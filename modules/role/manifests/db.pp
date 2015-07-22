@@ -15,7 +15,7 @@ class role::db {
     ufw::allow { 'mysql port':
         proto => 'tcp',
         port  => '3306',
-        from  => $IP,
+        from  => '185.52.1.75',
     }
 
     motd::role { 'role::db':
