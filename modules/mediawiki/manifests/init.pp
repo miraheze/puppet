@@ -1,6 +1,6 @@
 # class: mediawiki
 class mediawiki {
-    file { [ '/srv/mediawiki', '/var/log/mediawiki' ]:
+    file { [ '/srv/mediawiki', '/srv/mediawiki-static', '/var/log/mediawiki' ]:
         ensure => 'directory',
         owner  => 'www-data',
         group  => 'www-data',
