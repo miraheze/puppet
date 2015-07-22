@@ -1,0 +1,23 @@
+# standard stuff
+mailer-daemon: postmaster
+postmaster: root
+nobody: root
+hostmaster: root
+webmaster: root
+www: root
+ftp: root
+abuse: root
+noc: root
+security: root
+
+# noreply death
+noreply: /dev/null
+
+# group aliases
+ops: operations
+
+# destination aliases
+operations: john,southparkfan
+
+# root spam
+root: john

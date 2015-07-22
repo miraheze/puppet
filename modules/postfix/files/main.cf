@@ -1,0 +1,28 @@
+myhostname = mail.miraheze.org
+myorigin = /etc/mailname
+mydestination = mail.miraheze.org, miraheze.org, localhost
+relayhost =
+relay_domains =
+mynetworks = $IP
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_tls_auth_only = yes
+smtpd_tls_cert_file = /etc/ssl/cert/$SSL_CERT
+smtpd_tls_key_file = /etc/ssl/private/$SSL_KEY
+smtpd_use_tls = yes
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+smtpd_tls_security_level = may
+smtpd_tls_protocols = !SSLv2, !SSLv3
+
+local_recipient_maps = proxy:unix:passwd.byname $alias_maps
+smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination

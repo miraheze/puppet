@@ -1,0 +1,17 @@
+#!/bin/sh
+
+cd /root/puppet
+
+git remote update
+
+LOCAL=$(git rev-parse @)
+REMOTE=$(git rev-parse @{u})
+
+if [ $LOCAL = $REMOTE ]; then
+    echo "No change"
+else
+    echo "Changes exist"
+    git pull
+    [puppet]
+fi
+

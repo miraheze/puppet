@@ -1,0 +1,37 @@
+user www-data;
+worker_processes <%= scope.lookupvar('::processorcount') %>;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 1024;
+    multi_accept on;
+}
+
+http {
+    # Basic settings
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 30;
+    
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # SSL Settings
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    
+    # Log Settings
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log error;
+
+    # GZIP Settings
+    gzip on;
+    gzip_disable "msie6";
+    gzip_comp_level 1;
+    gzip_min_length 5120;
+
+    # VHosts
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}

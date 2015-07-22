@@ -1,0 +1,57 @@
+[mysql]
+port                           = 3306
+socket                         = /var/run/mysqld/mysqld.sock
+
+[mysqld]
+<% if read_only == false then -%>
+read_only                      = 0
+<% else %>
+read_only                      = 1
+<% end %>
+
+<% if @password -%>
+password                       = <%= @password %>
+<% end -%>
+
+user                           = mysql
+port                           = 3306
+default-storage-engine         = InnoDB
+socket                         = /var/run/mysqld/mysqld.sock
+pid-file                       = /var/run/mysqld/mysqld.pid
+
+key-buffer-size                = 32M
+myisam-recover                 = FORCE,BACKUP
+
+max-allowed-packet             = 16M
+max-connect-errors             = 1000000
+sql-mode                       = STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_AUTO_VALUE_ON_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ONLY_FULL_GROUP_BY
+sysdate-is-now                 = 1
+innodb                         = FORCE
+
+datadir                        = <%= @datadir %>
+
+log-bin                        = <%= @datadir %>/mysql-bin
+expire-logs-days               = 14
+sync-binlog                    = 1
+
+tmp-table-size                 = 32M
+max-heap-table-size            = 32M
+query-cache-type               = 0
+query-cache-size               = 0
+max-connections                = 500
+thread-cache-size              = 50
+open-files-limit               = 65535
+table-definition-cache         = 1024
+table-open-cache               = 2048
+
+innodb-flush-method            = O_DIRECT
+innodb-log-files-in-group      = 2
+innodb-log-file-size           = 64M
+innodb-flush-log-at-trx-commit = 1
+innodb-file-per-table          = 1
+innodb-buffer-pool-size        = 592M
+
+log-error                      = <%= @datadir %>/mysql-error.log
+log-queries-not-using-indexes  = 1
+slow-query-log                 = 1
+slow-query-log-file            = <%= @datadir %>/mysql-slow.log

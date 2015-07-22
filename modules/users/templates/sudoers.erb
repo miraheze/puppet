@@ -1,0 +1,9 @@
+# Puppet
+
+<%- @privileges.each do |privilege| -%>
+<%- if @is_group == true %>
+%<%= @priv_holder %> <%= privilege %>
+<%- else %>
+<%= @priv_holder %> <%= privilege %>
+<%- end -%>
+<%- end -%>

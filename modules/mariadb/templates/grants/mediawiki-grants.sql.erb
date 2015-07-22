@@ -1,0 +1,23 @@
+-- Grants for 'mediawiki'@''
+
+GRANT CREATE, PROCESS
+    ON *.* TO 'mediawiki'@'%'
+    IDENTIFIED BY '<%= @mediawiki_password %>';
+
+GRANT SELECT, INSERT, UPDATE, DELETE
+    ON `%wik%`.* TO 'mediawiki'@'%';
+
+GRANT SELECT, INSERT, UPDATE, DELETE
+    ON `centralauth`.* TO 'mediawiki'@'%';
+
+-- Grants for 'wikiadmin'@''
+
+GRANT CREATE, PROCESS
+    ON *.* TO 'wikiadmin'@'%'
+    IDENTIFIED BY '<%= @wikiadmin_password %>';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX
+    ON `%wik%`.* TO 'wikiadmin'@'%';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX
+    ON `centralauth`.* TO 'wikiadmin'@'%';

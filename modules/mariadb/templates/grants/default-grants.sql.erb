@@ -1,0 +1,6 @@
+-- Grants for 'root'@'localhost'
+
+GRANT ALL PRIVILEGES
+    ON *.* TO 'root'@'localhost'
+    IDENTIFIED BY '<%= @root_password %>'
+    WITH GRANT OPTION;
