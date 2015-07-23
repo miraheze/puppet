@@ -2,5 +2,5 @@
 
 GRANT ALL PRIVILEGES
     ON *.* TO 'root'@'localhost'
-    IDENTIFIED BY '<%= @root_password %>'
+    IDENTIFIED BY '<%= scope.lookupvar('private::mariadb::root_password') %>'
     WITH GRANT OPTION;
