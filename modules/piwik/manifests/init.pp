@@ -1,5 +1,7 @@
 # class: piwik
 class piwik {
+    include ::apache
+    include ::apache::mod::php5
     git::clone { 'piwik':
         directory => '/srv/piwik',
         origin    => 'https://github.com/piwik/piwik.git',

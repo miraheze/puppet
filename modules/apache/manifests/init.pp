@@ -8,6 +8,7 @@
 # }
 #
 class apache {
+    include apache::mpm
     $available_dirs = '/etc/apache2/sites-available'
     $enabled_dirs   = '/etc/apache2/sites-enabled'
 
