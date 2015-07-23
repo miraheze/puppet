@@ -17,6 +17,7 @@ node 'misc1.miraheze.org' {
     include role::mail
     include role::dns
     include role::piwik
+    include role::redis
 }
 
 node 'mw1.miraheze.org' {
@@ -27,11 +28,6 @@ node 'mw1.miraheze.org' {
 node 'ns1.miraheze.org' {
     include standard
     include role::dns
-}
-
-node 'rdb1.miraheze.org' {
-    include standard
-    include role::redis
 }
 
 # ensures all servers have basic class if puppet runs
