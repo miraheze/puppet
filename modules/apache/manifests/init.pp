@@ -25,6 +25,19 @@ class apache {
         require    => Package['apache2'],
     }
 
+    exec { 'apache2_test_config_and_restart':
+        command     => '/usr/sbin/apache2ctl configtest',
+        notify      => Exec['apache2_hard_restart'],
+        before      => Service['apache2'],
+        refreshonly => true,
+    }
+
+    exec { 'apache2_hard_restart':
+        command     => '/usr/sbin/service apache2 restart',
+        refreshonly => true,
+        before      => Service['apache2'],
+    }
+
     file { $available_dirs:
         ensure  => directory,
         owner   => 'root',
