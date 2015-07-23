@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /root/puppet
+cd /etc/puppet
 
 git remote update
 
