@@ -12,6 +12,6 @@ if [ $LOCAL = $REMOTE ]; then
 else
     echo "Changes exist"
     git pull
-    [puppet]
+    puppet apply /etc/puppet/manifests/site.pp -tv
 fi
 

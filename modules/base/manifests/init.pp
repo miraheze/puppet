@@ -24,7 +24,7 @@ class base {
         mode   => '0444',
     }
 
-    file { '/etc/puppet/private':
+    file { '/etc/puppet/modules/private':
         ensure => link,
         target => '/root/private',
     }
