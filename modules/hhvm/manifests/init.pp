@@ -1,12 +1,15 @@
 # class: hhvm
 class hhvm {
-    exec { 'HHVM apt-key':
-        command => '/usr/bin/apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0x5a16e7281be7a449',
-    }
-
-    file { '/etc/apt/sources.list.d/hhvm.list':
-        content => 'deb http://dl.hhvm.com/debian jessie main',
-        require => Exec['HHVM apt-key'],
+    include ::apt
+    apt::source { 'HHVM apt':
+        comment  => 'HHVM apt repo',
+        location => 'http://dl.hhvm.com/debian',
+        release  => 'jessie',
+        repos    => 'main',
+        key      => {
+            'id'     => '0x5a16e7281be7a449',
+            'server' => 'hkp://keyserver.ubuntu.com:80',
+        },
     }
 
     $packages = [
@@ -27,7 +30,7 @@ class hhvm {
 
     package { 'hhvm':
         ensure  => present,
-        require => File['/etc/apt/sources.list.d/hhvm.list'],
+        require => Apt::Source['HHVM apt'],
     }
 
     service { 'hhvm':
