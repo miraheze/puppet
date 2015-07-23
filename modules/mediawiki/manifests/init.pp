@@ -46,4 +46,9 @@ class mediawiki {
         target  => '/srv/mediawiki/config/LocalSettings.php',
         require => Git::Clone['MediaWiki config'],
     }
+
+    file { '/srv/mediawiki/config/PrivateSettings.php':
+        ensure => 'present',
+        source => 'puppet:///private/files/mediawiki/PrivateSettings.php',
+    }
 }
