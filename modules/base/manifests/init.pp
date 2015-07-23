@@ -24,11 +24,6 @@ class base {
         mode   => '0444',
     }
 
-    file { '/etc/puppet/modules/private':
-        ensure => link,
-        target => '/root/private',
-    }
-
     if $::hostname != "misc1" {
         mailalias { 'root':
             recipient => 'root@miraheze.org',
