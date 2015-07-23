@@ -3,12 +3,6 @@ port                           = 3306
 socket                         = /var/run/mysqld/mysqld.sock
 
 [mysqld]
-<% if read_only == false then -%>
-read_only                      = 0
-<% else %>
-read_only                      = 1
-<% end %>
-
 <% if @password -%>
 password                       = <%= @password %>
 <% end -%>

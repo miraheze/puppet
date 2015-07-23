@@ -3,7 +3,6 @@ class mariadb::config(
     $config    = undef,
     $password  = undef,
     $datadir   = '/srv/mariadb',
-    $read_only = 'false',
 ) {
     file { '/etc/my.cnf':
         owner   => 'root',
