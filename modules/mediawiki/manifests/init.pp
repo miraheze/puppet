@@ -12,8 +12,9 @@ class mediawiki {
     }
 
     nginx::site { 'mediawiki':
-        ensure => present,
-        source => 'puppet:///modules/mediawiki/nginx/mediawiki.conf',
+        ensure   => present,
+        ssl_cert => 'wildcard.miraheze.org',
+        source   => 'puppet:///modules/mediawiki/nginx/mediawiki.conf',
     }
 
     git::clone { 'MediaWiki config':
