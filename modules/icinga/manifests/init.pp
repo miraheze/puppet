@@ -153,4 +153,7 @@ class icinga {
         mode   => '0664',
     }
 
+    package { 'nagios-nrpe-plugin':
+        ensure => present,
+    }
 }
