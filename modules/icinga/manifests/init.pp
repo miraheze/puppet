@@ -45,7 +45,7 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    file { '/etc/icinga/generics.cfg':
+    file { '/etc/icinga/config/generics.cfg':
         source  => 'puppet:///modules/icinga/generics.cfg',
         owner   => 'icinga',
         group   => 'icinga',
@@ -54,7 +54,7 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    file { '/etc/icinga/extinfo.cfg':
+    file { '/etc/icinga/config/extinfo.cfg':
         source  => 'puppet:///modules/icinga/extinfo.cfg',
         owner   => 'icinga',
         group   => 'icinga',
@@ -63,7 +63,7 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    file { '/etc/icinga/contactgroups.cfg':
+    file { '/etc/icinga/config/contactgroups.cfg':
         source  => 'puppet:///modules/icinga/contactgroups.cfg',
         owner   => 'icinga',
         group   => 'icinga',
@@ -72,7 +72,7 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    file { '/etc/icinga/contacts.cfg':
+    file { '/etc/icinga/config/contacts.cfg':
         source  => 'puppet:///modules/icinga/contacts.cfg',
         owner   => 'icinga',
         group   => 'icinga',
@@ -82,7 +82,7 @@ class icinga {
     }
 
 
-    file { '/etc/icinga/timeperiods.cfg':
+    file { '/etc/icinga/config/timeperiods.cfg':
         source  => 'puppet:///modules/icinga/timeperiods.cfg',
         owner   => 'icinga',
         group   => 'icinga',
@@ -100,7 +100,7 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    file { '/etc/icinga/services.cfg':
+    file { '/etc/icinga/config/services.cfg':
         source  => 'puppet:///modules/icinga/services.cfg',
         owner   => 'icinga',
         group   => 'icinga',
@@ -109,7 +109,7 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    file { '/etc/icinga/hosts.cfg':
+    file { '/etc/icinga/config/hosts.cfg':
         source  => 'puppet:///modules/icinga/hosts.cfg',
         owner   => 'icinga',
         group   => 'icinga',
@@ -118,7 +118,7 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    file { '/etc/icinga/hostgroups.cfg':
+    file { '/etc/icinga/config/hostgroups.cfg':
         source  => 'puppet:///modules/icinga/hostgroups.cfg',
         owner   => 'icinga',
         group   => 'icinga',
