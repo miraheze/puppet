@@ -29,7 +29,9 @@ class base {
         target => '/root/private',
     }
 
-    mailalias { 'root':
-        recipient => 'root@miraheze.org',
+    if $::hostname != "misc1" {
+        mailalias { 'root':
+            recipient => 'root@miraheze.org',
+        }
     }
 }
