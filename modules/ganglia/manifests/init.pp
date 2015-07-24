@@ -1,4 +1,8 @@
 class ganglia {
+    include ::apache::mod::php5
+    include ::apache::mod::rewrite
+    include ::apache::mod::ssl
+
     $packages = [
         'rrdtool',
         'gmetad',
@@ -12,5 +16,16 @@ class ganglia {
     file { '/etc/ganglia/gmetad.conf':
         ensure => present,
         source => 'puppet:///modules/ganglia/gmetad.conf',
+    }
+
+    file { '/etc/apache2/sites-enabled/apache.conf':
+        ensure => absent,
+    }
+
+    apache::site { 'ganglia.miraheze.org':
+        ensure   => present,
+        source   => 'puppet:///modules/ganglia/apache/apache.conf',
+        ssl_cert => 'wildcard.miraheze.org',
+        require  => File['/etc/apache2/sites-enabled/apache.conf'],
     }
 }
