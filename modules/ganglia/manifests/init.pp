@@ -25,7 +25,6 @@ class ganglia {
     apache::site { 'ganglia.miraheze.org':
         ensure   => present,
         source   => 'puppet:///modules/ganglia/apache/apache.conf',
-        ssl_cert => 'wildcard.miraheze.org',
         require  => File['/etc/apache2/sites-enabled/apache.conf'],
     }
 }
