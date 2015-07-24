@@ -13,10 +13,4 @@ class ganglia {
         ensure => present,
         source => 'puppet:///modules/ganglia/gmetad.conf',
     }
-
-    service { 'ganglia-monitor':
-        ensure    => running,
-        require   => Package['ganglia-monitor'],
-        subscribe => File['/etc/ganglia/gmetad.conf'],
-    }
 }
