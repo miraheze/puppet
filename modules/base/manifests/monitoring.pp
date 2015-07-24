@@ -23,7 +23,7 @@ class base::monitoring {
 
     file { '/etc/ganglia/gmond.conf':
         ensure => present,
-        source => 'puppet:///modules/base/ganglia/gmond.conf',
+        source => template('base/ganglia/gmond.conf'),
     }
 
     service { 'ganglia-monitor':
