@@ -23,17 +23,20 @@ define nginx::site(
     }
 
     if $ssl_cert != undef {
-        file { "/etc/ssl/certs/${ssl_cert}.crt":
+        file { "${conf_file} SSL cert":
+            path   => "/etc/ssl/certs/${ssl_cert}.crt",
             ensure => present,
             source => "puppet:///modules/base/ssl/${ssl_cert}.crt",
         }
 
-        file { "/etc/ssl/private/${ssl_cert}.key":
+        file { "${conf_file} SSL key":
+            path   => "/etc/ssl/private/${ssl_cert}.key",
             ensure => present,
             source => "puppet:///private/ssl/${ssl_cert}.key",
         }
 
-        file { "/etc/ssl/certs/${ca_cert}.crt":
+        file { "${conf_file} ${ca_cert} cert":
+            path   => "/etc/ssl/certs/${ca_cert}.crt",
             ensure => present,
             source => "puppet:///modules/base/ssl/${ca_cert}.crt",
         }
