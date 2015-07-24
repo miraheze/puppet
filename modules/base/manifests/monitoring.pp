@@ -22,8 +22,8 @@ class base::monitoring {
     }
 
     file { '/etc/ganglia/gmond.conf':
-        ensure => present,
-        source => template('base/ganglia/gmond.conf'),
+        ensure  => present,
+        content => template('base/ganglia/gmond.conf'),
     }
 
     service { 'ganglia-monitor':
