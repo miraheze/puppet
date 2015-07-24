@@ -1,17 +1,65 @@
-#!/bin/sh
+#!/bin/bash
+set -e
+set -u
+FORCE=0
+PRIVATE=0
+CHANGES=0
 
-cd /etc/puppet
+function log  {
+    echo "$@"
+}
 
-git remote update
+function puppet_updates {
+    cd /etc/puppet
+    git remote update
+    LOCAL=$(git rev-parse @)
+    REMOTE=$(git rev-parse @{u})
+    if [ $LOCAL = $REMOTE ]; then
+        CHANGES=0
+    else
+        CHANGES=1
+    fi
+}
 
-LOCAL=$(git rev-parse @)
-REMOTE=$(git rev-parse @{u})
+function pull_private {
+    eval `ssh-agent` && ssh-add /root/id_rsa && cd private && git pull
+}
 
-if [ $LOCAL = $REMOTE ]; then
-    echo "No change"
-else
-    echo "Changes exist"
+function run_puppet {
+    cd /etc/puppet
     git pull
     puppet apply /etc/puppet/manifests/site.pp -tv
-fi
+}
 
+
+function usage {
+    echo "Usage: $0 [-f][-p]"; exit 1;
+}
+
+while getopts "fp:" option; do
+    case $option in
+        f)
+            FORCE=1
+            ;;
+        p)
+            PRIVATE=1
+            ;;
+        *)
+            usage
+            ;;
+esac
+done
+
+puppet_updates
+
+if [ $CHANGES -eq 1 ]; then
+    log "Changes exist!"
+    pull_private
+    run_puppet
+elif [ $FORCE -eq 1 ]; then
+    log "Forcing puppet run!"
+    pull_private
+    run_puppet
+else
+    log "No changes and no forced run!"
+fi;
