@@ -50,6 +50,6 @@ class mediawiki {
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure => 'present',
-        source => 'puppet:///private/files/mediawiki/PrivateSettings.php',
+        source => 'puppet:///private/mediawiki/PrivateSettings.php',
     }
 }
