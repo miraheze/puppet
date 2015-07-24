@@ -6,13 +6,14 @@ class dns {
     }
 
     service { 'gdnsd':
-        ensure     => 'running',
+        ensure     => running,
         hasrestart => true,
         hasstatus  => true,
         require    => Package['gdnsd'],
     }
 
     git::clone { 'dns':
+        ensure    => latest,
         directory => '/etc/gdnsd',
         origin    => 'https://github.com/miraheze/dns.git',
         owner     => 'root',
