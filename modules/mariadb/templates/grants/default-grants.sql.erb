@@ -4,3 +4,9 @@ GRANT ALL PRIVILEGES
     ON *.* TO 'root'@'localhost'
     IDENTIFIED BY '<%= scope.lookupvar('private::mariadb::root_password') %>'
     WITH GRANT OPTION;
+
+-- Grants for 'icinga'@'185.52.1.76'
+
+GRANT USAGE, PROCESS
+    ON *.* TO 'icinga'@'185.52.1.76';
+
