@@ -17,13 +17,13 @@ class role::db {
         content => template('mariadb/grants/piwik-grants.sql.erb'),
     }
 
-    ufw::allow { 'mysql port':
+    ufw::allow { 'mysql port mw1':
         proto => 'tcp',
         port  => '3306',
         from  => '185.52.1.75',
     }
 
-    ufw::allow { 'mysql port':
+    ufw::allow { 'mysql port misc1':
         proto => 'tcp',
         port  => '3306',
         from  => '185.52.1.76',
