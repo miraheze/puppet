@@ -6,6 +6,18 @@ class base {
     include ssh
     include users
 
+    cron { 'puppet-run-no-force':
+        command => "/root/puppet-run",
+        user    => 'root',
+        minute  => [ 10, 20, 30, 40, 50 ],
+    }
+
+    cron { 'puppet-run-force':
+        command => "/root/puppet-run -f",
+        user    => 'root',
+        hour    => '*',
+    }
+
     file { '/root/puppet-run':
         ensure => present,
         source => 'puppet:///modules/base/puppet/puppet-run',
