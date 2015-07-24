@@ -12,10 +12,21 @@ class role::db {
         content => template('mariadb/grants/mediawiki-grants.sql.erb'),
     }
 
+    file { '/etc/mysql/miraheze/piwik-grants.sql':
+        ensure  => present,
+        content => template('mariadb/grants/piwik-grants.sql.erb'),
+    }
+
     ufw::allow { 'mysql port':
         proto => 'tcp',
         port  => '3306',
         from  => '185.52.1.75',
+    }
+
+    ufw::allow { 'mysql port':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '185.52.1.76',
     }
 
     motd::role { 'role::db':

@@ -1,0 +1,8 @@
+-- Grants for 'piwik'@''
+
+GRANT CREATE, PROCESS
+    ON *.* TO 'piwik'@'%'
+    IDENTIFIED BY '<%= scope.lookupvar('private::mariadb::piwik_password') %>';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX
+    ON `piwik`.* TO 'piwik'@'%';
