@@ -1,5 +1,10 @@
 # icinga
 class icinga {
+    include ::apache::mod::alias
+    include ::apache::mod::php5
+    include ::apache::mod::rewrite
+    include ::apache::mod::ssl
+
     group { 'nagios':
         ensure    => present,
         name      => 'nagios',
@@ -155,5 +160,16 @@ class icinga {
 
     package { 'nagios-nrpe-plugin':
         ensure => present,
+    }
+
+    file { '/etc/apache2/conf-enabled/icinga.conf':
+        ensure => absent,
+    }
+
+    apache::site { 'icinga.miraheze.org':
+        ensure   => present,
+        source   => 'puppet:///modules/icinga/apache/apache.conf',
+        ssl_cert => 'wildcard.miraheze.org',
+        require  => File['/etc/apache2/conf-enabled/icinga.conf'],
     }
 }
