@@ -3,6 +3,8 @@ class piwik {
     include ::apache
     include ::apache::mod::expires
     include ::apache::mod::php5
+    include private::mariadb
+    include private::piwik
 
     $packages = [
         'php5-curl',
@@ -14,6 +16,13 @@ class piwik {
         ensure => present,
     }
     
+    file { '/srv/piwikconfig':
+        ensure => directory,
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => 755,
+    }
+        
     git::clone { 'piwik':
         directory => '/srv/piwik',
         origin    => 'https://github.com/piwik/piwik.git',
@@ -36,7 +45,7 @@ class piwik {
 
     file { '/srv/piwik/config/config.ini.php':
         ensure  => present,
-        source  => 'puppet:///modules/piwik/config.ini.php',
+        content => template('piwik/config.ini.php.erb'),
         require => Git::Clone['piwik'],
     }
 }

@@ -1,0 +1,23 @@
+; <?php exit; ?> DO NOT REMOVE THIS LINE
+; file automatically generated or modified by Piwik; you can manually override t
+he default values in global.ini.php by redefining them in this file.
+[database]
+host = "185.52.1.77"
+username = "piwik"
+password = "<%= scope.lookupvar('private::mariadb::piwik_password') %>"
+dbname = "piwik"
+tables_prefix = "piwik_"
+charset = "utf8"
+
+[General]
+salt = "<%= scope.lookupvar('private::piwik::piwik_salt') %>"
+
+[PluginsInstalled]
+PluginsInstalled[] = "Diagnostics"
+PluginsInstalled[] = "Login"
+PluginsInstalled[] = "CoreAdminHome"
+PluginsInstalled[] = "UsersManager"
+PluginsInstalled[] = "SitesManager"
+PluginsInstalled[] = "Installation"
+PluginsInstalled[] = "Monolog"
+PluginsInstalled[] = "Intl"
