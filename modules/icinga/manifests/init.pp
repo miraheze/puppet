@@ -2,6 +2,7 @@
 class icinga {
     include ::apache::mod::alias
     include ::apache::mod::php5
+    include ::apache::mod::rewrite
     include ::apache::mod::ssl
 
     group { 'nagios':
