@@ -1,7 +1,7 @@
 # class: hhvm
 class hhvm {
     include ::apt
-    apt::source { 'HHVM apt':
+    apt::source { 'HHVM_apt':
         comment  => 'HHVM apt repo',
         location => 'http://dl.hhvm.com/debian',
         release  => 'jessie',
@@ -13,13 +13,15 @@ class hhvm {
     }
 
     $packages = [
+        'php-pear',
+        'php-mail',
         'php5',
         'php5-curl',
         'php5-gd',
         'php5-imagick',
         'php5-intl',
-        'php5-mcrypt',
         'php5-json',
+        'php5-mcrypt',
         'php5-mysqlnd',
         'php5-redis',
     ]
@@ -28,9 +30,9 @@ class hhvm {
         ensure => present,
     }
 
-    package { 'hhvm':
+    package { 'hhvm-nightly':
         ensure  => present,
-        require => Apt::Source['HHVM apt'],
+        require => Apt::Source['HHVM_apt'],
     }
 
     service { 'hhvm':
