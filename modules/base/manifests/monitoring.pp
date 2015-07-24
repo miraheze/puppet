@@ -31,10 +31,4 @@ class base::monitoring {
         require => Package['ganglia-monitor'],
         subscribe => File['/etc/ganglia/gmond.conf'],
     }
-
-    file { ['/usr/lib/ganglia/python_modules',
-            '/etc/ganglia/conf.d']:
-        ensure  => directory,
-        require => Package['ganglia-monitor'],
-    }
 }
