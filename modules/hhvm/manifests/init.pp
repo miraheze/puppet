@@ -42,14 +42,14 @@ class hhvm {
     file { '/etc/hhvm/php.ini':
         ensure  => present,
         source  => 'puppet:///modules/hhvm/php.ini',
-        require => Package['hhvm'],
+        require => Package['hhvm-nightly'],
         notify  => Service['hhvm'],
     }
 
     file { '/etc/hhvm/server.ini':
         ensure  => present,
         source  => 'puppet:///modules/hhvm/server.ini',
-        require => Package['hhvm'],
+        require => Package['hhvm-nightly'],
         notify  => Service['hhvm'],
     }
 }
