@@ -16,4 +16,19 @@ class base::monitoring {
         ensure     => 'running',
         hasrestart => true,
     }
+
+    package { 'ganglia-monitor':
+        ensure => present,
+    }
+
+    file { '/etc/ganglia/gmond.conf':
+        ensure => present,
+        source => 'puppet:///modules/base/ganglia/gmond.conf',
+    }
+
+    service { 'ganglia-monitor':
+        ensure => running,
+        require => Package['ganglia-monitor'],
+        subscribe => File['/etc/ganglia/gmond.conf'],
+    }
 }

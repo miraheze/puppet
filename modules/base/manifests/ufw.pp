@@ -11,4 +11,9 @@ class base::ufw {
         proto => 'tcp',
         port  => 5666,
     }
+
+    ufw::allow { 'ganglia':
+        proto => 'udp',
+        port  => 8649,
+    }
 }
