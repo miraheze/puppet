@@ -46,6 +46,8 @@ class piwik {
     file { '/srv/piwik/config/config.ini.php':
         ensure  => present,
         content => template('piwik/config.ini.php.erb'),
+        owner   => 'www-data',
+        group   => 'www-data',
         require => Git::Clone['piwik'],
     }
 }
