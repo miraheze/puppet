@@ -7,7 +7,6 @@ define apache::site(
     $source    = undef,
     $replaces  = undef,
     $ssl_cert  = undef,
-    $ca_cert   = 'GlobalSign',
 ) {
     include ::apache
 
@@ -59,11 +58,6 @@ define apache::site(
         file { "/etc/ssl/private/${ssl_cert}.key":
             ensure => present,
             source => "puppet:///private/ssl/${ssl_cert}.key",
-        }
-
-        file { "/etc/ssl/certs/${ca_cert}.crt":
-            ensure => present,
-            source => "puppet:///modules/base/ssl/${ca_cert}.crt",
         }
     }
 }
