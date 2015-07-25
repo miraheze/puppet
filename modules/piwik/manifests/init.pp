@@ -45,6 +45,12 @@ class piwik {
         source => 'puppet:///modules/piwik/apache.conf',
     }
 
+    file { '/etc/php5/apache2/conf.d/20-piwik.ini':
+        ensure => present,
+        source => 'puppet:///modules/piwik/20-piwik.ini',
+        notify => Exec['apache2_test_config_and_restart'],
+    }
+
     file { '/srv/piwik/config/config.ini.php':
         ensure  => present,
         content => template('piwik/config.ini.php.erb'),
