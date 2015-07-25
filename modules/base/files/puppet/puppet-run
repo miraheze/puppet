@@ -11,7 +11,7 @@ function log  {
 
 function puppet_updates {
     cd /etc/puppet
-    git remote update
+    /usr/bin/git remote update
     LOCAL=$(git rev-parse @)
     REMOTE=$(git rev-parse @{u})
     if [ $LOCAL = $REMOTE ]; then
@@ -27,8 +27,8 @@ function pull_private {
 
 function run_puppet {
     cd /etc/puppet
-    git pull
-    puppet apply /etc/puppet/manifests/site.pp -tv
+    /usr/bin/git pull
+    /usr/bin/puppet apply /etc/puppet/manifests/site.pp -tv
 }
 
 
