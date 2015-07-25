@@ -3,6 +3,8 @@ class piwik {
     include ::apache
     include ::apache::mod::expires
     include ::apache::mod::php5
+    include ::apache::mod::rewrite
+    include ::apache::mod::ssl
     include private::mariadb
     include private::piwik
 
