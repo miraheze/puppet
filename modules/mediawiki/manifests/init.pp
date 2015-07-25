@@ -11,6 +11,10 @@ class mediawiki {
         content => template('mediawiki/nginx.conf.erb'),
     }
 
+    package { 'imagemagick':
+        ensure => present,
+    }
+
     nginx::site { 'mediawiki':
         ensure   => present,
         ssl_cert => 'wildcard.miraheze.org',
