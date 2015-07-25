@@ -16,6 +16,7 @@ class base {
         command => "/root/puppet-run -f",
         user    => 'root',
         hour    => '*',
+        minute  => '0',
     }
 
     file { '/root/puppet-run':
