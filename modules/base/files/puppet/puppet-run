@@ -12,8 +12,8 @@ function log  {
 function puppet_updates {
     cd /etc/puppet
     /usr/bin/git remote update
-    LOCAL=$(git rev-parse @)
-    REMOTE=$(git rev-parse @{u})
+    LOCAL=$(/usr/bin/git rev-parse @)
+    REMOTE=$(/usr/bin/git rev-parse @{u})
     if [ $LOCAL = $REMOTE ]; then
         CHANGES=0
     else
@@ -22,7 +22,7 @@ function puppet_updates {
 }
 
 function pull_private {
-    eval `ssh-agent` && ssh-add /root/id_rsa && cd /root/private && git pull
+    eval `ssh-agent` && /usr/bin/ssh-add /root/id_rsa && cd /root/private && /usr/bin/git pull
 }
 
 function run_puppet {
