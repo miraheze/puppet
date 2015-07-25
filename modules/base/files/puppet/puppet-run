@@ -22,7 +22,7 @@ function puppet_updates {
 }
 
 function pull_private {
-    eval `ssh-agent` && ssh-add /root/id_rsa && cd private && git pull
+    eval `ssh-agent` && ssh-add /root/id_rsa && cd /root/private && git pull
 }
 
 function run_puppet {
