@@ -21,7 +21,18 @@ function puppet_updates {
     fi
 }
 
+function ssh_agent {
+    if [[ -z $(ps -ef | grep ssh-agent | grep -v grep) ]]
+    then
+       echo "ssh-agent is not running."
+    else
+       echo "ssh-agent is running. Killing ssh-agent."
+       killall ssh-agent
+    fi
+}
+
 function pull_private {
+    ssh_agent
     eval `ssh-agent` && /usr/bin/ssh-add /root/id_rsa && cd /root/private && /usr/bin/git pull
 }
 
