@@ -27,7 +27,7 @@ function ssh_agent {
        echo "ssh-agent is not running."
     else
        echo "ssh-agent is running. Killing ssh-agent."
-       killall ssh-agent
+       /usr/bin/killall ssh-agent
     fi
 }
 
