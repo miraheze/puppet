@@ -15,6 +15,7 @@ class base::monitoring {
     file { '/usr/lib/nagios/plugins/check_puppet_run':
         ensure => present,
         source => 'puppet:///modules/base/icinga/check_puppet_run',
+        mode   => '0555',
     }
 
     service { 'nagios-nrpe-server':

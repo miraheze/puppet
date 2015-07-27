@@ -42,4 +42,10 @@ class base {
             recipient => 'root@miraheze.org',
         }
     }
+
+    # SUDO FOR NRPE
+    sudo::user { 'nrpe_sudo':
+        user => 'nagios',
+        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run', ],
+    }
 }
