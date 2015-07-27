@@ -7,13 +7,13 @@ class base {
     include users
 
     cron { 'puppet-run-no-force':
-        command => "/root/puppet-run",
+        command => "/root/puppet-run &> /dev/null",
         user    => 'root',
         minute  => [ 10, 20, 30, 40, 50 ],
     }
 
     cron { 'puppet-run-force':
-        command => "/root/puppet-run -f",
+        command => "/root/puppet-run -f &> /dev/null",
         user    => 'root',
         hour    => '*',
         minute  => '0',
