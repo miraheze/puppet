@@ -21,6 +21,11 @@ define nginx::site(
         target => "/etc/nginx/sites-available/${basename}",
     }
 
+    file { '/etc/ssl/certs/GlobalSign.crt':
+        ensure => present,
+        source => 'puppet:///modules/base/ssl/GlobalSign.crt',
+    }
+
     if $ssl_cert != undef {
         file { "/etc/ssl/certs/${ssl_cert}.crt":
             ensure => present,
