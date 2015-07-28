@@ -24,6 +24,7 @@ http {
     ssl_prefer_server_ciphers on;
     ssl_stapling on;
     ssl_stapling_verify on;
+    ssl_trusted_certificate /etc/ssl/certs/GlobalSign.crt;
 
     # Log Settings
     access_log /var/log/nginx/access.log;
