@@ -1,11 +1,11 @@
-Puppet repo for new farm project
+Puppet repo for Miraheze
 
-How to run puppet (as is!)
+This repository is licensed per the GNU General Public License, Version 3.
+The full license is available in LICENSE.md.
 
-apt-get install puppet
+The repository is made of an assortment of code developed by hand, reusing PuppetLabs Forge and code by the Wikimedia Foundation.
+Attritubtions should exist in module directories if code if fully unmodified or slightly.
+If attribution is missing, please open a code request adding the attribution and it will be merged.
 
-clone this repo so manifests and module directories are /etc/puppet/manifests and /etc/puppet/modules
-
-run "puppet apply /etc/puppet/manifests/site.pp"
-
-If you want to test roles, apply them to the default node locally and run.
+This works out of the box as long as Puppet is installed on the local machine.
+All code is tested and developed on Debian Jessie and is ran in production on Debian Jessie.
