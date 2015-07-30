@@ -2,7 +2,8 @@ class role::redis {
     include private::redis
 
     class { '::redis':
-        password => $password,
+        password  => $password,
+        maxmemory => '384mb',
     }
 
     ufw::allow { 'redis':
