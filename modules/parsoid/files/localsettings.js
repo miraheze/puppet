@@ -2,7 +2,9 @@
 
 exports.setup = function( parsoidConfig ) {
 	// wiki end points
-	parsoidConfig.setInterwiki( 'metawiki', 'https://meta.miraheze.org/w/api.php' );
+	// interwikis with m at the beginning have conflicts with Wikimeda wikis
+	parsoidConfig.setInterwiki( 'mmetawiki', 'https://meta.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'googlewiki', 'https://google.miraheze.org/w/api.php' );
 
 	// Enable debug mode (prints extra debugging messages)
 	parsoidConfig.debug = false;
