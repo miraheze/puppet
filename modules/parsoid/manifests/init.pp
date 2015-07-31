@@ -1,4 +1,6 @@
 class parsoid {
+    include apt
+
     apt::source { 'parsoid':
         location => 'http://parsoid.wmflabs.org:8080/deb',
         repos    => 'main',
