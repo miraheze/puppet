@@ -30,6 +30,11 @@ node /^ns[13]\.miraheze\.org$/ {
     include role::dns
 }
 
+node 'parsoid1.miraheze.org' {
+    include standard
+    include role::parsoid
+}
+
 # ensures all servers have basic class if puppet runs
 node default {
     include standard
