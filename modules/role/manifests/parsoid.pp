@@ -1,5 +1,5 @@
 class role::parsoid {
-    include parsoid
+    include ::parsoid
 
     ufw::allow { 'parsoid':
         proto => 'tcp',
