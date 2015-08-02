@@ -1,4 +1,4 @@
-class ssl::cert (
+define ssl::cert (
     $ensure         = 'present',
     $certificate    = $title,
 ) {
