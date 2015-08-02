@@ -3,6 +3,7 @@
 exports.setup = function( parsoidConfig ) {
 	// wiki end points
 	parsoidConfig.setInterwiki( 'metawiki', 'https://meta.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'spiralwiki', 'https://spiral.miraheze.org/w/api.php' );
 
 	// Enable debug mode (prints extra debugging messages)
 	parsoidConfig.debug = false;
