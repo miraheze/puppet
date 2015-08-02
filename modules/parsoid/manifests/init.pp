@@ -12,13 +12,13 @@ class parsoid {
     }
 
     service { 'parsoid':
-        ensure => running,
-        require => Package['parsoid'],
+        ensure    => running,
+        require   => Package['parsoid'],
+        subscribe => File['/etc/mediawiki/parsoid/settings.js'],
     }
 
-    file { '/etc/mediawiki/parsoid/localsettings.js':
-        ensure    => present,
-        source    => 'puppet:///modules/parsoid/localsettings.js',
-        subscribe => Service['parsoid'],
+    file { '/etc/mediawiki/parsoid/settings.js':
+        ensure => present,
+        source => 'puppet:///modules/parsoid/settings.js',
     }
 }
