@@ -6,7 +6,6 @@ define apache::site(
     $content   = undef,
     $source    = undef,
     $replaces  = undef,
-    $ssl_cert  = undef,
 ) {
     include ::apache
 
@@ -46,18 +45,6 @@ define apache::site(
         file { "${title_safe}_${replaces}":
             ensure => absent,
             path   => "/etc/apache2/${replaces}",
-        }
-    }
-
-    if $ssl_cert != undef {
-        file { "/etc/ssl/certs/${ssl_cert}.crt":
-            ensure => present,
-            source => "puppet:///modules/base/ssl/${ssl_cert}.crt",
-        }
-
-        file { "/etc/ssl/private/${ssl_cert}.key":
-            ensure => present,
-            source => "puppet:///private/ssl/${ssl_cert}.key",
         }
     }
 }

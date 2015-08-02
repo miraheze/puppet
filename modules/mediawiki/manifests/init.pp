@@ -15,9 +15,10 @@ class mediawiki {
         ensure => present,
     }
 
+    ssl::cert { 'wildcard.miraheze.org': }
+
     nginx::site { 'mediawiki':
         ensure   => present,
-        ssl_cert => 'wildcard.miraheze.org',
         source   => 'puppet:///modules/mediawiki/nginx/mediawiki.conf',
     }
 

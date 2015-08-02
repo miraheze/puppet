@@ -4,7 +4,6 @@ define nginx::site(
     $ensure   = present,
     $content  = undef,
     $source   = undef,
-    $ssl_cert = undef,
 ) {
     include ::nginx
 
@@ -23,18 +22,6 @@ define nginx::site(
 
     file { '/etc/ssl/certs/GlobalSign.crt':
         ensure => present,
-        source => 'puppet:///modules/base/ssl/GlobalSign.crt',
-    }
-
-    if $ssl_cert != undef {
-        file { "/etc/ssl/certs/${ssl_cert}.crt":
-            ensure => present,
-            source => "puppet:///modules/base/ssl/${ssl_cert}.crt",
-        }
-
-        file { "/etc/ssl/private/${ssl_cert}.key":
-            ensure => present,
-            source => "puppet:///private/ssl/${ssl_cert}.key",
-        }
+        source => 'puppet:///modules/ssl/GlobalSign.crt',
     }
 }
