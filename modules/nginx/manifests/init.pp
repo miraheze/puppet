@@ -11,7 +11,8 @@ class nginx {
     }
     
     package { 'nginx':
-        ensure => present,
+        ensure  => present,
+        require => Apt::Source['nginx_apt'],
     }
 
     service { 'nginx':
