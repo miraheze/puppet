@@ -16,6 +16,7 @@ class mediawiki {
     }
 
     ssl::cert { 'wildcard.miraheze.org': }
+    ssl::cert { 'spiral.wiki': }
 
     nginx::site { 'mediawiki':
         ensure   => present,
