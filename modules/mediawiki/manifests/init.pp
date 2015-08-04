@@ -35,8 +35,11 @@ class mediawiki {
         origin              => 'https://github.com/miraheze/mediawiki.git',
         branch              => 'REL1_25',
         ensure              => 'latest',
+        owner               => 'www-data',
+        group               => 'www-data',
         timeout             => '550',
         recurse_submodules  => true,
+        mode                => 0755,
         require             => File['/srv/mediawiki'],
     }
 
@@ -44,7 +47,10 @@ class mediawiki {
         directory => '/srv/mediawiki/w/vendor',
         origin    => 'https://github.com/wikimedia/mediawiki-vendor.git',
         branch    => 'REL1_25',
-        ensure    => 'latest',  
+        ensure    => 'latest',
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => 0755,
         require   => Git::Clone['MediaWiki core'],
     }
 
