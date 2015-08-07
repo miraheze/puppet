@@ -48,7 +48,7 @@ class hhvm {
 
     file { '/etc/hhvm/server.ini':
         ensure  => present,
-        source  => template('hhvm/server.ini.erb'),
+        content => template('hhvm/server.ini.erb'),
         require => Package['hhvm-nightly'],
         notify  => Service['hhvm'],
     }
