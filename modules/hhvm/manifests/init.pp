@@ -46,6 +46,8 @@ class hhvm {
         notify  => Service['hhvm'],
     }
 
+    include private::hhvm
+
     file { '/etc/hhvm/server.ini':
         ensure  => present,
         content => template('hhvm/server.ini.erb'),
