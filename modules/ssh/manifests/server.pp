@@ -1,6 +1,6 @@
 class ssh::server (
     $listen_port = '22',
-    $permit_root = true,
+    $permit_root = false,
     $authorized_keys_file = undef,
 ) {
     package { 'openssh-server':
