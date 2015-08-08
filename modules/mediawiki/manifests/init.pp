@@ -59,7 +59,7 @@ class mediawiki {
         source => 'puppet:///private/mediawiki/PrivateSettings.php',
     }
 
-    file { '/usr/local/bin/foreachwikiiindblist':
+    file { '/usr/local/bin/foreachwikiindblist':
         ensure => 'present',
         mode   => 0755,
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
