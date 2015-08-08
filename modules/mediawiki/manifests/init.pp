@@ -71,16 +71,12 @@ class mediawiki {
 		'default.ico',
 		'spiral.wiki.ico'
 	]
-
-	define faviconForeach {
-		file { "/usr/share/nginx/favicons/${favicons}":
-			ensure	=> present,
-			owner 	=> 'www-data',
-			group	=> 'www-data',
-			mode	=> 0644,
-			source	=> "puppet:///modules/mediawiki/favicons/${favicons}",
-		}
+	
+	file { "/usr/share/nginx/favicons/${favicons}":
+		ensure	=> present,
+		owner 	=> 'www-data',
+		group	=> 'www-data',
+		mode	=> 0644,
+		source	=> "puppet:///modules/mediawiki/favicons/${favicons}",
 	}
-
-	faviconForeach { $favicons: }
 }
