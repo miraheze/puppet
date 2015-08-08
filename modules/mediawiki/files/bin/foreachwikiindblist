@@ -1,0 +1,21 @@
+#! /bin/bash
+
+usage(){
+        echo "Usage: /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/<dblist> /srv/mediawiki/w/<maintenance script> <any other options if needed>"
+        exit 1
+}
+
+[[ $# -eq 0 ]] && usage
+
+if [ ! -f $1 ]; then
+        echo "dblist does not exist!"
+        usage
+        exit 1
+fi
+
+while read line
+do
+        wiki=`echo $line | cut -d"|" -f1`
+        echo "Running ${*:2} for $wiki"
+        /usr/bin/php $2 --wiki $wiki ${*:3}
+done < $1

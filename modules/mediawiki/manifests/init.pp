@@ -58,4 +58,10 @@ class mediawiki {
         ensure => 'present',
         source => 'puppet:///private/mediawiki/PrivateSettings.php',
     }
+
+    file { '/usr/local/bin/foreachwikiiindblist':
+        ensure => 'present',
+        mode   => 0755,
+        source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
+    }
 }
