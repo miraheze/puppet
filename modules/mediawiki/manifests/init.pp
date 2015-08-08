@@ -58,4 +58,25 @@ class mediawiki {
         ensure => 'present',
         source => 'puppet:///private/mediawiki/PrivateSettings.php',
     }
+
+	file { '/usr/share/nginx/favicons':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => 0755,
+        require => Package['nginx'],
+    }
+
+	$favicons = [
+		'default.ico',
+		'spiral.wiki.ico'
+	]
+	
+	file { "/usr/share/nginx/favicons/${favicons}":
+		ensure	=> present,
+		owner 	=> 'www-data',
+		group	=> 'www-data',
+		mode	=> 0644,
+		source	=> "puppet:///modules/mediawiki/favicons/${favicons}",
+	}
 }
