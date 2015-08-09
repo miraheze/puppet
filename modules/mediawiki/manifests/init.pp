@@ -15,6 +15,12 @@ class mediawiki {
         ensure => present,
     }
 
+
+    package { 'mediawiki-math-texvc':
+        ensure => present,
+        install_options => ['--no-install-recommends'],
+    }
+    
     ssl::cert { 'wildcard.miraheze.org': }
     ssl::cert { 'spiral.wiki': }
 
