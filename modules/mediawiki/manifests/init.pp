@@ -1,5 +1,7 @@
 # class: mediawiki
 class mediawiki {
+    include mediawiki::cron
+
     file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/srv/mediawiki-static', '/var/log/mediawiki' ]:
         ensure => 'directory',
         owner  => 'www-data',
