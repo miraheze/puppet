@@ -21,6 +21,30 @@ function puppet_updates {
     fi
 }
 
+function dns_updates {
+    cd /etc/gdnsd
+    /usr/bin/git remote update
+    LOCAL=$(/usr/bin/git rev-parse @)
+    REMOTE=$(/usr/bin/git rev-parse @{u})
+    if [ $LOCAL = $REMOTE ]; then
+        CHANGES=0
+    else
+        CHANGES=1
+    fi
+}
+
+function mediawiki_updates {
+    cd /srv/mediawiki/config
+    /usr/bin/git remote update
+    LOCAL=$(/usr/bin/git rev-parse @)
+    REMOTE=$(/usr/bin/git rev-parse @{u})
+    if [ $LOCAL = $REMOTE ]; then
+        CHANGES=0
+    else
+        CHANGES=1
+    fi
+}
+
 function ssh_agent {
     if [[ -z $(ps -ef | grep ssh-agent | grep -v grep) ]]
     then
@@ -44,16 +68,13 @@ function run_puppet {
 
 
 function usage {
-    echo "Usage: $0 [-f][-p]"; exit 1;
+    echo "Usage: $0 [-f]"; exit 1;
 }
 
-while getopts "fp:" option; do
+while getopts "f:" option; do
     case $option in
         f)
             FORCE=1
-            ;;
-        p)
-            PRIVATE=1
             ;;
         *)
             usage
@@ -62,6 +83,12 @@ esac
 done
 
 puppet_updates
+
+if [ -d "/etc/gdnsd" ]; then
+    dns_updates
+elif [ -d "/srv/mediawiki" ]; then
+    mediawiki_updates
+fi
 
 if [ $CHANGES -eq 1 ]; then
     log "Changes exist!"
