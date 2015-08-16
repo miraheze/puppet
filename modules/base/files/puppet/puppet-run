@@ -81,13 +81,13 @@ while getopts "f" option; do
 esac
 done
 
-puppet_updates
-
 if [ -d "/etc/gdnsd" ]; then
     dns_updates
 elif [ -d "/srv/mediawiki" ]; then
     mediawiki_updates
 fi
+
+puppet_updates
 
 if [ $CHANGES -eq 1 ]; then
     log "Changes exist!"
