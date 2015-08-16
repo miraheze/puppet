@@ -2,7 +2,6 @@
 set -e
 set -u
 FORCE=0
-PRIVATE=0
 CHANGES=0
 
 function log  {
@@ -71,7 +70,7 @@ function usage {
     echo "Usage: $0 [-f]"; exit 1;
 }
 
-while getopts "f:" option; do
+while getopts "f" option; do
     case $option in
         f)
             FORCE=1
