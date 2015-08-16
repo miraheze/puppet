@@ -87,7 +87,9 @@ elif [ -d "/srv/mediawiki" ]; then
     mediawiki_updates
 fi
 
-puppet_updates
+if [ $CHANGES -eq 0 ]; then
+    puppet_updates
+fi
 
 if [ $CHANGES -eq 1 ]; then
     log "Changes exist!"
