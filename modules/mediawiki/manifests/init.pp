@@ -72,14 +72,4 @@ class mediawiki {
         mode   => 0755,
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
     }
-
-    include logrotate::rotate
-
-    logrotate::rotate { 'mediawiki_wikilogs':
-        logs => '/var/logs/mediawiki/*.log',
-    }
-
-    logrotate::rotate { 'mediawiki_debuglogs':
-        logs => '/var/log/mediawiki/debuglogs/*.log',
-    }
 }
