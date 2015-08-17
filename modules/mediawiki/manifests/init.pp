@@ -73,6 +73,8 @@ class mediawiki {
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
     }
 
+    include logrotate::rotate
+
     logrotate::rotate { 'mediawiki_wikilogs':
         logs => '/var/logs/mediawiki/*.log',
     }
