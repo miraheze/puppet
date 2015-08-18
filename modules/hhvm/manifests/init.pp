@@ -30,7 +30,7 @@ class hhvm {
         ensure => present,
     }
 
-    package { 'hhvm-nightly':
+    package { 'hhvm':
         ensure  => present,
         require => Apt::Source['HHVM_apt'],
     }
@@ -42,7 +42,7 @@ class hhvm {
     file { '/etc/hhvm/php.ini':
         ensure  => present,
         source  => 'puppet:///modules/hhvm/php.ini',
-        require => Package['hhvm-nightly'],
+        require => Package['hhvm'],
         notify  => Service['hhvm'],
     }
 
@@ -51,7 +51,7 @@ class hhvm {
     file { '/etc/hhvm/server.ini':
         ensure  => present,
         content => template('hhvm/server.ini.erb'),
-        require => Package['hhvm-nightly'],
+        require => Package['hhvm'],
         notify  => Service['hhvm'],
     }
 }
