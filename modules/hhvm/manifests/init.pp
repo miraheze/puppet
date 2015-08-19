@@ -7,7 +7,7 @@ class hhvm {
         release  => 'jessie',
         repos    => 'main',
         key      => {
-            'id'     => '0x5a16e7281be7a449',
+            'id'     => '36AEF64D0207E7EEE352D4875A16E7281BE7A449',
             'server' => 'hkp://keyserver.ubuntu.com:80',
         },
     }
