@@ -25,7 +25,7 @@ class base {
         mode   => '0775',
     }
 
-    file { 'etc/puppet/hiera.yaml':
+    file { '/etc/puppet/hiera.yaml':
         ensure => present,
         source => 'puppet:///modules/base/puppet/hiera.yaml',
         mode   => '0444',

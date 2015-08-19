@@ -20,7 +20,7 @@ ops: operations
 operations: john,southparkfan
 
 # root spam
-root: john
+root: john,southparkfan
 
 # campaign
 campaign: john,southparkfan
