@@ -1,6 +1,7 @@
 # class: base
 class base {
     include base::packages
+    include base::timezone
     include base::monitoring
     include base::ufw
     include ssh
