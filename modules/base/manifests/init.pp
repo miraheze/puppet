@@ -54,4 +54,10 @@ class base {
         user => 'nagios',
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run', ],
     }
+
+    file { '/root/id_rsa':
+        ensure => present,
+        source => 'puppet:///private/ssh/id_rsa',
+        mode   => '0400',
+    }
 }
