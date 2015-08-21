@@ -74,7 +74,7 @@ class mediawiki {
     }
 
     logrotate::rotate { 'mediawiki_wikilogs':
-        logs => '/var/logs/mediawiki/*.log',
+        logs => '/var/log/mediawiki/*.log',
     }
 
     logrotate::rotate { 'mediawiki_debuglogs':
