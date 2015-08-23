@@ -1,6 +1,7 @@
 # class: mediawiki
 class mediawiki {
     include mediawiki::cron
+    include mediawiki::favicons
 
     file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/srv/mediawiki-static', '/var/log/mediawiki' ]:
         ensure => 'directory',
@@ -16,7 +17,6 @@ class mediawiki {
     package { 'imagemagick':
         ensure => present,
     }
-
 
     package { 'mediawiki-math-texvc':
         ensure => present,
