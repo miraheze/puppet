@@ -37,4 +37,10 @@ class base::monitoring {
         require => Package['ganglia-monitor'],
         subscribe => File['/etc/ganglia/gmond.conf'],
     }
+
+    # SUDO FOR NRPE
+    sudo::user { 'nrpe_sudo':
+        user => 'nagios',
+        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run', ],
+    }
 }
