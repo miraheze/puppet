@@ -14,6 +14,7 @@ node 'misc1.miraheze.org' {
     include standard
     include role::ganglia
     include role::icinga
+    include role::irc
     include role::mail
     include role::dns
     include role::piwik
