@@ -6,6 +6,10 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'spiralwiki', 'https://spiral.wiki/w/api.php' );
 	parsoidConfig.setInterwiki( 'extloadwiki', 'https://extload.miraheze.org/w/api.php' );
 
+	// Don't load WMF wikis
+	parsoidConfig.loadWMF = false;
+	parsoidConfig.defaultWiki = 'metawiki';
+
 	// Enable debug mode (prints extra debugging messages)
 	parsoidConfig.debug = false;
 
