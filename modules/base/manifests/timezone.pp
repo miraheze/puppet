@@ -10,7 +10,6 @@ class base::timezone {
         path        => '/usr/bin:/usr/sbin:/bin:/sbin',
         subscribe   => File['/etc/timezone'],
         refreshonly => true,
-        path    => '/usr/bin:/usr/sbin:/bin:/sbin',
-        unless  => "date +%Z | grep -q UTC",
+        unless      => "date +%Z | grep -q UTC",
     }
 }
