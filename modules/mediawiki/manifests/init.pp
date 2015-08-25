@@ -88,7 +88,7 @@ class mediawiki {
     }
     
     exec { 'Math texvccheck':
-        command => 'cd /srv/mediawiki/w/extensions/Math/texvccheck && make'
+        command => 'cd /srv/mediawiki/w/extensions/Math/texvccheck && make',
         creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
         user    => 'www-data',
     }
