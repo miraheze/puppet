@@ -86,4 +86,10 @@ class mediawiki {
     logrotate::rotate { 'mediawiki_debuglogs':
         logs => '/var/log/mediawiki/debuglogs/*.log',
     }
+    
+    exec { 'Math texvccheck':
+        command => 'cd /srv/mediawiki/w/extensions/Math/texvccheck && make'
+        creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
+        user    => 'www-data',
+    }
 }
