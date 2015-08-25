@@ -14,7 +14,13 @@ class mediawiki {
         content => template('mediawiki/nginx.conf.erb'),
     }
 
-    package { 'imagemagick':
+    $packages = [
+        'imagemagick',
+        'ploticus',
+        'ttf-freefont',
+    ]
+
+    package { $packages:
         ensure => present,
     }
 
