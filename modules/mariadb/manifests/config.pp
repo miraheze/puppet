@@ -44,4 +44,12 @@ class mariadb::config(
         ensure  => present,
         content => template('mariadb/grants/default-grants.sql.erb'),
     }
+
+    file { '/root/.my.cnf':
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => template('mariadb/config/root.my.cnf.erb'),
+    }
+
 }

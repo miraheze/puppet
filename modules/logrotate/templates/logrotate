@@ -1,0 +1,7 @@
+<%= @logs %> {
+    <%= @time %>
+    missingok
+    rotate <%= @rotate %>
+    compress
+    delaycompress
+}

@@ -14,6 +14,7 @@ node 'misc1.miraheze.org' {
     include standard
     include role::ganglia
     include role::icinga
+    include role::irc
     include role::mail
     include role::dns
     include role::piwik
@@ -25,9 +26,14 @@ node 'mw1.miraheze.org' {
     include role::mediawiki
 }
 
-node 'ns1.miraheze.org' {
+node /^ns[13]\.miraheze\.org$/ {
     include standard
     include role::dns
+}
+
+node 'parsoid1.miraheze.org' {
+    include standard
+    include role::parsoid
 }
 
 # ensures all servers have basic class if puppet runs

@@ -7,9 +7,15 @@ class base::monitoring {
 
     file { '/etc/nagios/nrpe.cfg':
         ensure  => present,
-        source  => 'puppet:///modules/base/nrpe.cfg',
+        source  => 'puppet:///modules/base/icinga/nrpe.cfg',
         require => Package['nagios-nrpe-server'],
         notify  => Service['nagios-nrpe-server'],
+    }
+
+    file { '/usr/lib/nagios/plugins/check_puppet_run':
+        ensure => present,
+        source => 'puppet:///modules/base/icinga/check_puppet_run',
+        mode   => '0555',
     }
 
     service { 'nagios-nrpe-server':
@@ -30,5 +36,11 @@ class base::monitoring {
         ensure => running,
         require => Package['ganglia-monitor'],
         subscribe => File['/etc/ganglia/gmond.conf'],
+    }
+
+    # SUDO FOR NRPE
+    sudo::user { 'nrpe_sudo':
+        user => 'nagios',
+        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run', ],
     }
 }

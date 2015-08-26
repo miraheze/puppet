@@ -4,7 +4,7 @@ GRANT CREATE, PROCESS
     ON *.* TO 'mediawiki'@'%'
     IDENTIFIED BY '<%= scope.lookupvar('private::mariadb::mediawiki_password') %>';
 
-GRANT SELECT, INSERT, UPDATE, DELETE
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX
     ON `%wik%`.* TO 'mediawiki'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE

@@ -81,7 +81,7 @@ define git::clone(
                     mode   => $file_mode,
                     owner  => $owner,
                     group  => $group,
-                    before => exec["git_clone_${title}"],
+                    before => Exec["git_clone_${title}"],
                 }
             }
 
@@ -99,7 +99,7 @@ define git::clone(
                     group     => $group,
                     umask     => $umask,
                     path      => '/usr/bin:/bin',
-                    require   => exec["git_clone_${title}"],
+                    require   => Exec["git_clone_${title}"],
                 }
                 # If we want submodules up to date, then we need
                 # to run git submodule update --init after
@@ -115,7 +115,7 @@ define git::clone(
                         group       => $group,
                         umask       => $umask,
                         path        => '/usr/bin:/bin',
-                        subscribe   => exec["git_pull_${title}"],
+                        subscribe   => Exec["git_pull_${title}"],
                     }
                 }
             }

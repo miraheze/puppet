@@ -3,6 +3,8 @@ class piwik {
     include ::apache
     include ::apache::mod::expires
     include ::apache::mod::php5
+    include ::apache::mod::rewrite
+    include ::apache::mod::ssl
     include private::mariadb
     include private::piwik
 
@@ -41,6 +43,12 @@ class piwik {
     apache::site { 'piwik.miraheze.org':
         ensure => present,
         source => 'puppet:///modules/piwik/apache.conf',
+    }
+
+    file { '/etc/php5/apache2/conf.d/20-piwik.ini':
+        ensure => present,
+        source => 'puppet:///modules/piwik/20-piwik.ini',
+        notify => Exec['apache2_test_config_and_restart'],
     }
 
     file { '/srv/piwik/config/config.ini.php':

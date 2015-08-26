@@ -7,7 +7,7 @@ class hhvm {
         release  => 'jessie',
         repos    => 'main',
         key      => {
-            'id'     => '0x5a16e7281be7a449',
+            'id'     => '36AEF64D0207E7EEE352D4875A16E7281BE7A449',
             'server' => 'hkp://keyserver.ubuntu.com:80',
         },
     }
@@ -30,7 +30,7 @@ class hhvm {
         ensure => present,
     }
 
-    package { 'hhvm-nightly':
+    package { 'hhvm':
         ensure  => present,
         require => Apt::Source['HHVM_apt'],
     }
@@ -42,14 +42,16 @@ class hhvm {
     file { '/etc/hhvm/php.ini':
         ensure  => present,
         source  => 'puppet:///modules/hhvm/php.ini',
-        require => Package['hhvm-nightly'],
+        require => Package['hhvm'],
         notify  => Service['hhvm'],
     }
 
+    include private::hhvm
+
     file { '/etc/hhvm/server.ini':
         ensure  => present,
-        source  => 'puppet:///modules/hhvm/server.ini',
-        require => Package['hhvm-nightly'],
+        content => template('hhvm/server.ini.erb'),
+        require => Package['hhvm'],
         notify  => Service['hhvm'],
     }
 }

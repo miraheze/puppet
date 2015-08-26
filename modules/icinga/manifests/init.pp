@@ -166,10 +166,18 @@ class icinga {
         ensure => absent,
     }
 
+    ssl::cert { 'wildcard.miraheze.org': }
+
     apache::site { 'icinga.miraheze.org':
         ensure   => present,
         source   => 'puppet:///modules/icinga/apache/apache.conf',
-        ssl_cert => 'wildcard.miraheze.org',
         require  => File['/etc/apache2/conf-enabled/icinga.conf'],
     }
+
+    file { '/etc/icinga/irc.py':
+        ensure => present,
+        source => 'puppet:///modules/icinga/bot/irc.py',
+        mode   => '0551',
+    }
+
 }

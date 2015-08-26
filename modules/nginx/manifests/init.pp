@@ -1,7 +1,9 @@
 # nginx
 #
 class nginx {
-    package { [ 'nginx-light', 'nginx-common' ]: }
+    package { 'nginx':
+        ensure  => present,
+    }
 
     service { 'nginx':
         ensure     => 'running',
