@@ -24,6 +24,9 @@ innodb                         = FORCE
 
 datadir                        = <%= @datadir %>
 
+transaction-isolation          = READ-COMMITTED
+binlog_format                  = ROW
+
 log-bin                        = <%= @datadir %>/mysql-bin
 expire-logs-days               = 14
 sync-binlog                    = 1
