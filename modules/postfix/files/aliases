@@ -15,9 +15,12 @@ noreply: /dev/null
 
 # group aliases
 ops: operations
+steward: stewards
+sysadmin: operations
 
 # destination aliases
 operations: john,southparkfan
+stewards: john,southparkfan
 
 # root spam
 root: john,southparkfan

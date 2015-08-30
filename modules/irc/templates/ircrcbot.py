@@ -22,7 +22,7 @@ class RCBot(irc.IRCClient):
  
     def gotUDP(self, broadcast):
         self.msg(self.channel, broadcast)
-        time.sleep("<%= @sleeptime %>")
+        time.sleep(<%= @sleeptime %>)
  
 class RCFactory(protocol.ClientFactory):
     protocol = RCBot
