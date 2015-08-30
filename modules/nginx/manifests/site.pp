@@ -1,5 +1,4 @@
 # nginx::site
-#
 define nginx::site(
     $ensure   = present,
     $content  = undef,
@@ -18,6 +17,7 @@ define nginx::site(
     file { "/etc/nginx/sites-enabled/${basename}":
         ensure => link,
         target => "/etc/nginx/sites-available/${basename}",
+        notify => Service['nginx'],
     }
 
     file { '/etc/ssl/certs/GlobalSign.crt':

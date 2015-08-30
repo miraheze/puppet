@@ -37,6 +37,11 @@ class mediawiki {
         source   => 'puppet:///modules/mediawiki/nginx/mediawiki.conf',
     }
 
+    nginx::conf { 'mediawiki-includes':
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/nginx/mediawiki-includes.conf',
+    }
+
     git::clone { 'MediaWiki config':
         directory => '/srv/mediawiki/config',
         origin    => 'https://github.com/miraheze/mw-config.git',
