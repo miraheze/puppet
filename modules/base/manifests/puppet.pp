@@ -42,4 +42,8 @@ class base::puppet {
         source => 'puppet:///private/ssh/id_rsa',
         mode   => '0400',
     }
+
+    service { 'puppet':
+        ensure => stopped,
+    }
 }
