@@ -4,6 +4,10 @@ class parsoid {
     apt::source { 'parsoid':
         location => 'http://parsoid.wmflabs.org:8080/deb',
         repos    => 'main',
+        key      => {
+            'id'     => 'BE0C9EFB1A948BF3C8157E8B811780265C927F7C',
+            'server' => 'hkp://keyserver.ubuntu.com:80',
+        },
     }
 
     package { 'parsoid':
