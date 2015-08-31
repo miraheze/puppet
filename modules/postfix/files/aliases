@@ -15,7 +15,6 @@ noreply: /dev/null
 
 # group aliases
 ops: operations
-steward: stewards
 sysadmin: operations
 
 # destination aliases
