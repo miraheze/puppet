@@ -13,6 +13,6 @@ define nginx::conf(
         ensure  => $ensure,
         content => $content,
         source  => $source,
-		notify	=> Service['nginx'],
+	notify	=> Service['nginx'],
     }
 }
