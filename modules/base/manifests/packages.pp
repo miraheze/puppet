@@ -8,6 +8,7 @@ class base::packages {
         'debian-goodies',
         'git',
         'htop',
+	'logrotate',
         'nano',
         'screen',
         'strace',
