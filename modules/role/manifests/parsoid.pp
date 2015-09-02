@@ -7,7 +7,7 @@ class role::parsoid {
         from  => '185.52.1.75',
     }
 
-    ufw::alow { 'parsoid monitoring':
+    ufw::allow { 'parsoid monitoring':
         proto => 'tcp',
         port  => 8142,
         from  => '185.52.1.76',
