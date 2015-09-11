@@ -4,7 +4,7 @@ define ssl::cert (
 ) {
     file { "/etc/ssl/certs/${certificate}.crt":
         ensure => $ensure,
-        source => "puppet:///modules/ssl/${certificate}.crt",
+        source => "puppet:///modules/ssl/certificates/${certificate}.crt",
     }
 
     file { "/etc/ssl/private/${certificate}.key":

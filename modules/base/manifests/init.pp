@@ -5,6 +5,7 @@ class base {
     include base::timezone
     include base::monitoring
     include base::ufw
+    include base::ssl
     include ssh
     include users
 
