@@ -19,9 +19,4 @@ define nginx::site(
         target => "/etc/nginx/sites-available/${basename}",
         notify => Service['nginx'],
     }
-
-    file { '/etc/ssl/certs/GlobalSign.crt':
-        ensure => present,
-        source => 'puppet:///modules/ssl/GlobalSign.crt',
-    }
 }
