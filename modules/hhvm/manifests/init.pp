@@ -1,7 +1,6 @@
 # class: hhvm
 class hhvm {
     include ::apt
-
     apt::source { 'HHVM_apt':
         comment  => 'HHVM apt repo',
         location => 'http://dl.hhvm.com/debian',
@@ -54,13 +53,5 @@ class hhvm {
         content => template('hhvm/server.ini.erb'),
         require => Package['hhvm'],
         notify  => Service['hhvm'],
-    }
-    
-    file { '/var/run/hhvm/hhvm.hhbc':
-        ensure  => present,
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '0644',
-        before  => Service['hhvm'],
     }
 }
