@@ -3,6 +3,7 @@ class base {
     include base::packages
     include base::puppet
     include base::timezone
+    include base::upgrades
     include base::monitoring
     include base::ufw
     include base::ssl
