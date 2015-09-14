@@ -25,6 +25,7 @@ node 'mw1.miraheze.org' {
     include standard
     include role::mediawiki
 
+    $users_defined = 'true'
     class { 'users':
         groups => ['mediawiki-admins'],
     }
