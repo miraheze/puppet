@@ -9,7 +9,7 @@ class base {
     include base::ssl
     include ssh
 
-    if $user_defined != "true" {
+    if $users_defined != "true" {
         include users
     }
 
