@@ -4,6 +4,15 @@ groups:
     description: roots, sudo everywhere
     members: [johnflewis, southparkfan]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
+  mediawiki-admins:
+    gid: 2001
+    description: sudo on MediaWiki servers
+    members: []
+    privileges: ['ALL = (www-data) NOPASSWD: ALL',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service hhvm *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
+                 'ALL = (ALL) NOPASSWD: /root/puppet-run',
+                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
 
 users:
   johnflewis:

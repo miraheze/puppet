@@ -24,6 +24,10 @@ node 'misc1.miraheze.org' {
 node 'mw1.miraheze.org' {
     include standard
     include role::mediawiki
+
+    class { 'users':
+        groups => ['mediawiki-admins'],
+    }
 }
 
 node /^ns[13]\.miraheze\.org$/ {
