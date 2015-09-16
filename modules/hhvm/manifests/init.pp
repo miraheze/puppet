@@ -54,4 +54,9 @@ class hhvm {
         require => Package['hhvm'],
         notify  => Service['hhvm'],
     }
+
+    file { '/etc/rc3.d/S95hhvm':
+        ensure => 'link',
+        target => '/etc/init.d/hhvm',
+    }
 }
