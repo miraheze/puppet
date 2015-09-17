@@ -12,4 +12,10 @@ class role::irc {
         port  => '5070',
         from  => '185.52.1.75',
     }
+
+    ufw::allow { 'ircircbot port mw1 2':
+        proto => 'udp',
+        port  => 5070,
+        from  => '185.34.216.183',
+    }
 }
