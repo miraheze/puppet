@@ -2,8 +2,8 @@ class parsoid {
     include apt
 
     apt::source { 'parsoid':
-        location => 'http://parsoid.wmflabs.org:8080/deb',
-        release  => 'wmf-production',
+        location => 'https://releases.wikimedia.org/debian',
+        release  => 'jessie-mediawiki',
         repos    => 'main',
         key      => {
             'id'     => 'BE0C9EFB1A948BF3C8157E8B811780265C927F7C',
