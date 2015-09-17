@@ -2,7 +2,7 @@ class parsoid {
     include apt
 
     apt::source { 'parsoid':
-        location => 'https://releases.wikimedia.org/debian',
+        location => 'http://releases.wikimedia.org/debian',
         release  => 'jessie-mediawiki',
         repos    => 'main',
         key      => {
