@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [mutante]
+    members: [mutante, revi]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service hhvm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
@@ -33,3 +33,9 @@ users:
     name: mutante
     realname: Accion Mutante
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCuEdjiTcvHOAcnTtaellx9UAcxDjCRzNKzQHsOmm5ojz4p67uMJDoM3leDh9/eiFmIsTnydPF+44y/6TD7fIZ+swi2/ZuOpgHMgQd/fG6+6spPtBryd3vwdC6vekg2KMDEwIJ8ZuQOGVYywQciCKvut+J+cLREqsqWIiiH0apWwZC5JA+NWRAfm4Ae3Fz51YQhIGCQLoQ8c7JO58CJwkYGyZOAecA0eNP+56CYsmt5QJUzWMe2+fwXUSbMfIxgj5ylmjrRD2z8AcSkWV3q5zWhrE9IkyAo82I7GqwAKgvj3R83InsDP8t8CUH76T6UdI0jj7m9gNBwh2GWondYgQiz mutante@sphinx@miraheze]
+  revi:
+    ensure: present
+    uid: 1003
+    name: revi
+    realname: Revi
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCga/EhKR8V6HU/ehOJ5ixZxnATOoGHJnd/qYIpbxGDMHCAjqL67HhZE4pgSKvu5mgML4G2Ls8+oHUY/aJrDKAqIRW+kGQnSpXIE98HMi7o0jm0AsHCotBK+q5KYH7HMjU4kapRjsrXx3MxlaIXz75eJZ6ysbauP/ROxqHuDXPlhdQgPNUhNh0icxUcEOBMET+oa4+iesT6DnL6yRXVpC7SY+q4XXahbajeGKHFLjuNwDtB0ExVY2O80OMGcl04DABm4oRNOCRLtkVsXdTOL7s/SVmzb/tfz1A0JUTo6YJkd2PPauPjRGGW2RgCqKAS2gApRFUT7RWriZcIh3IAeKpP revi@miraheze]
