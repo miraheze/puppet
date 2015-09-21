@@ -12,6 +12,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'nwpwiki', 'https://nwp.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'spiralwiki', 'https://spiral.wiki/w/api.php' );
 	parsoidConfig.setInterwiki( 'torejorgwiki', 'https://torejorg.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'unikumwiki', 'https://unikum.miraheze.org/w/api.php' );
 
 	// Don't load WMF wikis
 	parsoidConfig.loadWMF = false;
