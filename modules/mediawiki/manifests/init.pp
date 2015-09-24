@@ -33,6 +33,7 @@ class mediawiki {
     ssl::cert { 'spiral.wiki': }
     ssl::cert { 'anuwiki.com': }
     ssl::cert { 'antiguabarbudacalypso.com': }
+    ssl::cert { 'permanentfuturelab.wiki': }
 
     nginx::site { 'mediawiki':
         ensure   => present,
