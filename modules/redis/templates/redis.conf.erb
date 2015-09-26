@@ -16,7 +16,7 @@ slave-serve-stale-data yes
 slave-read-only no
 slave-priority 100
 
-requirepass <%= @password %>
+requirepass <%= scope.lookupvar('private::redis::password') %>
 
 maxmemory <%= @maxmemory %>
 maxmemory-policy <%= @maxmemory_policy %>
