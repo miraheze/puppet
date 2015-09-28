@@ -34,6 +34,7 @@ class mediawiki {
     ssl::cert { 'anuwiki.com': }
     ssl::cert { 'antiguabarbudacalypso.com': }
     ssl::cert { 'permanentfuturelab.wiki': }
+    ssl::cert { 'secure.reviwiki.info': }
 
     nginx::site { 'mediawiki':
         ensure   => present,
