@@ -39,7 +39,7 @@ class mediawiki {
 
     $custom_domains = [
         {
-            url => 'antiguabarbudacalypso.com'
+            url => 'antiguabarbudacalypso.com',
             ca  => 'StartSSL',
         },
         {
