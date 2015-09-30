@@ -18,6 +18,10 @@ class mediawiki {
         'imagemagick',
         'ploticus',
         'ttf-freefont',
+        'ffmpeg2theora',
+        'oggvideotools',
+        'libav-tools',
+        'libvips-tools',
     ]
 
     package { $packages:
