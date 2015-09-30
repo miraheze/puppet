@@ -35,6 +35,7 @@ class mediawiki {
     ssl::cert { 'antiguabarbudacalypso.com': }
     ssl::cert { 'permanentfuturelab.wiki': }
     ssl::cert { 'secure.reviwiki.info': }
+    ssl::cert { 'wiki.printmaking.be': }
 
     nginx::site { 'mediawiki':
         ensure   => present,
