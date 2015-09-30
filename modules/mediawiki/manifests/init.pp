@@ -37,9 +37,37 @@ class mediawiki {
     ssl::cert { 'secure.reviwiki.info': }
     ssl::cert { 'wiki.printmaking.be': }
 
+    $custom_domains = [
+        {
+            url => 'antiguabarbudacalypso.com'
+            ca  => 'StartSSL',
+        },
+        {
+            url => 'anuwiki.com',
+            ca  => 'Godaddy',
+        },
+        {
+            url => 'permanentfuturelab.wiki',
+            ca  => 'StartSSL',
+        },
+        {
+            url => 'secure.reviwiki.info',
+            ca  => 'StartSSL',
+        },
+        {
+            url => 'spiral.wiki',
+            ca  => 'Gandi',
+        },
+        {
+            url => 'wiki.printmaking.be',
+            ca  => 'Gandi',
+        },
+    ]
+
+
     nginx::site { 'mediawiki':
-        ensure   => present,
-        source   => 'puppet:///modules/mediawiki/nginx/mediawiki.conf',
+        ensure  => present,
+        content => template('mediawiki/mediawiki.conf.erb'),
     }
 
     nginx::conf { 'mediawiki-includes':
