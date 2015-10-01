@@ -16,6 +16,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'permanentfuturelabwiki', 'https://permanentfuturelab.wiki/w/api.php');
 	parsoidConfig.setInterwiki( 'rawdatawiki', 'https://rawdata.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'recherchesdocumentaireswiki', 'https://recherchesdocumentaires.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'safiriawiki', 'https://safiria.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'spiralwiki', 'https://spiral.wiki/w/api.php' );
 	parsoidConfig.setInterwiki( 'torejorgwiki', 'https://torejorg.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'unikumwiki', 'https://unikum.miraheze.org/w/api.php' );
