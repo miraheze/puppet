@@ -10,14 +10,6 @@ class redis (
         ensure => present,
     }
 
-    file { '/srv/redis':
-        ensure  => directory,
-        owner   => 'redis',
-        group   => 'redis',
-        mode    => '0755',
-        require => Package['redis-server'],
-    }
-
     file { '/etc/redis/redis.conf':
         content => template('redis/redis.conf.erb'),
         owner   => 'root',
