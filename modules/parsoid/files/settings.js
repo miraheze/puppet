@@ -3,6 +3,7 @@
 exports.setup = function( parsoidConfig ) {
 	// wiki end points
 	parsoidConfig.setInterwiki( 'allthetropeswiki', 'https://allthetropes.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'applebranchwiki', 'https://applebranch.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'aryamanwiki', 'https://aryaman.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'cbmediawiki', 'https://cbmedia.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'cinemawiki', 'https://cinema.miraheze.org/w/api.php' );
