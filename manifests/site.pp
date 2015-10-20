@@ -5,6 +5,11 @@ class standard {
     include base
 }
 
+# Varnish cache for SPF. Remove comment when in-use
+node 'cp1.miraheze.org' {
+    include standard
+}
+
 node 'db1.miraheze.org' {
     include standard
     include role::db
