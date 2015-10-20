@@ -1,0 +1,14 @@
+[Unit]
+Description=Varnish HTTP accelerator
+
+[Service]
+Type=forking
+LimitNOFILE=131072
+LimitMEMLOCK=82000
+EnvironmentFile=/etc/default/varnish
+ExecStartPre=/usr/sbin/varnishd -C -f /etc/varnish/default.vcl
+ExecStart=/usr/sbin/varnishd $DAEMON_OPTS
+ExecReload=/usr/share/varnish/reload-vcl
+
+[Install]
+WantedBy=multi-user.target
