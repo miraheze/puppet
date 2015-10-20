@@ -44,5 +44,4 @@ users:
     uid: 1004
     name: ndkilla
     realname: NDKilla
-    # This is my key, because I don't know if puppet fails when an empty key is set --SPF 2015-10-20
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAwNoKzSb75imXVKETWqZ0maE1YyoKNQ/aCiOA3vPcUZc/X39dGZyeiWfLGA34KZYSoNhYjumw5sB8YiGxQckE/13osd5cwrE4gUo/Y9R82e0XPgDqzftUoJN+XeDBVFr540QBepCGBSmKQAPTaCkueaGqPIueVJ/yp4RGt//zmeaW7M+IrsQZ7UAtci7A6NMRkoWprc6ZC0F41tJqp5Dcmzszju6CtMAzJNsHVeHoBzkVLccdw/dB1lWjNJttTMTx/tXM+HOZIaBVg/pHQgPYcH0JhT76PilYEfKkW4ZqskrcMNuZKGQry1QO1mutmYjkovdnv19bsGfthW9/5lnj9w== southparkfan@miraheze]
+    ssh_keys: []
