@@ -63,9 +63,16 @@ class varnish {
         notify => Service['nginx'],
     }
 
+    file { '/etc/default/stunnel4':
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/stunnel/stunnel.default',
+        notify  => Service['stunnel4'],
+        require => Package['stunnel4'],
+    }
+
     file { '/etc/stunnel/mediawiki.conf':
         ensure  => present,
-        source  => 'puppet:///modules/varnish/stunnel.conf',
+        source  => 'puppet:///modules/varnish/stunnel/stunnel.conf',
         notify  => Service['stunnel4'],
         require => Package['stunnel4'],
     }
