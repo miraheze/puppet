@@ -5,37 +5,44 @@ class varnish {
     }
 
     service { 'varnish':
-        ensure => 'running',
+        ensure  => 'running',
+        require => Package['varnish'],
     }
 
     service { 'stunnel4':
-        ensure => 'running',
+        ensure  => 'running',
+        require => Package['stunnel4'],
     }
 
     file { '/var/lib/varnish/mediawiki':
-        ensure => directory,
-        notify => Service['varnish'],
+        ensure  => directory,
+        notify  => Service['varnish'],
+        require => Package['varnish'],
     }
 
     file { '/etc/varnish/default.vcl':
-        ensure => present,
-        source => 'puppet:///modules/varnish/varnish/default.vcl',
-        notify => Service['varnish'],
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/varnish/default.vcl',
+        notify  => Service['varnish'],
+        require => Package['varnish'],
     }
 
     file { '/etc/default/varnish':
-        ensure => present,
-        source => 'puppet:///modules/varnish/varnish/varnish.default',
-        notify => Service['varnish'],
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/varnish/varnish.default',
+        notify  => Service['varnish'],
+        require => Package['varnish'],
     }
 
     file { '/etc/systemd/system/varnish.service':
-        ensure => present,
-        source => 'puppet:///modules/varnish/varnish/varnish.service',
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/varnish/varnish.service',
+        require => Package['varnish'],
     }
 
     exec { 'systemctl daemon-reload':
-        path => '/bin',
+        path    => '/bin',
+        require => File['/etc/systemd/system/varnish.service'],
     }
 
     ssl::cert { 'wildcard.miraheze.org': }
@@ -57,8 +64,9 @@ class varnish {
     }
 
     file { '/etc/stunnel/mediawiki.conf':
-        ensure => present,
-        source => 'puppet:///modules/varnish/stunnel.conf',
-        notify => Service['stunnel4'],
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/stunnel.conf',
+        notify  => Service['stunnel4'],
+        require => Package['stunnel4'],
     }
 }
