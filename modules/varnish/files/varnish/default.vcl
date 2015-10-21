@@ -80,12 +80,18 @@ sub vcl_recv {
 		set req.hash_ignore_busy = true;
 	}
 
+	# We never want to cache non-GET/HEAD requests.
 	if (req.method != "GET" && req.method != "HEAD") {
 		return (pass);
 	}
 
 	if (req.http.If-Modified-Since && req.http.Cookie ~ "LoggedOut") {
 		unset req.http.If-Modified-Since;
+	}
+
+	# Don't cache dumps
+	if (req.http.Host == "static.miraheze.org" && req.url ~ "^/dumps") {
+		return (pass);
 	}
 
 	call evaluate_cookie;
@@ -119,10 +125,6 @@ sub vcl_backend_response {
 }
 
 sub vcl_deliver {
-    # Happens when we have all the pieces we need, and are about to send the
-    # response to the client.
-    # 
-    # You can do accounting or modifying the final object here.
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php" || req.url ~ "^/\?title=") {
 		if (req.url !~ "^/wiki/Special\:Banner") {
 			set resp.http.Cache-Control = "private, s-maxage=0, maxage=0, must-revalidate";
