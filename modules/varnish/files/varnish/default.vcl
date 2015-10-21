@@ -121,6 +121,11 @@ sub vcl_backend_response {
 		set beresp.uncacheable = true;
 	}
 
+        if (beresp.http.status ~ "40[34]") {
+                set beresp.ttl = 0s;
+                set beresp.uncacheable = true;
+        }
+
 	return (deliver);
 }
 
