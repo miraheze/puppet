@@ -63,6 +63,11 @@ class varnish {
         notify => Service['nginx'],
     }
 
+    file { '/etc/nginx/nginx.conf':
+        content => template('varnish/nginx.conf.erb'),
+        notify  => Service['nginx'],
+    }
+
     file { '/etc/default/stunnel4':
         ensure  => present,
         source  => 'puppet:///modules/varnish/stunnel/stunnel.default',
