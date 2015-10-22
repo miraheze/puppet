@@ -22,4 +22,12 @@ class mediawiki::cron {
         minute  => '0',
         hour    => '*/12',
     }
+    
+    cron { 'update_database_lists':
+        ensure  => present,
+        command => '/usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/DBListGenerator.php --wiki metawiki',
+        user    => 'www-data',
+        minute  => '*',
+        hour    => '*',
+    }
 }
