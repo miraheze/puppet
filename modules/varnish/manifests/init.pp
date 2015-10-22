@@ -38,11 +38,12 @@ class varnish {
         ensure  => present,
         source  => 'puppet:///modules/varnish/varnish/varnish.service',
         require => Package['varnish'],
+        notify  => Exec['systemctl daemon-reload'],
     }
 
     exec { 'systemctl daemon-reload':
-        path    => '/bin',
-        require => File['/etc/systemd/system/varnish.service'],
+        path        => '/bin',
+        refreshonly => true,
     }
 
     ssl::cert { 'wildcard.miraheze.org': }
