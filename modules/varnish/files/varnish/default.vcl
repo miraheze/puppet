@@ -116,11 +116,13 @@ sub vcl_backend_response {
 
 	# No people, don't cache 302 responses!
 	if ((bereq.url ~ "^/wiki/" || bereq.url ~ "^/w/index\.php") 
-	&& beresp.status == "302") {
+	&& beresp.http.status == "302") {
+		set beresp.ttl = 0s;
 		set beresp.uncacheable = true;
 	}
 
-        if (beresp.status >= 400) {
+        if (beresp.http.status ~ "40[34]") {
+                set beresp.ttl = 0s;
                 set beresp.uncacheable = true;
         }
 
