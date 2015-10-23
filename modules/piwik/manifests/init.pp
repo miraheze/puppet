@@ -17,18 +17,11 @@ class piwik {
     package { $packages:
         ensure => present,
     }
-    
-    file { '/srv/piwikconfig':
-        ensure => directory,
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => 755,
-    }
         
     git::clone { 'piwik':
         directory => '/srv/piwik',
         origin    => 'https://github.com/piwik/piwik.git',
-        branch    => 'master', # FIXME: shouldn't clone master
+        branch    => '2.15.0', # Current LTS
         owner     => 'www-data',
         group     => 'www-data',
     }
