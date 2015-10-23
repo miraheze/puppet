@@ -2,6 +2,7 @@
 
 exports.setup = function( parsoidConfig ) {
 	// wiki end points
+	parsoidConfig.setInterwiki( '8stationwiki', 'https://8station.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'allthetropeswiki', 'https://allthetropes.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'applebranchwiki', 'https://applebranch.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'aryamanwiki', 'https://aryaman.miraheze.org/w/api.php' );
