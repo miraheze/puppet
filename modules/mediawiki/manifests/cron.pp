@@ -24,7 +24,7 @@ class mediawiki::cron {
     }
     
     cron { 'update_database_lists':
-        ensure  => present,
+        ensure  => absent,
         command => '/usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/DBListGenerator.php --wiki metawiki',
         user    => 'www-data',
         minute  => '*',
