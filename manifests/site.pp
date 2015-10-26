@@ -5,7 +5,7 @@ class standard {
     include base
 }
 
-node 'cp1.miraheze.org' {
+node /^cp[12]\.miraheze\.org$/ {
     include standard
     include role::varnish
 }
