@@ -9,12 +9,11 @@ class dns {
         repos    => 'main contrib non-free',
     }
 
-    # Debian Jessie has GDNSD 2.1, but we need 2.2 so we use stretch for this one
-    file { '/etc/apt/preferences':
-        ensure  => present,
-        source  => 'puppet:///modules/dns/preferences.apt',
-        require => Apt::Source['debian_stretch'],
-        notify  => Exec['apt_update'],
+    apt::pin { 'debian_stretch':
+        priority   => 740,
+        originator => 'Debian',
+        release    => 'stretch',
+        packages   => 'gdnsd',
     }
         
     package { 'gdnsd':
