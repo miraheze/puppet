@@ -3,10 +3,10 @@ class dns {
     include ::apt
     
     apt::source { 'debian_stretch':
-        comment     => 'Debian Stretch APT'
-        location    => 'http://ftp.debian.org/debian',
-        release     => 'stretch',
-        repos       => 'main contrib non-free',
+        comment  => 'Debian Stretch APT',
+        location => 'http://ftp.debian.org/debian',
+        release  => 'stretch',
+        repos    => 'main contrib non-free',
     }
 
     # Debian Jessie has GDNSD 2.1, but we need 2.2 so we use stretch for this one
