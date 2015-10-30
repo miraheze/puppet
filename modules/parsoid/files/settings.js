@@ -1,16 +1,18 @@
 "use strict";
 
 exports.setup = function( parsoidConfig ) {
-	// wiki end points
+	// Wiki end points
 	parsoidConfig.setInterwiki( '8stationwiki', 'https://8station.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'allthetropeswiki', 'https://allthetropes.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'applebranchwiki', 'https://applebranch.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'arguwikiwiki', 'https://arguwiki.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'aryamanwiki', 'https://aryaman.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'cbmediawiki', 'https://cbmedia.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'clicordiwiki', 'https://clicordi.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'extloadwiki', 'https://extload.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'genwiki', 'https://gen.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'mecanonwiki', 'https://mecanon.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'hshsinfoportalwiki', 'https://hshsinfoportal.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'metawiki', 'https://meta.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'nwpwiki', 'https://nwp.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'pqwiki', 'https://pq.miraheze.org/w/api.php' );
