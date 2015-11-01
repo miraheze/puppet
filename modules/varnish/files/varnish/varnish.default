@@ -27,9 +27,9 @@ MEMLOCK=82000
 
 ## Alternative 1, Configuration with VCL
 #
-# Listen on port 81, administration on localhost:6082, Use a 1GB fixed-size 
+# Listen on port 81, administration on localhost:6082, Use a 15GB fixed-size 
 # cache file.
 #
 # This example uses the INSTANCE variable above, which you need to uncomment.
 #
-DAEMON_OPTS="-a :81 -T localhost:6082 -f /etc/varnish/default.vcl -S /etc/varnish/secret -s file,/var/lib/varnish/mediawiki/varnish_storage.bin,1G"
+DAEMON_OPTS="-a :81 -T localhost:6082 -f /etc/varnish/default.vcl -S /etc/varnish/secret -s file,/var/lib/varnish/mediawiki/varnish_storage.bin,15G"
