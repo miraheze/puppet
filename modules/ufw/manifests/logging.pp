@@ -7,7 +7,7 @@ define ufw::logging(
         unless   => "grep -qE '^LOGLEVEL=${level}$' /etc/ufw/ufw.conf",
         path     => '/usr/sbin:/bin:/usr/bin',
         provider => 'posix',
-        require  => exec['ufw-default-deny'],
-        before   => exec['ufw-enable'],
+        require  => Exec['ufw-default-deny'],
+        before   => Exec['ufw-enable'],
     }
 }
