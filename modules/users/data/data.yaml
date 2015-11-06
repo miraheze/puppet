@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [mutante, ndkilla, revi]
+    members: [mutante, revi]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service hhvm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
