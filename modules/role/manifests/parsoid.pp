@@ -7,12 +7,6 @@ class role::parsoid {
         from  => '185.52.1.75',
     }
 
-    ufw::allow { 'parsoid mw1 2':
-        proto => 'tcp',
-        port  => 8142,
-        from  => '185.34.216.183',
-    }
-
     ufw::allow { 'parsoid monitoring':
         proto => 'tcp',
         port  => 8142,
