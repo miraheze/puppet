@@ -1,7 +1,7 @@
 # class: mediawiki::cron
 class mediawiki::cron {
     cron { 'jobqueue':
-        ensure  => present,
+        ensure  => absent,
         command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/runJobs.php > /var/log/mediawiki/cron/jobqueue.log',
         user    => 'www-data',
         minute  => '*/10',
