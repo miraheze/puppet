@@ -38,12 +38,19 @@ sub restore_cookie {
 }
 
 sub evaluate_cookie {
-	if (req.http.Cookie ~ "([sS]ession|Token)="
-	&& req.url !~ "^/w/load\.php") {
+	if (req.http.Cookie ~ "([sS]ession|Token)=" && req.url !~ "^/w/load\.php") {
 		set req.hash_ignore_busy = true;
 	} else {
 		call stash_cookie;
 	}
+}
+
+sub identify_device {
+	set req.http.X-Device = "desktop";
+
+        if (req.http.User-Agent ~ "(iP(hone|od|ad)|Android|BlackBerry|HTC|mobi|mobile)") {
+                set req.http.X-Device = "phone-tablet";
+        }
 }
 
 sub pass_authorization {
@@ -75,6 +82,7 @@ sub recv_purge {
 sub vcl_recv {
 	call filter_headers;
 	call recv_purge;
+	call identify_device;
 
 	if (req.url ~ "^/wiki/Special:CentralAuthLogin/") {
 		set req.hash_ignore_busy = true;
@@ -106,6 +114,13 @@ sub vcl_pass {
 
 sub vcl_miss {
 	call restore_cookie;
+}
+
+sub vcl_hash {
+        # FIXME: try if we can make this ^/wiki/ only?
+        if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
+                hash_data(req.http.X-Device);
+        }
 }
 
 sub vcl_backend_response {
