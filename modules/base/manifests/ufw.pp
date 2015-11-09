@@ -11,4 +11,9 @@ class base::ufw {
         proto => 'tcp',
         port  => 5666,
     }
+
+    file { '/root/ufw-fix':
+        ensure => present,
+        source => 'puppet:///modules/base/files/ufw/ufw-fix',
+    }
 }
