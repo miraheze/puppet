@@ -14,6 +14,6 @@ class base::ufw {
 
     file { '/root/ufw-fix':
         ensure => present,
-        source => 'puppet:///modules/base/files/ufw/ufw-fix',
+        source => 'puppet:///modules/base/ufw/ufw-fix',
     }
 }
