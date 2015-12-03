@@ -73,9 +73,9 @@ sub recv_purge {
 		} elseif (req.http.Host ~ "static.miraheze.org") {
 			set req.hash_ignore_busy = true;
 			return (hash);
-		} else {
-			return (synth(204, "Domain not cached here."));
 		}
+
+		return (purge);
 	}
 }
 
