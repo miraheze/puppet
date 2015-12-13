@@ -53,6 +53,7 @@ class varnish {
     ssl::cert { 'permanentfuturelab.wiki': }
     ssl::cert { 'secure.reviwiki.info': }
     ssl::cert { 'wiki.printmaking.be': }
+    ssl::cert { 'private.revi.wiki': }
 
     nginx::site { 'mediawiki':
         ensure => present,
