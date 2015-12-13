@@ -15,7 +15,7 @@ noreply: /dev/null
 
 # group aliases
 ops: operations
-sysadmin: operations
+sysadmin: operations, revi@reviwiki.info
 
 # destination aliases
 operations: john,southparkfan
