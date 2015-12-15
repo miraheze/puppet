@@ -22,7 +22,7 @@ class varnish {
 
     file { '/etc/varnish/default.vcl':
         ensure  => present,
-        source  => 'puppet:///modules/varnish/varnish/default.vcl',
+        content => template('varnish/default.vcl'),
         notify  => Service['varnish'],
         require => Package['varnish'],
     }

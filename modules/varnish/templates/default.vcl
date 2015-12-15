@@ -7,6 +7,10 @@
 # See the VCL chapters in the Users Guide at https://www.varnish-cache.org/docs/
 # and http://varnish-cache.org/trac/wiki/VCLExamples for more examples.
 
+# Credits go to the contributors of Wikimedia's Varnish configuration.
+# See their Puppet Repo (https://github.com/wikimedia/operations-puppet)
+# for the LICENSE.
+
 # Marker to tell the VCL compiler that this VCL has been adapted to the
 # new 4.0 format.
 vcl 4.0;
@@ -141,5 +145,11 @@ sub vcl_deliver {
 		if (req.url !~ "^/wiki/Special\:Banner") {
 			set resp.http.Cache-Control = "private, s-maxage=0, maxage=0, must-revalidate";
 		}
+	}
+
+	if (obj.hits > 0) {
+		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> HIT (" + obj.hits + ")";
+	} else {
+		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
 	}
 }
