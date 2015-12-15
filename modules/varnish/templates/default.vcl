@@ -50,10 +50,18 @@ sub evaluate_cookie {
 }
 
 sub identify_device {
+	# Varnish will serve the right version (desktop or mobile) based on the content of
+	# this header.
 	set req.http.X-Device = "desktop";
 
         if (req.http.User-Agent ~ "(iP(hone|od|ad)|Android|BlackBerry|HTC|mobi|mobile)") {
                 set req.http.X-Device = "phone-tablet";
+        }
+
+	# If we have a mobile user that wants to have the desktop version, we should not
+	# restrict that.
+        if (req.http.X-Device == "phone-tablet" && req.http.Cookie ~ "mf_useformat=desktop") {
+                set req.http.X-Device = "desktop";
         }
 }
 
