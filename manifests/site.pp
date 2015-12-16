@@ -36,7 +36,7 @@ node 'mw1.miraheze.org' {
     }
 }
 
-node /^ns[13]\.miraheze\.org$/ {
+node 'ns1.miraheze.org' {
     include standard
     include role::dns
 }
