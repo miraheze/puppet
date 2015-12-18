@@ -82,9 +82,6 @@ sub recv_purge {
 	if (req.method == "PURGE") {
 		if (!client.ip ~ purge) {
 			return (synth(405, "Denied."));
-		} elseif (req.http.Host ~ "static.miraheze.org") {
-			set req.hash_ignore_busy = true;
-			return (hash);
 		}
 
 		return (purge);
