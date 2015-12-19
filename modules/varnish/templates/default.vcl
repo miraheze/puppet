@@ -54,7 +54,7 @@ sub identify_device {
 	# this header.
 	set req.http.X-Device = "desktop";
 
-        if (req.http.User-Agent ~ "(iP(hone|od|ad)|Android|BlackBerry|HTC|mobi|mobile)") {
+        if (req.http.User-Agent ~ "(iP(hone|od|ad)|Android|BlackBerry|HTC|mobi|mobile)" || req.http.Cookie ~ "mf_useformat=true") {
                 set req.http.X-Device = "phone-tablet";
         }
 
