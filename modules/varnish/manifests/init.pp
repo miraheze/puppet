@@ -54,6 +54,7 @@ class varnish {
     ssl::cert { 'secure.reviwiki.info': }
     ssl::cert { 'wiki.printmaking.be': }
     ssl::cert { 'private.revi.wiki': }
+    ssl::cert { 'allthetropes.org': }
 
     nginx::site { 'mediawiki':
         ensure => present,
