@@ -1,10 +1,16 @@
 class role::parsoid {
     include ::parsoid
 
-    ufw::allow { 'parsoid':
+    ufw::allow { 'parsoid mw1':
         proto => 'tcp',
         port  => 8142,
         from  => '185.52.1.75',
+    }
+
+    ufw::allow { 'parsoid mw2':
+        proto => 'tcp',
+        port  => 8142,
+        from  => '185.52.2.113',
     }
 
     ufw::allow { 'parsoid monitoring':

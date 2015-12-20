@@ -24,6 +24,7 @@ backend default {
 acl purge {
 	"localhost";
 	"185.52.1.75";
+	"185.52.2.113";
 }
 
 sub stash_cookie {

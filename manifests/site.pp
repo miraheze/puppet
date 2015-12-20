@@ -26,7 +26,7 @@ node 'misc1.miraheze.org' {
     include role::redis
 }
 
-node 'mw1.miraheze.org' {
+node /^mw[12]\.miraheze\.org$/ {
     $users_defined = 'true'
     include standard
     include role::mediawiki
