@@ -4,7 +4,7 @@ class hhvm {
     apt::source { 'HHVM_apt':
         comment  => 'HHVM apt repo',
         location => 'http://dl.hhvm.com/debian',
-        release  => 'jessie',
+        release  => 'jessie-lts-3.9',
         repos    => 'main',
         key      => {
             'id'     => '36AEF64D0207E7EEE352D4875A16E7281BE7A449',
