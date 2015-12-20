@@ -14,6 +14,10 @@ class mediawiki {
         content => template('mediawiki/nginx.conf.erb'),
     }
 
+    file { '/etc/nginx/sites-enabled/default':
+        ensure  => absent,
+    }
+
     $packages = [
         'imagemagick',
         'ploticus',
