@@ -28,7 +28,7 @@ class mediawiki {
         ensure => present,
     }
 
-    package { 'mediawiki-math-texvc':
+    package { [ 'mediawiki-math-texvc', 'ocaml' ]:
         ensure => present,
         install_options => ['--no-install-recommends'],
     }
@@ -107,5 +107,6 @@ class mediawiki {
         command => '/usr/bin/make --directory=/srv/mediawiki/w/extensions/Math/texvccheck',
         creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
         user    => 'www-data',
+        require => Package['ocaml'],
     }
 }
