@@ -142,6 +142,11 @@ sub vcl_backend_response {
                 set beresp.uncacheable = true;
         }
 
+	# Trial: cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
+        if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
+                set beresp.ttl = 43200s;
+        }
+
 	return (deliver);
 }
 
