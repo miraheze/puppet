@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [mutante, revi]
+    members: [mutante, ndkilla, revi]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service hhvm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
@@ -39,10 +39,9 @@ users:
     name: revi
     realname: Revi
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCga/EhKR8V6HU/ehOJ5ixZxnATOoGHJnd/qYIpbxGDMHCAjqL67HhZE4pgSKvu5mgML4G2Ls8+oHUY/aJrDKAqIRW+kGQnSpXIE98HMi7o0jm0AsHCotBK+q5KYH7HMjU4kapRjsrXx3MxlaIXz75eJZ6ysbauP/ROxqHuDXPlhdQgPNUhNh0icxUcEOBMET+oa4+iesT6DnL6yRXVpC7SY+q4XXahbajeGKHFLjuNwDtB0ExVY2O80OMGcl04DABm4oRNOCRLtkVsXdTOL7s/SVmzb/tfz1A0JUTo6YJkd2PPauPjRGGW2RgCqKAS2gApRFUT7RWriZcIh3IAeKpP revi@miraheze]
-  # No SSH keys and absented per #32
   ndkilla:
-    ensure: absent
+    ensure: present
     uid: 1004
     name: ndkilla
     realname: NDKilla
-    ssh_keys: []
+    ssh_keys: [AAAAB3NzaC1yc2EAAAABJQAAAQEA483LlTZ0FqGGJSKYHkQXSo7NUmmziIbb/KH9NjwEO8YihLG2rAMh9L2C2LX4ggaSxSMlupopL3lXr8yG8FqVjX1fVofGEj9adGs48lhrbauYFQ9ZKK5AGuYHzyKkONOIpHio0eQ5z6GSZdnHOI22Idn7IEqghTnGDFb8PVqf7fjiS2LIGhoZJWVkSFuxQNHpgX6OyqbsolE3sp8ZjfY4zX+KWqavs1LogWEqNQNM3eUNN7higG6/lJPTOCJicP0Z8pwRP4I5xpbbhLxRNojEXrYocxb7PzZfSojZnHNsospLN4ssPYBrhlHhGVL6er25vBEbyKGszT7Xx7907oMKw== rsa-key-20151221]
