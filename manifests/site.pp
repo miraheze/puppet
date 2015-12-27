@@ -41,6 +41,13 @@ node 'ns1.miraheze.org' {
     include role::dns
 }
 
+# Vultr instance running both GDNSD and Varnish
+node 'ns3.miraheze.org' {
+    include standard
+    include role::dns
+    include role::varnish
+}
+
 node 'parsoid1.miraheze.org' {
     include standard
     include role::parsoid
