@@ -84,7 +84,7 @@ class mediawiki {
 
     file { '/srv/mediawiki/robots.txt':
         ensure  => 'present',
-        source  => 'puppet:///modules/mediawiki/robotx.txt',
+        source  => 'puppet:///modules/mediawiki/robots.txt',
         require => File['/srv/mediawiki'],
     }
 
