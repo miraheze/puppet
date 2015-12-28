@@ -82,6 +82,12 @@ class mediawiki {
         require   => Git::Clone['MediaWiki core'],
     }
 
+    file { '/srv/mediawiki/robots.txt':
+        ensure  => 'present',
+        source  => 'puppet:///modules/mediawiki/robotx.txt',
+        require => File['/srv/mediawiki'],
+    }
+
     file { '/srv/mediawiki/w/LocalSettings.php':
         ensure  => 'link',
         target  => '/srv/mediawiki/config/LocalSettings.php',
