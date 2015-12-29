@@ -7,11 +7,20 @@ pid = /var/run/hhvm/pid
 hhvm.server.port = 9000
 hhvm.server.type = fastcgi
 hhvm.server.default_document = index.php
-hhvm.log.use_log_file = true
-hhvm.log.file = /var/log/hhvm/error.log
 hhvm.repo.central.path = /var/run/hhvm/hhvm.hhbc
 hhvm.eval.perf_pid_map = false
 hhvm.jit = false
+
+; hhvm logging
+
+hhvm.debug.core_dump_report_directory = /var/log/hhvm
+hhvm.error_handling.call_user_handler_on_fatals = true
+hhvm.log.level = Error
+hhvm.log.native_stack_trace = true
+hhvm.log.use_syslog = true
+hhvm.log.injected_stack_trace = true
+hhvm.log.use_log_file = true
+hhvm.log.file = /var/log/hhvm/error.log
 
 ; hhvm admin server
 
