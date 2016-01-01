@@ -17,6 +17,7 @@ class hhvm {
         'php-mail',
         'php5',
         'php5-curl',
+        'php5-fpm',
         'php5-gd',
         'php5-imagick',
         'php5-intl',
