@@ -83,9 +83,12 @@ sub recv_purge {
 	if (req.method == "PURGE") {
 		if (!client.ip ~ purge) {
 			return (synth(405, "Denied."));
+		} else {
+			# Purge all variants (Accept-Encoding, etc) of cache? Not sure if needed, 
+			# but when I added it (in combination with this else statement) it fixed a large purging issue.
+			ban("req.http.Host == " + req.http.Host + " && req.url ~ ^" + req.url + "$");
+			return (purge);
 		}
-
-		return (purge);
 	}
 }
 
