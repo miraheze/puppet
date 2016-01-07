@@ -16,6 +16,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'esswaywiki', 'https://essway.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'etpowiki', 'https://etpo.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'genwiki', 'https://gen.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'izanagiwiki', 'https://izanagiwiki.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'mecanonwiki', 'https://mecanon.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'hshsinfoportalwiki', 'https://hshsinfoportal.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'metawiki', 'https://meta.miraheze.org/w/api.php' );
