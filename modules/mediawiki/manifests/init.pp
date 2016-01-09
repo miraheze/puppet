@@ -47,6 +47,7 @@ class mediawiki {
     ssl::cert { 'private.revi.wiki': }
     ssl::cert { 'allthetropes.org': }
     ssl::cert { 'oneagencydunedin.wiki': }
+    ssl::cert { 'publictestwiki.com': }
 
     nginx::site { 'mediawiki':
         ensure   => present,
