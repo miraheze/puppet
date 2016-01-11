@@ -2,7 +2,7 @@
 
 pid = /var/run/hhvm/pid
 
-; hhvm specific
+; hhvm general
 
 hhvm.server.port = 9000
 hhvm.server.type = fastcgi
@@ -13,8 +13,13 @@ hhvm.jit = false
 
 ; hhvm logging
 
+hhvm.debug.core_dump_report = true
 hhvm.debug.core_dump_report_directory = /var/log/hhvm
+hhvm.debug.core_dump_email = southparkfan@miraheze.org
 hhvm.debug.full_backtrace = true
+hhvm.debug.profiler_output_dir = /tmp
+hhvm.debug.server_stack_trace = true
+hhvm.debug.server_error_message = true
 hhvm.error_handling.call_user_handler_on_fatals = true
 hhvm.log.level = Error
 hhvm.log.native_stack_trace = true
@@ -22,6 +27,7 @@ hhvm.log.use_syslog = true
 hhvm.log.injected_stack_trace = true
 hhvm.log.use_log_file = true
 hhvm.log.file = /var/log/hhvm/error.log
+hhvm.log.always_log_unhandled_exceptions = true
 
 ; hhvm admin server
 
