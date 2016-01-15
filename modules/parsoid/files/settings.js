@@ -11,7 +11,8 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'biblicalwikiwiki', 'https://biblicalwiki.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'boulderwikiwiki', 'https://boulderwiki.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'braindumpwiki', 'https://braindump.miraheze.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'cbmediawiki', 'https://cbmedia.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'cbmediawiki', 'https://cbmedia.miraheze.org/w/api.php' ); 
+	parsoidConfig.setInterwiki( 'chandruswethswiki', 'https://chandrusweths.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'clicordiwiki', 'https://clicordi.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'developmentwiki', 'https://development.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'extloadwiki', 'https://extload.miraheze.org/w/api.php' );
