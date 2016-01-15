@@ -57,6 +57,7 @@ class varnish {
     ssl::cert { 'allthetropes.org': }
     ssl::cert { 'oneagencydunedin.wiki': }
     ssl::cert { 'publictestwiki.com': }
+    ssl::cert { 'boulderwiki.org': }
 
     nginx::site { 'mediawiki':
         ensure => present,
