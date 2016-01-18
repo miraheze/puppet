@@ -36,6 +36,8 @@ class role::db {
         from  => '185.52.1.76',
     }
 
+    ssl::cert { 'wildcard.miraheze.org': }
+
     motd::role { 'role::db':
         description => 'general database server',
     }
