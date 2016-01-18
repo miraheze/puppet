@@ -1,13 +1,8 @@
-# This is an example VCL file for Varnish.
-#
-# It does not do anything by default, delegating control to the
-# builtin VCL. The builtin VCL is called when there is no explicit
-# return statement.
-#
-# See the VCL chapters in the Users Guide at https://www.varnish-cache.org/docs/
-# and http://varnish-cache.org/trac/wiki/VCLExamples for more examples.
+# Miraheze production Varnish 4.0 configuration
+# Any changes (except spelling/obviously very small changes that do not break stuff) to Varnish configuration should be discussed 
+# with the MediaWiki System Administrators and Miraheze's operations team, as they have a site-wide effect.
 
-# Credits go to the contributors of Wikimedia's Varnish configuration.
+# Credits pertially go to the contributors of Wikimedia's Varnish configuration.
 # See their Puppet Repo (https://github.com/wikimedia/operations-puppet)
 # for the LICENSE.
 
@@ -34,17 +29,15 @@ sub stash_cookie {
 	}
 }
 
-sub restore_cookie {
-	# FIXME: bereq not set?
-	#if (bereq.http.X-Orig-Cookie) {
-		#set bereq.http.Cookie = bereq.http.X-Orig-Cookie;
-		#unset bereq.http.X-Orig-Cookie;
-	#}
-}
-
 sub evaluate_cookie {
-	if (req.http.Cookie ~ "([sS]ession|Token)=" && req.url !~ "^/w/load\.php") {
-		set req.hash_ignore_busy = true;
+	# We return pass if all following criteria are met:
+	# 1) There is a session/token cookie;
+	# 2) The url does NOT begin with /w/load.php (we can easily cache that, at all);
+	# 3) If the url is static.miraheze.org (so not a regular wiki), we should still serve cached images
+	if (req.http.Cookie ~ "([sS]ession|Token)=" 
+		&& req.url !~ "^/w/load\.php"
+		&& (req.http.Host == 'static.miraheze.org' && req.url !~ "\.(png|svg|jpe?g)$")) {
+		return (pass);
 	} else {
 		call stash_cookie;
 	}
@@ -55,28 +48,33 @@ sub identify_device {
 	# this header.
 	set req.http.X-Device = "desktop";
 
-        if (req.http.User-Agent ~ "(iP(hone|od|ad)|Android|BlackBerry|HTC|mobi|mobile)") {
-                set req.http.X-Device = "phone-tablet";
-        }
+	# If the User-Agent matches our regex, or the user explicitly sets the mf_useformat=true cookie to say
+	# they want the mobile version, we request MediaWiki to return the mobile version
+	if (req.http.User-Agent ~ "(iP(hone|od|ad)|Android|BlackBerry|HTC|mobi|mobile)" || req.http.Cookie ~ "mf_useformat=true") {
+		set req.http.X-Device = "phone-tablet";
+		# This forces to serve the mobile version, no matter what
+		set req.http.X-WAP = "no";
+	}
 
 	# If we have a mobile user that wants to have the desktop version, we should not
 	# restrict that.
-        if (req.http.X-Device == "phone-tablet" && req.http.Cookie ~ "mf_useformat=desktop") {
+	if (req.http.Cookie ~ "mf_useformat=desktop") {
                 set req.http.X-Device = "desktop";
+                # Despite MediaWiki should not return the mobile version, it might still do that because
+                # the User-Agent matches MobileFrontend's autodetection regex.
+                unset req.http.User-Agent;
         }
 }
 
 sub pass_authorization {
 	if (req.http.Authorization ~ "^OAuth ") {
-		set req.hash_ignore_busy = true;
 		return (pass);
 	}
 }
 
 sub filter_headers {
-	if (req.restarts == 0) {
-		unset req.http.X-Orig-Cookie;
-	}
+	# No guys, don't fool us.
+	unset req.http.X-Real-IP;
 }
 
 sub recv_purge {
@@ -98,7 +96,7 @@ sub vcl_recv {
 	call identify_device;
 
 	if (req.url ~ "^/wiki/Special:CentralAuthLogin/") {
-		set req.hash_ignore_busy = true;
+		return (pass);
 	}
 
 	# We never want to cache non-GET/HEAD requests.
@@ -119,14 +117,6 @@ sub vcl_recv {
 	call pass_authorization;
 
 	return (hash);
-}
-
-sub vcl_pass {
-	call restore_cookie;
-}
-
-sub vcl_miss {
-	call restore_cookie;
 }
 
 sub vcl_hash {
