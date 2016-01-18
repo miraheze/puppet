@@ -36,7 +36,7 @@ sub evaluate_cookie {
 	# 3) If the url is static.miraheze.org (so not a regular wiki), we should still serve cached images
 	if (req.http.Cookie ~ "([sS]ession|Token)=" 
 		&& req.url !~ "^/w/load\.php"
-		&& (req.http.Host == "static.miraheze.org" && req.url !~ "\.(png|svg|jpe?g)$")) {
+		&& (req.http.Host == 'static.miraheze.org' && req.url !~ "\.(png|svg|jpe?g)$")) {
 		return (pass);
 	} else {
 		call stash_cookie;
