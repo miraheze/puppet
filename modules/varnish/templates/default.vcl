@@ -116,7 +116,7 @@ sub vcl_hash {
 }
 
 sub vcl_backend_fetch {
-        if ((bereq.url ~ "^/wiki/" || bereq.url ~ "^/w/index.php\?title=") && bereq.http.X-Device == "phone-tablet") {
+        if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php\?title=[^$]") && bereq.http.X-Device == "phone-tablet") {
                 if (bereq.url ~ "\?") {
                         set bereq.url = bereq.url + "&useformat=mobile";
                 } else {
