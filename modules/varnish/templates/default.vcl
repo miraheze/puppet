@@ -44,7 +44,7 @@ sub restore_cookie {
 
 sub evaluate_cookie {
 	if (req.http.Cookie ~ "([sS]ession|Token)=" && req.url !~ "^/w/load\.php") {
-		set req.hash_ignore_busy = true;
+		return (pass);
 	} else {
 		call stash_cookie;
 	}
@@ -68,7 +68,6 @@ sub identify_device {
 
 sub pass_authorization {
 	if (req.http.Authorization ~ "^OAuth ") {
-		set req.hash_ignore_busy = true;
 		return (pass);
 	}
 }
@@ -98,7 +97,7 @@ sub vcl_recv {
 	call identify_device;
 
 	if (req.url ~ "^/wiki/Special:CentralAuthLogin/") {
-		set req.hash_ignore_busy = true;
+		return (pass);
 	}
 
 	# We never want to cache non-GET/HEAD requests.
