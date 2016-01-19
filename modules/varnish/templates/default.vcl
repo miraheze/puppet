@@ -29,17 +29,8 @@ acl purge {
 
 sub stash_cookie {
 	if (req.restarts == 0) {
-		set req.http.X-Orig-cookie = req.http.Cookie;
 		unset req.http.Cookie;
 	}
-}
-
-sub restore_cookie {
-	# FIXME: bereq not set?
-	#if (bereq.http.X-Orig-Cookie) {
-		#set bereq.http.Cookie = bereq.http.X-Orig-Cookie;
-		#unset bereq.http.X-Orig-Cookie;
-	#}
 }
 
 sub evaluate_cookie {
@@ -51,19 +42,16 @@ sub evaluate_cookie {
 }
 
 sub identify_device {
-	# Varnish will serve the right version (desktop or mobile) based on the content of
-	# this header.
+	# Used in vcl_backend_fetch and vcl_hash
 	set req.http.X-Device = "desktop";
 
-        if (req.http.User-Agent ~ "(iP(hone|od|ad)|Android|BlackBerry|HTC|mobi|mobile)") {
-                set req.http.X-Device = "phone-tablet";
-        }
+	# If the User-Agent matches the regex (this is the official regex used in MobileFrontend for automatic device detection), 
+	# and the cookie does NOT explicitly state the user does not want the mobile version, we
+	# set X-Device to phone-tablet. This will make vcl_backend_fetch add ?useformat=mobile to the URL sent to the backend.
+	if (req.http.User-Agent ~ "(?i)(mobi|240x240|240x320|320x320|alcatel|android|audiovox|bada|benq|blackberry|cdm-|compal-|docomo|ericsson|hiptop|htc[-_]|huawei|ipod|kddi-|kindle|meego|midp|mitsu|mmp\/|mot-|motor|ngm_|nintendo|opera.m|palm|panasonic|philips|phone|playstation|portalmmm|sagem-|samsung|sanyo|sec-|semc-browser|sendo|sharp|silk|softbank|symbian|teleca|up.browser|vodafone|webos)" && req.http.Cookie !~ "(stopMobileRedirect=true|mf_useformat=desktop)") {
+		set req.http.X-Device = "phone-tablet";
+	}
 
-	# If we have a mobile user that wants to have the desktop version, we should not
-	# restrict that.
-        if (req.http.X-Device == "phone-tablet" && req.http.Cookie ~ "mf_useformat=desktop") {
-                set req.http.X-Device = "desktop";
-        }
 }
 
 sub pass_authorization {
@@ -120,18 +108,20 @@ sub vcl_recv {
 	return (hash);
 }
 
-sub vcl_pass {
-	call restore_cookie;
-}
-
-sub vcl_miss {
-	call restore_cookie;
-}
-
 sub vcl_hash {
         # FIXME: try if we can make this ^/wiki/ only?
         if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
                 hash_data(req.http.X-Device);
+        }
+}
+
+sub vcl_backend_fetch {
+        if ((bereq.url ~ "^/wiki/" || bereq.url ~ "^/w/index.php\?title=") && bereq.http.X-Device == "phone-tablet") {
+                if (bereq.url ~ "\?") {
+                        set bereq.url = bereq.url + "&useformat=mobile";
+                } else {
+                        set bereq.url = bereq.url + "?useformat=mobile";
+                }
         }
 }
 
