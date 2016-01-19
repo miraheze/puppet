@@ -36,7 +36,7 @@ class mediawiki {
         ensure => present,
         install_options => ['--no-install-recommends'],
     }
-    
+
     ssl::cert { 'wildcard.miraheze.org': }
     ssl::cert { 'spiral.wiki': }
     ssl::cert { 'anuwiki.com': }
@@ -48,6 +48,7 @@ class mediawiki {
     ssl::cert { 'allthetropes.org': }
     ssl::cert { 'oneagencydunedin.wiki': }
     ssl::cert { 'publictestwiki.com': }
+    ssl::cert { 'boulderwiki.org': }
 
     nginx::site { 'mediawiki':
         ensure   => present,
