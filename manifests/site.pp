@@ -24,6 +24,7 @@ node 'misc1.miraheze.org' {
     include role::dns
     include role::piwik
     include role::redis
+    include role::surveys
 }
 
 node /^mw[12]\.miraheze\.org$/ {
