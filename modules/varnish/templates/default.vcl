@@ -35,6 +35,10 @@ sub stash_cookie {
 
 sub evaluate_cookie {
 	if (req.http.Cookie ~ "([sS]ession|Token)=" && req.url !~ "^/w/load\.php") {
+		# To prevent issues, we do not want vcl_backend_fetch to add ?useformat=mobile
+		# when the user directly contacts the backend. The backend will directly listen to the cookies
+		# the user sets anyway, the hack in vcl_backend_fetch is only for users that are not logged in.
+		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	} else {
 		call stash_cookie;
@@ -84,12 +88,16 @@ sub vcl_recv {
 	call recv_purge;
 	call identify_device;
 
+	set req.http.X-Use-Mobile = "1";
+
 	if (req.url ~ "^/wiki/Special:CentralAuthLogin/") {
+		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	}
 
 	# We never want to cache non-GET/HEAD requests.
 	if (req.method != "GET" && req.method != "HEAD") {
+		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	}
 
@@ -99,6 +107,7 @@ sub vcl_recv {
 
 	# Don't cache dumps
 	if (req.http.Host == "static.miraheze.org" && req.url ~ "^/dumps") {
+		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	}
 
@@ -116,7 +125,7 @@ sub vcl_hash {
 }
 
 sub vcl_backend_fetch {
-        if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php\?title=[^$]") && bereq.http.X-Device == "phone-tablet") {
+        if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php\?title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1") {
                 if (bereq.url ~ "\?") {
                         set bereq.url = bereq.url + "&useformat=mobile";
                 } else {
@@ -126,7 +135,7 @@ sub vcl_backend_fetch {
 }
 
 sub vcl_backend_response {
-	if (beresp.ttl <= 0s || bereq.http.X-Miraheze-Debug == "1") {
+	if (beresp.ttl <= 0s) {
 		set beresp.ttl = 120s;
 		set beresp.uncacheable = true;
 	}
