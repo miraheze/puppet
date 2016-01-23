@@ -38,6 +38,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'tochkiwiki', 'https://tochki.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'torejorgwiki', 'https://torejorg.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'unikumwiki', 'https://unikum.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'urho3dwiki', 'https://urho3d.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'vrgowiki', 'https://vrgo.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'walthamstowlabourwiki', 'https://walthamstowlabour.miraheze.org/w/api.php' );
 
