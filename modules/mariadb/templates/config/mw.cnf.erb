@@ -1,3 +1,6 @@
+[client]
+ssl-ca=/etc/ssl/certs/GlobalSign.crt
+
 [mysql]
 port                           = 3306
 socket                         = /var/run/mysqld/mysqld.sock
@@ -52,3 +55,8 @@ log-error                      = <%= @datadir %>/mysql-error.log
 log-queries-not-using-indexes  = 1
 slow-query-log                 = 1
 slow-query-log-file            = <%= @datadir %>/mysql-slow.log
+
+ssl
+ssl-ca=/etc/ssl/certs/GlobalSign.crt
+ssl-cert=/etc/ssl/certs/wildcard.miraheze.org.crt
+ssl-key=/etc/ssl/private/wildcard.miraheze.org-nopass.key
