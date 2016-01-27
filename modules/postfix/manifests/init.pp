@@ -7,7 +7,7 @@ class postfix {
     file { '/etc/postfix/main.cf':
         ensure => present,
         source => 'puppet:///modules/postfix/main.cf',
-   }
+    }
 
     file { '/etc/postfix/master.cf':
         ensure => present,
@@ -15,8 +15,8 @@ class postfix {
     }
 
     file { '/etc/aliases':
-       ensure => present,
-       source => 'puppet:///modules/postfix/aliases',
+        ensure => present,
+        source => 'puppet:///modules/postfix/aliases',
     }
 
     exec { '/usr/bin/newaliases':
