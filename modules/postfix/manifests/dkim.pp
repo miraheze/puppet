@@ -9,7 +9,7 @@ class postfix::dkim {
         '/etc/opendkim/keys',
     ]
 
-    file { $dkimdirectoy:
+    file { $dkimdirectory:
         ensure => directory,
         owner  => 'opendkim',
         group  => 'opendkim',
