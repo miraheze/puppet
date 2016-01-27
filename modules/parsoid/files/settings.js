@@ -43,6 +43,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'urho3dwiki', 'https://urho3d.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'vrgowiki', 'https://vrgo.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'walthamstowlabourwiki', 'https://walthamstowlabour.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'webflowwiki', 'https://webflow.miraheze.org/w/api.php' );
 
 	// Don't load WMF wikis
 	parsoidConfig.loadWMF = false;
