@@ -24,10 +24,10 @@ smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 smtpd_tls_security_level = may
 smtpd_tls_protocols = !SSLv2, !SSLv3
 
-milter_protocol = 2
-milter_default_action = accept
-smtpd_milters = inet:localhost:12301
-non_smtpd_milters = inet:localhost:12301
+#milter_protocol = 2
+#milter_default_action = accept
+#smtpd_milters = inet:localhost:12301
+#non_smtpd_milters = inet:localhost:12301
 
 local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination
