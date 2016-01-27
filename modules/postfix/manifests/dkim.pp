@@ -43,4 +43,5 @@ class postfix::dkim {
 
     service { 'opendkim':
         ensure => running,
+    }
 }
