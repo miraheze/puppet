@@ -33,7 +33,7 @@ node /^mw[12]\.miraheze\.org$/ {
     include role::mediawiki
 
     class { 'users':
-        groups => ['mediawiki-admins'],
+        groups => ['mediawiki-admins', 'mediawiki-roots'],
     }
 }
 

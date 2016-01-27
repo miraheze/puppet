@@ -7,12 +7,17 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [ndkilla, revi]
+    members: [revi]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service hhvm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /root/puppet-run',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+  mediawiki-roots:
+    gid: 2002
+    description: full root on MediaWiki servers
+    members: [ndkilla]
+    privileges: ['ALL = (ALL) NOPASSWD: ALL']
 
 users:
   johnflewis:
