@@ -10,7 +10,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'arguwikiwiki', 'https://arguwiki.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'aryamanwiki', 'https://aryaman.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'biblicalwikiwiki', 'https://biblicalwiki.miraheze.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'boulderwikiwiki', 'https://boulderwiki.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'boulderwikiwiki', 'https://boulderwiki.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'braindumpwiki', 'https://braindump.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'cbmediawiki', 'https://cbmedia.miraheze.org/w/api.php' ); 
 	parsoidConfig.setInterwiki( 'chandruswethswiki', 'https://chandrusweths.miraheze.org/w/api.php' );
