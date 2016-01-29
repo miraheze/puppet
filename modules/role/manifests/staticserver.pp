@@ -1,7 +1,7 @@
 # NFS static content server
 class role::staticserver {
     nfs::server { 'static':
-        mountroot   => '/mnt/mediawiki-static',
+        mountroot   => '/srv/mediawiki-static',
         exportsfile => 'puppet:///role/files/staticserver/exports',
     }
 
