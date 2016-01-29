@@ -8,6 +8,10 @@ class standard {
 node /^cp[12]\.miraheze\.org$/ {
     include standard
     include role::varnish
+
+    if $::hostname == 'cp1.miraheze.org' {
+        include role::staticserver
+    }
 }
 
 node 'db1.miraheze.org' {

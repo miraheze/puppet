@@ -16,4 +16,11 @@ class role::mediawiki {
     motd::role { 'role::mediawiki':
         description => 'MediaWiki server',
     }
+
+    mount { '/mnt/mediawiki-static':
+        ensure => mounted,
+        device => '81.4.124.61:/srv/mediawiki-static',
+        fstype => 'nfs',
+        atboot => true,
+    }
 }
