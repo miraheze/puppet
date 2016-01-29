@@ -7,6 +7,8 @@ mynetworks = 185.52.1.75, 185.52.1.76, 185.52.2.113
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
+smtp_bind_address=185.52.1.76
+smtp_bind_address6=2a00:d880:6:787::3
 
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
