@@ -9,6 +9,12 @@ class dns {
         repos    => 'main contrib non-free',
     }
 
+    # Workaround for https://github.com/miraheze/puppet/issues/70
+    apt::pin { 'debian_stable':
+        priority => 995,
+        release => 'stable',
+    }
+
     apt::pin { 'debian_stretch':
         priority   => 740,
         originator => 'Debian',
