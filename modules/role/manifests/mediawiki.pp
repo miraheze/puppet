@@ -17,10 +17,17 @@ class role::mediawiki {
         description => 'MediaWiki server',
     }
 
+    file { '/mnt/mediawiki-static':
+        ensure => directory,
+        owner  => 'www-data',
+        group  => 'www-data',
+    }
+
     mount { '/mnt/mediawiki-static':
-        ensure => mounted,
-        device => '81.4.124.61:/srv/mediawiki-static',
-        fstype => 'nfs',
-        atboot => true,
+        ensure  => mounted,
+        device  => '81.4.124.61:/srv/mediawiki-static',
+        fstype  => 'nfs',
+        atboot  => true,
+        require => File['/mnt/mediawiki-static'],
     }
 }
