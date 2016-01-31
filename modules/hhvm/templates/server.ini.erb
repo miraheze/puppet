@@ -9,7 +9,12 @@ hhvm.server.type = fastcgi
 hhvm.server.default_document = index.php
 hhvm.repo.central.path = /var/run/hhvm/hhvm.hhbc
 hhvm.eval.perf_pid_map = false
-hhvm.jit = false
+hhvm.jit = true
+hhvm.jit_a_size = 536870912
+hhvm.jit_a_cold_size = 268435456
+hhvm.jit_a_frozen_size = 268435456
+hhvm.jit_a_max_usage = 671088640
+hhvm.server.stat_cache = true
 
 ; hhvm logging
 
