@@ -15,11 +15,24 @@
 # new 4.0 format.
 vcl 4.0;
 
-# Default backend definition. Set this to point to your content server.
-backend default {
+import directors;
+
+backend mw1 {
     .host = "127.0.0.1";
     .port = "8080";
 }
+
+backend mw2 {
+    .host = "127.0.0.1";
+    .port = "8081";
+}
+
+sub vcl_init {
+        new mediawiki = directors.round_robin();
+        mediawiki.add_backend(mw1);
+        mediawiki.add_backend(mw2);
+}
+
 
 acl purge {
 	"localhost";
@@ -84,6 +97,7 @@ sub recv_purge {
 }
 
 sub vcl_recv {
+	set req.backend_hint = mediawiki.backend();
 	call filter_headers;
 	call recv_purge;
 	call identify_device;
