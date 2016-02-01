@@ -27,6 +27,7 @@ class role::mediawiki {
         ensure  => mounted,
         device  => '81.4.124.61:/srv/mediawiki-static',
         fstype  => 'nfs',
+        options => 'rw',
         atboot  => true,
         require => File['/mnt/mediawiki-static'],
     }
