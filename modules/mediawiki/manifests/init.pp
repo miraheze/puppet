@@ -82,6 +82,15 @@ class mediawiki {
         require             => File['/srv/mediawiki'],
     }
 
+    # FIXME: Ugly hack, *everything* in /srv/mediawiki/w should be owned by www-data,
+    # but recursive chown in git::clone causes puppet to OOM.
+    file { '/srv/mediawiki/w/cache':
+        ensure  => directory,
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => Git::Clone['MediaWiki core'],
+    }
+
     git::clone { 'MediaWiki vendor':
         directory => '/srv/mediawiki/w/vendor',
         origin    => 'https://github.com/wikimedia/mediawiki-vendor.git',
