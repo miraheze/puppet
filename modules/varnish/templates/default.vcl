@@ -90,7 +90,7 @@ sub vcl_recv {
 
 	set req.http.X-Use-Mobile = "1";
 
-	if (req.url ~ "^/wiki/Special:CentralAuthLogin/") {
+	if (req.url ~ "^/wiki/Special:CentralAutoLogin/") {
 		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	}
