@@ -23,6 +23,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'etpowiki', 'https://etpo.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'gameswiki', 'https://games.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'genwiki', 'https://gen.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'islamwissenschaft', 'https://islamwissenschaft.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'izanagiwiki', 'https://izanagi.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'luckandlogicwiki', 'https://luckandlogic.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'mecanonwiki', 'https://mecanon.miraheze.org/w/api.php' );
