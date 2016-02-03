@@ -20,38 +20,19 @@ import directors;
 backend mw1 {
     .host = "127.0.0.1";
     .port = "8080";
-    .probe = {
-        .request =
-            "GET /wiki/Special:RecentChanges HTTP/1.1"
-            "Host: allthetropes.org"
-            "Connection: close";
-        .timeout = 1100ms;
-        .interval = 5s;
-        .window = 10;
-        .threshold = 8;
-    }
 }
 
 backend mw2 {
     .host = "127.0.0.1";
     .port = "8081";
-    .probe = {
-        .request =
-            "GET /wiki/Special:RecentChanges HTTP/1.1"
-            "Host: allthetropes.org"
-            "Connection: close";
-        .timeout = 1100ms;
-        .interval = 5s;
-        .window = 10;
-        .threshold = 8;
-    }
 }
 
 sub vcl_init {
-    new mediawiki = directors.round_robin();
-    mediawiki.add_backend(mw1);
-    mediawiki.add_backend(mw2);
+        new mediawiki = directors.round_robin();
+        mediawiki.add_backend(mw1);
+        mediawiki.add_backend(mw2);
 }
+
 
 acl purge {
 	"localhost";
@@ -151,20 +132,20 @@ sub vcl_recv {
 }
 
 sub vcl_hash {
-    # FIXME: try if we can make this ^/wiki/ only?
-    if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
-            hash_data(req.http.X-Device);
-    }
+        # FIXME: try if we can make this ^/wiki/ only?
+        if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
+                hash_data(req.http.X-Device);
+        }
 }
 
 sub vcl_backend_fetch {
-	if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php\?title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1") {
-		if (bereq.url ~ "\?") {
-		        set bereq.url = bereq.url + "&useformat=mobile";
-		} else {
-		        set bereq.url = bereq.url + "?useformat=mobile";
-		}
-	}
+        if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php\?title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1") {
+                if (bereq.url ~ "\?") {
+                        set bereq.url = bereq.url + "&useformat=mobile";
+                } else {
+                        set bereq.url = bereq.url + "?useformat=mobile";
+                }
+        }
 }
 
 sub vcl_backend_response {
@@ -173,14 +154,14 @@ sub vcl_backend_response {
 		set beresp.uncacheable = true;
 	}
 
-    if (beresp.status >= 400) {
-            set beresp.uncacheable = true;
-    }
+        if (beresp.status >= 400) {
+                set beresp.uncacheable = true;
+        }
 
 	# Trial: cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
-    if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
-            set beresp.ttl = 43200s;
-    }
+        if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
+                set beresp.ttl = 43200s;
+        }
 
 	return (deliver);
 }
