@@ -15,6 +15,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'braindumpwiki', 'https://braindump.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'cbmediawiki', 'https://cbmedia.miraheze.org/w/api.php' ); 
 	parsoidConfig.setInterwiki( 'chandruswethswiki', 'https://chandrusweths.miraheze.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'christipediawiki', 'https://christipedia.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'clicordiwiki', 'https://clicordi.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'cssandjsschoolboardwiki', 'https://cssandjsschoolboard.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'developmentwiki', 'https://development.miraheze.org/w/api.php' );
