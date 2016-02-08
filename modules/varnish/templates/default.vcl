@@ -17,6 +17,12 @@ vcl 4.0;
 
 import directors;
 
+# -------------------------------------------------------------------
+# When depooling a backend here, you should not only comment out the
+# mediawiki.add_backend block, but ALSO the associated backend block.
+# Failing to do so will break Varnish!
+# -------------------------------------------------------------------
+
 backend mw1 {
     .host = "127.0.0.1";
     .port = "8080";
@@ -122,6 +128,11 @@ sub vcl_recv {
 	# Don't cache dumps
 	if (req.http.Host == "static.miraheze.org" && req.url ~ "^/dumps") {
 		set req.http.X-Use-Mobile = "0";
+		return (pass);
+	}
+
+	if (req.http.X-Miraheze-Debug == "1") {
+		set req.backend_hint = mw1;
 		return (pass);
 	}
 
