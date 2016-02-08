@@ -103,7 +103,13 @@ sub recv_purge {
 }
 
 sub vcl_recv {
-	set req.backend_hint = mediawiki.backend();
+        if (req.http.X-Miraheze-Debug ~ "1") {
+                set req.backend_hint = mw1;
+                return (pass);
+        } else {
+		set req.backend_hint = mediawiki.backend();
+	}
+
 	call filter_headers;
 	call recv_purge;
 	call identify_device;
