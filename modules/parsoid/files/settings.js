@@ -40,6 +40,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'safiriawiki', 'https://safiria.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'shoppingwiki', 'https://shopping.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'spiralwiki', 'https://spiral.wiki/w/api.php' );
+	parsoidConfig.setInterwiki( 'taylorwiki', 'https://taylor.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'testwiki', 'https://test.miraheze.org/w/api.php' ); 
 	parsoidConfig.setInterwiki( 'tochkiwiki', 'https://tochki.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'torejorgwiki', 'https://torejorg.miraheze.org/w/api.php' );
