@@ -1,6 +1,7 @@
-# We do not use hiera.
-# We may one day.
-# We never know.
-#
-# We may also live on Mars one day.
-# But that is not our focus.
+---
+:backends: yaml
+:yaml:
+  :datadir: /etc/puppet/hieradata
+:hierarchy:
+  - "hosts/%{::hostname}"
+  - common

@@ -32,13 +32,8 @@ node 'misc1.miraheze.org' {
 }
 
 node /^mw[12]\.miraheze\.org$/ {
-    $users_defined = 'true'
     include standard
     include role::mediawiki
-
-    class { 'users':
-        groups => ['mediawiki-admins', 'mediawiki-roots'],
-    }
 }
 
 node 'ns1.miraheze.org' {

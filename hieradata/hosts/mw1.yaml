@@ -1,0 +1,3 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
