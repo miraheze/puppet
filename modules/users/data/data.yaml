@@ -31,7 +31,7 @@ users:
     uid: 1001
     name: southparkfan
     realname: Southparkfan
-    ssh_keys: []
+    ssh_keys: [AAAAB3NzaC1yc2EAAAABJQAAAQEAjhc+iyIRGCYNhcOSFfx/1nQMdOByX5I1cdKBrpndyhkQ3Ln/2o1nSKatFuhFf166PTuIIVG1xfCdkcdOAJqpeDzLm9SUURt/jhAsPkf9h6WniATz6AE+j/+WLVnl0jaAPy5htT/Cf1mSf268mUHcJBb263UItoN0EhdhH1vq/R2XOJiMXxTk4wz7S2yacdIG0HtxLKbGmlmK1FoQQ7RYtKzdm1pxHENWBrf+OCEKN9Mx/EFTWwubBB/JGfIqsu0T3fZusGsSX6NmgFzsHZhKaVQ2hQAr+tXCOgCHpxpRevZ+3EQg6SM3n25bjM9bZ/Pa9nDK0kGcz4nOhpMs5C/6Kw== southparkfan@miraheze-production]
   mutante:
     ensure: absent
     uid: 1002
