@@ -87,4 +87,16 @@ class varnish {
         notify  => Service['stunnel4'],
         require => Package['stunnel4'],
     }
+
+    file { '/usr/lib/nagios/check_varnishbackends':
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/icinga/check_varnishbackends.py',
+        mode    => 755,
+    }
+
+    # This script needs root access to read /etc/varnish/secret
+    sudo::user { 'nrpe_sudo_checkvarnishbackends':
+        user        => 'nagios',
+        privileges  => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_varnishbackends' ],
+    }
 }
