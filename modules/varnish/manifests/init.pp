@@ -88,7 +88,7 @@ class varnish {
         require => Package['stunnel4'],
     }
 
-    file { '/usr/lib/nagios/check_varnishbackends':
+    file { '/usr/lib/nagios/plugins/check_varnishbackends':
         ensure  => present,
         source  => 'puppet:///modules/varnish/icinga/check_varnishbackends.py',
         mode    => 755,
