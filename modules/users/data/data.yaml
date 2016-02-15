@@ -11,6 +11,7 @@ groups:
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service hhvm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php5-fpm *',
                  'ALL = (ALL) NOPASSWD: /root/puppet-run',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
