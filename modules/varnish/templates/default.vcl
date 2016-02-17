@@ -127,12 +127,7 @@ sub vcl_recv {
 	call identify_device;
 	
 	set req.http.X-Use-Mobile = "1";
-	
-	if (req.url ~ "^/wiki/Special:CentralAutoLogin/") {
-		set req.http.X-Use-Mobile = "0";
-		return (pass);
-	}
-	
+
 	# We never want to cache non-GET/HEAD requests.
 	if (req.method != "GET" && req.method != "HEAD") {
 		set req.http.X-Use-Mobile = "0";
@@ -189,7 +184,7 @@ sub vcl_backend_response {
 
 	# Trial: cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
 	if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
-	set beresp.ttl = 43200s;
+		set beresp.ttl = 43200s;
 	}
 
 	return (deliver);
