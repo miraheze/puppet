@@ -40,9 +40,6 @@ http {
         application/json application/javascript application/x-javascript 
         application/xml application/rss+xml application/atom+xml application/rdf+xml
         video/mp4 video/mpeg video/webmv video/x-flv;
-
-    # Default headers
-    add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
     
     # VHosts
     include /etc/nginx/conf.d/*.conf;
