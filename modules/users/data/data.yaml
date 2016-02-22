@@ -19,6 +19,11 @@ groups:
     description: full root on MediaWiki servers
     members: [ndkilla]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
+  cache-admins:
+    gid: 2003
+    descriptions: limited sudo on cache proxies
+    members: []
+    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/varnishadm']
 
 users:
   johnflewis:
