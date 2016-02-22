@@ -23,7 +23,8 @@ groups:
     gid: 2003
     descriptions: limited sudo on cache proxies
     members: []
-    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/varnishadm']
+    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/varnishadm',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service varnish *']
 
 users:
   johnflewis:
