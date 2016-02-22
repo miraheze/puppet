@@ -39,7 +39,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'permanentfuturelabwiki', 'https://permanentfuturelab.wiki/w/api.php');
 	parsoidConfig.setInterwiki( 'rawdatawiki', 'https://rawdata.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'recherchesdocumentaireswiki', 'https://recherchesdocumentaires.miraheze.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'ricwiki', 'https://ric.miraheze.org/w/api.php', );
+	parsoidConfig.setInterwiki( 'ricwiki', 'https://ric.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'safiriawiki', 'https://safiria.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'shoppingwiki', 'https://shopping.miraheze.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'sirikotwiki', 'https://sirikot.miraheze.org/w/api.php' );
