@@ -66,12 +66,7 @@ sub stash_cookie {
 }
 
 sub evaluate_cookie {
-	if (req.http.Cookie ~ "([sS]ession|Token)=" 
-		&& req.url !~ "^/w/load\.php"
-		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
-                && req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(png|jpe?g|svg)$"
-                && req.url !~ "^/w/resources/assets/.*\.png$") {
-	) {
+	if (req.http.Cookie ~ "([sS]ession|Token)=" && req.url !~ "^/w/load\.php") {
 		# To prevent issues, we do not want vcl_backend_fetch to add ?useformat=mobile
 		# when the user directly contacts the backend. The backend will directly listen to the cookies
 		# the user sets anyway, the hack in vcl_backend_fetch is only for users that are not logged in.
