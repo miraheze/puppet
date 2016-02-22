@@ -22,6 +22,7 @@ class parsoid {
         subscribe => File['/etc/mediawiki/parsoid/settings.js'],
     }
 
+    # The name of the wiki (or the URL in form <wikiname>.miraheze.org. DO NOT INCLUDE WIKI.
     $wikis = [
                 '8station',
                 'adnovum',
