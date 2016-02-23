@@ -32,7 +32,7 @@ import directors;
 #	.window = 5;
 #	.threshold = 4;
 #	.expected_response = 200;
-}
+#}
 
 backend mw1 {
 	.host = "127.0.0.1";
