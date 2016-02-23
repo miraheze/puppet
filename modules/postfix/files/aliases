@@ -1,14 +1,14 @@
 # standard stuff
 mailer-daemon: postmaster
-postmaster: root
+postmaster: operations
 nobody: root
-hostmaster: root
+hostmaster: operations
 webmaster: root
 www: root
 ftp: root
-abuse: root
-noc: root
-security: root
+abuse: operations
+noc: operations
+security: operations
 
 # noreply death
 noreply: /dev/null
