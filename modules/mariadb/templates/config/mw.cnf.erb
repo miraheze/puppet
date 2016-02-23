@@ -51,12 +51,12 @@ innodb-flush-log-at-trx-commit = 1
 innodb-file-per-table          = 1
 innodb-buffer-pool-size        = 2304M
 
-log-error                      = <%= @datadir %>/mysql-error.log
+log-error                      = /var/log/mysql/mysql-error.log
 log-queries-not-using-indexes  = 1
 slow-query-log                 = 1
-slow-query-log-file            = <%= @datadir %>/mysql-slow.log
+slow-query-log-file            = /var/log/mysql/mysql-slow.log
 
 ssl
-ssl-ca=/etc/ssl/certs/GlobalSign.crt
-ssl-cert=/etc/ssl/certs/wildcard.miraheze.org.crt
-ssl-key=/etc/ssl/private/wildcard.miraheze.org-nopass.key
+ssl-ca                         = /etc/ssl/certs/GlobalSign.crt
+ssl-cert                       = /etc/ssl/certs/wildcard.miraheze.org.crt
+ssl-key                        = /etc/ssl/private/wildcard.miraheze.org-nopass.key
