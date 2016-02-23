@@ -50,6 +50,7 @@ class mediawiki {
     ssl::cert { 'publictestwiki.com': }
     ssl::cert { 'boulderwiki.org': }
     ssl::cert { 'wiki.zepaltusproject.com': }
+    ssl::cert { 'universebuild.com': }
 
     $custom_domains = [
                         {
