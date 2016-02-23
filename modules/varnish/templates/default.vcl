@@ -19,31 +19,31 @@ import directors;
 # mediawiki.add_backend block, but ALSO the associated backend block.
 # Failing to do so will break Varnish!
 # -------------------------------------------------------------------
-probe mwhealth {
-	.request = "GET /wiki/Miraheze HTTP/1.1"
-		"Host: meta.miraheze.org"
-		"Connection: close";
-	# Check each 5s
-	.interval = 5s;
-	# May not take longer than 4s to load
-	.timeout = 4s;
-	# At least 4 out of 5 checks must be successful
-	# to mark the backend as healthy
-	.window = 5;
-	.threshold = 4;
-	.expected_response = 200;
+#probe mwhealth {
+#	.request = "GET /wiki/Miraheze HTTP/1.1"
+#		"Host: meta.miraheze.org"
+#		"Connection: close";
+#	# Check each 5s
+#	.interval = 5s;
+#	# May not take longer than 4s to load
+#	.timeout = 4s;
+#	# At least 4 out of 5 checks must be successful
+#	# to mark the backend as healthy
+#	.window = 5;
+#	.threshold = 4;
+#	.expected_response = 200;
 }
 
 backend mw1 {
 	.host = "127.0.0.1";
 	.port = "8080";
-	.probe = mwhealth;
+#	.probe = mwhealth;
 }
 
 backend mw2 {
 	.host = "127.0.0.1";
 	.port = "8081";
-	.probe = mwhealth;
+#	.probe = mwhealth;
 }
 
 sub vcl_init {
