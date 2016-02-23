@@ -12,7 +12,7 @@ class dns {
     # Workaround for https://github.com/miraheze/puppet/issues/70
     apt::pin { 'debian_stable':
         priority => 995,
-        release => 'stable',
+        release  => 'stable',
     }
 
     apt::pin { 'debian_stretch':
@@ -31,7 +31,12 @@ class dns {
         ensure     => running,
         hasrestart => true,
         hasstatus  => true,
-        require    => Package['gdnsd'],
+        require    => [ Package['gdnsd'], Exec['gdnsd-syntax'] ],
+    }
+
+    exec { 'gdnsd-syntax':
+        command => '/usr/sbin/gdnsd checkconf',
+        notify  => Service['gdnsd'],
     }
 
     git::clone { 'dns':
@@ -41,6 +46,6 @@ class dns {
         owner     => 'root',
         group     => 'root',
         before    => Package['gdnsd'],
-        notify    => Service['gdnsd'],
+        notify    => Exec['gdnsd-syntax'],
     }
 }
