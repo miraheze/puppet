@@ -27,7 +27,6 @@ class parsoid {
                 '8station',
                 'adnovum',
                 'air',
-                'allthetropes',
                 'aktpos',
                 'applebranch',
                 'aryaman',
