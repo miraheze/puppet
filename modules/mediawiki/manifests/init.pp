@@ -51,52 +51,9 @@ class mediawiki {
     ssl::cert { 'boulderwiki.org': }
     ssl::cert { 'wiki.zepaltusproject.com': }
 
-    $custom_domains = [
-                        {
-                             url => 'boulderwiki.org',
-                             ca  => 'StartSSL',
-                        },
-                        {
-                             url => 'antiguabarbudacalypso.com',
-                             ca  => 'StartSSL',
-                        },
-                        {
-                             url => 'anuwiki.com',
-                             ca  => 'Godaddy',
-                        },
-                        {
-                             url => 'oneagencydunedin.wiki',
-                             ca  => 'Comodo',
-                        },
-                        {
-                             url => 'spiral.wiki',
-                             ca  => 'Gandi',
-                        },
-                        {
-                             url => 'wiki.printmaking.be',
-                             ca  => 'StartSSL',
-                        },
-                        {
-                             url => 'permanentfuturelab.wiki',
-                             ca  => 'StartSSL',
-                        },
-                        {
-                             url => 'private.revi.wiki',
-                             ca  => 'Comodo',
-                        },
-                        {
-                             url => 'publictestwiki.com',
-                             ca  => 'Comodo',
-                        },
-                        {
-                             url => 'wiki.zepaltusproject.com',
-                             ca  => 'Gandi',
-                        },
-    ]
-
     nginx::site { 'mediawiki':
-        ensure    => present,
-        content   => template('mediawiki/mediawiki.conf'),
+        ensure   => present,
+        source   => 'puppet:///modules/mediawiki/nginx/mediawiki.conf',
     }
 
     nginx::conf { 'mediawiki-includes':
