@@ -18,17 +18,17 @@ ops: operations
 sysadmin: operations, revi@reviwiki.info, ndkilla
 
 # destination aliases
-operations: southparkfan
-stewards: southparkfan,ndkilla
+operations: southparkfan,john
+stewards: southparkfan,ndkilla,john
 
 # finances
-donate: bslaabs@gmail.com,southparkfan
+donate: bslaabs@gmail.com,southparkfan,john
 
 # root spam
 root: southparkfan
 
 # campaign
-campaign: southparkfan
+campaign: southparkfan,john
 
 # southparkfan
 southparkfan: southparkfan223@hotmail.com
