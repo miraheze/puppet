@@ -89,6 +89,10 @@ class mediawiki {
                              ca  => 'Comodo',
                         },
                         {
+                             url => 'universebuild.com',
+                             ca => 'Comodo',
+                        },
+                        {
                              url => 'wiki.zepaltusproject.com',
                              ca  => 'Gandi',
                         },
