@@ -11,6 +11,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'boulderwikiwiki', 'https://boulderwiki.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'permanentfuturelabwiki', 'https://permanentfuturelab.wiki/w/api.php');
 	parsoidConfig.setInterwiki( 'spiralwiki', 'https://spiral.wiki/w/api.php' );
+	parsoidConfig.setInterwiki( 'universebuildwiki', 'https://universebuild.com/w/api.php' );
 
 	// Don't load WMF wikis
 	parsoidConfig.loadWMF = false;
