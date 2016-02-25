@@ -65,6 +65,7 @@ class parsoid {
                 'test',
                 'tochki',
                 'torejorg',
+                'universebuild'
                 'unikum',
                 'urho3d',
                 'vrgo',
