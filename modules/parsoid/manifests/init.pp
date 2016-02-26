@@ -46,6 +46,7 @@ class parsoid {
                 'gen',
                 'islamwissenschaft',
                 'izanagi',
+                'lbsges',
                 'luckandlogic',
                 'mecanon',
                 'hobbies',
