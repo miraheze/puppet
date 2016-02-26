@@ -38,6 +38,7 @@ class parsoid {
                 'clicordi',
                 'cssandjsschoolboard',
                 'development',
+                'drunkenpeasantswiki',
                 'elainarmua',
                 'extload',
                 'essway',
