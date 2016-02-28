@@ -1,5 +1,13 @@
 # class: mediawiki::cron
 class mediawiki::cron {
+    # HACK BAD BAD HACK
+    cron { 'hhvm_hack_restart':
+        ensure  => present,
+        command => "/usr/sbin/service hhvm restart",
+        user    => 'root',
+        hour    => '*/2',
+    }
+
     cron { 'jobqueue':
         ensure  => present,
         command => '/usr/bin/flock -xn "/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/runJobs.php" > /var/log/mediawiki/cron/jobqueue.log',
