@@ -208,3 +208,65 @@ sub vcl_deliver {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
 	}
 }
+
+sub vcl_backend_error {
+	set beresp.http.Content-Type = "text/html; charset=utf-8";
+	
+	synthetic( {"<!DOCTYPE html>
+	<html>
+		<head>
+			<title>Error "} + beresp.status + " " + beresp.reason + {"</title>
+			<style type="text/css">
+				html, body {
+					height: 100%;
+					margin: 0;
+					padding: 0;
+					font-family: sans-serif;
+				}
+				html {
+					font-size: 100%;
+				}
+				body {
+					background-color: hsl(0, 0%, 96%);
+				}
+				h1, h2 {
+					margin-bottom: .6em !important;
+				}
+				h1 {
+					font-size: 188%;
+				}
+				h1, h2, h3, h4, h5, h6 {
+					color: hsl(0, 0%, 0%);
+					background: none;
+					font-weight: normal;
+					margin: 0;
+					overflow: hidden;
+					padding-top: .5em;
+					padding-bottom: .17em;
+					border-bottom: 1px solid hsl(0, 0%, 67%);
+				}
+				p {
+					margin: .4em 0 .5em 0;
+				}
+			</style>
+		</head>
+		<body>
+			<div style="text-align: center;">
+				<h1>"} + beresp.status + " " + beresp.reason + {"</h1>
+				<p>Our servers are having problems at the moment. Please try again in a few minutes.</p>
+				<p>Please provide the details below if you report this error to the system administrators:</p>
+				<p style="font-size: 14px; padding-top: 0.5em;">
+					Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" (Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
+				</p>
+			</div>
+			<div style="float: right; padding-right: 1em;">
+				<a href="https://meta.miraheze.org/wiki/Miraheze">
+					<img src="https://static.miraheze.org/metawiki/7/7e/Powered_by_Miraheze.png" alt="Powered by Miraheze" />
+				</a>
+			</div>
+		</body>
+	</html>
+	"} );
+
+	return (deliver);
+}
