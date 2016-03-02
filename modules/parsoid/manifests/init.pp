@@ -48,6 +48,7 @@ class parsoid {
                 'islamwissenschaft',
                 'izanagi',
                 'lbsges',
+                'lclwiki'
                 'luckandlogic',
                 'mecanon',
                 'hobbies',
