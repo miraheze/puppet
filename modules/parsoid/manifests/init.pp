@@ -55,6 +55,7 @@ class parsoid {
                 'hshsinfoportal',
                 'meta',
                 'nwp',
+                'newtrend',
                 'partup',
                 'pflanzen',
                 'pq',
