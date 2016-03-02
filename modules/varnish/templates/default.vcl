@@ -23,8 +23,8 @@ probe mwhealth {
 	.request = "GET /wiki/Miraheze HTTP/1.1"
 		"Host: meta.miraheze.org"
 		"Connection: close";
-	# Check each 5s
-	.interval = 5s;
+	# Check each 10s
+	.interval = 10s;
 	# May not take longer than 8s to load. Ideally this should be lowered, but sometimes latency to the NL servers could suck.
 	.timeout = 8s;
 	# At least 4 out of 5 checks must be successful
