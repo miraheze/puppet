@@ -57,14 +57,3 @@ users:
     name: ndkilla
     realname: NDKilla
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEA483LlTZ0FqGGJSKYHkQXSo7NUmmziIbb/KH9NjwEO8YihLG2rAMh9L2C2LX4ggaSxSMlupopL3lXr8yG8FqVjX1fVofGEj9adGsg48lhrbauYFQ9ZKK5AGuYHzyKkONOIpHio0eQ5z6GSZdnHOI22Idn7IEqghTnGDFb8PVqf7fjiS2LIGhoZJWVkSFuxQNHpgX6OyqbsolE3sp8ZjfY4zX+KWqavs1LogWEqNQNM3eUNN7higG6/lJPTOCJicP0Z8pwRP4I5xpbbhLxRNojEXrYocxb7PzZfSojZnHNsospLN4ssPYBrhlHhGVL6er25vBEbyKGszT7Xx7907oMKw== rsa-key-20151221]
-  southparkfan2:
-    ensure: present
-    uid: 1005
-    name: southparkfan2
-    realname: Southparkfan
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAjhc+iyIRGCYNhcOSFfx/1nQMdOByX
-5I1cdKBrpndyhkQ3Ln/2o1nSKatFuhFf166PTuIIVG1xfCdkcdOAJqpeDzLm9SUURt/jhAsPkf9h6Wni
-ATz6AE+j/+WLVnl0jaAPy5htT/Cf1mSf268mUHcJBb263UItoN0EhdhH1vq/R2XOJiMXxTk4wz7S2yac
-dIG0HtxLKbGmlmK1FoQQ7RYtKzdm1pxHENWBrf+OCEKN9Mx/EFTWwubBB/JGfIqsu0T3fZusGsSX6Nmg
-FzsHZhKaVQ2hQAr+tXCOgCHpxpRevZ+3EQg6SM3n25bjM9bZ/Pa9nDK0kGcz4nOhpMs5C/6Kw== sout
-hparkfan@miraheze-production]
