@@ -10,6 +10,7 @@ recver = None
  
 class RCBot(irc.IRCClient):
     nickname = "<%= @nickname %>"
+    password = "<%= @password %>"
     channel = "<%= @channel %>"
     def signedOn(self):
         global recver

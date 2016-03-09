@@ -1,6 +1,7 @@
 # class: irc::ircrcbot
 class irc::ircrcbot(
     $nickname     = undef,
+    $password     = undef,
     $network      = undef,
     $network_port = '6667',
     $channel      = undef,
