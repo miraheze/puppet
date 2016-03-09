@@ -3,7 +3,7 @@ class mediawiki {
     include mediawiki::favicons
     include mediawiki::cron
 
-    if $jobrunner {
+    if hiera(jobrunner) {
         include mediawiki::jobrunner
     }
 
