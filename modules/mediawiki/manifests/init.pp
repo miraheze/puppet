@@ -1,7 +1,11 @@
 # class: mediawiki
 class mediawiki {
-    include mediawiki::cron
     include mediawiki::favicons
+    include mediawiki::cron
+
+    if $jobrunner {
+        include mediawiki::jobrunner
+    }
 
     file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/srv/mediawiki-static', '/var/log/mediawiki' ]:
         ensure => 'directory',
