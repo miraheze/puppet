@@ -10,7 +10,7 @@ recver = None
  
 class RCBot(irc.IRCClient):
     nickname = "<%= @nickname %>"
-    password = "<%= @password %>"
+    password = "<%= scope['private::irc::mirahezebots_password'] %>"
     channel = "<%= @channel %>"
     def signedOn(self):
         global recver

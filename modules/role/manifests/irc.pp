@@ -3,7 +3,6 @@ class role::irc {
 
     class { 'irc::ircrcbot':
         nickname     => 'MirahezeRC',
-        password     => $mirahezebots_password,
         network      => 'chat.freenode.net',
         network_port => '6667',
         channel      => '#miraheze-feed',
