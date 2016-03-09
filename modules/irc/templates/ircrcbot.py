@@ -40,6 +40,6 @@ class Echo(DatagramProtocol):
         global recver
         recver.gotUDP(data)
 
-reactor.listenUDP(5070, Echo())
-reactor.connectTCP("<%= @network %>", 6667, RCFactory())
+reactor.listenUDP(<%= @udp_port %>, Echo())
+reactor.connectTCP("<%= @network %>", <%= @network_port %>, RCFactory())
 reactor.run()

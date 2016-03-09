@@ -1,10 +1,11 @@
 # class: irc::ircrcbot
 class irc::ircrcbot(
-    $nickname   = undef,
-    $network    = undef,
-    $channel    = undef,
-    $port       = '5070',
-    $sleeptime  = '0.5',
+    $nickname     = undef,
+    $network      = undef,
+    $network_port = '6667',
+    $channel      = undef,
+    $udp_port     = '5070',
+    $sleeptime    = '0.5',
 ) {
     include ::irc
     
