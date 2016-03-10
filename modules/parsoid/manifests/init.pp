@@ -51,6 +51,7 @@ class parsoid {
                 'lclwiki'
                 'luckandlogic',
                 'mecanon',
+                'hftqms',
                 'hobbies',
                 'hshsinfoportal',
                 'meta',
