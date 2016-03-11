@@ -5,6 +5,7 @@ class base {
     include base::timezone
     include base::upgrades
     include base::monitoring
+    include base::rsyslog
     include base::ufw
     include base::ssl
     include ssh
