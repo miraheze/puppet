@@ -55,6 +55,7 @@ class mediawiki {
     ssl::cert { 'boulderwiki.org': }
     ssl::cert { 'wiki.zepaltusproject.com': }
     ssl::cert { 'universebuild.com': }
+    ssl::cert { 'wiki.dottorconte.eu': }
 
     $custom_domains = [
                         {
@@ -100,6 +101,10 @@ class mediawiki {
                         {
                              url => 'wiki.zepaltusproject.com',
                              ca  => 'Gandi',
+                        },
+                        {
+                             url => 'wiki.dottorconte.eu',
+                             ca  => 'LetsEncrypt',
                         },
     ]
 
