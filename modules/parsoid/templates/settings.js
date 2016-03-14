@@ -9,6 +9,7 @@ exports.setup = function( parsoidConfig ) {
 	// Wiki end points - Custom domains only
 	parsoidConfig.setInterwiki( 'allthetropeswiki', 'https://allthetropes.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'boulderwikiwiki', 'https://boulderwiki.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'dottorcontewiki', 'https://wiki.dottorconte.eu/w/api.php' );
 	parsoidConfig.setInterwiki( 'permanentfuturelabwiki', 'https://permanentfuturelab.wiki/w/api.php');
 	parsoidConfig.setInterwiki( 'spiralwiki', 'https://spiral.wiki/w/api.php' );
 	parsoidConfig.setInterwiki( 'universebuildwiki', 'https://universebuild.com/w/api.php' );
