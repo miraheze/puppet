@@ -65,6 +65,7 @@ class parsoid {
                 'ric',
                 'safiria',
                 'shopping',
+                'soshomophobie',
                 'sirikot',
                 'taylor',
                 'test',
