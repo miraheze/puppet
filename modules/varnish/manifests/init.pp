@@ -61,6 +61,7 @@ class varnish {
     ssl::cert { 'wiki.zepaltusproject.com': }
     ssl::cert { 'universebuild.com': }
     ssl::cert { 'wiki.dottorconte.eu': }
+    ssl::cert { 'wiki.valentinaproject.org': }
 
     nginx::site { 'mediawiki':
         ensure => present,
