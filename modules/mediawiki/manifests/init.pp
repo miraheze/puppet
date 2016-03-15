@@ -56,6 +56,8 @@ class mediawiki {
     ssl::cert { 'wiki.zepaltusproject.com': }
     ssl::cert { 'universebuild.com': }
     ssl::cert { 'wiki.dottorconte.eu': }
+    ssl::cert { 'wiki.valentinaproject.org': }
+
 
     $custom_domains = [
                         {
