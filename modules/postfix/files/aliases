@@ -25,7 +25,7 @@ stewards: southparkfan,ndkilla,john
 donate: bslaabs@gmail.com,southparkfan,john
 
 # root spam
-root: southparkfan
+root: /dev/null
 
 # campaign
 campaign: southparkfan,john
