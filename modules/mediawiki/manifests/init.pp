@@ -106,6 +106,10 @@ class mediawiki {
                              url => 'wiki.dottorconte.eu',
                              ca  => 'LetsEncrypt',
                         },
+                        {
+                             url => 'wiki.valentinaproject.org',
+                             ca => 'StartSSL',
+                        },
     ]
 
     nginx::site { 'mediawiki':
