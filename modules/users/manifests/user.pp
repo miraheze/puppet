@@ -26,14 +26,18 @@ define users::user(
 
     if $ensure == 'present' {
         file { "/home/${name}":
-            ensure => 'present',
-            source => "puppet:///modules/users/home/${name}/",
-            recurse => 'remote',
-            mode => '0644',
-            owner => $name,
-            group => $gid,
-            force => true,
-            require => User[$name],
+            ensure       => 'present',
+            source       => [
+                "puppet:///modules/users/home/${name}/",
+                'puppet:///modules/users/home/skel',
+            ],
+            sourceselect => 'first',
+            recurse      => 'remote',
+            mode         => '0644',
+            owner        => $name,
+            group        => $gid,
+            force        => true,
+            require      => User[$name],
         }
     }
 
