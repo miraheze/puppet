@@ -9,7 +9,7 @@ ssl:
     url: 'anuwiki.com'
     ca: 'Godaddy'
   oneagencydunedin:
-    url: 'oneagencydunedun.wiki'
+    url: 'oneagencydunedin.wiki'
     ca: 'Comodo'
   spiral:
     url: 'spiral.wiki'
