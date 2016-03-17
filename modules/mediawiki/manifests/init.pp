@@ -2,6 +2,7 @@
 class mediawiki {
     include mediawiki::favicons
     include mediawiki::cron
+    include mediawiki::nginx
 
     if hiera(jobrunner) {
         include mediawiki::jobrunner
