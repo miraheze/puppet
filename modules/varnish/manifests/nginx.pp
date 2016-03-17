@@ -1,4 +1,4 @@
-# class to handle Varnish nginx (using heria coolness)
+# class to handle Varnish nginx (using hiera coolness)
 class varnish::nginx {
     $sslcerts = hiera_hash('ssl')
 

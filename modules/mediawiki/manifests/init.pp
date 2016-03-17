@@ -114,11 +114,6 @@ class mediawiki {
                         },
     ]
 
-    nginx::site { 'mediawiki':
-        ensure    => present,
-        content   => template('mediawiki/mediawiki.conf'),
-    }
-
     nginx::conf { 'mediawiki-includes':
         ensure => present,
         source => 'puppet:///modules/mediawiki/nginx/mediawiki-includes.conf',
