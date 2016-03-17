@@ -1,6 +1,7 @@
 # class: varnish
 class varnish {
     include varnish::nginx
+    include ssl::hiera
 
     package { [ 'varnish', 'stunnel4' ]:
         ensure => present,
@@ -49,21 +50,8 @@ class varnish {
     }
 
     ssl::cert { 'wildcard.miraheze.org': }
-    ssl::cert { 'spiral.wiki': }
-    ssl::cert { 'anuwiki.com': }
-    ssl::cert { 'antiguabarbudacalypso.com': }
-    ssl::cert { 'permanentfuturelab.wiki': }
     ssl::cert { 'secure.reviwiki.info': }
-    ssl::cert { 'wiki.printmaking.be': }
-    ssl::cert { 'private.revi.wiki': }
     ssl::cert { 'allthetropes.org': }
-    ssl::cert { 'oneagencydunedin.wiki': }
-    ssl::cert { 'publictestwiki.com': }
-    ssl::cert { 'boulderwiki.org': }
-    ssl::cert { 'wiki.zepaltusproject.com': }
-    ssl::cert { 'universebuild.com': }
-    ssl::cert { 'wiki.dottorconte.eu': }
-    ssl::cert { 'wiki.valentinaproject.org': }
 
     $custom_domains = [
                         {
