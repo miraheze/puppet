@@ -118,7 +118,6 @@ class varnish {
                         },
     ]
 
-
     nginx::site { 'mediawiki':
         ensure  => present,
         content => template('varnish/mediawiki.conf'),
