@@ -1,6 +1,7 @@
 # define resource handler, same as current manual cert handler
 define ssl::hiera::certs (
     $url,
+    $ca,
 ) {
     file { "/etc/ssl/certs/${url}.crt":
         ensure => 'present',
