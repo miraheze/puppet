@@ -132,6 +132,17 @@ class icinga {
         notify  => Service['icinga'],
     }
 
+    $sslcerts = hiera_hash('ssl')
+
+    file { '/etc/icinga/config/ssl.cfg':
+        ensure => 'present',
+        content => template('icinga/ssl.cfg'),
+        owner => 'icinga',
+        group => 'icinga',
+        mode    => '0664',
+        require => Package['icinga'],
+        notify  => Service['icinga'],
+    }
 
     class { 'icinga::plugins':
         require => Package['icinga'],
