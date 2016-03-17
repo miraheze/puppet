@@ -1,5 +1,7 @@
 # class: varnish
 class varnish {
+    include varnish::nginx
+
     package { [ 'varnish', 'stunnel4' ]:
         ensure => present,
     }
@@ -117,11 +119,6 @@ class varnish {
                              ca => 'StartSSL',
                         },
     ]
-
-    nginx::site { 'mediawiki':
-        ensure  => present,
-        content => template('varnish/mediawiki.conf'),
-    }
 
     file { '/etc/nginx/sites-enabled/default':
         ensure => absent,
