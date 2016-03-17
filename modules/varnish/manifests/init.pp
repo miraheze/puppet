@@ -1,5 +1,7 @@
 # class: varnish
 class varnish {
+    include varnish::nginx
+
     package { [ 'varnish', 'stunnel4' ]:
         ensure => present,
     }
@@ -63,10 +65,60 @@ class varnish {
     ssl::cert { 'wiki.dottorconte.eu': }
     ssl::cert { 'wiki.valentinaproject.org': }
 
-    nginx::site { 'mediawiki':
-        ensure => present,
-        source => 'puppet:///modules/varnish/nginx/mediawiki.conf',
-    }
+    $custom_domains = [
+                        {
+                             url => 'boulderwiki.org',
+                             ca  => 'StartSSL',
+                        },
+                        {
+                             url => 'antiguabarbudacalypso.com',
+                             ca  => 'StartSSL',
+                        },
+                        {
+                             url => 'anuwiki.com',
+                             ca  => 'Godaddy',
+                        },
+                        {
+                             url => 'oneagencydunedin.wiki',
+                             ca  => 'Comodo',
+                        },
+                        {
+                             url => 'spiral.wiki',
+                             ca  => 'Gandi',
+                        },
+                        {
+                             url => 'wiki.printmaking.be',
+                             ca  => 'StartSSL',
+                        },
+                        {
+                             url => 'permanentfuturelab.wiki',
+                             ca  => 'StartSSL',
+                        },
+                        {
+                             url => 'private.revi.wiki',
+                             ca  => 'Comodo',
+                        },
+                        {
+                             url => 'publictestwiki.com',
+                             ca  => 'Comodo',
+                        },
+                        {
+                             url => 'universebuild.com',
+                             ca => 'Comodo',
+                        },
+                        {
+                             url => 'wiki.zepaltusproject.com',
+                             ca  => 'Gandi',
+                        },
+                        {
+                             url => 'wiki.dottorconte.eu',
+                             ca  => 'LetsEncrypt',
+                        },
+                        {
+                             url => 'wiki.valentinaproject.org',
+                             ca => 'StartSSL',
+                        },
+    ]
 
     file { '/etc/nginx/sites-enabled/default':
         ensure => absent,

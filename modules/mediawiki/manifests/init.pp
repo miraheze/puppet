@@ -2,6 +2,7 @@
 class mediawiki {
     include mediawiki::favicons
     include mediawiki::cron
+    include mediawiki::nginx
 
     if hiera(jobrunner) {
         include mediawiki::jobrunner
@@ -113,11 +114,6 @@ class mediawiki {
                              ca => 'StartSSL',
                         },
     ]
-
-    nginx::site { 'mediawiki':
-        ensure    => present,
-        content   => template('mediawiki/mediawiki.conf'),
-    }
 
     nginx::conf { 'mediawiki-includes':
         ensure => present,
