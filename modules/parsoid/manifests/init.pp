@@ -70,6 +70,7 @@ class parsoid {
                 'soshomophobie',
                 'sirikot',
                 'taylor',
+                'teleswiki',
                 'test',
                 'tochki',
                 'torejorg',
