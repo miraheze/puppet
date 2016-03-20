@@ -15,7 +15,7 @@ noreply: /dev/null
 
 # group aliases
 ops: operations
-sysadmin: operations, revi@reviwiki.info, ndkilla
+sysadmin: operations, revi, ndkilla
 
 # destination aliases
 operations: southparkfan,john
@@ -29,6 +29,9 @@ root: /dev/null
 
 # campaign
 campaign: southparkfan,john
+
+# revi
+revi: revi@reviwiki.info
 
 # southparkfan
 southparkfan: southparkfan223@hotmail.com
