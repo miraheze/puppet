@@ -58,6 +58,7 @@ class parsoid {
                 'ndtest',
                 'newtrend',
                 'nwp',
+                'oyeavdelingen',
                 'partup',
                 'pflanzen',
                 'pq',
