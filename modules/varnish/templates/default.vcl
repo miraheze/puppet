@@ -34,22 +34,22 @@ probe mwhealth {
 	.expected_response = 200;
 }
 
-backend mw1 {
-	.host = "127.0.0.1";
-	.port = "8080";
-	.probe = mwhealth;
-}
-
-#backend mw2 {
+#backend mw1 {
 #	.host = "127.0.0.1";
-#	.port = "8081";
+#	.port = "8080";
 #	.probe = mwhealth;
 #}
 
+backend mw2 {
+	.host = "127.0.0.1";
+	.port = "8081";
+	.probe = mwhealth;
+}
+
 sub vcl_init {
 	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(mw1);
-	#mediawiki.add_backend(mw2);
+	#mediawiki.add_backend(mw1);
+	mediawiki.add_backend(mw2);
 }
 
 
