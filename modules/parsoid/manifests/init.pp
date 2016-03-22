@@ -57,6 +57,7 @@ class parsoid {
                 'meta',
                 'ndtest',
                 'newtrend',
+                'nidda23',
                 'nwp',
                 'oyeavdelingen',
                 'partup',
