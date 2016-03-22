@@ -40,16 +40,16 @@ backend mw1 {
 	.probe = mwhealth;
 }
 
-backend mw2 {
-	.host = "127.0.0.1";
-	.port = "8081";
-	.probe = mwhealth;
-}
+#backend mw2 {
+#	.host = "127.0.0.1";
+#	.port = "8081";
+#	.probe = mwhealth;
+#}
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
 	mediawiki.add_backend(mw1);
-	mediawiki.add_backend(mw2);
+	#mediawiki.add_backend(mw2);
 }
 
 
