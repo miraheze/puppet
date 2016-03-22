@@ -121,7 +121,7 @@ sub recv_purge {
 
 sub vcl_recv {
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
-		set req.backend_hint = mw1;
+		#set req.backend_hint = mw1;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
