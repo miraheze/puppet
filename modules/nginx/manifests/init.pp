@@ -11,4 +11,9 @@ class nginx {
         provider   => 'debian',
         hasrestart => true,
     }
+
+    file { '/etc/logrotate.d/nginx':
+        ensure => present,
+        source => 'puppet:///modules/nginx/logrotate',
+    }
 }
