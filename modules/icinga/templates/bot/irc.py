@@ -25,6 +25,7 @@ irc.connect((server, port))
 irc.setblocking(False)
 irc.send("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n")
 irc.send("NICK "+ botnick +"\n")
+irc.send("NICKSERV IDENTIFY mirahezebots <%= scope['private::irc::mirahezebots_password'] %>\n")
 irc.send("JOIN "+ channel +"\n")
 
 

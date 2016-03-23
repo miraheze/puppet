@@ -186,9 +186,9 @@ class icinga {
     }
 
     file { '/etc/icinga/irc.py':
-        ensure => present,
-        source => 'puppet:///modules/icinga/bot/irc.py',
-        mode   => '0551',
+        ensure  => present,
+        content => template('icinga/bot/irc.py'),
+        mode    => '0551',
     }
 
 }
