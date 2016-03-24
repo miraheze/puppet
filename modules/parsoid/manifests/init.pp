@@ -32,6 +32,7 @@ class parsoid {
                 'aryaman',
                 'biblicalwiki',
                 'braindump',
+                'carving',
                 'cbmedia',
                 'chandrusweths',
                 'christipedia',
