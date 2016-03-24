@@ -38,4 +38,6 @@ ssl:
   valentinaproject:
     url: 'wiki.valentinaproject.org'
     ca: 'StartSSL'
-
+  wikiparkinson:
+    url: 'wikiparkinson.org'
+    ca: 'StartSSL'
