@@ -36,7 +36,7 @@ class parsoid {
                 'cbmedia',
                 'chandrusweths',
                 'christipedia',
-                'clementsworldbuilding'
+                'clementsworldbuilding',
                 'clicordi',
                 'cssandjsschoolboard',
                 'development',
