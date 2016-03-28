@@ -2,7 +2,7 @@
 class role::staticserver {
     nfs::server { 'static':
         mountroot   => '/srv/mediawiki-static',
-        exportsfile => 'puppet:///modules/role/files/staticserver/exports',
+        exportsfile => 'puppet:///modules/role/staticserver/exports',
     }
 
     ufw::allow { 'nfs annoyance (mw1)':
