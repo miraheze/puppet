@@ -5,7 +5,7 @@ class standard {
     include base
 }
 
-node 'bacula1.miraheze.org' {
+node 'bacula1' {
     include standard
     include bacula::director
 }
