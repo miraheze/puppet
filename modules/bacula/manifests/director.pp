@@ -19,7 +19,7 @@ class bacula::director {
         require => Package['bacula-server'],
     }
 
-    $password = hiera('bacula::director::password)
+    $password = hiera('bacula::director::password')
 
     file { ['/bacula/backup', '/bacula/restore']:
         esnure => directory,
