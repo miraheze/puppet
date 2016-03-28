@@ -9,7 +9,7 @@ class bacula::client {
         require => Package['bacula-client'],
     }
 
-    file { '/bacula/restore':
+    file { ['/bacula', '/bacula/restore']:
         ensure => directory,
         owner  => 'bacula',
     }
