@@ -22,7 +22,7 @@ class bacula::director {
     $password = hiera('bacula::director::password')
 
     file { ['/bacula/backup', '/bacula/restore']:
-        esnure => directory,
+        ensure => directory,
         owner  => 'bacula',
     }
 
