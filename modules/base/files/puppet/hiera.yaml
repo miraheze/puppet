@@ -5,4 +5,5 @@
 :hierarchy:
   - "private/%{::hostname}"
   - "hosts/%{::hostname}"
+  - "private/common"
   - common
