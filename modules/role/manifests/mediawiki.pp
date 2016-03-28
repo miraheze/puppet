@@ -19,8 +19,6 @@ class role::mediawiki {
 
     file { '/mnt/mediawiki-static':
         ensure => directory,
-        owner  => 'www-data',
-        group  => 'www-data',
     }
 
     mount { '/mnt/mediawiki-static':
