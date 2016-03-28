@@ -3,5 +3,6 @@
 :yaml:
   :datadir: /etc/puppet/hieradata
 :hierarchy:
+  - "private/%{::hostname}"
   - "hosts/%{::hostname}"
   - common
