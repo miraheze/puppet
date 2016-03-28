@@ -5,6 +5,11 @@ class standard {
     include base
 }
 
+node 'bacula1.miraheze.org' {
+    include standard
+    include bacula::director
+}
+
 node /^cp[12]\.miraheze\.org$/ {
     include standard
     include role::varnish
