@@ -41,3 +41,6 @@ ssl:
   wikiparkinson:
     url: 'wikiparkinson.org'
     ca: 'StartSSL'
+  oyeavdelingen:
+    url: 'oyeavdelingen.org'
+    ca: 'Comodo'
