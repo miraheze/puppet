@@ -14,14 +14,16 @@ node /^cp[12]\.miraheze\.org$/ {
     include standard
     include role::varnish
 
-    if $::hostname == 'cp1.miraheze.org' {
+    if $::hostname == 'cp1' {
         include role::staticserver
+        include bacula::client
     }
 }
 
 node 'db1.miraheze.org' {
     include standard
     include role::db
+    include bacula::client
 }
 
 node 'misc1.miraheze.org' {
@@ -40,6 +42,10 @@ node 'misc1.miraheze.org' {
 node /^mw[12]\.miraheze\.org$/ {
     include standard
     include role::mediawiki
+
+    if $::hostname == 'mw1' {
+        include bacula::client
+    }
 }
 
 node 'ns1.miraheze.org' {
