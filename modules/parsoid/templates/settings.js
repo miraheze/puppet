@@ -15,6 +15,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'universebuildwiki', 'https://universebuild.com/w/api.php' );
 	parsoidConfig.setInterwiki( 'valentinaprojectwiki', 'https://wiki.valentinaproject.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'oyeavdelingenwiki', 'https://oyeavdelingen.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'carvingwiki', 'https://carving.wiki/w/api.php' );
 
 	// Don't load WMF wikis
 	parsoidConfig.loadWMF = false;
