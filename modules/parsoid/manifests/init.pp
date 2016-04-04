@@ -43,6 +43,7 @@ class parsoid {
                 'drunkenpeasantswiki',
                 'elainarmua',
                 'extload',
+                'ernaehrungsrathh',
                 'essway',
                 'etpo',
                 'games',
