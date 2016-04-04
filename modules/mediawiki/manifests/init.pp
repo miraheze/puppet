@@ -25,6 +25,7 @@ class mediawiki {
     }
 
     $packages = [
+        'dvipng',
         'imagemagick',
         'ploticus',
         'ttf-freefont',
