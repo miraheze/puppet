@@ -3,7 +3,6 @@
 # Used for CORE crons which should be ran on every MediaWiki server.
 class mediawiki::cron {
     # HACK BAD BAD HACK
-    # Temporarily disabled -- Southparkfan 29/03/2016
     cron { 'hhvm_hack_restart':
         ensure  => present,
         command => "/usr/sbin/service hhvm restart",
