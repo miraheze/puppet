@@ -5,7 +5,7 @@ class mediawiki::cron {
     # HACK BAD BAD HACK
     # Temporarily disabled -- Southparkfan 29/03/2016
     cron { 'hhvm_hack_restart':
-        ensure  => absent,
+        ensure  => present,
         command => "/usr/sbin/service hhvm restart",
         user    => 'root',
         hour    => '*/2',
