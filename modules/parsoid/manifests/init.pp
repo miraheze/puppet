@@ -40,6 +40,7 @@ class parsoid {
                 'clicordi',
                 'cssandjsschoolboard',
                 'development',
+                'dicfic',
                 'drunkenpeasantswiki',
                 'elainarmua',
                 'extload',
