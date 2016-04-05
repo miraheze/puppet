@@ -70,7 +70,7 @@ class parsoid {
                 'safiria',
                 'shopping',
                 'soshomophobie',
-                'stellachronica'
+                'stellachronica',
                 'sirikot',
                 'taylor',
                 'teleswiki',
