@@ -71,6 +71,7 @@ class parsoid {
                 'safiria',
                 'shopping',
                 'soshomophobie',
+                'stellachronica',
                 'sirikot',
                 'taylor',
                 'teleswiki',
