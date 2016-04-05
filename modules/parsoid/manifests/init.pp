@@ -46,6 +46,7 @@ class parsoid {
                 'ernaehrungsrathh',
                 'essway',
                 'etpo',
+                'foodsharinghamburg',
                 'games',
                 'gen',
                 'hftqms',
