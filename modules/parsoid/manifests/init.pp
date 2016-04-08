@@ -30,7 +30,7 @@ class parsoid {
                 'aktpos',
                 'applebranch',
                 'aryaman',
-                'bgowiki',
+                'bgo',
                 'biblicalwiki',
                 'braindump',
                 'carving',
