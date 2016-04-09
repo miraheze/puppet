@@ -4,7 +4,7 @@
 class mediawiki::cron {
     # HACK BAD BAD HACK
     cron { 'hhvm_hack_restart':
-        ensure  => present,
+        ensure  => absent,
         command => "/usr/sbin/service hhvm restart",
         user    => 'root',
         hour    => '*/2',
