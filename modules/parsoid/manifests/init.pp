@@ -42,6 +42,7 @@ class parsoid {
                 'cssandjsschoolboard',
                 'development',
                 'dicfic',
+                'dmw',
                 'drunkenpeasantswiki',
                 'elainarmua',
                 'extload',
