@@ -37,7 +37,7 @@ class hhvm {
     }
 
     service { 'hhvm':
-        ensure => 'running',
+        ensure => 'stopped',
     }
 
     file { '/etc/hhvm/php.ini':
