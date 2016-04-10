@@ -60,6 +60,7 @@ class parsoid {
                 'lbsges',
                 'lclwiki',
                 'littlebigplanet',
+                'lizard',
                 'luckandlogic',
                 'mecanon',
                 'meta',
