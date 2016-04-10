@@ -58,6 +58,7 @@ class parsoid {
                 'izanagi',
                 'lbsges',
                 'lclwiki',
+                'littlebigplanet',
                 'luckandlogic',
                 'mecanon',
                 'meta',
