@@ -4,5 +4,5 @@ GRANT USAGE
     ON *.* TO 'phabricator'@'%'
     IDENTIFIED BY '<%= scope.lookupvar('private::mariadb::phabricator_password') %>';
 
-GRANT ALL PRIVILEDGES
+GRANT ALL PRIVILEGES
     ON `phabricator%`.* TO 'phabricator'@'%';
