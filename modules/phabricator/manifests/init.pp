@@ -4,6 +4,6 @@ class phabricator {
 
     apache::site { 'phabricator.miraheze.org':
         ensure => present,
-        source => 'pupper:///modules/phabricator/apache.conf
+        source => 'puppet:///modules/phabricator/apache.conf',
     }
 }
