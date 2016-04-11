@@ -35,3 +35,6 @@ revi: revi@reviwiki.info
 
 # southparkfan
 southparkfan: southparkfan223@hotmail.com
+
+# phabricator testing
+phabricatortest: |/srv/phab/phabricator/scripts/mail/mail_handler.php
