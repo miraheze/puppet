@@ -36,6 +36,7 @@ node 'misc1.miraheze.org' {
     include role::piwik
     include role::redis
     include role::surveys
+    include role::phabricator
     include bacula::client
 }
 
