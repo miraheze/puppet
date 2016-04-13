@@ -14,3 +14,26 @@ phabricator.show-prototypes: true
 phabricator.base-uri: "https://phabricator.miraheze.org/"
 security.require-https: true
 repository.default-local-path: "/srv/phab/repos/"
+
+# Disable some Phabricator applications
+phabricator.uninstalled-applications:
+  PhabricatorAlmanacApplication: true # we don't have resources to manage
+  PhabricatorChatLogApplication: true # deprecated
+  PhabricatorDivinerApplication: true # we don't need Phab docs locally
+  PhabricatorDryDockApplication: true # we don't have resources to manage
+  PhabricatorFactsApplication: true # we don't have fact sources to graph
+  PhabricatorFundApplication: true # we don't need to fund single projects
+  PhabricatorHarbormasterApplication: true # we don't need local CI / we don't have resources
+  PhabricatorMultimeterApplication: true # performance sampling we don't have
+  PhabricatorNuanceApplication: true # we're not a call center
+  PhabricatorOAuthServerApplication: true # we're running MediaWiki as an OAuth
+  PhabricatorOwnersApplication: true # we don't manage source on Phab
+  PhabricatorPhameApplication: true # we don't need a blog
+  PhabricatorPhluxApplication: true # puppet has hiera
+  PhabricatorPhortuneApplication: true # we don't need billing stuff
+  PhabricatorPhragmentApplication: true # puppet has hiera
+  PhabricatorPhrequentApplication: true # SPF spends all of his time well, we don't need to track it
+  PhabricatorPhrictionApplication: true # if we operate this, there will be phriction with MediaWiki
+  PhabricatorPhurlApplication: true # we already have a URL shortener
+  PhabricatorPonderApplication: true # I wonder if we need a Q&A system
+  PhabricatorReleephApplication: true # we don't need to releeph GitHub of more work
