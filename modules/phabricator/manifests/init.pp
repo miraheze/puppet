@@ -32,6 +32,13 @@ class phabricator {
         require   => File['/srv/phab'],
     }
 
+    file { '/srv/phab/repos':
+        ensure  => directory,
+        mode    => 0755,
+        owner   => 'www-data',
+        group   => 'www-data',
+    }
+
     $module_path = get_module_path($module_name)
     $phab_yaml = loadyaml("${module_path}/data/config.yaml")
     $phab_private = {
