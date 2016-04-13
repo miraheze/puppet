@@ -21,7 +21,7 @@
 #
 # From Wikimedia Foundation Puppet repo
 # Source: https://raw.githubusercontent.com/wikimedia/operations-puppet/production/modules/wmflib/lib/puppet/parser/functions/ordered_json.rb
-# Author: TwentyAfterFour (20after4)
+# Author: Ryan Lane
 
 def ordered_json(o)
   case o
