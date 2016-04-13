@@ -1,0 +1,16 @@
+# MySQL
+mysql.port: 3306
+mysql.user: 'phabricator'
+mysql.host: '185.52.1.77'
+
+# SMTP
+phpmailer.smtp-port: 587
+phpmailer.smtp-protocol: 'tls'
+phpmailer.smtp-user: 'noreply'
+phpmailer.smtp-host: 'mail.miraheze.org'
+
+# Phabricator
+phabricator.show-prototypes: true
+phabricator.base-uri: "https://phabricator.miraheze.org/"
+security.require-https: true
+repository.default-local-path: "/srv/phab/repos/"

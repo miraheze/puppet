@@ -31,4 +31,13 @@ class phabricator {
         origin    => 'https://github.com/phacility/phabricator.git',
         require   => File['/srv/phab'],
     }
+
+    $module_path = get_module_path($module_name)
+    $phab_yaml = loadyaml("${module_path}/data/config.yaml")
+    $phab_private = {
+        'mysql.pass'              => $private::mariadb::phabricator_password,
+        'phpmailer.smtp-password' => hiera('phabricator::noreply_password'),
+    }
+
+    $phab_settings = merge($phab_yaml, $phab_private)
 }
