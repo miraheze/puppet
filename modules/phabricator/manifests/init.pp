@@ -47,4 +47,9 @@ class phabricator {
     }
 
     $phab_settings = merge($phab_yaml, $phab_private)
+
+    file { '/srv/phab/phabricator/conf/local/local.json
+        ensure  => present,
+        content => template('phabricator/local.json.erb'),
+    }
 }
