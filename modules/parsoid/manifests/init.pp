@@ -55,6 +55,7 @@ class parsoid {
                 'hftqms',
                 'hobbies',
                 'hshsinfoportal',
+                'idtest',
                 'islamwissenschaft',
                 'izanagi',
                 'lbsges',
