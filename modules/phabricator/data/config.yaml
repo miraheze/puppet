@@ -24,6 +24,34 @@ repository.default-local-path: "/srv/phab/repos/"
 policy.allow-public: true
 user.require-real-name: false
 
+# Maniphest priorities
+maniphest.priorities:
+  '100':
+    name: 'Unbreak Now!'
+    short: 'Unbreak!'
+    color: 'pink'
+    keywords: ['unbreak']
+  '90':
+    name: 'Needs Triage'
+    short: 'Triage'
+    color: 'violet'
+    keywords: ['triage']
+  '75':
+    name: 'High'
+    short: 'High'
+    color: 'red'
+    keywords: ['high']
+  '50':
+    name: 'Normal'
+    short: 'Normal'
+    color: 'orange'
+    keywords: ['normal']
+  '25':
+    name: 'Low'
+    short: 'Low'
+    color: 'sky'
+    keywords: ['low']
+
 # Disable some Phabricator applications
 phabricator.uninstalled-applications:
   PhabricatorAlmanacApplication: true # we don't have resources to manage
