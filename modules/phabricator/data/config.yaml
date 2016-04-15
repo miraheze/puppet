@@ -52,6 +52,38 @@ maniphest.priorities:
     color: 'sky'
     keywords: ['low']
 
+maniphest.statuses:
+  'open':
+    name: 'Open'
+    special: 'default'
+  'resolved':
+    name: 'Resolved'
+    name.full: 'Closed, Resolved'
+    closed: true
+    special: 'closed'
+    transaction.icon: 'fa-check-circle'
+    keywords: ['closed', 'fixed', 'resolved']
+  'invalid':
+    name: 'Invalid'
+    name.full: 'Closed, Invalid'
+    closed: true
+    transaction.icon: 'fa-minus-circle'
+    claim: false
+    keywords: ['invalid']
+  'duplicate':
+    name: 'Duplicate'
+    name.full: 'Closed, Duplicate'
+    closed: true
+    special: 'duplicate'
+    transaction.icon: 'fa-files-o'
+    claim: false
+  'declined':
+    name: 'Declined'
+    name.full: 'Closed, Declined'
+    closed: true
+    transaction.icon: 'fa-thumbs-o-down'
+    keywords: ['declined']
+
 # Disable some Phabricator applications
 phabricator.uninstalled-applications:
   PhabricatorAlmanacApplication: true # we don't have resources to manage
