@@ -8,12 +8,21 @@ phpmailer.smtp-port: 587
 phpmailer.smtp-protocol: 'tls'
 phpmailer.smtp-user: 'noreply'
 phpmailer.smtp-host: 'mail.miraheze.org'
+metamta.default-address: 'noreply@miraheze.org'
+metamta.domain: 'miraheze.org'
+metamta.mail-adapter: 'PhabricatorMailImplementationPHPMailerAdapter'
+
+# Auth
+auth.require-approval: false
 
 # Phabricator
 phabricator.show-prototypes: true
 phabricator.base-uri: "https://phabricator.miraheze.org/"
+phabricator.timezone: 'UTC'
 security.require-https: true
 repository.default-local-path: "/srv/phab/repos/"
+policy.allow-public: true
+user.require-real-name: false
 
 # Disable some Phabricator applications
 phabricator.uninstalled-applications:
