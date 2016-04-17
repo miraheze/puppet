@@ -1,10 +1,16 @@
 # class: hhvm
 class hhvm {
     include ::apt
+
+    if $::hostname == 'mw1' {
+        $version = '3.12'
+    } else {
+        $version = '3.6'
+
     apt::source { 'HHVM_apt':
         comment  => 'HHVM apt repo',
         location => 'http://dl.hhvm.com/debian',
-        release  => 'jessie-lts-3.6',
+        release  => "jessie-lts-${version}",
         repos    => 'main',
         key      => {
             'id'     => '36AEF64D0207E7EEE352D4875A16E7281BE7A449',
