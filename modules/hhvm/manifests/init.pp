@@ -43,8 +43,10 @@ class hhvm {
         require => Apt::Source['HHVM_apt'],
     }
 
-    service { 'hhvm':
-        ensure => 'stopped',
+    if $::hostname != 'mw1' {
+        service { 'hhvm':
+            ensure => 'stopped',
+        }
     }
 
     file { '/etc/hhvm/php.ini':
