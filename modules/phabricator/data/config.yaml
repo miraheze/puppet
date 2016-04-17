@@ -89,8 +89,8 @@ phabricator.uninstalled-applications:
   PhabricatorAlmanacApplication: true # we don't have resources to manage
   PhabricatorChatLogApplication: true # deprecated
   PhabricatorDivinerApplication: true # we don't need Phab docs locally
-  PhabricatorDryDockApplication: true # we don't have resources to manage
-  PhabricatorFactsApplication: true # we don't have fact sources to graph
+  PhabricatorDrydockApplication: true # we don't have resources to manage
+  PhabricatorFactApplication: true # we don't have fact sources to graph
   PhabricatorFundApplication: true # we don't need to fund single projects
   PhabricatorHarbormasterApplication: true # we don't need local CI / we don't have resources
   PhabricatorMultimeterApplication: true # performance sampling we don't have
