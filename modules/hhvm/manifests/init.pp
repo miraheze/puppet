@@ -6,6 +6,7 @@ class hhvm {
         $version = '3.12'
     } else {
         $version = '3.6'
+    }
 
     apt::source { 'HHVM_apt':
         comment  => 'HHVM apt repo',
