@@ -44,9 +44,13 @@ class hhvm {
     }
 
     if $::hostname != 'mw1' {
-        service { 'hhvm':
-            ensure => 'stopped',
-        }
+        $ensure = 'stopped'
+    } else {
+        $ensure = 'running'
+    }
+
+    service { 'hhvm':
+        ensure => $ensure,
     }
 
     file { '/etc/hhvm/php.ini':
