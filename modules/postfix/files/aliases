@@ -8,7 +8,6 @@ www: root
 ftp: root
 abuse: operations
 noc: operations
-security: operations
 
 # noreply death
 noreply: /dev/null
@@ -36,5 +35,6 @@ revi: revi@reviwiki.info
 # southparkfan
 southparkfan: southparkfan223@hotmail.com
 
-# phabricator testing
-phabricatortest: |/srv/phab/phabricator/scripts/mail/mail_handler.php
+# phabricator incoming emails - must be configued with Maniphest
+security: |/srv/phab/phabricator/scripts/mail/mail_handler.php
+csr: |/srv/phab/phabricator/scripts/mail/mail_handler.php
