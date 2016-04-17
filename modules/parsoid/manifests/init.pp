@@ -26,6 +26,7 @@ class parsoid {
     $wikis = [
                 '8station',
                 'adnovum',
+                'aescapes',
                 'air',
                 'aktpos',
                 'applebranch',
