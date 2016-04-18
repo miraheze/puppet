@@ -4,6 +4,7 @@ class icinga {
     include ::apache::mod::php5
     include ::apache::mod::rewrite
     include ::apache::mod::ssl
+    include private::irc
 
     group { 'nagios':
         ensure    => present,

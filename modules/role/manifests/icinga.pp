@@ -1,6 +1,5 @@
 class role::icinga {
     include ::icinga
-    include private::irc
 
     ufw::allow { 'icinga http':
         proto => 'tcp',
