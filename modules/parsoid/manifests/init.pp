@@ -72,6 +72,7 @@ class parsoid {
                 'newtrend',
                 'nidda23',
                 'nwp',
+                'openconstitution',
                 'partup',
                 'pflanzen',
                 'pq',
