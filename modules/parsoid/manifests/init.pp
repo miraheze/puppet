@@ -46,6 +46,7 @@ class parsoid {
                 'dicfic',
                 'dmw',
                 'drunkenpeasantswiki',
+                'dwplive',
                 'elainarmua',
                 'extload',
                 'ernaehrungsrathh',
