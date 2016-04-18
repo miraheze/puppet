@@ -25,6 +25,7 @@ class parsoid {
     # The name of the wiki (or the URL in form <wikiname>.miraheze.org. DO NOT INCLUDE WIKI.
     $wikis = [
                 '8station',
+                'aacenterpriselearning',
                 'adnovum',
                 'aescapes',
                 'air',
