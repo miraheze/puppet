@@ -88,6 +88,8 @@ maniphest.statuses:
 phabricator.uninstalled-applications:
   PhabricatorAlmanacApplication: true # we don't have resources to manage
   PhabricatorChatLogApplication: true # deprecated
+  PhabricatorConpherenceApplication: true # not used, IRC used
+  PhabricatorCountdownApplication: true # niche calendar thing, not useful
   PhabricatorDivinerApplication: true # we don't need Phab docs locally
   PhabricatorDrydockApplication: true # we don't have resources to manage
   PhabricatorFactApplication: true # we don't have fact sources to graph
