@@ -89,6 +89,7 @@ class parsoid {
                 'test',
                 'tochki',
                 'torejorg',
+                'touhouengine',
                 'unikum',
                 'urho3d',
                 'vrgo',
