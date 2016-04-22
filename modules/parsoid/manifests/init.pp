@@ -42,6 +42,7 @@ class parsoid {
                 'clementsworldbuilding',
                 'clicordi',
                 'cssandjsschoolboard',
+                'datachron',
                 'development',
                 'dicfic',
                 'dmw',
