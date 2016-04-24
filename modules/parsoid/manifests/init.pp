@@ -83,6 +83,7 @@ class parsoid {
                 'ric',
                 'safiria',
                 'shopping',
+                'simonjon',
                 'soshomophobie',
                 'stellachronica',
                 'sirikot',
