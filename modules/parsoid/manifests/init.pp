@@ -70,6 +70,7 @@ class parsoid {
                 'luckandlogic',
                 'mecanon',
                 'meta',
+                'mydegree'
                 'ndtest',
                 'newtrend',
                 'nidda23',
