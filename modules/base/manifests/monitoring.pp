@@ -32,11 +32,11 @@ class base::monitoring {
         content => template('base/ganglia/gmond.conf'),
     }
 
-    #service { 'ganglia-monitor':
-    #    ensure => running,
-    #    require => Package['ganglia-monitor'],
-    #    subscribe => File['/etc/ganglia/gmond.conf'],
-    #}
+    service { 'ganglia-monitor':
+        ensure => running,
+        require => Package['ganglia-monitor'],
+        subscribe => File['/etc/ganglia/gmond.conf'],
+    }
 
     # SUDO FOR NRPE
     sudo::user { 'nrpe_sudo':
