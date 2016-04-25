@@ -40,6 +40,11 @@ node 'misc1.miraheze.org' {
     include bacula::client
 }
 
+node 'misc2.miraheze.org' {
+    include standard
+    include role::redis
+}
+
 node /^mw[12]\.miraheze\.org$/ {
     include standard
     include role::mediawiki
