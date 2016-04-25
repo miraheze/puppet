@@ -1,6 +1,16 @@
 class role::ganglia {
     include ::ganglia
 
+    ufw::allow { 'icinga http':
+        proto => 'tcp',
+        port  => '80',
+    }
+
+    ufw::allow { 'icinga https':
+        proto => 'tcp',
+        port  => '443',
+    }
+
     ufw::allow { 'ganglia udp':
         proto => 'udp',
         port  => 8649,
