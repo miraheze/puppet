@@ -73,6 +73,7 @@ class parsoid {
                 'mydegree',
                 'ndtest',
                 'newtrend',
+                'newknowledge',
                 'nidda23',
                 'nwp',
                 'openconstitution',
