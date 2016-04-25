@@ -3,6 +3,8 @@ class ganglia {
     include ::apache::mod::rewrite
     include ::apache::mod::ssl
 
+    ssl::cert { 'wildcard.miraheze.org' }
+
     $packages = [
         'rrdtool',
         'gmetad',
