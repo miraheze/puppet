@@ -28,7 +28,6 @@ node 'db1.miraheze.org' {
 
 node 'misc1.miraheze.org' {
     include standard
-    include role::ganglia
     include role::icinga
     include role::irc
     include role::mail
