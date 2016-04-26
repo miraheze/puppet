@@ -41,6 +41,12 @@ class role::db {
         from  => '185.52.1.76',
     }
 
+    ufw::allow { 'mysql port misc2':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '81.4.127.174',
+    }
+
     ssl::cert { 'wildcard.miraheze.org': }
 
     motd::role { 'role::db':
