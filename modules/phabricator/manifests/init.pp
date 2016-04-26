@@ -1,6 +1,7 @@
 class phabricator {
     include ::apache::mod::ssl
     include ::apache::mod::php5
+    include private::mariadb
 
     apache::site { 'phabricator.miraheze.org':
         ensure => present,
