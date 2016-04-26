@@ -44,6 +44,13 @@ class piwik {
         notify => Exec['apache2_test_config_and_restart'],
     }
 
+    file_line { 'enable_php_opcache':
+        line   => 'opcache.enable=1',
+        match  => '^;?opcache.enable\s*\=',
+        path   => '/etc/php5/apache2/php.ini',
+        notify => Exec['apache2_test_config_and_restart'],
+    }
+
     file { '/srv/piwik/config/config.ini.php':
         ensure  => present,
         content => template('piwik/config.ini.php.erb'),
