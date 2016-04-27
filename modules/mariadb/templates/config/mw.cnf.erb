@@ -34,8 +34,8 @@ log-bin                        = <%= @datadir %>/mysql-bin
 expire-logs-days               = 14
 sync-binlog                    = 1
 
-tmp-table-size                 = 16M
-max-heap-table-size            = 16M
+tmp-table-size                 = 12M
+max-heap-table-size            = 12M
 query-cache-type               = 0
 query-cache-size               = 0
 max-connections                = 50
@@ -49,7 +49,7 @@ innodb-log-files-in-group      = 2
 innodb-log-file-size           = 64M
 innodb-flush-log-at-trx-commit = 1
 innodb-file-per-table          = 1
-innodb-buffer-pool-size        = 2250M
+innodb-buffer-pool-size        = 2200M
 innodb-buffer-pool-instances   = 1
 innodb_lock_wait_timeout       = 120
 
