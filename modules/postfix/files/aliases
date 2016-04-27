@@ -37,4 +37,4 @@ southparkfan: southparkfan223@hotmail.com
 
 # phabricator incoming emails - must be configued with Maniphest
 security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
-csr: |/srv/phab/phabricator/scripts/mail/mail_handler.php
+csr: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
