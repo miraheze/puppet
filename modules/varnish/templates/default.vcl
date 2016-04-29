@@ -91,18 +91,9 @@ sub identify_device {
 	# set X-Device to phone-tablet. This will make vcl_backend_fetch add ?useformat=mobile to the URL sent to the backend.
 	if (req.http.User-Agent ~ "(?i)(mobi|240x240|240x320|320x320|alcatel|android|audiovox|bada|benq|blackberry|cdm-|compal-|docomo|ericsson|hiptop|htc[-_]|huawei|ipod|kddi-|kindle|meego|midp|mitsu|mmp\/|mot-|motor|ngm_|nintendo|opera.m|palm|panasonic|philips|phone|playstation|portalmmm|sagem-|samsung|sanyo|sec-|semc-browser|sendo|sharp|silk|softbank|symbian|teleca|up.browser|vodafone|webos)" && req.http.Cookie !~ "(stopMobileRedirect=true|mf_useformat=desktop)") {
 		set req.http.X-Device = "phone-tablet";
-	}
-}
 
-sub pass_authorization {
-	if (req.http.Authorization ~ "^OAuth ") {
-		return (pass);
-	}
-}
-
-sub filter_headers {
-	if (req.restarts == 0) {
-		unset req.http.X-Orig-Cookie;
+		# In vcl_fetch we'll decide in which situations we should actually do something with this.
+		set req.http.X-Use-Mobile = "1";
 	}
 }
 
@@ -117,6 +108,9 @@ sub recv_purge {
 }
 
 sub vcl_recv {
+	call recv_purge;
+	call identify_device;
+
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1;
 		return (pass);
@@ -124,14 +118,9 @@ sub vcl_recv {
 		set req.backend_hint = mediawiki.backend();
 	}
 
-	call filter_headers;
-	call recv_purge;
-	call identify_device;
-	
-	set req.http.X-Use-Mobile = "1";
-
 	# We never want to cache non-GET/HEAD requests.
 	if (req.method != "GET" && req.method != "HEAD") {
+		# Zero reason to append ?useformat=true here.
 		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	}
@@ -140,9 +129,8 @@ sub vcl_recv {
 		unset req.http.If-Modified-Since;
 	}
 	
-	# Don't cache dumps
-	if (req.http.Host == "static.miraheze.org" && req.url ~ "^/dumps") {
-		set req.http.X-Use-Mobile = "0";
+	# Don't cache dumps, and such
+	if (req.http.Host == "static.miraheze.org" && req.url !~ "^/.*wiki") {
 		return (pass);
 	}
 	
@@ -150,9 +138,12 @@ sub vcl_recv {
 		set req.backend_hint = mw1;
 		return (pass);
 	}
-	
+ 
+	if (req.http.Authorization ~ "OAuth") {
+		return (pass);
+	}
+
 	call evaluate_cookie;
-	call pass_authorization;
 	
 	return (hash);
 }
@@ -193,7 +184,7 @@ sub vcl_backend_response {
 }
 
 sub vcl_deliver {
-	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php" || req.url ~ "^/\?title=") {
+	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
 		if (req.url !~ "^/wiki/Special\:Banner") {
 			set resp.http.Cache-Control = "private, s-maxage=0, maxage=0, must-revalidate";
 		}
