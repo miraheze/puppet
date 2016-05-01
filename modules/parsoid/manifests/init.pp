@@ -29,6 +29,7 @@ class parsoid {
                 'adnovum',
                 'aescapes',
                 'air',
+                'alanpedia'
                 'aktpos',
                 'applebranch',
                 'aryaman',
