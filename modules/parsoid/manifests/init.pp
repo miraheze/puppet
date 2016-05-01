@@ -80,6 +80,7 @@ class parsoid {
                 'partup',
                 'pflanzen',
                 'pq',
+                'qwerty',
                 'rawdata',
                 'recherchesdocumentaires',
                 'ric',
@@ -100,6 +101,7 @@ class parsoid {
                 'vrgo',
                 'walthamstowlabour',
                 'webflow',
+                'wikicervantes',
     ]
 
     file { '/etc/mediawiki/parsoid/settings.js':
