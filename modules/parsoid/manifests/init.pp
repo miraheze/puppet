@@ -92,6 +92,7 @@ class parsoid {
                 'soshomophobie',
                 'stellachronica',
                 'sirikot',
+                'snowthegame',
                 'taylor',
                 'teleswiki',
                 'test',
