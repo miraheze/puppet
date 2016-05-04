@@ -47,3 +47,6 @@ ssl:
   carving:
     url: 'carving.wiki'
     ca: 'StartSSL'
+  dwplive:
+    url: 'wiki.dwplive.com'
+    ca: 'StartSSL'
