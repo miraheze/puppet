@@ -4,6 +4,7 @@ pid /run/nginx.pid;
 
 events {
     worker_connections 1024;
+    use epoll;
     multi_accept on;
 }
 
@@ -25,7 +26,6 @@ http {
     ssl_stapling on;
     ssl_session_cache shared:SSL:20m;
     ssl_session_timeout 60m;
-
 
     # Log Settings
     access_log /var/log/nginx/access.log;
