@@ -95,7 +95,6 @@ class parsoid {
                 'snowthegame',
                 'taylor',
                 'teleswiki',
-                'test',
                 'tochki',
                 'torejorg',
                 'touhouengine',
