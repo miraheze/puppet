@@ -32,7 +32,6 @@ node 'misc1.miraheze.org' {
     include role::irc
     include role::mail
     include role::dns
-    include role::surveys
     include role::phabricator
     include bacula::client
 }
@@ -42,7 +41,6 @@ node 'misc2.miraheze.org' {
     include role::redis
     include role::ganglia
     include role::piwik
-    include role::surveys
 }
 
 node /^mw[12]\.miraheze\.org$/ {
