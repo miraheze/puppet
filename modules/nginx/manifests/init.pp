@@ -3,7 +3,7 @@ class nginx {
     include ::apt
 
     apt::source { 'nginx_apt':
-        comment     => 'NGINX mainline',
+        comment     => 'NGINX stable',
         location    => 'http://nginx.org/packages/debian',
         release     => 'jessie',
         repos       => 'nginx',
