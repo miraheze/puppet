@@ -93,6 +93,7 @@ class parsoid {
                 'sirikot',
                 'snowthegame',
                 'taylor',
+                'tme',
                 'teleswiki',
                 'tochki',
                 'torejorg',
