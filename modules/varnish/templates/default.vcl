@@ -71,6 +71,7 @@ sub evaluate_cookie {
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
                 && req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(png|jpe?g|svg)$"
                 && req.url !~ "^/w/resources/assets/.*\.png$"
+		&& req.url !~ "^/(wiki/?)?$"
 	) {
 		# To prevent issues, we do not want vcl_backend_fetch to add ?useformat=mobile
 		# when the user directly contacts the backend. The backend will directly listen to the cookies
