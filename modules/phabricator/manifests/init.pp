@@ -53,4 +53,8 @@ class phabricator {
         ensure  => present,
         content => template('phabricator/local.json.erb'),
     }
+
+    file { '/srv/phab/images':
+        ensure => directory,
+    }
 }
