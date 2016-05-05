@@ -12,6 +12,7 @@ define nginx::site(
         ensure  => $ensure,
         content => $content,
         source  => $source,
+        require => Package['nginx'],
     }
 
     file { "/etc/nginx/sites-enabled/${basename}":
