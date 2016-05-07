@@ -50,6 +50,6 @@ ssl:
   dwplive:
     url: 'wiki.dwplive.com'
     ca: 'StartSSL'
-  haxinspace:
+  haxionspace:
     url: 'haxion.space'
     ca: 'StartSSL'
