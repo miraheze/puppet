@@ -39,6 +39,7 @@ class parsoid {
                 'braindump',
                 'carving',
                 'cbmedia',
+                'cec',
                 'chandrusweths',
                 'christipedia',
                 'clementsworldbuilding',
