@@ -52,7 +52,7 @@ class mediawiki {
 
     file { '/etc/ImageMagick-6/policy.xml':
         ensure => present,
-        source => 'puppet:///modules/mediawiki/imagemagick/policy.xml'
+        source => 'puppet:///modules/mediawiki/imagemagick/policy.xml',
         require => Package['imagemagick'],
     }
 
