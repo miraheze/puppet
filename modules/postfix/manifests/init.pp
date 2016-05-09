@@ -19,8 +19,13 @@ class postfix {
         source => 'puppet:///modules/postfix/aliases',
     }
 
+    file { '/etc/virtual':
+        ensure => present,
+        source => 'puppet:///modules/postfix/virtual',
+    }
+
     exec { '/usr/bin/newaliases':
-        subscribe   => File['/etc/aliases'],
+        subscribe   => [ File['/etc/aliases'], File['/etc/virtual'], ],
         refreshonly => true,
     }
 
