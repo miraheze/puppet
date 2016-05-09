@@ -11,7 +11,7 @@ smtp_bind_address=185.52.1.76
 smtp_bind_address6=2a00:d880:6:787::3
 
 virtual_alias_domains = phabricator.miraheze.org
-virtual_alias_maps = hash:/etc/postfix/virtual
+virtual_alias_maps = hash:/etc/virtual
 
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
