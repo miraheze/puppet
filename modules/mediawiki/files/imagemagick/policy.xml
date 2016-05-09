@@ -1,4 +1,5 @@
-CTYPE policymap [
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policymap [
 <!ELEMENT policymap (policy)+>
 <!ELEMENT policy (#PCDATA)>
 <!ATTLIST policy domain (delegate|coder|filter|path|resource) #IMPLIED>
