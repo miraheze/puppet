@@ -12,6 +12,7 @@ phpmailer.smtp-host: 'mail.miraheze.org'
 metamta.default-address: 'noreply@miraheze.org'
 metamta.domain: 'miraheze.org'
 metamta.mail-adapter: 'PhabricatorMailImplementationPHPMailerAdapter'
+metamta.single-reply-handler-prefix: 'phabricator'
 
 # Auth
 auth.require-approval: false
