@@ -33,6 +33,13 @@ class phabricator {
         require   => File['/srv/phab'],
     }
 
+    git::clone { 'phabricator-extensions':
+        ensure    => latest,
+        directory => '/srv/phab/phabricator/src/extensions',
+        origin    => 'https://github.com/miraheze/phabricator-extensions.git',
+        require   => File['/srv/phab'],
+    }
+
     file { '/srv/phab/repos':
         ensure  => directory,
         mode    => 0755,
