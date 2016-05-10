@@ -50,6 +50,12 @@ class mediawiki {
         install_options => ['--no-install-recommends'],
     }
 
+    file { '/etc/ImageMagick-6/policy.xml':
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/imagemagick/policy.xml',
+        require => Package['imagemagick'],
+    }
+
     # these aren't autoloaded by ssl::hiera
     ssl::cert { 'wildcard.miraheze.org': }
     ssl::cert { 'secure.reviwiki.info': }
