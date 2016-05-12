@@ -106,6 +106,7 @@ class parsoid {
                 'walthamstowlabour',
                 'webflow',
                 'wikicervantes',
+                'yggdrasilwiki',
     ]
 
     file { '/etc/mediawiki/parsoid/settings.js':
