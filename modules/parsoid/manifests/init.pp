@@ -82,6 +82,7 @@ class parsoid {
                 'openconstitution',
                 'partup',
                 'pflanzen',
+                'priyo',
                 'pq',
                 'qwerty',
                 'rawdata',
