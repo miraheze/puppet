@@ -71,6 +71,7 @@ class parsoid {
                 'littlebigplanet',
                 'lizard',
                 'luckandlogic',
+                'lunfeng',
                 'mecanon',
                 'meta',
                 'mydegree',
