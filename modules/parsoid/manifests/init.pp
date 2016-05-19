@@ -84,6 +84,7 @@ class parsoid {
                 'nidda23',
                 'nwp',
                 'openconstitution',
+                'panorama',
                 'partup',
                 'pflanzen',
                 'priyo',
