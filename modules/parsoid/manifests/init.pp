@@ -76,6 +76,7 @@ class parsoid {
                 'luckandlogic',
                 'lunfeng',
                 'mecanon',
+                'meregos',
                 'meta',
                 'mydegree',
                 'ndtest',
