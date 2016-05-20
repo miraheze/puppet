@@ -57,6 +57,7 @@ class parsoid {
                 'essway',
                 'etpo',
                 'ezdmf',
+                'fishpercolator',
                 'foodsharinghamburg',
                 'games',
                 'gen',
