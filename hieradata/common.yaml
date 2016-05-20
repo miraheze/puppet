@@ -53,6 +53,3 @@ ssl:
   haxionspace:
     url: 'haxion.space'
     ca: 'StartSSL'
-  jubeatwikith:
-    url: 'mwiki.jubeatwikith.ga'
-    ca: 'StartSSL'
