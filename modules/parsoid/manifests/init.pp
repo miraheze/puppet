@@ -117,6 +117,7 @@ class parsoid {
                 'walthamstowlabour',
                 'webflow',
                 'wikicervantes',
+                'wisdomwiki',
                 'yggdrasilwiki',
     ]
 
