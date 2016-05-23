@@ -67,7 +67,7 @@ class mediawiki {
     }
 
     nginx::site { 'hhvm-adminserver':
-        ensure  => present,
+        ensure  => absent,
         source  => 'puppet:///modules/mediawiki/nginx/hhvm-adminserver.conf',
     }
 

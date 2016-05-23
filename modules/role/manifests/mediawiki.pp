@@ -1,6 +1,5 @@
 class role::mediawiki {
     include ::mediawiki
-    include hhvm
     include nfs::client
 
     ufw::allow { 'http port tcp':
