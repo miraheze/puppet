@@ -66,11 +66,6 @@ class mediawiki {
         source => 'puppet:///modules/mediawiki/nginx/mediawiki-includes.conf',
     }
 
-    nginx::site { 'hhvm-adminserver':
-        ensure  => absent,
-        source  => 'puppet:///modules/mediawiki/nginx/hhvm-adminserver.conf',
-    }
-
     git::clone { 'MediaWiki config':
         directory => '/srv/mediawiki/config',
         origin    => 'https://github.com/miraheze/mw-config.git',
