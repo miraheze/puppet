@@ -63,6 +63,7 @@ class parsoid {
                 'fishpercolator',
                 'foodsharinghamburg',
                 'games',
+                'geirpedia',
                 'gen',
                 'grandtheftwiki',
                 'hftqms',
