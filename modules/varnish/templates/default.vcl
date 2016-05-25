@@ -120,6 +120,7 @@ sub vcl_recv {
 
 	if (req.http.Host == "permanentfuturelab.wiki") {
 		set req.backend_hint = mw1;
+		return (pass);
 	}
 
 	# We never want to cache non-GET/HEAD requests.
