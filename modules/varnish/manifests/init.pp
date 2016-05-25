@@ -84,9 +84,21 @@ class varnish {
         mode    => 755,
     }
 
+    file { '/usr/lib/nagios/plugins/check_nginx_errorrate':
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/icinga/check_nginx_errorrate',
+        mode    => 755,
+    }
+
     # This script needs root access to read /etc/varnish/secret
     sudo::user { 'nrpe_sudo_checkvarnishbackends':
         user        => 'nagios',
         privileges  => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_varnishbackends' ],
+    }
+
+    # FIXME: Can't read access files without root
+    sudo::user { 'nrpe_sudo_checknginxerrorrate':
+        user        => 'nagios',
+        privileges  => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nginx_errorrate' ],
     }
 }
