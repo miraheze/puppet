@@ -48,7 +48,6 @@ backend mw2 {
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(mw1);
 	mediawiki.add_backend(mw2);
 }
 
@@ -113,10 +112,14 @@ sub vcl_recv {
 	call identify_device;
 
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
-		set req.backend_hint = mw1;
+		set req.backend_hint = mw2;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
+	}
+
+	if (req.http.Host == "permanentfuturelab.wiki") {
+		set req.backend_hint = mw1;
 	}
 
 	# We never want to cache non-GET/HEAD requests.
@@ -136,7 +139,7 @@ sub vcl_recv {
 	}
 	
 	if (req.http.X-Miraheze-Debug == "1") {
-		set req.backend_hint = mw1;
+		set req.backend_hint = mw2;
 		return (pass);
 	}
  
