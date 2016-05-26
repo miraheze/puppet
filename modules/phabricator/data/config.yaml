@@ -65,7 +65,7 @@ maniphest.statuses:
     closed: true
     special: 'closed'
     transaction.icon: 'fa-check-circle'
-    keywords: ['closed', 'fixed', 'resolved']
+    keywords: ['closed', 'fixed', 'resolved', 'closes', 'fixes', 'resolves']
   'invalid':
     name: 'Invalid'
     name.full: 'Closed, Invalid'
@@ -85,7 +85,7 @@ maniphest.statuses:
     name.full: 'Closed, Declined'
     closed: true
     transaction.icon: 'fa-thumbs-o-down'
-    keywords: ['declined']
+    keywords: ['declined', 'declines']
 
 # Disable some Phabricator applications
 phabricator.uninstalled-applications:
