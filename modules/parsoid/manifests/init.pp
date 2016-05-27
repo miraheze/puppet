@@ -79,6 +79,7 @@ class parsoid {
                 'lizard',
                 'luckandlogic',
                 'lunfeng',
+                'maiasongcontest',
                 'mecanon',
                 'meregos',
                 'meta',
