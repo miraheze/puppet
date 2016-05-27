@@ -84,6 +84,7 @@ class parsoid {
                 'meta',
                 'mydegree',
                 'ndtest',
+                'neuronpedia',
                 'newtrend',
                 'newknowledge',
                 'nidda23',
