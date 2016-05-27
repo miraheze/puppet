@@ -3,6 +3,7 @@ class mediawiki {
     include mediawiki::favicons
     include mediawiki::cron
     include mediawiki::nginx
+    include mediawiki::php
     include ssl::hiera
 
     if hiera(jobrunner) {
@@ -135,17 +136,5 @@ class mediawiki {
         command => '/usr/bin/make --directory=/srv/mediawiki/w/extensions/Math/texvccheck',
         creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
         require => Package['ocaml'],
-    }
-
-    file { '/etc/php5/fpm/php-fpm.conf':
-        ensure => 'present',
-        mode   => 0755,
-        source => 'puppet:///modules/mediawiki/php/php-fpm.conf',
-    }
-
-    file { '/etc/php5/fpm/pool.d/www.conf':
-        ensure => 'present',
-        mode   => 0755,
-        source => 'puppet:///modules/mediawiki/php/www.conf',
     }
 }
