@@ -104,6 +104,7 @@ class parsoid {
                 'shopping',
                 'simonjon',
                 'soshomophobie',
+                'sjuhabitat',
                 'stellachronica',
                 'studynotekr',
                 'sirikot',
