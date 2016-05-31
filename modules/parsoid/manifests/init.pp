@@ -45,6 +45,7 @@ class parsoid {
                 'cec',
                 'chandrusweths',
                 'christipedia',
+                'civitas',
                 'clementsworldbuilding',
                 'clicordi',
                 'cssandjsschoolboard',
