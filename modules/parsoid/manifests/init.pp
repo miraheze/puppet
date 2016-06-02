@@ -72,6 +72,7 @@ class parsoid {
                 'hshsinfoportal',
                 'hsooden',
                 'idtest',
+                'imsts',
                 'islamwissenschaft',
                 'izanagi',
                 'lbsges',
