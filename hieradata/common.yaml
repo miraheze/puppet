@@ -53,3 +53,6 @@ ssl:
   haxionspace:
     url: 'haxion.space'
     ca: 'StartSSL'
+  grottocenter:
+    url: 'wiki.grottocenter.org'
+    ca: 'StartSSL'
