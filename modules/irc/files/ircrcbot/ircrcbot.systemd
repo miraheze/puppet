@@ -1,0 +1,11 @@
+[Unit]
+Description=Miraheze IRC RecentChanges feed
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ircrcbot.py
+User=irc
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
