@@ -208,7 +208,7 @@ class icinga {
 
     file { '/etc/systemd/system/icingabot.service':
         ensure  => present,
-        source  => 'puppet:///modules/icinga/icingabot.systemd',
+        source  => 'puppet:///modules/icinga/bot/icingabot.systemd',
         notify  => Exec['Icingabot reload systemd'],
     }
 }
