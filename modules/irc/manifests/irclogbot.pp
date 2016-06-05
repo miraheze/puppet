@@ -26,4 +26,20 @@ class irc::irclogbot {
         ensure  => present,
         content => template('irc/logbot/config.py'),
     }
+
+    file { '/etc/init.d/adminbot':
+        ensure  => present,
+        source  => 'puppet:///modules/irc/logbot/adminbot.initd',
+    }
+
+    exec { 'systemctl daemon-reload':
+        path        => '/bin',
+        refreshonly => true,
+    }
+
+    file { '/etc/systemd/system/adminbot.service':
+        ensure  => present,
+        source  => 'puppet:///modules/irc/logbot/adminbot.systemd',
+        notify  => Exec['systemctl daemon-reload'],
+    }
 }
