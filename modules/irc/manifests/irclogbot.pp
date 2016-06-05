@@ -2,7 +2,7 @@ class irc::irclogbot {
     include ::irc
 
     file { '/etc/irclogbot':
-        esnure => directory,
+        ensure => directory,
     }
 
     git::clone { 'mwclient':
