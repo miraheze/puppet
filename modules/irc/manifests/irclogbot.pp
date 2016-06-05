@@ -18,8 +18,9 @@ class irc::irclogbot {
     }
 
     file { '/etc/irclogbot/adminlogbot.py':
-        ensure => present,
-        source => 'puppet:///modules/irc/logbot/adminlogbot.py',
+        ensure  => present,
+        source  => 'puppet:///modules/irc/logbot/adminlogbot.py',
+        mode    => 0755,
     }
 
     file { '/etc/irclogbot/config.py':
