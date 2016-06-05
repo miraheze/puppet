@@ -187,11 +187,11 @@ class icinga {
     }
 
     file { '/etc/icinga/irc.py':
-        ensure  => present,
-        user    => 'irc',
-        content => template('icinga/bot/irc.py'),
-        mode    => '0551',
-        notify  => Service['icingabot'],
+        ensure   => present,
+        owner    => 'irc',
+        content  => template('icinga/bot/irc.py'),
+        mode     => '0551',
+        notify   => Service['icingabot'],
     }
 
     file { '/etc/init.d/icingabot':
