@@ -211,4 +211,8 @@ class icinga {
         source  => 'puppet:///modules/icinga/bot/icingabot.systemd',
         notify  => Exec['Icingabot reload systemd'],
     }
+
+    service { 'icingabot':
+        ensure => running,
+    }
 }
