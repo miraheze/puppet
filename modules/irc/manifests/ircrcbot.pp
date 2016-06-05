@@ -12,11 +12,15 @@ class irc::ircrcbot(
     file { '/usr/local/bin/ircrcbot.py':
         ensure  => present,
         content => template('irc/ircrcbot.py'),
+        mode    => 0755,
+        notify  => Service['ircrcbot'],
     }
 
     file { '/etc/init.d/ircrcbot':
         ensure  => present,
         source  => 'puppet:///modules/irc/ircrcbot/ircrcbot.initd',
+        mode    => 0755,
+        notify  => Service['ircrcbot'],
     }
 
     exec { 'IRCRCbot reload systemd':
