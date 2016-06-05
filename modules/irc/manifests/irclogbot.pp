@@ -15,17 +15,20 @@ class irc::irclogbot {
     file { '/etc/irclogbot/adminlog.py':
         ensure => present,
         source => 'puppet:///modules/irc/logbot/adminlog.py',
+        notify => Service['adminbot'],
     }
 
     file { '/etc/irclogbot/adminlogbot.py':
         ensure  => present,
         source  => 'puppet:///modules/irc/logbot/adminlogbot.py',
-        mode    => 0755,
+        mode    => '0755',
+        notify => Service['adminbot'],
     }
 
     file { '/etc/irclogbot/config.py':
         ensure  => present,
         content => template('irc/logbot/config.py'),
+        notify => Service['adminbot'],
     }
 
     file { '/etc/init.d/adminbot':
@@ -33,8 +36,8 @@ class irc::irclogbot {
         source  => 'puppet:///modules/irc/logbot/adminbot.initd',
     }
 
-    exec { 'IRCLogbot reload systemd':
-        command     => '/bin/systemctl daemon-reload',
+    exec { 'IRCLogbot reload systemd':  
+        command     => '/bin/systemctl daemon-reload',  
         refreshonly => true,
     }
 
@@ -42,5 +45,9 @@ class irc::irclogbot {
         ensure  => present,
         source  => 'puppet:///modules/irc/logbot/adminbot.systemd',
         notify  => Exec['systemctl daemon-reload'],
+    }
+    
+    service { 'adminbot':
+        ensure => 'running',
     }
 }
