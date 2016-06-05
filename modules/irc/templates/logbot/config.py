@@ -50,7 +50,10 @@ network = "chat.freenode.net"
 port = 6667
 
 # Map irc nick to real name
-author_map = {"JohnLewis": "John"}
+author_map = {
+    "JohnLewis": "John",
+    "SPF|Cloud": "Southparkfan"
+}
 
 # Map irc nick to title of the user (how the bot addresses the user)
 title_map = {"example": "Master"}
