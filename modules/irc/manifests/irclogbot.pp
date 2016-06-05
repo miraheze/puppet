@@ -36,15 +36,15 @@ class irc::irclogbot {
         source  => 'puppet:///modules/irc/logbot/adminbot.initd',
     }
 
-    exec { 'IRCLogbot reload systemd':  
-        command     => '/bin/systemctl daemon-reload',  
+    exec { 'IRCLogbot reload systemd':
+        command     => '/bin/systemctl daemon-reload',
         refreshonly => true,
     }
 
     file { '/etc/systemd/system/adminbot.service':
         ensure  => present,
         source  => 'puppet:///modules/irc/logbot/adminbot.systemd',
-        notify  => Exec['systemctl daemon-reload'],
+        notify  => Exec['IRCLogbot reload systemd'],
     }
     
     service { 'adminbot':
