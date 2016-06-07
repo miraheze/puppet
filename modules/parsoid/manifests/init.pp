@@ -93,6 +93,7 @@ class parsoid {
                 'newknowledge',
                 'nidda23',
                 'nwp',
+                'ofthevampire',
                 'openconstitution',
                 'panorama',
                 'partup',
