@@ -30,7 +30,7 @@ class parsoid {
                 'aescapes',
                 'air',
                 'alanpedia',
-		'algopedia',
+                'algopedia',
                 'allbanks2',
                 'aktpos',
                 'applebranch',
