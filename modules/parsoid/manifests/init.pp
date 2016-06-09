@@ -99,7 +99,7 @@ class parsoid {
                 'ofthevampire',
                 'openconstitution',
                 'panorama',
-		'paodeaode',
+		'paodeaoda',
                 'partup',
                 'pflanzen',
                 'priyo',
