@@ -78,7 +78,7 @@ class parsoid {
                 'imsts',
                 'islamwissenschaft',
                 'izanagi',
-		'lancemedical',
+                'lancemedical',
                 'lbsges',
                 'lclwiki',
                 'littlebigplanet',
