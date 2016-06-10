@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [johnflewis, southparkfan]
+    members: [johnflewis, ndkilla, southparkfan]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -16,7 +16,7 @@ groups:
   mediawiki-roots:
     gid: 2002
     description: full root on MediaWiki servers
-    members: [ndkilla]
+    members: []
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   cache-admins:
     gid: 2003
