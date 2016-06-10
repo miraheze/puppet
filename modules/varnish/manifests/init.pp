@@ -53,6 +53,7 @@ class varnish {
     ssl::cert { 'wildcard.miraheze.org': }
     ssl::cert { 'secure.reviwiki.info': }
     ssl::cert { 'allthetropes.org': }
+    ssl::cert { 'wisdomwiki.org': }
 
     file { '/etc/nginx/sites-enabled/default':
         ensure => absent,

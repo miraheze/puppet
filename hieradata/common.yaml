@@ -56,6 +56,3 @@ ssl:
   grottocenter:
     url: 'wiki.grottocenter.org'
     ca: 'StartSSL'
-  wisdomwiki:
-    url: 'wisdomwiki.org'
-    ca: 'StartSSL'
