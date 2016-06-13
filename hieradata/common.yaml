@@ -58,4 +58,4 @@ ssl:
     ca: 'StartSSL'
   downhillderelicts:
     url: 'wiki.downhillderelicts.com'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
