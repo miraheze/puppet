@@ -21,7 +21,7 @@ class parsoid {
 
     file { '/etc/nginx/nginx.conf':
         ensure  => present,
-        content => template('nginx/nginx.conf.erb'),
+        content => template('parsoid/nginx.conf.erb'),
         require => Package['nginx'],
     }
 
