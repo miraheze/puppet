@@ -56,3 +56,6 @@ ssl:
   grottocenter:
     url: 'wiki.grottocenter.org'
     ca: 'StartSSL'
+  downhillderelicts:
+    url: 'wiki.downhillderelicts.com'
+    ca: 'LetsEncrypt'
