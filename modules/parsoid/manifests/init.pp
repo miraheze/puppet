@@ -19,6 +19,12 @@ class parsoid {
         require => Package['nginx'],
     }
 
+    file { '/etc/nginx/nginx.conf':
+        ensure  => present,
+        content => template('nginx/nginx.conf.erb'),
+        require => Package['nginx'],
+    }
+
     nginx::site { 'parsoid':
         ensure  => present,
         source  => 'puppet:///modules/parsoid/nginx/parsoid',
