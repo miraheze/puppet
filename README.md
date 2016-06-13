@@ -1,4 +1,4 @@
-Puppet repo for Miraheze
+Puppet Configuration for Miraheze
 
 This repository is licensed per the GNU General Public License, Version 3.
 The full license is available in LICENSE.md.
