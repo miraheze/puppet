@@ -21,9 +21,12 @@ groups:
   cache-admins:
     gid: 2003
     descriptions: limited sudo on cache proxies
-    members: []
+    members: [ndkilla]
     privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/varnishadm',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service varnish *']
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service varnish *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
+                 'ALL = (ALL) NOPASSWD: /root/puppet-run',
+                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
 
 users:
   johnflewis:
