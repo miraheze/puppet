@@ -57,7 +57,9 @@ users:
     uid: 1004
     name: ndkilla
     realname: NDKilla
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEA483LlTZ0FqGGJSKYHkQXSo7NUmmziIbb/KH9NjwEO8YihLG2rAMh9L2C2LX4ggaSxSMlupopL3lXr8yG8FqVjX1fVofGEj9adGsg48lhrbauYFQ9ZKK5AGuYHzyKkONOIpHio0eQ5z6GSZdnHOI22Idn7IEqghTnGDFb8PVqf7fjiS2LIGhoZJWVkSFuxQNHpgX6OyqbsolE3sp8ZjfY4zX+KWqavs1LogWEqNQNM3eUNN7higG6/lJPTOCJicP0Z8pwRP4I5xpbbhLxRNojEXrYocxb7PzZfSojZnHNsospLN4ssPYBrhlHhGVL6er25vBEbyKGszT7Xx7907oMKw== rsa-key-20151221]
+    ssh_keys: 
+      - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEA483LlTZ0FqGGJSKYHkQXSo7NUmmziIbb/KH9NjwEO8YihLG2rAMh9L2C2LX4ggaSxSMlupopL3lXr8yG8FqVjX1fVofGEj9adGsg48lhrbauYFQ9ZKK5AGuYHzyKkONOIpHio0eQ5z6GSZdnHOI22Idn7IEqghTnGDFb8PVqf7fjiS2LIGhoZJWVkSFuxQNHpgX6OyqbsolE3sp8ZjfY4zX+KWqavs1LogWEqNQNM3eUNN7higG6/lJPTOCJicP0Z8pwRP4I5xpbbhLxRNojEXrYocxb7PzZfSojZnHNsospLN4ssPYBrhlHhGVL6er25vBEbyKGszT7Xx7907oMKw== rsa-key-20151221
+      - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAty/E19COjzLoMG/rjCk0qKdZCh1n2yS3g4LcVTauXK4VJiy53Ipvv3cX3Mqoe/AmHPe1H0dTDiHKdUw+iyrwZ8graf0dD0KvevUoNVGwmvRV1FJ/iW48/rykLnGr6OprZMPfUR4gjxy+H6hQ9uI20bVA7xYp+BD9pz3pzk41k0P0stcvpnKI5Igtvn+zNE1hyJDaTG2otRXbHspTtLLYkK+4/lsh8WcEJ69D8NSbaZnnCVdxJt5UmLUQJ/wNyy9pG/B3CVDi4y2hQgdXweKFqVRGrhjX/ZN/AKyieKSAM/voepdZrgI1nVH6bAoCdjh7Dxo4mIn2Lo429+HVpI2hCw== ndkilla@workagain
   labster:
     ensure: present
     uid: 1005
