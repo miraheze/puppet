@@ -3,13 +3,13 @@ class role::parsoid {
 
     ufw::allow { 'parsoid mw1':
         proto => 'tcp',
-        port  => 8142,
+        port  => 443,
         from  => '185.52.1.75',
     }
 
     ufw::allow { 'parsoid mw2':
         proto => 'tcp',
-        port  => 8142,
+        port  => 443,
         from  => '185.52.2.113',
     }
 

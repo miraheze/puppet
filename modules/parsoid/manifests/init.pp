@@ -1,5 +1,6 @@
 class parsoid {
     include apt
+    include nginx
 
     apt::source { 'parsoid':
         location => 'http://releases.wikimedia.org/debian',
@@ -9,6 +10,18 @@ class parsoid {
             'id'     => 'BE0C9EFB1A948BF3C8157E8B811780265C927F7C',
             'server' => 'hkp://keyserver.ubuntu.com:80',
         },
+    }
+
+    ssl::cert { 'wildcard.miraheze.org': }
+
+    file { '/etc/nginx/sites-enabled/default':
+        ensure  => absent,
+        require => Package['nginx'],
+    }
+
+    nginx::site { 'parsoid':
+        ensure  => present,
+        source  => 'puppet:///modules/parsoid/nginx/parsoid',
     }
 
     package { 'parsoid':
