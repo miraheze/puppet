@@ -1,0 +1,29 @@
+#! /bin/bash
+amount_of_accesslogs=`tail -500 /var/log/nginx/access.log | wc -l`
+amount_of_errors=`tail -500 /var/log/nginx/access.log | awk '{print $9}' | grep '^[45]' | wc -l`
+
+# http://stackoverflow.com/a/24299222
+error_rate=$(awk "BEGIN { pc=100*${amount_of_errors}/${amount_of_accesslogs}; i=int(pc); print (pc-i<0.5)?i:i+1 }")
+
+# 0 - 30%: OK
+# 31 - 50%: WARNING
+# 51 - 100%: CRITICAL
+
+case $error_rate in
+        [1-9]|[12][0-9]|[30]*)
+        echo "OK - NGINX Error Rate is $error_rate%"
+        exit 0
+        ;;
+        [31]|[4][0-9]|[50]*)
+        echo "WARNING - NGINX Error Rate is $error_rate%"
+        exit 1
+        ;;
+        [5][1-9]|[6789][0-9]|[100]*)
+        echo "CRITICAL - NGINX Error Rate is $error_rate%"
+        exit 2
+        ;;
+        *)
+        echo "UNKNOWN - NGINX Error Rate is UNKNOWN"
+        exit 3
+        ;;
+esac

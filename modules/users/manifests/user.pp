@@ -24,6 +24,23 @@ define users::user(
         allowdupe  => false,
     }
 
+    if $ensure == 'present' {
+        file { "/home/${name}":
+            ensure       => 'present',
+            source       => [
+                "puppet:///modules/users/home/${name}/",
+                'puppet:///modules/users/home/skel',
+            ],
+            sourceselect => 'first',
+            recurse      => 'remote',
+            mode         => '0644',
+            owner        => $name,
+            group        => $gid,
+            force        => true,
+            require      => User[$name],
+        }
+    }
+
     if !is_array($ssh_keys) {
         fail("${name} is not a valid ssh_keys array: ${ssh_keys}")
     }

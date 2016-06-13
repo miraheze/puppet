@@ -1,5 +1,8 @@
 # class: varnish
 class varnish {
+    include varnish::nginx
+    include ssl::hiera
+
     package { [ 'varnish', 'stunnel4' ]:
         ensure => present,
     }
@@ -46,20 +49,11 @@ class varnish {
         refreshonly => true,
     }
 
+    # these aren't autoloaded by ssl::hiera
     ssl::cert { 'wildcard.miraheze.org': }
-    ssl::cert { 'spiral.wiki': }
-    ssl::cert { 'anuwiki.com': }
-    ssl::cert { 'antiguabarbudacalypso.com': }
-    ssl::cert { 'permanentfuturelab.wiki': }
     ssl::cert { 'secure.reviwiki.info': }
-    ssl::cert { 'wiki.printmaking.be': }
-    ssl::cert { 'private.revi.wiki': }
     ssl::cert { 'allthetropes.org': }
-
-    nginx::site { 'mediawiki':
-        ensure => present,
-        source => 'puppet:///modules/varnish/nginx/mediawiki.conf',
-    }
+    ssl::cert { 'wisdomwiki.org': }
 
     file { '/etc/nginx/sites-enabled/default':
         ensure => absent,
@@ -83,5 +77,29 @@ class varnish {
         source  => 'puppet:///modules/varnish/stunnel/stunnel.conf',
         notify  => Service['stunnel4'],
         require => Package['stunnel4'],
+    }
+
+    file { '/usr/lib/nagios/plugins/check_varnishbackends':
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/icinga/check_varnishbackends.py',
+        mode    => 755,
+    }
+
+    file { '/usr/lib/nagios/plugins/check_nginx_errorrate':
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/icinga/check_nginx_errorrate',
+        mode    => 755,
+    }
+
+    # This script needs root access to read /etc/varnish/secret
+    sudo::user { 'nrpe_sudo_checkvarnishbackends':
+        user        => 'nagios',
+        privileges  => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_varnishbackends' ],
+    }
+
+    # FIXME: Can't read access files without root
+    sudo::user { 'nrpe_sudo_checknginxerrorrate':
+        user        => 'nagios',
+        privileges  => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nginx_errorrate' ],
     }
 }

@@ -18,7 +18,7 @@ class base::packages {
     ]
 
     package { $packages:
-        ensure => latest,
+        ensure => present,
     }
 
 }

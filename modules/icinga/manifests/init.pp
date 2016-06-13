@@ -4,6 +4,7 @@ class icinga {
     include ::apache::mod::php5
     include ::apache::mod::rewrite
     include ::apache::mod::ssl
+    include private::irc
 
     group { 'nagios':
         ensure    => present,
@@ -132,6 +133,17 @@ class icinga {
         notify  => Service['icinga'],
     }
 
+    $sslcerts = hiera_hash('ssl')
+
+    file { '/etc/icinga/config/ssl.cfg':
+        ensure => 'present',
+        content => template('icinga/ssl.cfg'),
+        owner => 'icinga',
+        group => 'icinga',
+        mode    => '0664',
+        require => Package['icinga'],
+        notify  => Service['icinga'],
+    }
 
     class { 'icinga::plugins':
         require => Package['icinga'],
@@ -175,9 +187,32 @@ class icinga {
     }
 
     file { '/etc/icinga/irc.py':
-        ensure => present,
-        source => 'puppet:///modules/icinga/bot/irc.py',
-        mode   => '0551',
+        ensure   => present,
+        owner    => 'irc',
+        content  => template('icinga/bot/irc.py'),
+        mode     => '0551',
+        notify   => Service['icingabot'],
     }
 
+    file { '/etc/init.d/icingabot':
+        ensure  => present,
+        source  => 'puppet:///modules/icinga/bot/icingabot.initd',
+        mode    => '0755',
+        notify  => Service['icingabot'],
+    }
+
+    exec { 'Icingabot reload systemd':
+        command     => '/bin/systemctl daemon-reload',
+        refreshonly => true,
+    }
+
+    file { '/etc/systemd/system/icingabot.service':
+        ensure  => present,
+        source  => 'puppet:///modules/icinga/bot/icingabot.systemd',
+        notify  => Exec['Icingabot reload systemd'],
+    }
+
+    service { 'icingabot':
+        ensure => running,
+    }
 }

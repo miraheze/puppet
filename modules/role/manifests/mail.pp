@@ -1,5 +1,6 @@
 class role::mail {
     include postfix
+    include postfix::dkim
     include dovecot
 
     ufw::allow { 'smtp':

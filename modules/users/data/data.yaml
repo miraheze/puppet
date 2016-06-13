@@ -2,46 +2,67 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [southparkfan]
+    members: [johnflewis, southparkfan]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [mutante, ndkilla, revi]
+    members: [revi, labster]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service hhvm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php5-fpm *',
                  'ALL = (ALL) NOPASSWD: /root/puppet-run',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+  mediawiki-roots:
+    gid: 2002
+    description: full root on MediaWiki servers
+    members: [ndkilla]
+    privileges: ['ALL = (ALL) NOPASSWD: ALL']
+  cache-admins:
+    gid: 2003
+    descriptions: limited sudo on cache proxies
+    members: []
+    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/varnishadm',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service varnish *']
 
 users:
   johnflewis:
-    ensure: absent
+    ensure: present
     uid: 1000
     name: johnflewis
     realname: John Lewis
-    ssh_keys: []
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDIwfVQJtJbFd+thUce/2+UVFwxGCLlXYL9ReVoG8Gtal/ZuWQrK7V/tKaS9NxpxV40PRUoKxGjxMyRDioLPPE1OLqLW5dn8/tAlyzz+MAojTY0/LhC5/IcHsw/HUADT0BMgf81HCVbXONJFsl2A8ZEduEf4Bfzm+r4hTMMLGBYVTpN75qmusOfP63A7utSLymBopMfKFGJQFEC4G/VUJRYODEDRLeuBvAh9GZpoCdKQfo7T2ohPyPBAczhQtIZzw7/TasK307brrYlbVOIJjR6Wu+nyLWSbevO6+nom1jStVhKfhnylHo6j99+t5F5Sg4LHw3w7d+OuG1ihy7Xj9B5SBZLU5h4O6t26RIGqMB10D8Yd75e6gCBnfASaf1ELfzvFThjWFjot7m3PZGVA5CkFALYlRa4BrSis2m2wSfHPiocRNwinx++amtMtMh1hGjUjYSn4iqjLOepScLc0C/Bv7xBKH/a1HM+tN3GZunwEo5XcYDK7Br6r7LbLXCTlysxmDQtBO0UxiMtEJaLwfTCeIjB0BmusGhjOuoE3s2zifeGCbBbAwaVgKTQEtw3PgmS1g/emgs6aAtry8oDSIYo/MtqGOTMVuIytgU0mZR+GgSvVH9rjb6k6CvSA0i6bDW5E71w52zkQoV16uH8IU5MIMthfgI5jd0GH43ZAvePqw== johnflewis@miraheze]
   southparkfan:
     ensure: present
     uid: 1001
     name: southparkfan
     realname: Southparkfan
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAwNoKzSb75imXVKETWqZ0maE1YyoKNQ/aCiOA3vPcUZc/X39dGZyeiWfLGA34KZYSoNhYjumw5sB8YiGxQckE/13osd5cwrE4gUo/Y9R82e0XPgDqzftUoJN+XeDBVFr540QBepCGBSmKQAPTaCkueaGqPIueVJ/yp4RGt//zmeaW7M+IrsQZ7UAtci7A6NMRkoWprc6ZC0F41tJqp5Dcmzszju6CtMAzJNsHVeHoBzkVLccdw/dB1lWjNJttTMTx/tXM+HOZIaBVg/pHQgPYcH0JhT76PilYEfKkW4ZqskrcMNuZKGQry1QO1mutmYjkovdnv19bsGfthW9/5lnj9w== southparkfan@miraheze]
+    ssh_keys: 
+      - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAjhc+iyIRGCYNhcOSFfx/1nQMdOByX5I1cdKBrpndyhkQ3Ln/2o1nSKatFuhFf166PTuIIVG1xfCdkcdOAJqpeDzLm9SUURt/jhAsPkf9h6WniATz6AE+j/+WLVnl0jaAPy5htT/Cf1mSf268mUHcJBb263UItoN0EhdhH1vq/R2XOJiMXxTk4wz7S2yacdIG0HtxLKbGmlmK1FoQQ7RYtKzdm1pxHENWBrf+OCEKN9Mx/EFTWwubBB/JGfIqsu0T3fZusGsSX6NmgFzsHZhKaVQ2hQAr+tXCOgCHpxpRevZ+3EQg6SM3n25bjM9bZ/Pa9nDK0kGcz4nOhpMs5C/6Kw== southparkfan@miraheze-production
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCqOCAca6MCxNPgS5PKzzlZ2s44MTqosdfVXSGoJJB22Bp2o18GvAooQyKKqwWnfdMeMogK0mpVSdwHmGX8N8fv8z2HttJxpLc/U4Tck1sgkX0zWioarfEop0X565Vjkn+sxXtAEoZoT7x9dW7yuUpWYOzkVtg2xjFr7NtN/j7/QQ1NI7kWElCaA37iB3DhL7Gh5QG8GggPp+1nredt4RAdegNF2Nb+gouifsx5RNWqw1en21ahDtLzFVnU3l64cafssS/6EKuxlVD6vXU5CmnRWR1s43cz8It2QuQWDuOD4O68BCuPAa0j71629qP4YH/pDLgak/Ob60oG8oWh8Y4zNlokBZSxsl4yt3g56eODHKIgQ8aILpkDiumIH2xBxSjsCm85hZotuiKNDNRjWEdHgJX9f5K9kTZdO+3wkMxsnsKWjozV3KahvppxYXCxXSsY8Zqjy+HERfehGy07G7xwBhdZOfUDbqUwqU31TARFjvQTPt+n3PKbBhUveKg9yznq3zOl1sHvVvPiB3DrvNl/NEvCcuVG9atBzXrIysbgQdprK4w3LEAclcVvIbD2mzQCdNcwLGpaVYqUKWFiWs4fhOzDldkkkxjl2J0Z+N2V5wdce7g7aRrVwAfi/Z3Ii+mU+zQ06PBHM+8smA5OpRIAZlmBQDavX5KgoyZh5KPENw== root@vps1
   mutante:
-    ensure: present
+    ensure: absent
     uid: 1002
     name: mutante
     realname: Accion Mutante
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCuEdjiTcvHOAcnTtaellx9UAcxDjCRzNKzQHsOmm5ojz4p67uMJDoM3leDh9/eiFmIsTnydPF+44y/6TD7fIZ+swi2/ZuOpgHMgQd/fG6+6spPtBryd3vwdC6vekg2KMDEwIJ8ZuQOGVYywQciCKvut+J+cLREqsqWIiiH0apWwZC5JA+NWRAfm4Ae3Fz51YQhIGCQLoQ8c7JO58CJwkYGyZOAecA0eNP+56CYsmt5QJUzWMe2+fwXUSbMfIxgj5ylmjrRD2z8AcSkWV3q5zWhrE9IkyAo82I7GqwAKgvj3R83InsDP8t8CUH76T6UdI0jj7m9gNBwh2GWondYgQiz mutante@sphinx@miraheze]
+    ssh_keys: []
   revi:
     ensure: present
     uid: 1003
     name: revi
     realname: Revi
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCga/EhKR8V6HU/ehOJ5ixZxnATOoGHJnd/qYIpbxGDMHCAjqL67HhZE4pgSKvu5mgML4G2Ls8+oHUY/aJrDKAqIRW+kGQnSpXIE98HMi7o0jm0AsHCotBK+q5KYH7HMjU4kapRjsrXx3MxlaIXz75eJZ6ysbauP/ROxqHuDXPlhdQgPNUhNh0icxUcEOBMET+oa4+iesT6DnL6yRXVpC7SY+q4XXahbajeGKHFLjuNwDtB0ExVY2O80OMGcl04DABm4oRNOCRLtkVsXdTOL7s/SVmzb/tfz1A0JUTo6YJkd2PPauPjRGGW2RgCqKAS2gApRFUT7RWriZcIh3IAeKpP revi@miraheze]
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDw7dKp53t8J1i/4tqNJZJvrrw/0NfILZDtEsTx2N8fJ3XF8wsqbGtXR6xAJZmsA+PC5hMHc5ut+Q805HxX1/ddJgHhSx83ENZslk2G+pYQP27siGBoMbrMvCgvULr9aP1LKeBsxidlUEikkt76iJcNuqG/aYWCsHNJ1O2WOxnhmBC4HOxSC5ZBZ3jhSmizka+qpCTnGC9ruD1tpsKfxOO9SpOYKHuVsed0KAiriE6fwF9c8vGi/NFO3x3LWtUiTCNRs7kcXOaajTF+iezWN+Mtq/Y2RqNSHdUILH5KX6bRgSlyd6viAQ93XiOWQGONLo4B/UjT5nihLDZWH7iK/3hAgfuRBOWb6KaSJIWz1v82VMpZwXiNERkRa6dSp4/QLjmuub2Ubuk3NYvdgoKAhUK87zsC7iqSxR86J/I3B2E932+ussKeLoP9rmwkB4RbvzOpIIP8h9BaFzneOa/xghJ8mAuxEhREXe2U8HYrzVyXVE9xeXaUlyRc0fXmV3o442+Q5WMLNFU3AkIrXBlvtZdmezX6/PZEReqOj8ShVOoq1+Tm5l5S5oWnMqm6MJK0gaxtAlkbj39h8PBB5vRWNKyb/4oClWUjHK4RRddjQoMa3Q5/w0qz5Bwn28fh7syOpk/llP51mK2qqw+K2++Bl0GCaro5/ELQSdgd95YOBV7JUw== revi@miraheze]
   ndkilla:
     ensure: present
     uid: 1004
     name: ndkilla
     realname: NDKilla
-    ssh_keys: [AAAAB3NzaC1yc2EAAAABJQAAAQEA483LlTZ0FqGGJSKYHkQXSo7NUmmziIbb/KH9NjwEO8YihLG2rAMh9L2C2LX4ggaSxSMlupopL3lXr8yG8FqVjX1fVofGEj9adGs48lhrbauYFQ9ZKK5AGuYHzyKkONOIpHio0eQ5z6GSZdnHOI22Idn7IEqghTnGDFb8PVqf7fjiS2LIGhoZJWVkSFuxQNHpgX6OyqbsolE3sp8ZjfY4zX+KWqavs1LogWEqNQNM3eUNN7higG6/lJPTOCJicP0Z8pwRP4I5xpbbhLxRNojEXrYocxb7PzZfSojZnHNsospLN4ssPYBrhlHhGVL6er25vBEbyKGszT7Xx7907oMKw== rsa-key-20151221]
+    ssh_keys: 
+      - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEA483LlTZ0FqGGJSKYHkQXSo7NUmmziIbb/KH9NjwEO8YihLG2rAMh9L2C2LX4ggaSxSMlupopL3lXr8yG8FqVjX1fVofGEj9adGsg48lhrbauYFQ9ZKK5AGuYHzyKkONOIpHio0eQ5z6GSZdnHOI22Idn7IEqghTnGDFb8PVqf7fjiS2LIGhoZJWVkSFuxQNHpgX6OyqbsolE3sp8ZjfY4zX+KWqavs1LogWEqNQNM3eUNN7higG6/lJPTOCJicP0Z8pwRP4I5xpbbhLxRNojEXrYocxb7PzZfSojZnHNsospLN4ssPYBrhlHhGVL6er25vBEbyKGszT7Xx7907oMKw== rsa-key-20151221
+      - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAty/E19COjzLoMG/rjCk0qKdZCh1n2yS3g4LcVTauXK4VJiy53Ipvv3cX3Mqoe/AmHPe1H0dTDiHKdUw+iyrwZ8graf0dD0KvevUoNVGwmvRV1FJ/iW48/rykLnGr6OprZMPfUR4gjxy+H6hQ9uI20bVA7xYp+BD9pz3pzk41k0P0stcvpnKI5Igtvn+zNE1hyJDaTG2otRXbHspTtLLYkK+4/lsh8WcEJ69D8NSbaZnnCVdxJt5UmLUQJ/wNyy9pG/B3CVDi4y2hQgdXweKFqVRGrhjX/ZN/AKyieKSAM/voepdZrgI1nVH6bAoCdjh7Dxo4mIn2Lo429+HVpI2hCw== ndkilla@workagain
+  labster:
+    ensure: present
+    uid: 1005
+    name: labster
+    realname: Vorticity
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMIFCaagRn4CCVDfuixkOdeYw4+Jdy3mg01SWLJ7F3nQKKVhSNlnKZrsiWsI6ihj6K06QBQxrFB3AfaqpWqALitkI+5CisnwOfutAGZu9+cbE8qo9sDAmm34N52yfnzmcFx2kgj0BDL/T+C/iiG8ZRdmeKes4Lv5OylDo+f0sHdbzc3YTTeuTafwgrXUeHv3FCrpw/xu0t9Vgawt6HACVSYq2+fglY+4oG4Pc1+hBGnRPyet+dILYTHmDem1iG2vCajiTbtnN+gKdWp3+2CeZ7YLRDexm3ncoKLPXi+nxTp6qKknH0QOd52YOnNRj3TGuif7mrRn+LVMFLaMhxuUst blaabs@perceptyx.com]

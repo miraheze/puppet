@@ -1,0 +1,61 @@
+ssl:
+  boulderwiki:
+    url: 'boulderwiki.org'
+    ca: 'StartSSL'
+  antiguabarbudacalypso:
+    url: 'antiguabarbudacalypso.com'
+    ca: 'StartSSL'
+  anuwiki:
+    url: 'anuwiki.com'
+    ca: 'Godaddy'
+  oneagencydunedin:
+    url: 'oneagencydunedin.wiki'
+    ca: 'Comodo'
+  spiral:
+    url: 'spiral.wiki'
+    ca: 'Gandi'
+  printmaking:
+    url: 'wiki.printmaking.be'
+    ca: 'StartSSL'
+  permanentfuturelab:
+    url: 'permanentfuturelab.wiki'
+    ca: 'StartSSL'
+  reviwiki:
+    url: 'private.revi.wiki'
+    ca: 'Comodo'
+  publictestwiki:
+    url: 'publictestwiki.com'
+    ca: 'Comodo'
+  universebuild:
+    url: 'universebuild.com'
+    ca: 'Comodo'
+  zepaltusproject:
+    url: 'wiki.zepaltusproject.com'
+    ca: 'Gandi'
+  dottorconte:
+    url: 'wiki.dottorconte.eu'
+    ca: 'LetsEncrypt'
+  valentinaproject:
+    url: 'wiki.valentinaproject.org'
+    ca: 'StartSSL'
+  wikiparkinson:
+    url: 'wikiparkinson.org'
+    ca: 'StartSSL'
+  oyeavdelingen:
+    url: 'oyeavdelingen.org'
+    ca: 'Comodo'
+  carving:
+    url: 'carving.wiki'
+    ca: 'StartSSL'
+  dwplive:
+    url: 'wiki.dwplive.com'
+    ca: 'StartSSL'
+  haxionspace:
+    url: 'haxion.space'
+    ca: 'StartSSL'
+  grottocenter:
+    url: 'wiki.grottocenter.org'
+    ca: 'StartSSL'
+  downhillderelicts:
+    url: 'wiki.downhillderelicts.com'
+    ca: 'LetsEncrypt'

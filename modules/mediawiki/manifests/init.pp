@@ -1,7 +1,14 @@
 # class: mediawiki
 class mediawiki {
-    include mediawiki::cron
     include mediawiki::favicons
+    include mediawiki::cron
+    include mediawiki::nginx
+    include mediawiki::php
+    include ssl::hiera
+
+    if hiera(jobrunner) {
+        include mediawiki::jobrunner
+    }
 
     file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/srv/mediawiki-static', '/var/log/mediawiki' ]:
         ensure => 'directory',
@@ -12,6 +19,12 @@ class mediawiki {
 
     file { '/etc/nginx/nginx.conf':
         content => template('mediawiki/nginx.conf.erb'),
+        require => Package['nginx'],
+    }
+
+    file { '/etc/nginx/fastcgi_params':
+        ensure  => present,
+        source  => 'puppet:///modules/mediawiki/nginx/fastcgi_params',
     }
 
     file { '/etc/nginx/sites-enabled/default':
@@ -19,6 +32,7 @@ class mediawiki {
     }
 
     $packages = [
+        'dvipng',
         'imagemagick',
         'ploticus',
         'ttf-freefont',
@@ -36,21 +50,17 @@ class mediawiki {
         ensure => present,
         install_options => ['--no-install-recommends'],
     }
-    
-    ssl::cert { 'wildcard.miraheze.org': }
-    ssl::cert { 'spiral.wiki': }
-    ssl::cert { 'anuwiki.com': }
-    ssl::cert { 'antiguabarbudacalypso.com': }
-    ssl::cert { 'permanentfuturelab.wiki': }
-    ssl::cert { 'secure.reviwiki.info': }
-    ssl::cert { 'wiki.printmaking.be': }
-    ssl::cert { 'private.revi.wiki': }
-    ssl::cert { 'allthetropes.org': }
 
-    nginx::site { 'mediawiki':
-        ensure   => present,
-        source   => 'puppet:///modules/mediawiki/nginx/mediawiki.conf',
+    file { '/etc/ImageMagick-6/policy.xml':
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/imagemagick/policy.xml',
+        require => Package['imagemagick'],
     }
+
+    # these aren't autoloaded by ssl::hiera
+    ssl::cert { 'wildcard.miraheze.org': }
+    ssl::cert { 'secure.reviwiki.info': }
+    ssl::cert { 'allthetropes.org': }
 
     nginx::conf { 'mediawiki-includes':
         ensure => present,
@@ -67,19 +77,34 @@ class mediawiki {
     git::clone { 'MediaWiki core':
         directory           => '/srv/mediawiki/w',
         origin              => 'https://github.com/miraheze/mediawiki.git',
-        branch              => 'REL1_25',
+        branch              => 'REL1_26',
         ensure              => 'latest',
         timeout             => '550',
         recurse_submodules  => true,
         require             => File['/srv/mediawiki'],
     }
 
+    # FIXME: Ugly hack, *everything* in /srv/mediawiki/w should be owned by www-data,
+    # but recursive chown in git::clone causes puppet to OOM.
+    file { '/srv/mediawiki/w/cache':
+        ensure  => directory,
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => Git::Clone['MediaWiki core'],
+    }
+
     git::clone { 'MediaWiki vendor':
         directory => '/srv/mediawiki/w/vendor',
         origin    => 'https://github.com/wikimedia/mediawiki-vendor.git',
-        branch    => 'REL1_25',
+        branch    => 'REL1_26',
         ensure    => 'latest',  
         require   => Git::Clone['MediaWiki core'],
+    }
+
+    file { '/srv/mediawiki/robots.txt':
+        ensure  => 'present',
+        source  => 'puppet:///modules/mediawiki/robots.txt',
+        require => File['/srv/mediawiki'],
     }
 
     file { '/srv/mediawiki/w/LocalSettings.php':
@@ -110,7 +135,6 @@ class mediawiki {
     exec { 'Math texvccheck':
         command => '/usr/bin/make --directory=/srv/mediawiki/w/extensions/Math/texvccheck',
         creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
-        user    => 'www-data',
         require => Package['ocaml'],
     }
 }

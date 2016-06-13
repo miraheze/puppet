@@ -1,10 +1,14 @@
 class role::irc {
+    include private::irc
+    include irc::irclogbot
+
     class { 'irc::ircrcbot':
-        nickname    => 'MirahezeRC',
-        network     => 'chat.freenode.net',
-        channel     => '#miraheze-feed',
-        port        => '5070',
-        sleeptime   => '0.5',
+        nickname     => 'MirahezeRC',
+        network      => 'chat.freenode.net',
+        network_port => '6667',
+        channel      => '#miraheze-feed',
+        udp_port     => '5070',
+        sleeptime    => '0.5',
     }
 
     ufw::allow { 'ircrcbot port mw1':

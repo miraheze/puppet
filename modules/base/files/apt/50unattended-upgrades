@@ -14,7 +14,7 @@ Unattended-Upgrade::Package-Blacklist {
 
 Unattended-Upgrade::Mail "operations@miraheze.org";
 
-Unattended-Upgrade::MailOnlyOnError "false";
+Unattended-Upgrade::MailOnlyOnError "true";
 
 // Automatically reboot *WITHOUT CONFIRMATION* if
 // the file /var/run/reboot-required is found after the upgrade

@@ -17,6 +17,11 @@ class role::db {
         content => template('mariadb/grants/piwik-grants.sql.erb'),
     }
 
+    file { '/etc/mysql/miraheze/phabricator-grants.sql':
+        ensure  => present,
+        content => template('mariadb/grants/phabricator-grants.sql.erb'),
+    }
+
     ufw::allow { 'mysql port mw1':
         proto => 'tcp',
         port  => '3306',
@@ -35,6 +40,14 @@ class role::db {
         port  => '3306',
         from  => '185.52.1.76',
     }
+
+    ufw::allow { 'mysql port misc2':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '81.4.127.174',
+    }
+
+    ssl::cert { 'wildcard.miraheze.org': }
 
     motd::role { 'role::db':
         description => 'general database server',

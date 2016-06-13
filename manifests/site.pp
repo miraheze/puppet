@@ -5,34 +5,51 @@ class standard {
     include base
 }
 
+node 'bacula1' {
+    include standard
+    include bacula::director
+}
+
 node /^cp[12]\.miraheze\.org$/ {
     include standard
     include role::varnish
+
+    if $::hostname == 'cp1' {
+        include role::staticserver
+        include bacula::client
+    }
 }
 
 node 'db1.miraheze.org' {
     include standard
     include role::db
+    include bacula::client
 }
 
 node 'misc1.miraheze.org' {
     include standard
-    include role::ganglia
     include role::icinga
     include role::irc
     include role::mail
     include role::dns
-    include role::piwik
+    include role::phabricator
+    include bacula::client
+}
+
+node 'misc2.miraheze.org' {
+    include standard
     include role::redis
+    include role::ganglia
+    include role::piwik
+    include bacula::client
 }
 
 node /^mw[12]\.miraheze\.org$/ {
-    $users_defined = 'true'
     include standard
     include role::mediawiki
 
-    class { 'users':
-        groups => ['mediawiki-admins'],
+    if $::hostname == 'mw1' {
+        include bacula::client
     }
 }
 

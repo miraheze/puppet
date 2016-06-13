@@ -1,3 +1,6 @@
+[client]
+ssl-ca=/etc/ssl/certs/GlobalSign.crt
+
 [mysql]
 port                           = 3306
 socket                         = /var/run/mysqld/mysqld.sock
@@ -12,13 +15,13 @@ port                           = 3306
 default-storage-engine         = InnoDB
 socket                         = /var/run/mysqld/mysqld.sock
 pid-file                       = /var/run/mysqld/mysqld.pid
-
+skip-name-resolve
 key-buffer-size                = 32M
 myisam-recover                 = FORCE,BACKUP
 
 max-allowed-packet             = 16M
 max-connect-errors             = 1000000
-sql-mode                       = STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_AUTO_VALUE_ON_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ONLY_FULL_GROUP_BY
+sql-mode                       = STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_AUTO_VALUE_ON_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE
 sysdate-is-now                 = 1
 innodb                         = FORCE
 
@@ -31,14 +34,14 @@ log-bin                        = <%= @datadir %>/mysql-bin
 expire-logs-days               = 14
 sync-binlog                    = 1
 
-tmp-table-size                 = 32M
-max-heap-table-size            = 32M
+tmp-table-size                 = 12M
+max-heap-table-size            = 12M
 query-cache-type               = 0
 query-cache-size               = 0
 max-connections                = 50
 thread-cache-size              = 50
 open-files-limit               = 65535
-table-definition-cache         = 1400
+table-definition-cache         = 1024
 table-open-cache               = 2048
 
 innodb-flush-method            = O_DIRECT
@@ -46,9 +49,16 @@ innodb-log-files-in-group      = 2
 innodb-log-file-size           = 64M
 innodb-flush-log-at-trx-commit = 1
 innodb-file-per-table          = 1
-innodb-buffer-pool-size        = 1700M
+innodb-buffer-pool-size        = 1024M
+innodb-buffer-pool-instances   = 1
+innodb_lock_wait_timeout       = 120
 
-log-error                      = <%= @datadir %>/mysql-error.log
+log-error                      = /var/log/mysql/mysql-error.log
 log-queries-not-using-indexes  = 1
 slow-query-log                 = 1
-slow-query-log-file            = <%= @datadir %>/mysql-slow.log
+slow-query-log-file            = /var/log/mysql/mysql-slow.log
+
+ssl
+ssl-ca                         = /etc/ssl/certs/GlobalSign.crt
+ssl-cert                       = /etc/ssl/certs/wildcard.miraheze.org.crt
+ssl-key                        = /etc/ssl/private/wildcard.miraheze.org-nopass.key

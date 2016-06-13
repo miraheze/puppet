@@ -1,0 +1,11 @@
+[Unit]
+Description=Miraheze SAL Logbot
+
+[Service]
+Type=simple
+ExecStart=/etc/irclogbot/adminlogbot.py --config=/etc/irclogbot/config.py
+User=irc
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

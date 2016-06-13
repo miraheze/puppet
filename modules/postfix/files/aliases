@@ -1,34 +1,42 @@
 # standard stuff
 mailer-daemon: postmaster
-postmaster: root
+postmaster: operations
 nobody: root
-hostmaster: root
+hostmaster: operations
 webmaster: root
 www: root
 ftp: root
-abuse: root
-noc: root
-security: root
+abuse: operations
+noc: operations
 
 # noreply death
 noreply: /dev/null
 
+# root spam
+root: /dev/null
+
 # group aliases
 ops: operations
-sysadmin: operations, revi@reviwiki.info
+sysadmin: operations
 
 # destination aliases
-operations: john,southparkfan
-stewards: john,southparkfan
+operations: southparkfan,john
+stewards: southparkfan,ndkilla,john
+staff: southparkfan,ndkilla,john,revi,bslaabs@gmail.com
 
 # finances
-donate: bslaabs@gmail.com,southparkfan
+donate: bslaabs@gmail.com,southparkfan,john
 
-# root spam
-root: john,southparkfan
+
 
 # campaign
-campaign: john,southparkfan
+campaign: southparkfan,john
 
-# southparkfan
-southparkfan: southparkfan223@hotmail.com
+# revi
+revi: revi@reviwiki.info
+
+# phabricator incoming emails - must be configued with Maniphest
+security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
+csr: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
+phabricator: |/srv/phab/phabricator/scripts/mail/mail_handler.php
+bugs: |/srv/phab/phabricator/scripts/mail/mail_handler.php
