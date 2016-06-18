@@ -108,6 +108,7 @@ class parsoid {
                 'mecanon',
                 'meregos',
                 'meta',
+                'musiclibrary',
                 'mydegree',
                 'ndtest',
                 'neuronpedia',
