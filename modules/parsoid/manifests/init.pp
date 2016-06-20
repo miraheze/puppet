@@ -129,6 +129,7 @@ class parsoid {
                 'recherchesdocumentaires',
                 'ric',
                 'safiria',
+                'secondcircle',
                 'shopping',
                 'simonjon',
                 'soshomophobie',
