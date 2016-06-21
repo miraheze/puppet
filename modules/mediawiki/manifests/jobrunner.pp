@@ -3,7 +3,7 @@
 # Crons which should be ran on a jobrunner selected machine only.
 class mediawiki::jobrunner {
     cron { 'jobqueue':
-        ensure  => absent,
+        ensure  => present,
         command => '/usr/bin/flock -xn "/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/runJobs.php" > /var/log/mediawiki/cron/jobqueue.log',
         user    => 'www-data',
         minute  => '*/10',
