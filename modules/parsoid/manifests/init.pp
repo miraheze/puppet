@@ -149,6 +149,7 @@ class parsoid {
                 'vrgo',
                 'walthamstowlabour',
                 'webflow',
+                'wikibooks',
                 'wikicervantes',
                 'wikihoyo',
                 'wisdomwiki',
