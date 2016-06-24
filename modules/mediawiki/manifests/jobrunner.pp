@@ -11,7 +11,7 @@ class mediawiki::jobrunner {
 
     file { '/srv/jobrunner/jobrunner.json':
         ensure  => present,
-        content => template('jobrunner/jobrunner.json.erb'),
+        content => template('mediawiki/jobrunner.json.erb'),
         require => Git::Clone['JobRunner'],
     }
 
