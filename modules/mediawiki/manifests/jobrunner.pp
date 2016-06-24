@@ -2,11 +2,33 @@
 #
 # Crons which should be ran on a jobrunner selected machine only.
 class mediawiki::jobrunner {
-    cron { 'jobqueue':
-        ensure  => absent,
-        command => '/usr/bin/flock -xn "/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/runJobs.php" > /var/log/mediawiki/cron/jobqueue.log',
-        user    => 'www-data',
-        minute  => '*/15',
+    include private::redis
+
+    git::clone { 'JobRunner':
+        directory   => '/srv/jobrunner',
+        origin      => 'https://github.com/wikimedia/mediawiki-services-jobrunner',
+    }
+
+    file { '/srv/jobrunner/jobrunner.json':
+        ensure  => present,
+        content => template('jobrunner/jobrunner.json.erb'),
+        require => Git::Clone['JobRunner'],
+    }
+
+    file { '/etc/init.d/jobrunner':
+        ensure  => present,
+        source  => 'puppet:///modules/mediawiki/jobrunner/jobrunner.initd',
+    }
+
+    exec { 'JobRunner reload systemd':
+        command     => '/bin/systemctl daemon-reload',
+        refreshonly => true,
+    }
+
+    file { '/etc/systemd/system/adminbot.service':
+        ensure  => present,
+        source  => 'puppet:///modules/mediawiki/jobrunner/jobrunner.systemd',
+        notify  => Exec['JobRunner reload systemd'],
     }
 
     cron { 'purge_checkuser':
