@@ -25,7 +25,7 @@ class mediawiki::jobrunner {
         refreshonly => true,
     }
 
-    file { '/etc/systemd/system/adminbot.service':
+    file { '/etc/systemd/system/jobrunner.service':
         ensure  => present,
         source  => 'puppet:///modules/mediawiki/jobrunner/jobrunner.systemd',
         notify  => Exec['JobRunner reload systemd'],
