@@ -6,7 +6,7 @@ class mediawiki::jobrunner {
         ensure  => present,
         command => '/usr/bin/flock -xn "/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/runJobs.php" > /var/log/mediawiki/cron/jobqueue.log',
         user    => 'www-data',
-        minute  => '*/10',
+        minute  => '*/15',
     }
 
     cron { 'purge_checkuser':
