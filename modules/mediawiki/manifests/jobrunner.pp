@@ -17,6 +17,7 @@ class mediawiki::jobrunner {
 
     file { '/etc/init.d/jobrunner':
         ensure  => present,
+        mode    => 0755,
         source  => 'puppet:///modules/mediawiki/jobrunner/jobrunner.initd',
     }
 
