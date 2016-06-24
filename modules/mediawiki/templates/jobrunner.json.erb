@@ -42,7 +42,7 @@
             "queues": [
                 "81.4.127.174:6379"
             ],
-            "password": "<%= @password %>"
+            "password": "<%= scope.lookupvar('private::redis::password') %>"
         },
         // Address to send statsd metrics to
         "statsd": "",
