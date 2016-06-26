@@ -65,3 +65,6 @@ ssl:
   wikikaisaga:
     url: 'wiki.kaisaga.com'
     ca: 'LetsEncrypt'
+  wisdomwiki:
+    url: 'wisdomwiki.org'
+    ca: 'StartSSL'
