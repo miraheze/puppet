@@ -152,7 +152,6 @@ class parsoid {
                 'wikibooks',
                 'wikicervantes',
                 'wikihoyo',
-                'wisdomwiki',
                 'yggdrasilwiki',
     ]
 
