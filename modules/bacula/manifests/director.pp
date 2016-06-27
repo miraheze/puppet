@@ -70,4 +70,10 @@ class bacula::director {
         proto => 'tcp',
         port  => 9103,
     }
+
+    file { '/usr/lib/nagios/plugins/check_bacula_backups':
+        ensure => present,
+        source => 'puppet:///modules/bacula/check_bacula_backups',
+        mode => '0555',
+    }
 }
