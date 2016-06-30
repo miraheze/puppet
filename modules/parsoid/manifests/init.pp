@@ -95,6 +95,7 @@ class parsoid {
                 'idtest',
                 'ilearnthings',
                 'imsts',
+                'inazumaeleven',
                 'islamwissenschaft',
                 'izanagi',
                 'lancemedical',
