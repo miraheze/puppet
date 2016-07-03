@@ -68,3 +68,6 @@ ssl:
   wisdomwiki:
     url: 'wisdomwiki.org'
     ca: 'StartSSL'
+  aenasan:
+    url: 'wiki.aenasan.com'
+    ca: 'StartSSL'
