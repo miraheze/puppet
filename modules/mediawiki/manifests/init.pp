@@ -135,6 +135,6 @@ class mediawiki {
     exec { 'Math texvccheck':
         command => '/usr/bin/make --directory=/srv/mediawiki/w/extensions/Math/texvccheck',
         creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
-        require => Package['ocaml'],
+        require => [ Git::Clone['MediaWiki core'], Package['ocaml'] ],
     }
 }
