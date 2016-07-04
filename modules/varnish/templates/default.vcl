@@ -49,7 +49,7 @@ backend mw2 {
 sub vcl_init {
 	new mediawiki = directors.round_robin();
 	mediawiki.add_backend(mw1);
-	# mediawiki.add_backend(mw2);
+	mediawiki.add_backend(mw2);
 }
 
 
@@ -118,11 +118,6 @@ sub vcl_recv {
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
-
-        if (req.http.Host ~ "(extload.miraheze.org|publictestwiki.com)") {
-                set req.backend_hint = mw2;
-                return (pass);
-        }
 
 	# We never want to cache non-GET/HEAD requests.
 	if (req.method != "GET" && req.method != "HEAD") {
