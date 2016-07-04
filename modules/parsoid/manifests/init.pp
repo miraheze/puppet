@@ -97,6 +97,7 @@ class parsoid {
                 'ilearnthings',
                 'imsts',
                 'inazumaeleven',
+                'irc',
                 'islamwissenschaft',
                 'izanagi',
                 'lancemedical',
