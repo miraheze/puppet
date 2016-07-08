@@ -8,7 +8,7 @@ class acme {
 
     file { '/root/ssl-certificate':
         ensure => present,
-        source => 'puppet://modules/acme/ssl-certificate',
+        source => 'puppet:///modules/acme/ssl-certificate',
         mode   => '0555',
     }
 }
