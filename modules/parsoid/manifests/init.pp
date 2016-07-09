@@ -62,6 +62,7 @@ class parsoid {
                 'biblio',
                 'braindump',
                 'carving',
+                'casuarina',
                 'cbmedia',
                 'cec',
                 'chandrusweths',
