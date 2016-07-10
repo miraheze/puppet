@@ -74,3 +74,6 @@ ssl:
   droneregulation:
     url: 'drone-regulation.info'
     ca: 'LetsEncrypt'
+  easygov:
+    url: 'easygov.info'
+    ca: 'LetsEncrypt'
