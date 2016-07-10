@@ -27,13 +27,14 @@ function generate_letsencrypt_certificate {
 }
 
 function usage {
-    echo "Usage: $0 [-f] <domain>"; exit 1;
+    echo "Usage: $0 [-g] <domain>"; exit 1;
 }
 
 while getopts "g" option; do
     case $option in
         g)
-            LE=1
+            LE=1;
+            shift
             ;;
         *)
             usage
