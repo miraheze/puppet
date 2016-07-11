@@ -77,3 +77,6 @@ ssl:
   easygov:
     url: 'easygov.info'
     ca: 'LetsEncrypt'
+  garyjohnsonmeetups:
+    url: 'wiki.garyjohnsonmeetups.com'
+    ca: 'StartSSL'
