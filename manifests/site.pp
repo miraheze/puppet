@@ -50,6 +50,7 @@ node /^mw[12]\.miraheze\.org$/ {
 
     if $::hostname == 'mw1' {
         include bacula::client
+        include acme
     }
 }
 

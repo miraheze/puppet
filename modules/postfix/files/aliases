@@ -22,18 +22,16 @@ sysadmin: operations
 # destination aliases
 operations: southparkfan,john
 stewards: southparkfan,ndkilla,john
-staff: southparkfan,ndkilla,john,revi,bslaabs@gmail.com
+staff: southparkfan,ndkilla,john,bslaabs@gmail.com
 
 # finances
 donate: bslaabs@gmail.com,southparkfan,john
 
-
-
 # campaign
 campaign: southparkfan,john
 
-# revi
-revi: revi@reviwiki.info
+# southparkfan
+southparkfan: southparkfan223@hotmail.com
 
 # phabricator incoming emails - must be configued with Maniphest
 security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations

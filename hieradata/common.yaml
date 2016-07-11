@@ -59,3 +59,21 @@ ssl:
   downhillderelicts:
     url: 'wiki.downhillderelicts.com'
     ca: 'LetsEncrypt'
+  metatrek:
+    url: 'meta.trek.tk'
+    ca: 'LetsEncrypt'
+  wikikaisaga:
+    url: 'wiki.kaisaga.com'
+    ca: 'LetsEncrypt'
+  wisdomwiki:
+    url: 'wisdomwiki.org'
+    ca: 'StartSSL'
+  aenasan:
+    url: 'wiki.aenasan.com'
+    ca: 'StartSSL'
+  droneregulation:
+    url: 'drone-regulation.info'
+    ca: 'LetsEncrypt'
+  easygov:
+    url: 'easygov.info'
+    ca: 'LetsEncrypt'

@@ -70,4 +70,16 @@ class bacula::director {
         proto => 'tcp',
         port  => 9103,
     }
+
+    file { '/usr/lib/nagios/plugins/check_bacula_backups':
+        ensure => present,
+        source => 'puppet:///modules/bacula/check_bacula_backups',
+        mode => '0555',
+    }
+
+    # Bacula secret keys
+    sudo::user { 'nrpe_sudo_checkbaculabackups':
+        user        => 'nagios',
+        privileges  => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_bacula_backups' ],
+    }
 }

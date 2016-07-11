@@ -10,7 +10,7 @@ class mediawiki {
         include mediawiki::jobrunner
     }
 
-    file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/srv/mediawiki-static', '/var/log/mediawiki' ]:
+    file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/var/log/mediawiki' ]:
         ensure => 'directory',
         owner  => 'www-data',
         group  => 'www-data',
@@ -135,6 +135,6 @@ class mediawiki {
     exec { 'Math texvccheck':
         command => '/usr/bin/make --directory=/srv/mediawiki/w/extensions/Math/texvccheck',
         creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
-        require => Package['ocaml'],
+        require => [ Git::Clone['MediaWiki core'], Package['ocaml'] ],
     }
 }

@@ -18,6 +18,8 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'testwiki', 'https://publictestwiki.com/w/api.php' );
 	parsoidConfig.setInterwiki( 'universebuildwiki', 'https://universebuild.com/w/api.php' );
 	parsoidConfig.setInterwiki( 'valentinaprojectwiki', 'https://wiki.valentinaproject.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'wikikaisagawiki', 'https://wiki.kaisaga.com/w/api.php' );
+	parsoidConfig.setInterwiki( 'wisdomwiki', 'https://wisdomwiki.org/w/api.php' );
 
 	// Don't load WMF wikis
 	parsoidConfig.loadWMF = false;

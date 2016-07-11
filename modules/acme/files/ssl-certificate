@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# Generate an SSL certificate (LetsEncrypt) with a CSR and private key.
+#
+# John Lewis
+set -e
+set -u
+LE=0
+
+function log {
+    echo "$@"
+}
+
+function generate_private_key {
+    openssl genrsa 2048 > /root/acme-tiny/ssl/${domain}.key
+    log "Private key generated at: /root/acme-tiny/ssl/${domain}.key"
+}
+
+function generate_csr {
+    openssl req -new -sha256 -key /root/acme-tiny/ssl/${domain}.key -subj "/" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:${domain}")) > /root/acme-tiny/ssl/${domain}.csr
+    log "CSR generated at: /root/acme-tiny/ssl/${domain}.csr"
+}
+
+function generate_letsencrypt_certificate {
+    python /root/acme-tiny/acme_tiny.py --account-key /root/acme-tiny/account.key --csr /root/acme-tiny/ssl/${domain}.csr --acme-dir /var/www/challenges/ > /root/acme-tiny/ssl/${domain}.crt
+    log "LetsEncrypt certificate at: /root/acme-tiny/ssl/${domain}.crt"
+}
+
+function usage {
+    echo "Usage: $0 [-g] <domain>"; exit 1;
+}
+
+while getopts "g" option; do
+    case $option in
+        g)
+            LE=1;
+            shift
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+domain=${1:-}
+test -z ${domain} && usage
+
+generate_private_key
+generate_csr
+
+if [ $LE -eq 1 ]; then
+    log "Generating SSL certificate with LetsEncrypt"
+    generate_letsencrypt_certificate
+    cat /root/acme-tiny/ssl/${domain}.crt
+else
+    log "Not generating an SSL certificate. Use CSR below to send to the requestor"
+    cat /root/acme-tiny/ssl/${domain}.csr
+fi
