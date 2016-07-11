@@ -146,6 +146,7 @@ class parsoid {
                 'taylor',
                 'tme',
                 'teleswiki',
+                'thefosters',
                 'tochki',
                 'torejorg',
                 'touhouengine',
