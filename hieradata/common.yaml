@@ -80,3 +80,6 @@ ssl:
   garyjohnsonmeetups:
     url: 'wiki.garyjohnsonmeetups.com'
     ca: 'StartSSL'
+  irc:
+    url: 'ircwiki.cf'
+    ca: 'LetsEncrypt'
