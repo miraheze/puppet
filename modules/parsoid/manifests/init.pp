@@ -159,6 +159,7 @@ class parsoid {
                 'wikicervantes',
                 'wikihoyo',
                 'worldbuilding',
+                'yacresources',
                 'yourosongcontest',
                 'yggdrasilwiki',
     ]
