@@ -6,6 +6,7 @@
 set -e
 set -u
 LE=0
+RENEW=0
 
 function log {
     echo "$@"
@@ -27,13 +28,17 @@ function generate_letsencrypt_certificate {
 }
 
 function usage {
-    echo "Usage: $0 [-g] <domain>"; exit 1;
+    echo "Usage: $0 [-gr] <domain>"; exit 1;
 }
 
-while getopts "g" option; do
+while getopts "gr" option; do
     case $option in
         g)
             LE=1;
+            shift
+            ;;
+        r)
+            RENEW=1;
             shift
             ;;
         *)
@@ -45,14 +50,20 @@ done
 domain=${1:-}
 test -z ${domain} && usage
 
-generate_private_key
-generate_csr
+if [ $RENEW -eq 0 ]; then
+    generate_private_key
+    generate_csr
 
-if [ $LE -eq 1 ]; then
-    log "Generating SSL certificate with LetsEncrypt"
+    if [ $LE -eq 1 ]; then
+        log "Generating SSL certificate with LetsEncrypt"
+        generate_letsencrypt_certificate
+        cat /root/acme-tiny/ssl/${domain}.crt
+    else
+        log "Not generating an SSL certificate. Use CSR below to send to the requestor"
+        cat /root/acme-tiny/ssl/${domain}.csr
+    fi
+else
+    log "Re-generating a new SSL cert for ${domain}"
     generate_letsencrypt_certificate
     cat /root/acme-tiny/ssl/${domain}.crt
-else
-    log "Not generating an SSL certificate. Use CSR below to send to the requestor"
-    cat /root/acme-tiny/ssl/${domain}.csr
 fi
