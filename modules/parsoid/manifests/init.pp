@@ -113,6 +113,7 @@ class parsoid {
                 'meregos',
                 'meta',
                 'musiclibrary',
+                'musictabs',
                 'mydegree',
                 'ndtest',
                 'neuronpedia',
