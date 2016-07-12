@@ -83,3 +83,6 @@ ssl:
   irc:
     url: 'ircwiki.cf'
     ca: 'LetsEncrypt'
+  sandboxwisdomwiki:
+    url: 'sandbox.wisdomwiki.org'
+    ca: 'LetsEncrypt'
