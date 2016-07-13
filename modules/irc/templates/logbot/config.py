@@ -56,10 +56,7 @@ author_map = {
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)
-title_map = {
-    "example": "Master",
-    "SPF|Cloud": "I love you! <3"
-}
+title_map = { "example": "Master" }
 
 # Scheme and wiki hostname to connect to
 wiki_connection = ("https", "meta.miraheze.org")
