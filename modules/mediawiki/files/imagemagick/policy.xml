@@ -65,5 +65,6 @@
   <policy domain="coder" rights="none" pattern="SHOW" />
   <policy domain="coder" rights="none" pattern="WIN" />
   <policy domain="coder" rights="none" pattern="PLT" />
+  <policy domain="path" rights="none" pattern="@*" />
 </policymap>
 
