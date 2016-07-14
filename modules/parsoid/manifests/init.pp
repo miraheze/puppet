@@ -89,6 +89,7 @@ class parsoid {
                 'games',
                 'geirpedia',
                 'gen',
+                'gnc',
                 'grandtheftwiki',
                 'hftqms',
                 'hobbies',
