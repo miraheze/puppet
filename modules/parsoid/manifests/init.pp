@@ -87,6 +87,7 @@ class parsoid {
                 'ezdmf',
                 'fishpercolator',
                 'foodsharinghamburg',
+                'frontdesks',
                 'games',
                 'geirpedia',
                 'gen',
