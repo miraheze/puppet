@@ -129,6 +129,8 @@ sub vcl_recv {
 	call identify_device;
 	call url_rewrite;
 
+	unset req.http.Proxy; # https://httpoxy.org/; CVE-2016-5385
+
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1;
 		return (pass);
