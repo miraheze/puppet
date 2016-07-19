@@ -156,6 +156,7 @@ class parsoid {
                 'touhouengine',
                 'unikum',
                 'urho3d',
+                'videogames',
                 'vrgo',
                 'walthamstowlabour',
                 'webflow',
