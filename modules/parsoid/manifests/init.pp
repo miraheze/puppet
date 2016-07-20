@@ -48,6 +48,7 @@ class parsoid {
                 'aacenterpriselearning',
                 'adnovum',
                 'aescapes',
+                'ageofimperialism',
                 'air',
                 'aktpos',
                 'alanpedia',
