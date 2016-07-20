@@ -59,6 +59,7 @@ class parsoid {
                 'aryaman',
                 'atheneum',
                 'augustinianum',
+                'aurcusonline',
                 'bgo',
                 'biblicalwiki',
                 'biblio',
