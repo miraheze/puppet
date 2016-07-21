@@ -86,3 +86,6 @@ ssl:
   sandboxwisdomwiki:
     url: 'sandbox.wisdomwiki.org'
     ca: 'LetsEncrypt'
+  make717:
+    url: 'wiki.make717.org'
+    ca: 'LetsEncrypt'
