@@ -138,6 +138,7 @@ class parsoid {
                 'rawdata',
                 'recherchesdocumentaires',
                 'ric',
+                'robloxscripters',
                 'safiria',
                 'secondcircle',
                 'shopping',
