@@ -115,6 +115,7 @@ class parsoid {
                 'lunfeng',
                 'maiasongcontest',
                 'mecanon',
+                'menufeed',
                 'meregos',
                 'meta',
                 'musiclibrary',
