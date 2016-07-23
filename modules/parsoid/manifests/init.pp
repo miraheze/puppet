@@ -154,6 +154,7 @@ class parsoid {
                 'tme',
                 'teleswiki',
                 'thefosters',
+                'thehushhushsaga',
                 'tochki',
                 'torejorg',
                 'touhouengine',
