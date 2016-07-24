@@ -140,6 +140,7 @@ class parsoid {
                 'recherchesdocumentaires',
                 'ric',
                 'robloxscripters',
+                'rpcharacters',
                 'safiria',
                 'secondcircle',
                 'shopping',
