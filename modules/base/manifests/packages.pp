@@ -9,6 +9,7 @@ class base::packages {
         'git',
         'htop',
 	'logrotate',
+	'mtr',
         'nano',
         'screen',
         'strace',
