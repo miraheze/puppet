@@ -27,10 +27,12 @@ class piwik {
     }
 
     exec { "curl -sS https://getcomposer.org/installer | php && php composer.phar install":
-        creates => '/srv/piwik/composer.phar',
-        cwd     => '/srv/piwik',
-        path    => '/usr/bin',
-        user    => 'www-data',
+        creates     => '/srv/piwik/composer.phar',
+        cwd         => '/srv/piwik',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/piwik',
+        user        => 'www-data',
+        require     => Git::Clone['piwik'],
     }
 
     apache::site { 'piwik.miraheze.org':
