@@ -174,6 +174,7 @@ class parsoid {
                 'yacresources',
                 'yourosongcontest',
                 'yggdrasilwiki',
+                'youtube',
     ]
 
     file { '/etc/mediawiki/parsoid/settings.js':
