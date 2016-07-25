@@ -89,3 +89,6 @@ ssl:
   thinkingliquid:
     url: 'thinkingliquid.org'
     ca: 'LetsEncrypt'
+  thelonsdalebattalion:
+    url: 'thelonsdalebattalion.co.uk'
+    ca: 'LetsEncrypt'
