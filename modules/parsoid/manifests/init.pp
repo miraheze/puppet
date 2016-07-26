@@ -106,6 +106,7 @@ class parsoid {
                 'irc',
                 'islamwissenschaft',
                 'izanagi',
+                'justinbieber',
                 'lancemedical',
                 'lbsges',
                 'lclwiki',
