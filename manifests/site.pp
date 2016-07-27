@@ -34,7 +34,6 @@ node 'misc1.miraheze.org' {
     include role::dns
     include role::phabricator
     include bacula::client
-    include role::redis
 }
 
 node 'misc2.miraheze.org' {
