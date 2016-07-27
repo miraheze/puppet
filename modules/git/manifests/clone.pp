@@ -106,7 +106,7 @@ define git::clone(
                 # git pull is run.
                 if $recurse_submodules {
                     exec { "git_submodule_update_${title}":
-                        command     => "${git} submodule update --init",
+                        command     => "${git} submodule update --init --recursive",
                         provider    => shell,
                         cwd         => $directory,
                         environment => $env,
