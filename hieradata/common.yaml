@@ -92,3 +92,6 @@ ssl:
   thelonsdalebattalion:
     url: 'thelonsdalebattalion.co.uk'
     ca: 'LetsEncrypt'
+  labby:
+    url: 'wiki.labby.io'
+	ca: 'LetsEncrypt'
