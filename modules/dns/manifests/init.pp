@@ -48,4 +48,10 @@ class dns {
         before    => Package['gdnsd'],
         notify    => Exec['gdnsd-syntax'],
     }
+
+    file { '/usr/lib/nagios/plugins/check_gdnsd_datacenters':
+        ensure  => present,
+        source  => 'puppet:///modules/dns/check_gdnsd_datacenters.py',
+        mode    => 755,
+    }
 }

@@ -18,6 +18,14 @@ class redis (
         require => Package['redis-server'],
     }
 
+    file { '/srv/redis':
+        ensure  => directory,
+        owner   => 'redis',
+        group   => 'redis',
+        mode    => '0755',
+        require => Package['redis-server'],
+    }
+
     service { 'redis-server':
         ensure  => running,
         enable  => true,

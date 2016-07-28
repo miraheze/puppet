@@ -61,6 +61,7 @@ class mediawiki {
     ssl::cert { 'wildcard.miraheze.org': }
     ssl::cert { 'secure.reviwiki.info': }
     ssl::cert { 'allthetropes.org': }
+    ssl::cert { 'fibromyalgia-engineer.com': }
 
     nginx::conf { 'mediawiki-includes':
         ensure => present,

@@ -74,12 +74,21 @@ ssl:
   droneregulation:
     url: 'drone-regulation.info'
     ca: 'LetsEncrypt'
-  easygov:
-    url: 'easygov.info'
-    ca: 'LetsEncrypt'
   garyjohnsonmeetups:
     url: 'wiki.garyjohnsonmeetups.com'
     ca: 'StartSSL'
   irc:
     url: 'ircwiki.cf'
+    ca: 'LetsEncrypt'
+  sandboxwisdomwiki:
+    url: 'sandbox.wisdomwiki.org'
+    ca: 'LetsEncrypt'
+  make717:
+    url: 'wiki.make717.org'
+    ca: 'LetsEncrypt'
+  thinkingliquid:
+    url: 'thinkingliquid.org'
+    ca: 'LetsEncrypt'
+  thelonsdalebattalion:
+    url: 'thelonsdalebattalion.co.uk'
     ca: 'LetsEncrypt'

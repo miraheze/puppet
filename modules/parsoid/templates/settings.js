@@ -20,6 +20,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'valentinaprojectwiki', 'https://wiki.valentinaproject.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'wikikaisagawiki', 'https://wiki.kaisaga.com/w/api.php' );
 	parsoidConfig.setInterwiki( 'wisdomwiki', 'https://wisdomwiki.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'wisdomsandboxwiki', 'https://sandbox.wisdomwiki.org/w/api.php' );
 
 	// Don't load WMF wikis
 	parsoidConfig.loadWMF = false;

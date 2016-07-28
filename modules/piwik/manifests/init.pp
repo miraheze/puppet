@@ -21,16 +21,18 @@ class piwik {
     git::clone { 'piwik':
         directory => '/srv/piwik',
         origin    => 'https://github.com/piwik/piwik.git',
-        branch    => '2.15.0', # Current LTS
+        branch    => '2.16.1', # Current stable
         owner     => 'www-data',
         group     => 'www-data',
     }
 
     exec { "curl -sS https://getcomposer.org/installer | php && php composer.phar install":
-        creates => '/srv/piwik/composer.phar',
-        cwd     => '/srv/piwik',
-        path    => '/usr/bin',
-        user    => 'www-data',
+        creates     => '/srv/piwik/composer.phar',
+        cwd         => '/srv/piwik',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/piwik',
+        user        => 'www-data',
+        require     => Git::Clone['piwik'],
     }
 
     apache::site { 'piwik.miraheze.org':

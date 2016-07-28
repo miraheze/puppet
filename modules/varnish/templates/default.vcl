@@ -98,6 +98,22 @@ sub identify_device {
 	}
 }
 
+sub url_rewrite {
+        if (req.http.Host == "meta.miraheze.org"
+                && req.url ~ "^/Stewards'_noticeboard"
+        ) {
+                return (synth(752, "/wiki/Stewards'_noticeboard"));
+        }
+}
+
+sub vcl_synth {
+        if (resp.status == 752) {
+                set resp.http.Location = resp.reason;
+                set resp.status = 302;
+                return (deliver);
+        }
+}
+
 sub recv_purge {
 	if (req.method == "PURGE") {
 		if (!client.ip ~ purge) {
@@ -111,6 +127,9 @@ sub recv_purge {
 sub vcl_recv {
 	call recv_purge;
 	call identify_device;
+	call url_rewrite;
+
+	unset req.http.Proxy; # https://httpoxy.org/; CVE-2016-5385
 
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1;
