@@ -130,6 +130,7 @@ class parsoid {
                 'nwp',
                 'ofthevampire',
                 'openconstitution',
+                'opengovpioneers',
                 'panorama',
                 'paodeaoda',
                 'partup',
