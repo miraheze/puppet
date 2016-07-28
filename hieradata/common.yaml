@@ -13,7 +13,7 @@ ssl:
     ca: 'Comodo'
   spiral:
     url: 'spiral.wiki'
-    ca: 'LetsEncrypt'
+    ca: 'Gandi'
   printmaking:
     url: 'wiki.printmaking.be'
     ca: 'StartSSL'
