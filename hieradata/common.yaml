@@ -94,4 +94,4 @@ ssl:
     ca: 'LetsEncrypt'
   labby:
     url: 'wiki.labby.io'
-	ca: 'LetsEncrypt'
+    ca: 'LetsEncrypt'
