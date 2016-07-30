@@ -110,6 +110,7 @@ class parsoid {
                 'lancemedical',
                 'lbsges',
                 'lclwiki',
+                'lingnlang',
                 'littlebigplanet',
                 'lizard',
                 'luckandlogic',
