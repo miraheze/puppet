@@ -156,7 +156,7 @@ class parsoid {
                 'stellachronica',
                 'studynotekr',
                 'taylor',
-                'tcc6440',
+                'tcc6640',
                 'teleswiki',
                 'thefosters',
                 'thehushhushsaga',
