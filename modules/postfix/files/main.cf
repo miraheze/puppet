@@ -31,8 +31,8 @@ smtp_tls_security_level = may
 
 milter_protocol = 2
 milter_default_action = accept
-smtpd_milters = inet:localhost:12301
-non_smtpd_milters = inet:localhost:12301
+smtpd_milters = inet:localhost:12301,inet:localhost:54321
+non_smtpd_milters = inet:localhost:12301,inet:localhost:54321
 
 local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination

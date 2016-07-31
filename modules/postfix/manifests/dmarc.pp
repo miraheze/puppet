@@ -12,6 +12,11 @@ class postfix::dmarc {
         notify => Service['opendmarc'],
     }
 
+    file { '/etc/default/opendmarc':
+        ensure => present,
+        source => 'puppet:///modules/postfix/opendmarc',
+    }
+
     service { 'opendmarc':
         ensure  => running,
         require => Package['opendmarc'],
