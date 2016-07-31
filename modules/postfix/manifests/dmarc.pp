@@ -14,6 +14,6 @@ class postfix::dmarc {
 
     service { 'opendmarc':
         ensure  => running,
-        require => Packaage['opendmarc'],
+        require => Package['opendmarc'],
     }
 }
