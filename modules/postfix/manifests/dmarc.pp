@@ -7,6 +7,13 @@ class postfix::dmarc {
     file { '/etc/opendmarc.conf':
         ensure => present,
         owner  => 'opendmarc',
+        group  => 'opendmarc',
         source => 'puppet:///modules/postfix/opendmarc.conf',
+        notify => Service['opendmarc'],
+    }
+
+    service { 'opendmarc':
+        ensure  => running,
+        require => Packaage['opendmarc'],
     }
 }
