@@ -180,6 +180,7 @@ class parsoid {
                 'yggdrasilwiki',
                 'yourosongcontest',
                 'youtube',
+                'dts',
     ]
 
     file { '/etc/mediawiki/parsoid/settings.js':
