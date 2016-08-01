@@ -23,7 +23,7 @@ sysadmin: operations
 dmarc: john
 
 # destination aliases
-operations: southparkfan,john
+operations: southparkfan,john,ndkilla
 stewards: southparkfan,ndkilla,john
 staff: southparkfan,ndkilla,john,bslaabs@gmail.com,coreychambers123@gmail.com
 
