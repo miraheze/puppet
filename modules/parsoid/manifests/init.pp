@@ -80,6 +80,7 @@ class parsoid {
                 'dicfic',
                 'dmw',
                 'drunkenpeasantswiki',
+                'dts',
                 'elainarmua',
                 'ernaehrungsrathh',
                 'essway',
