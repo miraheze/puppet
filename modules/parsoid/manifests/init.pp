@@ -155,7 +155,7 @@ class parsoid {
                 'skyfireflyff',
                 'snowthegame',
                 'soshomophobie',
-                'starsetonline,
+                'starsetonline',
                 'stellachronica',
                 'studynotekr',
                 'taylor',
