@@ -63,6 +63,7 @@ class parsoid {
                 'bgo',
                 'biblicalwiki',
                 'biblio',
+                'bmed',
                 'braindump',
                 'carving',
                 'casuarina',
