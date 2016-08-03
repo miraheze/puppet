@@ -12,9 +12,7 @@ class base {
     include users
 
     if !hiera('mailserver') {
-        mailalias { 'root':
-            recipient => 'root@miraheze.org',
-        }
+        include base::mail
     }
 	
     file { '/usr/local/bin/gen_fingerprints':
