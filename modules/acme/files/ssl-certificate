@@ -18,7 +18,7 @@ function generate_private_key {
 }
 
 function generate_csr {
-    openssl req -new -sha256 -key /root/acme-tiny/ssl/${domain}.key -subj "/" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:${domain}")) > /root/acme-tiny/ssl/${domain}.csr
+    openssl req -new -sha256 -key /root/acme-tiny/ssl/${domain}.key -subj "/" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:${domain}${secdomain}")) > /root/acme-tiny/ssl/${domain}.csr
     log "CSR generated at: /root/acme-tiny/ssl/${domain}.csr"
 }
 
@@ -28,10 +28,10 @@ function generate_letsencrypt_certificate {
 }
 
 function usage {
-    echo "Usage: $0 [-gr] <domain>"; exit 1;
+    echo "Usage: $0 [-gr] [-s <secondary domain>] <domain>"; exit 1;
 }
 
-while getopts "gr" option; do
+while getopts "grs" option; do
     case $option in
         g)
             LE=1;
@@ -39,6 +39,10 @@ while getopts "gr" option; do
             ;;
         r)
             RENEW=1;
+            shift
+            ;;
+        s)
+            SECONDARYDOMAIN=$2;
             shift
             ;;
         *)
@@ -49,6 +53,7 @@ done
 
 domain=${1:-}
 test -z ${domain} && usage
+secdomain=",DNS:${SECONDARYDOMAIN}"
 
 if [ $RENEW -eq 0 ]; then
     generate_private_key

@@ -103,6 +103,7 @@ phabricator.uninstalled-applications:
   PhabricatorNuanceApplication: true # we're not a call center
   PhabricatorOAuthServerApplication: true # we're running MediaWiki as an OAuth
   PhabricatorOwnersApplication: true # we don't manage source on Phab
+  PhabricatorPackagesApplication: true # no packages to host
   PhabricatorPhluxApplication: true # puppet has hiera
   PhabricatorPhortuneApplication: true # we don't need billing stuff
   PhabricatorPhragmentApplication: true # puppet has hiera

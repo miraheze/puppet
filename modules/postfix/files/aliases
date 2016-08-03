@@ -19,10 +19,13 @@ root: /dev/null
 ops: operations
 sysadmin: operations
 
+# DMARC - potentially high volume, best recommended for mail admins on misc1
+dmarc: john
+
 # destination aliases
-operations: southparkfan,john
+operations: southparkfan,john,ndkilla
 stewards: southparkfan,ndkilla,john
-staff: southparkfan,ndkilla,john,bslaabs@gmail.com
+staff: southparkfan,ndkilla,john,bslaabs@gmail.com,coreychambers123@gmail.com,utilizator.receptie123@gmail.com
 
 # finances
 donate: bslaabs@gmail.com,southparkfan,john
