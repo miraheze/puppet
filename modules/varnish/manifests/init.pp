@@ -51,9 +51,6 @@ class varnish {
 
     # these aren't autoloaded by ssl::hiera
     ssl::cert { 'wildcard.miraheze.org': }
-    ssl::cert { 'secure.reviwiki.info': }
-    ssl::cert { 'allthetropes.org': }
-    ssl::cert { 'fibromyalgia-engineer.com': }
 
     file { '/etc/nginx/sites-enabled/default':
         ensure => absent,
