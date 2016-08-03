@@ -2,7 +2,7 @@ class role::redis {
     include private::redis
 
     class { '::redis':
-        password  => $password,
+        password  => hiera('passwords::redis::master),
         maxmemory => '384mb',
     }
 
