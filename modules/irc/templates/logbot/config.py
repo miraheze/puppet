@@ -41,7 +41,7 @@ nick = "MirahezeLogbot"
 nick_username = "mirahezebots"
 
 # Password to identify with
-nick_password = "<%= scope['private::irc::mirahezebots_password'] %>"
+nick_password = "<%= @mirahezebots_password %>"
 
 # Network to join (ex: irc.freenode.net)
 network = "chat.freenode.net"

@@ -1,5 +1,7 @@
 # class: irc
 class irc {
+    $mirahezebots_password = hiera('passwords::irc::mirahezebots')
+
     $packages = [
         'python',
         'python-twisted',

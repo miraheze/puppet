@@ -186,6 +186,8 @@ class icinga {
         require  => File['/etc/apache2/conf-enabled/icinga.conf'],
     }
 
+    $mirahezebots_password = hiera('passwords::irc::mirahezebots')
+
     file { '/etc/icinga/irc.py':
         ensure   => present,
         owner    => 'irc',
