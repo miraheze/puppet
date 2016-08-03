@@ -68,7 +68,7 @@ wiki_path = "/w/"
 wiki_user = "MirahezeLogbot"
 
 # Password of wiki bot user
-wiki_pass = "<%= scope['private::irc::mirahezelogbot_wiki_password'] %>"
+wiki_pass = "<%= @mirahezelogbot_password %>"
 
 # Whether to use a bot flag or not
 wiki_bot = True
