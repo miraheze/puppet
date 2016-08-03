@@ -13,7 +13,7 @@ class irc::irclogbot {
     }
 
     $mirahezebots_password = hiera('passwords::irc::mirahezebots')
-    $mirahezelogbot_password = hiera('passwords::wikI::mirahezelogbot')
+    $mirahezelogbot_password = hiera('passwords::wiki::mirahezelogbot')
 
     file { '/etc/irclogbot/adminlog.py':
         ensure => present,
