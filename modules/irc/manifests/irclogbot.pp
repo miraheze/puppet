@@ -12,6 +12,8 @@ class irc::irclogbot {
         require => File['/etc/irclogbot'],
     }
 
+    $mirahezebots_password = hiera('passwords::irc::mirahezebots')
+
     file { '/etc/irclogbot/adminlog.py':
         ensure => present,
         source => 'puppet:///modules/irc/logbot/adminlog.py',

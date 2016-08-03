@@ -9,6 +9,8 @@ class irc::ircrcbot(
 ) {
     include ::irc
     
+    $mirahezebots_password = hiera('passwords::irc::mirahezebots')
+
     file { '/usr/local/bin/ircrcbot.py':
         ensure  => present,
         content => template('irc/ircrcbot.py'),
