@@ -14,6 +14,7 @@ class base::mail {
         owner   => 'postfix',
         group   => 'postfix',
         content => template('base/mail/main.cf'),
+        require => Package['postifx'],
         notify  => Service['postfix'],
     }
 
