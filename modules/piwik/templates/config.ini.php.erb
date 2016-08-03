@@ -10,7 +10,7 @@ charset = "utf8"
 
 [General]
 release_channel = "latest_2x_stable"
-salt = "<%= scope.lookupvar('private::piwik::piwik_salt') %>"
+salt = "<%= @salt %>"
 trusted_hosts[] = "piwik.miraheze.org"
 
 [PluginsInstalled]
