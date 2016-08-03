@@ -51,7 +51,7 @@ class phabricator {
     $phab_yaml = loadyaml("${module_path}/data/config.yaml")
     $phab_private = {
         'mysql.pass'              => $private::mariadb::phabricator_password,
-        'phpmailer.smtp-password' => hiera('passwords::mail::noreply'),
+        'phpmailer.smtp-password' => hiera('phabricator::noreply_password'),
     }
 
     $phab_settings = merge($phab_yaml, $phab_private)
@@ -63,5 +63,10 @@ class phabricator {
 
     file { '/srv/phab/images':
         ensure => directory,
+    }
+    
+    file { '/srv/phab/phabricator/resources/chatbot/test.json':
+        ensure => present,
+        content => template('phabricator/botconfig.json.erb'),
     }
 }
