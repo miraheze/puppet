@@ -1,6 +1,6 @@
 [client]
 user=root
-password=<%= scope.lookupvar('private::mariadb::root_password') %>
+password=<%= @password %>
 socket=/var/run/mysqld/mysqld.sock
 
 #SSL

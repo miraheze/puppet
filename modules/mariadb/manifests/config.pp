@@ -38,8 +38,6 @@ class mariadb::config(
         mode   => '0755',
     }
 
-    include private::mariadb
-
     file { '/etc/mysql/miraheze/default-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/default-grants.sql.erb'),

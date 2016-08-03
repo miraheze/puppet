@@ -3,7 +3,7 @@
 [database]
 host = "185.52.1.77"
 username = "piwik"
-password = "<%= scope.lookupvar('private::mariadb::piwik_password') %>"
+password = "<%= @password %>"
 dbname = "piwik"
 tables_prefix = "piwik_"
 charset = "utf8"

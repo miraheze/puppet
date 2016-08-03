@@ -1,10 +1,14 @@
 class role::db {
     include mariadb::packages
-    include private::mariadb
+
+    $mediawiki_password = hiera('passwords::db::mediawiki')
+    $wikiadmin_password = hiera('passwords::db::wikiadmin')
+    $piwik_password = hiera('passwords::db::piwik')
+    $phabricator_password = hiera('passwords::db::phabricator')
 
     class { 'mariadb::config':
         config   => 'mariadb/config/mw.cnf.erb',
-        password => $root_password,
+        password => hiera('passwords::db::root'),
     }
 
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':

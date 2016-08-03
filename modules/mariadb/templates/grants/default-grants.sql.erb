@@ -2,7 +2,7 @@
 
 GRANT ALL PRIVILEGES
     ON *.* TO 'root'@'localhost'
-    IDENTIFIED BY '<%= scope.lookupvar('private::mariadb::root_password') %>'
+    IDENTIFIED BY '<%= @password %>'
     WITH GRANT OPTION;
 
 -- Grants for 'icinga'@'185.52.1.76'

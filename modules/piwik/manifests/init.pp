@@ -5,7 +5,6 @@ class piwik {
     include ::apache::mod::php5
     include ::apache::mod::rewrite
     include ::apache::mod::ssl
-    include private::mariadb
 
     $packages = [
         'php5-curl',
@@ -53,6 +52,7 @@ class piwik {
     }
 
     $salt = hiera('passwords::piwik::salt')
+    $password = hiera('passwords::db::piwik')
 
     file { '/srv/piwik/config/config.ini.php':
         ensure  => present,

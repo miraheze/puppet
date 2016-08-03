@@ -1,7 +1,6 @@
 class phabricator {
     include ::apache::mod::ssl
     include ::apache::mod::php5
-    include private::mariadb
 
     apache::site { 'phabricator.miraheze.org':
         ensure => present,
@@ -50,7 +49,7 @@ class phabricator {
     $module_path = get_module_path($module_name)
     $phab_yaml = loadyaml("${module_path}/data/config.yaml")
     $phab_private = {
-        'mysql.pass'              => $private::mariadb::phabricator_password,
+        'mysql.pass'              => hiera('passwords::db::phabricator'),
         'phpmailer.smtp-password' => hiera('passwords::mail::noreply'),
     }
 
