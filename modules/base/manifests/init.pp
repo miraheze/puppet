@@ -19,7 +19,7 @@ class base {
 	
     file { '/usr/local/bin/gen_fingerprints':
         ensure => present,
-        source => 'puppet:///modules/base/files/environment/gen_fingerprints',
+        source => 'puppet:///modules/base/environment/gen_fingerprints',
         mode   => '0555',
     }
 }
