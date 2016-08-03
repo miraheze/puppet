@@ -79,6 +79,6 @@ users:
   reception:
     ensure: present
     uid: 1007
-    name: Reception
+    name: reception
     realname: Reception
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEArLuT2xIdxzSjY9MZn+MSD6I+6goqCnMwzeKPGeRFwvlwNe78B7X4eWta7DaDEqj6JnchQRwt/rvbsHR0CYLemvQhyK1WvnT2zi6MmNS++QlHvRsDWRaJEjfpvzA4sHv2OYzXBA3GeubomTXl28FY1EfZDh6QAkqor76Zl04njZ2lWuRpbDqXIBcKs6qty5WwA+CFCJfqo8sxZbXvNnejuseWPFqNyDurMgoACslVh4hwIe7sPEue3vCthdaccqQyH8LxUt4k4KI9GROmZRdUcTzXJRLRfI6wa0ko/egoMq6HdqzvYPxLY+Y3Js8OD2x7WYMW+dodB8V8Fpek5izb1Q== rsa-key-20160803]
