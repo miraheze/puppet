@@ -2,13 +2,13 @@
 define ssl::hiera::certs (
     $url,
     $ca,
-    $redirect,
-    $sslname,
+    $redirect = undef,
+    $sslname = undef,
 ) {
-    if $sslname {
-        $sslurl = $sslname
-    } else {
+    if $sslname == undef {
         $sslurl = $url
+    } else {
+        $sslurl = $sslname
     }
 
     file { "/etc/ssl/certs/${sslurl}.crt":
