@@ -11,7 +11,7 @@ class base {
     include ssh
     include users
 
-    if $::hostname != "misc1" {
+    if !hiera('mailserver') {
         mailalias { 'root':
             recipient => 'root@miraheze.org',
         }
