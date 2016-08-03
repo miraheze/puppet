@@ -6,4 +6,5 @@
   - "private/%{::hostname}"
   - "hosts/%{::hostname}"
   - "private/common"
+  - ssl
   - common

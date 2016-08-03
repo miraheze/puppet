@@ -1,0 +1,135 @@
+ssl:
+  boulderwiki:
+    url: 'boulderwiki.org'
+    ca: 'StartSSL'
+  antiguabarbudacalypso:
+    url: 'antiguabarbudacalypso.com'
+    ca: 'StartSSL'
+  anuwiki:
+    url: 'anuwiki.com'
+    ca: 'Godaddy'
+  oneagencydunedin:
+    url: 'oneagencydunedin.wiki'
+    ca: 'Comodo'
+  spiral:
+    url: 'spiral.wiki'
+    ca: 'Gandi'
+  printmaking:
+    url: 'wiki.printmaking.be'
+    ca: 'StartSSL'
+  permanentfuturelab:
+    url: 'permanentfuturelab.wiki'
+    ca: 'StartSSL'
+  reviwiki:
+    url: 'private.revi.wiki'
+    ca: 'Comodo'
+  publictestwiki:
+    url: 'publictestwiki.com'
+    ca: 'Comodo'
+  universebuild:
+    url: 'universebuild.com'
+    ca: 'Comodo'
+  zepaltusproject:
+    url: 'wiki.zepaltusproject.com'
+    ca: 'Gandi'
+  dottorconte:
+    url: 'wiki.dottorconte.eu'
+    ca: 'LetsEncrypt'
+  valentinaproject:
+    url: 'wiki.valentinaproject.org'
+    ca: 'StartSSL'
+  wikiparkinson:
+    url: 'wikiparkinson.org'
+    ca: 'StartSSL'
+  oyeavdelingen:
+    url: 'oyeavdelingen.org'
+    ca: 'Comodo'
+  carving:
+    url: 'carving.wiki'
+    ca: 'StartSSL'
+  dwplive:
+    url: 'wiki.dwplive.com'
+    ca: 'StartSSL'
+  haxionspace:
+    url: 'haxion.space'
+    ca: 'StartSSL'
+  grottocenter:
+    url: 'wiki.grottocenter.org'
+    ca: 'StartSSL'
+  downhillderelicts:
+    url: 'wiki.downhillderelicts.com'
+    ca: 'LetsEncrypt'
+  metatrek:
+    url: 'meta.trek.tk'
+    ca: 'LetsEncrypt'
+  wikikaisaga:
+    url: 'wiki.kaisaga.com'
+    ca: 'LetsEncrypt'
+  wisdomwiki:
+    url: 'wisdomwiki.org'
+    ca: 'StartSSL'
+  aenasan:
+    url: 'wiki.aenasan.com'
+    ca: 'StartSSL'
+  droneregulation:
+    url: 'drone-regulation.info'
+    ca: 'LetsEncrypt'
+  garyjohnsonmeetups:
+    url: 'wiki.garyjohnsonmeetups.com'
+    ca: 'StartSSL'
+  irc:
+    url: 'ircwiki.cf'
+    ca: 'LetsEncrypt'
+  sandboxwisdomwiki:
+    url: 'sandbox.wisdomwiki.org'
+    ca: 'LetsEncrypt'
+  make717:
+    url: 'wiki.make717.org'
+    ca: 'LetsEncrypt'
+  thinkingliquid:
+    url: 'thinkingliquid.org'
+    ca: 'LetsEncrypt'
+  thelonsdalebattalion:
+    url: 'thelonsdalebattalion.co.uk'
+    ca: 'LetsEncrypt'
+  labby:
+    url: 'wiki.labby.io'
+    ca: 'LetsEncrypt'
+  allthetropes:
+    url: 'allthetropes.org'
+    ca: 'LetsEncrypt'
+  fibromyaligaengineer:
+    url: 'fibromyalgia-engineer.com'
+    ca: 'LetsEncrypt'
+
+redirects:
+  securereviwiki:
+    url: 'secure.reviwiki.info'
+    redirect: 'private.reviwiki.info'
+    sslname: 'secure.reviwiki.info'
+    ca: 'StartSSL'
+  wwwallthetropes:
+    url: 'www.allthetropes.org'
+    redirect: 'allthetropes.org'
+    sslname: 'allthetropes.org'
+    ca: 'LetsEncrypt'
+  wwwfibromyalgiaengineer:
+    url: 'www.fibromyalgia-engineer.com'
+    redirect: 'fibromyalgia-engineer.com'
+    sslname: 'fibromyalgia-engineer.com'
+    ca: 'LetsEncrypt'
+  wwwpermanentfuturelab:
+    url: 'www.permanentfuturelab.wiki'
+    redirect: 'permanentfuturelab.wiki'
+    sslname: 'permanentfuturelab.wiki'
+    ca: 'LetsEncrypt'
+  wwwthinkingliquid:
+    url: 'www.thinkingliquid.org'
+    redirect: 'thinkingliquid.org'
+    sslname: 'thinkingliquid.org'
+    ca: 'LetsEncrypt'
+  wwwwikiparkinson:
+    url: 'www.wikiparkinson.org'
+    redirect: 'wikiparkinson.org'
+    sslname: 'wikiparkinson.org'
+    ca: 'StartSSL'
