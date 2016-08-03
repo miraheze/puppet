@@ -76,3 +76,9 @@ users:
     name: corey
     realname: Corey Chambers
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEA0dAQsZlhNpB4Y9/6InPsUXcAxMapYmbYZx5cWTtBw4UNO36axEHbY9KOJpMEVr8gSrraeaVzCEeEwt+Mvbve9Odn9xJY0Q/hDRUPAVhSPnj+ulZRf3mqLkInkSK/Z27eyAhW21NsoZreXL1eI6dzyd/SvrAJjcm8NrY9qrC12LvhnrpYb78qbuOYfYAO80NXVZnvu8/0BnateYnWvjrHJ/W/tL/+zM+e+ZZVfCYJA9a5fCx8u9KKNo7xQFTOGoota1SoXVtzG6hI6ufD+GtRbov+WAfKLFkbF8pMNtLGQdjrbtekN9+gyDanrin7BTSxvOYEMP6L7GfTPQ3LkvWR8Q==]
+  reception:
+    ensure: present
+    uid: 1007
+    name: Reception
+    realname: Reception
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEArLuT2xIdxzSjY9MZn+MSD6I+6goqCnMwzeKPGeRFwvlwNe78B7X4eWta7DaDEqj6JnchQRwt/rvbsHR0CYLemvQhyK1WvnT2zi6MmNS++QlHvRsDWRaJEjfpvzA4sHv2OYzXBA3GeubomTXl28FY1EfZDh6QAkqor76Zl04njZ2lWuRpbDqXIBcKs6qty5WwA+CFCJfqo8sxZbXvNnejuseWPFqNyDurMgoACslVh4hwIe7sPEue3vCthdaccqQyH8LxUt4k4KI9GROmZRdUcTzXJRLRfI6wa0ko/egoMq6HdqzvYPxLY+Y3Js8OD2x7WYMW+dodB8V8Fpek5izb1Q== rsa-key-20160803]
