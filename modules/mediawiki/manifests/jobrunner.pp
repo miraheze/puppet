@@ -2,12 +2,12 @@
 #
 # Crons which should be ran on a jobrunner selected machine only.
 class mediawiki::jobrunner {
-    include private::redis
-
     git::clone { 'JobRunner':
         directory   => '/srv/jobrunner',
         origin      => 'https://github.com/wikimedia/mediawiki-services-jobrunner',
     }
+
+    $redis_password = hiera('passwords::redis::master')
 
     file { '/srv/jobrunner/jobrunner.json':
         ensure  => present,
