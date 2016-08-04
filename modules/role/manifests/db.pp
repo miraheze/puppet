@@ -1,6 +1,7 @@
 class role::db {
     include mariadb::packages
-
+    
+    $cachet_password = hiera('passwords::db::cachet')
     $mediawiki_password = hiera('passwords::db::mediawiki')
     $wikiadmin_password = hiera('passwords::db::wikiadmin')
     $piwik_password = hiera('passwords::db::piwik')
@@ -9,6 +10,11 @@ class role::db {
     class { 'mariadb::config':
         config   => 'mariadb/config/mw.cnf.erb',
         password => hiera('passwords::db::root'),
+    }
+
+   file { '/etc/mysql/miraheze/cachet-grants.sql':
+       ensure => present,
+       content => template('mariadb/grants/cachet-grants.sql.erb'),
     }
 
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':
