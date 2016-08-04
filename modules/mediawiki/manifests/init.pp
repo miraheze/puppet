@@ -98,6 +98,15 @@ class mediawiki {
         ensure    => 'latest',  
         require   => Git::Clone['MediaWiki core'],
     }
+    
+    # Ensure widgets template directory is read/writeable by webserver if mediawiki is cloned
+    file { '/srv/mediawiki/w/extensions/Widgets/compiled_templates':
+        ensure  => directory,
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode   => '0755',
+        require => Git::Clone['MediaWiki core'],
+    }
 
     file { '/srv/mediawiki/robots.txt':
         ensure  => 'present',
