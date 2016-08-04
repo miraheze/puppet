@@ -27,7 +27,7 @@ class cachet {
         require     => Git::Clone['cachet'],
     }
 
-   file { '/srv/cach/cachet/.env':
+   file { '/srv/cachet/.env':
         ensure  => present,
         content => template('cachet/env.erb'),
     }
