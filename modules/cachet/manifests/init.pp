@@ -21,6 +21,6 @@ class cachet {
    file { '/srv/cach/cachet/.env':
         ensure  => present,
         content => template('cachet/env.erb'),
-}
+    }
 
 }
