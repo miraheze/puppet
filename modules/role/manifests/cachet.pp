@@ -1,4 +1,4 @@
-class role::cachet
+class role::cachet {
     include ::cachet
 
     motd::role { 'role::cachet':
