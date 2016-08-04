@@ -1,7 +1,8 @@
 class cachet {
     include ::apache::mod::ssl
     include ::apache::mod::php5
-
+    $database_password = hiera('passwords::db::cachet')
+    
     apache::site { 'status.miraheze.org':
         ensure => present,
         source => 'puppet:///modules/cachet/apache.conf',
