@@ -16,7 +16,8 @@ class cachet {
         require   => File['/srv/cachet'],
     }
 
-    exec { "curl -sS https://getcomposer.org/installer | php && php composer.phar install":
+    exec { 'Cachet composer':
+        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
         creates     => '/srv/cachet/composer.phar',
         cwd         => '/srv/cachet',
         path        => '/usr/bin',
