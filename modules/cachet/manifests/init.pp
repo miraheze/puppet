@@ -18,6 +18,15 @@ class cachet {
         require   => File['/srv/cachet'],
     }
 
+    exec { "curl -sS https://getcomposer.org/installer | php && php composer.phar install":
+        creates     => '/srv/cachet/composer.phar',
+        cwd         => '/srv/cachet',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/cachet',
+        user        => 'www-data',
+        require     => Git::Clone['cachet'],
+    }
+
    file { '/srv/cach/cachet/.env':
         ensure  => present,
         content => template('cachet/env.erb'),
