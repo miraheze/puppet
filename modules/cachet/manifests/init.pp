@@ -2,7 +2,7 @@ class cachet {
     include ::apache::mod::ssl
     include ::apache::mod::php5
 
-    apache::site { 'cachet.miraheze.org':
+    apache::site { 'status.miraheze.org':
         ensure => present,
         source => 'puppet:///modules/cachet/apache.conf',
     }
