@@ -14,7 +14,7 @@ class role::db {
 
    file { '/etc/mysql/miraheze/cachet-grants.sql':
        ensure => present,
-       content => template('maradb/grants/cachet-grants.sql.erb'),
+       content => template('mariadb/grants/cachet-grants.sql.erb'),
     }
 
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':
