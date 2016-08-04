@@ -2,6 +2,7 @@ class cachet {
     include ::apache::mod::ssl
     include ::apache::mod::php5
     $database_password = hiera('passwords::db::cachet')
+    $redis_password = hiera('passwords::redis::master')
     
     apache::site { 'status.miraheze.org':
         ensure => present,
