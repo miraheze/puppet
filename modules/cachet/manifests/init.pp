@@ -7,15 +7,15 @@ class cachet {
         source => 'puppet:///modules/cachet/apache.conf',
     }
 
-    file { '/srv/cach':
+    file { '/srv/cachet':
         ensure => directory,
     }
 
    git::clone { 'cachet':
         ensure    => present,
-        directory => '/srv/cach/cachet',
+        directory => '/srv/cachet',
         origin    => 'https://github.com/cachethq/Cachet.git',
-        require   => File['/srv/cach'],
+        require   => File['/srv/cachet'],
     }
 
    file { '/srv/cach/cachet/.env':
