@@ -12,6 +12,10 @@ class role::db {
         password => hiera('passwords::db::root'),
     }
 
+   file { '/etc/mysql/miraheze/cachet-grants.sql':
+       ensure => present,
+       content => template('maradb/grants/cachet-grants.sql.erb'),
+
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/mediawiki-grants.sql.erb'),
