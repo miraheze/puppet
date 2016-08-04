@@ -12,6 +12,8 @@ class cachet {
     git::clone { 'cachet':
         ensure    => present,
         directory => '/srv/cachet',
+        owner     => 'www-data',
+        group     => 'www-data',
         origin    => 'https://github.com/cachethq/Cachet.git',
     }
 
