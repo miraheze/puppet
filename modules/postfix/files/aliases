@@ -13,7 +13,7 @@ noc: operations
 noreply: /dev/null
 
 # root spam
-root: john
+root: /dev/null
 
 # group aliases
 ops: operations
