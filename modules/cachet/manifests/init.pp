@@ -9,11 +9,10 @@ class cachet {
         source => 'puppet:///modules/cachet/apache.conf',
     }
 
-   git::clone { 'cachet':
+    git::clone { 'cachet':
         ensure    => present,
         directory => '/srv/cachet',
         origin    => 'https://github.com/cachethq/Cachet.git',
-        require   => File['/srv/cachet'],
     }
 
     exec { 'Cachet composer':
@@ -30,5 +29,4 @@ class cachet {
         ensure  => present,
         content => template('cachet/env.erb'),
     }
-
 }
