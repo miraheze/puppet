@@ -53,6 +53,7 @@ class piwik {
 
     $salt = hiera('passwords::piwik::salt')
     $password = hiera('passwords::db::piwik')
+    $noreply_password = hiera('passwords::mail::noreply')
 
     file { '/srv/piwik/config/config.ini.php':
         ensure  => present,
