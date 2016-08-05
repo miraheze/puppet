@@ -13,6 +13,15 @@ release_channel = "latest_2x_stable"
 salt = "<%= @salt %>"
 trusted_hosts[] = "piwik.miraheze.org"
 
+[mail]
+transport = smtp
+port = 25
+host = mail.miraheze.org
+type = LOGIN
+username = noreply
+password = <%= @noreply_password %>
+encryption = tls
+
 [PluginsInstalled]
 PluginsInstalled[] = "Diagnostics"
 PluginsInstalled[] = "Login"
