@@ -29,14 +29,6 @@ class cachet {
         require     => Git::Clone['cachet'],
     }
 
-    exec { 'php composer.phar require predis/predis':
-        cwd         => '/srv/cachet',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/cachet',
-        user        => 'www-data',
-        require     => Exec['Cachet composer'],
-    }
-
    file { '/srv/cachet/.env':
         ensure  => present,
         content => template('cachet/env.erb'),
