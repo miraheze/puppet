@@ -34,4 +34,11 @@ class cachet {
         content => template('cachet/env.erb'),
         require => Git::Clone['cachet'],
     }
+
+    cron { 'purge_checkuser':
+        ensure  => present,
+        command => '/usr/bin/php /srv/cachet/artisan schedule:run',
+        user    => 'www-data',
+        minute    => '*/10',
+    }
 }
