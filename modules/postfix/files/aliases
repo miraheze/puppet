@@ -20,7 +20,7 @@ ops: operations
 sysadmin: operations
 
 # DMARC - potentially high volume, best recommended for mail admins on misc1
-dmarc: john
+dmarc: john,ndkilla
 
 # destination aliases
 operations: southparkfan,john,ndkilla
