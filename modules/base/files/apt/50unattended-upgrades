@@ -12,7 +12,7 @@ Unattended-Upgrade::Package-Blacklist {
         "libc6-i686";
 };
 
-Unattended-Upgrade::Mail "operations@miraheze.org";
+Unattended-Upgrade::Mail "apt-list@miraheze.org";
 
 Unattended-Upgrade::MailOnlyOnError "true";
 
