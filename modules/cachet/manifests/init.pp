@@ -18,8 +18,7 @@ class cachet {
     }
 
     exec { 'Cachet composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
-        creates     => '/srv/cachet/composer.phar',
+        command     => 'curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer | composer install --no-dev -o',
         cwd         => '/srv/cachet',
         path        => '/usr/bin',
         environment => 'HOME=/srv/cachet',
