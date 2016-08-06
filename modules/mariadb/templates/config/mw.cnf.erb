@@ -6,10 +6,6 @@ port                           = 3306
 socket                         = /var/run/mysqld/mysqld.sock
 
 [mysqld]
-<% if @password -%>
-password                       = <%= @password %>
-<% end -%>
-
 user                           = mysql
 port                           = 3306
 default-storage-engine         = InnoDB
