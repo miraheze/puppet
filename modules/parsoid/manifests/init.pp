@@ -77,6 +77,7 @@ class parsoid {
                 'clicordi',
                 'cssandjsschoolboard',
                 'datachron',
+                'detlefs',
                 'development',
                 'dicfic',
                 'dmw',
