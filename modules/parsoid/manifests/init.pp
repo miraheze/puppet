@@ -76,6 +76,7 @@ class parsoid {
                 'clementsworldbuilding',
                 'clicordi',
                 'cssandjsschoolboard',
+                'dalar',
                 'datachron',
                 'detlefs',
                 'development',
