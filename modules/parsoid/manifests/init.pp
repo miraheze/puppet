@@ -49,6 +49,7 @@ class parsoid {
                 'adnovum',
                 'aescapes',
                 'ageofimperialism',
+                'ageofimperialists',
                 'air',
                 'aktpos',
                 'alanpedia',
