@@ -135,6 +135,7 @@ class parsoid {
                 'nidda23',
                 'nwp',
                 'ofthevampire',
+                'oncproject',
                 'openconstitution',
                 'opengovpioneers',
                 'panorama',
