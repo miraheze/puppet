@@ -12,6 +12,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'carvingwiki', 'https://carving.wiki/w/api.php' );
 	parsoidConfig.setInterwiki( 'dottorcontewiki', 'https://wiki.dottorconte.eu/w/api.php' );
 	parsoidConfig.setInterwiki( 'dwplivewiki', 'https://wiki.dwplive.com/w/api.php' );
+	parsoidConfig.setInterwiki( 'make717wiki', 'https://wiki.make717.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'oyeavdelingenwiki', 'https://oyeavdelingen.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'permanentfuturelabwiki', 'https://permanentfuturelab.wiki/w/api.php');
 	parsoidConfig.setInterwiki( 'spiralwiki', 'https://spiral.wiki/w/api.php' );
