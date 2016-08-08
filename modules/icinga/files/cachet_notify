@@ -7,7 +7,7 @@
 $cachet_url = 'https://status.miraheze.org/api/v1/';
 $api_key = hiera('passwords::cachet::apitoken');
 
-$incident_prefix = '[Nagios]';
+$incident_prefix = '[Automated] ';
 $cachet_notify_subscribers = true; // Enable subscribers notifcation for incidents creation and updates
 
 $cachet_component = $argv[1];
@@ -84,7 +84,7 @@ if ($service_status != 'OK' && $service_status_type == 'SOFT') { // Hope it will
                 'status' => CACHET_STATUS_INVESTIGATING,
                 'component_id' => $cachet_component_id,
                 'notify' => $cachet_notify_subscribers,
-                'component_status' => 4,
+                'component_status' => CACHET_COMPONENTSTATUS_INVESTIGATING,
         );
         $result = cachet_query('incidents', 'POST', $query);
         if ($result['code'] != 200) {
@@ -117,7 +117,7 @@ if ($service_status != 'OK' && $service_status_type == 'SOFT') { // Hope it will
                 'status' => CACHET_STATUS_WATCHING,
                 'component_id' => $cachet_component_id,
                 'notify' => $cachet_notify_subscribers,
-                'component_status' => 3,
+                'component_status' => CACHET_COMPONENTSTATUS_INVESTIGATING,
         );
         /* Use a POST query as that will keep an incident history */
         $result = cachet_query('incidents', 'POST', $query);
@@ -151,7 +151,7 @@ if ($service_status != 'OK' && $service_status_type == 'SOFT') { // Hope it will
                 'status' => CACHET_STATUS_FIXED,
                 'component_id' => $cachet_component_id,
                 'notify' => $cachet_notify_subscribers,
-                'component_status' => 1,
+                'component_status' => CACHET_COMPONENTSTATUS_OK,
         );
         /* Use a POST query as that will keep an incident history */
         $result = cachet_query('incidents', 'POST', $query);
