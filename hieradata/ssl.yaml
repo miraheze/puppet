@@ -133,3 +133,11 @@ redirects:
     redirect: 'wikiparkinson.org'
     sslname: 'wikiparkinson.org'
     ca: 'StartSSL'
+  amaninfotm:
+    url: 'aman.info.tm'
+    redirect: 'aman.info.tm'
+    sslname: 'aman.info.tm'
+    ca: 'LetsEncrypt'
+
+
+
