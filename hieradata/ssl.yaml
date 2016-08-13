@@ -101,6 +101,9 @@ ssl:
   fibromyaligaengineer:
     url: 'fibromyalgia-engineer.com'
     ca: 'LetsEncrypt'
+  amaninfotm:
+    url: 'aman.info.tm'
+    ca: 'LetsEncrypt'
 
 redirects:
   securereviwiki:
@@ -133,7 +136,3 @@ redirects:
     redirect: 'wikiparkinson.org'
     sslname: 'wikiparkinson.org'
     ca: 'StartSSL'
-  amaninfotm:
-    url: 'aman.info.tm'
-    sslname: 'aman.info.tm'
-    ca: 'LetsEncrypt'
