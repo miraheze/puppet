@@ -101,9 +101,6 @@ ssl:
   fibromyaligaengineer:
     url: 'fibromyalgia-engineer.com'
     ca: 'LetsEncrypt'
-  dejmusicinfo:
-    url: 'de.j-music.info'
-    ca: 'CloudFlare'
 
 redirects:
   securereviwiki:
