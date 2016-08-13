@@ -101,6 +101,7 @@ ssl:
   fibromyaligaengineer:
     url: 'fibromyalgia-engineer.com'
     ca: 'LetsEncrypt'
+    ca: 'CloudFlare'
 
 redirects:
   securereviwiki:
