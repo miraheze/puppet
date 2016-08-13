@@ -133,3 +133,8 @@ redirects:
     redirect: 'wikiparkinson.org'
     sslname: 'wikiparkinson.org'
     ca: 'StartSSL'
+  mirahezewiki:
+    url: 'miraheze.wiki'
+    redirect: 'meta.miraheze.org'
+    sslname: 'miraheze.wiki'
+    ca: 'LetsEncrypt'
