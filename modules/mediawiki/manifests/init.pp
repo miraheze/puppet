@@ -8,14 +8,6 @@ class mediawiki {
 
     if hiera(jobrunner) {
         include mediawiki::jobrunner
-    } else {
-        # Add a cron to run htmlCacheUpdate on all non-jobrunner servers
-        cron { 'jobqueue_cache':
-            ensure  => present,
-            command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/runJobs.php --type htmlCacheUpdate',
-            user    => 'www-data',
-            minute  => [ 5, 15, 25, 35, 45, 55 ],
-        }
     }
 
     file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/var/log/mediawiki' ]:

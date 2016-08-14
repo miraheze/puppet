@@ -36,13 +36,6 @@ class mediawiki::jobrunner {
         ensure => stopped,
     }
 	
-    cron { 'jobqueue':
-        ensure  => present,
-        command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/runJobs.php > /var/log/mediawiki/cron/jobqueue.log',
-        user    => 'www-data',
-        minute  => '*/10',
-    }
-
     cron { 'purge_checkuser':
         ensure  => present,
         command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/CheckUser/maintenance/purgeOldData.php > /var/log/mediawiki/cron/purge_checkuser.log',
