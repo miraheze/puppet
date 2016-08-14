@@ -35,6 +35,22 @@ class mediawiki::jobrunner {
     service { 'jobrunner':
         ensure => stopped,
     }
+
+    file { '/etc/init.d/jobchron':
+        ensure  => present,
+        mode    => 0755,
+        source  => 'puppet:///modules/mediawiki/jobrunner/jobchron.initd',
+    }
+
+    file { '/etc/systemd/system/jobchron.service':
+        ensure  => present,
+        source  => 'puppet:///modules/mediawiki/jobrunner/jobchron.systemd',
+        notify  => Exec['JobRunner reload systemd'],
+    }
+
+    service { 'jobchron':
+        ensure => running,
+    }
 	
     cron { 'purge_checkuser':
         ensure  => present,
