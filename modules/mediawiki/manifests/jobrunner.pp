@@ -33,7 +33,7 @@ class mediawiki::jobrunner {
     }
 
     service { 'jobrunner':
-        ensure => stopped,
+        ensure => running,
     }
 
     file { '/etc/init.d/jobchron':
