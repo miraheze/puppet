@@ -152,4 +152,13 @@ class mediawiki {
         creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
         require => [ Git::Clone['MediaWiki core'], Package['ocaml'] ],
     }
+
+    exec { "curl -sS https://getcomposer.org/installer | php && php composer.phar install":
+        creates     => '/srv/mediawiki/w/extensions/Wikibase/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/Wikibase',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/extensions/Wikibase',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 }
