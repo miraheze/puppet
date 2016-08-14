@@ -31,12 +31,16 @@ class mediawiki::jobrunner {
         source  => 'puppet:///modules/mediawiki/jobrunner/jobrunner.systemd',
         notify  => Exec['JobRunner reload systemd'],
     }
+
+    service { 'jobrunner':
+        ensure => stopped,
+    }
 	
     cron { 'jobqueue':
-        ensure  => absent,
+        ensure  => present,
         command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/runJobs.php > /var/log/mediawiki/cron/jobqueue.log',
         user    => 'www-data',
-        minute  => '*/15',
+        minute  => '*/10',
     }
 
     cron { 'purge_checkuser':
