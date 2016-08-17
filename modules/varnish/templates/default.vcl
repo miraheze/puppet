@@ -104,9 +104,7 @@ sub url_rewrite {
         ) {
                 return (synth(752, "/wiki/Stewards'_noticeboard"));
         }
-}
-
-sub url_rewrite {
+        
 	if (req.http.Host == "meta.miraheze.org
 		&& req.url ~ "^/Requests_for_adoption
 	) {
