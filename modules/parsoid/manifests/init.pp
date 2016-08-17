@@ -55,6 +55,7 @@ class parsoid {
                 'alanpedia',
                 'algopedia',
                 'allbanks2',
+                'alwiki',
                 'applebranch',
                 'arabudland',
                 'aryaman',
