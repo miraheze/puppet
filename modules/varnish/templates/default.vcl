@@ -106,6 +106,14 @@ sub url_rewrite {
         }
 }
 
+sub url_rewrite {
+	if (req.http.Host == "meta.miraheze.org
+		&& req.url ~ "^/Requests_for_adoption
+	) {
+		return (synth(752, "/wiki/Requests_for_adoption"));
+	}
+}
+
 sub vcl_synth {
         if (resp.status == 752) {
                 set resp.http.Location = resp.reason;
