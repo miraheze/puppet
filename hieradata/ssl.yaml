@@ -104,7 +104,7 @@ ssl:
   amaninfotm:
     url: 'aman.info.tm'
     ca: 'LetsEncrypt'
-  codebaseclub
+  codebaseclub:
     url: 'wiki.codebase.club'
     ca: 'LetsEncrypt'
 
