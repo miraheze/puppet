@@ -104,6 +104,9 @@ ssl:
   amaninfotm:
     url: 'aman.info.tm'
     ca: 'LetsEncrypt'
+  zenbuddhisminfo:
+    url: 'zenbuddhism.info'
+    ca: 'LetsEncrypt'
 
 redirects:
   securereviwiki:
