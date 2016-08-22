@@ -109,7 +109,7 @@ ssl:
     ca: 'LetsEncrypt'
   zenbuddhisminfo:
     url: 'zenbuddhism.info'
-    ca: 'LetsEncyrpt'
+    ca: 'LetsEncrypt'
 
 redirects:
   securereviwiki:
