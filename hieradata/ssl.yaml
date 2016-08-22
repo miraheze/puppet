@@ -107,6 +107,9 @@ ssl:
   codebaseclub:
     url: 'wiki.codebase.club'
     ca: 'LetsEncrypt'
+  zenbuddhisminfo:
+    url: 'zenbuddhism.info'
+    ca: 'LetsEncyrpt'
 
 redirects:
   securereviwiki:
