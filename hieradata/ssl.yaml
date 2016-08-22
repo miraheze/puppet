@@ -107,8 +107,8 @@ ssl:
   codebaseclub:
     url: 'wiki.codebase.club'
     ca: 'LetsEncrypt'
-  zenbuddhisminfo:
-    url: 'zenbuddhism.info'
+  wwwzenbuddhisminfo:
+    url: 'www.zenbuddhism.info'
     ca: 'LetsEncrypt'
 
 redirects:
