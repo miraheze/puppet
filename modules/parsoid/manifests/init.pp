@@ -135,6 +135,7 @@ class parsoid {
                 'mydegree',
                 'ndtest',
                 'neuronpedia',
+                'newarkmanor',
                 'newknowledge',
                 'newtrend',
                 'nidda23',
