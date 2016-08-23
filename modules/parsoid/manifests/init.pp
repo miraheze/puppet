@@ -187,6 +187,7 @@ class parsoid {
                 'wikicervantes',
                 'wikihoyo',
                 'worldbuilding',
+                'wthsapgov',
                 'xdjibi',
                 'yacresources',
                 'yggdrasilwiki',
