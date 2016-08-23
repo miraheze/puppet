@@ -171,6 +171,7 @@ class parsoid {
                 'studynotekr',
                 'taylor',
                 'tcc6640',
+                'techeducation',
                 'teleswiki',
                 'thefosters',
                 'thehushhushsaga',
