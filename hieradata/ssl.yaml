@@ -107,6 +107,9 @@ ssl:
   wwwzenbuddhisminfo:
     url: 'www.zenbuddhism.info'
     ca: 'LetsEncrypt'
+  espiral:
+    url: 'espiral.org'
+    ca: 'Gandi'
 
 redirects:
   securereviwiki:
