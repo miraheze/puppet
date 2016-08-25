@@ -67,7 +67,6 @@ class parsoid {
                 'biblio',
                 'bmed',
                 'braindump',
-                'carving',
                 'casuarina',
                 'cbmedia',
                 'cec',
