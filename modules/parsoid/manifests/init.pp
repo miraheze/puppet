@@ -89,7 +89,6 @@ class parsoid {
                 'dts',
                 'elainarmua',
                 'ernaehrungsrathh',
-                'espiral',
                 'essway',
                 'etpo',
                 'eva',
