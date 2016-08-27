@@ -112,11 +112,6 @@ ssl:
     ca: 'Gandi'
 
 redirects:
-  securereviwiki:
-    url: 'secure.reviwiki.info'
-    redirect: 'private.reviwiki.info'
-    sslname: 'secure.reviwiki.info'
-    ca: 'StartSSL'
   wwwallthetropes:
     url: 'www.allthetropes.org'
     redirect: 'allthetropes.org'
