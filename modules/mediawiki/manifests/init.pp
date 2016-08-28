@@ -37,6 +37,7 @@ class mediawiki {
         'ploticus',
         'ttf-freefont',
         'ffmpeg2theora',
+        'locales-all',
         'oggvideotools',
         'libav-tools',
         'libvips-tools',
