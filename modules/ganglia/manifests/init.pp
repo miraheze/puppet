@@ -33,7 +33,7 @@ class ganglia {
     file { '/etc/php5/apache2/php.ini':
         ensure => present,
         mode   => '0755',
-        source +> 'puppet:///modules/ganglia/apache/php.ini',
+        source => 'puppet:///modules/ganglia/apache/php.ini',
     }
 
 }

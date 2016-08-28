@@ -69,6 +69,6 @@ class phabricator {
     file { '/etc/php5/apache2/php.ini':
         ensure => present,
         mode   => '0755',
-        source +> 'puppet:///modules/phabricator/php.ini',
+        source => 'puppet:///modules/phabricator/php.ini',
     }
 }
