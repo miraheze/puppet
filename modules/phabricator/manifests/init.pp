@@ -65,4 +65,10 @@ class phabricator {
     file { '/srv/phab/images':
         ensure => directory,
     }
+
+    file { '/etc/php5/apache2/php.ini':
+        ensure => present,
+        mode   => '0755',
+        source +> 'puppet:///modules/phabricator/php.ini',
+    }
 }
