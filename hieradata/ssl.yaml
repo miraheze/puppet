@@ -68,9 +68,6 @@ ssl:
   aenasan:
     url: 'wiki.aenasan.com'
     ca: 'StartSSL'
-  droneregulation:
-    url: 'drone-regulation.info'
-    ca: 'LetsEncrypt'
   garyjohnsonmeetups:
     url: 'wiki.garyjohnsonmeetups.com'
     ca: 'StartSSL'
