@@ -59,6 +59,7 @@ class parsoid {
                 'applebranch',
                 'arabudland',
                 'aryaman',
+                'ayrshire',
                 'atheneum',
                 'augustinianum',
                 'aurcusonline',
