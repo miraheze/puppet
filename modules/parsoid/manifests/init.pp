@@ -146,6 +146,7 @@ class parsoid {
                 'panorama',
                 'paodeaoda',
                 'partup',
+                'pbm',
                 'pflanzen',
                 'priyo',
                 'pq',
