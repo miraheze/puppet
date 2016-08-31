@@ -10,7 +10,7 @@ class mediawiki {
         include mediawiki::jobrunner
     }
 
-    file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/var/log/mediawiki' ]:
+    file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/srv/mediawiki/cdb-config', '/var/log/mediawiki' ]:
         ensure => 'directory',
         owner  => 'www-data',
         group  => 'www-data',
