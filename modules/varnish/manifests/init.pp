@@ -3,6 +3,26 @@ class varnish {
     include varnish::nginx
     include ssl::hiera
 
+    apt::source { 'debian_stretch':
+        comment  => 'Debian Stretch APT',
+        location => 'http://ftp.debian.org/debian',
+        release  => 'stretch',
+        repos    => 'main contrib non-free',
+    }
+
+    # Workaround for https://github.com/miraheze/puppet/issues/70
+    apt::pin { 'debian_stable':
+        priority => 995,
+        release  => 'stable',
+    }
+
+    apt::pin { 'debian_stretch':
+        priority   => 740,
+        originator => 'Debian',
+        release    => 'stretch',
+        packages   => 'varnish-modules',
+    }
+
     package { [ 'varnish', 'stunnel4' ]:
         ensure => present,
     }
