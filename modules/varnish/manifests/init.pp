@@ -20,11 +20,12 @@ class varnish {
         priority   => 740,
         originator => 'Debian',
         release    => 'stretch',
-        packages   => 'varnish-modules',
+        packages   => ['varnish', 'varnish-modules'],
     }
 
     package { [ 'varnish', 'stunnel4' ]:
-        ensure => present,
+        ensure  => present,
+        require => Apt::Pin['debian_stretch'],
     }
 
     service { 'varnish':
