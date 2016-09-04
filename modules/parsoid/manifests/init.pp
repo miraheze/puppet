@@ -175,6 +175,7 @@ class parsoid {
                 'teleswiki',
                 'thefosters',
                 'thehushhushsaga',
+                'theworld',
                 'tme',
                 'tochki',
                 'torejorg',
