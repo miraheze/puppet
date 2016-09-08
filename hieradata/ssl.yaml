@@ -107,6 +107,9 @@ ssl:
   espiral:
     url: 'espiral.org'
     ca: 'Gandi'
+  wikilbcomms:
+    url: 'wiki.lbcomms.co.za'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
