@@ -77,6 +77,7 @@ class parsoid {
                 'civitas',
                 'clementsworldbuilding',
                 'clicordi',
+                'cnv',
                 'cssandjsschoolboard',
                 'cvsmb',
                 'dalar',
