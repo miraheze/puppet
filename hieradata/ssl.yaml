@@ -107,6 +107,9 @@ ssl:
   espiral:
     url: 'espiral.org'
     ca: 'Gandi'
+  wwwopenonderwijsorg:
+    url: 'www.openonderwijs.org'
+    ca: 'StartSSL'
 
 redirects:
   wwwallthetropes:
