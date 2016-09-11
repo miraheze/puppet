@@ -159,6 +159,7 @@ class parsoid {
                 'rpcharacters',
                 'safiria',
                 'secondcircle',
+                'seldir',
                 'seton',
                 'shopping',
                 'simonjon',
