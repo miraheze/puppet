@@ -110,6 +110,9 @@ ssl:
   wikilbcomms:
     url: 'wiki.lbcomms.co.za'
     ca: 'LetsEncrypt'
+  wwwopenonderwijsorg:
+    url: 'www.openonderwijs.org'
+    ca: 'StartSSL'
 
 redirects:
   wwwallthetropes:
