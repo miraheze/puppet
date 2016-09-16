@@ -127,6 +127,7 @@ class parsoid {
                 'luckandlogic',
                 'lunfeng',
                 'maiasongcontest',
+                'marcoschriek',
                 'mecanon',
                 'menufeed',
                 'meregos',
