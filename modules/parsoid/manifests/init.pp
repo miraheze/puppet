@@ -118,6 +118,7 @@ class parsoid {
                 'janesskillspack',
                 'justinbieber',
                 'kassai',
+                'kwiki',
                 'lancemedical',
                 'lbsges',
                 'lclwiki',
