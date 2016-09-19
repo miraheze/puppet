@@ -113,6 +113,9 @@ ssl:
   wwwopenonderwijsorg:
     url: 'www.openonderwijs.org'
     ca: 'StartSSL'
+  wikiforfunssakecouk:
+    url: 'wiki.forfunssake.co.uk'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
