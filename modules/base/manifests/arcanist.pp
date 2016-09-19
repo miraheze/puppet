@@ -1,7 +1,7 @@
-# class: mediawiki::arcanist
+# class: base::arcanist
 #
 # install arcanist on arcanist hosts (currently mw2 in hieradata)
-class mediawiki::arcanist {
+class base::arcanist {
     file { '/srv/phab':
         ensure => directory,
     }
