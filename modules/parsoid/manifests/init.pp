@@ -133,6 +133,7 @@ class parsoid {
                 'menufeed',
                 'meregos',
                 'meta',
+                'musicarchive',
                 'musiclibrary',
                 'musictabs',
                 'mydegree',
