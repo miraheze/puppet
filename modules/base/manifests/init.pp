@@ -10,6 +10,10 @@ class base {
     include base::ssl
     include ssh
     include users
+	
+	if hiera('arcanist') {
+        include base::arcanist
+    }
 
     if !hiera('mailserver') {
         include base::mail
