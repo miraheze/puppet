@@ -10,6 +10,10 @@ class mediawiki {
         include mediawiki::jobrunner
     }
 
+    if hiera(arcanist) {
+        include base::arcanist
+    }
+
     file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/srv/mediawiki/cdb-config', '/var/log/mediawiki' ]:
         ensure => 'directory',
         owner  => 'www-data',
