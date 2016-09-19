@@ -125,6 +125,7 @@ class parsoid {
                 'lingnlang',
                 'littlebigplanet',
                 'lizard',
+                'lovelivewiki',
                 'luckandlogic',
                 'lunfeng',
                 'maiasongcontest',
