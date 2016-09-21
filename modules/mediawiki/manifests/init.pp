@@ -154,4 +154,12 @@ class mediawiki {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+    exec { "curl -sS https://getcomposer.org/installer | php && php composer.phar install":
+        creates     => '/srv/mediawiki/w/extensions/Maps/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/Maps',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/extensions/Maps',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 }
