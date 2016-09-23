@@ -11,9 +11,6 @@ ssl:
   spiral:
     url: 'spiral.wiki'
     ca: 'Gandi'
-  printmaking:
-    url: 'wiki.printmaking.be'
-    ca: 'StartSSL'
   permanentfuturelab:
     url: 'permanentfuturelab.wiki'
     ca: 'StartSSL'
