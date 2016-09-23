@@ -85,6 +85,7 @@ class parsoid {
                 'detlefs',
                 'development',
                 'dicfic',
+                'dish',
                 'dmw',
                 'drunkenpeasantswiki',
                 'dts',
