@@ -87,6 +87,7 @@ class parsoid {
                 'dicfic',
                 'dish',
                 'dmw',
+                'doin',
                 'drunkenpeasantswiki',
                 'dts',
                 'elainarmua',
