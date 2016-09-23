@@ -116,6 +116,9 @@ ssl:
   wikiforfunssakecouk:
     url: 'wiki.forfunssake.co.uk'
     ca: 'LetsEncrypt'
+  takethatwikicom:
+    url: 'takethatwiki.com'
+    ca: 'StartSSL'
 
 redirects:
   wwwallthetropes:
