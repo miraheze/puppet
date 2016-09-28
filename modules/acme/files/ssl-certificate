@@ -19,7 +19,7 @@ function generate_private_key {
 }
 
 function generate_csr {
-    openssl req -new -sha256 -key /root/acme-tiny/ssl/${domain}.key -subj "/" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:${domain}${secdomain}")) > /root/acme-tiny/ssl/${domain}.csr
+    openssl req -new -sha256 -key /root/acme-tiny/ssl/${domain}.key -subj "/O=Miraheze/CN=${domain}" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:${domain}${secdomain}")) > /root/acme-tiny/ssl/${domain}.csr
     log "CSR generated at: /root/acme-tiny/ssl/${domain}.csr"
 }
 
