@@ -160,6 +160,7 @@ class parsoid {
                 'pflanzen',
                 'priyo',
                 'pq',
+                'pso2',
                 'qwerty',
                 'rawdata',
                 'recherchesdocumentaires',
