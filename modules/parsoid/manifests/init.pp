@@ -43,7 +43,7 @@ class parsoid {
 
     # The name of the wiki (or the URL in form <wikiname>.miraheze.org. DO NOT INCLUDE WIKI.
     $wikis = [
-                '1209'
+                '1209',
                 '3dicxyz',
                 '8station',
                 'aacenterpriselearning',
