@@ -82,7 +82,7 @@ class parsoid {
                 'cnv',
                 'cssandjsschoolboard',
                 'cvsmb',
-                'cybersecurity",
+                'cybersecurity',
                 'dalar',
                 'datachron',
                 'detlefs',
