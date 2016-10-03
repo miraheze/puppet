@@ -138,6 +138,7 @@ class parsoid {
                 'menufeed',
                 'meregos',
                 'meta',
+                'mozi',
                 'musicarchive',
                 'musiclibrary',
                 'musictabs',
