@@ -121,7 +121,7 @@ redirects:
   wwwallthetropes:
     url: 'www.allthetropes.org'
     redirect: 'allthetropes.org'
-    sslname: 'www.allthetropes.org'
+    sslname: 'allthetropes.org'
     ca: 'LetsEncrypt'
   wwwfibromyalgiaengineer:
     url: 'www.fibromyalgia-engineer.com'
