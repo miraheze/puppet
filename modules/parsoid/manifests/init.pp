@@ -144,6 +144,7 @@ class parsoid {
                 'musiclibrary',
                 'musictabs',
                 'mydegree',
+                'mylogic',
                 'ndn',
                 'neuronpedia',
                 'newarkmanor',
