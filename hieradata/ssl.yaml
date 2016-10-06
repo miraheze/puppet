@@ -116,6 +116,9 @@ ssl:
   takethatwikicom:
     url: 'takethatwiki.com'
     ca: 'StartSSL'
+    wikialliancegenomeorg:
+    url: 'wiki.alliancegenome.org'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
