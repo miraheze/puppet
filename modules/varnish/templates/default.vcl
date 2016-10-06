@@ -13,12 +13,8 @@
 vcl 4.0;
 
 import directors;
+import std;
 
-# -------------------------------------------------------------------
-# When depooling a backend here, you should not only comment out the
-# mediawiki.add_backend block, but ALSO the associated backend block.
-# Failing to do so will break Varnish!
-# -------------------------------------------------------------------
 probe mwhealth {
 	.request = "GET /wiki/Miraheze HTTP/1.1"
 		"Host: meta.miraheze.org"
@@ -137,6 +133,21 @@ sub vcl_recv {
 
 	unset req.http.Proxy; # https://httpoxy.org/; CVE-2016-5385
 
+	# Normalize Accept-Encoding for better cache hit ratio
+	if (req.http.Accept-Encoding) {
+		if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|ogg)$") {
+			# No point in compressing these
+			unset req.http.Accept-Encoding;
+		} elsif (req.http.Accept-Encoding ~ "gzip") {
+			set req.http.Accept-Encoding = "gzip";
+		} elsif (req.http.Accept-Encoding ~ "deflate") {
+			set req.http.Accept-Encoding = "deflate";
+		} else {
+			# We don't understand this
+			unset req.http.Accept-Encoding;
+		}
+	}
+
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1;
 		return (pass);
@@ -159,10 +170,16 @@ sub vcl_recv {
 	if (req.http.Host == "static.miraheze.org" && req.url !~ "^/.*wiki") {
 		return (pass);
 	}
-	
-	if (req.http.X-Miraheze-Debug == "1") {
-		set req.backend_hint = mw1;
+
+	# No caching of Math images for now..
+	if (req.http.Host == "static.miraheze.org"
+		&& req.url ~ "^/.*wiki/math/") {
 		return (pass);
+	}
+
+	# We can rewrite those to one domain name to increase cache hits!
+	if (req.url ~ "^/w/resources") {
+		set req.http.Host = "meta.miraheze.org";
 	}
  
 	if (req.http.Authorization ~ "OAuth") {
@@ -201,9 +218,15 @@ sub vcl_backend_response {
 		set beresp.uncacheable = true;
 	}
 
-	# Trial: cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
+	# Cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
 	if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
 		set beresp.ttl = 43200s;
+	}
+
+	# Don't cache anything larger than 256KB @ vcl_backend_response
+	if (std.integer(beresp.http.Content-Length, 262144) >= 262144) {
+		set beresp.uncacheable = true;
+		return (deliver);
 	}
 
 	return (deliver);
