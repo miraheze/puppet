@@ -2,9 +2,9 @@
 #
 # Cron jobs of select wiki dumps
 class mediawiki::cron {
-    cron { 'update_database_lists':
+    cron { 'sterbalssundrystudieswiki':
         ensure   => present,
-        command  => '/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackups.php --wiki sterbalssundrystudieswiki --logs --full',
+        command  => '/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackups.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
         user     => 'www-data',
         minute   => absent,
         hour     => absent,
