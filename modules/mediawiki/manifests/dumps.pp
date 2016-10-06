@@ -1,7 +1,7 @@
 # class: mediawiki::dumps
 #
 # Cron jobs of select wiki dumps
-class mediawiki::cron {
+class mediawiki::dumps {
     cron { 'sterbalssundrystudieswiki':
         ensure   => present,
         command  => '/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackups.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
