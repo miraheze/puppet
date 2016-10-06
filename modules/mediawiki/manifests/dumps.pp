@@ -4,7 +4,7 @@
 class mediawiki::dumps {
     cron { 'sterbalssundrystudieswiki':
         ensure   => present,
-        command  => '/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackups.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackups.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
         user     => 'www-data',
         minute   => absent,
         hour     => absent,
