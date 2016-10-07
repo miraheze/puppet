@@ -9,6 +9,9 @@ class mediawiki {
     if hiera(jobrunner) {
         include mediawiki::jobrunner
     }
+    if hiera(mwdumps) {
+        include mediawiki::dumps
+    }
 
     file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/srv/mediawiki/cdb-config', '/var/log/mediawiki' ]:
         ensure => 'directory',
