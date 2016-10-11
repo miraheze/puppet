@@ -123,6 +123,7 @@ class parsoid {
                 'janesskillspack',
                 'justinbieber',
                 'kassai',
+                'kinderacic',
                 'korach',
                 'kwiki',
                 'lancemedical',
