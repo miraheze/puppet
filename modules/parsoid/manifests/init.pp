@@ -172,6 +172,7 @@ class parsoid {
                 'recherchesdocumentaires',
                 'ric',
                 'robloxscripters',
+                'rocketleaguequebec',
                 'rpcharacters',
                 'safiria',
                 'secondcircle',
