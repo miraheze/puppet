@@ -154,6 +154,7 @@ class parsoid {
                 'newtrend',
                 'nidda23',
                 'nwp',
+                'nvc',
                 'ofthevampire',
                 'oncproject',
                 'openconstitution',
