@@ -167,6 +167,7 @@ class parsoid {
                 'priyo',
                 'pq',
                 'pso2',
+                'purpanrangueilus',
                 'qwerty',
                 'rawdata',
                 'recherchesdocumentaires',
