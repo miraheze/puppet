@@ -191,6 +191,7 @@ class parsoid {
                 'starsetonline',
                 'stellachronica',
                 'studynotekr',
+                'takethatwiki',
                 'taylor',
                 'tcc6640',
                 'techeducation',
