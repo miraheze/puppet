@@ -208,6 +208,7 @@ class parsoid {
                 'webflow',
                 'wikibooks',
                 'wikicervantes',
+                'wikidolphinhansen',
                 'wikihoyo',
                 'worldbuilding',
                 'wthsapgov',
