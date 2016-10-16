@@ -102,6 +102,7 @@ class parsoid {
                 'eva',
                 'extload',
                 'ezdmf',
+                'fablabesds',
                 'fbwiki',
                 'fishpercolator',
                 'foodsharinghamburg',
