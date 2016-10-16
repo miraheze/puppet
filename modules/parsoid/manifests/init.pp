@@ -81,6 +81,7 @@ class parsoid {
                 'clementsworldbuilding',
                 'clicordi',
                 'cnv',
+                'corydoctorow',
                 'cssandjsschoolboard',
                 'cvsmb',
                 'cybersecurity',
