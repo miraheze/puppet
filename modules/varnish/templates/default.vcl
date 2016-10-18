@@ -285,12 +285,16 @@ sub vcl_backend_error {
 				p {
 					margin: .4em 0 .5em 0;
 				}
+				a {
+					text-decoration: none;
+					color: #0645ad;
+				}
 			</style>
 		</head>
 		<body>
 			<div style="text-align: center;">
 				<h1>"} + beresp.status + " " + beresp.reason + {"</h1>
-				<p>Our servers are having problems at the moment. Please try again in a few minutes.</p>
+				<p>Our servers are having problems at the moment. Please try again in a few minutes. You can view our <a href="https://www.facebook.com/miraheze">Facebook</a> and <a href="https://twitter.com/miraheze">Twitter</a> feeds for more information.</p>
 				<p>Please provide the details below if you report this error to the system administrators via https://phabricator.miraheze.org:</p>
 				<p style="font-size: 14px; padding-top: 0.5em;">
 					Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" (Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
