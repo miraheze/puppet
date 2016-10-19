@@ -1,8 +1,0 @@
--- Grants for 'cachet'@''
-
-GRANT CREATE, PROCESS
-    ON *.* TO 'cachet'@'%'
-    IDENTIFIED BY '<%= @cachet_password %>';
-
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, CREATE TEMPORARY TABLES, INDEX
-    ON `cachet`.* TO 'cachet'@'%';
