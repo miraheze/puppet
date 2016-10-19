@@ -53,7 +53,7 @@ class mediawiki::jobrunner {
     }
 	
     cron { 'purge_checkuser':
-        ensure  => present,
+        ensure  => absent,
         command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/CheckUser/maintenance/purgeOldData.php > /var/log/mediawiki/cron/purge_checkuser.log',
         user    => 'www-data',
         minute  => '0',
@@ -61,7 +61,7 @@ class mediawiki::jobrunner {
     }
 
     cron { 'purge_abusefilter':
-        ensure => present,
+        ensure => absent,
         command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/AbuseFilter/maintenance/purgeOldLogIPData.php > /var/log/mediawiki/cron/purge_abusefilter.log',
         user    => 'www-data',
         minute  => '0',
