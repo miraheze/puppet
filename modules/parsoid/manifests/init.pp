@@ -124,7 +124,7 @@ class parsoid {
                 'izanagi',
                 'janesskillspack',
                 'justinbieber',
-                'karniaruthenia'
+                'karniaruthenia',
                 'kassai',
                 'kinderacic',
                 'korach',
