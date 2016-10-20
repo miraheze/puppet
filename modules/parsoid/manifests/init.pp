@@ -183,6 +183,7 @@ class parsoid {
                 'seldir',
                 'seton',
                 'shopping',
+                'sidem',
                 'simonjon',
                 'sirikot',
                 'sjuhabitat',
