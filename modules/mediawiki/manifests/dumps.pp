@@ -4,7 +4,7 @@
 class mediawiki::dumps {
     cron { 'Export sterbalssundrystudieswiki xml dump monthly':
         ensure   => present,
-        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackups.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -13,7 +13,7 @@ class mediawiki::dumps {
      }
     cron { 'Export amaninfowiki xml dump monthly':
         ensure   => present,
-        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackups.php --wiki amaninfowiki --logs --full > /mnt/mediawiki-static/dumps/amaninfowiki.xml',
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki amaninfowiki --logs --full > /mnt/mediawiki-static/dumps/amaninfowiki.xml',
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
