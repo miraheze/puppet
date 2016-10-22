@@ -105,6 +105,7 @@ class parsoid {
                 'fablabesds',
                 'fbwiki',
                 'fishpercolator',
+                'fmbv',
                 'foodsharinghamburg',
                 'frontdesks',
                 'geirpedia',
