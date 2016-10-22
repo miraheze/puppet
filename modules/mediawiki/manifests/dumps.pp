@@ -17,8 +17,7 @@ class mediawiki::dumps {
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
-        month    => '0',
-        week     => '2',
-        monthday => 0,
+        month    => '*',
+        monthday => 15, 30,
     }
 }
