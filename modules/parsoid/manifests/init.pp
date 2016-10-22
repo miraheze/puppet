@@ -95,6 +95,7 @@ class parsoid {
                 'doin',
                 'drunkenpeasantswiki',
                 'dts',
+                'easywiki',
                 'elainarmua',
                 'ernaehrungsrathh',
                 'essway',
