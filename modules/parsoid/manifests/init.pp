@@ -190,6 +190,7 @@ class parsoid {
                 'skyfireflyff',
                 'snowthegame',
                 'soshomophobie',
+                'southparkfan',
                 'starsetonline',
                 'stellachronica',
                 'studynotekr',
