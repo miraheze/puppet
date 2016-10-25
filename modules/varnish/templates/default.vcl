@@ -171,12 +171,6 @@ sub vcl_recv {
 		return (pass);
 	}
 
-	# No caching of Math images for now..
-	if (req.http.Host == "static.miraheze.org"
-		&& req.url ~ "^/.*wiki/math/") {
-		return (pass);
-	}
-
 	# We can rewrite those to one domain name to increase cache hits!
 	if (req.url ~ "^/w/resources") {
 		set req.http.Host = "meta.miraheze.org";
