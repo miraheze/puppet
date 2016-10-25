@@ -145,6 +145,7 @@ class parsoid {
                 'menufeed',
                 'meregos',
                 'meta',
+                'mikrodev',
                 'mozi',
                 'musicarchive',
                 'musiclibrary',
