@@ -18,6 +18,6 @@ class mediawiki::dumps {
         minute   => '0',
         hour     => '0',
         month    => '*',
-        monthday => 15, 30,
+        monthday => ['15', '30'],
     }
 }
