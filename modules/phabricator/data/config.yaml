@@ -90,7 +90,6 @@ maniphest.statuses:
 # Disable some Phabricator applications
 phabricator.uninstalled-applications:
   PhabricatorAlmanacApplication: true # we don't have resources to manage
-  PhabricatorBadgesApplication: true # authority is false
   PhabricatorChatLogApplication: true # deprecated
   PhabricatorConpherenceApplication: true # not used, IRC used
   PhabricatorCountdownApplication: true # niche calendar thing, not useful
