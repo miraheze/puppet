@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [corey, labster, reception]
+    members: [labster, reception]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php5-fpm *',
@@ -72,11 +72,11 @@ users:
     realname: Vorticity
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMIFCaagRn4CCVDfuixkOdeYw4+Jdy3mg01SWLJ7F3nQKKVhSNlnKZrsiWsI6ihj6K06QBQxrFB3AfaqpWqALitkI+5CisnwOfutAGZu9+cbE8qo9sDAmm34N52yfnzmcFx2kgj0BDL/T+C/iiG8ZRdmeKes4Lv5OylDo+f0sHdbzc3YTTeuTafwgrXUeHv3FCrpw/xu0t9Vgawt6HACVSYq2+fglY+4oG4Pc1+hBGnRPyet+dILYTHmDem1iG2vCajiTbtnN+gKdWp3+2CeZ7YLRDexm3ncoKLPXi+nxTp6qKknH0QOd52YOnNRj3TGuif7mrRn+LVMFLaMhxuUst blaabs@perceptyx.com]
   corey:
-    ensure: present
+    ensure: absent
     uid: 1006
     name: corey
     realname: Corey Chambers
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEA0dAQsZlhNpB4Y9/6InPsUXcAxMapYmbYZx5cWTtBw4UNO36axEHbY9KOJpMEVr8gSrraeaVzCEeEwt+Mvbve9Odn9xJY0Q/hDRUPAVhSPnj+ulZRf3mqLkInkSK/Z27eyAhW21NsoZreXL1eI6dzyd/SvrAJjcm8NrY9qrC12LvhnrpYb78qbuOYfYAO80NXVZnvu8/0BnateYnWvjrHJ/W/tL/+zM+e+ZZVfCYJA9a5fCx8u9KKNo7xQFTOGoota1SoXVtzG6hI6ufD+GtRbov+WAfKLFkbF8pMNtLGQdjrbtekN9+gyDanrin7BTSxvOYEMP6L7GfTPQ3LkvWR8Q==]
+    ssh_keys: []
   reception:
     ensure: present
     uid: 1007
