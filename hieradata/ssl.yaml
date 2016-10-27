@@ -119,6 +119,9 @@ ssl:
   wikialliancegenomeorg:
     url: 'wiki.alliancegenome.org'
     ca: 'LetsEncrypt'
+  applebranchwiki:
+    url: 'applewiki.tk'
+	ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
