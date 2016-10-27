@@ -121,7 +121,7 @@ ssl:
     ca: 'LetsEncrypt'
   applebranchwiki:
     url: 'applewiki.tk'
-	ca: 'LetsEncrypt'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
