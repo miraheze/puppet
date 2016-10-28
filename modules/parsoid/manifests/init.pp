@@ -158,6 +158,7 @@ class parsoid {
                 'newknowledge',
                 'newtrend',
                 'nidda23',
+                'noalatala',
                 'nwp',
                 'nvc',
                 'ofthevampire',
