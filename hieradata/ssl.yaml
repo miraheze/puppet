@@ -122,6 +122,9 @@ ssl:
   applebranchwiki:
     url: 'applewiki.tk'
     ca: 'LetsEncrypt'
+  wikirpgbrigadeorg:
+    url: 'wiki.rpgbrigade.org'
+    ca: 'StartSSL'
 
 redirects:
   wwwallthetropes:
