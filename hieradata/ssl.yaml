@@ -124,7 +124,7 @@ ssl:
     ca: 'LetsEncrypt'
   wikirpgbrigadeorg:
     url: 'wiki.rpgbrigade.org'
-    ca: 'StartCom'
+    ca: 'StartSSL'
 
 redirects:
   wwwallthetropes:
