@@ -216,6 +216,7 @@ class parsoid {
                 'urho3d',
                 'videogames',
                 'vrgo',
+                'wabc',
                 'walthamstowlabour',
                 'webflow',
                 'wikibooks',
