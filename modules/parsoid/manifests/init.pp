@@ -113,6 +113,7 @@ class parsoid {
                 'gen',
                 'gnc',
                 'grandtheftwiki',
+                'gze',
                 'hftqms',
                 'hobbies',
                 'hshsinfoportal',
