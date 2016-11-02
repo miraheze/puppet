@@ -23,9 +23,6 @@ ssl:
   universebuild:
     url: 'universebuild.com'
     ca: 'Comodo'
-  zepaltusproject:
-    url: 'wiki.zepaltusproject.com'
-    ca: 'Gandi'
   dottorconte:
     url: 'wiki.dottorconte.eu'
     ca: 'LetsEncrypt'
