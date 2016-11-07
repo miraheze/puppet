@@ -122,6 +122,9 @@ ssl:
   wikirpgbrigadeorg:
     url: 'wiki.rpgbrigade.org'
     ca: 'StartSSL'
+  wikia22dk:
+    url: 'wiki.a22.dk'
+    ca: 'StartSSL'
 
 redirects:
   wwwallthetropes:
