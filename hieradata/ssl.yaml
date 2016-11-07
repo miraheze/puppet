@@ -16,7 +16,7 @@ ssl:
     ca: 'StartSSL'
   reviwiki:
     url: 'private.revi.wiki'
-    ca: 'Comodo'
+    ca: 'GeoTrust'
   publictestwiki:
     url: 'publictestwiki.com'
     ca: 'Comodo'
