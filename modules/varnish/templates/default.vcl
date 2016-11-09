@@ -217,12 +217,6 @@ sub vcl_backend_response {
 		set beresp.ttl = 43200s;
 	}
 
-	# Don't cache anything larger than 256KB @ vcl_backend_response
-	if (std.integer(beresp.http.Content-Length, 262144) >= 262144) {
-		set beresp.uncacheable = true;
-		return (deliver);
-	}
-
 	return (deliver);
 }
 
