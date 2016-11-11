@@ -125,6 +125,7 @@ class parsoid {
                 'irc',
                 'islamwissenschaft',
                 'izanagi',
+                'jakepers',
                 'janesskillspack',
                 'justinbieber',
                 'karniaruthenia',
