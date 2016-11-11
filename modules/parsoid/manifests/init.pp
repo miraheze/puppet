@@ -3,11 +3,11 @@ class parsoid {
     include nginx
 
     apt::source { 'parsoid':
-        location => 'http://releases.wikimedia.org/debian',
+        location => 'https://releases.wikimedia.org/debian',
         release  => 'jessie-mediawiki',
         repos    => 'main',
         key      => {
-            'id'     => 'BE0C9EFB1A948BF3C8157E8B811780265C927F7C',
+            'id'     => 'A6FD76E2A61C5566D196D2C090E9F83F22250DD7',
             'server' => 'hkp://keyserver.ubuntu.com:80',
         },
     }
