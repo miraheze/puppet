@@ -122,6 +122,9 @@ ssl:
   wikirpgbrigadeorg:
     url: 'wiki.rpgbrigade.org'
     ca: 'StartSSL'
+  evelopediatk:
+    url: 'evelopedia.tk'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
