@@ -101,6 +101,7 @@ class parsoid {
                 'essway',
                 'etpo',
                 'eva',
+                'evelopedia',
                 'extload',
                 'ezdmf',
                 'fablabesds',
