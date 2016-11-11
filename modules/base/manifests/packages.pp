@@ -1,6 +1,5 @@
 # class: base::packages
 class base::packages {
-
     $packages = [
         'acct',
         'atop',
@@ -8,8 +7,8 @@ class base::packages {
         'debian-goodies',
         'git',
         'htop',
-	'logrotate',
-	'mtr',
+        'logrotate',
+        'mtr',
         'nano',
         'screen',
         'strace',
@@ -22,4 +21,8 @@ class base::packages {
         ensure => present,
     }
 
+    # Get rid of this
+    package { [ 'apt-listchanges' ]:
+        ensure	=> absent,
+    }
 }
