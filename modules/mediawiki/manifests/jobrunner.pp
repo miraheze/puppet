@@ -62,15 +62,15 @@ class mediawiki::jobrunner {
         ensure  => present,
         command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/CheckUser/maintenance/purgeOldData.php > /var/log/mediawiki/cron/purge_checkuser.log',
         user    => 'www-data',
-        minute  => '0',
-        hour    => '*/12',
+        minute  => '5',
+        hour    => '6',
     }
 
     cron { 'purge_abusefilter':
         ensure => present,
         command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/AbuseFilter/maintenance/purgeOldLogIPData.php > /var/log/mediawiki/cron/purge_abusefilter.log',
         user    => 'www-data',
-        minute  => '0',
-        hour    => '*/12',
+        minute  => '5',
+        hour    => '18',
     }
 }
