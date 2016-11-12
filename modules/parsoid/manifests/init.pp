@@ -59,6 +59,7 @@ class parsoid {
                 'allbanks2',
                 'alwiki',
                 'apneuvereniging',
+                'applebranch',
                 'arabudland',
                 'aryaman',
                 'ayrshire',
