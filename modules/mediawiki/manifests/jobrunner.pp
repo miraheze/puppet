@@ -55,7 +55,7 @@ class mediawiki::jobrunner {
     file { '/etc/rsyslog.d/20-jobrunner.conf':
         ensure  => present,
         source  => 'puppet:///modules/mediawiki/jobrunner/jobrunner.rsyslog.conf',
-        notify  => Service['rsyslog'],
+        notify  => [ Service['rsyslog'], Service['jobchron'], Service['jobrunner'] ],
     }
 	
     cron { 'purge_checkuser':
