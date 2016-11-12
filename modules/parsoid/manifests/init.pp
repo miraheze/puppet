@@ -146,7 +146,6 @@ class parsoid {
                 'lunfeng',
                 'maiasongcontest',
                 'marcoschriek',
-                'mecanon',
                 'menufeed',
                 'meregos',
                 'meta',
