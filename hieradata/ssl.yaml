@@ -125,7 +125,7 @@ ssl:
   wikia22dk:
     url: 'wiki.a22.dk'
     ca: 'LetsEncrypt'
-  alwikinet:
+  alwiki:
     url: 'alwiki.net'
     ca: 'LetsEncrypt'
 
