@@ -125,6 +125,9 @@ ssl:
   wikia22dk:
     url: 'wiki.a22.dk'
     ca: 'LetsEncrypt'
+  alwiki:
+    url: 'alwiki.net'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
