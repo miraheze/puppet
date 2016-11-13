@@ -44,6 +44,7 @@ class mediawiki {
         'oggvideotools',
         'libav-tools',
         'libvips-tools',
+        'poppler-utils',
     ]
 
     package { $packages:
