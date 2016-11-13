@@ -128,6 +128,9 @@ ssl:
   alwiki:
     url: 'alwiki.net'
     ca: 'LetsEncrypt'
+  evelopediatk:
+    url: 'evelopedia.tk'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
