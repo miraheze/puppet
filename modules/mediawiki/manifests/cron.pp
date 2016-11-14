@@ -9,4 +9,11 @@ class mediawiki::cron {
         minute  => '*',
         hour    => '*',
     }
+        cron { 'update.php for LocalisationUpdate':
+        ensure  => present,
+        command => '/usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki extloadwiki',
+        user    => 'www-data',
+        minute  => '*',
+        hour    => '24',
+    }
 }
