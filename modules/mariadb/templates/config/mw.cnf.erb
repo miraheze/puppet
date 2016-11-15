@@ -12,7 +12,7 @@ default-storage-engine         = InnoDB
 socket                         = /var/run/mysqld/mysqld.sock
 pid-file                       = /var/run/mysqld/mysqld.pid
 skip-name-resolve
-key-buffer-size                = 32M
+key-buffer-size                = 16M
 myisam-recover                 = FORCE,BACKUP
 
 max-allowed-packet             = 16M
@@ -34,11 +34,11 @@ tmp-table-size                 = 12M
 max-heap-table-size            = 12M
 query-cache-type               = 0
 query-cache-size               = 0
-max-connections                = 75
+max-connections                = 90
 thread-cache-size              = 50
 open-files-limit               = 65535
-table-definition-cache         = 700
-table-open-cache               = 700
+table-definition-cache         = 350
+table-open-cache               = 350
 
 innodb-flush-method            = O_DIRECT
 innodb-log-files-in-group      = 2
