@@ -151,6 +151,7 @@ class parsoid {
                 'meta',
                 'mikrodev',
                 'mozi',
+                'muckhack',
                 'musicarchive',
                 'musiclibrary',
                 'musictabs',
