@@ -173,6 +173,7 @@ class parsoid {
                 'paodeaoda',
                 'partup',
                 'pbm',
+		'porp',
                 'pflanzen',
                 'priyo',
                 'pq',
