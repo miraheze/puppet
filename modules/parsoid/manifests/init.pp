@@ -72,6 +72,7 @@ class parsoid {
                 'biblio',
                 'bmed',
                 'braindump',
+                'bttest',
                 'casuarina',
                 'cbmedia',
                 'cec',
