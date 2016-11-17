@@ -13,7 +13,7 @@ class mediawiki::cron {
         ensure  => present,
         command => '/usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki extloadwiki',
         user    => 'www-data',
-        minute  => '*',
-        hour    => '24',
+        minute  => '0',
+        hour    => '23',
     }
 }
