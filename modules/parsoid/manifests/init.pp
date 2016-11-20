@@ -130,6 +130,7 @@ class parsoid {
                 'izanagi',
                 'jakepers',
                 'janesskillspack',
+                'jayuwiki',
                 'justinbieber',
                 'karniaruthenia',
                 'kassai',
