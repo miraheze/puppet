@@ -229,6 +229,7 @@ class parsoid {
                 'wikicervantes',
                 'wikidolphinhansen',
                 'wikihoyo',
+                'wikipuc',
                 'worldbuilding',
                 'wthsapgov',
                 'xdjibi',
