@@ -50,6 +50,7 @@ class parsoid {
                 'aacenterpriselearning',
                 'adnovum',
                 'aescapes',
+                'ageofenlightenment',
                 'ageofimperialism',
                 'ageofimperialists',
                 'air',
