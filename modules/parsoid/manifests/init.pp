@@ -206,6 +206,7 @@ class parsoid {
                 'southparkfan',
                 'starsetonline',
                 'stellachronica',
+                'sthomaspri',
                 'studynotekr',
                 'takethatwiki',
                 'taylor',
