@@ -80,7 +80,7 @@ class mediawiki {
     git::clone { 'MediaWiki core':
         directory           => '/srv/mediawiki/w',
         origin              => 'https://github.com/miraheze/mediawiki.git',
-        branch              => 'REL1_27',
+        branch              => 'REL1_28',
         ensure              => 'latest',
         timeout             => '550',
         recurse_submodules  => true,
@@ -99,7 +99,7 @@ class mediawiki {
     git::clone { 'MediaWiki vendor':
         directory => '/srv/mediawiki/w/vendor',
         origin    => 'https://github.com/wikimedia/mediawiki-vendor.git',
-        branch    => 'REL1_27',
+        branch    => 'REL1_28',
         ensure    => 'latest',  
         require   => Git::Clone['MediaWiki core'],
     }
