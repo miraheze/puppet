@@ -45,7 +45,7 @@ backend mw2 {
 sub vcl_init {
 	new mediawiki = directors.round_robin();
 	mediawiki.add_backend(mw1);
-	#mediawiki.add_backend(mw2);
+	mediawiki.add_backend(mw2);
 }
 
 
@@ -149,7 +149,7 @@ sub vcl_recv {
 	}
 
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
-		set req.backend_hint = mw2;
+		set req.backend_hint = mw1;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
