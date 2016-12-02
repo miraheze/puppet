@@ -125,6 +125,9 @@ ssl:
   evelopediatk:
     url: 'evelopedia.tk'
     ca: 'LetsEncrypt'
+  meeusenwiki:
+    url: 'wiki.meeusen.net'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
