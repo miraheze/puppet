@@ -193,6 +193,7 @@ class parsoid {
                 'rocketleaguequebec',
                 'rpcharacters',
                 'safiria',
+                'savagewiki',
                 'secondcircle',
                 'seldir',
                 'seton',
