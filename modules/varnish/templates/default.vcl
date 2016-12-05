@@ -134,7 +134,7 @@ sub vcl_recv {
 	unset req.http.Proxy; # https://httpoxy.org/; CVE-2016-5385
 
 	# Normalize Accept-Encoding for better cache hit ratio
-	if (req.http.Accept-Encoding)p {
+	if (req.http.Accept-Encoding) {
 		if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|ogg)$") {
 			# No point in compressing these
 			unset req.http.Accept-Encoding;
