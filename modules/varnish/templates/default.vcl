@@ -134,7 +134,7 @@ sub vcl_recv {
 	unset req.http.Proxy; # https://httpoxy.org/; CVE-2016-5385
 
 	# Normalize Accept-Encoding for better cache hit ratio
-	if (req.http.Accept-Encoding) {
+	if (req.http.Accept-Encoding)p {
 		if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|ogg)$") {
 			# No point in compressing these
 			unset req.http.Accept-Encoding;
@@ -283,7 +283,6 @@ sub vcl_backend_error {
 			<div style="text-align: center;">
 				<h1>"} + beresp.status + " " + beresp.reason + {"</h1>
 				<p>Our servers are having problems at the moment. Please try again in a few minutes. There may be additional information on our <a href="https://www.facebook.com/miraheze">Facebook</a> and <a href="https://twitter.com/miraheze">Twitter</a> pages.</p>
-				<p>Please provide the details below if you report this error to the system administrators via https://phabricator.miraheze.org:</p>
 				<p style="font-size: 14px; padding-top: 0.5em;">
 					Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" (Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
 				</p>
