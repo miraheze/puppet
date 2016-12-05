@@ -20,7 +20,7 @@ node /^cp[12]\.miraheze\.org$/ {
     }
 }
 
-node 'db2.miraheze.org' {
+node /^db[23].miraheze.org$/ {
     include standard
     include role::db
     include bacula::client
