@@ -1,7 +1,7 @@
 # MySQL
 mysql.port: '3306'
 mysql.user: 'phabricator'
-mysql.host: '168.235.88.118'
+mysql.host: '81.4.125.112'
 storage.mysql-engine.max-size: 0
 
 # SMTP
