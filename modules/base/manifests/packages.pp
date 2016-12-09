@@ -10,6 +10,7 @@ class base::packages {
         'logrotate',
         'mtr',
         'nano',
+        'pigz',
         'screen',
         'strace',
         'tcpdump',
