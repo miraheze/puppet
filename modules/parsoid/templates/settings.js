@@ -12,6 +12,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'carvingwiki', 'https://carving.wiki/w/api.php' );
 	parsoidConfig.setInterwiki( 'dottorcontewiki', 'https://wiki.dottorconte.eu/w/api.php' );
 	parsoidConfig.setInterwiki( 'dwplivewiki', 'https://wiki.dwplive.com/w/api.php' );
+	parsoidConfig.setInterwiki( 'drones4allwiki', 'https://wiki.drones4nature.info/w/api.php' );
 	parsoidConfig.setInterwiki( 'espiralwiki', 'https://espiral.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'make717wiki', 'https://wiki.make717.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'nextlevelwikiwiki', 'https://wiki.lbcomms.co.za/w/api.php' );
@@ -25,7 +26,6 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'wikikaisagawiki', 'https://wiki.kaisaga.com/w/api.php' );
 	parsoidConfig.setInterwiki( 'wisdomwiki', 'https://wisdomwiki.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'wisdomsandboxwiki', 'https://sandbox.wisdomwiki.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'drones4allwiki', 'https://drones4nature.info' );
 
 	// Don't load WMF wikis
 	parsoidConfig.loadWMF = false;
