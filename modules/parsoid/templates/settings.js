@@ -25,6 +25,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'wikikaisagawiki', 'https://wiki.kaisaga.com/w/api.php' );
 	parsoidConfig.setInterwiki( 'wisdomwiki', 'https://wisdomwiki.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'wisdomsandboxwiki', 'https://sandbox.wisdomwiki.org/w/api.php' );
+	parsoidConfig.setInterwiki( 'drones4allwiki', 'https://drones4nature.info' );
 
 	// Don't load WMF wikis
 	parsoidConfig.loadWMF = false;
