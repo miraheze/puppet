@@ -68,6 +68,7 @@ class parsoid {
                 'augustinianum',
                 'aurcusonline',
                 'betapurple',
+                'betternews',
                 'bgo',
                 'biblicalwiki',
                 'biblio',
