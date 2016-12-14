@@ -116,6 +116,7 @@ class parsoid {
                 'fmbv',
                 'foodsharinghamburg',
                 'frontdesks',
+                'ganesha',
                 'geirpedia',
                 'gen',
                 'gnc',
