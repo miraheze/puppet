@@ -128,6 +128,9 @@ ssl:
   wikidrones4natureinfo:
     url: 'wiki.drones4nature.info'
     ca: 'LetsEncrypt'
+  savagewikicom:
+    url: 'savage-wiki.com'
+    ca: 'RapidSSL'
 
 redirects:
   wwwallthetropes:
