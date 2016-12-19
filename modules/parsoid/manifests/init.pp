@@ -99,6 +99,7 @@ class parsoid {
                 'dish',
                 'dmw',
                 'doin',
+                'doraemon',
                 'drones4all',
                 'drunkenpeasantswiki',
                 'dts',
