@@ -228,6 +228,7 @@ class parsoid {
                 'torejorg',
                 'touhouengine',
                 'trex',
+                'trump',
                 'unikum',
                 'urho3d',
                 'videogames',
