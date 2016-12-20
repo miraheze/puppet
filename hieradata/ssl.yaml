@@ -131,6 +131,9 @@ ssl:
   savagewikicom:
     url: 'savage-wiki.com'
     ca: 'RapidSSL'
+  wikipukcl:
+    url: 'wikipuk.cl'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
