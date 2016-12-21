@@ -8,10 +8,10 @@ ssl:
   permanentfuturelab:
     url: 'permanentfuturelab.wiki'
     ca: 'StartSSL'
-  reviwiki:
+  revi:
     url: 'private.revi.wiki'
     ca: 'GeoTrust'
-  publictestwiki:
+  test:
     url: 'publictestwiki.com'
     ca: 'Comodo'
   universebuild:
@@ -59,7 +59,7 @@ ssl:
   irc:
     url: 'ircwiki.cf'
     ca: 'LetsEncrypt'
-  sandboxwisdomwiki:
+  sandboxwisdom:
     url: 'sandbox.wisdomwiki.org'
     ca: 'LetsEncrypt'
   make717:
@@ -83,49 +83,46 @@ ssl:
   amaninfotm:
     url: 'aman.info.tm'
     ca: 'LetsEncrypt'
-  codebaseclub:
-    url: 'wiki.codebase.club'
-    ca: 'LetsEncrypt'
-  wwwzenbuddhisminfo:
+  zenbuddhisminfo:
     url: 'www.zenbuddhism.info'
     ca: 'LetsEncrypt'
   espiral:
     url: 'espiral.org'
     ca: 'Gandi'
-  wikilbcomms:
+  nextlevelwiki:
     url: 'wiki.lbcomms.co.za'
     ca: 'LetsEncrypt'
-  wwwopenonderwijsorg:
+  openonderwijsorg:
     url: 'www.openonderwijs.org'
     ca: 'StartSSL'
-  wikiforfunssakecouk:
+  forfunssake:
     url: 'wiki.forfunssake.co.uk'
     ca: 'LetsEncrypt'
-  takethatwikicom:
+  takethatwiki:
     url: 'takethatwiki.com'
     ca: 'StartSSL'
-  applebranchwiki:
+  applewiki:
     url: 'applewiki.tk'
     ca: 'LetsEncrypt'
-  wikirpgbrigadeorg:
+  rpgbrigade:
     url: 'wiki.rpgbrigade.org'
     ca: 'StartSSL'
   alwiki:
     url: 'alwiki.net'
     ca: 'LetsEncrypt'
-  evelopediatk:
+  evelopedia:
     url: 'evelopedia.tk'
     ca: 'LetsEncrypt'
-  meeusenwiki:
+  meeusen:
     url: 'wiki.meeusen.net'
     ca: 'LetsEncrypt'
-  wikidrones4natureinfo:
+  drones4all:
     url: 'wiki.drones4nature.info'
     ca: 'LetsEncrypt'
-  savagewikicom:
+  savagewiki:
     url: 'savage-wiki.com'
     ca: 'RapidSSL'
-  wikipukcl:
+  wikipuc:
     url: 'wikipuk.cl'
     ca: 'LetsEncrypt'
 
