@@ -137,7 +137,7 @@ def open_phabricator_task(
 
     task = phab_client.maniphest.createtask(
         title=PHABRICATOR_TASK_TITLE.format(service=service),
-        projectPHIDs=project_ids, description=description)
+        projectPHIDs=project_ids, priority='75', description=description)
 
     logger.debug('Opened Phabricator task: {}'.format(task))
     return task
