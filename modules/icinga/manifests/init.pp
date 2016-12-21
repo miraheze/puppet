@@ -151,7 +151,7 @@ class icinga {
         content => template('icinga/ssl-phabricator.py'),
         owner   => 'icinga',
         group   => 'icinga',
-        mode    => '0774',
+        mode    => '0755',
     }
 
     class { 'icinga::plugins':
@@ -169,14 +169,14 @@ class icinga {
         ensure => directory,
         owner  => 'icinga',
         group  => 'nagios',
-        mode   => '0775',
+        mode   => '0777',
     }
 
     file { '/var/lib/nagios/rw/nagios.cmd':
         ensure => present,
         owner  => 'icinga',
         group  => 'www-data',
-        mode   => '0664',
+        mode   => '0666',
     }
 
     package { 'nagios-nrpe-plugin':
