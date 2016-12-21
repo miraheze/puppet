@@ -93,7 +93,7 @@ def get_phabricator_client():
 
     client = Phabricator(
         username = 'miraheze-icinga',
-        token = <%= @icingabot_password %>
+        token = '<%= @icingabot_password %>',
         host = 'https://phabricator.miraheze.org/api/'
     )
 
