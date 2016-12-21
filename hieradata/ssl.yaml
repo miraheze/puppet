@@ -5,9 +5,6 @@ ssl:
   antiguabarbudacalypso:
     url: 'antiguabarbudacalypso.com'
     ca: 'StartSSL'
-  oneagencydunedin:
-    url: 'oneagencydunedin.wiki'
-    ca: 'Comodo'
   spiral:
     url: 'spiral.wiki'
     ca: 'Gandi'
