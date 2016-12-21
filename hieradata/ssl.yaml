@@ -1,7 +1,4 @@
 ssl:
-  boulderwiki:
-    url: 'boulderwiki.org'
-    ca: 'StartSSL'
   antiguabarbudacalypso:
     url: 'antiguabarbudacalypso.com'
     ca: 'StartSSL'
