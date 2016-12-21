@@ -135,13 +135,21 @@ class icinga {
     $sslcerts = hiera_hash('ssl')
 
     file { '/etc/icinga/config/ssl.cfg':
-        ensure => 'present',
+        ensure  => 'present',
         content => template('icinga/ssl.cfg'),
-        owner => 'icinga',
-        group => 'icinga',
+        owner   => 'icinga',
+        group   => 'icinga',
         mode    => '0664',
         require => Package['icinga'],
         notify  => Service['icinga'],
+    }
+
+    file { '/etc/icinga/ssl-phabricator.py':
+        ensure  => 'present',
+        content => template('icinga/ssl-phabricator.py'),
+        owner   => 'icinga',
+        group   => 'icinga',
+        mode    => '0774',
     }
 
     class { 'icinga::plugins':
