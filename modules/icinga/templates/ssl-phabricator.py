@@ -92,9 +92,9 @@ def get_phabricator_client():
     """Return a Phabricator client instance"""
 
     client = Phabricator(
-        username = 'miraheze-test',
-        token = 'api-vh2seycefbwwoot3x6j37lgamylx',
-        host = 'https://test-vnw4ov3a5vfd.phacility.com/api/'
+        username = 'miraheze-icinga',
+        token = <%= @icingabot_password %>
+        host = 'https://phabricator.miraheze.org/api/'
     )
 
     return client
