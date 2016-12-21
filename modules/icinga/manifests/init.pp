@@ -144,6 +144,8 @@ class icinga {
         notify  => Service['icinga'],
     }
 
+    $icingabot_password = hiera('passwords::phabricator::icinga')
+
     file { '/etc/icinga/ssl-phabricator.py':
         ensure  => 'present',
         content => template('icinga/ssl-phabricator.py'),
@@ -194,7 +196,6 @@ class icinga {
     }
 
     $mirahezebots_password = hiera('passwords::irc::mirahezebots')
-    $icingabot_password = hiera('passwords::phabricator::icinga')
 
     file { '/etc/icinga/irc.py':
         ensure   => present,
