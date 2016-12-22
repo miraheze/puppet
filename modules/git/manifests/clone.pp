@@ -78,7 +78,6 @@ define git::clone(
             if (!defined(File[$directory])) {
                 file { $directory:
                     ensure => 'directory',
-                    mode   => $file_mode,
                     owner  => $owner,
                     group  => $group,
                     before => Exec["git_clone_${title}"],

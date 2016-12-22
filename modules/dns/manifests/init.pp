@@ -1,7 +1,7 @@
 # dns
 class dns {
     include ::apt
-    
+
     apt::source { 'debian_stretch':
         comment  => 'Debian Stretch APT',
         location => 'http://ftp.debian.org/debian',

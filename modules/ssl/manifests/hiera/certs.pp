@@ -13,14 +13,14 @@ define ssl::hiera::certs (
 
     if !defined(File["${sslurl}"]) {
         file { "${sslurl}":
+            ensure => present,
             path   => "/etc/ssl/certs/${sslurl}.crt",
-            ensure => 'present',
             source => "puppet:///modules/ssl/certificates/${sslurl}.crt",
         }
 
         file { "${sslurl}_private":
+            ensure => present,
             path   => "/etc/ssl/private/${sslurl}.key",
-            ensure => 'present',
             source => "puppet:///private/ssl/${sslurl}.key",
         }
     }

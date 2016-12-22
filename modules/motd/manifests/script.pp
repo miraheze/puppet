@@ -1,3 +1,4 @@
+# class: motd::script
 define motd::script(
     $ensure    = present,
     $priority  = 50,

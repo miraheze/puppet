@@ -10,7 +10,8 @@ class mediawiki::dumps {
         hour     => '0',
         month    => '*',
         monthday => 1,
-     }
+    }
+
     cron { 'Export amaninfowiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki amaninfowiki --logs --full --uploads > /mnt/mediawiki-static/dumps/amaninfowiki.xml',
@@ -20,6 +21,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['15', '30'],
     }
+
     cron { 'Export amaninfowiki images monthly':
         ensure   => present,
         command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/amaninfowiki.zip /mnt/mediawiki-static/amaninfowiki/',

@@ -12,4 +12,3 @@ define logrotate::rotate(
         content => template('logrotate/logrotate'),
     }
 }
-        

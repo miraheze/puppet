@@ -10,15 +10,15 @@ class base {
     include base::ssl
     include ssh
     include users
-	
-	if hiera('arcanist') {
+
+    if hiera('arcanist') {
         include base::arcanist
     }
 
     if !hiera('mailserver') {
         include base::mail
     }
-	
+
     file { '/usr/local/bin/gen_fingerprints':
         ensure => present,
         source => 'puppet:///modules/base/environment/gen_fingerprints',

@@ -74,7 +74,7 @@ class bacula::director {
     file { '/usr/lib/nagios/plugins/check_bacula_backups':
         ensure => present,
         source => 'puppet:///modules/bacula/check_bacula_backups',
-        mode => '0555',
+        mode   => '0555',
     }
 
     # Bacula secret keys

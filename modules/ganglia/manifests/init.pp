@@ -1,3 +1,4 @@
+# class: ganglia
 class ganglia {
     include ::apache::mod::php5
     include ::apache::mod::rewrite

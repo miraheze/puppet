@@ -1,3 +1,4 @@
+# class: parsoid
 class parsoid {
     include apt
     include nginx

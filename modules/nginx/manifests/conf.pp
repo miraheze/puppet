@@ -14,6 +14,6 @@ define nginx::conf(
         content => $content,
         source  => $source,
         require => Package['nginx'],
-	    notify	=> Service['nginx'],
+        notify  => Service['nginx'],
     }
 }

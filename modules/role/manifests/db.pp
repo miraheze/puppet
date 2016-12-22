@@ -1,6 +1,7 @@
+# class: role::db
 class role::db {
     include mariadb::packages
-    
+
     $mediawiki_password = hiera('passwords::db::mediawiki')
     $wikiadmin_password = hiera('passwords::db::wikiadmin')
     $piwik_password = hiera('passwords::db::piwik')

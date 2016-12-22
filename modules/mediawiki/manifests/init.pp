@@ -101,10 +101,10 @@ class mediawiki {
         directory => '/srv/mediawiki/w/vendor',
         origin    => 'https://github.com/wikimedia/mediawiki-vendor.git',
         branch    => 'REL1_28',
-        ensure    => 'latest',  
+        ensure    => 'latest', 
         require   => Git::Clone['MediaWiki core'],
     }
-    
+
     # Ensure widgets template directory is read/writeable by webserver if mediawiki is cloned
     file { '/srv/mediawiki/w/extensions/Widgets/compiled_templates':
         ensure  => directory,
@@ -151,7 +151,7 @@ class mediawiki {
         require => [ Git::Clone['MediaWiki core'], Package['ocaml'] ],
     }
 
-    exec { "curl -sS https://getcomposer.org/installer | php && php composer.phar install":
+    exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
         creates     => '/srv/mediawiki/w/extensions/Wikibase/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Wikibase',
         path        => '/usr/bin',

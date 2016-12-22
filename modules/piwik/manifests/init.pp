@@ -15,7 +15,7 @@ class piwik {
     package { $packages:
         ensure => present,
     }
-        
+
     git::clone { 'piwik':
         directory => '/srv/piwik',
         origin    => 'https://github.com/piwik/piwik.git',
