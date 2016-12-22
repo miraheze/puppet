@@ -35,8 +35,9 @@ class dns {
     }
 
     exec { 'gdnsd-syntax':
-        command => '/usr/sbin/gdnsd checkconf',
-        notify  => Service['gdnsd'],
+        command     => '/usr/sbin/gdnsd checkconf',
+        notify      => Service['gdnsd'],
+        refreshonly => true,
     }
 
     git::clone { 'dns':
