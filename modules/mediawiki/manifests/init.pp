@@ -4,6 +4,7 @@ class mediawiki {
     include mediawiki::cron
     include mediawiki::nginx
     include mediawiki::php
+    include mediawiki::wikistats
     include ssl::hiera
 
     if hiera(jobrunner) {
