@@ -2,6 +2,6 @@
 
 while read line
 do
-	wiki=`echo $line | cut -d "|" -f1`
-	echo ${wiki%????}
+	wiki=`/bin/echo $line | /usr/bin/cut -d "|" -f1`
+	/bin/echo ${wiki%????}
 done < $1

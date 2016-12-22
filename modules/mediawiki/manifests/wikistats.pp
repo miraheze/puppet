@@ -18,11 +18,9 @@ class mediawiki::wikistats {
     }
 
     file { '/usr/local/bin/wikistats-format-list.sh':
-        ensure  => present,
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '0664',
-        source  => 'puppet:///modules/mediawiki/wikistats/wikistats-format-list.sh',
+        ensure => present,
+        mode   => '0775',
+        source => 'puppet:///modules/mediawiki/wikistats/wikistats-format-list.sh',
     }
 
     cron { 'wikistats_all_wikis':
