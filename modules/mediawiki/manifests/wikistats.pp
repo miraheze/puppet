@@ -13,7 +13,7 @@ class mediawiki::wikistats {
         ensure  => present,
         owner   => 'www-data',
         group   => 'www-data',
-        content => template('mediawiki/wikistats/custom.txt'),
+        content => template('mediawiki/wikistats/custom.txt.erb'),
         require => File['/srv/mediawiki/wikistats'],
     }
 
