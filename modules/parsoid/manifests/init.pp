@@ -243,6 +243,7 @@ class parsoid {
                 'worldbuilding',
                 'wthsapgov',
                 'xdjibi',
+                'xjtlu',
                 'yacresources',
                 'yggdrasilwiki',
                 'yourosongcontest',
