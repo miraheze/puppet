@@ -125,6 +125,10 @@ ssl:
   wikipuc:
     url: 'wikipuk.cl'
     ca: 'LetsEncrypt'
+  rizalespe:
+    url: 'wiki.rizalespe.com'
+    ca: 'LetsEncrypt'
+
 
 redirects:
   wwwallthetropes:
