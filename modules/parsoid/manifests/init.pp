@@ -106,6 +106,7 @@ class parsoid {
                 'dts',
                 'easywiki',
                 'elainarmua',
+                'elements',
                 'ernaehrungsrathh',
                 'essway',
                 'etpo',
