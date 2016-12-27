@@ -125,11 +125,12 @@ ssl:
   wikipuc:
     url: 'wikipuk.cl'
     ca: 'LetsEncrypt'
+  soundbox:
+    url: 'soundbox.wiki'
+    ca: 'LetsEncrypt'
   rizalespe:
     url: 'wiki.rizalespe.com'
     ca: 'LetsEncrypt'
-
-
 redirects:
   wwwallthetropes:
     url: 'www.allthetropes.org'
