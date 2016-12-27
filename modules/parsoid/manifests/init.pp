@@ -75,6 +75,7 @@ class parsoid {
                 'biblio',
                 'bmed',
                 'braindump',
+                'brynda1231',
                 'bttest',
                 'calexit',
                 'cancer',
