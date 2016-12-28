@@ -120,6 +120,7 @@ class parsoid {
                 'fmbv',
                 'foodsharinghamburg',
                 'frontdesks',
+                'fuse',
                 'ganesha',
                 'geirpedia',
                 'gen',
