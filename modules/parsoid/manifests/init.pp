@@ -191,7 +191,6 @@ class parsoid {
                 'porp',
                 'pflanzen',
                 'priyo',
-                'prp',
                 'pq',
                 'pso2',
                 'purpanrangueilus',
