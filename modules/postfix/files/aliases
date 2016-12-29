@@ -25,7 +25,7 @@ dmarc: john
 # destination aliases
 operations: southparkfan,john,ndkilla
 stewards: southparkfan,ndkilla,john
-staff: southparkfan,ndkilla,john,bslaabs@gmail.com,utilizator.receptie123@gmail.com,imbophilmh@gmail.com
+staff: southparkfan,ndkilla,john,bslaabs@gmail.com,utilizator.receptie123@gmail.com,imbophilmh@gmail.com,revi
 
 # finances
 donate: bslaabs@gmail.com,southparkfan,john
@@ -44,3 +44,6 @@ security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 csr: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 phabricator: |/srv/phab/phabricator/scripts/mail/mail_handler.php
 bugs: |/srv/phab/phabricator/scripts/mail/mail_handler.php
+
+# revi
+revi: revi@reviwiki.info,revi@pobox.com
