@@ -49,4 +49,5 @@ class mediawiki::dumps {
         hour     => '0',
         month    => '*',
         monthday => ['15', '30'],
+        }
 }
