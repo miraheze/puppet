@@ -163,3 +163,8 @@ redirects:
     redirect: 'meta.miraheze.org'
     sslname: 'miraheze.wiki'
     ca: 'LetsEncrypt'
+  wwwsoundboxwiki:
+    url: 'www.soundbox.wiki'
+    redirect: 'soundbox.wiki'
+    sslname: 'soundbox.wiki'
+    ca: 'LetsEncrypt'
