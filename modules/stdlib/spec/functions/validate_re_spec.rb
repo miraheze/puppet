@@ -1,6 +1,17 @@
 require 'spec_helper'
 
 describe 'validate_re' do
+  after(:all) do
+    ENV.delete('STDLIB_LOG_DEPRECATIONS')
+  end
+
+  # Checking for deprecation warning
+  it 'should display a single deprecation' do
+    ENV['STDLIB_LOG_DEPRECATIONS'] = "true"
+    scope.expects(:warning).with(includes('This method is deprecated'))
+    is_expected.to run.with_params('', '')
+  end
+
   describe 'signature validation' do
     it { is_expected.not_to eq(nil) }
     it { is_expected.to run.with_params().and_raise_error(Puppet::ParseError, /wrong number of arguments/i) }
@@ -17,22 +28,6 @@ describe 'validate_re' do
     end
 
     describe 'invalid inputs' do
-      it {
-        pending('should implement stricter type checking')
-        is_expected.to run.with_params([], '').and_raise_error(Puppet::ParseError, /is not a String/)
-      }
-      it {
-        pending('should implement stricter type checking')
-        is_expected.to run.with_params('', {}).and_raise_error(Puppet::ParseError, /is not an Array/)
-      }
-      it {
-        pending('should implement stricter type checking')
-        is_expected.to run.with_params('', '', []).and_raise_error(Puppet::ParseError, /is not a String/)
-      }
-      it {
-        pending('should implement stricter type checking')
-        is_expected.to run.with_params(nil, nil).and_raise_error(Puppet::ParseError, /is not a String/)
-      }
       it { is_expected.to run.with_params('', []).and_raise_error(Puppet::ParseError, /does not match/) }
       it { is_expected.to run.with_params('one', 'two').and_raise_error(Puppet::ParseError, /does not match/) }
       it { is_expected.to run.with_params('', 'two').and_raise_error(Puppet::ParseError, /does not match/) }
@@ -41,6 +36,21 @@ describe 'validate_re' do
       it { is_expected.to run.with_params('notone', '^one').and_raise_error(Puppet::ParseError, /does not match/) }
       it { is_expected.to run.with_params('notone', [ '^one', '^two' ]).and_raise_error(Puppet::ParseError, /does not match/) }
       it { is_expected.to run.with_params('notone', [ '^one', '^two' ], 'custom error').and_raise_error(Puppet::ParseError, /custom error/) }
+
+      describe 'non-string inputs' do
+        [
+          1,             # Fixnum
+          3.14,          # Float
+          nil,           # NilClass
+          true,          # TrueClass
+          false,         # FalseClass
+          ["10"],        # Array
+          :key,          # Symbol
+          {:key=>"val"}, # Hash
+        ].each do |input|
+          it { is_expected.to run.with_params(input, '.*').and_raise_error(Puppet::ParseError, /needs to be a String/) }
+        end
+      end
     end
   end
 end
