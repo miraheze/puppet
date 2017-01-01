@@ -14,6 +14,7 @@ pid-file                       = /var/run/mysqld/mysqld.pid
 skip-name-resolve
 key-buffer-size                = 16M
 myisam-recover                 = FORCE,BACKUP
+myisam-sort-buffer-size        = 8M
 
 max-allowed-packet             = 16M
 max-connect-errors             = 1000000
@@ -45,10 +46,11 @@ innodb-log-files-in-group      = 2
 innodb-log-file-size           = 64M
 innodb-flush-log-at-trx-commit = 1
 innodb-file-per-table          = 1
-innodb-buffer-pool-size        = 1024M
+innodb-buffer-pool-size        = 768M
 innodb-buffer-pool-instances   = 1
 innodb_lock_wait_timeout       = 120
 innodb-stats-on-metadata       = OFF
+innodb_ft_total_cache_size     = 150000000
 
 performance_schema = off
 
