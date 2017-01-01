@@ -9,6 +9,10 @@ class phabricator {
 
     $password = hiera('passwords::irc::mirahezebots')
 
+    package { 'php5-apcu':
+        ensure => present,
+    }
+
     apache::site { 'phabricator.miraheze.org':
         ensure => present,
         source => 'puppet:///modules/phabricator/apache.conf',
