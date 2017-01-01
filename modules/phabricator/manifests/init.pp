@@ -80,12 +80,4 @@ class phabricator {
         mode   => '0755',
         source => 'puppet:///modules/phabricator/php.ini',
     }
-	
-	# If /tmp gets full, Phabricator refuses to work
-	cron { 'tmp_cleanup_cron':
-		ensure	=> present,
-		command	=> '/usr/bin/find /tmp/ -mtime +5 -delete',
-		user	=> 'root',
-		weekday	=> 1,
-	}
 }
