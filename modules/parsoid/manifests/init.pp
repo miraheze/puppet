@@ -206,6 +206,7 @@ class parsoid {
                 'secondcircle',
                 'seldir',
                 'seton',
+                'shippingandmeta',
                 'shopping',
                 'sidem',
                 'simonjon',
