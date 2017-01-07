@@ -232,6 +232,7 @@ class parsoid {
                 'tochki',
                 'torejorg',
                 'touhouengine',
+                'tsponie',
                 'trex',
                 'trump',
                 'unikum',
