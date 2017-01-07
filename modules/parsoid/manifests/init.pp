@@ -214,7 +214,6 @@ class parsoid {
                 'sjuhabitat',
                 'skyfireflyff',
                 'snowthegame',
-                'soundbox',
                 'soshomophobie',
                 'southparkfan',
                 'starsetonline',
