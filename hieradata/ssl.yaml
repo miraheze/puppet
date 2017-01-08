@@ -13,7 +13,7 @@ ssl:
     ca: 'GeoTrust'
   test:
     url: 'publictestwiki.com'
-    ca: 'Comodo'
+    ca: 'LetsEncrypt'
   universebuild:
     url: 'universebuild.com'
     ca: 'Comodo'
