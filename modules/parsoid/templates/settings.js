@@ -19,6 +19,7 @@ exports.setup = function( parsoidConfig ) {
 	parsoidConfig.setInterwiki( 'oyeavdelingenwiki', 'https://oyeavdelingen.org/w/api.php' );
 	parsoidConfig.setInterwiki( 'permanentfuturelabwiki', 'https://permanentfuturelab.wiki/w/api.php');
 	parsoidConfig.setInterwiki( 'savagewikiwiki', 'https://savage-wiki.com/w/api.php'),
+	parsoidConfig.setInterwiki( 'soundboxwiki', 'https://www.soundbox.wiki/w/api.php'),
 	parsoidConfig.setInterwiki( 'spiralwiki', 'https://spiral.wiki/w/api.php' );
 	parsoidConfig.setInterwiki( 'takethatwikiwiki', 'https://takethatwiki.com/w/api.php' );
 	parsoidConfig.setInterwiki( 'testwiki', 'https://publictestwiki.com/w/api.php' );
