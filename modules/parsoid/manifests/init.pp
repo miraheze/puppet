@@ -116,7 +116,7 @@ class parsoid {
                 'extload',
                 'ezdmf',
                 'fablabesds',
-                'fantasia'
+                'fantasia',
                 'fbwiki',
                 'fishpercolator',
                 'fmbv',
