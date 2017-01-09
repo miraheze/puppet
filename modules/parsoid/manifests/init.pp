@@ -191,6 +191,7 @@ class parsoid {
                 'pbm',
                 'porp',
                 'pflanzen',
+                'plasticssongcontest',
                 'priyo',
                 'pq',
                 'pso2',
