@@ -131,6 +131,9 @@ ssl:
   rizalespe:
     url: 'wiki.rizalespe.com'
     ca: 'LetsEncrypt'
+  supportdriven:
+    url: 'wiki.supportdriven.com'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
