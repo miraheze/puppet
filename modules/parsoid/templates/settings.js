@@ -1,34 +1,14 @@
 "use strict";
 
 exports.setup = function( parsoidConfig ) {
-	// Wiki end points - Miraheze domains only
-<% @wikis.each do |wiki| -%>
+	// Wikis
+<%- @wikis.each_pair do |wiki, value| -%>
+<%- if value == true -%>
 	parsoidConfig.setInterwiki( '<%= wiki %>wiki', 'https://<%= wiki %>.miraheze.org/w/api.php' );
-<% end -%>
-
-	// Wiki end points - Custom domains only
-	parsoidConfig.setInterwiki( 'allthetropeswiki', 'https://allthetropes.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'boulderwikiwiki', 'https://boulderwiki.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'carvingwiki', 'https://carving.wiki/w/api.php' );
-	parsoidConfig.setInterwiki( 'dottorcontewiki', 'https://wiki.dottorconte.eu/w/api.php' );
-	parsoidConfig.setInterwiki( 'dwplivewiki', 'https://wiki.dwplive.com/w/api.php' );
-	parsoidConfig.setInterwiki( 'drones4allwiki', 'https://wiki.drones4nature.info/w/api.php' );
-	parsoidConfig.setInterwiki( 'espiralwiki', 'https://espiral.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'make717wiki', 'https://wiki.make717.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'nextlevelwikiwiki', 'https://wiki.lbcomms.co.za/w/api.php' );
-	parsoidConfig.setInterwiki( 'oyeavdelingenwiki', 'https://oyeavdelingen.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'permanentfuturelabwiki', 'https://permanentfuturelab.wiki/w/api.php');
-	parsoidConfig.setInterwiki( 'savagewikiwiki', 'https://savage-wiki.com/w/api.php'),
-	parsoidConfig.setInterwiki( 'soundboxwiki', 'https://www.soundbox.wiki/w/api.php'),
-	parsoidConfig.setInterwiki( 'spiralwiki', 'https://spiral.wiki/w/api.php' );
-	parsoidConfig.setInterwiki( 'takethatwikiwiki', 'https://takethatwiki.com/w/api.php' );
-	parsoidConfig.setInterwiki( 'testwiki', 'https://publictestwiki.com/w/api.php' );
-	parsoidConfig.setInterwiki( 'universebuildwiki', 'https://universebuild.com/w/api.php' );
-	parsoidConfig.setInterwiki( 'valentinaprojectwiki', 'https://wiki.valentinaproject.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'wikikaisagawiki', 'https://wiki.kaisaga.com/w/api.php' );
-	parsoidConfig.setInterwiki( 'wikipucwiki', 'https://wikipuk.cl/w/api.php' );
-	parsoidConfig.setInterwiki( 'wisdomwiki', 'https://wisdomwiki.org/w/api.php' );
-	parsoidConfig.setInterwiki( 'wisdomsandboxwiki', 'https://sandbox.wisdomwiki.org/w/api.php' );
+<%- else -%>
+	parsoidConfig.setInterwiki( '<%= wiki %>wiki', 'https://<%= value %>/w/api.php' );
+<%- end -%>
+<%- end -%>
 
 	// Don't load WMF wikis
 	parsoidConfig.loadWMF = false;
