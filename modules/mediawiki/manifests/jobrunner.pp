@@ -73,4 +73,10 @@ class mediawiki::jobrunner {
         minute  => '5',
         hour    => '18',
     }
+
+    file { '/usr/lib/nagios/plugins/check_jobqueue':
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/jobrunner/check_jobqueue',
+        mode   => '0555',
+    }
 }
