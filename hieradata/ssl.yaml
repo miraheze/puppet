@@ -65,9 +65,6 @@ ssl:
   make717:
     url: 'wiki.make717.org'
     ca: 'LetsEncrypt'
-  thinkingliquid:
-    url: 'thinkingliquid.org'
-    ca: 'LetsEncrypt'
   thelonsdalebattalion:
     url: 'thelonsdalebattalion.co.uk'
     ca: 'LetsEncrypt'
@@ -150,11 +147,6 @@ redirects:
     url: 'www.permanentfuturelab.wiki'
     redirect: 'permanentfuturelab.wiki'
     sslname: 'permanentfuturelab.wiki'
-    ca: 'LetsEncrypt'
-  wwwthinkingliquid:
-    url: 'www.thinkingliquid.org'
-    redirect: 'thinkingliquid.org'
-    sslname: 'thinkingliquid.org'
     ca: 'LetsEncrypt'
   wwwwikiparkinson:
     url: 'www.wikiparkinson.org'
