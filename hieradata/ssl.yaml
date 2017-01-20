@@ -148,11 +148,6 @@ redirects:
     redirect: 'permanentfuturelab.wiki'
     sslname: 'permanentfuturelab.wiki'
     ca: 'LetsEncrypt'
-  wwwthinkingliquid:
-    url: 'www.thinkingliquid.org'
-    redirect: 'thinkingliquid.org'
-    sslname: 'thinkingliquid.org'
-    ca: 'LetsEncrypt'
   wwwwikiparkinson:
     url: 'www.wikiparkinson.org'
     redirect: 'wikiparkinson.org'
