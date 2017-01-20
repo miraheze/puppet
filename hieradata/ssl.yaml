@@ -65,9 +65,6 @@ ssl:
   make717:
     url: 'wiki.make717.org'
     ca: 'LetsEncrypt'
-  thinkingliquid:
-    url: 'thinkingliquid.org'
-    ca: 'LetsEncrypt'
   thelonsdalebattalion:
     url: 'thelonsdalebattalion.co.uk'
     ca: 'LetsEncrypt'
