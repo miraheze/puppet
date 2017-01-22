@@ -29,9 +29,6 @@ ssl:
   oyeavdelingen:
     url: 'oyeavdelingen.org'
     ca: 'Comodo'
-  carving:
-    url: 'carving.wiki'
-    ca: 'StartSSL'
   dwplive:
     url: 'wiki.dwplive.com'
     ca: 'StartSSL'
@@ -130,6 +127,9 @@ ssl:
     ca: 'LetsEncrypt'
   supportdriven:
     url: 'wiki.supportdriven.com'
+    ca: 'LetsEncrypt'
+  simplicitysolutionsgroup:
+    url: 'wiki.simplicitysolutionsgroup.com'
     ca: 'LetsEncrypt'
 
 redirects:
