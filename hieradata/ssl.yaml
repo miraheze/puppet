@@ -131,6 +131,9 @@ ssl:
   simplicitysolutionsgroup:
     url: 'wiki.simplicitysolutionsgroup.com'
     ca: 'LetsEncrypt'
+  wishcert:
+    url: 'wiki.wishcert.com'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
