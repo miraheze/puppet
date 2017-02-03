@@ -89,15 +89,9 @@ ssl:
   openonderwijsorg:
     url: 'www.openonderwijs.org'
     ca: 'StartSSL'
-  forfunssake:
-    url: 'wiki.forfunssake.co.uk'
-    ca: 'LetsEncrypt'
   takethatwiki:
     url: 'takethatwiki.com'
     ca: 'StartSSL'
-  applewiki:
-    url: 'applewiki.tk'
-    ca: 'LetsEncrypt'
   rpgbrigade:
     url: 'wiki.rpgbrigade.org'
     ca: 'StartSSL'
