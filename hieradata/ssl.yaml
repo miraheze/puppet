@@ -128,6 +128,9 @@ ssl:
   wishcert:
     url: 'wiki.wishcert.com'
     ca: 'LetsEncrypt'
+  changemy:
+    url: 'changemy.org'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
@@ -159,4 +162,9 @@ redirects:
     url: 'www.soundbox.wiki'
     redirect: 'soundbox.wiki'
     sslname: 'soundbox.wiki'
+    ca: 'LetsEncrypt'
+ wwwchangemy:
+    url: 'www.changemy.org'
+    redirect: 'changemy.org'
+    sslname: 'changemy.org'
     ca: 'LetsEncrypt'
