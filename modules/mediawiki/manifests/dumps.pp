@@ -24,7 +24,7 @@ class mediawiki::dumps {
 
     cron { 'Export amaninfowiki images monthly':
         ensure   => present,
-        command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/amaninfowiki.zip /mnt/mediawiki-static/amaninfowiki/',
+        command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/amaninfowiki.zip /mnt/mediawiki-static/amaninfowiki/ > /home/reception/amaninfoimagedump.log',
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
