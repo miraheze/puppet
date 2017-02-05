@@ -163,5 +163,5 @@ redirects:
   studynotekr:
     url: 'studynotekr.miraheze.org'
     redirect: 'jayuwiki.miraheze.org'
-    sslname: 'jayuwiki.miraheze.org'
-    ca: 'LetsEncrypt'
+    sslname: 'wildcard.miraheze.org'
+    ca: 'GlobalSign'
