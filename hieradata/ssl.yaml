@@ -168,7 +168,7 @@ redirects:
     redirect: 'jayuwiki.miraheze.org'
     sslname: 'wildcard.miraheze.org'
     ca: 'GlobalSign'
- wwwchangemy:
+  wwwchangemy:
     url: 'www.changemy.org'
     redirect: 'changemy.org'
     sslname: 'changemy.org'
