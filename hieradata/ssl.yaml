@@ -160,3 +160,8 @@ redirects:
     redirect: 'soundbox.wiki'
     sslname: 'soundbox.wiki'
     ca: 'LetsEncrypt'
+  studynotekr:
+    url: 'studynotekr.miraheze.org'
+    redirect: 'jayuwiki.miraheze.org'
+    sslname: 'jayuwiki.miraheze.org'
+    ca: 'LetsEncrypt'
