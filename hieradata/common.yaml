@@ -2,3 +2,4 @@ jobrunner: false
 mailserver: false
 arcanist: false
 mwdumps: false
+puppetmaster: false

@@ -19,22 +19,12 @@ class base::puppet {
         mode   => '0775',
     }
 
-    file { '/etc/puppet/hiera.yaml':
-        ensure => present,
-        source => 'puppet:///modules/base/puppet/hiera.yaml',
-        mode   => '0444',
-    }
-
-    file { '/etc/puppet/puppet.conf':
-        ensure => present,
-        source => 'puppet:///modules/base/puppet/puppet.conf',
-        mode   => '0444',
-    }
-
-    file { '/etc/puppet/fileserver.conf':
-        ensure => present,
-        source => 'puppet:///modules/base/puppet/fileserver.conf',
-        mode   => '0444',
+    if !hiera('puppetmaster') {
+        file { '/etc/puppet/puppet.conf':
+            ensure => present,
+            source => 'puppet:///modules/base/puppet/puppet.conf',
+            mode   => '0444',
+        }
     }
 
     file { '/root/id_rsa':

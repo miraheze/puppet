@@ -1,0 +1,4 @@
+puppetmaster: true
+puppetmaster::dbserver: db3.miraheze.org
+puppetmaster::dbuser: puppet
+puppetmaster::dbname: puppet

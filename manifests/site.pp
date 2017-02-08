@@ -64,6 +64,11 @@ node 'parsoid1.miraheze.org' {
     include role::parsoid
 }
 
+node 'puppet1.miraheze.org' {
+    include standard
+    include puppetmaster
+}
+
 # ensures all servers have basic class if puppet runs
 node default {
     include standard
