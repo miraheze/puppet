@@ -31,7 +31,7 @@ class puppetmaster(
 
     file { '/etc/puppet/fileserver.conf':
         ensure  => present,
-        source  => 'puppet:///modules/puppermaster/fileserver.conf',
+        source  => 'puppet:///modules/puppetmaster/fileserver.conf',
         require => Package['puppetmaster'],
         notify  => Service['puppetmaster'],
 
