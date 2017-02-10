@@ -16,7 +16,7 @@ class puppetmaster(
 
     file { '/etc/puppet/puppet.conf':
         ensure  => present,
-        content => template('modules/puppetmaster/puppet.conf'),
+        content => template('puppetmaster/puppet.conf'),
         require => Package['puppetmaster'],
         notify  => Service['puppetmaster'],
     }
@@ -41,7 +41,7 @@ class puppetmaster(
         ensure => directory,
     }
 
-    file { 'etc/puppet/private':
+    file { '/etc/puppet/private':
         ensure => directory,
     }
 
