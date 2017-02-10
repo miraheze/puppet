@@ -48,4 +48,9 @@ class puppetmaster(
     service { 'puppetmaster':
         ensure => running,
     }
+
+    ufw::allow { 'puppetmaster':
+        proto => 'tcp',
+        port => '8140',
+    }
 }
