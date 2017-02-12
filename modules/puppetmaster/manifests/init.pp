@@ -53,4 +53,14 @@ class puppetmaster(
         proto => 'tcp',
         port => '8140',
     }
+
+    file { '/etc/puppet/manifests':
+        ensure => link,
+        target => '/etc/puppet/git/manifests',
+    }
+
+    file { '/etc/puppet/modules':
+        ensure => link,
+        target => '/etc/puppet/git/modules',
+    }
 }
