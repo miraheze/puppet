@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [imbophil, labster, reception,revi]
+    members: [imbophil, labster, reception, revi]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php5-fpm *',
@@ -56,7 +56,9 @@ users:
     uid: 1003
     name: revi
     realname: Revi
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDw7dKp53t8J1i/4tqNJZJvrrw/0NfILZDtEsTx2N8fJ3XF8wsqbGtXR6xAJZmsA+PC5hMHc5ut+Q805HxX1/ddJgHhSx83ENZslk2G+pYQP27siGBoMbrMvCgvULr9aP1LKeBsxidlUEikkt76iJcNuqG/aYWCsHNJ1O2WOxnhmBC4HOxSC5ZBZ3jhSmizka+qpCTnGC9ruD1tpsKfxOO9SpOYKHuVsed0KAiriE6fwF9c8vGi/NFO3x3LWtUiTCNRs7kcXOaajTF+iezWN+Mtq/Y2RqNSHdUILH5KX6bRgSlyd6viAQ93XiOWQGONLo4B/UjT5nihLDZWH7iK/3hAgfuRBOWb6KaSJIWz1v82VMpZwXiNERkRa6dSp4/QLjmuub2Ubuk3NYvdgoKAhUK87zsC7iqSxR86J/I3B2E932+ussKeLoP9rmwkB4RbvzOpIIP8h9BaFzneOa/xghJ8mAuxEhREXe2U8HYrzVyXVE9xeXaUlyRc0fXmV3o442+Q5WMLNFU3AkIrXBlvtZdmezX6/PZEReqOj8ShVOoq1+Tm5l5S5oWnMqm6MJK0gaxtAlkbj39h8PBB5vRWNKyb/4oClWUjHK4RRddjQoMa3Q5/w0qz5Bwn28fh7syOpk/llP51mK2qqw+K2++Bl0GCaro5/ELQSdgd95YOBV7JUw== revi@miraheze]
+    ssh_keys: 
+       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDw7dKp53t8J1i/4tqNJZJvrrw/0NfILZDtEsTx2N8fJ3XF8wsqbGtXR6xAJZmsA+PC5hMHc5ut+Q805HxX1/ddJgHhSx83ENZslk2G+pYQP27siGBoMbrMvCgvULr9aP1LKeBsxidlUEikkt76iJcNuqG/aYWCsHNJ1O2WOxnhmBC4HOxSC5ZBZ3jhSmizka+qpCTnGC9ruD1tpsKfxOO9SpOYKHuVsed0KAiriE6fwF9c8vGi/NFO3x3LWtUiTCNRs7kcXOaajTF+iezWN+Mtq/Y2RqNSHdUILH5KX6bRgSlyd6viAQ93XiOWQGONLo4B/UjT5nihLDZWH7iK/3hAgfuRBOWb6KaSJIWz1v82VMpZwXiNERkRa6dSp4/QLjmuub2Ubuk3NYvdgoKAhUK87zsC7iqSxR86J/I3B2E932+ussKeLoP9rmwkB4RbvzOpIIP8h9BaFzneOa/xghJ8mAuxEhREXe2U8HYrzVyXVE9xeXaUlyRc0fXmV3o442+Q5WMLNFU3AkIrXBlvtZdmezX6/PZEReqOj8ShVOoq1+Tm5l5S5oWnMqm6MJK0gaxtAlkbj39h8PBB5vRWNKyb/4oClWUjHK4RRddjQoMa3Q5/w0qz5Bwn28fh7syOpk/llP51mK2qqw+K2++Bl0GCaro5/ELQSdgd95YOBV7JUw== revi@miraheze
+       - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAgEAotchhkUVf98EIU5fA8Noosq6Gk8sV58YEBpbhBHJCWx5jv2FDXDHOtY+Xe19jDs3g7ZmlYfX1i/dIVApGodjhknv7vERFDB7nZoU+xaxi/YUyzImGC5iHH+YIJb3xHZWZCJNJcaJ6nokeSDxMO79ql37Kwi4fYd7glN/xgXxJfPsVywrTCQVH+RWgbmUbPct4IMTLZkn5xgJJ7k5MeWx6pxtLkmXxYHJCb/lt41hp8uYlmo7yJR6Bce5vI7GvUkaeV0t2ZGrHeX2tG2u0riqJq4T45Y81vfNc5WTjYNXx+7gQDeeTWfa4XeuUBkagLNjvj9dgUMZpQRi3pl18cNcAFUyaeozSjOQ1Dc9d2Llp3dPNPydITBzE7aU/AlYHH354hfBQX0xofj2qCyyUsUcluAjinXaYYU/mNywnSg+AD8ZDhEtXhKjn8BukqOc6R5bk/gjFHo8CXpX2bb/oODDwmCXy3DK9/NV0PSckTfxGjHngaoMDK9HRLZWJGzBSklhAxRd8u2FPsuZT4m86Y39er2EFWcc05haGkXZd9nGZrVMNug4cEvdkxUgMb5IUwrZekVEYf47QaOc/VfozFCFW83zHTpHJKNuofV9O865ZyzX3xynBtsqrBuN2dzpIUjTibiK0VIhRAyUC3FwWWLNCV6vELqOite6NoQf8vPTX5s=
   ndkilla:
     ensure: present
     uid: 1004
