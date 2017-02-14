@@ -2,7 +2,6 @@ class puppetmaster(
     $dbserver   = undef,
     $dbname     = undef,
     $dbuser     = undef,
-    $dbpassword = undef,
   ) {
     $packages = [
         'libmysqld-dev',
@@ -13,6 +12,8 @@ class puppetmaster(
     package { $packages:
         ensure => present,
     }
+
+    $dbpassword = hiera('puppetmaster::dbpassword')
 
     file { '/etc/puppet/puppet.conf':
         ensure  => present,
