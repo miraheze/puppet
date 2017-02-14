@@ -53,6 +53,7 @@ class puppetmaster(
 
     service { 'apache2':
         ensure => running,
+    }
 
     ufw::allow { 'puppetmaster':
         proto => 'tcp',
