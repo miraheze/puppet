@@ -78,16 +78,16 @@ class puppetmaster(
     }
 
     cron { 'puppet-git':
-        ensure => '/usr/bin/git -C /etc/puppet/git pull',
-        user   => 'root',
-        hour   => '*',
-        minute => [ '9', '19', '29', '39', '49', '59' ],
+        command => '/usr/bin/git -C /etc/puppet/git pull',
+        user    => 'root',
+        hour    => '*',
+        minute  => [ '9', '19', '29', '39', '49', '59' ],
     }
 
     cron { 'parsoid-git':
-        ensure => '/usr/bin/git -C /etc/puppet/parsoid pull',
-        user   => 'root',
-        hour   => '*',
-        minute => [ '9', '19', '29', '39', '49', '59' ],
+        command => '/usr/bin/git -C /etc/puppet/parsoid pull',
+        user    => 'root',
+        hour    => '*',
+        minute  => [ '9', '19', '29', '39', '49', '59' ],
     }
 }
