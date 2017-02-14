@@ -7,6 +7,7 @@ class puppetmaster(
         'libmysqld-dev',
         'puppetmaster',
         'puppet-common',
+        'puppetmaster-passenger',
     ]
 
     package { $packages:
@@ -19,14 +20,14 @@ class puppetmaster(
         ensure  => present,
         content => template('puppetmaster/puppet.conf'),
         require => Package['puppetmaster'],
-        notify  => Service['puppetmaster'],
+        notify  => Service['apache2'],
     }
 
     file { '/etc/puppet/auth.conf':
         ensure  => present,
         source  => 'puppet:///modules/puppetmaster/auth.conf',
         require => Package['puppetmaster'],
-        notify  => Service['puppetmaster'],
+        notify  => Service['apache2'],
 
     }
 
@@ -34,7 +35,7 @@ class puppetmaster(
         ensure  => present,
         source  => 'puppet:///modules/puppetmaster/fileserver.conf',
         require => Package['puppetmaster'],
-        notify  => Service['puppetmaster'],
+        notify  => Service['apache2'],
 
     }
 
@@ -47,8 +48,11 @@ class puppetmaster(
     }
 
     service { 'puppetmaster':
-        ensure => running,
+        ensure => stopped,
     }
+
+    service { 'apache2':
+        ensure => running,
 
     ufw::allow { 'puppetmaster':
         proto => 'tcp',
