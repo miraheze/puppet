@@ -1,4 +1,4 @@
 puppetmaster: true
-puppetmaster::dbserver: db3.miraheze.org
+puppetmaster::dbserver: db2.miraheze.org
 puppetmaster::dbuser: puppet
 puppetmaster::dbname: puppet
