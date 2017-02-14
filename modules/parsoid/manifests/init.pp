@@ -3,7 +3,7 @@ class parsoid {
     include apt
     include nginx
 
-    $wikis = loadyaml('/etc/mediawiki/parsoid/parsoid.yaml')
+    $wikis = loadyaml('/etc/puppet/parsoid/parsoid.yaml')
 
     apt::source { 'parsoid':
         location => 'https://releases.wikimedia.org/debian',
@@ -47,12 +47,6 @@ class parsoid {
     file { '/etc/mediawiki/parsoid/settings.js':
         ensure  => present,
         content => template('parsoid/settings.js'),
-        require => Git::Clone['parsoid'],
     }
 
-    git::clone { 'parsoid':
-        ensure    => latest,
-        directory => '/etc/mediawiki/parsoid',
-        origin    => 'https://github.com/miraheze/parsoid.git',
-    }
 }

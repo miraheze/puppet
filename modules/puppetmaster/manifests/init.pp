@@ -69,4 +69,11 @@ class puppetmaster(
         ensure => link,
         target => '/etc/puppet/git/modules',
     }
+
+    # work around for new puppet agent
+    git::clone { 'parsoid':
+        ensure    => latest,
+        directory => '/etc/puppet/parsoid',
+        origin    => 'https://github.com/miraheze/parsoid.git',
+    }
 }
