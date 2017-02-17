@@ -4,17 +4,17 @@ logging:
   level: info
 
 services:
-  - module: ../srv/lib/index.js
+  - module: /usr/lib/parsoid/src/lib/index.js
     entrypoint: apiServiceWorker
     conf:
       mwApis:
 <%- @wikis.each_pair do |wiki, value| -%>
 <%- if value == true -%>
         - uri: 'https://<%= wiki %>.miraheze.org/w/api.php'
-          domain: '<%= wiki %>wiki'
+          domain: '<%= wiki %>.miraheze.org'
 <%- else -%>
         - uri: 'https://<%= value %>/w/api.php'
-          domain: '<%= wiki %>wiki'
+          domain: '<%= value %>'
 <%- end -%>
 <%- end -%>
       loadWMF: false
