@@ -113,9 +113,6 @@ ssl:
   wikipuc:
     url: 'wikipuk.cl'
     ca: 'LetsEncrypt'
-  soundbox:
-    url: 'soundbox.wiki'
-    ca: 'LetsEncrypt'
   rizalespe:
     url: 'wiki.rizalespe.com'
     ca: 'LetsEncrypt'
@@ -157,11 +154,6 @@ redirects:
     url: 'miraheze.wiki'
     redirect: 'meta.miraheze.org'
     sslname: 'miraheze.wiki'
-    ca: 'LetsEncrypt'
-  wwwsoundboxwiki:
-    url: 'www.soundbox.wiki'
-    redirect: 'soundbox.wiki'
-    sslname: 'soundbox.wiki'
     ca: 'LetsEncrypt'
   studynotekr:
     url: 'studynotekr.miraheze.org'
