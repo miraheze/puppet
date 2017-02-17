@@ -44,9 +44,9 @@ class parsoid {
         subscribe => File['/etc/mediawiki/parsoid/settings.js'],
     }
 
-    file { '/etc/mediawiki/parsoid/settings.js':
+    file { '/etc/mediawiki/parsoid/config.yaml':
         ensure  => present,
-        content => template('parsoid/settings.js'),
+        content => template('parsoid/config.yaml'),
     }
 
 }

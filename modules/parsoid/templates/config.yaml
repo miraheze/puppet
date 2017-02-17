@@ -1,0 +1,25 @@
+worker_heartbeat_timeout: 300000
+
+logging:
+  level: info
+
+services:
+  - module: ../srv/lib/index.js
+    entrypoint: apiServiceWorker
+    conf:
+      mwApis:
+<%- @wikis.each_pair do |wiki, value| -%>
+<%- if value == true -%>
+        - uri: 'https://<%= wiki %>.miraheze.org/w/api.php'
+          domain: '<%= wiki %>wiki'
+<%- else -%>
+        - uri: 'https://<%= value %>/w/api.php'
+          domain: '<%= wiki %>wiki'
+<%- end -%>
+<%- end -%>
+      loadWMF: false
+      debug: false
+      usePHPPreProcessor: true
+      useSelser: true
+      linting: true
+      linterSendAPI: false
