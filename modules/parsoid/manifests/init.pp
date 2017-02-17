@@ -41,7 +41,7 @@ class parsoid {
     service { 'parsoid':
         ensure    => running,
         require   => Package['parsoid'],
-        subscribe => File['/etc/mediawiki/parsoid/settings.js'],
+        subscribe => File['/etc/mediawiki/parsoid/config.yaml'],
     }
 
     file { '/etc/mediawiki/parsoid/config.yaml':
