@@ -128,6 +128,9 @@ ssl:
   changemy:
     url: 'changemy.org'
     ca: 'LetsEncrypt'
+  betermedia:
+    url: 'bettermedia.info'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
