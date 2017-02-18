@@ -44,5 +44,5 @@ class base::monitoring {
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run', ],
     }
 
-    icinga::host { $::hostname }
+    icinga::host { $::hostname: }
 }
