@@ -2,3 +2,6 @@ users::groups:
   - mediawiki-admins
   - mediawiki-roots
 jobrunner: true
+contactgroups:
+  - ops
+  - mediawiki
