@@ -10,7 +10,7 @@ define icinga::service (
     $contacts       = hiera('contactgroups', 'ops'),
     $event_handler  = undef,
   ) {
-    $description_safe = regsubst($description, '[`~!$%^&*"|\'<>?,()=]', '-'. 'G')
+    $description_safe = regsubst($description, '[`~!$%^&*"|\'<>?,()=]', '-', 'G')
 
     $service = {
         "${::hostname} ${title}" => {
@@ -33,6 +33,7 @@ define icinga::service (
             event_handler          => $event_handler,
             target                 => '/etc/icinga/config/puppet_services.cfg',
             mode                   => '0444',
+            use                    => 'generic-service',
         },
     }
 
