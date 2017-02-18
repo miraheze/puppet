@@ -20,4 +20,18 @@ define nginx::site(
         target => "/etc/nginx/sites-available/${basename}",
         notify => Service['nginx'],
     }
+
+    if !defined(Icinga::Service['HTTP'] {
+        icinga::service { 'HTTP':
+            description   => 'HTTP',
+            check_command => 'check_http',
+        }
+    }
+
+    if !defined(Icinga::Service['HTTPS'] {
+        icinga::service { 'HTTPS':
+            description   => 'HTTPS',
+            check_command => 'check_https',
+        }
+    }
 }

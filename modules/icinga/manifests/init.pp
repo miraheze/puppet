@@ -106,6 +106,7 @@ class icinga {
     }
 
     file { '/etc/icinga/config/services.cfg':
+        ensure  => absent,
         source  => 'puppet:///modules/icinga/services.cfg',
         owner   => 'icinga',
         group   => 'icinga',

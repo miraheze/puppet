@@ -55,4 +55,14 @@ class dns {
         source  => 'puppet:///modules/dns/check_gdnsd_datacenters.py',
         mode    => 755,
     }
+
+    icinga::service { 'auth_dns':
+        description   => 'Auth DNS',
+        check_command => 'check_dns_auth!miraheze.org',
+    }
+
+    icinga::service { 'gdnsd':
+        description   => 'GDNSD Datacenters',
+        check_command => 'check_nrpe_1arg!check_gdnsd_datacenters',
+    }
 }

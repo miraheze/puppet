@@ -99,4 +99,14 @@ class varnish {
         user        => 'nagios',
         privileges  => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nginx_errorrate' ],
     }
+
+    icinga::service { 'varnish':
+        description   => 'Varnish Backends',
+        check_command => 'check_nrpe_1arg!check_varnishbackends',
+    }
+
+    icinga::service { 'varnish_error_rate':
+        description   => 'HTTP 4xx/5xx ERROR Rate',
+        check_command => 'check_nrpe_1arg!check_nginx_errorrate',
+    }
 }

@@ -14,4 +14,9 @@ class dovecot {
         require   => Package['dovecot-core'],
         subscribe => File['/etc/dovecot/dovecot.conf'],
     }
+
+    icinga::service { 'imap':
+        description   => 'IMAP',
+        check_command => 'check_imap',
+    }
 }

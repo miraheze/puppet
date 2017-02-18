@@ -34,4 +34,9 @@ class postfix {
         require   => Package['postfix'],
         subscribe => [ File['/etc/postfix/main.cf'], File['/etc/postfix/master.cf'], ],
     }
+
+    icinga::service { 'smtp':
+        description   => 'SMTP',
+        check_command => 'check_smtp',
+    }
 }

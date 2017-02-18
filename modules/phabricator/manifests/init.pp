@@ -80,4 +80,9 @@ class phabricator {
         mode   => '0755',
         source => 'puppet:///modules/phabricator/php.ini',
     }
+
+    icinga::service { 'phd':
+        description   => 'phd',
+        check_command => 'check_nrpe_1arg!check_phd',
+    }
 }

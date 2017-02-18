@@ -37,4 +37,9 @@ class redis (
         subscribe   => File['/etc/redis/redis.conf'],
         refreshonly => true,
     }
+
+    icinga::service { 'redis':
+        description   => 'Redis Process',
+        check_command => 'check_nrpe_1arg!check_redis',
+    }
 }

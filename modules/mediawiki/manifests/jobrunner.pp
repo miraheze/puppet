@@ -79,4 +79,19 @@ class mediawiki::jobrunner {
         source => 'puppet:///modules/mediawiki/jobrunner/check_jobqueue',
         mode   => '0555',
     }
+
+    icinga::service { 'jobrunner':
+        description   => 'JobRunner Service',
+        check_command => 'check_nrpe_1arg!check_jobrunner',
+    }
+
+    icinga::service { 'jobchron':
+        description   => 'JobChron Service',
+        check_command => 'check_nrpe_1arg!check_jobchron',
+    }
+
+    icinga::service { 'jobqueue':
+        description   => 'JobQueue',
+        check_command => 'check_nrpe_1arg!check_jobqueue',
+    }
 }

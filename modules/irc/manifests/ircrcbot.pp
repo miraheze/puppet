@@ -40,4 +40,9 @@ class irc::ircrcbot(
         ensure  => 'running',
         require => File['/etc/systemd/system/ircrcbot.service'],
     }
+
+    icinga::service { 'ircrcbot':
+        description   => 'IRC RC Bot',
+        check_command => 'check_nrpe_1arg!check_irc_rcbot',
+    }
 }

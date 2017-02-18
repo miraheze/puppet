@@ -49,4 +49,8 @@ class parsoid {
         content => template('parsoid/config.yaml'),
     }
 
+    icinga::service { 'parsoid':
+        description   => 'Parsoid',
+        check_command => 'check_tcp!8142',
+    }
 }

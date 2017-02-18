@@ -9,4 +9,9 @@ class mariadb {
         group   => 'mysql',
         mode    => '0644',
     }
+
+    icinga::service { 'mysql':
+        description   => 'MySQL',
+        check_command => 'check_mysql!icinga',
+    }
 }

@@ -168,4 +168,14 @@ class mediawiki {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+
+    icinga::service { 'mediawiki_rendering':
+        description   => 'MediaWiki Rendering',
+        check_command => 'check_mediawiki!meta.miraheze.org',
+    }
+
+    icinga::service { 'php5-fpm':
+        description   => 'php5-fpm',
+        check_command => 'check_nrpe_1arg!check_php_fpm',
+    }
 }

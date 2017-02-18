@@ -82,4 +82,39 @@ class bacula::director {
         user        => 'nagios',
         privileges  => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_bacula_backups' ],
     }
+
+    icinga::service { 'bacula_daemon':
+        description   => 'Bacula Daemon',
+        check_command => 'check_nrpe_1arg!check_bacula_daemon',
+    }
+
+    icinga::service { 'bacula_databases':
+        description   => 'Bacula - Databases',
+        check_command => 'check_nrpe_1arg!check_bacula_databases',
+    }
+
+    icinga::service { 'bacula_static':
+        description   => 'Bacula - Static',
+        check_command => 'check_nrpe_1arg!check_bacula_static',
+    }
+
+    icinga::service { 'bacula_phabstatic':
+        description   => 'Bacula - Phabricator Static',
+        check_command => 'check_nrpe_1arg!check_bacula_phab',
+    }
+
+    icinga::service { 'bacula_private':
+        description   => 'Bacula - Private Git',
+        check_command => 'check_nrpe_1arg!check_bacula_private',
+    }
+
+    icinga::service { 'bacula_ganglia':
+        description   => 'Bacula - Ganglia',
+        check_command => 'check_nrpe_1arg!check_bacula_ganglia',
+    }
+
+    icinga::service { 'bacula_acme':
+        description   => 'Bacula - Acme',
+        check_command => 'check_nrpe_1arg!check_bacula_acme',
+    }
 }
