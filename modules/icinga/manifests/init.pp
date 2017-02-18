@@ -226,4 +226,7 @@ class icinga {
     service { 'icingabot':
         ensure => running,
     }
+
+    # collect exported resources
+    Nagios_host <<| |>>
 }
