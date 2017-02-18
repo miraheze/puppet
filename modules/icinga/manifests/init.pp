@@ -229,4 +229,5 @@ class icinga {
 
     # collect exported resources
     Nagios_host <<| |>> ~> Service['icinga']
+    Nagios_service <<| |>> ~> Service['icinga']
 }
