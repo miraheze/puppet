@@ -48,14 +48,14 @@ define apache::site(
         }
     }
 
-    if !defined(Icinga::Service['HTTP'] {
+    if !defined(Icinga::Service['HTTP']) {
         icinga::service { 'HTTP':
             description   => 'HTTP',
             check_command => 'check_http',
         }
     }
 
-    if !defined(Icinga::Service['HTTPS'] {
+    if !defined(Icinga::Service['HTTPS']) {
         icinga::service { 'HTTPS':
             description   => 'HTTPS',
             check_command => 'check_https',
