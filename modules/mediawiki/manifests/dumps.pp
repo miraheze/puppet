@@ -2,6 +2,10 @@
 #
 # Cron jobs of select wiki dumps
 class mediawiki::dumps {
+    package { 'zip':
+        ensure => present,
+    }
+
     cron { 'Export sterbalssundrystudieswiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
@@ -24,7 +28,7 @@ class mediawiki::dumps {
 
     cron { 'Export amaninfowiki images monthly':
         ensure   => present,
-        command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/amaninfowiki.zip /mnt/mediawiki-static/amaninfowiki/ > /home/reception/amaninfoimagedump.log',
+        command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/amaninfowiki.zip /mnt/mediawiki-static/amaninfowiki/',
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
