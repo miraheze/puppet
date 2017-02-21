@@ -1,0 +1,11 @@
+[Unit]
+Description=Miraheze Icinga Bot
+
+[Service]
+Type=simple
+ExecStart=/etc/icinga/irc.py
+User=irc
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

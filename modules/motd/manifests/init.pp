@@ -1,3 +1,4 @@
+# class: motd
 class motd {
     file { '/etc/motd':
         ensure => link,

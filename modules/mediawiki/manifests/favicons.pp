@@ -1,9 +1,10 @@
+# class: mediawiki::favicons
 class mediawiki::favicons {
-    file { '/usr/share/nginx/favicons':
+    file { [ '/usr/share/nginx', '/usr/share/nginx/favicons' ]:
         ensure => directory,
         owner  => 'www-data',
         group  => 'www-data',
-        mode   => 0755,
+        mode   => '0755',
     }
 
     file { '/usr/share/nginx/favicons/default.ico':

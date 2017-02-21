@@ -1,5 +1,4 @@
 # nginx::site
-#
 define nginx::site(
     $ensure   = present,
     $content  = undef,
@@ -13,15 +12,26 @@ define nginx::site(
         ensure  => $ensure,
         content => $content,
         source  => $source,
+        require => Package['nginx'],
     }
 
     file { "/etc/nginx/sites-enabled/${basename}":
         ensure => link,
         target => "/etc/nginx/sites-available/${basename}",
+        notify => Service['nginx'],
     }
 
-    file { '/etc/ssl/certs/GlobalSign.crt':
-        ensure => present,
-        source => 'puppet:///modules/ssl/GlobalSign.crt',
+    if !defined(Icinga::Service['HTTP']) {
+        icinga::service { 'HTTP':
+            description   => 'HTTP',
+            check_command => 'check_http',
+        }
+    }
+
+    if !defined(Icinga::Service['HTTPS']) {
+        icinga::service { 'HTTPS':
+            description   => 'HTTPS',
+            check_command => 'check_https',
+        }
     }
 }

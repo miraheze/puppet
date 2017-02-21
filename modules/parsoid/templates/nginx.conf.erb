@@ -1,0 +1,50 @@
+
+user www-data;
+worker_processes <%= scope.lookupvar('::processorcount') %>;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 1024;
+    multi_accept on;
+    use epoll;
+}
+
+http {
+    # Basic settings
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 90;
+    client_max_body_size 40M;    
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # SSL Settings
+    ssl_ciphers EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_stapling on;
+    ssl_session_cache shared:SSL:20m;
+    ssl_session_timeout 60m;
+    ssl_buffer_size 4k;
+
+    # Log Settings
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log error;
+
+    # GZIP Settings
+    gzip on;
+    gzip_disable "msie6";
+    gzip_comp_level 6;
+    gzip_min_length 500;
+    gzip_types text/plain text/css text/xml text/javascript image/gif image/jpeg image/tiff
+        image/x-icon image/x-ms-bmp image/svg+xml
+        application/json application/javascript application/x-javascript 
+        application/xml application/rss+xml application/atom+xml application/rdf+xml
+        video/mp4 video/mpeg video/webmv video/x-flv;
+    
+    # VHosts
+    include /etc/nginx/conf.d/*.conf;
+    include /etc/nginx/sites-enabled/*;
+}

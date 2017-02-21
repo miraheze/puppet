@@ -16,7 +16,7 @@ slave-serve-stale-data yes
 slave-read-only no
 slave-priority 100
 
-requirepass <%= scope.lookupvar('private::redis::password') %>
+requirepass <%= @password %>
 
 maxmemory <%= @maxmemory %>
 maxmemory-policy <%= @maxmemory_policy %>
@@ -37,3 +37,5 @@ set-max-intset-entries 512
 zset-max-ziplist-entries 128
 zset-max-ziplist-value 64
 activerehashing yes
+
+dir /srv/redis

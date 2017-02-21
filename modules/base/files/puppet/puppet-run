@@ -44,12 +44,30 @@ function mediawiki_updates {
     fi
 }
 
+function parsoid_updates {
+    cd /etc/mediawiki/parsoid
+    /usr/bin/git remote update
+    LOCAL=$(/usr/bin/git rev-parse @)
+    REMOTE=$(/usr/bin/git rev-parse @{u})
+    if [ $LOCAL = $REMOTE ]; then
+        CHANGES=0
+    else
+        CHANGES=1
+        parsoid_pull
+    fi
+}
+
+function parsoid_pull {
+    cd /etc/mediawiki/parsoid
+    /usr/bin/git pull
+}
+
 function ssh_agent {
     if [[ -z $(ps -ef | grep ssh-agent | grep -v grep) ]]
     then
-       echo "ssh-agent is not running."
+       log "ssh-agent is not running."
     else
-       echo "ssh-agent is running. Killing ssh-agent."
+       log "ssh-agent is running. Killing ssh-agent."
        /usr/bin/killall ssh-agent
     fi
 }
@@ -85,6 +103,8 @@ if [ -d "/etc/gdnsd" ]; then
     dns_updates
 elif [ -d "/srv/mediawiki" ]; then
     mediawiki_updates
+elif [ -d "/etc/mediawiki/parsoid" ]; then
+    parsoid_updates
 fi
 
 if [ $CHANGES -eq 0 ]; then

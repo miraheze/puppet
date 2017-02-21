@@ -1,3 +1,176 @@
+## Supported Release 4.13.1
+### Summary
+
+This bugfix release addresses the `undefined method 'optional_repeated_param'` error messages seen by users of puppet 3.7.
+
+It also improves the user experience around function deprecations by emitting one warning per function(-name) instead of only one deprecation overall. This allows users to identify all deprecated functions used in one agent run, with less back-and-forth.
+
+#### Bugfixes
+
+* Emit deprecations warnings for each function, instead of once per process. (MODULES-3961)
+* Use a universally available API for the v4 deprecation stubs of `is_*` and `validate_*`. (MODULES-3962)
+* Make `getvar()` compatible to ruby 1.8.7. (MODULES-3969)
+* Add v4 deprecation stubs for the `is_` counterparts of the deprecated functions to emit the deprecations warnings in all cases.
+
+
+## Supported Release 4.13.0
+### Summary
+
+This version of stdlib deprecates a whole host of functions, and provides stepping stones to move to Puppet 4 type validations. Be sure to check out the new `deprecation()` and `validate_legacy()` functions to migrate off the deprecated v3-style data validations.
+
+Many thanks to all community contributors: bob, Dmitry Ilyin, Dominic Cleal, Joris, Joseph Yaworski, Loic Antoine-Gombeaud, Maksym Melnychok, Michiel Brandenburg, Nate Potter, Romain Tartière, Stephen Benjamin, and Steve Moore, as well as anyone contributing in the code review process and by submitting issues.
+
+Special thanks to [Voxpupuli's](https://voxpupuli.org/) Igor Galić for donating the puppet-tea types to kickstart this part of stdlib.
+
+
+#### Deprecations
+* `validate_absolute_path`, `validate_array`, `validate_bool`, `validate_hash`, `validate_integer`, `validate_ip_address`, `validate_ipv4_address`, `validate_ipv6_address`, `validate_numeric`, `validate_re`, `validate_slength`, `validate_string`, and their `is_` counter parts are now deprecated on Puppet 4. See the `validate_legacy()` description in the README for help on migrating away from those functions.
+* The `dig` function is provided by core puppet since 4.5.0 with slightly different calling convention. The stdlib version can still be accessed as `dig44` for now.
+
+
+#### Features
+* Add Puppet 4 data types for Unix, and Windows paths, and URLs.
+* Add `deprecation` function to warn users of functionality that will be removed soon.
+* Add `validate_legacy` function to help with migrating to Puppet 4 data types.
+
+* Add `any2bool` function, a combination of of `string2bool` and `num2bool`.
+* Add `delete_regex` function to delete array elements matching a regular expression.
+* Add `puppet_environmentpath` fact to expose the `environmentpath` setting.
+* Add `regexpescape` function to safely insert arbitrary strings into regular expressions.
+* Add `shell_escape`, `shell_join`, and `shell_split` functions for safer working with shell scripts..
+
+* The `delete` function now also accepts regular expressions as search term.
+* The `loadyaml` function now accepts a default value, which is returned when there is an error loading the file.
+
+#### Bugfixes
+* Fix `file_line.match_for_absence` implementation and description to actually work. (MODULES-3590)
+* Fix `getparam` so that it can now also return `false`. (MODULES-3933)
+* Fix the fixture setup for testing and adjust `load_module_metadata` and `loadjson` tests.
+* Fix `defined_with_params` to handle `undef` correctly on all puppet versions. (PUP-6422, MODULES-3543)
+* Fix `file_line.path` validation to use puppet's built in `absolute_path?` matcher.
+
+#### Minor Improvements
+* README changes: improved descriptions of `deep_merge`, `delete`, `ensure_packages`, `file_line.after`, `range`, and `validate_numeric`.
+* The `getvar` function now returns nil in all situations where the variable is not found.
+* Update the `dig44` function with better `undef`, `nil`, and `false` handling.
+* Better wording on `str2bool` argument validation error message.
+
+
+### Known issues
+* The `validate_legacy` function relies on internal APIs from Puppet 4.4.0 (PE 2016.1) onwards, and doesn't work on earlier versions.
+* Puppet 4.5.0 (PE 2016.2) has a number of improvements around data types - especially error handling - that make working with them much nicer.
+
+## Supported Release 4.12.0
+###Summary
+
+This release provides several new functions, bugfixes, modulesync changes, and some documentation updates.
+
+####Features
+- Adds `clamp`. This function keeps values within a specified range.
+- Adds `validate_x509_rsa_key_pair`. This function validates an x509 RSA certificate and key pair.
+- Adds `dig`. This function performs a deep lookup in nested hashes or arrays.
+- Extends the `base64` support to fit `rfc2045` and `rfc4648`.
+- Adds `is_ipv6_address` and `is_ipv4_address`. These functions validate the specified ipv4 or ipv6 addresses.
+- Adds `enclose_ipv6`. This function encloses IPv6 addresses in square brackets.
+- Adds `ensure_resources`. This function takes a list of resources and creates them if they do not exist.
+- Extends `suffix` to support applying a suffix to keys in a hash.
+- Apply modulesync changes.
+- Add validate_email_address function.
+
+####Bugfixes
+- Fixes `fqdn_rand_string` tests, since Puppet 4.4.0 and later have a higher `fqdn_rand` ceiling.
+- (MODULES-3152) Adds a check to `package_provider` to prevent failures if Gem is not installed.
+- Fixes to README.md.
+- Fixes catch StandardError rather than the gratuitous Exception
+- Fixes file_line attribute validation.
+- Fixes concat with Hash arguments.
+
+## Supported Release 4.11.0
+###Summary
+
+Provides a validate_absolute_paths and Debian 8 support. There is a fix to the is_package_provider fact and a test improvement.
+
+####Features
+-  Adds new parser called is_absolute_path
+-  Supports Debian 8
+
+####Bugfixes
+-  Allow package_provider fact to resolve on PE 3.x
+
+####Improvements
+- ensures that the test passes independently of changes to rubygems for ensure_resource
+
+##2015-12-15 - Supported Release 4.10.0
+###Summary
+
+Includes the addition of several new functions and considerable improvements to the existing functions, tests and documentation. Includes some bug fixes which includes compatibility, test and fact issues.
+
+####Features
+- Adds service_provider fact
+- Adds is_a() function
+- Adds package_provider fact
+- Adds validate_ip_address function
+- Adds seeded_rand function
+
+####Bugfixes
+- Fix backwards compatibility from an improvement to the parseyaml function
+- Renaming of load_module_metadata test to include _spec.rb
+- Fix root_home fact on AIX 5.x, now '-c' rather than '-C'
+- Fixed Gemfile to work with ruby 1.8.7
+
+####Improvements
+- (MODULES-2462) Improvement of parseyaml function
+- Improvement of str2bool function
+- Improvement to readme
+- Improvement of intersection function
+- Improvement of validate_re function
+- Improved speed on Facter resolution of service_provider
+- empty function now handles numeric values
+- Package_provider now prevents deprecation warning about the allow_virtual parameter
+- load_module_metadata now succeeds on empty file
+- Check added to ensure puppetversion value is not nil
+- Improvement to bool2str to return a string of choice using boolean
+- Improvement to naming convention in validate_ipv4_address function
+
+## Supported Release 4.9.1
+###Summary
+
+Small release for support of newer PE versions. This increments the version of PE in the metadata.json file.
+
+##2015-09-08 - Supported Release 4.9.0
+###Summary
+
+This release adds new features including the new functions dos2unix, unix2dos, try_get_value, convert_base as well as other features and improvements.
+
+####Features
+- (MODULES-2370) allow `match` parameter to influence `ensure => absent` behavior
+- (MODULES-2410) Add new functions dos2unix and unix2dos
+- (MODULE-2456) Modify union to accept more than two arrays
+- Adds a convert_base function, which can convert numbers between bases
+- Add a new function "try_get_value"
+
+####Bugfixes
+- n/a
+
+####Improvements
+- (MODULES-2478) Support root_home fact on AIX through "lsuser" command
+- Acceptance test improvements
+- Unit test improvements
+- Readme improvements
+
+## 2015-08-10 - Supported Release 4.8.0
+### Summary
+This release adds a function for reading metadata.json from any module, and expands file\_line's abilities.
+
+#### Features
+- New parameter `replace` on `file_line`
+- New function `load_module_metadata()` to load metadata.json and return the content as a hash.
+- Added hash support to `size()`
+
+#### Bugfixes
+- Fix various docs typos
+- Fix `file_line` resource on puppet < 3.3
+
 ##2015-06-22 - Supported Release 4.7.0
 ###Summary
 
@@ -322,7 +495,7 @@ This is a supported release
 
  * Add an ensure\_packages function. (8a8c09e)
 
-##### 2012-11-23 - Erik DalÃƒÂ©n <dalen@spotify.com> - 3.2.0
+##### 2012-11-23 - Erik Dalén <dalen@spotify.com> - 3.2.0
 
  * (#17797) min() and max() functions (9954133)
 
@@ -419,7 +592,7 @@ This is a supported release
 
  * Add support for a 'match' parameter to file\_line (a06c0d8)
 
-##### 2012-08-07 - Erik DalÃƒÂ©n <dalen@spotify.com> - 2.4.0
+##### 2012-08-07 - Erik Dalén <dalen@spotify.com> - 2.4.0
 
  * (#15872) Add to\_bytes function (247b69c)
 

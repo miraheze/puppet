@@ -78,7 +78,6 @@ define git::clone(
             if (!defined(File[$directory])) {
                 file { $directory:
                     ensure => 'directory',
-                    mode   => $file_mode,
                     owner  => $owner,
                     group  => $group,
                     before => Exec["git_clone_${title}"],
@@ -106,7 +105,7 @@ define git::clone(
                 # git pull is run.
                 if $recurse_submodules {
                     exec { "git_submodule_update_${title}":
-                        command     => "${git} submodule update --init",
+                        command     => "${git} submodule update --init --recursive",
                         provider    => shell,
                         cwd         => $directory,
                         environment => $env,

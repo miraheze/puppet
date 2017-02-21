@@ -1,0 +1,1 @@
+mariadb::config::tmpdir: /srv/tmp

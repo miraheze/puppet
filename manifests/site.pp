@@ -5,28 +5,56 @@ class standard {
     include base
 }
 
-node 'db1.miraheze.org' {
+node 'bacula1' {
+    include standard
+    include bacula::director
+}
+
+node /^cp[12]\.miraheze\.org$/ {
+    include standard
+    include role::varnish
+
+    if $::hostname == 'cp1' {
+        include role::staticserver
+        include bacula::client
+    }
+}
+
+node /^db[23].miraheze.org$/ {
     include standard
     include role::db
+    include bacula::client
 }
 
 node 'misc1.miraheze.org' {
     include standard
-    include role::ganglia
     include role::icinga
     include role::irc
     include role::mail
     include role::dns
-    include role::piwik
-    include role::redis
+    include role::phabricator
+    include bacula::client
 }
 
-node 'mw1.miraheze.org' {
+node 'misc2.miraheze.org' {
+    include standard
+    include role::redis
+    include role::ganglia
+    include role::piwik
+    include bacula::client
+}
+
+node /^mw[12]\.miraheze\.org$/ {
     include standard
     include role::mediawiki
+
+    if $::hostname == 'mw1' {
+        include bacula::client
+        include acme
+    }
 }
 
-node /^ns[13]\.miraheze\.org$/ {
+node 'ns1.miraheze.org' {
     include standard
     include role::dns
 }
@@ -34,6 +62,11 @@ node /^ns[13]\.miraheze\.org$/ {
 node 'parsoid1.miraheze.org' {
     include standard
     include role::parsoid
+}
+
+node 'puppet1.miraheze.org' {
+    include standard
+    include puppetmaster
 }
 
 # ensures all servers have basic class if puppet runs

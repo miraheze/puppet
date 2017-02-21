@@ -1,0 +1,9 @@
+# Don't stress our MediaWiki servers, please. 
+User-Agent: *
+Disallow: /w/api.php
+Disallow: /w/index.php?title=Special:
+Disallow: /wiki/Special:
+
+# This bot caused a 20-minutes site outage, so throttle it.
+# User-Agent: MJ12bot
+# Crawl-Delay:   7

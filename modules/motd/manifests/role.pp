@@ -1,3 +1,4 @@
+# class: motd::role
 define motd::role(
     $ensure      = present,
     $description = undef,

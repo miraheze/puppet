@@ -47,4 +47,18 @@ define apache::site(
             path   => "/etc/apache2/${replaces}",
         }
     }
+
+    if !defined(Icinga::Service['HTTP']) {
+        icinga::service { 'HTTP':
+            description   => 'HTTP',
+            check_command => 'check_http',
+        }
+    }
+
+    if !defined(Icinga::Service['HTTPS']) {
+        icinga::service { 'HTTPS':
+            description   => 'HTTPS',
+            check_command => 'check_https',
+        }
+    }
 }

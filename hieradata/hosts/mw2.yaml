@@ -1,0 +1,9 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+jobrunner: false
+arcanist: true
+mwdumps: true
+contactgroups:
+  - ops
+  - mediawiki

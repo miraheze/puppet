@@ -1,0 +1,113 @@
+# MySQL
+mysql.port: 3306
+mysql.user: 'phabricator'
+mysql.host: '81.4.127.157'
+storage.mysql-engine.max-size: 0
+
+# SMTP
+phpmailer.smtp-port: 587
+phpmailer.smtp-protocol: 'tls'
+phpmailer.smtp-user: 'noreply'
+phpmailer.smtp-host: 'mail.miraheze.org'
+metamta.default-address: 'noreply@miraheze.org'
+metamta.domain: 'miraheze.org'
+metamta.mail-adapter: 'PhabricatorMailImplementationPHPMailerAdapter'
+metamta.single-reply-handler-prefix: 'phabricator'
+
+# Auth
+auth.require-approval: false
+
+# Phabricator
+phabricator.show-prototypes: true
+phabricator.base-uri: "https://phabricator.miraheze.org/"
+phabricator.timezone: 'UTC'
+security.require-https: true
+repository.default-local-path: "/srv/phab/repos/"
+policy.allow-public: true
+user.require-real-name: false
+storage.local-disk.path: "/srv/phab/images/"
+
+# Maniphest priorities
+maniphest.priorities:
+  '100':
+    name: 'Unbreak Now!'
+    short: 'Unbreak!'
+    color: 'pink'
+    keywords: ['unbreak']
+  '90':
+    name: 'Needs Triage'
+    short: 'Triage'
+    color: 'violet'
+    keywords: ['triage']
+  '75':
+    name: 'High'
+    short: 'High'
+    color: 'red'
+    keywords: ['high']
+  '50':
+    name: 'Normal'
+    short: 'Normal'
+    color: 'orange'
+    keywords: ['normal']
+  '25':
+    name: 'Low'
+    short: 'Low'
+    color: 'sky'
+    keywords: ['low']
+
+maniphest.statuses:
+  'open':
+    name: 'Open'
+    special: 'default'
+  'resolved':
+    name: 'Resolved'
+    name.full: 'Closed, Resolved'
+    closed: true
+    special: 'closed'
+    transaction.icon: 'fa-check-circle'
+    keywords: ['closed', 'fixed', 'resolved', 'closes', 'fixes', 'resolves']
+  'invalid':
+    name: 'Invalid'
+    name.full: 'Closed, Invalid'
+    closed: true
+    transaction.icon: 'fa-minus-circle'
+    claim: false
+    keywords: ['invalid']
+  'duplicate':
+    name: 'Duplicate'
+    name.full: 'Closed, Duplicate'
+    closed: true
+    special: 'duplicate'
+    transaction.icon: 'fa-files-o'
+    claim: false
+  'declined':
+    name: 'Declined'
+    name.full: 'Closed, Declined'
+    closed: true
+    transaction.icon: 'fa-thumbs-o-down'
+    keywords: ['declined', 'declines']
+
+# Disable some Phabricator applications
+phabricator.uninstalled-applications:
+  PhabricatorAlmanacApplication: true # we don't have resources to manage
+  PhabricatorChatLogApplication: true # deprecated
+  PhabricatorConpherenceApplication: true # not used, IRC used
+  PhabricatorCountdownApplication: true # niche calendar thing, not useful
+  PhabricatorDivinerApplication: true # we don't need Phab docs locally
+  PhabricatorDrydockApplication: true # we don't have resources to manage
+  PhabricatorFactApplication: true # we don't have fact sources to graph
+  PhabricatorFundApplication: true # we don't need to fund single projects
+  PhabricatorHarbormasterApplication: true # we don't need local CI / we don't have resources
+  PhabricatorMultimeterApplication: true # performance sampling we don't have
+  PhabricatorNuanceApplication: true # we're not a call center
+  PhabricatorOAuthServerApplication: true # we're running MediaWiki as an OAuth
+  PhabricatorOwnersApplication: true # we don't manage source on Phab
+  PhabricatorPackagesApplication: true # no packages to host
+  PhabricatorPhluxApplication: true # puppet has hiera
+  PhabricatorPhortuneApplication: true # we don't need billing stuff
+  PhabricatorPhragmentApplication: true # puppet has hiera
+  PhabricatorPhrequentApplication: true # SPF spends all of his time well, we don't need to track it
+  PhabricatorPhrictionApplication: true # if we operate this, there will be phriction with MediaWiki
+  PhabricatorPhurlApplication: true # we already have a URL shortener
+  PhabricatorPonderApplication: true # I wonder if we need a Q&A system
+  PhabricatorReleephApplication: true # we don't need to releeph GitHub of more work

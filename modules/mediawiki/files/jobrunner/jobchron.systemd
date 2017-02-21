@@ -1,0 +1,12 @@
+[Unit]
+Description=Miraheze JobChron
+
+[Service]
+Type=simple
+ExecStart=/srv/jobrunner/redisJobChronService --config-file=/srv/jobrunner/jobrunner.json
+User=www-data
+SyslogIdentifier=jobchron
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

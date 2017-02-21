@@ -29,7 +29,7 @@ class icinga {
     }
 
     package { 'icinga':
-        ensure => latest,
+        ensure => present,
     }
 
     file { '/etc/icinga/cgi.cfg':
@@ -106,6 +106,7 @@ class icinga {
     }
 
     file { '/etc/icinga/config/services.cfg':
+        ensure  => absent,
         source  => 'puppet:///modules/icinga/services.cfg',
         owner   => 'icinga',
         group   => 'icinga',
@@ -132,6 +133,27 @@ class icinga {
         notify  => Service['icinga'],
     }
 
+    $sslcerts = hiera_hash('ssl')
+
+    file { '/etc/icinga/config/ssl.cfg':
+        ensure  => 'present',
+        content => template('icinga/ssl.cfg'),
+        owner   => 'icinga',
+        group   => 'icinga',
+        mode    => '0664',
+        require => Package['icinga'],
+        notify  => Service['icinga'],
+    }
+
+    $icingabot_password = hiera('passwords::phabricator::icinga')
+
+    file { '/etc/icinga/ssl-phabricator.py':
+        ensure  => 'present',
+        content => template('icinga/ssl-phabricator.py'),
+        owner   => 'icinga',
+        group   => 'icinga',
+        mode    => '0755',
+    }
 
     class { 'icinga::plugins':
         require => Package['icinga'],
@@ -148,14 +170,14 @@ class icinga {
         ensure => directory,
         owner  => 'icinga',
         group  => 'nagios',
-        mode   => '0775',
+        mode   => '0777',
     }
 
     file { '/var/lib/nagios/rw/nagios.cmd':
         ensure => present,
         owner  => 'icinga',
         group  => 'www-data',
-        mode   => '0664',
+        mode   => '0666',
     }
 
     package { 'nagios-nrpe-plugin':
@@ -174,10 +196,39 @@ class icinga {
         require  => File['/etc/apache2/conf-enabled/icinga.conf'],
     }
 
+    $mirahezebots_password = hiera('passwords::irc::mirahezebots')
+
     file { '/etc/icinga/irc.py':
-        ensure => present,
-        source => 'puppet:///modules/icinga/bot/irc.py',
-        mode   => '0551',
+        ensure   => present,
+        owner    => 'irc',
+        content  => template('icinga/bot/irc.py'),
+        mode     => '0551',
+        notify   => Service['icingabot'],
     }
 
+    file { '/etc/init.d/icingabot':
+        ensure  => present,
+        source  => 'puppet:///modules/icinga/bot/icingabot.initd',
+        mode    => '0755',
+        notify  => Service['icingabot'],
+    }
+
+    exec { 'Icingabot reload systemd':
+        command     => '/bin/systemctl daemon-reload',
+        refreshonly => true,
+    }
+
+    file { '/etc/systemd/system/icingabot.service':
+        ensure  => present,
+        source  => 'puppet:///modules/icinga/bot/icingabot.systemd',
+        notify  => Exec['Icingabot reload systemd'],
+    }
+
+    service { 'icingabot':
+        ensure => running,
+    }
+
+    # collect exported resources
+    Nagios_host <<| |>> ~> Service['icinga']
+    Nagios_service <<| |>> ~> Service['icinga']
 }

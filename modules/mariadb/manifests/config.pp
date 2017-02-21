@@ -3,6 +3,7 @@ class mariadb::config(
     $config    = undef,
     $password  = undef,
     $datadir   = '/srv/mariadb',
+    $tmpdir    = '/tmp',
 ) {
     file { '/etc/my.cnf':
         owner   => 'root',
@@ -31,14 +32,19 @@ class mariadb::config(
         mode   => '0755',
     }
 
+    file { $tmpdir:
+        ensure => directory,
+        owner  => 'mysql',
+        group  => 'mysql',
+        mode   => '0775',
+    }
+
     file { '/etc/mysql/miraheze':
         ensure => directory,
         owner  => 'mysql',
         group  => 'mysql',
         mode   => '0755',
     }
-
-    include private::mariadb
 
     file { '/etc/mysql/miraheze/default-grants.sql':
         ensure  => present,

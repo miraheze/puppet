@@ -40,4 +40,6 @@ class ufw(
         hasstatus => true,
         subscribe => Package['ufw'],
     }
+
+    ufw::logging { 'default': }
 }

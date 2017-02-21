@@ -1,9 +1,7 @@
 class role::redis {
-    include private::redis
-
     class { '::redis':
-        password  => $password,
-        maxmemory => '384mb',
+        password  => hiera('passwords::redis::master'),
+        maxmemory => '288mb',
     }
 
     ufw::allow { 'redis':

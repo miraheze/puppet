@@ -10,6 +10,7 @@ recver = None
  
 class RCBot(irc.IRCClient):
     nickname = "<%= @nickname %>"
+    password = "mirahezebots:<%= @mirahezebots_password %>"
     channel = "<%= @channel %>"
     def signedOn(self):
         global recver
@@ -22,7 +23,7 @@ class RCBot(irc.IRCClient):
  
     def gotUDP(self, broadcast):
         self.msg(self.channel, broadcast)
-        time.sleep("<%= @sleeptime %>")
+        time.sleep(<%= @sleeptime %>)
  
 class RCFactory(protocol.ClientFactory):
     protocol = RCBot
@@ -40,6 +41,6 @@ class Echo(DatagramProtocol):
         global recver
         recver.gotUDP(data)
 
-reactor.listenUDP(5070, Echo())
-reactor.connectTCP("<%= @network %>", 6667, RCFactory())
+reactor.listenUDP(<%= @udp_port %>, Echo())
+reactor.connectTCP("<%= @network %>", <%= @network_port %>, RCFactory())
 reactor.run()

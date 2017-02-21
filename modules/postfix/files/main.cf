@@ -3,10 +3,15 @@ myorigin = /etc/mailname
 mydestination = mail.miraheze.org, miraheze.org, localhost
 relayhost =
 relay_domains =
-mynetworks = 185.52.1.75, 185.52.1.76
+mynetworks = 185.52.1.75, 185.52.1.76, 185.52.2.113, 81.4.127.174
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
+smtp_bind_address=185.52.1.76
+smtp_bind_address6=2a00:d880:6:787::3
+
+virtual_alias_domains = phabricator.miraheze.org
+virtual_alias_maps = hash:/etc/virtual
 
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
@@ -21,8 +26,13 @@ smtpd_tls_key_file = /etc/ssl/private/wildcard.miraheze.org.key
 smtpd_use_tls = yes
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
-smtpd_tls_security_level = may
 smtpd_tls_protocols = !SSLv2, !SSLv3
+smtp_tls_security_level = may
+
+milter_protocol = 2
+milter_default_action = accept
+smtpd_milters = inet:localhost:12301,inet:localhost:54321
+non_smtpd_milters = inet:localhost:12301,inet:localhost:54321
 
 local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination

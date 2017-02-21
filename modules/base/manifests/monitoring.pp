@@ -43,4 +43,26 @@ class base::monitoring {
         user => 'nagios',
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run', ],
     }
+
+    icinga::host { $::hostname: }
+
+    icinga::service { 'disk_space':
+        description   => 'Disk Space',
+        check_command => 'check_nrpe_1arg!check_disk',
+    }
+
+    icinga::service { 'current_load':
+        description   => 'Current Load',
+        check_command => 'check_nrpe_1arg!check_load',
+    }
+
+    icinga::service { 'puppet':
+        description   => 'Puppet',
+        check_command => 'check_nrpe_1arg!check_puppet_run',
+    }
+
+    icinga::service { 'ssh':
+        description   => 'SSH',
+        check_command => 'check_ssh',
+    }
 }

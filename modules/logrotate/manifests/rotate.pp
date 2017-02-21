@@ -4,7 +4,7 @@
 define logrotate::rotate(
     $logs   = undef,
     $time   = 'weekly',
-    $rotate = '52',
+    $rotate = '12',
 ) {
     file { "log_rotate_${title}":
         ensure  => present,
@@ -12,4 +12,3 @@ define logrotate::rotate(
         content => template('logrotate/logrotate'),
     }
 }
-        

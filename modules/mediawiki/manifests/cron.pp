@@ -1,25 +1,19 @@
 # class: mediawiki::cron
+#
+# Used for CORE crons which should be ran on every MediaWiki server.
 class mediawiki::cron {
-    cron { 'jobqueue':
+    cron { 'update_database_lists':
         ensure  => present,
-        command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/runJobs.php > /var/log/mediawiki/cron/jobqueue.log',
+        command => '/usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/DBListGenerator.php --wiki metawiki',
         user    => 'www-data',
-        minute  => '*/10',
+        minute  => '*',
+        hour    => '*',
     }
-
-    cron { 'purge_checkuser':
+    cron { 'update.php for LocalisationUpdate':
         ensure  => present,
-        command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/CheckUser/maintenance/purgeOldData.php > /var/log/mediawiki/cron/purge_checkuser.log',
+        command => '/usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki extloadwiki > /var/log/mediawiki/debuglogs/l10nupdate.log',
         user    => 'www-data',
         minute  => '0',
-        hour    => '*/12',
-    }
-
-    cron { 'purge_abusefilter':
-        ensure => present,
-        command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/AbuseFilter/maintenance/purgeOldLogIPData.php > /var/log/mediawiki/cron/purge_abusefilter.log',
-        user    => 'www-data',
-        minute  => '0',
-        hour    => '*/12',
+        hour    => '23',
     }
 }
