@@ -122,8 +122,8 @@ ssl:
   simplicitysolutionsgroup:
     url: 'wiki.simplicitysolutionsgroup.com'
     ca: 'LetsEncrypt'
-  wishcert:
-    url: 'wiki.wishcert.com'
+  histories:
+    url: 'histories.wiki'
     ca: 'LetsEncrypt'
   changemy:
     url: 'changemy.org'
