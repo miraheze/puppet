@@ -4,7 +4,6 @@ define ssl::hiera::certs (
     $ca,
     $redirect = undef,
     $sslname  = undef,
-    $restart  = undef,
 ) {
     if $sslname == undef {
         $sslurl = $url
@@ -12,7 +11,7 @@ define ssl::hiera::certs (
         $sslurl = $sslname
     }
 
-    if defined(Package['nginx'] {
+    if defined(Package['nginx']) {
         $restart = 'nginx'
     } else {
         $restart = 'apache2'
