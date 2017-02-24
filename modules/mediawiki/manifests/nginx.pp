@@ -16,5 +16,6 @@ class mediawiki::nginx {
 
     exec { 'nginx-reload':
         command => '/usr/sbin/service nginx reload',
+        require => Exec['nginx-syntax'],
     }
 }
