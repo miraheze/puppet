@@ -168,7 +168,7 @@ redirects:
     redirect: 'changemy.org'
     sslname: 'changemy.org'
     ca: 'LetsEncrypt'
- wwwhistories:
+  wwwhistories:
     url: 'www.histories.wiki'
     redirect: 'histories.wiki'
     sslname: 'www.histories.wiki'
