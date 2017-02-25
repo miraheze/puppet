@@ -16,6 +16,7 @@ metamta.single-reply-handler-prefix: 'phabricator'
 
 # Auth
 auth.require-approval: false
+auth.require-email-verification: true
 
 # Phabricator
 phabricator.show-prototypes: true
