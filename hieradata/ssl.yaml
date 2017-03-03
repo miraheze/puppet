@@ -119,9 +119,6 @@ ssl:
   supportdriven:
     url: 'wiki.supportdriven.com'
     ca: 'LetsEncrypt'
-  simplicitysolutionsgroup:
-    url: 'wiki.simplicitysolutionsgroup.com'
-    ca: 'LetsEncrypt'
   histories:
     url: 'histories.wiki'
     ca: 'LetsEncrypt'
