@@ -92,9 +92,6 @@ ssl:
   takethatwiki:
     url: 'takethatwiki.com'
     ca: 'StartSSL'
-  rpgbrigade:
-    url: 'wiki.rpgbrigade.org'
-    ca: 'StartSSL'
   alwiki:
     url: 'alwiki.net'
     ca: 'LetsEncrypt'
