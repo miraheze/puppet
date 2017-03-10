@@ -14,9 +14,6 @@ ssl:
   test:
     url: 'publictestwiki.com'
     ca: 'LetsEncrypt'
-  universebuild:
-    url: 'universebuild.com'
-    ca: 'Comodo'
   dottorconte:
     url: 'wiki.dottorconte.eu'
     ca: 'LetsEncrypt'
