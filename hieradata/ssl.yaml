@@ -125,6 +125,9 @@ ssl:
   gamdug:
     url: 'gamdug.tk'
     ca: 'LetsEncrypt'
+  wikiescola:
+    url: 'wikiescola.com.br'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
