@@ -89,9 +89,6 @@ ssl:
   takethatwiki:
     url: 'takethatwiki.com'
     ca: 'StartSSL'
-  rpgbrigade:
-    url: 'wiki.rpgbrigade.org'
-    ca: 'StartSSL'
   alwiki:
     url: 'alwiki.net'
     ca: 'LetsEncrypt'
@@ -116,17 +113,17 @@ ssl:
   supportdriven:
     url: 'wiki.supportdriven.com'
     ca: 'LetsEncrypt'
-  simplicitysolutionsgroup:
-    url: 'wiki.simplicitysolutionsgroup.com'
-    ca: 'LetsEncrypt'
-  wishcert:
-    url: 'wiki.wishcert.com'
+  histories:
+    url: 'histories.wiki'
     ca: 'LetsEncrypt'
   changemy:
     url: 'changemy.org'
     ca: 'LetsEncrypt'
   betermedia:
     url: 'bettermedia.info'
+    ca: 'LetsEncrypt'
+  gamdug:
+    url: 'gamdug.tk'
     ca: 'LetsEncrypt'
 
 redirects:
@@ -164,4 +161,9 @@ redirects:
     url: 'www.changemy.org'
     redirect: 'changemy.org'
     sslname: 'changemy.org'
+    ca: 'LetsEncrypt'
+  wwwhistories:
+    url: 'www.histories.wiki'
+    redirect: 'histories.wiki'
+    sslname: 'www.histories.wiki'
     ca: 'LetsEncrypt'
