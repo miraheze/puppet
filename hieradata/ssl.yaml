@@ -19,7 +19,7 @@ ssl:
     ca: 'LetsEncrypt'
   valentinaproject:
     url: 'wiki.valentinaproject.org'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   wikiparkinson:
     url: 'wikiparkinson.org'
     ca: 'StartSSL'
