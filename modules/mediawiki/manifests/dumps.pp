@@ -6,16 +6,6 @@ class mediawiki::dumps {
         ensure => present,
     }
 
-    cron { 'Export sterbalssundrystudieswiki xml dump monthly':
-        ensure   => present,
-        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
-        user     => 'www-data',
-        minute   => '0',
-        hour     => '0',
-        month    => '*',
-        monthday => '1',
-    }
-
     cron { 'Export amaninfowiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki amaninfowiki --logs --full --uploads > /mnt/mediawiki-static/dumps/amaninfowiki.xml',
@@ -45,7 +35,8 @@ class mediawiki::dumps {
         month    => '*',
         monthday => '1',
     }
-     cron { 'Export nissanecuwiki xml dump monthly':
+    
+    cron { 'Export nissanecuwiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki nissanecuwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/nissanecuwiki.xml',
         user     => 'www-data',
@@ -53,5 +44,25 @@ class mediawiki::dumps {
         hour     => '0',
         month    => '*',
         monthday => ['15', '30'],
+    }
+    
+    cron { 'Export scruffywiki xml dump weekly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki scruffywiki --logs --full > /home/reception/dumps/scruffywiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => ['1', '8', '15', '22', '29'],
+    }
+   
+    cron { 'Export sterbalssundrystudieswiki xml dump monthly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => '1',
     }
 }
