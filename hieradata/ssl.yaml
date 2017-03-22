@@ -20,9 +20,6 @@ ssl:
   valentinaproject:
     url: 'wiki.valentinaproject.org'
     ca: 'LetsEncrypt'
-  wikiparkinson:
-    url: 'wikiparkinson.org'
-    ca: 'StartSSL'
   oyeavdelingen:
     url: 'oyeavdelingen.org'
     ca: 'Comodo'
@@ -134,6 +131,9 @@ ssl:
   bootlegged:
     url: 'bootlegged.questionable.photography'
     ca: 'LetsEncyrpt'
+  yeoksa:
+    url: 'yeoksa.wiki'
+    ca: 'Comodo'
 
 redirects:
   wwwallthetropes:
@@ -151,11 +151,6 @@ redirects:
     redirect: 'permanentfuturelab.wiki'
     sslname: 'permanentfuturelab.wiki'
     ca: 'LetsEncrypt'
-  wwwwikiparkinson:
-    url: 'www.wikiparkinson.org'
-    redirect: 'wikiparkinson.org'
-    sslname: 'wikiparkinson.org'
-    ca: 'StartSSL'
   mirahezewiki:
     url: 'miraheze.wiki'
     redirect: 'meta.miraheze.org'
