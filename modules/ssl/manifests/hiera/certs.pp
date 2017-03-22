@@ -2,6 +2,7 @@
 define ssl::hiera::certs (
     $url,
     $ca,
+    $hsts     = 'weak',
     $redirect = undef,
     $sslname  = undef,
 ) {
