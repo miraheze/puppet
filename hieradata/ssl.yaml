@@ -131,7 +131,7 @@ ssl:
     ca: 'LetsEncrypt'
   bootlegged:
     url: 'bootlegged.questionable.photography'
-    ca: 'LetsEncyrpt'
+    ca: 'LetsEncrypt'
   yeoksa:
     url: 'yeoksa.wiki'
     ca: 'Comodo'
