@@ -113,6 +113,7 @@ ssl:
   histories:
     url: 'histories.wiki'
     ca: 'LetsEncrypt'
+    hsts: 'strict'
   changemy:
     url: 'changemy.org'
     ca: 'LetsEncrypt'
@@ -161,6 +162,7 @@ redirects:
     redirect: 'jayuwiki.miraheze.org'
     sslname: 'wildcard.miraheze.org'
     ca: 'GlobalSign'
+    hsts: 'strict'
   wwwchangemy:
     url: 'www.changemy.org'
     redirect: 'changemy.org'
@@ -171,3 +173,4 @@ redirects:
     redirect: 'histories.wiki'
     sslname: 'www.histories.wiki'
     ca: 'LetsEncrypt'
+    hsts: 'strict'
