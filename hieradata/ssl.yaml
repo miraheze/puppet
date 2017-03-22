@@ -131,6 +131,9 @@ ssl:
   jacksonheights:
     url: 'wiki.jacksonheights.nyc'
     ca: 'LetsEncrypt'
+  yeoksa:
+    url: 'yeoksa.wiki'
+    ca: 'Comodo'
 
 redirects:
   wwwallthetropes:
