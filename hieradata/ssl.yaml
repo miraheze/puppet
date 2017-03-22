@@ -131,6 +131,9 @@ ssl:
   jacksonheights:
     url: 'wiki.jacksonheights.nyc'
     ca: 'LetsEncrypt'
+  bootlegged:
+    url: 'bootlegged.questionable.photography'
+    ca: 'LetsEncyrpt'
 
 redirects:
   wwwallthetropes:
