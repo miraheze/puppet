@@ -49,7 +49,7 @@ class mediawiki::dumps {
     cron { 'Export icmscholarswiki xml dump every two weeks':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki icmscholarswiki --logs --full > /home/reception/dumps/icmscholarswiki.xml',
-        user     => 'www-data',
+        user     => 'reception',
         minute   => '0',
         hour     => '0',
         month    => '*',
@@ -59,7 +59,7 @@ class mediawiki::dumps {
     cron { 'Export scruffywiki xml dump weekly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki scruffywiki --logs --full > /home/reception/dumps/scruffywiki.xml',
-        user     => 'www-data',
+        user     => 'reception',
         minute   => '0',
         hour     => '0',
         month    => '*',
