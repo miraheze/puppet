@@ -140,13 +140,13 @@ class mediawiki {
     logrotate::rotate { 'mediawiki_wikilogs':
         logs   => '/var/log/mediawiki/*.log',
         rotate => '6',
-        delay  => 'false',
+        delay  => false,
     }
 
     logrotate::rotate { 'mediawiki_debuglogs':
         logs   => '/var/log/mediawiki/debuglogs/*.log',
         rotate => '6',
-        delay  => 'false',
+        delay  => false,
     }
     
     exec { 'Math texvccheck':
