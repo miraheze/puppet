@@ -5,6 +5,7 @@ define logrotate::rotate(
     $logs   = undef,
     $time   = 'weekly',
     $rotate = '12',
+    $delay  = true,
 ) {
     file { "log_rotate_${title}":
         ensure  => present,

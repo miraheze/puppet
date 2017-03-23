@@ -3,5 +3,5 @@
     missingok
     rotate <%= @rotate %>
     compress
-    delaycompress
+    <% if @delay == "true" %>delaycompress<% end %>
 }
