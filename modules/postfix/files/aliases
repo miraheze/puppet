@@ -33,6 +33,9 @@ donate: bslaabs@gmail.com,southparkfan,john
 # campaign
 campaign: southparkfan,john
 
+# southparkfan
+southparkfan: southparkfan223@hotmail.com
+
 # apt changes list (temp. avoid upstream reputation issues with Hotmail)
 apt-list: john,ndkila
 
