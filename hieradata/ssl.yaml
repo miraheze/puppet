@@ -132,6 +132,7 @@ ssl:
   yeoksa:
     url: 'yeoksa.wiki'
     ca: 'Comodo'
+    hsts: 'strict'
 
 redirects:
   wwwallthetropes:
@@ -176,3 +177,4 @@ redirects:
     redirect: 'yeoksa.wiki'
     sslname: 'www.yeoksa.wiki'
     ca: 'Comodo'
+    hsts: 'strict'
