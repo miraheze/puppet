@@ -113,7 +113,7 @@ phabricator.uninstalled-applications:
   PhabricatorPonderApplication: true # I wonder if we need a Q&A system
   PhabricatorReleephApplication: true # we don't need to releeph GitHub of more work
   
-  # Other settings
+ # Custom field settings
 user.custom-field-definitions:
   irc_nick:
     name: 'IRC Nickname'
