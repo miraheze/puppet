@@ -112,3 +112,10 @@ phabricator.uninstalled-applications:
   PhabricatorPhurlApplication: true # we already have a URL shortener
   PhabricatorPonderApplication: true # I wonder if we need a Q&A system
   PhabricatorReleephApplication: true # we don't need to releeph GitHub of more work
+  
+  # Other settings
+user.custom-field-definitions:
+  irc_nick:
+    name: 'IRC Nickname'
+    type: text
+    search: true
