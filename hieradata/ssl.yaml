@@ -133,6 +133,9 @@ ssl:
     url: 'yeoksa.wiki'
     ca: 'Comodo'
     hsts: 'strict'
+  kstartups:
+    url: 'wiki.besuccess.com'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
