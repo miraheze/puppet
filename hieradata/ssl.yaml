@@ -175,9 +175,3 @@ redirects:
     sslname: 'www.histories.wiki'
     ca: 'LetsEncrypt'
     hsts: 'strict'
-  wwwyeoksa:
-    url: 'www.yeoksa.wiki'
-    redirect: 'yeoksa.wiki'
-    sslname: 'www.yeoksa.wiki'
-    ca: 'Comodo'
-    hsts: 'strict'
