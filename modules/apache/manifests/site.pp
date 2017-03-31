@@ -6,6 +6,7 @@ define apache::site(
     $content   = undef,
     $source    = undef,
     $replaces  = undef,
+    $monitor   = true,
 ) {
     include ::apache
 
@@ -48,17 +49,19 @@ define apache::site(
         }
     }
 
-    if !defined(Icinga::Service['HTTP']) {
-        icinga::service { 'HTTP':
-            description   => 'HTTP',
-            check_command => 'check_http',
+    if $monitor {
+        if !defined(Icinga::Service['HTTP']) {
+            icinga::service { 'HTTP':
+                description   => 'HTTP',
+                check_command => 'check_http',
+            }
         }
-    }
 
-    if !defined(Icinga::Service['HTTPS']) {
-        icinga::service { 'HTTPS':
-            description   => 'HTTPS',
-            check_command => 'check_https',
+        if !defined(Icinga::Service['HTTPS']) {
+            icinga::service { 'HTTPS':
+                description   => 'HTTPS',
+                check_command => 'check_https',
+            }
         }
     }
 }

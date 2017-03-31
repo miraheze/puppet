@@ -31,6 +31,7 @@ class parsoid {
     nginx::site { 'parsoid':
         ensure  => present,
         source  => 'puppet:///modules/parsoid/nginx/parsoid',
+        monitor => false,
     }
 
     package { 'parsoid':

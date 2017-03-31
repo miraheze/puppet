@@ -3,6 +3,7 @@ define nginx::site(
     $ensure   = present,
     $content  = undef,
     $source   = undef,
+    $monitor  = true,
 ) {
     include ::nginx
 
@@ -21,17 +22,19 @@ define nginx::site(
         notify => Service['nginx'],
     }
 
-    if !defined(Icinga::Service['HTTP']) {
-        icinga::service { 'HTTP':
-            description   => 'HTTP',
-            check_command => 'check_http',
+    if $monitor {
+        if !defined(Icinga::Service['HTTP']) {
+            icinga::service { 'HTTP':
+                description   => 'HTTP',
+                check_command => 'check_http',
+            }
         }
-    }
 
-    if !defined(Icinga::Service['HTTPS']) {
-        icinga::service { 'HTTPS':
-            description   => 'HTTPS',
-            check_command => 'check_https',
+        if !defined(Icinga::Service['HTTPS']) {
+            icinga::service { 'HTTPS':
+                description   => 'HTTPS',
+                check_command => 'check_https',
+            }
         }
     }
 }
