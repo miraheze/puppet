@@ -136,6 +136,9 @@ ssl:
   kstartups:
     url: 'wiki.besuccess.com'
     ca: 'LetsEncrypt'
+  aksaray:
+    url: 'www.aksaraywiki.com'
+    ca: 'Comodo'
 
 redirects:
   wwwallthetropes:
