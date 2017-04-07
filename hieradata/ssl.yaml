@@ -19,7 +19,7 @@ ssl:
     ca: 'LetsEncrypt'
   valentinaproject:
     url: 'wiki.valentinaproject.org'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   wikiparkinson:
     url: 'wikiparkinson.org'
     ca: 'StartSSL'
@@ -124,6 +124,9 @@ ssl:
     ca: 'LetsEncrypt'
   gamdug:
     url: 'gamdug.tk'
+    ca: 'LetsEncrypt'
+  wikiescola:
+    url: 'wikiescola.com.br'
     ca: 'LetsEncrypt'
 
 redirects:
