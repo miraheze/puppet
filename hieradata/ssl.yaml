@@ -1,13 +1,13 @@
 ssl:
   antiguabarbudacalypso:
     url: 'antiguabarbudacalypso.com'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   spiral:
     url: 'spiral.wiki'
     ca: 'Gandi'
   permanentfuturelab:
     url: 'permanentfuturelab.wiki'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   revi:
     url: 'private.revi.wiki'
     ca: 'GeoTrust'
@@ -49,7 +49,7 @@ ssl:
     ca: 'StartSSL'
   garyjohnsonmeetups:
     url: 'wiki.garyjohnsonmeetups.com'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   irc:
     url: 'ircwiki.cf'
     ca: 'LetsEncrypt'
@@ -85,10 +85,10 @@ ssl:
     ca: 'LetsEncrypt'
   openonderwijsorg:
     url: 'www.openonderwijs.org'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   takethatwiki:
     url: 'takethatwiki.com'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   alwiki:
     url: 'alwiki.net'
     ca: 'LetsEncrypt'
