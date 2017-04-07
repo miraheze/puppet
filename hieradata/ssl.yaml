@@ -136,6 +136,9 @@ ssl:
   kstartups:
     url: 'wiki.besuccess.com'
     ca: 'LetsEncrypt'
+  speleo:
+    url: 'speleo.wiki'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
