@@ -139,11 +139,6 @@ redirects:
     redirect: 'permanentfuturelab.wiki'
     sslname: 'permanentfuturelab.wiki'
     ca: 'LetsEncrypt'
-  wwwwikiparkinson:
-    url: 'www.wikiparkinson.org'
-    redirect: 'wikiparkinson.org'
-    sslname: 'wikiparkinson.org'
-    ca: 'LetsEncrypt'
   mirahezewiki:
     url: 'miraheze.wiki'
     redirect: 'meta.miraheze.org'
