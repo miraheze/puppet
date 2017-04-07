@@ -20,12 +20,6 @@ ssl:
   valentinaproject:
     url: 'wiki.valentinaproject.org'
     ca: 'LetsEncrypt'
-  wikiparkinson:
-    url: 'wikiparkinson.org'
-    ca: 'LetsEncrypt'
-  oyeavdelingen:
-    url: 'oyeavdelingen.org'
-    ca: 'Comodo'
   dwplive:
     url: 'wiki.dwplive.com'
     ca: 'LetsEncrypt'
