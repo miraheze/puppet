@@ -22,19 +22,19 @@ ssl:
     ca: 'LetsEncrypt'
   wikiparkinson:
     url: 'wikiparkinson.org'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   oyeavdelingen:
     url: 'oyeavdelingen.org'
     ca: 'Comodo'
   dwplive:
     url: 'wiki.dwplive.com'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   haxionspace:
     url: 'haxion.space'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   grottocenter:
     url: 'wiki.grottocenter.org'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   metatrek:
     url: 'meta.trek.tk'
     ca: 'LetsEncrypt'
@@ -43,10 +43,10 @@ ssl:
     ca: 'LetsEncrypt'
   wisdomwiki:
     url: 'wisdomwiki.org'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   aenasan:
     url: 'wiki.aenasan.com'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   garyjohnsonmeetups:
     url: 'wiki.garyjohnsonmeetups.com'
     ca: 'LetsEncrypt'
@@ -149,7 +149,7 @@ redirects:
     url: 'www.wikiparkinson.org'
     redirect: 'wikiparkinson.org'
     sslname: 'wikiparkinson.org'
-    ca: 'StartSSL'
+    ca: 'LetsEncrypt'
   mirahezewiki:
     url: 'miraheze.wiki'
     redirect: 'meta.miraheze.org'
