@@ -105,16 +105,6 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    file { '/etc/icinga/config/services.cfg':
-        ensure  => absent,
-        source  => 'puppet:///modules/icinga/services.cfg',
-        owner   => 'icinga',
-        group   => 'icinga',
-        mode    => '0664',
-        require => Package['icinga'],
-        notify  => Service['icinga'],
-    }
-
     file { '/etc/icinga/config/hosts.cfg':
         source  => 'puppet:///modules/icinga/hosts.cfg',
         owner   => 'icinga',
