@@ -7,7 +7,7 @@ class base::monitoring {
 
     file { '/etc/nagios/nrpe.cfg':
         ensure  => present,
-        source  => 'puppet:///modules/base/icinga/nrpe.cfg',
+        content => template('base/icinga/nrpe.cfg.erb'),
         require => Package['nagios-nrpe-server'],
         notify  => Service['nagios-nrpe-server'],
     }
