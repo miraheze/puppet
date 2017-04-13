@@ -15,7 +15,7 @@ connection_timeout=300
 
 # Simplify config with puppet
 command[check_disk]=/usr/lib/nagios/plugins/check_disk -w 20% -c 10% -p /
-command[check_load]=/usr/lib/nagios/plugins/check_load -w <% scope.lookupvar('::processorcount').to_i * 1.7 %> -c <% scope.lookupvar('::processorcount').to_i * 2.0 %>
+command[check_load]=/usr/lib/nagios/plugins/check_load -w <%= scope.lookupvar('::processorcount').to_i * 1.7 %> -c <%= scope.lookupvar('::processorcount').to_i * 2.0 %>
 command[check_puppet_run]=/usr/bin/sudo /usr/lib/nagios/plugins/check_puppet_run -w 3600 -c 43200
 command[check_varnishbackends]=/usr/bin/sudo /usr/lib/nagios/plugins/check_varnishbackends
 command[check_nginx_errorrate]=/usr/bin/sudo /usr/lib/nagios/plugins/check_nginx_errorrate
