@@ -142,6 +142,9 @@ ssl:
   aksaray:
     url: 'www.aksaraywiki.com'
     ca: 'Comodo'
+  disabledlife:
+    url: 'speleo.wiki'
+    ca: 'LetsEncrypt'
   teessidehackspace:
     url: 'wiki.teessidehackspace.org.uk'
     ca: 'LetsEncrypt'
