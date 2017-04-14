@@ -142,8 +142,8 @@ ssl:
   aksaray:
     url: 'www.aksaraywiki.com'
     ca: 'Comodo'
-  speleo:
-    url: 'speleo.wiki'
+  disabledlife:
+    url: 'disabled.life'
     ca: 'LetsEncrypt'
 
 redirects:
