@@ -142,6 +142,9 @@ ssl:
   aksaray:
     url: 'www.aksaraywiki.com'
     ca: 'Comodo'
+  speleo:
+    url: 'speleo.wiki'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
