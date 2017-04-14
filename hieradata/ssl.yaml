@@ -145,7 +145,7 @@ ssl:
   disabledlife:
     url: 'disabled.life'
     ca: 'LetsEncrypt'
-
+	
 redirects:
   wwwallthetropes:
     url: 'www.allthetropes.org'
