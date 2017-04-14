@@ -142,7 +142,10 @@ ssl:
   aksaray:
     url: 'www.aksaraywiki.com'
     ca: 'Comodo'
-
+  disabledlife:
+    url: 'disabled.life'
+    ca: 'LetsEncrypt'
+	
 redirects:
   wwwallthetropes:
     url: 'www.allthetropes.org'
