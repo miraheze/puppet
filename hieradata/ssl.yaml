@@ -142,6 +142,9 @@ ssl:
   aksaray:
     url: 'www.aksaraywiki.com'
     ca: 'Comodo'
+  wikiletras:
+    url: 'wikiletras.tk'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
