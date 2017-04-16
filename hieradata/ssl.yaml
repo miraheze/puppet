@@ -23,9 +23,6 @@ ssl:
   dwplive:
     url: 'wiki.dwplive.com'
     ca: 'LetsEncrypt'
-  haxionspace:
-    url: 'haxion.space'
-    ca: 'LetsEncrypt'
   grottocenter:
     url: 'wiki.grottocenter.org'
     ca: 'LetsEncrypt'
