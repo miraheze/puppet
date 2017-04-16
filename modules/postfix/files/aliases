@@ -17,7 +17,7 @@ root: /dev/null
 
 # group aliases
 ops: operations
-sysadmin: operations
+sysadmin: staff
 
 # DMARC - potentially high volume, best recommended for mail admins on misc1
 dmarc: john
