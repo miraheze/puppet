@@ -142,6 +142,9 @@ ssl:
   disabledlife:
     url: 'disabled.life'
     ca: 'LetsEncrypt'
+  teessidehackspace:
+    url: 'wiki.teessidehackspace.org.uk'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
