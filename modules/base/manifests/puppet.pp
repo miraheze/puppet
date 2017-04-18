@@ -36,12 +36,6 @@ class base::puppet {
         }
     }
 
-    file { '/root/id_rsa':
-        ensure => absent,
-        source => 'puppet:///private/ssh/id_rsa',
-        mode   => '0400',
-    }
-
     service { 'puppet':
         ensure => stopped,
     }
