@@ -15,9 +15,8 @@ noreply: /dev/null
 # root spam
 root: /dev/null
 
-# group aliases
+# operations aliases
 ops: operations
-sysadmin: operations
 
 # DMARC - potentially high volume, best recommended for mail admins on misc1
 dmarc: john
