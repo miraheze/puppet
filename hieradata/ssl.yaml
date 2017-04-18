@@ -189,6 +189,6 @@ redirects:
     hsts: 'strict'
   wikiletras:
     url: 'www.wikiletras.tk'
-    redirect: 'wikiletras'
+    redirect: 'wikiletras.tk'
     sslname: 'wikiletras.tk'
     ca: 'LetsEncrypt'
