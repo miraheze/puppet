@@ -145,6 +145,9 @@ ssl:
   teessidehackspace:
     url: 'wiki.teessidehackspace.org.uk'
     ca: 'LetsEncrypt'
+  wikiletras:
+    url: 'wikiletras.tk'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
