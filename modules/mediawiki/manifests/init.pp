@@ -126,9 +126,18 @@ class mediawiki {
         require => Git::Clone['MediaWiki config'],
     }
 
+    $wikiadmin_password   = hiera('passwords::db::wikiadmin')
+    $mediawiki_password   = hiera('passwords::db::mediawiki')
+    $redis_password       = hiera('passwords::redis::master')
+    $noreply_password     = hiera('passwords::mail::noreply')
+    $mediawiki_upgradekey = hiera('passwords::mediawiki::upgradekey')
+    $mediawiki_secretkey  = hiera('passwords::mediawiki::secretkey')
+    $recaptcha_sitekey    = hiera('passwords::recaptcha::sitekey')
+    $recaptcha_secretkey  = hiera('passwords::recaptcha::secretkey')
+
     file { '/srv/mediawiki/config/PrivateSettings.php':
-        ensure => 'present',
-        source => 'puppet:///private/mediawiki/PrivateSettings.php',
+        ensure  => 'present',
+        content => template('mediawiki/PrivateSettings.php'),
     }
 
     file { '/usr/local/bin/foreachwikiindblist':
