@@ -146,7 +146,7 @@ ssl:
     url: 'wiki.teessidehackspace.org.uk'
     ca: 'LetsEncrypt'
   wikiletras:
-    url: 'wikiletras.tk'
+    url: 'www.wikiletras.tk'
     ca: 'LetsEncrypt'
 
 redirects:
@@ -187,8 +187,3 @@ redirects:
     sslname: 'www.histories.wiki'
     ca: 'LetsEncrypt'
     hsts: 'strict'
-  wikiletras:
-    url: 'www.wikiletras.tk'
-    redirect: 'wikiletras.tk'
-    sslname: 'wikiletras.tk'
-    ca: 'LetsEncrypt'
