@@ -25,6 +25,26 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['15', '30'],
     }
+    
+    cron { 'Export cpiwiki xml dump weekly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki cpiwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/cpiwiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => ['1', '8', '22', '29'],
+    }
+    
+    cron { 'Export cpiwiki images weekly':
+        ensure   => present,
+        command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/cpiwiki.zip /mnt/mediawiki-static/cpiwiki/',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => ['1', '8', '22', '29'],
+    }
 
     cron { 'Export jokowiki xml dump montly ':
         ensure   => present,
