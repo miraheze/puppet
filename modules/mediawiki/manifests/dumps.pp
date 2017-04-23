@@ -96,6 +96,16 @@ class mediawiki::dumps {
         monthday => '1'
     }
     
+    cron { 'Export sqlserverwiki xml dump monthly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sqlserverwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/sqlserverwiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => '1'
+    }
+    
     cron { 'Export sterbalssundrystudieswiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
@@ -103,6 +113,16 @@ class mediawiki::dumps {
         minute   => '0',
         hour     => '0',
         month    => '*',
-        monthday => '1',
+        monthday => ['1', '8', '15', '22', '29'],
+    }
+    
+    cron { 'Export sterbalfamilyrecipeswiki xml dump monthly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalfamilyrecipeswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalfamilyrecipeswiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => ['1', '8', '15', '22', '29'],
     }
 }
