@@ -148,6 +148,9 @@ ssl:
   wikiletras:
     url: 'www.wikiletras.tk'
     ca: 'LetsEncrypt'
+  prueba:
+    url: 'es.publictestwiki.com'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
