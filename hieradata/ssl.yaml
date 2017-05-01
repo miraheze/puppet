@@ -151,6 +151,9 @@ ssl:
   prueba:
     url: 'es.publictestwiki.com'
     ca: 'LetsEncrypt'
+  armsinstitute:
+    url: 'arms.institute'
+    ca: 'LetsEncrypt'
 
 redirects:
   wwwallthetropes:
