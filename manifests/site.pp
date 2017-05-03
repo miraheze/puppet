@@ -64,6 +64,7 @@ node 'parsoid1.miraheze.org' {
 
 node 'puppet1.miraheze.org' {
     include standard
+    include bacula::client
     include puppetmaster
 }
 
