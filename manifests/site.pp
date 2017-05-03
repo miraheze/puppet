@@ -48,7 +48,6 @@ node /^mw[12]\.miraheze\.org$/ {
     include role::mediawiki
 
     if $::hostname == 'mw1' {
-        include bacula::client
         include acme
     }
 }
