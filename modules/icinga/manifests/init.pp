@@ -123,7 +123,9 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    $sslcerts = hiera_hash('ssl')
+    $ssl = hiera_hash('ssl')
+    $redirects = hiera_hash('redirects')
+    $sslcerts = merge( $ssl, $redirects )
 
     file { '/etc/icinga/config/ssl.cfg':
         ensure  => 'present',
