@@ -108,11 +108,6 @@ class bacula::director {
         check_command => 'check_nrpe_1arg!check_bacula_private',
     }
 
-    icinga::service { 'bacula_ganglia':
-        description   => 'Bacula - Ganglia',
-        check_command => 'check_nrpe_1arg!check_bacula_ganglia',
-    }
-
     icinga::service { 'bacula_acme':
         description   => 'Bacula - Acme',
         check_command => 'check_nrpe_1arg!check_bacula_acme',

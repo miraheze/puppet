@@ -41,7 +41,6 @@ node 'misc2.miraheze.org' {
     include role::redis
     include role::ganglia
     include role::piwik
-    include bacula::client
 }
 
 node /^mw[12]\.miraheze\.org$/ {
