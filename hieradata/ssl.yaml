@@ -155,7 +155,7 @@ ssl:
     url: 'arms.institute'
     ca: 'LetsEncrypt'
   phab:
-    url: 'phab.miraheze.org'
+    url: 'phab.miraheze.wiki'
     ca: 'LetsEncrypt'
 
 redirects:
