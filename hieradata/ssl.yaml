@@ -154,7 +154,7 @@ ssl:
   armsinstitute:
     url: 'arms.institute'
     ca: 'LetsEncrypt'
-
+    
 redirects:
   wwwallthetropes:
     url: 'www.allthetropes.org'
