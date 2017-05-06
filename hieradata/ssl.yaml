@@ -154,10 +154,7 @@ ssl:
   armsinstitute:
     url: 'arms.institute'
     ca: 'LetsEncrypt'
-  phab:
-    url: 'phab.miraheze.wiki'
-    ca: 'LetsEncrypt'
-
+    
 redirects:
   wwwallthetropes:
     url: 'www.allthetropes.org'
