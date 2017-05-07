@@ -154,6 +154,9 @@ ssl:
   armsinstitute:
     url: 'arms.institute'
     ca: 'LetsEncrypt'
+  livesnowmap:
+    url: 'wiki.livesnowmap.com'
+    ca: 'LetsEncrypt'
     
 redirects:
   wwwallthetropes:
