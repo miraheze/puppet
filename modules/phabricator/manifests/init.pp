@@ -13,6 +13,8 @@ class phabricator {
         ensure => present,
     }
 
+    ssl::certificate{ 'phab.miraheze.wiki': }
+
     apache::site { 'phabricator.miraheze.org':
         ensure => present,
         source => 'puppet:///modules/phabricator/apache.conf',
