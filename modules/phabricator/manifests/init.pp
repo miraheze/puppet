@@ -13,7 +13,7 @@ class phabricator {
         ensure => present,
     }
 
-    ssl::certificate{ 'phab.miraheze.wiki': }
+    ssl::cert { 'phab.miraheze.wiki': }
 
     apache::site { 'phabricator.miraheze.org':
         ensure => present,
