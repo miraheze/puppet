@@ -89,12 +89,12 @@ class bacula::director {
     }
 
     icinga::service { 'bacula_databasesdb2':
-        description   => 'Bacula - Databases - db2 ',
+        description   => 'Bacula - Databases - db2',
         check_command => 'check_nrpe_1arg!check_bacula_databasesdb2',
     }
 
     icinga::service { 'bacula_databasesdb3':
-        description   => 'Bacula - Databases - db3 ',
+        description   => 'Bacula - Databases - db3',
         check_command => 'check_nrpe_1arg!check_bacula_databasesdb3',
     }
 
