@@ -157,6 +157,9 @@ ssl:
   livesnowmap:
     url: 'wiki.livesnowmap.com'
     ca: 'LetsEncrypt'
+  reviwiki:
+    url: 'reviwiki.info'
+    ca: 'LetsEncrypt'
     
 redirects:
   wwwallthetropes:
@@ -200,4 +203,9 @@ redirects:
     url: 'miraheze.com'
     redirect: 'meta.miraheze.org'
     sslname: 'miraheze.com'
+    ca: 'LetsEncrypt'
+  wwwreviwiki:
+    url: 'www.reviwiki.info'
+    redirect: 'reviwiki.info'
+    sslname: 'www.reviwiki.info'
     ca: 'LetsEncrypt'
