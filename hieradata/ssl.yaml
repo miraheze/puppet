@@ -97,8 +97,7 @@ ssl:
     ca: 'RapidSSL'
   wikipuc:
     url: 'wikipuk.cl'
-    ca: 'LetsEncrypt'
-  rizalespe:
+    ca: 'LetsEncrypt'  rizalespe:
     url: 'wiki.rizalespe.com'
     ca: 'LetsEncrypt'
   supportdriven:
