@@ -157,6 +157,9 @@ ssl:
   livesnowmap:
     url: 'wiki.livesnowmap.com'
     ca: 'LetsEncrypt'
+  denverkr:
+    url: 'wiki.denverkr.cf'
+    ca: 'LetsEncrypt'
     
 redirects:
   wwwallthetropes:
