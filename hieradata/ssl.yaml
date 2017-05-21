@@ -151,9 +151,6 @@ ssl:
   prueba:
     url: 'es.publictestwiki.com'
     ca: 'LetsEncrypt'
-  armsinstitute:
-    url: 'arms.institute'
-    ca: 'LetsEncrypt'
   livesnowmap:
     url: 'wiki.livesnowmap.com'
     ca: 'LetsEncrypt'
