@@ -157,6 +157,9 @@ ssl:
   livesnowmap:
     url: 'wiki.livesnowmap.com'
     ca: 'LetsEncrypt'
+  nenawiki:
+    url: 'nenawiki.org'
+    ca: 'LetsEncrypt'
     
 redirects:
   wwwallthetropes:
