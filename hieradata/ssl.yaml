@@ -154,6 +154,8 @@ ssl:
   livesnowmap:
     url: 'wiki.livesnowmap.com'
     ca: 'LetsEncrypt'
+  nenawiki:
+    url: 'nenawiki.org'
   denverkr:
     url: 'wiki.denverkr.cf'
   reviwiki:
