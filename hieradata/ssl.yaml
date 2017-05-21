@@ -151,14 +151,15 @@ ssl:
   prueba:
     url: 'es.publictestwiki.com'
     ca: 'LetsEncrypt'
-  armsinstitute:
-    url: 'arms.institute'
-    ca: 'LetsEncrypt'
   livesnowmap:
     url: 'wiki.livesnowmap.com'
     ca: 'LetsEncrypt'
   nenawiki:
     url: 'nenawiki.org'
+  denverkr:
+    url: 'wiki.denverkr.cf'
+  reviwiki:
+    url: 'reviwiki.info'
     ca: 'LetsEncrypt'
     
 redirects:
@@ -203,4 +204,9 @@ redirects:
     url: 'miraheze.com'
     redirect: 'meta.miraheze.org'
     sslname: 'miraheze.com'
+    ca: 'LetsEncrypt'
+  wwwreviwiki:
+    url: 'www.reviwiki.info'
+    redirect: 'reviwiki.info'
+    sslname: 'www.reviwiki.info'
     ca: 'LetsEncrypt'
