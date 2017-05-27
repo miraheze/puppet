@@ -126,10 +126,6 @@ ssl:
   bootlegged:
     url: 'bootlegged.questionable.photography'
     ca: 'LetsEncrypt'
-  yeoksa:
-    url: 'yeoksa.wiki'
-    ca: 'Comodo'
-    hsts: 'strict'
   kstartups:
     url: 'wiki.besuccess.com'
     ca: 'LetsEncrypt'
