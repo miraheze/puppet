@@ -55,6 +55,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => [ '15', '30'],
     }
+    
     cron { 'Export jokowiki xml dump montly ':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki jokowiki --logs --full > /mnt/mediawiki-static/dumps/jokowiki.xml',
@@ -64,7 +65,6 @@ class mediawiki::dumps {
         month    => '*',
         monthday => '1',
     }
-    
     
     cron { 'Export modularwiki xml dump monthly':
         ensure   => present,
