@@ -19,22 +19,22 @@ root: /dev/null
 ops: operations
 
 # DMARC - potentially high volume, best recommended for mail admins on misc1
-dmarc: john
+dmarc: ndkilla
 
 # destination aliases
-operations: southparkfan,john,ndkilla
-stewards: southparkfan,ndkilla,john,orduinvoidwalker@gmail.com
-staff: southparkfan,ndkilla,john,bslaabs@gmail.com,utilizator.receptie123@gmail.com,imbophilmh@gmail.com,revi
+operations: southparkfan,ndkilla
+stewards: southparkfan,ndkilla,orduinvoidwalker@gmail.com
+staff: southparkfan,ndkilla,bslaabs@gmail.com,utilizator.receptie123@gmail.com,imbophilmh@gmail.com,revi
 cvt: stewards,utilizator.receptie123@gmail.com,revi
 
 # finances
-donate: bslaabs@gmail.com,southparkfan,john
+donate: bslaabs@gmail.com,southparkfan
 
 # southparkfan
 southparkfan: southparkfan223@hotmail.com
 
 # apt changes list (temp. avoid upstream reputation issues with Hotmail)
-apt-list: john,ndkila
+apt-list: ndkila
 
 # phabricator incoming emails - must be configued with Maniphest
 security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
