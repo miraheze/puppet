@@ -45,10 +45,30 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['1', '8', '22', '29'],
     }
-
+    
+    cron { 'Export icmscholarswiki xml dump every two weeks':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki icmscholarswiki --logs --full > /home/reception/dumps/icmscholarswiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => [ '15', '30'],
+    }
+    
     cron { 'Export jokowiki xml dump montly ':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki jokowiki --logs --full > /mnt/mediawiki-static/dumps/jokowiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => '1',
+    }
+    
+    cron { 'Export modularwiki xml dump monthly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki modularwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/modularwiki.xml',
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -65,17 +85,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['15', '30'],
     }
-    
-    cron { 'Export icmscholarswiki xml dump every two weeks':
-        ensure   => present,
-        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki icmscholarswiki --logs --full > /home/reception/dumps/icmscholarswiki.xml',
-        user     => 'www-data',
-        minute   => '0',
-        hour     => '0',
-        month    => '*',
-        monthday => [ '15', '30'],
-    }
-    
+   
     cron { 'Export scruffywiki xml dump weekly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki scruffywiki --logs --full > /home/reception/dumps/scruffywiki.xml',
