@@ -1,13 +1,13 @@
 ssl:
   antiguabarbudacalypso:
     url: 'antiguabarbudacalypso.com'
-    ca: 'LetsEncrypt'
+    ca: 'StartSSL'
   spiral:
     url: 'spiral.wiki'
     ca: 'Gandi'
   permanentfuturelab:
     url: 'permanentfuturelab.wiki'
-    ca: 'LetsEncrypt'
+    ca: 'StartSSL'
   revi:
     url: 'private.revi.wiki'
     ca: 'GeoTrust'
@@ -19,13 +19,22 @@ ssl:
     ca: 'LetsEncrypt'
   valentinaproject:
     url: 'wiki.valentinaproject.org'
-    ca: 'LetsEncrypt'
+    ca: 'StartSSL'
+  wikiparkinson:
+    url: 'wikiparkinson.org'
+    ca: 'StartSSL'
+  oyeavdelingen:
+    url: 'oyeavdelingen.org'
+    ca: 'Comodo'
   dwplive:
     url: 'wiki.dwplive.com'
-    ca: 'LetsEncrypt'
+    ca: 'StartSSL'
+  haxionspace:
+    url: 'haxion.space'
+    ca: 'StartSSL'
   grottocenter:
     url: 'wiki.grottocenter.org'
-    ca: 'LetsEncrypt'
+    ca: 'StartSSL'
   metatrek:
     url: 'meta.trek.tk'
     ca: 'LetsEncrypt'
@@ -34,13 +43,13 @@ ssl:
     ca: 'LetsEncrypt'
   wisdomwiki:
     url: 'wisdomwiki.org'
-    ca: 'LetsEncrypt'
+    ca: 'StartSSL'
   aenasan:
     url: 'wiki.aenasan.com'
-    ca: 'LetsEncrypt'
+    ca: 'StartSSL'
   garyjohnsonmeetups:
     url: 'wiki.garyjohnsonmeetups.com'
-    ca: 'LetsEncrypt'
+    ca: 'StartSSL'
   irc:
     url: 'ircwiki.cf'
     ca: 'LetsEncrypt'
@@ -76,10 +85,10 @@ ssl:
     ca: 'LetsEncrypt'
   openonderwijsorg:
     url: 'www.openonderwijs.org'
-    ca: 'LetsEncrypt'
+    ca: 'StartSSL'
   takethatwiki:
     url: 'takethatwiki.com'
-    ca: 'LetsEncrypt'
+    ca: 'StartSSL'
   alwiki:
     url: 'alwiki.net'
     ca: 'LetsEncrypt'
@@ -107,7 +116,6 @@ ssl:
   histories:
     url: 'histories.wiki'
     ca: 'LetsEncrypt'
-    hsts: 'strict'
   changemy:
     url: 'changemy.org'
     ca: 'LetsEncrypt'
@@ -117,49 +125,13 @@ ssl:
   gamdug:
     url: 'gamdug.tk'
     ca: 'LetsEncrypt'
-  wikiescola:
-    url: 'wikiescola.com.br'
-    ca: 'LetsEncrypt'
-  jacksonheights:
-    url: 'wiki.jacksonheights.nyc'
-    ca: 'LetsEncrypt'
-  bootlegged:
-    url: 'bootlegged.questionable.photography'
-    ca: 'LetsEncrypt'
-  kstartups:
-    url: 'wiki.besuccess.com'
-    ca: 'LetsEncrypt'
-  speleo:
-    url: 'speleo.wiki'
-    ca: 'LetsEncrypt'
-  aksaray:
-    url: 'www.aksaraywiki.com'
-    ca: 'Comodo'
-  disabledlife:
-    url: 'disabled.life'
-    ca: 'LetsEncrypt'
   teessidehackspace:
     url: 'wiki.teessidehackspace.org.uk'
     ca: 'LetsEncrypt'
-  wikiletras:
-    url: 'www.wikiletras.tk'
+  embobada:
+    url: 'embobada.com'
     ca: 'LetsEncrypt'
-  prueba:
-    url: 'es.publictestwiki.com'
-    ca: 'LetsEncrypt'
-  livesnowmap:
-    url: 'wiki.livesnowmap.com'
-    ca: 'LetsEncrypt'
-  nenawiki:
-    url: 'nenawiki.org'
-    ca: 'LetsEncrypt'
-  denverkr:
-    url: 'wiki.denverkr.cf'
-    ca: 'LetsEncrypt'
-  reviwiki:
-    url: 'reviwiki.info'
-    ca: 'LetsEncrypt'
-    
+
 redirects:
   wwwallthetropes:
     url: 'www.allthetropes.org'
@@ -176,6 +148,11 @@ redirects:
     redirect: 'permanentfuturelab.wiki'
     sslname: 'permanentfuturelab.wiki'
     ca: 'LetsEncrypt'
+  wwwwikiparkinson:
+    url: 'www.wikiparkinson.org'
+    redirect: 'wikiparkinson.org'
+    sslname: 'wikiparkinson.org'
+    ca: 'StartSSL'
   mirahezewiki:
     url: 'miraheze.wiki'
     redirect: 'meta.miraheze.org'
@@ -186,7 +163,6 @@ redirects:
     redirect: 'jayuwiki.miraheze.org'
     sslname: 'wildcard.miraheze.org'
     ca: 'GlobalSign'
-    hsts: 'strict'
   wwwchangemy:
     url: 'www.changemy.org'
     redirect: 'changemy.org'
@@ -196,15 +172,4 @@ redirects:
     url: 'www.histories.wiki'
     redirect: 'histories.wiki'
     sslname: 'www.histories.wiki'
-    ca: 'LetsEncrypt'
-    hsts: 'strict'
-  mirahezecom:
-    url: 'miraheze.com'
-    redirect: 'meta.miraheze.org'
-    sslname: 'miraheze.com'
-    ca: 'LetsEncrypt'
-  wwwreviwiki:
-    url: 'www.reviwiki.info'
-    redirect: 'reviwiki.info'
-    sslname: 'www.reviwiki.info'
     ca: 'LetsEncrypt'
