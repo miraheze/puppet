@@ -36,11 +36,6 @@ maniphest.priorities:
     short: 'Unbreak!'
     color: 'pink'
     keywords: ['unbreak']
-  '90':
-    name: 'Needs Triage'
-    short: 'Triage'
-    color: 'violet'
-    keywords: ['triage']
   '75':
     name: 'High'
     short: 'High'
@@ -56,6 +51,11 @@ maniphest.priorities:
     short: 'Low'
     color: 'sky'
     keywords: ['low']
+   '0':
+    name: 'Needs Triage'
+    short: 'Triage'
+    color: 'violet'
+    keywords: ['triage']
 
 maniphest.statuses:
   'open':
