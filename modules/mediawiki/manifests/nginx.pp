@@ -1,6 +1,6 @@
 # MediaWiki nginx config using hiera
 class mediawiki::nginx {
-    $sslcerts = hiera_hash('ssl')
+    $sslcerts = loadyaml('/etc/puppet/ssl/certs.yaml', '/etc/puppet/ssl/redirects.yaml')
 
     nginx::site { 'mediawiki':
         ensure    => present,

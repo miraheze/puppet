@@ -123,9 +123,9 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    $ssl = hiera_hash('ssl')
-    $redirects = hiera_hash('redirects')
-    $sslcerts = merge( $ssl, $redirects )
+    $ssl = loadyaml('/etc/puppet/ssl')
+    $redirects = loadyaml('/etc/puppet/ssl/redirects.yaml')
+    $sslcerts = loadyaml('/etc/puppet/ssl/certs.yaml')
 
     file { '/etc/icinga/config/ssl.cfg':
         ensure  => 'present',
