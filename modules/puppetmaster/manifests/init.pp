@@ -78,7 +78,7 @@ class puppetmaster(
     }
 	git::clone { 'ssl':
         ensure    => latest,
-        directory => 'etc/ssl/private',
+        directory => '/etc/puppet/ssl',
         origin    => 'https://github.com/miraheze/ssl.git',
     }
 
