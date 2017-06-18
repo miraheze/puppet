@@ -22,7 +22,7 @@ define ssl::hiera::certs (
         file { "${sslurl}":
             ensure => present,
             path   => "/etc/ssl/certs/${sslurl}.crt",
-            source => "puppet:///ssl/certificates${sslurl}.crt",
+            source => "puppet:///ssl/certificates/${sslurl}.crt",
             notify => Exec["${restart}-syntax"],
         }
 
