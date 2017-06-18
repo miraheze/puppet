@@ -76,6 +76,11 @@ class puppetmaster(
         directory => '/etc/puppet/parsoid',
         origin    => 'https://github.com/miraheze/parsoid.git',
     }
+	git::clone { 'ssl':
+        ensure    => latest,
+        directory => 'etc/ssl/private',
+        origin    => 'https://github.com/miraheze/ssl.git',
+    }
 
     cron { 'puppet-git':
         command => '/usr/bin/git -C /etc/puppet/git pull',
