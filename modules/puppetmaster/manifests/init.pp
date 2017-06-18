@@ -95,4 +95,10 @@ class puppetmaster(
         hour    => '*',
         minute  => [ '9', '19', '29', '39', '49', '59' ],
     }
+    cron { 'ssl-git':
+        command => '/usr/bin/git -C /etc/puppet/ssl pull',
+        user    => 'root',
+        hour    => '*',
+        minute  => [ '9', '19', '29', '39', '49', '59' ],
+    }
 }
