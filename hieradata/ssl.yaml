@@ -1,1 +1,0 @@
-loadyaml('/etc/puppet/parsoid/parsoid.yaml')
