@@ -1,1 +1,1 @@
-# Not sure how to load this.
+loadyaml('/etc/puppet/parsoid/parsoid.yaml')
