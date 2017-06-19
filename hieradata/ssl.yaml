@@ -159,6 +159,9 @@ ssl:
   reviwiki:
     url: 'reviwiki.info'
     ca: 'LetsEncrypt'
+  reversiblework:
+    url: 'reversible.work'
+    ca: 'Cloudflare'
     
 redirects:
   wwwallthetropes:
