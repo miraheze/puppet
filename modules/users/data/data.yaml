@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [imbophil, labster, reception, revi]
+    members: [corey, imbophil, labster, reception, revi]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php5-fpm *',
@@ -72,11 +72,11 @@ users:
     realname: Vorticity
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC94hzJuJkiXTa1cbGvbTbnk1ErBR9FgdaVSMia04Qu4+DBquxEsJ+yqvyZxhBXYbsJUNPgDiRASPhX8ktdhWB2sOki+9Dyqu3JkGSijtUt4QRu8z4V3H+wxjkilxMkeSgw6/LjS3kIMiq22hUrgMkO9H0ZvB3NrS9MdxNZWtX8N6UE3weTFgLPqvW3ZozIpOnPKgpk7hruIk7jE0szbnRhrKFXa8KpBI93Kl3PV7zmPtyn9mhhGxxnlaAWwHladyzC475KoOyHRzYh92g4JqXabUypvV+9tHtjAX6Vzqsnm8Zc8WvPp4wFZm2XuF61bfKztb/MH9ugEo7lQZGuFq63R75ykR5Py/SwjKQsIZ+nluES+Ar9LsJMmzvTCOsmY5aOAS7PhYALpNzLHxeDNJYbE+++3eGeqNsSKaowCV+3FrOUUQrhLP86R2HFYQmsasauJNhW6PYsH5G36hickiCvH3v3gxZewZReE3Ryn1/Przd8CmQt6Y1B0SJKxGpFtfVFIDTpdnBNeWeI69+6T9FF0JD3R0hTvxne3v7tNDt7x+n1tp5ceB31B03eyd5HfYWZ8BwK3PUBffzwzL8tyuaIk9vRqFqAQNgb2z9yJfgT02qoB/ob1GPfPnOAnbkUofrRJnmUiO5SkZNw5FTFUVxrJeyOTCbTpWJNGpzTCnq+Rw== labster@miraheze.org]
   corey:
-    ensure: absent
+    ensure: present
     uid: 1006
     name: corey
     realname: Corey Chambers
-    ssh_keys: []
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDF8fdFzmjbBUg/Yv87kZ0n+50MHbDMqGHMqTLw689nhONsgtiVuPqnLr0z5UuuxZ3aXhfXkhjFR6CTdpESyCF/I/hQBLn1u0C0711xkVrTgcnzJLobGk72N3IKUtXEc/xsto61Fkd6pnQj0f9NW/wPRk76k9iUstpehmhP0S9xnu75t0+7nXnnPT6prip5WE3ii/QuJtyJjmRR1tuF4BExROhUT1i3qn0J4hE6vSZtsQMyxGO6TZ0rSKv1Qy6TnHO9L0t7rg2UzJXI3LjYIe/9pKYLVZIo6An5gIfd/3FqXWFYSXuamnRlfeblaImpxwPxbfb5tIE6kN/EqkwK17ib Miraheze@LYOKO]
   reception:
     ensure: present
     uid: 1007
