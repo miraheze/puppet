@@ -66,6 +66,16 @@ class mediawiki::dumps {
         monthday => '1',
     }
     
+    cron { 'Export mikrodevwiki xml dump weekly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki mikrodevwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/mikrodevwiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => ['1', '8', '22', '29'],
+    }
+    
     cron { 'Export modularwiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki modularwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/modularwiki.xml',
