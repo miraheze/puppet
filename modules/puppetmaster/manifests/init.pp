@@ -82,7 +82,7 @@ class puppetmaster(
         ensure => directory,
 	recurse => true,
         owner  => 'root',
-        group  => 'root',
+        group  => 'www-data',
         mode   => '0770',
     }
 
