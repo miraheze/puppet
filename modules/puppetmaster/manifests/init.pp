@@ -77,14 +77,6 @@ class puppetmaster(
         group  => 'puppet-users',
         mode   => '0770',
     }
-    
-    file { '/etc/puppet':
-        ensure => directory,
-	recurse => true,
-        owner  => 'root',
-        group  => 'www-data',
-        mode   => '0770',
-    }
 
     # work around for new puppet agent
     git::clone { 'parsoid':
