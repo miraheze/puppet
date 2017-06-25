@@ -10,7 +10,7 @@ define ssl::cert (
 
         file { "/etc/ssl/private/${certificate}.key":
             ensure => $ensure,
-            source => "puppet:///private/ssl/${certificate}.key",
+            source => "puppet:///ssl-keys/${certificate}.key",
         }
     }
 }
