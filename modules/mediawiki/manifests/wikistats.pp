@@ -8,7 +8,7 @@ class mediawiki::wikistats {
         group  => 'www-data',
     }
 
-    $customdomains = hiera_hash('ssl')
+    $customdomains = loadyaml('/etc/puppet/ssl/certs.yaml')
     file { '/srv/mediawiki/wstats/custom.txt':
         ensure  => present,
         owner   => 'www-data',

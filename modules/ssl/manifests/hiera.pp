@@ -1,7 +1,7 @@
 # class for auto loading SSL certs onto machines needing them
 class ssl::hiera {
-    $ssldomains = hiera_hash('ssl')
-    $sslredirects = hiera_hash('redirects')
+    $ssldomains = loadyaml('/etc/puppet/ssl/certs.yaml')
+    $sslredirects = loadyaml('/etc/puppet/ssl/redirects.yaml')
 
     $certs = merge( $ssldomains, $sslredirects )
 

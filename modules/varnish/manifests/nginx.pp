@@ -1,7 +1,7 @@
 # class to handle Varnish nginx (using hiera coolness)
 class varnish::nginx {
-    $sslcerts = hiera_hash('ssl')
-    $sslredirects = hiera_hash('redirects')
+    $sslcerts = loadyaml('/etc/puppet/ssl/certs.yaml')
+    $sslredirects = loadyaml('/etc/puppet/ssl/redirects.yaml')
 
     nginx::site { 'mediawiki':
         ensure  => present,

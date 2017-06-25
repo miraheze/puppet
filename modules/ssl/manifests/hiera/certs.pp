@@ -22,14 +22,14 @@ define ssl::hiera::certs (
         file { "${sslurl}":
             ensure => present,
             path   => "/etc/ssl/certs/${sslurl}.crt",
-            source => "puppet:///modules/ssl/certificates/${sslurl}.crt",
+            source => "puppet:///ssl/certificates/${sslurl}.crt",
             notify => Exec["${restart}-syntax"],
         }
 
         file { "${sslurl}_private":
             ensure => present,
             path   => "/etc/ssl/private/${sslurl}.key",
-            source => "puppet:///private/ssl/${sslurl}.key",
+            source => "puppet:///ssl-keys/${sslurl}.key",
             notify => Exec["${restart}-syntax"],
         }
     }
