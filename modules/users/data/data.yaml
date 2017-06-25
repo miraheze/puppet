@@ -29,6 +29,11 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+  puppet-users:
+    gid: 2004
+    descriptions: limited access on puppet1 to add SSL private keys
+    members: [reception]
+    privileges: []                 
 
 users:
   johnflewis:
