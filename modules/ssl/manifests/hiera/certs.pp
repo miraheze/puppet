@@ -29,7 +29,7 @@ define ssl::hiera::certs (
         file { "${sslurl}_private":
             ensure => present,
             path   => "/etc/ssl/private/${sslurl}.key",
-            source => "puppet:///private/ssl/${sslurl}.key",
+            source => "puppet:///ssl-keys/${sslurl}.key"",
             notify => Exec["${restart}-syntax"],
         }
     }
