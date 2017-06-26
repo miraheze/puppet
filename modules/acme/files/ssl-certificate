@@ -74,7 +74,6 @@ if [ $RENEW -eq 0 ]; then
         log "Not generating an SSL certificate. Use CSR below to send to the requestor"
         cat /root/acme-tiny/ssl/${domain}.csr
         cat /root/acme-tiny/ssl/${domain}.key
-
     fi
 else
     log "Re-generating a new SSL cert for ${domain}"
