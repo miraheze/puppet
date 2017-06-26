@@ -123,7 +123,7 @@ class icinga {
         notify  => Service['icinga'],
     }
 
-    $ssl = loadyaml('/etc/puppet/ssl.yaml')
+    $ssl = loadyaml('/etc/puppet/ssl/certs.yaml')
     $redirects = loadyaml('/etc/puppet/ssl/redirects.yaml')
     $sslcerts = merge( $ssl, $redirects )
 
