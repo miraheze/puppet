@@ -4,6 +4,4 @@ users::groups:
 jobrunner: false
 arcanist: true
 mwdumps: true
-contactgroups:
-  - ops
-  - mediawiki
+contactgroups: 'ops,mediawiki'
