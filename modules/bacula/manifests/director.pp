@@ -1,6 +1,6 @@
 # Director: the bacula server
 class bacula::director {
-    package { ['bacula-server', 'bacula-client']:
+    package { ['bacula-server', 'bacula-client', 'python-pexpect']:
         ensure => present,
     }
 
