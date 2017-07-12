@@ -92,8 +92,6 @@ maniphest.statuses:
     name: 'Stalled'
     name.full: 'Open, Stalled'
     closed: false
-    prefixes: [stalled]
-    suffixes: ['as stalled']
 
 # Disable some Phabricator applications
 phabricator.uninstalled-applications:
