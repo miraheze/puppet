@@ -43,4 +43,4 @@ phabricator: |/srv/phab/phabricator/scripts/mail/mail_handler.php
 bugs: |/srv/phab/phabricator/scripts/mail/mail_handler.php
 
 # revi
-revi: revi@reviwiki.info,revi@pobox.com
+revi: revi@revi.wiki,revi@pobox.com
