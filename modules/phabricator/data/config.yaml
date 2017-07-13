@@ -88,6 +88,10 @@ maniphest.statuses:
     closed: true
     transaction.icon: 'fa-thumbs-o-down'
     keywords: ['declined', 'declines']
+  'stalled':
+    name: 'Stalled'
+    name.full: 'Open, Stalled'
+    closed: false
 
 # Disable some Phabricator applications
 phabricator.uninstalled-applications:
