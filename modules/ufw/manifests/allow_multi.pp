@@ -7,10 +7,10 @@ define ufw::allow_multi(
 ) {
     $from_array.each |String $from| {
         ufw::allow { "ufw allow from ${from} to ${port}":
-            proto   => $proto,
-            port    => $port,
-            ip      => $ip,
-            from    => $from,
+            proto => $proto,
+            port  => $port,
+            ip    => $ip,
+            from  => $from,
         }
     }
 }

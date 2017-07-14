@@ -1,3 +1,4 @@
+# role: redis
 class role::redis {
     class { '::redis':
         password  => hiera('passwords::redis::master'),

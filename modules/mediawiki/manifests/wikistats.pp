@@ -25,7 +25,7 @@ class mediawiki::wikistats {
 
     cron { 'wikistats_all_wikis':
         ensure  => present,
-        command => "/usr/local/bin/wikistats-format-list.sh /srv/mediawiki/dblist/all.dblist > /srv/mediawiki/wstats/miraheze.txt",
+        command => '/usr/local/bin/wikistats-format-list.sh /srv/mediawiki/dblist/all.dblist > /srv/mediawiki/wstats/miraheze.txt',
         user    => 'www-data',
         minute  => '0',
         hour    => '0',

@@ -24,6 +24,6 @@ class base::packages {
 
     # Get rid of this
     package { [ 'apt-listchanges' ]:
-        ensure	=> absent,
+        ensure => absent,
     }
 }

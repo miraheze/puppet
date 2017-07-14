@@ -79,8 +79,8 @@ class bacula::director {
 
     # Bacula secret keys
     sudo::user { 'nrpe_sudo_checkbaculabackups':
-        user        => 'nagios',
-        privileges  => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_bacula_backups' ],
+        user       => 'nagios',
+        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_bacula_backups' ],
     }
 
     icinga::service { 'bacula_daemon':

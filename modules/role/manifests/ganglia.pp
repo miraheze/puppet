@@ -1,3 +1,4 @@
+# role: ganglia
 class role::ganglia {
     include ::ganglia
 

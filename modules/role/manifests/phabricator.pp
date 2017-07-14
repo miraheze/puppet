@@ -1,3 +1,4 @@
+# role: phabricator
 class role::phabricator {
-	include ::phabricator
+    include ::phabricator
 }

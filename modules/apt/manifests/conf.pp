@@ -1,3 +1,4 @@
+# APT configuration
 define apt::conf (
   $content  = undef,
   $ensure   = present,

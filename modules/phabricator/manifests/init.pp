@@ -58,10 +58,10 @@ class phabricator {
     }
 
     file { '/srv/phab/repos':
-        ensure  => directory,
-        mode    => 0755,
-        owner   => 'www-data',
-        group   => 'www-data',
+        ensure => directory,
+        mode   => '0755',
+        owner  => 'www-data',
+        group  => 'www-data',
     }
 
     $module_path = get_module_path($module_name)

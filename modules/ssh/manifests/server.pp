@@ -1,3 +1,4 @@
+# class: ssh::server
 class ssh::server (
     $listen_port = '22',
     $permit_root = false,

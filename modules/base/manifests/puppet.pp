@@ -2,14 +2,14 @@
 class base::puppet {
     cron { 'puppet-run-no-force':
         ensure  => absent,
-        command => "/root/puppet-run &> /var/log/puppet-run.log",
+        command => '/root/puppet-run &> /var/log/puppet-run.log',
         user    => 'root',
         minute  => [ 10, 20, 30, 40, 50 ],
     }
 
     cron { 'puppet-run-force':
         ensure  => absent,
-        command => "/root/puppet-run -f &> /var/log/puppet-run.log",
+        command => '/root/puppet-run -f &> /var/log/puppet-run.log',
         user    => 'root',
         hour    => '*',
         minute  => '0',

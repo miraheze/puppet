@@ -1,3 +1,4 @@
+# APT params
 class apt::params {
 
   if $::osfamily != 'Debian' {

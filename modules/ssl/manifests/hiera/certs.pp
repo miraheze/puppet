@@ -18,8 +18,8 @@ define ssl::hiera::certs (
         $restart = 'apache2'
     }
 
-    if !defined(File["${sslurl}"]) {
-        file { "${sslurl}":
+    if !defined(File[$sslurl]) {
+        file { $sslurl:
             ensure => present,
             path   => "/etc/ssl/certs/${sslurl}.crt",
             source => "puppet:///ssl/certificates/${sslurl}.crt",

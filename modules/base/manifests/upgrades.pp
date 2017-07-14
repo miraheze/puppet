@@ -18,7 +18,7 @@ class base::upgrades {
 
     # http://askubuntu.com/a/556169
     file { '/etc/cron.daily/apt':
-        ensure  => 'link',
-        target  => '/etc/cron.daily/apt.disabled',
+        ensure => 'link',
+        target => '/etc/cron.daily/apt.disabled',
     }
 }

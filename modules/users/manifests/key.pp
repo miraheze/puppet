@@ -10,11 +10,11 @@ define users::key(
     if $skey {
         if !defined(File["/etc/ssh/userkeys/${user}.d/"]) {
             file { "/etc/ssh/userkeys/${user}.d/":
-                ensure  => directory,
-                force   => true,
-                owner   => 'root',
-                group   => 'root',
-                mode    => '0755',
+                ensure => directory,
+                force  => true,
+                owner  => 'root',
+                group  => 'root',
+                mode   => '0755',
             }
         }
         $path = "/etc/ssh/userkeys/${user}.d/${skey}"

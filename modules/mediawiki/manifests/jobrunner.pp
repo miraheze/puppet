@@ -3,8 +3,8 @@
 # Crons which should be ran on a jobrunner selected machine only.
 class mediawiki::jobrunner {
     git::clone { 'JobRunner':
-        directory   => '/srv/jobrunner',
-        origin      => 'https://github.com/wikimedia/mediawiki-services-jobrunner',
+        directory => '/srv/jobrunner',
+        origin    => 'https://github.com/wikimedia/mediawiki-services-jobrunner',
     }
 
     $redis_password = hiera('passwords::redis::master')
@@ -16,9 +16,9 @@ class mediawiki::jobrunner {
     }
 
     file { '/etc/init.d/jobrunner':
-        ensure  => present,
-        mode    => 0755,
-        source  => 'puppet:///modules/mediawiki/jobrunner/jobrunner.initd',
+        ensure => present,
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/jobrunner/jobrunner.initd',
     }
 
     exec { 'JobRunner reload systemd':
@@ -27,9 +27,9 @@ class mediawiki::jobrunner {
     }
 
     file { '/etc/systemd/system/jobrunner.service':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/jobrunner/jobrunner.systemd',
-        notify  => Exec['JobRunner reload systemd'],
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/jobrunner/jobrunner.systemd',
+        notify => Exec['JobRunner reload systemd'],
     }
 
     service { 'jobrunner':
@@ -37,15 +37,15 @@ class mediawiki::jobrunner {
     }
 
     file { '/etc/init.d/jobchron':
-        ensure  => present,
-        mode    => 0755,
-        source  => 'puppet:///modules/mediawiki/jobrunner/jobchron.initd',
+        ensure => present,
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/jobrunner/jobchron.initd',
     }
 
     file { '/etc/systemd/system/jobchron.service':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/jobrunner/jobchron.systemd',
-        notify  => Exec['JobRunner reload systemd'],
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/jobrunner/jobchron.systemd',
+        notify => Exec['JobRunner reload systemd'],
     }
 
     service { 'jobchron':
@@ -53,11 +53,11 @@ class mediawiki::jobrunner {
     }
 
     file { '/etc/rsyslog.d/20-jobrunner.conf':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/jobrunner/jobrunner.rsyslog.conf',
-        notify  => [ Service['rsyslog'], Service['jobchron'], Service['jobrunner'] ],
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/jobrunner/jobrunner.rsyslog.conf',
+        notify => [ Service['rsyslog'], Service['jobchron'], Service['jobrunner'] ],
     }
-	
+
     cron { 'purge_checkuser':
         ensure  => present,
         command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/CheckUser/maintenance/purgeOldData.php > /var/log/mediawiki/cron/purge_checkuser.log',
@@ -67,7 +67,7 @@ class mediawiki::jobrunner {
     }
 
     cron { 'purge_abusefilter':
-        ensure => present,
+        ensure  => present,
         command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/AbuseFilter/maintenance/purgeOldLogIPData.php > /var/log/mediawiki/cron/purge_abusefilter.log',
         user    => 'www-data',
         minute  => '5',
