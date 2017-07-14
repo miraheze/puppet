@@ -134,7 +134,7 @@ class mediawiki {
     $mediawiki_secretkey  = hiera('passwords::mediawiki::secretkey')
     $recaptcha_sitekey    = hiera('passwords::recaptcha::sitekey')
     $recaptcha_secretkey  = hiera('passwords::recaptcha::secretkey')
-    $googlemaps_key  = hiera('passwords::mediawiki::googlemapskey')
+    $googlemaps_key       = hiera('passwords::mediawiki::googlemapskey')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
