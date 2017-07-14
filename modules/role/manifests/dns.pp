@@ -1,3 +1,4 @@
+# role: dns
 class role::dns {
     include ::dns
 

@@ -1,3 +1,4 @@
+# role: varnish
 class role::varnish {
     include ::varnish
 

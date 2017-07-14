@@ -25,7 +25,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['15', '30'],
     }
-    
+
     cron { 'Export cpiwiki xml dump weekly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki cpiwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/cpiwiki.xml',
@@ -35,7 +35,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['1', '8', '22', '29'],
     }
-    
+
     cron { 'Export cpiwiki images weekly':
         ensure   => present,
         command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/cpiwiki.zip /mnt/mediawiki-static/cpiwiki/',
@@ -45,7 +45,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['1', '8', '22', '29'],
     }
-    
+
     cron { 'Export icmscholarswiki xml dump every two weeks':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki icmscholarswiki --logs --full > /home/reception/dumps/icmscholarswiki.xml',
@@ -55,7 +55,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => [ '15', '30'],
     }
-    
+
     cron { 'Export jokowiki xml dump montly ':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki jokowiki --logs --full > /mnt/mediawiki-static/dumps/jokowiki.xml',
@@ -65,7 +65,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => '1',
     }
-    
+
     cron { 'Export mikrodevwiki xml dump weekly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki mikrodevwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/mikrodevwiki.xml',
@@ -75,7 +75,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['1', '8', '22', '29'],
     }
-    
+
     cron { 'Export modularwiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki modularwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/modularwiki.xml',
@@ -85,7 +85,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => '1',
     }
-    
+
     cron { 'Export nissanecuwiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki nissanecuwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/nissanecuwiki.xml',
@@ -95,7 +95,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['15', '30'],
     }
-   
+
     cron { 'Export scruffywiki xml dump weekly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki scruffywiki --logs --full > /home/reception/dumps/scruffywiki.xml',
@@ -105,7 +105,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['1', '8', '15', '22', '29'],
     }
-    
+
     cron { 'Export speleowiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki speleowiki --logs --full --uploads > /mnt/mediawiki-static/dumps/speleowiki.xml',
@@ -115,7 +115,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => '1'
     }
-    
+
     cron { 'Export sqlserverwiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sqlserverwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/sqlserverwiki.xml',
@@ -125,7 +125,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => '1'
     }
-    
+
     cron { 'Export sterbalssundrystudieswiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml',
@@ -135,7 +135,7 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['1', '8', '15', '22', '29'],
     }
-    
+
     cron { 'Export sterbalfamilyrecipeswiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalfamilyrecipeswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalfamilyrecipeswiki.xml',

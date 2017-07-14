@@ -1,3 +1,4 @@
+# class: irc::irclogbot
 class irc::irclogbot {
     include ::irc
 
@@ -6,10 +7,10 @@ class irc::irclogbot {
     }
 
     git::clone { 'mwclient':
-        ensure => present,
+        ensure    => present,
         directory => '/etc/irclogbot/mwclient',
-        origin => 'https://github.com/mwclient/mwclient',
-        require => File['/etc/irclogbot'],
+        origin    => 'https://github.com/mwclient/mwclient',
+        require   => File['/etc/irclogbot'],
     }
 
     $mirahezebots_password = hiera('passwords::irc::mirahezebots')
@@ -22,21 +23,21 @@ class irc::irclogbot {
     }
 
     file { '/etc/irclogbot/adminlogbot.py':
-        ensure  => present,
-        source  => 'puppet:///modules/irc/logbot/adminlogbot.py',
-        mode    => '0755',
+        ensure => present,
+        source => 'puppet:///modules/irc/logbot/adminlogbot.py',
+        mode   => '0755',
         notify => Service['adminbot'],
     }
 
     file { '/etc/irclogbot/config.py':
         ensure  => present,
         content => template('irc/logbot/config.py'),
-        notify => Service['adminbot'],
+        notify  => Service['adminbot'],
     }
 
     file { '/etc/init.d/adminbot':
-        ensure  => present,
-        source  => 'puppet:///modules/irc/logbot/adminbot.initd',
+        ensure => present,
+        source => 'puppet:///modules/irc/logbot/adminbot.initd',
     }
 
     exec { 'IRCLogbot reload systemd':
@@ -45,11 +46,11 @@ class irc::irclogbot {
     }
 
     file { '/etc/systemd/system/adminbot.service':
-        ensure  => present,
-        source  => 'puppet:///modules/irc/logbot/adminbot.systemd',
-        notify  => Exec['IRCLogbot reload systemd'],
+        ensure => present,
+        source => 'puppet:///modules/irc/logbot/adminbot.systemd',
+        notify => Exec['IRCLogbot reload systemd'],
     }
-    
+
     service { 'adminbot':
         ensure => 'running',
     }

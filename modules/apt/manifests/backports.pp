@@ -1,3 +1,4 @@
+# Manage backports with an apt repo
 class apt::backports (
   $location = undef,
   $release  = undef,

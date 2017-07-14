@@ -1,3 +1,4 @@
+# role: piwik
 class role::piwik {
     include ::piwik
 

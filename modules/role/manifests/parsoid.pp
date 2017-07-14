@@ -1,3 +1,4 @@
+# role: parsoid
 class role::parsoid {
     include ::parsoid
 

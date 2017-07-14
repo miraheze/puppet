@@ -1,3 +1,4 @@
+# APT setting
 define apt::setting (
   $priority      = 50,
   $ensure        = file,

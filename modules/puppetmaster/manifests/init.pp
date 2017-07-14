@@ -1,3 +1,4 @@
+# class: puppetmaster
 class puppetmaster(
     $dbserver   = undef,
     $dbname     = undef,
@@ -57,7 +58,7 @@ class puppetmaster(
 
     ufw::allow { 'puppetmaster':
         proto => 'tcp',
-        port => '8140',
+        port  => '8140',
     }
 
     file { '/etc/puppet/manifests':
@@ -69,13 +70,13 @@ class puppetmaster(
         ensure => link,
         target => '/etc/puppet/git/modules',
     }
-    
+
     file { '/home/puppet-users':
-        ensure => directory,
-	recurse => true,
-        owner  => 'root',
-        group  => 'puppet-users',
-        mode   => '0770',
+        ensure  => directory,
+        recurse => true,
+        owner   => 'root',
+        group   => 'puppet-users',
+        mode    => '0770',
     }
 
     # work around for new puppet agent
@@ -84,7 +85,8 @@ class puppetmaster(
         directory => '/etc/puppet/parsoid',
         origin    => 'https://github.com/miraheze/parsoid.git',
     }
-	git::clone { 'ssl':
+
+    git::clone { 'ssl':
         ensure    => latest,
         directory => '/etc/puppet/ssl',
         origin    => 'https://github.com/miraheze/ssl.git',

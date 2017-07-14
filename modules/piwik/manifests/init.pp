@@ -24,7 +24,7 @@ class piwik {
         group     => 'www-data',
     }
 
-    exec { "curl -sS https://getcomposer.org/installer | php && php composer.phar install":
+    exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
         creates     => '/srv/piwik/composer.phar',
         cwd         => '/srv/piwik',
         path        => '/usr/bin',

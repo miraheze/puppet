@@ -21,7 +21,7 @@ class dns {
         release    => 'stretch',
         packages   => 'gdnsd',
     }
-        
+
     package { 'gdnsd':
         ensure  => installed,
         require => File['/etc/apt/preferences'],
@@ -51,9 +51,9 @@ class dns {
     }
 
     file { '/usr/lib/nagios/plugins/check_gdnsd_datacenters':
-        ensure  => present,
-        source  => 'puppet:///modules/dns/check_gdnsd_datacenters.py',
-        mode    => 755,
+        ensure => present,
+        source => 'puppet:///modules/dns/check_gdnsd_datacenters.py',
+        mode   => '0755',
     }
 
     icinga::service { 'auth_dns':

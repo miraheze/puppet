@@ -19,7 +19,7 @@ class base::mail {
     }
 
     service { 'postfix':
-        ensure => running,
+        ensure  => running,
         require => Package['postfix'],
     }
 

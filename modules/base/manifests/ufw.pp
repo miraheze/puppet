@@ -13,8 +13,8 @@ class base::ufw {
     }
 
     file { '/root/ufw-fix':
-        ensure  => present,
-        source  => 'puppet:///modules/base/ufw/ufw-fix',
-        mode    => 0755,
+        ensure => present,
+        source => 'puppet:///modules/base/ufw/ufw-fix',
+        mode   => '0755',
     }
 }

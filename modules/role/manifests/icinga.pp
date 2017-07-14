@@ -1,3 +1,4 @@
+# role: icinga
 class role::icinga {
     include ::icinga
 

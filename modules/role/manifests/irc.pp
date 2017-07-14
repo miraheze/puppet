@@ -1,3 +1,4 @@
+# role: irc
 class role::irc {
     include irc::irclogbot
 

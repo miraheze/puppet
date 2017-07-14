@@ -183,26 +183,26 @@ class icinga {
     ssl::cert { 'wildcard.miraheze.org': }
 
     apache::site { 'icinga.miraheze.org':
-        ensure   => present,
-        source   => 'puppet:///modules/icinga/apache/apache.conf',
-        require  => File['/etc/apache2/conf-enabled/icinga.conf'],
+        ensure  => present,
+        source  => 'puppet:///modules/icinga/apache/apache.conf',
+        require => File['/etc/apache2/conf-enabled/icinga.conf'],
     }
 
     $mirahezebots_password = hiera('passwords::irc::mirahezebots')
 
     file { '/etc/icinga/irc.py':
-        ensure   => present,
-        owner    => 'irc',
-        content  => template('icinga/bot/irc.py'),
-        mode     => '0551',
-        notify   => Service['icingabot'],
+        ensure  => present,
+        owner   => 'irc',
+        content => template('icinga/bot/irc.py'),
+        mode    => '0551',
+        notify  => Service['icingabot'],
     }
 
     file { '/etc/init.d/icingabot':
-        ensure  => present,
-        source  => 'puppet:///modules/icinga/bot/icingabot.initd',
-        mode    => '0755',
-        notify  => Service['icingabot'],
+        ensure => present,
+        source => 'puppet:///modules/icinga/bot/icingabot.initd',
+        mode   => '0755',
+        notify => Service['icingabot'],
     }
 
     exec { 'Icingabot reload systemd':
@@ -211,9 +211,9 @@ class icinga {
     }
 
     file { '/etc/systemd/system/icingabot.service':
-        ensure  => present,
-        source  => 'puppet:///modules/icinga/bot/icingabot.systemd',
-        notify  => Exec['Icingabot reload systemd'],
+        ensure => present,
+        source => 'puppet:///modules/icinga/bot/icingabot.systemd',
+        notify => Exec['Icingabot reload systemd'],
     }
 
     service { 'icingabot':

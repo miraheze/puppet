@@ -2,7 +2,7 @@
 class base::timezone {
     file { '/etc/timezone':
         ensure  => present,
-        content => "Etc/UTC",
+        content => 'Etc/UTC',
     }
 
     exec { 'timezone_update':
@@ -10,6 +10,6 @@ class base::timezone {
         path        => '/usr/bin:/usr/sbin:/bin:/sbin',
         subscribe   => File['/etc/timezone'],
         refreshonly => true,
-        unless      => "date +%Z | grep -q UTC",
+        unless      => 'date +%Z | grep -q UTC',
     }
 }

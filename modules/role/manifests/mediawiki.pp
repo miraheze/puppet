@@ -1,3 +1,4 @@
+# role: mediawiki
 class role::mediawiki {
     include ::mediawiki
     include nfs::client

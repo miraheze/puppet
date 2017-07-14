@@ -59,10 +59,10 @@ class mariadb::config(
     }
 
     file { '/var/tmp/mariadb':
-        ensure  => directory,
-        owner   => 'mysql',
-        group   => 'mysql',
-        mode    => '0644',
+        ensure => directory,
+        owner  => 'mysql',
+        group  => 'mysql',
+        mode   => '0644',
     }
 
     icinga::service { 'mysql':
