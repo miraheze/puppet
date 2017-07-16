@@ -6,7 +6,7 @@ $wgDBpassword = "<%= @mediawiki_password %>";
 
 // Google Maps API key
 
-$egMapsGMaps3ApiKey = "<%= @googlemaps_key %>";
+$wmgMapsGMaps3ApiKey = "<%= @googlemaps_key %>";
 
 // Redis AUTH password
 $wmgRedisPassword = "<%= @redis_password %>";
