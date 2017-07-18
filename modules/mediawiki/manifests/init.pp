@@ -27,12 +27,12 @@ class mediawiki {
     }
 
     file { '/etc/nginx/fastcgi_params':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/nginx/fastcgi_params',
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/nginx/fastcgi_params',
     }
 
     file { '/etc/nginx/sites-enabled/default':
-        ensure  => absent,
+        ensure => absent,
     }
 
     $packages = [
@@ -53,13 +53,13 @@ class mediawiki {
     }
 
     package { [ 'mediawiki-math-texvc', 'ocaml' ]:
-        ensure => present,
+        ensure          => present,
         install_options => ['--no-install-recommends'],
     }
 
     file { '/etc/ImageMagick-6/policy.xml':
-        ensure => present,
-        source => 'puppet:///modules/mediawiki/imagemagick/policy.xml',
+        ensure  => present,
+        source  => 'puppet:///modules/mediawiki/imagemagick/policy.xml',
         require => Package['imagemagick'],
     }
 
@@ -72,20 +72,20 @@ class mediawiki {
     }
 
     git::clone { 'MediaWiki config':
+        ensure    => 'latest',
         directory => '/srv/mediawiki/config',
         origin    => 'https://github.com/miraheze/mw-config.git',
-        ensure    => 'latest',
         require   => File['/srv/mediawiki'],
     }
 
     git::clone { 'MediaWiki core':
-        directory           => '/srv/mediawiki/w',
-        origin              => 'https://github.com/miraheze/mediawiki.git',
-        branch              => 'REL1_29',
-        ensure              => 'latest',
-        timeout             => '550',
-        recurse_submodules  => true,
-        require             => File['/srv/mediawiki'],
+        ensure             => 'latest',
+        directory          => '/srv/mediawiki/w',
+        origin             => 'https://github.com/miraheze/mediawiki.git',
+        branch             => 'REL1_29',
+        timeout            => '550',
+        recurse_submodules => true,
+        require            => File['/srv/mediawiki'],
     }
 
     # FIXME: Ugly hack, *everything* in /srv/mediawiki/w should be owned by www-data,
@@ -98,10 +98,10 @@ class mediawiki {
     }
 
     git::clone { 'MediaWiki vendor':
+        ensure    => 'latest',
         directory => '/srv/mediawiki/w/vendor',
         origin    => 'https://github.com/wikimedia/mediawiki-vendor.git',
         branch    => 'REL1_29',
-        ensure    => 'latest', 
         require   => Git::Clone['MediaWiki core'],
     }
 
@@ -110,7 +110,7 @@ class mediawiki {
         ensure  => directory,
         owner   => 'www-data',
         group   => 'www-data',
-        mode   => '0755',
+        mode    => '0755',
         require => Git::Clone['MediaWiki core'],
     }
 
@@ -134,6 +134,7 @@ class mediawiki {
     $mediawiki_secretkey  = hiera('passwords::mediawiki::secretkey')
     $recaptcha_sitekey    = hiera('passwords::recaptcha::sitekey')
     $recaptcha_secretkey  = hiera('passwords::recaptcha::secretkey')
+    $googlemaps_key       = hiera('passwords::mediawiki::googlemapskey')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
@@ -142,7 +143,7 @@ class mediawiki {
 
     file { '/usr/local/bin/foreachwikiindblist':
         ensure => 'present',
-        mode   => 0755,
+        mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
     }
 
@@ -157,7 +158,7 @@ class mediawiki {
         rotate => '6',
         delay  => false,
     }
-    
+
     exec { 'Math texvccheck':
         command => '/usr/bin/make --directory=/srv/mediawiki/w/extensions/Math/texvccheck',
         creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
