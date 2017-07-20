@@ -106,7 +106,6 @@ class mediawiki::dumps {
         monthday => ['1', '8', '15', '22', '29'],
     }
 
-
     cron { 'Export nissanecuwiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki nissanecuwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/nissanecuwiki.xml',
