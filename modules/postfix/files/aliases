@@ -34,7 +34,7 @@ donate: bslaabs@gmail.com,southparkfan
 southparkfan: southparkfan223@hotmail.com
 
 # apt changes list (temp. avoid upstream reputation issues with Hotmail)
-apt-list: ndkila
+apt-list: ndkilla
 
 # phabricator incoming emails - must be configued with Maniphest
 security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
