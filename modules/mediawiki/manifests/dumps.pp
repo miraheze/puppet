@@ -88,7 +88,7 @@ class mediawiki::dumps {
     
     cron { 'Export nenawikiwiki xml dump weekly':
         ensure   => present,
-        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki nenawikiwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/amaninfowiki.xml',
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki nenawikiwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/nenawikiwiki.xml',
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
