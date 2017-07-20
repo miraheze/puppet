@@ -93,7 +93,7 @@ class mediawiki::dumps {
         minute   => '0',
         hour     => '0',
         month    => '*',
-        monthday => ['1', '8', '22', '29'],
+        monthday => ['1', '8', '15', 22', '29'],
     }
 
     cron { 'Export nenawikiwiki images weekly':
@@ -103,7 +103,7 @@ class mediawiki::dumps {
         minute   => '0',
         hour     => '0',
         month    => '*',
-        monthday => ['1', '8', '22', '29'],
+        monthday => ['1', '8', '15', '22', '29'],
     }
 
 
