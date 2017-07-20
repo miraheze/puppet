@@ -33,7 +33,7 @@ class mediawiki::dumps {
         minute   => '0',
         hour     => '0',
         month    => '*',
-        monthday => ['1', '8', '22', '29'],
+        monthday => ['1', '8', '15', '22', '29'],
     }
 
     cron { 'Export cpiwiki images weekly':
@@ -43,7 +43,7 @@ class mediawiki::dumps {
         minute   => '0',
         hour     => '0',
         month    => '*',
-        monthday => ['1', '8', '22', '29'],
+        monthday => ['1', '8', '15', '22', '29'],
     }
 
     cron { 'Export icmscholarswiki xml dump every two weeks':
@@ -73,7 +73,7 @@ class mediawiki::dumps {
         minute   => '0',
         hour     => '0',
         month    => '*',
-        monthday => ['1', '8', '22', '29'],
+        monthday => ['1', '8', '15', '22', '29'],
     }
 
     cron { 'Export modularwiki xml dump monthly':
