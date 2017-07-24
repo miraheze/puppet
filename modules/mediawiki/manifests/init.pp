@@ -37,6 +37,7 @@ class mediawiki {
 
     $packages = [
         'dvipng',
+        'htmldoc',
         'imagemagick',
         'ploticus',
         'ttf-freefont',
@@ -173,21 +174,12 @@ class mediawiki {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
-    exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
+    exec { 'maps_composer':
         command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
         creates     => '/srv/mediawiki/w/extensions/Maps/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Maps',
         path        => '/usr/bin',
         environment => 'HOME=/srv/mediawiki/w/extensions/Maps',
-        user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
-    }
-    exec { 'htmldoc':
-        command     => 'curl -sS https://github.com/michaelrsweet/htmldoc.git',
-        creates     => '/srv/mediawiki/w/extensions/PdfBook/MediaWiki/PdfBook/htmldoc',
-        cwd         => '/srv/mediawiki/w/extensions/PdfBook/MediaWiki/PdfBook/',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/mediawiki/w/extensions/PdfBook//MediaWiki/PdfBook/',
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
