@@ -174,6 +174,15 @@ class mediawiki {
         require     => Git::Clone['MediaWiki core'],
     }
     exec { 'maps_composer':
+        command     => 'curl -sS https://github.com/michaelrsweet/htmldoc.git | apt-get install htmldoc',
+        creates     => '/srv/mediawiki/w/extensions/PdfBook/MediaWiki/PdfBook/htmldoc',
+        cwd         => '/srv/mediawiki/w/extensions/PdfBook/MediaWiki/PdfBook/',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/extensions/PdfBook//MediaWiki/PdfBook/',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+    exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
         command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
         creates     => '/srv/mediawiki/w/extensions/Maps/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Maps',
