@@ -30,6 +30,12 @@ cvt: stewards,utilizator.receptie123@gmail.com,revi
 # finances
 donate: bslaabs@gmail.com,southparkfan
 
+# imbophil
+imbophil: imbophilmh@gmail.com
+
+# labster
+labster: bslaabs@gmail.com
+
 # southparkfan
 southparkfan: southparkfan223@hotmail.com
 
@@ -41,6 +47,9 @@ security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 csr: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 phabricator: |/srv/phab/phabricator/scripts/mail/mail_handler.php
 bugs: |/srv/phab/phabricator/scripts/mail/mail_handler.php
+
+# reception123
+reception123: utilizator.receptie123@gmail.com
 
 # revi
 revi: revi@revi.wiki,revi@pobox.com
