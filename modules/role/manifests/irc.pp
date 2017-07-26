@@ -22,4 +22,8 @@ class role::irc {
         port  => '5070',
         from  => '185.52.2.113',
     }
+
+    motd::role { '::irc':
+        description => 'IRC bots server',
+    }
 }
