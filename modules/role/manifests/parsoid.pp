@@ -19,6 +19,12 @@ class role::parsoid {
         port  => 8142,
         from  => '185.52.1.76',
     }
+	
+    ufw::allow { 'parsoid test1':
+        proto => 'tcp',
+        port  => 443,
+        from  => '185.52.2.243',
+    }
 
     motd::role { 'role::parsoid':
         description => 'parsoid server',

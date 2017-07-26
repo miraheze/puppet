@@ -9,8 +9,12 @@ class role::staticserver {
         from => '185.52.1.75',
     }
 
-    ufw::allow { 'nfs annoyamce (mw2)':
+    ufw::allow { 'nfs annoyance (mw2)':
         from => '185.52.2.113',
+    }
+	
+    ufw::allow { 'nfs annoyance (test1)':
+        from => '185.52.2.243',
     }
 
     motd::role { 'role::staticserver':
