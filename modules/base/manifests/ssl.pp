@@ -2,7 +2,7 @@
 class base::ssl {
     file { 'authority certificates':
         path    => '/etc/ssl/certs',
-        source  => 'puppet:///modules/ssl/ca/',
+        source  => 'puppet:///ssl/ca/',
         recurse => 'remote',
     }
 }
