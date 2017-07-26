@@ -3,10 +3,6 @@ class phabricator {
     include ::apache::mod::ssl
     include ::apache::mod::php5
 
-    motd::role { 'role::phabricator':
-        description => 'Phabricator host',
-    }
-
     $password = hiera('passwords::irc::mirahezebots')
 
     package { 'php5-apcu':
