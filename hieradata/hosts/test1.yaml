@@ -1,0 +1,4 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+contactgroups: 'ops,mediawiki'

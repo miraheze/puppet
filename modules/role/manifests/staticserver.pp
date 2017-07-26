@@ -12,6 +12,10 @@ class role::staticserver {
     ufw::allow { 'nfs annoyamce (mw2)':
         from => '185.52.2.113',
     }
+	
+	ufw::allow { 'nfs annoyamce (test1)':
+        from => '185.52.2.243',
+    }
 
     motd::role { 'role::staticserver':
         description => 'static hosting server',
