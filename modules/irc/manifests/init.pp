@@ -9,8 +9,4 @@ class irc {
     package { $packages:
         ensure => present,
     }
-
-    motd::role { '::irc':
-        description => 'IRC bots server',
-    }
 }
