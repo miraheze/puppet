@@ -69,4 +69,6 @@ class mariadb::config(
         description   => 'MySQL',
         check_command => 'check_mysql!icinga',
     }
+    
+    ssl::cert { 'wildcard.miraheze.org': }
 }
