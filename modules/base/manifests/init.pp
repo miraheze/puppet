@@ -24,4 +24,6 @@ class base {
         source => 'puppet:///modules/base/environment/gen_fingerprints',
         mode   => '0555',
     }
+    
+    class { 'apt::backports': }
 }
