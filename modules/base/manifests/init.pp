@@ -1,13 +1,14 @@
 # class: base
 class base {
+    include apt
     include base::packages
     include base::puppet
+    include base::rsyslog
+    include base::ssl
     include base::timezone
     include base::upgrades
-    include base::monitoring
-    include base::rsyslog
     include base::ufw
-    include base::ssl
+    include base::monitoring
     include ssh
     include users
 
