@@ -104,12 +104,16 @@ phabricator.uninstalled-applications:
   PhabricatorFactApplication: true # we don't have fact sources to graph
   PhabricatorFundApplication: true # we don't need to fund single projects
   PhabricatorHarbormasterApplication: true # we don't need local CI / we don't have resources
+  PhabricatorLegalpadApplication: true # we are not a law firm
+  PhabricatorMacroApplication: true # we don't need a macro databases
   PhabricatorMultimeterApplication: true # performance sampling we don't have
   PhabricatorNuanceApplication: true # we're not a call center
   PhabricatorOAuthServerApplication: true # we're running MediaWiki as an OAuth
   PhabricatorOwnersApplication: true # we don't manage source on Phab
   PhabricatorPackagesApplication: true # no packages to host
+  PhabricatorPhameApplication: true # we don't have a plan to have a blog, otherwise should be staffonly
   PhabricatorPhluxApplication: true # puppet has hiera
+  PhabricatorPholioApplication: true # we are not designers
   PhabricatorPhortuneApplication: true # we don't need billing stuff
   PhabricatorPhragmentApplication: true # puppet has hiera
   PhabricatorPhrequentApplication: true # SPF spends all of his time well, we don't need to track it
