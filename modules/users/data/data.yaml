@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [corey, imbophil, labster, reception, revi]
+    members: [imbophil, labster, reception, revi]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php5-fpm *',
@@ -77,11 +77,11 @@ users:
     realname: Vorticity
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC94hzJuJkiXTa1cbGvbTbnk1ErBR9FgdaVSMia04Qu4+DBquxEsJ+yqvyZxhBXYbsJUNPgDiRASPhX8ktdhWB2sOki+9Dyqu3JkGSijtUt4QRu8z4V3H+wxjkilxMkeSgw6/LjS3kIMiq22hUrgMkO9H0ZvB3NrS9MdxNZWtX8N6UE3weTFgLPqvW3ZozIpOnPKgpk7hruIk7jE0szbnRhrKFXa8KpBI93Kl3PV7zmPtyn9mhhGxxnlaAWwHladyzC475KoOyHRzYh92g4JqXabUypvV+9tHtjAX6Vzqsnm8Zc8WvPp4wFZm2XuF61bfKztb/MH9ugEo7lQZGuFq63R75ykR5Py/SwjKQsIZ+nluES+Ar9LsJMmzvTCOsmY5aOAS7PhYALpNzLHxeDNJYbE+++3eGeqNsSKaowCV+3FrOUUQrhLP86R2HFYQmsasauJNhW6PYsH5G36hickiCvH3v3gxZewZReE3Ryn1/Przd8CmQt6Y1B0SJKxGpFtfVFIDTpdnBNeWeI69+6T9FF0JD3R0hTvxne3v7tNDt7x+n1tp5ceB31B03eyd5HfYWZ8BwK3PUBffzwzL8tyuaIk9vRqFqAQNgb2z9yJfgT02qoB/ob1GPfPnOAnbkUofrRJnmUiO5SkZNw5FTFUVxrJeyOTCbTpWJNGpzTCnq+Rw== labster@miraheze.org]
   corey:
-    ensure: present
+    ensure: absent
     uid: 1006
     name: corey
     realname: Corey Chambers
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCzjQv+DmAiDHqEq62FllDM1qGiauU8299h6uL2dajmuad5tmbfz/nF9vN9X7dnyKjr1p/6B5NbqH++ZlYK9+3+13pUMFM4KRUeTaoQwce5vI3vSWFxAQob1SSaDzdIdO2Zc9KQjDP10ImBU/7IvOYsyrYzT9lc4plbdoTCA8zyoPeOt2iohkQTi2Ut5BVrzDsHwZUIRdlwAl5h9pRSQ94+g48byHoXdoeVnxBTLVOWMrBwHMjzE6XNcCz84ss2mBBA5y0u/GBspnEuJwU2rr+AgxATeDmfKG2g4rorTXiaxgt+nz/mwUTz9kuU8z19WRaPH81aGKxsbu9YEbGJonhEZLVmky1OL+i7Q3wIWdOiyfmvPBvTB+JgCGDkilbcdtSE1yCZQ32UI0+FI+bgXN/zqcoxeWB1CTyGRTmGVUEiJoa9Edzzcr8Suj2EiofbWO/iz6Ka3oH5rQV2pjiTMBJWqgn+IbJeAX3vXhBoELW8/YSyK+fF/D2Zr2AvPuKbNTgiNiOBgc9VKkgDKZdbQROlI+RBW9ydaVeoNVdpW7EGmU+AZcfN8QLwo32Pgb2riwCWJem9OS5b6aRLbHIJEVbM0WG/reMZ193LfjqTz67mgLksCmpe1qmCGYTu4sqm7F0iHRmSjGiOBQGQ/cxTBzm1laTYORtxOD/Evrbg9ErTnw== miraheze@lyoko]
+    ssh_keys: []
   reception:
     ensure: present
     uid: 1007
