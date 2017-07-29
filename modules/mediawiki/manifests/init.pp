@@ -53,7 +53,7 @@ class mediawiki {
         ensure => present,
     }
 
-    package { [ 'mediawiki-math-texvc', 'ocaml' ]:
+    package { [ 'texvc', 'ocaml' ]:
         ensure          => present,
         install_options => ['--no-install-recommends'],
     }
