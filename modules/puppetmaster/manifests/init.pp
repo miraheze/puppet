@@ -73,7 +73,6 @@ class puppetmaster(
 
     file { '/home/puppet-users':
         ensure  => directory,
-        recurse => true,
         owner   => 'root',
         group   => 'puppet-users',
         mode    => '0770',
