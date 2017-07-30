@@ -30,9 +30,6 @@ cvt: stewards,utilizator.receptie123@gmail.com,revi
 # finances
 donate: bslaabs@gmail.com,southparkfan
 
-# southparkfan
-southparkfan: southparkfan223@hotmail.com
-
 # apt changes list (temp. avoid upstream reputation issues with Hotmail)
 apt-list: ndkilla
 
@@ -42,5 +39,10 @@ csr: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 phabricator: |/srv/phab/phabricator/scripts/mail/mail_handler.php
 bugs: |/srv/phab/phabricator/scripts/mail/mail_handler.php
 
-# revi
+# Staff aliases
+imbophil: imbophilmh@gmail.com
+labster: bslaabs@gmail.com
+reception123: utilizator.receptie123@gmail.com
 revi: revi@revi.wiki,revi@pobox.com
+southparkfan: southparkfan223@hotmail.com
+
