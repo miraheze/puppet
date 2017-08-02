@@ -16,7 +16,13 @@ class mediawiki(
         include mediawiki::dumps
     }
 
-    file { [ '/srv/mediawiki', '/srv/mediawiki/dblist', '/srv/mediawiki/cdb-config', '/var/log/mediawiki' ]:
+    file { [ 
+        '/srv/mediawiki', 
+        '/srv/mediawiki/dblist', 
+        '/srv/mediawiki/cdb-config', 
+        '/var/log/mediawiki', 
+        '/var/log/mediawiki/debuglogs' 
+    ]:
         ensure => 'directory',
         owner  => 'www-data',
         group  => 'www-data',
