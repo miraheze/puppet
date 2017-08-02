@@ -1,7 +1,10 @@
 # role: mediawiki
 class role::mediawiki {
-    include ::mediawiki
     include nfs::client
+
+    class { 'mediawiki':
+        branch  => hiera('mediawiki::branch'),
+    }
 
     ufw::allow { 'http port tcp':
         proto => 'tcp',
