@@ -84,23 +84,6 @@ define git::clone(
                 }
             }
 
-            if $branch {
-                exec { "git_checkout_${title}":
-                    cwd         => $directory,
-                    command     => "${git} checkout ${branch}",
-                    provider    => shell,
-                    environment => $env,
-                    unless      => "${git} rev-parse --abbrev-ref HEAD | grep ${branch}",
-                    user        => $owner,
-                    group       => $group,
-                    umask       => $umask,
-                    path        => '/usr/bin:/bin',
-                    require     => Exec["git_clone_${title}"],
-                    before      => Exec["git_pull_${title}"],
-                }
-            }
-
-
             # pull if $ensure == latest and if there are changes to merge in.
             if $ensure == 'latest' {
                 exec { "git_pull_${title}":

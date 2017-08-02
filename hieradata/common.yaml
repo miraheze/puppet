@@ -3,4 +3,3 @@ mailserver: false
 arcanist: false
 mwdumps: false
 puppetmaster: false
-mediawiki::branch: 'REL1_28'

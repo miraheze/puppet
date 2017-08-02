@@ -2,4 +2,3 @@ users::groups:
   - mediawiki-admins
   - mediawiki-roots
 contactgroups: 'ops,mediawiki'
-mediawiki::branch: 'REL1_29'
