@@ -83,7 +83,7 @@ class mediawiki {
         ensure             => 'latest',
         directory          => '/srv/mediawiki/w',
         origin             => 'https://github.com/miraheze/mediawiki.git',
-        branch             => 'REL1_28',
+        branch             => 'REL1_29',
         timeout            => '550',
         recurse_submodules => true,
         require            => File['/srv/mediawiki'],
@@ -102,7 +102,7 @@ class mediawiki {
         ensure    => 'latest',
         directory => '/srv/mediawiki/w/vendor',
         origin    => 'https://github.com/wikimedia/mediawiki-vendor.git',
-        branch    => 'REL1_28',
+        branch    => 'REL1_29',
         require   => Git::Clone['MediaWiki core'],
     }
 
