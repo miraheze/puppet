@@ -5,3 +5,4 @@ jobrunner: false
 arcanist: true
 mwdumps: true
 contactgroups: 'ops,mediawiki'
+mediawiki::branch: 'REL1_28'
