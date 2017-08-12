@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [ndkilla, southparkfan]
+    members: [johnflewis, ndkilla, southparkfan]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -37,11 +37,11 @@ groups:
 
 users:
   johnflewis:
-    ensure: absent
+    ensure: present
     uid: 1000
     name: johnflewis
     realname: John Lewis
-    ssh_keys: []
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCuFmrUcVFjRS6NIwIk7wFdr5AkCJagPVqM3p5+7xA05f8vy8kzp26+YntzRSLRNRfzV0PWnGrFn4JZdY9mlioxO4SyXHRYOXAmChYB+VPn/e9/u95kLjNaD8oZjSF1UdsJvC1dgaf+0reoXcWaeDPWC63RSl41OmipjmHaf4NpVvDCL/U6Fmd4KXzgj35Mr2W/JOpVJVE/Z3yMTV8AjY8x/EZOOcCcKGA1j29hDOXRccD1/LUs2aXjr1o/x2jbRp4XADsdV7NrO7OyLR/H7i81nYit7Y2h0by3SV6dkFDmoK2g4StktWBzor6DT/5cgW/0WRFrdka+gl/m5rCZDZFydNW87St+zeE6E3uYb0xl1OQNiHvJzOFXIekQ7MHJu4+aEv1/vlfADhvXpxwePMpuBWaJfujddkx5hlEt53AZhhMEuak+d/7uScw3Pyv+1NrRLgkYPupBV3JrX8xuxGKib+wANFDFpuLa6X31i2MBEVuW7Dulhmg6TQWPItaj93uQIhkvlrgKP56jKaCPf5WybcypIvuCjqYwRVpcVA/MBDzy++YpVKVKbD3cQJa2iONbR8VnfV6YgH6Y71fXaf96OREc71XE4edDmbiAbIOQoKI3TBRQnRzX+Fn5rMmQu1xK9KD+rT8dLHIPlpUnp42GDd7TNc/g72tvEeHz/A7Rtw== johnflewis@miraheze]
   southparkfan:
     ensure: present
     uid: 1001
