@@ -106,14 +106,6 @@ class mediawiki(
         require => Git::Clone['MediaWiki core'],
     }
 
-    git::clone { 'MediaWiki vendor':
-        ensure    => 'latest',
-        directory => '/srv/mediawiki/w/vendor',
-        origin    => 'https://github.com/wikimedia/mediawiki-vendor.git',
-        branch    => $branch,
-        require   => Git::Clone['MediaWiki core'],
-    }
-
     # Ensure widgets template directory is read/writeable by webserver if mediawiki is cloned
     file { '/srv/mediawiki/w/extensions/Widgets/compiled_templates':
         ensure  => directory,
