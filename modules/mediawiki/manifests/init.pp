@@ -44,6 +44,7 @@ class mediawiki(
     }
 
     $packages = [
+        'djvulibre-bin',
         'dvipng',
         'htmldoc',
         'imagemagick',
