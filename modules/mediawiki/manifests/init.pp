@@ -119,6 +119,8 @@ class mediawiki(
     file { '/srv/mediawiki/w/LocalSettings.php':
         ensure  => 'link',
         target  => '/srv/mediawiki/config/LocalSettings.php',
+        owner   => 'www-data',
+        group   => 'www-data',
         require => Git::Clone['MediaWiki config'],
     }
 
