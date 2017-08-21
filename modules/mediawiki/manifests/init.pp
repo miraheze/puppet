@@ -123,6 +123,13 @@ class mediawiki(
         group   => 'www-data',
         require => Git::Clone['MediaWiki config'],
     }
+    
+    file { '/var/log/php5-fpm.log':
+        ensure  => 'present',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0755',
+    }
 
     $wikiadmin_password   = hiera('passwords::db::wikiadmin')
     $mediawiki_password   = hiera('passwords::db::mediawiki')
