@@ -93,18 +93,12 @@ class mediawiki(
         directory          => '/srv/mediawiki/w',
         origin             => 'https://github.com/miraheze/mediawiki.git',
         branch             => $branch,
+        owner              => 'www-data',
+        group              => 'www-data',
+        mode               => '0755',
         timeout            => '550',
         recurse_submodules => true,
         require            => File['/srv/mediawiki'],
-    }
-
-    # FIXME: Ugly hack, *everything* in /srv/mediawiki/w should be owned by www-data,
-    # but recursive chown in git::clone causes puppet to OOM.
-    file { '/srv/mediawiki/w/cache':
-        ensure  => directory,
-        owner   => 'www-data',
-        group   => 'www-data',
-        require => Git::Clone['MediaWiki core'],
     }
 
     # Ensure widgets template directory is read/writeable by webserver if mediawiki is cloned
