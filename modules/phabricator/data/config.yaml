@@ -92,6 +92,7 @@ maniphest.statuses:
     name: 'Stalled'
     name.full: 'Open, Stalled'
     closed: false
+    transaction.icon: 'fa-spinner'
 
 # Disable some Phabricator applications
 phabricator.uninstalled-applications:
