@@ -55,6 +55,7 @@ class mediawiki(
         'oggvideotools',
         'libav-tools',
         'libvips-tools',
+        'lilypond',
         'poppler-utils',
     ]
 
