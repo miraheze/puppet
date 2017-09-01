@@ -48,6 +48,8 @@ class mediawiki(
         'dvipng',
         'htmldoc',
         'imagemagick',
+        'netpbm',
+        'netpbm-procs',
         'ploticus',
         'ttf-freefont',
         'ffmpeg2theora',
