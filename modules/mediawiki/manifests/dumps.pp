@@ -108,7 +108,7 @@ class mediawiki::dumps {
 
     cron { 'Export scruffywiki xml dump weekly':
         ensure   => present,
-        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki scruffywiki --logs --full > /home/reception/dumps/scruffywiki.xml',
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki scruffywiki --logs --full > /mnt/mediawiki-static/dumps/scruffywiki.xml',
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
