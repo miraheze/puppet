@@ -165,4 +165,14 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['1', '8', '15', '22', '29'],
     }
-}
+
+    cron { 'Export worlduniversityandschool xml dump monthly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki worlduniversityandschoolwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/worlduniversityandschool.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => '1'
+    }
+ }
