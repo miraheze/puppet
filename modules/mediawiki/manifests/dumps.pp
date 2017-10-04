@@ -125,16 +125,6 @@ class mediawiki::dumps {
         month    => '*',
         monthday => ['1', '8', '15', '22', '29'],
     }
-    
-    cron { 'Export scruffywiki images weekly':
-        ensure   => present,
-        command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/scruffywiki.zip /mnt/mediawiki-static/scruffywiki/',
-        user     => 'www-data',
-        minute   => '0',
-        hour     => '0',
-        month    => '*',
-        monthday => ['1', '8', '15', '22', '29'],
-    }
 
     cron { 'Export speleowiki xml dump monthly':
         ensure   => present,
