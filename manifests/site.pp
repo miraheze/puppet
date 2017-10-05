@@ -15,7 +15,7 @@ node /^cp[24]\.miraheze\.org$/ {
     include role::varnish
 }
 
-node /^nfs[1]\.miraheze\.org$/ {
+node 'nfs1.miraheze.org' {
     include standard
     include role::staticserver
     include bacula::client
