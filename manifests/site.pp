@@ -11,7 +11,7 @@ node 'bacula1.miraheze.org' {
 }
 
 node /^cp[24]\.miraheze\.org$/ {
-	include standard
+    include standard
     include role::varnish
 }
 
