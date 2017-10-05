@@ -1,4 +1,4 @@
 users::groups:
   - mediawiki-admins
+jobrunner: true
 contactgroups: 'ops,mediawiki'
-mediawiki::branch: 'REL1_29'
