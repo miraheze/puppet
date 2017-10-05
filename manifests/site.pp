@@ -10,14 +10,15 @@ node 'bacula1.miraheze.org' {
     include bacula::director
 }
 
-node /^cp[124]\.miraheze\.org$/ {
-    include standard
+node /^cp[24]\.miraheze\.org$/ {
+	include standard
     include role::varnish
+}
 
-    if $::hostname == 'cp1' {
-        include role::staticserver
-        include bacula::client
-    }
+node /^nfs[1]\.miraheze\.org$/ {
+    include standard
+    include role::staticserver
+    include bacula::client
 }
 
 node /^db[23].miraheze.org$/ {
