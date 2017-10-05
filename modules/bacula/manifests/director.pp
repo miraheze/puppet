@@ -24,41 +24,41 @@ class bacula::director {
     file { ['/bacula', '/bacula/backup', '/bacula/restore']:
         ensure => directory,
         owner  => 'bacula',
-        require => Package['bacula-director'],
+        require => Package['bacula-server'],
     }
 
     file { '/etc/bacula/bacula-dir.conf':
         ensure  => present,
         content => template('bacula/director/bacula-dir.conf'),
-        require => Package['bacula-director'],
+        require => Package['bacula-server'],
         notify  => Service['bacula-director'],
     }
 
     file { '/etc/bacula/bacula-fd.conf':
         ensure  => present,
         content => template('bacula/director/bacula-fd.conf'),
-        require => Package['bacula-director'],
+        require => Package['bacula-server'],
         notify  => Service['bacula-fd'],
     }
 
     file { '/etc/bacula/bacula-sd.conf':
         ensure  => present,
         content => template('bacula/director/bacula-sd.conf'),
-        require => Package['bacula-director'],
+        require => Package['bacula-server'],
         notify  => Service['bacula-sd'],
     }
 
     file { '/etc/bacula/bconsole.conf':
         ensure  => present,
         content => template('bacula/director/bconsole.conf'),
-        require => Package['bacula-director'],
+        require => Package['bacula-server'],
         notify  => Service['bacula-director'],
     }
 
     file { '/etc/bacula/tray-monitor.conf':
         ensure  => present,
         content => template('bacula/director/tray-monitor.conf'),
-        require => Package['bacula-director'],
+        require => Package['bacula-server'],
         notify  => Service['bacula-director'],
     }
 
