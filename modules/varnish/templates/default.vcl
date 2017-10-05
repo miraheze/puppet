@@ -33,7 +33,7 @@ probe mwhealth {
 backend mw1 {
 	.host = "127.0.0.1";
 	.port = "8080";
-	.probe = mwhealth;
+#	.probe = mwhealth;
 }
 
 backend mw2 {
@@ -44,7 +44,7 @@ backend mw2 {
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(mw1);
+#	mediawiki.add_backend(mw1);
 	mediawiki.add_backend(mw2);
 }
 
