@@ -11,7 +11,6 @@ define icinga::host (
             host_name             => $title,
             address               => $ip,
             contact_groups        => $contacts,
-            target                => '/etc/icinga/config/puppet_hosts.cfg',
         },
     }
 

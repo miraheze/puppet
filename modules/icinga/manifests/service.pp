@@ -31,7 +31,6 @@ define icinga::service (
             is_volatile            => 0,
             check_freshness        => 0,
             event_handler          => $event_handler,
-            target                 => '/etc/icinga/config/puppet_services.cfg',
             mode                   => '0444',
             use                    => 'generic-service',
         },
