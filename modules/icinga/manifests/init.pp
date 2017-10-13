@@ -223,9 +223,4 @@ class icinga {
     # collect exported resources
     Nagios_host <<| |>> ~> Service['icinga']
     Nagios_service <<| |>> ~> Service['icinga']
-
-    # purge exported resources if needed
-    resources { 'nagios_host': purge => true, }
-    resources { 'nagios_service': purge => true, }
-
 }
