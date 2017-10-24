@@ -46,19 +46,19 @@ class mediawiki::dumps {
         monthday => ['1', '8', '15', '22', '29'],
     }
 
-    cron { 'Export icmscholarswiki xml dump every two weeks':
+    cron { 'Export jokowiki xml dump montly ':
         ensure   => present,
-        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki icmscholarswiki --logs --full > /home/reception/dumps/icmscholarswiki.xml',
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki jokowiki --logs --full > /mnt/mediawiki-static/dumps/jokowiki.xml',
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
         month    => '*',
-        monthday => [ '15', '30'],
+        monthday => '1',
     }
-
-    cron { 'Export jokowiki xml dump montly ':
+    
+    cron { 'Export lexique xml dump monthly':
         ensure   => present,
-        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki jokowiki --logs --full > /mnt/mediawiki-static/dumps/jokowiki.xml',
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki lexiquewiki --logs --full --uploads > /mnt/mediawiki-static/dumps/lexiquewiki.xml',
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
