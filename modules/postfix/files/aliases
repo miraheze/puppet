@@ -22,7 +22,7 @@ ops: operations
 dmarc: ndkilla
 
 # destination aliases
-operations: southparkfan,ndkilla
+operations: southparkfan,ndkilla,utilizator.receptie123@gmail.com
 stewards: southparkfan,ndkilla,orduinvoidwalker@gmail.com
 staff: southparkfan,ndkilla,bslaabs@gmail.com,utilizator.receptie123@gmail.com,imbophilmh@gmail.com,revi
 cvt: stewards,utilizator.receptie123@gmail.com,revi
