@@ -2,12 +2,12 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [ndkilla, southparkfan]
+    members: [ndkilla, reception, southparkfan]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [imbophil, labster, reception, revi]
+    members: [imbophil, labster, revi]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php5-fpm *',
@@ -32,7 +32,7 @@ groups:
   puppet-users:
     gid: 2004
     descriptions: limited access on puppet1 to add SSL private keys
-    members: [reception]
+    members: []
     privileges: []                 
 
 users:
