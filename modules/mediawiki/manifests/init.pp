@@ -191,7 +191,16 @@ class mediawiki(
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
-
+    exec { 'ExtensionMessageFiles':
+        command     => 'php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php',
+        creates     => '/srv/mediawiki/config/ExtensionMessageFiles.php',
+        cwd         => '/srv/mediawiki/config',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/config',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+    
     icinga::service { 'mediawiki_rendering':
         description   => 'MediaWiki Rendering',
         check_command => 'check_mediawiki!meta.miraheze.org',
