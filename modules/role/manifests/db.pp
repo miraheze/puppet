@@ -41,8 +41,8 @@ class role::db {
     }
 	
     ufw:allow { 'mysql port mw3':
-        proto => 'tcp'
-        port => '3306'
+        proto => 'tcp',
+        port => '3306',
         from => '81.4.121.113',
     }
 
