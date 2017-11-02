@@ -42,10 +42,17 @@ backend mw2 {
 	.probe = mwhealth;
 }
 
+backend mw3 {
+	.host = "127.0.0.1";
+	.port = "8082";
+	.probe = mwhealth;
+}
+
 sub vcl_init {
 	new mediawiki = directors.round_robin();
 	mediawiki.add_backend(mw1);
 	mediawiki.add_backend(mw2);
+	mediawiki.add_backend(mw3);
 }
 
 
@@ -53,6 +60,7 @@ acl purge {
 	"localhost";
 	"185.52.1.75";
 	"185.52.2.113";
+	"81.4.121.113";
 }
 
 sub stash_cookie {
