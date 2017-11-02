@@ -13,6 +13,10 @@ class role::staticserver {
         from => '185.52.2.113',
     }
 	
+    ufw::allow { 'nfs annoyance (mw3)':
+        from => '81.4.121.113',
+    }
+
     ufw::allow { 'nfs annoyance (test1)':
         from => '185.52.2.243',
     }
