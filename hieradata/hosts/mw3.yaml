@@ -1,4 +1,4 @@
 users::groups:
   - mediawiki-admins
-jobrunner: true
+jobrunner: false
 contactgroups: 'ops,mediawiki'
