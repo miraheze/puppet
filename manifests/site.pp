@@ -44,7 +44,7 @@ node 'misc2.miraheze.org' {
     include role::piwik
 }
 
-node /^mw[12]\.miraheze\.org$/ {
+node /^mw[123]\.miraheze\.org$/ {
     include standard
     include role::mediawiki
 
