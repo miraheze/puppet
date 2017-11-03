@@ -57,6 +57,7 @@ class mediawiki(
         'libvips-tools',
         'lilypond',
         'poppler-utils',
+        'python-pip',
     ]
 
     package { $packages:
