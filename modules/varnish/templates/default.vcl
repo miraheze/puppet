@@ -18,6 +18,7 @@ import std;
 probe mwhealth {
 	.request = "GET /wiki/Miraheze HTTP/1.1"
 		"Host: meta.miraheze.org"
+		"User-Agent: Varnish healthcheck"
 		"Connection: close";
 	# Check each 10s
 	.interval = 10s;
