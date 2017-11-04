@@ -31,6 +31,18 @@ probe mwhealth {
 	.expected_response = 200;
 }
 
+probe mwtest {
+	.request = "GET / HTTP/1.1"
+		"Host: meta.miraheze.org"
+		"User-Agent: Varnish healthcheck"
+	"Connection: close";
+	.interval = 5s;
+	.timeout = 3s;
+	.window = 5;
+	.threshold = 4;
+	.expected_response = 301;
+}
+
 backend mw1 {
 	.host = "127.0.0.1";
 	.port = "8080";
@@ -47,6 +59,12 @@ backend mw3 {
 	.host = "127.0.0.1";
 	.port = "8082";
 	.probe = mwhealth;
+}
+
+backend mw2test {
+	.host = "185.52.2.113";
+	.port = "80";
+	.probe = mwtest;
 }
 
 sub vcl_init {
@@ -160,6 +178,9 @@ sub vcl_recv {
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1;
 		return (pass);
+	} elsif (req.http.X-Miraheze-Debug == "2"
+		|| req.url ~ "^/mw2nostunneltest$") {
+		set req.backend_hint = mw2test;
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
