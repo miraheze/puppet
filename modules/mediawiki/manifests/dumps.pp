@@ -76,6 +76,16 @@ class mediawiki::dumps {
         monthday => ['1', '8', '15', '22', '29'],
     }
     
+    cron { 'Export mussmanwissenwiki xml dump biweekly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki mussmanwissenwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/mussmanwissenwiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => ['15', '30'],
+    }
+    
     cron { 'Export nenawikiwiki xml dump weekly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki nenawikiwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/nenawikiwiki.xml',
