@@ -10,6 +10,9 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX
 GRANT SELECT, INSERT, UPDATE, DELETE
     ON `centralauth`.* TO 'mediawiki'@'%';
 
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX
+    ON `cargodb`.* TO 'mediawiki'@'%';
+
 -- Grants for 'wikiadmin'@''
 
 GRANT CREATE, PROCESS
