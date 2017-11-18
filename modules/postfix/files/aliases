@@ -22,10 +22,11 @@ ops: operations
 dmarc: ndkilla
 
 # destination aliases
-operations: southparkfan,ndkilla,utilizator.receptie123@gmail.com
+operations: southparkfan,ndkilla,reception
 stewards: southparkfan,ndkilla,orduinvoidwalker@gmail.com
-staff: southparkfan,ndkilla,bslaabs@gmail.com,utilizator.receptie123@gmail.com,imbophilmh@gmail.com,revi
-cvt: stewards,utilizator.receptie123@gmail.com,revi
+staff: southparkfan,ndkilla,bslaabs@gmail.com,reception,imbophilmh@gmail.com,revi
+cvt: stewards,reception,revi
+conduct: alvaromolinacl@gmail.com,diarmuidsmithy@gmail.com,reception,revi,orduinvoidwalker@gmail.com
 
 # finances
 donate: bslaabs@gmail.com,southparkfan
