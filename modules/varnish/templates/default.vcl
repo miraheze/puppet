@@ -317,7 +317,7 @@ sub vcl_backend_error {
 				<p style="font-size: 14px; padding-top: 0.5em;">
 					Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" (Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
 				</p>
-              				<p>We apologize for this inconvinience. The system administrators should be investigating it, and this wiki should be back up soon. </p>
+              				<p>We apologize for this inconvenience. The system administrators should be investigating it, and this wiki should be back up soon. </p>
 			</div>
 			<div style="float: right; padding-right: 1em;">
               <a class="twitter-timeline" data-width="500" data-height="350" text-align: center href="https://twitter.com/miraheze?ref_src=twsrc%5Etfw">Tweets by miraheze</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
