@@ -2,3 +2,4 @@ users::groups:
   - mediawiki-admins
 jobrunner: false
 contactgroups: 'ops,mediawiki'
+acme: true

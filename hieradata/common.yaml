@@ -4,3 +4,4 @@ arcanist: false
 mwdumps: false
 puppetmaster: false
 mediawiki::branch: 'REL1_29'
+acme: false

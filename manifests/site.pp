@@ -42,10 +42,6 @@ node 'misc2.miraheze.org' {
 node /^mw[123]\.miraheze\.org$/ {
     include base
     include role::mediawiki
-
-    if $::hostname == 'mw1' {
-        include acme
-    }
 }
 
 node 'ns1.miraheze.org' {
