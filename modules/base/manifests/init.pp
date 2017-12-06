@@ -12,6 +12,10 @@ class base {
     include ssh
     include users
 
+    if hiera('acme') {
+        include acme
+    }
+
     if hiera('arcanist') {
         include base::arcanist
     }
