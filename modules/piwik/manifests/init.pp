@@ -19,7 +19,7 @@ class piwik {
     git::clone { 'piwik':
         directory => '/srv/piwik',
         origin    => 'https://github.com/piwik/piwik.git',
-        branch    => '3.2.1', # Current stable
+        revision    => '3.2.1', # Current stable
         owner     => 'www-data',
         group     => 'www-data',
     }
