@@ -20,6 +20,7 @@ class piwik {
         directory => '/srv/piwik',
         origin    => 'https://github.com/piwik/piwik.git',
         branch    => '3.2.1', # Current stable
+        recurse_submodules => true,
         owner     => 'www-data',
         group     => 'www-data',
     }
