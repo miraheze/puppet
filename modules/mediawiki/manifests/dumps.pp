@@ -65,6 +65,16 @@ class mediawiki::dumps {
         month    => '*',
         monthday => '1',
     }
+    
+    cron { 'Export madgendersciencewiki xml dump biweekly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki madgendersciencewiki --logs --full --uploads > /mnt/mediawiki-static/dumps/madgendersciencewiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => ['15', '30'],
+    }
 
     cron { 'Export mikrodevwiki xml dump weekly':
         ensure   => present,
