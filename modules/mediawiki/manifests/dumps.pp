@@ -196,9 +196,19 @@ class mediawiki::dumps {
         monthday => ['1', '8', '15', '22', '29'],
     }
 
-    cron { 'Export sterbalfamilyrecipeswiki xml dump monthly':
+    cron { 'Export sterbalfamilyrecipeswiki xml dump weekly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalfamilyrecipeswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalfamilyrecipeswiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => ['1', '8', '15', '22', '29'],
+    }
+    
+    cron { 'Export sterbalfamilyrecipeswiki images weekly':
+        ensure   => present,
+        command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/sterbalfamilyrecipeswiki.zip /mnt/mediawiki-static/sterbalfamilyrecipeswiki/',
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
