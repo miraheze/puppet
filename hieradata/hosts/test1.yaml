@@ -2,4 +2,7 @@ users::groups:
   - mediawiki-admins
 jobrunner: false
 contactgroups: 'ops,mediawiki'
-mediawiki::branch: 'REL1_30'
+puppetmaster: true
+puppetmaster::dbserver: db2.miraheze.org
+puppetmaster::dbuser: puppet
+puppetmaster::dbname: puppet
