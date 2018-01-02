@@ -1,5 +1,5 @@
 users::groups:
-  - mediawiki-admins
+  - puppet-users
 jobrunner: false
 contactgroups: 'ops,mediawiki'
 puppetmaster: true
