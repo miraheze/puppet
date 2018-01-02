@@ -4,6 +4,9 @@ class puppetmaster(
     $dbname     = undef,
     $dbuser     = undef,
   ) {
+
+    $puppetmaster_hostname = hiera('puppetmaster_hostname', 'puppet1.miraheze.org')
+
     $packages = [
         'libmysqld-dev',
         'puppetmaster',
