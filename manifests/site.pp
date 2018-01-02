@@ -61,7 +61,6 @@ node 'puppet1.miraheze.org' {
 }
 node 'test1.miraheze.org' {
     include base
-    include role::mediawiki
     include puppetmaster # Temporary for testing new Puppet version
 }
 
