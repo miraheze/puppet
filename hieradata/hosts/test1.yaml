@@ -1,4 +1,10 @@
 users::groups:
-  - mediawiki-admins
+  - puppet-users
 jobrunner: false
 contactgroups: 'ops,mediawiki'
+mediawiki::branch: 'REL1_30'
+puppetmaster_hostname: test1.miraheze.org
+puppetmaster: true
+puppetmaster::dbserver: db2.miraheze.org
+puppetmaster::dbuser: puppet
+puppetmaster::dbname: puppet
