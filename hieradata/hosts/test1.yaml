@@ -3,3 +3,4 @@ users::groups:
 jobrunner: false
 contactgroups: 'ops,mediawiki'
 mediawiki::branch: 'REL1_30'
+puppetmaster_hostname: test1.miraheze.org
