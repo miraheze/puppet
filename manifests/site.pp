@@ -61,7 +61,7 @@ node 'puppet1.miraheze.org' {
 }
 node 'test1.miraheze.org' {
     include base
-    include puppetmaster # Temporary for testing new Puppet version
+    include role::mediawiki
 }
 
 # ensures all servers have basic class if puppet runs

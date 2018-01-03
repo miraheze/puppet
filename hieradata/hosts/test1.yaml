@@ -1,8 +1,4 @@
 users::groups:
-  - puppet-users
+  - mediawiki-admins
 jobrunner: false
 contactgroups: 'ops,mediawiki'
-puppetmaster: true
-puppetmaster::dbserver: db2.miraheze.org
-puppetmaster::dbuser: puppet
-puppetmaster::dbname: puppet
