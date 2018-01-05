@@ -1,0 +1,6 @@
+users::groups:
+  - puppet-users
+puppetmaster: true
+puppetmaster::dbserver: db2.miraheze.org
+puppetmaster::dbuser: puppet
+puppetmaster::dbname: puppet
