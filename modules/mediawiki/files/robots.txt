@@ -1,7 +1,7 @@
 # Disallow API and special pages
 User-Agent: *
-Disallow: /w/api.php
-Disallow: /w/index.php?title=Special:
+Allow: /w/load.php?
+Disallow: /w/
 Disallow: /wiki/Special:
 
 # Throttle YandexBot
