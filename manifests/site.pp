@@ -59,9 +59,15 @@ node 'puppet1.miraheze.org' {
     include bacula::client
     include puppetmaster
 }
+
 node 'test1.miraheze.org' {
     include base
     include role::mediawiki
+}
+
+node 'test1puppetmaster.miraheze.org' {
+    include base
+    include puppetmaster # Temporary for testing new Puppet version
 }
 
 # ensures all servers have basic class if puppet runs
