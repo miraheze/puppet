@@ -4,3 +4,4 @@ puppetmaster: true
 puppetmaster::dbserver: db2.miraheze.org
 puppetmaster::dbuser: puppet
 puppetmaster::dbname: puppet
+puppetmaster::dbpassword: 'test'
