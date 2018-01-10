@@ -8,7 +8,7 @@ class puppetmaster(
     $puppetmaster_hostname = hiera('puppetmaster_hostname', 'puppet1.miraheze.org')
 
     $packages = [
-        'libmysqld-dev',
+        'libmariadbd-dev',
         'puppetmaster',
         'puppet-common',
         'puppetmaster-passenger',
@@ -43,42 +43,10 @@ class puppetmaster(
 
     }
 
-    file { '/etc/puppet/git':
-        ensure => directory,
-    }
-
-    file { '/etc/puppet/private':
-        ensure => directory,
-    }
-
-    service { 'puppetmaster':
-        ensure => stopped,
-    }
-
-    service { 'apache2':
-        ensure => running,
-    }
-
-    ufw::allow { 'puppetmaster':
-        proto => 'tcp',
-        port  => '8140',
-    }
-
-    file { '/etc/puppet/manifests':
-        ensure => link,
-        target => '/etc/puppet/git/manifests',
-    }
-
-    file { '/etc/puppet/modules':
-        ensure => link,
-        target => '/etc/puppet/git/modules',
-    }
-
-    file { '/home/puppet-users':
-        ensure  => directory,
-        owner   => 'root',
-        group   => 'puppet-users',
-        mode    => '0770',
+    git::clone { 'puppet':
+        ensure    => latest,
+        directory => '/etc/puppet/git',
+        origin    => 'https://github.com/miraheze/puppet.git',
     }
 
     # work around for new puppet agent
@@ -94,6 +62,91 @@ class puppetmaster(
         origin    => 'https://github.com/miraheze/ssl.git',
     }
 
+    file { '/etc/puppet/private':
+        ensure => directory,
+    }
+
+    file { '/etc/puppet/manifests':
+        ensure  => link,
+        target  => '/etc/puppet/git/manifests',
+        require => Git::clone['puppet'],
+    }
+
+    file { '/etc/puppet/modules':
+        ensure  => link,
+        target  => '/etc/puppet/git/modules',
+        require => Git::clone['puppet'],
+    }
+
+    file { '/etc/puppet/code':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0770',
+        require => Package['puppetmaster'],
+    }
+
+    file { '/etc/puppet/code/environments':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0770',
+        require => File['/etc/puppet/code'],
+    }
+
+    file { '/etc/puppet/code/environments/production':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0770',
+        require => File['/etc/puppet/code/environments'],
+    }
+
+    file { '/etc/puppet/code/environments/production/manifests':
+        ensure  => link,
+        target  => '/etc/puppet/manifests',
+        require => [File['/etc/puppet/code/environments/production'], File['/etc/puppet/manifests']],
+    }
+
+    file { '/etc/puppet/code/environments/production/modules':
+        ensure  => link,
+        target  => '/etc/puppet/modules',
+        require => [File['/etc/puppet/code/environments/production'], File['/etc/puppet/modules']],
+    }
+
+    file { '/etc/puppet/code/environments/production/ssl':
+        ensure  => link,
+        target  => '/etc/puppet/ssl',
+        require => [File['/etc/puppet/code/environments/production'], Git::clone['/etc/puppet/ssl']],
+    }
+
+    file { '/home/puppet-users':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'puppet-users',
+        mode    => '0770',
+    }
+
+    service { 'puppetmaster':
+        ensure => stopped,
+    }
+
+    service { 'apache2':
+        ensure => running,
+    }
+
+    ufw::allow { 'puppetmaster':
+        proto => 'tcp',
+        port  => '8140',
+    }
+
+    file { '/home/puppet-users':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'puppet-users',
+        mode    => '0770',
+    }
+
     cron { 'puppet-git':
         command => '/usr/bin/git -C /etc/puppet/git pull',
         user    => 'root',
@@ -107,6 +160,7 @@ class puppetmaster(
         hour    => '*',
         minute  => [ '9', '19', '29', '39', '49', '59' ],
     }
+
     cron { 'ssl-git':
         command => '/usr/bin/git -C /etc/puppet/ssl pull',
         user    => 'root',
