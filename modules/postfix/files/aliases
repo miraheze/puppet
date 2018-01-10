@@ -26,7 +26,7 @@ operations: southparkfan,ndkilla,reception123
 stewards: southparkfan,ndkilla,orduinvoidwalker@gmail.com
 staff: southparkfan,ndkilla,bslaabs@gmail.com,reception123,imbophilmh@gmail.com,revi
 cvt: stewards,reception123,revi
-conduct: alvaromolinacl@gmail.com,diarmuidsmithy@gmail.com,reception123,revi,orduinvoidwalker@gmail.com
+cocc: alvaromolinacl@gmail.com,diarmuidsmithy@gmail.com,reception123,revi,orduinvoidwalker@gmail.com
 wiki-abuse: ndkilla,reception123,revi
 
 # finances
@@ -40,6 +40,7 @@ security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 csr: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 phabricator: |/srv/phab/phabricator/scripts/mail/mail_handler.php
 bugs: |/srv/phab/phabricator/scripts/mail/mail_handler.php
+conduct: |/srv/phab/phabricator/scripts/mail/mail_handler.php,cocc
 
 # Staff aliases
 imbophil: imbophilmh@gmail.com
