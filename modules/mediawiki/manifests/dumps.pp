@@ -5,6 +5,17 @@ class mediawiki::dumps {
     package { 'zip':
         ensure => present,
     }
+    
+    
+    cron { 'Export aesbasewiki xml dump montly ':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki aesbasewiki --logs --full > /mnt/mediawiki-static/dumps/aesbasewiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => '1',
+    }
 
     cron { 'Export amaninfowiki xml dump monthly':
         ensure   => present,
