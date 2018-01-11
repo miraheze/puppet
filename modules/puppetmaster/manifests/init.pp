@@ -143,13 +143,6 @@ class puppetmaster(
         port  => '8140',
     }
 
-    file { '/home/puppet-users':
-        ensure  => directory,
-        owner   => 'root',
-        group   => 'puppet-users',
-        mode    => '0770',
-    }
-
     cron { 'puppet-git':
         command => '/usr/bin/git -C /etc/puppet/git pull',
         user    => 'root',
