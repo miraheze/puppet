@@ -120,7 +120,7 @@ class puppetmaster(
     file { '/etc/puppet/code/environments/production/ssl':
         ensure  => link,
         target  => '/etc/puppet/ssl',
-        require => [File['/etc/puppet/code/environments/production'], Git::clone['/etc/puppet/ssl']],
+        require => [File['/etc/puppet/code/environments/production'], Git::Clone['/etc/puppet/ssl']],
     }
 
     file { '/home/puppet-users':
