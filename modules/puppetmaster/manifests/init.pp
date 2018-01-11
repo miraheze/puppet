@@ -6,6 +6,7 @@ class puppetmaster(
   ) {
 
     $puppetmaster_hostname = hiera('puppetmaster_hostname', 'puppet1.miraheze.org')
+    $puppetmaster_version = hiera('puppetmaster_version', 3)
 
     $packages = [
         'libmariadbd-dev',
@@ -22,14 +23,14 @@ class puppetmaster(
 
     file { '/etc/puppet/puppet.conf':
         ensure  => present,
-        content => template('puppetmaster/puppet.conf'),
+        content => template("puppetmaster/puppet_${puppetmaster_version}.conf"),
         require => Package['puppetmaster'],
         notify  => Service['apache2'],
     }
 
     file { '/etc/puppet/auth.conf':
         ensure  => present,
-        source  => 'puppet:///modules/puppetmaster/auth.conf',
+        source  => "puppet:///modules/puppetmaster/auth_${puppetmaster_version}.conf",
         require => Package['puppetmaster'],
         notify  => Service['apache2'],
 
