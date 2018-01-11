@@ -47,6 +47,7 @@ class puppetmaster(
         ensure    => latest,
         directory => '/etc/puppet/git',
         origin    => 'https://github.com/miraheze/puppet.git',
+        require   => Package['puppetmaster'],
     }
 
     # work around for new puppet agent
@@ -54,12 +55,14 @@ class puppetmaster(
         ensure    => latest,
         directory => '/etc/puppet/parsoid',
         origin    => 'https://github.com/miraheze/parsoid.git',
+        require   => Package['puppetmaster'],
     }
 
     git::clone { 'ssl':
         ensure    => latest,
         directory => '/etc/puppet/ssl',
         origin    => 'https://github.com/miraheze/ssl.git',
+        require   => Package['puppetmaster'],
     }
 
     file { '/etc/puppet/private':
@@ -69,13 +72,13 @@ class puppetmaster(
     file { '/etc/puppet/manifests':
         ensure  => link,
         target  => '/etc/puppet/git/manifests',
-        require => Git::clone['puppet'],
+        require => Git::Clone['puppet'],
     }
 
     file { '/etc/puppet/modules':
         ensure  => link,
         target  => '/etc/puppet/git/modules',
-        require => Git::clone['puppet'],
+        require => Git::Clone['puppet'],
     }
 
     file { '/etc/puppet/code':
