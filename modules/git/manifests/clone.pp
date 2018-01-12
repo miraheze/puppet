@@ -12,8 +12,8 @@
 define git::clone(
     $directory,
     $origin=undef,
-    $branch=false,
-    $ssh=false,
+    $branch=undef,
+    $ssh=undef,
     $ensure='present',
     $owner='root',
     $group='root',
