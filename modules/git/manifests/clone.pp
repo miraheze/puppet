@@ -13,7 +13,7 @@ define git::clone(
     $directory,
     $origin=undef,
     $branch='',
-    $ssh='',
+    $ssh=false,
     $ensure='present',
     $owner='root',
     $group='root',
