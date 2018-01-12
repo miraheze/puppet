@@ -6,3 +6,4 @@ puppetmaster::dbserver: db2.miraheze.org
 puppetmaster::dbuser: puppet
 puppetmaster::dbname: puppet
 puppetmaster::dbpassword: 'test'
+puppetmaster_version: 4
