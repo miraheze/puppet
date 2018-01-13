@@ -39,7 +39,7 @@ class puppetmaster::puppetdb::client(
 
     class { 'puppetdb': }
 
-    class { 'puppetmaster::puppetdb::database':
+    class { 'puppetdb::database':
         require => Class['puppetdb'],
     }
 }
