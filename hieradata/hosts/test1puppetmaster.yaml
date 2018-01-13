@@ -1,0 +1,9 @@
+users::groups:
+  - puppet-users
+puppetmaster: true
+puppetmaster_hostname: test1puppetmaster.miraheze.org
+puppetmaster::dbserver: db2.miraheze.org
+puppetmaster::dbuser: puppet
+puppetmaster::dbname: puppet
+puppetmaster::dbpassword: 'test'
+puppetmaster_version: 4

@@ -12,8 +12,8 @@
 define git::clone(
     $directory,
     $origin=undef,
-    $branch='',
-    $ssh='',
+    $branch=undef,
+    $ssh=undef,
     $ensure='present',
     $owner='root',
     $group='root',
@@ -41,7 +41,7 @@ define git::clone(
                 default => '',
             }
             # if branch was specified
-            if $branch {
+            if $branch != undef {
                 $brancharg = "-b ${branch} "
             }
             # else don't checkout a non-default branch
@@ -84,7 +84,7 @@ define git::clone(
                 }
             }
 
-            if $branch {
+            if $branch != undef {
                 if $ensure == 'latest' {
                     exec { "git_checkout_${title}":
                         cwd         => $directory,
