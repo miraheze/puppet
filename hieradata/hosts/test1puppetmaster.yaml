@@ -9,4 +9,7 @@ puppetmaster::dbpassword: 'test'
 puppetmaster_version: 4
 puppetmaster::use_puppetdb: true
 puppetdb_host: test1puppetmaster.miraheze.org
-postgresql::user::pg_version: 9.6
+puppetdb::db_ro_host: localhost
+# these are tests passwords on prod add them into the private repo
+puppetdb::db_password: 'miraheze'
+puppetdb::password::rw: 'miraheze'

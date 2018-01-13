@@ -1,9 +1,11 @@
 # Class puppetdb::database
 #
 # Sets up the postgresql database
-class puppetdb::database($master) {
-    # use 9.6 on stretch and 9.4 on jessie.
-    $pgversion = hiera('postgresql::user::pg_version', '9.4')
+class puppetmaster::puppetdb::database($master = undef) {
+    $pgversion = $::lsbdistcodename ? {
+        'stretch' => '9.6',
+        'jessie'  => '9.4',
+    }
 
     $puppetdb_pass = hiera('puppetdb::password::rw')
 

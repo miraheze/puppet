@@ -7,7 +7,7 @@ class puppetdb(
     $db_rw_host = hiera('puppetdb::db_rw_host', 'localhost'),
     $db_ro_host = hiera('puppetdb::db_ro_host', undef),
     $db_user = hiera('puppetdb::db_user', 'puppetdb'),
-    $db_password= hiera('puppetdb::db_password', 'test'),
+    $db_password = hiera('puppetdb::db_password', 'test'),
     $perform_gc = hiera('puppetdb::perform_gc', false),
     $heap_size = hiera('puppetdb::heap_size', '4G'),
     $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
@@ -121,8 +121,7 @@ class puppetdb(
 
     if $bind_ip {
         $actual_jetty_settings = merge($jetty_settings, {'ssl-host' => $bind_ip})
-    }
-    else {
+    } else {
         $actual_jetty_settings = $jetty_settings
     }
 
@@ -130,14 +129,19 @@ class puppetdb(
         settings => $actual_jetty_settings,
     }
 
-    file { '/etc/systemd/system/puppetdb.service':
+    package { 'policykit-1':
         ensure => present,
+    }
+
+    file { '/lib/systemd/system/puppetdb.service':
+        ensure  => present,
         content => template('puppetdb/puppetdb.systemd.erb'),
+        require => Package['policykit-1'],
     }
 
     service { 'puppetdb':
         ensure  => running,
-        require => File['/etc/systemd/system/puppetdb.service'],
+        require => File['/lib/systemd/system/puppetdb.service'],
     }
 
     puppetdb::config { 'command-processing':
