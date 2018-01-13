@@ -20,24 +20,24 @@ class puppetdb(
     ## Update puppetdb when wmf do.
     exec { "install_puppetdb":
         command => '/usr/bin/curl -o /opt/puppetdb_2.3.8-1~wmf1_all.deb https://apt.wikimedia.org/wikimedia/pool/main/p/puppetdb/puppetdb_2.3.8-1~wmf1_all.deb',
-        unless  => "/bin/ls /opt/puppetdb_2.3.8-1~wmf1_all.deb",
+        unless  => '/bin/ls /opt/puppetdb_2.3.8-1~wmf1_all.deb',
     }
 
     exec { "puppetdb-terminus":
         command => '/usr/bin/curl -o /opt/puppetdb-terminus_2.3.8-1~wmf1_all.deb https://apt.wikimedia.org/wikimedia/pool/main/p/puppetdb/puppetdb-terminus_2.3.8-1~wmf1_all.deb',
-        unless  => "/bin/ls /opt/puppetdb-terminus_2.3.8-1~wmf1_all.deb",
+        unless  => '/bin/ls /opt/puppetdb-terminus_2.3.8-1~wmf1_all.deb',
     }
 
     package { "puppetdb":
         provider => dpkg,
         ensure   => present,
-        source   => "/opt/puppetdb_2.3.8-1~wmf1_all.deb",
+        source   => '/opt/puppetdb_2.3.8-1~wmf1_all.deb',
     }
 
     package { "puppetdb-terminus":
         provider => dpkg,
         ensure   => present,
-        source   => "/opt/puppetdb-terminus_2.3.8-1~wmf1_all.deb",
+        source   => '/opt/puppetdb-terminus_2.3.8-1~wmf1_all.deb',
     }
 
     ## Configuration
@@ -127,7 +127,7 @@ class puppetdb(
 
     file { '/etc/systemd/system/puppetdb.service':
         ensure => present,
-        content => template('puppetdb/puppetdb.service.erb'),
+        content => template('puppetdb/puppetdb.systemd.erb'),
     }
 
     service { 'puppetdb':
