@@ -1,8 +1,9 @@
 # class: puppetmaster
 class puppetmaster(
-    $dbserver   = undef,
-    $dbname     = undef,
-    $dbuser     = undef,
+    $dbserver     = undef,
+    $dbname       = undef,
+    $dbuser       = undef,
+    $use_puppetdb = hiera('puppetmaster::use_puppetdb', false),
   ) {
 
     $puppetmaster_hostname = hiera('puppetmaster_hostname', 'puppet1.miraheze.org')
@@ -33,7 +34,6 @@ class puppetmaster(
         source  => "puppet:///modules/puppetmaster/auth_${puppetmaster_version}.conf",
         require => Package['puppetmaster'],
         notify  => Service['apache2'],
-
     }
 
     file { '/etc/puppet/fileserver.conf':
@@ -41,7 +41,10 @@ class puppetmaster(
         source  => 'puppet:///modules/puppetmaster/fileserver.conf',
         require => Package['puppetmaster'],
         notify  => Service['apache2'],
+    }
 
+    if $use_puppetdb {
+        class { 'puppetmaster::puppetdb::client': }
     }
 
     git::clone { 'puppet':
