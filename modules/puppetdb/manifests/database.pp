@@ -1,7 +1,7 @@
 # Class puppetdb::database
 #
 # Sets up the postgresql database
-class puppetmaster::puppetdb::database($master = undef) {
+class puppetdb::database($master = undef) {
     $pgversion = $::lsbdistcodename ? {
         'stretch' => '9.6',
         'jessie'  => '9.4',
