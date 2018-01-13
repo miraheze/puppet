@@ -19,7 +19,6 @@ class puppetdb(
 	    ensure => present,
 	}
 
-    Package java7-runtime-headless
     ## PuppetDB installation
 
     ## Update puppetdb when wmf do.
