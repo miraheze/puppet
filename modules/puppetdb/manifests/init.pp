@@ -15,6 +15,11 @@ class puppetdb(
     $db_ssl = hiera('puppetdb::db_ssl', false),
 ) {
 
+    package { 'java7-runtime-headless':
+	    ensure => present,
+	}
+
+    Package java7-runtime-headless
     ## PuppetDB installation
 
     ## Update puppetdb when wmf do.
@@ -32,6 +37,7 @@ class puppetdb(
         provider => dpkg,
         ensure   => present,
         source   => '/opt/puppetdb_2.3.8-1~wmf1_all.deb',
+        require  => Package['java7-runtime-headless'],
     }
 
     package { "puppetdb-terminus":
