@@ -14,7 +14,6 @@ class puppetdb(
     $command_processing_threads = hiera('puppetdb::command_processing_threads', 16),
     $db_ssl = hiera('puppetdb::db_ssl', false),
 ) {
-    requires_os('debian >= jessie')
 
     ## PuppetDB installation
 
