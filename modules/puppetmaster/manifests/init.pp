@@ -44,10 +44,7 @@ class puppetmaster(
     }
 
     if $use_puppetdb {
-        $puppetdb_host = hiera('puppetdb_host', 'puppet1.miraheze.org')
-        class { 'puppetmaster::puppetdb::client':
-          host => $puppetdb_host,
-        }
+        class { 'puppetmaster::puppetdb::client': }
     }
 
     git::clone { 'puppet':

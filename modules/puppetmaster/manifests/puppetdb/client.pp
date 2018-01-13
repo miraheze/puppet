@@ -1,6 +1,10 @@
 # == Class puppetmaster::puppetdb::client
 # Configures a puppetmaster to work as a puppetdb client
-class puppetmaster::puppetdb::client($host, $port=443) {
+class puppetmaster::puppetdb::client(
+  $port = 443
+) {
+
+    $host = hiera('puppetdb_host', 'puppet1.miraheze.org'),
 
     # We are hosting puppetdb on puppetmaster so this
     # is already going to be installed
@@ -35,7 +39,7 @@ class puppetmaster::puppetdb::client($host, $port=443) {
 
     class { 'puppetdb': }
 
-    class { 'puppetmaster::puppetdb::database':
+    class { 'puppetdb::database':
         require => Class['puppetdb'],
     }
 }
