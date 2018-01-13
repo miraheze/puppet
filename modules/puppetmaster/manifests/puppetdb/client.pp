@@ -34,4 +34,8 @@ class puppetmaster::puppetdb::client($host, $port=443) {
     }
 
     class { 'puppetdb': }
+
+    class { 'puppetmaster::puppetdb::database':
+        require => Class['puppetdb'],
+    }
 }
