@@ -43,10 +43,6 @@ class puppetmaster(
         notify  => Service['apache2'],
     }
 
-    if $use_puppetdb {
-        class { 'puppetmaster::puppetdb::client': }
-    }
-
     git::clone { 'puppet':
         ensure    => latest,
         directory => '/etc/puppet/git',
@@ -132,6 +128,10 @@ class puppetmaster(
         owner   => 'root',
         group   => 'puppet-users',
         mode    => '0770',
+    }
+
+    if $use_puppetdb {
+        class { 'puppetmaster::puppetdb::client': }
     }
 
     service { 'puppetmaster':
