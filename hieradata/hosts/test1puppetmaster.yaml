@@ -8,5 +8,5 @@ puppetmaster::dbname: puppet
 puppetmaster::dbpassword: 'test'
 puppetmaster_version: 4
 puppetmaster::use_puppetdb: true
-profile::puppetmaster::common::puppetdb_host: test1puppetmaster.miraheze.org
+puppetdb_host: test1puppetmaster.miraheze.org
 postgresql::user::pg_version: 9.6
