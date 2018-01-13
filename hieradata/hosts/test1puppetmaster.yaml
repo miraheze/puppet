@@ -7,3 +7,4 @@ puppetmaster::dbuser: puppet
 puppetmaster::dbname: puppet
 puppetmaster::dbpassword: 'test'
 puppetmaster_version: 4
+puppetmaster::use_puppetdb: true
