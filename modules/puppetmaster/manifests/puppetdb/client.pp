@@ -4,7 +4,7 @@ class puppetmaster::puppetdb::client(
   $port = 443
 ) {
 
-    $host = hiera('puppetdb_host', 'puppet1.miraheze.org'),
+    $host = hiera('puppetdb_host', 'puppet1.miraheze.org')
 
     # We are hosting puppetdb on puppetmaster so this
     # is already going to be installed
