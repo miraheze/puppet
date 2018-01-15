@@ -18,7 +18,7 @@ class puppetdb::database($master = undef) {
     }
 
     # Postgres replication and users
-    $postgres_users = hiera('puppetdb::postgres_users', 'puppetdb')
+    $postgres_users = hiera('puppetdb::postgres_users', undef)
     if $postgres_users {
         $postgres_users_defaults = {
             pgversion => $pgversion,
