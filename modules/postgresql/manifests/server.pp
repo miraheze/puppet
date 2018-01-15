@@ -29,9 +29,8 @@ class postgresql::server(
     $port             = '5432',
     $root_dir         = '/var/lib/postgresql',
     $use_ssl          = false,
+    $pgversion        = '9.4',
 ) {
-    # use 9.6 on stretch and 9.4 on jessie.
-    $pgversion = hiera('postgresql::user::pg_version', '9.4')
 
     package { [
         "postgresql-${pgversion}",
