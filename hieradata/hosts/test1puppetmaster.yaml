@@ -13,3 +13,8 @@ puppetdb::db_ro_host: localhost
 # these are tests passwords on prod add them into the private repo
 puppetdb::db_password: 'miraheze'
 puppetdb::password::rw: 'miraheze'
+puppetmaster::puppetdb::postgres_users:
+  puppetdb@test1puppetmaster:
+    user: puppetdb
+    database: puppetdb
+    password: "%{::puppetdb::database::puppetdb_pass}"
