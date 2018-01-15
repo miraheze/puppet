@@ -20,12 +20,10 @@
 #  include postgresql::dirs
 #
 class postgresql::dirs(
-    $ensure           = 'present',
-    $root_dir         = '/var/lib/postgresql',
+    $ensure    = 'present',
+    $root_dir  = '/var/lib/postgresql',
+    $pgversion = '9.4',
 ) {
-    # use 9.6 on stretch and 9.4 on jessie.
-    $pgversion = hiera('postgresql::user::pg_version', '9.4')
-
     $data_dir = "${root_dir}/${pgversion}/main"
     file {  [ $root_dir, "${root_dir}/${pgversion}" ] :
         ensure => ensure_directory($ensure),
