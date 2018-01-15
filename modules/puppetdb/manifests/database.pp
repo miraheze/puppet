@@ -1,3 +1,4 @@
+
 # Class puppetdb::database
 #
 # Sets up the postgresql database
