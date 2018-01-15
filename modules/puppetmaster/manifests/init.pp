@@ -22,6 +22,13 @@ class puppetmaster(
 
     $dbpassword = hiera('puppetmaster::dbpassword')
 
+    file { '/etc/puppet/hiera.yaml':
+        ensure  => present,
+        source  => 'puppet:///modules/puppetmaster/hiera.yaml',
+        require => Package['puppetmaster'],
+        notify  => Service['apache2'],
+    }
+
     file { '/etc/puppet/puppet.conf':
         ensure  => present,
         content => template("puppetmaster/puppet_${puppetmaster_version}.conf"),
@@ -67,6 +74,12 @@ class puppetmaster(
 
     file { '/etc/puppet/private':
         ensure => directory,
+    }
+
+    file { '/etc/puppet/hieradata':
+        ensure  => link,
+        target  => '/etc/puppet/git/hieradata',
+        require => Git::Clone['puppet'],
     }
 
     file { '/etc/puppet/manifests':
@@ -121,6 +134,40 @@ class puppetmaster(
         ensure  => link,
         target  => '/etc/puppet/ssl',
         require => [File['/etc/puppet/code/environments/production'], Git::Clone['ssl']],
+    }
+
+    file { '/etc/puppet/environments':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0770',
+        require => Package['puppetmaster'],
+    }
+
+    file { '/etc/puppet/environments/production':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0770',
+        require => File['/etc/puppet/environments'],
+    }
+
+    file { '/etc/puppet/environments/production/manifests':
+        ensure  => link,
+        target  => '/etc/puppet/manifests',
+        require => [File['/etc/puppet/environments/production'], File['/etc/puppet/manifests']],
+    }
+
+    file { '/etc/puppet/environments/production/modules':
+        ensure  => link,
+        target  => '/etc/puppet/modules',
+        require => [File['/etc/puppet/environments/production'], File['/etc/puppet/modules']],
+    }
+
+    file { '/etc/puppet/environments/production/ssl':
+        ensure  => link,
+        target  => '/etc/puppet/ssl',
+        require => [File['/etc/puppet/environments/production'], Git::Clone['ssl']],
     }
 
     file { '/home/puppet-users':
