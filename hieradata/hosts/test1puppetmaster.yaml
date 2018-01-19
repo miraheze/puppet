@@ -5,14 +5,13 @@ puppetmaster_hostname: test1puppetmaster.miraheze.org
 puppetmaster::dbserver: db2.miraheze.org
 puppetmaster::dbuser: puppet
 puppetmaster::dbname: puppet
-puppetmaster::dbpassword: 'test'
+puppetmaster::dbpassword: miraheze
 puppetmaster_version: 4
 puppetmaster::use_puppetdb: true
 puppetdb_host: test1puppetmaster.miraheze.org
-puppetdb::db_ro_host: localhost
 # these are tests passwords on prod add them into the private repo
-puppetdb::db_password: 'miraheze'
-puppetdb::password::rw: 'miraheze'
+puppetdb::db_password: miraheze
+puppetdb::password::rw: miraheze
 puppetmaster::puppetdb::postgres_users:
   puppetdb@test1puppetmaster:
     user: puppetdb

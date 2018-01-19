@@ -36,8 +36,10 @@ define postgresql::user(
     $ensure = 'present'
     ) {
 
-    # use 9.6 on stretch and 9.4 on jessie.
-    $pgversion = hiera('postgresql::user::pg_version', '9.4')
+    $pgversion = $::lsbdistcodename ? {
+        'stretch' => '9.6',
+        'jessie'  => '9.4',
+    }
 
     $pg_hba_file = "/etc/postgresql/${pgversion}/main/pg_hba.conf"
 
