@@ -79,18 +79,24 @@ class puppetmaster(
     file { '/etc/puppet/hieradata':
         ensure  => link,
         target  => '/etc/puppet/git/hieradata',
+        user    => 'root',
+        group   => 'root',
         require => Git::Clone['puppet'],
     }
 
     file { '/etc/puppet/manifests':
         ensure  => link,
         target  => '/etc/puppet/git/manifests',
+        user    => 'root',
+        group   => 'root',
         require => Git::Clone['puppet'],
     }
 
     file { '/etc/puppet/modules':
         ensure  => link,
         target  => '/etc/puppet/git/modules',
+        user    => 'root',
+        group   => 'root',
         require => Git::Clone['puppet'],
     }
 
@@ -121,18 +127,24 @@ class puppetmaster(
     file { '/etc/puppet/code/environments/production/manifests':
         ensure  => link,
         target  => '/etc/puppet/manifests',
+        user    => 'root',
+        group   => 'root',
         require => [File['/etc/puppet/code/environments/production'], File['/etc/puppet/manifests']],
     }
 
     file { '/etc/puppet/code/environments/production/modules':
         ensure  => link,
         target  => '/etc/puppet/modules',
+        user    => 'root',
+        group   => 'root',
         require => [File['/etc/puppet/code/environments/production'], File['/etc/puppet/modules']],
     }
 
     file { '/etc/puppet/code/environments/production/ssl':
         ensure  => link,
         target  => '/etc/puppet/ssl',
+        user    => 'root',
+        group   => 'root',
         require => [File['/etc/puppet/code/environments/production'], Git::Clone['ssl']],
     }
 
@@ -155,18 +167,24 @@ class puppetmaster(
     file { '/etc/puppet/environments/production/manifests':
         ensure  => link,
         target  => '/etc/puppet/manifests',
+        user    => 'root',
+        group   => 'root',
         require => [File['/etc/puppet/environments/production'], File['/etc/puppet/manifests']],
     }
 
     file { '/etc/puppet/environments/production/modules':
         ensure  => link,
         target  => '/etc/puppet/modules',
+        user    => 'root',
+        group   => 'root',
         require => [File['/etc/puppet/environments/production'], File['/etc/puppet/modules']],
     }
 
     file { '/etc/puppet/environments/production/ssl':
         ensure  => link,
         target  => '/etc/puppet/ssl',
+        user    => 'root',
+        group   => 'root',
         require => [File['/etc/puppet/environments/production'], Git::Clone['ssl']],
     }
 
