@@ -38,7 +38,7 @@ apt-list: ndkilla
 # phabricator incoming emails - must be configued with Maniphest
 security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 csr: operations # Temporary, until complete deprecation
-phabricator: |/srv/phab/phabricator/scripts/mail/mail_handler.php
+phabricator: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 bugs: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 conduct: |/srv/phab/phabricator/scripts/mail/mail_handler.php,cocc
 
