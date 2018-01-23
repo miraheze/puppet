@@ -47,7 +47,9 @@ nick_password = "<%= @mirahezebots_password %>"
 network = "chat.freenode.net"
 
 # Port to use when joining network (ex: 7000). Should support SSL.
-port = 6667
+port = 6697
+
+ssl = True
 
 # Map irc nick to real name
 author_map = {
