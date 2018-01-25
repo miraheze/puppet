@@ -5,8 +5,8 @@ Before=apache2.service
 
 [Service]
 Type=forking
-User=root
-Group=root
+User=www-data
+Group=www-data
 ExecStartPre=-/bin/mkdir -p /var/run/phd/
 ExecStart=/srv/phab/phabricator/bin/phd start
 ExecStop=/srv/phab/phabricator/bin/phd stop --force
