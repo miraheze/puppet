@@ -84,16 +84,6 @@ class phabricator {
         source => 'puppet:///modules/phabricator/php.ini',
     }
 
-    file { '/etc/systemd/system/phd.service':
-        ensure => present,
-        source => 'puppet:///modules/phabricator/phd.systemd',
-    }
-
-    service { 'phd':
-        ensure  => 'running',
-        require => [File['/etc/systemd/system/phd.service'], [File['/srv/phab/phabricator/conf/local/local.json']],
-    }
-
     icinga::service { 'phd':
         description   => 'phd',
         check_command => 'check_nrpe_1arg!check_phd',
