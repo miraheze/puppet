@@ -9,9 +9,6 @@ User=www-data
 Group=www-data
 ExecStart=/srv/phab/phabricator/bin/phd start
 ExecStop=/srv/phab/phabricator/bin/phd stop --force
-PIDFile=/run/phd/phd.pid
-RuntimeDirectory=phd
-RuntimeDirectoryMode=0755
 RemainAfterExit=yes
 
 [Install]
