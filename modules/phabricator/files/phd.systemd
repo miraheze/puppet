@@ -7,9 +7,11 @@ Before=apache2.service
 Type=forking
 User=www-data
 Group=www-data
-ExecStartPre=-/bin/mkdir -p /var/run/phd/
 ExecStart=/srv/phab/phabricator/bin/phd start
 ExecStop=/srv/phab/phabricator/bin/phd stop --force
+PIDFile=/run/phd/phd.pid
+RuntimeDirectory=phd
+RuntimeDirectoryMode=0755
 RemainAfterExit=yes
 
 [Install]
