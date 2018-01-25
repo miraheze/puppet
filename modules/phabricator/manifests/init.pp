@@ -60,6 +60,13 @@ class phabricator {
         group  => 'www-data',
     }
 
+    file { '/srv/phab/images':
+        ensure => directory,
+        mode   => '0755',
+        owner  => 'www-data',
+        group  => 'www-data',
+    }
+
     $module_path = get_module_path($module_name)
     $phab_yaml = loadyaml("${module_path}/data/config.yaml")
     $phab_private = {
@@ -72,10 +79,6 @@ class phabricator {
     file { '/srv/phab/phabricator/conf/local/local.json':
         ensure  => present,
         content => template('phabricator/local.json.erb'),
-    }
-
-    file { '/srv/phab/images':
-        ensure => directory,
     }
 
     file { '/etc/php5/apache2/php.ini':
