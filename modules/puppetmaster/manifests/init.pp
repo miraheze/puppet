@@ -33,7 +33,7 @@ class puppetmaster(
 
     file { '/etc/puppet/puppet.conf':
         ensure  => present,
-        content => template("puppetmaster/puppet_${puppetmaster_version}.conf"),
+        content => template("puppetmaster/puppet_${puppetmaster_version}.conf.erb"),
         owner   => 'root',
         group   => 'root',
         require => Package['puppetmaster'],
