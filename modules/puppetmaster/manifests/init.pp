@@ -216,7 +216,7 @@ class puppetmaster(
 
     apache::site { 'puppet-master':
         ensure => present,
-        content => template("puppetmaster/puppet-master.conf"),
+        content => template("puppetmaster/puppet-master.conf.erb"),
     }
 
     ufw::allow { 'puppetmaster':
