@@ -211,8 +211,12 @@ class puppetmaster(
         ensure => stopped,
     }
 
-    service { 'apache2':
-        ensure => running,
+    include ::apache::mod::rewrite 
+    include ::apache::mod::ssl
+
+    apache::site { 'puppet-master':
+        ensure => present,
+        content => template("puppetmaster/puppet-master.conf"),
     }
 
     ufw::allow { 'puppetmaster':
