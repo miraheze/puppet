@@ -33,7 +33,7 @@ class puppetmaster(
 
     file { '/etc/puppet/puppet.conf':
         ensure  => present,
-        content => template("puppetmaster/puppet_${puppetmaster_version}.conf"),
+        content => template("puppetmaster/puppet_${puppetmaster_version}.conf.erb"),
         owner   => 'root',
         group   => 'root',
         require => Package['puppetmaster'],
@@ -211,8 +211,12 @@ class puppetmaster(
         ensure => stopped,
     }
 
-    service { 'apache2':
-        ensure => running,
+    include ::apache::mod::rewrite 
+    include ::apache::mod::ssl
+
+    apache::site { 'puppet-master':
+        ensure => present,
+        content => template("puppetmaster/puppet-master.conf.erb"),
     }
 
     ufw::allow { 'puppetmaster':
