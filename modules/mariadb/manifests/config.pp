@@ -1,9 +1,12 @@
 # class: mariadb::config
 class mariadb::config(
-    $config    = undef,
-    $password  = undef,
-    $datadir   = '/srv/mariadb',
-    $tmpdir    = '/tmp',
+    $config                         = undef,
+    $password                       = undef,
+    $datadir                        = '/srv/mariadb',
+    $tmpdir                         = '/tmp',
+    $innodb_buffer_pool_instances   = 1,
+    $innodb_buffer_pool_size        = '768M',
+    $max_connections                = 90,
 ) {
     file { '/etc/my.cnf':
         owner   => 'root',
