@@ -60,6 +60,13 @@ class phabricator {
         group  => 'www-data',
     }
 
+    file { '/srv/phab/images':
+        ensure => directory,
+        mode   => '0755',
+        owner  => 'www-data',
+        group  => 'www-data',
+    }
+
     $module_path = get_module_path($module_name)
     $phab_yaml = loadyaml("${module_path}/data/config.yaml")
     $phab_private = {
@@ -74,14 +81,26 @@ class phabricator {
         content => template('phabricator/local.json.erb'),
     }
 
-    file { '/srv/phab/images':
-        ensure => directory,
-    }
-
     file { '/etc/php5/apache2/php.ini':
         ensure => present,
         mode   => '0755',
         source => 'puppet:///modules/phabricator/php.ini',
+    }
+
+    exec { 'PHD reload systemd':
+        command     => '/bin/systemctl daemon-reload',
+        refreshonly => true,
+    }
+
+    file { '/etc/systemd/system/phd.service':
+        ensure => present,
+        source => 'puppet:///modules/phabricator/phd.systemd',
+        notify => Exec['PHD reload systemd'],
+    }
+
+    service { 'phd':
+        ensure  => 'running',
+        require => [File['/etc/systemd/system/phd.service'], File['/srv/phab/phabricator/conf/local/local.json']],
     }
 
     icinga::service { 'phd':

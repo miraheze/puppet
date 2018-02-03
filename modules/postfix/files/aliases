@@ -25,8 +25,8 @@ dmarc: ndkilla
 operations: southparkfan,ndkilla,reception123
 stewards: southparkfan,ndkilla,orduinvoidwalker@gmail.com
 staff: southparkfan,ndkilla,bslaabs@gmail.com,reception123,imbophilmh@gmail.com,revi
-cvt: stewards,reception123,revi
-conduct: alvaromolinacl@gmail.com,diarmuidsmithy@gmail.com,reception123,revi,orduinvoidwalker@gmail.com
+cvt: stewards,reception123,revi,megadev44s.mail@gmail.com,paulfkeffer@gmail.com,alvaromolinacl@gmail.com
+cocc: alvaromolinacl@gmail.com,diarmuidsmithy@gmail.com,reception123,revi,orduinvoidwalker@gmail.com
 wiki-abuse: ndkilla,reception123,revi
 
 # finances
@@ -37,9 +37,10 @@ apt-list: ndkilla
 
 # phabricator incoming emails - must be configued with Maniphest
 security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
-csr: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
-phabricator: |/srv/phab/phabricator/scripts/mail/mail_handler.php
-bugs: |/srv/phab/phabricator/scripts/mail/mail_handler.php
+csr: operations # Temporary, until complete deprecation
+phabricator: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
+bugs: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
+conduct: |/srv/phab/phabricator/scripts/mail/mail_handler.php,cocc
 
 # Staff aliases
 imbophil: imbophilmh@gmail.com

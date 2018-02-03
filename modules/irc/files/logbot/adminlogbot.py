@@ -2,6 +2,7 @@
 import adminlog
 import argparse
 import imp
+import irc.client  # for exceptions.
 import irc.bot as ircbot
 import json
 import logging
@@ -26,8 +27,12 @@ class logbot(ircbot.SingleServerIRCBot):
                 config.nick)
 
     def connect(self, *args, **kwargs):
-        # kwargs.update(ssl=True)
-        ircbot.SingleServerIRCBot.connect(self, *args, **kwargs)
+        if self.config.ssl:
+            import ssl
+            ssl_factory = irc.connection.Factory(wrapper=ssl.wrap_socket)
+            self.connection.connect(*args, connect_factory=ssl_factory, **kwargs)
+        else:
+            self.connection.connect(*args, **kwargs)
 
     def get_version(self):
         return ('Miraheze Log Bot -- '
