@@ -67,6 +67,13 @@ node 'test1.miraheze.org' {
 node 'test1puppetmaster.miraheze.org' {
     include base
     include puppetmaster # Temporary for testing new Puppet version
+    
+    file { '/etc/puppet-test':
+        ensure => directory,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    }
 }
 
 # ensures all servers have basic class if puppet runs
