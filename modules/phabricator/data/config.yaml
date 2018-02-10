@@ -28,6 +28,7 @@ policy.allow-public: true
 user.require-real-name: false
 storage.local-disk.path: "/srv/phab/images/"
 security.alternate-file-domain: "https://phab.miraheze.wiki/"
+load-libraries: ["/srv/phab/phabricator-translations"]
 
 # Maniphest priorities
 maniphest.priorities:
