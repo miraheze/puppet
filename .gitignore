@@ -1,3 +1,4 @@
 fileserver.conf
 puppet.conf
 hiera.yaml
+.DS_Store
