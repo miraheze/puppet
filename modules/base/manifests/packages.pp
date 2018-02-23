@@ -2,7 +2,6 @@
 class base::packages {
     $packages = [
         'acct',
-        'atop',
         'coreutils',
         'debian-goodies',
         'git',
