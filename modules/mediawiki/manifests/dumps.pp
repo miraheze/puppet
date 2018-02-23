@@ -227,6 +227,16 @@ class mediawiki::dumps {
         monthday => ['1', '8', '15', '22', '29'],
     }
     
+    cron { 'Export templatewiki xml dump weekly':
+        ensure   => present,
+        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki templatewiki --logs --full > /mnt/mediawiki-static/dumps/templatewiki.xml',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        monthday => ['1', '8', '15', '22', '29'],
+    }
+    
     cron { 'Export tmewiki xml dump monthly':
         ensure   => present,
         command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki tmewiki --logs --full > /mnt/mediawiki-static/dumps/tmewiki.xml',
