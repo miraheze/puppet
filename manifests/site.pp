@@ -16,7 +16,7 @@ node 'nfs1.miraheze.org' {
     include bacula::client
 }
 
-node /^db[234].miraheze.org$/ {
+node /^db[23].miraheze.org$/ {
     include base
     include role::db
     include bacula::client
