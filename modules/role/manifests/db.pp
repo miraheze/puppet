@@ -81,6 +81,12 @@ class role::db {
     }
 
     ssl::cert { 'wildcard.miraheze.org': }
+
+    if $::hostname == 'db4' {
+        sysctl::parameters { 'avoid swap usage':
+            values  => { 'vm.swappiness' => 1, },
+        }
+    }
     
     motd::role { 'role::db':
         description => 'general database server',
