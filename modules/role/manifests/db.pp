@@ -82,7 +82,7 @@ class role::db {
 
     ssl::cert { 'wildcard.miraheze.org': }
 
-    if $::hostname == 'db4' {
+    if $::virtual == 'kvm' {
         sysctl::parameters { 'avoid swap usage':
             values  => { 'vm.swappiness' => 1, },
         }

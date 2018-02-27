@@ -1,4 +1,5 @@
 mariadb::config::innodb_buffer_pool_instances: 2
 mariadb::config::innodb_buffer_pool_size: 8G
 mariadb::config::max_connections: 500
+mariadb::config::version_102: true
 mariadb::packages::version_102: true

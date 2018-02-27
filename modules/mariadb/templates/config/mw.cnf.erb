@@ -13,8 +13,8 @@ socket                         = /var/run/mysqld/mysqld.sock
 pid-file                       = /var/run/mysqld/mysqld.pid
 skip-name-resolve
 key-buffer-size                = 16M
-<% if scope.lookupvar('::hostname') == "db4" %>   
-myisam-recover-options                = FORCE,BACKUP
+<% if $version_102 %>   
+myisam-recover-options         = FORCE,BACKUP
 <% else %>
 myisam-recover                 = FORCE,BACKUP
 <% end %>
