@@ -77,7 +77,7 @@ class role::db {
         owner   => 'root',
         group   => 'mysql',
         mode	=> '0750',
-        before  => Ssl:Cert['wildcard.miraheze.org'],
+        before  => Ssl::Cert['wildcard.miraheze.org'],
     }
 
     ssl::cert { 'wildcard.miraheze.org': }
