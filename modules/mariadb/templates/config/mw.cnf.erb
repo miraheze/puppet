@@ -56,9 +56,6 @@ innodb_lock_wait_timeout       = 120
 innodb-stats-on-metadata       = OFF
 innodb_ft_total_cache_size     = 150000000
 innodb_adaptive_hash_index     = OFF
-<% if scope.lookupvar('::hostname') == "db4" %>       
-innodb_file_format             = Barracuda
-<% end %>
 
 performance_schema = off
 
