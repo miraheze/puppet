@@ -73,7 +73,7 @@ class role::db {
     }
 
     file { '/etc/ssl/private':
-        ensure  => present,
+        ensure  => directory,
         owner   => 'root',
         group   => 'mysql',
         mode	=> '0750',
