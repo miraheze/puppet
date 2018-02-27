@@ -105,6 +105,11 @@ class bacula::director {
         check_command => 'check_nrpe_1arg!check_bacula_databasesdb3',
     }
 
+    icinga::service { 'bacula_databasesdb4':
+        description     => 'Bacula - Databases - db4',
+        check_command   => 'check_nrpe_1arg!check_bacula_databasesdb4',
+    }
+
     icinga::service { 'bacula_static':
         description   => 'Bacula - Static',
         check_command => 'check_nrpe_1arg!check_bacula_static',
