@@ -72,7 +72,15 @@ class role::db {
         ],
     }
 
+    file { '/etc/ssl/private':
+        ensure  => present,
+        owner   => 'root',
+        group   => 'mysql',
+        before  => Ssl:Cert['wildcard.miraheze.org'],
+    }
+
     ssl::cert { 'wildcard.miraheze.org': }
+    
 
     motd::role { 'role::db':
         description => 'general database server',
