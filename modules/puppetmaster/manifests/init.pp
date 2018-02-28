@@ -96,19 +96,19 @@ class puppetmaster(
 
     file { '/etc/puppet/code':
         ensure  => directory,
-        mode    => '0770',
+        mode    => '0775',
         require => Package['puppetmaster'],
     }
 
     file { '/etc/puppet/code/environments':
         ensure  => directory,
-        mode    => '0770',
+        mode    => '0775',
         require => File['/etc/puppet/code'],
     }
 
     file { '/etc/puppet/code/environments/production':
         ensure  => directory,
-        mode    => '0770',
+        mode    => '0775',
         require => File['/etc/puppet/code/environments'],
     }
 
@@ -132,13 +132,13 @@ class puppetmaster(
 
     file { '/etc/puppet/environments':
         ensure  => directory,
-        mode    => '0770',
+        mode    => '0775',
         require => Package['puppetmaster'],
     }
 
     file { '/etc/puppet/environments/production':
         ensure  => directory,
-        mode    => '0770',
+        mode    => '0775',
         require => File['/etc/puppet/environments'],
     }
 
