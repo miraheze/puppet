@@ -15,46 +15,44 @@ PassengerStatThrottleRate 120
 Listen 8140
 
 <VirtualHost *:8140>
-        ServerName <%= @puppetmaster_hostname %>
+    ServerName <%= @puppetmaster_hostname %>
 
-        SSLEngine on
-        SSLProtocol             ALL -SSLv2 -SSLv3
-        SSLCipherSuite          EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:!SEED:!IDEA:!ECDSA:kEDH:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA
-        SSLHonorCipherOrder     on
+    SSLEngine on
+    SSLProtocol             ALL -SSLv2 -SSLv3
+    SSLCipherSuite          EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:!SEED:!IDEA:!ECDSA:kEDH:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA
+    SSLHonorCipherOrder     on
 
-        SSLCertificateFile      /var/lib/puppet/ssl/certs/<%= @puppetmaster_hostname %>.pem
-        SSLCertificateKeyFile   /var/lib/puppet/ssl/private_keys/<%= @puppetmaster_hostname %>.pem
-        SSLCertificateChainFile /var/lib/puppet/ssl/certs/ca.pem
-        SSLCACertificateFile    /var/lib/puppet/ssl/certs/ca.pem
-        # If Apache complains about invalid signatures on the CRL, you can try disabling
-        # CRL checking by commenting the next line, but this is not recommended.
-        SSLCARevocationFile     /var/lib/puppet/ssl/ca/ca_crl.pem
-        # Apache 2.4 introduces the SSLCARevocationCheck directive and sets it to none
-        # which effectively disables CRL checking; if you are using Apache 2.4+ you must
-        # specify 'SSLCARevocationCheck chain' to actually use the CRL.
-        # SSLCARevocationCheck chain
-        SSLVerifyClient optional
-        SSLVerifyDepth  1
-        # The `ExportCertData` option is needed for agent certificate expiration warnings
-        SSLOptions +StdEnvVars +ExportCertData
+    SSLCertificateFile      /var/lib/puppet/ssl/certs/<%= @puppetmaster_hostname %>.pem
+    SSLCertificateKeyFile   /var/lib/puppet/ssl/private_keys/<%= @puppetmaster_hostname %>.pem
+    SSLCertificateChainFile /var/lib/puppet/ssl/certs/ca.pem
+    SSLCACertificateFile    /var/lib/puppet/ssl/certs/ca.pem
+    # If Apache complains about invalid signatures on the CRL, you can try disabling
+    # CRL checking by commenting the next line, but this is not recommended.
+    SSLCARevocationFile     /var/lib/puppet/ssl/ca/ca_crl.pem
+    # Apache 2.4 introduces the SSLCARevocationCheck directive and sets it to none
+    # which effectively disables CRL checking; if you are using Apache 2.4+ you must
+    # specify 'SSLCARevocationCheck chain' to actually use the CRL.
+    # SSLCARevocationCheck chain
+    SSLVerifyClient optional
+    SSLVerifyDepth  1
+    # The `ExportCertData` option is needed for agent certificate expiration warnings
+    SSLOptions +StdEnvVars +ExportCertData
 
-        # This header needs to be set if using a loadbalancer or proxy
-        RequestHeader unset X-Forwarded-For
+    # This header needs to be set if using a loadbalancer or proxy
+    RequestHeader unset X-Forwarded-For
 
-        RequestHeader set X-SSL-Subject %{SSL_CLIENT_S_DN}e
-        RequestHeader set X-Client-DN %{SSL_CLIENT_S_DN}e
-        RequestHeader set X-Client-Verify %{SSL_CLIENT_VERIFY}e
+    RequestHeader set X-SSL-Subject %{SSL_CLIENT_S_DN}e
+    RequestHeader set X-Client-DN %{SSL_CLIENT_S_DN}e
+    RequestHeader set X-Client-Verify %{SSL_CLIENT_VERIFY}e
 
-        DocumentRoot /usr/share/puppet/rack/puppet-master/public/
-        RackBaseURI /
-        <Directory /usr/share/puppet/rack/puppet-master/>
-                Options None
-                AllowOverride None
-                Order allow,deny
-                allow from all
-        </Directory>
+    RackBaseURI /
 
-    ErrorLog /var/log/apache2/<%= @puppetmaster_hostname %>_ssl_error.log
-    CustomLog /var/log/apache2/<%= @puppetmaster_hostname %>_ssl_access.log combined
+    DocumentRoot /usr/share/puppet/rack/puppet-master/public
+    <Directory /usr/share/puppet/rack/puppet-master/>
+        Options None
+        AllowOverride None
+        Require all granted
+    </Directory>
 
+    CustomLog /var/log/apache2/puppetmaster.log combined
 </VirtualHost>
