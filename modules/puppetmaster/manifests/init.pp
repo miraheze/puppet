@@ -209,6 +209,8 @@ class puppetmaster(
 
     service { 'puppetmaster':
         ensure => stopped,
+        enable => false,
+        before => Service['apache2'],
     }
 
     include ::apache::mod::rewrite 
@@ -217,6 +219,18 @@ class puppetmaster(
     apache::site { 'puppet-master':
         ensure => present,
         content => template("puppetmaster/puppet-master.conf.erb"),
+    }
+
+    # Place an empty puppet-master.conf file to prevent creation of this file
+    # at package install time. Apache breaks if that happens. T179102
+    file { '/etc/apache2/sites-available/puppet-master.conf':
+        ensure  => present,
+        content => '# This file intentionally left blank by puppet'
+    }
+    file { '/etc/apache2/sites-enabled/puppet-master.conf':
+        ensure  => link,
+        target  => '/etc/apache2/sites-available/puppet-master.conf',
+        require => File['/etc/apache2/sites-available/puppet-master.conf'],
     }
 
     ufw::allow { 'puppetmaster':
