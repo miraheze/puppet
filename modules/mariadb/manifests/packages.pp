@@ -2,7 +2,10 @@
 class mariadb::packages(
     $version_102    = undef,
 ) {
-    package { 'percona-toolkit':
+    package { [
+        'percona-toolkit',
+        'percona-xtrabackup'
+    ]:
         ensure => present,
     }
 
