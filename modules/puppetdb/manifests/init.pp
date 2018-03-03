@@ -150,4 +150,13 @@ class puppetdb(
         },
     }
 
+    ufw::allow { 'puppetdb':
+        proto => 'tcp',
+        port  => 8081,
+    }
+
+    ufw::allow { 'postgresql':
+        proto => 'tcp',
+        port  => 5432,
+    }
 }
