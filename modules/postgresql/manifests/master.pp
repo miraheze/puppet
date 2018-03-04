@@ -69,12 +69,12 @@ class postgresql::master(
         require => Class['postgresql::server'],
     }
 
-    if $ensure == 'present' {
-        exec { 'pg-initdb':
-            command => "/usr/lib/postgresql/${pgversion}/bin/initdb --locale ${locale} -D ${data_dir}",
-            user    => 'postgres',
-            unless  => "/usr/bin/test -f ${data_dir}/PG_VERSION",
-            require => Class['postgresql::server'],
-        }
-    }
+    #if $ensure == 'present' {
+    #    exec { 'pg-initdb':
+    #        command => "/usr/lib/postgresql/${pgversion}/bin/initdb --locale ${locale} -D ${data_dir}",
+    #        user    => 'postgres',
+    #        unless  => "/usr/bin/test -f ${data_dir}/PG_VERSION",
+    #        require => Class['postgresql::server'],
+    #    }
+    #}
 }
