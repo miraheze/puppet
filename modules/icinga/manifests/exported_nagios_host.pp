@@ -2,17 +2,19 @@
 # Used as a workaround of https://tickets.puppetlabs.com/browse/PUP-6698
 define icinga::exported_nagios_host (
     $ensure,
+    $use,
     $host_name,
     $address,
     $contact_groups,
+    $target,
 ) {
     @@nagios_host { $title:
         ensure                => $ensure,
-        use                   => 'generic-host',
+        use                   => $use,
         host_name             => $host_name,
         address               => $address,
         contact_groups        => $contact_groups,
-        target                => '/etc/icinga/config/puppet_hosts.cfg',
+        target                => $target,
 
     }
 }
