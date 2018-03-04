@@ -10,8 +10,8 @@ puppetmaster_version: 4
 puppetmaster::use_puppetdb: true
 puppetdb_host: test1.miraheze.org
 # these are tests passwords on prod add them into the private repo
-puppetdb::db_password: miraheze
-puppetdb::password::rw: miraheze
+puppetdb::db_password: puppetdb
+puppetdb::password::rw: puppetdb
 puppetmaster::puppetdb::postgres_users:
   puppetdb@test1:
     user: puppetdb
