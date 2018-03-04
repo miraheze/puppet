@@ -42,11 +42,4 @@ class puppetdb::database($master = undef) {
         require => Class[$require_class],
     }
 
-    exec { 'create_tgrm_extension':
-        command => '/usr/bin/psql puppetdb -c "create extension pg_trgm"',
-        unless  => '/usr/bin/psql puppetdb -c \'\dx\' | /bin/grep -q pg_trgm',
-        user    => 'postgres',
-        require => Postgresql::Db['puppetdb'],
-    }
-
 }
