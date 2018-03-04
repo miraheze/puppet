@@ -1,6 +1,6 @@
 # proxy to an exported nagios_host definition
 # Used as a workaround of https://tickets.puppetlabs.com/browse/PUP-6698
-define monitoring::exported_nagios_host (
+define icinga::exported_nagios_host (
     $ensure,
     $host_name,
     $address,
