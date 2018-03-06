@@ -62,10 +62,10 @@ node 'puppet1.miraheze.org' {
 node 'test1.miraheze.org' {
     include base
     include puppetmaster # Temporary for testing new Puppet version
+    include testpuppetdb
 }
 
 # ensures all servers have basic class if puppet runs
 node default {
     include base
-    include testpuppetdb
 }
