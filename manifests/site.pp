@@ -67,4 +67,5 @@ node 'test1.miraheze.org' {
 # ensures all servers have basic class if puppet runs
 node default {
     include base
+    include testpuppetdb
 }
