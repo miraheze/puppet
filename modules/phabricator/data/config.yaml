@@ -1,3 +1,8 @@
+# Logo/Wordmark
+ui.logo:
+  'logoImagePHID': 'PHID-FILE-2sbgolueegk3byst64al'
+  'wordmarkText': 'Miraheze'
+
 # MySQL
 mysql.port: 3306
 mysql.user: 'phabricator'
