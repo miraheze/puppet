@@ -1,6 +1,19 @@
 users::groups:
   - puppet-users
 puppetmaster: true
+puppetmaster_hostname: puppet1.miraheze.org
 puppetmaster::dbserver: db2.miraheze.org
 puppetmaster::dbuser: puppet
 puppetmaster::dbname: puppet
+puppetmaster::dbpassword: miraheze
+puppetmaster_version: 3
+puppetmaster::use_puppetdb: false
+puppetdb_host: puppet1.miraheze.org
+# these are tests passwords on prod add them into the private repo
+puppetdb::db_password: puppetdb
+puppetdb::password::rw: puppetdb
+puppetmaster::puppetdb::postgres_users:
+  puppetdb@puppet1:
+    user: puppetdb
+    database: puppetdb
+    password: "%{::puppetdb::database::puppetdb_pass}"
