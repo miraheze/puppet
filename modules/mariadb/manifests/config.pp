@@ -7,6 +7,7 @@ class mariadb::config(
     $innodb_buffer_pool_instances   = 1,
     $innodb_buffer_pool_size        = '768M',
     $max_connections                = 90,
+    $version_102                    = undef,
 ) {
     file { '/etc/my.cnf':
         owner   => 'root',

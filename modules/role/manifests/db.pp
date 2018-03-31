@@ -72,8 +72,22 @@ class role::db {
         ],
     }
 
+    file { '/etc/ssl/private':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'mysql',
+        mode	=> '0750',
+        before  => Ssl::Cert['wildcard.miraheze.org'],
+    }
+
     ssl::cert { 'wildcard.miraheze.org': }
 
+    if $::virtual == 'kvm' {
+        sysctl::parameters { 'avoid swap usage':
+            values  => { 'vm.swappiness' => 1, },
+        }
+    }
+    
     motd::role { 'role::db':
         description => 'general database server',
     }
