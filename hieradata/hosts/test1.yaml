@@ -7,7 +7,7 @@ puppetmaster::dbuser: puppet
 puppetmaster::dbname: puppet
 puppetmaster::dbpassword: miraheze
 puppetmaster_version: 4
-puppetmaster::use_puppetdb: true
+puppetmaster::use_puppetdb: false
 puppetdb_host: test1.miraheze.org
 # these are tests passwords on prod add them into the private repo
 puppetdb::db_password: puppetdb
