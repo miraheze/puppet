@@ -5,7 +5,7 @@ node 'bacula1.miraheze.org' {
     include bacula::director
 }
 
-node /^cp[24]\.miraheze\.org$/ {
+node /^cp[245]\.miraheze\.org$/ {
     include base
     include role::varnish
 }
