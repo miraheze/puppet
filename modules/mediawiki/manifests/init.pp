@@ -7,7 +7,6 @@ class mediawiki(
     include mediawiki::nginx
     include mediawiki::php
     include mediawiki::wikistats
-    include ssl::hiera
 
     if hiera(jobrunner) {
         include mediawiki::jobrunner
@@ -77,6 +76,8 @@ class mediawiki(
 
     # these aren't autoloaded by ssl::hiera
     ssl::cert { 'wildcard.miraheze.org': }
+    
+    include ssl::hiera
 
     nginx::conf { 'mediawiki-includes':
         ensure => present,
