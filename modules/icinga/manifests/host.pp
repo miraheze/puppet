@@ -18,6 +18,6 @@ define icinga::host (
     if defined(Class['icinga']) {
         create_resources(nagios_host, $host)
     } else {
-        create_resources('@@nagios_host', $host)
+        create_resources('icinga::exported_nagios_host', $host)
     }
 }

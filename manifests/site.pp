@@ -59,6 +59,7 @@ node 'puppet1.miraheze.org' {
     include bacula::client
     include puppetmaster
 }
+
 node 'test1.miraheze.org' {
     include base
     include role::mediawiki

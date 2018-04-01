@@ -1,0 +1,17 @@
+[main]
+logdir = /var/log/puppet
+vardir = /var/lib/puppet
+ssldir = /var/lib/puppet/ssl
+rundir = /var/run/puppet
+factpath = $vardir/lib/facter
+
+[agent]
+server = <%= @puppetmaster_hostname %>
+daemonize = false
+http_connect_timeout = 60
+http_read_timeout = 960
+usecacheonfailure = false
+splay = true
+pluginsync = true
+report = true
+stringify_facts = false
