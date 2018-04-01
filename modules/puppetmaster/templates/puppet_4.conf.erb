@@ -8,7 +8,8 @@ factpath = $vardir/lib/facter
 [agent]
 server = <%= @puppetmaster_hostname %>
 daemonize = false
-configtimeout = 960
+http_connect_timeout = 60
+http_read_timeout = 960
 usecacheonfailure = false
 splay = true
 pluginsync = true

@@ -1,19 +1,6 @@
 users::groups:
-  - puppet-users
-puppetmaster: true
-puppetmaster_hostname: test1.miraheze.org
-puppetmaster::dbserver: db2.miraheze.org
-puppetmaster::dbuser: puppet
-puppetmaster::dbname: puppet
-puppetmaster::dbpassword: miraheze
+  - mediawiki-admins
+jobrunner: false
+contactgroups: 'ops,mediawiki'
+# can be removed once puppet 4 is the default
 puppetmaster_version: 4
-puppetmaster::use_puppetdb: false
-puppetdb_host: test1.miraheze.org
-# these are tests passwords on prod add them into the private repo
-puppetdb::db_password: puppetdb
-puppetdb::password::rw: puppetdb
-puppetmaster::puppetdb::postgres_users:
-  puppetdb@test1:
-    user: puppetdb
-    database: puppetdb
-    password: "%{::puppetdb::database::puppetdb_pass}"
