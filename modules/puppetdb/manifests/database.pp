@@ -7,7 +7,7 @@ class puppetdb::database($master = undef) {
         'jessie'  => '9.4',
     }
 
-    $puppetdb_pass = hiera('puppetdb::password::rw', 'puppetdb')
+    $puppetdb_pass = hiera('puppetdb::password::rw')
 
     # We do this for the require in postgres::db
     $require_class = 'postgresql::master'
