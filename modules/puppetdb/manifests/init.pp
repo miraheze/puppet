@@ -7,7 +7,7 @@ class puppetdb(
     $db_rw_host = hiera('puppetdb::db_rw_host', 'localhost'),
     $db_ro_host = hiera('puppetdb::db_ro_host', undef),
     $db_user = hiera('puppetdb::db_user', 'puppetdb'),
-    $db_password = hiera('puppetdb::db_password', 'test'),
+    $db_password = hiera('puppetdb::db_password'),
     $perform_gc = hiera('puppetdb::perform_gc', false),
     $heap_size = hiera('puppetdb::heap_size', '2G'),
     $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
