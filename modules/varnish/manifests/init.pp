@@ -1,7 +1,6 @@
 # class: varnish
 class varnish {
     include varnish::nginx
-    include ssl::hiera
 
     package { [ 'varnish', 'stunnel4' ]:
         ensure => present,
@@ -51,6 +50,8 @@ class varnish {
 
     # these aren't autoloaded by ssl::hiera
     ssl::cert { 'wildcard.miraheze.org': }
+    
+    include ssl::hiera
 
     file { '/etc/nginx/sites-enabled/default':
         ensure => absent,
