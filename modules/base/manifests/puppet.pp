@@ -4,21 +4,6 @@ class base::puppet {
     $puppetmaster_hostname = hiera('puppetmaster_hostname', 'puppet1.miraheze.org')
     $puppetmaster_version = hiera('puppetmaster_version', 3)
 
-    cron { 'puppet-run-no-force':
-        ensure  => absent,
-        command => '/root/puppet-run &> /var/log/puppet-run.log',
-        user    => 'root',
-        minute  => [ 10, 20, 30, 40, 50 ],
-    }
-
-    cron { 'puppet-run-force':
-        ensure  => absent,
-        command => '/root/puppet-run -f &> /var/log/puppet-run.log',
-        user    => 'root',
-        hour    => '*',
-        minute  => '0',
-    }
-
     cron { 'puppet-agent':
         command => '/usr/bin/puppet agent -t',
         user    => 'root',
