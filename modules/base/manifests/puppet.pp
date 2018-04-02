@@ -8,7 +8,7 @@ class base::puppet {
         command => '/usr/bin/puppet agent -t',
         user    => 'root',
         hour    => '*',
-        minute  => '*/10',
+        minute  => '*/30',
     }
 
     file { '/root/puppet-run':
