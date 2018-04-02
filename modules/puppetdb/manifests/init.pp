@@ -21,9 +21,8 @@ class puppetdb(
 
     ## PuppetDB installation
 
-    ## Update puppetdb when wmf do.
     exec { "install_puppetdb":
-        command => '/usr/bin/curl -o /opt/puppetdb_2.3.8-1~wmf1_all.deb https://apt.wikimedia.org/wikimedia/pool/component/puppetdb4/p/puppetdb/puppetdb_4.4.0-1~wmf1_all.deb',
+        command => '/usr/bin/curl -o /opt/puppetdb_4.4.0-1~wmf1_all.deb https://apt.wikimedia.org/wikimedia/pool/component/puppetdb4/p/puppetdb/puppetdb_4.4.0-1~wmf1_all.deb',
         unless  => '/bin/ls /opt/puppetdb_4.4.0-1~wmf1_all.deb',
     }
 
@@ -45,17 +44,6 @@ class puppetdb(
         source   => '/opt/puppetdb-termini_4.4.0-1~wmf1_all.deb',
     }
 
-    ## Configuration
-
-    file { '/etc/puppetdb/conf.d':
-        ensure  => directory,
-        owner   => 'puppetdb',
-        group   => 'puppetdb',
-        mode    => '0750',
-        recurse => true,
-        require => Package['puppetdb'],
-    }
-
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
     file { '/etc/puppetdb':
         ensure => link,
@@ -74,6 +62,16 @@ class puppetdb(
          group   => 'root',
          content => template('puppetdb/puppetdb.erb'),
      }
+
+    ## Configuration
+
+    file { '/etc/puppetdb/conf.d':
+        ensure  => directory,
+        owner   => 'puppetdb',
+        group   => 'puppetdb',
+        mode    => '0750',
+        recurse => true,
+    }
 
     # Ensure the default debian config file is not there
 
@@ -148,6 +146,12 @@ class puppetdb(
         settings => $actual_jetty_settings,
     }
 
+    puppetdb::config { 'command-processing':
+        settings => {
+            'threads' => $command_processing_threads,
+        },
+    }
+
     package { 'policykit-1':
         ensure => present,
     }
@@ -156,18 +160,12 @@ class puppetdb(
         ensure  => running,
     }
 
-    puppetdb::config { 'command-processing':
-        settings => {
-            'threads' => $command_processing_threads,
-        },
-    }
-
     ufw::allow { 'puppetdb':
         proto => 'tcp',
         port  => 8081,
     }
 
-    ufw::allow { 'postgresql':
+    ufw::allow { 'puppetdb_postgresql':
         proto => 'tcp',
         port  => 5432,
     }
