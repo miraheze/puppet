@@ -9,9 +9,9 @@ class puppetdb(
     $db_user = hiera('puppetdb::db_user', 'puppetdb'),
     $db_password = hiera('puppetdb::db_password'),
     $perform_gc = hiera('puppetdb::perform_gc', false),
-    $heap_size = hiera('puppetdb::heap_size', '300m'),
+    $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx1G'),
     $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
-    $command_processing_threads = hiera('puppetdb::command_processing_threads', 16),
+    $command_processing_threads = hiera('puppetdb::command_processing_threads', 1),
     $db_ssl = hiera('puppetdb::db_ssl', false),
 ) {
 
@@ -21,29 +21,47 @@ class puppetdb(
 
     ## PuppetDB installation
 
-    ## Update puppetdb when wmf do.
     exec { "install_puppetdb":
-        command => '/usr/bin/curl -o /opt/puppetdb_2.3.8-1~wmf1_all.deb https://apt.wikimedia.org/wikimedia/pool/main/p/puppetdb/puppetdb_2.3.8-1~wmf1_all.deb',
-        unless  => '/bin/ls /opt/puppetdb_2.3.8-1~wmf1_all.deb',
+        command => '/usr/bin/curl -o /opt/puppetdb_4.4.0-1~wmf1_all.deb https://apt.wikimedia.org/wikimedia/pool/component/puppetdb4/p/puppetdb/puppetdb_4.4.0-1~wmf1_all.deb',
+        unless  => '/bin/ls /opt/puppetdb_4.4.0-1~wmf1_all.deb',
     }
 
-    exec { "puppetdb-terminus":
-        command => '/usr/bin/curl -o /opt/puppetdb-terminus_2.3.8-1~wmf1_all.deb https://apt.wikimedia.org/wikimedia/pool/main/p/puppetdb/puppetdb-terminus_2.3.8-1~wmf1_all.deb',
-        unless  => '/bin/ls /opt/puppetdb-terminus_2.3.8-1~wmf1_all.deb',
+    exec { "puppetdb-termini":
+        command => '/usr/bin/curl -o /opt/puppetdb-termini_4.4.0-1~wmf1_all.deb https://apt.wikimedia.org/wikimedia/pool/component/puppetdb4/p/puppetdb/puppetdb-termini_4.4.0-1~wmf1_all.deb',
+        unless  => '/bin/ls /opt/puppetdb-termini_4.4.0-1~wmf1_all.deb',
     }
 
     package { "puppetdb":
         provider => dpkg,
         ensure   => present,
-        source   => '/opt/puppetdb_2.3.8-1~wmf1_all.deb',
+        source   => '/opt/puppetdb_4.4.0-1~wmf1_all.deb',
         require  => Package['default-jdk'],
     }
 
-    package { "puppetdb-terminus":
+    package { "puppetdb-termini":
         provider => dpkg,
         ensure   => present,
-        source   => '/opt/puppetdb-terminus_2.3.8-1~wmf1_all.deb',
+        source   => '/opt/puppetdb-termini_4.4.0-1~wmf1_all.deb',
     }
+
+    # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
+    file { '/etc/puppetdb':
+        ensure => link,
+        target => '/etc/puppetlabs/puppetdb',
+    }
+ 
+     file { '/var/lib/puppetdb':
+         ensure => directory,
+         owner  => 'puppetdb',
+         group  => 'puppetdb',
+     }
+
+     file { '/etc/default/puppetdb':
+         ensure  => present,
+         owner   => 'root',
+         group   => 'root',
+         content => template('puppetdb/puppetdb.erb'),
+     }
 
     ## Configuration
 
@@ -53,7 +71,6 @@ class puppetdb(
         group   => 'puppetdb',
         mode    => '0750',
         recurse => true,
-        require => Package['puppetdb'],
     }
 
     # Ensure the default debian config file is not there
@@ -129,25 +146,18 @@ class puppetdb(
         settings => $actual_jetty_settings,
     }
 
-    package { 'policykit-1':
-        ensure => present,
-    }
-
-    file { '/lib/systemd/system/puppetdb.service':
-        ensure  => present,
-        content => template('puppetdb/puppetdb.systemd.erb'),
-        require => Package['policykit-1'],
-    }
-
-    service { 'puppetdb':
-        ensure  => running,
-        require => File['/lib/systemd/system/puppetdb.service'],
-    }
-
     puppetdb::config { 'command-processing':
         settings => {
             'threads' => $command_processing_threads,
         },
+    }
+
+    package { 'policykit-1':
+        ensure => present,
+    }
+
+    service { 'puppetdb':
+        ensure  => running,
     }
 
     ufw::allow { 'puppetdb':
@@ -155,7 +165,7 @@ class puppetdb(
         port  => 8081,
     }
 
-    ufw::allow { 'postgresql':
+    ufw::allow { 'puppetdb_postgresql':
         proto => 'tcp',
         port  => 5432,
     }
