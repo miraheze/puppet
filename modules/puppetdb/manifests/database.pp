@@ -12,6 +12,7 @@ class puppetdb::database($master = undef) {
     # We do this for the require in postgres::db
     $require_class = 'postgresql::master'
     class { '::postgresql::master':
+        includes => ['tuning.conf'],
         root_dir => '/srv/postgres',
         use_ssl  => false,
     }
