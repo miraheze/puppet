@@ -19,3 +19,4 @@ elif len(depooled_datacenters) == 1:
         sys.exit(2)
 elif len(depooled_datacenters) > 1:
         print "CRITICAL - %s datacenters are down: %s" % (len(depooled_datacenters), ', '.join(depooled_datacenters))
+        sys.exit(2)
