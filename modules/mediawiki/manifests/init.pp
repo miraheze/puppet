@@ -5,7 +5,12 @@ class mediawiki(
     include mediawiki::favicons
     include mediawiki::cron
     include mediawiki::nginx
-    include mediawiki::php
+
+    if os_version('debian >= stretch') {
+        include mediawiki::php7
+    } else {
+        include mediawiki::php5
+    }
     include mediawiki::wikistats
 
     if hiera(jobrunner) {
@@ -79,9 +84,11 @@ class mediawiki(
     
     include ssl::hiera
 
+    $php_version = os_version('debian >= stretch')
+
     nginx::conf { 'mediawiki-includes':
         ensure => present,
-        source => 'puppet:///modules/mediawiki/nginx/mediawiki-includes.conf',
+        content => template('mediawiki/mediawiki-includes.conf.erb'),
     }
 
     git::clone { 'MediaWiki config':
@@ -129,12 +136,21 @@ class mediawiki(
         group   => 'www-data',
         require => Git::Clone['MediaWiki config'],
     }
-    
-    file { '/var/log/php5-fpm.log':
-        ensure  => 'present',
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '0755',
+
+    if os_version('debian >= stretch') {
+        file { '/var/log/php7.0-fpm.log':
+            ensure  => 'present',
+            owner   => 'www-data',
+            group   => 'www-data',
+            mode    => '0755',
+        }
+    } else {
+        file { '/var/log/php5-fpm.log':
+            ensure  => 'present',
+            owner   => 'www-data',
+            group   => 'www-data',
+            mode    => '0755',
+        }
     }
 
     $wikiadmin_password   = hiera('passwords::db::wikiadmin')
@@ -208,8 +224,15 @@ class mediawiki(
         check_command => 'check_mediawiki!meta.miraheze.org',
     }
 
-    icinga::service { 'php5-fpm':
-        description   => 'php5-fpm',
-        check_command => 'check_nrpe_1arg!check_php_fpm',
-    }
+    if os_version('debian >= stretch') {
+        icinga::service { 'php7.0-fpm':
+            description   => 'php7.0-fpm',
+            check_command => 'check_nrpe_1arg!check_php_fpm_7',
+        }
+    } else {
+        icinga::service { 'php5-fpm':
+            description   => 'php5-fpm',
+            check_command => 'check_nrpe_1arg!check_php_fpm_5',
+        }
+   }
 }

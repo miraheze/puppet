@@ -1,5 +1,5 @@
-# mediawiki::php
-class mediawiki::php {
+# mediawiki::php5
+class mediawiki::php5 {
     $packages = [
         'php-pear',
         'php-mail',
@@ -27,21 +27,21 @@ class mediawiki::php {
     file { '/etc/php5/fpm/php-fpm.conf':
         ensure => 'present',
         mode   => '0755',
-        source => 'puppet:///modules/mediawiki/php/php-fpm.conf',
+        source => 'puppet:///modules/mediawiki/php/php-fpm-5.conf',
         notify => Service['php5-fpm'],
     }
 
     file { '/etc/php5/fpm/pool.d/www.conf':
         ensure => 'present',
         mode   => '0755',
-        source => 'puppet:///modules/mediawiki/php/www.conf',
+        source => 'puppet:///modules/mediawiki/php/www-5.conf',
         notify => Service['php5-fpm'],
     }
 
     file { '/etc/php5/fpm/php.ini':
         ensure => present,
         mode   => '0755',
-        source => 'puppet:///modules/mediawiki/php/php.ini',
+        source => 'puppet:///modules/mediawiki/php/php-5.ini',
         notify => Service['php5-fpm'],
     }
 }

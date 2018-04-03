@@ -13,4 +13,4 @@ do
                 echo "JOBQUEUE OK - job queue below 300 jobs"
                 exit 0
         fi
-done < <( /usr/bin/php5 /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/getJobQueueLengths.php --totalonly --wiki loginwiki)
+done < <( /usr/bin/php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/getJobQueueLengths.php --totalonly --wiki loginwiki)
