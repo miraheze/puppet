@@ -101,6 +101,6 @@ class postgresql::server(
         owner  => 'root',
         group  => 'root',
         mode   => '0444',
-        source => 'puppet:///modules/postgres/tuning.conf',
+        source => 'puppet:///modules/postgresql/tuning.conf',
     }
 }
