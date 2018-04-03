@@ -210,6 +210,12 @@ sub vcl_recv {
 		return (pass);
 	}
 
+	if (req.url ~ "^/healthcheck$") {
+		set req.http.Host = "meta.miraheze.org";
+		set req.url = "/wiki/Miraheze";
+		return (pass);
+	}
+
 	call evaluate_cookie;
 	
 	return (hash);
