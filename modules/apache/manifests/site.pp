@@ -63,5 +63,17 @@ define apache::site(
                 check_command => 'check_https',
             }
         }
+    } else {
+        icinga::service { 'HTTP':
+            ensure        => 'absent',
+            description   => 'HTTP',
+            check_command => 'check_http',
+        }
+
+        icinga::service { 'HTTPS':
+            ensure        => 'absent',
+            description   => 'HTTPS',
+            check_command => 'check_https',
+        }
     }
 }
