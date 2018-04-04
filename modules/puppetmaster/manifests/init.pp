@@ -182,6 +182,7 @@ class puppetmaster(
     apache::site { 'puppet-master':
         ensure => present,
         content => template("puppetmaster/puppet-master.conf.erb"),
+        monitor => false,
     }
 
     # Place an empty puppet-master.conf file to prevent creation of this file
