@@ -58,6 +58,7 @@ node 'puppet1.miraheze.org' {
     include base
     include bacula::client
     include puppetmaster
+    include testpuppetdb
 }
 
 node 'test1.miraheze.org' {
