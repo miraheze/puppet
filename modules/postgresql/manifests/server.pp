@@ -95,12 +95,4 @@ class postgresql::server(
         group   => 'root',
         mode    => '0444',
     }
-
-    file { "/etc/postgresql/${pgversion}/main/tuning.conf":
-        ensure => 'present',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0444',
-        source => 'puppet:///modules/postgresql/tuning.conf',
-    }
 }
