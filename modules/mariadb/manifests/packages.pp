@@ -26,8 +26,7 @@ class mariadb::packages(
             'mariadb-client-10.0',
             'mariadb-server-10.0',
             'mariadb-server-core-10.0',
-          ]
-        }
+        ]
         package { $mariadb_package:
             ensure  => present,
         }
