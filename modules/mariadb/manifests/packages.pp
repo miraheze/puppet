@@ -24,9 +24,9 @@ class mariadb::packages(
     } else {
         if os_version('debian >= stretch') {
           $mariadb_package = [
-            'mariadb-client-10.1',
-            'mariadb-server-10.1',
-            'mariadb-server-core-10.1',
+            'mariadb-client-10.2',
+            'mariadb-server-10.2',
+            'mariadb-server-core-10.2',
           ]
         } else {
           $mariadb_package = [
