@@ -2,15 +2,8 @@
 class mariadb::packages(
     $version_102    = undef,
 ) {
-    if os_version('debian jessie') {
-      $percona_backup = 'percona-xtrabackup'
-    } else {
-      $percona_backup = ''
-    }
-    package { [
-        'percona-toolkit',
-        $percona_backup
-    ]:
+
+    package { 'percona-toolkit':
         ensure => present,
     }
 
