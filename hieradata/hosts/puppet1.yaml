@@ -6,7 +6,7 @@ puppetmaster::dbserver: db2.miraheze.org
 puppetmaster::dbuser: puppet
 puppetmaster::dbname: puppet
 puppetmaster_version: 4
-puppetmaster::use_puppetdb: false
+puppetmaster::use_puppetdb: true
 puppetdb_host: puppet1.miraheze.org
 puppetmaster::puppetdb::postgres_users:
   puppetdb@puppet1:
