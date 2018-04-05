@@ -64,7 +64,7 @@ define apache::site(
             }
         }
     } else {
-        if defined(Icinga::Service['HTTP']) {
+        if !defined(Icinga::Service['HTTP']) {
             icinga::service { 'HTTP':
                 ensure        => 'absent',
                 description   => 'HTTP',
@@ -72,7 +72,7 @@ define apache::site(
             }
         }
 
-        if defined(Icinga::Service['HTTPS']) {
+        if !defined(Icinga::Service['HTTPS']) {
             icinga::service { 'HTTPS':
                 ensure        => 'absent',
                 description   => 'HTTPS',
