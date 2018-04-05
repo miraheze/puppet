@@ -72,16 +72,11 @@ class postgresql::server(
             owner   => 'root',
             group   => 'root',
             mode    => '0444',
-            require => Base::Expose_puppet_certs['/etc/postgresql'],
+            require => Ssl::Cert['wildcard.miraheze.org'],
             before  => Service[$service_name],
         }
-
-        ::base::expose_puppet_certs { '/etc/postgresql':
-            ensure          => $ensure,
-            provide_private => true,
-            user            => 'postgres',
-            group           => 'postgres',
-        }
+        
+        ssl::cert { 'wildcard.miraheze.org': }
     }
 
     service { $service_name:
