@@ -39,9 +39,7 @@ class puppetmaster::puppetdb::client(
 
     class { 'puppetdb': }
 
-    if hiera('puppetmaster::puppetdb::use_local_db', false) {
-      class { 'puppetdb::database':
-          require => Class['puppetdb'],
-      }
+    class { 'puppetdb::database':
+        require => Class['puppetdb'],
     }
 }
