@@ -48,9 +48,7 @@ class varnish {
         refreshonly => true,
     }
 
-    # these aren't autoloaded by ssl::hiera
-    ssl::cert { 'wildcard.miraheze.org': }
-    
+    include ssl::wildcard
     include ssl::hiera
 
     file { '/etc/nginx/sites-enabled/default':

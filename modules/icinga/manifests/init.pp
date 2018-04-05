@@ -180,7 +180,7 @@ class icinga {
         ensure => absent,
     }
 
-    ssl::cert { 'wildcard.miraheze.org': }
+    include ssl::wildcard
 
     apache::site { 'icinga.miraheze.org':
         ensure  => present,

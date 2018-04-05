@@ -77,10 +77,9 @@ class role::db {
         owner   => 'root',
         group   => 'mysql',
         mode	=> '0750',
-        before  => Ssl::Cert['wildcard.miraheze.org'],
     }
 
-    ssl::cert { 'wildcard.miraheze.org': }
+    include ssl::wildcard
 
     if $::virtual == 'kvm' {
         sysctl::parameters { 'avoid swap usage':

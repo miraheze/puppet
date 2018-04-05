@@ -15,7 +15,7 @@ class parsoid {
         },
     }
 
-    ssl::cert { 'wildcard.miraheze.org': }
+    include ssl::wildcard
 
     file { '/etc/nginx/sites-enabled/default':
         ensure  => absent,
