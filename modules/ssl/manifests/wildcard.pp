@@ -8,6 +8,7 @@ class ssl::wildcard {
 
         file { '/etc/ssl/private/wildcard.miraheze.org.key':
             ensure => 'present',
+            mode   => '0644',
             source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
         }
     }
