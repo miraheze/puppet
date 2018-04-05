@@ -66,21 +66,15 @@ class postgresql::server(
     }
 
     if $use_ssl {
+        include ssl::wildcard
+
         file { "/etc/postgresql/${pgversion}/main/ssl.conf":
             ensure  => $ensure,
             source  => 'puppet:///modules/postgresql/ssl.conf',
             owner   => 'root',
             group   => 'root',
             mode    => '0444',
-            require => Base::Expose_puppet_certs['/etc/postgresql'],
             before  => Service[$service_name],
-        }
-
-        ::base::expose_puppet_certs { '/etc/postgresql':
-            ensure          => $ensure,
-            provide_private => true,
-            user            => 'postgres',
-            group           => 'postgres',
         }
     }
 
