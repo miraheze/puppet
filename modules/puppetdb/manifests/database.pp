@@ -11,10 +11,7 @@ class puppetdb::database($master = undef) {
 
     # We do this for the require in postgres::db
     $require_class = 'postgresql::master'
-    class { '::postgresql::master':
-        root_dir => '/srv/postgres',
-        use_ssl  => false,
-    }
+    include role::postgresql
 
     # Postgres replication and users
     $postgres_users = hiera('puppetdb::postgres_users', undef)
