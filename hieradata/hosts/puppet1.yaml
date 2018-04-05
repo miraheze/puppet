@@ -13,3 +13,5 @@ puppetmaster::puppetdb::postgres_users:
     user: puppetdb
     database: puppetdb
     password: "%{::puppetdb::database::puppetdb_pass}"
+puppetdb::db_ssl: true
+puppetdb::db_rw_host: db4.miraheze.org
