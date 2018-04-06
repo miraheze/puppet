@@ -133,7 +133,7 @@ class mediawiki(
         target  => '/srv/mediawiki/config/LocalSettings.php',
         owner   => 'www-data',
         group   => 'www-data',
-        require => Git::Clone['MediaWiki config'],
+        require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
     }
 
     if os_version('debian >= stretch') {
