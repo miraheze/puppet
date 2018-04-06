@@ -15,7 +15,11 @@ location ~ \.php {
 	fastcgi_split_path_info ^(.+\.php)(.*)$;
 	try_files $fastcgi_script_name =404;
 	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	<%- if @php_version -%>
+	fastcgi_pass unix:/var/run/php7.0-fpm.sock;
+	<%- else -%>
 	fastcgi_pass unix:/var/run/php5-fpm.sock;
+	<%- end -%>
 }
 
 location ~ ^/w/(cache|maintenance|mw-config|vendor) {
@@ -37,7 +41,11 @@ location = /apple-touch-icon.png {
 location ^~ /wiki {
 	include fastcgi_params;
 	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
+	<%- if @php_version -%>
+	fastcgi_pass unix:/var/run/php7.0-fpm.sock;
+	<%- else -%>
 	fastcgi_pass unix:/var/run/php5-fpm.sock;
+	<%- end -%>
 }
 
 location ~* .(gif|ico|jpg|jpeg|png|svg)$ {

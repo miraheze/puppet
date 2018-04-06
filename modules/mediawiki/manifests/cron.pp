@@ -9,6 +9,7 @@ class mediawiki::cron {
         minute  => '*',
         hour    => '*',
     }
+
     cron { 'update.php for LocalisationUpdate':
         ensure  => present,
         command => '/usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki extloadwiki > /var/log/mediawiki/debuglogs/l10nupdate.log',
@@ -16,9 +17,18 @@ class mediawiki::cron {
         minute  => '0',
         hour    => '23',
     }
-    cron { 'restart_php5fpm':
-        ensure  => absent,
-        command => '/usr/sbin/service php5-fpm restart',
-        minute  => '*/10',
+
+    if os_version('debian >= stretch') {
+        cron { 'restart_php70fpm':
+            ensure  => absent,
+            command => '/usr/sbin/service php7.0-fpm restart',
+            minute  => '*/10',
+        }
+    } else {
+        cron { 'restart_php5fpm':
+            ensure  => absent,
+            command => '/usr/sbin/service php5-fpm restart',
+            minute  => '*/10',
+        }
     }
 }
