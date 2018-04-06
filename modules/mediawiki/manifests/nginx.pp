@@ -1,7 +1,5 @@
 # MediaWiki nginx config using hiera
 class mediawiki::nginx {
-    include ssl::wildcard
-    include ssl::hiera
 
     $sslcerts = loadyaml('/etc/puppet/ssl/certs.yaml')
 
@@ -36,6 +34,9 @@ class mediawiki::nginx {
     file { '/etc/nginx/sites-enabled/default':
         ensure => absent,
     }
+
+    include ssl::wildcard
+    include ssl::hiera
 
     $php_version = os_version('debian >= stretch')
 
