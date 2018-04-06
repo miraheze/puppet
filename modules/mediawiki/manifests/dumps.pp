@@ -4,8 +4,7 @@
 class mediawiki::dumps {
     package { 'zip':
         ensure => present,
-    }
-    
+    }    
     
     cron { 'Export aesbasewiki xml dump montly ':
         ensure   => present,
@@ -256,4 +255,4 @@ class mediawiki::dumps {
         month    => '*',
         monthday => '1'
     }
- }
+}

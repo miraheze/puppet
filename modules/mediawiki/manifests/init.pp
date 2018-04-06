@@ -5,13 +5,16 @@ class mediawiki(
     include mediawiki::favicons
     include mediawiki::cron
     include mediawiki::nginx
+    include mediawiki::wikistats
+    include mediawiki::packages
+    include mediawiki::logging
+    include mediawiki::extensionsetup
 
     if os_version('debian >= stretch') {
         include mediawiki::php7
     } else {
         include mediawiki::php5
     }
-    include mediawiki::wikistats
 
     if hiera(jobrunner) {
         include mediawiki::jobrunner
@@ -24,8 +27,6 @@ class mediawiki(
         '/srv/mediawiki', 
         '/srv/mediawiki/dblist', 
         '/srv/mediawiki/cdb-config', 
-        '/var/log/mediawiki', 
-        '/var/log/mediawiki/debuglogs' 
     ]:
         ensure => 'directory',
         owner  => 'www-data',
@@ -33,61 +34,10 @@ class mediawiki(
         mode   => '0755',
     }
 
-    file { '/etc/nginx/nginx.conf':
-        content => template('mediawiki/nginx.conf.erb'),
-        require => Package['nginx'],
-    }
-
-    file { '/etc/nginx/fastcgi_params':
-        ensure => present,
-        source => 'puppet:///modules/mediawiki/nginx/fastcgi_params',
-    }
-
-    file { '/etc/nginx/sites-enabled/default':
-        ensure => absent,
-    }
-
-    $packages = [
-        'djvulibre-bin',
-        'dvipng',
-        'htmldoc',
-        'imagemagick',
-        'ploticus',
-        'ttf-freefont',
-        'ffmpeg2theora',
-        'locales-all',
-        'oggvideotools',
-        'libav-tools',
-        'libvips-tools',
-        'lilypond',
-        'poppler-utils',
-        'python-pip',
-    ]
-
-    package { $packages:
-        ensure => present,
-    }
-
-    package { [ 'texvc', 'ocaml' ]:
-        ensure          => present,
-        install_options => ['--no-install-recommends'],
-    }
-
     file { '/etc/ImageMagick-6/policy.xml':
         ensure  => present,
         source  => 'puppet:///modules/mediawiki/imagemagick/policy.xml',
         require => Package['imagemagick'],
-    }
-
-    include ssl::wildcard
-    
-    include ssl::hiera
-
-    $php_version = os_version('debian >= stretch')
-
-    nginx::conf { 'mediawiki-includes':
-        ensure => present,
-        content => template('mediawiki/mediawiki-includes.conf.erb'),
     }
 
     git::clone { 'MediaWiki config':
@@ -111,15 +61,6 @@ class mediawiki(
         timeout            => '550',
         recurse_submodules => true,
         require            => File['/srv/mediawiki'],
-    }
-
-    # Ensure widgets template directory is read/writeable by webserver if mediawiki is cloned
-    file { '/srv/mediawiki/w/extensions/Widgets/compiled_templates':
-        ensure  => directory,
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '0755',
-        require => Git::Clone['MediaWiki core'],
     }
 
     file { '/srv/mediawiki/robots.txt':
@@ -174,41 +115,6 @@ class mediawiki(
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
     }
 
-    logrotate::rotate { 'mediawiki_wikilogs':
-        logs   => '/var/log/mediawiki/*.log',
-        rotate => '6',
-        delay  => false,
-    }
-
-    logrotate::rotate { 'mediawiki_debuglogs':
-        logs   => '/var/log/mediawiki/debuglogs/*.log',
-        rotate => '6',
-        delay  => false,
-    }
-
-    exec { 'Math texvccheck':
-        command => '/usr/bin/make --directory=/srv/mediawiki/w/extensions/Math/texvccheck',
-        creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
-        require => [ Git::Clone['MediaWiki core'], Package['ocaml'] ],
-    }
-
-    exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
-        creates     => '/srv/mediawiki/w/extensions/Wikibase/composer.phar',
-        cwd         => '/srv/mediawiki/w/extensions/Wikibase',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/mediawiki/w/extensions/Wikibase',
-        user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
-    }
-    exec { 'maps_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
-        creates     => '/srv/mediawiki/w/extensions/Maps/composer.phar',
-        cwd         => '/srv/mediawiki/w/extensions/Maps',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/mediawiki/w/extensions/Maps',
-        user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
-    }
     exec { 'ExtensionMessageFiles':
         command     => 'php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php',
         creates     => '/srv/mediawiki/config/ExtensionMessageFiles.php',
@@ -218,21 +124,4 @@ class mediawiki(
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
-    
-    icinga::service { 'mediawiki_rendering':
-        description   => 'MediaWiki Rendering',
-        check_command => 'check_mediawiki!meta.miraheze.org',
-    }
-
-    if os_version('debian >= stretch') {
-        icinga::service { 'php7.0-fpm':
-            description   => 'php7.0-fpm',
-            check_command => 'check_nrpe_1arg!check_php_fpm_7',
-        }
-    } else {
-        icinga::service { 'php5-fpm':
-            description   => 'php5-fpm',
-            check_command => 'check_nrpe_1arg!check_php_fpm_5',
-        }
-   }
 }

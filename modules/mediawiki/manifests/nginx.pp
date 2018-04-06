@@ -1,5 +1,8 @@
 # MediaWiki nginx config using hiera
 class mediawiki::nginx {
+    include ssl::wildcard
+    include ssl::hiera
+
     $sslcerts = loadyaml('/etc/puppet/ssl/certs.yaml')
 
     nginx::site { 'mediawiki':
@@ -18,5 +21,26 @@ class mediawiki::nginx {
         command     => '/usr/sbin/service nginx reload',
         refreshonly => true,
         require     => Exec['nginx-syntax'],
+    }
+
+    file { '/etc/nginx/nginx.conf':
+        content => template('mediawiki/nginx.conf.erb'),
+        require => Package['nginx'],
+    }
+
+    file { '/etc/nginx/fastcgi_params':
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/nginx/fastcgi_params',
+    }
+
+    file { '/etc/nginx/sites-enabled/default':
+        ensure => absent,
+    }
+
+    $php_version = os_version('debian >= stretch')
+
+    nginx::conf { 'mediawiki-includes':
+        ensure => present,
+        content => template('mediawiki/mediawiki-includes.conf.erb'),
     }
 }
