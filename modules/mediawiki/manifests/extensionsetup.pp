@@ -7,7 +7,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'wikibase_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install'
+        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
         creates     => '/srv/mediawiki/w/extensions/Wikibase/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Wikibase',
         path        => '/usr/bin',
