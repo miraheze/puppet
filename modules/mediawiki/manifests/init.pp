@@ -165,6 +165,7 @@ class mediawiki(
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
         content => template('mediawiki/PrivateSettings.php'),
+        require => Git::Clone['MediaWiki config'],
     }
 
     file { '/usr/local/bin/foreachwikiindblist':
