@@ -4,6 +4,7 @@ class base::packages {
         'acct',
         'coreutils',
         'debian-goodies',
+        'dirmngr',
         'git',
         'htop',
         'logrotate',
