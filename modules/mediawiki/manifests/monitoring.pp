@@ -1,5 +1,5 @@
 # MediaWiki monitoring
-class mediawiki::packages {
+class mediawiki::monitoring {
     icinga::service { 'mediawiki_rendering':
         description   => 'MediaWiki Rendering',
         check_command => 'check_mediawiki!meta.miraheze.org',
