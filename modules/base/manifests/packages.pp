@@ -4,7 +4,6 @@ class base::packages {
         'acct',
         'coreutils',
         'debian-goodies',
-        'dirmngr',
         'git',
         'htop',
         'logrotate',
@@ -20,6 +19,12 @@ class base::packages {
 
     package { $packages:
         ensure => present,
+    }
+
+    if os_version('debian >= stretch') {
+        package { 'dirmngr':
+            ensure => present,
+        }
     }
 
     # Get rid of this
