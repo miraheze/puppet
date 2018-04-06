@@ -16,7 +16,7 @@ location ~ \.php {
 	try_files $fastcgi_script_name =404;
 	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 	<%- if @php_version -%>
-	fastcgi_pass unix:/var/run/php7.0-fpm.sock;
+	fastcgi_pass unix:/run/php/php7.0-fpm.pid;
 	<%- else -%>
 	fastcgi_pass unix:/var/run/php5-fpm.sock;
 	<%- end -%>
@@ -42,7 +42,7 @@ location ^~ /wiki {
 	include fastcgi_params;
 	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
 	<%- if @php_version -%>
-	fastcgi_pass unix:/var/run/php7.0-fpm.sock;
+	fastcgi_pass unix:/run/php/php7.0-fpm.pid;
 	<%- else -%>
 	fastcgi_pass unix:/var/run/php5-fpm.sock;
 	<%- end -%>
