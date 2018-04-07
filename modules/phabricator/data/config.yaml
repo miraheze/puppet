@@ -101,7 +101,7 @@ maniphest.statuses:
     name.full: 'Open, Stalled'
     closed: false
     transaction.icon: 'fa-spinner'
-    prefixes: [stall, stalls]
+    prefixes: [stall, stalls, stalled]
     suffixes: ['as stalled']
 
 # Disable some Phabricator applications
