@@ -72,14 +72,16 @@ maniphest.statuses:
     closed: true
     special: 'closed'
     transaction.icon: 'fa-check-circle'
-    keywords: ['closed', 'fixed', 'resolved', 'closes', 'fixes', 'resolves']
+    prefixes: [closed, closes, close, fix, fixes, fixed, resolve, resolves, resolved]
+    suffixes: ['as resolved', 'as fixed']
   'invalid':
     name: 'Invalid'
     name.full: 'Closed, Invalid'
     closed: true
     transaction.icon: 'fa-minus-circle'
     claim: false
-    keywords: ['invalid']
+    prefixes: [invalidate, invalidates, invalidated]
+    suffixes: ['as invalid']
   'duplicate':
     name: 'Duplicate'
     name.full: 'Closed, Duplicate'
@@ -92,12 +94,15 @@ maniphest.statuses:
     name.full: 'Closed, Declined'
     closed: true
     transaction.icon: 'fa-thumbs-o-down'
-    keywords: ['declined', 'declines']
+    prefixes: [decline, declines, declined]
+    suffixes: ['as declined']
   'stalled':
     name: 'Stalled'
     name.full: 'Open, Stalled'
     closed: false
     transaction.icon: 'fa-spinner'
+    prefixes: [stall, stalls]
+    suffixes: ['as stalled']
 
 # Disable some Phabricator applications
 phabricator.uninstalled-applications:
