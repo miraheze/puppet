@@ -18,13 +18,6 @@ class irc::ircrcbot(
         notify  => Service['ircrcbot'],
     }
 
-    file { '/etc/init.d/ircrcbot':
-        ensure => present,
-        source => 'puppet:///modules/irc/ircrcbot/ircrcbot.initd',
-        mode   => '0755',
-        notify => Service['ircrcbot'],
-    }
-
     exec { 'IRCRCbot reload systemd':
         command     => '/bin/systemctl daemon-reload',
         refreshonly => true,
