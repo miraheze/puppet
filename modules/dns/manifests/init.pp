@@ -1,30 +1,37 @@
 # dns
 class dns {
-    include ::apt
 
-    apt::source { 'debian_stretch':
-        comment  => 'Debian Stretch APT',
-        location => 'http://ftp.debian.org/debian',
-        release  => 'stretch',
-        repos    => 'main contrib non-free',
-    }
+    if os_version('debian jessie') {
+        include ::apt
 
-    # Workaround for https://github.com/miraheze/puppet/issues/70
-    apt::pin { 'debian_stable':
-        priority => 995,
-        release  => 'stable',
-    }
+        apt::source { 'debian_stretch':
+            comment  => 'Debian Stretch APT',
+            location => 'http://ftp.debian.org/debian',
+            release  => 'stretch',
+            repos    => 'main contrib non-free',
+        }
 
-    apt::pin { 'debian_stretch':
-        priority   => 740,
-        originator => 'Debian',
-        release    => 'stretch',
-        packages   => 'gdnsd',
-    }
+        # Workaround for https://github.com/miraheze/puppet/issues/70
+        apt::pin { 'debian_stable':
+            priority => 995,
+            release  => 'stable',
+        }
 
-    package { 'gdnsd':
-        ensure  => installed,
-        require => File['/etc/apt/preferences'],
+        apt::pin { 'debian_stretch':
+            priority   => 740,
+            originator => 'Debian',
+            release    => 'stretch',
+            packages   => 'gdnsd',
+        }
+
+        package { 'gdnsd':
+            ensure  => installed,
+            require => File['/etc/apt/preferences'],
+        }
+    } else {
+        package { 'gdnsd':
+            ensure  => installed,
+        }
     }
 
     service { 'gdnsd':
