@@ -29,8 +29,16 @@ class dns {
             require => File['/etc/apt/preferences'],
         }
     } else {
+        apt::pin { 'debian_stretch_backports':
+            priority   => 740,
+            originator => 'Debian',
+            release    => 'stretch-backports',
+            packages   => 'gdnsd',
+        }
+
         package { 'gdnsd':
             ensure  => installed,
+            require => File['/etc/apt/preferences'],
         }
     }
 
