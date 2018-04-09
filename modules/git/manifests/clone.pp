@@ -121,6 +121,10 @@ define git::clone(
 
             # pull if $ensure == latest and if there are changes to merge in.
             if $ensure == 'latest' {
+                $remote_to_check = $branch ? {
+                    ''      => 'remotes/origin/HEAD',
+                    default => "remotes/origin/${branch}",
+                }
                 exec { "git_pull_${title}":
                     cwd       => $directory,
                     command   => "${git} pull ${recurse_submodules_arg}--quiet${deptharg}",
@@ -128,7 +132,7 @@ define git::clone(
                     logoutput => on_failure,
                     # git diff --quiet will exit 1 (return false)
                     #  if there are differences
-                    unless    => "${git} fetch && /usr/bin/git diff --quiet remotes/origin/HEAD",
+                    unless    => "${git} fetch && /usr/bin/git diff --quiet ${remote_to_check}",
                     user      => $owner,
                     group     => $group,
                     umask     => $umask,
