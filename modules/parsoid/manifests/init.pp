@@ -21,13 +21,6 @@ class parsoid {
         unless  => '/bin/ls /opt/parsoid_0.8.0all_all.deb',
     }
 
-    package { "parsoid":
-        provider => dpkg,
-        ensure   => present,
-        source   => '/opt/puppetdb_4.4.0-1~wmf1_all.deb',
-        require  => Package['default-jdk'],
-    }
-
     include ssl::wildcard
 
     file { '/etc/nginx/sites-enabled/default':
