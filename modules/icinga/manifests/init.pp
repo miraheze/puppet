@@ -1,5 +1,7 @@
 # icinga
 class icinga {
+    include ::httpd
+
     group { 'nagios':
         ensure    => present,
         name      => 'nagios',
@@ -183,6 +185,11 @@ class icinga {
         ensure  => present,
         source  => 'puppet:///modules/icinga/apache/apache.conf',
         require => File['/etc/apache2/conf-enabled/icinga.conf'],
+    }
+
+    httpd::mod { 'icinga_apache':
+        modules => ['alias', 'rewrite', 'ssl', 'php5'],
+        require => Package['libapache2-mod-php5'],
     }
 
     class { '::httpd':

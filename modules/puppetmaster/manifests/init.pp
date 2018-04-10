@@ -5,6 +5,7 @@ class puppetmaster(
     $dbuser       = undef,
     $use_puppetdb = hiera('puppetmaster::use_puppetdb', false),
   ) {
+    include ::httpd
 
     $puppetmaster_hostname = hiera('puppetmaster_hostname', 'puppet1.miraheze.org')
     $puppetmaster_version = hiera('puppetmaster_version', 4)
@@ -195,7 +196,7 @@ class puppetmaster(
         require => File['/etc/apache2/sites-available/puppet-master.conf'],
     }
 
-    class { '::httpd':
+    httpd::mod { 'puppetmaster_apache':
         modules => ['rewrite', 'ssl'],
     }
 
