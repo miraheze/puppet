@@ -43,7 +43,7 @@ class parsoid {
     package { "parsoid":
         provider => dpkg,
         ensure   => present,
-        source   => '/opt/puppetdb_4.4.0-1~wmf1_all.deb',
+        source   => '/opt/parsoid_0.8.0all_all.deb',
         require  => Exec['install_parsoid'],
         # require => Apt::Source['parsoid'],
     }
