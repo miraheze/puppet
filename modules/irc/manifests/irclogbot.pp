@@ -35,11 +35,6 @@ class irc::irclogbot {
         notify  => Service['adminbot'],
     }
 
-    file { '/etc/init.d/adminbot':
-        ensure => present,
-        source => 'puppet:///modules/irc/logbot/adminbot.initd',
-    }
-
     exec { 'IRCLogbot reload systemd':
         command     => '/bin/systemctl daemon-reload',
         refreshonly => true,
@@ -52,7 +47,8 @@ class irc::irclogbot {
     }
 
     service { 'adminbot':
-        ensure => 'running',
+        ensure  => 'running',
+        require => File['/etc/systemd/system/adminbot.service'],
     }
 
     icinga::service { 'irclogbot':
