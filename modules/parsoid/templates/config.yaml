@@ -17,6 +17,8 @@ services:
           domain: '<%= value %>'
 <%- end -%>
 <%- end -%>
+      # /!\ COMPATIBILITY for Parsoid 0.9.0 with MediaWiki before 1.31
+      strictAcceptCheck: false
       loadWMF: false
       debug: false
       usePHPPreProcessor: true
