@@ -1,8 +1,8 @@
--- Grants for 'matomo'@''
+-- Grants for 'piwik'@''
 
 GRANT CREATE, PROCESS
-    ON *.* TO 'matomo'@'%'
+    ON *.* TO 'piwik'@'%'
     IDENTIFIED BY '<%= @matomo_password %>';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, CREATE TEMPORARY TABLES, INDEX
-    ON `matomo`.* TO 'matomo'@'%';
+    ON `piwik`.* TO 'piwik'@'%';
