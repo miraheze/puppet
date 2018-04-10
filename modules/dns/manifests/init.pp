@@ -1,9 +1,8 @@
 # dns
 class dns {
+    include ::apt
 
     if os_version('debian jessie') {
-        include ::apt
-
         apt::source { 'debian_stretch':
             comment  => 'Debian Stretch APT',
             location => 'http://ftp.debian.org/debian',
@@ -23,11 +22,6 @@ class dns {
             release    => 'stretch',
             packages   => 'gdnsd',
         }
-
-        package { 'gdnsd':
-            ensure  => installed,
-            require => File['/etc/apt/preferences'],
-        }
     } else {
         apt::pin { 'debian_stretch_backports':
             priority   => 740,
@@ -35,11 +29,11 @@ class dns {
             release    => 'stretch-backports',
             packages   => 'gdnsd',
         }
+    }
 
-        package { 'gdnsd':
-            ensure  => installed,
-            require => File['/etc/apt/preferences'],
-        }
+    package { 'gdnsd':
+        ensure  => installed,
+        require => File['/etc/apt/preferences'],
     }
 
     service { 'gdnsd':
