@@ -1,5 +1,10 @@
 # icinga
 class icinga {
+    include ::apache::mod::alias
+    include ::apache::mod::php5
+    include ::apache::mod::rewrite
+    include ::apache::mod::ssl
+
     group { 'nagios':
         ensure    => present,
         name      => 'nagios',
@@ -26,8 +31,6 @@ class icinga {
     package { 'icinga':
         ensure => present,
     }
-
-    require_package('libapache2-mod-php5')
 
     file { '/etc/icinga/cgi.cfg':
         source  => 'puppet:///modules/icinga/cgi.cfg',
@@ -179,15 +182,10 @@ class icinga {
 
     include ssl::wildcard
 
-    httpd::site { 'icinga.miraheze.org':
+    apache::site { 'icinga.miraheze.org':
         ensure  => present,
         source  => 'puppet:///modules/icinga/apache/apache.conf',
         require => File['/etc/apache2/conf-enabled/icinga.conf'],
-    }
-
-    class { '::httpd':
-        modules => ['alias', 'rewrite', 'ssl', 'php5'],
-        require => Package['libapache2-mod-php5']
     }
 
     $mirahezebots_password = hiera('passwords::irc::mirahezebots')
