@@ -52,7 +52,7 @@ class piwik {
         require => Package['libapache2-mod-php5'],
     }
 
-    httpd::mod { 'icinga_apache':
+    httpd::mod { 'piwik_apache':
         modules => ['expires', 'rewrite', 'ssl', 'php5'],
         require => Package['libapache2-mod-php5'],
     }
