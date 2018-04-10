@@ -1,22 +1,21 @@
 # class: phabricator
 class phabricator {
-    include ::apache::mod::ssl
-    include ::apache::mod::php5
-
     $password = hiera('passwords::irc::mirahezebots')
 
     package { 'php5-apcu':
         ensure => present,
     }
 
+    require_package('libapache2-mod-php5')
+
     ssl::cert { 'phab.miraheze.wiki': }
 
-    apache::site { 'phab.miraheze.wiki':
+    httpd::site { 'phab.miraheze.wiki':
         ensure => present,
         source => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
     }
 
-    apache::site { 'phabricator.miraheze.org':
+    httpd::site { 'phabricator.miraheze.org':
         ensure => present,
         source => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
     }
@@ -82,9 +81,15 @@ class phabricator {
     }
 
     file { '/etc/php5/apache2/php.ini':
-        ensure => present,
-        mode   => '0755',
-        source => 'puppet:///modules/phabricator/php.ini',
+        ensure  => present,
+        mode    => '0755',
+        source  => 'puppet:///modules/phabricator/php.ini',
+        require => Package['libapache2-mod-php5'],
+    }
+
+    class { '::httpd':
+        modules => ['ssl', 'php5'],
+        require => Package['libapache2-mod-php5'],
     }
 
     exec { 'PHD reload systemd':

@@ -176,10 +176,7 @@ class puppetmaster(
         before => Service['apache2'],
     }
 
-    include ::apache::mod::rewrite 
-    include ::apache::mod::ssl
-
-    apache::site { 'puppet-master':
+    httpd::site { 'puppet-master':
         ensure => present,
         content => template("puppetmaster/puppet-master.conf.erb"),
         monitor => false,
@@ -191,10 +188,15 @@ class puppetmaster(
         ensure  => present,
         content => '# This file intentionally left blank by puppet'
     }
+
     file { '/etc/apache2/sites-enabled/puppet-master.conf':
         ensure  => link,
         target  => '/etc/apache2/sites-available/puppet-master.conf',
         require => File['/etc/apache2/sites-available/puppet-master.conf'],
+    }
+
+    class { '::httpd':
+        modules => ['rewrite', 'ssl'],
     }
 
     ufw::allow { 'puppetmaster':
