@@ -1,5 +1,7 @@
 # class: piwik
 class piwik {
+    include ::httpd
+
     $packages = [
         'php5-curl',
         'php5-mysqlnd',
@@ -50,7 +52,7 @@ class piwik {
         require => Package['libapache2-mod-php5'],
     }
 
-    class { '::httpd':
+    httpd::mod { 'icinga_apache':
         modules => ['expires', 'rewrite', 'ssl', 'php5'],
         require => Package['libapache2-mod-php5'],
     }
