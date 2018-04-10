@@ -192,11 +192,6 @@ class icinga {
         require => Package['libapache2-mod-php5'],
     }
 
-    class { '::httpd':
-        modules => ['alias', 'rewrite', 'ssl', 'php5'],
-        require => Package['libapache2-mod-php5']
-    }
-
     $mirahezebots_password = hiera('passwords::irc::mirahezebots')
 
     file { '/etc/icinga/irc.py':
