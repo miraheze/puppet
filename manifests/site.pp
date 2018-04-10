@@ -43,7 +43,7 @@ node 'misc2.miraheze.org' {
     include base
     include role::redis
     include role::ganglia
-    include role::piwik
+    include role::matomo
 }
 
 node /^mw[123]\.miraheze\.org$/ {

@@ -1,5 +1,5 @@
-# class: piwik
-class piwik {
+# class: matomo
+class matomo {
     include ::apache
     include ::apache::mod::expires
     include ::apache::mod::php5
@@ -16,8 +16,8 @@ class piwik {
         ensure => present,
     }
 
-    git::clone { 'piwik':
-        directory => '/srv/piwik',
+    git::clone { 'matomo':
+        directory => '/srv/matomo',
         origin    => 'https://github.com/matomo-org/matomo',
         branch    => '3.3.0', # Current stable
         recurse_submodules => true,
@@ -26,22 +26,22 @@ class piwik {
     }
 
     exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
-        creates     => '/srv/piwik/composer.phar',
-        cwd         => '/srv/piwik',
+        creates     => '/srv/matomo/composer.phar',
+        cwd         => '/srv/matomo',
         path        => '/usr/bin',
-        environment => 'HOME=/srv/piwik',
+        environment => 'HOME=/srv/matomo',
         user        => 'www-data',
-        require     => Git::Clone['piwik'],
+        require     => Git::Clone['matomo'],
     }
 
-    apache::site { 'piwik.miraheze.org':
+    apache::site { 'matomo.miraheze.org':
         ensure => present,
-        source => 'puppet:///modules/piwik/apache.conf',
+        source => 'puppet:///modules/matomo/apache.conf',
     }
 
-    file { '/etc/php5/apache2/conf.d/20-piwik.ini':
+    file { '/etc/php5/apache2/conf.d/20-matomo.ini':
         ensure => present,
-        source => 'puppet:///modules/piwik/20-piwik.ini',
+        source => 'puppet:///modules/matomo/20-matomo.ini',
         notify => Exec['apache2_test_config_and_restart'],
     }
 
@@ -52,15 +52,15 @@ class piwik {
         notify => Exec['apache2_test_config_and_restart'],
     }
 
-    $salt = hiera('passwords::piwik::salt')
-    $password = hiera('passwords::db::piwik')
+    $salt = hiera('passwords::matomo::salt')
+    $password = hiera('passwords::db::matomo')
     $noreply_password = hiera('passwords::mail::noreply')
 
-    file { '/srv/piwik/config/config.ini.php':
+    file { '/srv/matomo/config/config.ini.php':
         ensure  => present,
-        content => template('piwik/config.ini.php.erb'),
+        content => template('matomo/config.ini.php.erb'),
         owner   => 'www-data',
         group   => 'www-data',
-        require => Git::Clone['piwik'],
+        require => Git::Clone['matomo'],
     }
 }
