@@ -46,6 +46,11 @@ node 'misc2.miraheze.org' {
     include role::piwik
 }
 
+node 'misc3.miraheze.org' {
+    include base
+    include role::parsoid
+}
+
 node /^mw[123]\.miraheze\.org$/ {
     include base
     include role::mediawiki
@@ -54,11 +59,6 @@ node /^mw[123]\.miraheze\.org$/ {
 node 'ns1.miraheze.org' {
     include base
     include role::dns
-}
-
-node 'parsoid1.miraheze.org' {
-    include base
-    include role::parsoid
 }
 
 node 'puppet1.miraheze.org' {
