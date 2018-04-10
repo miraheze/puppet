@@ -1,5 +1,9 @@
 # class: ganglia
 class ganglia {
+    include ::apache::mod::php5
+    include ::apache::mod::rewrite
+    include ::apache::mod::ssl
+
     include ssl::wildcard
 
     $packages = [
@@ -12,8 +16,6 @@ class ganglia {
         ensure => present,
     }
 
-    require_package('libapache2-mod-php5')
-
     file { '/etc/ganglia/gmetad.conf':
         ensure => present,
         source => 'puppet:///modules/ganglia/gmetad.conf',
@@ -23,21 +25,16 @@ class ganglia {
         ensure => absent,
     }
 
-    httpd::site { 'ganglia.miraheze.org':
+    apache::site { 'ganglia.miraheze.org':
         ensure  => present,
         source  => 'puppet:///modules/ganglia/apache/apache.conf',
         require => File['/etc/apache2/sites-enabled/apache.conf'],
     }
 
     file { '/etc/php5/apache2/php.ini':
-        ensure  => present,
-        mode    => '0755',
-        source  => 'puppet:///modules/ganglia/apache/php.ini',
-        require => Package['libapache2-mod-php5']
+        ensure => present,
+        mode   => '0755',
+        source => 'puppet:///modules/ganglia/apache/php.ini',
     }
 
-    class { '::httpd':
-        modules => ['rewrite', 'ssl', 'php5'],
-        require => Package['libapache2-mod-php5']
-    }
 }

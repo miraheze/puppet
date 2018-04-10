@@ -1,5 +1,11 @@
 # class: piwik
 class piwik {
+    include ::apache
+    include ::apache::mod::expires
+    include ::apache::mod::php5
+    include ::apache::mod::rewrite
+    include ::apache::mod::ssl
+
     $packages = [
         'php5-curl',
         'php5-mysqlnd',
@@ -10,15 +16,13 @@ class piwik {
         ensure => present,
     }
 
-    require_package('libapache2-mod-php5')
-
     git::clone { 'piwik':
-        directory          => '/srv/piwik',
-        origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '3.3.0', # Current stable
+        directory => '/srv/piwik',
+        origin    => 'https://github.com/matomo-org/matomo',
+        branch    => '3.3.0', # Current stable
         recurse_submodules => true,
-        owner              => 'www-data',
-        group               => 'www-data',
+        owner     => 'www-data',
+        group     => 'www-data',
     }
 
     exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
@@ -30,29 +34,22 @@ class piwik {
         require     => Git::Clone['piwik'],
     }
 
-    httpd::site { 'piwik.miraheze.org':
+    apache::site { 'piwik.miraheze.org':
         ensure => present,
         source => 'puppet:///modules/piwik/apache.conf',
     }
 
     file { '/etc/php5/apache2/conf.d/20-piwik.ini':
-        ensure  => present,
-        source  => 'puppet:///modules/piwik/20-piwik.ini',
-        notify  => Exec['apache2_test_config_and_restart'],
-        require => Package['libapache2-mod-php5'],
+        ensure => present,
+        source => 'puppet:///modules/piwik/20-piwik.ini',
+        notify => Exec['apache2_test_config_and_restart'],
     }
 
     file_line { 'enable_php_opcache':
-        line    => 'opcache.enable=1',
-        match   => '^;?opcache.enable\s*\=',
-        path    => '/etc/php5/apache2/php.ini',
-        notify  => Exec['apache2_test_config_and_restart'],
-        require => Package['libapache2-mod-php5'],
-    }
-
-    class { '::httpd':
-        modules => ['expires', 'rewrite', 'ssl', 'php5'],
-        require => Package['libapache2-mod-php5'],
+        line   => 'opcache.enable=1',
+        match  => '^;?opcache.enable\s*\=',
+        path   => '/etc/php5/apache2/php.ini',
+        notify => Exec['apache2_test_config_and_restart'],
     }
 
     $salt = hiera('passwords::piwik::salt')
