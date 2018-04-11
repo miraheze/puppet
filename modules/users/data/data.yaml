@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [johnflewis, ndkilla, reception, southparkfan]
+    members: [johnflewis, ndkilla, paladox, reception, southparkfan]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -97,3 +97,9 @@ users:
     name: imbophil
     realname: ImBoPhil
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEApisLO+5C+5ZX8tzgeOiapJEVAnm2RLVkjEBZ4x9HeRyNo1UqabxoMxTgXGRseI1YqHf4fZU+ILbWQ887pwp9EU8lmEw8+8+/2i1s+139xR9eQBbGMXV9b5zRMUKlzyCtBfp12vOqtV/Ch1X6S2+qhGNF+uMm7oF4Y894OJtBLtQ/dc/tUM9BTn+qeIthwY9fTpZ476zpIcO1WszvzHeBTL6I6XHioSjiYS7bd+YoYMCq1kN5B+1m5lB5JuM1ESwBbnjR7OwPsGkHiO+tJCWHsR0x/9/UgRTPc9zkHli1pEg/0MiA7C/jXTBy5CAcfrCdlCffV63JNJasVdcSAmvdmLKGcnlBxQpmNjf5xIYDsnRdX6n40OSkjPNcDEKY7600BO21oO+SgrFd4I9hsGnZhu4tmrOA53MHA9C9uWGDqdqWGspv8OcnbWB4xWDmpMcTC7DAnAxhKLYDNlgFXYnRvkqgSi7Kc5NSJcT49JLMqv1wwr25DExzP/OJHlM0MYeLf1ih/yhorvo/HzMz69e0GzzLeAfp4euK4hdY4lyd4G7CHYPVxEOxARrHLdXTmwFhhyfl/qhI5FFquPTWAArChDFP5JXDlbugm6KlfRP57EPFD6VsyQafQJGYkf8+zANkah2R7HcLtwSOkxMOGRn062/nHiVWOuPaUmBKDcOjpL8= imbophil Miraheze key]
+  paladox:
+    ensure: present
+    uid: 1009
+    name: paladox
+    realname: Paladox
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDJDGRZG9iCyvUh8tYIqx0KB9GDdr2l5jr+FGN6GH/VnFYI2XjYObuCLTJUBb0O9vlUvOyhLo6cORyDOO3fuEz82ApmjcTbBvaGZkiQJxopVWmaOQCkYHnaMomK/E2EwDzLF00rl2/+eckNTXsnqp42C9mSI0Qeig3yPTbahJM5J75I57rcaui4ZapALY2eht+zUCz8xWdiOn5ivP8S9KgxIM68rNQCvA6v8ppjlrdAFqhTfDOTJKcyTJA/1Ey+kOZDqjEaBQHu0i9qIwCAiWrJxSX5fd4PCQIHCr/HPDZV56kI08bGAWI3OCkjkYeBzPDSFNHrvgZNatwoGbAG9y+6WW1vhS4CrIg74atSwg0cbByr3FZNX2DPB3fE/tm47KgYis+Bem+Re+IKnexTwLNw6PeHRRTwLy47K4xs0MIq6GeYb8/y7G9gvjw2NN3ax6DhSNQ9NRUOVvHbSy++ufDnD2q1KWbHuwxQb5kKV0aQ4zBRCmkO/iLOETBZspX+vz7zBI7npAqy9mEK+Uzu7aqyp7OmwrSTOVF8WU3CS/gfE7fxBYwN2TUQHOaOp3vO1rMhJUUggjETYnxLUVSluvF8gY0aBJA6L3DL7e8x8b4I/uqaKOEStxZdKUT2vPUtp2uZ3u86RPt8mZSEXYnrJcidkxn9hgqA7V5FEOqYBQ0rUw== thomasmulhall410@yahoo.com]
