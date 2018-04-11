@@ -42,7 +42,7 @@ class ganglia(
     }
 
     httpd::mod { 'ganglia_apache':
-        modules => $modules
+        modules => $modules,
         require => Package['libapache2-mod-php5'],
     }
 }
