@@ -1,5 +1,7 @@
 # class: ganglia
-class ganglia {
+class ganglia(
+    $modules = ['rewrite', 'ssl', 'php5']
+) {
     include ::httpd
 
     include ssl::wildcard
@@ -39,7 +41,7 @@ class ganglia {
     }
 
     httpd::mod { 'ganglia_apache':
-        modules => ['rewrite', 'ssl', 'php5'],
+        modules => $modules
         require => Package['libapache2-mod-php5'],
     }
 }

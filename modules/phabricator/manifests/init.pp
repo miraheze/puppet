@@ -1,5 +1,7 @@
 # class: phabricator
-class phabricator {
+class phabricator(
+    $modules = ['ssl', 'php5']
+) {
     include ::httpd
 
     $password = hiera('passwords::irc::mirahezebots')
@@ -90,7 +92,7 @@ class phabricator {
     }
 
     httpd::mod { 'phabricator_apache':
-        modules => ['ssl', 'php5'],
+        modules => $modules,
         require => Package['libapache2-mod-php5'],
     }
 

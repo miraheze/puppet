@@ -1,5 +1,7 @@
 # icinga
-class icinga {
+class icinga(
+    $modules = ['alias', 'rewrite', 'ssl', 'php5']
+) {
     include ::httpd
 
     group { 'nagios':
@@ -188,7 +190,7 @@ class icinga {
     }
 
     httpd::mod { 'icinga_apache':
-        modules => ['alias', 'rewrite', 'ssl', 'php5'],
+        modules => $modules,
         require => Package['libapache2-mod-php5'],
     }
 

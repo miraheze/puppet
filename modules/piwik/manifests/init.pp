@@ -1,5 +1,7 @@
 # class: piwik
-class piwik {
+class piwik(
+    $modules = ['expires', 'rewrite', 'ssl', 'php5']
+) {
     include ::httpd
 
     $packages = [
@@ -53,7 +55,7 @@ class piwik {
     }
 
     httpd::mod { 'piwik_apache':
-        modules => ['expires', 'rewrite', 'ssl', 'php5'],
+        modules => $modules,
         require => Package['libapache2-mod-php5'],
     }
 

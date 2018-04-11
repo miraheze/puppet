@@ -4,6 +4,7 @@ class puppetmaster(
     $dbname       = undef,
     $dbuser       = undef,
     $use_puppetdb = hiera('puppetmaster::use_puppetdb', false),
+    $modules      = ['rewrite', 'ssl']
   ) {
     include ::httpd
 
@@ -197,7 +198,7 @@ class puppetmaster(
     }
 
     httpd::mod { 'puppetmaster_apache':
-        modules => ['rewrite', 'ssl'],
+        modules => $modules,
     }
 
     ufw::allow { 'puppetmaster':
