@@ -15,13 +15,15 @@ class phabricator(
     ssl::cert { 'phab.miraheze.wiki': }
 
     httpd::site { 'phab.miraheze.wiki':
-        ensure => present,
-        source => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
+        ensure  => present,
+        source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
+        monitor => true,
     }
 
     httpd::site { 'phabricator.miraheze.org':
-        ensure => present,
-        source => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
+        ensure  => present,
+        source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
+        monitor => true,
     }
 
     file { '/srv/phab':

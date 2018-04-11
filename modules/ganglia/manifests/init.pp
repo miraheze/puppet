@@ -31,6 +31,7 @@ class ganglia(
         ensure  => present,
         source  => 'puppet:///modules/ganglia/apache/apache.conf',
         require => File['/etc/apache2/sites-enabled/apache.conf'],
+        monitor => true,
     }
 
     file { '/etc/php5/apache2/php.ini':

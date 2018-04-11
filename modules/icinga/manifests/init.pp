@@ -187,6 +187,7 @@ class icinga(
         ensure  => present,
         source  => 'puppet:///modules/icinga/apache/apache.conf',
         require => File['/etc/apache2/conf-enabled/icinga.conf'],
+        monitor => true,
     }
 
     httpd::mod { 'icinga_apache':

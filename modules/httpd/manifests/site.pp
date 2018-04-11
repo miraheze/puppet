@@ -39,7 +39,7 @@ define httpd::site(
     $priority = 50,
     $content  = undef,
     $source   = undef,
-    $monitor   = true,
+    $monitor   = false,
 ) {
 
     httpd::conf { $name:
