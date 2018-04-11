@@ -1,0 +1,25 @@
+; Custom Miraheze config changes that overide the defaults in
+; /etc/php/7.2/apache2/php.ini
+[PHP]
+
+expose_php = Off
+
+max_execution_time = 30
+
+track_errors = Off
+
+post_max_size = 32M
+
+upload_max_filesize = 2M
+
+[mail function]
+
+mail.add_x_header = On
+
+[opcache]
+
+opcache.enable=1
+
+opcache.memory_consumption=52
+
+opcache.validate_timestamps=0

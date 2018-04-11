@@ -1,5 +1,6 @@
 # icinga
 class icinga(
+    # use php7.2 on stretch+
     $modules = ['alias', 'rewrite', 'ssl', 'php5']
 ) {
     include ::httpd
@@ -31,7 +32,33 @@ class icinga(
         ensure => present,
     }
 
-    require_package('libapache2-mod-php5')
+    if os_version('debian >= stretch') {
+        include ::apt
+
+        if !defined(Apt::Source['php72_apt']) {
+            apt::source { 'php72_apt':
+                comment  => 'PHP 7.2',
+                location => 'http://apt.wikimedia.org/wikimedia',
+                release  => "${::lsbdistcodename}-wikimedia",
+                repos    => 'thirdparty/php72',
+                key      => 'DB3DC2BD4CD504EF2D908FC509DBD9F93F6CD44A',
+                notify   => Exec['apt_update_php_icinga'],
+            }
+
+            # First installs can trip without this
+            exec {'apt_update_php_icinga':
+                command     => '/usr/bin/apt-get update',
+                refreshonly => true,
+                logoutput   => true,
+            }
+        }
+
+        $php = '7.2'
+    } else {
+        $php = '5'
+    }
+
+    require_package("libapache2-mod-php${php}")
 
     file { '/etc/icinga/cgi.cfg':
         source  => 'puppet:///modules/icinga/cgi.cfg',
@@ -192,7 +219,7 @@ class icinga(
 
     httpd::mod { 'icinga_apache':
         modules => $modules,
-        require => Package['libapache2-mod-php5'],
+        require => Package["libapache2-mod-php${php}"],
     }
 
     $mirahezebots_password = hiera('passwords::irc::mirahezebots')
