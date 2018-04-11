@@ -51,7 +51,7 @@ define httpd::conf(
     $content   = undef,
     $source    = undef,
     $replaces  = undef,
-    $monitor   = true,
+    $monitor   = false,
 ) {
     require_package('apache2')
     if $source == undef and $content == undef and $ensure == 'present' {

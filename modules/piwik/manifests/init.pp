@@ -35,8 +35,9 @@ class piwik(
     }
 
     httpd::site { 'piwik.miraheze.org':
-        ensure => present,
-        source => 'puppet:///modules/piwik/apache.conf',
+        ensure  => present,
+        source  => 'puppet:///modules/piwik/apache.conf',
+        monitor => true,
     }
 
     file { '/etc/php5/apache2/conf.d/20-piwik.ini':
