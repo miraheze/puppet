@@ -3,6 +3,7 @@ class mediawiki::php7 {
     $packages = [
         'php-pear',
         'php-mail',
+        'php-luasandbox',
         'php7.0',
         'php7.0-curl',
         'php7.0-fpm',
