@@ -22,9 +22,9 @@ ops: operations
 dmarc: ndkilla,john
 
 # destination aliases
-operations: southparkfan,ndkilla,reception123,john
+operations: southparkfan,ndkilla,reception123,john,paladox
 stewards: southparkfan,ndkilla,orduinvoidwalker@gmail.com
-staff: southparkfan,ndkilla,bslaabs@gmail.com,reception123,imbophilmh@gmail.com,revi,john
+staff: southparkfan,ndkilla,bslaabs@gmail.com,reception123,imbophilmh@gmail.com,revi,john,paladox
 cvt: stewards,reception123,megadev44s.mail@gmail.com,paulfkeffer@gmail.com,alvaromolinacl@gmail.com
 cocc: alvaromolinacl@gmail.com,diarmuidsmithy@gmail.com,reception123,revi,orduinvoidwalker@gmail.com
 wiki-abuse: ndkilla,reception123,revi
@@ -48,4 +48,4 @@ labster: bslaabs@gmail.com
 reception123: utilizator.receptie123@gmail.com
 revi: revi@revi.wiki,revi@pobox.com
 southparkfan: southparkfan223@hotmail.com
-
+paladox: thomasmulhall410@yahoo.com
