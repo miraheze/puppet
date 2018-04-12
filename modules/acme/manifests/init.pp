@@ -15,5 +15,6 @@ class acme {
     file { '/root/acme-tiny/account.key':
         ensure => present,
         source => 'puppet:///private/acme/account.key',
+        require => Git::Clone['acme-tiny'],
     }
 }
