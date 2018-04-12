@@ -46,11 +46,11 @@ def main(argv):
   o.add_option('-p', '--path', action='store', type='string', dest='path', default='/usr/bin/varnishadm', help='The path to the varnishadm binary')
 
   options=o.parse_args()[0]
-  command = runcommand("%(path)s -S %(secret)s -T %(host)s:%(port)s debug.health" % options.__dict__)
+  command = runcommand("%(path)s -S %(secret)s -T %(host)s:%(port)s backend.list -p" % options.__dict__)
   backends = command.split("\n")
   backends_healthy, backends_sick = [], []
   for line in backends:
-    if line.startswith("Backend") and line.find("test")==-1:
+    if line.startswith("boot") and line.find("test")==-1:
       if line.endswith("Healthy"):
         backends_healthy.append(line.split(" ")[1])
       else:
