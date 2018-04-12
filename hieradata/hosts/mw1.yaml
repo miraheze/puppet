@@ -3,3 +3,4 @@ users::groups:
 jobrunner: false
 contactgroups: 'ops,mediawiki'
 acme: true
+puppetmaster_version: 4
