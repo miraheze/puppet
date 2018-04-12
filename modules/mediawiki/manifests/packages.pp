@@ -25,8 +25,8 @@ class mediawiki::packages {
     }
 
     package { $packages:
-        ensure => present,
-        notify => Exec['apt_update_mediawiki_packages'],
+        ensure  => present,
+        require => Exec['apt_update_mediawiki_packages'],
     }
 
     package { [ 'texvc', 'ocaml' ]:
