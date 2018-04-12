@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Nagios Varnish Backend Check
-# v1.1
+# v1.2
 # URL: www.admingeekz.com
 # Contact: sales@admingeekz.com
 #
@@ -21,6 +21,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 #
+#   13 Apr 2016 - Jeoffrey BAUVIN
+#   Migrate to Varnish 4.1
 
 import sys
 import optparse
@@ -46,22 +48,22 @@ def main(argv):
   o.add_option('-p', '--path', action='store', type='string', dest='path', default='/usr/bin/varnishadm', help='The path to the varnishadm binary')
 
   options=o.parse_args()[0]
-  command = runcommand("%(path)s -S %(secret)s -T %(host)s:%(port)s backend.list -p" % options.__dict__)
+  command = runcommand("%(path)s -S %(secret)s -T %(host)s:%(port)s backend.list" % options.__dict__)
   backends = command.split("\n")
   backends_healthy, backends_sick = [], []
   for line in backends:
     if line.startswith("boot") and line.find("test")==-1:
-      if line.endswith("Healthy"):
-        backends_healthy.append(line.split(" ")[1])
+      if line.find("Healthy") != -1:
+        backends_healthy.append(line.split(" ")[0])
       else:
-        backends_sick.append(line.split(" ")[1])
- 
+        backends_sick.append(line.split(" ")[0])
+
   if backends_sick:
-    print "%s backends are down: %s" % (len(backends_sick), "".join(backends_sick))
+    print "%s backends are down.  %s" % (len(backends_sick), "".join(backends_sick))
     sys.exit(2)
 
   if not backends_sick and not backends_healthy:
-    print "No backends were found."
+    print "No backends detected.  If this is an error, see readme.txt"
     sys.exit(1)
 
   print "All %s backends are healthy" % (len(backends_healthy))
