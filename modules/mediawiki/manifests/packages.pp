@@ -17,8 +17,16 @@ class mediawiki::packages {
         'python-pip',
     ]
 
+    # First installs can trip without this
+    exec {'apt_update_mediawiki_packages':
+        command     => '/usr/bin/apt-get update',
+        refreshonly => true,
+        logoutput   => true,
+    }
+
     package { $packages:
         ensure => present,
+        notify => Exec['apt_update_mediawiki_packages'],
     }
 
     package { [ 'texvc', 'ocaml' ]:
