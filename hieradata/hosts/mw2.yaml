@@ -4,3 +4,4 @@ jobrunner: true
 arcanist: true
 mwdumps: true
 contactgroups: 'ops,mediawiki'
+puppetmaster_version: 4
