@@ -42,6 +42,13 @@ class icinga(
 
     require_package("libapache2-mod-php${php}")
 
+    file { '/etc/icinga/config':
+        ensure  => directory,
+        owner   => 'icinga',
+        group   => 'icinga',
+        require => Package['icinga'],
+    }
+
     file { '/etc/icinga/cgi.cfg':
         source  => 'puppet:///modules/icinga/cgi.cfg',
         owner   => 'icinga',
@@ -65,7 +72,7 @@ class icinga(
         owner   => 'icinga',
         group   => 'icinga',
         mode    => '0664',
-        require => Package['icinga'],
+        require => [ Package['icinga'], File['/etc/icinga/config'] ],
         notify  => Service['icinga'],
     }
 
@@ -74,7 +81,7 @@ class icinga(
         owner   => 'icinga',
         group   => 'icinga',
         mode    => '0664',
-        require => Package['icinga'],
+        require => [ Package['icinga'], File['/etc/icinga/config'] ],
         notify  => Service['icinga'],
     }
 
@@ -83,7 +90,7 @@ class icinga(
         owner   => 'icinga',
         group   => 'icinga',
         mode    => '0644',
-        require => Package['icinga'],
+        require => [ Package['icinga'], File['/etc/icinga/config'] ],
         notify  => Service['icinga'],
     }
 
@@ -92,7 +99,7 @@ class icinga(
         owner   => 'icinga',
         group   => 'icinga',
         mode    => '0644',
-        require => Package['icinga'],
+        require => [ Package['icinga'], File['/etc/icinga/config'] ],
         notify  => Service['icinga'],
     }
 
@@ -102,7 +109,7 @@ class icinga(
         owner   => 'icinga',
         group   => 'icinga',
         mode    => '0664',
-        require => Package['icinga'],
+        require => [ Package['icinga'], File['/etc/icinga/config'] ],
         notify  => Service['icinga'],
     }
 
@@ -120,7 +127,7 @@ class icinga(
         owner   => 'icinga',
         group   => 'icinga',
         mode    => '0664',
-        require => Package['icinga'],
+        require => [ Package['icinga'], File['/etc/icinga/config'] ],
         notify  => Service['icinga'],
     }
 
@@ -129,7 +136,7 @@ class icinga(
         owner   => 'icinga',
         group   => 'icinga',
         mode    => '0664',
-        require => Package['icinga'],
+        require => [ Package['icinga'], File['/etc/icinga/config'] ],
         notify  => Service['icinga'],
     }
 
@@ -143,7 +150,7 @@ class icinga(
         owner   => 'icinga',
         group   => 'icinga',
         mode    => '0664',
-        require => Package['icinga'],
+        require => [ Package['icinga'], File['/etc/icinga/config'] ],
         notify  => Service['icinga'],
     }
 
