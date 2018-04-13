@@ -19,7 +19,7 @@ define icinga::host (
       ensure  => present,
       owner   => 'icinga',
       group   => 'icinga', 
-      mode    => 0644,
+      mode    => '0644',
     }
 
     if defined(Class['icinga']) {
