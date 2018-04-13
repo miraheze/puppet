@@ -141,12 +141,6 @@ class icinga(
         notify  => Service['icinga'],
     }
 
-    # Double declaration of 24x7 timeperiod
-    file { '/etc/icinga/objects/timeperiods_icinga.cfg':
-        ensure  => absent,
-        before  => Service['icinga'],
-    }
-
     $ssl = loadyaml('/etc/puppet/ssl/certs.yaml')
     $redirects = loadyaml('/etc/puppet/ssl/redirects.yaml')
     $sslcerts = merge( $ssl, $redirects )
