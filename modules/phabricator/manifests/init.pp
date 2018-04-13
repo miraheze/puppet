@@ -43,8 +43,6 @@ class phabricator(
             'python-pygments',
             'subversion',
         ]
-
-        require_package($php)
     } else {
         $php_version = '5'
 
@@ -62,8 +60,6 @@ class phabricator(
             'python-pygments',
             'subversion',
         ]
-
-        require_package($php)
     }
 
     require_package($php_packages)
