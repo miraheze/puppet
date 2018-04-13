@@ -38,7 +38,8 @@ define icinga::service (
     }
 
     if defined(Class['icinga']) {
-        file { '/etc/icinga/config/puppet_services.cfg':
+        file { 'puppet_services.cfg':
+           path    => '/etc/icinga/config/puppet_services.cfg',
            ensure  => present,
            owner   => 'icinga',
            group   => 'icinga', 
