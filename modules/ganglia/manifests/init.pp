@@ -1,5 +1,6 @@
 # class: ganglia
 class ganglia(
+    # use php7 on stretch+
     $modules = ['rewrite', 'ssl', 'php5']
 ) {
     include ::httpd
@@ -16,7 +17,13 @@ class ganglia(
         ensure => present,
     }
 
-    require_package('libapache2-mod-php5')
+    if os_version('debian >= stretch') {
+        $php_version = '7'
+    } else {
+        $php_version = '5'
+    }
+
+    require_package("libapache2-mod-php${php_version}")
 
     file { '/etc/ganglia/gmetad.conf':
         ensure => present,
@@ -34,15 +41,24 @@ class ganglia(
         monitor => true,
     }
 
-    file { '/etc/php5/apache2/php.ini':
-        ensure  => present,
-        mode    => '0755',
-        source  => 'puppet:///modules/ganglia/apache/php.ini',
-        require => Package['libapache2-mod-php5']
+    if os_version('debian >= stretch') {
+        file { '/etc/php/7.0/apache2/conf.d/php.ini':
+            ensure  => present,
+            mode    => '0755',
+            source  => 'puppet:///modules/ganglia/apache/php7.ini',
+            require => Package['libapache2-mod-php7']
+        }
+    } else {
+        file { '/etc/php5/apache2/php.ini':
+            ensure  => present,
+            mode    => '0755',
+            source  => 'puppet:///modules/ganglia/apache/php.ini',
+            require => Package['libapache2-mod-php5']
+        }
     }
 
     httpd::mod { 'ganglia_apache':
         modules => $modules,
-        require => Package['libapache2-mod-php5'],
+        require => Package["libapache2-mod-php${php_version}"],
     }
 }
