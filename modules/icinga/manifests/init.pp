@@ -191,6 +191,14 @@ class icinga(
         hasstatus => false,
         restart   => '/etc/init.d/icinga reload',
     }
+    
+    file { '/var/lib/nagios/rw':
+        ensure  => directory,
+        owner   => 'icinga',
+        group   => 'nagios',
+        mode    => '0777',
+        require => Package['icinga'],
+    }
 
     file { '/var/lib/icinga/rw/icinga.cmd':
         ensure  => present,
