@@ -1,5 +1,6 @@
 mailserver: true
-# should be ssl and php5 but icinga adds it
+icinga::modules: ['alias', 'rewrite', 'ssl', 'php7.2']
+# should be ssl and php7.2 but icinga adds it
 # so this causes a dependancy error
 phabricator::modules: []
 puppetmaster_version: 4
