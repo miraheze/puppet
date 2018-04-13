@@ -184,7 +184,7 @@ class icinga(
         restart   => '/etc/init.d/icinga reload',
     }
 
-    file { '/var/lib/icinga/rw/nagios.cmd':
+    file { '/var/lib/icinga/rw/icinga.cmd':
         ensure  => present,
         owner   => 'icinga',
         group   => 'www-data',
