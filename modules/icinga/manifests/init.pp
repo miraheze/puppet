@@ -50,6 +50,14 @@ class icinga(
         require => Package['icinga'],
     }
 
+    file { '/etc/icinga/config/puppet_services.cfg':
+       ensure  => present,
+       owner   => 'icinga',
+       group   => 'icinga', 
+       mode    => '0644',
+       require => [File['/etc/icinga/config'], Package['icinga']],
+    }
+
     file { '/etc/icinga/cgi.cfg':
         source  => 'puppet:///modules/icinga/cgi.cfg',
         owner   => 'icinga',
