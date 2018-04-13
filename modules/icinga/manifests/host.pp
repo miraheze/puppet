@@ -15,11 +15,13 @@ define icinga::host (
         },
     }
     
-    file { '/etc/icinga/config/puppet_hosts.cfg':
-      ensure  => present,
-      owner   => 'icinga',
-      group   => 'icinga', 
-      mode    => '0644',
+    if defined(Class['Icinga']) {
+      file { '/etc/icinga/config/puppet_hosts.cfg':
+        ensure  => present,
+        owner   => 'icinga',
+        group   => 'icinga', 
+        mode    => '0644',
+      }
     }
 
     if defined(Class['icinga']) {
