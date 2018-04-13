@@ -184,18 +184,12 @@ class icinga(
         restart   => '/etc/init.d/icinga reload',
     }
 
-    file { '/var/lib/nagios/rw':
-        ensure => directory,
-        owner  => 'icinga',
-        group  => 'nagios',
-        mode   => '0777',
-    }
-
-    file { '/var/lib/nagios/rw/nagios.cmd':
-        ensure => present,
-        owner  => 'icinga',
-        group  => 'www-data',
-        mode   => '0666',
+    file { '/var/lib/icinga/rw/nagios.cmd':
+        ensure  => present,
+        owner   => 'icinga',
+        group   => 'www-data',
+        mode    => '0666',
+        require => Package['icinga'],
     }
 
     package { 'nagios-nrpe-plugin':
