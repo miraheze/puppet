@@ -38,16 +38,6 @@ define icinga::service (
     }
 
     if defined(Class['icinga']) {
-        file { 'puppet_services.cfg':
-           path    => '/etc/icinga/config/puppet_services.cfg',
-           ensure  => present,
-           owner   => 'icinga',
-           group   => 'icinga', 
-           mode    => '0644',
-        }
-    }
-
-    if defined(Class['icinga']) {
         create_resources(nagios_service, $service)
     } else {
         create_resources('icinga::exported_nagios_service', $service)
