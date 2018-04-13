@@ -14,9 +14,10 @@ class phabricator(
     }
 
     require_package(["libapache2-mod-php${php_version}", 'python-pygments', 'subversion'])
-    require_sslcert('phab.miraheze.wiki')
 
     $password = hiera('passwords::irc::mirahezebots')
+
+    ssl::cert { 'phab.miraheze.wiki': }
 
     httpd::site { 'phab.miraheze.wiki':
         ensure  => present,
