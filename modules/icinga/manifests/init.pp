@@ -5,6 +5,8 @@ class icinga(
 ) {
     include ::httpd
 
+    include ::php
+
     group { 'nagios':
         ensure    => present,
         name      => 'nagios',
@@ -33,26 +35,6 @@ class icinga(
     }
 
     if os_version('debian >= stretch') {
-        include ::apt
-
-        if !defined(Apt::Source['php72_apt']) {
-            apt::source { 'php72_apt':
-                comment  => 'PHP 7.2',
-                location => 'http://apt.wikimedia.org/wikimedia',
-                release  => "${::lsbdistcodename}-wikimedia",
-                repos    => 'thirdparty/php72',
-                key      => 'DB3DC2BD4CD504EF2D908FC509DBD9F93F6CD44A',
-                notify   => Exec['apt_update_php_icinga'],
-            }
-
-            # First installs can trip without this
-            exec {'apt_update_php_icinga':
-                command     => '/usr/bin/apt-get update',
-                refreshonly => true,
-                logoutput   => true,
-            }
-        }
-
         $php = '7.2'
     } else {
         $php = '5'
