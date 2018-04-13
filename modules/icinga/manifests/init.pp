@@ -192,7 +192,7 @@ class icinga(
         restart   => '/etc/init.d/icinga reload',
     }
     
-    file { '/var/lib/nagios/rw':
+    file { '/var/lib/icinga/rw':
         ensure  => directory,
         owner   => 'icinga',
         group   => 'nagios',
