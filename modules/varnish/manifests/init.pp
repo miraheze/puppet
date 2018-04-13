@@ -2,7 +2,7 @@
 class varnish {
     include varnish::nginx
 
-    package { [ 'varnish', 'stunnel4' ]:
+    package { [ 'varnish', 'stunnel4', 'varnish-modules' ]:
         ensure => present,
     }
 
