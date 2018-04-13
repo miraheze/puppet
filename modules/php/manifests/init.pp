@@ -9,7 +9,7 @@ class php {
                 location => 'http://apt.wikimedia.org/wikimedia',
                 release  => "${::lsbdistcodename}-wikimedia",
                 repos    => 'thirdparty/php72',
-                key      => 'DB3DC2BD4CD504EF2D908FC509DBD9F93F6CD44A',
+                key      => 'B8A2DF05748F9D524A3A2ADE9D392D3FFADF18FB',
                 notify   => Exec['apt_update_php'],
             }
 
