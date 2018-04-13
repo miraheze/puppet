@@ -14,6 +14,13 @@ define icinga::host (
             target                => '/etc/icinga/config/puppet_hosts.cfg',
         },
     }
+    
+    file { '/etc/icinga/config/puppet_hosts.cfg':
+      ensure  => present,
+      owner   => 'icinga',
+      group   => 'icinga', 
+      mode    => 0644,
+    }
 
     if defined(Class['icinga']) {
         create_resources(nagios_host, $host)
