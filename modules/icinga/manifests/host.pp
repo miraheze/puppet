@@ -17,8 +17,8 @@ define icinga::host (
     
     file { '/etc/icinga/config/puppet_hosts.cfg':
       ensure  => present,
-      owner   => 'icinga',
-      group   => 'icinga', 
+      owner   => 'root',
+      group   => 'root', 
       mode    => '0644',
     }
 
