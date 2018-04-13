@@ -31,18 +31,6 @@ probe mwhealth {
 	.expected_response = 200;
 }
 
-probe mwtest {
-	.request = "GET / HTTP/1.1"
-		"Host: meta.miraheze.org"
-		"User-Agent: Varnish healthcheck"
-	"Connection: close";
-	.interval = 5s;
-	.timeout = 3s;
-	.window = 5;
-	.threshold = 4;
-	.expected_response = 301;
-}
-
 backend mw1 {
 	.host = "127.0.0.1";
 	.port = "8080";
