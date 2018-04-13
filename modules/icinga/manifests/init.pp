@@ -43,7 +43,7 @@ class icinga(
 
     require_package("libapache2-mod-php${php}")
 
-    file { '/etc/icinga/config':
+    file { [ '/etc/icinga', '/etc/icinga/config' ]:
         ensure  => directory,
         owner   => 'icinga',
         group   => 'icinga',
