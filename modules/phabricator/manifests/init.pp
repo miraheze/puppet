@@ -56,6 +56,21 @@ class phabricator(
         require   => File['/srv/phab'],
     }
 
+    exec { "chk_phab_ext_git_exist":
+        command => 'true',
+        path    =>  ['/usr/bin', '/usr/sbin', '/bin'],
+        onlyif  => 'test -d  /srv/phab/phabricator/src/extensions'
+    }
+
+    file {'remove_phab_ext_dir_if_no_git':
+        ensure  => absent,
+        path    => '/srv/phab/phabricator/src/extensions',
+        recurse => true,
+        purge   => true,
+        force   => true,
+        require => Exec['chk_phab_ext_git_exist'],
+    }
+
     git::clone { 'phabricator-extensions':
         ensure    => latest,
         directory => '/srv/phab/phabricator/src/extensions',
