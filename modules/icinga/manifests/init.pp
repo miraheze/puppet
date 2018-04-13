@@ -30,7 +30,7 @@ class icinga(
         groups     => 'nagios',
     }
 
-    package { 'icinga':
+    package { ['icinga', 'icinga-cgi']:
         ensure  => present,
         require => User['icinga'],
     }
