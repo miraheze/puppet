@@ -5,6 +5,7 @@ class irc {
         'python-twisted',
         'python-irc',
         'python-requests',
+        'python-requests-oauthlib',
     ]
 
     package { $packages:
