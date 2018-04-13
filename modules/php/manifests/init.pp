@@ -32,6 +32,11 @@ class php {
             'php7.2-json',
             'php7.2-mbstring',
         ]
+
+        package { $php_packages:
+            ensure => present,
+            require => Apt::Source['php72_apt'],
+        }
     } else {
         $php_packages = [
             'php5-apcu',
@@ -42,7 +47,9 @@ class php {
             'php5-cli',
             'php5-json',
         ]
+
+        package { $php_packages:
+            ensure => present;
+        }
     }
-    
-    require_package($php_packages)
 }
