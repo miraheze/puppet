@@ -47,7 +47,7 @@ class phabricator(
 
         $php_packages = [
             'php5-apcu',
-            'php5-mysql',
+            'php5-mysqlnd',
             'php5-gd',
             'php5-dev',
             'php5-curl',
