@@ -31,7 +31,8 @@ class icinga(
     }
 
     package { 'icinga':
-        ensure => present,
+        ensure  => present,
+        require => User['icinga'],
     }
 
     if os_version('debian >= stretch') {
