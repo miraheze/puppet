@@ -59,7 +59,7 @@ class phabricator(
     exec { "chk_phab_ext_git_exist":
         command => 'true',
         path    =>  ['/usr/bin', '/usr/sbin', '/bin'],
-        onlyif  => 'test -d  /srv/phab/phabricator/src/extensions/.git'
+        onlyif  => 'test ! -d /srv/phab/phabricator/src/extensions/.git'
     }
 
     file {'remove_phab_ext_dir_if_no_git':
