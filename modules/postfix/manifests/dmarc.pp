@@ -30,6 +30,6 @@ class postfix::dmarc {
 
     service { 'opendmarc':
         ensure  => 'running',
-        require => [Package['opendmarc'], File['/etc/systemd/system/opendmarc.service']],
+        require => [Package['opendmarc'], File['/lib/systemd/system/opendmarc.service']],
     }
 }
