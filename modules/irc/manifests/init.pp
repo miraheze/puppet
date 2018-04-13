@@ -4,6 +4,7 @@ class irc {
         'python',
         'python-twisted',
         'python-irc',
+        'python-requests',
     ]
 
     package { $packages:
