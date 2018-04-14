@@ -19,4 +19,13 @@ class role::salt::masters: {
 
     include ::salt::master::key
 
+    ufw::allow { 'salt-master 1':
+        proto => 'tcp',
+        port  => 4505,
+    }
+
+    ufw::allow { 'salt-master 2':
+        proto => 'tcp',
+        port  => 4506,
+    }
 }
