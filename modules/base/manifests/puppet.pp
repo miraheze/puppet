@@ -4,14 +4,11 @@ class base::puppet {
     $puppetmaster_hostname = hiera('puppetmaster_hostname', 'puppet1.miraheze.org')
     $puppetmaster_version = hiera('puppetmaster_version', 3)
 
-
-    if $::hostname != "misc1" {
     cron { 'puppet-agent':
         command => '/usr/bin/puppet agent -t',
         user    => 'root',
         hour    => '*',
         minute  => '*/10',
-    }
     }
 
     file { '/root/puppet-run':
