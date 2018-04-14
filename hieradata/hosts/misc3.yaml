@@ -1,1 +1,2 @@
 puppetmaster_version: 4
+role::salt::minions::salt_master_key: true
