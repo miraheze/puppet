@@ -43,6 +43,8 @@ class postfix::dkim {
 
     file { '/etc/opendkim/keys/mail.private':
         ensure => present,
+        owner  => 'root',
+        group  => 'root',
         source => 'puppet:///private/postfix/mail.private',
     }
 
