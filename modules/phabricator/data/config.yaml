@@ -139,3 +139,5 @@ user.custom-field-definitions:
     name: 'IRC Nickname'
     type: text
     search: true
+
+pygments.enabled: true
