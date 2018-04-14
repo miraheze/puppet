@@ -41,6 +41,11 @@ class postfix::dkim {
         source => 'puppet:///modules/postfix/SigningTable',
     }
 
+    file { '/etc/opendkim/keys/mail.private':
+        ensure => present,
+        source => 'puppet:///private/postfix/mail.private',
+    }
+
     service { 'opendkim':
         ensure => running,
     }
