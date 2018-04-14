@@ -11,4 +11,8 @@ class role::salt::minions(
         master_finger => $master_finger,
         master_key    => $salt_master_key,
     }
+
+    motd::role { 'role::salt::minions':
+        description => 'Host the salt minion',
+    }
 }
