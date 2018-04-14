@@ -1,4 +1,4 @@
-class role::salt::masters: {
+class role::salt::masters {
 
     $salt_state_roots    = { 'base' => ['/srv/salt'] }
     $salt_file_roots     = { 'base' => ['/srv/salt'] }
@@ -27,5 +27,9 @@ class role::salt::masters: {
     ufw::allow { 'salt-master 2':
         proto => 'tcp',
         port  => 4506,
+    }
+
+    motd::role { 'role::salt::masters':
+        description => 'Host the salt master',
     }
 }
