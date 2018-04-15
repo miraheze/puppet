@@ -6,7 +6,7 @@ class piwik(
     include ::httpd
 
     if os_version('debian >= stretch') {
-        $php_version = '7'
+        $php_version = '7.0'
         require_package('php7.0-curl', 'php7.0-mysql', 'php7.0-gd', 'libapache2-mod-php7.0')
     } else {
         $php_version = '5'
@@ -42,7 +42,7 @@ class piwik(
             ensure  => present,
             source  => 'puppet:///modules/piwik/20-piwik.ini',
             notify  => Exec['apache2_test_config_and_restart'],
-            require => Package['libapache2-mod-php7'],
+            require => Package['libapache2-mod-php7.0'],
         }
 
         file_line { 'enable_php_opcache':
@@ -50,7 +50,7 @@ class piwik(
             match   => '^;?opcache.enable\s*\=',
             path    => '/etc/php/7.0/apache2/php.ini',
             notify  => Exec['apache2_test_config_and_restart'],
-            require => Package['libapache2-mod-php7'],
+            require => Package['libapache2-mod-php7.0'],
         }
     } else {
         file { '/etc/php5/apache2/conf.d/20-piwik.ini':
