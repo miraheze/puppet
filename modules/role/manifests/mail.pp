@@ -3,6 +3,7 @@ class role::mail {
     include postfix
     include postfix::dkim
     include postfix::dmarc
+    include postfix::spamassassin
     include dovecot
 
     ufw::allow { 'smtp':
