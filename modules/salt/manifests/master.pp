@@ -2,7 +2,7 @@ class salt::master(
     $salt_interface = undef,
     $salt_worker_threads = undef,
     $salt_runner_dirs = ['/srv/runners'],
-    $salt_file_roots = { 'base'=>['/srv/salt'] },
+    $salt_file_roots = { 'base' => ['/srv/salt'] },
     $salt_pillar_roots = { 'base' => ['/srv/pillar'] },
     $salt_ext_pillar = {},
     $salt_reactor_root = '/srv/reactors',
@@ -34,14 +34,14 @@ class salt::master(
         require => Package['salt-master'],
     }
 
-    file { $salt_runner_dir:
+    file { $salt_runner_dirs:
         ensure => directory,
         mode   => '0755',
         owner  => 'root',
         group  => 'root',
     }
 
-    file { "${salt_runner_dir}/keys.py":
+    file { "${salt_runner_dirs}/keys.py":
         ensure => present,
         source => 'puppet:///modules/salt/keys.py',
         mode   => '0755',
