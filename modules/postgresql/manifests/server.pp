@@ -68,6 +68,21 @@ class postgresql::server(
     if $use_ssl {
         include ssl::wildcard
 
+         file { "${$data_dir}/ssl":
+             ensure => directory,
+             owner  => 'postgres',
+             group  => 'postgres',
+         }
+
+        file { "${$data_dir}/ssl/wildcard.miraheze.org.key":
+            ensure  => 'present',
+            source  => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
+            owner   => 'postgres',
+            group   => 'postgres',
+            mode    => '0644',
+            require => File["${$data_dir}/ssl"],
+	    }
+
         file { "/etc/postgresql/${pgversion}/main/ssl.conf":
             ensure  => $ensure,
             source  => 'puppet:///modules/postgresql/ssl.conf',
@@ -75,6 +90,7 @@ class postgresql::server(
             group   => 'root',
             mode    => '0444',
             before  => Service[$service_name],
+            require => File["${$data_dir}/ssl/wildcard.miraheze.org.key"],
         }
     }
 
