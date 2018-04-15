@@ -18,7 +18,7 @@ class ganglia(
     }
 
     if os_version('debian >= stretch') {
-        $php_version = '7'
+        $php_version = '7.0'
     } else {
         $php_version = '5'
     }
@@ -42,18 +42,18 @@ class ganglia(
     }
 
     if os_version('debian >= stretch') {
-        file { '/etc/php/7.0/apache2/conf.d/php.ini':
+        file { "/etc/php/${php_version}/apache2/conf.d/php.ini":
             ensure  => present,
             mode    => '0755',
             source  => 'puppet:///modules/ganglia/apache/php7.ini',
-            require => Package['libapache2-mod-php7']
+            require => Package['libapache2-mod-php${$php_version}']
         }
     } else {
         file { '/etc/php5/apache2/php.ini':
             ensure  => present,
             mode    => '0755',
             source  => 'puppet:///modules/ganglia/apache/php.ini',
-            require => Package['libapache2-mod-php5']
+            require => Package["libapache2-mod-php${$php_version}"]
         }
     }
 
