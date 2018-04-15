@@ -34,7 +34,6 @@ class redis (
     file { '/lib/systemd/system/redis-server.service':
         ensure  => present,
         source  => 'puppet:///modules/redis/redis-server.systemd',
-        require => File['/etc/redis/redis.conf'],
         notify  => Exec['redis reload systemd'],
     }
 
