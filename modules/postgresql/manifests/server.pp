@@ -79,9 +79,9 @@ class postgresql::server(
             source  => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
             owner   => 'postgres',
             group   => 'postgres',
-            mode    => '0644',
+            mode    => '0600',
             require => File["${$data_dir}/ssl"],
-	    }
+	}
 
         file { "/etc/postgresql/${pgversion}/main/ssl.conf":
             ensure  => $ensure,
