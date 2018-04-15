@@ -8,12 +8,18 @@ class mariadb::packages(
     }
 
     if $version_102 {
+        if os_version('debian >= stretch') {
+          $key = '177F4010FE56CA3336300305F1656F24C74CD1D8'
+        } else {
+          $key = '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB'
+        }
+
         apt::source { 'mariadb_apt':
             comment     => 'MariaDB stable',
             location    => 'http://ams2.mirrors.digitalocean.com/mariadb/repo/10.2/debian',
             release     => "${::lsbdistcodename}",
             repos       => 'main',
-            key         => '199369E5404BD5FC7D2FE43BCBCB082A1BB943DB',
+            key         => $key,
         }
 
         package { 'mariadb-server':
