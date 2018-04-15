@@ -26,10 +26,22 @@ class redis (
         require => Package['redis-server'],
     }
 
+    exec { 'redis reload systemd':
+        command     => '/bin/systemctl daemon-reload',
+        refreshonly => true,
+    }
+
+    file { '/lib/systemd/system/redis-server.service':
+        ensure  => present,
+        source  => 'puppet:///modules/redis/redis-server.systemd',
+        require => File['/etc/redis/redis.conf'],
+        notify  => Exec['redis reload systemd'],
+    }
+
     service { 'redis-server':
         ensure  => running,
         enable  => true,
-        require => File['/etc/redis/redis.conf'],
+        require => File['/lib/systemd/system/redis-server.service'],
     }
 
     exec { 'Restart redis if needed':
