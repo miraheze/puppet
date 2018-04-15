@@ -49,7 +49,7 @@ node 'misc2.miraheze.org' {
     include role::redis
     include role::ganglia
     include role::piwik
-    # include role::salt::minions
+    include role::salt::minions
 }
 
 node 'misc3.miraheze.org' {
