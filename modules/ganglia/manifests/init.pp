@@ -1,6 +1,6 @@
 # class: ganglia
 class ganglia(
-    # use php7 on stretch+
+    # use php7.0 on stretch+
     $modules = ['rewrite', 'ssl', 'php5']
 ) {
     include ::httpd
