@@ -112,11 +112,10 @@ class salt::minion(
         }
     }
 
-    logrotate::conf { 'salt-common':
+    file { '/etc/logrotate.d/salt-common':
         ensure => present,
         source => 'puppet:///modules/salt/logrotate.conf',
     }
-
 
     file { '/etc/systemd/system/salt-minion.service.d/':
         ensure => directory,
