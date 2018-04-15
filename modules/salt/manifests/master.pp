@@ -11,9 +11,9 @@ class salt::master(
     $salt_peer = {},
     $salt_peer_run = {},
     $salt_nodegroups = {},
-    $salt_state_roots = /srv/salt',
-    $salt_module_roots = /srv/salt/_modules',
-    $salt_returner_roots = /srv/salt/_returners',
+    $salt_state_roots = '/srv/salt',
+    $salt_module_roots = '/srv/salt/_modules',
+    $salt_returner_roots = '/srv/salt/_returners',
 ) {
     package { 'salt-master':
         ensure => 'installed',
