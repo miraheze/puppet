@@ -46,7 +46,7 @@ class ganglia(
             ensure  => present,
             mode    => '0755',
             source  => 'puppet:///modules/ganglia/apache/php7.ini',
-            require => Package['libapache2-mod-php${$php_version}']
+            require => Package["libapache2-mod-php${$php_version}"]
         }
     } else {
         file { '/etc/php5/apache2/php.ini':
