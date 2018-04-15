@@ -23,6 +23,7 @@ node /^db[23].miraheze.org$/ {
     include base
     include role::db
     include bacula::client
+    include role::salt::minions
 }
 
 node 'db4.miraheze.org' {
@@ -49,7 +50,7 @@ node 'misc2.miraheze.org' {
     include role::redis
     include role::ganglia
     include role::piwik
-    include role::salt::minions
+    # include role::salt::minions
 }
 
 node 'misc3.miraheze.org' {
