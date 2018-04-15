@@ -2,7 +2,7 @@ class salt::master(
     $salt_interface = undef,
     $salt_worker_threads = undef,
     $salt_runner_dirs = ['/srv/runners'],
-    $salt_file_roots = /srv/salt',
+    $salt_file_roots = '/srv/salt',
     $salt_pillar_roots = '/srv/pillar',
     $salt_ext_pillar = {},
     $salt_reactor_root = '/srv/reactors',
