@@ -1,3 +1,5 @@
-# should be ssl and php5 and rewrite but piwik adds it
+# should be ssl and php7 and rewrite but piwik adds it
 # so this causes a dependancy error
+ganglia::modules: ['rewrite', 'ssl', 'php7']
 piwik::modules: ['expires']
+puppetmaster_version: 4
