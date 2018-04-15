@@ -199,7 +199,7 @@ auto_accept: <%= @salt_auto_accept %>
 
 # Add any additional locations to look for master runners
 #runner_dirs: []
-<% if @salt_runner_dir %>runner_dirs: ['<%= @salt_runner_dir %>']<% end %>
+<% if @salt_runner_dirs %>runner_dirs: ['<%= @salt_runner_dirs %>']<% end %>
 
 # Enable Cython for master side modules
 #cython_enable: False
@@ -272,11 +272,9 @@ auto_accept: <%= @salt_auto_accept %>
 #file_roots:
 #  base:
 #    - /srv/salt
-<% if @salt_file_roots != {} %>
-file_roots:<% @salt_file_roots.sort.each do |salt_environment, salt_root| %>
-  <%= salt_environment %>:
-    - <%= salt_root %>
-<% end %><% end %>
+file_roots:
+  base:
+    - /srv/salt
 
 # The hash_type is the hash to use when discovering the hash of a file on
 # the master server, the default is md5, but sha1, sha224, sha256, sha384
@@ -343,19 +341,13 @@ file_roots:<% @salt_file_roots.sort.each do |salt_environment, salt_root| %>
 #pillar_roots:
 #  base:
 #    - /srv/pillar
-<% if @salt_pillar_roots != {} %>
-pillar_roots:<% @salt_pillar_roots.sort.each do |salt_environment, salt_root| %>
-  <%= salt_environment %>:
-    - <%= salt_root %>
-<% end %><% end %>
+pillar_roots:
+  base:
+    - /srv/pillar
 
 # ext_pillar:
 #   - hiera: /etc/hiera.yaml
 #   - cmd_yaml: cat /etc/salt/yaml
-<% if @salt_ext_pillar != {} %>
-ext_pillar:<% salt_ext_pillar.sort.each do |salt_ext, salt_location| %>
-  - <%= salt_ext %>: <%= salt_location %>
-<% end %><% end %>
 
 # The pillar_opts option adds the master configuration file data to a dict in
 # the pillar called "master". This is used to set simple configurations in the
@@ -403,11 +395,6 @@ ext_pillar:<% salt_ext_pillar.sort.each do |salt_ext, salt_location| %>
 #       - .*
 # This is not recommended, since it would allow anyone who gets root on any
 # single minion to instantly have root on all of the minions!
-<% if @salt_peer != {} %>
-peer:<% salt_peer.sort.each do |salt_peer, salt_commands| %>
-  <%= salt_peer %>:<% salt_commands.sort.each do |salt_command| %>
-    - <%= salt_command %>
-<% end %><% end %><% end %>
 
 
 # Minions can also be allowed to execute runners from the salt master.
@@ -427,11 +414,6 @@ peer:<% salt_peer.sort.each do |salt_peer, salt_commands| %>
 # peer_run:
 #   foo.example.com:
 #     - manage.up
-<% if @salt_peer_run != {} %>
-peer_run:<% @salt_peer_run.sort.each do |salt_peer, salt_commands| %>
-  <%= salt_peer %>:<% salt_commands.sort.each do |salt_command| %>
-    - <%= salt_command %>
-<% end %><% end %><% end %>
 
 
 #####         Logging settings       #####
@@ -484,10 +466,6 @@ peer_run:<% @salt_peer_run.sort.each do |salt_peer, salt_commands| %>
 # nodegroups:
 #   group1: 'L@foo.domain.com,bar.domain.com,baz.domain.com and bl*.domain.com'
 #   group2: 'G@os:Debian and foo.domain.com'
-<% if @salt_nodegroups != {} %>
-nodegroups:<% salt_nodegroups.sort.each do |salt_group, salt_nodes| %>
-  <%= salt_group %>: <%= salt_nodes %>
-<% end %><% end %>
 
 
 #####     Range Cluster settings     #####
@@ -510,11 +488,7 @@ nodegroups:<% salt_nodegroups.sort.each do |salt_group, salt_nodes| %>
 # win_gitrepos:
 #   - 'https://github.com/saltstack/salt-winrepo.git'
 
-<% if @salt_reactor != {} %>
-reactor:<% salt_reactor.sort.each do |salt_tag, salt_states| %>
-  - '<%= salt_tag %>':<% salt_states.sort.each do |salt_state| %>
-    - <%= salt_reactor_root %>/<%= salt_state %><% end %>
-<% end %><% end %>
+#reactor:
 
 ##### Timeout for find_job to collect results #####
 ###################################################

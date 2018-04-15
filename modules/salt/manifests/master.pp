@@ -1,9 +1,9 @@
 class salt::master(
     $salt_interface = undef,
     $salt_worker_threads = undef,
-    $salt_runner_dirs = ['/srv/runners'],
-    $salt_file_roots = { 'base' =>'/srv/salt' },
-    $salt_pillar_roots = { 'base' => '/srv/pillar' },
+    $salt_runner_dirs = '/srv/runners',
+    $salt_file_roots = '/srv/salt',
+    $salt_pillar_roots = '/srv/pillar',
     $salt_ext_pillar = {},
     $salt_reactor_root = '/srv/reactors',
     $salt_reactor = {},
@@ -11,9 +11,9 @@ class salt::master(
     $salt_peer = {},
     $salt_peer_run = {},
     $salt_nodegroups = {},
-    $salt_state_roots = { 'base' => '/srv/salt' },
-    $salt_module_roots = { 'base' => '/srv/salt/_modules' },
-    $salt_returner_roots = { 'base' => '/srv/salt/_returners' },
+    $salt_state_roots = '/srv/salt',
+    $salt_module_roots = '/srv/salt/_modules',
+    $salt_returner_roots = '/srv/salt/_returners',
 ) {
     package { 'salt-master':
         ensure => 'installed',
@@ -56,12 +56,34 @@ class salt::master(
         group  => 'root',
     }
 
-    salt::master_environment{ 'base':
-        salt_state_roots    => $salt_state_roots,
-        salt_file_roots     => $salt_file_roots,
-        salt_pillar_roots   => $salt_pillar_roots,
-        salt_module_roots   => $salt_module_roots,
-        salt_returner_roots => $salt_returner_roots,
+
+    # this also is the same as $salt_state_roots
+    file { $salt_file_roots:
+        ensure => directory,
+        mode   => '0755',
+        owner  => 'root',
+        group  => 'root',
+    }
+
+    file { $salt_pillar_roots:
+        ensure => directory,
+        mode   => '0755',
+        owner  => 'root',
+        group  => 'root',
+    }
+
+    file { $salt_module_roots:
+        ensure => directory,
+        mode   => '0755',
+        owner  => 'root',
+        group  => 'root',
+    }
+
+    file { $salt_returner_roots:
+        ensure => directory,
+        mode   => '0755',
+        owner  => 'root',
+        group  => 'root',
     }
 
     sysctl::parameters { 'salt-master':

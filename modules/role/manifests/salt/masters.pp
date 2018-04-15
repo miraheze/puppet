@@ -1,13 +1,13 @@
 class role::salt::masters {
 
-    $salt_state_roots    = { 'base' => ['/srv/salt'] }
-    $salt_file_roots     = { 'base' => ['/srv/salt'] }
-    $salt_pillar_roots   = { 'base' => ['/srv/pillars'] }
-    $salt_module_roots   = { 'base' => ['/srv/salt/_modules'] }
-    $salt_returner_roots = { 'base' => ['/srv/salt/_returners'] }
+    $salt_state_roots    = '/srv/salt'
+    $salt_file_roots     = '/srv/salt'
+    $salt_pillar_roots   = '/srv/pillars'
+    $salt_module_roots   = '/srv/salt/_modules'
+    $salt_returner_roots = '/srv/salt/_returners'
 
     class { 'salt::master':
-        salt_runner_dirs    => ['/srv/runners'],
+        salt_runner_dirs    => '/srv/runners',
         salt_file_roots     => $salt_file_roots,
         salt_pillar_roots   => $salt_pillar_roots,
         salt_worker_threads => '30',

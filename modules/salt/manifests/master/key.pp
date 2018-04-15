@@ -18,12 +18,12 @@ TQIDAQAB
         content => $salt_master_pubkey[$salt_master_pubkey_type],
         owner   => 'root',
         group   => 'root',
-        mode    => '0444',
+        mode    => '0644',
         notify  => Service['salt-master'],
     }
 
     file { '/etc/salt/pki/master/master.pem':
-        content   => 'puppet:///private/salt/master.pem',
+        source    => 'puppet:///private/salt/master.pem',
         owner     => 'root',
         group     => 'root',
         mode      => '0400',
