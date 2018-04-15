@@ -74,13 +74,13 @@ class postgresql::server(
              group  => 'postgres',
          }
 
-        file { "${$data_dir}/ssl/wildcard.miraheze.org.key":
+        file { "/etc/postgresql/${pgversion}/main/ssl/wildcard.miraheze.org.key":
             ensure  => 'present',
             source  => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
             owner   => 'postgres',
             group   => 'postgres',
             mode    => '0600',
-            require => File["${$data_dir}/ssl"],
+            require => File["/etc/postgresql/${pgversion}/main/ssl"],
 	}
 
         file { "/etc/postgresql/${pgversion}/main/ssl.conf":
@@ -90,7 +90,7 @@ class postgresql::server(
             group   => 'root',
             mode    => '0444',
             before  => Service[$service_name],
-            require => File["${$data_dir}/ssl/wildcard.miraheze.org.key"],
+            require => File["/etc/postgresql/${pgversion}/main/ssl/wildcard.miraheze.org.key"],
         }
     }
 
