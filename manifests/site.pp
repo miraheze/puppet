@@ -3,23 +3,27 @@
 node 'bacula1.miraheze.org' {
     include base
     include bacula::director
+    include role::salt::minions
 }
 
 node /^cp[245]\.miraheze\.org$/ {
     include base
     include role::varnish
+    include role::salt::minions
 }
 
 node 'nfs1.miraheze.org' {
     include base
     include role::staticserver
     include bacula::client
+    include role::salt::minions
 }
 
 node /^db[23].miraheze.org$/ {
     include base
     include role::db
     include bacula::client
+    include role::salt::minions
 }
 
 node 'db4.miraheze.org' {
@@ -27,6 +31,7 @@ node 'db4.miraheze.org' {
     include role::db
     include role::postgresql
     include bacula::client
+    include role::salt::minions
 }
 
 node 'misc1.miraheze.org' {
@@ -37,6 +42,7 @@ node 'misc1.miraheze.org' {
     include role::dns
     include role::phabricator
     include bacula::client
+    include role::salt::minions
 }
 
 node 'misc2.miraheze.org' {
@@ -44,6 +50,7 @@ node 'misc2.miraheze.org' {
     include role::redis
     include role::ganglia
     include role::piwik
+    include role::salt::minions
 }
 
 node 'misc3.miraheze.org' {
@@ -62,6 +69,7 @@ node /^mw[123]\.miraheze\.org$/ {
 node 'ns1.miraheze.org' {
     include base
     include role::dns
+    include role::salt::minions
 }
 
 node 'puppet1.miraheze.org' {
@@ -80,4 +88,5 @@ node 'test1.miraheze.org' {
 # ensures all servers have basic class if puppet runs
 node default {
     include base
+    include role::salt::minions
 }
