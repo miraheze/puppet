@@ -1,7 +1,9 @@
 class salt::master(
     $salt_interface = undef,
     $salt_worker_threads = undef,
-    $salt_runner_dir = '/srv/runners',
+    $salt_runner_dirs = ['/srv/runners'],
+    $salt_file_roots = { 'base'=>['/srv/salt'] },
+    $salt_pillar_roots = { 'base' => ['/srv/pillar'] },
     $salt_ext_pillar = {},
     $salt_reactor_root = '/srv/reactors',
     $salt_reactor = {},
@@ -9,11 +11,9 @@ class salt::master(
     $salt_peer = {},
     $salt_peer_run = {},
     $salt_nodegroups = {},
-    $salt_file_roots = {'base'=>'/srv/salt'},
-    $salt_pillar_roots = {'base'=>'/srv/pillar'},
-    $salt_state_roots = {'base'=>'/srv/salt'},
-    $salt_module_roots = {'base'=>'/srv/salt/_modules'},
-    $salt_returner_roots = {'base'=>'/srv/salt/_returners'},
+    $salt_state_roots = { 'base' => ['/srv/salt'] },
+    $salt_module_roots = { 'base' => ['/srv/salt/_modules'] },
+    $salt_returner_roots = { 'base' => ['/srv/salt/_returners'] },
 ) {
     package { 'salt-master':
         ensure => 'installed',

@@ -4,7 +4,7 @@ define salt::master_environment(
     $salt_pillar_roots,
     $salt_module_roots,
     $salt_returner_roots,
-) {
+){
 
     if ! defined(File[$salt_state_roots[$title]]) {
         file { $salt_state_roots[$title]:
