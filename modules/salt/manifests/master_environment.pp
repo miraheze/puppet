@@ -7,7 +7,7 @@ define salt::master_environment(
 ){
 
     if ! defined(File[$salt_state_roots]) {
-        file { $salt_state_roots[$title]:
+        file { $salt_state_roots:
             ensure => directory,
             mode   => '0755',
             owner  => 'root',
@@ -25,7 +25,7 @@ define salt::master_environment(
     }
 
     if ! defined(File[$salt_pillar_roots]) {
-        file { $salt_pillar_roots[$title]:
+        file { $salt_pillar_roots:
             ensure => directory,
             mode   => '0755',
             owner  => 'root',
@@ -34,7 +34,7 @@ define salt::master_environment(
     }
 
     if ! defined(File[$salt_module_roots]) {
-        file { $salt_module_roots[$title]:
+        file { $salt_module_roots:
             ensure => directory,
             mode   => '0755',
             owner  => 'root',
@@ -43,7 +43,7 @@ define salt::master_environment(
     }
 
     if ! defined(File[$salt_returner_roots]) {
-        file { $salt_returner_roots[$title]:
+        file { $salt_returner_roots:
             ensure => directory,
             mode   => '0755',
             owner  => 'root',
