@@ -95,14 +95,6 @@ class salt::minion(
         require => File['/etc/salt'],
     }
 
-    file { '/usr/local/sbin/grain-ensure':
-        source  => 'puppet:///modules/salt/grain-ensure.py',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0544',
-        require => Package['salt-minion'],
-    }
-
     if ($master_key) {
         file { '/etc/salt/pki/minion/minion_master.pub':
             owner   => 'root',
