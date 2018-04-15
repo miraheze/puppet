@@ -1,4 +1,5 @@
 smtp      inet  n       -       -       -       -       smtpd
+  -o content_filter=spamassassin
 submission inet n       -       -       -       -       smtpd
   -o syslog_name=postfix/submission
   -o smtpd_tls_security_level=encrypt
@@ -32,7 +33,9 @@ maildrop  unix  -       n       n       -       -       pipe
   flags=DRhu user=vmail argv=/usr/bin/maildrop -d ${recipient}
 uucp      unix  -       n       n       -       -       pipe
   flags=Fqhu user=uucp argv=uux -r -n -z -a$sender - $nexthop!rmail ($recipient)
-  
+spamassassin unix -     n       n       -       -       pipe
+  user=debian-spamd argv /usr/bin/spamc -f -e /usr/sbin/sendmail -oi -f ${sender} ${recipient}
+
 #
 # Other external delivery methods.
 #
