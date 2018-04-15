@@ -68,7 +68,6 @@ node /^mw[123]\.miraheze\.org$/ {
 node 'ns1.miraheze.org' {
     include base
     include role::dns
-    include role::salt::minions
 }
 
 node 'puppet1.miraheze.org' {
