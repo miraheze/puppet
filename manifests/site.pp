@@ -72,6 +72,7 @@ node 'puppet1.miraheze.org' {
 node 'test1.miraheze.org' {
     include base
     include role::mediawiki
+    include role::salt::minions
 }
 
 # ensures all servers have basic class if puppet runs
