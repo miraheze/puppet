@@ -7,7 +7,7 @@ class piwik(
 
     if os_version('debian >= stretch') {
         $php_version = '7.0'
-        require_package('php7.0-curl', 'php7.0-mysql', 'php7.0-gd', 'libapache2-mod-php7.0')
+        require_package('php7.0-curl', 'php7.0-mbstring', 'php7.0-mysql', 'php7.0-gd', 'libapache2-mod-php7.0')
     } else {
         $php_version = '5'
         require_package('php5-curl', 'php5-mysqlnd', 'php5-gd', 'libapache2-mod-php5')
