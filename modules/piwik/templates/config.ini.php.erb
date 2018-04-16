@@ -14,13 +14,13 @@ salt = "<%= @salt %>"
 trusted_hosts[] = "piwik.miraheze.org"
 
 [mail]
-transport = smtp
+transport = "smtp"
 port = 25
-host = mail.miraheze.org
-type = LOGIN
-username = noreply
-password = <%= @noreply_password %>
-encryption = tls
+host = "mail.miraheze.org"
+type = "LOGIN"
+username = "noreply"
+password = "<%= @noreply_password %>"
+encryption = "tls"
 
 [PluginsInstalled]
 PluginsInstalled[] = "Diagnostics"
