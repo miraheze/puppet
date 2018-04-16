@@ -34,7 +34,7 @@ maildrop  unix  -       n       n       -       -       pipe
 uucp      unix  -       n       n       -       -       pipe
   flags=Fqhu user=uucp argv=uux -r -n -z -a$sender - $nexthop!rmail ($recipient)
 spamassassin unix -     n       n       -       -       pipe
-  user=debian-spamd argv /usr/bin/spamc -f -e /usr/sbin/sendmail -oi -f ${sender} ${recipient}
+  user=debian-spamd argv=/usr/bin/spamc -f -e /usr/sbin/sendmail -oi -f ${sender} ${recipient}
 
 #
 # Other external delivery methods.
