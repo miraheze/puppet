@@ -65,7 +65,6 @@ class salt::minion(
     # will start it with the correct settings
     package { 'salt-minion':
         ensure  => present,
-        require => File['/etc/salt/minion'],
     }
 
     service { 'salt-minion':
@@ -80,10 +79,11 @@ class salt::minion(
     }
 
     file { '/etc/salt':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => Package['salt-minion'],
     }
 
     file { '/etc/salt/minion':
@@ -92,7 +92,7 @@ class salt::minion(
         group   => 'root',
         mode    => '0444',
         notify  => Service['salt-minion'],
-        require => File['/etc/salt'],
+        require => File['/etc/salt'], 
     }
 
     if ($master_key) {
