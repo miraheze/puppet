@@ -1,1 +1,2 @@
 mariadb::config::tmpdir: /srv/tmp
+puppetmaster_version: 4
