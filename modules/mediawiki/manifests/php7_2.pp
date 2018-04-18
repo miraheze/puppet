@@ -31,7 +31,6 @@ class mediawiki::php7_2 {
         'php7.2-json',
         'php7.2-mbstring',
         'php7.2-mysql',
-        'php7.2-mysqlnd',
         'php7.2-xml',
     ]
 
