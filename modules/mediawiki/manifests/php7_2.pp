@@ -1,5 +1,5 @@
-# mediawiki::php7
-class mediawiki::php7 {
+# mediawiki::php7_2
+class mediawiki::php7_2 {
     include ::apt
 
     if !defined(Apt::Source['php72_apt']) {
