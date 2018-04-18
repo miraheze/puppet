@@ -10,8 +10,14 @@ class mediawiki(
     include mediawiki::logging
     include mediawiki::extensionsetup
 
+    $php7_2 = hiera('mediawiki::use_php_7_2', false)
+
     if os_version('debian >= stretch') {
-        include mediawiki::php7
+        if $php7_2 {
+            include mediawiki::php7_2
+        } else {
+            include mediawiki::php7
+        }
     } else {
         include mediawiki::php5
     }
@@ -78,11 +84,20 @@ class mediawiki(
     }
 
     if os_version('debian >= stretch') {
-        file { '/var/log/php7.0-fpm.log':
-            ensure  => 'present',
-            owner   => 'www-data',
-            group   => 'www-data',
-            mode    => '0755',
+        if $php7_2 {
+            file { '/var/log/php7.2-fpm.log':
+                ensure  => 'present',
+                owner   => 'www-data',
+                group   => 'www-data',
+                mode    => '0755',
+            }
+        } else {
+            file { '/var/log/php7.0-fpm.log':
+                ensure  => 'present',
+                owner   => 'www-data',
+                group   => 'www-data',
+                mode    => '0755',
+            }
         }
     } else {
         file { '/var/log/php5-fpm.log':
