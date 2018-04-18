@@ -4,4 +4,3 @@ jobrunner: false
 contactgroups: 'ops,mediawiki'
 # can be removed once puppet 4 is the default
 puppetmaster_version: 4
-mediawiki::use_php_7_2: true
