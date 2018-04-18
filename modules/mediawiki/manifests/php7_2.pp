@@ -58,7 +58,6 @@ class mediawiki::php7_2 {
     exec { "install_php_pear":
         command => '/usr/bin/curl -o /opt/php-pear_1.10.5%2Bsubmodules%2Bnotgz-1%2B0~20170904061717.3%2Bstretch~1.gbpe356ca_all.deb https://packages.sury.org/php/pool/main/p/php-pear/php-pear_1.10.5%2Bsubmodules%2Bnotgz-1%2B0~20170904061717.3%2Bstretch~1.gbpe356ca_all.deb',
         unless  => '/bin/ls /opt/php-pear_1.10.5%2Bsubmodules%2Bnotgz-1%2B0~20170904061717.3%2Bstretch~1.gbpe356ca_all.deb',
-        require => Package['php7.2-xml'],
     }
 
     package { "php-igbinary":
@@ -84,6 +83,7 @@ class mediawiki::php7_2 {
         provider => dpkg,
         ensure   => present,
         source   => '/opt/php-pear_1.10.5%2Bsubmodules%2Bnotgz-1%2B0~20170904061717.3%2Bstretch~1.gbpe356ca_all.deb',
+        require => Package['php7.2-xml'],
     }
 
     service { 'php7.2-fpm':
