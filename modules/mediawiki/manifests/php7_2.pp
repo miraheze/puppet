@@ -22,9 +22,11 @@ class mediawiki::php7_2 {
 
     $packages = [
         'php-imagick',
+        'php-mcrypt',
         'php-pear',
         'php-mail',
         'php-luasandbox',
+        'php-redis',
         'php7.2',
         'php7.2-curl',
         'php7.2-fpm',
@@ -32,10 +34,8 @@ class mediawiki::php7_2 {
         'php7.2-intl',
         'php7.2-json',
         'php7.2-mbstring',
-        'php7.2-mcrypt',
         'php7.2-mysql',
         'php7.2-mysqlnd',
-        'php7.2-redis',
     ]
 
     package { $packages:
