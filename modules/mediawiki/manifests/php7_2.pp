@@ -21,6 +21,7 @@ class mediawiki::php7_2 {
     }
 
     $packages = [
+        'php-imagick',
         'php-pear',
         'php-mail',
         'php-luasandbox',
@@ -28,7 +29,6 @@ class mediawiki::php7_2 {
         'php7.2-curl',
         'php7.2-fpm',
         'php7.2-gd',
-        'php7.2-imagick',
         'php7.2-intl',
         'php7.2-json',
         'php7.2-mbstring',
