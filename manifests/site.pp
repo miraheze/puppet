@@ -16,6 +16,7 @@ node 'nfs1.miraheze.org' {
     include base
     include role::staticserver
     include bacula::client
+    include role::salt::minions
 }
 
 node /^db[23].miraheze.org$/ {
