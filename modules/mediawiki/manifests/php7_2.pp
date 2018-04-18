@@ -52,7 +52,7 @@ class mediawiki::php7_2 {
 
     exec { "install_php_imagick":
         command => '/usr/bin/curl -o /opt/php-imagick_3.4.3-2%2B0~20170825111201.3%2Bstretch~1.gbp4fa216_amd64.deb https://packages.sury.org/php/pool/main/p/php-imagick/php-imagick_3.4.3-2%2B0~20170825111201.3%2Bstretch~1.gbp4fa216_amd64.deb',
-        unless  => '/bin/ls /opt/php-redis_4.0.0-1%2B0~20180412074133.5%2Bstretch~1.gbp24a357_amd64.deb',
+        unless  => '/bin/ls /opt/php-imagick_3.4.3-2%2B0~20170825111201.3%2Bstretch~1.gbp4fa216_amd64.deb',
     }
 
     exec { "install_php_pear":
