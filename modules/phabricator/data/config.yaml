@@ -8,7 +8,7 @@ ui.logo:
 # MySQL
 mysql.port: 3306
 mysql.user: 'phabricator'
-mysql.host: '81.4.127.157'
+mysql.host: 'db4.miraheze.org'
 storage.mysql-engine.max-size: 0
 
 # SMTP
