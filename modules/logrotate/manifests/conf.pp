@@ -1,8 +1,7 @@
 # === Define logrotate::conf
 #
 # Thin helper for the definition of logrotate rules.
-# It basically ensure consistency and that we don't risk things like
-# https://phabricator.wikimedia.org/T127025 to happen again
+# It basically ensure consistency and that we don't risk things.
 #
 define logrotate::conf (
     $ensure = present,
