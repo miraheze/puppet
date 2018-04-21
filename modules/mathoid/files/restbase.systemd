@@ -1,0 +1,21 @@
+[Unit]
+Description="restbase service"
+After=network.target
+
+[Service]
+# up ulimit -n a bit
+LimitNOFILE=10000
+User=www-data
+Group=www-data
+Environment="NODE_PATH=/srv/restbase/node_modules"
+Environment="MATHOID_PORT=10042"
+SyslogIdentifier=restbase
+Restart=always
+RestartSec=2s
+# wait 60 seconds for a graceful restart before killing the master
+TimeoutStopSec=60
+WorkingDirectory=/srv/restbase
+ExecStart=/usr/bin/nodejs server.js -c /etc/restbase/config.yaml
+
+[Install]
+WantedBy=multi-user.target
