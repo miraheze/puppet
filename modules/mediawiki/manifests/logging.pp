@@ -10,15 +10,13 @@ class mediawiki::logging {
         mode   => '0755',
     }
 
-    logrotate::rotate { 'mediawiki_wikilogs':
-        logs   => '/var/log/mediawiki/*.log',
-        rotate => '6',
-        delay  => false,
+    logrotate::conf { 'mediawiki_wikilogs':
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/mediawiki_wikilogs.logrotate.conf',
     }
 
-    logrotate::rotate { 'mediawiki_debuglogs':
-        logs   => '/var/log/mediawiki/debuglogs/*.log',
-        rotate => '6',
-        delay  => false,
+    logrotate::conf { 'mediawiki_debuglogs':
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/mediawiki_debuglogs.logrotate.conf',
     }
 }
