@@ -47,7 +47,7 @@ class nginx {
         require    => [ Exec['nginx unmask'], File['/etc/nginx/mime.types'] ],
     }
 
-    file { '/etc/logrotate.d/nginx':
+    logrotate::conf { 'nginx':
         ensure => present,
         source => 'puppet:///modules/nginx/logrotate',
     }
