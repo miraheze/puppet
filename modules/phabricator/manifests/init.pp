@@ -126,7 +126,6 @@ class phabricator(
     httpd::mod { 'phabricator_apache':
         modules => $modules,
         require => Package["libapache2-mod-php${php_version}"],
-        monitor => true,
     }
 
     exec { 'PHD reload systemd':
