@@ -22,7 +22,6 @@ class icinga2::install {
   $conf_dir       = $::icinga2::params::conf_dir
   $user           = $::icinga2::params::user
   $group          = $::icinga2::params::group
-  $repositoryd    = $::icinga2::repositoryd
 
   if $manage_package {
     if $::osfamily == 'windows' { Package { provider => chocolatey, } }
@@ -38,21 +37,5 @@ class icinga2::install {
     owner  => $user,
     group  => $group,
   }
-
-  # deprecated, removed in Icinga 2 v2.8.0
-  $_ensure = $repositoryd ? {
-    true    => 'directory',
-    default => 'absent',
-  }
-
-  file { "${conf_dir}/repository.d":
-    ensure  => $_ensure,
-    owner   => $user,
-    group   => $group,
-    recurse => true,
-    purge   => true,
-    force   => true,
-    require => File[$pki_dir, $conf_dir],
-  }
-
 }
+
