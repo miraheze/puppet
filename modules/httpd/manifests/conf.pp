@@ -93,33 +93,67 @@ define httpd::conf(
     }
 
     if $monitor {
-        if !defined(Icinga::Service['HTTP']) {
-            icinga::service { 'HTTP':
-                description   => 'HTTP',
-                check_command => 'check_http',
+        if hiera('base::monitoring::user_icinga2', false) {
+            if !defined(Icinga2::Object::Service['HTTP']) {
+                icinga2::object::service { 'HTTP':
+                    description   => 'HTTP',
+                    check_command => 'check_http',
+                }
             }
-        }
 
-        if !defined(Icinga::Service['HTTPS']) {
-            icinga::service { 'HTTPS':
-                description   => 'HTTPS',
-                check_command => 'check_https',
+            if !defined(Icinga2::Object::Service['HTTPS']) {
+                icinga2::object::service { 'HTTPS':
+                    description   => 'HTTPS',
+                    check_command => 'check_https',
+                }
+            }
+        } else {
+            if !defined(Icinga::Service['HTTP']) {
+                icinga::service { 'HTTP':
+                    description   => 'HTTP',
+                    check_command => 'check_http',
+                }
+            }
+
+            if !defined(Icinga::Service['HTTPS']) {
+                icinga::service { 'HTTPS':
+                    description   => 'HTTPS',
+                    check_command => 'check_https',
+                }
             }
         }
     } else {
-        if !defined(Icinga::Service['HTTP']) {
-            icinga::service { 'HTTP':
-                ensure        => 'absent',
-                description   => 'HTTP',
-                check_command => 'check_http',
+        if hiera('base::monitoring::user_icinga2', false) {
+            if !defined(Icinga2::Object::Service['HTTP']) {
+                icinga2::object::service { 'HTTP':
+                    ensure        => 'absent',
+                    description   => 'HTTP',
+                    check_command => 'check_http',
+                }
             }
-        }
 
-        if !defined(Icinga::Service['HTTPS']) {
-            icinga::service { 'HTTPS':
-                ensure        => 'absent',
-                description   => 'HTTPS',
-                check_command => 'check_https',
+            if !defined(Icinga2::Object::Service['HTTPS']) {
+                icinga2::object::service { 'HTTPS':
+                    ensure        => 'absent',
+                    description   => 'HTTPS',
+                    check_command => 'check_https',
+                }
+            }
+        } else {
+            if !defined(Icinga::Service['HTTP']) {
+                icinga::service { 'HTTP':
+                    ensure        => 'absent',
+                    description   => 'HTTP',
+                    check_command => 'check_http',
+                }
+            }
+
+            if !defined(Icinga::Service['HTTPS']) {
+                icinga::service { 'HTTPS':
+                    ensure        => 'absent',
+                    description   => 'HTTPS',
+                    check_command => 'check_https',
+                }
             }
         }
     }
