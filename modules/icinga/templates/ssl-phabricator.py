@@ -20,7 +20,7 @@ SERVICE_STATE_TYPES = ('SOFT', 'HARD')
 SKIP_STRINGS = ('timeout', 'timed out', 'connection refused', 'out of bounds')
 
 LOG_PATH = '/var/log/icinga/ssl_handler.log'
-COMMAND_FILE = '/var/lib/nagios/rw/nagios.cmd'
+COMMAND_FILE = '/var/lib/icinga/rw/icinga.cmd'
 
 ACK_MESSAGE = 'SSL handler auto-ack: {}'
 ICINGA_URL = ('https://icinga.miraheze.org/cgi-bin/icinga/extinfo.cgi?type=2&'
