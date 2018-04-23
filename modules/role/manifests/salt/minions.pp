@@ -13,6 +13,6 @@ class role::salt::minions(
     }
 
     motd::role { 'role::salt::minions':
-        description => 'Host the salt minion',
+        description => 'is a host for a minion',
     }
 }
