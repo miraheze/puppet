@@ -28,7 +28,7 @@ class role::parsoid {
     ufw::allow { 'parsoid monitoring temp':
         proto => 'tcp',
         port  => 8142,
-        from  => '185.52.1.76',
+        from  => '185.52.2.243',
     }
 	
     ufw::allow { 'parsoid test1':
