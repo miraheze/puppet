@@ -24,6 +24,15 @@ class icinga2::custom::conf {
         import_schema => true,
     }
 
+    file { '/etc/icinga2/conf.d/templates.conf':
+        source  => 'puppet:///modules/icinga2/templates.conf',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        require => Package['icinga2'],
+        notify  => Service['icinga2'],
+    }
+
     file { '/etc/icinga2/conf.d/users.conf':
         source  => 'puppet:///modules/icinga2/users.conf',
         owner   => 'root',
