@@ -53,18 +53,36 @@ class icingaweb2(
         group  => 'icingaweb2',
     }
 
+    file { '/etc/icingaweb2/modules':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'icingaweb2',
+        mode    => '2755',
+        require => Package['icingaweb2'],
+    }
+
+    file { '/etc/icingaweb2/modules/monitoring':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'icingaweb2',
+        mode    => '2755',
+        require => File['/etc/icingaweb2/modules'],
+    }
+    
     file { '/etc/icingaweb2/modules/monitoring/backends.ini':
-        ensure => present,
-        content => template('icingaweb2/backends.ini.erb'),
-        owner  => 'www-data',
-        group  => 'icingaweb2',
+        ensure  => present,
+        content  => template('icingaweb2/backends.ini.erb'),
+        owner   => 'www-data',
+        group   => 'icingaweb2',
+        require => File['/etc/icingaweb2/modules/monitoring'],
     }
 
     file { '/etc/icingaweb2/modules/monitoring/commandtransports.ini':
-        ensure => present,
+        ensure  => present,
         content => template('icingaweb2/commandtransports.ini.erb'),
-        owner  => 'www-data',
-        group  => 'icingaweb2',
+        owner   => 'www-data',
+        group   => 'icingaweb2',
+        require => File['/etc/icingaweb2/modules/monitoring'],
     }
 
     include ssl::wildcard
