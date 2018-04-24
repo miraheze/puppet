@@ -1,4 +1,4 @@
-class icinga2::custom::services (
+define icinga2::custom::services (
     $check_command,
     $host           = $::hostname,
     $retries        = 3,
