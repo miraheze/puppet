@@ -54,7 +54,6 @@ class parsoid {
         icinga2::custom::services { 'parsoid':
             check_command => 'tcp',
             vars          => {
-                tcp_address => 'host.address',
                 tcp_port    => '8142',
             },
         }
