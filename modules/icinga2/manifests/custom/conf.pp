@@ -24,26 +24,8 @@ class icinga2::custom::conf {
         import_schema => true,
     }
 
-    file { '/etc/icinga2/conf.d/templates.conf':
-        source  => 'puppet:///modules/icinga2/templates.conf',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        require => Package['icinga2'],
-        notify  => Service['icinga2'],
-    }
-
-    file { '/etc/icinga2/conf.d/users.conf':
-        source  => 'puppet:///modules/icinga2/users.conf',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        require => Package['icinga2'],
-        notify  => Service['icinga2'],
-    }
-
-    file { '/etc/icinga2/conf.d/timeperiods.conf':
-        source  => 'puppet:///modules/icinga2/timeperiods.conf',
+    file { '/etc/icinga2/conf.d/commands.conf':
+        source  => 'puppet:///modules/icinga2/commands.conf',
         owner   => 'root',
         group   => 'root',
         mode    => '0664',
@@ -51,8 +33,8 @@ class icinga2::custom::conf {
         notify  => Service['icinga2'],
     }
 
-    file { '/etc/icinga2/conf.d/commands.conf':
-        source  => 'puppet:///modules/icinga2/commands.conf',
+    file { '/etc/icinga2/conf.d/groups.conf':
+        source  => 'puppet:///modules/icinga2/groups.conf',
         owner   => 'root',
         group   => 'root',
         mode    => '0664',
@@ -69,11 +51,38 @@ class icinga2::custom::conf {
         notify  => Service['icinga2'],
     }
 
-    file { '/etc/icinga2/conf.d/groups.conf':
-        source  => 'puppet:///modules/icinga2/groups.conf',
+    file { '/etc/icinga2/conf.d/notifications.conf':
+        source  => 'puppet:///modules/icinga2/notifications.conf',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        require => Package['icinga2'],
+        notify  => Service['icinga2'],
+    }
+
+    file { '/etc/icinga2/conf.d/templates.conf':
+        source  => 'puppet:///modules/icinga2/templates.conf',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        require => Package['icinga2'],
+        notify  => Service['icinga2'],
+    }
+
+    file { '/etc/icinga2/conf.d/timeperiods.conf':
+        source  => 'puppet:///modules/icinga2/timeperiods.conf',
         owner   => 'root',
         group   => 'root',
         mode    => '0664',
+        require => Package['icinga2'],
+        notify  => Service['icinga2'],
+    }
+
+    file { '/etc/icinga2/conf.d/users.conf':
+        source  => 'puppet:///modules/icinga2/users.conf',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
         require => Package['icinga2'],
         notify  => Service['icinga2'],
     }
