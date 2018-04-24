@@ -9,7 +9,7 @@ class icinga2::custom::conf {
 
     include ::icinga2::feature::notification
 
-    inclide ::icinga2::feature::perfdata
+    include ::icinga2::feature::perfdata
 
     include ::icinga2::pki::ca
 
