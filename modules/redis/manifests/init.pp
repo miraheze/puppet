@@ -51,11 +51,10 @@ class redis (
 
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'redis':
-            check_command => 'nrpe-check-1arg',
+            check_command => 'nrpe',
             vars          => {
-                host  => 'host.address',
-                check => 'check_redis',
-            }
+                nrpe_command => 'check_redis',
+            },
         }
     } else {
         icinga::service { 'redis':
