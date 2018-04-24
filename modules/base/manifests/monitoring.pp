@@ -48,26 +48,23 @@ class base::monitoring {
         icinga2::custom::hosts { $::hostname: }
 
         icinga2::custom::services { 'disk_space':
-            check_command => 'nrpe-check-1arg',
+            check_command => 'nrpe',
             vars          => {
-                host  => 'host.address',
-                check => 'check_disk',
+                nrpe_command => 'check_disk',
             },
         }
 
         icinga2::custom::services { 'current_load':
-            check_command => 'nrpe-check-1arg',
+            check_command => 'nrpe',
             vars          => {
-                host  => 'host.address',
-                check => 'check_load',
+                nrpe_command => 'check_load',
             },
         }
 
         icinga2::custom::services { 'puppet':
-            check_command => 'nrpe-check-1arg',
+            check_command => 'nrpe',
             vars          => {
-                host  => 'host.address',
-                check => 'check_puppet_run',
+                nrpe_command => 'check_puppet_run',
             },
         }
 
