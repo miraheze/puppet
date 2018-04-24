@@ -22,8 +22,6 @@ define icinga2::custom::services (
         volatile               => false,
         event_command          => $event_command,
         target                 => '/etc/icinga/config/puppet_services.cfg',
-        mode                   => '0444',
-        use                    => 'generic-service',
         vars                   => $vars,
     }
 }
