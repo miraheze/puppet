@@ -66,7 +66,7 @@ class dns {
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        Icinga2::Object::Service { 'auth_dns':
+        icinga2::custom::services { 'auth_dns':
             check_command => 'check_dns_auth',
             vars          => {
                 host    => 'miraheze.org',
@@ -74,7 +74,7 @@ class dns {
             },
         }
 
-        Icinga2::Object::Service { 'gdnsd':
+        icinga2::custom::services { 'gdnsd':
             check_command => 'nrpe-check-1arg',
             vars          => {
                 host  => 'host.address',
