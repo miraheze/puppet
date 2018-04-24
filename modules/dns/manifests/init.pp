@@ -75,10 +75,9 @@ class dns {
         }
 
         icinga2::custom::services { 'gdnsd':
-            check_command => 'nrpe-check-1arg',
+            check_command => 'nrpe',
             vars          => {
-                host  => 'host.address',
-                check => 'check_gdnsd_datacenters',
+                nrpe_command => 'check_gdnsd_datacenters',
             },
         }
     } else {
