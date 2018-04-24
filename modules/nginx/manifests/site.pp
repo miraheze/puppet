@@ -27,9 +27,6 @@ define nginx::site(
             if !defined(Icinga2::Custom::Services['HTTP']) {
                 icinga2::custom::services { 'HTTP':
                     check_command => 'check_http',
-                    vars          => {
-                        address   => 'host.address',
-                    },
                 }
             }
 
@@ -37,7 +34,6 @@ define nginx::site(
                 icinga2::custom::services { 'HTTPS':
                     check_command => 'check_http',
                     vars          => {
-                        address   => 'host.address',
                         http_ssl  => true,
                     },
                 }
@@ -63,9 +59,6 @@ define nginx::site(
                 icinga2::custom::services { 'HTTP':
                     ensure        => 'absent',
                     check_command => 'check_http',
-                    vars          => {
-                        address   => 'host.address',
-                    },
                 }
             }
 
@@ -74,7 +67,6 @@ define nginx::site(
                     ensure        => 'absent',
                     check_command => 'check_http',
                     vars          => {
-                        address   => 'host.address',
                         http_ssl  => true,
                     },
                 }
