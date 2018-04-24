@@ -9,7 +9,7 @@ class icingaweb2(
     $icinga_ido_password = hiera('passwords::icinga_ido'),
     $icinga_api_password = hiera('passwords::icinga_api'),
     # use php7.2 on stretch+
-    $modules = ['alias', 'headers', 'rewrite', 'php7.2', 'proxy', 'proxy_http', 'ssl']
+    $modules = ['alias', 'headers', 'rewrite', 'php7.2', 'proxy', 'proxy_http', 'ssl'],
     $use_apache = hiera('icingaweb2::use_apache', true)
 ) {
     if $use_apache {
