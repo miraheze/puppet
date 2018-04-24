@@ -21,7 +21,7 @@ define icinga2::custom::services (
         enable_active_checks   => true,
         volatile               => false,
         event_command          => $event_command,
-        target                 => '/etc/icinga/config/puppet_services.cfg',
+        target                 => '/etc/icinga2/conf.d/puppet_services.conf',
         vars                   => $vars,
     }
 }
