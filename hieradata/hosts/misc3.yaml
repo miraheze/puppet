@@ -1,3 +1,2 @@
 puppetmaster_version: 4
 role::salt::minions::salt_master_key: true
-base::monitoring::use_icinga2: true
