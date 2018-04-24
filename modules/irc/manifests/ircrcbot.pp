@@ -35,7 +35,7 @@ class irc::ircrcbot(
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        Icinga2::Object::Service { 'ircrcbot':
+        icinga2::custom::services { 'ircrcbot':
             check_command => 'nrpe-check-1arg',
             vars          => {
                 host  => 'host.address',
