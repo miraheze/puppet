@@ -1,6 +1,6 @@
 # role: icinga
 class role::icinga2 {
-    include ::icinga2::conf::confd
+    include ::icinga2::custom::conf
 
     ufw::allow { 'icinga2 http':
         proto => 'tcp',
