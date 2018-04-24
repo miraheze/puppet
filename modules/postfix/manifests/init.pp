@@ -37,7 +37,10 @@ class postfix {
 
     if hiera('base::monitoring::user_icinga2', false) {
         icinga2::object::service { 'smtp':
-            check_command => 'check_smtp',
+            check_command => 'smtp',
+            vars          => {
+                smtp_address  => 'host.address',
+            },
         }
     } else {
         icinga::service { 'smtp':
