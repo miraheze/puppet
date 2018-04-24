@@ -82,26 +82,23 @@ class mediawiki::jobrunner {
 
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'jobrunner':
-            check_command => 'nrpe-check-1arg',
+            check_command => 'nrpe',
             vars          => {
-                host  => 'host.address',
-                check => 'check_jobrunner',
+                nrpe_command => 'check_jobrunner',
             },
         }
 
         icinga2::custom::services { 'jobchron':
-            check_command => 'nrpe-check-1arg',
+            check_command => 'nrpe',
             vars          => {
-                host  => 'host.address',
-                check => 'check_jobchron',
+                nrpe_command => 'check_jobchron',
             },
         }
 
         icinga2::custom::services { 'jobqueue':
-            check_command => 'nrpe-check-1arg',
+            check_command => 'nrpe',
             vars          => {
-                host  => 'host.address',
-                check => 'check_jobqueue',
+                nrpe_command => 'check_jobqueue',
             },
         }
     } else {
