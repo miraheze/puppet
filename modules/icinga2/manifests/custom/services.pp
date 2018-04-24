@@ -3,8 +3,8 @@ define icinga2::custom::services (
     $host           = $::hostname,
     $retries        = 3,
     $ensure         = present,
-    $check_interval = '2',
-    $retry_interval = '1',
+    $check_interval = '2m',
+    $retry_interval = '1m',
     $event_command  = undef,
     $vars           = undef,
 ) {
