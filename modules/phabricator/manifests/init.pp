@@ -144,8 +144,18 @@ class phabricator(
         require => [File['/etc/systemd/system/phd.service'], File['/srv/phab/phabricator/conf/local/local.json']],
     }
 
-    icinga::service { 'phd':
-        description   => 'phd',
-        check_command => 'check_nrpe_1arg!check_phd',
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::services { 'phd':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_phd',
+            },
+        }
+    } else {
+        icinga::service { 'phd':
+            description   => 'phd',
+            check_command => 'check_nrpe_1arg!check_phd',
+        }
     }
 }

@@ -80,18 +80,44 @@ class mediawiki::jobrunner {
         mode   => '0555',
     }
 
-    icinga::service { 'jobrunner':
-        description   => 'JobRunner Service',
-        check_command => 'check_nrpe_1arg!check_jobrunner',
-    }
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::services { 'jobrunner':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_jobrunner',
+            },
+        }
 
-    icinga::service { 'jobchron':
-        description   => 'JobChron Service',
-        check_command => 'check_nrpe_1arg!check_jobchron',
-    }
+        icinga2::custom::services { 'jobchron':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_jobchron',
+            },
+        }
 
-    icinga::service { 'jobqueue':
-        description   => 'JobQueue',
-        check_command => 'check_nrpe_1arg!check_jobqueue',
+        icinga2::custom::services { 'jobqueue':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_jobqueue',
+            },
+        }
+    } else {
+        icinga::service { 'jobrunner':
+            description   => 'JobRunner Service',
+            check_command => 'check_nrpe_1arg!check_jobrunner',
+        }
+
+        icinga::service { 'jobchron':
+            description   => 'JobChron Service',
+            check_command => 'check_nrpe_1arg!check_jobchron',
+        }
+
+        icinga::service { 'jobqueue':
+            description   => 'JobQueue',
+            check_command => 'check_nrpe_1arg!check_jobqueue',
+        }
     }
 }

@@ -65,13 +65,31 @@ class dns {
         mode   => '0755',
     }
 
-    icinga::service { 'auth_dns':
-        description   => 'Auth DNS',
-        check_command => 'check_dns_auth!miraheze.org',
-    }
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::services { 'auth_dns':
+            check_command => 'check_dns_auth',
+            vars          => {
+                host    => 'miraheze.org',
+                address => 'host.address',
+            },
+        }
 
-    icinga::service { 'gdnsd':
-        description   => 'GDNSD Datacenters',
-        check_command => 'check_nrpe_1arg!check_gdnsd_datacenters',
+        icinga2::custom::services { 'gdnsd':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_gdnsd_datacenters',
+            },
+        }
+    } else {
+        icinga::service { 'auth_dns':
+            description   => 'Auth DNS',
+            check_command => 'check_dns_auth!miraheze.org',
+        }
+
+        icinga::service { 'gdnsd':
+            description   => 'GDNSD Datacenters',
+            check_command => 'check_nrpe_1arg!check_gdnsd_datacenters',
+        }
     }
 }

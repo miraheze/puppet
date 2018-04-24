@@ -1,6 +1,9 @@
 users::groups:
   - mediawiki-admins
 jobrunner: false
+# for icinga2 only
+#contactgroups: ['icingaadmins', 'ops', 'mediawiki']
+# for icinga1 only
 contactgroups: 'ops,mediawiki'
 acme: true
 puppetmaster_version: 4

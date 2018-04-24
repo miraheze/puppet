@@ -44,25 +44,58 @@ class base::monitoring {
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run', ],
     }
 
-    icinga::host { $::hostname: }
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::hosts { $::hostname: }
 
-    icinga::service { 'disk_space':
-        description   => 'Disk Space',
-        check_command => 'check_nrpe_1arg!check_disk',
-    }
+        icinga2::custom::services { 'disk_space':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_disk',
+            },
+        }
 
-    icinga::service { 'current_load':
-        description   => 'Current Load',
-        check_command => 'check_nrpe_1arg!check_load',
-    }
+        icinga2::custom::services { 'current_load':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_load',
+            },
+        }
 
-    icinga::service { 'puppet':
-        description   => 'Puppet',
-        check_command => 'check_nrpe_1arg!check_puppet_run',
-    }
+        icinga2::custom::services { 'puppet':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_puppet_run',
+            },
+        }
 
-    icinga::service { 'ssh':
-        description   => 'SSH',
-        check_command => 'check_ssh',
+        icinga2::custom::services { 'ssh':
+            description   => 'SSH',
+            check_command => 'ssh',
+        }
+    } else {
+        icinga::host { $::hostname: }
+
+        icinga::service { 'disk_space':
+            description   => 'Disk Space',
+            check_command => 'check_nrpe_1arg!check_disk',
+        }
+
+        icinga::service { 'current_load':
+            description   => 'Current Load',
+            check_command => 'check_nrpe_1arg!check_load',
+        }
+
+        icinga::service { 'puppet':
+            description   => 'Puppet',
+            check_command => 'check_nrpe_1arg!check_puppet_run',
+        }
+
+        icinga::service { 'ssh':
+            description   => 'SSH',
+            check_command => 'check_ssh',
+        }
     }
 }

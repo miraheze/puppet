@@ -50,8 +50,18 @@ class parsoid {
         content => template('parsoid/config.yaml'),
     }
 
-    icinga::service { 'parsoid':
-        description   => 'Parsoid',
-        check_command => 'check_tcp!8142',
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::services { 'parsoid':
+            check_command => 'tcp',
+            vars          => {
+                tcp_address => 'host.address',
+                tcp_port    => '8142',
+            },
+        }
+    } else {
+        icinga::service { 'parsoid':
+            description   => 'Parsoid',
+            check_command => 'check_tcp!8142',
+        }
     }
 }
