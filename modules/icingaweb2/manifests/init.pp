@@ -100,6 +100,14 @@ class icingaweb2(
           modules => $modules,
           require => Package["libapache2-mod-php7.2"],
       }
+
+      file_line { 'set_date_time':
+          line    => 'date.timezone = Etc/Utc',
+          match   => '^;?date.timezone\s*\=',
+          path    => '/etc/php/7.2/apache2/php.ini',
+          notify  => Exec['apache2_test_config_and_restart'],
+          require => Package['libapache2-mod-php7.2'],
+      }
     } else {
       nginx::site { 'icinga2':
           ensure  => present,
