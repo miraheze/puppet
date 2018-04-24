@@ -108,7 +108,7 @@ class icinga2::custom::conf {
         owner   => 'root',
         group   => 'root',
         mode    => '0664',
-        require => Package['icinga2']
+        require => Package['icinga2'],
         notify  => Service['icinga2'],
     }
 
