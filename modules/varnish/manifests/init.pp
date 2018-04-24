@@ -101,19 +101,17 @@ class varnish {
 
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'varnish':
-            check_command => 'nrpe-check-1arg',
+            check_command => 'nrpe',
             vars          => {
-                host  => 'host.address',
-                check => 'check_varnishbackends',
-            }
+                nrpe_command => 'check_varnishbackends',
+            },
         }
 
         icinga2::custom::services { 'varnish_error_rate':
-            check_command => 'nrpe-check-1arg',
+            check_command => 'nrpe',
             vars          => {
-                host  => 'host.address',
-                check => 'check_nginx_errorrate',
-            }
+                nrpe_command => 'check_nginx_errorrate',
+            },
         }
     } else {
         icinga::service { 'varnish':
