@@ -4,7 +4,7 @@ define icinga2::custom::hosts (
   $vars     = undef,
   $contacts = hiera('contactgroups', [ 'icingaadmins', 'ops' ]),
 ) {
-    ::icinga2::object::host{ $title:
+    icinga2::object::host { $title:
         ensure  => $ensure,
         import  => 'generic-host',
         address => $ip,
