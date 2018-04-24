@@ -1,7 +1,7 @@
 define icinga2::custom::hosts (
   $ensure   = present,
   $ip       = $::ipaddress,
-  $contacts = hiera('contactgroups', [ 'icingaadmins', 'ops' ]),
+  $contacts = hiera('contactgroups', [ 'icingaadmins', 'irc', 'ops' ]),
 ) {
     @@icinga2::object::host { $title:
         ensure  => $ensure,
