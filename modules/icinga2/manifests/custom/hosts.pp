@@ -5,7 +5,7 @@ define icinga2::custom::hosts (
 ) {
     icinga2::object::host { $title:
         ensure  => $ensure,
-        import  => 'generic-host',
+        import  => ['generic-host'],
         address => $ip,
         target  => '/etc/icinga2/conf.d/puppet_hosts.conf',
         vars    => {
