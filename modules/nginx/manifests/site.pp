@@ -85,9 +85,6 @@ define nginx::site(
                     ensure        => 'absent',
                     description   => 'HTTP',
                     check_command => 'check_http',
-                    vars          => {
-                        address   => 'host.address',
-                    },
                 }
             }
 
