@@ -72,7 +72,6 @@ class base::monitoring {
         }
 
         icinga2::custom::services { 'ssh':
-            description   => 'SSH',
             check_command => 'ssh',
         }
     } else {
