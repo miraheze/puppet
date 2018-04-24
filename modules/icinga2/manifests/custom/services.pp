@@ -8,7 +8,7 @@ define icinga2::custom::services (
     $event_command  = undef,
     $vars           = undef,
 ) {
-    icinga2::object::services { $title:
+    icinga2::object::service { $title:
         ensure                 => $ensure,
         import                 => ['generic-service'],
         host_name              => $host,
