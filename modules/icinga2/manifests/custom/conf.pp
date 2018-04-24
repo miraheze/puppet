@@ -157,6 +157,6 @@ class icinga2::custom::conf {
     resources { '::icinga2::object::host': purge => true, }
     resources { '::icinga2::object::service': purge => true, }
 
-    ::Icinga2::Object::Host <<||>> ~> Service['icinga2']
-    ::Icinga2::Object::Service <<||>> ~> Service['icinga2']
+    Icinga2::Object::Host <<||>> ~> Service['icinga2']
+    Icinga2::Object::Service <<||>> ~> Service['icinga2']
 }
