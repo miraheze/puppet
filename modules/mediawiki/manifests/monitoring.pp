@@ -18,10 +18,9 @@ class mediawiki::monitoring {
     if os_version('debian >= stretch') {
         if hiera('base::monitoring::use_icinga2', false) {
             icinga2::custom::services { 'php7.0-fpm':
-                check_command => 'nrpe-check-1arg',
+                check_command => 'nrpe',
                 vars          => {
-                    host  => 'host.address',
-                    check => 'check_php_fpm_7',
+                    nrpe_command => 'check_php_fpm_7',
                 },
             }
         } else {
@@ -33,10 +32,9 @@ class mediawiki::monitoring {
     } else {
         if hiera('base::monitoring::use_icinga2', false) {
             icinga2::custom::services { 'php5-fpm':
-                check_command => 'nrpe-check-1arg',
+                check_command => 'nrpe',
                 vars          => {
-                    host  => 'host.address',
-                    check => 'check_php_fpm_5',
+                    nrpe_command => 'check_php_fpm_5',
                 },
             }
         } else {
