@@ -11,8 +11,6 @@ class icinga2::custom::conf {
 
     include ::icinga2::feature::perfdata
 
-    include ::icinga2::pki::ca
-
     $db_host = hiera('icinga_ido_db_host', 'db4.miraheze.org')
     $db_name = hiera('icinga_ido_db_name', 'icinga')
     $db_user = hiera('icinga_ido_user_name', 'icinga2')
