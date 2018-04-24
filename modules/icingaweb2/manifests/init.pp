@@ -4,7 +4,7 @@ class icingaweb2(
     $icingaweb_user_name = hiera('icingaweb_user_name', 'icingaweb2'),
     $icingaweb_password = hiera('passwords::icingaweb2'),
     $icinga_ido_db_host = hiera('icinga_ido_db_host', 'db4.miraheze.org'),
-    $icinga_ido_db_name = hiera('icinga_ido_db_name', 'icinga2'),
+    $icinga_ido_db_name = hiera('icinga_ido_db_name', 'icinga'),
     $icinga_ido_user_name = hiera('icinga_ido_user_name', 'icinga2'),
     $icinga_ido_password = hiera('passwords::icinga_ido'),
     $icinga_api_password = hiera('passwords::icinga_api'),
