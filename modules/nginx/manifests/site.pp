@@ -23,7 +23,7 @@ define nginx::site(
     }
 
     if $monitor {
-        if hiera('base::monitoring::user_icinga2', false) {
+        if hiera('base::monitoring::use_icinga2', false) {
             if !defined(Icinga2::Custom::Services['HTTP']) {
                 icinga2::custom::services { 'HTTP':
                     check_command => 'check_http',
@@ -58,14 +58,13 @@ define nginx::site(
             }
         }
     } else {
-        if hiera('base::monitoring::user_icinga2', false) {
+        if hiera('base::monitoring::use_icinga2', false) {
             if !defined(Icinga2::Custom::Services['HTTP']) {
                 icinga2::custom::services { 'HTTP':
                     ensure        => 'absent',
                     check_command => 'check_http',
                     vars          => {
                         address   => 'host.address',
-                        http_ssl  => true,
                     },
                 }
             }
