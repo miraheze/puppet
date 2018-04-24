@@ -37,7 +37,6 @@ class postfix {
 
     if hiera('base::monitoring::user_icinga2', false) {
         icinga2::object::service { 'smtp':
-            description   => 'SMTP',
             check_command => 'check_smtp',
         }
     } else {

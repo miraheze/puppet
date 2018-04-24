@@ -44,31 +44,36 @@ class base::monitoring {
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run', ],
     }
 
-    if hiera('base::monitoring::user_icinga2', false) {
-        icinga2::object::host { $::hostname:
-            address   => $::ipaddress,
-            host_name => $::hostname,
-            target    => '/etc/icinga2/conf.d/puppet_hosts.conf',
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::hosts { $::hostname: }
+
+        icinga2::custom::services { 'disk_space':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_disk',
+            },
         }
 
-        icinga2::object::service { 'disk_space':
-            description   => 'Disk Space',
-            check_command => 'check_nrpe_1arg!check_disk',
+        icinga2::custom::services { 'current_load':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_load',
+            },
         }
 
-        icinga2::object::service { 'current_load':
-            description   => 'Current Load',
-            check_command => 'check_nrpe_1arg!check_load',
+        icinga2::custom::services { 'puppet':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_puppet_run',
+            },
         }
 
-        icinga2::object::service { 'puppet':
-            description   => 'Puppet',
-            check_command => 'check_nrpe_1arg!check_puppet_run',
-        }
-
-        icinga2::object::service { 'ssh':
+        icinga2::custom::services { 'ssh':
             description   => 'SSH',
-            check_command => 'check_ssh',
+            check_command => 'ssh',
         }
     } else {
         icinga::host { $::hostname: }

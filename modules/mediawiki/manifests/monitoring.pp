@@ -1,9 +1,12 @@
 # MediaWiki monitoring
 class mediawiki::monitoring {
-    if hiera('base::monitoring::user_icinga2', false) {
-        Icinga2::Object::Service { 'mediawiki_rendering':
-            description   => 'MediaWiki Rendering',
-            check_command => 'check_mediawiki!meta.miraheze.org',
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::services { 'mediawiki_rendering':
+            check_command => 'check_mediawiki',
+            vars          => {
+                host    => 'meta.miraheze.org',
+                address => 'host.address',
+            },
         }
     } else {
         icinga::service { 'mediawiki_rendering':
@@ -13,10 +16,13 @@ class mediawiki::monitoring {
     }
 
     if os_version('debian >= stretch') {
-        if hiera('base::monitoring::user_icinga2', false) {
-            Icinga2::Object::Service { 'php7.0-fpm':
-                description   => 'php7.0-fpm',
-                check_command => 'check_nrpe_1arg!check_php_fpm_7',
+        if hiera('base::monitoring::use_icinga2', false) {
+            icinga2::custom::services { 'php7.0-fpm':
+                check_command => 'nrpe-check-1arg',
+                vars          => {
+                    host  => 'host.address',
+                    check => 'check_php_fpm_7',
+                },
             }
         } else {
             icinga::service { 'php7.0-fpm':
@@ -25,10 +31,13 @@ class mediawiki::monitoring {
             }
         }
     } else {
-        if hiera('base::monitoring::user_icinga2', false) {
-            Icinga2::Object::Service { 'php5-fpm':
-                description   => 'php5-fpm',
-                check_command => 'check_nrpe_1arg!check_php_fpm_5',
+        if hiera('base::monitoring::use_icinga2', false) {
+            icinga2::custom::services { 'php5-fpm':
+                check_command => 'nrpe-check-1arg',
+                vars          => {
+                    host  => 'host.address',
+                    check => 'check_php_fpm_5',
+                },
             }
         } else {
             icinga::service { 'php5-fpm':

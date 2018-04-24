@@ -18,5 +18,4 @@ class postfix::spamassassin {
         source => 'puppet:///modules/postfix/spamassassin/local.cf',
         notify => Service['spamassassin'],
     }
-
 }

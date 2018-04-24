@@ -34,8 +34,18 @@ class irc::ircrcbot(
         require => File['/etc/systemd/system/ircrcbot.service'],
     }
 
-    icinga::service { 'ircrcbot':
-        description   => 'IRC RC Bot',
-        check_command => 'check_nrpe_1arg!check_irc_rcbot',
+    if hiera('base::monitoring::use_icinga2', false) {
+        Icinga2::Object::Service { 'ircrcbot':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_irc_rcbot',
+            },
+        }
+    } else {
+        icinga::service { 'ircrcbot':
+            description   => 'IRC RC Bot',
+            check_command => 'check_nrpe_1arg!check_irc_rcbot',
+        }
     }
 }

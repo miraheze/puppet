@@ -69,8 +69,18 @@ class mariadb::config(
         mode   => '0644',
     }
 
-    icinga::service { 'mysql':
-        description   => 'MySQL',
-        check_command => 'check_mysql!icinga',
+    if hiera('base::monitoring::use_icinga2', false) {
+        Icinga2::Object::Service { 'mysql':
+            check_command => 'mysql',
+            vars          => {
+                mysql_hostname => 'host.address',
+                mysql_database => 'icinga',
+            },
+        }
+    } else {
+        icinga::service { 'mysql':
+            description   => 'MySQL',
+            check_command => 'check_mysql!icinga',
+        }
     }
 }

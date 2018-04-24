@@ -30,5 +30,4 @@ define nfs::server (
     service { 'rpcbind':
         ensure => running,
     }
-
 }

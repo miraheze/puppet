@@ -99,13 +99,31 @@ class varnish {
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nginx_errorrate' ],
     }
 
-    icinga::service { 'varnish':
-        description   => 'Varnish Backends',
-        check_command => 'check_nrpe_1arg!check_varnishbackends',
-    }
+    if hiera('base::monitoring::use_icinga2', false) {
+        Icinga2::Object::Service { 'varnish':
+            check_command => 'nrpe-check-1arg'
+            vars          => {
+                host  => 'host.address',
+                check => 'check_varnishbackends',
+            }
+        }
 
-    icinga::service { 'varnish_error_rate':
-        description   => 'HTTP 4xx/5xx ERROR Rate',
-        check_command => 'check_nrpe_1arg!check_nginx_errorrate',
+        Icinga2::Object::Service { 'varnish_error_rate':
+            check_command => 'nrpe-check-1arg'
+            vars          => {
+                host  => 'host.address',
+                check => 'check_nginx_errorrate',
+            }
+        }
+    } else {
+        icinga::service { 'varnish':
+            description   => 'Varnish Backends',
+            check_command => 'check_nrpe_1arg!check_varnishbackends',
+        }
+
+        icinga::service { 'varnish_error_rate':
+            description   => 'HTTP 4xx/5xx ERROR Rate',
+            check_command => 'check_nrpe_1arg!check_nginx_errorrate',
+        }
     }
 }

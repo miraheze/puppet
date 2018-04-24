@@ -3,5 +3,5 @@ users::groups:
 jobrunner: true
 arcanist: true
 mwdumps: true
-contactgroups: 'ops,mediawiki'
+contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 puppetmaster_version: 4

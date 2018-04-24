@@ -90,39 +90,97 @@ class bacula::director {
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_bacula_backups' ],
     }
 
-    icinga::service { 'bacula_daemon':
-        description   => 'Bacula Daemon',
-        check_command => 'check_nrpe_1arg!check_bacula_daemon',
-    }
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::services { 'bacula_daemon':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_bacula_daemon',
+            },
+        }
 
-    icinga::service { 'bacula_databasesdb2':
-        description   => 'Bacula - Databases - db2',
-        check_command => 'check_nrpe_1arg!check_bacula_databasesdb2',
-    }
+        icinga2::custom::services { 'bacula_databasesdb2':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_bacula_databasesdb2',
+            },
+        }
 
-    icinga::service { 'bacula_databasesdb3':
-        description   => 'Bacula - Databases - db3',
-        check_command => 'check_nrpe_1arg!check_bacula_databasesdb3',
-    }
+        icinga2::custom::services { 'bacula_databasesdb3':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_bacula_databasesdb3',
+            },
+        }
 
-    icinga::service { 'bacula_databasesdb4':
-        description     => 'Bacula - Databases - db4',
-        check_command   => 'check_nrpe_1arg!check_bacula_databasesdb4',
-    }
+        icinga2::custom::services { 'bacula_databasesdb4':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_bacula_databasesdb4',
+            },
+        }
 
-    icinga::service { 'bacula_static':
-        description   => 'Bacula - Static',
-        check_command => 'check_nrpe_1arg!check_bacula_static',
-    }
+        icinga2::custom::services { 'bacula_static':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_bacula_static',
+            },
+        }
 
-    icinga::service { 'bacula_phabstatic':
-        description   => 'Bacula - Phabricator Static',
-        check_command => 'check_nrpe_1arg!check_bacula_phab',
-    }
+        icinga2::custom::services { 'bacula_phabstatic':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_bacula_phab',
+            },
+        }
 
-    icinga::service { 'bacula_private':
-        description   => 'Bacula - Private Git',
-        check_command => 'check_nrpe_1arg!check_bacula_private',
+        icinga2::custom::services { 'bacula_private':
+            check_command => 'nrpe-check-1arg',
+            vars          => {
+                host  => 'host.address',
+                check => 'check_bacula_private',
+            },
+        }
+    } else {
+        icinga::service { 'bacula_daemon':
+            description   => 'Bacula Daemon',
+            check_command => 'check_nrpe_1arg!check_bacula_daemon',
+        }
+
+        icinga::service { 'bacula_databasesdb2':
+            description   => 'Bacula - Databases - db2',
+            check_command => 'check_nrpe_1arg!check_bacula_databasesdb2',
+        }
+
+        icinga::service { 'bacula_databasesdb3':
+            description   => 'Bacula - Databases - db3',
+            check_command => 'check_nrpe_1arg!check_bacula_databasesdb3',
+        }
+
+        icinga::service { 'bacula_databasesdb4':
+            description     => 'Bacula - Databases - db4',
+            check_command   => 'check_nrpe_1arg!check_bacula_databasesdb4',
+        }
+
+        icinga::service { 'bacula_static':
+            description   => 'Bacula - Static',
+            check_command => 'check_nrpe_1arg!check_bacula_static',
+        }
+
+        icinga::service { 'bacula_phabstatic':
+            description   => 'Bacula - Phabricator Static',
+            check_command => 'check_nrpe_1arg!check_bacula_phab',
+        }
+
+        icinga::service { 'bacula_private':
+            description   => 'Bacula - Private Git',
+            check_command => 'check_nrpe_1arg!check_bacula_private',
+        }
     }
 
 }

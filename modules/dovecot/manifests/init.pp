@@ -15,8 +15,14 @@ class dovecot {
         subscribe => File['/etc/dovecot/dovecot.conf'],
     }
 
-    icinga::service { 'imap':
-        description   => 'IMAP',
-        check_command => 'check_imap',
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::services { 'imap':
+            check_command => 'check_imap',
+        }
+    } else {
+        icinga::service { 'imap':
+            description   => 'IMAP',
+            check_command => 'check_imap',
+        }
     }
 }

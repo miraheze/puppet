@@ -1,5 +1,5 @@
 users::groups:
   - mediawiki-admins
 jobrunner: true
-contactgroups: 'ops,mediawiki'
+contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 puppetmaster_version: 4

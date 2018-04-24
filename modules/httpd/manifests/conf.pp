@@ -94,17 +94,22 @@ define httpd::conf(
 
     if $monitor {
         if hiera('base::monitoring::user_icinga2', false) {
-            if !defined(Icinga2::Object::Service['HTTP']) {
-                icinga2::object::service { 'HTTP':
-                    description   => 'HTTP',
+            if !defined(Icinga2::Custom::Services['HTTP']) {
+                icinga2::custom::services { 'HTTP':
                     check_command => 'check_http',
+                    vars          => {
+                        address   => 'host.address',
+                    },
                 }
             }
 
-            if !defined(Icinga2::Object::Service['HTTPS']) {
-                icinga2::object::service { 'HTTPS':
-                    description   => 'HTTPS',
-                    check_command => 'check_https',
+            if !defined(Icinga2::Custom::Services['HTTPS']) {
+                icinga2::custom::services { 'HTTPS':
+                    check_command => 'check_http',
+                     vars          => {
+                        address   => 'host.address',
+                        http_ssl  => true,
+                    },
                 }
             }
         } else {
@@ -124,19 +129,24 @@ define httpd::conf(
         }
     } else {
         if hiera('base::monitoring::user_icinga2', false) {
-            if !defined(Icinga2::Object::Service['HTTP']) {
-                icinga2::object::service { 'HTTP':
+            if !defined(icinga2::Custom::Services['HTTP']) {
+                icinga2::custom::services { 'HTTP':
                     ensure        => 'absent',
-                    description   => 'HTTP',
                     check_command => 'check_http',
+                    vars          => {
+                        address   => 'host.address',
+                    },
                 }
             }
 
-            if !defined(Icinga2::Object::Service['HTTPS']) {
-                icinga2::object::service { 'HTTPS':
+            if !defined(Icinga2::Custom::Services['HTTPS']) {
+                icinga2::custom::services { 'HTTPS':
                     ensure        => 'absent',
-                    description   => 'HTTPS',
-                    check_command => 'check_https',
+                    check_command => 'check_http',
+                    vars          => {
+                        address   => 'host.address',
+                        http_ssl  => true,
+                    },
                 }
             }
         } else {
