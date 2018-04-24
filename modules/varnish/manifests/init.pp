@@ -100,7 +100,7 @@ class varnish {
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        Icinga2::Object::Service { 'varnish':
+        icinga2::custom::services { 'varnish':
             check_command => 'nrpe-check-1arg'
             vars          => {
                 host  => 'host.address',
@@ -108,7 +108,7 @@ class varnish {
             }
         }
 
-        Icinga2::Object::Service { 'varnish_error_rate':
+        icinga2::custom::services { 'varnish_error_rate':
             check_command => 'nrpe-check-1arg'
             vars          => {
                 host  => 'host.address',
