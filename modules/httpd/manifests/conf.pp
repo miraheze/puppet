@@ -129,7 +129,7 @@ define httpd::conf(
         }
     } else {
         if hiera('base::monitoring::user_icinga2', false) {
-            if !defined(icinga2::Custom::Services['HTTP']) {
+            if !defined(Icinga2::Custom::Services['HTTP']) {
                 icinga2::custom::services { 'HTTP':
                     ensure        => 'absent',
                     check_command => 'check_http',
