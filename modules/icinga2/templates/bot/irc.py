@@ -9,11 +9,12 @@ import time
 server = "chat.freenode.net"
 port = 6697
 channel = "#miraheze"
-botnick = "icinga-miraheze"
+# change back to icinga once testing has completed
+botnick = "icinga2-miraheze"
 
 ### Tail
 tail_files = [
-    '/var/log/icinga/irc.log'
+    '/var/log/icinga2/irc.log'
 ]
 
 irc_C = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #defines the socket
@@ -25,7 +26,7 @@ irc.connect((server, port))
 irc.setblocking(False)
 irc.send("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n")
 irc.send("NICK "+ botnick +"\n")
-irc.send("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n")
+#irc.send("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n")
 irc.send("JOIN "+ channel +"\n")
 
 
