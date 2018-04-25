@@ -87,6 +87,15 @@ class icinga2::custom::conf {
         notify  => Service['icinga2'],
     }
 
+    file { '/etc/icinga2/features-enabled/checker.conf':
+        source  => 'puppet:///modules/icinga2/checker.conf',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        require => Package['icinga2'],
+        notify  => Service['icinga2'],
+    }
+
     file { '/etc/icinga2/scripts/irc-host-notification.sh':
         source  => 'puppet:///modules/icinga2/scripts/irc-host-notification.sh',
         owner   => 'root',
