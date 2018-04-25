@@ -3,7 +3,9 @@ class icinga2::custom::conf {
 
     include ::icinga2::feature::api
 
-    include ::icinga2::feature::checker
+    class{ '::icinga2::feature::checker':
+        concurrent_checks => 3,
+    }
 
     include ::icinga2::feature::command
 
@@ -80,15 +82,6 @@ class icinga2::custom::conf {
 
     file { '/etc/icinga2/conf.d/users.conf':
         source  => 'puppet:///modules/icinga2/users.conf',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        require => Package['icinga2'],
-        notify  => Service['icinga2'],
-    }
-
-    file { '/etc/icinga2/features-enabled/checker.conf':
-        source  => 'puppet:///modules/icinga2/checker.conf',
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
