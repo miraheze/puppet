@@ -32,11 +32,9 @@ wiki-abuse: ndkilla,reception123,revi
 # finances
 donate: bslaabs@gmail.com,southparkfan
 
-# apt changes list (temp. avoid upstream reputation issues with Hotmail)
-apt-list: john,ndkilla,reception123
-
-# bacula messages, see apt-list above
-bacula-mail: john,ndkilla,reception123
+# internal mail only - emails outside of miraheze.org will be dropped
+apt-list: john,ndkilla
+bacula-mail: john,ndkilla
 
 # phabricator incoming emails - must be configued with Maniphest
 security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
