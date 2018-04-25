@@ -35,6 +35,9 @@ donate: bslaabs@gmail.com,southparkfan
 # apt changes list (temp. avoid upstream reputation issues with Hotmail)
 apt-list: john,ndkilla
 
+# bacula messages, see apt-list above
+bacula-mail: john,ndkilla
+
 # phabricator incoming emails - must be configued with Maniphest
 security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
 csr: operations # Temporary, until complete deprecation
