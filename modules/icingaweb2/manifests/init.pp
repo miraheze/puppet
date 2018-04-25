@@ -16,7 +16,7 @@ class icingaweb2(
         include ::httpd
     }
 
-    include ::php
+    # include ::php
 
     package { [ 'icingaweb2', 'icingaweb2-module-monitoring',
                 'icingaweb2-module-doc', 'icingacli' ] :
