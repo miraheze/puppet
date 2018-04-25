@@ -9,7 +9,6 @@ import time
 server = "chat.freenode.net"
 port = 6697
 channel = "#miraheze"
-# change back to icinga once testing has completed
 botnick = "icinga-miraheze"
 
 ### Tail
@@ -26,7 +25,7 @@ irc.connect((server, port))
 irc.setblocking(False)
 irc.send("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n")
 irc.send("NICK "+ botnick +"\n")
-#irc.send("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n")
+irc.send("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n")
 irc.send("JOIN "+ channel +"\n")
 
 
