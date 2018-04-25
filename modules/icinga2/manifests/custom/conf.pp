@@ -94,7 +94,8 @@ class icinga2::custom::conf {
         notify  => Service['icinga2'],
     }
 
-    file { '/etc/icinga2/features-enabled/checker.conf':
+    file { 'features-enabled-checker.conf':
+        path => '/etc/icinga2/features-enabled/checker.conf',
         ensure  => 'link',
         target  => '/etc/icinga2/features-available/checker.conf',
         require => File['/etc/icinga2/features-available/checker.conf'],
