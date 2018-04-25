@@ -53,6 +53,13 @@ class icingaweb2(
         group  => 'icingaweb2',
     }
 
+    file { '/etc/icingaweb2/roles.ini':
+        ensure => present,
+        content => template('icingaweb2/roles.ini.erb'),
+        owner  => 'www-data',
+        group  => 'icingaweb2',
+    }
+
     file { '/etc/icingaweb2/modules':
         ensure  => 'directory',
         owner   => 'www-data',
