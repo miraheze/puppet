@@ -13,7 +13,7 @@ class role::mail {
 
     ufw::allow { 'smtp-ssl':
         proto => 'tcp',
-        port  => 465,
+        port  => 587,
     }
 
     ufw::allow { 'imap':
