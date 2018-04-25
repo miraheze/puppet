@@ -98,42 +98,42 @@ class bacula::director {
             },
         }
 
-        icinga2::custom::services { 'Bacula - Databases - db2':
+        icinga2::custom::services { 'Bacula Databases db2':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_databasesdb2',
             },
         }
 
-        icinga2::custom::services { 'Bacula - Databases - db3':
+        icinga2::custom::services { 'Bacula Databases db3':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_databasesdb3',
             },
         }
 
-        icinga2::custom::services { 'Bacula - Databases - db4':
+        icinga2::custom::services { 'Bacula Databases db4':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_databasesdb4',
             },
         }
 
-        icinga2::custom::services { 'Bacula - Static':
+        icinga2::custom::services { 'Bacula Static':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_static',
             },
         }
 
-        icinga2::custom::services { 'Bacula - Phabricator Static':
+        icinga2::custom::services { 'Bacula Phabricator Static':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_phab',
             },
         }
 
-        icinga2::custom::services { 'Bacula - Private Git':
+        icinga2::custom::services { 'Bacula Private Git':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_private',
