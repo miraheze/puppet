@@ -33,10 +33,10 @@ wiki-abuse: ndkilla,reception123,revi
 donate: bslaabs@gmail.com,southparkfan
 
 # apt changes list (temp. avoid upstream reputation issues with Hotmail)
-apt-list: john,ndkilla
+apt-list: john,ndkilla,reception123
 
 # bacula messages, see apt-list above
-bacula-mail: john,ndkilla
+bacula-mail: john,ndkilla,reception123
 
 # phabricator incoming emails - must be configued with Maniphest
 security: |/srv/phab/phabricator/scripts/mail/mail_handler.php,operations
