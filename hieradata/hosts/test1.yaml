@@ -8,4 +8,4 @@ contactgroups: ['icingaadmins', 'mediawiki', 'ops']
 # can be removed once puppet 4 is the default
 puppetmaster_version: 4
 icingaweb2::use_apache: false
-base::monitoring::use_icinga2: true
+base::monitoring::use_icinga2: false
