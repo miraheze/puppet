@@ -10,7 +10,7 @@ server = "chat.freenode.net"
 port = 6697
 channel = "#miraheze"
 # change back to icinga once testing has completed
-botnick = "icinga2-miraheze"
+botnick = "icinga-miraheze"
 
 ### Tail
 tail_files = [
