@@ -17,7 +17,7 @@ class dovecot {
 
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'IMAP':
-            check_command => 'check_imap',
+            check_command => 'imap',
         }
     } else {
         icinga::service { 'imap':
