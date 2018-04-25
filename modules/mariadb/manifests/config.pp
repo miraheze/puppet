@@ -73,6 +73,7 @@ class mariadb::config(
         icinga2::custom::services { 'MySQL':
             check_command => 'mysql',
             vars          => {
+                mysql_username => 'icinga',
                 mysql_database => 'icinga',
             },
         }
