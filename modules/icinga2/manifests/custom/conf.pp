@@ -3,8 +3,10 @@ class icinga2::custom::conf {
 
     include ::icinga2::feature::api
 
-    class{ '::icinga2::feature::checker':
-        concurrent_checks => 3,
+    if !defined(Class[''::icinga2::feature::checker') {
+        class{ '::icinga2::feature::checker':
+            concurrent_checks => 3,
+        }
     }
 
     include ::icinga2::feature::command
