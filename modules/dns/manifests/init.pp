@@ -66,11 +66,10 @@ class dns {
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'auth_dns':
-            check_command => 'Auth DNS',
+        icinga2::custom::services { 'Auth DNS':
+            check_command => 'check_dns_auth',
             vars          => {
                 host    => 'miraheze.org',
-                address => 'host.address',
             },
         }
 
