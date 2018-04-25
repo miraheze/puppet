@@ -3,12 +3,6 @@ class icinga2::custom::conf {
 
     include ::icinga2::feature::api
 
-    if !defined(Class['::icinga2::feature::checker']) {
-        class{ '::icinga2::feature::checker':
-            concurrent_checks => 3,
-        }
-    }
-
     include ::icinga2::feature::command
 
     include ::icinga2::feature::notification
@@ -89,6 +83,21 @@ class icinga2::custom::conf {
         mode    => '0644',
         require => Package['icinga2'],
         notify  => Service['icinga2'],
+    }
+
+    file { '/etc/icinga2/features-available/checker.conf':
+        source  => 'puppet:///modules/icinga2/checker.conf',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        require => Package['icinga2'],
+        notify  => Service['icinga2'],
+    }
+
+    file { '/etc/icinga2/features-enabled/checker.conf':
+        ensure  => 'link',
+        target  => '/etc/icinga2/features-available/checker.conf',
+        require => File['/etc/icinga2/features-available/checker.conf'],
     }
 
     file { '/etc/icinga2/scripts/irc-host-notification.sh':
