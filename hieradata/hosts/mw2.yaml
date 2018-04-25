@@ -3,5 +3,8 @@ users::groups:
 jobrunner: true
 arcanist: true
 mwdumps: true
-contactgroups: ['icingaadmins', 'ops', 'mediawiki']
+# for icinga2 only
+#contactgroups: ['icingaadmins', 'ops', 'mediawiki']
+# for icinga1 only
+contactgroups: 'ops,mediawiki'
 puppetmaster_version: 4
