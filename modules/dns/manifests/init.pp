@@ -67,14 +67,14 @@ class dns {
 
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'auth_dns':
-            check_command => 'check_dns_auth',
+            check_command => 'Auth DNS',
             vars          => {
                 host    => 'miraheze.org',
                 address => 'host.address',
             },
         }
 
-        icinga2::custom::services { 'gdnsd':
+        icinga2::custom::services { 'GDNSD Datacenters':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_gdnsd_datacenters',

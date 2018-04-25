@@ -35,7 +35,7 @@ class irc::ircrcbot(
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'ircrcbot':
+        icinga2::custom::services { 'IRC RC Bot':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_irc_rcbot',

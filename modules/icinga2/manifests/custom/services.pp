@@ -12,6 +12,7 @@ define icinga2::custom::services (
         ensure                 => $ensure,
         import                 => ['generic-service'],
         host_name              => $host,
+        display_name           => $title,
         check_command          => $check_command,
         max_check_attempts     => $retries,
         check_interval         => $check_interval,

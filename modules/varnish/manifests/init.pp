@@ -100,14 +100,14 @@ class varnish {
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'varnish':
+        icinga2::custom::services { 'Varnish Backends':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_varnishbackends',
             },
         }
 
-        icinga2::custom::services { 'varnish_error_rate':
+        icinga2::custom::services { 'HTTP 4xx/5xx ERROR Rate':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_nginx_errorrate',

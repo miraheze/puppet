@@ -50,7 +50,7 @@ class redis (
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'redis':
+        icinga2::custom::services { 'Redis Process':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_redis',

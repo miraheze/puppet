@@ -81,21 +81,21 @@ class mediawiki::jobrunner {
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'jobrunner':
+        icinga2::custom::services { 'JobRunner Service':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_jobrunner',
             },
         }
 
-        icinga2::custom::services { 'jobchron':
+        icinga2::custom::services { 'JobChron Service':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_jobchron',
             },
         }
 
-        icinga2::custom::services { 'jobqueue':
+        icinga2::custom::services { 'JobQueue':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_jobqueue',

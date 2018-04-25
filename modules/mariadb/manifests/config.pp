@@ -70,10 +70,9 @@ class mariadb::config(
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'mysql':
+        icinga2::custom::services { 'MySQL':
             check_command => 'mysql',
             vars          => {
-                mysql_hostname => 'host.address',
                 mysql_database => 'icinga',
             },
         }

@@ -51,7 +51,7 @@ class parsoid {
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'parsoid':
+        icinga2::custom::services { 'Parsoid':
             check_command => 'tcp',
             vars          => {
                 tcp_port    => '8142',

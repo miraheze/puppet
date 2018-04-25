@@ -47,28 +47,28 @@ class base::monitoring {
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::hosts { $::hostname: }
 
-        icinga2::custom::services { 'disk_space':
+        icinga2::custom::services { 'Disk Space':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_disk',
             },
         }
 
-        icinga2::custom::services { 'current_load':
+        icinga2::custom::services { 'Current Load':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_load',
             },
         }
 
-        icinga2::custom::services { 'puppet':
+        icinga2::custom::services { 'Puppet':
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_puppet_run',
             },
         }
 
-        icinga2::custom::services { 'ssh':
+        icinga2::custom::services { 'SSH':
             check_command => 'ssh',
         }
     } else {

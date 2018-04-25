@@ -1,7 +1,7 @@
 # MediaWiki monitoring
 class mediawiki::monitoring {
     if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'mediawiki_rendering':
+        icinga2::custom::services { 'MediaWiki Rendering:
             check_command => 'check_mediawiki',
             vars          => {
                 host    => 'meta.miraheze.org',
