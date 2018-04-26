@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [labster, revi]
+    members: [revi]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php5-fpm *',
@@ -74,11 +74,11 @@ users:
       - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAocN1uOukVfhc+R/DqkyG1LMVJvcaVo+nZXEa/Hz4Z1WoyObAOhzzyJlGn3kH44WMK38nWvwDV+5JvWeXIlyNFF9DtDBQDZFFUDLZRCM5mx5wma9SiaSmTz9x7nSXMc41GttjPYBG0yAb4rGYYEunG/ipM0NvyAJnnnx915fy764x4Xt08ly/Y8YSu2NwVPfvqET0ogIlwi4h6q6A9HtspA5zH8iElc/sr0Em3zPP9b1JKI5uSxKW260BUR+vnLGh5zoMbfdkX4XGqq6fbjufDj9tRlI+8avv7Oaq3BHn3F9zaRL91Zy/TOiO/hrRL540zsZ+bJVzMDGYvvlgXACJAq/vPP4qsdoS8VhZ7W+rOKONfH0O/pXnflGZgtdsMi8aRzSIUn7UJHG2I7NB4LsdL/16BOU8biJRVi7frOzXYKmCoDibZB0+FpUUWnZ88B8cXL85iZOSLhqtNAO5/6B+Jq9DfnwNNwX68ue6vRul5eIRrBio2eTIDs43BDLyerslApo/s2uefQt+1hC3moBjwuYPXJ7oVN1kfjavttX8ixs8LHF0/a39TqQ+isxRqIHoPY3igNDZB2z0fMgmqrB0w99rQItN0vKcwARg0CDXB3UM4AMnW2ko7PFfbnLUK5wOuRubSnLK4M2T4ImW3wcWgR6Uac3C70CjZUwkHvSMNZk= subwoofer@laptop
       - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAkaTzpC/3Ttt6IhHHsRXcmgK6BhkwzZRaFr1Y7rZZEPcJ/LXaaeV1H5fg+R3y8dXWQL5ySy092umxq+4hpY24OEV6UKCm/X8qU0kst/kCpOfVN2DlNy2PM2dQW+bpINDh43hIbqu9Hr5dWb1GqEhjtFjFfEx6pcziNrKpDi0tOxjG34tpnJ5XsumWRJQMCTg94YlhCb7UbK0YRURMY3103LFp1N6jI3RPP784OGiWAIM4by7v9auPd/n1S68Cxnh2N+30rZjm6ivzAlZ5MrMPu9YIwgmQ3/0YPX3IU9nSZattVQ8EqMsdi0kCqH2xbZ7iOtgbrfLfiT2Lw3LjflgmnjUvQikq4ntjgDSfljHjPsk+7LQz+ld8dJopygOBsCcCdzEdMAeiF39A06HNrlVz5fu082OsokpbYmJrHUtxntfH1f3smD7nHxGofnc+oDTTlwyB0PCZCp2oIgD+DZx70tHl4LxNiaZIpMNHJgAtonzvqSX2/axpPtETWJ/9CayO25R3850IRYqtBJD33w4vvlolTjhqd+eG3UZl4CaxTxyIstTFbnql85fDB5GK9CV6mExl1OLFFowFbdh+DAvyu4Fh3nVlfRzSH1UPgef/iiBZl0ghcEaBQBcP0yFAFXCbfT5pxaO7Vr8efRW3FsF+tsPjE85Rc4ZLqOYP7Bnlsck= subwoofer@home
   labster:
-    ensure: present
+    ensure: absent
     uid: 1005
     name: labster
     realname: Vorticity
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC94hzJuJkiXTa1cbGvbTbnk1ErBR9FgdaVSMia04Qu4+DBquxEsJ+yqvyZxhBXYbsJUNPgDiRASPhX8ktdhWB2sOki+9Dyqu3JkGSijtUt4QRu8z4V3H+wxjkilxMkeSgw6/LjS3kIMiq22hUrgMkO9H0ZvB3NrS9MdxNZWtX8N6UE3weTFgLPqvW3ZozIpOnPKgpk7hruIk7jE0szbnRhrKFXa8KpBI93Kl3PV7zmPtyn9mhhGxxnlaAWwHladyzC475KoOyHRzYh92g4JqXabUypvV+9tHtjAX6Vzqsnm8Zc8WvPp4wFZm2XuF61bfKztb/MH9ugEo7lQZGuFq63R75ykR5Py/SwjKQsIZ+nluES+Ar9LsJMmzvTCOsmY5aOAS7PhYALpNzLHxeDNJYbE+++3eGeqNsSKaowCV+3FrOUUQrhLP86R2HFYQmsasauJNhW6PYsH5G36hickiCvH3v3gxZewZReE3Ryn1/Przd8CmQt6Y1B0SJKxGpFtfVFIDTpdnBNeWeI69+6T9FF0JD3R0hTvxne3v7tNDt7x+n1tp5ceB31B03eyd5HfYWZ8BwK3PUBffzwzL8tyuaIk9vRqFqAQNgb2z9yJfgT02qoB/ob1GPfPnOAnbkUofrRJnmUiO5SkZNw5FTFUVxrJeyOTCbTpWJNGpzTCnq+Rw== labster@miraheze.org]
+    ssh_keys: []
   corey:
     ensure: absent
     uid: 1006
