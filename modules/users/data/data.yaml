@@ -103,7 +103,7 @@ users:
     name: paladox
     realname: Paladox
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDJDGRZG9iCyvUh8tYIqx0KB9GDdr2l5jr+FGN6GH/VnFYI2XjYObuCLTJUBb0O9vlUvOyhLo6cORyDOO3fuEz82ApmjcTbBvaGZkiQJxopVWmaOQCkYHnaMomK/E2EwDzLF00rl2/+eckNTXsnqp42C9mSI0Qeig3yPTbahJM5J75I57rcaui4ZapALY2eht+zUCz8xWdiOn5ivP8S9KgxIM68rNQCvA6v8ppjlrdAFqhTfDOTJKcyTJA/1Ey+kOZDqjEaBQHu0i9qIwCAiWrJxSX5fd4PCQIHCr/HPDZV56kI08bGAWI3OCkjkYeBzPDSFNHrvgZNatwoGbAG9y+6WW1vhS4CrIg74atSwg0cbByr3FZNX2DPB3fE/tm47KgYis+Bem+Re+IKnexTwLNw6PeHRRTwLy47K4xs0MIq6GeYb8/y7G9gvjw2NN3ax6DhSNQ9NRUOVvHbSy++ufDnD2q1KWbHuwxQb5kKV0aQ4zBRCmkO/iLOETBZspX+vz7zBI7npAqy9mEK+Uzu7aqyp7OmwrSTOVF8WU3CS/gfE7fxBYwN2TUQHOaOp3vO1rMhJUUggjETYnxLUVSluvF8gY0aBJA6L3DL7e8x8b4I/uqaKOEStxZdKUT2vPUtp2uZ3u86RPt8mZSEXYnrJcidkxn9hgqA7V5FEOqYBQ0rUw== thomasmulhall410@yahoo.com]
-  macfan4000:
+  macfan:
     ensure: present
     uid: 1010
     name: macfan
