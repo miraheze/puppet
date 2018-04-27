@@ -1,4 +1,4 @@
-# class: role::db
+# class: role::dbreplication
 class role::dbreplication {
     include mariadb::packages
 
