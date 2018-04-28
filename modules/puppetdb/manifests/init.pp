@@ -8,10 +8,10 @@ class puppetdb(
     $db_ro_host = hiera('puppetdb::db_ro_host', undef),
     $db_user = hiera('puppetdb::db_user', 'puppetdb'),
     $db_password = hiera('puppetdb::db_password'),
-    $perform_gc = hiera('puppetdb::perform_gc', false),
-    $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx172m'),
+    $perform_gc = hiera('puppetdb::perform_gc', true),
+    $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx162m'),
     $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
-    $command_processing_threads = hiera('puppetdb::command_processing_threads', 3),
+    $command_processing_threads = hiera('puppetdb::command_processing_threads', 4),
     $db_ssl = hiera('puppetdb::db_ssl', false),
 ) {
 
