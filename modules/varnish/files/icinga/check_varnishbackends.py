@@ -54,21 +54,19 @@ def main(argv):
   for line in backends:
     if line.startswith("boot") and line.find("test")==-1:
       if line.find("Healthy") != -1:
-        backends_healthy.append(line.split(" ")[0])
+        backends_healthy.append(line.split(" ")[0].replace("boot.", ""))
       else:
-        backends_sick.append(line.split(" ")[0])
+        backends_sick.append(line.split(" ")[0].replace("boot.", ""))
 
   if backends_sick:
-    backends_sick = backends_sick.replace("boot.", "")
-    print "%s backends are down.  %s" % (len(" ".join(backends_sick)), "".join(" ".join(backends_sick)))
+    print "%s backends are down.  %s" % (len(backends_sick), " ".join(backends_sick))
     sys.exit(2)
 
   if not backends_sick and not backends_healthy:
     print "No backends detected.  If this is an error, see readme.txt"
     sys.exit(1)
 
-  backends_healthy = backends_healthy.replace("boot.", "")
-  print "All %s backends are healthy" % (len(" ".join(backends_healthy)))
+  print "All %s backends are healthy" % (len(backends_healthy))
   sys.exit(0)
 
 
