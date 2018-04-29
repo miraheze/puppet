@@ -31,11 +31,18 @@ class base::monitoring {
         ensure  => present,
         content => template('base/ganglia/gmond.conf'),
     }
+    /etc/ganglia/conf.d/modpython.conf
 
     file { '/etc/ganglia/conf.d':
         ensure  => directory,
         mode    => '0755',
         require => Package['ganglia-monitor'],
+    }
+
+    file { '/etc/ganglia/conf.d/modpython.conf':
+        ensure  => present,
+        source => 'puppet:///modules/base/ganglia/modpython.conf',
+        require => File['/etc/ganglia/conf.d'],
     }
     
     file { '/usr/lib/ganglia/python_modules':
