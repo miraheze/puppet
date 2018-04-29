@@ -26,5 +26,9 @@ module.exports = function (config) {
 	config.backend.output_dir = "<%= @output_dir %>";
 	config.backend.post_mortem_dir = "<%= @postmortem_dir %>";
 
+	config.backend.bundler.bin = "/srv/ocg/ocg/mw-ocg-bundler/bin/mw-ocg-bundler";
+	config.backend.writers.rdf2latex.bin = "/srv/ocg/ocg/mw-ocg-latexer/bin/mw-ocg-latexer";
+	config.backend.writers.rdf2text.bin = "/srv/ocg/ocg/mw-ocg-texter/bin/mw-ocg-texter";
+
 	return config;
 }
