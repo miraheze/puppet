@@ -27,6 +27,12 @@ class base::monitoring {
         ensure => present,
     }
 
+    file { '/etc/ganglia/conf.d':
+        ensure  => directory,
+        mode    => '0755',
+        require => Package['ganglia-monitor'],
+    }
+
     file { '/etc/ganglia/gmond.conf':
         ensure  => present,
         content => template('base/ganglia/gmond.conf'),
