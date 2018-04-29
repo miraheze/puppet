@@ -8,8 +8,6 @@
  * ------------------------------------------------------------------ */
 
 module.exports = function (config) {
-	// Import the public local settings
-	config = require("/srv/ocg/ocg/LocalSettings.js")(config);
 
 	config.coordinator.hostname = "<%= @host_name %>";
 	<%- if @decommission == true %>
