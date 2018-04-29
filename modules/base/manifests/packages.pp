@@ -2,6 +2,7 @@
 class base::packages {
     $packages = [
         'acct',
+        'apt-transport-https',
         'coreutils',
         'debian-goodies',
         'git',
