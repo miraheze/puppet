@@ -12,6 +12,6 @@ class ocg::nagios {
 
     icinga::service { 'ocg_health':
         description   => 'OCG health',
-        check_command => 'check_ocg_health!8142',
+        check_command => 'check_nrpe_1arg!check_ocg_health',
     }
 }
