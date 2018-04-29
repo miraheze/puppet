@@ -40,11 +40,7 @@ class mediawiki(
         mode   => '0755',
     }
 
-    file { '/etc/ImageMagick-6/policy.xml':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/imagemagick/policy.xml',
-        require => Package['imagemagick'],
-    }
+    include ::imagemagick::install
 
     git::clone { 'MediaWiki config':
         ensure    => 'latest',
