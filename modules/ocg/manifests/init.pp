@@ -14,7 +14,7 @@ class ocg (
     $host_name = $::fqdn,
     $decommission = hiera('ocg::decommission', false),
     $service_port = 8000,
-    $redis_host = 'localhost',
+    $redis_host = 'misc2.miraheze.org',
     $redis_port = 6379,
     $redis_password = hiera('passwords::redis::master'),
     $temp_dir = '/srv/ocg/tmp',
