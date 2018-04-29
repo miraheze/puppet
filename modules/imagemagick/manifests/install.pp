@@ -6,7 +6,7 @@ class imagemagick::install {
     require_package('webp')
 
     # configuration directory changed since ImageMagick 8:6.8.5.6-1
-    file { '/etc/ImageMagick-6/policy.xml":
+    file { '/etc/ImageMagick-6/policy.xml':
         ensure  => present,
         owner   => 'root',
         group   => 'root',
