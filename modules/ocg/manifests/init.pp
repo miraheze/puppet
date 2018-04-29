@@ -99,6 +99,8 @@ class ocg (
             'djvulibre-bin',
             'unzip',
             'zip',
+            'g++',
+            'gcc',
         ]:
         ensure => present,
         before => Service['ocg']

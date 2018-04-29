@@ -5,6 +5,6 @@ After=network.target
 [Service]
 User=ocg
 Group=ocg
-ExecStart=/usr/bin/nodejs-ocg /srv/ocg/ocg/mw-ocg-service.js -c /etc/ocg/mw-ocg-service.js
+ExecStart=/usr/bin/nodejs-ocg /srv/ocg/ocg/mw-ocg-service/mw-ocg-service.js -c /etc/ocg/mw-ocg-service.js
 [Install]
 WantedBy=multi-user.target
