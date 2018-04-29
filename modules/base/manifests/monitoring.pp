@@ -31,7 +31,6 @@ class base::monitoring {
         ensure  => present,
         content => template('base/ganglia/gmond.conf'),
     }
-    /etc/ganglia/conf.d/modpython.conf
 
     file { '/etc/ganglia/conf.d':
         ensure  => directory,
