@@ -20,10 +20,15 @@ node 'nfs1.miraheze.org' {
     include role::salt::minions
 }
 
-node /^db[23].miraheze.org$/ {
+node /^db[2].miraheze.org$/ {
     include base
     include role::db
     include bacula::client
+    include role::salt::minions
+}
+
+node 'db3.miraheze.org' {
+    include base
     include role::salt::minions
 }
 
