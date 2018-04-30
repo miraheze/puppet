@@ -40,7 +40,7 @@ class pdf {
         system     => true,
     }
 
-    file { '/srv/ocg':
+    file { '/srv/ocg/cache':
         ensure => directory,
         owner  => 'ocg',
         group  => 'ocg',
