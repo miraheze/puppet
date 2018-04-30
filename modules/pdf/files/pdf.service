@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=ocg
 Group=ocg
-ExecStart=/usr/local/bin/nserve /usr/local/bin/mw-qserve /usr/local/bin/nslave --cachedir /srv/pdf/cache/
+ExecStart=/usr/local/bin/nserve /usr/local/bin/mw-qserve /usr/local/bin/nslave --cachedir /srv/ocg/cache/
 
 [Install]
 WantedBy=multi-user.target
