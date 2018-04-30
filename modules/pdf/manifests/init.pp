@@ -60,7 +60,7 @@ class pdf {
         group   => 'root',
         mode    => '0444',
         source  => 'puppet:///modules/pdf/pdf.service',
-        require => User['pdf'],
+        require => User['ocg'],
         notify  => Service['pdf'],
     }
 
