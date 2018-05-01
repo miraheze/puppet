@@ -16,6 +16,27 @@
 # - If all went well, http://localhost:7231/localhost/v1/page/html/Main_Page
 # should show your wiki's [[Main Page]].
 
+default_project: &default_project
+  x-modules:
+    - path: /srv/restbase/projects/example.yaml
+      options:
+        action:
+          apiUriTemplate: "{{'https://{domain}/w/api.php'}}"
+          baseUriTemplate: "{{'https://{domain}/api/rest_v1'}}"
+        parsoid:
+          # XXX Check Parsoid URL!
+          host: https://parsoid-lb.miraheze.org
+          grace_ttl: 1
+        table:
+          backend: sqlite
+          dbname: db.sqlite3
+          pool_idle_timeout: 20000
+          retry_delay: 250
+          retry_limit: 10
+          show_sql: false
+        purged_cache_control: s-maxage=0, max-age=86400
+        purged_cache_control_client_cache: s-maxage=0, max-age=300
+
 services:
   - name: restbase
     module: hyperswitch
@@ -35,65 +56,32 @@ services:
             name: http
             options:
             allow:
-<%- @wikis.each_pair do |wiki, value| -%>
-<%- if value == true -%>
-              - pattern: https://<%= wiki %>.miraheze.org/w/api.php
+              - pattern: /^https?:\/\/[a-zA-Z0-9\.]+\/w\/api\.php/
                 forward_headers: true
-<%- else -%>
-              - pattern: https://<%= value %>/w/api.php
-                forward_headers: true
-<%- end -%>
-<%- end -%>
               - pattern: https://parsoid-lb.miraheze.org
                 forward_headers: true
         paths:
 <%- @wikis.each_pair do |wiki, value| -%>
 <%- if value == true -%>
-          /{domain:<%= wiki %>.miraheze.org}:
-            x-modules:
-              - path: /srv/restbase/projects/example.yaml
-                options:
-                  action:
-                    # XXX Check API URL!
-                    apiUriTemplate: https://<%= wiki %>.miraheze.org/w/api.php
-                    # XXX Check the base RESTBase URI
-                    baseUriTemplate: "{{'https://{domain}/api/rest_v1'}}"
-                  parsoid:
-                    # XXX Check Parsoid URL!
-                    host: https://parsoid-lb.miraheze.org
-                  table:
-                    backend: sqlite
-                    dbname: db.sqlite3
-                    pool_idle_timeout: 20000
-                    retry_delay: 250
-                    retry_limit: 10
-                    show_sql: false
-                  purged_cache_control: s-maxage=0, max-age=86400
-                  purged_cache_control_client_cache: s-maxage=0, max-age=300
+          /{domain:<%= wiki %>.miraheze.org}: *default_project
 <%- else -%>
-          /{domain:<%= value %>}:
-            x-modules:
-              - path: /srv/restbase/projects/example.yaml
-                options:
-                  action:
-                    # XXX Check API URL!
-                    apiUriTemplate: https://<%= value %>/w/api.php
-                    # XXX Check the base RESTBase URI
-                    baseUriTemplate: "{{'https://{domain}/api/rest_v1'}}"
-                  parsoid:
-                    # XXX Check Parsoid URL!
-                    host: https://parsoid-lb.miraheze.org
-                  table:
-                    backend: sqlite
-                    dbname: db.sqlite3
-                    pool_idle_timeout: 20000
-                    retry_delay: 250
-                    retry_limit: 10
-                    show_sql: false
-                  purged_cache_control: s-maxage=0, max-age=86400
-                  purged_cache_control_client_cache: s-maxage=0, max-age=300
+          /{domain:<%= value %>.miraheze.org}: *default_project
 <%- end -%>
 <%- end -%>
+
+    # A robots.txt to make sure that the content isn't indexed.
+    /robots.txt:
+      get:
+        x-request-handler:
+          - static:
+              return:
+                status: 200
+                headers:
+                  content-type: text/plain
+                body: |
+                  User-agent: *
+                  Allow: /*/v1/?doc
+                  Disallow: /
 
 # Finally, a standard service-runner config.
 info:
