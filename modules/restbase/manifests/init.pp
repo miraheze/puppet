@@ -21,7 +21,7 @@ class restbase {
     git::clone { 'restbase_deploy':
         ensure             => present,
         directory          => '/srv/restbase',
-        origin             => 'https://github.com/wikimedia/mediawiki-services-restbase-deploy.git',
+        origin             => 'https://github.com/wikimedia/restbase.git',
         branch             => 'master',
         owner              => 'restbase',
         group              => 'restbase',
@@ -72,9 +72,9 @@ class restbase {
     }
 
     service { 'restbase':
-        ensure     => running,
+        ensure    => running,
         subscribe => File['/etc/mediawiki/restbase/config.yaml'],
-        require    => [
+        require   => [
             File['/etc/systemd/system/restbase.service'],
             Git::Clone['restbase_deploy'],
         ],
