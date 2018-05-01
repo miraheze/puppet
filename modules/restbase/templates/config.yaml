@@ -18,6 +18,8 @@
 
 num_workers: 2
 
+# Load some project templates. These are referenced / shared between domains
+# in the root_spec further down.
 default_project: &default_project
   x-modules:
     - path: /srv/restbase/projects/example.yaml
@@ -39,35 +41,28 @@ default_project: &default_project
         purged_cache_control: s-maxage=0, max-age=86400
         purged_cache_control_client_cache: s-maxage=0, max-age=300
 
-services:
-  - name: restbase
-    module: hyperswitch
-    conf: 
-      port: 7231
-      salt: secret
-      default_page_size: 125
-      user_agent: RESTBase
-      ui_name: RESTBase
-      ui_url: https://www.mediawiki.org/wiki/RESTBase
-      ui_title: RESTBase docs
-      spec:
-        x-request-filters:
-          - path: lib/security_response_header_filter.js
-        x-sub-request-filters:
-          - type: default
-            name: http
-            options:
-            allow:
-              - pattern: /^https?:\/\/[a-zA-Z0-9\.]+\/w\/api\.php/
-                forward_headers: true
-              - pattern: https://parsoid-lb.miraheze.org
-                forward_headers: true
-        paths:
+# The root of the spec tree. Domains tend to share specs by referencing them
+# using YAML references.
+spec_root: &spec_root
+  title: "The RESTBase root"
+  x-request-filters:
+    - path: lib/security_response_header_filter.js
+  x-sub-request-filters:
+    - type: default
+      name: http
+      options:
+        allow:
+          - pattern: /^https?:\/\/[a-zA-Z0-9\.]+\/w\/api\.php/
+            forward_headers: true
+          - pattern: /^https?:\/\/parsoid-lb.miraheze.org.+/
+            forward_headers: true
+          - pattern: /^https?:\/\//
+  paths:
 <%- @wikis.each_pair do |wiki, value| -%>
 <%- if value == true -%>
-          /{domain:<%= wiki %>.miraheze.org}: *default_project
+    /{domain:<%= wiki %>.miraheze.org}: *default_project
 <%- else -%>
-          /{domain:<%= value %>.miraheze.org}: *default_project
+    /{domain:<%= value %>.miraheze.org}: *default_project
 <%- end -%>
 <%- end -%>
 
@@ -88,6 +83,19 @@ services:
 # Finally, a standard service-runner config.
 info:
   name: restbase
+
+services:
+  - name: restbase
+    module: hyperswitch
+    conf: 
+      port: 7231
+      spec: *spec_root
+      salt: secret
+      default_page_size: 125
+      user_agent: RESTBase
+      ui_name: RESTBase
+      ui_url: https://www.mediawiki.org/wiki/RESTBase
+      ui_title: RESTBase docs
 
 logging:
   name: restbase
