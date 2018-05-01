@@ -16,8 +16,6 @@
 # - If all went well, http://localhost:7231/localhost/v1/page/html/Main_Page
 # should show your wiki's [[Main Page]].
 
-num_workers: 2
-
 # Load some project templates. These are referenced / shared between domains
 # in the root_spec further down.
 default_project: &default_project
