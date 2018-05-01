@@ -32,7 +32,7 @@ services:
           - path: lib/security_response_header_filter.js
         x-sub-request-filters:
           - type: default
-            name: https
+            name: http
             options:
             allow:
 <%- @wikis.each_pair do |wiki, value| -%>
