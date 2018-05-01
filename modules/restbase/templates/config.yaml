@@ -16,6 +16,8 @@
 # - If all went well, http://localhost:7231/localhost/v1/page/html/Main_Page
 # should show your wiki's [[Main Page]].
 
+num_workers: 2
+
 default_project: &default_project
   x-modules:
     - path: /srv/restbase/projects/example.yaml
