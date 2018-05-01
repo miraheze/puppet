@@ -51,7 +51,7 @@ services:
 <%- if value == true -%>
           /{domain:<%= wiki %>.miraheze.org}:
             x-modules:
-              - path: /srv/restbase/restbase/projects/example.yaml
+              - path: /srv/restbase/projects/example.yaml
                 options:
                   action:
                     # XXX Check API URL!
@@ -73,7 +73,7 @@ services:
 <%- else -%>
           /{domain:<%= value %>}:
             x-modules:
-              - path: /srv/restbase/restbase/projects/example.yaml
+              - path: /srv/restbase/projects/example.yaml
                 options:
                   action:
                     # XXX Check API URL!
