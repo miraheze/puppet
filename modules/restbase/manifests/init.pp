@@ -73,6 +73,7 @@ class restbase {
 
     service { 'restbase':
         ensure     => running,
+        subscribe => File['/etc/mediawiki/restbase/config.yaml'],
         require    => [
             File['/etc/systemd/system/restbase.service'],
             Git::Clone['restbase_deploy'],
