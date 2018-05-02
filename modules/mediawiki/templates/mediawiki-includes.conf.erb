@@ -53,3 +53,8 @@ location /server-status {
 location ~ ^/m/(.*) {
 	return 301 /w/index.php?title=Special:UrlRedirector/$1;
 }
+
+location /api/rest_v1/ {
+	rewrite    ^/api/rest_v1/(.*)$ /$host/v1/$1 break;
+	proxy_pass https://restbase-lb.miraheze.org/;
+}
