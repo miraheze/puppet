@@ -88,7 +88,6 @@ node 'puppet1.miraheze.org' {
 node 'test1.miraheze.org' {
     include base
     include role::mediawiki
-    include role::restbase
     include role::salt::minions
 }
 
