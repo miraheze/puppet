@@ -55,7 +55,7 @@ spec_root: &spec_root
       name: http
       options:
         allow:
-          - pattern: /^https?:\/\/[a-zA-Z0-9\.]+\/w\/api\.php/
+          - pattern: /^https?:\/\/[a-zA-Z0-9\._-]+\/w\/api\.php/
             forward_headers: true
           - pattern: /^https?:\/\/parsoid-lb.miraheze.org.+/
             forward_headers: true
