@@ -1,0 +1,81 @@
+# RESTBase project config for small wiki installs
+paths:
+  /{api:v1}:
+    x-modules:
+      - spec:
+          info:
+            version: 1.0.0
+            title: Wikimedia REST API
+            description: Welcome to your RESTBase API.
+          x-host-basePath: /api/rest_v1
+          x-route-filters:
+            - path: lib/content_location_filter.js
+            - path: ./lib/normalize_title_filter.js
+              options:
+                redirect_cache_control: '{{options.purged_cache_control}}'
+          paths:
+            /page:
+              x-modules:
+                - path: v1/content.yaml
+                  options:
+                    response_cache_control: '{{options.purged_cache_control}}'
+                - path: v1/pdf.js
+                  options: '{{options.pdf}}'
+                - path: v1/common_schemas.yaml # Doesn't really matter where to mount it.
+            /transform:
+              x-modules:
+                - path: v1/transform.yaml
+        options: '{{options}}'
+
+  /{api:sys}:
+    x-modules:
+      - spec:
+          paths:
+            /table: &sys_table
+              x-modules:
+                - path: sys/table.js
+                  options:
+                    conf: '{{options.table}}'
+            /parsoid_bucket:
+              x-modules:
+                - path: sys/multi_content_bucket.js
+                  options:
+                    grace_ttl: '{{default(options.parsoid.grace_ttl, 86400)}}'
+                    renew_expiring: true
+                    delete_probability: '{{default(options.parsoid.delete_probability, 1)}}'
+                    table_name_prefix: parsoid_ng
+                    main_content_type:
+                      name: html
+                      value_type: blob
+                    dependent_content_types:
+                      - name: data-parsoid
+                        value_type: json
+                      - name: section-offsets
+                        value_type: json
+            /key_value: &sys_key_value
+              x-modules:
+                - path: sys/key_value.js
+            /key_rev_value:
+              x-modules:
+                - path: sys/key_rev_value.js
+            /page_revisions:
+              x-modules:
+                - path: sys/page_revisions.js
+            /post_data:
+              x-modules:
+                - path: sys/post_data.js
+            /action:
+              x-modules:
+                - path: sys/action.js
+                  options: '{{options.action}}'
+            /page_save:
+              x-modules:
+                - path: sys/page_save.js
+            /parsoid:
+              x-modules:
+                - path: sys/parsoid.js
+                  options:
+                    parsoidHost: '{{options.parsoid.host}}'
+                    response_cache_control: '{{options.purged_cache_control}}'
+                    grace_ttl: '{{default(options.parsoid.grace_ttl, 86400)}}'
+        options: '{{options}}'

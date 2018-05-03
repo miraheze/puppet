@@ -41,16 +41,29 @@ class restbase {
 
     require_package('libsqlite3-dev')
 
-    file { '/etc/mediawiki/restbase':
+    file { '/etc/mediawiki':
         ensure => directory,
+    }
+
+    file { '/etc/mediawiki/restbase':
+        ensure  => directory,
+        require => File['/etc/mediawiki'],
     }
 
     $wikis = loadyaml('/etc/puppet/parsoid/parsoid.yaml')
 
     file { '/etc/mediawiki/restbase/config.yaml':
         ensure  => present,
-        content => template('restbase/config.yaml'),
+        content => template('restbase/config.yaml.erb'),
         require => File['/etc/mediawiki/restbase'],
+        notify  => Exec['restbase reload systemd'],
+    }
+
+    file { '/etc/mediawiki/restbase/miraheze_project.yaml':
+        ensure  => present,
+        source  => 'puppet:///modules/restbase/miraheze_project.yaml',
+        require => File['/etc/mediawiki/restbase'],
+        notify  => Exec['restbase reload systemd'],
     }
 
     file { '/var/log/restbase':
