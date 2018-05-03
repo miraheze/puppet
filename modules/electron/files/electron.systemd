@@ -12,7 +12,7 @@ User=electron
 Group=electron
 WorkingDirectory=/srv/electron
 Environment=RENDERER_ACCESS_KEY=secret
-ExecStart=xvfb-run --server-args="-screen 0 1024x768x24" electron-render-service 2>&1 > /var/log/electron/electron.log
+ExecStart=/usr/bin/xvfb-run --server-args="-screen 0 1024x768x24" electron-render-service 2>&1 > /var/log/electron/electron.log
 KillMode=process
 Restart=on-success
 PrivateTmp=true
