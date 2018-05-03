@@ -1,33 +1,21 @@
 # == Class: electron
 
-class electron {
+class electron (
+    $access_key = 'secret',
+) {
 
     include nodejs
 
     require_package(['xvfb', 'libgtk2.0-0', 'libnotify4', 'libgconf2-4', 'libxss1', 'libnss3', 'dbus-x11'])
-
-    group { 'electron':
-        ensure => present,
-    }
-
-    user { 'electron':
-        ensure     => present,
-        gid        => 'electron',
-        shell      => '/bin/false',
-        home       => '/srv/electron',
-        managehome => false,
-        system     => true,
-    }
 
     file { '/srv/electron':
         ensure => directory,
     }
 
     file { '/var/log/electron':
-        ensure  => directory,
-        owner   => 'electron',
-        group   => 'electron',
-        require => [User['electron'], Group['electron']],
+        ensure => directory,
+        owner  => 'root',
+        group  => 'root',
     }
 
     exec { 'electron reload systemd':
@@ -36,9 +24,9 @@ class electron {
     }
 
     file { '/etc/systemd/system/electron.service':
-        ensure => present,
-        source => 'puppet:///modules/electron/electron.systemd',
-        notify => Exec['electron reload systemd'],
+        ensure  => present,
+        content => template('electron/electron.systemd.erb'),
+        notify  => Exec['electron reload systemd'],
     }
 
     service { 'electron':

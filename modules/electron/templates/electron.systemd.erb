@@ -1,0 +1,22 @@
+[Unit]
+Description=PDF service provided by Electron
+Wants=local-fs.target network.target
+After=local-fs.target network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+LimitNOFILE=10000
+User=root
+Group=root
+SyslogIdentifier=electron
+Restart=always
+RestartSec=2s
+# wait 60 seconds for a graceful restart before killing the master
+TimeoutStopSec=60
+WorkingDirectory=/srv/electron
+Environment="RENDERER_ACCESS_KEY=<%= @access_key %>" 
+ExecStart=/usr/bin/xvfb-run -a --server-args="-screen 0 1024x768x24" electron-render-service
+ExecStopPost=/bin/sleep 10
