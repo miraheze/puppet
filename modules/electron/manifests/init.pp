@@ -4,7 +4,7 @@ class electron {
 
     include nodejs
 
-    require_package(['xvfb', 'libgtk2.0-0', 'ttf-mscorefonts-installer', 'libnotify4', 'libgconf2-4', 'libxss1', 'libnss3', 'dbus-x11'])
+    require_package(['xvfb', 'libgtk2.0-0', 'libnotify4', 'libgconf2-4', 'libxss1', 'libnss3', 'dbus-x11'])
 
     group { 'electron':
         ensure => present,
