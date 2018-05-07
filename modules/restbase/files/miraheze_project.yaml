@@ -25,10 +25,6 @@ paths:
             /transform:
               x-modules:
                 - path: v1/transform.yaml
-            /media:
-              x-modules:
-                - path: v1/mathoid.yaml
-                  options: '{{options.mathoid}}'
         options: '{{options}}'
 
   /{api:sys}:
