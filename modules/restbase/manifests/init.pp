@@ -56,14 +56,14 @@ class restbase {
         ensure  => present,
         content => template('restbase/config.yaml.erb'),
         require => File['/etc/mediawiki/restbase'],
-        notify  => Exec['restbase reload systemd'],
+        notify  => Service['restbase'],
     }
 
     file { '/etc/mediawiki/restbase/miraheze_project.yaml':
         ensure  => present,
         source  => 'puppet:///modules/restbase/miraheze_project.yaml',
         require => File['/etc/mediawiki/restbase'],
-        notify  => Exec['restbase reload systemd'],
+        notify  => Service['restbase'],
     }
 
     file { '/var/log/restbase':
@@ -86,7 +86,6 @@ class restbase {
 
     service { 'restbase':
         ensure    => running,
-        subscribe => File['/etc/mediawiki/restbase/config.yaml'],
         require   => [
             File['/etc/systemd/system/restbase.service'],
             Git::Clone['restbase_deploy'],
