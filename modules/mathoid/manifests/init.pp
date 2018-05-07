@@ -29,7 +29,7 @@ class mathoid {
         require            => [User['mathoid'], Group['mathoid']],
     }
 
-    require_package(['librsvg2-dev', 'g++''])
+    require_package(['librsvg2-dev', 'g++'])
 
     file { '/etc/mediawiki':
         ensure => directory,
