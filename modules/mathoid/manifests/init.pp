@@ -31,12 +31,6 @@ class mathoid {
 
     require_package(['librsvg2-dev', 'g++'])
 
-    if !defined(File['/etc/mediawiki']) {
-        file { '/etc/mediawiki':
-            ensure => directory,
-        }
-    }
-
     file { '/etc/mediawiki/mathoid':
         ensure  => directory,
         require => File['/etc/mediawiki'],
