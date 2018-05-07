@@ -1,6 +1,8 @@
 # == Class: mathoid
 
 class mathoid {
+    include nginx
+
     include nodejs
 
     group { 'mathoid':
@@ -27,6 +29,14 @@ class mathoid {
         timeout            => '550',
         recurse_submodules => true,
         require            => [User['mathoid'], Group['mathoid']],
+    }
+
+    include ssl::wildcard
+
+    nginx::site { 'mathoid':
+        ensure  => present,
+        source  => 'puppet:///modules/mathoid/nginx/mathoid',
+        monitor => false,
     }
 
     require_package(['librsvg2-dev', 'g++'])
