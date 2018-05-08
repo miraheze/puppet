@@ -56,8 +56,6 @@ while getopts ":hg:r:s:" option; do
     esac
 done
 
-
-domain=${1:-}
 test -z ${domain} && usage
 
 if [ $SD -eq 0 ]; then
