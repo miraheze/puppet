@@ -43,7 +43,8 @@ while getopts "grs" option; do
             shift
             ;;
         s)
-            SECONDARYDOMAIN=$2;
+            svalue=${OPTARG}
+            SECONDARYDOMAIN=svalue;
             shift
             ;;
         *)
@@ -51,6 +52,7 @@ while getopts "grs" option; do
             ;;
     esac
 done
+
 
 domain=${1:-}
 test -z ${domain} && usage
