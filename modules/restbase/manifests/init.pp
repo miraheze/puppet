@@ -50,7 +50,7 @@ class restbase {
         require => File['/etc/mediawiki'],
     }
 
-    $wikis = loadyaml('/etc/puppet/services/config.yaml')
+    $wikis = loadyaml('/etc/puppet/services/services.yaml')
 
     file { '/etc/mediawiki/restbase/config.yaml':
         ensure  => present,
