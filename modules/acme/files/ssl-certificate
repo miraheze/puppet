@@ -60,7 +60,7 @@ done
 domain=${1:-}
 test -z ${domain} && usage
 
-if [ $SECONDARYDOMAIN -eq 0 ]; then
+if [ $SD -eq 0 ]; then
     secdomain=""
 else
     secdomain=",DNS:${SECONDARYDOMAIN}"
