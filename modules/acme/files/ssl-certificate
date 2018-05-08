@@ -40,15 +40,15 @@ while getopts ":hg:r:s:" option; do
             ;;
         g)
             LE=1;
-            domain=$OPTARG;
+            domain=$OPTARG
             ;;
         r)
             RENEW=1;
-            domain=$OPTARG;
+            domain=$OPTARG
             ;;
         s)
             SD=1;
-            SECONDARYDOMAIN=$OPTARG;
+            SECONDARYDOMAIN=$OPTARG
             ;;
         *)
             usage
