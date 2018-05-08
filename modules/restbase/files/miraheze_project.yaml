@@ -35,6 +35,10 @@ paths:
     x-modules:
       - spec:
           paths:
+            /mathoid:
+              x-modules:
+                - path: sys/mathoid.js
+                  options: '{{options.mathoid}}'
             /table: &sys_table
               x-modules:
                 - path: sys/table.js
