@@ -3,7 +3,7 @@ class parsoid {
     include apt
     include nginx
 
-    $wikis = loadyaml('/etc/puppet/parsoid/parsoid.yaml')
+    $wikis = loadyaml('/etc/puppet/services/config.yaml')
 
     apt::source { 'parsoid':
         location => 'https://releases.wikimedia.org/debian',

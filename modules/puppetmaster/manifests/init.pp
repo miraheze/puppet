@@ -60,10 +60,10 @@ class puppetmaster(
     }
 
     # work around for new puppet agent
-    git::clone { 'parsoid':
+    git::clone { 'services':
         ensure    => latest,
-        directory => '/etc/puppet/parsoid',
-        origin    => 'https://github.com/miraheze/parsoid.git',
+        directory => '/etc/puppet/services',
+        origin    => 'https://github.com/miraheze/services.git',
         require   => Package['puppetmaster'],
     }
 
@@ -213,8 +213,8 @@ class puppetmaster(
         minute  => [ '9', '19', '29', '39', '49', '59' ],
     }
 
-    cron { 'parsoid-git':
-        command => '/usr/bin/git -C /etc/puppet/parsoid pull',
+    cron { 'services-git':
+        command => '/usr/bin/git -C /etc/puppet/services pull',
         user    => 'root',
         hour    => '*',
         minute  => [ '9', '19', '29', '39', '49', '59' ],
