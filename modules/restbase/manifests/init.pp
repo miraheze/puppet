@@ -66,6 +66,13 @@ class restbase {
         notify  => Service['restbase'],
     }
 
+    file { '/etc/mediawiki/restbase/mathoid.yaml':
+        ensure  => present,
+        source  => 'puppet:///modules/restbase/mathoid.yaml',
+        require => File['/etc/mediawiki/restbase'],
+        notify  => Service['restbase'],
+    }
+
     file { '/var/log/restbase':
         ensure  => directory,
         owner   => 'restbase',
