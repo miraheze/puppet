@@ -29,7 +29,7 @@ function generate_letsencrypt_certificate {
 }
 
 function usage {
-    echo "Usage: $0 [-h] [-gr] [-s <secondary domain>] <domain>"; exit 1;
+    echo "Usage: $0 [-h] [-g <domain>] [-r <domain>] [-s <secondary domain>]"; exit 1;
 }
 
 while getopts ":hg:r:s:" option; do
