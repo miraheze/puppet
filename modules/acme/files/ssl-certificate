@@ -7,7 +7,7 @@ set -e
 set -u
 LE=0
 RENEW=0
-SECONDARYDOMAIN=0
+SD=0
 
 function log {
     echo "$@"
@@ -29,23 +29,26 @@ function generate_letsencrypt_certificate {
 }
 
 function usage {
-    echo "Usage: $0 [-gr] [-s <secondary domain>] <domain>"; exit 1;
+    echo "Usage: $0 [-h] [-gr] [-s <secondary domain>] <domain>"; exit 1;
 }
 
-while getopts "grs" option; do
+while getopts ":hg:r:s:" option; do
     case $option in
+        h)
+            usage
+            exit 1
+            ;;
         g)
             LE=1;
-            shift
+            domain=$OPTARG;
             ;;
         r)
             RENEW=1;
-            shift
+            domain=$OPTARG;
             ;;
         s)
-            svalue=${OPTARG}
-            SECONDARYDOMAIN=svalue;
-            shift
+            SD=1;
+            SECONDARYDOMAIN=$OPTARG;
             ;;
         *)
             usage
