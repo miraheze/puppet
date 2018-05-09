@@ -9,3 +9,4 @@ contactgroups: 'ops,mediawiki'
 puppetmaster_version: 4
 icingaweb2::use_apache: false
 base::monitoring::use_icinga2: false
+mediawiki::branch: 'REL1_31'
