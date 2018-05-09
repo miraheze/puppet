@@ -1,6 +1,7 @@
 # class: mediawiki
 class mediawiki(
     $branch = undef,
+    $branch_mw_config = undef,
 ) {
     include mediawiki::favicons
     include mediawiki::cron
