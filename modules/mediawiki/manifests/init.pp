@@ -46,6 +46,7 @@ class mediawiki(
         ensure    => 'latest',
         directory => '/srv/mediawiki/config',
         origin    => 'https://github.com/miraheze/mw-config.git',
+        branch    => $branch,
         owner     => 'www-data',
         group     => 'www-data',
         mode      => '0755',
