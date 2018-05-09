@@ -29,14 +29,19 @@ function generate_letsencrypt_certificate {
 }
 
 function usage {
-    echo "Usage: $0 [-h] [-c <domain>] [-g <domain>] [-r <domain>] [-s <secondary domain>]"; exit 1;
+    echo "Usage: $0 [-h] [-c <domain>] [-g <domain>] [-r <domain>] [-s <secondary domain>]"
+    echo "  -h      display help"
+    echo "  -c      generates a csr"
+    echo "  -g      generates LetsEncrypt SSL Certificate"
+    echo "  -r      renews LetsEncrypt SSL Certificate"
+    echo "  -s      allows you to add other domains to the same cert, eg www.<domain>"
+    exit 1
 }
 
 while getopts ":hg:c:r:s:" option; do
     case $option in
         h)
             usage
-            exit 1
             ;;
         c)
             domain=$OPTARG
