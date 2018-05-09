@@ -1,6 +1,7 @@
 # class: mediawiki
 class mediawiki(
     $branch = undef,
+    $branch_mw_config = undef,
 ) {
     include mediawiki::favicons
     include mediawiki::cron
@@ -46,6 +47,7 @@ class mediawiki(
         ensure    => 'latest',
         directory => '/srv/mediawiki/config',
         origin    => 'https://github.com/miraheze/mw-config.git',
+        branch    => $branch_mw_config,
         owner     => 'www-data',
         group     => 'www-data',
         mode      => '0755',
