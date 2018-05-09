@@ -25,7 +25,7 @@ function generate_csr {
 
 function generate_letsencrypt_certificate {
     python /root/acme-tiny/acme_tiny.py --account-key /root/account.key --csr /root/ssl/${domain}.csr --acme-dir /var/www/challenges/ > /root/ssl/${domain}.crt
-    log "LetsEncrypt certificate at: /root/acme-tiny/ssl/${domain}.crt"
+    log "LetsEncrypt certificate at: /root/ssl/${domain}.crt"
 }
 
 function usage {
