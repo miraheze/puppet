@@ -8,6 +8,9 @@ set -u
 LE=0
 RENEW=0
 SD=0
+# this is a fail safe so that if a user called just
+# /root/ssl-certificate it would show the help screen
+domain=""
 
 function log {
     echo "$@"
