@@ -14,17 +14,17 @@ function log {
 }
 
 function generate_private_key {
-    openssl genrsa 2048 > /root/acme-tiny/ssl/${domain}.key
-    log "Private key generated at: /root/acme-tiny/ssl/${domain}.key"
+    openssl genrsa 2048 > /root/ssl/${domain}.key
+    log "Private key generated at: /root/ssl/${domain}.key"
 }
 
 function generate_csr {
-    openssl req -new -sha256 -key /root/acme-tiny/ssl/${domain}.key -subj "/C=NL/ST=Netherlands/L=Netherlands/O=Miraheze/CN=${domain}" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:${domain}${secdomain}")) > /root/acme-tiny/ssl/${domain}.csr
-    log "CSR generated at: /root/acme-tiny/ssl/${domain}.csr"
+    openssl req -new -sha256 -key /root/ssl/${domain}.key -subj "/C=NL/ST=Netherlands/L=Netherlands/O=Miraheze/CN=${domain}" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:${domain}${secdomain}")) > /root/acme-tiny/ssl/${domain}.csr
+    log "CSR generated at: /root/ssl/${domain}.csr"
 }
 
 function generate_letsencrypt_certificate {
-    python /root/acme-tiny/acme_tiny.py --account-key /root/acme-tiny/account.key --csr /root/acme-tiny/ssl/${domain}.csr --acme-dir /var/www/challenges/ > /root/acme-tiny/ssl/${domain}.crt
+    python /root/acme-tiny/acme_tiny.py --account-key /root/account.key --csr /root/ssl/${domain}.csr --acme-dir /var/www/challenges/ > /root/ssl/${domain}.crt
     log "LetsEncrypt certificate at: /root/acme-tiny/ssl/${domain}.crt"
 }
 
@@ -74,15 +74,15 @@ if [ $RENEW -eq 0 ]; then
     if [ $LE -eq 1 ]; then
         log "Generating SSL certificate with LetsEncrypt"
         generate_letsencrypt_certificate
-        cat /root/acme-tiny/ssl/${domain}.crt
-        cat /root/acme-tiny/ssl/${domain}.key
+        cat /root/ssl/${domain}.crt
+        cat /root/ssl/${domain}.key
     else
         log "Not generating an SSL certificate. Use CSR below to send to the requestor"
-        cat /root/acme-tiny/ssl/${domain}.csr
-        cat /root/acme-tiny/ssl/${domain}.key
+        cat /root/ssl/${domain}.csr
+        cat /root/ssl/${domain}.key
     fi
 else
     log "Re-generating a new SSL cert for ${domain}"
     generate_letsencrypt_certificate
-    cat /root/acme-tiny/ssl/${domain}.crt
+    cat /root/ssl/${domain}.crt
 fi
