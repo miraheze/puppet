@@ -83,4 +83,18 @@ class mathoid {
         ensure => present,
         source => 'puppet:///modules/mathoid/logrotate.conf',
     }
+
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::services { 'Mathoid':
+            check_command => 'tcp',
+            vars          => {
+                tcp_port    => '10044',
+            },
+        }
+    } else {
+        icinga::service { 'mathoid':
+            description   => 'Mathoid',
+            check_command => 'check_tcp!10044',
+        }
+    }
 }
