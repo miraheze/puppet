@@ -101,7 +101,7 @@ class varnish {
 
     logrotate::conf { 'stunnel4':
         ensure => present,
-        source => 'puppet:///modules/varnish/stunnel4.logrotate.conf',
+        source => 'puppet:///modules/varnish/stunnel4/stunnel4.logrotate.conf',
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
