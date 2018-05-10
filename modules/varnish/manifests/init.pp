@@ -99,6 +99,11 @@ class varnish {
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nginx_errorrate' ],
     }
 
+    logrotate::conf { 'stunnel4':
+        ensure => present,
+        source => 'puppet:///modules/varnish/stunnel4.logrotate.conf',
+    }
+
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'Varnish Backends':
             check_command => 'nrpe',
