@@ -73,4 +73,9 @@ class grafana(
             require => Package["libapache2-mod-php${$php_version}"]
         }
     }
+
+    httpd::mod { 'grafana_apache':
+        modules => $modules,
+        require => Package["libapache2-mod-php${php_version}"],
+    }
 }
