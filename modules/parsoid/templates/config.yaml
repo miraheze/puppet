@@ -3,11 +3,7 @@ worker_heartbeat_timeout: 300000
 logging:
   level: info
 
-services:
-  - module: /usr/lib/parsoid/src/lib/index.js
-    entrypoint: apiServiceWorker
-    conf:
-      mwApis:
+wiki: &wiki
 <%- @wikis.each_pair do |wiki, value| -%>
 <%- if value == true -%>
         - uri: 'https://<%= wiki %>.miraheze.org/w/api.php'
@@ -17,6 +13,13 @@ services:
           domain: '<%= value %>'
 <%- end -%>
 <%- end -%>
+
+services:
+  - module: /usr/lib/parsoid/src/lib/index.js
+    entrypoint: apiServiceWorker
+    conf:
+      mwApis:
+        *wiki
       # /!\ COMPATIBILITY for Parsoid 0.9.0 with MediaWiki before 1.31
       strictAcceptCheck: false
       loadWMF: false
