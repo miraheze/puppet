@@ -12,7 +12,7 @@ class mediawiki::php7_2 {
           location => 'https://packages.sury.org/php/',
           release  => "${::lsbdistcodename}",
           repos    => 'main',
-          require  => Apt::Key['c'],
+          require  => Apt::Key['php72_apt'],
           notify   => Exec['apt_update_php'],
         }
 
