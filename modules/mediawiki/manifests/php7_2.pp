@@ -3,13 +3,17 @@ class mediawiki::php7_2 {
     include ::apt
 
     if !defined(Apt::Source['php72_apt']) {
+        apt::key { 'php72_key':
+          id     => 'DF3D585DB8F0EB658690A554AC0E47584A7A714D',
+          source => 'https://packages.sury.org/php/apt.gpg',
+        }
+
         apt::source { 'php72_apt':
-            comment  => 'PHP 7.2',
-            location => 'http://apt.wikimedia.org/wikimedia',
-            release  => "${::lsbdistcodename}-wikimedia",
-            repos    => 'thirdparty/php72',
-            key      => 'B8A2DF05748F9D524A3A2ADE9D392D3FFADF18FB',
-            notify   => Exec['apt_update_php'],
+          location => 'https://packages.sury.org/php/',
+          release  => "${::lsbdistcodename}",
+          repos    => 'main',
+          require  => Apt::Key['c'],
+          notify   => Exec['apt_update_php'],
         }
 
         # First installs can trip without this
