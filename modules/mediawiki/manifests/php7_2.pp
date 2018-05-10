@@ -26,7 +26,11 @@ class mediawiki::php7_2 {
 
     $packages = [
         'php-mail',
+        'php-igbinary',
+        'php-imagick',
         'php-luasandbox',
+        'php-pear',
+        'php-redis',
         'php7.2',
         'php7.2-curl',
         'php7.2-fpm',
@@ -41,52 +45,6 @@ class mediawiki::php7_2 {
     package { $packages:
         ensure  => present,
         require => Apt::Source['php72_apt'],
-    }
-
-    exec { "install_php_igbinary":
-        command => '/usr/bin/curl -o /opt/php-igbinary_2.0.1-1%2B0~20170825111216.1%2Bstretch~1.gbp48b058_amd64.deb https://packages.sury.org/php/pool/main/p/php-igbinary/php-igbinary_2.0.1-1%2B0~20170825111216.1%2Bstretch~1.gbp48b058_amd64.deb',
-        unless  => '/bin/ls /opt/php-igbinary_2.0.1-1%2B0~20170825111216.1%2Bstretch~1.gbp48b058_amd64.deb',
-    }
-
-    exec { "install_php_redis_7_2":
-        command => '/usr/bin/curl -o /opt/php-redis_4.0.0-1%2B0~20180412074133.5%2Bstretch~1.gbp24a357_amd64.deb https://packages.sury.org/php/pool/main/p/php-redis/php-redis_4.0.0-1%2B0~20180412074133.5%2Bstretch~1.gbp24a357_amd64.deb',
-        unless  => '/bin/ls /opt/php-redis_4.0.0-1%2B0~20180412074133.5%2Bstretch~1.gbp24a357_amd64.deb',
-    }
-
-    exec { "install_php_imagick":
-        command => '/usr/bin/curl -o /opt/php-imagick_3.4.3-2%2B0~20170825111201.3%2Bstretch~1.gbp4fa216_amd64.deb https://packages.sury.org/php/pool/main/p/php-imagick/php-imagick_3.4.3-2%2B0~20170825111201.3%2Bstretch~1.gbp4fa216_amd64.deb',
-        unless  => '/bin/ls /opt/php-imagick_3.4.3-2%2B0~20170825111201.3%2Bstretch~1.gbp4fa216_amd64.deb',
-    }
-
-    exec { "install_php_pear":
-        command => '/usr/bin/curl -o /opt/php-pear_1.10.5%2Bsubmodules%2Bnotgz-1%2B0~20170904061717.3%2Bstretch~1.gbpe356ca_all.deb https://packages.sury.org/php/pool/main/p/php-pear/php-pear_1.10.5%2Bsubmodules%2Bnotgz-1%2B0~20170904061717.3%2Bstretch~1.gbpe356ca_all.deb',
-        unless  => '/bin/ls /opt/php-pear_1.10.5%2Bsubmodules%2Bnotgz-1%2B0~20170904061717.3%2Bstretch~1.gbpe356ca_all.deb',
-    }
-
-    package { "php-igbinary":
-        provider => dpkg,
-        ensure   => present,
-        source   => '/opt/php-igbinary_2.0.1-1%2B0~20170825111216.1%2Bstretch~1.gbp48b058_amd64.deb',
-    }
-
-    package { "php-redis":
-        provider => dpkg,
-        ensure   => present,
-        source   => '/opt/php-redis_4.0.0-1%2B0~20180412074133.5%2Bstretch~1.gbp24a357_amd64.deb',
-        require  => Package['php-igbinary'],
-    }
-
-    package { "php-imagick":
-        provider => dpkg,
-        ensure   => present,
-        source   => '/opt/php-imagick_3.4.3-2%2B0~20170825111201.3%2Bstretch~1.gbp4fa216_amd64.deb',
-    }
-
-    package { "php-pear":
-        provider => dpkg,
-        ensure   => present,
-        source   => '/opt/php-pear_1.10.5%2Bsubmodules%2Bnotgz-1%2B0~20170904061717.3%2Bstretch~1.gbpe356ca_all.deb',
-        require => Package['php7.2-xml'],
     }
 
     service { 'php7.2-fpm':
