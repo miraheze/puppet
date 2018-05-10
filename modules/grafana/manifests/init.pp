@@ -35,7 +35,6 @@ class grafana(
     }
 
     file { '/etc/grafana/grafana.ini':
-        content => ini($defaults, $config),
         source   => 'puppet:///modules/grafana/grafana.ini',
         owner   => 'root',
         group   => 'root',
