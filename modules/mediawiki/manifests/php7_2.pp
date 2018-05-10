@@ -2,7 +2,7 @@
 class mediawiki::php7_2 {
     include ::apt
 
-    if !defined(Apt::Source['php72_apt']) {
+    if !defined(Apt::Source['php72_apt']) and !defined(Apt::Source['php72_key']) {
         apt::key { 'php72_key':
           id     => 'DF3D585DB8F0EB658690A554AC0E47584A7A714D',
           source => 'https://packages.sury.org/php/apt.gpg',
