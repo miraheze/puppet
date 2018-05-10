@@ -2,7 +2,7 @@
 class mediawiki::php7_2 {
     include ::apt
 
-    if !defined(Apt::Source['php72_apt']) and !defined(Apt::Source['php72_key']) {
+    if !defined(Apt::Source['php72_apt']) {
         apt::key { 'php72_key':
           id     => 'DF3D585DB8F0EB658690A554AC0E47584A7A714D',
           source => 'https://packages.sury.org/php/apt.gpg',
@@ -12,7 +12,6 @@ class mediawiki::php7_2 {
           location => 'https://packages.sury.org/php/',
           release  => "${::lsbdistcodename}",
           repos    => 'main',
-          require  => Apt::Key['php72_apt'],
           notify   => Exec['apt_update_php'],
         }
 
