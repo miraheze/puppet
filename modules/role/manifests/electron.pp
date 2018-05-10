@@ -2,7 +2,7 @@
 class role::electron {
     include ::electron
 
-    ufw::allow { 'parsoid monitoring':
+    ufw::allow { 'electron monitoring':
         proto => 'tcp',
         port  => 3000,
         from  => '185.52.1.76',
