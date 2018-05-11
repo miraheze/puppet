@@ -6,3 +6,4 @@ puppetmaster: false
 mediawiki::branch: 'REL1_30'
 acme: false
 base::monitoring::use_icinga2: false
+base::enable_diamond: true
