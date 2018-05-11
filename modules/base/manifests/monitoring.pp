@@ -23,37 +23,55 @@ class base::monitoring {
         hasrestart => true,
     }
 
-    package { 'ganglia-monitor':
-        ensure => present,
-    }
+    if hiera('base::enable_diamond', false) {
+        package { ['diamond', 'python-psutil']:
+            ensure => present,
+        }
 
-    file { '/etc/ganglia/gmond.conf':
-        ensure  => present,
-        content => template('base/ganglia/gmond.conf'),
-    }
+        file { '/etc/diamond/diamond.conf':
+            ensure  => present,
+            source  => 'puppet:///modules/base/grafana/diamond.conf',
+            require => Package['diamond'],
+        }
 
-    file { '/etc/ganglia/conf.d':
-        ensure  => directory,
-        mode    => '0755',
-        require => Package['ganglia-monitor'],
-    }
+        service { 'diamond':
+            ensure    => running,
+            require   => Package['diamond'],
+            subscribe => File['/etc/diamond/diamond.conf'],
+        }
+    } else {
+        package { 'ganglia-monitor':
+            ensure => present,
+        }
 
-    file { '/etc/ganglia/conf.d/modpython.conf':
-        ensure  => present,
-        source => 'puppet:///modules/base/ganglia/modpython.conf',
-        require => File['/etc/ganglia/conf.d'],
-    }
-    
-    file { '/usr/lib/ganglia/python_modules':
-        ensure  => directory,
-        mode    => '0755',
-        require => Package['ganglia-monitor'],
-    }
+        file { '/etc/ganglia/gmond.conf':
+            ensure  => present,
+            content => template('base/ganglia/gmond.conf'),
+        }
 
-    service { 'ganglia-monitor':
-        ensure    => running,
-        require   => Package['ganglia-monitor'],
-        subscribe => File['/etc/ganglia/gmond.conf'],
+        file { '/etc/ganglia/conf.d':
+            ensure  => directory,
+            mode    => '0755',
+            require => Package['ganglia-monitor'],
+        }
+
+        file { '/etc/ganglia/conf.d/modpython.conf':
+            ensure  => present,
+            source => 'puppet:///modules/base/ganglia/modpython.conf',
+            require => File['/etc/ganglia/conf.d'],
+        }
+        
+        file { '/usr/lib/ganglia/python_modules':
+            ensure  => directory,
+            mode    => '0755',
+            require => Package['ganglia-monitor'],
+        }
+
+        service { 'ganglia-monitor':
+            ensure    => running,
+            require   => Package['ganglia-monitor'],
+            subscribe => File['/etc/ganglia/gmond.conf'],
+        }
     }
 
     # SUDO FOR NRPE

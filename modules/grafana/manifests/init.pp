@@ -1,7 +1,7 @@
 # class: grafana
 class grafana(
     # use php7.0 on stretch+
-    $modules = ['headers', 'proxy', 'proxy_http', 'php5', 'rewrite', 'ssl']
+    $modules = ['headers', 'proxy', 'proxy_http', 'php7.0', 'rewrite', 'ssl']
 ) {
     include ::httpd
 
@@ -22,13 +22,23 @@ class grafana(
         require => Apt::Source['grafana_apt'],
     }
 
-    if os_version('debian >= stretch') {
-        $php_version = '7.0'
-    } else {
-        $php_version = '5'
+    require_package(['graphite-web', 'graphite-carbon', 'graphite-api'])
+
+    file { '/etc/default/graphite-carbon':
+        source   => 'puppet:///modules/grafana/graphite-carbon',
+        owner   => 'root',
+        group   => 'root',
+        require => Package['graphite-carbon'],
     }
 
-    require_package("libapache2-mod-php${php_version}")
+    file { '/etc/graphite/local_settings.py':
+        source   => 'puppet:///modules/grafana/local_settings.py',
+        owner   => 'root',
+        group   => 'root',
+        require => [Package['graphite-api'], File['/etc/default/graphite-carbon']],
+    }
+
+    require_package('libapache2-mod-php7.0')
 
     file { '/etc/apache2/sites-enabled/apache.conf':
         ensure => absent,
@@ -40,6 +50,13 @@ class grafana(
         group   => 'root',
         mode    => '0444',
         require => Package['grafana'],
+    }
+
+    service { 'carbon-cache':
+        ensure => 'running',
+        enable => true,
+        subscribe => File['/etc/graphite/local_settings.py'],
+        require   => Package['graphite-carbon'],
     }
 
     service { 'grafana-server':
@@ -58,24 +75,15 @@ class grafana(
         monitor => true,
     }
 
-    if os_version('debian >= stretch') {
-        file { "/etc/php/${php_version}/apache2/conf.d/php.ini":
-            ensure  => present,
-            mode    => '0755',
-            source  => 'puppet:///modules/grafana/apache/php7.ini',
-            require => Package["libapache2-mod-php${$php_version}"]
-        }
-    } else {
-        file { '/etc/php5/apache2/php.ini':
-            ensure  => present,
-            mode    => '0755',
-            source  => 'puppet:///modules/grafana/apache/php.ini',
-            require => Package["libapache2-mod-php${$php_version}"]
-        }
+    file { '/etc/php/7.0/apache2/conf.d/php.ini':
+        ensure  => present,
+        mode    => '0755',
+        source  => 'puppet:///modules/grafana/apache/php7.ini',
+        require => Package["libapache2-mod-php7.0"]
     }
 
     httpd::mod { 'grafana_apache':
         modules => $modules,
-        require => Package["libapache2-mod-php${php_version}"],
+        require => Package['libapache2-mod-php7.0'],
     }
 }

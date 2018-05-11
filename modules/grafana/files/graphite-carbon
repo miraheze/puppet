@@ -1,0 +1,2 @@
+# Change to true, to enable carbon-cache on boot
+CARBON_CACHE_ENABLED=true
