@@ -14,7 +14,7 @@ class role::grafana {
 
     ufw::allow { 'grafana tcp':
         proto => 'tcp',
-        port  => 3000,
+        port  => 2003,
     }
 
     motd::role { 'role::grafana':
