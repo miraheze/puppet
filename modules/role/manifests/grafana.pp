@@ -13,12 +13,12 @@ class role::grafana {
     }
 
     ufw::allow { 'grafana tcp':
-        proto => 'udp',
+        proto => 'tcp',
         port  => 2003,
     }
 
     ufw::allow { 'grafana2 tcp':
-        proto => 'udp',
+        proto => 'tcp',
         port  => 2004,
     }
 
