@@ -17,6 +17,11 @@ class role::grafana {
         port  => 2003,
     }
 
+    ufw::allow { 'grafana2 tcp':
+        proto => 'tcp',
+        port  => 2004,
+    }
+
     motd::role { 'role::grafana':
         description => 'central Grafana server',
     }
