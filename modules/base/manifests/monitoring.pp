@@ -41,7 +41,7 @@ class base::monitoring {
 
         file { '/lib/systemd/system/diamond.service':
             ensure  => present,
-            source  => 'puppet:///modules/base/diamond/diamond.systemd',
+            source  => 'puppet:///modules/base/grafana/diamond.systemd',
             notify  => Exec['diamond reload systemd'],
             require => Package['diamond'],
         }
