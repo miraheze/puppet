@@ -17,7 +17,7 @@ define git::clone(
     $ensure='present',
     $owner='root',
     $group='root',
-    $timeout='600',
+    $timeout='300',
     $depth='full',
     $recurse_submodules=false,
     $mode='0755',
