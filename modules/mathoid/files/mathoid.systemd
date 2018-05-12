@@ -15,7 +15,5 @@ WorkingDirectory=/srv/mathoid
 ExecStart=/usr/bin/node /srv/mathoid/server.js -c /etc/mediawiki/mathoid/config.yaml
 KillMode=process
 Restart=on-success
-Nice=10
-OOMScoreAdjust=900
 PrivateTmp=true
 StandardOutput=syslog
