@@ -34,10 +34,25 @@ class base::monitoring {
             require => Package['diamond'],
         }
 
+        exec { 'diamond reload systemd':
+            command     => '/bin/systemctl daemon-reload',
+            refreshonly => true,
+        }
+
+        file { '/lib/systemd/system/diamond.service':
+            ensure  => present,
+            source  => 'puppet:///modules/base/diamond/diamond.systemd',
+            notify  => Exec['diamond reload systemd'],
+            require => Package['diamond'],
+        }
+
         service { 'diamond':
             ensure    => running,
             require   => Package['diamond'],
-            subscribe => File['/etc/diamond/diamond.conf'],
+            subscribe => [
+                File['/etc/diamond/diamond.conf'],
+                File['/lib/systemd/system/diamond.service'],
+            ],
         }
     } else {
         package { 'ganglia-monitor':
