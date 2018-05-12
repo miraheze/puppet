@@ -1,1 +1,2 @@
 puppetmaster_version: 4
+base::enable_diamond: true
