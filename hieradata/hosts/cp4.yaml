@@ -1,3 +1,2 @@
 users::groups: cache-admins
 puppetmaster_version: 4
-base::enable_diamond: false

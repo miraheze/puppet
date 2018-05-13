@@ -4,4 +4,3 @@ ganglia::modules: ['rewrite', 'ssl', 'php7.0']
 grafana::modules: ['headers', 'proxy', 'proxy_http', 'php7.0', 'rewrite', 'ssl']
 piwik::modules: ['expires']
 puppetmaster_version: 4
-base::enable_diamond: true

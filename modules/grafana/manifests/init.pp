@@ -22,20 +22,22 @@ class grafana(
         require => Apt::Source['grafana_apt'],
     }
 
-    require_package(['graphite-web', 'graphite-carbon', 'graphite-api'])
+    require_package('prometheus')
 
-    file { '/etc/default/graphite-carbon':
-        source   => 'puppet:///modules/grafana/graphite-carbon',
+    // TODO: convert this to use puppetdb to get hostname instead
+    // of manually adding the hostname
+    file { '/etc/prometheus/prometheus.yml:
+        source   => 'puppet:///modules/grafana/prometheus.yml',
         owner   => 'root',
         group   => 'root',
-        require => Package['graphite-carbon'],
+        mode    => '0444',
+        require => Package['prometheus'],
     }
 
-    file { '/etc/graphite/local_settings.py':
-        source   => 'puppet:///modules/grafana/local_settings.py',
-        owner   => 'root',
-        group   => 'root',
-        require => [Package['graphite-api'], File['/etc/default/graphite-carbon']],
+    service { 'prometheus':
+        ensure    => running,
+        require   => Package['prometheus'],
+        subscribe => File['/etc/prometheus/prometheus.yml'],
     }
 
     require_package('libapache2-mod-php7.0')

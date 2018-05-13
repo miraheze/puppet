@@ -23,36 +23,18 @@ class base::monitoring {
         hasrestart => true,
     }
 
-    if hiera('base::enable_diamond', false) {
-        package { ['diamond', 'python-psutil']:
-            ensure => present,
+    if hiera('base::use_prometheus_node_exporter', false) {
+        ufw::allow { 'prometheus access all hosts':
+            proto => 'tcp',
+            port  => 9100,
+            from  => '81.4.127.174',
         }
 
-        file { '/etc/diamond/diamond.conf':
-            ensure  => present,
-            source  => 'puppet:///modules/base/grafana/diamond.conf',
-            require => Package['diamond'],
-        }
+        require_package('prometheus-node-exporter')
 
-        exec { 'diamond reload systemd':
-            command     => '/bin/systemctl daemon-reload',
-            refreshonly => true,
-        }
-
-        file { '/lib/systemd/system/diamond.service':
-            ensure  => present,
-            source  => 'puppet:///modules/base/grafana/diamond.systemd',
-            notify  => Exec['diamond reload systemd'],
-            require => Package['diamond'],
-        }
-
-        service { 'diamond':
+        service { 'prometheus-node-exporter':
             ensure    => running,
-            require   => Package['diamond'],
-            subscribe => [
-                File['/etc/diamond/diamond.conf'],
-                File['/lib/systemd/system/diamond.service'],
-            ],
+            require   => Package['prometheus-node-exporter'],
         }
     } else {
         package { 'ganglia-monitor':

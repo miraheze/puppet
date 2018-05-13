@@ -15,4 +15,3 @@ puppetmaster::puppetdb::postgres_users:
     password: "%{::puppetdb::database::puppetdb_pass}"
 puppetdb::db_ssl: true
 puppetdb::db_rw_host: db4.miraheze.org
-base::enable_diamond: true
