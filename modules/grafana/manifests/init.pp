@@ -54,13 +54,6 @@ class grafana(
         require => Package['grafana'],
     }
 
-    service { 'carbon-cache':
-        ensure => 'running',
-        enable => true,
-        subscribe => File['/etc/graphite/local_settings.py'],
-        require   => Package['graphite-carbon'],
-    }
-
     service { 'grafana-server':
         ensure => 'running',
         enable => true,
