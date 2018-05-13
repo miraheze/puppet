@@ -26,7 +26,7 @@ class grafana(
 
     # TODO: convert this to use puppetdb to get hostname instead
     # of manually adding the hostname
-    file { '/etc/prometheus/prometheus.yml:
+    file { '/etc/prometheus/prometheus.yml':
         source   => 'puppet:///modules/grafana/prometheus.yml',
         owner   => 'root',
         group   => 'root',
