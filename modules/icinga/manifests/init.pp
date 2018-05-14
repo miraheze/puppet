@@ -264,12 +264,15 @@ class icinga(
 
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'Check correctness of the icinga configuration':
-            check_command => 'check_icinga_config',
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => 'check_icinga_config',
+            },
         }
     } else {
         icinga::service { 'check_icinga_config':
             description   => 'Check correctness of the icinga configuration',
-            check_command => 'check_icinga_config',
+            check_command => 'check_nrpe_1arg!check_icinga_config',
         }
     }
 
