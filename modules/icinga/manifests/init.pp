@@ -262,6 +262,13 @@ class icinga(
         ensure => running,
     }
 
+    file { '/usr/lib/nagios/plugins/check_icinga_config':
+        source  => 'puppet:///modules/icinga/check_icinga_config',
+        owner   => 'root',
+        group   => 'root',
+        require => Package['nagios-nrpe-plugin'],
+    }
+
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'Check correctness of the icinga configuration':
             check_command => 'nrpe',
