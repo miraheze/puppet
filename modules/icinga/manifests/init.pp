@@ -262,6 +262,17 @@ class icinga(
         ensure => running,
     }
 
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::services { 'Check correctness of the icinga configuration':
+            check_command => 'check_icinga_config',
+        }
+    } else {
+        icinga::service { 'check_icinga_config':
+            description   => 'Check correctness of the icinga configuration',
+            check_command => 'check_icinga_config',
+        }
+    }
+
     # Purge unmanaged nagios_host and nagios_services resources
     # This will only happen for non exported resources, that is resources that
     # are declared by the icinga host itself
