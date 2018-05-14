@@ -34,6 +34,7 @@ class base::monitoring {
 
         service { 'prometheus-node-exporter':
             ensure    => running,
+            enable    => true,
             require   => Package['prometheus-node-exporter'],
         }
     } else {
