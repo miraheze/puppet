@@ -266,6 +266,7 @@ class icinga(
         source  => 'puppet:///modules/icinga/check_icinga_config',
         owner   => 'root',
         group   => 'root',
+        mode    => '0755',
         require => Package['nagios-nrpe-plugin'],
     }
 
