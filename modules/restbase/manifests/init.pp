@@ -92,8 +92,9 @@ class restbase {
     }
 
     service { 'restbase':
-        ensure    => running,
-        require   => [
+        ensure     => running,
+        hasrestart => true,
+        require    => [
             File['/etc/systemd/system/restbase.service'],
             Git::Clone['restbase_deploy'],
         ],
