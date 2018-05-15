@@ -20,13 +20,6 @@ node 'nfs1.miraheze.org' {
     include role::salt::minions
 }
 
-node 'db2.miraheze.org' {
-    include base
-    include role::db
-    include bacula::client
-    include role::salt::minions
-}
-
 node 'db4.miraheze.org' {
     include base
     include role::db
