@@ -7,7 +7,6 @@ class nginx {
         location => 'http://nginx.org/packages/debian',
         release  => "${::lsbdistcodename}",
         repos    => 'nginx',
-        pin      => '-10',
         key      => '573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62',
     }
 
