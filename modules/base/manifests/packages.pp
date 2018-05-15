@@ -23,9 +23,7 @@ class base::packages {
     }
 
     if os_version('debian >= stretch') {
-        package { 'dirmngr':
-            ensure => present,
-        }
+        require_package('dirmngr')
     }
 
     # Get rid of this
