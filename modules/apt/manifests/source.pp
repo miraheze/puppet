@@ -1,128 +1,85 @@
 # source.pp
 # add an apt source
 define apt::source(
-  $location          = undef,
-  $comment           = $name,
-  $ensure            = present,
-  $release           = undef,
-  $repos             = 'main',
-  $include           = {},
-  $key               = undef,
-  $pin               = undef,
-  $architecture      = undef,
-  $allow_unsigned    = false,
-  $include_src       = undef,
-  $include_deb       = undef,
-  $required_packages = undef,
-  $key_server        = undef,
-  $key_content       = undef,
-  $key_source        = undef,
-  $trusted_source    = undef,
+  Optional[String] $location                    = undef,
+  String $comment                               = $name,
+  String $ensure                                = present,
+  Optional[String] $release                     = undef,
+  String $repos                                 = 'main',
+  Optional[Variant[Hash]] $include              = {},
+  Optional[Variant[String, Hash]] $key          = undef,
+  Optional[Variant[Hash, Numeric, String]] $pin = undef,
+  Optional[String] $architecture                = undef,
+  Boolean $allow_unsigned                       = false,
+  Boolean $notify_update                        = true,
 ) {
-  validate_string($architecture, $comment, $location, $repos)
-  validate_bool($allow_unsigned)
-  validate_hash($include)
 
-  include 'apt::params'
+  # This is needed for compat with 1.8.x
+  include ::apt
 
   $_before = Apt::Setting["list-${title}"]
 
-  if $include_src != undef {
-    warning("\$include_src is deprecated and will be removed in the next major release, please use \$include => { 'src' => ${include_src} } instead")
-  }
-
-  if $include_deb != undef {
-    warning("\$include_deb is deprecated and will be removed in the next major release, please use \$include => { 'deb' => ${include_deb} } instead")
-  }
-
-  if $required_packages != undef {
-    warning('$required_packages is deprecated and will be removed in the next major release, please use package resources instead.')
-    exec { "Required packages: '${required_packages}' for ${name}":
-      command     => "${::apt::params::provider} -y install ${required_packages}",
-      logoutput   => 'on_failure',
-      refreshonly => true,
-      tries       => 3,
-      try_sleep   => 1,
-      before      => $_before,
-    }
-  }
-
-  if $key_server != undef {
-    warning("\$key_server is deprecated and will be removed in the next major release, please use \$key => { 'server' => ${key_server} } instead.")
-  }
-
-  if $key_content != undef {
-    warning("\$key_content is deprecated and will be removed in the next major release, please use \$key => { 'content' => ${key_content} } instead.")
-  }
-
-  if $key_source != undef {
-    warning("\$key_source is deprecated and will be removed in the next major release, please use \$key => { 'source' => ${key_source} } instead.")
-  }
-
-  if $trusted_source != undef {
-    warning('$trusted_source is deprecated and will be removed in the next major release, please use $allow_unsigned instead.')
-    $_allow_unsigned = $trusted_source
-  } else {
-    $_allow_unsigned = $allow_unsigned
-  }
-
-  if ! $release {
-    $_release = $::apt::params::xfacts['lsbdistcodename']
-    unless $_release {
+  if !$release {
+    if $facts['lsbdistcodename'] {
+      $_release = $facts['lsbdistcodename']
+    } else {
       fail('lsbdistcodename fact not available: release parameter required')
     }
   } else {
     $_release = $release
   }
 
-  if $ensure == 'present' and ! $location {
-    fail('cannot create a source entry without specifying a location')
-  }
+  # Some releases do not support https transport with default installation
+  $_transport_https_releases = [ 'wheezy', 'jessie', 'stretch', 'trusty', 'xenial' ]
 
-  if $include_src != undef and $include_deb != undef {
-    $_deprecated_include = {
-      'src' => $include_src,
-      'deb' => $include_deb,
+  if $ensure == 'present' {
+    if ! $location {
+      fail('cannot create a source entry without specifying a location')
+    } elsif $_release in $_transport_https_releases {
+      $method = split($location, '[:\/]+')[0]
+      if $method == 'https' {
+        ensure_packages('apt-transport-https')
+      }
     }
-  } elsif $include_src != undef {
-    $_deprecated_include = { 'src' => $include_src }
-  } elsif $include_deb != undef {
-    $_deprecated_include = { 'deb' => $include_deb }
-  } else {
-    $_deprecated_include = {}
   }
 
-  $_include = merge($::apt::params::include_defaults, $_deprecated_include, $include)
-
-  $_deprecated_key = {
-    'key_server'  => $key_server,
-    'key_content' => $key_content,
-    'key_source'  => $key_source,
-  }
+  $includes = merge($::apt::include_defaults, $include)
 
   if $key {
-    if is_hash($key) {
+    if $key =~ Hash {
       unless $key['id'] {
         fail('key hash must contain at least an id entry')
       }
-      $_key = merge($::apt::params::source_key_defaults, $_deprecated_key, $key)
+      $_key = merge($::apt::source_key_defaults, $key)
     } else {
-      validate_string($key)
-      $_key = merge( { 'id' => $key }, $_deprecated_key)
+      $_key = { 'id' => assert_type(String[1], $key) }
     }
   }
 
+  $header = epp('apt/_header.epp')
+
+  $sourcelist = epp('apt/source.list.epp', {
+    'comment'          => $comment,
+    'includes'         => $includes,
+    'opt_architecture' => $architecture,
+    'allow_unsigned'   => $allow_unsigned,
+    'location'         => $location,
+    'release'          => $_release,
+    'repos'            => $repos,
+  })
+
   apt::setting { "list-${name}":
-    ensure  => $ensure,
-    content => template('apt/_header.erb', 'apt/source.list.erb'),
+    ensure        => $ensure,
+    content       => "${header}${sourcelist}",
+    notify_update => $notify_update,
   }
 
   if $pin {
-    if is_hash($pin) {
+    if $pin =~ Hash {
       $_pin = merge($pin, { 'ensure' => $ensure, 'before' => $_before })
-    } elsif (is_numeric($pin) or is_string($pin)) {
-      $url_split = split($location, '/')
-      $host      = $url_split[2]
+    } elsif ($pin =~ Numeric or $pin =~ String) {
+      $url_split = split($location, '[:\/]+')
+      $host      = $url_split[1]
       $_pin = {
         'ensure'   => $ensure,
         'priority' => $pin,
@@ -137,18 +94,15 @@ define apt::source(
 
   # We do not want to remove keys when the source is absent.
   if $key and ($ensure == 'present') {
-    if is_hash($_key) {
+    if $_key =~ Hash {
       apt::key { "Add key: ${$_key['id']} from Apt::Source ${title}":
-        ensure      => present,
-        id          => $_key['id'],
-        server      => $_key['server'],
-        content     => $_key['content'],
-        source      => $_key['source'],
-        options     => $_key['options'],
-        key_server  => $_key['key_server'],
-        key_content => $_key['key_content'],
-        key_source  => $_key['key_source'],
-        before      => $_before,
+        ensure  => present,
+        id      => $_key['id'],
+        server  => $_key['server'],
+        content => $_key['content'],
+        source  => $_key['source'],
+        options => $_key['options'],
+        before  => $_before,
       }
     }
   }

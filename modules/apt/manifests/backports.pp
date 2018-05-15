@@ -1,41 +1,29 @@
-# Manage backports with an apt repo
+# Defining backports for the apt class
 class apt::backports (
-  $location = undef,
-  $release  = undef,
-  $repos    = undef,
-  $key      = undef,
-  $pin      = 200,
+  Optional[String] $location                    = undef,
+  Optional[String] $release                     = undef,
+  Optional[String] $repos                       = undef,
+  Optional[Variant[String, Hash]] $key          = undef,
+  Optional[Variant[Integer, String, Hash]] $pin = 200,
 ){
   if $location {
-    validate_string($location)
     $_location = $location
   }
   if $release {
-    validate_string($release)
     $_release = $release
   }
   if $repos {
-    validate_string($repos)
     $_repos = $repos
   }
   if $key {
-    unless is_hash($key) {
-      validate_string($key)
-    }
     $_key = $key
   }
-  unless is_hash($pin) {
-    unless (is_numeric($pin) or is_string($pin)) {
-      fail('pin must be either a string, number or hash')
-    }
-  }
-
-  if ($::apt::xfacts['lsbdistid'] == 'debian' or $::apt::xfacts['lsbdistid'] == 'ubuntu') {
+  if ($facts['lsbdistid'] == 'Debian' or $facts['lsbdistid'] == 'Ubuntu') {
     unless $location {
       $_location = $::apt::backports['location']
     }
     unless $release {
-      $_release = "${::apt::xfacts['lsbdistcodename']}-backports"
+      $_release = "${facts['lsbdistcodename']}-backports"
     }
     unless $repos {
       $_repos = $::apt::backports['repos']
@@ -49,12 +37,24 @@ class apt::backports (
     }
   }
 
+  if $pin =~ Hash {
+    $_pin = $pin
+  } elsif $pin =~ Numeric or $pin =~ String {
+    # apt::source defaults to pinning to origin, but we should pin to release
+    # for backports
+    $_pin = {
+      'priority' => $pin,
+      'release'  => $_release,
+    }
+  } else {
+    fail('pin must be either a string, number or hash')
+  }
+
   apt::source { 'backports':
     location => $_location,
     release  => $_release,
     repos    => $_repos,
     key      => $_key,
-    pin      => $pin,
+    pin      => $_pin,
   }
-
 }

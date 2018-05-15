@@ -1,267 +1,252 @@
-#!/usr/bin/env rspec
 require 'spec_helper'
 
-describe 'apt::backports', :type => :class do
-  let (:pre_condition) { "class{ '::apt': }" }
+describe 'apt::backports', type: :class do
+  let(:pre_condition) { "class{ '::apt': }" }
+
   describe 'debian/ubuntu tests' do
-    context 'defaults on deb' do
+    context 'with defaults on deb' do
       let(:facts) do
         {
-          :lsbdistid       => 'Debian',
-          :osfamily        => 'Debian',
-          :lsbdistcodename => 'wheezy',
-          :puppetversion   => Puppet.version,
+          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          lsbdistid: 'Debian',
+          osfamily: 'Debian',
+          lsbdistcodename: 'wheezy',
+          puppetversion: Puppet.version,
         }
       end
-      it { is_expected.to contain_apt__source('backports').with({
-        :location => 'http://ftp.debian.org/debian/',
-        :key      => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
-        :repos    => 'main contrib non-free',
-        :release  => 'wheezy-backports',
-        :pin      => 200,
-      })
+
+      it {
+        is_expected.to contain_apt__source('backports').with(location: 'http://deb.debian.org/debian',
+                                                             key: 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
+                                                             repos: 'main contrib non-free',
+                                                             release: 'wheezy-backports',
+                                                             pin: { 'priority' => 200, 'release' => 'wheezy-backports' })
       }
     end
-    context 'defaults on squeeze' do
+    context 'with defaults on ubuntu' do
       let(:facts) do
         {
-          :lsbdistid       => 'Debian',
-          :osfamily        => 'Debian',
-          :lsbdistcodename => 'squeeze',
-          :puppetversion   => Puppet.version,
+          os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
+          lsbdistid: 'Ubuntu',
+          osfamily: 'Debian',
+          lsbdistcodename: 'trusty',
+          lsbdistrelease: '14.04',
+          puppetversion: Puppet.version,
         }
       end
-      it { is_expected.to contain_apt__source('backports').with({
-        :location => 'http://backports.debian.org/debian-backports',
-        :key      => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
-        :repos    => 'main contrib non-free',
-        :release  => 'squeeze-backports',
-        :pin      => 200,
-      })
+
+      it {
+        is_expected.to contain_apt__source('backports').with(location: 'http://archive.ubuntu.com/ubuntu',
+                                                             key: '630239CC130E1A7FD81A27B140976EAF437D05B5',
+                                                             repos: 'main universe multiverse restricted',
+                                                             release: 'trusty-backports',
+                                                             pin: { 'priority' => 200, 'release' => 'trusty-backports' })
       }
     end
-    context 'defaults on ubuntu' do
+    context 'with everything set' do
       let(:facts) do
         {
-          :lsbdistid       => 'Ubuntu',
-          :osfamily        => 'Debian',
-          :lsbdistcodename => 'trusty',
-          :puppetversion   => Puppet.version,
-        }
-      end
-      it { is_expected.to contain_apt__source('backports').with({
-        :location => 'http://archive.ubuntu.com/ubuntu',
-        :key      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
-        :repos    => 'main universe multiverse restricted',
-        :release  => 'trusty-backports',
-        :pin      => 200,
-      })
-      }
-    end
-    context 'set everything' do
-      let(:facts) do
-        {
-          :lsbdistid       => 'Ubuntu',
-          :osfamily        => 'Debian',
-          :lsbdistcodename => 'trusty',
-          :puppetversion   => Puppet.version,
+          os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
+          lsbdistid: 'Ubuntu',
+          osfamily: 'Debian',
+          lsbdistcodename: 'trusty',
+          lsbdistrelease: '14.04',
+          puppetversion: Puppet.version,
         }
       end
       let(:params) do
         {
-          :location => 'http://archive.ubuntu.com/ubuntu-test',
-          :release  => 'vivid',
-          :repos    => 'main',
-          :key      => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
-          :pin      => '90',
+          location: 'http://archive.ubuntu.com/ubuntu-test',
+          release: 'vivid',
+          repos: 'main',
+          key: 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
+          pin: '90',
         }
       end
-      it { is_expected.to contain_apt__source('backports').with({
-        :location => 'http://archive.ubuntu.com/ubuntu-test',
-        :key      => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
-        :repos    => 'main',
-        :release  => 'vivid',
-        :pin      => 90,
-      })
+
+      it {
+        is_expected.to contain_apt__source('backports').with(location: 'http://archive.ubuntu.com/ubuntu-test',
+                                                             key: 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
+                                                             repos: 'main',
+                                                             release: 'vivid',
+                                                             pin: { 'priority' => 90, 'release' => 'vivid' })
       }
     end
-    context 'set things with hashes' do
+    context 'when set things with hashes' do
       let(:facts) do
         {
-          :lsbdistid       => 'Ubuntu',
-          :osfamily        => 'Debian',
-          :lsbdistcodename => 'trusty',
-          :puppetversion   => Puppet.version,
+          os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
+          lsbdistid: 'Ubuntu',
+          osfamily: 'Debian',
+          lsbdistcodename: 'trusty',
+          lsbdistrelease: '14.04',
+          puppetversion: Puppet.version,
         }
       end
       let(:params) do
         {
-          :key => {
+          key: {
             'id' => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
           },
-          :pin => {
+          pin: {
             'priority' => '90',
           },
         }
       end
-      it { is_expected.to contain_apt__source('backports').with({
-        :key      => { 'id' => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553' },
-        :pin      => { 'priority' => '90' },
-      })
+
+      it {
+        is_expected.to contain_apt__source('backports').with(key: { 'id' => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553' },
+                                                             pin: { 'priority' => '90' })
       }
     end
   end
   describe 'mint tests' do
     let(:facts) do
       {
-        :lsbdistid       => 'linuxmint',
-        :osfamily        => 'Debian',
-        :lsbdistcodename => 'qiana',
-        :puppetversion   => Puppet.version,
+        os: { family: 'Debian', name: 'Linuxmint', release: { major: '17', full: '17' } },
+        lsbdistid: 'linuxmint',
+        osfamily: 'Debian',
+        lsbdistcodename: 'qiana',
+        puppetversion: Puppet.version,
       }
     end
-    context 'sets all the needed things' do
+
+    context 'with all the needed things set' do
       let(:params) do
         {
-          :location => 'http://archive.ubuntu.com/ubuntu',
-          :release  => 'trusty-backports',
-          :repos    => 'main universe multiverse restricted',
-          :key      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
+          location: 'http://archive.ubuntu.com/ubuntu',
+          release: 'trusty-backports',
+          repos: 'main universe multiverse restricted',
+          key: '630239CC130E1A7FD81A27B140976EAF437D05B5',
         }
       end
-      it { is_expected.to contain_apt__source('backports').with({
-        :location => 'http://archive.ubuntu.com/ubuntu',
-        :key      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
-        :repos    => 'main universe multiverse restricted',
-        :release  => 'trusty-backports',
-        :pin      => 200,
-      })
+
+      it {
+        is_expected.to contain_apt__source('backports').with(location: 'http://archive.ubuntu.com/ubuntu',
+                                                             key: '630239CC130E1A7FD81A27B140976EAF437D05B5',
+                                                             repos: 'main universe multiverse restricted',
+                                                             release: 'trusty-backports',
+                                                             pin: { 'priority' => 200, 'release' => 'trusty-backports' })
       }
     end
-    context 'missing location' do
+    context 'with missing location' do
       let(:params) do
         {
-          :release  => 'trusty-backports',
-          :repos    => 'main universe multiverse restricted',
-          :key      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
+          release: 'trusty-backports',
+          repos: 'main universe multiverse restricted',
+          key: '630239CC130E1A7FD81A27B140976EAF437D05B5',
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key/)
+        is_expected.to raise_error(Puppet::Error, %r{If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key})
       end
     end
-    context 'missing release' do
+    context 'with missing release' do
       let(:params) do
         {
-          :location => 'http://archive.ubuntu.com/ubuntu',
-          :repos    => 'main universe multiverse restricted',
-          :key      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
+          location: 'http://archive.ubuntu.com/ubuntu',
+          repos: 'main universe multiverse restricted',
+          key: '630239CC130E1A7FD81A27B140976EAF437D05B5',
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key/)
+        is_expected.to raise_error(Puppet::Error, %r{If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key})
       end
     end
-    context 'missing repos' do
+    context 'with missing repos' do
       let(:params) do
         {
-          :location => 'http://archive.ubuntu.com/ubuntu',
-          :release  => 'trusty-backports',
-          :key      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
+          location: 'http://archive.ubuntu.com/ubuntu',
+          release: 'trusty-backports',
+          key: '630239CC130E1A7FD81A27B140976EAF437D05B5',
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key/)
+        is_expected.to raise_error(Puppet::Error, %r{If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key})
       end
     end
-    context 'missing key' do
+    context 'with missing key' do
       let(:params) do
         {
-          :location => 'http://archive.ubuntu.com/ubuntu',
-          :release  => 'trusty-backports',
-          :repos    => 'main universe multiverse restricted',
+          location: 'http://archive.ubuntu.com/ubuntu',
+          release: 'trusty-backports',
+          repos: 'main universe multiverse restricted',
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key/)
+        is_expected.to raise_error(Puppet::Error, %r{If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key})
       end
     end
   end
   describe 'validation' do
     let(:facts) do
       {
-        :lsbdistid       => 'Ubuntu',
-        :osfamily        => 'Debian',
-        :lsbdistcodename => 'trusty',
-        :puppetversion   => Puppet.version,
+        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
+        lsbdistid: 'Ubuntu',
+        osfamily: 'Debian',
+        lsbdistcodename: 'trusty',
+        lsbdistrelease: '14.04',
+        puppetversion: Puppet.version,
       }
     end
-    context 'invalid location' do
+
+    context 'with invalid location' do
       let(:params) do
         {
-          :location => true
+          location: true,
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /is not a string/)
+        is_expected.to raise_error(Puppet::Error, %r{expects a})
       end
     end
-    context 'invalid release' do
+    context 'with invalid release' do
       let(:params) do
         {
-          :release => true
+          release: true,
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /is not a string/)
+        is_expected.to raise_error(Puppet::Error, %r{expects a})
       end
     end
-    context 'invalid repos' do
+    context 'with invalid repos' do
       let(:params) do
         {
-          :repos => true
+          repos: true,
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /is not a string/)
+        is_expected.to raise_error(Puppet::Error, %r{expects a})
       end
     end
-    context 'invalid key' do
+    context 'with invalid key' do
       let(:params) do
         {
-          :key => true
+          key: true,
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /is not a string/)
+        is_expected.to raise_error(Puppet::Error, %r{expects a})
       end
     end
-    context 'invalid pin' do
+    context 'with invalid pin' do
       let(:params) do
         {
-          :pin => true
+          pin: true,
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /pin must be either a string, number or hash/)
+        is_expected.to raise_error(Puppet::Error, %r{expects a})
       end
     end
   end

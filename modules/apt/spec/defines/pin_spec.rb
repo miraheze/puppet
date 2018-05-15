@@ -1,39 +1,46 @@
 require 'spec_helper'
-describe 'apt::pin', :type => :define do
+describe 'apt::pin', type: :define do
   let :pre_condition do
     'class { "apt": }'
   end
-  let(:facts) { { :lsbdistid => 'Debian', :osfamily => 'Debian', :lsbdistcodename => 'wheezy', :puppetversion   => Puppet.version, } }
+  let(:facts) do
+    {
+      os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+      lsbdistid: 'Debian',
+      osfamily: 'Debian',
+      lsbdistcodename: 'wheezy',
+      puppetversion: Puppet.version,
+    }
+  end
   let(:title) { 'my_pin' }
 
-  context 'defaults' do
-    it { is_expected.to contain_apt__setting("pref-my_pin").with_content(/Explanation: : my_pin\nPackage: \*\nPin: release a=my_pin\nPin-Priority: 0\n/)}
-    it { is_expected.to contain_apt__setting("pref-my_pin") }
+  context 'with defaults' do
+    it { is_expected.to contain_apt__setting('pref-my_pin').with_content(%r{Explanation: : my_pin\nPackage: \*\nPin: release a=my_pin\nPin-Priority: 0\n}) }
   end
 
-  context 'set version' do
+  context 'with set version' do
     let :params do
       {
         'packages' => 'vim',
         'version'  => '1',
       }
     end
-    it { is_expected.to contain_apt__setting("pref-my_pin").with_content(/Explanation: : my_pin\nPackage: vim\nPin: version 1\nPin-Priority: 0\n/)}
-    it { is_expected.to contain_apt__setting("pref-my_pin") }
+
+    it { is_expected.to contain_apt__setting('pref-my_pin').with_content(%r{Explanation: : my_pin\nPackage: vim\nPin: version 1\nPin-Priority: 0\n}) }
   end
 
-  context 'set origin' do
+  context 'with set origin' do
     let :params do
       {
         'packages' => 'vim',
         'origin'   => 'test',
       }
     end
-    it { is_expected.to contain_apt__setting("pref-my_pin").with_content(/Explanation: : my_pin\nPackage: vim\nPin: origin test\nPin-Priority: 0\n/)}
-    it { is_expected.to contain_apt__setting("pref-my_pin") }
+
+    it { is_expected.to contain_apt__setting('pref-my_pin').with_content(%r{Explanation: : my_pin\nPackage: vim\nPin: origin test\nPin-Priority: 0\n}) }
   end
 
-  context 'not defaults' do
+  context 'without defaults' do
     let :params do
       {
         'explanation'     => 'foo',
@@ -47,72 +54,70 @@ describe 'apt::pin', :type => :define do
         'priority'        => 10,
       }
     end
-    it { is_expected.to contain_apt__setting("pref-my_pin").with_content(/Explanation: foo\nPackage: \*\nPin: release a=1, n=bar, v=2, c=baz, o=foobar, l=foobaz\nPin-Priority: 10\n/) }
-    it { is_expected.to contain_apt__setting("pref-my_pin").with({
-      'priority'     => 99,
-    })
+
+    it { is_expected.to contain_apt__setting('pref-my_pin').with_content(%r{Explanation: foo\nPackage: \*\nPin: release a=1, n=bar, v=2, c=baz, o=foobar, l=foobaz\nPin-Priority: 10\n}) }
+    it {
+      is_expected.to contain_apt__setting('pref-my_pin').with('priority' => 99)
     }
   end
 
-  context 'ensure absent' do
+  context 'with ensure absent' do
     let :params do
       {
-        'ensure' => 'absent'
+        'ensure' => 'absent',
       }
     end
-    it { is_expected.to contain_apt__setting("pref-my_pin").with({
-      'ensure' => 'absent',
-    })
+
+    it {
+      is_expected.to contain_apt__setting('pref-my_pin').with('ensure' => 'absent')
     }
   end
 
-  context 'bad characters' do
+  context 'with bad characters' do
     let(:title) { 'such  bad && wow!' }
-    it { is_expected.to contain_apt__setting("pref-such__bad____wow_") }
+
+    it { is_expected.to contain_apt__setting('pref-such__bad____wow_') }
   end
 
   describe 'validation' do
-    context 'invalid order' do
+    context 'with invalid order' do
       let :params do
         {
           'order' => 'foo',
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /Only integers are allowed/)
+        is_expected.to raise_error(Puppet::Error, %r{expects an Integer value, got String})
       end
     end
 
-    context 'packages == * and version' do
+    context 'with packages == * and version' do
       let :params do
         {
           'version' => '1',
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /parameter version cannot be used in general form/)
+        is_expected.to raise_error(Puppet::Error, %r{parameter version cannot be used in general form})
       end
     end
 
-    context 'packages == * and release and origin' do
+    context 'with packages == * and release and origin' do
       let :params do
         {
           'origin'  => 'test',
           'release' => 'foo',
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /parameters release and origin are mutually exclusive/)
+        is_expected.to raise_error(Puppet::Error, %r{parameters release and origin are mutually exclusive})
       end
     end
 
-    context 'specific form with release and origin' do
+    context 'with specific release and origin' do
       let :params do
         {
           'release'  => 'foo',
@@ -120,14 +125,13 @@ describe 'apt::pin', :type => :define do
           'packages' => 'vim',
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /parameters release, origin, and version are mutually exclusive/)
+        is_expected.to raise_error(Puppet::Error, %r{parameters release, origin, and version are mutually exclusive})
       end
     end
 
-    context 'specific form with version and origin' do
+    context 'with specific version and origin' do
       let :params do
         {
           'version'  => '1',
@@ -135,10 +139,9 @@ describe 'apt::pin', :type => :define do
           'packages' => 'vim',
         }
       end
+
       it do
-        expect {
-          subject.call
-        }.to raise_error(Puppet::Error, /parameters release, origin, and version are mutually exclusive/)
+        is_expected.to raise_error(Puppet::Error, %r{parameters release, origin, and version are mutually exclusive})
       end
     end
   end

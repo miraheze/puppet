@@ -5,7 +5,7 @@ $rel_string = ''
 
 #if you need to specify a version
 $ensure = '<version>'
-#else
+#else 
 $ensure = installed
 
 #if overwrite existing cfg files
