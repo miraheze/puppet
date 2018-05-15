@@ -47,7 +47,7 @@ class grafana(
     }
 
     file { '/etc/grafana/grafana.ini':
-        source   => 'puppet:///modules/grafana/grafana.ini',
+        content => template('grafana/grafana.ini.erb'),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
