@@ -13,6 +13,7 @@ class php {
               location => 'https://packages.sury.org/php/',
               release  => "${::lsbdistcodename}",
               repos    => 'main',
+              pin      => '-10',
               notify   => Exec['apt_update_php'],
             }
 
