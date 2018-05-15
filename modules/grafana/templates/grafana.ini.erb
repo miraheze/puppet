@@ -16,3 +16,14 @@ auto_assign_org = true
 enabled = true
 org_name = Miraheze
 org_role = Viewer
+
+[smtp]
+enabled=true
+
+host = mail.miraheze.org:25
+
+user = noreply
+
+password = <%= @mail_password %>
+
+from_address = noreply@miraheze.org

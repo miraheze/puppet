@@ -45,9 +45,11 @@ class grafana(
     file { '/etc/apache2/sites-enabled/apache.conf':
         ensure => absent,
     }
+    
+    $mail_password = hiera('passwords::mail::noreply')
 
     file { '/etc/grafana/grafana.ini':
-        source   => 'puppet:///modules/grafana/grafana.ini',
+        content => template('grafana/grafana.ini.erb'),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
