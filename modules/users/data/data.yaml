@@ -15,6 +15,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /root/ssl-certificate',
+                 'ALL = (ALL) NOPASSWD: /root/ssl-certificate-old',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
     gid: 2002
