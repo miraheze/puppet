@@ -33,6 +33,8 @@ class mailman (
         release    => 'stretch-backports',
         packages   => 'mailman3-full',
     }
+    
+    require_package('python-pymysql')
 
     package { 'mailman3-full':
         ensure          => installed,
