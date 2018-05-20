@@ -35,8 +35,9 @@ class mailman (
     }
 
     package { 'mailman3-full':
-        ensure => installed,
-        require => File['/etc/apt/preferences'],
+        ensure          => installed,
+        install_options => ['-t', 'stretch-backports'],
+        require         => File['/etc/apt/preferences'],
     }
 
     file { '/etc/mailman3/mailman-hyperkitty.cfg':
