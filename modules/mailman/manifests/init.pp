@@ -41,7 +41,7 @@ class mailman (
 
     file { '/etc/mailman3/mailman-hyperkitty.cfg':
         ensure  => present,
-        content => template('mailman3/mailman-hyperkitty.cfg.erb'),
+        content => template('mailman/mailman-hyperkitty.cfg.erb'),
         owner   => 'root',
         group   => 'list',
         notify  => Service['mailman3'],
@@ -50,7 +50,7 @@ class mailman (
 
     file { '/etc/mailman3/mailman-web.py':
         ensure  => present,
-        content => template('mailman3/mailman-web.py.erb'),
+        content => template('mailman/mailman-web.py.erb'),
         owner   => 'root',
         group   => 'www-data',
         notify  => Service['mailman3-web'],
@@ -59,7 +59,7 @@ class mailman (
 
     file { '/etc/mailman3/mailman.cfg':
         ensure  => present,
-        content => template('mailman3/mailman.cfg.erb'),
+        content => template('mailman/mailman.cfg.erb'),
         owner   => 'root',
         group   => 'list',
         notify  => Service['mailman3'],
@@ -68,7 +68,7 @@ class mailman (
 
     file { '/etc/mailman3/uwsgi.ini':
         ensure  => present,
-        content => template('mailman3/uwsgi.ini.erb'),
+        content => template('mailman/uwsgi.ini.erb'),
         owner   => 'root',
         group   => 'root',
         notify  => Service['mailman3-web'],
@@ -78,12 +78,10 @@ class mailman (
     service { 'mailman3':
         ensure    => running,
         hasstatus => true,
-        subscribe => File['/etc/mailman3/mm_cfg.py'],
     }
 
     service { 'mailman3-web':
         ensure    => running,
         hasstatus => true,
-        subscribe => File['/etc/mailman3/mm_cfg.py'],
     }
 }
