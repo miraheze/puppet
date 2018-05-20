@@ -1,6 +1,6 @@
 myhostname = mail.miraheze.org
 myorigin = /etc/mailname
-mydestination = mail.miraheze.org, list.miraheze.org, miraheze.org, localhost
+mydestination = mail.miraheze.org, miraheze.org, localhost
 relayhost =
 relay_domains =
 mynetworks = 185.52.1.76
