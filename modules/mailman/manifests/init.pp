@@ -15,7 +15,7 @@ class mailman (
 
     httpd::site { 'mailman.miraheze.org':
         ensure  => present,
-        source  => 'puppet:///modules/mailman3/apache/apache.conf',
+        source  => 'puppet:///modules/mailman/apache/apache.conf',
         monitor => true,
     }
 
