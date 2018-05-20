@@ -1,6 +1,6 @@
 # role: mailman3
-class role::mailman3 {
-    include ::mailman3
+class role::mailman {
+    include ::mailman
 
     # crossed out as would conflict with other classes on misc1
     #ufw::allow { 'mailman3 http':
@@ -14,7 +14,7 @@ class role::mailman3 {
     #    port  => '443',
     #}
 
-    motd::role { 'role::mailman3':
+    motd::role { 'role::mailman':
         description => 'Mail List',
     }
 }
