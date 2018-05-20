@@ -27,7 +27,7 @@ class mailman (
         ],
     }
 
-    apt::pin { 'debian_stretch_backports':
+    apt::pin { 'mailman3_debian_stretch_backports':
         priority   => 740,
         originator => 'Debian',
         release    => 'stretch-backports',
