@@ -1,6 +1,6 @@
 myhostname = mail.miraheze.org
 myorigin = /etc/mailname
-mydestination = mail.miraheze.org, miraheze.org, localhost
+mydestination = mail.miraheze.org, list.miraheze.org, miraheze.org, localhost
 relayhost =
 relay_domains =
 mynetworks = 185.52.1.76
@@ -36,3 +36,10 @@ non_smtpd_milters = inet:localhost:12301,inet:localhost:54321
 
 local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination
+
+transport_maps =
+    hash:/var/lib/mailman3/data/postfix_lmtp
+local_recipient_maps =
+    hash:/var/lib/mailman3/data/postfix_lmtp
+relay_domains =
+    hash:/var/lib/mailman3/data/postfix_domains
