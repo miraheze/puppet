@@ -42,13 +42,19 @@ class mailman (
         require         => File['/etc/apt/preferences'],
     }
 
+    file { '/etc/mailman3':
+        ensure => directory,
+        owner   => 'root',
+        group   => 'root',
+    }
+
     file { '/etc/mailman3/mailman-hyperkitty.cfg':
         ensure  => present,
         content => template('mailman/mailman-hyperkitty.cfg.erb'),
         owner   => 'root',
         group   => 'list',
         notify  => Service['mailman3'],
-        require => Package['mailman3-full'],
+        require => File['/etc/mailman3'],
     }
 
     file { '/etc/mailman3/mailman-web.py':
@@ -57,7 +63,7 @@ class mailman (
         owner   => 'root',
         group   => 'www-data',
         notify  => Service['mailman3-web'],
-        require => Package['mailman3-full'],
+        require => File['/etc/mailman3'],
     }
 
     file { '/etc/mailman3/mailman.cfg':
@@ -66,7 +72,7 @@ class mailman (
         owner   => 'root',
         group   => 'list',
         notify  => Service['mailman3'],
-        require => Package['mailman3-full'],
+        require => File['/etc/mailman3'],
     }
 
     file { '/etc/mailman3/uwsgi.ini':
@@ -75,16 +81,16 @@ class mailman (
         owner   => 'root',
         group   => 'root',
         notify  => Service['mailman3-web'],
-        require => Package['mailman3-full'],
+        require => File['/etc/mailman3'],
     }
 
     service { 'mailman3':
         ensure    => running,
-        hasstatus => true,
+        require   => Package['mailman3-full'],
     }
 
     service { 'mailman3-web':
         ensure    => running,
-        hasstatus => true,
+        require   => Package['mailman3-full'],
     }
 }
