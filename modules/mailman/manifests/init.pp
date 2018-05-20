@@ -34,7 +34,7 @@ class mailman (
         packages   => 'mailman3-full',
     }
     
-    require_package('python-pymysql')
+    require_package(['python-pymysql', 'python-mysqldb'])
 
     package { 'mailman3-full':
         ensure          => installed,
