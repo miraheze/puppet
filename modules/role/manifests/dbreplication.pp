@@ -7,12 +7,6 @@ class role::dbreplication {
         password => hiera('passwords::db::root'),
     }
 
-    ufw::allow { 'mysql port db2':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '81.4.125.112',
-    }
-
     ufw::allow { 'mysql port db4':
         proto => 'tcp',
         port  => '3306',

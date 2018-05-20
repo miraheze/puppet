@@ -98,13 +98,6 @@ class bacula::director {
             },
         }
 
-        icinga2::custom::services { 'Bacula Databases db2':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_bacula_databasesdb2',
-            },
-        }
-
         icinga2::custom::services { 'Bacula Databases db4':
             check_command => 'nrpe',
             vars          => {
@@ -136,11 +129,6 @@ class bacula::director {
         icinga::service { 'bacula_daemon':
             description   => 'Bacula Daemon',
             check_command => 'check_nrpe_1arg!check_bacula_daemon',
-        }
-
-        icinga::service { 'bacula_databasesdb2':
-            description   => 'Bacula - Databases - db2',
-            check_command => 'check_nrpe_1arg!check_bacula_databasesdb2',
         }
 
         icinga::service { 'bacula_databasesdb4':

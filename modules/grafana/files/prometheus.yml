@@ -40,8 +40,6 @@ scrape_configs:
         'cp2.miraheze.org:9100',
         'cp4.miraheze.org:9100',
         'cp5.miraheze.org:9100',
-        'db2.miraheze.org:9100',
-        'db3.miraheze.org:9100',
         'db4.miraheze.org:9100',
         'misc1.miraheze.org:9100',
         'misc2.miraheze.org:9100',
