@@ -33,7 +33,6 @@ node 'misc1.miraheze.org' {
     include role::icinga
     include role::irc
     include role::mail
-    include role::mailman
     include role::dns
     include role::phabricator
     include bacula::client
