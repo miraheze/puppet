@@ -1,18 +1,19 @@
 [Unit]
 Description=Mediawiki RESTBase Service
 Documentation=https://www.mediawiki.org/wiki/RESTBase
-Wants=local-fs.target network.target
-After=local-fs.target network.target
+After=network.target
 
 [Install]
 WantedBy=multi-user.target
 
 [Service]
-Type=simple
 User=restbase
 Group=restbase
-WorkingDirectory=/srv/restbase
-ExecStart=/usr/bin/node /srv/restbase/server.js -c /etc/mediawiki/restbase/config.yaml
+SyslogIdentifier=restbase
 Restart=always
 RestartSec=2s
-KillMode=process
+WorkingDirectory=/srv/restbase
+ExecStart=/usr/bin/node /srv/restbase/server.js -c /etc/mediawiki/restbase/config.yaml
+
+[Install]
+WantedBy=multi-user.target
