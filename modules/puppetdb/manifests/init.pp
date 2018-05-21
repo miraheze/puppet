@@ -91,6 +91,7 @@ class puppetdb(
         'username'    => 'puppetdb',
         'password'    => $db_password,
         'subname'     => "//${db_rw_host}:5432/puppetdb${ssl}",
+        'node-purge-ttl' => '1d',
     }
 
     if $perform_gc {
