@@ -36,7 +36,7 @@ scrape_configs:
     # machine by default.
     static_configs:
       - targets: [
-        'bacula1.miraheze.org:9100',
+        'bacula1.miraheze.org:9100', # Standard exporter
         'cp2.miraheze.org:9100',
         'cp4.miraheze.org:9100',
         'cp5.miraheze.org:9100',
@@ -50,4 +50,7 @@ scrape_configs:
         'ns1.miraheze.org:9100',
         'puppet1.miraheze.org:9100',
         'test1.miraheze.org:9100',
+        'cp2.miraheze.org:9131', # Varnish exporter
+        'cp4.miraheze.org:9131',
+        'cp5.miraheze.org:9131',
       ]
