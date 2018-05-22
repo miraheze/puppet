@@ -18,6 +18,9 @@ root: /dev/null
 # operations aliases
 ops: operations
 
+# gdpr / privacy alias
+privacy: operations
+
 # DMARC - potentially high volume, best recommended for mail admins on misc1
 dmarc: ndkilla,john
 
@@ -28,7 +31,6 @@ staff: southparkfan,ndkilla,bslaabs@gmail.com,reception123,revi,john,paladox,mac
 cvt: stewards,reception123,megadev44s.mail@gmail.com,macfan,alvaromolinacl@gmail.com
 cocc: alvaromolinacl@gmail.com,diarmuidsmithy@gmail.com,reception123,revi,orduinvoidwalker@gmail.com
 wiki-abuse: ndkilla,reception123,revi
-privacy: operations
 
 # finances
 donate: bslaabs@gmail.com,southparkfan
