@@ -1,0 +1,8 @@
+-- Grants for 'grafana'@''
+
+GRANT USAGE
+    ON *.* TO 'grafana'@'%'
+    IDENTIFIED BY '<%= @grafana_password %>';
+
+GRANT ALL PRIVILEGES
+    ON `grafana`.* TO 'grafana'@'%';
