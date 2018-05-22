@@ -3,6 +3,8 @@ class grafana(
     # use php7.0 on stretch+
     $modules = ['headers', 'proxy', 'proxy_http', 'php7.0', 'rewrite', 'ssl']
 ) {
+    $grafana_password = hiera('passwords::db::grafana')
+
     include ::httpd
 
     include ssl::wildcard
