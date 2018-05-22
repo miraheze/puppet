@@ -6,10 +6,16 @@ class role::db {
     $wikiadmin_password = hiera('passwords::db::wikiadmin')
     $piwik_password = hiera('passwords::db::piwik')
     $phabricator_password = hiera('passwords::db::phabricator')
+    $grafana_password = hiera('passwords::db::grafana')
 
     class { 'mariadb::config':
         config   => 'mariadb/config/mw.cnf.erb',
         password => hiera('passwords::db::root'),
+    }
+
+    file { '/etc/mysql/miraheze/grafana-grants.sql':
+        ensure  => present,
+        content => template('mariadb/grants/grafana-grants.sql.erb'),
     }
 
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':
