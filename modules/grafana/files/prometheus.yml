@@ -47,6 +47,7 @@ scrape_configs:
         'mw1.miraheze.org:9100',
         'mw2.miraheze.org:9100',
         'mw3.miraheze.org:9100',
+        'nfs1.miraheze.org:9100',
         'ns1.miraheze.org:9100',
         'puppet1.miraheze.org:9100',
         'test1.miraheze.org:9100',
