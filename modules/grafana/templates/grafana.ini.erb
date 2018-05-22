@@ -32,3 +32,5 @@ from_address = noreply@miraheze.org
 url = mysql://grafana:<%= @grafana_password %>@db4.miraheze.org:3306/grafana
 type = mysql
 ssl_mode = true
+ca_cert_path = /etc/ssl/certs/GlobalSign.crt
+server_cert_name = *.miraheze.org
