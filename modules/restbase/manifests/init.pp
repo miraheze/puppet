@@ -97,6 +97,7 @@ class restbase {
             File['/etc/systemd/system/restbase.service'],
             Git::Clone['restbase_deploy'],
         ],
+        subscribe  => File['/etc/systemd/system/restbase.service'],
     }
 
     logrotate::conf { 'restbase':
