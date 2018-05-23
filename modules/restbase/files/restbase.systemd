@@ -13,7 +13,7 @@ SyslogIdentifier=restbase
 WorkingDirectory=/srv/restbase
 ExecStart=/usr/bin/node /srv/restbase/server.js -c /etc/mediawiki/restbase/config.yaml
 KillMode=process
-Restart=on-success
+Restart=always
 PrivateTmp=true
 
 [Install]
