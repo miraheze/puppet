@@ -10,10 +10,11 @@ WantedBy=multi-user.target
 User=restbase
 Group=restbase
 SyslogIdentifier=restbase
-Restart=always
-RestartSec=2s
 WorkingDirectory=/srv/restbase
 ExecStart=/usr/bin/node /srv/restbase/server.js -c /etc/mediawiki/restbase/config.yaml
+KillMode=process
+Restart=on-success
+PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target
