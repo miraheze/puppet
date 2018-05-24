@@ -25,9 +25,9 @@ class acme {
         require => Git::Clone['acme-tiny'],
     }
 
-    file { '/var/lib/nagios/ssl-phabricator':
+    file { '/var/lib/nagios/ssl-acme':
         ensure => present,
-        source => 'puppet:///modules/acme/ssl-phabricator',
+        source => 'puppet:///modules/acme/ssl-acme',
         owner  => 'nagios',
         group  => 'nagios',
     }
