@@ -9,8 +9,9 @@ class role::db {
     $grafana_password = hiera('passwords::db::grafana')
 
     class { 'mariadb::config':
-        config   => 'mariadb/config/mw.cnf.erb',
-        password => hiera('passwords::db::root'),
+        config      => 'mariadb/config/mw.cnf.erb',
+        password    => hiera('passwords::db::root'),
+        server_role => 'master',
     }
 
     file { '/etc/mysql/miraheze/grafana-grants.sql':

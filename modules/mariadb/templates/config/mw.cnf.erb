@@ -31,8 +31,16 @@ tmpdir                         = <%= @tmpdir %>
 transaction-isolation          = READ-COMMITTED
 binlog_format                  = ROW
 
+server-id                      = <%= @server_id %>
 log-bin                        = <%= @datadir %>/mysql-bin
-expire-logs-days               = 5
+<% if @server_role == 'slave' %>
+relay-log                      = /var/log/mysql/mysql-relay-bin.log
+<% end %>
+<% if @server_role == 'master' %>
+expire-logs-days               = 7
+<% else %>
+expire-logs-days               = 2
+<% end %>
 sync-binlog                    = 1
 
 tmp-table-size                 = 12M

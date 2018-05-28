@@ -3,8 +3,9 @@ class role::dbreplication {
     include mariadb::packages
 
     class { 'mariadb::config':
-        config   => 'mariadb/config/mw.cnf.erb',
-        password => hiera('passwords::db::root'),
+        config      => 'mariadb/config/mw.cnf.erb',
+        password    => hiera('passwords::db::root'),
+        server_role => 'slave',
     }
 
     ufw::allow { 'mysql port db4':

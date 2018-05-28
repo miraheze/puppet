@@ -6,9 +6,15 @@ class mariadb::config(
     $tmpdir                         = '/tmp',
     $innodb_buffer_pool_instances   = 1,
     $innodb_buffer_pool_size        = '768M',
+    $server_role                    = 'master',
     $max_connections                = 90,
     $version_102                    = undef,
 ) {
+    $server_id = inline_template(
+        "<%= @ipaddress.split('.').inject(0)\
+{|total,value| (total << 8 ) + value.to_i %>"
+    )
+
     file { '/etc/my.cnf':
         owner   => 'root',
         group   => 'root',
