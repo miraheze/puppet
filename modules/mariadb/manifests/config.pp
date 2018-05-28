@@ -12,7 +12,7 @@ class mariadb::config(
 ) {
     $server_id = inline_template(
         "<%= @ipaddress.split('.').inject(0)\
-{|total,value| (total << 8 ) + value.to_i %>"
+{|total,value| (total << 8 ) + value.to_i} %>"
     )
 
     file { '/etc/my.cnf':
