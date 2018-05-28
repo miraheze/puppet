@@ -1,6 +1,7 @@
 [Unit]
 Description=Advanced key-value store
 After=network.target
+Documentation=http://redis.io/documentation, man:redis-server(1)
 
 [Service]
 Type=forking
@@ -9,6 +10,8 @@ ExecStop=/usr/bin/redis-cli shutdown
 Restart=always
 User=redis
 Group=redis
+
+LimitNOFILE=65535
 
 [Install]
 WantedBy=multi-user.target
