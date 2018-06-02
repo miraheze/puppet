@@ -25,7 +25,7 @@ then
 			git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
 			sudo /root/ssl-certificate -r $URL > /srv/ssl/ssl/certificates/$URL.crt
 			sed -i "/Re-generating a new SSL cert for ${URL}/d" /srv/ssl/ssl/certificates/$URL.crt
-			sed -i "/LetsEncrypt certificate at: /root/ssl/${URL}.crt/d" /srv/ssl/ssl/certificates/$URL.crt
+			sed -i "/LetsEncrypt certificate at: \/root\/ssl\/${URL}.crt/d" /srv/ssl/ssl/certificates/$URL.crt
 			git -C /srv/ssl/ssl add /srv/ssl/ssl/certificates/$URL.crt
 			git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for ${URL}"
 			git -C /srv/ssl/ssl/ push origin master
