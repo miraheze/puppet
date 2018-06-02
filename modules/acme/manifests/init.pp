@@ -28,27 +28,27 @@ class acme {
     file { '/var/lib/nagios/ssl-acme':
         ensure => present,
         source => 'puppet:///modules/acme/ssl-acme',
-        owner  => 'nagios',
-        group  => 'nagios',
+        owner  => 'nagiosre',
+        group  => 'nagiosre',
     }
 
     file { '/var/lib/nagios/LE.crt':
         ensure => present,
         source => 'puppet:///modules/acme/LE.crt',
-        owner  => 'nagios',
-        group  => 'nagios',
+        owner  => 'nagiosre',
+        group  => 'nagiosre',
     }
 
     file { '/var/lib/nagios/id_rsa':
         ensure => present,
         source => 'puppet:///private/acme/id_rsa',
-        owner  => 'nagios',
-        group  => 'nagios',
+        owner  => 'nagiosre',
+        group  => 'nagiosre',
         mode   => '0400',
     }
 
     sudo::user { 'nrpe_ssl-certificate':
-        user       => 'nagios',
+        user       => 'nagiosre',
         privileges => [ 'ALL = NOPASSWD: /root/ssl-certificate' ],
     }
 }

@@ -176,6 +176,15 @@ class icinga(
     file { '/etc/icinga/ssl-phabricator.py':
         ensure  => 'present',
         content => template('icinga/ssl-phabricator.py'),
+        source  => 'puppet:///modules/icinga/hostgroups.cfg',
+        owner   => 'icinga',
+        group   => 'icinga',
+        mode    => '0755',
+    }
+
+    file { '/etc/icinga/ssl-renew.sh':
+        ensure  => 'present',
+        source  => 'puppet:///modules/icinga/ssl-renew.sh',
         owner   => 'icinga',
         group   => 'icinga',
         mode    => '0755',
