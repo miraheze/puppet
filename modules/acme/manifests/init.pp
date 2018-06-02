@@ -49,6 +49,9 @@ class acme {
 
     sudo::user { 'nrpe_ssl-certificate':
         user       => 'nagiosre',
-        privileges => [ 'ALL = NOPASSWD: /root/ssl-certificate' ],
+        privileges => [
+            'ALL = NOPASSWD: /root/ssl-certificate',
+            'ALL = NOPASSWD: git clone git@github.com:miraheze/ssl.git /srv/ssl',
+        ],
     }
 }
