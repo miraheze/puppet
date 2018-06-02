@@ -25,6 +25,13 @@ class acme {
         require => Git::Clone['acme-tiny'],
     }
 
+    file { '/srv/ssl':
+        ensure => directory,
+        owner  => 'nagiosre',
+        group  => 'nagiosre',
+        mode   => '0770',
+    }
+
     file { '/var/lib/nagios/ssl-acme':
         ensure => present,
         source => 'puppet:///modules/acme/ssl-acme',
@@ -51,7 +58,6 @@ class acme {
         user       => 'nagiosre',
         privileges => [
             'ALL = NOPASSWD: /root/ssl-certificate',
-            'ALL = NOPASSWD: git clone git@github.com:miraheze/ssl.git /srv/ssl',
         ],
     }
 }
