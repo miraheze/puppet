@@ -2,7 +2,10 @@
 #
 # Renews LetsEncrypt cert
 #
-# Miraheze Staff
+# This script is only compatible with LetsEncrypt
+# do not try to use it with any other certs.
+#
+# Miraheze Staff 2018
 set -e
 set -u
 
@@ -11,21 +14,17 @@ function log {
 }
 
 function usage {
-    echo "Usage: $0 [-h] [-d <description>] [-s <state>] [-u <URL>]"
+    echo "Usage: $0 [-h] [-s <state>] [-u <URL>]"
     echo "  -h      display help"
-    echo "  -d      description ie something like <domain> - LetsEncrypt"
     echo "  -s      state of service like WARNING and OK"
     echo "  -u      URL ie <domain>"
     exit 1
 }
 
-while getopts ":hd:s:u:" option; do
+while getopts ":hs:u:" option; do
     case $option in
         h)
             usage
-            ;;
-        d)
-            DESC="$OPTARG"
             ;;
         s)
             STATE="$OPTARG"
@@ -39,45 +38,37 @@ while getopts ":hd:s:u:" option; do
     esac
 done
 
-test -z ${DESC} && usage
 test -z ${STATE} && usage
 test -z ${URL} && usage
 
-CA=${DESC##* }
-
-if [[ $CA = "LetsEncrypt" ]]
-then
-  case $STATE in
-    OK)
-      # It's all good
-      ;;
-    UNKNOWN)
-      # We can't do anything about this really
-      ;;
-    WARNING)
-      # Lets Renew here
-      git config --global core.sshCommand "ssh -i /var/lib/nagios/id_rsa -F /dev/null"
-      if [ ! -d /srv/ssl/ssl/ ]; then
-        cd /srv/ssl/ && git clone git@github.com:miraheze/ssl.git
-      else
-              cd /srv/ssl/ssl && git reset --hard origin/master && git pull
-      fi
-      git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"
-      git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
-      sudo /root/ssl-certificate -r $URL > /srv/ssl/ssl/certificates/$URL.crt
-      sed -i "/Re-generating a new SSL cert for ${URL}/d" /srv/ssl/ssl/certificates/$URL.crt
-      sed -i "/LetsEncrypt certificate at: \/root\/ssl\/${URL}.crt/d" /srv/ssl/ssl/certificates/$URL.crt
-      git -C /srv/ssl/ssl add /srv/ssl/ssl/certificates/$URL.crt
-      git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for ${URL}"
-      git -C /srv/ssl/ssl/ push origin master
-      ;;
-    CRITICAL)
-      # If the above failed, let's not act here. CRITICAL is human intervention time
-      echo "CRITICAL - FAIL SAFE"
-      ;;
-  esac
-else
-  echo "Not LetsEncrypt"
-fi
+case $STATE in
+  OK)
+    # It's all good
+    ;;
+  UNKNOWN)
+    # We can't do anything about this really
+    ;;
+  WARNING)
+    # Lets Renew here
+    git config --global core.sshCommand "ssh -i /var/lib/nagios/id_rsa -F /dev/null"
+    if [ ! -d /srv/ssl/ssl/ ]; then
+      cd /srv/ssl/ && git clone git@github.com:miraheze/ssl.git
+    else
+            cd /srv/ssl/ssl && git reset --hard origin/master && git pull
+    fi
+    git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"
+    git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
+    sudo /root/ssl-certificate -r $URL > /srv/ssl/ssl/certificates/$URL.crt
+    sed -i "/Re-generating a new SSL cert for ${URL}/d" /srv/ssl/ssl/certificates/$URL.crt
+    sed -i "/LetsEncrypt certificate at: \/root\/ssl\/${URL}.crt/d" /srv/ssl/ssl/certificates/$URL.crt
+    git -C /srv/ssl/ssl add /srv/ssl/ssl/certificates/$URL.crt
+    git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for ${URL}"
+    git -C /srv/ssl/ssl/ push origin master
+    ;;
+  CRITICAL)
+    # If the above failed, let's not act here. CRITICAL is human intervention time
+    echo "CRITICAL - FAIL SAFE"
+    ;;
+esac
 
 exit 0
