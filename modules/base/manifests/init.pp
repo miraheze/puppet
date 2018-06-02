@@ -33,7 +33,7 @@ class base {
     class { 'apt::backports': }
 
     # Create a user to allow executing renewing ssl script between servers
-    users::user { 'nagios':
+    users::user { 'nagiosre':
         ensure      => present,
         uid         => 3001,
         ssh_keys    => [
