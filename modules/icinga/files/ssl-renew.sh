@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ssh -i /home/nagios/.ssh/id_rsa nagios@mw1.miraheze.org  '/var/lib/nagios/ssl-acme'
+ssh -i /home/nagiosre/.ssh/id_rsa nagiosre@mw1.miraheze.org  '/var/lib/nagios/ssl-acme'
