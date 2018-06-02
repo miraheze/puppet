@@ -23,53 +23,18 @@ class base::monitoring {
         hasrestart => true,
     }
 
-    if hiera('base::use_prometheus_node_exporter', false) {
-        ufw::allow { 'prometheus access all hosts':
-            proto => 'tcp',
-            port  => 9100,
-            from  => '81.4.127.174',
-        }
+    ufw::allow { 'prometheus access all hosts':
+        proto => 'tcp',
+        port  => 9100,
+        from  => '81.4.127.174',
+    }
 
-        require_package('prometheus-node-exporter')
+    require_package('prometheus-node-exporter')
 
-        service { 'prometheus-node-exporter':
-            ensure    => running,
-            enable    => true,
-            require   => Package['prometheus-node-exporter'],
-        }
-    } else {
-        package { 'ganglia-monitor':
-            ensure => present,
-        }
-
-        file { '/etc/ganglia/gmond.conf':
-            ensure  => present,
-            content => template('base/ganglia/gmond.conf'),
-        }
-
-        file { '/etc/ganglia/conf.d':
-            ensure  => directory,
-            mode    => '0755',
-            require => Package['ganglia-monitor'],
-        }
-
-        file { '/etc/ganglia/conf.d/modpython.conf':
-            ensure  => present,
-            source => 'puppet:///modules/base/ganglia/modpython.conf',
-            require => File['/etc/ganglia/conf.d'],
-        }
-        
-        file { '/usr/lib/ganglia/python_modules':
-            ensure  => directory,
-            mode    => '0755',
-            require => Package['ganglia-monitor'],
-        }
-
-        service { 'ganglia-monitor':
-            ensure    => running,
-            require   => Package['ganglia-monitor'],
-            subscribe => File['/etc/ganglia/gmond.conf'],
-        }
+    service { 'prometheus-node-exporter':
+        ensure    => running,
+        enable    => true,
+        require   => Package['prometheus-node-exporter'],
     }
 
     # SUDO FOR NRPE
