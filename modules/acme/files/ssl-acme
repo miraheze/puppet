@@ -19,7 +19,7 @@ then
 			if [ ! -d /srv/ssl/ssl/ ]; then
 				cd /srv/ssl/ && git clone git@github.com:miraheze/ssl.git
 			else
-			        cd /srv/ssl/ssl && git pull
+			        cd /srv/ssl/ssl && git reset --hard origin/master && git pull
 			fi
 			git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"
 			git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
