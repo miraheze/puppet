@@ -22,7 +22,8 @@ then
 			git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"
 			git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
 			sudo /root/ssl-certificate -r $URL > /srv/ssl/ssl/certificates/$URL.crt
-			cat /var/lib/nagios/LE.crt >> /srv/ssl/ssl/certificates/$URL.crt
+			sed '/Re-generating a new SSL cert for $URL/d' /srv/ssl/ssl/certificates/$URL.crt
+			sed '/LetsEncrypt certificate at: /root/ssl/$URL.crt/d' /srv/ssl/ssl/certificates/$URL.crt
 			git -C /srv/ssl/ssl add /srv/ssl/ssl/certificates/$URL.crt
 			git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for ${URL}"
 			git -C /srv/ssl/ssl/ push origin master
