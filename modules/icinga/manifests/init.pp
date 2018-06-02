@@ -189,7 +189,7 @@ class icinga(
         mode    => '0755',
     }
 
-    file { '/home/icinga/id_rsa2':
+    file { '/var/lib/nagios/id_rsa2':
         ensure => present,
         source => 'puppet:///private/icinga/id_rsa2',
         owner  => 'icinga',
