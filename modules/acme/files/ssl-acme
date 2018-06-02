@@ -14,9 +14,11 @@ function log {
 }
 
 function usage {
-    echo "Usage: $0 [-h] [-s <state>] [-u <URL>]"
+    echo "Usage: $0 [-h] [-a <service_attempts>] [-s <state>] [-t <service_type>] [-u <URL>]"
     echo "  -h      display help"
-    echo "  -s      state of service like WARNING and OK"
+    echo "  -a      attempts for service like 3 or 4"
+    echo "  -s      state of service like WARNING or OK"
+    echo "  -t      service type like for example SOFT or HARD"
     echo "  -u      URL ie <domain>"
     exit 1
 }
@@ -26,8 +28,14 @@ while getopts ":hs:u:" option; do
         h)
             usage
             ;;
+        a)
+            ATTEMPT="$OPTARG"
+            ;;
         s)
             STATE="$OPTARG"
+            ;;
+        t)
+            TYPE="$OPTARG"
             ;;
         u)
             URL="$OPTARG"
@@ -38,37 +46,154 @@ while getopts ":hs:u:" option; do
     esac
 done
 
+test -z ${ATTEMPT} && usage
 test -z ${STATE} && usage
+test -z ${TYPE} && usage
 test -z ${URL} && usage
 
 case $STATE in
-  OK)
-    # It's all good
-    ;;
-  UNKNOWN)
-    # We can't do anything about this really
-    ;;
-  WARNING)
-    # Lets Renew here
-    git config --global core.sshCommand "ssh -i /var/lib/nagios/id_rsa -F /dev/null"
-    if [ ! -d /srv/ssl/ssl/ ]; then
-      cd /srv/ssl/ && git clone git@github.com:miraheze/ssl.git
-    else
-            cd /srv/ssl/ssl && git reset --hard origin/master && git pull
-    fi
-    git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"
-    git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
-    sudo /root/ssl-certificate -r $URL > /srv/ssl/ssl/certificates/$URL.crt
-    sed -i "/Re-generating a new SSL cert for ${URL}/d" /srv/ssl/ssl/certificates/$URL.crt
-    sed -i "/LetsEncrypt certificate at: \/root\/ssl\/${URL}.crt/d" /srv/ssl/ssl/certificates/$URL.crt
-    git -C /srv/ssl/ssl add /srv/ssl/ssl/certificates/$URL.crt
-    git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for ${URL}"
-    git -C /srv/ssl/ssl/ push origin master
-    ;;
-  CRITICAL)
-    # If the above failed, let's not act here. CRITICAL is human intervention time
-    echo "CRITICAL - FAIL SAFE"
-    ;;
+OK)
+        # It's all good
+        ;;
+WARNING)
+        # Is this a "soft" or a "hard" state?
+        case $TYPE in
+        SOFT)
+            # blank message
+        ;;
+        HARD)
+                # Lets Renew here
+                git config --global core.sshCommand "ssh -i /var/lib/nagios/id_rsa -F /dev/null"
+                if [ ! -d /srv/ssl/ssl/ ]; then
+                  cd /srv/ssl/ && git clone git@github.com:miraheze/ssl.git
+                else
+                        cd /srv/ssl/ssl && git reset --hard origin/master && git pull
+                fi
+                git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"
+                git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
+                sudo /root/ssl-certificate -r $URL > /srv/ssl/ssl/certificates/$URL.crt
+                sed -i "/Re-generating a new SSL cert for ${URL}/d" /srv/ssl/ssl/certificates/$URL.crt
+                sed -i "/LetsEncrypt certificate at: \/root\/ssl\/${URL}.crt/d" /srv/ssl/ssl/certificates/$URL.crt
+                git -C /srv/ssl/ssl add /srv/ssl/ssl/certificates/$URL.crt
+                git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for ${URL}"
+                git -C /srv/ssl/ssl/ push origin master
+                ;;
+        esac
+        ;;
+UNKNOWN)
+        # We can't do anything about this really
+        ;;
+CRITICAL)
+        # If the above failed, let's not act here. CRITICAL is human intervention time
+        echo "CRITICAL - FAIL SAFE"
+        ;;
 esac
 
+exit 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#!/bin/sh
+#
+# Event handler script for restarting the web server on the local machine
+#
+# Note: This script will only restart the web server if the service is
+#       retried 3 times (in a "soft" state) or if the web service somehow
+#       manages to fall into a "hard" error state.
+#
+
+
+# What state is the HTTP service in?
+case "$1" in
+OK)
+        # The service just came back up, so don't do anything...
+        ;;
+WARNING)
+        # We don't really care about warning states, since the service is probably still running...
+        ;;
+UNKNOWN)
+        # We don't know what might be causing an unknown error, so don't do anything...
+        ;;
+CRITICAL)
+        # Aha!  The HTTP service appears to have a problem - perhaps we should restart the server...
+
+        # Is this a "soft" or a "hard" state?
+        case "$2" in
+                
+        # We're in a "soft" state, meaning that Icinga is in the middle of retrying the
+        # check before it turns into a "hard" state and contacts get notified...
+        SOFT)
+                        
+                # What check attempt are we on?  We don't want to restart the web server on the first
+                # check, because it may just be a fluke!
+                case "$3" in
+                                
+                # Wait until the check has been tried 3 times before restarting the web server.
+                # If the check fails on the 4th time (after we restart the web server), the state
+                # type will turn to "hard" and contacts will be notified of the problem.
+                # Hopefully this will restart the web server successfully, so the 4th check will
+                # result in a "soft" recovery.  If that happens no one gets notified because we
+                # fixed the problem!
+                3)
+                        echo -n "Restarting HTTP service (3rd soft critical state)..."
+                        # Call the init script to restart the HTTPD server
+                        /etc/rc.d/init.d/httpd restart
+                        ;;
+                        esac
+                ;;
+                                
+        # The HTTP service somehow managed to turn into a hard error without getting fixed.
+        # It should have been restarted by the code above, but for some reason it didn't.
+        # Let's give it one last try, shall we?  
+        # Note: Contacts have already been notified of a problem with the service at this
+        # point (unless you disabled notifications for this service)
+        HARD)
+                echo -n "Restarting HTTP service..."
+                # Call the init script to restart the HTTPD server
+                /etc/rc.d/init.d/httpd restart
+                ;;
+        esac
+        ;;
+esac
 exit 0
