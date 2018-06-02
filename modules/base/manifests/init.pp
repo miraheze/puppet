@@ -37,7 +37,7 @@ class base {
         ensure      => present,
         uid         => 3001,
         ssh_keys    => [
-            'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDTRdK2A00FRVV60Db+qJLspRw+mYnsG3X+MK3UR6JuK6bmueXA03Y1QNAxGsMIJarvTpuzEU30v/zh4NuQFCCX7vBKQfFxV32SyTIT7OQQpdzh0VlHzGQPq2Oz0fcDDxvCm5cldPZkq/rdQu5Qt395LHSLsiu7hblErlaUfFJ8UPIpIzi87NfaCvZiEad+kcqR5ELoK3LKUbu7vtv+UoCjSzc4eD/OFIuIhXFNk0TlRJppG5XxgnKgL3B1ho/x8i3f6mTwu6zx3IX6tO+0GN00nLVRbOGhZhvDuM2iSeQCKaQ0SbXRsn+DIEt2fUQT5D9xP1uTKB5+/NgWb0L4vVvd/a7rjpVniKWQjzJUxiel4/AjBudDwImP5wN7t8P3+4zYa/ooL8qe15nv40J66LuzRT0MNV4NCjNTrv2lOBMVz+cMy+xFDUtChleoABBQence8iqUvmZ2cH7GrK5IiKbRTjyIesfPmd+ewcRXmIQ0Y/UXTYi1oJqVP+pslQDa3aTgJGSgWvwbRFmQRHwLodAv3QXYT3KKbdPiynEvZ6A7qPkULGfeZ/W/R/JEr70csnHqKqvkz81jnqM9MFw2oDwU2vlhoHBhea8A+SJv38wAAuzpbcTzNQP8feXgKWnHavP6uRDxO8KUbV4LTt2Fveb+livtCGidU4wBtagDfTkgzQ== root@db3'
+            'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDkaCSnz6EWa4Dc3WtvqxXG/5QuhOEfzCraZUfMDDCLTjJrrWxo+8gPynm4IbsMbfur+dmi0JylABWvLM6OBXyGDZBasoFXTN0qQiVesKVFnUSdtsRXo9PZe2AR/pi/sE1i+L/j8daerx4uCY3gavG+RiHxeJUyWhFjxILmy+06X9xYKM9dY63pD6t4YdhIJPGcBylc3jBZ+8wkdYCr0hFvNLO7IAgVhc2LhaYcxbuhMuvrQtg4PQeSunQFEtkGjebxqvbzvTgfkcuK9mj58fMuC4fff9cdizuMuso4+HQ/G53P6QQYkKjVD49KipdHzyfrgf2QaTnZpVeOLCHonRl7c8DaXE1iWbifvI7+K2jZ+/qqT/cZ4jzCetBzRBpzW4En90abJ/jhV4wDAfLc34XUT+mexDAYO6LgivFsFuYLiQEOB6WwLtjXxYriWR7C/aHmDnUc3oJ/kXcZCnQ/c/YawXyDU+kUzUhkELHtEBnyaum0yEd4yiC/PrPYqkoOlbGO6GaV/ykjfcaNV4esBsiaOn72xobPTjfMhJdFRDebeoejPGWl4gHCZTtOjnpScYjEAuz4ZNCv7n9i/i8h1KvASf0FayU+yj2B/QvysxAzgbWuEMXulTVc8L4yYFLvIZtoRRg4drQ4mWLzhx1D/JVJDndUmHcWo1N3Rl2o6E5Ytw== nagiosre@misc1'
         ],
     }
 }
