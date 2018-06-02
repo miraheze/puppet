@@ -189,6 +189,14 @@ class icinga(
         mode    => '0755',
     }
 
+    file { '/var/lib/nagios/id_rsa2':
+        ensure => present,
+        source => 'puppet:///private/icinga/id_rsa2',
+        owner  => 'nagios',
+        group  => 'nagios',
+        mode   => '0400',
+    }
+
     class { 'icinga::plugins':
         require => Package['icinga'],
         notify  => Service['icinga'],
