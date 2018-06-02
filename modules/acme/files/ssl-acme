@@ -18,6 +18,8 @@ then
 			git config --global core.sshCommand "ssh -i /var/lib/nagios/id_rsa -F /dev/null"
 			if [ ! -d /srv/ssl/ssl/ ]; then
 				cd /srv/ssl/ && git clone git@github.com:miraheze/ssl.git
+			else
+			        cd /srv/ssl/ssl && git pull
 			fi
 			git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"
 			git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
