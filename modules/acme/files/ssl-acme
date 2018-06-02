@@ -23,7 +23,7 @@ function usage {
     exit 1
 }
 
-while getopts ":hs:u:" option; do
+while getopts ":ha:s:t:u:" option; do
     case $option in
         h)
             usage
