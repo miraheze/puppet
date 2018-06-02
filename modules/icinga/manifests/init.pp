@@ -24,7 +24,7 @@ class icinga(
         home       => '/home/icinga',
         gid        => 'icinga',
         system     => true,
-        managehome => false,
+        managehome => true,
         shell      => '/bin/false',
         require    => [ Group['icinga'], Group['nagios'] ],
         groups     => 'nagios',
