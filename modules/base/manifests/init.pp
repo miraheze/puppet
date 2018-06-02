@@ -32,7 +32,7 @@ class base {
     
     class { 'apt::backports': }
 
-    # Create a user to allow db transfers between servers
+    # Create a user to allow executing renewing ssl script between servers
     users::user { 'nagios':
         ensure      => present,
         uid         => 3001,
