@@ -19,7 +19,7 @@ root: /dev/null
 ops: operations
 
 # gdpr / privacy alias
-privacy: operations
+privacy: staff
 
 # DMARC - potentially high volume, best recommended for mail admins on misc1
 dmarc: ndkilla,john
