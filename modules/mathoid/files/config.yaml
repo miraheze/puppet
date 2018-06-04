@@ -5,7 +5,7 @@ num_workers: 0
 
 # Log error messages and gracefully restart a worker if v8 reports that it
 # uses more heap (note: not RSS) than this many mb.
-worker_heap_limit_mb: 150
+worker_heap_limit_mb: 140
 
 # Logger info
 logging:
