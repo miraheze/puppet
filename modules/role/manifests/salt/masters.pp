@@ -10,7 +10,7 @@ class role::salt::masters {
         salt_runner_dirs    => '/srv/runners',
         salt_file_roots     => $salt_file_roots,
         salt_pillar_roots   => $salt_pillar_roots,
-        salt_worker_threads => '20',
+        salt_worker_threads => '10',
         salt_state_roots    => $salt_state_roots,
         salt_module_roots   => $salt_module_roots,
         salt_returner_roots => $salt_returner_roots,
