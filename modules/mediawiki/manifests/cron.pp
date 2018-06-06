@@ -19,10 +19,19 @@ class mediawiki::cron {
     }
 
     if os_version('debian >= stretch') {
-        cron { 'restart_php70fpm':
-            ensure  => absent,
-            command => '/usr/sbin/service php7.0-fpm restart',
-            minute  => '*/10',
+        $php7_2 = hiera('mediawiki::use_php_7_2', false)
+        if $php7_2 {
+            cron { 'restart_php72fpm':
+                ensure  => absent,
+                command => '/usr/sbin/service php7.2-fpm restart',
+                minute  => '*/10',
+            }
+        } else {
+            cron { 'restart_php70fpm':
+                ensure  => absent,
+                command => '/usr/sbin/service php7.0-fpm restart',
+                minute  => '*/10',
+            }
         }
     } else {
         cron { 'restart_php5fpm':
