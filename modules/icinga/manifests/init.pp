@@ -192,8 +192,8 @@ class icinga(
     file { '/var/lib/nagios/id_rsa2':
         ensure => present,
         source => 'puppet:///private/icinga/id_rsa2',
-        owner  => 'icinga',
-        group  => 'icinga',
+        owner  => 'nagios',
+        group  => 'nagios',
         mode   => '0400',
     }
 
