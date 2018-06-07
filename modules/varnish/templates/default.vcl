@@ -49,6 +49,12 @@ backend mw3 {
 	.probe = mwhealth;
 }
 
+backend test1 {
+	.host = "127.0.0.1";
+	.port = "8083";
+	.probe = mwhealth;
+}
+
 sub vcl_init {
 	new mediawiki = directors.round_robin();
 	mediawiki.add_backend(mw1);
@@ -62,6 +68,7 @@ acl purge {
 	"185.52.1.75";
 	"185.52.2.113";
 	"81.4.121.113";
+	"185.52.2.243";
 }
 
 sub stash_cookie {
@@ -159,6 +166,9 @@ sub vcl_recv {
 
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "2") {
+		set req.backend_hint = test1;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
