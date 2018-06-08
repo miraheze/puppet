@@ -10,6 +10,7 @@ class mediawiki(
     include mediawiki::packages
     include mediawiki::logging
     include mediawiki::extensionsetup
+    include mediawiki::memcached
 
     $php7_2 = hiera('mediawiki::use_php_7_2', false)
 
