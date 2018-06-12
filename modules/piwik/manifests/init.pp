@@ -1,16 +1,21 @@
 # class: piwik
 class piwik(
-    # use php7 on stretch+
-    $modules = ['expires', 'rewrite', 'ssl', 'php5']
+    $modules = ['expires', 'rewrite', 'ssl', 'php7']
+    $php_72 = false,
 ) {
     include ::httpd
 
-    if os_version('debian >= stretch') {
-        $php_version = '7.0'
-        require_package('php7.0-curl', 'php7.0-mbstring', 'php7.0-mysql', 'php7.0-gd', 'libapache2-mod-php7.0')
+    if $php_72 {
+
+        include ::php
+
+        $php_version = '7.2'
+
+        require_package("libapache2-mod-php${php_version}")
     } else {
-        $php_version = '5'
-        require_package('php5-curl', 'php5-mysqlnd', 'php5-gd', 'libapache2-mod-php5')
+        $php_version = '7.0'
+
+        require_package('php7.0-curl', 'php7.0-mbstring', 'php7.0-mysql', 'php7.0-gd', 'libapache2-mod-php7.0')
     }
 
     git::clone { 'piwik':
@@ -37,36 +42,19 @@ class piwik(
         monitor => true,
     }
 
-    if os_version('debian >= stretch') {
-        file { '/etc/php/7.0/apache2/conf.d/20-piwik.ini':
-            ensure  => present,
-            source  => 'puppet:///modules/piwik/20-piwik.ini',
-            notify  => Exec['apache2_test_config_and_restart'],
-            require => Package['libapache2-mod-php7.0'],
-        }
+    file { "/etc/php/${php_version}/apache2/conf.d/20-piwik.ini":
+        ensure  => present,
+        source  => 'puppet:///modules/piwik/20-piwik.ini',
+        notify  => Exec['apache2_test_config_and_restart'],
+        require => Package["libapache2-mod-php${php_version}"],
+    }
 
-        file_line { 'enable_php_opcache':
-            line    => 'opcache.enable=1',
-            match   => '^;?opcache.enable\s*\=',
-            path    => '/etc/php/7.0/apache2/php.ini',
-            notify  => Exec['apache2_test_config_and_restart'],
-            require => Package['libapache2-mod-php7.0'],
-        }
-    } else {
-        file { '/etc/php5/apache2/conf.d/20-piwik.ini':
-            ensure  => present,
-            source  => 'puppet:///modules/piwik/20-piwik.ini',
-            notify  => Exec['apache2_test_config_and_restart'],
-            require => Package['libapache2-mod-php5'],
-        }
-
-        file_line { 'enable_php_opcache':
-            line    => 'opcache.enable=1',
-            match   => '^;?opcache.enable\s*\=',
-            path    => '/etc/php5/apache2/php.ini',
-            notify  => Exec['apache2_test_config_and_restart'],
-            require => Package['libapache2-mod-php5'],
-        }
+    file_line { 'enable_php_opcache':
+        line    => 'opcache.enable=1',
+        match   => '^;?opcache.enable\s*\=',
+        path    => "/etc/php/${php_version}/apache2/php.ini",
+        notify  => Exec['apache2_test_config_and_restart'],
+        require => Package["libapache2-mod-php${php_version}"],
     }
 
     httpd::mod { 'piwik_apache':
