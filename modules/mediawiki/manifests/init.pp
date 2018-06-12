@@ -12,6 +12,7 @@ class mediawiki(
     include mediawiki::logging
     include mediawiki::extensionsetup
     include mediawiki::memcached
+    include mediawiki::monitoring
 
     if $php7_2 {
         include mediawiki::php7_2
