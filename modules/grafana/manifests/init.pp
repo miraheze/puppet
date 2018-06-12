@@ -43,7 +43,7 @@ class grafana(
         subscribe => File['/etc/prometheus/prometheus.yml'],
     }
 
-    $php_72
+    if $php_72 {
         include ::php
 
         $php = '7.2'
