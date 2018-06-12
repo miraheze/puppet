@@ -2,6 +2,7 @@
 class mediawiki(
     $branch = undef,
     $branch_mw_config = undef,
+    $php7_2 = hiera('mediawiki::use_php_7_2', false)
 ) {
     include mediawiki::favicons
     include mediawiki::cron
@@ -12,21 +13,16 @@ class mediawiki(
     include mediawiki::extensionsetup
     include mediawiki::memcached
 
-    $php7_2 = hiera('mediawiki::use_php_7_2', false)
-
-    if os_version('debian >= stretch') {
-        if $php7_2 {
-            include mediawiki::php7_2
-        } else {
-            include mediawiki::php7
-        }
+    if $php7_2 {
+        include mediawiki::php7_2
     } else {
-        include mediawiki::php5
+        include mediawiki::php7
     }
 
     if hiera(jobrunner) {
         include mediawiki::jobrunner
     }
+
     if hiera(mwdumps) {
         include mediawiki::dumps
     }
@@ -82,24 +78,15 @@ class mediawiki(
         require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
     }
 
-    if os_version('debian >= stretch') {
-        if $php7_2 {
-            file { '/var/log/php7.2-fpm.log':
-                ensure  => 'present',
-                owner   => 'www-data',
-                group   => 'www-data',
-                mode    => '0755',
-            }
-        } else {
-            file { '/var/log/php7.0-fpm.log':
-                ensure  => 'present',
-                owner   => 'www-data',
-                group   => 'www-data',
-                mode    => '0755',
-            }
+    if $php7_2 {
+        file { '/var/log/php7.2-fpm.log':
+            ensure  => 'present',
+            owner   => 'www-data',
+            group   => 'www-data',
+            mode    => '0755',
         }
     } else {
-        file { '/var/log/php5-fpm.log':
+        file { '/var/log/php7.0-fpm.log':
             ensure  => 'present',
             owner   => 'www-data',
             group   => 'www-data',

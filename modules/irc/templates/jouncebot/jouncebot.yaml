@@ -1,0 +1,44 @@
+# Default configuration file for JounceBot
+#   Copy this:( I' and place in either the JounceBot root or /etc as jouncebot.yaml
+
+irc:
+  server: chat.freenode.net
+  port: 6697
+  channel: "#miraheze"
+  nick: MirahezeJouncebot
+  realname: "http://meta.miraheze.org"
+#  password: 
+
+mwclient:
+  wiki: meta.miraheze.org
+  calPage: Deployments
+
+aclFile: /etc/jouncebot.acl.yaml
+
+logging:
+  useSyslog: no
+
+messages:
+  generic:
+    - 'Deploy window {event.window} ({event.url})'
+  deployer:
+    - '{deployers}: How many deployers does it take to do {event.window} deploy? ({event.url}).'
+    - '{deployers}: Time to snap out of that daydream and deploy {event.window}. Get on with it. ({event.url}).'
+    - '{deployers}: Dear deployers, time to do the {event.window} deploy. Dont look at me like that. You signed up for it. ({event.url}).'
+    - '{deployers}: It is that lovely time of the day again! You are hereby commanded to deploy {event.window}. ({event.url}).'
+    - '{deployers}: (Dis)respected human, time to deploy {event.window} ({event.url}). Please do the needful.'
+    - '{deployers}: Your horoscope predicts another unfortunate {event.window} deploy. May Zuul be (nice) with you. ({event.url}).'
+    - '{deployers}: My dear minions, it''s time we take the moon! Just kidding. Time for {event.window} deploy. ({event.url}).'
+    - '{deployers}: I, the Bot under the Fountain, allow thee, The Deployer, to do {event.window} deploy. ({event.url}).'
+    - '{deployers}: That opportune time is upon us again. Time for a {event.window} deploy. Don''t be afraid. ({event.url}).'
+    - '{deployers}: I seem to be stuck in Groundhog week. Sigh. Time for (yet another) {event.window} deploy. ({event.url}).'
+    - '{deployers}: #bothumor Q:How do functions break up? A:They stop calling each other. Rise for {event.window} deploy. ({event.url}).'
+    - '{deployers}: #bothumor Q:Why did functions stop calling each other? A:They had arguments. Rise for {event.window} . ({event.url}).'
+    - '{deployers}: #bothumor When your hammer is PHP, everything starts looking like a thumb. Rise for {event.window}. ({event.url}).'
+    - '{deployers}: #bothumor My software never has bugs. It just develops random features. Rise for {event.window}. ({event.url}).'
+    - '{deployers}: #bothumor I � Unicode. All rise for {event.window} deploy. ({event.url}).'
+
+  owner:
+    - '{owners}: A patch you scheduled for {event.window} is about to be deployed. Please be around during the process. Note: If you break AND fix the wikis, you will be rewarded with a sticker.'
+
+debug: false

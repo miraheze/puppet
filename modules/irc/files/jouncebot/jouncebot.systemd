@@ -1,0 +1,11 @@
+[Unit]
+Description=Miraheze Jouncebot
+
+[Service]
+Type=simple
+ExecStart=/etc/jouncebot/jouncebot.py --config=/etc/jouncebot/jouncebot.yaml
+User=irc
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
