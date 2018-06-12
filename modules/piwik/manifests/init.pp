@@ -1,6 +1,6 @@
 # class: piwik
 class piwik(
-    $modules = ['expires', 'rewrite', 'ssl', 'php7']
+    $modules = ['expires', 'rewrite', 'ssl', 'php7'],
     $php_72 = false,
 ) {
     include ::httpd
