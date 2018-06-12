@@ -1,7 +1,8 @@
 # class: grafana
 class grafana(
     # use php7.0 on stretch+
-    $modules = ['headers', 'proxy', 'proxy_http', 'php7.0', 'rewrite', 'ssl']
+    $modules = ['headers', 'proxy', 'proxy_http', 'php7.0', 'rewrite', 'ssl'],
+    $php_72 = false,
 ) {
     $grafana_password = hiera('passwords::db::grafana')
 
@@ -42,7 +43,15 @@ class grafana(
         subscribe => File['/etc/prometheus/prometheus.yml'],
     }
 
-    require_package('libapache2-mod-php7.0')
+    $php_72
+        include ::php
+
+        $php = '7.2'
+    } else {
+        $php = '7.0'
+    }
+
+    require_package("libapache2-mod-php${php}")
 
     file { '/etc/apache2/sites-enabled/apache.conf':
         ensure => absent,
@@ -74,15 +83,15 @@ class grafana(
         monitor => true,
     }
 
-    file { '/etc/php/7.0/apache2/conf.d/php.ini':
+    file { "/etc/php/${php}/apache2/conf.d/php.ini":
         ensure  => present,
         mode    => '0755',
-        source  => 'puppet:///modules/grafana/apache/php7.ini',
-        require => Package["libapache2-mod-php7.0"]
+        source  => 'puppet:///modules/grafana/apache/php.ini',
+        require => Package["libapache2-mod-php${$php}"]
     }
 
     httpd::mod { 'grafana_apache':
         modules => $modules,
-        require => Package['libapache2-mod-php7.0'],
+        require => Package["libapache2-mod-php${php}"],
     }
 }
