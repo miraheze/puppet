@@ -26,10 +26,6 @@ class redis (
         require => Package['redis-server'],
     }
 
-    file { '/etc/init.d/redis-server':
-        ensure => absent,
-    }
-
     exec { 'redis reload systemd':
         command     => '/bin/systemctl daemon-reload',
         refreshonly => true,
