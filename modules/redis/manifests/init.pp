@@ -5,8 +5,16 @@ class redis (
     $maxmemory_samples = 5,
     $password = false,
 ) {
+    apt::pin { 'debian_stretch_backports_redis':
+        priority   => 740,
+        originator => 'Debian',
+        release    => 'stretch-backports',
+        packages   => 'redis-server',
+    }
+
     package { 'redis-server':
-        ensure => present,
+        ensure  => present,
+        require => Apt::Pin['debian_stretch_backports_redis'],
     }
 
     file { '/etc/redis/redis.conf':
