@@ -7,7 +7,6 @@ class mediawiki(
     include mediawiki::favicons
     include mediawiki::cron
     include mediawiki::nginx
-    include mediawiki::wikistats
     include mediawiki::packages
     include mediawiki::logging
     include mediawiki::extensionsetup
