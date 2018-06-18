@@ -4,4 +4,4 @@ grafana::modules: ['headers', 'proxy', 'proxy_http', 'php7.2', 'rewrite', 'ssl']
 piwik::modules: ['expires']
 puppetmaster_version: 4
 grafana::php_72: true
-piwik::php72: true
+piwik::php_72: true
