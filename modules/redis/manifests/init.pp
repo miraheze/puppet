@@ -2,7 +2,6 @@
 class redis (
     $port = 6379,
     $maxmemory = '512mb',
-    $maxmemory_policy = 'volatile-lfu',
     $maxmemory_samples = 5,
     $password = false,
 ) {
