@@ -94,6 +94,7 @@ maniphest.statuses:
     name.full: 'Closed, Declined'
     closed: true
     transaction.icon: 'fa-thumbs-o-down'
+    claim: false
     prefixes: [decline, declines, declined]
     suffixes: ['as declined']
   'stalled':
