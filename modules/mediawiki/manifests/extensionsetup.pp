@@ -96,6 +96,16 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
 
+    exec { 'timedmediahandler_composer':
+        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
+        creates     => '/srv/mediawiki/w/extensions/TimedMediaHandler/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/TimedMediaHandler',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/extensions/TimedMediaHandler',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
     # Ensure widgets template directory is read/writeable by webserver if mediawiki is cloned
     file { '/srv/mediawiki/w/extensions/Widgets/compiled_templates':
         ensure  => directory,
