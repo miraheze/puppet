@@ -14,6 +14,9 @@ class base::ufw {
 
     # temp for swift testing with nsf1
     ufw::allow { 'test1 swift':
+        proto => 'tcp',
+        port  => 6002,
+        from  => '185.52.2.243',
         ensure => absent,
     }
 
