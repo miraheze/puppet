@@ -1,6 +1,6 @@
 users::groups:
   - mediawiki-admins
-jobrunner: false
+jobrunner: true
 arcanist: true
 mwdumps: true
 # for icinga2 only
