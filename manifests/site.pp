@@ -3,7 +3,8 @@
 node 'bacula1.miraheze.org' {
     include base
     include bacula::director
-    include role::dbreplication
+    # mysql crashes
+    # include role::dbreplication
     include role::salt::minions
 }
 
