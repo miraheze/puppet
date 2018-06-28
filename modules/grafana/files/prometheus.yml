@@ -1,9 +1,10 @@
 # Sample config for Prometheus.
 
 global:
-  scrape_interval:     30s # By default, scrape targets every 15 seconds.
-  evaluation_interval: 30s # By default, scrape targets every 15 seconds.
+  scrape_interval:     30s # By default, scrape targets every 30 seconds.
+  evaluation_interval: 30s # By default, scrape targets every 30 seconds.
   # scrape_timeout is set to the global default (10s).
+  scrape_timeout: 30s
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
@@ -21,7 +22,7 @@ scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: 'prometheus'
 
-    # Override the global default and scrape targets from this job every 5 seconds.
+    # Override the global default and scrape targets from this job every 35 seconds.
     scrape_interval: 30s
     scrape_timeout: 30s
 
@@ -50,6 +51,7 @@ scrape_configs:
         'nfs1.miraheze.org:9100',
         'ns1.miraheze.org:9100',
         'puppet1.miraheze.org:9100',
+        'swift1.miraheze.org:9100',
         'test1.miraheze.org:9100',
         'cp2.miraheze.org:9131', # Varnish exporter
         'cp4.miraheze.org:9131',
