@@ -10,6 +10,54 @@ class swift {
         require => Package['swift'],
     }
 
+    git::clone { 'swift':
+        ensure    => present,
+        directory => '/srv/swift',
+        origin    => 'https://github.com/miraheze/rings.git',
+        branch    => 'master',
+        owner     => 'root',
+        group     => 'root',
+        mode      => '0755',
+        timeout   => '550',
+        require   => Package['swift'],
+    }
+
+    file { '/etc/swift/account.builder':
+        ensure  => 'link',
+        target  => '/srv/swift/account.builder',
+        require => [Package['swift'], Git::Clone['swift']],
+    }
+
+    file { '/etc/swift/account.ring.gz':
+        ensure  => 'link',
+        target  => '/srv/swift/account.ring.gz',
+        require => [Package['swift'], Git::Clone['swift']],
+    }
+
+    file { '/etc/swift/container.builder':
+        ensure  => 'link',
+        target  => '/srv/swift/container.builder',
+        require => [Package['swift'], Git::Clone['swift']],
+    }
+
+    file { '/etc/swift/container.ring.gz':
+        ensure  => 'link',
+        target  => '/srv/swift/container.ring.gz',
+        require => [Package['swift'], Git::Clone['swift']],
+    }
+
+    file { '/etc/swift/object.builder':
+        ensure  => 'link',
+        target  => '/srv/swift/object.builder',
+        require => [Package['swift'], Git::Clone['swift']],
+    }
+
+    file { '/etc/swift/object.ring.gz':
+        ensure  => 'link',
+        target  => '/srv/swift/object.ring.gz',
+        require => [Package['swift'], Git::Clone['swift']],
+    }
+
     if hiera('swift_proxy', false) {
         include swift::proxy
     }
