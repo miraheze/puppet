@@ -2,7 +2,6 @@ myhostname = mail.miraheze.org
 myorigin = /etc/mailname
 mydestination = mail.miraheze.org, miraheze.org, localhost
 relayhost =
-relay_domains =
 mynetworks = 185.52.1.76
 mailbox_size_limit = 0
 recipient_delimiter = +
@@ -10,7 +9,7 @@ inet_interfaces = all
 smtp_bind_address=185.52.1.76
 smtp_bind_address6=2a00:d880:6:787::3
 
-virtual_alias_domains = phabricator.miraheze.org
+virtual_alias_domains = hash:/etc/virtual_domains
 virtual_alias_maps = hash:/etc/virtual
 
 alias_maps = hash:/etc/aliases
@@ -34,5 +33,10 @@ milter_default_action = accept
 smtpd_milters = inet:localhost:12301,inet:localhost:54321
 non_smtpd_milters = inet:localhost:12301,inet:localhost:54321
 
-local_recipient_maps = proxy:unix:passwd.byname $alias_maps
+local_recipient_maps = proxy:unix:passwd.byname $alias_maps hash:/var/lib/mailman3/data/postfix_lmtp
 smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination
+
+transport_maps =
+    hash:/var/lib/mailman3/data/postfix_lmtp
+relay_domains =
+    hash:/var/lib/mailman3/data/postfix_domains

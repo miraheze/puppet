@@ -24,6 +24,11 @@ class postfix {
         source => 'puppet:///modules/postfix/virtual',
     }
 
+    file { '/etc/virtual_domains':
+        ensure => present,
+        source => 'puppet:///modules/postfix/virtual_domains',
+    }
+
     exec { '/usr/bin/newaliases':
         subscribe   => [ File['/etc/aliases'], File['/etc/virtual'], ],
         refreshonly => true,
