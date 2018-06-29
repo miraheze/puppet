@@ -21,3 +21,5 @@ $wgSecretKey = "<%= @mediawiki_secretkey %>";
 // ReCaptchaNoCaptcha secret keys
 $wgReCaptchaSiteKey = "<%= @recaptcha_sitekey %>";
 $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
+
+$wmgSwiftAdminPassword = "<%= @swift_admin_password %>";
