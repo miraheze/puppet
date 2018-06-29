@@ -10,6 +10,18 @@ class swift {
         require => Package['swift'],
     }
 
+    file { '/var/lock/swift':
+        ensure  => directory,
+    }
+
+    file { '/var/log/swift':
+        ensure  => directory,
+    }
+
+    file { '/var/lib/swift':
+        ensure  => directory,
+    }
+
     git::clone { 'swift':
         ensure    => present,
         directory => '/srv/swift',
