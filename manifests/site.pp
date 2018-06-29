@@ -76,6 +76,12 @@ node 'puppet1.miraheze.org' {
     include role::salt::minions
 }
 
+node 'swift.miraheze.org' {
+    include base
+    include role::swift
+    include role::salt::minions
+}
+
 node 'test1.miraheze.org' {
     include base
     include role::mediawiki
