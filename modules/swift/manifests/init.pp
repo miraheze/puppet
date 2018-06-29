@@ -22,6 +22,10 @@ class swift {
         ensure  => directory,
     }
 
+    file { '/srv/node':
+        ensure  => directory,
+    }
+
     git::clone { 'swift':
         ensure    => present,
         directory => '/srv/swift',
