@@ -74,8 +74,7 @@ class swift {
         include swift::proxy
     }
 
-    # TODO: create class
-    #if hiera('swift_backend', false) {
-    #    include swift::backend
-    #}
+    if hiera('swift_backend', false) {
+        include swift::backend
+    }
 }

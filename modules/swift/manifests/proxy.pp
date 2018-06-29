@@ -32,6 +32,7 @@ class swift::proxy {
         require => Package['memcached'],
     }
 
+    # TODO: get monotoring working
     #if hiera('base::monitoring::use_icinga2', false) {
     #    icinga2::custom::services { 'Swift Proxy':
     #        check_command => 'tcp',
