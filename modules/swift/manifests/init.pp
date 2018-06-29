@@ -2,7 +2,7 @@
 
 class swift {
 
-    require_package('swift')
+    require_package(['swift', 'python-swiftclient'])
 
     file { '/etc/swift/swift.conf':
         ensure  => present,
