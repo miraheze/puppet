@@ -76,7 +76,7 @@ node 'puppet1.miraheze.org' {
     include role::salt::minions
 }
 
-node 'swift.miraheze.org' {
+node 'swift1.miraheze.org' {
     include base
     include role::swift
     include role::salt::minions
