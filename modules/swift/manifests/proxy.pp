@@ -17,7 +17,7 @@ class swift::proxy {
 
     file { '/etc/swift/proxy-server.conf':
         ensure  => present,
-        content => template('restbase/proxy-server.conf.erb'),
+        content => template('swift/proxy-server.conf.erb'),
         require => Package['swift-proxy'],
         notify  => Service['swift-proxy'],
     }
