@@ -2,6 +2,32 @@
 class role::swift {
     include ::swift
 
+    # http
+    ufw::allow { 'swift mw1':
+        proto => 'tcp',
+        port  => 80,
+        from  => '185.52.1.75',
+    }
+
+    ufw::allow { 'swift mw2':
+        proto => 'tcp',
+        port  => 80,
+        from  => '185.52.2.113',
+    }
+
+    ufw::allow { 'swift mw3':
+        proto => 'tcp',
+        port  => 80,
+        from  => '81.4.121.113',
+    }
+
+    ufw::allow { 'swift test1':
+        proto => 'tcp',
+        port  => 80,
+        from  => '185.52.2.243',
+    }
+    
+    # https
     ufw::allow { 'swift mw1':
         proto => 'tcp',
         port  => 443,
