@@ -23,7 +23,9 @@ class swift {
     }
 
     file { '/srv/node':
-        ensure  => directory,
+        ensure => directory,
+        owner  => 'swift',
+        group  => 'swift',
     }
 
     git::clone { 'swift':
