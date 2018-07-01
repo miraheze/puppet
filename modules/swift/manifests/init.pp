@@ -29,7 +29,7 @@ class swift {
     }
 
     git::clone { 'swift':
-        ensure    => present,
+        ensure    => 'latest',
         directory => '/srv/swift',
         origin    => 'https://github.com/miraheze/rings.git',
         branch    => 'master',
