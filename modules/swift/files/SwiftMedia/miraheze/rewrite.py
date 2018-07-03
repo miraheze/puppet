@@ -145,7 +145,7 @@ class _WMFRewriteContext(WSGIContext):
         # add in the headers if we've got them
         for header in ['Content-Length', 'Content-Disposition', 'Last-Modified', 'Accept-Ranges']:
             if(uinfo.getheader(header) != ''):
-                resp.headers.[header] = uinfo.getheader(header)
+                resp.headers[header] = uinfo.getheader(header)
 
         # also add CORS; see also our CORS middleware
         resp.headers['Access-Control-Allow-Origin'] = '*'
