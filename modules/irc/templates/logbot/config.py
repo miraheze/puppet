@@ -58,7 +58,16 @@ author_map = {
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)
-title_map = { "example": "Master" }
+title_map = { 
+    "example": "Master",
+    "paladox": "Paladox",
+    "JohnLewis": "John",
+    "Reception123": "Reception",
+    "revi": "Revi",
+    "MacFan4000": "MacFan",
+    "SPF|Cloud": "SPF",
+    "PuppyKun": "NDKilla"
+            }
 
 # Scheme and wiki hostname to connect to
 wiki_connection = ("https", "meta.miraheze.org")
@@ -85,7 +94,7 @@ wiki_domain = ""
 wiki_page = "Tech:Server_admin_log"
 
 # Page to visit to view logs -- used by the bot's help message
-log_url = ""
+log_url = "Tech:Server_Admin_Log"
 
 # Header depth for dates written
 wiki_header_depth = 2
