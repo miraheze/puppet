@@ -917,6 +917,6 @@ account = 'AUTH_<%= user %>'
 user_agent = Mozilla/5.0
 
 # sending thumbnail requests to thumbor
-thumborhost = <%= @thumborhost %>
+thumborhost = '<%= @thumborhost %>'
 
-paste.filter_factory = wmf.rewrite:filter_factory
+paste.filter_factory = miraheze.rewrite:filter_factory
