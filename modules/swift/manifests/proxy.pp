@@ -29,6 +29,15 @@ class swift::proxy {
         notify  => Service['swift-proxy'],
     }
 
+    file { '/usr/local/lib/python2.7/dist-packages/miraheze/':
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        source  => 'puppet:///modules/swift/SwiftMedia/miraheze/',
+        recurse => 'remote',
+        notify  => Service['swift-proxy'],
+    }
+
     service { 'swift-proxy':
         ensure  => running,
         require => Package['swift-proxy'],
@@ -38,6 +47,7 @@ class swift::proxy {
         ensure  => running,
         require => Package['memcached'],
     }
+
 
     # TODO: get monotoring working
     #if hiera('base::monitoring::use_icinga2', false) {
