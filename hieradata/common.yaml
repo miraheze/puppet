@@ -7,3 +7,4 @@ mediawiki::branch: 'REL1_31'
 acme: false
 base::monitoring::use_icinga2: false
 mediawiki::use_php_7_2: true
+use_swift: true
