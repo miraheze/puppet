@@ -36,10 +36,6 @@ class _WMFRewriteContext(WSGIContext):
         self.thumbhost = conf['thumbhost'].strip()
         self.user_agent = conf['user_agent'].strip()
         self.bind_port = conf['bind_port'].strip()
-        # this parameter controls whether URLs sent to the thumbhost are sent
-        # as is (eg. upload/proj/lang/) or with the site/lang converted  and
-        # only the path sent back (eg en.wikipedia/thumb).
-        self.backend_url_format = conf['backend_url_format'].strip()  # asis, sitelang
 
     def handle404(self, reqorig, url, container, obj):
         """
