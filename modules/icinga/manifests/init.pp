@@ -173,14 +173,6 @@ class icinga(
 
     $icingabot_password = hiera('passwords::phabricator::icinga')
 
-    file { '/etc/icinga/ssl-phabricator.py':
-        ensure  => 'present',
-        content => template('icinga/ssl-phabricator.py'),
-        owner   => 'icinga',
-        group   => 'icinga',
-        mode    => '0755',
-    }
-
     file { '/etc/icinga/ssl-renew.sh':
         ensure  => 'present',
         source  => 'puppet:///modules/icinga/ssl-renew.sh',
