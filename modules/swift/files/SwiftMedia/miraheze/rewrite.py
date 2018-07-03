@@ -40,7 +40,6 @@ class _WMFRewriteContext(WSGIContext):
         # as is (eg. upload/proj/lang/) or with the site/lang converted  and
         # only the path sent back (eg en.wikipedia/thumb).
         self.backend_url_format = conf['backend_url_format'].strip()  # asis, sitelang
-        self.tld = conf['tld'].strip()
 
     def handle404(self, reqorig, url, container, obj):
         """
@@ -80,47 +79,18 @@ class _WMFRewriteContext(WSGIContext):
             # http://upload.wm.o/wikipedia/commons/thumb/a/a2/Foo_.jpg/330px-Foo_.jpg
             # changes to
             # http://commons.wp.o/w/thumb_handler.php/a/a2/Foo_.jpg/330px-Foo_.jpg
-            if self.backend_url_format == 'sitelang':
-                match = re.match(
-                    r'^http://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
-                    encodedurl)
-                if match:
-                    proj = match.group('proj')
-                    lang = match.group('lang')
-                    # and here are all the legacy special cases, imported from thumb_handler.php
-                    hostname = '%s.%s' % (proj, self.tld)
-                    if(proj == 'wikipedia' and lang == 'sources'):
-                        # yay special case
-                        hostname = 'wikisource.%s' % self.tld
-                    # ok, replace the URL with just the part starting with thumb/
-                    # take off the first two parts of the path
-                    # (eg /wikipedia/commons/); make sure the string starts
-                    # with a /
-                    encodedurl = 'http://%s/w/thumb_handler.php/%s' % (
-                        hostname, match.group('path'))
-                    # add in the X-Original-URI with the swift got (minus the hostname)
-                    opener.addheaders.append(
-                        ('X-Original-URI', list(urlparse.urlsplit(reqorig.url))[2]))
-                else:
-                    # ASSERT this code should never be hit since only thumbs
-                    # should call the 404 handler
-                    self.logger.warn("non-thumb in 404 handler! encodedurl = %s" % encodedurl)
-                    resp = swob.HTTPNotFound('Unexpected error')
-                    return resp
+            # log the result of the match here to test and make sure it's
+            # sane before enabling the config
+            match = re.match(
+                r'^http://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
+                encodedurl)
+            if match:
+                proj = match.group('proj')
+                self.logger.warn(
+                    "sitelang match has proj %s encodedurl %s" % (
+                        proj, encodedurl))
             else:
-                # log the result of the match here to test and make sure it's
-                # sane before enabling the config
-                match = re.match(
-                    r'^http://(?P<host>[^/]+)/(?P<proj>[^-/]+)/(?P<lang>[^/]+)/thumb/(?P<path>.+)',
-                    encodedurl)
-                if match:
-                    proj = match.group('proj')
-                    lang = match.group('lang')
-                    self.logger.warn(
-                        "sitelang match has proj %s lang %s encodedurl %s" % (
-                            proj, lang, encodedurl))
-                else:
-                    self.logger.warn("no sitelang match on encodedurl: %s" % encodedurl)
+                self.logger.warn("no sitelang match on encodedurl: %s" % encodedurl)
 
             # ok, call the encoded url
             upcopy = opener.open(encodedurl)
