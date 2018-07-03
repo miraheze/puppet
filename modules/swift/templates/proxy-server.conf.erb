@@ -94,7 +94,7 @@ log_level = INFO
 # testing. See below for a pipeline using keystone.
 # pipeline = catch_errors gatekeeper healthcheck proxy-logging cache container_sync bulk tempurl ratelimit copy container-quotas account-quotas slo dlo versioned_writes authtoken keystoneauth proxy-logging proxy-server
 
-pipeline = rewrite cache healthcheck tempauth tempurl staticweb proxy-server
+pipeline = rewrite healthcheck cache tempurl tempauth cors proxy-logging proxy-server
 
 # The following pipeline shows keystone integration. Comment out the one
 # above and uncomment this one. Additional steps for integrating keystone are
@@ -905,6 +905,13 @@ use = egg:swift#encryption
 [filter:tempurl]
 use = egg:swift#tempurl
 
+[filter:cors]
+paste.filter_factory = miraheze.cors:filter_factory
+
+[filter:proxy-logging]
+use = egg:swift#proxy_logging
+set access_log_facility = LOG_LOCAL1
+
 [filter:rewrite]
 # the auth system turns our login and key into an account / token pair.
 # the account remains valid forever, but the token times out.
@@ -918,5 +925,7 @@ user_agent = Mozilla/5.0
 
 # sending thumbnail requests to thumbor
 thumbhost = 'static.miraheze.org'
+
+bind_port = 8080
 
 paste.filter_factory = miraheze.rewrite:filter_factory

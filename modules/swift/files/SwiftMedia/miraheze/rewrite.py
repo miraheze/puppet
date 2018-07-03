@@ -177,7 +177,7 @@ class _WMFRewriteContext(WSGIContext):
         # regular uploads
         match = re.match(
             (r'^/(?P<proj>[^/]+)/'
-             r'((?P<path>transcoded|thumb|temp|archive|[0-9a-f]/[0-9a-f]{2})/.+)$'),
+             r'(?P<path>transcoded|thumb|temp|archive|[0-9a-f]/[0-9a-f]{2})/.+$'),
             req.path)
         if match:
             proj = match.group('proj')
@@ -199,7 +199,7 @@ class _WMFRewriteContext(WSGIContext):
             # /math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
             # /wikipedia/en/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png (legacy)
             match = re.match(
-                (r'^/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f])/.+)$'),
+                (r'^/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f]/.+)$'),
                 req.path)
 
             if match:
@@ -210,7 +210,7 @@ class _WMFRewriteContext(WSGIContext):
         if match is None:
             # /score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
             # /score/override-midi/8/i/8i9pzt87wtpy45lpz1rox8wusjkt7ki.ogg
-            match = re.match(r'^/(?P<proj>[^/]+)/?P<path>score/.+)$', req.path)
+            match = re.match(r'^/(?P<proj>[^/]+)/(?P<path>score/.+)$', req.path)
             if match:
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
