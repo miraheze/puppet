@@ -232,7 +232,7 @@ class _WMFRewriteContext(WSGIContext):
         if match is None:
             # /math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
             # /wikipedia/en/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png (legacy)
-           match = re.match(
+            match = re.match(
                 (r'^/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f])/.+)$'),
                 req.path)
 
