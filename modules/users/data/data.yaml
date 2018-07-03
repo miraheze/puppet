@@ -10,12 +10,11 @@ groups:
     members: [revi, macfan]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php5-fpm *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.0-fpm *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.2-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /root/ssl-certificate',
-                 'ALL = (ALL) NOPASSWD: /root/ssl-certificate-old',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
     gid: 2002
