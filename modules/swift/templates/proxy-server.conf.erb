@@ -95,7 +95,7 @@ log_level = INFO
 # testing. See below for a pipeline using keystone.
 # pipeline = catch_errors gatekeeper healthcheck proxy-logging cache container_sync bulk tempurl ratelimit copy container-quotas account-quotas slo dlo versioned_writes authtoken keystoneauth proxy-logging proxy-server
 
-pipeline = rewrite healthcheck cache tempurl tempauth cors proxy-logging proxy-server
+pipeline = rewrite healthcheck cache tempurl ratelimit tempauth cors proxy-logging proxy-server
 
 # The following pipeline shows keystone integration. Comment out the one
 # above and uncomment this one. Additional steps for integrating keystone are
@@ -506,6 +506,16 @@ memcache_servers = 127.0.0.1:11211
 # memcache_max_connections = 2
 #
 # More options documented in memcache.conf-sample
+
+[filter:ratelimit]
+use = egg:swift#ratelimit
+# accounts limited to 5/s PUT/DELETE to containers
+account_ratelimit = 5
+account_whitelist = AUTH_admin
+log_sleep_time_seconds = 3
+# containers with > 200 objects limited to 30/s PUT/DELETE/POST and listings
+container_ratelimit_200 = 30
+container_listing_ratelimit_200 = 30
 
 [filter:ratelimit]
 use = egg:swift#ratelimit
