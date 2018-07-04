@@ -517,10 +517,10 @@ log_sleep_time_seconds = 3
 container_ratelimit_200 = 30
 container_listing_ratelimit_200 = 30
 
-[filter:ratelimit]
-use = egg:swift#ratelimit
+#[filter:ratelimit]
+#use = egg:swift#ratelimit
 # You can override the default log routing for this filter here:
-set log_name = swift-proxy-ratelimit
+#set log_name = swift-proxy-ratelimit
 # set log_facility = LOG_LOCAL0
 # set log_level = INFO
 # set log_headers = false
