@@ -139,10 +139,10 @@ log_name = swift-container-replicator
 # max_diffs = 100
 #
 # Number of replication workers to spawn.
-# concurrency = 8
+concurrency = 1
 #
 # Time in seconds to wait between replication passes
-interval = 600
+interval = 900
 # run_pause is deprecated, use interval instead
 # run_pause = 30
 #
@@ -182,6 +182,8 @@ log_name = swift-container-updater
 # log_level = INFO
 # log_address = /dev/log
 #
+concurrency = 1
+
 # interval = 300
 # concurrency = 4
 # node_timeout = 3
