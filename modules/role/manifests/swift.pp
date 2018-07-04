@@ -26,6 +26,12 @@ class role::swift {
         port  => 8080,
         from  => '185.52.2.243',
     }
+
+    ufw::allow { 'swift swift1 8080':
+        proto => 'tcp',
+        port  => 8080,
+        from  => '81.4.101.157',
+    }
     
     # https
     ufw::allow { 'swift mw1 443':
