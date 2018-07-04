@@ -16,9 +16,10 @@ node /^cp[245]\.miraheze\.org$/ {
 
 node 'nfs1.miraheze.org' {
     include base
-    include role::staticserver
     include bacula::client
+    include role::staticserver
     include role::salt::minions
+    include role::swift
 }
 
 node 'db4.miraheze.org' {
