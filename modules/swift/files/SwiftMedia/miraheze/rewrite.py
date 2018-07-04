@@ -302,7 +302,7 @@ class WMFRewrite(object):
 
     def __call__(self, env, start_response):
         # end-users should only do GET/HEAD, nothing else needs a rewrite
-        if env['REQUEST_METHOD'] not in ('HEAD', 'GET'):
+        if env['REQUEST_METHOD'] not in ('HEAD', 'GET', 'PUT'):
             return self.app(env, start_response)
 
         # do nothing on authenticated and authentication requests
