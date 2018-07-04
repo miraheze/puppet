@@ -130,10 +130,10 @@ log_name = swift-account-replicator
 # max_diffs = 100
 #
 # Number of replication workers to spawn.
-# concurrency = 8
+concurrency = 1
 #
 # Time in seconds to wait between replication passes
-interval = 600
+interval = 900
 # run_pause is deprecated, use interval instead
 # run_pause = 30
 #
@@ -169,6 +169,7 @@ interval = 600
 [account-auditor]
 # You can override the default log routing for this app here (don't use set!):
 log_name = swift-account-auditor
+concurrency = 1
 # log_facility = LOG_LOCAL0
 # log_level = INFO
 # log_address = /dev/log
