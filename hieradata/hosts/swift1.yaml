@@ -1,2 +1,2 @@
-swift_proxy: true
+swift_proxy: false
 swift_backend: true
