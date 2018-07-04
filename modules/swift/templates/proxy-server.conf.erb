@@ -628,6 +628,7 @@ set log_name = swift-proxy-staticweb
 use = egg:swift#tempurl
 # The methods allowed with Temp URLs.
 # methods = GET HEAD PUT POST DELETE
+methods = GET HEAD PUT POST DELETE
 #
 # The headers to remove from incoming requests. Simply a whitespace delimited
 # list of header names and names can optionally end with '*' to indicate a
@@ -902,9 +903,6 @@ use = egg:swift#encryption
 # disable_encryption to True. However, all encryption middleware should remain
 # in the pipeline in order for existing encrypted data to be read.
 # disable_encryption = False
-
-[filter:tempurl]
-use = egg:swift#tempurl
 
 [filter:cors]
 paste.filter_factory = miraheze.cors:filter_factory
