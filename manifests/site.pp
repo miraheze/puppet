@@ -59,6 +59,12 @@ node 'misc3.miraheze.org' {
     include role::salt::minions
 }
 
+node 'misc4.miraheze.org' {
+    include base
+    include role::swift
+    include role::salt::minions
+}
+
 node /^mw[123]\.miraheze\.org$/ {
     include base
     include role::mediawiki
