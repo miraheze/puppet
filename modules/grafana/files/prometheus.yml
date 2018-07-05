@@ -45,6 +45,7 @@ scrape_configs:
         'misc1.miraheze.org:9100',
         'misc2.miraheze.org:9100',
         'misc3.miraheze.org:9100',
+        'misc4.miraheze.org:9100',
         'mw1.miraheze.org:9100',
         'mw2.miraheze.org:9100',
         'mw3.miraheze.org:9100',
