@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Portions Copyright (c) 2010 OpenStack, LLC.
 # Everything else Copyright (c) 2011 Wikimedia Foundation, Inc.
 # all of it licensed under the Apache Software License, included by reference.
@@ -22,7 +23,7 @@ class DumbRedirectHandler(urllib2.HTTPRedirectHandler):
         return None
 
 
-class _WMFRewriteContext(WSGIContext):
+class _MirahezeRewriteContext(WSGIContext):
     """
     Rewrite Media Store URLs so that swift knows how to deal with them.
     """
@@ -37,6 +38,7 @@ class _WMFRewriteContext(WSGIContext):
         self.user_agent = conf['user_agent'].strip()
         self.bind_port = conf['bind_port'].strip()
 
+    # unused at the momemnt
     def handle404(self, reqorig, url, container, obj):
         """
         Return a swob.Response which fetches the thumbnail from the thumb
@@ -47,7 +49,7 @@ class _WMFRewriteContext(WSGIContext):
         reqorig.host = self.thumbhost
         # upload doesn't like our User-agent, otherwise we could call it
         # using urllib2.url()
-        proxy_handler = urllib2.ProxyHandler({'http': self.thumbhost})
+        proxy_handler = urllib2.ProxyHandler({'https': self.thumbhost})
         redirect_handler = DumbRedirectHandler()
         opener = urllib2.build_opener(redirect_handler, proxy_handler)
         # Pass on certain headers from the caller squid to the scalers
@@ -118,6 +120,9 @@ class _WMFRewriteContext(WSGIContext):
 
         return resp
 
+    def decodeStr(self, test):
+        return urllib2.unquote(urllib2.unquote(test))
+
     def handle_request(self, env, start_response):
         try:
             return self._handle_request(env, start_response)
@@ -159,45 +164,34 @@ class _WMFRewriteContext(WSGIContext):
         #         => http://msfe/v1/AUTH_<hash>/global-data-math-render/<relpath>
         #
         # Rewrite wiki-relative URLs of these forms:
-        # (a) http://upload.wikimedia.org/<proj>/<lang>/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-public/<relpath>
-        # (b) http://upload.wikimedia.org/<proj>/<lang>/archive/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-public/archive/<relpath>
+        # (a) http://upload.wikimedia.org/<proj>/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/<relpath>
+        # (b) http://upload.wikimedia.org/<proj>/archive/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-<lang>-local-public/archive/<relpath>
         # (c) http://upload.wikimedia.org/<proj>/<lang>/thumb/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-thumb/<relpath>
-        # (d) http://upload.wikimedia.org/<proj>/<lang>/thumb/archive/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-thumb/archive/<relpath>
-        # (e) http://upload.wikimedia.org/<proj>/<lang>/thumb/temp/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-thumb/temp/<relpath>
-        # (f) http://upload.wikimedia.org/<proj>/<lang>/transcoded/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-transcoded/<relpath>
-        # (g) http://upload.wikimedia.org/<proj>/<lang>/timeline/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-timeline-render/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-<lang>-local-thumb/<relpath>
+        # (d) https://static.miraheze.org/<proj>/archive/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/archive/<relpath>
+        # (e) https://static.miraheze.org/<proj>/temp/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/temp/<relpath>
+        # (f) https://static.miraheze.org/<proj>/thumb/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/thumb/<relpath>
+        # (g) https://static.miraheze.org/<proj>/transcoded/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/transcoded/<relpath>
+        # (h) https://static.miraheze.org/<proj>/timeline/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/timeline/<relpath>
 
-        # regular uploads
         match = re.match(
-            (r'^/(?P<proj>[^/]+)/'
-             r'(?P<path>transcoded|thumb|temp|archive|[0-9a-f]/[0-9a-f]{2})/.+$'),
+            r'^/(?P<proj>[^/]+)/(?P<path>timeline/.+)$',
             req.path)
         if match:
-            proj = match.group('proj')
-            # Get the object path relative to the zone (and thus container)
-            obj = match.group('path')  # e.g. "archive/a/ab/..."
-
-        # timeline renderings
-        if match is None:
-            # /wikipedia/en/timeline/a876297c277d80dfd826e1f23dbfea3f.png
-            match = re.match(
-                r'^/(?P<proj>[^/]+)/(?P<path>timeline/.+)$',
-                req.path)
-            if match:
-                proj = match.group('proj')  # <wiki>
-                obj = match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
+            proj = match.group('proj')  # <wiki>
+            obj = match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
 
         # math renderings
         if match is None:
-            # /math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
-            # /wikipedia/en/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png (legacy)
+            # /metawiki/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
+            # /metawiki-mw/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png (legacy)
             match = re.match(
                 (r'^/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f]/.+)$'),
                 req.path)
@@ -208,12 +202,23 @@ class _WMFRewriteContext(WSGIContext):
 
         # score renderings
         if match is None:
-            # /score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
-            # /score/override-midi/8/i/8i9pzt87wtpy45lpz1rox8wusjkt7ki.ogg
+            # /metawiki/score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
+            # /metawiki-mw/score/override-midi/8/i/8i9pzt87wtpy45lpz1rox8wusjkt7ki.ogg
             match = re.match(r'^/(?P<proj>[^/]+)/(?P<path>score/.+)$', req.path)
             if match:
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
+
+        if match is None:
+            # regular uploads
+            match = re.match(
+                (r'^/(?P<proj>[^/]+)/'
+                 r'(?P<path>(.+))$'),
+                req.path)
+            if match:
+                proj = match.group('proj')
+                # Get the object path relative to the zone (and thus container)
+                obj = match.group('path')  # e.g. "archive/a/ab/..."
 
         #if match is None:
         #    match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
@@ -267,8 +272,8 @@ class _WMFRewriteContext(WSGIContext):
             req.host = '127.0.0.1:%s' % port
             url = req.url[:]
             # Create a path to our object's name.
-            req.path_info = "/v1/%s/%s/%s" % (self.account, container, urllib2.unquote(obj))
-            # self.logger.warn("new path is %s" % req.path_info)
+            req.path_info = "/v1/%s/%s/%s" % (self.account, container, self.decodeStr(obj))
+            #self.logger.warn(container + self.decodeStr(obj))
 
             # do_start_response just remembers what it got called with,
             # because our 404 handler will generate a different response.
@@ -278,12 +283,8 @@ class _WMFRewriteContext(WSGIContext):
 
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
-                if repo == 'local' and zone == 'thumb':
-                    resp = self.handle404(reqorig, url, container, obj)
-                    return resp(env, start_response)
-                else:
-                    resp = swob.HTTPNotFound('File not found: %s' % req.path)
-                    return resp(env, start_response)
+                resp = swob.HTTPNotFound('File not found: %s' % req.path)
+                return resp(env, start_response)
             else:
                 # Return the response verbatim
                 return swob.Response(status=status, headers=headers,
@@ -293,7 +294,7 @@ class _WMFRewriteContext(WSGIContext):
             return resp(env, start_response)
 
 
-class WMFRewrite(object):
+class MirahezeRewrite(object):
 
     def __init__(self, app, conf):
         self.app = app
@@ -302,7 +303,7 @@ class WMFRewrite(object):
 
     def __call__(self, env, start_response):
         # end-users should only do GET/HEAD, nothing else needs a rewrite
-        if env['REQUEST_METHOD'] not in ('HEAD', 'GET', 'PUT'):
+        if env['REQUEST_METHOD'] not in ('HEAD', 'GET'):
             return self.app(env, start_response)
 
         # do nothing on authenticated and authentication requests
@@ -310,7 +311,7 @@ class WMFRewrite(object):
         if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
             return self.app(env, start_response)
 
-        context = _WMFRewriteContext(self, self.conf)
+        context = _MirahezeRewriteContext(self, self.conf)
         return context.handle_request(env, start_response)
 
 
@@ -318,9 +319,9 @@ def filter_factory(global_conf, **local_conf):
     conf = global_conf.copy()
     conf.update(local_conf)
 
-    def wmfrewrite_filter(app):
-        return WMFRewrite(app, conf)
+    def mirahezerewrite_filter(app):
+        return MirahezeRewrite(app, conf)
 
-    return wmfrewrite_filter
+    return mirahezerewrite_filter
 
 # vim: set expandtab tabstop=4 shiftwidth=4 autoindent:
