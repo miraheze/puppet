@@ -27,7 +27,8 @@ class mediawiki(
         include mediawiki::dumps
     }
 
-    file { [ 
+    file { [
+        '/srv/files',
         '/srv/mediawiki', 
         '/srv/mediawiki/dblist', 
         '/srv/mediawiki/cdb-config', 
