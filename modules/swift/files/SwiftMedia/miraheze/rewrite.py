@@ -23,7 +23,7 @@ class DumbRedirectHandler(urllib2.HTTPRedirectHandler):
         return None
 
 
-class _WMFRewriteContext(WSGIContext):
+class _MirahezeRewriteContext(WSGIContext):
     """
     Rewrite Media Store URLs so that swift knows how to deal with them.
     """
@@ -38,6 +38,7 @@ class _WMFRewriteContext(WSGIContext):
         self.user_agent = conf['user_agent'].strip()
         self.bind_port = conf['bind_port'].strip()
 
+    # unused at the momemnt
     def handle404(self, reqorig, url, container, obj):
         """
         Return a swob.Response which fetches the thumbnail from the thumb
@@ -163,45 +164,34 @@ class _WMFRewriteContext(WSGIContext):
         #         => http://msfe/v1/AUTH_<hash>/global-data-math-render/<relpath>
         #
         # Rewrite wiki-relative URLs of these forms:
-        # (a) http://upload.wikimedia.org/<proj>/<lang>/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-public/<relpath>
-        # (b) http://upload.wikimedia.org/<proj>/<lang>/archive/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-public/archive/<relpath>
+        # (a) http://upload.wikimedia.org/<proj>/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/<relpath>
+        # (b) http://upload.wikimedia.org/<proj>/archive/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-<lang>-local-public/archive/<relpath>
         # (c) http://upload.wikimedia.org/<proj>/<lang>/thumb/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-thumb/<relpath>
-        # (d) http://upload.wikimedia.org/<proj>/<lang>/thumb/archive/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-thumb/archive/<relpath>
-        # (e) http://upload.wikimedia.org/<proj>/<lang>/thumb/temp/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-thumb/temp/<relpath>
-        # (f) http://upload.wikimedia.org/<proj>/<lang>/transcoded/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-local-transcoded/<relpath>
-        # (g) http://upload.wikimedia.org/<proj>/<lang>/timeline/<relpath>
-        #         => http://msfe/v1/AUTH_<hash>/<proj>-<lang>-timeline-render/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-<lang>-local-thumb/<relpath>
+        # (d) https://static.miraheze.org/<proj>/archive/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/archive/<relpath>
+        # (e) https://static.miraheze.org/<proj>/temp/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/temp/<relpath>
+        # (f) https://static.miraheze.org/<proj>/thumb/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/thumb/<relpath>
+        # (g) https://static.miraheze.org/<proj>/transcoded/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/transcoded/<relpath>
+        # (h) https://static.miraheze.org/<proj>/timeline/<relpath>
+        #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/timeline/<relpath>
 
-        # regular uploads
         match = re.match(
-            (r'^/(?P<proj>[^/]+)/'
-             r'(?P<path>((transcoded|thumb|temp|archive)/)?[0-9a-f]/[0-9a-f]{2}/.+)$'),
+            r'^/(?P<proj>[^/]+)/(?P<path>timeline/.+)$',
             req.path)
         if match:
-            proj = match.group('proj')
-            # Get the object path relative to the zone (and thus container)
-            obj = match.group('path')  # e.g. "archive/a/ab/..."
-
-        # timeline renderings
-        if match is None:
-            # /wikipedia/en/timeline/a876297c277d80dfd826e1f23dbfea3f.png
-            match = re.match(
-                r'^/(?P<proj>[^/]+)/(?P<path>timeline/.+)$',
-                req.path)
-            if match:
-                proj = match.group('proj')  # <wiki>
-                obj = match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
+            proj = match.group('proj')  # <wiki>
+            obj = match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
 
         # math renderings
         if match is None:
-            # /math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
-            # /wikipedia/en/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png (legacy)
+            # /metawiki/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
+            # /metawiki-mw/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png (legacy)
             match = re.match(
                 (r'^/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f]/.+)$'),
                 req.path)
@@ -212,12 +202,23 @@ class _WMFRewriteContext(WSGIContext):
 
         # score renderings
         if match is None:
-            # /score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
-            # /score/override-midi/8/i/8i9pzt87wtpy45lpz1rox8wusjkt7ki.ogg
+            # /metawiki/score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
+            # /metawiki-mw/score/override-midi/8/i/8i9pzt87wtpy45lpz1rox8wusjkt7ki.ogg
             match = re.match(r'^/(?P<proj>[^/]+)/(?P<path>score/.+)$', req.path)
             if match:
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
+
+        if match is None:
+            # regular uploads
+            match = re.match(
+                (r'^/(?P<proj>[^/]+)/'
+                 r'(?P<path>(.+))$'),
+                req.path)
+            if match:
+                proj = match.group('proj')
+                # Get the object path relative to the zone (and thus container)
+                obj = match.group('path')  # e.g. "archive/a/ab/..."
 
         #if match is None:
         #    match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
@@ -293,7 +294,7 @@ class _WMFRewriteContext(WSGIContext):
             return resp(env, start_response)
 
 
-class WMFRewrite(object):
+class MirahezeRewrite(object):
 
     def __init__(self, app, conf):
         self.app = app
@@ -310,7 +311,7 @@ class WMFRewrite(object):
         if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
             return self.app(env, start_response)
 
-        context = _WMFRewriteContext(self, self.conf)
+        context = _MirahezeRewriteContext(self, self.conf)
         return context.handle_request(env, start_response)
 
 
@@ -318,9 +319,9 @@ def filter_factory(global_conf, **local_conf):
     conf = global_conf.copy()
     conf.update(local_conf)
 
-    def wmfrewrite_filter(app):
-        return WMFRewrite(app, conf)
+    def mirahezerewrite_filter(app):
+        return MirahezeRewrite(app, conf)
 
-    return wmfrewrite_filter
+    return mirahezerewrite_filter
 
 # vim: set expandtab tabstop=4 shiftwidth=4 autoindent:
