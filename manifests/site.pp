@@ -61,6 +61,8 @@ node 'misc3.miraheze.org' {
 
 node 'misc4.miraheze.org' {
     include base
+    include bacula::client
+    include role::phabricator
     include role::swift
     include role::salt::minions
 }
