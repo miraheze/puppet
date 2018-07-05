@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Portions Copyright (c) 2010 OpenStack, LLC.
 # Everything else Copyright (c) 2011 Wikimedia Foundation, Inc.
 # all of it licensed under the Apache Software License, included by reference.
@@ -47,7 +48,7 @@ class _WMFRewriteContext(WSGIContext):
         reqorig.host = self.thumbhost
         # upload doesn't like our User-agent, otherwise we could call it
         # using urllib2.url()
-        proxy_handler = urllib2.ProxyHandler({'http': self.thumbhost})
+        proxy_handler = urllib2.ProxyHandler({'https': self.thumbhost})
         redirect_handler = DumbRedirectHandler()
         opener = urllib2.build_opener(redirect_handler, proxy_handler)
         # Pass on certain headers from the caller squid to the scalers
@@ -118,6 +119,9 @@ class _WMFRewriteContext(WSGIContext):
 
         return resp
 
+    def decodeStr(self, test):
+        return urllib2.unquote(urllib2.unquote(test))
+
     def handle_request(self, env, start_response):
         try:
             return self._handle_request(env, start_response)
@@ -177,7 +181,7 @@ class _WMFRewriteContext(WSGIContext):
         # regular uploads
         match = re.match(
             (r'^/(?P<proj>[^/]+)/'
-             r'(?P<path>transcoded|thumb|temp|archive|[0-9a-f]/[0-9a-f]{2})/.+$'),
+             r'(?P<path>((transcoded|thumb|temp|archive)/)?[0-9a-f]/[0-9a-f]{2}/.+)$'),
             req.path)
         if match:
             proj = match.group('proj')
@@ -267,8 +271,8 @@ class _WMFRewriteContext(WSGIContext):
             req.host = '127.0.0.1:%s' % port
             url = req.url[:]
             # Create a path to our object's name.
-            req.path_info = "/v1/%s/%s/%s" % (self.account, container, urllib2.unquote(obj))
-            # self.logger.warn("new path is %s" % req.path_info)
+            req.path_info = "/v1/%s/%s/%s" % (self.account, container, self.decodeStr(obj))
+            #self.logger.warn(container + self.decodeStr(obj))
 
             # do_start_response just remembers what it got called with,
             # because our 404 handler will generate a different response.
@@ -278,12 +282,8 @@ class _WMFRewriteContext(WSGIContext):
 
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
-                if repo == 'local' and zone == 'thumb':
-                    resp = self.handle404(reqorig, url, container, obj)
-                    return resp(env, start_response)
-                else:
-                    resp = swob.HTTPNotFound('File not found: %s' % req.path)
-                    return resp(env, start_response)
+                resp = swob.HTTPNotFound('File not found: %s' % req.path)
+                return resp(env, start_response)
             else:
                 # Return the response verbatim
                 return swob.Response(status=status, headers=headers,
@@ -302,7 +302,7 @@ class WMFRewrite(object):
 
     def __call__(self, env, start_response):
         # end-users should only do GET/HEAD, nothing else needs a rewrite
-        if env['REQUEST_METHOD'] not in ('HEAD', 'GET', 'PUT'):
+        if env['REQUEST_METHOD'] not in ('HEAD', 'GET'):
             return self.app(env, start_response)
 
         # do nothing on authenticated and authentication requests
