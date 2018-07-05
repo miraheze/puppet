@@ -29,6 +29,7 @@ class mediawiki(
 
     file { [
         '/srv/files',
+        '/srv/files/dumps',
         '/srv/mediawiki', 
         '/srv/mediawiki/dblist', 
         '/srv/mediawiki/cdb-config', 
