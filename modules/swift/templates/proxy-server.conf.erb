@@ -926,15 +926,13 @@ set access_log_facility = LOG_LOCAL1
 # the account remains valid forever, but the token times out.
 <%- @user_accounts.each_pair do |user, password| -%>
 <%- if user == 'admin' -%>
-account = 'AUTH_<%= user %>'
+account = AUTH_<%= user %>
 <%- end -%>
 <%- end -%>
 # upload doesn't like our User-agent (Python-urllib/2.6), otherwise we could call it using urllib2.urlopen()
 user_agent = Mozilla/5.0
 
 # sending thumbnail requests to thumbor
-thumbhost = 'static.miraheze.org'
-
-bind_port = 8080
+thumbhost = static.miraheze.org
 
 paste.filter_factory = miraheze.rewrite:filter_factory
