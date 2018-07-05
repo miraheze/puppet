@@ -4,11 +4,13 @@
 class mediawiki::dumps {
     package { 'zip':
         ensure => present,
-    }    
+    }
+    
+    $swift_password = hiera('passwords::mediawiki::swift::admin')
     
     cron { 'Export aesbasewiki xml dump montly ':
         ensure   => present,
-        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki aesbasewiki --logs --full > /mnt/mediawiki-static/dumps/aesbasewiki.xml',
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki aesbasewiki --logs --full > /srv/mediawiki/files/dumps/aesbasewiki.xml && cd /srv/mediawiki/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps aesbasewiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
