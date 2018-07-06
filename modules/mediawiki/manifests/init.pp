@@ -113,6 +113,11 @@ class mediawiki(
         require => Git::Clone['MediaWiki config'],
     }
 
+    file { '/root/swiftExport':
+        ensure  => 'present',
+        content => template('mediawiki/swiftExport'),
+    }
+
     file { '/usr/local/bin/foreachwikiindblist':
         ensure => 'present',
         mode   => '0755',
