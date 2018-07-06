@@ -84,7 +84,7 @@ log_name = swift-object
 # ionice_priority =
 
 [pipeline:main]
-pipeline = healthcheck recon object-server
+pipeline = recon object-server
 
 [app:object-server]
 use = egg:swift#object
@@ -181,7 +181,7 @@ use = egg:swift#healthcheck
 
 [filter:recon]
 use = egg:swift#recon
-#recon_cache_path = /var/cache/swift
+recon_cache_path = /var/cache/swift
 #recon_lock_path = /var/lock
 
 [object-replicator]
