@@ -1,22 +1,6 @@
 # == Class: swift::proxy
 
 class swift::proxy {
-    include nginx
-
-    include ssl::wildcard
-
-    file { '/etc/nginx/nginx.conf':
-        ensure  => present,
-        content => template('swift/nginx.conf.erb'),
-        require => Package['nginx'],
-        notify  => Service['nginx'],
-    }
-
-    nginx::site { 'swift':
-        ensure  => present,
-        source  => 'puppet:///modules/swift/nginx/swift',
-        monitor => false,
-    }
 
     require_package(['swift-proxy', 'memcached'])
 

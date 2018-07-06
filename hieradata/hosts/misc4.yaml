@@ -1,1 +1,2 @@
 swift_proxy: true
+phabricator::modules: ['alias', 'rewrite', 'ssl', 'php7.2']
