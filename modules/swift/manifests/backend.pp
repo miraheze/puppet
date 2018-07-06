@@ -71,7 +71,7 @@ class swift::backend (
             'swift-object-replicator',
             'swift-object-updater',
         ]:
-            ensure => stopped,
+            ensure => running,
         }
     } else {
         service { [
@@ -81,7 +81,7 @@ class swift::backend (
             'swift-object-replicator',
             'swift-object-updater',
         ]:
-            ensure => running,
+            ensure => stopped,
         }
     }
 
