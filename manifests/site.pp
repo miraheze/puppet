@@ -36,8 +36,6 @@ node 'misc1.miraheze.org' {
     include role::irc
     include role::mail
     include role::dns
-    include role::phabricator
-    include bacula::client
     include role::salt::minions
 }
 

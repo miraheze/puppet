@@ -1,7 +1,4 @@
 mailserver: true
 icinga::modules: ['alias', 'rewrite', 'ssl', 'php7.2']
 mailman::modules: ['proxy', 'proxy_http', 'proxy_uwsgi']
-# should be ssl and php7.2 but icinga adds it
-# so this causes a dependancy error
-phabricator::modules: []
 puppetmaster_version: 4
