@@ -47,19 +47,21 @@ class swift::backend {
         notify  => Service['swift-object'],
     }
 
-    service { 'swift-account':
-        ensure  => running,
-        require => Package['swift-account'],
-    }
-
-    service { 'swift-container':
-        ensure  => running,
-        require => Package['swift-container'],
-    }
-
-    service { 'swift-object':
-        ensure  => running,
-        require => Package['swift-object'],
+    service { [
+        'swift-account',
+        'swift-account-auditor',
+        'swift-account-reaper',
+        'swift-account-replicator',
+        'swift-container',
+        'swift-container-auditor',
+        'swift-container-replicator',
+        'swift-container-updater',
+        'swift-object',
+        'swift-object-auditor',
+        'swift-object-replicator',
+        'swift-object-updater',
+    ]:
+        ensure => running,
     }
 
     # TODO: get monotoring working
