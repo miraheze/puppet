@@ -73,7 +73,7 @@ log_name = swift-container
 # ionice_priority =
 
 [pipeline:main]
-pipeline = healthcheck recon container-server
+pipeline = recon container-server
 
 [app:container-server]
 use = egg:swift#container
@@ -117,7 +117,7 @@ use = egg:swift#healthcheck
 
 [filter:recon]
 use = egg:swift#recon
-#recon_cache_path = /var/cache/swift
+recon_cache_path = /var/cache/swift
 
 [container-replicator]
 # You can override the default log routing for this app here (don't use set!):
