@@ -20,7 +20,7 @@ class mediawiki::dumps {
 
     cron { 'Export amaninfowiki xml dump monthly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki amaninfowiki --logs --full --uploads > /mnt/mediawiki-static/dumps/amaninfowiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps amaninfowiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki amaninfowiki --logs --full --uploads > /srv/files/dumps/amaninfowiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps amaninfowiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -40,7 +40,7 @@ class mediawiki::dumps {
 
     cron { 'Export cpiwiki xml dump weekly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki cpiwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/cpiwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps cpiwiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki cpiwiki --logs --full --uploads > /srv/files/dumps/cpiwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps cpiwiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -60,7 +60,7 @@ class mediawiki::dumps {
 
     cron { 'Export jokowiki xml dump montly ':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki jokowiki --logs --full > /mnt/mediawiki-static/dumps/jokowiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps jokowiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki jokowiki --logs --full > /srv/files/dumps/jokowiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps jokowiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -70,7 +70,7 @@ class mediawiki::dumps {
     
     cron { 'Export lexique xml dump monthly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki lexiquewiki --logs --full --uploads > /mnt/mediawiki-static/dumps/lexiquewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps lexiquewiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki lexiquewiki --logs --full --uploads > /srv/files/dumps/lexiquewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps lexiquewiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -80,7 +80,7 @@ class mediawiki::dumps {
     
     cron { 'Export madgendersciencewiki xml dump biweekly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki madgendersciencewiki --logs --full --uploads > /mnt/mediawiki-static/dumps/madgendersciencewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps madgendersciencewiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki madgendersciencewiki --logs --full --uploads > /srv/files/dumps/madgendersciencewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps madgendersciencewiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -90,7 +90,7 @@ class mediawiki::dumps {
 
     cron { 'Export mikrodevwiki xml dump weekly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki mikrodevwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/mikrodevwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps mikrodevwiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki mikrodevwiki --logs --full --uploads > /srv/files/dumps/mikrodevwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps mikrodevwiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -100,7 +100,7 @@ class mediawiki::dumps {
     
     cron { 'Export mussmanwissenwiki xml dump biweekly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki mussmanwissenwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/mussmanwissenwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps mussmanwissenwiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki mussmanwissenwiki --logs --full --uploads > /srv/files/dumps/mussmanwissenwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps mussmanwissenwiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -110,7 +110,7 @@ class mediawiki::dumps {
     
     cron { 'Export nenawikiwiki xml dump weekly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki nenawikiwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/nenawikiwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps nenawikiwiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki nenawikiwiki --logs --full --uploads > /srv/files/dumps/nenawikiwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps nenawikiwiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -130,7 +130,7 @@ class mediawiki::dumps {
 
     cron { 'Export nissanecuwiki xml dump monthly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki nissanecuwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/nissanecuwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps nissanecuwiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki nissanecuwiki --logs --full --uploads > /srv/files/dumps/nissanecuwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps nissanecuwiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -140,7 +140,7 @@ class mediawiki::dumps {
     
     cron { 'Export renaissancewiki xml dump monthly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki renaissancewiki --logs --full --uploads > /mnt/mediawiki-static/dumps/renaissancewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps renaissancewiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki renaissancewiki --logs --full --uploads > /srv/files/dumps/renaissancewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps renaissancewiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -170,7 +170,7 @@ class mediawiki::dumps {
     
     cron { 'Export sdiywiki xml dump weekly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sdiywiki --logs --full --uploads > /mnt/mediawiki-static/dumps/sdiywiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sdiywiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sdiywiki --logs --full --uploads > /srv/files/dumps/sdiywiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sdiywiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -190,7 +190,7 @@ class mediawiki::dumps {
 
     cron { 'Export speleowiki xml dump monthly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki speleowiki --logs --full --uploads > /mnt/mediawiki-static/dumps/speleowiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps speleowiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki speleowiki --logs --full --uploads > /srv/files/dumps/speleowiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps speleowiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -200,7 +200,7 @@ class mediawiki::dumps {
 
     cron { 'Export sqlserverwiki xml dump monthly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sqlserverwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/sqlserverwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sqlserverwiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sqlserverwiki --logs --full --uploads > /srv/files/dumps/sqlserverwiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sqlserverwiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -210,7 +210,7 @@ class mediawiki::dumps {
 
     cron { 'Export sterbalssundrystudieswiki xml dump monthly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalssundrystudieswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalssundrystudieswiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sterbalssundrystudieswiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalssundrystudieswiki --logs --full > /srv/files/dumps/sterbalssundrystudieswiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sterbalssundrystudieswiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -220,7 +220,7 @@ class mediawiki::dumps {
 
     cron { 'Export sterbalfamilyrecipeswiki xml dump weekly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalfamilyrecipeswiki --logs --full > /mnt/mediawiki-static/dumps/sterbalfamilyrecipeswiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sterbalfamilyrecipeswiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki sterbalfamilyrecipeswiki --logs --full > /srv/files/dumps/sterbalfamilyrecipeswiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sterbalfamilyrecipeswiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -240,7 +240,7 @@ class mediawiki::dumps {
     
     cron { 'Export templatewiki xml dump weekly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki templatewiki --logs --full > /mnt/mediawiki-static/dumps/templatewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps templatewiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki templatewiki --logs --full > /srv/files/dumps/templatewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps templatewiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -250,7 +250,7 @@ class mediawiki::dumps {
     
     cron { 'Export tmewiki xml dump monthly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki tmewiki --logs --full > /mnt/mediawiki-static/dumps/tmewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps tmewiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki tmewiki --logs --full > /srv/files/dumps/tmewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps tmewiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
