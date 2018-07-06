@@ -30,7 +30,7 @@ class mediawiki::dumps {
 
     cron { 'Export amaninfowiki images monthly':
         ensure   => present,
-        command  => "cd /srv/files/dumps/amaninfowiki/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download amaninfowiki . && /usr/bin/zip -r /srv/files/dumps/amaninfowiki.zip /srv/files/dumps/amaninfowiki/ && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps amaninfowiki.zip",
+        command  => "mkdir -p /srv/files/dumps/amaninfowiki && cd /srv/files/dumps/amaninfowiki/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download amaninfowiki . && /usr/bin/zip -r /srv/files/dumps/amaninfowiki.zip /srv/files/dumps/amaninfowiki/ && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps amaninfowiki.zip",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
