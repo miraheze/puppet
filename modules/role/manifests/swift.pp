@@ -83,6 +83,32 @@ class role::swift {
         from  => '185.52.3.121',
     }
 
+    # misc4 access swift2
+    ufw::allow { 'swift misc4 -> swift2 6000':
+        proto => 'tcp',
+        port  => 6000,
+        from  => '81.4.124.61',
+    }
+
+    ufw::allow { 'swift misc4 -> swift2 6001':
+        proto => 'tcp',
+        port  => 6001,
+        from  => '81.4.124.61',
+    }
+
+    ufw::allow { 'swift misc4 -> swift2 6002':
+        proto => 'tcp',
+        port  => 6002,
+        from  => '81.4.124.61',
+    }
+
+    ufw::allow { 'swift misc4 -> swift2 6003':
+        proto => 'tcp',
+        port  => 6003,
+        from  => '81.4.124.61',
+    }
+
+
     motd::role { 'role::swift':
         description => 'Openstack Swift Object storage Proxy',
     }
