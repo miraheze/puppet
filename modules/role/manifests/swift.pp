@@ -33,7 +33,7 @@ class role::swift {
         from  => '81.4.101.157',
     }
 
-    # misc4 access swift1
+    # misc4 access swift1/swift2
     ufw::allow { 'swift misc4 -> swift1 6000':
         proto => 'tcp',
         port  => 6000,
@@ -52,34 +52,41 @@ class role::swift {
         from  => '185.52.3.121',
     }
 
-    ufw::allow { 'swift misc4 -> swift1 6003':
+    # swift1 access swift2
+    ufw::allow { 'swift swift1 -> swift2 6000':
         proto => 'tcp',
-        port  => 6003,
-        from  => '185.52.3.121',
+        port  => 6000,
+        from  => '81.4.101.157',
     }
 
-    # misc4 access swift2
-    ufw::allow { 'swift misc4 -> swift2 6000':
+    ufw::allow { 'swift swift1 -> swift2 6001':
+        proto => 'tcp',
+        port  => 6001,
+        from  => '81.4.101.157',
+    }
+
+    ufw::allow { 'swift swift1 -> swift2 6002':
+        proto => 'tcp',
+        port  => 6002,
+        from  => '81.4.101.157',
+    }
+
+    # swift2 access swift1
+    ufw::allow { 'swift swift2 -> swift1 6000':
         proto => 'tcp',
         port  => 6000,
         from  => '81.4.124.61',
     }
 
-    ufw::allow { 'swift misc4 -> swift2 6001':
+    ufw::allow { 'swift swift2 -> swift1 6001':
         proto => 'tcp',
         port  => 6001,
         from  => '81.4.124.61',
     }
 
-    ufw::allow { 'swift misc4 -> swift2 6002':
+    ufw::allow { 'swift swift2 -> swift1 6002':
         proto => 'tcp',
         port  => 6002,
-        from  => '81.4.124.61',
-    }
-
-    ufw::allow { 'swift misc4 -> swift2 6003':
-        proto => 'tcp',
-        port  => 6003,
         from  => '81.4.124.61',
     }
 
