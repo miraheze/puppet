@@ -1,29 +1,33 @@
 # == Class: swift::backend
 
-class swift::backend {
+class swift::backend (
+    $active_server = hiera('swift_active_server', true),
+) {
 
     require_package(['swift-account', 'swift-container', 'swift-object'])
 
-    class { 'rsync::server':
-        log_file => '/var/log/rsyncd.log',
-    }
+    if $active_server {
+        class { 'rsync::server':
+            log_file => '/var/log/rsyncd.log',
+        }
 
-    rsync::server::module { 'account':
-        uid             => 'swift',
-        gid             => 'swift',
-        max_connections => '5',
-        path            => '/srv/node/',
-        read_only       => 'no',
-        lock_file       => '/var/lock/account.lock',
-    }
+        rsync::server::module { 'account':
+            uid             => 'swift',
+            gid             => 'swift',
+            max_connections => '5',
+            path            => '/srv/node/',
+            read_only       => 'no',
+            lock_file       => '/var/lock/account.lock',
+        }
 
-    rsync::server::module { 'container':
-        uid             => 'swift',
-        gid             => 'swift',
-        max_connections => '5',
-        path            => '/srv/node/',
-        read_only       => 'no',
-        lock_file       => '/var/lock/container.lock',
+        rsync::server::module { 'container':
+            uid             => 'swift',
+            gid             => 'swift',
+            max_connections => '5',
+            path            => '/srv/node/',
+            read_only       => 'no',
+            lock_file       => '/var/lock/container.lock',
+        }
     }
 
     file { '/etc/swift/account-server.conf':
@@ -46,22 +50,39 @@ class swift::backend {
         require => Package['swift-object'],
         notify  => Service['swift-object'],
     }
-
+    
     service { [
         'swift-account',
         'swift-account-auditor',
         'swift-account-reaper',
-        'swift-account-replicator',
         'swift-container',
         'swift-container-auditor',
-        'swift-container-replicator',
-        'swift-container-updater',
         'swift-object',
         'swift-object-auditor',
-        'swift-object-replicator',
-        'swift-object-updater',
     ]:
         ensure => running,
+    }
+
+    if $active_server {
+        service { [
+            'swift-account-replicator',
+            'swift-container-replicator',
+            'swift-container-updater',
+            'swift-object-replicator',
+            'swift-object-updater',
+        ]:
+            ensure => stopped,
+        }
+    } else {
+        service { [
+            'swift-account-replicator',
+            'swift-container-replicator',
+            'swift-container-updater',
+            'swift-object-replicator',
+            'swift-object-updater',
+        ]:
+            ensure => running,
+        }
     }
 
     # TODO: get monotoring working
