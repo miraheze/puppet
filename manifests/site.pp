@@ -89,6 +89,12 @@ node 'swift1.miraheze.org' {
     include role::salt::minions
 }
 
+node 'swift2.miraheze.org' {
+    include base
+    include role::swift
+    include role::salt::minions
+}
+
 node 'test1.miraheze.org' {
     include base
     include role::mediawiki
