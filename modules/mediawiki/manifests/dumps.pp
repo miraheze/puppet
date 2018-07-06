@@ -20,7 +20,7 @@ class mediawiki::dumps {
 
     cron { 'Export amaninfowiki xml dump monthly':
         ensure   => present,
-        command  => '/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki amaninfowiki --logs --full --uploads > /mnt/mediawiki-static/dumps/amaninfowiki.xml',
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki amaninfowiki --logs --full --uploads > /mnt/mediawiki-static/dumps/amaninfowiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps amaninfowiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -30,7 +30,7 @@ class mediawiki::dumps {
 
     cron { 'Export amaninfowiki images monthly':
         ensure   => present,
-        command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/amaninfowiki.zip /mnt/mediawiki-static/amaninfowiki/',
+        command  => "cd /srv/files/dumps/amaninfowiki/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download amaninfowiki . && /usr/bin/zip -r /srv/files/dumps/amaninfowiki.zip /srv/files/dumps/amaninfowiki/ && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps amaninfowiki.zip",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
