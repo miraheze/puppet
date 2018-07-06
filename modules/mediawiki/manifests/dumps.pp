@@ -150,7 +150,7 @@ class mediawiki::dumps {
 
     cron { 'Export scruffywiki xml dump weekly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki scruffywiki --logs --full > /mnt/mediawiki-static/dumps/scruffywiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps scruffywiki.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki scruffywiki --logs --full > /srv/files/dumps/scruffywiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps scruffywiki.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -260,7 +260,7 @@ class mediawiki::dumps {
 
     cron { 'Export worlduniversityandschool xml dump monthly':
         ensure   => present,
-        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki worlduniversityandschoolwiki --logs --full --uploads > /mnt/mediawiki-static/dumps/worlduniversityandschool.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps worlduniversityandschool.xml",
+        command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki worlduniversityandschoolwiki --logs --full --uploads > /srv/files/dumps/worlduniversityandschool.xml && cd /srv/files/dumps/ && ST_AUTH='http://81.4.124.61:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps worlduniversityandschool.xml",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
