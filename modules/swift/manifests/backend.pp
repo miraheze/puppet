@@ -4,6 +4,28 @@ class swift::backend {
 
     require_package(['swift-account', 'swift-container', 'swift-object'])
 
+    class { 'rsync::server':
+        log_file => '/var/log/rsyncd.log',
+    }
+
+    rsync::server::module { 'account':
+        uid             => 'swift',
+        gid             => 'swift',
+        max_connections => '5',
+        path            => '/srv/node/',
+        read_only       => 'no',
+        lock_file       => '/var/lock/account.lock',
+    }
+
+    rsync::server::module { 'container':
+        uid             => 'swift',
+        gid             => 'swift',
+        max_connections => '5',
+        path            => '/srv/node/',
+        read_only       => 'no',
+        lock_file       => '/var/lock/container.lock',
+    }
+
     file { '/etc/swift/account-server.conf':
         ensure  => present,
         content => template('swift/account-server.conf.erb'),
