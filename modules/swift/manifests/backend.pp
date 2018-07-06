@@ -4,6 +4,28 @@ class swift::backend {
 
     require_package(['swift-account', 'swift-container', 'swift-object'])
 
+    class { 'rsync::server':
+        log_file => '/var/log/rsyncd.log',
+    }
+
+    rsync::server::module { 'account':
+        uid             => 'swift',
+        gid             => 'swift',
+        max_connections => '5',
+        path            => '/srv/node/',
+        read_only       => 'no',
+        lock_file       => '/var/lock/account.lock',
+    }
+
+    rsync::server::module { 'container':
+        uid             => 'swift',
+        gid             => 'swift',
+        max_connections => '5',
+        path            => '/srv/node/',
+        read_only       => 'no',
+        lock_file       => '/var/lock/container.lock',
+    }
+
     file { '/etc/swift/account-server.conf':
         ensure  => present,
         content => template('swift/account-server.conf.erb'),
@@ -25,19 +47,21 @@ class swift::backend {
         notify  => Service['swift-object'],
     }
 
-    service { 'swift-account':
-        ensure  => running,
-        require => Package['swift-account'],
-    }
-
-    service { 'swift-container':
-        ensure  => running,
-        require => Package['swift-container'],
-    }
-
-    service { 'swift-object':
-        ensure  => running,
-        require => Package['swift-object'],
+    service { [
+        'swift-account',
+        'swift-account-auditor',
+        'swift-account-reaper',
+        'swift-account-replicator',
+        'swift-container',
+        'swift-container-auditor',
+        'swift-container-replicator',
+        'swift-container-updater',
+        'swift-object',
+        'swift-object-auditor',
+        'swift-object-replicator',
+        'swift-object-updater',
+    ]:
+        ensure => running,
     }
 
     # TODO: get monotoring working
