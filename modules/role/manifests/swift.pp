@@ -83,6 +83,18 @@ class role::swift {
         from  => '81.4.124.61',
     }
 
+    # rsync data
+    ufw::allow { 'rsync swift1 -> swift2 6003':
+        proto => 'tcp',
+        port  => 873,
+        from  => '81.4.101.157',
+    }
+
+    ufw::allow { 'rsync swift2 -> swift1 873':
+        proto => 'tcp',
+        port  => 873,
+        from  => '81.4.124.61',
+    }
 
     motd::role { 'role::swift':
         description => 'Openstack Swift Object storage Proxy',
