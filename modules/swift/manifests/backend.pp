@@ -28,6 +28,15 @@ class swift::backend (
             read_only       => 'no',
             lock_file       => '/var/lock/container.lock',
         }
+
+        rsync::server::module { 'object':
+            uid             => 'swift',
+            gid             => 'swift',
+            max_connections => '20',
+            path            => '/srv/node/',
+            read_only       => 'no',
+            lock_file       => '/var/lock/object.lock',
+        }
     }
 
     file { '/etc/swift/account-server.conf':
