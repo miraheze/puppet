@@ -26,7 +26,7 @@ class base::monitoring {
     ufw::allow { 'prometheus access all hosts':
         proto => 'tcp',
         port  => 9100,
-        from  => '81.4.127.174',
+        from  => '185.52.1.76',
     }
 
     require_package('prometheus-node-exporter')
