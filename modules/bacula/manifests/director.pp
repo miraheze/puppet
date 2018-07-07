@@ -105,10 +105,17 @@ class bacula::director {
             },
         }
 
-        icinga2::custom::services { 'Bacula Static':
+        icinga2::custom::services { 'Bacula Static Swift1':
             check_command => 'nrpe',
             vars          => {
-                nrpe_command => 'check_bacula_static',
+                nrpe_command => 'check_bacula_static_swift1',
+            },
+        }
+
+        icinga2::custom::services { 'Bacula Static Swift2':
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => 'check_bacula_static_swift2',
             },
         }
 
@@ -136,9 +143,14 @@ class bacula::director {
             check_command   => 'check_nrpe_1arg!check_bacula_databasesdb4',
         }
 
-        icinga::service { 'bacula_static':
-            description   => 'Bacula - Static',
-            check_command => 'check_nrpe_1arg!check_bacula_static',
+        icinga::service { 'bacula_static_swift1':
+            description   => 'Bacula - Static Swift1',
+            check_command => 'check_nrpe_1arg!check_bacula_static_swift1',
+        }
+
+        icinga::service { 'bacula_static_swift2':
+            description   => 'Bacula - Static Swift2',
+            check_command => 'check_nrpe_1arg!check_bacula_static_swift2',
         }
 
         icinga::service { 'bacula_phabstatic':
