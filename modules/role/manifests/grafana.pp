@@ -2,14 +2,14 @@
 class role::grafana {
     include ::grafana
 
-    if !defined(Ufw::Allow['icinga http']) {
+    if defined(Ufw::Allow['icinga http']) {
         ufw::allow { 'icinga access':
             proto => 'tcp',
             port  => '80',
         }
     }
 
-    if !defined(Ufw::Allow['icinga https']) {
+    if defined(Ufw::Allow['icinga https']) {
         ufw::allow { 'icinga access':
             proto => 'tcp',
             port  => '443',
