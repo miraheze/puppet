@@ -104,6 +104,7 @@ class phabricator(
     file { '/srv/phab/phabricator/conf/local/local.json':
         ensure  => present,
         content => template('phabricator/local.json.erb'),
+        require => Git::Clone['phabricator'],
     }
 
     if os_version('debian >= stretch') {
