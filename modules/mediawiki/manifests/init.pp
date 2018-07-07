@@ -113,7 +113,7 @@ class mediawiki(
         require => Git::Clone['MediaWiki config'],
     }
 
-    file { '/root/swiftExport':
+    file { '/etc/swiftExport':
         ensure  => 'present',
         content => template('mediawiki/swiftExport'),
     }
