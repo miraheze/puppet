@@ -24,17 +24,17 @@ node 'db4.miraheze.org' {
 
 node 'misc1.miraheze.org' {
     include base
+    include role::dns
+    include role::grafana
     include role::icinga
     include role::irc
     include role::mail
-    include role::dns
     include role::salt::minions
 }
 
 node 'misc2.miraheze.org' {
     include base
     include role::redis
-    include role::grafana
     include role::piwik
     include role::salt::minions
 }
