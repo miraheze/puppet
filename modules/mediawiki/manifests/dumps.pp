@@ -8,7 +8,7 @@ class mediawiki::dumps {
     
     $swift_password = hiera('passwords::mediawiki::swift::admin')
     
-    cron { 'Export aesbasewiki xml dump montly ':
+    cron { 'Export aesbasewiki xml dump monthly':
         ensure   => present,
         command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki aesbasewiki --logs --full > /srv/files/dumps/aesbasewiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps aesbasewiki.xml",
         user     => 'www-data',
@@ -58,7 +58,7 @@ class mediawiki::dumps {
         monthday => ['1', '8', '15', '22', '29'],
     }
 
-    cron { 'Export jokowiki xml dump montly ':
+    cron { 'Export jokowiki xml dump monthly':
         ensure   => present,
         command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki jokowiki --logs --full > /srv/files/dumps/jokowiki.xml && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps jokowiki.xml",
         user     => 'www-data',
@@ -120,7 +120,7 @@ class mediawiki::dumps {
 
     cron { 'Export nenawikiwiki images weekly':
         ensure   => present,
-        command  => "mkdir -p /srv/files/dumps/nenawikiwiki && cd /srv/files/dumps/nenawikiwiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download nenawikiwiki-mw && /usr/bin/zip -r /srv/files/dumps/nenawikiwiki.zip /srv/files/dumps/nenawikiwiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps nenawikiwiki.zip",
+        command  => "mkdir -p /srv/files/dumps/nenawikiwiki && cd /srv/files/dumps/nenawikiwiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download nenawikiwiki-mw && /usr/bin/zip -r /srv/files/dumps/nenawikiwiki.zip /srv/files/dumps/nenawikiwiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps nenawikiwiki.zip && rm -rf /srv/files/dumps/nenawikiwiki",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -170,7 +170,7 @@ class mediawiki::dumps {
     
     cron { 'Export scruffywiki images weekly':
         ensure   => present,
-        command  => "mkdir -p /srv/files/dumps/scruffywiki && cd /srv/files/dumps/scruffywiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download scruffywiki-mw && /usr/bin/zip -r /srv/files/dumps/scruffywiki.zip /srv/files/dumps/cpiwiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps scruffywiki.zip",
+        command  => "mkdir -p /srv/files/dumps/scruffywiki && cd /srv/files/dumps/scruffywiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download scruffywiki-mw && /usr/bin/zip -r /srv/files/dumps/scruffywiki.zip /srv/files/dumps/scruffywiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps scruffywiki.zip && rm -rf /srv/files/dumps/scruffywiki",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -190,7 +190,7 @@ class mediawiki::dumps {
 
     cron { 'Export sdiywiki images weekly':
         ensure   => present,
-        command  => "mkdir -p /srv/files/dumps/sdiywiki && cd /srv/files/dumps/sdiywiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download sdiywiki-mw && /usr/bin/zip -r /srv/files/dumps/sdiywiki.zip /srv/files/dumps/cpiwiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sdiywiki.zip",
+        command  => "mkdir -p /srv/files/dumps/sdiywiki && cd /srv/files/dumps/sdiywiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download sdiywiki-mw && /usr/bin/zip -r /srv/files/dumps/sdiywiki.zip /srv/files/dumps/sdiywiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sdiywiki.zip && rm -rf /srv/files/sdiywiki",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -240,7 +240,7 @@ class mediawiki::dumps {
     
     cron { 'Export sterbalfamilyrecipeswiki images weekly':
         ensure   => present,
-        command  => "mkdir -p /srv/files/dumps/sterbalfamilyrecipeswiki && cd /srv/files/dumps/sterbalfamilyrecipeswiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download sterbalfamilyrecipeswiki-mw && /usr/bin/zip -r /srv/files/dumps/sterbalfamilyrecipeswiki.zip /srv/files/dumps/sterbalfamilyrecipeswiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sterbalfamilyrecipeswiki.zip",
+        command  => "mkdir -p /srv/files/dumps/sterbalfamilyrecipeswiki && cd /srv/files/dumps/sterbalfamilyrecipeswiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download sterbalfamilyrecipeswiki-mw && /usr/bin/zip -r /srv/files/dumps/sterbalfamilyrecipeswiki.zip /srv/files/dumps/sterbalfamilyrecipeswiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps sterbalfamilyrecipeswiki.zip && rm -rf /srv/files/dumps/sterbalfamilyrecipeswiki",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
