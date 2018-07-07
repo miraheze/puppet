@@ -30,7 +30,7 @@ class mediawiki::dumps {
 
     cron { 'Export amaninfowiki images monthly':
         ensure   => present,
-        command  => "mkdir -p /srv/files/dumps/amaninfowiki && cd /srv/files/dumps/amaninfowiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download amaninfowiki-mw && /usr/bin/zip -r /srv/files/dumps/amaninfowiki.zip /srv/files/dumps/amaninfowiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps amaninfowiki.zip",
+        command  => "mkdir -p /srv/files/dumps/amaninfowiki && cd /srv/files/dumps/amaninfowiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download amaninfowiki-mw && /usr/bin/zip -r /srv/files/dumps/amaninfowiki.zip /srv/files/dumps/amaninfowiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps amaninfowiki.zip && rm -rf /srv/mediawiki/files/dumps/amaninfowiki",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -120,7 +120,7 @@ class mediawiki::dumps {
 
     cron { 'Export nenawikiwiki images weekly':
         ensure   => present,
-        command  => "mkdir -p /srv/files/dumps/nenawikiwiki && cd /srv/files/dumps/nenawikiwiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download nenawikiwiki-mw && /usr/bin/zip -r /srv/files/dumps/nenawikiwiki.zip /srv/files/dumps/cpiwiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps nenawikiwiki.zip",
+        command  => "mkdir -p /srv/files/dumps/nenawikiwiki && cd /srv/files/dumps/nenawikiwiki/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift download nenawikiwiki-mw && /usr/bin/zip -r /srv/files/dumps/nenawikiwiki.zip /srv/files/dumps/nenawikiwiki/ && cd /srv/files/dumps/ && ST_AUTH='http://185.52.3.121:8080/auth/v1.0' ST_USER=admin:admin ST_KEY=${swift_password} swift upload dumps nenawikiwiki.zip",
         user     => 'www-data',
         minute   => '0',
         hour     => '0',
