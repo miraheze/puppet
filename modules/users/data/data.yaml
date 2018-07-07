@@ -16,7 +16,6 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /root/ssl-certificate',
                  'ALL = (ALL) NOPASSWD: /usr/bin/swift *',
-                 'ALL = (ALL) NOPASSWD: /bin/cat /root/swiftExport',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
     gid: 2002
