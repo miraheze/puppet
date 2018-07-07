@@ -22,6 +22,6 @@ class varnish::prometheus_exporter (
     ufw::allow { 'prometheus varnish/misc2':
         proto   => 'tcp',
         port    => $listen_port,
-        from    => '81.4.127.174',
+        from    => '185.52.1.76',
     }   
 }
