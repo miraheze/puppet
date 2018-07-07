@@ -14,14 +14,6 @@ node /^cp[245]\.miraheze\.org$/ {
     include role::salt::minions
 }
 
-node 'nfs1.miraheze.org' {
-    include base
-    include bacula::client
-    include role::staticserver
-    include role::salt::minions
-    include role::swift
-}
-
 node 'db4.miraheze.org' {
     include base
     include role::db
@@ -83,13 +75,8 @@ node 'puppet1.miraheze.org' {
     include role::salt::minions
 }
 
-node 'swift1.miraheze.org' {
-    include base
-    include role::swift
-    include role::salt::minions
-}
-
-node 'swift2.miraheze.org' {
+node /^swift[12]\.miraheze\.org$/ {
+    include bacula::client
     include base
     include role::swift
     include role::salt::minions
