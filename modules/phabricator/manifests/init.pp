@@ -1,17 +1,13 @@
 # class: phabricator
 class phabricator(
     # use php7.2 on stretch+
-    $modules = ['ssl', 'php5']
+    $modules = ['ssl', 'php7.2']
 ) {
     include ::httpd
 
     include ::php
 
-    if os_version('debian >= stretch') {
-        $php_version = '7.2'
-    } else {
-        $php_version = '5'
-    }
+    $php_version = '7.2'
 
     require_package(["libapache2-mod-php${php_version}", 'python-pygments', 'subversion'])
 
@@ -107,21 +103,12 @@ class phabricator(
         require => Git::Clone['phabricator'],
     }
 
-    if os_version('debian >= stretch') {
-      file { '/etc/php/7.2/apache2/conf.d/php.ini':
-          ensure  => present,
-          content => template('phabricator/php72.ini.erb'),
-          mode    => '0755',
-          notify  => Service['apache2'],
-          require => Package['libapache2-mod-php7.2'],
-      }
-    } else {
-        file { '/etc/php5/apache2/php.ini':
-            ensure  => present,
-            mode    => '0755',
-            source  => 'puppet:///modules/phabricator/php.ini',
-            require => Package['libapache2-mod-php5'],
-        }
+    file { '/etc/php/7.2/apache2/conf.d/php.ini':
+        ensure  => present,
+        content => template('phabricator/php72.ini.erb'),
+        mode    => '0755',
+        notify  => Service['apache2'],
+        require => Package['libapache2-mod-php7.2'],
     }
 
     httpd::mod { 'phabricator_apache':
