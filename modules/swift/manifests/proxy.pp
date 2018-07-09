@@ -22,6 +22,15 @@ class swift::proxy {
         notify  => Service['swift-proxy'],
     }
 
+    file { '/usr/local/lib/python2.7/dist-packages/defaulter/':
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        source  => 'puppet:///modules/swift/SwiftMedia/defaulter/',
+        recurse => 'remote',
+        notify  => Service['swift-proxy'],
+    }
+
     service { 'swift-proxy':
         ensure  => running,
         require => Package['swift-proxy'],
