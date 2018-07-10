@@ -175,7 +175,7 @@ class _MirahezeRewriteContext(WSGIContext):
                 req.path)
             if match:
                 proj = match.group('proj')  # <wiki>
-                obj = 'timeline/' + match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
+                obj = 'avatars/' + match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
 
         if match:
             # Get the per-project "conceptual" container name, e.g. "<proj><lang><repo><zone>"
@@ -375,7 +375,7 @@ class MirahezeRewrite(object):
         self.logger = get_logger(conf)
 
     def __call__(self, env, start_response):
-        if env['REQUEST_METHOD'] in ('PUT'):
+        if env['REQUEST_METHOD'] in ('PUT', 'POST'):
             context = _MirahezeRewriteContext(self, self.conf)
             return context.handle_request_put(env, start_response)
 
