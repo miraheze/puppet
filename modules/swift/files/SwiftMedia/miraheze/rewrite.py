@@ -214,6 +214,29 @@ class _MirahezeRewriteContext(WSGIContext):
         # Keep a copy of the original request so we can ask the scalers for it
         reqorig = swob.Request(req.environ.copy())
 
+        path = env['PATH_INFO']
+        if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
+            match = re.match(
+                r'^/v1/AUTH_admin/(?P<proj>[^/]+)-avatars$',
+                req.path)
+            if match:
+                proj = match.group('proj')  # <wiki>
+                obj = ''
+
+            if match is None:
+                match = re.match(
+                    r'^/v1/AUTH_admin/(?P<proj>[^/]+)-avatars/(?P<path>.+)$',
+                    req.path)
+                if match:
+                    proj = match.group('proj')  # <wiki>
+                    obj = 'avatars/' + match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
+            
+            if match is None:
+                return self.app(env, start_response)
+        else:
+            match = None
+            
+
         # Containers have 5 components: project, language, repo, zone, and shard.
         # If there's no zone in the URL, the zone is assumed to be 'public' (for b/c).
         # Shard is optional (and configurable), and is only used for large containers.
@@ -254,12 +277,13 @@ class _MirahezeRewriteContext(WSGIContext):
         # (h) https://static.miraheze.org/<proj>/timeline/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/timeline/<relpath>
 
-        match = re.match(
-            r'^/(?P<proj>[^/]+)/(?P<path>timeline/.+)$',
-            req.path)
-        if match:
-            proj = match.group('proj')  # <wiki>
-            obj = match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
+        if match is None:
+            match = re.match(
+                r'^/(?P<proj>[^/]+)/(?P<path>timeline/.+)$',
+                req.path)
+            if match:
+                proj = match.group('proj')  # <wiki>
+                obj = match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
 
         # math renderings
         if match is None:
@@ -381,11 +405,6 @@ class MirahezeRewrite(object):
 
         # end-users should only do GET/HEAD, nothing else needs a rewrite
         if env['REQUEST_METHOD'] not in ('HEAD', 'GET'):
-            return self.app(env, start_response)
-
-        # do nothing on authenticated and authentication requests
-        path = env['PATH_INFO']
-        if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
             return self.app(env, start_response)
 
         context = _MirahezeRewriteContext(self, self.conf)
