@@ -146,12 +146,15 @@ class _MirahezeRewriteContext(WSGIContext):
         # collapse them. fixes T34864
         req.path_info = re.sub(r'/{2,}', '/', req.path_info)
 
-        match = re.match(
-            r'^/v1/AUTH_admin/(?P<proj>[^/]+)-timeline-render$',
-            req.path)
-        if match:
-            proj = match.group('proj')  # <wiki>
-            obj = 'timeline'
+        if env['REQUEST_METHOD'] not in ('DELETE'):
+            match = re.match(
+                r'^/v1/AUTH_admin/(?P<proj>[^/]+)-timeline-render$',
+                req.path)
+            if match:
+                proj = match.group('proj')  # <wiki>
+                obj = 'timeline'
+        else:
+            match = None
 
         if match is None:
             match = re.match(
@@ -161,13 +164,16 @@ class _MirahezeRewriteContext(WSGIContext):
                 proj = match.group('proj')  # <wiki>
                 obj = 'timeline/' + match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
 
-        if match is None:
-            match = re.match(
-                r'^/v1/AUTH_admin/(?P<proj>[^/]+)-avatars$',
-                req.path)
-            if match:
-                proj = match.group('proj')  # <wiki>
-                obj = 'avatars'
+        if env['REQUEST_METHOD'] not in ('DELETE'):
+            if match is None:
+                match = re.match(
+                    r'^/v1/AUTH_admin/(?P<proj>[^/]+)-avatars$',
+                    req.path)
+                if match:
+                    proj = match.group('proj')  # <wiki>
+                    obj = 'avatars'
+        else:
+            match = None
 
         if match is None:
             match = re.match(
@@ -399,7 +405,7 @@ class MirahezeRewrite(object):
         self.logger = get_logger(conf)
 
     def __call__(self, env, start_response):
-        if env['REQUEST_METHOD'] in ('PUT', 'POST'):
+        if env['REQUEST_METHOD'] in ('PUT', 'POST', 'DELETE'):
             context = _MirahezeRewriteContext(self, self.conf)
             return context.handle_request_put(env, start_response)
 
