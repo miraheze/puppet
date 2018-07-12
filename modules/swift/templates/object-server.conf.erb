@@ -202,7 +202,7 @@ interval = 900
 # run_pause is deprecated, use interval instead
 # run_pause = 30
 #
-concurrency = 0
+concurrency = 1
 # stats_interval = 300
 #
 # default is rsync, alternative is ssync
@@ -297,7 +297,7 @@ interval = 900
 # run_pause = 30
 #
 # concurrency = 1
-concurrency = 0
+concurrency = 1
 # stats_interval = 300
 # node_timeout = 10
 # http_timeout = 60
@@ -326,8 +326,9 @@ log_name = swift-object-updater
 # log_level = INFO
 # log_address = /dev/log
 #
-interval = 300
-# concurrency = 1
+interval = 900
+concurrency = 1
+
 # node_timeout = <whatever's in the DEFAULT section or 10>
 # slowdown will sleep that amount between objects
 # slowdown = 0.01
@@ -361,7 +362,7 @@ interval = 900
 # disk_chunk_size = 65536
 files_per_second = 5
 
-concurrency = 0
+concurrency = 1
 # default is 10000000 but we change it to 5000000
 bytes_per_second = 5000000
 
