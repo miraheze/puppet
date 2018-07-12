@@ -290,12 +290,13 @@ log_name = swift-object-reconstructor
 # daemonize = on
 #
 # Time in seconds to wait between reconstruction passes
-interval = 300
+interval = 900
                            
 # run_pause is deprecated, use interval instead
 # run_pause = 30
 #
 # concurrency = 1
+concurrency = 0
 # stats_interval = 300
 # node_timeout = 10
 # http_timeout = 60
@@ -352,7 +353,7 @@ log_name = swift-object-auditor
 # log_address = /dev/log
 #
 # Time in seconds to wait between auditor passes
-interval = 600
+interval = 900
 #
 # You can set the disk chunk size that the auditor uses making it larger if
 # you like for more efficient local auditing of larger objects
