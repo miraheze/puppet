@@ -197,7 +197,7 @@ log_name = swift-object-replicator
 # daemonize = on
 #
 # Time in seconds to wait between replication passes
-interval = 300
+interval = 600
 # run_pause is deprecated, use interval instead
 # run_pause = 30
 #
@@ -290,7 +290,8 @@ log_name = swift-object-reconstructor
 # daemonize = on
 #
 # Time in seconds to wait between reconstruction passes
-# interval = 30
+interval = 300
+                           
 # run_pause is deprecated, use interval instead
 # run_pause = 30
 #
@@ -351,14 +352,17 @@ log_name = swift-object-auditor
 # log_address = /dev/log
 #
 # Time in seconds to wait between auditor passes
-interval = 300
+interval = 600
 #
 # You can set the disk chunk size that the auditor uses making it larger if
 # you like for more efficient local auditing of larger objects
 # disk_chunk_size = 65536
-# files_per_second = 20
-# concurrency = 1
-# bytes_per_second = 10000000
+files_per_second = 5
+
+concurrency = 1
+# default is 10000000 but we change it to 5000000
+bytes_per_second = 5000000
+
 # log_time = 3600
 # zero_byte_files_per_second = 50
 # recon_cache_path = /var/cache/swift
