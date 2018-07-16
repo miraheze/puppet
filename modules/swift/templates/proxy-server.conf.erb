@@ -1,7 +1,7 @@
 [DEFAULT]
 #bind_ip = 0.0.0.0
 bind_port = 8080
-workers = 3
+workers = 6
 # bind_timeout = 30
 # backlog = 4096
 swift_dir = /etc/swift
@@ -30,7 +30,8 @@ user = swift
 # workers = auto
 #
 # Maximum concurrent requests per worker
-# max_clients = 1024
+max_clients = 300
+
 #
 # Set the following two lines to enable SSL. This is for testing only.
 # cert_file = /etc/swift/proxy.crt
