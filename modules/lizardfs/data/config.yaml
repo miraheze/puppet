@@ -1,4 +1,6 @@
 # first value is ignore but the second value is the important one.
 # map storage_node_number.
-storage_node_1: '185.52.2.243'
-storage_node_2: '81.4.124.61'
+storage_node_1: '185.52.1.75'
+storage_node_2: '185.52.2.113'
+storage_node_3: '81.4.121.113'
+storage_node_4: '185.52.2.243'
