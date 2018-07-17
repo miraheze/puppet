@@ -1,6 +1,6 @@
 # == Class: lizardfs::web
 
-class lizardfs::web (
+class lizardfs::web(
     $modules = ['alias', 'rewrite', 'ssl']
 ) {
 

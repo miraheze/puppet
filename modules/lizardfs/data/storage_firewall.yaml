@@ -1,0 +1,11 @@
+# clients
+# maps short hostname to ip
+mw1: '185.52.1.75'
+mw2: '185.52.2.113'
+mw3: '81.4.121.113'
+test1: '185.52.2.243'
+
+# storage nodes
+# maps short hostname to ip
+swift1: '81.4.101.157'
+swift2: '81.4.124.61'

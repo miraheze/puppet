@@ -1,6 +1,6 @@
 # == Class: lizardfs::storage
 
-class lizardfs::storage (
+class lizardfs::storage(
     # misc4 ip
     $master_server = hiera('lizardfs_master_server', '185.52.3.121'),
 ) {
@@ -30,5 +30,17 @@ class lizardfs::storage (
     
     service { 'lizardfs-chunkserver':
         ensure => running,
+    }
+
+    $module_path = get_module_path($module_name)
+    $firewall = loadyaml("${module_path}/data/storage_firewall.yaml")
+
+    $firewall.each |$firewall_key, $firewall_value| {
+        # clients access chunkserver
+        ufw::allow { "lizardfs ${firewall_key} 9421":
+            proto => 'tcp',
+            port  => 9422,
+            from  => $firewall_value,
+        }
     }
 }
