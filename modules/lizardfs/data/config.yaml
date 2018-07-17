@@ -1,5 +1,5 @@
 # first value is ignore but the second value is the important one.
-# map storage_node_number.
+# maps short hostname to ip
 mw1: '185.52.1.75'
 mw2: '185.52.2.113'
 mw3: '81.4.121.113'
