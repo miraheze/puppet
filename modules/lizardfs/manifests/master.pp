@@ -30,13 +30,6 @@ class lizardfs::master(
         require => Package['lizardfs-master'],
         notify  => Service['lizardfs-master'],
     }
-
-    file { '/etc/swift/object-server.conf':
-        ensure  => present,
-        content => template('swift/object-server.conf.erb'),
-        require => Package['swift-object'],
-        notify  => Service['swift-object'],
-    }
     
     service { 'lizardfs-master':
         ensure => running,
