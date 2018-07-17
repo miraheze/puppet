@@ -40,7 +40,7 @@
 #   The mfsmount options. Example: "noauto"
 #
 
-define lizardfs::mount(
+define lizardfs::client(
   $lizardfs_port = 9421,
   $lizardfs_master = hiera('lizardfs_master_server', '185.52.3.121'),
   $mountpoint = undef,
