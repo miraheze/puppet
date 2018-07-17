@@ -16,7 +16,12 @@ class role::mediawiki {
         description => 'MediaWiki server',
     }
 
-    package { 'nfs-common':
-        ensure => purged,
+    ::lizardfs::client {'/mnt/mediawiki-static':
+        create_mountpoint => true,
+    }
+
+    ::lizardfs::client {'/mnt/mediawiki-trash':
+        create_mountpoint => true,
+        options           => 'mfsmeta',
     }
 }
