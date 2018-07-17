@@ -1,3 +1,4 @@
 swift_proxy: false
 swift_backend: true
 swift_active_server: true
+lizardfs_storage: true
