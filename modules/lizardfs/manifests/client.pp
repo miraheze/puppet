@@ -76,8 +76,8 @@ define lizardfs::client(
     if $create_mountpoint {
       exec { $real_mountpoint:
         command => "/bin/mkdir -p '${real_mountpoint}'",
-        user    => 'www-data',
-        group   => 'www-data',
+        user    => 'root',
+        group   => 'root',
         creates => $real_mountpoint,
         before  => Mount[$real_mountpoint],
       }
