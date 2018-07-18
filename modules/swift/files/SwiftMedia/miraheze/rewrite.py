@@ -405,7 +405,7 @@ class MirahezeRewrite(object):
         self.logger = get_logger(conf)
 
     def __call__(self, env, start_response):
-        if env['REQUEST_METHOD'] in ('PUT', 'POST', 'DELETE'):
+        if env['REQUEST_METHOD'] in ('PUT', 'POST'):
             context = _MirahezeRewriteContext(self, self.conf)
             return context.handle_request_put(env, start_response)
 
