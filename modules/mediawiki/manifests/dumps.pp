@@ -20,7 +20,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} xml dump ${value}":
             ensure   => present,
-            command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full > /mnt/mediawiki-static/dumps/${key}.xml",
+            command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full --uploads > /mnt/mediawiki-static/dumps/${key}.xml",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
