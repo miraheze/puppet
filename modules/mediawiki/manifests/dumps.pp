@@ -17,6 +17,7 @@ class mediawiki::dumps {
         } else {
             $time = ['1', '8', '15', '22', '29']
         }
+
         cron { "Export ${key} xml dump ${value}":
             ensure   => present,
             command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full > /mnt/mediawiki-static/dumps/${key}.xml",
@@ -38,15 +39,6 @@ class mediawiki::dumps {
         } else {
             $time = ['1', '8', '15', '22', '29']
         }
-        cron { "Export ${key} xml dump ${value}":
-            ensure   => present,
-            command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full > /mnt/mediawiki-static/dumps/${key}.xml",
-            user     => 'www-data',
-            minute   => '0',
-            hour     => '0',
-            month    => '*',
-            monthday => $time,
-        }
 
         cron { "Export ${key} images ${value}":
             ensure   => present,
@@ -55,7 +47,7 @@ class mediawiki::dumps {
             minute   => '0',
             hour     => '0',
             month    => '*',
-            monthday => ['15', '30'],
+            monthday => $time,
         }
     }
 }
