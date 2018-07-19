@@ -1,0 +1,7 @@
+# maps wiki db name to 'monthly' or 'fortnight' or 'weekly'
+amaninfowiki: 'fortnight'
+cpiwiki: 'weekly'
+nenawikiwiki: 'weekly'
+scruffywiki: 'weekly'
+sdiywiki: 'weekly'
+sterbalfamilyrecipeswiki: 'weekly'
