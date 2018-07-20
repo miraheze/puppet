@@ -80,7 +80,6 @@ node /^swift[12]\.miraheze\.org$/ {
     include bacula::client
     include base
     include role::lizardfs
-    include role::swift
     include role::salt::minions
 }
 
