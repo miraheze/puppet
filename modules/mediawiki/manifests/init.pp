@@ -105,17 +105,11 @@ class mediawiki(
     $recaptcha_sitekey    = hiera('passwords::recaptcha::sitekey')
     $recaptcha_secretkey  = hiera('passwords::recaptcha::secretkey')
     $googlemaps_key       = hiera('passwords::mediawiki::googlemapskey')
-    $swift_admin_password = hiera('passwords::mediawiki::swift::admin')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
         content => template('mediawiki/PrivateSettings.php'),
         require => Git::Clone['MediaWiki config'],
-    }
-
-    file { '/etc/swiftExport':
-        ensure  => 'present',
-        content => template('mediawiki/swiftExport'),
     }
 
     file { '/usr/local/bin/foreachwikiindblist':
