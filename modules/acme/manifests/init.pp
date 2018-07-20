@@ -37,6 +37,7 @@ class acme {
         source => 'puppet:///modules/acme/ssl-acme',
         owner  => 'nagiosre',
         group  => 'nagiosre',
+        mode   => '0775',
     }
 
     file { '/var/lib/nagios/LE.crt':
