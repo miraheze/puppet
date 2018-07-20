@@ -14,7 +14,6 @@ class mediawiki::packages {
         'lilypond',
         'poppler-utils',
         'python-pip',
-        'python-swiftclient',
     ]
 
     # First installs can trip without this
