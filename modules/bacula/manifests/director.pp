@@ -105,10 +105,10 @@ class bacula::director {
             },
         }
 
-        icinga2::custom::services { 'Bacula Static Lizardfs':
+        icinga2::custom::services { 'Bacula Static Lizardfs1':
             check_command => 'nrpe',
             vars          => {
-                nrpe_command => 'check_bacula_static_lizardfs',
+                nrpe_command => 'check_bacula_static_lizardfs1',
             },
         }
 
