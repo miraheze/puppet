@@ -8,7 +8,7 @@
 <%- @storage_ip.each_pair do |ip, value| -%>
 
 # <%= ip %>
-<%= value %> / rw,alldirs,maproot=0,mintrashtime=0,maxtrashtime=300
+<%= value %> / rw,alldirs,maproot=0,mintrashtime=0,maxtrashtime=0
 <%= value %> . rw
 
 <%- end -%>
