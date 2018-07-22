@@ -186,7 +186,7 @@ class bacula::director {
 
         icinga::service { 'bacula_lizardfs_lizardfs2_chunkserver2':
             description   => 'Bacula - lizardfs2 Lizardfs Chunkserver2',
-            check_command => 'check_nrpe_1arg!check_bacula_lizardfs2_lizardfs2_chunkserver2',
+            check_command => 'check_nrpe_1arg!check_bacula_lizardfs2_lizardfs_chunkserver2',
         }
 
         icinga::service { 'bacula_phabstatic':
