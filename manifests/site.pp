@@ -75,7 +75,7 @@ node 'puppet1.miraheze.org' {
     include role::salt::minions
 }
 
-node /^swift[12]\.miraheze\.org$/ {
+node /^lizardfs[12]\.miraheze\.org$/ {
     include bacula::client
     include base
     include role::lizardfs

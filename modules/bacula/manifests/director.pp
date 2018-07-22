@@ -105,17 +105,38 @@ class bacula::director {
             },
         }
 
-        icinga2::custom::services { 'Bacula Static Swift1':
+        icinga2::custom::services { 'Bacula Static Lizardfs1':
             check_command => 'nrpe',
             vars          => {
-                nrpe_command => 'check_bacula_static_swift1',
+                nrpe_command => 'check_bacula_static_lizardfs1',
             },
         }
 
-        icinga2::custom::services { 'Bacula Static Swift2':
+        icinga2::custom::services { 'Bacula Static Lizardfs2':
             check_command => 'nrpe',
             vars          => {
-                nrpe_command => 'check_bacula_static_swift2',
+                nrpe_command => 'check_bacula_static_lizardfs2',
+            },
+        }
+
+        icinga2::custom::services { 'Bacula Misc4 Lizardfs Master':
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => 'check_bacula_misc4_lizardfs',
+            },
+        }
+
+        icinga2::custom::services { 'Bacula Lizardfs1 Lizardfs Chunkserver':
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => 'check_bacula_lizardfs_lizardfs_chunkserver1',
+            },
+        }
+
+        icinga2::custom::services { 'Bacula Lizardfs2 Lizardfs Chunkserver':
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => 'check_bacula_lizardfs2_lizardfs_chunkserver2',
             },
         }
 
@@ -143,14 +164,29 @@ class bacula::director {
             check_command   => 'check_nrpe_1arg!check_bacula_databasesdb4',
         }
 
-        icinga::service { 'bacula_static_swift1':
+        icinga::service { 'bacula_static_lizardfs1':
             description   => 'Bacula - Static Swift1',
-            check_command => 'check_nrpe_1arg!check_bacula_static_swift1',
+            check_command => 'check_nrpe_1arg!check_bacula_static_lizardfs1',
         }
 
-        icinga::service { 'bacula_static_swift2':
-            description   => 'Bacula - Static Swift2',
-            check_command => 'check_nrpe_1arg!check_bacula_static_swift2',
+        icinga::service { 'bacula_static_lizardfs2':
+            description   => 'Bacula - Static Lizardfs2',
+            check_command => 'check_nrpe_1arg!check_bacula_static_lizardfs2',
+        }
+
+        icinga::service { 'bacula_misc4_lizardfs':
+            description   => 'Bacula - misc4 Lizardfs master',
+            check_command => 'check_nrpe_1arg!check_bacula_misc4_lizardfs',
+        }
+
+        icinga::service { 'bacula_lizardfs_lizardfs':
+            description   => 'Bacula - lizardfs1 Lizardfs Chunkserver1',
+            check_command => 'check_nrpe_1arg!check_bacula_lizardfs1_lizardfs_chunkserver1',
+        }
+
+        icinga::service { 'bacula_lizardfs_lizardfs2':
+            description   => 'Bacula - lizardfs2 Lizardfs Chunkserver2',
+            check_command => 'check_nrpe_1arg!check_bacula_lizardfs2_lizardfs2_chunkserver2',
         }
 
         icinga::service { 'bacula_phabstatic':
