@@ -37,7 +37,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'cookiewarning_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
+        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install && php composer.phar require geoip2/geoip2',
         creates     => '/srv/mediawiki/w/extensions/CookieWarning/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/CookieWarning',
         path        => '/usr/bin',
