@@ -3,6 +3,7 @@ users::groups:
 jobrunner: false
 arcanist: true
 mwdumps: true
+extensionupdate: true
 # for icinga2 only
 #contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 # for icinga1 only

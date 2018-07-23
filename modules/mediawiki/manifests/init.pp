@@ -26,7 +26,9 @@ class mediawiki(
     if hiera(mwdumps) {
         include mediawiki::dumps
     }
-
+	if hiera(extensionupdate) {
+		include mediawiki::extensionupdate
+	}
     file { [
         '/srv/files',
         '/srv/files/dumps',
