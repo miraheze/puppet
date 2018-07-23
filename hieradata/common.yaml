@@ -2,6 +2,7 @@ jobrunner: false
 mailserver: false
 arcanist: false
 mwdumps: false
+extensionupdate: false
 puppetmaster: false
 mediawiki::branch: 'REL1_31'
 acme: false
