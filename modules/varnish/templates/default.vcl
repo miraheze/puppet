@@ -228,30 +228,6 @@ sub vcl_backend_fetch {
 }
 
 sub vcl_backend_response {
-	if (beresp.ttl <= 0s) {
-		set beresp.ttl = 120s;
-		set beresp.uncacheable = true;
-	}
-
-	if (beresp.status >= 400) {
-		set beresp.uncacheable = true;
-	}
-
-	# Cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
-	if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
-		set beresp.ttl = 43200s;
-	}
-
-	return (deliver);
-
-
-
-
-
-
-
-
-
 	// This prevents the application layer from setting this in a response.
 	// We'll be setting this same variable internally in VCL in hit-for-pass
 	// cases later.
