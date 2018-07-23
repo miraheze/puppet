@@ -241,8 +241,8 @@ sub vcl_backend_response {
 	// Set a maximum cap on the TTL for 404s. Objects that don't exist now may
 	// be created later on, and we want to put a limit on the amount of time
 	// it takes for new resources to be visible.
-	elsif (beresp.status == 404 && beresp.ttl > <%= @vcl_config.fetch("ttl_cap_404", "10m") %>) {
-		set beresp.ttl = <%= @vcl_config.fetch("ttl_cap_404", "10m") %>;
+	elsif (beresp.status == 404 && beresp.ttl > 10m) {
+		set beresp.ttl = 10m;
 	}
 
 	// Set keep, which influences the amount of time objects are kept available
