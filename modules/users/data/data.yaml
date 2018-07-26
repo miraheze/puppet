@@ -33,7 +33,7 @@ groups:
   puppet-users:
     gid: 2004
     descriptions: limited access on puppet1 to add SSL private keys
-    members: [revi]
+    members: []
     privileges: []                 
 
 users:
