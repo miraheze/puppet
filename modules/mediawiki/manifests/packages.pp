@@ -16,7 +16,6 @@ class mediawiki::packages {
         'python-pip',
         'netpbm',
         'librsvg2-dev',
-        'heirloom-mailx',
     ]
 
     # First installs can trip without this
