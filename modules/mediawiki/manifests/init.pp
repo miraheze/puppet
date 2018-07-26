@@ -10,6 +10,7 @@ class mediawiki(
     include mediawiki::packages
     include mediawiki::logging
     include mediawiki::extensionsetup
+    include mediawiki::servicessetup
     # include mediawiki::memcached # not using memcached yet and also see T3272
     include mediawiki::monitoring
 
