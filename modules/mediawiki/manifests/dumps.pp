@@ -67,7 +67,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} email xml dump ${date}":
             ensure   => present,
-            command  => "mkdir -p /mnt/mediawiki-static/priavate/dumps && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full --uploads > /mnt/mediawiki-static/private/dumps/${key}.xml && heirloom-mailx -v -a /mnt/mediawiki-static/private/dumps/${key}.xml -s 'Email dump for ${key} wiki' -S smtp-use-starttls -S ssl-verify=ignore -S smtp-auth=login -S smtp='mail.miraheze.org:25' -S from='noreply@miraheze.org' -S smtp-auth-user='noreply' -S smtp-auth-password='${noreply_password}' -S ssl-verify=ignore ${email} < /dev/null",
+            command  => "mkdir -p /mnt/mediawiki-static/priavate/dumps && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full --uploads > /mnt/mediawiki-static/priavate/dumps/${key}.xml && heirloom-mailx -v -a /mnt/mediawiki-static/priavate/dumps/${key}.xml -s 'Email dump for ${key} wiki' -S smtp-use-starttls -S ssl-verify=ignore -S smtp-auth=login -S smtp='mail.miraheze.org:25' -S from='noreply@miraheze.org' -S smtp-auth-user='noreply' -S smtp-auth-password='${noreply_password}' -S ssl-verify=ignore ${email} < /dev/null",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
