@@ -13,7 +13,7 @@ class mediawiki::servicessetup {
     }
 
     exec { 'mathoid_npm':
-        command     => 'npm install',
+        command     => 'sudo -u root npm install',
         creates     => '/srv/mediawiki/w/extensions/Wikibase/node_modules',
         cwd         => '/srv/mathoid',
         path        => '/usr/bin',
