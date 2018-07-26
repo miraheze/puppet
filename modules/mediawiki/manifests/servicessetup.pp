@@ -19,6 +19,6 @@ class mediawiki::servicessetup {
         path        => '/usr/bin',
         environment => 'HOME=/srv/mathoid',
         user        => 'www-data',
-        require     => [Git::Clone['mathoid'], Package['nodejs']],
+        require     => [Git::Clone['mathoid'], Package['nodejs'], Package['librsvg2-dev']],
     }
 }
