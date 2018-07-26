@@ -7,8 +7,8 @@ class mediawiki::servicessetup {
         directory => '/srv/mathoid',
         origin    => 'https://github.com/wikimedia/mathoid.git',
         branch    => 'master',
-        owner     => 'www-data',
-        group     => 'www-data',
+        owner     => 'root',
+        group     => 'root',
         mode      => '0755',
     }
 
@@ -18,7 +18,7 @@ class mediawiki::servicessetup {
         cwd         => '/srv/mathoid',
         path        => '/usr/bin',
         environment => 'HOME=/srv/mathoid',
-        user        => 'www-data',
+        user        => 'root',
         require     => [Git::Clone['mathoid'], Package['nodejs'], Package['librsvg2-dev']],
     }
 }
