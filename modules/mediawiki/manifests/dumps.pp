@@ -56,25 +56,26 @@ class mediawiki::dumps {
     
     $noreply_password     = hiera('passwords::mail::noreply')
 
-    $email_dump.each |$key| {
-        $key.each |$date, $email| {
-            if $date == 'monthly' {
-                $time = '1'
-            } elsif  $date == 'fortnight' {
-                $time = ['15', '30']
-            } else {
-                $time = ['1', '8', '15', '22', '29']
-            }
+    $email_dump.each |$key, $val| {
+        $date = $val['time']
+        $email = $val['emai']
+        if $date == 'monthly' {
+            $time = '1'
+        } elsif  $date == 'fortnight' {
+            $time = ['15', '30']
+        } else {
+            $time = ['1', '8', '15', '22', '29']
+        }
 
-            cron { "Export ${key} email xml dump ${date}":
-                ensure   => present,
-                command  => "mkdir -p /mnt/mediawiki-static/priavate/dumps && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full --uploads > /mnt/mediawiki-static/private/dumps/${key}.xml &&
-                heirloom-mailx -v -a /mnt/mediawiki-static/private/dumps/${key}.xml -s 'Email dump for ${key} wiki' -S smtp-use-starttls -S ssl-verify=ignore -S smtp-auth=login -S smtp='mail.miraheze.org:25' -S from='noreply@miraheze.org' -S smtp-auth-user='noreply' -S smtp-auth-password='${noreply_password}' -S ssl-verify=ignore ${email} < /dev/null",
-                user     => 'www-data',
-                minute   => '0',
-                hour     => '0',
-                month    => '*',
-                monthday => $time,
-            }
+        cron { "Export ${key} email xml dump ${date}":
+            ensure   => present,
+            command  => "mkdir -p /mnt/mediawiki-static/priavate/dumps && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full --uploads > /mnt/mediawiki-static/private/dumps/${key}.xml &&
+            heirloom-mailx -v -a /mnt/mediawiki-static/private/dumps/${key}.xml -s 'Email dump for ${key} wiki' -S smtp-use-starttls -S ssl-verify=ignore -S smtp-auth=login -S smtp='mail.miraheze.org:25' -S from='noreply@miraheze.org' -S smtp-auth-user='noreply' -S smtp-auth-password='${noreply_password}' -S ssl-verify=ignore ${email} < /dev/null",
+            user     => 'www-data',
+            minute   => '0',
+            hour     => '0',
+            month    => '*',
+            monthday => $time,
+        }
     }
 }
