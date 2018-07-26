@@ -52,7 +52,7 @@ class mediawiki::dumps {
     }
 
     # used for private dumps
-    $email_dump = loadyaml("${module_path}/data/image_dump.yaml")
+    $email_dump = loadyaml("${module_path}/data/email_dump.yaml")
     
     $noreply_password     = hiera('passwords::mail::noreply')
 
