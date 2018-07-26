@@ -58,7 +58,7 @@ class mediawiki::dumps {
 
     $email_dump.each |$key, $val| {
         $date = $val['time']
-        $email = $val['emai']
+        $email = $val['email']
         if $date == 'monthly' {
             $time = '1'
         } elsif  $date == 'fortnight' {
