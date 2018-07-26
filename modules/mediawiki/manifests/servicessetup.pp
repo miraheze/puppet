@@ -21,4 +21,14 @@ class mediawiki::servicessetup {
         user        => 'root',
         require     => [Git::Clone['mathoid'], Package['nodejs'], Package['librsvg2-dev']],
     }
+
+    file { '/etc/mathoid':
+        ensure  => directory,
+    }
+
+    file { '/etc/mathoid/config.yaml':
+        ensure  => present,
+        source  => 'puppet:///modules/mathoid/config.yaml',
+        require => File['/etc/mathoid'],
+    }
 }
