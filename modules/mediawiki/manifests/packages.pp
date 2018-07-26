@@ -15,6 +15,7 @@ class mediawiki::packages {
         'poppler-utils',
         'python-pip',
         'netpbm',
+        'librsvg2-dev',
     ]
 
     # First installs can trip without this
