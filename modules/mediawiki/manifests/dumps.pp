@@ -2,9 +2,7 @@
 #
 # Cron jobs of select wiki dumps
 class mediawiki::dumps {
-    package { 'zip':
-        ensure => present,
-    }
+    require_package(['heirloom-mailx', 'zip'])
     
     $module_path = get_module_path($module_name)
     $xml_dump = loadyaml("${module_path}/data/xml_dump.yaml")
