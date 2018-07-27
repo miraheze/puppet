@@ -1,15 +1,16 @@
 #
 # keys.rb
 #
-
 module Puppet::Parser::Functions
-  newfunction(:keys, :type => :rvalue, :doc => <<-EOS
-Returns the keys of a hash as an array.
-    EOS
-  ) do |arguments|
+  newfunction(:keys, :type => :rvalue, :doc => <<-DOC
+    Returns the keys of a hash as an array.
 
-    raise(Puppet::ParseError, "keys(): Wrong number of arguments " +
-      "given (#{arguments.size} for 1)") if arguments.size < 1
+    Note: from Puppet 5.5.0, the compatible function with the same name in Puppet core
+    will be used instead of this function.
+    DOC
+             ) do |arguments|
+
+    raise(Puppet::ParseError, "keys(): Wrong number of arguments given (#{arguments.size} for 1)") if arguments.empty?
 
     hash = arguments[0]
 

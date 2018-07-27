@@ -1,9 +1,8 @@
 require 'spec_helper_acceptance'
 
-describe 'anchor type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatingsystem')) do
+describe 'anchor type' do
   describe 'success' do
-    it 'should effect proper chaining of resources' do
-      pp = <<-EOS
+    pp = <<-DOC
       class anchored {
         anchor { 'anchored::begin': }
         ~> anchor { 'anchored::end': }
@@ -16,10 +15,10 @@ describe 'anchor type', :unless => UNSUPPORTED_PLATFORMS.include?(fact('operatin
       }
 
       include anchorrefresh
-      EOS
-
+    DOC
+    it 'effects proper chaining of resources' do
       apply_manifest(pp, :catch_failures => true) do |r|
-        expect(r.stdout).to match(/Anchor\[final\]: Triggered 'refresh'/)
+        expect(r.stdout).to match(%r{Anchor\[final\]: Triggered 'refresh'})
       end
     end
   end

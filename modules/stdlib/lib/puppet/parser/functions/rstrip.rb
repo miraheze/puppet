@@ -1,28 +1,28 @@
 #
 #  rstrip.rb
 #
-
 module Puppet::Parser::Functions
-  newfunction(:rstrip, :type => :rvalue, :doc => <<-EOS
-Strips leading spaces to the right of the string.
-    EOS
-  ) do |arguments|
+  newfunction(:rstrip, :type => :rvalue, :doc => <<-DOC
+    Strips leading spaces to the right of the string.
 
-    raise(Puppet::ParseError, "rstrip(): Wrong number of arguments " +
-      "given (#{arguments.size} for 1)") if arguments.size < 1
+    Note: from Puppet 6.0.0, the compatible function with the same name in Puppet core
+    will be used instead of this function.
+    DOC
+             ) do |arguments|
+
+    raise(Puppet::ParseError, "rstrip(): Wrong number of arguments given (#{arguments.size} for 1)") if arguments.empty?
 
     value = arguments[0]
 
     unless value.is_a?(Array) || value.is_a?(String)
-      raise(Puppet::ParseError, 'rstrip(): Requires either ' +
-        'array or string to work with')
+      raise(Puppet::ParseError, 'rstrip(): Requires either array or string to work with')
     end
 
-    if value.is_a?(Array)
-      result = value.collect { |i| i.is_a?(String) ? i.rstrip : i }
-    else
-      result = value.rstrip
-    end
+    result = if value.is_a?(Array)
+               value.map { |i| i.is_a?(String) ? i.rstrip : i }
+             else
+               value.rstrip
+             end
 
     return result
   end
