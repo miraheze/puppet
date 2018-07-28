@@ -17,9 +17,9 @@ module Puppet::Parser::Functions
     end
 
     if args[3]
-      constants = args[3].merge(lookupvar('::icinga2::_constants'))
+      constants = args[3].merge(lookupvar('::icinga2::setup::_constants'))
     else
-      constants = lookupvar('::icinga2::_constants')
+      constants = lookupvar('::icinga2::setup::_constants')
     end
 
     Puppet::Icinga2::Utils.attributes(args[0], globals, constants, indent)

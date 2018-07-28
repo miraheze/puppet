@@ -17,12 +17,12 @@ class icinga2::install {
   assert_private()
 
   $package        = $::icinga2::params::package
-  $manage_package = $::icinga2::manage_package
+  $manage_package = $::icinga2::setup::manage_package
   $pki_dir        = $::icinga2::params::pki_dir
   $conf_dir       = $::icinga2::params::conf_dir
   $user           = $::icinga2::params::user
   $group          = $::icinga2::params::group
-  $repositoryd    = $::icinga2::repositoryd
+  $repositoryd    = $::icinga2::setup::repositoryd
 
   if $manage_package {
     if $::osfamily == 'windows' { Package { provider => chocolatey, } }

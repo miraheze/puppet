@@ -18,9 +18,9 @@ class icinga2::service {
 
   assert_private()
 
-  $ensure         = $::icinga2::ensure
-  $enable         = $::icinga2::enable
-  $manage_service = $::icinga2::manage_service
+  $ensure         = $::icinga2::setup::ensure
+  $enable         = $::icinga2::setup::enable
+  $manage_service = $::icinga2::setup::manage_service
   $service        = $::icinga2::params::service
   $reload         = $::icinga2::params::service_reload
   $hasrestart     = $reload ? {
