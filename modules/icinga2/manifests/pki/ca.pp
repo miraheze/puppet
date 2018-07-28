@@ -69,7 +69,7 @@ class icinga2::pki::ca(
   $pki_dir   = $::icinga2::params::pki_dir
   $user      = $::icinga2::params::user
   $group     = $::icinga2::params::group
-  $node_name = $::icinga2::_constants['NodeName']
+  $node_name = $::icinga2::setup::_constants['NodeName']
 
   File {
     owner => $user,
