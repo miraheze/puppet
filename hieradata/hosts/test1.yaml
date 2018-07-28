@@ -14,3 +14,4 @@ mediawiki::use_php_7_2: true
 icinga2_server: true
 icinga2_web: true
 icingaweb2::use_apache: false
+base::monitoring::use_icinga2: true
