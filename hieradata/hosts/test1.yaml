@@ -13,3 +13,4 @@ mediawiki::branch: 'REL1_31'
 mediawiki::use_php_7_2: true
 icinga2_server: true
 icinga2_web: true
+icingaweb2::use_apache: false
