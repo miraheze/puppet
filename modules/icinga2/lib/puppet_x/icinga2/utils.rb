@@ -86,7 +86,7 @@ module Puppet
 
         def self.value_types(value)
 
-          if value =~ /^\d+\.?\d*[dhms]?$/ || value =~ /^(true|false)$/ || value =~ /^!?(host|service|user)\./ || value =~ /^\{{2}.*\}{2}$/
+          if value =~ /^\d+\.?\d*[dhms]?$/ || value =~ /^(true|false|null)$/ || value =~ /^!?(host|service|user)\./ || value =~ /^\{{2}.*\}{2}$/
             result = value
           else
             if $constants.index { |x| if $hash_attrs.include?(x) then value =~ /^!?(#{x})(\..+$|$)/ else value =~ /^!?#{x}$/ end }
@@ -186,12 +186,14 @@ module Puppet
             else
               if level > 1
                 if level == 3
-                  result += "%s%s = %s\n" % [ prefix, attribute_types(attr), parse(value) ] if value
+                  result += "%s%s = %s\n" % [ prefix, attribute_types(attr), parse(value) ] if value != :nil
+                  #result += "%s%s = %s\n" % [ prefix, attr, parse(value) ] if value != :nil
                 else
-                  result += "%s[\"%s\"] = %s\n" % [ prefix, attribute_types(attr), parse(value) ] if value
+                  result += "%s[\"%s\"] = %s\n" % [ prefix, attribute_types(attr), parse(value) ] if value != :nil
+                  #result += "%s[\"%s\"] = %s\n" % [ prefix, attr, parse(value) ] if value != :nil
                 end
               else
-                result += "%s%s = %s\n" % [ prefix, attr, parse(value) ] if value
+                result += "%s%s = %s\n" % [ prefix, attr, parse(value) ] if value != :nil
               end
             end
           end

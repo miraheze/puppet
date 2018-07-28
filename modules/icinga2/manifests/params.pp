@@ -102,6 +102,7 @@ class icinga2::params {
           $user    = 'icinga'
           $group   = 'icinga'
           $bin_dir = $::operatingsystemmajrelease ? {
+            '5'     => '/usr/sbin',
             '6'     => '/usr/sbin',
             default => '/sbin',
           }
@@ -169,7 +170,7 @@ class icinga2::params {
     } # Windows
 
     'FreeBSD': {
-      $bin_dir              = '/usr/local/sbin/icinga2'
+      $bin_dir              = '/usr/local/sbin'
       $conf_dir             = '/usr/local/etc/icinga2'
       $log_dir              = '/var/log/icinga2'
       $run_dir              = '/var/run/icinga2'

@@ -1,5 +1,5 @@
-class icinga2::custom::conf {
-    include ::icinga2
+class icinga2::server {
+    include ::icinga2::setup
 
     include ::icinga2::feature::api
 
@@ -13,6 +13,13 @@ class icinga2::custom::conf {
     $db_name = hiera('icinga_ido_db_name', 'icinga')
     $db_user = hiera('icinga_ido_user_name', 'icinga2')
     $db_password = hiera('passwords::icinga_ido')
+
+    group { 'nagios':
+        ensure    => present,
+        name      => 'nagios',
+        system    => true,
+        allowdupe => false,
+    }
 
     class{ '::icinga2::feature::idomysql':
         host          => $db_host,
@@ -119,22 +126,13 @@ class icinga2::custom::conf {
         notify  => Service['icinga2'],
     }
 
-    file { '/etc/icinga2/scripts/create_ssl_phabricator_ticket.sh':
-        source  => 'puppet:///modules/icinga2/scripts/create_ssl_phabricator_ticket.sh',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        require => Package['icinga2'],
-        notify  => Service['icinga2'],
-    }
-
     $ssl = loadyaml('/etc/puppet/ssl/certs.yaml')
     $redirects = loadyaml('/etc/puppet/ssl/redirects.yaml')
     $sslcerts = merge( $ssl, $redirects )
 
     file { '/etc/icinga2/conf.d/ssl.conf':
         ensure  => 'present',
-        content => template('icinga2/ssl.conf'),
+        content => template('icinga2/ssl.conf.erb'),
         owner   => 'root',
         group   => 'root',
         mode    => '0664',
@@ -142,21 +140,25 @@ class icinga2::custom::conf {
         notify  => Service['icinga2'],
     }
 
-    $icingabot_password = hiera('passwords::phabricator::icinga')
-
-    file { '/etc/icinga2/ssl-phabricator.py':
+    file { '/etc/icinga2/scripts/ssl-renew.sh':
         ensure  => 'present',
-        content => template('icinga2/ssl-phabricator.py'),
+        source  => 'puppet:///modules/icinga2/ssl-renew.sh',
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
     }
 
+    file { '/var/lib/nagios/id_rsa2':
+        ensure => present,
+        source => 'puppet:///private/icinga2/id_rsa2',
+        owner  => 'nagios',
+        group  => 'nagios',
+        mode   => '0400',
+    }
+
     package { 'nagios-nrpe-plugin':
         ensure => present,
     }
-
-    include ::icingaweb2
 
     $mirahezebots_password = hiera('passwords::irc::mirahezebots')
 
