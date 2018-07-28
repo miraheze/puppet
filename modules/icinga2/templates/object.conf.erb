@@ -1,7 +1,7 @@
 
 <% if @apply.is_a?(String) %>apply <%= @object_type -%>
 <% if @prefix -%>
-<% if scope.lookupvar('icinga2::_constants').include?(@object_name) -%>
+<% if scope.lookupvar('icinga2::setup::_constants').include?(@object_name) -%>
  <%= @object_name -%>
 <% else -%>
   "<%= @object_name %>" <% end -%>
@@ -11,7 +11,7 @@
 <% if @apply %>apply<% else -%>
 <% if @template %>template<% else %>object<% end -%>
 <% end %> <%= @object_type -%>
-<% if scope.lookupvar('icinga2::_constants').include?(@object_name) -%>
+<% if scope.lookupvar('icinga2::setup::_constants').include?(@object_name) -%>
  <%= @object_name -%>
 <% else -%>
  "<%= @object_name %>" <% end -%>
