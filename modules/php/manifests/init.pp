@@ -36,9 +36,6 @@ class php {
         'php7.2-mbstring',
         'php7.2-xml',
     ]
-
-    package { $php_packages:
-        ensure => present,
-        require => Apt::Source['php72_apt'],
-    }
+    
+    require_package($php_packages)
 }
