@@ -146,7 +146,6 @@
 class icinga2::setup(
   $ensure         = running,
   $enable         = true,
-  $manage_repo    = false,
   $manage_package = true,
   $manage_service = true,
   $features       = $icinga2::params::default_features,
