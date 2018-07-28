@@ -165,6 +165,13 @@ class icinga2::web(
           notify  => Exec['nginx-syntax-icinga'],
       }
 
+      file_line { 'set_date_time':
+          line    => 'date.timezone = Etc/Utc',
+          match   => '^;?date.timezone\s*\=',
+          path    => '/etc/php/7.2/fpm/php.ini',
+          notify  => Exec['nginx-syntax-icinga'],
+      }
+
       exec { 'nginx-syntax-icinga':
           command     => '/usr/sbin/nginx -t',
           notify      => Exec['nginx-reload-icinga'],
