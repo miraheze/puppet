@@ -159,7 +159,6 @@ class icinga2::setup(
   validate_re($ensure, [ '^running$', '^stopped$' ],
     "${ensure} isn't supported. Valid values are 'running' and 'stopped'.")
   validate_bool($enable)
-  validate_bool($manage_repo)
   validate_bool($manage_package)
   validate_bool($manage_service)
   validate_array($features)
