@@ -40,11 +40,8 @@ class mediawiki::php7_2 {
         'php7.2-mysql',
         'php7.2-xml',
     ]
-
-    package { $packages:
-        ensure  => present,
-        require => Apt::Source['php72_apt'],
-    }
+    
+    require_package($packages)
 
     service { 'php7.2-fpm':
         ensure  => running,
