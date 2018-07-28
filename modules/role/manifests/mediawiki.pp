@@ -2,14 +2,18 @@
 class role::mediawiki {
     include ::mediawiki
 
-    ufw::allow { 'http port tcp':
-        proto => 'tcp',
-        port  => 80,
+    if !defined(Exec['ufw-allow-tcp-from-any-to-any-port-80']) {
+        ufw::allow { 'http port tcp':
+            proto => 'tcp',
+            port  => 80,
+        }
     }
 
-    ufw::allow { 'https port tcp':
-        proto => 'tcp',
-        port  => 443,
+    if !defined(Exec['ufw-allow-tcp-from-any-to-any-port-443']) {
+        ufw::allow { 'https port tcp':
+            proto => 'tcp',
+            port  => 443,
+        }
     }
 
     motd::role { 'role::mediawiki':
