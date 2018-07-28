@@ -185,6 +185,21 @@ class icinga2::server {
         ensure => running,
     }
 
+    file { '/usr/lib/nagios/plugins/check_icinga_config':
+        source  => 'puppet:///modules/icinga2/check_icinga_config',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => Package['nagios-nrpe-plugin'],
+    }
+
+    icinga2::custom::services { 'Check correctness of the icinga configuration':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_icinga_config',
+        },
+    }
+
     # Purge unmanaged icinga2::object::host and icinga2::object::service resources
     # This will only happen for non exported resources, that is resources that
     # are declared by the icinga host itself
