@@ -1,6 +1,6 @@
 #!/bin/bash
 set -u
-/usr/sbin/icinga2 deamon -C > /dev/null 2>&1
+/usr/sbin/icinga2 daemon -C > /dev/null 2>&1
 RETVAL=$?
 if [ ${RETVAL} -eq 0 ]; then
     echo "Icinga configuration is correct"
