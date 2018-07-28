@@ -2,13 +2,14 @@ users::groups:
   - mediawiki-admins
 jobrunner: false
 # for icinga2 only
-#contactgroups: ['icingaadmins', 'ops', 'mediawiki']
+contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 # for icinga1 only
-contactgroups: 'ops,mediawiki'
+#contactgroups: 'ops,mediawiki'
 # can be removed once puppet 4 is the default
 puppetmaster_version: 4
 icingaweb2::use_apache: false
 base::monitoring::use_icinga2: false
 mediawiki::branch: 'REL1_31'
 mediawiki::use_php_7_2: true
-use_swift: false
+icinga2_server: true
+icinga2_web: true
