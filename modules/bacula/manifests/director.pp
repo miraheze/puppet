@@ -129,7 +129,7 @@ class bacula::director {
         icinga2::custom::services { 'Bacula Lizardfs1 Lizardfs Chunkserver1':
             check_command => 'nrpe',
             vars          => {
-                nrpe_command => 'check_bacula_lizardfs_lizardfs_chunkserver1',
+                nrpe_command => 'check_bacula_lizardfs1_lizardfs_chunkserver1',
             },
         }
 
