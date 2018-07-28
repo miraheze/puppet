@@ -15,7 +15,7 @@ class icinga2::config {
 
   assert_private()
 
-  $constants      = prefix($::icinga2::_constants, 'const ')
+  $constants      = prefix($::icinga2::setup::_constants, 'const ')
   $conf_dir       = $::icinga2::params::conf_dir
   $plugins        = $::icinga2::setup::plugins
   $confd          = $::icinga2::setup::_confd
