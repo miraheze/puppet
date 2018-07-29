@@ -84,9 +84,7 @@ node /^lizardfs[12]\.miraheze\.org$/ {
 
 node 'test1.miraheze.org' {
     include base
-    include role::icinga2
-    # temp disable as it conflicts with icinga2
-    # include role::mediawiki
+    include role::mediawiki
     include role::salt::minions
 }
 
