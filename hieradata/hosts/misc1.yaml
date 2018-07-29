@@ -4,3 +4,5 @@ grafana::php_72: true
 icinga::modules: ['alias']
 # mailman::modules: ['proxy', 'proxy_http', 'proxy_uwsgi']
 puppetmaster_version: 4
+icinga2_server: true
+icinga2_web: true
