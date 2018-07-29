@@ -200,6 +200,12 @@ class icinga2::server {
         },
     }
 
+    tidy { '/var/spool/icinga2/perfdata':
+        age     => '3d',
+        recurse => 1,
+        matches => [ 'service*', 'host*' ],
+    }
+
     # Purge unmanaged icinga2::object::host and icinga2::object::service resources
     # This will only happen for non exported resources, that is resources that
     # are declared by the icinga host itself
