@@ -114,6 +114,13 @@ class mediawiki(
         require => Git::Clone['MediaWiki config'],
     }
 
+    $service_wikis = loadyaml('/etc/puppet/services/services.yaml')
+    file { '/srv/mediawiki/config/ServicesSettings.php':
+        ensure  => 'present',
+        content => template('mediawiki/ServicesSettings.php'),
+        require => Git::Clone['MediaWiki config'],
+    }
+
     file { '/usr/local/bin/foreachwikiindblist':
         ensure => 'present',
         mode   => '0755',
