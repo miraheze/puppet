@@ -29,6 +29,7 @@ define nginx::site(
                     check_command => 'check_http',
                     vars          => {
                         address   => 'host.address',
+                        http_address => 'host.address',
                         http_ssl  => true,
                     },
                 }
@@ -39,6 +40,7 @@ define nginx::site(
                     check_command => 'check_http',
                     vars          => {
                         address   => 'host.address',
+                        http_address => 'host.address',
                         http_ssl  => true,
                     },
                 }
