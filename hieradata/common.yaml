@@ -8,3 +8,4 @@ acme: false
 base::monitoring::use_icinga2: false
 mediawiki::use_php_7_2: true
 use_swift: false
+base::monitoring::use_icinga2: true
