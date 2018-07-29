@@ -95,6 +95,7 @@ class bacula::director {
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_daemon',
+                nrpe_timeout => '60s',
             },
         }
 
@@ -102,6 +103,7 @@ class bacula::director {
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_databasesdb4',
+                nrpe_timeout => '60s',
             },
         }
 
@@ -109,6 +111,7 @@ class bacula::director {
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_static_lizardfs1',
+                nrpe_timeout => '60s',
             },
         }
 
@@ -116,6 +119,7 @@ class bacula::director {
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_static_lizardfs2',
+                nrpe_timeout => '60s',
             },
         }
 
@@ -123,6 +127,7 @@ class bacula::director {
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_misc4_lizardfs_master',
+                nrpe_timeout => '60s',
             },
         }
 
@@ -130,6 +135,7 @@ class bacula::director {
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_lizardfs1_lizardfs_chunkserver1',
+                nrpe_timeout => '60s',
             },
         }
 
@@ -137,6 +143,7 @@ class bacula::director {
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_lizardfs2_lizardfs_chunkserver2',
+                nrpe_timeout => '60s',
             },
         }
 
@@ -144,6 +151,7 @@ class bacula::director {
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_phab',
+                nrpe_timeout => '60s',
             },
         }
 
@@ -151,6 +159,7 @@ class bacula::director {
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => 'check_bacula_private',
+                nrpe_timeout => '60s',
             },
         }
     } else {
