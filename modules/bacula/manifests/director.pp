@@ -165,7 +165,7 @@ class bacula::director {
         }
 
         icinga::service { 'bacula_static_lizardfs1':
-            description   => 'Bacula - Static Lizardfs2',
+            description   => 'Bacula - Static Lizardfs1',
             check_command => 'check_nrpe_1arg!check_bacula_static_lizardfs1',
         }
 
