@@ -139,8 +139,7 @@ class icinga2::web(
 
     # Temporarily supporting icinga under nginx
     if $use_apache {
-      # change this back to icinga.miraheze.org once it works
-      httpd::site { 'icinga2.miraheze.org':
+      httpd::site { 'icinga.miraheze.org':
           ensure  => present,
           source  => 'puppet:///modules/icinga2/web/apache/apache.conf',
           monitor => true,
