@@ -26,7 +26,7 @@ node 'misc1.miraheze.org' {
     include base
     include role::dns
     include role::grafana
-    include role::icinga
+    include role::icinga2
     include role::irc
     include role::mail
     include role::salt::minions
