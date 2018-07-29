@@ -35,8 +35,8 @@ default_project: &default_project
           grace_ttl: 1
         mathoid:
            host: http://127.0.0.1:10044
-          # 10 days Varnish caching, one day client-side
-          cache-control: s-maxage=864000, max-age=86400
+           # 10 days Varnish caching, one day client-side
+           cache-control: s-maxage=864000, max-age=86400
         table:
           backend: sqlite
           dbname: db.sqlite3
