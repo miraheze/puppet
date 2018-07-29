@@ -10,7 +10,7 @@ WantedBy=multi-user.target
 [Service]
 User=mathoid
 Group=mathoid
-SyslogIdentifier=restbase
+SyslogIdentifier=mathoid
 WorkingDirectory=/srv/mathoid
 ExecStart=/usr/bin/node /srv/mathoid/server.js -c /etc/mediawiki/mathoid/config.yaml
 KillMode=process
