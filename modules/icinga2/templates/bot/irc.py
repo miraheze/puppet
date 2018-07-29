@@ -9,7 +9,7 @@ import time
 server = "chat.freenode.net"
 port = 6697
 channel = "#miraheze"
-botnick = "icinga2-miraheze"
+botnick = "icinga-miraheze"
 
 ### Tail
 tail_files = [
