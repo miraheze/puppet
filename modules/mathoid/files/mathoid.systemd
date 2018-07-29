@@ -8,11 +8,11 @@ After=local-fs.target network.target
 WantedBy=multi-user.target
 
 [Service]
-Type=simple
 User=mathoid
 Group=mathoid
+SyslogIdentifier=restbase
 WorkingDirectory=/srv/mathoid
 ExecStart=/usr/bin/node /srv/mathoid/server.js -c /etc/mediawiki/mathoid/config.yaml
+KillMode=process
 Restart=always
-RestartSec=2s
-StandardOutput=syslog
+PrivateTmp=true
