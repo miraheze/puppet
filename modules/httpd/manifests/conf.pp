@@ -98,7 +98,8 @@ define httpd::conf(
                 icinga2::custom::services { 'HTTP':
                     check_command => 'check_http',
                     vars          => {
-                        address   => 'host.address',
+                        address      => 'host.address',
+                        http_address => 'host.address',
                     },
                 }
             }
@@ -107,8 +108,9 @@ define httpd::conf(
                 icinga2::custom::services { 'HTTPS':
                     check_command => 'check_http',
                      vars          => {
-                        address   => 'host.address',
-                        http_ssl  => true,
+                        address      => 'host.address',
+                        http_address => 'host.address',
+                        http_ssl     => true,
                     },
                 }
             }
