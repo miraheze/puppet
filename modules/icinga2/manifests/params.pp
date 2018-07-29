@@ -160,12 +160,13 @@ class icinga2::params {
       $service_reload       = undef
 
       $constants = {
-        'PluginDir'          => 'C:/Program Files/ICINGA2/sbin',
-        'PluginContribDir'   => 'C:/Program Files/ICINGA2/sbin',
-        'ManubulonPluginDir' => 'C:/Program Files/ICINGA2/sbin',
-        'ZoneName'           => $::fqdn,
-        'NodeName'           => $::fqdn,
-        'TicketSalt'         => '',
+        'PluginDir'           => 'C:/Program Files/ICINGA2/sbin',
+        'PluginContribDir'    => 'C:/Program Files/ICINGA2/sbin',
+        'ManubulonPluginDir'  => 'C:/Program Files/ICINGA2/sbin',
+        'ZoneName'            => $::fqdn,
+        'NodeName'            => $::fqdn,
+        'TicketSalt'          => '',
+        'MaxConcurrentChecks' => 3,
       }
     } # Windows
 
