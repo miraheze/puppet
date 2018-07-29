@@ -108,6 +108,25 @@ class icinga2::server {
         require => File['/etc/icinga2/features-available/checker.conf'],
     }
 
+
+    file { '/etc/icinga2/scripts/mail-host-notification.sh':
+        source  => 'puppet:///modules/icinga2/scripts/mail-host-notification.sh',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => Package['icinga2'],
+        notify  => Service['icinga2'],
+    }
+
+    file { '/etc/icinga2/scripts/mail-service-notification.sh':
+        source  => 'puppet:///modules/icinga2/scripts/mail-service-notification.sh',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => Package['icinga2'],
+        notify  => Service['icinga2'],
+    }
+
     file { '/etc/icinga2/scripts/irc-host-notification.sh':
         source  => 'puppet:///modules/icinga2/scripts/irc-host-notification.sh',
         owner   => 'root',
@@ -142,7 +161,7 @@ class icinga2::server {
 
     file { '/etc/icinga2/scripts/ssl-renew.sh':
         ensure  => 'present',
-        source  => 'puppet:///modules/icinga2/ssl-renew.sh',
+        source  => 'puppet:///modules/icinga2/scripts/ssl-renew.sh',
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
