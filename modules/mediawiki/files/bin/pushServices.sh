@@ -6,7 +6,7 @@ set -u
 
 git config --global core.sshCommand "ssh -i /var/lib/nagios/id_rsa -F /dev/null"
 if [ ! -d /srv/mediawiki/services/ ]; then
-        cd /srv/mediawiki/services/ && git clone git@github.com:miraheze/services.git
+        cd /srv/mediawiki/ && git clone git@github.com:miraheze/services.git
 else
         cd /srv/mediawiki/services/ && git reset --hard origin/master && git pull
 fi
