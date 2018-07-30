@@ -52,7 +52,7 @@ class acme {
         source => 'puppet:///private/acme/id_rsa',
         owner  => 'nagiosre',
         group  => 'www-data',
-        mode   => '0400',
+        mode   => '0440',
     }
 
     sudo::user { 'nrpe_ssl-certificate':
