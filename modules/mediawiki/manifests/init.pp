@@ -125,10 +125,9 @@ class mediawiki(
     }
 
     file { '/usr/local/bin/pushServices.sh':
-        ensure  => 'present',
-        mode    => '0755',
-        source  => 'puppet:///modules/mediawiki/bin/pushServices.sh',
-        require => File['/srv/mediawiki/services'],
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/bin/pushServices.sh',
     }
 
     exec { 'ExtensionMessageFiles':
