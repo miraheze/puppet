@@ -51,7 +51,7 @@ class acme {
         ensure => present,
         source => 'puppet:///private/acme/id_rsa',
         owner  => 'nagiosre',
-        group  => 'nagiosre',
+        group  => 'www-data',
         mode   => '0400',
     }
 
