@@ -125,7 +125,7 @@ class mediawiki(
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
     }
 
-    file { '/srv/mediawiki/services/pushServices.sh':
+    file { '/usr/local/bin/pushServices.sh':
         ensure  => 'present',
         mode    => '0755',
         source  => 'puppet:///modules/mediawiki/bin/pushServices.sh',
