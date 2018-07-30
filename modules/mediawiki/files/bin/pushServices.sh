@@ -10,10 +10,10 @@ if [ ! -d /srv/mediawiki/services/ ]; then
 else
         cd /srv/mediawiki/services/ && git reset --hard origin/master && git pull
 fi
-git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"
-git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
-git -C /srv/ssl/ssl add -A --all
-git -C /srv/ssl/ssl/ commit -m "Update config for wiki's"
-git -C /srv/ssl/ssl/ push origin master
+git -C /srv/mediawiki/services/ config user.email "noreply@miraheze.org"
+git -C /srv/mediawiki/services/ config user.name "MirahezeSSLBot"
+git -C /srv/mediawiki/services/ add -A --all
+git -C /srv/mediawiki/services/ commit -m "Update config for wiki's"
+git -C /srv/mediawiki/services/ push origin master
 
 exit 0
