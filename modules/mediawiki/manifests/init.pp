@@ -31,7 +31,6 @@ class mediawiki(
     file { [
         '/srv/mediawiki',
         '/srv/mediawiki/dblist',
-        '/srv/mediawiki/cdb-config',
         '/srv/mediawiki/services',
     ]:
         ensure => 'directory',
