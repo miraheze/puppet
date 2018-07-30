@@ -29,11 +29,9 @@ class mediawiki(
     }
 
     file { [
-        '/srv/files',
-        '/srv/files/dumps',
-        '/srv/mediawiki', 
-        '/srv/mediawiki/dblist', 
-        '/srv/mediawiki/cdb-config', 
+        '/srv/mediawiki',
+        '/srv/mediawiki/dblist',
+        '/srv/mediawiki/services',
     ]:
         ensure => 'directory',
         owner  => 'www-data',
@@ -125,6 +123,13 @@ class mediawiki(
         ensure => 'present',
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
+    }
+
+    file { '/srv/mediawiki/services/pushServices.sh':
+        ensure  => 'present',
+        mode    => '0755',
+        source  => 'puppet:///modules/mediawiki/bin/pushServices.sh',
+        require => File['/srv/mediawiki/services'],
     }
 
     exec { 'ExtensionMessageFiles':
