@@ -15,7 +15,7 @@ class mediawiki::cron {
             ensure  => present,
             command => '/usr/bin/php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/addWikiToServices.php --wiki=metawiki ** /bin/bash /usr/local/bin/pushServices.sh',
             user    => 'www-data',
-            minute  => '*',
+            minute  => '*/10',
             hour    => '*',
         }
     }
