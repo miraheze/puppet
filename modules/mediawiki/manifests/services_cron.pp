@@ -4,7 +4,7 @@ class mediawiki::services_cron {
           ensure  => present,
           command => '/bin/bash /usr/local/bin/pushServices.sh',
           user    => 'www-data',
-          minute  => '*/10',
+          minute  => '*/5',
           hour    => '*',
       }
 }
