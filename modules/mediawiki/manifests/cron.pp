@@ -10,7 +10,7 @@ class mediawiki::cron {
         hour    => '*',
     }
 
-    if $::fqdn == 'mw1.miraheze.org' {
+    if hiera('run_services', false) {
         cron { 'generate_services':
             ensure  => present,
             command => '/usr/bin/php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/addWikiToServices.php --wiki=metawiki ** /bin/bash /usr/local/bin/pushServices.sh',
