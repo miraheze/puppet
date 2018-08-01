@@ -7,6 +7,7 @@ set -u
 fqn=$(hostname -f)
 
 if [[ "${fqn}" == "mw1.miraheze.org" ]];
+then
         if [ ! -d /srv/mediawiki/services/ ]; then
                 cd /srv/mediawiki/ && GIT_SSH_COMMAND='ssh -o StrictHostKeyChecking=no -i /var/lib/nagios/id_rsa -F /dev/null' git clone git@github.com:miraheze/services.git && cd /srv/mediawiki/services/ && git config --local core.sshCommand "ssh -o StrictHostKeyChecking=no -i /var/lib/nagios/id_rsa -F /dev/null"
         else
