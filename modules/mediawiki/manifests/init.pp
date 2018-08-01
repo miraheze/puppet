@@ -28,6 +28,10 @@ class mediawiki(
         include mediawiki::dumps
     }
 
+    if hiera('mwservices', false) {
+        include mediawiki::services_cron
+    }
+
     file { [
         '/srv/mediawiki',
         '/srv/mediawiki/dblist',
