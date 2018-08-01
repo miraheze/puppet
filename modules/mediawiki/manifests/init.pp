@@ -6,6 +6,9 @@ class mediawiki(
 ) {
     include mediawiki::favicons
     include mediawiki::cron
+    if hiera('mwservices', false) {
+        include mediawiki::services_cron
+    }
     include mediawiki::nginx
     include mediawiki::packages
     include mediawiki::logging
@@ -26,10 +29,6 @@ class mediawiki(
 
     if hiera(mwdumps) {
         include mediawiki::dumps
-    }
-
-    if hiera('mwservices', false) {
-        include mediawiki::services_cron
     }
 
     file { [
