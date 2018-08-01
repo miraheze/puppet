@@ -7,3 +7,4 @@ contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 #contactgroups: 'ops,mediawiki'
 acme: true
 puppetmaster_version: 4
+mwservices: true
