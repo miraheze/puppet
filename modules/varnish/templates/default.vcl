@@ -228,21 +228,93 @@ sub vcl_backend_fetch {
 }
 
 sub vcl_backend_response {
-	if (beresp.ttl <= 0s) {
-		set beresp.ttl = 120s;
-		set beresp.uncacheable = true;
+	// This prevents the application layer from setting this in a response.
+	// We'll be setting this same variable internally in VCL in hit-for-pass
+	// cases later.
+	unset beresp.http.X-CDIS;
+
+	/* Don't cache private, no-cache, no-store objects */
+	if (beresp.http.Cache-Control ~ "(private|no-cache|no-store)") {
+		set beresp.ttl = 0s;
+		// translated to hit-for-pass below
+	}
+	// Set a maximum cap on the TTL for 404s. Objects that don't exist now may
+	// be created later on, and we want to put a limit on the amount of time
+	// it takes for new resources to be visible.
+	elsif (beresp.status == 404 && beresp.ttl > 10m) {
+		set beresp.ttl = 10m;
 	}
 
-	if (beresp.status >= 400) {
-		set beresp.uncacheable = true;
+	// Set keep, which influences the amount of time objects are kept available
+	// in cache for IMS requests (TTL+grace+keep). Scale keep to the app-provided
+	// TTL.
+	if (beresp.ttl > 0s) {
+		if (beresp.http.ETag || beresp.http.Last-Modified) {
+			if (beresp.ttl < 7d) {
+				set beresp.keep = beresp.ttl;
+			} else {
+				set beresp.keep = "7d";
+			}
+		}
+
+		// Hard TTL cap on all fetched objects (default 1d)
+		if (beresp.ttl > 1d) {
+			set beresp.ttl = 1d;
+		}
+
+		set beresp.grace = 20m;
 	}
 
-	# Cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
-	if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
-		set beresp.ttl = 43200s;
+	// Swizzled random reduction of all TTLs by up to 5%, to avoid various
+	// possible cases of stampedes of aligned natural expiries.
+	// Note VCL supports DURATION*REAL natively, and DURATIONs do support
+	// fractional seconds, so this doesn't technically need a guard
+	// condition against short TTLs.
+	// However, sub-second TTLs like 0.97s might poke edge cases in VCL,
+	// which would be a good reason to not do this for TTLs < 2s.
+	// Furthermore, swizzling a stampede of very short TTLs such that they
+	// expire milliseconds apart may do more perf harm than good.  60s
+	// seems like a reasonably-conservative cutoff, where the swizzle will
+	// be spreading things by ~3s.
+	if (beresp.ttl >= 60s) {
+		set beresp.ttl = beresp.ttl * std.random(0.95, 1.0);
 	}
 
-	return (deliver);
+	// Compress compressible things if the backend didn't already, but
+	// avoid explicitly-defined CL < 860 bytes.  We've seen varnish do
+	// gzipping on CL:0 302 responses, resulting in output that has CE:gzip
+	// and CL:20 and sends a pointless gzip header.
+	// Very small content may actually inflate from gzipping, and
+	// sub-one-packet content isn't saving a lot of latency for the gzip
+	// costs (to the server and the client, who must also decompress it).
+	// The magic 860 number comes from Akamai, Google recommends anywhere
+	// from 150-1000.  See also:
+	// https://webmasters.stackexchange.com/questions/31750/what-is-recommended-minimum-object-size-for-gzip-performance-benefits
+	if (beresp.http.content-type ~ "json|text|html|script|xml|icon|ms-fontobject|ms-opentype|x-font|sla"
+		&& (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 860)) {
+			set beresp.do_gzip = true;
+	}
+
+	// set a 601s hit-for-pass object based on response conditions in vcl_backend_response:
+	//    Calculated TTL <= 0 + Status < 500 + No underlying cache hit:
+	//    These are generally uncacheable responses.  The 5xx exception
+	//    avoids us accidentally replacing a good stale/grace object with
+	//    an hfp (and then repeatedly passing on potentially-cacheable
+	//    content) due to an isolated 5xx response, and the exception for
+	//    underlying cache hits (detected from X-Cache-Int) is to avoid
+	//    creating a persist HFP object when a lower-level varnish
+	//    returned an expired object under grace-mode rules.
+	if (
+		beresp.ttl <= 0s
+		&& beresp.status < 500
+		&& (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ " hit")
+	) {
+		set beresp.grace = 31s;
+		set beresp.keep = 0s;
+		set beresp.http.X-CDIS = "pass";
+		// XXX: HFP for now, but this requires further work: T180712
+		return(pass(601s));
+	}
 }
 
 sub vcl_deliver {
