@@ -51,7 +51,15 @@ class acme {
         ensure => present,
         source => 'puppet:///private/acme/id_rsa',
         owner  => 'nagiosre',
-        group  => 'nagiosre',
+        group  => 'www-data',
+        mode   => '0440',
+    }
+
+    file { '/var/lib/nagios/id_rsa2':
+        ensure => present,
+        source => 'puppet:///private/acme/id_rsa',
+        owner  => 'nagiosre',
+        group  => 'www-data',
         mode   => '0400',
     }
 
