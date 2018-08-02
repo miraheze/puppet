@@ -18,7 +18,7 @@ git -C /srv/mediawiki/services/ config user.name "MirahezeSSLBot"
 
 git -C /srv/mediawiki/services/ add -A --all
 
-git -C /srv/mediawiki/services/ commit -m "Update config for wiki's"
+git -C /srv/mediawiki/services/ commit -m "BOT: Updating services config for wikis"
 
 git -C /srv/mediawiki/services/ push origin master
 
