@@ -47,22 +47,6 @@ class acme {
         group  => 'nagiosre',
     }
 
-    file { '/var/lib/nagios/id_rsa':
-        ensure => present,
-        source => 'puppet:///private/acme/id_rsa',
-        owner  => 'nagiosre',
-        group  => 'www-data',
-        mode   => '0440',
-    }
-
-    file { '/var/lib/nagios/id_rsa2':
-        ensure => present,
-        source => 'puppet:///private/acme/id_rsa',
-        owner  => 'nagiosre',
-        group  => 'www-data',
-        mode   => '0400',
-    }
-
     sudo::user { 'nrpe_ssl-certificate':
         user       => 'nagiosre',
         privileges => [
