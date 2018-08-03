@@ -9,7 +9,7 @@ class puppetdb(
     $db_user = hiera('puppetdb::db_user', 'puppetdb'),
     $db_password = hiera('puppetdb::db_password'),
     $perform_gc = hiera('puppetdb::perform_gc', true),
-    $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx162m'),
+    $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx160m'),
     $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
     $command_processing_threads = hiera('puppetdb::command_processing_threads', 4),
     $db_ssl = hiera('puppetdb::db_ssl', false),
@@ -21,27 +21,34 @@ class puppetdb(
 
     ## PuppetDB installation
 
-    exec { "install_puppetdb":
-        command => '/usr/bin/curl -o /opt/puppetdb_4.4.0-1~wmf1_all.deb https://apt.wikimedia.org/wikimedia/pool/component/puppetdb4/p/puppetdb/puppetdb_4.4.0-1~wmf1_all.deb',
-        unless  => '/bin/ls /opt/puppetdb_4.4.0-1~wmf1_all.deb',
+    include ::apt
+
+    if !defined(Apt::Source['puppetdb_apt']) {
+        apt::source { 'puppetdb_apt':
+            comment  => 'puppetdb',
+            location => 'http://apt.wikimedia.org/wikimedia',
+            release  => "${::lsbdistcodename}-wikimedia",
+            repos    => 'component/puppetdb4',
+            key      => 'B8A2DF05748F9D524A3A2ADE9D392D3FFADF18FB',
+            notify   => Exec['apt_update_puppetdb'],
+        }
+
+        # First installs can trip without this
+        exec {'apt_update_puppetdb':
+            command     => '/usr/bin/apt-get update',
+            refreshonly => true,
+            logoutput   => true,
+        }
     }
 
-    exec { "puppetdb-termini":
-        command => '/usr/bin/curl -o /opt/puppetdb-termini_4.4.0-1~wmf1_all.deb https://apt.wikimedia.org/wikimedia/pool/component/puppetdb4/p/puppetdb/puppetdb-termini_4.4.0-1~wmf1_all.deb',
-        unless  => '/bin/ls /opt/puppetdb-termini_4.4.0-1~wmf1_all.deb',
+    package { 'puppetdb':
+        ensure  => present,
+        require => Apt::Source['puppetdb_apt'],
     }
 
-    package { "puppetdb":
-        provider => dpkg,
+    package { 'puppetdb-termini':
         ensure   => present,
-        source   => '/opt/puppetdb_4.4.0-1~wmf1_all.deb',
-        require  => Package['default-jdk'],
-    }
-
-    package { "puppetdb-termini":
-        provider => dpkg,
-        ensure   => present,
-        source   => '/opt/puppetdb-termini_4.4.0-1~wmf1_all.deb',
+        require => Apt::Source['ppuppetdb_apt'],
     }
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
