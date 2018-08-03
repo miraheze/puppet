@@ -11,7 +11,7 @@ class puppetdb(
     $perform_gc = hiera('puppetdb::perform_gc', true),
     $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx160m'),
     $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
-    $command_processing_threads = hiera('puppetdb::command_processing_threads', 4),
+    $command_processing_threads = hiera('puppetdb::command_processing_threads', ),
     $db_ssl = hiera('puppetdb::db_ssl', false),
 ) {
 
