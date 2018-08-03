@@ -1,4 +1,3 @@
-swift_proxy: true
 lizardfs::web: ['alias', 'rewrite', 'ssl']
 phabricator::modules: ['php7.2']
 lizardfs_master: true
