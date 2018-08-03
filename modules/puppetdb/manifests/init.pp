@@ -48,7 +48,7 @@ class puppetdb(
 
     package { 'puppetdb-termini':
         ensure   => present,
-        require => Apt::Source['ppuppetdb_apt'],
+        require => Apt::Source['puppetdb_apt'],
     }
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
