@@ -43,4 +43,18 @@ class lizardfs::storage(
             from  => $firewall_value,
         }
     }
+
+    if hiera('base::monitoring::use_icinga2', false) {
+        icinga2::custom::services { 'Lizardfs':
+            check_command => 'tcp',
+            vars          => {
+                tcp_port    => '9422',
+            },
+        }
+    } else {
+        icinga::service { 'lizardfs':
+            description   => 'Lizardfs',
+            check_command => 'check_tcp!9422',
+        }
+    }
 }
