@@ -61,7 +61,7 @@ class lizardfs::master(
     }
 
     if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'Lizardfs Master Port 3':
+        icinga2::custom::services { 'Lizardfs Master Port 1':
             check_command => 'tcp',
             vars          => {
                 tcp_port    => '9419',
