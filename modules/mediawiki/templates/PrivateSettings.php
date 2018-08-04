@@ -24,3 +24,7 @@ $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
 
 // Matomo Token
 $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
+
+$wmgMetaMirahezeDiscordHook = "<%= @meta_discord_hook %>";
+
+$wmgWikiMirahezeDiscordHook = <%= @wiki_discord_hook %>;
