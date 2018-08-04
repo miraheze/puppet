@@ -25,12 +25,9 @@ $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
 // Matomo Token
 $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 
-$wmgDefaultMirahezeDiscordHook = array( 'default' => "<%= @wiki_discord_hook['default'] %>" );
-
+// Extension:DiscordNotifications hooks
 $wmgWikiMirahezeDiscordHook = array(
 <%- @wiki_discord_hook.each_pair do |wiki, value| -%>
     '<%= wiki %>' => '<%= value %>',
 <%- end -%>
 );
-
-$wmgWikiMirahezeDiscordHook = array_merge( $wmgDefaultMirahezeDiscordHook, $wmgWikiMirahezeDiscordHook );
