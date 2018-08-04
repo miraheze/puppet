@@ -116,6 +116,12 @@ class mediawiki(
         require => Git::Clone['MediaWiki config'],
     }
 
+    file { '/srv/mediawiki/config/LocalWikiPrivateSettings.php':
+        ensure  => 'present',
+        content => template('mediawiki/LocalWikiPrivateSettings.php'),
+        require => Git::Clone['MediaWiki config'],
+    }
+
     file { '/usr/local/bin/foreachwikiindblist':
         ensure => 'present',
         mode   => '0755',
