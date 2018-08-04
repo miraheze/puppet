@@ -107,18 +107,11 @@ class mediawiki(
     $recaptcha_secretkey  = hiera('passwords::recaptcha::secretkey')
     $googlemaps_key       = hiera('passwords::mediawiki::googlemapskey')
     $matomotoken          = hiera('passwords::mediawiki::matomotoken')
-    $meta_discord_hook    = hiera('passwords::mediawiki::meta_discord_hook')
     $wiki_discord_hook    = hiera('passwords::mediawiki::wiki_discord_hook')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
         content => template('mediawiki/PrivateSettings.php'),
-        require => Git::Clone['MediaWiki config'],
-    }
-
-    file { '/srv/mediawiki/config/LocalWikiPrivateSettings.php':
-        ensure  => 'present',
-        content => template('mediawiki/LocalWikiPrivateSettings.php'),
         require => Git::Clone['MediaWiki config'],
     }
 
