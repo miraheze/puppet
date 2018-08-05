@@ -28,7 +28,7 @@ class mediawiki::servicessetup {
 
     file { '/etc/mathoid/config.yaml':
         ensure  => present,
-        source  => 'puppet:///modules/mathoid/config.yaml',
+        source  => 'puppet:///modules/mediawiki/config.yaml',
         require => File['/etc/mathoid'],
     }
 }
