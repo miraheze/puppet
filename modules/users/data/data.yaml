@@ -2,11 +2,6 @@ groups:
   absent:
     description: meta group for absented users with previous cluster shell access
     members: [corey, imbophil, labster, mutante, revi]
-  all-users:
-    description: Global group that includes all users
-    gid: 600
-    members: [] # members get populated automagically
-    privileges: [] # NO privileges to this group!
   ops:
     gid: 2000
     description: roots, sudo everywhere
@@ -42,19 +37,22 @@ groups:
     gid: 2004
     descriptions: limited access on puppet1 to add SSL private keys
     members: []
-    privileges: []                 
+    privileges: []
+  all-users:
+    description: Global group that includes all users
+    gid: 2005
+    members: [] # members get populated automagically
+    privileges: [] # NO privileges to this group!
 
 users:
   johnflewis:
     ensure: present
-    gid: 500
     name: johnflewis
     realname: John Lewis
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAnZCIzrz6zMQdqQrd2fl17m31ksgMbsJJZJ1vgBviK7YR7mq2snJGVwD1BTFemqNPblMCGAEzsgcJ9kjgE/FF0TwzFnkmFxcGlJXmWsGvdS5oFljEzw8jVCQ7zFMetGeTtAhjqx3kiRIprQ/GR6HforNUNxUCiV48Z2USLR6toa91VF75FnxBQBw5dAi6KpN+chBqeaG9+kIw2z3TkZjuBxw5B+lE4IKd7b152rHmfMNuQNP+zioXLfDz2afNWNlS0Zi0jJdh/K0HOEsytvyF2nZ3917V4LPPPQG1eOWGNI1eh745fgk0UdMsg4V7dsgfvetxoitDyCrd07a0Z/LZpSxJkfdHoJjxoLtXwDfZDJora+I/M2H8N2ZDzBZNCH4km/TVWoaHjGh838+Y3YkALcs84IUFd+7gFQaSQ6KvlepYoNeAu6zCx7kQc6cJIXy5UTS6xa6Jr8nolqqjoMnH4vz8TC3DEd0eT8PwoaOtBgj+QjlXAzbWwG+YTKKwmXTccId6H9mZN4XHL7FAMgkg/AQsv5DCOcdllasJ4Bs7cI61fXDzj44c38lroJ1DgMyhiQRrnHOZIKdloBwQHBF2Gz7BWL+GADfiiBpyDhpVCkFfhcDByFIm4QkX66VVXFW7MHzG5GqTL+j8RBZiYXH7OIY2rxWP/zy/vub7i+acVHE= john@miraheze]
     uid: 1000
   southparkfan:
     ensure: present
-    gid: 500
     name: southparkfan
     realname: Southparkfan
     ssh_keys: 
@@ -63,7 +61,6 @@ users:
     uid: 1001
   mutante:
     ensure: absent
-    gid: 500
     name: mutante
     realname: Accion Mutante
     ssh_keys: []
@@ -77,7 +74,6 @@ users:
     uid: 1003
   ndkilla:
     ensure: present
-    gid: 500
     name: ndkilla
     realname: NDKilla
     ssh_keys: 
@@ -86,42 +82,36 @@ users:
     uid: 1004
   labster:
     ensure: absent
-    gid: 500
     name: labster
     realname: Vorticity
     ssh_keys: []
     uid: 1005
   corey:
     ensure: absent
-    gid: 500
     name: corey
     realname: Corey Chambers
     ssh_keys: []
     uid: 1006
   reception:
     ensure: present
-    gid: 500
     name: reception
     realname: Reception
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEA7U+sWg/K7BM7KEVwsLEFnkmOv6//eotDh8W6FmG4D3t3/6q7ysQS8QEYtply8MWSusTCH1s/QfpPrhtxEq6Qm8LfjikbfeltfCZHmzGlqC98DRFMhGIgiFC4SVqRc9FCWv3ZQ8nnVp++VdiOoXB5rf8uENtlDlCLoA2RXuCCYBUMbScbbuDKPI/ipHuSx0kp04pGpX/QTULES3AJgjV2IZtLMh9cF27psEdjE1lRwt9aeB0Cgb9302AqQycXV2Oqcs9Y6TwkN6IWSvEo+5AenGZW9nqN0y0VekQNqMWMl4xLZDG8zNoq0tZcdSEXmz9D9XBOEg5d4blRkX5wzaCDYHhDbDJ71x2bgH/ifzQMaRYN6vLU8q3qlCxSq2Hk7rcEwK6/fqrOdZlavh0v59zsypuixYF+kRNtqipup21LV/2+jlc5DWqLUiW1ORCbdl2pvTEHNnKpaQO3tPa8PSht0EhaLl8st+nLOiGJgxtlf886lLBEbk+6y4tybtTJlCg5Z0FSZZpODD9DxktqUla+L44l6h6X4we/VnDJ6sWKOQqNZABZwv7sYlMxYt5Ncm04fcWTlVuUIToaflkIWitawHTwyauru8MenyHNT/gTYnwY8kc+jy44cO2QHWYERsNAXAAj2DRgn/b4x1oK7WNydAPPSxwblzuq0dgD8VJ0dE8= rsa-key-20161113]
     uid: 1007
   imbophil:
     ensure: absent
-    gid: 500
     name: imbophil
     realname: ImBoPhil
     ssh_keys: []
     uid: 1008
   paladox:
     ensure: present
-    gid: 500
     name: paladox
     realname: Paladox
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDJDGRZG9iCyvUh8tYIqx0KB9GDdr2l5jr+FGN6GH/VnFYI2XjYObuCLTJUBb0O9vlUvOyhLo6cORyDOO3fuEz82ApmjcTbBvaGZkiQJxopVWmaOQCkYHnaMomK/E2EwDzLF00rl2/+eckNTXsnqp42C9mSI0Qeig3yPTbahJM5J75I57rcaui4ZapALY2eht+zUCz8xWdiOn5ivP8S9KgxIM68rNQCvA6v8ppjlrdAFqhTfDOTJKcyTJA/1Ey+kOZDqjEaBQHu0i9qIwCAiWrJxSX5fd4PCQIHCr/HPDZV56kI08bGAWI3OCkjkYeBzPDSFNHrvgZNatwoGbAG9y+6WW1vhS4CrIg74atSwg0cbByr3FZNX2DPB3fE/tm47KgYis+Bem+Re+IKnexTwLNw6PeHRRTwLy47K4xs0MIq6GeYb8/y7G9gvjw2NN3ax6DhSNQ9NRUOVvHbSy++ufDnD2q1KWbHuwxQb5kKV0aQ4zBRCmkO/iLOETBZspX+vz7zBI7npAqy9mEK+Uzu7aqyp7OmwrSTOVF8WU3CS/gfE7fxBYwN2TUQHOaOp3vO1rMhJUUggjETYnxLUVSluvF8gY0aBJA6L3DL7e8x8b4I/uqaKOEStxZdKUT2vPUtp2uZ3u86RPt8mZSEXYnrJcidkxn9hgqA7V5FEOqYBQ0rUw== thomasmulhall410@yahoo.com]
     uid: 1009
   macfan:
     ensure: present
-    gid: 500
     name: macfan
     realname: macfan4000
     ssh_keys:
