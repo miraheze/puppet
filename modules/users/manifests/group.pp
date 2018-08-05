@@ -1,20 +1,4 @@
-# A defined type for system group mangement
-#
-# === Parameters
-#
-# [*name*]
-#  Group name
-#
-# [*ensure*]
-#  Add or remove the user group [ "present" | "absent" ]
-#
-# [*gid*]
-#  Sets the group id
-#
-# [*privileges*]
-#  An array of sudo privileges to setup
-#
-
+# class: users::group
 define users::group(
     $ensure         = 'present',
     $gid            = undef,

@@ -1,7 +1,4 @@
 groups:
-  absent:
-    description: meta group for absented users with previous cluster shell access
-    members: [corey, imbophil, labster, mutante, revi]
   ops:
     gid: 2000
     description: roots, sudo everywhere
@@ -42,84 +39,73 @@ groups:
 users:
   johnflewis:
     ensure: present
-    gid: 500
+    uid: 1000
     name: johnflewis
     realname: John Lewis
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAnZCIzrz6zMQdqQrd2fl17m31ksgMbsJJZJ1vgBviK7YR7mq2snJGVwD1BTFemqNPblMCGAEzsgcJ9kjgE/FF0TwzFnkmFxcGlJXmWsGvdS5oFljEzw8jVCQ7zFMetGeTtAhjqx3kiRIprQ/GR6HforNUNxUCiV48Z2USLR6toa91VF75FnxBQBw5dAi6KpN+chBqeaG9+kIw2z3TkZjuBxw5B+lE4IKd7b152rHmfMNuQNP+zioXLfDz2afNWNlS0Zi0jJdh/K0HOEsytvyF2nZ3917V4LPPPQG1eOWGNI1eh745fgk0UdMsg4V7dsgfvetxoitDyCrd07a0Z/LZpSxJkfdHoJjxoLtXwDfZDJora+I/M2H8N2ZDzBZNCH4km/TVWoaHjGh838+Y3YkALcs84IUFd+7gFQaSQ6KvlepYoNeAu6zCx7kQc6cJIXy5UTS6xa6Jr8nolqqjoMnH4vz8TC3DEd0eT8PwoaOtBgj+QjlXAzbWwG+YTKKwmXTccId6H9mZN4XHL7FAMgkg/AQsv5DCOcdllasJ4Bs7cI61fXDzj44c38lroJ1DgMyhiQRrnHOZIKdloBwQHBF2Gz7BWL+GADfiiBpyDhpVCkFfhcDByFIm4QkX66VVXFW7MHzG5GqTL+j8RBZiYXH7OIY2rxWP/zy/vub7i+acVHE= john@miraheze]
-    uid: 1000
   southparkfan:
     ensure: present
-    gid: 500
+    uid: 1001
     name: southparkfan
     realname: Southparkfan
     ssh_keys: 
       - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEA1K/Hwo6zP1iG5jjusujVnxqoTetNYahjKdO0j+tOkBkaYMNTeiPqu28LkLwImqf5o5YFumpOhm+Oa/Jr+g+T99Vr9mG6rVLAezMMPYXEkjTM97VNTbb4vAS5EcuFAZfCSfLLKWinksjc/zV6IOm4C+/EgL4rrAcwFQt+TgaCKBbXhbdDMu7bgYeJ3VSQdI6WVJjuTBgNPz1XUDWhJ/2p0iI2KrRmc/AVIn1uwZSTvsDTESVCyI5BDQSQkPm13GhXVgqJBHEe88SW+ABXVauw29TcEwrxN60IxG/wuVvYVwiW/UjdwdaY0a7LLag7eJLfqDF/HAQuJCUBenUGoTaEr1psPZVTqFWKQSDA/TulI4fzPF1V4O36SKbA7IT0ipGJqfpD89EmKp6V0L6kbttSAvEDEahIU8WZgFgdgS0ZyDJQPGEuzb4QzaYOhHlWT+33KQsZMofJFowrtYLhecXojELRqeYl3O0ngbtyc/rTAxtf6a1m4qZBLF0HI0smply4I7m+YD1j1FwW8ntdDtZoXsaIMJWxkDFHNcX75NLZc0/L4NJHG1Gut7WRHZN8QVNDT8oKXLq+CfOWhfmlSaOBAt6P8NG7458VEDQaSbf8yuY0/p8v+a/RJDl8V2FvfFueQUBTY/wlOJ6/CbEjnm0uhWsDpSkbBzy21edlAqq5028= southparkfan@miraheze.org
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDUS+5tmhWDXgAKqT/EkhYnU+TQ5uDVfr6TUrCZ+EINS6NGAPdZf39tN1BEUov/VHJHHiY2dy8Ji0FO/W7hhV9rHtXzAcqIZncIQQVCX0a2eZahHHXeqOfQiWrz1Ks95yv6BtEbG3U0UQtq7jWlAF+D9bWpRkQ+ktzcBsY/ZZNjJqv4vYKn+4rKJvZZfzw0nlmOEsY3eCbaGnqLzGv55fe8plPY2Vrhx8TjDmDuHJabVit2kWYCXchoTFlkq0jCLhb9rZdlLmS6HWR54k/77CNA5IaE89vOjfiDtOHi22++NZ2JyICpeJ1W4x8DjghhnXQ/p6wE+WWYsuCxXlEtuwioc2fHfzChXl7AufC5SoykFLIttCTcuFeFXDUKYyzmUj844NKq+wLpkSp2Wy7UMV86sIweREy99MvfObSr30ACOeBZT8d1Pmqa4t+3AsjvBAALWoDT/j5G3QDY40sYlOoCy4ndSzs/RyYdF+CAIw7a8ygEvgbe09G7IZ5xCZfNxoLLrlCYX61CUAGhBojRvMpJXWTIPS91kprWeY6NsHHTeAl4criIBia939LNkOwwUWhGxeV0C3VpZmVtL/LrDj3KjY8E4ybaIJVCaK73qfASlrvcLYGGAlbG5PUFUU28D59P17nd+0Vd/v0nVTGsz57brPEbyyrH0QAZZf2u512W8w== root@vps1
-    uid: 1001
   mutante:
     ensure: absent
-    gid: 500
+    uid: 1002
     name: mutante
     realname: Accion Mutante
     ssh_keys: []
-    uid: 1002
   revi:
     ensure: absent
-    gid: 500
+    uid: 1003
     name: revi
     realname: Revi
     ssh_keys: []
-    uid: 1003
   ndkilla:
     ensure: present
-    gid: 500
+    uid: 1004
     name: ndkilla
     realname: NDKilla
     ssh_keys: 
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDwaQK10mQ8vAQM+jnEM471Ej6/SJq3FtNuL5qYvtd5/pvx6fONkSfSrP8JiOEVSIbYn+9tQfZ7zDTY8HIfTX7W3rTQvgS5yFL/YvNZ+UCnrt0P76JXjd/dKWQ/d4isR9x/OtB+XM3JNVS0CiWCt/aERpJLF3lPLDRw3d9bef1Z9JdCwo2qlWfD9rzkksnd3Nm3YcY+b2uLzN9Bk5L7onTwJ5ftLGrI3bpVrsw8q3bM498wP4vMIJeBAFjwjdCrpdt0llvSjVJdBm6DLG031exmEyu+eSKIB6QFVric5cyhAQNIngqaSOI5taaHHf0hBoLF4oCzj9GqxAA4OHef9oyMbs66LBC8tY5i7nYhfioHiZ+GJHck7OAiLEM3mB06IQ4qP1hxXRDFEX33EVb0eJ5HLliQtimJ1DnZJnxqz0qxytH4UTW/xp7g9WYQaHbJ277sbmI7r2qAveAjeOwKXTaDlZlBsx/rzr2IV5yIcOhqplt5oGLIHOS9bgszaLiTWdOTL47s6iGQRQi+wchCqzL6/1Zijsdp48LPx9JhnHqq4XAS48Rc8cdCgAI34iIbwtaLm1NKofYdH2UBxcuLf+CjHQcmRQpbFgSnw4fKeNiDlcYV9EdowLrZitv/fkkCXXwEzQlmogurlEKEUCtIzvXGvD4x3YezVk16HJwVvgbxlw== subwoofer@wsl
       - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAocN1uOukVfhc+R/DqkyG1LMVJvcaVo+nZXEa/Hz4Z1WoyObAOhzzyJlGn3kH44WMK38nWvwDV+5JvWeXIlyNFF9DtDBQDZFFUDLZRCM5mx5wma9SiaSmTz9x7nSXMc41GttjPYBG0yAb4rGYYEunG/ipM0NvyAJnnnx915fy764x4Xt08ly/Y8YSu2NwVPfvqET0ogIlwi4h6q6A9HtspA5zH8iElc/sr0Em3zPP9b1JKI5uSxKW260BUR+vnLGh5zoMbfdkX4XGqq6fbjufDj9tRlI+8avv7Oaq3BHn3F9zaRL91Zy/TOiO/hrRL540zsZ+bJVzMDGYvvlgXACJAq/vPP4qsdoS8VhZ7W+rOKONfH0O/pXnflGZgtdsMi8aRzSIUn7UJHG2I7NB4LsdL/16BOU8biJRVi7frOzXYKmCoDibZB0+FpUUWnZ88B8cXL85iZOSLhqtNAO5/6B+Jq9DfnwNNwX68ue6vRul5eIRrBio2eTIDs43BDLyerslApo/s2uefQt+1hC3moBjwuYPXJ7oVN1kfjavttX8ixs8LHF0/a39TqQ+isxRqIHoPY3igNDZB2z0fMgmqrB0w99rQItN0vKcwARg0CDXB3UM4AMnW2ko7PFfbnLUK5wOuRubSnLK4M2T4ImW3wcWgR6Uac3C70CjZUwkHvSMNZk= subwoofer@laptop
-    uid: 1004
   labster:
     ensure: absent
-    gid: 500
+    uid: 1005
     name: labster
     realname: Vorticity
     ssh_keys: []
-    uid: 1005
   corey:
     ensure: absent
-    gid: 500
+    uid: 1006
     name: corey
     realname: Corey Chambers
     ssh_keys: []
-    uid: 1006
   reception:
     ensure: present
-    gid: 500
+    uid: 1007
     name: reception
     realname: Reception
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEA7U+sWg/K7BM7KEVwsLEFnkmOv6//eotDh8W6FmG4D3t3/6q7ysQS8QEYtply8MWSusTCH1s/QfpPrhtxEq6Qm8LfjikbfeltfCZHmzGlqC98DRFMhGIgiFC4SVqRc9FCWv3ZQ8nnVp++VdiOoXB5rf8uENtlDlCLoA2RXuCCYBUMbScbbuDKPI/ipHuSx0kp04pGpX/QTULES3AJgjV2IZtLMh9cF27psEdjE1lRwt9aeB0Cgb9302AqQycXV2Oqcs9Y6TwkN6IWSvEo+5AenGZW9nqN0y0VekQNqMWMl4xLZDG8zNoq0tZcdSEXmz9D9XBOEg5d4blRkX5wzaCDYHhDbDJ71x2bgH/ifzQMaRYN6vLU8q3qlCxSq2Hk7rcEwK6/fqrOdZlavh0v59zsypuixYF+kRNtqipup21LV/2+jlc5DWqLUiW1ORCbdl2pvTEHNnKpaQO3tPa8PSht0EhaLl8st+nLOiGJgxtlf886lLBEbk+6y4tybtTJlCg5Z0FSZZpODD9DxktqUla+L44l6h6X4we/VnDJ6sWKOQqNZABZwv7sYlMxYt5Ncm04fcWTlVuUIToaflkIWitawHTwyauru8MenyHNT/gTYnwY8kc+jy44cO2QHWYERsNAXAAj2DRgn/b4x1oK7WNydAPPSxwblzuq0dgD8VJ0dE8= rsa-key-20161113]
-    uid: 1007
   imbophil:
     ensure: absent
-    gid: 500
+    uid: 1008
     name: imbophil
     realname: ImBoPhil
     ssh_keys: []
-    uid: 1008
   paladox:
     ensure: present
-    gid: 500
+    uid: 1009
     name: paladox
     realname: Paladox
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDJDGRZG9iCyvUh8tYIqx0KB9GDdr2l5jr+FGN6GH/VnFYI2XjYObuCLTJUBb0O9vlUvOyhLo6cORyDOO3fuEz82ApmjcTbBvaGZkiQJxopVWmaOQCkYHnaMomK/E2EwDzLF00rl2/+eckNTXsnqp42C9mSI0Qeig3yPTbahJM5J75I57rcaui4ZapALY2eht+zUCz8xWdiOn5ivP8S9KgxIM68rNQCvA6v8ppjlrdAFqhTfDOTJKcyTJA/1Ey+kOZDqjEaBQHu0i9qIwCAiWrJxSX5fd4PCQIHCr/HPDZV56kI08bGAWI3OCkjkYeBzPDSFNHrvgZNatwoGbAG9y+6WW1vhS4CrIg74atSwg0cbByr3FZNX2DPB3fE/tm47KgYis+Bem+Re+IKnexTwLNw6PeHRRTwLy47K4xs0MIq6GeYb8/y7G9gvjw2NN3ax6DhSNQ9NRUOVvHbSy++ufDnD2q1KWbHuwxQb5kKV0aQ4zBRCmkO/iLOETBZspX+vz7zBI7npAqy9mEK+Uzu7aqyp7OmwrSTOVF8WU3CS/gfE7fxBYwN2TUQHOaOp3vO1rMhJUUggjETYnxLUVSluvF8gY0aBJA6L3DL7e8x8b4I/uqaKOEStxZdKUT2vPUtp2uZ3u86RPt8mZSEXYnrJcidkxn9hgqA7V5FEOqYBQ0rUw== thomasmulhall410@yahoo.com]
-    uid: 1009
   macfan:
     ensure: present
-    gid: 500
+    uid: 1010
     name: macfan
     realname: macfan4000
     ssh_keys:
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC8GzNlEBKQGTGuTv39ERLOzjrCe0huxpDtHhCKhvwbgVZ+dnoN/6Lqxn25GCWcZvqjSl8Dzu/KWyrcfKxmxaQFy6eHYTM7P+L5HXq9Z0ghdk2b9Cd78SQ6jXM4AvMC5KnlKd45rYCx1yXlSWNJQHecmPhub0dgj9TvrcttipaJ0h+dZ8kuCOXSwC2M7wzwvVt3tzdtnUpDSJdHqeR8gR96dYI/S/dqC3s9d5QytO2r6AKtw7TQpTlBOLyGOySz45xwny7zqWwJO1g0WgiOx4ycFi865KEEzSnepfbaeP2BmvrL/72UTPJ0SxQodZA1Y0JwCD1TbuhqFAaBlRP/LVjkeLLQjesUakdtlizDFlYejCMcqKRSsnBz4/A08YktZMvEkIwOueMR2CtvI+KCq7XvSfWlXrTc0gKXxHT2SbL0/IoG1FwMobn9aLWzbexTqnLKc1pAioWvq1Mxc0zcWroKc4CNJ4IMhJpW5H7Ttje1Zvf9dih6OjbMeRP+X2HB/66WWBbutKFc0vlC2WkBrdM1Z29JREwri03Pz2PJRPXRcpZKPuSpF0AN8Ia1gEmOH38/CUKzudMoPuO4xmOAhG/pAztjbCGlaWpo8YW1P8wZCneA7GXxfenS5Y+ez+FkpHdYWNIsa0WNSImryIuDxpI6FWLQbnF/tPhfwBdX3TBT8w== Generated By Termius
       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDiz0ZHBEGAK5H/ZETP0YBH3IHpsBbv40zXrRarJa2e1JGO6WbHBKv2d7n9INMnBnp7haZdWHO/Egeup81wnqH9mffPx0AYsv6OD/5L0jdHKs8yHdVayTv6OzLEEgNrqvRnDjhxRdEnmhwEJQkzwni3TBs48zEy+pDWfKIlvGbz0XtklDfI3gKe850OX1SjrtskjRe5WqJINocpWj8vsy1L//p+D4IbgXxohwiwcUEAwMcopAIZq0YO+Li9S66dWo27pd6pYcD6tXNYK0HQRhoi/QpFTeNcOPEWs2XEeuDbmC82xzlnlL02c5R6NdM3BE5DVmIHqAyey/eqqRxoxZM1NdkSqCy658SzL4p2X7dLwxjxnlomOOGa5z3EdM+xPyShMKHqgqYLB6LSk9dhzd0eNOcPhnMHXjTFzIneqr1ODQB59r+zgyZJnU3o69xrhlOUbhs33mlQXxHXleWPSdT9y2so+7noal0BUtkJbmi3KqnLPAyZ0AyLdg7wjqAZDmGBx0gv4JCjionnRHMFVW5WvDUHY/tWzHrHkD7DcTO20p5sy43Ai4AqLHxY7l7wwcxQ0o3lD/4tWIcxp2flVpWl8FoKAO2URXzv72dck5dX25t2/24txIgggw/ErqzFoFkO58WAzugRp7g9tskt88uYwuyzMt3qFaRKvEyszhwm8Q== paulfkeffer@gmail.com
-    uid: 1010

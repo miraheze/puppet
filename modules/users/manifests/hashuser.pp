@@ -1,15 +1,10 @@
-# A defined type for user creation from hash
-#
-# === Parameters
-#
-# [*name*]
-#  Hash user name
-#
+# class: users::hashuser
 define users::hashuser(
+    $phash={},
 )
 {
 
-    $uinfo = $::users::data['users'][$name]
+    $uinfo = $phash['users'][$name]
 
     if has_key($uinfo, 'gid') {
         $group_id = $uinfo['gid']
@@ -26,7 +21,6 @@ define users::hashuser(
     users::user { $name:
         ensure     => $uinfo['ensure'],
         uid        => $uinfo['uid'],
-        gid        => $group_id,
         groups     => $uinfo['groups'],
         comment    => $uinfo['realname'],
         shell      => $uinfo['shell'],
