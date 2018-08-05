@@ -75,6 +75,17 @@ class mariadb::config(
         mode   => '0644',
     }
 
+    exec { 'mariadb reload systemd':
+        command     => '/bin/systemctl daemon-reload',
+        refreshonly => true,
+    }
+
+    file { '/etc/systemd/system/mariadb.service.d/no-timeout-mariadb.conf':
+        ensure => present,
+        source => 'puppet:///modules/mariadb/no-timeout-mariadb.conf',
+        notify => Exec['mariadb reload systemd'],
+    }
+
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'MySQL':
             check_command => 'mysql',
