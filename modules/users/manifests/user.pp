@@ -1,5 +1,48 @@
-# class: users::user
-define users::user(
+# A defined type for user account management.
+#
+# WARNING: this is designed to NOT play well with local modifications.
+#
+# === Parameters
+#
+# [*name*]
+#  The user of the user to be created.
+#
+# [*ensure*]
+#  Add or remove the user account [ "present" | "absent"]
+#
+# [*uid*]
+#  The UID to set for the new account. Must be globally unique.
+#
+# [*gid*]
+#  Sets the primary group of this user.
+#
+#  NOTE: User created files default to this group
+#
+# [*groups*]
+#  An array of additional groups to add the user to.
+#
+#  NOTE: user membership should almost exclusively be handled in the
+#  external definition format (yaml)
+#
+#  WARNING: setting a group here means anywhere this user exists the
+#           group _has_ to exist also.  More than likely they should be added
+#           to the appropriate group in Admin::Groups
+#
+# [*comment*]
+#  Typicaly the realname for the user.
+#
+# [*shell*]
+#  The login shell.
+#
+# [*privileges*]
+#  An array of sudo privileges to setup
+#  Rarely should a user differ from an established group.
+#
+# [*ssh_keys*]
+#  An array of strings containing the SSH public keys.
+#
+
+define users::user (
     $ensure     = 'present',
     $uid        = undef,
     $gid        = undef,
@@ -20,16 +63,18 @@ define users::user(
         gid        => $gid,
         groups     => [],
         shell      => $shell,
-        managehome => true,
+        managehome => false, # we do it manually below
         allowdupe  => false,
     }
 
+    # This is all absented by the above /home/${user} cleanup
+    # Puppet chokes if we try to absent subfiles to /home/${user}
     if $ensure == 'present' {
         file { "/home/${name}":
-            ensure       => 'present',
+            ensure       => ensure_directory($ensure),
             source       => [
                 "puppet:///modules/users/home/${name}/",
-                'puppet:///modules/users/home/skel',
+                'puppet:///modules/users/home/skel/',
             ],
             sourceselect => 'first',
             recurse      => 'remote',
@@ -47,7 +92,7 @@ define users::user(
 
     # recursively-managed, automatically purged
     if !empty($ssh_keys) {
-        users::key { $name:
+        ssh::userkey { $name:
             ensure  => $ensure,
             content => join($ssh_keys, "\n"),
         }
