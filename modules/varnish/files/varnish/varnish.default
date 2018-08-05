@@ -32,4 +32,4 @@ MEMLOCK=82000
 #
 # This example uses the INSTANCE variable above, which you need to uncomment.
 #
-DAEMON_OPTS="-a :81 -T localhost:6082 -f /etc/varnish/default.vcl -S /etc/varnish/secret -s file,/var/lib/varnish/mediawiki/varnish_storage.bin,16G"
+DAEMON_OPTS="-a :81 -T localhost:6082 -f /etc/varnish/default.vcl -S /etc/varnish/secret -s file,/var/lib/varnish/mediawiki/varnish_storage.bin,15G"
