@@ -30,13 +30,6 @@ class users(
     #this custom function eliminates the need for virtual users
     $user_set = unique_users($data, $all_groups)
 
-
-    file { '/usr/local/sbin/enforce-users-groups':
-        ensure => file,
-        mode   => '0555',
-        source => 'puppet:///modules/users/enforce-users-groups.sh',
-    }
-
     users::hashgroup { $all_groups:
         before => Users::Hashuser[$user_set],
     }
@@ -45,15 +38,5 @@ class users(
         before => Users::Groupmembers[$all_groups],
     }
 
-    users::groupmembers { $all_groups:
-        before => Exec['enforce-users-groups-cleanup'],
-    }
-
-    # Declarative gotcha: non-defined users can get left behind
-    # Here we cleanup anyone not in a supplementary group above a certain UID
-    exec { 'enforce-users-groups-cleanup':
-        command   => '/usr/local/sbin/enforce-users-groups',
-        unless    => '/usr/local/sbin/enforce-users-groups dryrun',
-        logoutput => true,
-    }
+    users::groupmembers { $all_groups: }
 }
