@@ -31,19 +31,19 @@ class puppetdb::database($master = undef) {
 
     # Create the puppetdb user for localhost
     # This works on every server and is used for read-only db lookups
-    # postgresql::user { 'puppetdb@localhost':
-    #     ensure    => present,
-    #     user      => 'puppetdb',
-    #     database  => 'puppetdb',
-    #     password  => $puppetdb_pass,
-    #     master    => true,
-    # }
+    postgresql::user { 'puppetdb@localhost':
+        ensure    => present,
+        user      => 'puppetdb',
+        database  => 'puppetdb',
+        password  => $puppetdb_pass,
+        master    => true,
+    }
 
     # Create the database
-    # postgresql::db { 'puppetdb':
-    #     owner   => 'puppetdb',
-    #     require => Class[$require_class],
-    # }
+    postgresql::db { 'puppetdb':
+        owner   => 'puppetdb',
+        require => Class[$require_class],
+    }
 
     # sudo -u postgres sh
     # psql
@@ -51,11 +51,11 @@ class puppetdb::database($master = undef) {
     # \q
     # exit
     #
-    # exec { 'create_tgrm_extension':
-    #     command => '/usr/bin/psql puppetdb -c "create extension pg_trgm"',
-    #     unless  => '/usr/bin/psql puppetdb -c \'\dx\' | /bin/grep -q pg_trgm',
-    #     user    => 'postgres',
-    #     require => Postgresql::Db['puppetdb'],
-    # }
+    exec { 'create_tgrm_extension':
+        command => '/usr/bin/psql puppetdb -c "create extension pg_trgm"',
+        unless  => '/usr/bin/psql puppetdb -c \'\dx\' | /bin/grep -q pg_trgm',
+        user    => 'postgres',
+        require => Postgresql::Db['puppetdb'],
+    }
 
 }
