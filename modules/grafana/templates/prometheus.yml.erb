@@ -37,24 +37,12 @@ scrape_configs:
     # machine by default.
     static_configs:
       - targets: [
-        'bacula1.miraheze.org:9100', # Standard exporter
-        'cp2.miraheze.org:9100',
-        'cp4.miraheze.org:9100',
-        'cp5.miraheze.org:9100',
-        'db4.miraheze.org:9100',
-        'misc1.miraheze.org:9100',
-        'misc2.miraheze.org:9100',
-        'misc3.miraheze.org:9100',
-        'misc4.miraheze.org:9100',
-        'mw1.miraheze.org:9100',
-        'mw2.miraheze.org:9100',
-        'mw3.miraheze.org:9100',
-        'ns1.miraheze.org:9100',
-        'puppet1.miraheze.org:9100',
-        'lizardfs1.miraheze.org:9100',
-        'lizardfs2.miraheze.org:9100',
-        'test1.miraheze.org:9100',
-        'cp2.miraheze.org:9131', # Varnish exporter
-        'cp4.miraheze.org:9131',
-        'cp5.miraheze.org:9131',
+<%- @ips.sort.each do |host| -%>
+        # Standard exporter
+        '<%= host %>:9100',
+<%- if host =~ /^cp/ -%>
+        # Varnish exporter
+        '<%= host %>:9131',
+<%- end -%>
+<%- end -%>
       ]
