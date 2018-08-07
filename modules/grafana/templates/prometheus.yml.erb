@@ -37,7 +37,7 @@ scrape_configs:
     # machine by default.
     static_configs:
       - targets: [
-<%- @ips.sort.each do |host| -%>
+<%- @host.sort.each do |host| -%>
         # Standard exporter
         '<%= host %>:9100',
 <%- if host =~ /^cp/ -%>
