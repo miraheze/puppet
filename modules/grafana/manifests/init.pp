@@ -27,8 +27,7 @@ class grafana(
 
     require_package('prometheus')
 
-    # TODO: convert this to use puppetdb to get hostname instead
-    # of manually adding the hostname
+    $host = query_nodes("domain='$domain'", 'fqdn')
     file { '/etc/prometheus/prometheus.yml':
         content => template('grafana/prometheus.yml.erb'),
         owner   => 'root',
