@@ -74,6 +74,14 @@ class mediawiki::jobrunner {
         hour    => '18',
     }
 
+    cron { 'managewikis':
+        ensure  => present,
+        command => '/usr/bin/nice -19 /usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki loginwiki > /var/log/mediawiki/cron/managewikis.log',
+        user    => 'www-data',
+        minute  => '5',
+        hour    => '12',
+    }
+
     file { '/usr/lib/nagios/plugins/check_jobqueue':
         ensure => present,
         source => 'puppet:///modules/mediawiki/jobrunner/check_jobqueue',

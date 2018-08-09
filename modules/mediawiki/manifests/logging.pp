@@ -2,6 +2,7 @@
 class mediawiki::logging {
     file { [
         '/var/log/mediawiki',
+        '/var/log/mediawiki/cron',
         '/var/log/mediawiki/debuglogs'
     ]:
         ensure => 'directory',
