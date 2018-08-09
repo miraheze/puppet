@@ -76,7 +76,7 @@ class mediawiki::jobrunner {
 
     cron { 'managewikis':
         ensure  => present,
-        command => '/usr/bin/nice -19 /usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki loginwiki > /var/log/mediawiki/cron/managewikis.log',
+        command => '/usr/bin/nice -19 /usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki loginwiki --warn --close > /var/log/mediawiki/cron/managewikis.log',
         user    => 'www-data',
         minute  => '5',
         hour    => '12',
