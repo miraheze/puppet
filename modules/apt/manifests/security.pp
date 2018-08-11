@@ -1,5 +1,5 @@
-# Defining backports for the apt class
-class apt::backports (
+# Defining class to add debian security mirror to apt
+class apt::secuirty (
   Optional[String] $location                    = 'http://security.debian.org/',
   Optional[String] $release                     = undef,
   Optional[String] $repos                       = 'main',
