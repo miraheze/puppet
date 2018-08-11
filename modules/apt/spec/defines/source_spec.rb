@@ -15,9 +15,9 @@ describe 'apt::source' do
     context 'without location' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
           osfamily: 'Debian',
-          lsbdistcodename: 'wheezy',
+          lsbdistcodename: 'jessie',
           puppetversion: Puppet.version,
         }
       end
@@ -29,9 +29,9 @@ describe 'apt::source' do
     context 'with location' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
           lsbdistid: 'Debian',
-          lsbdistcodename: 'wheezy',
+          lsbdistcodename: 'jessie',
           osfamily: 'Debian',
           puppetversion: Puppet.version,
         }
@@ -40,6 +40,7 @@ describe 'apt::source' do
 
       it {
         is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').without_content(%r{# my_source\ndeb-src hello.there wheezy main\n})
+        is_expected.not_to contain_package('apt-transport-https')
       }
     end
   end
@@ -47,12 +48,12 @@ describe 'apt::source' do
   describe 'no defaults' do
     let :facts do
       {
-        os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
         lsbdistid: 'Debian',
-        lsbdistcodename: 'wheezy',
+        lsbdistcodename: 'jessie',
         osfamily: 'Debian',
         operatingsystem: 'Debian',
-        lsbdistrelease: '7.0',
+        lsbdistrelease: '8.0',
         puppetversion: Puppet.version,
       }
     end
@@ -68,7 +69,7 @@ describe 'apt::source' do
       end
 
       it {
-        is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{hello.there wheezy main\n})
+        is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{hello.there jessie main\n})
       }
 
       it { is_expected.to contain_file('/etc/apt/sources.list.d/my_source.list').that_notifies('Class[Apt::Update]') }
@@ -183,9 +184,9 @@ describe 'apt::source' do
   context 'with allow_unsigned true' do
     let :facts do
       {
-        os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
         lsbdistid: 'Debian',
-        lsbdistcodename: 'wheezy',
+        lsbdistcodename: 'jessie',
         osfamily: 'Debian',
         puppetversion: Puppet.version,
       }
@@ -198,7 +199,51 @@ describe 'apt::source' do
     end
 
     it {
-      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb \[trusted=yes\] hello.there wheezy main\n})
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb \[trusted=yes\] hello.there jessie main\n})
+    }
+  end
+
+  context 'with a https location, install apt-transport-https' do
+    let :facts do
+      {
+        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
+        lsbdistid: 'Debian',
+        lsbdistcodename: 'jessie',
+        osfamily: 'Debian',
+        puppetversion: Puppet.version,
+      }
+    end
+    let :params do
+      {
+        location: 'HTTPS://foo.bar',
+        allow_unsigned: false,
+      }
+    end
+
+    it {
+      is_expected.to contain_package('apt-transport-https')
+    }
+  end
+
+  context 'with a https location, do not install apt-transport-https on oses not in list eg buster' do
+    let :facts do
+      {
+        os: { family: 'Debian', name: 'Debian', release: { major: '10', full: '10.0' } },
+        lsbdistid: 'Debian',
+        lsbdistcodename: 'buster',
+        osfamily: 'Debian',
+        puppetversion: Puppet.version,
+      }
+    end
+    let :params do
+      {
+        location: 'https://foo.bar',
+        allow_unsigned: false,
+      }
+    end
+
+    it {
+      is_expected.not_to contain_package('apt-transport-https')
     }
   end
 
@@ -229,9 +274,9 @@ describe 'apt::source' do
     let :facts do
       {
         architecture: 'amd64',
-        os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
         lsbdistid: 'Debian',
-        lsbdistcodename: 'wheezy',
+        lsbdistcodename: 'jessie',
         osfamily: 'Debian',
         puppetversion: Puppet.version,
       }
@@ -244,16 +289,16 @@ describe 'apt::source' do
     end
 
     it {
-      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb-src hello.there wheezy main\n})
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb-src hello.there jessie main\n})
     }
   end
 
   context 'with include_src => true' do
     let :facts do
       {
-        os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
         lsbdistid: 'Debian',
-        lsbdistcodename: 'wheezy',
+        lsbdistcodename: 'jessie',
         osfamily: 'Debian',
         puppetversion: Puppet.version,
       }
@@ -266,16 +311,16 @@ describe 'apt::source' do
     end
 
     it {
-      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb hello.there wheezy main\ndeb-src hello.there wheezy main\n})
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb hello.there jessie main\ndeb-src hello.there jessie main\n})
     }
   end
 
   context 'with include deb => false' do
     let :facts do
       {
-        os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
         lsbdistid: 'debian',
-        lsbdistcodename: 'wheezy',
+        lsbdistcodename: 'jessie',
         osfamily: 'debian',
         puppetversion: Puppet.version,
       }
@@ -296,9 +341,9 @@ describe 'apt::source' do
   context 'with include src => true and include deb => false' do
     let :facts do
       {
-        os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
         lsbdistid: 'debian',
-        lsbdistcodename: 'wheezy',
+        lsbdistcodename: 'jessie',
         osfamily: 'debian',
         puppetversion: Puppet.version,
       }
@@ -311,17 +356,17 @@ describe 'apt::source' do
     end
 
     it {
-      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{deb-src hello.there wheezy main\n})
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{deb-src hello.there jessie main\n})
     }
-    it { is_expected.to contain_apt__setting('list-my_source').without_content(%r{deb hello.there wheezy main\n}) }
+    it { is_expected.to contain_apt__setting('list-my_source').without_content(%r{deb hello.there jessie main\n}) }
   end
 
   context 'with ensure => absent' do
     let :facts do
       {
-        os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
         lsbdistid: 'Debian',
-        lsbdistcodename: 'wheezy',
+        lsbdistcodename: 'jessie',
         osfamily: 'Debian',
         puppetversion: Puppet.version,
       }
@@ -341,7 +386,7 @@ describe 'apt::source' do
     context 'with no release' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
           lsbdistid: 'Debian',
           osfamily: 'Debian',
           puppetversion: Puppet.version,
@@ -357,7 +402,7 @@ describe 'apt::source' do
     context 'with release is empty string' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
           lsbdistid: 'Debian',
           osfamily: 'Debian',
           puppetversion: Puppet.version,
@@ -371,9 +416,9 @@ describe 'apt::source' do
     context 'with invalid pin' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
           lsbdistid: 'Debian',
-          lsbdistcodename: 'wheezy',
+          lsbdistcodename: 'jessie',
           osfamily: 'Debian',
           puppetversion: Puppet.version,
         }
@@ -393,9 +438,9 @@ describe 'apt::source' do
     context 'with notify_update = undef (default)' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
           lsbdistid: 'Debian',
-          lsbdistcodename: 'wheezy',
+          lsbdistcodename: 'jessie',
           osfamily: 'Debian',
           puppetversion: Puppet.version,
         }
@@ -412,9 +457,9 @@ describe 'apt::source' do
     context 'with notify_update = true' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
           lsbdistid: 'Debian',
-          lsbdistcodename: 'wheezy',
+          lsbdistcodename: 'jessie',
           osfamily: 'Debian',
           puppetversion: Puppet.version,
         }
@@ -432,9 +477,9 @@ describe 'apt::source' do
     context 'with notify_update = false' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
           lsbdistid: 'Debian',
-          lsbdistcodename: 'wheezy',
+          lsbdistcodename: 'jessie',
           osfamily: 'Debian',
           puppetversion: Puppet.version,
         }

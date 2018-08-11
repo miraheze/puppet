@@ -10,11 +10,11 @@ describe 'apt::update', type: :class do
       context "when $::apt_update_last_success indicates #{desc}" do
         let(:facts) do
           {
-            os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+            os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
             lsbdistid: 'Debian',
             osfamily: 'Debian',
             apt_update_last_success: factval,
-            lsbdistcodename: 'wheezy',
+            lsbdistcodename: 'jessie',
             puppetversion: Puppet.version,
           }
         end
@@ -31,10 +31,10 @@ describe 'apt::update', type: :class do
     context 'when $::apt_update_last_success is nil' do
       let(:facts) do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
           lsbdistid: 'Debian',
           osfamily: 'Debian',
-          lsbdistcodename: 'wheezy',
+          lsbdistcodename: 'jessie',
           puppetversion: Puppet.version,
         }
       end
@@ -55,11 +55,11 @@ describe 'apt::update', type: :class do
       context "when $::apt_update_last_success indicates #{desc}" do
         let(:facts) do
           {
-            os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+            os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
             lsbdistid: 'Debian',
             osfamily: 'Debian',
             apt_update_last_success: factval,
-            lsbdistcodename: 'wheezy',
+            lsbdistcodename: 'jessie',
             puppetversion: Puppet.version,
           }
         end
@@ -74,10 +74,10 @@ describe 'apt::update', type: :class do
     context 'when $::apt_update_last_success is nil' do
       let(:facts) do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
           lsbdistid: 'Debian',
           osfamily: 'Debian',
-          lsbdistcodename: 'wheezy',
+          lsbdistcodename: 'jessie',
           puppetversion: Puppet.version,
         }
       end
@@ -89,17 +89,17 @@ describe 'apt::update', type: :class do
       end
     end
   end
-  %w[daily weekly].each do |update_frequency|
+  ['daily', 'weekly'].each do |update_frequency|
     context "when apt::update['frequency'] has the value of #{update_frequency}" do
       { 'we are due for a run' => 1_406_660_561, 'the update-success-stamp file does not exist' => -1 }.each_pair do |desc, factval|
         context "when $::apt_update_last_success indicates #{desc}" do
           let(:facts) do
             {
-              os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+              os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
               lsbdistid: 'Debian',
               osfamily: 'Debian',
               apt_update_last_success: factval,
-              lsbdistcodename: 'wheezy',
+              lsbdistcodename: 'jessie',
               puppetversion: Puppet.version,
             }
           end
@@ -114,10 +114,10 @@ describe 'apt::update', type: :class do
       context 'when the $::apt_update_last_success fact has a recent value' do
         let(:facts) do
           {
-            os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+            os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
             lsbdistid: 'Debian',
             osfamily: 'Debian',
-            lsbdistcodename: 'wheezy',
+            lsbdistcodename: 'jessie',
             apt_update_last_success: Time.now.to_i,
             puppetversion: Puppet.version,
           }
@@ -132,10 +132,10 @@ describe 'apt::update', type: :class do
       context 'when $::apt_update_last_success is nil' do
         let(:facts) do
           {
-            os: { family: 'Debian', name: 'Debian', release: { major: '7', full: '7.0' } },
+            os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
             lsbdistid: 'Debian',
             osfamily: 'Debian',
-            lsbdistcodename: 'wheezy',
+            lsbdistcodename: 'jessie',
             apt_update_last_success: nil,
             puppetversion: Puppet.version,
           }

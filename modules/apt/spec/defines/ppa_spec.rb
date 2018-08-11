@@ -7,9 +7,9 @@ describe 'apt::ppa' do
   describe 'defaults' do
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '11', full: '11.04' } },
-        lsbdistrelease: '11.04',
-        lsbdistcodename: 'natty',
+        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '41.04' } },
+        lsbdistrelease: '14.04',
+        lsbdistcodename: 'trusty',
         operatingsystem: 'Ubuntu',
         osfamily: 'Debian',
         lsbdistid: 'Ubuntu',
@@ -23,7 +23,7 @@ describe 'apt::ppa' do
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:needs/such.substitution/wow+type').that_notifies('Class[Apt::Update]').with(environment: [],
                                                                                                                                       command: '/usr/bin/add-apt-repository -y ppa:needs/such.substitution/wow+type', # rubocop:disable Metrics/LineLength
-                                                                                                                                      unless: '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow_type-natty.list', # rubocop:disable Metrics/LineLength
+                                                                                                                                      unless: '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow_type-trusty.list', # rubocop:disable Metrics/LineLength
                                                                                                                                       user: 'root',
                                                                                                                                       logoutput: 'on_failure')
     }
@@ -65,9 +65,9 @@ describe 'apt::ppa' do
     end
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '11', full: '11.04' } },
-        lsbdistrelease: '11.04',
-        lsbdistcodename: 'natty',
+        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
+        lsbdistrelease: '14.04',
+        lsbdistcodename: 'trusty',
         operatingsystem: 'Ubuntu',
         osfamily: 'Debian',
         lsbdistid: 'Ubuntu',
@@ -81,53 +81,13 @@ describe 'apt::ppa' do
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:needs/such.substitution/wow').that_notifies('Class[Apt::Update]').with('environment' => [],
                                                                                                                                  'command'     => '/usr/bin/add-apt-repository -y ppa:needs/such.substitution/wow', # rubocop:disable Metrics/LineLength
-                                                                                                                                 'unless'      => '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow-natty.list', # rubocop:disable Metrics/LineLength
+                                                                                                                                 'unless'      => '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list', # rubocop:disable Metrics/LineLength
                                                                                                                                  'user'        => 'root',
                                                                                                                                  'logoutput'   => 'on_failure')
     }
 
     it {
-      is_expected.to contain_file('/etc/apt/sources.list.d/needs-such_substitution-wow-natty.list').that_requires('Exec[add-apt-repository-ppa:needs/such.substitution/wow]').with('ensure' => 'file')
-    }
-  end
-
-  describe 'package_manage => true, multiple ppas, MODULES-2873' do
-    let :pre_condition do
-      'class { "apt": }
-       apt::ppa {"ppa:user/foo":
-         package_manage => true
-       }'
-    end
-    let :facts do
-      {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '11', full: '11.04' } },
-        lsbdistrelease: '11.04',
-        lsbdistcodename: 'natty',
-        operatingsystem: 'Ubuntu',
-        osfamily: 'Debian',
-        lsbdistid: 'Ubuntu',
-        puppetversion: Puppet.version,
-      }
-    end
-    let :params do
-      {
-        package_manage: true,
-      }
-    end
-
-    let(:title) { 'ppa:user/bar' }
-
-    it { is_expected.to contain_package('python-software-properties') }
-    it {
-      is_expected.to contain_exec('add-apt-repository-ppa:user/bar').that_notifies('Class[Apt::Update]').with('environment' => [],
-                                                                                                              'command'     => '/usr/bin/add-apt-repository -y ppa:user/bar',
-                                                                                                              'unless'      => '/usr/bin/test -f /etc/apt/sources.list.d/user-bar-natty.list',
-                                                                                                              'user'        => 'root',
-                                                                                                              'logoutput'   => 'on_failure')
-    }
-
-    it {
-      is_expected.to contain_file('/etc/apt/sources.list.d/user-bar-natty.list').that_requires('Exec[add-apt-repository-ppa:user/bar]').with('ensure' => 'file')
+      is_expected.to contain_file('/etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list').that_requires('Exec[add-apt-repository-ppa:needs/such.substitution/wow]').with('ensure' => 'file')
     }
   end
 
@@ -137,9 +97,9 @@ describe 'apt::ppa' do
     end
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '11', full: '11.04' } },
-        lsbdistrelease: '11.04',
-        lsbdistcodename: 'natty',
+        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
+        lsbdistrelease: '14.04',
+        lsbdistcodename: 'trusty',
         operatingsystem: 'Ubuntu',
         osfamily: 'Debian',
         lsbdistid: 'Ubuntu',
@@ -158,13 +118,13 @@ describe 'apt::ppa' do
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:needs/such.substitution/wow').that_notifies('Class[Apt::Update]').with('environment' => [],
                                                                                                                                  'command'     => '/usr/bin/add-apt-repository -y ppa:needs/such.substitution/wow', # rubocop:disable Metrics/LineLength
-                                                                                                                                 'unless'      => '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow-natty.list', # rubocop:disable Metrics/LineLength
+                                                                                                                                 'unless'      => '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list', # rubocop:disable Metrics/LineLength
                                                                                                                                  'user'        => 'root',
                                                                                                                                  'logoutput'   => 'on_failure')
     }
 
     it {
-      is_expected.to contain_file('/etc/apt/sources.list.d/needs-such_substitution-wow-natty.list').that_requires('Exec[add-apt-repository-ppa:needs/such.substitution/wow]').with('ensure' => 'file')
+      is_expected.to contain_file('/etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list').that_requires('Exec[add-apt-repository-ppa:needs/such.substitution/wow]').with('ensure' => 'file')
     }
   end
 

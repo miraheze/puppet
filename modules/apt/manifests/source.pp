@@ -14,7 +14,6 @@ define apt::source(
   Boolean $notify_update                        = true,
 ) {
 
-  # This is needed for compat with 1.8.x
   include ::apt
 
   $_before = Apt::Setting["list-${title}"]
@@ -29,17 +28,14 @@ define apt::source(
     $_release = $release
   }
 
-  # Some releases do not support https transport with default installation
-  $_transport_https_releases = [ 'wheezy', 'jessie', 'stretch', 'trusty', 'xenial' ]
-
   if $ensure == 'present' {
     if ! $location {
       fail('cannot create a source entry without specifying a location')
-    } elsif $_release in $_transport_https_releases {
-      $method = split($location, '[:\/]+')[0]
-      if $method == 'https' {
-        ensure_packages('apt-transport-https')
-      }
+    }
+    # Newer oses, do not need the package for HTTPS transport.
+    $_transport_https_releases = [ 'wheezy', 'jessie', 'stretch', 'trusty', 'xenial' ]
+    if $_release in $_transport_https_releases and $location =~ /(?i:^https:\/\/)/ {
+      ensure_packages('apt-transport-https')
     }
   }
 

@@ -21,6 +21,8 @@ class apt (
   Hash $ppas                    = $apt::params::ppas,
   Hash $pins                    = $apt::params::pins,
   Hash $settings                = $apt::params::settings,
+  Array[Apt::Auth_conf_entry]
+    $auth_conf_entries          = $apt::params::auth_conf_entries,
   String $root                  = $apt::params::root,
   String $sources_list          = $apt::params::sources_list,
   String $sources_list_d        = $apt::params::sources_list_d,
@@ -178,23 +180,27 @@ class apt (
     create_resources('apt::setting', $settings)
   }
 
+  $auth_conf_ensure = $auth_conf_entries ? {
+    []      => 'absent',
+    default => 'present',
+  }
+
+  $auth_conf_tmp = epp('apt/auth_conf.epp')
+
+  file { '/etc/apt/auth.conf':
+    ensure  => $auth_conf_ensure,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0600',
+    content => "${confheadertmp}${auth_conf_tmp}",
+    notify  => Class['apt::update'],
+  }
+
   # manage pins if present
   if $pins {
     create_resources('apt::pin', $pins)
   }
 
   # required for adding GPG keys on Debian 9 (and derivatives)
-  case $facts['os']['name'] {
-    'Debian': {
-      if versioncmp($facts['os']['release']['major'], '9') >= 0 {
-        ensure_packages(['dirmngr'])
-      }
-    }
-    'Ubuntu': {
-      if versioncmp($facts['os']['release']['full'], '17.04') >= 0 {
-        ensure_packages(['dirmngr'])
-      }
-    }
-    default: { }
-  }
+  ensure_packages(['dirmngr'])
 }
