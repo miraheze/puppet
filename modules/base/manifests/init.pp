@@ -32,10 +32,7 @@ class base {
     
     class { 'apt::backports': }
 
-    file { '/etc/apt/sources.list.d/security_updates.list':
-        ensure => present,
-        source => 'puppet:///modules/base/apt/security_updates.list',
-    }
+    class { 'apt::security': }
 
     # Create a user to allow executing renewing ssl script between servers
     users::user { 'nagiosre':
