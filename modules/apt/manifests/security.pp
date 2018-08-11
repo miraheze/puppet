@@ -1,5 +1,5 @@
 # Defining class to add debian security mirror to apt
-class apt::secuirty (
+class apt::security (
   Optional[String] $location                    = 'http://security.debian.org/',
   Optional[String] $release                     = undef,
   Optional[String] $repos                       = 'main',
@@ -20,16 +20,16 @@ class apt::secuirty (
   }
   if ($facts['lsbdistid'] == 'Debian' or $facts['lsbdistid'] == 'Ubuntu') {
     unless $location {
-      $_location = $::apt::backports['location']
+      $_location = $::apt::security['location']
     }
     unless $release {
       $_release = "${facts['lsbdistcodename']}/updates"
     }
     unless $repos {
-      $_repos = $::apt::backports['repos']
+      $_repos = $::apt::security['repos']
     }
     unless $key {
-      $_key =  $::apt::backports['key']
+      $_key =  $::apt::security['key']
     }
   } else {
     unless $location and $release and $repos and $key {
