@@ -32,6 +32,8 @@ class base {
     
     class { 'apt::backports': }
 
+    class { 'apt::security': }
+
     # Create a user to allow executing renewing ssl script between servers
     users::user { 'nagiosre':
         ensure      => present,
