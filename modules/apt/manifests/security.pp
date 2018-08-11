@@ -3,7 +3,6 @@ class apt::security (
   Optional[String] $location                    = 'http://security.debian.org/',
   Optional[String] $release                     = undef,
   Optional[String] $repos                       = 'main',
-  Optional[Variant[String, Hash]] $key          = undef,
   Optional[Variant[Integer, String, Hash]] $pin = 200,
 ){
   if $location {
@@ -15,9 +14,6 @@ class apt::security (
   if $repos {
     $_repos = $repos
   }
-  if $key {
-    $_key = $key
-  }
   if ($facts['lsbdistid'] == 'Debian' or $facts['lsbdistid'] == 'Ubuntu') {
     unless $location {
       $_location = $::apt::security['location']
@@ -27,9 +23,6 @@ class apt::security (
     }
     unless $repos {
       $_repos = $::apt::security['repos']
-    }
-    unless $key {
-      $_key =  $::apt::security['key']
     }
   } else {
     unless $location and $release and $repos and $key {
@@ -54,7 +47,7 @@ class apt::security (
     location => $_location,
     release  => $_release,
     repos    => $_repos,
-    key      => $_key,
+    key      => undef,
     pin      => $_pin,
   }
 }
