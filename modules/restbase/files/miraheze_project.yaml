@@ -25,20 +25,22 @@ paths:
             /transform:
               x-modules:
                 - path: v1/transform.yaml
-            /media:
-               x-modules:
-                 - path: /etc/mediawiki/restbase/mathoid.yaml
-                   options: '{{options.mathoid}}'
+            # in case this is needed later, crossing out for now.
+            # /media:
+            #   x-modules:
+            #     - path: /etc/mediawiki/restbase/mathoid.yaml
+            #       options: '{{options.mathoid}}'
         options: '{{options}}'
 
   /{api:sys}:
     x-modules:
       - spec:
           paths:
-            /mathoid:
-              x-modules:
-                - path: sys/mathoid.js
-                  options: '{{options.mathoid}}'
+            # in case this is needed later, crossing out for now.
+            # /mathoid:
+            #  x-modules:
+            #    - path: sys/mathoid.js
+            #      options: '{{options.mathoid}}'
             /table: &sys_table
               x-modules:
                 - path: sys/table.js
