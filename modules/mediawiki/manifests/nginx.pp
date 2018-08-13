@@ -2,8 +2,6 @@
 class mediawiki::nginx {
 
     $sslcerts = loadyaml('/etc/puppet/ssl/certs.yaml')
-    
-    $use_swift = hiera('use_swift', false)
 
     nginx::site { 'mediawiki':
         ensure  => present,
