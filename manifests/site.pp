@@ -43,7 +43,6 @@ node 'misc3.miraheze.org' {
     include base
     include role::parsoid
     include role::electron
-    include role::mathoid
     include role::restbase
     include role::salt::masters
     include role::salt::minions
