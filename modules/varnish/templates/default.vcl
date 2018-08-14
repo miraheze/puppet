@@ -263,75 +263,75 @@ sub vcl_backend_error {
 	set beresp.http.Content-Type = "text/html; charset=utf-8";
 	
 	synthetic( {"<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Backend Fetch Failed">
-<title>"} + beresp.status + " " + beresp.reason + {"</title>
-<!-- Bootstrap core CSS -->
-<link rel="stylesheet" href="https://static.miraheze.org/static/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://static.miraheze.org/static/css/font-awesome.min.css">
-<style>
-/* Error Page Inline Styles */
-body {
-  padding-top: 20px;
-}
-/* Layout */
-.jumbotron {
-  font-size: 21px;
-  font-weight: 200;
-  line-height: 2.1428571435;
-  color: inherit;
-  padding: 10px 0px;
-}
-/* Everything but the jumbotron gets side spacing for mobile-first views */
-.masthead, .body-content {
-  padding-left: 15px;
-  padding-right: 15px;
-}
-/* Main marketing message and sign up button */
-.jumbotron {
-  text-align: center;
-  background-color: transparent;
-}
-.jumbotron .btn {
-  font-size: 21px;
-  padding: 14px 24px;
-}
-/* Colors */
-.green {color:#5cb85c;}
-.orange {color:#f0ad4e;}
-.red {color:#d9534f;}
-</style>
-<script>
-  function loadDomain() {
-    var display = document.getElementById("display-domain");
-    display.innerHTML = document.domain;
-  }
-</script>
-</head>
-<div class="container">
-  <!-- Jumbotron -->
-  <div class="jumbotron">
-    <h1><img src="//static.miraheze.org/metawiki/3/35/Miraheze_Logo.svg" alt="Miraheze Logo"> Our servers our having issues at the moment.</h1>
-  </div>
-</div>
-<div class="container">
-  <div class="body-content">
-    <div class="row">
-      <div class="col-md-6">
-        <a class="twitter-timeline" data-width="500" data-height="350" text-align: center href="https://twitter.com/miraheze?ref_src=twsrc%5Etfw">Tweets by miraheze</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-      </div>
-      <div class="col-md-6">
-        <h2>What can I do?</h2>
-        <p class="lead">If you're a wiki visitor or owner</p>
-        <p>Try again in a few minutes. If the problen persists, please report this on <a href="https://phabricator.mirageze.org">phabricator.</a> We appoligize for the inconvenience. Our sysadmins should be attempting to solve the issue ASAP!<br/><br/>When reporting this, please be sure to provide the information below.<br/>Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" (Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".</p>
-     </div>
-    </div>
-  </div>
-</div>
-</html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<meta name="description" content="Backend Fetch Failed">
+			<title>"} + beresp.status + " " + beresp.reason + {"</title>
+			<!-- Bootstrap core CSS -->
+			<link rel="stylesheet" href="https://static.miraheze.org/static/css/bootstrap.min.css">
+			<link rel="stylesheet" href="https://static.miraheze.org/static/css/font-awesome.min.css">
+			<style>
+				/* Error Page Inline Styles */
+				body {
+				  padding-top: 20px;
+				}
+				/* Layout */
+				.jumbotron {
+				  font-size: 21px;
+				  font-weight: 200;
+				  line-height: 2.1428571435;
+				  color: inherit;
+				  padding: 10px 0px;
+				}
+				/* Everything but the jumbotron gets side spacing for mobile-first views */
+				.masthead, .body-content {
+				  padding-left: 15px;
+				  padding-right: 15px;
+				}
+				/* Main marketing message and sign up button */
+				.jumbotron {
+				  text-align: center;
+				  background-color: transparent;
+				}
+				.jumbotron .btn {
+				  font-size: 21px;
+				  padding: 14px 24px;
+				}
+				/* Colors */
+				.green {color:#5cb85c;}
+				.orange {color:#f0ad4e;}
+				.red {color:#d9534f;}
+			</style>
+			<script>
+				function loadDomain() {
+					var display = document.getElementById("display-domain");
+					display.innerHTML = document.domain;
+				}
+			</script>
+		</head>
+		<div class="container">
+			<!-- Jumbotron -->
+			<div class="jumbotron">
+				<h1><img src="//static.miraheze.org/metawiki/3/35/Miraheze_Logo.svg" alt="Miraheze Logo"> Our servers our having issues at the moment.</h1>
+			</div>
+		</div>
+		<div class="container">
+			<div class="body-content">
+				<div class="row">
+					<div class="col-md-6">
+						<a class="twitter-timeline" data-width="500" data-height="350" text-align: center href="https://twitter.com/miraheze?ref_src=twsrc%5Etfw">Tweets by miraheze</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+					</div>
+					<div class="col-md-6">
+						<h2>What can I do?</h2>
+						<p class="lead">If you're a wiki visitor or owner</p>
+						<p>Try again in a few minutes. If the problen persists, please report this on <a href="https://phabricator.mirageze.org">phabricator.</a> We appoligize for the inconvenience. Our sysadmins should be attempting to solve the issue ASAP!<br/><br/>When reporting this, please be sure to provide the information below.<br/>Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" (Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</html>
 	"} );
 
 	return (deliver);
