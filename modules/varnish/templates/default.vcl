@@ -270,7 +270,7 @@ sub vcl_backend_error {
 			<meta name="description" content="Backend Fetch Failed">
 			<title>"} + beresp.status + " " + beresp.reason + {"</title>
 			<!-- Bootstrap core CSS -->
-			<link rel="stylesheet" href="https://static.miraheze.org/static/css/bootstrap.min.css">
+			<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 			<style>
 				/* Error Page Inline Styles */
 				body {
@@ -313,7 +313,7 @@ sub vcl_backend_error {
 		<div class="container">
 			<!-- Jumbotron -->
 			<div class="jumbotron">
-				<h1><img src="//static.miraheze.org/metawiki/3/35/Miraheze_Logo.svg" alt="Miraheze Logo"> Our servers our having issues at the moment.</h1>
+				<h1><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Miraheze-Logo.svg" alt="Miraheze Logo"> Our servers our having issues at the moment.</h1>
 			</div>
 		</div>
 		<div class="container">
