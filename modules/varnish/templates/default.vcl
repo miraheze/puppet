@@ -271,7 +271,6 @@ sub vcl_backend_error {
 			<title>"} + beresp.status + " " + beresp.reason + {"</title>
 			<!-- Bootstrap core CSS -->
 			<link rel="stylesheet" href="https://static.miraheze.org/static/css/bootstrap.min.css">
-			<link rel="stylesheet" href="https://static.miraheze.org/static/css/font-awesome.min.css">
 			<style>
 				/* Error Page Inline Styles */
 				body {
