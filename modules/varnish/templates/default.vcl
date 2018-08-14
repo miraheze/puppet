@@ -275,29 +275,29 @@ sub vcl_backend_error {
 			<style>
 				/* Error Page Inline Styles */
 				body {
-				  padding-top: 20px;
+					padding-top: 20px;
 				}
 				/* Layout */
 				.jumbotron {
-				  font-size: 21px;
-				  font-weight: 200;
-				  line-height: 2.1428571435;
-				  color: inherit;
-				  padding: 10px 0px;
+					font-size: 21px;
+					font-weight: 200;
+					line-height: 2.1428571435;
+					color: inherit;
+					padding: 10px 0px;
 				}
 				/* Everything but the jumbotron gets side spacing for mobile-first views */
 				.masthead, .body-content {
-				  padding-left: 15px;
-				  padding-right: 15px;
+					padding-left: 15px;
+					padding-right: 15px;
 				}
 				/* Main marketing message and sign up button */
 				.jumbotron {
-				  text-align: center;
-				  background-color: transparent;
+					text-align: center;
+					background-color: transparent;
 				}
 				.jumbotron .btn {
-				  font-size: 21px;
-				  padding: 14px 24px;
+					font-size: 21px;
+					padding: 14px 24px;
 				}
 				/* Colors */
 				.green {color:#5cb85c;}
