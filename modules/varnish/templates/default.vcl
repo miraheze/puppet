@@ -261,7 +261,7 @@ sub vcl_deliver {
 
 sub vcl_backend_error {
 	set beresp.http.Content-Type = "text/html; charset=utf-8";
-	
+
 	synthetic( {"<!DOCTYPE html>
 	<html lang="en">
 		<head>
