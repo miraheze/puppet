@@ -313,7 +313,8 @@ sub vcl_backend_error {
 		<div class="container">
 			<!-- Jumbotron -->
 			<div class="jumbotron">
-				<h1><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Miraheze-Logo.svg" alt="Miraheze Logo"> Our servers our having issues at the moment.</h1>
+				<h1><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Miraheze-Logo.svg" alt="Miraheze Logo"> "} + beresp.status + " " + beresp.reason + {"</h1>
+				<p class="lead">Our servers our having issues at the moment.</p>
 				<a href="javascript:document.location.reload(true);" class="btn btn-default btn-lg text-center"><span class="green">Try This Page Again</span></a>
 			</div>
 		</div>
@@ -321,14 +322,26 @@ sub vcl_backend_error {
 			<div class="body-content">
 				<div class="row">
 					<div class="col-md-6">
-						<a class="twitter-timeline" data-width="500" data-height="350" text-align: center href="https://twitter.com/miraheze?ref_src=twsrc%5Etfw">Tweets by miraheze</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-					</div>
-					<div class="col-md-6">
 						<h2>What can I do?</h2>
 						<p class="lead">If you're a wiki visitor or owner</p>
-						<p>Try again in a few minutes. If the problen persists, please report this on <a href="https://phabricator.miraheze.org">phabricator.</a> We appoligize for the inconvenience. Our sysadmins should be attempting to solve the issue ASAP!<br/><br/>When reporting this, please be sure to provide the information below.<br/>Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" (Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".</p>
+						<p>Try again in a few minutes. If the problen persists, please report this on <a href="https://phabricator.miraheze.org">phabricator.</a> We appoligize for the inconvenience. Our sysadmins should be attempting to solve the issue ASAP!</p>
+					</div>
+					<div class="col-md-6">
+						<a class="twitter-timeline" data-width="500" data-height="350" text-align: center href="https://twitter.com/miraheze?ref_src=twsrc%5Etfw">Tweets by miraheze</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 					</div>
 				</div>
+			</div>
+		</div>
+
+                <div class="footer">
+			<div class="text-center">
+				<p class="lead">When reporting this, please be sure to provide the information below.</p>
+
+				Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" <br />
+				(Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
+				<br /><br />
+
+
 			</div>
 		</div>
 	</html>
