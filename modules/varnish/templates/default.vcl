@@ -314,6 +314,7 @@ sub vcl_backend_error {
 			<!-- Jumbotron -->
 			<div class="jumbotron">
 				<h1><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Miraheze-Logo.svg" alt="Miraheze Logo"> Our servers our having issues at the moment.</h1>
+				<a href="javascript:document.location.reload(true);" class="btn btn-default btn-lg text-center"><span class="green">Try This Page Again</span></a>
 			</div>
 		</div>
 		<div class="container">
@@ -325,7 +326,7 @@ sub vcl_backend_error {
 					<div class="col-md-6">
 						<h2>What can I do?</h2>
 						<p class="lead">If you're a wiki visitor or owner</p>
-						<p>Try again in a few minutes. If the problen persists, please report this on <a href="https://phabricator.mirageze.org">phabricator.</a> We appoligize for the inconvenience. Our sysadmins should be attempting to solve the issue ASAP!<br/><br/>When reporting this, please be sure to provide the information below.<br/>Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" (Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".</p>
+						<p>Try again in a few minutes. If the problen persists, please report this on <a href="https://phabricator.miraheze.org">phabricator.</a> We appoligize for the inconvenience. Our sysadmins should be attempting to solve the issue ASAP!<br/><br/>When reporting this, please be sure to provide the information below.<br/>Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" (Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".</p>
 					</div>
 				</div>
 			</div>
