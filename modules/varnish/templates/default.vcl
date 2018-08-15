@@ -261,66 +261,89 @@ sub vcl_deliver {
 
 sub vcl_backend_error {
 	set beresp.http.Content-Type = "text/html; charset=utf-8";
-	
+
 	synthetic( {"<!DOCTYPE html>
-	<html>
+	<html lang="en">
 		<head>
-			<title>Error "} + beresp.status + " " + beresp.reason + {"</title>
-			<style type="text/css">
-				html, body {
-					height: 100%;
-					margin: 0;
-					padding: 0;
-					font-family: sans-serif;
-				}
-				html {
-					font-size: 100%;
-				}
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<meta name="description" content="Backend Fetch Failed">
+			<title>"} + beresp.status + " " + beresp.reason + {"</title>
+			<!-- Bootstrap core CSS -->
+			<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+			<style>
+				/* Error Page Inline Styles */
 				body {
-					background-color: hsl(0, 0%, 96%);
+					padding-top: 20px;
 				}
-				h1, h2 {
-					margin-bottom: .6em !important;
+				/* Layout */
+				.jumbotron {
+					font-size: 21px;
+					font-weight: 200;
+					line-height: 2.1428571435;
+					color: inherit;
+					padding: 10px 0px;
 				}
-				h1 {
-					font-size: 188%;
+				/* Everything but the jumbotron gets side spacing for mobile-first views */
+				.masthead, .body-content {
+					padding-left: 15px;
+					padding-right: 15px;
 				}
-				h1, h2, h3, h4, h5, h6 {
-					color: hsl(0, 0%, 0%);
-					background: none;
-					font-weight: normal;
-					margin: 0;
-					overflow: hidden;
-					padding-top: .5em;
-					padding-bottom: .17em;
-					border-bottom: 1px solid hsl(0, 0%, 67%);
+				/* Main marketing message and sign up button */
+				.jumbotron {
+					text-align: center;
+					background-color: transparent;
 				}
-				p {
-					margin: .4em 0 .5em 0;
+				.jumbotron .btn {
+					font-size: 21px;
+					padding: 14px 24px;
 				}
-				a {
-					text-decoration: none;
-					color: #0645ad;
-				}
+				/* Colors */
+				.green {color:#5cb85c;}
+				.orange {color:#f0ad4e;}
+				.red {color:#d9534f;}
 			</style>
+			<script>
+				function loadDomain() {
+					var display = document.getElementById("display-domain");
+					display.innerHTML = document.domain;
+				}
+			</script>
 		</head>
-		<body>
-			<div style="text-align: center;">
-				<h1>"} + beresp.status + " " + beresp.reason + {"</h1>
-				<p>Our servers are having problems at the moment. Please try again in a few minutes. There may be additional information on our <a href="https://twitter.com/miraheze">Twitter</a> and <a href="https://www.facebook.com/miraheze">Facebook</a> pages.</p>
-				<p>Please provide the details below if you report this error to the system administrators via https://phabricator.miraheze.org:</p>
-				<p style="font-size: 14px; padding-top: 0.5em;">
-					Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" (Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
-				</p>
-              				<p>We apologize for this inconvenience. The system administrators should be investigating it, and this wiki should be back up soon. </p>
+		<div class="container">
+			<!-- Jumbotron -->
+			<div class="jumbotron">
+				<h1><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Miraheze-Logo.svg" alt="Miraheze Logo"> "} + beresp.status + " " + beresp.reason + {"</h1>
+				<p class="lead">Our servers our having issues at the moment.</p>
+				<a href="javascript:document.location.reload(true);" class="btn btn-default btn-lg text-center"><span class="green">Try This Page Again</span></a>
 			</div>
-			<div style="float: right; padding-right: 1em;">
-              <a class="twitter-timeline" data-width="500" data-height="350" text-align: center href="https://twitter.com/miraheze?ref_src=twsrc%5Etfw">Tweets by miraheze</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-				<a href="https://meta.miraheze.org/wiki/Miraheze">
-					<img src="https://static.miraheze.org/metawiki/7/7e/Powered_by_Miraheze.png" alt="Powered by Miraheze" />
-				</a>
+		</div>
+		<div class="container">
+			<div class="body-content">
+				<div class="row">
+					<div class="col-md-6">
+						<h2>What can I do?</h2>
+						<p class="lead">If you're a wiki visitor or owner</p>
+						<p>Try again in a few minutes. If the problen persists, please report this on <a href="https://phabricator.miraheze.org">phabricator.</a> We appoligize for the inconvenience. Our sysadmins should be attempting to solve the issue ASAP!</p>
+					</div>
+					<div class="col-md-6">
+						<a class="twitter-timeline" data-width="500" data-height="350" text-align: center href="https://twitter.com/miraheze?ref_src=twsrc%5Etfw">Tweets by miraheze</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+					</div>
+				</div>
 			</div>
-		</body>
+		</div>
+
+                <div class="footer">
+			<div class="text-center">
+				<p class="lead">When reporting this, please be sure to provide the information below.</p>
+
+				Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" <br />
+				(Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
+				<br /><br />
+
+
+			</div>
+		</div>
 	</html>
 	"} );
 
