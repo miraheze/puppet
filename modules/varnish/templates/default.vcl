@@ -314,7 +314,7 @@ sub vcl_backend_error {
 			<!-- Jumbotron -->
 			<div class="jumbotron">
 				<h1><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Miraheze-Logo.svg" alt="Miraheze Logo"> "} + beresp.status + " " + beresp.reason + {"</h1>
-				<p class="lead">Our servers our having issues at the moment.</p>
+				<p class="lead">Our servers are having issues at the moment.</p>
 				<a href="javascript:document.location.reload(true);" class="btn btn-default btn-lg text-center"><span class="green">Try This Page Again</span></a>
 			</div>
 		</div>
