@@ -36,6 +36,7 @@ node 'misc2.miraheze.org' {
     include base
     include role::redis
     include role::piwik
+    include role::prometheus
     include role::salt::minions
 }
 

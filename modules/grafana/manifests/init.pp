@@ -25,23 +25,6 @@ class grafana(
         require => Apt::Source['grafana_apt'],
     }
 
-    require_package('prometheus')
-
-    $host = query_nodes("domain='$domain'", 'fqdn')
-    file { '/etc/prometheus/prometheus.yml':
-        content => template('grafana/prometheus.yml.erb'),
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0444',
-        require => Package['prometheus'],
-    }
-
-    service { 'prometheus':
-        ensure    => running,
-        require   => Package['prometheus'],
-        subscribe => File['/etc/prometheus/prometheus.yml'],
-    }
-
     if $php_72 {
         include ::php
 
