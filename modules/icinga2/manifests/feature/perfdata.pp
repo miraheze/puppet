@@ -36,7 +36,7 @@
 #
 # [*rotation_interval*]
 #   Rotation interval for the files specified in {host,service}_perfdata_path. Can be written in minutes or seconds,
-#   i.e. 1m or 15s. Defaults to 30s.
+#   i.e. 1m or 15s. Defaults to 1m.
 #
 #
 class icinga2::feature::perfdata(
@@ -47,7 +47,7 @@ class icinga2::feature::perfdata(
   $service_temp_path       = "${::icinga2::params::spool_dir}/tmp/service-perfdata",
   $host_format_template    = undef,
   $service_format_template = undef,
-  $rotation_interval       = '30s',
+  $rotation_interval       = '1m',
 ) {
 
   if ! defined(Class['::icinga2']) {
