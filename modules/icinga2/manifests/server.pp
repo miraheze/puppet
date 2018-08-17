@@ -219,10 +219,12 @@ class icinga2::server {
         },
     }
 
-    tidy { '/var/spool/icinga2/perfdata':
-        age     => '3d',
-        recurse => 1,
-        matches => [ 'service*', 'host*' ],
+    cron { 'remove_icinga2_perfdata_2_days':
+        ensure  => present,
+        command => '/usr/bin/find /var/spool/icinga2/perfdata -type f -mtime +2 -exec rm {} +',
+        user    => 'root',
+        hour     => 5,
+        minute   => 0,
     }
 
     # Purge unmanaged icinga2::object::host and icinga2::object::service resources
