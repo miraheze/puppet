@@ -26,10 +26,10 @@ dmarc: ndkilla,john
 
 # destination aliases
 operations: southparkfan,ndkilla,reception123,john,paladox
-stewards: southparkfan,ndkilla,orduinvoidwalker@gmail.com,john
-staff: southparkfan,ndkilla,bslaabs@gmail.com,reception123,john,paladox,macfan
+stewards: southparkfan,ndkilla,void,john
+staff: southparkfan,ndkilla,labster,reception123,john,paladox,macfan,void
 cvt: stewards,reception123,megadev44s.mail@gmail.com,macfan,alvaromolinacl@gmail.com,pio_uso@yahoo.co.jp
-cocc: alvaromolinacl@gmail.com,diarmuidsmithy@gmail.com,reception123,revi,orduinvoidwalker@gmail.com
+cocc: alvaromolinacl@gmail.com,diarmuidsmithy@gmail.com,reception123,revi,void
 wiki-abuse: ndkilla,reception123
 
 # finances
@@ -52,3 +52,4 @@ revi: revi@revi.wiki,revi@pobox.com
 southparkfan: southparkfan223@hotmail.com
 paladox: thomasmulhall410@yahoo.com
 macfan: paulfkeffer@gmail.com
+void: orduinvoidwalker@gmail.com
