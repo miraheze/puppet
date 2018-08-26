@@ -257,6 +257,8 @@ sub vcl_deliver {
 	} else {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
 	}
+
+	set resp.http.Content-Security-Policy = "default-src 'self' *.miraheze.org *.wikimedia.org *.wikipedia.org *.wikibooks.org *.wikisource.org *.wiktionary.org *.wikiquote.org *.wikisource.org *.wikiversity.org *.wikinews.org mediawiki.org wikidata.org *.google.com *.gstatic.com";
 }
 
 sub vcl_backend_error {
