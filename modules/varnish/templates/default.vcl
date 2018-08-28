@@ -258,7 +258,9 @@ sub vcl_deliver {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
 	}
 
-	set resp.http.Content-Security-Policy = "default-src 'self' data: *.miraheze.org *.wikimedia.org *.wikipedia.org *.wikibooks.org *.wiktionary.org *.wikiquote.org *.wikisource.org *.wikiversity.org *.wikinews.org *.wikivoyage.org mediawiki.org wikidata.org *.wmflabs.org *.google.com *.gstatic.com *.addthis.com *.youtube.com *.youtube-nocookie.com maxcdn.bootstrapcdn.com twitter.com *.creativecommons.org images.uncyc.org www.mikrodev.com  *.reviservices.com *.twitter.com 'unsafe-inline' 'unsafe-eval'";
+<%- @whitelist.each_pair do |value| -%>
+	set resp.http.Content-Security-Policy = "default-src 'self' data: <%= value %> 'unsafe-inline' 'unsafe-eval'";
+<%- end -%>
 }
 
 sub vcl_backend_error {
