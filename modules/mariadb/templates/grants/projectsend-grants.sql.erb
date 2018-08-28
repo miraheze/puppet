@@ -1,0 +1,8 @@
+-- Grants for 'projectsend'@''
+
+GRANT USAGE
+    ON *.* TO 'projectsend'@'%'
+    IDENTIFIED BY '<%= @projectsend_password %>';
+
+GRANT ALL PRIVILEGES
+    ON `projectsend`.* TO 'projectsend'@'%';
