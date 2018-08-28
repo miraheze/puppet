@@ -22,6 +22,9 @@ class varnish {
         notify  => Service['varnish'],
         require => Package['varnish'],
     }
+    
+    $module_path = get_module_path($module_name)
+    $whitelist = loadyaml("${module_path}/data/whitelist.yaml")
 
     file { '/etc/varnish/default.vcl':
         ensure  => present,
