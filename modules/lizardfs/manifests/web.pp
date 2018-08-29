@@ -8,7 +8,7 @@ class lizardfs::web {
 
     nginx::site { 'lizard.miraheze.org':
          ensure  => present,
-         source  => 'puppet:///modules/lizardfs/nginx.conf',
+         source  => 'puppet:///modules/lizardfs/nginx/nginx.conf',
          monitor => true,
     }
 }
