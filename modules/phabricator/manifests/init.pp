@@ -11,13 +11,13 @@ class phabricator {
     nginx::site { 'phab.miraheze.wiki':
          ensure  => present,
          source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
-         monitor => true,
+         monitor => false,
     }
 
     nginx::site { 'phabricator.miraheze.org':
          ensure  => present,
          source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
-         monitor => true,
+         monitor => false,
     }
 
     file { '/srv/phab':
