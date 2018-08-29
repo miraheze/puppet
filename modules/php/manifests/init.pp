@@ -26,16 +26,30 @@ class php {
     $php_packages = [
         'php-apcu',
         'php-mailparse',
-        'php7.2-mysql',
+        'php7.2-cli',
+        'php7.2-curl',
+        'php7.2-dev',
+        'php7.2-fpm',
         'php7.2-gd',
         'php7.2-gettext',
-        'php7.2-dev',
-        'php7.2-curl',
-        'php7.2-cli',
         'php7.2-json',
         'php7.2-mbstring',
+        'php7.2-mysql',
         'php7.2-xml',
     ]
     
     require_package($php_packages)
+
+    service { 'php7.2-fpm':
+        ensure  => running,
+        require => Package['php7.2-fpm'],
+    }
+
+    file { '/etc/php/7.2/fpm/pool.d/www.conf':
+        ensure  => 'present',
+        mode    => '0755',
+        source  => 'puppet:///modules/php/www-7.2.conf',
+        require => Package['php7.2-fpm'],
+        notify  => Service['php7.2-fpm'],
+    }
 }
