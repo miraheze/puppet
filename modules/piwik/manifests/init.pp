@@ -1,23 +1,5 @@
 # class: piwik
-class piwik(
-    $modules = ['expires', 'rewrite', 'ssl', 'php7'],
-    $php_72 = false,
-) {
-    include ::httpd
-
-    if $php_72 {
-
-        include ::php
-
-        $php_version = '7.2'
-
-        require_package("libapache2-mod-php${php_version}")
-    } else {
-        $php_version = '7.0'
-
-        require_package('php7.0-curl', 'php7.0-mbstring', 'php7.0-mysql', 'php7.0-gd', 'libapache2-mod-php7.0')
-    }
-
+class piwik {
     git::clone { 'piwik':
         directory          => '/srv/piwik',
         origin             => 'https://github.com/matomo-org/matomo',
@@ -36,32 +18,65 @@ class piwik(
         require     => Git::Clone['piwik'],
     }
 
-    httpd::site { 'piwik.miraheze.org':
+    if !defined(Apt::Source['php72_apt']) {
+        apt::key { 'php72_key':
+          id     => 'DF3D585DB8F0EB658690A554AC0E47584A7A714D',
+          source => 'https://packages.sury.org/php/apt.gpg',
+        }
+
+        apt::source { 'php72_apt':
+          location => 'https://packages.sury.org/php/',
+          release  => "${::lsbdistcodename}",
+          repos    => 'main',
+          notify   => Exec['apt_update_php'],
+        }
+
+        # First installs can trip without this
+        exec {'apt_update_php':
+            command     => '/usr/bin/apt-get update',
+            refreshonly => true,
+            logoutput   => true,
+        }
+    }
+    
+    $packages = [
+        'php7.2',
+        'php7.2-curl',
+        'php7.2-fpm',
+        'php7.2-gd',
+        'php7.2-mbstring',
+        'php7.2-mysql',
+    ]
+    
+    require_package($packages)
+
+    service { 'php7.2-fpm':
+        ensure  => running,
+        require => Package['php7.2-fpm'],
+    }
+
+    file { '/etc/php/7.2/fpm/pool.d/www.conf':
+        ensure  => 'present',
+        mode    => '0755',
+        source  => 'puppet:///modules/piwik/www-7.2.conf',
+        require => Package['php7.2-fpm'],
+        notify  => Service['php7.2-fpm'],
+    }
+
+    file { '/etc/php/7.2/fpm/conf.d/20-piwik.ini':
         ensure  => present,
-        source  => 'puppet:///modules/piwik/apache.conf',
+        mode    => '0755',
+        source  => 'puppet:///modules/piwik/20-piwik.ini',
+        require => Package['php7.2-fpm'],
+        notify  => Service['php7.2-fpm'],
+    }
+
+    nginx::site { 'matomo.miraheze.org':
+        ensure  => present,
+        source  => 'puppet:///modules/piwik/nginx.conf',
         monitor => true,
     }
-
-    file { "/etc/php/${php_version}/apache2/conf.d/20-piwik.ini":
-        ensure  => present,
-        source  => 'puppet:///modules/piwik/20-piwik.ini',
-        notify  => Exec['apache2_test_config_and_restart'],
-        require => Package["libapache2-mod-php${php_version}"],
-    }
-
-    file_line { 'enable_php_opcache':
-        line    => 'opcache.enable=1',
-        match   => '^;?opcache.enable\s*\=',
-        path    => "/etc/php/${php_version}/apache2/php.ini",
-        notify  => Exec['apache2_test_config_and_restart'],
-        require => Package["libapache2-mod-php${php_version}"],
-    }
-
-    httpd::mod { 'piwik_apache':
-        modules => $modules,
-        require => Package["libapache2-mod-php${php_version}"],
-    }
-
+    
     $salt = hiera('passwords::piwik::salt')
     $password = hiera('passwords::db::piwik')
     $noreply_password = hiera('passwords::mail::noreply')
