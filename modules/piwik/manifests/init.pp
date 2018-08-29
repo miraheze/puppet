@@ -21,7 +21,7 @@ class piwik(
     git::clone { 'piwik':
         directory          => '/srv/piwik',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '3.5.1', # Current stable
+        branch             => '3.6.0', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group               => 'www-data',
