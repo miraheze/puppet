@@ -39,21 +39,7 @@ class matomo {
         }
     }
     
-    $packages = [
-        'php7.2',
-        'php7.2-curl',
-        'php7.2-fpm',
-        'php7.2-gd',
-        'php7.2-mbstring',
-        'php7.2-mysql',
-    ]
-    
-    require_package($packages)
-
-    service { 'php7.2-fpm':
-        ensure  => running,
-        require => Package['php7.2-fpm'],
-    }
+    include ::php
 
     file { '/etc/php/7.2/fpm/pool.d/www.conf':
         ensure  => 'present',
