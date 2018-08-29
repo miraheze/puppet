@@ -170,7 +170,7 @@ sub vcl_recv {
 	}
 
     # No caching for now, until migration is over
-    if (req.http.Host == "piwik.miraheze.org") {
+    if (req.http.Host == "piwik.miraheze.org" || req.http.Host == "matomo.miraheze.org") {
         set req.backend_hint = misc2;
         return (pass);
     }
