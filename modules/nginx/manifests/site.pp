@@ -29,7 +29,7 @@ define nginx::site(
                     check_command => 'check_http',
                     vars         => {
                         address  => "${::ipaddress}",
-                        http_ssl => true,
+                        http_ssl => false,
                     },
                 }
             }
@@ -64,6 +64,9 @@ define nginx::site(
                 icinga2::custom::services { 'HTTP':
                     ensure        => 'absent',
                     check_command => 'check_http',
+                    vars          => {
+                        http_ssl  => false,
+                    },
                 }
             }
 
