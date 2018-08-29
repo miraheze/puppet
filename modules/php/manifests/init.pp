@@ -39,4 +39,17 @@ class php {
     ]
     
     require_package($php_packages)
+
+    service { 'php7.2-fpm':
+        ensure  => running,
+        require => Package['php7.2-fpm'],
+    }
+
+    file { '/etc/php/7.2/fpm/pool.d/www.conf':
+        ensure  => 'present',
+        mode    => '0755',
+        source  => 'puppet:///modules/php/www-7.2.conf',
+        require => Package['php7.2-fpm'],
+        notify  => Service['php7.2-fpm'],
+    }
 }
