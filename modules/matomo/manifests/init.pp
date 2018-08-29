@@ -41,14 +41,6 @@ class matomo {
     
     include ::php
 
-    file { '/etc/php/7.2/fpm/pool.d/www.conf':
-        ensure  => 'present',
-        mode    => '0755',
-        source  => 'puppet:///modules/matomo/www-7.2.conf',
-        require => Package['php7.2-fpm'],
-        notify  => Service['php7.2-fpm'],
-    }
-
     file { '/etc/php/7.2/fpm/conf.d/20-matomo.ini':
         ensure  => present,
         mode    => '0755',
