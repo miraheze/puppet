@@ -35,6 +35,7 @@ node 'misc1.miraheze.org' {
 node 'misc2.miraheze.org' {
     include base
     include role::redis
+    include role::piwik
     include role::prometheus
     include role::salt::minions
 }
@@ -85,7 +86,6 @@ node 'test1.miraheze.org' {
     include base
     include role::mediawiki
     include role::salt::minions
-    include role::piwik
 }
 
 # ensures all servers have basic class if puppet runs
