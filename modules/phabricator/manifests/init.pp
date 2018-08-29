@@ -1,30 +1,23 @@
 # class: phabricator
-class phabricator(
-    # use php7.2 on stretch+
-    $modules = ['ssl', 'php7.2']
-) {
-    include ::httpd
-
+class phabricator {
     include ::php
 
-    $php_version = '7.2'
-
-    require_package(["libapache2-mod-php${php_version}", 'python-pygments', 'subversion'])
+    require_package(['python-pygments', 'subversion'])
 
     $password = hiera('passwords::irc::mirahezebots')
 
     ssl::cert { 'phab.miraheze.wiki': }
 
-    httpd::site { 'phab.miraheze.wiki':
-        ensure  => present,
-        source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
-        monitor => true,
+    nginx::site { 'phab.miraheze.wiki':
+         ensure  => present,
+         source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
+         monitor => true,
     }
 
-    httpd::site { 'phabricator.miraheze.org':
-        ensure  => present,
-        source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
-        monitor => true,
+    nginx::site { 'phabricator.miraheze.org':
+         ensure  => present,
+         source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
+         monitor => true,
     }
 
     file { '/srv/phab':
@@ -103,17 +96,12 @@ class phabricator(
         require => Git::Clone['phabricator'],
     }
 
-    file { '/etc/php/7.2/apache2/conf.d/php.ini':
+    file { '/etc/php/7.2/fpm/conf.d/php.ini':
         ensure  => present,
         content => template('phabricator/php72.ini.erb'),
         mode    => '0755',
-        notify  => Service['apache2'],
-        require => Package['libapache2-mod-php7.2'],
-    }
-
-    httpd::mod { 'phabricator_apache':
-        modules => $modules,
-        require => Package["libapache2-mod-php${php_version}"],
+        notify  => Service['php7.2-fpm'],
+        require => Package['php7.2-fpm'],
     }
 
     exec { 'PHD reload systemd':
