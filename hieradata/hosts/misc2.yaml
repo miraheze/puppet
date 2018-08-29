@@ -1,5 +1,1 @@
-# should be ssl and php7 and rewrite but piwik adds it
-# so this causes a dependancy error
-piwik::modules: ['expires']
 puppetmaster_version: 4
-piwik::php_72: true

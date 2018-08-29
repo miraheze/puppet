@@ -1,7 +1,7 @@
-# class: piwik
-class piwik {
-    git::clone { 'piwik':
-        directory          => '/srv/piwik',
+# class: matomo
+class matomo {
+    git::clone { 'matomo':
+        directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
         branch             => '3.6.0', # Current stable
         recurse_submodules => true,
@@ -10,12 +10,12 @@ class piwik {
     }
 
     exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
-        creates     => '/srv/piwik/composer.phar',
-        cwd         => '/srv/piwik',
+        creates     => '/srv/matomo/composer.phar',
+        cwd         => '/srv/matomo',
         path        => '/usr/bin',
-        environment => 'HOME=/srv/piwik',
+        environment => 'HOME=/srv/matomo',
         user        => 'www-data',
-        require     => Git::Clone['piwik'],
+        require     => Git::Clone['matomo'],
     }
 
     if !defined(Apt::Source['php72_apt']) {
@@ -58,22 +58,22 @@ class piwik {
     file { '/etc/php/7.2/fpm/pool.d/www.conf':
         ensure  => 'present',
         mode    => '0755',
-        source  => 'puppet:///modules/piwik/www-7.2.conf',
+        source  => 'puppet:///modules/matomo/www-7.2.conf',
         require => Package['php7.2-fpm'],
         notify  => Service['php7.2-fpm'],
     }
 
-    file { '/etc/php/7.2/fpm/conf.d/20-piwik.ini':
+    file { '/etc/php/7.2/fpm/conf.d/20-matomo.ini':
         ensure  => present,
         mode    => '0755',
-        source  => 'puppet:///modules/piwik/20-piwik.ini',
+        source  => 'puppet:///modules/matomo/20-matomo.ini',
         require => Package['php7.2-fpm'],
         notify  => Service['php7.2-fpm'],
     }
 
     nginx::site { 'matomo.miraheze.org':
         ensure  => present,
-        source  => 'puppet:///modules/piwik/nginx.conf',
+        source  => 'puppet:///modules/matomo/nginx.conf',
         monitor => true,
     }
     
@@ -81,11 +81,11 @@ class piwik {
     $password = hiera('passwords::db::piwik')
     $noreply_password = hiera('passwords::mail::noreply')
 
-    file { '/srv/piwik/config/config.ini.php':
+    file { '/srv/matomo/config/config.ini.php':
         ensure  => present,
-        content => template('piwik/config.ini.php.erb'),
+        content => template('matomo/config.ini.php.erb'),
         owner   => 'www-data',
         group   => 'www-data',
-        require => Git::Clone['piwik'],
+        require => Git::Clone['matomo'],
     }
 }
