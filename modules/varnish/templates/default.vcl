@@ -31,6 +31,11 @@ probe mwhealth {
 	.expected_response = 200;
 }
 
+backend misc2 {
+    .host = "127.0.0.1";
+    .port = "8201";
+} 
+
 backend mw1 {
 	.host = "127.0.0.1";
 	.port = "8080";
@@ -163,6 +168,12 @@ sub vcl_recv {
 			unset req.http.Accept-Encoding;
 		}
 	}
+
+    # No caching for now, until migration is over
+    if (req.http.Host == "piwik.miraheze.org") {
+        set req.backend_hint = misc2;
+        return (pass);
+    }
 
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1;
