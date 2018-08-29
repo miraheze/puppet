@@ -1,5 +1,5 @@
-# should be ssl and php7 and rewrite but piwik adds it
+# should be ssl and php7 and rewrite but matomo adds it
 # so this causes a dependancy error
-piwik::modules: ['expires']
+matomo::modules: ['expires']
 puppetmaster_version: 4
-piwik::php_72: true
+matomo::php_72: true
