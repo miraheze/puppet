@@ -34,6 +34,16 @@ class nginx {
         source => 'puppet:///modules/nginx/mime.types',
     }
 
+    file { '/etc/nginx/nginx.conf':
+        content => template('nginx/nginx.conf.erb'),
+        require => Package['nginx'],
+    }
+
+    file { '/etc/nginx/fastcgi_params':
+        ensure => present,
+        source => 'puppet:///modules/nginx/fastcgi_params',
+    }
+ 
     exec { 'nginx unmask':
         command     => '/bin/systemctl unmask nginx.service',
         refreshonly => true,
@@ -44,7 +54,12 @@ class nginx {
         enable     => true,
         provider   => 'debian',
         hasrestart => true,
-        require    => [ Exec['nginx unmask'], File['/etc/nginx/mime.types'] ],
+        require    => [
+            Exec['nginx unmask'],
+            File['/etc/nginx/mime.types'],
+            File['/etc/nginx/nginx.conf'],
+            File['/etc/nginx/fastcgi_params']
+        ],
     }
 
     logrotate::conf { 'nginx':

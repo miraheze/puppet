@@ -21,20 +21,6 @@ class mediawiki::nginx {
         require     => Exec['nginx-syntax'],
     }
 
-    file { '/etc/nginx/nginx.conf':
-        content => template('mediawiki/nginx.conf.erb'),
-        require => Package['nginx'],
-    }
-
-    file { '/etc/nginx/fastcgi_params':
-        ensure => present,
-        source => 'puppet:///modules/mediawiki/nginx/fastcgi_params',
-    }
-
-    file { '/etc/nginx/sites-enabled/default':
-        ensure => absent,
-    }
-
     include ssl::wildcard
     include ssl::hiera
 
