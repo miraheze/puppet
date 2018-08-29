@@ -205,6 +205,11 @@ sub vcl_recv {
 	if (req.url ~ "^/w/resources") {
 		set req.http.Host = "meta.miraheze.org";
 	}
+
+        # redirect piwik.miraheze.org to matomo.miraheze.org
+	if (req.http.Host === "piwik.miraheze.org") {
+		set req.http.Host = "matomo.miraheze.org";
+	}
  
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
