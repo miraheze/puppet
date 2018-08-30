@@ -8,3 +8,4 @@ contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 acme: true
 puppetmaster_version: 4
 mwservices: true
+role::mediawiki::use_strict_firewall: true
