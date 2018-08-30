@@ -36,6 +36,11 @@ backend misc2 {
     .port = "8201";
 } 
 
+backend misc4 {
+    .host = "127.0.0.1";
+    .port = "8203";
+}
+
 backend mw1 {
 	.host = "127.0.0.1";
 	.port = "8080";
@@ -220,6 +225,11 @@ sub vcl_recv {
 		set req.backend_hint = misc2;
 		return (pass);
 	}
+
+    if (req.http.Host == "lizard.miraheze.org") {
+        set req.backend_hint = misc4;
+        return (pass);
+    }
 	
 	# MediaWiki specific
 	call mw_vcl_recv;
