@@ -11,13 +11,13 @@ class phabricator {
     nginx::site { 'phab.miraheze.wiki':
          ensure  => present,
          source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
-         monitor => false,
+         monitor => true,
     }
 
     nginx::site { 'phabricator.miraheze.org':
          ensure  => present,
          source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
-         monitor => false,
+         monitor => true,
     }
 
     file { '/srv/phab':
@@ -125,14 +125,6 @@ class phabricator {
         vars         => {
             address  => "phabricator.miraheze.org",
             http_ssl => false,
-        },
-    }
-
-    icinga2::custom::services { 'phabricator.miraheze.org HTTPS':
-        check_command => 'check_http',
-        vars          => {
-            address  => "phabricator.miraheze.org",
-            http_ssl  => true,
         },
     }
 
