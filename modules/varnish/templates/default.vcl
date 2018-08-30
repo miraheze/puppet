@@ -223,7 +223,7 @@ sub vcl_recv {
 	# No caching for now, until migration is over
 	if (req.http.Host == "matomo.miraheze.org") {
 		set req.backend_hint = misc2;
-		return (pass);
+		return (hash);
 	}
 
     if (req.http.Host == "lizard.miraheze.org") {
