@@ -12,14 +12,6 @@ class lizardfs::web {
          monitor => false,
     }
 
-    icinga2::custom::services { 'lizard.miraheze.org HTTP':
-        check_command => 'check_http',
-        vars         => {
-            address  => "lizard.miraheze.org",
-            http_ssl => false,
-        },
-    }
-
     icinga2::custom::services { 'lizard.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
