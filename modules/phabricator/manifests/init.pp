@@ -11,13 +11,13 @@ class phabricator {
     nginx::site { 'phab.miraheze.wiki':
          ensure  => present,
          source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
-         monitor => true,
+         monitor => false,
     }
 
     nginx::site { 'phabricator.miraheze.org':
          ensure  => present,
          source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
-         monitor => true,
+         monitor => false,
     }
 
     file { '/srv/phab':
@@ -119,6 +119,22 @@ class phabricator {
         ensure  => 'running',
         require => [File['/etc/systemd/system/phd.service'], File['/srv/phab/phabricator/conf/local/local.json']],
     }
+
+    icinga2::custom::services { 'phab.miraheze.wiki HTTPS':
+         check_command => 'check_http',
+         vars          => {
+             http_vhost => 'phab.miraheze.wiki',
+             http_ssl   => true,
+         },
+     }
+
+    icinga2::custom::services { 'phabricator.miraheze.org HTTPS':
+         check_command => 'check_http',
+         vars          => {
+             http_vhost => 'phabricator.miraheze.org',
+             http_ssl   => true,
+         },
+     }
 
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'phd':
