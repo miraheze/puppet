@@ -222,7 +222,7 @@ sub vcl_recv {
 
 	if (req.http.Host == "matomo.miraheze.org") {
 		set req.backend_hint = misc2;
-		return (hash);
+		return (pass);
 	}
 
     if (req.http.Host == "lizard.miraheze.org") {
