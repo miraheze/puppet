@@ -32,6 +32,7 @@ class mediawiki::php7_2 {
         'php-redis',
         'php7.2',
         'php7.2-curl',
+        'php7.2-dba',
         'php7.2-fpm',
         'php7.2-gd',
         'php7.2-intl',
