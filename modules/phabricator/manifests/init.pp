@@ -123,16 +123,17 @@ class phabricator {
     icinga2::custom::services { 'phab.miraheze.wiki HTTPS':
          check_command => 'check_http',
          vars          => {
-             http_vhost => 'phab.miraheze.wiki',
-             http_ssl   => true,
+             http_expect => 'HTTP/2 500',
+             http_ssl    => true,
+             http_vhost  => 'phab.miraheze.wiki',
          },
      }
 
     icinga2::custom::services { 'phabricator.miraheze.org HTTPS':
          check_command => 'check_http',
          vars          => {
-             http_vhost => 'phabricator.miraheze.org',
              http_ssl   => true,
+             http_vhost => 'phabricator.miraheze.org',
          },
      }
 
