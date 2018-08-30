@@ -96,7 +96,7 @@ sub mw_evaluate_cookie {
 		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	} else {
-		call stash_cookie;
+		call mw_stash_cookie;
 	}
 }
 
@@ -193,6 +193,7 @@ sub mw_vcl_recv {
 	}
 
 	call mw_evaluate_cookie;
+}
 
 sub vcl_recv {
 	call recv_purge;
