@@ -62,7 +62,6 @@ backend mw3 {
 backend test1 {
 	.host = "127.0.0.1";
 	.port = "8083";
-	.probe = mwhealth;
 }
 
 sub vcl_init {
