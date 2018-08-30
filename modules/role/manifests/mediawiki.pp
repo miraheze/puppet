@@ -8,7 +8,7 @@ class role::mediawiki {
         ufw::allow { 'https port cp2':
             proto => 'tcp',
             port  => 443,
-            from  => '107.191.126.63',
+            from  => '107.191.126.23',
         }
 
         ufw::allow { 'https port cp4':
@@ -22,6 +22,12 @@ class role::mediawiki {
             port  => 443,
             from  => '172.104.111.8',
         }
+
+        ufw::allow { 'https port icinga':
+            proto => 'tcp',
+            port  => 443,
+            from  => '185.52.1.76'
+    }
     } else {
         ufw::allow { 'http port tcp':
             proto => 'tcp',
