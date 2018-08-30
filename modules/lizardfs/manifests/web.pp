@@ -9,6 +9,6 @@ class lizardfs::web {
     nginx::site { 'lizard.miraheze.org':
          ensure  => present,
          source  => 'puppet:///modules/lizardfs/nginx/nginx.conf',
-         monitor => false,
+         monitor => true,
     }
 }
