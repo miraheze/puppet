@@ -76,13 +76,13 @@ acl purge {
 	"185.52.2.243";
 }
 
-sub stash_cookie {
+sub mw_stash_cookie {
 	if (req.restarts == 0) {
 		unset req.http.Cookie;
 	}
 }
 
-sub evaluate_cookie {
+sub mw_evaluate_cookie {
 	if (req.http.Cookie ~ "([sS]ession|Token)=" 
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
@@ -96,11 +96,11 @@ sub evaluate_cookie {
 		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	} else {
-		call stash_cookie;
+		call mw_stash_cookie;
 	}
 }
 
-sub identify_device {
+sub mw_identify_device {
 	# Used in vcl_backend_fetch and vcl_hash
 	set req.http.X-Device = "desktop";
 	
@@ -115,7 +115,7 @@ sub identify_device {
 	}
 }
 
-sub url_rewrite {
+sub mw_url_rewrite {
         if (req.http.Host == "meta.miraheze.org"
                 && req.url ~ "^/Stewards'_noticeboard"
         ) {
@@ -147,34 +147,10 @@ sub recv_purge {
 	}
 }
 
-sub vcl_recv {
-	call recv_purge;
-	call identify_device;
-	call url_rewrite;
-
-	unset req.http.Proxy; # https://httpoxy.org/; CVE-2016-5385
-
-	# Normalize Accept-Encoding for better cache hit ratio
-	if (req.http.Accept-Encoding) {
-		if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|ogg)$") {
-			# No point in compressing these
-			unset req.http.Accept-Encoding;
-		} elsif (req.http.Accept-Encoding ~ "gzip") {
-			set req.http.Accept-Encoding = "gzip";
-		} elsif (req.http.Accept-Encoding ~ "deflate") {
-			set req.http.Accept-Encoding = "deflate";
-		} else {
-			# We don't understand this
-			unset req.http.Accept-Encoding;
-		}
-	}
-
-    # No caching for now, until migration is over
-    if (req.http.Host == "matomo.miraheze.org") {
-        set req.backend_hint = misc2;
-        return (pass);
-    }
-
+sub mw_vcl_recv {
+	call mw_identify_device;
+	call mw_url_rewrite;
+	
 	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1;
 		return (pass);
@@ -216,7 +192,37 @@ sub vcl_recv {
 		return (pass);
 	}
 
-	call evaluate_cookie;
+	call mw_evaluate_cookie;
+}
+
+sub vcl_recv {
+	call recv_purge;
+
+	unset req.http.Proxy; # https://httpoxy.org/; CVE-2016-5385
+
+	# Normalize Accept-Encoding for better cache hit ratio
+	if (req.http.Accept-Encoding) {
+		if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|ogg)$") {
+			# No point in compressing these
+			unset req.http.Accept-Encoding;
+		} elsif (req.http.Accept-Encoding ~ "gzip") {
+			set req.http.Accept-Encoding = "gzip";
+		} elsif (req.http.Accept-Encoding ~ "deflate") {
+			set req.http.Accept-Encoding = "deflate";
+		} else {
+			# We don't understand this
+			unset req.http.Accept-Encoding;
+		}
+	}
+
+	# No caching for now, until migration is over
+	if (req.http.Host == "matomo.miraheze.org") {
+		set req.backend_hint = misc2;
+		return (pass);
+	}
+	
+	# MediaWiki specific
+	call mw_vcl_recv;
 	
 	return (hash);
 }
