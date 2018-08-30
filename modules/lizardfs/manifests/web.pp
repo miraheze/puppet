@@ -11,12 +11,4 @@ class lizardfs::web {
          source  => 'puppet:///modules/lizardfs/nginx/nginx.conf',
          monitor => false,
     }
-
-    icinga2::custom::services { 'lizard.miraheze.org HTTPS':
-        check_command => 'check_http',
-        vars          => {
-            address  => "lizard.miraheze.org",
-            http_ssl  => true,
-        },
-    }
 }
