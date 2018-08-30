@@ -14,6 +14,7 @@ define nginx::site(
         content => $content,
         source  => $source,
         require => Package['nginx'],
+        notify  => Service['nginx'],
     }
 
     file { "/etc/nginx/sites-enabled/${basename}":
