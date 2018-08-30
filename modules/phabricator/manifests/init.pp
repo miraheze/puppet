@@ -120,14 +120,6 @@ class phabricator {
         require => [File['/etc/systemd/system/phd.service'], File['/srv/phab/phabricator/conf/local/local.json']],
     }
 
-    icinga2::custom::services { 'phabricator.miraheze.org HTTP':
-        check_command => 'check_http',
-        vars         => {
-            address  => "phabricator.miraheze.org",
-            http_ssl => false,
-        },
-    }
-
     if hiera('base::monitoring::use_icinga2', false) {
         icinga2::custom::services { 'phd':
             check_command => 'nrpe',
