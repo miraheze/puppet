@@ -137,11 +137,12 @@ class puppetdb(
     }
 
     $jetty_settings = {
-        'port'        => 8080,
-        'ssl-port'    => 8081,
-        'ssl-key'     => '/etc/puppetdb/ssl/private.pem',
-        'ssl-cert'    => '/etc/puppetdb/ssl/public.pem',
-        'ssl-ca-cert' => '/etc/puppetdb/ssl/ca.pem',
+        'port'                      => 8080,
+        'ssl-port'                  => 8081,
+        'ssl-key'                   => '/etc/puppetdb/ssl/private.pem',
+        'ssl-cert'                  => '/etc/puppetdb/ssl/public.pem',
+        'ssl-ca-cert'               => '/etc/puppetdb/ssl/ca.pem',
+        'graceful-shutdown-timeout' => '5000',
     }
 
     if $bind_ip {
