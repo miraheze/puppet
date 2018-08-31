@@ -2,7 +2,7 @@
 class role::mediawiki {
     include ::mediawiki
 
-    if (hiera('role::mediawiki::use_strict_firewall', false)) {
+    if hiera('role::mediawiki::use_strict_firewall', false) {
         # Cache proxies will never use port 80.
 
         ufw::allow { 'https port cp2':
