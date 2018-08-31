@@ -94,7 +94,7 @@ class icinga2::feature::idopgsql(
   $conf_dir             = $::icinga2::params::conf_dir
   $ido_pgsql_package    = $::icinga2::params::ido_pgsql_package
   $ido_pgsql_schema_dir = $::icinga2::params::ido_pgsql_schema_dir
-  $manage_package       = $::icinga2::manage_package
+  $manage_package       = $::icinga2::setup::manage_package
   $_notify              = $ensure ? {
     'present' => Class['::icinga2::service'],
     default   => undef,
