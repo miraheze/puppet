@@ -14,7 +14,7 @@
 #
 class icinga2::params {
 
-  $package          = ['icinga2', 'icinga2-ido-mysql']
+  $package          = ['icinga2']
   $service          = 'icinga2'
   $plugins          = [ 'plugins', 'plugins-contrib', 'windows-plugins', 'nscp' ]
   $default_features = [ 'mainlog', 'notification' ]
