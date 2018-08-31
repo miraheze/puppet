@@ -142,7 +142,7 @@ class puppetdb(
         'ssl-key'                   => '/etc/puppetdb/ssl/private.pem',
         'ssl-cert'                  => '/etc/puppetdb/ssl/public.pem',
         'ssl-ca-cert'               => '/etc/puppetdb/ssl/ca.pem',
-        'graceful-shutdown-timeout' => '5000',
+        'graceful-shutdown-timeout' => '50000',
     }
 
     if $bind_ip {
