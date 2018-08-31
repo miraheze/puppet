@@ -5,7 +5,7 @@ class base::puppet {
     $puppetmaster_version = hiera('puppetmaster_version', 4)
 
     cron { 'puppet-agent':
-        command => '/usr/bin/puppet agent -t',
+        command => '/usr/bin/puppet agent -tv',
         user    => 'root',
         hour    => '*',
         minute  => '*/10',
