@@ -160,7 +160,7 @@ class icinga2::feature::idomysql(
   $ssl_dir              = "${::icinga2::params::pki_dir}/ido-mysql"
   $ido_mysql_package    = $::icinga2::params::ido_mysql_package
   $ido_mysql_schema_dir = $::icinga2::params::ido_mysql_schema_dir
-  $manage_package       = $::icinga2::manage_package
+  $manage_package       = $::icinga2::setup::manage_package
   $_ssl_key_mode        = $::osfamily ? {
     'windows' => undef,
     default   => '0600',
