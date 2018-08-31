@@ -27,7 +27,7 @@ class role::mediawiki {
             proto => 'tcp',
             port  => 443,
             from  => '185.52.1.76'
-    }
+        }
     } else {
         ufw::allow { 'http port tcp':
             proto => 'tcp',
