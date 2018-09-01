@@ -6,4 +6,4 @@ contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 # for icinga1 only
 #contactgroups: 'ops,mediawiki'
 puppetmaster_version: 4
-role::mediawiki::use_strict_firewall: true
+role::mediawiki::use_strict_firewall: false
