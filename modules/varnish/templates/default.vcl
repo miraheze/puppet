@@ -224,10 +224,15 @@ sub vcl_recv {
 		return (pass);
 	}
 
-    if (req.http.Host == "lizard.miraheze.org") {
-        set req.backend_hint = misc4;
-        return (pass);
-    }
+	if (req.http.Host == "lizard.miraheze.org") {
+		set req.backend_hint = misc4;
+		return (pass);
+	}
+
+	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki") {
+		set req.backend_hint = misc4;
+		return (pass);
+	}
 	
 	# MediaWiki specific
 	call mw_vcl_recv;
