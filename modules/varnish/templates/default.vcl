@@ -225,6 +225,9 @@ sub vcl_recv {
 	}
 
     if (req.http.Host == "lizard.miraheze.org") {
+        if (req.url == "/") {
+                return (synth(752, "/mfs.cgi"));
+        }
         set req.backend_hint = misc4;
         return (pass);
     }
