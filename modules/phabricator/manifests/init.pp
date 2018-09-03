@@ -137,17 +137,10 @@ class phabricator {
          },
      }
 
-    if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'phd':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_phd',
-            },
-        }
-    } else {
-        icinga::service { 'phd':
-            description   => 'phd',
-            check_command => 'check_nrpe_1arg!check_phd',
-        }
+    icinga2::custom::services { 'phd':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_phd',
+        },
     }
 }

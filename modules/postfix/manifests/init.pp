@@ -35,14 +35,7 @@ class postfix {
         subscribe => [ File['/etc/postfix/main.cf'], File['/etc/postfix/master.cf'], ],
     }
 
-    if hiera('base::monitoring::user_icinga2', false) {
-        icinga2::object::service { 'SMTP':
-            check_command => 'smtp',
-        }
-    } else {
-        icinga::service { 'smtp':
-            description   => 'SMTP',
-            check_command => 'check_smtp',
-        }
+    icinga2::object::service { 'SMTP':
+        check_command => 'smtp',
     }
 }

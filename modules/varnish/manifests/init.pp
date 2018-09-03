@@ -103,29 +103,17 @@ class varnish {
         source => 'puppet:///modules/varnish/stunnel/stunnel4.logrotate.conf',
     }
 
-    if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'Varnish Backends':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_varnishbackends',
-            },
-        }
+    icinga2::custom::services { 'Varnish Backends':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_varnishbackends',
+        },
+    }
 
-        icinga2::custom::services { 'HTTP 4xx/5xx ERROR Rate':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_nginx_errorrate',
-            },
-        }
-    } else {
-        icinga::service { 'varnish':
-            description   => 'Varnish Backends',
-            check_command => 'check_nrpe_1arg!check_varnishbackends',
-        }
-
-        icinga::service { 'varnish_error_rate':
-            description   => 'HTTP 4xx/5xx ERROR Rate',
-            check_command => 'check_nrpe_1arg!check_nginx_errorrate',
-        }
+    icinga2::custom::services { 'HTTP 4xx/5xx ERROR Rate':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_nginx_errorrate',
+        },
     }
 }

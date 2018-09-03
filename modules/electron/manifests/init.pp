@@ -39,17 +39,10 @@ class electron (
         source => 'puppet:///modules/electron/logrotate.conf',
     }
 
-    if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'Electron':
-            check_command => 'tcp',
-            vars          => {
-                tcp_port    => '3000',
-            },
-        }
-    } else {
-        icinga::service { 'electron':
-            description   => 'Electron',
-            check_command => 'check_tcp!3000',
-        }
+    icinga2::custom::services { 'Electron':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port    => '3000',
+        },
     }
 }

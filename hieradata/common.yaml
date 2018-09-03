@@ -6,4 +6,3 @@ puppetmaster: false
 mediawiki::branch: 'REL1_31'
 acme: false
 mediawiki::use_php_7_2: true
-base::monitoring::use_icinga2: true

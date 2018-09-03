@@ -107,17 +107,10 @@ class restbase {
         source => 'puppet:///modules/restbase/logrotate.conf',
     }
 
-    if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'Restbase':
-            check_command => 'tcp',
-            vars          => {
-                tcp_port    => '7231',
-            },
-        }
-    } else {
-        icinga::service { 'restbase':
-            description   => 'Restbase',
-            check_command => 'check_tcp!7231',
-        }
+    icinga2::custom::services { 'Restbase':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port    => '7231',
+        },
     }
 }

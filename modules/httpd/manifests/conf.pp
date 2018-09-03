@@ -93,43 +93,13 @@ define httpd::conf(
     }
 
     if $monitor {
-        if hiera('base::monitoring::user_icinga2', false) {
-            if !defined(Icinga2::Custom::Services['HTTPS']) {
-                icinga2::custom::services { 'HTTPS':
-                    check_command => 'check_http',
-                     vars          => {
-                        address  => "${::ipaddress}",
-                        http_ssl     => true,
-                    },
-                }
-            }
-        } else {
-            if !defined(Icinga::Service['HTTPS']) {
-                icinga::service { 'HTTPS':
-                    description   => 'HTTPS',
-                    check_command => 'check_https',
-                }
-            }
-        }
-    } else {
-        if hiera('base::monitoring::user_icinga2', false) {
-            if !defined(Icinga2::Custom::Services['HTTPS']) {
-                icinga2::custom::services { 'HTTPS':
-                    ensure        => 'absent',
-                    check_command => 'check_http',
-                    vars          => {
-                        address   => 'host.address',
-                        http_ssl  => true,
-                    },
-                }
-            }
-        } else {
-            if !defined(Icinga::Service['HTTPS']) {
-                icinga::service { 'HTTPS':
-                    ensure        => 'absent',
-                    description   => 'HTTPS',
-                    check_command => 'check_https',
-                }
+        if !defined(Icinga2::Custom::Services['HTTPS']) {
+            icinga2::custom::services { 'HTTPS':
+                check_command => 'check_http',
+                 vars          => {
+                    address  => "${::ipaddress}",
+                    http_ssl     => true,
+                },
             }
         }
     }

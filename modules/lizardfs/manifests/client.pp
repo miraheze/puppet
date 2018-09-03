@@ -41,58 +41,58 @@
 #
 
 define lizardfs::client(
-  $lizardfs_port = 9421,
-  $lizardfs_master = hiera('lizardfs_master_server', '185.52.3.121'),
-  $mountpoint = undef,
-  $options = undef,
-  $ensure = 'mounted',
-  $create_mountpoint = false,
+    $lizardfs_port = 9421,
+    $lizardfs_master = hiera('lizardfs_master_server', '185.52.3.121'),
+    $mountpoint = undef,
+    $options = undef,
+    $ensure = 'mounted',
+    $create_mountpoint = false,
 ) {
-  validate_integer($lizardfs_port)
-  validate_string($lizardfs_master)
-  validate_string($mountpoint)
-  validate_string($options)
-  validate_string($ensure)
+    validate_integer($lizardfs_port)
+    validate_string($lizardfs_master)
+    validate_string($mountpoint)
+    validate_string($options)
+    validate_string($ensure)
 
-  if $ensure == 'absent' {
-    mount { $mountpoint:
-      ensure => 'absent',
+    if $ensure == 'absent' {
+        mount { $mountpoint:
+          ensure => 'absent',
+        }
+    } else {
+        require_package('lizardfs-client')
+
+        $real_mountpoint = $mountpoint ? {
+            undef   => $name,
+            default => $mountpoint
+        }
+
+        $base_options = "mfsmaster=${lizardfs_master},mfsport=${lizardfs_port}"
+
+        $mount_options = $options ? {
+            undef   => $base_options,
+            default => "${base_options},${options}",
+        }
+
+        if $create_mountpoint {
+            exec { $real_mountpoint:
+                command => "/bin/mkdir -p '${real_mountpoint}'",
+                user    => 'root',
+                group   => 'root',
+                creates => $real_mountpoint,
+                before  => Mount[$real_mountpoint],
+            }
+        }
+
+        mount { $real_mountpoint:
+          ensure   => $ensure,
+          device   => 'mfsmount',
+          fstype   => 'fuse',
+          options  => $mount_options,
+          remounts => false,
+          # atboot   => true,
+          require  => Package['lizardfs-client'],
+        }
     }
-  } else {
-    require_package('lizardfs-client')
-
-    $real_mountpoint = $mountpoint ? {
-      undef   => $name,
-      default => $mountpoint
-    }
-
-    $base_options = "mfsmaster=${lizardfs_master},mfsport=${lizardfs_port}"
-
-    $mount_options = $options ? {
-      undef   => $base_options,
-      default => "${base_options},${options}",
-    }
-
-    if $create_mountpoint {
-      exec { $real_mountpoint:
-        command => "/bin/mkdir -p '${real_mountpoint}'",
-        user    => 'root',
-        group   => 'root',
-        creates => $real_mountpoint,
-        before  => Mount[$real_mountpoint],
-      }
-    }
-
-    mount { $real_mountpoint:
-      ensure   => $ensure,
-      device   => 'mfsmount',
-      fstype   => 'fuse',
-      options  => $mount_options,
-      remounts => false,
-      # atboot   => true,
-      require  => Package['lizardfs-client'],
-    }
-  }
 }
 
 # vim:et:sw=2:ts=2:sts=2:tw=0:fenc=utf-8

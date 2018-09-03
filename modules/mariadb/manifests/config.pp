@@ -86,18 +86,11 @@ class mariadb::config(
         notify => Exec['mariadb reload systemd'],
     }
 
-    if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'MySQL':
-            check_command => 'mysql',
-            vars          => {
-                mysql_username => 'icinga',
-                mysql_database => 'icinga',
-            },
-        }
-    } else {
-        icinga::service { 'mysql':
-            description   => 'MySQL',
-            check_command => 'check_mysql!icinga',
-        }
+    icinga2::custom::services { 'MySQL':
+        check_command => 'mysql',
+        vars          => {
+            mysql_username => 'icinga',
+            mysql_database => 'icinga',
+        },
     }
 }

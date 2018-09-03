@@ -88,41 +88,24 @@ class mediawiki::jobrunner {
         mode   => '0555',
     }
 
-    if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'JobRunner Service':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_jobrunner',
-            },
-        }
+    icinga2::custom::services { 'JobRunner Service':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_jobrunner',
+        },
+    }
 
-        icinga2::custom::services { 'JobChron Service':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_jobchron',
-            },
-        }
+    icinga2::custom::services { 'JobChron Service':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_jobchron',
+        },
+    }
 
-        icinga2::custom::services { 'JobQueue':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_jobqueue',
-            },
-        }
-    } else {
-        icinga::service { 'jobrunner':
-            description   => 'JobRunner Service',
-            check_command => 'check_nrpe_1arg!check_jobrunner',
-        }
-
-        icinga::service { 'jobchron':
-            description   => 'JobChron Service',
-            check_command => 'check_nrpe_1arg!check_jobchron',
-        }
-
-        icinga::service { 'jobqueue':
-            description   => 'JobQueue',
-            check_command => 'check_nrpe_1arg!check_jobqueue',
-        }
+    icinga2::custom::services { 'JobQueue':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_jobqueue',
+        },
     }
 }

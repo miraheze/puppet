@@ -60,41 +60,24 @@ class lizardfs::master(
         }
     }
 
-    if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'Lizardfs Master Port 1':
-            check_command => 'tcp',
-            vars          => {
-                tcp_port    => '9419',
-            },
-        }
+    icinga2::custom::services { 'Lizardfs Master Port 1':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port    => '9419',
+        },
+    }
 
-        icinga2::custom::services { 'Lizardfs Master Port 2':
-            check_command => 'tcp',
-            vars          => {
-                tcp_port    => '9420',
-            },
-        }
+    icinga2::custom::services { 'Lizardfs Master Port 2':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port    => '9420',
+        },
+    }
 
-        icinga2::custom::services { 'Lizardfs Master Port 3':
-            check_command => 'tcp',
-            vars          => {
-                tcp_port    => '9421',
-            },
-        }
-    } else {
-        icinga::service { 'lizardfs_master_port_1':
-            description   => 'Lizardfs Master Port 1',
-            check_command => 'check_tcp!9419',
-        }
-
-        icinga::service { 'lizardfs_master_port_2':
-            description   => 'Lizardfs Master Port 2',
-            check_command => 'check_tcp!9420',
-        }
-
-        icinga::service { 'lizardfs_master_port_3':
-            description   => 'Lizardfs Master Port 3',
-            check_command => 'check_tcp!9421',
-        }
+    icinga2::custom::services { 'Lizardfs Master Port 3':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port    => '9421',
+        },
     }
 }

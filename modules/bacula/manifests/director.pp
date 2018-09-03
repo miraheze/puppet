@@ -90,123 +90,76 @@ class bacula::director {
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_bacula_backups' ],
     }
 
-    if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'Bacula Daemon':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_bacula_daemon',
-                nrpe_timeout => '60s',
-            },
-        }
+    icinga2::custom::services { 'Bacula Daemon':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_daemon',
+            nrpe_timeout => '60s',
+        },
+    }
 
-        icinga2::custom::services { 'Bacula Databases db4':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_bacula_databasesdb4',
-                nrpe_timeout => '60s',
-            },
-        }
+    icinga2::custom::services { 'Bacula Databases db4':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_databasesdb4',
+            nrpe_timeout => '60s',
+        },
+    }
 
-        icinga2::custom::services { 'Bacula Static Lizardfs1':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_bacula_static_lizardfs1',
-                nrpe_timeout => '60s',
-            },
-        }
+    icinga2::custom::services { 'Bacula Static Lizardfs1':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_static_lizardfs1',
+            nrpe_timeout => '60s',
+        },
+    }
 
-        icinga2::custom::services { 'Bacula Static Lizardfs2':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_bacula_static_lizardfs2',
-                nrpe_timeout => '60s',
-            },
-        }
+    icinga2::custom::services { 'Bacula Static Lizardfs2':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_static_lizardfs2',
+            nrpe_timeout => '60s',
+        },
+    }
 
-        icinga2::custom::services { 'Bacula Misc4 Lizardfs Master':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_bacula_misc4_lizardfs_master',
-                nrpe_timeout => '60s',
-            },
-        }
+    icinga2::custom::services { 'Bacula Misc4 Lizardfs Master':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_misc4_lizardfs_master',
+            nrpe_timeout => '60s',
+        },
+    }
 
-        icinga2::custom::services { 'Bacula Lizardfs1 Lizardfs Chunkserver1':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_bacula_lizardfs1_lizardfs_chunkserver1',
-                nrpe_timeout => '60s',
-            },
-        }
+    icinga2::custom::services { 'Bacula Lizardfs1 Lizardfs Chunkserver1':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_lizardfs1_lizardfs_chunkserver1',
+            nrpe_timeout => '60s',
+        },
+    }
 
-        icinga2::custom::services { 'Bacula Lizardfs2 Lizardfs Chunkserver2':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_bacula_lizardfs2_lizardfs_chunkserver2',
-                nrpe_timeout => '60s',
-            },
-        }
+    icinga2::custom::services { 'Bacula Lizardfs2 Lizardfs Chunkserver2':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_lizardfs2_lizardfs_chunkserver2',
+            nrpe_timeout => '60s',
+        },
+    }
 
-        icinga2::custom::services { 'Bacula Phabricator Static':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_bacula_phab',
-                nrpe_timeout => '60s',
-            },
-        }
+    icinga2::custom::services { 'Bacula Phabricator Static':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_phab',
+            nrpe_timeout => '60s',
+        },
+    }
 
-        icinga2::custom::services { 'Bacula Private Git':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_bacula_private',
-                nrpe_timeout => '60s',
-            },
-        }
-    } else {
-        icinga::service { 'bacula_daemon':
-            description   => 'Bacula Daemon',
-            check_command => 'check_nrpe_1arg!check_bacula_daemon',
-        }
-
-        icinga::service { 'bacula_databasesdb4':
-            description     => 'Bacula - Databases - db4',
-            check_command   => 'check_nrpe_1arg!check_bacula_databasesdb4',
-        }
-
-        icinga::service { 'bacula_static_lizardfs1':
-            description   => 'Bacula - Static Lizardfs1',
-            check_command => 'check_nrpe_1arg!check_bacula_static_lizardfs1',
-        }
-
-        icinga::service { 'bacula_static_lizardfs2':
-            description   => 'Bacula - Static Lizardfs2',
-            check_command => 'check_nrpe_1arg!check_bacula_static_lizardfs2',
-        }
-
-        icinga::service { 'bacula_misc4_lizardfs_master':
-            description   => 'Bacula - misc4 Lizardfs master',
-            check_command => 'check_nrpe_1arg!check_bacula_misc4_lizardfs_master',
-        }
-
-        icinga::service { 'bacula_lizardfs_lizardfs_chunkserver1':
-            description   => 'Bacula - lizardfs1 Lizardfs Chunkserver1',
-            check_command => 'check_nrpe_1arg!check_bacula_lizardfs1_lizardfs_chunkserver1',
-        }
-
-        icinga::service { 'bacula_lizardfs_lizardfs2_chunkserver2':
-            description   => 'Bacula - lizardfs2 Lizardfs Chunkserver2',
-            check_command => 'check_nrpe_1arg!check_bacula_lizardfs2_lizardfs_chunkserver2',
-        }
-
-        icinga::service { 'bacula_phabstatic':
-            description   => 'Bacula - Phabricator Static',
-            check_command => 'check_nrpe_1arg!check_bacula_phab',
-        }
-
-        icinga::service { 'bacula_private':
-            description   => 'Bacula - Private Git',
-            check_command => 'check_nrpe_1arg!check_bacula_private',
-        }
+    icinga2::custom::services { 'Bacula Private Git':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_private',
+            nrpe_timeout => '60s',
+        },
     }
 
 }

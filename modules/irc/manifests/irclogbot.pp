@@ -51,17 +51,10 @@ class irc::irclogbot {
         require => File['/etc/systemd/system/adminbot.service'],
     }
 
-    if hiera('base::monitoring::use_icinga2', false) {
-        icinga2::custom::services { 'IRC Log Bot':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_irc_logbot',
-            },
-        }
-    } else {
-        icinga::service { 'irclogbot':
-            description   => 'IRC Log Bot',
-            check_command => 'check_nrpe_1arg!check_irc_logbot',
-        }
+    icinga2::custom::services { 'IRC Log Bot':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_irc_logbot',
+        },
     }
 }
