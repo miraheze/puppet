@@ -62,7 +62,6 @@ class grafana(
         ensure  => present,
         source  => 'puppet:///modules/grafana/apache/apache.conf',
         require => File['/etc/apache2/sites-enabled/apache.conf'],
-        monitor => true,
     }
 
     file { "/etc/php/${php}/apache2/conf.d/php.ini":
@@ -76,4 +75,12 @@ class grafana(
         modules => $modules,
         require => Package["libapache2-mod-php${php}"],
     }
+
+    icinga2::custom::services { 'grafana.miraheze.org HTTPS':
+         check_command => 'check_http',
+         vars          => {
+             http_ssl   => true,
+             http_vhost => 'grafana.miraheze.org',
+         },
+     }
 }
