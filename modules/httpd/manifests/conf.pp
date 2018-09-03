@@ -103,7 +103,7 @@ define httpd::conf(
             }
         }
     } else {
-        if !defined(Icinga2::Custom::Services['HTTPS']) {
+        if defined(Icinga2::Custom::Services['HTTPS']) {
              icinga2::custom::services { 'HTTPS':
                  ensure        => 'absent',
                  check_command => 'check_http',
