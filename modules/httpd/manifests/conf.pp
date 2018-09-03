@@ -102,5 +102,16 @@ define httpd::conf(
                 },
             }
         }
+    } else {
+        if !defined(Icinga2::Custom::Services['HTTPS']) {
+             icinga2::custom::services { 'HTTPS':
+                 ensure        => 'absent',
+                 check_command => 'check_http',
+                 vars          => {
+                     address   => 'host.address',
+                     http_ssl  => true,
+                 },
+             }
+         }
     }
 }
