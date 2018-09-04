@@ -49,25 +49,43 @@ class mediawiki::dumps {
         }
     }
 
-    # used for private dumps
-    $email_dump = hiera('mediawiki::dumps::email_dump', [])
-    
-    $noreply_password     = hiera('passwords::mail::noreply')
+    # private dumps
+    $private_xml_dump = loadyaml("${module_path}/data/private_xml_dump.yaml")
 
-    $email_dump.each |$key, $val| {
-        $date = $val['time']
-        $email = $val['email']
-        if $date == 'monthly' {
+    $private_xml_dump.each |$key, $value| {
+        if $value == 'monthly' {
             $time = '1'
-        } elsif  $date == 'fortnight' {
+        } elsif  $value == 'fortnight' {
             $time = ['15', '30']
         } else {
             $time = ['1', '8', '15', '22', '29']
         }
 
-        cron { "Export ${key} email xml dump ${date}":
+        cron { "Export ${key} private xml dump ${value}":
             ensure   => present,
-            command  => "mkdir -p /mnt/mediawiki-static/private/dumps && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full --uploads > /mnt/mediawiki-static/private/dumps/${key}.xml && heirloom-mailx -v -a /mnt/mediawiki-static/private/dumps/${key}.xml -s 'Email dump for ${key} wiki' -S smtp-use-starttls -S ssl-verify=ignore -S smtp-auth=login -S smtp='mail.miraheze.org:25' -S from='noreply@miraheze.org' -S smtp-auth-user='noreply' -S smtp-auth-password='${noreply_password}' ${email} < /dev/null",
+            command  => "/bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key} && /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key}/xml/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki=${key} --logs --full --uploads > /mnt/mediawiki-static/private/dumps/${key}/xml/${key}.xml && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${key}/xml/ --comment='Import xml dump for ${key}' --overwrite --wiki=${key} --extensions=xml",
+            user     => 'www-data',
+            minute   => '0',
+            hour     => '0',
+            month    => '*',
+            monthday => $time,
+        }
+    }
+
+    $private_image_dump = loadyaml("${module_path}/data/private_image_dump.yaml")
+
+    $private_image_dump.each |$key, $value| {
+        if $value == 'monthly' {
+            $time = '1'
+        } elsif  $value == 'fortnight' {
+            $time = ['15', '30']
+        } else {
+            $time = ['1', '8', '15', '22', '29']
+        }
+
+        cron { "Export ${key} private images ${value}":
+            ensure   => present,
+            command  => "/bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key} && /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key}/images/ && /usr/bin/zip -r /mnt/mediawiki-static/private/dumps/${key}/images/${key}.zip /mnt/mediawiki-static/${key}/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${key}/images/ --comment='Import image zip dump for ${key}' --overwrite --wiki=${key} --extensions=zip",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
