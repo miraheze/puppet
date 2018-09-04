@@ -85,7 +85,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} private images ${value}":
             ensure   => present,
-            command  => '/usr/bin/zip -r /mnt/mediawiki-static/private/dumps/${key}.zip /mnt/mediawiki-static/${key}/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php --comment='Import xml dump for ${key}' --overwrite --wiki=${key} /mnt/mediawiki-static/private/dumps/${key}.zip',
+            command  => '/usr/bin/zip -r /mnt/mediawiki-static/private/dumps/${key}.zip /mnt/mediawiki-static/${key}/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php --comment='Import image zip dump for ${key}' --overwrite --wiki=${key} /mnt/mediawiki-static/private/dumps/${key}.zip',
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
