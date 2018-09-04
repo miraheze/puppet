@@ -40,7 +40,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} images ${value}":
             ensure   => present,
-            command  => '/usr/bin/zip -r /mnt/mediawiki-static/dumps/${key}.zip /mnt/mediawiki-static/${key}/',
+            command  => "/usr/bin/zip -r /mnt/mediawiki-static/dumps/${key}.zip /mnt/mediawiki-static/${key}/",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
