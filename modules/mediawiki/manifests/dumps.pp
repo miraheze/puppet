@@ -63,7 +63,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} private xml dump ${value}":
             ensure   => present,
-            command  => "/bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key} && /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key}/xml/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full --uploads > /mnt/mediawiki-static/private/dumps/${key}/xml/${key}.xml && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${key}/xml/${key}.xml --comment='Import xml dump for ${key}' --overwrite --wiki=${key}",
+            command  => "/bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key} && /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key}/xml/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki=${key} --logs --full --uploads > /mnt/mediawiki-static/private/dumps/${key}/xml/${key}.xml && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${key}/xml/ --comment='Import xml dump for ${key}' --overwrite --wiki=${key}",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
@@ -85,7 +85,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} private images ${value}":
             ensure   => present,
-            command  => "/bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key} && /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key}/images/ && /usr/bin/zip -r /mnt/mediawiki-static/private/dumps/${key}/images/${key}.zip /mnt/mediawiki-static/${key}/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${key}/images/${key}.zip --comment='Import image zip dump for ${key}' --overwrite --wiki=${key}",
+            command  => "/bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key} && /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key}/images/ && /usr/bin/zip -r /mnt/mediawiki-static/private/dumps/${key}/images/${key}.zip /mnt/mediawiki-static/${key}/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${key}/images/ --comment='Import image zip dump for ${key}' --overwrite --wiki=${key}",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
