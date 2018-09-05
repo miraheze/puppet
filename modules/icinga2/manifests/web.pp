@@ -154,4 +154,12 @@ class icinga2::web(
         refreshonly => true,
         require     => Exec['nginx-syntax-icinga'],
     }
+
+    icinga2::custom::services { 'icinga.miraheze.org HTTPS':
+         check_command => 'check_http',
+         vars          => {
+             http_ssl   => true,
+             http_vhost => 'icinga.miraheze.org',
+         },
+     }
 }
