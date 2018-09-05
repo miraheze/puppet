@@ -8,14 +8,7 @@ class icinga2::web(
     $icinga_ido_user_name = hiera('icinga_ido_user_name', 'icinga2'),
     $icinga_ido_password = hiera('passwords::icinga_ido'),
     $icinga_api_password = hiera('passwords::icinga_api'),
-    # use php7.2 on stretch+
-    $modules = ['alias', 'headers', 'rewrite', 'php7.2', 'proxy', 'proxy_http', 'ssl'],
-    $use_apache = hiera('icingaweb2::use_apache', true),
 ) {
-    if $use_apache {
-        include ::httpd
-    }
-
     include ::php
 
     package { [ 'icingaweb2', 'icingaweb2-module-monitoring',
@@ -137,50 +130,28 @@ class icinga2::web(
 
     include ssl::wildcard
 
-    # Temporarily supporting icinga under nginx
-    if $use_apache {
-      httpd::site { 'icinga.miraheze.org':
-          ensure  => present,
-          source  => 'puppet:///modules/icinga2/web/apache/apache.conf',
-          monitor => true,
-      }
+    nginx::site { 'icinga2':
+        ensure  => present,
+        source  => 'puppet:///modules/icinga2/web/nginx/icinga2.conf',
+        notify  => Exec['nginx-syntax-icinga'],
+    }
 
-      httpd::mod { 'icinga_apache':
-          modules => $modules,
-          require => Package["libapache2-mod-php7.2"],
-      }
+    file_line { 'set_date_time':
+        line    => 'date.timezone = Etc/Utc',
+        match   => '^;?date.timezone\s*\=',
+        path    => '/etc/php/7.2/fpm/php.ini',
+        notify  => Exec['nginx-syntax-icinga'],
+    }
 
-      file_line { 'set_date_time':
-          line    => 'date.timezone = Etc/Utc',
-          match   => '^;?date.timezone\s*\=',
-          path    => '/etc/php/7.2/apache2/php.ini',
-          notify  => Exec['apache2_test_config_and_restart'],
-          require => Package['libapache2-mod-php7.2'],
-      }
-    } else {
-      nginx::site { 'icinga2':
-          ensure  => present,
-          source  => 'puppet:///modules/icinga2/web/nginx/icinga2.conf',
-          notify  => Exec['nginx-syntax-icinga'],
-      }
+    exec { 'nginx-syntax-icinga':
+        command     => '/usr/sbin/nginx -t',
+        notify      => Exec['nginx-reload-icinga'],
+        refreshonly => true,
+    }
 
-      file_line { 'set_date_time':
-          line    => 'date.timezone = Etc/Utc',
-          match   => '^;?date.timezone\s*\=',
-          path    => '/etc/php/7.2/fpm/php.ini',
-          notify  => Exec['nginx-syntax-icinga'],
-      }
-
-      exec { 'nginx-syntax-icinga':
-          command     => '/usr/sbin/nginx -t',
-          notify      => Exec['nginx-reload-icinga'],
-          refreshonly => true,
-      }
-
-      exec { 'nginx-reload-icinga':
-          command     => '/usr/sbin/service nginx reload',
-          refreshonly => true,
-          require     => Exec['nginx-syntax-icinga'],
-      }
+    exec { 'nginx-reload-icinga':
+        command     => '/usr/sbin/service nginx reload',
+        refreshonly => true,
+        require     => Exec['nginx-syntax-icinga'],
     }
 }
