@@ -42,4 +42,10 @@ class base {
             'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDkaCSnz6EWa4Dc3WtvqxXG/5QuhOEfzCraZUfMDDCLTjJrrWxo+8gPynm4IbsMbfur+dmi0JylABWvLM6OBXyGDZBasoFXTN0qQiVesKVFnUSdtsRXo9PZe2AR/pi/sE1i+L/j8daerx4uCY3gavG+RiHxeJUyWhFjxILmy+06X9xYKM9dY63pD6t4YdhIJPGcBylc3jBZ+8wkdYCr0hFvNLO7IAgVhc2LhaYcxbuhMuvrQtg4PQeSunQFEtkGjebxqvbzvTgfkcuK9mj58fMuC4fff9cdizuMuso4+HQ/G53P6QQYkKjVD49KipdHzyfrgf2QaTnZpVeOLCHonRl7c8DaXE1iWbifvI7+K2jZ+/qqT/cZ4jzCetBzRBpzW4En90abJ/jhV4wDAfLc34XUT+mexDAYO6LgivFsFuYLiQEOB6WwLtjXxYriWR7C/aHmDnUc3oJ/kXcZCnQ/c/YawXyDU+kUzUhkELHtEBnyaum0yEd4yiC/PrPYqkoOlbGO6GaV/ykjfcaNV4esBsiaOn72xobPTjfMhJdFRDebeoejPGWl4gHCZTtOjnpScYjEAuz4ZNCv7n9i/i8h1KvASf0FayU+yj2B/QvysxAzgbWuEMXulTVc8L4yYFLvIZtoRRg4drQ4mWLzhx1D/JVJDndUmHcWo1N3Rl2o6E5Ytw== nagiosre@misc1'
         ],
     }
+
+    if $::virtual == 'kvm' {
+        sysctl::parameters { 'avoid swap usage':
+            values  => { 'vm.swappiness' => 1, },
+        }
+    }
 }
