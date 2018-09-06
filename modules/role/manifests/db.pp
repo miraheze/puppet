@@ -99,12 +99,6 @@ class role::db {
     }
 
     include ssl::wildcard
-
-    if $::virtual == 'kvm' {
-        sysctl::parameters { 'avoid swap usage':
-            values  => { 'vm.swappiness' => 1, },
-        }
-    }
     
     motd::role { 'role::db':
         description => 'general database server',
