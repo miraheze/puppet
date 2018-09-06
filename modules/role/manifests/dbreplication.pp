@@ -23,12 +23,6 @@ class role::dbreplication {
 
     include ssl::wildcard
 
-    if $::virtual == 'kvm' {
-        sysctl::parameters { 'avoid swap usage':
-            values  => { 'vm.swappiness' => 1, },
-        }
-    }
-
     # Create a user to allow db transfers between servers
     users::user { 'dbcopy':
         ensure      => present,
