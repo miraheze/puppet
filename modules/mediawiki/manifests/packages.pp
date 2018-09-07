@@ -16,6 +16,7 @@ class mediawiki::packages {
         'python-pip',
         'netpbm',
         'librsvg2-dev',
+        'p7zip',
     ]
 
     # First installs can trip without this
