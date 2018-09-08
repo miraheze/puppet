@@ -1,7 +1,9 @@
 # maps wiki db name to 'monthly' or 'fortnight' or 'weekly'
 aesbasewiki: 'monthly'
 amaninfowiki: 'fortnight'
+astrobiologywiki: 'fortnight'
 cpiwiki: 'weekly'
+doomsdaydebunkedwiki: 'fortnight'
 jokowiki: 'monthly'
 lexiquewiki: 'monthly'
 madgendersciencewiki: 'fortnight'
@@ -21,3 +23,5 @@ tanukipediawiki: 'fortnight'
 templatewiki: 'weekly'
 tmewiki: 'weekly'
 worlduniversityandschoolwiki: 'monthly'
+
+astrobiology
