@@ -2,7 +2,8 @@
 class mediawiki(
     $branch = undef,
     $branch_mw_config = undef,
-    $php7_2 = hiera('mediawiki::use_php_7_2', false)
+    $php7_2 = hiera('mediawiki::use_php_7_2', false),
+    $use_memcached = undef,
 ) {
     include mediawiki::favicons
     include mediawiki::cron
@@ -14,7 +15,9 @@ class mediawiki(
     include mediawiki::logging
     include mediawiki::extensionsetup
     include mediawiki::servicessetup
-    # include mediawiki::memcached # not using memcached yet and also see T3272
+    if $use_memcached {
+        include mediawiki::memcached
+    }
     include mediawiki::monitoring
 
     if $php7_2 {
