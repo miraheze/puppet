@@ -16,8 +16,8 @@ import directors;
 import std;
 
 probe mwhealth {
-	.request = "GET /wiki/Miraheze HTTP/1.1"
-		"Host: meta.miraheze.org"
+	.request = "GET /wiki/Main_Page HTTP/1.1"
+		"Host: login.miraheze.org"
 		"User-Agent: Varnish healthcheck"
 		"Connection: close";
 	# Check each 10s
@@ -193,8 +193,8 @@ sub mw_vcl_recv {
 	}
 
 	if (req.url ~ "^/healthcheck$") {
-		set req.http.Host = "meta.miraheze.org";
-		set req.url = "/wiki/Miraheze";
+		set req.http.Host = "login.miraheze.org";
+		set req.url = "/wiki/Main_Page";
 		return (pass);
 	}
 

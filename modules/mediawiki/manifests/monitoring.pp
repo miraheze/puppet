@@ -5,7 +5,7 @@ class mediawiki::monitoring {
     icinga2::custom::services { 'MediaWiki Rendering':
         check_command => 'check_mediawiki',
         vars          => {
-            host    => 'meta.miraheze.org',
+            host    => 'login.miraheze.org',
             address => 'host.address',
         },
     }
