@@ -108,4 +108,9 @@ class mediawiki::jobrunner {
             nrpe_command => 'check_jobqueue',
         },
     }
+
+    sudo::user { 'nrpe_sudo_check_jobqueue':
+        user       => 'nagios',
+        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_jobqueue' ],
+    }
 }
