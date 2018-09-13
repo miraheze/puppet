@@ -6,4 +6,4 @@ puppetmaster: false
 mediawiki::branch: 'REL1_31'
 acme: false
 mediawiki::use_php_7_2: true
-mediawiki::use_memcached: true
+mediawiki::use_memcached: false
