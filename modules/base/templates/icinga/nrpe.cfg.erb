@@ -39,7 +39,7 @@ command[check_irc_logbot]=/usr/lib/nagios/plugins/check_procs -a adminlogbot.py 
 command[check_phd]=/usr/lib/nagios/plugins/check_procs -a phd -c 1:
 command[check_redis]=/usr/lib/nagios/plugins/check_procs -a redis-server -c 1:1
 command[check_jobchron]=/usr/lib/nagios/plugins/check_procs -a redisJobChronService -c 1:1
-command[check_jobqueue]=/usr/lib/nagios/plugins/check_jobqueue
+command[check_jobqueue]=/usr/bin/sudo -u www-data /usr/lib/nagios/plugins/check_jobqueue
 command[check_ocg_health]=/usr/lib/nagios/plugins/check_ocg_health --wjs 800000 --cjs 1500000 --wrj 500 --crj 3000 --url 'http://localhost:8000/?command=health'
 command[check_icinga_config]=/usr/lib/nagios/plugins/check_icinga_config /etc/icinga/icinga.cfg
 command[eh_ssl_acme_renew]=/var/lib/nagios/ssl-acme $ARG1$
