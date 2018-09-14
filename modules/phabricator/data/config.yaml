@@ -122,7 +122,6 @@ phabricator.uninstalled-applications:
   PhabricatorOAuthServerApplication: true # we're running MediaWiki as an OAuth
   PhabricatorOwnersApplication: true # we don't manage source on Phab
   PhabricatorPackagesApplication: true # no packages to host
-  PhabricatorPhameApplication: true # we don't have a plan to have a blog, otherwise should be staffonly
   PhabricatorPhluxApplication: true # puppet has hiera
   PhabricatorPholioApplication: true # we are not designers
   PhabricatorPhortuneApplication: true # we don't need billing stuff
