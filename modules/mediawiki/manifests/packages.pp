@@ -17,6 +17,7 @@ class mediawiki::packages {
         'netpbm',
         'librsvg2-dev',
         'libjpeg-dev',
+        'libgif-dev',
         'p7zip-full',
         'xvfb',
     ]
