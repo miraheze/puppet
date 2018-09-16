@@ -31,4 +31,24 @@ class mediawiki::servicessetup {
         source  => 'puppet:///modules/mediawiki/config.yaml',
         require => File['/etc/mathoid'],
     }
+
+    git::clone { '3d2png':
+        ensure    => present,
+        directory => '/srv/3d2png',
+        origin    => 'https://github.com/wikimedia/3d2png.git',
+        branch    => 'master',
+        owner     => 'root',
+        group     => 'root',
+        mode      => '0755',
+    }
+
+    exec { '3d2png_npm':
+        command     => 'sudo -u root npm install',
+        creates     => '/srv/3d2png/node_modules',
+        cwd         => '/srv/3d2png',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/3d2png',
+        user        => 'root',
+        require     => [Git::Clone['3d2png'], Package['nodejs']],
+    }
 }
