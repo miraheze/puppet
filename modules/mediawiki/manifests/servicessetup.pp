@@ -49,6 +49,6 @@ class mediawiki::servicessetup {
         path        => '/usr/bin',
         environment => 'HOME=/srv/3d2png',
         user        => 'root',
-        require     => [Git::Clone['3d2png'], Package['nodejs']],
+        require     => [Git::Clone['3d2png'], Package['nodejs'], Package['libjpeg-dev']],
     }
 }
