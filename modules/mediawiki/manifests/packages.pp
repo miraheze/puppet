@@ -16,6 +16,7 @@ class mediawiki::packages {
         'python-pip',
         'netpbm',
         'librsvg2-dev',
+        'libjpeg-dev',
         'p7zip-full',
         'xvfb',
     ]
