@@ -17,6 +17,7 @@ class mediawiki::packages {
         'netpbm',
         'librsvg2-dev',
         'p7zip-full',
+        'xvfb',
     ]
 
     # First installs can trip without this
