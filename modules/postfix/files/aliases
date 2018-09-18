@@ -25,7 +25,7 @@ wiki-abuse: staff
 privacy: staff
 
 # DMARC - potentially high volume, best recommended for mail admins on misc1
-dmarc: ndkilla,john
+dmarc: john
 
 # destination aliases
 operations: southparkfan,ndkilla,reception123,john,paladox
