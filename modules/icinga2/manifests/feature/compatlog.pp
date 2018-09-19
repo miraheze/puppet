@@ -8,18 +8,19 @@
 #   Set to present enables the feature compatlog, absent disabled it. Defaults to present.
 #
 # [*log_dir*]
-#   Absolute path to the log directory. Default depends on platform, /var/log/icinga2/compat on Linux
+#   Absolute path to the log directory. Default depends on platform,
+#   /var/log/icinga2/compat on Linux
 #   and C:/ProgramData/icinga2/var/log/icinga2/compat on Windows.
 #
 # [*rotation_method*]
-#   Sets how often should the log file be rotated. Valid options are: HOURLY, DAILY, WEEKLY or MONTHLY.
-#   Defaults to DAILY.
+#   Sets how often should the log file be rotated. Valid options are:
+#   HOURLY, DAILY, WEEKLY or MONTHLY. Icinga defaults to DAILY.
 #
 #
 class icinga2::feature::compatlog(
-  $ensure          = present,
-  $log_dir         = "${::icinga2::params::log_dir}/compat",
-  $rotation_method = 'DAILY',
+  Enum['absent', 'present']                                 $ensure          = present,
+  Optional[Stdlib::Absolutepath]                            $log_dir         = undef,
+  Optional[Enum['DAILY', 'HOURLY', 'MONTHLY', 'WEEKLY']]    $rotation_method = undef,
 ) {
 
   if ! defined(Class['::icinga2']) {
@@ -31,12 +32,6 @@ class icinga2::feature::compatlog(
     'present' => Class['::icinga2::service'],
     default   => undef,
   }
-
-  # validation
-  validate_re($ensure, [ '^present$', '^absent$' ],
-    "${ensure} isn't supported. Valid values are 'present' and 'absent'.")
-  validate_absolute_path($log_dir)
-  validate_re($rotation_method, ['^HOURLY$','^DAILY$','^WEEKLY$','^MONTHLY$'])
 
   # compose attributes
   $attrs = {
@@ -51,7 +46,7 @@ class icinga2::feature::compatlog(
     attrs       => delete_undef_values($attrs),
     attrs_list  => keys($attrs),
     target      => "${conf_dir}/features-available/compatlog.conf",
-    order       => '10',
+    order       => 10,
     notify      => $_notify,
   }
 

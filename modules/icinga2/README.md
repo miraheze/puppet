@@ -28,6 +28,22 @@ configuration of Icinga 2 on multiple operating systems.
 For Icinga 2 v2.8.0 and higher version v1.3.4 and above is needed and the parameter repositoryd
 can set to false. See issue #403.
 
+### v2.0.0
+
+* Requires Icinga 2 v2.8.0 or higher.
+* Feature `api`:
+ * Parameters `ssl_key_path`, `ssl_cert_path`, `ssl_csr_path` and `ssl_ca_path` removed.
+ * Deprecated value `ca` of parameter `pki` is removed.
+* Feature `idopgsql`
+ * Parameter `password` is required now.
+* Feature `idomysql`
+ * Parameter `password` is required now.
+ * Key and certs now are stored into the certs directory named IdoMysqlConnection_ido-mysql by default.
+* Feature `elasticsearch`
+ * Key and certs now are stored into the certs directory named ElasticsearchWriter_elasticsearch by default.
+* Feature `influxdb`
+ * Key and certs now are stored into the certs directory named InfluxdbWriter_influxdb by default.
+
 ## Module Description
 
 This module installs and configures Icinga 2 on your Linux or Windows hosts.
@@ -69,7 +85,7 @@ Depending on your setup following modules may also be required:
 This module has been tested on:
 
 * Ruby >= 1.9
-* Debian 7, 8
+* Debian 7, 8, 9
 * Ubuntu 14.04, 16.04
 * CentOS/RHEL 6, 7
     * **Caution:** CentOS 6 comes with Ruby 1.8.7 by default
@@ -763,12 +779,12 @@ icinga2::object::service { 'load':
   check_command => 'load',
   assign        => ['vars.os == Linux'],
   target        => '/etc/icinga2/conf.d/service_load.conf',
-  order         => '30',
+  order         => 30,
 }
 
 icinga2::config::fragment { 'load-function':
   target => '/etc/icinga2/conf.d/service_load.conf',
-  order => '10',
+  order => 10,
   content => 'vars.load_wload1 = {{
     if (get_time_period("backup").is_inside) {
       return 20
@@ -795,6 +811,7 @@ icinga2::config::fragment { 'load-function':
     - [Class: icinga2::feature::statusdata](#class-icinga2featurestatusdata)
     - [Class: icinga2::feature::syslog](#class-icinga2featuresyslog)
     - [Class::icinga2::feature::debuglog](#class-icinga2featuredebuglog)
+    - [Class::icinga2::feature::elasticsearch](#class-icinga2featureelasticsearch)
     - [Class::icinga2::feature::gelf](#class-icinga2featuregelf)
     - [Class::icinga2::feature::influxdb](#class-icinga2featureinfluxdb)
     - [Class::icinga2::feature::api](#class-icinga2featureapi)
@@ -816,11 +833,11 @@ icinga2::config::fragment { 'load-function':
     - [Defined type: icinga2::object::dependency](#defined-type-icinga2objectdependency)
     - [Defined type: icinga2::object::timeperiod](#defined-type-icinga2objecttimeperiod)
     - [Defined type: icinga2::object::usergroup](#defined-type-icinga2objectusergroup)
+    - [Defined type: icinga2::object::user](#defined-type-icinga2objectuser)
     - [Defined type: icinga2::object::notificationcommand](#defined-type-icinga2objectnotificationcommand)
     - [Defined type: icinga2::object::notification](#defined-type-icinga2objectnotification)
     - [Defined type: icinga2::object::service](#defined-type-icinga2objectservice)
     - [Defined type: icinga2::object::servicegroup](#defined-type-icinga2objectservicegroup)
-    - [Defined type: icinga2::object::downtime](#defined-type-icinga2objectdowntime)
     - [Defined type: icinga2::object::scheduleddowntime](#defined-type-icinga2objectscheduleddowntime)
     - [Defined type: icinga2::object::eventcommand](#defined-type-icinga2objecteventcommand)
     - [Defined type: icinga2::object::checkresultreader](#defined-type-icinga2objectcheckresultreader)
@@ -974,11 +991,9 @@ Absolute path to the log directory. Default depends on platform:
 Sets how often should the log file be rotated. Valid options are:
 
 * `HOURLY`
-* `DAILY`
+* `DAILY` (Icinga default)
 * `WEEKLY`
 * `MONTHLY`
-
-Defaults to `DAILY`
 
 #### Class: `icinga2::feature::graphite`
 Enables or disables the `graphite` feature.
@@ -989,22 +1004,22 @@ Enables or disables the `graphite` feature.
 Either `present` or `absent`. Defines if the feature `graphite` should be enabled. Defaults to `present`.
 
 ##### `host`
-Graphite Carbon host address. Defaults to `127.0.0.1`.
+Graphite Carbon host address. Icinga defaults to `127.0.0.1`.
 
 ##### `port`
-Graphite Carbon port. Defaults to `2003`.
+Graphite Carbon port. Icinga defaults to `2003`.
 
 ##### `host_name_template`
-Template for metric path of hosts. Defaults to `icinga2.$host.name$.host.$host.check_command$`.
+Template for metric path of hosts. Icinga defaults to `icinga2.$host.name$.host.$host.check_command$`.
 
 ##### `service_name_template`
-Template for metric path of services. Defaults to `icinga2.$host.name$.services.$service.name$.$service.check_command$`.
+Template for metric path of services. Icinga defaults to `icinga2.$host.name$.services.$service.name$.$service.check_command$`.
 
 ##### `enable_send_thresholds`
-Send thresholds as metrics. Defaults to false.
+Send thresholds as metrics. Icinga defaults to false.
 
 ##### `enable_send_metadata`
-Send metadata as metrics. Defaults to false.
+Send metadata as metrics. Icinga defaults to false.
 
 #### Class: `icinga2::feature::livestatus`
 Enables or disables the `livestatus` feature.
@@ -1015,13 +1030,13 @@ Enables or disables the `livestatus` feature.
 Either `present` or `absent`. Defines if the feature `livestatus` should be enabled. Defaults to `present`.
 
 ##### `socket_type`
-Specifies the socket type. Can be either 'tcp' or 'unix'. Defaults to 'unix'
+Specifies the socket type. Can be either 'tcp' or 'unix'. Icinga defaults to 'unix'
 
 ##### `bind_host`
-IP address to listen for connections. Only valid when socket_type is `tcp`. Defaults to `127.0.0.1`
+IP address to listen for connections. Only valid when socket_type is `tcp`. Icinga defaults to `127.0.0.1`
 
 ##### `bind_port`
-Port to listen for connections. Only valid when socket_type is `tcp`. Defaults to `6558`
+Port to listen for connections. Only valid when socket_type is `tcp`. Icinga defaults to `6558`
 
 ##### `socket_path`
 Specifies the path to the UNIX socket file. Only valid when socket_type is `unix`. Default depends on platform:
@@ -1044,10 +1059,10 @@ Enables or disables the `opentsdb` feature.
 Either `present` or `absent`. Defines if the feature `opentsdb` should be enabled. Defaults to `present`.
 
 ##### `host`
-OpenTSDB host address. Defaults to `127.0.0.1`
+OpenTSDB host address. Icinga defaults to `127.0.0.1`
 
 ##### `port`
-OpenTSDB port. Defaults to `4242`
+OpenTSDB port. Icinga defaults to `4242`
 
 #### Class: `icinga2::feature::perfdata`
 Enables or disables the `perfdata` feature.
@@ -1078,14 +1093,14 @@ Path to the temporary service file. Defaults depends on platform:
 * Windows: `C:/ProgramData/icinga2/var/spool/icinga2/tmp/host-perfdata`
 
 ##### `host_format_template`
-Host Format template for the performance data file. Defaults to a template that's suitable for use with PNP4Nagios.
+Host Format template for the performance data file. Icinga defaults to a template that's suitable for use with PNP4Nagios.
 
 ##### `service_format_template`
-Service Format template for the performance data file. Defaults to a template that's suitable for use with PNP4Nagios.
+Service Format template for the performance data file. Icinga defaults to a template that's suitable for use with PNP4Nagios.
 
 ##### `rotation_interval`
 Rotation interval for the files specified in `{host,service}_perfdata_path`. Can be written in minutes or seconds,
-i.e. `1m` or `15s`. Defaults to `30s`
+i.e. `1m` or `15s`. Icinga defaults to `30s`
 
 #### Class: `icinga2::feature::statusdata`
 Enables or disables the `statusdata` feature.
@@ -1096,18 +1111,18 @@ Enables or disables the `statusdata` feature.
 Either `present` or `absent`. Defines if the feature `statusdata` should be enabled. Defaults to `present`.
 
 ##### `status_path`
-Absolute path to the status.dat file. Default depends on platform:
+Absolute path to the status.dat file. Defaults depend on platform:
 * Linux: `/var/cache/icinga2/status.dat`
 * Windows: `C:/ProgramData/icinga2/var/cache/icinga2/status.dat`
 
 ##### `object_path`
-Absolute path to the object.cache file. Default depends on platform:
+Absolute path to the object.cache file. Defaults depend on platform:
 * Linux: `/var/cache/icinga2/object.cache`
 * Windows: `C:/ProgramData/icinga2/var/cache/icinga2/object.cache`
 
 ##### `update_interval`
 Interval in seconds to update both status files. You can also specify it in minutes with the letter m or in seconds
-with s. Defaults to `30s`
+with s. Icinga defaults to `15s`
 
 #### Class: `icinga2::feature::syslog`
 Enables or disables the `syslog` feature.
@@ -1122,10 +1137,33 @@ Set severity level for logging to syslog. Available options are:
 
 * `information`
 * `notice`
-* `warning`
+* `warning` (Icinga default)
 * `debug`
 
-Defaults to `warning`
+##### `facility`
+Defines the facility to use for syslog entries. This can be a facility constant like FacilityDaemon.
+Available options are:
+
+* `FacilityAuth`
+* `FacilityAuthPriv`
+* `FacilityCron`
+* `FacilityDaemon`
+* `FacilityFtp`
+* `FacilityKern`
+* `FacilityLocal0`
+* `FacilityLocal1`
+* `FacilityLocal2`
+* `FacilityLocal3`
+* `FacilityLocal4`
+* `FacilityLocal5`
+* `FacilityLocal6`
+* `FacilityLocal7`
+* `FacilityLpr`
+* `FacilityMail`
+* `FacilityNews`
+* `FacilitySyslog`
+* `FacilityUser` (Icinga default)
+* `FacilityUucp`
 
 #### Class: `icinga2::feature::debuglog`
 Enables or disables the `debuglog` feature.
@@ -1140,6 +1178,58 @@ Absolute path to the log file. Default depends on platform:
 * Linux: `/var/log/icinga2/debug.log`
 * Windows: `C:/ProgramData/icinga2/var/log/icinga2/debug.log`
 
+
+#### Class: `icinga2::feature::elasticsearch`
+Enables or disables the `elasticsearch` feature.
+
+**Parameters of `icinga2::feature::elasticsearch`:**
+
+##### `ensure`
+Either `present` or `absent`. Defines if the feature `elasticsearch` should be enabled. Defaults to `present`.
+
+##### `host`
+Elasticsearch host address. Icinga defaults to `127.0.0.1`
+
+##### `port`
+Elasticsearch HTTP port. Icinga defaults to `9200`
+
+##### `index`
+Elasticsearch index name. Icinga defaults to `icinga2`
+
+##### `username`
+Elasticsearch user name.
+
+##### `password`
+Elasticsearch user password.
+
+##### `enable_ssl`
+Either enable or disable SSL. Other SSL parameters are only affected if this is set to `true`. Defaults to `false`.
+
+##### `pki`
+SSL settings will be set depending on this parameter.
+
+* `puppet` Use puppet certificates. This will copy the ca.pem, certificate and key generated by Puppet.
+* `none` Set custom paths for certificate, key and CA
+
+##### `ssl_ca_cert`
+CA certificate to validate the remote host. Only valid if ssl is set to `none`.
+
+##### `ssl_cert`
+Host certificate to present to the remote host for mutual verification. Only valid if ssl is set to 'none'.
+
+##### `ssl_key`
+Host key to accompany the ssl_cert. Only valid if ssl is set to `none`.
+
+##### `enable_send_perfdata`
+Whether to send check performance data metrics. Icinga defaults to `false`.
+
+##### `flush_interval`
+How long to buffer data points before transferring to Elasticsearch. Icinga defaults to `10s`
+
+##### `flush_threshold`
+How many data points to buffer before forcing a transfer to Elasticsearch. Icinga defaults to `1024`
+
+
 #### Class: `icinga2::feature::gelf`
 Enables or disables the `gelf` feature.
 
@@ -1149,16 +1239,16 @@ Enables or disables the `gelf` feature.
 Either `present` or `absent`. Defines if the feature `gelf` should be enabled. Defaults to `present`.
 
 ##### `host`
-GELF receiver host address. Defaults to `127.0.0.1`
+GELF receiver host address. Icinga defaults to `127.0.0.1`
 
 ##### `port`
-GELF receiver port. Defaults to `12201`
+GELF receiver port. Icinga defaults to `12201`
 
 ##### `source`
-Source name for this instance. Defaults to `icinga2`
+Source name for this instance. Icinga defaults to `icinga2`
 
 ##### `enable_send_perfdata`
-Enable performance data for *CHECK RESULT* events. Defaults to `false`.
+Enable performance data for *CHECK RESULT* events. Icinga defaults to `false`.
 
 #### Class: `icinga2::feature::influxdb`
 Enables or disables the `influxdb` feature.
@@ -1169,42 +1259,40 @@ Enables or disables the `influxdb` feature.
 Either `present` or `absent`. Defines if the feature `influxdb` should be enabled. Defaults to `present`.
 
 ##### `host`
-InfluxDB host address. Defaults to `127.0.0.1`
+InfluxDB host address. Icinga defaults to `127.0.0.1`.
 
 ##### `port`
-InfluxDB HTTP port. Defaults to `8086`
+InfluxDB HTTP port. Icinga defaults to `8086`.
 
 ##### `database`
-InfluxDB database name. Defaults to `icinga2`
+InfluxDB database name. Icinga defaults to `icinga2`.
 
 ##### `username`
-InfluxDB user name. Defaults to `undef`
+InfluxDB user name.
 
 ##### `password`
-InfluxDB user password. Defaults to `undef`
+InfluxDB user password.
 
 ##### `enable_ssl`
-Either enable or disable SSL. Other SSL parameters are only affected if this is set to `true`. Defaults to `false`.
+Either enable or disable SSL. Other SSL parameters are only affected if this is set to `true`. Icinga defaults to `false`.
 
 ##### `pki`
 SSL settings will be set depending on this parameter.
 
 * `puppet` Use puppet certificates. This will copy the ca.pem, certificate and key generated by Puppet.
-* `custom` Set custom paths for certificate, key and CA
-* `false` Disable SSL (default)
+* `none` Set custom paths for certificate, key and CA
 
 ##### `ssl_ca_cert`
-CA certificate to validate the remote host. Only valid if ssl is set to `custom`. Defaults to `undef`
+CA certificate to validate the remote host. Only valid if ssl is set to `none`.
 
 ##### `ssl_cert`
-Host certificate to present to the remote host for mutual verification. Only valid if ssl is set to 'custom'.
-Defaults to `undef`
+Host certificate to present to the remote host for mutual verification. Only valid if ssl is set to 'none'.
 
 ##### `ssl_key`
-Host key to accompany the ssl_cert. Only valid if ssl is set to `custom`. Defaults to `undef`
+Host key to accompany the ssl_cert. Only valid if ssl is set to `none`.
 
 ##### `host_measurement`
-The value of this is used for the measurement setting in host_template. Defaults to  `$host.check_command$`
+The value of this is used for the measurement setting in host_template. Icinga defaults to `$host.check_command$`.
 
 ##### `host_tags`
 Tags defined in this hash will be set in the host_template.
@@ -1217,7 +1305,7 @@ class { '::icinga2::feature::influxdb':
 ```
 
 ##### `service_measurement`
-The value of this is used for the measurement setting in host_template. Defaults to  `$service.check_command$`
+The value of this is used for the measurement setting in host_template. Icinga defaults to `$service.check_command$`.
 
 ##### `service_tags`
 Tags defined in this hash will be set in the service_template.
@@ -1230,16 +1318,16 @@ class { '::icinga2::feature::influxdb':
 ```
 
 ##### `enable_send_thresholds`
-Whether to send warn, crit, min & max tagged data. Defaults to `false`
+Whether to send warn, crit, min & max tagged data. Icinga defaults to `false`.
 
 ##### `enable_send_metadata`
-Whether to send check metadata e.g. states, execution time, latency etc. Defaults to `false`
+Whether to send check metadata e.g. states, execution time, latency etc. Icinga defaults to `false`.
 
 ##### `flush_interval`
-How long to buffer data points before transferring to InfluxDB. Defaults to `10s`
+How long to buffer data points before transferring to InfluxDB. Icinga defaults to `10s`.
 
 ##### `flush_threshold`
-How many data points to buffer before forcing a transfer to InfluxDB. Defaults to `1024`
+How many data points to buffer before forcing a transfer to InfluxDB. Icinga defaults to `1024`.
 
 
 #### Class: `icinga2::feature::api`
@@ -1258,10 +1346,7 @@ Provides multiple sources for the certificate and key.
   * Windows: `C:/ProgramData/icinga2/etc/icinga2/pki`
 * `icinga2` Uses the icinga2 CLI to generate a Certificate and Key The ticket is generated on the Puppet master by using
 the configured 'ticket_salt' in a custom function.
-* `none` Does nothing and you either have to manage the files yourself as file resources or use the `ssl_key`, `ssl_cert`,
-`ssl_ca` parameters.
-* `ca` (**deprecated**) Includes the `::icinga2::pki::ca` class to generate a fresh CA and generates an SSL certificate and key signed by
-this new CA.
+* `none` Does nothing and you either have to manage the files yourself as file resources or use the `ssl_key`, `ssl_cert`, `ssl_ca` parameters.
 
 Defaults to `puppet`
 
@@ -1294,6 +1379,9 @@ Location of the CA certificate. Default depends on your platform:
 
 * Linux: `/etc/icinga2/pki/ca.crt`
 * Windows `C:/ProgramData/icinga2/etc/icinga2/pki/ca.crt`
+
+##### `ssl_crl_path`
+Optional location of the certificate revocation list.
 
 ##### `accept_config`
 Accept zone configuration. Defaults to `false`
@@ -1330,6 +1418,20 @@ The IP address the api listener will be bound to. (e.g. 0.0.0.0)
 ##### `bind_port`
 The port the api listener will be bound to. (e.g. 5665)
 
+##### `access_control_allow_origin`
+Specifies an array of origin URLs that may access the API.
+
+##### `access_control_allow_credentials`
+Indicates whether or not the actual request can be made using credentials. Defaults to `true`.
+
+##### `access_control_allow_headers`
+Used in response to a preflight request to indicate which HTTP headers can be used when making the actual request.
+Defaults to `Authorization`.
+
+##### `access_control_allow_methods`
+Used in response to a preflight request to indicate which HTTP methods can be used when making the actual request.
+Defaults to `GET, POST, PUT, DELETE`.
+
 #### Class: `icinga2::feature::idopgsql`
 Enables or disables the `ido-pgsql` feature.
 
@@ -1339,22 +1441,22 @@ Enables or disables the `ido-pgsql` feature.
 Either `present` or `absent`. Defines if the feature `ido-pgsql` should be enabled. Defaults to `present`.
 
 ##### `host`
-PostgreSQL database host address. Defaults to `127.0.0.1`
+PostgreSQL database host address. Icinga defaults to `localhost`.
 
 ##### `port`
-PostgreSQL database port. Defaults to `3306`
+PostgreSQL database port. Icinga defaults to `3306`.
 
 ##### `user`
-PostgreSQL database user with read/write permission to the icinga database. Defaults to `icinga`
+PostgreSQL database user with read/write permission to the icinga database. Icinga defaults to `icinga`.
 
 ##### `password`
-PostgreSQL database user's password. Defaults to `icinga`
+PostgreSQL database user's password.
 
 ##### `database`
-PostgreSQL database name. Defaults to `icinga`
+PostgreSQL database name. Icinga defaults to `icinga`
 
 ##### `table_prefix`
-PostgreSQL database table prefix. Defaults to `icinga_`
+PostgreSQL database table prefix. Icinga defaults to `icinga_`
 
 ##### `import_schema`
 Whether to import the PostgreSQL schema or not. Defaults to `false`
@@ -1368,37 +1470,36 @@ Enables or disables the `gelf` feature.
 Either `present` or `absent`. Defines if the feature `ido-mysql` should be enabled. Defaults to `present`.
 
 ##### `host`
-MySQL database host address. Defaults to `127.0.0.1`
+MySQL database host address. Icinga defaults to `localhost`.
 
 ##### `port`
-MySQL database port. Defaults to `3306`
+MySQL database port. Icinga defaults to `3306`.
 
 ##### `socket_path`
 MySQL socket path.
 
 ##### `user`
-MySQL database user with read/write permission to the icinga database. Defaults to `icinga`
+MySQL database user with read/write permission to the icinga database. Icinga defaults to `icinga`.
 
 ##### `password`
-MySQL database user's password. Defaults to `icinga`
+MySQL database user's password.
 
 ##### `database`
-MySQL database name. Defaults to `icinga`
+MySQL database name. Icinga defaults to `icinga`.
 
 ##### `ssl`
 SSL settings will be set depending on this parameter:
 * `puppet` Use puppet certificates
-* `custom` Set custom paths for certificate, key and CA
-* `false` Disable SSL (default)
+* `none` Set custom paths for certificate, key and CA
 
 ##### `ssl_key`
-MySQL SSL client key file path. Only valid if ssl is set to `custom`.
+MySQL SSL client key file path. Only valid if ssl is set to `none`.
 
 ##### `ssl_cert`
-MySQL SSL certificate file path. Only valid if ssl is set to `custom`.
+MySQL SSL certificate file path. Only valid if ssl is set to `none`.
 
 ##### `ssl_ca`
-MySQL SSL certificate authority certificate file path. Only valid if ssl is set to `custom`.
+MySQL SSL certificate authority certificate file path. Only valid if ssl is set to `none`.
 
 ##### `ssl_capath`
 MySQL SSL trusted SSL CA certificates in PEM format directory path. Only valid if ssl is enabled.
@@ -1407,19 +1508,19 @@ MySQL SSL trusted SSL CA certificates in PEM format directory path. Only valid i
 MySQL SSL list of allowed ciphers. Only valid if ssl is enabled.
 
 ##### `table_prefix`
-MySQL database table prefix. Defaults to `icinga_`
+MySQL database table prefix. Icinga defaults to `icinga_`.
 
 ##### `instance_name`
-Unique identifier for the local Icinga 2 instance. Defaults to `default`
+Unique identifier for the local Icinga 2 instance. Icinga defaults to `default`.
 
 ##### `instance_description`
 Description for the Icinga 2 instance.
 
 ##### `enable_ha`
-Enable the high availability functionality. Only valid in a cluster setup. Defaults to `true`
+Enable the high availability functionality. Only valid in a cluster setup. Icinga defaults to `true`.
 
 ##### `failover_timeout`
-Set the fail-over timeout in a HA cluster. Must not be lower than 60s. Defaults to `60s`
+Set the fail-over timeout in a HA cluster. Must not be lower than 60s. Icinga defaults to `60s`.
 
 ##### `cleanup`
 Hash with items for historical table cleanup.
@@ -1428,7 +1529,7 @@ Hash with items for historical table cleanup.
 Array of information types that should be written to the database.
 
 ##### `import_schema`
-Whether to import the MySQL schema or not. Defaults to `false`
+Whether to import the MySQL schema or not. Defaults to `false`.
 
 #### Class: `icinga2::pki::ca`
 This class provides multiple ways to create the CA used by Icinga 2. By default it will create a CA by using the
@@ -1446,32 +1547,32 @@ Content of the CA key. If this is unset, a key will be generated with the Icinga
 ##### `ssl_key_path`
 Location of the private key. Default depends on your platform:
 
-* Linux `/etc/icinga2/pki/NodeName.key`
-* Windows `C:/ProgramData/icinga2/etc/icinga2/pki/NodeName.key`
+* Linux `/var/lib/icinga2/certs/NodeName.key`
+* Windows `C:/ProgramData/icinga2/var/lib/icinga2/certs/NodeName.key`
 
 The Value of `NodeName` comes from the corresponding constant.
 
 ##### `ssl_cert_path`
 Location of the certificate. Default depends on your platform:
 
-* Linux `/etc/icinga2/pki/NodeName.crt`
-* Windows `C:/ProgramData/icinga2/etc/icinga2/pki/NodeName.crt`
+* Linux `/var/lib/icinga2/certs/NodeName.crt`
+* Windows `C:/ProgramData/icinga2/var/lib/icinga2/certs/NodeName.crt`
 
 The Value of `NodeName` comes from the corresponding constant.
 
 ##### `ssl_csr_path`
 Location of the certificate signing request. Default depends on your platform:
 
-* Linux: `/etc/icinga2/pki/NodeName.csr`
-* Windows `C:/ProgramData/icinga2/etc/icinga2/pki/NodeName.csr`
+* Linux: `/var/lib/icinga2/certs/NodeName.csr`
+* Windows `C:/ProgramData/icinga2/var/lib/icinga2/certs/NodeName.csr`
 
 The Value of `NodeName` comes from the corresponding constant.
 
 ##### `ssl_cacert_path`
 Location of the CA certificate. Default depends on your platform:
 
-* Linux: `/etc/icinga2/pki/ca.crt`
-* Windows `C:/ProgramData/icinga2/etc/icinga2/pki/ca.crt`
+* Linux: `/var/lib/icinga2/certs/ca.crt`
+* Windows `C:/ProgramData/icinga2/var/lib/icinga2/certs/ca.crt`
 
 ### Private Classes
 
@@ -1513,7 +1614,7 @@ like `10m` for 10 minutes or `1h` for one hour.
 Destination config file to store in this object. File will be declared at the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `10`.
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 40.
 
 #### Defined type: `icinga2::object::zone`
 
@@ -1536,7 +1637,7 @@ If set to `true`, a global zone is defined and the parameter endpoints and paren
 Destination config file to store in this object. File will be declared at the first time.
 
 ##### `order`
-String to control the position in the target file, sorted alpha numeric.
+String or integer to control the position in the target file, sorted alpha numeric. Defauts to 45.
 
 #### Defined type: `icinga2::object::apiuser`
 
@@ -1560,7 +1661,7 @@ as function.
 Destination config file to store in this object. File will be declared at the first time.
 
 ##### `order`
-String to control the position in the target file, sorted alpha numeric. Defaults to `10`
+String or integer to control the position in the target file, sorted alpha numeric. Defaults to 30.
 
 ###### Examples
 
@@ -1618,7 +1719,7 @@ Destination config file to store in this object. File will be declared the
 first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `10`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 15.
 
 #### Defined type: `icinga2::object::host`
 
@@ -1719,7 +1820,7 @@ Set to true creates a template instead of an object. Defaults to `false`
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `10`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 50.
 
 #### Defined type: `icinga2::object::hostgroup`
 
@@ -1739,7 +1840,7 @@ Assign host group members using the group assign rules.
 Destination config file to store in this object. File will be declared at the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `10`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 55.
 
 #### Defined type: `icinga2::object::dependency`
 
@@ -1802,7 +1903,7 @@ Sorted List of templates to include. Defaults to an empty list.
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `35`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 70.
 
 #### Defined type: `icinga2::object::timeperiod`
 
@@ -1837,7 +1938,7 @@ Set to true creates a template instead of an object. Defaults to `false`
 Destination config file to store this object in. File will be declared on the first run.
 
 ##### `order`
-String to control the position in the target file, sorted alpha numeric.
+String or integer to control the position in the target file, sorted alpha numeric. Defaults to 35.
 
 #### Defined type: `icinga2::object::usergroup`
 
@@ -1872,7 +1973,7 @@ Sorted List of templates to include. Defaults to an empty list.
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `10`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 80.
 
 #### Defined type: `icinga2::object::user`
 
@@ -1916,7 +2017,7 @@ Sorted List of templates to include. Defaults to an empty list.
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `30`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 75.
 
 #### Defined type: `icinga2::object::notificationcommand`
 
@@ -1956,7 +2057,7 @@ Sorted List of templates to include. Defaults to an empty list.
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `10`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 25.
 
 #### Defined type: `icinga2::object::notification`
 
@@ -2024,7 +2125,7 @@ Sorted List of templates to include. Defaults to an empty list.
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `10`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 85.
 
 #### Defined type: `icinga2::object::service`
 
@@ -2141,7 +2242,7 @@ Sorted List of templates to include. Defaults to an empty list.
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `10`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 60.
 
 #### Defined type: `icinga2::object::servicegroup`
 
@@ -2173,48 +2274,7 @@ Sorted List of templates to include. Defaults to an empty list.
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `30`
-
-#### Defined type: `icinga2::object::downtime`
-
-##### `ensure`
-Set to present enables the downtime object, absent disables it. Defaults to `present`
-
-##### `host_name`
-The name of the host this comment belongs to.
-
-##### `service_name`
-The short name of the service this comment belongs to. If omitted, this comment object is treated as host comment.
-
-##### `author`
-The author's name.
-
-##### `comment`
-The comment text.
-
-##### `start_time`
-The start time as unix timestamp.
-
-##### `end_time`
-The end time as unix timestamp.
-
-##### `duration`
-The duration as number.
-
-##### `entry_time`
-The unix timestamp when this downtime was added.
-
-##### `fixed`
-Whether the downtime is fixed (`true`) or flexible (`false`). Defaults to flexible.
-
-##### `triggers`
-List of downtimes which should be triggered by this downtime.
-
-##### `target`
-Destination config file to store in this object. File will be declared the first time.
-
-##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `30`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 55.
 
 #### Defined type: `icinga2::object::scheduleddowntime`
 
@@ -2265,7 +2325,7 @@ Exclude users using the group ignore rules.
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `30`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 90.
 
 #### Defined type: `icinga2::object::eventcommand`
 
@@ -2302,7 +2362,7 @@ Destination config file to store in this object. File will be declared the first
 Sorted List of templates to include. Defaults to an empty list.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `30`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 20.
 
 #### Defined type: `icinga2::object::checkresultreader`
 
@@ -2319,7 +2379,7 @@ The directory which contains the check result files. Defaults to `LocalStateDir 
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. Defaults to `30`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to `05`.
 
 #### Defined type: `icinga2::object::compatlogger`
 
@@ -2336,7 +2396,7 @@ The directory which contains the check result files. Defaults to `LocalStateDir 
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric. `Defaults to 30`
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to `05`.
 
 #### Defined type: `icinga2::config::fragment`
 
@@ -2347,7 +2407,7 @@ Content to insert in file specified in target.
 Destination config file to store in this fragment. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted in alpha numeric order.
+String or integer to set the position in the target file, sorted in alpha numeric order. Defailts to `05`.
 
 
 ### Private defined types
@@ -2380,7 +2440,7 @@ Dispose an apply instead an object if set to 'true'. Value is taken as statement
 i.e. 'vhost => config in host.vars.vhosts'. Defaults to false.
 
 ##### `apply_target`
-An object type on which to target the apply rule. Valid values are `Host` and `Service`. Defaults to `Host`.
+Optional fo an object type on which to target the apply rule. Valid values are `Host` and `Service`. Defaults to `Host`.
 
 ##### `import`
 A sorted list of templates to import in this object. Defaults to an empty array.
@@ -2395,7 +2455,7 @@ Icinga 2 object type for this object.
 Destination config file to store in this object. File will be declared the first time.
 
 ##### `order`
-String to set the position in the target file, sorted alpha numeric.
+String or integer to set the position in the target file, sorted alpha numeric. Defaults to 10.
 
 
 ## Development

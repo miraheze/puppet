@@ -8,16 +8,16 @@
 #   Set to present enables the feature opentsdb, absent disables it. Defaults to present.
 #
 # [*host*]
-#   OpenTSDB host address. Defaults to '127.0.0.1'.
+#   OpenTSDB host address. Icinga defaults to '127.0.0.1'.
 #
 # [*port*]
-#   OpenTSDB port. Defaults to 4242.
+#   OpenTSDB port. Icinga defaults to 4242.
 #
 #
 class icinga2::feature::opentsdb(
-  $ensure               = present,
-  $host                 = '127.0.0.1',
-  $port                 = '4242',
+  Enum['absent', 'present']     $ensure = present,
+  Optional[String]              $host   = undef,
+  Optional[Integer[1,65535]]    $port   = undef,
 ) {
 
   if ! defined(Class['::icinga2']) {
@@ -29,12 +29,6 @@ class icinga2::feature::opentsdb(
     'present' => Class['::icinga2::service'],
     default   => undef,
   }
-
-  # validation
-  validate_re($ensure, [ '^present$', '^absent$' ],
-    "${ensure} isn't supported. Valid values are 'present' and 'absent'.")
-  validate_string($host)
-  validate_integer($port)
 
   # compose attributes
   $attrs = {
@@ -49,7 +43,7 @@ class icinga2::feature::opentsdb(
     attrs       => delete_undef_values($attrs),
     attrs_list  => keys($attrs),
     target      => "${conf_dir}/features-available/opentsdb.conf",
-    order       => '10',
+    order       => 10,
     notify      => $_notify,
   }
 

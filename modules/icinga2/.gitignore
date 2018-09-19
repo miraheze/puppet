@@ -16,4 +16,5 @@ Gemfile.lock
 .bundle
 .vendor/
 vendor/
+.vendor/
 log/

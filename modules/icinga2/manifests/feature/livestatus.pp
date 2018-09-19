@@ -8,14 +8,14 @@
 #   Set to present enables the feature livestatus, absent disables it. Defaults to present.
 #
 # [*socket_type*]
-#   Specifies the socket type. Can be either 'tcp' or 'unix'. Defaults to 'unix'
+#   Specifies the socket type. Can be either 'tcp' or 'unix'. Icinga defaults to 'unix'.
 #
 # [*bind_host*]
 #   IP address to listen for connections. Only valid when socket_type is 'tcp'.
-#   Defaults to "127.0.0.1".
+#   Icinga defaults to '127.0.0.1'.
 #
 # [*bind_port*]
-#   Port to listen for connections. Only valid when socket_type is 'tcp'. Defaults to 6558.
+#   Port to listen for connections. Only valid when socket_type is 'tcp'. Icinga defaults to 6558.
 #
 # [*socket_path*]
 #   Specifies the path to the UNIX socket file. Only valid when socket_type is 'unix'.
@@ -31,12 +31,12 @@
 #
 #
 class icinga2::feature::livestatus(
-  $ensure          = present,
-  $socket_type     = 'unix',
-  $bind_host       = '127.0.0.1',
-  $bind_port       = '6558',
-  $socket_path     = "${::icinga2::params::run_dir}/cmd/livestatus",
-  $compat_log_path = "${::icinga2::params::log_dir}/compat",
+  Enum['absent', 'present']           $ensure          = present,
+  Optional[Enum['tcp', 'unix']]       $socket_type     = undef,
+  Optional[String]                    $bind_host       = undef,
+  Optional[Integer[1,65535]]          $bind_port       = undef,
+  Optional[Stdlib::Absolutepath]      $socket_path     = undef,
+  Optional[Stdlib::Absolutepath]      $compat_log_path = undef,
 ) {
 
   if ! defined(Class['::icinga2']) {
@@ -48,16 +48,6 @@ class icinga2::feature::livestatus(
     'present' => Class['::icinga2::service'],
     default   => undef,
   }
-
-  # validation
-  validate_re($ensure, [ '^present$', '^absent$' ],
-    "${ensure} isn't supported. Valid values are 'present' and 'absent'.")
-  validate_re($socket_type, [ '^unix$', '^tcp$' ],
-    "${socket_type} isn't supported. Valid values are 'unix' and 'tcp'.")
-  validate_string($bind_host)
-  validate_integer($bind_port)
-  validate_absolute_path($socket_path)
-  validate_absolute_path($compat_log_path)
 
   # compose attributes
   $attrs = {
@@ -75,7 +65,7 @@ class icinga2::feature::livestatus(
     attrs       => delete_undef_values($attrs),
     attrs_list  => keys($attrs),
     target      => "${conf_dir}/features-available/livestatus.conf",
-    order       => '10',
+    order       => 10,
     notify      => $_notify,
   }
 

@@ -8,24 +8,24 @@
 #   Set to present enables the feature gelf, absent disables it. Defaults to present.
 #
 # [*host*]
-#   GELF receiver host address. Defaults to '127.0.0.1'.
+#   GELF receiver host address. Icinga defaults to '127.0.0.1'.
 #
 # [*port*]
-#   GELF receiver port. Defaults to 12201.
+#   GELF receiver port. Icinga defaults to '12201'.
 #
 # [*source*]
-#   Source name for this instance. Defaults to icinga2.
+#   Source name for this instance. Icinga defaults to 'icinga2'.
 #
 # [*enable_send_perfdata*]
-#   Enable performance data for 'CHECK RESULT' events. Defaults to false.
+#   Enable performance data for 'CHECK RESULT' events. Icinga defaults to false.
 #
 #
 class icinga2::feature::gelf(
-  $ensure               = present,
-  $host                 = '127.0.0.1',
-  $port                 = '12201',
-  $source               = 'icinga2',
-  $enable_send_perfdata = false,
+  Enum['absent', 'present']      $ensure               = present,
+  Optional[String]               $host                 = undef,
+  Optional[Integer[1,65535]]     $port                 = undef,
+  Optional[String]               $source               = undef,
+  Optional[Boolean]              $enable_send_perfdata = undef,
 ) {
 
   if ! defined(Class['::icinga2']) {
@@ -37,14 +37,6 @@ class icinga2::feature::gelf(
     'present' => Class['::icinga2::service'],
     default   => undef,
   }
-
-  # validation
-  validate_re($ensure, [ '^present$', '^absent$' ],
-    "${ensure} isn't supported. Valid values are 'present' and 'absent'.")
-  validate_string($host)
-  validate_integer($port)
-  validate_string($source)
-  validate_bool($enable_send_perfdata)
 
   # compose attributes
   $attrs = {
@@ -61,7 +53,7 @@ class icinga2::feature::gelf(
     attrs       => delete_undef_values($attrs),
     attrs_list  => keys($attrs),
     target      => "${conf_dir}/features-available/gelf.conf",
-    order       => '10',
+    order       => 10,
     notify      => $_notify,
   }
 
