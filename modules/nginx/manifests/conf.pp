@@ -1,9 +1,9 @@
 # nginx::conf
 #
 define nginx::conf(
-    $ensure   = present,
-    $content  = undef,
-    $source   = undef,
+    Stdlib::Ensure $ensure   = present,
+    Optional[String] $content  = undef,
+    Stdlib::Sourceurl $source   = undef,
 ) {
     include ::nginx
 
