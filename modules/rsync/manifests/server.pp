@@ -18,7 +18,7 @@ class rsync::server(
     String $log_file   = 'UNSET',
     String $use_chroot = 'yes',
     Optional[Array] $rsync_opts = [],
-    Optional[Array] $rsyncd_conf = {},
+    Optional[Hash] $rsyncd_conf = {},
 ) inherits rsync {
 
   $rsync_fragments = '/etc/rsync.d'
