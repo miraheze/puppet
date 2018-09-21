@@ -1,8 +1,7 @@
 # class: users::hashuser
 define users::hashuser(
-    $phash={},
-)
-{
+    Hash $phash = {},
+) {
 
     $uinfo = $phash['users'][$name]
 
