@@ -17,27 +17,6 @@ class matomo {
         user        => 'www-data',
         require     => Git::Clone['matomo'],
     }
-
-    if !defined(Apt::Source['php72_apt']) {
-        apt::key { 'php72_key':
-          id     => 'DF3D585DB8F0EB658690A554AC0E47584A7A714D',
-          source => 'https://packages.sury.org/php/apt.gpg',
-        }
-
-        apt::source { 'php72_apt':
-          location => 'https://packages.sury.org/php/',
-          release  => "${::lsbdistcodename}",
-          repos    => 'main',
-          notify   => Exec['apt_update_php'],
-        }
-
-        # First installs can trip without this
-        exec {'apt_update_php':
-            command     => '/usr/bin/apt-get update',
-            refreshonly => true,
-            logoutput   => true,
-        }
-    }
     
     include ::php
 
