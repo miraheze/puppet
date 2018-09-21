@@ -11,7 +11,7 @@
 #
 define git::clone(
     String  $directory,
-    String  $origin = undef,
+    String  $origin = '',
     Strign  $branch = '',
     String  $ssh = '',
     String  $ensure = 'present',
