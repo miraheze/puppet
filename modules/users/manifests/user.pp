@@ -1,13 +1,13 @@
 # class: users::user
 define users::user(
     Stdlib::Ensure $ensure     = 'present',
-    String $uid        = undef,
-    String $gid        = undef,
+    Optional[Integer] $uid        = undef,
+    Optional[String] $gid        = undef,
     Array $groups     = [],
     String $comment    = '',
     String $shell      = '/bin/bash',
-    Hash $privileges = undef,
-    String $ssh_keys   = [],
+    Optional[Hash] $privileges = undef,
+    Array $ssh_keys   = [],
 ) {
     validate_ensure($ensure)
 
