@@ -20,11 +20,12 @@
 #  include postgresql::dirs
 #
 class postgresql::dirs(
-    $ensure    = 'present',
-    $root_dir  = '/var/lib/postgresql',
-    $pgversion = '9.4',
+    Stdlib::Ensure $ensure    = 'present',
+    String $root_dir  = '/var/lib/postgresql',
+    String $pgversion = '9.6',
 ) {
     $data_dir = "${root_dir}/${pgversion}/main"
+
     file {  [ $root_dir, "${root_dir}/${pgversion}" ] :
         ensure => ensure_directory($ensure),
         owner  => 'postgres',
