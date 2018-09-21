@@ -4,9 +4,9 @@
 # It basically ensure consistency and that we don't risk things.
 #
 define logrotate::conf (
-    $ensure = present,
-    $source = undef,
-    $content = undef,
+    Stdlib::Ensure $ensure = present,
+    Stdlib::Sourceurl $source = undef,
+    Optional[String] $content = undef,
 ) {
 
     file { "/etc/logrotate.d/${title}":
