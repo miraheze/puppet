@@ -4,15 +4,15 @@
 # This assumes you're using
 #
 class puppetdb(
-    $db_rw_host = hiera('puppetdb::db_rw_host', 'localhost'),
-    $db_ro_host = hiera('puppetdb::db_ro_host', undef),
-    $db_user = hiera('puppetdb::db_user', 'puppetdb'),
-    $db_password = hiera('puppetdb::db_password'),
-    $perform_gc = hiera('puppetdb::perform_gc', true),
-    $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx160m'),
-    $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
-    $command_processing_threads = hiera('puppetdb::command_processing_threads', 3),
-    $db_ssl = hiera('puppetdb::db_ssl', true),
+    String $db_rw_host = hiera('puppetdb::db_rw_host', 'localhost'),
+    String $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx160m'),
+    String $db_user = hiera('puppetdb::db_user', 'puppetdb'),
+    Boolean $perform_gc = hiera('puppetdb::perform_gc', true),
+    Integer $command_processing_threads = hiera('puppetdb::command_processing_threads', 3),
+    Optional[String] $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
+    Optional[String] $db_ro_host = hiera('puppetdb::db_ro_host', undef),
+    Optional[String] $db_password = hiera('puppetdb::db_password', undef),
+    Boolean $db_ssl = hiera('puppetdb::db_ssl', true),
 ) {
 
     package { 'default-jdk':
