@@ -1,10 +1,10 @@
 # define resource handler, same as current manual cert handler
 define ssl::hiera::certs (
-    $url,
-    $ca,
-    $hsts     = 'weak',
-    $redirect = undef,
-    $sslname  = undef,
+    String $url,
+    String $ca,
+    String $hsts     = 'weak',
+    Optional[String] $redirect = undef,
+    Optional[String] $sslname  = undef,
 ) {
     if $sslname == undef {
         $sslurl = $url
