@@ -1,9 +1,9 @@
 define salt::master_environment(
-    $salt_state_roots,
-    $salt_file_roots,
-    $salt_pillar_roots,
-    $salt_module_roots,
-    $salt_returner_roots,
+    Array $salt_state_roots,
+    Array $salt_file_roots,
+    Array $salt_pillar_roots,
+    Array $salt_module_roots,
+    Array $salt_returner_roots,
 ){
 
     if ! defined(File[$salt_state_roots[$title]]) {
