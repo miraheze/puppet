@@ -12,7 +12,7 @@
 define git::clone(
     String  $directory,
     String  $origin = '',
-    Strign  $branch = '',
+    String  $branch = '',
     String  $ssh = '',
     String  $ensure = 'present',
     String  $owner = 'root',
