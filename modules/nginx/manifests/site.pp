@@ -1,9 +1,9 @@
 # nginx::site
 define nginx::site(
-    $ensure   = present,
-    $content  = undef,
-    $source   = undef,
-    $monitor  = true,
+    Stdlib::Ensure $ensure   = present,
+    Optional[String] $content  = undef,
+    Stdlib::Sourceurl $source   = undef,
+    Boolean $monitor  = true,
 ) {
     include ::nginx
 
