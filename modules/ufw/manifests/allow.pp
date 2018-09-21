@@ -1,9 +1,9 @@
 # Define ufw::allow
 define ufw::allow(
-    $proto='tcp',
-    $port='all',
-    $ip='',
-    $from='any'
+    String $proto = 'tcp',
+    String $port = 'all',
+    String $ip = '',
+    String $from = 'any'
 ) {
 
     if $ip == '' {
