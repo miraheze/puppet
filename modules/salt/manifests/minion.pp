@@ -41,7 +41,7 @@ class salt::minion(
     String $master_finger,
     Optional[Boolean] $master_key = undef,
     String $id        = $::fqdn,
-    Array $grains    = {},
+    Hash $grains    = {},
 ) {
     $config = {
         id                  => $id,
