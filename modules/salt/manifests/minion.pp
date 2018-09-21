@@ -39,7 +39,7 @@
 class salt::minion(
     String $master,
     String $master_finger,
-    Optional[String] $master_key = undef,
+    Optional[Boolean] $master_key = undef,
     String $id        = $::fqdn,
     Array $grains    = {},
 ) {
