@@ -1,14 +1,12 @@
 # class: motd::script
 define motd::script(
-    $ensure    = present,
-    $priority  = 50,
-    $content   = undef,
-    $source    = undef,
+    Stdlib::Ensure $ensure    = present,
+    Integer[0, 99] $priority  = 50,
+    Optional[String] $content   = undef,
+    Stdlib::Sourceurl $source    = undef,
 ) {
     include ::motd
 
-    validate_ensure($ensure)
-    validate_numeric($priority, 99, 0)
     if $source == undef and $content == undef  { fail('you must provide either "source" or "content"') }
     if $source != undef and $content != undef  { fail('"source" and "content" are mutually exclusive') }
 
