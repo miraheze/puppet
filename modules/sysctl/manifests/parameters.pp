@@ -30,9 +30,9 @@
 #  }
 #
 define sysctl::parameters(
-    $values,
-    $ensure   = present,
-    $priority = 70
+    Hash $values,
+    Stdlib::Ensure $ensure   = present,
+    Integer[0, 99] $priority = 70
 ) {
     sysctl::conffile { $title:
         ensure   => $ensure,
