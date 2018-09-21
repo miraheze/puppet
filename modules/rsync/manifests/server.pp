@@ -11,14 +11,14 @@
 # into the WMF puppet repository. - otto
 
 class rsync::server(
-  $use_xinetd = false,  # this parameter should not be used.  xinetd is not available.
-  $address    = '0.0.0.0',
-  $timeout    = '300',
-  $motd_file  = 'UNSET',
-  $log_file   = 'UNSET',
-  $use_chroot = 'yes',
-  $rsync_opts = [],
-  $rsyncd_conf = {},
+    Boolean $use_xinetd = false,  # this parameter should not be used.  xinetd is not available.
+    String $address    = '0.0.0.0',
+    String $timeout    = '300',
+    String $motd_file  = 'UNSET',
+    String $log_file   = 'UNSET',
+    String $use_chroot = 'yes',
+    Optional[Array] $rsync_opts = [],
+    Optional[Array] $rsyncd_conf = {},
 ) inherits rsync {
 
   $rsync_fragments = '/etc/rsync.d'
