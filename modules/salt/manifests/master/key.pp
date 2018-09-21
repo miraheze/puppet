@@ -1,5 +1,5 @@
 class salt::master::key(
-    $salt_master_pubkey_type = 'prod',
+    String $salt_master_pubkey_type = 'prod',
 ) {
     $salt_master_pubkey = {
       'prod' => "-----BEGIN PUBLIC KEY-----
