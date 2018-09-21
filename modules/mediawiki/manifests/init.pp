@@ -1,7 +1,7 @@
 # class: mediawiki
 class mediawiki(
-    String $branch = undef,
-    String $branch_mw_config = undef,
+    Optional[String] $branch = undef,
+    Optional[String] $branch_mw_config = undef,
     Boolean $php7_2 = hiera('mediawiki::use_php_7_2', false),
     Optional[Boolean] $use_memcached = undef,
 ) {
