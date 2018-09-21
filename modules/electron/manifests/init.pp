@@ -1,7 +1,7 @@
 # == Class: electron
 
 class electron (
-    $access_key = 'secret',
+    String $access_key = 'secret',
 ) {
 
     include nodejs
