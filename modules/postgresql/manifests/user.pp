@@ -25,16 +25,16 @@
 # Based upon https://github.com/uggedal/puppet-module-postgresql
 #
 define postgresql::user(
-    $user,
-    $password = undef,
-    $database = 'template1',
-    $type = 'host',
-    $method = 'md5',
-    $cidr = '127.0.0.1/32',
-    $attrs = '',
-    $master = true,
-    $ensure = 'present'
-    ) {
+    String $user,
+    Optional[String] $password = undef,
+    String $database = 'template1',
+    String $type = 'host',
+    String $method = 'md5',
+    String $cidr = '127.0.0.1/32',
+    String $attrs = '',
+    Boolean $master = true,
+    Stdlib::Ensure $ensure = 'present'
+) {
 
     $pgversion = $::lsbdistcodename ? {
         'stretch' => '9.6',

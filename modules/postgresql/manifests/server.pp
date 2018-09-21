@@ -23,13 +23,13 @@
 #  include postgresql::server
 #
 class postgresql::server(
-    $ensure           = 'present',
-    $includes         = [],
-    $listen_addresses = '*',
-    $port             = '5432',
-    $root_dir         = '/var/lib/postgresql',
-    $use_ssl          = false,
-    $pgversion        = '9.4',
+    Stdlib::Ensure $ensure = 'present',
+    Optional[Array] $includes = [],
+    String $listen_addresses = '*',
+    String $port             = '5432',
+    String $root_dir         = '/var/lib/postgresql',
+    Boolean $use_ssl          = false,
+    String $pgversion        = '9.6',
 ) {
 
     package { [
@@ -49,15 +49,9 @@ class postgresql::server(
         ensure    => $ensure,
         pgversion => $pgversion,
         root_dir  => $root_dir,
-    }
+	}
 
     $data_dir = "${root_dir}/${pgversion}/main"
-
-    if $pgversion == '9.4' {
-      $service_name = "postgresql@${pgversion}-main"
-    } else {
-      $service_name = 'postgresql'
-    }
 
     exec { 'pgreload':
         command     => "/usr/bin/pg_ctlcluster ${pgversion} main reload",
@@ -81,7 +75,7 @@ class postgresql::server(
             group   => 'postgres',
             mode    => '0600',
             require => File["/etc/postgresql/${pgversion}/main/ssl"],
-	}
+		}
 
         file { "/etc/postgresql/${pgversion}/main/ssl.conf":
             ensure  => $ensure,
@@ -89,12 +83,12 @@ class postgresql::server(
             owner   => 'root',
             group   => 'root',
             mode    => '0444',
-            before  => Service[$service_name],
+            before  => Service['postgresql'],
             require => File["/etc/postgresql/${pgversion}/main/ssl/wildcard.miraheze.org.key"],
         }
     }
 
-    service { $service_name:
+    service { 'postgresql':
         ensure  => ensure_service($ensure),
     }
 

@@ -1,8 +1,8 @@
 # Create users for PostgreSQL Replication / Monitoring
 # This inner define should probably be replaced by iterator once we activate future parser
 define postgresql::slave_users(
-    $ip_address,
-    $replication_pass,
+    String $ip_address,
+    String $replication_pass,
 ) {
     ::postgresql::user { "replication@${title}":
         user     => 'replication',
