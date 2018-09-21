@@ -1,9 +1,8 @@
 # class: users::groupmembers
 define users::groupmembers(
-    $phash={},
-    $default_member='root',
-)
-    {
+    Hash $phash = {},
+    String $default_member = 'root',
+) {
 
     $gdata = $phash['groups'][$name]
     $members = $gdata['members']
