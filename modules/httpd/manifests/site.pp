@@ -35,11 +35,11 @@
 #  }
 #
 define httpd::site(
-    $ensure   = 'present',
-    $priority = 50,
-    $content  = undef,
-    $source   = undef,
-    $monitor   = false,
+    Stdlib::Ensure $ensure   = 'present',
+    Integer[0,99] $priority = 50,
+    Optional[String] $content  = undef,
+    Stdlib::Sourceurl $source   = undef,
+    Boolean $monitor   = false,
 ) {
 
     httpd::conf { $name:

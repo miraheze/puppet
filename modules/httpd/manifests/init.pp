@@ -1,8 +1,8 @@
 class httpd(
-    $modules = [],
-    $legacy_compat = present,
-    $period = 'daily',
-    $rotate = 30,
+    Array[String] $modules = [],
+    Stdlib::Ensure $legacy_compat = present,
+    Enum['daily', 'weekly'] $period = 'daily',
+    Integer $rotate = 30,
 ) {
     # Package and service. Links is needed for the status page below
     require_package('apache2', 'links')
@@ -25,55 +25,22 @@ class httpd(
     }
 
     # Ensure the directories for apache config files are in place.
-    file { '/etc/apache2/conf-available':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
-    file { '/etc/apache2/conf-enabled':
-        ensure  => directory,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        recurse => true,
-        purge   => true,
-        notify  => Service['apache2'],
-    }
-
-    file { '/etc/apache2/env-available':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
-    file { '/etc/apache2/env-enabled':
-        ensure  => directory,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        recurse => true,
-        purge   => true,
-        notify  => Service['apache2'],
-    }
-
-    file { '/etc/apache2/sites-available':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
-    file { '/etc/apache2/sites-enabled':
-        ensure  => directory,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        recurse => true,
-        purge   => true,
-        notify  => Service['apache2'],
+    ['conf', 'env', 'sites'].each |$conf_type| {
+        file { "/etc/apache2/${conf_type}-available":
+            ensure => directory,
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0755',
+        }
+        file { "/etc/apache2/${conf_type}-enabled":
+            ensure  => directory,
+            owner   => 'root',
+            group   => 'root',
+            mode    => '0755',
+            recurse => true,
+            purge   => true,
+            notify  => Service['apache2'],
+        }
     }
 
     file_line { 'load_env_enabled':

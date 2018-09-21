@@ -45,13 +45,13 @@
 #  }
 #
 define httpd::conf(
-    $ensure = present,
-    $conf_type = 'conf',
-    $priority  = 50,
-    $content   = undef,
-    $source    = undef,
-    $replaces  = undef,
-    $monitor   = false,
+    Stdlib::Ensure $ensure = present,
+    Enum['conf', 'env', 'sites'] $conf_type = 'conf',
+    Integer[0, 99] $priority  = 50,
+    Optional[String] $content   = undef,
+    Stdlib::Sourceurl $source    = undef,
+    Optional[String] $replaces  = undef,
+    Boolean $monitor   = false,
 ) {
     require_package('apache2')
     if $source == undef and $content == undef and $ensure == 'present' {
