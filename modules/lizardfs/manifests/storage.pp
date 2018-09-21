@@ -1,10 +1,8 @@
 # == Class: lizardfs::storage
 
 class lizardfs::storage(
-    # misc4 ip
-    $master_server = hiera('lizardfs_master_server', '185.52.3.121'),
+    String $master_server = hiera('lizardfs_master_server', '185.52.3.121'),
 ) {
-
     require_package('lizardfs-chunkserver')
 
     file { '/srv/mediawiki-static':
@@ -29,7 +27,8 @@ class lizardfs::storage(
     }
     
     service { 'lizardfs-chunkserver':
-        ensure => running,
+        ensure  => running,
+        require => Package['lizardfs-chunkserver'],
     }
 
     $module_path = get_module_path($module_name)
