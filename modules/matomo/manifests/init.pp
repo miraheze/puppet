@@ -6,7 +6,7 @@ class matomo {
         branch             => '3.6.0', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
-        group               => 'www-data',
+        group              => 'www-data',
     }
 
     exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
