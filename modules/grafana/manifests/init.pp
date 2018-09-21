@@ -1,7 +1,8 @@
 # class: grafana
-class grafana {
-
-    $grafana_password = hiera('passwords::db::grafana')
+class grafana (
+    String $grafana_password = hiera('passwords::db::grafana'),
+    String $mail_password = hiera('passwords::mail::noreply'),
+) {
 
     include ssl::wildcard
 
@@ -27,8 +28,6 @@ class grafana {
     file { '/etc/apache2/sites-enabled/apache.conf':
         ensure => absent,
     }
-    
-    $mail_password = hiera('passwords::mail::noreply')
 
     file { '/etc/grafana/grafana.ini':
         content => template('grafana/grafana.ini.erb'),
