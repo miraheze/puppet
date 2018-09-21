@@ -1,8 +1,8 @@
 # class: users::group
 define users::group(
-    $ensure         = 'present',
-    $gid            = undef,
-    $privileges     = [],
+    String $ensure         = 'present',
+    Optional[String] $gid            = undef,
+    Array $privileges     = [],
 )
     {
 
