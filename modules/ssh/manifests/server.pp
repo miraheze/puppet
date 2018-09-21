@@ -1,8 +1,8 @@
 # class: ssh::server
 class ssh::server (
-    $listen_port = '22',
-    $permit_root = false,
-    $authorized_keys_file = undef,
+    String $listen_port = '22',
+    Boolean $permit_root = false,
+    Optional[String] $authorized_keys_file = undef,
 ) {
     package { 'openssh-server':
         ensure => latest;
