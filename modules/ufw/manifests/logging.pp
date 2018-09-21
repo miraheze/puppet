@@ -1,6 +1,6 @@
 # Define ufw::logging
 define ufw::logging(
-    $level='low',
+    String $level = 'low',
 ) {
     exec { "ufw-logging-${level}":
         command  => "ufw logging ${level}",

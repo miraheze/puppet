@@ -17,7 +17,7 @@
 # }
 #
 class ufw(
-    $forward  = 'DROP',
+    String $forward  = 'DROP',
 ) {
 
     package { 'ufw':
