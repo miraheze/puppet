@@ -4,7 +4,7 @@ class redis (
     String $maxmemory = '512mb',
     String $maxmemory_policy = 'volatile-lfu',
     Integer $maxmemory_samples = 5,
-    Boolean $password = false,
+    Variant[Boolean, String] $password = false,
 ) {
     apt::pin { 'debian_stretch_backports_redis':
         priority   => 740,
