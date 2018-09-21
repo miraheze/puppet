@@ -24,8 +24,6 @@ define postgresql::db(
     Stdlib::Ensure $ensure    = present,
     String $owner     = 'postgres',
 ) {
-    validate_ensure($ensure)
-
     require ::postgresql::server
 
     $name_safe = regsubst($title, '[\W_]', '_', 'G')
