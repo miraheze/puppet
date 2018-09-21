@@ -25,44 +25,44 @@
 #  } # rsync
 #
 define rsync::get (
-  $source,
-  $path = undef,
-  $user = undef,
-  $purge = undef,
-  $exclude = undef,
-  $keyfile = undef,
-  $timeout = '900'
+    Stdlib::Sourceurl $source,
+    Optional[String]  $path = undef,
+    Optional[String] $user = undef,
+    Optional[Boolean] $purge = undef,
+    Optional[String] $exclude = undef,
+    Optional[String] $keyfile = undef,
+    Integer $timeout = '900'
 ) {
 
   if $keyfile {
-    $mykeyfile = $keyfile
+        $mykeyfile = $keyfile
   } else {
-    $mykeyfile = "/home/${user}/.ssh/id_rsa"
+        $mykeyfile = "/home/${user}/.ssh/id_rsa"
   }
 
   if $user {
-    $myuser = "-e 'ssh -i ${mykeyfile} -l ${user}' ${user}@"
+        $myuser = "-e 'ssh -i ${mykeyfile} -l ${user}' ${user}@"
   }
   else {
-    $myuser = ''
+        $myuser = ''
   }
 
   if $purge {
-    $mypurge = '--delete'
+        $mypurge = '--delete'
   } else {
-      $mypurge = ''
+        $mypurge = ''
   }
 
   if $exclude {
-    $myexclude = "--exclude=${exclude}"
+        $myexclude = "--exclude=${exclude}"
   } else {
-      $myexclude = ''
+        $myexclude = ''
   }
 
   if $path {
-    $mypath = $path
+        $mypath = $path
   } else {
-    $mypath = $name
+        $mypath = $name
   }
 
   $rsync_options = "-a ${mypurge} ${myexclude} ${myuser}${source} ${mypath}"

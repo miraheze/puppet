@@ -21,12 +21,12 @@
 # [*ensure*] The usual meaning, set to absent to clean up when done
 #
 define rsync::quickdatacopy(
-  $source_host,
-  $dest_host,
-  $module_path,
-  $file_path = '*',
-  $auto_sync = true,
-  $ensure = present,
+  String $source_host,
+  String $dest_host,
+  String $module_path,
+  String $file_path = '*',
+  Boolean $auto_sync = true,
+  Stdlib::Ensure $ensure = present,
   ) {
 
       if $source_host == $::fqdn {

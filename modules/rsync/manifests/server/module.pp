@@ -33,22 +33,23 @@
 #   }
 #
 define rsync::server::module (
-  $path,
-  $ensure          = present,
-  $comment         = undef,
-  $read_only       = 'yes',
-  $write_only      = 'no',
-  $list            = 'yes',
-  $uid             = '0',
-  $gid             = '0',
-  $incoming_chmod  = '0644',
-  $outgoing_chmod  = '0644',
-  $max_connections = '0',
-  $lock_file       = '/var/run/rsyncd.lock',
-  $secrets_file    = undef,
-  $auth_users      = undef,
-  $hosts_allow     = undef,
-  $hosts_deny      = undef)  {
+    String $path,
+    Stdlib::Ensure $ensure          = present,
+    String $comment         = undef,
+    String $read_only       = 'yes',
+    String $write_only      = 'no',
+    String $list            = 'yes',
+    String $uid             = '0',
+    String $gid             = '0',
+    String $incoming_chmod  = '0644',
+    String $outgoing_chmod  = '0644',
+    String $max_connections = '0',
+    String $lock_file       = '/var/run/rsyncd.lock',
+    Optional[String] $secrets_file    = undef,
+    Optional[String] $auth_users      = undef,
+    Optional[String] $hosts_allow     = undef,
+    Optional[String] $hosts_deny      = undef
+)  {
 
   file { "${rsync::server::rsync_fragments}/frag-${name}":
     ensure  => $ensure,
