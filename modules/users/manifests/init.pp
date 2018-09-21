@@ -1,9 +1,9 @@
 # class: user
+
 class users(
-    $groups=[],
-    $always_groups=['ops'],
-)
-{
+    hash $groups = [],
+    Array[String] $always_groups = ['ops'],
+) {
     $module_path = get_module_path($module_name)
     $data = loadyaml("${module_path}/data/data.yaml")
     $uinfo = $data['users']
