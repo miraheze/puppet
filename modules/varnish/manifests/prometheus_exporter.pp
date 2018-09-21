@@ -1,5 +1,5 @@
 class varnish::prometheus_exporter (
-    $listen_port = '9131',
+    String $listen_port = '9131',
 ) {
     require_package('prometheus-varnish-exporter')
 
