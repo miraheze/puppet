@@ -1,7 +1,7 @@
 # class: user
 
 class users(
-    hash $groups = [],
+    Array $groups = [],
     Array[String] $always_groups = ['ops'],
 ) {
     $module_path = get_module_path($module_name)
