@@ -1,7 +1,7 @@
 # class: user
 
 class users(
-    Array $groups = [],
+    Varient[Array,String] $groups = [],
     Array[String] $always_groups = ['ops'],
 ) {
     $module_path = get_module_path($module_name)
