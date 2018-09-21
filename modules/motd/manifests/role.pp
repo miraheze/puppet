@@ -1,7 +1,7 @@
 # class: motd::role
 define motd::role(
-    $ensure      = present,
-    $description = undef,
+    Stdlib::Ensure $ensure      = present,
+    Optional[String] $description = undef,
 ) {
     $message = $description ? {
         undef   => "${::hostname} is ${title}",
