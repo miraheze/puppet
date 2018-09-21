@@ -41,19 +41,13 @@
 #
 
 define lizardfs::client(
-    $lizardfs_port = 9421,
-    $lizardfs_master = hiera('lizardfs_master_server', '185.52.3.121'),
-    $mountpoint = undef,
-    $options = undef,
-    $ensure = 'mounted',
-    $create_mountpoint = false,
+    Integer $lizardfs_port = 9421,
+    String $lizardfs_master = hiera('lizardfs_master_server', '185.52.3.121'),
+    Optional[String] $mountpoint = undef,
+    Optional[String] $options = undef,
+    String $ensure = 'mounted',
+    Boolean $create_mountpoint = false,
 ) {
-    validate_integer($lizardfs_port)
-    validate_string($lizardfs_master)
-    validate_string($mountpoint)
-    validate_string($options)
-    validate_string($ensure)
-
     if $ensure == 'absent' {
         mount { $mountpoint:
           ensure => 'absent',
@@ -89,7 +83,6 @@ define lizardfs::client(
           fstype   => 'fuse',
           options  => $mount_options,
           remounts => false,
-          # atboot   => true,
           require  => Package['lizardfs-client'],
         }
     }
