@@ -1,6 +1,6 @@
 class httpd(
     Array[String] $modules = [],
-    Wmflib::Ensure $legacy_compat = present,
+    Stdlib::Ensure $legacy_compat = present,
     Enum['daily', 'weekly'] $period = 'daily',
     Integer $rotate = 30,
 ) {
