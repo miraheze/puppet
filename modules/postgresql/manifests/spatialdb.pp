@@ -15,8 +15,8 @@
 #  postgresql::spatialdb { 'mydb': }
 #
 define postgresql::spatialdb(
-    $ensure = 'present',
-    $owner  = 'postgres',
+    Stdlib::Ensure $ensure = 'present',
+    String $owner  = 'postgres',
 ) {
 
     require ::postgresql::postgis
