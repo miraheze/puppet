@@ -1,11 +1,10 @@
 # class: users::key
 define users::key(
-  $ensure  = present,
-  $user    = $title,
-  $skey    = undef,
-  $source  = undef,
-  $content = undef,
-
+  Stdlib::Ensure $ensure  = present,
+  String $user    = $title,
+  Optional[Boolean] $skey    = undef,
+  Stdlib::Sourceurl $source  = undef,
+  Optional[String] $content = undef,
 ) {
     if $skey {
         if !defined(File["/etc/ssh/userkeys/${user}.d/"]) {

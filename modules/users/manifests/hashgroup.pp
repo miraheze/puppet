@@ -1,8 +1,7 @@
 # class: user::hashgroup
 define users::hashgroup(
-    $phash={},
-)
-{
+    Hash $phash = {},
+) {
     #explicit error as otherwise it goes forward later
     #complaining of 'invalid hash' which is hard to track down
     if !has_key($phash['groups'], $name) {
