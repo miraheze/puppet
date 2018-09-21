@@ -1,14 +1,14 @@
 # class: mariadb::config
 class mariadb::config(
-    $config                         = undef,
-    $password                       = undef,
-    $datadir                        = '/srv/mariadb',
-    $tmpdir                         = '/tmp',
-    $innodb_buffer_pool_instances   = 1,
-    $innodb_buffer_pool_size        = '768M',
-    $server_role                    = 'master',
-    $max_connections                = 90,
-    $version_102                    = undef,
+    String $config                        = undef,
+    String $password                      = undef,
+    String $datadir                       = '/srv/mariadb',
+    String $tmpdir                        = '/tmp',
+    Integer $innodb_buffer_pool_instances = 1,
+    String $innodb_buffer_pool_size       = '768M',
+    String $server_role                   = 'master',
+    Integer $max_connections              = 90,
+    Optional[Boolean] $version_102        = undef,
 ) {
     $server_id = inline_template(
         "<%= @ipaddress.split('.').inject(0)\
