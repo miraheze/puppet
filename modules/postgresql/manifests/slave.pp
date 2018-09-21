@@ -27,16 +27,16 @@
 #  }
 #
 class postgresql::slave(
-    $master_server,
-    $replication_pass,
-    $includes=[],
-    $ensure='present',
-    $root_dir='/var/lib/postgresql',
-    $use_ssl=false,
+    String $master_server,
+    String $replication_pass,
+    Optional[Array] $includes = [],
+    Stdlib::Ensure $ensure = 'present',
+    String $root_dir='/var/lib/postgresql',
+    Boolean $use_ssl = false,
 ) {
 
-    # use 9.6 on stretch and 9.4 on jessie.
-    $pgversion = hiera('postgresql::user::pg_version', '9.4')
+    # use 9.6 on stretch
+    $pgversion = hiera('postgresql::user::pg_version', '9.6')
 
     $data_dir = "${root_dir}/${pgversion}/main"
 
