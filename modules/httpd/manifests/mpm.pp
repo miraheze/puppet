@@ -20,8 +20,8 @@
 #   Defaults to undef.
 #
 class httpd::mpm(
-    $mpm = 'worker',
-    $source = undef,
+    Enum['prefork', 'event', 'worker'] $mpm = 'worker',
+    Optional[String] $source = undef,
 ) {
     require_package('apache2')
     $selected_mod = "mpm_${mpm}"
