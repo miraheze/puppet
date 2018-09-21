@@ -10,18 +10,18 @@
 # }
 #
 define git::clone(
-    $directory,
-    $origin=undef,
-    $branch='',
-    $ssh='',
-    $ensure='present',
-    $owner='root',
-    $group='root',
-    $timeout='600',
-    $depth='full',
-    $recurse_submodules=false,
-    $mode='0755',
-    $umask='022',
+    String  $directory,
+    String  $origin = undef,
+    Strign  $branch = '',
+    String  $ssh = '',
+    String  $ensure = 'present',
+    String  $owner = 'root',
+    String  $group = 'root',
+    String  $timeout = '600',
+    String  $depth = 'full',
+    Boolean $recurse_submodules=false,
+    String  $mode = '0755',
+    String  $umask = '022',
 ) {
 
     case $ensure {
