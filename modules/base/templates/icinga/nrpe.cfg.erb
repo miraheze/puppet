@@ -19,7 +19,6 @@ command[check_load]=/usr/lib/nagios/plugins/check_load -w <%= scope.lookupvar(':
 command[check_puppet_run]=/usr/bin/sudo /usr/lib/nagios/plugins/check_puppet_run -w 3600 -c 43200
 command[check_varnishbackends]=/usr/bin/sudo /usr/lib/nagios/plugins/check_varnishbackends
 command[check_nginx_errorrate]=/usr/bin/sudo /usr/lib/nagios/plugins/check_nginx_errorrate
-command[check_php_fpm_5]=/usr/lib/nagios/plugins/check_procs -C php5-fpm -c 1:
 command[check_php_fpm_7]=/usr/lib/nagios/plugins/check_procs -C php-fpm7.0 -c 1:
 command[check_php_fpm_7_2]=/usr/lib/nagios/plugins/check_procs -C php-fpm7.2 -c 1:
 command[check_jobrunner]=/usr/lib/nagios/plugins/check_procs -a redisJobRunnerService -c 1:1
