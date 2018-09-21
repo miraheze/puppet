@@ -2,38 +2,16 @@
 class dns {
     include ::apt
 
-    if os_version('debian jessie') {
-        apt::source { 'debian_stretch':
-            comment  => 'Debian Stretch APT',
-            location => 'http://ftp.debian.org/debian',
-            release  => 'stretch',
-            repos    => 'main contrib non-free',
-        }
-
-        # Workaround for https://github.com/miraheze/puppet/issues/70
-        apt::pin { 'debian_stable':
-            priority => 995,
-            release  => 'stable',
-        }
-
-        apt::pin { 'debian_stretch':
-            priority   => 740,
-            originator => 'Debian',
-            release    => 'stretch',
-            packages   => 'gdnsd',
-        }
-    } else {
-        apt::pin { 'debian_stretch_backports':
-            priority   => 740,
-            originator => 'Debian',
-            release    => 'stretch-backports',
-            packages   => 'gdnsd',
-        }
+    apt::pin { 'debian_stretch_backports':
+        priority   => 740,
+        originator => 'Debian',
+        release    => 'stretch-backports',
+        packages   => 'gdnsd',
     }
 
     package { 'gdnsd':
         ensure  => installed,
-        require => File['/etc/apt/preferences'],
+        require => Apt::Pin['debian_stretch_backports'],
     }
 
     service { 'gdnsd':
