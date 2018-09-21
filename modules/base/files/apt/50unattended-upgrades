@@ -1,5 +1,4 @@
 Unattended-Upgrade::Origins-Pattern {
-      "o=Debian,n=jessie,l=Debian-Security";
       "o=Debian,n=stretch,l=Debian-Security";
 };
 
