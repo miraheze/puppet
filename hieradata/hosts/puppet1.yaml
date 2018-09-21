@@ -2,9 +2,6 @@ users::groups:
   - puppet-users
 puppetmaster: true
 puppetmaster_hostname: puppet1.miraheze.org
-puppetmaster::dbserver: db2.miraheze.org
-puppetmaster::dbuser: puppet
-puppetmaster::dbname: puppet
 puppetmaster_version: 4
 puppetmaster::use_puppetdb: true
 puppetdb_host: puppet1.miraheze.org

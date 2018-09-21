@@ -1,10 +1,7 @@
 # class: puppetmaster
 class puppetmaster(
-    $dbserver     = undef,
-    $dbname       = undef,
-    $dbuser       = undef,
-    $use_puppetdb = hiera('puppetmaster::use_puppetdb', false),
-    $modules      = ['rewrite', 'ssl']
+    Boolean $use_puppetdb = hiera('puppetmaster::use_puppetdb', false),
+    Array $modules      = ['rewrite', 'ssl']
   ) {
     include ::httpd
 
