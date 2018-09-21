@@ -25,48 +25,50 @@
 #   first time.
 #
 # [*order*]
-#   String to set the position in the target file, sorted alpha numeric. Defaults to 10.
+#   String or integer to set the position in the target file, sorted alpha numeric. Defaults to 10.
 #
 # === Examples
 #
-# permissions = [ "*" ]
+# ::icinga2::object::apiuser { 'director':
+#   ensure      => present,
+#   password    => 'Eih5Weefoo2oa8sh',
+#   permissions => [ "*" ],
+#   target      => '/etc/icinga2/conf.d/api-users.conf',
+# }
 #
-# permissions = [ "objects/query/Host", "objects/query/Service" ]
+# ::icinga2::object::apiuser { 'icingaweb2':
+#   ensure      => present,
+#   password    => '12e2ef553068b519',
+#   permissions => [ 'status/query', 'actions/*', 'objects/modify/*', 'objects/query/*' ],
+#   target      => '/etc/icinga2/conf.d/api-users.conf',
+# }
 #
-# permissions = [
-#   {
-#     permission = "objects/query/Host"
-#     filter = {{ regex("^Linux", host.vars.os) }}
-#   },
-#   {
-#     permission = "objects/query/Service"
-#     filter = {{ regex("^Linux", service.vars.os) }}
-#   }
-# ]
+# ::icinga2::object::apiuser { 'read':
+#   ensure      => present,
+#   password    => 'read',
+#   permissions => [
+#     {
+#       permission => 'objects/query/Host',
+#       filter     => '{{ regex("^Linux", host.vars.os) }}'
+#     },
+#     { 
+#       permission => 'objects/query/Service',
+#       filter     => '{{ regex("^Linux", host.vars.os) }}'
+#     },
+#   ],
+#   target      => '/etc/icinga2/conf.d/api-users.conf',
+# }
 #
 #
 define icinga2::object::apiuser(
-  $target,
-  $permissions,
-  $ensure       = present,
-  $apiuser_name = $title,
-  $password     = undef,
-  $client_cn    = undef,
-  $order        = '30',
+  Stdlib::Absolutepath        $target,
+  Array                       $permissions,
+  Enum['absent', 'present']   $ensure       = present,
+  String                      $apiuser_name = $title,
+  Optional[String]            $password     = undef,
+  Optional[String]            $client_cn    = undef,
+  Variant[String, Integer]    $order        = 30,
 ) {
-
-  include ::icinga2::params
-
-  $conf_dir = $::icinga2::params::conf_dir
-
-  # validation
-  validate_string($apiuser_name)
-  validate_string($order)
-  validate_absolute_path($target)
-  validate_array($permissions)
-
-  if $password { validate_string($password) }
-  if $client_cn { validate_string($client_cn) }
 
   # compose the attributes
   $attrs = {

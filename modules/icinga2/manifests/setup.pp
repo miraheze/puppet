@@ -1,4 +1,4 @@
-# == Class: icinga2::setups
+# == Class: icinga2::setup
 #
 # This module installs and configures Icinga 2.
 #
@@ -41,10 +41,6 @@
 #   own directory. This directory must be managed outside of this module as file resource
 #   with tag icinga2::config::file.
 #
-# [*repositoryd*]
-#   `repository.d` is removed since Icinga 2 2.8.0, set to true (default) will handle the directory.
-#   This Parameter will change to false by default in v2.0.0 and will be removed in the future.
-#
 # All default parameters are set in the icinga2::params class. To get more technical information have a look into the
 # params.pp manifest.
 #
@@ -61,23 +57,21 @@
 # Declare icinga2 with all defaults. Keep in mind that your operating system may not have Icinga 2 in its package
 # repository.
 #
-# set hiera value 'icinga2_server' to true or 'icinga2_web'
-#
-#  include ::icinga2
+#  include ::icinga2::setup
 #
 # If you want to use the official Icinga Project repository, enable the manage_repo parameter. Note: On Windows only
 # chocolatey is supported as installation source. The Icinga Project does not offer a chocolatey repository, therefore
 # you will get a warning if you enable this parameter
 # on windows.
 #
-#  class { 'icinga2':
+#  class { 'icinga2::setup':
 #    manage_repo => true,
 #  }
 #
 # If you don't want to manage the Icinga 2 service with puppet, you can dissable this behaviour with the manage_service
 # parameter. When set to false no service refreshes will be triggered.
 #
-#  class { 'icinga2':
+#  class { 'icinga2::setup':
 #    manage_service => false,
 #  }
 #
@@ -88,7 +82,7 @@
 #    notifiy => Class['icinga2'],
 #  }
 #
-#  class { '::icinga2':
+#  class { '::icinga2::setup':
 #    manage_package => false,
 #  }
 #
@@ -98,7 +92,7 @@
 # you can use the icinga2::config::file tag on your file resource. This module collects all file resource types with
 # this tag and triggers a reload of Icinga 2 on a file change.
 #
-#  include ::icinga2
+#  include ::icinga2::setup
 #  file { '/etc/icinga2/conf.d/foo.conf':
 #    ensure => file,
 #    owner  => icinga,
@@ -111,7 +105,7 @@
 # value a hash, every key will be set as constant and assigned by it's value. Defaults
 # can be overwritten.
 #
-#  class { 'icinga2':
+#  class { 'icinga2::setup':
 #    ...
 #    constants   => {
 #      'key1'             => 'value1',
@@ -124,7 +118,7 @@
 # of the plugins parameter, i.e. for a master or satellite do the following and
 # disbale the load of the configuration in conf.d.
 #
-#  class { 'icinga':
+#  class { 'icinga::setup':
 #    ...
 #    plugins => [ 'plugins', 'contrib-plugins', 'nscp', 'windows-plugins' ],
 #    confd   => false,
@@ -137,43 +131,30 @@
 #     ensure => directory,
 #     tag    => 'icinga2::config::file'
 #   }
-#   class { 'icinga2':
+#   class { 'icinga2::setup':
 #     ...
 #     confd => 'local.d',
 #   }
 #
 #
-class icinga2::setup(
-  $ensure         = running,
-  $enable         = true,
-  $manage_package = true,
-  $manage_service = true,
-  $features       = $icinga2::params::default_features,
-  $purge_features = true,
-  $constants      = {},
-  $plugins        = $icinga2::params::plugins,
-  $confd          = true,
-  $repositoryd    = true,
+class icinga2::setup (
+  Enum['running', 'stopped'] $ensure         = running,
+  Boolean                    $enable         = true,
+  Boolean                    $manage_repo    = false,
+  Boolean                    $manage_package = true,
+  Boolean                    $manage_service = true,
+  Array                      $features       = $icinga2::params::default_features,
+  Boolean                    $purge_features = true,
+  Hash                       $constants      = {},
+  Array                      $plugins        = $icinga2::params::plugins,
+  Variant[Boolean, String]   $confd          = true,
 ) inherits ::icinga2::params {
 
-  validate_re($ensure, [ '^running$', '^stopped$' ],
-    "${ensure} isn't supported. Valid values are 'running' and 'stopped'.")
-  validate_bool($enable)
-  validate_bool($manage_package)
-  validate_bool($manage_service)
-  validate_array($features)
-  validate_bool($purge_features)
-  validate_hash($constants)
-  validate_array($plugins)
-  validate_bool($repositoryd)
-
   # validate confd, boolean or string
-  if is_bool($confd) {
+  if $confd =~ Boolean {
     if $confd { $_confd = 'conf.d' } else { $_confd = undef }
-  } elsif is_string($confd) {
-    $_confd = $confd
   } else {
-    fail('confd has to be a boolean or string')
+    $_confd = $confd
   }
 
   # merge constants with defaults
@@ -184,7 +165,7 @@ class icinga2::setup(
   ~> Class['::icinga2::service']
 
   anchor { '::icinga2::begin':
-    notify => Class['::icinga2::service']
+    notify => Class['::icinga2::service'],
   }
   -> class { '::icinga2::install': }
   -> File <| ensure == 'directory' and tag == 'icinga2::config::file' |>
@@ -192,7 +173,7 @@ class icinga2::setup(
   -> File <| ensure != 'directory' and tag == 'icinga2::config::file' |>
   ~> class { '::icinga2::service': }
   -> anchor { '::icinga2::end':
-    subscribe => Class['::icinga2::config']
+    subscribe => Class['::icinga2::config'],
   }
 
   include prefix($features, '::icinga2::feature::')

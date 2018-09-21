@@ -12,14 +12,14 @@
 #   first time.
 #
 # [*order*]
-#   String to set the position in the target file, sorted in alpha numeric order.
+#   String or integer to set the position in the target file, sorted in alpha numeric order. Defaults to `00`.
 #
 #
 define icinga2::config::fragment(
-  $content,
-  $target,
-  $code_name = $title,
-  $order     = '0',
+  String                       $content,
+  Stdlib::Absolutepath         $target,
+  String                       $code_name = $title,
+  Variant[String, Integer]     $order     = '00',
 ) {
 
   include ::icinga2::params
@@ -43,10 +43,6 @@ define icinga2::config::fragment(
       $_content = $content
     } # default
   }
-
-  validate_string($content)
-  validate_absolute_path($target)
-  validate_string($order)
 
   if !defined(Concat[$target]) {
     concat { $target:

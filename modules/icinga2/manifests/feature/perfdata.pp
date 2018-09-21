@@ -28,26 +28,27 @@
 #   C:/ProgramData/icinga2/var/spool/icinga2/tmp/host-perfdata on Windows.
 #
 # [*host_format_template*]
-#   Host Format template for the performance data file. Defaults to a template that's suitable for use with PNP4Nagios.
+#   Host Format template for the performance data file.
+#   Icinga defaults to a template that's suitable for use with PNP4Nagios.
 #
 # [*service_format_template*]
-#   Service Format template for the performance data file. Defaults to a template that's suitable for use with
-#   PNP4Nagios.
+#   Service Format template for the performance data file.
+#   Icinga defaults to a template that's suitable for use with PNP4Nagios.
 #
 # [*rotation_interval*]
 #   Rotation interval for the files specified in {host,service}_perfdata_path. Can be written in minutes or seconds,
-#   i.e. 1m or 15s. Defaults to 1m.
+#   i.e. 1m or 15s. Icinga defaults to 30s.
 #
 #
 class icinga2::feature::perfdata(
-  $ensure                  = present,
-  $host_perfdata_path      = "${::icinga2::params::spool_dir}/perfdata/host-perfdata",
-  $service_perfdata_path   = "${::icinga2::params::spool_dir}/perfdata/service-perfdata",
-  $host_temp_path          = "${::icinga2::params::spool_dir}/tmp/host-perfdata",
-  $service_temp_path       = "${::icinga2::params::spool_dir}/tmp/service-perfdata",
-  $host_format_template    = undef,
-  $service_format_template = undef,
-  $rotation_interval       = '1m',
+  Enum['absent', 'present']           $ensure                  = present,
+  Optional[Stdlib::Absolutepath]      $host_perfdata_path      = undef,
+  Optional[Stdlib::Absolutepath]      $service_perfdata_path   = undef,
+  Optional[Stdlib::Absolutepath]      $host_temp_path          = undef,
+  Optional[Stdlib::Absolutepath]      $service_temp_path       = undef,
+  Optional[String]                    $host_format_template    = undef,
+  Optional[String]                    $service_format_template = undef,
+  Optional[Pattern[/^\d+[ms]*$/]]      $rotation_interval       = undef,
 ) {
 
   if ! defined(Class['::icinga2']) {
@@ -59,20 +60,6 @@ class icinga2::feature::perfdata(
     'present' => Class['::icinga2::service'],
     default   => undef,
   }
-
-  # validation
-  validate_re($ensure, [ '^present$', '^absent$' ],
-    "${ensure} isn't supported. Valid values are 'present' and 'absent'.")
-  validate_absolute_path($host_perfdata_path)
-  validate_absolute_path($service_perfdata_path)
-  validate_absolute_path($host_temp_path)
-  validate_absolute_path($service_temp_path)
-  validate_re($rotation_interval, '^\d+[ms]*$')
-  if $host_format_template { validate_string($host_format_template) }
-  if $service_format_template { validate_string($service_format_template) }
-
-  if $host_format_template { validate_string($host_format_template) }
-  if $service_format_template { validate_string($service_format_template) }
 
   # compose attributes
   $attrs = {
@@ -92,7 +79,7 @@ class icinga2::feature::perfdata(
     attrs       => delete_undef_values($attrs),
     attrs_list  => keys($attrs),
     target      => "${conf_dir}/features-available/perfdata.conf",
-    order       => '10',
+    order       => 10,
     notify      => $_notify,
   }
 

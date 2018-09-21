@@ -36,40 +36,22 @@
 #   first time.
 #
 # [*order*]
-#   String to set the position in the target file, sorted alpha numeric. Defaults to 10.
+#   String or integer to set the position in the target file, sorted alpha numeric. Defaults to 10.
 #
 #
 define icinga2::object::checkcommand(
-  $target,
-  $ensure            = present,
-  $checkcommand_name = $title,
-  $import            = ['plugin-check-command'],
-  $command           = undef,
-  $env               = undef,
-  $vars              = undef,
-  $timeout           = undef,
-  $arguments         = undef,
-  $template          = false,
-  $order             = '15',
+  Stdlib::Absolutepath                $target,
+  Enum['absent', 'present']           $ensure            = present,
+  Optional[String]                    $checkcommand_name = $title,
+  Array                               $import            = [],
+  Optional[Variant[Array, String]]    $command           = undef,
+  Optional[Hash]                      $env               = undef,
+  Optional[Variant[String, Hash]]     $vars              = undef,
+  Optional[Integer[1]]                $timeout           = undef,
+  Optional[Hash]                      $arguments         = undef,
+  Boolean                             $template          = false,
+  Variant[String, Integer]            $order             = 15,
 ) {
-
-  include ::icinga2::params
-
-  $conf_dir = $::icinga2::params::conf_dir
-
-  # validation
-  validate_re($ensure, [ '^present$', '^absent$' ],
-    "${ensure} isn't supported. Valid values are 'present' and 'absent'.")
-  validate_array($import)
-  validate_absolute_path($target)
-  validate_integer($order)
-
-  if $checkcommand_name { validate_string($checkcommand_name) }
-  if !is_array($command) { validate_string($command) }
-  if !is_string($command) { validate_array($command) }
-  if $env { validate_hash($env) }
-  if $timeout { validate_integer($timeout) }
-  if $arguments { validate_hash($arguments) }
 
   # compose the attributes
   $attrs = {

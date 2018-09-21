@@ -20,7 +20,6 @@ class icinga2::config {
   $plugins        = $::icinga2::setup::plugins
   $confd          = $::icinga2::setup::_confd
   $purge_features = $::icinga2::setup::purge_features
-  $repositoryd    = $::icinga2::setup::repositoryd
 
   if $::kernel != 'windows' {
     $template_constants  = icinga2_attributes($constants)

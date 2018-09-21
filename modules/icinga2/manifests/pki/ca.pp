@@ -15,26 +15,26 @@
 #
 # [*ssl_key_path*]
 #   Location of the private key. Default depends on platform:
-#   /etc/icinga2/pki/NodeName.key on Linux
-#   C:/ProgramData/icinga2/etc/icinga2/pki/NodeName.key on Windows
+#   /var/lib/icinga2/certs/NodeName.key on Linux
+#   C:/ProgramData/icinga2/var/lib/icinga2/certs/NodeName.key on Windows
 #   The Value of NodeName comes from the corresponding constant.
 #
 # [*ssl_cert_path*]
 #   Location of the certificate. Default depends on platform:
-#   /etc/icinga2/pki/NodeName.crt on Linux
-#   C:/ProgramData/icinga2/etc/icinga2/pki/NodeName.crt on Windows
+#   /var/lib/icinga2/certs/NodeName.crt on Linux
+#   C:/ProgramData/icinga2/var/lib/icinga2/certs/NodeName.crt on Windows
 #   The Value of NodeName comes from the corresponding constant.
 #
 # [*ssl_csr_path*]
 #   Location of the certificate signing request. Default depends on platform:
-#   /etc/icinga2/pki/NodeName.csr on Linux
-#   C:/ProgramData/icinga2/etc/icinga2/pki/NodeName.csr on Windows
+#   /var/lib/icinga2/certs/NodeName.csr on Linux
+#   C:/ProgramData/icinga2/var/lib/icinga2/certs/NodeName.csr on Windows
 #   The Value of NodeName comes from the corresponding constant.
 #
 # [*ssl_cacert_path*]
 #   Location of the CA certificate. Default is:
-#   /etc/icinga2/pki/ca.crt on Linux
-#   C:/ProgramData/icinga2/etc/icinga2/pki/ca.crt on Windows
+#   /var/lib/icinga2/certs/ca.crt on Linux
+#   C:/ProgramData/icinga2/var/lib/icinga2/certs/ca.crt on Windows
 #
 # === Examples
 #
@@ -53,12 +53,12 @@
 #
 #
 class icinga2::pki::ca(
-  $ca_cert         = undef,
-  $ca_key          = undef,
-  $ssl_key_path    = undef,
-  $ssl_cert_path   = undef,
-  $ssl_csr_path    = undef,
-  $ssl_cacert_path = undef,
+  Optional[String]               $ca_cert         = undef,
+  Optional[String]               $ca_key          = undef,
+  Optional[Stdlib::Absolutepath] $ssl_key_path    = undef,
+  Optional[Stdlib::Absolutepath] $ssl_cert_path   = undef,
+  Optional[Stdlib::Absolutepath] $ssl_csr_path    = undef,
+  Optional[Stdlib::Absolutepath] $ssl_cacert_path = undef,
 ) {
 
   include ::icinga2::params
@@ -81,22 +81,18 @@ class icinga2::pki::ca(
   }
 
   if $ssl_key_path {
-    validate_absolute_path($ssl_key_path)
     $_ssl_key_path = $ssl_key_path }
   else {
     $_ssl_key_path = "${pki_dir}/${node_name}.key" }
   if $ssl_cert_path {
-    validate_absolute_path($ssl_cert_path)
     $_ssl_cert_path = $ssl_cert_path }
   else {
     $_ssl_cert_path = "${pki_dir}/${node_name}.crt" }
   if $ssl_csr_path {
-    validate_absolute_path($ssl_csr_path)
     $_ssl_csr_path = $ssl_csr_path }
   else {
     $_ssl_csr_path = "${pki_dir}/${node_name}.csr" }
   if $ssl_cacert_path {
-    validate_absolute_path($ssl_cacert_path)
     $_ssl_cacert_path = $ssl_cacert_path }
   else {
     $_ssl_cacert_path = "${pki_dir}/ca.crt" }
@@ -114,9 +110,6 @@ class icinga2::pki::ca(
       notify  => Class['::icinga2::service'],
     }
   } else {
-    validate_string($ca_cert)
-    validate_string($ca_key)
-
     if $::osfamily == 'windows' {
       $_ca_dir_mode = undef
       $_ca_cert      = regsubst($ca_cert, '\n', "\r\n", 'EMG')
@@ -157,7 +150,7 @@ class icinga2::pki::ca(
   exec { 'icinga2 pki create certificate signing request':
     command => "icinga2 pki new-cert --cn '${node_name}' --key '${_ssl_key_path}' --csr '${_ssl_csr_path}'",
     creates => $_ssl_key_path,
-    require => File[$_ssl_cacert_path]
+    require => File[$_ssl_cacert_path],
   }
 
   -> file { $_ssl_key_path:
