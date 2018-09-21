@@ -1,7 +1,7 @@
 # Define ufw::allow
 define ufw::allow(
     String $proto = 'tcp',
-    String $port = 'all',
+    Variant[String, Integer] $port = 'all',
     String $ip = '',
     String $from = 'any'
 ) {
