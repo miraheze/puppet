@@ -1,9 +1,9 @@
 # class: mediawiki
 class mediawiki(
-    $branch = undef,
-    $branch_mw_config = undef,
-    $php7_2 = hiera('mediawiki::use_php_7_2', false),
-    $use_memcached = undef,
+    String $branch = undef,
+    String $branch_mw_config = undef,
+    Boolean $php7_2 = hiera('mediawiki::use_php_7_2', false),
+    Optional[Boolean] $use_memcached = undef,
 ) {
     include mediawiki::favicons
     include mediawiki::cron

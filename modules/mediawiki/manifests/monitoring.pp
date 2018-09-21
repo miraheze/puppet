@@ -1,6 +1,7 @@
 # MediaWiki monitoring
-class mediawiki::monitoring {
-    $php7_2 = hiera('mediawiki::use_php_7_2', false)
+class mediawiki::monitoring (
+    Boolean $php7_2 = hiera('mediawiki::use_php_7_2', false),
+) {
 
     icinga2::custom::services { 'MediaWiki Rendering':
         check_command => 'check_mediawiki',
