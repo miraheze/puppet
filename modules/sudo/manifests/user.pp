@@ -1,12 +1,10 @@
 # class: sudo::user
 define sudo::user(
-    $privileges,
-    $ensure  = present,
-    $user    = $title,
+    Array $privileges,
+    Stdlib::Ensure $ensure  = present,
+    String $user    = $title,
 ) {
     require sudo
-
-    validate_ensure($ensure)
 
     $title_safe = regsubst($title, '\W', '-', 'G')
     $filename = "/etc/sudoers.d/${title_safe}"
