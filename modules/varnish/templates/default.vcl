@@ -223,7 +223,13 @@ sub vcl_recv {
 
 	if (req.http.Host == "matomo.miraheze.org") {
 		set req.backend_hint = misc2;
-		return (pass);
+
+		# Yes, we only care about this file
+		if (req.url ~ "^/piwik.js") {
+			return (hash);
+		} else {
+			return (pass);
+		}
 	}
 
     if (req.http.Host == "lizard.miraheze.org") {
