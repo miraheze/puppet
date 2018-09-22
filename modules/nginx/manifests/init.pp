@@ -37,11 +37,13 @@ class nginx {
     file { '/etc/nginx/nginx.conf':
         content => template('nginx/nginx.conf.erb'),
         require => Package['nginx'],
+        notify  => Service['nginx'],
     }
 
     file { '/etc/nginx/fastcgi_params':
         ensure => present,
         source => 'puppet:///modules/nginx/fastcgi_params',
+        notify => Service['nginx'],
     }
  
     exec { 'nginx unmask':
