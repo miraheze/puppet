@@ -3,7 +3,7 @@ define ufw::allow(
     String $proto = 'tcp',
     Variant[String, Integer] $port = 'all',
     String $ip = '',
-    String $from = 'any'
+    String $from = 'Anywhere'
 ) {
 
     if $ip == '' {
