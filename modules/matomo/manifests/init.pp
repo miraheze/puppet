@@ -27,6 +27,8 @@ class matomo {
         require => Package['php7.2-fpm'],
         notify  => Service['php7.2-fpm'],
     }
+    
+    include ssl::wildcard
 
     nginx::site { 'matomo.miraheze.org':
         ensure  => present,
