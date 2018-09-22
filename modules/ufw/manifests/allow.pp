@@ -20,8 +20,8 @@ define ufw::allow(
 
     $from_match = $from ? {
         'any'   => $ipver ? {
-        'v4' => 'Anywhere',
-        'v6' => 'Anywhere \(v6\)',
+        'v4' => 'Anywhere +',
+        'v6' => 'Anywhere \(v6\) +',
         },
         default => $from,
     }
