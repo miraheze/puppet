@@ -21,6 +21,7 @@ class mediawiki::nginx {
         require     => Exec['nginx-syntax'],
     }
 
+    include ssl::wildcard
     include ssl::hiera
 
     if hiera('mediawiki::use_php_7_2', false) {
