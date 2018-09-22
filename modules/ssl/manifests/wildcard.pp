@@ -7,9 +7,10 @@ class ssl::wildcard {
             path   => '/etc/ssl/certs/wildcard.miraheze.org.crt',
         }
 
-        file { '/etc/ssl/private/wildcard.miraheze.org.key':
+        file { 'wildcard.miraheze.org_private':
             ensure => 'present',
             source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
+            path   => '/etc/ssl/private/wildcard.miraheze.org.key',
         }
     }
 }
