@@ -52,7 +52,6 @@ class varnish {
         refreshonly => true,
     }
 
-    include ssl::wildcard
     include ssl::hiera
 
     file { '/etc/nginx/sites-enabled/default':
