@@ -25,7 +25,9 @@ define ssl::hiera::certs (
             source => "puppet:///ssl/certificates/${sslurl}.crt",
             notify => Exec["${restart}-syntax"],
         }
+    }
 
+    if !defined(File["${sslurl}_private"]) {
         file { "${sslurl}_private":
             ensure => present,
             path   => "/etc/ssl/private/${sslurl}.key",
