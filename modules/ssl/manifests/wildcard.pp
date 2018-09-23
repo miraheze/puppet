@@ -6,7 +6,9 @@ class ssl::wildcard {
             source => 'puppet:///ssl/certificates/wildcard.miraheze.org.crt',
             path   => '/etc/ssl/certs/wildcard.miraheze.org.crt',
         }
+    }
 
+    if !defined(File['wildcard.miraheze.org_private']) {
         file { 'wildcard.miraheze.org_private':
             ensure => 'present',
             source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
