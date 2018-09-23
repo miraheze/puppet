@@ -20,6 +20,7 @@ class mediawiki::packages {
         'libgif-dev',
         'p7zip-full',
         'xvfb',
+        'timidity',
     ]
 
     # First installs can trip without this
