@@ -6,7 +6,7 @@ This repository contains our production Puppet configuration. Contributions (see
 
 # Contributing
 
-Pull requests are welcome! Please read [contributing.md](.github/CONTRIBUTING.md) for more information!
+Pull requests are welcome!
 
 # Issues
 
