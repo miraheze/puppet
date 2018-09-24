@@ -21,7 +21,6 @@ class mediawiki::packages {
         'p7zip-full',
         'xvfb',
         'timidity',
-        'fluidsynth',
     ]
 
     # First installs can trip without this
