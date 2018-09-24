@@ -294,6 +294,8 @@ sub vcl_deliver {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
 	}
 
+	set resp.http.Access-Control-Allow-Origin = "*";
+
 	set resp.http.Content-Security-Policy = "default-src 'self' data: <%- @whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'";
 }
 
