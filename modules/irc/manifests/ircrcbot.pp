@@ -2,7 +2,7 @@
 class irc::ircrcbot(
     $nickname     = undef,
     $network      = undef,
-    $network_port = '6667',
+    $network_port = '6697',
     $channel      = undef,
     $udp_port     = '5070',
     $sleeptime    = '0.5',
