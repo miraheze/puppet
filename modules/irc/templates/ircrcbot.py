@@ -42,6 +42,8 @@ irc.send(bytes("JOIN "+ channel +"\n", "UTF-8"))
 
 
 while True:
+    time.sleep(2)
+
     data, address = sock.recvfrom(4096)
 
     irc.send(bytes("PRIVMSG %s :%s" % (channel, data.decode("UTF-8")), "UTF-8"))
@@ -52,6 +54,6 @@ while True:
 
         # Prevent Timeout
         if text.find('PING') != -1:
-            irc.send(bytes('PONG ' + text.split() [1] + '\r\n', "UTF-8"))
+            irc.send(bytes('PONG ' + text.split().decode("UTF-8") [1] + '\r\n', "UTF-8"))
     except Exception:
         continue
