@@ -5,7 +5,7 @@ class role::irc {
     class { 'irc::ircrcbot':
         nickname     => 'MirahezeRC',
         network      => 'chat.freenode.net',
-        network_port => '6667',
+        network_port => '6697',
         channel      => '#miraheze-feed',
         udp_port     => '5070',
         sleeptime    => '0.5',
