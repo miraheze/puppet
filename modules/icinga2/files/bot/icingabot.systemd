@@ -3,7 +3,7 @@ Description=Miraheze Icinga Bot
 
 [Service]
 Type=simple
-ExecStart=/etc/icinga2/irc.py
+ExecStart=/usr/bin/python3 /etc/icinga2/irc.py
 User=root
 Restart=on-failure
 
