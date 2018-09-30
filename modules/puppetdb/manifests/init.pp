@@ -167,9 +167,4 @@ class puppetdb(
     service { 'puppetdb':
         ensure  => running,
     }
-
-    ufw::allow { 'puppetdb':
-        proto => 'tcp',
-        port  => 8081,
-    }
 }
