@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import adminlog
 import argparse
 import imp
@@ -217,7 +217,7 @@ class logbot(ircbot.SingleServerIRCBot):
             if self.config.enable_projects:
                 arr = line.split(" ", 2)
                 
-		if len(arr) < 2:
+				if len(arr) < 2:
                     self.connection.privmsg(event.target,
                                             "Project not found, O.o. Try !log"
                                             " <project> <message> next time.")
@@ -227,7 +227,7 @@ class logbot(ircbot.SingleServerIRCBot):
                                             "Message missing. Nothing logged.")
                     return
                 
-		project = arr[1]
+                project = arr[1]
                 projects = self.get_projects(event)
 
                 if project not in projects:
