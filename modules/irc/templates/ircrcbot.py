@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#! /usr/bin/python3
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 from twisted.words.protocols import irc
@@ -15,11 +15,11 @@ class RCBot(irc.IRCClient):
     def signedOn(self):
         global recver
         self.join(self.channel)
-        print("Signed on as %s." % (self.nickname,))
+        print(("Signed on as %s." % (self.nickname,)))
         recver = self
  
     def joined(self, channel):
-        print("Joined %s." % (channel,))
+        print(("Joined %s." % (channel,)))
  
     def gotUDP(self, broadcast):
         self.msg(self.channel, broadcast)
@@ -29,17 +29,19 @@ class RCFactory(protocol.ClientFactory):
     protocol = RCBot
  
     def clientConnectionLost(self, connector, reason):
-        print("Lost connection (%s), reconnecting." % (reason,))
+        print(("Lost connection (%s), reconnecting." % (reason,)))
         connector.connect()
  
     def clientConnectionFailed(self, connector, reason):
-        print("Could not connect: %s" % (reason,))
+        print(("Could not connect: %s" % (reason,)))
  
 class Echo(DatagramProtocol):
  
-    def datagramReceived(self, data, (host, port)):
+    def datagramReceived(self, data, host_and_port):
+        (host, port) = host_and_port
         global recver
-        recver.gotUDP(data)
+        if data:
+            recver.gotUDP(data)
 
 reactor.listenUDP(<%= @udp_port %>, Echo())
 reactor.connectTCP("<%= @network %>", <%= @network_port %>, RCFactory())
