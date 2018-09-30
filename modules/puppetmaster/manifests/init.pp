@@ -188,12 +188,11 @@ class puppetmaster(
         minute  => [ '9', '19', '29', '39', '49', '59' ],
     }
 
-    # Clear out older reports
-    cron { 'removeoldreports':
+    cron { 'puppet-old-reports-remove':
         ensure  => present,
         command => 'find /var/lib/puppet/reports -type f -mmin +960 -delete >/dev/null 2>&1',
-        user    => puppet,
-        hour    => [0, 8, 16], # Run every 8 hours, to prevent excess load
-        minute  => 27, # Run at a time when hopefully no other cron jobs are
+        user    => 'root',
+        hour    => [ 0, 8, 16 ],
+        minute  => 27,
     }
 }
