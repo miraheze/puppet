@@ -11,8 +11,8 @@ class base::puppet {
 
     file { '/var/log/puppet':
         ensure => directory,
-        owner  => 'root',
-        group  => 'root',
+        owner  => 'puppet',
+        group  => 'puppet',
         mode   => '0755',
     }
 
