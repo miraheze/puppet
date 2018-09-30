@@ -146,7 +146,7 @@ class logbot(ircbot.SingleServerIRCBot):
         cloak = self.get_cloak(event.source)
         if author in self.config.author_map:
             author = self.config.author_map[author]
-        line = event.arguments[0].decode("utf8", "replace")
+        line = event.arguments[0]
 
         if (line.startswith(self.config.nick) or
                 line.startswith("!%s" % self.config.nick) or
