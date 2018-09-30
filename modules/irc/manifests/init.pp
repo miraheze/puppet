@@ -2,10 +2,11 @@
 class irc {
     $packages = [
         'python',
-        'python-twisted',
-        'python-irc',
-        'python-requests',
-        'python-requests-oauthlib',
+        'python3',
+        'python3-twisted',
+        'python3-irc',
+        'python3-requests',
+        'python3-requests-oauthlib',
     ]
 
     package { $packages:
