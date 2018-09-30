@@ -93,42 +93,6 @@ class puppetmaster(
         require => Git::Clone['puppet'],
     }
 
-    file { '/etc/puppet/code':
-        ensure  => directory,
-        mode    => '0775',
-        require => Package['puppetmaster'],
-    }
-
-    file { '/etc/puppet/code/environments':
-        ensure  => directory,
-        mode    => '0775',
-        require => File['/etc/puppet/code'],
-    }
-
-    file { '/etc/puppet/code/environments/production':
-        ensure  => directory,
-        mode    => '0775',
-        require => File['/etc/puppet/code/environments'],
-    }
-
-    file { '/etc/puppet/code/environments/production/manifests':
-        ensure  => link,
-        target  => '/etc/puppet/manifests',
-        require => [File['/etc/puppet/code/environments/production'], File['/etc/puppet/manifests']],
-    }
-
-    file { '/etc/puppet/code/environments/production/modules':
-        ensure  => link,
-        target  => '/etc/puppet/modules',
-        require => [File['/etc/puppet/code/environments/production'], File['/etc/puppet/modules']],
-    }
-
-    file { '/etc/puppet/code/environments/production/ssl':
-        ensure  => link,
-        target  => '/etc/puppet/ssl',
-        require => [File['/etc/puppet/code/environments/production'], Git::Clone['ssl']],
-    }
-
     file { '/etc/puppet/environments':
         ensure  => directory,
         mode    => '0775',
