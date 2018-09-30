@@ -1,46 +1,59 @@
-#! /usr/bin/python
-from twisted.internet.protocol import DatagramProtocol
-from twisted.internet import reactor
-from twisted.words.protocols import irc
-from twisted.internet import protocol
-import sys
-import time
- 
-recver = None
- 
-class RCBot(irc.IRCClient):
-    nickname = "<%= @nickname %>"
-    password = "mirahezebots:<%= @mirahezebots_password %>"
-    channel = "<%= @channel %>"
-    def signedOn(self):
-        global recver
-        self.join(self.channel)
-        print "Signed on as %s." % (self.nickname,)
-        recver = self
- 
-    def joined(self, channel):
-        print "Joined %s." % (channel,)
- 
-    def gotUDP(self, broadcast):
-        self.msg(self.channel, broadcast)
-        time.sleep(<%= @sleeptime %>)
- 
-class RCFactory(protocol.ClientFactory):
-    protocol = RCBot
- 
-    def clientConnectionLost(self, connector, reason):
-        print "Lost connection (%s), reconnecting." % (reason,)
-        connector.connect()
- 
-    def clientConnectionFailed(self, connector, reason):
-        print "Could not connect: %s" % (reason,)
- 
-class Echo(DatagramProtocol):
- 
-    def datagramReceived(self, data, (host, port)):
-        global recver
-        recver.gotUDP(data)
+#!/usr/bin/python3
 
-reactor.listenUDP(<%= @udp_port %>, Echo())
-reactor.connectTCP("<%= @network %>", <%= @network_port %>, RCFactory())
-reactor.run()
+import socket
+import ssl
+import time
+
+## Settings
+### IRC
+server = "<%= @network %>"
+port = <%= @network_port %>
+channel = "<%= @channel %>"
+botnick = "<%= @nickname %>"
+
+# Create a UDP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+irc_C = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #defines the socket
+irc = ssl.wrap_socket(irc_C)
+
+print("Establishing connection to [%s]" % (server))
+
+# Bind the socket to the port
+server_address = ('185.52.1.76', 5070)
+sock.bind(server_address)
+
+# Connect
+irc.connect((server, port))
+
+irc.setblocking(False)
+
+irc.send(bytes("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n", "UTF-8"))
+
+irc.send(bytes("NICK "+ botnick +"\n", "UTF-8"))
+
+time.sleep(3)
+
+irc.send(bytes("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n", "UTF-8"))
+
+time.sleep(3)
+
+irc.send(bytes("JOIN "+ channel +"\n", "UTF-8"))
+
+
+while True:
+    time.sleep(2)
+
+    data, address = sock.recvfrom(4096)
+
+    irc.send(bytes("PRIVMSG %s :%s" % (channel, data.decode("UTF-8")), "UTF-8"))
+
+    try:
+        text = irc.recv(2040).decode("UTF-8")
+        print(text)
+
+        # Prevent Timeout
+        if text.find('PING') != -1:
+            irc.send(bytes('PONG ' + text.split().decode("UTF-8") [1] + '\r\n', "UTF-8"))
+    except Exception:
+        continue

@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+
 import adminlog
 import argparse
 import imp
@@ -146,7 +147,7 @@ class logbot(ircbot.SingleServerIRCBot):
         cloak = self.get_cloak(event.source)
         if author in self.config.author_map:
             author = self.config.author_map[author]
-        line = event.arguments[0].decode("utf8", "replace")
+        line = event.arguments[0]
 
         if (line.startswith(self.config.nick) or
                 line.startswith("!%s" % self.config.nick) or
@@ -217,7 +218,7 @@ class logbot(ircbot.SingleServerIRCBot):
             if self.config.enable_projects:
                 arr = line.split(" ", 2)
                 
-		if len(arr) < 2:
+                if len(arr) < 2:
                     self.connection.privmsg(event.target,
                                             "Project not found, O.o. Try !log"
                                             " <project> <message> next time.")
@@ -227,7 +228,7 @@ class logbot(ircbot.SingleServerIRCBot):
                                             "Message missing. Nothing logged.")
                     return
                 
-		project = arr[1]
+                project = arr[1]
                 projects = self.get_projects(event)
 
                 if project not in projects:

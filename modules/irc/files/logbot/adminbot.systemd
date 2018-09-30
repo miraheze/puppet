@@ -3,7 +3,7 @@ Description=Miraheze SAL Logbot
 
 [Service]
 Type=simple
-ExecStart=/etc/irclogbot/adminlogbot.py --config=/etc/irclogbot/config.py
+ExecStart=/usr/bin/python3 /etc/irclogbot/adminlogbot.py --config=/etc/irclogbot/config.py
 User=irc
 Restart=on-failure
 
