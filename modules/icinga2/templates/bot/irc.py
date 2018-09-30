@@ -51,7 +51,7 @@ while True:
             print(e)
 
     try:
-        text=irc.recv(2040)
+        text = irc.recv(2040).decode("UTF-8")
         print(text)
 
         # Prevent Timeout
