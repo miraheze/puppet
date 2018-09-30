@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import socket
 import ssl
@@ -19,14 +19,17 @@ tail_files = [
 irc_C = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #defines the socket
 irc = ssl.wrap_socket(irc_C)
 
-print "Establishing connection to [%s]" % (server)
+print("Establishing connection to [%s]" % (server))
 # Connect
-irc.connect((server, port))
-irc.setblocking(False)
-irc.send("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n")
-irc.send("NICK "+ botnick +"\n")
-irc.send("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n")
-irc.send("JOIN "+ channel +"\n")
+try:
+    irc.connect((server, port))
+    irc.setblocking(False)
+    irc.send(bytes("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n", "UTF-8"))
+    irc.send(bytes("NICK "+ botnick +"\n", "UTF-8"))
+    irc.send(bytes("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n", "UTF-8"))
+    irc.send(bytes("JOIN "+ channel +"\n", "UTF-8"))
+finally:
+    irc.close()
 
 
 tail_line = []
@@ -47,12 +50,12 @@ while True:
                 tail_line[i] = line
                 irc.send("PRIVMSG %s :%s" % (channel, line))
         except Exception as e:
-            print "Error with file %s" % (tail)
-            print e
+            print("Error with file %s" % (tail))
+            print(e)
 
     try:
         text=irc.recv(2040)
-        print text
+        print(text)
 
         # Prevent Timeout
         if text.find('PING') != -1:
