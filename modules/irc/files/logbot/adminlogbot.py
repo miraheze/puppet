@@ -218,7 +218,7 @@ class logbot(ircbot.SingleServerIRCBot):
             if self.config.enable_projects:
                 arr = line.split(" ", 2)
                 
-				if len(arr) < 2:
+                if len(arr) < 2:
                     self.connection.privmsg(event.target,
                                             "Project not found, O.o. Try !log"
                                             " <project> <message> next time.")
