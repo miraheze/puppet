@@ -13,7 +13,7 @@ class base::puppet {
         ensure => directory,
         owner  => 'puppet',
         group  => 'puppet',
-        mode   => '0755',
+        mode   => '0750',
     }
 
     cron { 'puppet-agent':
