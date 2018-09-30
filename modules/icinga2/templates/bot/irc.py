@@ -24,10 +24,10 @@ print("Establishing connection to [%s]" % (server))
 try:
     irc.connect((server, port))
     irc.setblocking(False)
-    irc.send("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n")
-    irc.send("NICK "+ botnick +"\n")
-    irc.send("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n")
-    irc.send("JOIN "+ channel +"\n")
+    irc.send(bytes("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n", "UTF-8"))
+    irc.send(bytes("NICK "+ botnick +"\n", "UTF-8"))
+    irc.send(bytes("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n", "UTF-8"))
+    irc.send(bytes("JOIN "+ channel +"\n", "UTF-8"))
 finally:
     irc.close()
 
