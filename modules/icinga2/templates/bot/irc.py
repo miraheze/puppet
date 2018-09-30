@@ -21,15 +21,12 @@ irc = ssl.wrap_socket(irc_C)
 
 print("Establishing connection to [%s]" % (server))
 # Connect
-try:
-    irc.connect((server, port))
-    irc.setblocking(False)
-    irc.send(bytes("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n", "UTF-8"))
-    irc.send(bytes("NICK "+ botnick +"\n", "UTF-8"))
-    irc.send(bytes("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n", "UTF-8"))
-    irc.send(bytes("JOIN "+ channel +"\n", "UTF-8"))
-finally:
-    irc.close()
+irc.connect((server, port))
+irc.setblocking(False)
+irc.send(bytes("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n", "UTF-8"))
+irc.send(bytes("NICK "+ botnick +"\n", "UTF-8"))
+irc.send(bytes("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n", "UTF-8"))
+irc.send(bytes("JOIN "+ channel +"\n", "UTF-8"))
 
 
 tail_line = []
