@@ -19,7 +19,7 @@ tail_files = [
 irc_C = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #defines the socket
 irc = ssl.wrap_socket(irc_C)
 
-print "Establishing connection to [%s]" % (server)
+print("Establishing connection to [%s]" % (server))
 # Connect
 irc.connect((server, port))
 irc.setblocking(False)
@@ -47,12 +47,12 @@ while True:
                 tail_line[i] = line
                 irc.send("PRIVMSG %s :%s" % (channel, line))
         except Exception as e:
-            print "Error with file %s" % (tail)
-            print e
+            print("Error with file %s" % (tail))
+            print(e)
 
     try:
         text=irc.recv(2040)
-        print text
+        print(text)
 
         # Prevent Timeout
         if text.find('PING') != -1:
