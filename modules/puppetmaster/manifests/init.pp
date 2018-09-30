@@ -192,7 +192,7 @@ class puppetmaster(
         ensure  => present,
         command => 'find /var/lib/puppet/reports -type f -mmin +960 -delete >/dev/null 2>&1',
         user    => 'root',
-        hour    => [ 0, 8, 16 ],
+        hour    => [ '0', '8', '16' ],
         minute  => [ '27' ],
     }
 }
