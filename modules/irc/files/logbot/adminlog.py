@@ -77,4 +77,4 @@ def log(config, message, project, author):
 
     revdata = site.api('query', prop='info',
                        inprop='url', revids=page.revision)
-    return revdata['query']['pages'].values()[0]['canonicalurl']
+    return list(revdata['query']['pages'].values())[0]['canonicalurl']
