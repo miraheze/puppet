@@ -40,8 +40,7 @@ class Echo(DatagramProtocol):
     def datagramReceived(self, data, host_and_port):
         (host, port) = host_and_port
         global recver
-        if data:
-            recver.gotUDP(data)
+        recver(data)
 
 reactor.listenUDP(<%= @udp_port %>, Echo())
 reactor.connectTCP("<%= @network %>", <%= @network_port %>, RCFactory())
