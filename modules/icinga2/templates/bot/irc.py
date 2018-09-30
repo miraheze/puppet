@@ -45,7 +45,7 @@ while True:
             f.close()
             if tail_line[i] != line:
                 tail_line[i] = line
-                irc.send("PRIVMSG %s :%s" % (channel, line))
+                irc.send(bytes("PRIVMSG %s :%s" % (channel, line), "UTF-8"))
         except Exception as e:
             print("Error with file %s" % (tail))
             print(e)
@@ -56,6 +56,6 @@ while True:
 
         # Prevent Timeout
         if text.find('PING') != -1:
-            irc.send('PONG ' + text.split() [1] + '\r\n')
+            irc.send(bytes('PONG ' + text.split() [1] + '\r\n', "UTF-8"))
     except Exception:
         continue
