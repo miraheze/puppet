@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from twisted.internet.protocol import DatagramProtocol
-from twisted.internet import reactor
+from twisted.internet import reactor, ssl
 from twisted.words.protocols import irc
 from twisted.internet import protocol
 import sys
