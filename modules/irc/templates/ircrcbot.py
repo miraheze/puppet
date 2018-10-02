@@ -23,7 +23,7 @@ class RCBot(irc.IRCClient):
         print "Joined %s." % (channel,)
  
     def gotUDP(self, broadcast):
-        self.msg(self.channel, broadcast)
+        self.msg(self.channel, str(broadcast, 'utf-8'))
         time.sleep(<%= @sleeptime %>)
  
 class RCFactory(protocol.ClientFactory):
