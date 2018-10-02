@@ -66,7 +66,7 @@ class IRC:
         text = self.irc.recv(2040).decode("UTF-8")
  
         if text.find('PING') != -1:                      
-            self.irc.send(bytes('PONG ' + text.split().decode("UTF-8") [1] + '\r\n', "UTF-8")) 
+            self.irc.send(bytes('PONG ' + text.split()[1].decode("UTF-8") + '\r\n', "UTF-8")) 
  
         return text
 
