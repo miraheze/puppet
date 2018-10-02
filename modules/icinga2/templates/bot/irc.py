@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import socket
-import sys
+import ssl
 import time
 
 ## Settings
@@ -10,8 +10,8 @@ server = "chat.freenode.net"
 port = 6697
 channel = "#miraheze"
 botnick = "icinga-miraheze"
-botnickpass = "mirahezebots"
-botpass = "<%= @mirahezebots_password %>"
+botnickservuser = "mirahezebots"
+botnickservpass = "<%= @mirahezebots_password %>"
 
 ### Tail
 tail_files = [
@@ -27,22 +27,25 @@ class IRC:
     irc = socket.socket()
   
     def __init__(self):  
-        self.irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        irc_C = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.irc = ssl.wrap_socket(irc_C)
  
     def send(self, chan, msg):
         self.irc.send(bytes("PRIVMSG " + chan + " " + msg + "n", "UTF-8"))
  
-    def connect(self, server, port, channel, botnick, botpass, botnickpass):
+    def connect(self, server, port, channel, botnick, botnickservuser, botnickpass):
         # defines the socket
         print("connecting to: " + server)
 
         # connects to the server
         self.irc.connect((server, port))
+        self.irc.setblocking(False)
+
         # user authentication
         self.irc.send(bytes("USER " + botnick + " " + botnick +" " + botnick + " :Miraheze\n", "UTF-8"))
         self.irc.send(bytes("NICK " + botnick + "\n", "UTF-8"))
-        self.irc.send(bytes("NICKSERV IDENTIFY " + botnickpass + " " + botpass + "\n", "UTF-8"))
-        time.sleep(5)
+        self.irc.send(bytes("NICKSERV IDENTIFY " + botnickservuser + " " + botnickservpass + "\n", "UTF-8"))
+
         # join the chan
         self.irc.send(bytes("JOIN " + channel + "\n", "UTF-8"))
  
@@ -66,16 +69,13 @@ class IRC:
         text = self.irc.recv(2040).decode("UTF-8")
  
         if text.find('PING') != -1:                      
-            self.irc.send(bytes('PONG ' + text.split()[1].decode("UTF-8") + '\r\n', "UTF-8")) 
+            self.irc.send(bytes('PONG ' + text.split()[1] + '\r\n', "UTF-8")) 
  
         return text
 
 irc = IRC()
-irc.connect(server, port, channel, botnick, botpass, botnickpass)
+irc.connect(server, port, channel, botnick, botpass, botnickservuser, botnickservpass)
  
  
 while 1:
     irc.get_text()
- 
-    if "PRIVMSG" in text and channel in text and "hello" in text:
-        irc.send(channel, "Hello!")
