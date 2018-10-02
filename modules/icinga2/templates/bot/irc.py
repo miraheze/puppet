@@ -10,61 +10,67 @@ server = "chat.freenode.net"
 port = 6697
 channel = "#miraheze"
 botnick = "icinga-miraheze"
+botnickservuser = "mirahezebots"
+botnickservpass = "<%= @mirahezebots_password %>"
 
 ### Tail
 tail_files = [
     '/var/log/icinga2/irc.log'
 ]
 
-irc_C = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #defines the socket
-irc = ssl.wrap_socket(irc_C)
-
-print("Establishing connection to [%s]" % (server))
-# Connect
-irc.connect((server, port))
-
-irc.setblocking(False)
-
-irc.send(bytes("USER "+ botnick +" "+ botnick +" "+ botnick +" :Miraheze\n", "UTF-8"))
-
-irc.send(bytes("NICK "+ botnick +"\n", "UTF-8"))
-
-time.sleep(3)
-
-irc.send(bytes("NICKSERV IDENTIFY mirahezebots <%= @mirahezebots_password %>\n", "UTF-8"))
-
-time.sleep(3)
-
-irc.send(bytes("JOIN "+ channel +"\n", "UTF-8"))
-
-
 tail_line = []
 for i, tail in enumerate(tail_files):
     tail_line.append('')
 
+irc_C = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-while True:
-    time.sleep(2)
+class IRC:
 
-    # Tail Files
-    for i, tail in enumerate(tail_files):
-        try:
-            f = open(tail, 'r')
-            line = f.readlines()[-1]
-            f.close()
-            if tail_line[i] != line:
-                tail_line[i] = line
-                irc.send(bytes("PRIVMSG %s :%s" % (channel, line), "UTF-8"))
-        except Exception as e:
-            print("Error with file %s" % (tail))
-            print(e)
+    def __init__(self):
+        self.irc = ssl.wrap_socket(irc_C)
 
-    try:
-        text = irc.recv(2040).decode("UTF-8")
-        print(text)
+    def connect(self, server, port, channel, botnick, botnickservuser, botnickservpass):
+        # defines the socket
+        print("connecting to: " + server)
 
-        # Prevent Timeout
+        # connects to the server
+        self.irc.connect((server, port))
+        self.irc.setblocking(False)
+
+        # user authentication
+        self.irc.send(bytes("USER " + botnick + " " + botnick +" " + botnick + " :Miraheze\n", "UTF-8"))
+        self.irc.send(bytes("NICK " + botnick + "\n", "UTF-8"))
+        self.irc.send(bytes("NICKSERV IDENTIFY " + botnickservuser + " " + botnickservpass + "\n", "UTF-8"))
+
+        # join the chan
+        self.irc.send(bytes("JOIN " + channel + "\n", "UTF-8"))
+ 
+    def get_text(self):
+        time.sleep(2)
+
+        # Tail Files
+        for i, tail in enumerate(tail_files):
+            try:
+                f = open(tail, 'r')
+                line = f.readlines()[-1]
+                f.close()
+                if tail_line[i] != line:
+                    tail_line[i] = line
+                    self.irc.send(bytes("PRIVMSG %s :%s" % (channel, line), "UTF-8"))
+            except Exception as e:
+                print("Error with file %s" % (tail))
+                print(e)
+
+        # receive the text
+        text = self.irc.recv(2040).decode("UTF-8")
+
         if text.find('PING') != -1:
-            irc.send(bytes('PONG ' + text.split()[1] + '\r\n', "UTF-8"))
-    except Exception:
-        continue
+            self.irc.send(bytes("PONG " + text.split()[1] + '\r\n', "UTF-8"))
+ 
+        return text
+
+irc = IRC()
+irc.connect(server, port, channel, botnick, botnickservuser, botnickservpass)
+
+while 1:
+    irc.get_text()
