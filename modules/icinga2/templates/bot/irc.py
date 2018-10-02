@@ -31,7 +31,7 @@ class IRC:
         self.irc = ssl.wrap_socket(irc_C)
 
     def send(self, chan, msg):
-        self.irc.send(bytes("PRIVMSG " + chan + " " + msg + "n", "UTF-8"))
+        self.irc.send(bytes("PRIVMSG " + chan + " " + msg + "\n", "UTF-8"))
 
     def connect(self, server, port, channel, botnick, botnickservuser, botnickservpass):
         # defines the socket
