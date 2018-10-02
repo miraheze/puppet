@@ -65,6 +65,6 @@ while True:
 
         # Prevent Timeout
         if text.find('PING') != -1:
-            irc.send(bytes('PONG ' + text.split() [1] + '\r\n', "UTF-8"))
+            irc.send(bytes('PONG ' + text.split()[1] + '\r\n', "UTF-8"))
     except Exception:
         continue
