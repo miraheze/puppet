@@ -22,16 +22,12 @@ tail_line = []
 for i, tail in enumerate(tail_files):
     tail_line.append('')
 
+irc_C = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
 class IRC:
 
-    irc = socket.socket()
-
     def __init__(self):
-        irc_C = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.irc = ssl.wrap_socket(irc_C)
-
-    def send(self, chan, msg):
-        self.irc.send(bytes("PRIVMSG " + chan + " " + msg + "\n", "UTF-8"))
 
     def connect(self, server, port, channel, botnick, botnickservuser, botnickservpass):
         # defines the socket
@@ -69,7 +65,7 @@ class IRC:
         text = self.irc.recv(2040).decode("UTF-8")
 
         if text.find('PING') != -1:
-            self.irc.send(bytes('PONG ' + text.split()[1] + '\r\n', "UTF-8"))
+            self.irc.send(bytes("PONG " + text.split()[1] + '\r\n', "UTF-8"))
  
         return text
 
