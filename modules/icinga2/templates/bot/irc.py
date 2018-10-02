@@ -60,7 +60,7 @@ class IRC:
                 f.close()
                 if tail_line[i] != line:
                     tail_line[i] = line
-                    irc.send(bytes("PRIVMSG %s :%s" % (channel, line), "UTF-8"))
+                    self.irc.send(bytes("PRIVMSG %s :%s" % (channel, line), "UTF-8"))
             except Exception as e:
                 print("Error with file %s" % (tail))
                 print(e)
