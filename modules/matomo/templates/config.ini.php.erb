@@ -14,6 +14,7 @@ ssl_ca = "/etc/ssl/certs/GlobalSign.crt"
 salt = "<%= @salt %>"
 trusted_hosts[] = "matomo.miraheze.org"
 force_ssl = 1
+session_save_handler = dbtable
 
 [mail]
 transport = "smtp"
