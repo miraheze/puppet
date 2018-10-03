@@ -15,12 +15,6 @@ class mediawiki::jobrunner {
         require => Git::Clone['JobRunner'],
     }
 
-    file { '/etc/init.d/jobrunner':
-        ensure => present,
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/jobrunner/jobrunner.initd',
-    }
-
     exec { 'JobRunner reload systemd':
         command     => '/bin/systemctl daemon-reload',
         refreshonly => true,
@@ -34,12 +28,6 @@ class mediawiki::jobrunner {
 
     service { 'jobrunner':
         ensure => running,
-    }
-
-    file { '/etc/init.d/jobchron':
-        ensure => present,
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/jobrunner/jobchron.initd',
     }
 
     file { '/etc/systemd/system/jobchron.service':
