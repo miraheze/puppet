@@ -38,8 +38,9 @@ class RCFactory(protocol.ClientFactory):
  
 class Echo(DatagramProtocol):
  
-    def datagramReceived(self, data, (host, port)):
+    def datagramReceived(self, data, host_port):
         global recver
+        (host, port) = host_port
         recver.gotUDP(data)
 
 reactor.listenUDP(<%= @udp_port %>, Echo())
