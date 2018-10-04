@@ -19,7 +19,7 @@ class RCBot(irc.IRCClient):
         recver = self
  
     def joined(self, channel):
-        print "Joined %s." % (channel,)
+        print("Joined %s." % (channel,))
  
     def gotUDP(self, broadcast):
         self.msg(self.channel, str(broadcast, 'utf-8'))
