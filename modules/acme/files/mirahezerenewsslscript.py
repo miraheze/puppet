@@ -1,31 +1,38 @@
 #!flask/bin/python
 
+from filelock import FileLock
 from flask import Flask
 app = Flask(__name__)
 from flask import Flask
 from flask import request
-import subprocess
 import os
+import time
 
 app = Flask(__name__)
 
 @app.route('/renew', methods=['POST'])
 def post():
+    lock_acquired = False
+
     content = request.get_json()
-    lock_acquired = False
+
+    filename = '/tmp/tmp_file.lock'
+
     while not lock_acquired:
+
         try:
-            os.system("/var/lib/nagios/ssl-acme -a {} -s {} -t {} -u {}".format(
-	            content['SERVICEATTEMPT'],
-	            content['SERVICESTATE'],
-	            content['SERVICESTATETYPE'],
-	            content['SERVICEDESC']
-	        ))
-        except:
-            sleep(3)
-        else:
+            with FileLock(filename):
+                os.system("/home/paladox/test2.sh -a {} -s {} -t {} -u {}".format(
+                    content['SERVICEATTEMPT'],
+                    content['SERVICESTATE'],
+                    content['SERVICESTATETYPE'],
+                    content['SERVICEDESC']
+                ))
+                time.sleep(2)
+                lock_acquired = True
+        finally:
+            os.unlink(filename)
             lock_acquired = True
-    lock_acquired = False
     return '', 204
 
 app.run(host='0.0.0.0', port=5000)
