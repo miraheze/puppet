@@ -22,7 +22,7 @@ apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   check_command = "check_ssl_expire"
   vars.host = "<%= property['url'] %>"
   vars.time = "<% if property['ca'] == "LetsEncrypt" %>15<% else %>30<% end %>"
-  <%- if property['ca'] == "LetsEncrypt" -%>
+  <%- if property['ca'] == "LetsEncrypt" and property['disable_event'] == false -%>
   event_command = "eh_ssl_acme"
   <%- end -%>
   assign where "sslchecks" in host.groups
