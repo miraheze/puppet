@@ -43,7 +43,7 @@ class Echo(DatagramProtocol):
         recver.gotUDP(data)
 
 reactor.listenUDP(<%= @udp_port %>, Echo())
-<% if @network_port == 6697 %>
+<% if @network_port == '6697' %>
 reactor.connectSSL("<%= @network %>", <%= @network_port %>, RCFactory(), ssl.ClientContextFactory())
 <% else %>
 reactor.connectTCP("<%= @network %>", <%= @network_port %>, RCFactory())
