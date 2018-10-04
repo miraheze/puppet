@@ -5,6 +5,7 @@ define ssl::hiera::certs (
     String $hsts     = 'weak',
     Optional[String] $redirect = undef,
     Optional[String] $sslname  = undef,
+    Optional[Boolean] $disable_event = true,
 ) {
     if $sslname == undef {
         $sslurl = $url
