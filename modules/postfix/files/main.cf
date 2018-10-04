@@ -40,4 +40,4 @@ non_smtpd_milters = inet:localhost:12301,inet:localhost:54321
 local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination
 
-notify_classes = delay, policy, protocol, resource, software
+notify_classes = delay, policy, resource, software
