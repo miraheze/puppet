@@ -55,9 +55,9 @@ class acme {
         mode   => '0400',
     }
 
-    file { '/usr/local/bin/mirahezethemagnificent.py':
+    file { '/usr/local/bin/mirahezerenewsslscript.py':
         ensure  => present,
-        content => template('acme/mirahezethemagnificent.py'),
+        content => 'puppet:///modules/acme/mirahezerenewsslscript.py',
         mode    => '0755',
     }
 
