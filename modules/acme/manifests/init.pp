@@ -55,6 +55,12 @@ class acme {
         mode   => '0400',
     }
 
+    file { '/usr/local/bin/mirahezethemagnificent.py':
+        ensure  => present,
+        content => template('acme/mirahezethemagnificent.py'),
+        mode    => '0755',
+    }
+
     sudo::user { 'nrpe_ssl-certificate':
         user       => 'nagiosre',
         privileges => [
