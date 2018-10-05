@@ -82,7 +82,7 @@ class acme {
     ufw::allow { "misc1 to port 5000":
         proto => 'tcp',
         port  => 5000,
-        from  => 185.52.1.76,
+        from  => '185.52.1.76',
     }
 
     icinga2::custom::services { 'Mirahezerenewssl':
