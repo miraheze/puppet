@@ -79,6 +79,19 @@ class acme {
         require => File['/etc/systemd/system/mirahezerenewssl.service'],
     }
 
+    ufw::allow { "misc1 to port 5000":
+        proto => 'tcp',
+        port  => 5000,
+        from  => 185.52.1.76,
+    }
+
+    icinga2::custom::services { 'Mirahezerenewssl':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port    => '5000',
+        },
+    }
+
     sudo::user { 'nrpe_ssl-certificate':
         user       => 'nagiosre',
         privileges => [
