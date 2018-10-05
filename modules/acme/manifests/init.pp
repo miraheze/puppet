@@ -54,11 +54,29 @@ class acme {
         group  => 'nagiosre',
         mode   => '0400',
     }
+    
+    require_package('python3-flask', 'python3-filelock')
 
-    file { '/usr/local/bin/mirahezerenewsslscript.py':
+    file { '/usr/local/bin/mirahezerenewssl.py':
         ensure  => present,
-        content => 'puppet:///modules/acme/mirahezerenewsslscript.py',
+        content => 'puppet:///modules/acme/mirahezerenewssl.py',
         mode    => '0755',
+    }
+
+    exec { 'mirahezerenewssl reload systemd':
+        command     => '/bin/systemctl daemon-reload',
+        refreshonly => true,
+    }
+
+    file { '/etc/systemd/system/mirahezerenewssl.service':
+        ensure => present,
+        source => 'puppet:///modules/acme/mirahezerenewssl.systemd',
+        notify => Exec['mirahezerenewssl reload systemd'],
+    }
+
+    service { 'mirahezerenewssl':
+        ensure  => 'running',
+        require => File['/etc/systemd/system/mirahezerenewssl.service'],
     }
 
     sudo::user { 'nrpe_ssl-certificate':
