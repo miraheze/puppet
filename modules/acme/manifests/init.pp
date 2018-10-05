@@ -61,6 +61,7 @@ class acme {
         ensure  => present,
         source  => 'puppet:///modules/acme/mirahezerenewssl.py',
         mode    => '0755',
+        notify  => Service['mirahezerenewssl'],
     }
 
     exec { 'mirahezerenewssl reload systemd':
