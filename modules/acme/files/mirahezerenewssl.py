@@ -22,7 +22,7 @@ def post():
 
         try:
             with FileLock(filename):
-                os.system("/home/paladox/test2.sh -a {} -s {} -t {} -u {}".format(
+                os.system("sudo -u nagiosre /var/lib/nagios/ssl-acme -a {} -s {} -t {} -u {}".format(
                     content['SERVICEATTEMPT'],
                     content['SERVICESTATE'],
                     content['SERVICESTATETYPE'],
