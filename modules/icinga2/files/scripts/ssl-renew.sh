@@ -1,3 +1,8 @@
 #!/bin/sh
 
-/usr/bin/ssh -t -i  /var/lib/nagios/id_rsa2 nagiosre@mw1.miraheze.org  "/var/lib/nagios/ssl-acme -a ${SERVICEATTEMPT} -s ${SERVICESTATE} -t ${SERVICESTATETYPE} -u ${SERVICEDESC}" >> /var/log/icinga2/ssl-let.log 2>&1
+curl -X POST -H "Content-Type: application/json" -d '{
+  "SERVICEATTEMPT": "${SERVICEATTEMPT}",
+  "SERVICESTATE": "${SERVICESTATE}",
+  "SERVICESTATETYPE": "${SERVICESTATETYPE}",
+  "SERVICEDESC": "${SERVICEDESC}"
+}' http://185.52.1.75:5000/renew >> /var/log/icinga2/ssl-let.log 2>&1
