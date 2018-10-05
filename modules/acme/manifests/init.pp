@@ -59,7 +59,7 @@ class acme {
 
     file { '/usr/local/bin/mirahezerenewssl.py':
         ensure  => present,
-        content => 'puppet:///modules/acme/mirahezerenewssl.py',
+        source  => 'puppet:///modules/acme/mirahezerenewssl.py',
         mode    => '0755',
     }
 
