@@ -24,4 +24,10 @@ class prometheus::blackbox_exporter {
         provider   => 'systemd',
         require    => Package['prometheus-blackbox-exporter'],
     }
+
+    ufw::allow { 'prometheus access 9115 on misc2':
+        proto => 'tcp',
+        port  => 9115,
+        from  => '185.52.1.76',
+    }
 }
