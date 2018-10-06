@@ -11,6 +11,14 @@ modules:
   icmp:
     prober: icmp
     timeout: 5s
+  http_post_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      method: POST
+      headers:
+        Content-Type: application/json
+      body: '{"text": "hi"}'
   http_connect:
     prober: http
     timeout: 5s
