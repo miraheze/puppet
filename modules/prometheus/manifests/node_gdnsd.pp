@@ -11,7 +11,7 @@
 
 class prometheus::node_gdnsd (
     Stdlib::Ensure $ensure = 'present',
-    String $outfile = '/var/lib/prometheus/node.d/gdnsd.prom',
+    String $outfile = '/var/lib/prometheus/node-exporter/gdnsd.prom',
 ) {
 
     require_package( [
