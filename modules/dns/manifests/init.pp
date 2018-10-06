@@ -1,6 +1,7 @@
 # dns
 class dns {
     include ::apt
+    include prometheus::node_gdnsd
 
     apt::pin { 'debian_stretch_backports':
         priority   => 740,
