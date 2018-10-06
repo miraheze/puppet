@@ -30,6 +30,7 @@ scrape_configs:
 
     static_configs:
       - targets: ['localhost:9090']
+      - targets: ['localhost:9091']
 
   - job_name: node
     # If prometheus-node-exporter is installed, grab stats about the local
