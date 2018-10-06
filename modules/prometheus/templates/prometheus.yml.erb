@@ -43,5 +43,8 @@ scrape_configs:
         # Varnish exporter
         '<%= host %>:9131',
 <%- end -%>
+<%- if host =~ /^misc2/ -%>
+        '<%= host %>:9115',
+<%- end -%>
 <%- end -%>
       ]
