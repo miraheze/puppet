@@ -1,4 +1,4 @@
-class varnish::prometheus_exporter (
+class prometheus::varnish_prometheus_exporter (
     String $listen_port = '9131',
 ) {
     require_package('prometheus-varnish-exporter')
@@ -23,5 +23,5 @@ class varnish::prometheus_exporter (
         proto   => 'tcp',
         port    => $listen_port,
         from    => '81.4.127.174',
-    }   
+    }
 }
