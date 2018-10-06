@@ -1,4 +1,6 @@
-class prometheus::varnish_prometheus_exporter {
+class prometheus::varnish_prometheus_exporter (
+    String $listen_port = '9131',
+) {
     require_package('prometheus-varnish-exporter')
 
     exec { 'prometheus-varnish-exporter reload systemd':
