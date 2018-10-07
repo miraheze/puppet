@@ -7,7 +7,7 @@ class prometheus::php_fpm {
         mode   => '0555',
         owner  => 'root',
         group  => 'root',
-        source => 'puppet:///modules/prometheus/php_fpm/phpfpm_exporter',
+        source => 'puppet:///modules/prometheus/php-fpm/phpfpm_exporter',
     }
 
     exec { 'prometheus-php-fpm reload systemd':
