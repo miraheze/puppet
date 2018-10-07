@@ -29,6 +29,12 @@ class base::monitoring {
         from  => '81.4.127.174',
     }
 
+    ufw::allow { 'prometheus access php-fpm for all hosts':
+        proto => 'tcp',
+        port  => 9253,
+        from  => '81.4.127.174',
+    }
+
     require_package('prometheus-node-exporter')
 
     service { 'prometheus-node-exporter':
