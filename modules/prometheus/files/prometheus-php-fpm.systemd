@@ -6,7 +6,7 @@ Documentation=https://github.com/Lusitaniae/phpfpm_exporter
 Restart=always
 User=prometheus
 EnvironmentFile=/etc/default/prometheus-node-exporter
-ExecStart=/usr/local/bin/prometheus-phpfpm-exporter --web.listen-address=":9253" --web.telemetry-path="/metrics" --phpfpm.socket-paths=/run/php/php7.2-fpm.sock --phpfpm.socket-directories=/run/php/
+ExecStart=/usr/local/bin/prometheus-phpfpm-exporter --web.listen-address=":9253" --web.telemetry-path="/metrics" --phpfpm.socket-paths=/run/php/php7.2-fpm.sock --phpfpm.status-path="/php_status" --phpfpm.socket-directories=/run/php/
 ExecReload=/bin/kill -HUP $MAINPID
 TimeoutStopSec=20s
 SendSIGKILL=no
