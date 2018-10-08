@@ -40,6 +40,7 @@ node 'misc2.miraheze.org' {
     include role::prometheus
     include prometheus::blackbox_exporter
     include role::salt::minions
+    include prometheus::php_fpm
 }
 
 node 'misc3.miraheze.org' {
