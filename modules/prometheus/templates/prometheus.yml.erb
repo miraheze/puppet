@@ -57,6 +57,7 @@ scrape_configs:
         # Standard exporter
         '<%= host %>:9253',
 <%- end -%>
+      ]
   - job_name: 'blackbox'
     metrics_path: /probe
     params:
