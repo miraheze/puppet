@@ -43,14 +43,20 @@ scrape_configs:
         # Varnish exporter
         '<%= host %>:9131',
 <%- end -%>
-<%- if host =~ /^misc1/ -%>
-        '<%= host %>:9253',
-<%- end -%>
 <%- if host =~ /^misc2/ -%>
         '<%= host %>:9115',
 <%- end -%>
 <%- end -%>
       ]
+  - job_name: fpm
+    # If prometheus-node-exporter is installed, grab stats about the local
+    # machine by default.
+    static_configs:
+      - targets: [
+<%- @host.sort.each do |host| -%>
+        # Standard exporter
+        '<%= host %>:9253',
+<%- end -%>
   - job_name: 'blackbox'
     metrics_path: /probe
     params:
