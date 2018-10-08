@@ -63,6 +63,7 @@ node /^mw[123]\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include role::salt::minions
+    include prometheus::php_fpm
 }
 
 node 'ns1.miraheze.org' {
