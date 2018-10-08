@@ -57,6 +57,7 @@ node 'misc4.miraheze.org' {
     include role::lizardfs
     include role::phabricator
     include role::salt::minions
+    include prometheus::php_fpm
 }
 
 node /^mw[123]\.miraheze\.org$/ {
@@ -89,6 +90,7 @@ node 'test1.miraheze.org' {
     include base
     include role::mediawiki
     include role::salt::minions
+    include prometheus::php_fpm
 }
 
 # ensures all servers have basic class if puppet runs
