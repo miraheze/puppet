@@ -14,22 +14,18 @@ function log {
 }
 
 function usage {
-    echo "Usage: $0 [-h] [-a <service_attempts>] [-s <state>] [-t <service_type>] [-u <URL>]"
+    echo "Usage: $0 [-h] [-s <state>] [-t <service_type>] [-u <URL>]"
     echo "  -h      display help"
-    echo "  -a      attempts for service like 3 or 4"
     echo "  -s      state of service like WARNING or OK"
     echo "  -t      service type like for example SOFT or HARD"
     echo "  -u      URL ie <domain>"
     exit 1
 }
 
-while getopts ":ha:s:t:u:" option; do
+while getopts ":hs:t:u:" option; do
     case $option in
         h)
             usage
-            ;;
-        a)
-            ATTEMPT="$OPTARG"
             ;;
         s)
             STATE="$OPTARG"
@@ -46,7 +42,6 @@ while getopts ":ha:s:t:u:" option; do
     esac
 done
 
-test -z ${ATTEMPT} && usage
 test -z ${STATE} && usage
 test -z ${TYPE} && usage
 test -z ${URL} && usage
