@@ -2,11 +2,6 @@
 
 set -x
 
-if [ -z "$SERVICEATTEMPT" ]
-then
-  SERVICEATTEMPT=$1
-fi
-
 if [ -z "$SERVICESTATE" ]
 then
   SERVICESTATE=$2
@@ -23,7 +18,6 @@ then
 fi
 
 curl -X POST -H "Content-Type: application/json" -d '{
-  "SERVICEATTEMPT": "'${SERVICEATTEMPT}'",
   "SERVICESTATE": "'${SERVICESTATE}'",
   "SERVICESTATETYPE": "'${SERVICESTATETYPE}'",
   "SERVICEDESC": "'${SERVICEDESC}'"
