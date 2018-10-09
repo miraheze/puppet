@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 if [ -z "$SERVICEATTEMPT" ]
 then
   SERVICEATTEMPT=$1
