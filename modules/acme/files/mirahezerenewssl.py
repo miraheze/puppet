@@ -22,7 +22,7 @@ def post():
     while not lock_acquired:
         try:
             with lock.acquire():
-                os.system("/var/lib/nagios/ssl-acme -s {} -t {} -u {}".format(
+                os.system("/var/lib/nagios/ssl-acme -s {} -t {} -u {} >> /var/log/acme/ssl-renew.log 2>&1".format(
                     content['SERVICESTATE'],
                     content['SERVICESTATETYPE'],
                     content['SERVICEDESC']
