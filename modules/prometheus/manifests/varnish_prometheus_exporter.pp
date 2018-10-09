@@ -10,7 +10,7 @@ class prometheus::varnish_prometheus_exporter (
 
     file { '/etc/systemd/system/prometheus-varnish-exporter.service':
         ensure  => present,
-        content  => template('varnish/prometheus-varnish-exporter.systemd'),
+        content  => template('prometheus/prometheus-varnish-exporter.systemd'),
         notify  => Exec['prometheus-varnish-exporter reload systemd'],
     }
 
