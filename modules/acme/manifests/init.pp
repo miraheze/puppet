@@ -99,4 +99,16 @@ class acme {
             'ALL = NOPASSWD: /root/ssl-certificate',
         ],
     }
+
+    file { '/var/log/acme':
+        ensure => directory,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0750',
+    }
+
+    logrotate::conf { 'acme':
+        ensure => present,
+        source => 'puppet:///modules/acme/acme.logrotate.conf',
+    }
 }
