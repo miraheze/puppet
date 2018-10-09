@@ -17,11 +17,11 @@ def post():
     content = request.get_json()
 
     filename = '/tmp/tmp_file.lock'
+    lock = FileLock(filename)
 
     while not lock_acquired:
-
         try:
-            with FileLock(filename):
+            with lock.acquire():
                 os.system("/var/lib/nagios/ssl-acme -a {} -s {} -t {} -u {}".format(
                     content['SERVICEATTEMPT'],
                     content['SERVICESTATE'],
@@ -31,7 +31,7 @@ def post():
                 time.sleep(2)
                 lock_acquired = True
         finally:
-            os.unlink(filename)
+            lock.release()
             lock_acquired = True
     return '', 204
 
