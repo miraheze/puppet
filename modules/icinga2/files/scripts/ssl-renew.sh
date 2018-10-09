@@ -4,21 +4,21 @@ set -x
 
 if [ -z "$SERVICESTATE" ]
 then
-  SERVICESTATE=$2
+  SERVICESTATE=$1
 fi
 
 if [ -z "$SERVICESTATETYPE" ]
 then
-  SERVICESTATETYPE=$3
+  SERVICESTATETYPE=$2
 fi
 
 if [ -z "$SERVICEDESC" ]
 then
-  SERVICEDESC=$4
+  SERVICEDESC=$3
 fi
 
-curl -X POST -H "Content-Type: application/json" -d '{
-  "SERVICESTATE": "'${SERVICESTATE}'",
-  "SERVICESTATETYPE": "'${SERVICESTATETYPE}'",
-  "SERVICEDESC": "'${SERVICEDESC}'"
-}' http://185.52.1.75:5000/renew >> /var/log/icinga2/ssl-let.log 2>&1
+curl -X POST -H 'Content-type: application/json' --data "{
+  \"SERVICESTATE\": \"${SERVICESTATE}\",
+  \"SERVICESTATETYPE\": \"${SERVICESTATETYPE}\",
+  \"SERVICEDESC\": \"${SERVICEDESC}\"
+}" http://185.52.1.75:5000/renew >> /var/log/icinga2/ssl-let.log 2>&1
