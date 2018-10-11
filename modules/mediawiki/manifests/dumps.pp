@@ -6,6 +6,7 @@ class mediawiki::dumps {
     
     file { '/usr/local/bin/dumpsBackup.sh':
         ensure  => 'present',
+        mode    => '0755',
         source  => 'puppet:///modules/mediawiki/dumps/dumpsBackup.sh',
         require => File['/srv/mediawiki'],
     }
