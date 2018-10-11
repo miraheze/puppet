@@ -11,7 +11,7 @@ class mediawiki::dumps {
         if $value == 'monthly' {
             $time = '1'
         } elsif  $value == 'fortnight' {
-            $time = ['15', '30']
+            $time = ['14', '28']
         } else {
             $time = ['1', '8', '15', '22', '29']
         }
@@ -33,7 +33,7 @@ class mediawiki::dumps {
         if $value == 'monthly' {
             $time = '1'
         } elsif  $value == 'fortnight' {
-            $time = ['15', '30']
+            $time = ['14', '28']
         } else {
             $time = ['1', '8', '15', '22', '29']
         }
@@ -56,7 +56,7 @@ class mediawiki::dumps {
         if $value == 'monthly' {
             $time = '1'
         } elsif  $value == 'fortnight' {
-            $time = ['15', '30']
+            $time = ['14', '28']
         } else {
             $time = ['1', '8', '15', '22', '29']
         }
@@ -78,7 +78,7 @@ class mediawiki::dumps {
         if $value == 'monthly' {
             $time = '1'
         } elsif  $value == 'fortnight' {
-            $time = ['15', '30']
+            $time = ['14', '28']
         } else {
             $time = ['1', '8', '15', '22', '29']
         }
