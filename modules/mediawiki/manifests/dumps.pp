@@ -2,8 +2,14 @@
 #
 # Cron jobs of select wiki dumps
 class mediawiki::dumps {
-    require_package(['heirloom-mailx', 'zip'])
+    require_package('zip')
     
+    file { '/usr/local/bin/dumpsBackup.sh':
+        ensure  => 'present',
+        source  => 'puppet:///modules/mediawiki/dumps/dumpsBackup.sh',
+        require => File['/srv/mediawiki'],
+    }
+
     $module_path = get_module_path($module_name)
     $xml_dump = loadyaml("${module_path}/data/xml_dump.yaml")
 
@@ -18,7 +24,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} xml dump ${value}":
             ensure   => present,
-            command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full --uploads --output=gzip:/mnt/mediawiki-static/dumps/${key}.xml.gz",
+            command  => "/usr/local/bin/dumpsBackup.sh -x -w ${key}",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
@@ -40,7 +46,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} images ${value}":
             ensure   => present,
-            command  => "/usr/bin/nice -n19 /usr/bin/zip -r /mnt/mediawiki-static/dumps/${key}.zip /mnt/mediawiki-static/${key}/",
+            command  => "/usr/local/bin/dumpsBackup.sh -i -w ${key}",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
@@ -63,7 +69,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} private xml dump ${value}":
             ensure   => present,
-            command  => "/usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key} && /usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key}/xml/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki=${key} --logs --full --uploads --output=gzip:/mnt/mediawiki-static/private/dumps/${key}/xml/${key}.xml.gz && /bin/echo '${key}.zip' | /usr/bin/nice -n19 php /srv/mediawiki/w/maintenance/deleteBatch.php --wiki=${key} && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/eraseArchivedFile.php --wiki=${key} --filekey='*' --filename='${key}.gz.xml' --delete &&  /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${key}/xml/ --comment='Import xml dump for ${key}' --overwrite --wiki=${key} --extensions=gz,xml",
+            command  => "/usr/local/bin/dumpsBackup.sh -x -p -w ${key}",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
@@ -85,7 +91,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} private images ${value}":
             ensure   => present,
-            command  => "/usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key} && /usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key}/images/ && /usr/bin/nice -n19 /usr/bin/zip -r /mnt/mediawiki-static/private/dumps/${key}/images/${key}.zip /mnt/mediawiki-static/${key}/ && /bin/echo '${key}.zip' | /usr/bin/nice -n19 php /srv/mediawiki/w/maintenance/deleteBatch.php --wiki=${key} && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/eraseArchivedFile.php --wiki=${key} --filekey='*' --filename='${key}.zip' --delete && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${key}/images/ --comment='Import image zip dump for ${key}' --overwrite --wiki=${key} --extensions=zip",
+            command  => "/usr/local/bin/dumpsBackup.sh -i -p -w ${key}",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
