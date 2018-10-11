@@ -18,7 +18,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} xml dump ${value}":
             ensure   => present,
-            command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full --uploads > /mnt/mediawiki-static/dumps/${key}.xml",
+            command  => "/usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki ${key} --logs --full --uploads --output=gzip:/mnt/mediawiki-static/dumps/${key}.xml.gz",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
@@ -63,7 +63,7 @@ class mediawiki::dumps {
 
         cron { "Export ${key} private xml dump ${value}":
             ensure   => present,
-            command  => "/usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key} && /usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key}/xml/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki=${key} --logs --full --uploads > /mnt/mediawiki-static/private/dumps/${key}/xml/${key}.xml && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${key}/xml/ --comment='Import xml dump for ${key}' --overwrite --wiki=${key} --extensions=xml",
+            command  => "/usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key} && /usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${key}/xml/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki=${key} --logs --full --uploads --output=gzip:/mnt/mediawiki-static/private/dumps/${key}/xml/${key}.xml.gz && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${key}/xml/ --comment='Import xml dump for ${key}' --overwrite --wiki=${key} --extensions=gz,xml",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
