@@ -76,7 +76,7 @@ function run_backups_private_xml {
 
     /usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${WIKI} /mnt/mediawiki-static/private/dumps/${WIKI}/xml/
 
-    /bin/echo "${WIKI}.xml.gz" | /usr/bin/nice -n19 php /srv/mediawiki/w/maintenance/deleteBatch.php --wiki=${WIKI} && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/eraseArchivedFile.php --wiki=${WIKI} --filekey="*" --filename="${WIKI}.xml.gz" --delete &&
+    /bin/echo "File:${WIKI}.xml.gz" | /usr/bin/nice -n19 php /srv/mediawiki/w/maintenance/deleteBatch.php --wiki=${WIKI} && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/eraseArchivedFile.php --wiki=${WIKI} --filekey="*" --filename="File:${WIKI}.xml.gz" --delete &&
     /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki=${WIKI} --logs --full --uploads --output=gzip:/mnt/mediawiki-static/private/dumps/${WIKI}/xml/${WIKI}.xml.gz &&  /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${WIKI}/xml/ --comment="Import XML dump for ${WIKI}" --overwrite --wiki=${WIKI} --extensions=gz,xml
 }
 
@@ -85,7 +85,7 @@ function run_backups_private_image {
 
     /usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${WIKI} /mnt/mediawiki-static/private/dumps/${WIKI}/images/
 
-    /bin/echo "${WIKI}.zip" | /usr/bin/nice -n19 php /srv/mediawiki/w/maintenance/deleteBatch.php --wiki=${WIKI} && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/eraseArchivedFile.php --wiki=${WIKI} --filekey="*" --filename="${WIKI}.zip" --delete &&
+    /bin/echo "File:${WIKI}.zip" | /usr/bin/nice -n19 php /srv/mediawiki/w/maintenance/deleteBatch.php --wiki=${WIKI} && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/eraseArchivedFile.php --wiki=${WIKI} --filekey="*" --filename="File:${WIKI}.zip" --delete &&
     /usr/bin/nice -n19 /usr/bin/zip -r /mnt/mediawiki-static/private/dumps/${WIKI}/images/${WIKI}.zip /mnt/mediawiki-static/${WIKI}/ && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${WIKI}/images/ --comment="Import image zip dump for ${WIKI}" --overwrite --wiki=${WIKI} --extensions=zip
 }
 
