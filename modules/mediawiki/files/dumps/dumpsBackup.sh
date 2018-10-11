@@ -76,7 +76,7 @@ function run_backups_private_xml {
 
     /usr/bin/nice -n19 /bin/mkdir -p /mnt/mediawiki-static/private/dumps/${WIKI} /mnt/mediawiki-static/private/dumps/${WIKI}/xml/
 
-    /bin/echo "${WIKI}.gz.xml" | /usr/bin/nice -n19 php /srv/mediawiki/w/maintenance/deleteBatch.php --wiki=${WIKI} && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/eraseArchivedFile.php --wiki=${WIKI} --filekey="*" --filename="${WIKI}.gz.xml" --delete &&
+    /bin/echo "${WIKI}.xml.gz" | /usr/bin/nice -n19 php /srv/mediawiki/w/maintenance/deleteBatch.php --wiki=${WIKI} && /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/eraseArchivedFile.php --wiki=${WIKI} --filekey="*" --filename="${WIKI}.xml.gz" --delete &&
     /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --wiki=${WIKI} --logs --full --uploads --output=gzip:/mnt/mediawiki-static/private/dumps/${WIKI}/xml/${WIKI}.xml.gz &&  /usr/bin/nice -n19 /usr/bin/php /srv/mediawiki/w/maintenance/importImages.php /mnt/mediawiki-static/private/dumps/${WIKI}/xml/ --comment="Import XML dump for ${WIKI}" --overwrite --wiki=${WIKI} --extensions=gz,xml
 }
 
