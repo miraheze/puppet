@@ -2,11 +2,6 @@
 class mediawiki::php {
     include ::php
 
-    service { 'php7.2-fpm':
-        ensure  => running,
-        require => Package['php7.2-fpm'],
-    }
-
     file { '/etc/php/7.2/fpm/php-fpm.conf':
         ensure  => 'present',
         mode    => '0755',
