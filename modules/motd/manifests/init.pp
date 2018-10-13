@@ -17,7 +17,7 @@ class motd {
 
     motd::script { 'header':
         ensure   => present,
-        priority => 00,
+        priority => 0,
         content  => "#!/bin/sh\nuname -snrvm\nlsb_release -s -d\n\n",
     }
 
