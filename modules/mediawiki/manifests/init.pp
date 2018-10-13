@@ -2,7 +2,6 @@
 class mediawiki(
     Optional[String] $branch = undef,
     Optional[String] $branch_mw_config = undef,
-    Boolean $php7_2 = hiera('mediawiki::use_php_7_2', false),
     Optional[Boolean] $use_memcached = undef,
 ) {
     include mediawiki::favicons
@@ -20,11 +19,7 @@ class mediawiki(
     }
     include mediawiki::monitoring
 
-    if $php7_2 {
-        include mediawiki::php7_2
-    } else {
-        include mediawiki::php7
-    }
+    include mediawiki::php
 
     if hiera(jobrunner) {
         include mediawiki::jobrunner
@@ -91,20 +86,11 @@ class mediawiki(
         require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
     }
 
-    if $php7_2 {
-        file { '/var/log/php7.2-fpm.log':
-            ensure  => 'present',
-            owner   => 'www-data',
-            group   => 'www-data',
-            mode    => '0755',
-        }
-    } else {
-        file { '/var/log/php7.0-fpm.log':
-            ensure  => 'present',
-            owner   => 'www-data',
-            group   => 'www-data',
-            mode    => '0755',
-        }
+    file { '/var/log/php7.2-fpm.log':
+        ensure  => 'present',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0755',
     }
 
     $wikiadmin_password   = hiera('passwords::db::wikiadmin')
