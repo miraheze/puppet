@@ -28,7 +28,7 @@ class role::irc {
         from  => '81.4.121.113',
     }
 
-    motd::role { '::irc':
+    motd::role { 'role::irc':
         description => 'IRC bots server',
     }
 }
