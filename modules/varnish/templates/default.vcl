@@ -133,6 +133,7 @@ sub mw_url_rewrite {
 	) {
 		return (synth(752, "/wiki/Requests_for_adoption"));
 	}
+	
 }
 
 sub vcl_synth {
@@ -232,13 +233,20 @@ sub vcl_recv {
 		}
 	}
 
-    if (req.http.Host == "lizard.miraheze.org") {
-        if (req.url == "/") {
-                return (synth(752, "/mfs.cgi"));
-        }
-        set req.backend_hint = misc4;
-        return (pass);
-    }
+	if (req.http.Host == "lizard.miraheze.org") {
+		if (req.url == "/") {
+			return (synth(752, "/mfs.cgi"));
+		}
+		set req.backend_hint = misc4;
+		return (pass);
+	}
+	
+	if (req.http.Host == "donate.miraheze.org") {
+		set req.http.Host = "miraheze.org";
+		if (req.url != "/") {
+			return (synth(752, "/#donate"));
+		}
+	}
 	
 	# MediaWiki specific
 	call mw_vcl_recv;
