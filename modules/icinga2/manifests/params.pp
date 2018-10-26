@@ -138,7 +138,7 @@ class icinga2::params {
         'ZoneName'           => $::fqdn,
         'NodeName'           => $::fqdn,
         'TicketSalt'         => '',
-        'MaxConcurrentChecks' => 0,
+        'MaxConcurrentChecks' => 1,
       }
     } # Linux
 
