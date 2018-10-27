@@ -56,13 +56,16 @@ class restbase {
 
     require_package('libsqlite3-dev')
 
-    file { '/etc/mediawiki':
-        ensure => directory,
+    if ! defined(File['/etc/mediawiki']) {
+        file { '/etc/mediawiki':
+            ensure => directory,
+        }
     }
 
-    file { '/etc/mediawiki/restbase':
-        ensure  => directory,
-        require => File['/etc/mediawiki'],
+    if ! defined(File['/etc/mediawiki/restbase']) {
+        file { '/etc/mediawiki/restbase':
+            ensure => directory,
+        }
     }
 
     $wikis = loadyaml('/etc/puppet/services/services.yaml')
