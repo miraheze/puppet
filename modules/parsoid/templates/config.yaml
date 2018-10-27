@@ -15,7 +15,7 @@ wiki: &wiki
 <%- end -%>
 
 services:
-  - module: /usr/lib/parsoid/src/lib/index.js
+  - module: /srv/parsoid/lib/index.js
     entrypoint: apiServiceWorker
     conf:
       mwApis: *wiki
