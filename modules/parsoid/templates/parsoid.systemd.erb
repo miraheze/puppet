@@ -18,4 +18,6 @@ ExecStart=/usr/bin/nodejs /srv/parsoid/bin/server.js -c /etc/mediawiki/parsoid/c
 KillMode=process
 Restart=on-success
 PrivateTmp=true
+StandardOutput=syslog
+StandardError=syslog
 SyslogIdentifier=parsoid
