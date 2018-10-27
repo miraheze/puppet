@@ -55,12 +55,16 @@ class parsoid {
         monitor => false,
     }
 
-    file { '/etc/mediawiki':
-        ensure => directory,
+    if !defined(File['/etc/mediawiki') {
+        file { '/etc/mediawiki':
+            ensure => directory,
+        }
     }
-    
-    file { '/etc/mediawiki/parsoid':
-        ensure => directory,
+
+    if !defined(File['/etc/mediawiki/parsoid') {
+        file { '/etc/mediawiki/parsoid':
+            ensure => directory,
+        }
     }
 
     file { '/etc/mediawiki/parsoid/config.yaml':
