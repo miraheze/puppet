@@ -72,6 +72,14 @@ class parsoid {
         subscribe => File['/etc/mediawiki/parsoid/config.yaml'],
     }
 
+    file { '/etc/mediawiki':
+        ensure => directory,
+    }
+    
+    file { '/etc/mediawiki/parsoid':
+        ensure => directory,
+    }
+
     file { '/etc/mediawiki/parsoid/config.yaml':
         ensure  => present,
         content => template('parsoid/config.yaml'),
