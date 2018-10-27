@@ -100,4 +100,13 @@ class mediawiki::dumps {
             monthday => $time,
         }
     }
+
+    cron { 'RotenLinks updateExternalLinks.php on all wikis':
+        ensure  => present,
+        command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php',
+        user    => 'www-data',
+        minute  => '*',
+        hour    => '23',
+        weekday => ['0', '4'],
+    }
 }
