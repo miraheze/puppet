@@ -2,6 +2,19 @@
 class parsoid {
     include nodejs
 
+    group { 'parsoid':
+        ensure => present,
+    }
+
+    user { 'parsoid':
+        ensure     => present,
+        gid        => 'restbase',
+        shell      => '/bin/false',
+        home       => '/srv/parsoid',
+        managehome => false,
+        system     => true,
+    }
+
     git::clone { 'parsoid':
         ensure    => present,
         directory => '/srv/parsoid',
