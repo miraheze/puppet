@@ -8,7 +8,7 @@ class parsoid {
 
     user { 'parsoid':
         ensure     => present,
-        gid        => 'restbase',
+        gid        => 'parsoid',
         shell      => '/bin/false',
         home       => '/srv/parsoid',
         managehome => false,
@@ -55,13 +55,13 @@ class parsoid {
         monitor => false,
     }
 
-    if !defined(File['/etc/mediawiki') {
+    if ! defined(File['/etc/mediawiki']) {
         file { '/etc/mediawiki':
             ensure => directory,
         }
     }
 
-    if !defined(File['/etc/mediawiki/parsoid') {
+    if ! defined(File['/etc/mediawiki/parsoid']) {
         file { '/etc/mediawiki/parsoid':
             ensure => directory,
         }
