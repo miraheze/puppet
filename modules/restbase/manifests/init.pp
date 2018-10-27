@@ -18,7 +18,7 @@ class restbase {
         system     => true,
     }
 
-    git::clone { 'restbase_deploy':
+    git::clone { 'restbase':
         ensure             => present,
         directory          => '/srv/restbase',
         origin             => 'https://github.com/wikimedia/restbase.git',
@@ -26,9 +26,24 @@ class restbase {
         owner              => 'restbase',
         group              => 'restbase',
         mode               => '0755',
-        timeout            => '550',
         recurse_submodules => true,
-        require            => [User['restbase'], Group['restbase']],
+        require            => [
+            User['restbase'],
+            Group['restbase']
+        ],
+    }
+
+    exec { 'restbase_npm':
+        command     => 'sudo -u restbase npm install',
+        creates     => '/srv/restbase/node_modules',
+        cwd         => '/srv/restbase',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/restbase',
+        user        => 'restbase',
+        require     => [
+            Git::Clone['restbase'],
+            Package['nodejs']
+        ],
     }
 
     include ssl::wildcard
