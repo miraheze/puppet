@@ -24,6 +24,6 @@ class mediawiki::cron {
         user    => 'www-data',
         minute  => '*',
         hour    => '23',
-        weekday => ['0', '3', '6'],
+        weekday => ['0', '4'],
     }
 }
