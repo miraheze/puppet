@@ -104,9 +104,9 @@ class parsoid {
         ],
     }
 
-    logrotate::conf { 'restbase':
+    logrotate::conf { 'parsoid':
         ensure => present,
-        source => 'puppet:///modules/restbase/logrotate.conf',
+        source => 'puppet:///modules/parsoid/logrotate.conf',
     }
 
     icinga2::custom::services { 'Parsoid':
