@@ -40,9 +40,9 @@ class parsoid {
 
     include nginx
 
-    $wikis = loadyaml('/etc/puppet/services/services.yaml')
-
     include ssl::wildcard
+
+    $wikis = loadyaml('/etc/puppet/services/services.yaml')
 
     file { '/etc/nginx/sites-enabled/default':
         ensure  => absent,
@@ -53,6 +53,29 @@ class parsoid {
         ensure  => present,
         source  => 'puppet:///modules/parsoid/nginx/parsoid',
         monitor => false,
+    }
+
+    file { '/etc/mediawiki':
+        ensure => directory,
+    }
+    
+    file { '/etc/mediawiki/parsoid':
+        ensure => directory,
+    }
+
+    file { '/etc/mediawiki/parsoid/config.yaml':
+        ensure  => present,
+        content => template('parsoid/config.yaml'),
+    }
+
+    file { '/var/log/parsoid':
+        ensure  => directory,
+        owner   => 'parsoid',
+        group   => 'parsoid',
+        require => [
+            User['parsoid'],
+            Group['parsoid']
+        ],
     }
 
     exec { 'parsoid reload systemd':
@@ -72,17 +95,9 @@ class parsoid {
         subscribe => File['/etc/mediawiki/parsoid/config.yaml'],
     }
 
-    file { '/etc/mediawiki':
-        ensure => directory,
-    }
-    
-    file { '/etc/mediawiki/parsoid':
-        ensure => directory,
-    }
-
-    file { '/etc/mediawiki/parsoid/config.yaml':
-        ensure  => present,
-        content => template('parsoid/config.yaml'),
+    logrotate::conf { 'restbase':
+        ensure => present,
+        source => 'puppet:///modules/restbase/logrotate.conf',
     }
 
     icinga2::custom::services { 'Parsoid':
