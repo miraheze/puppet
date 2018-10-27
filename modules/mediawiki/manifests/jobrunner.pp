@@ -70,6 +70,15 @@ class mediawiki::jobrunner {
         hour    => '12',
     }
 
+    cron { 'RotenLinks updateExternalLinks.php on all wikis':
+        ensure  => present,
+        command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php',
+        user    => 'www-data',
+        minute  => '*',
+        hour    => '23',
+        weekday => ['0', '4'],
+    }
+
     file { '/usr/lib/nagios/plugins/check_jobqueue':
         ensure => present,
         source => 'puppet:///modules/mediawiki/jobrunner/check_jobqueue',
