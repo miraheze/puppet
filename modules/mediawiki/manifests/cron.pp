@@ -18,7 +18,7 @@ class mediawiki::cron {
         hour    => '23',
     }
 
-    if $::fqdn === "mw1.miraheze.org" {
+    if hiera('run_rotenlinks_cron', false) {
         cron { 'RotenLinks updateExternalLinks.php on all wikis':
             ensure  => present,
             command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php',
