@@ -19,7 +19,7 @@ class mediawiki::cron {
     }
 
     cron { 'RotenLinks updateExternalLinks.php on all wikis':
-        ensure  => present,
+        ensure  => absent,
         command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php',
         user    => 'www-data',
         minute  => '*',
