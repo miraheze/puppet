@@ -1,19 +1,46 @@
 # class: parsoid
 class parsoid {
-    include apt
+    include nodejs
+
+    group { 'parsoid':
+        ensure => present,
+    }
+
+    user { 'parsoid':
+        ensure     => present,
+        gid        => 'restbase',
+        shell      => '/bin/false',
+        home       => '/srv/parsoid',
+        managehome => false,
+        system     => true,
+    }
+
+    git::clone { 'parsoid':
+        ensure    => present,
+        directory => '/srv/parsoid',
+        origin    => 'https://github.com/wikimedia/parsoid.git',
+        branch    => 'master',
+        owner     => 'root',
+        group     => 'root',
+        mode      => '0755',
+    }
+
+    exec { 'parsoid_npm':
+        command     => 'sudo -u root npm install',
+        creates     => '/srv/parsoid/node_modules',
+        cwd         => '/srv/parsoid',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/parsoid',
+        user        => 'root',
+        require     => [
+            Git::Clone['parsoid'],
+            Package['nodejs']
+        ],
+    }
+
     include nginx
 
     $wikis = loadyaml('/etc/puppet/services/services.yaml')
-
-    apt::source { 'parsoid':
-        location => 'https://releases.wikimedia.org/debian',
-        release  => 'jessie-mediawiki',
-        repos    => 'main',
-        key      => {
-            'id'     => 'A6FD76E2A61C5566D196D2C090E9F83F22250DD7',
-            'server' => 'hkp://keyserver.ubuntu.com:80',
-        },
-    }
 
     include ssl::wildcard
 
@@ -28,14 +55,20 @@ class parsoid {
         monitor => false,
     }
 
-    package { 'parsoid':
+    exec { 'parsoid reload systemd':
+        command     => '/bin/systemctl daemon-reload',
+        refreshonly => true,
+    }
+
+    file { '/etc/systemd/system/parsoid.service':
         ensure  => present,
-        require => Apt::Source['parsoid'],
+        content => template('parsoid/parsoid.systemd.erb'),
+        notify  => Exec['parsoid reload systemd'],
     }
 
     service { 'parsoid':
         ensure    => running,
-        require   => Package['parsoid'],
+        require   => File['/etc/systemd/system/parsoid.service'],
         subscribe => File['/etc/mediawiki/parsoid/config.yaml'],
     }
 
