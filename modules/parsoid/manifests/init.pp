@@ -95,6 +95,15 @@ class parsoid {
         subscribe => File['/etc/mediawiki/parsoid/config.yaml'],
     }
 
+    file { '/etc/rsyslog.d/20-parsoid.conf':
+        ensure => present,
+        source => 'puppet:///modules/parsoid/parsoid.rsyslog.conf',
+        notify => [
+            Service['rsyslog'],
+            Service['parsoid']
+        ],
+    }
+
     logrotate::conf { 'restbase':
         ensure => present,
         source => 'puppet:///modules/restbase/logrotate.conf',
