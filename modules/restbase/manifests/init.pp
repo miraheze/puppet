@@ -115,7 +115,7 @@ class restbase {
         hasrestart => true,
         require    => [
             File['/etc/systemd/system/restbase.service'],
-            Git::Clone['restbase_deploy'],
+            Git::Clone['restbase'],
         ],
         subscribe  => File['/etc/systemd/system/restbase.service'],
     }
