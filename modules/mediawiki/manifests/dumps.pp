@@ -19,6 +19,8 @@ class mediawiki::dumps {
             $time = '1'
         } elsif  $value == 'fortnight' {
             $time = ['14', '28']
+        } elsif  $value == 'biweekly' {
+            $time = ['1', '5', '8', '12', '15', '19', '22', '26', '29']
         } else {
             $time = ['1', '8', '15', '22', '29']
         }
