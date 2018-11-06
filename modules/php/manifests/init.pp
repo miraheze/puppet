@@ -35,6 +35,7 @@ class php {
         'php7.2',
         'php7.2-cli',
         'php7.2-curl',
+        'php7.2-bcmath',
         'php7.2-dba',
         'php7.2-dev',
         'php7.2-fpm',
