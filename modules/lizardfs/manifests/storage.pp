@@ -49,4 +49,12 @@ class lizardfs::storage(
             tcp_port    => '9422',
         },
     }
+
+    if hiera('lizardfs_client', false) {
+        # Used to backup with bacula
+        ::lizardfs::client { '/mnt/mediawiki-static':
+            create_mountpoint => true,
+            options           => 'big_writes,nosuid,nodev,noatime',
+        }
+    }
 }
