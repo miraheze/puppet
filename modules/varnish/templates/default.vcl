@@ -272,7 +272,7 @@ sub vcl_backend_fetch {
 
 sub vcl_backend_response {
 	if (beresp.ttl <= 0s) {
-		set beresp.ttl = 120s;
+		set beresp.ttl = 300s;
 		set beresp.uncacheable = true;
 	}
 
