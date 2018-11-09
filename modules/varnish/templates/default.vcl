@@ -158,10 +158,16 @@ sub mw_vcl_recv {
 	call mw_identify_device;
 	call mw_url_rewrite;
 	
-	if (req.http.X-Miraheze-Debug == "1" || req.url ~ "^/\.well-known") {
+	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "2") {
+	} else if (req.http.X-Miraheze-Debug == "mw2.miraheze.org") {
+		set req.backend_hint = mw2;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org") {
+		set req.backend_hint = mw3;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
 		set req.backend_hint = test1;
 		return (pass);
 	} else {
