@@ -1,5 +1,9 @@
 # first value is ignore but the second value is the important one.
 # maps short hostname to ip
+
+# used for backups
+lizardfs1: '81.4.101.157'
+
 mw1: '185.52.1.75'
 mw2: '185.52.2.113'
 mw3: '81.4.121.113'
