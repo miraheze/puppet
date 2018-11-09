@@ -106,42 +106,10 @@ class bacula::director {
         },
     }
 
-    icinga2::custom::services { 'Bacula Static Lizardfs1':
+    icinga2::custom::services { 'Bacula Static':
         check_command => 'nrpe',
         vars          => {
-            nrpe_command => 'check_bacula_static_lizardfs1',
-            nrpe_timeout => '60s',
-        },
-    }
-
-    icinga2::custom::services { 'Bacula Static Lizardfs2':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_bacula_static_lizardfs2',
-            nrpe_timeout => '60s',
-        },
-    }
-
-    icinga2::custom::services { 'Bacula Misc4 Lizardfs Master':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_bacula_misc4_lizardfs_master',
-            nrpe_timeout => '60s',
-        },
-    }
-
-    icinga2::custom::services { 'Bacula Lizardfs1 Lizardfs Chunkserver1':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_bacula_lizardfs1_lizardfs_chunkserver1',
-            nrpe_timeout => '60s',
-        },
-    }
-
-    icinga2::custom::services { 'Bacula Lizardfs2 Lizardfs Chunkserver2':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_bacula_lizardfs2_lizardfs_chunkserver2',
+            nrpe_command => 'check_bacula_static',
             nrpe_timeout => '60s',
         },
     }
