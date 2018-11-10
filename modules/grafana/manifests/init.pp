@@ -13,7 +13,7 @@ class grafana (
         location => 'https://packagecloud.io/grafana/stable/debian/',
         release  => "${::lsbdistcodename}",
         repos    => 'main',
-        key      => 'F86AA916A2195E121AEDB11437BBEE3F7AD95B3F',
+        key      => 'F51A91A5EE001AA5D77D53C4C6E319C334410682',
     }
 
     package { 'grafana':
