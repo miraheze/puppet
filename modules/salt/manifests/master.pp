@@ -15,8 +15,12 @@ class salt::master(
     String $salt_module_roots = '/srv/salt/_modules',
     String $salt_returner_roots = '/srv/salt/_returners',
 ) {
+
+    include salt::apt
+
     package { 'salt-master':
-        ensure => 'installed',
+        ensure  => 'installed',
+        require => Apt::Source['salt_apt'],
     }
 
     service { 'salt-master':
