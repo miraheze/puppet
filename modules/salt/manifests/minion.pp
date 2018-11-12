@@ -43,6 +43,8 @@ class salt::minion(
     String $id        = $::fqdn,
     Hash $grains    = {},
 ) {
+    include salt::apt
+
     $config = {
         id                  => $id,
         master              => $master,
@@ -65,6 +67,7 @@ class salt::minion(
     # will start it with the correct settings
     package { 'salt-minion':
         ensure  => present,
+        require => Apt::Source['salt_apt'],
     }
 
     service { 'salt-minion':
