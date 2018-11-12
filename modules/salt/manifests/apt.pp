@@ -1,4 +1,4 @@
-class apt {
+class salt::apt {
     include ::apt
 
     if !defined(Apt::Source['salt_apt']) {
