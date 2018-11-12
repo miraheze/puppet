@@ -67,17 +67,17 @@ backend test1 {
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
-backend mw1 {
+backend mw1_test {
 	.host = "127.0.0.1";
 	.port = "8080";
 }
 
-backend mw2 {
+backend mw2_test {
 	.host = "127.0.0.1";
 	.port = "8081";
 }
 
-backend mw3 {
+backend mw3_test {
 	.host = "127.0.0.1";
 	.port = "8082";
 }
