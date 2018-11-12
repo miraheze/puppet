@@ -3,7 +3,7 @@ class salt::apt {
 
     if !defined(Apt::Source['salt_apt']) {
         apt::key { 'salt_key':
-          id     => '126C0D24BD8A2942CC7DF8AC7638D0442B90D010',
+          id     => 'EAF4A8212DAC5DEDCA2D17860D34246317928113',
           source => 'https://repo.saltstack.com/apt/debian/9/amd64/2018.3/SALTSTACK-GPG-KEY.pub',
         }
 
