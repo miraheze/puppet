@@ -64,6 +64,27 @@ backend test1 {
 	.port = "8083";
 }
 
+# test mediawiki backend with out health check
+# to be used only by our miraheze debug plugin
+
+backend mw1 {
+	.host = "127.0.0.1";
+	.port = "8080";
+}
+
+backend mw2 {
+	.host = "127.0.0.1";
+	.port = "8081";
+}
+
+backend mw3 {
+	.host = "127.0.0.1";
+	.port = "8082";
+}
+
+# end test backend
+
+
 sub vcl_init {
 	new mediawiki = directors.round_robin();
 	mediawiki.add_backend(mw1);
