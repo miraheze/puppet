@@ -43,7 +43,7 @@ class salt::minion(
     String $id        = $::fqdn,
     Hash $grains    = {},
 ) {
-    include ::salt::apt
+    include salt::apt
 
     $config = {
         id                  => $id,
