@@ -179,7 +179,7 @@ sub mw_vcl_recv {
 	call mw_url_rewrite;
 
 	# Redirects <url>/sitemap to static.miraheze.org/sitemap/
-	if (req.url ~ "^/sitemap") {
+	if (req.url ~ "^/sitemap" && req.http.Host != "static.miraheze.org") {
 		set req.url = "/sitemaps/" + req.http.Host + req.url;
 		set req.http.Host = "static.miraheze.org";
 	}
