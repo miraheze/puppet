@@ -180,7 +180,7 @@ sub mw_vcl_recv {
 
 	# Redirects <url>/sitemap to static.miraheze.org/sitemap/
 	if (req.url ~ "^/sitemap") {
-		set req.url = "/" + req.http.Host + "/sitemaps" + req.url;
+		set req.url = "/sitemaps/" + req.http.Host + req.url;
 		set req.http.Host = "static.miraheze.org";
 	}
 
