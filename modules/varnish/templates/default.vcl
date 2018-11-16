@@ -154,7 +154,6 @@ sub mw_url_rewrite {
 	) {
 		return (synth(752, "/wiki/Requests_for_adoption"));
 	}
-	
 }
 
 sub vcl_synth {
@@ -178,7 +177,13 @@ sub recv_purge {
 sub mw_vcl_recv {
 	call mw_identify_device;
 	call mw_url_rewrite;
-	
+
+	# Redirects <url>/sitemap to static.miraheze.org/sitemap/
+	if (req.url ~ "^/sitemap") {
+		set req.url = "/" + req.http.Host + "/sitemaps" + req.url;
+		set req.http.Host = "static.miraheze.org";
+	}
+
 	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1_test;
 		return (pass);
@@ -201,11 +206,11 @@ sub mw_vcl_recv {
 		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	}
-	
+
 	if (req.http.If-Modified-Since && req.http.Cookie ~ "LoggedOut") {
 		unset req.http.If-Modified-Since;
 	}
-	
+
 	# Don't cache dumps, and such
 	if (req.http.Host == "static.miraheze.org" && req.url !~ "^/.*wiki") {
 		return (pass);
@@ -267,10 +272,10 @@ sub vcl_recv {
 		set req.backend_hint = misc4;
 		return (pass);
 	}
-	
+
 	# MediaWiki specific
 	call mw_vcl_recv;
-	
+
 	return (hash);
 }
 
