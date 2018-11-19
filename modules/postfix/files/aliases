@@ -39,8 +39,8 @@ conduct: miraheze-cocc@googlegroups.com
 donate: bslaabs@gmail.com,southparkfan
 
 # internal mail only - emails outside of miraheze.org will be dropped
-apt-list: john,ndkilla
-bacula-mail: john,ndkilla
+apt-list: john,ndkilla,paladox
+bacula-mail: john,ndkilla,paladox
 
 # phabricator incoming emails - must be configued with Maniphest
 security: operations
