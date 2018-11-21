@@ -200,11 +200,6 @@ sub mw_vcl_recv {
 		set req.backend_hint = mediawiki.backend();
 	}
 
-	if (req.url ~ "^/.well-known/acme-challenge") {
-		set req.backend_hint = mw1;
-		return (pass);
-	}
-
 	# We never want to cache non-GET/HEAD requests.
 	if (req.method != "GET" && req.method != "HEAD") {
 		# Zero reason to append ?useformat=true here.
