@@ -9,6 +9,7 @@ set -e
 set -u
 
 LE=0
+RENEW=0
 CSR=0
 SD=0
 
@@ -36,11 +37,17 @@ function generate_letsencrypt_certificate {
     log "LetsEncrypt certificate at: /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
 }
 
+function renew_letsencrypt_certificate {
+    /usr/bin/certbot -q --noninteractive renew --cert-name $DOMAIN --force-renewal --expand
+    log "LetsEncrypt certificate at: /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
+}
+
 function usage {
-    echo "Usage: $0 [-h] [-c <domain>] [-g <domain>] [-s <secondary domain>]"
+    echo "Usage: $0 [-h] [-c <domain>] [-g <domain>] [-r <domain>] [-s <secondary domain>]"
     echo "  -h      display help"
     echo "  -c      generates a csr"
     echo "  -g      generates LetsEncrypt SSL Certificate or renews the Certificate"
+    echo "  -r      renews LetsEncrypt SSL Certificate"
     echo "  -s      allows you to add other domains to the same cert, eg www.<domain>"
     exit 1
 }
@@ -56,6 +63,10 @@ while getopts ":hg:c:s:" option; do
             ;;
         g)
             LE=1;
+            DOMAIN=" -d ${OPTARG}"
+            ;;
+        r)
+            RENEW=1;
             DOMAIN=" -d ${OPTARG}"
             ;;
         s)
@@ -83,7 +94,13 @@ if [ $CSR -eq 1 ]; then
 fi
 
 if [ $LE -eq 1 ]; then
-    log "Generating SSL certificate/Re-generating with LetsEncrypt"
-    generate_letsencrypt_certificate
-    cat /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
+    if [ $RENEW -eq 0 ]; then
+        log "Generating SSL certificate with LetsEncrypt"
+        generate_letsencrypt_certificate
+        cat /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
+    else
+        log "Re-generating a new SSL cert for ${DOMAIN}"
+        renew_letsencrypt_certificate
+        cat /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
+    fi
 fi
