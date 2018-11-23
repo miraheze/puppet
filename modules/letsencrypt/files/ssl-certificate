@@ -33,7 +33,7 @@ function generate_csr {
 }
 
 function generate_letsencrypt_certificate {
-    /usr/bin/certbot --noninteractive certonly $DOMAIN $SECONDARYDOMAIN
+    /usr/bin/certbot -q --noninteractive certonly $DOMAIN $SECONDARYDOMAIN
     log "LetsEncrypt certificate at: /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
 }
 
