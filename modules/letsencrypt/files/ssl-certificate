@@ -12,6 +12,7 @@ LE=0
 RENEW=0
 CSR=0
 SD=0
+WILDCARD=0
 
 # this is a fail safe so that if a user called just
 # /root/ssl-certificate it would show the help screen
@@ -33,7 +34,12 @@ function generate_csr {
 }
 
 function generate_letsencrypt_certificate {
-    /usr/bin/certbot -q --noninteractive certonly $DOMAIN $SECONDARYDOMAIN
+    /usr/bin/certbot -q --noninteractive certonly -d $DOMAIN -d $SECONDARYDOMAIN
+    log "LetsEncrypt certificate at: /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
+}
+
+function generate_letsencrypt_wildcard_certificate {
+    /usr/bin/certbot certonly --manual --preferred-challenges dns-01 -d $DOMAIN -d $SECONDARYDOMAIN
     log "LetsEncrypt certificate at: /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
 }
 
@@ -42,17 +48,24 @@ function renew_letsencrypt_certificate {
     log "LetsEncrypt certificate at: /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
 }
 
+function renew_letsencrypt_wildcard_certificate {
+    # note that if you do *.domain.org then the cert name is domain.org
+    /usr/bin/certbot renew --cert-name $DOMAIN --force-renewal --expand
+    log "LetsEncrypt certificate at: /etc/letsencrypt/live/${DOMAIN}/fullchain.pem"
+}
+
 function usage {
-    echo "Usage: $0 [-h] [-c <domain>] [-g <domain>] [-r <domain>] [-s <secondary domain>]"
+    echo "Usage: $0 [-h] [-c <domain>] [-d] [-g <domain>] [-r <domain>] [-s <secondary domain>]"
     echo "  -h      display help"
     echo "  -c      generates a csr"
-    echo "  -g      generates LetsEncrypt SSL Certificate or renews the Certificate"
+    echo "  -d      auths against DNS supporting wildcards"
+    echo "  -g      generates LetsEncrypt SSL Certificate"
     echo "  -r      renews LetsEncrypt SSL Certificate"
     echo "  -s      allows you to add other domains to the same cert, eg www.<domain>"
     exit 1
 }
 
-while getopts ":hg:c:s:" option; do
+while getopts ":hgd:c:s:" option; do
     case $option in
         h)
             usage
@@ -61,17 +74,20 @@ while getopts ":hg:c:s:" option; do
             CSR=1;
             DOMAIN=$OPTARG
             ;;
+        d)
+            WILDCARD=1;
+            ;;
         g)
             LE=1;
-            DOMAIN=" -d ${OPTARG}"
+            DOMAIN=${OPTARG}
             ;;
         r)
             RENEW=1;
-            DOMAIN=" -d ${OPTARG}"
+            DOMAIN=$OPTARG
             ;;
         s)
             SD=1;
-            SECONDARYDOMAIN=" -d ${OPTARG}"
+            SECONDARYDOMAIN=$OPTARG
             ;;
         *)
             usage
@@ -84,7 +100,7 @@ test -z ${DOMAIN} && usage
 
 if [ $CSR -eq 1 ]; then
     if [ $SD -eq 1 ]; then
-        SECONDARYDOMAIN=",DNS:${SECONDARYDOMAIN/" -d "/""}"
+        SECONDARYDOMAIN=",DNS:${SECONDARYDOMAIN}"
     fi
     generate_private_key
     generate_csr
@@ -95,9 +111,15 @@ fi
 
 if [ $LE -eq 1 ]; then
     if [ $RENEW -eq 0 ]; then
-        log "Generating SSL certificate with LetsEncrypt"
-        generate_letsencrypt_certificate
-        cat /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
+        if [ $WILDCARD -eq 0 ]; then
+            log "Generating SSL certificate with LetsEncrypt"
+            generate_letsencrypt_certificate
+            cat /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
+        else
+            log "Generating Wildcard SSL certificate with LetsEncrypt"
+            generate_letsencrypt_wildcard_certificate
+            cat /etc/letsencrypt/live/${DOMAIN}/fullchain.pem
+        fi
     else
         log "Re-generating a new SSL cert for ${DOMAIN}"
         renew_letsencrypt_certificate
