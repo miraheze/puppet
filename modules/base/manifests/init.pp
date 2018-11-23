@@ -16,6 +16,10 @@ class base {
         include acme
     }
 
+    if hiera('letsencrypt') {
+        include letsencrypt
+    }
+
     if hiera('arcanist') {
         include base::arcanist
     }
