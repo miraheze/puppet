@@ -9,7 +9,6 @@ set -e
 set -u
 
 LE=0
-RENEW=0
 CSR=0
 SD=0
 
