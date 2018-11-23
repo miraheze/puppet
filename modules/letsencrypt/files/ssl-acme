@@ -70,7 +70,7 @@ WARNING)
 
                 sudo /root/ssl-certificate -g $URL > /srv/ssl/ssl/certificates/$URL.crt
  
-                sed -i "/Generating SSL certificate/Re-generating with LetsEncrypt/d" /srv/ssl/ssl/certificates/$URL.crt
+                sed -i "/Re-generating a new SSL cert for ${URL}/d" /srv/ssl/ssl/certificates/$URL.crt
                 sed -i "/LetsEncrypt certificate at: \/etc\/letsencrypt\/live\/${URL}\/fullchain.pem/d" /srv/ssl/ssl/certificates/$URL.crt
 
                 git -C /srv/ssl/ssl add /srv/ssl/ssl/certificates/$URL.crt
