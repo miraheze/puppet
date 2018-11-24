@@ -29,30 +29,33 @@ args = vars(ap.parse_args())
 
 class SslCertificate:
     def __init__(self):
-        self.csr = args.csr
-        self.domain = args.domain
-        self.generate = args.generate
-        if args.quiet:
+        self.csr = args['csr']
+        self.domain = args['domain']
+        self.generate = args['generate']
+        if args['quiet']:
             self.quiet = "-q"
         else:
             self.quiet = ""
-        self.renew = args.renew
-        if args.secondary:
-            self.secondary_domain = " -d " +  args.secondary
+        self.renew = args['renew']
+        if args['secondary']:
+            self.secondary_domain = " -d " +  args['secondary']
         else:
             self.secondary_domain = ""
-        self.wildcard = args.wildcard
+        self.wildcard = args['wildcard']
 
     def on_init(self):
         if self.csr:
-            generate_csr(self)
+            self.generate_csr()
         elif self.generate and not self.renew:
-            generate_letsencrypt_certificate(self)
+            self.generate_letsencrypt_certificate()
         elif not args.generate and args.renew:
-            renew_letsencrypt_certificate(self)
+            self.renew_letsencrypt_certificate()
 
     def generate_csr(self):
-        secondary_domain = self.secondary_domain.replace(" -d ", "")
+        if self.secondary_domain:
+            secondary_domain = self.secondary_domain.replace(" -d ", ",DNS:")
+        else:
+            secondary_domain = self.secondary_domain
 
         # Generate the private key
         os.system("openssl genrsa 2048 > /root/ssl/{0}.key".format(self.domain))
@@ -61,7 +64,11 @@ class SslCertificate:
             print("Private key generated at: /root/ssl/{0}.key".format(self.domain))
 
         # Generate the CSR
-        os.system("openssl req -new -sha256 -key /root/ssl/{0}.key -subj \"/C=NL/ST=Netherlands/L=Netherlands/O=Miraheze/CN={0}\" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf \"[SAN]\nsubjectAltName=DNS:{0}{1}\")) > /root/ssl/{0}.csr".format(self.domain, secondary_domain))
+        subprocess.call([
+            'bash',
+            '-c',
+            'openssl req -new -sha256 -key /root/ssl/{0}.key -subj \"/C=NL/ST=Netherlands/L=Netherlands/O=Miraheze/CN={0}\" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf \"[SAN]\nsubjectAltName=DNS:{0}{1}\")) > /root/ssl/{0}.csr'.format(self.domain, secondary_domain),
+        ])
 
         if not self.quiet:
             print("CSR generated at: /root/ssl/{0}.csr".format(self.domain))
@@ -113,7 +120,7 @@ class SslCertificate:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
 
         os.system("/bin/cat /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
-        
+
         if not self.quiet:
             print("LetsEncrypt private key is at: /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
 
