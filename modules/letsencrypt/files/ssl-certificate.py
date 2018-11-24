@@ -91,6 +91,9 @@ class SslCertificate:
 
         os.system("/bin/cat /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
 
+        if not self.quiet:
+            print("LetsEncrypt private key is at: /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
+
     def renew_letsencrypt_certificate(self):
         if self.wildcard:
             if not self.quiet:
@@ -110,6 +113,9 @@ class SslCertificate:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
 
         os.system("/bin/cat /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
+        
+        if not self.quiet:
+            print("LetsEncrypt private key is at: /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
 
 cert = SslCertificate()
 cert.on_init()
