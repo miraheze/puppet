@@ -42,7 +42,7 @@ class letsencrypt {
         ensure => present,
         owner  => 'root',
         group  => 'root',
-        source => 'puppet:///modules/letsencrypt/ssl-certificate',
+        source => 'puppet:///modules/letsencrypt/ssl-certificate.py',
         mode   => '0775',
     }
 
