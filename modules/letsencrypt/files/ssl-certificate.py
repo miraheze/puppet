@@ -15,13 +15,13 @@ ap.add_argument("-c", "--csr", required=False,
 ap.add_argument("-d", "--domain", required=True,
     help="name of the domain")
 ap.add_argument("-g", "--generate", required=False,
-    action="store_true", help="generates LetsEncrypt SSL Certificate")
+    action="store_true", default=False, help="generates LetsEncrypt SSL Certificate")
 ap.add_argument("-r", "--renew", required=False,
-    action="store_true", help="renews LetsEncrypt SSL Certificate")
+    action="store_true", default=False, help="renews LetsEncrypt SSL Certificate")
 ap.add_argument("-s", "--secondary", required=False,
     help="allows you to add other domains to the same cert, eg www.<domain>")
 ap.add_argument("-w", "--wildcard", required=False,
-    action="store_true", help="auths against DNS supporting wildcards")
+    action="store_true", default=False, help="auths against DNS supporting wildcards")
 args = vars(ap.parse_args())
 
 domain = args['domain']
@@ -47,16 +47,20 @@ if args["csr"]:
 
 if args["generate"] and not args["renew"]:
     if args["wildcard"]:
-        print("Generating SSL certificate with LetsEncrypt")
+        print("Generating Wildcard SSL certificate with LetsEncrypt")
         os.system("/usr/bin/certbot certonly --manual --preferred-challenges dns-01 -d {0} {1}".format(domain, secondary_domain))
         print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(domain))
     else:
-        print("Generating Wildcard SSL certificate with LetsEncrypt")
+        print("Generating SSL certificate with LetsEncrypt")
         os.system("/usr/bin/certbot -q --noninteractive certonly -a webroot -d {0} {1}".format(domain, secondary_domain))
         print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(domain))
     os.system("cat /etc/letsencrypt/live/{0}/fullchain.pem".format(domain))
 elif not args["generate"] and args["renew"]:
     # note that if you do *.domain.org then the cert name is domain.org
     print("Re-generating a new SSL cert for {0}".format(domain))
-    os.system("/usr/bin/certbot renew --cert-name {0} --force-renewal --expand".format(domain))
+    if args["wildcard"]:
+        os.system("/usr/bin/certbot renew --cert-name {0} --force-renewal --expand".format(domain))
+    else:
+        os.system("/usr/bin/certbot -q --noninteractive renew --cert-name {0} --force-renewal --expand".format(domain))
     print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(domain))
+    os.system("cat /etc/letsencrypt/live/{0}/fullchain.pem".format(domain))
