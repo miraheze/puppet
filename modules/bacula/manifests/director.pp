@@ -106,6 +106,14 @@ class bacula::director {
         },
     }
 
+    icinga2::custom::services { 'Bacula Letsencrypt':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_letsencrypt',
+            nrpe_timeout => '60s',
+        },
+    }
+
     icinga2::custom::services { 'Bacula Static':
         check_command => 'nrpe',
         vars          => {
