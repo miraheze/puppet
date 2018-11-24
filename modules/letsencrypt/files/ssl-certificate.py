@@ -55,10 +55,10 @@ class SslCertificate:
         secondary_domain = self.secondary_domain.replace(" -d ", "")
 
         # Generate the private key
-        os.system("openssl genrsa 2048 > /root/ssl/{}.key".format(self.domain))
+        os.system("openssl genrsa 2048 > /root/ssl/{0}.key".format(self.domain))
 
         if not self.quiet:
-            print("Private key generated at: /root/ssl/{}.key".format(self.domain))
+            print("Private key generated at: /root/ssl/{0}.key".format(self.domain))
 
         # Generate the CSR
         os.system("openssl req -new -sha256 -key /root/ssl/{0}.key -subj \"/C=NL/ST=Netherlands/L=Netherlands/O=Miraheze/CN={0}\" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf \"[SAN]\nsubjectAltName=DNS:{0}{1}\")) > /root/ssl/{0}.csr".format(self.domain, secondary_domain))
