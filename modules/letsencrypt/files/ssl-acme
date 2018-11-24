@@ -68,11 +68,8 @@ WARNING)
 
                 git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
 
-                sudo /root/ssl-certificate -d $URL -r > /srv/ssl/ssl/certificates/$URL.crt
+                sudo /root/ssl-certificate -d $URL -q -r > /srv/ssl/ssl/certificates/$URL.crt
  
-                sed -i "/Re-generating a new SSL cert for ${URL}/d" /srv/ssl/ssl/certificates/$URL.crt
-                sed -i "/LetsEncrypt certificate at: \/etc\/letsencrypt\/live\/${URL}\/fullchain.pem/d" /srv/ssl/ssl/certificates/$URL.crt
-
                 git -C /srv/ssl/ssl add /srv/ssl/ssl/certificates/$URL.crt
 
                 git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for ${URL}"
