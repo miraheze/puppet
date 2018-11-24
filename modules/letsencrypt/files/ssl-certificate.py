@@ -17,6 +17,8 @@ ap.add_argument("-d", "--domain", required=True,
     help="name of the domain")
 ap.add_argument("-g", "--generate", required=False,
     action="store_true", default=False, help="generates LetsEncrypt SSL Certificate")
+ap.add_argument("-p", "--private", required=False,
+    action="store_true", default=False, help="outputs private key")
 ap.add_argument("-q", "--quiet", required=False,
     action="store_true", default=False, help="makes script quieter")
 ap.add_argument("-r", "--renew", required=False,
@@ -33,6 +35,7 @@ class SslCertificate:
         self.csr = args['csr']
         self.domain = args['domain']
         self.generate = args['generate']
+        self.private = args['private']
         if args['quiet']:
             self.quiet = "-q"
         else:
@@ -99,8 +102,8 @@ class SslCertificate:
 
         os.system("/bin/cat /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
 
-        if not self.quiet:
-            print("LetsEncrypt private key is at: /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
+        if self.private:
+            os.system("/bin/cat /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
 
     def renew_letsencrypt_certificate(self):
         if self.wildcard:
@@ -122,8 +125,8 @@ class SslCertificate:
 
         os.system("/bin/cat /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
 
-        if not self.quiet:
-            print("LetsEncrypt private key is at: /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
+        if self.private:
+            os.system("/bin/cat /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
 
 cert = SslCertificate()
 cert.on_init()
