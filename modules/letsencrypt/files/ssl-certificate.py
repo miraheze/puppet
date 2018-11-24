@@ -48,19 +48,19 @@ if args["csr"]:
 if args["generate"] and not args["renew"]:
     if args["wildcard"]:
         print("Generating Wildcard SSL certificate with LetsEncrypt")
-        os.system("/usr/bin/certbot certonly --manual --preferred-challenges dns-01 -d {0} {1}".format(domain, secondary_domain))
+        os.system("/usr/bin/certbot certonly --manual --preferred-challenges dns-01 -d {0} {1} --no-verify-ssl".format(domain, secondary_domain))
         print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(domain))
     else:
         print("Generating SSL certificate with LetsEncrypt")
-        os.system("/usr/bin/certbot -q --noninteractive certonly -a webroot -d {0} {1}".format(domain, secondary_domain))
+        os.system("/usr/bin/certbot -q --noninteractive certonly -a webroot -d {0} {1} --no-verify-ssl".format(domain, secondary_domain))
         print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(domain))
     os.system("cat /etc/letsencrypt/live/{0}/fullchain.pem".format(domain))
 elif not args["generate"] and args["renew"]:
     # note that if you do *.domain.org then the cert name is domain.org
     print("Re-generating a new SSL cert for {0}".format(domain))
     if args["wildcard"]:
-        os.system("/usr/bin/certbot renew --cert-name {0} --force-renewal --expand".format(domain))
+        os.system("/usr/bin/certbot renew --cert-name {0} --no-verify-ssl --force-renewal --expand".format(domain))
     else:
-        os.system("/usr/bin/certbot -q --noninteractive renew --cert-name {0} --force-renewal --expand".format(domain))
+        os.system("/usr/bin/certbot -q --noninteractive renew --cert-name {0} --no-verify-ssl --force-renewal --expand".format(domain))
     print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(domain))
     os.system("cat /etc/letsencrypt/live/{0}/fullchain.pem".format(domain))
