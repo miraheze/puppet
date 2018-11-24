@@ -68,7 +68,7 @@ WARNING)
 
                 git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"
 
-                sudo /root/ssl-certificate -r $URL > /srv/ssl/ssl/certificates/$URL.crt
+                sudo /root/ssl-certificate -d $URL -r > /srv/ssl/ssl/certificates/$URL.crt
  
                 sed -i "/Re-generating a new SSL cert for ${URL}/d" /srv/ssl/ssl/certificates/$URL.crt
                 sed -i "/LetsEncrypt certificate at: \/etc\/letsencrypt\/live\/${URL}\/fullchain.pem/d" /srv/ssl/ssl/certificates/$URL.crt
