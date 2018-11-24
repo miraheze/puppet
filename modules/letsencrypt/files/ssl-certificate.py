@@ -7,6 +7,7 @@
 
 import argparse
 import os
+import subprocess
  
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser(description="Script to generate LetsEncrypt certs or generate a CSR.")
