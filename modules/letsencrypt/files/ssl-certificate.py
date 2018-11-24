@@ -101,7 +101,7 @@ class SslCertificate:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
 
         os.system("/bin/cat /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
-        
+
         if self.private:
             os.system("/bin/cat /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
 
