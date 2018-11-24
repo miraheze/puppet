@@ -49,7 +49,7 @@ class SslCertificate:
             self.generate_csr()
         elif self.generate and not self.renew:
             self.generate_letsencrypt_certificate()
-        elif not args.generate and args.renew:
+        elif not self.generate and self.renew:
             self.renew_letsencrypt_certificate()
 
     def generate_csr(self):
