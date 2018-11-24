@@ -11,9 +11,9 @@ import os
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser(description="Script to generate LetsEncrypt certs or generate a CSR.")
 ap.add_argument("-c", "--csr", required=False,
-    help="generates a csr")
+    help="generates a CSR")
 ap.add_argument("-d", "--domain", required=True,
-    help="name of domain")
+    help="name of the domain")
 ap.add_argument("-g", "--generate", required=False,
     action="store_true", help="generates LetsEncrypt SSL Certificate")
 ap.add_argument("-r", "--renew", required=False,
