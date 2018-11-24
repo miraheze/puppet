@@ -15,13 +15,13 @@ ap.add_argument("-c", "--csr", required=False,
 ap.add_argument("-d", "--domain", required=True,
     help="name of domain")
 ap.add_argument("-g", "--generate", required=False,
-     action='store_true', help="generates LetsEncrypt SSL Certificate")
+    action="store_true", help="generates LetsEncrypt SSL Certificate")
 ap.add_argument("-r", "--renew", required=False,
-    help="renews LetsEncrypt SSL Certificate")
+    action="store_true", help="renews LetsEncrypt SSL Certificate")
 ap.add_argument("-s", "--secondary", required=False,
     help="allows you to add other domains to the same cert, eg www.<domain>")
 ap.add_argument("-w", "--wildcard", required=False,
-    action='store_true', help="auths against DNS supporting wildcards")
+    action="store_true", help="auths against DNS supporting wildcards")
 args = vars(ap.parse_args())
 
 domain = args['domain']
@@ -44,7 +44,6 @@ if args["csr"]:
 
     print("Not generating an SSL certificate. Use CSR below to send to the requestor")
     os.system("cat /root/ssl/{0}.csr".format(domain))
-
 
 if args["generate"] and not args["renew"]:
     if args["wildcard"]:
