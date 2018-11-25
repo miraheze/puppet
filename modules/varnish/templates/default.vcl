@@ -184,6 +184,10 @@ sub mw_vcl_recv {
 		set req.http.Host = "static.miraheze.org";
 	}
 
+	if (req.http.host ~ "^([a-zA-Z0-9-]+\.)?m\.miraheze\.org") {
+		set req.http.X-Subdomain = "M";
+	}
+
 	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1_test;
 		return (pass);
