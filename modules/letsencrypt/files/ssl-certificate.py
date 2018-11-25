@@ -13,12 +13,12 @@ import subprocess
 ap = argparse.ArgumentParser(description="Script to generate LetsEncrypt certs or generate a CSR.")
 ap.add_argument("-c", "--csr", required=False,
     action="store_true", default=False, help="generates a CSR")
-ap.add_argument("-cert", "--certname", required=False,
-    action="store_true", default=False, help="Returns true if flag is selected (uses the name from -d flag)")
 ap.add_argument("-d", "--domain", required=True,
     help="name of the domain")
 ap.add_argument("-g", "--generate", required=False,
     action="store_true", default=False, help="generates LetsEncrypt SSL Certificate")
+ap.add_argument("-o", "--overwrite", required=False,
+    action="store_true", default=False, help="overwrites the certname replacing it with a updated version")
 ap.add_argument("-p", "--private", required=False,
     action="store_true", default=False, help="outputs private key")
 ap.add_argument("-q", "--quiet", required=False,
@@ -35,10 +35,10 @@ args = vars(ap.parse_args())
 class SslCertificate:
     def __init__(self):
         self.csr = args['csr']
-        if args['certname']:
-            self.cert_name = "--cert-name {0}".format(args['domain'])
+        if args['overwrite']:
+            self.overwrite = "--cert-name {0}".format(args['domain'])
         else:
-            self.cert_name = ""
+            self.overwrite = ""
         self.domain = args['domain']
         self.generate = args['generate']
         self.private = args['private']
@@ -93,7 +93,7 @@ class SslCertificate:
             if not self.quiet:
                 print("Generating Wildcard SSL certificate with LetsEncrypt")
 
-            os.system("/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {3} -d {0} {1}".format(self.domain, self.secondary_domain))
+            os.system("/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {3} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
 
             if not self.quiet:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
@@ -101,7 +101,7 @@ class SslCertificate:
             if not self.quiet:
                 print("Generating SSL certificate with LetsEncrypt")
 
-            os.system("/usr/bin/certbot {1} --noninteractive --force-renewal --reuse-key --expand  --no-verify-ssl certonly -a webroot {3} -d {0} {2}".format(self.domain, self.quiet, self.secondary_domain, self.cert_name))
+            os.system("/usr/bin/certbot {1} --noninteractive --force-renewal --reuse-key --expand  --no-verify-ssl certonly -a webroot {3} -d {0} {2}".format(self.domain, self.quiet, self.secondary_domain, self.overwrite))
 
             if not self.quiet:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
@@ -116,7 +116,7 @@ class SslCertificate:
             if not self.quiet:
                 print("Re-generating a new wildcard SSL cert for {0}".format(self.domain))
 
-            os.system("/usr/bin/certbot --no-verify-ssl --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {3} -d {0} {1}".format(self.domain, self.secondary_domain, self.cert_name))
+            os.system("/usr/bin/certbot --no-verify-ssl --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {3} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
 
             if not self.quiet:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
