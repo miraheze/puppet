@@ -54,6 +54,7 @@ class varnish {
 
     include ssl::wildcard
     include ssl::hiera
+    ssl::cert { 'miraheze.com': }
 
     file { '/etc/nginx/sites-enabled/default':
         ensure => absent,
