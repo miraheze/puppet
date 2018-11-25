@@ -140,6 +140,14 @@ sub mw_identify_device {
 		# In vcl_fetch we'll decide in which situations we should actually do something with this.
 		set req.http.X-Use-Mobile = "1";
 	}
+
+	if (req.http.host ~ "^([a-zA-Z0-9-]+\.)?m\.miraheze\.org") {
+		set req.http.X-Subdomain = "M";
+	} else if (req.http.host ~ "^m\.([a-zA-Z0-9-]+)\.([a-zA-Z0-9-]+)") {
+		set req.http.X-Subdomain = "M";
+	} else if (req.http.host ~ "^([a-zA-Z0-9-]+\.)m\.([a-zA-Z0-9-]+)\.([a-zA-Z0-9-]+)") {
+		set req.http.X-Subdomain = "M";
+	}
 }
 
 sub mw_url_rewrite {
@@ -182,10 +190,6 @@ sub mw_vcl_recv {
 	if (req.url ~ "^/sitemap" && req.http.Host != "static.miraheze.org") {
 		set req.url = "/sitemaps/" + req.http.Host + req.url;
 		set req.http.Host = "static.miraheze.org";
-	}
-
-	if (req.http.host ~ "^([a-zA-Z0-9-]+\.)?m\.miraheze\.org") {
-		set req.http.X-Subdomain = "M";
 	}
 
 	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org" || req.url ~ "^/\.well-known") {
