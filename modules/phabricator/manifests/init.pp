@@ -6,7 +6,7 @@ class phabricator {
 
     $password = hiera('passwords::irc::mirahezebots')
 
-    ssl::cert { 'phab.miraheze.wiki': }
+    ssl::cert { 'miraheze.wiki': }
 
     nginx::site { 'phab.miraheze.wiki':
          ensure  => present,
