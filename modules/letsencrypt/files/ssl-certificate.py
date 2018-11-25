@@ -87,7 +87,7 @@ class SslCertificate:
             if not self.quiet:
                 print("Generating Wildcard SSL certificate with LetsEncrypt")
 
-            os.system("/usr/bin/certbot --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 -d {0} {1} --no-verify-ssl".format(self.domain, self.secondary_domain))
+            os.system("/usr/bin/certbot --expand --no-verify-ssl --force-renewal certonly --manual --preferred-challenges dns-01 -d {0} {1} --no-verify-ssl".format(self.domain, self.secondary_domain))
 
             if not self.quiet:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
@@ -95,7 +95,7 @@ class SslCertificate:
             if not self.quiet:
                 print("Generating SSL certificate with LetsEncrypt")
 
-            os.system("/usr/bin/certbot {1} --noninteractive --expand --no-verify-ssl certonly -a webroot -d {0} {2}".format(self.domain, self.quiet, self.secondary_domain))
+            os.system("/usr/bin/certbot {1} --noninteractive --expand --no-verify-ssl --force-renewal certonly -a webroot -d {0} {2}".format(self.domain, self.quiet, self.secondary_domain))
 
             if not self.quiet:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
