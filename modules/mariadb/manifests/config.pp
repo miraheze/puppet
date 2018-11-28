@@ -10,6 +10,8 @@ class mariadb::config(
     Integer $max_connections              = 90,
     Optional[Boolean] $version_102        = undef,
 ) {
+    $exporter_password = hiera('passwords::db::exporter')
+
     $server_id = inline_template(
         "<%= @ipaddress.split('.').inject(0)\
 {|total,value| (total << 8 ) + value.to_i} %>"
