@@ -4,24 +4,40 @@ define nginx::site(
     Optional[String] $content  = undef,
     Stdlib::Sourceurl $source   = undef,
     Boolean $monitor  = true,
-    Optional $notify = undef,
+    Optional[Any] $notify = undef,
 ) {
     include ::nginx
 
     $basename = regsubst($title, '[\W_]', '-', 'G')
 
-    file { "/etc/nginx/sites-available/${basename}":
-        ensure  => $ensure,
-        content => $content,
-        source  => $source,
-        require => Package['nginx'],
-        notify  => $notify,
-    }
+    if $notify != undef {
+        file { "/etc/nginx/sites-available/${basename}":
+            ensure  => $ensure,
+            content => $content,
+            source  => $source,
+            require => Package['nginx'],
+            notify  => $notify,
+        }
 
-    file { "/etc/nginx/sites-enabled/${basename}":
-        ensure => link,
-        target => "/etc/nginx/sites-available/${basename}",
-        notify => Service['nginx'],
+        file { "/etc/nginx/sites-enabled/${basename}":
+            ensure => link,
+            target => "/etc/nginx/sites-available/${basename}",
+            notify => $notify,
+        }
+    } else {
+        file { "/etc/nginx/sites-available/${basename}":
+            ensure  => $ensure,
+            content => $content,
+            source  => $source,
+            require => Package['nginx'],
+            notify  => Service['nginx'],
+        }
+
+        file { "/etc/nginx/sites-enabled/${basename}":
+            ensure => link,
+            target => "/etc/nginx/sites-available/${basename}",
+            notify => Service['nginx'],
+        }
     }
 
     if $monitor {
