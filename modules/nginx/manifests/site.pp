@@ -4,6 +4,7 @@ define nginx::site(
     Optional[String] $content  = undef,
     Stdlib::Sourceurl $source   = undef,
     Boolean $monitor  = true,
+    Optional $notify = undef,
 ) {
     include ::nginx
 
@@ -14,7 +15,7 @@ define nginx::site(
         content => $content,
         source  => $source,
         require => Package['nginx'],
-        notify  => Service['nginx'],
+        notify  => $notify,
     }
 
     file { "/etc/nginx/sites-enabled/${basename}":
