@@ -9,3 +9,10 @@ GRANT ALL PRIVILEGES
 
 GRANT USAGE, PROCESS
     ON *.* TO 'icinga'@'185.52.1.76';
+
+-- Grants for 'exporter'@'81.4.127.174'
+
+GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT
+    ON *.* TO 'exporter'@'81.4.127.174'
+    IDENTIFIED BY '<%= @exporter_password %>'
+    WITH GRANT OPTION;
