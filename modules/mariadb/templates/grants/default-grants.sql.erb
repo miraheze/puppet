@@ -16,3 +16,8 @@ GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT
     ON *.* TO 'exporter'@'81.4.127.174'
     IDENTIFIED BY '<%= @exporter_password %>'
     WITH GRANT OPTION;
+
+GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT
+    ON *.* TO 'exporter'@'localhost'
+    IDENTIFIED BY '<%= @exporter_password %>'
+    WITH GRANT OPTION;
