@@ -20,6 +20,7 @@ node 'db4.miraheze.org' {
     include role::postgresql
     include bacula::client
     include role::salt::minions
+    include prometheus::mysqld_exporter
 }
 
 node 'misc1.miraheze.org' {
