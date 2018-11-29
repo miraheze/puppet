@@ -2,26 +2,32 @@
 #
 class prometheus::mysqld_exporter {
 
+    # should use the version from sid
     require_package('prometheus-mysqld-exporter')
 
-    file { '/etc/systemd/system/ prometheus-mysqld-exporter':
-        ensure => present,
-        source => 'puppet:///modules/prometheus/prometheus-php-fpm.systemd',
-        notify => Exec['prometheus-php-fpm reload systemd'],
-    }
+    $exporter_password = hiera('passwords::db::exporter')
 
     file { '/etc/default/prometheus-mysqld-exporter':
         content => template('prometheus/prometheus-mysqld-exporter.erb'),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
-        require => Package['prometheus'],
+        require => Package['prometheus-mysqld-exporter'],
+    }
+
+    file { '/var/lib/prometheus/.my.cnf':
+        content => template('prometheus/my.cnf.erb'),
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        require => Package['prometheus-mysqld-exporter'],
     }
 
     service { ' prometheus-mysqld-exporter':
         ensure  => 'running',
         require => [
             File['/etc/default/prometheus-mysqld-exporter'],
+            File['/var/lib/prometheus/.my.cnf'],
         ],
     }
 
