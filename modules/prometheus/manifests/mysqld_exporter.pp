@@ -23,7 +23,7 @@ class prometheus::mysqld_exporter {
         require => Package['prometheus-mysqld-exporter'],
     }
 
-    service { ' prometheus-mysqld-exporter':
+    service { 'prometheus-mysqld-exporter':
         ensure  => 'running',
         require => [
             File['/etc/default/prometheus-mysqld-exporter'],
