@@ -25,6 +25,8 @@ ap.add_argument("-q", "--quiet", required=False,
     action="store_true", default=False, help="makes script quieter")
 ap.add_argument("-r", "--renew", required=False,
     action="store_true", default=False, help="renews LetsEncrypt SSL Certificate")
+ap.add_argument("--revoke", required=False,
+    action="store_true", default=False, help="allows you to revoke certificates (also deletes them)")
 ap.add_argument("-s", "--secondary", required=False,
     help="allows you to add other domains to the same cert, eg www.<domain>")
 ap.add_argument("-v", "--version", action="version", version="%(prog)s 1.0")
@@ -47,6 +49,7 @@ class SslCertificate:
         else:
             self.quiet = ""
         self.renew = args['renew']
+        self.revoke = args['revoke']
         if args['secondary']:
             self.secondary_domain = " -d " +  args['secondary']
         else:
@@ -60,6 +63,8 @@ class SslCertificate:
             self.generate_letsencrypt_certificate()
         elif not self.generate and self.renew:
             self.renew_letsencrypt_certificate()
+        elif self.revoke:
+            self.revoke_letsencrypt_certificate()
 
     def generate_csr(self):
         if self.secondary_domain:
@@ -133,6 +138,18 @@ class SslCertificate:
 
         if self.private:
             os.system("/bin/cat /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
+
+    def revoke_letsencrypt_certificate(self):
+            if not self.quiet:
+                print("Revoking LetsEncrypt certificate at /etc/letsencrypt/live/{0}".format(self.domain))
+
+            os.system("/usr/bin/certbot revoke --cert-path /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
+
+            if not self.quiet:
+                print("Deleting LetsEncrypt certificate at /etc/letsencrypt/live/{0}".format(self.domain))
+
+            os.system("/usr/bin/certbot delete --cert-name {0}".format(self.domain))
+
 
 cert = SslCertificate()
 cert.on_init()
