@@ -74,9 +74,11 @@ scrape_configs:
         replacement: misc2.miraheze.org:9115
   - job_name: mariadb
     static_configs:
+      - targets: [
 <%- @host.sort.each do |host| -%>
 <%- if host =~ /^db/ -%>
         # Varnish exporter
         '<%= host %>:9104',
 <%- end -%>
 <%- end -%>
+      ]
