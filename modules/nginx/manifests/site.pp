@@ -4,25 +4,25 @@ define nginx::site(
     Optional[String] $content  = undef,
     Stdlib::Sourceurl $source   = undef,
     Boolean $monitor  = true,
-    Optional[Any] $notify = undef,
+    Optional[Any] $notify_site = undef,
 ) {
     include ::nginx
 
     $basename = regsubst($title, '[\W_]', '-', 'G')
 
-    if $notify != undef {
+    if $notify_site != undef {
         file { "/etc/nginx/sites-available/${basename}":
             ensure  => $ensure,
             content => $content,
             source  => $source,
             require => Package['nginx'],
-            notify  => $notify,
+            notify  => $notify_site,
         }
 
         file { "/etc/nginx/sites-enabled/${basename}":
             ensure => link,
             target => "/etc/nginx/sites-available/${basename}",
-            notify => $notify,
+            notify => $notify_site,
         }
     } else {
         file { "/etc/nginx/sites-available/${basename}":
