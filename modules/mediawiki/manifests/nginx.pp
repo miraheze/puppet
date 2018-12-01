@@ -4,9 +4,9 @@ class mediawiki::nginx {
     $sslcerts = loadyaml('/etc/puppet/ssl/certs.yaml')
 
     nginx::site { 'mediawiki':
-        ensure  => present,
-        content => template('mediawiki/mediawiki.conf'),
-        notify  => Exec['nginx-syntax'],
+        ensure       => present,
+        content      => template('mediawiki/mediawiki.conf'),
+        notify_site  => Exec['nginx-syntax'],
     }
 
     exec { 'nginx-syntax':
