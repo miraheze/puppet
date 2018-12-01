@@ -4,9 +4,9 @@ class varnish::nginx {
     $sslredirects = loadyaml('/etc/puppet/ssl/redirects.yaml')
 
     nginx::site { 'mediawiki':
-        ensure  => present,
-        content => template('varnish/mediawiki.conf'),
-        notify  => Exec['nginx-syntax'],
+        ensure       => present,
+        content      => template('varnish/mediawiki.conf'),
+        notify_site  => Exec['nginx-syntax'],
     }
 
     exec { 'nginx-syntax':
