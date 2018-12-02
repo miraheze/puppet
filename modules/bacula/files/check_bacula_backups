@@ -58,13 +58,13 @@ def main(argv):
     try:
         child.expect(r'\n\*')
         child.sendline('status client=%s' % hostid)
-        if child.expect_list([re.compile(r'Terminated Jobs:'), re.compile(r'Error: Client resource .* does not exist.'), pexpect.TIMEOUT]):
+        if child.expect_list([re.compile(br'Terminated Jobs:'), re.compile(br'Error: Client resource .* does not exist.'), pexpect.TIMEOUT]):
             raise RuntimeError('Timeout or unknown client: %s' % hostid)
         child.expect(r'\n\*')
         r = re.compile(r'\s*(\d+)\s+(\S+)\s+(\S+)\s+(\d+\.\d+\s+[KMGTP]|\d+)\s+OK\s+(\S+\s+\S+)\s+%s' % re.escape(backupid))
         job_id = level = files = bytes = finished = None
         for line in child.before.splitlines():
-            m = r.match(line)
+            m = r.match(line.decode('utf-8'))
             if m:
                 job_id = int(m.group(1))
                 level = m.group(2)
