@@ -58,7 +58,7 @@ def main(argv):
                 backends_sick.append(line.split(b" ")[0].replace(b"boot.", b""))
 
     if backends_sick:
-        print((b"%s backends are down.  %s" % (len(backends_sick), str(b" ".join(backends_sick), 'utf-8'))))
+        print(("%s backends are down.  %s" % (len(backends_sick), str(b" ".join(backends_sick), 'utf-8'))))
         sys.exit(2)
 
     if not backends_sick and not backends_healthy:
