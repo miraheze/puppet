@@ -15,8 +15,8 @@ class prometheus::node_gdnsd (
 ) {
 
     require_package( [
-        'python-prometheus-client',
-        'python-requests',
+        'python3-prometheus-client',
+        'python3-requests',
     ] )
 
     file { '/usr/local/bin/prometheus-gdnsd-stats':
