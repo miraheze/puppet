@@ -34,7 +34,7 @@ groups:
     gid: 2004
     descriptions: limited access on puppet1 to add SSL private keys
     members: [macfan]
-    privileges: ['ALL = (puppet-users) NOPASSWD: ALL']
+    privileges: ['ALL = (ALL) NOPASSWD: /home/puppet-users/ssl-keys']
 
 users:
   johnflewis:
