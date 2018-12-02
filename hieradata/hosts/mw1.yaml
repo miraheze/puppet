@@ -1,5 +1,6 @@
 users::groups:
   - mediawiki-admins
+  - puppet-users
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 acme: false
