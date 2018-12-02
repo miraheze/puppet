@@ -84,9 +84,9 @@ class mediawiki(
         require => Git::Clone['MediaWiki core'],
     }
 
-    file { '/srv/mediawiki/robots.txt':
+    file { '/srv/mediawiki/robots.php':
         ensure  => 'present',
-        source  => 'puppet:///modules/mediawiki/robots.txt',
+        source  => 'puppet:///modules/mediawiki/robots.php',
         require => File['/srv/mediawiki'],
     }
 
