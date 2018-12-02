@@ -1,9 +1,0 @@
-# Disallow API and special pages
-User-Agent: *
-Disallow: /w/api.php
-Disallow: /w/index.php?title=Special:
-Disallow: /wiki/Special:
-
-# Throttle YandexBot
-User-Agent: YandexBot
-Crawl-Delay: 2.5
