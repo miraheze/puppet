@@ -2,7 +2,7 @@
 class phabricator {
     include ::php
 
-    require_package(['python-pygments', 'subversion'])
+    require_package(['python-pygments', 'python3-pygments', 'subversion'])
 
     $password = hiera('passwords::irc::mirahezebots')
 
