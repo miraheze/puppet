@@ -3,7 +3,7 @@ import codecs, json,sys, urllib
 
 depooled_datacenters = []
 
-request = urllib.urlopen('http://127.0.0.1:3506/json')
+request = urllib.request.urlopen('http://127.0.0.1:3506/json')
 
 reader = codecs.getreader("utf-8")
 json = json.load(reader(request))
