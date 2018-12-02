@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 #   check_bacula_client  Nagios plugin to check Bacula client backups
 #   Copyright (C) 2010  Tom Payne
@@ -26,7 +26,7 @@ import time
 import pexpect
 
 
-OK, WARNING, CRITICAL, UNKNOWN = xrange(0, 4)
+OK, WARNING, CRITICAL, UNKNOWN = list(range(0, 4))
 status_message = 'OK WARNING CRITICAL UNKNOWN'.split()
 
 MULTIPLIERS = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400, 'w': 604800}
@@ -34,7 +34,7 @@ DIVISORS = ((60, 'minutes'), (60, 'hours'), (24, 'days'), (7, 'weeks'))
 
 
 def parse_period(option, opt_str, value, parser):
-    m = re.match(r'(\d+(?:\.\d+)?)(%s)\Z' % '|'.join(MULTIPLIERS.keys()), value)
+    m = re.match(r'(\d+(?:\.\d+)?)(%s)\Z' % '|'.join(list(MULTIPLIERS.keys())), value)
     if not m:
         raise OptionValueError('invalid period - %s' % value)
     setattr(parser.values, option.dest, timedelta(seconds=float(m.group(1)) * MULTIPLIERS[m.group(2)]))
@@ -58,13 +58,13 @@ def main(argv):
     try:
         child.expect(r'\n\*')
         child.sendline('status client=%s' % hostid)
-        if child.expect_list([re.compile(r'Terminated Jobs:'), re.compile(r'Error: Client resource .* does not exist.'), pexpect.TIMEOUT]):
+        if child.expect_list([re.compile(br'Terminated Jobs:'), re.compile(br'Error: Client resource .* does not exist.'), pexpect.TIMEOUT]):
             raise RuntimeError('Timeout or unknown client: %s' % hostid)
         child.expect(r'\n\*')
         r = re.compile(r'\s*(\d+)\s+(\S+)\s+(\S+)\s+(\d+\.\d+\s+[KMGTP]|\d+)\s+OK\s+(\S+\s+\S+)\s+%s' % re.escape(backupid))
         job_id = level = files = bytes = finished = None
         for line in child.before.splitlines():
-            m = r.match(line)
+            m = r.match(line.decode('utf-8'))
             if m:
                 job_id = int(m.group(1))
                 level = m.group(2)
@@ -90,7 +90,7 @@ def main(argv):
         exit_status, message = (CRITICAL, str(sys.exc_info()[1]))
     child.sendeof()
     child.expect_list([pexpect.EOF, pexpect.TIMEOUT])
-    print '%s: %s' % (status_message[exit_status], message)
+    print(('%s: %s' % (status_message[exit_status], message)))
     sys.exit(exit_status)
 
 
