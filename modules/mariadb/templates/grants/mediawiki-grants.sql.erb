@@ -37,5 +37,13 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, L
 -- Grants for 'internetarchivebot'@''
 
 GRANT SELECT
-    ON `%wiki%`.* TO 'internetarchivebot'@'%'
+    ON `%wiki%`.revision TO 'internetarchivebot'@'%'
+    IDENTIFIED BY '<%= @internetarchivebot_password %>'
+
+GRANT SELECT
+    ON `%wiki%`.text TO 'internetarchivebot'@'%'
+    IDENTIFIED BY '<%= @internetarchivebot_password %>'
+
+GRANT SELECT
+    ON `%wiki%`.page TO 'internetarchivebot'@'%'
     IDENTIFIED BY '<%= @internetarchivebot_password %>'
