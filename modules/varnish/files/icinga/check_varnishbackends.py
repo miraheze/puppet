@@ -34,7 +34,6 @@ def runcommand(command, exit_on_fail=True):
         output, unused_err = process.communicate()
         retcode = process.poll()
         return output
-
     except OSError as e:
         print("Error: Executing command failed,  does it exist?")
         sys.exit(2)
@@ -52,7 +51,7 @@ def main(argv):
     backends = command.split(b"\n")
     backends_healthy, backends_sick = [], []
     for line in backends:
-        if line.startswith(b"boot") and line.find(b"test")==-1:
+        if line.startswith(b"boot") and line.find(b"test") == -1:
             if line.find(b"Healthy") != -1:
                 backends_healthy.append(line.split(b" ")[0].replace(b"boot.", b""))
             else:
