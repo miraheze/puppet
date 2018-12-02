@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Nagios Varnish Backend Check
 # v1.2
 # URL: www.admingeekz.com
@@ -35,8 +35,8 @@ def runcommand(command, exit_on_fail=True):
       retcode = process.poll()
       return output
 
-    except OSError, e:
-      print "Error: Executing command failed,  does it exist?"
+    except OSError as e:
+      print("Error: Executing command failed,  does it exist?")
       sys.exit(2)
 
 
@@ -49,24 +49,24 @@ def main(argv):
 
   options=o.parse_args()[0]
   command = runcommand("%(path)s -S %(secret)s -T %(host)s:%(port)s backend.list" % options.__dict__)
-  backends = command.split("\n")
+  backends = command.split(b"\n")
   backends_healthy, backends_sick = [], []
   for line in backends:
-    if line.startswith("boot") and line.find("test")==-1:
-      if line.find("Healthy") != -1:
-        backends_healthy.append(line.split(" ")[0].replace("boot.", ""))
+    if line.startswith(b"boot") and line.find(b"test")==-1:
+      if line.find(b"Healthy") != -1:
+        backends_healthy.append(line.split(b" ")[0].replace(b"boot.", b""))
       else:
-        backends_sick.append(line.split(" ")[0].replace("boot.", ""))
+        backends_sick.append(line.split(b" ")[0].replace(b"boot.", b""))
 
   if backends_sick:
-    print "%s backends are down.  %s" % (len(backends_sick), " ".join(backends_sick))
+    print("%s backends are down.  %s" % (len(backends_sick), " ".join(backends_sick)))
     sys.exit(2)
 
   if not backends_sick and not backends_healthy:
-    print "No backends detected.  If this is an error, see readme.txt"
+    print("No backends detected.  If this is an error, see readme.txt")
     sys.exit(1)
 
-  print "All %s backends are healthy" % (len(backends_healthy))
+  print("All %s backends are healthy" % (len(backends_healthy)))
   sys.exit(0)
 
 
