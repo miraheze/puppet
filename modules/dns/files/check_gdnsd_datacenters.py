@@ -1,5 +1,5 @@
 #! /usr/bin/python3
-import codecs, json,sys, urllib
+import codecs, json,sys, urllib.request
 
 depooled_datacenters = []
 
