@@ -9,7 +9,5 @@ class irc {
         'python3-requests-oauthlib',
     ]
 
-    package { $packages:
-        ensure => present,
-    }
+    require_package($packages)
 }
