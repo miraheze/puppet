@@ -79,6 +79,15 @@ class mediawiki::jobrunner {
         weekday => ['0', '4'],
     }
 
+    cron { 'generate sitemaps for all wikis':
+        ensure  => present,
+        command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php',
+        user    => 'www-data',
+        minute  => '0',
+        hour    => '23',
+        weekday => ['6'],
+    }
+
     file { '/usr/lib/nagios/plugins/check_jobqueue':
         ensure => present,
         source => 'puppet:///modules/mediawiki/jobrunner/check_jobqueue',
