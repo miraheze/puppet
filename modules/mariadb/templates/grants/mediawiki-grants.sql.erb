@@ -37,13 +37,13 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, L
 -- Grants for 'internetarchivebot'@''
 
 GRANT SELECT
-    ON `%wiki%`.revision TO 'internetarchivebot'@'%'
+    ON `sdiywiki`.revision TO 'internetarchivebot'@'%'
     IDENTIFIED BY '<%= @internetarchivebot_password %>'
 
 GRANT SELECT
-    ON `%wiki%`.text TO 'internetarchivebot'@'%'
+    ON `sdiywiki`.text TO 'internetarchivebot'@'%'
     IDENTIFIED BY '<%= @internetarchivebot_password %>'
 
 GRANT SELECT
-    ON `%wiki%`.page TO 'internetarchivebot'@'%'
+    ON `sdiywiki`.page TO 'internetarchivebot'@'%'
     IDENTIFIED BY '<%= @internetarchivebot_password %>'
