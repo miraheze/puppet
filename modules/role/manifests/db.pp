@@ -8,6 +8,7 @@ class role::db {
     $phabricator_password = hiera('passwords::db::phabricator')
     $grafana_password = hiera('passwords::db::grafana')
     $exporter_password = hiera('passwords::db::exporter')
+    $internetarchivebot_password = hiera('passwords::db::iabot')
 
     class { 'mariadb::config':
         config      => 'mariadb/config/mw.cnf.erb',
