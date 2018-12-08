@@ -84,6 +84,19 @@ class role::db {
         from  => '172.245.38.205',
     }
 
+
+    # temp whitelisting for cyberpower
+    ufw::allow { 'mysql port cyberpower1':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '208.80.155.163',
+    }
+    ufw::allow { 'mysql port cyberpower2':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '185.15.56.22',
+    }
+
     # Create a user to allow db transfers between servers
     users::user { 'dbcopy':
         ensure      => present,
