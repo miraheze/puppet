@@ -21,6 +21,7 @@ class mediawiki::packages {
         'p7zip-full',
         'xvfb',
         'timidity',
+        'librsvg2-bin',
     ]
 
     # First installs can trip without this
