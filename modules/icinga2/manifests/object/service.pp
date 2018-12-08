@@ -146,7 +146,7 @@
 #
 #   ::icinga2::object::service { 'linux_disks':
 #     import           => ['generic-service'],
-#     apply            =>  'disk_name =>config in host.vars.disks',
+#     apply            =>  'disk_name => config in host.vars.disks',
 #     check_command    => 'disk',
 #     command_endpoint => 'host.name',
 #     vars             => 'vars + config',
@@ -228,19 +228,18 @@ define icinga2::object::service (
 
   # create object
   icinga2::object { "icinga2::object::Service::${title}":
-    ensure       => $ensure,
-    object_name  => $service_name,
-    object_type  => 'Service',
-    import       => $import,
-    apply        => $apply,
-    prefix       => $prefix,
-    assign       => $assign,
-    ignore       => $ignore,
-    template     => $template,
-    attrs        => delete_undef_values($attrs),
-    attrs_list   => keys($attrs),
-    target       => $target,
-    order        => $order,
-    notify       => Class['::icinga2::service'],
+    ensure      => $ensure,
+    object_name => $service_name,
+    object_type => 'Service',
+    import      => $import,
+    apply       => $apply,
+    prefix      => $prefix,
+    assign      => $assign,
+    ignore      => $ignore,
+    template    => $template,
+    attrs       => delete_undef_values($attrs),
+    attrs_list  => keys($attrs),
+    target      => $target,
+    order       => $order,
   }
 }

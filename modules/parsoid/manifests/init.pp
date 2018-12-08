@@ -113,7 +113,7 @@ class parsoid {
         source => 'puppet:///modules/parsoid/logrotate.conf',
     }
 
-    icinga2::custom::services { 'Parsoid':
+    monitoring::services { 'Parsoid':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '8142',

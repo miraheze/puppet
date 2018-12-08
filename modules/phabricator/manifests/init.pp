@@ -9,15 +9,15 @@ class phabricator {
     ssl::cert { 'miraheze.wiki': }
 
     nginx::site { 'phab.miraheze.wiki':
-         ensure  => present,
-         source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
-         monitor => false,
+        ensure  => present,
+        source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
+        monitor => false,
     }
 
     nginx::site { 'phabricator.miraheze.org':
-         ensure  => present,
-         source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
-         monitor => false,
+        ensure  => present,
+        source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
+        monitor => false,
     }
 
     file { '/srv/phab':
@@ -120,24 +120,24 @@ class phabricator {
         require => [File['/etc/systemd/system/phd.service'], File['/srv/phab/phabricator/conf/local/local.json']],
     }
 
-    icinga2::custom::services { 'phab.miraheze.wiki HTTPS':
-         check_command => 'check_http',
-         vars          => {
-             http_expect => 'HTTP/1.1 500 Internal Server Error',
-             http_ssl    => true,
-             http_vhost  => 'phab.miraheze.wiki',
-         },
+    monitoring::services { 'phab.miraheze.wiki HTTPS':
+        check_command => 'check_http',
+        vars          => {
+            http_expect => 'HTTP/1.1 500 Internal Server Error',
+            http_ssl    => true,
+            http_vhost  => 'phab.miraheze.wiki',
+        },
      }
 
-    icinga2::custom::services { 'phabricator.miraheze.org HTTPS':
-         check_command => 'check_http',
-         vars          => {
-             http_ssl   => true,
-             http_vhost => 'phabricator.miraheze.org',
-         },
+    monitoring::services { 'phabricator.miraheze.org HTTPS':
+        check_command => 'check_http',
+        vars          => {
+            http_ssl   => true,
+            http_vhost => 'phabricator.miraheze.org',
+        },
      }
 
-    icinga2::custom::services { 'phd':
+    monitoring::services { 'phd':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_phd',

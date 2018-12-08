@@ -34,15 +34,21 @@ can set to false. See issue #403.
 * Feature `api`:
  * Parameters `ssl_key_path`, `ssl_cert_path`, `ssl_csr_path` and `ssl_ca_path` removed.
  * Deprecated value `ca` of parameter `pki` is removed.
+ * Parameter ssl_crl_path was renamed to ssl_crl.
 * Feature `idopgsql`
  * Parameter `password` is required now.
 * Feature `idomysql`
  * Parameter `password` is required now.
- * Key and certs now are stored into the certs directory named IdoMysqlConnection_ido-mysql by default.
+ * Key and certs now are stored into the certs directory named `IdoMysqlConnection_ido-mysql` by default.
 * Feature `elasticsearch`
- * Key and certs now are stored into the certs directory named ElasticsearchWriter_elasticsearch by default.
+ * Key and certs now are stored into the certs directory named `ElasticsearchWriter_elasticsearch` by default.
 * Feature `influxdb`
- * Key and certs now are stored into the certs directory named InfluxdbWriter_influxdb by default.
+ * Key and certs now are stored into the certs directory named `InfluxdbWriter_influxdb` by default.
+* compatlogger
+ * Object removed
+* Class `icinga2::pki::ca`
+ * Parameters `ssl_key_path`, `ssl_csr_path` and `ssl_cacert_path` removed. Now the location is at `/var/lib/icinga2/certs`
+   on Linux hosts and `C:/ProgramData/icinga2/var/lib/icinga2/certs`.
 
 ## Module Description
 
@@ -71,14 +77,14 @@ available in Icinga 2 can be enabled and configured with this module.
 
 This module depends on:
 
-* [puppetlabs/stdlib] >= 4.16.0
-* [puppetlabs/concat] >= 2.1.0
+* [puppetlabs/stdlib] >= 4.16.0 < 6.0.0
+* [puppetlabs/concat] >= 5.1.0 < 6.0.0
 
 Depending on your setup following modules may also be required:
 
-* [puppetlabs/apt] >= 2.0.0
-* [puppetlabs/chocolatey] >= 0.7.0
-* [puppet/zypprepo] >= 2.0.0
+* [puppetlabs/apt] >= 6.0.0
+* [puppetlabs/chocolatey] >= 3.1.0
+* [puppet/zypprepo] >= 2.2.1
 
 ### Limitations
 
@@ -716,13 +722,13 @@ class { '::icinga2::feature::api':
   pki => 'none',
 }
 
-file { "/etc/icinga2/pki/${::fqdn}.crt":
+file { "/var/lib/icinga2/certs/${::fqdn}.crt":
   ensure => file,
   tag    => 'icinga2::config::file,
   source => "puppet:///modules/profiles/certificates/${::fqdn}.crt",
 }
 
-file { "/etc/icinga2/pki/${::fqdn}.key":
+file { "/var/lib/icinga2/certs/${::fqdn}.key":
   ensure => file,
   tag    => 'icinga2::config::file,
   source => "puppet:///modules/profiles/private_keys/${::fqdn}.key",
@@ -841,7 +847,6 @@ icinga2::config::fragment { 'load-function':
     - [Defined type: icinga2::object::scheduleddowntime](#defined-type-icinga2objectscheduleddowntime)
     - [Defined type: icinga2::object::eventcommand](#defined-type-icinga2objecteventcommand)
     - [Defined type: icinga2::object::checkresultreader](#defined-type-icinga2objectcheckresultreader)
-    - [Defined type: icinga2::object::compatlogger](#defined-type-icinga2objectcompatlogger)
     - [Defined type: icinga2::config::fragment](#defined-type-icinga2configfragment)
 - [**Private defined types**](#private-defined-types)
     - [Defined type: icinga2::feature](#defined-type-icinga2feature)
@@ -1341,46 +1346,16 @@ Either `present` or `absent`. Defines if the feature `api` should be enabled. De
 ##### `pki`
 Provides multiple sources for the certificate and key.
 
-* `puppet` Copies the key, cert and CA cert from the Puppet ssl directory to the Icinga pki directory.
-  * Linux: `/etc/icinga2/pki`
-  * Windows: `C:/ProgramData/icinga2/etc/icinga2/pki`
+* `puppet` Copies the key, cert and CA cert from the Puppet ssl directory to the Icinga cert directory.
+  * Linux: `/var/lib/icinga2/certs`
+  * Windows: `C:/ProgramData/icinga2/var/lib/icinga2/certs`
 * `icinga2` Uses the icinga2 CLI to generate a Certificate and Key The ticket is generated on the Puppet master by using
 the configured 'ticket_salt' in a custom function.
-* `none` Does nothing and you either have to manage the files yourself as file resources or use the `ssl_key`, `ssl_cert`, `ssl_ca` parameters.
+* `none` Does nothing and you either have to manage the files yourself as file resources or use the `ssl_key`, `ssl_cert`, `ssl_cacert` parameters.
 
 Defaults to `puppet`
 
-##### `ssl_key_path`
-Location of the private key. Default depends on your platform:
-
-* Linux `/etc/icinga2/pki/NodeName.key`
-* Windows `C:/ProgramData/icinga2/etc/icinga2/pki/NodeName.key`
-
-The Value of `NodeName` comes from the corresponding constant.
-
-##### `ssl_cert_path`
-Location of the certificate. Default depends on your platform:
-
-* Linux `/etc/icinga2/pki/NodeName.crt`
-* Windows `C:/ProgramData/icinga2/etc/icinga2/pki/NodeName.crt`
-
-The Value of `NodeName` comes from the corresponding constant.
-
-##### `ssl_csr_path`
-Location of the certificate signing request. Default depends on your platform:
-
-* Linux: `/etc/icinga2/pki/NodeName.csr`
-* Windows `C:/ProgramData/icinga2/etc/icinga2/pki/NodeName.csr`
-
-The Value of `NodeName` comes from the corresponding constant.
-
-##### `ssl_cacert_path`
-Location of the CA certificate. Default depends on your platform:
-
-* Linux: `/etc/icinga2/pki/ca.crt`
-* Windows `C:/ProgramData/icinga2/etc/icinga2/pki/ca.crt`
-
-##### `ssl_crl_path`
+##### `ssl_crl`
 Optional location of the certificate revocation list.
 
 ##### `accept_config`
@@ -1543,36 +1518,6 @@ Content of the CA certificate. If this is unset, a certificate will be generated
 
 ##### `ca_key`
 Content of the CA key. If this is unset, a key will be generated with the Icinga 2 CLI.
-
-##### `ssl_key_path`
-Location of the private key. Default depends on your platform:
-
-* Linux `/var/lib/icinga2/certs/NodeName.key`
-* Windows `C:/ProgramData/icinga2/var/lib/icinga2/certs/NodeName.key`
-
-The Value of `NodeName` comes from the corresponding constant.
-
-##### `ssl_cert_path`
-Location of the certificate. Default depends on your platform:
-
-* Linux `/var/lib/icinga2/certs/NodeName.crt`
-* Windows `C:/ProgramData/icinga2/var/lib/icinga2/certs/NodeName.crt`
-
-The Value of `NodeName` comes from the corresponding constant.
-
-##### `ssl_csr_path`
-Location of the certificate signing request. Default depends on your platform:
-
-* Linux: `/var/lib/icinga2/certs/NodeName.csr`
-* Windows `C:/ProgramData/icinga2/var/lib/icinga2/certs/NodeName.csr`
-
-The Value of `NodeName` comes from the corresponding constant.
-
-##### `ssl_cacert_path`
-Location of the CA certificate. Default depends on your platform:
-
-* Linux: `/var/lib/icinga2/certs/ca.crt`
-* Windows `C:/ProgramData/icinga2/var/lib/icinga2/certs/ca.crt`
 
 ### Private Classes
 
@@ -2380,34 +2325,6 @@ Destination config file to store in this object. File will be declared the first
 
 ##### `order`
 String or integer to set the position in the target file, sorted alpha numeric. Defaults to `05`.
-
-#### Defined type: `icinga2::object::compatlogger`
-
-##### `ensure`
-Set to present enables the compatlogger object, absent disables it. Defaults to `present`
-
-##### `compatlogger_name`
-Set the Icinga 2 name of the compatlogger object. Defaults to `title` of the define resource.
-
-##### `spool_dir`
-The directory which contains the check result files. Defaults to `LocalStateDir + "/lib/icinga2/spool/checkresults/"`
-
-##### `target`
-Destination config file to store in this object. File will be declared the first time.
-
-##### `order`
-String or integer to set the position in the target file, sorted alpha numeric. Defaults to `05`.
-
-#### Defined type: `icinga2::config::fragment`
-
-##### `content`
-Content to insert in file specified in target.
-
-##### `target`
-Destination config file to store in this fragment. File will be declared the first time.
-
-##### `order`
-String or integer to set the position in the target file, sorted in alpha numeric order. Defailts to `05`.
 
 
 ### Private defined types

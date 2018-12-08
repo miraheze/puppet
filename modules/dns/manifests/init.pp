@@ -44,14 +44,14 @@ class dns {
         mode   => '0755',
     }
 
-    icinga2::custom::services { 'Auth DNS':
+    monitoring::services { 'Auth DNS':
         check_command => 'check_dns_auth',
         vars          => {
             host    => 'miraheze.org',
         },
     }
 
-    icinga2::custom::services { 'GDNSD Datacenters':
+    monitoring::services { 'GDNSD Datacenters':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_gdnsd_datacenters',

@@ -47,9 +47,9 @@ class grafana (
     }
 
     nginx::site { 'grafana.miraheze.org':
-        ensure  => present,
-        source  => 'puppet:///modules/grafana/nginx/grafana.conf',
-        notify  => Exec['nginx-syntax-grafana'],
+        ensure       => present,
+        source       => 'puppet:///modules/grafana/nginx/grafana.conf',
+        notify_site  => Exec['nginx-syntax-grafana'],
     }
 
     file { '/etc/php/7.2/fpm/conf.d/php.ini':
@@ -71,11 +71,11 @@ class grafana (
         require     => Exec['nginx-syntax-grafana'],
     }
 
-    icinga2::custom::services { 'grafana.miraheze.org HTTPS':
-         check_command => 'check_http',
-         vars          => {
-             http_ssl   => true,
-             http_vhost => 'grafana.miraheze.org',
-         },
+    monitoring::services { 'grafana.miraheze.org HTTPS':
+        check_command => 'check_http',
+        vars          => {
+            http_ssl   => true,
+            http_vhost => 'grafana.miraheze.org',
+        },
      }
 }

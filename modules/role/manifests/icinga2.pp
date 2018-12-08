@@ -1,6 +1,10 @@
-# role: icinga
+# role: icinga2
 class role::icinga2 {
-    include ::icinga2
+    motd::role { 'icinga2':
+        description => 'central monitoring server which runs icinga2',
+    }
+
+    include ::profile::icinga2::main
 
     if !defined(Exec['ufw-allow-tcp-from-any-to-any-port-80']) {
         ufw::allow { 'icinga2 http':
@@ -14,9 +18,5 @@ class role::icinga2 {
             proto => 'tcp',
             port  => '443',
         }
-    }
-
-    motd::role { 'role::icinga2':
-        description => 'central monitoring server',
     }
 }

@@ -103,9 +103,9 @@ class icinga2::feature::elasticsearch(
     fail('You must include the icinga2 base class before using any icinga2 feature class!')
   }
 
-  $user          = $::icinga2::params::user
-  $group         = $::icinga2::params::group
-  $conf_dir      = $::icinga2::params::conf_dir
+  $user          = $::icinga2::globals::user
+  $group         = $::icinga2::globals::group
+  $conf_dir      = $::icinga2::globals::conf_dir
   $_notify       = $ensure ? {
     'present' => Class['::icinga2::service'],
     default   => undef,
@@ -118,7 +118,7 @@ class icinga2::feature::elasticsearch(
 
   if $enable_ssl {
 
-    $ssl_dir       = $::icinga2::params::pki_dir
+    $ssl_dir       = $::icinga2::globals::cert_dir
     $_ssl_key_mode = $::kernel ? {
       'windows' => undef,
       default   => '0600',
@@ -169,10 +169,7 @@ class icinga2::feature::elasticsearch(
 
       'none': {
         if $ssl_key {
-          $_ssl_key = $::osfamily ? {
-            'windows' => regsubst($ssl_key, '\n', "\r\n", 'EMG'),
-            default   => $ssl_key,
-          }
+          $_ssl_key = $ssl_key
 
           file { $_ssl_key_path:
             ensure  => file,
@@ -183,10 +180,7 @@ class icinga2::feature::elasticsearch(
         }
 
         if $ssl_cert {
-          $_ssl_cert = $::osfamily ? {
-            'windows' => regsubst($ssl_cert, '\n', "\r\n", 'EMG'),
-            default   => $ssl_cert,
-          }
+          $_ssl_cert = $ssl_cert
 
           file { $_ssl_cert_path:
             ensure  => file,
@@ -196,10 +190,7 @@ class icinga2::feature::elasticsearch(
         }
 
         if $ssl_cacert {
-          $_ssl_cacert = $::osfamily ? {
-            'windows' => regsubst($ssl_cacert, '\n', "\r\n", 'EMG'),
-            default   => $ssl_cacert,
-          }
+          $_ssl_cacert = $ssl_cacert
 
           file { $_ssl_cacert_path:
             ensure  => file,

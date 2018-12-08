@@ -90,7 +90,7 @@ class bacula::director {
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_bacula_backups' ],
     }
 
-    icinga2::custom::services { 'Bacula Daemon':
+    monitoring::services { 'Bacula Daemon':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_bacula_daemon',
@@ -98,7 +98,7 @@ class bacula::director {
         },
     }
 
-    icinga2::custom::services { 'Bacula Databases db4':
+    monitoring::services { 'Bacula Databases db4':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_bacula_databasesdb4',
@@ -106,7 +106,7 @@ class bacula::director {
         },
     }
 
-    icinga2::custom::services { 'Bacula Static':
+    monitoring::services { 'Bacula Static':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_bacula_static',
@@ -114,7 +114,7 @@ class bacula::director {
         },
     }
 
-    icinga2::custom::services { 'Bacula Phabricator Static':
+    monitoring::services { 'Bacula Phabricator Static':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_bacula_phab',
@@ -122,12 +122,11 @@ class bacula::director {
         },
     }
 
-    icinga2::custom::services { 'Bacula Private Git':
+    monitoring::services { 'Bacula Private Git':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_bacula_private',
             nrpe_timeout => '60s',
         },
     }
-
 }

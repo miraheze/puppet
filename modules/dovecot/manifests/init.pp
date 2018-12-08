@@ -15,7 +15,7 @@ class dovecot {
         subscribe => File['/etc/dovecot/dovecot.conf'],
     }
 
-    icinga2::custom::services { 'IMAP':
+    monitoring::services { 'IMAP':
         check_command => 'imap',
     }
 }

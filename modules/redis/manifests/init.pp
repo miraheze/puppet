@@ -57,7 +57,7 @@ class redis (
         refreshonly => true,
     }
 
-    icinga2::custom::services { 'Redis Process':
+    monitoring::services { 'Redis Process':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_redis',

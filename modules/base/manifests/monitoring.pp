@@ -49,30 +49,30 @@ class base::monitoring {
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run', ],
     }
 
-    icinga2::custom::hosts { $::hostname: }
+    monitoring::hosts { $::hostname: }
 
-    icinga2::custom::services { 'Disk Space':
+    monitoring::services { 'Disk Space':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_disk',
         },
     }
 
-    icinga2::custom::services { 'Current Load':
+    monitoring::services { 'Current Load':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_load',
         },
     }
 
-    icinga2::custom::services { 'Puppet':
+    monitoring::services { 'Puppet':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_puppet_run',
         },
     }
 
-    icinga2::custom::services { 'SSH':
+    monitoring::services { 'SSH':
         check_command => 'ssh',
     }
 }

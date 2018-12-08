@@ -43,7 +43,7 @@ class lizardfs::storage(
         }
     }
 
-    icinga2::custom::services { 'Lizardfs Chunkserver Port':
+    monitoring::services { 'Lizardfs Chunkserver Port':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '9422',

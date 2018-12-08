@@ -84,7 +84,7 @@ class mathoid {
         source => 'puppet:///modules/mathoid/logrotate.conf',
     }
 
-    icinga2::custom::services { 'Mathoid':
+    monitoring::services { 'Mathoid':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '10044',

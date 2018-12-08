@@ -125,7 +125,7 @@ class restbase {
         source => 'puppet:///modules/restbase/logrotate.conf',
     }
 
-    icinga2::custom::services { 'Restbase':
+    monitoring::services { 'Restbase':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '7231',

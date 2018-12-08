@@ -39,7 +39,7 @@
 # [*ssl_key_path*]
 #   Location of the private key. Default depends on platform:
 #   /var/lib/icinga2/certs/IdoMysqlConnection_ido-mysql.key on Linux
-#   C:/ProgramData/icinga2/etc/icinga2/pki/IdoMysqlConnection_ido-mysql.key on Windows
+#   C:/ProgramData/icinga2/var/lib/icinga2/certs/IdoMysqlConnection_ido-mysql.key on Windows
 #
 # [*ssl_cert_path*]
 #   Location of the certificate. Default depends on platform:
@@ -52,15 +52,15 @@
 #   C:/ProgramData/icinga2/var/lib/icinga2/certs/IdoMysqlConnection_ido-mysql_ca.crt on Windows
 #
 # [*ssl_key*]
-#   The private key in a base64 encoded string to store in pki directory, file is stored to
+#   The private key in a base64 encoded string to store in cert directory, file is stored to
 #   path spicified in ssl_key_path. This parameter requires pki to be set to 'none'.
 #
 # [*ssl_cert*]
-#   The certificate in a base64 encoded string to store in pki directory, file is  stored to
+#   The certificate in a base64 encoded string to store in cert directory, file is  stored to
 #   path spicified in ssl_cert_path. This parameter requires pki to be set to 'none'.
 #
 # [*ssl_cacert*]
-#   The CA root certificate in a base64 encoded string to store in pki directory, file is stored
+#   The CA root certificate in a base64 encoded string to store in cert directory, file is stored
 #   to path spicified in ssl_cacert_path. This parameter requires pki to be set to 'none'.
 #
 # [*ssl_capath*]
@@ -151,17 +151,14 @@ class icinga2::feature::idomysql(
     fail('You must include the icinga2 base class before using any icinga2 feature class!')
   }
 
-  $owner                = $::icinga2::params::user
-  $group                = $::icinga2::params::group
-  $conf_dir             = $::icinga2::params::conf_dir
-  $ssl_dir              = $::icinga2::params::pki_dir
-  $ido_mysql_package    = $::icinga2::params::ido_mysql_package
-  $ido_mysql_schema_dir = $::icinga2::params::ido_mysql_schema_dir
-  $manage_package       = $::icinga2::setup::manage_package
-  $_ssl_key_mode        = $::osfamily ? {
-    'windows' => undef,
-    default   => '0600',
-  }
+  $owner                  = $::icinga2::globals::user
+  $group                  = $::icinga2::globals::group
+  $conf_dir               = $::icinga2::globals::conf_dir
+  $ssl_dir                = $::icinga2::globals::cert_dir
+  $ido_mysql_package_name = $::icinga2::globals::ido_mysql_package_name
+  $ido_mysql_schema       = $::icinga2::globals::ido_mysql_schema
+  $manage_package         = $::icinga2::manage_package
+  $_ssl_key_mode          = '0600'
   $_notify           = $ensure ? {
     'present' => Class['::icinga2::service'],
     default   => undef,
@@ -221,10 +218,7 @@ class icinga2::feature::idomysql(
 
       'none': {
         if $ssl_key {
-          $_ssl_key = $::osfamily ? {
-            'windows' => regsubst($ssl_key, '\n', "\r\n", 'EMG'),
-            default   => $ssl_key,
-          }
+          $_ssl_key = $ssl_key
 
           file { $_ssl_key_path:
             ensure  => file,
@@ -235,10 +229,7 @@ class icinga2::feature::idomysql(
         }
 
         if $ssl_cert {
-          $_ssl_cert = $::osfamily ? {
-            'windows' => regsubst($ssl_cert, '\n', "\r\n", 'EMG'),
-            default   => $ssl_cert,
-          }
+          $_ssl_cert = $ssl_cert
 
           file { $_ssl_cert_path:
             ensure  => file,
@@ -248,10 +239,7 @@ class icinga2::feature::idomysql(
         }
 
         if $ssl_cacert {
-          $_ssl_cacert = $::osfamily ? {
-            'windows' => regsubst($ssl_cacert, '\n', "\r\n", 'EMG'),
-            default   => $ssl_cacert,
-          }
+          $_ssl_cacert = $ssl_cacert
 
           file { $_ssl_cacert_path:
             ensure  => file,
@@ -284,31 +272,31 @@ class icinga2::feature::idomysql(
   }
 
   # install additional package
-  if $ido_mysql_package and $manage_package {
-    package { $ido_mysql_package:
+  if $ido_mysql_package_name and $manage_package {
+    ensure_resources('file', { '/etc/dbconfig-common' => { ensure => directory } })
+    file { "/etc/dbconfig-common/${ido_mysql_package_name}.conf":
+      ensure  => file,
+      content => "dbc_install='false'\ndbc_upgrade='false'\ndbc_remove='false'\n",
+      mode    => '0600',
+      before  => Package[$ido_mysql_package_name],
+    }
+
+    package { $ido_mysql_package_name:
       ensure => installed,
       before => Icinga2::Feature['ido-mysql'],
-    }
-    -> class { '::icinga2::debian::dbconfig':
-      dbtype   => 'mysql',
-      dbserver => $host,
-      dbport   => $port,
-      dbname   => $database,
-      dbuser   => $user,
-      dbpass   => $password,
     }
   }
 
   # import db schema
   if $import_schema {
-    if $ido_mysql_package and $manage_package {
-      Package[$ido_mysql_package] -> Exec['idomysql-import-schema']
+    if $ido_mysql_package_name and $manage_package {
+      Package[$ido_mysql_package_name] -> Exec['idomysql-import-schema']
     }
     exec { 'idomysql-import-schema':
       user    => 'root',
       path    => $::path,
-      command => "mysql -h '${host}' -P '${port}' -u '${user}' -p'${password}' '${database}' < '${ido_mysql_schema_dir}/mysql.sql'",
-      unless  => "mysql -h '${host}' -P '${port}' -u '${user}' -p'${password}' '${database}' -Ns -e 'select version from icinga_dbversion'",
+      command => "mysql -h ${host} -P ${port} -u ${user} -p'${password}' ${database} < ${ido_mysql_schema}",
+      unless  => "mysql -h ${host} -P ${port} -u ${user} -p'${password}' ${database} -Ns -e 'select version from icinga_dbversion'",
     }
   }
 

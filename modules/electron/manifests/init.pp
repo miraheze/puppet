@@ -39,7 +39,7 @@ class electron (
         source => 'puppet:///modules/electron/logrotate.conf',
     }
 
-    icinga2::custom::services { 'Electron':
+    monitoring::services { 'Electron':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '3000',

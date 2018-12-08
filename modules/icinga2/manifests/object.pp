@@ -79,21 +79,11 @@ define icinga2::object(
 
   assert_private()
 
-  case $::osfamily {
-    'windows': {
-      Concat {
-        owner => 'Administrators',
-        group => 'NETWORK SERVICE',
-        mode  => '0770',
-      }
-    } # windows
-    default: {
-      Concat {
-        owner => $::icinga2::params::user,
-        group => $::icinga2::params::group,
-        mode  => '0640',
-      }
-    } # default
+
+  Concat {
+    owner => $::icinga2::globals::user,
+    group => $::icinga2::globals::group,
+    mode  => '0640',
   }
 
   if $object_type == $apply_target {
@@ -105,10 +95,7 @@ define icinga2::object(
     'ignore where' => $ignore,
   })
 
-  $_content = $::osfamily ? {
-    'windows' => regsubst(template('icinga2/object.conf.erb'), '\n', "\r\n", 'EMG'),
-    default   => template('icinga2/object.conf.erb'),
-  }
+  $_content = template('icinga2/object.conf.erb')
 
   if !defined(Concat[$target]) {
     concat { $target:

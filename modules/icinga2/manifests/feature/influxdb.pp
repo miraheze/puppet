@@ -28,7 +28,7 @@
 #
 # [*pki*]
 #   Provides multiple sources for the certificate, key and ca. Valid parameters are 'puppet' or 'none'.
-#   'puppet' copies the key, cert and CAcert from the Puppet ssl directory to the pki directory
+#   'puppet' copies the key, cert and CAcert from the Puppet ssl directory to the cert directory
 #   /var/lib/icinga2/certs on Linux and C:/ProgramData/icinga2/var/lib/icinga2/certs on Windows.
 #   'none' does nothing and you either have to manage the files yourself as file resources
 #   or use the ssl_key, ssl_cert, ssl_cacert parameters. Defaults to puppet.
@@ -49,15 +49,15 @@
 #   C:/ProgramData/icinga2/var/lib/icinga2/certs/InfluxdbWriter_influxdb_ca.crt on Windows
 #
 # [*ssl_key*]
-#   The private key in a base64 encoded string to store in pki directory, file is stored to
+#   The private key in a base64 encoded string to store in cert directory, file is stored to
 #   path spicified in ssl_key_path. This parameter requires pki to be set to 'none'.
 #
 # [*ssl_cert*]
-#   The certificate in a base64 encoded string to store in pki directory, file is  stored to
+#   The certificate in a base64 encoded string to store in cert directory, file is  stored to
 #   path spicified in ssl_cert_path. This parameter requires pki to be set to 'none'.
 #
 # [*ssl_cacert*]
-#   The CA root certificate in a base64 encoded string to store in pki directory, file is stored
+#   The CA root certificate in a base64 encoded string to store in cert directory, file is stored
 #   to path spicified in ssl_cacert_path. This parameter requires pki to be set to 'none'.
 #
 # [*host_measurement*]
@@ -123,10 +123,10 @@ class icinga2::feature::influxdb(
     fail('You must include the icinga2 base class before using any icinga2 feature class!')
   }
 
-  $user          = $::icinga2::params::user
-  $group         = $::icinga2::params::group
-  $conf_dir      = $::icinga2::params::conf_dir
-  $ssl_dir       = $::icinga2::params::pki_dir
+  $user          = $::icinga2::globals::user
+  $group         = $::icinga2::globals::group
+  $conf_dir      = $::icinga2::globals::conf_dir
+  $ssl_dir       = $::icinga2::globals::cert_dir
   $_ssl_key_mode = $::kernel ? {
     'windows' => undef,
     default   => '0600',
@@ -145,7 +145,7 @@ class icinga2::feature::influxdb(
   $service_template = { measurement => $service_measurement, tags => $service_tags}
 
   if $enable_ssl {
-  
+
     # Set defaults for certificate stuff
     if $ssl_key_path {
       $_ssl_key_path = $ssl_key_path }
@@ -191,10 +191,7 @@ class icinga2::feature::influxdb(
 
       'none': {
         if $ssl_key {
-          $_ssl_key = $::osfamily ? {
-            'windows' => regsubst($ssl_key, '\n', "\r\n", 'EMG'),
-            default   => $ssl_key,
-          }
+          $_ssl_key = $ssl_key
 
           file { $_ssl_key_path:
             ensure  => file,
@@ -205,10 +202,7 @@ class icinga2::feature::influxdb(
         }
 
         if $ssl_cert {
-          $_ssl_cert = $::osfamily ? {
-            'windows' => regsubst($ssl_cert, '\n', "\r\n", 'EMG'),
-            default   => $ssl_cert,
-          }
+          $_ssl_cert = $ssl_cert
 
           file { $_ssl_cert_path:
             ensure  => file,
@@ -218,10 +212,7 @@ class icinga2::feature::influxdb(
         }
 
         if $ssl_cacert {
-          $_ssl_cacert = $::osfamily ? {
-            'windows' => regsubst($ssl_cacert, '\n', "\r\n", 'EMG'),
-            default   => $ssl_cacert,
-          }
+          $_ssl_cacert = $ssl_cacert
 
           file { $_ssl_cacert_path:
             ensure  => file,

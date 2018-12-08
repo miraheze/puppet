@@ -18,7 +18,7 @@ class prometheus {
         subscribe => File['/etc/prometheus/prometheus.yml'],
     }
 
-    icinga2::custom::services { 'Prometheus':
+    monitoring::services { 'Prometheus':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '9090',

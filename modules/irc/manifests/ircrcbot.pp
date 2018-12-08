@@ -34,7 +34,7 @@ class irc::ircrcbot(
         require => File['/etc/systemd/system/ircrcbot.service'],
     }
 
-    icinga2::custom::services { 'IRC RC Bot':
+    monitoring::services { 'IRC RC Bot':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_irc_rcbot',

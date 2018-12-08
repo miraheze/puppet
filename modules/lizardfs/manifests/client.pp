@@ -87,5 +87,3 @@ define lizardfs::client(
         }
     }
 }
-
-# vim:et:sw=2:ts=2:sts=2:tw=0:fenc=utf-8

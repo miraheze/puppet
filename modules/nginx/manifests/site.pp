@@ -41,8 +41,8 @@ define nginx::site(
     }
 
     if $monitor {
-        if !defined(Icinga2::Custom::Services['HTTPS']) {
-            icinga2::custom::services { 'HTTPS':
+        if !defined(Monitoring::Services['HTTPS']) {
+            monitoring::services { 'HTTPS':
                 check_command => 'check_http',
                 vars          => {
                     address  => "${::ipaddress}",
@@ -51,8 +51,8 @@ define nginx::site(
             }
         }
     } else {
-        if !defined(Icinga2::Custom::Services['HTTPS']) {
-             icinga2::custom::services { 'HTTPS':
+        if !defined(Monitoring::Services['HTTPS']) {
+             monitoring::services { 'HTTPS':
                  ensure        => 'absent',
                  check_command => 'check_http',
                  vars          => {

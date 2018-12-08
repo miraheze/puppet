@@ -88,7 +88,7 @@ class mariadb::config(
         notify => Exec['mariadb reload systemd'],
     }
 
-    icinga2::custom::services { 'MySQL':
+    monitoring::services { 'MySQL':
         check_command => 'mysql',
         vars          => {
             mysql_username => 'icinga',

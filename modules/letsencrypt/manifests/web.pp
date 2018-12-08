@@ -32,7 +32,7 @@ class letsencrypt::web {
         from  => '185.52.1.76',
     }
 
-    icinga2::custom::services { 'MirahezeRenewSsl':
+    monitoring::services { 'MirahezeRenewSsl':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '5000',

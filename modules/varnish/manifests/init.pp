@@ -103,14 +103,14 @@ class varnish {
         source => 'puppet:///modules/varnish/stunnel/stunnel4.logrotate.conf',
     }
 
-    icinga2::custom::services { 'Varnish Backends':
+    monitoring::services { 'Varnish Backends':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_varnishbackends',
         },
     }
 
-    icinga2::custom::services { 'HTTP 4xx/5xx ERROR Rate':
+    monitoring::services { 'HTTP 4xx/5xx ERROR Rate':
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_nginx_errorrate',

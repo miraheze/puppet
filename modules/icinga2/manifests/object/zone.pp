@@ -38,9 +38,7 @@ define icinga2::object::zone(
   Variant[String, Integer]           $order     = 45,
 ) {
 
-  include ::icinga2::params
-
-  $conf_dir = $::icinga2::params::conf_dir
+  $conf_dir = $::icinga2::globals::conf_dir
 
   # set defaults
   if $target {
@@ -70,6 +68,5 @@ define icinga2::object::zone(
     attrs_list  => keys($attrs),
     target      => $_target,
     order       => $order,
-    notify      => Class['::icinga2::service'],
   }
 }

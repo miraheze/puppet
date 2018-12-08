@@ -86,7 +86,7 @@ class acme {
         from  => '185.52.1.76',
     }
 
-    icinga2::custom::services { 'Mirahezerenewssl':
+    monitoring::services { 'Mirahezerenewssl':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '5000',

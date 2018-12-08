@@ -59,21 +59,21 @@ class lizardfs::master(
         }
     }
 
-    icinga2::custom::services { 'Lizardfs Master Port 1':
+    monitoring::services { 'Lizardfs Master Port 1':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '9419',
         },
     }
 
-    icinga2::custom::services { 'Lizardfs Master Port 2':
+    monitoring::services { 'Lizardfs Master Port 2':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '9420',
         },
     }
 
-    icinga2::custom::services { 'Lizardfs Master Port 3':
+    monitoring::services { 'Lizardfs Master Port 3':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '9421',
