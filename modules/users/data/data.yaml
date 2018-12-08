@@ -70,7 +70,7 @@ users:
     realname: NDKilla
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC23A6wd6PcSBaQT0QXofW4ZfTHgP5SiT8lxM4k9kKr+tEKd4Uh2nNDmB5OhLqKteMLxW1MMbYUqkPM4ZPLwNXAOVHjHRJ6u9DiC/NgXd0UL1nzPEXhN9ajareKNZJwb5T9qLgwdQ+5xLns8/yC0NvEW7mdnKLFLip4QWTclaoeCqnR4gfGhE1AJxw2I66jkMtnpPXaU/dypedPtOkBsonKNC/QSam8QTBvkck4URuy0vdEsn+GBDrtlwwHlg5Rx2NxdOYV9WQouiy/+TE/UcRQCr1SvBt8dzugMPp24mXX7Hb7Wv1hBKagTUo5EjYsi3n2hIqwr0cSPSLoorEjQhBIfA2+0IYrdpHFdWoU4iwt2oAAStsPBy6+MWVhEXnFUqh/oXMV2iP+ZW6fgjHFOThgfgNfL2QlsaLVGwPmQtaCXT1dtfoNQDoVe/5ZG+QEKT0rKO5072NOPzkShF1llphoxwTLKrCIO/TsT+1gz5cK8fvXfXa10FrG/Obc/iN+MUNQXu9ndv6HQa80jpA5dfiq3b4RcmyYVaBR7FWL3mRwLggiN8IJEuH5mpbszJDQ+C1fr05vSNrkvFhmgCmLpbRlZ7e1K6+tw+RLMutDrVD3xuOPwFiz/UtZkR76QYxATHFz1yd8ulgWiD558NiX6ExgYpX0QqzBGG02HCuNArWvRw== subwoofer@DESKTOP-MBT3BHQ]
   labster:
-    ensure: absent
+    ensure: present
     uid: 1005
     name: labster
     realname: Vorticity
