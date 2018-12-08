@@ -37,6 +37,18 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, L
 -- Grants for 'internetarchivebot'@''
 
 GRANT SELECT
+    ON `allthetropeswiki`.revision TO 'internetarchivebot'@'%'
+    IDENTIFIED BY '<%= @internetarchivebot_password %>';
+
+GRANT SELECT
+    ON `allthetropeswiki`.text TO 'internetarchivebot'@'%'
+    IDENTIFIED BY '<%= @internetarchivebot_password %>';
+
+GRANT SELECT
+    ON `allthetropeswiki`.page TO 'internetarchivebot'@'%'
+    IDENTIFIED BY '<%= @internetarchivebot_password %>';
+
+GRANT SELECT
     ON `sdiywiki`.revision TO 'internetarchivebot'@'%'
     IDENTIFIED BY '<%= @internetarchivebot_password %>';
 
