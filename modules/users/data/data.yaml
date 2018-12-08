@@ -35,6 +35,11 @@ groups:
     descriptions: limited access on puppet1 to add SSL private keys
     members: [macfan]
     privileges: []                 
+  mail-users:
+    gid: 2005
+    descriptions: Gives the user shell access to have a mail account on the mail server
+    members: [labster]
+    privileges: []
 
 users:
   johnflewis:
