@@ -1,8 +1,8 @@
 class httpd(
-    Array[String] $modules = [],
-    Stdlib::Ensure $legacy_compat = present,
+    Array[String] $modules          = [],
+    Mlib::Ensure $legacy_compat     = present,
     Enum['daily', 'weekly'] $period = 'daily',
-    Integer $rotate = 30,
+    Integer $rotate                 = 30,
 ) {
     # Package and service. Links is needed for the status page below
     require_package('apache2', 'links')

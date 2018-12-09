@@ -1,15 +1,14 @@
 # class: users::user
 define users::user(
-    Stdlib::Ensure $ensure     = 'present',
-    Optional[Integer] $uid        = undef,
-    Optional[String] $gid        = undef,
-    Array $groups     = [],
-    String $comment    = '',
-    String $shell      = '/bin/bash',
+    Mlib::Ensure $ensure       = 'present',
+    Optional[Integer] $uid     = undef,
+    Optional[String] $gid      = undef,
+    Array $groups              = [],
+    String $comment            = '',
+    String $shell              = '/bin/bash',
     Optional[Hash] $privileges = undef,
-    Array $ssh_keys   = [],
+    Array $ssh_keys            = [],
 ) {
-    validate_ensure($ensure)
 
     user { $name:
         ensure     => $ensure,

@@ -1,8 +1,8 @@
 # class: sudo::group
 define sudo::group(
     Array $privileges,
-    Stdlib::Ensure $ensure  = present,
-    String $group   = $title,
+    Mlib::Ensure $ensure  = present,
+    String $group         = $title,
 ) {
     require sudo
 

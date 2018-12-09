@@ -1,6 +1,6 @@
 # class: motd::role
 define motd::role(
-    Stdlib::Ensure $ensure      = present,
+    Mlib::Ensure $ensure          = present,
     Optional[String] $description = undef,
 ) {
     $message = $description ? {

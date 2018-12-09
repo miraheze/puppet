@@ -12,9 +12,9 @@
 #   Defaults to the resource title plus a '.load' suffix.
 #
 define httpd::mod_conf(
-    Stdlib::Ensure $ensure   = present,
-    String $mod      = $title,
-    String $loadfile = "${title}.load",
+    Mlib::Ensure $ensure = present,
+    String $mod          = $title,
+    String $loadfile     = "${title}.load",
 )
 {
     require_package('apache2')
