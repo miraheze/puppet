@@ -1,2 +1,2 @@
 # Basic ensure validator
-type Wmflib::Ensure = Enum['present', 'absent']
+type Mlib::Ensure = Enum['present', 'absent']
