@@ -7,14 +7,14 @@ class role::roundcubemail {
     include ::profile::roundcubemail::main
 
     if !defined(Exec['ufw-allow-tcp-from-any-to-any-port-80']) {
-        ufw::allow { 'icinga2 http':
+        ufw::allow { 'roundcubemail http':
             proto => 'tcp',
             port  => '80',
         }
     }
 
     if !defined(Exec['ufw-allow-tcp-from-any-to-any-port-443']) {
-        ufw::allow { 'icinga2 https':
+        ufw::allow { 'roundcubemail https':
             proto => 'tcp',
             port  => '443',
         }
