@@ -13,10 +13,6 @@ module Puppet::Parser::Functions
     Would return:
 
         ['aaa','aaaddd']
-
-    Note that since Puppet 4.0.0, the filter() function in Puppet can do the same:
-
-        ['aaa', 'bbb', 'ccc', 'aaaddd']. filter |$x| { $x =~ 'aaa' }
     DOC
              ) do |arguments|
 

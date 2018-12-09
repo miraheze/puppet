@@ -5,9 +5,6 @@ module Puppet::Parser::Functions
   newfunction(:ceiling, :type => :rvalue, :doc => <<-DOC
     Returns the smallest integer greater or equal to the argument.
     Takes a single numeric value as an argument.
-
-    Note: from Puppet 6.0.0, the compatible function with the same name in Puppet core
-    will be used instead of this function.
     DOC
              ) do |arguments|
 

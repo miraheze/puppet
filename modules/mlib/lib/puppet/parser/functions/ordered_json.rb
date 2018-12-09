@@ -18,11 +18,6 @@
 #     content => ordered_json($options),
 #   }
 #
-#
-# From Wikimedia Foundation Puppet repo
-# Source: https://raw.githubusercontent.com/wikimedia/operations-puppet/production/modules/wmflib/lib/puppet/parser/functions/ordered_json.rb
-# Author: Ryan Lane
-
 def ordered_json(o)
   case o
   when Array
@@ -30,7 +25,11 @@ def ordered_json(o)
   when Hash
     '{' + o.sort.map { |k, v| k.to_pson + ': ' + ordered_json(v) }.join(', ') + '}'
   else
-    o.include?('.') ? Float(o).to_s : Integer(o).to_s rescue o.to_pson
+    begin
+      o.include?('.') ? Float(o).to_s : Integer(o).to_s
+    rescue
+      o.to_pson
+    end
   end
 end
 
