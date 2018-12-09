@@ -1,8 +1,8 @@
 # class: sudo::user
 define sudo::user(
     Array $privileges,
-    Stdlib::Ensure $ensure  = present,
-    String $user    = $title,
+    Mlib::Ensure $ensure  = present,
+    String $user          = $title,
 ) {
     require sudo
 
