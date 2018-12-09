@@ -10,7 +10,7 @@
 
 require 'puppet/parser/functions'
 
-Puppet::Parser::Functions.newfunction(:ensure_resource,
+Puppet::Parser::Functions.newfunction(:ensure_resource_duplicate,
                                       :type => :statement,
                                       :doc => <<-'DOC'
     Takes a resource type, title, and a list of attributes that describe a
