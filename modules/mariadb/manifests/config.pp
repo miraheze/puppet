@@ -11,6 +11,8 @@ class mariadb::config(
     Optional[Boolean] $version_102        = undef,
 ) {
     $exporter_password = hiera('passwords::db::exporter')
+    $ido_db_user_password = hiera('passwords::icinga_ido')
+    $icingaweb2_db_user_password = hiera('passwords::icingaweb2')
 
     $server_id = inline_template(
         "<%= @ipaddress.split('.').inject(0)\
