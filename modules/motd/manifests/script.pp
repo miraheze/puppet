@@ -1,9 +1,9 @@
 # class: motd::script
 define motd::script(
-    Stdlib::Ensure $ensure    = present,
+    Mlib::Ensure $ensure      = present,
     Integer[0, 99] $priority  = 50,
-    Optional[String] $content   = undef,
-    Stdlib::Sourceurl $source    = undef,
+    Optional[String] $content = undef,
+    Mlib::Sourceurl $source   = undef,
 ) {
     include ::motd
 

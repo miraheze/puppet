@@ -31,10 +31,10 @@
 #  }
 #
 define sysctl::conffile(
-    Stdlib::Ensure $ensure   = present,
-    Optional[String] $content  = undef,
-    Stdlib::Sourceurl $source   = undef,
-    Integer[0, 99] $priority = 70
+    Mlib::Ensure $ensure      = present,
+    Optional[String] $content = undef,
+    Mlib::Sourceurl $source   = undef,
+    Integer[0, 99] $priority  = 70
 ) {
     include ::sysctl
 

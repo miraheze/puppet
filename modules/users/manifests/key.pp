@@ -1,9 +1,9 @@
 # class: users::key
 define users::key(
-  Stdlib::Ensure $ensure  = present,
-  String $user    = $title,
-  Optional[Boolean] $skey    = undef,
-  Stdlib::Sourceurl $source  = undef,
+  Mlib::Ensure $ensure      = present,
+  String $user              = $title,
+  Optional[Boolean] $skey   = undef,
+  Mlib::Sourceurl $source   = undef,
   Optional[String] $content = undef,
 ) {
     if $skey {

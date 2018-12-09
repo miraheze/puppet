@@ -4,8 +4,8 @@
 # It basically ensure consistency and that we don't risk things.
 #
 define logrotate::conf (
-    Stdlib::Ensure $ensure = present,
-    Stdlib::Sourceurl $source = undef,
+    Mlib::Ensure $ensure = present,
+    Mlib::Sourceurl $source = undef,
     Optional[String] $content = undef,
 ) {
 
