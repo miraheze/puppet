@@ -13,6 +13,7 @@ class mariadb::config(
     $exporter_password = hiera('passwords::db::exporter')
     $ido_db_user_password = hiera('passwords::icinga_ido')
     $icingaweb2_db_user_password = hiera('passwords::icingaweb2')
+    $roundcubemail_password = hiera('passwords::roundcubemail')
 
     $server_id = inline_template(
         "<%= @ipaddress.split('.').inject(0)\
