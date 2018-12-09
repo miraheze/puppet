@@ -30,6 +30,7 @@ node 'misc1.miraheze.org' {
     include role::icinga2
     include role::irc
     include role::mail
+    include role::roundcubemail
     include role::salt::minions
     include prometheus::php_fpm
 }
