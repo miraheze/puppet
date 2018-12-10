@@ -6,7 +6,7 @@ class role::icinga2 {
 
     include ::profile::icinga2::main
 
-    ensure_resource_duplicate('ufw::allow', 'icinga2 http', {'proto' => 'tcp', 'port' => '80'})
+    ensure_resource_duplicate('ufw::allow', 'http', {'proto' => 'tcp', 'port' => '80'})
 
-    ensure_resource_duplicate('ufw::allow', 'icinga2 https', {'proto' => 'tcp', 'port' => '443'})
+    ensure_resource_duplicate('ufw::allow', 'https', {'proto' => 'tcp', 'port' => '443'})
 }
