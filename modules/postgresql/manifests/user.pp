@@ -33,7 +33,7 @@ define postgresql::user(
     String $cidr = '127.0.0.1/32',
     String $attrs = '',
     Boolean $master = true,
-    Stdlib::Ensure $ensure = 'present'
+    Mlib::Ensure $ensure = 'present'
 ) {
 
     $pgversion = $::lsbdistcodename ? {
