@@ -30,13 +30,13 @@ dmarc: john
 # destination aliases
 operations: southparkfan,ndkilla,reception123,john,paladox
 stewards: southparkfan,ndkilla,orduinvoidwalker@gmail.com,john
-staff: southparkfan,ndkilla,bslaabs@gmail.com,reception123,john,paladox,macfan
+staff: southparkfan,ndkilla,labster,reception123,john,paladox,macfan
 cvt: stewards,reception123,megadev44s.mail@gmail.com,macfan,alvaromolinacl@gmail.com,pio_uso@yahoo.co.jp,diarmuidsmithy@gmail.com
 cocc: conduct
 conduct: miraheze-cocc@googlegroups.com
 
 # finances
-donate: bslaabs@gmail.com,southparkfan
+donate: labster,southparkfan
 
 # internal mail only - emails outside of miraheze.org will be dropped
 apt-list: john,ndkilla,paladox
