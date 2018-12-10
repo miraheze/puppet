@@ -51,6 +51,7 @@ class roundcubemail (
     monitoring::services { 'webmail.miraheze.org HTTPS':
         check_command  => 'check_http',
         vars           => {
+            http_expect => 'HTTP/1.1 401 Unauthorized',
             http_ssl   => true,
             http_vhost => 'webmail.miraheze.org',
         },
