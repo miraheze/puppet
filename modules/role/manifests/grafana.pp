@@ -1,5 +1,9 @@
 # role: grafana
 class role::grafana {
+    motd::role { 'role::grafana':
+        description => 'central Grafana server',
+    }
+
     include ::grafana
 
     ufw::allow { 'grafana tcp':
@@ -12,7 +16,7 @@ class role::grafana {
         port  => 2004,
     }
 
-    motd::role { 'role::grafana':
-        description => 'central Grafana server',
-    }
+    ensure_resource_duplicate('ufw::allow', 'roundcubemail http', {'proto' => 'tcp', 'port' => '80'})
+
+    ensure_resource_duplicate('ufw::allow', 'roundcubemail https', {'proto' => 'tcp', 'port' => '443'})
 }
