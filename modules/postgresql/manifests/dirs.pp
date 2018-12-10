@@ -20,7 +20,7 @@
 #  include postgresql::dirs
 #
 class postgresql::dirs(
-    Stdlib::Ensure $ensure    = 'present',
+    Mlib::Ensure $ensure    = 'present',
     String $root_dir  = '/var/lib/postgresql',
     String $pgversion = '9.6',
 ) {
