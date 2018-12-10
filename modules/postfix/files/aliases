@@ -38,10 +38,6 @@ conduct: miraheze-cocc@googlegroups.com
 # finances
 donate: labster,southparkfan
 
-# internal mail only - emails outside of miraheze.org will be dropped
-apt-list: john,ndkilla,paladox
-bacula-mail: john,ndkilla,paladox
-
 # phabricator incoming emails - must be configued with Maniphest
 security: operations
 phabricator: operations
