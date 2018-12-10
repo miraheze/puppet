@@ -23,7 +23,7 @@
 #  include postgresql::server
 #
 class postgresql::server(
-    Stdlib::Ensure $ensure = 'present',
+    Mlib::Ensure $ensure = 'present',
     Optional[Array] $includes = [],
     String $listen_addresses = '*',
     String $port             = '5432',
