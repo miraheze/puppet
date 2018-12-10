@@ -41,7 +41,7 @@ class postgresql::master(
         'stretch' => '9.6',
         'jessie'  => '9.4',
     },
-    Stdlib::Ensure $ensure = 'present',
+    Mlib::Ensure $ensure = 'present',
     Integer $max_wal_senders = 5,
     Integer $checkpoint_segments = 64,
     Integer $wal_keep_segments = 128,
