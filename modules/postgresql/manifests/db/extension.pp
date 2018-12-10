@@ -1,7 +1,7 @@
 define postgresql::db::extension (
     String $extname,
     String $database,
-    Stdlib::Ensure $ensure = present,
+    Mlib::Ensure $ensure = present,
 ) {
 
     $db_sql = "SELECT datname from pg_catalog.pg_database where datname = '${database}'"
