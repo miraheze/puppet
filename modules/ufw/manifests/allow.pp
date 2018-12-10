@@ -16,8 +16,8 @@
 # @param port Port to act on. default: all
 # @param proto Protocol to use. default: tcp
 define ufw::allow(
-  Enum['IN','OUT'] $direction ='IN',
-  Enum['absent','present'] $ensure ='present',
+  Enum['IN','OUT'] $direction = 'IN',
+  Enum['absent','present'] $ensure = 'present',
   String $from = 'any',
   String $ip = '',
   String $port = 'all',
@@ -90,8 +90,7 @@ define ufw::allow(
       require  => Exec['ufw-default-deny'],
       before   => Exec['ufw-enable'],
     }
-  }
-  else {
+  } else {
     $command = "ufw ${rule}"
     $unless  = "${ipadr}:${port}" ? {
       'any:all'    => "ufw status | grep -qE ' +ALLOW +${from_match}${proto_match}$'",
@@ -101,7 +100,7 @@ define ufw::allow(
       default      => "ufw status | grep -qE '^${ipadr_match} ${port}${proto_match} +ALLOW +${from_match}( +.*)?$'",
     }
 
-  exec { "ufw-allow-${direction}-${proto}-from-${from}-to-${ipadr}-port-${port}":
+    exec { "ufw-allow-${direction}-${proto}-from-${from}-to-${ipadr}-port-${port}":
       command  => $command,
       path     => '/usr/sbin:/bin:/usr/bin',
       provider => 'posix',
