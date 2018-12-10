@@ -26,7 +26,7 @@ define rsync::quickdatacopy(
   String $module_path,
   String $file_path = '*',
   Boolean $auto_sync = true,
-  Stdlib::Ensure $ensure = present,
+  Mlib::Ensure $ensure = present,
   ) {
 
       if $source_host == $::fqdn {
