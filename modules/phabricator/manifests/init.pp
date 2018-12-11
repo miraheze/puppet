@@ -1,6 +1,7 @@
 # class: phabricator
 class phabricator {
-    include ::php
+    # TODO(paladox) replace with new php module
+    include ::php_old
 
     require_package(['python-pygments', 'python3-pygments', 'subversion'])
 

@@ -1,5 +1,5 @@
-# class: php
-class php {
+# class: php_old
+class php_old {
     include ::apt
 
     if !defined(Apt::Source['php72_apt']) {
@@ -59,7 +59,7 @@ class php {
     file { '/etc/php/7.2/fpm/pool.d/www.conf':
         ensure  => 'present',
         mode    => '0755',
-        source  => 'puppet:///modules/php/www-7.2.conf',
+        source  => 'puppet:///modules/php_old/www-7.2.conf',
         require => Package['php7.2-fpm'],
         notify  => Service['php7.2-fpm'],
     }

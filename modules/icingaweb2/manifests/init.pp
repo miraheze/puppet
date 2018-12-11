@@ -14,7 +14,8 @@ class icingaweb2 (
         fail('You must include the icinga2 base class before using any icingaweb2 feature class!')
     }
 
-    include ::php
+    # TODO(paladox) replace with new php module
+    include ::php_old
 
     package { [ 'icingaweb2', 'icingaweb2-module-monitoring',
                 'icingaweb2-module-doc', 'icingacli' ]:

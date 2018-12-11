@@ -21,7 +21,8 @@ class grafana (
         require => Apt::Source['grafana_apt'],
     }
 
-    include ::php
+    # TODO(paladox) replace with new php module
+    include ::php_old
 
     require_package('libapache2-mod-php7.2')
 

@@ -7,7 +7,8 @@ class roundcubemail (
 ) {
 
     include ::nodejs
-    include ::php
+    # TODO(paladox) replace with new php module
+    include ::php_old
 
     require_package('php7.2-pspell')
 

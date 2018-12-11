@@ -1,6 +1,7 @@
 # mediawiki::php
+# TODO(paladox) replace class with new php module
 class mediawiki::php {
-    include ::php
+    include ::php_old
 
     file { '/etc/php/7.2/fpm/php-fpm.conf':
         ensure  => 'present',

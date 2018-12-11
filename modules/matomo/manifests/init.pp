@@ -17,8 +17,9 @@ class matomo {
         user        => 'www-data',
         require     => Git::Clone['matomo'],
     }
-    
-    include ::php
+
+    # TODO(paladox) replace with new php module    
+    include ::php_old
 
     file { '/etc/php/7.2/fpm/conf.d/20-matomo.ini':
         ensure  => present,
