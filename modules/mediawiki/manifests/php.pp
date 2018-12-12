@@ -1,7 +1,8 @@
 # mediawiki::php
-class mediawiki::php (
-    Enum['7.0', '7.2', '7.3'] $php_version = hiera('php_version', '7.2'),
-) {
+class mediawiki::php {
+
+    $php_version = hiera('php::php_version', '7.2')
+
     if hiera('use_new_php_module', false) {
         $fpm_config = {
             'opcache'                   => {
@@ -28,13 +29,14 @@ class mediawiki::php (
         }
 
         $core_extensions =  [
+            'apcu',
             'curl',
             'bcmath',
-            'dba',
             'gd',
             'gmp',
             'intl',
             'mbstring',
+            'redis',
             'zip',
         ]
 
@@ -47,10 +49,14 @@ class mediawiki::php (
 
         # Extensions that require configuration.
         php::extension {
-            'apcu':
-                package_name => 'php-apcu';
+            'xml':
+                package_name => "php${php_version}-xml",
+                priority     => 15;
             'igbinary':
-                package_name => 'php-igbinary';
+                config   => {
+                    'extension'       => 'igbinary.so',
+                    'compact_strings' => 'Off',
+                };
             'imagick':
                 package_name => 'php-imagick';
             'mail':
@@ -59,25 +65,15 @@ class mediawiki::php (
                 package_name => 'php-mailparse';
             'pear':
                 package_name => 'php-pear';
-            'redis':
-                package_name => 'php-redis';
-            'xml':
-                package_name => "php${php_verision}-xml",
+            'mysqlnd':
+                package_name => "php${php_version}-mysqlnd",
                 priority     => 15;
             'mysqli':
                 package_name => "php${php_verision}-mysql";
+            'dba':
+                package_name => "php${php_version}-dba",
         }
 
-        # Additional config files are needed by some extensions, add them
-        # MySQL
-        php::extension {
-            default:
-                package_name => '',;
-            'pdo_mysql':
-                ;
-            'mysqlnd':
-                priority => 10,
-        }
         # XML
         php::extension{ [
             'dom',
@@ -100,17 +96,18 @@ class mediawiki::php (
             require => Apt::Source['php_apt'],
         }
 
-        $num_workers = max(floor($facts['processors']['count'] * 1.5), 8)
+        $num_workers = max(floor($facts['processors']['count'] * 1.5), 6)
         # These numbers need to be positive integers
         $max_spare = ceiling($num_workers * 0.3)
         $min_spare = ceiling($num_workers * 0.1)
         php::fpm::pool { 'www':
             config => {
-                'pm'                   => 'dynamic',
-                'pm.max_spare_servers' => $max_spare,
-                'pm.min_spare_servers' => $min_spare,
-                'pm.start_servers'     => $min_spare,
-                'pm.max_children'      => $num_workers,
+                'pm'                        => 'dynamic',
+                'pm.max_spare_servers'      => $max_spare,
+                'pm.min_spare_servers'      => $min_spare,
+                'pm.start_servers'          => $min_spare,
+                'pm.max_children'           => $num_workers,
+                'request_terminate_timeout' => 230,
             }
         }
     } else {

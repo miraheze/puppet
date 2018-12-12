@@ -29,11 +29,11 @@ define php::extension(
     }
 
     if $package_name != '' {
-        ensure_resource_duplicate('package', $package_name, {
-            'ensure'  => $ensure,
-            'require' => File[$mod_file],
-            'tag'     => prefix($_sapis, 'php::package::')
-        })
+        package{ $package_name:
+            ensure  => $ensure,
+            require => File[$mod_file],
+            tag     => prefix($_sapis, 'php::package::')
+        }
     }
 
     # If your provided list of PHP SAPIs is not compatible with the installed SAPIs
