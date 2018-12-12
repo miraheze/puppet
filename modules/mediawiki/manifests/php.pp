@@ -42,6 +42,7 @@ class mediawiki::php {
             'gd',
             'gmp',
             'intl',
+            'luasandbox',
             'mbstring',
             'redis',
             'zip',
