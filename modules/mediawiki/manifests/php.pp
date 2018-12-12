@@ -66,14 +66,8 @@ class mediawiki::php {
                 };
             'imagick':
                 package_name => 'php-imagick';
-            'luasandbox':
-                package_name => 'php-luasandbox';
-            'mail':
-                package_name => 'php-mail';
             'mailparse':
                 package_name => 'php-mailparse';
-            'pear':
-                package_name => 'php-pear';
             'mysqlnd':
                 package_name => "php${php_version}-mysqlnd",
                 priority     => 15;
@@ -82,6 +76,8 @@ class mediawiki::php {
             'dba':
                 package_name => "php${php_version}-dba",
         }
+
+        require_package('php-luasandbox', 'php-mail', 'php-pear')
 
         # XML
         php::extension{ [
