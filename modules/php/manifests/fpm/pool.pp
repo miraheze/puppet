@@ -28,7 +28,7 @@
 #   default one. Defaults to an empty hash.
 #
 define php::fpm::pool(
-    Optional[Mflib::Ipport] $port = undef,
+    Optional[Integer[0, 65535]] $port = undef,
     String $user = 'www-data',
     String $group = 'www-data',
     Hash $config = {},

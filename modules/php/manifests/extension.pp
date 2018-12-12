@@ -1,8 +1,8 @@
 define php::extension(
-    Mflib::Ensure $ensure = 'present',
-    String $package_name = "php-${title}",
-    Integer[0,99] $priority = 20,
-    Optional[Hash] $config = undef,
+    Enum['present', 'absent'] $ensure = 'present',
+    String $package_name              = "php-${title}",
+    Integer[0,99] $priority           = 20,
+    Optional[Hash] $config            = undef,
     Optional[Array[Php::Sapi]] $sapis = undef,
 ) {
     if !defined(Class['php']) {
@@ -29,7 +29,7 @@ define php::extension(
     }
 
     if $package_name != '' {
-        ensure_resource_duplicate('package', '$package_name', {
+        ensure_resource_duplicate('package', $package_name, {
             'ensure'  => $ensure,
             'require' => File[$mod_file],
             'tag'     => prefix($_sapis, 'php::package::')

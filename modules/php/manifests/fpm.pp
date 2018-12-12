@@ -16,8 +16,8 @@
 #   the defaults.
 #
 class php::fpm(
-    Mflib::Ensure $ensure = 'present',
-    Hash $config = {},
+    Enum['present', 'absent'] $ensure = 'present',
+    Hash $config                      = {},
 ) {
     if !defined(Class['php']) {
         fail('php::fpm is not meant to be used before the php class is declared.')

@@ -4,10 +4,10 @@
 #
 class php(
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
-    Mflib::Ensure $ensure              = present,
-    Array[Php::Sapi] $sapis            = ['cli'],
-    Hash $config_by_sapi               = {},
-    Hash $extensions                   = {}
+    Enum['present', 'absent'] $ensure         = present,
+    Array[Php::Sapi] $sapis                   = ['cli'],
+    Hash $config_by_sapi                      = {},
+    Hash $extensions                          = {}
 ) {
     requires_os('debian >= stretch')
  

@@ -25,7 +25,6 @@ class mediawiki::php (
             config_by_sapi => {
                 'fpm' => $fpm_config,
             },
-            require        => Apt::Source['php_apt'],
         }
 
         $core_extensions =  [
@@ -33,7 +32,6 @@ class mediawiki::php (
             'bcmath',
             'dba',
             'gd',
-            'gettext',
             'gmp',
             'intl',
             'mbstring',
@@ -52,17 +50,17 @@ class mediawiki::php (
             'apcu':
                 package_name => 'php-apcu';
             'igbinary':
-                packahe_name => 'php-igbinary';
+                package_name => 'php-igbinary';
             'imagick':
-                packahe_name => 'php-imagick';
+                package_name => 'php-imagick';
             'mail':
-                packahe_name => 'php-mail';
+                package_name => 'php-mail';
             'mailparse':
-                packahe_name => 'php-mailparse';
+                package_name => 'php-mailparse';
             'pear':
-                packahe_name => 'php-pear';
+                package_name => 'php-pear';
             'redis':
-                packahe_name => 'php-redis';
+                package_name => 'php-redis';
             'xml':
                 package_name => "php${php_verision}-xml",
                 priority     => 15;
