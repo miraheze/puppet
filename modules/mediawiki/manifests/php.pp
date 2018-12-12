@@ -3,7 +3,7 @@ class mediawiki::php {
 
     $php_version = hiera('php::php_version', '7.2')
 
-    if hiera('use_new_php_module', false) {
+    if hiera('use_new_php_module', true) {
         $fpm_config = {
             'display_errors'            => 'Off',
             'error_log'                 => '/var/log/mediawiki/debuglogs/php-error.log',
