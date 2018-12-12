@@ -42,7 +42,6 @@ class mediawiki::php {
             'gd',
             'gmp',
             'intl',
-            'luasandbox',
             'mbstring',
             'redis',
             'zip',
@@ -67,6 +66,8 @@ class mediawiki::php {
                 };
             'imagick':
                 package_name => 'php-imagick';
+            'luasandbox':
+                package_name => 'php-luasandbox';
             'mail':
                 package_name => 'php-mail';
             'mailparse':
