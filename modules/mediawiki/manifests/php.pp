@@ -5,6 +5,11 @@ class mediawiki::php {
 
     if hiera('use_new_php_module', false) {
         $fpm_config = {
+            'display_errors'            => 'Off',
+            'error_log'                 => '/var/log/mediawiki/debuglogs/php-error.log',
+            'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
+            'log_errors'                => 'On',
+            'max_execution_time'        => 230,
             'opcache'                   => {
                 'enable'                  => 1,
                 'memory_consumption'      => 256,
@@ -12,10 +17,12 @@ class mediawiki::php {
                 'max_accelerated_files'   => 32531,
                 'revalidate_freq'         => 60,
             },
-            'max_execution_time'  => 240,
             'post_max_size'       => '250M',
+            'register_argc_argv'  => 'Off',
+            'request_order'       => 'GP',
             'track_errors'        => 'Off',
             'upload_max_filesize' => '250M',
+            'variables_order'     => 'GPCS',
         }
 
         # Install the runtime

@@ -56,7 +56,7 @@ class php(
         'log_errors'             => 'On',
         'include_path'           => '".:/usr/share/php"',
         'max_execution_time'     => 180,
-        'memory_limit'           => '100M',
+        'memory_limit'           => '128M',
         'mysql'                  => {
             'connect_timeout' => 1,
         },
