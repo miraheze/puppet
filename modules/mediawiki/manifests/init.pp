@@ -98,11 +98,13 @@ class mediawiki(
         require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
     }
 
-    file { '/var/log/php7.2-fpm.log':
-        ensure  => 'present',
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '0755',
+    if !hiera('use_new_php_module', false) {
+        file { '/var/log/php7.2-fpm.log':
+            ensure  => 'present',
+            owner   => 'www-data',
+            group   => 'www-data',
+            mode    => '0755',
+        }
     }
 
     $wikiadmin_password   = hiera('passwords::db::wikiadmin')
