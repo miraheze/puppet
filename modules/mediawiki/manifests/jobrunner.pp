@@ -76,7 +76,7 @@ class mediawiki::jobrunner {
         user    => 'www-data',
         minute  => '0',
         hour    => '23',
-        weekday => ['0', '4'],
+        weekday => ['3'],
     }
 
     cron { 'generate sitemaps for all wikis':
