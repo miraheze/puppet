@@ -3,7 +3,7 @@ class matomo {
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '3.7.0', # Current stable
+        branch             => ' 3.8.0-b4', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
