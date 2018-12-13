@@ -11,9 +11,9 @@ enable_ssl = 1
 ssl_ca = "/etc/ssl/certs/GlobalSign.crt"
 
 [General]
+force_ssl = 1
 salt = "<%= @salt %>"
 trusted_hosts[] = "matomo.miraheze.org"
-force_ssl = 1
 
 [mail]
 transport = "smtp"
@@ -57,7 +57,6 @@ Plugins[] = "ExampleAPI"
 Plugins[] = "RssWidget"
 Plugins[] = "Feedback"
 Plugins[] = "Monolog"
-Plugins[] = "Login"
 Plugins[] = "UsersManager"
 Plugins[] = "SitesManager"
 Plugins[] = "Installation"
@@ -86,6 +85,7 @@ Plugins[] = "Marketplace"
 Plugins[] = "ProfessionalServices"
 Plugins[] = "UserId"
 Plugins[] = "CustomPiwikJs"
+Plugins[] = "GoogleAuthenticator"
 Plugins[] = "QueuedTracking"
 
 [PluginsInstalled]
@@ -156,6 +156,8 @@ PluginsInstalled[] = "CustomPiwikJs"
 PluginsInstalled[] = "SecurityInfo"
 PluginsInstalled[] = "GeoIp2"
 PluginsInstalled[] = "QueuedTracking"
+PluginsInstalled[] = "GoogleAuthenticator"
 
 [QueuedTracking]
 notify_queue_threshold_single_queue = 250000
+
