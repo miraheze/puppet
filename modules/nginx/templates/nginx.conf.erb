@@ -3,7 +3,7 @@ worker_processes <%= scope.lookupvar('::processorcount') %>;
 pid /run/nginx.pid;
 
 events {
-    worker_connections 1024;
+    worker_connections 2048;
     use epoll;
     multi_accept on;
 }
