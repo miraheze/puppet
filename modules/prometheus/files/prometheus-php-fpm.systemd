@@ -5,7 +5,7 @@ Documentation=https://github.com/hipages/php-fpm_exporter
 [Service]
 Restart=always
 User=www-data
-ExecStart=/usr/local/bin/prometheus-phpfpm-exporter server --phpfpm.scrape-uri="unix:///run/php/php7.2-fpm.sock;/php_status" --phpfpm.fix-process-count=true
+ExecStart=/usr/local/bin/prometheus-phpfpm-exporter server --phpfpm.scrape-uri="unix:///run/php/fpm-www.sock;/php_status" --phpfpm.fix-process-count=true
 ExecReload=/bin/kill -HUP $MAINPID
 TimeoutStopSec=20s
 SendSIGKILL=no
