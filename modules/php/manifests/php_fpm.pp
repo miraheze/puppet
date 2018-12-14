@@ -1,6 +1,26 @@
+# == Class: php::php_fpm
+#
+# This class makes it easy to integrate php-fpm into other puppet modules.
+#
+# === Parameters
+#
+# [*config*] A k => v hash of config keys and values we want to add to
+#   the defaults.
+#
+# [*fpm_config*]
+#
+# [*fpm_max_child*] Sets the maximum childs for php-fpm, defaults to 8.
+#
+# [*fpm_pool_config*]
+#
+# [*version*] Contains the php version you want to use, defaults to php 7.2.
+#
 class php::php_fpm(
-    Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
     Hash $config                              = {},
+    Hash $fpm_config                          = {},
+    Integer $fpm_max_child                    = 8,
+    Hash $fpm_pool_config                     = {},
+    Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
 ) {
 
     # Install the runtime
@@ -67,13 +87,15 @@ class php::php_fpm(
         package_name => '',
     }
 
+    $base_fpm_config = {
+        'emergency_restart_interval'  => '60s',
+        'emergency_restart_threshold' => $facts['processors']['count'],
+        'process.priority'            => -19,
+    }
+
     class { '::php::fpm':
         ensure  => present,
-        config  => {
-            'emergency_restart_interval'  => '60s',
-            'emergency_restart_threshold' => $facts['processors']['count'],
-            'process.priority'            => -19,
-        },
+        config  => merge($base_fpm_config, $fpm_config),
         require => Apt::Source['php_apt'],
     }
 
@@ -81,14 +103,17 @@ class php::php_fpm(
     # These numbers need to be positive integers
     $max_spare = ceiling($num_workers * 0.3)
     $min_spare = ceiling($num_workers * 0.1)
+
+    $base_fpm_pool_config = {
+        'pm'                        => 'dynamic',
+        'pm.max_spare_servers'      => $max_spare,
+        'pm.min_spare_servers'      => $min_spare,
+        'pm.start_servers'          => $min_spare,
+        'pm.max_children'           => $num_workers,
+        'request_terminate_timeout' => 230,
+    }
+
     php::fpm::pool { 'www':
-        config => {
-            'pm'                        => 'dynamic',
-            'pm.max_spare_servers'      => $max_spare,
-            'pm.min_spare_servers'      => $min_spare,
-            'pm.start_servers'          => $min_spare,
-            'pm.max_children'           => $num_workers,
-            'request_terminate_timeout' => 230,
-        }
+        config => merge($base_fpm_pool_config, $fpm_pool_config),
     }
 }
