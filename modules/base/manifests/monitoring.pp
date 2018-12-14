@@ -35,6 +35,15 @@ class base::monitoring {
         from  => '81.4.127.174',
     }
 
+    if os_version('debian == stretch') {
+        apt::pin { 'debian_stretch_backports_prometheus_node_exporter':
+            priority   => 740,
+            originator => 'Debian',
+            release    => 'stretch-backports',
+            packages   => 'prometheus-node-exporter',
+        }
+    }
+
     require_package('prometheus-node-exporter')
 
     service { 'prometheus-node-exporter':
