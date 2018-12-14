@@ -1,6 +1,15 @@
 # class: prometheus
 class prometheus {
 
+    if os_version('debian == stretch') {
+        apt::pin { 'debian_stretch_backports_prometheus':
+            priority   => 740,
+            originator => 'Debian',
+            release    => 'stretch-backports',
+            packages   => 'prometheus',
+        }
+    }
+
     require_package('prometheus')
 
     $host = query_nodes("domain='$domain'", 'fqdn')
