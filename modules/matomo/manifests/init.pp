@@ -18,17 +18,30 @@ class matomo {
         require     => Git::Clone['matomo'],
     }
 
-    # TODO(paladox) replace with new php module    
-    include ::php_old
+    ensure_resource_duplicate('class', 'php::php_fpm', {
+        'config'  => {
+            'display_errors'            => 'Off',
+            'error_log'                 => '/var/log/php-error.log',
+            'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
+            'log_errors'                => 'On',
+            'max_execution_time'        => 70,
+            'opcache'                   => {
+                'enable'                  => 1,
+                'memory_consumption'      => 256,
+                'interned_strings_buffer' => 64,
+                'max_accelerated_files'   => 32531,
+                'revalidate_freq'         => 60,
+            },
+            'post_max_size'       => '35M',
+            'register_argc_argv'  => 'Off',
+            'request_order'       => 'GP',
+            'track_errors'        => 'Off',
+            'upload_max_filesize' => '100M',
+            'variables_order'     => 'GPCS',
+        },
+        'version' => hiera('php::php_version', '7.2'),
+    })
 
-    file { '/etc/php/7.2/fpm/conf.d/20-matomo.ini':
-        ensure  => present,
-        mode    => '0755',
-        source  => 'puppet:///modules/matomo/20-matomo.ini',
-        require => Package['php7.2-fpm'],
-        notify  => Service['php7.2-fpm'],
-    }
-    
     include ssl::wildcard
 
     nginx::site { 'matomo.miraheze.org':
