@@ -53,7 +53,6 @@ class php::php_fpm(
         php::extension { $extension:
             package_name => "php${version}-${extension}",
             require      => Apt::Source['php_apt'],
-            notify       => Service["php${version}-fpm"],
         }
     }
 
@@ -61,31 +60,25 @@ class php::php_fpm(
     php::extension {
         'xml':
             package_name => "php${version}-xml",
-            priority     => 15,
-            notify       => Service["php${version}-fpm"];
+            priority     => 15;
         'igbinary':
             config   => {
                 'extension'       => 'igbinary.so',
                 'compact_strings' => 'Off',
-            },
-            notify       => Service["php${version}-fpm"];
+            };
         'imagick':
-            package_name => 'php-imagick',
-            notify       => Service["php${version}-fpm"];
+            package_name => 'php-imagick';
         'mysqli':
-            package_name => "php${version}-mysql",
-            notify       => Service["php${version}-fpm"];
+            package_name => "php${version}-mysql";
         'dba':
             package_name => "php${version}-dba",
-            notify       => Service["php${version}-fpm"],
     }
 
     # Additional config files are needed by some extensions, add them
     # MySQL
     php::extension {
         default:
-            package_name => '',
-            notify       => Service["php${version}-fpm"],;
+            package_name => '',;
         'pdo_mysql':
             ;
         'mysqlnd':
@@ -104,7 +97,6 @@ class php::php_fpm(
         'wddx',
     ]:
         package_name => '',
-        notify       => Service["php${version}-fpm"],
     }
 
     $base_fpm_config = {
