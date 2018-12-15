@@ -68,16 +68,21 @@ class php::php_fpm(
             };
         'imagick':
             package_name => 'php-imagick';
-        'pdo_mysql':
-            package_name => '',
-            priority     => 10;
-        'mysqlnd':
-            package_name => "php${version}-mysqlnd",
-            priority     => 10;
         'mysqli':
             package_name => "php${version}-mysql";
         'dba':
             package_name => "php${version}-dba",
+    }
+
+    # Additional config files are needed by some extensions, add them
+    # MySQL
+    php::extension {
+        default:
+            package_name => '',;
+        'pdo_mysql':
+            ;
+        'mysqlnd':
+            priority => 10,
     }
 
     require_package('php-luasandbox', 'php-mail', 'php-mailparse', 'php-pear')
