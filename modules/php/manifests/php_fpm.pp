@@ -23,13 +23,17 @@ class php::php_fpm(
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
 ) {
 
+    $base_config = {
+        'error_log' => '/var/log/php-error.log',
+    }
+
     # Install the runtime
     class { '::php':
         ensure         => present,
         version        => $version,
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
-            'fpm' => $config,
+            'fpm' => merge($base_config, $config),
         },
     }
 
@@ -116,5 +120,10 @@ class php::php_fpm(
 
     php::fpm::pool { 'www':
         config => merge($base_fpm_pool_config, $fpm_pool_config),
+    }
+
+    logrotate::conf { 'php-fpm':
+        ensure => present,
+        source => 'puppet:///modules/php/php-fpm-logrotate.conf',
     }
 }
