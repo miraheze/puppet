@@ -14,7 +14,7 @@ class icingaweb2 (
         fail('You must include the icinga2 base class before using any icingaweb2 feature class!')
     }
 
-    ensure_resource_duplicate('class', '::php::php_fpm', {
+    ensure_resource_duplicate('class', 'php::php_fpm', {
         'config'  => {
             'display_errors'            => 'Off',
             'error_log'                 => '/var/log/php-error.log',

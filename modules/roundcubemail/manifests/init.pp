@@ -8,7 +8,7 @@ class roundcubemail (
 
     include ::nodejs
 
-    ensure_resource_duplicate('class', '::php::php_fpm', {
+    ensure_resource_duplicate('class', 'php::php_fpm', {
         'config'  => {
             'display_errors'            => 'Off',
             'error_log'                 => '/var/log/php-error.log',
