@@ -24,7 +24,7 @@ class php::php_fpm(
 ) {
 
     $base_config = {
-        'error_log' => '/var/log/php-error.log',
+        'error_log' => '/var/log/php/php.log',
     }
 
     # Install the runtime
@@ -120,6 +120,12 @@ class php::php_fpm(
 
     php::fpm::pool { 'www':
         config => merge($base_fpm_pool_config, $fpm_pool_config),
+    }
+
+    file { '/var/log/php':
+        ensure => directory,
+        owner  => 'www-data',
+        group  => 'www-data',
     }
 
     logrotate::conf { 'php-fpm':
