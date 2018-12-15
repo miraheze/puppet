@@ -1,6 +1,6 @@
 # defined type: ssl::cert
 define ssl::cert (
-    Mlib::Ensure $ensure = 'present',
+    VMlib::Ensure $ensure = 'present',
     String $certificate    = $title,
 ) {
     if !defined(File["/etc/ssl/certs/${certificate}.crt"]) {

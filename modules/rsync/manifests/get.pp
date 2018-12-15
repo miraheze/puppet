@@ -25,7 +25,7 @@
 #  } # rsync
 #
 define rsync::get (
-    Mlib::Sourceurl $source,
+    VMlib::Sourceurl $source,
     Optional[String]  $path = undef,
     Optional[String] $user = undef,
     Optional[Boolean] $purge = undef,

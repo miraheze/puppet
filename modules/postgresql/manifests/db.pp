@@ -21,7 +21,7 @@
 #  postgresql::db { 'mydb': }
 #
 define postgresql::db(
-    Mlib::Ensure $ensure    = present,
+    VMlib::Ensure $ensure    = present,
     String $owner     = 'postgres',
 ) {
     require ::postgresql::server

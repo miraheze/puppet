@@ -1,9 +1,9 @@
 # class: users::key
 define users::key(
-  Mlib::Ensure $ensure      = present,
+  VMlib::Ensure $ensure      = present,
   String $user              = $title,
   Optional[Boolean] $skey   = undef,
-  Mlib::Sourceurl $source   = undef,
+  VMlib::Sourceurl $source   = undef,
   Optional[String] $content = undef,
 ) {
     if $skey {

@@ -1,4 +1,4 @@
-# mflib
+# vmflib
 
 Custom Puppet functions and types that help you get things done.
 
@@ -6,12 +6,12 @@ Some of this functions are from https://github.com/wikimedia/puppet/tree/product
 
 # Types
 
-## Mlib::Ensure
+## VMlib::Ensure
 Accepts either 'present' or 'absent' as values.
 Should be used to validate standard ensure parameters, instead of the
 corresponding `validate_ensure` function.
 
-## Mlib::Sourceurl
+## VMlib::Sourceurl
 Ensures the provided string begins with puppet:///modules/. This is useful to
 validate the format of `source` arguments to file resources.
 

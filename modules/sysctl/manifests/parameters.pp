@@ -31,7 +31,7 @@
 #
 define sysctl::parameters(
     Hash $values,
-    Mlib::Ensure $ensure   = present,
+    VMlib::Ensure $ensure   = present,
     Integer[0, 99] $priority = 70
 ) {
     sysctl::conffile { $title:

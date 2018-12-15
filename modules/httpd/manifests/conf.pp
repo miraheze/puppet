@@ -45,11 +45,11 @@
 #  }
 #
 define httpd::conf(
-    Mlib::Ensure $ensure = present,
+    VMlib::Ensure $ensure = present,
     Enum['conf', 'env', 'sites'] $conf_type = 'conf',
     Integer[0, 99] $priority                = 50,
     Optional[String] $content               = undef,
-    Mlib::Sourceurl $source                 = undef,
+    VMlib::Sourceurl $source                 = undef,
     Optional[String] $replaces              = undef,
     Boolean $monitor                        = false,
 ) {

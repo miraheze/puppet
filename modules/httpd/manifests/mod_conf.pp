@@ -12,7 +12,7 @@
 #   Defaults to the resource title plus a '.load' suffix.
 #
 define httpd::mod_conf(
-    Mlib::Ensure $ensure = present,
+    VMlib::Ensure $ensure = present,
     String $mod          = $title,
     String $loadfile     = "${title}.load",
 )

@@ -1,9 +1,9 @@
 # nginx::conf
 #
 define nginx::conf(
-    Mlib::Ensure $ensure       = present,
+    VMlib::Ensure $ensure       = present,
     Optional[String] $content  = undef,
-    Mlib::Sourceurl $source    = undef,
+    VMlib::Sourceurl $source    = undef,
 ) {
     include ::nginx
 

@@ -1,6 +1,6 @@
 # class: users::user
 define users::user(
-    Mlib::Ensure $ensure       = 'present',
+    VMlib::Ensure $ensure       = 'present',
     Optional[Integer] $uid     = undef,
     Optional[String] $gid      = undef,
     Array $groups              = [],

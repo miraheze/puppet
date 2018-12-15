@@ -10,7 +10,7 @@
 # from https://github.com/wikimedia/puppet/blob/production/modules/prometheus/manifests/node_gdnsd.pp
 
 class prometheus::node_gdnsd (
-    Mlib::Ensure $ensure = 'present',
+    VMlib::Ensure $ensure = 'present',
     String $outfile = '/var/lib/prometheus/node-exporter/gdnsd.prom',
 ) {
 

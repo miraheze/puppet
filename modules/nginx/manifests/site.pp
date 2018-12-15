@@ -1,8 +1,8 @@
 # nginx::site
 define nginx::site(
-    Mlib::Ensure $ensure       = present,
+    VMlib::Ensure $ensure       = present,
     Optional[String] $content  = undef,
-    Mlib::Sourceurl $source    = undef,
+    VMlib::Sourceurl $source    = undef,
     Boolean $monitor           = true,
     Optional[Any] $notify_site = undef,
 ) {

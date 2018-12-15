@@ -31,9 +31,9 @@
 #  }
 #
 define sysctl::conffile(
-    Mlib::Ensure $ensure      = present,
+    VMlib::Ensure $ensure      = present,
     Optional[String] $content = undef,
-    Mlib::Sourceurl $source   = undef,
+    VMlib::Sourceurl $source   = undef,
     Integer[0, 99] $priority  = 70
 ) {
     include ::sysctl
