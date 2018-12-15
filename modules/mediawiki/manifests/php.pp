@@ -22,9 +22,6 @@ class mediawiki::php {
                 'upload_max_filesize' => '250M',
                 'variables_order'     => 'GPCS',
             },
-            'fpm_config' => {
-                'error_log' => '/var/log/php7.2-fpm.log',
-            },
             'version' => hiera('php::php_version', '7.2'),
         })
     } else {

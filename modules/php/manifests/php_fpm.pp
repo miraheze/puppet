@@ -90,6 +90,7 @@ class php::php_fpm(
     $base_fpm_config = {
         'emergency_restart_interval'  => '60s',
         'emergency_restart_threshold' => $facts['processors']['count'],
+        'error_log'                   => '/var/log/php7.2-fpm.log',
         'process.priority'            => -19,
     }
 
