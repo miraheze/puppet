@@ -17,7 +17,7 @@ class icingaweb2 (
     ensure_resource_duplicate('class', 'php::php_fpm', {
         'config'  => {
             'display_errors'            => 'Off',
-            'error_log'                 => '/var/log/php-error.log',
+            'error_log'                 => '/var/log/php/php.log',
             'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
             'log_errors'                => 'On',
             'max_execution_time'        => 70,
