@@ -14,8 +14,29 @@ class icingaweb2 (
         fail('You must include the icinga2 base class before using any icingaweb2 feature class!')
     }
 
-    # TODO(paladox) replace with new php module
-    include ::php_old
+    ensure_resource_duplicate('class', '::php::php_fpm', {
+        'config'  => {
+            'display_errors'            => 'Off',
+            'error_log'                 => '/var/log/php-error.log',
+            'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
+            'log_errors'                => 'On',
+            'max_execution_time'        => 70,
+            'opcache'                   => {
+                'enable'                  => 1,
+                'memory_consumption'      => 256,
+                'interned_strings_buffer' => 64,
+                'max_accelerated_files'   => 32531,
+                'revalidate_freq'         => 60,
+            },
+            'post_max_size'       => '30M',
+            'register_argc_argv'  => 'Off',
+            'request_order'       => 'GP',
+            'track_errors'        => 'Off',
+            'upload_max_filesize' => '100M',
+            'variables_order'     => 'GPCS',
+        },
+        'version' => hiera('php::php_version', '7.2'),
+    })
 
     package { [ 'icingaweb2', 'icingaweb2-module-monitoring',
                 'icingaweb2-module-doc', 'icingacli' ]:
@@ -140,13 +161,6 @@ class icingaweb2 (
         ensure      => present,
         source      => 'puppet:///modules/icingaweb2/icinga2.conf',
         notify_site => Exec['nginx-syntax-icinga'],
-    }
-
-    file_line { 'set_date_time':
-        line    => 'date.timezone = Etc/Utc',
-        match   => '^;?date.timezone\s*\=',
-        path    => '/etc/php/7.2/fpm/php.ini',
-        notify  => Exec['nginx-syntax-icinga'],
     }
 
     exec { 'nginx-syntax-icinga':

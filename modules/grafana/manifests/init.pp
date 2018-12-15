@@ -4,8 +4,6 @@ class grafana (
     String $mail_password = hiera('passwords::mail::noreply'),
 ) {
 
-    include ssl::wildcard
-
     include ::apt
 
     apt::source { 'grafana_apt':
@@ -21,14 +19,29 @@ class grafana (
         require => Apt::Source['grafana_apt'],
     }
 
-    # TODO(paladox) replace with new php module
-    include ::php_old
-
-    require_package('libapache2-mod-php7.2')
-
-    file { '/etc/apache2/sites-enabled/apache.conf':
-        ensure => absent,
-    }
+    ensure_resource_duplicate('class', '::php::php_fpm', {
+        'config'  => {
+            'display_errors'            => 'Off',
+            'error_log'                 => '/var/log/php-error.log',
+            'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
+            'log_errors'                => 'On',
+            'max_execution_time'        => 70,
+            'opcache'                   => {
+                'enable'                  => 1,
+                'memory_consumption'      => 256,
+                'interned_strings_buffer' => 64,
+                'max_accelerated_files'   => 32531,
+                'revalidate_freq'         => 60,
+            },
+            'post_max_size'       => '30M',
+            'register_argc_argv'  => 'Off',
+            'request_order'       => 'GP',
+            'track_errors'        => 'Off',
+            'upload_max_filesize' => '100M',
+            'variables_order'     => 'GPCS',
+        },
+        'version' => hiera('php::php_version', '7.2'),
+    })
 
     file { '/etc/grafana/grafana.ini':
         content => template('grafana/grafana.ini.erb'),
@@ -47,17 +60,12 @@ class grafana (
         ],
     }
 
+    include ssl::wildcard
+
     nginx::site { 'grafana.miraheze.org':
         ensure       => present,
         source       => 'puppet:///modules/grafana/nginx/grafana.conf',
         notify_site  => Exec['nginx-syntax-grafana'],
-    }
-
-    file { '/etc/php/7.2/fpm/conf.d/php.ini':
-        ensure  => present,
-        mode    => '0755',
-        source  => 'puppet:///modules/grafana/nginx/php.ini',
-        require => Package['libapache2-mod-php7.2']
     }
 
     exec { 'nginx-syntax-grafana':
