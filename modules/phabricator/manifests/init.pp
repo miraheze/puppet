@@ -1,7 +1,28 @@
 # class: phabricator
 class phabricator {
-    # TODO(paladox) replace with new php module
-    include ::php_old
+    ensure_resource_duplicate('class', 'php::php_fpm', {
+        'config'  => {
+            'display_errors'            => 'Off',
+            'error_log'                 => '/var/log/php/php.log',
+            'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
+            'log_errors'                => 'On',
+            'max_execution_time'        => 70,
+            'opcache'                   => {
+                'enable'                  => 1,
+                'memory_consumption'      => 256,
+                'interned_strings_buffer' => 64,
+                'max_accelerated_files'   => 32531,
+                'revalidate_freq'         => 60,
+            },
+            'post_max_size'       => '35M',
+            'register_argc_argv'  => 'Off',
+            'request_order'       => 'GP',
+            'track_errors'        => 'Off',
+            'upload_max_filesize' => '100M',
+            'variables_order'     => 'GPCS',
+        },
+        'version' => hiera('php::php_version', '7.2'),
+    })
 
     require_package(['python-pygments', 'python3-pygments', 'subversion'])
 
@@ -97,14 +118,6 @@ class phabricator {
         require => Git::Clone['phabricator'],
     }
 
-    file { '/etc/php/7.2/fpm/conf.d/php.ini':
-        ensure  => present,
-        content => template('phabricator/php72.ini.erb'),
-        mode    => '0755',
-        notify  => Service['php7.2-fpm'],
-        require => Package['php7.2-fpm'],
-    }
-
     exec { 'PHD reload systemd':
         command     => '/bin/systemctl daemon-reload',
         refreshonly => true,
@@ -118,7 +131,10 @@ class phabricator {
 
     service { 'phd':
         ensure  => 'running',
-        require => [File['/etc/systemd/system/phd.service'], File['/srv/phab/phabricator/conf/local/local.json']],
+        require => [
+            File['/etc/systemd/system/phd.service'],
+            File['/srv/phab/phabricator/conf/local/local.json']
+        ],
     }
 
     monitoring::services { 'phab.miraheze.wiki HTTPS':
