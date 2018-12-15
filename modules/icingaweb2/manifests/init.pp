@@ -28,7 +28,7 @@ class icingaweb2 (
                 'max_accelerated_files'   => 32531,
                 'revalidate_freq'         => 60,
             },
-            'post_max_size'       => '30M',
+            'post_max_size'       => '35M',
             'register_argc_argv'  => 'Off',
             'request_order'       => 'GP',
             'track_errors'        => 'Off',
