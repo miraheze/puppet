@@ -68,9 +68,12 @@ class php::php_fpm(
             };
         'imagick':
             package_name => 'php-imagick';
+        'pdo_mysql':
+            package_name => '',
+            priority     => 10;
         'mysqlnd':
             package_name => "php${version}-mysqlnd",
-            priority     => 15;
+            priority     => 10;
         'mysqli':
             package_name => "php${version}-mysql";
         'dba':
