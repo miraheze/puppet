@@ -2,7 +2,6 @@
 class mediawiki::php {
     if hiera('use_new_php_module', true) {
         ensure_resource_duplicate('class', '::php::php_fpm', {
-            'version' => hiera('php::php_version', '7.2'),
             'config'  => {
                 'display_errors'            => 'Off',
                 'error_log'                 => '/var/log/mediawiki/debuglogs/php-error.log',
@@ -23,6 +22,10 @@ class mediawiki::php {
                 'upload_max_filesize' => '250M',
                 'variables_order'     => 'GPCS',
             },
+            'fpm_config' => {
+                'error_log' => '/var/log/php7.2-fpm.log',
+            },
+            'version' => hiera('php::php_version', '7.2'),
         })
     } else {
         include ::php_old
