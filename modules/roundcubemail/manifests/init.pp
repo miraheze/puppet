@@ -53,6 +53,12 @@ class roundcubemail (
 
     include ssl::wildcard
 
+    nginx::site { 'mail':
+        ensure      => present,
+        source      => 'puppet:///modules/roundcubemail/mail.miraheze.org.conf',
+        notify_site => Exec['nginx-syntax-roundcubemail'],
+    }
+
     nginx::site { 'roundcubemail':
         ensure      => present,
         source      => 'puppet:///modules/roundcubemail/roundcubemail.conf',
