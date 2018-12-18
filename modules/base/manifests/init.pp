@@ -58,6 +58,6 @@ class base {
         owner  => 'root',
         group  => 'root',
         mode   => '0444',
-        source => 'puppet:///modules/base/vimrc.local',
+        source => 'puppet:///modules/base/environment/vimrc.local',
     }
 }
