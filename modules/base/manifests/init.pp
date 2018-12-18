@@ -52,4 +52,12 @@ class base {
             values  => { 'vm.swappiness' => 1, },
         }
     }
+
+    # Global vim defaults
+    file { '/etc/vim/vimrc.local':
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
+        source => 'puppet:///modules/base/vimrc.local',
+    }
 }
