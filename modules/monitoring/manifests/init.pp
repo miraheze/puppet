@@ -180,27 +180,9 @@ class monitoring (
         ensure => present,
     }
 
-    file { '/etc/icinga2/irc.py':
-        ensure  => present,
-        owner   => 'irc',
-        content => template('monitoring/bot/irc.py'),
-        mode    => '0551',
-        notify  => Service['icingabot'],
-    }
-
-    exec { 'Icingabot reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/etc/systemd/system/icingabot.service':
-        ensure => present,
-        source => 'puppet:///modules/monitoring/bot/icingabot.systemd',
-        notify => Exec['Icingabot reload systemd'],
-    }
-
-    service { 'icingabot':
-        ensure => running,
+    # includes a irc bot to relay messages from icinga to irc
+    class { '::monitoring::ircecho':
+        mirahezebots_password => $mirahezebots_password,
     }
 
     file { '/usr/lib/nagios/plugins/check_icinga_config':
