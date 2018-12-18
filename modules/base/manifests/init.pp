@@ -12,10 +12,6 @@ class base {
     include ssh
     include users
 
-    if hiera('acme') {
-        include acme
-    }
-
     if hiera('letsencrypt') {
         include letsencrypt
     }

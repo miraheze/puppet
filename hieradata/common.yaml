@@ -4,6 +4,5 @@ arcanist: false
 mwdumps: false
 puppetmaster: false
 mediawiki::branch: 'REL1_31'
-acme: false
 letsencrypt: false
 mediawiki::use_memcached: false

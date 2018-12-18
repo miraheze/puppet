@@ -2,7 +2,6 @@ users::groups:
   - mediawiki-admins
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
-acme: false
 letsencrypt: true
 puppetmaster_version: 4
 mwservices: true
