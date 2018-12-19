@@ -7,7 +7,7 @@ User=root
 Group=root
 Type=simple
 EnvironmentFile=-/etc/default/ircecho
-ExecStart=/usr/local/bin/ircecho --ident_passwd_file=/etc/defaults/ircecho_password --infile=${INFILE} $CHANS $NICK $SERVER
+ExecStart=/usr/local/bin/ircecho --ident_passwd_file=/etc/defaults/ircecho_password --infile=${INFILE} $CHANS $NICK $NICK_FOR_PASS $SERVER
 Restart=always
 RestartSec=10s
 

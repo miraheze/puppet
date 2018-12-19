@@ -5,7 +5,7 @@ class monitoring::ircecho (
 
     file { '/usr/local/bin/ircecho':
         ensure => 'present',
-        source => 'puppet:///modules/monitoring/ircecho.py',
+        source => 'puppet:///modules/monitoring/bot/ircecho.py',
         owner  => 'root',
         group  => 'root',
         mode   => '0755',
@@ -14,7 +14,7 @@ class monitoring::ircecho (
 
     file { '/usr/local/lib/python3.5/dist-packages/ib3_auth.py':
         ensure => 'present',
-        source => 'puppet:///modules/monitoring/ib3_auth.py',
+        source => 'puppet:///modules/monitoring/bot/ib3_auth.py',
         owner  => 'root',
         group  => 'root',
         mode   => '0755',
@@ -27,13 +27,14 @@ class monitoring::ircecho (
 
     file { '/etc/default/ircecho':
         ensure  => 'present',
-        content => template('monitoring/default.erb'),
+        content => template('monitoring/bot/default.erb'),
         owner   => 'root',
         mode    => '0755',
         notify  => Service['ircecho'],
     }
 
-    file { '/etc/defaults/ircecho_password':
+    file { '/etc/default/ircecho_password':
+        ensure => 'present',
         content => $mirahezebots_password,
         owner   => 'root',
         group   => 'root',
