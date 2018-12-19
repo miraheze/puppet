@@ -13,6 +13,9 @@ define monitoring::hosts (
                 mail => {
                     groups => $contacts,
                 },
+                irc => {
+                    groups => [ 'icingaadmins' ],
+                },
             },
         },
     }
