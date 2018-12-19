@@ -29,6 +29,7 @@ Listen 8140
     # If Apache complains about invalid signatures on the CRL, you can try disabling
     # CRL checking by commenting the next line, but this is not recommended.
     SSLCARevocationFile     /var/lib/puppet/ssl/ca/ca_crl.pem
+    SSLCARevocationCheck chain
     # Apache 2.4 introduces the SSLCARevocationCheck directive and sets it to none
     # which effectively disables CRL checking; if you are using Apache 2.4+ you must
     # specify 'SSLCARevocationCheck chain' to actually use the CRL.
