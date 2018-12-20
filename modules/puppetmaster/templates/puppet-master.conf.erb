@@ -7,7 +7,7 @@
 
 # you probably want to tune these settings
 PassengerHighPerformance on
-PassengerMaxPoolSize <%= ((@memorysize_mb.to_i * 0.70) / 250).round %>
+PassengerMaxPoolSize <%= ((@memorysize_mb.to_i * 0.40) / 250).round %>
 PassengerPoolIdleTime 1500
 # PassengerMaxRequests 1000
 PassengerStatThrottleRate 120
