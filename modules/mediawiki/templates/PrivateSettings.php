@@ -31,3 +31,9 @@ $wmgWikiMirahezeDiscordHook = array(
     '<%= wiki %>' => '<%= value %>',
 <%- end -%>
 );
+
+$wmgWikiMirahezeDiscordHooks = array(
+<%- @wiki_discord_hooks.each_pair do |wiki, values| -%>
+    '<%= wiki %>' => <%= values %>,
+<%- end -%>
+);
