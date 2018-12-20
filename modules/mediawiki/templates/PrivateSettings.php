@@ -27,13 +27,13 @@ $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 
 // Extension:DiscordNotifications hooks
 $wmgWikiMirahezeDiscordHook = array(
-<%- @wiki_discord_hook.each_pair do |wiki, value| -%>
+<%- @wiki_discord_hook_url.each_pair do |wiki, value| -%>
     '<%= wiki %>' => '<%= value %>',
 <%- end -%>
 );
 
 $wmgWikiMirahezeDiscordHooks = array(
-<%- @wiki_discord_hooks.each_pair do |wiki, values| -%>
+<%- @wiki_discord_hooks_url.each_pair do |wiki, values| -%>
     '<%= wiki %>' => <%= values %>,
 <%- end -%>
 );
