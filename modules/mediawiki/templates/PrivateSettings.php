@@ -26,12 +26,6 @@ $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
 $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 
 // Extension:DiscordNotifications hooks
-$wmgWikiMirahezeDiscordHook = array(
-<%- @wiki_discord_hook_url.each_pair do |wiki, value| -%>
-    '<%= wiki %>' => '<%= value %>',
-<%- end -%>
-);
-
 $wmgWikiMirahezeDiscordHooks = array(
 <%- @wiki_discord_hooks_url.each_pair do |wiki, values| -%>
     '<%= wiki %>' => <%= values %>,

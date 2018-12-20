@@ -118,8 +118,7 @@ class mediawiki(
     $googlemaps_key       = hiera('passwords::mediawiki::googlemapskey')
     $matomotoken          = hiera('passwords::mediawiki::matomotoken')
 
-    $wiki_discord_hook_url    = hiera('mediawiki::wiki_discord_hook_url')
-    $wiki_discord_hooks_url    = hiera('mediawiki::wiki_discord_hooks_url')
+    $wiki_discord_hooks_url = hiera('mediawiki::wiki_discord_hooks_url')
 
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
