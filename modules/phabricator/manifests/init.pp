@@ -140,9 +140,9 @@ class phabricator {
     monitoring::services { 'phab.miraheze.wiki HTTPS':
         check_command => 'check_http',
         vars          => {
-            http_expect => 'HTTP/1.1 500 Internal Server Error',
+            http_expect => 'HTTP/1.1 200 OK',
             http_ssl    => true,
-            http_vhost  => 'phab.miraheze.wiki',
+            http_vhost  => 'phabricator.miraheze.org',
         },
      }
 
