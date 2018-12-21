@@ -140,7 +140,7 @@ class phabricator {
     monitoring::services { 'phab.miraheze.wiki HTTPS':
         check_command => 'check_http',
         vars          => {
-            http_expect => 'HTTP/2 200',
+            http_expect => 'HTTP/1.1 200',
             http_ssl    => true,
             http_vhost  => 'phab.miraheze.wiki',
             http_uri    => 'https://phab.miraheze.wiki/file/data/b6eckvcmsmmjwe6gb2as/PHID-FILE-c6u44mun2axi3qq63u5t/ManageWiki-GH.png'
