@@ -1,0 +1,13 @@
+---
+version: 5
+defaults:
+  datadir: /etc/puppetlabs/puppet/hieradata
+  data_hash: yaml_data
+hierarchy:
+  - name: "common"
+    paths:
+      - "private/%{::hostname}.yaml"
+      - "hosts/%{::hostname}.yaml"
+      - "private/common.yaml"
+      - "ssl.yaml"
+      - "common.yaml"
