@@ -1,5 +1,5 @@
 user www-data;
-worker_processes <%= scope.lookupvar("facts['virtual_processor_count']") %>;
+worker_processes <%= scope.lookupvar('::virtual_processor_count') %>;
 pid /run/nginx.pid;
 
 events {
