@@ -17,6 +17,10 @@ class puppetmaster::v6(
         notify  => Service['puppetserver'],
     }
 
+    file { '/etc/puppet':
+        ensure => directory,
+    }
+
     file { '/etc/puppetlabs/puppet/hiera.yaml':
         ensure  => present,
         source  => "puppet:///modules/puppetmaster/hiera.${puppetmaster_version}.yaml",
@@ -67,6 +71,15 @@ class puppetmaster::v6(
         require   => Package['puppet-agent'],
     }
 
+    file { '/etc/puppet/ssl':
+        ensure  => link,
+        target  => '/etc/puppetlabs/puppet/ssl_cert',
+        require => [
+            Git::Clone['ssl'],
+            File['/etc/puppet']
+        ],
+    }
+
     file { '/etc/puppetlabs/puppet/private':
         ensure => directory,
     }
@@ -75,6 +88,15 @@ class puppetmaster::v6(
         ensure  => link,
         target  => '/etc/puppetlabs/puppet/git/hieradata',
         require => Git::Clone['puppet'],
+    }
+
+    file { '/etc/puppet/hieradata':
+        ensure  => link,
+        target  => '/etc/puppetlabs/puppet/hieradata',
+        require => [
+            File['/etc/puppetlabs/puppet/hieradata'],
+            File['/etc/puppet']
+        ],
     }
 
     file { '/etc/puppetlabs/puppet/manifests':
