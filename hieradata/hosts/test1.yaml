@@ -5,7 +5,5 @@ puppetmaster_hostname: test1.miraheze.org
 puppetmaster_version: 6
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
-# can be removed once puppet 4 is the default
-puppetmaster_version: 4
 mediawiki::branch: 'REL1_32'
 use_new_php_module: true
