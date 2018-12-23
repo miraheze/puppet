@@ -135,7 +135,10 @@ class puppetmaster::v6(
     file { '/etc/puppetlabs/puppet/environments/production/modules':
         ensure  => link,
         target  => '/etc/puppet/modules',
-        require => [File['/etc/puppetlabs/puppet/environments/production'], File['/etc/puppet/modules']],
+        require => [
+            File['/etc/puppetlabs/puppet/environments/production'],
+            File['/etc/puppetlabs/puppet/modules']
+        ],
     }
 
     file { '/etc/puppetlabs/puppet/environments/production/ssl_cert':
