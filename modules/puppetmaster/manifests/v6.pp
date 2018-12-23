@@ -30,14 +30,14 @@ class puppetmaster::v6(
 
     file { '/etc/puppetlabs/puppet/puppet.conf':
         ensure  => present,
-        content => template("puppetmaster/puppet_${puppetmaster_version}.conf.erb"),
+        content => template("puppetmaster/puppet.${puppetmaster_version}.conf.erb"),
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/auth.conf':
         ensure  => present,
-        source  => "puppet:///modules/puppetmaster/auth_${puppetmaster_version}.conf",
+        source  => "puppet:///modules/puppetmaster/auth.${puppetmaster_version}.conf",
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
