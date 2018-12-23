@@ -17,8 +17,18 @@ class puppetmaster::v6(
         notify  => Service['puppetserver'],
     }
 
-    file { '/etc/puppet':
-        ensure => directory,
+    file { '/etc/puppetlabs/puppet/auth.conf':
+        ensure  => present,
+        source  => "puppet:///modules/puppetmaster/auth.${puppetmaster_version}.conf",
+        require => Package['puppet-agent'],
+        notify  => Service['puppetserver'],
+    }
+
+    file { '/etc/puppetlabs/puppet/fileserver.conf':
+        ensure  => present,
+        source  => "puppet:///modules/puppetmaster/fileserver.${puppetmaster_version}.conf",
+        require => Package['puppet-agent'],
+        notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/hiera.yaml':
@@ -31,20 +41,6 @@ class puppetmaster::v6(
     file { '/etc/puppetlabs/puppet/puppet.conf':
         ensure  => present,
         content => template("puppetmaster/puppet.${puppetmaster_version}.conf.erb"),
-        require => Package['puppet-agent'],
-        notify  => Service['puppetserver'],
-    }
-
-    file { '/etc/puppetlabs/puppet/auth.conf':
-        ensure  => present,
-        source  => "puppet:///modules/puppetmaster/auth.${puppetmaster_version}.conf",
-        require => Package['puppet-agent'],
-        notify  => Service['puppetserver'],
-    }
-
-    file { '/etc/puppetlabs/puppet/fileserver.conf':
-        ensure  => present,
-        source  => "puppet:///modules/puppetmaster/fileserver.${puppetmaster_version}.conf",
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
@@ -71,15 +67,6 @@ class puppetmaster::v6(
         require   => Package['puppet-agent'],
     }
 
-    file { '/etc/puppet/ssl':
-        ensure  => link,
-        target  => '/etc/puppetlabs/puppet/ssl_cert',
-        require => [
-            Git::Clone['ssl'],
-            File['/etc/puppet']
-        ],
-    }
-
     file { '/etc/puppetlabs/puppet/private':
         ensure => directory,
     }
@@ -88,15 +75,6 @@ class puppetmaster::v6(
         ensure  => link,
         target  => '/etc/puppetlabs/puppet/git/hieradata',
         require => Git::Clone['puppet'],
-    }
-
-    file { '/etc/puppet/hieradata':
-        ensure  => link,
-        target  => '/etc/puppetlabs/puppet/hieradata',
-        require => [
-            File['/etc/puppetlabs/puppet/hieradata'],
-            File['/etc/puppet']
-        ],
     }
 
     file { '/etc/puppetlabs/puppet/manifests':
@@ -147,6 +125,37 @@ class puppetmaster::v6(
         require => [
             File['/etc/puppetlabs/puppet/environments/production'],
             Git::Clone['ssl']
+        ],
+    }
+
+    file { '/etc/puppet':
+        ensure => directory,
+    }
+
+    file { '/etc/puppet/hieradata':
+        ensure  => link,
+        target  => '/etc/puppetlabs/puppet/hieradata',
+        require => [
+            File['/etc/puppetlabs/puppet/hieradata'],
+            File['/etc/puppet']
+        ],
+    }
+
+    file { '/etc/puppet/private':
+        ensure  => link,
+        target  => '/etc/puppetlabs/puppet/private',
+        require => [
+            File['/etc/puppetlabs/puppet/private'],
+            File['/etc/puppet']
+        ],
+    }
+
+    file { '/etc/puppet/ssl':
+        ensure  => link,
+        target  => '/etc/puppetlabs/puppet/ssl_cert',
+        require => [
+            Git::Clone['ssl'],
+            File['/etc/puppet']
         ],
     }
 
