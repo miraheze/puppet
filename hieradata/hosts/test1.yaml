@@ -1,5 +1,8 @@
 users::groups:
   - mediawiki-admins
+puppetmaster: true
+puppetmaster_hostname: test1.miraheze.org
+puppetmaster_version: 6
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 # can be removed once puppet 4 is the default
