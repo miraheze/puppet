@@ -123,7 +123,7 @@ class puppetmaster::v6(
         require => File['/etc/puppetlabs/puppet/environments'],
     }
 
-    file { '/etc/puppetlabs.puppet/environments/production/manifests':
+    file { '/etc/puppetlabs/puppet/environments/production/manifests':
         ensure  => link,
         target  => '/etc/puppetlabs/puppet/manifests',
         require => [
