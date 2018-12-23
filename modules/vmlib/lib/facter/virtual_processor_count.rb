@@ -2,7 +2,7 @@
 
 require 'etc'
 
-Facter.add(:real_processor_count) do
+Facter.add(:virtual_processor_count) do
   has_weight 100
   setcode do
     processors = Etc.nprocessors
