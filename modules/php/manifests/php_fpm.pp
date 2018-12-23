@@ -101,7 +101,7 @@ class php::php_fpm(
 
     $base_fpm_config = {
         'emergency_restart_interval'  => '60s',
-        'emergency_restart_threshold' => $facts['processors']['count'],
+        'emergency_restart_threshold' => $facts['virtual_processor_count'],
         'error_log'                   => '/var/log/php7.2-fpm.log',
         'process.priority'            => -19,
     }
@@ -112,7 +112,7 @@ class php::php_fpm(
         require => Apt::Source['php_apt'],
     }
 
-    $num_workers = max(floor($facts['processors']['count'] * 1.5), 6)
+    $num_workers = max(floor($facts['virtual_processor_count'] * 1.5), 6)
     # These numbers need to be positive integers
     $max_spare = ceiling($num_workers * 0.3)
     $min_spare = ceiling($num_workers * 0.1)
