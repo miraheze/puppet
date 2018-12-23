@@ -12,7 +12,6 @@ class base::puppet {
                 'id'     => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
                 'server' => 'pgp.mit.edu',
             },
-            priority => 800,
         }
 
         package { 'puppet-agent':
