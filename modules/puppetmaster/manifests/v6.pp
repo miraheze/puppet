@@ -166,6 +166,21 @@ class puppetmaster::v6(
         mode    => '0770',
     }
 
+    exec { 'puppetserver reload systemd':
+        command     => '/bin/systemctl daemon-reload',
+        refreshonly => true,
+    }
+
+    file { '/lib/systemd/system/puppetserver.service':
+        ensure  => present,
+        source  => 'puppet:///modules/puppetmaster/puppetserver.systemd',
+        notify  => [
+            Exec['puppetserver reload systemd'],
+            Service['puppetserver'],
+        ]
+        require => Package['puppetserver'],
+    }
+
     if $use_puppetdb {
         class { 'puppetmaster::puppetdb::client': }
     }
