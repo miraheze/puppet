@@ -177,6 +177,7 @@ class puppetdb(
     }
 
     service { 'puppetdb':
-        ensure  => running,
+        ensure => running,
+        enable => true,
     }
 }
