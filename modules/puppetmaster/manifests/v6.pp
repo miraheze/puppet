@@ -177,7 +177,7 @@ class puppetmaster::v6(
         notify  => [
             Exec['puppetserver reload systemd'],
             Service['puppetserver'],
-        ]
+        ],
         require => Package['puppetserver'],
     }
 
