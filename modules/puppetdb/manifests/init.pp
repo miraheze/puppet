@@ -21,34 +21,46 @@ class puppetdb(
 
     ## PuppetDB installation
 
-    include ::apt
-
-    if !defined(Apt::Source['puppetdb_apt']) {
-        apt::source { 'puppetdb_apt':
-            comment  => 'puppetdb',
-            location => 'http://apt.wikimedia.org/wikimedia',
-            release  => "${::lsbdistcodename}-wikimedia",
-            repos    => 'component/puppetdb4',
-            key      => 'B8A2DF05748F9D524A3A2ADE9D392D3FFADF18FB',
-            notify   => Exec['apt_update_puppetdb'],
+    if  hiera('puppetmaster_version', 4) == 6 {
+        package { 'puppetdb':
+            ensure  => present,
+            require => Apt::Source['puppetlabs'],
         }
 
-        # First installs can trip without this
-        exec {'apt_update_puppetdb':
-            command     => '/usr/bin/apt-get update',
-            refreshonly => true,
-            logoutput   => true,
+        package { 'puppetdb-termini':
+            ensure   => present,
+            require => Apt::Source['puppetlabs'],
         }
-    }
+    } else {
+        include ::apt
 
-    package { 'puppetdb':
-        ensure  => present,
-        require => Apt::Source['puppetdb_apt'],
-    }
+        if !defined(Apt::Source['puppetdb_apt']) {
+            apt::source { 'puppetdb_apt':
+                comment  => 'puppetdb',
+                location => 'http://apt.wikimedia.org/wikimedia',
+                release  => "${::lsbdistcodename}-wikimedia",
+                repos    => 'component/puppetdb4',
+                key      => 'B8A2DF05748F9D524A3A2ADE9D392D3FFADF18FB',
+                notify   => Exec['apt_update_puppetdb'],
+            }
 
-    package { 'puppetdb-termini':
-        ensure   => present,
-        require => Apt::Source['puppetdb_apt'],
+            # First installs can trip without this
+            exec {'apt_update_puppetdb':
+                command     => '/usr/bin/apt-get update',
+                refreshonly => true,
+                logoutput   => true,
+            }
+        }
+
+        package { 'puppetdb':
+            ensure  => present,
+            require => Apt::Source['puppetdb_apt'],
+        }
+
+        package { 'puppetdb-termini':
+            ensure   => present,
+            require => Apt::Source['puppetdb_apt'],
+        }
     }
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
