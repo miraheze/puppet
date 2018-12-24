@@ -62,7 +62,7 @@ class puppetmaster::v6(
 
     git::clone { 'ssl':
         ensure    => latest,
-        directory => '/etc/puppetlabs/puppet/ssl_cert',
+        directory => '/etc/puppetlabs/puppet/ssl-cert',
         origin    => 'https://github.com/miraheze/ssl.git',
         require   => Package['puppet-agent'],
     }
@@ -119,9 +119,9 @@ class puppetmaster::v6(
         ],
     }
 
-    file { '/etc/puppetlabs/puppet/environments/production/ssl_cert':
+    file { '/etc/puppetlabs/puppet/environments/production/ssl-cert':
         ensure  => link,
-        target  => '/etc/puppetlabs/puppet/ssl_cert',
+        target  => '/etc/puppetlabs/puppet/ssl-cert',
         require => [
             File['/etc/puppetlabs/puppet/environments/production'],
             Git::Clone['ssl']
@@ -152,7 +152,7 @@ class puppetmaster::v6(
 
     file { '/etc/puppet/ssl':
         ensure  => link,
-        target  => '/etc/puppetlabs/puppet/ssl_cert',
+        target  => '/etc/puppetlabs/puppet/ssl-cert',
         require => [
             Git::Clone['ssl'],
             File['/etc/puppet']
@@ -196,7 +196,7 @@ class puppetmaster::v6(
     }
 
     cron { 'ssl-git':
-        command => '/usr/bin/git -C /etc/puppetlabs/puppet/ssl_cert pull',
+        command => '/usr/bin/git -C /etc/puppetlabs/puppet/ssl-cert pull',
         user    => 'root',
         hour    => '*',
         minute  => [ '9', '19', '29', '39', '49', '59' ],
