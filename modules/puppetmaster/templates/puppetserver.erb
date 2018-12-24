@@ -6,7 +6,7 @@
 JAVA_BIN="/usr/bin/java"
 
 # Modify this if you'd like to change the memory allocation, enable JMX, etc
-JAVA_ARGS="-Xms<%= @puppetserver_heap %> -Xmx<%= @puppetserver_heap %> -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"
+JAVA_ARGS="-Xms<%= @puppetserver_heap %> -Xmx<%= @puppetserver_heap %> -XX:+ExitOnOutOfMemoryError -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"
 
 # Modify this if you'd like TrapperKeeper specific arguments
 TK_ARGS=""
