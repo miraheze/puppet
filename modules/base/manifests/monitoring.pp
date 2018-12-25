@@ -15,7 +15,7 @@ class base::monitoring {
     $puppetmaster_version = hiera('puppetmaster_version', 4)
     file { '/usr/lib/nagios/plugins/check_puppet_run':
         ensure => present,
-        source => 'puppet:///modules/base/icinga/check_puppet_run',
+        content => template('base/icinga/check_puppet_run.erb'),
         mode   => '0555',
     }
 
