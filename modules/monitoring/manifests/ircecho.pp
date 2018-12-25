@@ -57,9 +57,4 @@ class monitoring::ircecho (
         ensure  => running,
         require => File['/etc/systemd/system/ircecho.service'],
     }
-
-    logrotate::conf { 'ircecho':
-        ensure => present,
-        source => 'puppet:///modules/monitoring/ircecho_logrotate.conf',
-    }
 }
