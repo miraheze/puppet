@@ -8,6 +8,9 @@ JAVA_BIN="/usr/bin/java"
 # Modify this if you'd like to change the memory allocation, enable JMX, etc
 JAVA_ARGS="<%= @jvm_opts %>"
 
+# Modify this if you'd like TrapperKeeper specific arguments
+TK_ARGS=""
+
 # These normally shouldn't need to be edited if using OS packages
 USER="puppetdb"
 GROUP="puppetdb"
@@ -26,7 +29,7 @@ SERVICE_STOP_RETRIES=60
 # seconds.  For systemd, the shorter of this setting or 'TimeoutStartSec'
 # in the service's systemd.service configuration file will effectively be the
 # timeout which is used.
-START_TIMEOUT=300
+START_TIMEOUT=14400
 
 
 # Maximum number of seconds that can expire for a service reload attempt before
