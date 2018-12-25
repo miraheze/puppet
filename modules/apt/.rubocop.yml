@@ -1,5 +1,7 @@
 ---
-require: rubocop-rspec
+require:
+- rubocop-i18n
+- rubocop-rspec
 AllCops:
   DisplayCopNames: true
   TargetRubyVersion: '2.1'
@@ -19,6 +21,10 @@ AllCops:
 Metrics/LineLength:
   Description: People have wide screens, use them.
   Max: 200
+GetText/DecorateString:
+  Description: We don't want to decorate test output.
+  Exclude:
+  - spec/*
 RSpec/BeforeAfterAll:
   Description: Beware of using after(:all) as it may cause state to leak between tests.
     A necessary evil in acceptance testing.
@@ -66,11 +72,13 @@ Style/TrailingCommaInLiteral:
 Style/SymbolArray:
   Description: Using percent style obscures symbolic intent of array's contents.
   EnforcedStyle: brackets
+inherit_from: ".rubocop_todo.yml"
 RSpec/MessageSpies:
   EnforcedStyle: receive
 Style/Documentation:
   Exclude:
   - lib/puppet/parser/functions/**/*
+  - spec/**/*
 Style/WordArray:
   EnforcedStyle: brackets
 Style/CollectionMethods:
@@ -80,6 +88,8 @@ Style/MethodCalledOnDoEndBlock:
 Style/StringMethods:
   Enabled: true
 Layout/EndOfLine:
+  Enabled: false
+Layout/IndentHeredoc:
   Enabled: false
 Metrics/AbcSize:
   Enabled: false

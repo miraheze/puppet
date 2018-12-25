@@ -1,29 +1,36 @@
 require 'pathname'
+require 'puppet/parameter/boolean'
 
 Puppet::Type.newtype(:apt_key) do
   @doc = <<-MANIFEST
-    This type provides Puppet with the capabilities to manage GPG keys needed
-    by apt to perform package validation. Apt has it's own GPG keyring that can
-    be manipulated through the `apt-key` command.
+    @summary This type provides Puppet with the capabilities to manage GPG keys needed
+      by apt to perform package validation. Apt has it's own GPG keyring that can
+      be manipulated through the `apt-key` command.
 
-    apt_key { '6F6B15509CF8E59E6E469F327F438280EF8D349F':
-      source => 'http://apt.puppetlabs.com/pubkey.gpg'
-    }
+    @example Basic usage
+      apt_key { '6F6B15509CF8E59E6E469F327F438280EF8D349F':
+        source => 'http://apt.puppetlabs.com/pubkey.gpg'
+      }
 
-    **Autorequires**:
+    **Autorequires**
 
     If Puppet is given the location of a key file which looks like an absolute
     path this type will autorequire that file.
+
+    @api private
   MANIFEST
 
   ensurable
 
   validate do
+    if self[:refresh] == true && self[:ensure] == :absent
+      raise(_('ensure => absent and refresh => true are mutually exclusive'))
+    end
     if self[:content] && self[:source]
-      raise('The properties content and source are mutually exclusive.')
+      raise(_('The properties content and source are mutually exclusive.'))
     end
     if self[:id].length < 40
-      warning('The id should be a full fingerprint (40 characters), see README.')
+      warning(_('The id should be a full fingerprint (40 characters), see README.'))
     end
   end
 
@@ -61,11 +68,16 @@ Puppet::Type.newtype(:apt_key) do
     desc 'The key server to fetch the key from based on the ID. It can either be a domain name or url.'
     defaultto :'keyserver.ubuntu.com'
 
-    newvalues(%r{\A((hkp|http|https)://)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?$})
+    newvalues(%r{\A((hkp|hkps|http|https)://)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?$})
   end
 
   newparam(:options) do
     desc 'Additional options to pass to apt-key\'s --keyserver-options.'
+  end
+
+  newparam(:refresh, boolean: true, parent: Puppet::Parameter::Boolean) do
+    desc 'When true, recreate an existing expired key'
+    defaultto false
   end
 
   newproperty(:fingerprint) do

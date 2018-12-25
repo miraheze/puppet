@@ -15,7 +15,8 @@ def default_apt_key_example(title)
     source: nil,
     server: 'keyserver.ubuntu.com',
     content: nil,
-    options: nil }
+    options: nil,
+    refresh: false }
 end
 
 def bunch_things_apt_key_example(title, params)
@@ -96,6 +97,21 @@ describe 'apt::key' do
       end
       it 'contains the apt_key absent anchor' do
         is_expected.to contain_anchor("apt_key #{title} absent")
+      end
+    end
+
+    describe 'ensure => refreshed' do
+      let :params do
+        {
+          ensure: 'refreshed',
+        }
+      end
+
+      it 'contains the apt_key with refresh => true' do
+        is_expected.to contain_apt_key(title).with(
+          ensure: 'present',
+          refresh: true,
+        )
       end
     end
 
@@ -276,7 +292,7 @@ describe 'apt::key' do
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a match})
+        is_expected.to raise_error(%r{evaluating a Resource})
       end
     end
 
@@ -317,7 +333,7 @@ describe 'apt::key' do
     end
 
     context 'with invalid ensure' do
-      ['foo', 'aabsent', 'absenta', 'apresent', 'presenta'].each do |param|
+      ['foo', 'aabsent', 'absenta', 'apresent', 'presenta', 'refresh', 'arefreshed', 'refresheda'].each do |param|
         let :params do
           {
             ensure: param,
@@ -325,7 +341,7 @@ describe 'apt::key' do
         end
 
         it 'fails' do
-          is_expected.to raise_error(%r{for Enum\['absent', 'present'\], got})
+          is_expected.to raise_error(%r{for Enum\['absent', 'present', 'refreshed'\], got})
         end
       end
     end
