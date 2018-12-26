@@ -7,5 +7,6 @@ Facter.add(:virtual_ip_address) do
       ip = Facter.value('ipaddress')
     else
       ip Socket.ip_address_list[2].ip_address
+    end
   end
 end
