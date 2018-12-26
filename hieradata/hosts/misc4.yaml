@@ -1,4 +1,3 @@
-lizardfs::web: ['alias', 'rewrite', 'ssl']
-phabricator::modules: ['php7.2']
+puppetmaster_version: 6
 lizardfs_master: true
 lizardfs_web: true
