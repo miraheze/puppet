@@ -22,6 +22,18 @@ class base::puppet {
         # facter needs this for proper "virtual"/"is_virtual" resolution
         require_package('virt-what')
 
+        file { '/usr/bin/facter':
+            ensure  => link,
+            target  => '/opt/puppetlabs/bin/facter',
+            require => Package['puppet-agent'],
+        }
+
+        file { '/usr/bin/hiera':
+            ensure  => link,
+            target  => '/opt/puppetlabs/bin/hiera',
+            require => Package['puppet-agent'],
+        }
+
         file { '/usr/bin/puppet':
             ensure  => 'link',
             target  => '/opt/puppetlabs/bin/puppet',
