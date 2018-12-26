@@ -4,16 +4,16 @@ class puppetmaster(
     Array $modules                 = ['rewrite', 'ssl'],
     Integer $puppetmaster_version  = hiera('puppetmaster_version', 4),
     String $puppetmaster_hostname  = hiera('puppetmaster_hostname', 'puppet1.miraheze.org'),
-    String $puppetserver_heap      = hiera('puppetserver_heap_heap', '300m'),
+    String $puppetserver_java_opts = hiera('puppetserver_java_opts', '-Xms150m -Xmx300m'),
 ) {
 
     if $puppetmaster_version == 6 {
         # TODO(paladox) move this back into init.pp
         class { '::puppetmaster::v6':
-            puppetmaster_hostname => $puppetmaster_hostname,
-            puppetmaster_version  => $puppetmaster_version,
-            use_puppetdb          => $use_puppetdb,
-            puppetserver_heap     => $puppetserver_heap,
+            puppetmaster_hostname  => $puppetmaster_hostname,
+            puppetmaster_version   => $puppetmaster_version,
+            use_puppetdb           => $use_puppetdb,
+            puppetserver_java_opts => $puppetserver_java_opts,
         }
     } else {
         # deprecated
