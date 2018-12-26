@@ -4,6 +4,7 @@ class mediawiki::packages {
         'djvulibre-bin',
         'dvipng',
         'htmldoc',
+        'inkscape',
         'ploticus',
         'ttf-freefont',
         'ffmpeg2theora',
