@@ -14,7 +14,7 @@ class puppetmaster::puppetdb::client(
         mode    => '0444',
     }
 
-    if hiera('puppetmaster_version', 4) == 6 ) {
+    if hiera('puppetmaster_version', 4) == 6 {
         file { '/etc/puppetlabs/puppet/routes.yaml':
             ensure => present,
             owner  => 'root',
