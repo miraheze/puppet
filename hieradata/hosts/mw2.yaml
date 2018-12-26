@@ -4,5 +4,5 @@ jobrunner: false
 arcanist: true
 mwdumps: true
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
-puppetmaster_version: 4
+puppetmaster_version: 6
 role::mediawiki::use_strict_firewall: false
