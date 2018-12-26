@@ -3,7 +3,7 @@ users::groups:
 puppetmaster: true
 puppetmaster_hostname: puppet1.miraheze.org
 puppetmaster_version: 6
-puppetserver_java_opts: '-Xms100m -Xmx400m'
+puppetserver_java_opts: '-Xms50m -Xmx250m'
 puppetmaster::use_puppetdb: true
 puppetdb_host: puppet1.miraheze.org
 puppetmaster::puppetdb::postgres_users:
