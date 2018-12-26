@@ -1,9 +1,9 @@
 # class: puppetmaster::v6
 class puppetmaster::v6(
-    String $puppetmaster_hostname = 'puppet1.miraheze.org',
-    Integer $puppetmaster_version = 4,
-    Boolean $use_puppetdb = false,
-    String $puppetserver_heap = '300m',
+    String $puppetmaster_hostname,
+    Integer $puppetmaster_version,
+    Boolean $use_puppetdb,
+    String $puppetserver_java_opts,
 ) {
     package { 'puppetserver':
         ensure  => present,
