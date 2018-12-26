@@ -16,7 +16,7 @@ class mariadb::config(
     $roundcubemail_password = hiera('passwords::roundcubemail')
 
     $server_id = inline_template(
-        "<%= @ipaddress.split('.').inject(0)\
+        "<%= @virtual_ip_address.split('.').inject(0)\
 {|total,value| (total << 8 ) + value.to_i} %>"
     )
 
