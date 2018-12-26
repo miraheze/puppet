@@ -3,7 +3,7 @@ class puppetmaster::v6(
     String $puppetmaster_hostname = 'puppet1.miraheze.org',
     Integer $puppetmaster_version = 4,
     Boolean $use_puppetdb = false,
-    String $puppetserver_heap = '300m',
+    String $puppetserver_java_opts = '-Xms150m -Xmx300m',
 ) {
     package { 'puppetserver':
         ensure  => present,
