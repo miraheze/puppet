@@ -4,7 +4,7 @@ class puppetmaster(
     Array $modules                 = ['rewrite', 'ssl'],
     Integer $puppetmaster_version  = hiera('puppetmaster_version', 4),
     String $puppetmaster_hostname  = hiera('puppetmaster_hostname', 'puppet1.miraheze.org'),
-    String $puppetserver_heap      = hiera('puppetserver_heap_heap', '250m'),
+    String $puppetserver_heap      = hiera('puppetserver_heap_heap', '300m'),
 ) {
 
     if $puppetmaster_version == 6 {
