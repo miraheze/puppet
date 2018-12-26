@@ -10,6 +10,36 @@ class puppetmaster::v6(
         require => Apt::Source['puppetlabs'],
     }
 
+    file { '/usr/bin/facter':
+        ensure  => link,
+        target  => '/opt/puppetlabs/bin/facter',
+        require => Package['puppetserver'],
+    }
+
+    file { '/usr/bin/hiera':
+        ensure  => link,
+        target  => '/opt/puppetlabs/bin/hiera',
+        require => Package['puppetserver'],
+    }
+
+    file { '/usr/bin/puppet':
+        ensure  => link,
+        target  => '/opt/puppetlabs/bin/puppet',
+        require => Package['puppetserver'],
+    }
+
+    file { '/usr/bin/puppetdb':
+        ensure  => link,
+        target  => '/opt/puppetlabs/bin/puppetdb',
+        require => Package['puppetserver'],
+    }
+
+    file { '/usr/bin/puppetserver':
+        ensure  => link,
+        target  => '/opt/puppetlabs/bin/puppetserver',
+        require => Package['puppetserver'],
+    }
+
     file { '/etc/default/puppetserver':
         ensure  => present,
         content => template('puppetmaster/puppetserver.erb'),
