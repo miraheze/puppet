@@ -1,6 +1,6 @@
 define monitoring::hosts (
     $ensure   = present,
-    $ip       = $::ipaddress,
+    $ip       = $facts['virtual_ip_address'],
     $contacts = hiera('contactgroups', [ 'icingaadmins', 'ops' ]),
 ) {
     @@icinga2::object::host { $title:
