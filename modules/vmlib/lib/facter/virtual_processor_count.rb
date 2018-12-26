@@ -5,6 +5,6 @@ require 'etc'
 Facter.add(:virtual_processor_count) do
   has_weight 100
   setcode do
-    processors = Integer(Etc.nprocessors)
+    processors = Etc.nprocessors
   end
 end
