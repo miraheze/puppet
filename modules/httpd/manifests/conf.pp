@@ -97,8 +97,8 @@ define httpd::conf(
             monitoring::services { 'HTTPS':
                 check_command => 'check_http',
                 vars          => {
-                    address  => "${::ipaddress}",
-                    http_ssl     => true,
+                    address   => 'host.address',
+                    http_ssl  => true,
                 },
             }
         }
