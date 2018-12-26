@@ -45,7 +45,7 @@ define nginx::site(
             monitoring::services { 'HTTPS':
                 check_command => 'check_http',
                 vars          => {
-                    address  => "${::ipaddress}",
+                    address   => 'host.address',
                     http_ssl  => true,
                 },
             }
@@ -56,6 +56,7 @@ define nginx::site(
                  ensure        => 'absent',
                  check_command => 'check_http',
                  vars          => {
+                     address   => 'host.address',
                      http_ssl  => true,
                  },
              }
