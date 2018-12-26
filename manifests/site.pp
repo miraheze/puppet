@@ -93,7 +93,6 @@ node 'test1.miraheze.org' {
     include base
     include role::mediawiki
     include role::salt::minions
-    include puppetmaster
     include prometheus::php_fpm
 }
 
