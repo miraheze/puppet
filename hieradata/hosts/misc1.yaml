@@ -1,6 +1,6 @@
 mailserver: true
 grafana::php_72: true
-puppetmaster_version: 4
+puppetmaster_version: 6
 
 # debian
 icinga2::globals::package_name: 'icinga2'
