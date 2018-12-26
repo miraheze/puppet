@@ -30,7 +30,7 @@ class puppetmaster::puppetdb::client(
         # Absence of this directory causes the puppetmaster to spit out
         # 'Removing mount "facts": /var/lib/puppet/facts does not exist or is not a directory'
         # and catalog compilation to fail with https://tickets.puppetlabs.com/browse/PDB-949
-        file { '/opt/puppetserver/puppet/facts':
+        file { '/opt/puppetlabs/puppet/facts':
             ensure => directory,
         }
     } else {
