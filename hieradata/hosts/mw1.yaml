@@ -3,6 +3,6 @@ users::groups:
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 letsencrypt: true
-puppetmaster_version: 4
+puppetmaster_version: 6
 mwservices: true
 role::mediawiki::use_strict_firewall: false
