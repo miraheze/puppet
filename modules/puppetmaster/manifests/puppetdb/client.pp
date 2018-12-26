@@ -14,23 +14,44 @@ class puppetmaster::puppetdb::client(
         mode    => '0444',
     }
 
-    file { '/etc/puppet/routes.yaml':
-        ensure => present,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0444',
-        source => 'puppet:///modules/puppetmaster/routes.yaml',
-    }
+    if hiera('puppetmaster_version', 4) == 6 ) {
+        file { '/etc/puppetlabs/puppet/routes.yaml':
+            ensure => present,
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0444',
+            source => 'puppet:///modules/puppetmaster/routes.yaml',
+        }
 
-    if defined(Service['apache2']) {
-        File['/etc/puppet/routes.yaml'] -> Service['apache2']
-    }
+        if defined(Service['puppetserver']) {
+            File['/etc/puppet/routes.yaml'] -> Service['puppetserver']
+        }
 
-    # Absence of this directory causes the puppetmaster to spit out
-    # 'Removing mount "facts": /var/lib/puppet/facts does not exist or is not a directory'
-    # and catalog compilation to fail with https://tickets.puppetlabs.com/browse/PDB-949
-    file { '/var/lib/puppet/facts':
-        ensure => directory,
+        # Absence of this directory causes the puppetmaster to spit out
+        # 'Removing mount "facts": /var/lib/puppet/facts does not exist or is not a directory'
+        # and catalog compilation to fail with https://tickets.puppetlabs.com/browse/PDB-949
+        file { '/opt/puppetserver/puppet/facts':
+            ensure => directory,
+        }
+    } else {
+        file { '/etc/puppet/routes.yaml':
+            ensure => present,
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0444',
+            source => 'puppet:///modules/puppetmaster/routes.yaml',
+        }
+
+        if defined(Service['apache2']) {
+            File['/etc/puppet/routes.yaml'] -> Service['apache2']
+        }
+
+        # Absence of this directory causes the puppetmaster to spit out
+        # 'Removing mount "facts": /var/lib/puppet/facts does not exist or is not a directory'
+        # and catalog compilation to fail with https://tickets.puppetlabs.com/browse/PDB-949
+        file { '/var/lib/puppet/facts':
+            ensure => directory,
+        }
     }
 
     class { 'puppetdb': }
