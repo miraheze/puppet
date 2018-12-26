@@ -6,7 +6,7 @@
 JAVA_BIN="/usr/bin/java"
 
 # Modify this if you'd like to change the memory allocation, enable JMX, etc
-JAVA_ARGS="-Xms<%= @puppetserver_heap %> -Xmx<%= @puppetserver_heap %> -XX:+ExitOnOutOfMemoryError -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"
+JAVA_ARGS="<%= @puppetserver_java_opts %> -XX:+ExitOnOutOfMemoryError -Djruby.logger.class=com.puppetlabs.jruby_utils.jruby.Slf4jLogger"
 
 # Modify this if you'd like TrapperKeeper specific arguments
 TK_ARGS=""
@@ -34,4 +34,4 @@ START_TIMEOUT=400
 
 # Maximum number of seconds that can expire for a service reload attempt before
 # the result of the attempt is interpreted as a failure.
-RELOAD_TIMEOUT=120
+RELOAD_TIMEOUT=130
