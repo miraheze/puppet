@@ -97,7 +97,7 @@ define httpd::conf(
             monitoring::services { 'HTTPS':
                 check_command => 'check_http',
                 vars          => {
-                    address   => 'host.address',
+                    address   => $facts['virtual_ip_address'],
                     http_ssl  => true,
                 },
             }
@@ -108,7 +108,7 @@ define httpd::conf(
                 ensure        => 'absent',
                 check_command => 'check_http',
                 vars          => {
-                    address   => 'host.address',
+                    address   => $facts['virtual_ip_address'],
                     http_ssl  => true,
                  },
             }
