@@ -1,10 +1,3 @@
-[main]
-logdir = /var/log/puppetlabs/puppet
-vardir = /opt/puppetlabs/puppet
-ssldir = /opt/puppetlabs/puppetssl
-rundir = /run/puppetlabs/puppet
-factpath = $vardir/lib/facter
-
 [agent]
 server = <%= @puppetmaster_hostname %>
 daemonize = false
