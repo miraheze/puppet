@@ -22,12 +22,6 @@ class puppetmaster::v6(
         require => Package['puppetserver'],
     }
 
-    file { '/usr/bin/puppet':
-        ensure  => link,
-        target  => '/opt/puppetlabs/bin/puppet',
-        require => Package['puppetserver'],
-    }
-
     file { '/usr/bin/puppetdb':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/puppetdb',
