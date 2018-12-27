@@ -1,9 +1,23 @@
-# class: puppetmaster::v6
-class puppetmaster::v6(
-    String $puppetmaster_hostname,
-    Integer $puppetmaster_version,
-    Boolean $use_puppetdb,
-    String $puppetserver_java_opts,
+# == Class: puppetserver
+#
+# Configures a puppetserver using puppetlabs debian repo.
+#
+# === Parameters
+#
+# [*use_puppetdb*] Enables or disable puppetdb support.
+#
+# [*puppet_major_version*] Specify the puppetserver version you want to support / install.
+#
+# [*puppetserver_hostname*] Hostname of the puppetserver, eg puppet1.miraheze.org.
+#
+# [*puppetserver_java_opts*] Options to pass to the puppetserver, eg configuring the heap.
+#
+class puppetserver(
+    String  $puppetdb_hostname,
+    Boolean $puppetdb_enable,
+    Integer $puppet_major_version,
+    String  $puppetserver_hostname,
+    String  $puppetserver_java_opts,
 ) {
     package { 'puppetserver':
         ensure  => present,
@@ -18,35 +32,35 @@ class puppetmaster::v6(
 
     file { '/etc/default/puppetserver':
         ensure  => present,
-        content => template('puppetmaster/puppetserver.erb'),
+        content => template('puppetserver/puppetserver.erb'),
         require => Package['puppetserver'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/auth.conf':
         ensure  => present,
-        source  => "puppet:///modules/puppetmaster/auth.${puppetmaster_version}.conf",
+        source  => "puppet:///modules/puppetserver/auth.${puppet_major_version}.conf",
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/fileserver.conf':
         ensure  => present,
-        source  => "puppet:///modules/puppetmaster/fileserver.${puppetmaster_version}.conf",
+        source  => "puppet:///modules/puppetserver/fileserver.${puppet_major_version}.conf",
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/hiera.yaml':
         ensure  => present,
-        source  => "puppet:///modules/puppetmaster/hiera.${puppetmaster_version}.yaml",
+        source  => "puppet:///modules/puppetserver/hiera.${puppet_major_version}.yaml",
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/puppet.conf':
         ensure  => present,
-        content => template("puppetmaster/puppet.${puppetmaster_version}.conf.erb"),
+        content => template("puppetserver/puppet.${puppet_major_version}.conf.erb"),
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
@@ -58,7 +72,6 @@ class puppetmaster::v6(
         require   => Package['puppet-agent'],
     }
 
-    # work around for new puppet agent
     git::clone { 'services':
         ensure    => latest,
         directory => '/etc/puppetlabs/puppet/services',
@@ -179,7 +192,7 @@ class puppetmaster::v6(
 
     file { '/lib/systemd/system/puppetserver.service':
         ensure  => present,
-        source  => 'puppet:///modules/puppetmaster/puppetserver.systemd',
+        source  => 'puppet:///modules/puppetserver/puppetserver.systemd',
         notify  => [
             Exec['puppetserver reload systemd'],
             Service['puppetserver'],
@@ -187,8 +200,10 @@ class puppetmaster::v6(
         require => Package['puppetserver'],
     }
 
-    if $use_puppetdb {
-        class { 'puppetmaster::puppetdb::client': }
+    if $puppetdb_enable {
+        class { 'puppetserver::puppetdb::client':
+            puppetdb_hostname => $puppetdb_hostname,
+        }
 
         file { '/usr/bin/puppetdb':
             ensure  => link,

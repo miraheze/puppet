@@ -5,4 +5,3 @@ mariadb::config::version_102: true
 mariadb::packages::version_102: true
 mariadb::config::tmpdir: /srv/tmp
 postgresql::ssl: true
-puppetmaster_version: 6

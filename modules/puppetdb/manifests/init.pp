@@ -1,7 +1,28 @@
-# ==  Class puppetdb:
+# == Class: puppetdb
 #
 # Sets up the puppetdb clojure app.
-# This assumes you're using
+#
+# === Parameters
+#
+# [*db_rw_host*] The read, write db hostname, eg db4.miraheze.org.
+#
+# [*jvm_opts*] Puppetdb java options, eg configuring heap.
+#
+# [*db_user*] The db user that puppetdb uses to connect to postgresql.
+#
+# [*perform_gc*] Weather to cleanup the db.
+#
+# [*command_processing_threads*] How mcuh concurrency to run puppetdb under, eg 2 threads.
+#
+# [*bind_ip*] The ip to bind to puppetdb, eg 0.0.0.0 which means any ip.
+#
+# [*db_ro_host*] The read only db hostname, eg db4.miraheze.org.
+#
+# [*db_password*] The db password for the postgresql db.
+#
+# [*db_ssl*] Weather to enable ssl connectivity to the postgresql db.
+#
+# [*puppet_major_version*] Which puppet version to use, eg 4.
 #
 class puppetdb(
     String $db_rw_host = hiera('puppetdb::db_rw_host', 'localhost'),
@@ -13,6 +34,7 @@ class puppetdb(
     Optional[String] $db_ro_host = hiera('puppetdb::db_ro_host', undef),
     Optional[String] $db_password = hiera('puppetdb::db_password', undef),
     Boolean $db_ssl = hiera('puppetdb::db_ssl', true),
+    Integer $puppet_major_version = hiera('puppet_major_version', 4)
 ) {
 
     package { 'default-jdk':
@@ -21,7 +43,7 @@ class puppetdb(
 
     ## PuppetDB installation
 
-    if  hiera('puppetmaster_version', 4) == 6 {
+    if $puppet_major_version == 6 {
         package { 'puppetdb':
             ensure  => present,
             require => Apt::Source['puppetlabs'],

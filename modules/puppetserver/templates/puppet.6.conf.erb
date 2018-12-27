@@ -6,7 +6,7 @@ pidfile = /var/run/puppetlabs/puppetserver/puppetserver.pid
 codedir = /etc/puppetlabs/puppet/code
 
 [agent]
-server = <%= @puppetmaster_hostname %>
+server = <%= @puppetserver_hostname %>
 daemonize = false
 http_connect_timeout = 60
 http_read_timeout = 960
@@ -17,12 +17,12 @@ report = true
 stringify_facts = false
 
 [master]
-<% if @use_puppetdb %>
+<% if @puppetdb_enable %>
 storeconfigs = true
 storeconfigs_backend = puppetdb
 reports = store,puppetdb
 <% end %>
-certname = <%= @puppetmaster_hostname %>
+certname = <%= @puppetserver_hostname %>
 basemodulepath = /etc/puppetlabs/puppet/modules
 
 # puppetmaster($config) settings
@@ -38,5 +38,5 @@ trusted_node_data = true
 ssldir = $confdir/ssl/
 ssl_client_header = SSL_CLIENT_S_DN
 ssl_client_verify_header = SSL_CLIENT_VERIFY
-hostcert = $confdir/ssl/certs/<%= @puppetmaster_hostname %>.pem
-hostprivkey = $confdir/ssl/private_keys/<%= @puppetmaster_hostname %>.pem
+hostcert = $confdir/ssl/certs/<%= @puppetserver_hostname %>.pem
+hostprivkey = $confdir/ssl/private_keys/<%= @puppetserver_hostname %>.pem

@@ -1,6 +1,5 @@
 users::groups:
   - mediawiki-admins
-puppetmaster_version: 6
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 mediawiki::branch: 'REL1_32'

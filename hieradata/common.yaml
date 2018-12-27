@@ -3,6 +3,8 @@ mailserver: false
 arcanist: false
 mwdumps: false
 puppetmaster: false
+puppetserver: false
+puppet_major_version: 6
 mediawiki::branch: 'REL1_31'
 letsencrypt: false
 mediawiki::use_memcached: false

@@ -78,7 +78,7 @@ node 'ns1.miraheze.org' {
 node 'puppet1.miraheze.org' {
     include base
     include bacula::client
-    include puppetmaster
+    include role::puppetserver
     include role::salt::minions
 }
 

@@ -1,13 +1,14 @@
 # class base::puppet
 class base::puppet {
 
-    $puppetmaster_hostname = hiera('puppetmaster_hostname', 'puppet1.miraheze.org')
-    $puppetmaster_version = hiera('puppetmaster_version', 4)
+    $puppet_major_version = hiera('puppet_major_version', 6)
 
-    if $puppetmaster_version == 6 {
+    if $puppet_major_version == 6 {
+        $puppetserver_hostname = hiera('puppetserver_hostname', 'puppet1.miraheze.org')
+
         apt::source { 'puppetlabs':
             location => 'http://apt.puppetlabs.com',
-            repos    => 'puppet6',
+            repos    => "puppet${puppet_major_version}",
             key      => {
                 'id'     => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
                 'server' => 'pgp.mit.edu',
@@ -59,16 +60,18 @@ class base::puppet {
             source => 'puppet:///modules/base/puppet/puppetlabs.puppet.logrotate.conf',
         }
 
-        if !hiera('puppetmaster') {
+        if !hiera('puppetserver') {
             file { '/etc/puppetlabs/puppet/puppet.conf':
                 ensure  => present,
-                content => template("base/puppet/puppet_${puppetmaster_version}.conf.erb"),
+                content => template("base/puppet/puppet.${puppet_major_version}.conf.erb"),
                 mode    => '0444',
                 require => Package['puppet-agent'],
             }
         }
     } else {
         # deprecated
+        $puppetmaster_hostname = hiera('puppetmaster_hostname', 'puppet1.miraheze.org')
+
         require_package('puppet', 'facter')
 
         # facter needs this for proper "virtual"/"is_virtual" resolution
@@ -96,7 +99,7 @@ class base::puppet {
         if !hiera('puppetmaster') {
             file { '/etc/puppet/puppet.conf':
                 ensure => present,
-                content => template("base/puppet/puppet_${puppetmaster_version}.conf.erb"),
+                content => template("base/puppet/puppet.${puppet_major_version}.conf.erb"),
                 mode   => '0444',
             }
         }
