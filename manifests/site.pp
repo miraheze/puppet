@@ -18,6 +18,7 @@ node 'db4.miraheze.org' {
     include base
     include role::db
     include role::postgresql
+    include puppetdb::database
     include bacula::client
     include role::salt::minions
     include prometheus::mysqld_exporter
