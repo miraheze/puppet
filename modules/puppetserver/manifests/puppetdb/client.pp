@@ -10,7 +10,7 @@ class puppetserver::puppetdb::client(
     String $puppetdb_hostname,
 ) {
 
-    file { '/etc/puppet/puppetdb.conf':
+    file { '/etc/puppetlabs/puppet/puppetdb.conf':
         ensure  => present,
         content => template('puppetserver/puppetdb.conf.erb'),
         owner   => 'root',
