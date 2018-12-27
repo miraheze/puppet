@@ -13,7 +13,7 @@ require 'safe_yaml'
 
 PRINT_FAILED_RESOURCES_NO = 3 # Number of failed resources to print. Don't set this high
 
-<% if @puppetmaster_version != 4 %>
+<% if @puppet_major_version != 4 %>
 runlockfile = "/opt/puppetlabs/server/data/puppetserver/state/agent_catalog_run.lock"
 adminlockfile = "/opt/puppetlabs/server/data/puppetserver/state/agent_disabled.lock"
 summaryfile = "/opt/puppetlabs/server/data/puppetserver/state/last_run_summary.yaml"

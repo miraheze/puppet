@@ -12,7 +12,7 @@ class puppetserver::puppetdb::client(
 
     file { '/etc/puppet/puppetdb.conf':
         ensure  => present,
-        content => template('puppetmaster/puppetdb.conf.erb'),
+        content => template('puppetserver/puppetdb.conf.erb'),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
@@ -23,14 +23,14 @@ class puppetserver::puppetdb::client(
         owner  => 'root',
         group  => 'root',
         mode   => '0444',
-        source => 'puppet:///modules/puppetmaster/routes.yaml',
+        source => 'puppet:///modules/puppetserver/routes.yaml',
     }
 
     if defined(Service['puppetserver']) {
         File['/etc/puppet/routes.yaml'] -> Service['puppetserver']
     }
 
-    # Absence of this directory causes the puppetmaster to spit out
+    # Absence of this directory causes the puppetserver to spit out
     # 'Removing mount "facts": /var/lib/puppet/facts does not exist or is not a directory'
     # and catalog compilation to fail with https://tickets.puppetlabs.com/browse/PDB-949
     file { '/opt/puppetlabs/puppet/facts':
