@@ -18,7 +18,7 @@
 class php::php_fpm(
     Hash $config                              = {},
     Hash $fpm_config                          = {},
-    Integer $fpm_max_child                    = 8,
+    Integer $fpm_max_child                    = 6,
     Hash $fpm_pool_config                     = {},
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
 ) {
@@ -102,7 +102,7 @@ class php::php_fpm(
     $base_fpm_config = {
         'emergency_restart_interval'  => '60s',
         'emergency_restart_threshold' => $facts['virtual_processor_count'],
-        'error_log'                   => '/var/log/php7.2-fpm.log',
+        'error_log'                   => "/var/log/php${$version}-fpm.log",
         'process.priority'            => -19,
     }
 
@@ -112,7 +112,7 @@ class php::php_fpm(
         require => Apt::Source['php_apt'],
     }
 
-    $num_workers = max(floor($facts['virtual_processor_count'] * 1.5), 6)
+    $num_workers = max(floor($facts['virtual_processor_count'] * 1.5), $fpm_max_child)
     # These numbers need to be positive integers
     $max_spare = ceiling($num_workers * 0.3)
     $min_spare = ceiling($num_workers * 0.1)
