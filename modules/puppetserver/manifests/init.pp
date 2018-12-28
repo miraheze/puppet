@@ -251,4 +251,11 @@ class puppetserver(
         hour    => [ '0', '8', '16' ],
         minute  => [ '27' ],
     }
+
+    monitoring::services { 'puppetserver':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port    => '8140',
+        },
+    }
 }
