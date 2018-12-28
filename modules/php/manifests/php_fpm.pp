@@ -9,7 +9,7 @@
 #
 # [*fpm_config*]
 #
-# [*fpm_max_child*] Sets the maximum childs for php-fpm, defaults to 8.
+# [*fpm_max_child*] Sets the maximum childs for php-fpm, defaults to 6.
 #
 # [*fpm_pool_config*]
 #
