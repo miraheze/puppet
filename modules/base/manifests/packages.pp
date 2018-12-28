@@ -11,6 +11,8 @@ class base::packages {
         'mtr',
         'nano',
         'pigz',
+        'ruby',
+        'ruby-safe-yaml',
         'screen',
         'strace',
         'tcpdump',
