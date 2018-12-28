@@ -14,16 +14,15 @@ class php(
     include ::apt
 
     if !defined(Apt::Source['php_apt']) {
-        apt::key { 'php_key':
-          id     => 'DF3D585DB8F0EB658690A554AC0E47584A7A714D',
-          source => 'https://packages.sury.org/php/apt.gpg',
-        }
-
         apt::source { 'php_apt':
-          location => 'https://packages.sury.org/php/',
-          release  => "${::lsbdistcodename}",
-          repos    => 'main',
-          notify   => Exec['apt_update_php'],
+            location => 'https://packages.sury.org/php/',
+            release  => "${::lsbdistcodename}",
+            repos    => 'main',
+            key      => {
+                id     => 'DF3D585DB8F0EB658690A554AC0E47584A7A714D',
+                server => 'https://packages.sury.org/php/apt.gpg',
+            },
+            notify   => Exec['apt_update_php'],
         }
 
         # First installs can trip without this
