@@ -8,6 +8,48 @@ class electron (
 
     require_package(['xvfb', 'libgtk2.0-0', 'libnotify4', 'libgconf2-4', 'libxss1', 'libnss3', 'dbus-x11'])
 
+    group { 'electron':
+        ensure => present,
+    }
+
+    user { 'electron':
+        ensure     => present,
+        gid        => 'electron',
+        shell      => '/bin/false',
+        home       => '/srv/electron',
+        managehome => false,
+        system     => true,
+    }
+
+    git::clone { 'electron_deploy':
+        ensure             => present,
+        directory          => '/srv/electron',
+        origin             => 'https://github.com/msokk/electron-render-service.git',
+        branch             => '1.0.0',
+        owner              => 'electron',
+        group              => 'electron',
+        mode               => '0755',
+        timeout            => '550',
+        recurse_submodules => true,
+        require            => [
+            User['electron'],
+            Group['electron']
+        ],
+    }
+
+    exec { 'electron_npm':
+        command     => 'sudo -u electron npm install',
+        creates     => '/srv/electron/node_modules',
+        cwd         => '/srv/electron',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/electron',
+        user        => 'electron',
+        require     => [
+            Git::Clone['electron'],
+            Package['nodejs']
+        ],
+    }
+
     file { '/srv/electron':
         ensure => directory,
     }
