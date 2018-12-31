@@ -12,11 +12,13 @@ class postfix {
     file { '/etc/postfix/main.cf':
         ensure => present,
         source => 'puppet:///modules/postfix/main.cf',
+        notify => Service['postfix'],
     }
 
     file { '/etc/postfix/master.cf':
         ensure => present,
         source => 'puppet:///modules/postfix/master.cf',
+        notify => Service['postfix'],
     }
 
     file { '/etc/aliases':
@@ -32,6 +34,7 @@ class postfix {
     file { '/etc/postfix/login_maps.pcre':
         ensure   => present,
         source   => 'puppet:///modules/postfix/login_maps.pcre',
+        notify   => Service['postfix'],
         requires => Package['postfix-pcre'],
     }
 
@@ -43,7 +46,6 @@ class postfix {
     service { 'postfix':
         ensure    => running,
         require   => Package['postfix'],
-        subscribe => [ File['/etc/postfix/main.cf'], File['/etc/postfix/master.cf'], ],
     }
 
     monitoring::services { 'SMTP':
