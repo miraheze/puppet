@@ -26,11 +26,12 @@ class electron (
         directory          => '/srv/electron',
         origin             => 'https://github.com/msokk/electron-render-service.git',
         branch             => '1.0.0',
-        owner              => 'electron',
-        group              => 'electron',
+        owner              => 'root',
+        group              => 'root',
         mode               => '0755',
         timeout            => '550',
         recurse_submodules => true,
+        before             => Service['electron'],
         require            => [
             User['electron'],
             Group['electron']
@@ -38,12 +39,13 @@ class electron (
     }
 
     exec { 'electron_npm':
-        command     => 'npm install',
+        command     => 'sudo -u root npm install',
         creates     => '/srv/electron/node_modules',
         cwd         => '/srv/electron',
         path        => '/usr/bin',
         environment => 'HOME=/srv/electron',
-        user        => 'electron',
+        user        => 'root',
+        before      => Service['electron'],
         require     => [
             Git::Clone['electron'],
             Package['nodejs']
