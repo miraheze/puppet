@@ -38,7 +38,7 @@ class electron (
     }
 
     exec { 'electron_npm':
-        command     => 'sudo -u electron npm install',
+        command     => 'npm install',
         creates     => '/srv/electron/node_modules',
         cwd         => '/srv/electron',
         path        => '/usr/bin',
