@@ -1,6 +1,6 @@
 # == Class: services::restbase
 
-class service::restbase {
+class services::restbase {
 
     include ::services
 
