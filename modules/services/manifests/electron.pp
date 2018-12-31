@@ -60,10 +60,11 @@ class services::electron (
     }
 
     systemd::syslog { 'electron':
-        readable_by => 'all',
-        base_dir    => '/var/log',
-        group       => 'root',
-        require     => [
+        readable_by  => 'all',
+        base_dir     => '/var/log',
+        group        => 'root',
+        log_filename => 'electron.log',
+        require      => [
             User['electron'],
             Group['electron'],
         ],

@@ -86,9 +86,10 @@ class services::restbase {
     }
 
     systemd::syslog { 'restbase':
-        readable_by => 'all',
-        base_dir    => '/var/log',
-        group       => 'root',
+        readable_by  => 'all',
+        base_dir     => '/var/log',
+        group        => 'root',
+        log_filename => 'restbase.log',
         require     => [
             User['restbase'],
             Group['restbase'],

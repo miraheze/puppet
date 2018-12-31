@@ -64,10 +64,11 @@ class services::parsoid {
     }
 
     systemd::syslog { 'parsoid':
-        readable_by => 'all',
-        base_dir    => '/var/log',
-        group       => 'root',
-        require     => [
+        readable_by  => 'all',
+        base_dir     => '/var/log',
+        group        => 'root',
+        log_filename => 'parsoid.log',
+        require      => [
             User['parsoid'],
             Group['parsoid'],
         ],
