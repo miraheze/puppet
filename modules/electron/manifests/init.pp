@@ -50,10 +50,6 @@ class electron (
         ],
     }
 
-    file { '/srv/electron':
-        ensure => directory,
-    }
-
     file { '/var/log/electron':
         ensure => directory,
         owner  => 'root',
