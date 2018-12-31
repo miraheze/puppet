@@ -1,10 +1,16 @@
-# == Class: electron
-
-class electron (
+# == Class: services::electron
+#
+# Configures a pdf service using electron.
+#
+# === Parameters
+#
+# [*access_key*] A key used to access the pdf.
+#
+class services::electron (
     String $access_key = 'secret',
 ) {
 
-    include nodejs
+    include ::services
 
     require_package(['xvfb', 'libgtk2.0-0', 'libnotify4', 'libgconf2-4', 'libxss1', 'libnss3', 'dbus-x11'])
 
@@ -50,36 +56,27 @@ class electron (
             Git::Clone['electron'],
             Package['nodejs']
         ],
+        notify      => Service['electron'],
     }
 
-    file { '/var/log/electron':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
+    systemd::syslog { 'electron':
+        readable_by => 'all',
+        base_dir    => '/var/log',
+        group       => 'root',
+        require     => [
+            User['electron'],
+            Group['electron'],
+        ],
     }
 
-    exec { 'electron reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/etc/systemd/system/electron.service':
+    systemd::service { 'electron':
         ensure  => present,
-        content => template('electron/electron.systemd.erb'),
-        notify  => Exec['electron reload systemd'],
+        content => systemd_template('electron'),
+        restart => true,
+        require => Git::Clone['electron'],
     }
 
-    service { 'electron':
-        ensure  => running,
-        require => File['/etc/systemd/system/electron.service'],
-    }
-
-    logrotate::conf { 'electron':
-        ensure => present,
-        source => 'puppet:///modules/electron/logrotate.conf',
-    }
-
-    monitoring::services { 'Electron':
+    monitoring::services { 'electron':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '3000',

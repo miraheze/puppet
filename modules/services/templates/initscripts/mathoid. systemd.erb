@@ -4,9 +4,6 @@ Documentation=https://www.mediawiki.org/wiki/Mathoid
 Wants=local-fs.target network.target
 After=local-fs.target network.target
 
-[Install]
-WantedBy=multi-user.target
-
 [Service]
 User=mathoid
 Group=mathoid
@@ -16,3 +13,6 @@ ExecStart=/usr/bin/node /srv/mathoid/server.js -c /etc/mediawiki/mathoid/config.
 KillMode=process
 Restart=always
 PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

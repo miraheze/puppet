@@ -1,0 +1,23 @@
+[Unit]
+Description=Mediawiki Parsoid web service on node.js
+Documentation=https://www.mediawiki.org/wiki/Parsoid
+Wants=local-fs.target network.target
+After=local-fs.target network.target
+
+[Service]
+Type=simple
+User=parsoid
+Group=parsoid
+WorkingDirectory=/srv/parsoid
+Environment="PORT=8142"
+Environment="NODE_PATH=/srv/parsoid/node_modules"
+ExecStart=/usr/bin/nodejs /srv/parsoid/bin/server.js -c /etc/mediawiki/parsoid/config.yaml
+KillMode=process
+Restart=on-success
+PrivateTmp=true
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=parsoid
+
+[Install]
+WantedBy=multi-user.target

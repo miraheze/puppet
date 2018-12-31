@@ -1,9 +1,10 @@
-# == Class: restbase
+# == Class: services::restbase
 
-class restbase {
-    include nginx
+class service::restbase {
 
-    include nodejs
+    include ::services
+
+    require_package('libsqlite3-dev')
 
     group { 'restbase':
         ensure => present,
@@ -34,98 +35,74 @@ class restbase {
     }
 
     exec { 'restbase_npm':
-        command     => 'sudo -u restbase npm install',
+        command     => 'sudo -u root npm install',
         creates     => '/srv/restbase/node_modules',
         cwd         => '/srv/restbase',
         path        => '/usr/bin',
         environment => 'HOME=/srv/restbase',
-        user        => 'restbase',
+        user        => 'root',
         require     => [
             Git::Clone['restbase'],
             Package['nodejs']
         ],
     }
 
+    include ::nginx
+
     include ssl::wildcard
 
     nginx::site { 'restbase':
         ensure  => present,
-        source  => 'puppet:///modules/restbase/nginx/restbase',
+        source  => 'puppet:///modules/services/nginx/restbase',
         monitor => false,
     }
 
-    require_package('libsqlite3-dev')
-
-    if ! defined(File['/etc/mediawiki']) {
-        file { '/etc/mediawiki':
-            ensure => directory,
-        }
-    }
-
-    if ! defined(File['/etc/mediawiki/restbase']) {
-        file { '/etc/mediawiki/restbase':
-            ensure => directory,
-        }
+    file { '/etc/mediawiki/restbase':
+        ensure  => directory,
+        require => File['/etc/mediawiki'],
     }
 
     $wikis = loadyaml('/etc/puppet/services/services.yaml')
 
     file { '/etc/mediawiki/restbase/config.yaml':
         ensure  => present,
-        content => template('restbase/config.yaml.erb'),
+        content => template('services/restbase/config.yaml.erb'),
         require => File['/etc/mediawiki/restbase'],
         notify  => Service['restbase'],
     }
 
     file { '/etc/mediawiki/restbase/miraheze_project.yaml':
         ensure  => present,
-        source  => 'puppet:///modules/restbase/miraheze_project.yaml',
+        source  => 'puppet:///modules/services/restbase/miraheze_project.yaml',
         require => File['/etc/mediawiki/restbase'],
         notify  => Service['restbase'],
     }
 
     file { '/etc/mediawiki/restbase/mathoid.yaml':
         ensure  => present,
-        source  => 'puppet:///modules/restbase/mathoid.yaml',
+        source  => 'puppet:///modules/services/restbase/mathoid.yaml',
         require => File['/etc/mediawiki/restbase'],
         notify  => Service['restbase'],
     }
 
-    file { '/var/log/restbase':
-        ensure  => directory,
-        owner   => 'restbase',
-        group   => 'restbase',
-        require => [User['restbase'], Group['restbase']],
-    }
-
-    exec { 'restbase reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/etc/systemd/system/restbase.service':
-        ensure => present,
-        source => 'puppet:///modules/restbase/restbase.systemd',
-        notify => Exec['restbase reload systemd'],
-    }
-
-    service { 'restbase':
-        ensure     => running,
-        hasstatus  => false,
-        hasrestart => true,
-        require    => [
-            File['/etc/systemd/system/restbase.service'],
-            Git::Clone['restbase'],
+    systemd::syslog { 'restbase':
+        readable_by => 'all',
+        base_dir    => '/var/log',
+        group       => 'root',
+        require     => [
+            User['restbase'],
+            Group['restbase'],
         ],
-        subscribe  => File['/etc/systemd/system/restbase.service'],
     }
 
-    logrotate::conf { 'restbase':
-        ensure => present,
-        source => 'puppet:///modules/restbase/logrotate.conf',
+    systemd::service { 'restbase':
+        ensure  => present,
+        content => systemd_template('restbase'),
+        restart => true,
+        require => Git::Clone['restbase'],
     }
 
-    monitoring::services { 'Restbase':
+    monitoring::services { 'restbase':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '7231',

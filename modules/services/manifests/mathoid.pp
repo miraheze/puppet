@@ -1,9 +1,10 @@
-# == Class: mathoid
+# == Class: services::mathoid
 
-class mathoid {
-    include nginx
+class services::mathoid {
 
-    include nodejs
+    include ::services
+
+    require_package(['librsvg2-dev', 'g++'])
 
     group { 'mathoid':
         ensure => present,
@@ -28,18 +29,34 @@ class mathoid {
         mode               => '0755',
         timeout            => '550',
         recurse_submodules => true,
-        require            => [User['mathoid'], Group['mathoid']],
+        require            => [
+            User['mathoid'],
+            Group['mathoid']
+        ],
     }
+
+    exec { 'mathoid_npm':
+        command     => 'sudo -u root npm install',
+        creates     => '/srv/mathoid/node_modules',
+        cwd         => '/srv/mathoid',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mathoid',
+        user        => 'root',
+        require     => [
+            Git::Clone['mathoid'],
+            Package['nodejs']
+        ],
+    }
+
+    include nginx
 
     include ssl::wildcard
 
     nginx::site { 'mathoid':
         ensure  => present,
-        source  => 'puppet:///modules/mathoid/nginx/mathoid',
+        source  => 'puppet:///modules/services/nginx/mathoid',
         monitor => false,
     }
-
-    require_package(['librsvg2-dev', 'g++'])
 
     file { '/etc/mediawiki/mathoid':
         ensure  => directory,
@@ -53,38 +70,24 @@ class mathoid {
         notify  => Service['mathoid'],
     }
 
-    file { '/var/log/mathoid':
-        ensure  => directory,
-        owner   => 'mathoid',
-        group   => 'mathoid',
-        require => [User['mathoid'], Group['mathoid']],
-    }
-
-    exec { 'mathoid reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/etc/systemd/system/mathoid.service':
-        ensure => present,
-        source => 'puppet:///modules/mathoid/mathoid.systemd',
-        notify => Exec['mathoid reload systemd'],
-    }
-
-    service { 'mathoid':
-        ensure    => running,
-        require   => [
-            File['/etc/systemd/system/mathoid.service'],
-            Git::Clone['mathoid_deploy'],
+    systemd::syslog { 'mathoid':
+        readable_by => 'all',
+        base_dir    => '/var/log',
+        group       => 'root',
+        require     => [
+            User['mathoid'],
+            Group['mathoid'],
         ],
     }
 
-    logrotate::conf { 'mathoid':
-        ensure => present,
-        source => 'puppet:///modules/mathoid/logrotate.conf',
+    systemd::service { 'mathoid':
+        ensure  => present,
+        content => systemd_template('mathoid'),
+        restart => true,
+        require => Git::Clone['mathoid'],
     }
 
-    monitoring::services { 'Mathoid':
+    monitoring::services { 'mathoid':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '10044',
