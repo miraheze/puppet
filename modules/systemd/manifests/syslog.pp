@@ -36,10 +36,6 @@ define systemd::syslog(
     String $readable_by  = 'group',
     String $log_filename = 'syslog.log'
 ) {
-    if $::initsystem != 'systemd' {
-        fail('systemd::syslog is useful only with systemd')
-    }
-
     # File permissions
     $dirmode = '0755'
     $filemode = $readable_by ? {
