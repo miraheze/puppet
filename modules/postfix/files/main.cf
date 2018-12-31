@@ -38,3 +38,6 @@ local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination
 
 notify_classes = delay, policy, resource, software
+
+smtpd_sender_login_maps = pcre:/etc/postfix/login_maps.pcre
+smtpd_sender_restrictions = reject_unauthenticated_sender_login_mismatch

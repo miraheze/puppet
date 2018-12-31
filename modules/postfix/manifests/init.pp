@@ -1,6 +1,11 @@
 # class: postfix
 class postfix {
-    package { 'postfix':
+    $packages = [
+        'postfix',
+        'postfix-pcre',
+    ]
+
+    package { $packages:
         ensure => present,
     }
 
@@ -22,6 +27,12 @@ class postfix {
     file { '/etc/virtual':
         ensure => present,
         source => 'puppet:///modules/postfix/virtual',
+    }
+
+    file { '/etc/postfix/login_maps.pcre':
+        ensure   => present,
+        source   => 'puppet:///modules/postfix/login_maps.pcre',
+        requires => Package['postfix-pcre'],
     }
 
     exec { '/usr/bin/newaliases':
