@@ -39,7 +39,7 @@
 #
 define systemd::unit(
     String $content,
-    Wmflib::Ensure $ensure=present,
+    VMlib::Ensure $ensure=present,
     Boolean $restart=false,
     Boolean $override=false,
 ){
