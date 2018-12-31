@@ -1,8 +1,6 @@
 # class base::rsyslog
 class base::rsyslog {
-    service { 'rsyslog':
-        ensure => running,
-    }
+	include ::rsyslog
 
     file { '/etc/rsyslog.conf':
         ensure => present,
