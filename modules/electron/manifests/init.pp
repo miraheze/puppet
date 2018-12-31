@@ -21,7 +21,7 @@ class electron (
         system     => true,
     }
 
-    git::clone { 'electron_deploy':
+    git::clone { 'electron':
         ensure             => present,
         directory          => '/srv/electron',
         origin             => 'https://github.com/msokk/electron-render-service.git',
