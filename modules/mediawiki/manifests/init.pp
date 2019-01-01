@@ -81,6 +81,7 @@ class mediawiki(
         ensure  => 'directory',
         owner   => 'www-data',
         group   => 'www-data',
+        recurse => true,
         require => Git::Clone['MediaWiki core'],
     }
 
