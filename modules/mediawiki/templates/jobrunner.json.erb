@@ -12,7 +12,6 @@
             // Job types to exempt (useful when combined with "*")
             "exclude": [
                 "LocalGlobalUserPageCacheUpdateJob",
-                "LocalUserMergeJob",
                 "webVideoTranscode"
             ],
             "low-priority": [
@@ -24,12 +23,6 @@
             "runners": 1,
             "include": [
                 "LocalGlobalUserPageCacheUpdateJob"
-            ]
-        },
-        "usermerge": {
-            "runners": 1,
-            "include": [
-                "LocalUserMergeJob"
             ]
         }
     },
