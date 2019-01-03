@@ -29,7 +29,7 @@
             "low-priority": [
                 "LocalGlobalUserPageCacheUpdateJob"
             ]
-        }
+        },
         "parsoid": {
             "runners": 0,
             "include": [
@@ -48,6 +48,7 @@
             ]
         }
     },
+
     "limits": {
         // How many times to let jobs be recycled before abandoning
         "attempts": {
@@ -66,6 +67,7 @@
             "*": "200M"
         }
     },
+
     "redis": {
         // Ready queue trackers
         "aggregators": [
@@ -77,6 +79,7 @@
         ],
         "password": "<%= @redis_password %>"
     },
+
     // Address to send statsd metrics to
     "statsd": "",
 
