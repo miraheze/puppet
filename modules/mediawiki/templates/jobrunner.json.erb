@@ -11,12 +11,10 @@
             ],
             // Job types to exempt (useful when combined with "*")
             "exclude": [
-                "AssembleUploadChunks",
                 "LocalGlobalUserPageCacheUpdateJob",
+                "LocalUserMergeJob",
                 "ParsoidCacheUpdateJobOnDependencyChange",
                 "ParsoidCacheUpdateJobOnEdit",
-                "PublishStashedFile",
-                "uploadFromUrl",
                 "webVideoTranscode"
             ],
             "low-priority": [
@@ -26,7 +24,7 @@
         },
         "GUP": {
             "runners": 1,
-            "low-priority": [
+            "include": [
                 "LocalGlobalUserPageCacheUpdateJob"
             ]
         },
@@ -39,12 +37,10 @@
                 "ParsoidCacheUpdateJobOnDependencyChange"
             ]
         },
-        "upload": {
+        "usermerge": {
             "runners": 1,
             "include": [
-                "AssembleUploadChunks",
-                "PublishStashedFile",
-                "uploadFromUrl"
+                "LocalUserMergeJob"
             ]
         }
     },
