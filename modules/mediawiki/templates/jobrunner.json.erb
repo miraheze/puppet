@@ -4,7 +4,7 @@
     "groups": {
         "basic": {
             // Number of runner processes in this group
-            "runners": 1,
+            "runners": 2,
             // Job types to include ("*" means "all")
             "include": [
                 "*"
@@ -25,13 +25,13 @@
             ]
         },
         "GUP": {
-            "runners": 0,
+            "runners": 1,
             "low-priority": [
                 "LocalGlobalUserPageCacheUpdateJob"
             ]
         },
         "parsoid": {
-            "runners": 0,
+            "runners": 1,
             "include": [
                 "ParsoidCacheUpdateJobOnEdit"
             ],
@@ -40,7 +40,7 @@
             ]
         },
         "upload": {
-            "runners": 0,
+            "runners": 1,
             "include": [
                 "AssembleUploadChunks",
                 "PublishStashedFile",
