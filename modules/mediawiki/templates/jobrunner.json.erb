@@ -13,8 +13,6 @@
             "exclude": [
                 "LocalGlobalUserPageCacheUpdateJob",
                 "LocalUserMergeJob",
-                "ParsoidCacheUpdateJobOnDependencyChange",
-                "ParsoidCacheUpdateJobOnEdit",
                 "webVideoTranscode"
             ],
             "low-priority": [
@@ -26,15 +24,6 @@
             "runners": 1,
             "include": [
                 "LocalGlobalUserPageCacheUpdateJob"
-            ]
-        },
-        "parsoid": {
-            "runners": 1,
-            "include": [
-                "ParsoidCacheUpdateJobOnEdit"
-            ],
-            "low-priority": [
-                "ParsoidCacheUpdateJobOnDependencyChange"
             ]
         },
         "usermerge": {
