@@ -2,7 +2,7 @@ define monitoring::wiki (
     $ensure       = present,
     $name         = undef,
     $contacts     = hiera('contactgroups', [ 'icingaadmins', 'ops' ]),
-    $protocol     = 'https'
+    $protocol     = 'https',
     $domain       = 'miraheze.org',
     $testpage     = 'Main_Page',
     $http_version = '1.1',
