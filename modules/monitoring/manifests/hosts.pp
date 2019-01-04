@@ -6,9 +6,9 @@ define monitoring::hosts (
    # If on a container instead of a physical machine or real VM,
     # use the custom fact to get the IP.
     if $facts['virtual'] == 'openvz' {
-        $ip = $facts['virtual_ip_address'],
+        $ip = $facts['virtual_ip_address']
     } else {
-        $ip = $facts['ipaddress'],
+        $ip = $facts['ipaddress']
     }
 
     @@icinga2::object::host { $title:
