@@ -75,18 +75,20 @@ class mediawiki::jobrunner {
         ensure  => present,
         command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php',
         user    => 'www-data',
-        minute  => '0',
-        hour    => '23',
-        weekday => ['3'],
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        weekday => [ '14', '28' ],
     }
 
     cron { 'generate sitemaps for all wikis':
         ensure  => present,
         command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php',
         user    => 'www-data',
-        minute  => '0',
-        hour    => '23',
-        weekday => ['6'],
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        weekday => [ '6' ],
     }
 
     file { '/usr/lib/nagios/plugins/check_jobqueue':
