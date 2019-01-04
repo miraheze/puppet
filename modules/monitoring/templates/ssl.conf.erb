@@ -16,25 +16,6 @@ apply Service "phab.miraheze.wiki" {
   assign where "sslchecks" in host.groups
 }
 
-object Service "meta.miraheze.org HTTPS" {
-  import "generic-service"
-
-  display_name = "meta.miraheze.org HTTPS"
-  check_command = "check_http"
-  check_interval = 2m
-  check_period = "24x7"
-  retry_interval = 1m
-  max_check_attempts = 3
-  enable_active_checks = true
-  enable_passive_checks = true
-  volatile = false
-  vars.address = "meta.miraheze.org"
-  vars.http_ssl = true
-  vars.http_uri = "/wiki/Miraheze"
-  vars.http_vhost = "meta.miraheze.org"
-  vars.http_expect = "HTTP/1.1 200"
-}
-
 <% @sslcerts.each_pair do | name, property | -%>
 apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   import "generic-service"
