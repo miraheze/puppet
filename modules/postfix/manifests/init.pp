@@ -35,7 +35,7 @@ class postfix {
         ensure   => present,
         source   => 'puppet:///modules/postfix/login_maps.pcre',
         notify   => Service['postfix'],
-        requires => Package['postfix-pcre'],
+        require  => Package['postfix-pcre'],
     }
 
     exec { '/usr/bin/newaliases':
