@@ -1,15 +1,15 @@
 define monitoring::wiki (
     $ensure       = present,
-    $name         = undef,
+    $wiki_name    = undef,
     $contacts     = hiera('contactgroups', [ 'icingaadmins', 'ops' ]),
     $protocol     = 'https',
     $domain       = 'miraheze.org',
     $testpage     = 'Main_Page',
     $http_version = '1.1',
 ) {
-
-    $wikifqdn = "${name}.${domain}"
-    $testuri  = "${protocol}://${name}.${domain}/wiki/${testpage}"
+    $wikis_name = $wiki_name != undef ? $wiki_name : $name
+    $wikifqdn = "${wikis_name}.${domain}"
+    $testuri  = "${protocol}://${wikis_name}.${domain}/wiki/${testpage}"
     $protocol_string = upcase($protocol)
 
     monitoring::services {"${wikifqdn} ${protocol_string}":
