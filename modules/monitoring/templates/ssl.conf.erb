@@ -16,13 +16,6 @@ apply Service "phab.miraheze.wiki" {
   assign where "sslchecks" in host.groups
 }
 
-apply Service "phab.miraheze.wiki" {
-  import "generic-service"
-  check_command = "check_ssl_expire"
-  vars.host = "phab.miraheze.wiki"
-  vars.time = "15"
-}
-
 object Service "meta.miraheze.org HTTPS" {
   import "generic-service"
 
