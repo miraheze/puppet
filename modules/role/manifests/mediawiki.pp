@@ -40,8 +40,6 @@ class role::mediawiki {
         }
     }
 
-    include ::profile::wiki_monitoring
-
     motd::role { 'role::mediawiki':
         description => 'MediaWiki server',
     }
