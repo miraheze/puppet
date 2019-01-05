@@ -10,10 +10,15 @@ mysql.host: 'db4.miraheze.org'
 storage.mysql-engine.max-size: 0
 
 # SMTP
-phpmailer.smtp-port: 587
-phpmailer.smtp-protocol: 'tls'
-phpmailer.smtp-user: 'noreply'
-phpmailer.smtp-host: 'mail.miraheze.org'
+cluster.mailers:
+  - key: miraheze-smtp
+    type: mailgun
+    options:
+      host: mail.miraheze.org
+      port: 587
+      user: noreply
+      protocol: tls
+
 metamta.default-address: 'noreply@miraheze.org'
 metamta.domain: 'miraheze.org'
 metamta.mail-adapter: 'PhabricatorMailImplementationPHPMailerAdapter'
