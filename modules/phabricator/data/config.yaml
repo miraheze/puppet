@@ -9,16 +9,6 @@ mysql.user: 'phabricator'
 mysql.host: 'db4.miraheze.org'
 storage.mysql-engine.max-size: 0
 
-# SMTP
-cluster.mailers:
-  - key: miraheze-smtp
-    type: mailgun
-    options:
-      host: mail.miraheze.org
-      port: 587
-      user: noreply
-      protocol: tls
-
 metamta.default-address: 'noreply@miraheze.org'
 metamta.domain: 'miraheze.org'
 metamta.mail-adapter: 'PhabricatorMailImplementationPHPMailerAdapter'
