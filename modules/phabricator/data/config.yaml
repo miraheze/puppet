@@ -10,8 +10,6 @@ mysql.host: 'db4.miraheze.org'
 storage.mysql-engine.max-size: 0
 
 metamta.default-address: 'noreply@miraheze.org'
-metamta.domain: 'miraheze.org'
-metamta.mail-adapter: 'PhabricatorMailImplementationPHPMailerAdapter'
 metamta.single-reply-handler-prefix: 'phabricator'
 
 # Auth
