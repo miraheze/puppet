@@ -106,11 +106,27 @@ class phabricator {
     $module_path = get_module_path($module_name)
     $phab_yaml = loadyaml("${module_path}/data/config.yaml")
     $phab_private = {
-        'mysql.pass'              => hiera('passwords::db::phabricator'),
-        'phpmailer.smtp-password' => hiera('passwords::mail::noreply'),
+        'mysql.pass'                       => hiera('passwords::db::phabricator'),
     }
 
-    $phab_settings = merge($phab_yaml, $phab_private)
+    $phab_setting = {
+        # smtp
+        'cluster.mailers'      => [
+            {
+                'key'          => 'miraheze-smtp',
+                'type'         => 'smtp',
+                'options'      => {
+                    'host'     => 'mail.miraheze.org',
+                    'port'     => 587,
+                    'user'     => 'noreply',
+                    'password' => hiera('passwords::mail::noreply'),
+                    'protocol' => 'tls',
+                },
+            },
+        ],
+    }
+
+    $phab_settings = merge($phab_yaml, $phab_private, $phab_setting)
 
     file { '/srv/phab/phabricator/conf/local/local.json':
         ensure  => present,
