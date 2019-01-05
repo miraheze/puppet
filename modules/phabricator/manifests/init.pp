@@ -114,7 +114,7 @@ class phabricator {
         'cluster.mailers'      => [
             {
                 'key'          => 'miraheze-smtp',
-                'type'         => 'mailgun',
+                'type'         => 'smtp',
                 'options'      => {
                     'host'     => 'mail.miraheze.org',
                     'port'     => 587,
