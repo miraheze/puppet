@@ -11,6 +11,7 @@ noc: operations
 
 # noreply death
 noreply: /dev/null
+void-recipient: /dev/null
 
 # root spam
 root: /dev/null
