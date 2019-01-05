@@ -108,7 +108,9 @@ class phabricator {
     $phab_private = {
         'mysql.pass'                       => hiera('passwords::db::phabricator'),
     }
+
     $phab_setting = {
+        # smtp
         'cluster.mailers'      => [
             {
                 'key'          => 'miraheze-smtp',
