@@ -26,7 +26,7 @@
 #
 class puppetdb(
     String $db_rw_host = hiera('puppetdb::db_rw_host', 'localhost'),
-    String $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx300m'),
+    String $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx250m'),
     String $db_user = hiera('puppetdb::db_user', 'puppetdb'),
     Boolean $perform_gc = hiera('puppetdb::perform_gc', true),
     Integer $command_processing_threads = hiera('puppetdb::command_processing_threads', 2),
