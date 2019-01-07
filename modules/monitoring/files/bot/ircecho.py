@@ -10,6 +10,7 @@
 # Modified by Ryan Anderson <ryan@michonline.com> to handle disconnections more
 # gracefully. Changes in the public domain.
 
+import argparse
 import logging
 import pyinotify
 import threading
@@ -20,7 +21,6 @@ import sys
 
 import ib3_auth
 import irc.client  # for exceptions.
-from optparse import OptionParser
 from irc.bot import SingleServerIRCBot
 
 logging.basicConfig()
@@ -69,12 +69,12 @@ class EchoReader():
                 temparr = filechan.split(':')
                 filename = self.unescape(temparr[0])
                 try:
-                    print(('Opening: ' + filename))
+                    print('Opening: ' + filename)
                     f = open(filename)
                     f.seek(0, 2)
                     self.files[filename] = f
                 except IOError:
-                    print(('Failed to open file: ' + filename))
+                    print('Failed to open file: ' + filename)
                     self.files[filename] = None
                     pass
                 wm = pyinotify.WatchManager()
@@ -134,8 +134,8 @@ class EchoReader():
 
 
 class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
-    def __init__(self, chans, nickname, nickname_pass_user, server, port=6667, ssl=False, ident_passwd=None):
-        print(('Connecting to IRC server %s...' % server))
+    def __init__(self, chans, nickname, nickname_pass, server, port=6667, ssl=False, ident_passwd=None):
+        print('Connecting to IRC server %s...' % server)
 
         self.chans = chans
         self.nickname = nickname
@@ -145,9 +145,9 @@ class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
             ssl_factory = irc.connection.Factory(wrapper=ssl.wrap_socket)
             kwargs['connect_factory'] = ssl_factory
 
-        SingleServerIRCBot.__init__(self, [(server, port)], nickname_pass_user, 'IRC echo bot', **kwargs)
+        SingleServerIRCBot.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', **kwargs)
         if ident_passwd is not None:
-            ib3_auth.SASL.__init__(self, [(server, port)], nickname_pass_user, 'IRC echo bot', ident_passwd,
+            ib3_auth.SASL.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', ident_passwd,
                                    **kwargs)
 
     def on_nicknameinuse(self, c, e):
@@ -192,39 +192,47 @@ class EventHandler(pyinotify.ProcessEvent):
 
     def process_IN_CREATE(self, event):
         try:
-            print(('Reopening file: ' + event.pathname))
+            print('Reopening file: ' + event.pathname)
             reader.files[event.pathname] = open(event.pathname)
         except IOError:
-            print(('Failed to reopen file: ' + event.pathname))
+            print('Failed to reopen file: ' + event.pathname)
             pass
 
 
-parser = OptionParser(conflict_handler='resolve')
-parser.set_usage('ircecho [--ident_passwd_file=<filename>] [--infile=<filename>] <channel>'
-                 ' <nickname> <nickname_pass_user> <server> [[+]port]')
-parser.add_option('--infile', dest='infile',
-                  help='Read input from the specific file instead of from stdin')
-parser.add_option('--ident_passwd_file', dest='ident_passwd_file',
-                  help='Optional SASL password')
-(options, args) = parser.parse_args()
-chans = args[0]
-nickname = args[1]
-nickname_pass_user = args[2]
-server = args[3]
+# construct the argument parse and parse the arguments
+ap = argparse.ArgumentParser(conflict_handler='resolve')
+ap.add_argument('--ident_passwd_file', required=False,
+                help='path to file that contains the irc password.')
+ap.add_argument('--infile', required=True,
+                help='maps location of irc log to the irc channel.')
+ap.add_argument('--channel', required=True,
+                help='a list of irc channels for the bot to join.')
+ap.add_argument('--nickname', required=True,
+                help='nickname of the irc bot.')
+ap.add_argument('--nickname-pass', required=True,
+                help='Password for nickname.')
+ap.add_argument('--server', required=True,
+                help='irc server to connect to, eg freenode and also including the port.')
+args = vars(ap.parse_args())
+
+chans = args['channel']
+nickname = args['nickname']
+nickname_pass = args['nickname-pass']
+server = args['server'].split(':')[0]
 try:
-    ssl = args[4].startswith('+')
-    port = int(args[4].strip('+'))
+    ssl = args['server'].split(':')[1].startswith('+')
+    port = int(args['server'].split(':')[1].strip('+'))
 except IndexError:
     ssl = False
     port = 6667
 global bot
-if options.ident_passwd_file:
-    with open(options.ident_passwd_file) as f:
-        bot = EchoBot(chans, nickname, nickname_pass_user, server, port, ssl, f.read().strip())
+if args['ident_passwd_file']:
+    with open(args['ident_passwd_file']) as f:
+        bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl, f.read().strip())
 else:
-    bot = EchoBot(chans, nickname, nickname_pass_user, server, port, ssl)
+    bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl)
 global reader
-reader = EchoReader(options.infile)
+reader = EchoReader(args['infile'])
 try:
     bot.start()
 except Exception:
