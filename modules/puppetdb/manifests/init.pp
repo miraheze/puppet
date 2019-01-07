@@ -202,4 +202,11 @@ class puppetdb(
         ensure => running,
         enable => true,
     }
+
+    monitoring::services { 'puppetdb':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port    => '8081',
+        },
+    }
 }
