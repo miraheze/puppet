@@ -209,4 +209,10 @@ class puppetdb(
             tcp_port    => '8081',
         },
     }
+
+    ufw::allow { 'misc1 check puppetdb port':
+        proto => 'tcp',
+        port  => 8081,
+        from  => '185.52.1.76',
+    }
 }
