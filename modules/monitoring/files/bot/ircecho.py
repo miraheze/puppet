@@ -217,7 +217,7 @@ args = vars(ap.parse_args())
 
 chans = args['channel']
 nickname = args['nickname']
-nickname_pass = args['nickname_pass']
+nickname_pass = args['nickname-pass']
 server = args['server'].split(':')[0]
 try:
     ssl = args['server'].split(':')[1].startswith('+')
