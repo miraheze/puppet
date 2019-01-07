@@ -42,19 +42,17 @@ class monitoring::ircecho (
         notify  => Service['ircecho'],
     }
 
-    exec { 'ircecho reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
+    systemd::syslog { 'ircecho':
+        readable_by  => 'all',
+        base_dir     => '/var/log',
+        owner        => 'root',
+        group        => 'root',
+        log_filename => 'ircecho.log',
     }
 
-    file { '/etc/systemd/system/ircecho.service':
-        ensure => present,
-        source => 'puppet:///modules/monitoring/bot/ircecho.systemd',
-        notify => Exec['ircecho reload systemd'],
-    }
-
-    service { 'ircecho':
-        ensure  => running,
-        require => File['/etc/systemd/system/ircecho.service'],
+    systemd::service { 'ircecho':
+        ensure  => present,
+        content => systemd_template('ircecho'),
+        restart => true,
     }
 }
