@@ -27,12 +27,6 @@ class role::services {
         from  => '185.52.1.76',
     }
 
-    ufw::allow { 'electron monitoring':
-        proto => 'tcp',
-        port  => 3000,
-        from  => '185.52.1.76',
-    }
-
     ufw::allow { 'parsoid mw1':
         proto => 'tcp',
         port  => 443,
