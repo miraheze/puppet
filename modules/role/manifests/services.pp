@@ -1,10 +1,31 @@
 # role: services
 class role::services {
-	include ::profile::electron
+    include ::profile::citoid
 
-	include ::profile::parsoid
+    include ::profile::electron
+
+    include ::profile::parsoid
 
     include ::profile::restbase
+
+
+    ufw::allow { 'citoid monitoring':
+        proto => 'tcp',
+        port  => 6927,
+        from  => '185.52.1.76',
+    }
+
+    ufw::allow { 'zotero monitoring':
+        proto => 'tcp',
+        port  => 1969,
+        from  => '185.52.1.76',
+    }
+
+    ufw::allow { 'electron monitoring':
+        proto => 'tcp',
+        port  => 3000,
+        from  => '185.52.1.76',
+    }
 
     ufw::allow { 'electron monitoring':
         proto => 'tcp',
@@ -48,6 +69,6 @@ class role::services {
     }
 
     motd::role { 'role::services':
-        description => 'Hosting MediaWiki services (electron, parsoid, restbase etc)',
+        description => 'Hosting MediaWiki services (citoid, electron, parsoid, restbase etc)',
     }
 }

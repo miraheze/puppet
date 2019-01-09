@@ -1,0 +1,16 @@
+[Unit]
+Description=Mediawiki Zoetero Service
+After=network.target
+
+[Service]
+User=zotero
+Group=zotero
+SyslogIdentifier=zotero
+WorkingDirectory=/srv/zotero
+ExecStart=/usr/bin/node /srv/zotero/src/server.js
+KillMode=process
+Restart=always
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

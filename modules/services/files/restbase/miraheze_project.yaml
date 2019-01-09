@@ -5,7 +5,7 @@ paths:
       - spec:
           info:
             version: 1.0.0
-            title: Wikimedia REST API
+            title: Miraheze REST API
             description: Welcome to your RESTBase API.
           x-host-basePath: /api/rest_v1
           x-route-filters:
@@ -25,6 +25,10 @@ paths:
             /transform:
               x-modules:
                 - path: v1/transform.yaml
+            /data:
+              x-modules:
+                - path: v1/citoid.js
+                  options: '{{options.citoid}}'
             # in case this is needed later, crossing out for now.
             # /media:
             #   x-modules:

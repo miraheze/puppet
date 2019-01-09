@@ -65,7 +65,7 @@ class services::mathoid {
 
     file { '/etc/mediawiki/mathoid/config.yaml':
         ensure  => present,
-        source  => 'puppet:///modules/mathoid/config.yaml',
+        source  => 'puppet:///modules/services/mathoid/config.yaml',
         require => File['/etc/mediawiki/mathoid'],
         notify  => Service['mathoid'],
     }
