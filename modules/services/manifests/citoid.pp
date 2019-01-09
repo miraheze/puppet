@@ -95,7 +95,6 @@ class services::citoid {
         group        => 'root',
         log_filename => 'zotero.log',
         owner        => 'citoid',
-        group        => 'citoid',
         require      => [
             User['citoid'],
             Group['citoid'],
