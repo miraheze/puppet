@@ -19,20 +19,20 @@ class irc::irclogbot {
     file { '/etc/irclogbot/adminlog.py':
         ensure => present,
         source => 'puppet:///modules/irc/logbot/adminlog.py',
-        notify => Service['adminbot'],
+        notify => Service['logbot'],
     }
 
     file { '/etc/irclogbot/adminlogbot.py':
         ensure => present,
         source => 'puppet:///modules/irc/logbot/adminlogbot.py',
         mode   => '0755',
-        notify => Service['adminbot'],
+        notify => Service['logbot'],
     }
 
     file { '/etc/irclogbot/config.py':
         ensure  => present,
         content => template('irc/logbot/config.py'),
-        notify  => Service['adminbot'],
+        notify  => Service['logbot'],
     }
 
     systemd::syslog { 'logbot':
