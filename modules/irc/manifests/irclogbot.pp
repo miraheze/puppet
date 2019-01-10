@@ -35,20 +35,18 @@ class irc::irclogbot {
         notify  => Service['adminbot'],
     }
 
-    exec { 'IRCLogbot reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
+    systemd::syslog { 'logbot':
+        readable_by  => 'all',
+        base_dir     => '/var/log',
+        group        => 'root',
+        owner        => 'irc',
+        log_filename => 'logbot.log',
     }
 
-    file { '/etc/systemd/system/adminbot.service':
-        ensure => present,
-        source => 'puppet:///modules/irc/logbot/adminbot.systemd',
-        notify => Exec['IRCLogbot reload systemd'],
-    }
-
-    service { 'adminbot':
-        ensure  => 'running',
-        require => File['/etc/systemd/system/adminbot.service'],
+    systemd::service { 'logbot':
+        ensure  => present,
+        content => systemd_template('logbot'),
+        restart => true,
     }
 
     monitoring::services { 'IRC Log Bot':

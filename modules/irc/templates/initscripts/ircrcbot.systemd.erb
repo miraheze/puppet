@@ -3,8 +3,9 @@ Description=Miraheze IRC RecentChanges feed
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/python3 /usr/local/bin/ircrcbot.py
 User=irc
+SyslogIdentifier=ircrcbot
+ExecStart=/usr/bin/python3 /usr/local/bin/ircrcbot.py
 Restart=on-failure
 
 [Install]

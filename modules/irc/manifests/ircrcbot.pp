@@ -18,20 +18,18 @@ class irc::ircrcbot(
         notify  => Service['ircrcbot'],
     }
 
-    exec { 'IRCRCbot reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
+    systemd::syslog { 'ircrcbot':
+        readable_by  => 'all',
+        base_dir     => '/var/log',
+        group        => 'root',
+        owner        => 'irc',
+        log_filename => 'ircrcbot.log',
     }
 
-    file { '/etc/systemd/system/ircrcbot.service':
-        ensure => present,
-        source => 'puppet:///modules/irc/ircrcbot/ircrcbot.systemd',
-        notify => Exec['IRCRCbot reload systemd'],
-    }
-
-    service { 'ircrcbot':
-        ensure  => 'running',
-        require => File['/etc/systemd/system/ircrcbot.service'],
+    systemd::service { 'ircrcbot':
+        ensure  => present,
+        content => systemd_template('ircrcbot'),
+        restart => true,
     }
 
     monitoring::services { 'IRC RC Bot':
