@@ -10,7 +10,7 @@ ExecStop=/usr/bin/redis-cli shutdown
 Restart=always
 User=redis
 Group=redis
-
+ReadWriteDirectories=-/srv/redis
 LimitNOFILE=65535
 
 [Install]
