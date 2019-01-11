@@ -1,11 +1,5 @@
 # MediaWiki extension setup
 class mediawiki::extensionsetup {
-    exec { 'Math texvccheck':
-        command => '/usr/bin/mkdir --directory=/srv/mediawiki/w/extensions/Math/texvccheck',
-        creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
-        require => [ Git::Clone['MediaWiki core'], Package['ocaml'] ],
-    }
-
     exec { 'wikibase_composer':
         command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
         creates     => '/srv/mediawiki/w/extensions/Wikibase/composer.phar',
