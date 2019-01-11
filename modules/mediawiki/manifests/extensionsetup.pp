@@ -1,7 +1,7 @@
 # MediaWiki extension setup
 class mediawiki::extensionsetup {
     exec { 'Math texvccheck':
-        command => '/usr/bin/make --directory=/srv/mediawiki/w/extensions/Math/texvccheck',
+        command => '/usr/bin/mkdir --directory=/srv/mediawiki/w/extensions/Math/texvccheck',
         creates => '/srv/mediawiki/w/extensions/Math/texvccheck/texvccheck',
         require => [ Git::Clone['MediaWiki core'], Package['ocaml'] ],
     }
