@@ -3,3 +3,4 @@ users::groups:
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 mediawiki::branch: 'REL1_32'
+php::php_version: 7.3
