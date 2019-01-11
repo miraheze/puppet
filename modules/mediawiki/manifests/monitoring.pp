@@ -9,10 +9,10 @@ class mediawiki::monitoring {
         },
     }
 
-    monitoring::services { 'php7.2-fpm':
+    monitoring::services { 'php-fpm':
         check_command => 'nrpe',
         vars          => {
-            nrpe_command => 'check_php_fpm_7_2',
+            nrpe_command => 'check_php_fpm',
         },
     }
 }
