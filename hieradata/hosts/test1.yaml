@@ -3,4 +3,3 @@ users::groups:
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 mediawiki::branch: 'REL1_32'
-use_new_php_module: true
