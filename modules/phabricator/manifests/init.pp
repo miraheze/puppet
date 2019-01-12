@@ -18,7 +18,7 @@ class phabricator {
             'register_argc_argv'  => 'Off',
             'request_order'       => 'GP',
             'track_errors'        => 'Off',
-            'upload_max_filesize' => '100M',
+            'upload_max_filesize' => '20M',
             'variables_order'     => 'GPCS',
         },
         'version' => hiera('php::php_version', '7.2'),
