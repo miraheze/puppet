@@ -32,6 +32,7 @@ class lizardfs::master(
     
     service { 'lizardfs-master':
         ensure => running,
+        enable => true,
     }
 
     $firewall = loadyaml("${module_path}/data/storage_firewall.yaml")
