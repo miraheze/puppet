@@ -56,6 +56,24 @@ class role::services {
         from  => '185.52.2.243',
     }
 
+    ufw::allow { 'cp2 433':
+        proto => 'tcp',
+        port  => 443,
+        from  => '107.191.126.23',
+    }
+
+    ufw::allow { 'cp4 433':
+        proto => 'tcp',
+        port  => 443,
+        from  => '81.4.109.133',
+    }
+
+    ufw::allow { 'cp5 433':
+        proto => 'tcp',
+        port  => 443,
+        from  => '172.104.111.8',
+    }
+
     ufw::allow { 'restbase monitoring':
         proto => 'tcp',
         port  => 7231,
