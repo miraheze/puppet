@@ -48,8 +48,9 @@ node 'misc2.miraheze.org' {
 
 node 'misc3.miraheze.org' {
     include base
+    include role::lizardfs
     include role::services
-    include role::salt::masters
+    #include role::salt::masters
     include role::salt::minions
 }
 
