@@ -12,6 +12,11 @@ class lizardfs::web {
          monitor => false,
     }
 
+    service { 'lizardfs-cgiserv':
+        ensure => running,
+        enable => true,
+    }
+
     monitoring::services { 'lizard.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
