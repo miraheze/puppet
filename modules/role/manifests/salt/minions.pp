@@ -7,7 +7,7 @@ class role::salt::minions(
 
     class { '::salt::minion':
         id            => $::fqdn,
-        master        => 'misc3.miraheze.org',
+        master        => 'misc4.miraheze.org',
         master_finger => $master_finger,
         master_key    => $salt_master_key,
     }
