@@ -50,7 +50,6 @@ node 'misc3.miraheze.org' {
     include base
     include role::lizardfs
     include role::services
-    #include role::salt::masters
     include role::salt::minions
 }
 
@@ -58,6 +57,7 @@ node 'misc4.miraheze.org' {
     include base
     include bacula::client
     include role::phabricator
+    include role::salt::masters
     include role::salt::minions
     include prometheus::php_fpm
 }
