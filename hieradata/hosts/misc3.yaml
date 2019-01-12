@@ -1,1 +1,4 @@
 role::salt::minions::salt_master_key: true
+lizardfs_master_server: '185.52.1.144'
+lizardfs_master: true
+lizardfs_web: true
