@@ -2,7 +2,7 @@
 
 class lizardfs::web {
 
-    require_package('lizardfs-cgiserv')
+    require_package('lizardfs-cgiserv', 'apache2-utils')
 
     include ssl::wildcard
 
