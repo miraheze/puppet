@@ -134,23 +134,19 @@ class phabricator {
         require => Git::Clone['phabricator'],
     }
 
-    exec { 'PHD reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
+    systemd::syslog { 'phd':
+        readable_by  => 'all',
+        base_dir     => '/var/log',
+        group        => 'root',
+        owner        => 'www-data',
+        log_filename => 'phd.log',
     }
 
-    file { '/etc/systemd/system/phd.service':
-        ensure => present,
-        source => 'puppet:///modules/phabricator/phd.systemd',
-        notify => Exec['PHD reload systemd'],
-    }
-
-    service { 'phd':
-        ensure  => 'running',
-        require => [
-            File['/etc/systemd/system/phd.service'],
-            File['/srv/phab/phabricator/conf/local/local.json']
-        ],
+    systemd::service { 'phd':
+        ensure  => present,
+        content => systemd_template('phd'),
+        restart => true,
+        require => File['/srv/phab/phabricator/conf/local/local.json'],
     }
 
     monitoring::services { 'phab.miraheze.wiki HTTPS':
