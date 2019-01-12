@@ -1,5 +1,8 @@
 # class: phabricator
 class phabricator {
+
+    require_package(['python-pygments', 'python3-pygments', 'subversion'])
+
     ensure_resource_duplicate('class', 'php::php_fpm', {
         'config'  => {
             'display_errors'            => 'Off',
@@ -23,8 +26,6 @@ class phabricator {
         },
         'version' => hiera('php::php_version', '7.2'),
     })
-
-    require_package(['python-pygments', 'python3-pygments', 'subversion'])
 
     $password = hiera('passwords::irc::mirahezebots')
 
@@ -106,7 +107,7 @@ class phabricator {
     $module_path = get_module_path($module_name)
     $phab_yaml = loadyaml("${module_path}/data/config.yaml")
     $phab_private = {
-        'mysql.pass'                       => hiera('passwords::db::phabricator'),
+        'mysql.pass' => hiera('passwords::db::phabricator'),
     }
 
     $phab_setting = {
@@ -134,23 +135,19 @@ class phabricator {
         require => Git::Clone['phabricator'],
     }
 
-    exec { 'PHD reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
+    systemd::syslog { 'phd':
+        readable_by  => 'all',
+        base_dir     => '/var/log',
+        group        => 'root',
+        owner        => 'www-data',
+        log_filename => 'phd.log',
     }
 
-    file { '/etc/systemd/system/phd.service':
-        ensure => present,
-        source => 'puppet:///modules/phabricator/phd.systemd',
-        notify => Exec['PHD reload systemd'],
-    }
-
-    service { 'phd':
-        ensure  => 'running',
-        require => [
-            File['/etc/systemd/system/phd.service'],
-            File['/srv/phab/phabricator/conf/local/local.json']
-        ],
+    systemd::service { 'phd':
+        ensure  => present,
+        content => systemd_template('phd'),
+        restart => true,
+        require => File['/srv/phab/phabricator/conf/local/local.json'],
     }
 
     monitoring::services { 'phab.miraheze.wiki HTTPS':
