@@ -1,5 +1,8 @@
 # class: phabricator
 class phabricator {
+
+    require_package(['python-pygments', 'python3-pygments', 'subversion'])
+
     ensure_resource_duplicate('class', 'php::php_fpm', {
         'config'  => {
             'display_errors'            => 'Off',
@@ -23,8 +26,6 @@ class phabricator {
         },
         'version' => hiera('php::php_version', '7.2'),
     })
-
-    require_package(['python-pygments', 'python3-pygments', 'subversion'])
 
     $password = hiera('passwords::irc::mirahezebots')
 
@@ -106,7 +107,7 @@ class phabricator {
     $module_path = get_module_path($module_name)
     $phab_yaml = loadyaml("${module_path}/data/config.yaml")
     $phab_private = {
-        'mysql.pass'                       => hiera('passwords::db::phabricator'),
+        'mysql.pass' => hiera('passwords::db::phabricator'),
     }
 
     $phab_setting = {
