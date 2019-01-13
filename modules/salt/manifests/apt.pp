@@ -4,11 +4,11 @@ class salt::apt {
     if !defined(Apt::Source['salt_apt']) {
         apt::key { 'salt_key':
           id     => '754A1A7AE731F165D5E6D4BD0E08A149DE57BFBE',
-          source => 'https://repo.saltstack.com/py3/debian/9/amd64/latest/SALTSTACK-GPG-KEY.pub',
+          source => 'https://repo.saltstack.com/py3/debian/9/amd64/2018.3/SALTSTACK-GPG-KEY.pub',
         }
 
         apt::source { 'salt_apt':
-          location => 'http://repo.saltstack.com/py3/debian/9/amd64/latest',
+          location => 'http://repo.saltstack.com/py3/debian/9/amd64/2018.3',
           release  => "${::lsbdistcodename}",
           repos    => 'main',
           notify   => Exec['apt_update_salt'],
