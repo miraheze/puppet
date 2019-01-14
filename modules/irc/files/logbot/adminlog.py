@@ -28,7 +28,7 @@ def log(config, message, project, author):
     if page.redirect:
         page = next(page.links())
 
-    text = page.edit()
+    text = page.text()
     lines = text.split('\n')
     position = 0
     # Um, check the date
