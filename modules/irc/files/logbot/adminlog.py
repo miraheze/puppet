@@ -16,7 +16,7 @@ def log(config, message, project, author):
     if config.wiki_category:
         import re
 
-    site = mwclient.Site(config.wiki_connection, path=config.wiki_path, version='1.32.0')
+    site = mwclient.Site(config.wiki_connection, path=config.wiki_path)
     site.login(config.wiki_user, config.wiki_pass, domain=config.wiki_domain)
     if config.enable_projects:
         project = project.capitalize()
