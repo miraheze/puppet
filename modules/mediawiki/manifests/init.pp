@@ -4,6 +4,11 @@ class mediawiki(
     Optional[String] $branch_mw_config = undef,
     Optional[Boolean] $use_memcached = undef,
 ) {
+    host { 'mediawiki-internal-db-master.miraheze.org':
+        ensure => present,
+        ip => '81.4.109.166'
+    }
+
     include mediawiki::favicons
     include mediawiki::cron
     if hiera('mwservices', false) {
