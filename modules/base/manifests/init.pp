@@ -33,7 +33,7 @@ class base {
     class { 'apt::backports':
         include => {
             'deb' => true,
-            'src' => false,
+            'src' => true,
         },
     }
 
