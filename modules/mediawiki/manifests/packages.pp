@@ -13,6 +13,7 @@ class mediawiki::packages {
         'libav-tools',
         'libvips-tools',
         'lilypond',
+        'php-luasandbox',
         'poppler-utils',
         'python-pip',
         'netpbm',
