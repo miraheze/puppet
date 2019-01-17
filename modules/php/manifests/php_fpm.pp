@@ -39,8 +39,9 @@ class php::php_fpm(
 
     $core_extensions =  [
         'apcu',
-        'curl',
         'bcmath',
+        'curl',
+        'dev',
         'gd',
         'gmp',
         'intl',
