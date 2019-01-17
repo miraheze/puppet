@@ -85,7 +85,7 @@ class php::php_fpm(
             priority => 10,
     }
 
-    require_package('php-luasandbox', 'php-mail', 'php-mailparse', 'php-pear')
+    require_package('php-mail', 'php-mailparse', 'php-pear')
 
     # XML
     php::extension{ [
