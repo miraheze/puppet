@@ -56,6 +56,12 @@ class php::php_fpm(
         }
     }
 
+    # make sure to rebuild against the selected php version
+    file { '/usr/lib/php/20180731/luasandbox.so':
+        ensure => present,
+        source => "puppet:///modules/php/luasandbox/${version}.luasandbox.so",
+    }
+
     # Extensions that require configuration.
     php::extension {
         'xml':
@@ -68,6 +74,8 @@ class php::php_fpm(
             };
         'imagick':
             package_name => 'php-imagick';
+        'luasandbox':
+            package_name => '',
         'mysqli':
             package_name => "php${version}-mysql";
         'dba':
@@ -85,7 +93,7 @@ class php::php_fpm(
             priority => 10,
     }
 
-    require_package("php${version}-dev", 'php-luasandbox', 'php-mail', 'php-mailparse', 'php-pear')
+    require_package("php${version}-dev", 'php-mail', 'php-mailparse', 'php-pear')
 
     # XML
     php::extension{ [
@@ -102,7 +110,7 @@ class php::php_fpm(
     $base_fpm_config = {
         'emergency_restart_interval'  => '60s',
         'emergency_restart_threshold' => $facts['virtual_processor_count'],
-        'error_log'                   => "/var/log/php${$version}-fpm.log",
+        'error_log'                   => "/var/log/php${version}-fpm.log",
         'process.priority'            => -19,
     }
 
