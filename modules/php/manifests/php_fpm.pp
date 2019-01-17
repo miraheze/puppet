@@ -75,7 +75,7 @@ class php::php_fpm(
         'imagick':
             package_name => 'php-imagick';
         'luasandbox':
-            package_name => '',
+            package_name => '';
         'mysqli':
             package_name => "php${version}-mysql";
         'dba':
