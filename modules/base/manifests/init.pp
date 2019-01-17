@@ -30,7 +30,12 @@ class base {
         mode   => '0555',
     }
     
-    class { 'apt::backports': }
+    class { 'apt::backports':
+        include => {
+            'deb' => true,
+            'src' => false,
+        },
+    }
 
     class { 'apt::security': }
 
