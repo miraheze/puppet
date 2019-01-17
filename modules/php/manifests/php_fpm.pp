@@ -56,10 +56,17 @@ class php::php_fpm(
         }
     }
 
-    # make sure to rebuild against the selected php version
-    file { '/usr/lib/php/20180731/luasandbox.so':
-        ensure => present,
-        source => "puppet:///modules/php/luasandbox/${version}.luasandbox.so",
+    if $version == '7.3' {
+        # make sure to rebuild against the selected php version
+        file { '/usr/lib/php/20180731/luasandbox.so':
+            ensure => present,
+            source => "puppet:///modules/php/luasandbox/${version}.luasandbox.so",
+        }
+
+        php::extension {
+            'luasandbox':
+                package_name => '';
+        }
     }
 
     # Extensions that require configuration.
@@ -74,8 +81,6 @@ class php::php_fpm(
             };
         'imagick':
             package_name => 'php-imagick';
-        'luasandbox':
-            package_name => '';
         'mysqli':
             package_name => "php${version}-mysql";
         'dba':
