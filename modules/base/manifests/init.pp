@@ -1,6 +1,11 @@
 # class: base
 class base {
-    include apt
+    class { 'apt':
+        include_defaults => {
+            'deb' => true,
+            'src' => true,
+        },
+    }
     include base::packages
     include base::puppet
     include base::rsyslog
