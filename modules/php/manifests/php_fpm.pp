@@ -41,7 +41,6 @@ class php::php_fpm(
         'apcu',
         'bcmath',
         'curl',
-        'dev',
         'gd',
         'gmp',
         'intl',
@@ -86,7 +85,7 @@ class php::php_fpm(
             priority => 10,
     }
 
-    require_package('php-luasandbox', 'php-mail', 'php-mailparse', 'php-pear')
+    require_package("php${version}-dev", 'php-luasandbox', 'php-mail', 'php-mailparse', 'php-pear')
 
     # XML
     php::extension{ [
