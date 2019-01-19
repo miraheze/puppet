@@ -7,6 +7,7 @@ class base::packages {
         'debian-goodies',
         'git',
         'htop',
+        'iftop',
         'logrotate',
         'mtr',
         'nano',
@@ -17,6 +18,7 @@ class base::packages {
         'strace',
         'tcpdump',
         'vim',
+        'vnstat',
         'wipe',
     ]
 
