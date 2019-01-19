@@ -24,7 +24,10 @@ class php::php_fpm(
 ) {
 
     $base_config = {
-        'error_log' => '/var/log/php/php.log',
+        'error_log'              => '/var/log/php/php.log',
+        'mysqli'                 => {
+            'allow_local_infile' => 0,
+        },
     }
 
     # Install the runtime
