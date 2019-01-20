@@ -64,20 +64,6 @@ scrape_configs:
         '<%= host %>:9253',
 <%- end -%>
       ]
-  - job_name: 'blackbox'
-    metrics_path: /probe
-    params:
-      module: [https_mediawiki]
-    static_configs:
-      - targets:
-        - https://meta.miraheze.org/wiki/Main_Page
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
-        replacement: misc2.miraheze.org:9115
   - job_name: mariadb
     static_configs:
       - targets: [
@@ -88,3 +74,17 @@ scrape_configs:
 <%- end -%>
 <%- end -%>
       ]
+#  - job_name: 'blackbox'
+#    metrics_path: /probe
+#    params:
+#      module: [https_mediawiki]
+#    static_configs:
+#      - targets:
+#        - https://meta.miraheze.org/wiki/Main_Page
+#    relabel_configs:
+#      - source_labels: [__address__]
+#        target_label: __param_target
+#      - source_labels: [__param_target]
+#        target_label: instance
+#      - target_label: __address__
+#        replacement: misc2.miraheze.org:9115
