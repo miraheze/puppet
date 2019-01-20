@@ -40,7 +40,6 @@ node 'misc2.miraheze.org' {
     include base
     include role::redis
     include role::matomo
-    include role::prometheus
     include role::salt::minions
     include prometheus::php_fpm
 }
@@ -56,6 +55,7 @@ node 'misc4.miraheze.org' {
     include base
     include bacula::client
     include role::phabricator
+    include role::prometheus
     include role::salt::masters
     include role::salt::minions
     include prometheus::php_fpm
