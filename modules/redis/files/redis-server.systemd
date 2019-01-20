@@ -15,10 +15,7 @@ Group=redis
 RuntimeDirectory=redis
 RuntimeDirectoryMode=2755
 
-UMask=007
-PrivateTmp=yes
 LimitNOFILE=65535
-ReadOnlyDirectories=/
 ReadWriteDirectories=-/srv/redis
 ReadWriteDirectories=-/var/log/redis
 ReadWriteDirectories=-/var/run/redis
