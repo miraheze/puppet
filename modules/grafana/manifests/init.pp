@@ -8,7 +8,7 @@ class grafana (
 
     apt::source { 'grafana_apt':
         comment  => 'Grafana stable',
-        location => 'deb https://packages.grafana.com/oss/deb stable main',
+        location => 'https://packages.grafana.com/oss/deb',
         repos    => 'stable main',
         key      => 'F51A91A5EE001AA5D77D53C4C6E319C334410682',
     }
