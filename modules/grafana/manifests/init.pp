@@ -8,9 +8,8 @@ class grafana (
 
     apt::source { 'grafana_apt':
         comment  => 'Grafana stable',
-        location => 'https://packagecloud.io/grafana/stable/debian/',
-        release  => "${::lsbdistcodename}",
-        repos    => 'main',
+        location => 'deb https://packages.grafana.com/oss/deb stable main',
+        repos    => 'stable main',
         key      => 'F51A91A5EE001AA5D77D53C4C6E319C334410682',
     }
 
