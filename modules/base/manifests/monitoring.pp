@@ -27,13 +27,13 @@ class base::monitoring {
     ufw::allow { 'prometheus access all hosts':
         proto => 'tcp',
         port  => 9100,
-        from  => '81.4.127.174',
+        from  => '185.52.3.121',
     }
 
     ufw::allow { 'prometheus access php-fpm for all hosts':
         proto => 'tcp',
         port  => 9253,
-        from  => '81.4.127.174',
+        from  => '185.52.3.121',
     }
 
     if os_version('debian == stretch') {
