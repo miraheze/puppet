@@ -14,6 +14,11 @@ echo "# Throttle YandexBot" . "\r\n";
 echo "User-Agent: YandexBot" . "\r\n";
 echo "Crawl-Delay: 2.5" . "\r\n\n";
 
+# Block SemrushBot
+echo "# Block SemrushBot" . "\r\n";
+echo "User-Agent: SemrushBot" . "\r\n";
+echo "Disallow: /" . "\r\n\n";
+
 # Dynamic sitemap url
 echo "# Dynamic sitemap url" . "\r\n";
 echo "Sitemap: https://static.miraheze.org/sitemaps/$_SERVER[HTTP_HOST]/sitemap.xml" . "\r\n\n";
