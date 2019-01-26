@@ -52,6 +52,8 @@ Puppet::Functions.create_function(:ordered_yaml) do
     end
   end
 
+  def extra_method()
+  end
   def dedent_string(string)
     lines = string.split("\n")
     return string if lines.empty?
