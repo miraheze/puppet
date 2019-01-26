@@ -15,7 +15,7 @@ require 'yaml'
 
 Puppet::Functions.create_function(:ordered_yaml) do
 
-  dispatch :up do
+  dispatch :ordered_yaml do
     param 'Any', :first
   end
 
