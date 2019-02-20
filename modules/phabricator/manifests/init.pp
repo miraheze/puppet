@@ -25,7 +25,7 @@ class phabricator {
             'variables_order'     => 'GPCS',
         },
         'fpm_max_child' => 4,
-        'version' => hiera('php::php_version', '7.2'),
+        'version' => hiera('php::php_version', '7.3'),
     })
 
     $password = hiera('passwords::irc::mirahezebots')
