@@ -1,6 +1,6 @@
 server {
         listen 443 ssl;
-        server_name ~.;
+        server_name parsoid-lb.miraheze.org;
 
 	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org.key;
