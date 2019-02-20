@@ -1,2 +1,5 @@
 lizardfs_master: true
 lizardfs_web: true
+enable_citoid: false
+enable_electron: false
+enable_restbase: false
