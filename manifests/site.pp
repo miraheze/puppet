@@ -56,7 +56,7 @@ node 'misc4.miraheze.org' {
     include bacula::client
     include role::phabricator
     include role::prometheus
-    include role::salt::masters
+    #include role::salt::masters
     include role::salt::minions
     include prometheus::php_fpm
 }
