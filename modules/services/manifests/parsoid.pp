@@ -21,7 +21,7 @@ class services::parsoid {
         ensure    => present,
         directory => '/srv/parsoid',
         origin    => 'https://github.com/wikimedia/parsoid.git',
-        branch    => 'master',
+        branch    => 'v0.10.0',
         owner     => 'root',
         group     => 'root',
         mode      => '0755',
