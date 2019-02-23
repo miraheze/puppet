@@ -10,38 +10,9 @@
 #   php_ini({'server' => {'port' => 80}}) # => server.port = 80
 #
 
-# supports puppet 4
-def ini_flatten(map, prefix = nil)
-  map.reduce({}) do |flat, (k, v)|
-    k = [prefix, k].compact.join('.')
-    flat.merge! v.is_a?(Hash) ? ini_flatten(v, k) : Hash[k, v]
-  end
-end
+Puppet::Functions.create_function(:php_ini) do
 
-# supports puppet 4
-def ini_cast(v)
-    v.include?('.') ? Float(v) : Integer(v)
-  rescue
-    v
-end
-
-module Puppet::Parser::Functions
-  newfunction(:php_ini, :type => :rvalue, :arity => -2) do |args|
-    # supports puppet 6
-    def ini_flatten(map, prefix = nil)
-      map.reduce({}) do |flat, (k, v)|
-        k = [prefix, k].compact.join('.')
-        flat.merge! v.is_a?(Hash) ? ini_flatten(v, k) : Hash[k, v]
-      end
-    end
-
-    # supports puppet 6
-    def ini_cast(v)
-        v.include?('.') ? Float(v) : Integer(v)
-      rescue
-        v
-    end
-
+  def php_ini(*args)
     if args.map(&:class).uniq != [Hash]
       fail(ArgumentError, 'php_ini(): hash arguments required')
     end
@@ -53,5 +24,18 @@ module Puppet::Parser::Functions
       end
     end
     options.flatten.sort.push('').join("\n")
+  end
+
+  def ini_flatten(map, prefix = nil)
+    map.reduce({}) do |flat, (k, v)|
+      k = [prefix, k].compact.join('.')
+      flat.merge! v.is_a?(Hash) ? ini_flatten(v, k) : Hash[k, v]
+    end
+  end
+
+  def ini_cast(v)
+      v.include?('.') ? Float(v) : Integer(v)
+    rescue
+      v
   end
 end
