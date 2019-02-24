@@ -24,11 +24,7 @@ class mediawiki::nginx {
     include ssl::wildcard
     include ssl::hiera
 
-    if hiera('use_new_php_module', true) {
-        $php_fpm_sock = 'php/fpm-www.sock'
-    } else {
-        $php_fpm_sock = 'php/php7.2-fpm.sock'
-    }
+    $php_fpm_sock = 'php/fpm-www.sock'
 
     nginx::conf { 'mediawiki-includes':
         ensure => present,
