@@ -32,11 +32,15 @@ class monitoring (
     include ::icinga2::feature::perfdata
 
     class{ '::icinga2::feature::idomysql':
-        host          => $db_host,
-        user          => $db_user,
-        password      => $db_password,
-        database      => $db_name,
-        import_schema => true,
+        host            => $db_host,
+        user            => $db_user,
+        password        => $db_password,
+        database        => $db_name,
+        import_schema   => false,
+        enable_ssl      => true,
+        ssl_key_path    => '/etc/ssl/private/wildcard.miraheze.org-no-key.key',
+        ssl_cert_path   => '/etc/ssl/certs/wildcard.miraheze.org.crt',
+        ssl_cacert_path => '/etc/ssl/certs/GlobalSign.crt',
     }
 
     file { '/etc/icinga2/conf.d/commands.conf':
