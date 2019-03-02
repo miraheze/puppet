@@ -19,24 +19,17 @@ class icinga2::repo {
   assert_private()
 
   if $::icinga2::manage_repo and $::icinga2::manage_package {
+    $repo =  lookup('icinga2::repo', Hash, 'deep', {})
+
     # handle icinga stable repo before all package resources
     # contain class problem!
     Apt::Source['icinga-stable-release'] -> Package <| tag == 'icinga2' |>
     Class['Apt::Update'] -> Package<|tag == 'icinga2'|>
 
-    include ::apt, ::apt::backports
+    include ::apt
     apt::source { 'icinga-stable-release':
-      location => 'http://packages.icinga.com/debian',
-      release  => "icinga-${::lsbdistcodename}",
-      repos    => 'main',
-      key      => {
-        id     => 'F51A91A5EE001AA5D77D53C4C6E319C334410682',
-        source => 'http://packages.icinga.com/icinga.key',
-      },
-      require  => Class['::apt::backports'],
+      * => $repo,
     }
-
-    contain ::apt::update
   } # if $::icinga::manage_repo
 
 }

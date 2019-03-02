@@ -8,7 +8,7 @@
 #   Set to present enables the feature ido-pgsql, absent disables it. Defaults to present.
 #
 # [*host*]
-#    PostgreSQL database host address. Defaults to '127.0.0.1'.
+#    PostgreSQL database host address. Defaults to 'localhost'.
 #
 # [*port*]
 #    PostgreSQL database port. Defaults to '5432'.
@@ -72,20 +72,20 @@
 #
 #
 class icinga2::feature::idopgsql(
-  String                              $password,
-  Enum['absent', 'present']           $ensure               = present,
-  String                              $host                 = '127.0.0.1',
-  Integer[1,65535]                    $port                 = 5432,
-  String                              $user                 = 'icinga',
-  String                              $database             = 'icinga',
-  Optional[String]                    $table_prefix         = undef,
-  Optional[String]                    $instance_name        = undef,
-  Optional[String]                    $instance_description = undef,
-  Optional[Boolean]                   $enable_ha            = undef,
-  Optional[Pattern[/^\d+[ms]*$/]]     $failover_timeout     = undef,
-  Optional[Hash]                      $cleanup              = undef,
-  Optional[Array]                     $categories           = undef,
-  Boolean                             $import_schema        = false,
+  String                         $password,
+  Enum['absent', 'present']      $ensure               = present,
+  Stdlib::Host                   $host                 = 'localhost',
+  Stdlib::Port::Unprivileged     $port                 = 5432,
+  String                         $user                 = 'icinga',
+  String                         $database             = 'icinga',
+  Optional[String]               $table_prefix         = undef,
+  Optional[String]               $instance_name        = undef,
+  Optional[String]               $instance_description = undef,
+  Optional[Boolean]              $enable_ha            = undef,
+  Optional[Icinga2::Interval]    $failover_timeout     = undef,
+  Optional[Hash]                 $cleanup              = undef,
+  Optional[Array]                $categories           = undef,
+  Boolean                        $import_schema        = false,
 ) {
 
   if ! defined(Class['::icinga2']) {
@@ -118,13 +118,15 @@ class icinga2::feature::idopgsql(
 
   # install additional package
   if $ido_pgsql_package_name and $manage_package {
-    ensure_resources('file', { '/etc/dbconfig-common' => { ensure => directory } })
-    file { "/etc/dbconfig-common/${ido_pgsql_package_name}.conf":
-      ensure  => file,
-      content => "dbc_install='false'\ndbc_upgrade='false'\ndbc_remove='false'\n",
-      mode    => '0600',
-      before  => Package[$ido_pgsql_package_name],
-    }
+    if $::osfamily == 'debian' {
+      ensure_resources('file', { '/etc/dbconfig-common' => { ensure => directory } })
+      file { "/etc/dbconfig-common/${ido_pgsql_package_name}.conf":
+        ensure  => file,
+        content => "dbc_install='false'\ndbc_upgrade='false'\ndbc_remove='false'\n",
+        mode    => '0600',
+        before  => Package[$ido_pgsql_package_name],
+      }
+    } # Debian
 
     package { $ido_pgsql_package_name:
       ensure => installed,

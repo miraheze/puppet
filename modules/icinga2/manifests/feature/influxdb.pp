@@ -26,39 +26,29 @@
 #    Either enable or disable SSL. Other SSL parameters are only affected if this is set to 'true'.
 #    Icinga defaults to 'false'.
 #
-# [*pki*]
-#   Provides multiple sources for the certificate, key and ca. Valid parameters are 'puppet' or 'none'.
-#   'puppet' copies the key, cert and CAcert from the Puppet ssl directory to the cert directory
-#   /var/lib/icinga2/certs on Linux and C:/ProgramData/icinga2/var/lib/icinga2/certs on Windows.
-#   'none' does nothing and you either have to manage the files yourself as file resources
-#   or use the ssl_key, ssl_cert, ssl_cacert parameters. Defaults to puppet.
-#
 # [*ssl_key_path*]
-#   Location of the private key. Default depends on platform:
-#   /var/lib/icinga2/certs/InfluxdbWriter_influxdb.key on Linux
-#   C:/ProgramData/icinga2/var/lib/icinga2/certs/InfluxdbWriter_influxdb.key on Windows
+#   Location of the private key.
 #
 # [*ssl_cert_path*]
-#   Location of the certificate. Default depends on platform:
-#   /var/lib/icinga2/certs/InfluxdbWriter_influxdb.crt on Linux
-#   C:/ProgramData/icinga2/var/lib/icinga2/certs/InfluxdbWriter_influxdb.crt on Windows
+#   Location of the certificate.
 #
 # [*ssl_cacert_path*]
-#   Location of the CA certificate. Default is:
-#   /var/lib/icinga2/certs/InfluxdbWriter_influxdb_ca.crt on Linux
-#   C:/ProgramData/icinga2/var/lib/icinga2/certs/InfluxdbWriter_influxdb_ca.crt on Windows
+#   Location of the CA certificate.
 #
 # [*ssl_key*]
-#   The private key in a base64 encoded string to store in cert directory, file is stored to
-#   path spicified in ssl_key_path. This parameter requires pki to be set to 'none'.
+#   The private key in a base64 encoded string to store in ssl_key_path file.
+#   Default depends on platform:
+#     /var/lib/icinga2/certs/InfluxdbWriter_influxdb.key on Linux
 #
 # [*ssl_cert*]
-#   The certificate in a base64 encoded string to store in cert directory, file is  stored to
-#   path spicified in ssl_cert_path. This parameter requires pki to be set to 'none'.
+#   The certificate in a base64 encoded string to store in ssl_cert_path file.
+#   Default depends on platform:
+#     /var/lib/icinga2/certs/InfluxdbWriter_influxdb.crt on Linux
 #
 # [*ssl_cacert*]
-#   The CA root certificate in a base64 encoded string to store in cert directory, file is stored
-#   to path spicified in ssl_cacert_path. This parameter requires pki to be set to 'none'.
+#   The CA root certificate in a base64 encoded to store in ssl_cacert_path file.
+#   Default depends on platform:
+#     /var/lib/icinga2/certs/InfluxdbWriter_influxdb_ca.crt on Linux
 #
 # [*host_measurement*]
 #    The value of this is used for the measurement setting in host_template. Icinga defaults to '$host.check_command$'.
@@ -95,28 +85,27 @@
 #
 #
 class icinga2::feature::influxdb(
-  Enum['absent', 'present']          $ensure                 = present,
-  Optional[String]                   $host                   = undef,
-  Optional[Integer[1,65535]]         $port                   = undef,
-  Optional[String]                   $database               = undef,
-  Optional[String]                   $username               = undef,
-  Optional[String]                   $password               = undef,
-  Optional[Boolean]                  $enable_ssl             = undef,
-  Enum['none', 'puppet']             $pki                    = 'puppet',
-  Optional[Stdlib::Absolutepath]     $ssl_key_path           = undef,
-  Optional[Stdlib::Absolutepath]     $ssl_cert_path          = undef,
-  Optional[Stdlib::Absolutepath]     $ssl_cacert_path        = undef,
-  Optional[String]                   $ssl_key                = undef,
-  Optional[String]                   $ssl_cert               = undef,
-  Optional[String]                   $ssl_cacert             = undef,
-  Optional[String]                   $host_measurement       = undef,
-  Optional[Hash]                     $host_tags              = undef,
-  Optional[String]                   $service_measurement    = undef,
-  Optional[Hash]                     $service_tags           = undef,
-  Optional[Boolean]                  $enable_send_thresholds = undef,
-  Optional[Boolean]                  $enable_send_metadata   = undef,
-  Optional[Pattern[/^\d+[ms]*$/]]    $flush_interval         = undef,
-  Optional[Integer[1]]               $flush_threshold        = undef,
+  Enum['absent', 'present']                $ensure                 = present,
+  Optional[Stdlib::Host]                   $host                   = undef,
+  Optional[Stdlib::Port::Unprivileged]     $port                   = undef,
+  Optional[String]                         $database               = undef,
+  Optional[String]                         $username               = undef,
+  Optional[String]                         $password               = undef,
+  Optional[Boolean]                        $enable_ssl             = undef,
+  Optional[Stdlib::Absolutepath]           $ssl_key_path           = undef,
+  Optional[Stdlib::Absolutepath]           $ssl_cert_path          = undef,
+  Optional[Stdlib::Absolutepath]           $ssl_cacert_path        = undef,
+  Optional[String]                         $ssl_key                = undef,
+  Optional[String]                         $ssl_cert               = undef,
+  Optional[String]                         $ssl_cacert             = undef,
+  Optional[String]                         $host_measurement       = undef,
+  Optional[Hash]                           $host_tags              = undef,
+  Optional[String]                         $service_measurement    = undef,
+  Optional[Hash]                           $service_tags           = undef,
+  Optional[Boolean]                        $enable_send_thresholds = undef,
+  Optional[Boolean]                        $enable_send_metadata   = undef,
+  Optional[Icinga2::Interval]              $flush_interval         = undef,
+  Optional[Integer[1]]                     $flush_threshold        = undef,
 ) {
 
   if ! defined(Class['::icinga2']) {
@@ -127,10 +116,7 @@ class icinga2::feature::influxdb(
   $group         = $::icinga2::globals::group
   $conf_dir      = $::icinga2::globals::conf_dir
   $ssl_dir       = $::icinga2::globals::cert_dir
-  $_ssl_key_mode = $::kernel ? {
-    'windows' => undef,
-    default   => '0600',
-  }
+  $_ssl_key_mode = '0600'
   $_notify       = $ensure ? {
     'present' => Class['::icinga2::service'],
     default   => undef,
@@ -147,18 +133,60 @@ class icinga2::feature::influxdb(
   if $enable_ssl {
 
     # Set defaults for certificate stuff
-    if $ssl_key_path {
-      $_ssl_key_path = $ssl_key_path }
-    else {
-      $_ssl_key_path = "${ssl_dir}/InfluxdbWriter_influxdb.key" }
-    if $ssl_cert_path {
-      $_ssl_cert_path = $ssl_cert_path }
-    else {
-      $_ssl_cert_path = "${ssl_dir}/InfluxdbWriter_influxdb.crt" }
-    if $ssl_cacert_path {
-      $_ssl_cacert_path = $ssl_cacert_path }
-    else {
-      $_ssl_cacert_path = "${ssl_dir}/InfluxdbWriter_influxdb_ca.crt" }
+    if $ssl_key {
+      if $ssl_key_path {
+        $_ssl_key_path = $ssl_key_path }
+      else {
+        $_ssl_key_path = "${ssl_dir}/InfluxdbWriter_influxdb.key"
+      }
+
+      $_ssl_key = $ssl_key
+
+      file { $_ssl_key_path:
+        ensure  => file,
+        mode    => $_ssl_key_mode,
+        content => $_ssl_key,
+        tag     => 'icinga2::config::file',
+      }
+    } else {
+      $_ssl_key_path = $ssl_key_path
+    }
+
+    if $ssl_cert {
+      if $ssl_cert_path {
+        $_ssl_cert_path = $ssl_cert_path }
+      else {
+        $_ssl_cert_path = "${ssl_dir}/InfluxdbWriter_influxdb.crt"
+      }
+
+      $_ssl_cert = $ssl_cert
+
+      file { $_ssl_cert_path:
+        ensure  => file,
+        content => $_ssl_cert,
+        tag     => 'icinga2::config::file',
+      }
+    } else {
+      $_ssl_cert_path = $ssl_cert_path
+    }
+
+    if $ssl_cacert {
+      if $ssl_cacert_path {
+        $_ssl_cacert_path = $ssl_cacert_path }
+      else {
+        $_ssl_cacert_path = "${ssl_dir}/InfluxdbWriter_influxdb_ca.crt"
+      }
+
+      $_ssl_cacert = $ssl_cacert
+
+      file { $_ssl_cacert_path:
+        ensure  => file,
+        content => $_ssl_cacert,
+        tag     => 'icinga2::config::file',
+      }
+    } else {
+      $_ssl_cacert_path = $ssl_cacert_path
+    }
 
     $attrs_ssl = {
       ssl_enable  => $enable_ssl,
@@ -166,62 +194,6 @@ class icinga2::feature::influxdb(
       ssl_cert    => $_ssl_cert_path,
       ssl_key     => $_ssl_key_path,
     }
-
-    case $pki {
-      'puppet': {
-        file { $_ssl_key_path:
-          ensure => file,
-          mode   => $_ssl_key_mode,
-          source => $::icinga2_puppet_hostprivkey,
-          tag    => 'icinga2::config::file',
-        }
-
-        file { $_ssl_cert_path:
-          ensure => file,
-          source => $::icinga2_puppet_hostcert,
-          tag    => 'icinga2::config::file',
-        }
-
-        file { $_ssl_cacert_path:
-          ensure => file,
-          source => $::icinga2_puppet_localcacert,
-          tag    => 'icinga2::config::file',
-        }
-      } # puppet
-
-      'none': {
-        if $ssl_key {
-          $_ssl_key = $ssl_key
-
-          file { $_ssl_key_path:
-            ensure  => file,
-            mode    => $_ssl_key_mode,
-            content => $_ssl_key,
-            tag     => 'icinga2::config::file',
-          }
-        }
-
-        if $ssl_cert {
-          $_ssl_cert = $ssl_cert
-
-          file { $_ssl_cert_path:
-            ensure  => file,
-            content => $_ssl_cert,
-            tag     => 'icinga2::config::file',
-          }
-        }
-
-        if $ssl_cacert {
-          $_ssl_cacert = $ssl_cacert
-
-          file { $_ssl_cacert_path:
-            ensure  => file,
-            content => $_ssl_cacert,
-            tag     => 'icinga2::config::file',
-          }
-        }
-      } # none
-    } # case pki
   } # enable_ssl
   else {
     $attrs_ssl = { ssl_enable  => $enable_ssl }

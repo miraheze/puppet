@@ -79,7 +79,6 @@ define icinga2::object(
 
   assert_private()
 
-
   Concat {
     owner => $::icinga2::globals::user,
     group => $::icinga2::globals::group,

@@ -4,6 +4,7 @@ class monitoring (
     String $db_user               = 'icinga2',
     String $db_password           = undef,
     String $mirahezebots_password = undef,
+    String $ticket_salt           = '',
 ) {
     group { 'nagios':
         ensure    => present,
@@ -12,9 +13,17 @@ class monitoring (
         allowdupe => false,
     }
 
-    include ::icinga2
+    class { '::icinga2':
+      manage_repo => true,
+      constants   => {
+        'TicketSalt' => $ticket_salt
+      }
+    }
 
-    include ::icinga2::feature::api
+    class { '::icinga2::feature::api':
+      ca_host     => $::fqdn,
+      ticket_salt => $ticket_salt,
+    }
 
     include ::icinga2::feature::command
 

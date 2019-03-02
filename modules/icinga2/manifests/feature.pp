@@ -15,7 +15,7 @@ define icinga2::feature(
   $conf_dir = $::icinga2::globals::conf_dir
 
   $_ensure = $ensure ? {
-    'present' => link,
+    'present' => file,
     default   => absent,
   }
 
@@ -23,7 +23,7 @@ define icinga2::feature(
     ensure  => $_ensure,
     owner   => $user,
     group   => $group,
-    target  => "../features-available/${feature}.conf",
+    content => "include \"../features-available/${feature}.conf\"\r\n",
     require => Concat["${conf_dir}/features-available/${feature}.conf"],
     notify  => Class['::icinga2::service'],
   }

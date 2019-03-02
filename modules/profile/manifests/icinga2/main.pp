@@ -12,6 +12,7 @@ class profile::icinga2::main (
     String $icingaweb2_ido_db_name          = hiera('icinga_ido_db_name', 'icinga'),
     String $icingaweb2_ido_db_user_name     = hiera('icinga_ido_user_name', 'icinga2'),
     String $icingaweb2_icinga_api_password  = hiera('passwords::icinga_api'),
+    String $ticket_salt                     = hiera('passwords::ticket_salt', ''),
 ) {
     class { '::monitoring':
         db_host               => $icinga2_db_host,
@@ -19,6 +20,7 @@ class profile::icinga2::main (
         db_user               => $icinga2_db_user,
         db_password           => $ido_db_user_password ,
         mirahezebots_password => $mirahezebots_password,
+        ticket_salt           => $ticket_salt,
     }
 
     class { '::icingaweb2':

@@ -16,9 +16,9 @@
 #
 #
 class icinga2::feature::syslog(
-  Enum['absent', 'present']                                     $ensure   = present,
-  Optional[Enum['debug', 'information', 'notice', 'warning']]   $severity = undef,
-  Optional[String]                                              $facility = undef,
+  Enum['absent', 'present']        $ensure   = present,
+  Optional[Icinga2::LogSeverity]   $severity = undef,
+  Optional[Icinga2::LogFacility]   $facility = undef,
 ) {
 
   if ! defined(Class['::icinga2']) {

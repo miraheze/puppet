@@ -98,10 +98,14 @@ class icinga2::globals(
   Stdlib::Absolutepath   $cert_dir,
   Stdlib::Absolutepath   $ca_dir,
   Array[String]          $reserved,
-  String                 $service_reload,
+  Optional[String]       $service_reload,
 ) {
 
   assert_private()
+
+  if ( versioncmp($puppetversion, '6' ) >= 0 and versioncmp(load_module_metadata('stdlib')['version'], '5.1.0') < 0 ) {                                                                             
+    fail('You be affected by this bug: https://github.com/Icinga/puppet-icinga2/issues/505 so you should update your stdlib to version 5.1 or higher')                                                             
+  }   
 
   $constants =  lookup('icinga2::globals::constants', Hash, 'deep', {})
 

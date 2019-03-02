@@ -56,7 +56,8 @@ class icinga2::pki::ca(
     group => $group,
   }
 
-  $_ca_key_mode = '0600'
+  $_ca_key_mode = undef
+
 
   if !$ca_cert or !$ca_key {
     exec { 'create-icinga2-ca':
@@ -86,10 +87,7 @@ class icinga2::pki::ca(
 
   file { $_ssl_cacert_path:
     ensure => file,
-    source => $::kernel ? {
-      'windows' => "file:///${ca_dir}/ca.crt",
-      default   => "${ca_dir}/ca.crt",
-    },
+    source => "${ca_dir}/ca.crt",
   }
 
   exec { 'icinga2 pki create certificate signing request':

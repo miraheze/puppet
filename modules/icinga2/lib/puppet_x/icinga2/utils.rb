@@ -92,7 +92,7 @@ module Puppet
             if $constants.index { |x| if $hash_attrs.include?(x) then value =~ /^!?(#{x})(\..+$|$)/ else value =~ /^!?#{x}$/ end }
               result = value
             else
-              result = "\"#{value}\""
+              result = value.dump
             end
           end
 
@@ -115,15 +115,15 @@ module Puppet
           result = ''
 
           # parser is disabled
-          if row =~ /^-:(.*)$/
+          if row =~ /^-:(.*)$/m
             return $1
           end
 
           # scan function
-          if row =~ /^\{{2}(.+)\}{2}$/
+          if row =~ /^\{{2}(.+)\}{2}$/m
             result += "{{%s}}" % [ $1 ]
           # scan expression + function (function should contain expressions, but we donno parse it)
-          elsif row =~ /^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s\{{2}(.+)\}{2}$/
+          elsif row =~ /^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s\{{2}(.+)\}{2}$/m
             result += "%s %s {{%s}}" % [ parse($1), $2, $3 ]
           # scan expression
           elsif row =~ /^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s(.+)$/
@@ -189,8 +189,8 @@ module Puppet
                   result += "%s%s = %s\n" % [ prefix, attribute_types(attr), parse(value) ] if value != :nil
                   #result += "%s%s = %s\n" % [ prefix, attr, parse(value) ] if value != :nil
                 else
-                  result += "%s[\"%s\"] = %s\n" % [ prefix, attribute_types(attr), parse(value) ] if value != :nil
-                  #result += "%s[\"%s\"] = %s\n" % [ prefix, attr, parse(value) ] if value != :nil
+                  #result += "%s[\"%s\"] = %s\n" % [ prefix, attribute_types(attr), parse(value) ] if value != :nil
+                  result += "%s[\"%s\"] = %s\n" % [ prefix, attr, parse(value) ] if value != :nil
                 end
               else
                 result += "%s%s = %s\n" % [ prefix, attr, parse(value) ] if value != :nil

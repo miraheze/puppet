@@ -23,32 +23,39 @@
 Icinga 2 is a widely used open source monitoring software. This Puppet module helps with installing and managing
 configuration of Icinga 2 on multiple operating systems.
 
-### Notices
-
-For Icinga 2 v2.8.0 and higher version v1.3.4 and above is needed and the parameter repositoryd
-can set to false. See issue #403.
-
 ### v2.0.0
 
 * Requires Icinga 2 v2.8.0 or higher.
 * Feature `api`:
- * Parameters `ssl_key_path`, `ssl_cert_path`, `ssl_csr_path` and `ssl_ca_path` removed.
- * Deprecated value `ca` of parameter `pki` is removed.
- * Parameter ssl_crl_path was renamed to ssl_crl.
+    * Default for parameter `pki` was changed to `icinga2`.
+    * Parameters `ssl_key_path`, `ssl_cert_path`, `ssl_csr_path` and `ssl_ca_path` removed.
+    * Deprecated value `ca` of parameter `pki` is removed.
+    * Parameter ssl_crl_path was renamed to ssl_crl.
 * Feature `idopgsql`
- * Parameter `password` is required now.
+    * Parameter `password` is required now.
+    * Parameter default for `host` is set to `localhost`
 * Feature `idomysql`
- * Parameter `password` is required now.
- * Key and certs now are stored into the certs directory named `IdoMysqlConnection_ido-mysql` by default.
+    * Parameter `password` is required now.
+    * Parameter default for `host` is set to `localhost`
+    * Remove parameter `pki`.
+        * Puppet as key, cert or cacert source isn't supported anymore.
+        * However to use these create file resources with tag to `icinga2::config::file` and source to one of the facts icinga2_puppet_hostcert, icinga2_puppet_hostprivkey, icinga2_puppet_localcacert
+    * Key and certs now are stored into the certs directory named `IdoMysqlConnection_ido-mysql` by default.
 * Feature `elasticsearch`
- * Key and certs now are stored into the certs directory named `ElasticsearchWriter_elasticsearch` by default.
+    * Remove parameter `pki`.
+        * Puppet as key, cert or cacert source isn't supported anymore.
+        * However to use these create file resources with tag to `icinga2::config::file` and source to one of the facts icinga2_puppet_hostcert, icinga2_puppet_hostprivkey, icinga2_puppet_localcacert
+    * Key and certs now are stored into the certs directory and named `ElasticsearchWriter_elasticsearch` by default.
 * Feature `influxdb`
- * Key and certs now are stored into the certs directory named `InfluxdbWriter_influxdb` by default.
+    * Remove parameter `pki`.
+        * Puppet as key, cert or cacert source isn't supported anymore.
+        * However to use these create file resources with tag to `icinga2::config::file` and source to one of the facts icinga2_puppet_hostcert, icinga2_puppet_hostprivkey, icinga2_puppet_localcacert
+    * Key and certs now are stored into the certs directory named `InfluxdbWriter_influxdb` by default.
 * compatlogger
- * Object removed
+    * Object removed
 * Class `icinga2::pki::ca`
- * Parameters `ssl_key_path`, `ssl_csr_path` and `ssl_cacert_path` removed. Now the location is at `/var/lib/icinga2/certs`
-   on Linux hosts and `C:/ProgramData/icinga2/var/lib/icinga2/certs`.
+    * Parameters `ssl_key_path`, `ssl_csr_path` and `ssl_cacert_path` removed. Now the location is at `/var/lib/icinga2/certs` on Linux hosts and `C:/ProgramData/icinga2/var/lib/icinga2/certs`.
+
 
 ## Module Description
 
@@ -75,10 +82,15 @@ available in Icinga 2 can be enabled and configured with this module.
 
 ### Dependencies
 
-This module depends on:
+This module supports:
+
+* [puppet] >= 4.10 < 7.0.0
+
+And depends on:
 
 * [puppetlabs/stdlib] >= 4.16.0 < 6.0.0
-* [puppetlabs/concat] >= 5.1.0 < 6.0.0
+    * If Puppet 6 is used a stdlib 5.1 or higher is required, see https://github.com/Icinga/puppet-icinga2/issues/505
+* [puppetlabs/concat] >= 2.1.0 < 6.0.0
 
 Depending on your setup following modules may also be required:
 
@@ -91,18 +103,16 @@ Depending on your setup following modules may also be required:
 This module has been tested on:
 
 * Ruby >= 1.9
-* Debian 7, 8, 9
-* Ubuntu 14.04, 16.04
+* Debian 8, 9
+* Ubuntu 16.04, 18.04
 * CentOS/RHEL 6, 7
     * **Caution:** CentOS 6 comes with Ruby 1.8.7 by default
 * OracleLinux 7
 * FreeBSD 10, 11
 * SLES 12
-* Windows Server 2012
+* Windows Server 2012 R2, 2016
 
 Other operating systems or versions may work but have not been tested.
-
-It's recommended to enable the future parser when using this module in combination with exported resources.
 
 ## Usage
 
@@ -124,6 +134,22 @@ class { '::icinga2':
 
 *Info:* If you are using the [Icinga Web 2](https://github.com/Icinga/puppet-icingaweb2/) Puppet module on the same
 server, make sure to disable the repository management for one of the modules!
+
+Since version 2.0.0 you're able via hiera to overload which repository will be used for installation, e.g. for icinga on YUM based operating systems:
+
+``` puppet
+---
+icinga2::repo:
+  baseurl: 'http://myhost.example.org/epel/%{facts.os.release.major}/release/'
+  proxy: http://proxy.example.org:3128
+```
+
+You can also change or set every other parameter of the underlying resources, supported for operating system families:
+
+* RedHat, resource type: yumrepo
+* Debian, define resource: apt::source
+* SuSE, resource type: zypprepo
+    * a workaround is implemented to use a parameter proxy also to download the gpg key thru a proxy, see https://github.com/Icinga/puppet-icinga2/issues/397.
 
 If you want to manage the version of Icinga 2, you have to disable the package management of this module and handle
 packages in your own Puppet code. The attribute manage_repo is also disabled automattically and you have to manage
@@ -413,7 +439,7 @@ icinga2::object::hostgroup { 'monitoring-hosts':
   display_name => 'Linux Servers',
   groups       => [ 'linux-servers' ],
   target       => '/etc/icinga2/conf.d/groups2.conf',
-  assign       => [ 'host.vars.os == "linux"' ],
+  assign       => [ 'host.vars.os == linux' ],
 }
 ```
 
@@ -591,7 +617,7 @@ icinga2::object::hostgroup { 'monitoring-hosts':
   display_name => 'Linux Servers',
   groups       => [ 'linux-servers' ],
   target       => '/etc/icinga2/conf.d/groups2.conf',
-  assign       => [ 'host.vars.os == "linux"' ],
+  assign       => [ 'host.vars.os == linux' ],
 }
 ```
 
@@ -724,13 +750,13 @@ class { '::icinga2::feature::api':
 
 file { "/var/lib/icinga2/certs/${::fqdn}.crt":
   ensure => file,
-  tag    => 'icinga2::config::file,
+  tag    => 'icinga2::config::file',
   source => "puppet:///modules/profiles/certificates/${::fqdn}.crt",
 }
 
 file { "/var/lib/icinga2/certs/${::fqdn}.key":
   ensure => file,
-  tag    => 'icinga2::config::file,
+  tag    => 'icinga2::config::file',
   source => "puppet:///modules/profiles/private_keys/${::fqdn}.key",
 }
 ```
@@ -908,10 +934,6 @@ set this parameter to `false`. By default this parameter is `true`. It's also po
 own directory. This directory and must be managed outside of this module as file resource
 with tag icinga2::config::file.
 
-##### `repositoryd`
-`repository.d` is removed since Icinga 2 2.8.0, set to true (default) will handle the directory.
-This Parameter will change to false by default in v2.0.0 and will be removed in the future.
-
 #### Class: `icinga2::feature::checker`
 Enables or disables the `checker` feature.
 
@@ -959,7 +981,7 @@ Either `present` or `absent`. Defines if the feature `notification` should be en
 Notifications are load-balanced amongst all nodes in a zone. By default this functionality is enabled. If your nodes should send out notifications independently from any other nodes (this will cause duplicated notifications if not properly handled!), you can set enable_ha to false.
 
 #### Class: `icinga2::feature::command`
-Enables or disables the `command` feature.
+Enables or disables the `command` feature. Notice: The feature is deprecated and will be removed in Icinga 2 2.11.0.
 
 **Parameters of `icinga2::feature::command`:**
 
@@ -1108,7 +1130,7 @@ Rotation interval for the files specified in `{host,service}_perfdata_path`. Can
 i.e. `1m` or `15s`. Icinga defaults to `30s`
 
 #### Class: `icinga2::feature::statusdata`
-Enables or disables the `statusdata` feature.
+Enables or disables the `statusdata` feature. The feature is deprecated and will be removed in Icinga 2 2.11.0.
 
 **Parameters of `icinga2::feature::statusdata`:**
 
@@ -1143,6 +1165,7 @@ Set severity level for logging to syslog. Available options are:
 * `information`
 * `notice`
 * `warning` (Icinga default)
+* `critical`
 * `debug`
 
 ##### `facility`
@@ -1210,20 +1233,14 @@ Elasticsearch user password.
 ##### `enable_ssl`
 Either enable or disable SSL. Other SSL parameters are only affected if this is set to `true`. Defaults to `false`.
 
-##### `pki`
-SSL settings will be set depending on this parameter.
-
-* `puppet` Use puppet certificates. This will copy the ca.pem, certificate and key generated by Puppet.
-* `none` Set custom paths for certificate, key and CA
-
 ##### `ssl_ca_cert`
-CA certificate to validate the remote host. Only valid if ssl is set to `none`.
+CA certificate to validate the remote host.
 
 ##### `ssl_cert`
-Host certificate to present to the remote host for mutual verification. Only valid if ssl is set to 'none'.
+Host certificate to present to the remote host for mutual verification.
 
 ##### `ssl_key`
-Host key to accompany the ssl_cert. Only valid if ssl is set to `none`.
+Host key to accompany the ssl_cert.
 
 ##### `enable_send_perfdata`
 Whether to send check performance data metrics. Icinga defaults to `false`.
@@ -1281,20 +1298,14 @@ InfluxDB user password.
 ##### `enable_ssl`
 Either enable or disable SSL. Other SSL parameters are only affected if this is set to `true`. Icinga defaults to `false`.
 
-##### `pki`
-SSL settings will be set depending on this parameter.
-
-* `puppet` Use puppet certificates. This will copy the ca.pem, certificate and key generated by Puppet.
-* `none` Set custom paths for certificate, key and CA
-
 ##### `ssl_ca_cert`
-CA certificate to validate the remote host. Only valid if ssl is set to `none`.
+CA certificate to validate the remote host.
 
 ##### `ssl_cert`
-Host certificate to present to the remote host for mutual verification. Only valid if ssl is set to 'none'.
+Host certificate to present to the remote host for mutual verification.
 
 ##### `ssl_key`
-Host key to accompany the ssl_cert. Only valid if ssl is set to `none`.
+Host key to accompany the ssl_cert.
 
 ##### `host_measurement`
 The value of this is used for the measurement setting in host_template. Icinga defaults to `$host.check_command$`.
@@ -1353,7 +1364,7 @@ Provides multiple sources for the certificate and key.
 the configured 'ticket_salt' in a custom function.
 * `none` Does nothing and you either have to manage the files yourself as file resources or use the `ssl_key`, `ssl_cert`, `ssl_cacert` parameters.
 
-Defaults to `puppet`
+Defaults to `icinga2`
 
 ##### `ssl_crl`
 Optional location of the certificate revocation list.
@@ -1416,10 +1427,10 @@ Enables or disables the `ido-pgsql` feature.
 Either `present` or `absent`. Defines if the feature `ido-pgsql` should be enabled. Defaults to `present`.
 
 ##### `host`
-PostgreSQL database host address. Icinga defaults to `localhost`.
+PostgreSQL database host address. Defaults to `localhost`.
 
 ##### `port`
-PostgreSQL database port. Icinga defaults to `3306`.
+PostgreSQL database port. Defaults to `5432`.
 
 ##### `user`
 PostgreSQL database user with read/write permission to the icinga database. Icinga defaults to `icinga`.
@@ -1462,10 +1473,9 @@ MySQL database user's password.
 ##### `database`
 MySQL database name. Icinga defaults to `icinga`.
 
-##### `ssl`
-SSL settings will be set depending on this parameter:
-* `puppet` Use puppet certificates
-* `none` Set custom paths for certificate, key and CA
+##### `enable_ssl`
+Either enable or disable SSL. Other SSL parameters are only affected if this is set to 'true'.
+Icinga defaults to 'false'.
 
 ##### `ssl_key`
 MySQL SSL client key file path. Only valid if ssl is set to `none`.
@@ -2113,7 +2123,7 @@ Defaults to `5` minutes.
 
 ##### `retry_interval`
 The retry interval (in seconds). This interval is used for checks when the service is in a SOFT state.
-Defaults to `1 minute.
+Defaults to `1` minute.
 
 ##### `enable_notifications`
 Whether notifications are enabled. Defaults to `true`
