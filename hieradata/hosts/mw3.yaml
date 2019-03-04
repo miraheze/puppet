@@ -2,5 +2,6 @@ users::groups:
   - mediawiki-admins
 jobrunner: true
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
+letsencrypt: true
 role::mediawiki::use_strict_firewall: false
 php::php_version: '7.3'

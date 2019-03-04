@@ -1,5 +1,8 @@
 # class: letsencrypt
-class letsencrypt {
+class letsencrypt (
+    $username = hiera('letsencrypt_rest_api_username', undef),
+    $password = hiera('letsencrypt_rest_api_password', undef),
+) {
     include ::apt
 
     apt::pin { 'certbot_backports':
@@ -14,21 +17,46 @@ class letsencrypt {
         require => Apt::Pin['certbot_backports'],
     }
 
-    file { '/etc/letsencrypt/cli.ini':
-        ensure => present,
-        owner  => 'root',
-        group  => 'root',
-        source => 'puppet:///modules/letsencrypt/cli.ini',
-        mode   => '0644',
+    file { '/etc/letsencrypt':
+        ensure  => 'link',
+        force   => true,
+        target  => '/mnt/mediawiki-static/private/miraheze/letsencrypt',
+        require => Package['certbot'],
     }
 
-    ['/var/www/.well-known', '/var/www/.well-known/acme-challenge'].each |$folder| {
+    file { '/etc/letsencrypt/cli.ini':
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        source  => 'puppet:///modules/letsencrypt/cli.ini',
+        mode    => '0644',
+        require => File['/etc/letsencrypt']
+    }
+
+    ['/mnt/mediawiki-static/private/miraheze/.well-known', '/mnt/mediawiki-static/private/miraheze/.well-known/acme-challenge'].each |$folder| {
         file { "${folder}":
             ensure => directory,
             owner  => 'root',
             group  => 'root',
             mode   => '0755',
         }
+    }
+
+    file { '/var/www/.well-known':
+        ensure => directory,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    }
+
+    file { '/var/www/.well-known/acme-challenge':
+        ensure  => 'link',
+        force   => true,
+        target  => '/mnt/mediawiki-static/private/miraheze/.well-known/acme-challenge',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => File['/var/www/.well-known'],
     }
 
     file { '/root/ssl':
@@ -46,35 +74,8 @@ class letsencrypt {
         mode   => '0775',
     }
 
-    file { '/srv/ssl':
-        ensure => directory,
-        owner  => 'nagiosre',
-        group  => 'nagiosre',
-        mode   => '0770',
+    class { 'letsencrypt::web':
+        username => $username,
+        password => $password,
     }
-
-    file { '/var/lib/nagios/ssl-acme':
-        ensure => present,
-        source => 'puppet:///modules/letsencrypt/ssl-acme',
-        owner  => 'nagiosre',
-        group  => 'nagiosre',
-        mode   => '0775',
-    }
-
-    file { '/var/lib/nagios/id_rsa':
-        ensure => present,
-        source => 'puppet:///private/acme/id_rsa',
-        owner  => 'nagiosre',
-        group  => 'nagiosre',
-        mode   => '0400',
-    }
-
-    sudo::user { 'nrpe_ssl-certificate':
-        user       => 'nagiosre',
-        privileges => [
-            'ALL = NOPASSWD: /root/ssl-certificate',
-        ],
-    }
-
-    include letsencrypt::web
 }

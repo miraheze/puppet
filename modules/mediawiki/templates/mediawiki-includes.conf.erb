@@ -1,7 +1,7 @@
 index index.php index.html;
 
 location /.well-known/acme-challenge/ {
-	alias /var/www/challenges/;
+	alias /mnt/mediawiki-static/private/miraheze/.well-known/acme-challenge/;
 	try_files $uri =404;
 }
 
