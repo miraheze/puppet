@@ -17,7 +17,7 @@ ap.add_argument("-d", "--domain", required=True,
     help="name of the domain")
 ap.add_argument("-g", "--generate", required=False,
     action="store_true", default=False, help="generates LetsEncrypt SSL Certificate")
-ap.add_argument("--no-use-key", required=False, dest="no_use_key",
+ap.add_argument("--no-use-key", required=False,
     action="store_true", default=False, help="Creates a brand new private key along side a certificate.")
 ap.add_argument("-o", "--overwrite", required=False,
     action="store_true", default=False, help="overwrites the certname replacing it with a updated version")
@@ -101,7 +101,7 @@ class SslCertificate:
             if not self.quiet:
                 print("Generating Wildcard SSL certificate with LetsEncrypt")
 
-            if not self.no_existing_key:
+            if self.no_existing_key:
                 os.system("/usr/bin/certbot --force-renewal --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
             else:
                 os.system("/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
@@ -112,7 +112,7 @@ class SslCertificate:
             if not self.quiet:
                 print("Generating SSL certificate with LetsEncrypt")
 
-            if not self.no_existing_key:
+            if self.no_existing_key:
                 os.system("/usr/bin/certbot {1} --noninteractive --force-renewal --expand  --no-verify-ssl certonly -a webroot {3} -d {0} {2}".format(self.domain, self.quiet, self.secondary_domain, self.overwrite))
             else:
                 os.system("/usr/bin/certbot {1} --noninteractive --force-renewal --reuse-key --expand  --no-verify-ssl certonly -a webroot {3} -d {0} {2}".format(self.domain, self.quiet, self.secondary_domain, self.overwrite))
