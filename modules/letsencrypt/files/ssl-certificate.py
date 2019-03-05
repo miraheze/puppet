@@ -57,7 +57,7 @@ class SslCertificate:
         else:
             self.secondary_domain = ""
         self.wildcard = args['wildcard']
-	self.no_existing_key = args['no-use-key']
+        self.no_existing_key = args['no-use-key']
 
     def on_init(self):
         if self.csr:
@@ -101,10 +101,10 @@ class SslCertificate:
             if not self.quiet:
                 print("Generating Wildcard SSL certificate with LetsEncrypt")
 
-			if not self.no_existing_key:
-				os.system("/usr/bin/certbot --force-renewal --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
-			else:
-				os.system("/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
+            if not self.no_existing_key:
+                os.system("/usr/bin/certbot --force-renewal --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
+            else:
+                os.system("/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
 
             if not self.quiet:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
@@ -113,9 +113,9 @@ class SslCertificate:
                 print("Generating SSL certificate with LetsEncrypt")
 
             if not self.no_existing_key:
-				os.system("/usr/bin/certbot {1} --noninteractive --force-renewal --expand  --no-verify-ssl certonly -a webroot {3} -d {0} {2}".format(self.domain, self.quiet, self.secondary_domain, self.overwrite))
-			else:
-				os.system("/usr/bin/certbot {1} --noninteractive --force-renewal --reuse-key --expand  --no-verify-ssl certonly -a webroot {3} -d {0} {2}".format(self.domain, self.quiet, self.secondary_domain, self.overwrite))
+                os.system("/usr/bin/certbot {1} --noninteractive --force-renewal --expand  --no-verify-ssl certonly -a webroot {3} -d {0} {2}".format(self.domain, self.quiet, self.secondary_domain, self.overwrite))
+            else:
+                os.system("/usr/bin/certbot {1} --noninteractive --force-renewal --reuse-key --expand  --no-verify-ssl certonly -a webroot {3} -d {0} {2}".format(self.domain, self.quiet, self.secondary_domain, self.overwrite))
 
             if not self.quiet:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
