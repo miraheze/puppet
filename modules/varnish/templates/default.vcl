@@ -195,10 +195,10 @@ sub mw_vcl_recv {
 	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw2.miraheze.org" || req.url ~ "^/\.well-known") {
+	} else if (req.http.X-Miraheze-Debug == "mw2.miraheze.org") {
 		set req.backend_hint = mw2_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org" || req.url ~ "^/\.well-known") {
+	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org") {
 		set req.backend_hint = mw3_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {

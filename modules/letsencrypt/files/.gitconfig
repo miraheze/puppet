@@ -1,6 +1,0 @@
-[core]
-    ; disable's host key checking as we will always be github and these key's are public.
-    sshCommand = ssh -i /home/sslrenewal/.ssh/id_rsa -F /dev/null -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no  
-[user]
-    email = noreply@miraheze.org
-    name = MirahezeSSLBot

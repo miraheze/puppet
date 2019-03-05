@@ -173,14 +173,20 @@ class monitoring (
         notify  => Service['icinga2'],
     }
 
-    $rest_api_username = hiera('letsencrypt_rest_api_username', undef)
-    $rest_api_password = hiera('letsencrypt_rest_api_password', undef)
     file { '/etc/icinga2/scripts/ssl-renew.sh':
         ensure  => 'present',
-        content => template('monitoring/scripts/ssl-renew.sh.erb'),
+        source  => 'puppet:///modules/monitoring/scripts/ssl-renew.sh',
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
+    }
+
+    file { '/var/lib/nagios/id_rsa2':
+        ensure => present,
+        source => 'puppet:///private/icinga2/id_rsa2',
+        owner  => 'nagios',
+        group  => 'nagios',
+        mode   => '0400',
     }
 
     package { 'nagios-nrpe-plugin':
