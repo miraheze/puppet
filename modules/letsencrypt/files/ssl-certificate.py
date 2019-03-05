@@ -17,7 +17,7 @@ ap.add_argument("-d", "--domain", required=True,
     help="name of the domain")
 ap.add_argument("-g", "--generate", required=False,
     action="store_true", default=False, help="generates LetsEncrypt SSL Certificate")
-ap.add_argument("--no-use-key", required=False,
+ap.add_argument("--no-use-key", required=False, dest="no_use_key",
     action="store_true", default=False, help="Creates a brand new private key along side a certificate.")
 ap.add_argument("-o", "--overwrite", required=False,
     action="store_true", default=False, help="overwrites the certname replacing it with a updated version")
@@ -57,7 +57,7 @@ class SslCertificate:
         else:
             self.secondary_domain = ""
         self.wildcard = args['wildcard']
-        self.no_existing_key = args['no-use-key']
+        self.no_existing_key = args['no_use_key']
 
     def on_init(self):
         if self.csr:
