@@ -192,13 +192,13 @@ sub mw_vcl_recv {
 		set req.http.Host = "static.miraheze.org";
 	}
 
-	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org") {
+	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw1_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw2.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw2.miraheze.org" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw2_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org" || req.url ~ "^/\.well-known") {
 		set req.backend_hint = mw3_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
@@ -206,10 +206,6 @@ sub mw_vcl_recv {
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
-	}
-
-	if (req.url ~ "^/\.well-known") {
-		return (pass);
 	}
 
 	# We never want to cache non-GET/HEAD requests.
