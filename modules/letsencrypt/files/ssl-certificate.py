@@ -57,7 +57,7 @@ class SslCertificate:
         else:
             self.secondary_domain = ""
         self.wildcard = args['wildcard']
-		self.no_existing_key = args['domain']
+	self.no_existing_key = args['no-use-key']
 
     def on_init(self):
         if self.csr:
