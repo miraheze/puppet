@@ -130,7 +130,10 @@ class SslCertificate:
             if not self.quiet:
                 print("Re-generating a new wildcard SSL cert for {0}".format(self.domain))
 
-            os.system("/usr/bin/certbot --no-verify-ssl --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
+            if self.no_existing_key:
+                os.system("/usr/bin/certbot --no-verify-ssl --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
+            else:
+                os.system("/usr/bin/certbot --no-verify-ssl --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
 
             if not self.quiet:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
@@ -138,7 +141,10 @@ class SslCertificate:
             if not self.quiet:
                 print("Re-generating a new SSL cert for {0}".format(self.domain))
 
-            os.system("/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl {1} --noninteractive renew --cert-name {0}".format(self.domain, self.quiet))
+            if self.no_existing_key:
+                os.system("/usr/bin/certbot --force-renewal --expand  --no-verify-ssl {1} --noninteractive renew --cert-name {0}".format(self.domain, self.quiet))
+            else:
+                os.system("/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl {1} --noninteractive renew --cert-name {0}".format(self.domain, self.quiet))
 
             if not self.quiet:
                 print("LetsEncrypt certificate at: /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
