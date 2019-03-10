@@ -1,5 +1,7 @@
 # class: vpncloud
-class vpncloud {
+class vpncloud(
+        Optional[string] $server_ip = undef,
+){
     file { '/opt/vpncloud_0.9.1_xenial_amd64.deb':
         ensure  => present,
         source  => 'puppet:///modules/vpncloud/vpncloud_0.9.1_xenial_amd64.deb',
@@ -12,9 +14,11 @@ class vpncloud {
         require     => File['/opt/vpncloud_0.9.1_xenial_amd64.deb'],
     }
 
+    $shared_key = hiera('passwords::vpncloud::shared_key')
+
     file { '/etc/vpncloud/miraheze-internal.net':
         ensure  => present,
-        source  => 'puppet:///modules/vpncloud/miraheze-internal.net',
+        content  => template('vpncloud/miraheze-internal.net.erb'),
         notify  => Service['vpncloud'],
         require => Package['vpncloud'],
     }
