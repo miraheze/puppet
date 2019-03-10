@@ -5,5 +5,4 @@ contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 letsencrypt: true
 mwservices: true
 role::mediawiki::use_strict_firewall: false
-mediawiki::branch: 'REL1_32'
 php::php_version: '7.3'
