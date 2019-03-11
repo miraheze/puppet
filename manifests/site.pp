@@ -24,6 +24,11 @@ node 'db4.miraheze.org' {
     include prometheus::mysqld_exporter
 }
 
+node 'elasticsearch1.miraheze.org' {
+    include base
+    include role::elasticsearch
+}
+
 node 'misc1.miraheze.org' {
     include base
     include role::dns
