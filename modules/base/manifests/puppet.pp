@@ -10,8 +10,8 @@ class base::puppet {
             location => 'http://apt.puppetlabs.com',
             repos    => "puppet${puppet_major_version}",
             key      => {
-                'id'     => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
-                'server' => 'pgp.mit.edu',
+                'id'     => '07F5ABF8FE84BC3736D2AAD3A2D80E04656674AE',
+                'server' => 'keyserver.ubuntu.com',
             },
         }
 
