@@ -23,6 +23,12 @@ class php::php_fpm(
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
 ) {
 
+    $base_cli_config = {
+        'pcre'         => {
+            'backtrack_limit' => 5000000,
+        },
+    }
+
     $base_config = {
         'error_log' => '/var/log/php/php.log',
         'mysqli'                 => {
@@ -36,6 +42,7 @@ class php::php_fpm(
         version        => $version,
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
+            'cli' => $base_cli_config,
             'fpm' => merge($base_config, $config),
         },
     }
