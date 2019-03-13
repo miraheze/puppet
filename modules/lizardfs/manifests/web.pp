@@ -23,6 +23,12 @@ class lizardfs::web {
         from  => '107.191.126.23',
     }
 
+    ufw::allow { 'cp3 443':
+        proto => 'tcp',
+        port  => 443,
+        from  => '128.199.139.216',
+    }
+
     ufw::allow { 'cp4 433':
         proto => 'tcp',
         port  => 443,
