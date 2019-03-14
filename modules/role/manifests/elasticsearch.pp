@@ -62,6 +62,14 @@ class role::elasticsearch {
         from  => '185.52.2.243',
     }
 
+    monitoring::services { 'elasticsearch-lb.miraheze.org HTTPS':
+        check_command => 'check_http',
+        vars          => {
+            http_ssl   => true,
+            http_vhost => 'elasticsearch-lb.miraheze.org',
+        },
+     }
+ 
     motd::role { 'role::elasticsearch':
         description => 'elasticsearch server',
     }
