@@ -38,6 +38,12 @@ class role::elasticsearch {
         require     => Exec['nginx-syntax'],
     }
 
+    ufw::allow { 'nginx port misc1':
+        proto => 'tcp',
+        port  => '443',
+        from  => '185.52.1.76',
+    }
+
     ufw::allow { 'nginx port mw1':
         proto => 'tcp',
         port  => '443',
