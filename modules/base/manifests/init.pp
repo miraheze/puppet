@@ -54,6 +54,10 @@ class base {
         }
     }
 
+    sysctl::parameters { 'increase open files limit':
+        values  => { 'fs.file-max' => 26384062, },
+    }
+
     # Global vim defaults
     file { '/etc/vim/vimrc.local':
         owner  => 'root',
