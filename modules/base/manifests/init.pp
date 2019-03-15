@@ -52,10 +52,10 @@ class base {
         sysctl::parameters { 'avoid swap usage':
             values  => { 'vm.swappiness' => 1, },
         }
-    }
 
-    sysctl::parameters { 'increase open files limit':
-        values  => { 'fs.file-max' => 26384062, },
+        sysctl::parameters { 'increase open files limit':
+            values  => { 'fs.file-max' => 26384062, },
+        }
     }
 
     # Global vim defaults
