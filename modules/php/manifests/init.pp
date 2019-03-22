@@ -19,7 +19,7 @@ class php(
             release  => "${::lsbdistcodename}",
             repos    => 'main',
             key      => {
-                id     => 'DF3D585DB8F0EB658690A554AC0E47584A7A714D',
+                id     => '126C0D24BD8A2942CC7DF8AC7638D0442B90D010',
                 source => 'https://packages.sury.org/php/apt.gpg',
             },
             notify   => Exec['apt_update_php'],
