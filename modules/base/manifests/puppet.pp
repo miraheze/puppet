@@ -10,7 +10,7 @@ class base::puppet {
             location => 'http://apt.puppetlabs.com',
             repos    => "puppet${puppet_major_version}",
             key      => {
-                'id'     => '07F5ABF8FE84BC3736D2AAD3A2D80E04656674AE',
+                'id'     => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
                 'server' => 'keyserver.ubuntu.com',
             },
         }
