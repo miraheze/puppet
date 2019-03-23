@@ -40,7 +40,7 @@ class grafana (
             'upload_max_filesize' => '100M',
             'variables_order'     => 'GPCS',
         },
-        'version' => hiera('php::php_version', '7.2'),
+        'version' => hiera('php::php_version', '7.3'),
     })
 
     file { '/etc/grafana/grafana.ini':
