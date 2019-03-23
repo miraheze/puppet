@@ -19,30 +19,6 @@ class grafana (
         require => Apt::Source['grafana_apt'],
     }
 
-    ensure_resource_duplicate('class', 'php::php_fpm', {
-        'config'  => {
-            'display_errors'            => 'Off',
-            'error_log'                 => '/var/log/php/php.log',
-            'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
-            'log_errors'                => 'On',
-            'max_execution_time'        => 70,
-            'opcache'                   => {
-                'enable'                  => 1,
-                'memory_consumption'      => 256,
-                'interned_strings_buffer' => 64,
-                'max_accelerated_files'   => 32531,
-                'revalidate_freq'         => 60,
-            },
-            'post_max_size'       => '35M',
-            'register_argc_argv'  => 'Off',
-            'request_order'       => 'GP',
-            'track_errors'        => 'Off',
-            'upload_max_filesize' => '100M',
-            'variables_order'     => 'GPCS',
-        },
-        'version' => hiera('php::php_version', '7.2'),
-    })
-
     file { '/etc/grafana/grafana.ini':
         content => template('grafana/grafana.ini.erb'),
         owner   => 'root',
