@@ -21,6 +21,15 @@ TimeoutStopSec=70
 Restart=on-failure
 StartLimitBurst=5
 PIDFile=/var/run/puppetlabs/puppetserver/puppetserver.pid
+
+# https://tickets.puppetlabs.com/browse/EZ-129
+# Prior to systemd v228, TasksMax was unset by default, and unlimited. Starting in 228 a default of '512'
+# was implemented. This is low enough to cause problems for certain applications. In systemd 231, the
+# default was changed to be 15% of the default kernel limit. This explicitly sets TasksMax to 4915,
+# which should match the default in systemd 231 and later.
+# See https://github.com/systemd/systemd/issues/3211#issuecomment-233676333
+TasksMax=4915
+
 #set default privileges to -rw-r-----
 UMask=027
 
