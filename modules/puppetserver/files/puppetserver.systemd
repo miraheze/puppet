@@ -10,7 +10,7 @@
 #
 [Unit]
 Description=puppetserver Service
-After=syslog.target network.target network-online.target
+After=syslog.target network.target nss-lookup.target
 
 [Service]
 Type=forking
