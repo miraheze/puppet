@@ -27,6 +27,10 @@ class php::php_fpm(
         'pcre'         => {
             'backtrack_limit' => 5000000,
         },
+        'mysqli'                 => {
+            'allow_local_infile' => 0,
+            'connect_timeout' => 3,
+        },
     }
 
     $base_config = {
