@@ -18,7 +18,7 @@
 class php::php_fpm(
     Hash $config                              = {},
     Hash $fpm_config                          = {},
-    Integer $fpm_max_child                    = 6,
+    Integer $fpm_max_child                    = 5,
     Hash $fpm_pool_config                     = {},
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
 ) {
