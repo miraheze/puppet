@@ -77,6 +77,11 @@ class php::php_fpm(
             source => "puppet:///modules/php/luasandbox/${version}.luasandbox.so",
         }
 
+        file { '/usr/lib/php/20180731/luasandbox.so.so':
+            ensure => present,
+            source => "puppet:///modules/php/luasandbox/${version}.luasandbox.so",
+        }
+
         php::extension {
             'luasandbox':
                 package_name => '';
