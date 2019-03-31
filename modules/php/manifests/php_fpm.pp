@@ -71,6 +71,8 @@ class php::php_fpm(
     }
 
     if $version == '7.3' {
+        require_package('liblua5.1-0')
+
         # make sure to rebuild against the selected php version
         file { '/usr/lib/php/20180731/luasandbox.so':
             ensure => present,
