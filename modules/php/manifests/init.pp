@@ -23,7 +23,7 @@ class php(
             location => 'https://packages.sury.org/php/',
             release  => "${::lsbdistcodename}",
             repos    => 'main',
-            require  => File['/etc/apt/trusted.gpg.d/php.gpg']
+            require  => File['/etc/apt/trusted.gpg.d/php.gpg'],
             notify   => Exec['apt_update_php'],
         }
 
