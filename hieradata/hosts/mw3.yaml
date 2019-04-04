@@ -3,4 +3,3 @@ users::groups:
 jobrunner: true
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 role::mediawiki::use_strict_firewall: false
-php::php_version: '7.3'
