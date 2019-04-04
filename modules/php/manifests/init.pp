@@ -14,14 +14,16 @@ class php(
     include ::apt
 
     if !defined(Apt::Source['php_apt']) {
+        file { '/etc/apt/trusted.gpg.d/php.gpg':
+            ensure => present,
+            source => 'puppet:///modules/php/key/php.gpg',
+        }
+
         apt::source { 'php_apt':
             location => 'https://packages.sury.org/php/',
             release  => "${::lsbdistcodename}",
             repos    => 'main',
-            key      => {
-                id     => '126C0D24BD8A2942CC7DF8AC7638D0442B90D010',
-                source => 'https://packages.sury.org/php/apt.gpg',
-            },
+            require  => File['/etc/apt/trusted.gpg.d/php.gpg']
             notify   => Exec['apt_update_php'],
         }
 
