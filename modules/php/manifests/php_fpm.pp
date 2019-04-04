@@ -23,6 +23,30 @@ class php::php_fpm(
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
 ) {
 
+    include ::apt
+
+    if !defined(Apt::Source['php_apt']) {
+        file { '/etc/apt/trusted.gpg.d/php.gpg':
+            ensure => present,
+            source => 'puppet:///modules/php/key/php.gpg',
+        }
+
+        apt::source { 'php_apt':
+            location => 'https://packages.sury.org/php/',
+            release  => "${::lsbdistcodename}",
+            repos    => 'main',
+            require  => File['/etc/apt/trusted.gpg.d/php.gpg'],
+            notify   => Exec['apt_update_php'],
+        }
+
+        # First installs can trip without this
+        exec {'apt_update_php':
+            command     => '/usr/bin/apt-get update',
+            refreshonly => true,
+            logoutput   => true,
+        }
+    }
+
     $base_cli_config = {
         'pcre'         => {
             'backtrack_limit' => 5000000,
@@ -49,6 +73,7 @@ class php::php_fpm(
             'cli' => $base_cli_config,
             'fpm' => merge($base_config, $config),
         },
+        require        => Apt::Source['php_apt'],
     }
 
     $core_extensions =  [
