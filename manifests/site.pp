@@ -8,7 +8,7 @@ node 'bacula1.miraheze.org' {
     include role::salt::minions
 }
 
-node /^cp[2345]\.miraheze\.org$/ {
+node /^cp[234]\.miraheze\.org$/ {
     include base
     include role::varnish
     include role::salt::minions
