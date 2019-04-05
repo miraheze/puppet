@@ -6,6 +6,7 @@ class base::packages {
         'coreutils',
         'debian-goodies',
         'git',
+        'gzip',
         'htop',
         'iftop',
         'logrotate',
