@@ -37,17 +37,18 @@
         },
         // How long jobs can be claimed before being recycled
         "claimTTL": {
-            "*": 3600
+            "*": 3600,
+            "DataDumpGenerateJob": 86400
         },
         // runJobs.php process time limits
         "real": {
             "*": 130,
-            "DataDumpGenerateJob": 500
+            "DataDumpGenerateJob": 9000
         },
         // runJobs.php memory limits
         "memory": {
-            "DataDumpGenerateJob": "300",
-            "*": "192M"
+            "*": "192M",
+            "DataDumpGenerateJob": "300M"
         }
     },
 
