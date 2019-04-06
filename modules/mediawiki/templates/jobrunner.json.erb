@@ -4,17 +4,24 @@
     "groups": {
         "basic": {
             // Number of runner processes in this group
-            "runners": 2,
+            "runners": 1,
             // Job types to include ("*" means "all")
             "include": [
                 "*"
             ],
             // Job types to exempt (useful when combined with "*")
             "exclude": [
+                "DataDumpGenerateJob",
                 "LocalGlobalUserPageCacheUpdateJob",
                 "webVideoTranscode"
             ]
         },
+        "DataDumpGenerateJob": {
+            "runners": 1,
+            "include": [
+                "DataDumpGenerateJob"
+            ]
+        }
         "GUP": {
             "runners": 1,
             "include": [
@@ -34,10 +41,12 @@
         },
         // runJobs.php process time limits
         "real": {
-            "*": 130
+            "*": 130,
+            "DataDumpGenerateJob": 500
         },
         // runJobs.php memory limits
         "memory": {
+            "DataDumpGenerateJob": "300",
             "*": "192M"
         }
     },
