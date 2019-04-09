@@ -27,8 +27,11 @@ class lizardfs::storage(
     }
     
     service { 'lizardfs-chunkserver':
-        ensure  => running,
-        require => Package['lizardfs-chunkserver'],
+        ensure   => running,
+        enable   => true,
+        provider => 'systemd',
+        require  => Package['lizardfs-chunkserver'],
+        restart  => '/bin/systemctl reload lizardfs-chunkserver.service',
     }
 
     $module_path = get_module_path($module_name)
