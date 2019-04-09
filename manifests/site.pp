@@ -29,6 +29,13 @@ node 'elasticsearch1.miraheze.org' {
     include role::elasticsearch
 }
 
+node /^lizardfs[123]\.miraheze\.org$/ {
+    include base
+    include bacula::client
+    include role::lizardfs
+    include role::salt::minions
+}
+
 node 'misc1.miraheze.org' {
     include base
     include role::dns
@@ -83,13 +90,6 @@ node 'puppet1.miraheze.org' {
     include base
     include bacula::client
     include role::puppetserver
-    include role::salt::minions
-}
-
-node /^lizardfs[12]\.miraheze\.org$/ {
-    include base
-    include bacula::client
-    include role::lizardfs
     include role::salt::minions
 }
 
