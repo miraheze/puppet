@@ -31,8 +31,11 @@ class lizardfs::master(
     }
     
     service { 'lizardfs-master':
-        ensure => running,
-        enable => true,
+        ensure   => running,
+        enable   => true,
+        provider => 'systemd',
+        require  => Package['lizardfs-master'],
+        restart  => '/bin/systemctl reload lizardfs-master.service',
     }
 
     $firewall = loadyaml("${module_path}/data/storage_firewall.yaml")
