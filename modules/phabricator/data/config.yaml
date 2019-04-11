@@ -13,6 +13,7 @@ metamta.default-address: 'noreply@miraheze.org'
 metamta.single-reply-handler-prefix: 'phabricator'
 
 # Auth
+auth.lock-config: true
 auth.require-approval: false
 auth.require-email-verification: true
 
