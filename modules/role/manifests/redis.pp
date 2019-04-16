@@ -2,7 +2,7 @@
 class role::redis {
     class { '::redis':
         password  => hiera('passwords::redis::master'),
-        maxmemory => '650mb',
+        maxmemory => '1150mb',
     }
 
     ufw::allow { 'redis':
