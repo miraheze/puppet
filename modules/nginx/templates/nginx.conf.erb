@@ -15,7 +15,6 @@ http {
     tcp_nodelay on;
     keepalive_timeout 90;
     client_max_body_size 250M;
-    fastcgi_read_timeout 220;
 
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
