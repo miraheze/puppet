@@ -55,11 +55,11 @@ class php(
         'date'                   => {
             'timezone' => 'UTC',
         },
-        'default_socket_timeout' => 1,
+        'default_socket_timeout' => 2,
         'display_errors'         => 'On',
         'log_errors'             => 'On',
         'include_path'           => '".:/usr/share/php"',
-        'max_execution_time'     => 180,
+        'max_execution_time'     => 230,
         'memory_limit'           => '128M',
         'mysql'                  => {
             'connect_timeout' => 1,

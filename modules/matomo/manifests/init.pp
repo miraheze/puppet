@@ -24,7 +24,7 @@ class matomo {
             'error_log'                 => '/var/log/php/php.log',
             'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
             'log_errors'                => 'On',
-            'max_execution_time'        => 100,
+            'max_execution_time'        => 230,
             'opcache'                   => {
                 'enable'                  => 1,
                 'memory_consumption'      => 256,
@@ -32,14 +32,14 @@ class matomo {
                 'max_accelerated_files'   => 32531,
                 'revalidate_freq'         => 60,
             },
-            'post_max_size'       => '35M',
+            'post_max_size'       => '60M',
             'register_argc_argv'  => 'Off',
             'request_order'       => 'GP',
             'track_errors'        => 'Off',
             'upload_max_filesize' => '100M',
             'variables_order'     => 'GPCS',
         },
-        'fpm_max_child' => 4,
+        'fpm_min_child' => 6,
         'version' => hiera('php::php_version', '7.3'),
     })
 

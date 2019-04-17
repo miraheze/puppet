@@ -9,7 +9,7 @@
 #
 # [*fpm_config*]
 #
-# [*fpm_max_child*] Sets the maximum childs for php-fpm, defaults to 6.
+# [*fpm_min_child*] Sets the minimum childs for php-fpm, defaults to 4.
 #
 # [*fpm_pool_config*]
 #
@@ -18,7 +18,7 @@
 class php::php_fpm(
     Hash $config                              = {},
     Hash $fpm_config                          = {},
-    Integer $fpm_max_child                    = 5,
+    Integer $fpm_min_child                    = 4,
     Hash $fpm_pool_config                     = {},
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
 ) {
@@ -146,7 +146,7 @@ class php::php_fpm(
         require => Apt::Source['php_apt'],
     }
 
-    $num_workers = max(floor($facts['virtual_processor_count'] * 1.5), $fpm_max_child)
+    $num_workers = max(floor($facts['virtual_processor_count'] * 1.5), $fpm_min_child)
     # These numbers need to be positive integers
     $max_spare = ceiling($num_workers * 0.3)
     $min_spare = ceiling($num_workers * 0.1)

@@ -24,7 +24,7 @@ class phabricator {
             'upload_max_filesize' => '10M',
             'variables_order'     => 'GPCS',
         },
-        'fpm_max_child' => 4,
+        'fpm_min_child' => 4,
         'version' => hiera('php::php_version', '7.3'),
     })
 
