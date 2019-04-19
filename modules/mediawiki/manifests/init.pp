@@ -30,10 +30,6 @@ class mediawiki(
         include mediawiki::jobrunner
     }
 
-    if hiera(mwdumps) {
-        include mediawiki::dumps
-    }
-
     file { [
         '/srv/mediawiki',
         '/srv/mediawiki/dblist',
