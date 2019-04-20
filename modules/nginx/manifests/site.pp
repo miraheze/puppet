@@ -43,21 +43,23 @@ define nginx::site(
     if $monitor {
         if !defined(Monitoring::Services['HTTPS']) {
             monitoring::services { 'HTTPS':
-                check_command => 'check_http',
-                vars          => {
-                    address   => $facts['virtual_ip_address'],
-                    http_ssl  => true,
+                check_command  => 'check_http',
+                vars           => {
+                    address    => $facts['virtual_ip_address'],
+                    http_vhost => $::fqdn,
+                    http_ssl   => true,
                 },
             }
         }
     } else {
         if !defined(Monitoring::Services['HTTPS']) {
              monitoring::services { 'HTTPS':
-                 ensure        => 'absent',
-                 check_command => 'check_http',
-                 vars          => {
-                     address   => $facts['virtual_ip_address'],
-                     http_ssl  => true,
+                 ensure         => 'absent',
+                 check_command  => 'check_http',
+                 vars           => {
+                     address    => $facts['virtual_ip_address'],
+                     http_vhost => $::fqdn,
+                     http_ssl   => true,
                  },
              }
          }
