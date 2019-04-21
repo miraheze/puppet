@@ -24,13 +24,10 @@ class php::php_fpm(
 ) {
 
     $base_cli_config = {
-        'pcre'         => {
-            'backtrack_limit' => 5000000,
-        },
-        'mysqli'                 => {
-            'allow_local_infile' => 0,
-            'connect_timeout' => 3,
-        },
+        'pcre.backtrack_limit'   => 5000000,
+        'date.timezone'          => 'UTC',
+        'mysql'                  => { 'connect_timeout' => 3},
+        'default_socket_timeout' => 60,
     }
 
     $base_config = {
@@ -97,13 +94,18 @@ class php::php_fpm(
             priority     => 15;
         'igbinary':
             config   => {
-                'extension'       => 'igbinary.so',
-                'compact_strings' => 'Off',
+                'extension'                => 'igbinary.so',
+                'igbinary.compact_strings' => 'Off',
             };
         'imagick':
             package_name => 'php-imagick';
         'mysqli':
-            package_name => "php${version}-mysql";
+            package_name => "php${php_version}-mysql",
+            config       => {
+                'extension'                 => 'mysqli.so',
+                'mysqli.allow_local_infile' => 'Off',
+            }
+            ;
         'dba':
             package_name => "php${version}-dba",
     }

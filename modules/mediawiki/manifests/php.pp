@@ -9,9 +9,10 @@ class mediawiki::php {
             'max_execution_time'        => 230,
             'opcache'                   => {
                 'enable'                  => 1,
-                'memory_consumption'      => 256,
-                'interned_strings_buffer' => 64,
-                'max_accelerated_files'   => 32531,
+                'interned_strings_buffer' => 50,
+                'memory_consumption'      => 300,
+                'max_accelerated_files'   => 24000,
+                'max_wasted_percentage'   => 10,
                 'revalidate_freq'         => 60,
             },
             'post_max_size'       => '250M',
