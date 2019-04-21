@@ -97,7 +97,7 @@ class php::php_fpm(
         'imagick':
             package_name => 'php-imagick';
         'mysqli':
-            package_name => "php${php_version}-mysql",
+            package_name => "php${version}-mysql",
             config       => {
                 'extension'                 => 'mysqli.so',
                 'mysqli.allow_local_infile' => 'Off',
