@@ -9,7 +9,7 @@ class phabricator {
             'error_log'                 => '/var/log/php/php.log',
             'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
             'log_errors'                => 'On',
-            'max_execution_time'        => 70,
+            'max_execution_time'        => 230,
             'opcache'                   => {
                 'enable'                  => 1,
                 'memory_consumption'      => 256,
