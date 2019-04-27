@@ -10,6 +10,7 @@ class base::packages {
         'htop',
         'iftop',
         'logrotate',
+        'molly-guard',
         'mtr',
         'nano',
         'pigz',
