@@ -40,7 +40,7 @@ class matomo {
             'upload_max_filesize' => '100M',
             'variables_order'     => 'GPCS',
         },
-        'fpm_min_child' => 8,
+        'fpm_min_child' => 6,
         'version' => hiera('php::php_version', '7.3'),
     })
 
