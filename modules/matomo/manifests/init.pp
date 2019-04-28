@@ -66,7 +66,7 @@ class matomo {
 
     cron { 'archive_matomo':
         ensure  => present,
-        command => '/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/ > /srv/matomo/matomo-archive.log'
+        command => '/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/ > /srv/matomo/matomo-archive.log',
         user    => 'www-data',
         minute  => '30',
         hour    => '*/2',
