@@ -12,6 +12,10 @@ node /^cp[234]\.miraheze\.org$/ {
     include base
     include role::varnish
     include role::salt::minions
+    
+    if $::hostname == 'cp3.miraheze.org' {
+        include role::vpncloud
+    }
 }
 
 node 'db4.miraheze.org' {
@@ -78,6 +82,11 @@ node /^mw[123]\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include role::salt::minions
+    
+    if $::hostname == 'mw2.miraheze.org' {
+        include role::vpncloud
+    }
+    
     include prometheus::php_fpm
 }
 
@@ -97,6 +106,7 @@ node 'test1.miraheze.org' {
     include base
     include role::mediawiki
     include role::salt::minions
+    include role::vpncloud
     include prometheus::php_fpm
 }
 
