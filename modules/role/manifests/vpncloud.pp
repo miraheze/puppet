@@ -8,10 +8,10 @@ class role::vpncloud {
         from    => '185.52.2.113',
     }
 
-    ufw::allow { 'vpncloud port tcp cp5':
+    ufw::allow { 'vpncloud port tcp cp3':
         proto   => 'tcp',
         port    => 3120,
-        from    => '172.104.111.8',
+        from    => '128.199.139.216',
     }
  
     ufw::allow { 'vpncloud port tcp test1':
