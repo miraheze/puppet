@@ -1,5 +1,3 @@
- This configuration file uses the YAML format.
-
 # This configuration can be enabled/disabled and controlled by adding the
 # network to `/etc/default/vpncloud` and starting/stopping it via
 # `/etc/init.d/vpncloud start/stop` on non-systemd systems and via
@@ -15,8 +13,9 @@ port: 3210
 # periodically. This parameter can be repeated to connect to multiple peers.
 # Note: Several entries can be separated by spaces.
 peers:
-##### FIND OUT HOW TO LOOP IN PUPPET #####
-  - 172.104.111.8:3210
+  - 81.4.122.121:3210
+  - 185.52.2.243:3210
+  - 128.199.139.216:3210
 
 # Peer timeout in seconds. The peers will exchange information periodically
 # and drop peers that are silent for this period of time.
