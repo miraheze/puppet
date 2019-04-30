@@ -1,12 +1,12 @@
 # class: vpncloud
 class vpncloud(
-        Optional[string] $server_ip = undef,
+    Optional[string] $server_ip = undef,
 ){
     file { '/opt/vpncloud_0.9.1_xenial_amd64.deb':
         ensure  => present,
         source  => 'puppet:///modules/vpncloud/vpncloud_0.9.1_xenial_amd64.deb',
     }
-    
+
     package { 'vpncloud':
         ensure      => installed,
         provider    => dpkg,
@@ -22,11 +22,19 @@ class vpncloud(
         notify  => Service['vpncloud'],
         require => Package['vpncloud'],
     }
+
+    exec { 'Enable vpncloud service':
+        command         => '/bin/systemctl enable vpncloud@miraheze-internal',
+        ensure          => present,
+        refreshonly     => true,
+        subscribe       => Package['vpncloud'],
+    }
     
-    service { 'vpncloud':
+    service { 'vpncloud@miraheze-internal':
         ensure      => running,
         hasrestart  => true,
+        provider    => 'systemd',
         restart     => '/bin/systemctl reload vpncloud',
-        require     => [ Package['vpncloud'], File['/etc/vpncloud/miraheze-internal.net'] ],
+        require     => [ Exec['Enable vpncloud service'], File['/etc/vpncloud/miraheze-internal.net'] ],
     }
 }
