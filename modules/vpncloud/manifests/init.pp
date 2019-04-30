@@ -19,21 +19,16 @@ class vpncloud(
     file { '/etc/vpncloud/miraheze-internal.net':
         ensure  => present,
         content  => template('vpncloud/miraheze-internal.net.erb'),
-        notify  => Service['vpncloud'],
+        notify  => Service['vpncloud@miraheze-internal'],
         require => Package['vpncloud'],
-    }
-
-    exec { 'Enable vpncloud service':
-        command         => '/bin/systemctl enable vpncloud@miraheze-internal',
-        refreshonly     => true,
-        subscribe       => Package['vpncloud'],
     }
     
     service { 'vpncloud@miraheze-internal':
         ensure      => running,
         hasrestart  => true,
         provider    => 'systemd',
+        enable      => true,
         restart     => '/bin/systemctl reload vpncloud',
-        require     => [ Exec['Enable vpncloud service'], File['/etc/vpncloud/miraheze-internal.net'] ],
+        require     => File['/etc/vpncloud/miraheze-internal.net'],
     }
 }
