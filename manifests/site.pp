@@ -12,10 +12,6 @@ node /^cp[234]\.miraheze\.org$/ {
     include base
     include role::varnish
     include role::salt::minions
-    
-    if $::hostname == 'cp3.miraheze.org' {
-        include role::vpncloud
-    }
 }
 
 node 'db4.miraheze.org' {
@@ -31,7 +27,6 @@ node 'db4.miraheze.org' {
 node 'elasticsearch1.miraheze.org' {
     include base
     include role::elasticsearch
-    include role::vpncloud
 }
 
 node /^lizardfs[123]\.miraheze\.org$/ {
@@ -102,7 +97,6 @@ node 'test1.miraheze.org' {
     include base
     include role::mediawiki
     include role::salt::minions
-    include role::vpncloud
     include prometheus::php_fpm
 }
 
