@@ -25,7 +25,6 @@ class vpncloud(
 
     exec { 'Enable vpncloud service':
         command         => '/bin/systemctl enable vpncloud@miraheze-internal',
-        ensure          => present,
         refreshonly     => true,
         subscribe       => Package['vpncloud'],
     }
