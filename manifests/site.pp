@@ -31,6 +31,7 @@ node 'db4.miraheze.org' {
 node 'elasticsearch1.miraheze.org' {
     include base
     include role::elasticsearch
+    include role::vpncloud
 }
 
 node /^lizardfs[123]\.miraheze\.org$/ {
@@ -82,11 +83,6 @@ node /^mw[123]\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include role::salt::minions
-    
-    if $::hostname == 'mw2.miraheze.org' {
-        include role::vpncloud
-    }
-    
     include prometheus::php_fpm
 }
 
