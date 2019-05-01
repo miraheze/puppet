@@ -42,7 +42,7 @@
 
 define lizardfs::client(
     Integer $lizardfs_port = 9421,
-    String $lizardfs_master = hiera('lizardfs_master_server', '185.52.3.121'),
+    String $lizardfs_master = hiera('lizardfs_master_server', '185.52.1.144'),
     Optional[String] $mountpoint = undef,
     Optional[String] $options = undef,
     String $ensure = 'mounted',
