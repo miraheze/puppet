@@ -1,7 +1,7 @@
 # == Class: lizardfs::storage
 
 class lizardfs::storage(
-    String $master_server = hiera('lizardfs_master_server', '185.52.3.121'),
+    String $master_server = hiera('lizardfs_master_server', '185.52.1.144'),
 ) {
     require_package('lizardfs-chunkserver')
 
