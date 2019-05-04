@@ -1,6 +1,6 @@
 # class: vpncloud
 class vpncloud(
-    String $server_ip = undef,
+    String $server_ip = '0.0.0.0',
 ){
     file { '/opt/vpncloud_0.9.1_xenial_amd64.deb':
         ensure  => present,
