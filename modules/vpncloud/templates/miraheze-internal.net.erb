@@ -1,3 +1,4 @@
+# THIS CONFIGURATION FILE IS MANAGED BY PUPPET
 # This configuration can be enabled/disabled and controlled by adding the
 # network to `/etc/default/vpncloud` and starting/stopping it via
 # `/etc/init.d/vpncloud start/stop` on non-systemd systems and via
@@ -8,10 +9,8 @@
 # Note: Every VPN needs a different port number.
 port: 3210
 
-# Address of a peer to connect to. The address should be in the form
-# `addr:port`. If the node is not started, the connection will be retried
-# periodically. This parameter can be repeated to connect to multiple peers.
-# Note: Several entries can be separated by spaces.
+# List of peers to connect to. Each peer must have port 3210 opened in 
+# the firewall (see modules/role/manifests/vpncloud.pp)
 peers:
   - 81.4.122.121:3210
   - 185.52.2.243:3210
@@ -41,7 +40,7 @@ shared_key: "<%= @shared_key %>"
 crypto: aes256
 
 # Name of the virtual device. Any `%d` will be filled with a free number.
-device_name: "vpncloud%d"
+device_name: "vpncloud0"
 
 # Set the type of network. There are two options: **tap** devices process
 # Ethernet frames **tun** devices process IP packets. [default: `tap`]
@@ -75,10 +74,8 @@ ifup: "ip addr add <%= @server_ip %>/16 dev $IFNAME && ip link set dev $IFNAME m
 # variable `IFNAME`.
 ifdown: "ip link set $IFNAME down"
 
-# Store the process id in this file when running in the background. If set,
-# the given file will be created containing the process id of the new
-# background process. This option is only used when running in background.
-pid_file: "/var/run/vpncloud.pid"
+# systemd stores the PID file at /run/vpncloud-miraheze-internal.pid
+# pid_file: "/var/run/vpncloud.pid"
 
 # Change the user and/or group of the process once all the setup has been
 # done and before spawning the background process. This option is only used
