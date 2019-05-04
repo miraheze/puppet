@@ -20,6 +20,12 @@ class role::vpncloud {
         from    => '185.52.2.243',
     }
     
+    ufw::allow { 'vpncloud port tcp db4':
+        proto   => 'tcp',
+        port    => 3120,
+        from    => '81.4.109.166',
+    }
+    
     motd::role { 'role::vpncloud':
         description => 'server with VPNCloud (experimental)',
     }
