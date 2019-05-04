@@ -26,6 +26,7 @@ node 'db4.miraheze.org' {
     include bacula::client
     include role::salt::minions
     include prometheus::mysqld_exporter
+    include role::vpncloud
 }
 
 node 'elasticsearch1.miraheze.org' {
