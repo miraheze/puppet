@@ -2,6 +2,7 @@
 class mediawiki::nginx {
 
     $sslcerts = loadyaml('/etc/puppet/ssl/certs.yaml')
+    $php_fpm_sock = 'php/fpm-www.sock'
 
     nginx::site { 'mediawiki':
         ensure       => present,
@@ -23,8 +24,6 @@ class mediawiki::nginx {
 
     include ssl::wildcard
     include ssl::hiera
-
-    $php_fpm_sock = 'php/fpm-www.sock'
 
     nginx::conf { 'mediawiki-includes':
         ensure => present,
