@@ -12,10 +12,7 @@ node /^cp[234]\.miraheze\.org$/ {
     include base
     include role::varnish
     include role::salt::minions
-    
-    if $::hostname == 'cp3' {
-        include role::vpncloud
-    }
+    include role::vpncloud
 }
 
 node 'db4.miraheze.org' {
