@@ -90,6 +90,7 @@ node /^mw[123]\.miraheze\.org$/ {
 node 'ns1.miraheze.org' {
     include base
     include role::dns
+    include role::vpncloud
 }
 
 node 'puppet1.miraheze.org' {
@@ -97,6 +98,7 @@ node 'puppet1.miraheze.org' {
     include bacula::client
     include role::puppetserver
     include role::salt::minions
+    include role::vpncloud
 }
 
 node 'test1.miraheze.org' {
