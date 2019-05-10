@@ -3,3 +3,4 @@ users::groups:
 jobrunner: true
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 role::mediawiki::use_strict_firewall: false
+vpncloud::server_ip: 10.0.1.9
