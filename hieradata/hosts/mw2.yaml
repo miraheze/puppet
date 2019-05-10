@@ -4,3 +4,4 @@ jobrunner: false
 arcanist: true
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 role::mediawiki::use_strict_firewall: false
+vpncloud::server_ip: 10.0.1.8
