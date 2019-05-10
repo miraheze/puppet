@@ -2,12 +2,24 @@
 class role::vpncloud {
     include ::vpncloud
 
+    ufw::allow { 'vpncloud port tcp cp2':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '107.191.126.23',
+    }
+
     ufw::allow { 'vpncloud port tcp cp3':
         proto   => 'tcp',
         port    => 3210,
         from    => '128.199.139.216',
     }
  
+     ufw::allow { 'vpncloud port tcp cp4':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '81.4.109.133',
+    }
+
     ufw::allow { 'vpncloud port tcp test1':
         proto   => 'tcp',
         port    => 3210,
