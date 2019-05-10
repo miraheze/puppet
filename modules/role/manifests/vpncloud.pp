@@ -25,7 +25,19 @@ class role::vpncloud {
         port    => 3210,
         from    => '81.4.109.166',
     }
-    
+
+    ufw::allow { 'vpncloud port tcp ns1':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '192.184.82.120',
+    }
+
+    ufw::allow { 'vpncloud port tcp puppet1':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '81.4.127.229',
+    }
+
     motd::role { 'role::vpncloud':
         description => 'server with VPNCloud (experimental)',
     }
