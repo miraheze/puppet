@@ -2,7 +2,7 @@ users::groups:
   - mediawiki-admins
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
-letsencrypt: true
+letsencrypt: false
 mwservices: true
 role::mediawiki::use_strict_firewall: false
 vpncloud::server_ip: 10.0.1.7
