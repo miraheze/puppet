@@ -336,6 +336,8 @@ sub vcl_deliver {
 	}
 
 	set resp.http.Content-Security-Policy = "default-src 'self' blob: data: <%- @whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'";
+	
+	set req.http.Referer = "no-referrer"
 }
 
 sub vcl_backend_error {
