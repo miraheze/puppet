@@ -38,7 +38,7 @@ class base::monitoring {
 
     if os_version('debian == stretch') {
         apt::pin { 'debian_stretch_backports_prometheus_node_exporter':
-            priority   => 20,
+            priority   => 200,
             originator => 'Debian',
             release    => 'stretch-backports',
             packages   => 'prometheus-node-exporter',
