@@ -46,6 +46,9 @@ http {
     # XSS Protection
     add_header x-xss-protection "1; mode=block" always;
 
+    # Protects against click jacking
+    add_header X-Frame-Options "SAMEORIGIN" always;
+
     # Add response time to access.log
     log_format miraheze '$remote_addr - $remote_user [$time_local] '
                     '"$request" $status $body_bytes_sent '
