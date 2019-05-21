@@ -61,6 +61,22 @@ scrape_configs:
         '<%= host %>:9253',
 <%- end -%>
       ]
+  - job_name: redis
+    static_configs:
+      - targets: [
+<%- @host.sort.each do |host| -%>
+<%- if host =~ /^misc2/ -%>
+          # redis exporter
+          '<%= host %>:9121',
+<%- end -%>
+<%- end -%>
+        ]
+<%- @host.sort.each do |host| -%>
+<%- if host =~ /^misc2/ -%>
+        labels:
+          alias: <%= host %>
+<%- end -%>
+<%- end -%>
   - job_name: mariadb
     static_configs:
       - targets: [

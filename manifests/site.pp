@@ -57,6 +57,7 @@ node 'misc2.miraheze.org' {
     include role::matomo
     include role::salt::minions
     include prometheus::php_fpm
+    include prometheus::redis_exporter
 }
 
 node 'misc3.miraheze.org' {
