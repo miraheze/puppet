@@ -47,7 +47,7 @@ http {
     add_header x-xss-protection "1; mode=block" always;
 
     <%- @frame_whitelist.each_pair do |config, value| -%>
-    add_header X-Frame-Options ALLOW-FROM <%= value %>;
+    add_header X-Frame-Options "ALLOW-FROM <%= value %>";
     <%- end -%>
 
     # Add response time to access.log
