@@ -34,6 +34,9 @@ class nginx {
         source => 'puppet:///modules/nginx/mime.types',
     }
 
+    $module_path = get_module_path('varnish')
+
+    $frame_whitelist = loadyaml("${module_path}/data/frame_whitelist.yaml")
     file { '/etc/nginx/nginx.conf':
         content => template('nginx/nginx.conf.erb'),
         require => Package['nginx'],
