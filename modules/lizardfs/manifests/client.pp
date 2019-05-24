@@ -60,7 +60,7 @@ define lizardfs::client(
             default => $mountpoint
         }
 
-        $base_options = "mfsmaster=${lizardfs_master},mfsport=${lizardfs_port}"
+        $base_options = "mfsmaster=${lizardfs_master},mfsport=${lizardfs_port},enablefilelocks=1"
 
         $mount_options = $options ? {
             undef   => $base_options,
