@@ -20,6 +20,7 @@ define users::hashuser(
     users::user { $name:
         ensure     => $uinfo['ensure'],
         uid        => $uinfo['uid'],
+        gid        => $group_id,
         groups     => $uinfo['groups'],
         comment    => $uinfo['realname'],
         shell      => $uinfo['shell'],

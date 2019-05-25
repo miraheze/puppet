@@ -2,7 +2,7 @@
 define users::user(
     VMlib::Ensure $ensure       = 'present',
     Optional[Integer] $uid     = undef,
-    Optional[String] $gid      = undef,
+    Optional[Integer] $gid      = undef,
     Array $groups              = [],
     String $comment            = '',
     String $shell              = '/bin/bash',
