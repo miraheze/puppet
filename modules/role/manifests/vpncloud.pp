@@ -32,6 +32,24 @@ class role::vpncloud {
         from    => '81.4.109.166',
     }
 
+    ufw::allow { 'vpncloud port tcp lizardfs1':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '81.4.101.157',
+    }
+
+    ufw::allow { 'vpncloud port tcp lizardfs2':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '81.4.124.61',
+    }
+
+    ufw::allow { 'vpncloud port tcp lizardfs3':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '168.235.109.27',
+    }
+
     ufw::allow { 'vpncloud port tcp ns1':
         proto   => 'tcp',
         port    => 3210,
@@ -42,12 +60,6 @@ class role::vpncloud {
         proto   => 'tcp',
         port    => 3210,
         from    => '81.4.127.229',
-    }
-
-    ufw::allow { 'vpncloud port tcp misc1':
-        proto   => 'tcp',
-        port    => 3210,
-        from    => '185.52.1.76',
     }
 
     ufw::allow { 'vpncloud port tcp mw1':
