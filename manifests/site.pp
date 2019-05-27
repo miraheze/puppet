@@ -58,6 +58,7 @@ node 'misc2.miraheze.org' {
     include role::redis
     include role::matomo
     include role::salt::minions
+    include role::vpncloud
     include prometheus::php_fpm
     include prometheus::redis_exporter
 }
@@ -67,6 +68,7 @@ node 'misc3.miraheze.org' {
     include role::lizardfs
     include role::services
     include role::salt::minions
+    include role::vpncloud
 }
 
 node 'misc4.miraheze.org' {

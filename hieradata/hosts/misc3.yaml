@@ -3,3 +3,4 @@ lizardfs_master_server: '185.52.1.144'
 lizardfs_master: true
 lizardfs_web: true
 enable_parsoid: false
+vpncloud::server_ip: 10.0.1.16
