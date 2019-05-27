@@ -37,6 +37,7 @@ node /^lizardfs[123]\.miraheze\.org$/ {
     include bacula::client
     include role::lizardfs
     include role::salt::minions
+    include role::vpncloud
 }
 
 node 'misc1.miraheze.org' {
