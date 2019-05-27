@@ -1,1 +1,1 @@
-# blank hiera file
+vpncloud::server_ip: 10.0.1.15
