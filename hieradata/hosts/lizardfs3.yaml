@@ -1,1 +1,2 @@
 lizardfs_storage: true
+vpncloud::server_ip: 10.0.1.14
