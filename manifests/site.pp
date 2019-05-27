@@ -48,6 +48,7 @@ node 'misc1.miraheze.org' {
     include role::mail
     include role::roundcubemail
     include role::salt::minions
+    include role::vpncloud
     include prometheus::php_fpm
 }
 
