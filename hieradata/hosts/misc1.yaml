@@ -1,6 +1,8 @@
 mailserver: true
 grafana::php_72: true
 
+vpncloud::server_ip: 10.0.1.11
+
 # debian
 icinga2::globals::package_name: 'icinga2'
 icinga2::globals::service_name: 'icinga2'
