@@ -50,6 +50,48 @@ class role::vpncloud {
         from    => '168.235.109.27',
     }
 
+    ufw::allow { 'vpncloud port tcp misc1':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '185.52.1.76',
+    }
+
+    ufw::allow { 'vpncloud port tcp misc2':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '81.4.127.174',
+    }
+
+    ufw::allow { 'vpncloud port tcp misc3':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '185.52.1.144',
+    }
+
+    ufw::allow { 'vpncloud port tcp misc4':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '185.52.3.121',
+    }
+
+    ufw::allow { 'vpncloud port tcp mw1':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '185.52.1.75',
+    }
+
+    ufw::allow { 'vpncloud port tcp mw2':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '185.52.2.113',
+    }
+
+    ufw::allow { 'vpncloud port tcp mw3':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '81.4.121.113',
+    }
+
     ufw::allow { 'vpncloud port tcp ns1':
         proto   => 'tcp',
         port    => 3210,
