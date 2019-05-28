@@ -40,7 +40,13 @@ class nginx {
     file { '/etc/nginx/nginx.conf':
         content => template('nginx/nginx.conf.erb'),
         require => Package['nginx'],
-        notify  => Service['nginx'],
+        notify  => Exec['nginx-server-syntax'],
+    }
+
+    exec { 'nginx-server-syntax':
+        command     => '/usr/sbin/nginx -t',
+        notify      => Service['nginx'],
+        refreshonly => true,
     }
 
     file { '/etc/nginx/fastcgi_params':
