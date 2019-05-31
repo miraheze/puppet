@@ -23,15 +23,29 @@ class php::php_fpm(
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
 ) {
 
-    $base_cli_config = {
+    $config_cli = {
+        'include_path'           => '".:/usr/share/php"',
+        'error_log'              => '/var/log/php/php.log',
         'pcre.backtrack_limit'   => 5000000,
         'date.timezone'          => 'UTC',
-        'mysql'                  => { 'connect_timeout' => 3},
+        'display_errors'         => 'stderr',
+        'memory_limit'           => '128M',
+        'error_reporting'        => 'E_ALL & ~E_STRICT',
+        'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
     }
 
-    $base_config = {
-        'error_log' => '/var/log/php/php.log',
+    $base_config_fpm = {
+        'opcache.enable'                  => 1,
+        'opcache.interned_strings_buffer' => 50,
+        'opcache.memory_consumption'      => 300,
+        'opcache.max_accelerated_files'   => 24000,
+        'opcache.max_wasted_percentage'   => 10,
+        'opcache.validate_timestamps'     => 1,
+        'opcache.revalidate_freq'         => 10,
+        'display_errors'                  => 0,
+        'session.upload_progress.enabled' => 0,
+        'enable_dl'                       => 0,
     }
 
     # Install the runtime
@@ -40,8 +54,8 @@ class php::php_fpm(
         version        => $version,
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
-            'cli' => $base_cli_config,
-            'fpm' => merge($base_config, $config),
+            'cli' => $config_cli,
+            'fpm' => merge($config_cli, $base_config_fpm, $config),
         },
     }
 
