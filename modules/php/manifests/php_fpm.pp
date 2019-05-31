@@ -28,7 +28,7 @@ class php::php_fpm(
         'error_log'              => '/var/log/php/php.log',
         'pcre.backtrack_limit'   => 5000000,
         'date.timezone'          => 'UTC',
-        'display_errors'         => 'stderr',
+        'display_errors'         => 'On',
         'memory_limit'           => '128M',
         'error_reporting'        => 'E_ALL & ~E_STRICT',
         'mysql'                  => { 'connect_timeout' => 3 },
