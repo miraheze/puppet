@@ -131,7 +131,7 @@ class puppetserver(
 
     file { '/etc/puppetlabs/puppet/environments/production/modules':
         ensure  => link,
-        target  => '/etc/puppet/modules',
+        target  => '/etc/puppetserver/puppet/git/modules',
         require => [
             File['/etc/puppetlabs/puppet/environments/production'],
             File['/etc/puppetlabs/puppet/modules']
@@ -144,37 +144,6 @@ class puppetserver(
         require => [
             File['/etc/puppetlabs/puppet/environments/production'],
             Git::Clone['ssl']
-        ],
-    }
-
-    file { '/etc/puppet':
-        ensure => directory,
-    }
-
-    file { '/etc/puppet/hieradata':
-        ensure  => link,
-        target  => '/etc/puppetlabs/puppet/hieradata',
-        require => [
-            File['/etc/puppetlabs/puppet/hieradata'],
-            File['/etc/puppet']
-        ],
-    }
-
-    file { '/etc/puppet/private':
-        ensure  => link,
-        target  => '/etc/puppetlabs/puppet/private',
-        require => [
-            File['/etc/puppetlabs/puppet/private'],
-            File['/etc/puppet']
-        ],
-    }
-
-    file { '/etc/puppet/ssl':
-        ensure  => link,
-        target  => '/etc/puppetlabs/puppet/ssl-cert',
-        require => [
-            Git::Clone['ssl'],
-            File['/etc/puppet']
         ],
     }
 

@@ -80,7 +80,7 @@ class services::citoid {
         require => File['/etc/mediawiki'],
     }
 
-    $wikis = loadyaml('/etc/puppet/services/services.yaml')
+    $wikis = loadyaml('/etc/puppetserver/puppet/services/services.yaml')
 
     file { '/etc/mediawiki/citoid/config.yaml':
         ensure  => present,
