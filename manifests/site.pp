@@ -79,6 +79,7 @@ node 'misc4.miraheze.org' {
     include role::salt::masters
     include role::salt::minions
     include role::services
+    include role::vpncloud
     include prometheus::php_fpm
 }
 
