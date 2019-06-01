@@ -2,22 +2,40 @@
 class role::vpncloud {
     include ::vpncloud
 
-    ufw::allow { 'vpncloud port tcp cp2':
+    ufw::allow { 'vpncloud port tcp cp2 ipv4':
         proto   => 'tcp',
         port    => 3210,
         from    => '107.191.126.23',
     }
 
-    ufw::allow { 'vpncloud port tcp cp3':
+    ufw::allow { 'vpncloud port tcp cp2 ipv6':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '2604:180:0:33b::2',
+    }
+
+    ufw::allow { 'vpncloud port tcp cp3 ipv4':
         proto   => 'tcp',
         port    => 3210,
         from    => '128.199.139.216',
     }
+
+    ufw::allow { 'vpncloud port tcp cp3 ipv6':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '2400:6180:0:d0::403:f001',
+    }
  
-     ufw::allow { 'vpncloud port tcp cp4':
+     ufw::allow { 'vpncloud port tcp cp4 ipv4':
         proto   => 'tcp',
         port    => 3210,
         from    => '81.4.109.133',
+    }
+
+     ufw::allow { 'vpncloud port tcp cp4 ipv6':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '2a00:d880:5:8ea::ebc7',
     }
 
     ufw::allow { 'vpncloud port tcp test1':
@@ -74,22 +92,40 @@ class role::vpncloud {
         from    => '185.52.3.121',
     }
 
-    ufw::allow { 'vpncloud port tcp mw1':
+    ufw::allow { 'vpncloud port tcp mw1 ipv4':
         proto   => 'tcp',
         port    => 3210,
         from    => '185.52.1.75',
     }
 
-    ufw::allow { 'vpncloud port tcp mw2':
+    ufw::allow { 'vpncloud port tcp mw1 ipv6':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '2a00:d880:6:786::2',
+    }
+
+    ufw::allow { 'vpncloud port tcp mw2 ipv4':
         proto   => 'tcp',
         port    => 3210,
         from    => '185.52.2.113',
     }
 
-    ufw::allow { 'vpncloud port tcp mw3':
+    ufw::allow { 'vpncloud port tcp mw2 ipv6':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '2a00:d880:5:799::2',
+    }
+
+    ufw::allow { 'vpncloud port tcp mw3 ipv4':
         proto   => 'tcp',
         port    => 3210,
         from    => '81.4.121.113',
+    }
+
+    ufw::allow { 'vpncloud port tcp mw3 ipv6':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '2a00:d880:5:b45::2',
     }
 
     ufw::allow { 'vpncloud port tcp ns1':
