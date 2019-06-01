@@ -2,16 +2,16 @@
 class vpncloud(
     String $server_ip = '0.0.0.0',
 ){
-    file { '/opt/vpncloud_0.9.1_xenial_amd64.deb':
+    file { '/opt/vpncloud_1.0.0_amd64.deb':
         ensure  => present,
-        source  => 'puppet:///modules/vpncloud/vpncloud_0.9.1_xenial_amd64.deb',
+        source  => 'puppet:///modules/vpncloud/vpncloud_1.0.0_amd64.deb',
     }
 
     package { 'vpncloud':
         ensure      => installed,
         provider    => dpkg,
-        source      => '/opt/vpncloud_0.9.1_xenial_amd64.deb',
-        require     => File['/opt/vpncloud_0.9.1_xenial_amd64.deb'],
+        source      => '/opt/vpncloud_1.0.0_amd64.deb',
+        require     => File['/opt/vpncloud_1.0.0_amd64.deb'],
     }
 
     $shared_key = hiera('passwords::vpncloud::shared_key')
