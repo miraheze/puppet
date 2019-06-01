@@ -13,6 +13,7 @@ class base::packages {
         'molly-guard',
         'mtr',
         'nano',
+        'net-tools',
         'pigz',
         'ruby',
         'ruby-safe-yaml',
