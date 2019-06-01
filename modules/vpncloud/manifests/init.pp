@@ -28,7 +28,7 @@ class vpncloud(
         hasrestart  => true,
         provider    => 'systemd',
         enable      => true,
-        restart     => '/bin/systemctl reload vpncloud@miraheze-internal',
+        restart     => '/bin/systemctl restart vpncloud@miraheze-internal',
         require     => File['/etc/vpncloud/miraheze-internal.net'],
     }
 }
