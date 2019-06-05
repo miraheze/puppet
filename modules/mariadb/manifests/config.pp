@@ -94,7 +94,7 @@ class mariadb::config(
     monitoring::services { 'Disk Space 1% left':
         check_command => 'nrpe',
         vars          => {
-            nrpe_command => 'check_disk_5_percent',
+            nrpe_command => 'check_disk_1_percent',
         },
     }
 
