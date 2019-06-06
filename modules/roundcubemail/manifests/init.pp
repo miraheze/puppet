@@ -8,6 +8,7 @@ class roundcubemail (
 
     include ::nodejs
 
+    $php_version = hiera('php::php_version', '7.2')
     ensure_resource_duplicate('class', 'php::php_fpm', {
         'config'  => {
             'display_errors'            => 'Off',
@@ -21,8 +22,10 @@ class roundcubemail (
                 'memory_consumption'      => 300,
                 'max_accelerated_files'   => 24000,
                 'max_wasted_percentage'   => 10,
-                'revalidate_freq'         => 60,
+                'validate_timestamps'     => 1,
+                'revalidate_freq'         => 10,
             },
+            'enable_dl'           => 0,
             'post_max_size'       => '40M',
             'register_argc_argv'  => 'Off',
             'request_order'       => 'GP',
@@ -30,10 +33,10 @@ class roundcubemail (
             'upload_max_filesize' => '100M',
             'variables_order'     => 'GPCS',
         },
-        'version' => hiera('php::php_version', '7.2'),
+        'version' => $php_version
     })
 
-    require_package('php7.2-pspell')
+    require_package("php${php_version}-pspell")
 
     git::clone { 'roundcubemail':
         directory          => '/srv/roundcubemail',
