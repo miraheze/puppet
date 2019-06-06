@@ -1,5 +1,4 @@
 mailserver: true
-grafana::php_72: true
 
 vpncloud::server_ip: 10.0.1.11
 
