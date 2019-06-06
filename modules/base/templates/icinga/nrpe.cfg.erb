@@ -14,7 +14,7 @@ connection_timeout=300
 # allow_weak_random_seed=1
 
 # Simplify config with puppet
-command[check_disk]=/usr/lib/nagios/plugins/check_disk -w 10% -c 4% -p /
+command[check_disk]=/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /
 command[check_load]=/usr/lib/nagios/plugins/check_load -w <%= scope.lookupvar('::virtual_processor_count').to_i * 1.7 %> -c <%= scope.lookupvar('::virtual_processor_count').to_i * 2.0 %>
 command[check_puppet_run]=/usr/bin/sudo /usr/lib/nagios/plugins/check_puppet_run -w 3600 -c 43200
 command[check_varnishbackends]=/usr/bin/sudo /usr/lib/nagios/plugins/check_varnishbackends
