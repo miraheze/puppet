@@ -2,6 +2,6 @@ users::groups:
   - mediawiki-admins
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
-mediawiki::branch: 'REL1_32'
+mediawiki::branch: 'REL1_33'
 php::php_version: '7.3'
 vpncloud::server_ip: 10.0.1.2
