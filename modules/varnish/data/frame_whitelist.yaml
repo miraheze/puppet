@@ -1,2 +1,2 @@
 # Only add a domain if really necessary.
-url1: 'miraheze.org'
+url1: '*.miraheze.org'
