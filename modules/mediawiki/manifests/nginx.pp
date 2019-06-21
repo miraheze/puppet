@@ -4,10 +4,16 @@ class mediawiki::nginx {
     $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
     $php_fpm_sock = 'php/fpm-www.sock'
 
+    nginx::conf { 'mediawiki-includes':
+        ensure => present,
+        content => template('mediawiki/mediawiki-includes.conf.erb'),
+    }
+
     nginx::site { 'mediawiki':
         ensure       => present,
         content      => template('mediawiki/mediawiki.conf'),
         notify_site  => Exec['nginx-syntax'],
+        require      => Nginx::Conf['mediawiki-includes'],
     }
 
     exec { 'nginx-syntax':
@@ -24,9 +30,4 @@ class mediawiki::nginx {
 
     include ssl::wildcard
     include ssl::hiera
-
-    nginx::conf { 'mediawiki-includes':
-        ensure => present,
-        content => template('mediawiki/mediawiki-includes.conf.erb'),
-    }
 }
