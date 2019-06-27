@@ -78,7 +78,7 @@ class php::php_fpm(
         }
     }
 
-    if $version == '7.3' {
+    if $version == '7.2' or $version == '7.3' {
         require_package('liblua5.1-0')
 
         # make sure to rebuild against the selected php version
@@ -97,6 +97,8 @@ class php::php_fpm(
                 package_name => '';
         }
     }
+
+
 
     # Extensions that require configuration.
     php::extension {
