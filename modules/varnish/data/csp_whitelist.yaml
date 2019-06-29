@@ -1,6 +1,7 @@
 # Only add a domain if really necessary.
 # There should be a discussion before adding it and at least 2 ops members should sign off unless it's a emergency.
 url1: '*.miraheze.org'
+url1: '*.m.miraheze.org'
 url2: '*.wikimedia.org'
 url3: '*.wikipedia.org'
 url4: '*.wikibooks.org'
