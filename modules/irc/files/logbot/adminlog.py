@@ -16,7 +16,7 @@ def log(config, message, project, author):
     if config.wiki_category:
         import re
 
-    site = mwclient.Site(config.wiki_connection, path=config.wiki_path)
+    site = mwclient.Site(config.wiki_connection, path=config.wiki_path, clients_useragent='Miraheze-LogBot/0.1 run by Miraheze Operation')
     site.login(config.wiki_user, config.wiki_pass, domain=config.wiki_domain)
     if config.enable_projects:
         project = project.capitalize()
