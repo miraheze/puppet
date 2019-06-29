@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import sys
-sys.path.append('/etc/irclogbot/mwclient')
+sys.path.insert(0, r'/etc/irclogbot/mwclient')
 import mwclient
 import datetime
 
