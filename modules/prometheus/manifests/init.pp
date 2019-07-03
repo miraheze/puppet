@@ -13,6 +13,7 @@ class prometheus {
     require_package('prometheus')
 
     $host = query_nodes("domain='$domain'", 'fqdn')
+    $host_nginx = query_nodes("domain='$domain' and Class[Prometheus::Nginx]", 'fqdn')
     file { '/etc/prometheus/prometheus.yml':
         content => template('prometheus/prometheus.yml.erb'),
         owner   => 'root',
