@@ -68,8 +68,8 @@ class matomo {
 
     cron { 'archive_matomo':
         ensure  => present,
-        command => '/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/ > /srv/matomo-archive.log',
-        user    => 'www-data',
+        command => 'flock -w .007 /tmp/flock.lock -c "/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/ > /srv/matomo-archive.log"',
+        user    => 'root',
         minute  => '30',
         hour    => '*/2',
     }
