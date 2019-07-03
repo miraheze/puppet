@@ -6,3 +6,4 @@ letsencrypt: true
 mwservices: true
 role::mediawiki::use_strict_firewall: false
 vpncloud::server_ip: 10.0.1.7
+mediawiki::branch: 'REL1_33'
