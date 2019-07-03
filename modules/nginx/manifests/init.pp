@@ -77,4 +77,7 @@ class nginx {
         ensure => present,
         source => 'puppet:///modules/nginx/logrotate',
     }
+
+    # Include nginx prometheus exported on all hosts that use the nginx class
+    include prometheus::nginx
 }
