@@ -3,10 +3,10 @@ class role::elasticsearch {
     include ::java
 
     class { 'elastic_stack::repo':
-        version => 5,
+        version => 6,
     }
     class { 'elasticsearch':
-        version => '5.6.15',
+        version => '6.8.1',
     }
 
     # https://www.elastic.co/guide/en/elasticsearch/reference/master/heap-size.html
