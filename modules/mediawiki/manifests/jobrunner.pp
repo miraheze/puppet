@@ -73,7 +73,7 @@ class mediawiki::jobrunner {
 
     cron { 'update rottenlinks on all wikis':
         ensure  => present,
-        command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php',
+        command => 'flock -w .007 /tmp/rl_flock.lock -c "/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php"',
         user    => 'www-data',
         minute   => '0',
         hour     => '0',
