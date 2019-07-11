@@ -120,6 +120,12 @@ class mediawiki(
         require => Git::Clone['MediaWiki config'],
     }
 
+    file { '/usr/local/bin/fileLockScript.sh':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/bin/fileLockScript.sh',
+    }
+
     file { '/usr/local/bin/foreachwikiindblist':
         ensure => 'present',
         mode   => '0755',
