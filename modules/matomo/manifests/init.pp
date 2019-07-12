@@ -66,10 +66,16 @@ class matomo {
         require => Git::Clone['matomo'],
     }
 
+    file { '/usr/local/bin/fileLockScript.sh':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/bin/fileLockScript.sh',
+    }
+
     cron { 'archive_matomo':
         ensure  => present,
-        command => 'flock -w .007 /tmp/flock.lock -c "/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/ > /srv/matomo-archive.log"',
-        user    => 'root',
+        command => '/usr/local/bin/fileLockScript.sh /tmp/matomo_file_lock "/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/ > /srv/matomo-archive.log"',
+        user    => 'www-data',
         minute  => '30',
         hour    => '*/2',
     }
