@@ -18,13 +18,23 @@
                 "webVideoTranscode"
             ]
         },
-        "basic2": {
-            "runners": 2,
+        "DataDumpGenerateJob": {
+            "runners": 1,
+            "include": [
+                "DataDumpGenerateJob"
+            ]
+        },
+        "GUP": {
+            "runners": 1,
+            "include": [
+                "LocalGlobalUserPageCacheUpdateJob"
+            ]
+        },
+        "SEARCH": {
+            "runners": 1,
             "include": [
                 "cirrusSearchLinksUpdatePrioritized",
-                "cirrusSearchLinksUpdate",
-                "DataDumpGenerateJob",
-                "LocalGlobalUserPageCacheUpdateJob"
+                "cirrusSearchLinksUpdate"
             ]
         }
     },
