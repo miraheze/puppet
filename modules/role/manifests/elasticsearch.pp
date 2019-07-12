@@ -12,8 +12,8 @@ class role::elasticsearch {
     # https://www.elastic.co/guide/en/elasticsearch/reference/master/heap-size.html
     elasticsearch::instance { 'es-01':
         jvm_options => [
-            '-Xms2g',
-            '-Xmx2g',
+            '-Xms2.5g',
+            '-Xmx2.5g',
         ]
     }
 
