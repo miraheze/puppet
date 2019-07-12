@@ -11,6 +11,8 @@
             ],
             // Job types to exempt (useful when combined with "*")
             "exclude": [
+                "cirrusSearchLinksUpdatePrioritized",
+                "cirrusSearchLinksUpdate",
                 "DataDumpGenerateJob",
                 "LocalGlobalUserPageCacheUpdateJob",
                 "webVideoTranscode"
@@ -27,7 +29,13 @@
             "include": [
                 "LocalGlobalUserPageCacheUpdateJob"
             ]
-        }
+        },
+        "SEARCH": {
+            "runners": 1,
+            "include": [
+                "cirrusSearchLinksUpdatePrioritized",
+                "cirrusSearchLinksUpdate",
+            ]
     },
 
     "limits": {
