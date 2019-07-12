@@ -69,7 +69,7 @@ class matomo {
     file { '/usr/local/bin/fileLockScript.sh':
         ensure => 'present',
         mode   => '0755',
-        source => 'puppet:///modules/mediawiki/bin/fileLockScript.sh',
+        source => 'puppet:///modules/matomo/fileLockScript.sh',
     }
 
     cron { 'archive_matomo':
