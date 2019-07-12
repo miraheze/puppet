@@ -14,7 +14,10 @@ class role::elasticsearch {
         jvm_options => [
             '-Xms3g',
             '-Xmx3g',
-        ]
+        ],
+        init_defaults => {
+            'MAX_OPEN_FILES' => '150000',
+        }
     }
 
     include ssl::wildcard
