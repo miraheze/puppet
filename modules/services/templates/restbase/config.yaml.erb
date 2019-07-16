@@ -38,6 +38,16 @@ default_project: &default_project
                     grace_ttl: 1
                   citoid:
                     host: http://127.0.0.1:6927
+                  table:
+                    storage_groups:
+                    - name: default
+                      domains: /./
+                    backend: sqlite
+                    dbname: db.sqlite3
+                    pool_idle_timeout: 20000
+                    retry_delay: 250
+                    retry_limit: 10
+                    show_sql: false
                   # in case this is needed later but for now cross out
                   # mathoid:
                   #   host: http://127.0.0.1:10044
