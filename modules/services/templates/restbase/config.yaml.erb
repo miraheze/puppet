@@ -29,7 +29,7 @@ default_project: &default_project
           /{api:v1}:
             x-modules:
               - path: /etc/mediawiki/restbase/miraheze_project.yaml
-                options: &default_options
+                options:
                   parsoid:
                     host: https://parsoid-lb.miraheze.org
                     grace_ttl: 1000000
