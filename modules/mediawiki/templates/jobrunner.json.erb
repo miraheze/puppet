@@ -11,8 +11,9 @@
             ],
             // Job types to exempt (useful when combined with "*")
             "exclude": [
-                "cirrusSearchLinksUpdatePrioritized",
+                "cirrusSearchElasticaWrite",
                 "cirrusSearchLinksUpdate",
+                "cirrusSearchLinksUpdatePrioritized",
                 "DataDumpGenerateJob",
                 "LocalGlobalUserPageCacheUpdateJob",
                 "webVideoTranscode"
@@ -33,8 +34,9 @@
         "SEARCH": {
             "runners": 1,
             "include": [
-                "cirrusSearchLinksUpdatePrioritized",
-                "cirrusSearchLinksUpdate"
+                "cirrusSearchElasticaWrite",
+                "cirrusSearchLinksUpdate",
+                "cirrusSearchLinksUpdatePrioritized"
             ]
         }
     },
