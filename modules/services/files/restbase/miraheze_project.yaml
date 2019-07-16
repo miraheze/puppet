@@ -25,6 +25,7 @@ paths:
             /transform:
               x-modules:
                 - path: v1/transform.yaml
+                - path: v1/transform-lang.js
                   options: '{{options.transform}}'
             /data:
               x-modules:
