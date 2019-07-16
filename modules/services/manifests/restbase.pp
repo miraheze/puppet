@@ -23,7 +23,7 @@ class services::restbase {
         ensure             => present,
         directory          => '/srv/restbase',
         origin             => 'https://github.com/wikimedia/restbase.git',
-        branch             => 'master',
+        branch             => 'ab6b368',
         owner              => 'restbase',
         group              => 'restbase',
         mode               => '0755',
