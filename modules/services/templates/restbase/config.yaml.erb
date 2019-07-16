@@ -23,19 +23,19 @@ worker_heap_limit_mb: 80
 # Load some project templates. These are referenced / shared between domains
 # in the root_spec further down.
 default_project: &default_project
-  x-modules:
     - spec:
         paths:
           /{api:v1}:
             x-modules:
               - path: /etc/mediawiki/restbase/miraheze_project.yaml
                 options:
-                  parsoid:
-                    host: https://parsoid-lb.miraheze.org
-                    grace_ttl: 1000000
                   action:
                     apiUriTemplate: "{{'https://{domain}/w/api.php'}}"
                     baseUriTemplate: "{{'https://{domain}/api/rest_v1'}}"
+                  parsoid:
+                    # XXX Check Parsoid URL!
+                    host: https://parsoid-lb.miraheze.org
+                    grace_ttl: 1
                   citoid:
                     host: http://127.0.0.1:6927
                   table:
@@ -48,6 +48,11 @@ default_project: &default_project
                     retry_delay: 250
                     retry_limit: 10
                     show_sql: false
+                  # in case this is needed later but for now cross out
+                  # mathoid:
+                  #   host: http://127.0.0.1:10044
+                  #   # 10 days Varnish caching, one day client-side
+                  #   cache-control: s-maxage=864000, max-age=86400
                   purged_cache_control: s-maxage=0, max-age=86400
                   purged_cache_control_client_cache: s-maxage=0, max-age=300
                   pdf:
@@ -60,11 +65,10 @@ default_project: &default_project
                       options:
                         permissions:
                           - read
-                  skip_updates: false
-              - path: projects/proxy.yaml
-                options: &proxy_options
-                  backend_host_template: '{{"/{domain}/sys/legacy"}}'
-                  block_external_reqs: true
+                - path: projects/proxy.yaml
+                  options:
+                    backend_host_template: '{{"/{domain}/sys/legacy"}}'
+                    block_external_reqs: true
           /{api:sys}: &default_sys
             x-modules:
               - path: /etc/mediawiki/restbase/miraheze_project_sys.yaml
