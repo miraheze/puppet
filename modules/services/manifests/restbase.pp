@@ -78,13 +78,6 @@ class services::restbase {
         notify  => Service['restbase'],
     }
 
-    file { '/etc/mediawiki/restbase/miraheze_project_sys.yaml':
-        ensure  => present,
-        source  => 'puppet:///modules/services/restbase/miraheze_project_sys.yaml',
-        require => File['/etc/mediawiki/restbase'],
-        notify  => Service['restbase'],
-    }
-
     file { '/etc/mediawiki/restbase/mathoid.yaml':
         ensure  => present,
         source  => 'puppet:///modules/services/restbase/mathoid.yaml',
