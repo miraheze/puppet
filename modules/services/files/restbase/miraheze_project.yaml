@@ -25,8 +25,6 @@ paths:
             /transform:
               x-modules:
                 - path: v1/transform.yaml
-                - path: v1/transform-lang.js
-                  options: '{{options.transform}}'
             /data:
               x-modules:
                 - path: v1/citoid.js
@@ -41,25 +39,49 @@ paths:
   /{api:sys}:
     x-modules:
       - spec:
-          paths:    
+          paths:
+            # in case this is needed later, crossing out for now.
+            # /mathoid:
+            #  x-modules:
+            #    - path: sys/mathoid.js
+            #      options: '{{options.mathoid}}'
             /table: &sys_table
               x-modules:
                 - path: sys/table.js
                   options:
                     conf: '{{options.table}}'
+            /parsoid_bucket:
+              x-modules:
+                - path: sys/multi_content_bucket.js
+                  options:
+                    grace_ttl: '{{default(options.parsoid.grace_ttl, 86400)}}'
+                    renew_expiring: true
+                    delete_probability: '{{default(options.parsoid.delete_probability, 1)}}'
+                    table_name_prefix: parsoid_ng
+                    main_content_type:
+                      name: html
+                      value_type: blob
+                    dependent_content_types:
+                      - name: data-parsoid
+                        value_type: json
+                      - name: section-offsets
+                        value_type: json
             /key_value: &sys_key_value
               x-modules:
                 - path: sys/key_value.js
+            /key_rev_value:
+              x-modules:
+                - path: sys/key_rev_value.js
             /page_revisions:
               x-modules:
                 - path: sys/page_revisions.js
-            /post_data: &sys_post_data
+            /post_data:
               x-modules:
                 - path: sys/post_data.js
             /action:
               x-modules:
                 - path: sys/action.js
-                  options: "{{options.action}}"
+                  options: '{{options.action}}'
             /page_save:
               x-modules:
                 - path: sys/page_save.js
