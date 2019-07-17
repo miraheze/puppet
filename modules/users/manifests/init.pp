@@ -28,4 +28,7 @@ class users(
     users::groupmembers { $all_groups:
         phash  => $data,
     }
+
+    # Ensure ordering of resources
+    Users::Hashuser<| |> -> Users::Groupmembers<| |>
 }
