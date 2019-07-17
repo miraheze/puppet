@@ -8,11 +8,14 @@ class role::elasticsearch {
 
     $es_master_node = hiera('role::elasticsearch::master', false)
     $es_data_node = hiera('role::elasticsearch::data_node', false)
+    $es_data_node = hiera('role::elasticsearch::unicast_host', '127.0.0.1')
 
     class { 'elasticsearch':
         config => {
-            'cluster.name' => 'Miraheze',
             'bootstrap.mlockall' => true,
+            'discovery.zen.ping.multicast.enabled' => false,
+            'discovery.zen.ping.unicast.hosts' => $es_unicast_host,
+            'cluster.name' => 'Miraheze',
             'index.number_of_shards' => 1,
             'index.number_of_replicas' => 0,
             'index.codec' => 'best_compression',
