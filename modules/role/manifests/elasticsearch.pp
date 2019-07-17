@@ -23,10 +23,11 @@ class role::elasticsearch {
         version => '6.8.1',
     }
 
+    $es_instance = hiera('role::elasticsearch::instance', 'es-01')
     $es_heap = hiera('role::elasticsearch::heap', ['-Xms2g', '-Xmx2g'])
 
     # https://www.elastic.co/guide/en/elasticsearch/reference/master/heap-size.html
-    elasticsearch::instance { 'es-01':
+    elasticsearch::instance { $es_instance:
         jvm_options => $es_heap,
         init_defaults => {
             'MAX_OPEN_FILES' => '150000',
