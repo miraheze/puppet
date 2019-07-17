@@ -28,7 +28,7 @@ class role::elasticsearch {
     elasticsearch::instance { $es_instance:
         jvm_options => $es_heap,
         init_defaults => {
-            'MAX_OPEN_FILES' => '150000',
+            'MAX_OPEN_FILES' => '1500000',
         }
     }
 
