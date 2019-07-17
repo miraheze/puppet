@@ -12,7 +12,8 @@ class role::elasticsearch {
 
     class { 'elasticsearch':
         config => {
-            'bootstrap.memory_lock' => true,
+            'bootstrap.memory_lock' => false,
+            
             'discovery.zen.ping.unicast.hosts' => $es_unicast_host,
             'cluster.name' => 'Miraheze',
             'node.master' => $es_master_node,
@@ -24,11 +25,11 @@ class role::elasticsearch {
     }
 
     $es_instance = hiera('role::elasticsearch::instance', 'es-01')
-    $es_heap = hiera('role::elasticsearch::heap', ['-Xms2g', '-Xmx2g'])
+    $es_jvm_options = hiera('role::elasticsearch::jvm_options', ['-Xms2g', '-Xmx2g', '-Des.enforce.bootstrap.checks=true'])
 
     # https://www.elastic.co/guide/en/elasticsearch/reference/master/heap-size.html
     elasticsearch::instance { $es_instance:
-        jvm_options => $es_heap,
+        jvm_options => $es_jvm_options,
         init_defaults => {
             'MAX_OPEN_FILES' => '1500000',
         }
