@@ -16,10 +16,6 @@ class role::elasticsearch {
             'discovery.zen.ping.multicast.enabled' => false,
             'discovery.zen.ping.unicast.hosts' => $es_unicast_host,
             'cluster.name' => 'Miraheze',
-            'index.number_of_shards' => 1,
-            'index.number_of_replicas' => 0,
-            'index.codec' => 'best_compression',
-            'index.refresh_interval' => '5s',
             'node.master' => $es_master_node,
             'node.data' => $es_data_node
         },
