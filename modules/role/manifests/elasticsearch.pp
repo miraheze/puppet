@@ -12,8 +12,7 @@ class role::elasticsearch {
 
     class { 'elasticsearch':
         config => {
-            'bootstrap.mlockall' => true,
-            'discovery.zen.ping.multicast.enabled' => false,
+            'bootstrap.memory_lock' => true,
             'discovery.zen.ping.unicast.hosts' => $es_unicast_host,
             'cluster.name' => 'Miraheze',
             'node.master' => $es_master_node,
