@@ -86,12 +86,11 @@ class role::elasticsearch {
     }
 
     # TODO: Switch this to use https
-    ufw::allow { 'elasticsearch master access data nodes':
+    ufw::allow { 'elasticsearch master access data nodes 9300 port':
         proto => 'tcp',
-        port  => '9200',
+        port  => '9300',
         from  => hiera('role::elasticsearch::master_ip')
     }
-
     motd::role { 'role::elasticsearch':
         description => 'elasticsearch server',
     }
