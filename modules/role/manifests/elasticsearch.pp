@@ -16,7 +16,9 @@ class role::elasticsearch {
             'discovery.zen.ping.unicast.hosts' => $es_unicast_host,
             'cluster.name' => 'Miraheze',
             'node.master' => $es_master_node,
-            'node.data' => $es_data_node
+            'node.data' => $es_data_node,
+            'network.bind_host' => '0.0.0.0',
+            'network.publish_host' => '0.0.0.0',
         },
         version => '6.8.1',
     }
