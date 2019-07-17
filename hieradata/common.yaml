@@ -9,4 +9,4 @@ letsencrypt: false
 mediawiki::use_memcached: false
 lizardfs_master_server: '185.52.1.144'
 role::elasticsearch::master_ip: '81.4.122.121'
-role::elasticsearch::unicast_host: ['81.4.122.121']
+role::elasticsearch::unicast_host: ['81.4.122.121','185.52.3.60']
