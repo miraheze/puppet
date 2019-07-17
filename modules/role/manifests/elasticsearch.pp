@@ -23,7 +23,7 @@ class role::elasticsearch {
         version => '6.8.1',
     }
 
-    $es_heap = hiera('role::elasticsearch::data_node', ['-Xms2g', '-Xmx2g'])
+    $es_heap = hiera('role::elasticsearch::heap', ['-Xms2g', '-Xmx2g'])
 
     # https://www.elastic.co/guide/en/elasticsearch/reference/master/heap-size.html
     elasticsearch::instance { 'es-01':
@@ -33,7 +33,7 @@ class role::elasticsearch {
         }
     }
 
-    if es_master_node {
+    if $es_master_node {
         include ssl::wildcard
 
         nginx::site { 'elasticsearch-lb.miraheze.org':
