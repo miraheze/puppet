@@ -1,1 +1,5 @@
 vpncloud::server_ip: 10.0.1.1
+role::elasticsearch::master: true
+role::elasticsearch::data_node: true
+role::elasticsearch::instance: 'es-01'
+role::elasticsearch::heap: ['-Xms3g', '-Xmx3g']
