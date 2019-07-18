@@ -1,0 +1,5 @@
+role::elasticsearch::master: true
+role::elasticsearch::data_node: false
+role::elasticsearch::instance: 'es-01'
+role::elasticsearch::heap: ['-Xms1500M', '-Xmx1500M']
+role::elasticsearch::unicast_host: ['168.235.81.167']
