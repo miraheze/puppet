@@ -8,7 +8,7 @@ class role::elasticsearch {
 
     $es_master_node = hiera('role::elasticsearch::master', false)
     $es_data_node = hiera('role::elasticsearch::data_node', false)
-    $es_unicast_host = hiera('role::elasticsearch::unicast_host', '')
+    $es_unicast_host = hiera('role::elasticsearch::unicast_host', '127.0.0.1')
 
     $config = {
         'discovery.zen.ping.unicast.hosts' => $es_unicast_host,
