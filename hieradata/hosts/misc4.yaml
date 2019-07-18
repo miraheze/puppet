@@ -4,3 +4,4 @@ enable_citoid: false
 enable_electron: false
 enable_restbase: false
 vpncloud::server_ip: 10.0.1.17
+enable_proton: false
