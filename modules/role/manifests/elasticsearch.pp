@@ -84,13 +84,20 @@ class role::elasticsearch {
             port  => '443',
             from  => '185.52.2.243',
         }
+
+        ufw::allow { 'elasticsearch master access data nodes 9300 port':
+            proto => 'tcp',
+            port  => '9300',
+            from  => hiera('role::elasticsearch::master_ip')
+        }
     }
 
-    # TODO: Switch this to use https
-    ufw::allow { 'elasticsearch master access data nodes 9300 port':
-        proto => 'tcp',
-        port  => '9300',
-        from  => hiera('role::elasticsearch::master_ip')
+    if $es_data_node {
+        ufw::allow { 'elasticsearch data nodes access master node 9300 port':
+            proto => 'tcp',
+            port  => '9300',
+            from  => '168.235.110.5',
+        }
     }
 
     sysctl::parameters { 'disable ipv6':
