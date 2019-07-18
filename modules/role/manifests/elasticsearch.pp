@@ -84,18 +84,18 @@ class role::elasticsearch {
             port  => '443',
             from  => '185.52.2.243',
         }
+    }
 
-        ufw::allow { 'elasticsearch data nodes access master node 9300 port (1)':
-            proto => 'tcp',
-            port  => '9300',
-            from  => '168.235.110.5',
-        }
+    ufw::allow { 'elasticsearch data nodes access master node 9300 port (1)':
+        proto => 'tcp',
+        port  => '9300',
+        from  => '168.235.110.5',
+    }
 
-        ufw::allow { 'elasticsearch data nodes access master node 9300 port (2)':
-            proto => 'tcp',
-            port  => '9300',
-            from  => '168.235.110.25',
-        }
+    ufw::allow { 'elasticsearch data nodes access master node 9300 port (2)':
+        proto => 'tcp',
+        port  => '9300',
+        from  => '168.235.110.25',
     }
 
     if $es_data_node {
