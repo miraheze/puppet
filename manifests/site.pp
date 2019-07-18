@@ -32,12 +32,6 @@ node 'elasticsearch1.miraheze.org' {
     include role::vpncloud
 }
 
-node 'elasticsearch2.miraheze.org' {
-    include base
-    include role::elasticsearch
-    include role::vpncloud
-}
-
 node /^es[123]\.miraheze\.org$/ {
     include base
     include role::elasticsearch
