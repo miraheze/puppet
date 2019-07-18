@@ -8,17 +8,27 @@ class role::elasticsearch {
 
     $es_master_node = hiera('role::elasticsearch::master', false)
     $es_data_node = hiera('role::elasticsearch::data_node', false)
-    $es_unicast_host = hiera('role::elasticsearch::unicast_host', '127.0.0.1')
+    $es_unicast_host = hiera('role::elasticsearch::unicast_host', '')
 
+    $config = {
+        'discovery.zen.ping.unicast.hosts' => $es_unicast_host,
+        'cluster.name' => 'Miraheze',
+        'node.master' => $es_master_node,
+        'node.data' => $es_data_node,
+        'network.bind_host' => '0.0.0.0',
+        'network.publish_host' => '0.0.0.0',
+    }
+    
+    if hiera('single_node', false) {
+      $backup_config = {'discovery.type' => 'single-node'}
+    } else {
+      $backup_config = {}
+    }
+ 
+    $config = merge($config, $backup_config)
+ 
     class { 'elasticsearch':
-        config => {
-            'discovery.zen.ping.unicast.hosts' => $es_unicast_host,
-            'cluster.name' => 'Miraheze',
-            'node.master' => $es_master_node,
-            'node.data' => $es_data_node,
-            'network.bind_host' => '0.0.0.0',
-            'network.publish_host' => '0.0.0.0',
-        },
+        config => $config,
         version => '6.8.1',
     }
 
