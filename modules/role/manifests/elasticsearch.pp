@@ -15,7 +15,7 @@ class role::elasticsearch {
     class { 'elasticsearch':
         config => {
             'discovery.seed_hosts' => $es_discovery_host,
-            'discovery.zen.ping.unicast.hosts' => $es_unicast_host,
+            'discovery.zen.ping.unicast.hosts' => $es_discovery_host,
             'cluster.name' => 'Miraheze',
             'node.master' => $es_master_node,
             'node.data' => $es_data_node,
