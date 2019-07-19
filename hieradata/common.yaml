@@ -9,4 +9,4 @@ letsencrypt: false
 mediawiki::use_memcached: false
 lizardfs_master_server: '185.52.1.144'
 role::elasticsearch::master_ip: '168.235.81.167'
-role::elasticsearch::discovery_host: ['es1.miraheze.org', 'es2.miraheze.org', 'es3.miraheze.org']
+role::elasticsearch::discovery_host: ['es1.miraheze.org', 'es2.miraheze.org', 'es3.miraheze.org', 'es4.miraheze.org']

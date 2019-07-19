@@ -32,7 +32,7 @@ node 'elasticsearch1.miraheze.org' {
     include role::vpncloud
 }
 
-node /^es[123]\.miraheze\.org$/ {
+node /^es[1234]\.miraheze\.org$/ {
     include base
     include role::elasticsearch
     include role::salt::minions

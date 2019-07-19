@@ -1,0 +1,4 @@
+role::elasticsearch::master: false
+role::elasticsearch::data_node: true
+role::elasticsearch::instance: 'es-04'
+role::elasticsearch::heap: ['-Xms4G', '-Xmx4G']
