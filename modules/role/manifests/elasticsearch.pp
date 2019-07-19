@@ -52,6 +52,7 @@ class role::elasticsearch {
         nginx::site { 'elasticsearch-lb.miraheze.org':
             ensure      => present,
             source      => 'puppet:///modules/role/elasticsearch/nginx-site.conf',
+            content     => template('role/elasticsearch/nginx-site.conf.erb'),
             monitor     => false,
             notify_site => Exec['nginx-syntax'],
         }
