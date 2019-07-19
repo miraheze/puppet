@@ -1,7 +1,7 @@
 # class: ssl::wildcard
 class ssl::wildcard (
-    $ssl_cert_path => '/etc/ssl/certs',
-    $ssl_cert_key_private_path => '/etc/ssl/private',
+    $ssl_cert_path = '/etc/ssl/certs',
+    $ssl_cert_key_private_path = '/etc/ssl/private',
     $use_globalsign = false,
 ) {
 
