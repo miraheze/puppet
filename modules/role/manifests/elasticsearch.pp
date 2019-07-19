@@ -25,10 +25,10 @@ class role::elasticsearch {
       $backup_config = {}
     }
  
-    $es_config = merge($config, $backup_config)
+    $config = merge($config, $backup_config)
  
     class { 'elasticsearch':
-        config => $es_config,
+        config => $config,
         version => '6.8.1',
     }
 
