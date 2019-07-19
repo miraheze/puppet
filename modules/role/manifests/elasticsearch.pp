@@ -36,7 +36,7 @@ class role::elasticsearch {
 
     exec { 'add elasticsearch to ssl-cert group':
         unless  => '/bin/grep -q "ssl-cert\\S*elasticsearch" /etc/group',
-        command => '/sbin/usermod -aG ssl-cert elasticsearch',
+        command => '/usr/sbin/usermod -aG ssl-cert elasticsearch',
         require => Class['elasticsearch'],
     }
 
