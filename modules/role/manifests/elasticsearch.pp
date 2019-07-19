@@ -23,7 +23,7 @@ class role::elasticsearch {
             'xpack.security.enabled' => true,
             'xpack.security.http.ssl.enabled' => true,
             'xpack.security.transport.ssl.enabled' => true,
-            'xpack.security.http.ssl.key' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.key'"
+            'xpack.security.http.ssl.key' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.key"
             'xpack.security.http.ssl.certificate' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.crt",
             'xpack.security.http.ssl.certificate_authorities' => "/etc/elasticsearch/${es_instance}/ssl/GlobalSign.crt",
             'xpack.security.transport.ssl.key' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.key",
@@ -43,8 +43,10 @@ class role::elasticsearch {
         }
     }
 
-    class { 'ssl::elasticsearch_wildcard':
-        es_name => $es_instance,
+    class { 'ssl::wildcard':
+        ssl_cert_path => '',
+        ssl_private_path => '',
+        ssl_path => "/etc/elasticsearch/$es_instance/ssl",
         require => Elasticsearch::Instance[$es_instance],
     }
 
