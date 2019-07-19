@@ -8,16 +8,28 @@ class role::elasticsearch {
 
     $es_master_node = hiera('role::elasticsearch::master', false)
     $es_data_node = hiera('role::elasticsearch::data_node', false)
-    $es_unicast_host = hiera('role::elasticsearch::unicast_host', '127.0.0.1')
+    $es_discovery_host = hiera('role::elasticsearch::discovery_host', ['es1.miraheze.org'])
+
+    include ssl::wildcard
 
     class { 'elasticsearch':
         config => {
+            'discovery.seed_hosts' => $es_discovery_host,
             'discovery.zen.ping.unicast.hosts' => $es_unicast_host,
             'cluster.name' => 'Miraheze',
             'node.master' => $es_master_node,
             'node.data' => $es_data_node,
             'network.bind_host' => '0.0.0.0',
             'network.publish_host' => '0.0.0.0',
+            'xpack.security.enabled' => true,
+            'xpack.security.http.ssl.enabled' => true,
+            'xpack.security.transport.ssl.enabled' => true,
+            'xpack.security.http.ssl.key' => '/etc/ssl/private/wildcard.miraheze.org.key',
+            'xpack.security.http.ssl.certificate' => '/etc/ssl/certs/wildcard.miraheze.org.crt',
+            'xpack.security.http.ssl.certificate_authorities' => '/etc/ssl/certs/GlobalSign.crt',
+            'xpack.security.transport.ssl.key' => '/etc/ssl/private/wildcard.miraheze.org.key',
+            'xpack.security.transport.ssl.certificate' => '/etc/ssl/certs/wildcard.miraheze.org.crt',
+            'xpack.security.transport.ssl.certificate_authorities' => '/etc/ssl/certs/wildcard.miraheze.org.crt',
         },
         version => '6.8.1',
     }
@@ -34,8 +46,6 @@ class role::elasticsearch {
     }
 
     if $es_master_node {
-        include ssl::wildcard
-
         nginx::site { 'elasticsearch-lb.miraheze.org':
             ensure      => present,
             source      => 'puppet:///modules/role/elasticsearch/nginx-site.conf',
