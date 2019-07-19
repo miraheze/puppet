@@ -9,6 +9,7 @@ class role::elasticsearch {
     $es_master_node = hiera('role::elasticsearch::master', false)
     $es_data_node = hiera('role::elasticsearch::data_node', false)
     $es_discovery_host = hiera('role::elasticsearch::discovery_host', ['es1.miraheze.org'])
+    $es_instance = hiera('role::elasticsearch::instance', 'es-01')
 
     class { 'elasticsearch':
         config => {
@@ -32,7 +33,6 @@ class role::elasticsearch {
         version => '6.8.1',
     }
 
-    $es_instance = hiera('role::elasticsearch::instance', 'es-01')
     $es_heap = hiera('role::elasticsearch::heap', ['-Xms2g', '-Xmx2g'])
 
     # https://www.elastic.co/guide/en/elasticsearch/reference/master/heap-size.html
