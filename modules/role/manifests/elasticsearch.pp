@@ -42,11 +42,17 @@ class role::elasticsearch {
         }
     }
 
+    file { "/etc/elasticsearch/${es_instance}/ssl":
+        ensure  => 'directory',
+        mode    => '0745',
+        require => Elasticsearch::Instance[$es_instance],
+    }
+
     class { 'ssl::wildcard':
         ssl_cert_path => "/etc/elasticsearch/${es_instance}/ssl",
         ssl_cert_key_private_path => "/etc/elasticsearch/${es_instance}/ssl",
         use_globalsign => true,
-        require => Elasticsearch::Instance[$es_instance],
+        require => File["/etc/elasticsearch/${es_instance}/ssl"],
     }
 
     if $es_master_node {
