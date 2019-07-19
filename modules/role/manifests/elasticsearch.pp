@@ -43,9 +43,8 @@ class role::elasticsearch {
     }
 
     class { 'ssl::wildcard':
-        ssl_cert_path => '',
-        ssl_private_path => '',
-        ssl_path => "/etc/elasticsearch/$es_instance/ssl",
+        ssl_cert_path => "/etc/elasticsearch/$es_instance/ssl",
+        ssl_cert_key_private_path => "/etc/elasticsearch/$es_instance/ssl",
         require => Elasticsearch::Instance[$es_instance],
     }
 
