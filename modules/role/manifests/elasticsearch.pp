@@ -10,8 +10,6 @@ class role::elasticsearch {
     $es_data_node = hiera('role::elasticsearch::data_node', false)
     $es_discovery_host = hiera('role::elasticsearch::discovery_host', ['es1.miraheze.org'])
 
-    include ssl::wildcard
-
     class { 'elasticsearch':
         config => {
             'discovery.seed_hosts' => $es_discovery_host,
@@ -32,6 +30,14 @@ class role::elasticsearch {
             'xpack.security.transport.ssl.certificate_authorities' => '/etc/ssl/certs/wildcard.miraheze.org.crt',
         },
         version => '6.8.1',
+    }
+
+    include ssl::wildcard
+
+    exec { 'add elasticsearch to ssl-cert group':
+        unless  => '/bin/grep -q "ssl-cert\\S*elasticsearch" /etc/group',
+        command => '/sbin/usermod -aG ssl-cert elasticsearch',
+        require => Class['elasticsearch'],
     }
 
     $es_instance = hiera('role::elasticsearch::instance', 'es-01')
