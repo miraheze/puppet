@@ -10,8 +10,6 @@ class role::elasticsearch {
     $es_data_node = hiera('role::elasticsearch::data_node', false)
     $es_discovery_host = hiera('role::elasticsearch::discovery_host', ['es1.miraheze.org'])
 
-    include ssl::wildcard
-
     class { 'elasticsearch':
         config => {
             'discovery.seed_hosts' => $es_discovery_host,
@@ -24,12 +22,12 @@ class role::elasticsearch {
             'xpack.security.enabled' => true,
             'xpack.security.http.ssl.enabled' => true,
             'xpack.security.transport.ssl.enabled' => true,
-            'xpack.security.http.ssl.key' => '/etc/ssl/private/wildcard.miraheze.org.key',
-            'xpack.security.http.ssl.certificate' => '/etc/ssl/certs/wildcard.miraheze.org.crt',
-            'xpack.security.http.ssl.certificate_authorities' => '/etc/ssl/certs/GlobalSign.crt',
-            'xpack.security.transport.ssl.key' => '/etc/ssl/private/wildcard.miraheze.org.key',
-            'xpack.security.transport.ssl.certificate' => '/etc/ssl/certs/wildcard.miraheze.org.crt',
-            'xpack.security.transport.ssl.certificate_authorities' => '/etc/ssl/certs/wildcard.miraheze.org.crt',
+            'xpack.security.http.ssl.key' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.key'"
+            'xpack.security.http.ssl.certificate' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.crt",
+            'xpack.security.http.ssl.certificate_authorities' => "/etc/elasticsearch/${es_instance}/ssl/GlobalSign.crt",
+            'xpack.security.transport.ssl.key' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.key",
+            'xpack.security.transport.ssl.certificate' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.crt",
+            'xpack.security.transport.ssl.certificate_authorities' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.crt",
         },
         version => '6.8.1',
     }
@@ -43,6 +41,11 @@ class role::elasticsearch {
         init_defaults => {
             'MAX_OPEN_FILES' => '1500000',
         }
+    }
+
+    class { 'ssl::elasticsearch_wildcard':
+        es_name => $es_instance,
+        require => Elasticsearch::Instance[$es_instance],
     }
 
     if $es_master_node {
