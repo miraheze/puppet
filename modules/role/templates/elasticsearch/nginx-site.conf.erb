@@ -11,7 +11,7 @@ server {
 	ssl_stapling_verify on;
 
 	location / {
-		proxy_pass http://127.0.0.1:9200;
+		proxy_pass https://<%= @es_master_node %>:9200;
 		proxy_set_header Connection "Keep-Alive";
 		proxy_set_header Host $http_host;
 		proxy_set_header Proxy-Connection "Keep-Alive";
