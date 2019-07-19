@@ -9,12 +9,10 @@ class role::elasticsearch {
     $es_master_node = hiera('role::elasticsearch::master', false)
     $es_data_node = hiera('role::elasticsearch::data_node', false)
     $es_discovery_host = hiera('role::elasticsearch::discovery_host', ['es1.miraheze.org'])
-
-    include ssl::wildcard
+    $es_instance = hiera('role::elasticsearch::instance', 'es-01')
 
     class { 'elasticsearch':
         config => {
-            'discovery.seed_hosts' => $es_discovery_host,
             'discovery.zen.ping.unicast.hosts' => $es_discovery_host,
             'cluster.name' => 'Miraheze',
             'node.master' => $es_master_node,
@@ -24,17 +22,16 @@ class role::elasticsearch {
             'xpack.security.enabled' => true,
             'xpack.security.http.ssl.enabled' => true,
             'xpack.security.transport.ssl.enabled' => true,
-            'xpack.security.http.ssl.key' => '/etc/ssl/private/wildcard.miraheze.org.key',
-            'xpack.security.http.ssl.certificate' => '/etc/ssl/certs/wildcard.miraheze.org.crt',
-            'xpack.security.http.ssl.certificate_authorities' => '/etc/ssl/certs/GlobalSign.crt',
-            'xpack.security.transport.ssl.key' => '/etc/ssl/private/wildcard.miraheze.org.key',
-            'xpack.security.transport.ssl.certificate' => '/etc/ssl/certs/wildcard.miraheze.org.crt',
-            'xpack.security.transport.ssl.certificate_authorities' => '/etc/ssl/certs/wildcard.miraheze.org.crt',
+            'xpack.security.http.ssl.key' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.key"
+            'xpack.security.http.ssl.certificate' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.crt",
+            'xpack.security.http.ssl.certificate_authorities' => "/etc/elasticsearch/${es_instance}/ssl/GlobalSign.crt",
+            'xpack.security.transport.ssl.key' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.key",
+            'xpack.security.transport.ssl.certificate' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.crt",
+            'xpack.security.transport.ssl.certificate_authorities' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.crt",
         },
         version => '6.8.1',
     }
 
-    $es_instance = hiera('role::elasticsearch::instance', 'es-01')
     $es_heap = hiera('role::elasticsearch::heap', ['-Xms2g', '-Xmx2g'])
 
     # https://www.elastic.co/guide/en/elasticsearch/reference/master/heap-size.html
@@ -45,10 +42,17 @@ class role::elasticsearch {
         }
     }
 
+    class { 'ssl::wildcard':
+        ssl_cert_path => "/etc/elasticsearch/${es_instance}/ssl",
+        ssl_cert_key_private_path => "/etc/elasticsearch/${es_instance}/ssl",
+        use_globalsign => true,
+        require => Elasticsearch::Instance[$es_instance],
+    }
+
     if $es_master_node {
         nginx::site { 'elasticsearch-lb.miraheze.org':
             ensure      => present,
-            source      => 'puppet:///modules/role/elasticsearch/nginx-site.conf',
+            content     => template('role/elasticsearch/nginx-site.conf.erb'),
             monitor     => false,
             notify_site => Exec['nginx-syntax'],
         }
