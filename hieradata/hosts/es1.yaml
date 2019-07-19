@@ -2,5 +2,3 @@ role::elasticsearch::master: true
 role::elasticsearch::data_node: false
 role::elasticsearch::instance: 'es-01'
 role::elasticsearch::heap: ['-Xms4G', '-Xmx4G']
-role::elasticsearch::master_ip: '168.235.81.167'
-role::elasticsearch::discovery_host: ['es1.miraheze.org', 'es2.miraheze.org', 'es3.miraheze.org']
