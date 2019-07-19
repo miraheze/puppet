@@ -17,7 +17,7 @@ class role::elasticsearch {
             'cluster.name' => 'Miraheze',
             'node.master' => $es_master_node,
             'node.data' => $es_data_node,
-            'network.host' => $::hostname,
+            'network.host' => $::fqdn,
             'network.bind_host' => '0.0.0.0',
             'network.publish_host' => '0.0.0.0',
             'xpack.security.enabled' => true,
