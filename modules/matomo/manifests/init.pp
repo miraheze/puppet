@@ -72,11 +72,11 @@ class matomo {
         source => 'puppet:///modules/matomo/fileLockScript.sh',
     }
 
-    cron { 'archive_matomo':
-        ensure  => present,
-        command => '/usr/local/bin/fileLockScript.sh /tmp/matomo_file_lock "/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/" > /srv/matomo-archive.log',
-        user    => 'www-data',
-        minute  => '30',
-        hour    => '*/2',
-    }
+    #cron { 'archive_matomo':
+    #    ensure  => present,
+    #    command => '/usr/local/bin/fileLockScript.sh /tmp/matomo_file_lock "/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/" > /srv/matomo-archive.log',
+    #    user    => 'www-data',
+    #    minute  => '30',
+    #    hour    => '*/2',
+    #}
 }
