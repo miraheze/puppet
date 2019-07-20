@@ -29,7 +29,7 @@ class php::php_fpm(
         'pcre.backtrack_limit'   => 5000000,
         'date.timezone'          => 'UTC',
         'display_errors'         => 'On',
-        'memory_limit'           => '128M',
+        'memory_limit'           => '256M',
         'error_reporting'        => 'E_ALL & ~E_STRICT',
         'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
