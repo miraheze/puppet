@@ -24,6 +24,8 @@ GRANT USAGE
     ON *.* TO 'wikiadmin'@'%'
     IDENTIFIED BY '<%= @wikiadmin_password %>';
 
+GRANT REPLICATION CLIENT ON *.* TO 'wikiadmin'@'%';
+
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
     ON `%wiki%`.* TO 'wikiadmin'@'%';
 
