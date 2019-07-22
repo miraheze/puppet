@@ -9,6 +9,11 @@ class mediawiki(
         ip => '81.4.109.166'
     }
 
+    host { 'mediawiki-internal-db-master-db5.miraheze.org':
+        ensure => present,
+        ip => '168.235.110.65'
+    }
+
     include mediawiki::favicons
     include mediawiki::cron
     if hiera('mwservices', false) {
