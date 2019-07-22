@@ -26,6 +26,15 @@ node 'db4.miraheze.org' {
     include role::vpncloud
 }
 
+node 'db5.miraheze.org' {
+    include base
+    include role::db
+    include bacula::client
+    include role::salt::minions
+    include prometheus::mysqld_exporter
+    include role::vpncloud
+}
+
 node /^es[1234]\.miraheze\.org$/ {
     include base
     include role::elasticsearch
