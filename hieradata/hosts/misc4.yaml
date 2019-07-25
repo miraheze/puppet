@@ -1,3 +1,4 @@
+role::salt::minions::salt_master_key
 lizardfs_master: true
 lizardfs_web: true
 enable_citoid: false
