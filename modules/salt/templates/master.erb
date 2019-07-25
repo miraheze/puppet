@@ -135,7 +135,7 @@
 
 # Cache minion grains, pillar and mine data via the cache subsystem in the
 # cachedir or a database.
-#minion_data_cache: True
+minion_data_cache: False
 
 # Cache subsystem module to use for minion data cache.
 #cache: localfs
@@ -198,7 +198,7 @@
 #
 # If disabled, it is recommended to handle this event by listening for the
 # 'aes_key_rotate' event with the 'key' tag and acting appropriately.
-# ping_on_rotate: False
+ping_on_rotate: True
 
 # By default, the master deletes its cache of minion data when the key for that
 # minion is removed. To preserve the cache after key deletion, set
@@ -258,7 +258,7 @@
 # return calls made from minions to the master. If the master seems to be
 # running slowly, increase the number of threads. This setting can not be
 # set lower than 3.
-#worker_threads: 5
+<% if @salt_worker_threads %>worker_threads: <%= @salt_worker_threads %><% end %>
 
 # Set the ZeroMQ high water marks
 # http://api.zeromq.org/3-2:zmq-setsockopt
@@ -319,7 +319,7 @@
 
 # Enable auto_accept, this setting will automatically accept all incoming
 # public keys from the minions. Note that this is insecure.
-#auto_accept: False
+auto_accept: <% if @salt_auto_accept %>True<% else %>False<% end %>
 
 # The size of key that should be generated when creating new keys.
 #keysize: 2048
@@ -537,7 +537,7 @@
 # Manage how master side modules are loaded.
 
 # Add any additional locations to look for master runners:
-#runner_dirs: []
+<% if @salt_runner_dirs %>runner_dirs: ['<%= @salt_runner_dirs %>']<% end %>
 
 # Add any additional locations to look for master utils:
 #utils_dirs: []
