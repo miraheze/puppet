@@ -61,6 +61,11 @@ class salt::minion(
         ping_interval       => 15,
         auth_retries        => 5,
         auth_safemode       => false,
+        ssl                 => {
+            keyfile => '/etc/ssl/private/wildcard.miraheze.org.key',
+            certfile => '/etc/ssl/certs/wildcard.miraheze.org.crt',
+            ssl_version => 'PROTOCOL_TLSv1_2',
+        },
     }
 
     # our config file must be in place before
