@@ -1,11 +1,11 @@
 {
   "name": "puppetlabs-mailalias_core",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": "Puppet Labs",
   "summary": "Creates an email alias in the local alias database.",
   "license": "Apache-2.0",
   "source": "https://github.com/puppetlabs/puppetlabs-mailalias_core",
-  "project_page": "https://github.com/puppetlabs/puppetlabs-mailalias_core/blob/master/README.md",
+  "project_page": "https://github.com/puppetlabs/puppetlabs-mailalias_core",
   "issues_url": "https://tickets.puppetlabs.com/projects/MODULES",
   "dependencies": [
 
@@ -75,10 +75,10 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 6.0.0 < 7.0.0"
+      "version_requirement": ">= 4.10.0 < 7.0.0"
     }
   ],
-  "pdk-version": "1.5.0",
+  "pdk-version": "1.8.0",
   "template-url": "https://github.com/puppetlabs/pdk-templates",
-  "template-ref": "heads/master-0-g34e3266"
+  "template-ref": "heads/master-0-gd61c0a4"
 }

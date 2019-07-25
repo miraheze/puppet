@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [1.0.5] - 2019-01-11
+### Added
+- Added LICENSE file
+- Added test matrix to test against puppet 6
+
 ## [1.0.4] - 2018-08-17
 ### Added
 - (PUP-9053) Enable localization
@@ -33,6 +38,7 @@ This is an empty release to test the release pipeline
 ### Summary
 This is the initial release of the extracted mailalias module
 
+[1.0.5]: https://github.com/puppetlabs/puppetlabs-mailalias_core/compare/1.0.4...1.0.5
 [1.0.4]: https://github.com/puppetlabs/puppetlabs-mailalias_core/compare/1.0.3...1.0.4
 [1.0.3]: https://github.com/puppetlabs/puppetlabs-mailalias_core/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/puppetlabs/puppetlabs-mailalias_core/compare/1.0.1...1.0.2

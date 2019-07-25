@@ -8,6 +8,7 @@
 4. [Limitations - OS compatibility, etc.](#limitations)
 5. [Development - Guide for contributing to the module](#development)
 
+<a id="description"></a>
 ## Description
 
 The mailalias module is used to manage entries in the local alias database.
@@ -22,10 +23,11 @@ mailalias { 'ftp':
 ```
 This example will redirect mail for the ftp account to root's mailbox.
 
+<a id="usage"></a>
 ## Usage
 The mailalias module is used to manage entries in `/etc/aliases`, which creates an email alias in the local alias database.
 
-For details on usage, please see [the puppet docs](https://puppet.com/docs/puppet/latest/types/mailalias.html).
+For details on usage, please see REFERENCE.md for the reference documentation.
 
 #### file
 A file containing the alias’s contents. The file and the recipient entries are mutually exclusive.
@@ -62,6 +64,7 @@ $ cat /etc/mail/aliases
 ftp: root
 ```
 
+<a id="reference"></a>
 ## Reference
 
 This module is documented using Puppet Strings.
@@ -75,11 +78,12 @@ bundle exec puppet strings generate ./lib/**/*.rb
 ```
 This command will create a browsable `\_index.html` file in the `doc` directory. The references available here are all generated from YARD-style comments embedded in the code base. When any development happens on this module, the impacted documentation should also be updated.
 
-
+<a id="limitations"></a>
 ## Limitations
 
 This module is only supported on platforms that have `sendmail` available.
 
+<a id="development"></a>
 ## Development
 
 Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can't access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
