@@ -15,8 +15,9 @@ class salt::master(
     String $salt_module_roots = '/srv/salt/_modules',
     String $salt_returner_roots = '/srv/salt/_returners',
 ) {
-
     include salt::apt
+
+    include ssl::wildcard
 
     package { 'salt-master':
         ensure  => 'installed',
