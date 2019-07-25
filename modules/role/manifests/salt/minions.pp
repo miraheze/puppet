@@ -3,7 +3,7 @@ class role::salt::minions(
 ) {
     # stretch's salt-minion uses SHA256 instead of MD5 by default.
     # while it's possible to set 'hash_type: md5', this is preferrable
-    $master_finger = 'f8:9e:01:c4:65:5a:10:92:79:ae:80:ce:37:83:d9:b4:0a:2e:9b:f3:c7:d2:65:83:69:f2:a7:b0:47:80:73:ec'
+    $master_finger = '28:62:d0:61:2c:76:3c:15:51:6a:43:1b:bb:e1:99:a4:e8:82:b5:47:fc:3c:44:b5:16:84:86:f4:5d:22:69:9d'
 
     class { '::salt::minion':
         id            => $::fqdn,
