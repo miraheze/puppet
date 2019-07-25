@@ -25,7 +25,7 @@ def accept(minion):
     else:
         key.accept(match_dict=keys)
         ret['status'] = 'done'
-    print ret
+    print(ret)
     return ret
 
 
@@ -44,7 +44,7 @@ def status(minion):
         ret['status'] = 'accepted'
     else:
         ret['status'] = 'missing'
-    print ret
+    print(ret)
     return ret
 
 
@@ -70,7 +70,7 @@ def delete(minion):
     else:
         key.delete_key(match_dict=keys)
         ret['status'] = 'done'
-    print ret
+    print(ret)
     return ret
 
 
