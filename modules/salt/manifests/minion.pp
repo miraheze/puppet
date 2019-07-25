@@ -45,6 +45,8 @@ class salt::minion(
 ) {
     include salt::apt
 
+    include ssl::wildcard
+
     $config = {
         id                  => $id,
         master              => $master,
