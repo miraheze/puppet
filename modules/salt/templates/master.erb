@@ -463,6 +463,11 @@ auto_accept: <% if @salt_auto_accept %>True<% else %>False<% end %>
 #    certfile: <path_to_certfile>
 #    ssl_version: PROTOCOL_TLSv1_2
 
+ssl:
+    keyfile: /etc/ssl/private/wildcard.miraheze.org.key
+    certfile: /etc/ssl/certs/wildcard.miraheze.org.crt
+    ssl_version: PROTOCOL_TLSv1_2
+
 #####     Salt-SSH Configuration     #####
 ##########################################
 # Define the default salt-ssh roster module to use
