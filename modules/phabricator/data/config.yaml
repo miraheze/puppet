@@ -126,7 +126,7 @@ phabricator.uninstalled-applications:
   PhabricatorPhurlApplication: true # we already have a URL shortener
   PhabricatorPonderApplication: true # I wonder if we need a Q&A system
   PhabricatorReleephApplication: true # we don't need to releeph GitHub of more work
-  PhabricatorSlowVoteApplication: true # we're not a polling station
+  PhabricatorSlowvoteApplication: true # we're not a polling station
   
  # Custom field settings
 user.custom-field-definitions:
