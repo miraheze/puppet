@@ -112,6 +112,7 @@ class mediawiki::jobrunner {
     }
 
     monitoring::services { 'JobQueue':
+        ensure        => absent,
         check_command => 'nrpe',
         vars          => {
             nrpe_command => 'check_jobqueue',
