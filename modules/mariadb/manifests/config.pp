@@ -9,6 +9,7 @@ class mariadb::config(
     String $server_role                   = 'master',
     Integer $max_connections              = 90,
     Optional[Boolean] $version_102        = undef,
+    String $icinga_password,
 ) {
     $exporter_password = hiera('passwords::db::exporter')
     $ido_db_user_password = hiera('passwords::icinga_ido')
@@ -96,6 +97,7 @@ class mariadb::config(
         vars          => {
             mysql_username => 'icinga',
             mysql_database => 'icinga',
+            mysql_password => $icinga_password,
             mysql_ssl      => true,
         },
     }
