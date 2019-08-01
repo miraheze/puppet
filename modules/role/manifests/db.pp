@@ -9,11 +9,13 @@ class role::db {
     $grafana_password = hiera('passwords::db::grafana')
     $exporter_password = hiera('passwords::db::exporter')
     $internetarchivebot_password = hiera('passwords::db::iabot')
+    $icinga_password = hiera('passwords::db::icinga')
 
     class { 'mariadb::config':
         config      => 'mariadb/config/mw.cnf.erb',
         password    => hiera('passwords::db::root'),
         server_role => 'master',
+	icinga_password => $icinga_password,
     }
 
     file { '/etc/mysql/miraheze/grafana-grants.sql':
