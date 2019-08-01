@@ -11,7 +11,7 @@ class mediawiki(
 
     host { 'mediawiki-internal-db-master-db5.miraheze.org':
         ensure => present,
-        ip => '168.235.110.50'
+        ip => '185.52.1.89'
     }
 
     include mediawiki::favicons
