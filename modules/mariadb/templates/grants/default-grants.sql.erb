@@ -7,8 +7,10 @@ GRANT ALL PRIVILEGES
 
 -- Grants for 'icinga'@'185.52.1.76'
 
-GRANT USAGE, PROCESS
-    ON *.* TO 'icinga'@'185.52.1.76';
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
+    CREATE VIEW, INDEX, EXECUTE
+    ON icinga.* TO 'icinga'@'185.52.1.76'
+    IDENTIFIED BY '<%= @icinga_password %>';
 
 -- Grants for 'exporter'@'81.4.127.174'
 
