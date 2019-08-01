@@ -96,6 +96,7 @@ class mariadb::config(
         vars          => {
             mysql_username => 'icinga',
             mysql_database => 'icinga',
+            mysql_password => $icinga_database_password,
             mysql_ssl      => true,
         },
     }
