@@ -17,19 +17,19 @@
 #
 class php::php_fpm(
     Hash $config                              = {},
+    Hash $config_cli                          = {},
     Hash $fpm_config                          = {},
     Integer $fpm_min_child                    = 4,
     Hash $fpm_pool_config                     = {},
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
 ) {
 
-    $config_cli = {
+    $base_config_cli = {
         'include_path'           => '".:/usr/share/php"',
         'error_log'              => '/var/log/php/php.log',
         'pcre.backtrack_limit'   => 5000000,
         'date.timezone'          => 'UTC',
         'display_errors'         => 'On',
-        'memory_limit'           => '256M',
         'error_reporting'        => 'E_ALL & ~E_STRICT',
         'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
@@ -54,8 +54,8 @@ class php::php_fpm(
         version        => $version,
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
-            'cli' => $config_cli,
-            'fpm' => merge($config_cli, $base_config_fpm, $config),
+            'cli' => merge($base_config_cli, $config_cli),
+            'fpm' => merge($base_config_cli, $base_config_fpm, $config),
         },
     }
 
