@@ -12,7 +12,9 @@ define ssl::cert (
         file { "/etc/ssl/private/${certificate}.key":
             ensure => $ensure,
             source => "puppet:///ssl-keys/${certificate}.key",
-            mode   => '660',
+            owner  => 'root',
+            group  => 'ssl-cert',
+            mode   => '0660',
         }
     }
 }
