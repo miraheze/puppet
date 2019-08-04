@@ -10,6 +10,7 @@ class ssl::wildcard (
             ensure => 'present',
             source => 'puppet:///ssl/certificates/wildcard.miraheze.org.crt',
             path   => "${ssl_cert_path}/wildcard.miraheze.org.crt",
+            mode   => '0600',
         }
     }
 
@@ -18,6 +19,7 @@ class ssl::wildcard (
             ensure => 'present',
             source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
             path   => "${ssl_cert_key_private_path}/wildcard.miraheze.org.key",
+            mode   => '0600',
         }
     }
 
