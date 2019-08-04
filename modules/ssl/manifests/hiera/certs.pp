@@ -35,7 +35,9 @@ define ssl::hiera::certs (
             path   => "/etc/ssl/private/${sslurl}.key",
             source => "puppet:///ssl-keys/${sslurl}.key",
             notify => Exec["${restart}-syntax"],
-            mode   => '660',
+            owner  => 'root',
+            group  => 'ssl-cert',
+            mode   => '0660',
         }
     }
 }
