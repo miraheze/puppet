@@ -18,7 +18,9 @@ class ssl::wildcard (
             ensure => 'present',
             source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
             path   => "${ssl_cert_key_private_path}/wildcard.miraheze.org.key",
-            mode   => '660',
+            owner  => 'root',
+            group  => 'ssl-cert',
+            mode   => '0660',
         }
     }
 
