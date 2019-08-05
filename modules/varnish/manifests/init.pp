@@ -118,4 +118,14 @@ class varnish {
             nrpe_command => 'check_nginx_errorrate',
         },
     }
+
+    ['misc2', 'misc3', 'mw1', 'mw2', 'mw3', 'test1'].each |$host| {
+        monitoring::services { "Stunnel Http for ${host}":
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => "check_stunnel_${host}",
+                nrpe_timeout => '10s',
+            },
+        }
+    }
 }
