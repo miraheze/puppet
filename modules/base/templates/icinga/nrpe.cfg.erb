@@ -38,3 +38,11 @@ command[check_jobqueue]=/usr/bin/sudo -u www-data /usr/lib/nagios/plugins/check_
 command[check_ocg_health]=/usr/lib/nagios/plugins/check_ocg_health --wjs 800000 --cjs 1500000 --wrj 500 --crj 3000 --url 'http://localhost:8000/?command=health'
 command[check_icinga_config]=/usr/lib/nagios/plugins/check_icinga_config /etc/icinga/icinga.cfg
 command[eh_ssl_acme_renew]=/var/lib/nagios/ssl-acme $ARG1$
+
+# check stunnel http
+command[check_stunnel_misc2]=/usr/lib/nagios/plugins/check_http -H localhost:8203
+command[check_stunnel_misc3]=/usr/lib/nagios/plugins/check_http -H localhost:8203
+command[check_stunnel_mw1]=/usr/lib/nagios/plugins/check_http -H localhost:8080
+command[check_stunnel_mw2]=/usr/lib/nagios/plugins/check_http -H localhost:8081
+command[check_stunnel_mw3]=/usr/lib/nagios/plugins/check_http -H localhost:8082
+command[check_stunnel_test1]=/usr/lib/nagios/plugins/check_http -H localhost:8083
