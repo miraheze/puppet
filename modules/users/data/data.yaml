@@ -48,7 +48,8 @@ users:
     uid: 1001
     name: southparkfan
     realname: Southparkfan
-    ssh_keys: []
+    ssh_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC0HVSixfoUBAf8Kw1lA5+qpyNp4EnXba8NQFhf8+KH6dtD9IWvT4qxDMJVlkchFyrh7xs+Encjid+Y/ivnamDTqordfT+jf6DbiUuCJLQgSBf+2M6+OcRHwUfbDXUg5TYDu4E/j7DmB4tPdjT/vVXFcB1OfKliL1iKC1OTKAU/IYLwamIV+BaAhWnaU4tQcEmFGVl2m+bVeiLpN6o6wbmq4AARkKZ2SagRY1ot33dhllp0oT+QLYZ8Ah1YS+bZEGAyWRNg/1XyKCSr9mWgO7xbmOB1OSHAsyTCFYxc2xtK+jQxTO1BTdGUw3Y/+7EID2aOCvHcshjutwRoZtpqtdwQeg13kpycM+xekBwiHEjfpSiUqfjtW00KuGtGcA/nIOANsQI7oqHDCa6maN98fmttiw1YxJe4msctGO9uIq02xQ9QSKiyeNoBZhmlmkhZZmD8OmsvGHoXU4HDL9JZulwb9ASYpxMwkUsqr51QpG5zTc6kMj+yTN4+DPWDkKOIp+9c7V3c/1TM1Tq+cGeOKH4+A3x1pBJOqff5sim0xIU0hciKcXv2f4fTDhdoSv58FfvqvHPIU8Z8w4L7F0ycpbffr7e0p7Xj12/AhNUClFKxEUBsLNjrqObq43dVHTpuVxhhU0RwcmjSu+fOvgYWHvZ956f75/UjUzhPWXoBGttZXQ== Android
   mutante:
     ensure: absent
     uid: 1002
