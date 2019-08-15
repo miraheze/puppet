@@ -3,7 +3,7 @@ Description=NGINX metrics exporter for Prometheus
 After=network-online.target
  
 [Service]
-ExecStart=/usr/local/bin/nginx-prometheus-exporter -nginx.scrape-uri=http://127.0.0.1/server-status
+ExecStart=/usr/local/bin/nginx-prometheus-exporter -nginx.scrape-uri=http://127.0.0.1:8090/server-status
 Restart=always
 
 [Install]
