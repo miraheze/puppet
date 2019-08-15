@@ -66,5 +66,22 @@ http {
     
     # VHosts
     include /etc/nginx/conf.d/*.conf;
+
+    server {
+        listen 8090;
+        listen [::]:8090;
+
+        server_name 127.0.0.1 localhost;
+
+        # Define the document root of the server e.g /var/www/html
+        root /var/www/html;
+
+        location /server-status {
+            stub_status;
+            access_log off;
+            allow 127.0.0.1;
+        }
+    }
+
     include /etc/nginx/sites-enabled/*;
 }

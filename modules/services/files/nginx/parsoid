@@ -10,12 +10,6 @@ server {
 
 	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
 
-	location /server-status {
-		stub_status;
-		access_log off;
-		allow 127.0.0.1;
-	}
-
         location / {
                 proxy_pass http://127.0.0.1:8142;
                 proxy_http_version 1.1;
