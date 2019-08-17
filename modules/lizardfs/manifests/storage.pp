@@ -17,22 +17,24 @@ class lizardfs::storage(
         ensure  => present,
         content => template('lizardfs/mfschunkserver.cfg.erb'),
         require => Package['lizardfs-chunkserver'],
-        notify  => Service['lizardfs-chunkserver'],
     }
 
     file { '/etc/lizardfs/mfshdd.cfg':
         ensure  => present,
         content => template('lizardfs/mfshdd.cfg.erb'),
         require => Package['lizardfs-chunkserver'],
-        notify  => Service['lizardfs-chunkserver'],
     }
     
     service { 'lizardfs-chunkserver':
         ensure   => running,
         enable   => true,
         provider => 'systemd',
-        require  => Package['lizardfs-chunkserver'],
-        restart  => '/bin/systemctl reload lizardfs-chunkserver.service',
+        require  => [
+            Package['lizardfs-chunkserver'],
+            File['/srv/mediawiki-static'],
+            File['/etc/lizardfs/mfschunkserver.cfg'],
+            File['/etc/lizardfs/mfshdd.cfg'],
+        ],
     }
 
     $module_path = get_module_path($module_name)
