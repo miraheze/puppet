@@ -13,4 +13,8 @@
 #
 # The following mount point is marked for removal with '*':
 #*/mnt/hd3/lizardfs
+<% if @chunkserver_mount_removal %>
+*/srv/mediawiki-static
+<% else %>
 /srv/mediawiki-static
+<% end %>
