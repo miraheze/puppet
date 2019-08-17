@@ -2,6 +2,7 @@
 
 class lizardfs::storage(
     String $master_server = hiera('lizardfs_master_server', '185.52.1.144'),
+    Boolean $chunkserver_mount_removal = hiera('lizardfs_chunkserver_mount_removal', false),
 ) {
     require_package('lizardfs-chunkserver')
 
