@@ -17,7 +17,6 @@ class lizardfs::master(
         ensure  => present,
         content => template('lizardfs/mfsmaster.cfg.erb'),
         require => Package['lizardfs-master'],
-        notify  => Service['lizardfs-master'],
     }
 
     $module_path = get_module_path($module_name)
@@ -27,15 +26,17 @@ class lizardfs::master(
         ensure  => present,
         content => template('lizardfs/mfsexports.cfg.erb'),
         require => Package['lizardfs-master'],
-        notify  => Service['lizardfs-master'],
     }
     
     service { 'lizardfs-master':
         ensure   => running,
         enable   => true,
         provider => 'systemd',
-        require  => Package['lizardfs-master'],
-        restart  => '/bin/systemctl reload lizardfs-master.service',
+        require  => [
+            Package['lizardfs-master'],
+            File['/etc/lizardfs/mfsmaster.cfg'],
+            File['/etc/lizardfs/mfsexports.cfg'],
+        ],
     }
 
     $firewall = loadyaml("${module_path}/data/storage_firewall.yaml")
