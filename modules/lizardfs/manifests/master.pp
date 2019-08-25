@@ -1,7 +1,7 @@
 # == Class: lizardfs::master
 
 class lizardfs::master(
-    String $master_server = hiera('lizardfs_master_server', '185.52.1.144'),
+    String $master_server = hiera('lizardfs_master_server'),
 ) {
 
     require_package('lizardfs-master')
