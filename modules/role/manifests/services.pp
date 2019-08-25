@@ -29,23 +29,6 @@ class role::services {
     if hiera('enable_parsoid', true) {
         include ::profile::parsoid
 
-        ufw::allow { 'parsoid mw1':
-            proto => 'tcp',
-            port  => 443,
-            from  => '185.52.1.75',
-        }
-
-        ufw::allow { 'parsoid mw2':
-            proto => 'tcp',
-            port  => 443,
-            from  => '185.52.2.113',
-        }
-        ufw::allow { 'parsoid mw3':
-            proto => 'tcp',
-            port  => 443,
-            from  => '81.4.121.113',
-        }
-
         ufw::allow { 'parsoid monitoring':
             proto => 'tcp',
             port  => 8142,
@@ -77,6 +60,30 @@ class role::services {
             port  => 7231,
             from  => '185.52.1.76',
         }
+    }
+
+    ufw::allow { 'mw1 443':
+        proto => 'tcp',
+        port  => 443,
+        from  => '185.52.1.75',
+    }
+
+    ufw::allow { 'mw2 443':
+        proto => 'tcp',
+        port  => 443,
+        from  => '185.52.2.113',
+    }
+
+    ufw::allow { 'mw3 443':
+        proto => 'tcp',
+        port  => 443,
+        from  => '81.4.121.113',
+    }
+
+    ufw::allow { 'test1 443':
+        proto => 'tcp',
+        port  => 443,
+        from  => '185.52.2.243',
     }
 
     motd::role { 'role::services':
