@@ -10,7 +10,7 @@ class services::citoid {
 
     user { 'citoid':
         ensure     => present,
-        gid        => 'mathoid',
+        gid        => 'citoid',
         shell      => '/bin/false',
         home       => '/srv/citoid',
         managehome => false,
