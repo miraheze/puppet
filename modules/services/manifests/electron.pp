@@ -12,7 +12,13 @@ class services::electron (
 
     include ::services
 
-    require_package(['xvfb', 'libgtk2.0-0', 'libnotify4', 'libgconf2-4', 'libxss1', 'libnss3', 'dbus-x11'])
+    if os_version('debian == stretch') {
+        require_package('libgconf2-4')
+    } else {
+        require_package('gconf-gsettings-backend')
+    }
+
+    require_package(['xvfb', 'libgtk2.0-0', 'libnotify4', 'libxss1', 'libnss3', 'dbus-x11'])
 
     group { 'electron':
         ensure => present,
