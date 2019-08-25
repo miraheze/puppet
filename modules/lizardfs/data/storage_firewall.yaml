@@ -13,4 +13,6 @@ lizardfs3: '168.235.109.27'
 
 misc1: '185.52.1.76'
 misc3: '185.52.1.144'
+# This is the new master, replaces above.
+misc31: '185.52.1.71'
 misc4: '185.52.3.121'
