@@ -41,7 +41,7 @@ command[eh_ssl_acme_renew]=/var/lib/nagios/ssl-acme $ARG1$
 
 # check stunnel http
 command[check_stunnel_misc2]=/usr/lib/nagios/plugins/check_http -H localhost:8201 --expect="502"
-command[check_stunnel_misc3]=/usr/lib/nagios/plugins/check_http -H localhost:8203 --expect="403"
+command[check_stunnel_misc3]=/usr/lib/nagios/plugins/check_http -H localhost:8203 --expect="401"
 command[check_stunnel_mw1]=/usr/lib/nagios/plugins/check_http -H localhost:8080
 command[check_stunnel_mw2]=/usr/lib/nagios/plugins/check_http -H localhost:8081
 command[check_stunnel_mw3]=/usr/lib/nagios/plugins/check_http -H localhost:8082
