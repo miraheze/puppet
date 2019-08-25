@@ -73,8 +73,7 @@ class salt::minion(
     # step which automatically starts the minion
     # will start it with the correct settings
     package { 'salt-minion':
-        ensure  => present,
-        require => Apt::Source['salt_apt'],
+        ensure => present,
     }
 
     service { 'salt-minion':
