@@ -334,6 +334,14 @@ sub vcl_backend_response {
 	return (deliver);
 }
 
+# Temporary solution to fix CookieWarning issue with ElectronPDF
+
+sub mw_vcl_recv {
+	if (req.http.X-Real-IP == "185.52.1.71") {
+	return (pass);
+	}
+}
+
 sub vcl_deliver {
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
 		if (req.url !~ "^/wiki/Special\:Banner") {
