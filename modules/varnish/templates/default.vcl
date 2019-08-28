@@ -250,6 +250,12 @@ sub mw_vcl_recv {
 		set req.url = "/wiki/Main_Page";
 		return (pass);
 	}
+	
+	# Temporary solution to fix CookieWarning issue with ElectronPDF
+
+	if (req.http.X-Real-IP == "185.52.1.71") {
+		return (pass);
+	}
 
 	call mw_evaluate_cookie;
 }
