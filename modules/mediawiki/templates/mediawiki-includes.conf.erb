@@ -46,12 +46,6 @@ location ~* .(gif|ico|jpg|jpeg|png|svg)$ {
 	expires 1w;
 }
 
-location /server-status {
-	stub_status on;
-	allow 127.0.0.1;
-	deny all;
-}
-
 location ~ ^/m/(.*) {
 	return 301 /w/index.php?title=Special:UrlRedirector/$1;
 }
