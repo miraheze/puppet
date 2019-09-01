@@ -22,7 +22,7 @@ command[check_nginx_errorrate]=/usr/bin/sudo /usr/lib/nagios/plugins/check_nginx
 command[check_php_fpm]=/usr/lib/nagios/plugins/check_procs -C php-fpm<%= scope.call_function('hiera', ["php::php_version", "7.2"]) %> -c 1:
 command[check_jobrunner]=/usr/lib/nagios/plugins/check_procs -a redisJobRunnerService -c 1:1
 command[check_bacula_daemon]=/usr/lib/nagios/plugins/check_procs -u bacula -c 2:
-command[check_bacula_static]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H lizardfs1-fd -B BackupStatic -w 15d -c 31d
+command[check_bacula_static]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H lizardfs4-fd -B BackupStatic -w 15d -c 31d
 command[check_bacula_databasesdb4]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db4-fd -B BackupDatabasesDB4 -w 15d -c 31d
 command[check_bacula_databasesdb5]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db5-fd -B BackupDatabasesDB5 -w 15d -c 31d
 command[check_bacula_private]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H puppet1-fd -B BackupPrivateGit -w 8d -c 16d
