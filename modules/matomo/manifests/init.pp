@@ -77,6 +77,6 @@ class matomo {
         command => '/usr/local/bin/fileLockScript.sh /tmp/matomo_file_lock "/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/" > /srv/matomo-archive.log',
         user    => 'www-data',
         minute  => '30',
-        hour    => '*/6',
+        hour    => '*/12',
     }
 }
