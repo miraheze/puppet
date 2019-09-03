@@ -89,7 +89,7 @@ class role::vpncloud {
     ufw::allow { 'vpncloud port tcp misc3':
         proto   => 'tcp',
         port    => 3210,
-        from    => '185.52.1.144',
+        from    => '185.52.1.71',
     }
 
     ufw::allow { 'vpncloud port tcp misc4 ipv4':
