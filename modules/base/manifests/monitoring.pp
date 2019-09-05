@@ -1,5 +1,7 @@
 # base::monitoring
 class base::monitoring {
+    include ::prometheus::node_exporter
+
     $nagios_packages = [ 'nagios-plugins', 'nagios-nrpe-server', ]
     package { $nagios_packages:
         ensure => present,
@@ -22,35 +24,6 @@ class base::monitoring {
     service { 'nagios-nrpe-server':
         ensure     => 'running',
         hasrestart => true,
-    }
-
-    ufw::allow { 'prometheus access all hosts':
-        proto => 'tcp',
-        port  => 9100,
-        from  => '185.52.3.121',
-    }
-
-    ufw::allow { 'prometheus access php-fpm for all hosts':
-        proto => 'tcp',
-        port  => 9253,
-        from  => '185.52.3.121',
-    }
-
-    if os_version('debian == stretch') {
-        apt::pin { 'debian_stretch_backports_prometheus_node_exporter':
-            priority   => 200,
-            originator => 'Debian',
-            release    => 'stretch-backports',
-            packages   => 'prometheus-node-exporter',
-        }
-    }
-
-    require_package('prometheus-node-exporter')
-
-    service { 'prometheus-node-exporter':
-        ensure    => running,
-        enable    => true,
-        require   => Package['prometheus-node-exporter'],
     }
 
     # SUDO FOR NRPE
