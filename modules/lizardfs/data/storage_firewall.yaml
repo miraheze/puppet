@@ -6,10 +6,6 @@ mw3: '81.4.121.113'
 test1: '185.52.2.243'
 
 # storage nodes
-# maps short hostname to ip
-lizardfs1: '81.4.101.157'
-lizardfs2: '81.4.124.61'
-lizardfs3: '168.235.109.27'
 lizardfs4: '81.4.122.238'
 lizardfs5: '81.4.122.196'
 
