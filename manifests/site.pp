@@ -42,7 +42,7 @@ node /^es[1234]\.miraheze\.org$/ {
     include role::vpncloud
 }
 
-node /^lizardfs[12345]\.miraheze\.org$/ {
+node /^lizardfs[45]\.miraheze\.org$/ {
     include base
     include bacula::client
     include role::lizardfs
