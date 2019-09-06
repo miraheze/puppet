@@ -5,12 +5,11 @@ class mediawiki::packages {
         'dvipng',
         'htmldoc',
         'inkscape',
-        'ploticus',
-        'ttf-freefont',
+        'fonts-freefont-ttf',
+        'ffmpeg',
         'ffmpeg2theora',
         'locales-all',
         'oggvideotools',
-        'libav-tools',
         'libvips-tools',
         'lilypond',
         'poppler-utils',
@@ -23,6 +22,7 @@ class mediawiki::packages {
         'xvfb',
         'timidity',
         'librsvg2-bin',
+        'texlive-latex-extra',
     ]
 
     # First installs can trip without this
@@ -37,7 +37,34 @@ class mediawiki::packages {
         require => Exec['apt_update_mediawiki_packages'],
     }
 
-    package { [ 'texvc', 'ocaml' ]:
+    file { '/opt/ploticus_2.42-3+b4_amd64.deb':
+        ensure  => present,
+        source  => 'puppet:///modules/mediawiki/packages/ploticus/ploticus_2.42-3+b4_amd64.deb',
+    }
+
+    package { 'ploticus':
+        ensure      => installed,
+        provider    => dpkg,
+        source      => '/opt/ploticus_2.42-3+b4_amd64.deb',
+        require     => File['/opt/ploticus_2.42-3+b4_amd64.deb'],
+    }
+
+    file { '/opt/texvc_3.0.0+git20160613-1_amd64.deb':
+        ensure  => present,
+        source  => 'puppet:///modules/mediawiki/packages/texvc/texvc_3.0.0+git20160613-1_amd64.deb',
+    }
+
+    package { 'texvc':
+        ensure      => installed,
+        provider    => dpkg,
+        source      => '/opt/texvc_3.0.0+git20160613-1_amd64.deb',
+        require     => [
+            File['/opt/texvc_3.0.0+git20160613-1_amd64.deb'],
+            Package['texlive-latex-extra'],
+        ],
+    }
+
+    package { [ 'ocaml' ]:
         ensure          => present,
         install_options => ['--no-install-recommends'],
     }
