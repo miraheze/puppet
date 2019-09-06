@@ -92,6 +92,14 @@ node 'misc4.miraheze.org' {
     include prometheus::php_fpm
 }
 
+node /^mw[4]\.miraheze\.org$/ {
+    include base
+    include role::mediawiki
+    include role::salt::minions
+    include prometheus::php_fpm
+    include role::vpncloud
+}
+
 node /^mw[123]\.miraheze\.org$/ {
     include base
     include role::mediawiki
