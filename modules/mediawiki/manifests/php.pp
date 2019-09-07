@@ -1,5 +1,8 @@
 # mediawiki::php
-class mediawiki::php {
+class mediawiki::php (
+    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 12),
+    $php_version = hiera('php::php_version', '7.2'),
+) {
     ensure_resource_duplicate('class', '::php::php_fpm', {
         'config'  => {
             'display_errors'            => 'Off',
@@ -24,8 +27,7 @@ class mediawiki::php {
             'upload_max_filesize' => '250M',
             'variables_order'     => 'GPCS',
         },
-        # We double this so that it's 4 x 3
-        'fpm_min_child' => 12,
-        'version' => hiera('php::php_version', '7.2'),
+        'fpm_min_child' => $php_fpm_childs,
+        'version' => $php_version
     })
 }
