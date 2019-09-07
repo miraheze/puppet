@@ -78,7 +78,6 @@ define lizardfs::client(
         }
 
         mount { $real_mountpoint:
-          atboot => false,
           ensure   => $ensure,
           device   => 'mfsmount',
           fstype   => 'fuse',
