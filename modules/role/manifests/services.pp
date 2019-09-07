@@ -36,7 +36,7 @@ class role::services {
         }
     }
 
-    if hiera('enable_proton', true) {
+    if hiera('enable_proton', false) {
         include ::profile::proton
 
         ufw::allow { 'proton monitoring':
