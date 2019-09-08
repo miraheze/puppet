@@ -42,7 +42,7 @@ scrape_configs:
     # machine by default.
     static_configs:
       - targets: [
-<%- @host_ip.sort.each do |host| -%>
+<%- @host.sort.each do |host| -%>
         # Standard exporter
         '<%= host %>:9100',
 <%- if host =~ /^cp/ -%>
@@ -63,13 +63,13 @@ scrape_configs:
   - job_name: redis
     static_configs:
       - targets: [
-<%- @host_ip.sort.each do |host| -%>
+<%- @host.sort.each do |host| -%>
 <%- if host =~ /^misc2/ -%>
           '<%= host %>:9121',
 <%- end -%>
 <%- end -%>
         ]
-<%- @host_ip.sort.each do |host| -%>
+<%- @host.sort.each do |host| -%>
 <%- if host =~ /^misc2/ -%>
         labels:
           alias: <%= host %>
@@ -78,7 +78,7 @@ scrape_configs:
   - job_name: mariadb
     static_configs:
       - targets: [
-<%- @host_ip.sort.each do |host| -%>
+<%- @host.sort.each do |host| -%>
 <%- if host =~ /^db/ -%>
         '<%= host %>:9104',
 <%- end -%>
