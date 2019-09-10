@@ -65,6 +65,18 @@ backend mw4 {
 	.probe = mwhealth;
 }
 
+backend mw5 {
+	.host = "127.0.0.1";
+	.port = "8085";
+	.probe = mwhealth;
+}
+
+backend mw6 {
+	.host = "127.0.0.1";
+	.port = "8086";
+	.probe = mwhealth;
+}
+
 backend test1 {
 	.host = "127.0.0.1";
 	.port = "8083";
@@ -102,6 +114,8 @@ sub vcl_init {
 	mediawiki.add_backend(mw2);
 	mediawiki.add_backend(mw3);
 	mediawiki.add_backend(mw4);
+	mediawiki.add_backend(mw5);
+	mediawiki.add_backend(mw6);
 }
 
 
@@ -115,6 +129,10 @@ acl purge {
 	"2a00:d880:5:b45::2"; # mw3
 	"81.4.100.21"; # mw4
 	"2a00:d880:11::6e"; # mw4
+	"81.4.100.53"; # mw5
+	"2a00:d880:11::61"; # mw5
+	"81.4.100.49"; # mw6
+	"2a00:d880:11::e0"; # mw6
 	"185.52.2.243"; # test1
 	"81.4.127.174"; # misc2
 	"185.52.3.121"; # misc4

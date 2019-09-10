@@ -36,6 +36,18 @@ class role::varnish {
         from  => '81.4.100.21',
     }
 
+    ufw::allow { 'Direct Varnish access mw5':
+        proto => 'tcp',
+        port  => 81,
+        from  => '81.4.100.53',
+    }
+
+    ufw::allow { 'Direct Varnish access mw6':
+        proto => 'tcp',
+        port  => 81,
+        from  => '81.4.100.49',
+    }
+
     motd::role { 'role::varnish':
         description => 'Varnish caching server',
     }
