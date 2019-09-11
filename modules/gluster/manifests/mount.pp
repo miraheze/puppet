@@ -163,6 +163,6 @@ define gluster::mount (
     dump     => $dump,
     pass     => $pass,
     options  => $_options,
-    require => File['']
+    require => File['/var/lib/glusterd/secure-access']
   }
 }
