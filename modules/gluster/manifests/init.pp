@@ -26,18 +26,20 @@ class gluster {
     $firewall = loadyaml("${module_path}/data/firewall.yaml")
 
     $firewall.each |$key, $value| {
-        ufw::allow { "glusterfs ${key} ${value}":
-            proto => 'tcp',
-            port  => $value,
-            from  => $key,
-        }
+        $value.each |$port| {
+            ufw::allow { "glusterfs ${key} ${port}":
+                proto => 'tcp',
+                port  => $port,
+                from  => $key,
+            }
 
-        monitoring::services { "GlusterFS ip ${key} on port ${value}":
-            ensure => absent,
-            check_command => 'tcp',
-            vars          => {
-                tcp_port    => $value,
-            },
+            monitoring::services { "GlusterFS ip ${key} on port ${port}":
+                ensure => absent,
+                check_command => 'tcp',
+                vars          => {
+                    tcp_port    => $port,
+                },
+            }
         }
     }
 
