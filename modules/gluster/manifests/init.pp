@@ -25,6 +25,7 @@ class gluster {
         }
 
         monitoring::services { "GlusterFS ip ${key} on port ${value}":
+            ensure => absent,
             check_command => 'tcp',
             vars          => {
                 tcp_port    => $value,
