@@ -87,8 +87,8 @@ define gluster::mount (
       ensure => 'present',
       source => 'puppet:///ssl/certificates/wildcard.miraheze.org.crt',
       path   => '/etc/ssl/glusterfs.pem',
-      owner  => 'gluster',
-      group  => 'gluster',
+      owner  => 'root',
+      group  => 'root',
     }
   }
 
@@ -97,8 +97,8 @@ define gluster::mount (
       ensure => 'present',
       source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
       path   => '/etc/ssl/glusterfs.key',
-      owner  => 'gluster',
-      group  => 'gluster',
+      owner  => 'root',
+      group  => 'root',
       mode   => '0660',
     }
   }
@@ -108,8 +108,8 @@ define gluster::mount (
       ensure => 'present',
       source => 'puppet:///ssl/ca/GlobalSign.crt',
       path   => '/etc/ssl/glusterfs.ca',
-      owner  => 'gluster',
-      group  => 'gluster',
+      owner  => 'root',
+      group  => 'root',
     }
   }
 
