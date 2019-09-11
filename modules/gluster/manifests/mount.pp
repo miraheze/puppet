@@ -72,6 +72,8 @@ define gluster::mount (
   Optional[Boolean] $readdirp                                           = undef,
 ) {
 
+  require('glusterfs-client')
+
   if $log_level {
     $ll = "log-level=${log_level}"
   } else {

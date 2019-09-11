@@ -32,4 +32,17 @@ class gluster {
             },
         }
     }
+
+    if hiera('gluster_client', false) {
+        $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/prodvol')
+        gluster::mount { '/mnt/mediawiki-static':
+          ensure    => present,
+          volume    => hiera('gluster_volume', 'glusterfs1.miraheze.org:/prodvol'),
+          transport => 'tcp',
+          atboot    => false,
+          dump      => 0,
+          pass      => 0,
+          options   => "backup-volfile-servers=${gluster_volume_backup}",
+        }
+    }
 }
