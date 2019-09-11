@@ -74,6 +74,14 @@ define gluster::mount (
 
   require('glusterfs-client')
 
+  file { $title:
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '2755',
+    require => Package['glusterfs-client'],
+  }
+
   if $log_level {
     $ll = "log-level=${log_level}"
   } else {
