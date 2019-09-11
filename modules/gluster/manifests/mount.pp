@@ -72,7 +72,7 @@ define gluster::mount (
   Optional[Boolean] $readdirp                                           = undef,
 ) {
 
-  require('glusterfs-client')
+  require_package('glusterfs-client')
 
   file { $title:
     ensure  => 'directory',
