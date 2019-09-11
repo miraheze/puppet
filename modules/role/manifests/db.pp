@@ -52,14 +52,26 @@ class role::db {
 	
     ufw::allow { 'mysql port mw3':
         proto => 'tcp',
-        port => '3306',
-        from => '81.4.121.113',
+        port  => '3306',
+        from  => '81.4.121.113',
     }
 
     ufw::allow { 'mysql port mw4':
         proto => 'tcp',
-        port => '3306',
-        from => '81.4.100.21',
+        port  => '3306',
+        from  => '81.4.100.21',
+    }
+
+    ufw::allow { 'mysql port mw5':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '81.4.100.53',
+    }
+
+    ufw::allow { 'mysql port mw6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '81.4.100.49',
     }
 
     ufw::allow { 'mysql port misc1':
