@@ -42,6 +42,13 @@ node /^es[1234]\.miraheze\.org$/ {
     include role::vpncloud
 }
 
+node /^glusterfs[12]\.miraheze\.org$/ {
+    include base
+    include bacula::client
+    include role::gluster
+    include role::salt::minions
+}
+
 node /^lizardfs[45]\.miraheze\.org$/ {
     include base
     include bacula::client
