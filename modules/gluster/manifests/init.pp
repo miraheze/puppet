@@ -4,29 +4,35 @@ class gluster {
 
     require_package('glusterfs-server')
 
-    file { 'glusterfs.pem':
-        ensure => 'present',
-        source => 'puppet:///ssl/certificates/wildcard.miraheze.org.crt',
-        path   => '/etc/ssl/glusterfs.pem',
-        owner  => 'gluster',
-        group  => 'gluster',
+    if !defined(File['glusterfs.pem']) {
+        file { 'glusterfs.pem':
+            ensure => 'present',
+            source => 'puppet:///ssl/certificates/wildcard.miraheze.org.crt',
+            path   => '/etc/ssl/glusterfs.pem',
+            owner  => 'gluster',
+            group  => 'gluster',
+        }
     }
 
-    file { 'glusterfs.key':
-        ensure => 'present',
-        source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
-        path   => '/etc/ssl/glusterfs.key',
-        owner  => 'gluster',
-        group  => 'gluster',
-        mode   => '0660',
+    if !defined(File['glusterfs.key']) {
+        file { 'glusterfs.key':
+            ensure => 'present',
+            source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
+            path   => '/etc/ssl/glusterfs.key',
+            owner  => 'gluster',
+            group  => 'gluster',
+            mode   => '0660',
+        }
     }
 
-    file { 'glusterfs.ca':
-        ensure => 'present',
-        source => 'puppet:///ssl/ca/GlobalSign.crt',
-        path   => '/etc/ssl/glusterfs.ca',
-        owner  => 'gluster',
-        group  => 'gluster',
+    if !defined(File['glusterfs.ca']) {
+        file { 'glusterfs.ca':
+            ensure => 'present',
+            source => 'puppet:///ssl/ca/GlobalSign.crt',
+            path   => '/etc/ssl/glusterfs.ca',
+            owner  => 'gluster',
+            group  => 'gluster',
+        }
     }
 
     if !defined(File['/var/lib/glusterd/secure-access']) {
