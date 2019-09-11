@@ -115,6 +115,14 @@ define gluster::mount (
   $mount_options = [ $options, $ll, $lf, $t, $dim, $r, ]
   $_options = join(delete_undef_values($mount_options), ',')
 
+  if !defined(File['/var/lib/glusterd/secure-access']) {
+    file { '/var/lib/glusterd/secure-access':
+      ensure  => present,
+      content => '',
+      require => Package['glusterfs-client'],
+    }
+  }
+
   mount { $title:
     ensure   => $ensure,
     fstype   => 'glusterfs',
@@ -124,5 +132,6 @@ define gluster::mount (
     dump     => $dump,
     pass     => $pass,
     options  => $_options,
+    require => File['']
   }
 }

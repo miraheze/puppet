@@ -4,12 +4,20 @@ class gluster {
 
     require_package('glusterfs-server')
 
+    if !defined(File['/var/lib/glusterd/secure-access']) {
+        file { '/var/lib/glusterd/secure-access':
+            ensure  => present,
+            content => '',
+            require => Package['glusterfs-server'],
+        }
+    }
+
     service { 'glusterd':
         ensure   => running,
         enable   => true,
         provider => 'systemd',
         require  => [
-            Package['glusterfs-server'],
+            File['/var/lib/glusterd/secure-access'],
         ],
     }
 
