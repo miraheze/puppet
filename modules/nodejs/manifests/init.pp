@@ -4,7 +4,6 @@ class nodejs {
 
     apt::pin { 'nodejs_pin':
         priority        => 600,
-        label           => 'NodeJS',
         origin          => 'deb.nodesource.com'
     }
 
