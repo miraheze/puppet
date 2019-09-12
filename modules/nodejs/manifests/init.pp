@@ -23,6 +23,7 @@ class nodejs {
         command     => '/usr/bin/apt-get update',
         refreshonly => true,
         logoutput   => true,
+        before      => Package['nodejs'],
     }
 
     require_package('nodejs')
