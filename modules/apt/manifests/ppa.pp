@@ -27,11 +27,11 @@ define apt::ppa(
   Boolean $package_manage        = false,
 ) {
   unless $release {
-    fail(translate('lsbdistcodename fact not available: release parameter required'))
+    fail('lsbdistcodename fact not available: release parameter required')
   }
 
   if $facts['lsbdistid'] == 'Debian' {
-    fail(translate('apt::ppa is not currently supported on Debian.'))
+    fail('apt::ppa is not currently supported on Debian.')
   }
 
   if versioncmp($facts['lsbdistrelease'], '14.10') >= 0 {

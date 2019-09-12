@@ -67,7 +67,7 @@ class apt::backports (
   }
   if (!($facts['lsbdistid'] == 'Debian' or $facts['lsbdistid'] == 'Ubuntu')) {
     unless $location and $release and $repos and $key {
-      fail(translate('If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key'))
+      fail('If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key')
     }
   }
   unless $location {
@@ -93,7 +93,7 @@ class apt::backports (
       'release'  => $_release,
     }
   } else {
-    fail(translate('pin must be either a string, number or hash'))
+    fail('pin must be either a string, number or hash')
   }
 
   apt::source { 'backports':

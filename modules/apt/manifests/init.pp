@@ -140,7 +140,7 @@ class apt (
 ) inherits apt::params {
 
   if $facts['osfamily'] != 'Debian' {
-    fail(translate('This module only works on Debian or derivatives like Ubuntu'))
+    fail('This module only works on Debian or derivatives like Ubuntu')
   }
 
   if $update['frequency'] {
