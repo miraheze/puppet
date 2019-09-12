@@ -78,7 +78,7 @@ define apt::key (
 
     absent: {
       if defined(Anchor["apt_key ${id} present"]){
-        fail("key with id ${_id} already ensured as present"
+        fail("key with id ${_id} already ensured as present")
       }
 
       if !defined(Anchor["apt_key ${id} absent"]){
