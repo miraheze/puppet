@@ -25,8 +25,7 @@ class nodejs {
     }
 
     ensure_resource_duplicate('package', 'nodejs', {
-        'ensure' => installed,
-        '' => installed,
-        require  => Exec['apt_update_nodejs'],
+        'ensure'   => installed,
+        'require'  => Exec['apt_update_nodejs'],
     })
 }
