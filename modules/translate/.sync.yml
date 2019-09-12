@@ -1,0 +1,31 @@
+---
+.gitignore:
+  required:
+    - ---.project
+
+.gitlab-ci.yml:
+  unmanaged: true
+
+.travis.yml:
+  branches:
+    - release 
+
+appveyor.yml:
+  delete: true
+
+Gemfile:
+  required:
+    ':system_tests':
+      - gem: beaker-hostgenerator
+        from_env: BEAKER_HOSTGENERATOR_VERSION
+      - gem: nokogiri
+  optional:
+    ':development':
+      - gem: 'github_changelog_generator'
+        git: 'https://github.com/skywinder/github-changelog-generator'
+        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
+        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
+
+spec/spec_helper.rb:
+  mock_with: ':rspec'
+  coverage_report: true
