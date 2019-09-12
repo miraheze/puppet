@@ -22,8 +22,11 @@ class nodejs {
         refreshonly => true,
         logoutput   => true,
         require     => Apt::Pin['nodejs_pin'],
-        before      => Package['nodejs'],
     }
 
-    require_package('nodejs')
+    ensure_resource_duplicate('package', 'nodejs', {
+        'ensure' => installed,
+        '' => installed,
+        require  => Exec['apt_update_nodejs'],
+    })
 }
