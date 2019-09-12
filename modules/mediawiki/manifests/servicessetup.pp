@@ -19,7 +19,7 @@ class mediawiki::servicessetup {
         path        => '/usr/bin',
         environment => 'HOME=/srv/mathoid',
         user        => 'root',
-        require     => [Git::Clone['mathoid'], Package['nodejs'], Package['librsvg2-dev']],
+        require     => [Git::Clone['mathoid'], Class['nodejs'], Package['librsvg2-dev']],
     }
 
     file { '/etc/mathoid':
