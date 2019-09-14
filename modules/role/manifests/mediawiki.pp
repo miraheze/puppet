@@ -45,10 +45,10 @@ class role::mediawiki {
     }
 
     if hiera('use_gluster_mount', false) {
-        $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/prodvol')
+        $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/mvolume')
         gluster::mount { '/mnt/mediawiki-static':
           ensure    => present,
-          volume    => hiera('gluster_volume', 'glusterfs1.miraheze.org:/prodvol'),
+          volume    => hiera('gluster_volume', 'glusterfs1.miraheze.org:/mvolume'),
           transport => 'tcp',
           atboot    => false,
           dump      => 0,
