@@ -20,6 +20,7 @@ class base::packages {
         'screen',
         'strace',
         'tcpdump',
+        'telnet',
         'vim',
         'vnstat',
         'wipe',
