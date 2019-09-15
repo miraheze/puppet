@@ -53,7 +53,7 @@ class role::mediawiki {
           atboot    => false,
           dump      => 0,
           pass      => 0,
-          options   => "backup-volfile-servers=${gluster_volume_backup}",
+          options   => "backup-volfile-servers=${gluster_volume_backup},log-level=WARNING",
         }
     } else {
         ::lizardfs::client { '/mnt/mediawiki-static':
