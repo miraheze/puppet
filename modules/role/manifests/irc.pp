@@ -29,24 +29,6 @@ class role::irc {
         from  => '81.4.121.113',
     }
 
-    ufw::allow { 'ircrcbot port mw4':
-        proto => 'udp',
-        port  => '5070',
-        from  => '81.4.100.21',
-    }
-
-    ufw::allow { 'ircrcbot port mw5':
-        proto => 'udp',
-        port  => '5070',
-        from  => '81.4.100.53',
-    }
-
-    ufw::allow { 'ircrcbot port mw6':
-        proto => 'udp',
-        port  => '5070',
-        from  => '81.4.100.49',
-    }
-
     motd::role { 'role::irc':
         description => 'IRC bots server',
     }
