@@ -74,24 +74,6 @@ class role::services {
         from  => '81.4.121.113',
     }
 
-    ufw::allow { 'mw4 443':
-        proto => 'tcp',
-        port  => 443,
-        from  => '81.4.100.21',
-    }
-
-    ufw::allow { 'mw5 443':
-        proto => 'tcp',
-        port  => 443,
-        from  => '81.4.100.53',
-    }
-
-    ufw::allow { 'mw6 443':
-        proto => 'tcp',
-        port  => 443,
-        from  => '81.4.100.49',
-    }
-
     ufw::allow { 'test1 443':
         proto => 'tcp',
         port  => 443,
