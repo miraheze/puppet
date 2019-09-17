@@ -37,7 +37,7 @@ log-bin                        = <%= @datadir %>/mysql-bin
 relay-log                      = /var/log/mysql/mysql-relay-bin.log
 <% end %>
 <% if @server_role == 'master' %>
-expire-logs-days               = 7
+expire-logs-days               = 4
 <% else %>
 expire-logs-days               = 2
 <% end %>
