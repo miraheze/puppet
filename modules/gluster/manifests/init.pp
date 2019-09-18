@@ -66,9 +66,9 @@ class gluster {
         }
     }
     
-    $monotoring = loadyaml("${module_path}/data/monotoring.yaml")
+    $monitoring = loadyaml("${module_path}/data/monitoring.yaml")
 
-    $monotoring.each |$key, $value| {
+    $monitoring.each |$key, $value| {
         $value.each |$port| {
             monitoring::services { "GlusterFS: host ${key} on port ${port}":
                 check_command => 'tcp',
