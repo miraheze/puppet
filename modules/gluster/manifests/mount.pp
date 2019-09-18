@@ -70,16 +70,14 @@ define gluster::mount (
   Optional[String] $transport                                           = undef,
   Optional[String] $direct_io_mode                                      = undef,
   Optional[Boolean] $readdirp                                           = undef,
-  String $owner                                                         = 'root',
-  String $group                                                         = 'root',
 ) {
 
   require_package('glusterfs-client')
 
   file { $title:
     ensure  => 'directory',
-    owner   => $owner,
-    group   => $group,
+    owner   => 'root',
+    group   => 'root',
     mode    => '2755',
     require => Package['glusterfs-client'],
   }
