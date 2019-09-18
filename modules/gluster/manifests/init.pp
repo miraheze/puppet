@@ -63,9 +63,14 @@ class gluster {
                 port  => $port,
                 from  => $key,
             }
+        }
+    }
+    
+    $monitoring = loadyaml("${module_path}/data/monitoring.yaml")
 
-            monitoring::services { "GlusterFS ip ${key} on port ${port}":
-                ensure => absent,
+    $monitoring.each |$key, $value| {
+        $value.each |$port| {
+            monitoring::services { "GlusterFS: host ${key} on port ${port}":
                 check_command => 'tcp',
                 vars          => {
                     tcp_port    => $port,
