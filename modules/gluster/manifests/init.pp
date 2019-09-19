@@ -44,10 +44,11 @@ class gluster {
     }
 
     service { 'glusterd':
-        ensure   => running,
-        enable   => true,
-        provider => 'systemd',
-        require  => [
+        ensure     => running,
+        enable     => true,
+        hasrestart => true,
+        hasstatus  => true,
+        require    => [
             File['/var/lib/glusterd/secure-access'],
         ],
     }
