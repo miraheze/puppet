@@ -56,15 +56,14 @@ class role::mediawiki {
           options   => "backup-volfile-servers=${gluster_volume_backup},log-level=WARNING,reader-thread-count=20",
         }
     } else {
-        $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/mvolume')
         gluster::mount { '/mnt/mediawiki-static-new':
           ensure    => present,
-          volume    => hiera('gluster_volume', 'glusterfs1.miraheze.org:/mvolume'),
+          volume    => hiera('gluster_volume', 'glusterfs1.miraheze.org,glusterfs2.miraheze.org:/mvolume'),
           transport => 'tcp',
           atboot    => false,
           dump      => 0,
           pass      => 0,
-          options   => "backup-volfile-servers=${gluster_volume_backup},log-level=WARNING,reader-thread-count=22,negative-timeout=600",
+          options   => "log-level=WARNING,reader-thread-count=22,negative-timeout=600",
         }
 
         ::lizardfs::client { '/mnt/mediawiki-static':
