@@ -76,8 +76,6 @@ define gluster::mount (
 
   file { $title:
     ensure  => 'directory',
-    owner   => 'root',
-    group   => 'root',
     mode    => '2755',
     require => Package['glusterfs-client'],
   }
