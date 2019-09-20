@@ -74,10 +74,12 @@ define gluster::mount (
 
   require_package('glusterfs-client')
 
-  file { $title:
-    ensure  => 'directory',
-    mode    => '2755',
-    require => Package['glusterfs-client'],
+  exec { $title:
+      command => "/bin/mkdir -p '${title}'",
+      user    => 'root',
+      group   => 'root',
+      creates => $title,
+      before  => Mount[$title],
   }
 
   if !defined(File['glusterfs.pem']) {
