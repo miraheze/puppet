@@ -63,7 +63,7 @@ class role::mediawiki {
           atboot    => false,
           dump      => 0,
           pass      => 0,
-          options   => "log-level=WARNING,reader-thread-count=22,negative-timeout=10,fopen-keep-cache,use-readdirp=no,fetch-attempts=5",
+          options   => "log-level=WARNING,reader-thread-count=22,negative-timeout=10,fopen-keep-cache,use-readdirp=no,fetch-attempts=5,attribute-timeout=30",
         }
 
         ::lizardfs::client { '/mnt/mediawiki-static':
