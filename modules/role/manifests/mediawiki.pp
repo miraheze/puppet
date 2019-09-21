@@ -53,7 +53,7 @@ class role::mediawiki {
           atboot    => false,
           dump      => 0,
           pass      => 0,
-          options   => "backup-volfile-servers=${gluster_volume_backup},log-level=WARNING,reader-thread-count=20",
+          options   => "backup-volfile-servers=${gluster_volume_backup},log-level=WARNING,reader-thread-count=22,negative-timeout=10,fopen-keep-cache",
         }
     } else {
         gluster::mount { '/mnt/mediawiki-static-new':
