@@ -70,10 +70,5 @@ class role::mediawiki {
             create_mountpoint => true,
             options           => 'big_writes,nosuid,nodev,noatime',
         }
-
-        ::lizardfs::client { '/mnt/mediawiki-trash':
-            create_mountpoint => true,
-            options           => 'mfsmeta',
-        }
     }
 }
