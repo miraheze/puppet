@@ -4,7 +4,7 @@ class gluster {
 
     include gluster::apt
     
-    package { 'glusterfs-server': {
+    package { 'glusterfs-server':
         ensure   => installed,
         require  => Class['gluster::apt'],
     }
