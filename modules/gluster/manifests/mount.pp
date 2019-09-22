@@ -72,7 +72,12 @@ define gluster::mount (
   Optional[Boolean] $readdirp                                           = undef,
 ) {
 
-  require_package('glusterfs-client')
+  include gluster::apt
+
+  package { 'glusterfs-client': {
+      ensure   => installed,
+      require  => Class['gluster::apt'],
+  }
 
   exec { $title:
       command => "/bin/mkdir -p '${title}'",

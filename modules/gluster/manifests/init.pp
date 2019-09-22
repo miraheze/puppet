@@ -2,7 +2,12 @@
 
 class gluster {
 
-    require_package('glusterfs-server')
+    include gluster::apt
+    
+    package { 'glusterfs-server': {
+        ensure   => installed,
+        require  => Class['gluster::apt'],
+    }
 
     if !defined(File['glusterfs.pem']) {
         file { 'glusterfs.pem':
