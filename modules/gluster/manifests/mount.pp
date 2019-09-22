@@ -74,7 +74,7 @@ define gluster::mount (
 
   include gluster::apt
 
-  package { 'glusterfs-client': {
+  package { 'glusterfs-client':
       ensure   => installed,
       require  => Class['gluster::apt'],
   }
