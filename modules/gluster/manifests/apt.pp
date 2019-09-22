@@ -1,7 +1,7 @@
 class gluster::apt {
     apt::source { 'gluster_apt':
         comment  => 'GlusterFS',
-        location => "https://download.gluster.org/pub/gluster/glusterfs/6/LATEST/Debian/${::lsbdistcodename}/amd64/apt",
+        location => "https://download.gluster.org/pub/gluster/glusterfs/6/6.5/Debian/${::lsbdistcodename}/amd64/apt",
         release  => "${::lsbdistcodename}",
         repos    => 'main',
         key      => '9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280',
