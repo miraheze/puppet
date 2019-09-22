@@ -1,4 +1,6 @@
 class gluster::apt {
+    # Needs to be manually updated when a update is released.
+    # We pin this to 6.5 to prevent unintended updates.
     apt::source { 'gluster_apt':
         comment  => 'GlusterFS',
         location => "https://download.gluster.org/pub/gluster/glusterfs/6/6.5/Debian/${::lsbdistcodename}/amd64/apt",
