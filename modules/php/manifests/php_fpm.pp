@@ -98,8 +98,6 @@ class php::php_fpm(
         }
     }
 
-
-
     # Extensions that require configuration.
     php::extension {
         'xml':
@@ -161,16 +159,10 @@ class php::php_fpm(
         require => Apt::Source['php_apt'],
     }
 
-    $num_workers = max(floor($facts['virtual_processor_count'] * 1.5), $fpm_min_child)
-    # These numbers need to be positive integers
-    $max_spare = ceiling($num_workers * 0.3)
-    $min_spare = ceiling($num_workers * 0.1)
+    $num_workers =  max(floor($facts['virtual_processor_count'] * 1.5), $fpm_min_child)
 
     $base_fpm_pool_config = {
-        'pm'                        => 'dynamic',
-        'pm.max_spare_servers'      => $max_spare,
-        'pm.min_spare_servers'      => $min_spare,
-        'pm.start_servers'          => $min_spare,
+        'pm'                        => 'static',
         'pm.max_children'           => $num_workers,
         'request_terminate_timeout' => 230,
     }
