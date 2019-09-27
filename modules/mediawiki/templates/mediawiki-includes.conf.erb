@@ -18,6 +18,7 @@ location ~ \.php {
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 	fastcgi_send_timeout 140;
 	fastcgi_read_timeout 140;
+	send_timeout 140s;
 }
 
 location ~ ^/w/(cache|maintenance|mw-config|vendor) {
