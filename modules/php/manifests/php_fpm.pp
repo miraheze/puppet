@@ -189,7 +189,7 @@ class php::php_fpm(
     systemd::syslog { $fpm_programname:
         base_dir     => '/var/log',
         owner        => 'www-data',
-        group        => 'wikidev',
+        group        => 'www-data',
         readable_by  => 'group',
         log_filename => 'error.log'
     }
