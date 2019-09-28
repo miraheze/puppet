@@ -26,7 +26,7 @@ class php::php_fpm(
 
     $base_config_cli = {
         'include_path'           => '".:/usr/share/php"',
-        'error_log'              => 'syslog',
+        'error_log'              => '/var/log/php/php.log',
         'pcre.backtrack_limit'   => 5000000,
         'date.timezone'          => 'UTC',
         'display_errors'         => 'On',
