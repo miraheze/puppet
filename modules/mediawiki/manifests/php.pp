@@ -9,7 +9,6 @@ class mediawiki::php (
             'error_log'                 => '/var/log/mediawiki/debuglogs/php-error.log',
             'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
             'log_errors'                => 'On',
-            'max_execution_time'        => 230,
             'opcache'                   => {
                 'enable'                  => 1,
                 'interned_strings_buffer' => 50,
