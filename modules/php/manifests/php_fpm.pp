@@ -48,6 +48,16 @@ class php::php_fpm(
         'enable_dl'                       => 0,
     }
 
+    # Add systemd override for php-fpm, that should prevent a reload
+    # if the fpm config files are broken.
+    # This should prevent us from shooting our own foot as happened before.
+    systemd::unit { "php${php_version}-fpm.service":
+        ensure   => present,
+        content  => template('php/php-fpm-systemd-override.conf.erb'),
+        override => true,
+        restart  => false,
+    }
+
     # Install the runtime
     class { '::php':
         ensure         => present,
@@ -171,14 +181,16 @@ class php::php_fpm(
         config => merge($base_fpm_pool_config, $fpm_pool_config),
     }
 
-    file { '/var/log/php':
-        ensure => directory,
-        owner  => 'www-data',
-        group  => 'www-data',
-    }
-
-    logrotate::conf { 'php-fpm':
-        ensure => present,
-        source => 'puppet:///modules/php/php-fpm-logrotate.conf',
+    # Send logs locally to /var/log/php7.x-fpm/error.log
+    # Please note: this replaces the logrotate rule coming from the package,
+    # because we use syslog-based logging. This will also prevent an fpm reload
+    # for every logrotate run.
+    $fpm_programname = "php${php_version}-fpm"
+    systemd::syslog { $fpm_programname:
+        base_dir     => '/var/log',
+        owner        => 'www-data',
+        group        => 'wikidev',
+        readable_by  => 'group',
+        log_filename => 'error.log'
     }
 }
