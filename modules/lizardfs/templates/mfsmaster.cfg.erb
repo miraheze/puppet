@@ -47,6 +47,11 @@
 ## (Default: /var/lib/lizardfs)
 # DATA_PATH = /var/lib/lizardfs
 
+## If set, servers with the same IP address will be treated
+## as their topology distance is 0.
+## (Default: 1)
+# PREFER_LOCAL_CHUNKSERVER = 1
+
 ## When this option is set (equals 1) master will try to recover metadata
 ## from changelog when it is being started after a crash; otherwise it will
 ## refuse to start and 'mfsmetarestore' should be used to recover the metadata.
@@ -118,7 +123,7 @@ BACK_LOGS = 50
 
 ## Hard limit on CPU usage by chunks loop (percentage).
 ## (Default: 60)
-CHUNKS_LOOP_MAX_CPU = 60
+# CHUNKS_LOOP_MAX_CPU = 60
 
 ## Soft maximum number of chunks to delete on one chunkserver.
 ## (Default: 10)
@@ -204,7 +209,6 @@ CHUNKS_LOOP_MAX_CPU = 60
 ## Address of the host running LizardFS metadata server that currently
 ## acts as master.
 ## Mandatory for "shadow" instance.
-# misc4.miraheze.org
 MASTER_HOST = <%= @master_server %>
 
 ## Port number where LizardFS metadata server currently running as master
@@ -248,3 +252,31 @@ MASTER_HOST = <%= @master_server %>
 ## by Berkeley DB storage.
 ## (Default: 10)
 # BDB_NAME_STORAGE_CACHE_SIZE = 10
+
+## When this option is set to 1, process of selecting chunkservers for chunks
+## will try to avoid using those that share the same ip.
+## (Default: 0)
+# AVOID_SAME_IP_CHUNKSERVERS = 0
+
+## When set, percentage of load will be added to chunkserver disk usage to determine most fitting
+## chunkserver. Heavy loaded chunkservers will be picked for operations less frequently.
+## (Default: 0, Valid range: [0, 0.5])
+# LOAD_FACTOR_PENALTY = 0
+
+## Minimum number of required redundant chunk parts that can be lost before
+## chunk becomes endangered
+## (Default: 0)
+# REDUNDANCY_LEVEL = 0
+
+## This option can be used to specify initial number of snapshotted nodes that will be atomically
+## cloned before enqueuing the task for execution in fixed-sized batches.
+## (Default: 1000)
+# SNAPSHOT_INITIAL_BATCH_SIZE = 1000
+
+## This option specifies the maximum initial batch size set for snapshot request.
+## (Default: 10000)
+# SNAPSHOT_INITIAL_BATCH_SIZE_LIMIT = 10000
+
+## Test files loop will try to check all files in specified time (in seconds).
+## (Default: 3600)
+# FILE_TEST_LOOP_MIN_TIME = 3600
