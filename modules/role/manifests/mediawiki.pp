@@ -46,6 +46,6 @@ class role::mediawiki {
 
     ::lizardfs::client { '/mnt/mediawiki-static':
         create_mountpoint => true,
-        options           => 'big_writes,nosuid,nodev,noatime,async',
+        options           => 'big_writes,nosuid,nodev,noatime,async,mfsioretries=1',
     }
 }
