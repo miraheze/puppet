@@ -84,7 +84,6 @@ node 'misc3.miraheze.org' {
     include role::lizardfs
     include role::services
     include role::salt::minions
-    include role::vpncloud
 }
 
 node 'misc4.miraheze.org' {
