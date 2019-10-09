@@ -82,6 +82,7 @@ node 'misc2.miraheze.org' {
 node 'misc3.miraheze.org' {
     include base
     include role::lizardfs
+    include role::staticserver
     include role::services
     include role::salt::minions
 }
