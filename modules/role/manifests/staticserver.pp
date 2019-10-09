@@ -5,28 +5,28 @@ class role::staticserver {
         exportsfile => 'puppet:///modules/role/staticserver/exports',
     }
 
-    ufw::allow { 'nfs annoyance (mw1)':
+    ufw::allow { 'nfs (mw1)':
         port => 'all',
         # lizardfs master ip, change when the master changes.
         ip   => '185.52.1.71',
         from => '185.52.1.75',
     }
 
-    ufw::allow { 'nfs annoyance (mw2)':
+    ufw::allow { 'nfs (mw2)':
         port => 'all',
         # lizardfs master ip, change when the master changes.
         ip   => '185.52.1.71',
         from => '185.52.2.113',
     }
 	
-    ufw::allow { 'nfs annoyance (mw3)':
+    ufw::allow { 'nfs (mw3)':
         port => 'all',
         # lizardfs master ip, change when the master changes.
         ip   => '185.52.1.71',
         from => '81.4.121.113',
     }
 
-    ufw::allow { 'nfs annoyance (test1)':
+    ufw::allow { 'nfs (test1)':
         port => 'all',
         # lizardfs master ip, change when the master changes.
         ip   => '185.52.1.71',
