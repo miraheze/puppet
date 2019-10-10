@@ -53,7 +53,7 @@ class role::mediawiki {
         ensure  => mounted,
         device  => '185.52.1.71:/mnt/mediawiki-static',
         fstype  => 'nfs',
-        options => 'rw,soft,timeo=600,retrans=2',
+        options => 'rw,soft,timeo=50,retrans=1',
         atboot  => true,
         require => File['/mnt/mediawiki-static'],
     }
