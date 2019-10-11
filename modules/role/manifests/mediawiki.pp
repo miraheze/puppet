@@ -55,7 +55,6 @@ class role::mediawiki {
         fstype  => 'nfs',
         options => 'rw,soft,timeo=50,retrans=1,mountvers=4',
         atboot  => true,
-        remounts => false,
         require => File['/mnt/mediawiki-static'],
     }
 }
