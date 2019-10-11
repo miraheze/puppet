@@ -1,7 +1,6 @@
 # role: mediawiki
 class role::mediawiki {
     include ::mediawiki
-    include nfs::client
 
     if hiera('role::mediawiki::use_strict_firewall', false) {
         # Cache proxies will never use port 80.
@@ -45,16 +44,8 @@ class role::mediawiki {
         description => 'MediaWiki server',
     }
 
-    file { '/mnt/mediawiki-static':
-        ensure => directory,
-    }
-
-    mount { '/mnt/mediawiki-static':
-        ensure  => mounted,
-        device  => '185.52.1.71:/mnt/mediawiki-static',
-        fstype  => 'nfs',
-        options => 'rw,soft,timeo=600,retrans=2',
-        atboot  => true,
-        require => File['/mnt/mediawiki-static'],
+    ::lizardfs::client { '/mnt/mediawiki-static':
+        create_mountpoint => true,
+        options           => 'big_writes,nosuid,nodev,noatime,async,mfsioretries=1,mfswriteworkers=100',
     }
 }
