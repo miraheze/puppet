@@ -1,6 +1,6 @@
 # mediawiki::php
 class mediawiki::php (
-    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 12),
+    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 8),
     $php_version = hiera('php::php_version', '7.2'),
 ) {
     ensure_resource_duplicate('class', '::php::php_fpm', {
