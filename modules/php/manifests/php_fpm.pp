@@ -22,6 +22,7 @@ class php::php_fpm(
     Integer $fpm_min_child                    = 4,
     Hash $fpm_pool_config                     = {},
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
+    Float $fpm_workers_multiplier = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
 ) {
 
     $base_config_cli = {
@@ -37,9 +38,9 @@ class php::php_fpm(
 
     $base_config_fpm = {
         'opcache.enable'                  => 1,
-        'opcache.interned_strings_buffer' => 50,
-        'opcache.memory_consumption'      => 300,
-        'opcache.max_accelerated_files'   => 24000,
+        'opcache.interned_strings_buffer' => 30,
+        'opcache.memory_consumption'      => 112,
+        'opcache.max_accelerated_files'   => 20000,
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,
         'opcache.revalidate_freq'         => 10,
@@ -169,12 +170,12 @@ class php::php_fpm(
         require => Apt::Source['php_apt'],
     }
 
-    $num_workers =  max(floor($facts['virtual_processor_count'] * 1.5), $fpm_min_child)
+    $num_workers =  max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
 
     $base_fpm_pool_config = {
         'pm'                        => 'static',
         'pm.max_children'           => $num_workers,
-        'request_terminate_timeout' => 180,
+        'request_terminate_timeout' => 240,
     }
 
     php::fpm::pool { 'www':

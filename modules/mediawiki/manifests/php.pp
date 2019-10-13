@@ -1,6 +1,6 @@
 # mediawiki::php
 class mediawiki::php (
-    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 12),
+    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 16),
     $php_version = hiera('php::php_version', '7.2'),
 ) {
     ensure_resource_duplicate('class', '::php::php_fpm', {
@@ -11,9 +11,9 @@ class mediawiki::php (
             'log_errors'                => 'On',
             'opcache'                   => {
                 'enable'                  => 1,
-                'interned_strings_buffer' => 50,
-                'memory_consumption'      => 300,
-                'max_accelerated_files'   => 24000,
+                'interned_strings_buffer' => 30,
+                'memory_consumption'      => 112,
+                'max_accelerated_files'   => 20000,
                 'max_wasted_percentage'   => 10,
                 'validate_timestamps'     => 1,
                 'revalidate_freq'         => 10,

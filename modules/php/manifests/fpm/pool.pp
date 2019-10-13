@@ -54,7 +54,7 @@ define php::fpm::pool(
         'listen.backlog' => 256,
         'pm'     => 'static',
         'pm.max_children' => $facts['virtual_processor_count'],
-        'pm.max_requests' => 100000,
+        'pm.max_requests' => 1000,
         'pm.status_path' => '/php_status',
         'access.format'  => '%{%Y-%m-%dT%H:%M:%S}t [%p] %{microseconds}d %{HTTP_HOST}e/%r %m/%s %{mega}M',
         'slowlog' => "/var/log/php${php::version}-fpm-${title_safe}-slowlog.log",

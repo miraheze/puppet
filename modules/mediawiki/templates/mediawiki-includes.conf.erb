@@ -1,5 +1,8 @@
 index index.php index.html;
 
+fastcgi_read_timeout 202;
+send_timeout 202;
+
 location /.well-known/acme-challenge/ {
 	alias /var/www/challenges/;
 	try_files $uri =404;
@@ -18,9 +21,6 @@ location ~ \.php {
 	fastcgi_buffers 32 32k;
 	fastcgi_buffer_size 64k;
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-	fastcgi_send_timeout 140;
-	fastcgi_read_timeout 140;
-	send_timeout 140s;
 }
 
 location ~ ^/w/(cache|maintenance|mw-config|vendor) {
