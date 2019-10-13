@@ -26,9 +26,9 @@ class matomo {
             'memory_limit'              => '256M',
             'opcache'                   => {
                 'enable'                  => 1,
-                'interned_strings_buffer' => 50,
-                'memory_consumption'      => 300,
-                'max_accelerated_files'   => 24000,
+                'interned_strings_buffer' => 30,
+                'memory_consumption'      => 112,
+                'max_accelerated_files'   => 20000,
                 'max_wasted_percentage'   => 10,
                 'validate_timestamps'     => 1,
                 'revalidate_freq'         => 10,
