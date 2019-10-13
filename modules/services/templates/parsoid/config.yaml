@@ -1,4 +1,6 @@
-worker_heartbeat_timeout: 500000
+worker_heartbeat_timeout: 300000
+
+num_workers: 1
 
 logging:
   level: info
@@ -27,3 +29,5 @@ services:
       useSelser: true
       linting: true
       linterSendAPI: false
+      strictSSL: true
+      useWorker: true
