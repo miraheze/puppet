@@ -18,7 +18,6 @@ class mediawiki::packages {
         'librsvg2-dev',
         'libjpeg-dev',
         'libgif-dev',
-        'php-tideways',
         'p7zip-full',
         'xvfb',
         'timidity',
