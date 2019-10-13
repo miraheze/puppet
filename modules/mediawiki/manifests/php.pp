@@ -29,4 +29,9 @@ class mediawiki::php (
         'fpm_min_child' => $php_fpm_childs,
         'version' => $php_version
     })
+    
+    php::extension { 'tideways':
+        ensure  => present,
+        sapis   => [ 'fpm' ]
+    }
 }
