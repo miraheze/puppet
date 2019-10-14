@@ -2,6 +2,7 @@
 class mediawiki::php (
     $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 16),
     $php_version = hiera('php::php_version', '7.2'),
+    Optional[Boolean] $use_tideways = undef,
 ) {
     ensure_resource_duplicate('class', '::php::php_fpm', {
         'config'  => {
@@ -29,9 +30,11 @@ class mediawiki::php (
         'fpm_min_child' => $php_fpm_childs,
         'version' => $php_version
     })
-    
-    # php::extension { 'tideways':
-    #    ensure  => present,
-    #    sapis   => [ 'fpm' ]
-    # }
+
+    if $use_tideways {
+        php::extension { 'tideways':
+            ensure  => present,
+            sapis   => [ 'fpm' ]
+        }
+    }
 }
