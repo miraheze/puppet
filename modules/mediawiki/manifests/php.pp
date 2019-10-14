@@ -30,8 +30,8 @@ class mediawiki::php (
         'version' => $php_version
     })
     
-    php::extension { 'tideways':
-        ensure  => present,
-        sapis   => [ 'fpm' ]
-    }
+    # php::extension { 'tideways':
+    #    ensure  => present,
+    #    sapis   => [ 'fpm' ]
+    # }
 }
