@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [rhinos]
+    members: [rhinos, zppix]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.2-fpm *',
@@ -112,3 +112,9 @@ users:
     name: rhinos
     realname: RhinosF1
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEnUGYdeuyt6ECHwNvbeSvgjT8wyHmppzMqAtdm6SczfhFENTrnJ721ap9NVm9UbuF/VUQxuy5HErU4s+Z+QCYFELPcE4pc3MJ066rIkNLgXBFlqENQgLUbUCd+9CfZZbtW1LeTnH1ZvrPDdvNgeypHysSUXuS2Wy5mGF59zeVrTlGiS4QQwRio1YagyedNMoWXj8jLEqq/ZAUqKknq3ScrlqKZFJMMxHLQ8vcCuIxM6sMelX5KMGp293K8Ur7KebPJMO+Zec9wzEP51SuuEdayQKRjmBmXsgdbAsF7WtwEb/WRQpiYwQY6dFiAMC2E+B8DFJXAmRk/DBkjxOPFqEWqRjZ45YChphQaeMJGCoh+xKFprIFwmjwKFgcXSc9U7MuzE9iD9TKp200peAHUlk2Ku6US0WpLHVVEU8g+BcZqIzS+7nwd6EwTpheuAKfEEyaSbmDP5QUtp6eTvGiNihduq97+ncyzH31UG5bcBFQ0L/Lz6i+4htGvSMvma/2bR5uxFOu4ePnxrKuZw07SmZaxnx0sJBWE28ivm5ollEn2rkK9qU9qYntf3fS2x3jiJ879VD6uN40GL1ToHTXWkEqBJPG3pfoCax5ydweHLBldAZsxHN222Z8UEZPBgrzv/jczTN/cjg5toBpkP500zrkbF8/iN88ZJ9UPPDsMztQGQ== samuelkirwin@Samuels-Air]
+  zppix:
+    ensure: present
+    uid: 1012
+    name: zppix
+    realname: Zppix
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAsAY4JbmUybxRZ4mRoIGPpcKrWb3+Tr3O8tgceH1ry1MvrwJIGErcrm2rXoTE7saBfINFoQsc1oqMsSe8jt9mMiZLq9iR5cRX9yXZjx4n1TGJTpG1WAJ+TCzqVmz7F4KBrsygGa4opLlJ9tA9pywNkaym9jmL4eTSLGTwufhM42QOayr0DAPEdWNKxs9gcrv4/eyEuCRIw/SvjN970ZfkQ17TSmBtLkVjAaJfmAYfNTwXiOKk0oomIhWiXy4ddsjrWVk56OHs2eDw61vmVNLc+AaAcqcEdQN6O4WXcDvT/+1pbac2YJ0OMxep0beWi4HhoMyJ5LYbI5B1Eqtlm+F5js8PY0WEatapVz4b/zJ72ex03H5k7K8Xxt+YwFk5HZ6FbTvohRzHoD5PWrt5sE5U/ygBMWXREbl/eU63DHASbDcfVTco92W1lFGgnExbXfg0bI/uQ2LIIK5QWq0Ul2VKtVwY0sJ2wiYu7T0gj3EhpRH8n6BG5NIHYZ/2HBSshU/PA/rnP8yBwXZFZ9miLST9bAjuPx/yP2AG2nxiyYx49jv4//FQ7XTqlBs4OtrYWgF1XmiukF/UChahl8XCB5gxecxKJrh7g9yNt91JtgJuurKfMFuGiUHOnaTr5vfXrw4f8oIYfN38aFll9Qtbm4gLrF+mdL7vHznz2+CcJMfWvoM= rsa-key-20191015]
