@@ -42,7 +42,7 @@ class lizardfs::storage(
 
     $firewall.each |$firewall_key, $firewall_value| {
         # clients access chunkserver
-        ufw::allow { "lizardfs ${firewall_key} 9421":
+        ufw::allow { "lizardfs ${firewall_key} 9421 1":
             proto => 'tcp',
             port  => 9422,
             from  => $firewall_value,
