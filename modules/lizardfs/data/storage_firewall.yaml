@@ -9,6 +9,9 @@ test1: '185.52.2.243'
 lizardfs4: '81.4.122.238'
 lizardfs5: '81.4.122.196'
 
+# Experimental chunkserver and master
+lizardfs6: '51.158.176.139'
+
 misc1: '185.52.1.76'
 misc3: '185.52.1.71'
 misc4: '185.52.3.121'
