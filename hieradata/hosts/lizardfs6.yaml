@@ -1,0 +1,4 @@
+lizardfs_storage: true
+lizardfs_master: true
+lizardfs_web: true
+base::sysctl::swap_value: 0
