@@ -62,5 +62,12 @@ class lizardfs::storage(
             create_mountpoint => true,
             options           => 'big_writes,nosuid,nodev,noatime,mfsioretries=10,mfswriteworkers=15,mfsattrcacheto=60.0,mfsentrycacheto=60.0,mfsdirentrycacheto=60.0,mfsdirentrycachesize=3000',
         }
+
+        # experimental
+        ::lizardfs::client { '/mnt/mediawiki-static-new':
+            create_mountpoint => true,
+            options           => 'big_writes,nosuid,nodev,noatime,mfsioretries=3,mfswriteworkers=15,mfsattrcacheto=60.0,mfsentrycacheto=60.0,mfsdirentrycacheto=60.0,mfsdirentrycachesize=3000',
+            lizardfs_master   => '51.158.176.139',
+        }
     }
 }
