@@ -6,4 +6,4 @@ base::sysctl::swap_value: 0
 lizardfs_master_server: '51.158.176.139'
 # Picks up wrong interface so we have to manually
 # add the ip
-monitoring::hosts::ip: '51.158.176.139'
+monitoring::hosts::ipaddress: '51.158.176.139'
