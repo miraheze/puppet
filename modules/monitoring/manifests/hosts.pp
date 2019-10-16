@@ -20,7 +20,7 @@ define monitoring::hosts (
     @@icinga2::object::host { $title:
         ensure  => $ensure,
         import  => ['generic-host'],
-        address => $ipaddress,
+        address => $ipaddresses,
         target  => '/etc/icinga2/conf.d/puppet_hosts.conf',
         vars    => {
             notification => {
