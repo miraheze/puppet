@@ -50,7 +50,7 @@ http {
     add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
     # Add response time to access.log
-    log_format miraheze '[$time_local] $remote_addr - $remote_user - '
+    log_format miraheze '$remote_addr - $remote_user [$time_local] '
                     '"$request_method $scheme://$host$request_uri" $status $body_bytes_sent '
                     '"$http_referer" "$http_user_agent" $request_time '
                     '$ssl_protocol/$ssl_cipher';
