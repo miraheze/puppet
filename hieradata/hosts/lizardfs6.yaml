@@ -4,3 +4,4 @@ lizardfs_master: true
 lizardfs_web: true
 base::sysctl::swap_value: 0
 lizardfs_master_server: '51.158.176.139'
+monitoring::hosts::ip: '51.158.176.139'
