@@ -1,12 +1,12 @@
 define monitoring::hosts (
-    $ensure   = present,
-    $contacts = hiera('contactgroups', [ 'icingaadmins', 'ops' ]),
+    $ensure      = present,
+    $contacts    = hiera('contactgroups', [ 'icingaadmins', 'ops' ]),
     # Defaults to use the variables below.
-    $ip       = hiera('monitoring::hosts::ip', undef),
+    $ipaddresses = hiera('monitoring::hosts::ip', undef),
 ) {
 
-    if $ip != undef {
-        $ipaddress = $ip
+    if $ipaddresses != undef {
+        $ipaddress = $ipaddresses
     } else {
         # If on a container instead of a physical machine or real VM,
         # use the custom fact to get the IP.
