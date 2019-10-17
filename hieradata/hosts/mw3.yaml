@@ -6,4 +6,3 @@ role::mediawiki::use_strict_firewall: false
 vpncloud::server_ip: 10.0.1.9
 mediawiki::branch: 'REL1_33'
 php::php_fpm::fpm_workers_multiplier: 2.0
-nginx::worker_processes: 8
