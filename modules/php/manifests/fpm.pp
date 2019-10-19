@@ -35,7 +35,7 @@ class php::fpm(
         'syslog.facility'         => 'daemon',
         'syslog.ident'            => "php${php::version}-fpm",
         'log_level'               => 'notice',
-        'process_control_timeout' => 120,
+        'process_control_timeout' => 180,
         'systemd_interval'        => 10,
     }
 

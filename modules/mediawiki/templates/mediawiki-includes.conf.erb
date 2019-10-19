@@ -1,7 +1,7 @@
 index index.php index.html;
 
-fastcgi_read_timeout 202;
-send_timeout 202;
+fastcgi_read_timeout 140;
+send_timeout 140;
 
 location /.well-known/acme-challenge/ {
 	alias /var/www/challenges/;
