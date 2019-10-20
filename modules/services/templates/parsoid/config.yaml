@@ -30,13 +30,12 @@ services:
       linterSendAPI: false
       strictSSL: true
       useWorker: true
+      cpu_workers: 1
       nativeGallery: false
-
       timeouts:
         request: 110000
         mwApi:
           batch: 145000
-
       limits:
         wt2html:
           maxTableCells: 40000
