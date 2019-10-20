@@ -1,4 +1,4 @@
-worker_heartbeat_timeout: 300000
+worker_heartbeat_timeout: 115000
 
 num_workers: 1
 
@@ -21,8 +21,6 @@ services:
     entrypoint: apiServiceWorker
     conf:
       mwApis: *wiki
-      # /!\ COMPATIBILITY for Parsoid 0.9.0 with MediaWiki before 1.31
-      strictAcceptCheck: false
       loadWMF: false
       debug: false
       usePHPPreProcessor: true
@@ -31,3 +29,14 @@ services:
       linterSendAPI: false
       strictSSL: true
       useWorker: true
+      nativeGallery: false
+
+      timeouts:
+        request: 110000
+        mwApi:
+          batch: 145000
+
+      limits:
+        wt2html:
+          maxTableCells: 40000
+          maxListItems: 40000
