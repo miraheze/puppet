@@ -95,12 +95,12 @@ HDD_LEAVE_SPACE_DEFAULT = 33GiB
 ## with clients; these threads are responsible for reading from
 ## sockets and coping data from internal buffers to sockets.
 ## (Default: 1)
-NR_OF_NETWORK_WORKERS = 20
+NR_OF_NETWORK_WORKERS = 3
 
 ## Number of threads that each network worker may use to do disk operations
 ## like opening chunks, reading or writing them
 ## (Default: 20)
-NR_OF_HDD_WORKERS_PER_NETWORK_WORKER = 10
+NR_OF_HDD_WORKERS_PER_NETWORK_WORKER = 3
 
 ## additional number of kilobytes which should be passed to
 ## posix_fadvise(POSIX_FADV_WILLNEED) before reading data from a chunk
