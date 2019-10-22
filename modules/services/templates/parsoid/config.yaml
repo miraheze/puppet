@@ -1,6 +1,6 @@
 worker_heartbeat_timeout: 115000
 
-num_workers: 1
+num_workers: 3
 
 worker_heap_limit_mb: 120
 
@@ -31,7 +31,7 @@ services:
       linting: true
       linterSendAPI: false
       strictSSL: true
-      useWorker: true
+      useWorker: false
       cpu_workers: 1
       nativeGallery: false
       timeouts:
