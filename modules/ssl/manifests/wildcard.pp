@@ -24,6 +24,14 @@ class ssl::wildcard (
         }
     }
 
+    if $use_globalsign and !defined(File['LetsEncrypt.crt']) {
+        file { 'LetsEncrypt.crt':
+            ensure => 'present',
+            source => 'puppet:///ssl/ca/LetsEncrypt.crt',
+            path   => "${ssl_cert_path}/LetsEncrypt.crt",
+        }
+    }
+
     if $use_globalsign and !defined(File['GlobalSign.crt']) {
         file { 'GlobalSign.crt':
             ensure => 'present',
