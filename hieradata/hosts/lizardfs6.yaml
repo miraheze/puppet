@@ -1,5 +1,5 @@
 lizardfs_client: true
-lizardfs_storage: true
+lizardfs_storage: false
 lizardfs_master: true
 lizardfs_web: true
 base::sysctl::swap_value: 0
