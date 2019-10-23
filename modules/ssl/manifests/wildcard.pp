@@ -32,6 +32,14 @@ class ssl::wildcard (
         }
     }
 
+    if $use_globalsign and !defined(File['lets-encrypt-x3-cross-signed.crt']) {
+        file { 'lets-encrypt-x3-cross-signed.crt':
+            ensure => 'present',
+            source => 'puppet:///ssl/ca/lets-encrypt-x3-cross-signed.crt',
+            path   => "${ssl_cert_path}/lets-encrypt-x3-cross-signed.crt",
+        }
+    }
+   
     if $use_globalsign and !defined(File['GlobalSign.crt']) {
         file { 'GlobalSign.crt':
             ensure => 'present',
