@@ -1,8 +1,8 @@
 worker_heartbeat_timeout: 115000
 
-num_workers: 3
+num_workers: 0
 
-worker_heap_limit_mb: 120
+worker_heap_limit_mb: 90
 
 logging:
   level: info
@@ -31,7 +31,7 @@ services:
       linting: true
       linterSendAPI: false
       strictSSL: true
-      useWorker: false
+      useWorker: true
       cpu_workers: 1
       nativeGallery: false
       timeouts:
