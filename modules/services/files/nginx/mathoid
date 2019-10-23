@@ -5,7 +5,7 @@ server {
 	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org.key;
 
-	ssl_trusted_certificate /etc/ssl/certs/LetsEncrypt.crt;
+	ssl_trusted_certificate /etc/ssl/certs/lets-encrypt-x3-cross-signed.crt;
 
         location / {
                 proxy_pass http://127.0.0.1:10044;
