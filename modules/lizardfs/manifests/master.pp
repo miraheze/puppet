@@ -6,12 +6,12 @@ class lizardfs::master(
 
     require_package('lizardfs-master')
 
-    file { '/var/lib/lizardfs/metadata.mfs':
-        ensure  => 'present',
-        replace => 'no',
-        content => 'MFSM NEW',
-        require => Package['lizardfs-master'],
-    }
+    # file { '/var/lib/lizardfs/metadata.mfs':
+    #    ensure  => 'present',
+    #    replace => 'no',
+    #    content => 'MFSM NEW',
+    #    require => Package['lizardfs-master'],
+    # }
 
     file { '/etc/lizardfs/mfsmaster.cfg':
         ensure  => present,
