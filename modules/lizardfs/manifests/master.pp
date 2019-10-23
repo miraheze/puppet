@@ -19,6 +19,12 @@ class lizardfs::master(
         require => Package['lizardfs-master'],
     }
 
+    file { '/etc/lizardfs/globaliolimits.cfg':
+        ensure  => present,
+        content => template('lizardfs/globaliolimits.cfg.erb'),
+        require => Package['lizardfs-master'],
+    }
+
     $module_path = get_module_path($module_name)
     $storage_ip = loadyaml("${module_path}/data/config.yaml")
 
