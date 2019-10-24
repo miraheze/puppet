@@ -47,6 +47,16 @@ class roundcubemail (
         group              => 'www-data',
     }
 
+    git::clone { 'roundcubemail_filters':
+        ensure             => present,
+        directory          => '/srv/roundcubemail/plugins',
+        origin             => 'https://github.com/6ec123321/filters',
+        branch             => 'filters-2.2.0', # we are using the beta for the new skin
+        owner              => 'www-data',
+        group              => 'www-data',
+        require            => Git::Clone['roundcubemail'],
+    }
+
     file { '/srv/roundcubemail/config/config.inc.php':
         ensure => present,
         content => template('roundcubemail/config.inc.php.erb'),
