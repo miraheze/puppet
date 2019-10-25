@@ -16,7 +16,7 @@ class mariadb::packages(
             key         => '177F4010FE56CA3336300305F1656F24C74CD1D8',
         }
 
-        package { 'mariadb-server':
+        package { 'mariadb-server-10.2':
             ensure  => present,
             require => Apt::Source['mariadb_apt'],
         }
