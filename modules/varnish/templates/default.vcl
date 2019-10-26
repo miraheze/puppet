@@ -44,18 +44,27 @@ backend misc3 {
 backend mw1 {
 	.host = "127.0.0.1";
 	.port = "8080";
+	.connect_timeout = 10s;
+	.first_byte_timeout = 63s;
+	.between_bytes_timeout = 31s;
 	.probe = mwhealth;
 }
 
 backend mw2 {
 	.host = "127.0.0.1";
 	.port = "8081";
+	.connect_timeout = 10s;
+	.first_byte_timeout = 63s;
+	.between_bytes_timeout = 31s;
 	.probe = mwhealth;
 }
 
 backend mw3 {
 	.host = "127.0.0.1";
 	.port = "8082";
+	.connect_timeout = 10s;
+	.first_byte_timeout = 63s;
+	.between_bytes_timeout = 31s;
 	.probe = mwhealth;
 }
 
