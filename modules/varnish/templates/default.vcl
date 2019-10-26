@@ -32,19 +32,25 @@ probe mwhealth {
 }
 
 backend misc2 {
-    .host = "127.0.0.1";
-    .port = "8201";
+	.host = "127.0.0.1";
+	.port = "8201";
+	.connect_timeout = 6s;
+	.first_byte_timeout = 63s;
+	.between_bytes_timeout = 31s;
 } 
 
 backend misc3 {
-    .host = "127.0.0.1";
-    .port = "8203";
+	.host = "127.0.0.1";
+	.port = "8203";
+	.connect_timeout = 6s;
+	.first_byte_timeout = 63s;
+	.between_bytes_timeout = 31s;
 }
 
 backend mw1 {
 	.host = "127.0.0.1";
 	.port = "8080";
-	.connect_timeout = 10s;
+	.connect_timeout = 6s;
 	.first_byte_timeout = 63s;
 	.between_bytes_timeout = 31s;
 	.probe = mwhealth;
@@ -53,7 +59,7 @@ backend mw1 {
 backend mw2 {
 	.host = "127.0.0.1";
 	.port = "8081";
-	.connect_timeout = 10s;
+	.connect_timeout = 6s;
 	.first_byte_timeout = 63s;
 	.between_bytes_timeout = 31s;
 	.probe = mwhealth;
@@ -62,7 +68,7 @@ backend mw2 {
 backend mw3 {
 	.host = "127.0.0.1";
 	.port = "8082";
-	.connect_timeout = 10s;
+	.connect_timeout = 6s;
 	.first_byte_timeout = 63s;
 	.between_bytes_timeout = 31s;
 	.probe = mwhealth;
@@ -71,6 +77,9 @@ backend mw3 {
 backend test1 {
 	.host = "127.0.0.1";
 	.port = "8083";
+	.connect_timeout = 6s;
+	.first_byte_timeout = 63s;
+	.between_bytes_timeout = 31s;
 }
 
 # test mediawiki backend with out health check
@@ -79,16 +88,25 @@ backend test1 {
 backend mw1_test {
 	.host = "127.0.0.1";
 	.port = "8080";
+	.connect_timeout = 6s;
+	.first_byte_timeout = 63s;
+	.between_bytes_timeout = 31s;
 }
 
 backend mw2_test {
 	.host = "127.0.0.1";
 	.port = "8081";
+	.connect_timeout = 6s;
+	.first_byte_timeout = 63s;
+	.between_bytes_timeout = 31s;
 }
 
 backend mw3_test {
 	.host = "127.0.0.1";
 	.port = "8082";
+	.connect_timeout = 6s;
+	.first_byte_timeout = 63s;
+	.between_bytes_timeout = 31s;
 }
 
 # end test backend
