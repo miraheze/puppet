@@ -68,7 +68,7 @@ BACK_LOGS = 50
 
 ## Initial delay in seconds before starting chunk operations.
 ## (Default: 300)
-# OPERATIONS_DELAY_INIT = 300
+OPERATIONS_DELAY_INIT = 30
 
 ## Chunk operations delay in seconds after chunkserver disconnection.
 ## (Default: 3600)
@@ -110,7 +110,7 @@ BACK_LOGS = 50
 
 ## Chunks loop shouldn't check more chunks per seconds than given number.
 ## (Default: 100000)
-# CHUNKS_LOOP_MAX_CPS = 100000
+CHUNKS_LOOP_MAX_CPS = 1000
 
 ## Chunks loop will check all chunks in specified time (in seconds) unless
 ## CHUNKS_LOOP_MAX_CPS will force slower execution.
@@ -119,11 +119,11 @@ BACK_LOGS = 50
 
 ## Time in milliseconds between chunks loop execution.
 ## (Default: 1000)
-# CHUNKS_LOOP_PERIOD = 1000
+CHUNKS_LOOP_PERIOD = 10000
 
 ## Hard limit on CPU usage by chunks loop (percentage).
 ## (Default: 60)
-# CHUNKS_LOOP_MAX_CPU = 60
+CHUNKS_LOOP_MAX_CPU = 40
 
 ## Soft maximum number of chunks to delete on one chunkserver.
 ## (Default: 10)
@@ -179,7 +179,7 @@ BACK_LOGS = 50
 ## sustained in the master server after connection with the client was lost.
 ## Values between 60 and 604800 (one week) are accepted.
 ## (Default: 86400)
-# SESSION_SUSTAIN_TIME = 86400
+SESSION_SUSTAIN_TIME = 120
 
 ## Reject mfsmounts older than 1.6.0 (Boolean, 0 or 1).
 ## Note that mfsexports access control is NOT used for those old clients.
@@ -221,7 +221,7 @@ MASTER_HOST = <%= @master_server %>
 ## Timeout (in seconds) for metadata server connections;
 ## Mandatory for "shadow" instance.
 ## (Default: 60)
-# MASTER_TIMEOUT = 60
+MASTER_TIMEOUT = 150
 
 ## How often metadata checksum shall be sent to backup servers, every N metadata updates.
 ## (Default: 50)
@@ -229,7 +229,7 @@ MASTER_HOST = <%= @master_server %>
 
 ## How fast should metadata be recalculated in background, N objects per function call.
 ## (Default: 100)
-# METADATA_CHECKSUM_RECALCULATION_SPEED = 100
+METADATA_CHECKSUM_RECALCULATION_SPEED = 50
 
 ## Should checksum verification be disabled while applying changelog, boolean.
 ## (Default: 0)
