@@ -28,6 +28,7 @@ class mediawiki::php (
             'variables_order'     => 'GPCS',
         },
         'fpm_min_child' => $php_fpm_childs,
+        'fpm_min_restart_threshold' => 7,
         'version' => $php_version
     })
 
