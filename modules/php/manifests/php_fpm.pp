@@ -23,6 +23,7 @@ class php::php_fpm(
     Hash $fpm_pool_config                     = {},
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
     Float $fpm_workers_multiplier = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
+    Integer $fpm_min_restart_threshold        = 1,
 ) {
 
     $base_config_cli = {
@@ -159,7 +160,7 @@ class php::php_fpm(
 
     $base_fpm_config = {
         'emergency_restart_interval'  => '60s',
-        'emergency_restart_threshold' => $facts['virtual_processor_count'],
+        'emergency_restart_threshold' => max($facts['virtual_processor_count'], $fpm_min_restart_threshold),
         'error_log'                   => "/var/log/php${version}-fpm.log",
         'process.priority'            => -19,
     }
