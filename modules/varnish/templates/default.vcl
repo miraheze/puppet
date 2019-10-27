@@ -261,6 +261,11 @@ sub mw_vcl_recv {
 		return (pass);
 	}
 
+	if (req.url ~ "^/.*wiki/thumb/.+$" ||
+	    req.url ~ "^/w/thumb_handler.php/.+$") {
+		set req.backend_hint = mw2;
+	}
+
 	call mw_evaluate_cookie;
 }
 
