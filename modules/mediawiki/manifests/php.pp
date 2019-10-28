@@ -1,6 +1,6 @@
 # mediawiki::php
 class mediawiki::php (
-    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 14),
+    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 4),
     $php_version = hiera('php::php_version', '7.2'),
     Optional[Boolean] $use_tideways = undef,
 ) {
@@ -28,7 +28,7 @@ class mediawiki::php (
             'variables_order'     => 'GPCS',
         },
         'fpm_min_child' => $php_fpm_childs,
-        'fpm_min_restart_threshold' => 7,
+        'fpm_min_restart_threshold' => 4,
         'version' => $php_version
     })
 
