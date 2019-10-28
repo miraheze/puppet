@@ -1,6 +1,6 @@
 # mediawiki::php
 class mediawiki::php (
-    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 4),
+    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 6),
     $php_version = hiera('php::php_version', '7.2'),
     Optional[Boolean] $use_tideways = undef,
 ) {
