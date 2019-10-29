@@ -32,10 +32,17 @@ class mediawiki::php (
         'version' => $php_version
     })
 
-    if $use_tideways {
-        php::extension { 'tideways':
-            ensure  => present,
-            sapis   => [ 'fpm' ]
+    $profiling_ensure =  $use_tideways ? {
+        true    => 'present',
+        default => 'absent'
+    }
+    php::extension { 'tideways':
+        ensure   => $profiling_ensure,
+        priority => 30,
+        sapis    => ['fpm'],
+        config   => {
+            'extension'                       => 'tideways.so',
+            'tideways_xhprof.clock_use_rdtsc' => '0',
         }
     }
 }
