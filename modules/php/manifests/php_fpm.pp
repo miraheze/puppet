@@ -174,10 +174,10 @@ class php::php_fpm(
     $num_workers =  max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
 
     $base_fpm_pool_config = {
-        'pm'                                       => 'static',
-        'pm.max_children'                          => $num_workers,
-        'request_terminate_timeout'                => 180,
-        'request_terminate_timeout_track_finished' => 'yes',
+        'pm'                        => 'static',
+        'pm.max_children'           => $num_workers,
+        'request_terminate_timeout' => 180,
+        'request_terminate_timeout_track_finished' = 'yes',
     }
 
     php::fpm::pool { 'www':
