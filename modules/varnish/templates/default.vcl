@@ -36,7 +36,7 @@ backend misc2 {
     .port = "8201";
 } 
 
-backend misc3 {
+backend lizardfs6 {
     .host = "127.0.0.1";
     .port = "8203";
 }
@@ -299,7 +299,7 @@ sub vcl_recv {
 		if (req.url == "/") {
 			return (synth(752, "/mfs.cgi"));
 		}
-		set req.backend_hint = misc3;
+		set req.backend_hint = lizardfs6;
 		return (pass);
 	}
 
