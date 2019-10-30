@@ -1,0 +1,6 @@
+lizardfs_client: true
+lizardfs_storage: true
+lizardfs_master: true
+lizardfs_web: true
+base::sysctl::swap_value: 0
+lizardfs_master_server: '54.36.165.161'
