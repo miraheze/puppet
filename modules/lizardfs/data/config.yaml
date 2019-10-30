@@ -4,8 +4,7 @@
 # used for backups
 lizardfs4: '81.4.122.238'
 
-# Experimental chunkserver and master
-lizardfs6: '51.158.176.139'
+lizardfs7: '54.36.165.161'
 
 mw1: '185.52.1.75'
 mw2: '185.52.2.113'
