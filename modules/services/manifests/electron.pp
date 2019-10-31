@@ -18,7 +18,7 @@ class services::electron (
         require_package('gconf-gsettings-backend')
     }
 
-    require_package(['xvfb', 'libgtk2.0-0', 'libnotify4', 'libxss1', 'libnss3', 'dbus-x11'])
+    require_package(['xvfb', 'libgtk2.0-0', 'libnotify4', 'libxss1', 'libnss3', 'dbus-x11', 'libasound2'])
 
     group { 'electron':
         ensure => present,
