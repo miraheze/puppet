@@ -24,11 +24,11 @@ class ssl::wildcard (
         }
     }
 
-    if $use_globalsign and !defined(File['Comodo.crt']) {
+    if $use_globalsign and !defined(File['Sectigo.crt']) {
         file { 'Comodo.crt':
             ensure => 'present',
-            source => 'puppet:///ssl/ca/Comodo.crt',
-            path   => "${ssl_cert_path}/Comodo.crt",
+            source => 'puppet:///ssl/ca/Sectigo.crt',
+            path   => "${ssl_cert_path}/Sectigo.crt",
         }
     }
 }
