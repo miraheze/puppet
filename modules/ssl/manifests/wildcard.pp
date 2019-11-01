@@ -24,27 +24,11 @@ class ssl::wildcard (
         }
     }
 
-    if $use_globalsign and !defined(File['LetsEncrypt.crt']) {
-        file { 'LetsEncrypt.crt':
+    if $use_globalsign and !defined(File['Comodo.crt']) {
+        file { 'Comodo.crt':
             ensure => 'present',
-            source => 'puppet:///ssl/ca/LetsEncrypt.crt',
-            path   => "${ssl_cert_path}/LetsEncrypt.crt",
-        }
-    }
-
-    if $use_globalsign and !defined(File['lets-encrypt-x3-cross-signed.crt']) {
-        file { 'lets-encrypt-x3-cross-signed.crt':
-            ensure => 'present',
-            source => 'puppet:///ssl/ca/lets-encrypt-x3-cross-signed.crt',
-            path   => "${ssl_cert_path}/lets-encrypt-x3-cross-signed.crt",
-        }
-    }
-   
-    if $use_globalsign and !defined(File['GlobalSign.crt']) {
-        file { 'GlobalSign.crt':
-            ensure => 'present',
-            source => 'puppet:///ssl/ca/GlobalSign.crt',
-            path   => "${ssl_cert_path}/GlobalSign.crt",
+            source => 'puppet:///ssl/ca/Comodo.crt',
+            path   => "${ssl_cert_path}/Comodo.crt",
         }
     }
 }

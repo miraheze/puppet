@@ -53,7 +53,7 @@ class monitoring (
         enable_ssl      => true,
         ssl_key_path    => '/etc/ssl/private/wildcard.miraheze.org.key',
         ssl_cert_path   => '/etc/ssl/certs/wildcard.miraheze.org.crt',
-        ssl_cacert_path => '/etc/ssl/certs/lets-encrypt-x3-cross-signed.crt',
+        ssl_cacert_path => '/etc/ssl/certs/Comodo.crt',
     }
 
     file { '/etc/icinga2/conf.d/commands.conf':
