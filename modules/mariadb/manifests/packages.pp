@@ -1,6 +1,6 @@
 # class: mariadb::packages
 class mariadb::packages(
-    Enum['10.2', '10.3'] $version = hiera('mariadb::version', '10.2'),
+    Enum['10.2', '10.3', '10.4'] $version = hiera('mariadb::version', '10.2'),
 ) {
 
     package { 'percona-toolkit':
