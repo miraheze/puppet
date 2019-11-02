@@ -1,6 +1,6 @@
 # class: mariadb::config
 class mariadb::config(
-    String               $config                = undef,
+    String               $config                       = undef,
     String               $password                     = undef,
     String               $datadir                      = '/srv/mariadb',
     String               $tmpdir                       = '/tmp',
@@ -9,7 +9,7 @@ class mariadb::config(
     String               $server_role                  = 'master',
     Integer              $max_connections              = 90,
     Enum['10.2', '10.3'] $version                      = hiera('mariadb::version', '10.2'),
-    String               $icinga_password,
+    String               $icinga_password              = undef,
 ) {
     $exporter_password = hiera('passwords::db::exporter')
     $ido_db_user_password = hiera('passwords::icinga_ido')
