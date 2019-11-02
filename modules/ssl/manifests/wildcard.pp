@@ -25,7 +25,7 @@ class ssl::wildcard (
     }
 
     if $use_globalsign and !defined(File['Sectigo.crt']) {
-        file { 'Comodo.crt':
+        file { 'Sectigo.crt':
             ensure => 'present',
             source => 'puppet:///ssl/ca/Sectigo.crt',
             path   => "${ssl_cert_path}/Sectigo.crt",
