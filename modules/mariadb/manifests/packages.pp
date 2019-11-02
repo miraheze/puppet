@@ -15,6 +15,11 @@ class mariadb::packages(
         key         => '177F4010FE56CA3336300305F1656F24C74CD1D8',
     }
 
+    apt::pin { 'mariadb_pin':
+        priority        => 600,
+        origin          => 'ams2.mirrors.digitalocean.com'
+    }
+
     package { "mariadb-server-${version}":
         ensure  => present,
         require => Apt::Source['mariadb_apt'],
