@@ -33,7 +33,7 @@ class gluster {
     if !defined(File['glusterfs.ca']) {
         file { 'glusterfs.ca':
             ensure => 'present',
-            source => 'puppet:///ssl/ca/GlobalSign.crt',
+            source => 'puppet:///ssl/ca/Sectigo.crt',
             path   => '/etc/ssl/glusterfs.ca',
             owner  => 'root',
             group  => 'root',
