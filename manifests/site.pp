@@ -60,6 +60,7 @@ node 'lizardfs6.miraheze.org' {
     include base
     include bacula::client
     include role::db
+    include role::gluster
     include role::lizardfs
     include role::salt::minions
 }
