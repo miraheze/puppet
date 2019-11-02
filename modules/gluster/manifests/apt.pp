@@ -6,7 +6,7 @@ class gluster::apt {
         location => "https://download.gluster.org/pub/gluster/glusterfs/7/7.0/Debian/${::lsbdistcodename}/amd64/apt",
         release  => "${::lsbdistcodename}",
         repos    => 'main',
-        key      => 'A4A905B794A455AD2AF02C5D96040CA0BF11C87C',
+        key      => '80D15823B7FD1561F9F7BCDDDC30D7C23CBBABEE',
         notify   => Exec['apt_update_gluster'],
     }
 
