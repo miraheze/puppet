@@ -8,7 +8,7 @@ class mariadb::config(
     String               $innodb_buffer_pool_size      = '768M',
     String               $server_role                  = 'master',
     Integer              $max_connections              = 90,
-    Enum['10.2', '10.3'] $version                      = '10.2',
+    Enum['10.2', '10.3'] $version                      = hiera('mariadb::version', '10.2'),
     String               $icinga_password,
 ) {
     $exporter_password = hiera('passwords::db::exporter')
