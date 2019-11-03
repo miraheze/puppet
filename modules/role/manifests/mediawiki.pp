@@ -47,7 +47,7 @@ class role::mediawiki {
     # Add mfschunkserverreadto=20000 when client is >= 3.12
     ::lizardfs::client { '/mnt/mediawiki-static':
         create_mountpoint => true,
-        options           => 'big_writes,nosuid,nodev,noatime,mfsattrcacheto=30.0,mfsentrycacheto=30.0,mfsdirentrycacheto=30.0,mfsdirentrycachesize=3000,mfswriteworkers=50,async',
+        options           => 'big_writes,nosuid,nodev,noatime,mfsattrcacheto=30.0,mfsentrycacheto=30.0,mfsdirentrycacheto=30.0,mfsdirentrycachesize=3000,mfswriteworkers=20,async',
     }
 
     if hiera('use_gluster_new', false) {
