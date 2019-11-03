@@ -51,13 +51,11 @@ class role::mediawiki {
     }
 
     if hiera('use_gluster_new', false) {
-        include gluster::apt
-
         # $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/prodvol')
         # backup-volfile-servers=
         gluster::mount { '/mnt/mediawiki-static-new':
           ensure    => present,
-          volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/prodvol'),
+          volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/mvol'),
           transport => 'tcp',
           atboot    => false,
           dump      => 0,
