@@ -86,7 +86,7 @@ class gluster {
         # backup-volfile-servers=
         gluster::mount { '/mnt/mediawiki-static-new':
           ensure    => present,
-          volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/prodvol'),
+          volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/mvol'),
           transport => 'tcp',
           atboot    => false,
           dump      => 0,
