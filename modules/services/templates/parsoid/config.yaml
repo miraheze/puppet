@@ -28,6 +28,7 @@ services:
       usePHPPreProcessor: true
       useSelser: true
       useBatchAPI: true
+      batchConcurrency: 2
       linting: true
       maxSockets: 2
       maxConcurrentCalls: 1
