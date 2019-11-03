@@ -32,6 +32,7 @@ services:
       linting: true
       maxSockets: 2
       maxConcurrentCalls: 1
+      maxListeners: 1000
       strictSSL: true
       useWorker: true
       cpu_workers: 1
