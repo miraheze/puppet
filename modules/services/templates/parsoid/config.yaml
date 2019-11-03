@@ -2,7 +2,7 @@ worker_heartbeat_timeout: 115000
 
 num_workers: 3
 
-worker_heap_limit_mb: 60
+worker_heap_limit_mb: 90
 
 logging:
   level: info
@@ -29,7 +29,8 @@ services:
       useSelser: true
       useBatchAPI: true
       linting: true
-      linterSendAPI: false
+      maxSockets: 2
+      maxConcurrentCalls: 1
       strictSSL: true
       useWorker: true
       cpu_workers: 1
