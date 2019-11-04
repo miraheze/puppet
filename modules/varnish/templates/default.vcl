@@ -261,10 +261,6 @@ sub mw_vcl_recv {
 		return (pass);
 	}
 
-	if (req.http.X-Real-IP == "185.52.3.121" || req.http.X-Real-IP == "2a00:d880:5:7c6::2") {
-		set req.backend_hint = mw2;
-	}
-
 	call mw_evaluate_cookie;
 }
 
