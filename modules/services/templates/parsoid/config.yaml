@@ -1,6 +1,6 @@
 worker_heartbeat_timeout: 115000
 
-num_workers: 3
+num_workers: 1
 
 worker_heap_limit_mb: 90
 
@@ -35,7 +35,7 @@ services:
       maxListeners: 1000
       strictSSL: true
       useWorker: true
-      cpu_workers: 1
+      cpu_workers: 2
       nativeGallery: false
       timeouts:
         request: 110000
