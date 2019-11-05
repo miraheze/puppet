@@ -23,7 +23,7 @@ probe mwhealth {
 	# Check each 10s
 	.interval = 10s;
 	# May not take longer than 8s to load. Ideally this should be lowered, but sometimes latency to the NL servers could suck.
-	.timeout = 8s;
+	.timeout = 20s;
 	# At least 4 out of 5 checks must be successful
 	# to mark the backend as healthy
 	.window = 5;
