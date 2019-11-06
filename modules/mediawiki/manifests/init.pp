@@ -66,7 +66,7 @@ class mediawiki(
         owner              => 'www-data',
         group              => 'www-data',
         mode               => '0755',
-        timeout            => '550',
+        timeout            => '1500',
         recurse_submodules => true,
         require            => File['/srv/mediawiki'],
     }
