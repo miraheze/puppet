@@ -62,7 +62,9 @@ node 'lizardfs6.miraheze.org' {
     include role::db
     include role::gluster
     include role::lizardfs
+    include role::mediawiki
     include role::salt::minions
+    include prometheus::php_fpm
 }
 
 node 'misc1.miraheze.org' {
