@@ -162,7 +162,6 @@ class php::php_fpm(
         'emergency_restart_interval'  => '60s',
         'emergency_restart_threshold' => max($facts['virtual_processor_count'], $fpm_min_restart_threshold),
         'error_log'                   => "/var/log/php${version}-fpm.log",
-        'process.priority'            => -19,
     }
 
     class { '::php::fpm':
