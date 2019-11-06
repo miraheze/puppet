@@ -111,7 +111,6 @@ node /^mw[123]\.miraheze\.org$/ {
     include role::mediawiki
     include role::salt::minions
     include prometheus::php_fpm
-    include role::vpncloud
 }
 
 node 'ns1.miraheze.org' {
