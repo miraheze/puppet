@@ -1,4 +1,4 @@
-lizardfs_client: true
+lizardfs_client: false
 lizardfs_storage: true
 lizardfs_master: true
 lizardfs_web: true
