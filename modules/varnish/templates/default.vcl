@@ -39,6 +39,7 @@ backend misc2 {
 backend lizardfs6 {
     .host = "127.0.0.1";
     .port = "8203";
+    .probe = mwhealth;
 }
 
 backend mw1 {
@@ -82,11 +83,17 @@ backend mw3_test {
 	.port = "8082";
 }
 
+backend lizardfs6_no_check {
+    .host = "127.0.0.1";
+    .port = "8203";
+}
+
 # end test backend
 
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
+	mediawiki.add_backend(lizardfs6);
 	mediawiki.add_backend(mw1);
 	mediawiki.add_backend(mw2);
 	mediawiki.add_backend(mw3);
@@ -95,6 +102,7 @@ sub vcl_init {
 
 acl purge {
 	"localhost";
+	"54.36.165.161"; # lizardfs6
 	"185.52.1.75"; # mw1
 	"2a00:d880:6:786::2"; # mw1
 	"185.52.2.113"; # mw2
@@ -216,6 +224,9 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
 		set req.backend_hint = test1;
 		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "lizardfs6.miraheze.org") {
+		set req.backend_hint = lizardfs6_no_check;
+		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
@@ -299,7 +310,7 @@ sub vcl_recv {
 		if (req.url == "/") {
 			return (synth(752, "/mfs.cgi"));
 		}
-		set req.backend_hint = lizardfs6;
+		set req.backend_hint = lizardfs6_no_check;
 		return (pass);
 	}
 
