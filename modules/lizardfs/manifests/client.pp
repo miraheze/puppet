@@ -77,13 +77,11 @@ define lizardfs::client(
             }
         }
 
-        mount { $real_mountpoint:
-          ensure   => $ensure,
-          device   => 'mfsmount',
-          fstype   => 'fuse',
-          options  => $mount_options,
-          remounts => false,
-          require  => Package['lizardfs-client'],
+        systemd::service { "${title}.mount":
+            ensure  => present,
+            content => systemd_template('lizard-mount'),
+            restart => true,
+            require => Git::Clone['zotero'],
         }
     }
 }
