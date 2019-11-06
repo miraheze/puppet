@@ -12,4 +12,9 @@ mariadb::config::innodb_buffer_pool_size: '8G'
 mariadb::config::max_connections: 500
 mariadb::config::tmpdir: /srv/tmp
 gluster_client: true
+
+# mediawiki
+jobrunner: false
+role::mediawiki::use_strict_firewall: false
+mediawiki::branch: 'REL1_33'
 mediawiki::php::fpm::childs: 50
