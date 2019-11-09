@@ -35,7 +35,7 @@ services:
       maxListeners: 1000
       strictSSL: true
       useWorker: true
-      cpu_workers: 2
+      cpu_workers: 1
       nativeGallery: false
       timeouts:
         request: 110000
