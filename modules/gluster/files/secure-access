@@ -1,0 +1,1 @@
+option transport.socket.ssl-cert-depth 2
