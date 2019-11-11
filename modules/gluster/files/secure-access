@@ -1,1 +1,5 @@
+option transport.socket.ssl-enabled on
+option transport.socket.ssl-own-cert /etc/ssl/private/wildcard.miraheze.org.crt
+option transport.socket.ssl-private-key /etc/ssl/private/wildcard.miraheze.org.key
+option transport.socket.ssl-ca-list /etc/ssl/certs/Sectigo.crt
 option transport.socket.ssl-cert-depth 2
