@@ -72,104 +72,111 @@ define gluster::mount (
   Optional[Boolean] $readdirp                                           = undef,
 ) {
 
-  include gluster::apt
+    include gluster::apt
 
-  package { 'glusterfs-client':
-      ensure   => installed,
-      require  => Class['gluster::apt'],
-  }
-
-  exec { $title:
-      command => "/bin/mkdir -p '${title}'",
-      user    => 'root',
-      group   => 'root',
-      creates => $title,
-      before  => Mount[$title],
-  }
-
-  if !defined(File['glusterfs.pem']) {
-    file { 'glusterfs.pem':
-      ensure => 'present',
-      source => 'puppet:///ssl/certificates/wildcard.miraheze.org.crt',
-      path   => '/etc/ssl/glusterfs.pem',
-      owner  => 'root',
-      group  => 'root',
+    package { 'glusterfs-client':
+        ensure   => installed,
+        require  => Class['gluster::apt'],
     }
-  }
 
-  if !defined(File['glusterfs.key']) {
-    file { 'glusterfs.key':
-      ensure => 'present',
-      source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
-      path   => '/etc/ssl/glusterfs.key',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0660',
+    exec { $title:
+        command => "/bin/mkdir -p '${title}'",
+        user    => 'root',
+        group   => 'root',
+        creates => $title,
+        before  => Mount[$title],
     }
-  }
 
-  if !defined(File['glusterfs.ca']) {
-    file { 'glusterfs.ca':
-      ensure => 'present',
-      source => 'puppet:///ssl/ca/Sectigo.crt',
-      path   => '/etc/ssl/glusterfs.ca',
-      owner  => 'root',
-      group  => 'root',
+    if !defined(File['glusterfs.pem']) {
+        file { 'glusterfs.pem':
+            ensure => 'present',
+            source => 'puppet:///ssl/certificates/wildcard.miraheze.org.crt',
+            path   => '/etc/ssl/glusterfs.pem',
+            owner  => 'root',
+            group  => 'root',
+        }
     }
-  }
 
-  if $log_level {
-    $ll = "log-level=${log_level}"
-  } else {
-    $ll = undef
-  }
+    if !defined(File['glusterfs.key']) {
+        file { 'glusterfs.key':
+            ensure => 'present',
+            source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
+            path   => '/etc/ssl/glusterfs.key',
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0660',
+        }
+    }
 
-  if $log_file {
-    $lf = "log-file=${log_file}"
-  } else {
-    $lf = undef
-  }
+    if !defined(File['glusterfs.ca']) {
+        file { 'glusterfs.ca':
+            ensure => 'present',
+            source => 'puppet:///ssl/ca/Sectigo.crt',
+            path   => '/etc/ssl/glusterfs.ca',
+            owner  => 'root',
+            group  => 'root',
+        }
+    }
 
-  if $transport {
-    $t = "transport=${transport}"
-  } else {
-    $t = undef
-  }
+    if $log_level {
+        $ll = "log-level=${log_level}"
+    } else {
+        $ll = undef
+    }
 
-  if $direct_io_mode {
-    $dim = "direct-io-mode=${direct_io_mode}"
-  } else {
-    $dim = undef
-  }
+    if $log_file {
+        $lf = "log-file=${log_file}"
+    } else {
+        $lf = undef
+    }
 
-  if $readdirp {
-    $r = "usereaddrip=${readdirp}"
-  } else {
-    $r = undef
-  }
+    if $transport {
+        $t = "transport=${transport}"
+    } else {
+        $t = undef
+    }
+
+    if $direct_io_mode {
+        $dim = "direct-io-mode=${direct_io_mode}"
+    } else {
+        $dim = undef
+    }
+
+    if $readdirp {
+        $r = "usereaddrip=${readdirp}"
+    } else {
+        $r = undef
+    }
   
-  $backup_defaults = "noauto,x-systemd.automount"
+    $backup_defaults = "noauto"
 
-  $mount_options = [ $options, $ll, $lf, $t, $dim, $r, $backup_defaults, ]
-  $_options = join(delete_undef_values($mount_options), ',')
+    $mount_options = [ $options, $ll, $lf, $t, $dim, $r, $backup_defaults, ]
+    $_options = join(delete_undef_values($mount_options), ',')
 
-  if !defined(File['/var/lib/glusterd/secure-access']) {
-    file { '/var/lib/glusterd/secure-access':
-      ensure  => present,
-      source  => 'puppet:///modules/gluster/secure-access',
-      require => Package['glusterfs-client'],
+    if !defined(File['/var/lib/glusterd/secure-access']) {
+        file { '/var/lib/glusterd/secure-access':
+            ensure  => present,
+            source  => 'puppet:///modules/gluster/secure-access',
+            require => Package['glusterfs-client'],
+        }
     }
-  }
 
-  mount { $title:
-    ensure   => $ensure,
-    fstype   => 'glusterfs',
-    remounts => false,
-    atboot   => $atboot,
-    device   => $volume,
-    dump     => $dump,
-    pass     => $pass,
-    options  => $_options,
-    require => File['/var/lib/glusterd/secure-access']
-  }
+    mount { $title:
+        ensure   => $ensure,
+        fstype   => 'glusterfs',
+        remounts => false,
+        atboot   => $atboot,
+        device   => $volume,
+        dump     => $dump,
+        pass     => $pass,
+        options  => $_options,
+        require => File['/var/lib/glusterd/secure-access']
+    }
+
+    systemd::service { 'gluster-mount':
+        ensure  => present,
+        content => systemd_template('gluster-mount'),
+        restart => true,
+        require => Mount[$title],
+    }
 }
