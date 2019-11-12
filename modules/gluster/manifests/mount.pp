@@ -147,8 +147,10 @@ define gluster::mount (
   } else {
     $r = undef
   }
+  
+  $backup_defaults = "noauto,x-systemd.automount"
 
-  $mount_options = [ $options, $ll, $lf, $t, $dim, $r, ]
+  $mount_options = [ $options, $ll, $lf, $t, $dim, $r, $backup_defaults, ]
   $_options = join(delete_undef_values($mount_options), ',')
 
   if !defined(File['/var/lib/glusterd/secure-access']) {
