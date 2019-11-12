@@ -1,0 +1,13 @@
+[Unit]
+Description=Gluster Mount                                      
+After=network.target
+
+[Service]
+Type=simple
+RemainAfterExit=true
+ExecStart=/bin/mount /mnt/mediawiki-static-new
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
