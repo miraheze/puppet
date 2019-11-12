@@ -43,7 +43,7 @@ class gluster {
     if !defined(File['/var/lib/glusterd/secure-access']) {
         file { '/var/lib/glusterd/secure-access':
             ensure  => present,
-            content => 'option transport.socket.ssl-cert-depth 2',
+            source  => 'puppet:///modules/gluster/secure-access',
             require => Package['glusterfs-server'],
         }
     }
