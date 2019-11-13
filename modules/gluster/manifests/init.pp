@@ -93,4 +93,6 @@ class gluster {
           pass      => 0,
         }
     }
+
+    include prometheus::gluster_exporter
 }
