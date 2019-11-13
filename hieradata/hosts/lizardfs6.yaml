@@ -17,4 +17,4 @@ mariadb::config::tmpdir: /srv/tmp
 jobrunner: false
 role::mediawiki::use_strict_firewall: false
 mediawiki::branch: 'REL1_33'
-mediawiki::php::fpm::childs: 50
+mediawiki::php::fpm::childs: 40
