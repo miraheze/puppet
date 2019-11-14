@@ -299,7 +299,7 @@ sub vcl_recv {
 		set req.backend_hint = misc2;
 
 		# Yes, we only care about this file
-		if (req.url ~ "^/piwik.js" || req.url ~ "^/js/index.php") {
+		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
 			return (hash);
 		} else {
 			return (pass);
