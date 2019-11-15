@@ -127,19 +127,19 @@ CHUNKS_LOOP_MAX_CPU = 60
 
 ## Soft maximum number of chunks to delete on one chunkserver.
 ## (Default: 10)
-# CHUNKS_SOFT_DEL_LIMIT = 10
+CHUNKS_SOFT_DEL_LIMIT = 20
 
 ## Hard maximum number of chunks to delete on one chunkserver.
 ## (Default: 25)
-# CHUNKS_HARD_DEL_LIMIT = 25
+CHUNKS_HARD_DEL_LIMIT = 45
 
 ## Maximum number of chunks to replicate to one chunkserver.
 ## (Default: 2)
-CHUNKS_WRITE_REP_LIMIT = 10
+CHUNKS_WRITE_REP_LIMIT = 20
 
 ## Maximum number of chunks to replicate from one chunkserver
 ## (Default: 10)
-CHUNKS_READ_REP_LIMIT = 20
+CHUNKS_READ_REP_LIMIT = 30
 
 ## Percentage of endangered chunks that should be replicated with high priority.
 ## Example: when set to 0.2, up to 20% of chunks served in one turn would be extracted
