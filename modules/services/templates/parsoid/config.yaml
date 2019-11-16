@@ -28,10 +28,8 @@ services:
       usePHPPreProcessor: true
       useSelser: true
       useBatchAPI: true
-      batchConcurrency: 2
+      batchConcurrency: 5
       linting: true
-      maxSockets: 2
-      maxConcurrentCalls: 1
       maxListeners: 1000
       strictSSL: true
       useWorker: true
