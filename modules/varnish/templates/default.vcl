@@ -93,7 +93,7 @@ backend lizardfs6_no_check {
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(lizardfs6);
+	# mediawiki.add_backend(lizardfs6);
 	mediawiki.add_backend(mw1);
 	mediawiki.add_backend(mw2);
 	mediawiki.add_backend(mw3);
