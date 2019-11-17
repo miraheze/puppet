@@ -12,7 +12,6 @@ node /^cp[234]\.miraheze\.org$/ {
     include base
     include role::varnish
     include role::salt::minions
-    include role::vpncloud
 }
 
 node 'db4.miraheze.org' {
@@ -23,7 +22,6 @@ node 'db4.miraheze.org' {
     include bacula::client
     include role::salt::minions
     include prometheus::mysqld_exporter
-    include role::vpncloud
 }
 
 node 'db5.miraheze.org' {
@@ -32,34 +30,12 @@ node 'db5.miraheze.org' {
     include bacula::client
     include role::salt::minions
     include prometheus::mysqld_exporter
-    include role::vpncloud
-}
-
-node /^es[1234]\.miraheze\.org$/ {
-    include base
-    include role::elasticsearch
-    include role::salt::minions
-    include role::vpncloud
-}
-
-node /^glusterfs[12]\.miraheze\.org$/ {
-    include base
-    include bacula::client
-    include role::gluster
-    include role::salt::minions
-}
-
-node /^lizardfs[45]\.miraheze\.org$/ {
-    include base
-    include bacula::client
-    include role::salt::minions
 }
 
 node 'lizardfs6.miraheze.org' {
     include base
     include bacula::client
     include role::gluster
-    include role::lizardfs
     include role::mediawiki
     include role::salt::minions
     include prometheus::php_fpm
@@ -83,7 +59,6 @@ node 'misc2.miraheze.org' {
     include role::redis
     include role::matomo
     include role::salt::minions
-    include role::vpncloud
     include prometheus::php_fpm
     include prometheus::redis_exporter
 }
@@ -102,7 +77,6 @@ node 'misc4.miraheze.org' {
     include role::salt::masters
     include role::salt::minions
     include role::services
-    include role::vpncloud
     include prometheus::php_fpm
 }
 
@@ -116,7 +90,6 @@ node /^mw[123]\.miraheze\.org$/ {
 node 'ns1.miraheze.org' {
     include base
     include role::dns
-    include role::vpncloud
 }
 
 node 'puppet1.miraheze.org' {
@@ -124,7 +97,6 @@ node 'puppet1.miraheze.org' {
     include bacula::client
     include role::puppetserver
     include role::salt::minions
-    include role::vpncloud
 }
 
 node 'test1.miraheze.org' {
@@ -132,7 +104,6 @@ node 'test1.miraheze.org' {
     include role::mediawiki
     include role::salt::minions
     include prometheus::php_fpm
-    include role::vpncloud
 }
 
 # ensures all servers have basic class if puppet runs
