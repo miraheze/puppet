@@ -52,7 +52,6 @@ node /^glusterfs[12]\.miraheze\.org$/ {
 node /^lizardfs[45]\.miraheze\.org$/ {
     include base
     include bacula::client
-    include role::lizardfs
     include role::salt::minions
 }
 
