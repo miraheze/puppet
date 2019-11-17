@@ -30,7 +30,6 @@ services:
       useBatchAPI: true
       batchConcurrency: 5
       linting: true
-      maxListeners: 1000
       strictSSL: true
       useWorker: true
       cpu_workers: 1
