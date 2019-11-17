@@ -44,22 +44,14 @@ class role::mediawiki {
         description => 'MediaWiki server',
     }
 
-    # Add mfschunkserverreadto=20000 when client is >= 3.12
-    ::lizardfs::client { '/mnt/mediawiki-static':
-        create_mountpoint => true,
-        options           => 'big_writes,nosuid,nodev,noatime,mfsattrcacheto=30.0,mfsentrycacheto=30.0,mfsdirentrycacheto=30.0,mfsdirentrycachesize=3000,mfswriteworkers=20,async',
-    }
-
-    if hiera('use_gluster_new', false) {
-        # $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/prodvol')
-        # backup-volfile-servers=
-        gluster::mount { '/mnt/mediawiki-static-new':
-          ensure    => mounted,
-          volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/mvol'),
-          transport => 'tcp',
-          atboot    => false,
-          dump      => 0,
-          pass      => 0,
-        }
+    # $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/mvol')
+    # backup-volfile-servers=
+    gluster::mount { '/mnt/mediawiki-static-new':
+      ensure    => mounted,
+      volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/mvol'),
+      transport => 'tcp',
+      atboot    => false,
+      dump      => 0,
+      pass      => 0,
     }
 }
