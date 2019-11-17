@@ -306,14 +306,6 @@ sub vcl_recv {
 		}
 	}
 
-	if (req.http.Host == "lizard.miraheze.org") {
-		if (req.url == "/") {
-			return (synth(752, "/mfs.cgi"));
-		}
-		set req.backend_hint = lizardfs6_no_check;
-		return (pass);
-	}
-
 	# MediaWiki specific
 	call mw_vcl_recv;
 
