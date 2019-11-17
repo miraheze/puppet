@@ -84,13 +84,15 @@ class gluster {
     if hiera('gluster_client', false) {
         # $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/prodvol')
         # backup-volfile-servers=
-        gluster::mount { '/mnt/mediawiki-static-new':
-          ensure    => present,
-          volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/mvol'),
-          transport => 'tcp',
-          atboot    => false,
-          dump      => 0,
-          pass      => 0,
+        if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
+            gluster::mount { '/mnt/mediawiki-static':
+              ensure    => present,
+              volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/mvol'),
+              transport => 'tcp',
+              atboot    => false,
+              dump      => 0,
+              pass      => 0,
+            }
         }
     }
 
