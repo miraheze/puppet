@@ -27,6 +27,9 @@ class mediawiki::php (
             'upload_max_filesize' => '250M',
             'variables_order'     => 'GPCS',
         },
+        'fpm_pool_config' => {
+            'request_terminate_timeout_track_finished' => 'yes',
+        },
         'fpm_min_child' => $php_fpm_childs,
         'version' => $php_version
     })
