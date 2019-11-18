@@ -50,10 +50,6 @@ class role::mediawiki {
         gluster::mount { '/mnt/mediawiki-static':
           ensure    => mounted,
           volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/mvol'),
-          transport => 'tcp',
-          atboot    => false,
-          dump      => 0,
-          pass      => 0,
         }
     }
 }
