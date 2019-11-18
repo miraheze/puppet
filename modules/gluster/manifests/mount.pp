@@ -148,7 +148,7 @@ define gluster::mount (
     $r = undef
   }
   
-  $backup_defaults = "noauto,x-systemd.automount,attribute-timeout=600,entry-timeout=600,negative-timeout=600,fopen-keep-cache"
+  $backup_defaults = "noauto,x-systemd.automount,attribute-timeout=200,entry-timeout=200,negative-timeout=60,fopen-keep-cache"
 
   $mount_options = [ $options, $ll, $lf, $t, $dim, $r, $backup_defaults, ]
   $_options = join(delete_undef_values($mount_options), ',')
