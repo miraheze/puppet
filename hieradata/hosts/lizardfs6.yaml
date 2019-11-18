@@ -11,6 +11,7 @@ mariadb::config::innodb_buffer_pool_instances: 1
 mariadb::config::innodb_buffer_pool_size: '2G'
 mariadb::config::max_connections: 500
 mariadb::config::tmpdir: /srv/tmp
+php::php_version: '7.3'
 #gluster_client: true
 
 # mediawiki
