@@ -60,7 +60,7 @@
 #
 define gluster::mount (
   String $volume,
-  String $options                                                       = 'defaults',
+  Optional[String] $options                                             = undef,
   Enum['defined', 'present', 'unmounted', 'absent', 'mounted'] $ensure  = 'mounted',
 ) {
 
