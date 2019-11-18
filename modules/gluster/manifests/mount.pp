@@ -60,16 +60,8 @@
 #
 define gluster::mount (
   String $volume,
-  Variant[Enum['yes', 'no'], Boolean] $atboot                           = 'yes',
   String $options                                                       = 'defaults',
-  Integer $dump                                                         = 0,
-  Integer $pass                                                         = 0,
   Enum['defined', 'present', 'unmounted', 'absent', 'mounted'] $ensure  = 'mounted',
-  Optional[String] $log_level                                           = undef,
-  Optional[String] $log_file                                            = undef,
-  Optional[String] $transport                                           = undef,
-  Optional[String] $direct_io_mode                                      = undef,
-  Optional[Boolean] $readdirp                                           = undef,
 ) {
 
   include gluster::apt
@@ -118,41 +110,6 @@ define gluster::mount (
     }
   }
 
-  if $log_level {
-    $ll = "log-level=${log_level}"
-  } else {
-    $ll = undef
-  }
-
-  if $log_file {
-    $lf = "log-file=${log_file}"
-  } else {
-    $lf = undef
-  }
-
-  if $transport {
-    $t = "transport=${transport}"
-  } else {
-    $t = undef
-  }
-
-  if $direct_io_mode {
-    $dim = "direct-io-mode=${direct_io_mode}"
-  } else {
-    $dim = undef
-  }
-
-  if $readdirp {
-    $r = "usereaddrip=${readdirp}"
-  } else {
-    $r = undef
-  }
-  
-  $backup_defaults = "noauto,x-systemd.automount,attribute-timeout=200,entry-timeout=200,negative-timeout=60,fopen-keep-cache"
-
-  $mount_options = [ $options, $ll, $lf, $t, $dim, $r, $backup_defaults, ]
-  $_options = join(delete_undef_values($mount_options), ',')
-
   if !defined(File['/var/lib/glusterd/secure-access']) {
     file { '/var/lib/glusterd/secure-access':
       ensure  => present,
@@ -161,15 +118,19 @@ define gluster::mount (
     }
   }
 
+  $base_options = "noauto,x-systemd.automount,attribute-timeout=200,entry-timeout=200,negative-timeout=60,fopen-keep-cache"
+
+  $mount_options = $options ? {
+      undef   => $base_options,
+      default => "${base_options},${options}",
+  }
+
   mount { $title:
     ensure   => $ensure,
     fstype   => 'glusterfs',
     remounts => false,
-    atboot   => $atboot,
     device   => $volume,
-    dump     => $dump,
-    pass     => $pass,
-    options  => $_options,
-    require => File['/var/lib/glusterd/secure-access']
+    options  => $mount_options,
+    require  => File['/var/lib/glusterd/secure-access']
   }
 }
