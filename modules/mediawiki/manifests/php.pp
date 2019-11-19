@@ -38,13 +38,34 @@ class mediawiki::php (
         true    => 'present',
         default => 'absent'
     }
-    php::extension { 'tideways':
-        ensure   => $profiling_ensure,
-        priority => 30,
-        sapis    => ['fpm'],
-        config   => {
-            'extension'                       => 'tideways.so',
-            'tideways_xhprof.clock_use_rdtsc' => '0',
+
+    if $php_version == '7.3' {
+        file { '/usr/lib/php/20180731/tideways_xhprof.so':
+            ensure => $profiling_ensure,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/tideways_xhprof.so',
+        }
+
+        php::extension { 'tideways-xhprof':
+            ensure   => $profiling_ensure,
+            package_name => '',
+            priority => 30,
+            sapis    => ['fpm'],
+            config   => {
+                'extension'                       => 'tideways_xhprof.so',
+                'tideways_xhprof.clock_use_rdtsc' => '0',
+            },
+            require  => File['/usr/lib/php/20180731/tideways_xhprof.so'],
+        }
+    } else {
+        php::extension { 'tideways':
+            ensure   => $profiling_ensure,
+            priority => 30,
+            sapis    => ['fpm'],
+            config   => {
+                'extension'                       => 'tideways.so',
+                'tideways_xhprof.clock_use_rdtsc' => '0',
+            }
         }
     }
 }
