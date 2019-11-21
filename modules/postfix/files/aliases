@@ -39,6 +39,9 @@ conduct: miraheze-cocc@googlegroups.com
 # finances
 donate: labster,southparkfan
 
+# board
+board: owen,southparkfan,void
+
 # phabricator incoming emails - must be configued with Maniphest
 security: operations
 phabricator: operations
