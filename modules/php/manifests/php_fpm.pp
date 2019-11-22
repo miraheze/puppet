@@ -129,6 +129,8 @@ class php::php_fpm(
                 'mysqli.allow_local_infile' => 'Off',
             }
             ;
+        'pear':
+            package_name => 'php-pear';
         'dba':
             package_name => "php${version}-dba",
     }
