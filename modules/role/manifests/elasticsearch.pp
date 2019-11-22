@@ -139,7 +139,7 @@ class role::elasticsearch {
     sysctl::parameters { 'disable ipv6':
         values   => {
             # Increase TCP max buffer size
-            'net.ipv6.conf.all.disable_ipv6 = 1' => 1,
+            'net.ipv6.conf.all.disable_ipv6' => 1,
             'net.ipv6.conf.default.disable_ipv6' => 1,
             'net.ipv6.conf.lo.disable_ipv6' => 1,
         },
