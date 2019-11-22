@@ -28,7 +28,6 @@ services:
       usePHPPreProcessor: true
       useSelser: true
       useBatchAPI: true
-      batchConcurrency: 5
       linting: true
       strictSSL: true
       useWorker: true
