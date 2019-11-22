@@ -122,6 +122,8 @@ class php::php_fpm(
             };
         'imagick':
             package_name => 'php-imagick';
+        'mail-mime':
+            package_name => 'php-mail-mime';
         'mysqli':
             package_name => "php${version}-mysql",
             config       => {
