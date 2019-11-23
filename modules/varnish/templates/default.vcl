@@ -355,9 +355,9 @@ sub vcl_deliver {
 	}
 
 	if (obj.hits > 0) {
-		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> HIT (" + obj.hits + ")";
+		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %>/hit-mh (" + obj.hits + ")";
 	} else {
-		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
+		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %>/miss-mh (0)";
 	}
 
 	set resp.http.Content-Security-Policy = "default-src 'self' blob: data: <%- @csp_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self' <%- @frame_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%>";
