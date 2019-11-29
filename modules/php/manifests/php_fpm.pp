@@ -122,8 +122,6 @@ class php::php_fpm(
             };
         'imagick':
             package_name => 'php-imagick';
-        'mail-mime':
-            package_name => 'php-mail-mime';
         'mysqli':
             package_name => "php${version}-mysql",
             config       => {
@@ -133,6 +131,13 @@ class php::php_fpm(
             ;
         'dba':
             package_name => "php${version}-dba",
+    }
+
+    if $version == '7.2' {
+        php::extension {
+            'mail-mime':
+                package_name => 'php-mail-mime';
+        }
     }
 
     # Additional config files are needed by some extensions, add them
