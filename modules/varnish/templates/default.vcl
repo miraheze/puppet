@@ -153,11 +153,11 @@ sub mw_identify_device {
 		set req.http.X-Use-Mobile = "1";
 	}
 
-	if (req.http.host ~ "^([a-zA-Z0-9-]+)\.m\.miraheze\.org") {
+	if (req.http.host ~ "^([a-zA-Z0-9].+)\.m\.miraheze\.org") {
 		set req.http.X-Subdomain = "M";
-	} else if (req.http.host ~ "^m\.([a-zA-Z0-9-\.]+)") {
+	} else if (req.http.host ~ "^m\.([a-zA-Z0-9\-\.].+)") {
 		set req.http.X-Subdomain = "M";
-	} else if (req.http.host ~ "^([a-zA-Z0-9-\.]+)\.m\.([a-zA-Z0-9-\.]+)") {
+	} else if (req.http.host ~ "^([a-zA-Z0-9\-\.]+)\.m\.([a-zA-Z0-9\-\.].+)") {
 		set req.http.X-Subdomain = "M";
 	}
 }
