@@ -353,7 +353,7 @@ sub vcl_deliver {
 			set resp.http.Cache-Control = "private, s-maxage=0, maxage=0, must-revalidate";
 		}
 	}
-
+set resp.http.Alt-Svc = 'quic="<%= scope.lookupvar('::hostname') %>:443", v="22,25,27", ma=86400';
 	if (obj.hits > 0) {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> hit/" + obj.hits + "";
 	} else {
