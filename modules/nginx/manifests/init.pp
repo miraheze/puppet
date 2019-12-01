@@ -1,5 +1,7 @@
 # nginx
-class nginx {
+class nginx (
+    Variant[String, Integer] $nginx_worker_processes = hiera('nginx::worker_processes', 'auto'),
+) {
     include ::apt
 
     apt::source { 'nginx_apt':

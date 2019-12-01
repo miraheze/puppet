@@ -13,6 +13,19 @@ class monitoring (
         allowdupe => false,
     }
 
+    apt::source { 'mariadb_apt':
+        comment     => 'MariaDB stable',
+        location    => 'http://ams2.mirrors.digitalocean.com/mariadb/repo/10.2/debian',
+        release     => "${::lsbdistcodename}",
+        repos       => 'main',
+        key         => '177F4010FE56CA3336300305F1656F24C74CD1D8',
+    }
+
+    package { 'mariadb-client-10.2':
+        ensure  => present,
+        require => Apt::Source['mariadb_apt'],
+    }
+
     class { '::icinga2':
       manage_repo => true,
       constants   => {
@@ -38,9 +51,9 @@ class monitoring (
         database        => $db_name,
         import_schema   => false,
         enable_ssl      => true,
-        ssl_key_path    => '/etc/ssl/private/wildcard.miraheze.org-no-key.key',
+        ssl_key_path    => '/etc/ssl/private/wildcard.miraheze.org.key',
         ssl_cert_path   => '/etc/ssl/certs/wildcard.miraheze.org.crt',
-        ssl_cacert_path => '/etc/ssl/certs/GlobalSign.crt',
+        ssl_cacert_path => '/etc/ssl/certs/Sectigo.crt',
     }
 
     file { '/etc/icinga2/conf.d/commands.conf':

@@ -30,14 +30,17 @@ dmarc: john
 
 # destination aliases
 operations: southparkfan,ndkilla,reception123,john,paladox
-stewards: southparkfan,ndkilla,orduinvoidwalker@gmail.com,john,pio_uso@yahoo.co.jp
-staff: southparkfan,ndkilla,labster,reception123,john,paladox, rhinosf1
-cvt: stewards,reception123,megadev44s.mail@gmail.com,diarmuidsmithy@gmail.com
+stewards: southparkfan,ndkilla,void,john,pio_uso@yahoo.co.jp
+staff: southparkfan,ndkilla,labster,reception123,john,paladox,rhinosf1,zppix
+cvt: stewards,reception123,zppix,diarmuidsmithy@gmail.com
 cocc: conduct
 conduct: miraheze-cocc@googlegroups.com
 
 # finances
 donate: labster,southparkfan
+
+# board
+board: owen,southparkfan,void
 
 # phabricator incoming emails - must be configued with Maniphest
 security: operations

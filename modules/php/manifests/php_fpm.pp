@@ -22,6 +22,8 @@ class php::php_fpm(
     Integer $fpm_min_child                    = 4,
     Hash $fpm_pool_config                     = {},
     Enum['7.0', '7.1', '7.2', '7.3'] $version = '7.2',
+    Float $fpm_workers_multiplier = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
+    Integer $fpm_min_restart_threshold        = 1,
 ) {
 
     $base_config_cli = {
@@ -37,15 +39,25 @@ class php::php_fpm(
 
     $base_config_fpm = {
         'opcache.enable'                  => 1,
-        'opcache.interned_strings_buffer' => 50,
-        'opcache.memory_consumption'      => 300,
-        'opcache.max_accelerated_files'   => 24000,
+        'opcache.interned_strings_buffer' => 30,
+        'opcache.memory_consumption'      => 112,
+        'opcache.max_accelerated_files'   => 20000,
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,
         'opcache.revalidate_freq'         => 10,
         'display_errors'                  => 0,
         'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
+    }
+
+    # Add systemd override for php-fpm, that should prevent a reload
+    # if the fpm config files are broken.
+    # This should prevent us from shooting our own foot as happened before.
+    systemd::unit { "php${php_version}-fpm.service":
+        ensure   => present,
+        content  => template('php/php-fpm-systemd-override.conf.erb'),
+        override => true,
+        restart  => false,
     }
 
     # Install the runtime
@@ -98,8 +110,6 @@ class php::php_fpm(
         }
     }
 
-
-
     # Extensions that require configuration.
     php::extension {
         'xml':
@@ -121,6 +131,13 @@ class php::php_fpm(
             ;
         'dba':
             package_name => "php${version}-dba",
+    }
+
+    if $version == '7.2' {
+        php::extension {
+            'mail-mime':
+                package_name => 'php-mail-mime';
+        }
     }
 
     # Additional config files are needed by some extensions, add them
@@ -150,9 +167,8 @@ class php::php_fpm(
 
     $base_fpm_config = {
         'emergency_restart_interval'  => '60s',
-        'emergency_restart_threshold' => $facts['virtual_processor_count'],
+        'emergency_restart_threshold' => max($facts['virtual_processor_count'], $fpm_min_restart_threshold),
         'error_log'                   => "/var/log/php${version}-fpm.log",
-        'process.priority'            => -19,
     }
 
     class { '::php::fpm':
@@ -161,32 +177,28 @@ class php::php_fpm(
         require => Apt::Source['php_apt'],
     }
 
-    $num_workers = max(floor($facts['virtual_processor_count'] * 1.5), $fpm_min_child)
-    # These numbers need to be positive integers
-    $max_spare = ceiling($num_workers * 0.3)
-    $min_spare = ceiling($num_workers * 0.1)
+    $num_workers =  max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
 
     $base_fpm_pool_config = {
-        'pm'                        => 'dynamic',
-        'pm.max_spare_servers'      => $max_spare,
-        'pm.min_spare_servers'      => $min_spare,
-        'pm.start_servers'          => $min_spare,
+        'pm'                        => 'static',
         'pm.max_children'           => $num_workers,
-        'request_terminate_timeout' => 230,
+        'request_terminate_timeout' => 180,
     }
 
     php::fpm::pool { 'www':
         config => merge($base_fpm_pool_config, $fpm_pool_config),
     }
 
-    file { '/var/log/php':
-        ensure => directory,
-        owner  => 'www-data',
-        group  => 'www-data',
-    }
-
-    logrotate::conf { 'php-fpm':
-        ensure => present,
-        source => 'puppet:///modules/php/php-fpm-logrotate.conf',
+    # Send logs locally to /var/log/php7.x-fpm/error.log
+    # Please note: this replaces the logrotate rule coming from the package,
+    # because we use syslog-based logging. This will also prevent an fpm reload
+    # for every logrotate run.
+    $fpm_programname = "php${php_version}-fpm"
+    systemd::syslog { $fpm_programname:
+        base_dir     => '/var/log',
+        owner        => 'www-data',
+        group        => 'www-data',
+        readable_by  => 'group',
+        log_filename => 'error.log'
     }
 }

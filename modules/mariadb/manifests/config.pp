@@ -1,15 +1,15 @@
 # class: mariadb::config
 class mariadb::config(
-    String $config                        = undef,
-    String $password                      = undef,
-    String $datadir                       = '/srv/mariadb',
-    String $tmpdir                        = '/tmp',
-    Integer $innodb_buffer_pool_instances = 1,
-    String $innodb_buffer_pool_size       = '768M',
-    String $server_role                   = 'master',
-    Integer $max_connections              = 90,
-    Optional[Boolean] $version_102        = undef,
-    String $icinga_password,
+    String                       $config                       = undef,
+    String                       $password                     = undef,
+    String                       $datadir                      = '/srv/mariadb',
+    String                       $tmpdir                       = '/tmp',
+    Integer                      $innodb_buffer_pool_instances = 1,
+    String                       $innodb_buffer_pool_size      = '768M',
+    String                       $server_role                  = 'master',
+    Integer                      $max_connections              = 90,
+    Enum['10.2', '10.3', '10.4'] $version                      = hiera('mariadb::version', '10.2'),
+    String                       $icinga_password              = undef,
 ) {
     $exporter_password = hiera('passwords::db::exporter')
     $ido_db_user_password = hiera('passwords::icinga_ido')

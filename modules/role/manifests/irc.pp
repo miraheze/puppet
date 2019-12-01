@@ -11,6 +11,12 @@ class role::irc {
         sleeptime    => '0.5',
     }
 
+    ufw::allow { 'ircrcbot port lizardfs6':
+        proto => 'udp',
+        port  => '5070',
+        from  => '54.36.165.161',
+    }
+
     ufw::allow { 'ircrcbot port mw1':
         proto => 'udp',
         port  => '5070',

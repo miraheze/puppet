@@ -66,21 +66,21 @@ class puppetserver(
     }
 
     git::clone { 'puppet':
-        ensure    => latest,
+        ensure    => present,
         directory => '/etc/puppetlabs/puppet/git',
         origin    => 'https://github.com/miraheze/puppet.git',
         require   => Package['puppet-agent'],
     }
 
     git::clone { 'services':
-        ensure    => latest,
+        ensure    => present,
         directory => '/etc/puppetlabs/puppet/services',
         origin    => 'https://github.com/miraheze/services.git',
         require   => Package['puppet-agent'],
     }
 
     git::clone { 'ssl':
-        ensure    => latest,
+        ensure    => present,
         directory => '/etc/puppetlabs/puppet/ssl-cert',
         origin    => 'https://github.com/miraheze/ssl.git',
         require   => Package['puppet-agent'],

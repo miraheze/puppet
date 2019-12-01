@@ -8,6 +8,7 @@ test1: '185.52.2.243'
 # storage nodes
 lizardfs4: '81.4.122.238'
 lizardfs5: '81.4.122.196'
+lizardfs6: '54.36.165.161'
 
 misc1: '185.52.1.76'
 misc3: '185.52.1.71'

@@ -3,7 +3,7 @@ class matomo {
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '3.11.0', # Current stable
+        branch             => '3.13.0', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
@@ -21,16 +21,14 @@ class matomo {
     ensure_resource_duplicate('class', 'php::php_fpm', {
         'config'  => {
             'display_errors'            => 'Off',
-            'error_log'                 => '/var/log/php/php.log',
             'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
             'log_errors'                => 'On',
             'memory_limit'              => '256M',
-            'max_execution_time'        => 230,
             'opcache'                   => {
                 'enable'                  => 1,
-                'interned_strings_buffer' => 50,
-                'memory_consumption'      => 300,
-                'max_accelerated_files'   => 24000,
+                'interned_strings_buffer' => 30,
+                'memory_consumption'      => 112,
+                'max_accelerated_files'   => 20000,
                 'max_wasted_percentage'   => 10,
                 'validate_timestamps'     => 1,
                 'revalidate_freq'         => 10,
@@ -43,7 +41,7 @@ class matomo {
             'upload_max_filesize' => '100M',
             'variables_order'     => 'GPCS',
         },
-        'fpm_min_child' => 3,
+        'fpm_min_child' => 4,
         'version' => hiera('php::php_version', '7.3'),
     })
 

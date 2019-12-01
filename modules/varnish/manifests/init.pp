@@ -19,7 +19,7 @@ class varnish {
 
     file { '/var/lib/varnish/mediawiki':
         ensure  => directory,
-        notify  => Service['varnish'],
+        notify  => Exec['varnish-server-syntax'],
         require => Package['varnish'],
     }
     
@@ -31,27 +31,34 @@ class varnish {
     file { '/etc/varnish/default.vcl':
         ensure  => present,
         content => template('varnish/default.vcl'),
-        notify  => Service['varnish'],
+        notify  => Exec['varnish-server-syntax'],
         require => Package['varnish'],
     }
 
     file { '/etc/default/varnish':
         ensure  => present,
         source  => 'puppet:///modules/varnish/varnish/varnish.default',
-        notify  => Service['varnish'],
+        notify  => Exec['varnish-server-syntax'],
         require => Package['varnish'],
+    }
+
+    exec { 'systemctl daemon-reload':
+        path        => '/bin',
+        refreshonly => true,
+    }
+
+    exec { 'varnish-server-syntax':
+        command     => '/usr/sbin/varnishd -C -f /etc/varnish/default.vcl',
+        notify      => Service['varnish'],
+        refreshonly => true,
+        require     => Exec['systemctl daemon-reload'],
     }
 
     file { '/etc/systemd/system/varnish.service':
         ensure  => present,
         source  => 'puppet:///modules/varnish/varnish/varnish.service',
         require => Package['varnish'],
-        notify  => Exec['systemctl daemon-reload'],
-    }
-
-    exec { 'systemctl daemon-reload':
-        path        => '/bin',
-        refreshonly => true,
+        notify  => Exec['varnish-server-syntax'],
     }
 
     include ssl::wildcard
@@ -119,7 +126,7 @@ class varnish {
         },
     }
 
-    ['misc2', 'misc3', 'mw1', 'mw2', 'mw3', 'test1'].each |$host| {
+    ['lizardfs6', 'misc2', 'mw1', 'mw2', 'mw3', 'test1'].each |$host| {
         monitoring::services { "Stunnel Http for ${host}":
             check_command => 'nrpe',
             vars          => {

@@ -2,7 +2,12 @@
 
 class gluster {
 
-    require_package('glusterfs-server')
+    include gluster::apt
+    
+    package { 'glusterfs-server':
+        ensure   => installed,
+        require  => Class['gluster::apt'],
+    }
 
     if !defined(File['glusterfs.pem']) {
         file { 'glusterfs.pem':
@@ -28,7 +33,7 @@ class gluster {
     if !defined(File['glusterfs.ca']) {
         file { 'glusterfs.ca':
             ensure => 'present',
-            source => 'puppet:///ssl/ca/GlobalSign.crt',
+            source => 'puppet:///ssl/ca/Sectigo.crt',
             path   => '/etc/ssl/glusterfs.ca',
             owner  => 'root',
             group  => 'root',
@@ -38,16 +43,17 @@ class gluster {
     if !defined(File['/var/lib/glusterd/secure-access']) {
         file { '/var/lib/glusterd/secure-access':
             ensure  => present,
-            content => '',
+            source  => 'puppet:///modules/gluster/secure-access',
             require => Package['glusterfs-server'],
         }
     }
 
     service { 'glusterd':
-        ensure   => running,
-        enable   => true,
-        provider => 'systemd',
-        require  => [
+        ensure     => running,
+        enable     => true,
+        hasrestart => true,
+        hasstatus  => true,
+        require    => [
             File['/var/lib/glusterd/secure-access'],
         ],
     }
@@ -63,27 +69,32 @@ class gluster {
                 port  => $port,
                 from  => $key,
             }
+        }
+    }
 
-            monitoring::services { "GlusterFS ip ${key} on port ${port}":
-                ensure => absent,
-                check_command => 'tcp',
-                vars          => {
-                    tcp_port    => $port,
-                },
-            }
+    [24007, 49152].each |$port| {
+        monitoring::services { "GlusterFS port ${port}":
+            check_command => 'tcp',
+            vars          => {
+                tcp_port    => $port,
+            },
         }
     }
 
     if hiera('gluster_client', false) {
-        $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/prodvol')
-        gluster::mount { '/mnt/mediawiki-static':
-          ensure    => present,
-          volume    => hiera('gluster_volume', 'glusterfs1.miraheze.org:/prodvol'),
-          transport => 'tcp',
-          atboot    => false,
-          dump      => 0,
-          pass      => 0,
-          options   => "backup-volfile-servers=${gluster_volume_backup}",
+        # $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/prodvol')
+        # backup-volfile-servers=
+        if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
+            gluster::mount { '/mnt/mediawiki-static':
+              ensure    => present,
+              volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/mvol'),
+              transport => 'tcp',
+              atboot    => false,
+              dump      => 0,
+              pass      => 0,
+            }
         }
     }
+
+    include prometheus::gluster_exporter
 }

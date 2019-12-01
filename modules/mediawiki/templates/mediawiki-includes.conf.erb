@@ -1,5 +1,8 @@
 index index.php index.html;
 
+fastcgi_read_timeout 140;
+send_timeout 140;
+
 location /.well-known/acme-challenge/ {
 	alias /var/www/challenges/;
 	try_files $uri =404;
@@ -15,9 +18,9 @@ location ~ \.php {
 	fastcgi_split_path_info ^(.+\.php)(.*)$;
 	try_files $fastcgi_script_name =404;
 	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	fastcgi_buffers 32 32k;
+	fastcgi_buffer_size 64k;
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-	fastcgi_send_timeout 220;
-	fastcgi_read_timeout 220;
 }
 
 location ~ ^/w/(cache|maintenance|mw-config|vendor) {
@@ -39,6 +42,8 @@ location = /apple-touch-icon.png {
 location ^~ /wiki {
 	include fastcgi_params;
 	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
+	fastcgi_buffers 32 32k;
+	fastcgi_buffer_size 64k;
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 }
 

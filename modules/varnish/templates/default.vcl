@@ -23,7 +23,7 @@ probe mwhealth {
 	# Check each 10s
 	.interval = 10s;
 	# May not take longer than 8s to load. Ideally this should be lowered, but sometimes latency to the NL servers could suck.
-	.timeout = 8s;
+	.timeout = 20s;
 	# At least 4 out of 5 checks must be successful
 	# to mark the backend as healthy
 	.window = 5;
@@ -36,9 +36,10 @@ backend misc2 {
     .port = "8201";
 } 
 
-backend misc3 {
+backend lizardfs6 {
     .host = "127.0.0.1";
     .port = "8203";
+    .probe = mwhealth;
 }
 
 backend mw1 {
@@ -82,11 +83,17 @@ backend mw3_test {
 	.port = "8082";
 }
 
+backend lizardfs6_no_check {
+    .host = "127.0.0.1";
+    .port = "8203";
+}
+
 # end test backend
 
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
+	mediawiki.add_backend(lizardfs6);
 	mediawiki.add_backend(mw1);
 	mediawiki.add_backend(mw2);
 	mediawiki.add_backend(mw3);
@@ -95,6 +102,7 @@ sub vcl_init {
 
 acl purge {
 	"localhost";
+	"54.36.165.161"; # lizardfs6
 	"185.52.1.75"; # mw1
 	"2a00:d880:6:786::2"; # mw1
 	"185.52.2.113"; # mw2
@@ -145,11 +153,11 @@ sub mw_identify_device {
 		set req.http.X-Use-Mobile = "1";
 	}
 
-	if (req.http.host ~ "^([a-zA-Z0-9-]+\.)?m\.miraheze\.org") {
+	if (req.http.host ~ "^([a-zA-Z0-9].+)\.m\.miraheze\.org") {
 		set req.http.X-Subdomain = "M";
-	} else if (req.http.host ~ "^m\.([a-zA-Z0-9-]+)\.([a-zA-Z0-9-\.]+)") {
+	} else if (req.http.host ~ "^m\.([a-zA-Z0-9\-\.].+)") {
 		set req.http.X-Subdomain = "M";
-	} else if (req.http.host ~ "^([a-zA-Z0-9-\.]+)\.\m\.([a-zA-Z0-9-]+)\.([a-zA-Z0-9-\.]+)") {
+	} else if (req.http.host ~ "^([a-zA-Z0-9\-\.]+)\.m\.([a-zA-Z0-9\-\.].+)") {
 		set req.http.X-Subdomain = "M";
 	}
 }
@@ -216,6 +224,9 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
 		set req.backend_hint = test1;
 		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "lizardfs6.miraheze.org") {
+		set req.backend_hint = lizardfs6_no_check;
+		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
@@ -233,6 +244,10 @@ sub mw_vcl_recv {
 
 	# Don't cache dumps, and such
 	if (req.http.Host == "static.miraheze.org" && req.url !~ "^/.*wiki") {
+		return (pass);
+	}
+
+	if (req.http.Host == "static-temp.miraheze.org" && req.url !~ "^/.*wiki") {
 		return (pass);
 	}
 
@@ -284,19 +299,11 @@ sub vcl_recv {
 		set req.backend_hint = misc2;
 
 		# Yes, we only care about this file
-		if (req.url ~ "^/piwik.js") {
+		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
 			return (hash);
 		} else {
 			return (pass);
 		}
-	}
-
-	if (req.http.Host == "lizard.miraheze.org") {
-		if (req.url == "/") {
-			return (synth(752, "/mfs.cgi"));
-		}
-		set req.backend_hint = misc3;
-		return (pass);
 	}
 
 	# MediaWiki specific
@@ -324,7 +331,7 @@ sub vcl_backend_fetch {
 
 sub vcl_backend_response {
 	if (beresp.ttl <= 0s) {
-		set beresp.ttl = 300s;
+		set beresp.ttl = 1800s;
 		set beresp.uncacheable = true;
 	}
 

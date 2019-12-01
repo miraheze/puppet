@@ -44,26 +44,12 @@ class role::mediawiki {
         description => 'MediaWiki server',
     }
 
-    if hiera('use_gluster_mount', false) {
-        $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/mvolume')
+    # $gluster_volume_backup = hiera('gluster_volume_backup', 'glusterfs2.miraheze.org:/mvol')
+    # backup-volfile-servers=
+    if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
         gluster::mount { '/mnt/mediawiki-static':
-          ensure    => present,
-          volume    => hiera('gluster_volume', 'glusterfs1.miraheze.org:/mvolume'),
-          transport => 'tcp',
-          atboot    => false,
-          dump      => 0,
-          pass      => 0,
-          options   => "backup-volfile-servers=${gluster_volume_backup},log-level=WARNING,reader-thread-count=20",
-        }
-    } else {
-        ::lizardfs::client { '/mnt/mediawiki-static':
-            create_mountpoint => true,
-            options           => 'big_writes,nosuid,nodev,noatime',
-        }
-
-        ::lizardfs::client { '/mnt/mediawiki-trash':
-            create_mountpoint => true,
-            options           => 'mfsmeta',
+          ensure    => mounted,
+          volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/mvol'),
         }
     }
 }

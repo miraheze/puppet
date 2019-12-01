@@ -13,13 +13,22 @@ class base::sysctl {
             # Don't cache ssthresh from previous connection
             'net.ipv4.tcp_no_metrics_save'     => 1,
 
+            # Increase the number of ephemeral ports
+            'net.ipv4.ip_local_port_range' =>  [ 1024, 65535 ],
+
+            # Recommended to increase this for 1000 BT or higher
+            'net.core.netdev_max_backlog'  =>  30000,
+
             # Increase the queue size of new TCP connections
-            'net.core.somaxconn'               => 1024,
-            'net.ipv4.tcp_max_syn_backlog'     => 4096,
+            'net.core.somaxconn'           => 4096,
+            'net.ipv4.tcp_max_syn_backlog' => 262144,
+            'net.ipv4.tcp_max_tw_buckets'  => 360000,
 
             'net.ipv4.tcp_keepalive_time'      => 300,
             'net.ipv4.tcp_keepalive_intvl'     => 1,
             'net.ipv4.tcp_keepalive_probes'    => 2,
+            
+            'net.ipv6.route.max_size'          => 131072,
 
             # Mitigate side-channel from challenge acks, at least until most
             # public servers are on kernel 4.7+ or have a backported fix.
@@ -45,7 +54,7 @@ class base::sysctl {
 
     if $::virtual == 'kvm' {
         sysctl::parameters { 'avoid swap usage':
-            values  => { 'vm.swappiness' => 1, },
+            values  => { 'vm.swappiness' => hiera('base::sysctl::swap_value', 1), },
         }
 
         sysctl::parameters { 'increase open files limit':

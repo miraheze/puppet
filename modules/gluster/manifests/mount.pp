@@ -60,26 +60,23 @@
 #
 define gluster::mount (
   String $volume,
-  Variant[Enum['yes', 'no'], Boolean] $atboot                           = 'yes',
-  String $options                                                       = 'defaults',
-  Integer $dump                                                         = 0,
-  Integer $pass                                                         = 0,
+  Optional[String] $options                                             = undef,
   Enum['defined', 'present', 'unmounted', 'absent', 'mounted'] $ensure  = 'mounted',
-  Optional[String] $log_level                                           = undef,
-  Optional[String] $log_file                                            = undef,
-  Optional[String] $transport                                           = undef,
-  Optional[String] $direct_io_mode                                      = undef,
-  Optional[Boolean] $readdirp                                           = undef,
 ) {
 
-  require_package('glusterfs-client')
+  include gluster::apt
 
-  file { $title:
-    ensure  => 'directory',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '2755',
-    require => Package['glusterfs-client'],
+  package { 'glusterfs-client':
+      ensure   => installed,
+      require  => Class['gluster::apt'],
+  }
+
+  exec { $title:
+      command => "/bin/mkdir -p '${title}'",
+      user    => 'root',
+      group   => 'root',
+      creates => $title,
+      before  => Mount[$title],
   }
 
   if !defined(File['glusterfs.pem']) {
@@ -106,63 +103,34 @@ define gluster::mount (
   if !defined(File['glusterfs.ca']) {
     file { 'glusterfs.ca':
       ensure => 'present',
-      source => 'puppet:///ssl/ca/GlobalSign.crt',
+      source => 'puppet:///ssl/ca/Sectigo.crt',
       path   => '/etc/ssl/glusterfs.ca',
       owner  => 'root',
       group  => 'root',
     }
   }
 
-  if $log_level {
-    $ll = "log-level=${log_level}"
-  } else {
-    $ll = undef
-  }
-
-  if $log_file {
-    $lf = "log-file=${log_file}"
-  } else {
-    $lf = undef
-  }
-
-  if $transport {
-    $t = "transport=${transport}"
-  } else {
-    $t = undef
-  }
-
-  if $direct_io_mode {
-    $dim = "direct-io-mode=${direct_io_mode}"
-  } else {
-    $dim = undef
-  }
-
-  if $readdirp {
-    $r = "usereaddrip=${readdirp}"
-  } else {
-    $r = undef
-  }
-
-  $mount_options = [ $options, $ll, $lf, $t, $dim, $r, ]
-  $_options = join(delete_undef_values($mount_options), ',')
-
   if !defined(File['/var/lib/glusterd/secure-access']) {
     file { '/var/lib/glusterd/secure-access':
       ensure  => present,
-      content => '',
+      source  => 'puppet:///modules/gluster/secure-access',
       require => Package['glusterfs-client'],
     }
+  }
+
+  $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,attribute-timeout=600,entry-timeout=600,negative-timeout=20,fopen-keep-cache"
+
+  $mount_options = $options ? {
+      undef   => $base_options,
+      default => "${base_options},${options}",
   }
 
   mount { $title:
     ensure   => $ensure,
     fstype   => 'glusterfs',
     remounts => false,
-    atboot   => $atboot,
     device   => $volume,
-    dump     => $dump,
-    pass     => $pass,
-    options  => $_options,
-    require => File['/var/lib/glusterd/secure-access']
+    options  => $mount_options,
+    require  => File['/var/lib/glusterd/secure-access']
   }
 }

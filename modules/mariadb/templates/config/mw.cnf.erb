@@ -1,5 +1,5 @@
 [client]
-ssl-ca=/etc/ssl/certs/GlobalSign.crt
+ssl-ca=/etc/ssl/certs/Sectigo.crt
 
 [mysql]
 port                           = 3306
@@ -13,11 +13,7 @@ socket                         = /var/run/mysqld/mysqld.sock
 pid-file                       = /var/run/mysqld/mysqld.pid
 skip-name-resolve
 key-buffer-size                = 16M
-<% if @version_102 %>   
 myisam-recover-options         = FORCE,BACKUP
-<% else %>
-myisam-recover                 = FORCE,BACKUP
-<% end %>
 
 max-allowed-packet             = 64M
 max-connect-errors             = 1000000
@@ -37,7 +33,7 @@ log-bin                        = <%= @datadir %>/mysql-bin
 relay-log                      = /var/log/mysql/mysql-relay-bin.log
 <% end %>
 <% if @server_role == 'master' %>
-expire-logs-days               = 7
+expire-logs-days               = 4
 <% else %>
 expire-logs-days               = 2
 <% end %>
@@ -76,6 +72,6 @@ slow-query-log                 = 0
 slow-query-log-file            = /var/log/mysql/mysql-slow.log
 
 ssl
-ssl-ca                         = /etc/ssl/certs/GlobalSign.crt
+ssl-ca                         = /etc/ssl/certs/Sectigo.crt
 ssl-cert                       = /etc/ssl/certs/wildcard.miraheze.org.crt
 ssl-key                        = /etc/ssl/private/wildcard.miraheze.org.key

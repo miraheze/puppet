@@ -52,8 +52,6 @@ scrape_configs:
 <%- end -%>
       ]
   - job_name: fpm
-    # If prometheus-node-exporter is installed, grab stats about the local
-    # machine by default.
     static_configs:
       - targets: [
 <%- @host_php_fpm.sort.each do |host| -%>
@@ -89,6 +87,13 @@ scrape_configs:
       - targets: [
 <%- @host_nginx.sort.each do |host_nginx| -%>
         '<%= host_nginx %>:9113',
+<%- end -%>
+      ]
+  - job_name: gluster
+    static_configs:
+      - targets: [
+<%- @host_gluster.sort.each do |host| -%>
+        '<%= host %>:9050',
 <%- end -%>
       ]
 #  - job_name: 'blackbox'

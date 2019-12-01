@@ -38,6 +38,12 @@ class role::db {
         content => template('mariadb/grants/phabricator-grants.sql.erb'),
     }
 
+    ufw::allow { 'mysql port lizardfs6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '54.36.165.161',
+    }
+
     ufw::allow { 'mysql port mw1':
         proto => 'tcp',
         port  => '3306',

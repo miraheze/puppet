@@ -8,7 +8,7 @@ dbname = "piwik"
 tables_prefix = "piwik_"
 charset = "utf8"
 enable_ssl = 1
-ssl_ca = "/etc/ssl/certs/GlobalSign.crt"
+ssl_ca = "/etc/ssl/certs/Sectigo.crt"
 
 [General]
 force_ssl = 1
@@ -90,6 +90,7 @@ Plugins[] = "UserId"
 Plugins[] = "CustomPiwikJs"
 Plugins[] = "ForceSSL"
 Plugins[] = "QueuedTracking"
+Plugins[] = "DeviceDetectorCache"
 
 [PluginsInstalled]
 PluginsInstalled[] = "Diagnostics"
@@ -161,6 +162,7 @@ PluginsInstalled[] = "GeoIp2"
 PluginsInstalled[] = "QueuedTracking"
 PluginsInstalled[] = "ForceSSL"
 PluginsInstalled[] = "TwoFactorAuth"
+PluginsInstalled[] = "DeviceDetectorCache"
 
 [QueuedTracking]
 notify_queue_threshold_single_queue = 250000

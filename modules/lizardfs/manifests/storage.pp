@@ -42,7 +42,7 @@ class lizardfs::storage(
 
     $firewall.each |$firewall_key, $firewall_value| {
         # clients access chunkserver
-        ufw::allow { "lizardfs ${firewall_key} 9421":
+        ufw::allow { "lizardfs ${firewall_key} 9421 1":
             proto => 'tcp',
             port  => 9422,
             from  => $firewall_value,
@@ -60,7 +60,7 @@ class lizardfs::storage(
         # Used to backup with bacula
         ::lizardfs::client { '/mnt/mediawiki-static':
             create_mountpoint => true,
-            options           => 'big_writes,nosuid,nodev,noatime',
+            options           => 'big_writes,nosuid,nodev,noatime,mfsioretries=10,mfswriteworkers=15,mfsattrcacheto=60.0,mfsentrycacheto=60.0,mfsdirentrycacheto=60.0,mfsdirentrycachesize=3000',
         }
     }
 }
