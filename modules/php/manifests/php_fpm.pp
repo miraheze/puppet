@@ -171,9 +171,17 @@ class php::php_fpm(
         'error_log'                   => "/var/log/php${version}-fpm.log",
     }
 
+    if $facts['virtual'] != 'openvz' {
+          $base_fpm_config_kvm = {
+                'process.priority' => -19,
+          }
+    } else {
+        $base_fpm_config_kvm = {}
+    }
+
     class { '::php::fpm':
         ensure  => present,
-        config  => merge($base_fpm_config, $fpm_config),
+        config  => merge($base_fpm_config, $base_fpm_config_kvm, $fpm_config),
         require => Apt::Source['php_apt'],
     }
 
