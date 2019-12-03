@@ -6,16 +6,11 @@ base::sysctl::swap_value: 0
 lizardfs_master_server: '54.36.165.161'
 
 # temporarily
-mariadb::version: '10.3'
-mariadb::config::innodb_buffer_pool_instances: 1
-mariadb::config::innodb_buffer_pool_size: '2G'
-mariadb::config::max_connections: 500
-mariadb::config::tmpdir: /srv/tmp
 php::php_version: '7.3'
 #gluster_client: true
 
 # mediawiki
-jobrunner: false
+jobrunner: true
 role::mediawiki::use_strict_firewall: false
 mediawiki::branch: 'REL1_33'
 mediawiki::php::fpm::childs: 40
