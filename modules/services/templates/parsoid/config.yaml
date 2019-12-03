@@ -37,6 +37,8 @@ services:
         request: 110000
         mwApi:
           batch: 145000
+      maxSockets: 30
+      maxConcurrentCalls: 20
       limits:
         wt2html:
           maxTableCells: 40000
