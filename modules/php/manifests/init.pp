@@ -27,11 +27,17 @@ class php(
             notify   => Exec['apt_update_php'],
         }
 
+	apt::pin { 'php_pin':
+		priority        => 600,
+		origin          => 'packages.sury.org'
+	}
+
         # First installs can trip without this
         exec {'apt_update_php':
             command     => '/usr/bin/apt-get update',
             refreshonly => true,
             logoutput   => true,
+	    require     => Apt::Pin['php_pin'],
         }
     }
 
