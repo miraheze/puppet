@@ -11,7 +11,7 @@ class role::mediawiki {
             from  => '107.191.126.23',
         }
 
-        ufw::alow { ' https port cp3':
+        ufw::allow { 'https port cp3':
             proto => 'tcp',
             port  => 443,
             from  => '128.199.139.216',
