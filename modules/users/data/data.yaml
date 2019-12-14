@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [rhinos, zppix]
+    members: [rhinos]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.2-fpm *',
@@ -108,11 +108,11 @@ users:
     realname: macfan4000
     ssh_keys: []
   rhinos:
-    ensure: present
+    ensure: absent
     uid: 1011
     name: rhinos
     realname: RhinosF1
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEnUGYdeuyt6ECHwNvbeSvgjT8wyHmppzMqAtdm6SczfhFENTrnJ721ap9NVm9UbuF/VUQxuy5HErU4s+Z+QCYFELPcE4pc3MJ066rIkNLgXBFlqENQgLUbUCd+9CfZZbtW1LeTnH1ZvrPDdvNgeypHysSUXuS2Wy5mGF59zeVrTlGiS4QQwRio1YagyedNMoWXj8jLEqq/ZAUqKknq3ScrlqKZFJMMxHLQ8vcCuIxM6sMelX5KMGp293K8Ur7KebPJMO+Zec9wzEP51SuuEdayQKRjmBmXsgdbAsF7WtwEb/WRQpiYwQY6dFiAMC2E+B8DFJXAmRk/DBkjxOPFqEWqRjZ45YChphQaeMJGCoh+xKFprIFwmjwKFgcXSc9U7MuzE9iD9TKp200peAHUlk2Ku6US0WpLHVVEU8g+BcZqIzS+7nwd6EwTpheuAKfEEyaSbmDP5QUtp6eTvGiNihduq97+ncyzH31UG5bcBFQ0L/Lz6i+4htGvSMvma/2bR5uxFOu4ePnxrKuZw07SmZaxnx0sJBWE28ivm5ollEn2rkK9qU9qYntf3fS2x3jiJ879VD6uN40GL1ToHTXWkEqBJPG3pfoCax5ydweHLBldAZsxHN222Z8UEZPBgrzv/jczTN/cjg5toBpkP500zrkbF8/iN88ZJ9UPPDsMztQGQ== samuelkirwin@Samuels-Air]
+    ssh_keys: []
   zppix:
     ensure: present
     uid: 1012

@@ -31,7 +31,7 @@ dmarc: john
 # destination aliases
 operations: southparkfan,ndkilla,reception123,john,paladox
 stewards: southparkfan,ndkilla,void,john,pio_uso@yahoo.co.jp
-staff: southparkfan,ndkilla,labster,reception123,john,paladox,rhinosf1,zppix
+staff: southparkfan,ndkilla,labster,reception123,john,paladox,zppix
 cvt: stewards,reception123,zppix,diarmuidsmithy@gmail.com
 cocc: conduct
 conduct: miraheze-cocc@googlegroups.com
