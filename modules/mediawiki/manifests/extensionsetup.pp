@@ -110,6 +110,16 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
 
+    exec { 'oathauth_composer':
+        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
+        creates     => '/srv/mediawiki/w/extensions/OATHAuth/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/OATHAuth',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/OATHAuth/Widgets',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
     exec { 'widgets_composer':
         command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
         creates     => '/srv/mediawiki/w/extensions/Widgets/composer.phar',
