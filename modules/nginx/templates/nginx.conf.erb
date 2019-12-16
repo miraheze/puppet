@@ -20,6 +20,7 @@ http {
     tcp_nodelay on;
     keepalive_timeout 60;
     client_max_body_size 250M;
+    server_names_hash_bucket_size 112;
 
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
