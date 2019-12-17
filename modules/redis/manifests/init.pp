@@ -1,8 +1,8 @@
 # class: redis
 class redis (
-    Integer$port = 6379,
+    Integer $port = 6379,
     String $maxmemory = '512mb',
-    String $maxmemory_policy = 'allkeys-lru',
+    String $maxmemory_policy = 'volatile-lfu',
     Integer $maxmemory_samples = 5,
     Variant[Boolean, String] $password = false,
 ) {
