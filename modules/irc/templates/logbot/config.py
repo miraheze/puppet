@@ -61,7 +61,7 @@ author_map = {
 title_map = { "example": "Master" }
 
 # Scheme and wiki hostname to connect to
-wiki_connection = ("https", "meta.miraheze.org")
+wiki_connection = "meta.miraheze.org"
 
 # Url path
 wiki_path = "/w/"
