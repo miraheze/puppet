@@ -8,9 +8,9 @@ loglevel notice
 logfile /var/log/redis/redis.log
 databases 1
 
-save 60 1
-rdbcompression yes
-rdbchecksum yes
+#save 60 1
+#rdbcompression yes
+#rdbchecksum yes
 
 slave-serve-stale-data yes
 slave-read-only no
@@ -22,7 +22,8 @@ maxmemory <%= @maxmemory %>
 maxmemory-policy <%= @maxmemory_policy %>
 maxmemory-samples <%= @maxmemory_samples %>
 
-appendonly no
+appendonly yes
+appendfsync everysec
 
 lua-time-limit 5000
 
