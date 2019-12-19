@@ -108,7 +108,6 @@ class base::puppet {
     service { 'puppet':
         ensure => stopped,
     }
-}
 
     motd::script { 'last-puppet-run':
         ensure   => present,
