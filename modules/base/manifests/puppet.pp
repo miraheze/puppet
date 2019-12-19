@@ -109,3 +109,10 @@ class base::puppet {
         ensure => stopped,
     }
 }
+
+    motd::script { 'last-puppet-run':
+        ensure   => present,
+        priority => 97,
+        source   => 'puppet:///modules/base/puppet/97-last-puppet-run',
+    }
+}
