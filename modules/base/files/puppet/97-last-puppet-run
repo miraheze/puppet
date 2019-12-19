@@ -5,7 +5,7 @@ set -e
 
 PATH=/bin:/usr/bin:/usr/local/bin
 LANG=C
-CONFIG_VERSION=$(awk -F\" '/^configuration_version:/ {$1="";print}' /opt/puppetlabs/server/data/puppetserver/state/last_run_report.yamll)
+CONFIG_VERSION=$(awk -F\" '/^configuration_version:/ {$1="";print}' /opt/puppetlabs/server/data/puppetserver/state/last_run_report.yaml)
 TSLASTPUPPETRUN=$(stat -c %Z /opt/puppetlabs/server/data/puppetserver/state/classes.txt)
 NOW=$(date +%s)
 DELTAMIN=$(((NOW-TSLASTPUPPETRUN)/60))
