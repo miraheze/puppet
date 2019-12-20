@@ -12,5 +12,5 @@ php::php_version: '7.3'
 # mediawiki
 jobrunner: true
 role::mediawiki::use_strict_firewall: false
-mediawiki::branch: 'REL1_33'
+mediawiki::branch: 'REL1_34'
 mediawiki::php::fpm::childs: 40
