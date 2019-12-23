@@ -35,6 +35,12 @@ class role::irc {
         from  => '81.4.121.113',
     }
 
+    ufw::allow { 'ircrcbot port test1':
+        proto => 'udp',
+        port  => '5070',
+        from  => '185.52.2.243',
+    }
+
     motd::role { 'role::irc':
         description => 'IRC bots server',
     }
