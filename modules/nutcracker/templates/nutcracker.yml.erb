@@ -1,0 +1,14 @@
+redis:
+  listen: 127.0.0.1:22121                                        
+  hash: md5
+  server_connections: 1
+  distribution: ketama
+  auto_eject_hosts: true
+  redis: true
+  redis_auth: <%= @redis_password %>
+  server_retry_timeout: 2000
+  server_failure_limit: 3
+  timeout: 1000
+  servers:
+  # Redis server (misc2)
+   - 81.4.127.174:6379:1

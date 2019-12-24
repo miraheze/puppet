@@ -118,6 +118,9 @@ class mediawiki(
 
     $wiki_discord_hooks_url = hiera('mediawiki::wiki_discord_hooks_url')
 
+    class { '::nutcracker':
+        redis_password => $redis_password,
+    }
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
