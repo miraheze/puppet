@@ -10,7 +10,11 @@
 
 # Marker to tell the VCL compiler that this VCL has been adapted to the
 # new 4.0 format.
+<% if @buster %>
+vcl 4.1;
+<% else %>
 vcl 4.0;
+<% end %>
 
 import directors;
 import std;
