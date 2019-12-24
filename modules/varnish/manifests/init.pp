@@ -27,6 +27,7 @@ class varnish {
 
     $csp_whitelist = loadyaml("${module_path}/data/csp_whitelist.yaml")
     $frame_whitelist = loadyaml("${module_path}/data/frame_whitelist.yaml")
+    $buster = os_version('debian == buster')
 
     file { '/etc/varnish/default.vcl':
         ensure  => present,
