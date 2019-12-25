@@ -1,13 +1,13 @@
 # standard stuff
 mailer-daemon: postmaster
-postmaster: operations
+postmaster: sre
 nobody: root
-hostmaster: operations
+hostmaster: sre
 webmaster: root
 www: root
 ftp: root
-abuse: operations
-noc: operations
+abuse: sre
+noc: sre
 
 # noreply death
 noreply: /dev/null
@@ -16,22 +16,23 @@ void-recipient: /dev/null
 # root spam
 root: /dev/null
 
-# operations aliases
-ops: operations
+# redirect for old names
+operations: sre
+staff: tech
 
 # staff aliases
-wiki-abuse: staff
+wiki-abuse: tech
 
 # gdpr / privacy alias
-privacy: staff
+privacy: tech
 
 # DMARC - potentially high volume, best recommended for mail admins on misc1
 dmarc: john
 
 # destination aliases
-operations: southparkfan,ndkilla,reception123,john,paladox
+sre: southparkfan,ndkilla,reception123,john,paladox
 stewards: southparkfan,ndkilla,void,john,pio_uso@yahoo.co.jp
-staff: southparkfan,ndkilla,labster,reception123,john,paladox,zppix
+tech: southparkfan,ndkilla,labster,reception123,john,paladox,zppix
 cvt: stewards,reception123,zppix,diarmuidsmithy@gmail.com
 cocc: conduct
 conduct: miraheze-cocc@googlegroups.com
@@ -47,6 +48,6 @@ rhinosf1: rhinosf1@gmail.com
 board: owen,southparkfan,void
 
 # phabricator incoming emails - must be configued with Maniphest
-security: operations
-phabricator: operations
-bugs: operations
+security: sre
+phabricator: sre
+bugs: sre
