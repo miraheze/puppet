@@ -18,13 +18,13 @@ root: /dev/null
 
 # redirect for old names
 operations: sre
-staff: sysadmins
+staff: tech
 
 # staff aliases
-wiki-abuse: sysadmins
+wiki-abuse: tech
 
 # gdpr / privacy alias
-privacy: sysadmins
+privacy: tech
 
 # DMARC - potentially high volume, best recommended for mail admins on misc1
 dmarc: john
@@ -32,7 +32,7 @@ dmarc: john
 # destination aliases
 sre: southparkfan,ndkilla,reception123,john,paladox
 stewards: southparkfan,ndkilla,void,john,pio_uso@yahoo.co.jp
-sysadmins: southparkfan,ndkilla,labster,reception123,john,paladox,zppix
+tech: southparkfan,ndkilla,labster,reception123,john,paladox,zppix
 cvt: stewards,reception123,zppix,diarmuidsmithy@gmail.com
 cocc: conduct
 conduct: miraheze-cocc@googlegroups.com
