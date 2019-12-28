@@ -13,6 +13,10 @@ databases 1
 #rdbcompression yes
 #rdbchecksum yes
 
+# Disable persitence 
+appendonly no
+save ""
+
 slave-serve-stale-data yes
 slave-read-only no
 slave-priority 100
