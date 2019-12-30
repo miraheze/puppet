@@ -47,7 +47,7 @@ rhinosf1: rhinosf1@gmail.com
 campaign: sre
 
 # board
-board: owen,southparkfan,void
+board: owen,southparkfan,void,robla
 
 # phabricator incoming emails - must be configued with Maniphest
 security: sre
