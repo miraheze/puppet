@@ -1,6 +1,6 @@
 # mediawiki::php
 class mediawiki::php (
-    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 6),
+    $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 8),
     $php_version = hiera('php::php_version', '7.2'),
     Optional[Boolean] $use_tideways = undef,
 ) {
@@ -31,6 +31,7 @@ class mediawiki::php (
             'request_terminate_timeout_track_finished' => 'yes',
         },
         'fpm_min_child' => $php_fpm_childs,
+        'fpm_min_restart_threshold' => 6,
         'version' => $php_version
     })
 
