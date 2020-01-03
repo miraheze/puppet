@@ -1,7 +1,7 @@
 # mediawiki::php
 class mediawiki::php (
     $php_fpm_childs = hiera('mediawiki::php::fpm::childs', 6),
-    $fpm_min_restart_threshold = hiera('mediawiki::php::fpm::fpm_min_restart_threshold', 6),
+    $fpm_min_restart_threshold = hiera('mediawiki::php::fpm::fpm_min_restart_threshold', 3),
     $php_version = hiera('php::php_version', '7.2'),
     Optional[Boolean] $use_tideways = undef,
 ) {
