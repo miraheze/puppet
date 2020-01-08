@@ -51,11 +51,7 @@ table-open-cache               = 1000
 
 # thread and connection handling
 thread_handling                = pool-of-threads
-<% if @server_role == 'master' -%>
 thread_pool_stall_limit        = 10
-<% else -%>
-thread_pool_stall_limit        = 100
-<% end -%>
 thread_pool_size               = 32
 thread_pool_max_threads        = 2000
 back_log                       = 500
