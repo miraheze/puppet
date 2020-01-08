@@ -45,7 +45,6 @@ local_infile                   = 0
 tmp-table-size                 = 12M
 max-heap-table-size            = 12M
 max-connections                = <%= @max_connections %>
-thread-cache-size              = 100
 open-files-limit               = 65535
 table-definition-cache         = 1000
 table-open-cache               = 1000
@@ -67,6 +66,7 @@ back_log                       = 500
 extra_max_connections          = 10
 query-cache-type               = 0
 query-cache-size               = 0
+thread-cache-size              = 150
 interactive_timeout            = 28800
 wait_timeout                   = 3600
 
