@@ -32,11 +32,11 @@ log-bin                        = <%= @datadir %>/mysql-bin
 <% if @server_role == 'slave' %>
 relay-log                      = /var/log/mysql/mysql-relay-bin.log
 <% end %>
-<% if @server_role == 'master' %>
+<% if @server_role == 'master' -%>
 expire-logs-days               = 4
-<% else %>
+<% else -%>
 expire-logs-days               = 2
-<% end %>
+<% end -%>
 sync-binlog                    = 1
 slave_compressed_protocol      = 1
 
@@ -47,18 +47,21 @@ max-heap-table-size            = 12M
 max-connections                = <%= @max_connections %>
 thread-cache-size              = 100
 open-files-limit               = 65535
-table-definition-cache         = 800
-table-open-cache               = 800
-
+table-definition-cache         = 1000
+table-open-cache               = 1000
 
 # thread and connection handling
 thread_handling                = pool-of-threads
-<% if @server_role == 'master' %>
+<% if @server_role == 'master' -%>
 thread_pool_stall_limit        = 10
-<% else %>
+<% else -%>
 thread_pool_stall_limit        = 100
-<% end %>
+<% end -%>
+<% if Integer(@processorcount) <= 32 -%>
+thread_pool_size               = 32
+<% else -%>
 thread_pool_size               = <%= @processorcount %>
+<% end -%>
 thread_pool_max_threads        = 2000
 back_log                       = 500
 extra_max_connections          = 10
