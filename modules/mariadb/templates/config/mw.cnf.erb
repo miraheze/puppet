@@ -56,11 +56,7 @@ thread_pool_stall_limit        = 10
 <% else -%>
 thread_pool_stall_limit        = 100
 <% end -%>
-<% if Integer(@processorcount) <= 32 -%>
 thread_pool_size               = 32
-<% else -%>
-thread_pool_size               = <%= @processorcount %>
-<% end -%>
 thread_pool_max_threads        = 2000
 back_log                       = 500
 # For port 3307
