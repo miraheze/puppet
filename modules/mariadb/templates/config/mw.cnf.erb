@@ -63,11 +63,17 @@ thread_pool_size               = <%= @processorcount %>
 <% end -%>
 thread_pool_max_threads        = 2000
 back_log                       = 500
+# For port 3307
+# https://github.com/wikimedia/puppet/commit/7927ece6f1c77b2279d3c84c23e90c207261c639
 extra_max_connections          = 10
 query-cache-type               = 0
 query-cache-size               = 0
 thread-cache-size              = 150
+# 8 hours timeout
+# Default 28800 (8 hours)
 interactive_timeout            = 28800
+# 1 hour timeout
+# Default 28800 (8 hours)
 wait_timeout                   = 3600
 
 innodb-flush-method            = O_DIRECT
