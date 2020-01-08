@@ -44,13 +44,28 @@ local_infile                   = 0
 
 tmp-table-size                 = 12M
 max-heap-table-size            = 12M
-query-cache-type               = 0
-query-cache-size               = 0
 max-connections                = <%= @max_connections %>
 thread-cache-size              = 100
 open-files-limit               = 65535
 table-definition-cache         = 800
 table-open-cache               = 800
+
+
+# thread and connection handling
+thread_handling                = pool-of-threads
+<% if @server_role == 'master' %>
+thread_pool_stall_limit        = 10
+<% else %>
+thread_pool_stall_limit        = 100
+<% end %>
+thread_pool_size               = <%= @processorcount %>
+thread_pool_max_threads        = 2000
+back_log                       = 500
+extra_max_connections          = 10
+query-cache-type               = 0
+query-cache-size               = 0
+interactive_timeout            = 28800
+wait_timeout                   = 3600
 
 innodb-flush-method            = O_DIRECT
 innodb-log-files-in-group      = 2
