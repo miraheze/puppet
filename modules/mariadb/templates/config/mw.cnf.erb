@@ -60,13 +60,7 @@ back_log                       = 500
 extra_max_connections          = 10
 query-cache-type               = 0
 query-cache-size               = 0
-thread-cache-size              = 150
-# 8 hours timeout
-# Default 28800 (8 hours)
-interactive_timeout            = 28800
-# 1 hour timeout
-# Default 28800 (8 hours)
-wait_timeout                   = 3600
+thread-cache-size              = 100
 
 innodb-flush-method            = O_DIRECT
 innodb-log-files-in-group      = 2
