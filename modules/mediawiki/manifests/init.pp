@@ -3,6 +3,7 @@ class mediawiki(
     Optional[String] $branch = undef,
     Optional[String] $branch_mw_config = undef,
     Optional[Boolean] $use_memcached = undef,
+    Optional[Boolean] $use_redis = undef,
 ) {
     host { 'mediawiki-internal-db-master.miraheze.org':
         ensure => present,
@@ -26,6 +27,12 @@ class mediawiki(
     include mediawiki::servicessetup
     if $use_memcached {
         include mediawiki::memcached
+    }
+    if $use_redis {
+        class { '::redis':
+             password  => hiera('passwords::redis::master'),
+             maxmemory => hiera('mediawiki_redis_maxmemory', '156mb'),
+         }
     }
     include mediawiki::monitoring
 
