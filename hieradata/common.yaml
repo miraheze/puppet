@@ -5,7 +5,6 @@ puppetmaster: false
 puppetserver: false
 puppet_major_version: 6
 mediawiki::branch: 'REL1_34'
-mediawiki::php::use_tideways: true
 letsencrypt: false
 mediawiki::use_memcached: true
 lizardfs_master_server: '54.36.165.161'
