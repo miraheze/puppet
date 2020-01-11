@@ -6,7 +6,7 @@ class mediawiki::memcached {
 
     file { '/etc/memcached.conf':
         ensure  => present,
-        source  => 'puppet:///modules/mediawiki/memcached.conf',
+        content => template('mediawiki/memcached.conf.erb')
         notify  => Service['memcached'],
         require => Package['memcached'],
     }
