@@ -1,13 +1,18 @@
 # role: redis
-class role::redis {
+class role::redis (
+    String $maxmemory = '2000mb',
+    Boolean $enable_firewall = true,
+) {
     class { '::redis':
         password  => hiera('passwords::redis::master'),
-        maxmemory => '2000mb',
+        maxmemory => $maxmemory,
     }
 
-    ufw::allow { 'redis':
-        proto => 'tcp',
-        port  => 6379,
+    if $enable_firewall {
+        ufw::allow { 'redis':
+            proto => 'tcp',
+            port  => 6379,
+        }
     }
 
     motd::role { 'role::redis':
