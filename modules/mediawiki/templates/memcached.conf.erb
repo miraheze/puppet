@@ -20,7 +20,11 @@ logfile /var/log/memcached.log
 # Start with a cap of 192 megs of memory. It's reasonable, and the daemon default
 # Note that the daemon will grow to this size, but does not start out holding this much
 # memory
+<% if @fqdn == "lizardfs6.miraheze.org" -%>
+-m 3000
+<% else -%>
 -m 256
+<% end -%>
 
 # Default connection port is 11211
 -p 11211
