@@ -31,7 +31,7 @@ class mediawiki(
     if $use_redis {
         class { '::redis':
              password  => hiera('passwords::redis::master'),
-             maxmemory => hiera('mediawiki_redis_maxmemory', '156mb'),
+             maxmemory => hiera('mediawiki_redis_maxmemory', '200mb'),
          }
     }
     include mediawiki::monitoring
