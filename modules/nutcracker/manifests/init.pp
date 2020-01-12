@@ -57,15 +57,7 @@ class nutcracker(
         notify  => Service['nutcracker'],
     }
 
-    file { '/run/nutcracker':
-        ensure  => directory,
-        owner   => 'nutcracker',
-        group   => 'nutcracker',
-        require => Package['nutcracker'],
-    }
-
     service { 'nutcracker':
-        ensure  => ensure_service($ensure),
-        require => File['/run/nutcracker'],
+        ensure => ensure_service($ensure),
     }
 }
