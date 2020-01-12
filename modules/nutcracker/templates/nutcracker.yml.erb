@@ -3,12 +3,12 @@ redis:
   hash: md5
   server_connections: 1
   distribution: ketama
-  auto_eject_hosts: true
+  auto_eject_hosts: false
   redis: true
   redis_auth: <%= @redis_password %>
   server_retry_timeout: 2000
   server_failure_limit: 3
-  timeout: 1000
+  timeout: 3000
   servers:
-  # Redis server (misc2)
-   - 81.4.127.174:6379:1
+    # Redis server (misc2)
+    - 81.4.127.174:6379:1
