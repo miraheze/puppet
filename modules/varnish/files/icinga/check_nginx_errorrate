@@ -1,6 +1,6 @@
 #! /bin/bash
 amount_of_accesslogs=`tail -500 /var/log/nginx/access.log | wc -l`
-amount_of_errors=`tail -500 /var/log/nginx/access.log | awk '{print $9}' | grep '^[45]' | wc -l`
+amount_of_errors=`tail -500 /var/log/nginx/access.log | awk '{print $8}' | grep '^[45]' | wc -l`
 
 # http://stackoverflow.com/a/24299222
 error_rate=$(awk "BEGIN { pc=100*${amount_of_errors}/${amount_of_accesslogs}; i=int(pc); print (pc-i<0.5)?i:i+1 }")
