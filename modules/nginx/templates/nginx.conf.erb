@@ -52,7 +52,7 @@ http {
     add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
 
     # XSS Protection
-    add_header "X-XSS-Protection" "1; mode=block;" always;
+    add_header X-XSS-Protection "1; mode=block";
 
     add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
