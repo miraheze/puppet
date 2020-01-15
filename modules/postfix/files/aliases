@@ -1,5 +1,4 @@
 # standard stuff
-mailer-daemon: postmaster
 postmaster: sre
 nobody: root
 hostmaster: sre
@@ -15,6 +14,7 @@ void-recipient: /dev/null
 
 # root spam
 root: /dev/null
+mailer-daemon: /dev/null
 
 # redirect for old names
 operations: sre
