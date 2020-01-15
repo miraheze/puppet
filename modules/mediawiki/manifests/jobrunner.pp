@@ -65,7 +65,7 @@ class mediawiki::jobrunner {
 
     cron { 'update_special_pages':
         ensure   => present,
-        command  => '/usr/bin/nice -n -1 flock -n /var/lock/update-special-pages /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/updateSpecialPages.php > updateSpecialPages.log 2>&1',
+        command  => '/usr/bin/nice -n 0 flock -n /var/lock/update-special-pages /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/updateSpecialPages.php > updateSpecialPages.log 2>&1',
         user     => 'www-data',
         monthday => '*/3',
         minute   => 5,
