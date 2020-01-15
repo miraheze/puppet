@@ -95,9 +95,9 @@ class mediawiki::jobrunner {
         ensure   => present,
         command  => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/initSiteStats.php --update > /dev/null',
         user     => 'www-data',
-        minute   => 39,
-        hour     => 05,
-        monthday => [1, 15],
+        minute   => '0',
+        hour     => '5',
+        monthday => [ '1', '15' ],
     }
 
     file { '/usr/lib/nagios/plugins/check_jobqueue':
