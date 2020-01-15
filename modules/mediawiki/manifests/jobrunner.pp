@@ -63,6 +63,15 @@ class mediawiki::jobrunner {
         hour    => '18',
     }
 
+    cron { 'update_special_pages':
+        ensure   => present,
+        command  => '/usr/bin/nice -n -1 flock -n /var/lock/update-special-pages /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/updateSpecialPages.php > updateSpecialPages.log 2>&1',
+        user     => 'www-data',
+        monthday => '*/3',
+        minute   => 5,
+        hour     => 0,
+    }
+
     cron { 'managewikis':
         ensure  => present,
         command => '/usr/bin/nice -19 /usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki loginwiki --write > /var/log/mediawiki/cron/managewikis.log',
