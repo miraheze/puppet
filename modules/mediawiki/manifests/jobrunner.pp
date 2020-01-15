@@ -93,7 +93,7 @@ class mediawiki::jobrunner {
 
     cron { 'update_statistics':
         ensure   => present,
-        command  => '/usr/bin/nice -19 flock -n /var/lock/update-statistics /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/initSiteStats.php --update > initSiteStats.log 2>&1',
+        command  => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/initSiteStats.php --update > /dev/null',
         user     => 'www-data',
         minute   => 39,
         hour     => 05,
