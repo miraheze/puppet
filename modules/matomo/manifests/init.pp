@@ -23,7 +23,7 @@ class matomo {
             'display_errors'            => 'Off',
             'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
             'log_errors'                => 'On',
-            'memory_limit'              => '400',
+            'memory_limit'              => '256',
             'opcache'                   => {
                 'enable'                  => 1,
                 'interned_strings_buffer' => 30,
@@ -40,6 +40,9 @@ class matomo {
             'track_errors'        => 'Off',
             'upload_max_filesize' => '100M',
             'variables_order'     => 'GPCS',
+        },
+        'config_cli' => {
+            'memory_limit' => '400',
         },
         'fpm_min_child' => 4,
         'version' => hiera('php::php_version', '7.3'),
