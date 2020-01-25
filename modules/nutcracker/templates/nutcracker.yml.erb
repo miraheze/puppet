@@ -6,9 +6,9 @@ redis:
   auto_eject_hosts: false
   redis: true
   redis_auth: <%= @redis_password %>
-  server_retry_timeout: 2000
-  server_failure_limit: 3
-  timeout: 3000
+  server_retry_timeout: 6000
+  server_failure_limit: 6
+  timeout: 6000
   servers:
     # Redis server (misc2)
     - 81.4.127.174:6379:1
