@@ -33,7 +33,7 @@ class php::php_fpm(
         'date.timezone'          => 'UTC',
         'display_errors'         => 'On',
         'error_reporting'        => 'E_ALL & ~E_STRICT',
-        'mysql'                  => { 'connect_timeout' => 8 },
+        'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
     }
 
