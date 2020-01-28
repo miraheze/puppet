@@ -8,7 +8,7 @@ class roundcubemail (
 
     include ::nodejs
 
-    $php_version = hiera('php::php_version', '7.2')
+    $php_version = hiera('php::php_version', '7.3')
     ensure_resource_duplicate('class', 'php::php_fpm', {
         'config'  => {
             'display_errors'            => 'Off',
@@ -33,7 +33,7 @@ class roundcubemail (
             'upload_max_filesize' => '100M',
             'variables_order'     => 'GPCS',
         },
-        'version' => $php_version
+        'version' => $php_version,
     })
 
     require_package("php${php_version}-pspell")
