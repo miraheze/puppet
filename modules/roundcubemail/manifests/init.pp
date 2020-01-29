@@ -81,6 +81,19 @@ class roundcubemail (
         require     => Exec['nginx-syntax-roundcubemail'],
     }
 
+    file { '/var/log/roundcubemail:
+        ensure  => directory,
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0640',
+        require => Package['nginx'],
+    }
+
+    logrotate::conf { 'roundcubemail':
+        ensure  => present,
+        source => 'puppet:///modules/roundcubemail/roundcubemail.logrotate.conf',
+    }
+
     monitoring::services { 'webmail.miraheze.org HTTPS':
         check_command  => 'check_http',
         vars           => {
