@@ -81,7 +81,7 @@ class roundcubemail (
         require     => Exec['nginx-syntax-roundcubemail'],
     }
 
-    file { '/var/log/roundcubemail:
+    file { '/var/log/roundcubemail':
         ensure  => directory,
         owner   => 'www-data',
         group   => 'www-data',
