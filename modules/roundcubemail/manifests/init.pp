@@ -91,7 +91,8 @@ class roundcubemail (
 
     logrotate::conf { 'roundcubemail':
         ensure  => present,
-        source => 'puppet:///modules/roundcubemail/roundcubemail.logrotate.conf',
+        source  => 'puppet:///modules/roundcubemail/roundcubemail.logrotate.conf',
+        require => File['/var/log/roundcubemail',
     }
 
     monitoring::services { 'webmail.miraheze.org HTTPS':
