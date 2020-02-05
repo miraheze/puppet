@@ -122,8 +122,6 @@ class php::php_fpm(
             };
         'imagick':
             package_name => 'php-imagick';
-        'php-mail-mime':
-            package_name => 'php-mail-mime';
         'mysqli':
             package_name => "php${version}-mysql",
             config       => {
@@ -153,7 +151,7 @@ class php::php_fpm(
             priority => 10,
     }
 
-    require_package("php${version}-dev", 'php-mail', 'php-mailparse', 'php-pear')
+    require_package("php${version}-dev", 'php-mail', 'php-mail-mime', 'php-mailparse', 'php-pear')
 
     # XML
     php::extension{ [
