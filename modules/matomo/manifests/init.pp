@@ -23,7 +23,7 @@ class matomo {
             'display_errors'            => 'Off',
             'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
             'log_errors'                => 'On',
-            'memory_limit'              => '256M',
+            'memory_limit'              => '512M',
             'opcache'                   => {
                 'enable'                  => 1,
                 'interned_strings_buffer' => 30,
