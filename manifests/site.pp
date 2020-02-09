@@ -14,7 +14,7 @@ node /^cp[234]\.miraheze\.org$/ {
     include role::salt::minions
 }
 
-node 'db4.miraheze.org' {
+node /^db[46]\.miraheze\.org$/ {
     include base
     include role::db
     include role::postgresql
