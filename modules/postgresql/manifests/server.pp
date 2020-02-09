@@ -84,7 +84,7 @@ class postgresql::server(
 
         file { "/etc/postgresql/${pgversion}/main/ssl.conf":
             ensure  => $ensure,
-            source  => 'puppet:///modules/postgresql/ssl.conf',
+            content => template('postgresql/ssl.conf.erb'),
             owner   => 'root',
             group   => 'root',
             mode    => '0444',
