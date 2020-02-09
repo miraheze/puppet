@@ -31,6 +31,6 @@ class mariadb::packages(
 
     package { "mariadb-server-${version}":
         ensure  => present,
-        require => Apt::Source['php_apt'],
+        require => Apt::Source['mariadb_apt'],
     }
 }
