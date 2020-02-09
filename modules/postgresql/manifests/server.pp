@@ -54,7 +54,7 @@ class postgresql::server(
         ensure    => $ensure,
         pgversion => $pgversion,
         root_dir  => $root_dir,
-	}
+    }
 
     $data_dir = "${root_dir}/${pgversion}/main"
 
@@ -80,7 +80,7 @@ class postgresql::server(
             group   => 'postgres',
             mode    => '0600',
             require => File["/etc/postgresql/${pgversion}/main/ssl"],
-		}
+        }
 
         file { "/etc/postgresql/${pgversion}/main/ssl.conf":
             ensure  => $ensure,
