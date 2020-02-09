@@ -91,7 +91,7 @@ node 'ns1.miraheze.org' {
     include role::dns
 }
 
-node 'puppet1.miraheze.org' {
+node /^puppet[12]\.miraheze\.org$/ {
     include base
     include bacula::client
     include role::puppetserver
