@@ -42,29 +42,33 @@ class mariadb::config(
     }
 
     file { $datadir:
-        ensure => directory,
-        owner  => 'mysql',
-        group  => 'mysql',
-        mode   => '0755',
+        ensure  => directory,
+        owner   => 'mysql',
+        group   => 'mysql',
+        mode    => '0755',
+        require => Package["mariadb-server-${version}"],
     }
 
     file { $tmpdir:
-        ensure => directory,
-        owner  => 'mysql',
-        group  => 'mysql',
-        mode   => '0775',
+        ensure  => directory,
+        owner   => 'mysql',
+        group   => 'mysql',
+        mode    => '0775',
+        require => Package["mariadb-server-${version}"],
     }
 
     file { '/etc/mysql/miraheze':
-        ensure => directory,
-        owner  => 'mysql',
-        group  => 'mysql',
-        mode   => '0755',
+        ensure  => directory,
+        owner   => 'mysql',
+        group   => 'mysql',
+        mode    => '0755',
+        require => Package["mariadb-server-${version}"],
     }
 
     file { '/etc/mysql/miraheze/default-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/default-grants.sql.erb'),
+        require => File['/etc/mysql/miraheze'],
     }
 
     file { '/root/.my.cnf':
@@ -75,10 +79,11 @@ class mariadb::config(
     }
 
     file { '/var/tmp/mariadb':
-        ensure => directory,
-        owner  => 'mysql',
-        group  => 'mysql',
-        mode   => '0644',
+        ensure  => directory,
+        owner   => 'mysql',
+        group   => 'mysql',
+        mode    => '0644',
+        require => Package["mariadb-server-${version}"],
     }
 
     exec { 'mariadb reload systemd':
