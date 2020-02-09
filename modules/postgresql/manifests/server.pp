@@ -39,10 +39,15 @@ class postgresql::server(
         "postgresql-contrib-${pgversion}",
         'libdbi-perl',
         'libdbd-pg-perl',
-        'ptop',
         'check-postgres',
     ]:
         ensure => $ensure,
+    }
+    
+    if os_version('debian >= buster') {
+        require_package('pgtop')
+    } else {
+        require_package('ptop')
     }
 
     class { '::postgresql::dirs':
