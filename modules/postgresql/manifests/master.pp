@@ -38,6 +38,7 @@ class postgresql::master(
     String $master_server = $::fqdn,
     Optional[Array] $includes = [],
     String $pgversion = $::lsbdistcodename ? {
+        'buster'  => '11',
         'stretch' => '9.6',
         'jessie'  => '9.4',
     },

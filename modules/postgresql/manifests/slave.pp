@@ -36,7 +36,11 @@ class postgresql::slave(
 ) {
 
     # use 9.6 on stretch
-    $pgversion = hiera('postgresql::user::pg_version', '9.6')
+    $pgversion = $::lsbdistcodename ? {
+        'buster'  => '11',
+        'stretch' => '9.6',
+        'jessie'  => '9.4',
+    }
 
     $data_dir = "${root_dir}/${pgversion}/main"
 
