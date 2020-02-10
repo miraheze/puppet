@@ -105,6 +105,13 @@ node /^puppet[12]\.miraheze\.org$/ {
     include role::salt::minions
 }
 
+node 'rdb1.miraheze.org' {
+    include base
+    include role::redis
+    include role::salt::minions
+    include prometheus::redis_exporter
+}
+
 node 'test1.miraheze.org' {
     include base
     include role::mediawiki
