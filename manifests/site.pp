@@ -41,6 +41,13 @@ node 'lizardfs6.miraheze.org' {
     include prometheus::php_fpm
 }
 
+node 'gluster1.miraheze.org' {
+    include base
+    include bacula::client
+    include role::gluster
+    include role::salt::minions
+}
+
 node 'misc1.miraheze.org' {
     include base
     include role::dns
