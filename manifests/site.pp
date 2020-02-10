@@ -112,6 +112,12 @@ node 'rdb1.miraheze.org' {
     include prometheus::redis_exporter
 }
 
+node 'services1.miraheze.org' {
+    include base
+    include role::services
+    include role::salt::minions
+}
+
 node 'test1.miraheze.org' {
     include base
     include role::mediawiki
