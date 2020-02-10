@@ -6,16 +6,23 @@ class redis (
     Integer $maxmemory_samples = 5,
     Variant[Boolean, String] $password = false,
 ) {
-    apt::pin { 'debian_stretch_backports_redis':
-        priority   => 740,
-        originator => 'Debian',
-        release    => 'stretch-backports',
-        packages   => 'redis-server',
-    }
 
-    package { 'redis-server':
-        ensure  => present,
-        require => Apt::Pin['debian_stretch_backports_redis'],
+    if os_version('debian stretch') {
+        apt::pin { 'debian_stretch_backports_redis':
+            priority   => 740,
+            originator => 'Debian',
+            release    => 'stretch-backports',
+            packages   => 'redis-server',
+        }
+
+        package { 'redis-server':
+            ensure  => present,
+            require => Apt::Pin['debian_stretch_backports_redis'],
+        }
+    } else {
+        package { 'redis-server':
+            ensure  => present,
+        }
     }
 
     file { '/etc/redis/redis.conf':
@@ -43,12 +50,14 @@ class redis (
         ensure  => present,
         source  => 'puppet:///modules/redis/redis-server.systemd',
         notify  => Exec['redis reload systemd'],
+        require => Package['redis-server'],
     }
 
     service { 'redis-server':
         ensure  => running,
         enable  => true,
         require => File['/lib/systemd/system/redis-server.service'],
+       
     }
 
     exec { 'Restart redis if needed':
