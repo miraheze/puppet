@@ -93,6 +93,14 @@ class role::db {
     }
 
 
+    # new servers
+    ufw::allow { 'mysql port test2':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.77.107.211',
+    }
+
+
     # temp whitelisting for cyberpower
     ufw::allow { 'mysql port cyberpower1':
         proto => 'tcp',
