@@ -92,6 +92,26 @@ backend mw3_test {
 	.port = "8082";
 }
 
+backend mw4_test {
+	.host = "127.0.0.1";
+	.port = "8085";
+}
+
+backend mw5_test {
+	.host = "127.0.0.1";
+	.port = "8086";
+}
+
+backend mw6_test {
+	.host = "127.0.0.1";
+	.port = "8087";
+}
+
+backend mw7_test {
+	.host = "127.0.0.1";
+	.port = "8088";
+}
+
 backend lizardfs6_no_check {
     .host = "127.0.0.1";
     .port = "8203";
@@ -231,6 +251,18 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org") {
 		set req.backend_hint = mw3_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw4.miraheze.org") {
+		set req.backend_hint = mw4_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw5.miraheze.org") {
+		set req.backend_hint = mw5_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw6.miraheze.org") {
+		set req.backend_hint = mw6_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw7.miraheze.org") {
+		set req.backend_hint = mw7_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
 		set req.backend_hint = test1;
