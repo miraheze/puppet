@@ -7,3 +7,4 @@ puppetdb_enable: true
 puppetdb_hostname: puppet2.miraheze.org
 puppetdb::db_ssl: true
 puppetdb::db_rw_host: puppet2.miraheze.org
+postgresql::ssl: true
