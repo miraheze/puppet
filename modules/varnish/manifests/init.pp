@@ -40,7 +40,7 @@ class varnish(
 
     file { '/etc/default/varnish':
         ensure  => present,
-        source  => template('varnish/varnish.default.erb'),
+        content => template('varnish/varnish.default.erb'),
         notify  => Exec['varnish-server-syntax'],
         require => Package['varnish'],
     }
