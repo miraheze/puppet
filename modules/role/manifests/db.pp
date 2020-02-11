@@ -94,10 +94,64 @@ class role::db {
 
 
     # new servers
+    ufw::allow { 'mysql port mw4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.89.160.128',
+    }
+
+    ufw::allow { 'mysql port mw4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:1056::3',
+    }
+
+    ufw::allow { 'mysql port mw5':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.89.160.133',
+    }
+
+    ufw::allow { 'mysql port mw5':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:1056::8',
+    }
+
+    ufw::allow { 'mysql port mw6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.89.160.136',
+    }
+
+    ufw::allow { 'mysql port mw6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:105a::4',
+    }
+
+    ufw::allow { 'mysql port mw7':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.89.160.137',
+    }
+
+    ufw::allow { 'mysql port mw7':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:105a::5',
+    }
+
     ufw::allow { 'mysql port test2':
         proto => 'tcp',
         port  => '3306',
         from  => '51.77.107.211',
+    }
+ 
+     ufw::allow { 'mysql port test2':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:105a::3',
     }
 
 
