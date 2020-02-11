@@ -1,5 +1,7 @@
 # class: varnish
-class varnish {
+class varnish(
+    String $cache_file_size = '15G'
+){
     include varnish::nginx
     include prometheus::varnish_prometheus_exporter
 
@@ -38,7 +40,7 @@ class varnish {
 
     file { '/etc/default/varnish':
         ensure  => present,
-        source  => 'puppet:///modules/varnish/varnish/varnish.default',
+        source  => template('varnish/varnish.default.erb'),
         notify  => Exec['varnish-server-syntax'],
         require => Package['varnish'],
     }
