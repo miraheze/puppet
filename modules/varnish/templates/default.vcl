@@ -92,6 +92,26 @@ backend mw3_test {
 	.port = "8082";
 }
 
+backend mw4_test {
+	.host = "127.0.0.1";
+	.port = "8085";
+}
+
+backend mw5_test {
+	.host = "127.0.0.1";
+	.port = "8086";
+}
+
+backend mw6_test {
+	.host = "127.0.0.1";
+	.port = "8087";
+}
+
+backend mw7_test {
+	.host = "127.0.0.1";
+	.port = "8088";
+}
+
 backend lizardfs6_no_check {
     .host = "127.0.0.1";
     .port = "8203";
@@ -124,6 +144,14 @@ acl purge {
 	"81.4.127.174"; # misc2
 	"185.52.3.121"; # misc4
 	"2a00:d880:5:7c6::2"; # misc4
+	"51.89.160.128"; # mw4
+	"2001:41d0:800:1056::3"; # mw4
+	"51.89.160.133"; # mw5
+	"2001:41d0:800:1056::8"; # mw5
+	"51.89.160.136"; # mw6
+	"2001:41d0:800:105a::4"; # mw6
+	"51.89.160.137"; # mw7
+	"2001:41d0:800:105a::5"; # mw7
 }
 
 sub mw_stash_cookie {
@@ -231,6 +259,18 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org") {
 		set req.backend_hint = mw3_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw4.miraheze.org") {
+		set req.backend_hint = mw4_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw5.miraheze.org") {
+		set req.backend_hint = mw5_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw6.miraheze.org") {
+		set req.backend_hint = mw6_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw7.miraheze.org") {
+		set req.backend_hint = mw7_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
 		set req.backend_hint = test1;
