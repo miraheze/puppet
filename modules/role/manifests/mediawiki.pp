@@ -23,6 +23,12 @@ class role::mediawiki {
             from  => '81.4.109.133',
         }
 
+        ufw::allow { 'https port cp8':
+            proto => 'tcp',
+            port  => 443,
+            from  => '51.161.32.127',
+        }
+
         ufw::allow { 'https port icinga':
             proto => 'tcp',
             port  => 443,
