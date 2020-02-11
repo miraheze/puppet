@@ -14,7 +14,7 @@ node /^cp[234]\.miraheze\.org$/ {
     include role::salt::minions
 }
 
-node /^db[46]\.miraheze\.org$/ {
+node 'db4.miraheze.org' {
     include base
     include role::db
     include role::postgresql
@@ -25,6 +25,14 @@ node /^db[46]\.miraheze\.org$/ {
 }
 
 node 'db5.miraheze.org' {
+    include base
+    include role::db
+    include bacula::client
+    include role::salt::minions
+    include prometheus::mysqld_exporter
+}
+
+node 'db6.miraheze.org' {
     include base
     include role::db
     include bacula::client
