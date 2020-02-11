@@ -98,10 +98,19 @@ node 'ns1.miraheze.org' {
     include role::dns
 }
 
-node /^puppet[12]\.miraheze\.org$/ {
+node 'puppet1.miraheze.org' {
     include base
     include bacula::client
     include role::puppetserver
+    include role::salt::minions
+}
+
+node 'puppet2.miraheze.org' {
+    include base
+    include bacula::client
+    include role::postgresql
+    include role::puppetserver
+    include puppetdb::database
     include role::salt::minions
 }
 
