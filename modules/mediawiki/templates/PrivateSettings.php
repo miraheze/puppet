@@ -31,3 +31,9 @@ $wmgWikiMirahezeDiscordHooks = array(
     '<%= wiki %>' => <%= values %>,
 <%- end -%>
 );
+
+<%- if @new_servers -%>
+$wmgUseNewServers = true;
+<%- else -%>
+$wmgUseNewServers = false;
+<%- end -%>

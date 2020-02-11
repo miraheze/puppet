@@ -5,9 +5,17 @@ class mediawiki(
     Optional[Boolean] $use_memcached = undef,
     Optional[Boolean] $use_redis = undef,
 ) {
-    host { 'mediawiki-internal-db-master.miraheze.org':
-        ensure => present,
-        ip => '81.4.109.166'
+    $new_servers = hiera('new_servers', false)
+    if $new_servers {
+        host { 'mediawiki-internal-db-master.miraheze.org':
+            ensure => present,
+            ip => '51.89.160.130'
+        }
+    } else {
+        host { 'mediawiki-internal-db-master.miraheze.org':
+            ensure => present,
+            ip => '81.4.109.166'
+        }
     }
 
     host { 'mediawiki-internal-db-master-db5.miraheze.org':

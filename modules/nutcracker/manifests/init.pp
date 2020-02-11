@@ -26,6 +26,7 @@ class nutcracker(
 
     require_package('nutcracker')
 
+    $new_servers = hiera('new_servers', false)
     file { '/etc/nutcracker/nutcracker.yml':
         ensure  => $ensure,
         content => template('nutcracker/nutcracker.yml.erb'),
