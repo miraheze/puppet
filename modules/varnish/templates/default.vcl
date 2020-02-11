@@ -69,6 +69,11 @@ backend test1 {
 	.port = "8083";
 }
 
+backend test2 {
+	.host = "127.0.0.1";
+	.port = "8084";
+}
+
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
@@ -114,6 +119,8 @@ acl purge {
 	"81.4.121.113"; # mw3
 	"2a00:d880:5:b45::2"; # mw3
 	"185.52.2.243"; # test1
+	"51.77.107.211"; # test2
+	"2001:41d0:800:105a::3"; # test2
 	"81.4.127.174"; # misc2
 	"185.52.3.121"; # misc4
 	"2a00:d880:5:7c6::2"; # misc4
@@ -227,6 +234,9 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
 		set req.backend_hint = test1;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "test2.miraheze.org") {
+		set req.backend_hint = test2;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "lizardfs6.miraheze.org") {
 		set req.backend_hint = lizardfs6_no_check;
