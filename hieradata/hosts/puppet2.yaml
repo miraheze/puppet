@@ -6,4 +6,4 @@ puppetserver_java_opts: '-Xms1G -Xmx1G'
 puppetdb_enable: true
 puppetdb_hostname: puppet2.miraheze.org
 puppetdb::db_ssl: true
-puppetdb::db_rw_host: db6.miraheze.org
+puppetdb::db_rw_host: puppet2.miraheze.org
