@@ -94,7 +94,7 @@ node 'misc4.miraheze.org' {
     include prometheus::php_fpm
 }
 
-node /^mw[1234]\.miraheze\.org$/ {
+node /^mw[12345]\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include role::salt::minions
