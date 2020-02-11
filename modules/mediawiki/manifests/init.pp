@@ -5,7 +5,8 @@ class mediawiki(
     Optional[Boolean] $use_memcached = undef,
     Optional[Boolean] $use_redis = undef,
 ) {
-    if hiera('new_servers', false) {
+    $new_servers = hiera('new_servers', false)
+    if $new_servers {
         host { 'mediawiki-internal-db-master.miraheze.org':
             ensure => present,
             ip => '51.89.160.130'
