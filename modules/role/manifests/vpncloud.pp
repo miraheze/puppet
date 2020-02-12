@@ -37,6 +37,18 @@ class role::vpncloud {
         port    => 3210,
         from    => '2a00:d880:5:8ea::ebc7',
     }
+    
+     ufw::allow { 'vpncloud port tcp cp6 ipv4':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '51.77.107.210',
+    }
+
+     ufw::allow { 'vpncloud port tcp cp6 ipv6':
+        proto   => 'tcp',
+        port    => 3210,
+        from    => '2001:41d0:800:1056::2',
+    }
 
     ufw::allow { 'vpncloud port tcp test1':
         proto   => 'tcp',
