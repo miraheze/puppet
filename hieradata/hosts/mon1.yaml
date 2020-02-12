@@ -3,6 +3,8 @@ role::salt::minions::salt_master: 'puppet2.miraheze.org'
 new_servers: true
 mariadb::version: '10.4'
 
+php::php_version: 7.4
+
 # icinga2
 
 icinga2::globals::package_name: 'icinga2'
