@@ -115,7 +115,7 @@ node /^mw[1234567]\.miraheze\.org$/ {
     include prometheus::php_fpm
 }
 
-node 'ns1.miraheze.org' {
+node /^ns[12]\.miraheze\.org$/ {
     include base
     include role::dns
 }
