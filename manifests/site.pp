@@ -24,15 +24,7 @@ node 'db4.miraheze.org' {
     include prometheus::mysqld_exporter
 }
 
-node 'db5.miraheze.org' {
-    include base
-    include role::db
-    include bacula::client
-    include role::salt::minions
-    include prometheus::mysqld_exporter
-}
-
-node 'db6.miraheze.org' {
+node /^db[567]\.miraheze\.org$/ {
     include base
     include role::db
     include bacula::client
