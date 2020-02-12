@@ -1,5 +1,6 @@
 class role::salt::minions(
-    $salt_master_key = false,
+    $salt_master = 'misc4.miraheze.org',
+    $salt_master_key = false
 ) {
     # stretch's salt-minion uses SHA256 instead of MD5 by default.
     # while it's possible to set 'hash_type: md5', this is preferrable
@@ -7,7 +8,7 @@ class role::salt::minions(
 
     class { '::salt::minion':
         id            => $::fqdn,
-        master        => 'misc4.miraheze.org',
+        master        => $salt_master,
         master_finger => $master_finger,
         master_key    => $salt_master_key,
     }
