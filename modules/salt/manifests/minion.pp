@@ -104,12 +104,28 @@ class salt::minion(
     }
 
     if $master_key {
+        file { '/etc/salt/pki':
+            ensure  => directory,
+            owner   => 'root',
+            group   => 'root',
+            mode    => '0755',
+            require => File['/etc/salt'],
+        }
+
+        file { '/etc/salt/pki/minion':
+            ensure  => directory,
+            owner   => 'root',
+            group   => 'root',
+            mode    => '0755',
+            require => File['/etc/salt/pki'],
+        }
+
         file { '/etc/salt/pki/minion/minion_master.pub':
             owner   => 'root',
             group   => 'root',
             mode    => '0444',
             source  => 'puppet:///modules/salt/minion_master.pub',
-            require => File['/etc/salt'],
+            require => File['/etc/salt/pki/minion'],
         }
     }
 
