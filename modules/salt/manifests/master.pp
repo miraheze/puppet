@@ -21,7 +21,6 @@ class salt::master(
 
     package { 'salt-master':
         ensure  => 'installed',
-        require => Apt::Source['salt_apt'],
     }
 
     service { 'salt-master':
