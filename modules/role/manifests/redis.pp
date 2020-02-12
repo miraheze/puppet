@@ -1,8 +1,9 @@
 # role: redis
 class role::redis {
+    $redis_heap = hiera('redis::heap', '2000mb')
     class { '::redis':
         password  => hiera('passwords::redis::master'),
-        maxmemory => '2000mb',
+        maxmemory => $redis_heap,
     }
 
     ufw::allow { 'redis':
