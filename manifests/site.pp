@@ -120,6 +120,14 @@ node 'ns1.miraheze.org' {
     include role::dns
 }
 
+node 'phab1.miraheze.org' {
+    include base
+    include bacula::client
+    include role::phabricator
+    include role::salt::minions
+    include prometheus::php_fpm
+}
+
 node 'puppet1.miraheze.org' {
     include base
     include bacula::client
