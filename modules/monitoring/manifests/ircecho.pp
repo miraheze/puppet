@@ -12,7 +12,12 @@ class monitoring::ircecho (
         notify => Service['ircecho'],
     }
 
-    file { '/usr/local/lib/python3.5/dist-packages/ib3_auth.py':
+
+    $pyversion = $::lsbdistcodename ? {
+        'buster'  => '3.7',
+        'stretch' => '3.5',
+    },
+    file { "/usr/local/lib/${pyversion}/dist-packages/ib3_auth.py":
         ensure => 'present',
         source => 'puppet:///modules/monitoring/bot/ib3_auth.py',
         owner  => 'root',
