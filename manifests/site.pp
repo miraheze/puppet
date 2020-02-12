@@ -152,7 +152,7 @@ node /^rdb[12]\.miraheze\.org$/ {
     include prometheus::redis_exporter
 }
 
-node /^services2[12]\.miraheze\.org$/ {
+node /^services[12]\.miraheze\.org$/ {
     include base
     include role::services
     include role::salt::minions
