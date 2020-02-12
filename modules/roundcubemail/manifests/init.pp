@@ -12,28 +12,31 @@ class roundcubemail (
     ensure_resource_duplicate('class', 'php::php_fpm', {
         'config'  => {
             'display_errors'            => 'Off',
-            'error_log'                 => '/var/log/php/php.log',
             'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
             'log_errors'                => 'On',
-            'max_execution_time'        => 100,
+            'memory_limit'              => '512M',
             'opcache'                   => {
                 'enable'                  => 1,
-                'interned_strings_buffer' => 50,
-                'memory_consumption'      => 300,
-                'max_accelerated_files'   => 24000,
+                'interned_strings_buffer' => 30,
+                'memory_consumption'      => 112,
+                'max_accelerated_files'   => 20000,
                 'max_wasted_percentage'   => 10,
                 'validate_timestamps'     => 1,
                 'revalidate_freq'         => 10,
             },
             'enable_dl'           => 0,
-            'post_max_size'       => '40M',
+            'post_max_size'       => '60M',
             'register_argc_argv'  => 'Off',
             'request_order'       => 'GP',
             'track_errors'        => 'Off',
             'upload_max_filesize' => '100M',
             'variables_order'     => 'GPCS',
         },
-        'version' => $php_version,
+        'config_cli' => {
+            'memory_limit' => '400M',
+        },
+        'fpm_min_child' => 4,
+        'version' => $php_version
     })
 
     require_package("php${php_version}-pspell")
