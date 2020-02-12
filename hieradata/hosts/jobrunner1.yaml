@@ -1,0 +1,10 @@
+puppetserver_hostname: puppet2.miraheze.org
+users::groups:
+  - mediawiki-admins
+jobrunner: true
+contactgroups: ['icingaadmins', 'ops', 'mediawiki']
+role::mediawiki::use_strict_firewall: false
+mediawiki::branch: 'REL1_34'
+php::php_fpm::fpm_workers_multiplier: 1.0
+php::php_version: '7.3'
+redis::heap: '1000mb'
