@@ -131,8 +131,9 @@ node 'puppet2.miraheze.org' {
     include base
     include bacula::client
     include role::postgresql
-    include role::puppetserver
     include puppetdb::database
+    include role::puppetserver
+    include role::salt::masters
     include role::salt::minions
 }
 
