@@ -92,9 +92,10 @@ class mariadb::config(
     }
 
     file { '/etc/systemd/system/mariadb.service.d/no-timeout-mariadb.conf':
-        ensure => present,
-        source => 'puppet:///modules/mariadb/no-timeout-mariadb.conf',
-        notify => Exec['mariadb reload systemd'],
+        ensure  => present,
+        source  => 'puppet:///modules/mariadb/no-timeout-mariadb.conf',
+        notify  => Exec['mariadb reload systemd'],
+        require => Package["mariadb-server-${version}"],
     }
 
     monitoring::services { 'MySQL':
