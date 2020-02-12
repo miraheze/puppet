@@ -1,0 +1,2 @@
+mailserver: true
+puppetserver_hostname: puppet2.miraheze.org
