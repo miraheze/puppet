@@ -100,15 +100,16 @@ class salt::minion(
         group   => 'root',
         mode    => '0444',
         notify  => Service['salt-minion'],
-        require => File['/etc/salt'], 
+        require => File['/etc/salt'],
     }
 
-    if ($master_key) {
+    if $master_key {
         file { '/etc/salt/pki/minion/minion_master.pub':
             owner   => 'root',
             group   => 'root',
             mode    => '0444',
-            source => 'puppet:///modules/salt/minion_master.pub',
+            source  => 'puppet:///modules/salt/minion_master.pub',
+            require => File['/etc/salt'],
         }
     }
 
