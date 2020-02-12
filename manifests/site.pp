@@ -56,6 +56,13 @@ node 'gluster1.miraheze.org' {
     include role::salt::minions
 }
 
+node 'mail1.miraheze.org' {
+    include base
+    include role::mail
+    include role::roundcubemail
+    include role::salt::minions
+}
+
 node 'misc1.miraheze.org' {
     include base
     include role::dns
