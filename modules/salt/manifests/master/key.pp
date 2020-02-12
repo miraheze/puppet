@@ -13,12 +13,21 @@ swIDAQAB
 -----END PUBLIC KEY-----',
     }
 
+    file { '/etc/salt/pki/master':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => File['/etc/salt/pki'],
+    }
+
     file { '/etc/salt/pki/master/master.pub':
         content => $salt_master_pubkey[$salt_master_pubkey_type],
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
         notify  => Service['salt-master'],
+        require => File['/etc/salt/pki/master'],
     }
 
     file { '/etc/salt/pki/master/master.pem':
@@ -28,5 +37,6 @@ swIDAQAB
         mode      => '0400',
         notify    => Service['salt-master'],
         show_diff => false,
+        require => File['/etc/salt/pki/master'],
     }
 }
