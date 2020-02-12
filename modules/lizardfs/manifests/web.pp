@@ -34,6 +34,10 @@ class lizardfs::web {
         port  => 443,
         from  => '81.4.109.133',
     }
+    ufw:allow { 'cp6 433':
+        proto => 'tcp',
+        port => 443,
+        from => '51.77.107.210',
 
     ufw::allow { 'cp8 433':
         proto => 'tcp',
