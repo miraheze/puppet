@@ -14,8 +14,8 @@ class monitoring::ircecho (
 
 
     $pyversion = $::lsbdistcodename ? {
-        'buster'  => '3.7',
-        'stretch' => '3.5',
+        'buster'  => 'python3.7',
+        'stretch' => 'python3.5',
     }
     file { "/usr/local/lib/${pyversion}/dist-packages/ib3_auth.py":
         ensure => 'present',
