@@ -166,6 +166,18 @@ class role::db {
         from  => '2001:41d0:800:105a::3',
     }
 
+    ufw::allow { 'mysql port phab1 ipv4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.89.160.139',
+    }
+
+    ufw::allow { 'mysql port phab1 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:105a::7',
+    }
+
 
     # temp whitelisting for cyberpower
     ufw::allow { 'mysql port cyberpower1':
