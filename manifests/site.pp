@@ -145,7 +145,7 @@ node 'puppet2.miraheze.org' {
     include role::salt::minions
 }
 
-node 'rdb1.miraheze.org' {
+node /^rdb[12]\.miraheze\.org$/ {
     include base
     include role::redis
     include role::salt::minions
