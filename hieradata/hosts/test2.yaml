@@ -11,3 +11,4 @@ puppetserver_hostname: puppet2.miraheze.org
 mediawiki::php::use_tideways: true
 new_servers: true
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
+gluster_volume: 'gluster1.miraheze.org:/mm'
