@@ -95,8 +95,6 @@ node 'misc4.miraheze.org' {
     include role::prometheus
     include role::salt::masters
     include role::salt::minions
-    include role::services
-    include prometheus::php_fpm
 }
 
 node 'mon1.miraheze.org' {
