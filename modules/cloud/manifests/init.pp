@@ -15,10 +15,10 @@ class cloud {
         notify   => Exec['apt_update_proxmox'],
     }
 
-	apt::pin { 'proxmox_pin':
-		priority        => 600,
-		origin          => 'download.proxmox.com'
-	}
+    apt::pin { 'proxmox_pin':
+        priority        => 600,
+        origin          => 'download.proxmox.com'
+    }
 
     # First installs can trip without this
     exec {'apt_update_proxmox':
@@ -29,6 +29,12 @@ class cloud {
     }
 
     require_package('proxmox-ve', 'open-iscsi')
+
+
+    file { '/etc/cloud/cloud.cfg.d/99-disable-network-config.cfg':
+        ensure  => 'present',
+        source  => 'puppet:///cloud/cloudinit/99-disable-network-config.cfg',
+    }
 
     file { '/etc/network/interfaces.d/50-cloud-init.cfg':
         ensure  => 'present',
