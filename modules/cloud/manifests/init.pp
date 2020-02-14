@@ -30,7 +30,6 @@ class cloud {
 
     require_package('proxmox-ve', 'open-iscsi')
 
-
     file { '/etc/cloud/cloud.cfg.d/99-disable-network-config.cfg':
         ensure  => 'present',
         source  => 'puppet:///cloud/cloudinit/99-disable-network-config.cfg',
@@ -46,5 +45,4 @@ class cloud {
         content => template('cloud/network/interfaces.erb'),
         require => Package['lizardfs-master'],
     }
-
 }
