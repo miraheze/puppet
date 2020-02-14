@@ -61,6 +61,7 @@ backend mw6 {
 backend mw7 {
 	.host = "127.0.0.1";
 	.port = "8083";
+	.probe = mwhealth;
 }
 
 # test mediawiki backend with out health check
