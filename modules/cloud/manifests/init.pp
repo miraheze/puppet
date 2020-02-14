@@ -4,7 +4,7 @@ class cloud {
 
     file { '/etc/apt/trusted.gpg.d/proxmox.gpg':
         ensure => present,
-        source => 'puppet:///modules/php/key/proxmox.gpg',
+        source => 'puppet:///modules/cloud/key/proxmox.gpg',
     }
 
     apt::source { 'proxmox_apt':
