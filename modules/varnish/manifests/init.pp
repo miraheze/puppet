@@ -129,7 +129,7 @@ class varnish(
         },
     }
 
-    ['lizardfs6', 'misc2', 'mw1', 'mw2', 'mw3', 'test1'].each |$host| {
+    ['misc2', 'mw4', 'mw5', 'mw6', 'mw7', 'test2'].each |$host| {
         monitoring::services { "Stunnel Http for ${host}":
             check_command => 'nrpe',
             vars          => {
