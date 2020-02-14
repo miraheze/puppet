@@ -63,11 +63,6 @@ backend mw7 {
 	.port = "8083";
 }
 
-backend test2 {
-	.host = "127.0.0.1";
-	.port = "8084";
-}
-
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
@@ -233,7 +228,7 @@ sub mw_vcl_recv {
 		set req.backend_hint = mw7_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test2.miraheze.org") {
-		set req.backend_hint = test2;
+		set req.backend_hint = test2_test;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
