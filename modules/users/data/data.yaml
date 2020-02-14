@@ -51,6 +51,7 @@ users:
     realname: Southparkfan
     ssh_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSvMibqNvs6wzm1GRQcd817Ydky+bZ4kKbr4IQHtFSC southparkfan@miraheze.org
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDmL4oKcKJeAetJfdLLbM6iKNb/GfmI+G01+U9wHrh6JDaGFzq3kyfRtH2QNKNaWxO0fUu+dGg42WTUT0m9YMWIFvJ6HIPg4cm/wwlqQsR1tiS/fOjuB6XskLHLsL8DlZkL2lK6XxTyuYJvarTtr8xuOmcgUDF3fOQeakgKyADvAjr232CAla/kx5NwYrOTadL0jFUYx/xeUAdu/1YJAOJhd7lomg1L/tblL8HlZhWRztJ6uyAGL/MIvCdMXJqlHMZO5JxRHe+VWQ3dYZO/GbT5K8ceooMckpVzMcW7GSgboXCZyErfdCyvA3WJj17tZ9VZvfaxJBMEO2uxqwMHomsF1JP7xbHljQ2As3HVps65LgAr7s4mv4KAws63OTMS8ad5x2rulwrAqbNpY0lJP5heYT2bVFqCLUQSkSR+yDVDlOj3NJaYxZFj39yW6UDAQl5S8kF8r/mPBQb3iKJh1dJTF9+MiMfwomoW7ZOxsw1EeLuL1AkD5UnJ7o5cUIaYmhQ4BqWuhGWa8/GoKdUi3HNDsKHsEZAAChwi6YDMq4NdQ96b+oWEOneAByRkstehq+LjNIvGXmT9Sxw3Yzm8zUJ0B6iZrr9nxHrWoLfefYG5fCs7Bj3a0RDVCG7Uyq6/JujQ4+GAez6j81Cy7va2t0EBm9WoOFKq29JudIUrhfMq7Q== southparkfan@puppet1.miraheze.org
   mutante:
     ensure: absent
     uid: 1002
