@@ -83,12 +83,6 @@ node 'misc2.miraheze.org' {
     include prometheus::redis_exporter
 }
 
-node 'misc3.miraheze.org' {
-    include base
-    include role::services
-    include role::salt::minions
-}
-
 node 'misc4.miraheze.org' {
     include base
     include bacula::client
