@@ -1,6 +1,13 @@
 # == Class: cloud
 
-class cloud {
+class cloud (
+    Stdlib::IP::Address $main_ip4_address   => hiera('role::db::main_ip4_address'),
+    Float               $main_ip4_netmask   => hiera('role::db::main_ip4_netmask'),
+    Float               $main_ip4_broadcast => hiera('role::db::main_ip4_broadcast'),
+    Float               $main_ip4_gateway   => hiera('role::db::main_ip4_gateway'),
+    Stdlib::IP::Address $main_ip6_address   => hiera('role::db::main_ip6_address'),
+    Float               $main_ip6_gateway   => hiera('role::db::main_ip6_gateway'),
+) {
 
     file { '/etc/apt/trusted.gpg.d/proxmox.gpg':
         ensure => present,
