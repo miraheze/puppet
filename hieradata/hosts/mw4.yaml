@@ -2,6 +2,8 @@ users::groups:
   - mediawiki-admins
 jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
+letsencrypt: true
+mwservices: true
 role::mediawiki::use_strict_firewall: false
 mediawiki::branch: 'REL1_34'
 php::php_fpm::fpm_workers_multiplier: 1.0
