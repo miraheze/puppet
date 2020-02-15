@@ -1,5 +1,5 @@
 class profile::roundcubemail::main (
-    String $db_host               = hiera('roundcubemail_db_host', 'db4.miraheze.org'),
+    String $db_host               = hiera('roundcubemail_db_host', 'db6.miraheze.org'),
     String $db_name               = hiera('roundcubemail_db_name', 'roundcubemail'),
     String $db_user_name          = hiera('roundcubemail_user_name', 'roundcubemail'),
     String $db_user_password      = hiera('passwords::roundcubemail'),
