@@ -40,54 +40,54 @@ backend misc2 {
     .port = "8201";
 }
 
-backend mw4 {
+backend mw1 {
 	.host = "127.0.0.1";
 	.port = "8080";
 	.probe = mwhealth;
 }
 
-backend mw5 {
+backend mw2 {
 	.host = "127.0.0.1";
 	.port = "8081";
 	.probe = mwhealth;
 }
 
-backend mw6 {
+backend mw3 {
 	.host = "127.0.0.1";
 	.port = "8082";
 	.probe = mwhealth;
 }
 
-backend mw7 {
+backend lizardfs6 {
 	.host = "127.0.0.1";
-	.port = "8083";
+	.port = "8082";
 	.probe = mwhealth;
 }
 
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
-backend mw4_test {
+backend mw1_test {
 	.host = "127.0.0.1";
 	.port = "8080";
 }
 
-backend mw5_test {
+backend mw2_test {
 	.host = "127.0.0.1";
 	.port = "8081";
 }
 
-backend mw6_test {
+backend mw3_test {
 	.host = "127.0.0.1";
 	.port = "8082";
 }
 
-backend mw7_test {
+backend lizardfs6_test {
 	.host = "127.0.0.1";
 	.port = "8083";
 }
 
-backend test2_test {
+backend test1_test {
 	.host = "127.0.0.1";
 	.port = "8084";
 }
@@ -97,15 +97,23 @@ backend test2_test {
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(mw4);
-	mediawiki.add_backend(mw5);
-	mediawiki.add_backend(mw6);
-	mediawiki.add_backend(mw7);
+	mediawiki.add_backend(lizardfs6);
+	mediawiki.add_backend(mw1);
+	mediawiki.add_backend(mw2);
+	mediawiki.add_backend(mw3);
 }
 
 
 acl purge {
 	"localhost";
+	"54.36.165.161"; # lizardfs6
+ 	"185.52.1.75"; # mw1
+ 	"2a00:d880:6:786::2"; # mw1
+ 	"185.52.2.113"; # mw2
+ 	"2a00:d880:5:799::2"; # mw2
+ 	"81.4.121.113"; # mw3
+ 	"2a00:d880:5:b45::2"; # mw3
+ 	"185.52.2.243"; # test1
 	"51.77.107.211"; # test2
 	"2001:41d0:800:105a::3"; # test2
 	"81.4.127.174"; # misc2
@@ -216,20 +224,20 @@ sub mw_vcl_recv {
 		set req.http.Host = "static.miraheze.org";
 	}
 
-	if (req.http.X-Miraheze-Debug == "mw4.miraheze.org" || req.url ~ "^/\.well-known") {
-		set req.backend_hint = mw4_test;
+	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org" || req.url ~ "^/\.well-known") {
+		set req.backend_hint = mw1_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw5.miraheze.org") {
-		set req.backend_hint = mw5_test;
+	} else if (req.http.X-Miraheze-Debug == "mw2.miraheze.org") {
+		set req.backend_hint = mw2_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw6.miraheze.org") {
-		set req.backend_hint = mw6_test;
+	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org") {
+		set req.backend_hint = mw3_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw7.miraheze.org") {
-		set req.backend_hint = mw7_test;
+	} else if (req.http.X-Miraheze-Debug == "lizardfs6.miraheze.org") {
+		set req.backend_hint = lizardfs6_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "test2.miraheze.org") {
-		set req.backend_hint = test2_test;
+	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
+		set req.backend_hint = test1_test;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
