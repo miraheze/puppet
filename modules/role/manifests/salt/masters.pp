@@ -7,6 +7,7 @@ class role::salt::masters {
     $salt_returner_roots = '/srv/salt/_returners'
 
     class { 'salt::master':
+        salt_interface      => '::',
         salt_runner_dirs    => '/srv/runners',
         salt_file_roots     => $salt_file_roots,
         salt_pillar_roots   => $salt_pillar_roots,
