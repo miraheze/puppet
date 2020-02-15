@@ -3,7 +3,7 @@ class icingaweb2 (
     String $db_name              = 'icingaweb2',
     String $db_user_name         = 'icingaweb2',
     String $db_user_password     = undef,
-    String $ido_db_host          = 'db4.miraheze.org',
+    String $ido_db_host          = 'db6.miraheze.org',
     String $ido_db_name          = 'icinga',
     String $ido_db_user_name     = 'icinga2',
     String $ido_db_user_password = undef,
