@@ -12,6 +12,30 @@ class role::varnish {
         port  => 443,
     }
 
+    ufw::allow { 'Direct Varnish access lizardfs6':
+         proto => 'tcp',
+         port  => 81,
+         from  => '54.36.165.161',
+     }
+
+     ufw::allow { 'Direct Varnish access mw1':
+         proto => 'tcp',
+         port  => 81,
+         from  => '185.52.1.75',
+     }
+
+     ufw::allow { 'Direct Varnish access mw2':
+         proto => 'tcp',
+         port  => 81,
+         from  => '185.52.2.113',
+     }
+
+     ufw::allow { 'Direct Varnish access mw3':
+         proto => 'tcp',
+         port  => 81,
+         from  => '81.4.121.113',
+     }
+
     # new servers
     ufw::allow { 'Direct Varnish access mw4 ipv4':
         proto => 'tcp',
