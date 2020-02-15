@@ -10,3 +10,4 @@ puppetdb::db_rw_host: puppet2.miraheze.org
 postgresql::ssl: true
 role::salt::minions::salt_master_key: true
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
+new_servers: true
