@@ -92,6 +92,11 @@ backend test1_test {
 	.port = "8084";
 }
 
+backend mw4_test {
+	.host = "127.0.0.1";
+	.port = "8085";
+}
+
 # end test backend
 
 
@@ -232,6 +237,9 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org") {
 		set req.backend_hint = mw3_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw4.miraheze.org") {
+		set req.backend_hint = mw4_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "lizardfs6.miraheze.org") {
 		set req.backend_hint = lizardfs6_test;
