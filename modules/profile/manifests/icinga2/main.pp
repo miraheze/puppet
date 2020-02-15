@@ -1,5 +1,5 @@
 class profile::icinga2::main (
-    String $icinga2_db_host                 = hiera('icinga_ido_db_host', 'db4.miraheze.org'),
+    String $icinga2_db_host                 = hiera('icinga_ido_db_host', 'db6.miraheze.org'),
     String $icinga2_db_name                 = hiera('icinga_ido_db_name', 'icinga'),
     String $icinga2_db_user                 = hiera('icinga_ido_user_name', 'icinga2'),
     String $ido_db_user_password            = hiera('passwords::icinga_ido'),
