@@ -64,7 +64,7 @@ backend lizardfs6 {
 	.probe = mwhealth;
 }
 
-3backend mw4 {
+#backend mw4 {
 #	.host = "127.0.0.1";
 #	.port = "8085";
 #	.probe = mwhealth;
