@@ -64,29 +64,29 @@ backend lizardfs6 {
 	.probe = mwhealth;
 }
 
-backend mw4 {
-	.host = "127.0.0.1";
-	.port = "8085";
-	.probe = mwhealth;
-}
+3backend mw4 {
+#	.host = "127.0.0.1";
+#	.port = "8085";
+#	.probe = mwhealth;
+#}
 
-backend mw5 {
-	.host = "127.0.0.1";
-	.port = "8086";
-	.probe = mwhealth;
-}
+#backend mw5 {
+#	.host = "127.0.0.1";
+#	.port = "8086";
+#	.probe = mwhealth;
+#}
 
-backend mw6 {
-	.host = "127.0.0.1";
-	.port = "8087";
-	.probe = mwhealth;
-}
+#backend mw6 {
+#	.host = "127.0.0.1";
+#	.port = "8087";
+#	.probe = mwhealth;
+#}
 
-backend mw7 {
-	.host = "127.0.0.1";
-	.port = "8088";
-	.probe = mwhealth;
-}
+#backend mw7 {
+#	.host = "127.0.0.1";
+#	.port = "8088";
+#	.probe = mwhealth;
+#}
 
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
@@ -130,10 +130,10 @@ sub vcl_init {
 	mediawiki.add_backend(mw1);
 	mediawiki.add_backend(mw2);
 	mediawiki.add_backend(mw3);
-	mediawiki.add_backend(mw4);
-	mediawiki.add_backend(mw5);
-	mediawiki.add_backend(mw6);
-	mediawiki.add_backend(mw7);
+#	mediawiki.add_backend(mw4);
+#	mediawiki.add_backend(mw5);
+#	mediawiki.add_backend(mw6);
+#	mediawiki.add_backend(mw7);
 }
 
 
