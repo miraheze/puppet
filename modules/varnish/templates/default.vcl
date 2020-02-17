@@ -40,7 +40,7 @@ backend misc2 {
     .port = "8201";
 }
 
-<%- if @::fqdn != "cp7.miraheze.org" %>
+<%- if @fqdn != "cp7.miraheze.org" %>
 backend mw1 {
 	.host = "127.0.0.1";
 	.port = "8080";
@@ -66,7 +66,7 @@ backend lizardfs6 {
 }
 <%- end %>
 
-<%- if @::fqdn == "cp7.miraheze.org" %>
+<%- if @fqdn == "cp7.miraheze.org" %>
 backend mw4 {
 	.host = "127.0.0.1";
 	.port = "8085";
@@ -130,7 +130,7 @@ backend mw4_test {
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
-<%- if @::fqdn == "cp7.miraheze.org" %>
+<%- if @fqdn == "cp7.miraheze.org" %>
 	mediawiki.add_backend(mw4);
 	mediawiki.add_backend(mw5);
 	mediawiki.add_backend(mw6);
