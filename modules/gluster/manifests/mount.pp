@@ -111,10 +111,15 @@ define gluster::mount (
   }
 
   if !defined(File['/var/lib/glusterd/secure-access']) {
+    file { '/var/lib/glusterd':
+      ensure  => directory,
+      require => Package['glusterfs-client'],
+    }
+
     file { '/var/lib/glusterd/secure-access':
       ensure  => present,
       source  => 'puppet:///modules/gluster/secure-access',
-      require => Package['glusterfs-client'],
+      require => File['/var/lib/glusterd'],
     }
   }
 
