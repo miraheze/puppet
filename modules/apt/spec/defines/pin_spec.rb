@@ -9,6 +9,7 @@ describe 'apt::pin', type: :define do
       lsbdistid: 'Debian',
       osfamily: 'Debian',
       lsbdistcodename: 'jessie',
+      puppetversion: Puppet.version,
     }
   end
   let(:title) { 'my_pin' }

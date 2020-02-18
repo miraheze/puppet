@@ -11,11 +11,13 @@ describe 'apt::backports', type: :class do
           lsbdistid: 'Debian',
           osfamily: 'Debian',
           lsbdistcodename: 'jessie',
+          puppetversion: Puppet.version,
         }
       end
 
       it {
         is_expected.to contain_apt__source('backports').with(location: 'http://deb.debian.org/debian',
+                                                             key: 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
                                                              repos: 'main contrib non-free',
                                                              release: 'jessie-backports',
                                                              pin: { 'priority' => 200, 'release' => 'jessie-backports' })
@@ -29,6 +31,7 @@ describe 'apt::backports', type: :class do
           osfamily: 'Debian',
           lsbdistcodename: 'xenial',
           lsbdistrelease: '16.04',
+          puppetversion: Puppet.version,
         }
       end
 
@@ -48,6 +51,7 @@ describe 'apt::backports', type: :class do
           osfamily: 'Debian',
           lsbdistcodename: 'xenial',
           lsbdistrelease: '16.04',
+          puppetversion: Puppet.version,
         }
       end
       let(:params) do
@@ -76,6 +80,7 @@ describe 'apt::backports', type: :class do
           osfamily: 'Debian',
           lsbdistcodename: 'xenial',
           lsbdistrelease: '16.04',
+          puppetversion: Puppet.version,
         }
       end
       let(:params) do
@@ -102,6 +107,7 @@ describe 'apt::backports', type: :class do
         lsbdistid: 'linuxmint',
         osfamily: 'Debian',
         lsbdistcodename: 'qiana',
+        puppetversion: Puppet.version,
       }
     end
 
@@ -184,6 +190,7 @@ describe 'apt::backports', type: :class do
         osfamily: 'Debian',
         lsbdistcodename: 'xenial',
         lsbdistrelease: '16.04',
+        puppetversion: Puppet.version,
       }
     end
 

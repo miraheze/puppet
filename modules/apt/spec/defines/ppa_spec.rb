@@ -13,6 +13,7 @@ describe 'apt::ppa' do
         operatingsystem: 'Ubuntu',
         osfamily: 'Debian',
         lsbdistid: 'Ubuntu',
+        puppetversion: Puppet.version,
       }
     end
 
@@ -37,6 +38,7 @@ describe 'apt::ppa' do
         operatingsystem: 'Ubuntu',
         osfamily: 'Debian',
         lsbdistid: 'Ubuntu',
+        puppetversion: Puppet.version,
       }
     end
 
@@ -69,6 +71,7 @@ describe 'apt::ppa' do
         operatingsystem: 'Ubuntu',
         osfamily: 'Debian',
         lsbdistid: 'Ubuntu',
+        puppetversion: Puppet.version,
       }
     end
 
@@ -100,6 +103,7 @@ describe 'apt::ppa' do
         operatingsystem: 'Ubuntu',
         osfamily: 'Debian',
         lsbdistid: 'Ubuntu',
+        puppetversion: Puppet.version,
       }
     end
     let :params do
@@ -138,6 +142,7 @@ describe 'apt::ppa' do
         operatingsystem: 'Ubuntu',
         lsbdistid: 'Ubuntu',
         osfamily: 'Debian',
+        puppetversion: Puppet.version,
       }
     end
     let :params do
@@ -174,6 +179,7 @@ describe 'apt::ppa' do
         operatingsystem: 'Ubuntu',
         lsbdistid: 'Ubuntu',
         osfamily: 'Debian',
+        puppetversion: Puppet.version,
       }
     end
     let :params do
@@ -208,6 +214,7 @@ describe 'apt::ppa' do
         operatingsystem: 'Ubuntu',
         lsbdistid: 'Ubuntu',
         osfamily: 'Debian',
+        puppetversion: Puppet.version,
       }
     end
     let :params do
@@ -242,6 +249,7 @@ describe 'apt::ppa' do
         operatingsystem: 'Ubuntu',
         lsbdistid: 'Ubuntu',
         osfamily: 'Debian',
+        puppetversion: Puppet.version,
       }
     end
     let :params do
@@ -274,6 +282,7 @@ describe 'apt::ppa' do
         operatingsystem: 'Ubuntu',
         lsbdistid: 'Ubuntu',
         osfamily: 'Debian',
+        puppetversion: Puppet.version,
       }
     end
     let(:title) { 'ppa:user/foo' }
@@ -298,6 +307,7 @@ describe 'apt::ppa' do
           lsbdistid: 'Ubuntu',
           osfamily: 'Debian',
           lsbdistcodeanme: nil,
+          puppetversion: Puppet.version,
         }
       end
       let(:title) { 'ppa:user/foo' }
@@ -316,6 +326,7 @@ describe 'apt::ppa' do
           operatingsystem: 'Debian',
           lsbdistid: 'debian',
           osfamily: 'Debian',
+          puppetversion: Puppet.version,
         }
       end
       let(:title) { 'ppa:user/foo' }

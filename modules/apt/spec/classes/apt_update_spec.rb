@@ -15,6 +15,7 @@ describe 'apt::update', type: :class do
             osfamily: 'Debian',
             apt_update_last_success: factval,
             lsbdistcodename: 'jessie',
+            puppetversion: Puppet.version,
           }
         end
         let(:pre_condition) do
@@ -34,6 +35,7 @@ describe 'apt::update', type: :class do
           lsbdistid: 'Debian',
           osfamily: 'Debian',
           lsbdistcodename: 'jessie',
+          puppetversion: Puppet.version,
         }
       end
       let(:pre_condition) { "class{ '::apt': update => {'frequency' => 'always' },}" }
@@ -58,6 +60,7 @@ describe 'apt::update', type: :class do
             osfamily: 'Debian',
             apt_update_last_success: factval,
             lsbdistcodename: 'jessie',
+            puppetversion: Puppet.version,
           }
         end
         let(:pre_condition) { "class{ '::apt': update => {'frequency' => 'reluctantly' },}" }
@@ -75,6 +78,7 @@ describe 'apt::update', type: :class do
           lsbdistid: 'Debian',
           osfamily: 'Debian',
           lsbdistcodename: 'jessie',
+          puppetversion: Puppet.version,
         }
       end
       let(:pre_condition) { "class{ '::apt': update => {'frequency' => 'reluctantly' },}" }
@@ -96,6 +100,7 @@ describe 'apt::update', type: :class do
               osfamily: 'Debian',
               apt_update_last_success: factval,
               lsbdistcodename: 'jessie',
+              puppetversion: Puppet.version,
             }
           end
           let(:pre_condition) { "class{ '::apt': update => {'frequency' => '#{update_frequency}',} }" }
@@ -114,6 +119,7 @@ describe 'apt::update', type: :class do
             osfamily: 'Debian',
             lsbdistcodename: 'jessie',
             apt_update_last_success: Time.now.to_i,
+            puppetversion: Puppet.version,
           }
         end
         let(:pre_condition) { "class{ '::apt': update => {'frequency' => '#{update_frequency}',} }" }
@@ -131,6 +137,7 @@ describe 'apt::update', type: :class do
             osfamily: 'Debian',
             lsbdistcodename: 'jessie',
             apt_update_last_success: nil,
+            puppetversion: Puppet.version,
           }
         end
         let(:pre_condition) { "class{ '::apt': update => {'frequency' => '#{update_frequency}',} }" }

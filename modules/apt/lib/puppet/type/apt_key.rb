@@ -68,7 +68,7 @@ Puppet::Type.newtype(:apt_key) do
     desc 'The key server to fetch the key from based on the ID. It can either be a domain name or url.'
     defaultto :'keyserver.ubuntu.com'
 
-    newvalues(%r{\A((hkp|hkps|http|https):\/\/)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?(\/[a-zA-Z\d\-_.]+)*\/?$})
+    newvalues(%r{\A((hkp|hkps|http|https)://)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?$})
   end
 
   newparam(:options) do
@@ -77,11 +77,6 @@ Puppet::Type.newtype(:apt_key) do
 
   newparam(:refresh, boolean: true, parent: Puppet::Parameter::Boolean) do
     desc 'When true, recreate an existing expired key'
-    defaultto false
-  end
-
-  newparam(:weak_ssl, boolean: true, parent: Puppet::Parameter::Boolean) do
-    desc 'When true and source uses https, accepts download of keys without SSL verfication'
     defaultto false
   end
 

@@ -16,9 +16,7 @@ class apt::params {
   $conf_d         = "${root}/apt.conf.d"
   $preferences    = "${root}/preferences"
   $preferences_d  = "${root}/preferences.d"
-  $apt_conf_d     = "${root}/apt.conf.d"
   $keyserver      = 'keyserver.ubuntu.com'
-  $key_options    = undef
   $confs          = {}
   $update         = {}
   $purge          = {}
@@ -28,7 +26,6 @@ class apt::params {
   $ppas           = {}
   $pins           = {}
   $settings       = {}
-  $manage_auth_conf = true
   $auth_conf_entries = []
 
   $config_files = {
@@ -66,7 +63,6 @@ class apt::params {
     'sources.list.d' => false,
     'preferences'    => false,
     'preferences.d'  => false,
-    'apt.conf.d'     => false,
   }
 
   $source_key_defaults = {
@@ -85,15 +81,11 @@ class apt::params {
     'Debian': {
           $backports = {
             'location' => 'http://deb.debian.org/debian',
+            'key'      => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
             'repos'    => 'main contrib non-free',
           }
       $ppa_options = undef
       $ppa_package = undef
-      if versioncmp($facts['os']['release']['major'], '9') >= 0 {
-        $auth_conf_owner = '_apt'
-      } else {
-        $auth_conf_owner = 'root'
-      }
     }
     'Ubuntu': {
       $backports = {
@@ -103,11 +95,6 @@ class apt::params {
       }
       $ppa_options        = '-y'
       $ppa_package        = 'software-properties-common'
-      if versioncmp($facts['os']['release']['full'], '16.04') >= 0 {
-        $auth_conf_owner = '_apt'
-      } else {
-        $auth_conf_owner = 'root'
-      }
     }
     undef: {
       fail('Unable to determine value for fact os[\"name\"]')
@@ -116,7 +103,6 @@ class apt::params {
       $ppa_options = undef
       $ppa_package = undef
       $backports   = undef
-      $auth_conf_owner = 'root'
     }
   }
 }

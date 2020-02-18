@@ -6,14 +6,11 @@
 #   Specifies the provider that should be used by apt::update.
 #
 # @param keyserver
-#   Specifies a keyserver to provide the GPG key. Valid options: a string containing a domain name or a full URL (http://, https://, or
+#   Specifies a keyserver to provide the GPG key. Valid options: a string containing a domain name or a full URL (http://, https://, or 
 #   hkp://).
 #
-# @param key_options
-#   Specifies the default options for apt::key resources.
-#
 # @param ppa_options
-#   Supplies options to be passed to the `add-apt-repository` command.
+#   Supplies options to be passed to the `add-apt-repository` command. 
 #
 # @param ppa_package
 #   Names the package that provides the `apt-add-repository` command.
@@ -21,13 +18,13 @@
 # @param backports
 #   Specifies some of the default parameters used by apt::backports. Valid options: a hash made up from the following keys:
 #
-# @option backports [String] :location
+# @option backports [String] :location 
 #   See apt::backports for documentation.
 #
-# @option backports [String] :repos
+# @option backports [String] :repos 
 #   See apt::backports for documentation.
 #
-# @option backports [String] :key
+# @option backports [String] :key 
 #   See apt::backports for documentation.
 #
 # @param confs
@@ -37,9 +34,9 @@
 #   Configures various update settings. Valid options: a hash made up from the following keys:
 #
 # @option update [String] :frequency
-#   Specifies how often to run `apt-get update`. If the exec resource `apt_update` is notified, `apt-get update` runs regardless of this value.
-#   Valid options: 'always' (at every Puppet run); 'daily' (if the value of `apt_update_last_success` is less than current epoch time minus 86400);
-#   'weekly' (if the value of `apt_update_last_success` is less than current epoch time minus 604800); and 'reluctantly' (only if the exec resource
+#   Specifies how often to run `apt-get update`. If the exec resource `apt_update` is notified, `apt-get update` runs regardless of this value. 
+#   Valid options: 'always' (at every Puppet run); 'daily' (if the value of `apt_update_last_success` is less than current epoch time minus 86400); 
+#   'weekly' (if the value of `apt_update_last_success` is less than current epoch time minus 604800); and 'reluctantly' (only if the exec resource 
 #   `apt_update` is notified). Default: 'reluctantly'.
 #
 # @option update [Integer] :loglevel
@@ -84,36 +81,29 @@
 # @param settings
 #   Creates new `apt::setting` resources. Valid options: a hash to be passed to the create_resources function linked above.
 #
-# @param manage_auth_conf
-#   Specifies whether to manage the /etc/apt/auth.conf file. When true, the file will be overwritten with the entries specified in
-#   the auth_conf_entries parameter. When false, the file will be ignored (note that this does not set the file to absent.
-#
 # @param auth_conf_entries
-#   An optional array of login configuration settings (hashes) that are recorded in the file /etc/apt/auth.conf. This file has a netrc-like
-#   format (similar to what curl uses) and contains the login configuration for APT sources and proxies that require authentication. See
-#   https://manpages.debian.org/testing/apt/apt_auth.conf.5.en.html for details. If specified each hash must contain the keys machine, login and
-#   password and no others. Specifying manage_auth_conf and not specifying this parameter will set /etc/apt/auth.conf to absent.
-#
-# @param auth_conf_owner
-#   The owner of the file /etc/apt/auth.conf. Default: '_apt' or 'root' on old releases.
+#   An optional array of login configuration settings (hashes) that are recorded in the file /etc/apt/auth.conf. This file has a netrc-like 
+#   format (similar to what curl uses) and contains the login configuration for APT sources and proxies that require authentication. See 
+#   https://manpages.debian.org/testing/apt/apt_auth.conf.5.en.html for details. If specified each hash must contain the keys machine, login and 
+#   password and no others.
 #
 # @param root
 #   Specifies root directory of Apt executable.
 #
 # @param sources_list
-#   Specifies the path of the sources_list file to use.
+#   Specifies the path of the sources_list file to use. 
 #
 # @param sources_list_d
-#   Specifies the path of the sources_list.d file to use.
+#   Specifies the path of the sources_list.d file to use. 
 #
 # @param conf_d
-#   Specifies the path of the conf.d file to use.
+#   Specifies the path of the conf.d file to use. 
 #
 # @param preferences
-#   Specifies the path of the preferences file to use.
+#   Specifies the path of the preferences file to use. 
 #
 # @param preferences_d
-#   Specifies the path of the preferences.d file to use.
+#   Specifies the path of the preferences.d file to use. 
 #
 # @param config_files
 #   A hash made up of the various configuration files used by Apt.
@@ -125,7 +115,6 @@ class apt (
   Hash $include_defaults        = $apt::params::include_defaults,
   String $provider              = $apt::params::provider,
   String $keyserver             = $apt::params::keyserver,
-  Optional[String] $key_options = $apt::params::key_options,
   Optional[String] $ppa_options = $apt::params::ppa_options,
   Optional[String] $ppa_package = $apt::params::ppa_package,
   Optional[Hash] $backports     = $apt::params::backports,
@@ -138,17 +127,14 @@ class apt (
   Hash $ppas                    = $apt::params::ppas,
   Hash $pins                    = $apt::params::pins,
   Hash $settings                = $apt::params::settings,
-  Boolean $manage_auth_conf     = $apt::params::manage_auth_conf,
   Array[Apt::Auth_conf_entry]
     $auth_conf_entries          = $apt::params::auth_conf_entries,
-  String $auth_conf_owner       = $apt::params::auth_conf_owner,
   String $root                  = $apt::params::root,
   String $sources_list          = $apt::params::sources_list,
   String $sources_list_d        = $apt::params::sources_list_d,
   String $conf_d                = $apt::params::conf_d,
   String $preferences           = $apt::params::preferences,
   String $preferences_d         = $apt::params::preferences_d,
-  String $apt_conf_d            = $apt::params::apt_conf_d,
   Hash $config_files            = $apt::params::config_files,
   Hash $source_key_defaults     = $apt::params::source_key_defaults,
 ) inherits apt::params {
@@ -184,9 +170,6 @@ class apt (
   }
   if $purge['preferences.d'] {
     assert_type(Boolean, $purge['preferences.d'])
-  }
-  if $purge['apt.conf.d'] {
-    assert_type(Boolean, $purge['apt.conf.d'])
   }
 
   $_purge = merge($::apt::purge_defaults, $purge)
@@ -266,17 +249,6 @@ class apt (
     notify  => Class['apt::update'],
   }
 
-  file { 'apt.conf.d':
-    ensure  => directory,
-    path    => $::apt::apt_conf_d,
-    owner   => root,
-    group   => root,
-    mode    => '0644',
-    purge   => $_purge['apt.conf.d'],
-    recurse => $_purge['apt.conf.d'],
-    notify  => Class['apt::update'],
-  }
-
   if $confs {
     create_resources('apt::conf', $confs)
   }
@@ -297,22 +269,20 @@ class apt (
     create_resources('apt::setting', $settings)
   }
 
-  if $manage_auth_conf {
-    $auth_conf_ensure = $auth_conf_entries ? {
-      []      => 'absent',
-      default => 'present',
-    }
+  $auth_conf_ensure = $auth_conf_entries ? {
+    []      => 'absent',
+    default => 'present',
+  }
 
-    $auth_conf_tmp = epp('apt/auth_conf.epp')
+  $auth_conf_tmp = epp('apt/auth_conf.epp')
 
-    file { '/etc/apt/auth.conf':
-      ensure  => $auth_conf_ensure,
-      owner   => $auth_conf_owner,
-      group   => 'root',
-      mode    => '0600',
-      content => "${confheadertmp}${auth_conf_tmp}",
-      notify  => Class['apt::update'],
-    }
+  file { '/etc/apt/auth.conf':
+    ensure  => $auth_conf_ensure,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0600',
+    content => "${confheadertmp}${auth_conf_tmp}",
+    notify  => Class['apt::update'],
   }
 
   # manage pins if present
@@ -321,5 +291,5 @@ class apt (
   }
 
   # required for adding GPG keys on Debian 9 (and derivatives)
-  ensure_packages(['gnupg'])
+  ensure_packages(['dirmngr'])
 }

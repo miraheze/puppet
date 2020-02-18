@@ -1,7 +1,3 @@
-RSpec.configure do |c|
-  c.mock_with :rspec
-end
-
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec-puppet-facts'
 
@@ -23,15 +19,10 @@ default_fact_files.each do |f|
   next unless File.exist?(f) && File.readable?(f) && File.size?(f)
 
   begin
-    default_facts.merge!(YAML.safe_load(File.read(f), [], [], true))
+    default_facts.merge!(YAML.safe_load(File.read(f)))
   rescue => e
     RSpec.configuration.reporter.message "WARNING: Unable to load #{f}: #{e}"
   end
-end
-
-# read default_facts and merge them over what is provided by facterdb
-default_facts.each do |fact, value|
-  add_custom_fact fact, value
 end
 
 RSpec.configure do |c|
@@ -41,18 +32,12 @@ RSpec.configure do |c|
     # by default Puppet runs at warning level
     Puppet.settings[:strict] = :warning
   end
-  c.filter_run_excluding(bolt: true) unless ENV['GEM_BOLT']
-  c.after(:suite) do
-    RSpec::Puppet::Coverage.report!(0)
-  end
 end
 
-# Ensures that a module is defined
-# @param module_name Name of the module
 def ensure_module_defined(module_name)
   module_name.split('::').reduce(Object) do |last_module, next_module|
-    last_module.const_set(next_module, Module.new) unless last_module.const_defined?(next_module, false)
-    last_module.const_get(next_module, false)
+    last_module.const_set(next_module, Module.new) unless last_module.const_defined?(next_module)
+    last_module.const_get(next_module)
   end
 end
 
