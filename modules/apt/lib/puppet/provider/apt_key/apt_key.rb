@@ -2,14 +2,6 @@ require 'open-uri'
 require 'net/ftp'
 require 'tempfile'
 
-if RUBY_VERSION == '1.8.7'
-  # Mothers cry, puppies die and Ruby 1.8.7's open-uri needs to be
-  # monkeypatched to support passing in :ftp_passive_mode.
-  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
-                                     'puppet_x', 'apt_key', 'patch_openuri.rb'))
-  OpenURI::Options[:ftp_active_mode] = false
-end
-
 Puppet::Type.type(:apt_key).provide(:apt_key) do
   desc 'apt-key provider for apt_key resource'
 
@@ -134,7 +126,11 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
         # Only send basic auth if URL contains userinfo
         # Some webservers (e.g. Amazon S3) return code 400 if empty basic auth is sent
         if parsed_value.userinfo.nil?
-          key = parsed_value.read
+          key = if parsed_value.scheme == 'https' && resource[:weak_ssl] == true
+                  open(parsed_value, ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE).read
+                else
+                  parsed_value.read
+                end
         else
           user_pass = parsed_value.userinfo.split(':')
           parsed_value.userinfo = ''
@@ -244,12 +240,6 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
   end
 
   mk_resource_methods
-
-  # Needed until PUP-1470 is fixed and we can drop support for Puppet versions
-  # before that.
-  def expired
-    @property_hash[:expired]
-  end
 
   # Alias the setters of read-only properties
   # to the read_only function.

@@ -23,6 +23,7 @@ everything_everything_pp = <<-MANIFEST
           'sources.list.d' => true,
           'preferences'    => true,
           'preferences.d'  => true,
+          'apt.conf.d'     => true,
         },
         sources => $sources,
       }
@@ -31,7 +32,7 @@ everything_everything_pp = <<-MANIFEST
 describe 'apt class' do
   context 'with reset' do
     it 'fixes the sources.list' do
-      shell('cp /etc/apt/sources.list /tmp')
+      run_shell('cp /etc/apt/sources.list /tmp')
     end
   end
 
@@ -43,14 +44,14 @@ describe 'apt class' do
       end
     end
     it 'stills work' do
-      shell('apt-get update')
-      shell('apt-get -y --force-yes upgrade')
+      run_shell('apt-get update')
+      run_shell('apt-get -y --force-yes upgrade')
     end
   end
 
   context 'with reset' do
     it 'fixes the sources.list' do
-      shell('cp /tmp/sources.list /etc/apt')
+      run_shell('cp /tmp/sources.list /etc/apt')
     end
   end
 end

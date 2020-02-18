@@ -19,6 +19,7 @@ _Private Classes_
 
 * [`apt::conf`](#aptconf): Specifies a custom Apt configuration file.
 * [`apt::key`](#aptkey): Manages the GPG keys that Apt uses to authenticate packages.
+* [`apt::mark`](#aptmark): defined typeapt::mark
 * [`apt::pin`](#aptpin): Manages Apt pins. Does not trigger an apt-get update run.
 * [`apt::ppa`](#aptppa): Manages PPA repositories using `add-apt-repository`. Not supported on Debian.
 * [`apt::setting`](#aptsetting): Manages Apt configuration files.
@@ -34,6 +35,11 @@ _Private Resource types_
 * `apt_key`: This type provides Puppet with the capabilities to manage GPG keys needed
 by apt to perform package validation. Apt has it's own GPG keyring that can
 be manipulated through the `apt-key` command.
+
+**Data types**
+
+* [`Apt::Auth_conf_entry`](#aptauth_conf_entry): Login configuration settings that are recorded in the file `/etc/apt/auth.conf`.
+* [`Apt::Proxy`](#aptproxy): Configures Apt to connect to a proxy server.
 
 **Tasks**
 
@@ -65,10 +71,18 @@ Default value: $apt::params::provider
 
 Data type: `String`
 
-Specifies a keyserver to provide the GPG key. Valid options: a string containing a domain name or a full URL (http://, https://,
-hkp:// or hkps://). The hkps:// protocol is currently only supported on Ubuntu 18.04.
+Specifies a keyserver to provide the GPG key. Valid options: a string containing a domain name or a full URL (http://, https://, or
+hkp://).
 
 Default value: $apt::params::keyserver
+
+##### `key_options`
+
+Data type: `Optional[String]`
+
+Specifies the default options for apt::key resources.
+
+Default value: $apt::params::key_options
 
 ##### `ppa_options`
 
@@ -189,6 +203,15 @@ Creates new `apt::setting` resources. Valid options: a hash to be passed to the 
 
 Default value: $apt::params::settings
 
+##### `manage_auth_conf`
+
+Data type: `Boolean`
+
+Specifies whether to manage the /etc/apt/auth.conf file. When true, the file will be overwritten with the entries specified in
+the auth_conf_entries parameter. When false, the file will be ignored (note that this does not set the file to absent.
+
+Default value: $apt::params::manage_auth_conf
+
 ##### `auth_conf_entries`
 
 Data type: `Array[Apt::Auth_conf_entry]`
@@ -196,9 +219,17 @@ Data type: `Array[Apt::Auth_conf_entry]`
 An optional array of login configuration settings (hashes) that are recorded in the file /etc/apt/auth.conf. This file has a netrc-like
 format (similar to what curl uses) and contains the login configuration for APT sources and proxies that require authentication. See
 https://manpages.debian.org/testing/apt/apt_auth.conf.5.en.html for details. If specified each hash must contain the keys machine, login and
-password and no others.
+password and no others. Specifying manage_auth_conf and not specifying this parameter will set /etc/apt/auth.conf to absent.
 
 Default value: $apt::params::auth_conf_entries
+
+##### `auth_conf_owner`
+
+Data type: `String`
+
+The owner of the file /etc/apt/auth.conf. Default: '_apt' or 'root' on old releases.
+
+Default value: $apt::params::auth_conf_owner
 
 ##### `root`
 
@@ -287,6 +318,14 @@ Data type: `Hash`
 
 
 Default value: $apt::params::include_defaults
+
+##### `apt_conf_d`
+
+Data type: `String`
+
+
+
+Default value: $apt::params::apt_conf_d
 
 ##### `source_key_defaults`
 
@@ -481,12 +520,20 @@ Default value: `undef`
 
 ##### `server`
 
-Data type: `Pattern[/\A((hkp|hkps|http|https):\/\/)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?$/]`
+Data type: `Pattern[/\A((hkp|hkps|http|https):\/\/)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?(\/[a-zA-Z\d\-_.]+)*\/?$/]`
 
 Specifies a keyserver to provide the GPG key. Valid options: a string containing a domain name or a full URL (http://, https://,
 hkp:// or hkps://). The hkps:// protocol is currently only supported on Ubuntu 18.04.
 
 Default value: $::apt::keyserver
+
+##### `weak_ssl`
+
+Data type: `Boolean`
+
+Specifies whether strict SSL verification on a https URL should be disabled. Valid options: true or false.
+
+Default value: `false`
 
 ##### `options`
 
@@ -494,7 +541,23 @@ Data type: `Optional[String]`
 
 Passes additional options to `apt-key adv --keyserver-options`.
 
-Default value: `undef`
+Default value: $::apt::key_options
+
+### apt::mark
+
+defined typeapt::mark
+
+#### Parameters
+
+The following parameters are available in the `apt::mark` defined type.
+
+##### `setting`
+
+Data type: `Enum['auto','manual','hold','unhold']`
+
+auto, manual, hold, unhold
+specifies the behavior of apt in case of no more dependencies installed
+https://manpages.debian.org/sretch/apt/apt-mark.8.en.html
 
 ### apt::pin
 
@@ -653,6 +716,15 @@ Optional if lsb-release is installed (unless you're using a different release th
 Specifies the operating system of your node. Valid options: a string containing a valid LSB distribution codename.
 
 Default value: $facts['lsbdistcodename']
+
+##### `dist`
+
+Data type: `Optional[String]`
+
+Optional if lsb-release is installed (unless you're using a different release than indicated by lsb-release, e.g., Linux Mint).
+Specifies the distribution of your node. Valid options: a string containing a valid distribution codename.
+
+Default value: $facts['lsbdistid']
 
 ##### `package_name`
 
@@ -847,6 +919,74 @@ Default value: `true`
 
 ## Resource types
 
+## Data types
+
+### Apt::Auth_conf_entry
+
+Login configuration settings that are recorded in the file `/etc/apt/auth.conf`.
+
+* **See also**
+https://manpages.debian.org/testing/apt/apt_auth.conf.5.en.html
+for more information
+
+Alias of `Struct[{
+    machine => String[1],
+    login => String,
+    password => String
+  }]`
+
+#### Parameters
+
+The following parameters are available in the `Apt::Auth_conf_entry` data type.
+
+##### `machine`
+
+Hostname of machine to connect to.
+
+##### `login`
+
+Specifies the username to connect with.
+
+##### `password`
+
+Specifies the password to connect with.
+
+### Apt::Proxy
+
+Configures Apt to connect to a proxy server.
+
+Alias of `Struct[{
+    ensure => Optional[Enum['file', 'present', 'absent']],
+    host   => Optional[String],
+    port   => Optional[Integer[0, 65535]],
+    https  => Optional[Boolean],
+    direct => Optional[Boolean],
+  }]`
+
+#### Parameters
+
+The following parameters are available in the `Apt::Proxy` data type.
+
+##### `ensure`
+
+Specifies whether the proxy should exist. Valid options: 'file', 'present', and 'absent'. Prefer 'file' over 'present'.
+
+##### `host`
+
+Specifies a proxy host to be stored in `/etc/apt/apt.conf.d/01proxy`. Valid options: a string containing a hostname.
+
+##### `port`
+
+Specifies a proxy port to be stored in `/etc/apt/apt.conf.d/01proxy`. Valid options: an integer containing a port number.
+
+##### `https`
+
+Specifies whether to enable https proxies.
+
+##### `direct`
+
+Specifies whether or not to use a `DIRECT` https proxy if http proxy is used but https is not.
+
 ## Tasks
 
 ### init
@@ -859,7 +999,7 @@ Allows you to perform apt functions
 
 ##### `action`
 
-Data type: `Enum[update, upgrade]`
+Data type: `Enum[update, upgrade, dist-upgrade, autoremove]`
 
 Action to perform 
 
