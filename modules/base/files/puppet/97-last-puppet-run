@@ -17,4 +17,4 @@ if [ $DELTAMIN -gt 60 ]; then
 else
 	MSG="($DELTAMIN minutes ago). $(puppet-enabled || true)"
 fi
-printf "The last Puppet run was at %s %b\\n"
+printf "The last Puppet run was at %s %b\\n" "${LAST_RUN}" "${MSG}"
