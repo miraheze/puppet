@@ -5,6 +5,8 @@ mariadb::version: '10.4'
 
 php::php_version: '7.3'
 
+new_servers: true
+
 # icinga2
 
 icinga2::globals::package_name: 'icinga2'
