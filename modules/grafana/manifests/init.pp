@@ -19,6 +19,7 @@ class grafana (
         require => Apt::Source['grafana_apt'],
     }
 
+    $new_servers = hiera('new_servers', false)
     file { '/etc/grafana/grafana.ini':
         content => template('grafana/grafana.ini.erb'),
         owner   => 'root',
