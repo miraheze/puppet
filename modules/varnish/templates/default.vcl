@@ -64,29 +64,29 @@ backend lizardfs6 {
 	.probe = mwhealth;
 }
 
-#backend mw4 {
-#	.host = "127.0.0.1";
-#	.port = "8085";
-#	.probe = mwhealth;
-#}
+backend mw4 {
+	.host = "127.0.0.1";
+	.port = "8085";
+	.probe = mwhealth;
+}
 
-#backend mw5 {
-#	.host = "127.0.0.1";
-#	.port = "8086";
-#	.probe = mwhealth;
-#}
+backend mw5 {
+	.host = "127.0.0.1";
+	.port = "8086";
+	.probe = mwhealth;
+}
 
-#backend mw6 {
-#	.host = "127.0.0.1";
-#	.port = "8087";
-#	.probe = mwhealth;
-#}
+backend mw6 {
+	.host = "127.0.0.1";
+	.port = "8087";
+	.probe = mwhealth;
+}
 
-#backend mw7 {
-#	.host = "127.0.0.1";
-#	.port = "8088";
-#	.probe = mwhealth;
-#}
+backend mw7 {
+	.host = "127.0.0.1";
+	.port = "8088";
+	.probe = mwhealth;
+}
 
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
@@ -130,10 +130,13 @@ sub vcl_init {
 	mediawiki.add_backend(mw1);
 	mediawiki.add_backend(mw2);
 	mediawiki.add_backend(mw3);
-#	mediawiki.add_backend(mw4);
-#	mediawiki.add_backend(mw5);
-#	mediawiki.add_backend(mw6);
-#	mediawiki.add_backend(mw7);
+
+	# new servers
+	new mediawiki_new = directors.round_robin();
+	mediawiki_new.add_backend(mw4);
+	mediawiki_new.add_backend(mw5);
+	mediawiki_new.add_backend(mw6);
+	mediawiki_new.add_backend(mw7);
 }
 
 
@@ -276,7 +279,11 @@ sub mw_vcl_recv {
 		set req.backend_hint = test1_test;
 		return (pass);
 	} else {
+		<%- if @fqdn == "cp7.miraheze.org" %>
+		set req.backend_hint = mediawiki_new.backend();
+		<%- else %>
 		set req.backend_hint = mediawiki.backend();
+		<%- end %>
 	}
 
 	# We never want to cache non-GET/HEAD requests.
