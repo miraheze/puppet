@@ -118,6 +118,18 @@ class role::db {
 
 
     # new servers
+    ufw::allow { 'mysql port mon1 ipv4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.89.160.138',
+    }
+
+    ufw::allow { 'mysql port mon1 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:105a::6',
+    }
+
     ufw::allow { 'mysql port jobrunner1 ipv4':
         proto => 'tcp',
         port  => '3306',
