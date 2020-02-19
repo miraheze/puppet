@@ -33,6 +33,7 @@ class nutcracker(
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
+        notify  => Service['nutcracker'],
         require => Package['nutcracker'],
     }
 
