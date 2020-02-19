@@ -44,22 +44,40 @@ class role::db {
         from  => '54.36.165.161',
     }
 
-    ufw::allow { 'mysql port mw1':
+    ufw::allow { 'mysql port mw1 ipv4':
         proto => 'tcp',
         port  => '3306',
         from  => '185.52.1.75',
     }
 
-    ufw::allow { 'mysql port mw2':
+    ufw::allow { 'mysql port mw1 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2a00:d880:6:786:0000:0000:0000:0002',
+    }
+
+    ufw::allow { 'mysql port mw2 ipv4':
         proto => 'tcp',
         port  => '3306',
         from  => '185.52.2.113',
     }
-	
-    ufw::allow { 'mysql port mw3':
+
+    ufw::allow { 'mysql port mw2 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => ' 2a00:d880:5:799:0000:0000:0000:0002',
+    }
+
+    ufw::allow { 'mysql port mw3 ipv4':
         proto => 'tcp',
         port  => '3306',
         from  => '81.4.121.113',
+    }
+
+    ufw::allow { 'mysql port mw3 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2a00:d880:5:b45:0000:0000:0000:0002',
     }
 
     ufw::allow { 'mysql port misc1 ipv4':
