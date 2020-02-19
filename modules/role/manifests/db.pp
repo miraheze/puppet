@@ -62,10 +62,16 @@ class role::db {
         from  => '81.4.121.113',
     }
 
-    ufw::allow { 'mysql port misc1':
+    ufw::allow { 'mysql port misc1 ipv4':
         proto => 'tcp',
         port  => '3306',
         from  => '185.52.1.76',
+    }
+
+    ufw::allow { 'mysql port misc1 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2a00:d880:6:787::2',
     }
 
     ufw::allow { 'mysql port misc2':
