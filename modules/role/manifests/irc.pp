@@ -11,31 +11,31 @@ class role::irc {
         sleeptime    => '0.5',
     }
 
-    ufw::allow { 'ircrcbot port lizardfs6':
+    ufw::allow { 'ircrcbot port lizardfs6 ipv4':
         proto => 'udp',
         port  => '5070',
         from  => '54.36.165.161',
     }
 
-    ufw::allow { 'ircrcbot port mw1':
+    ufw::allow { 'ircrcbot port mw1 ipv4':
         proto => 'udp',
         port  => '5070',
         from  => '185.52.1.75',
     }
 
-    ufw::allow { 'ircrcbot port mw2':
+    ufw::allow { 'ircrcbot port mw2 ipv4':
         proto => 'udp',
         port  => '5070',
         from  => '185.52.2.113',
     }
 
-    ufw::allow { 'ircrcbot port mw3':
+    ufw::allow { 'ircrcbot port mw3 ipv4':
         proto => 'udp',
         port  => '5070',
         from  => '81.4.121.113',
     }
 
-    ufw::allow { 'ircrcbot port test1':
+    ufw::allow { 'ircrcbot port test1 ipv4':
         proto => 'udp',
         port  => '5070',
         from  => '185.52.2.243',
