@@ -1,5 +1,9 @@
 [server]
+<%- if @new_servers %>
+domain = grafana-new.miraheze.org
+<%- else %>
 domain = grafana.miraheze.org
+<%- end %>
 root_url = %(protocol)s://%(domain)s/
 
 [users]
