@@ -15,6 +15,7 @@ class mariadb::config(
     $ido_db_user_password = hiera('passwords::icinga_ido')
     $icingaweb2_db_user_password = hiera('passwords::icingaweb2')
     $roundcubemail_password = hiera('passwords::roundcubemail')
+    $mariadb_replica_password = hiera('passwords::mariadb_replica_password')
 
     $server_id = inline_template(
         "<%= @virtual_ip_address.split('.').inject(0)\
