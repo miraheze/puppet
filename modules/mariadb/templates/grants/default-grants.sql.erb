@@ -41,3 +41,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE
 GRANT ALL PRIVILEGES
     ON roundcubemail.* TO 'roundcubemail'@'185.52.1.76'
     IDENTIFIED BY '<%= @roundcubemail_password %>';
+
+-- Grants for 'replica'@'%'
+
+GRANT REPLICATION SLAVE ON *.* TO 'replica'@'%' IDENTIFIED BY '<%= @mariadb_replica_password %>';
