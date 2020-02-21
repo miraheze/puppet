@@ -35,7 +35,7 @@ probe mwhealth {
 	.expected_response = 200;
 }
 
-backend misc2 {
+backend mon1 {
     .host = "127.0.0.1";
     .port = "8201";
 }
@@ -152,7 +152,6 @@ acl purge {
  	"185.52.2.243"; # test1
 	"51.77.107.211"; # test2
 	"2001:41d0:800:105a::3"; # test2
-	"81.4.127.174"; # misc2
 	"51.89.160.128"; # mw4
 	"2001:41d0:800:1056::3"; # mw4
 	"51.89.160.133"; # mw5
@@ -161,6 +160,8 @@ acl purge {
 	"2001:41d0:800:105a::4"; # mw6
 	"51.89.160.137"; # mw7
 	"2001:41d0:800:105a::5"; # mw7
+	"51.89.160.138"; # mon1
+	"2001:41d0:800:105a::6"; # mon1
 }
 
 sub mw_stash_cookie {
@@ -351,7 +352,7 @@ sub vcl_recv {
 	}
 
 	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = misc2;
+		set req.backend_hint = mon1;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
