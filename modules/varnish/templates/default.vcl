@@ -130,6 +130,7 @@ sub vcl_init {
 	mediawiki.add_backend(mw1);
 	mediawiki.add_backend(mw2);
 	mediawiki.add_backend(mw3);
+	mediawiki.add_backend(mw4);
 
 	# new servers
 	new mediawiki_new = directors.round_robin();
