@@ -85,9 +85,7 @@ node 'misc1.miraheze.org' {
 node 'misc2.miraheze.org' {
     include base
     include role::redis
-    include role::matomo
     include role::salt::minions
-    include prometheus::php_fpm
     include prometheus::redis_exporter
 }
 
