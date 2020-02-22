@@ -42,7 +42,7 @@ class matomo {
             'variables_order'     => 'GPCS',
         },
         'config_cli' => {
-            'memory_limit' => '400M',
+            'memory_limit' => '2G',
         },
         'fpm_min_child' => 4,
         'version' => hiera('php::php_version', '7.3'),
