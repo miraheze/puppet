@@ -126,11 +126,10 @@ backend mw4_test {
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(lizardfs6);
-	mediawiki.add_backend(mw1);
-	mediawiki.add_backend(mw2);
-	mediawiki.add_backend(mw3);
 	mediawiki.add_backend(mw4);
+	mediawiki.add_backend(mw5);
+	mediawiki.add_backend(mw6);
+	mediawiki.add_backend(mw7);
 
 	# new servers
 	new mediawiki_new = directors.round_robin();
