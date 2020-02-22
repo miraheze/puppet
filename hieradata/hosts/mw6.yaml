@@ -4,7 +4,7 @@ jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 role::mediawiki::use_strict_firewall: false
 mediawiki::branch: 'REL1_34'
-php::php_fpm::fpm_workers_multiplier: 3.0
+php::php_fpm::fpm_workers_multiplier: 2.0
 php::php_version: '7.3'
 puppetserver_hostname: puppet2.miraheze.org
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
