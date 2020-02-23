@@ -323,8 +323,8 @@ sub mw_vcl_recv {
 	}
 	
 	# Temporary solution to fix CookieWarning issue with ElectronPDF
-
-	if (req.http.X-Real-IP == "185.52.1.71") {
+	if (req.http.X-Real-IP == "51.89.160.132" || req.http.X-Real-IP == "2001:41d0:800:1056::7" ||
+		req.http.X-Real-IP == "51.89.160.141" || req.http.X-Real-IP == "2001:41d0:800:105a::9") {
 		return (pass);
 	}
 
