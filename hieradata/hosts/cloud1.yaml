@@ -1,2 +1,3 @@
 puppetserver_hostname: puppet2.miraheze.org
 ssh::server::permit_root: true
+new_servers: true
