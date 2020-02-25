@@ -2,7 +2,7 @@ users::groups:
   - puppet-users
 puppetserver: true
 puppetserver_hostname: puppet2.miraheze.org
-puppetserver_java_opts: '-Xms2G -Xmx2G'
+puppetserver_java_opts: '-Xms1G -Xmx1G'
 puppetdb_enable: true
 puppetdb_hostname: puppet2.miraheze.org
 puppetdb::db_ssl: true
