@@ -79,7 +79,7 @@ class role::db {
     ufw::allow { 'mysql port mw2 ipv6':
         proto => 'tcp',
         port  => '3306',
-        from  => ' 2a00:d880:5:799:0000:0000:0000:0002',
+        from  => '2a00:d880:5:799:0000:0000:0000:0002',
     }
 
     ufw::allow { 'mysql port mw3 ipv4':
