@@ -1,10 +1,8 @@
 # servers
 
-node 'bacula1.miraheze.org' {
+node /^bacula[12]\.miraheze\.org$/ {
     include base
     include bacula::director
-    # mysql crashes
-    # include role::dbreplication
     include role::salt::minions
 }
 
