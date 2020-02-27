@@ -10,7 +10,7 @@ class roundcubemail (
     $php_version = hiera('php::php_version', '7.3')
     if !defined(Class['php::php_fpm']) {
         class { 'php::php_fpm':
-            'config'  => {
+            config  => {
                 'display_errors'            => 'Off',
                 'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
                 'log_errors'                => 'On',
@@ -32,11 +32,11 @@ class roundcubemail (
                 'upload_max_filesize' => '100M',
                 'variables_order'     => 'GPCS',
             },
-            'config_cli' => {
+            config_cli => {
                 'memory_limit' => '400M',
             },
-            'fpm_min_child' => 4,
-            'version' => $php_version
+            fpm_min_child => 4,
+            version => $php_version
         }
     }
 
