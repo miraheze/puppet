@@ -16,7 +16,7 @@ class icingaweb2 (
 
     if !defined(Class['php::php_fpm']) {
         class { 'php::php_fpm':
-            'config'  => {
+            config  => {
                 'display_errors'            => 'Off',
                 'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
                 'log_errors'                => 'On',
@@ -38,11 +38,11 @@ class icingaweb2 (
                 'upload_max_filesize' => '100M',
                 'variables_order'     => 'GPCS',
             },
-            'config_cli' => {
+            config_cli => {
                 'memory_limit' => '400M',
             },
-            'fpm_min_child' => 4,
-            'version' => hiera('php::php_version', '7.3'),
+            fpm_min_child => 4,
+            version => hiera('php::php_version', '7.3'),
         }
     }
 
