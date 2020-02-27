@@ -33,7 +33,7 @@ class roundcubemail (
                 'variables_order'     => 'GPCS',
             },
             config_cli => {
-                'memory_limit' => '400M',
+                'memory_limit' => hiera('php::cli::memory_limit', '400M'),
             },
             fpm_min_child => 4,
             version => $php_version
