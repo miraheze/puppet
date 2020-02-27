@@ -18,35 +18,37 @@ class matomo {
         require     => Git::Clone['matomo'],
     }
 
-    ensure_resource_duplicate('class', 'php::php_fpm', {
-        'config'  => {
-            'display_errors'            => 'Off',
-            'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
-            'log_errors'                => 'On',
-            'memory_limit'              => '512M',
-            'opcache'                   => {
-                'enable'                  => 1,
-                'interned_strings_buffer' => 30,
-                'memory_consumption'      => 112,
-                'max_accelerated_files'   => 20000,
-                'max_wasted_percentage'   => 10,
-                'validate_timestamps'     => 1,
-                'revalidate_freq'         => 10,
+    if !defined(Class['php::php_fpm']) {
+        class { 'php::php_fpm':
+            'config'  => {
+                'display_errors'            => 'Off',
+                'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
+                'log_errors'                => 'On',
+                'memory_limit'              => '512M',
+                'opcache'                   => {
+                    'enable'                  => 1,
+                    'interned_strings_buffer' => 30,
+                    'memory_consumption'      => 112,
+                    'max_accelerated_files'   => 20000,
+                    'max_wasted_percentage'   => 10,
+                    'validate_timestamps'     => 1,
+                    'revalidate_freq'         => 10,
+                },
+                'enable_dl'           => 0,
+                'post_max_size'       => '60M',
+                'register_argc_argv'  => 'Off',
+                'request_order'       => 'GP',
+                'track_errors'        => 'Off',
+                'upload_max_filesize' => '100M',
+                'variables_order'     => 'GPCS',
             },
-            'enable_dl'           => 0,
-            'post_max_size'       => '60M',
-            'register_argc_argv'  => 'Off',
-            'request_order'       => 'GP',
-            'track_errors'        => 'Off',
-            'upload_max_filesize' => '100M',
-            'variables_order'     => 'GPCS',
-        },
-        'config_cli' => {
-            'memory_limit' => '2G',
-        },
-        'fpm_min_child' => 4,
-        'version' => hiera('php::php_version', '7.3'),
-    })
+            'config_cli' => {
+                'memory_limit' => '2G',
+            },
+            'fpm_min_child' => 4,
+            'version' => hiera('php::php_version', '7.3'),
+        }
+    }
 
     include ssl::wildcard
 
