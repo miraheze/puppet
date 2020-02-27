@@ -4,7 +4,7 @@ new_servers: true
 mariadb::version: '10.4'
 
 php::php_version: '7.3'
-php::cli::memory_limit: '2G'
+php::cli::memory_limit: '3G'
 
 # icinga2
 
