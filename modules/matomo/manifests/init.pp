@@ -76,7 +76,7 @@ class matomo {
 
     cron { 'archive_matomo':
         ensure  => present,
-        command => '/usr/local/bin/fileLockScript.sh /tmp/matomo_file_lock \'/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/\' > /srv/matomo-archive.log',
+        command => '/usr/bin/flock -w 0 /tmp/matomo_file_lock /usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/ > /srv/matomo-archive.log',
         user    => 'www-data',
         minute  => '30',
         hour    => '*/24',
