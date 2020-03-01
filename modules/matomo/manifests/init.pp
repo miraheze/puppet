@@ -71,16 +71,21 @@ class matomo {
     }
 
     file { '/usr/local/bin/fileLockScript.sh':
-        ensure => 'present',
+        ensure => absent,
         mode   => '0755',
         source => 'puppet:///modules/matomo/fileLockScript.sh',
     }
 
+    file { '/usr/local/bin/runMatomoArchive.sh':
+        ensure => absent,
+        mode   => '0755',
+        source => 'puppet:///modules/matomo/runMatomoArchive.sh',
+    }
+
     cron { 'archive_matomo':
         ensure  => present,
-        command => '/usr/bin/flock -w 0 /tmp/matomo_file_lock /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/ > /srv/matomo-archive.log',
+        command => '/usr/local/bin/runMatomoArchive.sh',
         user    => 'www-data',
-        minute  => '30',
-        hour    => '*/24',
+        special => 'daily'
     }
 }
