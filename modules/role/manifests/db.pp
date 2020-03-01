@@ -123,13 +123,6 @@ class role::db {
         port  => '3306',
         from  => '185.52.2.243',
     }
-    
-    ufw::allow { 'mysql port bacula1':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '172.245.38.205',
-    }
-
 
     # new servers
     ufw::allow { 'mysql port mon1 ipv4':
