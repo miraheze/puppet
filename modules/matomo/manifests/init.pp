@@ -73,11 +73,10 @@ class matomo {
     file { '/usr/local/bin/fileLockScript.sh':
         ensure => absent,
         mode   => '0755',
-        source => 'puppet:///modules/matomo/fileLockScript.sh',
     }
 
     file { '/usr/local/bin/runMatomoArchive.sh':
-        ensure => absent,
+        ensure => present,
         mode   => '0755',
         source => 'puppet:///modules/matomo/runMatomoArchive.sh',
     }
