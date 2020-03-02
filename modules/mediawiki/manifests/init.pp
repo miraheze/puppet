@@ -17,6 +17,7 @@ class mediawiki(
     }
     include mediawiki::packages
     include mediawiki::logging
+    include mediawiki::php
     include mediawiki::extensionsetup
     include mediawiki::servicessetup
     if $use_memcached {
@@ -29,8 +30,6 @@ class mediawiki(
          }
     }
     include mediawiki::monitoring
-
-    include mediawiki::php
 
     if hiera(jobrunner) {
         include mediawiki::jobrunner
