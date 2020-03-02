@@ -133,13 +133,6 @@ class php::php_fpm(
             package_name => "php${version}-dba",
     }
 
-    if $version == '7.2' {
-        php::extension {
-            'mail-mime':
-                package_name => 'php-mail-mime';
-        }
-    }
-
     # Additional config files are needed by some extensions, add them
     # MySQL
     php::extension {
