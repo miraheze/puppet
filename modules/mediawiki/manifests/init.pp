@@ -17,14 +17,8 @@ class mediawiki(
     include mediawiki::packages
     include mediawiki::logging
     include mediawiki::php
-
-    class { '::mediawiki::extensionsetup':
-        require => Class['mediawiki::php'],
-    }
-
-    class { '::mediawiki::servicessetup':
-        require => Class['mediawiki::php'],
-    }
+    include mediawiki::extensionsetup
+    include mediawiki::servicessetup
 
     if $use_memcached {
         include mediawiki::memcached
