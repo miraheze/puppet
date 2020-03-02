@@ -86,7 +86,6 @@ class php::php_fpm(
     $core_extensions.each |$extension| {
         php::extension { $extension:
             package_name => "php${version}-${extension}",
-            require      => Apt::Source['php_apt'],
         }
     }
 
@@ -175,7 +174,6 @@ class php::php_fpm(
     class { '::php::fpm':
         ensure  => present,
         config  => merge($base_fpm_config, $base_fpm_config_kvm, $fpm_config),
-        require => Apt::Source['php_apt'],
     }
 
     $num_workers =  max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
