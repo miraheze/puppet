@@ -44,7 +44,6 @@ class php(
     # We need php-common everywhere
     package { [ "php${version}-common", "php${version}-opcache" ]:
         ensure  => $ensure,
-        require => Apt::Source['php_apt'],
     }
 
     $config_dir = "/etc/php/${version}"
