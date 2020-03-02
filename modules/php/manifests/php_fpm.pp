@@ -79,7 +79,6 @@ class php::php_fpm(
         'gmp',
         'intl',
         'mbstring',
-        'redis',
         'zip',
     ]
 
@@ -87,6 +86,10 @@ class php::php_fpm(
         php::extension { $extension:
             package_name => "php${version}-${extension}",
         }
+    }
+
+    php::extension { 'redis':
+        package_name => "php-redis",
     }
 
     if $version == '7.2' or $version == '7.3' {
