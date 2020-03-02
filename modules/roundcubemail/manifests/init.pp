@@ -38,8 +38,8 @@ class roundcubemail (
             fpm_min_child => 4,
             version => $php_version,
             before => [
-              Class['mediawiki::extensionsetup'],
-              Class['mediawiki::servicessetup'],
+                Class['mediawiki::extensionsetup'],
+                Class['mediawiki::servicessetup'],
             ],
         }
     }
