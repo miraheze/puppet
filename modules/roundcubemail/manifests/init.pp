@@ -36,11 +36,7 @@ class roundcubemail (
                 'memory_limit' => hiera('php::cli::memory_limit', '400M'),
             },
             fpm_min_child => 4,
-            version => $php_version,
-            before => [
-                Class['mediawiki::extensionsetup'],
-                Class['mediawiki::servicessetup'],
-            ],
+            version => $php_version
         }
     }
 
