@@ -51,13 +51,13 @@ class role::db {
     }
 
     # temp
-    ufw::allow { 'mysql port db7 ipv4':
+    ufw::allow { 'mysql port db4 ipv4':
         proto => 'tcp',
         port  => '3306',
         from  => '81.4.109.166',
     }
 
-    ufw::allow { 'mysql port db7 ipv4':
+    ufw::allow { 'mysql port db5 ipv4':
         proto => 'tcp',
         port  => '3306',
         from  => '185.52.1.89',
