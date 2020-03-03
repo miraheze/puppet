@@ -50,6 +50,19 @@ class role::db {
         from  => '2001:41d0:800:105a::11',
     }
 
+    # temp
+    ufw::allow { 'mysql port db7 ipv4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '81.4.109.166',
+    }
+
+    ufw::allow { 'mysql port db7 ipv4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '185.52.1.89',
+    }
+
 
 
     ufw::allow { 'mysql port lizardfs6':
