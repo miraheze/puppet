@@ -2,6 +2,7 @@ puppetserver_hostname: puppet2.miraheze.org
 users::groups:
   - mediawiki-admins
 jobrunner: true
+letsencrypt: true
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 role::mediawiki::use_strict_firewall: false
 mediawiki::branch: 'REL1_34'
