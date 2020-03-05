@@ -11,9 +11,7 @@ class mediawiki(
     if hiera('mwservices', false) {
         include mediawiki::services_cron
     }
-    if !hiera(jobrunner) {
-        include mediawiki::nginx
-    }
+    include mediawiki::nginx
     include mediawiki::packages
     include mediawiki::logging
     include mediawiki::php
