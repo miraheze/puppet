@@ -121,7 +121,7 @@ class puppetdb(
     }
 
     if $db_ssl {
-      $ssl = '?ssl=true'
+      $ssl = '?ssl=true&sslmode=require'
     } else {
       $ssl = ''
     }
