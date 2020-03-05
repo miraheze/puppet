@@ -2,24 +2,24 @@
 class letsencrypt {
     include ::apt
 
-    apt::pin { 'certbot_backports':
-        priority   => 740,
-        originator => 'Debian',
-        release    => 'stretch-backports',
-        packages   => 'certbot',
+    if os_version('debian == stretch') {
+        apt::pin { 'certbot_backports':
+            priority   => 740,
+            originator => 'Debian',
+            release    => 'stretch-backports',
+            packages   => 'certbot',
+        }
     }
-
-    package { 'certbot':
-        ensure  => installed,
-        require => Apt::Pin['certbot_backports'],
-    }
+    
+    require_package('certbot')
 
     file { '/etc/letsencrypt/cli.ini':
-        ensure => present,
-        owner  => 'root',
-        group  => 'root',
-        source => 'puppet:///modules/letsencrypt/cli.ini',
-        mode   => '0644',
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        source  => 'puppet:///modules/letsencrypt/cli.ini',
+        mode    => '0644',
+        require => Package['certbot'],
     }
 
     ['/var/www/.well-known', '/var/www/.well-known/acme-challenge'].each |$folder| {
