@@ -32,6 +32,18 @@ class letsencrypt::web {
         from  => '185.52.1.76',
     }
 
+    ufw::allow { "mon1 ipv4 to port 5000":
+        proto => 'tcp',
+        port  => 5000,
+        from  => '51.89.160.138',
+    }
+
+    ufw::allow { "mon1 ipv6 to port 5000":
+        proto => 'tcp',
+        port  => 5000,
+        from  => '2001:41d0:800:105a::6',
+    }
+
     monitoring::services { 'MirahezeRenewSsl':
         check_command => 'tcp',
         vars          => {
