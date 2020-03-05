@@ -88,6 +88,12 @@ backend mw7 {
 	.probe = mwhealth;
 }
 
+# to be used for acme/letsencrypt only
+backend jobrunner1 {
+	.host = "127.0.0.1";
+	.port = "8089";
+}
+
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
@@ -119,6 +125,21 @@ backend test1_test {
 backend mw4_test {
 	.host = "127.0.0.1";
 	.port = "8085";
+}
+
+backend mw5_test {
+	.host = "127.0.0.1";
+	.port = "8086";
+}
+
+backend mw6_test {
+	.host = "127.0.0.1";
+	.port = "8087";
+}
+
+backend mw7_test {
+	.host = "127.0.0.1";
+	.port = "8088";
 }
 
 # end test backend
@@ -264,8 +285,11 @@ sub mw_vcl_recv {
 		set req.http.Host = "static.miraheze.org";
 	}
 
-	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org" || req.url ~ "^/\.well-known") {
+	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org") {
 		set req.backend_hint = mw1_test;
+		return (pass);
+	} else if (req.url ~ "^/\.well-known") {
+		set req.backend_hint = jobrunner1;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw2.miraheze.org") {
 		set req.backend_hint = mw2_test;
@@ -275,6 +299,15 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw4.miraheze.org") {
 		set req.backend_hint = mw4_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw5.miraheze.org") {
+		set req.backend_hint = mw5_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw6.miraheze.org") {
+		set req.backend_hint = mw6_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw7.miraheze.org") {
+		set req.backend_hint = mw7_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "lizardfs6.miraheze.org") {
 		set req.backend_hint = lizardfs6_test;
