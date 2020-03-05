@@ -285,11 +285,11 @@ sub mw_vcl_recv {
 		set req.http.Host = "static.miraheze.org";
 	}
 
-	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org") {
-		set req.backend_hint = mw1_test;
-		return (pass);
-	} else if (req.url ~ "^/\.well-known") {
+	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = jobrunner1;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw1.miraheze.org") {
+		set req.backend_hint = mw1_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw2.miraheze.org") {
 		set req.backend_hint = mw2_test;
