@@ -12,7 +12,7 @@ class prometheus::nginx {
     }
 
     systemd::service { 'nginx-prometheus-exporter':
-        ensure  => present,
+        ensure  => running,
         content => systemd_template('nginx-prometheus-exporter'),
         restart => true,
         require => [
