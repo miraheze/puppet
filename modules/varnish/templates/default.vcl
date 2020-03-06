@@ -94,6 +94,11 @@ backend jobrunner1 {
 	.port = "8089";
 }
 
+backend test2 {
+	.host = "127.0.0.1";
+	.port = "8090";
+}
+
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
@@ -314,6 +319,9 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
 		set req.backend_hint = test1_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "test2.miraheze.org") {
+		set req.backend_hint = test2_test;
 		return (pass);
 	} else {
 		<%- if @fqdn == "cp7.miraheze.org" %>
