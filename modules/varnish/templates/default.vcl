@@ -321,7 +321,7 @@ sub mw_vcl_recv {
 		set req.backend_hint = test1_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test2.miraheze.org") {
-		set req.backend_hint = test2_test;
+		set req.backend_hint = test2;
 		return (pass);
 	} else {
 		<%- if @fqdn == "cp7.miraheze.org" %>
