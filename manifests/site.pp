@@ -105,7 +105,6 @@ node 'mon1.miraheze.org' {
     include role::prometheus
     include role::salt::minions
     include prometheus::php_fpm
-    include prometheus::redis_exporter
 }
 
 node /^mw[1234567]\.miraheze\.org$/ {
