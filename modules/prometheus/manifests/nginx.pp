@@ -9,6 +9,7 @@ class prometheus::nginx {
         owner  => 'root',
         group  => 'root',
         source => 'puppet:///modules/prometheus/nginx/nginx-prometheus-exporter',
+        notify => Service['nginx-prometheus-exporter'],
     }
 
     systemd::service { 'nginx-prometheus-exporter':
