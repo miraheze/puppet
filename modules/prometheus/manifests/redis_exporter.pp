@@ -10,6 +10,7 @@ class prometheus::redis_exporter (
         owner  => 'root',
         group  => 'root',
         source => 'puppet:///modules/prometheus/redis/redis_exporter',
+        notify => Service['prometheus-redis'],
     }
 
     file { '/etc/systemd/system/prometheus-redis.service':
