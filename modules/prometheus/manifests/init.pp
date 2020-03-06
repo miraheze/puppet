@@ -24,6 +24,7 @@ class prometheus {
     $host_gluster = query_nodes("domain='$domain' and Class[Prometheus::Gluster_exporter]", 'fqdn')
     $host_nginx = query_nodes("domain='$domain' and Class[Prometheus::Nginx]", 'fqdn')
     $host_php_fpm = query_nodes("domain='$domain' and Class[Php::Php_fpm]", 'fqdn')
+    $host_redis = query_nodes("domain='$domain' and Class[Prometheus::Redis_exporter]", 'fqdn')
 
     file { '/etc/prometheus/prometheus.yml':
         content => template('prometheus/prometheus.yml.erb'),
