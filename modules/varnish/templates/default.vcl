@@ -96,7 +96,7 @@ backend jobrunner1 {
 
 backend test2 {
 	.host = "127.0.0.1";
-	.port = "8090";
+	.port = "8091";
 }
 
 # test mediawiki backend with out health check
