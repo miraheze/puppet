@@ -12,6 +12,18 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
     ON icinga.* TO 'icinga'@'185.52.1.76'
     IDENTIFIED BY '<%= @icinga_password %>';
 
+-- Grants for 'icinga'@'51.89.160.138' & 'icinga'@'2001:41d0:800:105a::6'
+
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
+    CREATE VIEW, INDEX, EXECUTE
+    ON icinga.* TO 'icinga'@'51.89.160.138'
+    IDENTIFIED BY '<%= @icinga_password %>';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
+    CREATE VIEW, INDEX, EXECUTE
+    ON icinga.* TO '2001:41d0:800:105a::6'
+    IDENTIFIED BY '<%= @icinga_password %>';
+
 -- Grants for 'exporter'@'81.4.127.174'
 
 GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT
