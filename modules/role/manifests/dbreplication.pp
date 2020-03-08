@@ -23,17 +23,11 @@ class role::dbreplication {
     }
 
     # temp
-     ufw::allow { 'mysql port db4 ipv4':
-         proto => 'tcp',
-         port  => '3306',
-         from  => '81.4.109.166',
-     }
-
-     ufw::allow { 'mysql port db5 ipv4':
-         proto => 'tcp',
-         port  => '3306',
-         from  => '185.52.1.89',
-     }
+    ufw::allow { 'mysql port db4 ipv4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '81.4.109.166',
+    }
 
     file { '/etc/ssl/private':
         ensure  => directory,
