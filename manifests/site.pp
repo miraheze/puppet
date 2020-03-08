@@ -36,7 +36,7 @@ node /^db[56]\.miraheze\.org$/ {
 
 node 'db7.miraheze.org' {
     include base
-    include role::dbreplication
+    include role::db
     include bacula::client
     include role::salt::minions
     include prometheus::mysqld_exporter
