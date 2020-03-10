@@ -13,3 +13,4 @@ role::elasticsearch::discovery_host: ['es1.miraheze.org', 'es2.miraheze.org', 'e
 use_gluster_new: true
 mediawiki::use_redis: false
 puppetserver_hostname: puppet2.miraheze.org
+role::salt::minions::salt_master: 'puppet2.miraheze.org'
