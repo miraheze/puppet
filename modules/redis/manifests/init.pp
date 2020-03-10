@@ -7,6 +7,8 @@ class redis (
     Variant[Boolean, String] $password = false,
 ) {
 
+    $new_servers = hiera('new_servers', false)
+
     if os_version('debian stretch') {
         apt::pin { 'debian_stretch_backports_redis':
             priority   => 740,

@@ -11,13 +11,19 @@ databases 1
 tcp-backlog 511
 
 #stop-writes-on-bgsave-error no
-#save 60 1
-#rdbcompression yes
-#rdbchecksum yes
+<%- if @new_servers -%>
+save 60 1
+rdbcompression yes
+rdbchecksum yes
+<%- end -%>
 
-# Disable persitence 
+<%- if @new_servers -%>
+appendonly no
+<%- else -%>
+# Disable persitence
 appendonly no
 save ""
+<%- end -%>
 
 slave-serve-stale-data yes
 slave-read-only no
