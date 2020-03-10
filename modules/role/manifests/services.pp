@@ -3,56 +3,92 @@ class role::services {
     if hiera('enable_citoid', true) {
         include ::profile::citoid
 
-        ufw::allow { 'citoid monitoring':
+        ufw::allow { 'citoid monitoring ipv4':
             proto => 'tcp',
             port  => 6927,
-            from  => '185.52.1.76',
+            from  => '51.89.160.138',
         }
 
-        ufw::allow { 'zotero monitoring':
+        ufw::allow { 'citoid monitoring ipv6':
+            proto => 'tcp',
+            port  => 6927,
+            from  => '2001:41d0:800:105a::6',
+        }
+
+        ufw::allow { 'zotero monitoring ipv4':
             proto => 'tcp',
             port  => 1969,
-            from  => '185.52.1.76',
+            from  => '51.89.160.138',
+        }
+
+        ufw::allow { 'zotero monitoring ipv6':
+            proto => 'tcp',
+            port  => 1969,
+            from  => '2001:41d0:800:105a::6',
         }
     }
 
     if hiera('enable_electron', true) {
         include ::profile::electron
 
-        ufw::allow { 'electron monitoring':
+        ufw::allow { 'electron monitoring ipv4':
             proto => 'tcp',
             port  => 3000,
-            from  => '185.52.1.76',
+            from  => '51.89.160.138',
+        }
+
+        ufw::allow { 'electron monitoring ipv6':
+            proto => 'tcp',
+            port  => 3000,
+            from  => '2001:41d0:800:105a::6',
         }
     }
 
     if hiera('enable_parsoid', true) {
         include ::profile::parsoid
 
-        ufw::allow { 'parsoid monitoring':
+        ufw::allow { 'parsoid monitoring ipv4':
             proto => 'tcp',
             port  => 8142,
-            from  => '185.52.1.76',
+            from  => '51.89.160.138',
+        }
+
+        ufw::allow { 'parsoid monitoring ipv6':
+            proto => 'tcp',
+            port  => 8142,
+            from  => '2001:41d0:800:105a::6',
         }
     }
 
     if hiera('enable_proton', false) {
         include ::profile::proton
 
-        ufw::allow { 'proton monitoring':
+        ufw::allow { 'proton monitoring ipv4':
             proto => 'tcp',
             port  => 3030,
-            from  => '185.52.1.76',
+            from  => '51.89.160.138',
+        }
+
+        ufw::allow { 'proton monitoring ipv6':
+            proto => 'tcp',
+            port  => 3030,
+            from  => '2001:41d0:800:105a::6',
         }
     }
 
     if hiera('enable_restbase', true) {
         include ::profile::restbase
 
-        ufw::allow { 'restbase monitoring':
+        ufw::allow { 'restbase monitoring ipv4':
             proto => 'tcp',
             port  => 7231,
-            from  => '185.52.1.76',
+            from  => '51.89.160.138',
+        }
+
+        ufw::allow { 'restbase monitoring ipv6':
+            proto => 'tcp',
+            port  => 7231,
+            from  => '2001:41d0:800:105a::6',
         }
     }
 
