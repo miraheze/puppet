@@ -47,11 +47,19 @@
     "redis": {
         // Ready queue trackers
         "aggregators": [
+<%- if @new_servers -%>
+            "51.89.160.135:6379"
+<%- else -%>
             "81.4.127.174:6379"
+<%- end -%>
         ],
         // Main queue servers
         "queues": [
+<%- if @new_servers -%>
+            "51.89.160.135:6379"
+<%- else -%>
             "81.4.127.174:6379"
+<%- end -%>
         ],
         "password": "<%= @redis_password %>"
     },
