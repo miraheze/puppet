@@ -1,16 +1,10 @@
-lizardfs_client: false
-lizardfs_storage: true
-lizardfs_master: true
-lizardfs_web: true
 base::sysctl::swap_value: 0
-lizardfs_master_server: '54.36.165.161'
 
 # temporarily
 php::php_version: '7.3'
 #gluster_client: true
 
 # mediawiki
-jobrunner: true
 role::mediawiki::use_strict_firewall: false
 mediawiki::branch: 'REL1_34'
 mediawiki::php::fpm::childs: 24
