@@ -7,7 +7,6 @@ class mediawiki::jobrunner {
         origin    => 'https://github.com/wikimedia/mediawiki-services-jobrunner',
     }
 
-    $new_servers = hiera('new_servers', false)
     $redis_password = hiera('passwords::redis::master')
 
     file { '/srv/jobrunner/jobrunner.json':
