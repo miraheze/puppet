@@ -12,3 +12,4 @@ role::elasticsearch::master_ip: '168.235.81.167'
 role::elasticsearch::discovery_host: ['es1.miraheze.org', 'es2.miraheze.org', 'es3.miraheze.org', 'es4.miraheze.org']
 use_gluster_new: true
 mediawiki::use_redis: false
+puppetserver_hostname: puppet2.miraheze.org
