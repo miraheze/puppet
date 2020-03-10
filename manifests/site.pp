@@ -74,7 +74,6 @@ node 'mail1.miraheze.org' {
 
 node 'misc1.miraheze.org' {
     include base
-    include role::icinga2
     include role::mail
     include role::roundcubemail
     include role::salt::minions
