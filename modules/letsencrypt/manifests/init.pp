@@ -37,7 +37,6 @@ class letsencrypt {
         require => File['/var/www/.well-known/acme-challenge'],
     }
 
-
     file { '/root/ssl':
         ensure => directory,
         owner  => 'root',
