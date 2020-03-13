@@ -55,7 +55,7 @@ class role::mediawiki {
     if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
         gluster::mount { '/mnt/mediawiki-static':
           ensure    => mounted,
-          volume    => hiera('gluster_volume', 'lizardfs6.miraheze.org:/mvol'),
+          volume    => hiera('gluster_volume', 'gluster1.miraheze.org:/mvol'),
         }
     }
 }
