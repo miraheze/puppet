@@ -215,10 +215,10 @@ class puppetserver(
 
     cron { 'puppet-old-reports-remove':
         ensure  => present,
-        command => 'find /opt/puppetlabs/server/data/puppetserver/reports -type f -mmin +960 -delete >/dev/null 2>&1',
+        command => 'find /opt/puppetlabs/server/data/puppetserver/reports -type f -mmin +100 -delete >/dev/null 2>&1',
         user    => 'root',
-        hour    => [ '0', '8', '16' ],
-        minute  => [ '27' ],
+        hour    => '*/1',
+        minute  => '*',
     }
 
     monitoring::services { 'puppetserver':
