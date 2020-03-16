@@ -40,8 +40,8 @@ probe mwhealth {
 }
 
 backend mon1 {
-    .host = "127.0.0.1";
-    .port = "8201";
+	.host = "127.0.0.1";
+	.port = "8201";
 }
 
 backend mw1 {
@@ -59,12 +59,6 @@ backend mw2 {
 backend mw3 {
 	.host = "127.0.0.1";
 	.port = "8082";
-	.probe = mwhealth;
-}
-
-backend lizardfs6 {
-	.host = "127.0.0.1";
-	.port = "8083";
 	.probe = mwhealth;
 }
 
@@ -121,11 +115,6 @@ backend mw3_test {
 	.port = "8082";
 }
 
-backend lizardfs6_test {
-	.host = "127.0.0.1";
-	.port = "8083";
-}
-
 backend test1_test {
 	.host = "127.0.0.1";
 	.port = "8084";
@@ -156,10 +145,13 @@ backend mw7_test {
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(lizardfs6);
 	mediawiki.add_backend(mw1);
 	mediawiki.add_backend(mw2);
 	mediawiki.add_backend(mw3);
+	mediawiki.add_backend(mw4);
+	mediawiki.add_backend(mw5);
+	mediawiki.add_backend(mw6);
+	mediawiki.add_backend(mw7);
 
 	# new servers
 	new mediawiki_new = directors.round_robin();
@@ -172,7 +164,6 @@ sub vcl_init {
 
 acl purge {
 	"localhost";
-	"54.36.165.161"; # lizardfs6
  	"185.52.1.75"; # mw1
  	"2a00:d880:6:786::2"; # mw1
 	"2a00:d880:6:786:0000:0000:0000:0002"; #mw
@@ -317,9 +308,6 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw7.miraheze.org") {
 		set req.backend_hint = mw7_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "lizardfs6.miraheze.org") {
-		set req.backend_hint = lizardfs6_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
 		set req.backend_hint = test1_test;
