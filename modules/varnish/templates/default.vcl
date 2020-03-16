@@ -21,7 +21,11 @@ import std;
 
 probe mwhealth {
 	.request = "GET /wiki/Main_Page HTTP/1.1"
+		<%- if @fqdn == "cp7.miraheze.org" -%>
+		"Host: tme.miraheze.org"
+		<%- else -%>
 		"Host: login.miraheze.org"
+		<%- end -%>
 		"User-Agent: Varnish healthcheck"
 		"Connection: close";
 	# Check each 10s
