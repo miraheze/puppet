@@ -1,5 +1,4 @@
 puppetserver_hostname: puppet2.miraheze.org
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
 new_servers: true
-gluster_volume: 'lizardfs6.miraheze.org:/mvol'
 gluster_client: true
