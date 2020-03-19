@@ -115,11 +115,6 @@ backend mw3_test {
 	.port = "8082";
 }
 
-backend test1_test {
-	.host = "127.0.0.1";
-	.port = "8084";
-}
-
 backend mw4_test {
 	.host = "127.0.0.1";
 	.port = "8085";
@@ -173,7 +168,6 @@ acl purge {
  	"81.4.121.113"; # mw3
  	"2a00:d880:5:b45::2"; # mw3
 	"2a00:d880:5:b45:0000:0000:0000:0002"; # mw3
- 	"185.52.2.243"; # test1
 	"51.77.107.211"; # test2
 	"2001:41d0:800:105a::3"; # test2
 	"51.89.160.128"; # mw4
@@ -308,9 +302,6 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw7.miraheze.org") {
 		set req.backend_hint = mw7_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
-		set req.backend_hint = test1_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test2.miraheze.org") {
 		set req.backend_hint = test2;
