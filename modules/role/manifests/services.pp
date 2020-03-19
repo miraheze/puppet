@@ -92,12 +92,6 @@ class role::services {
         }
     }
 
-    ufw::allow { 'lizardfs6 443':
-        proto => 'tcp',
-        port  => 443,
-        from  => '54.36.165.161',
-    }
-
     ufw::allow { 'mw1 443':
         proto => 'tcp',
         port  => 443,
