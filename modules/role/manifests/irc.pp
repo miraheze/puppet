@@ -34,12 +34,6 @@ class role::irc {
         port  => '5070',
         from  => '81.4.121.113',
     }
-
-    ufw::allow { 'ircrcbot port test1 ipv4':
-        proto => 'udp',
-        port  => '5070',
-        from  => '185.52.2.243',
-    }
     
     # new servers
     ufw::allow { 'ircrcbot port mw4 ipv4':
