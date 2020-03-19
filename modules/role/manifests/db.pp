@@ -57,14 +57,6 @@ class role::db {
         from  => '81.4.109.166',
     }
 
-
-
-    ufw::allow { 'mysql port lizardfs6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '54.36.165.161',
-    }
-
     ufw::allow { 'mysql port mw1 ipv4':
         proto => 'tcp',
         port  => '3306',
@@ -123,12 +115,6 @@ class role::db {
         proto => 'tcp',
         port  => '3306',
         from  => '185.52.3.121',
-    }
-
-    ufw::allow { 'mysql port test1':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '185.52.2.243',
     }
 
     # new servers
