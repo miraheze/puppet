@@ -34,7 +34,7 @@ class puppetdb(
     Optional[String] $db_ro_host = hiera('puppetdb::db_ro_host', undef),
     Optional[String] $db_password = hiera('puppetdb::db_password', undef),
     Boolean $db_ssl = hiera('puppetdb::db_ssl', true),
-    Integer $puppet_major_version = hiera('puppet_major_version', 4)
+    Integer $puppet_major_version = hiera('puppet_major_version', 6)
 ) {
 
     package { 'default-jdk':
@@ -43,46 +43,14 @@ class puppetdb(
 
     ## PuppetDB installation
 
-    if $puppet_major_version == 6 {
-        package { 'puppetdb':
-            ensure  => present,
-            require => Apt::Source['puppetlabs'],
-        }
+    package { 'puppetdb':
+        ensure  => present,
+        require => Apt::Source['puppetlabs'],
+    }
 
-        package { 'puppetdb-termini':
-            ensure   => present,
-            require => Apt::Source['puppetlabs'],
-        }
-    } else {
-        include ::apt
-
-        if !defined(Apt::Source['puppetdb_apt']) {
-            apt::source { 'puppetdb_apt':
-                comment  => 'puppetdb',
-                location => 'http://apt.wikimedia.org/wikimedia',
-                release  => "${::lsbdistcodename}-wikimedia",
-                repos    => 'component/puppetdb4',
-                key      => 'B8A2DF05748F9D524A3A2ADE9D392D3FFADF18FB',
-                notify   => Exec['apt_update_puppetdb'],
-            }
-
-            # First installs can trip without this
-            exec {'apt_update_puppetdb':
-                command     => '/usr/bin/apt-get update',
-                refreshonly => true,
-                logoutput   => true,
-            }
-        }
-
-        package { 'puppetdb':
-            ensure  => present,
-            require => Apt::Source['puppetdb_apt'],
-        }
-
-        package { 'puppetdb-termini':
-            ensure   => present,
-            require => Apt::Source['puppetdb_apt'],
-        }
+    package { 'puppetdb-termini':
+        ensure   => present,
+        require => Apt::Source['puppetlabs'],
     }
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
