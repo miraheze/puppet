@@ -29,7 +29,7 @@ class puppetdb(
     String $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx200m'),
     String $db_user = hiera('puppetdb::db_user', 'puppetdb'),
     Boolean $perform_gc = hiera('puppetdb::perform_gc', true),
-    Integer $command_processing_threads = hiera('puppetdb::command_processing_threads', 4),
+    Integer $command_processing_threads = hiera('puppetdb::command_processing_threads', 1),
     Optional[String] $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
     Optional[String] $db_ro_host = hiera('puppetdb::db_ro_host', undef),
     Optional[String] $db_password = hiera('puppetdb::db_password', undef),
