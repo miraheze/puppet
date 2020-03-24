@@ -12,8 +12,7 @@ WorkingDirectory=/srv/parsoid
 Environment="PORT=8142"
 Environment="NODE_PATH=/srv/parsoid/node_modules"
 ExecStart=/usr/bin/nodejs /srv/parsoid/bin/server.js -c /etc/mediawiki/parsoid/config.yaml
-KillMode=process
-Restart=on-success
+Restart=on-failure
 PrivateTmp=true
 StandardOutput=syslog
 StandardError=syslog
