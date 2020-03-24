@@ -34,9 +34,9 @@ services:
       cpu_workers: 1
       nativeGallery: false
       timeouts:
-        request: 60000
+        request: 110000
         mwApi:
-          batch: 60000
+          batch: 145000
       maxSockets: 30
       maxConcurrentCalls: 20
       limits:
