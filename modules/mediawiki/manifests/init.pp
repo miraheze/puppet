@@ -11,7 +11,11 @@ class mediawiki(
     if hiera('mwservices', false) {
         include mediawiki::services_cron
     }
-    include mediawiki::nginx
+    if hiera('mediawiki::use_apache', false) {
+        include mediawiki::apache
+    } else {
+        include mediawiki::nginx
+    }
     include mediawiki::packages
     include mediawiki::logging
     include mediawiki::php
