@@ -44,24 +44,6 @@ backend mon1 {
 	.port = "8201";
 }
 
-backend mw1 {
-	.host = "127.0.0.1";
-	.port = "8080";
-	.probe = mwhealth;
-}
-
-backend mw2 {
-	.host = "127.0.0.1";
-	.port = "8081";
-	.probe = mwhealth;
-}
-
-backend mw3 {
-	.host = "127.0.0.1";
-	.port = "8082";
-	.probe = mwhealth;
-}
-
 backend mw4 {
 	.host = "127.0.0.1";
 	.port = "8085";
@@ -99,21 +81,6 @@ backend test2 {
 
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
-
-backend mw1_test {
-	.host = "127.0.0.1";
-	.port = "8080";
-}
-
-backend mw2_test {
-	.host = "127.0.0.1";
-	.port = "8081";
-}
-
-backend mw3_test {
-	.host = "127.0.0.1";
-	.port = "8082";
-}
 
 backend mw4_test {
 	.host = "127.0.0.1";
@@ -156,15 +123,6 @@ sub vcl_init {
 
 acl purge {
 	"localhost";
- 	"185.52.1.75"; # mw1
- 	"2a00:d880:6:786::2"; # mw1
-	"2a00:d880:6:786:0000:0000:0000:0002"; #mw
- 	"185.52.2.113"; # mw2
- 	"2a00:d880:5:799::2"; # mw2
-	"2a00:d880:5:799:0000:0000:0000:0002"; # mw2
- 	"81.4.121.113"; # mw3
- 	"2a00:d880:5:b45::2"; # mw3
-	"2a00:d880:5:b45:0000:0000:0000:0002"; # mw3
 	"51.77.107.211"; # test2
 	"2001:41d0:800:105a::3"; # test2
 	"51.89.160.128"; # mw4
@@ -278,15 +236,6 @@ sub mw_vcl_recv {
 
 	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = jobrunner1;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw1.miraheze.org") {
-		set req.backend_hint = mw1_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw2.miraheze.org") {
-		set req.backend_hint = mw2_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org") {
-		set req.backend_hint = mw3_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw4.miraheze.org") {
 		set req.backend_hint = mw4_test;
