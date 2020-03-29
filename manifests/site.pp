@@ -53,7 +53,6 @@ node 'dbt1.miraheze.org' {
 node 'lizardfs6.miraheze.org' {
     include base
     include bacula::client
-    include role::gluster
     include role::mediawiki
     include role::salt::minions
     include prometheus::php_fpm
