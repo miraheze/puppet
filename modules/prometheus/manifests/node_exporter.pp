@@ -14,7 +14,7 @@
 # [*$ignored_fs_types*]
 #  Regular expression to exclude filesystem types from being reported
 #
-# [*$ignored_mount_points_default*]
+# [*$ignored_mount_points*]
 #  Regular expression to exclude mount points from being reported
 #
 # [*$netstat_fields*]
