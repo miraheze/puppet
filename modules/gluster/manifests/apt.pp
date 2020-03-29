@@ -3,7 +3,7 @@ class gluster::apt {
     # We pin this to 7.0 to prevent unintended updates to majour releases.
     apt::source { 'gluster_apt':
         comment  => 'GlusterFS',
-        location => "https://download.gluster.org/pub/gluster/glusterfs/7/7.3/Debian/${::lsbdistcodename}/amd64/apt",
+        location => "https://download.gluster.org/pub/gluster/glusterfs/7/7.4/Debian/${::lsbdistcodename}/amd64/apt",
         release  => "${::lsbdistcodename}",
         repos    => 'main',
         key      => '80D15823B7FD1561F9F7BCDDDC30D7C23CBBABEE',
