@@ -85,7 +85,6 @@ class matomo {
         ensure  => present,
         command => '/usr/local/bin/runMatomoArchive.sh',
         user    => 'www-data',
-        minute  => '*',
-        hour    => '*/24',
+        special => 'daily',
     }
 }
