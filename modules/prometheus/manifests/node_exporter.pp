@@ -33,7 +33,6 @@
 #
 # From https://github.com/wikimedia/puppet/blob/2daf8fbd7151244e5f81608c077c07cf4ee71df5/modules/prometheus/manifests/node_exporter.pp
 
-
 class prometheus::node_exporter (
     String $ignored_devices  = '^(ram|loop|fd|(h|s|v|xv)d[a-z]|nvme[0-9]+n[0-9]+p)[0-9]+$',
     String $ignored_fs_types  = '^(overlay|autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|nsfs|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$',
