@@ -14,7 +14,7 @@
 # [*$ignored_fs_types*]
 #  Regular expression to exclude filesystem types from being reported
 #
-# [*$ignored_mount_points_default*]
+# [*$ignored_mount_points*]
 #  Regular expression to exclude mount points from being reported
 #
 # [*$netstat_fields*]
@@ -33,11 +33,10 @@
 #
 # From https://github.com/wikimedia/puppet/blob/2daf8fbd7151244e5f81608c077c07cf4ee71df5/modules/prometheus/manifests/node_exporter.pp
 
-
 class prometheus::node_exporter (
     String $ignored_devices  = '^(ram|loop|fd|(h|s|v|xv)d[a-z]|nvme[0-9]+n[0-9]+p)[0-9]+$',
     String $ignored_fs_types  = '^(overlay|autofs|binfmt_misc|cgroup|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|nsfs|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)$',
-    String $ignored_mount_points_default  = '^/(mnt|run|sys|proc|dev|var/lib/docker|var/lib/kubelet)($|/)',
+    String $ignored_mount_points  = '^/(mnt|run|sys|proc|dev|var/lib/docker|var/lib/kubelet)($|/)',
     String $netstat_fields = '^(.*)',
     String $vmstat_fields = '^(.*)',
     Array[String] $collectors_extra = [],
@@ -59,12 +58,6 @@ class prometheus::node_exporter (
     }
 
     $collectors_enabled = concat($collectors_default, $collectors_extra)
-    
-    if $::fqdn == "dbt1.miraheze.org" {
-        $ignored_mount_points = '^/(run|sys|proc|dev|var/lib/docker|var/lib/kubelet)($|/)'
-    } else {
-        $ignored_mount_points = $ignored_mount_points_default
-    }
 
     file { '/etc/default/prometheus-node-exporter':
           ensure  => present,
