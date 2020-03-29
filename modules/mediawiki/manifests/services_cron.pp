@@ -7,9 +7,9 @@ class mediawiki::services_cron {
         mode   => '0755',
     }
 
-    file { '/srv/services/id_rsa':
+    file { '/srv/services/id_ed25519':
         ensure  => present,
-        source  => 'puppet:///private/acme/id_rsa',
+        source  => 'puppet:///private/acme/id_ed25519',
         owner   => 'www-data',
         group   => 'www-data',
         mode    => '0400',
