@@ -67,9 +67,9 @@ class letsencrypt {
         mode   => '0775',
     }
 
-    file { '/var/lib/nagios/id_rsa':
+    file { '/var/lib/nagios/id_ed25519':
         ensure => present,
-        source => 'puppet:///private/acme/id_rsa',
+        source => 'puppet:///private/acme/id_ed25519',
         owner  => 'nagiosre',
         group  => 'nagiosre',
         mode   => '0400',
