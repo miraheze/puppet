@@ -21,11 +21,7 @@ import std;
 
 probe mwhealth {
 	.request = "GET /wiki/Main_Page HTTP/1.1"
-		<%- if @fqdn == "cp7.miraheze.org" -%>
-		"Host: tme.miraheze.org"
-		<%- else -%>
 		"Host: login.miraheze.org"
-		<%- end -%>
 		"User-Agent: Varnish healthcheck"
 		"Connection: close";
 	# Check each 10s
@@ -111,13 +107,6 @@ sub vcl_init {
 	mediawiki.add_backend(mw5);
 	mediawiki.add_backend(mw6);
 	mediawiki.add_backend(mw7);
-
-	# new servers
-	new mediawiki_new = directors.round_robin();
-	mediawiki_new.add_backend(mw4);
-	mediawiki_new.add_backend(mw5);
-	mediawiki_new.add_backend(mw6);
-	mediawiki_new.add_backend(mw7);
 }
 
 
@@ -253,11 +242,7 @@ sub mw_vcl_recv {
 		set req.backend_hint = test2;
 		return (pass);
 	} else {
-		<%- if @fqdn == "cp7.miraheze.org" -%>
-		set req.backend_hint = mediawiki_new.backend();
-		<%- else -%>
 		set req.backend_hint = mediawiki.backend();
-		<%- end -%>
 	}
 
 	# We never want to cache non-GET/HEAD requests.
