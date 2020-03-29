@@ -9,6 +9,7 @@ class base::packages {
         'gzip',
         'htop',
         'iftop',
+        'iotop',
         'logrotate',
         'lvm2',
         'molly-guard',
