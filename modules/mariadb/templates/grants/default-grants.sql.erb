@@ -47,6 +47,10 @@ GRANT ALL PRIVILEGES
     ON roundcubemail.* TO 'roundcubemail'@'185.52.1.76'
     IDENTIFIED BY '<%= @roundcubemail_password %>';
 
+GRANT ALL PRIVILEGES
+    ON roundcubemail.* TO 'roundcubemail'@'2a00:d880:6:787::3'
+    IDENTIFIED BY '<%= @roundcubemail_password %>';
+
 -- Grants for 'replica'@'%'
 
 GRANT REPLICATION SLAVE ON *.* TO 'replica'@'%' IDENTIFIED BY '<%= @mariadb_replica_password %>';
