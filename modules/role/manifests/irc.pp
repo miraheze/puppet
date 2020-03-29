@@ -10,26 +10,7 @@ class role::irc {
         udp_port     => '5070',
         sleeptime    => '0.5',
     }
-
-    ufw::allow { 'ircrcbot port mw1 ipv4':
-        proto => 'udp',
-        port  => '5070',
-        from  => '185.52.1.75',
-    }
-
-    ufw::allow { 'ircrcbot port mw2 ipv4':
-        proto => 'udp',
-        port  => '5070',
-        from  => '185.52.2.113',
-    }
-
-    ufw::allow { 'ircrcbot port mw3 ipv4':
-        proto => 'udp',
-        port  => '5070',
-        from  => '81.4.121.113',
-    }
     
-    # new servers
     ufw::allow { 'ircrcbot port mw4 ipv4':
         proto => 'udp',
         port  => '5070',
