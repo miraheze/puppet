@@ -41,12 +41,6 @@ class prometheus::redis_exporter (
         notify => Exec['prometheus-redis reload systemd'],
     }
 
-    ufw::allow { 'prometheus access 9121 on misc2':
-        proto => 'tcp',
-        port  => 9121,
-        from  => '185.52.3.121',
-    }
-
     ufw::allow { 'prometheus access 9121  ipv4':
         proto => 'tcp',
         port  => 9121,

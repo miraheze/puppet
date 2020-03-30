@@ -1,5 +1,0 @@
-lizardfs_master: true
-lizardfs_web: true
-enable_parsoid: false
-vpncloud::server_ip: 10.0.1.16
-base::sysctl::swap_value: 0
