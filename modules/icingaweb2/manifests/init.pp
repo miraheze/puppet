@@ -20,7 +20,7 @@ class icingaweb2 (
                 'display_errors'            => 'Off',
                 'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
                 'log_errors'                => 'On',
-                'memory_limit'              => '512M',
+                'memory_limit'              => hiera('php::fpm::memory_limit', '512M'),
                 'opcache'                   => {
                     'enable'                  => 1,
                     'interned_strings_buffer' => 30,
