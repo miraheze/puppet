@@ -6,6 +6,8 @@ mariadb::version: '10.4'
 php::php_version: '7.3'
 php::cli::memory_limit: '3G'
 
+php::php_fpm::fpm_workers_multiplier: '3.0'
+
 # icinga2
 
 icinga2::globals::package_name: 'icinga2'
