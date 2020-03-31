@@ -1,8 +1,8 @@
 worker_heartbeat_timeout: 115000
 
-num_workers: 1
+num_workers: 2
 
-worker_heap_limit_mb: 90
+worker_heap_limit_mb: 120
 
 logging:
   level: info
