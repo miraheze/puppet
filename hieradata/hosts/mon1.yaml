@@ -5,9 +5,9 @@ mariadb::version: '10.4'
 
 php::php_version: '7.3'
 php::cli::memory_limit: '3G'
-php::fpm::memory_limit: '2g'
+php::fpm::memory_limit: '3g'
 
-php::php_fpm::fpm_workers_multiplier: 3.0
+php::php_fpm::fpm_workers_multiplier: 4.0
 
 # icinga2
 
