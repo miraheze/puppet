@@ -115,8 +115,7 @@ info:
 services:
   - name: restbase
     module: hyperswitch
-    conf: &rb_conf
-      # In production we expose both 7231 and 7233 ports from fullstack RB.
+    conf:
       port: 7231
       spec: *spec_root
       salt: secret
