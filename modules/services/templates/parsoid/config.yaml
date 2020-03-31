@@ -27,7 +27,7 @@ services:
       debug: false
       usePHPPreProcessor: true
       useSelser: true
-      useBatchAPI: false
+      useBatchAPI: true
       linting: true
       strictSSL: true
       useWorker: true
