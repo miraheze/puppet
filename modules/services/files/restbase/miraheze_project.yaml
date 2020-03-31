@@ -9,7 +9,7 @@ paths:
             description: Welcome to your RESTBase API.
           x-host-basePath: /api/rest_v1
           x-route-filters:
-            - path: lib/content_location_filter.js
+            - path: ./lib/content_location_filter.js
             - path: ./lib/normalize_title_filter.js
               options:
                 redirect_cache_control: '{{options.purged_cache_control}}'
