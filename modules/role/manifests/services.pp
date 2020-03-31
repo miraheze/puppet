@@ -28,7 +28,7 @@ class role::services {
         }
     }
 
-    if hiera('enable_electron', true) {
+    if hiera('enable_electron', false) {
         include ::profile::electron
 
         ufw::allow { 'electron monitoring ipv4':
@@ -60,7 +60,7 @@ class role::services {
         }
     }
 
-    if hiera('enable_proton', false) {
+    if hiera('enable_proton', true) {
         include ::profile::proton
 
         ufw::allow { 'proton monitoring ipv4':
