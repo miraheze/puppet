@@ -1,3 +1,0 @@
-users::groups: cache-admins
-vpncloud::server_ip: 10.0.1.10
-nginx::worker_processes: 4

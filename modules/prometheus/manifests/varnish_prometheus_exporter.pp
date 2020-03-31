@@ -19,12 +19,6 @@ class prometheus::varnish_prometheus_exporter (
         require => [ Package['varnish'], File['/etc/systemd/system/prometheus-varnish-exporter.service'] ],
     }
 
-    ufw::allow { 'prometheus varnish/misc2':
-        proto   => 'tcp',
-        port    => $listen_port,
-        from    => '185.52.3.121',
-    }
-
     ufw::allow { 'prometheus varnish ipv4':
         proto => 'tcp',
         port  => $listen_port,

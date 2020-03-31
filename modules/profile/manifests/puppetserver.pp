@@ -3,10 +3,10 @@
 # Sets up a puppetserver for all puppet agent's to connect to.
 #
 class profile::puppetserver (
-    String  $puppetdb_hostname      = hiera('puppetdb_hostname', 'puppet1.miraheze.org'),
+    String  $puppetdb_hostname      = hiera('puppetdb_hostname', 'puppet2.miraheze.org'),
     Boolean $puppetdb_enable        = hiera('puppetdb_enable', false),
     Integer $puppet_major_version   = hiera('puppet_major_version', 6),
-    String  $puppetserver_hostname  = hiera('puppetserver_hostname', 'puppet1.miraheze.org'),
+    String  $puppetserver_hostname  = hiera('puppetserver_hostname', 'puppet2.miraheze.org'),
     String  $puppetserver_java_opts = hiera('puppetserver_java_opts', '-Xms300m -Xmx300m'),
 ) {
     class { '::puppetserver':

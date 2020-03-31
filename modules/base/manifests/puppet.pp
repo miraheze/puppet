@@ -4,7 +4,7 @@ class base::puppet {
     $puppet_major_version = hiera('puppet_major_version', 6)
 
     if $puppet_major_version == 6 {
-        $puppetserver_hostname = hiera('puppetserver_hostname', 'puppet1.miraheze.org')
+        $puppetserver_hostname = hiera('puppetserver_hostname', 'puppet2.miraheze.org')
 
         apt::source { 'puppetlabs':
             location => 'http://apt.puppetlabs.com',

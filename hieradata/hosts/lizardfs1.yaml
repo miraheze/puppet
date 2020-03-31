@@ -1,4 +1,0 @@
-lizardfs_storage: true
-lizardfs_client: true
-vpncloud::server_ip: 10.0.1.12
-lizardfs_chunkserver_mount_removal: true

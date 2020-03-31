@@ -1,6 +1,6 @@
 # servers
 
-node /^bacula[12]\.miraheze\.org$/ {
+node 'bacula2.miraheze.org' {
     include base
     include bacula::director
     include role::salt::minions
@@ -10,7 +10,7 @@ node /^cloud[12]\.miraheze\.org$/ {
     include base
 }
 
-node /^cp[34678]\.miraheze\.org$/ {
+node /^cp[3678]\.miraheze\.org$/ {
     include base
     include role::varnish
     include role::salt::minions
@@ -26,7 +26,7 @@ node 'db4.miraheze.org' {
     include prometheus::mysqld_exporter
 }
 
-node /^db[56]\.miraheze\.org$/ {
+node 'db6.miraheze.org' {
     include base
     include role::db
     include bacula::client
@@ -48,14 +48,6 @@ node 'dbt1.miraheze.org' {
     include bacula::client
     include role::salt::minions
     include prometheus::mysqld_exporter
-}
-
-node 'lizardfs6.miraheze.org' {
-    include base
-    include bacula::client
-    include role::mediawiki
-    include role::salt::minions
-    include prometheus::php_fpm
 }
 
 node 'gluster1.miraheze.org' {
@@ -87,21 +79,6 @@ node 'misc1.miraheze.org' {
     include prometheus::php_fpm
 }
 
-node 'misc2.miraheze.org' {
-    include base
-    include role::redis
-    include role::salt::minions
-    include prometheus::redis_exporter
-}
-
-node 'misc4.miraheze.org' {
-    include base
-    include bacula::client
-    include role::prometheus
-    include role::salt::masters
-    include role::salt::minions
-}
-
 node 'mon1.miraheze.org' {
     include base
     include role::grafana
@@ -113,7 +90,7 @@ node 'mon1.miraheze.org' {
     include prometheus::php_fpm
 }
 
-node /^mw[1234567]\.miraheze\.org$/ {
+node /^mw[4567]\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include role::salt::minions
@@ -131,13 +108,6 @@ node 'phab1.miraheze.org' {
     include role::phabricator
     include role::salt::minions
     include prometheus::php_fpm
-}
-
-node 'puppet1.miraheze.org' {
-    include base
-    include bacula::client
-    include role::puppetserver
-    include role::salt::minions
 }
 
 node 'puppet2.miraheze.org' {
@@ -161,13 +131,6 @@ node /^services[12]\.miraheze\.org$/ {
     include base
     include role::services
     include role::salt::minions
-}
-
-node 'test1.miraheze.org' {
-    include base
-    include role::mediawiki
-    include role::salt::minions
-    include prometheus::php_fpm
 }
 
 node 'test2.miraheze.org' {
