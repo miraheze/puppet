@@ -28,22 +28,6 @@ class role::services {
         }
     }
 
-    if hiera('enable_electron', false) {
-        include ::profile::electron
-
-        ufw::allow { 'electron monitoring ipv4':
-            proto => 'tcp',
-            port  => 3000,
-            from  => '51.89.160.138',
-        }
-
-        ufw::allow { 'electron monitoring ipv6':
-            proto => 'tcp',
-            port  => 3000,
-            from  => '2001:41d0:800:105a::6',
-        }
-    }
-
     if hiera('enable_parsoid', true) {
         include ::profile::parsoid
 
