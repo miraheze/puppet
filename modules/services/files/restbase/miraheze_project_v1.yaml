@@ -42,11 +42,6 @@ paths:
       - path: v1/pdf.js
         options: '{{options.pdf}}'
       - path: v1/common_schemas.yaml # Doesn't really matter where to mount it.
-  /transform:
-    x-modules:
-      - path: v1/transform.yaml
-      - path: v1/transform-lang.js
-        options: '{{options.transform}}'
   /data:
     x-modules:
       - path: v1/citoid.js
