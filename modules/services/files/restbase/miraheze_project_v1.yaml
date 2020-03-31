@@ -39,13 +39,6 @@ paths:
       - path: v1/content.yaml
         options:
           response_cache_control: '{{options.purged_cache_control}}'
-      - path: v1/summary.js
-        options: '{{merge({"response_cache_control": options.purged_cache_control_client_cache},
-                      options.summary)}}'
-      - path: v1/related.js
-        options: '{{options.related}}'
-      - path: v1/random.yaml
-        options: '{{merge({"random_cache_control": "s-maxage=2, max-age=1"}, options.wikifeeds)}}'
       - path: v1/pdf.js
         options: '{{options.pdf}}'
       - path: v1/common_schemas.yaml # Doesn't really matter where to mount it.
