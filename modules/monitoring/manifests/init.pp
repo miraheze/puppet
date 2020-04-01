@@ -187,8 +187,8 @@ class monitoring (
         notify  => Service['icinga2'],
     }
 
-    $ssl = loadyaml('/etc/puppet/ssl/certs.yaml')
-    $redirects = loadyaml('/etc/puppet/ssl/redirects.yaml')
+    $ssl = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
+    $redirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
     $sslcerts = merge( $ssl, $redirects )
 
     file { '/etc/icinga2/conf.d/ssl.conf':
