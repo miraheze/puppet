@@ -123,7 +123,7 @@ define gluster::mount (
     }
   }
 
-  $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,attribute-timeout=600,entry-timeout=600,negative-timeout=20,fopen-keep-cache"
+  $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,attribute-timeout=600,entry-timeout=600,negative-timeout=20,fopen-keep-cache,noexec"
 
   $mount_options = $options ? {
       undef   => $base_options,
