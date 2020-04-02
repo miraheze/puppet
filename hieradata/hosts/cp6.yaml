@@ -3,4 +3,4 @@ role::salt::minions::salt_master: 'puppet2.miraheze.org'
 new_servers: true
 users::groups: 'cache-admins'
 nginx::worker_processes: 4
-varnish::cache_file_size: '10G'
+varnish::cache_file_size: '12G'
