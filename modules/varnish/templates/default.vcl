@@ -133,7 +133,7 @@ sub mw_stash_cookie {
 }
 
 sub mw_evaluate_cookie {
-	if (req.http.Cookie ~ "([sS]ession|Token)=" 
+	if (req.http.Cookie ~ "([sS]ession|Token|mf_useformat|stopMobileRedirect)=" 
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
                 && req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(png|jpe?g|svg)$"
