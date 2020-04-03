@@ -64,6 +64,7 @@ class nutcracker(
         owner   => 'nutcracker',
         group   => 'nutcracker',
         require => Package['nutcracker'],
+        notify  => Service['nutcracker'],
     }
 
     service { 'nutcracker':
