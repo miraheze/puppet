@@ -1,11 +1,11 @@
 #!/bin/sh
 # Script that reports when Puppet last ran, in bold if more than an hour ago.
-
+# from https://github.com/wikimedia/puppet/blob/84c52f5b6b69db1606e25b5e9d8e85e783f3d958/modules/base/files/puppet/97-last-puppet-run
 set -e
 
 PATH=/bin:/usr/bin:/usr/local/bin
 LANG=C
-CONFIG_VERSION=$(awk -F\" '/^configuration_version:/ {$1="";print}' /opt/puppetlabs/server/data/puppetserver/state/last_run_report.yaml)
+CONFIG_VERSION=$(grep -A1 '^configuration_version:' /opt/puppetlabs/server/data/puppetserver/state/last_run_report.yaml| ruby -ryaml -e 'puts YAML.load(STDIN.read)["configuration_version"]')
 TSLASTPUPPETRUN=$(stat -c %Z /opt/puppetlabs/server/data/puppetserver/state/classes.txt)
 NOW=$(date +%s)
 DELTAMIN=$(((NOW-TSLASTPUPPETRUN)/60))
@@ -17,4 +17,4 @@ if [ $DELTAMIN -gt 60 ]; then
 else
 	MSG="($DELTAMIN minutes ago). $(puppet-enabled || true)"
 fi
-printf "The last Puppet run was at %s %b\\n" "${LAST_RUN}" "${MSG}"
+printf "The last Puppet run was at %s %b\\nLast puppet commit: %s\\n" "${LAST_RUN}" "${MSG}" "${CONFIG_VERSION}"
