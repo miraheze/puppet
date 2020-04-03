@@ -1,0 +1,17 @@
+#!/bin/sh
+# Script displaying a message if Puppet agent is disabled.
+# from https://github.com/wikimedia/puppet/blob/c58a46122ae52069af3d6dc13392f7f6d093934e/modules/base/files/puppet/97-last-puppet-run
+
+set -eu
+
+PATH=/bin:/usr/bin
+
+lockfile="/opt/puppetlabs/server/data/puppetserver/state/agent_disabled.lock"
+
+if test -f $lockfile; then
+    reason="$(jq -r '.disabled_message' $lockfile 2>/dev/null)"
+    echo "Puppet is disabled. $reason"
+    exit 1
+fi
+
+exit 0
