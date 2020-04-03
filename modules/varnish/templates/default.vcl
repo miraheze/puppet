@@ -133,6 +133,19 @@ sub mw_stash_cookie {
 }
 
 sub mw_evaluate_cookie {
+        if (req.url ~ "mobileaction=toggle_view_mobile") {
+		set req.http.Cookie = regsuball(req.http.Cookie, "(^|;\s*)(mf_useformat)=[^;]*", "");
+		set req.http.Cookie = regsub(req.http.Cookie, "^;\s*", "");
+		if (beresp.http.Set-Cookie) {
+			set beresp.http.Set-Cookie = beresp.http.Set-Cookie + "mf_useformat=true; path=/; domain=" + req.host;
+		} else {
+			set beresp.http.Set-Cookie = "mf_useformat=true; path=/; domain=" + req.host;
+		}
+	} elsif (req.url ~ "mobileaction=toggle_view_desktop") {
+		set req.http.Cookie = regsuball(req.http.Cookie, "(^|;\s*)(mf_useformat)=[^;]*", "");
+		set req.http.Cookie = regsub(req.http.Cookie, "^;\s*", "");
+	}
+
 	if (req.http.Cookie ~ "([sS]ession|Token)=" 
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
