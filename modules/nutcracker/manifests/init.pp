@@ -68,6 +68,7 @@ class nutcracker(
 
     service { 'nutcracker':
         ensure  => ensure_service($ensure),
+        enable  => true,
         require => File['/run/nutcracker'],
     }
 }
