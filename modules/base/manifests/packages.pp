@@ -8,6 +8,7 @@ class base::packages {
         'git',
         'gzip',
         'htop',
+        'jq',
         'iftop',
         'iotop',
         'logrotate',
