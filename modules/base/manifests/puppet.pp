@@ -109,6 +109,13 @@ class base::puppet {
         ensure => stopped,
     }
 
+    file { '/usr/local/bin/puppet-enabled':
+        mode   => '0555',
+        owner  => 'root',
+        group  => 'root',
+        source => 'puppet:///modules/base/puppet/puppet-enabled',
+    }
+
     motd::script { 'last-puppet-run':
         ensure   => present,
         priority => 97,
