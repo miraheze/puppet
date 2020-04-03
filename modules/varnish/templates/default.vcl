@@ -133,7 +133,7 @@ sub mw_stash_cookie {
 }
 
 sub mw_evaluate_cookie {
-        if (req.url ~ "mobileaction=toggle_view_mobile") {
+	if (req.url ~ "mobileaction=toggle_view_mobile") {
 		set req.http.Cookie = regsuball(req.http.Cookie, "(^|;\s*)(mf_useformat)=[^;]*", "");
 		set req.http.Cookie = regsub(req.http.Cookie, "^;\s*", "");
 		if (beresp.http.Set-Cookie) {
@@ -146,7 +146,7 @@ sub mw_evaluate_cookie {
 		set req.http.Cookie = regsub(req.http.Cookie, "^;\s*", "");
 	}
 
-	if (req.http.Cookie ~ "([sS]ession|Token)=" 
+	if (req.http.Cookie ~ "([sS]ession|Token|mf_useformat|stopMobileRedirect)=" 
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
                 && req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(png|jpe?g|svg)$"
