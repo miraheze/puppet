@@ -62,6 +62,7 @@ node 'jobrunner1.miraheze.org' {
     include role::redis
     include role::mediawiki
     include role::salt::minions
+    include prometheus::redis_exporter
 }
 
 node 'mail1.miraheze.org' {
