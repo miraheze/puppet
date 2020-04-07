@@ -37,7 +37,7 @@ class profile::icinga::agent {
         display_name            => $::fqdn,
         address                 => $::ipaddress_eth0,
         check_command           => 'hostalive',
-        vars                    => hiera_hash('icinga_vars', {}),
+        vars                    => lookup('icinga_vars', {merge => hash}),
         target                  => "/etc/icinga2/zones.d/master/${::fqdn}.conf"
     }
 

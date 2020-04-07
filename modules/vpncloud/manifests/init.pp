@@ -14,7 +14,7 @@ class vpncloud(
         require     => File['/opt/vpncloud_1.0.0_amd64.deb'],
     }
 
-    $shared_key = hiera('passwords::vpncloud::shared_key')
+    $shared_key = lookup('passwords::vpncloud::shared_key')
 
     file { '/etc/vpncloud/miraheze-internal.net':
         ensure  => present,

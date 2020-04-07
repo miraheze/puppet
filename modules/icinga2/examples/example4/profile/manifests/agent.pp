@@ -52,6 +52,6 @@ class profile::icinga2::agent(
       display_name => $::hostname,
       address      => $agent_ip,
       target       => "/etc/icinga2/zones.d/${parent_zone}/${::hostname}.conf",
-    }, hiera_hash(icinga2::host)),
+    }, lookup('icinga2::host', {merge => unique}),
   }
 }

@@ -13,8 +13,8 @@ class irc::irclogbot {
         require   => File['/etc/irclogbot'],
     }
 
-    $mirahezebots_password = hiera('passwords::irc::mirahezebots')
-    $mirahezelogbot_password = hiera('passwords::mediawiki::mirahezelogbot')
+    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
+    $mirahezelogbot_password = lookup('passwords::mediawiki::mirahezelogbot')
 
     file { '/etc/irclogbot/adminlog.py':
         ensure => present,

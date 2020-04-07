@@ -1,6 +1,6 @@
 # role: services
 class role::services {
-    if hiera('enable_citoid', true) {
+    if lookup('enable_citoid', true) {
         include ::profile::citoid
 
         ufw::allow { 'citoid monitoring ipv4':
@@ -28,7 +28,7 @@ class role::services {
         }
     }
 
-    if hiera('enable_parsoid', true) {
+    if lookup('enable_parsoid', true) {
         include ::profile::parsoid
 
         ufw::allow { 'parsoid monitoring ipv4':
@@ -44,7 +44,7 @@ class role::services {
         }
     }
 
-    if hiera('enable_proton', true) {
+    if lookup('enable_proton', true) {
         include ::profile::proton
 
         ufw::allow { 'proton monitoring ipv4':
@@ -60,7 +60,7 @@ class role::services {
         }
     }
 
-    if hiera('enable_restbase', true) {
+    if lookup('enable_restbase', true) {
         include ::profile::restbase
 
         ufw::allow { 'restbase monitoring ipv4':

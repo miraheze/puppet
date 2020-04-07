@@ -2,18 +2,18 @@
 class role::db {
     include mariadb::packages
 
-    $mediawiki_password = hiera('passwords::db::mediawiki')
-    $wikiadmin_password = hiera('passwords::db::wikiadmin')
-    $piwik_password = hiera('passwords::db::piwik')
-    $phabricator_password = hiera('passwords::db::phabricator')
-    $grafana_password = hiera('passwords::db::grafana')
-    $exporter_password = hiera('passwords::db::exporter')
-    $internetarchivebot_password = hiera('passwords::db::iabot')
-    $icinga_password = hiera('passwords::db::icinga')
+    $mediawiki_password = lookup('passwords::db::mediawiki')
+    $wikiadmin_password = lookup('passwords::db::wikiadmin')
+    $piwik_password = lookup('passwords::db::piwik')
+    $phabricator_password = lookup('passwords::db::phabricator')
+    $grafana_password = lookup('passwords::db::grafana')
+    $exporter_password = lookup('passwords::db::exporter')
+    $internetarchivebot_password = lookup('passwords::db::iabot')
+    $icinga_password = lookup('passwords::db::icinga')
 
     class { 'mariadb::config':
         config      => 'mariadb/config/mw.cnf.erb',
-        password    => hiera('passwords::db::root'),
+        password    => lookup('passwords::db::root'),
         server_role => 'master',
 	icinga_password => $icinga_password,
     }

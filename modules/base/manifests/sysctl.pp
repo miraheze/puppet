@@ -54,7 +54,7 @@ class base::sysctl {
 
     if $::virtual == 'kvm' {
         sysctl::parameters { 'avoid swap usage':
-            values  => { 'vm.swappiness' => hiera('base::sysctl::swap_value', 1), },
+            values  => { 'vm.swappiness' => lookup('base::sysctl::swap_value', 1), },
         }
 
         sysctl::parameters { 'increase open files limit':

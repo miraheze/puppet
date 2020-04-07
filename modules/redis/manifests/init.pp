@@ -7,7 +7,7 @@ class redis (
     Variant[Boolean, String] $password = false,
 ) {
 
-    $jobrunner = hiera('jobrunner', false)
+    $jobrunner = lookup('jobrunner', false)
 
     if os_version('debian stretch') {
         apt::pin { 'debian_stretch_backports_redis':

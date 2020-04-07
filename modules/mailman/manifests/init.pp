@@ -1,11 +1,11 @@
 # class: mailman
 class mailman (
     String $modules = ['alias', 'headers', 'rewrite', 'proxy', 'proxy_http', 'proxy_uwsgi', 'ssl'],
-    String $mailman_hyperkitty_api_key = hiera('mailman_hyperkitty_api_key'),
-    String $mailman3_web_secret_key = hiera('mailman3_web_secret_key'),
-    String $mailman3_rest_api_pass = hiera('mailman3_rest_api_pass'),
-    String $mailman3_admin_pass = hiera('mailman3_admin_pass'),
-    String $noreply_password = hiera('passwords::mail::noreply'),
+    String $mailman_hyperkitty_api_key = lookup('mailman_hyperkitty_api_key'),
+    String $mailman3_web_secret_key = lookup('mailman3_web_secret_key'),
+    String $mailman3_rest_api_pass = lookup('mailman3_rest_api_pass'),
+    String $mailman3_admin_pass = lookup('mailman3_admin_pass'),
+    String $noreply_password = lookup('passwords::mail::noreply'),
 ) {
     include ::httpd
 

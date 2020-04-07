@@ -7,7 +7,7 @@ class mediawiki::jobrunner {
         origin    => 'https://github.com/wikimedia/mediawiki-services-jobrunner',
     }
 
-    $redis_password = hiera('passwords::redis::master')
+    $redis_password = lookup('passwords::redis::master')
 
     file { '/srv/jobrunner/jobrunner.json':
         ensure  => present,

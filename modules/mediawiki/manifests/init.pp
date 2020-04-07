@@ -4,11 +4,11 @@ class mediawiki(
     Optional[String] $branch_mw_config = undef,
     Optional[Boolean] $use_memcached = undef,
 ) {
-    $new_servers = hiera('new_servers', false)
+    $new_servers = lookup('new_servers', false)
 
     include mediawiki::favicons
     include mediawiki::cron
-    if hiera('mwservices', false) {
+    if lookup('mwservices', false) {
         include mediawiki::services_cron
     }
     include mediawiki::nginx
@@ -24,7 +24,7 @@ class mediawiki(
 
     include mediawiki::monitoring
 
-    if hiera(jobrunner) {
+    if lookup(jobrunner) {
         include mediawiki::jobrunner
     }
 
@@ -98,18 +98,18 @@ class mediawiki(
         require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
     }
 
-    $wikiadmin_password   = hiera('passwords::db::wikiadmin')
-    $mediawiki_password   = hiera('passwords::db::mediawiki')
-    $redis_password       = hiera('passwords::redis::master')
-    $noreply_password     = hiera('passwords::mail::noreply')
-    $mediawiki_upgradekey = hiera('passwords::mediawiki::upgradekey')
-    $mediawiki_secretkey  = hiera('passwords::mediawiki::secretkey')
-    $recaptcha_sitekey    = hiera('passwords::recaptcha::sitekey')
-    $recaptcha_secretkey  = hiera('passwords::recaptcha::secretkey')
-    $googlemaps_key       = hiera('passwords::mediawiki::googlemapskey')
-    $matomotoken          = hiera('passwords::mediawiki::matomotoken')
+    $wikiadmin_password   = lookup('passwords::db::wikiadmin')
+    $mediawiki_password   = lookup('passwords::db::mediawiki')
+    $redis_password       = lookup('passwords::redis::master')
+    $noreply_password     = lookup('passwords::mail::noreply')
+    $mediawiki_upgradekey = lookup('passwords::mediawiki::upgradekey')
+    $mediawiki_secretkey  = lookup('passwords::mediawiki::secretkey')
+    $recaptcha_sitekey    = lookup('passwords::recaptcha::sitekey')
+    $recaptcha_secretkey  = lookup('passwords::recaptcha::secretkey')
+    $googlemaps_key       = lookup('passwords::mediawiki::googlemapskey')
+    $matomotoken          = lookup('passwords::mediawiki::matomotoken')
 
-    $wiki_discord_hooks_url = hiera('mediawiki::wiki_discord_hooks_url')
+    $wiki_discord_hooks_url = lookup('mediawiki::wiki_discord_hooks_url')
 
     class { '::nutcracker':
         redis_password => $redis_password,

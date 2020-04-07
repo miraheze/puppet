@@ -9,7 +9,7 @@ class irc::ircrcbot(
 ) {
     include ::irc
 
-    $mirahezebots_password = hiera('passwords::irc::mirahezebots')
+    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
 
     file { '/usr/local/bin/ircrcbot.py':
         ensure  => present,

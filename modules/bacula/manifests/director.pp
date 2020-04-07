@@ -19,7 +19,7 @@ class bacula::director {
         require => Package['bacula-server'],
     }
 
-    $password = hiera('passwords::bacula::director')
+    $password = lookup('passwords::bacula::director')
 
     file { ['/bacula', '/bacula/backup', '/bacula/restore']:
         ensure => directory,

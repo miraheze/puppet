@@ -2,8 +2,8 @@
 class role::postgresql {
     
     class { '::postgresql::master':
-        root_dir => hiera('postgresql::root_dir', '/srv/postgres'),
-        use_ssl  => hiera('postgresql::ssl', false),
+        root_dir => lookup('postgresql::root_dir', '/srv/postgres'),
+        use_ssl  => lookup('postgresql::ssl', false),
     }
 
     ufw::allow { 'postgresql':

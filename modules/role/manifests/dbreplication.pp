@@ -2,10 +2,10 @@
 class role::dbreplication {
     include mariadb::packages
 
-    $icinga_password = hiera('passwords::db::icinga')
+    $icinga_password = lookup('passwords::db::icinga')
     class { 'mariadb::config':
         config          => 'mariadb/config/mw.cnf.erb',
-        password        => hiera('passwords::db::root'),
+        password        => lookup('passwords::db::root'),
         server_role     => 'slave',
         icinga_password => $icinga_password,
     }
