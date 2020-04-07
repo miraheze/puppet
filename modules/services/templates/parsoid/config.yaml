@@ -31,7 +31,7 @@ services:
       linting: true
       strictSSL: true
       useWorker: true
-      cpu_workers: 1
+      cpu_workers: 2
       nativeGallery: false
       timeouts:
         request: 110000
