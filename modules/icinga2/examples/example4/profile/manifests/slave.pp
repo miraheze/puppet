@@ -72,6 +72,6 @@ class profile::icinga2::slave(
       vars         => {
         'cluster_zone' => $slave_zone,
       },
-    }, lookup(icinga2::host, {merge => hash}),
+    }, hiera_hash(icinga2::host)),
   }
 }

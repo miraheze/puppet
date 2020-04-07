@@ -1,6 +1,6 @@
 class profile::backuppc::server {
     class { '::backuppc::server': }
-    create_resources('backuppc::server::user', lookup('backuppc_users', []))
+    create_resources('backuppc::server::user', hiera('backuppc_users', []))
 
     # Icinga CheckCommand and Apply Rules
     @@icinga2::object::checkcommand { 'backuppc':

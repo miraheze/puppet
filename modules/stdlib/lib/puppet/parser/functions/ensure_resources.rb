@@ -26,7 +26,7 @@ Puppet::Parser::Functions.newfunction(:ensure_resources,
      gid: 'mygroup'
 
     Call:
-    ensure_resources('user', lookup('userlist', {merge => hash}), {'ensure' => 'present'})
+    ensure_resources('user', hiera_hash('userlist'), {'ensure' => 'present'})
 DOC
                                      ) do |vals|
   type, title, params = vals

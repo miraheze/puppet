@@ -29,9 +29,9 @@ class base::puppet {
             require => Package['puppet-agent'],
         }
 
-        file { '/usr/bin/lookup':
+        file { '/usr/bin/hiera':
             ensure  => link,
-            target  => '/opt/puppetlabs/bin/lookup',
+            target  => '/opt/puppetlabs/bin/hiera',
             require => Package['puppet-agent'],
         }
 
