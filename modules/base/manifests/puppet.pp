@@ -1,7 +1,7 @@
 # class base::puppet
 class base::puppet {
 
-    $puppet_major_version = lookup('puppet_major_version', 6)
+    $puppet_major_version = lookup('puppet_major_version', {'default_value' => 6})
 
     if $puppet_major_version == 6 {
         $puppetserver_hostname = lookup('puppetserver_hostname', 'puppet2.miraheze.org')

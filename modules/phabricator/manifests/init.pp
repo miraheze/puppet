@@ -28,7 +28,7 @@ class phabricator {
             'variables_order'     => 'GPCS',
         },
         'fpm_min_child' => 4,
-        'version' => lookup('php::php_version', '7.3'),
+        'version' => lookup('php::php_version', {'default_value' => '7.3'}),
     })
 
     $password = lookup('passwords::irc::mirahezebots')

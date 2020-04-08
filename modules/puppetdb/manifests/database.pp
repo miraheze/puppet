@@ -17,7 +17,7 @@ class puppetdb::database(
     include role::postgresql
 
     # Postgres replication and users
-    $postgres_users = lookup('puppetdb::postgres_users', undef)
+    $postgres_users = lookup('puppetdb::postgres_users', {'default_value' => undef})
     if $postgres_users {
         $postgres_users_defaults = {
             pgversion => $pgversion,

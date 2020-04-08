@@ -1,6 +1,6 @@
 # role: services
 class role::services {
-    if lookup('enable_citoid', true) {
+    if lookup('enable_citoid', {'default_value' => true}) {
         include ::profile::citoid
 
         ufw::allow { 'citoid monitoring ipv4':
@@ -28,7 +28,7 @@ class role::services {
         }
     }
 
-    if lookup('enable_parsoid', true) {
+    if lookup('enable_parsoid', {'default_value' => true}) {
         include ::profile::parsoid
 
         ufw::allow { 'parsoid monitoring ipv4':
@@ -44,7 +44,7 @@ class role::services {
         }
     }
 
-    if lookup('enable_proton', true) {
+    if lookup('enable_proton', {'default_value' => true}) {
         include ::profile::proton
 
         ufw::allow { 'proton monitoring ipv4':
@@ -60,7 +60,7 @@ class role::services {
         }
     }
 
-    if lookup('enable_restbase', true) {
+    if lookup('enable_restbase', {'default_value' => true}) {
         include ::profile::restbase
 
         ufw::allow { 'restbase monitoring ipv4':

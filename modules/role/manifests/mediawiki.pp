@@ -2,7 +2,7 @@
 class role::mediawiki {
     include ::mediawiki
 
-    if lookup('role::mediawiki::use_strict_firewall', false) {
+    if lookup('role::mediawiki::use_strict_firewall', {'default_value' => false}) {
         # Cache proxies will never use port 80.
 
         ufw::allow { 'https port cp2':
@@ -50,12 +50,12 @@ class role::mediawiki {
         description => 'MediaWiki server',
     }
 
-    # $gluster_volume_backup = lookup('gluster_volume_backup', 'glusterfs2.miraheze.org:/mvol')
+    # $gluster_volume_backup = lookup('gluster_volume_backup', {'default_value' => 'glusterfs2.miraheze.org:/mvol'})
     # backup-volfile-servers=
     if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
         gluster::mount { '/mnt/mediawiki-static':
           ensure    => mounted,
-          volume    => lookup('gluster_volume', 'gluster1.miraheze.org:/mvol'),
+          volume    => lookup('gluster_volume', {'default_value' => 'gluster1.miraheze.org:/mvol'}),
         }
     }
 }

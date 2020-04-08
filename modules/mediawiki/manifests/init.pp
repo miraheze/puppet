@@ -4,7 +4,7 @@ class mediawiki(
     Optional[String] $branch_mw_config = undef,
     Optional[Boolean] $use_memcached = undef,
 ) {
-    $new_servers = lookup('new_servers', false)
+    $new_servers = lookup('new_servers', {'default_value' => false})
 
     include mediawiki::favicons
     include mediawiki::cron

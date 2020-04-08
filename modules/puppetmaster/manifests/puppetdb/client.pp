@@ -4,7 +4,7 @@ class puppetmaster::puppetdb::client(
     Integer $port = 443
 ) {
 
-    $host = lookup('puppetdb_host', 'puppet1.miraheze.org')
+    $host = lookup('puppetdb_host', {'default_value' => 'puppet1.miraheze.org'})
 
     file { '/etc/puppet/puppetdb.conf':
         ensure  => present,

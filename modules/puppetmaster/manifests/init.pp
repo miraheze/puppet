@@ -1,10 +1,10 @@
 # class: puppetmaster
 # deprecated
 class puppetmaster(
-    Boolean $use_puppetdb          = lookup('puppetmaster::use_puppetdb', false),
+    Boolean $use_puppetdb          = lookup('puppetmaster::use_puppetdb', {'default_value' => false}),
     Array   $modules               = ['rewrite', 'ssl'],
-    Integer $puppet_major_version  = lookup('puppet_major_version', 4),
-    String  $puppetmaster_hostname = lookup('puppetmaster_hostname', 'puppet1.miraheze.org'),
+    Integer $puppet_major_version  = lookup('puppet_major_version', {'default_value' => 4}),
+    String  $puppetmaster_hostname = lookup('puppetmaster_hostname', {'default_value' => 'puppet1.miraheze.org'}),
 ) {
     include ::httpd
 

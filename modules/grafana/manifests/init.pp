@@ -19,7 +19,7 @@ class grafana (
         require => Apt::Source['grafana_apt'],
     }
 
-    $new_servers = lookup('new_servers', false)
+    $new_servers = lookup('new_servers', {'default_value' => false})
     file { '/etc/grafana/grafana.ini':
         content => template('grafana/grafana.ini.erb'),
         owner   => 'root',

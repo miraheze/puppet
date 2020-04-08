@@ -14,7 +14,7 @@ class base::monitoring {
         notify  => Service['nagios-nrpe-server'],
     }
 
-    $puppetmaster_version = lookup('puppetmaster_version', 4)
+    $puppetmaster_version = lookup('puppetmaster_version', {'default_value' => 4})
     file { '/usr/lib/nagios/plugins/check_puppet_run':
         ensure  => present,
         content => template('base/icinga/check_puppet_run.erb'),

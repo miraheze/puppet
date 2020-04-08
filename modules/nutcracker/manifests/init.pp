@@ -26,7 +26,7 @@ class nutcracker(
 
     require_package('nutcracker')
 
-    $new_servers = lookup('new_servers', false)
+    $new_servers = lookup('new_servers', {'default_value' => false})
     file { '/etc/nutcracker/nutcracker.yml':
         ensure  => $ensure,
         content => template('nutcracker/nutcracker.yml.erb'),

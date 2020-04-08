@@ -1,6 +1,6 @@
 # nginx
 class nginx (
-    Variant[String, Integer] $nginx_worker_processes = lookup('nginx::worker_processes', 'auto'),
+    Variant[String, Integer] $nginx_worker_processes = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
 ) {
     include ::apt
 
