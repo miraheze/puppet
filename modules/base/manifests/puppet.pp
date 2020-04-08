@@ -1,10 +1,10 @@
 # class base::puppet
 class base::puppet {
 
-    $puppet_major_version = hiera('puppet_major_version', 6)
+    $puppet_major_version = lookup('puppet_major_version', {'default_value' => 6})
 
     if $puppet_major_version == 6 {
-        $puppetserver_hostname = hiera('puppetserver_hostname', 'puppet2.miraheze.org')
+        $puppetserver_hostname = lookup('puppetserver_hostname', {'default_value' => 'puppet2.miraheze.org'})
 
         apt::source { 'puppetlabs':
             location => 'http://apt.puppetlabs.com',
@@ -60,7 +60,7 @@ class base::puppet {
             source => 'puppet:///modules/base/puppet/puppetlabs.puppet.logrotate.conf',
         }
 
-        if !hiera('puppetserver') {
+        if !lookup('puppetserver') {
             file { '/etc/puppetlabs/puppet/puppet.conf':
                 ensure  => present,
                 content => template("base/puppet/puppet.${puppet_major_version}.conf.erb"),
@@ -70,7 +70,7 @@ class base::puppet {
         }
     } else {
         # deprecated
-        $puppetmaster_hostname = hiera('puppetmaster_hostname', 'puppet1.miraheze.org')
+        $puppetmaster_hostname = lookup('puppetmaster_hostname', {'default_value' => 'puppet1.miraheze.org'})
 
         require_package('puppet', 'facter')
 
@@ -96,7 +96,7 @@ class base::puppet {
             source => 'puppet:///modules/base/puppet/puppet.logrotate.conf',
         }
 
-        if !hiera('puppetmaster') {
+        if !lookup('puppetmaster') {
             file { '/etc/puppet/puppet.conf':
                 ensure => present,
                 content => template("base/puppet/puppet.${puppet_major_version}.conf.erb"),

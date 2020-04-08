@@ -25,16 +25,16 @@
 # [*puppet_major_version*] Which puppet version to use, eg 4.
 #
 class puppetdb(
-    String $db_rw_host = hiera('puppetdb::db_rw_host', 'localhost'),
-    String $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx200m'),
-    String $db_user = hiera('puppetdb::db_user', 'puppetdb'),
-    Boolean $perform_gc = hiera('puppetdb::perform_gc', true),
-    Integer $command_processing_threads = hiera('puppetdb::command_processing_threads', 2),
-    Optional[String] $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
-    Optional[String] $db_ro_host = hiera('puppetdb::db_ro_host', undef),
-    Optional[String] $db_password = hiera('puppetdb::db_password', undef),
-    Boolean $db_ssl = hiera('puppetdb::db_ssl', true),
-    Integer $puppet_major_version = hiera('puppet_major_version', 6)
+    String $db_rw_host = lookup('puppetdb::db_rw_host', {'default_value' => 'localhost'}),
+    String $jvm_opts = lookup('puppetdb::jvm_opts', {'default_value' =>'-Xmx200m'}),
+    String $db_user = lookup('puppetdb::db_user', {'default_value' =>'puppetdb'}),
+    Boolean $perform_gc = lookup('puppetdb::perform_gc', {'default_value' => true}),
+    Integer $command_processing_threads = lookup('puppetdb::command_processing_threads', {'default_value' => 2}),
+    Optional[String] $bind_ip = lookup('puppetdb::bind_ip', {'default_value' => '0.0.0.0'}),
+    Optional[String] $db_ro_host = lookup('puppetdb::db_ro_host', {'default_value' => undef}),
+    Optional[String] $db_password = lookup('puppetdb::db_password', {'default_value' => undef}),
+    Boolean $db_ssl = lookup('puppetdb::db_ssl', {'default_value' => true}),
+    Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 6})
 ) {
 
     package { 'default-jdk':

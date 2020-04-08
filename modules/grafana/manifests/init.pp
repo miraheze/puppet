@@ -1,7 +1,7 @@
 # class: grafana
 class grafana (
-    String $grafana_password = hiera('passwords::db::grafana'),
-    String $mail_password = hiera('passwords::mail::noreply'),
+    String $grafana_password = lookup('passwords::db::grafana'),
+    String $mail_password = lookup('passwords::mail::noreply'),
 ) {
 
     include ::apt
@@ -19,7 +19,7 @@ class grafana (
         require => Apt::Source['grafana_apt'],
     }
 
-    $new_servers = hiera('new_servers', false)
+    $new_servers = lookup('new_servers', {'default_value' => false})
     file { '/etc/grafana/grafana.ini':
         content => template('grafana/grafana.ini.erb'),
         owner   => 'root',

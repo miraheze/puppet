@@ -1,7 +1,7 @@
 # = Class: prometheus::redis
 #
 class prometheus::redis_exporter (
-    $redis_password = hiera('passwords::redis::master'),
+    $redis_password = lookup('passwords::redis::master'),
 ) {
 
     file { '/usr/local/bin/redis_exporter':

@@ -14,7 +14,7 @@ class bacula::client {
         owner  => 'bacula',
     }
 
-    $password = hiera('passwords::bacula::director')
+    $password = lookup('passwords::bacula::director')
 
     file { '/etc/bacula/bacula-fd.conf':
         ensure  => present,

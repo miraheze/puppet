@@ -13,7 +13,7 @@ class monitoring (
         allowdupe => false,
     }
 
-    $version = hiera('mariadb::version', '10.2')
+    $version = lookup('mariadb::version', {'default_value' => '10.2'})
     apt::source { 'mariadb_apt':
         comment     => 'MariaDB stable',
         location    => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",

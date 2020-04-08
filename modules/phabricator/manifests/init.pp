@@ -28,10 +28,10 @@ class phabricator {
             'variables_order'     => 'GPCS',
         },
         'fpm_min_child' => 4,
-        'version' => hiera('php::php_version', '7.3'),
+        'version' => lookup('php::php_version', {'default_value' => '7.3'}),
     })
 
-    $password = hiera('passwords::irc::mirahezebots')
+    $password = lookup('passwords::irc::mirahezebots')
 
     ssl::cert { 'miraheze.wiki': }
 
@@ -111,7 +111,7 @@ class phabricator {
     $module_path = get_module_path($module_name)
     $phab_yaml = loadyaml("${module_path}/data/config.yaml")
     $phab_private = {
-        'mysql.pass' => hiera('passwords::db::phabricator'),
+        'mysql.pass' => lookup('passwords::db::phabricator'),
     }
 
     $phab_setting = {
@@ -124,7 +124,7 @@ class phabricator {
                     'host'     => 'mail.miraheze.org',
                     'port'     => 587,
                     'user'     => 'noreply',
-                    'password' => hiera('passwords::mail::noreply'),
+                    'password' => lookup('passwords::mail::noreply'),
                     'protocol' => 'tls',
                 },
             },

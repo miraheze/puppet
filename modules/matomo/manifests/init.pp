@@ -24,7 +24,7 @@ class matomo {
                 'display_errors'            => 'Off',
                 'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
                 'log_errors'                => 'On',
-                'memory_limit'              => hiera('php::fpm::memory_limit', '512M'),
+                'memory_limit'              => lookup('php::fpm::memory_limit', {'default_value' => '512M'}),
                 'opcache'                   => {
                     'enable'                  => 1,
                     'interned_strings_buffer' => 30,
@@ -43,10 +43,10 @@ class matomo {
                 'variables_order'     => 'GPCS',
             },
             config_cli => {
-                'memory_limit' => hiera('php::cli::memory_limit', '2G'),
+                'memory_limit' => lookup('php::cli::memory_limit', {'default_value' => '2G'}),
             },
             fpm_min_child => 4,
-            version => hiera('php::php_version', '7.3'),
+            version => lookup('php::php_version', {'default_value' => '7.3'}),
         }
     }
 
@@ -58,9 +58,9 @@ class matomo {
         monitor => true,
     }
     
-    $salt = hiera('passwords::piwik::salt')
-    $password = hiera('passwords::db::piwik')
-    $noreply_password = hiera('passwords::mail::noreply')
+    $salt = lookup('passwords::piwik::salt')
+    $password = lookup('passwords::db::piwik')
+    $noreply_password = lookup('passwords::mail::noreply')
 
     file { '/srv/matomo/config/config.ini.php':
         ensure  => present,

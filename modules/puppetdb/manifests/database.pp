@@ -10,14 +10,14 @@ class puppetdb::database(
         'jessie'  => '9.4',
     }
 
-    $puppetdb_pass = hiera('puppetdb::password::rw')
+    $puppetdb_pass = lookup('puppetdb::password::rw')
 
     # We do this for the require in postgres::db
     $require_class = 'postgresql::master'
     include role::postgresql
 
     # Postgres replication and users
-    $postgres_users = hiera('puppetdb::postgres_users', undef)
+    $postgres_users = lookup('puppetdb::postgres_users', {'default_value' => undef})
     if $postgres_users {
         $postgres_users_defaults = {
             pgversion => $pgversion,

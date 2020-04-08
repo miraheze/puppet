@@ -13,15 +13,15 @@ class base {
     include ssh
     include users
 
-    if hiera('letsencrypt') {
+    if lookup('letsencrypt') {
         include letsencrypt
     }
 
-    if hiera('arcanist') {
+    if lookup('arcanist') {
         include base::arcanist
     }
 
-    if !hiera('mailserver') {
+    if !lookup('mailserver') {
         include base::mail
     }
 

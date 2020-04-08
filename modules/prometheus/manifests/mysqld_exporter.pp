@@ -5,7 +5,7 @@ class prometheus::mysqld_exporter {
     # should use the version from sid
     require_package('prometheus-mysqld-exporter')
 
-    $exporter_password = hiera('passwords::db::exporter')
+    $exporter_password = lookup('passwords::db::exporter')
 
     file { '/etc/default/prometheus-mysqld-exporter':
         content => template('prometheus/prometheus-mysqld-exporter.erb'),

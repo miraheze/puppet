@@ -7,7 +7,7 @@ class roundcubemail (
 ) {
     include ::nodejs
 
-    $php_version = hiera('php::php_version', '7.3')
+    $php_version = lookup('php::php_version', {'default_value' => '7.3'})
     if !defined(Class['php::php_fpm']) {
         class { 'php::php_fpm':
             config  => {
@@ -33,7 +33,7 @@ class roundcubemail (
                 'variables_order'     => 'GPCS',
             },
             config_cli => {
-                'memory_limit' => hiera('php::cli::memory_limit', '400M'),
+                'memory_limit' => lookup('php::cli::memory_limit', {'default_value' => '400M'}),
             },
             fpm_min_child => 4,
             version => $php_version

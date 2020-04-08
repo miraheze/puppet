@@ -1,8 +1,8 @@
 define monitoring::hosts (
     $ensure      = present,
-    $contacts    = hiera('contactgroups', [ 'icingaadmins', 'ops' ]),
+    $contacts    = lookup('contactgroups', {'default_value' => [ 'icingaadmins', 'ops' ]}),
     # Defaults to use the variables below.
-    $ipaddress = hiera('monitoring::hosts::ipaddress', undef),
+    $ipaddress = lookup('monitoring::hosts::ipaddress', {'default_value' => undef}),
 ) {
 
     if $ipaddress != undef {
