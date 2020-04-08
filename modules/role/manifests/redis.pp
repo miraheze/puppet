@@ -1,6 +1,6 @@
 # role: redis
 class role::redis {
-    $redis_heap = lookup('redis::heap', '2900mb')
+    $redis_heap = lookup('redis::heap', {'default_value' => '2900mb'})
     class { '::redis':
         password  => lookup('passwords::redis::master'),
         maxmemory => $redis_heap,
