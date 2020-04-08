@@ -4,7 +4,7 @@ class base::puppet {
     $puppet_major_version = lookup('puppet_major_version', {'default_value' => 6})
 
     if $puppet_major_version == 6 {
-        $puppetserver_hostname = lookup('puppetserver_hostname', 'puppet2.miraheze.org')
+        $puppetserver_hostname = lookup('puppetserver_hostname', {'default_value' => 'puppet2.miraheze.org'})
 
         apt::source { 'puppetlabs':
             location => 'http://apt.puppetlabs.com',
@@ -70,7 +70,7 @@ class base::puppet {
         }
     } else {
         # deprecated
-        $puppetmaster_hostname = lookup('puppetmaster_hostname', 'puppet1.miraheze.org')
+        $puppetmaster_hostname = lookup('puppetmaster_hostname', {'default_value' => 'puppet1.miraheze.org'})
 
         require_package('puppet', 'facter')
 

@@ -43,10 +43,10 @@ class matomo {
                 'variables_order'     => 'GPCS',
             },
             config_cli => {
-                'memory_limit' => lookup('php::cli::memory_limit', '2G'),
+                'memory_limit' => lookup('php::cli::memory_limit', {'default_value' => '2G'}),
             },
             fpm_min_child => 4,
-            version => lookup('php::php_version', '7.3'),
+            version => lookup('php::php_version', {'default_value' => '7.3'}),
         }
     }
 

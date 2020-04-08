@@ -8,7 +8,7 @@ class mediawiki(
 
     include mediawiki::favicons
     include mediawiki::cron
-    if lookup('mwservices', false) {
+    if lookup('mwservices', {'default_value' => false}) {
         include mediawiki::services_cron
     }
     include mediawiki::nginx
