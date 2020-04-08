@@ -1,4 +1,4 @@
-hiera monitoring (
+class monitoring (
     String $db_host               = 'db7.miraheze.org',
     String $db_name               = 'icinga',
     String $db_user               = 'icinga2',
