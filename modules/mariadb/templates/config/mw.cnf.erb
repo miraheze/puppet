@@ -32,6 +32,10 @@ server-id                      = <%= @server_id %>
 log-bin                        = <%= @datadir %>/mysql-bin
 <% if @server_role == 'slave' %>
 relay-log                      = /var/log/mysql/mysql-relay-bin.log
+skip-slave-start
+replicate-ignore-db            = test
+replicate-ignore-db            = information_schema
+replicate-ignore-db            = mysql
 <% end %>
 <% if @server_role == 'master' -%>
 expire-logs-days               = 4
