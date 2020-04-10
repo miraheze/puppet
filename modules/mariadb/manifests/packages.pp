@@ -29,7 +29,10 @@ class mariadb::packages(
         require     => Apt::Pin['mariadb_pin'],
     }
 
-    package { "mariadb-server-${version}":
+    package {[
+        "mariadb-server-${version}",
+        "mariadb-backup"
+    ]:
         ensure  => present,
         require => Apt::Source['mariadb_apt'],
     }
