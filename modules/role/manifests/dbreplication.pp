@@ -10,16 +10,16 @@ class role::dbreplication {
         icinga_password => $icinga_password,
     }
 
-    ufw::allow { 'mysql port db6 ipv4':
+    ufw::allow { 'mysql port db7 ipv4':
         proto => 'tcp',
         port  => '3306',
-        from  => '51.89.160.130',
+        from  => '51.89.160.143',
     }
 
-    ufw::allow { 'mysql port db6 ipv6':
+    ufw::allow { 'mysql port db7 ipv6':
         proto => 'tcp',
         port  => '3306',
-        from  => '2001:41d0:800:1056::5',
+        from  => '2001:41d0:800:105a::11',
     }
 
     file { '/etc/ssl/private':
