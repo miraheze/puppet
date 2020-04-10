@@ -43,8 +43,8 @@ slave_compressed_protocol      = 1
 
 local_infile                   = 0
 
-tmp-table-size                 = 12M
-max-heap-table-size            = 12M
+tmp-table-size                 = 64M
+max-heap-table-size            = 64M
 max-connections                = <%= @max_connections %>
 open-files-limit               = 65535
 table-definition-cache         = <%= @table_definition_cache %>
