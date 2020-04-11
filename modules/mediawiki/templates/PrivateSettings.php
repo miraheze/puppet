@@ -41,7 +41,6 @@ $wmgUseNewServers = false;
 // Extension:SlackNotifications hooks
 $wmgWikiMirahezeSlackHooks = array(
 <%- @wiki_slack_hooks_url.each_pair do |wiki, values| -%>
-    '<%= wiki %>' => <%= values %>,
+    '<%= wiki %>' => '<%= values %>',
 <%- end -%>
 );
-
