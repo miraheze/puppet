@@ -110,7 +110,6 @@ class mediawiki(
     $matomotoken          = lookup('passwords::mediawiki::matomotoken')
 
     $wiki_discord_hooks_url = lookup('mediawiki::wiki_discord_hooks_url')
-    $wiki_slack_hooks_url = lookup('mediawiki::wiki_slack_hooks_url')
 
     class { '::nutcracker':
         redis_password => $redis_password,
