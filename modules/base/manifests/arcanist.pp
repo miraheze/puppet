@@ -6,13 +6,6 @@ class base::arcanist {
         ensure => directory,
     }
 
-    git::clone { 'libphutil':
-        ensure    => latest,
-        directory => '/srv/phab/libphutil',
-        origin    => 'https://github.com/phacility/libphutil.git',
-        require   => File['/srv/phab'],
-    }
-
     git::clone { 'arcanist':
         ensure    => latest,
         directory => '/srv/phab/arcanist',

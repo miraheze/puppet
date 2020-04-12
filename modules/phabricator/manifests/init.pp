@@ -58,13 +58,6 @@ class phabricator {
         require   => File['/srv/phab'],
     }
 
-    git::clone { 'libphutil':
-        ensure    => present,
-        directory => '/srv/phab/libphutil',
-        origin    => 'https://github.com/phacility/libphutil.git',
-        require   => File['/srv/phab'],
-    }
-
     git::clone { 'phabricator':
         ensure    => present,
         directory => '/srv/phab/phabricator',
