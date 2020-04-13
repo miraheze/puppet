@@ -76,14 +76,6 @@ class mediawiki(
         require            => File['/srv/mediawiki'],
     }
 
-    file { '/srv/mediawiki/w/cache/managewiki':
-        ensure  => 'directory',
-        owner   => 'www-data',
-        group   => 'www-data',
-        recurse => true,
-        require => Git::Clone['MediaWiki core'],
-    }
-
     file { '/srv/mediawiki/robots.php':
         ensure  => 'present',
         source  => 'puppet:///modules/mediawiki/robots.php',
