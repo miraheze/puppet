@@ -18,9 +18,6 @@ class mediawiki(
     include mediawiki::extensionsetup
     include mediawiki::servicessetup
 
-    if $use_memcached {
-        include mediawiki::memcached
-    }
 
     include mediawiki::monitoring
 
