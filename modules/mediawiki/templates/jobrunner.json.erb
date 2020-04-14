@@ -60,6 +60,5 @@
     "statsd": "",
 
     // Command used to launch a runner for a given job queue
-    // Temp hack (run nice as -0 as php-fpm on openvz7 dosen't support nice so is running as unset)
-    "dispatcher": "nice -0 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
+    "dispatcher": "nice -15 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
 }
