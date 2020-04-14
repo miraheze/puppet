@@ -4,7 +4,7 @@
     "groups": {
         "basic": {
             // Number of runner processes in this group
-            "runners": 3,
+            "runners": 2,
             // Job types to include ("*" means "all")
             "include": [
                 "*"
@@ -60,5 +60,5 @@
     "statsd": "",
 
     // Command used to launch a runner for a given job queue
-    "dispatcher": "sudo -u www-data nice -15 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
+    "dispatcher": "nice -15 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
 }
