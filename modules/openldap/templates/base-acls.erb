@@ -7,7 +7,7 @@
 # admin entry below
 # These access lines apply to database #1 only
 access to attrs=userPassword
-	by dn="cn=admin,<%= @suffix %>" write
+	by dn="cn=admin,dc=miraheze,dc=org" write
 	by anonymous auth
 	by self write
 	by * none
