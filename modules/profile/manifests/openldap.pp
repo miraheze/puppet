@@ -1,6 +1,6 @@
 # openldap server
 class profile::openldap (
-    String $master = hiera('profile::openldap::master', undef),
+    Optional[String] $master = hiera('profile::openldap::master', undef),
     Integer $server_id = hiera('profile::openldap::server_id'),
     String $hash_passwords = hiera('profile::openldap::hash_passwords'),
     Boolean $read_only = hiera('profile::openldap::read_only'),
