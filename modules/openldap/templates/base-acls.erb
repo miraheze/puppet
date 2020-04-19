@@ -6,7 +6,7 @@
 # Others should not be able to see it, except the
 # admin entry below
 # These access lines apply to database #1 only
-access to attrs=userPassword,shadowLastChange
+access to attrs=userPassword
 	by dn="cn=admin,<%= @suffix %>" write
 	by anonymous auth
 	by self write
