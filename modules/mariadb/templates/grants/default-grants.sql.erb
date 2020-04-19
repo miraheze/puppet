@@ -17,12 +17,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
     ON icinga.* TO '2001:41d0:800:105a::6'
     IDENTIFIED BY '<%= @icinga_password %>';
 
--- Grants for 'exporter'@'81.4.127.174'
-
-GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT
-    ON *.* TO 'exporter'@'81.4.127.174'
-    IDENTIFIED BY '<%= @exporter_password %>'
-    WITH GRANT OPTION;
+-- Grants for 'exporter'@'local'
 
 GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT
     ON *.* TO 'exporter'@'localhost'
