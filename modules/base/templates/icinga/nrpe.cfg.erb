@@ -23,7 +23,7 @@ command[check_php_fpm]=/usr/lib/nagios/plugins/check_procs -C php-fpm<%= scope.c
 command[check_jobrunner]=/usr/lib/nagios/plugins/check_procs -a redisJobRunnerService -c 1:1
 command[check_bacula_daemon]=/usr/lib/nagios/plugins/check_procs -u bacula -c 2:
 command[check_bacula_static]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H gluster1-fd -B BackupStatic -w 15d -c 31d
-command[check_bacula_databasesdb7]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db7-fd -B BackupDatabasesDB7 -w 15d -c 31d
+command[check_bacula_databasesdb6]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db6-fd -B BackupDatabasesDB6 -w 15d -c 31d
 command[check_bacula_databasesdbt1]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H dbt1-fd -B BackupDatabasesDBT1 -w 15d -c 31d
 command[check_bacula_private]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H puppet2-fd -B BackupPrivateGit -w 8d -c 16d
 command[check_bacula_phab]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H phab1-fd -B BackupPhabStatic -w 15d -c 30d
