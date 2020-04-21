@@ -27,7 +27,7 @@ class monitoring::ircecho (
     }
 
     $ircecho_logs = {
-        "/var/log/icinga2/irc.log" => "#miraheze",
+        '/var/log/icinga2/irc.log' => '#miraheze',
     }
 
     file { '/etc/default/ircecho':
@@ -39,7 +39,7 @@ class monitoring::ircecho (
     }
 
     file { '/etc/default/ircecho_password':
-        ensure => 'present',
+        ensure  => 'present',
         content => $mirahezebots_password,
         owner   => 'root',
         group   => 'root',
@@ -59,5 +59,12 @@ class monitoring::ircecho (
         ensure  => present,
         content => systemd_template('ircecho'),
         restart => true,
+    }
+
+    monitoring::services { 'IRCEcho':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_ircecho',
+        },
     }
 }
