@@ -22,7 +22,6 @@ class RCBot(irc.IRCClient):
         print("Joined %s." % (channel,))
  
     def gotUDP(self, broadcast):
-        time.sleep(<%= @sleeptime %>)
         self.msg(self.channel, str(broadcast, 'utf-8'))
  
 class RCFactory(protocol.ClientFactory):
@@ -41,6 +40,7 @@ class Echo(DatagramProtocol):
         global recver
         (host, port) = host_port
         if recver:
+            time.sleep(<%= @sleeptime %>)
             recver.gotUDP(data)
 
 reactor.listenUDP(<%= @udp_port %>, Echo())
