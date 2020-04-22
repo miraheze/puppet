@@ -8,7 +8,7 @@ class role::irc {
         network_port => '6697',
         channel      => '#miraheze-feed',
         udp_port     => '5070',
-        sleeptime    => '0.5',
+        sleeptime    => '1',
     }
     
     ufw::allow { 'ircrcbot port mw4 ipv4':
