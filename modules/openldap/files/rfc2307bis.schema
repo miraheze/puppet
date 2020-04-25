@@ -227,19 +227,6 @@ objectclass ( 1.3.6.1.1.1.2.5 NAME 'oncRpc' SUP top STRUCTURAL
   MUST ( cn $ oncRpcNumber )
   MAY description )
 
-objectclass ( 1.3.6.1.1.1.2.6 NAME 'ipHost' SUP top AUXILIARY
-  DESC 'Abstraction of a host, an IP device. The distinguished
-        value of the cn attribute denotes the hosts canonical
-        name. Device SHOULD be used as a structural class'
-  MUST ( cn $ ipHostNumber )
-  MAY ( userPassword $ l $ description $ manager ) )
-
-objectclass ( 1.3.6.1.1.1.2.7 NAME 'ipNetwork' SUP top STRUCTURAL
-  DESC 'Abstraction of a network. The distinguished value of
-        the cn attribute denotes the networks canonical name'
-  MUST ipNetworkNumber
-  MAY ( cn $ ipNetmaskNumber $ l $ description $ manager ) )
-
 objectclass ( 1.3.6.1.1.1.2.8 NAME 'nisNetgroup' SUP top STRUCTURAL
   DESC 'Abstraction of a netgroup. May refer to other netgroups'
   MUST cn
