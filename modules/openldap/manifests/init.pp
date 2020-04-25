@@ -92,6 +92,8 @@ class openldap(
         content => template('openldap/default.erb'),
     }
 
+    openldap::ldap_schema { 'rfc2307bis.schema': }
+
     if $extra_schemas {
         openldap::ldap_schema { $extra_schemas: }
     }
