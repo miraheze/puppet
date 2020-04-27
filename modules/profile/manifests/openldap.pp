@@ -70,12 +70,11 @@ class profile::openldap (
     }
 
     file { '/etc/ldap/schema/rfc2307bis.schema' :
-        ensure  => present,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0444',
-        source  => 'puppet:///modules/profile/openldap/rfc2307bis.schema',
-        require => Class['openldap::server'],
+        ensure => present,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
+        source => 'puppet:///modules/profile/openldap/rfc2307bis.schema',
     }
 
     openldap::server::schema { 'rfc2307bis':
