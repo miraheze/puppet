@@ -6,7 +6,7 @@ class profile::openldap (
 
     class { 'openldap::server':
         ldaps_ifs => ['/'],
-        ssl_ca    => '/etc/ssl/certs/Sectigo.crt'
+        ssl_ca    => '/etc/ssl/certs/Sectigo.crt',
         ssl_cert  => '/etc/ssl/certs/wildcard.miraheze.org.crt',
         ssl_key   => '/etc/ssl/private/wildcard.miraheze.org.key',
         require   => Class['ssl::wildcard'],
