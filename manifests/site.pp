@@ -57,6 +57,12 @@ node 'gluster1.miraheze.org' {
     include role::salt::minions
 }
 
+node 'gluster2.miraheze.org' {
+    include base
+    include role::gluster
+    include role::salt::minions
+}
+
 node 'jobrunner1.miraheze.org' {
     include base
     include role::redis
