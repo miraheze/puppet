@@ -69,18 +69,9 @@ class profile::openldap (
         path   => '/etc/ldap/schema/cosine.schema',
     }
 
-    file { '/etc/ldap/schema/rfc2307bis.schema' :
+    openldap::server::schema { 'nis':
         ensure => present,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0444',
-        source => 'puppet:///modules/profile/openldap/rfc2307bis.schema',
-    }
-
-    openldap::server::schema { 'rfc2307bis':
-        ensure  => present,
-        path    => '/etc/ldap/schema/rfc2307bis.schema',
-        require => File['/etc/ldap/schema/rfc2307bis.schema'],
+        path   => '/etc/ldap/schema/nis.ldif',
     }
 
     openldap::server::schema { 'inetorgperson':
