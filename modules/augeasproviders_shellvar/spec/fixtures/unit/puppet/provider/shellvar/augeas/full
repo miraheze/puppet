@@ -1,0 +1,21 @@
+# Options for ntpdate
+OPTIONS="-p 2"
+OPTIONS_SINGLE='-p 2'
+
+# retry setting
+# RETRIES: Number of retries before giving up
+RETRIES=2
+
+# Set to 'yes' to sync hw clock after successful ntpdate
+#SYNC_HWCLOCK=no
+
+#LS_JAVA_OPTS="option1"
+#LS_JAVA_OPTS_MULT="option1 option2"
+
+EXAMPLE=foo
+
+unset EXAMPLE_U
+export EXAMPLE_E=baz
+
+STR_LIST="foo bar baz"
+LST_LIST=(foo "bar baz" 123)
