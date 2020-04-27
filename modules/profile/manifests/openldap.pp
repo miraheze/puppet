@@ -13,10 +13,6 @@ class profile::openldap (
     }
 
     openldap::server::database { 'dc=miraheze,dc=org':
-        ensure => present,
-    }
-
-    openldap::server::database { 'dc=miraheze,dc=org':
         directory => '/var/lib/ldap',
         rootdn    => 'cn=admin,dc=miraheze,dc=org',
         rootpw    => $password,
