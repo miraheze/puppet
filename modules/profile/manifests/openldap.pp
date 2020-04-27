@@ -18,10 +18,6 @@ class profile::openldap (
         rootpw    => $password,
     }
 
-    openldap::server::module { 'memberof':
-        ensure => present,
-    }
-
     openldap::server::access { '0 on dc=miraheze,dc=org':
         what     => 'attrs=userPassword,shadowLastChange',
         access   => [
