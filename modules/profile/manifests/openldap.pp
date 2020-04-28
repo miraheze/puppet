@@ -92,7 +92,7 @@ class profile::openldap (
     require_package('ldapvi')
 
     file { '/etc/ldapvi.conf':
-        content => template('ldap/ldapvi.conf.erb'),
+        content => template('profile/openldap/ldapvi.conf.erb'),
         mode    => '0440',
         owner   => 'root',
         group   => 'root',
