@@ -78,6 +78,7 @@ class php::php_fpm(
         'gd',
         'gmp',
         'intl',
+        'ldap',
         'mbstring',
         'zip',
     ]
