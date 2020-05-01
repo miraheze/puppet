@@ -141,9 +141,9 @@ class puppetdb(
     $jetty_settings = {
         'port'                      => 8080,
         'ssl-port'                  => 8081,
-        'ssl-key'                   => '/etc/puppetdb/ssl/private.pem',
-        'ssl-cert'                  => '/etc/puppetdb/ssl/public.pem',
-        'ssl-ca-cert'               => '/etc/puppetdb/ssl/ca.pem',
+        'ssl-key'                   => '/etc/puppetlabs/puppetdb/ssl/private.pem',
+        'ssl-cert'                  => '/etc/puppetlabs/puppetdb/ssl/public.pem',
+        'ssl-ca-cert'               => '/etc/puppetlabs/puppetdb/ssl/ca.pem',
     }
 
     if $bind_ip {
