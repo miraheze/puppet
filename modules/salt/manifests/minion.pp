@@ -77,7 +77,7 @@ class salt::minion(
     }
 
     service { 'salt-minion':
-        ensure   => running,
+        ensure   => stopped,
         require  => Package['salt-minion'],
     }
 
