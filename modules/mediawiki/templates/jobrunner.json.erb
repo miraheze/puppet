@@ -11,9 +11,16 @@
             ],
             // Job types to exempt (useful when combined with "*")
             "exclude": [
-                "DataDumpGenerateJob"
+                "DataDumpGenerateJob",
+                "LocalGlobalUserPageCacheUpdateJob"
             ]
         },
+        "LocalGlobalUserPageCacheUpdateJob": {
+            "runners": 1,
+            "include": [
+                "LocalGlobalUserPageCacheUpdateJob"
+            ]
+        }
         "DataDumpGenerateJob": {
             "runners": 1,
             "include": [
