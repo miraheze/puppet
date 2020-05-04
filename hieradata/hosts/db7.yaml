@@ -3,8 +3,8 @@ mariadb::config::innodb_buffer_pool_instances: 1
 mariadb::config::innodb_buffer_pool_size: '7G'
 mariadb::config::max_connections: 500
 mariadb::config::tmpdir: /srv/tmp
-mariadb::config::table_definition_cache: 5000
-mariadb::config::table_open_cache: 5000
+mariadb::config::table_definition_cache: 10000
+mariadb::config::table_open_cache: 10000
 puppetserver_hostname: puppet2.miraheze.org
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
 new_servers: true
