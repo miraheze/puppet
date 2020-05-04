@@ -24,7 +24,7 @@ class salt::master(
     }
 
     service { 'salt-master':
-        ensure  => stopped,
+        ensure  => running,
         enable  => true,
         require => Package['salt-master'],
     }
