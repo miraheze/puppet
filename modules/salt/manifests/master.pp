@@ -19,10 +19,15 @@ class salt::master(
 
     include ssl::wildcard
 
+    # May be installed in the future again,
+    # but with proper measures in place.
     package { 'salt-master':
-        ensure  => 'installed',
+        ensure  => 'absent',
     }
 
+    # Do NOT install and run this service
+    # on any Miraheze server. Salt is NOT safe
+    # for usage here, EVEN with the patch in place.
     service { 'salt-master':
         ensure  => stopped,
         enable  => true,
