@@ -72,10 +72,16 @@ class salt::minion(
     # package installation, so that the deb postinst
     # step which automatically starts the minion
     # will start it with the correct settings
+    
+    # May be installed in the future again,
+    # but with proper measures in place.
     package { 'salt-minion':
-        ensure => present,
+        ensure => absent,
     }
 
+    # Do NOT install and run this service
+    # on any Miraheze server. Salt is NOT safe
+    # for usage here, EVEN with the patch in place.
     service { 'salt-minion':
         ensure   => stopped,
         require  => Package['salt-minion'],
