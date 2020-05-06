@@ -14,6 +14,8 @@ Unattended-Upgrade::Package-Blacklist {
 	"php7.4-";
 	"php7.3-";
 	"php7.2-";
+	"puppetdb";
+	"puppet-";
 };
 
 Unattended-Upgrade::Mail "sre@miraheze.org";
