@@ -1,5 +1,5 @@
 Unattended-Upgrade::Origins-Pattern {
-      "o=Debian,n=buster,l=Debian-Security";
+      "o=Debian,n=${distro_codename},l=Debian-Security";
 };
 
 // List of packages to not update (regexp are supported)
