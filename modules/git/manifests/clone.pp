@@ -17,7 +17,7 @@ define git::clone(
     String  $ensure = 'present',
     String  $owner = 'root',
     String  $group = 'root',
-    String  $timeout = '600',
+    String  $timeout = '900',
     String  $depth = 'full',
     Boolean $recurse_submodules=false,
     String  $mode = '0755',
