@@ -58,4 +58,11 @@ class base::monitoring {
     monitoring::services { 'SSH':
         check_command => 'ssh',
     }
+
+    monitoring::services { 'APT':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_apt',
+        },
+    }
 }
