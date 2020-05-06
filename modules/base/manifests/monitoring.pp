@@ -2,7 +2,7 @@
 class base::monitoring {
     include ::prometheus::node_exporter
 
-    $nagios_packages = [ 'nagios-plugins', 'nagios-nrpe-server', ]
+    $nagios_packages = [ 'monitoring-plugins', 'nagios-nrpe-server', ]
     package { $nagios_packages:
         ensure => present,
     }
