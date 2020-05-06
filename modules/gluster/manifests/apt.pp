@@ -1,12 +1,10 @@
 class gluster::apt {
-    # Needs to be manually updated when a majour update is released.
-    # We pin this to 7.0 to prevent unintended updates to majour releases.
     apt::source { 'gluster_apt':
         comment  => 'GlusterFS',
-        location => "https://download.gluster.org/pub/gluster/glusterfs/7/7.5/Debian/${::lsbdistcodename}/amd64/apt",
+        location => "https://download.gluster.org/pub/gluster/glusterfs/7/LATEST/Debian/${::lsbdistcodename}/amd64/apt",
         release  => "${::lsbdistcodename}",
         repos    => 'main',
-        key      => '80D15823B7FD1561F9F7BCDDDC30D7C23CBBABEE',
+        key      => 'F9C958A3AEE0D2184FAD1CBD43607F0DC2F8238C',
         notify   => Exec['apt_update_gluster'],
     }
 
