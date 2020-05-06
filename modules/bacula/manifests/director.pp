@@ -81,7 +81,7 @@ class bacula::director {
         ensure  => present,
         source  => 'puppet:///modules/bacula/check_bacula_backups',
         mode    => '0555',
-        require => Package['nagios-plugins'],
+        require => Package['monitoring-plugins'],
     }
 
     # Bacula secret keys
