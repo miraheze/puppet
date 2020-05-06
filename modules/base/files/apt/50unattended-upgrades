@@ -10,6 +10,7 @@ Unattended-Upgrade::Package-Blacklist {
 	"libc6-dev";
 	"libc6-i686";
 	"mariadb-";
+	"nginx";
 	"php-";
 	"php7.4-";
 	"php7.3-";
