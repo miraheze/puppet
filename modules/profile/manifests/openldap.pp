@@ -104,6 +104,20 @@ class profile::openldap (
         group   => 'root',
     }
 
+    file { '/usr/local/bin/modify-ldap-group':
+        source => 'puppet:///modules/profile/openldap/modify-ldap-group',
+        mode   => '0440',
+        owner  => 'root',
+        group  => 'root',
+    }
+
+    file { '/usr/local/bin/modify-ldap-user':
+        source => 'puppet:///modules/profile/openldap/modify-ldap-user',
+        mode   => '0440',
+        owner  => 'root',
+        group  => 'root',
+    }
+
     # only allow access to ldap tls port
     ufw::allow { 'ldaps port':
         proto => 'tcp',
