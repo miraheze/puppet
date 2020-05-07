@@ -71,6 +71,11 @@ node 'jobrunner1.miraheze.org' {
     include prometheus::redis_exporter
 }
 
+node 'ldap1.miraheze.org' {
+    include base
+    include role::openldap
+}
+
 node 'mail1.miraheze.org' {
     include base
     include role::mail
