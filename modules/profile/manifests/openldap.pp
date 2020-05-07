@@ -106,14 +106,14 @@ class profile::openldap (
 
     file { '/usr/local/bin/modify-ldap-group':
         source => 'puppet:///modules/profile/openldap/modify-ldap-group',
-        mode   => '0440',
+        mode   => '0550',
         owner  => 'root',
         group  => 'root',
     }
 
     file { '/usr/local/bin/modify-ldap-user':
         source => 'puppet:///modules/profile/openldap/modify-ldap-user',
-        mode   => '0440',
+        mode   => '0550',
         owner  => 'root',
         group  => 'root',
     }
