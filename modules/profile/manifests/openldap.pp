@@ -89,6 +89,15 @@ class profile::openldap (
         path   => '/etc/ldap/schema/ppolicy.schema',
     }
 
+    require_package('ldapvi')
+
+    file { '/etc/ldapvi.conf':
+        content => template('profile/openldap/ldapvi.conf.erb'),
+        mode    => '0440',
+        owner   => 'root',
+        group   => 'root',
+    }
+
     # only allow access to ldap tls port
     ufw::allow { 'ldaps port':
         proto => 'tcp',
