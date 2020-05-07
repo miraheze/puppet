@@ -26,7 +26,7 @@ bind_password = '<%= @ldap_password %>'
 search_filter = "(cn=%s)"
 
 # An array of base dns to search through
-search_base_dns = ["dc=miraheze,dc=org"]
+search_base_dns = ["ou=people,dc=miraheze,dc=org"]
 
 # group_search_filter = "(&(objectClass=posixGroup)(memberUid=%s))"
 # group_search_filter_user_attribute = "distinguishedName"
@@ -38,4 +38,9 @@ name = "givenName"
 surname = "sn"
 username = "cn"
 member_of = "memberOf"
-email =  "email"
+email =  "mail"
+
+[[servers.group_mappings]]
+# If you want to match all (or no ldap groups) then you can use wildcard
+group_dn = "cn=sre,ou=groups,dc=miraheze,dc=org"
+org_role = "Admin"
