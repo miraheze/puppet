@@ -25,6 +25,16 @@ class grafana (
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
+        notify  => Service['grafana-server'],
+        require => Package['grafana'],
+    }
+
+    file { '/etc/grafana/ldap.toml':
+        content => template('grafana/ldap.toml.erb'),
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        notify  => Service['grafana-server'],
         require => Package['grafana'],
     }
 
