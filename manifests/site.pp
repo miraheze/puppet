@@ -147,7 +147,6 @@ node /^services[12]\.miraheze\.org$/ {
 
 node 'test2.miraheze.org' {
     include base
-    include role::openldap
     include role::mediawiki
     include role::salt::minions
     include prometheus::php_fpm
