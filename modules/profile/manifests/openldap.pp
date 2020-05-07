@@ -89,6 +89,12 @@ class profile::openldap (
         path   => '/etc/ldap/schema/ppolicy.schema',
     }
 
+    class { 'openldap::client':
+        base       => 'dc=miraheze,dc=org',
+        uri        => ["ldaps://${::fqdn}"],
+        tls_cacert => '/etc/ssl/certs/Sectigo.crt',
+    }
+
     require_package('ldapvi')
 
     file { '/etc/ldapvi.conf':
