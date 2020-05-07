@@ -2,6 +2,7 @@
 class grafana (
     String $grafana_password = lookup('passwords::db::grafana'),
     String $mail_password = lookup('passwords::mail::noreply'),
+    String $ldap_password = lookup('passwords::ldap_password'),
 ) {
 
     include ::apt
