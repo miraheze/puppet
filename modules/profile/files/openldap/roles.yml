@@ -11,4 +11,4 @@ users:
     description: Basic users of the system
     backends_groups:
         ldap:
-            - cn=users,ou=group,dc=miraheze,dc=org
+            - cn=users,ou=groups,dc=miraheze,dc=org
