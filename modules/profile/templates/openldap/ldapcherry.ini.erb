@@ -125,7 +125,7 @@ ldap.search_filter_tmpl = '(|(uid=%(searchstring)s*)(sn=%(searchstring)s*))'
 ldap.group_attr.memberUid = "%(uid)s"
 
 # object classes of a user entry
-ldap.objectclasses = 'top, person, posixAccount, inetOrgPerson'
+ldap.objectclasses = 'top, person, organizationalPerson, inetOrgPerson'
 # dn entry attribute for an ldap user
 ldap.dn_user_attr = 'uid'
 
