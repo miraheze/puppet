@@ -156,7 +156,7 @@ class profile::openldap (
 
     file { '/etc/ldapcherry/roles.yml':
         ensure  => present,
-        source  => 'puppet:///modules/profile/openldap/ldapcherry.ini',
+        source  => 'puppet:///modules/profile/openldap/roles.yml',
         owner   => 'www-data',
         group   => 'www-data',
         require => File['/etc/ldapcherry'],
