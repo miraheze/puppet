@@ -1,10 +1,10 @@
-[auth_ldap]  
-type = "ldap"  
-hostname = "ldap1.miraheze.org"  
-port = "636"  
-root_dn = "dc=miraheze,dc=org  
-bind_dn = "cn=admin,dc=miraheze,dc=org"  
-bind_pw = "<%= @ldap_password %>"  
+[auth_ldap]
+type = "ldap"
+hostname = "ldap1.miraheze.org"
+port = "636"
+root_dn = "dc=miraheze,dc=org"
+bind_dn = "cn=admin,dc=miraheze,dc=org"
+bind_pw = "<%= @ldap_password %>"
 encryption = "ldaps"
 
 [icinga_ido]
