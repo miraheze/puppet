@@ -220,4 +220,13 @@ class profile::openldap (
         command => "/bin/ps -C slapd -o pmem= | awk '{sum+=\$1} END { if (sum <= 50.0) exit 1 }' \
         && /bin/systemctl restart slapd >/dev/null 2>/dev/null",
     }
+
+    cron { 'clean_sessions':
+        ensure  => present,
+        command => '/usr/bin/find /var/lib/ldapcherry/sessions -type f -mtime +2 -exec rm {} +',
+        user    => 'root',
+        hour    => 5,
+        minute  => 0,
+        require => File['/var/lib/ldapcherry/sessions'],
+    }
 }
