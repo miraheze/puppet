@@ -32,11 +32,6 @@ email:
     search_displayed: True
     type: email
     weight: 40
-    autofill: 
-        function: lcMail
-        args:
-            - $name
-            - '@miraheze'
     backends:
         ldap: mail
 uid:
