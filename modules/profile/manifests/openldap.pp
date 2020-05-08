@@ -171,6 +171,8 @@ class profile::openldap (
         require => File['/etc/ldapcherry'],
     }
 
+    require_package('python3-setuptools')
+
     systemd::service { 'ldapcherry':
         ensure  => present,
         content => systemd_template('ldapcherry'),
