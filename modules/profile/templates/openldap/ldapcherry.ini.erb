@@ -112,7 +112,7 @@ ldap.userdn = 'ou=people,dc=miraheze,dc=org'
 ldap.user_filter_tmpl = '(uid=%(username)s)'
 # ldapsearch filter to get groups of a user
 # %(username)s is content of the attribute marked 'key: True' in the attributes.file config file
-ldap.group_filter_tmpl = '(member=uid=%(username)s,ou=people,dc=miraheze,dc=org)'
+ldap.group_filter_tmpl = '(memberUid=%(username)s)'
 # filter to search users
 # %(searchstring)s is the content passed through the search box
 ldap.search_filter_tmpl = '(|(uid=%(searchstring)s*)(sn=%(searchstring)s*))'
@@ -120,9 +120,9 @@ ldap.search_filter_tmpl = '(|(uid=%(searchstring)s*)(sn=%(searchstring)s*))'
 # ldap group attributes and how to fill them
 # 'member' is the name of the attribute
 # for the template, any of the user's ldap attributes can be user
-ldap.group_attr.member = "%(dn)s"
+# ldap.group_attr.member = "%(dn)s"
 # same with memverUid and the uid user's attribute
-#ldap.group_attr.memberUid = "%(uid)s"
+ldap.group_attr.memberUid = "%(uid)s"
 
 # object classes of a user entry
 ldap.objectclasses = 'top, person, posixAccount, inetOrgPerson'
