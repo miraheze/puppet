@@ -148,7 +148,6 @@ class profile::openldap (
 
     file { '/etc/ldapcherry/ldapcherry.ini':
         ensure  => present,
-        source  => 'puppet:///modules/profile/openldap/ldapcherry.ini',
         content => template('openldap/ldapcherry.ini.erb'),
         owner   => 'www-data',
         group   => 'www-data',
