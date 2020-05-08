@@ -126,7 +126,7 @@ class profile::openldap (
         monitor => true,
     }
 
-    # Note you will need to manually run `python setup.py install`
+    # Note you will need to manually run `python3 setup.py install`
     # after git cloning. And also restart the ldapcherry service.
     git::clone { 'ldapcherry':
         directory          => '/srv/ldapcherry',
