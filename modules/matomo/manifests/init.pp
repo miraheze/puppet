@@ -45,7 +45,7 @@ class matomo {
             config_cli => {
                 'memory_limit' => lookup('php::cli::memory_limit', {'default_value' => '2G'}),
             },
-            fpm_min_child => 4,
+            fpm_min_child => 18,
             version => lookup('php::php_version', {'default_value' => '7.3'}),
         }
     }
