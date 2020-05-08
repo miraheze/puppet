@@ -1,3 +1,9 @@
-[db]
-resource = "icingaweb_db"
-backend = "db"
+[ldap-group-auth]  
+backend = "ldap"  
+resource = "auth_ldap"  
+user_class = "member"  
+user_name_attribute = "uid"  
+group_class = "groupofnames"  
+group_name_attribute = "cn"  
+group_filter = "cn=*"  
+user_backend = "ldap_user_auth"
