@@ -3,7 +3,7 @@ admin:
     description: Super administrators of the system
     backends_groups:
         ldap:
-            - cn=sre,ou=group,dc=miraheze,dc=org
+            - cn=sre,ou=groups,dc=miraheze,dc=org
 
 users:
     display_name: Users
