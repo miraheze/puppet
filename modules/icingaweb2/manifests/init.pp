@@ -41,7 +41,7 @@ class icingaweb2 (
             config_cli => {
                 'memory_limit' => hiera('php::cli::memory_limit', '400M'),
             },
-            fpm_min_child => 4,
+            fpm_min_child => 18,
             version => hiera('php::php_version', '7.3'),
         }
     }
