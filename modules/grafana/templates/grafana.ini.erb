@@ -15,6 +15,11 @@ enabled = true
 org_name = Miraheze
 org_role = Viewer
 
+[auth.ldap]
+enabled = true
+config_file = /etc/grafana/ldap.toml
+allow_sign_up = false
+
 [smtp]
 enabled=true
 host = mail.miraheze.org:25
