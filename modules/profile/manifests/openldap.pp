@@ -122,7 +122,7 @@ class profile::openldap (
 
     nginx::site { 'ldapcherry.miraheze.org':
         ensure  => present,
-        source  => 'puppet:///modules/profile/openldap/dapcherry-nginx.conf',
+        source  => 'puppet:///modules/profile/openldap/ldapcherry-nginx.conf',
         monitor => true,
     }
 
