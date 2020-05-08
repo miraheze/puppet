@@ -138,6 +138,22 @@ class profile::openldap (
         require            => Package['nginx']
     }
 
+    file { '/var/lib/ldapcherry':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '2755',
+        require => Package['nginx'],
+    }
+
+    file { '/var/lib/ldapcherry/sessions':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '2755',
+        require => File['/var/lib/ldapcherry'],
+    }
+
     file { '/etc/ldapcherry':
         ensure  => 'directory',
         owner   => 'www-data',
