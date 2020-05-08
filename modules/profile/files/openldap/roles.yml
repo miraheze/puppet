@@ -1,6 +1,7 @@
 admin:
     display_name: Administrators
     description: Super administrators of the system
+    LC_admins: True
     backends_groups:
         ldap:
             - cn=sre,ou=groups,dc=miraheze,dc=org
