@@ -148,7 +148,7 @@ class profile::openldap (
 
     file { '/etc/ldapcherry/ldapcherry.ini':
         ensure  => present,
-        content => template('openldap/ldapcherry.ini.erb'),
+        content => template('profile/openldap/ldapcherry.ini.erb'),
         owner   => 'www-data',
         group   => 'www-data',
         require => File['/etc/ldapcherry'],
