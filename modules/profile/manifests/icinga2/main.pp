@@ -13,6 +13,7 @@ class profile::icinga2::main (
     String $icingaweb2_ido_db_user_name     = hiera('icinga_ido_user_name', 'icinga2'),
     String $icingaweb2_icinga_api_password  = hiera('passwords::icinga_api'),
     String $ticket_salt                     = hiera('passwords::ticket_salt', ''),
+    String $ldap_password                   = hiera('password::ldap_password'),
 ) {
     class { '::monitoring':
         db_host               => $icinga2_db_host,
@@ -33,5 +34,6 @@ class profile::icinga2::main (
         ido_db_user_name      => $icingaweb2_ido_db_user_name,
         ido_db_user_password  => $ido_db_user_password ,
         icinga_api_password   => $icingaweb2_icinga_api_password,
+        ldap_password         => $ldap_password,
     }
 }
