@@ -1,6 +1,6 @@
 # openldap server
 class profile::openldap (
-    String $password = hiera('profile::openldap::password'),
+    String $password = lookup('profile::openldap::password'),
 ) {
     include ssl::wildcard
 
