@@ -1,6 +1,6 @@
 # class: matomo
 class matomo (
-    String $ldap_password = lookup('password::matomo::ldap_password'),
+    String $ldap_password = lookup('passwords::matomo::ldap_password'),
 ) {
     git::clone { 'matomo':
         directory          => '/srv/matomo',
