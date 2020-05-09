@@ -110,4 +110,35 @@ class salt::master(
         owner  => 'root',
         group  => 'root',
     }
+
+    $hostips = query_nodes("domain='$domain' and Class[Role::Salt::Minions]", 'ipaddress')
+    
+    $hostips.each |$key| {
+        ufw::allow { 'salt master port 4505 ipv4':
+            proto   => 'tcp',
+            port    => 4505,
+            from    => $key,
+        }
+
+        ufw::allow { 'salt master port 4506 ipv4':
+            proto   => 'tcp',
+            port    => 4506,
+            from    => $key,
+        }
+    }
+
+    $hostips6 = query_nodes("domain='$domain' and Class[Role::Salt::Minions]", 'ipaddress6')
+    $hostips6.each |$key| {
+        ufw::allow { 'salt master port 4505 ipv6':
+            proto   => 'tcp',
+            port    => 4505,
+            from    => $key,
+        }
+
+        ufw::allow { 'salt master port 4506 ipv6':
+            proto   => 'tcp',
+            port    => 4506,
+            from    => $key,
+        }
+    }
 }
