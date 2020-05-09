@@ -58,12 +58,3 @@ password:
     type: password
     backends:
         ldap: userPassword
-memberOf:
-    description: "User group the user is a member of (value should be in the form of cn=<group>,dc=miraheze,dc=org"
-    display_name: "memberOf"
-    search_displayed: True
-    key: True
-    type: string
-    weight: 60
-    backends:
-        ldap: memberOf
