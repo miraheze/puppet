@@ -27,6 +27,9 @@ ipv6: True
 # modified files cause conflicts, set verify_env to False.
 #user: root
 
+# Tell the master to also use salt-ssh when running commands against minions.
+#enable_ssh_minions: False
+
 # The port used by the communication interface. The ret (return) port is the
 # interface used for the file server, authentication, job returns, etc.
 #ret_port: 4506
@@ -135,7 +138,7 @@ ipv6: True
 
 # Cache minion grains, pillar and mine data via the cache subsystem in the
 # cachedir or a database.
-minion_data_cache: False
+#minion_data_cache: True
 
 # Cache subsystem module to use for minion data cache.
 #cache: localfs
@@ -151,7 +154,7 @@ minion_data_cache: False
 # Store all returns in the given returner.
 # Setting this option requires that any returner-specific configuration also
 # be set. See various returners in salt/returners for details on required
-# configuration values. (See also, event_return_queue below.)
+# configuration values. (See also, event_return_queue, and event_return_queue_max_seconds below.)
 #
 #event_return: mysql
 
@@ -160,6 +163,12 @@ minion_data_cache: False
 # stored in a batched fashion using a single transaction for multiple events.
 # By default, events are not queued.
 #event_return_queue: 0
+
+# In some cases enabling event return queueing can be very helpful, but the bus
+# may not busy enough to flush the queue consistently.  Setting this to a reasonable
+# value (1-30 seconds) will cause the queue to be flushed when the oldest event is older
+# than `event_return_queue_max_seconds` regardless of how many events are in the queue.
+#event_return_queue_max_seconds: 0
 
 # Only return events matching tags in a whitelist, supports glob matches.
 #event_return_whitelist:
@@ -319,7 +328,7 @@ ping_on_rotate: True
 
 # Enable auto_accept, this setting will automatically accept all incoming
 # public keys from the minions. Note that this is insecure.
-auto_accept: <% if @salt_auto_accept %>True<% else %>False<% end %>
+auto_accept: False
 
 # The size of key that should be generated when creating new keys.
 #keysize: 2048
@@ -341,7 +350,7 @@ auto_accept: <% if @salt_auto_accept %>True<% else %>False<% end %>
 # the autosign_file and the auto_accept setting.
 #autoreject_file: /etc/salt/autoreject.conf
 
-# If the autosign_grains_dir is specified, incoming keys from minons with grain
+# If the autosign_grains_dir is specified, incoming keys from minions with grain
 # values matching those defined in files in this directory will be accepted
 # automatically. This is insecure. Minions need to be configured to send the grains.
 #autosign_grains_dir: /etc/salt/autosign_grains
@@ -1295,3 +1304,9 @@ ssl:
 # use OS defaults, typically 75 seconds on Linux, see
 # /proc/sys/net/ipv4/tcp_keepalive_intvl.
 #tcp_keepalive_intvl: -1
+
+
+#####         NetAPI settings          #####
+############################################
+# Allow the raw_shell parameter to be used when calling Salt SSH client via API
+#netapi_allow_raw_shell: True
