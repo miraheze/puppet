@@ -167,6 +167,7 @@ class profile::openldap (
         content => template('profile/openldap/ldapcherry.ini.erb'),
         owner   => 'www-data',
         group   => 'www-data',
+        notify  => Service['ldapcherry'],
         require => File['/etc/ldapcherry'],
     }
 
@@ -175,6 +176,7 @@ class profile::openldap (
         source  => 'puppet:///modules/profile/openldap/roles.yml',
         owner   => 'www-data',
         group   => 'www-data',
+        notify  => Service['ldapcherry'],
         require => File['/etc/ldapcherry'],
     }
 
@@ -183,6 +185,7 @@ class profile::openldap (
         source  => 'puppet:///modules/profile/openldap/attributes.yml',
         owner   => 'www-data',
         group   => 'www-data',
+        notify  => Service['ldapcherry'],
         require => File['/etc/ldapcherry'],
     }
 
