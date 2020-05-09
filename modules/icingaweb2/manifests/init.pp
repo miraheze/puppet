@@ -21,7 +21,7 @@ class icingaweb2 (
                 'display_errors'            => 'Off',
                 'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
                 'log_errors'                => 'On',
-                'memory_limit'              => hiera('php::fpm::memory_limit', '512M'),
+                'memory_limit'              => lookup('php::fpm::memory_limit', {'default_value' => '512M'}),
                 'opcache'                   => {
                     'enable'                  => 1,
                     'interned_strings_buffer' => 30,
@@ -40,10 +40,10 @@ class icingaweb2 (
                 'variables_order'     => 'GPCS',
             },
             config_cli => {
-                'memory_limit' => hiera('php::cli::memory_limit', '400M'),
+                'memory_limit' => lookup('php::cli::memory_limit', {'default_value' => '400M'}),
             },
             fpm_min_child => 4,
-            version => hiera('php::php_version', '7.3'),
+            version => lookup('php::php_version', {'default_value' => '7.3'}),
         }
     }
 
