@@ -3,7 +3,7 @@ class profile::icinga2::main (
     String $icinga2_db_name                 = lookup('icinga_ido_db_name', {'default_value' => 'icinga'}),
     String $icinga2_db_user                 = lookup('icinga_ido_user_name', {'default_value' => 'icinga2'}),
     String $ido_db_user_password            = lookup('passwords::icinga_ido'),
-    String $mirahezebots_password           = lookup('passwords::irc::mirahezebots')
+    String $mirahezebots_password           = lookup('passwords::irc::mirahezebots'),
     String $icingaweb2_db_host              = lookup('icingaweb_db_host', {'default_value' => 'db6.miraheze.org'}),
     String $icingaweb2_db_name              = lookup('icingaweb_db_name', {'default_value' => 'icingaweb2'}),
     String $icingaweb2_db_user_name         = lookup('icingaweb_user_name', {'default_value' => 'icingaweb2'}),
