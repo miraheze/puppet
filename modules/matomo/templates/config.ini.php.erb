@@ -61,7 +61,8 @@ Plugins[] = "ExampleAPI"
 Plugins[] = "RssWidget"
 Plugins[] = "Feedback"
 Plugins[] = "Monolog"
-Plugins[] = "Login"
+; We use LoginLdap now
+; Plugins[] = "Login"
 Plugins[] = "TwoFactorAuth"
 Plugins[] = "UsersManager"
 Plugins[] = "SitesManager"
@@ -98,7 +99,8 @@ Plugins[] = "LoginLdap"
 
 [PluginsInstalled]
 PluginsInstalled[] = "Diagnostics"
-PluginsInstalled[] = "Login"
+; We use LdapLogin now
+; PluginsInstalled[] = "Login"
 PluginsInstalled[] = "CoreAdminHome"
 PluginsInstalled[] = "UsersManager"
 PluginsInstalled[] = "SitesManager"
@@ -172,3 +174,33 @@ PluginsInstalled[] = "LoginLdap"
 [QueuedTracking]
 notify_queue_threshold_single_queue = 250000
 
+[LoginLdap]
+servers[] = "Miraheze Ldap"
+use_ldap_for_authentication = 1
+enable_synchronize_access_from_ldap = 0
+new_user_default_sites_view_access = ""
+user_email_suffix = ""
+required_member_of = "cn=matomo-super,ou=groups,dc=miraheze,dc=org"
+required_member_of_field = "memberOf"
+ldap_user_filter = "(objectClass=person)"
+ldap_user_id_field = "uid"
+ldap_last_name_field = "sn"
+ldap_first_name_field = "givenName"
+ldap_alias_field = "cn"
+ldap_mail_field = "mail"
+ldap_password_field = "userPassword"
+ldap_view_access_field = "view"
+ldap_admin_access_field = "admin"
+ldap_superuser_access_field = "superuser"
+use_webserver_auth = 0
+user_access_attribute_server_specification_delimiter = ";"
+user_access_attribute_server_separator = ":"
+instance_name = ""
+ldap_network_timeout = "15"
+
+[LoginLdap_Miraheze Ldap]
+hostname = "ldaps://ldap1.miraheze.org/"
+port = 636
+base_dn = "dc=miraheze,dc=org"
+admin_user = "cn=admin,dc=miraheze,dc=org"
+admin_password = "<%= @ldap_password %>"
