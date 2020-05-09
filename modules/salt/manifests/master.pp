@@ -64,7 +64,6 @@ class salt::master(
         group  => 'root',
     }
 
-
     # this also is the same as $salt_state_roots
     file { $salt_file_roots:
         ensure => directory,
