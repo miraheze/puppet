@@ -13,7 +13,7 @@ class profile::icinga2::main (
     String $icingaweb2_ido_db_user_name     = lookup('icinga_ido_user_name', {'default_value' => 'icinga2'}),
     String $icingaweb2_icinga_api_password  = lookup('passwords::icinga_api'),
     String $ticket_salt                     = lookup('passwords::ticket_salt', {'default_value' => ''}),
-    String $ldap_password                   = lookup('passwords::ldap_password'),
+    String $ldap_password                   = lookup('password::ldap_password'),
 ) {
     class { '::monitoring':
         db_host               => $icinga2_db_host,
