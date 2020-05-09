@@ -1,5 +1,7 @@
 # class: matomo
-class matomo {
+class matomo (
+    String $ldap_password = hiera('password::matomo::ldap_password'),
+) {
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
