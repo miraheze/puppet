@@ -178,11 +178,11 @@ notify_queue_threshold_single_queue = 250000
 servers[] = "Miraheze Ldap"
 use_ldap_for_authentication = 1
 enable_synchronize_access_from_ldap = 0
-new_user_default_sites_view_access = ""
+new_user_default_sites_view_access = "all"
 user_email_suffix = ""
-required_member_of = "cn=matomo-super,ou=groups,dc=miraheze,dc=org"
+required_member_of = ""
 required_member_of_field = "memberOf"
-ldap_user_filter = "(objectClass=person)"
+ldap_user_filter = "(|(&(memberOf=cn=matomo-super,ou=groups,dc=miraheze,dc=org)(objectclass=person))(&(memberOf=cn=sre,ou=groups,dc=miraheze,dc=org)(objectclass=person)))"
 ldap_user_id_field = "uid"
 ldap_last_name_field = "sn"
 ldap_first_name_field = "givenName"
