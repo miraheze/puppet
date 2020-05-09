@@ -19,16 +19,38 @@ class role::salt::masters {
 
     include ::salt::master::key
 
-    ufw::allow { 'salt-master 1':
-        proto => 'tcp',
-        port  => 4505,
-    }
+    # DO NOT UNDER ANY CIRCUMSTANCES OPEN THIS UP
+    $hostips = query_nodes("domain='$domain' and Class[Role::Salt::Minions]", 'ipaddress')
+    $hostips.each |$key| {
+        ufw::allow { 'salt master port 4505 ipv4':
+            proto   => 'tcp',
+            port    => 4505,
+            from    => $key,
+        }
 
-    ufw::allow { 'salt-master 2':
-        proto => 'tcp',
-        port  => 4506,
-    }
+        ufw::allow { 'salt master port 4506 ipv4':
+            proto   => 'tcp',
+            port    => 4506,
+            from    => $key,
+        }
+     }
 
+    # DO NOT UNDER ANY CIRCUMSTANCES OPEN THIS UP
+    $hostips6 = query_nodes("domain='$domain' and Class[Role::Salt::Minions]", 'ipaddress6')
+    $hostips6.each |$key| {
+        ufw::allow { 'salt master port 4505 ipv6':
+            proto   => 'tcp',
+            port    => 4505,
+            from    => $key,
+        }
+
+        ufw::allow { 'salt master port 4506 ipv6':
+            proto   => 'tcp',
+            port    => 4506,
+            from    => $key,
+        }
+    }
+ 
     motd::role { 'role::salt::masters':
         description => 'Host the salt master',
     }
