@@ -49,6 +49,8 @@ location ^~ /wiki {
 
 location ~* .(gif|ico|jpg|jpeg|png|svg)$ {
 	expires 1w;
+
+	add_header Access-Control-Allow-Origin '*' always;
 }
 
 location ~ ^/m/(.*) {
