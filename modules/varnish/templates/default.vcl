@@ -286,6 +286,10 @@ sub vcl_recv {
 
 	unset req.http.Proxy; # https://httpoxy.org/; CVE-2016-5385
 
+	if (req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt)$") {
+		set resp.http.Access-Control-Allow-Origin = "*";
+	}
+
 	# Normalize Accept-Encoding for better cache hit ratio
 	if (req.http.Accept-Encoding) {
 		if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|ogg)$") {
