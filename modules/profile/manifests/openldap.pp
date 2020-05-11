@@ -198,7 +198,7 @@ class profile::openldap (
         require => Git::Clone['ldapcherry'],
     }
 
-    $hostips = query_nodes("domain='$domain' and Class[Role::Grafana] OR Class[Role::Matomo] OR Class[Role::Openldap]", 'ipaddress')
+    $hostips = query_nodes("domain='$domain' and Class[Role::Grafana] or Class[Role::Matomo] or Class[Role::Openldap]", 'ipaddress')
     $hostips.each |$ip| {
         # Restrict access to ldap tls port
         ufw::allow { "ldaps port ${ip}":
