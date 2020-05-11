@@ -204,7 +204,7 @@ class profile::openldap (
         ufw::allow { "ldaps port ${ip}":
             proto => 'tcp',
             port  => 636,
-            from  => $key,
+            from  => $ip,
         }
     }
 
