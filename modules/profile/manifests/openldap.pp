@@ -209,7 +209,7 @@ class profile::openldap (
         port  => 80,
     }
 
-    $hostips = query_nodes("domain='$domain' and Class[Role::Grafana] OR Class[Role::Matomo] OR Class[Role::Ldapcherry]", 'ipaddress')
+    $hostips = query_nodes("domain='$domain' and Class[Role::Grafana] OR Class[Role::Matomo] OR Class[Role::Openldap]", 'ipaddress')
     $hostips.each |$ip| {
         ufw::allow { "https port tcp ${ip}":
             proto => 'tcp',
