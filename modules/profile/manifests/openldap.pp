@@ -209,9 +209,13 @@ class profile::openldap (
         port  => 80,
     }
 
-    ufw::allow { 'https port tcp':
-        proto => 'tcp',
-        port  => 443,
+    $hostips = query_nodes("domain='$domain' and Class[Role::Grafana] OR Class[Role::Matomo] OR Class[Role::Ldapcherry]", 'ipaddress')
+    $hostips.each |$ip| {
+        ufw::allow { "https port tcp ${ip}":
+            proto => 'tcp',
+            port  => 443,
+            from  => $key,
+        }
     }
 
     # TODO: Add monitoring for ldap
