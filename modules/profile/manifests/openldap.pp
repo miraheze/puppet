@@ -198,10 +198,14 @@ class profile::openldap (
         require => Git::Clone['ldapcherry'],
     }
 
-    # only allow access to ldap tls port
-    ufw::allow { 'ldaps port':
-        proto => 'tcp',
-        port  => 636,
+    $hostips = query_nodes("domain='$domain' and Class[Role::Grafana] OR Class[Role::Matomo] OR Class[Role::Openldap]", 'ipaddress')
+    $hostips.each |$ip| {
+        # Restrict access to ldap tls port
+        ufw::allow { "ldaps port ${ip}":
+            proto => 'tcp',
+            port  => 636,
+            from  => $key,
+        }
     }
 
     ufw::allow { 'http port tcp':
