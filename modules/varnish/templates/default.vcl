@@ -215,6 +215,13 @@ sub mw_vcl_recv {
 		set req.http.Host = "static.miraheze.org";
 	}
 
+	# HACK for T217669
+	if (req.url ~ "/wiki/undefined/api.php") {
+		set req.url = regsuball(req.url, "/wiki/undefined/api.php", "/w/api.php");
+	} else if (req.url ~ "/w/undefined/api.php") {
+		set req.url = regsuball(req.url, "/w/undefined/api.php", "/w/api.php");
+	}
+
 	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = jobrunner1;
 		return (pass);
@@ -359,13 +366,7 @@ sub vcl_deliver {
 	}
 
 	# HACK for T217669
-	if (req.url ~ "/wiki/undefined/api.php") {
-		set req.url = regsuball(req.url, "/wiki/undefined/api.php", "/w/api.php");
-
-		set resp.http.Access-Control-Allow-Origin = "*";
-	} else if (req.url ~ "/w/undefined/api.php") {
-		set req.url = regsuball(req.url, "/w/undefined/api.php", "/w/api.php");
-
+	if (req.url ~ "/w/api.php") {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
 
