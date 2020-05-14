@@ -358,6 +358,7 @@ sub vcl_deliver {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
 
+	# HACK for T217669
 	if (req.url ~ "/wiki/undefined/api.php") {
 		set req.url = regsuball(req.url, "/wiki/undefined/api.php", "/w/api.php");
 
