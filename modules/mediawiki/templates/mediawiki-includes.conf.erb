@@ -67,3 +67,13 @@ location ~ ^/(.+)/v1/ {
         #rewrite    ^/api/rest_v1/(.+)$ /$1/v1/$1 break;
         proxy_pass https://restbase-lb.miraheze.org;
 }
+
+# Fixes T217669 with a hack to redirect undefined
+location ~ ^/wiki/undefined/api.php {
+        rewrite    ^/wiki/undefined/api.php(.+)$ /w/api.php$1 break;
+}
+
+# Fixes T217669 with a hack to redirect undefined
+location ~ ^/w/undefined/api.php {
+        rewrite    ^/w/undefined/api.php(.+)$ /w/api.php$1 break;
+}
