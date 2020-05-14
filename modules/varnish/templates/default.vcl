@@ -358,6 +358,16 @@ sub vcl_deliver {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
 
+	if (req.url ~ "/wiki/undefined/api.php") {
+		set req.url = regsuball(req.url, "/wiki/undefined/api.php", "/w/api.php");
+
+		set resp.http.Access-Control-Allow-Origin = "*";
+	} else if (req.url ~ "/w/undefined/api.php") {
+		set req.url = regsuball(req.url, "/w/undefined/api.php", "/w/api.php");
+
+		set resp.http.Access-Control-Allow-Origin = "*";
+	}
+
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
 		if (req.url !~ "^/wiki/Special\:Banner") {
 			set resp.http.Cache-Control = "private, s-maxage=0, maxage=0, must-revalidate";
