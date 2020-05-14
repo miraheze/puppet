@@ -18,13 +18,42 @@ class profile::openldap (
         rootpw    => $password,
     }
 
-    openldap::server::access { '0 on dc=miraheze,dc=org':
+    openldap::server::access { 'write access for admin':
         what     => 'attrs=userPassword,shadowLastChange',
         access   => [
             'by dn="cn=admin,dc=miraheze,dc=org" write',
             'by anonymous auth',
             'by self write',
             'by * none',
+        ],
+    }
+
+    # Allows users in the Administrators group to write
+    openldap::server::access { 'write access for admin':
+        what     => 'attrs=userPassword,shadowLastChange',
+        access   => [
+            'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
+            'by self write',
+            'by anonymous auth',
+            'by * none',
+        ],
+    }
+
+    openldap::server::access { 'dn children':
+        what     => 'dn.children="dc=miraheze,dc=org"',
+        access   => [
+            'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
+            'by users read',
+            'by * break',
+        ],
+    }
+
+    # Anonomous read access
+    openldap::server::access { 'read access':
+        what     => '*',
+        access   => [
+            'by self write',
+            'by * read',
         ],
     }
 
