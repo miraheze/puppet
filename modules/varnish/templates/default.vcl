@@ -253,10 +253,6 @@ sub mw_vcl_recv {
 		return (pass);
 	}
 
-	if (req.http.Host == "static-temp.miraheze.org" && req.url !~ "^/.*wiki") {
-		return (pass);
-	}
-
 	# We can rewrite those to one domain name to increase cache hits!
 	if (req.url ~ "^/w/resources") {
 		set req.http.Host = "meta.miraheze.org";
