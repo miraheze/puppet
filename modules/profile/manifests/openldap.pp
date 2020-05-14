@@ -32,7 +32,7 @@ class profile::openldap (
     openldap::server::access { 'write access for admin':
         what     => 'attrs=userPassword,shadowLastChange',
         access   => [
-            'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
+            'by dn="cn=writer,dc=miraheze,dc=org" write',
             'by self write',
             'by anonymous auth',
             'by * none',
@@ -42,7 +42,7 @@ class profile::openldap (
     openldap::server::access { 'dn children':
         what     => 'dn.children="dc=miraheze,dc=org"',
         access   => [
-            'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
+            'by dn="cn=writer,dc=miraheze,dc=org" write',
             'by users read',
             'by * break',
         ],
