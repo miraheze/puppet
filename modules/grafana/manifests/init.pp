@@ -40,12 +40,9 @@ class grafana (
     }
 
     service { 'grafana-server':
-        ensure => 'running',
-        enable => true,
-        subscribe => [
-            File['/etc/grafana/grafana.ini'],
-            Package['grafana'],
-        ],
+        ensure  => 'running',
+        enable  => true,
+        require => Package['grafana'],
     }
 
     include ssl::wildcard

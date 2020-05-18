@@ -215,6 +215,13 @@ sub mw_vcl_recv {
 		set req.http.Host = "static.miraheze.org";
 	}
 
+	# HACK for T217669
+	if (req.url ~ "/wiki/undefined/api.php") {
+		set req.url = regsuball(req.url, "/wiki/undefined/api.php", "/w/api.php");
+	} else if (req.url ~ "/w/undefined/api.php") {
+		set req.url = regsuball(req.url, "/w/undefined/api.php", "/w/api.php");
+	}
+
 	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = jobrunner1;
 		return (pass);
@@ -250,10 +257,6 @@ sub mw_vcl_recv {
 
 	# Don't cache dumps, and such
 	if (req.http.Host == "static.miraheze.org" && req.url !~ "^/.*wiki") {
-		return (pass);
-	}
-
-	if (req.http.Host == "static-temp.miraheze.org" && req.url !~ "^/.*wiki") {
 		return (pass);
 	}
 
@@ -359,6 +362,11 @@ sub vcl_backend_response {
 
 sub vcl_deliver {
 	if (req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt)$") {
+		set resp.http.Access-Control-Allow-Origin = "*";
+	}
+
+	# HACK for T217669
+	if (req.url ~ "/w/api.php") {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
 
