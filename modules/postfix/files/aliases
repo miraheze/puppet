@@ -47,6 +47,9 @@ campaign: sre
 # board
 board: owen,southparkfan,void,robla
 
+# security announcements
+security-announcements: sre
+
 # phabricator incoming emails - must be configued with Maniphest
 security: sre
 phabricator: sre
