@@ -26,7 +26,7 @@ $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
 $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 
 // Translate Yandex API key
-$wmgYandexTranslationKey = "<%= @yandextranslation_key @>";
+$wmgYandexTranslationKey = "<%= @yandextranslation_key %>";
 
 // Extension:DiscordNotifications hooks
 $wmgWikiMirahezeDiscordHooks = array(
