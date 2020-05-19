@@ -97,6 +97,7 @@ class mediawiki(
     $recaptcha_secretkey  = lookup('passwords::recaptcha::secretkey')
     $googlemaps_key       = lookup('passwords::mediawiki::googlemapskey')
     $matomotoken          = lookup('passwords::mediawiki::matomotoken')
+    $googlemaps_key       = lookup('passwords::mediawiki::yandextranslationkey')
 
     $wiki_discord_hooks_url = lookup('mediawiki::wiki_discord_hooks_url')
     $wiki_slack_hooks_url = lookup('mediawiki::wiki_slack_hooks_url')
