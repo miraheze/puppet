@@ -17,10 +17,16 @@ class role::mediawiki {
             from  => '51.161.32.127',
         }
 
-        ufw::allow { 'https port icinga':
+        ufw::allow { 'https port icinga ipv4':
             proto => 'tcp',
             port  => 443,
-            from  => '185.52.1.76'
+            from  => '51.89.160.138'
+        }
+
+        ufw::allow { 'https port icinga ipv6':
+            proto => 'tcp',
+            port  => 443,
+            from  => '2001:41d0:800:105a::6'
         }
     } else {
         ufw::allow { 'http port tcp':
