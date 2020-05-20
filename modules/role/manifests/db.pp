@@ -55,20 +55,18 @@ class role::db {
         from  => '51.77.109.151',
     }
 
-
-    ufw::allow { 'mysql port misc1 ipv4':
+    ufw::allow { 'mysql port mail1 ipv4':
         proto => 'tcp',
         port  => '3306',
-        from  => '185.52.1.76',
+        from  => '51.89.160.134',
     }
 
-    ufw::allow { 'mysql port misc1 ipv6':
+    ufw::allow { 'mysql port mail1 ipv6':
         proto => 'tcp',
         port  => '3306',
-        from  => '2a00:d880:0006:0787:0000:0000:0000:0003',
+        from  => '2001:41d0:800:1056::9',
     }
 
-    # new servers
     ufw::allow { 'mysql port mon1 ipv4':
         proto => 'tcp',
         port  => '3306',
