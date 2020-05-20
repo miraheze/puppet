@@ -11,10 +11,16 @@ class role::mediawiki {
             from  => '128.199.139.216',
         }
 
-        ufw::allow { 'https port cp8':
+        ufw::allow { 'https port cp8 ipv4':
             proto => 'tcp',
             port  => 443,
             from  => '51.161.32.127',
+        }
+
+        ufw::allow { 'https port cp8 ipv6':
+            proto => 'tcp',
+            port  => 443,
+            from  => '2607:5300:205:200::17f6',
         }
 
         ufw::allow { 'https port icinga ipv4':
