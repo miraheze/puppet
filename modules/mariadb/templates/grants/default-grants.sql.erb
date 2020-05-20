@@ -36,14 +36,14 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE
     ON `icingaweb2`.* TO 'icingaweb2'@'%'
     IDENTIFIED BY '<%= @icingaweb2_db_user_password %>';
 
--- Grants for 'roundcubemail'@'185.52.1.76'
+-- Grants for 'roundcubemail'@'51.89.160.134' & 'roundcubemail'@'2001:41d0:800:1056::9'
 
 GRANT ALL PRIVILEGES
-    ON roundcubemail.* TO 'roundcubemail'@'185.52.1.76'
+    ON roundcubemail.* TO 'roundcubemail'@'51.89.160.134'
     IDENTIFIED BY '<%= @roundcubemail_password %>';
 
 GRANT ALL PRIVILEGES
-    ON roundcubemail.* TO 'roundcubemail'@'2a00:d880:6:787::3'
+    ON roundcubemail.* TO 'roundcubemail'@'2001:41d0:800:1056::9'
     IDENTIFIED BY '<%= @roundcubemail_password %>';
 
 -- Grants for 'replica'@'%'
