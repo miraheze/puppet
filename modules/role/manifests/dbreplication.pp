@@ -22,6 +22,18 @@ class role::dbreplication {
         from  => '2001:41d0:800:1056::5',
     }
 
+    ufw::allow { 'mysql port mon1 ipv4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.89.160.138',
+    }
+
+    ufw::allow { 'mysql port mon1 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:105a::6',
+    }
+
     file { '/etc/ssl/private':
         ensure  => directory,
         owner   => 'root',
