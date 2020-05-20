@@ -8,7 +8,6 @@ class role::db {
     $phabricator_password = lookup('passwords::db::phabricator')
     $grafana_password = lookup('passwords::db::grafana')
     $exporter_password = lookup('passwords::db::exporter')
-    $internetarchivebot_password = lookup('passwords::db::iabot')
     $icinga_password = lookup('passwords::db::icinga')
 
     class { 'mariadb::config':
