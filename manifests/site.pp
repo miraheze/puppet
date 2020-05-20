@@ -86,7 +86,6 @@ node 'mail1.miraheze.org' {
 node 'misc1.miraheze.org' {
     include base
     include role::mail
-    include role::roundcubemail
     include role::salt::minions
     include prometheus::php_fpm
 }
