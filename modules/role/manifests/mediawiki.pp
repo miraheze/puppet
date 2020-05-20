@@ -5,22 +5,10 @@ class role::mediawiki {
     if lookup('role::mediawiki::use_strict_firewall', {'default_value' => false}) {
         # Cache proxies will never use port 80.
 
-        ufw::allow { 'https port cp2':
-            proto => 'tcp',
-            port  => 443,
-            from  => '107.191.126.23',
-        }
-
         ufw::allow { 'https port cp3':
             proto => 'tcp',
             port  => 443,
             from  => '128.199.139.216',
-        }
-
-        ufw::allow { 'https port cp4':
-            proto => 'tcp',
-            port  => 443,
-            from  => '81.4.109.133',
         }
 
         ufw::allow { 'https port cp8':
