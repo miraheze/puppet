@@ -21,12 +21,6 @@ class prometheus::nginx {
         ],
     }
 
-    ufw::allow { 'prometheus access 9113':
-        proto => 'tcp',
-        port  => 9113,
-        from  => '185.52.3.121',
-    }
-
     ufw::allow { 'prometheus access 9113 ipv4':
         proto => 'tcp',
         port  => 9113,

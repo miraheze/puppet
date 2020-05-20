@@ -31,12 +31,6 @@ class prometheus::mysqld_exporter {
         ],
     }
 
-    ufw::allow { 'prometheus mysql monitoring':
-        proto   => 'tcp',
-        port    => '9104',
-        from    => '185.52.3.121',
-    }
-
     ufw::allow { 'prometheus mysql monitoring ipv4':
         proto   => 'tcp',
         port    => '9104',

@@ -90,13 +90,6 @@ class prometheus::node_exporter (
         require   => Package['prometheus-node-exporter'],
     }
 
-    ufw::allow { 'prometheus access all hosts':
-        proto => 'tcp',
-        port  => 9100,
-        from  => '185.52.3.121',
-    }
-
-    # new servers
     ufw::allow { 'prometheus access all hosts ipv4':
         proto => 'tcp',
         port  => '9100',
