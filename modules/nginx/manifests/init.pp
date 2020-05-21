@@ -1,20 +1,7 @@
 # nginx
 class nginx (
     Variant[String, Integer] $nginx_worker_processes = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
-    Boolean $external_apt = true,
 ) {
-    if $external_apt {
-        include ::apt
-
-        apt::source { 'nginx_apt':
-            comment  => 'NGINX stable',
-            location => 'http://nginx.org/packages/debian',
-            release  => "${::lsbdistcodename}",
-            repos    => 'nginx',
-            key      => '573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62',
-        }
-    }
-
     # Ensure Apache is absent: https://phabricator.miraheze.org/T253
     package { 'apache2':
         ensure  => absent,
