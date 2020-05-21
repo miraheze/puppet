@@ -11,7 +11,7 @@ puppetserver_hostname: puppet2.miraheze.org
 mediawiki::php::use_tideways: true
 new_servers: true
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
-
+nginx::external_apt: false
 
 # Temporarily - Testing LDAP
 profile::openldap::server_id: 1
