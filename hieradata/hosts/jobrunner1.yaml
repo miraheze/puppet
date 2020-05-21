@@ -13,3 +13,4 @@ php::php_version: '7.3'
 redis::heap: '1000mb'
 new_servers: true
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
+nginx::external_apt: false
