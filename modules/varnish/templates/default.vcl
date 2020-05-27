@@ -10,11 +10,7 @@
 
 # Marker to tell the VCL compiler that this VCL has been adapted to the
 # new 4.0 format.
-<% if @buster %>
 vcl 4.1;
-<% else %>
-vcl 4.0;
-<% end %>
 
 import directors;
 import std;
@@ -124,6 +120,8 @@ acl purge {
 	"2001:41d0:800:105a::5"; # mw7
 	"51.89.160.138"; # mon1
 	"2001:41d0:800:105a::6"; # mon1
+	"51.89.160.135"; # jobrunner1
+	"2001:41d0:800:1056::10"; # jobrunner1
 }
 
 sub mw_stash_cookie {
