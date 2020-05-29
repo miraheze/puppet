@@ -107,6 +107,15 @@ class monitoring (
         notify  => Service['icinga2'],
     }
 
+    file { '/etc/icinga2/conf.d/services.conf':
+        source  => 'puppet:///modules/monitoring/services.conf',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        require => Package['icinga2'],
+        notify  => Service['icinga2'],
+    }
+
     file { '/etc/icinga2/conf.d/templates.conf':
         source  => 'puppet:///modules/monitoring/templates.conf',
         owner   => 'root',
