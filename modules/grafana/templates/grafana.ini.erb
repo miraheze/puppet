@@ -31,7 +31,7 @@ from_address = noreply@miraheze.org
 url = mysql://grafana:<%= @grafana_password %>@db6.miraheze.org:3306/grafana
 type = mysql
 ssl_mode = true
-ca_cert_path = /etc/ssl/certs/Sectigo.crt
+ca_cert_path = /etc/ssl/certs/LetsEncrypt.crt
 server_cert_name = *.miraheze.org
 
 [security]
