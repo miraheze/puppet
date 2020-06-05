@@ -51,8 +51,7 @@ users:
     uid: 1001
     name: southparkfan
     realname: Southparkfan
-    ssh_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMSvMibqNvs6wzm1GRQcd817Ydky+bZ4kKbr4IQHtFSC southparkfan@miraheze.org
+    ssh_keys: []
   mutante:
     ensure: absent
     uid: 1002
