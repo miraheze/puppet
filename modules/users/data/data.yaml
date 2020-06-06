@@ -50,8 +50,8 @@ users:
     ensure: present
     uid: 1001
     name: southparkfan
-    realname: Southparkfan
-    ssh_keys: []
+    realname: Ferran Tufan
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDzSWKcBprC1gODO82rt7FmXGo+Enj7PTfqCjs5ucx+N southparkfan@miraheze.org]
   mutante:
     ensure: absent
     uid: 1002
