@@ -4,8 +4,23 @@ class role::mediawiki {
 
     $strictFirewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
     if $strictFirewall {
-        $firewall = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2])", 'ipaddress')
-        $firewall.each |$key| {
+        $firewallIpv4 = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2])", 'ipaddress')
+        $firewallIpv4.each |$key| {
+            ufw::allow { "http port ${key}":
+                proto => 'tcp',
+                port  => 80,
+                from  => $key,
+            }
+
+            ufw::allow { "https port ${key}":
+                proto => 'tcp',
+                port  => 443,
+                from  => $key,
+            }
+        }
+
+        $firewallIpv6 = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2])", 'ipaddress6')
+        $firewallIpv6.each |$key| {
             ufw::allow { "http port ${key}":
                 proto => 'tcp',
                 port  => 80,
