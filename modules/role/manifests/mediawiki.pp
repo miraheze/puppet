@@ -6,7 +6,6 @@ class role::mediawiki {
     if $strictFirewall {
         $firewallIpv4 = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2])", 'ipaddress')
         $firewallIpv4.each |$key| {
-            $
             ufw::allow { "http port ${key}":
                 proto => 'tcp',
                 port  => 80,
