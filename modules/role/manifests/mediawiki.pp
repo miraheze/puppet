@@ -4,7 +4,7 @@ class role::mediawiki {
 
     $strictFirewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
     if $strictFirewall {
-        $firewall = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services])", 'ipaddress')
+        $firewall = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2])", 'ipaddress')
         $firewall.each |$key| {
             ufw::allow { "http port ${key}":
                 proto => 'tcp',
