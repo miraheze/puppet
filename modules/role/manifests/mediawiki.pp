@@ -2,37 +2,21 @@
 class role::mediawiki {
     include ::mediawiki
 
-    if lookup('role::mediawiki::use_strict_firewall', {'default_value' => false}) {
-        # Cache proxies will never use port 80.
+    $strictFirewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
+    if $strictFirewall {
+        $firewall = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2])", 'ipaddress')
+        $firewall.each |$key| {
+            ufw::allow { "http port ${key}":
+                proto => 'tcp',
+                port  => 80,
+                from  => $key,
+            }
 
-        ufw::allow { 'https port cp3':
-            proto => 'tcp',
-            port  => 443,
-            from  => '128.199.139.216',
-        }
-
-        ufw::allow { 'https port cp8 ipv4':
-            proto => 'tcp',
-            port  => 443,
-            from  => '51.161.32.127',
-        }
-
-        ufw::allow { 'https port cp8 ipv6':
-            proto => 'tcp',
-            port  => 443,
-            from  => '2607:5300:205:200::17f6',
-        }
-
-        ufw::allow { 'https port icinga ipv4':
-            proto => 'tcp',
-            port  => 443,
-            from  => '51.89.160.138'
-        }
-
-        ufw::allow { 'https port icinga ipv6':
-            proto => 'tcp',
-            port  => 443,
-            from  => '2001:41d0:800:105a::6'
+            ufw::allow { "https port ${key}":
+                proto => 'tcp',
+                port  => 443,
+                from  => $key,
+            }
         }
     } else {
         ufw::allow { 'http port tcp':
