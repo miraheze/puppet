@@ -86,7 +86,8 @@ class role::services {
         }
     }
 
-    $firewallMon = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
+    $firewallMediaWiki = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
+    $firewallMediaWiki.each |$key, $value| {
         ufw::allow { "${value['ipaddress']} 443":
             proto => 'tcp',
             port  => 443,
