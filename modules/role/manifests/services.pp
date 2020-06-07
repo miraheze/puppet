@@ -57,7 +57,7 @@ class role::services {
             ufw::allow { "proton monitoring ${value['ipaddress']}":
                 proto => 'tcp',
                 port  => 3030,
-                from  => $value['ipaddress6'],
+                from  => $value['ipaddress'],
             }
 
             ufw::allow { "proton monitoring ${value['ipaddress6']}":
