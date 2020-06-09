@@ -50,6 +50,14 @@ node 'dbt1.miraheze.org' {
     include prometheus::mysqld_exporter
 }
 
+node 'db8.miraheze.org' {
+    include base
+    include role::db
+    include bacula::client
+    include role::salt::minions
+    include prometheus::mysqld_exporter
+}
+
 node 'gluster1.miraheze.org' {
     include base
     include bacula::client
