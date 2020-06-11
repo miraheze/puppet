@@ -457,15 +457,13 @@ sub vcl_backend_error {
 			</div>
 		</div>
 
-                <div class="footer">
+		<div class="footer">
 			<div class="text-center">
 				<p class="lead">When reporting this, please be sure to provide the information below.</p>
 
 				Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" <br />
 				(Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
 				<br /><br />
-
-
 			</div>
 		</div>
 	</html>
