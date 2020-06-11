@@ -106,10 +106,10 @@ class bacula::director {
         },
     }
 
-    monitoring::services { 'Bacula Databases dbt1':
+    monitoring::services { 'Bacula Databases db9':
         check_command => 'nrpe',
         vars          => {
-            nrpe_command => 'check_bacula_databasesdbt1',
+            nrpe_command => 'check_bacula_databasesdb9',
             nrpe_timeout => '60s',
         },
     }
