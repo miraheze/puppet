@@ -49,10 +49,16 @@ class role::db {
         from  => '2001:41d0:800:105a::11',
     }
 
-    ufw::allow { 'mysql port dbt1 ipv4':
+    ufw::allow { 'mysql port db9 ipv4':
         proto => 'tcp',
         port  => '3306',
         from  => '51.77.109.151',
+    }
+
+    ufw::allow { 'mysql port db9 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:801:1000::147b',
     }
 
     ufw::allow { 'mysql port mail1 ipv4':
