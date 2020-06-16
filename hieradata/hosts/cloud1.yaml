@@ -1,4 +1,3 @@
 puppetserver_hostname: puppet2.miraheze.org
 ssh::server::permit_root: true
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
-new_servers: true
