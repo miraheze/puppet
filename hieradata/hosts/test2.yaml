@@ -9,11 +9,4 @@ php::php_fpm::fpm_workers_multiplier: 1.0
 php::php_version: '7.3'
 puppetserver_hostname: puppet2.miraheze.org
 mediawiki::php::use_tideways: true
-new_servers: true
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
-
-# Temporarily - Testing LDAP
-profile::openldap::server_id: 1
-profile::openldap::master: ~
-profile::openldap::hash_passwords: SHA
-profile::openldap::read_only: false
