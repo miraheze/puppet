@@ -35,12 +35,6 @@ $wmgWikiMirahezeDiscordHooks = array(
 <%- end -%>
 );
 
-<%- if @new_servers -%>
-$wmgUseNewServers = true;
-<%- else -%>
-$wmgUseNewServers = false;
-<%- end -%>
-
 // Extension:SlackNotifications hooks
 $wmgWikiMirahezeSlackHooks = array(
 <%- @wiki_slack_hooks_url.each_pair do |wiki, values| -%>
