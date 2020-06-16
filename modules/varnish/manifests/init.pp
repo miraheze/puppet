@@ -1,6 +1,7 @@
 # class: varnish
 class varnish(
-    String $cache_file_size = '15G'
+    String $cache_file_size = '15G',
+    Boolean $use_new_cache = false,
 ){
     include varnish::nginx
     include prometheus::varnish_prometheus_exporter
@@ -35,6 +36,29 @@ class varnish(
         content => template('varnish/default.vcl'),
         notify  => Exec['varnish-server-syntax'],
         require => Package['varnish'],
+    }
+
+    if $use_new_cache {
+        $cache_file_name = '/srv/varnish/cache_storage.bin'
+
+        file { '/srv/varnish':
+            ensure  => directory,
+            owner   => 'varnish',
+            group   => 'varnish',
+        }
+
+        mount { '/var/lib/varnish':
+            ensure  => mounted,
+            device  => 'tmpfs',
+            fstype  => 'tmpfs',
+            options => 'noatime,defaults,size=128M',
+            pass    => 0,
+            dump    => 0,
+            require => Package['varnish'],
+            notify  => Service['varnish'],
+        }
+    } else {
+        $cache_file_name = '/var/lib/varnish/mediawiki/varnish_storage.bin'
     }
 
     file { '/etc/default/varnish':
