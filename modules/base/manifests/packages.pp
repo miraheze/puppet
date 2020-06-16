@@ -12,6 +12,7 @@ class base::packages {
         'iftop',
         'iotop',
         'logrotate',
+        'lsof',
         'lvm2',
         'molly-guard',
         'mtr',
