@@ -1,4 +1,4 @@
 users::groups: 'cache-admins'
 nginx::worker_processes: 4
-varnish::cache_file_size: '9G'
+varnish::cache_file_size: '8G'
 varnish::use_new_cache: true
