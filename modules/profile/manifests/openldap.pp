@@ -18,13 +18,25 @@ class profile::openldap (
         rootpw    => $password,
     }
 
-    openldap::server::access { '0 on dc=miraheze,dc=org':
+    # Allow everybody to try to bind
+    openldap::server::access { '0 write access for admin':
         what     => 'attrs=userPassword,shadowLastChange',
         access   => [
             'by dn="cn=admin,dc=miraheze,dc=org" write',
-            'by anonymous auth',
+            'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
             'by self write',
+            'by anonymous auth',
             'by * none',
+        ],
+    }
+
+    # Allow admin users to manage things and authed users to read
+    openldap::server::access { '1 write access for admin':
+        what     => 'dn.children="dc=miraheze,dc=org"',
+        access   => [
+            'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
+            'by users read',
+            'by * break',
         ],
     }
 
