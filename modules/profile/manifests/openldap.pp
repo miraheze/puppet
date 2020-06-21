@@ -19,7 +19,7 @@ class profile::openldap (
     }
 
     # Allow everybody to try to bind
-    openldap::server::access { '0 write access for admin':
+    openldap::server::access { '0 on dc=miraheze,dc=org':
         what     => 'attrs=userPassword,shadowLastChange',
         access   => [
             'by dn="cn=admin,dc=miraheze,dc=org" write',
@@ -31,7 +31,7 @@ class profile::openldap (
     }
 
     # Allow admin users to manage things and authed users to read
-    openldap::server::access { '1 write access for admin':
+    openldap::server::access { '1 on dc=miraheze,dc=org':
         what     => 'dn.children="dc=miraheze,dc=org"',
         access   => [
             'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
