@@ -1,5 +1,5 @@
 class monitoring (
-    String $db_host               = 'db6.miraheze.org',
+    String $db_host               = 'db7.miraheze.org',
     String $db_name               = 'icinga',
     String $db_user               = 'icinga2',
     String $db_password           = undef,
