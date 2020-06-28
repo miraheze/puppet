@@ -1,5 +1,5 @@
 class role::salt::minions(
-    $salt_master = 'misc4.miraheze.org',
+    $salt_master = 'puppet2.miraheze.org',
     $salt_master_key = false
 ) {
     # stretch's/buster's salt-minion uses SHA256 instead of MD5 by default.
