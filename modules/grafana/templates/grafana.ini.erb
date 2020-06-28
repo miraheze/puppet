@@ -4,7 +4,7 @@ root_url = %(protocol)s://%(domain)s/
 
 [users]
 # user signup / registration
-allow_sign_up = true
+allow_sign_up = false
 default_theme = light
 auto_assign_org_role = Viewer
 auto_assign_org = true
@@ -15,6 +15,11 @@ enabled = true
 org_name = Miraheze
 org_role = Viewer
 
+[auth.ldap]
+enabled = true
+config_file = /etc/grafana/ldap.toml
+allow_sign_up = true
+
 [smtp]
 enabled=true
 host = mail.miraheze.org:25
@@ -23,7 +28,7 @@ password = <%= @mail_password %>
 from_address = noreply@miraheze.org
 
 [database]
-url = mysql://grafana:<%= @grafana_password %>@db4.miraheze.org:3306/grafana
+url = mysql://grafana:<%= @grafana_password %>@db9.miraheze.org:3306/grafana
 type = mysql
 ssl_mode = true
 ca_cert_path = /etc/ssl/certs/Sectigo.crt

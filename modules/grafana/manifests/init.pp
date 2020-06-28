@@ -1,7 +1,8 @@
 # class: grafana
 class grafana (
-    String $grafana_password = hiera('passwords::db::grafana'),
-    String $mail_password = hiera('passwords::mail::noreply'),
+    String $grafana_password = lookup('passwords::db::grafana'),
+    String $mail_password = lookup('passwords::mail::noreply'),
+    String $ldap_password = lookup('passwords::ldap_password'),
 ) {
 
     include ::apt
@@ -24,16 +25,23 @@ class grafana (
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
+        notify  => Service['grafana-server'],
+        require => Package['grafana'],
+    }
+
+    file { '/etc/grafana/ldap.toml':
+        content => template('grafana/ldap.toml.erb'),
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        notify  => Service['grafana-server'],
         require => Package['grafana'],
     }
 
     service { 'grafana-server':
-        ensure => 'running',
-        enable => true,
-        subscribe => [
-            File['/etc/grafana/grafana.ini'],
-            Package['grafana'],
-        ],
+        ensure  => 'running',
+        enable  => true,
+        require => Package['grafana'],
     }
 
     include ssl::wildcard

@@ -31,9 +31,15 @@ class prometheus::php_fpm {
         notify => Exec['prometheus-php-fpm reload systemd'],
     }
 
-    ufw::allow { 'prometheus access php-fpm for all hosts':
+    ufw::allow { 'prometheus access php-fpm for all hosts ipv4':
         proto => 'tcp',
         port  => 9253,
-        from  => '185.52.3.121',
+        from  => '51.89.160.138',
+    }
+
+    ufw::allow { 'prometheus access php-fpm for all hosts ipv6':
+        proto => 'tcp',
+        port  => 9253,
+        from  => '2001:41d0:800:105a::6',
     }
 }

@@ -11,7 +11,7 @@ class mediawiki::nginx {
 
     nginx::site { 'mediawiki':
         ensure       => present,
-        content      => template('mediawiki/mediawiki.conf'),
+        content      => template('mediawiki/mediawiki.conf.erb'),
         notify_site  => Exec['nginx-syntax'],
         require      => Nginx::Conf['mediawiki-includes'],
     }

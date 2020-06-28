@@ -90,7 +90,7 @@ class services::proton {
     monitoring::services { 'proton':
         check_command => 'tcp',
         vars          => {
-            tcp_port    => '3000',
+            tcp_port    => '3030',
         },
     }
 }

@@ -31,23 +31,24 @@ dmarc: john
 
 # destination aliases
 sre: southparkfan,ndkilla,reception123,john,paladox
-stewards: southparkfan,ndkilla,void,john,pio_uso@yahoo.co.jp
-tech: southparkfan,ndkilla,reception123,john,paladox,zppix
-cvt: stewards,reception123,zppix,diarmuidsmithy@gmail.com
+stewards: ndkilla,void,john,pio_uso@yahoo.co.jp
+tech: southparkfan,ndkilla,reception123,john,paladox,zppix,rhinosf1
+cvt: stewards,reception123
 cocc: conduct
 conduct: miraheze-cocc@googlegroups.com
 
 # finances
 donate: southparkfan,owen
 
-# temp - see T4930
-rhinosf1: rhinosf1@gmail.com
 
 # campaign email temp
 campaign: sre
 
 # board
 board: owen,southparkfan,void,robla
+
+# security announcements
+security-announcements: sre
 
 # phabricator incoming emails - must be configued with Maniphest
 security: sre

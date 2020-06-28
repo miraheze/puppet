@@ -19,7 +19,7 @@ class bacula::director {
         require => Package['bacula-server'],
     }
 
-    $password = hiera('passwords::bacula::director')
+    $password = lookup('passwords::bacula::director')
 
     file { ['/bacula', '/bacula/backup', '/bacula/restore']:
         ensure => directory,
@@ -62,26 +62,26 @@ class bacula::director {
         notify  => Service['bacula-director'],
     }
 
-    ufw::allow { 'bacula_9101':
-        proto => 'tcp',
-        port  => 9101,
-    }
+    $firewall = query_facts('Class[Bacula::Client]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "bacula 9102 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9102,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { 'bacula_9102':
-        proto => 'tcp',
-        port  => 9102,
-    }
-
-    ufw::allow { 'bacula_9103':
-        proto => 'tcp',
-        port  => 9103,
+        ufw::allow { "bacula 9102 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9102,
+            from  => $value['ipaddress6'],
+        }
     }
 
     file { '/usr/lib/nagios/plugins/check_bacula_backups':
         ensure  => present,
         source  => 'puppet:///modules/bacula/check_bacula_backups',
         mode    => '0555',
-        require => Package['nagios-plugins'],
+        require => Package['monitoring-plugins'],
     }
 
     # Bacula secret keys
@@ -98,18 +98,18 @@ class bacula::director {
         },
     }
 
-    monitoring::services { 'Bacula Databases db4':
+    monitoring::services { 'Bacula Databases db7':
         check_command => 'nrpe',
         vars          => {
-            nrpe_command => 'check_bacula_databasesdb4',
+            nrpe_command => 'check_bacula_databasesdb7',
             nrpe_timeout => '60s',
         },
     }
 
-    monitoring::services { 'Bacula Databases db5':
+    monitoring::services { 'Bacula Databases db9':
         check_command => 'nrpe',
         vars          => {
-            nrpe_command => 'check_bacula_databasesdb5',
+            nrpe_command => 'check_bacula_databasesdb9',
             nrpe_timeout => '60s',
         },
     }

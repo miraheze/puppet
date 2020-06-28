@@ -1,17 +1,7 @@
 # nginx
 class nginx (
-    Variant[String, Integer] $nginx_worker_processes = hiera('nginx::worker_processes', 'auto'),
+    Variant[String, Integer] $nginx_worker_processes = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
 ) {
-    include ::apt
-
-    apt::source { 'nginx_apt':
-        comment  => 'NGINX stable',
-        location => 'http://nginx.org/packages/debian',
-        release  => "${::lsbdistcodename}",
-        repos    => 'nginx',
-        key      => '573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62',
-    }
-
     # Ensure Apache is absent: https://phabricator.miraheze.org/T253
     package { 'apache2':
         ensure  => absent,
@@ -19,7 +9,7 @@ class nginx (
 
     package { 'nginx':
         ensure  => present,
-        require => [ Apt::Source['nginx_apt'], Package['apache2'] ],
+        require => Package['apache2'],
         notify  => Exec['nginx unmask'],
     }
 

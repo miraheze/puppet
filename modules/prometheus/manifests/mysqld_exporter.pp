@@ -5,7 +5,7 @@ class prometheus::mysqld_exporter {
     # should use the version from sid
     require_package('prometheus-mysqld-exporter')
 
-    $exporter_password = hiera('passwords::db::exporter')
+    $exporter_password = lookup('passwords::db::exporter')
 
     file { '/etc/default/prometheus-mysqld-exporter':
         content => template('prometheus/prometheus-mysqld-exporter.erb'),
@@ -31,9 +31,15 @@ class prometheus::mysqld_exporter {
         ],
     }
 
-    ufw::allow { 'prometheus mysql monitoring':
+    ufw::allow { 'prometheus mysql monitoring ipv4':
         proto   => 'tcp',
         port    => '9104',
-        from    => '185.52.3.121',
+        from    => '51.89.160.138',
+    }
+
+    ufw::allow { 'prometheus mysql monitoring ipv6':
+        proto   => 'tcp',
+        port    => '9104',
+        from    => '2001:41d0:800:105a::6',
     }
 }

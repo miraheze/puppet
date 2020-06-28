@@ -1,9 +1,11 @@
 # class: matomo
-class matomo {
+class matomo (
+    String $ldap_password = lookup('passwords::matomo::ldap_password'),
+) {
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '3.13.1', # Current stable
+        branch             => '3.13.6', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
@@ -18,35 +20,37 @@ class matomo {
         require     => Git::Clone['matomo'],
     }
 
-    ensure_resource_duplicate('class', 'php::php_fpm', {
-        'config'  => {
-            'display_errors'            => 'Off',
-            'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
-            'log_errors'                => 'On',
-            'memory_limit'              => '512M',
-            'opcache'                   => {
-                'enable'                  => 1,
-                'interned_strings_buffer' => 30,
-                'memory_consumption'      => 112,
-                'max_accelerated_files'   => 20000,
-                'max_wasted_percentage'   => 10,
-                'validate_timestamps'     => 1,
-                'revalidate_freq'         => 10,
+    if !defined(Class['php::php_fpm']) {
+        class { 'php::php_fpm':
+            config  => {
+                'display_errors'            => 'Off',
+                'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
+                'log_errors'                => 'On',
+                'memory_limit'              => lookup('php::fpm::memory_limit', {'default_value' => '512M'}),
+                'opcache'                   => {
+                    'enable'                  => 1,
+                    'interned_strings_buffer' => 30,
+                    'memory_consumption'      => 112,
+                    'max_accelerated_files'   => 20000,
+                    'max_wasted_percentage'   => 10,
+                    'validate_timestamps'     => 1,
+                    'revalidate_freq'         => 10,
+                },
+                'enable_dl'           => 0,
+                'post_max_size'       => '60M',
+                'register_argc_argv'  => 'Off',
+                'request_order'       => 'GP',
+                'track_errors'        => 'Off',
+                'upload_max_filesize' => '100M',
+                'variables_order'     => 'GPCS',
             },
-            'enable_dl'           => 0,
-            'post_max_size'       => '60M',
-            'register_argc_argv'  => 'Off',
-            'request_order'       => 'GP',
-            'track_errors'        => 'Off',
-            'upload_max_filesize' => '100M',
-            'variables_order'     => 'GPCS',
-        },
-        'config_cli' => {
-            'memory_limit' => '400M',
-        },
-        'fpm_min_child' => 4,
-        'version' => hiera('php::php_version', '7.3'),
-    })
+            config_cli => {
+                'memory_limit' => lookup('php::cli::memory_limit', {'default_value' => '2G'}),
+            },
+            fpm_min_child => 4,
+            version => lookup('php::php_version', {'default_value' => '7.3'}),
+        }
+    }
 
     include ssl::wildcard
 
@@ -56,9 +60,9 @@ class matomo {
         monitor => true,
     }
     
-    $salt = hiera('passwords::piwik::salt')
-    $password = hiera('passwords::db::piwik')
-    $noreply_password = hiera('passwords::mail::noreply')
+    $salt = lookup('passwords::piwik::salt')
+    $password = lookup('passwords::db::piwik')
+    $noreply_password = lookup('passwords::mail::noreply')
 
     file { '/srv/matomo/config/config.ini.php':
         ensure  => present,
@@ -69,16 +73,20 @@ class matomo {
     }
 
     file { '/usr/local/bin/fileLockScript.sh':
-        ensure => 'present',
+        ensure => absent,
         mode   => '0755',
-        source => 'puppet:///modules/matomo/fileLockScript.sh',
+    }
+
+    file { '/usr/local/bin/runMatomoArchive.sh':
+        ensure => present,
+        mode   => '0755',
+        source => 'puppet:///modules/matomo/runMatomoArchive.sh',
     }
 
     cron { 'archive_matomo':
         ensure  => present,
-        command => '/usr/local/bin/fileLockScript.sh /tmp/matomo_file_lock "/usr/bin/nice -19 /usr/bin/php /srv/matomo/console core:archive --url=https://matomo.miraheze.org/ --concurrent-requests-per-website=1" > /srv/matomo-archive.log',
+        command => '/usr/local/bin/runMatomoArchive.sh',
         user    => 'www-data',
-        minute  => '30',
-        hour    => '*/24',
+        special => 'daily',
     }
 }

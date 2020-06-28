@@ -119,6 +119,17 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+    
+    exec { 'bootstrap_composer':
+        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
+        creates     => '/srv/mediawiki/w/extensions/Bootstrap/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/Bootstrap',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/Bootstrap',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
 
     exec { 'widgets_composer':
         command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
@@ -126,6 +137,16 @@ class mediawiki::extensionsetup {
         cwd         => '/srv/mediawiki/w/extensions/Widgets',
         path        => '/usr/bin',
         environment => 'HOME=/srv/mediawiki/w/extensions/Widgets',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
+    exec { 'mermaid_composer':
+        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
+        creates     => '/srv/mediawiki/w/extensions/Mermaid/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/Mermaid',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/extensions/Mermaid',
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }

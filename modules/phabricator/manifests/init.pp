@@ -12,8 +12,8 @@ class phabricator {
             'max_execution_time'        => 230,
             'opcache'                   => {
                 'enable'                  => 1,
-                'interned_strings_buffer' => 30,
-                'memory_consumption'      => 112,
+                'interned_strings_buffer' => 40,
+                'memory_consumption'      => 256,
                 'max_accelerated_files'   => 20000,
                 'max_wasted_percentage'   => 10,
                 'validate_timestamps'     => 1,
@@ -27,11 +27,11 @@ class phabricator {
             'upload_max_filesize' => '10M',
             'variables_order'     => 'GPCS',
         },
-        'fpm_min_child' => 4,
-        'version' => hiera('php::php_version', '7.3'),
+        'fpm_min_child' => 8,
+        'version' => lookup('php::php_version', {'default_value' => '7.3'}),
     })
 
-    $password = hiera('passwords::irc::mirahezebots')
+    $password = lookup('passwords::irc::mirahezebots')
 
     ssl::cert { 'miraheze.wiki': }
 
@@ -55,13 +55,6 @@ class phabricator {
         ensure    => present,
         directory => '/srv/phab/arcanist',
         origin    => 'https://github.com/phacility/arcanist.git',
-        require   => File['/srv/phab'],
-    }
-
-    git::clone { 'libphutil':
-        ensure    => present,
-        directory => '/srv/phab/libphutil',
-        origin    => 'https://github.com/phacility/libphutil.git',
         require   => File['/srv/phab'],
     }
 
@@ -111,7 +104,7 @@ class phabricator {
     $module_path = get_module_path($module_name)
     $phab_yaml = loadyaml("${module_path}/data/config.yaml")
     $phab_private = {
-        'mysql.pass' => hiera('passwords::db::phabricator'),
+        'mysql.pass' => lookup('passwords::db::phabricator'),
     }
 
     $phab_setting = {
@@ -124,7 +117,7 @@ class phabricator {
                     'host'     => 'mail.miraheze.org',
                     'port'     => 587,
                     'user'     => 'noreply',
-                    'password' => hiera('passwords::mail::noreply'),
+                    'password' => lookup('passwords::mail::noreply'),
                     'protocol' => 'tls',
                 },
             },

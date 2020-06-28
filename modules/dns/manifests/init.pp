@@ -16,7 +16,9 @@ class dns {
             require => Apt::Pin['debian_stretch_backports'],
         }
     } else {
-        require_package('gdnsd')
+        package { 'gdnsd':
+            ensure  => installed,
+        }
     }
 
     service { 'gdnsd':

@@ -25,16 +25,16 @@
 # [*puppet_major_version*] Which puppet version to use, eg 4.
 #
 class puppetdb(
-    String $db_rw_host = hiera('puppetdb::db_rw_host', 'localhost'),
-    String $jvm_opts = hiera('puppetdb::jvm_opts', '-Xmx200m'),
-    String $db_user = hiera('puppetdb::db_user', 'puppetdb'),
-    Boolean $perform_gc = hiera('puppetdb::perform_gc', true),
-    Integer $command_processing_threads = hiera('puppetdb::command_processing_threads', 2),
-    Optional[String] $bind_ip = hiera('puppetdb::bind_ip', '0.0.0.0'),
-    Optional[String] $db_ro_host = hiera('puppetdb::db_ro_host', undef),
-    Optional[String] $db_password = hiera('puppetdb::db_password', undef),
-    Boolean $db_ssl = hiera('puppetdb::db_ssl', true),
-    Integer $puppet_major_version = hiera('puppet_major_version', 4)
+    String $db_rw_host = lookup('puppetdb::db_rw_host', {'default_value' => 'localhost'}),
+    String $jvm_opts = lookup('puppetdb::jvm_opts', {'default_value' =>'-Xmx200m'}),
+    String $db_user = lookup('puppetdb::db_user', {'default_value' =>'puppetdb'}),
+    Boolean $perform_gc = lookup('puppetdb::perform_gc', {'default_value' => true}),
+    Integer $command_processing_threads = lookup('puppetdb::command_processing_threads', {'default_value' => 1}),
+    Optional[String] $bind_ip = lookup('puppetdb::bind_ip', {'default_value' => '0.0.0.0'}),
+    Optional[String] $db_ro_host = lookup('puppetdb::db_ro_host', {'default_value' => undef}),
+    Optional[String] $db_password = lookup('puppetdb::db_password', {'default_value' => undef}),
+    Boolean $db_ssl = lookup('puppetdb::db_ssl', {'default_value' => true}),
+    Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 6})
 ) {
 
     package { 'default-jdk':
@@ -43,46 +43,14 @@ class puppetdb(
 
     ## PuppetDB installation
 
-    if $puppet_major_version == 6 {
-        package { 'puppetdb':
-            ensure  => present,
-            require => Apt::Source['puppetlabs'],
-        }
+    package { 'puppetdb':
+        ensure  => present,
+        require => Apt::Source['puppetlabs'],
+    }
 
-        package { 'puppetdb-termini':
-            ensure   => present,
-            require => Apt::Source['puppetlabs'],
-        }
-    } else {
-        include ::apt
-
-        if !defined(Apt::Source['puppetdb_apt']) {
-            apt::source { 'puppetdb_apt':
-                comment  => 'puppetdb',
-                location => 'http://apt.wikimedia.org/wikimedia',
-                release  => "${::lsbdistcodename}-wikimedia",
-                repos    => 'component/puppetdb4',
-                key      => 'B8A2DF05748F9D524A3A2ADE9D392D3FFADF18FB',
-                notify   => Exec['apt_update_puppetdb'],
-            }
-
-            # First installs can trip without this
-            exec {'apt_update_puppetdb':
-                command     => '/usr/bin/apt-get update',
-                refreshonly => true,
-                logoutput   => true,
-            }
-        }
-
-        package { 'puppetdb':
-            ensure  => present,
-            require => Apt::Source['puppetdb_apt'],
-        }
-
-        package { 'puppetdb-termini':
-            ensure   => present,
-            require => Apt::Source['puppetdb_apt'],
-        }
+    package { 'puppetdb-termini':
+        ensure   => present,
+        require => Apt::Source['puppetlabs'],
     }
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
@@ -121,7 +89,7 @@ class puppetdb(
     }
 
     if $db_ssl {
-      $ssl = '?ssl=true'
+      $ssl = '?ssl=true&sslmode=require'
     } else {
       $ssl = ''
     }
@@ -173,9 +141,9 @@ class puppetdb(
     $jetty_settings = {
         'port'                      => 8080,
         'ssl-port'                  => 8081,
-        'ssl-key'                   => '/etc/puppetdb/ssl/private.pem',
-        'ssl-cert'                  => '/etc/puppetdb/ssl/public.pem',
-        'ssl-ca-cert'               => '/etc/puppetdb/ssl/ca.pem',
+        'ssl-key'                   => '/etc/puppetlabs/puppetdb/ssl/private.pem',
+        'ssl-cert'                  => '/etc/puppetlabs/puppetdb/ssl/public.pem',
+        'ssl-ca-cert'               => '/etc/puppetlabs/puppetdb/ssl/ca.pem',
     }
 
     if $bind_ip {
@@ -210,9 +178,15 @@ class puppetdb(
         },
     }
 
-    ufw::allow { 'misc1 check puppetdb port':
+    ufw::allow { 'misc1 check puppetdb port ipv4':
         proto => 'tcp',
         port  => 8081,
-        from  => '185.52.1.76',
+        from  => '51.89.160.138',
+    }
+
+    ufw::allow { 'misc1 check puppetdb port ipv6':
+        proto => 'tcp',
+        port  => 8081,
+        from  => '2001:41d0:800:105a::6',
     }
 }

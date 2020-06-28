@@ -26,13 +26,13 @@ class nutcracker(
 
     require_package('nutcracker')
 
-    $new_servers = hiera('new_servers', false)
     file { '/etc/nutcracker/nutcracker.yml':
         ensure  => $ensure,
         content => template('nutcracker/nutcracker.yml.erb'),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
+        notify  => Service['nutcracker'],
         require => Package['nutcracker'],
     }
 
@@ -63,10 +63,20 @@ class nutcracker(
         owner   => 'nutcracker',
         group   => 'nutcracker',
         require => Package['nutcracker'],
+        notify  => Service['nutcracker'],
+    }
+
+    systemd::unit { 'nutcracker.service':
+        ensure   => present,
+        content  => template('nutcracker/nutcracker-systemd-override.conf.erb'),
+        override => true,
+        restart  => false,
+        notify   => Service['nutcracker'],
     }
 
     service { 'nutcracker':
         ensure  => ensure_service($ensure),
+        enable  => true,
         require => File['/run/nutcracker'],
     }
 }

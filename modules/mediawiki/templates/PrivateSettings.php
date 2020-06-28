@@ -25,6 +25,9 @@ $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
 // Matomo Token
 $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 
+// Translate Yandex API key
+$wmgYandexTranslationKey = "<%= @yandextranslation_key %>";
+
 // Extension:DiscordNotifications hooks
 $wmgWikiMirahezeDiscordHooks = array(
 <%- @wiki_discord_hooks_url.each_pair do |wiki, values| -%>
@@ -32,8 +35,9 @@ $wmgWikiMirahezeDiscordHooks = array(
 <%- end -%>
 );
 
-<%- if @new_servers -%>
-$wmgUseNewServers = true;
-<%- else -%>
-$wmgUseNewServers = false;
+// Extension:SlackNotifications hooks
+$wmgWikiMirahezeSlackHooks = array(
+<%- @wiki_slack_hooks_url.each_pair do |wiki, values| -%>
+    '<%= wiki %>' => '<%= values %>',
 <%- end -%>
+);

@@ -3,36 +3,23 @@ class mediawiki(
     Optional[String] $branch = undef,
     Optional[String] $branch_mw_config = undef,
     Optional[Boolean] $use_memcached = undef,
-    Optional[Boolean] $use_redis = undef,
 ) {
-    $new_servers = hiera('new_servers', false)
-
     include mediawiki::favicons
     include mediawiki::cron
-    if hiera('mwservices', false) {
+    if lookup('mwservices', {'default_value' => false}) {
         include mediawiki::services_cron
     }
-    if !hiera(jobrunner) {
-        include mediawiki::nginx
-    }
+    include mediawiki::nginx
     include mediawiki::packages
     include mediawiki::logging
+    include mediawiki::php
     include mediawiki::extensionsetup
     include mediawiki::servicessetup
-    if $use_memcached {
-        include mediawiki::memcached
-    }
-    if $use_redis {
-        class { '::redis':
-             password  => hiera('passwords::redis::master'),
-             maxmemory => hiera('mediawiki_redis_maxmemory', '200mb'),
-         }
-    }
+
+
     include mediawiki::monitoring
 
-    include mediawiki::php
-
-    if hiera(jobrunner) {
+    if lookup(jobrunner) {
         include mediawiki::jobrunner
     }
 
@@ -84,14 +71,6 @@ class mediawiki(
         require            => File['/srv/mediawiki'],
     }
 
-    file { '/srv/mediawiki/w/cache/managewiki':
-        ensure  => 'directory',
-        owner   => 'www-data',
-        group   => 'www-data',
-        recurse => true,
-        require => Git::Clone['MediaWiki core'],
-    }
-
     file { '/srv/mediawiki/robots.php':
         ensure  => 'present',
         source  => 'puppet:///modules/mediawiki/robots.php',
@@ -106,18 +85,20 @@ class mediawiki(
         require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
     }
 
-    $wikiadmin_password   = hiera('passwords::db::wikiadmin')
-    $mediawiki_password   = hiera('passwords::db::mediawiki')
-    $redis_password       = hiera('passwords::redis::master')
-    $noreply_password     = hiera('passwords::mail::noreply')
-    $mediawiki_upgradekey = hiera('passwords::mediawiki::upgradekey')
-    $mediawiki_secretkey  = hiera('passwords::mediawiki::secretkey')
-    $recaptcha_sitekey    = hiera('passwords::recaptcha::sitekey')
-    $recaptcha_secretkey  = hiera('passwords::recaptcha::secretkey')
-    $googlemaps_key       = hiera('passwords::mediawiki::googlemapskey')
-    $matomotoken          = hiera('passwords::mediawiki::matomotoken')
+    $wikiadmin_password   = lookup('passwords::db::wikiadmin')
+    $mediawiki_password   = lookup('passwords::db::mediawiki')
+    $redis_password       = lookup('passwords::redis::master')
+    $noreply_password     = lookup('passwords::mail::noreply')
+    $mediawiki_upgradekey = lookup('passwords::mediawiki::upgradekey')
+    $mediawiki_secretkey  = lookup('passwords::mediawiki::secretkey')
+    $recaptcha_sitekey    = lookup('passwords::recaptcha::sitekey')
+    $recaptcha_secretkey  = lookup('passwords::recaptcha::secretkey')
+    $googlemaps_key       = lookup('passwords::mediawiki::googlemapskey')
+    $matomotoken          = lookup('passwords::mediawiki::matomotoken')
+    $yandextranslation_key = lookup('passwords::mediawiki::yandextranslationkey')
 
-    $wiki_discord_hooks_url = hiera('mediawiki::wiki_discord_hooks_url')
+    $wiki_discord_hooks_url = lookup('mediawiki::wiki_discord_hooks_url')
+    $wiki_slack_hooks_url = lookup('mediawiki::wiki_slack_hooks_url')
 
     class { '::nutcracker':
         redis_password => $redis_password,

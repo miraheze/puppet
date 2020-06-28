@@ -78,16 +78,19 @@ class php::php_fpm(
         'gd',
         'gmp',
         'intl',
+        'ldap',
         'mbstring',
-        'redis',
         'zip',
     ]
 
     $core_extensions.each |$extension| {
         php::extension { $extension:
             package_name => "php${version}-${extension}",
-            require      => Apt::Source['php_apt'],
         }
+    }
+
+    php::extension { 'redis':
+        package_name => "php-redis",
     }
 
     if $version == '7.2' or $version == '7.3' {
@@ -133,13 +136,6 @@ class php::php_fpm(
             package_name => "php${version}-dba",
     }
 
-    if $version == '7.2' {
-        php::extension {
-            'mail-mime':
-                package_name => 'php-mail-mime';
-        }
-    }
-
     # Additional config files are needed by some extensions, add them
     # MySQL
     php::extension {
@@ -182,7 +178,6 @@ class php::php_fpm(
     class { '::php::fpm':
         ensure  => present,
         config  => merge($base_fpm_config, $base_fpm_config_kvm, $fpm_config),
-        require => Apt::Source['php_apt'],
     }
 
     $num_workers =  max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)

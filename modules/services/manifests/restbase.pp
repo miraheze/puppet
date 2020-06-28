@@ -23,7 +23,7 @@ class services::restbase {
         ensure             => present,
         directory          => '/srv/restbase',
         origin             => 'https://github.com/wikimedia/restbase.git',
-        branch             => 'v0.19.3',
+        branch             => 'v1.1.4',
         owner              => 'restbase',
         group              => 'restbase',
         mode               => '0755',
@@ -71,9 +71,16 @@ class services::restbase {
         notify  => Service['restbase'],
     }
 
-    file { '/etc/mediawiki/restbase/miraheze_project.yaml':
+    file { '/etc/mediawiki/restbase/miraheze_project_v1.yaml':
         ensure  => present,
-        source  => 'puppet:///modules/services/restbase/miraheze_project.yaml',
+        source  => 'puppet:///modules/services/restbase/miraheze_project_v1.yaml',
+        require => File['/etc/mediawiki/restbase'],
+        notify  => Service['restbase'],
+    }
+
+    file { '/etc/mediawiki/restbase/miraheze_project_sys.yaml':
+        ensure  => present,
+        source  => 'puppet:///modules/services/restbase/miraheze_project_sys.yaml',
         require => File['/etc/mediawiki/restbase'],
         notify  => Service['restbase'],
     }

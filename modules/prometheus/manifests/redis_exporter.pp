@@ -1,7 +1,7 @@
 # = Class: prometheus::redis
 #
 class prometheus::redis_exporter (
-    $redis_password = hiera('passwords::redis::master'),
+    $redis_password = lookup('passwords::redis::master'),
 ) {
 
     file { '/usr/local/bin/redis_exporter':
@@ -10,6 +10,7 @@ class prometheus::redis_exporter (
         owner  => 'root',
         group  => 'root',
         source => 'puppet:///modules/prometheus/redis/redis_exporter',
+        notify => Service['prometheus-redis'],
     }
 
     file { '/etc/systemd/system/prometheus-redis.service':
@@ -40,9 +41,15 @@ class prometheus::redis_exporter (
         notify => Exec['prometheus-redis reload systemd'],
     }
 
-    ufw::allow { 'prometheus access 9121 on misc2':
+    ufw::allow { 'prometheus access 9121  ipv4':
         proto => 'tcp',
         port  => 9121,
-        from  => '185.52.3.121',
+        from  => '51.89.160.138',
+    }
+
+    ufw::allow { 'prometheus access 9121  ipv6':
+        proto => 'tcp',
+        port  => 9121,
+        from  => '2001:41d0:800:105a::6',
     }
 }

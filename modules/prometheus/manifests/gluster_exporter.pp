@@ -29,9 +29,15 @@ class prometheus::gluster_exporter {
         ],
     }
 
-    ufw::allow { 'prometheus access 9050':
+    ufw::allow { 'prometheus access 9050 ipv4':
         proto => 'tcp',
         port  => 9050,
-        from  => '185.52.3.121',
+        from  => '51.89.160.138',
+    }
+
+    ufw::allow { 'prometheus access 9050 ipv6':
+        proto => 'tcp',
+        port  => 9050,
+        from  => '2001:41d0:800:105a::6',
     }
 }

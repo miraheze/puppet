@@ -2,7 +2,7 @@
 class base::monitoring {
     include ::prometheus::node_exporter
 
-    $nagios_packages = [ 'nagios-plugins', 'nagios-nrpe-server', ]
+    $nagios_packages = [ 'monitoring-plugins', 'nagios-nrpe-server', ]
     package { $nagios_packages:
         ensure => present,
     }
@@ -14,7 +14,7 @@ class base::monitoring {
         notify  => Service['nagios-nrpe-server'],
     }
 
-    $puppetmaster_version = hiera('puppetmaster_version', 4)
+    $puppetmaster_version = lookup('puppetmaster_version', {'default_value' => 4})
     file { '/usr/lib/nagios/plugins/check_puppet_run':
         ensure  => present,
         content => template('base/icinga/check_puppet_run.erb'),
@@ -57,5 +57,12 @@ class base::monitoring {
 
     monitoring::services { 'SSH':
         check_command => 'ssh',
+    }
+
+    monitoring::services { 'APT':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_apt',
+        },
     }
 }

@@ -10,11 +10,7 @@
 
 # Marker to tell the VCL compiler that this VCL has been adapted to the
 # new 4.0 format.
-<% if @buster %>
 vcl 4.1;
-<% else %>
-vcl 4.0;
-<% end %>
 
 import directors;
 import std;
@@ -27,7 +23,7 @@ probe mwhealth {
 	# Check each 10s
 	.interval = 10s;
 	# May not take longer than 8s to load. Ideally this should be lowered, but sometimes latency to the NL servers could suck.
-	.timeout = 20s;
+	.timeout = 30s;
 	# At least 4 out of 5 checks must be successful
 	# to mark the backend as healthy
 	.window = 5;
@@ -35,62 +31,48 @@ probe mwhealth {
 	.expected_response = 200;
 }
 
-backend misc2 {
-    .host = "127.0.0.1";
-    .port = "8201";
-} 
-
-backend lizardfs6 {
-    .host = "127.0.0.1";
-    .port = "8203";
-    .probe = mwhealth;
+backend mon1 {
+	.host = "127.0.0.1";
+	.port = "8201";
 }
 
-backend mw1 {
+backend mw4 {
 	.host = "127.0.0.1";
-	.port = "8080";
+	.port = "8085";
 	.probe = mwhealth;
 }
 
-backend mw2 {
+backend mw5 {
 	.host = "127.0.0.1";
-	.port = "8081";
+	.port = "8086";
 	.probe = mwhealth;
 }
 
-backend mw3 {
+backend mw6 {
 	.host = "127.0.0.1";
-	.port = "8082";
+	.port = "8087";
 	.probe = mwhealth;
 }
 
-backend test1 {
+backend mw7 {
 	.host = "127.0.0.1";
-	.port = "8083";
+	.port = "8088";
+	.probe = mwhealth;
+}
+
+# to be used for acme/letsencrypt only
+backend jobrunner1 {
+	.host = "127.0.0.1";
+	.port = "8089";
 }
 
 backend test2 {
 	.host = "127.0.0.1";
-	.port = "8084";
+	.port = "8091";
 }
 
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
-
-backend mw1_test {
-	.host = "127.0.0.1";
-	.port = "8080";
-}
-
-backend mw2_test {
-	.host = "127.0.0.1";
-	.port = "8081";
-}
-
-backend mw3_test {
-	.host = "127.0.0.1";
-	.port = "8082";
-}
 
 backend mw4_test {
 	.host = "127.0.0.1";
@@ -112,38 +94,22 @@ backend mw7_test {
 	.port = "8088";
 }
 
-backend lizardfs6_no_check {
-    .host = "127.0.0.1";
-    .port = "8203";
-}
-
 # end test backend
 
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(lizardfs6);
-	mediawiki.add_backend(mw1);
-	mediawiki.add_backend(mw2);
-	mediawiki.add_backend(mw3);
+	mediawiki.add_backend(mw4);
+	mediawiki.add_backend(mw5);
+	mediawiki.add_backend(mw6);
+	mediawiki.add_backend(mw7);
 }
 
 
 acl purge {
 	"localhost";
-	"54.36.165.161"; # lizardfs6
-	"185.52.1.75"; # mw1
-	"2a00:d880:6:786::2"; # mw1
-	"185.52.2.113"; # mw2
-	"2a00:d880:5:799::2"; # mw2
-	"81.4.121.113"; # mw3
-	"2a00:d880:5:b45::2"; # mw3
-	"185.52.2.243"; # test1
 	"51.77.107.211"; # test2
 	"2001:41d0:800:105a::3"; # test2
-	"81.4.127.174"; # misc2
-	"185.52.3.121"; # misc4
-	"2a00:d880:5:7c6::2"; # misc4
 	"51.89.160.128"; # mw4
 	"2001:41d0:800:1056::3"; # mw4
 	"51.89.160.133"; # mw5
@@ -152,6 +118,10 @@ acl purge {
 	"2001:41d0:800:105a::4"; # mw6
 	"51.89.160.137"; # mw7
 	"2001:41d0:800:105a::5"; # mw7
+	"51.89.160.138"; # mon1
+	"2001:41d0:800:105a::6"; # mon1
+	"51.89.160.135"; # jobrunner1
+	"2001:41d0:800:1056::10"; # jobrunner1
 }
 
 sub mw_stash_cookie {
@@ -161,7 +131,7 @@ sub mw_stash_cookie {
 }
 
 sub mw_evaluate_cookie {
-	if (req.http.Cookie ~ "([sS]ession|Token)=" 
+	if (req.http.Cookie ~ "([sS]ession|Token|mf_useformat|stopMobileRedirect)=" 
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
                 && req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(png|jpe?g|svg)$"
@@ -190,14 +160,6 @@ sub mw_identify_device {
 
 		# In vcl_fetch we'll decide in which situations we should actually do something with this.
 		set req.http.X-Use-Mobile = "1";
-	}
-
-	if (req.http.host ~ "^([a-zA-Z0-9].+)\.m\.miraheze\.org") {
-		set req.http.X-Subdomain = "M";
-	} else if (req.http.host ~ "^m\.([a-zA-Z0-9\-\.].+)") {
-		set req.http.X-Subdomain = "M";
-	} else if (req.http.host ~ "^([a-zA-Z0-9\-\.].+)\.m\.([a-zA-Z0-9\-\.].+)") {
-		set req.http.X-Subdomain = "M";
 	}
 }
 
@@ -251,14 +213,15 @@ sub mw_vcl_recv {
 		set req.http.Host = "static.miraheze.org";
 	}
 
-	if (req.http.X-Miraheze-Debug == "mw1.miraheze.org" || req.url ~ "^/\.well-known") {
-		set req.backend_hint = mw1_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw2.miraheze.org") {
-		set req.backend_hint = mw2_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw3.miraheze.org") {
-		set req.backend_hint = mw3_test;
+	# HACK for T217669
+	if (req.url ~ "/wiki/undefined/api.php") {
+		set req.url = regsuball(req.url, "/wiki/undefined/api.php", "/w/api.php");
+	} else if (req.url ~ "/w/undefined/api.php") {
+		set req.url = regsuball(req.url, "/w/undefined/api.php", "/w/api.php");
+	}
+
+	if (req.url ~ "^/\.well-known") {
+		set req.backend_hint = jobrunner1;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw4.miraheze.org") {
 		set req.backend_hint = mw4_test;
@@ -272,14 +235,8 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "mw7.miraheze.org") {
 		set req.backend_hint = mw7_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "test1.miraheze.org") {
-		set req.backend_hint = test1;
-		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test2.miraheze.org") {
 		set req.backend_hint = test2;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "lizardfs6.miraheze.org") {
-		set req.backend_hint = lizardfs6_no_check;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
@@ -301,10 +258,6 @@ sub mw_vcl_recv {
 		return (pass);
 	}
 
-	if (req.http.Host == "static-temp.miraheze.org" && req.url !~ "^/.*wiki") {
-		return (pass);
-	}
-
 	# We can rewrite those to one domain name to increase cache hits!
 	if (req.url ~ "^/w/resources") {
 		set req.http.Host = "meta.miraheze.org";
@@ -321,8 +274,8 @@ sub mw_vcl_recv {
 	}
 	
 	# Temporary solution to fix CookieWarning issue with ElectronPDF
-
-	if (req.http.X-Real-IP == "185.52.1.71") {
+	if (req.http.X-Real-IP == "51.89.160.132" || req.http.X-Real-IP == "2001:41d0:800:1056::7" ||
+		req.http.X-Real-IP == "51.89.160.141" || req.http.X-Real-IP == "2001:41d0:800:105a::9") {
 		return (pass);
 	}
 
@@ -350,7 +303,7 @@ sub vcl_recv {
 	}
 
 	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = misc2;
+		set req.backend_hint = mon1;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
@@ -393,6 +346,10 @@ sub vcl_backend_response {
 		set beresp.uncacheable = true;
 	}
 
+	if (beresp.http.Set-Cookie) {
+		set beresp.uncacheable = true;
+	}
+
 	# Cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
 	if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
 		set beresp.ttl = 43200s;
@@ -402,6 +359,15 @@ sub vcl_backend_response {
 }
 
 sub vcl_deliver {
+	if (req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt)$") {
+		set resp.http.Access-Control-Allow-Origin = "*";
+	}
+
+	# HACK for T217669
+	if (req.url ~ "/w/api.php") {
+		set resp.http.Access-Control-Allow-Origin = "*";
+	}
+
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
 		if (req.url !~ "^/wiki/Special\:Banner") {
 			set resp.http.Cache-Control = "private, s-maxage=0, maxage=0, must-revalidate";
@@ -428,7 +394,7 @@ sub vcl_backend_error {
 			<meta name="description" content="Backend Fetch Failed">
 			<title>"} + beresp.status + " " + beresp.reason + {"</title>
 			<!-- Bootstrap core CSS -->
-			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 			<style>
 				/* Error Page Inline Styles */
 				body {
@@ -473,7 +439,7 @@ sub vcl_backend_error {
 			<div class="jumbotron">
 				<h1><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Miraheze-Logo.svg" alt="Miraheze Logo"> "} + beresp.status + " " + beresp.reason + {"</h1>
 				<p class="lead">Our servers are having issues at the moment.</p>
-				<a href="javascript:document.location.reload(true);" class="btn btn-default btn-lg text-center"><span class="green">Try This Page Again</span></a>
+				<a href="javascript:document.location.reload(true);" class="btn btn-lg btn-outline-success" role="button">Try this page again</a>
 			</div>
 		</div>
 		<div class="container">
@@ -491,15 +457,13 @@ sub vcl_backend_error {
 			</div>
 		</div>
 
-                <div class="footer">
+		<div class="footer">
 			<div class="text-center">
 				<p class="lead">When reporting this, please be sure to provide the information below.</p>
 
 				Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" <br />
 				(Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
 				<br /><br />
-
-
 			</div>
 		</div>
 	</html>

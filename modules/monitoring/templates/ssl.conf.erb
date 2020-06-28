@@ -7,6 +7,14 @@ apply Service "wc.miraheze.org" {
   assign where "sslchecks" in host.groups
 }
 
+apply Service "m.miraheze.org - LetsEncrypt" {
+  import "generic-service"
+  check_command = "check_ssl_expire"
+  vars.host = "m.miraheze.org"
+  vars.time = "15"
+  assign where "sslchecks" in host.groups
+}
+
 <% @sslcerts.each_pair do | name, property | -%>
 apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   import "generic-service"

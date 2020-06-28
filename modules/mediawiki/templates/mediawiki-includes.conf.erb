@@ -49,6 +49,8 @@ location ^~ /wiki {
 
 location ~* .(gif|ico|jpg|jpeg|png|svg)$ {
 	expires 1w;
+
+	add_header Access-Control-Allow-Origin '*' always;
 }
 
 location ~ ^/m/(.*) {
@@ -57,5 +59,7 @@ location ~ ^/m/(.*) {
 
 location /api/rest_v1/ {
 	rewrite    ^/api/rest_v1/(.*)$ /$host/v1/$1 break;
-	proxy_pass https://restbase-lb.miraheze.org/;
+
+	# the upstream backend 'restbase-lb.miraheze.org' is defined in sites-enabled/mediawiki
+	proxy_pass https://restbase-lb.miraheze.org;
 }

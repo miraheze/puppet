@@ -47,11 +47,11 @@
     "redis": {
         // Ready queue trackers
         "aggregators": [
-            "81.4.127.174:6379"
+            "51.89.160.135:6379"
         ],
         // Main queue servers
         "queues": [
-            "81.4.127.174:6379"
+            "51.89.160.135:6379"
         ],
         "password": "<%= @redis_password %>"
     },
@@ -60,6 +60,5 @@
     "statsd": "",
 
     // Command used to launch a runner for a given job queue
-    // Temp hack (run nice as -0 as php-fpm on openvz7 dosen't support nice so is running as unset)
-    "dispatcher": "nice -0 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
+    "dispatcher": "php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
 }

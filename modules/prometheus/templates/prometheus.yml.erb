@@ -61,32 +61,22 @@ scrape_configs:
   - job_name: redis
     static_configs:
       - targets: [
-<%- @host.sort.each do |host| -%>
-<%- if host =~ /^misc2/ -%>
-          '<%= host %>:9121',
-<%- end -%>
+<%- @host_redis.sort.each do |host| -%>
+        '<%= host %>:9121',
 <%- end -%>
         ]
-<%- @host.sort.each do |host| -%>
-<%- if host =~ /^misc2/ -%>
-        labels:
-          alias: <%= host %>
-<%- end -%>
-<%- end -%>
   - job_name: mariadb
     static_configs:
       - targets: [
-<%- @host.sort.each do |host| -%>
-<%- if host =~ /^db/ -%>
+<%- @host_mariadb.sort.each do |host| -%>
         '<%= host %>:9104',
-<%- end -%>
 <%- end -%>
       ]
   - job_name: nginx
     static_configs:
       - targets: [
-<%- @host_nginx.sort.each do |host_nginx| -%>
-        '<%= host_nginx %>:9113',
+<%- @host_nginx.sort.each do |host| -%>
+        '<%= host %>:9113',
 <%- end -%>
       ]
   - job_name: gluster

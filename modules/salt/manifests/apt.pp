@@ -1,7 +1,7 @@
 class salt::apt {
     include ::apt
 
-    if !defined(Apt::Source['salt_apt']) and os_version('debian == stretch') {
+    if !defined(Apt::Source['salt_apt']) {
         $os_version = $facts['os']['release']['major']
         apt::key { 'salt_key':
           id     => '754A1A7AE731F165D5E6D4BD0E08A149DE57BFBE',

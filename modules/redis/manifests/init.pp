@@ -7,6 +7,8 @@ class redis (
     Variant[Boolean, String] $password = false,
 ) {
 
+    $jobrunner = lookup('jobrunner', {'default_value' => false})
+
     if os_version('debian stretch') {
         apt::pin { 'debian_stretch_backports_redis':
             priority   => 740,

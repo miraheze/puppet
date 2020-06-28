@@ -111,14 +111,19 @@ define gluster::mount (
   }
 
   if !defined(File['/var/lib/glusterd/secure-access']) {
+    file { '/var/lib/glusterd':
+      ensure  => directory,
+      require => Package['glusterfs-client'],
+    }
+
     file { '/var/lib/glusterd/secure-access':
       ensure  => present,
       source  => 'puppet:///modules/gluster/secure-access',
-      require => Package['glusterfs-client'],
+      require => File['/var/lib/glusterd'],
     }
   }
 
-  $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,attribute-timeout=600,entry-timeout=600,negative-timeout=20,fopen-keep-cache"
+  $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,attribute-timeout=600,entry-timeout=600,negative-timeout=20,fopen-keep-cache,noexec"
 
   $mount_options = $options ? {
       undef   => $base_options,

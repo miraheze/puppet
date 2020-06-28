@@ -1,14 +1,16 @@
 # servers
 
-node 'bacula1.miraheze.org' {
+node 'bacula2.miraheze.org' {
     include base
     include bacula::director
-    # mysql crashes
-    # include role::dbreplication
     include role::salt::minions
 }
 
-node /^cp[234678]\.miraheze\.org$/ {
+node /^cloud[12]\.miraheze\.org$/ {
+    include base
+}
+
+node /^cp[3678]\.miraheze\.org$/ {
     include base
     include role::varnish
     include role::salt::minions
@@ -24,7 +26,15 @@ node 'db4.miraheze.org' {
     include prometheus::mysqld_exporter
 }
 
-node /^db[567]\.miraheze\.org$/ {
+node 'db6.miraheze.org' {
+    include base
+    include role::dbreplication
+    include bacula::client
+    include role::salt::minions
+    include prometheus::mysqld_exporter
+}
+
+node 'db7.miraheze.org' {
     include base
     include role::db
     include bacula::client
@@ -32,13 +42,20 @@ node /^db[567]\.miraheze\.org$/ {
     include prometheus::mysqld_exporter
 }
 
-node 'lizardfs6.miraheze.org' {
+node 'db8.miraheze.org' {
     include base
+    include role::db
     include bacula::client
-    include role::gluster
-    include role::mediawiki
     include role::salt::minions
-    include prometheus::php_fpm
+    include prometheus::mysqld_exporter
+}
+
+node 'db9.miraheze.org' {
+    include base
+    include role::db
+    include bacula::client
+    include role::salt::minions
+    include prometheus::mysqld_exporter
 }
 
 node 'gluster1.miraheze.org' {
@@ -48,11 +65,23 @@ node 'gluster1.miraheze.org' {
     include role::salt::minions
 }
 
+node 'gluster2.miraheze.org' {
+    include base
+    include role::gluster
+    include role::salt::minions
+}
+
 node 'jobrunner1.miraheze.org' {
     include base
     include role::redis
     include role::mediawiki
     include role::salt::minions
+    include prometheus::redis_exporter
+}
+
+node 'ldap1.miraheze.org' {
+    include base
+    include role::openldap
 }
 
 node 'mail1.miraheze.org' {
@@ -64,39 +93,8 @@ node 'mail1.miraheze.org' {
 
 node 'misc1.miraheze.org' {
     include base
-    include role::dns
-    include role::grafana
-    include role::icinga2
-    include role::irc
     include role::mail
-    include role::roundcubemail
     include role::salt::minions
-    include prometheus::php_fpm
-}
-
-node 'misc2.miraheze.org' {
-    include base
-    include role::redis
-    include role::matomo
-    include role::salt::minions
-    include prometheus::php_fpm
-    include prometheus::redis_exporter
-}
-
-node 'misc3.miraheze.org' {
-    include base
-    include role::services
-    include role::salt::minions
-}
-
-node 'misc4.miraheze.org' {
-    include base
-    include bacula::client
-    include role::phabricator
-    include role::prometheus
-    include role::salt::masters
-    include role::salt::minions
-    include role::services
     include prometheus::php_fpm
 }
 
@@ -109,10 +107,9 @@ node 'mon1.miraheze.org' {
     include role::prometheus
     include role::salt::minions
     include prometheus::php_fpm
-    include prometheus::redis_exporter
 }
 
-node /^mw[1234567]\.miraheze\.org$/ {
+node /^mw[4567]\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include role::salt::minions
@@ -130,13 +127,6 @@ node 'phab1.miraheze.org' {
     include role::phabricator
     include role::salt::minions
     include prometheus::php_fpm
-}
-
-node 'puppet1.miraheze.org' {
-    include base
-    include bacula::client
-    include role::puppetserver
-    include role::salt::minions
 }
 
 node 'puppet2.miraheze.org' {
@@ -160,13 +150,6 @@ node /^services[12]\.miraheze\.org$/ {
     include base
     include role::services
     include role::salt::minions
-}
-
-node 'test1.miraheze.org' {
-    include base
-    include role::mediawiki
-    include role::salt::minions
-    include prometheus::php_fpm
 }
 
 node 'test2.miraheze.org' {

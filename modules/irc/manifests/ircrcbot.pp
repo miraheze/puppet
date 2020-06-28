@@ -5,11 +5,11 @@ class irc::ircrcbot(
     $network_port = '6697',
     $channel      = undef,
     $udp_port     = '5070',
-    $sleeptime    = '0.5',
+    $sleeptime    = '1',
 ) {
     include ::irc
 
-    $mirahezebots_password = hiera('passwords::irc::mirahezebots')
+    $mirahezebots_password = lookup('passwords::irc::mirahezebots')
 
     file { '/usr/local/bin/ircrcbot.py':
         ensure  => present,

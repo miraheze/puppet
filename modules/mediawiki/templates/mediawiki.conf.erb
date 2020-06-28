@@ -1,0 +1,282 @@
+# Traffic going to URLs like https://meta.miraheze.org/api/rest_v1
+# is proxied to services backends. In DNS, the subdomain restbase-lb
+# uses a weighted load balancing configuration to balance traffic.
+# However, there are no health checks in DNS and by default, NGINX caches
+# DNS lookups in proxy_pass forever, thus DNS changes are not picked up
+# until NGINX is reloaded or restarted.
+# There are several workaround available (such as using the resolver option
+# with a low cache expiration timeout), but that's not recommended due to DNS
+# spoofing attacks. This is not the preferred solution, but works reliably.
+upstream restbase-lb.miraheze.org {
+	server services1.miraheze.org:443 weight=1 max_fails=2 fail_timeout=5s;
+	server services2.miraheze.org:443 weight=1 max_fails=2 fail_timeout=5s;
+}
+
+server {
+	listen 80 backlog=1024;
+	listen [::]:80 ipv6only=on backlog=1024;
+	listen 443 ssl http2 backlog=1024;
+	listen [::]:443 ssl http2 ipv6only=on backlog=1024;
+
+	server_name miraheze.org www.miraheze.org;
+	root /srv/mediawiki/landing;
+	index index.php index.html;
+
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org.crt;
+	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org.key;
+
+	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
+
+	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+
+	location /.well-known/acme-challenge/ {
+		alias /var/www/challenges/;
+		try_files $uri =404;
+	}
+
+	location ~ ^/(\.git|config) {
+		deny all;
+	}
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		try_files $fastcgi_script_name =404;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+		fastcgi_read_timeout 140;
+		send_timeout 140;
+	}
+}
+
+server {
+	listen 80;
+	listen [::]:80;
+
+	server_name ~.;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	location /php_status {
+		access_log off;
+		allow 127.0.0.1;
+		include fastcgi_params;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_buffers 32 32k;
+		fastcgi_buffer_size 64k;
+		fastcgi_read_timeout 20;
+ 		send_timeout 20s;
+	}
+
+	location / {
+		return 301 https://$host$request_uri;
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name *.miraheze.org;
+	root /srv/mediawiki;
+
+	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org.crt;
+	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org.key;
+
+	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
+
+	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+
+	include /etc/nginx/mediawiki-includes;
+
+	location = /robots.txt {
+		rewrite ^(.*)$ /robots.php;
+	}
+}
+
+server {
+	listen 80;
+	listen [::]:80;
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name allthetropes.miraheze.org;
+	root /srv/mediawiki;
+
+	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org.crt;
+	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org.key;
+
+	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
+
+	add_header Strict-Transport-Security "max-age=2419200";
+
+	location / {
+		rewrite ^(.*)$ https://allthetropes.org$1;
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name static.miraheze.org;
+	root /mnt/mediawiki-static;
+
+	send_timeout 120;
+
+	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org.crt;
+	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org.key;
+
+	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
+
+	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+
+	location ~* .(gif|jpe?g|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt)$ {
+		expires 1w;
+
+		add_header Access-Control-Allow-Origin '*' always;
+	}
+
+	error_page 404 =404 @notfound;
+
+	location @notfound {
+		# Work around the issue affecting T5568.
+		if ($request_uri ~* "(.*\.(gif|jpe?g|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt)$)") {
+			add_header Access-Control-Allow-Origin '*' always;
+		}
+
+		rewrite ^/(.*)wiki/thumb/(.+)$ https://$1.miraheze.org/w/thumb_handler.php/$2;
+	}
+
+	location = /favicon.ico {
+		try_files /../../usr/share/nginx/favicons/$host.ico /../../usr/share/nginx/favicons/default.ico;
+	}
+
+	location = /apple-touch-icon.png {
+		try_files /../../usr/share/nginx/favicons/apple-touch-icon-$host.png /../../usr/share/nginx/favicons/apple-touch-icon-default.png;
+	}
+
+	location /private {
+		deny all;
+	}
+
+	location /dumps {
+		autoindex on;
+	}
+
+	location /sitemaps {
+		autoindex on;
+		try_files $uri $uri/ $uri.xml =404;
+	}
+}
+
+server {
+	listen 80;
+	listen [::]:80;
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name donate.miraheze.org;
+	root /srv/mediawiki/landing;
+	index donate.php;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org.crt;
+	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org.key;
+
+	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
+
+	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		try_files $fastcgi_script_name =404;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+		fastcgi_read_timeout 140;
+		send_timeout 140;
+	}
+}
+
+<% @sslcerts.each_pair do | name, property | -%>
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+<% if property['mobiledomain'] %>
+	server_name <%= property['url'] %> <%= property['mobiledomain'] %>;
+<% else %>
+	server_name <%= property['url'] %>;
+<% end %>
+	root /srv/mediawiki;
+<% if property['sslname'] %>
+	ssl_certificate /etc/ssl/certs/<%= property['sslname'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
+<% else %>
+	ssl_certificate /etc/ssl/certs/<%= property['url'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= property['url'] %>.key;
+<% end %>
+	ssl_trusted_certificate /etc/ssl/certs/<%= property['ca'] %>.crt;
+
+<% if property['hsts'] == "strict" %>  
+	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+<% else %>
+	add_header Strict-Transport-Security "max-age=604800";
+<% end %>
+
+	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+
+	include /etc/nginx/mediawiki-includes;
+
+	location = /robots.txt {
+			rewrite ^(.*)$ /robots.php;
+	}
+}
+
+<% end -%>

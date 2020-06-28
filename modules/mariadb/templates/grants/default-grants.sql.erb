@@ -5,19 +5,19 @@ GRANT ALL PRIVILEGES
     IDENTIFIED BY '<%= @password %>'
     WITH GRANT OPTION;
 
--- Grants for 'icinga'@'185.52.1.76'
+-- Grants for 'icinga'@'51.89.160.138' & 'icinga'@'2001:41d0:800:105a::6'
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
     CREATE VIEW, INDEX, EXECUTE
-    ON icinga.* TO 'icinga'@'185.52.1.76'
+    ON icinga.* TO 'icinga'@'51.89.160.138'
     IDENTIFIED BY '<%= @icinga_password %>';
 
--- Grants for 'exporter'@'81.4.127.174'
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
+    CREATE VIEW, INDEX, EXECUTE
+    ON icinga.* TO '2001:41d0:800:105a::6'
+    IDENTIFIED BY '<%= @icinga_password %>';
 
-GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT
-    ON *.* TO 'exporter'@'81.4.127.174'
-    IDENTIFIED BY '<%= @exporter_password %>'
-    WITH GRANT OPTION;
+-- Grants for 'exporter'@'local'
 
 GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT
     ON *.* TO 'exporter'@'localhost'
@@ -36,8 +36,16 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE
     ON `icingaweb2`.* TO 'icingaweb2'@'%'
     IDENTIFIED BY '<%= @icingaweb2_db_user_password %>';
 
--- Grants for 'roundcubemail'@'185.52.1.76'
+-- Grants for 'roundcubemail'@'51.89.160.134' & 'roundcubemail'@'2001:41d0:800:1056::9'
 
 GRANT ALL PRIVILEGES
-    ON roundcubemail.* TO 'roundcubemail'@'185.52.1.76'
+    ON roundcubemail.* TO 'roundcubemail'@'51.89.160.134'
     IDENTIFIED BY '<%= @roundcubemail_password %>';
+
+GRANT ALL PRIVILEGES
+    ON roundcubemail.* TO 'roundcubemail'@'2001:41d0:800:1056::9'
+    IDENTIFIED BY '<%= @roundcubemail_password %>';
+
+-- Grants for 'replica'@'%'
+
+GRANT REPLICATION SLAVE ON *.* TO 'replica'@'%' IDENTIFIED BY '<%= @mariadb_replica_password %>';

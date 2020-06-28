@@ -1,5 +1,5 @@
 class monitoring (
-    String $db_host               = 'db4.miraheze.org',
+    String $db_host               = 'db7.miraheze.org',
     String $db_name               = 'icinga',
     String $db_user               = 'icinga2',
     String $db_password           = undef,
@@ -13,7 +13,7 @@ class monitoring (
         allowdupe => false,
     }
 
-    $version = hiera('mariadb::version', '10.2')
+    $version = lookup('mariadb::version', {'default_value' => '10.2'})
     apt::source { 'mariadb_apt':
         comment     => 'MariaDB stable',
         location    => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
@@ -107,6 +107,15 @@ class monitoring (
         notify  => Service['icinga2'],
     }
 
+    file { '/etc/icinga2/conf.d/services.conf':
+        source  => 'puppet:///modules/monitoring/services.conf',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        require => Package['icinga2'],
+        notify  => Service['icinga2'],
+    }
+
     file { '/etc/icinga2/conf.d/templates.conf':
         source  => 'puppet:///modules/monitoring/templates.conf',
         owner   => 'root',
@@ -187,8 +196,8 @@ class monitoring (
         notify  => Service['icinga2'],
     }
 
-    $ssl = loadyaml('/etc/puppet/ssl/certs.yaml')
-    $redirects = loadyaml('/etc/puppet/ssl/redirects.yaml')
+    $ssl = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
+    $redirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
     $sslcerts = merge( $ssl, $redirects )
 
     file { '/etc/icinga2/conf.d/ssl.conf':

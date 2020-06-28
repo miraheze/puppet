@@ -1,5 +1,5 @@
 puppetserver_hostname: puppet2.miraheze.org
-ssh::server::permit_root: true
+role::salt::minions::salt_master: 'puppet2.miraheze.org'
 
 # Network setup
 role::db::main_ip4_address: 54.36.165.86

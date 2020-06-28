@@ -3,6 +3,5 @@ user=root
 password=<%= @password %>
 socket=/var/run/mysqld/mysqld.sock
 
-#SSL
-ssl-cert=/etc/ssl/certs/wildcard.miraheze.org.crt
-ssl-key=/etc/ssl/private/wildcard.miraheze.org.key
+# Local connections using TLS are currently broken.
+ssl=0

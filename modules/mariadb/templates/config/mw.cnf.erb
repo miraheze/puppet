@@ -12,6 +12,7 @@ default-storage-engine         = InnoDB
 socket                         = /var/run/mysqld/mysqld.sock
 pid-file                       = /var/run/mysqld/mysqld.pid
 skip-name-resolve
+bind-address                   = ::
 key-buffer-size                = 16M
 myisam-recover-options         = FORCE,BACKUP
 
@@ -31,6 +32,10 @@ server-id                      = <%= @server_id %>
 log-bin                        = <%= @datadir %>/mysql-bin
 <% if @server_role == 'slave' %>
 relay-log                      = /var/log/mysql/mysql-relay-bin.log
+skip-slave-start
+replicate-ignore-db            = test
+replicate-ignore-db            = information_schema
+replicate-ignore-db            = mysql
 <% end %>
 <% if @server_role == 'master' -%>
 expire-logs-days               = 4
@@ -42,12 +47,12 @@ slave_compressed_protocol      = 1
 
 local_infile                   = 0
 
-tmp-table-size                 = 12M
-max-heap-table-size            = 12M
+tmp-table-size                 = 64M
+max-heap-table-size            = 64M
 max-connections                = <%= @max_connections %>
 open-files-limit               = 65535
-table-definition-cache         = 1000
-table-open-cache               = 1000
+table-definition-cache         = <%= @table_definition_cache %>
+table-open-cache               = <%= @table_open_cache %>
 
 # thread and connection handling
 thread_handling                = pool-of-threads
