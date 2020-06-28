@@ -22,13 +22,13 @@ class role::salt::masters {
     # DO NOT UNDER ANY CIRCUMSTANCES OPEN THIS UP
     $hostips = query_nodes("domain='$domain' and Class[Role::Salt::Minions]", 'ipaddress')
     $hostips.each |$key| {
-        ufw::allow { 'salt master port 4505 ipv4':
+        ufw::allow { "salt master port 4505 ipv4 ${$key}":
             proto   => 'tcp',
             port    => 4505,
             from    => $key,
         }
 
-        ufw::allow { 'salt master port 4506 ipv4':
+        ufw::allow { "salt master port 4506 ipv4 ${$key}":
             proto   => 'tcp',
             port    => 4506,
             from    => $key,
@@ -38,13 +38,13 @@ class role::salt::masters {
     # DO NOT UNDER ANY CIRCUMSTANCES OPEN THIS UP
     $hostips6 = query_nodes("domain='$domain' and Class[Role::Salt::Minions]", 'ipaddress6')
     $hostips6.each |$key| {
-        ufw::allow { 'salt master port 4505 ipv6':
+        ufw::allow { "salt master port 4505 ipv6 ${$key}":
             proto   => 'tcp',
             port    => 4505,
             from    => $key,
         }
 
-        ufw::allow { 'salt master port 4506 ipv6':
+        ufw::allow { "salt master port 4506 ipv6 ${$key}":
             proto   => 'tcp',
             port    => 4506,
             from    => $key,
