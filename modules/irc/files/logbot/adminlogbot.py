@@ -250,12 +250,9 @@ class logbot(ircbot.SingleServerIRCBot):
                 if author in self.config.title_map:
                     title = self.config.title_map[author]
                 else:
-                    title = "Master"
                     self.connection.privmsg(
                         event.target,
-                        "Logged the message at {url}, {author}".format(
-                            url=pageurl, author=title
-                        )
+                        "Logged the message at {url}".format(url=pageurl)
                     )
             except Exception as e:
                 logging.exception('Failed to log message: %r' % e)
