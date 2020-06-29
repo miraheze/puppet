@@ -6,6 +6,7 @@ webmaster: root
 www: root
 ftp: root
 noc: sre
+abuse: tech
 
 # noreply death
 noreply: /dev/null
@@ -21,8 +22,6 @@ staff: tech
 
 # tech@ abuse aliases
 wiki-abuse: tech
-abuse: tech
-
 # gdpr / privacy alias
 privacy: tech
 
