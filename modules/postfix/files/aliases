@@ -5,7 +5,6 @@ hostmaster: sre
 webmaster: root
 www: root
 ftp: root
-abuse: sre
 noc: sre
 
 # noreply death
@@ -20,8 +19,9 @@ mailer-daemon: /dev/null
 operations: sre
 staff: tech
 
-# staff aliases
+# tech@ abuse aliases
 wiki-abuse: tech
+abuse: tech
 
 # gdpr / privacy alias
 privacy: tech
