@@ -1,4 +1,4 @@
-class salt::master(
+class salt (
     Optional[String] $salt_interface      = undef,
     Optional[String] $salt_worker_threads = undef,
     String $salt_runner_dirs              = '/srv/runners',
