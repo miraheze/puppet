@@ -43,6 +43,9 @@ donate: southparkfan,owen
 # campaign email temp
 campaign: sre
 
+# bots
+bots: paladox,rhinosf1,zppix,reception123
+
 # board
 board: owen,southparkfan,void,robla
 
