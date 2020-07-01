@@ -30,7 +30,7 @@ class salt {
      }
      
     file { '/home/salt-user/.ssh/known_hosts':
-         content   => template('base/user/salt-user-known-hosts.erb'),
+         content   => template('salt/salt-user-known-hosts.erb'),
          owner     => 'salt-user',
          group     => 'salt-user',
          mode      => '644',
