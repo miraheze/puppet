@@ -69,7 +69,7 @@ class base {
      }
      
     file { '/home/salt-user/.ssh/known_hosts':
-         source    => 'puppet:///puppet/base/user/salt-user-known-hosts',
+         source    => 'puppet:///modules/base/user/salt-user-known-hosts',
          owner     => 'salt-user',
          group     => 'salt-user',
          mode      => '644',
