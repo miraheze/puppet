@@ -1,13 +1,13 @@
 # class: users::user
 define users::user(
-    VMlib::Ensure $ensure       = 'present',
-    Optional[Integer] $uid     = undef,
-    Optional[String] $gid      = undef,
-    Array $groups              = [],
-    String $comment            = '',
-    String $shell              = '/bin/bash',
-    Optional[Hash] $privileges = undef,
-    Array $ssh_keys            = [],
+    VMlib::Ensure           $ensure     = present,
+    Optional[Integer]       $uid        = undef,
+    Optional[Integer]       $gid        = undef,
+    Array[String]           $groups     = [],
+    String                  $comment    = '',
+    String                  $shell      = '/bin/bash',
+    Optional[Array[String]] $privileges = undef,
+    Array[String]           $ssh_keys   = [],
 ) {
 
     user { $name:
