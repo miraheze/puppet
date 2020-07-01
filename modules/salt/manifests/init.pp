@@ -15,7 +15,7 @@ class salt (
     String $salt_returner_roots           = '/srv/salt/_returners',
 ) {
     package { 'salt-ssh':
-        ensure  => 'absent',
+        ensure  => present,
     }
 
     $host = query_nodes("domain='$domain'", 'fqdn')
