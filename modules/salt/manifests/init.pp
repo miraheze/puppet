@@ -15,8 +15,8 @@ class salt {
      file { '/home/salt-user/.ssh':
         ensure  => directory,
         mode    => '0700',
-        owner   => 'root',
-        group   => 'root',
+        owner   => 'salt-user',
+        group   => 'salt-user',
         require => User['salt-user'],
      }
  
