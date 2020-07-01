@@ -24,13 +24,6 @@ class salt (
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
-        notify  => Service['salt-ssh'],
-        require => Package['salt-ssh'],
-    }
-
-    service { 'salt-ssh':
-        ensure  => running,
-        enable  => true,
         require => Package['salt-ssh'],
     }
 }
