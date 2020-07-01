@@ -42,7 +42,7 @@ class ssh::server (
         $aliases = [ $::hostname, $::ipaddress, $::ipaddress6 ]
     }
 
-    debug("Storing ${type} SSH hostkey for ${::fqdn}")
+    debug("Storing ecdsa-sha2-nistp256 SSH hostkey for ${::fqdn}")
     @@sshkey { $::fqdn:
         ensure       => present,
         type         => 'ecdsa-sha2-nistp256',
