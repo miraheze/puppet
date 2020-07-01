@@ -1,5 +1,5 @@
 class salt {
-    package { 'salt-ssh':
+    package { ['salt-ssh', 'salt-common']:
         ensure  => present,
     }
 
