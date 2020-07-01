@@ -44,7 +44,7 @@ node 'db9.miraheze.org' {
     include prometheus::mysqld_exporter
 }
 
-node 'db9.miraheze.org' {
+node 'db10.miraheze.org' {
     include base
     include role::dbreplication
     include bacula::client
