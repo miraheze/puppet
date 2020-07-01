@@ -59,6 +59,15 @@ class base {
         privileges  => ['ALL = (ALL) NOPASSWD: ALL'],
     }
 
+    file { '/home/salt-user/id_ed25519':
+         source    => 'puppet:///private/base/user/salt-user-ssh-key',
+         owner     => 'salt-user',
+         group     => 'salt-user',
+         mode      => '400',
+         require   => User['salt-user'],
+         show_diff => false,
+     }
+
     # Global vim defaults
     file { '/etc/vim/vimrc.local':
         owner  => 'root',
