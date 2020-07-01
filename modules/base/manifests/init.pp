@@ -58,14 +58,22 @@ class base {
         ],
         privileges  => ['ALL = (ALL) NOPASSWD: ALL'],
     }
-
-    file { '/home/salt-user/id_ed25519':
+ 
+     file { '/home/salt-user/.ssh':
+        ensure  => directory,
+        mode    => '0700',
+        owner   => 'root',
+        group   => 'root',
+        require => User['salt-user'],
+     }
+ 
+     file { '/home/salt-user/.ssh/id_ed25519':
          source    => 'puppet:///private/base/user/salt-user-ssh-key',
          owner     => 'salt-user',
          group     => 'salt-user',
          mode      => '400',
-         require   => User['salt-user'],
          show_diff => false,
+         require   => File['/home/salt-user/.ssh'],
      }
      
     file { '/home/salt-user/.ssh/known_hosts':
@@ -73,7 +81,7 @@ class base {
          owner     => 'salt-user',
          group     => 'salt-user',
          mode      => '644',
-         require   => User['salt-user'],
+         require   => File['/home/salt-user/.ssh'],
      }
 
     # Global vim defaults
