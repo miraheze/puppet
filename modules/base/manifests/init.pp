@@ -67,6 +67,14 @@ class base {
          require   => User['salt-user'],
          show_diff => false,
      }
+     
+    file { '/home/salt-user/.ssh/known_hosts':
+         source    => 'puppet:///puppet/base/user/salt-user-known-hosts',
+         owner     => 'salt-user',
+         group     => 'salt-user',
+         mode      => '644',
+         require   => User['salt-user'],
+     }
 
     # Global vim defaults
     file { '/etc/vim/vimrc.local':
