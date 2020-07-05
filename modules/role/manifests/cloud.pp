@@ -11,41 +11,66 @@ class role::db {
 
     # cloud1 and cloud2 respectivly
     # TODO: Either automate this or move it so it's done in a file
-    ['54.36.165.86', '2001:41d0:800:1056::1', '54.36.165.90', '2001:41d0:800:105a::1'].each |String $ip| {
-        ufw::allow { "proxmox port 5900:5999 ${ip}":
+    $firewall = query_facts('Class[Role::Cloud]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "proxmox port 5900:5999 ${value['ipaddress']}":
             proto => 'tcp',
             port  => '5900:5999',
-            from  => $ip,
+            from  => $value['ipaddress'],
         }
 
-        ufw::allow { "proxmox port 5404:5405 ${ip}":
+        ufw::allow { "proxmox port 5900:5999 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => '5900:5999',
+            from  => $value['ipaddress6'],
+        }
+
+        ufw::allow { "proxmox port 5404:5405 ${value['ipaddress']}":
+            proto => 'udp',
+            port  => '5404:5405',
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "proxmox port 5404:5405 ${value['ipaddress6']}":
             proto => 'udp',
             port  => '5404:5405',
             from  => $ip,
         }
 
-        ufw::allow { "proxmox port 5404:5405 ${ip}":
-            proto => 'udp',
-            port  => '5404:5405',
-            from  => $ip,
-        }
-
-        ufw::allow { "proxmox port 3128 ${ip}":
+        ufw::allow { "proxmox port 3128 ${value['ipaddress']}":
             proto => 'tcp',
             port  => '3128',
-            from  => $ip,
+            from  => $value['ipaddress'],
         }
 
-        ufw::allow { "proxmox port 8006 ${ip}":
+        ufw::allow { "proxmox port 3128 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => '3128',
+            from  => $value['ipaddress6'],
+        }
+
+        ufw::allow { "proxmox port 8006 ${value['ipaddress']}":
             proto => 'tcp',
             port  => '8006',
-            from  => $ip,
+            from  => $value['ipaddress'],
         }
 
-        ufw::allow { "proxmox port 111 ${ip}":
+        ufw::allow { "proxmox port 8006 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => '8006',
+            from  => $value['ipaddress6'],
+        }
+
+        ufw::allow { "proxmox port 111 ${value['ipaddress']}":
             proto => 'tcp',
             port  => '111',
-            from  => $ip,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "proxmox port 111 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => '111',
+            from  => $value['ipaddress6'],
         }
     }
 
