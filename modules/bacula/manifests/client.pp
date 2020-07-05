@@ -24,18 +24,6 @@ class bacula::client {
 
     $firewall = query_facts('Class[Bacula::Director]', ['ipaddress', 'ipaddress6'])
     $firewall.each |$key, $value| {
-        ufw::allow { "bacula 9101 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 9101,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "bacula 9101 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 9101,
-            from  => $value['ipaddress6'],
-        }
-
         ufw::allow { "bacula 9102 ${value['ipaddress']}":
             proto => 'tcp',
             port  => 9102,
@@ -45,18 +33,6 @@ class bacula::client {
         ufw::allow { "bacula 9102 ${value['ipaddress6']}":
             proto => 'tcp',
             port  => 9102,
-            from  => $value['ipaddress6'],
-        }
-
-        ufw::allow { "bacula 9103 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 9103,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "bacula 9103 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 9103,
             from  => $value['ipaddress6'],
         }
     }
