@@ -90,6 +90,33 @@ class bacula::director {
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_bacula_backups' ],
     }
 
+    $firewall = query_facts('Class[Bacula::Client]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "bacula 9101 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9101,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "bacula 9101 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9101,
+            from  => $value['ipaddress6'],
+        }
+
+        ufw::allow { "bacula 9103 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9103,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "bacula 9103 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9103,
+            from  => $value['ipaddress6'],
+        }
+    }
+
     monitoring::services { 'Bacula Daemon':
         check_command => 'nrpe',
         vars          => {
