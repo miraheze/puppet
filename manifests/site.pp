@@ -6,8 +6,9 @@ node 'bacula2.miraheze.org' {
     include role::salt::minions
 }
 
-node /^cloud[12]\.miraheze\.org$/ {
+node /^cloud[123]\.miraheze\.org$/ {
     include base
+    include role::cloud
 }
 
 node /^cp[3678]\.miraheze\.org$/ {
