@@ -5,8 +5,9 @@ node 'bacula2.miraheze.org' {
     include bacula::director
 }
 
-node /^cloud[12]\.miraheze\.org$/ {
+node /^cloud[123]\.miraheze\.org$/ {
     include base
+    include role::cloud
 }
 
 node /^cp[3678]\.miraheze\.org$/ {

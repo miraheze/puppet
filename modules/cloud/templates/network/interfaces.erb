@@ -1,0 +1,33 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+iface eno1 inet manual
+
+# IPV4 main host addresses (configured through OVH UI)
+auto vmbr0
+iface vmbr0 inet static
+    address <%= @main_ip4_address %>
+    netmask  <%= @main_ip4_netmask %>
+    broadcast <%= @main_ip4_broadcast %>
+    gateway <%= @main_ip4_gateway %>
+    bridge-ports eno1
+    bridge-stp off
+    bridge-fd 0
+
+# IPV6 addresses are configured through OVH UI.
+iface vmbr0 inet6 static 
+    address <%= @main_ip6_address %>
+    netmask 128
+    gateway <%= @main_ip6_gateway %>
+    post-up /sbin/ip -f inet6 route add <%= @main_ip6_gateway %> dev vmbr0
+    post-up /sbin/ip -f inet6 route add default via <%= @main_ip6_gateway %>
+    pre-down /sbin/ip -f inet6 route del <%= @main_ip6_gateway %> dev vmbr0
+    pre-down /sbin/ip -f inet6 route del default via <%= @main_ip6_gateway %>
+
+# Set this one last, so that cloud-init or user can
+# override defaults.
+source /etc/network/interfaces.d/*
