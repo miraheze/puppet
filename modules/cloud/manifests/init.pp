@@ -1,12 +1,12 @@
 # == Class: cloud
 
 class cloud (
-    Stdlib::IP::Address $main_ip4_address   = hiera('role::db::main_ip4_address'),
-                        $main_ip4_netmask   = hiera('role::db::main_ip4_netmask'),
-                        $main_ip4_broadcast = hiera('role::db::main_ip4_broadcast'),
-                        $main_ip4_gateway   = hiera('role::db::main_ip4_gateway'),
-    Stdlib::IP::Address $main_ip6_address   = hiera('role::db::main_ip6_address'),
-                        $main_ip6_gateway   = hiera('role::db::main_ip6_gateway'),
+    Stdlib::IP::Address $main_ip4_address   = hiera('role::cloud::main_ip4_address'),
+                        $main_ip4_netmask   = hiera('role::cloud::main_ip4_netmask'),
+                        $main_ip4_broadcast = hiera('role::cloud::main_ip4_broadcast'),
+                        $main_ip4_gateway   = hiera('role::cloud::main_ip4_gateway'),
+    Stdlib::IP::Address $main_ip6_address   = hiera('role::cloud::main_ip6_address'),
+                        $main_ip6_gateway   = hiera('role::cloud::main_ip6_gateway'),
 ) {
 
     file { '/etc/apt/trusted.gpg.d/proxmox.gpg':
