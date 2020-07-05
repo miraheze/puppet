@@ -50,6 +50,5 @@ class cloud (
     file { '/etc/network/interfaces':
         ensure  => present,
         content => template('cloud/network/interfaces.erb'),
-        require => Package['lizardfs-master'],
     }
 }
