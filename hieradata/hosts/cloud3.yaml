@@ -1,3 +1,5 @@
+ssh::server::permit_root: true
+
 # Network setup
 role::db::main_ip4_address: 51.68.206.11
 role::db::main_ip4_netmask: 255.255.255.0
