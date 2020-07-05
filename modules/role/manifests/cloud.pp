@@ -1,5 +1,5 @@
-# class: role::db
-class role::db {
+# class: role::cloud
+class role::cloud {
     class { '::cloud':
         main_ip4_address   => hiera('role::db::main_ip4_address'),
         main_ip4_netmask   => hiera('role::db::main_ip4_netmask'),
