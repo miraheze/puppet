@@ -34,7 +34,7 @@ class role::cloud {
         ufw::allow { "proxmox port 5404:5405 ${value['ipaddress6']}":
             proto => 'udp',
             port  => '5404:5405',
-            from  => $ip,
+            from  => $value['ipaddress6'],
         }
 
         ufw::allow { "proxmox port 3128 ${value['ipaddress']}":
