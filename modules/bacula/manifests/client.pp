@@ -35,5 +35,17 @@ class bacula::client {
             port  => 9102,
             from  => $value['ipaddress6'],
         }
+
+        ufw::allow { "bacula 9103 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9103,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "bacula 9103 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9103,
+            from  => $value['ipaddress6'],
+        }
     }
 }
