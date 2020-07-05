@@ -39,12 +39,12 @@ class cloud (
 
     file { '/etc/cloud/cloud.cfg.d/99-disable-network-config.cfg':
         ensure  => 'present',
-        source  => 'puppet:///cloud/cloudinit/99-disable-network-config.cfg',
+        source  => 'puppet:///modules/cloud/cloudinit/99-disable-network-config.cfg',
     }
 
     file { '/etc/network/interfaces.d/50-cloud-init.cfg':
         ensure  => 'present',
-        source  => 'puppet:///cloud/cloudinit/50-cloud-init.cfg',
+        source  => 'puppet:///modules/cloud/cloudinit/50-cloud-init.cfg',
     }
 
     file { '/etc/network/interfaces':
