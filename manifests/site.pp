@@ -15,15 +15,6 @@ node /^cp[3678]\.miraheze\.org$/ {
     include role::varnish
 }
 
-node 'db4.miraheze.org' {
-    include base
-    include role::db
-    include role::postgresql
-    include puppetdb::database
-    include bacula::client
-    include prometheus::mysqld_exporter
-}
-
 node 'db6.miraheze.org' {
     include base
     include role::dbreplication
@@ -41,13 +32,6 @@ node 'db7.miraheze.org' {
 node 'db9.miraheze.org' {
     include base
     include role::db
-    include bacula::client
-    include prometheus::mysqld_exporter
-}
-
-node 'db10.miraheze.org' {
-    include base
-    include role::dbreplication
     include bacula::client
     include prometheus::mysqld_exporter
 }
