@@ -52,6 +52,13 @@ node 'db10.miraheze.org' {
     include prometheus::mysqld_exporter
 }
 
+node 'db11.miraheze.org' {
+    include base
+    include role::db
+    include bacula::client
+    include prometheus::mysqld_exporter
+}
+
 node 'gluster1.miraheze.org' {
     include base
     include bacula::client
