@@ -102,11 +102,10 @@ class mariadb::config(
     }
 
     file { '/usr/lib/nagios/plugins/check_mysql-replication.pl':
-        source  => 'puppet:///modules/mariadb/check_mysql-replication.pl',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        require => Package['nagios-nrpe-plugin'],
+        source => 'puppet:///modules/mariadb/check_mysql-replication.pl',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
     }
 
     monitoring::services { 'MySQL':
