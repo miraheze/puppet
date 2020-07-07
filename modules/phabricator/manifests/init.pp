@@ -129,7 +129,7 @@ class phabricator {
     file { '/srv/phab/phabricator/conf/local/local.json':
         ensure  => present,
         content => template('phabricator/local.json.erb'),
-        notify  => Service['phd']
+        notify  => Service['phd'],
         require => Git::Clone['phabricator'],
     }
 
