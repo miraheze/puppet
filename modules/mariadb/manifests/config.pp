@@ -112,10 +112,10 @@ class mariadb::config(
     }
 
     if $server_role == 'slave' {
-        monitoring::services { 'Check Mysql Replication':
+        monitoring::services { 'Check MariaDB Replication':
             check_command => 'nrpe',
             vars          => {
-                nrpe_command => "check_mysql-replication_${::fqdn}",
+                nrpe_command => 'check_mysql-replication',
             },
         }
     }
