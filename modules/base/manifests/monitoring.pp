@@ -7,6 +7,9 @@ class base::monitoring {
         ensure => present,
     }
 
+    $icinga_password = lookup('passwords::db::icinga')
+
+    $mysql_hosts = query_nodes("domain='$domain' and Class[Role::Dbreplication]", 'fqdn')
     file { '/etc/nagios/nrpe.cfg':
         ensure  => present,
         content => template('base/icinga/nrpe.cfg.erb'),
