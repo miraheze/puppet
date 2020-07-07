@@ -7,10 +7,12 @@ GRANT ALL PRIVILEGES
 
 -- Grants for 'icinga'@'%'
 
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
-    CREATE VIEW, INDEX, EXECUTE, process,
-    replication client ON icinga.* TO 'icinga'@'%'
+GRANT REPLICATION CLIENT ON *.* TO 'icinga'@'%'
     IDENTIFIED BY '<%= @icinga_password %>';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
+    CREATE VIEW, INDEX, EXECUTE, PROCESS,
+    ON icinga.* TO 'icinga'@'%';
 
 -- Grants for 'exporter'@'local'
 
