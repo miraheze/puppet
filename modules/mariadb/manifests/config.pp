@@ -110,4 +110,13 @@ class mariadb::config(
             mysql_ssl      => true,
         },
     }
+
+    if $server_role == 'slave' {
+        monitoring::services { 'Check MariaDB Replication':
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => 'check_mysql-replication',
+            },
+        }
+    }
 }

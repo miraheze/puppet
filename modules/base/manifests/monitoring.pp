@@ -7,6 +7,7 @@ class base::monitoring {
         ensure => present,
     }
 
+    $icinga_password = lookup('passwords::db::icinga')
     file { '/etc/nagios/nrpe.cfg':
         ensure  => present,
         content => template('base/icinga/nrpe.cfg.erb'),
