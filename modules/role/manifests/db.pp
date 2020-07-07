@@ -73,6 +73,29 @@ class role::db {
         from  => '2001:41d0:800:170b::2',
     }
 
+    ufw::allow { 'mysql port db12 ipv4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.195.180.10',
+    }
+
+    ufw::allow { 'mysql port db12 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:170b::3',
+    }
+
+    ufw::allow { 'mysql port db13 ipv4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.195.180.11',
+    }
+
+    ufw::allow { 'mysql port db13 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:170b::4',
+    }
     ufw::allow { 'mysql port mail1 ipv4':
         proto => 'tcp',
         port  => '3306',
