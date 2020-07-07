@@ -242,14 +242,6 @@ class monitoring (
         require => Package['nagios-nrpe-plugin'],
     }
 
-    file { '/usr/lib/nagios/plugins/check_mysql-replication.pl':
-        source  => 'puppet:///modules/monitoring/check_mysql-replication.pl',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        require => Package['nagios-nrpe-plugin'],
-    }
-
     monitoring::services { 'Check correctness of the icinga configuration':
         check_command => 'nrpe',
         vars          => {
