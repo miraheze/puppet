@@ -38,6 +38,9 @@ command[check_redis]=/usr/lib/nagios/plugins/check_procs -a redis-server -c 1:1
 command[check_jobchron]=/usr/lib/nagios/plugins/check_procs -a redisJobChronService -c 1:1
 command[check_jobqueue]=/usr/bin/sudo -u www-data /usr/lib/nagios/plugins/check_jobqueue
 command[check_icinga_config]=/usr/lib/nagios/plugins/check_icinga_config /etc/icinga/icinga.cfg
+<%- @mysql_hosts.sort.each do |mysql_host| -%>
+command[check_mysql-replication_<%= mysql_host %>]=/usr/lib/nagios/plugins/check_mysql-replica.pl -sa <%= mysql_host %> -sl icinga -spd <%= @icinga_password %> -a both -w 10 -c 30 -D "MariaDB replication"
+<%- end -%>
 
 # check stunnel http
 command[check_stunnel_mon1]=/usr/lib/nagios/plugins/check_http -H localhost:8201
