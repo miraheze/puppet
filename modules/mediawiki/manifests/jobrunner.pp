@@ -93,7 +93,7 @@ class mediawiki::jobrunner {
     
     cron { 'generate sitemap index':
         ensure  => present,
-        command => '/usr/bin/nice -19 /usr/bin/python3 /srv/mediawiki/extensions/MirahezeMagic/py/generateSitemapIndex.py',
+        command => '/usr/bin/nice -19 /usr/bin/python3 /srv/mediawiki/w/extensions/MirahezeMagic/py/generateSitemapIndex.py',
         user    => 'www-data',
         minute   => '0',
         hour     => '0',
