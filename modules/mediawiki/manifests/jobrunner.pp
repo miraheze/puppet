@@ -90,6 +90,16 @@ class mediawiki::jobrunner {
         month    => '*',
         weekday => [ '6' ],
     }
+    
+    cron { 'generate sitemap index':
+        ensure  => present,
+        command => '/usr/bin/nice -19 /usr/bin/python3 /srv/mediawiki/extensions/MirahezeMagic/py/generateSitemapIndex.py',
+        user    => 'www-data',
+        minute   => '0',
+        hour     => '0',
+        month    => '*',
+        weekday => [ '7' ],
+    }
 
     cron { 'update_statistics':
         ensure   => present,
