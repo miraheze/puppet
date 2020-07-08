@@ -4,6 +4,8 @@ mariadb::config::innodb_buffer_pool_size: '6G'
 mariadb::config::max_connections: 500
 mariadb::config::tmpdir: /mnt/disk/tmp
 mariadb::config::datadir: /mnt/disk/mariadb
+mariadb::config::table_definition_cache: 7500
+mariadb::config::table_open_cache: 7500
 puppetserver_hostname: puppet2.miraheze.org
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
 prometheus::node_exporter::ignored_mount_points: '^/(run|sys|proc|dev|var/lib/docker|var/lib/kubelet)($|/)'
