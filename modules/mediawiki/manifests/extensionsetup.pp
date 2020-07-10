@@ -150,6 +150,16 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+    
+    exec { 'lingo_composer':
+        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install',
+        creates     => '/srv/mediawiki/w/extensions/Lingo/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/Lingo',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/extensions/Lingo',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 
     # Ensure widgets template directory is read/writeable by webserver if mediawiki is cloned
     file { '/srv/mediawiki/w/extensions/Widgets/compiled_templates':
