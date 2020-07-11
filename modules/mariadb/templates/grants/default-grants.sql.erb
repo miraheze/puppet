@@ -14,8 +14,7 @@ GRANT REPLICATION CLIENT ON *.* TO 'icinga'@'%'
 
 GRANT USAGE, PROCESS, REPLICATION CLIENT
     ON *.* TO 'exporter'@'localhost'
-    IDENTIFIED BY '<%= @exporter_password %>'
-    WITH GRANT OPTION;
+    IDENTIFIED BY '<%= @exporter_password %>';
 
 -- Grants for 'icinga2'@''
 
