@@ -64,7 +64,7 @@ class mariadb::config(
         ensure  => directory,
         owner   => 'mysql',
         group   => 'mysql',
-        mode    => '0755',
+        mode    => '0750',
         require => Package["mariadb-server-${version}"],
     }
 
