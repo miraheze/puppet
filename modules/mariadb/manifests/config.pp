@@ -108,13 +108,14 @@ class mariadb::config(
         mode   => '0755',
     }
 
-    monitoring::services { 'MySQL':
+    monitoring::services { 'MariaDB':
         check_command => 'mysql',
         vars          => {
-            mysql_username => 'icinga',
-            mysql_database => 'icinga',
-            mysql_password => $icinga_password,
-            mysql_ssl      => true,
+            mysql_hostname  => $::fqdn,
+            mysql_username  => 'icinga',
+            mysql_password  => $icinga_password,
+            mysql_ssl       => true,
+            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
         },
     }
 
