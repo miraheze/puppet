@@ -12,7 +12,7 @@ GRANT REPLICATION CLIENT ON *.* TO 'icinga'@'%'
 
 -- Grants for 'exporter'@'local'
 
-GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT
+GRANT USAGE, PROCESS, REPLICATION CLIENT
     ON *.* TO 'exporter'@'localhost'
     IDENTIFIED BY '<%= @exporter_password %>'
     WITH GRANT OPTION;
