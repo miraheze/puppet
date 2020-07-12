@@ -63,3 +63,11 @@ location /api/rest_v1/ {
 	# the upstream backend 'restbase-lb.miraheze.org' is defined in sites-enabled/mediawiki
 	proxy_pass https://restbase-lb.miraheze.org;
 }
+
+# rewrites /<domain>/v1/ to /api/rest_v1/
+location ~ ^/(.+)/v1/ {
+	rewrite    ^/api/rest_v1/(.+)$ /$1/v1/$1 break;
+
+	# the upstream backend 'restbase-lb.miraheze.org' is defined in sited-enabled/mediawiki
+	proxy_pass https://restbase-lb.miraheze.org;
+ }
