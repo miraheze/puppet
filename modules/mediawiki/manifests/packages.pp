@@ -5,7 +5,6 @@ class mediawiki::packages {
         'dvipng',
         'htmldoc',
         'inkscape',
-        'jq',
         'fonts-freefont-ttf',
         'ffmpeg',
         'ffmpeg2theora',
