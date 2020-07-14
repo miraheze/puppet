@@ -1,6 +1,7 @@
 # openldap server
 class profile::openldap (
-    String $password = lookup('profile::openldap::password'),
+    String $admin_password = lookup('profile::openldap::admin_password'),
+    String $ldapvi_password = lookup('profile::openldap::ldapvi_password'),
 ) {
     include ssl::wildcard
 
