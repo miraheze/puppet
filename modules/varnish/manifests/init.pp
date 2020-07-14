@@ -16,6 +16,7 @@ class varnish(
             ensure  => directory,
             owner   => 'varnish',
             group   => 'varnish',
+            require => Package['varnish'],
         }
 
         mount { '/var/lib/varnish':
@@ -25,7 +26,7 @@ class varnish(
             options => 'noatime,defaults,size=128M',
             pass    => 0,
             dump    => 0,
-            require => Package['varnish'],
+            require => File['/var/lib/varnish'],
             notify  => Service['varnish'],
         }
 
