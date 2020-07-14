@@ -10,20 +10,45 @@ class varnish(
         ensure => present,
     }
 
-    service { 'varnish':
-        ensure  => 'running',
-        require => Package['varnish'],
+    # Avoid race condition where varnish starts, before /var/lib/varnish was mounted as tmpfs
+    if $use_new_cache {
+        file { '/var/lib/varnish':
+            ensure  => directory,
+            owner   => 'varnish',
+            group   => 'varnish',
+        }
+
+        mount { '/var/lib/varnish':
+            ensure  => mounted,
+            device  => 'tmpfs',
+            fstype  => 'tmpfs',
+            options => 'noatime,defaults,size=128M',
+            pass    => 0,
+            dump    => 0,
+            require => Package['varnish'],
+            notify  => Service['varnish'],
+        }
+
+        service { 'varnish':
+            ensure  => 'running',
+            require => Mount['/var/lib/varnish'],
+        }
+    } else {
+        service { 'varnish':
+            ensure  => 'running',
+            require => Package['varnish'],
+        }
+
+        file { '/var/lib/varnish/mediawiki':
+            ensure  => directory,
+            notify  => Exec['varnish-server-syntax'],
+            require => Package['varnish'],
+        }
     }
 
     service { 'stunnel4':
         ensure  => 'running',
         require => Package['stunnel4'],
-    }
-
-    file { '/var/lib/varnish/mediawiki':
-        ensure  => directory,
-        notify  => Exec['varnish-server-syntax'],
-        require => Package['varnish'],
     }
     
     $module_path = get_module_path($module_name)
@@ -45,17 +70,6 @@ class varnish(
             ensure  => directory,
             owner   => 'varnish',
             group   => 'varnish',
-        }
-
-        mount { '/var/lib/varnish':
-            ensure  => mounted,
-            device  => 'tmpfs',
-            fstype  => 'tmpfs',
-            options => 'noatime,defaults,size=128M',
-            pass    => 0,
-            dump    => 0,
-            require => Package['varnish'],
-            notify  => Service['varnish'],
         }
     } else {
         $cache_file_name = '/var/lib/varnish/mediawiki/varnish_storage.bin'
