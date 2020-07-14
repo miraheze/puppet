@@ -16,7 +16,7 @@ class profile::openldap (
     openldap::server::database { 'dc=miraheze,dc=org':
         directory => '/var/lib/ldap/miraheze',
         rootdn    => 'cn=admin,dc=miraheze,dc=org',
-        rootpw    => $password,
+        rootpw    => $admin_password,
     }
 
     # Allow everybody to try to bind
