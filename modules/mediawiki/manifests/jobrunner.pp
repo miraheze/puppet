@@ -51,7 +51,7 @@ class mediawiki::jobrunner {
 
     cron { 'purge_checkuser':
         ensure  => present,
-        command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/CheckUser/maintenance/purgeOldData.php > /var/log/mediawiki/cron/purge_checkuser.log',
+        command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/extensions/CheckUser/maintenance/purgeOldData.php > /var/log/mediawiki/cron/purge_checkuser.log',
         user    => 'www-data',
         minute  => '5',
         hour    => '6',
@@ -59,7 +59,7 @@ class mediawiki::jobrunner {
 
     cron { 'purge_abusefilter':
         ensure  => present,
-        command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/AbuseFilter/maintenance/purgeOldLogIPData.php > /var/log/mediawiki/cron/purge_abusefilter.log',
+        command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/extensions/AbuseFilter/maintenance/purgeOldLogIPData.php > /var/log/mediawiki/cron/purge_abusefilter.log',
         user    => 'www-data',
         minute  => '5',
         hour    => '18',
@@ -75,7 +75,7 @@ class mediawiki::jobrunner {
 
     cron { 'update rottenlinks on all wikis':
         ensure  => present,
-        command => '/usr/local/bin/fileLockScript.sh /tmp/rotten_links_file_lock "/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php"',
+        command => '/usr/local/bin/fileLockScript.sh /tmp/rotten_links_file_lock "/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php"',
         user    => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -85,7 +85,7 @@ class mediawiki::jobrunner {
 
     cron { 'generate sitemaps for all wikis':
         ensure  => present,
-        command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php',
+        command => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php',
         user    => 'www-data',
         minute   => '0',
         hour     => '0',
@@ -105,7 +105,7 @@ class mediawiki::jobrunner {
 
     cron { 'update_statistics':
         ensure   => present,
-        command  => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/dblist/all.dblist /srv/mediawiki/w/maintenance/initSiteStats.php --update > /dev/null',
+        command  => '/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/maintenance/initSiteStats.php --update > /dev/null',
         user     => 'www-data',
         minute   => '0',
         hour     => '5',
