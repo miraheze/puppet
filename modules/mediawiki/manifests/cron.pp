@@ -3,7 +3,7 @@
 # Used for CORE crons which should be ran on every MediaWiki server.
 class mediawiki::cron {
     cron { 'update_database_lists':
-        ensure  => present,
+        ensure  => absent,
         command => '/usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/DBListGenerator.php --wiki metawiki',
         user    => 'www-data',
         minute  => '*',
