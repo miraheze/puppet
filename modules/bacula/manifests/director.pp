@@ -122,6 +122,22 @@ class bacula::director {
         },
     }
 
+    monitoring::services { 'Bacula Databases db11':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_databasesdb11',
+            nrpe_timeout => '60s',
+        },
+    }
+
+    monitoring::services { 'Bacula Databases db12':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_databasesdb12',
+            nrpe_timeout => '60s',
+        },
+    }
+
     monitoring::services { 'Bacula Databases db13':
         check_command => 'nrpe',
         vars          => {
