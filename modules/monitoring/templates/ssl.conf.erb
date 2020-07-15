@@ -27,4 +27,13 @@ apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   <%- end -%>
   assign where "sslchecks" in host.groups
 }
+
+apply Service "<%= property['url'] %> - DNS" {
+  import "generic-service"
+  check_command = "dns"
+  check_interval = 7m
+  vars.dig_lookup = "<%= property['url'] %>"
+  vars.dns_expected_answers = "2001:41d0:800:1056::2,2001:41d0:800:105a::10,51.77.107.210,51.89.160.142"
+  assign where "sslchecks" in host.groups
+}
 <% end -%>
