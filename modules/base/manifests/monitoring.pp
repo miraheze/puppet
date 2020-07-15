@@ -36,34 +36,41 @@ class base::monitoring {
     monitoring::hosts { $::hostname: }
 
     monitoring::services { 'Disk Space':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_disk',
+        check_command   => 'nrpe',
+        vars            => {
+            nrpe_command    => 'check_disk',
         },
     }
 
     monitoring::services { 'Current Load':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_load',
+        check_command   => 'nrpe',
+        vars            => {
+            nrpe_command    => 'check_load',
         },
     }
 
     monitoring::services { 'Puppet':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_puppet_run',
+        check_command   => 'nrpe',
+        vars            => {
+            nrpe_command    => 'check_puppet_run',
         },
     }
 
     monitoring::services { 'SSH':
-        check_command => 'ssh',
+        check_command   => 'ssh',
     }
 
     monitoring::services { 'APT':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_apt',
+        check_command   => 'nrpe',
+        vars            => {
+            nrpe_command    => 'check_apt',
+        },
+    }
+
+    monitoring::serivces { 'NTP time':
+        check_command   => 'nrpe',
+        vars            => {
+            nrpe_command    => 'check_ntp_time',
         },
     }
 }
