@@ -67,7 +67,7 @@ class base::monitoring {
         },
     }
 
-    monitoring::serivces { 'NTP time':
+    monitoring::services { 'NTP time':
         check_command   => 'nrpe',
         vars            => {
             nrpe_command    => 'check_ntp_time',
