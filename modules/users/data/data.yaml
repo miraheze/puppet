@@ -119,4 +119,4 @@ users:
     name: zppix
     realname: Zppix
     ssh_keys: 
-       - ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAATzbRBZdiB UWh5fPz3cEyYZc2ve8D+papjdS/Qo2twfPcUIuoTxDkL/a5bgP/V9pv7pTxry7SF KUOdoOG/4Y8QKgAUvUyTKJK+HDBYQS9jqd768+VlTGNU+nVNCkQ/YKR431oQbajC wYRgLC0X0RUSYaa94lVxgsR+0beaBHCU/0xWxQ==
+       - ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAE3DMRUIOWsgwGKgSMgFA20NKpTJj6YKJqNJeOHHmKxvwsEhcn/WWREefvpXXabbTVyX45GHz9XcVkJGJRJ2ED+/gDzOBddOrca4c12TvS2wKh8DraNFsNUbQg1dvSaTLh0P6SALUbYA9uYeKA1rkTNJgurN1VK4oeVqxNEV6cV3KDlyA== ecdsa-key-20200716
