@@ -27,7 +27,6 @@ command[check_bacula_static]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_
 command[check_bacula_databasesdb11]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db11-fd -B BackupDatabasesDB11 -w 15d -c 31d
 command[check_bacula_databasesdb12]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db12-fd -B BackupDatabasesDB12 -w 15d -c 31d
 command[check_bacula_databasesdb13]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db13-fd -B BackupDatabasesDB13 -w 15d -c 31d
-command[check_bacula_databasesdb9]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db9-fd -B BackupDatabasesDB9 -w 15d -c 31d
 command[check_bacula_private]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H puppet2-fd -B BackupPrivateGit -w 8d -c 16d
 command[check_bacula_phab]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H phab1-fd -B BackupPhabStatic -w 15d -c 30d
 command[check_bacula_acme]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H mw1-fd -B BackupAcme -w 8d -c 16d
