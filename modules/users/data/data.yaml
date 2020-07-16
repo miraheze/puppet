@@ -118,4 +118,5 @@ users:
     uid: 1012
     name: zppix
     realname: Zppix
-    ssh_keys: []
+    ssh_keys: 
+       - ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAATzbRBZdiB UWh5fPz3cEyYZc2ve8D+papjdS/Qo2twfPcUIuoTxDkL/a5bgP/V9pv7pTxry7SF KUOdoOG/4Y8QKgAUvUyTKJK+HDBYQS9jqd768+VlTGNU+nVNCkQ/YKR431oQbajC wYRgLC0X0RUSYaa94lVxgsR+0beaBHCU/0xWxQ==
