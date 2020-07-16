@@ -70,6 +70,9 @@ class profile::openldap (
         ensure => present,
     }
 
+    openldap::server::overlay { 'memberof on dc=miraheze,dc=org':
+        ensure => present,
+    }
 
     # Schema
     openldap::server::schema { 'core':
