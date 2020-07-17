@@ -4,7 +4,6 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor, ssl
 from twisted.words.protocols import irc
 from twisted.internet import protocol
-import time
  
 recver = None
  
@@ -22,7 +21,9 @@ class RCBot(irc.IRCClient):
         print("Joined %s." % (channel,))
  
     def gotUDP(self, broadcast):
-        self.msg(self.channel, str(broadcast, 'utf-8'))
+        # We ignore any errors, otherwise it will possibly fail
+        # with 'unexpected end of data'.
+        self.msg(self.channel, str(broadcast, 'utf-8', 'ignore'))
  
 class RCFactory(protocol.ClientFactory):
     protocol = RCBot
@@ -40,7 +41,6 @@ class Echo(DatagramProtocol):
         global recver
         (host, port) = host_port
         if recver:
-            time.sleep(<%= @sleeptime %>)
             recver.gotUDP(data)
 
 reactor.listenUDP(<%= @udp_port %>, Echo())
