@@ -8,7 +8,6 @@ class role::irc {
         network_port => '6697',
         channel      => '#miraheze-feed',
         udp_port     => '5070',
-        sleeptime    => '1',
     }
  
     $firewallRulesIrc = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
