@@ -11,6 +11,8 @@ class RCBot(irc.IRCClient):
     nickname = "<%= @nickname %>"
     password = "mirahezebots:<%= @mirahezebots_password %>"
     channel = "<%= @channel %>"
+    lineRate = 1
+
     def signedOn(self):
         global recver
         self.join(self.channel)
