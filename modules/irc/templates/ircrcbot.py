@@ -11,7 +11,7 @@ class RCBot(irc.IRCClient):
     nickname = "<%= @nickname %>"
     password = "mirahezebots:<%= @mirahezebots_password %>"
     channel = "<%= @channel %>"
-    lineRate = 1
+    lineRate = 0.5
 
     def signedOn(self):
         global recver
