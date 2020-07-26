@@ -105,7 +105,7 @@ class mediawiki::jobrunner {
 
     cron { 'update_statistics':
         ensure   => present,
-        command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/maintenance/initSiteStats.php --update > /dev/null',
+        command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/maintenance/initSiteStats.php --update --active > /dev/null',
         user     => 'www-data',
         minute   => '0',
         hour     => '5',
