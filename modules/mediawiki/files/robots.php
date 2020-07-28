@@ -14,6 +14,11 @@ echo "# Throttle YandexBot" . "\r\n";
 echo "User-Agent: YandexBot" . "\r\n";
 echo "Crawl-Delay: 2.5" . "\r\n\n";
 
+# Throttle BingBot
+echo "#Throttle BingBot" . "\r\n";
+echo "User-agent: bingbot" . "\r\n";
+echo "Crawl-delay: 1" . "\r\n";
+
 # Block SemrushBot
 echo "# Block SemrushBot" . "\r\n";
 echo "User-Agent: SemrushBot" . "\r\n";
