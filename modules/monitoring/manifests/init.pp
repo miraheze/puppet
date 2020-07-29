@@ -242,6 +242,14 @@ class monitoring (
         require => Package['nagios-nrpe-plugin'],
     }
 
+    file { '/usr/lib/nagios/plugins/check_reverse_dns.py':
+        source  => 'puppet:///modules/monitoring/check_reverse_dns.py',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => Package['nagios-nrpe-plugin'],
+    }
+
     monitoring::services { 'Check correctness of the icinga configuration':
         check_command => 'nrpe',
         vars          => {
