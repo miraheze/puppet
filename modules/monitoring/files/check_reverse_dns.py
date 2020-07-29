@@ -2,7 +2,7 @@
 """
 Script to check if reverse DNS entry for hostname matches given regex.
 
-Version: 0.1.0 (2020-07-29)
+Version: 0.1.1 (2020-07-29)
 
 Copyright (C) 2020 Ferran Tufan
 
@@ -69,8 +69,8 @@ def get_reverse_dnshostname(hostname):
 
                 return rev_host
         except resolver.NXDOMAIN:
-                print("rDNS UNKNOWN - hostname {} could not found".format(hostname))
-                sys.exit(3)
+                print("rDNS WARNING - reverse DNS entry for {} could not be found".format(hostname))
+                sys.exit(1)
 
 def main():
         """Execute functions"""
