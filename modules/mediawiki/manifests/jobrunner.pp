@@ -127,7 +127,7 @@ class mediawiki::jobrunner {
         user     => 'www-data',
         minute   => '0',
         hour     => '5',
-        monthday => [ '5', '20' ],
+        monthday => [ '6', '21' ],
     }
 
     file { '/usr/lib/nagios/plugins/check_jobqueue':
