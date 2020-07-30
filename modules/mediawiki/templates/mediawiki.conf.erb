@@ -32,7 +32,7 @@ server {
 
 	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
 
-	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
 	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
 
@@ -101,7 +101,7 @@ server {
 
 	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
 
-	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
 	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
 
@@ -152,7 +152,7 @@ server {
 
 	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
 
-	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
 	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
 
@@ -219,7 +219,7 @@ server {
 
 	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
 
-	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
 	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
 
@@ -260,7 +260,7 @@ server {
 	ssl_trusted_certificate /etc/ssl/certs/<%= property['ca'] %>.crt;
 
 <% if property['hsts'] == "strict" %>  
-	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 <% else %>
 	add_header Strict-Transport-Security "max-age=604800";
 <% end %>
