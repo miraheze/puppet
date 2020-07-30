@@ -111,6 +111,24 @@ class mediawiki::jobrunner {
         hour     => '5',
         monthday => [ '1', '15' ],
     }
+    
+    cron { 'update_sites':
+        ensure   => present,
+        command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/populateWikibaseSitesTable.php > /dev/null',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '5',
+        monthday => [ '5', '20' ],
+    }
+    
+    cron { 'clean_gu_cache':
+        ensure   => present,
+        command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/extensions/GlobalUsage/maintenance/refreshGlobalimagelinks.php --pages=existing,nonexisting > /dev/null',
+        user     => 'www-data',
+        minute   => '0',
+        hour     => '5',
+        monthday => [ '5', '20' ],
+    }
 
     file { '/usr/lib/nagios/plugins/check_jobqueue':
         ensure => present,
