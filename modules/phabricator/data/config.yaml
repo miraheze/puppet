@@ -6,7 +6,7 @@ ui.logo:
 # MySQL
 mysql.port: 3306
 mysql.user: 'phabricator'
-mysql.host: 'db6.miraheze.org'
+mysql.host: 'db13.miraheze.org'
 storage.mysql-engine.max-size: 0
 
 metamta.default-address: 'noreply@miraheze.org'

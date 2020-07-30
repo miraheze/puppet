@@ -7,9 +7,22 @@ class base::ufw {
         port  => 22,
     }
 
-    ufw::allow { 'nrpe':
-        proto => 'tcp',
-        port  => 5666,
+    $firewallIpv4 = query_nodes("domain='$domain' and Class[Role::Icinga2]", 'ipaddress')
+    $firewallIpv4.each |$key| {
+        ufw::allow { "nrpe ${key}":
+            proto => 'tcp',
+            port  => 5666,
+            from  => $key,
+        }
+    }
+
+    $firewallIpv6 = query_nodes("domain='$domain' and Class[Role::Icinga2]", 'ipaddress6')
+    $firewallIpv6.each |$key| {
+        ufw::allow { "nrpe ${key}":
+            proto => 'tcp',
+            port  => 5666,
+            from  => $key,
+        }
     }
 
     file { '/root/ufw-fix':

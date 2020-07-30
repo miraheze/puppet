@@ -1,7 +1,6 @@
 Unattended-Upgrade::Origins-Pattern {
 	"o=Debian,n=${distro_codename},l=Debian-Security";
 	"o=grafana,n=stable,l=grafana";
-	"o=SaltStack,n=${distro_codename}";
 };
 
 // List of packages to not update (regexp are supported)
@@ -17,6 +16,7 @@ Unattended-Upgrade::Package-Blacklist {
 	"php7.3-";
 	"puppetdb";
 	"puppet-";
+	"redis-";
 	"varnish";
 };
 

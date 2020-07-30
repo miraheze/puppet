@@ -5,24 +5,16 @@ GRANT ALL PRIVILEGES
     IDENTIFIED BY '<%= @password %>'
     WITH GRANT OPTION;
 
--- Grants for 'icinga'@'51.89.160.138' & 'icinga'@'2001:41d0:800:105a::6'
+-- Grants for 'icinga'@'%'
 
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
-    CREATE VIEW, INDEX, EXECUTE
-    ON icinga.* TO 'icinga'@'51.89.160.138'
-    IDENTIFIED BY '<%= @icinga_password %>';
-
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP,
-    CREATE VIEW, INDEX, EXECUTE
-    ON icinga.* TO '2001:41d0:800:105a::6'
+GRANT REPLICATION CLIENT ON *.* TO 'icinga'@'%'
     IDENTIFIED BY '<%= @icinga_password %>';
 
 -- Grants for 'exporter'@'local'
 
-GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT
+GRANT USAGE, PROCESS, REPLICATION CLIENT
     ON *.* TO 'exporter'@'localhost'
-    IDENTIFIED BY '<%= @exporter_password %>'
-    WITH GRANT OPTION;
+    IDENTIFIED BY '<%= @exporter_password %>';
 
 -- Grants for 'icinga2'@''
 

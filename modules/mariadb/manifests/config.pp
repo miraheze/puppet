@@ -64,7 +64,7 @@ class mariadb::config(
         ensure  => directory,
         owner   => 'mysql',
         group   => 'mysql',
-        mode    => '0755',
+        mode    => '0750',
         require => Package["mariadb-server-${version}"],
     }
 
@@ -101,13 +101,30 @@ class mariadb::config(
         require => Package["mariadb-server-${version}"],
     }
 
-    monitoring::services { 'MySQL':
+    file { '/usr/lib/nagios/plugins/check_mysql-replication.pl':
+        source => 'puppet:///modules/mariadb/check_mysql-replication.pl',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    }
+
+    monitoring::services { 'MariaDB':
         check_command => 'mysql',
         vars          => {
-            mysql_username => 'icinga',
-            mysql_database => 'icinga',
-            mysql_password => $icinga_password,
-            mysql_ssl      => true,
+            mysql_hostname  => $::fqdn,
+            mysql_username  => 'icinga',
+            mysql_password  => $icinga_password,
+            mysql_ssl       => true,
+            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
         },
+    }
+
+    if $server_role == 'slave' {
+        monitoring::services { 'Check MariaDB Replication':
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => 'check_mysql-replication',
+            },
+        }
     }
 }

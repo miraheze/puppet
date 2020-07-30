@@ -17,7 +17,7 @@
 #  GRANT PROCESS, REPLICATION CLIENT, SELECT ON *.* TO 'prometheus'@'localhost';
 
 # Set the command-line arguments to pass to the exporter.
-ARGS='--config.my-cnf /var/lib/prometheus/.my.cnf --collect.global_status --collect.global_variables --collect.info_schema.processlist --collect.info_schema.processlist.min_time 0 --collect.slave_status --no-collect.info_schema.tables'
+ARGS='--config.my-cnf /var/lib/prometheus/.my.cnf --collect.global_status --collect.global_variables --collect.engine_innodb_status --collect.binlog_size --collect.info_schema.processlist --collect.info_schema.processlist.min_time 0 --collect.slave_status --no-collect.info_schema.tables'
 
 # Usage of prometheus-mysqld-exporter:
 #  --collect.auto_increment.columns

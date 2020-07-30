@@ -5,8 +5,8 @@ hostmaster: sre
 webmaster: root
 www: root
 ftp: root
-abuse: sre
 noc: sre
+abuse: tech
 
 # noreply death
 noreply: /dev/null
@@ -20,9 +20,8 @@ mailer-daemon: /dev/null
 operations: sre
 staff: tech
 
-# staff aliases
+# tech@ abuse aliases
 wiki-abuse: tech
-
 # gdpr / privacy alias
 privacy: tech
 
@@ -32,7 +31,7 @@ dmarc: john
 # destination aliases
 sre: southparkfan,ndkilla,reception123,john,paladox
 stewards: ndkilla,void,john,pio_uso@yahoo.co.jp
-tech: southparkfan,ndkilla,reception123,john,paladox,zppix
+tech: southparkfan,ndkilla,reception123,john,paladox,zppix,rhinosf1
 cvt: stewards,reception123,zppix
 cocc: conduct
 conduct: miraheze-cocc@googlegroups.com
@@ -43,6 +42,9 @@ donate: southparkfan,owen
 
 # campaign email temp
 campaign: sre
+
+# bots
+bots: rhinosf1,zppix,reception123,void,paulfkeffer@gmail.com
 
 # board
 board: owen,southparkfan,void,robla

@@ -2,6 +2,6 @@ profile default
 unpaged-help: yes
 ldap-conf: yes
 host: ldaps://<%= @fqdn %>
-user: cn=admin,dc=miraheze,dc=org
+user: cn=write-user,dc=miraheze,dc=org
 base: dc=miraheze,dc=org
-password: <%= @password %>
+password: <%= @ldapvi_password %>

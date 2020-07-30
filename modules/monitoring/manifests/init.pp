@@ -1,5 +1,5 @@
 class monitoring (
-    String $db_host               = 'db6.miraheze.org',
+    String $db_host               = 'db13.miraheze.org',
     String $db_name               = 'icinga',
     String $db_user               = 'icinga2',
     String $db_password           = undef,
@@ -42,15 +42,15 @@ class monitoring (
     }
 
     class { '::icinga2':
-      manage_repo => true,
-      constants   => {
-        'TicketSalt' => $ticket_salt
-      }
+        manage_repo => true,
+        constants   => {
+            'TicketSalt' => $ticket_salt
+        }
     }
 
     class { '::icinga2::feature::api':
-      ca_host     => $::fqdn,
-      ticket_salt => $ticket_salt,
+        ca_host     => $::fqdn,
+        ticket_salt => $ticket_salt,
     }
 
     include ::icinga2::feature::command
@@ -159,7 +159,6 @@ class monitoring (
         require => File['/etc/icinga2/features-available/checker.conf'],
     }
 
-
     file { '/etc/icinga2/scripts/mail-host-notification.sh':
         source  => 'puppet:///modules/monitoring/scripts/mail-host-notification.sh',
         owner   => 'root',
@@ -237,6 +236,14 @@ class monitoring (
 
     file { '/usr/lib/nagios/plugins/check_icinga_config':
         source  => 'puppet:///modules/monitoring/check_icinga_config',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => Package['nagios-nrpe-plugin'],
+    }
+
+    file { '/usr/lib/nagios/plugins/check_reverse_dns.py':
+        source  => 'puppet:///modules/monitoring/check_reverse_dns.py',
         owner   => 'root',
         group   => 'root',
         mode    => '0755',

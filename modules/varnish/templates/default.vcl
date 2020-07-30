@@ -394,7 +394,7 @@ sub vcl_backend_error {
 			<meta name="description" content="Backend Fetch Failed">
 			<title>"} + beresp.status + " " + beresp.reason + {"</title>
 			<!-- Bootstrap core CSS -->
-			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 			<style>
 				/* Error Page Inline Styles */
 				body {
@@ -439,7 +439,7 @@ sub vcl_backend_error {
 			<div class="jumbotron">
 				<h1><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Miraheze-Logo.svg" alt="Miraheze Logo"> "} + beresp.status + " " + beresp.reason + {"</h1>
 				<p class="lead">Our servers are having issues at the moment.</p>
-				<a href="javascript:document.location.reload(true);" class="btn btn-default btn-lg text-center"><span class="green">Try This Page Again</span></a>
+				<a href="javascript:document.location.reload(true);" class="btn btn-lg btn-outline-success" role="button">Try this page again</a>
 			</div>
 		</div>
 		<div class="container">
@@ -457,15 +457,13 @@ sub vcl_backend_error {
 			</div>
 		</div>
 
-                <div class="footer">
+		<div class="footer">
 			<div class="text-center">
 				<p class="lead">When reporting this, please be sure to provide the information below.</p>
 
 				Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" <br />
 				(Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
 				<br /><br />
-
-
 			</div>
 		</div>
 	</html>

@@ -62,19 +62,43 @@ class bacula::director {
         notify  => Service['bacula-director'],
     }
 
-    ufw::allow { 'bacula_9101':
-        proto => 'tcp',
-        port  => 9101,
-    }
+    $firewall = query_facts('Class[Bacula::Client]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "bacula 9101 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9101,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { 'bacula_9102':
-        proto => 'tcp',
-        port  => 9102,
-    }
+        ufw::allow { "bacula 9101 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9101,
+            from  => $value['ipaddress6'],
+        }
 
-    ufw::allow { 'bacula_9103':
-        proto => 'tcp',
-        port  => 9103,
+        ufw::allow { "bacula 9102 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9102,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "bacula 9102 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9102,
+            from  => $value['ipaddress6'],
+        }
+
+        ufw::allow { "bacula 9103 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9103,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "bacula 9103 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9103,
+            from  => $value['ipaddress6'],
+        }
     }
 
     file { '/usr/lib/nagios/plugins/check_bacula_backups':
@@ -98,18 +122,26 @@ class bacula::director {
         },
     }
 
-    monitoring::services { 'Bacula Databases db6':
+    monitoring::services { 'Bacula Databases db11':
         check_command => 'nrpe',
         vars          => {
-            nrpe_command => 'check_bacula_databasesdb6',
+            nrpe_command => 'check_bacula_databasesdb11',
             nrpe_timeout => '60s',
         },
     }
 
-    monitoring::services { 'Bacula Databases dbt1':
+    monitoring::services { 'Bacula Databases db12':
         check_command => 'nrpe',
         vars          => {
-            nrpe_command => 'check_bacula_databasesdbt1',
+            nrpe_command => 'check_bacula_databasesdb12',
+            nrpe_timeout => '60s',
+        },
+    }
+
+    monitoring::services { 'Bacula Databases db13':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_bacula_databasesdb13',
             nrpe_timeout => '60s',
         },
     }

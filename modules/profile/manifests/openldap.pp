@@ -1,6 +1,7 @@
 # openldap server
 class profile::openldap (
-    String $password = lookup('profile::openldap::password'),
+    String $admin_password = lookup('profile::openldap::admin_password'),
+    String $ldapvi_password = lookup('profile::openldap::ldapvi_password'),
 ) {
     include ssl::wildcard
 
@@ -15,16 +16,28 @@ class profile::openldap (
     openldap::server::database { 'dc=miraheze,dc=org':
         directory => '/var/lib/ldap/miraheze',
         rootdn    => 'cn=admin,dc=miraheze,dc=org',
-        rootpw    => $password,
+        rootpw    => $admin_password,
     }
 
+    # Allow everybody to try to bind
     openldap::server::access { '0 on dc=miraheze,dc=org':
         what     => 'attrs=userPassword,shadowLastChange',
         access   => [
             'by dn="cn=admin,dc=miraheze,dc=org" write',
-            'by anonymous auth',
+            'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
             'by self write',
+            'by anonymous auth',
             'by * none',
+        ],
+    }
+
+    # Allow admin users to manage things and authed users to read
+    openldap::server::access { '1 on dc=miraheze,dc=org':
+        what     => 'dn.children="dc=miraheze,dc=org"',
+        access   => [
+            'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
+            'by users read',
+            'by * break',
         ],
     }
 
@@ -57,6 +70,9 @@ class profile::openldap (
         ensure => present,
     }
 
+    openldap::server::overlay { 'memberof on dc=miraheze,dc=org':
+        ensure => present,
+    }
 
     # Schema
     openldap::server::schema { 'core':
@@ -118,85 +134,6 @@ class profile::openldap (
         group  => 'root',
     }
 
-    include ssl::wildcard
-
-    nginx::site { 'ldapcherry.miraheze.org':
-        ensure  => present,
-        source  => 'puppet:///modules/profile/openldap/ldapcherry-nginx.conf',
-        monitor => true,
-    }
-
-    # Note you will need to manually run `python3 setup.py install`
-    # after git cloning. And also restart the ldapcherry service.
-    git::clone { 'ldapcherry':
-        directory          => '/srv/ldapcherry',
-        origin             => 'https://github.com/kakwa/ldapcherry',
-        branch             => '1.1.1', # Current stable
-        recurse_submodules => true,
-        owner              => 'www-data',
-        group              => 'www-data',
-        require            => Package['nginx']
-    }
-
-    file { '/var/lib/ldapcherry':
-        ensure  => 'directory',
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '2755',
-        require => Package['nginx'],
-    }
-
-    file { '/var/lib/ldapcherry/sessions':
-        ensure  => 'directory',
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '2755',
-        require => File['/var/lib/ldapcherry'],
-    }
-
-    file { '/etc/ldapcherry':
-        ensure  => 'directory',
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '2755',
-        require => Package['nginx'],
-    }
-
-    file { '/etc/ldapcherry/ldapcherry.ini':
-        ensure  => present,
-        content => template('profile/openldap/ldapcherry.ini.erb'),
-        owner   => 'www-data',
-        group   => 'www-data',
-        notify  => Service['ldapcherry'],
-        require => File['/etc/ldapcherry'],
-    }
-
-    file { '/etc/ldapcherry/roles.yml':
-        ensure  => present,
-        source  => 'puppet:///modules/profile/openldap/roles.yml',
-        owner   => 'www-data',
-        group   => 'www-data',
-        notify  => Service['ldapcherry'],
-        require => File['/etc/ldapcherry'],
-    }
-
-    file { '/etc/ldapcherry/attributes.yml':
-        ensure  => present,
-        source  => 'puppet:///modules/profile/openldap/attributes.yml',
-        owner   => 'www-data',
-        group   => 'www-data',
-        notify  => Service['ldapcherry'],
-        require => File['/etc/ldapcherry'],
-    }
-
-    require_package('python3-setuptools')
-
-    systemd::service { 'ldapcherry':
-        ensure  => present,
-        content => systemd_template('ldapcherry'),
-        restart => true,
-        require => Git::Clone['ldapcherry'],
-    }
 
     $hostips = query_nodes("domain='$domain' and Class[Role::Grafana] or Class[Role::Matomo] or Class[Role::Openldap]", 'ipaddress')
     $hostips.each |$ip| {
@@ -208,18 +145,6 @@ class profile::openldap (
         }
     }
 
-    ufw::allow { 'http port tcp':
-        proto => 'tcp',
-        port  => 80,
-    }
-
-    ufw::allow { 'https port tcp':
-        proto => 'tcp',
-        port  => 443,
-    }
-
-    # TODO: Add monitoring for ldap
-
     # restart slapd if it uses more than 50% of memory (T130593)
     cron { 'restart_slapd':
         ensure  => present,
@@ -228,12 +153,13 @@ class profile::openldap (
         && /bin/systemctl restart slapd >/dev/null 2>/dev/null",
     }
 
-    cron { 'clean_sessions':
-        ensure  => present,
-        command => '/usr/bin/find /var/lib/ldapcherry/sessions -type f -mtime +2 -exec rm {} +',
-        user    => 'root',
-        hour    => 5,
-        minute  => 0,
-        require => File['/var/lib/ldapcherry/sessions'],
+    monitoring::services { 'LDAP':
+        check_command => 'ldap',
+        vars          => {
+            ldap_address => $::fqdn,
+            ldap_base    => 'dc=miraheze,dc=org',
+            ldap_v3      => true,
+            ldap_ssl     => true,
+        },
     }
 }

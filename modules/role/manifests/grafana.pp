@@ -6,16 +6,6 @@ class role::grafana {
 
     include ::grafana
 
-    ufw::allow { 'grafana tcp':
-        proto => 'tcp',
-        port  => 2003,
-    }
-
-    ufw::allow { 'grafana2 tcp':
-        proto => 'tcp',
-        port  => 2004,
-    }
-
     ensure_resource_duplicate('ufw::allow', 'http', {'proto' => 'tcp', 'port' => '80'})
 
     ensure_resource_duplicate('ufw::allow', 'https', {'proto' => 'tcp', 'port' => '443'})

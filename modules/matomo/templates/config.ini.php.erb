@@ -1,7 +1,7 @@
 ; <?php exit; ?> DO NOT REMOVE THIS LINE
 ; file automatically generated or modified by Matomo; you can manually override the default values in global.ini.php by redefining them in this file.
 [database]
-host = "db6.miraheze.org"
+host = "db13.miraheze.org"
 username = "piwik"
 password = "<%= @password %>"
 dbname = "piwik"
@@ -170,6 +170,7 @@ PluginsInstalled[] = "ForceSSL"
 PluginsInstalled[] = "TwoFactorAuth"
 PluginsInstalled[] = "DeviceDetectorCache"
 PluginsInstalled[] = "LoginLdap"
+PluginsInstalled[] = "Login"
 
 [QueuedTracking]
 notify_queue_threshold_single_queue = 250000
@@ -182,7 +183,7 @@ new_user_default_sites_view_access = "all"
 user_email_suffix = ""
 required_member_of = ""
 required_member_of_field = "memberOf"
-ldap_user_filter = "(|(&(memberOf=cn=matomo-super,ou=groups,dc=miraheze,dc=org)(objectclass=person))(&(memberOf=cn=sre,ou=groups,dc=miraheze,dc=org)(objectclass=person)))"
+ldap_user_filter = "(|(&(memberOf=cn=matomo-super,ou=groups,dc=miraheze,dc=org)(objectclass=person))(&(memberOf=cn=sre,ou=groups,dc=miraheze,dc=org)(objectclass=person))(&(memberOf=cn=matomo-users,ou=groups,dc=miraheze,dc=org)(objectclass=person)))"
 ldap_user_id_field = "uid"
 ldap_last_name_field = "sn"
 ldap_first_name_field = "givenName"
@@ -202,5 +203,5 @@ ldap_network_timeout = "15"
 hostname = "ldaps://ldap1.miraheze.org/"
 port = 636
 base_dn = "dc=miraheze,dc=org"
-admin_user = "cn=admin,dc=miraheze,dc=org"
+admin_user = "cn=write-user,dc=miraheze,dc=org"
 admin_pass = "<%= @ldap_password %>"

@@ -5,11 +5,10 @@ jobrunner: true
 letsencrypt: true
 mwservices: true
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
-role::mediawiki::use_strict_firewall: false
+role::mediawiki::use_strict_firewall: true
 mediawiki::branch: 'REL1_34'
 mediawiki::php::fpm::childs: 1
 mediawiki::php::fpm::fpm_min_restart_threshold: 1
 php::php_version: '7.3'
 redis::heap: '1000mb'
-new_servers: true
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
