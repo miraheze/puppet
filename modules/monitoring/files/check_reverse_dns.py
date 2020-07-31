@@ -2,7 +2,7 @@
 """
 Script to check if reverse DNS entry for hostname matches given regex.
 
-Version: 0.1.1 (2020-07-29)
+Version: 0.1.2 (2020-07-31)
 
 Copyright (C) 2020 Ferran Tufan
 
@@ -76,8 +76,11 @@ def main():
         """Execute functions"""
 
         args = get_args()
-
-        rdns_hostname = get_reverse_dnshostname(args.hostname)
+        try:
+                rdns_hostname = get_reverse_dnshostname(args.hostname)
+        except NoNameservers:
+                print("rDNS CRITICAL - {} All nameservers failed to answer the query.".format(args.hostname))
+                
 
         match = re.search(args.regex, rdns_hostname)
 
