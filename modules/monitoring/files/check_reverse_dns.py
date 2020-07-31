@@ -80,7 +80,7 @@ def main():
                 rdns_hostname = get_reverse_dnshostname(args.hostname)
         except NoNameservers:
                 print("rDNS CRITICAL - {} All nameservers failed to answer the query.".format(args.hostname))
-                
+                sys.exit(2)
 
         match = re.search(args.regex, rdns_hostname)
 
