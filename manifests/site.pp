@@ -54,6 +54,12 @@ node 'jobrunner1.miraheze.org' {
     include prometheus::redis_exporter
 }
 
+node 'jobrunner2.miraheze.org' {
+    include base
+    include role::mediawiki
+    include prometheus::redis_exporter
+}
+
 node 'ldap1.miraheze.org' {
     include base
     include role::openldap
