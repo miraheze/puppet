@@ -6,9 +6,19 @@ class role::redis {
         maxmemory => $redis_heap,
     }
 
-    ufw::allow { 'redis':
-        proto => 'tcp',
-        port  => 6379,
+    $firewall = query_facts("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "Redis port - ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 6379,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "Redis port - ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 6379,
+            from  => $value['ipaddress6'],
+        }
     }
 
     motd::role { 'role::redis':
