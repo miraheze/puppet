@@ -120,6 +120,18 @@ class role::db {
         from  => '2001:41d0:800:1056::10',
     }
 
+    ufw::allow { 'mysql port jobrunner2 ipv4':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '51.195.135.132',
+    }
+
+    ufw::allow { 'mysql port jobrunner2 ipv6':
+        proto => 'tcp',
+        port  => '3306',
+        from  => '2001:41d0:800:105a::13',
+    }
+
     ufw::allow { 'mysql port mw4 ipv4':
         proto => 'tcp',
         port  => '3306',
