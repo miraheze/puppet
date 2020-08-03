@@ -12,6 +12,30 @@ class role::varnish {
         port  => 443,
     }
 
+    ufw::allow { 'Direct Varnish access jobrunner1 ipv4':
+        proto => 'tcp',
+        port  => 81,
+        from  => '51.89.160.135',
+    }
+
+    ufw::allow { 'Direct Varnish access jobrunner1 ipv6':
+        proto => 'tcp',
+        port  => 81,
+        from  => '2001:41d0:800:1056::10',
+    }
+
+    ufw::allow { 'Direct Varnish access jobrunner2 ipv4':
+        proto => 'tcp',
+        port  => 81,
+        from  => '51.195.135.132',
+    }
+
+    ufw::allow { 'Direct Varnish access jobrunner2 ipv6':
+        proto => 'tcp',
+        port  => 81,
+        from  => '2001:41d0:800:105a::13',
+    }
+
     ufw::allow { 'Direct Varnish access mw4 ipv4':
         proto => 'tcp',
         port  => 81,
