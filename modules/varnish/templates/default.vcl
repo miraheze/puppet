@@ -122,6 +122,8 @@ acl purge {
 	"2001:41d0:800:105a::6"; # mon1
 	"51.89.160.135"; # jobrunner1
 	"2001:41d0:800:1056::10"; # jobrunner1
+	"51.195.135.132"; # jobrunner2
+	"2001:41d0:800:105a::13"; # jobrunner2
 }
 
 sub mw_stash_cookie {
