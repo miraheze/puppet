@@ -374,10 +374,12 @@ sub vcl_deliver {
 		}
 	}
 
+        set resp.http.X-Varnish-IP = server.ip;
+	set resp.http.X-Request-ID = uuid.version4();
 	if (obj.hits > 0) {
-		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> HIT (" + obj.hits + ")";
+		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> HIT/" + obj.hits;
 	} else {
-		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
+		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS/0";
 	}
 
 	set resp.http.Content-Security-Policy = "default-src 'self' blob: data: <%- @csp_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self' <%- @frame_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%>";
