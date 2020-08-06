@@ -2,7 +2,7 @@
 """
 Script to check if reverse DNS entry for hostname matches given regex.
 
-Version: 0.1.2 (2020-07-31)
+Version: 0.1.3 (2020-08-06)
 
 Copyright (C) 2020 Ferran Tufan
 
