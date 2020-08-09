@@ -5,7 +5,7 @@ class mediawiki::monitoring {
         check_command => 'check_mediawiki',
         vars          => {
             host    => 'login.miraheze.org',
-            address => 'host.address',
+            address => $::fqdn,
         },
     }
 
