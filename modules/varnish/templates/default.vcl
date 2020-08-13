@@ -170,17 +170,9 @@ sub mw_url_rewrite {
                 && req.url ~ "^/Stewards'_noticeboard"
         ) {
                 return (synth(752, "/wiki/Stewards'_noticeboard"));
-        } else if (req.http.Host == "meta.m.miraheze.org"
-                && req.url ~ "^/Stewards'_noticeboard"
-        ) {
-                return (synth(752, "/wiki/Stewards'_noticeboard"));
-	}
+        }
         
 	if (req.http.Host == "meta.miraheze.org"
-		&& req.url ~ "^/Requests_for_adoption"
-	) {
-		return (synth(752, "/wiki/Requests_for_adoption"));
-	} else if (req.http.Host == "meta.m.miraheze.org"
 		&& req.url ~ "^/Requests_for_adoption"
 	) {
 		return (synth(752, "/wiki/Requests_for_adoption"));
