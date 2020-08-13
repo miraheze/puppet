@@ -64,10 +64,8 @@ location /api/rest_v1/ {
 	proxy_pass https://restbase-lb.miraheze.org;
 }
 
-# rewrites /<domain>/v1/ to /api/rest_v1/
+# Restbase uses /<domain>/v1/. We redirect /api/rest_v1/ to /$host/v1/$1 above.
 location ~ ^/(.+)/v1/ {
-	rewrite    ^/api/rest_v1/(.+)$ /$1/v1/$1 break;
-
 	# the upstream backend 'restbase-lb.miraheze.org' is defined in sited-enabled/mediawiki
 	proxy_pass https://restbase-lb.miraheze.org;
  }
