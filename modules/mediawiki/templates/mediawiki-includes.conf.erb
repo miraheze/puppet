@@ -39,7 +39,11 @@ location = /apple-touch-icon.png {
 	try_files /../../usr/share/nginx/favicons/apple-touch-icon-$host.png /../../usr/share/nginx/favicons/apple-touch-icon-default.png;
 }
 
-location ^~ /wiki {
+location = /wiki {
+	return 301 /wiki/;
+}
+
+location ^~ /wiki/ {
 	include fastcgi_params;
 	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
 	fastcgi_buffers 32 32k;
