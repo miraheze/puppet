@@ -12,3 +12,4 @@ mediawiki::php::fpm::fpm_min_restart_threshold: 1
 php::php_version: '7.3'
 redis::heap: '1000mb'
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
+mediawiki::jobrunner::cron: true
