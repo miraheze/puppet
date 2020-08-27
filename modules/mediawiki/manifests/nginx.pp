@@ -30,4 +30,7 @@ class mediawiki::nginx {
 
     include ssl::wildcard
     include ssl::hiera
+
+    Class['ssl::wildcard'] ~> Exec['nginx-syntax']
+    Class['ssl::hiera'] ~> Exec['nginx-syntax']
 }
