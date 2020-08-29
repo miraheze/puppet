@@ -108,6 +108,10 @@ class varnish(
         notify => Service['nginx'],
     }
 
+    Class['ssl::wildcard'] ~> Exec['nginx-syntax']
+    Class['ssl::hiera'] ~> Exec['nginx-syntax']
+    Class['ssl::cert'] ~> Exec['nginx-syntax']
+
     file { '/etc/nginx/sites-enabled/default':
         ensure => absent,
         notify => Service['nginx'],
