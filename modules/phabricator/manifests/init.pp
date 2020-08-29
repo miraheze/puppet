@@ -33,7 +33,11 @@ class phabricator {
 
     $password = lookup('passwords::irc::mirahezebots')
 
+    include ssl::wildcard
     ssl::cert { 'miraheze.wiki': }
+
+    Class['ssl::wildcard'] ~> Exec['nginx-syntax']
+    Ssl::Cert['miraheze.wiki'] ~> Exec['nginx-syntax']
 
     nginx::site { 'phab.miraheze.wiki':
         ensure  => present,
