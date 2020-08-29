@@ -36,9 +36,6 @@ class phabricator {
     include ssl::wildcard
     ssl::cert { 'miraheze.wiki': }
 
-    Class['ssl::wildcard'] ~> Exec['nginx-syntax']
-    Ssl::Cert['miraheze.wiki'] ~> Exec['nginx-syntax']
-
     nginx::site { 'phab.miraheze.wiki':
         ensure  => present,
         source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
@@ -46,10 +43,26 @@ class phabricator {
     }
 
     nginx::site { 'phabricator.miraheze.org':
-        ensure  => present,
-        source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
-        monitor => false,
+        ensure      => present,
+        source      => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
+        monitor     => false,
+        notify_site => Exec['nginx-syntax'],
     }
+
+    exec { 'nginx-syntax':
+        command     => '/usr/sbin/nginx -t',
+        notify      => Exec['nginx-reload'],
+        refreshonly => true,
+    }
+
+    exec { 'nginx-reload':
+        command     => '/usr/sbin/service nginx reload',
+        refreshonly => true,
+        require     => Exec['nginx-syntax'],
+    }
+
+    Class['ssl::wildcard'] ~> Exec['nginx-syntax']
+    Ssl::Cert['miraheze.wiki'] ~> Exec['nginx-syntax']
 
     file { '/srv/phab':
         ensure => directory,
