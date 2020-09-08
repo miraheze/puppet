@@ -68,9 +68,10 @@ def get_reverse_dnshostname(hostname):
                 rev_host = str(resolver.query(ptr_record, "PTR")[0]).rstrip('.')
 
                 return rev_host
-        except resolver.NXDOMAIN:
+        except (resolver.NXDOMAIN, resolver.NoAnswer):
                 print("rDNS WARNING - reverse DNS entry for {} could not be found".format(hostname))
                 sys.exit(1)
+
 
 def main():
         """Execute functions"""
