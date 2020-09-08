@@ -72,7 +72,6 @@ def get_reverse_dnshostname(hostname):
                 print("rDNS WARNING - reverse DNS entry for {} could not be found".format(hostname))
                 sys.exit(1)
 
-
 def main():
         """Execute functions"""
 
