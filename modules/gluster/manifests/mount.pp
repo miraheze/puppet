@@ -123,7 +123,7 @@ define gluster::mount (
     }
   }
 
-  $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec"
+  $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec,kernel-writeback-cache=on"
 
   $mount_options = $options ? {
       undef   => $base_options,
