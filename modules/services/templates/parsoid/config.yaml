@@ -29,6 +29,8 @@ services:
       useSelser: true
       useBatchAPI: true
       linting: true
+      linter:
+        sendAPI: true
       strictSSL: true
       useWorker: true
       cpu_workers: 2
@@ -43,6 +45,3 @@ services:
         wt2html:
           maxTableCells: 40000
           maxListItems: 40000
-      linting: true
-      linter:
-        sendAPI: true
