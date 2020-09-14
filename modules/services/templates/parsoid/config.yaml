@@ -43,3 +43,6 @@ services:
         wt2html:
           maxTableCells: 40000
           maxListItems: 40000
+      linting: true
+      linter:
+        sendAPI: true
