@@ -18,6 +18,11 @@ wiki: &wiki
 <%- end -%>
 <%- end -%>
 
+# Linter extension settings
+        linting: true
+        linter:
+            sendAPI: true
+
 services:
   - module: /srv/parsoid/lib/index.js
     entrypoint: apiServiceWorker
