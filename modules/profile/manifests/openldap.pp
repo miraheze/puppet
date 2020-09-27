@@ -135,8 +135,18 @@ class profile::openldap (
     }
 
 
-    $hostips = query_nodes("domain='$domain' and Class[Role::Grafana] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap]", 'ipaddress')
-    $hostips.each |$ip| {
+    $hostips4 = query_nodes("domain='$domain' and Class[Role::Grafana] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap]", 'ipaddress')
+    $hostips4.each |$ip| {
+        # Restrict access to ldap tls port
+        ufw::allow { "ldaps port ${ip}":
+            proto => 'tcp',
+            port  => 636,
+            from  => $ip,
+        }
+    }
+
+    $hostips6 = query_nodes("domain='$domain' and Class[Role::Grafana] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap]", 'ipaddress6')
+    $hostips6.each |$ip| {
         # Restrict access to ldap tls port
         ufw::allow { "ldaps port ${ip}":
             proto => 'tcp',
