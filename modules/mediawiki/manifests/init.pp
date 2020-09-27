@@ -85,17 +85,18 @@ class mediawiki(
         require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
     }
 
-    $wikiadmin_password   = lookup('passwords::db::wikiadmin')
-    $mediawiki_password   = lookup('passwords::db::mediawiki')
-    $redis_password       = lookup('passwords::redis::master')
-    $noreply_password     = lookup('passwords::mail::noreply')
-    $mediawiki_upgradekey = lookup('passwords::mediawiki::upgradekey')
-    $mediawiki_secretkey  = lookup('passwords::mediawiki::secretkey')
-    $recaptcha_sitekey    = lookup('passwords::recaptcha::sitekey')
-    $recaptcha_secretkey  = lookup('passwords::recaptcha::secretkey')
-    $googlemaps_key       = lookup('passwords::mediawiki::googlemapskey')
-    $matomotoken          = lookup('passwords::mediawiki::matomotoken')
+    $wikiadmin_password    = lookup('passwords::db::wikiadmin')
+    $mediawiki_password    = lookup('passwords::db::mediawiki')
+    $redis_password        = lookup('passwords::redis::master')
+    $noreply_password      = lookup('passwords::mail::noreply')
+    $mediawiki_upgradekey  = lookup('passwords::mediawiki::upgradekey')
+    $mediawiki_secretkey   = lookup('passwords::mediawiki::secretkey')
+    $recaptcha_sitekey     = lookup('passwords::recaptcha::sitekey')
+    $recaptcha_secretkey   = lookup('passwords::recaptcha::secretkey')
+    $googlemaps_key        = lookup('passwords::mediawiki::googlemapskey')
+    $matomotoken           = lookup('passwords::mediawiki::matomotoken')
     $yandextranslation_key = lookup('passwords::mediawiki::yandextranslationkey')
+    $ldap_password         = lookup('passwords::mediawiki::ldap_password')
 
     $wiki_discord_hooks_url = lookup('mediawiki::wiki_discord_hooks_url')
     $wiki_slack_hooks_url = lookup('mediawiki::wiki_slack_hooks_url')
