@@ -41,3 +41,6 @@ $wmgWikiMirahezeSlackHooks = array(
     '<%= wiki %>' => '<%= values %>',
 <%- end -%>
 );
+
+// writer-user password (ldap)
+$wmgLdapPassword = "<%= @ldap_password %>";
