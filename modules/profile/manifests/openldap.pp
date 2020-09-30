@@ -111,7 +111,7 @@ class profile::openldap (
         suffix  => 'cn=config',
         overlay => 'ppolicy',
         options => {
-            'olcPPolicyHashCleartext' => 'FALSE',
+            'olcPPolicyHashCleartext' => 'TRUE',
         },
     }
 
