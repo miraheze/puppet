@@ -112,7 +112,6 @@ class profile::openldap (
         overlay => 'ppolicy',
         options => {
             'olcPPolicyHashCleartext' => 'FALSE',
-            'olcPasswordHash' => '{SSHA}'
         },
     }
 
