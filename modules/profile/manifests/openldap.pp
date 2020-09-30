@@ -105,6 +105,17 @@ class profile::openldap (
         path   => '/etc/ldap/schema/ppolicy.schema',
     }
 
+
+    openldap::server::overlay { "ppolicy":
+        ensure  => present,
+        suffix  => 'cn=config',
+        overlay => 'ppolicy',
+        options => {
+            'olcPPolicyHashCleartext' => 'FALSE',
+            'olcPasswordHash' => '{SSHA}'
+        },
+    }
+
     class { 'openldap::client':
         base       => 'dc=miraheze,dc=org',
         uri        => ["ldaps://${::fqdn}"],
