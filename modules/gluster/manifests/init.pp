@@ -3,6 +3,8 @@
 class gluster {
 
     include gluster::apt
+
+    include ssl::wildcard
     
     package { 'glusterfs-server':
         ensure   => installed,
