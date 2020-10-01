@@ -66,8 +66,6 @@ class monitoring (
         database        => $db_name,
         import_schema   => false,
         enable_ssl      => true,
-        ssl_key_path    => '/etc/ssl/private/wildcard.miraheze.org.key',
-        ssl_cert_path   => '/etc/ssl/certs/wildcard.miraheze.org.crt',
         ssl_cacert_path => '/etc/ssl/certs/Sectigo.crt',
     }
 
