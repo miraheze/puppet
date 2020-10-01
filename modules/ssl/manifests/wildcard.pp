@@ -2,9 +2,8 @@
 class ssl::wildcard (
     $ssl_cert_path = '/etc/ssl/certs',
     $ssl_cert_key_private_path = '/etc/ssl/private',
-    $use_globalsign = false,
 ) {
-
+    # Legacy kept for 2020 TLS certificate switchover
     if !defined(File['wildcard.miraheze.org']) {
         file { 'wildcard.miraheze.org':
             ensure => 'present',
@@ -24,11 +23,23 @@ class ssl::wildcard (
         }
     }
 
-    if $use_globalsign and !defined(File['Sectigo.crt']) {
-        file { 'Sectigo.crt':
+    # New certificate for 2020 switchover
+    if !defined(File['wildcard.miraheze.org-2020']) {
+        file { 'wildcard.miraheze.org-2020':
             ensure => 'present',
-            source => 'puppet:///ssl/ca/Sectigo.crt',
-            path   => "${ssl_cert_path}/Sectigo.crt",
+            source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020.crt',
+            path   => "${ssl_cert_path}/wildcard.miraheze.org-2020.crt",
+        }
+    }
+
+    if !defined(File['wildcard.miraheze.org-2020_private']) {
+        file { 'wildcard.miraheze.org-2020_private':
+            ensure => 'present',
+            source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020.key',
+            path   => "${ssl_cert_key_private_path}/wildcard.miraheze.org-2020.key",
+            owner  => 'root',
+            group  => 'ssl-cert',
+            mode   => '0660',
         }
     }
 }
