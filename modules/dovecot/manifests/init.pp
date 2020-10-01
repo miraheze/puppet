@@ -1,5 +1,7 @@
 # class: dovecot
 class dovecot {
+    include ssl::wildcard
+
     package { [ 'dovecot-core', 'dovecot-imapd' ]:
         ensure => present,
     }
