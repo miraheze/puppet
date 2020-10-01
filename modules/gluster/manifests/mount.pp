@@ -82,7 +82,7 @@ define gluster::mount (
   if !defined(File['glusterfs.pem']) {
     file { 'glusterfs.pem':
       ensure => 'present',
-      source => 'puppet:///ssl/certificates/wildcard.miraheze.org.crt',
+      source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020.crt',
       path   => '/etc/ssl/glusterfs.pem',
       owner  => 'root',
       group  => 'root',
@@ -92,7 +92,7 @@ define gluster::mount (
   if !defined(File['glusterfs.key']) {
     file { 'glusterfs.key':
       ensure => 'present',
-      source => 'puppet:///ssl-keys/wildcard.miraheze.org.key',
+      source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020.key',
       path   => '/etc/ssl/glusterfs.key',
       owner  => 'root',
       group  => 'root',
