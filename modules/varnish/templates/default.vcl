@@ -14,6 +14,7 @@ vcl 4.1;
 
 import directors;
 import std;
+import vsthrottle;
 
 probe mwhealth {
 	.request = "GET /wiki/Main_Page HTTP/1.1"
@@ -136,8 +137,8 @@ sub mw_evaluate_cookie {
 	if (req.http.Cookie ~ "([sS]ession|Token|mf_useformat|stopMobileRedirect)=" 
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
-                && req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(png|jpe?g|svg)$"
-                && req.url !~ "^/w/resources/assets/.*\.png$"
+		&& req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(png|jpe?g|svg)$"
+		&& req.url !~ "^/w/resources/assets/.*\.png$"
 		&& req.url !~ "^/(wiki/?)?$"
 	) {
 		# To prevent issues, we do not want vcl_backend_fetch to add ?useformat=mobile
@@ -165,26 +166,35 @@ sub mw_identify_device {
 	}
 }
 
-sub mw_url_rewrite {
-        if (req.http.Host == "meta.miraheze.org"
-                && req.url ~ "^/Stewards'_noticeboard"
-        ) {
-                return (synth(752, "/wiki/Stewards'_noticeboard"));
-        }
-        
-	if (req.http.Host == "meta.miraheze.org"
-		&& req.url ~ "^/Requests_for_adoption"
-	) {
-		return (synth(752, "/wiki/Requests_for_adoption"));
+sub mw_rate_limit {
+	# Allow higher limits for static.mh.o, we can handle more of those requests
+	if (req.http.Host == "static.miraheze.org") {
+		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 120, 10s)) {
+			return (synth(429, "Varnish Rate Limit Exceeded"));
+		}
+	} else {
+		# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
+		if (req.url ~ "^/wiki" || req.url ~ "^/w/(api|index)\.php") {
+			# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
+			if (req.url ~ "^/w/index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
+				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
+					return (synth(429, "Varnish Rate Limit Exceeded"));
+				}
+			} else {
+				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 5, 2s)) {
+					return (synth(429, "Varnish Rate Limit Exceeded"));
+				}
+			}
+		}
 	}
 }
 
 sub vcl_synth {
-        if (resp.status == 752) {
-                set resp.http.Location = resp.reason;
-                set resp.status = 302;
-                return (deliver);
-        }
+	if (resp.status == 752) {
+		set resp.http.Location = resp.reason;
+		set resp.status = 302;
+		return (deliver);
+	}
 }
 
 sub recv_purge {
@@ -198,8 +208,8 @@ sub recv_purge {
 }
 
 sub mw_vcl_recv {
+	call mw_rate_limit;
 	call mw_identify_device;
-	call mw_url_rewrite;
 
 	# Redirects <url>/sitemap to static.miraheze.org/sitemap/
 	if (req.url ~ "^/sitemap" && req.http.Host != "static.miraheze.org") {
@@ -323,9 +333,9 @@ sub vcl_hash {
 sub vcl_backend_fetch {
 	if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php\?title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1") {
 		if (bereq.url ~ "\?") {
-		        set bereq.url = bereq.url + "&useformat=mobile";
+			set bereq.url = bereq.url + "&useformat=mobile";
 		} else {
-		        set bereq.url = bereq.url + "?useformat=mobile";
+			set bereq.url = bereq.url + "?useformat=mobile";
 		}
 	}
 }
