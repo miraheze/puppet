@@ -11,7 +11,7 @@ GEM
       json_pure
     http-cookie (1.0.2)
       domain_name (~> 0.5)
-    json (1.8.3)
+    json (2.3.1)
     json_pure (1.8.3)
     metaclass (0.0.4)
     metadata-json-lint (0.0.11)
@@ -38,7 +38,7 @@ GEM
       puppet-syntax
       rake
       rspec-puppet
-    rake (11.1.2)
+    rake (13.0.1)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
