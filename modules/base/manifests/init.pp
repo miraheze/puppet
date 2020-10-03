@@ -3,7 +3,7 @@ class base {
     include apt
     include base::packages
     include base::puppet
-    include base::rsyslog
+    include base::syslog
     include base::ssl
     include base::sysctl
     include base::timezone

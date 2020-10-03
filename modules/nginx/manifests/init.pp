@@ -1,6 +1,7 @@
 # nginx
 class nginx (
-    Variant[String, Integer] $nginx_worker_processes = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
+    Variant[String, Integer] $nginx_worker_processes    = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
+    Boolean $use_graylog                                = false,
 ) {
     # Ensure Apache is absent: https://phabricator.miraheze.org/T253
     package { 'apache2':

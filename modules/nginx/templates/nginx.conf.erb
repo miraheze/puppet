@@ -1,3 +1,5 @@
+# This file is managed by puppet
+
 user www-data;
 <% if @nginx_worker_processes != 'auto' %>
 worker_processes <%= @nginx_worker_processes %>;
@@ -8,89 +10,114 @@ pid /run/nginx.pid;
 worker_rlimit_nofile 16192; # Twice the number of worker_connections
 
 events {
-    worker_connections 8096;
-    use epoll;
-    multi_accept on;
+	worker_connections 8096;
+	use epoll;
+	multi_accept on;
 }
 
 http {
-    # Basic settings
-    sendfile on;
-    tcp_nopush on;
-    tcp_nodelay on;
-    keepalive_timeout 30;
-    client_max_body_size 250M;
-    server_names_hash_bucket_size 112;
+	# Basic settings
+	sendfile on;
+	tcp_nopush on;
+	tcp_nodelay on;
+	keepalive_timeout 30;
+	client_max_body_size 250M;
+	server_names_hash_bucket_size 112;
 
-    include /etc/nginx/mime.types;
-    default_type application/octet-stream;
+	include /etc/nginx/mime.types;
+	default_type application/octet-stream;
 
-    server_tokens off;
+	server_tokens off;
 
-    # SSL Settings
-    ssl_ciphers EECDH+CHACHA20:EECDH+AES128:EECDH+AES256:EECDH+3DES:!MD5;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_prefer_server_ciphers on;
-    ssl_stapling on;
-    ssl_session_cache shared:SSL:20m;
-    ssl_session_timeout 60m;
+	# SSL Settings
+	ssl_ciphers EECDH+CHACHA20:EECDH+AES128:EECDH+AES256:EECDH+3DES:!MD5;
+	ssl_protocols TLSv1.2 TLSv1.3;
+	ssl_prefer_server_ciphers on;
+	ssl_stapling on;
+	ssl_session_cache shared:SSL:20m;
+	ssl_session_timeout 60m;
 
-    # GZIP Settings
-    gzip on;
-    gzip_disable "msie6";
-    gzip_comp_level 6;
-    gzip_min_length 500;
-    gzip_types text/plain text/css text/xml text/javascript image/gif image/jpeg
+	# GZIP Settings
+	gzip on;
+	gzip_disable "msie6";
+	gzip_comp_level 6;
+	gzip_min_length 500;
+	gzip_types text/plain text/css text/xml text/javascript image/gif image/jpeg
  image/tiff
-        image/x-icon image/x-ms-bmp image/svg+xml
-        application/json application/javascript application/x-javascript
-        application/xml application/rss+xml application/atom+xml application/rdf
+	image/x-icon image/x-ms-bmp image/svg+xml
+	application/json application/javascript application/x-javascript
+	application/xml application/rss+xml application/atom+xml application/rdf
 +xml
-        video/mp4 video/mpeg video/webmv video/x-flv;
+	video/mp4 video/mpeg video/webmv video/x-flv;
 
-    # Default headers
-    add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+	# Default headers
+	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
 
-    # XSS Protection
-    add_header x-xss-protection "1; mode=block" always;
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
 
-    add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-    # Add response time to access.log
-    log_format miraheze '$remote_addr - $remote_user [$time_local] '
-                    '"$request_method $scheme://$host$request_uri" $status $body_bytes_sent '
-                    '"$http_referer" "$http_user_agent" $request_time '
-                    '$ssl_protocol/$ssl_cipher';
+	<% if @use_graylog -%>
+	# Custom log format for graylog
+	log_format graylog2_json escape=json '{ "timestamp": "$msec", '
+		'"remote_addr": "$remote_addr", '
+		'"remote_user": "$remote_user", '
+		'"time_local": "$time_local", '
+		'"request_method": "$request_method", '
+		'"request_uri": "$scheme://$host$request_uri", '
+		'"status": "$status", '
+		'"body_bytes_sent": "$body_bytes_sent",'
+		'"http_x_forwarded_for": "$http_x_forwarded_for",'
+		'"http_referrer": "$http_referer", '
+		'"http_user_agent": "$http_user_agent", '
+		'"request_time": "$request_time", '
+		'"ssl_protocol": "$ssl_protocol", '
+		'"ssl_cipher": "$ssl_cipher", '
+		'"nginx_access_log": true }';
 
-    # Logging
-    access_log /var/log/nginx/access.log miraheze;
-    error_log /var/log/nginx/error.log error;
+	<% else -%>
+	# Add response time to access.log
+	log_format miraheze '$remote_addr - $remote_user [$time_local] '
+			'"$request_method $scheme://$host$request_uri" $status $body_bytes_sent '
+			'"$http_referer" "$http_user_agent" $request_time '
+			'$ssl_protocol/$ssl_cipher';
+	<% end -%>
 
-    # Set real IP for cache proxy web requests
-    set_real_ip_from 128.199.139.216; # cp3 (Singapore)
-    set_real_ip_from 51.77.107.210; # cp6 (UK)
-    set_real_ip_from 51.89.160.142; # cp7 (UK)
-    set_real_ip_from 51.222.27.129; # cp9 (Canada)
-    real_ip_header X-Real-IP;
+	# Logging
+	<% if @use_graylog -%>
+	access_log syslog:server=unix:/var/run/syslog-ng-dgram.sock,nohostname graylog2_json;
+	error_log syslog:server=unix:/var/run/syslog-ng-dgram.sock,nohostname error;
+	<% else -%>
+	access_log /var/log/nginx/access.log miraheze;
+	error_log /var/log/nginx/error.log error;
+	<% end -%>
 
-    # VHosts
-    include /etc/nginx/conf.d/*.conf;
+	# Set real IP for cache proxy web requests
+	set_real_ip_from 128.199.139.216; # cp3 (Singapore)
+	set_real_ip_from 51.77.107.210; # cp6 (UK)
+	set_real_ip_from 51.89.160.142; # cp7 (UK)
+	set_real_ip_from 51.222.27.129; # cp9 (Canada)
+	real_ip_header X-Real-IP;
 
-    server {
-        listen 8090;
-        listen [::]:8090;
+	# VHosts
+	include /etc/nginx/conf.d/*.conf;
 
-        server_name 127.0.0.1 localhost;
+	server {
+	listen 8090;
+	listen [::]:8090;
 
-        # Define the document root of the server e.g /var/www/html
-        root /var/www/html;
+	server_name 127.0.0.1 localhost;
 
-        location /server-status {
-            stub_status;
-            access_log off;
-            allow 127.0.0.1;
-        }
-    }
+	# Define the document root of the server e.g /var/www/html
+	root /var/www/html;
 
-    include /etc/nginx/sites-enabled/*;
+	location /server-status {
+		stub_status;
+		access_log off;
+		allow 127.0.0.1;
+	}
+	}
+
+	include /etc/nginx/sites-enabled/*;
 }

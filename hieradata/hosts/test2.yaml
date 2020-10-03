@@ -10,3 +10,5 @@ php::php_version: '7.3'
 puppetserver_hostname: puppet2.miraheze.org
 mediawiki::php::use_tideways: true
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
+nginx::use_graylog: true
+base::syslog::syslog_daemon: 'syslog_ng'
