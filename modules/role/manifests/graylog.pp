@@ -27,14 +27,13 @@ class role::graylog {
     }
 
     class { 'elasticsearch':
-        version      => '6.8.12',
-        manage_repo  => true,
-    }->
-    elasticsearch::instance { 'graylog':
-        config => {
-            'cluster.name' => 'graylog',
-            'network.host' => '127.0.0.1',
-        }
+        version         => '6.8.12',
+        manage_repo     => true,
+        config          => {
+            'cluster.name'  => 'graylog',
+            'http.port'     => '9200',
+            'network.host'  => '127.0.0.1',
+        },
     }
 
     class { 'graylog::repository':
