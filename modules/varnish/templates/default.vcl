@@ -175,12 +175,18 @@ sub mw_rate_limit {
 	} else {
 		# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
 		if (req.url ~ "^/wiki" || req.url ~ "^/w/(api|index)\.php") {
-			# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
 			if (req.url ~ "^/w/index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
+				# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
 				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
 					return (synth(429, "Varnish Rate Limit Exceeded"));
 				}
+			} elsif (req.url ~ "^/w/api\.php" && req.http.User-Agent ~ "^Parsoid") {
+				# Parsoid may send up to 120 requests per minute to api.php
+				if (vsthrottle.is_denied("parsoid:" + req.http.X-Real-IP, 120, 60s)) {
+					return (synth(429, "Varnish Rate Limit Exceeded"));
+				}
 			} else {
+				# Fallback
 				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 5, 2s)) {
 					return (synth(429, "Varnish Rate Limit Exceeded"));
 				}
