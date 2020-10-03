@@ -2,7 +2,96 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
-## [3.3.0](https://github.com/puppetlabs/puppetlabs-java/tree/3.3.0) (2019-01-16)
+## [v6.3.0](https://github.com/puppetlabs/puppetlabs-java/tree/v6.2.0) (2020-05-27)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java/compare/v6.2.0...v6.2.0)
+
+### Added
+
+- \(MODULES-10681\) Add option to manage symlink to java::adopt [\#429](https://github.com/puppetlabs/puppetlabs-java/pull/429) ([fraenki](https://github.com/fraenki))
+- \(IAC-746\) - Add ubuntu 20.04 support [\#428](https://github.com/puppetlabs/puppetlabs-java/pull/428) ([david22swan](https://github.com/david22swan))
+
+## [v6.2.0](https://github.com/puppetlabs/puppetlabs-java/tree/v6.2.0) (2020-02-18)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java/compare/v6.1.0...v6.2.0)
+
+### Added
+
+- Support AdoptOpenJDK [\#370](https://github.com/puppetlabs/puppetlabs-java/pull/370) ([timdeluxe](https://github.com/timdeluxe))
+
+### Fixed
+
+- Replace legacy facts by modern facts [\#406](https://github.com/puppetlabs/puppetlabs-java/pull/406) ([hdeheer](https://github.com/hdeheer))
+
+## [v6.1.0](https://github.com/puppetlabs/puppetlabs-java/tree/v6.1.0) (2020-02-03)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java/compare/v6.0.0...v6.1.0)
+
+## [v6.0.0](https://github.com/puppetlabs/puppetlabs-java/tree/v6.0.0) (2019-11-11)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java/compare/v5.0.1...v6.0.0)
+
+### Added
+
+- \(FM-8676\) Add CentOS 8 to supported OS list [\#399](https://github.com/puppetlabs/puppetlabs-java/pull/399) ([david22swan](https://github.com/david22swan))
+- FM-8403 - add support Debain10 [\#387](https://github.com/puppetlabs/puppetlabs-java/pull/387) ([lionce](https://github.com/lionce))
+
+### Fixed
+
+- we need to check if java\_default\_home has a value before we attempt t… [\#391](https://github.com/puppetlabs/puppetlabs-java/pull/391) ([robmbrooks](https://github.com/robmbrooks))
+- Add support for java 11, the default in debian buster 10 [\#386](https://github.com/puppetlabs/puppetlabs-java/pull/386) ([jhooyberghs](https://github.com/jhooyberghs))
+
+## [v5.0.1](https://github.com/puppetlabs/puppetlabs-java/tree/v5.0.1) (2019-08-05)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java/compare/v5.0.0...v5.0.1)
+
+## [v5.0.0](https://github.com/puppetlabs/puppetlabs-java/tree/v5.0.0) (2019-07-29)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java/compare/v4.1.0...v5.0.0)
+
+### Changed
+
+- \[FM-8320\] Remove Oracle download [\#372](https://github.com/puppetlabs/puppetlabs-java/pull/372) ([carabasdaniel](https://github.com/carabasdaniel))
+
+### Added
+
+- \(FM-8223\) converted to use litmus [\#376](https://github.com/puppetlabs/puppetlabs-java/pull/376) ([tphoney](https://github.com/tphoney))
+- Add buster support, default to 11 [\#369](https://github.com/puppetlabs/puppetlabs-java/pull/369) ([mhjacks](https://github.com/mhjacks))
+- Add support for debian buster [\#364](https://github.com/puppetlabs/puppetlabs-java/pull/364) ([TomRitserveldt](https://github.com/TomRitserveldt))
+
+### Fixed
+
+- \(FM-8343\) use release numbers not lsbdistcodename [\#375](https://github.com/puppetlabs/puppetlabs-java/pull/375) ([tphoney](https://github.com/tphoney))
+- Revert "Add support for debian buster" [\#374](https://github.com/puppetlabs/puppetlabs-java/pull/374) ([tphoney](https://github.com/tphoney))
+
+## [v4.1.0](https://github.com/puppetlabs/puppetlabs-java/tree/v4.1.0) (2019-05-29)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java/compare/v4.0.0...v4.1.0)
+
+### Added
+
+- \(FM-8028\) Add RedHat 8 support [\#363](https://github.com/puppetlabs/puppetlabs-java/pull/363) ([eimlav](https://github.com/eimlav))
+
+## [v4.0.0](https://github.com/puppetlabs/puppetlabs-java/tree/v4.0.0) (2019-05-20)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-java/compare/3.3.0...v4.0.0)
+
+### Changed
+
+- pdksync - \(MODULES-8444\) - Raise lower Puppet bound [\#356](https://github.com/puppetlabs/puppetlabs-java/pull/356) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- \(FM-7921\) - Implement Puppet Strings [\#353](https://github.com/puppetlabs/puppetlabs-java/pull/353) ([david22swan](https://github.com/david22swan))
+- Update default version & java 8 version from 8u192 to 8u201 [\#347](https://github.com/puppetlabs/puppetlabs-java/pull/347) ([valentinsavenko](https://github.com/valentinsavenko))
+- Add ability to override basedir and package type for oracle java [\#345](https://github.com/puppetlabs/puppetlabs-java/pull/345) ([fraenki](https://github.com/fraenki))
+- MODULES-8613: Add option to set a custom JCE download URL [\#344](https://github.com/puppetlabs/puppetlabs-java/pull/344) ([HielkeJ](https://github.com/HielkeJ))
+
+### Fixed
+
+- MODULES-8698: Fix $install\_path on CentOS with tar.gz package type [\#349](https://github.com/puppetlabs/puppetlabs-java/pull/349) ([fraenki](https://github.com/fraenki))
+
+## [3.3.0](https://github.com/puppetlabs/puppetlabs-java/tree/3.3.0) (2019-01-17)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-java/compare/3.2.0...3.3.0)
 

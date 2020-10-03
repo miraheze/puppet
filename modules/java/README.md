@@ -43,51 +43,117 @@ class { 'java' :
 }
 ```
 
-The defined type `java::oracle` installs one or more versions of Oracle Java SE. `java::oracle` depends on [puppet/archive](https://github.com/voxpupuli/puppet-archive).  By using `java::oracle` you agree to Oracle's licensing terms for Java SE.
+The defined type `java::download` installs one or more versions of Java SE from a remote url. `java::download` depends on [puppet/archive](https://github.com/voxpupuli/puppet-archive).
 
+To install Java to a non-default basedir (defaults: /usr/lib/jvm for Debian; /usr/java for RedHat):
 ```puppet
-java::oracle { 'jdk6' :
+java::download { 'jdk8' :
   ensure  => 'present',
-  version => '6',
   java_se => 'jdk',
-}
-
-java::oracle { 'jdk8' :
-  ensure  => 'present',
-  version => '8',
-  java_se => 'jdk',
-}
-```
-
-To install a specific release of a Java version, e.g. 8u101-b13, provide both parameters `version_major` and `version_minor` as follows:
-
-```puppet
-java::oracle { 'jdk8' :
-  ensure  => 'present',
-  version_major => '8u101',
-  version_minor => 'b13',
-  java_se => 'jdk',
-}
-```
-
-To install Oracle Java to a non-default basedir (defaults: /usr/lib/jvm for Debian; /usr/java for RedHat):
-```puppet
-java::oracle { 'jdk8' :
-  ensure  => 'present',
-  version_major => '8u101',
-  version_minor => 'b13',
-  java_se => 'jdk',
+  url     => 'http://myjava.repository/java.tgz",
   basedir => '/custom/java',
 }
 ```
 
-To ensure that a custom basedir is a directory before Oracle Java is installed (note: manage separately for custom ownership or perms):
+## AdoptOpenJDK
+
+The defined type `java::adopt` installs one or more versions of AdoptOpenJDK Java. `java::adopt` depends on [puppet/archive](https://github.com/voxpupuli/puppet-archive).
+
 ```puppet
-java::oracle { 'jdk8' :
+java::adopt { 'jdk8' :
   ensure  => 'present',
-  version_major => '8u101',
-  version_minor => 'b13',
-  java_se => 'jdk',
+  version => '8',
+  java => 'jdk',
+}
+
+java::adopt { 'jdk11' :
+  ensure  => 'present',
+  version => '11',
+  java => 'jdk',
+}
+```
+
+To install a specific release of a AdoptOpenJDK Java version, e.g. 8u202-b08, provide both parameters `version_major` and `version_minor` as follows:
+
+```puppet
+java::adopt { 'jdk8' :
+  ensure  => 'present',
+  version_major => '8u202',
+  version_minor => 'b08',
+  java => 'jdk',
+}
+```
+
+To install AdoptOpenJDK Java to a non-default basedir (defaults: /usr/lib/jvm for Debian; /usr/java for RedHat):
+```puppet
+java::adopt { 'jdk8' :
+  ensure  => 'present',
+  version_major => '8u202',
+  version_minor => 'b08',
+  java => 'jdk',
+  basedir => '/custom/java',
+}
+```
+
+To ensure that a custom basedir is a directory before AdoptOpenJDK Java is installed (note: manage separately for custom ownership or perms):
+```puppet
+java::adopt { 'jdk8' :
+  ensure  => 'present',
+  version_major => '8u202',
+  version_minor => 'b08',
+  java => 'jdk',
+  manage_basedir => true,
+  basedir => '/custom/java',
+}
+```
+
+## SAP Java (sapjvm / sapmachine)
+
+SAP also offers JVM distributions. They are mostly required for their SAP products. In earlier versions it is called "sapjvm", in newer versions they call it "sapmachine".
+
+The defined type `java::sap` installs one or more versions of sapjvm (if version 7 or 8) or sapmachine (if version > 8) Java. `java::sap` depends on [puppet/archive](https://github.com/voxpupuli/puppet-archive).
+By using this defined type with versions 7 or 8 you agree with the EULA presented at https://tools.hana.ondemand.com/developer-license-3_1.txt!
+
+```puppet
+java::sap { 'sapjvm8' :
+  ensure  => 'present',
+  version => '8',
+  java => 'jdk',
+}
+
+java::sap { 'sapmachine11' :
+  ensure  => 'present',
+  version => '11',
+  java => 'jdk',
+}
+```
+
+To install a specific release of a SAP Java version, e.g. sapjvm 8.1.063, provide parameter `version_full`:
+
+```puppet
+java::sap { 'jdk8' :
+  ensure  => 'present',
+  version_full => '8.1.063',
+  java => 'jdk',
+}
+```
+
+To install SAP Java to a non-default basedir (defaults: /usr/lib/jvm for Debian; /usr/java for RedHat):
+```puppet
+java::adopt { 'sapjvm8' :
+  ensure  => 'present',
+  version_full => '8.1.063',
+  java => 'jdk',
+  basedir => '/custom/java',
+}
+```
+
+To ensure that a custom basedir is a directory before SAP Java is installed (note: manage separately for custom ownership or perms):
+```puppet
+java::adopt { 'sapjvm8' :
+  ensure  => 'present',
+  version_full => '8.1.063',
+  java => 'jdk',
   manage_basedir => true,
   basedir => '/custom/java',
 }
@@ -95,94 +161,7 @@ java::oracle { 'jdk8' :
 
 ## Reference
 
-### Classes
-
-#### Public classes
-
-* `java`: Installs and manages the Java package.
-
-#### Private classes
-
-* `java::config`: Configures the Java alternatives.
-
-* `java::params`: Builds a hash of jdk/jre packages for all compatible operating systems.
-
-
-#### Parameters
-
-The following parameters are available in `java`:
-
-##### `distribution`
-
-Specifies the Java distribution to install.
-Valid options:  'jdk', 'jre', or, where the platform supports alternative packages, 'sun-jdk', 'sun-jre', 'oracle-jdk', 'oracle-jre'. Default: 'jdk'.
-
-##### `java_alternative`
-
-Specifies the name of the Java alternative to use. If you set this parameter, *you must also set the `java_alternative_path`.*
-Valid options: Run command `update-java-alternatives -l` for a list of available choices. Default: OS and distribution dependent defaults on *deb systems, undef on others.
-
-##### `java_alternative_path`
-
-*Required when `java_alternative` is specified.* Defines the path to the `java` command.
-Valid option: String. Default: OS and distribution dependent defaults on *deb systems, undef on others.
-
-##### `package`
-
-Specifies the name of the Java package. This is configurable in case you want to install a non-standard Java package. If not set, the module installs the appropriate package for the `distribution` parameter and target platform. If you set `package`, the `distribution` parameter does nothing.
-Valid option: String. Default: undef.
-
-##### `version`
-
-Sets the version of Java to install, if you want to ensure a particular version.
-Valid options: 'present', 'installed', 'latest', or a string matching `/^[.+_0-9a-zA-Z:-]+$/`. Default: 'present'.
-
-#### Public defined types
-
-* `java::oracle`: Installs specified version of Oracle Java SE.  You may install multiple versions of Oracle Jave SE on the same node using this defined type.
-
-#### Parameters
-
-The following parameters are available in `java::oracle`:
-
-##### `version`
-Version of Java Standard Edition (SE) to install. 6, 7 or 8.
-
-##### `version_major`
-
-Major version of the Java Standard Edition (SE) to install. Must be used together with `version_minor`. For example, '8u101'.
-
-##### `version_minor`
-
-Minor version (or build version) of the Java Standard Edition (SE) to install. Must be used together with `version_major`. For example, 'b13'.
-
-##### `java_se`
-
-Type of Java SE to install, jdk or jre.
-
-##### `ensure`
-
-Install or remove the package.
-
-##### `oracle_url`
-
-Official Oracle URL to download the binaries from.
-
-##### `proxy_server`
-
-Specify a proxy server, with port number if needed. ie: https://example.com:8080. (passed to archive)
-
-##### `proxy_type`
-
-Proxy server type (none|http|https|ftp). (passed to archive)
-
-##### `url`
-
-Pass an entire URL to download the installer from rather than building the complete URL from other parameters. This will allow the module to be used even if the URLs are changed by Oracle. If this parameter is used, matching `version_major` and `version_minor` parameters must also be passed to the class.
-
-##### `url_hash`
-
-Directory hash used by the download.oracle.com site. This value is a 32 character string which is part of the file URL returned by the JDK download site.
+For information on the classes and types, see the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-java/blob/master/REFERENCE.md). For information on the facts, see below.
 
 ### Facts
 
@@ -229,6 +208,24 @@ Oracle Java is supported on:
 * CentOS 7
 * Red Hat Enterprise Linux (RHEL) 7
 
+AdoptOpenJDK Java is supported on:
+
+* CentOS
+* Red Hat Enterprise Linux (RHEL)
+* Amazon Linux
+* Debian
+
+SAP Java 7 and 8 (=sapjvm) are supported (by SAP) on:
+
+* SLES 12, 15
+* Oracle Linux 7, 8
+* Red Hat Enterprise Linux (RHEL) 7, 8
+
+(however installations on other distributions mostly also work well)
+
+For SAP Java > 8 (=sapmachine) please refer to the OpenJDK list as it is based on OpenJDK and has no special requirements.
+
+
 ### Known issues
 
 Where Oracle change the format of the URLs to different installer packages, the curl to fetch the package may fail with a HTTP/404 error. In this case, passing a full known good URL using the `url` parameter will allow the module to still be able to install specific versions of the JRE/JDK. Note the `version_major` and `version_minor` parameters must be passed and must match the version downloaded using the known URL in the `url` parameter. 
@@ -239,18 +236,6 @@ OpenBSD packages install Java JRE/JDK in a unique directory structure, not linki
 the binaries to a standard directory. Because of that, the path to this location
 is hardcoded in the `java_version` fact. Whenever you upgrade Java to a newer
 version, you have to update the path in this fact.
-
-#### FreeBSD
-
-By default on FreeBSD, Puppet versions prior to 4.0 throw an error saying `pkgng` is not the default provider. To fix this, install the [zleslie/pkgng module](https://forge.puppetlabs.com/zleslie/pkgng) and set it as the default package provider:
-
-```puppet
-Package {
-  provider => 'pkgng',
-}
-```
-
-On Puppet 4.0 and later, `pkgng` is included within Puppet and is the default package provider.
 
 ## Development
 

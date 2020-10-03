@@ -1,6 +1,7 @@
 # role: graylog
 class role::graylog {
     include ssl::wildcard
+    include ::java
 
     motd::role { 'role::graylog':
         description => 'central logging server',
@@ -15,7 +16,7 @@ class role::graylog {
 
     class { 'mongodb::globals':
         manage_package_repo => true,
-        version             => '4.2',
+        version             => '4.2.10',
     }->
     class { 'mongodb::server':
         bind_ip => ['127.0.0.1'],

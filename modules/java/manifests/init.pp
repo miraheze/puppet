@@ -1,48 +1,39 @@
-# Class: java
+# @summary
+#   This module manages the Java runtime package
 #
-# This module manages the Java runtime package
-#
-# Parameters:
-#
-#  [*distribution*]
+# @param distribution
 #    The java distribution to install. Can be one of "jdk" or "jre",
 #    or other platform-specific options where there are multiple
 #    implementations available (eg: OpenJDK vs Oracle JDK).
 #
-#  [*version*]
+# @param version
 #    The version of java to install. By default, this module simply ensures
 #    that java is present, and does not require a specific version.
 #
-#  [*package*]
+# @param package
 #    The name of the java package. This is configurable in case a non-standard
 #    java package is desired.
 #
-#  [*package_options*]
+# @param package_options
 #    Array of strings to pass installation options to the 'package' Puppet resource.
 #    Options available depend on the 'package' provider for the target OS.
 #
-#  [*java_alternative*]
+# @param java_alternative
 #    The name of the java alternative to use on Debian systems.
 #    "update-java-alternatives -l" will show which choices are available.
 #    If you specify a particular package, you will almost always also
 #    want to specify which java_alternative to choose. If you set
 #    this, you also need to set the path below.
 #
-#  [*java_alternative_path*]
+# @param java_alternative_path
 #    The path to the "java" command on Debian systems. Since the
 #    alternatives system makes it difficult to verify which
 #    alternative is actually enabled, this is required to ensure the
 #    correct JVM is enabled.
 #
-#  [*java_home*]
+# @param java_home
 #    The path to where the JRE is installed. This will be set as an
 #    environment variable.
-#
-# Actions:
-#
-# Requires:
-#
-# Sample Usage:
 #
 class java(
   String $distribution                                              = 'jdk',
@@ -110,7 +101,7 @@ class java(
       $use_java_package_name == undef or $use_java_alternative == undef or
       $use_java_alternative_path == undef or $use_java_home == undef
     ) and (
-      ! has_key($::java::params::java, $distribution)
+      ! has_key($java::params::java, $distribution)
     )) {
     fail("Java distribution ${distribution} is not supported. Missing default values.")
   }
@@ -120,7 +111,7 @@ class java(
     default    => '--jre'
   }
 
-  if $::osfamily == 'Debian' {
+  if $facts['os']['family'] == 'Debian' {
     # Needed for update-java-alternatives
     package { 'java-common':
       ensure => present,
