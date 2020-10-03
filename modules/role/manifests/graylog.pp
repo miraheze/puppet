@@ -8,7 +8,7 @@ class role::graylog {
 
     nginx::site { 'graylog_proxy':
         ensure  => present,
-        source  => puppet:///modules/role/graylog/graylog.miraheze.org.conf'
+        source  => puppet:///modules/role/graylog/graylog.miraheze.org.conf',
     }
 
     # NOT setting ufw ports here yet!
@@ -37,7 +37,7 @@ class role::graylog {
     }
 
     class { 'graylog::repository':
-        version => '3.3'
+        version => '3.3',
     }->
     class { 'graylog::server':
         package_version => '3.3.6-1',
