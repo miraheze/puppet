@@ -42,6 +42,11 @@ node /^gluster[12]\.miraheze\.org$/ {
     include role::gluster
 }
 
+node 'graylog1.miraheze.org' {
+    include base
+    include role::graylog
+}
+
 node 'jobrunner1.miraheze.org' {
     include base
     include role::redis
