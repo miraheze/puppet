@@ -8,13 +8,14 @@ class role::graylog {
 
     nginx::site { 'graylog_proxy':
         ensure  => present,
-        source  => puppet:///modules/role/graylog/graylog.miraheze.org.conf',
+        source  => 'puppet:///modules/role/graylog/graylog.miraheze.org.conf',
     }
 
     # NOT setting ufw ports here yet!
 
     class { 'mongodb::globals':
         manage_package_repo => true,
+        version             => '4.2',
     }->
     class { 'mongodb::server':
         bind_ip => ['127.0.0.1'],
@@ -26,7 +27,6 @@ class role::graylog {
 
     class { 'elasticsearch':
         version      => '6.8.12',
-        repo_version => '6.x',
         manage_repo  => true,
     }->
     elasticsearch::instance { 'graylog':
@@ -43,7 +43,7 @@ class role::graylog {
         package_version => '3.3.6-1',
         config          => {
             'password_secret'       => lookup('passwords::graylog::password_secret'),
-            'root_password_sha2'    => lookup('passwords::graylog:root_password_sha2'),
+            'root_password_sha2'    => lookup('passwords::graylog::root_password_sha2'),
         }
     }
 }
