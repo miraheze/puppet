@@ -155,7 +155,7 @@ class profile::openldap (
         }
     }
 
-    $hostips6 = query_nodes("domain='$domain' and (Class[Role::Grafana] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap])", 'ipaddress6')
+    $hostips6 = query_nodes("domain='$domain' and (Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap])", 'ipaddress6')
     $hostips6.each |$ip| {
         # Restrict access to ldap tls port
         ufw::allow { "ldaps port ${ip}":
