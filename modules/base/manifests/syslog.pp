@@ -49,8 +49,6 @@ class base::syslog (
                                                 'tls' => [
                                                         { 'peer-verify' => 'required-trusted' },
                                                         { 'ca-dir' => '/etc/ssl/certs' },
-                                                        { 'cert-file' => '/etc/ssl/certs/wildcard.miraheze.org-2020.crt' },
-                                                        { 'key-file' => '/etc/ssl/private/wildcard.miraheze.org-2020.key' },
                                                         { 'ssl-options' => [ 'no-sslv2', 'no-sslv3', 'no-tlsv1', 'no-tlsv11' ] }
                                                 ]
                                         },
