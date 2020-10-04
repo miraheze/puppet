@@ -40,16 +40,42 @@ class base::syslog (
                 } ->
                 syslog_ng::destination { 'd_graylog_syslog_tls':
                         params => {
-                                type => 'syslog',
+                                type    => 'syslog',
                                 options => [
                                         "graylog1.miraheze.org",
-                                        { 'port' => [12210] },
-                                        { 'transport' => 'tls' },
+                                        { 
+                                                'port' => [ 12210 ] 
+                                        },
+                                        { 
+                                                'transport' => 'tls' 
+                                        },
                                         {
                                                 'tls' => [
-                                                        { 'peer-verify' => 'required-trusted' },
-                                                        { 'ca-dir' => '/etc/ssl/certs' },
-                                                        { 'ssl-options' => [ 'no-sslv2', 'no-sslv3', 'no-tlsv1', 'no-tlsv11' ] }
+                                                        { 
+                                                                'peer-verify' => 'required-trusted' 
+                                                        },
+                                                        { 
+                                                                'ca-dir' => '/etc/ssl/certs' 
+                                                        },
+                                                        {       
+                                                                'ssl-options' => [ 'no-sslv2', 'no-sslv3', 'no-tlsv1', 'no-tlsv11' ] 
+                                                        }
+                                                ]
+                                        },
+                                        {
+                                                'disk-buffer' => [
+                                                        { 
+                                                                'dir' => '/var/tmp' 
+                                                        },
+                                                        { 
+                                                                'disk-buf-size' => '1073741824' 
+                                                        },
+                                                        { 
+                                                                'mem-buf-size' => '33554432' 
+                                                        },
+                                                        { 
+                                                                'reliable' => 'yes' 
+                                                        }
                                                 ]
                                         },
                                 ],
@@ -57,14 +83,22 @@ class base::syslog (
                 } ->
                 syslog_ng::log { 's_src_system to d_graylog_syslog_tls':
                         params => [
-                                { 'source' => 's_src_system' },
-                                { 'destination' => 'd_graylog_syslog_tls' },
+                                { 
+                                        'source' => 's_src_system' 
+                                },
+                                { 
+                                        'destination' => 'd_graylog_syslog_tls' 
+                                },
                         ],
                 } ->
                 syslog_ng::log { 's_src_internal to d_graylog_syslog_tls':
                         params => [
-                                { 'source' => 's_src_internal' },
-                                { 'destination' => 'd_graylog_syslog_tls' },
+                                { 
+                                        'source' => 's_src_internal' 
+                                },
+                                { 
+                                        'destination' => 'd_graylog_syslog_tls' 
+                                },
                         ],
                 }
         } else {
