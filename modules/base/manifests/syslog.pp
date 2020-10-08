@@ -26,6 +26,15 @@ class base::syslog (
                                 'dns_cache'             => 'no',
                         },
                 } ->
+                syslog_ng::rewrite { 'r_hostname':
+                        params => {
+                                'type'      => 'set',
+                                'options'   => [
+                                        '',
+                                        { 'value' => 'HOST' }
+                                ],
+                        },
+                } ->
                 syslog_ng::source { 's_src_system':
                         params => {
                                 'type'          => 'system',
@@ -37,6 +46,15 @@ class base::syslog (
                                 'type'          => 'internal',
                                 'options'       => [],
                         },
+                } ->
+                syslog_ng::source { 's_src_udp_local':
+                        params => {
+                                'type'          => 'syslog',
+                                'options'       => [
+                                        { 'transport'   => 'udp' },
+                                        { 'port'        => 10514 },
+                                ],
+                        }
                 } ->
                 syslog_ng::destination { 'd_graylog_syslog_tls':
                         params => {
@@ -67,6 +85,19 @@ class base::syslog (
                                 { 'source' => 's_src_internal' },
                                 { 'destination' => 'd_graylog_syslog_tls' },
                         ],
+                } ->
+                syslog_ng::log { 's_src_udp_local to d_graylog_syslog_tls':
+                    params => [
+                        {
+                            'source' => 's_src_udp_local',
+                        },
+                        {
+                            'rewrite' => 'r_hostname',
+                        },
+                        {
+                            'destination' => 'd_graylog_syslog_tls',
+                        },
+                    ],
                 }
         } else {
                 warning('Invalid syslog_daemon selected for base::syslog.')
