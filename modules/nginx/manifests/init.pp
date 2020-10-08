@@ -66,26 +66,9 @@ class nginx (
         ],
     }
 
-    if $use_graylog {
-        syslog_ng::source { 's_src_nginx_socket':
-                params => {
-                        'type'          => 'unix-dgram',
-                        'options'       => [
-                                "/var/run/syslog-ng-dgram.sock",
-                        ],
-                },
-        } ->
-        syslog_ng::log { 's_src_nginx to d_graylog_syslog_tls':
-                params => [
-                        { 'source'      => 's_src_nginx_socket' },
-                        { 'destination' => 'd_graylog_syslog_tls' },
-                ],
-        }
-    } else {
-        logrotate::conf { 'nginx':
-            ensure => present,
-            source => 'puppet:///modules/nginx/logrotate',
-        }
+    logrotate::conf { 'nginx':
+        ensure => present,
+        source => 'puppet:///modules/nginx/logrotate',
     }
 
     # Include nginx prometheus exported on all hosts that use the nginx class

@@ -86,8 +86,8 @@ http {
 
 	# Logging
 	<% if @use_graylog -%>
-	access_log syslog:server=unix:/var/run/syslog-ng-dgram.sock,nohostname graylog2_json;
-	error_log syslog:server=unix:/var/run/syslog-ng-dgram.sock,nohostname error;
+	access_log syslog:server=unix:127.0.0.1:10514,nohostname graylog2_json;
+	error_log syslog:server=unix:127.0.0.1:10514,nohostname error;
 	<% else -%>
 	access_log /var/log/nginx/access.log miraheze;
 	error_log /var/log/nginx/error.log error;

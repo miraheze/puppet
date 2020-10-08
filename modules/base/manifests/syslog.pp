@@ -30,7 +30,7 @@ class base::syslog (
                         params => {
                                 'type'      => 'set',
                                 'options'   => [
-                                        '',
+                                        $::fqdn,
                                         { 'value' => 'HOST' }
                                 ],
                         },
