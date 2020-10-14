@@ -4,7 +4,7 @@ jobrunner: false
 contactgroups: ['icingaadmins', 'ops', 'mediawiki']
 role::mediawiki::use_strict_firewall: false
 vpncloud::server_ip: 10.0.1.7
-mediawiki::branch: 'REL1_34'
+mediawiki::branch: 'REL1_35'
 php::php_fpm::fpm_workers_multiplier: 1.0
 php::php_version: '7.3'
 puppetserver_hostname: puppet2.miraheze.org
