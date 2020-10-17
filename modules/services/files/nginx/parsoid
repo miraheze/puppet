@@ -18,5 +18,7 @@ server {
 		proxy_read_timeout 120s;
 		proxy_send_timeout 120s;
 		send_timeout       120s;
+		proxy_buffer_size       32k;
+		proxy_buffers         4 32k;
         }
 }
