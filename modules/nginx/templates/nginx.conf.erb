@@ -86,8 +86,8 @@ http {
 
 	# Logging
 	<% if @use_graylog -%>
-	access_log syslog:server=unix:127.0.0.1:10514,nohostname graylog2_json;
-	error_log syslog:server=unix:127.0.0.1:10514,nohostname error;
+	access_log syslog:server=127.0.0.1:10514 graylog2_json;
+	error_log syslog:server=127.0.0.1:10514 error;
 	<% else -%>
 	access_log /var/log/nginx/access.log miraheze;
 	error_log /var/log/nginx/error.log error;
@@ -103,20 +103,19 @@ http {
 	# VHosts
 	include /etc/nginx/conf.d/*.conf;
 
+	# NGINX statistics
 	server {
-	listen 8090;
-	listen [::]:8090;
+		listen 8090;
+		listen [::]:8090;
 
-	server_name 127.0.0.1 localhost;
+		server_name 127.0.0.1 localhost;
+		root /var/www/html;
 
-	# Define the document root of the server e.g /var/www/html
-	root /var/www/html;
-
-	location /server-status {
+		location /server-status {
 		stub_status;
-		access_log off;
-		allow 127.0.0.1;
-	}
+			access_log off;
+			allow 127.0.0.1;
+		}
 	}
 
 	include /etc/nginx/sites-enabled/*;
