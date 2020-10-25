@@ -2,6 +2,7 @@
 class postfix {
     $packages = [
         'postfix',
+        'postfix-ldap',
         'postfix-pcre',
     ]
 
@@ -23,26 +24,46 @@ class postfix {
         notify => Service['postfix'],
     }
 
-    file { '/etc/aliases':
-        ensure => present,
-        source => 'puppet:///modules/postfix/aliases',
+    file { '/etc/postfix/ldap':
+        ensure => directory,
     }
 
-    file { '/etc/virtual':
-        ensure => present,
-        source => 'puppet:///modules/postfix/virtual',
+    $ldap_password = hiera('passwords::ldap_password')
+
+    file { '/etc/postfix/ldap/smtpd_sender_login_maps':
+        ensure  => present,
+        content => template('postfix/smtpd_sender_login_maps'),
+        notify  => Service['postfix'],
     }
 
-    file { '/etc/postfix/login_maps.pcre':
-        ensure   => present,
-        source   => 'puppet:///modules/postfix/login_maps.pcre',
-        notify   => Service['postfix'],
-        require  => Package['postfix-pcre'],
+    file { '/etc/postfix/ldap/virtual_alias_maps':
+        ensure  => present,
+        content => template('postfix/virtual_alias_maps'),
+        notify  => Service['postfix'],
     }
 
-    exec { '/usr/bin/newaliases':
-        subscribe   => [ File['/etc/aliases'], File['/etc/virtual'], ],
-        refreshonly => true,
+    file { '/etc/postfix/ldap/virtual_mailbox_maps':
+        ensure  => present,
+        content => template('postfix/virtual_mailbox_maps'),
+        notify  => Service['postfix'],
+    }
+
+    file { '/etc/postfix/ldap/virtual_alias_domains':
+        ensure  => present,
+        content => template('postfix/virtual_alias_domains'),
+        notify  => Service['postfix'],
+    }
+
+    file { '/etc/postfix/ldap/virtual_gid_maps':
+        ensure  => present,
+        content => template('postfix/virtual_gid_maps'),
+        notify  => Service['postfix'],
+    }
+
+    file { '/etc/postfix/ldap/virtual_uid_maps':
+        ensure  => present,
+        content => template('postfix/virtual_uid_maps'),
+        notify  => Service['postfix'],
     }
 
     service { 'postfix':

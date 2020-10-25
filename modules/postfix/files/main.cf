@@ -1,20 +1,22 @@
 myhostname = mail.miraheze.org
 myorigin = /etc/mailname
-mydestination = mail.miraheze.org, miraheze.org, localhost
+mydestination = localhost
 relayhost =
 relay_domains =
-mynetworks = 185.52.1.76
+mynetworks = 51.89.160.134
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
-smtp_bind_address=185.52.1.76
-smtp_bind_address6=2a00:d880:6:787::3
+smtp_bind_address=54.89.160.134
+smtp_bind_address6=
 
-virtual_alias_domains = phabricator.miraheze.org
-virtual_alias_maps = hash:/etc/virtual
-
-alias_maps = hash:/etc/aliases
-alias_database = hash:/etc/aliases
+virtual_mailbox_domains = $myhostname
+virtual_mailbox_base = /var/mail
+virtual_alias_domains = ldap:/etc/postfix/ldap/virtual_alias_domains
+virtual_alias_maps = ldap:/etc/postfix/ldap/virtual_alias_maps
+virtual_mailbox_maps = ldap:/etc/postfix/ldap/virtual_mailbox_maps
+virtual_uid_maps = ldap:/etc/postfix/ldap/virtual_uid_maps
+virtual_gid_maps = ldap:/etc/postfix/ldap/virtual_gid_maps
 
 smtpd_sasl_type = dovecot
 smtpd_sasl_path = private/auth
@@ -34,10 +36,9 @@ milter_default_action = accept
 smtpd_milters = inet:localhost:12301,inet:localhost:54321
 non_smtpd_milters = inet:localhost:12301,inet:localhost:54321
 
-local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination
 
 notify_classes = delay, resource, software
 
-smtpd_sender_login_maps = pcre:/etc/postfix/login_maps.pcre
+smtpd_sender_login_maps = ldap:/etc/postfix/ldap/smtpd_sender_login_maps
 smtpd_sender_restrictions = reject_unauthenticated_sender_login_mismatch
