@@ -1,6 +1,6 @@
 # class base::syslog
 class base::syslog (
-        String $syslog_daemon   = 'rsyslog',
+        String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'rsyslog'}),
     ) {
         if $syslog_daemon == 'rsyslog' {
                 include ::rsyslog
