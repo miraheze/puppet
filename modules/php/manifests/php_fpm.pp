@@ -24,6 +24,7 @@ class php::php_fpm(
     Enum['7.0', '7.1', '7.2', '7.3', '7.4'] $version = '7.2',
     Float $fpm_workers_multiplier = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $fpm_min_restart_threshold        = 1,
+    String $syslog_daemon                     = lookup('base::syslog::syslog_daemon', {'default_value' => 'rsyslog'}),
 ) {
 
     $base_config_cli = {
@@ -187,16 +188,18 @@ class php::php_fpm(
         config => merge($base_fpm_pool_config, $fpm_pool_config),
     }
 
-    # Send logs locally to /var/log/php7.x-fpm/error.log
-    # Please note: this replaces the logrotate rule coming from the package,
-    # because we use syslog-based logging. This will also prevent an fpm reload
-    # for every logrotate run.
-    $fpm_programname = "php${php_version}-fpm"
-    systemd::syslog { $fpm_programname:
-        base_dir     => '/var/log',
-        owner        => 'www-data',
-        group        => 'www-data',
-        readable_by  => 'group',
-        log_filename => 'error.log'
+    if $syslog_daemon == 'rsyslog' {
+        # Send logs locally to /var/log/php7.x-fpm/error.log
+        # Please note: this replaces the logrotate rule coming from the package,
+        # because we use syslog-based logging. This will also prevent an fpm reload
+        # for every logrotate run.
+        $fpm_programname = "php${php_version}-fpm"
+        systemd::syslog { $fpm_programname:
+            base_dir     => '/var/log',
+            owner        => 'www-data',
+            group        => 'www-data',
+            readable_by  => 'group',
+            log_filename => 'error.log'
+        }
     }
 }
