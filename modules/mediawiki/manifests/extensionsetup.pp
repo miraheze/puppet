@@ -1,7 +1,8 @@
 # MediaWiki extension setup
 class mediawiki::extensionsetup {
+    $composer = 'wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar install --no-dev'
     exec { 'wikibase_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/Wikibase/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Wikibase',
         path        => '/usr/bin',
@@ -11,7 +12,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'maps_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/Maps/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Maps',
         path        => '/usr/bin',
@@ -21,7 +22,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'flow_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/Flow/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Flow',
         path        => '/usr/bin',
@@ -31,7 +32,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'cookiewarning_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev && php composer.phar require geoip2/geoip2',
+        command     => "${composer} && php composer.phar require geoip2/geoip2",
         creates     => '/srv/mediawiki/w/extensions/CookieWarning/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/CookieWarning',
         path        => '/usr/bin',
@@ -41,7 +42,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'syntaxhighlight_geshi_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/SyntaxHighlight_GeSHi/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/SyntaxHighlight_GeSHi',
         path        => '/usr/bin',
@@ -51,7 +52,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'oauth_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/OAuth/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/OAuth',
         path        => '/usr/bin',
@@ -61,7 +62,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'templatestyles_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/TemplateStyles/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/TemplateStyles',
         path        => '/usr/bin',
@@ -71,7 +72,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'antispoof_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/AntiSpoof/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/AntiSpoof',
         path        => '/usr/bin',
@@ -81,7 +82,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'kartographer_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/Kartographer/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Kartographer',
         path        => '/usr/bin',
@@ -91,7 +92,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'timedmediahandler_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/TimedMediaHandler/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/TimedMediaHandler',
         path        => '/usr/bin',
@@ -101,7 +102,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'translate_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/Translate/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Translate',
         path        => '/usr/bin',
@@ -111,7 +112,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'oathauth_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/OATHAuth/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/OATHAuth',
         path        => '/usr/bin',
@@ -121,7 +122,7 @@ class mediawiki::extensionsetup {
     }
     
     exec { 'bootstrap_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/Bootstrap/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Bootstrap',
         path        => '/usr/bin',
@@ -132,7 +133,7 @@ class mediawiki::extensionsetup {
 
 
     exec { 'widgets_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/Widgets/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Widgets',
         path        => '/usr/bin',
@@ -142,7 +143,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'mermaid_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/Mermaid/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Mermaid',
         path        => '/usr/bin',
@@ -152,7 +153,7 @@ class mediawiki::extensionsetup {
     }
     
     exec { 'lingo_composer':
-        command     => 'curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev',
+        command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/Lingo/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/Lingo',
         path        => '/usr/bin',
