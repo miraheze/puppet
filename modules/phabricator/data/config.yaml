@@ -118,7 +118,6 @@ phabricator.uninstalled-applications:
   PhabricatorOwnersApplication: true # we don't manage source on Phab
   PhabricatorPackagesApplication: true # no packages to host
   PhabricatorPhluxApplication: true # puppet has hiera
-  PhabricatorPholioApplication: true # we are not designers
   PhabricatorPhortuneApplication: true # we don't need billing stuff
   PhabricatorPhragmentApplication: true # puppet has hiera
   PhabricatorPhrequentApplication: true # SPF spends all of his time well, we don't need to track it
