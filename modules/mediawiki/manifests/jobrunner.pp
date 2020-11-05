@@ -67,13 +67,14 @@ class mediawiki::jobrunner {
             hour    => '18',
         }
 
-        cron { 'managewikis':
+        /*cron { 'managewikis':
             ensure  => absent,
             command => '/usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki loginwiki --write > /var/log/mediawiki/cron/managewikis.log',
             user    => 'www-data',
             minute  => '5',
             hour    => '12',
-        }
+        }*/
+
 
         cron { 'update rottenlinks on all wikis':
             ensure  => present,
