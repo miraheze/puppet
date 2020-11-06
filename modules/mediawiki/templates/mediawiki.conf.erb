@@ -60,9 +60,10 @@ server {
 		fastcgi_read_timeout 140;
 		send_timeout 140;
 	}
-        location /discord {
-                return 301 https://discord.gg/v7HeT96
-        }
+
+	 location /discord {
+	 	 return 301 https://discord.gg/;
+	}
 }
 
 server {
