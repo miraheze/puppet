@@ -11,13 +11,13 @@ class mediawiki::logging {
         mode   => '0755',
     }
 
-    logrotate::conf { 'mediawiki_wikilogs':
+    logrotate::conf { 'mediawiki_cron_logs':
         ensure => present,
-        source => 'puppet:///modules/mediawiki/mediawiki_wikilogs.logrotate.conf',
+        source => 'puppet:///modules/mediawiki/mediawiki_cron_logs.logrotate.conf',
     }
 
-    logrotate::conf { 'mediawiki_debuglogs':
+    logrotate::conf { 'mediawiki_debug_logs':
         ensure => present,
-        source => 'puppet:///modules/mediawiki/mediawiki_debuglogs.logrotate.conf',
+        source => 'puppet:///modules/mediawiki/mediawiki_debug_logs.logrotate.conf',
     }
 }
