@@ -3,7 +3,10 @@ class mariadb::packages(
     Enum['10.2', '10.3', '10.4'] $version = lookup('mariadb::version', {'default_value' => '10.2'}),
 ) {
 
-    package { 'percona-toolkit':
+    package { [
+        'mydumper',
+        'percona-toolkit'
+    ]:
         ensure => present,
     }
 
