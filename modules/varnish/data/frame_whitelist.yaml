@@ -1,3 +1,4 @@
 # Only add a domain if really necessary.
 url1: '*.miraheze.org'
 url2: 'www.desmos.com'
+url3: 'snap.berkeley.edu'
