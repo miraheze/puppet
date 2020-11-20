@@ -97,6 +97,7 @@ class mediawiki(
     $matomotoken           = lookup('passwords::mediawiki::matomotoken')
     $yandextranslation_key = lookup('passwords::mediawiki::yandextranslationkey')
     $ldap_password         = lookup('passwords::mediawiki::ldap_password')
+	$mediamoderation_key   = lookup('passwords::mediawiki::mediamoderation_key')
 
     $wiki_discord_hooks_url = lookup('mediawiki::wiki_discord_hooks_url')
     $wiki_slack_hooks_url = lookup('mediawiki::wiki_slack_hooks_url')

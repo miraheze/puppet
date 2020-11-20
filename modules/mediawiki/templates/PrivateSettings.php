@@ -44,3 +44,6 @@ $wmgWikiMirahezeSlackHooks = array(
 
 // writer-user password (ldap)
 $wmgLdapPassword = "<%= @ldap_password %>";
+
+// MediaModeration API key
+$wgMediaModerationPhotoDNASubscriptionKey = "<%= @mediamoderation_key %>";
