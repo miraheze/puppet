@@ -54,6 +54,12 @@ class postfix {
         notify  => Service['postfix'],
     }
 
+    file { '/etc/postfix/ldap/virtual_alias_groups':
+        ensure  => present,
+        content => template('postfix/virtual_alias_groups'),
+        notify  => Service['postfix'],
+    }
+
     service { 'postfix':
         ensure    => running,
         require   => Package['postfix'],
