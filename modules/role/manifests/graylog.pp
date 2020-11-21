@@ -3,10 +3,6 @@ class role::graylog {
     include ssl::wildcard
     include ::java
 
-    motd::role { 'role::graylog':
-        description => 'central logging server',
-    }
-
     nginx::site { 'graylog_proxy':
         ensure  => present,
         source  => 'puppet:///modules/role/graylog/graylog.miraheze.org.conf',
@@ -23,11 +19,11 @@ class role::graylog {
     }
 
     class { 'elastic_stack::repo':
-        version => 6,
+        version => 7,
     }
 
     class { 'elasticsearch':
-        version         => '6.8.13',
+        version         => '7.10.0',
         manage_repo     => true,
         config          => {
             'cluster.name'  => 'graylog',
@@ -37,13 +33,17 @@ class role::graylog {
     }
 
     class { 'graylog::repository':
-        version => '3.3',
+        version => '4.0',
     }->
     class { 'graylog::server':
-        package_version => '3.3.8-1',
+        package_version => '4.0.0-1',
         config          => {
             'password_secret'       => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'    => lookup('passwords::graylog::root_password_sha2'),
         }
+    }
+
+    motd::role { 'role::graylog':
+        description => 'central logging server',
     }
 }
