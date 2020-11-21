@@ -27,7 +27,7 @@ class role::graylog {
     }
 
     class { 'elasticsearch':
-        version         => '6.8.12',
+        version         => '6.8.13',
         manage_repo     => true,
         config          => {
             'cluster.name'  => 'graylog',
