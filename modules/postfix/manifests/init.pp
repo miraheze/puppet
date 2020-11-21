@@ -54,18 +54,6 @@ class postfix {
         notify  => Service['postfix'],
     }
 
-    file { '/etc/postfix/ldap/virtual_gid_maps':
-        ensure  => present,
-        content => template('postfix/virtual_gid_maps'),
-        notify  => Service['postfix'],
-    }
-
-    file { '/etc/postfix/ldap/virtual_uid_maps':
-        ensure  => present,
-        content => template('postfix/virtual_uid_maps'),
-        notify  => Service['postfix'],
-    }
-
     service { 'postfix':
         ensure    => running,
         require   => Package['postfix'],

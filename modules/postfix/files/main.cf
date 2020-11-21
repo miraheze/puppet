@@ -15,8 +15,8 @@ virtual_mailbox_base = /var/mail
 virtual_alias_domains = ldap:/etc/postfix/ldap/virtual_alias_domains
 virtual_alias_maps = ldap:/etc/postfix/ldap/virtual_alias_maps
 virtual_mailbox_maps = ldap:/etc/postfix/ldap/virtual_mailbox_maps
-virtual_uid_maps = ldap:/etc/postfix/ldap/virtual_uid_maps
-virtual_gid_maps = ldap:/etc/postfix/ldap/virtual_gid_maps
+virtual_uid_maps = static:111
+virtual_gid_maps = static:8
 
 smtpd_sasl_type = dovecot
 smtpd_sasl_path = private/auth
