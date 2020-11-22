@@ -42,7 +42,7 @@ class role::graylog {
     }
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
-    $fwHttps = query_facts('domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])', ['ipaddress', 'ipaddress6'])
+    $fwHttps = query_facts("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
     $fwHttps.each |$key, $value| {
         ufw::allow { "graylog access 443/tcp for ${value['ipaddress']}":
             proto => 'tcp',
@@ -58,7 +58,7 @@ class role::graylog {
     }
 
     # syslog-ng > graylog 12210/tcp
-    $fwSyslog = query_facts('domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])', ['ipaddress', 'ipaddress6'])
+    $fwSyslog = query_facts("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
     $fwSyslog.each |$key, $value| {
         ufw::allow { "graylog access 12210/tcp for ${value['ipaddress']}":
             proto => 'tcp',
