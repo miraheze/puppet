@@ -5,6 +5,8 @@ Description=Miraheze JobChron
 Type=simple
 ExecStart=/srv/jobrunner/redisJobChronService --config-file=/srv/jobrunner/jobrunner.json
 User=www-data
+StandardOutput=syslog
+StandardError=syslog
 SyslogIdentifier=jobchron
 Restart=always
 
