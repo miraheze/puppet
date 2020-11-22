@@ -43,6 +43,21 @@ class role::graylog {
         }
     }
 
+    $firewallMon = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
+    $firewallMon.each |$key, $value| {
+        ufw::allow { "graylog mediawiki access to 443 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 443,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "graylog mediawiki access to 443 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 443,
+            from  => $value['ipaddress6'],
+        }
+    }
+
     motd::role { 'role::graylog':
         description => 'central logging server',
     }
