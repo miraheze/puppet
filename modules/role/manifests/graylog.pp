@@ -3,11 +3,6 @@ class role::graylog {
     include ssl::wildcard
     include ::java
 
-    nginx::site { 'graylog_proxy':
-        ensure  => present,
-        source  => 'puppet:///modules/role/graylog/graylog.miraheze.org.conf',
-    }
-
     # NOT setting ufw ports here yet!
 
     class { 'mongodb::globals':
@@ -40,6 +35,11 @@ class role::graylog {
         config          => {
             'password_secret'       => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'    => lookup('passwords::graylog::root_password_sha2'),
+            'http_bind_address'     => 'localhost:8007',
+            'http_publish_uri'      => 'https://localhost:8007/',
+            'http_enable_tls'       => true,
+            'http_tls_cert_file'    => '/etc/ssl/certs/wildcard.miraheze.org-2020.crt',
+            'http_tls_key_file'     => '/etc/ssl/private/wildcard.miraheze.org-2020.key',
         }
     }
 
