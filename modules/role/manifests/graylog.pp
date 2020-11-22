@@ -8,8 +8,6 @@ class role::graylog {
         source  => 'puppet:///modules/role/graylog/graylog.miraheze.org.conf',
     }
 
-    # NOT setting ufw ports here yet!
-
     class { 'mongodb::globals':
         manage_package_repo => true,
         version             => '4.4.2',
@@ -43,17 +41,34 @@ class role::graylog {
         }
     }
 
-    $firewallMon = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
-    $firewallMon.each |$key, $value| {
-        ufw::allow { "graylog mediawiki access to 443 ${value['ipaddress']}":
+    # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
+    $fwHttps = query_facts('domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])', ['ipaddress', 'ipaddress6'])
+    $fwHttps.each |$key, $value| {
+        ufw::allow { "graylog access 443/tcp for ${value['ipaddress']}":
             proto => 'tcp',
             port  => 443,
             from  => $value['ipaddress'],
         }
 
-        ufw::allow { "graylog mediawiki access to 443 ${value['ipaddress6']}":
+        ufw::allow { "graylog access 443/tcp for ${value['ipaddress6']}":
             proto => 'tcp',
             port  => 443,
+            from  => $value['ipaddress6'],
+        }
+    }
+
+    # syslog-ng > graylog 12210/tcp
+    $fwSyslog = query_facts('domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])', ['ipaddress', 'ipaddress6'])
+    $fwSyslog.each |$key, $value| {
+        ufw::allow { "graylog access 12210/tcp for ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 12210,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "graylog access 12210/tcp for ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 12210,
             from  => $value['ipaddress6'],
         }
     }
