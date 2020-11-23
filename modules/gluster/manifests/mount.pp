@@ -64,78 +64,85 @@ define gluster::mount (
   Enum['defined', 'present', 'unmounted', 'absent', 'mounted'] $ensure  = 'mounted',
 ) {
 
-  include gluster::apt
+	include gluster::apt
 
-  package { 'glusterfs-client':
-      ensure   => installed,
-      require  => Class['gluster::apt'],
-  }
+	package { 'glusterfs-client':
+		ensure   => installed,
+		require  => Class['gluster::apt'],
+	}
 
-  exec { $title:
-      command => "/bin/mkdir -p '${title}'",
-      user    => 'root',
-      group   => 'root',
-      creates => $title,
-      before  => Mount[$title],
-  }
+	exec { $title:
+		command => "/bin/mkdir -p '${title}'",
+		user    => 'root',
+		group   => 'root',
+		creates => $title,
+		before  => Mount[$title],
+	}
 
-  if !defined(File['glusterfs.pem']) {
-    file { 'glusterfs.pem':
-      ensure => 'present',
-      source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020.crt',
-      path   => '/etc/ssl/glusterfs.pem',
-      owner  => 'root',
-      group  => 'root',
+	if !defined(File['glusterfs.pem']) {
+		file { 'glusterfs.pem':
+			ensure => 'present',
+			source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020.crt',
+			path   => '/etc/ssl/glusterfs.pem',
+			owner  => 'root',
+			group  => 'root',
+		}
+	}
+
+	if !defined(File['glusterfs.key']) {
+		file { 'glusterfs.key':
+			ensure => 'present',
+			source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020.key',
+			path   => '/etc/ssl/glusterfs.key',
+			owner  => 'root',
+			group  => 'root',
+			mode   => '0660',
+		}
+	}
+
+	if !defined(File['glusterfs.ca']) {
+		file { 'glusterfs.ca':
+		ensure => 'present',
+		source => 'puppet:///ssl/ca/Sectigo.crt',
+		path   => '/etc/ssl/glusterfs.ca',
+		owner  => 'root',
+		group  => 'root',
+		}
+	}
+
+	if !defined(File['/var/lib/glusterd/secure-access']) {
+		file { '/var/lib/glusterd':
+			ensure  => directory,
+			require => Package['glusterfs-client'],
+		}
+
+		file { '/var/lib/glusterd/secure-access':
+			ensure  => present,
+			source  => 'puppet:///modules/gluster/secure-access',
+			require => File['/var/lib/glusterd'],
+		}
+	}
+
+	$base_options = "defaults,transport=tcp,noauto,x-systemd.automount,attribute-timeout=0,entry-timeout=0,noexec"
+
+	$mount_options = $options ? {
+		undef   => $base_options,
+		default => "${base_options},${options}",
+	}
+
+	mount { $title:
+		ensure   => $ensure,
+		fstype   => 'glusterfs',
+		remounts => false,
+		device   => $volume,
+		options  => $mount_options,
+		require  => File['/var/lib/glusterd/secure-access']
+	}
+
+    monitoring::services { 'Check Gluster Clients':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_glusterd_client',
+        },
     }
-  }
-
-  if !defined(File['glusterfs.key']) {
-    file { 'glusterfs.key':
-      ensure => 'present',
-      source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020.key',
-      path   => '/etc/ssl/glusterfs.key',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0660',
-    }
-  }
-
-  if !defined(File['glusterfs.ca']) {
-    file { 'glusterfs.ca':
-      ensure => 'present',
-      source => 'puppet:///ssl/ca/Sectigo.crt',
-      path   => '/etc/ssl/glusterfs.ca',
-      owner  => 'root',
-      group  => 'root',
-    }
-  }
-
-  if !defined(File['/var/lib/glusterd/secure-access']) {
-    file { '/var/lib/glusterd':
-      ensure  => directory,
-      require => Package['glusterfs-client'],
-    }
-
-    file { '/var/lib/glusterd/secure-access':
-      ensure  => present,
-      source  => 'puppet:///modules/gluster/secure-access',
-      require => File['/var/lib/glusterd'],
-    }
-  }
-
-  $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,attribute-timeout=0,entry-timeout=0,noexec"
-
-  $mount_options = $options ? {
-      undef   => $base_options,
-      default => "${base_options},${options}",
-  }
-
-  mount { $title:
-    ensure   => $ensure,
-    fstype   => 'glusterfs',
-    remounts => false,
-    device   => $volume,
-    options  => $mount_options,
-    require  => File['/var/lib/glusterd/secure-access']
-  }
 }

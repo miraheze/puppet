@@ -42,10 +42,12 @@ command[check_jobchron]=/usr/lib/nagios/plugins/check_procs -a redisJobChronServ
 command[check_jobqueue]=/usr/bin/sudo -u www-data /usr/lib/nagios/plugins/check_jobqueue
 command[check_icinga_config]=/usr/lib/nagios/plugins/check_icinga_config /etc/icinga/icinga.cfg
 command[check_mysql-replication]=/usr/lib/nagios/plugins/check_mysql-replication.pl -sa localhost -sl icinga -spd <%= @icinga_password %> -a both -w 10 -c 30 -D "MariaDB replication - "
-# glusterfs deamon
-command[check_glusterd]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterd -c 1:
-# glusterfs brick
+# glusterfsd brick
 command[check_glusterd_volume]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfsd -c 1:
+# glusterfs client
+command[check_glusterd]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfs -c 1:
+# glusterd deamon
+command[check_glusterd]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterd -c 1:
 
 # check stunnel http
 command[check_stunnel_mon1]=/usr/lib/nagios/plugins/check_http -H localhost:8201
