@@ -74,13 +74,18 @@ class gluster {
         }
     }
 
-    [24007, 49152].each |$port| {
-        monitoring::services { "GlusterFS port ${port}":
-            check_command => 'tcp',
-            vars          => {
-                tcp_port    => $port,
-            },
-        }
+    monitoring::services { 'glusterd':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_glusterd',
+        },
+    }
+
+    monitoring::services { 'glusterd_volume':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_glusterd_volume',
+        },
     }
 
     if lookup('gluster_client', {'default_value' => false}) {
