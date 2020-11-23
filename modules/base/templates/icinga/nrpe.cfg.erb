@@ -45,7 +45,7 @@ command[check_mysql-replication]=/usr/lib/nagios/plugins/check_mysql-replication
 # glusterfsd brick
 command[check_glusterd_volume]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfsd -c 1:
 # glusterfs client
-command[check_glusterd]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfs -c 1:
+command[check_glusterd_client]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfs -c 1:
 # glusterd deamon
 command[check_glusterd]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterd -c 1:
 
