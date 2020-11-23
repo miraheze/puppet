@@ -11,3 +11,4 @@ mediawiki::php::fpm::childs: 1
 mediawiki::php::fpm::fpm_min_restart_threshold: 1
 php::php_version: '7.3'
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
+base::syslog::syslog_daemon: 'syslog_ng'
