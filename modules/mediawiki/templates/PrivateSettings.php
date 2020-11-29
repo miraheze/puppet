@@ -29,18 +29,18 @@ $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 $wmgYandexTranslationKey = "<%= @yandextranslation_key %>";
 
 // Extension:DiscordNotifications hooks
-$wmgWikiMirahezeDiscordHooks = [
+$wmgWikiMirahezeDiscordHooks = array(
 <%- @wiki_discord_hooks_url.each_pair do |wiki, values| -%>
     '<%= wiki %>' => <%= values %>,
 <%- end -%>
-];
+);
 
 // Extension:SlackNotifications hooks
-$wmgWikiMirahezeSlackHooks = [
+$wmgWikiMirahezeSlackHooks = array(
 <%- @wiki_slack_hooks_url.each_pair do |wiki, values| -%>
     '<%= wiki %>' => '<%= values %>',
 <%- end -%>
-];
+);
 
 // writer-user password (ldap)
 $wmgLdapPassword = "<%= @ldap_password %>";
