@@ -1,7 +1,7 @@
 # mediawiki::php
 class mediawiki::php (
-    $php_fpm_childs = lookup('mediawiki::php::fpm::childs', {'default_value' => 26}),
-    $fpm_min_restart_threshold = lookup('mediawiki::php::fpm::fpm_min_restart_threshold', {'default_value' => 6}),
+    $php_fpm_childs = lookup('mediawiki::php::fpm::childs', {'default_value' => 30}),
+    $fpm_min_restart_threshold = lookup('mediawiki::php::fpm::fpm_min_restart_threshold', {'default_value' => 10}),
     $php_version = lookup('php::php_version', {'default_value' => '7.2'}),
     Optional[Boolean] $use_tideways = undef,
 ) {
