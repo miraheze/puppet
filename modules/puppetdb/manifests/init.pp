@@ -178,15 +178,4 @@ class puppetdb(
         },
     }
 
-    ufw::allow { 'misc1 check puppetdb port ipv4':
-        proto => 'tcp',
-        port  => 8081,
-        from  => '51.89.160.138',
-    }
-
-    ufw::allow { 'misc1 check puppetdb port ipv6':
-        proto => 'tcp',
-        port  => 8081,
-        from  => '2001:41d0:800:105a::6',
-    }
 }

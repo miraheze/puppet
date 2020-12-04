@@ -26,12 +26,6 @@ class letsencrypt::web {
         require => File['/etc/systemd/system/mirahezerenewssl.service'],
     }
 
-    ufw::allow { "misc1 to port 5000":
-        proto => 'tcp',
-        port  => 5000,
-        from  => '185.52.1.76',
-    }
-
     ufw::allow { "mon1 ipv4 to port 5000":
         proto => 'tcp',
         port  => 5000,
