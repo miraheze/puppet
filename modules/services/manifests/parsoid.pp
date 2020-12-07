@@ -75,7 +75,7 @@ class services::parsoid {
     }
 
     systemd::service { 'parsoid':
-        ensure  => present,
+        ensure  => stopped,
         content => systemd_template('parsoid'),
         restart => true,
         require => Git::Clone['parsoid'],
