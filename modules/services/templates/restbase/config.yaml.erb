@@ -1,7 +1,6 @@
 # RESTBase config for large or small wiki installs
 #
 # - sqlite backend
-# - parsoid at https://parsoid-lb.miraheze.org
 # - wiki at https://<wiki>.miraheze.org/w/api.php or https://<custom_wiki>/w/api.php
 #
 
@@ -17,9 +16,6 @@ default_project: &default_project
             x-modules:
               - path: /etc/mediawiki/restbase/miraheze_project_v1.yaml
                 options: &default_options
-                  parsoid:
-                    host: https://parsoid-lb.miraheze.org
-                    grace_ttl: 1000000
                   action:
                     apiUriTemplate: "{{'https://{domain}/w/api.php'}}"
                     baseUriTemplate: "{{'https://{domain}/api/rest_v1'}}"
@@ -83,8 +79,6 @@ spec_root: &spec_root
       options:
         allow:
           - pattern: /^https?:\/\/[a-zA-Z0-9\._-]+\/w\/api\.php/
-            forward_headers: true
-          - pattern: /^https?:\/\/parsoid-lb.miraheze.org.+/
             forward_headers: true
           - pattern: /^https?:\/\//
   paths:
