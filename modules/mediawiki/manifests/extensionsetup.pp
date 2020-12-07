@@ -110,17 +110,6 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
-    
-    exec { 'bootstrap_composer':
-        command     => $composer,
-        creates     => '/srv/mediawiki/w/extensions/Bootstrap/composer.phar',
-        cwd         => '/srv/mediawiki/w/extensions/Bootstrap',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/mediawiki/w/Bootstrap',
-        user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
-    }
-
 
     exec { 'widgets_composer':
         command     => $composer,
