@@ -69,6 +69,7 @@ class base::puppet (
 
     service { 'puppet':
         ensure => stopped,
+        enable => false,
     }
 
     file { '/usr/local/bin/puppet-enabled':
