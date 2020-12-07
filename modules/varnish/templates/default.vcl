@@ -180,11 +180,6 @@ sub mw_rate_limit {
 				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
 					return (synth(429, "Varnish Rate Limit Exceeded"));
 				}
-			} elsif (req.url ~ "^/w/api\.php" && req.http.User-Agent ~ "^Parsoid") {
-				# Parsoid may send up to 120 requests per minute to api.php
-				if (vsthrottle.is_denied("parsoid:" + req.http.X-Real-IP, 120, 10s)) {
-					return (synth(429, "Varnish Rate Limit Exceeded"));
-				}
 			} else {
 				# Fallback
 				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 12, 2s)) {
