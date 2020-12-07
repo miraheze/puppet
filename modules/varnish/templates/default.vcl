@@ -272,6 +272,11 @@ sub mw_vcl_recv {
 	if (req.url ~ "^/w/resources") {
 		set req.http.Host = "meta.miraheze.org";
 	}
+
+	# Do not cache rest.php (Parsoid new entry point)
+	if (req.url ~ "^/w/rest.php") {
+		return (pass);
+	}
  
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
