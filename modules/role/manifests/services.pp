@@ -32,24 +32,6 @@ class role::services {
         }
     }
 
-    if lookup('enable_parsoid', {'default_value' => true}) {
-        include ::profile::parsoid
-
-        $firewallMon.each |$key, $value| {
-            ufw::allow { "parsoid monitoring ${value['ipaddress']}":
-                proto => 'tcp',
-                port  => 8142,
-                from  => $value['ipaddress'],
-            }
-
-            ufw::allow { "parsoid monitoring ${value['ipaddress6']}":
-                proto => 'tcp',
-                port  => 8142,
-                from  => $value['ipaddress6'],
-            }
-        }
-    }
-
     if lookup('enable_proton', {'default_value' => true}) {
         include ::profile::proton
 
