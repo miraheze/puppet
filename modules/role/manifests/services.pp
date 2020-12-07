@@ -84,6 +84,6 @@ class role::services {
     }
 
     motd::role { 'role::services':
-        description => 'Hosting MediaWiki services (citoid, parsoid, proton, restbase etc)',
+        description => 'Hosting MediaWiki services (citoid, proton, restbase etc)',
     }
 }
