@@ -10,9 +10,9 @@
 numtimes = 60 / @interval
 times = Array.new(numtimes) { |t| t = (t * @interval + @crontime) % 60 }.sort.join(',')
 -%>
-<% if @cron_time %>
+<%- if @cron_time -%>
 <%= @cron_time %> * * * * root /usr/local/sbin/puppet-run > /dev/null 2>&1
-<% else %>
+<%- else -%>
 <%= times %> * * * * root /usr/local/sbin/puppet-run > /dev/null 2>&1
-<% end %>
+<%- end -%>
 @reboot              root /usr/local/sbin/puppet-run > /dev/null 2>&1
