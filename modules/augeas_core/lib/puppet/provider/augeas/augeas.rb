@@ -367,8 +367,18 @@ Puppet::Type.type(:augeas).provide(:augeas) do
       load_path.flatten!
     end
 
-    if Puppet::FileSystem.exist?("#{Puppet[:libdir]}/augeas/lenses")
-      load_path << "#{Puppet[:libdir]}/augeas/lenses"
+    if Puppet::Application.name == :agent
+      if Puppet::FileSystem.exist?("#{Puppet[:libdir]}/augeas/lenses")
+        load_path << "#{Puppet[:libdir]}/augeas/lenses"
+      end
+    else
+      env = Puppet.lookup(:current_environment)
+      env.each_plugin_directory do |dir|
+        lenses = File.join(dir, 'augeas', 'lenses')
+        if File.exist?(lenses)
+          load_path << lenses
+        end
+      end
     end
 
     load_path.join(':')

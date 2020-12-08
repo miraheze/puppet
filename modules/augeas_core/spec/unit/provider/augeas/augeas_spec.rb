@@ -1121,15 +1121,42 @@ describe Puppet::Type.type(:augeas).provider(:augeas) do
       expect(provider.get_load_path(resource)).to eq('/foo:/bar:/baz')
     end
 
-    it 'offers pluginsync augeas/lenses subdir' do
-      Puppet[:libdir] = my_fixture_dir
-      expect(provider.get_load_path(resource)).to eq("#{my_fixture_dir}/augeas/lenses")
+    context 'when running application is agent' do
+      before(:each) do
+        Puppet[:libdir] = my_fixture_dir
+        Puppet::Application.stubs(:name).returns(:agent)
+      end
+
+      it 'offers pluginsync augeas/lenses subdir' do
+        expect(provider.get_load_path(resource)).to eq("#{my_fixture_dir}/augeas/lenses")
+      end
+
+      it 'offers both pluginsync and load_path paths' do
+        resource[:load_path] = ['/foo', '/bar', '/baz']
+        expect(provider.get_load_path(resource)).to eq("/foo:/bar:/baz:#{my_fixture_dir}/augeas/lenses")
+      end
     end
 
-    it 'offers both pluginsync and load_path paths' do
-      Puppet[:libdir] = my_fixture_dir
-      resource[:load_path] = ['/foo', '/bar', '/baz']
-      expect(provider.get_load_path(resource)).to eq("/foo:/bar:/baz:#{my_fixture_dir}/augeas/lenses")
+    context 'when running application is not agent' do
+      before(:each) do
+        Puppet::Application.stubs(:name).returns(:apply)
+
+        env = Puppet::Node::Environment.create('root', ['/modules/foobar'])
+        Puppet.stubs(:lookup).returns(env)
+        env.stubs(:each_plugin_directory).yields('/modules/foobar')
+
+        resource[:load_path] = ['/foo', '/bar', '/baz']
+      end
+
+      it 'offers both load_path and module lenses path when available' do
+        File.stubs(:exist?).with('/modules/foobar/augeas/lenses').returns(true)
+        expect(provider.get_load_path(resource)).to eq('/foo:/bar:/baz:/modules/foobar/augeas/lenses')
+      end
+
+      it 'offers only load_path if module lenses path is not available' do
+        File.stubs(:exist?).with('/modules/foobar/augeas/lenses').returns(false)
+        expect(provider.get_load_path(resource)).to eq('/foo:/bar:/baz')
+      end
     end
   end
 end

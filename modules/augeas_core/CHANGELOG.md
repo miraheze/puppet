@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [1.1.1](https://github.com/puppetlabs/puppetlabs-augeas_core/tree/1.1.1) (2020-09-29)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-augeas_core/compare/1.1.0...1.1.1)
+
+### Fixed
+
+- \(maint\) Readd puppet-blacksmith dependency [\#30](https://github.com/puppetlabs/puppetlabs-augeas_core/pull/30) ([GabrielNagy](https://github.com/GabrielNagy))
+
+## [1.1.0](https://github.com/puppetlabs/puppetlabs-augeas_core/tree/1.1.0) (2020-09-29)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-augeas_core/compare/1.0.5...1.1.0)
+
+### Added
+
+- \(MODULES-7397\) Load Augeas lenses from modules [\#27](https://github.com/puppetlabs/puppetlabs-augeas_core/pull/27) ([luchihoratiu](https://github.com/luchihoratiu))
+
 ## [1.0.5](https://github.com/puppetlabs/puppetlabs-augeas_core/tree/1.0.5) (2019-10-31)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-augeas_core/compare/1.0.4...1.0.5)
