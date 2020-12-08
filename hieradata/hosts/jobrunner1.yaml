@@ -11,7 +11,7 @@ mediawiki::php::fpm::childs: 1
 mediawiki::php::fpm::fpm_min_restart_threshold: 1
 php::php_version: '7.3'
 redis::heap: '1000mb'
-role::salt::minions::salt_master: 'puppet2.miraheze.org'
 mediawiki::jobrunner::cron: true
 nginx::use_graylog: true
 base::syslog::syslog_daemon: 'syslog_ng'
+puppet_cron_time: '2,32'
