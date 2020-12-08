@@ -7,8 +7,8 @@
 # provided by `crontime` which is calculated using `fqdn_rand`.  our interval
 # is 30 which means `numtimes` will always be two.  we then use modulus to
 # to ensure all values remain under 60
-numtimes = 60 / @interval
-times = Array.new(numtimes) { |t| t = (t * @interval + @crontime) % 60 }.sort.join(',')
+numtimes = 60 / 30
+times = Array.new(numtimes) { |t| t = (t * 30 + @crontime) % 60 }.sort.join(',')
 -%>
 <%- if @cron_time -%>
 <%= @cron_time %> * * * * root /usr/local/sbin/puppet-run > /dev/null 2>&1
