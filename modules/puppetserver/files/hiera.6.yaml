@@ -9,6 +9,5 @@ hierarchy:
       - "private/%{::hostname}.yaml"
       - "hosts/%{::hostname}.yaml"
       - "private/common.yaml"
-      - "role/common/%{::_role}.yaml"
       - "ssl.yaml"
       - "common.yaml"
