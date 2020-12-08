@@ -46,11 +46,20 @@ class base::puppet (
         mode   => '0750',
     }
 
-    cron { 'puppet-agent':
-        command => '/usr/bin/puppet agent -tv >> /var/log/puppet/puppet.log',
-        user    => 'root',
-        hour    => '*',
-        minute  => '*/10',
+    file { '/usr/local/sbin/puppet-run':
+        mode    => '0555',
+        owner   => 'root',
+        group   => 'root',
+        content => template('base/puppet-run.erb'),
+        require => File['/var/log/puppet'],
+    }
+
+    file { '/etc/cron.d/puppet':
+        mode    => '0444',
+        owner   => 'root',
+        group   => 'root',
+        content => template('base/puppet/puppet.cron.erb'),
+        require => File['/usr/local/sbin/puppet-run'],
     }
 
     logrotate::conf { 'puppet':
