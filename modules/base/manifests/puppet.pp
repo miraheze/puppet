@@ -50,7 +50,7 @@ class base::puppet (
         mode    => '0555',
         owner   => 'root',
         group   => 'root',
-        content => template('base/puppet-run.erb'),
+        content => template('base/puppet/puppet-run.erb'),
         require => File['/var/log/puppet'],
     }
 
