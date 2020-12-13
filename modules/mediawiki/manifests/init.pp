@@ -130,7 +130,7 @@ class mediawiki(
     }
 
     exec { 'ExtensionMessageFiles':
-        command     => 'php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php',
+        command     => 'nice -n 15 php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php',
         creates     => '/srv/mediawiki/config/ExtensionMessageFiles.php',
         cwd         => '/srv/mediawiki/config',
         path        => '/usr/bin',
