@@ -9,7 +9,10 @@ worker_heap_limit_mb: 120
 
 # Logger info
 logging:
-  level: info
+  level: trace
+  streams:
+  - type: stdout # log to stdout
+    named_levels: true # emit log level name instead of index. e.g. INFO vs 30
 
 # Statsd metrics reporter
 metrics:
@@ -76,7 +79,7 @@ services:
       pdf_options:
         scale: 1
         displayHeaderFooter: false
-        printBackground: false
+        printBackground: true
         landscape: false
         pageRanges: ''
         format: 'Letter'
@@ -99,6 +102,11 @@ services:
           - '--hide-scrollbars'
           - '--disable-gpu'
           - '--no-first-run'
+          - '--single-process'
+          - '--no-zygote'
+      # Regexp of domains the browser is not allowed to access during rendering the page.
+      # Case-insensitive, gets anchored automatically.
+      # host_blacklist: '^(?!localhost$).*'
       # the maximum number of puppeteer instances that can be launched at a time
       render_concurrency: 1
       # don't wait to render a PDF after this many seconds
