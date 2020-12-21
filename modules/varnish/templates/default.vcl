@@ -212,12 +212,6 @@ sub mw_vcl_recv {
 	call mw_rate_limit;
 	call mw_identify_device;
 
-	# Redirects <url>/sitemap to static.miraheze.org/sitemap/
-	if (req.url ~ "^/sitemap" && req.http.Host != "static.miraheze.org") {
-		set req.url = "/sitemaps/" + req.http.Host + req.url;
-		set req.http.Host = "static.miraheze.org";
-	}
-
 	# HACK for T217669
 	if (req.url ~ "/wiki/undefined/api.php") {
 		set req.url = regsuball(req.url, "/wiki/undefined/api.php", "/w/api.php");
