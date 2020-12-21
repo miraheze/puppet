@@ -197,11 +197,6 @@ server {
 	location /dumps {
 		autoindex on;
 	}
-
-	location /sitemaps {
-		autoindex on;
-		try_files $uri $uri/ $uri.xml =404;
-	}
 }
 
 server {
