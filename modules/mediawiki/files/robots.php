@@ -26,4 +26,4 @@ echo "Disallow: /" . "\r\n\n";
 
 # Dynamic sitemap url
 echo "# Dynamic sitemap url" . "\r\n";
-echo "Sitemap: https://$_SERVER[HTTP_HOST]/sitemaps/sitemap.xml" . "\r\n\n";
+echo "Sitemap: https://$_SERVER[HTTP_HOST]/wiki/Special:RedirectSitemap" . "\r\n\n";
