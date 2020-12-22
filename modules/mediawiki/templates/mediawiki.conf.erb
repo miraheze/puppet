@@ -190,11 +190,11 @@ server {
 		try_files /../../usr/share/nginx/favicons/apple-touch-icon-$host.png /../../usr/share/nginx/favicons/apple-touch-icon-default.png;
 	}
 
-	location /private {
+	location /private/ {
 		deny all;
 	}
 
-	location /dumps {
+	location /dumps/ {
 		autoindex on;
 	}
 }
