@@ -253,7 +253,7 @@ sub mw_vcl_recv {
 	}
 
 	# Don't cache dumps, and such
-	if (req.http.Host == "static.miraheze.org" && req.url !~ "^/.*wiki") {
+	if (req.http.Host == "static.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/.*wiki/sitemaps")) {
 		return (pass);
 	}
 
