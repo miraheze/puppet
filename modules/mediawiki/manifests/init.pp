@@ -55,6 +55,7 @@ class mediawiki(
         group              => 'www-data',
         mode               => '0755',
         timeout            => '1500',
+        depth              => '1',
         recurse_submodules => true,
         require            => File['/srv/mediawiki'],
     }
