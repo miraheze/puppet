@@ -1,9 +1,28 @@
-# role: services
-class role::services {
+# = Class: role::services
+#
+# Sets up Citeoid, Proton and Restbase.
+#
+# = Parameters
+#
+# [*citoid*]
+#   A boolean on whether to enable citoid.
+#
+# [*proton*]
+#   A boolean on whether to enable proton.
+#
+# [*restbase*]
+#   A boolean on whether to enable restbase.
+#
+class role::services (
+    Boolean $citoid   = lookup('enable_citoid', {'default_value' => true}),
+    Boolean $proton   = lookup('enable_proton', {'default_value' => true}),
+    Boolean $restbase = lookup('enable_restbase', {'default_value' => true})
+) {
 
     $firewallMon = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
-    if lookup('enable_citoid', {'default_value' => true}) {
-        include ::profile::citoid
+
+    if $citoid {
+        class { '::services::citoid': }
 
         $firewallMon.each |$key, $value| {
             ufw::allow { "citoid monitoring ${value['ipaddress']}":
@@ -32,8 +51,8 @@ class role::services {
         }
     }
 
-    if lookup('enable_proton', {'default_value' => true}) {
-        include ::profile::proton
+    if $proton {
+        class { '::services::proton': }
 
         $firewallMon.each |$key, $value| {
             ufw::allow { "proton monitoring ${value['ipaddress']}":
@@ -50,8 +69,8 @@ class role::services {
         }
     }
 
-    if lookup('enable_restbase', {'default_value' => true}) {
-        include ::profile::restbase
+    if $restbase {
+        class { '::services::restbase': }
 
         $firewallMon.each |$key, $value| {
             ufw::allow { "restbase monitoring ${value['ipaddress']}":
@@ -84,6 +103,6 @@ class role::services {
     }
 
     motd::role { 'role::services':
-        description => 'Hosting MediaWiki services (citoid, proton, restbase etc)',
+        description => 'Hosting MediaWiki services (citoid, proton, restbase)',
     }
 }
