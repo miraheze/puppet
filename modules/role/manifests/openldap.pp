@@ -4,7 +4,10 @@
 #
 # = Parameters
 #
-class role::openldap {
+class role::openldap (
+    String $admin_password = lookup('profile::openldap::admin_password'),
+    String $ldapvi_password = lookup('profile::openldap::ldapvi_password'),
+) {
     include ssl::wildcard
 
     class { 'openldap::server':
