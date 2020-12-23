@@ -43,6 +43,12 @@ backend mw4 {
 	.probe = mwhealth;
 }
 
+backend mw5 {
+	.host = "127.0.0.1";
+	.port = "8086";
+	.probe = mwhealth;
+}
+
 backend mw6 {
 	.host = "127.0.0.1";
 	.port = "8087";
@@ -74,6 +80,11 @@ backend mw4_test {
 	.port = "8085";
 }
 
+backend mw5_test {
+	.host = "127.0.0.1";
+	.port = "8086";
+}
+
 backend mw6_test {
 	.host = "127.0.0.1";
 	.port = "8087";
@@ -90,6 +101,7 @@ backend mw7_test {
 sub vcl_init {
 	new mediawiki = directors.round_robin();
 	mediawiki.add_backend(mw4);
+	mediawiki.add_backend(mw5);
 	mediawiki.add_backend(mw6);
 	mediawiki.add_backend(mw7);
 }
@@ -101,6 +113,8 @@ acl purge {
 	"2001:41d0:800:105a::3"; # test2
 	"51.89.160.128"; # mw4
 	"2001:41d0:800:1056::3"; # mw4
+	"51.89.160.133"; # mw5
+	"2001:41d0:800:1056::8"; # mw5
 	"51.89.160.136"; # mw6
 	"2001:41d0:800:105a::4"; # mw6
 	"51.89.160.137"; # mw7
@@ -210,6 +224,9 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw4.miraheze.org") {
 		set req.backend_hint = mw4_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw5.miraheze.org") {
+		set req.backend_hint = mw5_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw6.miraheze.org") {
 		set req.backend_hint = mw6_test;
