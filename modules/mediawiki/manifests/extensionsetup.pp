@@ -111,16 +111,6 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
 
-    exec { 'widgets_composer':
-        command     => $composer,
-        creates     => '/srv/mediawiki/w/extensions/Widgets/composer.phar',
-        cwd         => '/srv/mediawiki/w/extensions/Widgets',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/mediawiki/w/extensions/Widgets',
-        user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
-    }
-
     exec { 'mermaid_composer':
         command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/Mermaid/composer.phar',
@@ -139,14 +129,5 @@ class mediawiki::extensionsetup {
         environment => 'HOME=/srv/mediawiki/w/extensions/Lingo',
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
-    }
-
-    # Ensure widgets template directory is read/writeable by webserver if mediawiki is cloned
-    file { '/srv/mediawiki/w/extensions/Widgets/compiled_templates':
-        ensure  => directory,
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '0755',
-        require => Git::Clone['MediaWiki core'],
-    }
+    }    
 }
