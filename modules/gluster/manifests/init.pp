@@ -14,7 +14,7 @@ class gluster {
     if !defined(File['glusterfs.pem']) {
         file { 'glusterfs.pem':
             ensure => 'present',
-            source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020.crt',
+            source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020-2.crt',
             path   => '/etc/ssl/glusterfs.pem',
             owner  => 'root',
             group  => 'root',
@@ -24,7 +24,7 @@ class gluster {
     if !defined(File['glusterfs.key']) {
         file { 'glusterfs.key':
             ensure => 'present',
-            source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020.key',
+            source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
             path   => '/etc/ssl/glusterfs.key',
             owner  => 'root',
             group  => 'root',
