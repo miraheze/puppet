@@ -142,7 +142,11 @@ class SslCertificate:
                 print("Re-generating a new SSL cert for {0}".format(self.domain))
 
             if self.no_existing_key:
+                os.system( "/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain) )
+
                 os.system("/usr/bin/certbot --force-renewal --expand  --no-verify-ssl {1} --noninteractive renew --cert-name {0}".format(self.domain, self.quiet))
+
+                os.system( "/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain) )
             else:
                 os.system("/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl {1} --noninteractive renew --cert-name {0}".format(self.domain, self.quiet))
 
