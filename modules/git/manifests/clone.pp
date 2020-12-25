@@ -22,7 +22,7 @@ define git::clone(
     Boolean $recurse_submodules = false,
     String  $mode = '0755',
     String  $umask = '022',
-    String  $options = '',
+    String  $allow_unrelated_histories = '',
 ) {
 
     case $ensure {
@@ -41,15 +41,22 @@ define git::clone(
                 true    => '--recurse-submodules ',
                 default => '',
             }
+
             # if branch was specified
             if !empty($branch) {
                 $brancharg = "-b ${branch} "
-            }
-            # else don't checkout a non-default branch
-            else {
+            } else {
+                # else don't checkout a non-default branch
                 $brancharg = ''
             }
+
             if !empty($ssh) {
+                $env = "GIT_SSH=${ssh}"
+            } else {
+                $env = undef
+            }
+
+            if !empty($allow_unrelated_histories) {
                 $env = "GIT_SSH=${ssh}"
             } else {
                 $env = undef
@@ -60,11 +67,16 @@ define git::clone(
                 default => " --depth=${depth}"
             }
 
+            $allow_unrelated_histories_arg = $allow_unrelated_histories ?  {
+                true    => '--allow-unrelated-histories',
+                default => ''
+            }
+
             $git = '/usr/bin/git'
 
             # clone the repository
             exec { "git_clone_${title}":
-                command     => "${git} clone ${recurse_submodules_arg}${brancharg}${origin}${deptharg} ${options} ${directory}",
+                command     => "${git} clone ${recurse_submodules_arg}${brancharg}${origin}${deptharg} ${allow_unrelated_histories_arg} ${directory}",
                 provider    => shell,
                 logoutput   => on_failure,
                 cwd         => '/tmp',
@@ -128,7 +140,7 @@ define git::clone(
                 }
                 exec { "git_pull_${title}":
                     cwd       => $directory,
-                    command   => "${git} pull ${recurse_submodules_arg}--quiet${deptharg} ${options}",
+                    command   => "${git} pull ${recurse_submodules_arg}--quiet${deptharg} ${allow_unrelated_histories_arg}",
                     provider  => shell,
                     logoutput => on_failure,
                     # git diff --quiet will exit 1 (return false)
