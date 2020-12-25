@@ -129,5 +129,15 @@ class mediawiki::extensionsetup {
         environment => 'HOME=/srv/mediawiki/w/extensions/Lingo',
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
+    }
+
+    exec { 'validator_composer':
+        command     => $composer,
+        creates     => '/srv/mediawiki/w/extensions/Validator/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/Validator',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/extensions/Validator',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
     }    
 }
