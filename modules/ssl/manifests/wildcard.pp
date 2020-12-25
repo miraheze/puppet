@@ -61,6 +61,4 @@ class ssl::wildcard (
             mode   => '0660',
         }
     }
-
-wildcard.miraheze.org-2020-2.crt
 }
