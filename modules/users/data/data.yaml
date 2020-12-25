@@ -112,7 +112,7 @@ users:
     uid: 1011
     name: rhinos
     realname: RhinosF1
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC/qA+k5lH4hul7q4bJG2f5kGXYfWVLTVOzXVY065NAFDSFZcOjYHI589tbzKtkIUB7+L+1LD1NANXp6g8ugYOgP6JlvWHrqVtZZUuH+uur78OQFm4xW8uBb3EqRtPJ++XMMcVwPmcSZbEnyZ+tqxWK4U0z4QOJsSTshPwA0z8G5SiVtIZaSu5f9ddWCnEwy7/MzuCdwXbOF4B2WqZ23La6dP+CiDDuU66ZFXY4nMId4QOtppY+8PggKQji1PLGOWzGvOK4292jaf1RE8HNdG8SqdwxmtGYMpTZNDrS86FnnpB5fMJsKCrKgIF6FrlU71qXcCDlKoJIxiNuIG4H5kf/0mzPWVGIXSGWWmuCtx4i4atlRyWYTvsiyNXA94zGhSXpF2v/dm05pNeK3whz9w+TqnJucsQcV/qorX+AYCzM6veeQi4ItAr8nAKLd8sDXeLFoLnrzQTvR8TgpmKV0no9RRgkzEAnn1PAxMNXHaoAQgeoJSikrd2pnJr1Opa8mY/lTm7Xf7JcH3PWipoE3wZOWCcHxk/0QcvvjCgKTvoIbuV27XWV6OE2w+eRI9gA8zoxXXanPU0+sOwANVu8tY30Faz6B4OGUufTT43utcAY8V8+bo5rXCL+lq287sk2CJ0ydkdNNWbKZfNZmRjBvSxyPe8u/dX0bwH2euOROSXxmQ== rhinosf1@gmail.com]
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM4I7SW+RmPebTb4gQ7hqHMlSdTcK3BkYdU4Hac+sAQE rhinosf1@miraheze.org]
   zppix:
     ensure: present
     uid: 1012
