@@ -22,7 +22,7 @@ define git::clone(
     Boolean $recurse_submodules = false,
     String  $mode = '0755',
     String  $umask = '022',
-    String  $allow_unrelated_histories = '',
+    Boolean $allow_unrelated_histories = false,
 ) {
 
     case $ensure {
