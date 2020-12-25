@@ -75,7 +75,7 @@ class postgresql::server(
 
         file { "/etc/postgresql/${pgversion}/main/ssl/wildcard.miraheze.org.key":
             ensure  => 'present',
-            source  => 'puppet:///ssl-keys/wildcard.miraheze.org-2020.key',
+            source  => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
             owner   => 'postgres',
             group   => 'postgres',
             mode    => '0600',
