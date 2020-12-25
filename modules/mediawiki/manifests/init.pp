@@ -57,7 +57,7 @@ class mediawiki(
         timeout                   => '1500',
         depth                     => '1',
         allow_unrelated_histories => true,
-        recurse_submodules.       => true,
+        recurse_submodules        => true,
         require                   => File['/srv/mediawiki'],
     }
 
