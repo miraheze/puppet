@@ -56,12 +56,6 @@ define git::clone(
                 $env = undef
             }
 
-            if !empty($allow_unrelated_histories) {
-                $env = "GIT_SSH=${ssh}"
-            } else {
-                $env = undef
-            }
-
             $deptharg = $depth ?  {
                 'full'  => '',
                 default => " --depth=${depth}"
