@@ -47,17 +47,18 @@ class mediawiki(
     }
 
     git::clone { 'MediaWiki core':
-        ensure             => 'latest',
-        directory          => '/srv/mediawiki/w',
-        origin             => 'https://github.com/miraheze/mediawiki.git',
-        branch             => $branch,
-        owner              => 'www-data',
-        group              => 'www-data',
-        mode               => '0755',
-        timeout            => '1500',
-        depth              => '1',
-        recurse_submodules => true,
-        require            => File['/srv/mediawiki'],
+        ensure                    => 'latest',
+        directory                 => '/srv/mediawiki/w',
+        origin                    => 'https://github.com/miraheze/mediawiki.git',
+        branch                    => $branch,
+        owner                     => 'www-data',
+        group                     => 'www-data',
+        mode                      => '0755',
+        timeout                   => '1500',
+        depth                     => '1',
+        allow_unrelated_histories => true,
+        recurse_submodules.       => true,
+        require                   => File['/srv/mediawiki'],
     }
 
     git::clone { 'landing':
