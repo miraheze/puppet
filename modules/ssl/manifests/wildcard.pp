@@ -42,4 +42,25 @@ class ssl::wildcard (
             mode   => '0660',
         }
     }
+
+    if !defined(File['wildcard.miraheze.org-2020-2']) {
+        file { 'wildcard.miraheze.org-2020-2':
+            ensure => 'present',
+            source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020-2.crt',
+            path   => "${ssl_cert_path}/wildcard.miraheze.org-2020-2.crt",
+        }
+    }
+
+    if !defined(File['wildcard.miraheze.org-2020-2_private']) {
+        file { 'wildcard.miraheze.org-2020-2_private':
+            ensure => 'present',
+            source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
+            path   => "${ssl_cert_key_private_path}/wildcard.miraheze.org-2020-2.key",
+            owner  => 'root',
+            group  => 'ssl-cert',
+            mode   => '0660',
+        }
+    }
+
+wildcard.miraheze.org-2020-2.crt
 }
