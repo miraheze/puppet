@@ -13,8 +13,8 @@ class role::openldap (
     class { 'openldap::server':
         ldaps_ifs => ['/'],
         ssl_ca    => '/etc/ssl/certs/Sectigo.crt',
-        ssl_cert  => '/etc/ssl/certs/wildcard.miraheze.org-2020.crt',
-        ssl_key   => '/etc/ssl/private/wildcard.miraheze.org-2020.key',
+        ssl_cert  => '/etc/ssl/certs/wildcard.miraheze.org-2020-2.crt',
+        ssl_key   => '/etc/ssl/private/wildcard.miraheze.org-2020-2.key',
         require   => Class['ssl::wildcard'],
     }
 
