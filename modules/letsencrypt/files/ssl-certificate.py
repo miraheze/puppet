@@ -131,7 +131,11 @@ class SslCertificate:
                 print("Re-generating a new wildcard SSL cert for {0}".format(self.domain))
 
             if self.no_existing_key:
+                os.system( "/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain) )
+
                 os.system("/usr/bin/certbot --no-verify-ssl --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
+
+                os.system( "/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain) )
             else:
                 os.system("/usr/bin/certbot --no-verify-ssl --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
 
