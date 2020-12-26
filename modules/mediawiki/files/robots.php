@@ -4,7 +4,7 @@ header( 'Content-Type: text/plain' );
 
 $databaseJsonFileName = '/srv/mediawiki/w/cache/databases.json';
 $databasesArray = file_exists( $databaseJsonFileName ) ?
-	json_decode( file_get_contents( $$databaseJsonFileName ), true ) : [ 'combi' => [] ];
+	json_decode( file_get_contents( $databaseJsonFileName ), true ) : [ 'combi' => [] ];
 
 # Disallow API and special pages
 echo "# Disallow API and special pages" . "\r\n";
@@ -29,15 +29,15 @@ echo "User-Agent: SemrushBot" . "\r\n";
 echo "Disallow: /" . "\r\n\n";
 
 if ( $databasesArray['combi'] ) {
-	$wikis = array_keys( $databasesArray['combi'] );
 	if ( preg_match( '/^(.+)\.miraheze\.org$/', $_SERVER['HTTP_HOST'], $matches ) ) {
-		if ( !isset( $wikis["{$matches[0]}wiki"] ) ) {
+		$wiki = "{$matches[1]}wiki";
+		if ( !isset( $databasesArray['combi']["{$wiki}"] ) ) {
 			return;
 		}
 
 		# Dynamic sitemap url
 		echo "# Dynamic sitemap url" . "\r\n";
-		echo "Sitemap: https://static.miraheze.org/{$wikis["{$matches[0]}wiki"]}/sitemaps/sitemap.xml" . "\r\n\n";
+		echo "Sitemap: https://static.miraheze.org/{$wiki}/sitemaps/sitemap.xml" . "\r\n\n";
 	} else {
 		$customDomainFound = false;
 		$suffixes = [ 'wiki' ];
@@ -45,16 +45,21 @@ if ( $databasesArray['combi'] ) {
 		foreach ( $databasesArray['combi'] as $db => $data ) {
 			foreach ( $suffixes as $suffix ) {
 				if ( substr( $db, -strlen( $suffix ) == $suffix ) ) {
-					if ( 'https://' . substr( $db, 0, -strlen( $suffix ) ) === $_SERVER['HTTP_HOST'] ) {
+					$url = $data['u'] ?? 'https://' . substr( $db, 0, -strlen( $suffix ) ) . '.' . $suffixMatch[$suffix];
+
+					if ( !isset( $url ) || !$url ) {
+						continue;
+					}
+
+					if ( $url === "https://{$_SERVER['HTTP_HOST']}" ) {
 						$customDomainFound = $db;
-						return;
 					}
 				}
 			}
 
 			continue;
 		}
-		
+
 		if ( $customDomainFound ) {
 			# Dynamic sitemap url
 			echo "# Dynamic sitemap url" . "\r\n";
