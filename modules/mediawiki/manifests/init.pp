@@ -78,6 +78,12 @@ class mediawiki(
         require => File['/srv/mediawiki'],
     }
 
+    file { '/srv/mediawiki/sitemap.php':
+        ensure  => 'present',
+        source  => 'puppet:///modules/mediawiki/sitemap.php',
+        require => File['/srv/mediawiki'],
+    }
+
     file { '/srv/mediawiki/w/LocalSettings.php':
         ensure  => 'link',
         target  => '/srv/mediawiki/config/LocalSettings.php',
