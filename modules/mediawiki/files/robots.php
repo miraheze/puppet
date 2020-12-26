@@ -3,7 +3,7 @@
 header( 'Content-Type: text/plain' );
 
 $databaseJsonFileName = '/srv/mediawiki/w/cache/databases.json';
-$databasesArray = fil_exists( $$databaseJsonFileName ) ?
+$databasesArray = file_exists( $databaseJsonFileName ) ?
 	json_decode( file_get_contents( $$databaseJsonFileName ), true ) : [];
 
 # Disallow API and special pages
