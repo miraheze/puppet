@@ -5,7 +5,7 @@ redis:
   distribution: ketama
   auto_eject_hosts: false
   redis: true
-  redis_auth: <%= @redis_password %>
+  redis_auth: "<%= @redis_password %>"
   server_retry_timeout: 6000
   server_failure_limit: 6
   timeout: 6000
