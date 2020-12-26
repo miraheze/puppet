@@ -45,7 +45,7 @@ if ( isset( $databasesArray['combi'] ) && $databasesArray['combi'] ) {
 		foreach ( $databasesArray['combi'] as $db => $data ) {
 			foreach ( $suffixes as $suffix ) {
 				if ( substr( $db, -strlen( $suffix ) == $suffix ) ) {
-					if ( substr( $db, 0, -strlen( $suffix ) ) === $_SERVER['HTTP_HOST'] ) {
+					if ( 'https://' . substr( $db, 0, -strlen( $suffix ) ) === $_SERVER['HTTP_HOST'] ) {
 						$customDomainFound = $db;
 						return;
 					}
