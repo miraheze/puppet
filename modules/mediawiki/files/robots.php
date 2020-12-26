@@ -62,6 +62,3 @@ if ( isset( $databasesArray['combi'] ) && $databasesArray['combi'] ) {
     }
   }
 }
-# Dynamic sitemap url
-echo "# Dynamic sitemap url" . "\r\n";
-echo "Sitemap: https://$_SERVER[HTTP_HOST]/wiki/Special:RedirectSitemap" . "\r\n\n";
