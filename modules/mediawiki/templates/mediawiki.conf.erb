@@ -119,6 +119,10 @@ server {
 	location = /robots.txt {
 		rewrite ^(.*)$ /robots.php;
 	}
+
+	location = /sitemap.xml {
+		rewrite ^(.*)$ /sitemap.php;
+	}
 }
 
 server {
@@ -275,6 +279,10 @@ server {
 
 	location = /robots.txt {
 			rewrite ^(.*)$ /robots.php;
+	}
+
+	location = /sitemap.xml {
+		rewrite ^(.*)$ /sitemap.php;
 	}
 }
 
