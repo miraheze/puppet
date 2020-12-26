@@ -4,7 +4,7 @@ header( 'Content-Type: text/plain' );
 
 $databaseJsonFileName = '/srv/mediawiki/w/cache/databases.json';
 $databasesArray = file_exists( $databaseJsonFileName ) ?
-	json_decode( file_get_contents( $$databaseJsonFileName ), true ) : [];
+	json_decode( file_get_contents( $$databaseJsonFileName ), true ) : [ 'combi' => [] ];
 
 # Disallow API and special pages
 echo "# Disallow API and special pages" . "\r\n";
@@ -28,7 +28,7 @@ echo "# Block SemrushBot" . "\r\n";
 echo "User-Agent: SemrushBot" . "\r\n";
 echo "Disallow: /" . "\r\n\n";
 
-if ( isset( $databasesArray['combi'] ) && $databasesArray['combi'] ) {
+if ( $databasesArray['combi'] ) {
 	$wikis = array_keys( $databasesArray['combi'] );
 	if ( preg_match( '/^(.+)\.miraheze\.org$/', $_SERVER['HTTP_HOST'], $matches ) ) {
 		if ( !isset( $wikis["{$matches[0]}wiki"] ) ) {
