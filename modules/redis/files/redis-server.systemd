@@ -17,6 +17,7 @@ RuntimeDirectoryMode=2755
 
 LimitNOFILE=65535
 ReadWriteDirectories=-/srv/redis
+ReadWriteDirectories=-/var/log/redis
 ReadWriteDirectories=-/var/run/redis
 
 # redis-server can write to its own config file when in cluster mode so we
