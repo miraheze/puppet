@@ -29,7 +29,7 @@ class puppetdb(
     String $jvm_opts = lookup('puppetdb::jvm_opts', {'default_value' =>'-Xmx510m'}),
     String $db_user = lookup('puppetdb::db_user', {'default_value' =>'puppetdb'}),
     Boolean $perform_gc = lookup('puppetdb::perform_gc', {'default_value' => true}),
-    Integer $command_processing_threads = lookup('puppetdb::command_processing_threads', {'default_value' => 4}),
+    Integer $command_processing_threads = lookup('puppetdb::command_processing_threads', {'default_value' => 2}),
     Optional[String] $bind_ip = lookup('puppetdb::bind_ip', {'default_value' => '0.0.0.0'}),
     Optional[String] $db_ro_host = lookup('puppetdb::db_ro_host', {'default_value' => undef}),
     Optional[String] $db_password = lookup('puppetdb::db_password', {'default_value' => undef}),
