@@ -150,14 +150,6 @@ class phabricator {
         require => Git::Clone['phabricator'],
     }
 
-    systemd::syslog { 'phd':
-        readable_by  => 'all',
-        base_dir     => '/var/log',
-        group        => 'root',
-        owner        => 'www-data',
-        log_filename => 'phd.log',
-    }
-
     systemd::service { 'phd':
         ensure  => present,
         content => systemd_template('phd'),
