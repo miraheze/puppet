@@ -58,7 +58,7 @@ class role::graylog {
     }
 
     # syslog-ng > graylog 12210/tcp
-    $fwSyslog = query_facts("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
+    $fwSyslog = query_facts("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Dns] or Class[Role::Db] or Class[Role::Dbreplication] or Class[Role::Services] or Class[Role::Redis])", ['ipaddress', 'ipaddress6'])
     $fwSyslog.each |$key, $value| {
         ufw::allow { "graylog access 12210/tcp for ${value['ipaddress']}":
             proto => 'tcp',
