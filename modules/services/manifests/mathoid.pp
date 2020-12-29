@@ -70,17 +70,6 @@ class services::mathoid {
         notify  => Service['mathoid'],
     }
 
-    systemd::syslog { 'mathoid':
-        readable_by  => 'all',
-        base_dir     => '/var/log',
-        group        => 'root',
-        log_filename => 'mathoid.log',
-        require      => [
-            User['mathoid'],
-            Group['mathoid'],
-        ],
-    }
-
     systemd::service { 'mathoid':
         ensure  => present,
         content => systemd_template('mathoid'),

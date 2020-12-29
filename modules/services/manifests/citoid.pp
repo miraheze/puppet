@@ -89,29 +89,6 @@ class services::citoid {
         notify  => Service['citoid'],
     }
 
-    systemd::syslog { 'zotero':
-        readable_by  => 'all',
-        base_dir     => '/var/log',
-        group        => 'root',
-        log_filename => 'zotero.log',
-        owner        => 'citoid',
-        require      => [
-            User['citoid'],
-            Group['citoid'],
-        ],
-    }
-
-    systemd::syslog { 'citoid':
-        readable_by  => 'all',
-        base_dir     => '/var/log',
-        group        => 'root',
-        log_filename => 'citoid.log',
-        require      => [
-            User['citoid'],
-            Group['citoid'],
-        ],
-    }
-
     systemd::service { 'zotero':
         ensure  => present,
         content => systemd_template('zotero'),

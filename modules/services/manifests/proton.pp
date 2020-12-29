@@ -69,17 +69,6 @@ class services::proton {
         notify  => Service['proton'],
     }
 
-    systemd::syslog { 'proton':
-        readable_by  => 'all',
-        base_dir     => '/var/log',
-        group        => 'root',
-        log_filename => 'proton.log',
-        require      => [
-            User['proton'],
-            Group['proton'],
-        ],
-    }
-
     systemd::service { 'proton':
         ensure  => present,
         content => systemd_template('proton'),

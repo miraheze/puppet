@@ -92,17 +92,6 @@ class services::restbase {
         notify  => Service['restbase'],
     }
 
-    systemd::syslog { 'restbase':
-        readable_by  => 'all',
-        base_dir     => '/var/log',
-        group        => 'root',
-        log_filename => 'restbase.log',
-        require     => [
-            User['restbase'],
-            Group['restbase'],
-        ],
-    }
-
     systemd::service { 'restbase':
         ensure  => present,
         content => systemd_template('restbase'),
