@@ -1,4 +1,3 @@
 puppetserver_hostname: puppet2.miraheze.org
 puppet_cron_time: '0,30'
-base::syslog::syslog_daemon: 'syslog_ng'
 nginx::use_graylog: true

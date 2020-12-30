@@ -6,4 +6,3 @@ mariadb::config::tmpdir: /srv/tmp
 mariadb::config::table_definition_cache: 10000 
 mariadb::config::table_open_cache: 10000
 puppetserver_hostname: puppet2.miraheze.org
-base::syslog::syslog_daemon: 'syslog_ng'

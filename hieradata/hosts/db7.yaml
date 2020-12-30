@@ -7,4 +7,3 @@ mariadb::config::table_definition_cache: 7000
 mariadb::config::table_open_cache: 7000
 puppetserver_hostname: puppet2.miraheze.org
 role::salt::minions::salt_master: 'puppet2.miraheze.org'
-base::syslog::syslog_daemon: 'syslog_ng'
