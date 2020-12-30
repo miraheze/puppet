@@ -2,7 +2,7 @@
 #
 # Crons which should be ran on a jobrunner selected machine only.
 class mediawiki::jobrunner (
-    String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'rsyslog'}),
+    String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
 ) {
     require_package('python3-xmltodict')
 

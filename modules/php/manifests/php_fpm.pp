@@ -24,7 +24,7 @@ class php::php_fpm(
     Enum['7.0', '7.1', '7.2', '7.3', '7.4'] $version = '7.2',
     Float $fpm_workers_multiplier = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $fpm_min_restart_threshold        = 1,
-    String $syslog_daemon                     = lookup('base::syslog::syslog_daemon', {'default_value' => 'rsyslog'}),
+    String $syslog_daemon                     = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
 ) {
 
     $base_config_cli = {

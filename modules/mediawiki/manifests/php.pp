@@ -4,7 +4,7 @@ class mediawiki::php (
     Integer $fpm_min_restart_threshold = lookup('mediawiki::php::fpm::fpm_min_restart_threshold', {'default_value' => 6}),
     String $php_version = lookup('php::php_version', {'default_value' => '7.2'}),
     Optional[Boolean] $use_tideways = undef,
-    String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'rsyslog'}),
+    String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
 ) {
     
     if !defined(Class['php::php_fpm']) {
