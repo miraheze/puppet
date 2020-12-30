@@ -1,5 +1,6 @@
 # class: varnish
 class varnish(
+    String $cache_file_name = '/srv/varnish/cache_storage.bin',
     String $cache_file_size = '15G',
     Boolean $use_new_cache = false,
 ){
@@ -11,40 +12,27 @@ class varnish(
     }
 
     # Avoid race condition where varnish starts, before /var/lib/varnish was mounted as tmpfs
-    if $use_new_cache {
-        file { '/var/lib/varnish':
-            ensure  => directory,
-            owner   => 'varnish',
-            group   => 'varnish',
-            require => Package['varnish'],
-        }
+    file { '/var/lib/varnish':
+        ensure  => directory,
+        owner   => 'varnish',
+        group   => 'varnish',
+        require => Package['varnish'],
+    }
 
-        mount { '/var/lib/varnish':
-            ensure  => mounted,
-            device  => 'tmpfs',
-            fstype  => 'tmpfs',
-            options => 'noatime,defaults,size=128M',
-            pass    => 0,
-            dump    => 0,
-            require => File['/var/lib/varnish'],
-            notify  => Service['varnish'],
-        }
+    mount { '/var/lib/varnish':
+        ensure  => mounted,
+        device  => 'tmpfs',
+        fstype  => 'tmpfs',
+        options => 'noatime,defaults,size=128M',
+        pass    => 0,
+        dump    => 0,
+        require => File['/var/lib/varnish'],
+        notify  => Service['varnish'],
+    }
 
-        service { 'varnish':
-            ensure  => 'running',
-            require => Mount['/var/lib/varnish'],
-        }
-    } else {
-        service { 'varnish':
-            ensure  => 'running',
-            require => Package['varnish'],
-        }
-
-        file { '/var/lib/varnish/mediawiki':
-            ensure  => directory,
-            notify  => Exec['varnish-server-syntax'],
-            require => Package['varnish'],
-        }
+    service { 'varnish':
+        ensure  => 'running',
+        require => Mount['/var/lib/varnish'],
     }
 
     service { 'stunnel4':
@@ -64,16 +52,10 @@ class varnish(
         require => Package['varnish'],
     }
 
-    if $use_new_cache {
-        $cache_file_name = '/srv/varnish/cache_storage.bin'
-
-        file { '/srv/varnish':
-            ensure  => directory,
-            owner   => 'varnish',
-            group   => 'varnish',
-        }
-    } else {
-        $cache_file_name = '/var/lib/varnish/mediawiki/varnish_storage.bin'
+    file { '/srv/varnish':
+        ensure  => directory,
+        owner   => 'varnish',
+        group   => 'varnish',
     }
 
     file { '/etc/default/varnish':
@@ -104,6 +86,7 @@ class varnish(
 
     include ssl::wildcard
     include ssl::hiera
+
     ssl::cert { 'm.miraheze.org':
         notify => Service['nginx'],
     }
