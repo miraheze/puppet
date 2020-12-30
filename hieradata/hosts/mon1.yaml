@@ -108,3 +108,5 @@ icinga2::globals::reserved:
   - VarsPath
   - Warning
   - ZonesDir
+
+base::syslog::syslog_daemon: 'rsyslog'
