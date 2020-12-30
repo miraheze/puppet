@@ -59,7 +59,7 @@ class role::graylog {
 
     # syslog-ng > graylog 12210/tcp
     # non-OpenVZ (RamNode)
-    $fwSyslog = query_facts("domain='$domain' and Class[Base] and network_venet0!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
+    $fwSyslog = query_facts("domain='$domain' and Class[Base] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
     $fwSyslog.each |$key, $value| {
         ufw::allow { "graylog access 12210/tcp for ${value['ipaddress']}":
             proto => 'tcp',
@@ -76,7 +76,7 @@ class role::graylog {
 
     # syslog-ng > graylog 12210/tcp
     # puppet facter returns the wrong IP addresses by default for RamNode VMs with the venet0:0 interface
-    $fwSyslogVenet = query_facts("domain='$domain' and Class[Base] and network_venet0='127.0.0.1'", ['ipaddress_venet0:0', 'ipaddress6_venet0'])
+    $fwSyslogVenet = query_facts("domain='$domain' and Class[Base] and network='127.0.0.1'", ['ipaddress_venet0:0', 'ipaddress6_venet0'])
     $fwSyslogVenet.each |$key, $value| {
         ufw::allow { "graylog access 12210/tcp for ${value['ipaddress_venet0:0']}":
             proto => 'tcp',
