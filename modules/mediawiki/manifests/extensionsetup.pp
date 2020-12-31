@@ -31,16 +31,6 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
 
-    exec { 'cookiewarning_composer':
-        command     => "${composer} && php composer.phar require geoip2/geoip2",
-        creates     => '/srv/mediawiki/w/extensions/CookieWarning/composer.phar',
-        cwd         => '/srv/mediawiki/w/extensions/CookieWarning',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/mediawiki/w/extensions/CookieWarning',
-        user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
-    }
-
     exec { 'oauth_composer':
         command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/OAuth/composer.phar',
