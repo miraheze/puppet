@@ -7,7 +7,7 @@ class ssl::wildcard (
     # New certificate for 2020 switchover
     if !defined(File['wildcard.miraheze.org-2020']) {
         file { 'wildcard.miraheze.org-2020':
-            ensure => 'present',
+            ensure => absent,
             source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020.crt',
             path   => "${ssl_cert_path}/wildcard.miraheze.org-2020.crt",
         }
@@ -15,7 +15,7 @@ class ssl::wildcard (
 
     if !defined(File['wildcard.miraheze.org-2020_private']) {
         file { 'wildcard.miraheze.org-2020_private':
-            ensure => 'present',
+            ensure => absent,
             source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020.key',
             path   => "${ssl_cert_key_private_path}/wildcard.miraheze.org-2020.key",
             owner  => 'root',
