@@ -5,6 +5,7 @@ class base::packages {
         'apt-transport-https',
         'coreutils',
         'debian-goodies',
+        'fatrace',
         'git',
         'gzip',
         'htop',
