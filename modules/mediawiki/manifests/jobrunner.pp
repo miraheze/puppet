@@ -1,9 +1,7 @@
 # class: mediawiki::jobrunner
 #
 # Crons which should be ran on a jobrunner selected machine only.
-class mediawiki::jobrunner (
-    String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
-) {
+class mediawiki::jobrunner {
     require_package('python3-xmltodict')
 
     git::clone { 'JobRunner':
@@ -43,14 +41,6 @@ class mediawiki::jobrunner (
 
     service { 'jobchron':
         ensure => running,
-    }
-
-    if $syslog_daemon == 'rsyslog' {
-        file { '/etc/rsyslog.d/20-jobrunner.conf':
-            ensure => present,
-            source => 'puppet:///modules/mediawiki/jobrunner/jobrunner.rsyslog.conf',
-            notify => [ Service['rsyslog'], Service['jobchron'], Service['jobrunner'] ],
-        }
     }
 
     $cron = hiera('mediawiki::jobrunner::cron', false)

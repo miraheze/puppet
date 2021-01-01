@@ -24,12 +24,11 @@ class php::php_fpm(
     Enum['7.0', '7.1', '7.2', '7.3', '7.4'] $version = '7.2',
     Float $fpm_workers_multiplier = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $fpm_min_restart_threshold        = 1,
-    String $syslog_daemon                     = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
 ) {
 
     $base_config_cli = {
         'include_path'           => '".:/usr/share/php"',
-        'error_log'              => '/var/log/php/php.log',
+        'error_log'              => 'syslog',
         'pcre.backtrack_limit'   => 5000000,
         'date.timezone'          => 'UTC',
         'display_errors'         => 'On',
@@ -160,7 +159,7 @@ class php::php_fpm(
     $base_fpm_config = {
         'emergency_restart_interval'  => '60s',
         'emergency_restart_threshold' => max($facts['virtual_processor_count'], $fpm_min_restart_threshold),
-        'error_log'                   => "/var/log/php${version}-fpm.log",
+        'error_log'                   => 'syslog',
     }
 
     if $facts['virtual'] != 'openvz' {
@@ -186,20 +185,5 @@ class php::php_fpm(
 
     php::fpm::pool { 'www':
         config => merge($base_fpm_pool_config, $fpm_pool_config),
-    }
-
-    if $syslog_daemon == 'rsyslog' {
-        # Send logs locally to /var/log/php7.x-fpm/error.log
-        # Please note: this replaces the logrotate rule coming from the package,
-        # because we use syslog-based logging. This will also prevent an fpm reload
-        # for every logrotate run.
-        $fpm_programname = "php${php_version}-fpm"
-        systemd::syslog { $fpm_programname:
-            base_dir     => '/var/log',
-            owner        => 'www-data',
-            group        => 'www-data',
-            readable_by  => 'group',
-            log_filename => 'error.log'
-        }
     }
 }

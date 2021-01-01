@@ -4,18 +4,13 @@ class mediawiki::php (
     Integer $fpm_min_restart_threshold = lookup('mediawiki::php::fpm::fpm_min_restart_threshold', {'default_value' => 6}),
     String $php_version = lookup('php::php_version', {'default_value' => '7.2'}),
     Optional[Boolean] $use_tideways = undef,
-    String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
 ) {
     
     if !defined(Class['php::php_fpm']) {
-        $syslog =  $syslog_daemon ? {
-            'syslog_ng' => 'syslog',
-            default => '/var/log/mediawiki/debuglogs/php-error.log'
-        }
         class { 'php::php_fpm':
             config  => {
                 'display_errors'            => 'Off',
-                'error_log'                 => $syslog,
+                'error_log'                 => 'syslog',
                 'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
                 'log_errors'                => 'On',
                 'memory_limit'              => '512M',
