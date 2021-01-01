@@ -111,4 +111,6 @@ $config['plugins'] = array('filesystem_attachments', 'help', 'markasjunk', 'user
 // You can connect to any other googie-compliant service by setting 'spellcheck_uri' accordingly.
 $config['spellcheck_engine'] = 'pspell';
 
-$config['log_dir'] = '/var/log/roundcubemail/';
+$config['log_driver'] = 'syslog';
+$config['syslog_id'] = 'roundcubemail';
+$config['log_logins'] = true;
