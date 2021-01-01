@@ -89,11 +89,4 @@ class matomo (
         user    => 'www-data',
         special => 'daily',
     }
-
-    cron { 'queued_tracking_matomo':   
-       command => "/usr/bin/php /srv/matomo/console queuedtracking:process",   
-       user    => 'www-data',
-       hour    => '*',   
-       minute  => '*/1',
-    }
 }
