@@ -1,6 +1,6 @@
 define monitoring::hosts (
     $ensure      = present,
-    $contacts    = lookup('contactgroups', {'default_value' => [ 'icingaadmins', 'ops' ]}),
+    $contacts    = lookup('contactgroups', {'default_value' => [ 'icingaadmins', 'sre' ]}),
 ) {
 
     # If on a container instead of a physical machine or real VM,
