@@ -1,6 +1,6 @@
 define monitoring::wiki (
     $ensure       = present,
-    $contacts     = lookup('contactgroups', {'default_value' => [ 'icingaadmins', 'ops' ]}),
+    $contacts     = lookup('contactgroups', {'default_value' => [ 'icingaadmins', 'sre' ]}),
     $protocol     = 'https',
     $domain       = 'miraheze.org',
     $testpage     = 'Main_Page',
