@@ -54,32 +54,25 @@ class letsencrypt {
 
     file { '/srv/ssl':
         ensure => directory,
-        owner  => 'nagiosre',
-        group  => 'nagiosre',
+        owner  => 'root',
+        group  => 'root',
         mode   => '0770',
     }
 
     file { '/var/lib/nagios/ssl-acme':
         ensure => present,
         source => 'puppet:///modules/letsencrypt/ssl-acme',
-        owner  => 'nagiosre',
-        group  => 'nagiosre',
+        owner  => 'root',
+        group  => 'root',
         mode   => '0775',
     }
 
     file { '/var/lib/nagios/id_rsa':
         ensure => present,
         source => 'puppet:///private/acme/id_rsa',
-        owner  => 'nagiosre',
-        group  => 'nagiosre',
+        owner  => 'root',
+        group  => 'root',
         mode   => '0400',
-    }
-
-    sudo::user { 'nrpe_ssl-certificate':
-        user       => 'nagiosre',
-        privileges => [
-            'ALL = NOPASSWD: /root/ssl-certificate',
-        ],
     }
 
     include letsencrypt::web

@@ -40,15 +40,6 @@ class base {
 
     class { 'apt::security': }
 
-    # Create a user to allow executing renewing ssl script between servers
-    users::user { 'nagiosre':
-        ensure      => present,
-        uid         => 3001,
-        ssh_keys    => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP1H12zO+spUhU08d/8A4zcpCpoXa2vPgAIVEJ/Fzly1 nagiosre@miraheze'
-        ],
-    }
-
     # Used by salt-user
     users::user { 'salt-user':
         ensure      => present,
