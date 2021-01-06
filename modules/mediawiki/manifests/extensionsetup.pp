@@ -129,5 +129,25 @@ class mediawiki::extensionsetup {
         environment => 'HOME=/srv/mediawiki/w/extensions/Validator',
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
-    }    
+    }
+
+    exec { 'wikibasequalityconstraints_composer':
+        command     => $composer,
+        creates     => '/srv/mediawiki/w/extensions/WikibaseQualityConstraints/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/WikibaseQualityConstraints',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/extensions/WikibaseQualityConstraints',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
+    exec { 'wikibaselexeme_composer':
+        command     => $composer,
+        creates     => '/srv/mediawiki/w/extensions/WikibaseLexeme/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/WikibaseLexeme',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/extensions/WikibaseLexeme',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 }
