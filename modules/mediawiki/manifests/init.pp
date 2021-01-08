@@ -100,7 +100,6 @@ class mediawiki(
     $mediawiki_secretkey   = lookup('passwords::mediawiki::secretkey')
     $recaptcha_sitekey     = lookup('passwords::recaptcha::sitekey')
     $recaptcha_secretkey   = lookup('passwords::recaptcha::secretkey')
-    $googlemaps_key        = lookup('passwords::mediawiki::googlemapskey')
     $matomotoken           = lookup('passwords::mediawiki::matomotoken')
     $yandextranslation_key = lookup('passwords::mediawiki::yandextranslationkey')
     $ldap_password         = lookup('passwords::mediawiki::ldap_password')
