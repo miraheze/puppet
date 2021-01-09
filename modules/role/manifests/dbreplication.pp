@@ -1,6 +1,15 @@
 # class: role::dbreplication
 class role::dbreplication {
-    include mariadb::packages
+    include ssl::wildcard
+
+    class { 'mariadb::packages':
+    } ->
+    file { '/etc/ssl/private':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'mysql',
+        mode    => '0750',
+    }
 
     $icinga_password = lookup('passwords::db::icinga')
     class { 'mariadb::config':
@@ -8,14 +17,24 @@ class role::dbreplication {
         password        => lookup('passwords::db::root'),
         server_role     => 'slave',
         icinga_password => $icinga_password,
+        require         => File['/etc/ssl/private'],
     }
 
-    file { '/etc/ssl/private':
-        ensure  => directory,
-        owner   => 'root',
-        group   => 'mysql',
-        mode	=> '0750',
+    mariadb::instance { 'c2':
+        port        => 3310,
+        read_only   => 1,
     }
+
+    mariadb::instance { 'c3':
+        port        => 3311,
+        read_only   => 1,
+    }
+
+    mariadb::instance { 'c4':
+        port        => 3312,
+        read_only   => 1,
+    }
+
 
     $fwPort3306 = query_facts("domain='$domain' and (Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
     $fwPort3306.each |$key, $value| {
@@ -32,8 +51,6 @@ class role::dbreplication {
         }
     }
 
-
-    include ssl::wildcard
 
     # Create a user to allow db transfers between servers
     users::user { 'dbcopy':
