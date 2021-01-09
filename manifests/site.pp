@@ -36,6 +36,11 @@ node /^db1[123]\.miraheze\.org$/ {
     include prometheus::mysqld_exporter
 }
 
+node 'dbbackup1.miraheze.org' {
+    include base
+    include role::dbreplication
+}
+
 node /^gluster[12]\.miraheze\.org$/ {
     include base
     include bacula::client
