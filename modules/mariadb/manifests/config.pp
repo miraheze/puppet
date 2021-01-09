@@ -44,6 +44,13 @@ class mariadb::config(
         require => File['/etc/mysql'],
     }
 
+    file { '/etc/mysql/debian.cnf':
+        owner   => 'mysql',
+        group   => 'mysql',
+        mode    => '0400',
+        require => File['/etc/mysql'],
+    }
+
     file { $datadir:
         ensure  => directory,
         owner   => 'mysql',
