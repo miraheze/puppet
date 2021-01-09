@@ -37,172 +37,22 @@ class role::db {
         content => template('mariadb/grants/phabricator-grants.sql.erb'),
     }
 
-    ufw::allow { 'mysql port db7 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.143',
+
+    $fwPort3306 = query_facts("domain='$domain' and (Class[Role::Db] or Class[Role::Dbreplication] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator])", ['ipaddress', 'ipaddress6'])
+    $fwPort3306.each |$key, $value| {
+        ufw::allow { "mariadb inbound 3306/tcp for ${value['ipaddress']}":
+            proto   => 'tcp',
+            port    => 3306,
+            from    => $value['ipaddress'],
+        }
+
+        ufw::allow { "mariadb inbound 3306/tcp for ${value['ipaddress6']}":
+            proto   => 'tcp',
+            port    => 3306,
+            from    => $value['ipaddress6'],
+        }
     }
 
-    ufw::allow { 'mysql port db7 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:105a::11',
-    }
-
-    ufw::allow { 'mysql port db11 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.195.175.114',
-    }
-
-    ufw::allow { 'mysql port db11 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:170b::2',
-    }
-
-    ufw::allow { 'mysql port db12 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.195.180.10',
-    }
-
-    ufw::allow { 'mysql port db12 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:170b::3',
-    }
-
-    ufw::allow { 'mysql port db13 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.195.180.11',
-    }
-
-    ufw::allow { 'mysql port db13 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:170b::4',
-    }
-    ufw::allow { 'mysql port mail1 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.134',
-    }
-
-    ufw::allow { 'mysql port mail1 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:1056::9',
-    }
-
-    ufw::allow { 'mysql port mon1 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.138',
-    }
-
-    ufw::allow { 'mysql port mon1 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:105a::6',
-    }
-
-    ufw::allow { 'mysql port jobrunner1 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.135',
-    }
-
-    ufw::allow { 'mysql port jobrunner1 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:1056::10',
-    }
-
-    ufw::allow { 'mysql port jobrunner2 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.195.135.132',
-    }
-
-    ufw::allow { 'mysql port jobrunner2 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:105a::13',
-    }
-
-    ufw::allow { 'mysql port mw4 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.128',
-    }
-
-    ufw::allow { 'mysql port mw4 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:1056::3',
-    }
-
-    ufw::allow { 'mysql port mw5 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.133',
-    }
-
-    ufw::allow { 'mysql port mw5 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:1056::8',
-    }
-
-    ufw::allow { 'mysql port mw6 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.136',
-    }
-
-    ufw::allow { 'mysql port mw6 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:105a::4',
-    }
-
-    ufw::allow { 'mysql port mw7 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.137',
-    }
-
-    ufw::allow { 'mysql port mw7 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:105a::5',
-    }
-
-    ufw::allow { 'mysql port test2 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.77.107.211',
-    }
- 
-     ufw::allow { 'mysql port test2 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:105a::3',
-    }
-
-    ufw::allow { 'mysql port phab1 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.139',
-    }
-
-    ufw::allow { 'mysql port phab1 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:105a::7',
-    }
 
     # Create a user to allow db transfers between servers
     users::user { 'dbcopy':

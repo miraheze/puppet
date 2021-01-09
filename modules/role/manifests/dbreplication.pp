@@ -10,36 +10,28 @@ class role::dbreplication {
         icinga_password => $icinga_password,
     }
 
-    ufw::allow { 'mysql port db6 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.130',
-    }
-
-    ufw::allow { 'mysql port db6 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:1056::5',
-    }
-
-    ufw::allow { 'mysql port mon1 ipv4':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '51.89.160.138',
-    }
-
-    ufw::allow { 'mysql port mon1 ipv6':
-        proto => 'tcp',
-        port  => '3306',
-        from  => '2001:41d0:800:105a::6',
-    }
-
     file { '/etc/ssl/private':
         ensure  => directory,
         owner   => 'root',
         group   => 'mysql',
         mode	=> '0750',
     }
+
+    $fwPort3306 = query_facts("domain='$domain' and (Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
+    $fwPort3306.each |$key, $value| {
+        ufw::allow { "mariadb inbound 3306/tcp for ${value['ipaddress']}":
+            proto   => 'tcp',
+            port    => 3306,
+            from    => $value['ipaddress'],
+        }
+
+        ufw::allow { "mariadb inbound 3306/tcp for ${value['ipaddress6']}":
+            proto   => 'tcp',
+            port    => 3306,
+            from    => $value['ipaddress6'],
+        }
+    }
+
 
     include ssl::wildcard
 
