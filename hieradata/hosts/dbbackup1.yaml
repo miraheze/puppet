@@ -1,0 +1,4 @@
+mariadb::config::innodb_buffer_pool_instances: 2
+mariadb::config::innodb_buffer_pool_size: '128M'
+mariadb::config::table_definition_cache: 1500
+mariadb::config::table_open_cache: 500
