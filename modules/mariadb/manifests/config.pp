@@ -8,7 +8,7 @@ class mariadb::config(
     String                       $innodb_buffer_pool_size      = '768M',
     String                       $server_role                  = 'master',
     Integer                      $max_connections              = 90,
-    Enum['10.2', '10.3', '10.4'] $version                      = lookup('mariadb::version', {'default_value' => '10.2'}),
+    Enum['10.2', '10.3', '10.4'] $version                      = lookup('mariadb::version', {'default_value' => '10.4'}),
     String                       $icinga_password              = undef,
     Integer                      $table_definition_cache       = 10000,
     Integer                      $table_open_cache             = 10000,

@@ -1,5 +1,3 @@
-puppetserver_hostname: puppet2.miraheze.org
-role::salt::minions::salt_master: 'puppet2.miraheze.org'
 users::groups: 'cache-admins'
 nginx::worker_processes: 4
 varnish::cache_file_size: '12G'

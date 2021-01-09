@@ -1,7 +1,6 @@
 users::groups:
   - puppet-users
 puppetserver: true
-puppetserver_hostname: puppet2.miraheze.org
 puppetserver_java_opts: '-Xms2500M -Xmx2500M'
 puppetdb_enable: true
 puppetdb_hostname: puppet2.miraheze.org
@@ -9,5 +8,4 @@ puppetdb::db_ssl: true
 puppetdb::db_rw_host: puppet2.miraheze.org
 postgresql::ssl: true
 role::salt::minions::salt_master_key: true
-role::salt::minions::salt_master: 'puppet2.miraheze.org'
 puppetdb::command_processing_threads: 2

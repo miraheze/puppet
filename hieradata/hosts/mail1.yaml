@@ -1,4 +1,2 @@
 mailserver: true
-puppetserver_hostname: puppet2.miraheze.org
-role::salt::minions::salt_master: 'puppet2.miraheze.org'
 nginx::use_graylog: true

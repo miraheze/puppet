@@ -1,6 +1,6 @@
 # class: mariadb::packages
 class mariadb::packages(
-    Enum['10.2', '10.3', '10.4'] $version = lookup('mariadb::version', {'default_value' => '10.2'}),
+    Enum['10.2', '10.3', '10.4'] $version = lookup('mariadb::version', {'default_value' => '10.4'}),
 ) {
 
     package { [

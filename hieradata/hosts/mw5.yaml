@@ -6,6 +6,5 @@ role::mediawiki::use_strict_firewall: true
 mediawiki::branch: 'REL1_35'
 php::php_fpm::fpm_workers_multiplier: 1.0
 php::php_version: '7.3'
-puppetserver_hostname: puppet2.miraheze.org
 nginx::use_graylog: true
 puppet_cron_time: '2,32'

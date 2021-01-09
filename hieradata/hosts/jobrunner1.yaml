@@ -1,4 +1,3 @@
-puppetserver_hostname: puppet2.miraheze.org
 users::groups:
   - mediawiki-admins
 jobrunner: true

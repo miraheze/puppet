@@ -1,5 +1,3 @@
-puppetserver_hostname: puppet2.miraheze.org
-role::salt::minions::salt_master: 'puppet2.miraheze.org'
 
 # Network setup
 role::cloud::main_ip4_address: 54.36.165.90
