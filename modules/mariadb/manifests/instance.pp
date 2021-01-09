@@ -10,17 +10,19 @@
 #   it is unconfigured, and it will default to the one on the common
 #   config template (or the mysql default, if not configured there). When
 #   configured, it must be passed as a string, such as '11G' or '10000000'.
+# * read_only: whether to operate in read_only mode (mariadb::config
+#   sets read_only mode to 1 for replicas by default!)
 # From https://github.com/wikimedia/puppet/blob/production/modules/mariadb/manifests/instance.pp
 # with changes for Miraheze
 
 define mariadb::instance(
-    Integer $port,
-    Optional[String] $datadir = "/srv/mariadb.${title}",
-    Optional[String] $tmpdir  = "/srv/tmp.${title}",
-    Optional[String] $socket  = "/run/mysqld/mysqld.${title}.sock",
-    Optional[String] $innodb_buffer_pool_size = false,
-    Optional[String] $template = 'mariadb/config/instance.cnf.erb',
-    Optional[Integer] $read_only = 1,
+    Integer                             $port,
+    Optional[String]                    $datadir = "/srv/mariadb.${title}",
+    Optional[String]                    $tmpdir  = "/srv/tmp.${title}",
+    Optional[String]                    $socket  = "/run/mysqld/mysqld.${title}.sock",
+    Optional[Variant[String, Boolean]]  $innodb_buffer_pool_size = false,
+    Optional[String]                    $template = 'mariadb/config/instance.cnf.erb',
+    Optional[Integer]                   $read_only = 1,
 ) {
     file { $datadir:
         ensure => directory,
