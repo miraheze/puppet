@@ -31,7 +31,6 @@ binlog_format                  = ROW
 server-id                      = <%= @server_id %>
 log-bin                        = <%= @datadir %>/mysql-bin
 <% if @server_role == 'slave' %>
-relay-log                      = /var/log/mysql/mysql-relay-bin.log
 skip-slave-start
 replicate-ignore-db            = test
 replicate-ignore-db            = information_schema

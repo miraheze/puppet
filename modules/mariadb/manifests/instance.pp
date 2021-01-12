@@ -22,6 +22,7 @@ define mariadb::instance(
     Optional[String]                    $tmpdir  = "/srv/tmp.${title}",
     Optional[String]                    $socket  = "/var/run/mysqld/mysqld.${title}.sock",
     Optional[String]                    $pid_file = "/var/run/mysqld/mysqld.${title}.pid",
+    Optional[String]                    $error_log = "/var/log/mysql/mysql-error.${title}.log",
     Optional[Variant[String, Boolean]]  $innodb_buffer_pool_size = false,
     Optional[String]                    $template = 'mariadb/config/instance.cnf.erb',
     Optional[Integer]                   $read_only = 1,

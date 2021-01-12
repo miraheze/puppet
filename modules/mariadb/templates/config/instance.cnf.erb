@@ -4,6 +4,7 @@ tmpdir = <%= @tmpdir %>
 socket = <%= @socket %>
 port = <%= @port %>
 extra-port = <%= Integer(@port) + 20 %>
+log-error = <%= @error_log %>
 <% if @innodb_buffer_pool_size -%>
 innodb_buffer_pool_size = <%= @innodb_buffer_pool_size %>
 <% end -%>
