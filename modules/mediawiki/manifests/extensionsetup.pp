@@ -100,16 +100,6 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
-
-    exec { 'mermaid_composer':
-        command     => $composer,
-        creates     => '/srv/mediawiki/w/extensions/Mermaid/composer.phar',
-        cwd         => '/srv/mediawiki/w/extensions/Mermaid',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/mediawiki/w/extensions/Mermaid',
-        user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
-    }
     
     exec { 'lingo_composer':
         command     => $composer,
