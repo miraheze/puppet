@@ -1,5 +1,5 @@
 users::groups:
-  - mediawiki-admins
+  - mediawiki-engineers
 jobrunner: false
 contactgroups: ['icingaadmins', 'sre', 'mediawiki']
 role::mediawiki::use_strict_firewall: true
