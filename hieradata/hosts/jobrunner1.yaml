@@ -3,7 +3,7 @@ users::groups:
 jobrunner: true
 letsencrypt: true
 mwservices: true
-contactgroups: ['icingaadmins', 'sre', 'mediawiki']
+contactgroups: ['icingaadmins', 'infrastructure', 'mediawiki']
 role::mediawiki::use_strict_firewall: true
 mediawiki::branch: 'REL1_35'
 mediawiki::php::fpm::childs: 1
