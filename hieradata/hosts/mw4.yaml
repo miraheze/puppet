@@ -1,7 +1,7 @@
 users::groups:
   - mediawiki-engineers
 jobrunner: false
-contactgroups: ['icingaadmins', 'sre', 'mediawiki']
+contactgroups: ['icingaadmins', 'infrastructure', 'mediawiki']
 role::mediawiki::use_strict_firewall: true
 mediawiki::branch: 'REL1_35'
 php::php_fpm::fpm_workers_multiplier: 1.0
