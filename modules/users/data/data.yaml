@@ -17,20 +17,6 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /root/ssl-certificate',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
-  mediawiki-roots:
-    gid: 2002
-    description: full root on MediaWiki servers
-    members: []
-    privileges: ['ALL = (ALL) NOPASSWD: ALL']
-  cache-admins:
-    gid: 2003
-    descriptions: limited sudo on cache proxies
-    members: []
-    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/varnishadm',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service varnish *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
-                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   puppet-users:
     gid: 2004
     descriptions: limited access on puppet2 to add SSL private keys
