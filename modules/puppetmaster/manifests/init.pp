@@ -126,7 +126,7 @@ class puppetmaster(
     file { '/home/puppet-users':
         ensure  => directory,
         owner   => 'root',
-        group   => 'puppet-users',
+        group   => 'mediawiki-engineers',
         mode    => '0770',
     }
 
