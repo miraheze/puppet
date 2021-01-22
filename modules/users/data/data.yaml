@@ -1,10 +1,10 @@
 groups:
-  ops:
+  infrastructure-engineers:
     gid: 2000
     description: roots, sudo everywhere
     members: [johnflewis, ndkilla, paladox, reception, southparkfan]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
-  mediawiki-admins:
+  mediawiki-engineers:
     gid: 2001
     description: sudo on MediaWiki servers
     members: [zppix, rhinos, universalomega]
@@ -16,12 +16,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /root/ssl-certificate',
-                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
-  puppet-users:
-    gid: 2004
-    descriptions: limited access on puppet2 to add SSL private keys
-    members: [zppix]
-    privileges: []                 
+                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']           
 
 users:
   johnflewis:
