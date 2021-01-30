@@ -97,6 +97,13 @@ class gluster {
               volume    => lookup('gluster_volume', {'default_value' => 'gluster1.miraheze.org:/mvol'}),
             }
         }
+
+        monitoring::services { 'Gluster Disk Space':
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => 'check_gluster_disk',
+            },
+        }
     }
 
     include prometheus::gluster_exporter
