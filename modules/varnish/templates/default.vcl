@@ -168,7 +168,7 @@ sub mw_identify_device {
 
 sub mw_rate_limit {
 	# Allow higher limits for static.mh.o, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org") {
+	if (req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
 		}
@@ -257,7 +257,8 @@ sub mw_vcl_recv {
 	}
 
 	# Don't cache dumps, and such
-	if (req.http.Host == "static.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/.*wiki/sitemaps")) {
+	if (req.http.Host == "static.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/.*wiki/sitemaps" || req.url ~ "^/.*wiki/dumps") ||
+		req.http.Host == "static-new.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/.*wiki/sitemaps" || req.url ~ "^/.*wiki/dumps")) {
 		return (pass);
 	}
 
