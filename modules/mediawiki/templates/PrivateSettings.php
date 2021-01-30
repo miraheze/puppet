@@ -24,19 +24,8 @@ $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 // Translate Yandex API key
 $wmgYandexTranslationKey = "<%= @yandextranslation_key %>";
 
-// Extension:DiscordNotifications hooks
-$wmgWikiMirahezeDiscordHooks = [
-<%- @wiki_discord_hooks_url.each_pair do |wiki, values| -%>
-    '<%= wiki %>' => <%= values %>,
-<%- end -%>
-];
-
-// Extension:SlackNotifications hooks
-$wmgWikiMirahezeSlackHooks = [
-<%- @wiki_slack_hooks_url.each_pair do |wiki, values| -%>
-    '<%= wiki %>' => '<%= values %>',
-<%- end -%>
-];
+// Extension:DiscordNotifications global webhook
+$wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
 
 // writer-user password (ldap)
 $wmgLdapPassword = "<%= @ldap_password %>";
