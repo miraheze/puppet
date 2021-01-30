@@ -45,7 +45,20 @@ define prometheus::jmx_exporter (
         fail('"source" and "content" are mutually exclusive')
     }
 
-    require_package('prometheus-jmx-exporter')
+    file { '/usr/share/java/prometheus':
+        ensure => 'directory',
+        owner  => 'root',
+        group  => 'root',
+    }
+
+    file { '/usr/share/java/prometheus/jmx_prometheus_javaagent.jar:
+        ensure  => 'present',
+        mode    => '0555',
+        owner   => 'root',
+        group   => 'root',
+        source  => 'puppet:///modules/prometheus/jmx_exporter/jmx_prometheus_javaagent.jar',
+        require => File['/usr/share/java/prometheus']
+    }
 
     if $config_dir and ! defined(File[$config_dir]) {
         # Create the Prometheus JMX Exporter configuration's parent dir
