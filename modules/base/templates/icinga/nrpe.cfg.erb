@@ -15,6 +15,7 @@ connection_timeout=300
 
 # Simplify config with puppet
 command[check_disk]=/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /
+command[check_gluster_disk]=/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /mnt/mediawiki-static
 command[check_load]=/usr/lib/nagios/plugins/check_load -w <%= scope.lookupvar('::virtual_processor_count').to_i * 1.7 %> -c <%= scope.lookupvar('::virtual_processor_count').to_i * 2.0 %>
 command[check_puppet_run]=/usr/bin/sudo /usr/lib/nagios/plugins/check_puppet_run -w 3600 -c 43200
 command[check_apt]=/usr/lib/nagios/plugins/check_apt -o
