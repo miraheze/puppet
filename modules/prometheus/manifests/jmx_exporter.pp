@@ -82,15 +82,15 @@ define prometheus::jmx_exporter (
         links   => 'follow',
     }
 
-    ufw::allow { 'prometheus access 9121  ipv4':
+    ufw::allow { 'prometheus access 9400 ipv4':
         proto => 'tcp',
-        port  => 9121,
+        port  => 9400,
         from  => '51.89.160.138',
     }
 
-    ufw::allow { 'prometheus access 9121  ipv6':
+    ufw::allow { 'prometheus access 9400 ipv6':
         proto => 'tcp',
-        port  => 9121,
+        port  => 9400,
         from  => '2001:41d0:800:105a::6',
     }
 }
