@@ -177,10 +177,9 @@ class puppetdb(
     }
 
     prometheus::jmx_exporter { "puppetdb_${::hostname}":
-        port             => $prometheus_jmx_exporter_port,
-        prometheus_nodes => $prometheus_nodes,
-        config_file      => $jmx_exporter_config_file,
-        source           => 'puppet:///modules/puppetdb/jvm_prometheus_puppetdb_jmx_exporter.yaml',
+        port        => $prometheus_jmx_exporter_port,
+        config_file => $jmx_exporter_config_file,
+        source      => 'puppet:///modules/puppetdb/jvm_prometheus_puppetdb_jmx_exporter.yaml',
     }
 
     monitoring::services { 'puppetdb':
