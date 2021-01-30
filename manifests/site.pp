@@ -10,7 +10,7 @@ node /^cloud[123]\.miraheze\.org$/ {
     include role::cloud
 }
 
-node /^cp[36789]\.miraheze\.org$/ {
+node /^cp([3679]|12)\.miraheze\.org$/ {
     include base
     include role::varnish
 }
