@@ -17,7 +17,7 @@ class prometheus {
     $host_nginx = query_nodes("domain='$domain' and Class[Prometheus::Nginx]", 'fqdn')
     $host_php_fpm = query_nodes("domain='$domain' and Class[Php::Php_fpm]", 'fqdn')
     $host_redis = query_nodes("domain='$domain' and Class[Prometheus::Redis_exporter]", 'fqdn')
-    $host_puppetdb = query_nodes("domain='$domain' and Class[Prometheus::Redis_exporter]", 'fqdn')
+    $host_puppetdb = query_nodes("domain='$domain' and Class[Puppetdb]", 'fqdn')
 
     file { '/etc/prometheus/prometheus.yml':
         content => template('prometheus/prometheus.yml.erb'),
