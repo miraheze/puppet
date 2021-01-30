@@ -25,7 +25,7 @@ $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 $wmgYandexTranslationKey = "<%= @yandextranslation_key %>";
 
 // Extension:DiscordNotifications global webhook
-$wmgGlobalMirahezeDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
+$wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
 
 // writer-user password (ldap)
 $wmgLdapPassword = "<%= @ldap_password %>";
