@@ -189,4 +189,19 @@ class puppetdb(
             tcp_port    => '8081',
         },
     }
+
+    $fwPort8081 = query_facts("domain='$domain' and Class[Role::Icinga2]", ['ipaddress', 'ipaddress6'])
+    $fwPort8081.each |$key, $value| {
+        ufw::allow { "icinga2 inbound 8081/tcp for ${value['ipaddress']}":
+            proto   => 'tcp',
+            port    => 8081,
+            from    => $value['ipaddress'],
+        }
+
+        ufw::allow { "icinga2 inbound 8081/tcp for ${value['ipaddress6']}":
+            proto   => 'tcp',
+            port    => 8081,
+            from    => $value['ipaddress6'],
+        }
+    }
 }
