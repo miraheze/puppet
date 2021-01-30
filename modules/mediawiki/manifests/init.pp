@@ -104,8 +104,7 @@ class mediawiki(
     $yandextranslation_key = lookup('passwords::mediawiki::yandextranslationkey')
     $ldap_password         = lookup('passwords::mediawiki::ldap_password')
 
-    $wiki_discord_hooks_url = lookup('mediawiki::wiki_discord_hooks_url')
-    $wiki_slack_hooks_url = lookup('mediawiki::wiki_slack_hooks_url')
+    $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
 
     class { '::nutcracker':
         redis_password => $redis_password,
