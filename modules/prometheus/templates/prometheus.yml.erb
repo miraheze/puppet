@@ -89,7 +89,7 @@ scrape_configs:
   - job_name: puppetdb
     static_configs:
       - targets: [
-<%- @host_gluster.sort.each do |host| -%>
+<%- @host_puppetdb.sort.each do |host| -%>
         '<%= host %>:9400',
 <%- end -%>
       ]
