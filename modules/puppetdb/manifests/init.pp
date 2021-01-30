@@ -26,7 +26,7 @@
 #
 class puppetdb(
     String $db_rw_host = lookup('puppetdb::db_rw_host', {'default_value' => 'localhost'}),
-    String $jvm_opts = lookup('puppetdb::jvm_opts', {'default_value' =>'-Xmx510m'}),
+    String $puppetdb_jvm_opts = lookup('puppetdb::jvm_opts', {'default_value' =>'-Xmx510m'}),
     String $db_user = lookup('puppetdb::db_user', {'default_value' =>'puppetdb'}),
     Boolean $perform_gc = lookup('puppetdb::perform_gc', {'default_value' => true}),
     Integer $command_processing_threads = lookup('puppetdb::command_processing_threads', {'default_value' => 2}),
@@ -59,18 +59,23 @@ class puppetdb(
         target => '/etc/puppetlabs/puppetdb',
     }
  
-     file { '/var/lib/puppetdb':
-         ensure => directory,
-         owner  => 'puppetdb',
-         group  => 'puppetdb',
-     }
+    file { '/var/lib/puppetdb':
+        ensure => directory,
+        owner  => 'puppetdb',
+        group  => 'puppetdb',
+    }
 
-     file { '/etc/default/puppetdb':
-         ensure  => present,
-         owner   => 'root',
-         group   => 'root',
-         content => template('puppetdb/puppetdb.erb'),
-     }
+    $jmx_exporter_config_file = '/etc/puppetlabs/puppetdb/jvm_prometheus_puppetdb_jmx_exporter.yaml'
+    $prometheus_jmx_exporter_port = 9400
+    $prometheus_java_opts = "-javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::ipaddress}:${prometheus_jmx_exporter_port}:${jmx_exporter_config_file}"
+
+    $jvm_opts = "${puppetdb_jvm_opts} ${prometheus_java_opts}"
+    file { '/etc/default/puppetdb':
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        content => template('puppetdb/puppetdb.erb'),
+    }
 
     ## Configuration
 
@@ -89,9 +94,9 @@ class puppetdb(
     }
 
     if $db_ssl {
-      $ssl = '?ssl=true&sslmode=require'
+        $ssl = '?ssl=true&sslmode=require'
     } else {
-      $ssl = ''
+        $ssl = ''
     }
 
     $default_db_settings = {
@@ -171,11 +176,17 @@ class puppetdb(
         enable => true,
     }
 
+    prometheus::jmx_exporter { "puppetdb_${::hostname}":
+        port             => $prometheus_jmx_exporter_port,
+        prometheus_nodes => $prometheus_nodes,
+        config_file      => $jmx_exporter_config_file,
+        content          => file('puppetdb/jvm_prometheus_puppetdb_jmx_exporter.yaml'),
+    }
+
     monitoring::services { 'puppetdb':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '8081',
         },
     }
-
 }
