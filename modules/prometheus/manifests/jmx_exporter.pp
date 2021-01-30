@@ -51,7 +51,7 @@ define prometheus::jmx_exporter (
         group  => 'root',
     }
 
-    file { '/usr/share/java/prometheus/jmx_prometheus_javaagent.jar:
+    file { '/usr/share/java/prometheus/jmx_prometheus_javaagent.jar':
         ensure  => 'present',
         mode    => '0555',
         owner   => 'root',
