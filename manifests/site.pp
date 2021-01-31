@@ -78,6 +78,16 @@ node 'mon1.miraheze.org' {
     include prometheus::php_fpm
 }
 
+node 'mon2.miraheze.org' {
+    include base
+    include role::grafana
+    include role::icinga2
+    include role::irc
+    include role::matomo
+    include role::prometheus
+    include prometheus::php_fpm
+}
+
 node /^mw[4567]\.miraheze\.org$/ {
     include base
     include role::mediawiki
