@@ -9,9 +9,8 @@ class cloud (
     String              $main_ip6_gateway
 ) {
 
-    file { '/etc/cloud/cloud.cfg.d/99-disable-network-config.cfg':
-        ensure  => 'present',
-        source  => 'puppet:///modules/cloud/cloudinit/99-disable-network-config.cfg',
+    package { 'cloud-init':
+        ensure => purge,
     }
 
     file { '/etc/network/interfaces.d/50-cloud-init.cfg':
