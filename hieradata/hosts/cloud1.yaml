@@ -1,3 +1,4 @@
+base::syslog::syslog_daemon: 'rsyslog'
 
 # Network setup
 role::cloud::main_ip4_address: 54.36.165.86
