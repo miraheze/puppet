@@ -6,7 +6,8 @@ class cloud (
     String              $main_ip4_broadcast,
     String              $main_ip4_gateway,
     Stdlib::IP::Address $main_ip6_address,
-    String              $main_ip6_gateway
+    String              $main_ip6_gateway,
+    String              $main_interface = 'en0'
 ) {
 
     package { 'cloud-init':
