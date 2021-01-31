@@ -1,7 +1,16 @@
 [Administrators]
-groups = "sre"
+groups = "sre-infrastructure,sre-management"
 permissions = "*"
 
-[view]
-groups = "users"
-permissions = "module/doc, module/monitoring, module/translation"
+[guest]
+users = "guest"
+permissions = "no-user/password-change, module/doc, module/monitoring, module/translation"
+
+[sre-mediawiki]
+groups = "sre-mediawiki"
+monitoring/filter/objects = "(hostgroup_name=mediawiki||hostgroup_name=jobrunner)"
+permissions = "module/monitoring, monitoring/command/*"
+
+[sre-mediawiki-view]
+groups = "sre-mediawiki"
+permissions = "module/doc, module/monitoring"
