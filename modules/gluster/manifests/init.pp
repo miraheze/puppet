@@ -98,6 +98,13 @@ class gluster {
             }
         }
 
+        if !defined(Gluster::Mount['/mnt/mediawiki-static-new']) {
+            gluster::mount { '/mnt/mediawiki-static-new':
+              ensure    => mounted,
+              volume    => lookup('gluster_volume', {'default_value' => 'gluster3.miraheze.org:/static'}),
+            }
+        }
+
         monitoring::services { 'Gluster Disk Space':
             check_command => 'nrpe',
             vars          => {

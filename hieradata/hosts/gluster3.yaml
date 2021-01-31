@@ -1,0 +1,2 @@
+puppetserver_hostname: 'puppet3.miraheze.org'
+gluster_client: true

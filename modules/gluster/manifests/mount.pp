@@ -66,9 +66,11 @@ define gluster::mount (
 
 	include gluster::apt
 
-	package { 'glusterfs-client':
-		ensure   => installed,
-		require  => Class['gluster::apt'],
+	if !defined(Package['glusterfs-client']) {
+		package { 'glusterfs-client':
+			ensure   => installed,
+			require  => Class['gluster::apt'],
+		}
 	}
 
 	exec { $title:
@@ -139,10 +141,13 @@ define gluster::mount (
 		require  => File['/var/lib/glusterd/secure-access']
 	}
 
-	monitoring::services { 'Check Gluster Clients':
-		check_command => 'nrpe',
-		vars          => {
-			nrpe_command => 'check_glusterd_client',
-		},
+	if !defined(Monitoring::Services['Check Gluster Clients']) {
+		monitoring::services { 'Check Gluster Clients':
+			check_command => 'nrpe',
+			vars          => {
+				nrpe_command => 'check_glusterd_client',
+			},
+		}
 	}
+
 }

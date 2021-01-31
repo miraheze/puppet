@@ -57,4 +57,11 @@ class role::mediawiki {
           volume    => lookup('gluster_volume', {'default_value' => 'gluster1.miraheze.org:/mvol'}),
         }
     }
+
+    if !defined(Gluster::Mount['/mnt/mediawiki-static-new']) {
+        gluster::mount { '/mnt/mediawiki-static-new':
+          ensure    => mounted,
+          volume    => lookup('gluster_volume', {'default_value' => 'gluster3.miraheze.org:/static'}),
+        }
+    }
 }
