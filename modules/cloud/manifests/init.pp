@@ -1,13 +1,13 @@
 # == Class: cloud
 
 class cloud (
-    String              $main_interface = 'eno0'
+    String              $main_interface = 'eno0',
     Stdlib::IP::Address $main_ip4_address,
     String              $main_ip4_netmask,
     String              $main_ip4_broadcast,
     String              $main_ip4_gateway,
     Stdlib::IP::Address $main_ip6_address,
-    String              $main_ip6_gateway,
+    String              $main_ip6_gateway
 ) {
 
     package { 'cloud-init':
