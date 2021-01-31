@@ -1,6 +1,7 @@
 # == Class: cloud
 
 class cloud (
+    String              $main_interface = 'eno0',
     Stdlib::IP::Address $main_ip4_address,
     String              $main_ip4_netmask,
     String              $main_ip4_broadcast,

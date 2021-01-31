@@ -1,4 +1,5 @@
 # Network setup
+role::cloud::main_interface: 'eth0'
 role::cloud::main_ip4_address: 51.77.117.189
 role::cloud::main_ip4_netmask: 255.255.255.0
 role::cloud::main_ip4_broadcast: 51.77.117.255
