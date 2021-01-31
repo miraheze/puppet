@@ -105,6 +105,15 @@ node 'puppet2.miraheze.org' {
     include role::salt
 }
 
+node 'puppet3.miraheze.org' {
+    include base
+    include bacula::client
+    include role::postgresql
+    include puppetdb::database
+    include role::puppetserver
+    include role::salt
+}
+
 node /^rdb[12]\.miraheze\.org$/ {
     include base
     include role::redis
