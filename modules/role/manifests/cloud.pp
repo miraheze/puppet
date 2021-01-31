@@ -1,6 +1,7 @@
 # class: role::cloud
 class role::cloud {
     class { '::cloud':
+        main_interface     => hiera('role::cloud::main_interface'),
         main_ip4_address   => hiera('role::cloud::main_ip4_address'),
         main_ip4_netmask   => hiera('role::cloud::main_ip4_netmask'),
         main_ip4_broadcast => hiera('role::cloud::main_ip4_broadcast'),
