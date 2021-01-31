@@ -6,7 +6,6 @@
 # from https://github.com/wikimedia/puppet/blob/b347052863d4d2e87b37d6c2d9f44f833cfd9dc2/modules/prometheus/manifests/blackbox_exporter.pp
 
 class prometheus::blackbox_exporter {
-
     require_package('prometheus-blackbox-exporter')
 
     file { '/etc/prometheus/blackbox.yml':
@@ -23,11 +22,5 @@ class prometheus::blackbox_exporter {
         hasrestart => true,
         provider   => 'systemd',
         require    => Package['prometheus-blackbox-exporter'],
-    }
-
-    ufw::allow { 'prometheus access 9115 on misc2':
-        proto => 'tcp',
-        port  => 9115,
-        from  => '185.52.1.76',
     }
 }

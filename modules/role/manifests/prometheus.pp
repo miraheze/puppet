@@ -1,6 +1,7 @@
 # role: prometheus
 class role::prometheus {
     include ::prometheus
+    include prometheus::blackbox_exporter
 
     ufw::allow { 'prometheus tcp ipv4':
         proto => 'tcp',
