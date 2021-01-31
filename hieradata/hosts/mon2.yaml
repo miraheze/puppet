@@ -29,8 +29,8 @@ icinga2::globals::constants:
   PluginDir: '/usr/lib/nagios/plugins'
   PluginContribDir: '/usr/lib/nagios/plugins'
   ManubulonPluginDir: '/usr/lib/nagios/plugins'
-  NodeName: 'mon1.miraheze.org'
-  ZoneName: 'mon1.miraheze.org'
+  NodeName: 'mon2.miraheze.org'
+  ZoneName: 'mon2.miraheze.org'
   TicketSalt: ''
   MaxConcurrentChecks: 6
 icinga2::globals::user: 'nagios'
