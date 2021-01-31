@@ -5,7 +5,7 @@
 auto lo
 iface lo inet loopback
 
-iface eno1 inet manual
+iface <%= @main_interface %> inet manual
 
 # IPV4 main host addresses (configured through OVH UI)
 auto vmbr0
@@ -14,7 +14,7 @@ iface vmbr0 inet static
     netmask  <%= @main_ip4_netmask %>
     broadcast <%= @main_ip4_broadcast %>
     gateway <%= @main_ip4_gateway %>
-    bridge-ports eno1
+    bridge-ports <%= @main_interface %>
     bridge-stp off
     bridge-fd 0
 

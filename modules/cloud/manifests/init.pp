@@ -1,6 +1,7 @@
 # == Class: cloud
 
 class cloud (
+    String              $main_interface = 'eno0',
     Stdlib::IP::Address $main_ip4_address,
     String              $main_ip4_netmask,
     String              $main_ip4_broadcast,
@@ -8,6 +9,20 @@ class cloud (
     Stdlib::IP::Address $main_ip6_address,
     String              $main_ip6_gateway
 ) {
+
+    package { 'cloud-init':
+        ensure => absent,
+    }
+
+    file { '/etc/network/interfaces.d/50-cloud-init.cfg':
+        ensure  => 'present',
+        source  => 'puppet:///modules/cloud/cloudinit/50-cloud-init.cfg',
+    }
+
+    file { '/etc/network/interfaces':
+        ensure  => present,
+        content => template('cloud/network/interfaces.erb'),
+    }
 
     file { '/etc/apt/trusted.gpg.d/proxmox.gpg':
         ensure => present,
@@ -35,20 +50,8 @@ class cloud (
         require     => Apt::Pin['proxmox_pin'],
     }
 
-    require_package('proxmox-ve', 'open-iscsi')
-
-    file { '/etc/cloud/cloud.cfg.d/99-disable-network-config.cfg':
-        ensure  => 'present',
-        source  => 'puppet:///modules/cloud/cloudinit/99-disable-network-config.cfg',
-    }
-
-    file { '/etc/network/interfaces.d/50-cloud-init.cfg':
-        ensure  => 'present',
-        source  => 'puppet:///modules/cloud/cloudinit/50-cloud-init.cfg',
-    }
-
-    file { '/etc/network/interfaces':
-        ensure  => present,
-        content => template('cloud/network/interfaces.erb'),
+    package { ['proxmox-ve', 'open-iscsi']:
+        ensure => present,
+        require => Apt::Source['proxmox_apt']
     }
 }
