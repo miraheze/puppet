@@ -96,10 +96,13 @@ scrape_configs:
   - job_name: 'blackbox'
     metrics_path: /probe
     params:
-      module: [https_mediawiki]
+      module: [https_mediawiki_cp]
     static_configs:
       - targets:
-        - https://meta.miraheze.org/wiki/Main_Page
+        - https://cp3.miraheze.org/wiki/Main_Page
+        - https://cp6.miraheze.org/wiki/Main_Page
+        - https://cp7.miraheze.org/wiki/Main_Page
+        - https://cp12.miraheze.org/wiki/Main_Page
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

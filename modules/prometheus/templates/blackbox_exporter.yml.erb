@@ -44,12 +44,12 @@ modules:
       tls_config:
         insecure_skip_verify: false
   # Check for a MediaWiki page, hosted by Miraheze
-  https_mediawiki:
+  https_mediawiki_cp:
     prober: http
     timeout: 5s
     http:
       headers:
-        'X-Miraheze-Debug': 'mw4.miraheze.org'
+        'X-Miraheze-Debug': 'mw6.miraheze.org'
       preferred_ip_protocol: "ip4"
       no_follow_redirects: false
       fail_if_not_ssl: true
