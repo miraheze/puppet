@@ -1,13 +1,13 @@
 # class: role::cloud
 class role::cloud {
     class { '::cloud':
-        main_interface     => hiera('role::cloud::main_interface'),
-        main_ip4_address   => hiera('role::cloud::main_ip4_address'),
-        main_ip4_netmask   => hiera('role::cloud::main_ip4_netmask'),
-        main_ip4_broadcast => hiera('role::cloud::main_ip4_broadcast'),
-        main_ip4_gateway   => hiera('role::cloud::main_ip4_gateway'),
-        main_ip6_address   => hiera('role::cloud::main_ip6_address'),
-        main_ip6_gateway   => hiera('role::cloud::main_ip6_gateway'),
+        main_interface     => lookup('role::cloud::main_interface', {'default_value' => 'eno0'}),
+        main_ip4_address   => lookup('role::cloud::main_ip4_address'),
+        main_ip4_netmask   => lookup('role::cloud::main_ip4_netmask'),
+        main_ip4_broadcast => lookup('role::cloud::main_ip4_broadcast'),
+        main_ip4_gateway   => lookup('role::cloud::main_ip4_gateway'),
+        main_ip6_address   => lookup('role::cloud::main_ip6_address'),
+        main_ip6_gateway   => lookup('role::cloud::main_ip6_gateway'),
     }
 
     # cloud1 and cloud2 respectivly
