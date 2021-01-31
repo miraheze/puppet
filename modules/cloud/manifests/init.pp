@@ -11,7 +11,7 @@ class cloud (
 ) {
 
     package { 'cloud-init':
-        ensure => purge,
+        ensure => absent,
     }
 
     file { '/etc/network/interfaces.d/50-cloud-init.cfg':
