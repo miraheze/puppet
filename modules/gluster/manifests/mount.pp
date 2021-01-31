@@ -66,9 +66,11 @@ define gluster::mount (
 
 	include gluster::apt
 
-	package { 'glusterfs-client':
-		ensure   => installed,
-		require  => Class['gluster::apt'],
+	if !defined(Package['glusterfs-client']) {
+		package { 'glusterfs-client':
+			ensure   => installed,
+			require  => Class['gluster::apt'],
+		}
 	}
 
 	exec { $title:
