@@ -39,7 +39,12 @@ email =  "mail"
 
 [[servers.group_mappings]]
 # If you want to match all (or no ldap groups) then you can use wildcard
-group_dn = "cn=sre,ou=groups,dc=miraheze,dc=org"
+group_dn = "cn=sre-management,ou=groups,dc=miraheze,dc=org"
+org_role = "Admin"
+grafana_admin = true
+
+[[servers.group_mappings]]
+group_dn = "cn=sre-infrastructure,ou=groups,dc=miraheze,dc=org"
 org_role = "Admin"
 grafana_admin = true
 
