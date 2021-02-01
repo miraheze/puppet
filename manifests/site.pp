@@ -40,6 +40,10 @@ node /^gluster[1234]\.miraheze\.org$/ {
     include role::gluster
 }
 
+node 'glustermigrtemp1.miraheze.org' {
+    include base
+}
+
 node 'graylog1.miraheze.org' {
     include base
     include role::graylog
