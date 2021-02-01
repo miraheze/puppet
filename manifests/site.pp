@@ -68,6 +68,12 @@ node 'mail1.miraheze.org' {
     include role::roundcubemail
 }
 
+node 'mail2.miraheze.org' {
+    include base
+    include role::mail
+    include role::roundcubemail
+}
+
 node 'mon1.miraheze.org' {
     include base
     include role::grafana
