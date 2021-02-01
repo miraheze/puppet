@@ -3,16 +3,19 @@ class role::prometheus {
     include ::prometheus
     include prometheus::blackbox_exporter
 
-    ufw::allow { 'prometheus tcp ipv4':
-        proto => 'tcp',
-        port  => '9090',
-        from  => '51.89.160.138',
-    }
+    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "prometheus 9090 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9090,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { 'prometheus tcp ipv6':
-        proto => 'tcp',
-        port  => '9090',
-        from  => '2001:41d0:800:105a::6',
+        ufw::allow { "prometheus 9090 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9090,
+            from  => $value['ipaddress6'],
+        }
     }
 
     motd::role { 'role::prometheus':
