@@ -19,15 +19,18 @@ class prometheus::varnish_prometheus_exporter (
         require => [ Package['varnish'], File['/etc/systemd/system/prometheus-varnish-exporter.service'] ],
     }
 
-    ufw::allow { 'prometheus varnish ipv4':
-        proto => 'tcp',
-        port  => $listen_port,
-        from  => '51.89.160.138',
-    }
+    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "prometheus ${listen_port} ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => $listen_port,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { 'prometheus varnish ipv6':
-        proto => 'tcp',
-        port  => $listen_port,
-        from  => '2001:41d0:800:105a::6',
+        ufw::allow { "prometheus ${listen_port} ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => $listen_port,
+            from  => $value['ipaddress6'],
+        }
     }
 }
