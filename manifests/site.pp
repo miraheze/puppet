@@ -42,6 +42,13 @@ node /^gluster[1234]\.miraheze\.org$/ {
 
 node 'glustermigrtemp1.miraheze.org' {
     include base
+
+    include ssl::wildcard
+
+    gluster::mount { '/mnt/mediawiki-static':
+      ensure    => mounted,
+      volume    => lookup('gluster_volume', {'default_value' => 'gluster1.miraheze.org:/mvol'}),
+    }
 }
 
 node 'graylog1.miraheze.org' {
