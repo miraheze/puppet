@@ -1,0 +1,3 @@
+puppetserver_hostname: 'puppet3.miraheze.org'
+mailserver: true
+nginx::use_graylog: true
