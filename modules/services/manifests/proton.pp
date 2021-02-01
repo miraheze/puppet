@@ -18,7 +18,7 @@ class services::proton {
 
     user { 'proton':
         ensure     => present,
-        gid        => 'electron',
+        gid        => 'proton',
         shell      => '/bin/false',
         home       => '/srv/proton',
         managehome => false,
