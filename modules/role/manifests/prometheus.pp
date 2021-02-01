@@ -4,7 +4,7 @@ class role::prometheus {
     include prometheus::blackbox_exporter
 
     $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
-    $firewallMon.each |$key, $value| {
+    $firewall.each |$key, $value| {
         ufw::allow { "prometheus ${value['ipaddress']}":
             proto => 'tcp',
             port  => 9090,
