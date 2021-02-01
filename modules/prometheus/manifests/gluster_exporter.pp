@@ -29,15 +29,18 @@ class prometheus::gluster_exporter {
         ],
     }
 
-    ufw::allow { 'prometheus access 9050 ipv4':
-        proto => 'tcp',
-        port  => 9050,
-        from  => '51.89.160.138',
-    }
+    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "prometheus 9050 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9050,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { 'prometheus access 9050 ipv6':
-        proto => 'tcp',
-        port  => 9050,
-        from  => '2001:41d0:800:105a::6',
+        ufw::allow { "prometheus 9050 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9050,
+            from  => $value['ipaddress6'],
+        }
     }
 }
