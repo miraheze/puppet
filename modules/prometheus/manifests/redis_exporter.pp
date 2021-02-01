@@ -41,15 +41,18 @@ class prometheus::redis_exporter (
         notify => Exec['prometheus-redis reload systemd'],
     }
 
-    ufw::allow { 'prometheus access 9121  ipv4':
-        proto => 'tcp',
-        port  => 9121,
-        from  => '51.89.160.138',
-    }
+    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "Prometheus  9121 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9121,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { 'prometheus access 9121  ipv6':
-        proto => 'tcp',
-        port  => 9121,
-        from  => '2001:41d0:800:105a::6',
+        ufw::allow { "Prometheus 9121 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9121,
+            from  => $value['ipaddress6'],
+        }
     }
 }
