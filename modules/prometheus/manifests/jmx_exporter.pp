@@ -82,15 +82,18 @@ define prometheus::jmx_exporter (
         links   => 'follow',
     }
 
-    ufw::allow { 'prometheus access 9400 ipv4':
-        proto => 'tcp',
-        port  => 9400,
-        from  => '51.89.160.138',
-    }
+    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "Prometheus  9400 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9400,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { 'prometheus access 9400 ipv6':
-        proto => 'tcp',
-        port  => 9400,
-        from  => '2001:41d0:800:105a::6',
+        ufw::allow { "Prometheus 9400 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9400,
+            from  => $value['ipaddress6'],
+        }
     }
 }
