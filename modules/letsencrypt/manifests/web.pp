@@ -26,16 +26,19 @@ class letsencrypt::web {
         require => File['/etc/systemd/system/mirahezerenewssl.service'],
     }
 
-    ufw::allow { "mon1 ipv4 to port 5000":
-        proto => 'tcp',
-        port  => 5000,
-        from  => '51.89.160.138',
-    }
+    $firewall = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "Icinga 5000 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 5000,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { "mon1 ipv6 to port 5000":
-        proto => 'tcp',
-        port  => 5000,
-        from  => '2001:41d0:800:105a::6',
+        ufw::allow { "Icinga 5000 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 5000,
+            from  => $value['ipaddress6'],
+        }
     }
 
     monitoring::services { 'MirahezeRenewSsl':
