@@ -112,6 +112,13 @@ node 'phab1.miraheze.org' {
     include prometheus::php_fpm
 }
 
+node 'phab2.miraheze.org' {
+    include base
+    include bacula::client
+    include role::phabricator
+    include prometheus::php_fpm
+}
+
 node 'puppet2.miraheze.org' {
     include base
     include bacula::client
