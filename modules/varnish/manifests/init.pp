@@ -84,6 +84,19 @@ class varnish(
         notify  => Exec['varnish-server-syntax'],
     }
 
+    systemd::service { 'varnishlog':
+        ensure  => present,
+        content => systemd_template('varnishlog'),
+        restart => true,
+        require => Service['varnish'],
+    }
+
+    # Unfortunately, varnishlog can't log to syslog
+    logrotate::conf { 'varnishlog_logs':
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/varnish/varnishlog.logrotate.conf',
+    }
+
     include ssl::wildcard
     include ssl::hiera
 

@@ -1,0 +1,20 @@
+[Unit]
+Description=Varnish HTTP accelerator log daemon
+Documentation=https://www.varnish-cache.org/docs/6.1/ man:varnishlog
+After=varnish.service
+
+[Service]
+Type=forking
+PIDFile=/run/varnishlog/varnishlog.pid
+RuntimeDirectory=varnishlog
+User=varnishlog
+Group=varnish
+ExecStart=/usr/bin/varnishlog -q "RespStatus >= 500 or BerespStatus >= 500" -A -a -w /var/log/varnish/varnishlog-5xx.log -D -P /run/varnishlog/varnishlog.pid
+ExecReload=/bin/kill -HUP $MAINPID
+PrivateDevices=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target
