@@ -31,15 +31,18 @@ class prometheus::mysqld_exporter {
         ],
     }
 
-    ufw::allow { 'prometheus mysql monitoring ipv4':
-        proto   => 'tcp',
-        port    => '9104',
-        from    => '51.89.160.138',
-    }
+    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "Prometheus mysql 9104 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9104,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { 'prometheus mysql monitoring ipv6':
-        proto   => 'tcp',
-        port    => '9104',
-        from    => '2001:41d0:800:105a::6',
+        ufw::allow { "Prometheus mysql 9104 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9104,
+            from  => $value['ipaddress6'],
+        }
     }
 }
