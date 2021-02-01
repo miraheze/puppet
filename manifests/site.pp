@@ -130,7 +130,7 @@ node /^rdb[12]\.miraheze\.org$/ {
     include prometheus::redis_exporter
 }
 
-node /^services[12]\.miraheze\.org$/ {
+node /^services[124]\.miraheze\.org$/ {
     include base
     include role::services
 }
