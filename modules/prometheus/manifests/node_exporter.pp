@@ -101,4 +101,16 @@ class prometheus::node_exporter (
         port  => '9100',
         from  => '2001:41d0:800:105a::6',
     }
+
+    ufw::allow { 'prometheus access all hosts ipv4 new':
+        proto => 'tcp',
+        port  => '9100',
+        from  => '51.195.236.249',
+    }
+
+    ufw::allow { 'prometheus access all hosts ipv6 new':
+        proto => 'tcp',
+        port  => '9100',
+        from  => '2001:41d0:800:1bbd::3',
+    }
 }
