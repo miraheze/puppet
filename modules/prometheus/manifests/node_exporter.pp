@@ -90,27 +90,18 @@ class prometheus::node_exporter (
         require   => Package['prometheus-node-exporter'],
     }
 
-    ufw::allow { 'prometheus access all hosts ipv4':
-        proto => 'tcp',
-        port  => '9100',
-        from  => '51.89.160.138',
-    }
+    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "Prometheus 9100 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9100,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { 'prometheus access all hosts ipv6':
-        proto => 'tcp',
-        port  => '9100',
-        from  => '2001:41d0:800:105a::6',
-    }
-
-    ufw::allow { 'prometheus access all hosts ipv4 new':
-        proto => 'tcp',
-        port  => '9100',
-        from  => '51.195.236.249',
-    }
-
-    ufw::allow { 'prometheus access all hosts ipv6 new':
-        proto => 'tcp',
-        port  => '9100',
-        from  => '2001:41d0:800:1bbd::3',
+        ufw::allow { "Prometheus 9100 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9100,
+            from  => $value['ipaddress6'],
+        }
     }
 }
