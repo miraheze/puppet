@@ -10,7 +10,7 @@ node /^cloud[12345]\.miraheze\.org$/ {
     include role::cloud
 }
 
-node /^cp([3679]|12)\.miraheze\.org$/ {
+node /^cp([3679]|1[012])\.miraheze\.org$/ {
     include base
     include role::varnish
 }
@@ -45,14 +45,14 @@ node 'graylog1.miraheze.org' {
     include role::graylog
 }
 
-node 'jobrunner1.miraheze.org' {
+node /^jobrunner[13]\.miraheze.org$/ {
     include base
     include role::redis
     include role::mediawiki
     include prometheus::redis_exporter
 }
 
-node 'jobrunner2.miraheze.org' {
+node /^jobrunner[24]\.miraheze.org$/ {
     include base
     include role::mediawiki
 }
