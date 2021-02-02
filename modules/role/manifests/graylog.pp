@@ -27,7 +27,9 @@ class role::graylog {
             'cluster.name'  => 'graylog',
             'http.port'     => '9200',
             'network.host'  => '127.0.0.1',
+            'ES_HEAP_SIZE'  => '2g',
         },
+        jvm_options     => ['-Xms2g', '-Xmx2g']
     }
 
     class { 'graylog::repository':
@@ -39,6 +41,15 @@ class role::graylog {
             'password_secret'       => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'    => lookup('passwords::graylog::root_password_sha2'),
         }
+    }
+
+    file { '/etc/default/graylog-server':
+        ensure  => 'present',
+        source  => 'puppet:///role/graylog/graylog-server-default',
+        owner   => 'root',
+        group   => 'root',
+        require => Class['graylog::server']
+        notify  => Service['graylog-server']
     }
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
