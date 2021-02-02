@@ -47,7 +47,7 @@ class role::graylog {
         source  => 'puppet:///role/graylog/graylog-server-default',
         owner   => 'root',
         group   => 'root',
-        require => Class['graylog::server']
+        require => Class['graylog::server'],
         notify  => Service['graylog-server']
     }
 
