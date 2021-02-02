@@ -110,7 +110,7 @@ node 'mon2.miraheze.org' {
     include prometheus::php_fpm
 }
 
-node /^mw([4567]|10|11)\.miraheze\.org$/ {
+node /^mw([456789]|10|11)\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include prometheus::php_fpm
