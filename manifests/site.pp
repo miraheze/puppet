@@ -170,6 +170,12 @@ node 'test2.miraheze.org' {
     include prometheus::php_fpm
 }
 
+node 'test3.miraheze.org' {
+    include base
+    include role::mediawiki
+    include prometheus::php_fpm
+}
+
 # ensures all servers have basic class if puppet runs
 node default {
     include base
