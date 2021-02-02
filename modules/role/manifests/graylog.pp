@@ -27,7 +27,6 @@ class role::graylog {
             'cluster.name'  => 'graylog',
             'http.port'     => '9200',
             'network.host'  => '127.0.0.1',
-            'ES_HEAP_SIZE'  => '2g',
         },
         jvm_options     => ['-Xms2g', '-Xmx2g']
     }
