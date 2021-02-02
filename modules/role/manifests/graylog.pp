@@ -48,7 +48,6 @@ class role::graylog {
         owner   => 'root',
         group   => 'root',
         require => Class['graylog::server'],
-        notify  => Service['graylog-server']
     }
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
