@@ -56,6 +56,11 @@ node 'graylog1.miraheze.org' {
     include role::graylog
 }
 
+node 'graylog2.miraheze.org' {
+    include base
+    include role::graylog
+}
+
 node /^jobrunner[13]\.miraheze.org$/ {
     include base
     include role::redis
