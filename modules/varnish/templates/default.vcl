@@ -256,13 +256,14 @@ sub mw_vcl_recv {
 		unset req.http.If-Modified-Since;
 	}
 
-	# Don't cache dumps, and such
-	if (req.http.Host == "static.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps") ||
-		req.http.Host == "static-new.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps")) {
+	# Hosted on local domain and redirects to static.miraheze.org
+	if (req.url ~ "^/sitemaps") {
 		return (pass);
 	}
 
-	if ( req.url ~ "^/sitemaps/(.+)wiki/sitemaps") {
+	# Don't cache dumps, and such
+	if (req.http.Host == "static.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps") ||
+		req.http.Host == "static-new.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps")) {
 		return (pass);
 	}
 
