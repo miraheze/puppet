@@ -16,7 +16,7 @@ class role::varnish {
     $firewall.each |$key, $value| {
         ufw::allow { "Direct Varnish access ipv4 ${value['ipaddress']}":
             proto => 'tcp',
-            port  => 9113,
+            port  => 81,
             from  => $value['ipaddress'],
         }
 
