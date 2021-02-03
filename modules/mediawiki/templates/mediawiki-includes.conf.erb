@@ -73,3 +73,7 @@ location ~ ^/(.+)/v1/ {
 	# the upstream backend 'restbase-lb.miraheze.org' is defined in sited-enabled/mediawiki
 	proxy_pass https://restbase-lb.miraheze.org;
  }
+	
+location /sitemaps/ {
+	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.miraheze.org/$1/sitemaps/$2 permanent;
+}
