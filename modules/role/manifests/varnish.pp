@@ -12,76 +12,19 @@ class role::varnish {
         port  => 443,
     }
 
-    ufw::allow { 'Direct Varnish access jobrunner1 ipv4':
-        proto => 'tcp',
-        port  => 81,
-        from  => '51.89.160.135',
-    }
+    $firewall = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "Direct Varnish access ipv4 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9113,
+            from  => $value['ipaddress'],
+        }
 
-    ufw::allow { 'Direct Varnish access jobrunner1 ipv6':
-        proto => 'tcp',
-        port  => 81,
-        from  => '2001:41d0:800:1056::10',
-    }
-
-    ufw::allow { 'Direct Varnish access jobrunner2 ipv4':
-        proto => 'tcp',
-        port  => 81,
-        from  => '51.195.135.132',
-    }
-
-    ufw::allow { 'Direct Varnish access jobrunner2 ipv6':
-        proto => 'tcp',
-        port  => 81,
-        from  => '2001:41d0:800:105a::13',
-    }
-
-    ufw::allow { 'Direct Varnish access mw4 ipv4':
-        proto => 'tcp',
-        port  => 81,
-        from  => '51.89.160.128',
-    }
-
-    ufw::allow { 'Direct Varnish access mw4 ipv6':
-        proto => 'tcp',
-        port  => 81,
-        from  => '2001:41d0:800:1056::3',
-    }
-
-    ufw::allow { 'Direct Varnish access mw5 ipv4':
-        proto => 'tcp',
-        port  => 81,
-        from  => '51.89.160.133',
-    }
-
-    ufw::allow { 'Direct Varnish access mw5 ipv6':
-        proto => 'tcp',
-        port  => 81,
-        from  => '2001:41d0:800:1056::8',
-    }
-
-    ufw::allow { 'Direct Varnish access mw6 ipv4':
-        proto => 'tcp',
-        port  => 81,
-        from  => '51.89.160.136',
-    }
-
-    ufw::allow { 'Direct Varnish access mw6 ipv6':
-        proto => 'tcp',
-        port  => 81,
-        from  => '2001:41d0:800:105a::4',
-    }
-
-    ufw::allow { 'Direct Varnish access mw7 ipv4':
-        proto => 'tcp',
-        port  => 81,
-        from  => '51.89.160.137',
-    }
-
-    ufw::allow { 'Direct Varnish access mw7 ipv6':
-        proto => 'tcp',
-        port  => 81,
-        from  => '2001:41d0:800:105a::5',
+        ufw::allow { "Direct Varnish access ipv6 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 81,
+            from  => $value['ipaddress6'],
+        }
     }
 
     motd::role { 'role::varnish':
