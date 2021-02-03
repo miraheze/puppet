@@ -263,7 +263,7 @@ sub mw_vcl_recv {
 	}
 
 	if ( req.url ~ "^/sitemaps/(.+)wiki/sitemaps") {
-		return (pass)'
+		return (pass);
 	}
 
 	# We can rewrite those to one domain name to increase cache hits!
