@@ -169,6 +169,10 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
+	location ~ ^/(a|b|c|e|f|g|h|i)(.+)wiki {
+	    root /mnt/mediawiki-static-new;
+	}
+
 	location ~* .(gif|jpe?g|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$ {
 		expires 1w;
 
