@@ -19,7 +19,7 @@ iface vmbr0 inet static
     bridge-fd 0
 
 # IPV6 addresses are configured through OVH UI.
-iface vmbr0 inet6 static 
+iface vmbr0 inet6 static
     address <%= @main_ip6_address %>
     netmask 128
     gateway <%= @main_ip6_gateway %>
@@ -27,6 +27,14 @@ iface vmbr0 inet6 static
     post-up /sbin/ip -f inet6 route add default via <%= @main_ip6_gateway %>
     pre-down /sbin/ip -f inet6 route del <%= @main_ip6_gateway %> dev vmbr0
     pre-down /sbin/ip -f inet6 route del default via <%= @main_ip6_gateway %>
+
+<%- if @private_interface -%>
+# Private Interface
+auto <%= @private_interface %>
+iface <%= @private_interface %> inet static
+    address <%= @private_ip %>
+    netmask <%= @private_netmask %>
+<%- end -%>
 
 # Set this one last, so that cloud-init or user can
 # override defaults.
