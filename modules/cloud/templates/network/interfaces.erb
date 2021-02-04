@@ -34,6 +34,14 @@ auto <%= @private_interface %>
 iface <%= @private_interface %> inet static
     address <%= @private_ip %>
     netmask <%= @private_netmask %>
+
+auto vmbr1
+iface vmbr1 inet static
+    address <%= @private_ip %>
+    netmask <%= @private_netmask %>
+    bridge-ports <%= @private_interface %>
+    bridge-stp off
+    bridge-fd 0
 <%- end -%>
 
 # Set this one last, so that cloud-init or user can
