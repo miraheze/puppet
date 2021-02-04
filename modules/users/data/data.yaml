@@ -113,7 +113,7 @@ users:
     name: rhinos
     realname: RhinosF1
     ssh_keys: []
-zppix:
+  zppix:
     ensure: present
     uid: 1012
     name: zppix
