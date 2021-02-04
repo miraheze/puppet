@@ -13,4 +13,4 @@ role::cloud::main_ip6_gateway: 2001:41D0:800:1bFF:FF:FF:FF:FF
 # Private network setup
 role::cloud::private_interface: 'enp1s0f1'
 role::cloud::private_ip: 10.0.1.1
-role::cloud::private_netmask: 255.255.255.255
+role::cloud::private_netmask: 255.0.0.0
