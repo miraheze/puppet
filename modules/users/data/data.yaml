@@ -112,7 +112,7 @@ users:
     uid: 1011
     name: rhinos
     realname: RhinosF1
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM4I7SW+RmPebTb4gQ7hqHMlSdTcK3BkYdU4Hac+sAQE rhinosf1@miraheze.org]
+    ssh_keys: []
   zppix:
     ensure: present
     uid: 1012
