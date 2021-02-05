@@ -41,19 +41,19 @@
         "memory": {
             "*": "192M",
             "DataDumpGenerateJob": "300M",
-			"RequestWikiAIJob": "1000M"
+            "RequestWikiAIJob": "1000M"
         }
     },
 
     "redis": {
         // Ready queue trackers
         "aggregators": [
-            "51.89.160.135:6379"
+            "51.195.236.220:6379"
         ],
         // Main queue servers
         "queues": [
-            "51.89.160.135:6379",
-            "51.89.160.135:6379"
+            "51.195.236.220:6379",
+            "51.195.236.220:6379"
         ],
         "password": "<%= @redis_password %>"
     },
