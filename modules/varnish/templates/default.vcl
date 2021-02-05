@@ -32,42 +32,42 @@ probe mwhealth {
 	.expected_response = 200;
 }
 
-backend mon1 {
+backend mon2 {
 	.host = "127.0.0.1";
 	.port = "8201";
 }
 
-backend mw4 {
+backend mw8 {
 	.host = "127.0.0.1";
 	.port = "8085";
 	.probe = mwhealth;
 }
 
-backend mw5 {
+backend mw9 {
 	.host = "127.0.0.1";
 	.port = "8086";
 	.probe = mwhealth;
 }
 
-backend mw6 {
+backend mw10 {
 	.host = "127.0.0.1";
 	.port = "8087";
 	.probe = mwhealth;
 }
 
-backend mw7 {
+backend mw11 {
 	.host = "127.0.0.1";
 	.port = "8088";
 	.probe = mwhealth;
 }
 
 # to be used for acme/letsencrypt only
-backend jobrunner1 {
+backend jobrunner3 {
 	.host = "127.0.0.1";
 	.port = "8089";
 }
 
-backend test2 {
+backend test3 {
 	.host = "127.0.0.1";
 	.port = "8091";
 }
@@ -75,22 +75,22 @@ backend test2 {
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
-backend mw4_test {
+backend mw8_test {
 	.host = "127.0.0.1";
 	.port = "8085";
 }
 
-backend mw5_test {
+backend mw9_test {
 	.host = "127.0.0.1";
 	.port = "8086";
 }
 
-backend mw6_test {
+backend mw10_test {
 	.host = "127.0.0.1";
 	.port = "8087";
 }
 
-backend mw7_test {
+backend mw11_test {
 	.host = "127.0.0.1";
 	.port = "8088";
 }
@@ -100,31 +100,39 @@ backend mw7_test {
 
 sub vcl_init {
 	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(mw4);
-	mediawiki.add_backend(mw5);
-	mediawiki.add_backend(mw6);
-	mediawiki.add_backend(mw7);
+	mediawiki.add_backend(mw8);
+	mediawiki.add_backend(mw9);
+	mediawiki.add_backend(mw10);
+	mediawiki.add_backend(mw11);
 }
 
 
 acl purge {
 	"localhost";
-	"51.77.107.211"; # test2
-	"2001:41d0:800:105a::3"; # test2
-	"51.89.160.128"; # mw4
-	"2001:41d0:800:1056::3"; # mw4
-	"51.89.160.133"; # mw5
-	"2001:41d0:800:1056::8"; # mw5
-	"51.89.160.136"; # mw6
-	"2001:41d0:800:105a::4"; # mw6
-	"51.89.160.137"; # mw7
-	"2001:41d0:800:105a::5"; # mw7
-	"51.89.160.138"; # mon1
-	"2001:41d0:800:105a::6"; # mon1
-	"51.89.160.135"; # jobrunner1
-	"2001:41d0:800:1056::10"; # jobrunner1
-	"51.195.135.132"; # jobrunner2
-	"2001:41d0:800:105a::13"; # jobrunner2
+	# mw8
+	"51.195.236.221";
+	"2001:41d0:800:178a::7";
+	# mw9
+	"51.195.236.222";
+	"2001:41d0:800:178a::8";
+	# mw10
+	"51.195.236.254";
+	"2001:41d0:800:1bbd::8";
+	# mw11
+	"51.195.236.255";
+	"2001:41d0:800:1bbd::10";
+	# mon2
+	"51.195.236.249";
+	"2001:41d0:800:1bbd::3";
+	# jobrunner3
+	"51.195.236.220";
+	"2001:41d0:800:178a::6";
+	# jobrunner4
+	"51.195.236.251";
+	"2001:41d0:800:1bbd::5";
+	# test3
+	"51.195.236.247";
+	"2001:41d0:800:1bbd::14";
 }
 
 sub mw_stash_cookie {
@@ -226,19 +234,19 @@ sub mw_vcl_recv {
 	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = jobrunner1;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw4.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw8.miraheze.org") {
 		set req.backend_hint = mw4_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw5.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw9.miraheze.org") {
 		set req.backend_hint = mw5_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw6.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw10.miraheze.org") {
 		set req.backend_hint = mw6_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw7.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw11.miraheze.org") {
 		set req.backend_hint = mw7_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "test2.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test2;
 		return (pass);
 	} else {
@@ -262,8 +270,7 @@ sub mw_vcl_recv {
 	}
 
 	# Don't cache dumps, and such
-	if (req.http.Host == "static.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps") ||
-		req.http.Host == "static-new.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps")) {
+	if (req.http.Host == "static.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps")) {
 		return (pass);
 	}
 
@@ -288,8 +295,8 @@ sub mw_vcl_recv {
 	}
 	
 	# Temporary solution to fix CookieWarning issue with ElectronPDF
-	if (req.http.X-Real-IP == "51.89.160.132" || req.http.X-Real-IP == "2001:41d0:800:1056::7" ||
-		req.http.X-Real-IP == "51.89.160.141" || req.http.X-Real-IP == "2001:41d0:800:105a::9") {
+	if (req.http.X-Real-IP == "51.195.236.212" || req.http.X-Real-IP == "2001:41d0:800:178a::10" ||
+		req.http.X-Real-IP == "51.195.236.246" || req.http.X-Real-IP == "2001:41d0:800:1bbd::13") {
 		return (pass);
 	}
 
@@ -317,7 +324,7 @@ sub vcl_recv {
 	}
 
 	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = mon1;
+		set req.backend_hint = mon2;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
