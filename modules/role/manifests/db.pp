@@ -37,12 +37,12 @@ class role::db {
         content => template('mariadb/grants/phabricator-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/roundcubemail-grants.sql.erb':
+    file { '/etc/mysql/miraheze/roundcubemail-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/roundcubemail-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/icinga2-grants.sql.erb':
+    file { '/etc/mysql/miraheze/icinga2-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/icinga2-grants.sql.erb'),
     }
