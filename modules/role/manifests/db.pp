@@ -37,6 +37,10 @@ class role::db {
         content => template('mariadb/grants/phabricator-grants.sql.erb'),
     }
 
+    file { '/etc/mysql/miraheze/roundcubemail-grants.sql.erb':
+        ensure  => present,
+        content => template('mariadb/grants/roundcubemail-grants.sql.erb'),
+    }
 
     $fwPort3306 = query_facts("domain='$domain' and (Class[Role::Db] or Class[Role::Dbreplication] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator])", ['ipaddress', 'ipaddress6'])
     $fwPort3306.each |$key, $value| {
