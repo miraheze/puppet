@@ -3,13 +3,13 @@ myorigin = /etc/mailname
 mydestination = localhost
 relayhost =
 relay_domains =
-mynetworks = 51.89.160.134
+mynetworks = 51.195.236.253
 mailbox_size_limit = 0
 virtual_mailbox_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
-smtp_bind_address=51.89.160.134
-smtp_bind_address6=2001:41d0:800:1056::9
+smtp_bind_address=51.195.236.253
+smtp_bind_address6=2001:41d0:800:1bbd::7
 
 virtual_mailbox_domains = $myhostname
 virtual_mailbox_base = /var/mail
