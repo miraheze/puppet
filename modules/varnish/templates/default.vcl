@@ -235,19 +235,19 @@ sub mw_vcl_recv {
 		set req.backend_hint = jobrunner3;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw8.miraheze.org") {
-		set req.backend_hint = mw4_test;
+		set req.backend_hint = mw8_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw9.miraheze.org") {
-		set req.backend_hint = mw5_test;
+		set req.backend_hint = mw9_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw10.miraheze.org") {
-		set req.backend_hint = mw6_test;
+		set req.backend_hint = mw10_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw11.miraheze.org") {
-		set req.backend_hint = mw7_test;
+		set req.backend_hint = mw11_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
-		set req.backend_hint = test2;
+		set req.backend_hint = test3;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
