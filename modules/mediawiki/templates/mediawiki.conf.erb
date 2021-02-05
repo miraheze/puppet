@@ -8,8 +8,8 @@
 # with a low cache expiration timeout), but that's not recommended due to DNS
 # spoofing attacks. This is not the preferred solution, but works reliably.
 upstream restbase-lb.miraheze.org {
-	server services1.miraheze.org:443 weight=1 max_fails=2 fail_timeout=5s;
-	server services2.miraheze.org:443 weight=1 max_fails=2 fail_timeout=5s;
+	server services3.miraheze.org:443 weight=1 max_fails=2 fail_timeout=5s;
+	server services4.miraheze.org:443 weight=1 max_fails=2 fail_timeout=5s;
 }
 
 server {
