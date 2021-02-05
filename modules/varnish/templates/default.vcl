@@ -234,19 +234,19 @@ sub mw_vcl_recv {
 	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = jobrunner1;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw4.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw8.miraheze.org") {
 		set req.backend_hint = mw4_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw5.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw9.miraheze.org") {
 		set req.backend_hint = mw5_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw6.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw10.miraheze.org") {
 		set req.backend_hint = mw6_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw7.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw11.miraheze.org") {
 		set req.backend_hint = mw7_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "test2.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test2;
 		return (pass);
 	} else {
@@ -270,8 +270,7 @@ sub mw_vcl_recv {
 	}
 
 	# Don't cache dumps, and such
-	if (req.http.Host == "static.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps") ||
-		req.http.Host == "static-new.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps")) {
+	if (req.http.Host == "static.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps")) {
 		return (pass);
 	}
 
@@ -296,8 +295,8 @@ sub mw_vcl_recv {
 	}
 	
 	# Temporary solution to fix CookieWarning issue with ElectronPDF
-	if (req.http.X-Real-IP == "51.89.160.132" || req.http.X-Real-IP == "2001:41d0:800:1056::7" ||
-		req.http.X-Real-IP == "51.89.160.141" || req.http.X-Real-IP == "2001:41d0:800:105a::9") {
+	if (req.http.X-Real-IP == "51.195.236.212" || req.http.X-Real-IP == "2001:41d0:800:178a::10" ||
+		req.http.X-Real-IP == "51.195.236.246" || req.http.X-Real-IP == "2001:41d0:800:1bbd::13") {
 		return (pass);
 	}
 
@@ -325,7 +324,7 @@ sub vcl_recv {
 	}
 
 	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = mon1;
+		set req.backend_hint = mon2;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
