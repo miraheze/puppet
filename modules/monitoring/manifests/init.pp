@@ -240,6 +240,10 @@ class monitoring (
         require => Package['nagios-nrpe-plugin'],
     }
 
+    package { 'python3-dnspython':
+        ensure => present,
+    }
+
     file { '/usr/lib/nagios/plugins/check_reverse_dns.py':
         source  => 'puppet:///modules/monitoring/check_reverse_dns.py',
         owner   => 'root',
