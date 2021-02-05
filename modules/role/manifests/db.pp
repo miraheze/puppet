@@ -9,7 +9,9 @@ class role::db {
     $grafana_password = lookup('passwords::db::grafana')
     $exporter_password = lookup('passwords::db::exporter')
     $icinga_password = lookup('passwords::db::icinga')
-
+    $roundcubemail_password = lookup('passwords::roundcubemail')
+    $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
+ 
     class { 'mariadb::config':
         config      => 'mariadb/config/mw.cnf.erb',
         password    => lookup('passwords::db::root'),
