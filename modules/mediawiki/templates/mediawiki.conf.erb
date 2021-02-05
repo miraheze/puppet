@@ -169,67 +169,6 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	location ~ ^/(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|0|1|2|3|4|5|6|7|8|9)(.+)wiki {
-	    root /mnt/mediawiki-static-new;
-	}
-
-	location ~* .(gif|jpe?g|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$ {
-		expires 1w;
-
-		add_header Access-Control-Allow-Origin '*' always;
-	}
-
-	error_page 404 =404 @notfound;
-
-	location @notfound {
-		# Work around the issue affecting T5568.
-		if ($request_uri ~* "(.*\.(gif|jpe?g|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$)") {
-			add_header Access-Control-Allow-Origin '*' always;
-		}
-
-		rewrite ^/(.*)wiki/thumb/(.+)$ https://$1.miraheze.org/w/thumb_handler.php/$2;
-	}
-
-	location = /favicon.ico {
-		try_files /../../usr/share/nginx/favicons/$host.ico /../../usr/share/nginx/favicons/default.ico;
-	}
-
-	location = /apple-touch-icon.png {
-		try_files /../../usr/share/nginx/favicons/apple-touch-icon-$host.png /../../usr/share/nginx/favicons/apple-touch-icon-default.png;
-	}
-
-	location /private/ {
-		deny all;
-	}
-
-	location /dumps/ {
-		autoindex on;
-	}
-}
-
-server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-
-	server_name static-new.miraheze.org;
-	root /mnt/mediawiki-static-new;
-
-	send_timeout 120;
-
-	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org-2020-2.crt;
-	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
-
-	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
-
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-
-	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
-
-	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
-
-	add_header X-Frame-Options "ALLOW-FROM static2.miraheze.org";
-
 	location ~* .(gif|jpe?g|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$ {
 		expires 1w;
 
