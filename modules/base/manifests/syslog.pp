@@ -63,7 +63,7 @@ class base::syslog (
                         params => {
                                 type    => 'syslog',
                                 options => [
-                                        "graylog1.miraheze.org",
+                                        "graylog2.miraheze.org",
                                         { 
                                                 'port' => [ 12210 ] 
                                         },
