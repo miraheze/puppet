@@ -8,5 +8,5 @@ mediawiki::branch: 'REL1_35'
 letsencrypt: false
 use_gluster_new: true
 mediawiki::use_redis: false
-puppetserver_hostname: puppet2.miraheze.org
-role::salt::minions::salt_master: 'puppet2.miraheze.org'
+puppetserver_hostname: puppet3.miraheze.org
+role::salt::minions::salt_master: 'puppet3.miraheze.org'

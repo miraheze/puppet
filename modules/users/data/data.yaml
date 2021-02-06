@@ -33,7 +33,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   puppet-users:
     gid: 2004
-    descriptions: limited access on puppet2 to add SSL private keys
+    descriptions: limited access on puppet3 to add SSL private keys
     members: [zppix]
     privileges: []                 
 

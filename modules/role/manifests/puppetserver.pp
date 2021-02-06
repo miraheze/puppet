@@ -20,10 +20,10 @@
 #   Options for java (which runs the puppetserver)
 #
 class role::puppetserver (
-    String  $puppetdb_hostname      = lookup('puppetdb_hostname', {'default_value' => 'puppet2.miraheze.org'}),
+    String  $puppetdb_hostname      = lookup('puppetdb_hostname', {'default_value' => 'puppet3.miraheze.org'}),
     Boolean $puppetdb_enable        = lookup('puppetdb_enable', {'default_value' => false}),
     Integer $puppet_major_version   = lookup('puppet_major_version', {'default_value' => 6}),
-    String  $puppetserver_hostname  = lookup('puppetserver_hostname', {'default_value' => 'puppet2.miraheze.org'}),
+    String  $puppetserver_hostname  = lookup('puppetserver_hostname', {'default_value' => 'puppet3.miraheze.org'}),
     String  $puppetserver_java_opts = lookup('puppetserver_java_opts', {'default_value' => '-Xms300m -Xmx300m'}),
 ) {
 
