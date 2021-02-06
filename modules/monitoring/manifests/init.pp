@@ -69,6 +69,10 @@ class monitoring (
         ssl_cacert_path => '/etc/ssl/certs/Sectigo.crt',
     }
 
+    class { '::icinga2::feature::gelf':
+        host => 'graylog.miraheze.org',
+    }
+
     file { '/etc/icinga2/conf.d/commands.conf':
         source  => 'puppet:///modules/monitoring/commands.conf',
         owner   => 'root',

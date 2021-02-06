@@ -100,6 +100,21 @@ class role::graylog {
         }
     }
 
+    $fwIcinga = query_facts("domain='$domain' and Class['Role::Icinga2'] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
+    $fwIcinga.each |$key, $value| {
+        ufw::allow { "graylog access 12201/tcp for ${value['ipaddess']}":
+            proto => 'tcp',
+            port  => 12201,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "graylog access 12201/tcp for ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 12201,
+            from  => $value['ipaddress6'],
+        }
+    }
+
     motd::role { 'role::graylog':
         description => 'central logging server',
     }
