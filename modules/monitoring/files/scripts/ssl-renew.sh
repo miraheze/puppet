@@ -21,4 +21,4 @@ curl -X POST -H 'Content-type: application/json' --data "{
   \"SERVICESTATE\": \"${SERVICESTATE}\",
   \"SERVICESTATETYPE\": \"${SERVICESTATETYPE}\",
   \"SERVICEDESC\": \"${SERVICEDESC}\"
-}" http://51.89.160.135:5000/renew >> /var/log/icinga2/ssl-let.log 2>&1
+}" http://51.195.236.220:5000/renew >> /var/log/icinga2/ssl-let.log 2>&1
