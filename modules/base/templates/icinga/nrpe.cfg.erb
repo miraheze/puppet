@@ -24,8 +24,7 @@ command[check_nginx_errorrate]=/usr/bin/sudo /usr/lib/nagios/plugins/check_nginx
 command[check_php_fpm]=/usr/lib/nagios/plugins/check_procs -C php-fpm<%= scope.call_function('hiera', ["php::php_version", "7.2"]) %> -c 1:
 command[check_jobrunner]=/usr/lib/nagios/plugins/check_procs -a redisJobRunnerService -c 1:1
 command[check_bacula_daemon]=/usr/lib/nagios/plugins/check_procs -u bacula -c 2:
-command[check_bacula_static_1]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H gluster3-fd -B BackupStatic1 -w 15d -c 31d
-command[check_bacula_static_2]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H gluster4-fd -B BackupStatic2 -w 15d -c 31d
+command[check_bacula_static]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H gluster3-fd -B BackupStatic -w 15d -c 31d
 command[check_bacula_databasesdb11]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db11-fd -B BackupDatabasesDB11 -w 15d -c 31d
 command[check_bacula_databasesdb12]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db12-fd -B BackupDatabasesDB12 -w 15d -c 31d
 command[check_bacula_databasesdb13]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db13-fd -B BackupDatabasesDB13 -w 15d -c 31d
