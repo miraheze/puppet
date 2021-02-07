@@ -1,2 +1,0 @@
-mailserver: true
-nginx::use_graylog: true
