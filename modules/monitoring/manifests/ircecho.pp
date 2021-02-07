@@ -27,7 +27,7 @@ class monitoring::ircecho (
     }
 
     $ircecho_logs = {
-        '/var/log/icinga2/irc.log' => '#miraheze',
+        '/var/log/icinga2/irc.log' => '#miraheze-sre',
     }
 
     file { '/etc/default/ircecho':
