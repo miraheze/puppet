@@ -21,7 +21,7 @@ class role::dbbackup {
     }
 
     $clusters = lookup('role::dbbackup::clusters')
-    $clusters.map |String $clusterName, Hash[String, String]$clusterDetails| {
+    $clusters.map |String $clusterName, Hash[String, Integer]$clusterDetails| {
         mariadb::instance { $clusterName:
             port        => $clusterDetails['port'],
             read_only   => 1,
