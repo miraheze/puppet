@@ -13,7 +13,7 @@ class role::cloud {
         private_netmask    => lookup('role::cloud::private_netmask', {'default_value' => undef}),
     }
 
-    # cloud1 and cloud2 respectivly
+    # cloud4 and cloud5 respectivly
     # TODO: Either automate this or move it so it's done in a file
     $firewall = query_facts('Class[Role::Cloud]', ['ipaddress', 'ipaddress6'])
     $firewall.each |$key, $value| {
