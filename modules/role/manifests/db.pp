@@ -49,7 +49,7 @@ class role::db {
         content => template('mariadb/grants/icinga2-grants.sql.erb'),
     }
 
-    $fwPort3306 = query_facts("domain='$domain' and (Class[Role::Db] or Class[Role::Dbreplication] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator])", ['ipaddress', 'ipaddress6'])
+    $fwPort3306 = query_facts("domain='$domain' and (Class[Role::Db] or Class[Role::Dbbackup] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator])", ['ipaddress', 'ipaddress6'])
     $fwPort3306.each |$key, $value| {
         ufw::allow { "mariadb inbound 3306/tcp for ${value['ipaddress']}":
             proto   => 'tcp',
