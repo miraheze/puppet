@@ -1,5 +1,5 @@
-# class: role::dbreplication
-class role::dbreplication {
+# class: role::dbbackup
+class role::dbbackup {
     include ssl::wildcard
 
     $icinga_password = lookup('passwords::db::icinga')
@@ -18,18 +18,19 @@ class role::dbreplication {
         server_role     => 'slave',
         icinga_password => $icinga_password,
         require         => File['/etc/ssl/private'],
-    } ->
-    mariadb::instance { 'c2':
-        port        => 3310,
-        read_only   => 1,
-    } ->
-    mariadb::instance { 'c3':
-        port        => 3311,
-        read_only   => 1,
-    } ->
-    mariadb::instance { 'c4':
-        port        => 3312,
-        read_only   => 1,
+    }
+
+    $clusters = lookup('role::dbbackup::clusters')
+    $clusters.map |String $clusterName, Hash[String, String]$clusterDetails| {
+        mariadb::instance { $clusterName:
+            port        => $clusterDetails['port'],
+            read_only   => 1,
+            require     => Class['mariadb::config'],
+        }
+
+        motd::role { "role::dbbackup, cluster ${clusterName}":
+            description => "database replica (for backup) of cluster ${clusterName}",
+        }
     }
 
     $fwPort3306 = query_facts("domain='$domain' and (Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
@@ -54,9 +55,5 @@ class role::dbreplication {
         ssh_keys    => [
             'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFX1yvcRAMqwlbkkhMPhK1GFYrLYM18qC1YUcuUEErxz dbcopy@db6'
         ],
-    }
-
-    motd::role { 'role::dbreplication':
-        description => 'replication backup database server',
     }
 }

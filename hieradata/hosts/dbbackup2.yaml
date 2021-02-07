@@ -1,10 +1,8 @@
-mariadb::config::innodb_buffer_pool_instances: 1
+mariadb::config::innodb_buffer_pool_instances: 2
 mariadb::config::innodb_buffer_pool_size: '128M'
 mariadb::config::table_definition_cache: 1500
 mariadb::config::table_open_cache: 500
 
 role::dbbackup::clusters:
-  c2:
-    port: 3310
-  c4:
-    port: 3312
+  c3:
+    port: 3311
