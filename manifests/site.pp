@@ -31,7 +31,7 @@ node /^db1[123]\.miraheze\.org$/ {
 
 node 'dbbackup1.miraheze.org' {
     include base
-    include role::dbreplication
+    # include role::dbreplication # pending reimage
 }
 
 node /^gluster[1234]\.miraheze\.org$/ {
