@@ -22,6 +22,7 @@ class mariadb::packages(
         priority        => 600,
         origin          => 'ams2.mirrors.digitalocean.com',
         require         => Apt::Source['mariadb_apt'],
+        notify          => Exec['apt_update_mariadb'],
     }
 
     # First installs can trip without this
@@ -29,7 +30,6 @@ class mariadb::packages(
         command     => '/usr/bin/apt-get update',
         refreshonly => true,
         logoutput   => true,
-        require     => Apt::Pin['mariadb_pin'],
     }
 
     package {[
