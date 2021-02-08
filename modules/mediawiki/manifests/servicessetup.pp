@@ -7,19 +7,23 @@ class mediawiki::servicessetup {
         directory => '/srv/mathoid',
         origin    => 'https://github.com/wikimedia/mathoid.git',
         branch    => 'master',
-        owner     => 'root',
+        owner     => 'www-data',
         group     => 'root',
         mode      => '0755',
     }
 
     exec { 'mathoid_npm':
-        command     => 'sudo -u root npm install',
+        command     => 'npm install --cache /srv/mediawiki/npm-cache',
         creates     => '/srv/mathoid/node_modules',
         cwd         => '/srv/mathoid',
         path        => '/usr/bin',
         environment => 'HOME=/srv/mathoid',
-        user        => 'root',
-        require     => [Git::Clone['mathoid'], Class['nodejs'], Package['librsvg2-dev']],
+        user        => 'www-data',
+        require     => [
+            Git::Clone['mathoid'],
+            Class['nodejs'],
+            Package['librsvg2-dev']
+        ],
     }
 
     file { '/etc/mathoid':
@@ -37,18 +41,22 @@ class mediawiki::servicessetup {
         directory => '/srv/3d2png',
         origin    => 'https://github.com/wikimedia/3d2png.git',
         branch    => 'master',
-        owner     => 'root',
-        group     => 'root',
+        owner     => 'www-data',
+        group     => 'www-data',
         mode      => '0755',
     }
 
     exec { '3d2png_npm':
-        command     => 'sudo -u root npm install',
+        command     => 'npm install --cache /srv/mediawiki/npm-cache',
         creates     => '/srv/3d2png/node_modules',
         cwd         => '/srv/3d2png',
         path        => '/usr/bin',
         environment => 'HOME=/srv/3d2png',
-        user        => 'root',
-        require     => [Git::Clone['3d2png'], Package['nodejs'], Package['libjpeg-dev']],
+        user        => 'www-data',
+        require     => [
+            Git::Clone['3d2png'],
+            Package['nodejs'],
+            Package['libjpeg-dev']
+        ],
     }
 }
