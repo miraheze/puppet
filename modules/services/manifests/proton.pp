@@ -26,7 +26,7 @@ class services::proton {
     }
 
     git::clone { 'proton':
-        ensure.   => present,
+        ensure    => present,
         directory => '/srv/proton',
         origin    => 'https://github.com/wikimedia/mediawiki-services-chromium-render',
         branch    => 'master',
