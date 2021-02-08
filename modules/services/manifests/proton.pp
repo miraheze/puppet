@@ -26,20 +26,19 @@ class services::proton {
     }
 
     git::clone { 'proton':
-        ensure             => present,
-        directory          => '/srv/proton',
-        origin             => 'https://github.com/wikimedia/mediawiki-services-chromium-render',
-        branch             => 'master',
-        owner              => 'proton',
-        group              => 'proton',
-        mode               => '0755',
-        timeout            => '550',
-        recurse_submodules => true,
-        before             => Service['proton'],
-        require            => [
+        ensure.   => present,
+        directory => '/srv/proton',
+        origin    => 'https://github.com/wikimedia/mediawiki-services-chromium-render',
+        branch    => 'master',
+        owner     => 'proton',
+        group     => 'proton',
+        mode      => '0755',
+        timeout   => '550',
+        before    => Service['proton'],
+        require => [
             User['proton'],
             Group['proton']
-        ],
+        ]
     }
 
     exec { 'proton_npm':
