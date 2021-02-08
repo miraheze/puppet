@@ -35,16 +35,16 @@ class services::restbase {
     }
 
     exec { 'restbase_npm':
-        command     => 'sudo -u root npm install',
+        command     => 'npm install --cache /tmp/npm_cache_restbase',
         creates     => '/srv/restbase/node_modules',
         cwd         => '/srv/restbase',
         path        => '/usr/bin',
         environment => 'HOME=/srv/restbase',
-        user        => 'root',
+        user        => 'restbase',
         require     => [
             Git::Clone['restbase'],
             Package['nodejs']
-        ],
+        ]
     }
 
     include ::nginx

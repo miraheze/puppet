@@ -36,12 +36,12 @@ class services::mathoid {
     }
 
     exec { 'mathoid_npm':
-        command     => 'sudo -u root npm install',
+        command     => 'npm install --cache /tmp/npm_cache_mathoid',
         creates     => '/srv/mathoid/node_modules',
         cwd         => '/srv/mathoid',
         path        => '/usr/bin',
         environment => 'HOME=/srv/mathoid',
-        user        => 'root',
+        user        => 'mathoid',
         require     => [
             Git::Clone['mathoid'],
             Package['nodejs']

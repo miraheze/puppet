@@ -10,7 +10,7 @@ class services::proton {
 
     include ::services
 
-    require_package(['chromium'])
+    require_package('chromium')
 
     group { 'proton':
         ensure => present,
@@ -26,35 +26,34 @@ class services::proton {
     }
 
     git::clone { 'proton':
-        ensure             => present,
-        directory          => '/srv/proton',
-        origin             => 'https://github.com/wikimedia/mediawiki-services-chromium-render',
-        branch             => 'master',
-        owner              => 'proton',
-        group              => 'proton',
-        mode               => '0755',
-        timeout            => '550',
-        recurse_submodules => true,
-        before             => Service['proton'],
-        require            => [
+        ensure.   => present,
+        directory => '/srv/proton',
+        origin    => 'https://github.com/wikimedia/mediawiki-services-chromium-render',
+        branch    => 'master',
+        owner     => 'proton',
+        group     => 'proton',
+        mode      => '0755',
+        timeout   => '550',
+        before    => Service['proton'],
+        require => [
             User['proton'],
             Group['proton']
-        ],
+        ]
     }
 
     exec { 'proton_npm':
-        command     => 'sudo -u root npm install',
+        command     => 'npm install --cache /tmp/npm_cache_proton',
         creates     => '/srv/proton/node_modules',
         cwd         => '/srv/proton',
         path        => '/usr/bin',
         environment => 'HOME=/srv/proton',
-        user        => 'root',
+        user        => 'proton',
         before      => Service['proton'],
+        notify      => Service['proton'],
         require     => [
             Git::Clone['proton'],
             Package['nodejs']
-        ],
-        notify      => Service['proton'],
+        ]
     }
 
     file { '/etc/mediawiki/proton':
@@ -80,6 +79,6 @@ class services::proton {
         check_command => 'tcp',
         vars          => {
             tcp_port    => '3030',
-        },
+        }
     }
 }
