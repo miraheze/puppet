@@ -13,7 +13,7 @@ class mediawiki::servicessetup {
     }
 
     exec { 'mathoid_npm':
-        command     => 'npm install --cache /srv/mediawiki/npm-cache',
+        command     => 'npm install --cache /tmp/npm-cache',
         creates     => '/srv/mathoid/node_modules',
         cwd         => '/srv/mathoid',
         path        => '/usr/bin',
@@ -23,7 +23,7 @@ class mediawiki::servicessetup {
             Git::Clone['mathoid'],
             Class['nodejs'],
             Package['librsvg2-dev']
-        ],
+        ]
     }
 
     file { '/etc/mathoid':
@@ -47,7 +47,7 @@ class mediawiki::servicessetup {
     }
 
     exec { '3d2png_npm':
-        command     => 'npm install --cache /srv/mediawiki/npm-cache',
+        command     => 'npm install --cache /tmp/npm-cache',
         creates     => '/srv/3d2png/node_modules',
         cwd         => '/srv/3d2png',
         path        => '/usr/bin',
@@ -57,6 +57,6 @@ class mediawiki::servicessetup {
             Git::Clone['3d2png'],
             Package['nodejs'],
             Package['libjpeg-dev']
-        ],
+        ]
     }
 }
