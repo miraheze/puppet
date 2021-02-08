@@ -8,6 +8,6 @@ puppetdb::db_ssl: true
 puppetdb::db_rw_host: puppet3.miraheze.org
 postgresql::ssl: true
 role::salt::minions::salt_master_key: true
-puppetdb::command_processing_threads: 2
+puppetdb::command_processing_threads: 3
 puppetserver_hostname: 'puppet3.miraheze.org'
 role::salt::minions::salt_master: 'puppet3.miraheze.org'
