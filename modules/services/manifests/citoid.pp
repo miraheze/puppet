@@ -50,12 +50,12 @@ class services::citoid {
     }
 
     exec { 'zotero_npm':
-        command     => 'sudo -u root npm install',
+        command     => 'npm install --cache /tmp/npm_cache_citoid',
         creates     => '/srv/zotero/node_modules',
         cwd         => '/srv/zotero',
         path        => '/usr/bin',
         environment => 'HOME=/srv/zotero',
-        user        => 'root',
+        user        => 'citoid',
         require     => [
             Git::Clone['zotero'],
             Package['nodejs']
@@ -63,12 +63,12 @@ class services::citoid {
     }
 
     exec { 'citoid_npm':
-        command     => 'sudo -u root npm install',
+        command     => 'root npm install --cache /tmp/npm_cache_citoid',
         creates     => '/srv/citoid/node_modules',
         cwd         => '/srv/citoid',
         path        => '/usr/bin',
         environment => 'HOME=/srv/citoid',
-        user        => 'root',
+        user        => 'citoid',
         require     => [
             Git::Clone['citoid'],
             Package['nodejs']
