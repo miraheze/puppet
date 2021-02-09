@@ -8,7 +8,7 @@ class mediawiki::servicessetup {
         origin    => 'https://github.com/wikimedia/mathoid.git',
         branch    => 'master',
         owner     => 'www-data',
-        group     => 'root',
+        group     => 'www-data',
         mode      => '0755',
     }
 
