@@ -10,3 +10,4 @@ use_gluster_new: true
 mediawiki::use_redis: false
 puppetserver_hostname: puppet3.miraheze.org
 role::salt::minions::salt_master: 'puppet3.miraheze.org'
+base::syslog::syslog_host: [ 'graylog2.miraheze.org:12210' ]
