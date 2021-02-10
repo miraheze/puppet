@@ -1,7 +1,7 @@
 # class base::syslog
 class base::syslog (
         String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
-        Array[String] $syslog_host = lookup('base::syslog::syslog_host', {'default_value' => '[]]'}),
+        Array[String] $syslog_host = lookup('base::syslog::syslog_host', {'default_value' => []}),
         Integer $syslog_queue_size = 10000,
 ) {
     if $syslog_daemon == 'rsyslog' {
@@ -12,23 +12,17 @@ class base::syslog (
             source => 'puppet:///modules/base/rsyslog/rsyslog.conf',
             notify => Service['rsyslog'],
         }
-    } elsif $syslog_daemon == 'remote_rsyslog' {
-        require_package('rsyslog-gnutls')
 
-        include ::rsyslog
+        if !empty( $syslog_host ) {
+            require_package('rsyslog-gnutls')
 
-        file { '/etc/rsyslog.conf':
-            ensure => present,
-            source => 'puppet:///modules/base/rsyslog/rsyslog.conf',
-            notify => Service['rsyslog'],
-        }
+            include ssl::wildcard
 
-        include ssl::wildcard
-
-        rsyslog::conf { 'remote_syslog':
-            content  => template('base/syslog/remote_syslog.conf.erb'),
-            priority => 30,
-            require  => Class['ssl::wildcard']
+            rsyslog::conf { 'remote_syslog':
+                content  => template('base/syslog/remote_syslog.conf.erb'),
+                priority => 30,
+                require  => Class['ssl::wildcard']
+            }
         }
     } elsif $syslog_daemon == 'syslog_ng' {
         package { 'rsyslog':
