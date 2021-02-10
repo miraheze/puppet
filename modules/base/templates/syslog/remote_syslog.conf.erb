@@ -1,0 +1,29 @@
+# NOTE: This file is managed by Puppet.
+$DefaultNetstreamDriverCAFile /etc/ssl/certs/Sectigo.crt
+# $DefaultNetstreamDriverCertFile /etc/rsyslog/ssl/cert.pem
+# $DefaultNetstreamDriverKeyFile /etc/rsyslog/ssl/server.key
+
+# By default, rsyslog will truncate programname[pid] to 32 characters.  This
+# is a problem if logging to logstash, because programname will not be
+# parseable.  This format template removes the 32 character limit.
+# See also: http://www.rsyslog.com/sende-messages-with-tags-larger-than-32-characters/
+
+$template LongTagForwardFormat,"<%%PRI%>%TIMESTAMP:::date-rfc3339% %HOSTNAME% %syslogtag%%msg:::sp-if-no-1st-sp%%msg%"
+
+if ($syslogseverity-text == 'info' and
+    $syslogfacility-text != 'cron' and
+    $syslogfacility-text != 'authpriv' and
+    $syslogfacility-text != 'mail') then {
+<%- @syslog_host.sort.each do |log_host| %>
+  <% host, port = log_host.split(':') %>
+  action(type="omfwd" name="fwd_<%= log_host %>" Target="<%= host %>" Port="<%= port or '6514' %>"
+    StreamDriver="gtls" StreamDriverAuthMode="x509/certvalid" StreamDriverMode="1"
+    Protocol="tcp" template="LongTagForwardFormat"
+<%- if @queue_size > 0 -%>
+    queue.type="LinkedList" queue.size="<%= @queue_size %>" queue.filename="<%= log_host %>"
+    queue.highWatermark="<%= (@queue_size * 0.7).to_i %>" queue.lowWatermark="<%= (@queue_size * 0.6).to_i %>"
+    queue.checkpointInterval="5"
+<% end -%>
+    )
+<% end -%>
+}
