@@ -1,9 +1,0 @@
-base::syslog::syslog_daemon: 'rsyslog'
-
-# Network setup
-role::cloud::main_ip4_address: 54.36.165.90
-role::cloud::main_ip4_netmask: 255.255.255.0
-role::cloud::main_ip4_broadcast: 54.36.165.255
-role::cloud::main_ip4_gateway: 54.36.165.254
-role::cloud::main_ip6_address: 2001:41d0:800:105a::1
-role::cloud::main_ip6_gateway: 2001:41D0:800:10FF:FF:FF:FF:FF

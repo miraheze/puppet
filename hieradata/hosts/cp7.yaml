@@ -1,4 +1,0 @@
-users::groups: 'cache-admins'
-nginx::worker_processes: 4
-varnish::cache_file_size: '12G'
-base::syslog::syslog_daemon: 'rsyslog'

@@ -1,2 +1,0 @@
-puppet_cron_time: '0,30'
-nginx::use_graylog: true
