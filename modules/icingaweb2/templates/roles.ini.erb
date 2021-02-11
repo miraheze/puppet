@@ -1,10 +1,7 @@
 [Administrators]
 groups = "sre-infrastructure,sre-management"
+monitoring/filter/objects = "host_name=*"
 permissions = "*"
-
-[guest]
-users = "guest"
-permissions = "no-user/password-change, module/doc, module/monitoring, module/translation"
 
 [sre-mediawiki]
 groups = "sre-mediawiki"
@@ -14,3 +11,7 @@ permissions = "module/monitoring, monitoring/command/*"
 [sre-mediawiki-view]
 groups = "sre-mediawiki"
 permissions = "module/doc, module/monitoring"
+
+[guest]
+users = "guest"
+permissions = "no-user/password-change, module/doc, module/monitoring, module/translation"
