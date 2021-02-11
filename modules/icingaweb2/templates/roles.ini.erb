@@ -10,8 +10,10 @@ permissions = "module/monitoring, monitoring/command/*"
 
 [sre-mediawiki-view]
 groups = "sre-mediawiki"
+monitoring/filter/objects = "host_name=*"
 permissions = "module/doc, module/monitoring"
 
 [guest]
 users = "guest"
+monitoring/filter/objects = "host_name=*"
 permissions = "no-user/password-change, module/doc, module/monitoring, module/translation"
