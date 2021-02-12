@@ -47,13 +47,6 @@ class monitoring::ircecho (
         notify  => Service['ircecho'],
     }
 
-    systemd::syslog { 'ircecho':
-        readable_by  => 'all',
-        base_dir     => '/var/log',
-        owner        => 'root',
-        group        => 'root',
-        log_filename => 'ircecho.log',
-    }
 
     systemd::service { 'ircecho':
         ensure  => present,

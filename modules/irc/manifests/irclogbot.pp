@@ -35,14 +35,6 @@ class irc::irclogbot {
         notify  => Service['logbot'],
     }
 
-    systemd::syslog { 'logbot':
-        readable_by  => 'all',
-        base_dir     => '/var/log',
-        group        => 'root',
-        owner        => 'irc',
-        log_filename => 'logbot.log',
-    }
-
     systemd::service { 'logbot':
         ensure  => present,
         content => systemd_template('logbot'),

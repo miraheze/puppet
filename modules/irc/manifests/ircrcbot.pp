@@ -17,14 +17,6 @@ class irc::ircrcbot(
         notify  => Service['ircrcbot'],
     }
 
-    systemd::syslog { 'ircrcbot':
-        readable_by  => 'all',
-        base_dir     => '/var/log',
-        group        => 'root',
-        owner        => 'irc',
-        log_filename => 'ircrcbot.log',
-    }
-
     systemd::service { 'ircrcbot':
         ensure  => present,
         content => systemd_template('ircrcbot'),
