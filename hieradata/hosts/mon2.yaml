@@ -108,3 +108,5 @@ icinga2::globals::reserved:
   - VarsPath
   - Warning
   - ZonesDir
+
+nginx::use_graylog: true
