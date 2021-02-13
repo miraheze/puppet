@@ -59,9 +59,9 @@
 # SOFTWARE.
 #
 define gluster::mount (
-  String $volume,
-  Optional[String] $options                                             = undef,
-  Enum['defined', 'present', 'unmounted', 'absent', 'mounted'] $ensure  = 'mounted',
+	String $volume,
+	Optional[String] $options                                             = undef,
+	Enum['defined', 'present', 'unmounted', 'absent', 'mounted'] $ensure  = 'mounted',
 ) {
 
 	include gluster::apt
@@ -104,11 +104,11 @@ define gluster::mount (
 
 	if !defined(File['glusterfs.ca']) {
 		file { 'glusterfs.ca':
-		ensure => 'present',
-		source => 'puppet:///ssl/ca/Sectigo.crt',
-		path   => '/etc/ssl/glusterfs.ca',
-		owner  => 'root',
-		group  => 'root',
+			ensure => 'present',
+			source => 'puppet:///ssl/ca/Sectigo.crt',
+			path   => '/etc/ssl/glusterfs.ca',
+			owner  => 'root',
+			group  => 'root',
 		}
 	}
 
@@ -125,7 +125,7 @@ define gluster::mount (
 		}
 	}
 
-	$base_options = "defaults,transport=tcp,noauto,x-systemd.automount,attribute-timeout=0,entry-timeout=0,noexec"
+	$base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec"
 
 	$mount_options = $options ? {
 		undef   => $base_options,
