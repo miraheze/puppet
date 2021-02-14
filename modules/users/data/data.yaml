@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [johnflewis, ndkilla, paladox, reception, southparkfan]
+    members: [johnflewis, paladox, reception, southparkfan]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -65,12 +65,11 @@ users:
     realname: Revi
     ssh_keys: []
   ndkilla:
-    ensure: present
+    ensure: absent
     uid: 1004
     name: ndkilla
     realname: NDKilla
-    ssh_keys: 
-      - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEApmgqRXsctlXUThqPb41FkIfbpZHOYPUxswGFZZqxGTEAMrXi1739tsOHRDfNMFP8QCjV1PzgVJ9aj13VzzERaqHSSq/eq8HYjAKDJBvbDHIoF5MggAWRPxMPh1v2l7a/ccidUlP3Qm+HiePO/P9yHme1n3iqz8RBjDItBMGqr6Wsgh01/3Lk1mlCk6tEOEetX6yHXoWLT8Bt0S5ov1lJz55xOC50m/0cmPElH04KoyCdoOErmND5zlR4bgfwTdyaKhL9KhGncb+EvLPu1B/y1iUj234NnQTMiYzwcBK5GtCQPXvqggXD4AMLhteGjmeKelizJYbiQ4dX7nguPS9Stgm0TMoH1ajT4Z51rdjw5a2+ysRJdN7lrTN+w5jMn73LZvRYJGNRbc46VX8ZOJPTme/Ox+g5ivNdlQZ2F2HjapsUX4gklrwIXns7RtDTFEkEEmuAwxgMXzpa/YiaaOgeFbmMz1qWmpNAkfbQSPEnfCBs1USstXMcXqkIiSzvKU7oYGXt8tDUKERWFz0KRYsZXOl2yrr3YKIBRkArGJhQ0PxY5ggnTU40Hcw0EIXE73mz0kAsDN5V2VYwiNgfDjdhco/Kjj/qhUwfTlHZdlehKj3gx4XGroHET1r3Vl77+qj45vMopii7G+u4N3LOeUTAipj/opU5hlBv05u8CTQYdBc= miraheze.ndkilla@subwoofer
+    ssh_keys: []
   labster:
     ensure: absent
     uid: 1005
