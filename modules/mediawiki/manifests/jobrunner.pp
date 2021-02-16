@@ -2,7 +2,7 @@
 #
 # Crons which should be ran on a jobrunner selected machine only.
 class mediawiki::jobrunner {
-    require_package('python3-xmltodict')
+    require_package(['python3-xmltodict', 'unrar'])
 
     git::clone { 'JobRunner':
         directory => '/srv/jobrunner',
