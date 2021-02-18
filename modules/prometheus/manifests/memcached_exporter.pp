@@ -11,7 +11,7 @@ class prometheus::memcached_exporter (
     $arguments = '',
 ) {
 
-    file { '/usr/local/bin/prometheus-memcached-exporter':
+    file { '/usr/bin/prometheus-memcached-exporter':
         ensure => file,
         mode   => '0555',
         owner  => 'root',
