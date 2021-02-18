@@ -93,6 +93,13 @@ scrape_configs:
         '<%= host %>:9400',
 <%- end -%>
       ]
+  - job_name: memcached
+    static_configs:
+      - targets: [
+<%- @host_memcached.sort.each do |host| -%>
+        '<%= host %>:9150',
+<%- end -%>
+      ]
   - job_name: 'blackbox'
     metrics_path: /probe
     params:

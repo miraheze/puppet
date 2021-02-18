@@ -1,0 +1,25 @@
+[Unit]
+Description=memcached daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/memcached \
+          <%- @listen.sort.each do |listen| -%>
+          -l <%= listen %> \
+          -p <%= @port -%> \
+          <%- end -%>
+          -m <%= @size %> \
+          -u nobody \
+          -c 25000 \
+          -f <%= @growth_factor -%> \
+          <%- @extra_options.sort.each do |option,value| -%>
+          <%= option %> <%= value %> \
+          <%- end -%>
+          <%- if @enable_tls -%>
+          -Z -o ssl_chain_cert=<%= @ssl_cert %> \
+          -o ssl_key=<%= @ssl_key %> \
+          <%- end -%>
+          -n <%= @min_slab_size %>
+
+[Install]
+WantedBy=multi-user.target
