@@ -20,7 +20,7 @@ Unattended-Upgrade::Package-Blacklist {
 	"varnish";
 };
 
-Unattended-Upgrade::Mail "sre@miraheze.org";
+Unattended-Upgrade::Mail "sre-infrastructure@miraheze.org";
 Unattended-Upgrade::MailOnlyOnError "true";
 
 Unattended-Upgrade::Remove-Unused-Dependencies "true";
