@@ -93,7 +93,7 @@ class php::php_fpm(
         package_name => "php-redis",
     }
 
-    if $version == '7.2' or $version == '7.3' {
+    if $version == '7.3' {
         require_package('liblua5.1-0')
 
         # make sure to rebuild against the selected php version
@@ -102,8 +102,15 @@ class php::php_fpm(
             source => "puppet:///modules/php/luasandbox/${version}.luasandbox.so",
         }
 
+        file { '/usr/lib/php/20180731/wikidiff2.so':
+            ensure => present,
+            source => "puppet:///modules/php/wikidiff2/wikidiff2.so",
+        }
+
         php::extension {
             'luasandbox':
+                package_name => '';
+            'wikidiff2':
                 package_name => '';
         }
     }
