@@ -12,7 +12,7 @@ class role::memcached (
 
     include prometheus::memcached_exporter
 
-    if $extended_options {
+    if !empty( $extended_options ) {
         $base_extra_options = {
             '-o' => join($extended_options, ','),
             '-D' => ':',
