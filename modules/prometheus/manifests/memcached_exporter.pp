@@ -1,4 +1,4 @@
-# == Define: prometheus::memcached_exporter
+# == Class: prometheus::memcached_exporter
 #
 # Prometheus exporter for memcached server metrics.
 #
@@ -7,7 +7,7 @@
 # [*arguments*]
 #   Additional command line arguments for prometheus-memcached-exporter.
 
-define prometheus::memcached_exporter (
+class prometheus::memcached_exporter (
     $arguments = '',
 ) {
 
