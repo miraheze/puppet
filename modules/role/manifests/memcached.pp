@@ -34,7 +34,6 @@ class role::memcached (
     class { '::memcached':
         size          => $size,
         port          => $port,
-        enable_16     => $enable_16,
         version       => $version,
         growth_factor => $growth_factor,
         min_slab_size => $min_slab_size,
