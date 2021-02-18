@@ -16,7 +16,7 @@ class prometheus::memcached_exporter (
         mode   => '0555',
         owner  => 'root',
         group  => 'root',
-        source => 'puppet:///modules/prometheus/memcached/prometheus-memcached-exporter',
+        source => 'puppet:///modules/prometheus/memcached/memcached_exporter',
         notify => Service['prometheus-memcached-exporter'],
     }
 
