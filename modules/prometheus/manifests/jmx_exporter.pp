@@ -84,15 +84,15 @@ define prometheus::jmx_exporter (
 
     $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
     $firewall.each |$key, $value| {
-        ufw::allow { "Prometheus  9400 ${value['ipaddress']}":
+        ufw::allow { "Prometheus  ${port} ${value['ipaddress']}":
             proto => 'tcp',
-            port  => 9400,
+            port  => $port,
             from  => $value['ipaddress'],
         }
 
-        ufw::allow { "Prometheus 9400 ${value['ipaddress6']}":
+        ufw::allow { "Prometheus ${port} ${value['ipaddress6']}":
             proto => 'tcp',
-            port  => 9400,
+            port  => $port,
             from  => $value['ipaddress6'],
         }
     }
