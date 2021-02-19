@@ -65,9 +65,7 @@ class puppetdb(
         group  => 'puppetdb',
     }
 
-    $jmx_exporter_config_file = '/etc/puppetlabs/puppetdb/jvm_prometheus_puppetdb_jmx_exporter.yaml'
-    $prometheus_jmx_exporter_port = 9400
-    $prometheus_java_opts = "-javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::fqdn}:${prometheus_jmx_exporter_port}:${jmx_exporter_config_file}"
+    $prometheus_java_opts = "-javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::fqdn}:9400:/etc/puppetlabs/puppetdb/jvm_prometheus_puppetdb_jmx_exporter.yaml"
 
     $jvm_opts = "${puppetdb_jvm_opts} ${prometheus_java_opts}"
     file { '/etc/default/puppetdb':
