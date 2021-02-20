@@ -1,6 +1,6 @@
 require 'yaml'
 
-Puppet::Functions.create_function(:'wmflib::expand_path') do
+Puppet::Functions.create_function(:'vmlib::expand_path') do
   dispatch :expand_path do
     param 'String[1]', :key
     param 'Struct[{path=>String[1]}]', :options
