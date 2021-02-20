@@ -11,7 +11,7 @@ rules:
     # Metrics from https://puppet.com/docs/puppetserver/latest/puppet_server_metrics.html#enabling-puppet-servers-graphite-support
 
     ## Compiler metrics
-    - pattern: 'puppetserver<name=puppetlabs.localhost.compiler.([\w-]+)><>(Max|Min|Mean$|StdDev|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.compiler.([\w-]+)><>(Max|Min|Mean|StdDev|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_compiler_seconds
       type: GAUGE
       help: "Time spent parsing/retrieving/compiling catalogs."
@@ -21,7 +21,7 @@ rules:
         measurement: "$2"
 
     ## Function metrics
-    - pattern: 'puppetserver<name=puppetlabs.localhost.functions><>(Max|Min|Mean$|StdDev|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.functions><>(Max|Min|Mean|StdDev|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_functions_seconds
       type: GAUGE
       help: "The amount of time during catalog compilation spent in function calls."
@@ -30,7 +30,7 @@ rules:
         measurement: "$1"
 
     ## HTTP metrics
-    - pattern: 'puppetserver<name=puppetlabs.localhost.http.total-requests><>(Max|Min|Mean$|StdDev|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.http.total-requests><>(Max|Min|Mean|StdDev|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_http_requests_duration_seconds
       type: GAUGE
       help: "The time spent handling requests."
@@ -40,42 +40,42 @@ rules:
         measurement: "$1"
 
     ## JRuby metrics
-    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.borrow-timer><>(Max|Min|Mean$|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.borrow-timer><>(Max|Min|Mean|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_jruby_borrow_timer
       type: GAUGE
       help: "The time spent with a borrowed JRuby."
       valueFactor: 0.001
       labels:
         measurement: "$1"
-    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.free-jrubies-histo><>(Max|Min|Mean$|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.free-jrubies-histo><>(Max|Min|Mean|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_jruby_free_jrubies_histo
       type: GAUGE
       help: "A histogram of free JRubies over time. This metric’s average value should greater than 1; if it isn’t, more JRubies or another compile master might be needed to keep up with requests."
       valueFactor: 0.001
       labels:
         measurement: "$1"
-    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.lock-held-timer><>(Max|Min|Mean$|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.lock-held-timer><>(Max|Min|Mean|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_jruby_lock_held_timer
       type: GAUGE
       help: "The time spent holding the JRuby lock."
       valueFactor: 0.001
       labels:
         measurement: "$1"
-    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.lock-wait-timer><>(Max|Min|Mean$|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.lock-wait-timer><>(Max|Min|Mean|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_jruby_lock_wait_timer
       type: GAUGE
       help: "The time spent waiting to acquire the JRuby lock."
       valueFactor: 0.001
       labels:
         measurement: "$1"
-    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.requested-jrubies-histo><>(Max|Min|Mean$|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.requested-jrubies-histo><>(Max|Min|Mean|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_jruby_requested_jrubies_histo
       type: GAUGE
       help: "A histogram of requested JRubies over time. This increases as the number of free JRubies, or the free-jrubies-histo metric, decreases, which can suggest that the server’s capacity is being depleted."
       valueFactor: 0.001
       labels:
         measurement: "$1"
-    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.wait-timer><>(Max|Min|Mean$|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.jruby.wait-timer><>(Max|Min|Mean|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_jruby_wait_timer
       type: GAUGE
       help: "The time spent waiting to borrow a JRuby."
@@ -85,7 +85,7 @@ rules:
 
     # PuppetDB metrics
     # puppetserver_puppetdb_duration_seconds{function="facts",measurement="Mean",} 0.08795445645602212
-    - pattern: 'puppetserver<name=puppetlabs.localhost.http-client.experimental.with-metric-id.puppetdb.(.+).full-response><>(Max|Min|Mean$|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.http-client.experimental.with-metric-id.puppetdb.(.+).full-response><>(Max|Min|Mean|StdDev|Count|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_puppetdb_duration_seconds
       type: GAUGE
       help: "Time that Puppet Server spends sending or receiving data from PuppetDB."
