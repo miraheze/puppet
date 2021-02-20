@@ -7,12 +7,12 @@ hierarchy:
   - name: "node hierarchy"
     path: "hosts/%{::hostname}.yaml"
   - name: "private node"
-    datadir: "/etc/puppet/private/hieradata"
+    datadir: "/etc/puppetlabs/puppet/private/hieradata"
     path: "hosts/%{::hostname}.yaml" # Currently only used for labtest hosts
   - name: "common"
-    lookup_key: 'wmflib::expand_path'
+    lookup_key: 'vmflib::expand_path'
     path: "common"
   - name: "private common"
-    lookup_key: 'wmflib::expand_path'
-    datadir: "/etc/puppet/private/hieradata"
+    lookup_key: 'vmflib::expand_path'
+    datadir: "/etc/puppet/puppetlabs/private/hieradata"
     path: "common"
