@@ -36,9 +36,6 @@ define systemd::sidekick (
     $stop,
     VMlib::Ensure $ensure = present,
 ) {
-    if $::initsystem != 'systemd' {
-        fail('systemd::service_sidekick only works with systemd')
-    }
 
     # Depend on the parent service unit
     Base::Service_unit[$parent] -> Systemd::Sidekick[$title]
