@@ -14,5 +14,5 @@ hierarchy:
     path: "common"
   - name: "private common"
     lookup_key: 'vmlib::expand_path'
-    datadir: "/etc/puppet/puppetlabs/private/hieradata"
+    datadir: "/etc/puppetlabs/puppet/private/hieradata"
     path: "common"
