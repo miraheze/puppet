@@ -43,8 +43,7 @@ class mediawiki::jobrunner {
         ensure => running,
     }
 
-    $cron = hiera('mediawiki::jobrunner::cron', false)
-    if $cron {
+    if lookup('mediawiki::jobrunner::cron', {'default_value' => false}) {
         cron { 'purge_checkuser':
             ensure  => present,
             command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/extensions/CheckUser/maintenance/purgeOldData.php >> /var/log/mediawiki/cron/purge_checkuser.log',
