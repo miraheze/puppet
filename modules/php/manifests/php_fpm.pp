@@ -53,7 +53,7 @@ class php::php_fpm(
     # Add systemd override for php-fpm, that should prevent a reload
     # if the fpm config files are broken.
     # This should prevent us from shooting our own foot as happened before.
-    systemd::unit { "php${php_version}-fpm.service":
+    systemd::unit { "php${version}-fpm.service":
         ensure   => present,
         content  => template('php/php-fpm-systemd-override.conf.erb'),
         override => true,
