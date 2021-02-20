@@ -45,19 +45,21 @@ define prometheus::jmx_exporter (
         fail('"source" and "content" are mutually exclusive')
     }
 
-    file { '/usr/share/java/prometheus':
-        ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
-    }
+    if !defined(File['/usr/share/java/prometheus/jmx_prometheus_javaagent.jar']) {
+        file { '/usr/share/java/prometheus':
+            ensure => 'directory',
+            owner  => 'root',
+            group  => 'root',
+        }
 
-    file { '/usr/share/java/prometheus/jmx_prometheus_javaagent.jar':
-        ensure  => 'present',
-        mode    => '0555',
-        owner   => 'root',
-        group   => 'root',
-        source  => 'puppet:///modules/prometheus/jmx_exporter/jmx_prometheus_javaagent.jar',
-        require => File['/usr/share/java/prometheus']
+        file { '/usr/share/java/prometheus/jmx_prometheus_javaagent.jar':
+            ensure  => 'present',
+            mode    => '0555',
+            owner   => 'root',
+            group   => 'root',
+            source  => 'puppet:///modules/prometheus/jmx_exporter/jmx_prometheus_javaagent.jar',
+            require => File['/usr/share/java/prometheus']
+        }
     }
 
     if $config_dir and ! defined(File[$config_dir]) {
