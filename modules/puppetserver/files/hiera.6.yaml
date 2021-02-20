@@ -4,10 +4,15 @@ defaults:
   datadir: /etc/puppetlabs/puppet/hieradata
   data_hash: yaml_data
 hierarchy:
+  - name: "node hierarchy"
+    path: "hosts/%{::hostname}.yaml"
+  - name: "private node"
+    datadir: "/etc/puppet/private/hieradata"
+    path: "hosts/%{::hostname}.yaml" # Currently only used for labtest hosts
   - name: "common"
-    paths:
-      - "private/%{::hostname}.yaml"
-      - "hosts/%{::hostname}.yaml"
-      - "private/common.yaml"
-      - "ssl.yaml"
-      - "common.yaml"
+    lookup_key: 'wmflib::expand_path'
+    path: "common"
+  - name: "private common"
+    lookup_key: 'wmflib::expand_path'
+    datadir: "/etc/puppet/private/hieradata"
+    path: "common"
