@@ -65,7 +65,7 @@ class puppetdb(
         group  => 'puppetdb',
     }
 
-    $prometheus_java_opts = "${puppetdb_jvm_opts} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::fqdn}:9400:/etc/puppetlabs/puppetserver/jvm_prometheus_puppetserver_jmx_exporter.yaml"
+    $prometheus_java_opts = "${puppetdb_jvm_opts} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::fqdn}:9400:/etc/puppetlabs/jvm_prometheus_puppetlabs_jmx_exporter.yaml"
 
     $jvm_opts = "${puppetdb_jvm_opts} ${prometheus_java_opts}"
     file { '/etc/default/puppetdb':
