@@ -30,7 +30,7 @@ class role::roundcubemail (
     class { '::roundcubemail':
         db_host               => $db_host,
         db_name               => $db_name,
-        db_user_name          => $db_user,
+        db_user_name          => $db_user_name,
         db_user_password      => $db_user_password ,
         roundcubemail_des_key => $roundcubemail_des_key,
     }
