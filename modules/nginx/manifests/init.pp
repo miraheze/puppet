@@ -56,7 +56,6 @@ class nginx (
     service { 'nginx':
         ensure     => 'running',
         enable     => true,
-        provider   => 'debian',
         hasrestart => true,
         require    => [
             Exec['nginx unmask'],
