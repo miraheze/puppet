@@ -27,7 +27,7 @@ class role::puppetserver (
     String  $puppetserver_java_options = lookup('puppetserver_java_opts', {'default_value' => '-Xms300m -Xmx300m'}),
 ) {
 
-    $puppetserver_java_opts = "${puppetserver_java_options} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::fqdn}:9400:/etc/puppetlabs/jvm_prometheus_puppetlabs_jmx_exporter.yaml"
+    $puppetserver_java_opts = "${puppetserver_java_options} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::fqdn}:9400:/etc/puppetlabs/puppetserver/jvm_prometheus_jmx_exporter.yaml"
     class { '::puppetserver':
         puppetdb_hostname      => $puppetdb_hostname,
         puppetdb_enable        => $puppetdb_enable,
@@ -36,15 +36,20 @@ class role::puppetserver (
         puppetserver_java_opts => $puppetserver_java_opts,
     }
 
-    # Used for puppetdb and puppetserver
+    # Used for puppetserver
     prometheus::jmx_exporter { "puppetserver_${::hostname}":
         port        => 9400,
-        config_file => '/etc/puppetlabs/jvm_prometheus_puppetlabs_jmx_exporter.yaml',
-        content      => template('role/puppetlabs/jvm_prometheus_puppetlabs_jmx_exporter.yaml.erb'),
-        notify      => [
-            Service['puppetdb'],
-            Service['puppetserver']
-        ]
+        config_file => '/etc/puppetlabs/puppetserver/jvm_prometheus_jmx_exporter.yaml',
+        content      => template('role/puppetserver/jvm_prometheus_jmx_exporter.yaml.erb'),
+        notify      => Service['puppetserver']
+    }
+
+    # Used for puppetdb
+    prometheus::jmx_exporter { "puppetdb_${::hostname}":
+        port        => 9401,
+        config_file => '/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml',
+        content      => template('role/puppetdb/jvm_prometheus_jmx_exporter.yaml.erb'),
+        notify      => Service['puppetdb']
     }
 
     motd::role { 'role::puppetserver':
