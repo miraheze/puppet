@@ -28,7 +28,7 @@ class postfix {
         ensure => directory,
     }
 
-    $ldap_password = hiera('passwords::ldap_password')
+    $ldap_password = lookup('passwords::ldap_password')
 
     file { '/etc/postfix/ldap/smtpd_sender_login_maps':
         ensure  => present,
