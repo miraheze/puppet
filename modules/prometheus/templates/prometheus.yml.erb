@@ -86,11 +86,18 @@ scrape_configs:
         '<%= host %>:9050',
 <%- end -%>
       ]
+  - job_name: puppetserver
+    static_configs:
+      - targets: [
+<%- @host_puppetserver.sort.each do |host| -%>
+        '<%= host %>:9400',
+<%- end -%>
+      ]
   - job_name: puppetdb
     static_configs:
       - targets: [
-<%- @host_puppetdb.sort.each do |host| -%>
-        '<%= host %>:9400',
+<%- @host_puppetserver.sort.each do |host| -%>
+        '<%= host %>:9401',
 <%- end -%>
       ]
   - job_name: memcached
