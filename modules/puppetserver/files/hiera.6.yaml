@@ -8,7 +8,7 @@ hierarchy:
     path: "hosts/%{::hostname}.yaml"
   - name: "private node"
     datadir: "/etc/puppetlabs/puppet/private/hieradata"
-    path: "hosts/%{::hostname}.yaml" # Currently only used for labtest hosts
+    path: "hosts/%{::hostname}.yaml"
   - name: "common"
     lookup_key: 'vmlib::expand_path'
     path: "common"
