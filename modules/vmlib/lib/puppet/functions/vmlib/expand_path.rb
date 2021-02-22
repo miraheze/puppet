@@ -25,13 +25,13 @@ Puppet::Functions.create_function(:'vmlib::expand_path') do
       expanded_path = File.join(base_path, namespace) + '.yaml'
     end
 
-    raw_data = context.cached_value(nil)
-    if raw_data.nil?
-      raw_data = load_data_hash(expanded_path, context)
-      context.cache(nil, raw_data)
+    data = context.cached_value(nil)
+    if data.nil?
+      data = load_data_hash(expanded_path, context)
+      context.cache(nil, data)
     end
-    context.not_found unless raw_data.include?(key)
-    context.cache(key, context.interpolate(raw_data[key]))
+    context.not_found unless data.include?(key)
+    context.cache(key, context.interpolate(data[key]))
   end
 
   def load_data_hash(path, context)
