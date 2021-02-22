@@ -27,7 +27,7 @@ class puppetserver::puppetdb::client(
     }
 
     if defined(Service['puppetserver']) {
-        File['/etc/puppet/routes.yaml'] -> Service['puppetserver']
+        File['/etc/puppetlabs/puppet/routes.yaml'] -> Service['puppetserver']
     }
 
     # Absence of this directory causes the puppetserver to spit out
