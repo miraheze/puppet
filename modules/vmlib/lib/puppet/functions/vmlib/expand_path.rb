@@ -9,6 +9,13 @@ Puppet::Functions.create_function(:'vmlib::expand_path') do
 
   def expand_path(key, options, context)
     return context.cached_value(key) if context.cache_has_key(key)
+
+    unless options.include?('path')
+      raise ArgumentError,
+        _("'vmlib::expand_path': one of 'path', 'paths' 'glob', 'globs' or 'mapped_paths' must be declared in hiera.yaml"\
+              " when using this lookup_key function")
+    end
+
     base_path = options['path']
     namespace = key.gsub(/^::/, '').split('::')
     namespace.pop
@@ -17,9 +24,14 @@ Puppet::Functions.create_function(:'vmlib::expand_path') do
     else
       expanded_path = File.join(base_path, namespace) + '.yaml'
     end
-    data = load_data_hash(expanded_path, context)
-    context.not_found unless data.include?(key)
-    context.cache(key, context.interpolate(data[key]))
+
+    raw_data = context.cached_value(nil)
+    if raw_data.nil?
+      raw_data = load_data_hash(expanded_path, context)
+      context.cache(nil, raw_data)
+    end
+    context.not_found unless raw_data.include?(key)
+    context.cache(key, context.interpolate(raw_data[key]))
   end
 
   def load_data_hash(path, context)
