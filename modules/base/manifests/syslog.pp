@@ -68,12 +68,6 @@ class base::syslog (
                             'options' => [
                                 '"$ISODATE $MSGHDR$MESSAGE\n"'
                             ]
-                        },
-                        {
-                            'type' => 'template_escape',
-                            'options' => [
-                                'no'
-                            ]
                         }
                     ]
                 } ->
