@@ -59,6 +59,23 @@ class base::syslog (
                                 ],
                         }
                 } ->
+                # The 
+                syslog_ng::template {'t_add_timestamp':
+                    params => [
+                        {
+                            'type' => 'template',
+                            'options' => [
+                                '"$ISODATE $MSGHDR$MESSAGE\n"'
+                            ]
+                        },
+                        {
+                            'type' => 'template_escape',
+                            'options' => [
+                                'no'
+                            ]
+                        }
+                    ]
+                } ->
                 syslog_ng::destination { 'd_graylog_syslog_tls':
                         params => {
                                 type    => 'syslog',
@@ -99,6 +116,13 @@ class base::syslog (
                                                         }
                                                 ]
                                         },
+                                        {
+                                                'template' => [
+                                                        { 
+                                                                't_add_timestamp'
+                                                        }
+                                                ]
+                                        }
                                 ],
                         },
                 } ->
