@@ -59,7 +59,8 @@ class base::syslog (
                                 ],
                         }
                 } ->
-                # The 
+                # This is needed as it appears the output doesn't have
+                # a timestamp.
                 syslog_ng::template {'t_add_timestamp':
                     params => [
                         {
