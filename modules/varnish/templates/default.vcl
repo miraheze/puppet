@@ -381,10 +381,9 @@ sub vcl_backend_response {
 
 sub vcl_deliver {
 	# We set Access-Control-Allow-Origin to * for all files hosted on
-	# static.miraheze.org We also set a hack for T217669.
-	# Finally we also set this header for some images hosted on the same site
-	# as the wiki (private).
-	# HACK for T217669
+	# static.miraheze.org. We also set a hack for T217669.
+	# And finally we also set this header for some images hosted on the
+	# same site as the wiki (private).
 	if (
 		req.http.Host == "static.miraheze.org" ||
 		req.url ~ "/w/api.php" ||
