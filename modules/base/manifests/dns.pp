@@ -11,4 +11,8 @@ class base::dns {
         source => 'puppet:///modules/base/dns/recursor.conf',
     }
 
+    service { 'pdns-recursor':
+        ensure  => running,
+        require => Package['pdns-recursor'],
+    }
 }

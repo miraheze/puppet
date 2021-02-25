@@ -25,7 +25,7 @@ class base {
         include base::mail
     }
 
-    if !defined(Class['Role::dns']) {
+    if !defined('role::dns') {
         include base::dns
     }
 
