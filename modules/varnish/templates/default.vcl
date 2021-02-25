@@ -380,12 +380,15 @@ sub vcl_backend_response {
 }
 
 sub vcl_deliver {
-	if (req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt)$") {
-		set resp.http.Access-Control-Allow-Origin = "*";
-	}
-
-	# HACK for T217669
-	if (req.url ~ "/w/api.php") {
+	# We set Access-Control-Allow-Origin to * for all files hosted on
+	# static.miraheze.org. We also set a hack for phabricator.wikimedia.org/T217669.
+	# And finally we also set this header for some images hosted on the
+	# same site as the wiki (private).
+	if (
+		req.http.Host == "static.miraheze.org" ||
+		req.url ~ "/w/api.php" ||
+		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt)$"
+	) {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
 

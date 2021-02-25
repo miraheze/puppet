@@ -51,12 +51,6 @@ location ^~ /wiki/ {
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 }
 
-location ~* .(gif|ico|jpg|jpeg|png|svg)$ {
-	expires 1w;
-
-	add_header Access-Control-Allow-Origin '*' always;
-}
-
 location ~ ^/m/(.*) {
 	return 301 /w/index.php?title=Special:UrlRedirector/$1;
 }
