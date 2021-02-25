@@ -169,20 +169,9 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	location ~* .(gif|jpe?g|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$ {
-		expires 1w;
-
-		add_header Access-Control-Allow-Origin '*' always;
-	}
-
 	error_page 404 =404 @notfound;
 
 	location @notfound {
-		# Work around the issue affecting T5568.
-		if ($request_uri ~* "(.*\.(gif|jpe?g|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$)") {
-			add_header Access-Control-Allow-Origin '*' always;
-		}
-
 		rewrite ^/(.*)wiki/thumb/(.+)$ https://$1.miraheze.org/w/thumb_handler.php/$2;
 	}
 
