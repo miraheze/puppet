@@ -33,7 +33,7 @@ def log(config, message, project, author):
     position = 0
     # Um, check the date
     now = datetime.datetime.utcnow()
-    logline = "* %02d:%02d %s: %s" % (now.hour, now.minute, author, message)
+    logline = "* %02d:%02d %s: <nowiki>%s</nowiki>" % (now.hour, now.minute, author, message)
 
     # Try extracting latest date header
     header = "=" * config.wiki_header_depth
