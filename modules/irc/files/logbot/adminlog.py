@@ -47,7 +47,7 @@ def log(config, message, project, author):
                 header_date = None
             break
     if header_date != [now.year, now.month, now.day]:
-        lines.insert(0, "")
+        lines.insert(0, "{{TOC right}} <br />")
         lines.insert(0, logline)
         lines.insert(0, now.strftime("{0} %Y-%m-%d {0}".format(header)))
     else:
