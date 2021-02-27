@@ -148,7 +148,7 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	location ~ ^//thumb/(archive/)?[0-9a-f]/[0-9a-f][0-9a-f]/([^/]+)/([0-9]+)px-.*$ {
+	location ~ ^/(.+)wiki/thumb/(archive/)?[0-9a-f]/[0-9a-f][0-9a-f]/([^/]+)/[^/]*([0-9]+)px-.*$ {
 		# Thumbnail handler for MediaWiki
 		# This location only matches on a thumbnail's url
 		# If the file does not exist we use @thumb to run the thumb.php script
