@@ -10,7 +10,7 @@ class role::graylog {
 
     class { 'mongodb::globals':
         manage_package_repo => true,
-        version             => '4.4.3',
+        version             => '4.4.4',
     }->
     class { 'mongodb::server':
         bind_ip => ['127.0.0.1'],
