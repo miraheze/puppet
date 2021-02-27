@@ -126,27 +126,6 @@ server {
 }
 
 server {
-	listen 80;
-	listen [::]:80;
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-
-	server_name allthetropes.miraheze.org;
-	root /srv/mediawiki;
-
-	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org-2020-2.crt;
-	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
-
-	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
-
-	add_header Strict-Transport-Security "max-age=2419200";
-
-	location / {
-		rewrite ^(.*)$ https://allthetropes.org$1;
-	}
-}
-
-server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
