@@ -21,7 +21,7 @@ group :test do
   gem 'rspec-puppet-utils'
   gem 'rspec-retry'
   # Required to test against Ruby 1.9
-  gem "rubocop", ">= 0.49.0"
+  gem 'rubocop', '~> 0.41.2'
   gem 'rubysl-securerandom'
   gem 'webmock'
 
