@@ -107,6 +107,13 @@ scrape_configs:
         '<%= host %>:9150',
 <%- end -%>
       ]
+  - job_name: postfix
+    static_configs:
+      - targets: [
+<%- @host_postfix.sort.each do |host| -%>
+        '<%= host %>:9154',
+<%- end -%>
+      ]
   - job_name: 'blackbox'
     metrics_path: /probe
     params:

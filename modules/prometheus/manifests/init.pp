@@ -19,6 +19,7 @@ class prometheus {
     $host_redis = query_nodes("domain='$domain' and Class[Prometheus::Redis_exporter]", 'fqdn')
     $host_puppetserver = query_nodes("domain='$domain' and Class[Role::Puppetserver]", 'fqdn')
     $host_memcached = query_nodes("domain='$domain' and Class[Prometheus::Memcached_exporter]", 'fqdn')
+    $host_postfix = query_nodes("domain='$domain' and Class[Postfix]", 'fqdn')
 
     file { '/etc/prometheus/prometheus.yml':
         content => template('prometheus/prometheus.yml.erb'),

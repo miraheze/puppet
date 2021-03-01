@@ -5,6 +5,7 @@ class role::mail {
     include postfix::dmarc
     include postfix::spamassassin
     include dovecot
+    include prometheus::postfix_exporter
 
     ufw::allow { 'smtp':
         proto => 'tcp',

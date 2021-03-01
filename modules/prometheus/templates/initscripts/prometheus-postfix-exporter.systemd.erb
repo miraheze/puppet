@@ -1,0 +1,13 @@
+[Unit]
+Description=Postfix Prometheus Exporter
+Documentation=https://github.com/kumina/postfix_exporter man:prometheus-postfix-exporter(1)
+After=network.target postfix.service
+
+[Service]
+User=prometheus
+SupplementaryGroups=systemd-journal postdrop
+EnvironmentFile=/etc/default/prometheus-postfix-exporter
+ExecStart=/usr/bin/prometheus-postfix-exporter --systemd.enable --postfix.logfile_path="" $ARGS
+
+[Install]
+WantedBy=multi-user.target
