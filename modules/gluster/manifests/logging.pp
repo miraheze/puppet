@@ -11,7 +11,7 @@
 define gluster::logging (
 	Array[String] $file_source_options
 ) {
-	syslog_ng::source { 's_file_${title}':
+	syslog_ng::source { "s_file_${title}":
 		params => {
 			'type'    => 'file',
 			'options' => $file_source_options,
