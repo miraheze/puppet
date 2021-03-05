@@ -30,11 +30,6 @@ class varnish(
         notify  => Service['varnish'],
     }
 
-    service { 'varnish':
-        ensure  => 'running',
-        require => Mount['/var/lib/varnish'],
-    }
-
     service { 'stunnel4':
         ensure  => 'running',
         require => Package['stunnel4'],
@@ -56,13 +51,6 @@ class varnish(
         ensure  => directory,
         owner   => 'varnish',
         group   => 'varnish',
-    }
-
-    file { '/etc/default/varnish':
-        ensure  => present,
-        content => template('varnish/varnish.default.erb'),
-        notify  => Service['varnish'],
-        require => Package['varnish'],
     }
 
     systemd::service { 'varnish':
