@@ -32,4 +32,4 @@ MEMLOCK=82000
 #
 # This example uses the INSTANCE variable above, which you need to uncomment.
 #
-DAEMON_OPTS="-a :81 -T localhost:6082 -f /etc/varnish/default.vcl -S /etc/varnish/secret -s file,<%= @cache_file_name %>,<%= @cache_file_size %> -p thread_pool_min=250 -p thread_pool_max=<%= @processorcount * 250 -%> -p thread_pool_timeout=120 -p workspace_backend=128k -p timeout_idle=120 -p http_max_hdr=128"
+DAEMON_OPTS="-P %t/%p.pid -a :81 -T localhost:6082 -f /etc/varnish/default.vcl -S /etc/varnish/secret -s file,<%= @cache_file_name %>,<%= @cache_file_size %> -p thread_pool_min=250 -p thread_pool_max=<%= @processorcount * 250 -%> -p thread_pool_timeout=120 -p workspace_backend=128k -p timeout_idle=120 -p vcc_err_unref=off -p http_max_hdr=128"
