@@ -61,27 +61,29 @@ class varnish(
     file { '/etc/default/varnish':
         ensure  => present,
         content => template('varnish/varnish.default.erb'),
-        notify  => Exec['varnish-server-syntax'],
+        notify  => Service['varnish'],
         require => Package['varnish'],
     }
 
-    exec { 'systemctl daemon-reload':
-        path        => '/bin',
-        refreshonly => true,
-    }
-
-    exec { 'varnish-server-syntax':
-        command     => '/usr/sbin/varnishd -C -f /etc/varnish/default.vcl',
-        notify      => Service['varnish'],
-        refreshonly => true,
-        require     => Exec['systemctl daemon-reload'],
-    }
-
-    file { '/etc/systemd/system/varnish.service':
+    systemd::service { 'varnish':
         ensure  => present,
-        source  => 'puppet:///modules/varnish/varnish/varnish.service',
-        require => Package['varnish'],
-        notify  => Exec['varnish-server-syntax'],
+        content => systemd_template('varnish'),
+        service_params => {
+            enable  => true,
+            require => [
+                Package['varnish'],
+                File['/etc/varnish/default.vcl'],
+                Mount['/var/lib/varnish']
+            ],
+        }
+    }
+
+    systemd::unit { 'varnish.service':
+        ensure   => present,
+        content  => template('varnish/varnish-override.conf.erb'),
+        override => true,
+        restart  => false,
+        require  => Systemd::Service['varnish']
     }
 
     systemd::service { 'varnishlog':
