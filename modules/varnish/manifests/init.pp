@@ -71,7 +71,6 @@ class varnish(
         content  => template('varnish/varnish-override.conf.erb'),
         override => true,
         restart  => false,
-        require  => Systemd::Service['varnish']
     }
 
     systemd::service { 'varnishlog':
