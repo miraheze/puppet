@@ -46,13 +46,13 @@ class role::memcached (
 
     $firewall = query_facts("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
     $firewall.each |$key, $value| {
-        ufw::allow { "Redis port - ${value['ipaddress']}":
+        ufw::allow { "Memcached port - ${value['ipaddress']}":
             proto => 'tcp',
             port  => $port,
             from  => $value['ipaddress'],
         }
 
-        ufw::allow { "Redis port - ${value['ipaddress6']}":
+        ufw::allow { "Memcached port - ${value['ipaddress6']}":
             proto => 'tcp',
             port  => $port,
             from  => $value['ipaddress6'],
