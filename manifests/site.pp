@@ -61,7 +61,7 @@ node 'mail2.miraheze.org' {
     include role::roundcubemail
 }
 
-node 'mem2.miraheze.org' {
+node /^mem[12]\.miraheze\.org$/ {
     include base
     include role::memcached
 }
