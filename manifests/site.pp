@@ -103,12 +103,6 @@ node 'puppet3.miraheze.org' {
     include role::salt
 }
 
-node /^rdb[3]\.miraheze\.org$/ {
-    include base
-    include role::redis
-    include prometheus::redis_exporter
-}
-
 node /^services[34]\.miraheze\.org$/ {
     include base
     include role::services
