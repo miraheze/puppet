@@ -5,10 +5,25 @@ Description=Varnish HTTP accelerator
 Type=forking
 LimitNOFILE=131072
 LimitMEMLOCK=82000
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=full
+ProtectHome=true
+PIDFile=%t/%p.pid
 Restart=on-failure
-EnvironmentFile=/etc/default/varnish
-ExecStartPre=/usr/sbin/varnishd -C -f /etc/varnish/default.vcl
-ExecStart=/usr/sbin/varnishd $DAEMON_OPTS
+KillMode=process
+ExecStart=/usr/sbin/varnishd \
+-P %t/%p.pid \
+-T localhost:6082 \
+-f /etc/varnish/default.vcl \
+-p thread_pool_min=250 -p thread_pool_max=<%= @processorcount * 250 -%> -p thread_pool_timeout=120 \
+-p vsl_reclen=2048 \
+-p workspace_backend=128k \
+-p vcc_allow_inline_c=true \
+-S /etc/varnish/secret \
+-s file,<%= @cache_file_name %>,<%= @cache_file_size %> \
+-p vcc_err_unref=off \
+-p http_max_hdr=128
 ExecReload=/usr/share/varnish/varnishreload
 
 [Install]
