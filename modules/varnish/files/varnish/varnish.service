@@ -9,7 +9,7 @@ Restart=on-failure
 EnvironmentFile=/etc/default/varnish
 ExecStartPre=/usr/sbin/varnishd -C -f /etc/varnish/default.vcl
 ExecStart=/usr/sbin/varnishd $DAEMON_OPTS
-ExecReload=/usr/share/varnish/reload-vcl
+ExecReload=/usr/share/varnish/varnishreload
 
 [Install]
 WantedBy=multi-user.target
