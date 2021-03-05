@@ -12,6 +12,7 @@ ProtectHome=true
 PIDFile=%t/%p.pid
 Restart=on-failure
 KillMode=process
+SyslogIdentifier=varnish
 ExecStart=/usr/sbin/varnishd \
 -P %t/%p.pid \
 -T localhost:6082 \
