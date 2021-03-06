@@ -1,81 +1,79 @@
 {
-  "graylog-internal" : {
-    "order" : -1,
-    "index_patterns" : [
-      "graylog_*"
-    ],
-    "settings" : {
-      "index" : {
-        "max_result_window": 10000000,
-        "analysis" : {
-          "analyzer" : {
-            "analyzer_keyword" : {
-              "filter" : "lowercase",
-              "tokenizer" : "keyword"
-            }
+  "order" : -1,
+  "index_patterns" : [
+    "graylog_*"
+  ],
+  "settings" : {
+    "index" : {
+      "max_result_window": 10000000,
+      "analysis" : {
+        "analyzer" : {
+          "analyzer_keyword" : {
+            "filter" : "lowercase",
+            "tokenizer" : "keyword"
           }
         }
       }
+    }
+  },
+  "mappings" : {
+    "_source" : {
+      "enabled" : true
     },
-    "mappings" : {
-      "_source" : {
-        "enabled" : true
+    "dynamic_templates" : [
+      {
+        "internal_fields" : {
+          "mapping" : {
+            "type" : "keyword"
+          },
+          "match_mapping_type" : "string",
+          "match" : "gl2_*"
+        }
       },
-      "dynamic_templates" : [
-        {
-          "internal_fields" : {
-            "mapping" : {
-              "type" : "keyword"
-            },
-            "match_mapping_type" : "string",
-            "match" : "gl2_*"
-          }
-        },
-        {
-          "store_generic" : {
-            "mapping" : {
-              "type" : "keyword"
-            },
-            "match_mapping_type" : "string"
-          }
-        }
-      ],
-      "properties" : {
-        "gl2_processing_timestamp" : {
-          "format" : "uuuu-MM-dd HH:mm:ss.SSS",
-          "type" : "date"
-        },
-        "gl2_accounted_message_size" : {
-          "type" : "long"
-        },
-        "gl2_receive_timestamp" : {
-          "format" : "uuuu-MM-dd HH:mm:ss.SSS",
-          "type" : "date"
-        },
-        "full_message" : {
-          "fielddata" : false,
-          "analyzer" : "standard",
-          "type" : "text"
-        },
-        "streams" : {
-          "type" : "keyword"
-        },
-        "source" : {
-          "fielddata" : true,
-          "analyzer" : "analyzer_keyword",
-          "type" : "text"
-        },
-        "message" : {
-          "fielddata" : false,
-          "analyzer" : "standard",
-          "type" : "text"
-        },
-        "timestamp" : {
-          "format" : "uuuu-MM-dd HH:mm:ss.SSS",
-          "type" : "date"
+      {
+        "store_generic" : {
+          "mapping" : {
+            "type" : "keyword"
+          },
+          "match_mapping_type" : "string"
         }
       }
-    },
-    "aliases" : { }
-  }
+    ],
+    "properties" : {
+      "gl2_processing_timestamp" : {
+        "format" : "uuuu-MM-dd HH:mm:ss.SSS",
+        "type" : "date"
+      },
+      "gl2_accounted_message_size" : {
+        "type" : "long"
+      },
+      "gl2_receive_timestamp" : {
+        "format" : "uuuu-MM-dd HH:mm:ss.SSS",
+        "type" : "date"
+      },
+      "full_message" : {
+        "fielddata" : false,
+        "analyzer" : "standard",
+        "type" : "text"
+      },
+      "streams" : {
+        "type" : "keyword"
+      },
+      "source" : {
+        "fielddata" : true,
+        "analyzer" : "analyzer_keyword",
+        "type" : "text"
+      },
+      "message" : {
+        "fielddata" : false,
+        "analyzer" : "standard",
+        "type" : "text"
+      },
+      "timestamp" : {
+        "format" : "uuuu-MM-dd HH:mm:ss.SSS",
+        "type" : "date"
+      }
+    }
+  },
+  "aliases" : { }
 }
