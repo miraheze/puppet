@@ -6,9 +6,6 @@
 #
 # = Parameters
 #
-# [*single*]
-#   Whether the mysql is an instance or single (e.g mysql@c4)
-#
 # [*client_socket*]
 #   The socket to connect to.
 #
