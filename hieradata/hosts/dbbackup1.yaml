@@ -6,5 +6,7 @@ mariadb::config::table_open_cache: 500
 role::dbbackup::clusters:
   c2:
     port: 3310
+    monitoring_port: 9104
   c4:
     port: 3312
+    monitoring_port: 9105

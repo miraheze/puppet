@@ -28,6 +28,11 @@ class role::dbbackup {
             require     => Class['mariadb::config'],
         }
 
+        prometheus::mysqld_exporter::instance { $clusterName:
+            client_socket => "/run/mysqld/mysqld.${clusterName}.sock",
+            listen_address => ":${clusterDetails['monitoring_port']}"
+        }
+
         motd::role { "role::dbbackup, cluster ${clusterName}":
             description => "database replica (for backup) of cluster ${clusterName}",
         }
