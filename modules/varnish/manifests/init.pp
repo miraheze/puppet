@@ -11,6 +11,13 @@ class varnish(
         ensure => present,
     }
 
+    file { '/usr/local/sbin/reload-vcl':
+        source => 'puppet:///modules/varnish/varnish/reload-vcl.py',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0555',
+    }
+
     # Avoid race condition where varnish starts, before /var/lib/varnish was mounted as tmpfs
     file { '/var/lib/varnish':
         ensure  => directory,
@@ -30,11 +37,6 @@ class varnish(
         notify  => Service['varnish'],
     }
 
-    service { 'varnish':
-        ensure  => 'running',
-        require => Mount['/var/lib/varnish'],
-    }
-
     service { 'stunnel4':
         ensure  => 'running',
         require => Package['stunnel4'],
@@ -52,36 +54,31 @@ class varnish(
         require => Package['varnish'],
     }
 
+    exec { 'varnish-server-syntax':
+        command     => '/usr/sbin/varnishd -C -f /etc/varnish/default.vcl',
+        refreshonly => true,
+        notify      => Service['varnish'],
+    }
+
     file { '/srv/varnish':
         ensure  => directory,
         owner   => 'varnish',
         group   => 'varnish',
     }
 
-    file { '/etc/default/varnish':
+    $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
+    systemd::service { 'varnish':
         ensure  => present,
-        content => template('varnish/varnish.default.erb'),
-        notify  => Exec['varnish-server-syntax'],
-        require => Package['varnish'],
-    }
-
-    exec { 'systemctl daemon-reload':
-        path        => '/bin',
-        refreshonly => true,
-    }
-
-    exec { 'varnish-server-syntax':
-        command     => '/usr/sbin/varnishd -C -f /etc/varnish/default.vcl',
-        notify      => Service['varnish'],
-        refreshonly => true,
-        require     => Exec['systemctl daemon-reload'],
-    }
-
-    file { '/etc/systemd/system/varnish.service':
-        ensure  => present,
-        source  => 'puppet:///modules/varnish/varnish/varnish.service',
-        require => Package['varnish'],
-        notify  => Exec['varnish-server-syntax'],
+        content => systemd_template('varnish'),
+        service_params => {
+            enable  => true,
+            require => [
+                Package['varnish'],
+                File['/usr/local/sbin/reload-vcl'],
+                File['/etc/varnish/default.vcl'],
+                Mount['/var/lib/varnish']
+            ],
+        }
     }
 
     systemd::service { 'varnishlog':
