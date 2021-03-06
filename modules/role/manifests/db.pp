@@ -12,11 +12,20 @@ class role::db {
     $roundcubemail_password = lookup('passwords::roundcubemail')
     $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
  
+    file { '/etc/ssl/private':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'mysql',
+        mode    => '0750',
+    }
+
+    include ssl::wildcard
+
     class { 'mariadb::config':
         config      => 'mariadb/config/mw.cnf.erb',
         password    => lookup('passwords::db::root'),
         server_role => 'master',
-	icinga_password => $icinga_password,
+        icinga_password => $icinga_password,
     }
 
     file { '/etc/mysql/miraheze/grafana-grants.sql':
@@ -64,24 +73,20 @@ class role::db {
         }
     }
 
-
     # Create a user to allow db transfers between servers
     users::user { 'dbcopy':
         ensure      => present,
         uid         => 3000,
         ssh_keys    => [
-		'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFX1yvcRAMqwlbkkhMPhK1GFYrLYM18qC1YUcuUEErxz dbcopy@db6'
+    		'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFX1yvcRAMqwlbkkhMPhK1GFYrLYM18qC1YUcuUEErxz dbcopy@db6'
         ],
     }
 
-    file { '/etc/ssl/private':
-        ensure  => directory,
-        owner   => 'root',
-        group   => 'mysql',
-        mode	=> '0750',
+    # We only need to rung a single instance of mysqld_exporter,
+    # listens on port 9104 by default.
+    prometheus::mysqld_exporter::instance { 'main':
+        client_socket => '/run/mysqld/mysqld.sock'
     }
-
-    include ssl::wildcard
     
     motd::role { 'role::db':
         description => 'general database server',
