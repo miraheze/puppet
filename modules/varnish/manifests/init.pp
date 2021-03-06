@@ -12,7 +12,7 @@ class varnish(
     }
 
     file { '/usr/local/sbin/reload-vcl':
-        source => 'puppet:///modules/varnish/reload-vcl.py',
+        source => 'puppet:///modules/varnish/varnish/reload-vcl.py',
         owner  => 'root',
         group  => 'root',
         mode   => '0555',
