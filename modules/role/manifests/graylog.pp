@@ -28,7 +28,17 @@ class role::graylog {
             'http.port'     => '9200',
             'network.host'  => '127.0.0.1',
         },
-        jvm_options     => ['-Xms2g', '-Xmx2g']
+        jvm_options     => ['-Xms2g', '-Xmx2g'],
+        templates => {
+            'graylog' => {
+                'content' => {
+                    'template' => 'graylog_*',
+                    'settings' => {
+                      'max_result_window' => 10000000
+                    }
+                }
+            }
+        }
     }
 
     class { 'graylog::repository':
