@@ -28,7 +28,12 @@ class role::graylog {
             'http.port'     => '9200',
             'network.host'  => '127.0.0.1',
         },
-        jvm_options     => ['-Xms2g', '-Xmx2g']
+        jvm_options     => ['-Xms2g', '-Xmx2g'],
+        templates => {
+            'graylog-internal' => {
+                'source' => 'puppet:///modules/role/elasticsearch/index_template.json'
+            }
+        }
     }
 
     class { 'graylog::repository':
