@@ -27,6 +27,12 @@ server {
 		return 403;
 	}
 
+	if ( $http_accept_language ~ ^(..) ) {
+		set $lang $1;
+	}
+
+	set $args lang=$lang&$args;
+
 	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org-2020-2.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
 
