@@ -22,6 +22,7 @@ ExecReload=/usr/local/sbin/reload-vcl -f /etc/varnish/default.vcl -d <%= @vcl_re
 ExecStartPost=/usr/local/sbin/reload-vcl -f /etc/varnish/default.vcl -d <%= @vcl_reload_delay_s %> -a --start-child
 ExecStart=/usr/sbin/varnishd \
 -P %t/%p.pid \
+-a :81 \
 -T localhost:6082 \
 -f '' \
 -p thread_pool_min=250 -p thread_pool_max=<%= @processorcount * 250 -%> -p thread_pool_timeout=120 \
