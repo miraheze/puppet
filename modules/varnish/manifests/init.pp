@@ -47,6 +47,12 @@ class varnish(
         require => Package['varnish'],
     }
 
+    exec { 'varnish-server-syntax':
+        command     => '/usr/sbin/varnishd -C -f /etc/varnish/default.vcl',
+        refreshonly => true,
+        notify      => Service['varnish'],
+    }
+
     file { '/srv/varnish':
         ensure  => directory,
         owner   => 'varnish',
@@ -64,13 +70,6 @@ class varnish(
                 Mount['/var/lib/varnish']
             ],
         }
-    }
-
-    systemd::unit { 'varnish.service':
-        ensure   => present,
-        content  => template('varnish/varnish-override.conf.erb'),
-        override => true,
-        restart  => false,
     }
 
     systemd::service { 'varnishlog':
