@@ -6,7 +6,7 @@
     ],
     "settings" : {
       "index" : {
-        'max_result_window': 10000000,
+        "max_result_window": 10000000,
         "analysis" : {
           "analyzer" : {
             "analyzer_keyword" : {
