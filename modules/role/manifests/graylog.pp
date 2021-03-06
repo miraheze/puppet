@@ -20,14 +20,6 @@ class role::graylog {
         version => 7,
     }
 
-    file { '/etc/default/graylog-server':
-        ensure  => 'present',
-        source  => 'puppet:///modules/role/graylog/graylog-server-default',
-        owner   => 'root',
-        group   => 'root',
-        require => Class['graylog::server'],
-    }
-
     class { 'elasticsearch':
         version         => '7.11.1',
         manage_repo     => true,
@@ -39,7 +31,7 @@ class role::graylog {
         jvm_options     => ['-Xms2g', '-Xmx2g'],
         templates => {
             'graylog-internal' => {
-                'source' => 'puppet:///modules/elasticsearch/index_template.json'
+                'source' => 'puppet:///modules/role/elasticsearch/index_template.json'
             }
         }
     }
