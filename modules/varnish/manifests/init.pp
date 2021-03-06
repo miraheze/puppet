@@ -11,6 +11,13 @@ class varnish(
         ensure => present,
     }
 
+    file { '/usr/local/sbin/reload-vcl':
+        source => 'puppet:///modules/varnish/reload-vcl.py',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0555',
+    }
+
     # Avoid race condition where varnish starts, before /var/lib/varnish was mounted as tmpfs
     file { '/var/lib/varnish':
         ensure  => directory,
@@ -59,6 +66,7 @@ class varnish(
         group   => 'varnish',
     }
 
+    $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
     systemd::service { 'varnish':
         ensure  => present,
         content => systemd_template('varnish'),
@@ -66,6 +74,7 @@ class varnish(
             enable  => true,
             require => [
                 Package['varnish'],
+                File['/usr/local/sbin/reload-vcl'],
                 File['/etc/varnish/default.vcl'],
                 Mount['/var/lib/varnish']
             ],
