@@ -17,7 +17,4 @@ class mediawiki::nginx {
         content => template('mediawiki/mediawiki.conf.erb'),
         require => Nginx::Conf['mediawiki-includes'],
     }
-
-    Class['ssl::wildcard'] ~> Service['nginx']
-    Class['ssl::hiera'] ~> Service['nginx']
 }
