@@ -14,6 +14,7 @@ class role::dbbackup {
     } ->
     class { 'mariadb::config':
         config          => 'mariadb/config/mw.cnf.erb',
+        instances       => true,
         password        => lookup('passwords::db::root'),
         server_role     => 'slave',
         icinga_password => $icinga_password,
@@ -25,27 +26,27 @@ class role::dbbackup {
     $clusters = lookup('role::dbbackup::clusters')
     $clusters.map |String $clusterName, Hash[String, Integer]$clusterDetails| {
         mariadb::instance { $clusterName:
-            port        => $clusterDetails['port'],
-            read_only   => 1,
-            require     => Class['mariadb::config'],
+            port      => $clusterDetails['port'],
+            read_only => 1,
+            require   => Class['mariadb::config'],
         }
 
         prometheus::mysqld_exporter::instance { $clusterName:
-            client_socket => "/run/mysqld/mysqld.${clusterName}.sock",
+            client_socket  => "/run/mysqld/mysqld.${clusterName}.sock",
             listen_address => ":${clusterDetails['monitoring_port']}"
         }
 
         $fwPort.each |$key, $value| {
             ufw::allow { "mariadb inbound ${clusterDetails['port']}/tcp for ${value['ipaddress']}":
-                proto   => 'tcp',
-                port    => $clusterDetails['port'],
-                from    => $value['ipaddress'],
+                proto => 'tcp',
+                port  => $clusterDetails['port'],
+                from  => $value['ipaddress'],
             }
 
             ufw::allow { "mariadb inbound ${clusterDetails['port']}/tcp for ${value['ipaddress6']}":
-                proto   => 'tcp',
-                port    => $clusterDetails['port'],
-                from    => $value['ipaddress6'],
+                proto => 'tcp',
+                port  => $clusterDetails['port'],
+                from  => $value['ipaddress6'],
             }
         }
 
