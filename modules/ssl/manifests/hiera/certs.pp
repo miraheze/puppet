@@ -18,7 +18,7 @@ define ssl::hiera::certs (
     if defined(Service['nginx']) {
         $restart_nginx = Service['nginx']
     } else {
-        $restart_nginx = undef,
+        $restart_nginx = undef
     }
 
     if !defined(File[$sslurl]) {
