@@ -47,4 +47,16 @@ define mariadb::instance(
         mode    => '0644',
         content => template($template),
     }
+
+    monitoring::services { "MariaDB ${title}":
+        check_command => 'mysql',
+        vars          => {
+            mysql_hostname  => $::fqdn,
+            mysql_port      => $port,
+            mysql_username  => 'icinga',
+            mysql_password  => $icinga_password,
+            mysql_ssl       => true,
+            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
+        },
+    }
 }
