@@ -1,7 +1,6 @@
 # define resource handler, same as current manual cert handler
 define ssl::hiera::certs (
     String $url,
-    String $ca,
     String $hsts     = 'weak',
     Optional[String] $redirect = undef,
     Optional[String] $sslname  = undef,
@@ -23,7 +22,7 @@ define ssl::hiera::certs (
     if !defined(File[$sslurl]) {
         file { $sslurl:
             ensure => present,
-            path   => "/etc/ssl/certs/${sslurl}.crt",
+            path   => "/etc/ssl/localcerts/${sslurl}.crt",
             source => "puppet:///ssl/certificates/${sslurl}.crt",
             notify => Exec["${restart}-syntax"],
         }
