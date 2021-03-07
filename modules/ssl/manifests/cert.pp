@@ -4,7 +4,7 @@ define ssl::cert (
     String $certificate    = $title,
 ) {
     if !defined(File["/etc/ssl/certs/${certificate}.crt"]) {
-        file { "/etc/ssl/certs/${certificate}.crt":
+        file { "/etc/ssl/localcerts/${certificate}.crt":
             ensure => $ensure,
             source => "puppet:///ssl/certificates/${certificate}.crt",
         }
