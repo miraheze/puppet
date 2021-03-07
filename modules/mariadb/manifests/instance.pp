@@ -48,13 +48,6 @@ define mariadb::instance(
         content => template($template),
     }
 
-    file { '/usr/lib/nagios/plugins/check_mysql-replication.pl':
-        source => 'puppet:///modules/mariadb/check_mysql-replication.pl',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
     $icinga_password = lookup('passwords::db::icinga')
 
     monitoring::services { "MariaDB ${title}":
