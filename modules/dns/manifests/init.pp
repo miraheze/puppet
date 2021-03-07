@@ -63,4 +63,10 @@ class dns {
             nrpe_command => 'check_gdnsd_datacenters',
         },
     }
+
+    file { '/usr/share/GeoIP/GeoLite2-Country.mmdb':
+        ensure => present,
+        source => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
+        mode   => '0444',
+    }
 }
