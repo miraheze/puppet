@@ -1,11 +1,19 @@
 # nginx
 class nginx (
-    Variant[String, Integer] $nginx_worker_processes    = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
-    Boolean $use_graylog                                = false,
+    Variant[String, Integer] $nginx_worker_processes = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
+    Boolean $use_graylog                             = false,
 ) {
     # Ensure Apache is absent: https://phabricator.miraheze.org/T253
     package { 'apache2':
         ensure  => absent,
+    }
+
+    # We need to check the syntax before we reload
+    systemd::unit { 'nginx.service':
+        ensure   => present,
+        content  => template('nginx/nginx-systemd-override.conf.erb'),
+        override => true,
+        restart  => false,
     }
 
     package { 'nginx':
@@ -34,13 +42,7 @@ class nginx (
     file { '/etc/nginx/nginx.conf':
         content => template('nginx/nginx.conf.erb'),
         require => Package['nginx'],
-        notify  => Exec['nginx-server-syntax'],
-    }
-
-    exec { 'nginx-server-syntax':
-        command     => '/usr/sbin/nginx -t',
-        notify      => Service['nginx'],
-        refreshonly => true,
+        notify  => Service['nginx'],
     }
 
     file { '/etc/nginx/fastcgi_params':
@@ -55,10 +57,10 @@ class nginx (
     }
 
     service { 'nginx':
-        ensure     => 'running',
-        enable     => true,
-        hasrestart => true,
-        require    => [
+        ensure  => 'running',
+        enable  => true,
+        restart => '/bin/systemctl reload nginx.service',
+        require => [
             Exec['nginx unmask'],
             File['/etc/nginx/mime.types'],
             File['/etc/nginx/nginx.conf'],

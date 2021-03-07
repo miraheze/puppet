@@ -1,67 +1,42 @@
 # nginx::site
 define nginx::site(
-    VMlib::Ensure $ensure       = present,
-    Optional[String] $content  = undef,
-    VMlib::Sourceurl $source    = undef,
-    Boolean $monitor           = true,
-    Optional[Any] $notify_site = undef,
+    VMlib::Ensure $ensure     = present,
+    Optional[String] $content = undef,
+    VMlib::Sourceurl $source  = undef,
+    Boolean $monitor          = true,
 ) {
     include ::nginx
 
     $basename = regsubst($title, '[\W_]', '-', 'G')
 
-    if $notify_site != undef {
-        file { "/etc/nginx/sites-available/${basename}":
-            ensure  => $ensure,
-            content => $content,
-            source  => $source,
-            require => Package['nginx'],
-            notify  => $notify_site,
-        }
-
-        file { "/etc/nginx/sites-enabled/${basename}":
-            ensure => link,
-            target => "/etc/nginx/sites-available/${basename}",
-            notify => $notify_site,
-        }
-    } else {
-        file { "/etc/nginx/sites-available/${basename}":
-            ensure  => $ensure,
-            content => $content,
-            source  => $source,
-            require => Package['nginx'],
-            notify  => Service['nginx'],
-        }
-
-        file { "/etc/nginx/sites-enabled/${basename}":
-            ensure => link,
-            target => "/etc/nginx/sites-available/${basename}",
-            notify => Service['nginx'],
-        }
+    file { "/etc/nginx/sites-available/${basename}":
+        ensure  => $ensure,
+        content => $content,
+        source  => $source,
+        require => Package['nginx'],
+        notify  => Service['nginx'],
     }
 
-    if $monitor {
-        if !defined(Monitoring::Services['HTTPS']) {
-            monitoring::services { 'HTTPS':
-                check_command  => 'check_http',
-                vars           => {
-                    address    => $facts['virtual_ip_address'],
-                    http_vhost => $::fqdn,
-                    http_ssl   => true,
-                },
-            }
+    file { "/etc/nginx/sites-enabled/${basename}":
+        ensure => link,
+        target => "/etc/nginx/sites-available/${basename}",
+        notify => Service['nginx'],
+    }
+
+    $monitor_service = $monitor ? {
+        'true'  => 'present',
+        default => 'absent',
+    }
+
+    if !defined(Monitoring::Services['HTTPS']) {
+        monitoring::services { 'HTTPS':
+            ensure         => $monitor_service,
+            check_command  => 'check_http',
+            vars           => {
+                address    => $facts['virtual_ip_address'],
+                http_vhost => $::fqdn,
+                http_ssl   => true,
+            },
         }
-    } else {
-        if !defined(Monitoring::Services['HTTPS']) {
-             monitoring::services { 'HTTPS':
-                 ensure         => 'absent',
-                 check_command  => 'check_http',
-                 vars           => {
-                     address    => $facts['virtual_ip_address'],
-                     http_vhost => $::fqdn,
-                     http_ssl   => true,
-                 },
-             }
-         }
-     }
+    }
 }

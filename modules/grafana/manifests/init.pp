@@ -47,21 +47,8 @@ class grafana (
     include ssl::wildcard
 
     nginx::site { 'grafana.miraheze.org':
-        ensure       => present,
-        source       => 'puppet:///modules/grafana/nginx/grafana.conf',
-        notify_site  => Exec['nginx-syntax-grafana'],
-    }
-
-    exec { 'nginx-syntax-grafana':
-        command     => '/usr/sbin/nginx -t',
-        notify      => Exec['nginx-reload-grafana'],
-        refreshonly => true,
-    }
-
-    exec { 'nginx-reload-grafana':
-        command     => '/usr/sbin/service nginx reload',
-        refreshonly => true,
-        require     => Exec['nginx-syntax-grafana'],
+        ensure => present,
+        source => 'puppet:///modules/grafana/nginx/grafana.conf',
     }
 
     monitoring::services { 'grafana.miraheze.org HTTPS':

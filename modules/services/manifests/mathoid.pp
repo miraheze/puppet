@@ -48,8 +48,6 @@ class services::mathoid {
         ],
     }
 
-    include nginx
-
     include ssl::wildcard
 
     nginx::site { 'mathoid':
