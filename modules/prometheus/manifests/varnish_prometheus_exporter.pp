@@ -3,20 +3,11 @@ class prometheus::varnish_prometheus_exporter (
 ) {
     require_package('prometheus-varnish-exporter')
 
-    exec { 'prometheus-varnish-exporter reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/etc/systemd/system/prometheus-varnish-exporter.service':
+    systemd::service { 'prometheus-varnish-exporter':
         ensure  => present,
-        content  => template('prometheus/prometheus-varnish-exporter.systemd'),
-        notify  => Exec['prometheus-varnish-exporter reload systemd'],
-    }
-
-    service { 'prometheus-varnish-exporter':
-        ensure  => 'running',
-        require => [ Package['varnish'], File['/etc/systemd/system/prometheus-varnish-exporter.service'] ],
+        content => systemd_template('prometheus-varnish-exporter'),
+        restart => true,
+        require => Package['varnish'],
     }
 
     $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
