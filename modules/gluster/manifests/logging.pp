@@ -11,6 +11,15 @@
 define gluster::logging (
 	Array[String] $file_source_options
 ) {
+	syslog_ng::rewrite { 'r_application_name':
+		params => {
+			'type'      => 'set',
+			'options'   => [
+				'glusterd',
+				{ 'value' => 'APPLICATION_NAME' }
+			],
+		},
+	} ->
 	syslog_ng::source { "s_file_${title}":
 		params => {
 			'type'    => 'file',
@@ -22,6 +31,9 @@ define gluster::logging (
 			{
 				'source' => "s_file_${title}",
 			},
+                        {
+                            'rewrite' => 'r_application_name',
+                        },
 			{
 				'destination' => 'd_graylog_syslog_tls',
 			},
