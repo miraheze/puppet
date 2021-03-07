@@ -1,12 +1,11 @@
 [Unit]
 Description=Prometheus exporter for php-fpm metrics
-Documentation=https://github.com/hipages/php-fpm_exporter
+Documentation=https://github.com/Lusitaniae/phpfpm_exporter
 
 [Service]
 Restart=always
 User=www-data
-Environment="PHP_FPM_FIX_PROCESS_COUNT=1"
-ExecStart=/usr/local/bin/prometheus-phpfpm-exporter server --phpfpm.scrape-uri="unix:///run/php/fpm-www.sock;/php_status"
+ExecStart=/usr/local/bin/prometheus-phpfpm-exporter server --phpfpm.socket-paths="unix:///run/php/fpm-www.sock" --phpfpm.status-path="/php_status"
 ExecReload=/bin/kill -HUP $MAINPID
 TimeoutStopSec=20s
 SendSIGKILL=no
