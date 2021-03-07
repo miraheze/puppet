@@ -40,9 +40,9 @@ command[check_redis]=/usr/lib/nagios/plugins/check_procs -a redis-server -c 1:1
 command[check_jobchron]=/usr/lib/nagios/plugins/check_procs -a redisJobChronService -c 1:1
 command[check_jobqueue]=/usr/bin/sudo -u www-data /usr/lib/nagios/plugins/check_jobqueue
 command[check_icinga_config]=/usr/lib/nagios/plugins/check_icinga_config /etc/icinga/icinga.cfg
-command[check_mysql-replication_c2]=/usr/lib/nagios/plugins/check_mysql-replication.pl -sa dbbackup1.miraheze.org -sl icinga -sp 3310 -spd <%= @icinga_password %> -a both -w 10 -c 30 -D "MariaDB replication - "
-command[check_mysql-replication_c3]=/usr/lib/nagios/plugins/check_mysql-replication.pl -sa dbbackup2.miraheze.org -sl icinga -sp 3311 -spd <%= @icinga_password %> -a both -w 10 -c 30 -D "MariaDB replication - "
-command[check_mysql-replication_c4]=/usr/lib/nagios/plugins/check_mysql-replication.pl -sa dbbackup1.miraheze.org -sl icinga -sp 3312 -spd <%= @icinga_password %> -a both -w 10 -c 30 -D "MariaDB replication - "
+command[check_mysql_replication_c2]=/usr/lib/nagios/plugins/check_mysql-replication.pl -sa dbbackup1.miraheze.org -sl icinga -sp 3310 -spd <%= @icinga_password %> -a both -w 10 -c 30 -D "MariaDB replication - "
+command[check_mysql_replication_c3]=/usr/lib/nagios/plugins/check_mysql-replication.pl -sa dbbackup2.miraheze.org -sl icinga -sp 3311 -spd <%= @icinga_password %> -a both -w 10 -c 30 -D "MariaDB replication - "
+command[check_mysql_replication_c4]=/usr/lib/nagios/plugins/check_mysql-replication.pl -sa dbbackup1.miraheze.org -sl icinga -sp 3312 -spd <%= @icinga_password %> -a both -w 10 -c 30 -D "MariaDB replication - "
 # glusterfsd brick
 command[check_glusterd_volume]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfsd -c 1:
 # glusterfs client
