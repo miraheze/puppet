@@ -10,13 +10,13 @@ class prometheus::redis_exporter (
         owner  => 'root',
         group  => 'root',
         source => 'puppet:///modules/prometheus/redis/redis_exporter',
-        notify => Service['prometheus-redis'],
+        notify => Service['prometheus-redis-exporter'],
     }
 
     file { '/etc/default/prometheus-redis':
         ensure => present,
         content => template('prometheus/prometheus-redis-default.erb'),
-        notify => Service['prometheus-redis'],
+        notify => Service['prometheus-redis-exporter'],
     }
 
     systemd::service { 'prometheus-redis-exporter':
