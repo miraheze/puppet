@@ -398,7 +398,7 @@ sub vcl_deliver {
 		}
 	}
 
-	if (req.url ~ "^(/w/api\.php|/w/index\.php\?title=Special\:|/wiki/Special\:|/w/index\.php\?title\=Special%3A|/wiki/Special%3A)$") {
+	if (req.url ~ "^(/w/api\.php|/w/index\.php\?title\=Special\:|/wiki/Special\:|/w/index\.php\?title\=Special%3A|/wiki/Special%3A)$") {
 		set resp.http.X-Robots-Tag = "noindex";
 	}
 
