@@ -153,22 +153,7 @@ class puppetserver(
         group   => 'puppet-users',
         mode    => '0770',
     }
-
-    exec { 'puppetserver reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/lib/systemd/system/puppetserver.service':
-        ensure  => present,
-        source  => 'puppet:///modules/puppetserver/puppetserver.systemd',
-        notify  => [
-            Exec['puppetserver reload systemd'],
-            Service['puppetserver'],
-        ],
-        require => Package['puppetserver'],
-    }
-
+ 
     if $puppetdb_enable {
         class { 'puppetserver::puppetdb::client':
             puppetdb_hostname => $puppetdb_hostname,
@@ -181,9 +166,10 @@ class puppetserver(
         }
     }
 
-    service { 'puppetserver':
-        ensure  => running,
-        enable  => true,
+    systemd::service { 'puppetserver':
+        ensure  => present,
+        content => systemd_template('puppetserver'),
+        restart => true,
         require => Package['puppetserver'],
     }
 
