@@ -33,7 +33,7 @@ server {
 
 	set $args lang=$lang&$args;
 
-	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org-2020-2.crt;
+	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
@@ -104,7 +104,7 @@ server {
 	server_name *.miraheze.org;
 	root /srv/mediawiki;
 
-	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org-2020-2.crt;
+	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
@@ -136,7 +136,7 @@ server {
 
 	send_timeout 120;
 
-	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org-2020-2.crt;
+	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
@@ -193,7 +193,7 @@ server {
 		return 403;
 	}
 
-	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org-2020-2.crt;
+	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
@@ -228,10 +228,10 @@ server {
 <% end %>
 	root /srv/mediawiki;
 <% if property['sslname'] %>
-	ssl_certificate /etc/ssl/certs/<%= property['sslname'] %>.crt;
+	ssl_certificate /etc/ssl/localcerts/<%= property['sslname'] %>.crt;
 	ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
 <% else %>
-	ssl_certificate /etc/ssl/certs/<%= property['url'] %>.crt;
+	ssl_certificate /etc/ssl/localcerts/<%= property['url'] %>.crt;
 	ssl_certificate_key /etc/ssl/private/<%= property['url'] %>.key;
 <% end %>
 
