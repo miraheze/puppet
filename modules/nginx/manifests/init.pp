@@ -57,10 +57,10 @@ class nginx (
     }
 
     service { 'nginx':
-        ensure     => 'running',
-        enable     => true,
-        hasrestart => true,
-        require    => [
+        ensure  => 'running',
+        enable  => true,
+        restart => '/bin/systemctl reload nginx.service',
+        require => [
             Exec['nginx unmask'],
             File['/etc/nginx/mime.types'],
             File['/etc/nginx/nginx.conf'],
