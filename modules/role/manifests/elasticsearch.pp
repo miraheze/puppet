@@ -61,22 +61,9 @@ class role::elasticsearch {
 
     if $es_master_node {
         nginx::site { 'elasticsearch-lb.miraheze.org':
-            ensure      => present,
-            content     => template('role/elasticsearch/nginx-site.conf.erb'),
-            monitor     => false,
-            notify_site => Exec['nginx-syntax'],
-        }
-
-        exec { 'nginx-syntax':
-            command     => '/usr/sbin/nginx -t',
-            notify      => Exec['nginx-reload'],
-            refreshonly => true,
-        }
-
-        exec { 'nginx-reload':
-            command     => '/usr/sbin/service nginx reload',
-            refreshonly => true,
-            require     => Exec['nginx-syntax'],
+            ensure  => present,
+            content => template('role/elasticsearch/nginx-site.conf.erb'),
+            monitor => false,
         }
 
         ufw::allow { 'nginx port mw1':
