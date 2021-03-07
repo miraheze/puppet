@@ -47,8 +47,6 @@ class services::restbase {
         ]
     }
 
-    include ::nginx
-
     include ssl::wildcard
 
     nginx::site { 'restbase':

@@ -43,26 +43,10 @@ class phabricator {
     }
 
     nginx::site { 'phabricator.miraheze.org':
-        ensure      => present,
-        source      => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
-        monitor     => false,
-        notify_site => Exec['nginx-syntax'],
+        ensure  => present,
+        source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
+        monitor => false,
     }
-
-    exec { 'nginx-syntax':
-        command     => '/usr/sbin/nginx -t',
-        notify      => Exec['nginx-reload'],
-        refreshonly => true,
-    }
-
-    exec { 'nginx-reload':
-        command     => '/usr/sbin/service nginx reload',
-        refreshonly => true,
-        require     => Exec['nginx-syntax'],
-    }
-
-    Class['ssl::wildcard'] ~> Exec['nginx-syntax']
-    Ssl::Cert['miraheze.wiki'] ~> Exec['nginx-syntax']
 
     file { '/srv/phab':
         ensure => directory,

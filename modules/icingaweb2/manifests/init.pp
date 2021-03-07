@@ -167,21 +167,8 @@ class icingaweb2 (
     include ssl::wildcard
 
     nginx::site { 'icinga2':
-        ensure      => present,
-        source      => 'puppet:///modules/icingaweb2/icinga2.conf',
-        notify_site => Exec['nginx-syntax-icinga'],
-    }
-
-    exec { 'nginx-syntax-icinga':
-        command     => '/usr/sbin/nginx -t',
-        notify      => Exec['nginx-reload-icinga'],
-        refreshonly => true,
-    }
-
-    exec { 'nginx-reload-icinga':
-        command     => '/usr/sbin/service nginx reload',
-        refreshonly => true,
-        require     => Exec['nginx-syntax-icinga'],
+        ensure => present,
+        source => 'puppet:///modules/icingaweb2/icinga2.conf',
     }
 
     monitoring::services { 'icinga.miraheze.org HTTPS':
