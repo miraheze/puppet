@@ -1,4 +1,4 @@
 [Service]
 ExecReload=
 ExecReload=/usr/sbin/nginx -t
-ExecReload=/bin/kill -USR2 $MAINPID
+ExecReload=/usr/sbin/nginx -g 'daemon on; master_process on;' -s reload
