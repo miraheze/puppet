@@ -7,7 +7,7 @@ class ssl::wildcard (
     if defined(Service['nginx']) {
         $restart_nginx = Service['nginx']
     } else {
-        $restart_nginx = undef,
+        $restart_nginx = undef
     }
 
     if !defined(File['wildcard.miraheze.org-2020-2']) {
