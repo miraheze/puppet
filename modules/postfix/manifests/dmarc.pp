@@ -15,6 +15,7 @@ class postfix::dmarc {
     systemd::service { 'opendmarc':
         ensure  => present,
         content => systemd_template('opendmarc'),
+        restart => true,
         require => Package['opendmarc'],
     }
 }
