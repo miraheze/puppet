@@ -48,9 +48,6 @@ class phabricator {
         monitor => false,
     }
 
-    Class['ssl::wildcard'] ~> Service['nginx']
-    Ssl::Cert['miraheze.wiki'] ~> Service['nginx']
-
     file { '/srv/phab':
         ensure => directory,
     }
