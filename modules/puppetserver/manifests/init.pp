@@ -221,6 +221,23 @@ class puppetserver(
         minute  => '*',
     }
 
+    $geoip_key = lookup('passwords::geoipupdatekey')
+
+    file { '/root/geoipupdate':
+        ensure  => present,
+        content => template('puppetserver/geoipupdate'),
+        mode    => '0555',
+    }
+
+    cron { 'geoipupdate':
+        ensure   => present,
+        command  => '/root/geoipupdate',
+        user     => 'root',
+        monthday => 1,
+        hour     => 12,
+        minute   => 0,
+    }
+
     monitoring::services { 'puppetserver':
         check_command => 'tcp',
         vars          => {
