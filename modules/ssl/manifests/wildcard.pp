@@ -1,6 +1,6 @@
 # class: ssl::wildcard
 class ssl::wildcard (
-    $ssl_cert_path = '/etc/ssl/certs',
+    $ssl_cert_path = '/etc/ssl/localcerts',
     $ssl_cert_key_private_path = '/etc/ssl/private',
 ) {
 
