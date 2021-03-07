@@ -48,6 +48,13 @@ define mariadb::instance(
         content => template($template),
     }
 
+    file { '/usr/lib/nagios/plugins/check_mysql-replication.pl':
+        source => 'puppet:///modules/mariadb/check_mysql-replication.pl',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    }
+
     monitoring::services { "MariaDB ${title}":
         check_command => 'mysql',
         vars          => {
@@ -57,6 +64,13 @@ define mariadb::instance(
             mysql_password  => $icinga_password,
             mysql_ssl       => true,
             mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
+        },
+    }
+
+    monitoring::services { 'Check MariaDB Replication':
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => 'check_mysql-replication',
         },
     }
 }
