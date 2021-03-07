@@ -8,27 +8,14 @@ class prometheus::php_fpm {
         owner  => 'root',
         group  => 'root',
         source => 'puppet:///modules/prometheus/php-fpm/phpfpm_exporter',
+        notify => Service['prometheus-php-fpm']
     }
 
-    file { '/etc/systemd/system/prometheus-php-fpm.service':
-        ensure => present,
-        source => 'puppet:///modules/prometheus/php-fpm/prometheus-php-fpm.systemd',
-        notify => Service['prometheus-php-fpm'],
-    }
-
-    exec { 'prometheus-php-fpm reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    service { 'prometheus-php-fpm':
-        ensure  => 'running',
-        enable  => true,
-        require => [
-            File['/etc/systemd/system/prometheus-php-fpm.service'],
-            File['/usr/local/bin/prometheus-phpfpm-exporter']
-        ],
-        notify => Exec['prometheus-php-fpm reload systemd'],
+    systemd::service { 'prometheus-php-fpm':
+        ensure  => present,
+        content => systemd_template('prometheus-php-fpm'),
+        restart => true,
+        require => File['/usr/local/bin/prometheus-phpfpm-exporter'],
     }
 
     $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
