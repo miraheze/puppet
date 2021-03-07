@@ -62,27 +62,13 @@ class roundcubemail (
     include ssl::wildcard
 
     nginx::site { 'mail':
-        ensure      => present,
-        source      => 'puppet:///modules/roundcubemail/mail.miraheze.org.conf',
-        notify_site => Exec['nginx-syntax-roundcubemail'],
+        ensure => present,
+        source => 'puppet:///modules/roundcubemail/mail.miraheze.org.conf',
     }
 
     nginx::site { 'roundcubemail':
-        ensure      => present,
-        source      => 'puppet:///modules/roundcubemail/roundcubemail.conf',
-        notify_site => Exec['nginx-syntax-roundcubemail'],
-    }
-
-    exec { 'nginx-syntax-roundcubemail':
-        command     => '/usr/sbin/nginx -t',
-        notify      => Exec['nginx-reload-roundcubemail'],
-        refreshonly => true,
-    }
-
-    exec { 'nginx-reload-roundcubemail':
-        command     => '/usr/sbin/service nginx reload',
-        refreshonly => true,
-        require     => Exec['nginx-syntax-roundcubemail'],
+        ensure => present,
+        source => 'puppet:///modules/roundcubemail/roundcubemail.conf',
     }
 
     file { '/var/log/roundcubemail':
