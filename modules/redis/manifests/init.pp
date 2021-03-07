@@ -19,6 +19,7 @@ class redis (
         group   => 'root',
         mode    => '0444',
         require => Package['redis-server'],
+        notify  => Service['redis-server'],
     }
 
     file { '/srv/redis':
