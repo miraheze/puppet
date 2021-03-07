@@ -17,19 +17,9 @@ class postfix::dmarc {
         source => 'puppet:///modules/postfix/opendmarc',
     }
 
-    exec { 'opendmarc reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/lib/systemd/system/opendmarc.service':
-        ensure => present,
-        source => 'puppet:///modules/postfix/opendmarc.systemd',
-        notify => Exec['opendmarc reload systemd'],
-    }
-
-    service { 'opendmarc':
-        ensure  => 'running',
-        require => [Package['opendmarc'], File['/lib/systemd/system/opendmarc.service']],
+    systemd::service { 'opendmarc':
+        ensure  => present,
+        content => systemd_template('opendmarc'),
+        require => Package['opendmarc'],
     }
 }
