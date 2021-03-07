@@ -2,10 +2,8 @@ server {
         listen 443 ssl;
         server_name mathoid-lb.miraheze.org;
 
-	ssl_certificate /etc/ssl/certs/wildcard.miraheze.org-2020-2.crt;
+	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
-
-	ssl_trusted_certificate /etc/ssl/certs/Sectigo.crt;
 
         location / {
                 proxy_pass http://127.0.0.1:10044;
