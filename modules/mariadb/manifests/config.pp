@@ -97,11 +97,6 @@ class mariadb::config(
         require => Package["mariadb-server-${version}"],
     }
 
-    exec { 'mariadb reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
     systemd::unit { 'mariadb.service':
         ensure   => present,
         content  => template('mariadb/mariadb-systemd-override.conf.erb'),
