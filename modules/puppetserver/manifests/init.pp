@@ -154,18 +154,10 @@ class puppetserver(
         mode    => '0770',
     }
 
-    exec { 'puppetserver reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/lib/systemd/system/puppetserver.service':
+    systemd::service { 'puppetserver':
         ensure  => present,
-        source  => 'puppet:///modules/puppetserver/puppetserver.systemd',
-        notify  => [
-            Exec['puppetserver reload systemd'],
-            Service['puppetserver'],
-        ],
+        content => systemd_template('puppetserver'),
+        restart => true,
         require => Package['puppetserver'],
     }
 
