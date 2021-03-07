@@ -7,7 +7,6 @@ class prometheus::varnish_prometheus_exporter (
         ensure  => present,
         content => systemd_template('prometheus-varnish-exporter'),
         restart => true,
-        require => Package['varnish'],
     }
 
     $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
