@@ -34,7 +34,7 @@ class redis (
         ensure  => present,
         content => systemd_template('redis-server'),
         restart => true,
-        require => Service['varnish'],
+        require => Package['redis-server'],
     }
 
     monitoring::services { 'Redis Process':
