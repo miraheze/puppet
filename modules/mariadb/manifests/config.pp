@@ -97,16 +97,11 @@ class mariadb::config(
         require => Package["mariadb-server-${version}"],
     }
 
-    exec { 'mariadb reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/etc/systemd/system/mariadb.service.d/no-timeout-mariadb.conf':
-        ensure  => present,
-        source  => 'puppet:///modules/mariadb/no-timeout-mariadb.conf',
-        notify  => Exec['mariadb reload systemd'],
-        require => Package["mariadb-server-${version}"],
+    systemd::unit { 'mariadb.service':
+        ensure   => present,
+        content  => template('mariadb/mariadb-systemd-override.conf.erb'),
+        override => true,
+        restart  => false,
     }
 
     file { '/usr/lib/nagios/plugins/check_mysql-replication.pl':
