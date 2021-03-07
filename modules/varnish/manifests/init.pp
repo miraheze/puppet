@@ -97,9 +97,7 @@ class varnish(
     include ssl::wildcard
     include ssl::hiera
 
-    ssl::cert { 'm.miraheze.org':
-        notify => Exec['nginx-syntax'],
-    }
+    ssl::cert { 'm.miraheze.org': }
 
     Class['ssl::wildcard'] ~> Exec['nginx-syntax']
     Class['ssl::hiera'] ~> Exec['nginx-syntax']
