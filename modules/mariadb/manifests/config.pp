@@ -1,6 +1,7 @@
 # class: mariadb::config
 class mariadb::config(
     String                       $config                       = undef,
+    Optional[Boolean]            $instances                    = undef,
     String                       $password                     = undef,
     String                       $datadir                      = '/srv/mariadb',
     String                       $tmpdir                       = '/tmp',
@@ -109,28 +110,21 @@ class mariadb::config(
     }
 
     file { '/usr/lib/nagios/plugins/check_mysql-replication.pl':
-        source => 'puppet:///modules/mariadb/check_mysql-replication.pl',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
+         source => 'puppet:///modules/mariadb/check_mysql-replication.pl',
+         owner  => 'root',
+         group  => 'root',
+         mode   => '0755',
+     }
 
-    monitoring::services { 'MariaDB':
-        check_command => 'mysql',
-        vars          => {
-            mysql_hostname  => $::fqdn,
-            mysql_username  => 'icinga',
-            mysql_password  => $icinga_password,
-            mysql_ssl       => true,
-            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
-        },
-    }
-
-    if $server_role == 'slave' {
-        monitoring::services { 'Check MariaDB Replication':
-            check_command => 'nrpe',
+    if $instances == undef {
+        monitoring::services { 'MariaDB':
+            check_command => 'mysql',
             vars          => {
-                nrpe_command => 'check_mysql-replication',
+                mysql_hostname  => $::fqdn,
+                mysql_username  => 'icinga',
+                mysql_password  => $icinga_password,
+                mysql_ssl       => true,
+                mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
             },
         }
     }

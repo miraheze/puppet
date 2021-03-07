@@ -47,4 +47,25 @@ define mariadb::instance(
         mode    => '0644',
         content => template($template),
     }
+
+    $icinga_password = lookup('passwords::db::icinga')
+
+    monitoring::services { "MariaDB ${title}":
+        check_command => 'mysql',
+        vars          => {
+            mysql_hostname  => $::fqdn,
+            mysql_port      => $port,
+            mysql_username  => 'icinga',
+            mysql_password  => $icinga_password,
+            mysql_ssl       => true,
+            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
+        }
+    }
+
+    monitoring::services { "Check MariaDB Replication ${title}":
+        check_command => 'nrpe',
+        vars          => {
+            nrpe_command => "check_mysql_replication_${title}",
+        }
+    }
 }

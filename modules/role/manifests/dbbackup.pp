@@ -14,42 +14,44 @@ class role::dbbackup {
     } ->
     class { 'mariadb::config':
         config          => 'mariadb/config/mw.cnf.erb',
+        instances       => true,
         password        => lookup('passwords::db::root'),
         server_role     => 'slave',
         icinga_password => $icinga_password,
         require         => File['/etc/ssl/private'],
     }
 
+    $fwPort = query_facts("domain='$domain' and (Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
+
     $clusters = lookup('role::dbbackup::clusters')
     $clusters.map |String $clusterName, Hash[String, Integer]$clusterDetails| {
         mariadb::instance { $clusterName:
-            port        => $clusterDetails['port'],
-            read_only   => 1,
-            require     => Class['mariadb::config'],
+            port      => $clusterDetails['port'],
+            read_only => 1,
+            require   => Class['mariadb::config'],
         }
 
         prometheus::mysqld_exporter::instance { $clusterName:
-            client_socket => "/run/mysqld/mysqld.${clusterName}.sock",
+            client_socket  => "/run/mysqld/mysqld.${clusterName}.sock",
             listen_address => ":${clusterDetails['monitoring_port']}"
+        }
+
+        $fwPort.each |$key, $value| {
+            ufw::allow { "mariadb inbound ${clusterDetails['port']}/tcp for ${value['ipaddress']}":
+                proto => 'tcp',
+                port  => $clusterDetails['port'],
+                from  => $value['ipaddress'],
+            }
+
+            ufw::allow { "mariadb inbound ${clusterDetails['port']}/tcp for ${value['ipaddress6']}":
+                proto => 'tcp',
+                port  => $clusterDetails['port'],
+                from  => $value['ipaddress6'],
+            }
         }
 
         motd::role { "role::dbbackup, cluster ${clusterName}":
             description => "database replica (for backup) of cluster ${clusterName}",
-        }
-    }
-
-    $fwPort3306 = query_facts("domain='$domain' and (Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
-    $fwPort3306.each |$key, $value| {
-        ufw::allow { "mariadb inbound 3306/tcp for ${value['ipaddress']}":
-            proto   => 'tcp',
-            port    => 3306,
-            from    => $value['ipaddress'],
-        }
-
-        ufw::allow { "mariadb inbound 3306/tcp for ${value['ipaddress6']}":
-            proto   => 'tcp',
-            port    => 3306,
-            from    => $value['ipaddress6'],
         }
     }
 
