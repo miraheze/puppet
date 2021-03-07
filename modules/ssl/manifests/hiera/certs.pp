@@ -15,10 +15,10 @@ define ssl::hiera::certs (
         $sslurl = $sslname
     }
 
-    if defined(Package['nginx']) {
-        $restart = 'nginx'
+    if defined(Service['nginx']) {
+        $restart_nginx = Service['nginx']
     } else {
-        $restart = 'apache2'
+        $restart_nginx = undef,
     }
 
     if !defined(File[$sslurl]) {
@@ -26,7 +26,7 @@ define ssl::hiera::certs (
             ensure => present,
             path   => "/etc/ssl/localcerts/${sslurl}.crt",
             source => "puppet:///ssl/certificates/${sslurl}.crt",
-            notify => Exec["${restart}-syntax"],
+            notify => $restart_nginx,
         }
     }
 
@@ -39,6 +39,7 @@ define ssl::hiera::certs (
             owner  => 'root',
             group  => 'ssl-cert',
             mode   => '0660',
+            notify => $restart_nginx,
         }
     }
 }
