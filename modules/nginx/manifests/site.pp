@@ -24,7 +24,7 @@ define nginx::site(
     }
 
     $monitor_service = $monitor ? {
-        'true'  => 'present',
+        true  => 'present',
         default => 'absent',
     }
 
