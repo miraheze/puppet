@@ -13,26 +13,18 @@
 #   program name is set wrong. This corrects the issue.
 #
 define gluster::logging (
-	Array $file_source_options,
-	Optional[String] $program_name = undef,
+	Array  $file_source_options,
+	String $program_name,
 ) {
-
-	if $program_name {
-		syslog_ng::rewrite { 'r_program':
-			params => {
-				'type'      => 'set',
-				'options'   => [
-					$program_name,
-					{ 'value' => 'PROGRAM' }
-				],
-			},
-		}
-	}
-
-	$rename_program_name = $program_name ? {
-		undef          => {},
-		default        =>  { 'rewrite' => 'r_program' },
-	}
+	syslog_ng::rewrite { 'r_program':
+		params => {
+			'type'      => 'set',
+			'options'   => [
+				$program_name,
+				{ 'value' => 'PROGRAM' }
+			],
+		},
+	} ->
 	syslog_ng::source { "s_file_${title}":
 		params => {
 			'type'    => 'file',
@@ -44,7 +36,9 @@ define gluster::logging (
 			{
 				'source' => "s_file_${title}",
 			},
-			$rename_program_name,
+			{
+				'rewrite' => 'r_program'
+			},
 			{
 				'destination' => 'd_graylog_syslog_tls',
 			},
