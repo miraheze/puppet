@@ -25,10 +25,10 @@ define puppetserver::logging (
 	String $program_name,
 ) {
 	
-    file { $file_path:
-        ensure  => present,
-        source  => $file_source,
-    }
+	file { $file_path:
+		ensure  => present,
+		source  => $file_source,
+	}
 
 	syslog_ng::rewrite { "r_program_${program_name}":
 		params => {
