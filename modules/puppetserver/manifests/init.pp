@@ -179,7 +179,7 @@ class puppetserver(
 
     puppetserver::logging { 'puppetserver_access':
         file_path           => '/etc/puppetlabs/puppetserver/request-logging.xml',
-        file_source         => 'puppet:///modules/puppetserver/puppetserver_access_request-logging.xml',
+        file_source         => 'puppet:///modules/puppetserver/puppetserver-request-logging.xml',
         file_source_options => [
             '/var/log/puppetlabs/puppetserver/puppetserver-access.log.json',
             { 'flags' => 'no-parse' }
