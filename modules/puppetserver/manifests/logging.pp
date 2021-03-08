@@ -30,7 +30,7 @@ define puppetserver::logging (
         source  => $file_source,
     }
 
-	syslog_ng::rewrite { 'r_program_${program_name}':
+	syslog_ng::rewrite { "r_program_${program_name}":
 		params => {
 			'type'      => 'set',
 			'options'   => [
