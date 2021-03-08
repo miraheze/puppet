@@ -169,7 +169,10 @@ class puppetserver(
     puppetserver::logging { 'puppetserver':
         file_path           => '/etc/puppetlabs/puppetserver/logback.xml',
         file_source         => 'puppet:///modules/puppetserver/puppetserver_logback.xml',
-        file_source_options => [ '/var/log/puppetlabs/puppetserver/puppetserver.log.json' ],
+        file_source_options => [
+            '/var/log/puppetlabs/puppetserver/puppetserver.log.json',
+            { 'flags' => 'no-parse' }
+        ],
         program_name        => 'puppetserver',
         notify              => Service['puppetserver'],
     }
