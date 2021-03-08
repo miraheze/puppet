@@ -9,17 +9,26 @@
 #   This essentially reads from the log file and sends it to gluster.
 #
 define gluster::logging (
-	Array[String] $file_source_options
+	Array $file_source_options,
+	Optional[String] $program_name = undef,
 ) {
-	syslog_ng::rewrite { 'r_program':
-		params => {
-			'type'      => 'set',
-			'options'   => [
-				$title,
-				{ 'value' => 'PROGRAM' }
-			],
-		},
-	} ->
+
+	if $program_name {
+		syslog_ng::rewrite { 'r_program':
+			params => {
+				'type'      => 'set',
+				'options'   => [
+					$program_name,
+					{ 'value' => 'PROGRAM' }
+				],
+			},
+		}
+	}
+
+	$rename_program_name = $program_name ? {
+		undef          => {},
+		default        =>  { 'rewrite' => 'r_program' },
+	}
 	syslog_ng::source { "s_file_${title}":
 		params => {
 			'type'    => 'file',
@@ -31,9 +40,7 @@ define gluster::logging (
 			{
 				'source' => "s_file_${title}",
 			},
-                        {
-				'rewrite' => 'r_program',
-                        },
+			$rename_program_name,
 			{
 				'destination' => 'd_graylog_syslog_tls',
 			},
