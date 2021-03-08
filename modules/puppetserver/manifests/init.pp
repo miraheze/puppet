@@ -177,6 +177,17 @@ class puppetserver(
         notify              => Service['puppetserver'],
     }
 
+    puppetserver::logging { 'puppetserver_access':
+        file_path           => '/etc/puppetlabs/puppetserver/request-logging.xml',
+        file_source         => 'puppet:///modules/puppetserver/puppetserver_access_request-logging.xml',
+        file_source_options => [
+            '/var/log/puppetlabs/puppetserver/puppetserver-access.log.json',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name        => 'puppetserver_access',
+        notify              => Service['puppetserver'],
+    }
+
     systemd::service { 'puppetserver':
         ensure  => present,
         content => systemd_template('puppetserver'),
