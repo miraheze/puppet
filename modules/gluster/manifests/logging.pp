@@ -1,12 +1,16 @@
 # == Define: gluster::logging
 #
-# Read log file and sends to centralised logger (e.g reads /var/log/glusterfs/glusterd.log and sends to gluster).
+# Read log file and sends to centralised logger (e.g reads /var/log/glusterfs/glusterd.log and sends to graylog).
 #
 # === Parameters
 #
 # [file_source_options*]
 #   Options for the file source for example [ '/var/log/glusterfs/glusterd.log' ].
 #   This essentially reads from the log file and sends it to gluster.
+#
+# [program_name*]
+#   This sets the program name. Sometimes the log is parsed wrong and the
+#   program name is set wrong. This corrects the issue.
 #
 define gluster::logging (
 	Array $file_source_options,
