@@ -40,13 +40,24 @@ class puppetserver::puppetdb::client(
     class { 'puppetdb': }
 
     puppetserver::logging { 'puppetdb':
-         file_path           => '/etc/puppetlabs/puppetdb/logback.xml',
-         file_source         => 'puppet:///modules/puppetserver/puppetdb_logback.xml',
-         file_source_options => [
-             '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
-             { 'flags' => 'no-parse' }
-         ],
-         program_name        => 'puppetdb',
-         notify              => Service['puppetdb'],
-     }
+        file_path           => '/etc/puppetlabs/puppetdb/logback.xml',
+        file_source         => 'puppet:///modules/puppetserver/puppetdb_logback.xml',
+        file_source_options => [
+            '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name        => 'puppetdb',
+        notify              => Service['puppetdb'],
+    }
+ 
+    puppetserver::logging { 'puppetdb_access':
+        file_path           => '/etc/puppetlabs/puppetdb/request-logging.xml',
+        file_source         => 'puppet:///modules/puppetdb/puppetdb-request-logging.xml',
+        file_source_options => [
+            '/var/log/puppetlabs/puppetdb/puppetdb-access.log.json',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name        => 'puppetdb_access',
+        notify              => Service['puppetdb'],
+    }
 }
