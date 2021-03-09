@@ -49,15 +49,4 @@ class puppetserver::puppetdb::client(
         program_name        => 'puppetdb',
         notify              => Service['puppetdb'],
     }
- 
-    puppetserver::logging { 'puppetdb_access':
-        file_path           => '/etc/puppetlabs/puppetdb/request-logging.xml',
-        file_source         => 'puppet:///modules/puppetserver/puppetdb-request-logging.xml',
-        file_source_options => [
-            '/var/log/puppetlabs/puppetdb/puppetdb-access.log.json',
-            { 'flags' => 'no-parse' }
-        ],
-        program_name        => 'puppetdb_access',
-        notify              => Service['puppetdb'],
-    }
 }
