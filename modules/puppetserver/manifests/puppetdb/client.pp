@@ -52,7 +52,7 @@ class puppetserver::puppetdb::client(
  
     puppetserver::logging { 'puppetdb_access':
         file_path           => '/etc/puppetlabs/puppetdb/request-logging.xml',
-        file_source         => 'puppet:///modules/puppetdb/puppetdb-request-logging.xml',
+        file_source         => 'puppet:///modules/puppetserver/puppetdb-request-logging.xml',
         file_source_options => [
             '/var/log/puppetlabs/puppetdb/puppetdb-access.log.json',
             { 'flags' => 'no-parse' }
