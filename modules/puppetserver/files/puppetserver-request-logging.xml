@@ -30,6 +30,7 @@
                     <pattern>
                         {
                           "@timestamp":"%date{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}",
+                          "program_name":"puppetserver_access",
                           "clientip":"%remoteIP",
                           "auth":"%user",
                           "verb":"%requestMethod",
