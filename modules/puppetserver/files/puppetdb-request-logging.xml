@@ -63,4 +63,5 @@
     </appender>
 
     <appender-ref ref="FILE" />
+    <appender-ref ref="JSON" />
 </configuration>
