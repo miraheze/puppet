@@ -148,6 +148,10 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
+	location ~* .(gif|jpe?g|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$ {
+		expires 1w;
+	}
+
 	location ~ ^/(.+)wiki/thumb/(archive/)?[0-9a-f]/[0-9a-f][0-9a-f]/([^/]+)/[^/]*([0-9]+)px-.*$ {
 		# Thumbnail handler for MediaWiki
 		# This location only matches on a thumbnail's url
