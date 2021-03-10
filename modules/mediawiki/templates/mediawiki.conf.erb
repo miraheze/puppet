@@ -148,7 +148,7 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	location !~ ^/(.+)wiki/(dumps|sitemaps) {
+	location ~ ^/(?!(.+)wiki/(dumps|sitemaps)) { 
 		expires 1w;
 	}
 
