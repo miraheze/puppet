@@ -161,12 +161,6 @@ server {
 		rewrite ^/(.+)wiki/thumb/(.+)$ https://$1.miraheze.org/w/thumb_handler.php/$2;
  	}
 
- 	# This must be specified below our 404 thumb handler,
- 	# otherwise thumbs do not hit it.
-	location ~ ^/(.+)wiki/(?!(dumps|sitemaps)) {
-		expires 1w;
-	}
-
 	location = /favicon.ico {
 		try_files /../../usr/share/nginx/favicons/$host.ico /../../usr/share/nginx/favicons/default.ico;
 	}
@@ -181,6 +175,12 @@ server {
 
 	location /dumps/ {
 		autoindex on;
+	}
+
+ 	# This must be specified below our 404 thumb handler,
+ 	# otherwise thumbs do not hit it.
+	location ~ ^/(.+)wiki/(?!(dumps|sitemaps)) {
+		expires 1w;
 	}
 }
 
