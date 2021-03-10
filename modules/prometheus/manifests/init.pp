@@ -13,7 +13,7 @@ class prometheus {
 
     $host = query_nodes("domain='$domain'", 'fqdn')
     $host_gluster = query_nodes("domain='$domain' and Class[Prometheus::Gluster_exporter]", 'fqdn')
-    $host_mariadb = query_nodes("domain='$domain' and Class[Role::Db])", 'fqdn')
+    $host_mariadb = query_nodes("domain='$domain' and Class[Role::Db]", 'fqdn')
     $host_nginx = query_nodes("domain='$domain' and Class[Prometheus::Nginx]", 'fqdn')
     $host_php_fpm = query_nodes("domain='$domain' and Class[Prometheus::Php_fpm]", 'fqdn')
     $host_redis = query_nodes("domain='$domain' and Class[Prometheus::Redis_exporter]", 'fqdn')
