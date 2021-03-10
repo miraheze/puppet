@@ -149,7 +149,7 @@ server {
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
 	# Increase cache hits on varnish
-	location ~ ^/(.+)wiki/(?!(dumps|private|sitemaps|thumb)) {
+	location ~ ^/(.+)wiki/?!(dumps|thumb/(archive/)?[0-9a-f]/[0-9a-f][0-9a-f]/([^/]+)/[^/]*([0-9]+)px-.*$) {
 		expires 1w;
 	}
 
