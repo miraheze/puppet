@@ -387,7 +387,7 @@ sub vcl_deliver {
 	if (
 		req.http.Host == "static.miraheze.org" ||
 		req.url ~ "/w/api.php" ||
-		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt)$"
+		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt||stl|STL)$"
 	) {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
