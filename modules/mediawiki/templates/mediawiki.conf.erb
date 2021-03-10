@@ -158,7 +158,7 @@ server {
 	# Thumbnail 404 handler, only called by try_files when a thumbnail does not exist
 	location @thumb_handler {
 		# Do a rewrite here so that thumb.php gets the correct arguments
-		rewrite ^/(.+)wiki/thumb/(.+)$ https://$1.miraheze.org/w/thumb_handler.php/thumb/$2;
+		rewrite ^/(.+)wiki/thumb/(.+)$ https://$1.miraheze.org/w/thumb_handler.php/$2;
  	}
 
  	# This must be specified below our 404 thumb handler,
