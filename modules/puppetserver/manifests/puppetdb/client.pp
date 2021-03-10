@@ -38,4 +38,15 @@ class puppetserver::puppetdb::client(
     }
 
     class { 'puppetdb': }
+
+    puppetserver::logging { 'puppetdb':
+        file_path           => '/etc/puppetlabs/puppetdb/logback.xml',
+        file_source         => 'puppet:///modules/puppetserver/puppetdb_logback.xml',
+        file_source_options => [
+            '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name        => 'puppetdb',
+        notify              => Service['puppetdb'],
+    }
 }

@@ -10,20 +10,10 @@ class letsencrypt::web {
         notify  => Service['mirahezerenewssl'],
     }
 
-    exec { 'mirahezerenewssl reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/etc/systemd/system/mirahezerenewssl.service':
-        ensure => present,
-        source => 'puppet:///modules/letsencrypt/mirahezerenewssl.systemd',
-        notify => Exec['mirahezerenewssl reload systemd'],
-    }
-
-    service { 'mirahezerenewssl':
-        ensure  => 'running',
-        require => File['/etc/systemd/system/mirahezerenewssl.service'],
+    systemd::service { 'mirahezerenewssl':
+        ensure  => present,
+        content => systemd_template('mirahezerenewssl'),
+        restart => true,
     }
 
     $firewall = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])

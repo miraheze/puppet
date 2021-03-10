@@ -1,5 +1,5 @@
 [client]
-ssl-ca=/etc/ssl/certs/Sectigo.crt
+ssl-capath=/etc/ssl/certs
 
 [mysql]
 port                           = 3306
@@ -89,8 +89,8 @@ slow-query-log                 = 0
 slow-query-log-file            = /var/log/mysql/mysql-slow.log
 
 ssl
-ssl-ca                         = /etc/ssl/certs/Sectigo.crt
-ssl-cert                       = /etc/ssl/certs/wildcard.miraheze.org-2020-2.crt
+ssl-capath                     = /etc/ssl/certs
+ssl-cert                       = /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt
 ssl-key                        = /etc/ssl/private/wildcard.miraheze.org-2020-2.key
 
 !includedir /etc/mysql/conf.d/

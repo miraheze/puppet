@@ -153,22 +153,7 @@ class puppetserver(
         group   => 'puppet-users',
         mode    => '0770',
     }
-
-    exec { 'puppetserver reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/lib/systemd/system/puppetserver.service':
-        ensure  => present,
-        source  => 'puppet:///modules/puppetserver/puppetserver.systemd',
-        notify  => [
-            Exec['puppetserver reload systemd'],
-            Service['puppetserver'],
-        ],
-        require => Package['puppetserver'],
-    }
-
+ 
     if $puppetdb_enable {
         class { 'puppetserver::puppetdb::client':
             puppetdb_hostname => $puppetdb_hostname,
@@ -181,9 +166,32 @@ class puppetserver(
         }
     }
 
-    service { 'puppetserver':
-        ensure  => running,
-        enable  => true,
+    puppetserver::logging { 'puppetserver':
+        file_path           => '/etc/puppetlabs/puppetserver/logback.xml',
+        file_source         => 'puppet:///modules/puppetserver/puppetserver_logback.xml',
+        file_source_options => [
+            '/var/log/puppetlabs/puppetserver/puppetserver.log.json',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name        => 'puppetserver',
+        notify              => Service['puppetserver'],
+    }
+
+    puppetserver::logging { 'puppetserver_access':
+        file_path           => '/etc/puppetlabs/puppetserver/request-logging.xml',
+        file_source         => 'puppet:///modules/puppetserver/puppetserver-request-logging.xml',
+        file_source_options => [
+            '/var/log/puppetlabs/puppetserver/puppetserver-access.log.json',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name        => 'puppetserver_access',
+        notify              => Service['puppetserver'],
+    }
+
+    systemd::service { 'puppetserver':
+        ensure  => present,
+        content => systemd_template('puppetserver'),
+        restart => true,
         require => Package['puppetserver'],
     }
 
@@ -219,6 +227,23 @@ class puppetserver(
         user    => 'root',
         hour    => '*/1',
         minute  => '*',
+    }
+
+    $geoip_key = lookup('passwords::geoipupdatekey')
+
+    file { '/root/geoipupdate':
+        ensure  => present,
+        content => template('puppetserver/geoipupdate'),
+        mode    => '0555',
+    }
+
+    cron { 'geoipupdate':
+        ensure   => present,
+        command  => '/root/geoipupdate',
+        user     => 'root',
+        monthday => 1,
+        hour     => 12,
+        minute   => 0,
     }
 
     monitoring::services { 'puppetserver':

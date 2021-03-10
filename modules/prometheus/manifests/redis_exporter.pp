@@ -1,7 +1,7 @@
 # = Class: prometheus::redis
 #
 class prometheus::redis_exporter (
-    $redis_password = lookup('passwords::redis::master'),
+    String $redis_password = lookup('passwords::redis::master'),
 ) {
 
     file { '/usr/local/bin/redis_exporter':
@@ -10,35 +10,23 @@ class prometheus::redis_exporter (
         owner  => 'root',
         group  => 'root',
         source => 'puppet:///modules/prometheus/redis/redis_exporter',
-        notify => Service['prometheus-redis'],
-    }
-
-    file { '/etc/systemd/system/prometheus-redis.service':
-        ensure => present,
-        source => 'puppet:///modules/prometheus/redis/prometheus-redis.systemd',
-        notify => Service['prometheus-redis'],
-    }
-
-    exec { 'prometheus-redis reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
+        notify => Service['prometheus-redis-exporter'],
     }
 
     file { '/etc/default/prometheus-redis':
         ensure => present,
         content => template('prometheus/prometheus-redis-default.erb'),
-        notify => Service['prometheus-redis'],
+        notify => Service['prometheus-redis-exporter'],
     }
 
-    service { 'prometheus-redis':
-        ensure  => 'running',
-        enable  => true,
+    systemd::service { 'prometheus-redis-exporter':
+        ensure  => present,
+        content => systemd_template('prometheus-redis-exporter'),
+        restart => true,
         require => [
-            File['/etc/systemd/system/prometheus-redis.service'],
-            File['/usr/local/bin/redis_exporter'],
             File['/etc/default/prometheus-redis'],
-        ],
-        notify => Exec['prometheus-redis reload systemd'],
+            File['/usr/local/bin/redis_exporter']
+        ]
     }
 
     $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])

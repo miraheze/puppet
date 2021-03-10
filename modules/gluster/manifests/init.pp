@@ -106,5 +106,13 @@ class gluster {
         }
     }
 
+    gluster::logging { 'glusterd':
+        file_source_options => [
+            '/var/log/glusterfs/glusterd.log',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name => 'glusterd',
+    }
+
     include prometheus::gluster_exporter
 }

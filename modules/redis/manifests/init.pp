@@ -9,22 +9,8 @@ class redis (
 
     $jobrunner = lookup('jobrunner', {'default_value' => false})
 
-    if os_version('debian stretch') {
-        apt::pin { 'debian_stretch_backports_redis':
-            priority   => 740,
-            originator => 'Debian',
-            release    => 'stretch-backports',
-            packages   => 'redis-server',
-        }
-
-        package { 'redis-server':
-            ensure  => present,
-            require => Apt::Pin['debian_stretch_backports_redis'],
-        }
-    } else {
-        package { 'redis-server':
-            ensure  => present,
-        }
+    package { 'redis-server':
+        ensure  => present,
     }
 
     file { '/etc/redis/redis.conf':
@@ -33,6 +19,7 @@ class redis (
         group   => 'root',
         mode    => '0444',
         require => Package['redis-server'],
+        notify  => Service['redis-server'],
     }
 
     file { '/srv/redis':
@@ -43,29 +30,11 @@ class redis (
         require => Package['redis-server'],
     }
 
-    exec { 'redis reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
-    file { '/lib/systemd/system/redis-server.service':
+    systemd::service { 'redis-server':
         ensure  => present,
-        source  => 'puppet:///modules/redis/redis-server.systemd',
-        notify  => Exec['redis reload systemd'],
+        content => systemd_template('redis-server'),
+        restart => true,
         require => Package['redis-server'],
-    }
-
-    service { 'redis-server':
-        ensure  => running,
-        enable  => true,
-        require => File['/lib/systemd/system/redis-server.service'],
-       
-    }
-
-    exec { 'Restart redis if needed':
-        command     => '/usr/sbin/service redis-server restart',
-        subscribe   => File['/etc/redis/redis.conf'],
-        refreshonly => true,
     }
 
     monitoring::services { 'Redis Process':

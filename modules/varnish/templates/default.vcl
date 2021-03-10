@@ -387,7 +387,7 @@ sub vcl_deliver {
 	if (
 		req.http.Host == "static.miraheze.org" ||
 		req.url ~ "/w/api.php" ||
-		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt)$"
+		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt||stl|STL)$"
 	) {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
@@ -402,6 +402,10 @@ sub vcl_deliver {
 		set resp.http.X-Robots-Tag = "noindex";
 	}
 
+	if (req.url ~ "^/w/load\.php" ) {
+		set resp.http.Age = 0;
+	}
+
 	if (obj.hits > 0) {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> HIT (" + obj.hits + ")";
 	} else {
@@ -409,6 +413,8 @@ sub vcl_deliver {
 	}
 
 	set resp.http.Content-Security-Policy = "default-src 'self' blob: data: <%- @csp_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self' <%- @frame_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%>";
+
+	return (deliver);
 }
 
 sub vcl_backend_error {

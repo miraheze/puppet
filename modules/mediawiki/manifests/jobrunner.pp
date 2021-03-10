@@ -18,29 +18,16 @@ class mediawiki::jobrunner {
         require => Git::Clone['JobRunner'],
     }
 
-    exec { 'JobRunner reload systemd':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
+    systemd::service { 'jobrunner':
+        ensure  => present,
+        content => systemd_template('jobrunner'),
+        restart => true,
     }
 
-    file { '/etc/systemd/system/jobrunner.service':
-        ensure => present,
-        source => 'puppet:///modules/mediawiki/jobrunner/jobrunner.systemd',
-        notify => Exec['JobRunner reload systemd'],
-    }
-
-    service { 'jobrunner':
-        ensure => running,
-    }
-
-    file { '/etc/systemd/system/jobchron.service':
-        ensure => present,
-        source => 'puppet:///modules/mediawiki/jobrunner/jobchron.systemd',
-        notify => Exec['JobRunner reload systemd'],
-    }
-
-    service { 'jobchron':
-        ensure => running,
+    systemd::service { 'jobchron':
+        ensure  => present,
+        content => systemd_template('jobchron'),
+        restart => true,
     }
 
     if lookup('mediawiki::jobrunner::cron', {'default_value' => false}) {
