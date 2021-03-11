@@ -2,6 +2,13 @@
 
 header( 'Content-Type: text/plain' );
 
+require_once( '/srv/mediawiki/w/includes/WebStart.php' );
+
+$page = WikiPage::factory( Title::newFromText( 'MediaWiki:Robots.txt' ) );
+if ( $page->exists() ) {
+	echo ContentHandler::getContentText( $page->getContent() ) ?: '';
+}
+
 $databaseJsonFileName = '/srv/mediawiki/w/cache/databases.json';
 $databasesArray = file_exists( $databaseJsonFileName ) ?
 	json_decode( file_get_contents( $databaseJsonFileName ), true ) : [ 'combi' => [] ];
