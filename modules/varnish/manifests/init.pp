@@ -88,6 +88,11 @@ class varnish(
         require => Service['varnish'],
     }
 
+    service { 'varnishncsa':
+        ensure  => 'stop',
+        require => Package['varnish'],
+    }
+
     # Unfortunately, varnishlog can't log to syslog
     logrotate::conf { 'varnishlog_logs':
         ensure  => present,
