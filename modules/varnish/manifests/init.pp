@@ -89,7 +89,7 @@ class varnish(
     }
 
     service { 'varnishncsa':
-        ensure  => 'stop',
+        ensure  => 'stopped',
         require => Package['varnish'],
     }
 
