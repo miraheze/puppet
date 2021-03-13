@@ -2,7 +2,7 @@
 class dns {
     include prometheus::node_gdnsd
 
-    ensure_package('gdnsd')
+    require_package('gdnsd')
 
     git::clone { 'dns':
         ensure    => latest,
