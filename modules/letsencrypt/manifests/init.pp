@@ -1,15 +1,6 @@
 # class: letsencrypt
 class letsencrypt {
     include ::apt
-
-    if os_version('debian == stretch') {
-        apt::pin { 'certbot_backports':
-            priority   => 740,
-            originator => 'Debian',
-            release    => 'stretch-backports',
-            packages   => 'certbot',
-        }
-    }
     
     require_package('certbot')
 
