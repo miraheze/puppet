@@ -402,6 +402,10 @@ sub vcl_deliver {
 		set resp.http.Age = 0;
 	}
 
+	if (req.url ~ "^(/w/api\.php|/w/index\.php\?title\=Special\:|/wiki/Special\:|/w/index\.php\?title\=Special%3A|/wiki/Special%3A)$") {
+		set resp.http.X-Robots-Tag = "noindex";
+	}
+
 	if (obj.hits > 0) {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> HIT (" + obj.hits + ")";
 	} else {
