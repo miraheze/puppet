@@ -1,7 +1,5 @@
 # class: letsencrypt
-class letsencrypt {
-    include ::apt
-    
+class letsencrypt {    
     require_package('certbot')
 
     file { '/etc/letsencrypt/cli.ini':
@@ -66,9 +64,25 @@ class letsencrypt {
         mode   => '0400',
     }
 
+    # We do not need to run the ssl renewal cron,
+    # we run our own service.
     file { '/etc/cron.d/certbot':
         ensure => absent,
         require => Package['certbot'],
+    }
+
+    service { 'certbot':
+        ensure    => 'stopped',
+        enable    => 'mask',
+        provider  => 'systemd',
+        require   => Package['certbot',
+    }
+
+    service { 'certbot.timer':
+        ensure    => 'stopped',
+        enable    => 'mask',
+        provider  => 'systemd',
+        require   => Package['certbot',
     }
 
     include letsencrypt::web
