@@ -75,14 +75,14 @@ class letsencrypt {
         ensure    => 'stopped',
         enable    => 'mask',
         provider  => 'systemd',
-        require   => Package['certbot',
+        require   => Package['certbot'],
     }
 
     service { 'certbot.timer':
         ensure    => 'stopped',
         enable    => 'mask',
         provider  => 'systemd',
-        require   => Package['certbot',
+        require   => Package['certbot'],
     }
 
     include letsencrypt::web
