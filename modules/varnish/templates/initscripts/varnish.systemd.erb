@@ -10,7 +10,7 @@ PrivateDevices=true
 ProtectSystem=full
 ProtectHome=true
 PIDFile=%t/%p.pid
-Restart=on-failure
+Restart=always
 KillMode=process
 SyslogIdentifier=varnish
 ExecReload=/usr/local/sbin/reload-vcl -f /etc/varnish/default.vcl -d <%= @vcl_reload_delay_s %> -a
@@ -33,6 +33,7 @@ ExecStart=/usr/sbin/varnishd \
 -p vcc_err_unref=off \
 -p http_max_hdr=128
 ExecReload=/usr/share/varnish/varnishreload
+ExecStopPost=/usr/bin/rm -rf /var/lib/varnish/*
 
 [Install]
 WantedBy=multi-user.target
