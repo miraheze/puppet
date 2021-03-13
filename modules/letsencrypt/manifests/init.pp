@@ -66,5 +66,10 @@ class letsencrypt {
         mode   => '0400',
     }
 
+    file { '/etc/cron.d/certbot':
+        ensure => absent,
+        require => Package['certbot'],
+    }
+
     include letsencrypt::web
 }
