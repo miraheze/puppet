@@ -1,5 +1,7 @@
 <?php
 
+define( 'MW_NO_SESSION', 1 );
+
 require_once( '/srv/mediawiki/w/includes/WebStart.php' );
 
 $page = WikiPage::factory( Title::newFromText( 'MediaWiki:Robots.txt' ) );
