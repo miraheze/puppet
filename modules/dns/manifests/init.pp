@@ -1,24 +1,9 @@
 # dns
 class dns {
-    include ::apt
     include prometheus::node_gdnsd
 
-    if os_version('debian stretch') {
-        apt::pin { 'debian_stretch_backports':
-            priority   => 740,
-            originator => 'Debian',
-            release    => 'stretch-backports',
-            packages   => 'gdnsd',
-        }
-
-        package { 'gdnsd':
-            ensure  => installed,
-            require => Apt::Pin['debian_stretch_backports'],
-        }
-    } else {
-        package { 'gdnsd':
-            ensure  => installed,
-        }
+    package { 'gdnsd':
+        ensure  => installed,
     }
 
     service { 'gdnsd':
