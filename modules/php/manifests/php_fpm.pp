@@ -89,6 +89,8 @@ class php::php_fpm(
         }
     }
 
+    php::extension { 'msgpack': }
+
     php::extension { 'redis':
         package_name => "php-redis",
     }
