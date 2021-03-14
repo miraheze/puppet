@@ -120,6 +120,13 @@ class php::php_fpm(
         'xml':
             package_name => "php${version}-xml",
             priority     => 15;
+        'memcached':
+            priority => 25,
+            config   => {
+                'extension'                   => 'memcached.so',
+                'memcached.serializer'        => 'php',
+                'memcached.store_retry_count' => '0'
+            };
         'igbinary':
             config   => {
                 'extension'                => 'igbinary.so',
