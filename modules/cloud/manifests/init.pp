@@ -64,4 +64,9 @@ class cloud (
         ],
         program_name => 'pveproxy',
     }
+
+    logrotate::conf { 'pve':
+        ensure => present,
+        source => 'puppet:///modules/cloud/pve.logrotate.conf',
+    }
 }
