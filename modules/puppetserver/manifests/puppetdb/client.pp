@@ -49,4 +49,9 @@ class puppetserver::puppetdb::client(
         program_name        => 'puppetdb',
         notify              => Service['puppetdb'],
     }
+
+    logrotate::conf { 'puppetdb':
+        ensure => present,
+        source => 'puppet:///modules/puppetserver/puppetdb.logrotate.conf',
+    }
 }

@@ -188,6 +188,11 @@ class puppetserver(
         notify              => Service['puppetserver'],
     }
 
+    logrotate::conf { 'puppetserver':
+        ensure => present,
+        source => 'puppet:///modules/puppetserver/puppetserver.logrotate.conf',
+    }
+
     systemd::service { 'puppetserver':
         ensure  => present,
         content => systemd_template('puppetserver'),
