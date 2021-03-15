@@ -60,7 +60,8 @@ class cloud (
 
     cloud::logging { 'pveproxy':
         file_source_options => [
-            '/var/log/pveproxy/access.log'
+            '/var/log/pveproxy/access.log',
+            { 'flags' => 'no-parse' }
         ],
         program_name => 'pveproxy',
     }
