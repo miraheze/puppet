@@ -1,15 +1,14 @@
-redis:
-  listen: /run/nutcracker/nutcracker.sock 0666
+memcached:
+  listen: 127.0.0.1:11212
+  preconnect: true
   hash: md5
   server_connections: 1
   distribution: ketama
   auto_eject_hosts: false
-  redis: true
-  redis_auth: "<%= @redis_password %>"
-  server_retry_timeout: 6000
-  server_failure_limit: 6
-  timeout: 6000
+  server_retry_timeout: 30000
+  server_failure_limit: 3
+  timeout: 500
   backlog: 1024
   servers:
-    # Redis server (rdb3)
-    - 51.195.236.223:6379:1
+    # Memcached server (mem2)
+    - 51.195.236.245:11211:1

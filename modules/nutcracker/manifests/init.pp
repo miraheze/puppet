@@ -9,19 +9,13 @@
 # [*verbosity*]
 #   Set logging level (default: 4, min: 0, max: 11).
 #
-# [*redis_password*]
-#   Password for redis
-#
 # === Examples
 #
-#  class { '::nutcracker':
-#    redis_password => 'xxxx',
-#  }
+#  class { '::nutcracker': }
 #
 class nutcracker(
     VMlib::Ensure $ensure = present,
     Integer $verbosity = 4,
-    String $redis_password,
 ) {
 
     require_package('nutcracker')
