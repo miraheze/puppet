@@ -57,4 +57,11 @@ class cloud (
         ensure => present,
         require => Apt::Source['proxmox_apt']
     }
+
+    cloud::logging { 'pveproxy':
+        file_source_options => [
+            '/var/log/pveproxy/access.log'
+        ],
+        program_name => 'pveproxy',
+    }
 }
