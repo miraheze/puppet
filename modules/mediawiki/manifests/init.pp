@@ -106,9 +106,7 @@ class mediawiki(
 
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
 
-    class { '::nutcracker':
-        redis_password => $redis_password,
-    }
+    class { '::nutcracker': }
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
