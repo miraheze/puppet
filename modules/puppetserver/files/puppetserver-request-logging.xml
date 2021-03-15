@@ -15,7 +15,7 @@
         </encoder>
     </appender>
 
-    <appender name="JSON" class="ch.qos.logback.core.rolling.FileAppender">
+    <appender name="JSON" class="ch.qos.logback.core.FileAppender">
         <file>/var/log/puppetlabs/puppetserver/puppetserver-access.log.json</file>
 
         <encoder class="net.logstash.logback.encoder.AccessEventCompositeJsonEncoder">
