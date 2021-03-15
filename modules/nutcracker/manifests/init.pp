@@ -60,14 +60,6 @@ class nutcracker(
         notify  => Service['nutcracker'],
     }
 
-    systemd::unit { 'nutcracker.service':
-        ensure   => present,
-        content  => template('nutcracker/nutcracker-systemd-override.conf.erb'),
-        override => true,
-        restart  => false,
-        notify   => Service['nutcracker'],
-    }
-
     service { 'nutcracker':
         ensure  => ensure_service($ensure),
         enable  => true,
