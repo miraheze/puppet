@@ -12,24 +12,15 @@ $databasesArray = file_exists( $databaseJsonFileName ) ?
 
 header( 'Content-Type: text/plain; charset=utf-8' );
 
-# Disallow API and special pages
-echo "# Disallow API and special pages" . "\r\n";
-echo "User-agent: *" . "\r\n";
-echo "Disallow: /w/api.php" . "\r\n";
-echo "Disallow: /w/index.php?title=Special:" . "\r\n";
-echo "Disallow: /wiki/Special:" . "\r\n\n";
-echo "Disallow: /w/index.php?title=Special%3A" . "\r\n";
-echo "Disallow: /wiki/Special%3A" . "\r\n\n";
-
 # Throttle YandexBot
 echo "# Throttle YandexBot" . "\r\n";
 echo "User-Agent: YandexBot" . "\r\n";
 echo "Crawl-Delay: 2.5" . "\r\n\n";
 
 # Throttle BingBot
-echo "#Throttle BingBot" . "\r\n";
+echo "# Throttle BingBot" . "\r\n";
 echo "User-agent: bingbot" . "\r\n";
-echo "Crawl-delay: 1" . "\r\n";
+echo "Crawl-delay: 1" . "\r\n\n";
 
 # Block SemrushBot
 echo "# Block SemrushBot" . "\r\n";
@@ -78,7 +69,8 @@ if ( $databasesArray['combi'] ) {
 	}
 }
 
-echo "#\n#\n#----------------------------------------------------------#\n#\n#\n#\n";
 if ( $page->exists() ) {
+	echo "# -- BEGIN CUSTOM -- #\r\n\n";
+
 	echo ContentHandler::getContentText( $page->getContent() ) ?: '';
 }
