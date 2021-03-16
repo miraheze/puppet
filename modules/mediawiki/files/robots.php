@@ -12,6 +12,15 @@ $databasesArray = file_exists( $databaseJsonFileName ) ?
 
 header( 'Content-Type: text/plain; charset=utf-8' );
 
+# Disallow API and special pages
+echo "# Disallow API and special pages" . "\r\n";
+echo "User-agent: *" . "\r\n";
+echo "Disallow: /w/api.php" . "\r\n";
+echo "Disallow: /w/index.php?title=Special:" . "\r\n";
+echo "Disallow: /wiki/Special:" . "\r\n\n";
+echo "Disallow: /w/index.php?title=Special%3A" . "\r\n";
+echo "Disallow: /wiki/Special%3A" . "\r\n\n";
+
 # Throttle YandexBot
 echo "# Throttle YandexBot" . "\r\n";
 echo "User-Agent: YandexBot" . "\r\n";
