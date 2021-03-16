@@ -27,9 +27,9 @@ echo "User-Agent: YandexBot" . "\r\n";
 echo "Crawl-Delay: 2.5" . "\r\n\n";
 
 # Throttle BingBot
-echo "#Throttle BingBot" . "\r\n";
+echo "# Throttle BingBot" . "\r\n";
 echo "User-agent: bingbot" . "\r\n";
-echo "Crawl-delay: 1" . "\r\n";
+echo "Crawl-delay: 1" . "\r\n\n";
 
 # Block SemrushBot
 echo "# Block SemrushBot" . "\r\n";
@@ -78,7 +78,8 @@ if ( $databasesArray['combi'] ) {
 	}
 }
 
-echo "#\n#\n#----------------------------------------------------------#\n#\n#\n#\n";
 if ( $page->exists() ) {
+	echo "# -- BEGIN CUSTOM -- #\r\n\n";
+
 	echo ContentHandler::getContentText( $page->getContent() ) ?: '';
 }
