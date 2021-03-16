@@ -1,10 +1,16 @@
 <?php
 
-header( 'Content-Type: text/plain' );
+define( 'MW_NO_SESSION', 1 );
+
+require_once( '/srv/mediawiki/w/includes/WebStart.php' );
+
+$page = WikiPage::factory( Title::newFromText( 'MediaWiki:Robots.txt' ) );
 
 $databaseJsonFileName = '/srv/mediawiki/w/cache/databases.json';
 $databasesArray = file_exists( $databaseJsonFileName ) ?
 	json_decode( file_get_contents( $databaseJsonFileName ), true ) : [ 'combi' => [] ];
+
+header( 'Content-Type: text/plain; charset=utf-8' );
 
 # Disallow API and special pages
 echo "# Disallow API and special pages" . "\r\n";
@@ -33,6 +39,7 @@ echo "Disallow: /" . "\r\n\n";
 if ( $databasesArray['combi'] ) {
 	if ( preg_match( '/^(.+)\.miraheze\.org$/', $_SERVER['HTTP_HOST'], $matches ) ) {
 		$wiki = "{$matches[1]}wiki";
+
 		if ( !isset( $databasesArray['combi']["{$wiki}"] ) ) {
 			return;
 		}
@@ -44,6 +51,7 @@ if ( $databasesArray['combi'] ) {
 		$customDomainFound = false;
 		$suffixes = [ 'wiki' ];
 		$suffixMatch = array_flip( [ 'miraheze.org' => 'wiki' ] );
+
 		foreach ( $databasesArray['combi'] as $db => $data ) {
 			foreach ( $suffixes as $suffix ) {
 				if ( substr( $db, -strlen( $suffix ) == $suffix ) ) {
@@ -68,4 +76,9 @@ if ( $databasesArray['combi'] ) {
 			echo "Sitemap: https://static.miraheze.org/{$customDomainFound}/sitemaps/sitemap.xml" . "\r\n\n";
 		}
 	}
+}
+
+echo "#\n#\n#----------------------------------------------------------#\n#\n#\n#\n";
+if ( $page->exists() ) {
+	echo ContentHandler::getContentText( $page->getContent() ) ?: '';
 }
