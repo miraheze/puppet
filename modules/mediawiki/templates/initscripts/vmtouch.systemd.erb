@@ -9,7 +9,7 @@ Before=shutdown.target
 [Service]
 Type=forking
 PIDFile=/run/vmtouch.pid
-ExecStart=/usr/bin/vmtouch -d -P /run/vmtouch.pid -b /etc/vmtouch-mediawiki-files.list
+ExecStart=/usr/bin/vmtouch -d -b /etc/vmtouch-mediawiki-files.list
 
 [Install]
 WantedBy=local-fs.target
