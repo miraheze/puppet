@@ -141,4 +141,18 @@ class mediawiki(
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+
+    require_package('vmtouch')
+
+    file { '/etc/vmtouch-mediawiki-files.list':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/vmtouch-mediawiki-files.list',
+    }
+
+    systemd::service { 'vmtouch':
+        ensure  => present,
+        content => systemd_template('vmtouch'),
+        require => File['/etc/vmtouch-mediawiki-files.list']
+    }
 }
