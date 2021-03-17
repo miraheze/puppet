@@ -26,7 +26,6 @@ command[check_jobrunner]=/usr/lib/nagios/plugins/check_procs -a redisJobRunnerSe
 command[check_bacula_daemon]=/usr/lib/nagios/plugins/check_procs -u bacula -c 2:
 command[check_bacula_static]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H gluster3-fd -B BackupStatic -w 15d -c 31d
 command[check_bacula_databasesdb11]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db11-fd -B BackupDatabasesDB11 -w 15d -c 31d
-command[check_bacula_databasesdb12]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db12-fd -B BackupDatabasesDB12 -w 15d -c 31d
 command[check_bacula_databasesdb13]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db13-fd -B BackupDatabasesDB13 -w 15d -c 31d
 command[check_bacula_private]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H puppet3-fd -B BackupPrivateGit -w 8d -c 16d
 command[check_bacula_phab]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H phab2-fd -B BackupPhabStatic -w 15d -c 30d
