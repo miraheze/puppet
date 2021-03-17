@@ -7,9 +7,7 @@ Conflicts=shutdown.target
 Before=shutdown.target
 
 [Service]
-Type=forking
-PIDFile=/run/vmtouch.pid
-ExecStart=/usr/bin/vmtouch -d -b /etc/vmtouch-mediawiki-files.list
+ExecStart=/usr/bin/vmtouch -b /etc/vmtouch-mediawiki-files.list
 
 [Install]
 WantedBy=local-fs.target
