@@ -22,6 +22,12 @@ class base::monitoring {
         mode    => '0555',
     }
 
+    file { '/usr/lib/nagios/plugins/check_smart':
+        ensure => present,
+        source => 'puppet:///modules/base/icinga/check_smart',
+        mode   => '0555',
+    }
+
     service { 'nagios-nrpe-server':
         ensure     => 'running',
         hasrestart => true,
@@ -30,7 +36,10 @@ class base::monitoring {
     # SUDO FOR NRPE
     sudo::user { 'nrpe_sudo':
         user       => 'nagios',
-        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run', ],
+        privileges => [
+            'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run',
+            'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_smart',
+        ],
     }
 
     monitoring::hosts { $::hostname: }
@@ -72,5 +81,21 @@ class base::monitoring {
         vars            => {
             nrpe_command    => 'check_ntp_time',
         },
+    }
+
+    if !$fact['is_virtual'] {
+        if !empty($facts['disks']['sda']) {
+            $type = 'sata'
+        } else {
+            $type = 'nvme'
+        }
+
+
+        monitoring::services { 'SMART':
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => "check_smart_${type}",
+            },
+        }
     }
 }

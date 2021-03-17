@@ -58,3 +58,5 @@ command[check_stunnel_mw11]=/usr/lib/nagios/plugins/check_http -H localhost:8088
 command[check_stunnel_jobrunner3]=/usr/lib/nagios/plugins/check_http -H localhost:8089
 command[check_stunnel_test3]=/usr/lib/nagios/plugins/check_http -H localhost:8091
 command[check_pdns_recursor]=/usr/lib/nagios/plugins/check_dns -s 127.0.0.1 -H miraheze.org
+command[check_smart_sata]=/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sd[a-z] -i ata
+command[check_smart_nvme]=/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/nvme[0-9] -i nvme -l
