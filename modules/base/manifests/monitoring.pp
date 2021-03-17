@@ -83,7 +83,7 @@ class base::monitoring {
         },
     }
 
-    if !$fact['is_virtual'] {
+    if !$facts['is_virtual'] {
         if !empty($facts['disks']['sda']) {
             $type = 'sata'
         } else {
