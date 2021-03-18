@@ -148,6 +148,7 @@ class mediawiki(
         ensure => 'present',
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/vmtouch-mediawiki-files.list',
+        notify => Service['vmtouch']
     }
 
     systemd::service { 'vmtouch':
