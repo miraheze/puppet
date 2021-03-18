@@ -256,5 +256,13 @@ class puppetserver(
         vars          => {
             tcp_port    => '8140',
         },
+    users::user { 'puppet-users':
+        ensure      => present,
+        uid         => 2004,
+        gid         => 2004,
+        ssh_keys    => [
+            'puppet-users@jobrunner3.miraheze.org'
+        ],
+    }
     }
 }
