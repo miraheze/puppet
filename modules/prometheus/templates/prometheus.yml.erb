@@ -118,7 +118,7 @@ scrape_configs:
         '<%= host %>:9154',
 <%- end -%>
       ]
-  - job_name: 'blackbox'
+  - job_name: 'blackbox_https_mediawiki_cp'
     metrics_path: /probe
     params:
       module: [https_mediawiki_cp]
@@ -128,6 +128,22 @@ scrape_configs:
         - https://cp10.miraheze.org/wiki/Main_Page
         - https://cp11.miraheze.org/wiki/Main_Page
         - https://cp12.miraheze.org/wiki/Main_Page
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: mon2.miraheze.org:9115
+  - job_name: 'blackbox_https'
+    metrics_path: /probe
+    params:
+      module: [https_200_300_connect]
+    static_configs:
+      - targets:
+        - https://phabricator.miraheze.org/
+        - https://matomo.miraheze.org/
+        - https://graylog.miraheze.org/
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
