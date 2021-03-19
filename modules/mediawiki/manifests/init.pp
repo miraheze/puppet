@@ -153,6 +153,7 @@ class mediawiki(
     systemd::service { 'vmtouch':
         ensure  => present,
         content => systemd_template('vmtouch'),
+        restart => true,
     }
 
     cron { 'vmtouch':
