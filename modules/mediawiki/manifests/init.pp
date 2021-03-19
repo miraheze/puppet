@@ -144,10 +144,10 @@ class mediawiki(
 
     require_package('vmtouch')
 
-    file { '/usr/local/bin/generateVmtouch.sh':
+    file { '/usr/local/bin/generateVmtouch.py':
         ensure => 'present',
         mode   => '0755',
-        source => 'puppet:///modules/mediawiki/bin/generateVmtouch.sh',
+        source => 'puppet:///modules/mediawiki/bin/generateVmtouch.py',
     }
 
     systemd::service { 'vmtouch':
@@ -157,7 +157,7 @@ class mediawiki(
 
     cron { 'vmtouch':
         ensure  => present,
-        command => '/bin/bash /usr/bingenerateVmtouch.sh',
+        command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
         user    => 'rot',
         minute  => '*/60',
         hour    => '*',
