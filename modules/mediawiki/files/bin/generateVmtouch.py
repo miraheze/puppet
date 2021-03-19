@@ -43,3 +43,6 @@ for lang in l10nLangs:
 with open('/etc/vmtouch-files.list', mode='wt') as filesList:
     filesList.write('\n'.join(files))
     filesList.write('\n')
+
+# After writing to file we restart the service to pickup the changes.
+os.system( 'service vmtouch restart' )
