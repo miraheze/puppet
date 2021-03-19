@@ -30,11 +30,10 @@ globFiles = [
 ]
 
 for globFile in globFiles:
-    globPath = glob(globFile)
-    if not globPath:
-        files.append(globFile)
-    for file in globPath:
+    for file in glob(globFile):
         if os.path.isfile(file):
+            files.append(file)
+        elif os.path.isdir(file):
             files.append(file)
 
 for lang in l10nLangs:
