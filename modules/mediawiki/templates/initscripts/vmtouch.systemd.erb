@@ -8,7 +8,7 @@ Before=shutdown.target
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/vmtouch -d -l -b /etc/vmtouch-mediawiki-files.list
+ExecStart=/usr/bin/vmtouch -d -l -b /etc/vmtouch-files.list -f
 
 [Install]
 WantedBy=local-fs.target

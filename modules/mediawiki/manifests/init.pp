@@ -144,16 +144,23 @@ class mediawiki(
 
     require_package('vmtouch')
 
-    file { '/etc/vmtouch-mediawiki-files.list':
+    file { '/usr/local/bin/generateVmtouch.py':
         ensure => 'present',
         mode   => '0755',
-        source => 'puppet:///modules/mediawiki/vmtouch-mediawiki-files.list',
-        notify => Service['vmtouch']
+        source => 'puppet:///modules/mediawiki/bin/generateVmtouch.py',
     }
 
     systemd::service { 'vmtouch':
         ensure  => present,
         content => systemd_template('vmtouch'),
-        require => File['/etc/vmtouch-mediawiki-files.list']
+        restart => true,
+    }
+
+    cron { 'vmtouch':
+        ensure  => present,
+        command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
+        user    => 'root',
+        minute  => '*/60',
+        hour    => '*',
     }
 }
