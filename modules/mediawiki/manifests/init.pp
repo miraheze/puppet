@@ -159,7 +159,7 @@ class mediawiki(
     cron { 'vmtouch':
         ensure  => present,
         command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
-        user    => 'rot',
+        user    => 'root',
         minute  => '*/60',
         hour    => '*',
     }
