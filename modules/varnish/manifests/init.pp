@@ -181,7 +181,7 @@ class varnish(
     file { '/usr/local/bin/generateVmtouch.py':
         ensure => 'present',
         mode   => '0755',
-        source => 'puppet:///modules/varnish/generateVmtouch.py',
+        source => 'puppet:///modules/varnish/vmtouch/generateVmtouch.py',
     }
 
     systemd::service { 'vmtouch':
