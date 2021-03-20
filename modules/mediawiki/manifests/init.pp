@@ -160,7 +160,7 @@ class mediawiki(
         ensure  => present,
         command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
         user    => 'root',
-        minute  => '*/60',
-        hour    => '*',
+        minute  => '0',
+        hour    => '*/1',
     }
 }
