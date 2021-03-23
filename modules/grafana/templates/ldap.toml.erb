@@ -49,5 +49,9 @@ org_role = "Admin"
 grafana_admin = true
 
 [[servers.group_mappings]]
+group_dn = "cn=sre-mediawiki,ou=groups,dc=miraheze,dc=org"
+org_role = "Editor"
+
+[[servers.group_mappings]]
 group_dn = "*"
 org_role = "Viewer"
