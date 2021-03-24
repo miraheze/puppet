@@ -69,4 +69,25 @@ class mediawiki::packages {
         ensure          => present,
         install_options => ['--no-install-recommends'],
     }
+
+    file { '/usr/local/bin/mediawiki-firejail-convert':
+        source => 'puppet:///modules/mediawiki/mediawiki-firejail-convert.py',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0555',
+    }
+
+    file { '/etc/firejail/mediawiki.local':
+        source => 'puppet:///modules/mediawiki/firejail-mediawiki.profile',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0644',
+    }
+
+    file { '/etc/firejail/mediawiki-converters.profile':
+        source => 'puppet:///modules/mediawiki/mediawiki-converters.profile',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0644',
+    }
 }
