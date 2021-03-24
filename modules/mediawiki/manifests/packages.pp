@@ -3,6 +3,7 @@ class mediawiki::packages {
     $packages = [
         'djvulibre-bin',
         'dvipng',
+        'firejail',
         'htmldoc',
         'inkscape',
         'fonts-freefont-ttf',
