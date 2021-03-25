@@ -4,6 +4,7 @@ class mediawiki::packages {
         'djvulibre-bin',
         'dvipng',
         'firejail',
+        'ghostscript',
         'htmldoc',
         'inkscape',
         'fonts-freefont-ttf',
@@ -89,5 +90,12 @@ class mediawiki::packages {
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0644',
+    }
+
+    file { '/usr/local/bin/mediawiki-firejail-ghostscript':
+        source => 'puppet:///modules/mediawiki/mediawiki-firejail-ghostscript.py',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0555',
     }
 }
