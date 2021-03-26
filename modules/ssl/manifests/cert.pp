@@ -15,7 +15,9 @@ define ssl::cert (
             source => "puppet:///ssl/certificates/${certificate}.crt",
             notify => $restart_nginx,
         }
+    }
 
+    if !defined(File["/etc/ssl/private/${certificate}.key"]) {
         file { "/etc/ssl/private/${certificate}.key":
             ensure => $ensure,
             source => "puppet:///ssl-keys/${certificate}.key",
