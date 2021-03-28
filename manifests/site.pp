@@ -113,7 +113,7 @@ node 'test3.miraheze.org' {
     include prometheus::php_fpm
 }
 
-node 'test3.miraheze.org' {
+node 'test4.miraheze.org' {
     include base
 
     ufw::allow { 'http port 443 51.195.236.249':
