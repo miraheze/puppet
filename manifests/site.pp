@@ -113,6 +113,22 @@ node 'test3.miraheze.org' {
     include prometheus::php_fpm
 }
 
+node 'test3.miraheze.org' {
+    include base
+
+    ufw::allow { 'http port 443 51.195.236.249':
+        proto => 'tcp',
+        port  => 443,
+        from  => '51.195.236.249',
+    }
+
+    ufw::allow { 'https port 443 2001:41d0:800:1bbd::3':
+        proto => 'tcp',
+        port  => 443,
+        from  => '2001:41d0:800:1bbd::3',
+    }
+}
+
 # ensures all servers have basic class if puppet runs
 node default {
     include base
