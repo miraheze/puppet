@@ -132,7 +132,7 @@ role::trafficserver::h2_settings:
   stream_error_rate_threshold: 1.0
 
 role::trafficserver::storage_elements:
-    - pathname: '/srv/storage/'
+    - pathname: '/srv/trafficserver'
       size: '10G'
 
 role::trafficserver::cache::req_handling: {}

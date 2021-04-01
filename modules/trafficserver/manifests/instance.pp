@@ -334,6 +334,20 @@ define trafficserver::instance(
         }
     }
 
+    if $enable_caching and $storage {
+        $storage.each |$value| {
+            if $value['pathname'] {
+                file { $value['pathname']:
+                    ensure  => directory,
+                    owner   => $trafficserver::user,
+                    mode    => '0755',
+                    require => $config_requires,
+                    notify  => Service[$service_name],
+                }
+            }
+        }
+    }
+
     include ssl::wildcard
     include ssl::hiera
 
@@ -345,14 +359,11 @@ define trafficserver::instance(
 
     ## Service
     $do_ocsp = !empty($inbound_tls_settings) and num2bool($inbound_tls_settings['do_ocsp'])
-    # We only need to update prefetched OCSP staples iff non-acme chief certificates
-    # are being deployed in the server
     if $do_ocsp {
-        $update_ocsp = $inbound_tls_settings['certificates'].any |$certificate| { !$certificate['acme_chief'] } # used in the systemd template
+        $update_ocsp = $inbound_tls_settings['certificates'].any |$certificate| { $certificate } # used in the systemd template
     } else {
         $update_ocsp = false
     }
-
 
     if ($http_port and $http_port < 1024) or ($https_port and $https_port < 1024) {
       $privileged_port = true
