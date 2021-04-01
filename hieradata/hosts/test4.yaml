@@ -134,6 +134,6 @@ role::trafficserver::storage_elements:
     - pathname: '/srv/storage/'
       size: '10g'
 
-role::trafficserver::cache::req_handling: []
-role::traficserver::cache::alternate_domains: []
+role::trafficserver::cache::req_handling: {}
+role::traficserver::cache::alternate_domains: {}
 
