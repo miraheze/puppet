@@ -5,7 +5,7 @@
 class role::trafficserver (
     String $user                                                = lookup('role::trafficserver::user', {default_value => 'trafficserver'}),
     Integer $max_lua_states                                     = lookup('role::trafficserver::max_lua_states', {default_value => 256}),
-    Trafficserver::Inbound_TLS_settings $tls_settings           = lookup('role::trafficserver::inbound_tls_settings'),
+    Trafficserver::Inbound_TLS_settings $inbound_tls_settings   = lookup('role::trafficserver::inbound_tls_settings'),
     Trafficserver::Outbound_TLS_settings $outbound_tls_settings = lookup('role::trafficserver::outbound_tls_settings'),
     Optional[Trafficserver::Network_settings] $network_settings = lookup('role::trafficserver::network_settings', {default_value => undef}),
     Optional[Trafficserver::HTTP_settings] $http_settings       = lookup('role::trafficserver::http_settings', {default_value => undef}),
