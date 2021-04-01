@@ -9,11 +9,12 @@ function do_remap()
     end
 
     local debug_map = {
-        ["1"]                 = "mw8.miraheze.org",
-        ["mw8.miraheze.org"]  = "mw8.miraheze.org",
-        ["mw9.miraheze.org"]  = "mw9.miraheze.org",
-        ["mw10.miraheze.org"] = "mw10.miraheze.org",
-        ["mw11.miraheze.org"] = "mw11.miraheze.org",
+        ["1"]                  = "mw8.miraheze.org",
+        ["mw8.miraheze.org"]   = "mw8.miraheze.org",
+        ["mw9.miraheze.org"]   = "mw9.miraheze.org",
+        ["mw10.miraheze.org"]  = "mw10.miraheze.org",
+        ["mw11.miraheze.org"]  = "mw11.miraheze.org",
+        ["test3.miraheze.org"] = "test3.miraheze.org",
     }
 
     local backend = string.match(xwd, 'backend=([%a%d%.]+)')
