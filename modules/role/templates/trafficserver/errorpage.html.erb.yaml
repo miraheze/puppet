@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Backend Fetch Failed">
+    <title>%<pssc> %<prrp></title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <style>
+      /* Error Page Inline Styles */
+      body {
+        padding-top: 20px;
+      }
+      /* Layout */
+      .jumbotron {
+        font-size: 21px;
+        font-weight: 200;
+        line-height: 2.1428571435;
+        color: inherit;
+        padding: 10px 0px;
+      }
+      /* Everything but the jumbotron gets side spacing for mobile-first views */
+      .masthead, .body-content {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        text-align: center;
+        background-color: transparent;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+      /* Colors */
+      .green {color:#5cb85c;}
+      .orange {color:#f0ad4e;}
+      .red {color:#d9534f;}
+    </style>
+    <script>
+      function loadDomain() {
+        var display = document.getElementById("display-domain");
+        display.innerHTML = document.domain;
+      }
+    </script>
+  </head>
+  <div class="container">
+    <!-- Jumbotron -->
+    <div class="jumbotron">
+      <h1><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Miraheze-Logo.svg" alt="Miraheze Logo">%<pssc> %<prrp></h1>
+      <p class="lead">Our servers are having issues at the moment.</p>
+      <a href="javascript:document.location.reload(true);" class="btn btn-lg btn-outline-success" role="button">Try this page again</a>
+    </div>
+  </div>
+  <div class="container">
+    <div class="body-content">
+      <div class="row">
+        <div class="col-md-6">
+          <h2>What can I do?</h2>
+          <p class="lead">If you're a wiki visitor or owner</p>
+          <p>Try again in a few minutes. If the problem persists, please report this on <a href="https://phabricator.miraheze.org">phabricator.</a> We apologize for the inconvenience. Our sysadmins should be attempting to solve the issue ASAP!</p>
+        </div>
+        <div class="col-md-6">
+          <a class="twitter-timeline" data-width="500" data-height="350" text-align: center href="https://twitter.com/miraheze?ref_src=twsrc%5Etfw">Tweets by miraheze</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="text-center">
+      <p class="lead">When reporting this, please be sure to provide the information below.</p>
+      Request from %<{X-Client-IP}cqh> via <%= @fqdn %>, %<{Server}psh><br>Error: %<pssc>, %<prrp> at %<cqtd> %<cqtt> GMT
+      <br /><br />
+    </div>
+  </div>
+</html>

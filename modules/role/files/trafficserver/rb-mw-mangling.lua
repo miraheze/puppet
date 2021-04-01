@@ -1,0 +1,22 @@
+-- The JIT compiler is causing severe performance issues:
+-- https://phabricator.wikimedia.org/T265625
+jit.off(true, true)
+
+function remap_hook()
+    local orig_uri = ts.client_request.get_uri()
+
+    -- RestBASE mangling
+    if string.match(orig_uri, "^/api/rest_v1/") then
+        local host = ts.client_request.header['Host']
+        new_path = "/" .. host .. string.gsub(orig_uri, "^/api/rest_v1/", "/v1/")
+        ts.client_request.set_uri(new_path)
+        return
+    end
+end
+
+function do_remap()
+    -- Use TS_LUA_HOOK_CACHE_LOOKUP_COMPLETE, so that the mangling happens
+    -- after cache lookup and before fetching the response from the origin
+    ts.hook(TS_LUA_HOOK_CACHE_LOOKUP_COMPLETE, remap_hook)
+    return 0
+end
