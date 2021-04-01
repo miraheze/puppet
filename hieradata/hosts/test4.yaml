@@ -132,7 +132,7 @@ role::trafficserver::h2_settings:
 
 role::trafficserver::storage_elements:
     - pathname: '/srv/storage/'
-      size: '10g'
+      size: '10G'
 
 role::trafficserver::cache::req_handling: {}
 role::traficserver::cache::alternate_domains: {}
