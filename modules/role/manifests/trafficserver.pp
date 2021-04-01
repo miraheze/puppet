@@ -23,7 +23,6 @@ class role::trafficserver (
     Array[TrafficServer::Log_filter] $log_filters               = lookup('role::trafficserver::log_filters', {default_value => []}),
     Array[TrafficServer::Log] $logs                             = lookup('role::trafficserver::logs', {default_value => []}),
     Array[TrafficServer::Parent_rule] $parent_rules             = lookup('role::trafficserver::parent_rules'),
-    Stdlib::Port::User $prometheus_exporter_port                = lookup('role::trafficserver::prometheus_exporter_port', {default_value => 9122}),
     Optional[Integer] $ram_cache_size                           = lookup('role::trafficserver::ram_cache_size', {default_value => -1}),
     Optional[Integer[0,2]] $res_track_memory                    = lookup('role::trafficserver::res_track_memory', {'default_value' => undef}),
 ) {
