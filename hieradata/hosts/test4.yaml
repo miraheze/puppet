@@ -1,3 +1,5 @@
+role::trafficserver::enable_xdebug: true
+
 # Define hosts. If not defined everything automatically
 # goes to mediawiki backends.
 role::trafficserver::mapping_rules:
