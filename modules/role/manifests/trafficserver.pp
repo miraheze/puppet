@@ -43,15 +43,6 @@ class role::trafficserver (
         notify  => Service['trafficserver'],
     }
 
-    $errorpage = {
-        # An explanation for these (and more) fields is available here:
-        # https://docs.trafficserver.apache.org/en/latest/admin-guide/logging/formatting.en.html
-        # Rendered example:
-        # Request from 93.184.216.34 via cp1071.eqiad.wmnet, ATS/8.0.3
-        # Error: 502, connect failed at 2019-04-04 12:22:08 GMT
-        footer      => "Request from %<chi> via ${::fqdn}, %<{Server}psh><br>Error: %<pssc>, %<prrp> at %<cqtd> %<cqtt> GMT",
-    }
-
     $default_instance = true
     $instance_name = 'backend'
     $paths = trafficserver::get_paths($default_instance, 'backend')
