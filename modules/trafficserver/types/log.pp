@@ -1,5 +1,5 @@
 type Trafficserver::Log = Struct[{
-    'ensure'   => Wmflib::Ensure,
+    'ensure'   => VMlib::Ensure,
     'filename' => String,
     'format'   => String,
     'mode'     => Enum['ascii', 'binary', 'ascii_pipe'],
