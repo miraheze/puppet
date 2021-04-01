@@ -80,6 +80,7 @@ class role::trafficserver (
         log_formats             => $log_formats,
         log_filters             => $log_filters,
         logs                    => $logs,
+        parent_rules            => $parent_rules,
         error_page              => template('role/trafficserver/errorpage.html.erb'),
         x_forwarded_for         => 1,
         systemd_hardening       => $systemd_hardening,
