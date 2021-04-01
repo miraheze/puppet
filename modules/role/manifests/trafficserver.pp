@@ -25,6 +25,7 @@ class role::trafficserver (
     Array[TrafficServer::Parent_rule] $parent_rules             = lookup('role::trafficserver::parent_rules'),
     Optional[Integer] $ram_cache_size                           = lookup('role::trafficserver::ram_cache_size', {default_value => -1}),
     Optional[Integer[0,2]] $res_track_memory                    = lookup('role::trafficserver::res_track_memory', {'default_value' => undef}),
+    Boolean $systemd_hardening                                  = lookup('role::trafficserver::systemd_hardening', {default_value => true}),
 ) {
 
     $global_lua_script = $default_lua_script? {
