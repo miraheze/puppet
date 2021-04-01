@@ -1,4 +1,5 @@
 role::trafficserver::enable_xdebug: true
+role::trafficserver::systemd_hardening: false
 
 # Define hosts. If not defined everything automatically
 # goes to mediawiki backends.
