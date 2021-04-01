@@ -270,7 +270,7 @@ define trafficserver::instance(
     $compress_config_path = "${paths['sysconfdir']}/compress.config"
 
     # This is used to install the certificates in ssl_multicert.config
-    $sslcac = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
+    $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
     # This is also used to redirect in the frontend
     $sslredirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
 

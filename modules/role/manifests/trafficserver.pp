@@ -42,15 +42,6 @@ class role::trafficserver (
         notify  => Service['trafficserver'],
     }
 
-    file { '/usr/local/lib/nagios/plugins/check_default_ats_lua_conf':
-        ensure  => present,
-        owner   => root,
-        group   => root,
-        mode    => '0555',
-        content => "#!/usr/bin/lua\ndofile('/etc/trafficserver/lua/${default_lua_script}.lua.conf')\nassert(lua_hostname)\nprint('OK')\n",
-        require => File["/etc/trafficserver/lua/${default_lua_script}.lua.conf"],
-    }
-
     $errorpage = {
         # An explanation for these (and more) fields is available here:
         # https://docs.trafficserver.apache.org/en/latest/admin-guide/logging/formatting.en.html
@@ -115,7 +106,7 @@ class role::trafficserver (
         source    => 'puppet:///modules/role/trafficserver/rb-mw-mangling.lua',
     }
 
-    trafficserver::lua_script { 'x-wikimedia-debug-routing':
-        source    => 'puppet:///modules/role/trafficserver/x-wikimedia-debug-routing.lua',
+    trafficserver::lua_script { 'x-miraheze-debug-routing':
+        source    => 'puppet:///modules/role/trafficserver/x-miraheze-debug-routing.lua',
     }
 }

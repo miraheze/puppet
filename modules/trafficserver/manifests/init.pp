@@ -13,6 +13,5 @@ class trafficserver(
     ## Packages
     package { $packages:
         ensure  => present,
-        require => Exec['apt-get update'],
     }
 }
