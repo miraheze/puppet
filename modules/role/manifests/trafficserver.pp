@@ -26,6 +26,7 @@ class role::trafficserver (
     Optional[Integer] $ram_cache_size                           = lookup('role::trafficserver::ram_cache_size', {default_value => -1}),
     Optional[Integer[0,2]] $res_track_memory                    = lookup('role::trafficserver::res_track_memory', {'default_value' => undef}),
 ) {
+
     $global_lua_script = $default_lua_script? {
         ''      => '',
         default => "/etc/trafficserver/lua/${default_lua_script}.lua",

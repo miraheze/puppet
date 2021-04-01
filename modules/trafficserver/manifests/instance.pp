@@ -274,6 +274,8 @@ define trafficserver::instance(
     # This is also used to redirect in the frontend
     $sslredirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
 
+    $mediawiki_ip = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
+
     ## Config files
     file {
         default:
@@ -331,6 +333,15 @@ define trafficserver::instance(
             content => template('trafficserver/compress.config.erb'),
         }
     }
+
+    include ssl::wildcard
+    include ssl::hiera
+
+    ssl::cert { 'm.miraheze.org': }
+
+    Class['ssl::wildcard'] ~> Service[$service_name]
+    Class['ssl::hiera'] ~> Service[$service_name]
+    Ssl::Cert['m.miraheze.org'] ~> Service[$service_name]
 
     ## Service
     $do_ocsp = !empty($inbound_tls_settings) and num2bool($inbound_tls_settings['do_ocsp'])
