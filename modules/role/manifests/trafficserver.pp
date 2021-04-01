@@ -68,7 +68,7 @@ class role::trafficserver (
         paths                   => $paths,
         default_instance        => $default_instance,
         http_port               => 80,
-        http_port               => 443,
+        https_port               => 443,
         network_settings        => $network_settings,
         http_settings           => $http_settings,
         h2_settings             => $h2_settings,
