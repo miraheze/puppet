@@ -49,7 +49,7 @@ class role::trafficserver (
         # Rendered example:
         # Request from 93.184.216.34 via cp1071.eqiad.wmnet, ATS/8.0.3
         # Error: 502, connect failed at 2019-04-04 12:22:08 GMT
-        footer      => "Request from %<{X-Client-IP}cqh> via ${::fqdn}, %<{Server}psh><br>Error: %<pssc>, %<prrp> at %<cqtd> %<cqtt> GMT",
+        footer      => "Request from %<chi> via ${::fqdn}, %<{Server}psh><br>Error: %<pssc>, %<prrp> at %<cqtd> %<cqtt> GMT",
     }
 
     $default_instance = true
