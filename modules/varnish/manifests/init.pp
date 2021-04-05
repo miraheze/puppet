@@ -11,6 +11,9 @@ class varnish(
         ensure => present,
     }
 
+    $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
+    $reload_vcl_opts = "-f /etc/varnish/default.vcl -d ${vcl_reload_delay_s} -a ''"
+
     file { '/usr/local/sbin/reload-vcl':
         source => 'puppet:///modules/varnish/varnish/reload-vcl.py',
         owner  => 'root',
@@ -50,14 +53,8 @@ class varnish(
     file { '/etc/varnish/default.vcl':
         ensure  => present,
         content => template('varnish/default.vcl'),
-        notify  => Exec['varnish-server-syntax'],
+        notify  => Exec['load-new-vcl-file'],
         require => Package['varnish'],
-    }
-
-    exec { 'varnish-server-syntax':
-        command     => '/usr/sbin/varnishd -C -f /etc/varnish/default.vcl',
-        refreshonly => true,
-        notify      => Service['varnish'],
     }
 
     file { '/srv/varnish':
@@ -66,7 +63,6 @@ class varnish(
         group   => 'varnish',
     }
 
-    $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
     systemd::service { 'varnish':
         ensure  => present,
         content => systemd_template('varnish'),
@@ -107,6 +103,27 @@ class varnish(
     file { '/etc/nginx/sites-enabled/default':
         ensure => absent,
         notify => Service['nginx'],
+    }
+
+    # This mechanism with the touch/rm conditionals in the pair of execs
+    #   below should ensure that reload-vcl failures are retried on
+    #   future puppet runs until they succeed.
+    $vcl_failed_file = "/var/tmp/reload-vcl-failed"
+
+    exec { 'load-new-vcl-file':
+        require     => Service['varnish'],
+        subscribe   => File['/etc/varnish/default.vcl'],
+        command     => "/usr/local/sbin/reload-vcl ${reload_vcl_opts} || (touch ${vcl_failed_file}; false)",
+        unless      => "test -f ${vcl_failed_file}",
+        path        => '/bin:/usr/bin',
+        refreshonly => true,
+    }
+
+    exec { 'retry-load-new-vcl-file':
+        require => Exec['load-new-vcl-file'],
+        command => "/usr/local/sbin/reload-vcl ${reload_vcl_opts} && (rm ${vcl_failed_file}; true)",
+        onlyif  => "test -f ${vcl_failed_file}",
+        path    => '/bin:/usr/bin',
     }
 
     file { '/etc/default/stunnel4':
