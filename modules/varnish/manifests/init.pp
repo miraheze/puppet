@@ -1,15 +1,13 @@
 # class: varnish
-class varnish(
+class varnish (
     String $cache_file_name = '/srv/varnish/cache_storage.bin',
     String $cache_file_size = '15G',
-    Boolean $use_new_cache = false,
-){
+) {
     include varnish::nginx
+    include varnish::stunnel4
     include prometheus::varnish_prometheus_exporter
 
-    package { [ 'varnish', 'stunnel4', 'varnish-modules' ]:
-        ensure => present,
-    }
+    ensure_packages(['varnish', 'varnish-modules'])
 
     $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
     $reload_vcl_opts = "-f /etc/varnish/default.vcl -d ${vcl_reload_delay_s} -a"
@@ -38,11 +36,6 @@ class varnish(
         dump    => 0,
         require => File['/var/lib/varnish'],
         notify  => Service['varnish'],
-    }
-
-    service { 'stunnel4':
-        ensure  => 'running',
-        require => Package['stunnel4'],
     }
     
     $module_path = get_module_path($module_name)
@@ -116,20 +109,6 @@ class varnish(
         path    => '/bin:/usr/bin',
     }
 
-    file { '/etc/default/stunnel4':
-        ensure  => present,
-        source  => 'puppet:///modules/varnish/stunnel/stunnel.default',
-        notify  => Service['stunnel4'],
-        require => Package['stunnel4'],
-    }
-
-    file { '/etc/stunnel/mediawiki.conf':
-        ensure  => present,
-        source  => 'puppet:///modules/varnish/stunnel/stunnel.conf',
-        notify  => Service['stunnel4'],
-        require => Package['stunnel4'],
-    }
-
     file { '/usr/lib/nagios/plugins/check_varnishbackends':
         ensure => present,
         source => 'puppet:///modules/varnish/icinga/check_varnishbackends.py',
@@ -154,11 +133,6 @@ class varnish(
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nginx_errorrate' ],
     }
 
-    logrotate::conf { 'stunnel4':
-        ensure => present,
-        source => 'puppet:///modules/varnish/stunnel/stunnel4.logrotate.conf',
-    }
-
     monitoring::services { 'Varnish Backends':
         check_command => 'nrpe',
         vars          => {
@@ -171,16 +145,6 @@ class varnish(
         vars          => {
             nrpe_command => 'check_nginx_errorrate',
         },
-    }
-
-    ['mon2', 'mw8', 'mw9', 'mw10', 'mw11', 'test3'].each |$host| {
-        monitoring::services { "Stunnel Http for ${host}":
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => "check_stunnel_${host}",
-                nrpe_timeout => '10s',
-            },
-        }
     }
 
     require_package('vmtouch')
