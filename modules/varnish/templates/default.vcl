@@ -187,6 +187,14 @@ sub mw_rate_limit {
 			(req.url ~ "^/wiki" || req.url ~ "^/w/(api|index)\.php")
 			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
+			# Stopgap for Googlebot sending suspicious requests with inpval parameter
+			if (
+				req.http.User-Agent ~ "(?i)Googlebot"
+				&& req.url ~ "inpval"
+			) {
+				return (synth(403, "Forbidden"));
+			}
+
 			if (req.url ~ "^/w/index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
 				# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
 				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
