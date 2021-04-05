@@ -2,6 +2,174 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v8.0.2](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.0.2) (2021-03-29)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.0.1...v8.0.2)
+
+### Fixed
+
+- \(MODULES-10971\) - Ensure `apt::keyserver` is considered when creating a default apt:source [\#981](https://github.com/puppetlabs/puppetlabs-apt/pull/981) ([david22swan](https://github.com/david22swan))
+- \(IAC-1497\) - Removal of unsupported `translate` dependency [\#979](https://github.com/puppetlabs/puppetlabs-apt/pull/979) ([david22swan](https://github.com/david22swan))
+
+## [v8.0.1](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.0.1) (2021-03-15)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.0.0...v8.0.1)
+
+### Fixed
+
+- MODULES-10956 remove redundant code in provider apt\_key [\#973](https://github.com/puppetlabs/puppetlabs-apt/pull/973) ([moritz-makandra](https://github.com/moritz-makandra))
+
+## [v8.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.0.0) (2021-03-01)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.7.1...v8.0.0)
+
+### Changed
+
+- pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [\#969](https://github.com/puppetlabs/puppetlabs-apt/pull/969) ([carabasdaniel](https://github.com/carabasdaniel))
+
+## [v7.7.1](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.7.1) (2021-02-15)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.7.0...v7.7.1)
+
+### Fixed
+
+- Use modern os facts [\#964](https://github.com/puppetlabs/puppetlabs-apt/pull/964) ([kenyon](https://github.com/kenyon))
+
+## [v7.7.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.7.0) (2020-12-08)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.6.0...v7.7.0)
+
+### Added
+
+- pdksync - \(feat\) - Add support for Puppet 7 [\#958](https://github.com/puppetlabs/puppetlabs-apt/pull/958) ([daianamezdrea](https://github.com/daianamezdrea))
+- Make auth.conf contents Sensitive [\#953](https://github.com/puppetlabs/puppetlabs-apt/pull/953) ([suchpuppet](https://github.com/suchpuppet))
+
+## [v7.6.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.6.0) (2020-09-15)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.5.0...v7.6.0)
+
+### Added
+
+- \(MODULES-10804\) option to force purge source.lists file [\#948](https://github.com/puppetlabs/puppetlabs-apt/pull/948) ([sheenaajay](https://github.com/sheenaajay))
+
+### Fixed
+
+- \(IAC-978\) - Removal of inappropriate terminology [\#947](https://github.com/puppetlabs/puppetlabs-apt/pull/947) ([david22swan](https://github.com/david22swan))
+
+## [v7.5.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.5.0) (2020-08-12)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.4.2...v7.5.0)
+
+### Added
+
+- pdksync - \(IAC-973\) - Update travis/appveyor to run on new default branch main [\#940](https://github.com/puppetlabs/puppetlabs-apt/pull/940) ([david22swan](https://github.com/david22swan))
+- patch-acng-ssl-support [\#938](https://github.com/puppetlabs/puppetlabs-apt/pull/938) ([mdklapwijk](https://github.com/mdklapwijk))
+- \(IAC-746\) - Add ubuntu 20.04 support [\#936](https://github.com/puppetlabs/puppetlabs-apt/pull/936) ([david22swan](https://github.com/david22swan))
+
+### Fixed
+
+- \(MODULES-10763\) loglevel won't affect reports [\#942](https://github.com/puppetlabs/puppetlabs-apt/pull/942) ([gguillotte](https://github.com/gguillotte))
+
+## [v7.4.2](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.4.2) (2020-05-14)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.4.1...v7.4.2)
+
+### Fixed
+
+- fix apt-mark syntax [\#927](https://github.com/puppetlabs/puppetlabs-apt/pull/927) ([tryfunc](https://github.com/tryfunc))
+- Do not specify file modes unless relevant [\#923](https://github.com/puppetlabs/puppetlabs-apt/pull/923) ([anarcat](https://github.com/anarcat))
+
+## [v7.4.1](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.4.1) (2020-03-10)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.4.0...v7.4.1)
+
+### Fixed
+
+- \(MODULES-10583\) Revert "MODULES-10548: make files readonly" [\#920](https://github.com/puppetlabs/puppetlabs-apt/pull/920) ([carabasdaniel](https://github.com/carabasdaniel))
+
+## [v7.4.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.4.0) (2020-03-03)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.3.0...v7.4.0)
+
+### Added
+
+- Add 'include' param to apt::backports [\#910](https://github.com/puppetlabs/puppetlabs-apt/pull/910) ([paladox](https://github.com/paladox))
+- pdksync - \(FM-8581\) - Debian 10 added to travis and provision file refactored [\#902](https://github.com/puppetlabs/puppetlabs-apt/pull/902) ([david22swan](https://github.com/david22swan))
+
+### Fixed
+
+- MODULES-10548: make files readonly [\#906](https://github.com/puppetlabs/puppetlabs-apt/pull/906) ([anarcat](https://github.com/anarcat))
+- MODULES-10543: only consider lsbdistcodename for apt-transport-https [\#905](https://github.com/puppetlabs/puppetlabs-apt/pull/905) ([anarcat](https://github.com/anarcat))
+- MODULES-10543: remove sources.list file on purging [\#904](https://github.com/puppetlabs/puppetlabs-apt/pull/904) ([anarcat](https://github.com/anarcat))
+- Include apt in apt::backports [\#891](https://github.com/puppetlabs/puppetlabs-apt/pull/891) ([zivis](https://github.com/zivis))
+
+## [v7.3.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.3.0) (2019-12-11)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.2.0...v7.3.0)
+
+### Added
+
+- Adding a new parameter for dist [\#890](https://github.com/puppetlabs/puppetlabs-apt/pull/890) ([luckyraul](https://github.com/luckyraul))
+
+### Fixed
+
+- MODULES-10063, extend apt::key to support deeplinks, this time with f… [\#894](https://github.com/puppetlabs/puppetlabs-apt/pull/894) ([atarax](https://github.com/atarax))
+- MODULES-10063, extend apt::key to support deeplinks [\#892](https://github.com/puppetlabs/puppetlabs-apt/pull/892) ([atarax](https://github.com/atarax))
+
+## [v7.2.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.2.0) (2019-10-29)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.1.0...v7.2.0)
+
+### Added
+
+- Add apt::mark defined type [\#879](https://github.com/puppetlabs/puppetlabs-apt/pull/879) ([tuxmea](https://github.com/tuxmea))
+- \(FM-8394\) add debian 10 testing [\#876](https://github.com/puppetlabs/puppetlabs-apt/pull/876) ([ThoughtCrhyme](https://github.com/ThoughtCrhyme))
+- Add apt::key\_options for default apt::key options [\#873](https://github.com/puppetlabs/puppetlabs-apt/pull/873) ([raphink](https://github.com/raphink))
+- implement apt.conf.d purging [\#869](https://github.com/puppetlabs/puppetlabs-apt/pull/869) ([lelutin](https://github.com/lelutin))
+
+### Fixed
+
+- Install gnupg instead of dirmngr [\#866](https://github.com/puppetlabs/puppetlabs-apt/pull/866) ([martijndegouw](https://github.com/martijndegouw))
+
+## [v7.1.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.1.0) (2019-07-30)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.0.1...v7.1.0)
+
+### Added
+
+- \(FM-8215\) Convert to using litmus [\#864](https://github.com/puppetlabs/puppetlabs-apt/pull/864) ([florindragos](https://github.com/florindragos))
+
+## [v7.0.1](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.0.1) (2019-05-13)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/7.0.0...v7.0.1)
+
+## [7.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/7.0.0) (2019-04-24)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.3.0...7.0.0)
+
+### Changed
+
+- pdksync - \(MODULES-8444\) - Raise lower Puppet bound [\#853](https://github.com/puppetlabs/puppetlabs-apt/pull/853) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- Allow weak SSL verification for apt\_key [\#849](https://github.com/puppetlabs/puppetlabs-apt/pull/849) ([tuxmea](https://github.com/tuxmea))
+
+## [6.3.0](https://github.com/puppetlabs/puppetlabs-apt/tree/6.3.0) (2019-01-21)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.2.1...6.3.0)
+
+### Added
+
+- Add support for dist-upgrade & autoremove action [\#832](https://github.com/puppetlabs/puppetlabs-apt/pull/832) ([aboks](https://github.com/aboks))
+- \(MODULES-8321\) - Add manage\_auth\_conf parameter [\#831](https://github.com/puppetlabs/puppetlabs-apt/pull/831) ([eimlav](https://github.com/eimlav))
+
+### Fixed
+
+- \(MODULES-8418\) Fix /etc/apt/auth.conf owner changing endlessly [\#836](https://github.com/puppetlabs/puppetlabs-apt/pull/836) ([antaflos](https://github.com/antaflos))
+- pdksync - \(FM-7655\) Fix rubygems-update for ruby \< 2.3 [\#835](https://github.com/puppetlabs/puppetlabs-apt/pull/835) ([tphoney](https://github.com/tphoney))
+- \(MODULES-8326\) - apt-transport-https not ensured properly [\#830](https://github.com/puppetlabs/puppetlabs-apt/pull/830) ([eimlav](https://github.com/eimlav))
+
 ## [6.2.1](https://github.com/puppetlabs/puppetlabs-apt/tree/6.2.1) (2018-11-20)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.2.0...6.2.1)
@@ -755,4 +923,4 @@ This release includes Ubuntu 12.10 (Quantal) support for PPAs.
 [4.2.0]:https://github.com/puppetlabs/puppetlabs-apt/compare/4.1.0...4.2.0
 
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*

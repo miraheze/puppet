@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 describe 'apt::conf', type: :define do
   let :pre_condition do
@@ -5,11 +7,18 @@ describe 'apt::conf', type: :define do
   end
   let(:facts) do
     {
-      os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-      lsbdistid: 'Debian',
-      osfamily: 'Debian',
-      lsbdistcodename: 'jessie',
-      puppetversion: Puppet.version,
+      os: {
+        family: 'Debian',
+        name: 'Debian',
+        release: {
+          major: '8',
+          full: '8.0',
+        },
+        distro: {
+          codename: 'jessie',
+          id: 'Debian',
+        },
+      },
     }
   end
   let :title do
@@ -35,8 +44,7 @@ describe 'apt::conf', type: :define do
       is_expected.to contain_file(filename).with('ensure' => 'present',
                                                  'content'   => %r{Apt::Install-Recommends 0;\nApt::AutoRemove::InstallRecommends 1;},
                                                  'owner'     => 'root',
-                                                 'group'     => 'root',
-                                                 'mode'      => '0644')
+                                                 'group'     => 'root')
     }
 
     context 'with notify_update = true (default)' do
@@ -83,8 +91,7 @@ describe 'apt::conf', type: :define do
     it {
       is_expected.to contain_file(filename).with('ensure' => 'absent',
                                                  'owner'     => 'root',
-                                                 'group'     => 'root',
-                                                 'mode'      => '0644')
+                                                 'group'     => 'root')
     }
   end
 end
