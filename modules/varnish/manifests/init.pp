@@ -95,16 +95,6 @@ class varnish(
         source  => 'puppet:///modules/varnish/varnish/varnishlog.logrotate.conf',
     }
 
-    include ssl::wildcard
-    include ssl::hiera
-
-    ssl::cert { 'm.miraheze.org': }
-
-    file { '/etc/nginx/sites-enabled/default':
-        ensure => absent,
-        notify => Service['nginx'],
-    }
-
     # This mechanism with the touch/rm conditionals in the pair of execs
     #   below should ensure that reload-vcl failures are retried on
     #   future puppet runs until they succeed.
