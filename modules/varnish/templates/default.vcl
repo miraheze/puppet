@@ -67,11 +67,6 @@ backend jobrunner3 {
 	.port = "8089";
 }
 
-backend test3 {
-	.host = "127.0.0.1";
-	.port = "8091";
-}
-
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
@@ -93,6 +88,11 @@ backend mw10_test {
 backend mw11_test {
 	.host = "127.0.0.1";
 	.port = "8088";
+}
+
+backend test3 {
+	.host = "127.0.0.1";
+	.port = "8091";
 }
 
 # end test backend
