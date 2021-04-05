@@ -12,7 +12,7 @@ class varnish(
     }
 
     $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
-    $reload_vcl_opts = "-f /etc/varnish/default.vcl -d ${vcl_reload_delay_s} -a ''"
+    $reload_vcl_opts = "-f /etc/varnish/default.vcl -d ${vcl_reload_delay_s} -a"
 
     file { '/usr/local/sbin/reload-vcl':
         source => 'puppet:///modules/varnish/varnish/reload-vcl.py',
