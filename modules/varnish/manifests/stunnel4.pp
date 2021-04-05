@@ -1,5 +1,5 @@
 # class: varnish::stunnel4
-class varnish::stunnel4(
+class varnish::stunnel4 (
     String $cache_file_name = '/srv/varnish/cache_storage.bin',
     String $cache_file_size = '15G',
 ) {
