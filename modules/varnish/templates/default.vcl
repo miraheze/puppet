@@ -283,10 +283,15 @@ sub mw_vcl_recv {
 	}
 
 	# We can rewrite those to one domain name to increase cache hits!
-	if (req.url ~ "^/w/(skins|resources|extensions)/" ) {
+	if (req.url ~ "^/w/resources") {
 		set req.http.Host = "meta.miraheze.org";
 	}
 
+	# Do not cache rest.php (Parsoid new entry point)
+	if (req.url ~ "^/w/rest.php") {
+		return (pass);
+	}
+ 
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
 	}
@@ -294,6 +299,12 @@ sub mw_vcl_recv {
 	if (req.url ~ "^/healthcheck$") {
 		set req.http.Host = "login.miraheze.org";
 		set req.url = "/wiki/Main_Page";
+		return (pass);
+	}
+	
+	# Temporary solution to fix CookieWarning issue with ElectronPDF
+	if (req.http.X-Real-IP == "51.195.236.212" || req.http.X-Real-IP == "2001:41d0:800:178a::10" ||
+		req.http.X-Real-IP == "51.195.236.246" || req.http.X-Real-IP == "2001:41d0:800:1bbd::13") {
 		return (pass);
 	}
 
@@ -390,9 +401,8 @@ sub vcl_deliver {
 	}
 
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
-		// ...but exempt CentralNotice banner special pages
-		if (req.url !~ "^/(wiki/|w/index\.php\?title=)Special:Banner") {
-			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
+		if (req.url !~ "^/wiki/Special\:Banner") {
+			set resp.http.Cache-Control = "private, s-maxage=0, maxage=0, must-revalidate";
 		}
 	}
 
