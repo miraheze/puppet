@@ -275,7 +275,7 @@ sub mw_vcl_recv {
 	}
 
 	# We can rewrite those to one domain name to increase cache hits!
-	if (req.url ~ "^/w/(skins|resources|extensions)/.+\?[a-fA-F0-9]+$" ) {
+	if (req.url ~ "^/w/(skins|resources|extensions)" ) {
 		set req.http.Host = "meta.miraheze.org";
 	}
 
