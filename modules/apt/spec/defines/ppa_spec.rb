@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 describe 'apt::ppa' do
   let :pre_condition do
@@ -7,13 +9,18 @@ describe 'apt::ppa' do
   describe 'defaults' do
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '41.04' } },
-        lsbdistrelease: '14.04',
-        lsbdistcodename: 'trusty',
-        operatingsystem: 'Ubuntu',
-        osfamily: 'Debian',
-        lsbdistid: 'Ubuntu',
-        puppetversion: Puppet.version,
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '14',
+            full: '14.04',
+          },
+          distro: {
+            codename: 'trusty',
+            id: 'Ubuntu',
+          },
+        },
       }
     end
 
@@ -22,8 +29,8 @@ describe 'apt::ppa' do
     it { is_expected.not_to contain_package('python-software-properties') }
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:needs/such.substitution/wow+type').that_notifies('Class[Apt::Update]').with(environment: [],
-                                                                                                                                      command: '/usr/bin/add-apt-repository -y ppa:needs/such.substitution/wow+type || (rm /etc/apt/sources.list.d/needs-such_substitution-wow_type-trusty.list && false)', # rubocop:disable Metrics/LineLength
-                                                                                                                                      unless: '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow_type-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/needs-such_substitution-wow_type.gpg', # rubocop:disable Metrics/LineLength
+                                                                                                                                      command: '/usr/bin/add-apt-repository -y ppa:needs/such.substitution/wow+type || (rm /etc/apt/sources.list.d/needs-such_substitution-wow_type-trusty.list && false)', # rubocop:disable Layout/LineLength
+                                                                                                                                      unless: '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow_type-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/needs-such_substitution-wow_type.gpg', # rubocop:disable Layout/LineLength
                                                                                                                                       user: 'root',
                                                                                                                                       logoutput: 'on_failure')
     }
@@ -32,13 +39,18 @@ describe 'apt::ppa' do
   describe 'Ubuntu 15.10 sources.list filename' do
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '15', full: '15.10' } },
-        lsbdistrelease: '15.10',
-        lsbdistcodename: 'wily',
-        operatingsystem: 'Ubuntu',
-        osfamily: 'Debian',
-        lsbdistid: 'Ubuntu',
-        puppetversion: Puppet.version,
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '15',
+            full: '15.10',
+          },
+          distro: {
+            codename: 'wily',
+            id: 'Ubuntu',
+          },
+        },
       }
     end
 
@@ -46,8 +58,8 @@ describe 'apt::ppa' do
 
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:user/foo').that_notifies('Class[Apt::Update]').with(environment: [],
-                                                                                                              command: '/usr/bin/add-apt-repository -y ppa:user/foo || (rm /etc/apt/sources.list.d/user-ubuntu-foo-wily.list && false)', # rubocop:disable Metrics/LineLength
-                                                                                                              unless: '/usr/bin/test -f /etc/apt/sources.list.d/user-ubuntu-foo-wily.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/user_ubuntu_foo.gpg', # rubocop:disable Metrics/LineLength
+                                                                                                              command: '/usr/bin/add-apt-repository -y ppa:user/foo || (rm /etc/apt/sources.list.d/user-ubuntu-foo-wily.list && false)', # rubocop:disable Layout/LineLength
+                                                                                                              unless: '/usr/bin/test -f /etc/apt/sources.list.d/user-ubuntu-foo-wily.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/user_ubuntu_foo.gpg', # rubocop:disable Layout/LineLength
                                                                                                               user: 'root',
                                                                                                               logoutput: 'on_failure')
     }
@@ -65,13 +77,18 @@ describe 'apt::ppa' do
     end
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
-        lsbdistrelease: '14.04',
-        lsbdistcodename: 'trusty',
-        operatingsystem: 'Ubuntu',
-        osfamily: 'Debian',
-        lsbdistid: 'Ubuntu',
-        puppetversion: Puppet.version,
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '14',
+            full: '14.04',
+          },
+          distro: {
+            codename: 'trusty',
+            id: 'Ubuntu',
+          },
+        },
       }
     end
 
@@ -80,8 +97,8 @@ describe 'apt::ppa' do
     it { is_expected.to contain_package('software-properties-common') }
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:needs/such.substitution/wow').that_notifies('Class[Apt::Update]').with('environment' => [],
-                                                                                                                                 'command'     => '/usr/bin/add-apt-repository -y ppa:needs/such.substitution/wow || (rm /etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list && false)', # rubocop:disable Metrics/LineLength
-                                                                                                                                 'unless'      => '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/needs-such_substitution-wow.gpg', # rubocop:disable Metrics/LineLength
+                                                                                                                                 'command'     => '/usr/bin/add-apt-repository -y ppa:needs/such.substitution/wow || (rm /etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list && false)', # rubocop:disable Layout/LineLength
+                                                                                                                                 'unless'      => '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/needs-such_substitution-wow.gpg', # rubocop:disable Layout/LineLength
                                                                                                                                  'user'        => 'root',
                                                                                                                                  'logoutput'   => 'on_failure')
     }
@@ -97,13 +114,18 @@ describe 'apt::ppa' do
     end
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
-        lsbdistrelease: '14.04',
-        lsbdistcodename: 'trusty',
-        operatingsystem: 'Ubuntu',
-        osfamily: 'Debian',
-        lsbdistid: 'Ubuntu',
-        puppetversion: Puppet.version,
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '14',
+            full: '14.04',
+          },
+          distro: {
+            codename: 'trusty',
+            id: 'Ubuntu',
+          },
+        },
       }
     end
     let :params do
@@ -117,8 +139,8 @@ describe 'apt::ppa' do
     it { is_expected.not_to contain_package('python-software-properties') }
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:needs/such.substitution/wow').that_notifies('Class[Apt::Update]').with('environment' => [],
-                                                                                                                                 'command'     => '/usr/bin/add-apt-repository -y ppa:needs/such.substitution/wow || (rm /etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list && false)', # rubocop:disable Metrics/LineLength
-                                                                                                                                 'unless'      => '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/needs-such_substitution-wow.gpg', # rubocop:disable Metrics/LineLength
+                                                                                                                                 'command'     => '/usr/bin/add-apt-repository -y ppa:needs/such.substitution/wow || (rm /etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list && false)', # rubocop:disable Layout/LineLength
+                                                                                                                                 'unless'      => '/usr/bin/test -f /etc/apt/sources.list.d/needs-such_substitution-wow-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/needs-such_substitution-wow.gpg', # rubocop:disable Layout/LineLength
                                                                                                                                  'user'        => 'root',
                                                                                                                                  'logoutput'   => 'on_failure')
     }
@@ -136,13 +158,18 @@ describe 'apt::ppa' do
     end
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
-        lsbdistrelease: '14.04',
-        lsbdistcodename: 'trusty',
-        operatingsystem: 'Ubuntu',
-        lsbdistid: 'Ubuntu',
-        osfamily: 'Debian',
-        puppetversion: Puppet.version,
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '14',
+            full: '14.04',
+          },
+          distro: {
+            codename: 'trusty',
+            id: 'Ubuntu',
+          },
+        },
       }
     end
     let :params do
@@ -158,8 +185,8 @@ describe 'apt::ppa' do
     it { is_expected.to contain_package('software-properties-common') }
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:user/foo').that_notifies('Class[Apt::Update]').with(environment: [],
-                                                                                                              command: '/usr/bin/add-apt-repository  ppa:user/foo || (rm /etc/apt/sources.list.d/user-foo-trusty.list && false)', # rubocop:disable Metrics/LineLength
-                                                                                                              unless: '/usr/bin/test -f /etc/apt/sources.list.d/user-foo-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/user-foo.gpg', # rubocop:disable Metrics/LineLength
+                                                                                                              command: '/usr/bin/add-apt-repository  ppa:user/foo || (rm /etc/apt/sources.list.d/user-foo-trusty.list && false)', # rubocop:disable Layout/LineLength
+                                                                                                              unless: '/usr/bin/test -f /etc/apt/sources.list.d/user-foo-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/user-foo.gpg', # rubocop:disable Layout/LineLength
                                                                                                               user: 'root',
                                                                                                               logoutput: 'on_failure')
     }
@@ -173,13 +200,18 @@ describe 'apt::ppa' do
     end
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
-        lsbdistrelease: '14.04',
-        lsbdistcodename: 'trusty',
-        operatingsystem: 'Ubuntu',
-        lsbdistid: 'Ubuntu',
-        osfamily: 'Debian',
-        puppetversion: Puppet.version,
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '14',
+            full: '14.04',
+          },
+          distro: {
+            codename: 'trusty',
+            id: 'Ubuntu',
+          },
+        },
       }
     end
     let :params do
@@ -193,8 +225,8 @@ describe 'apt::ppa' do
     it { is_expected.to contain_package('software-properties-common') }
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:user/foo').that_notifies('Class[Apt::Update]').with(environment: ['http_proxy=http://localhost:8080'],
-                                                                                                              command: '/usr/bin/add-apt-repository  ppa:user/foo || (rm /etc/apt/sources.list.d/user-foo-trusty.list && false)', # rubocop:disable Metrics/LineLength
-                                                                                                              unless: '/usr/bin/test -f /etc/apt/sources.list.d/user-foo-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/user-foo.gpg', # rubocop:disable Metrics/LineLength
+                                                                                                              command: '/usr/bin/add-apt-repository  ppa:user/foo || (rm /etc/apt/sources.list.d/user-foo-trusty.list && false)', # rubocop:disable Layout/LineLength
+                                                                                                              unless: '/usr/bin/test -f /etc/apt/sources.list.d/user-foo-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/user-foo.gpg', # rubocop:disable Layout/LineLength
                                                                                                               user: 'root',
                                                                                                               logoutput: 'on_failure')
     }
@@ -208,13 +240,18 @@ describe 'apt::ppa' do
     end
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
-        lsbdistrelease: '14.04',
-        lsbdistcodename: 'trusty',
-        operatingsystem: 'Ubuntu',
-        lsbdistid: 'Ubuntu',
-        osfamily: 'Debian',
-        puppetversion: Puppet.version,
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '14',
+            full: '14.04',
+          },
+          distro: {
+            codename: 'trusty',
+            id: 'Ubuntu',
+          },
+        },
       }
     end
     let :params do
@@ -228,8 +265,8 @@ describe 'apt::ppa' do
     it { is_expected.to contain_package('software-properties-common') }
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:user/foo').that_notifies('Class[Apt::Update]').with(environment: ['http_proxy=http://localhost:8180'],
-                                                                                                              command: '/usr/bin/add-apt-repository  ppa:user/foo || (rm /etc/apt/sources.list.d/user-foo-trusty.list && false)', # rubocop:disable Metrics/LineLength
-                                                                                                              unless: '/usr/bin/test -f /etc/apt/sources.list.d/user-foo-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/user-foo.gpg', # rubocop:disable Metrics/LineLength
+                                                                                                              command: '/usr/bin/add-apt-repository  ppa:user/foo || (rm /etc/apt/sources.list.d/user-foo-trusty.list && false)', # rubocop:disable Layout/LineLength
+                                                                                                              unless: '/usr/bin/test -f /etc/apt/sources.list.d/user-foo-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/user-foo.gpg', # rubocop:disable Layout/LineLength
                                                                                                               user: 'root',
                                                                                                               logoutput: 'on_failure')
     }
@@ -243,13 +280,18 @@ describe 'apt::ppa' do
     end
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
-        lsbdistrelease: '14.04',
-        lsbdistcodename: 'trusty',
-        operatingsystem: 'Ubuntu',
-        lsbdistid: 'Ubuntu',
-        osfamily: 'Debian',
-        puppetversion: Puppet.version,
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '14',
+            full: '14.04',
+          },
+          distro: {
+            codename: 'trusty',
+            id: 'Ubuntu',
+          },
+        },
       }
     end
     let :params do
@@ -263,8 +305,8 @@ describe 'apt::ppa' do
     it { is_expected.to contain_package('software-properties-common') }
     it {
       is_expected.to contain_exec('add-apt-repository-ppa:user/foo').that_notifies('Class[Apt::Update]').with(environment: ['http_proxy=http://localhost:8180', 'https_proxy=https://localhost:8180'],
-                                                                                                              command: '/usr/bin/add-apt-repository  ppa:user/foo || (rm /etc/apt/sources.list.d/user-foo-trusty.list && false)', # rubocop:disable Metrics/LineLength
-                                                                                                              unless: '/usr/bin/test -f /etc/apt/sources.list.d/user-foo-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/user-foo.gpg', # rubocop:disable Metrics/LineLength
+                                                                                                              command: '/usr/bin/add-apt-repository  ppa:user/foo || (rm /etc/apt/sources.list.d/user-foo-trusty.list && false)', # rubocop:disable Layout/LineLength
+                                                                                                              unless: '/usr/bin/test -f /etc/apt/sources.list.d/user-foo-trusty.list && /usr/bin/test -f /etc/apt/trusted.gpg.d/user-foo.gpg', # rubocop:disable Layout/LineLength
                                                                                                               user: 'root',
                                                                                                               logoutput: 'on_failure')
     }
@@ -276,13 +318,18 @@ describe 'apt::ppa' do
     end
     let :facts do
       {
-        os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
-        lsbdistrelease: '14.04',
-        lsbdistcodename: 'trusty',
-        operatingsystem: 'Ubuntu',
-        lsbdistid: 'Ubuntu',
-        osfamily: 'Debian',
-        puppetversion: Puppet.version,
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '14',
+            full: '14.04',
+          },
+          distro: {
+            codename: 'trusty',
+            id: 'Ubuntu',
+          },
+        },
       }
     end
     let(:title) { 'ppa:user/foo' }
@@ -301,32 +348,42 @@ describe 'apt::ppa' do
     describe 'no release' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Ubuntu', release: { major: '14', full: '14.04' } },
-          lsbdistrelease: '14.04',
-          operatingsystem: 'Ubuntu',
-          lsbdistid: 'Ubuntu',
-          osfamily: 'Debian',
-          lsbdistcodeanme: nil,
-          puppetversion: Puppet.version,
+          os: {
+            family: 'Debian',
+            name: 'Ubuntu',
+            release: {
+              major: '14',
+              full: '14.04',
+            },
+            distro: {
+              codename: nil,
+              id: 'Ubuntu',
+            },
+          },
         }
       end
       let(:title) { 'ppa:user/foo' }
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{lsbdistcodename fact not available: release parameter required})
+        is_expected.to raise_error(Puppet::Error, %r{os.distro.codename fact not available: release parameter required})
       end
     end
 
     describe 'not ubuntu' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '6', full: '6.0.7' } },
-          lsbdistrelease: '6.0.7',
-          lsbdistcodename: 'wheezy',
-          operatingsystem: 'Debian',
-          lsbdistid: 'debian',
-          osfamily: 'Debian',
-          puppetversion: Puppet.version,
+          os: {
+            family: 'Debian',
+            name: 'Debian',
+            release: {
+              major: '6',
+              full: '6.0.7',
+            },
+            distro: {
+              codename: 'wheezy',
+              id: 'Debian',
+            },
+          },
         }
       end
       let(:title) { 'ppa:user/foo' }
