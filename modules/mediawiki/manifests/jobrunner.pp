@@ -6,7 +6,7 @@ class mediawiki::jobrunner {
 
     git::clone { 'JobRunner':
         directory => '/srv/jobrunner',
-        origin    => 'https://github.com/wikimedia/mediawiki-services-jobrunner',
+        origin    => 'https://github.com/miraheze/jobrunner-service',
     }
 
     $redis_password = lookup('passwords::redis::master')
