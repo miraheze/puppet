@@ -2,7 +2,7 @@
 -- Author: John Lewis, Miraheze
 
 local result = {}
-local queues = { 'l-unclaimed', 'z-claimed', 'z-abandoned', 'z-delayed' }
+local queues = { 'l-unclaimed', 'z-abandoned' }
 -- Below is a list of jobs we want to monitor specifically
 local jobs = { '*', 'CreateWikiJob', 'RequestWikiAIJob', 'DataDumpGenerateJob', 'MWScriptJob', 'NamespaceMigrationJob', 'LocalRenameUserJob', 'LocalGlobalUserPageCacheUpdateJob', 'replaceText', 'webVideoTranscode', 'refreshLinks', 'htmlCacheUpdate', 'recentChangesUpdate' }
 
