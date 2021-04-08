@@ -19,9 +19,33 @@ class role::openldap (
     }
 
     openldap::server::database { 'dc=miraheze,dc=org':
+        ensure    => present,
         directory => '/var/lib/ldap/miraheze',
         rootdn    => 'cn=admin,dc=miraheze,dc=org',
         rootpw    => $admin_password,
+    }
+
+    # LDAP monitoring support
+    -> openldap::server::module { 'back_monitor':
+        ensure => present,
+    }
+
+    -> openldap::server::database { 'monitor':
+        ensure  => present,
+        suffix  => 'cn=monitoring,cn=Monitor',
+        backend => 'monitor',
+        rootdn  => "cn=admin,cn=monitor",
+        rootpw  => $admin_password,
+    }
+
+    -> openldap::server::access { 'admin-monitor-access':
+        ensure => present,
+        what   => 'dn.subtree="cn=monitoring,cn=Monitor"',
+        suffix => 'cn=monitoring,cn=Monitor',
+        access => [
+            "by dn.base=\"cn=admin,dc=miraheze,dc=org\" read",
+            'by * none',
+        ],
     }
 
     # Allow everybody to try to bind
@@ -43,6 +67,22 @@ class role::openldap (
             'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
             'by users read',
             'by * break',
+        ],
+    }
+access to dn.subtree="cn=Monitor"
+by dn.exact="uid=Admin,dc=my,dc=org" write
+by users read
+
+by * none
+    # Allow everybody to try to bind
+    openldap::server::access { '0 on cn=monitoring,cn=Monitor':
+        what     => 'attrs=userPassword,shadowLastChange',
+        access   => [
+            'by dn="cn=admin,dc=miraheze,dc=org" write',
+            'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
+            'by self write',
+            'by anonymous auth',
+            'by * none',
         ],
     }
 
