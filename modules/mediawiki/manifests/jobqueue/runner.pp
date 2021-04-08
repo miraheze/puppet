@@ -5,6 +5,7 @@ class mediawiki::jobqueue::runner {
     require_package('python3-xmltodict')
 
     git::clone { 'JobRunner':
+        enure     =>> latest,
         directory => '/srv/jobrunner',
         origin    => 'https://github.com/miraheze/jobrunner-service',
     }
