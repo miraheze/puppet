@@ -100,8 +100,6 @@ function do_global_send_response()
     local cache_status = cache_status_to_string(ts.http.get_cache_lookup_status())
     ts.client_response.header['X-Cache-Int'] = HOSTNAME .. " " .. cache_status
 
-    ts.client_response.header['X-ATS-Timestamp'] = os.time()
-
     if ts.client_response.header['Set-Cookie'] then
         -- At the frontend layer we do have measures in place to ensure that,
         -- regardless of what the origin says, Set-Cookie responses are never
