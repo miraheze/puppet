@@ -19,7 +19,7 @@ class role::openldap (
     }
 
     openldap::server::database { 'dc=miraheze,dc=org':
-        ensure  => present,
+        ensure    => present,
         directory => '/var/lib/ldap/miraheze',
         rootdn    => 'cn=admin,dc=miraheze,dc=org',
         rootpw    => $admin_password,
