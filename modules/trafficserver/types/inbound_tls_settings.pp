@@ -61,9 +61,6 @@
 # [*load_elevated*]
 #   Enables (1) or disables (0) elevation of traffic_server privileges during loading of SSL certificates.
 #
-# [*do_ocsp*]
-#   Enables (1) or disables (0) OCSP stapling.
-#
 # [*ssl_handshake_timeout_in*]
 #   When enabled this limits the total duration for the server side SSL handshake. Setting it to 0 disables
 #   the timeout.
@@ -84,7 +81,6 @@ type Trafficserver::Inbound_TLS_settings = Struct[{
     'session_ticket_filename'  => Optional[String],
     'session_ticket_number'    => Optional[Integer[0]],
     'load_elevated'            => Optional[Integer[0, 1]],
-    'do_ocsp'                  => Integer[0, 1],
     'ssl_handshake_timeout_in' => Integer[0],
     'prioritize_chacha'        => Integer[0, 1],
 }]
