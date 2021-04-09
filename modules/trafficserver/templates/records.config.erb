@@ -6,9 +6,9 @@ CONFIG proxy.config.http.server_ports STRING<% if @https_port -%> <%= @https_por
 
 CONFIG proxy.config.admin.user_id STRING <%= @user %>
 
-CONFIG proxy.config.http.insert_request_via_str INT 0
+CONFIG proxy.config.http.insert_request_via_str INT 1
 CONFIG proxy.config.http.insert_client_ip INT 0
-CONFIG proxy.config.http.insert_squid_x_forwarded_for INT <%= @x_forwarded_for %>
+CONFIG proxy.config.http.insert_squid_x_forwarded_for INT 0
 CONFIG proxy.config.http.response_server_enabled INT 2
 
 CONFIG proxy.config.url_remap.pristine_host_hdr INT 1
@@ -19,6 +19,7 @@ CONFIG proxy.config.plugin.lua.max_states INT <%= @max_lua_states %>
 <% if @res_track_memory -%>
 CONFIG proxy.config.res_track_memory INT <%= @res_track_memory %>
 <% end -%>
+
 <% if @network_settings -%>
 # Network settings
 CONFIG proxy.config.net.connections_throttle INT <%= @network_settings['connections_throttle'] %>
@@ -27,6 +28,7 @@ CONFIG proxy.config.net.default_inactivity_timeout INT <%= @network_settings['de
 CONFIG proxy.config.net.max_connections_in INT <%= @network_settings['max_connections_in'] %>
 CONFIG proxy.config.net.max_connections_active_in INT <%= @network_settings['max_connections_active_in'] %>
 <% end -%>
+
 <% if @h2_settings -%>
 # HTTP/2 settings
 CONFIG proxy.config.http2.stream_priority_enabled INT <%= @h2_settings['stream_priority_enabled'] %>
@@ -181,13 +183,6 @@ CONFIG proxy.config.ssl.server.groups_list STRING <%= @inbound_tls_settings['com
 CONFIG proxy.config.ssl.server.cert.path STRING <%= @inbound_tls_settings['cert_path'] %>
 CONFIG proxy.config.ssl.server.private_key.path STRING <%= @inbound_tls_settings['private_key_path'] %>
 CONFIG proxy.config.ssl.max_record_size INT <%= @inbound_tls_settings['max_record_size'] %>
-<% if @inbound_tls_settings['dhparams_file'] -%>
-CONFIG proxy.config.ssl.server.dhparams_file STRING <%= @inbound_tls_settings['dhparams_file'] %>
-<% end -%>
-CONFIG proxy.config.ssl.ocsp.enabled INT <%= @inbound_tls_settings['do_ocsp'] %>
-<% if @inbound_tls_settings['do_ocsp'] == 1 and @inbound_tls_settings['ocsp_stapling_path'] -%>
-CONFIG proxy.config.ssl.ocsp.response.path STRING <%= @inbound_tls_settings['ocsp_stapling_path'] %>
-<% end -%>
 CONFIG proxy.config.ssl.session_cache INT <%= @inbound_tls_settings['session_cache'] %>
 <% if @inbound_tls_settings['session_cache_timeout'] -%>
 CONFIG proxy.config.ssl.session_cache.timeout INT <%= @inbound_tls_settings['session_cache_timeout'] %>

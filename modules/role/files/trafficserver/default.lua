@@ -111,6 +111,14 @@ function do_global_send_response()
         ts.client_response.header['Cache-Control'] = 'private, max-age=0, s-maxage=0'
     end
 
+    if ts.client_request.header['X-Miraheze-Debug'] == nil then
+        ts.client_response.header['Backend-Timing'] = nil
+        ts.client_response.header['X-ATS-Timestamp'] = nil
+        ts.client_response.header['X-Powered-By'] = nil
+        ts.client_response.header['X-Timestamp '] = nil
+        ts.client_response.header['X-Trans-Id'] = nil
+    end
+
     return 0
 end
 
@@ -211,4 +219,8 @@ function do_global_read_response()
 end
 
 function do_global_send_request()
+    local client_ip, client_port, client_family = ts.client_request.client_addr.get_addr()
+
+    ts.server_request.header['X-Real-IP'] = client_ip
+    ts.server_request.header['X-Forwarded-Proto'] = 'https'
 end

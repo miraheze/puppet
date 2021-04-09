@@ -1,27 +1,17 @@
-function trafficserver::get_paths(Boolean $default_instance, String $instance_name) >> Hash {
+function trafficserver::get_paths() >> Hash {
     $libdir = '/usr/lib/trafficserver'
     $libexecdir = "${libdir}/modules"
-    $secretsdir = "/run/trafficserver-${instance_name}-secrets"
+    $secretsdir = "/run/trafficserver-secrets"
     $stekfile = "${secretsdir}/tickets.key"
-    if $default_instance { # debian layout -- https://github.com/apache/trafficserver/blob/master/config.layout
-      $base_path = undef
-      $prefix = '/usr'
-      $exec_prefix = $prefix
-      $sysconfdir = '/etc/trafficserver'
-      $datadir = '/var/cache/trafficserver'
-      $localstatedir = '/run'
-      $runtimedir = '/run/trafficserver'
-      $logdir = '/var/log/trafficserver'
-    } else {
-      $base_path = '/srv/trafficserver'
-      $prefix = "${base_path}/${instance_name}"
-      $exec_prefix = $prefix
-      $sysconfdir = "${prefix}/etc"
-      $datadir = "${prefix}/var/cache"
-      $localstatedir = "${prefix}/var"
-      $runtimedir = "${prefix}/var/run"
-      $logdir = "${prefix}/var/log"
-    }
+
+    $base_path = undef
+    $prefix = '/usr'
+    $exec_prefix = $prefix
+    $sysconfdir = '/etc/trafficserver'
+    $datadir = '/var/cache/trafficserver'
+    $localstatedir = '/run'
+    $runtimedir = '/run/trafficserver'
+    $logdir = '/var/log/trafficserver'
 
     $bindir = "${exec_prefix}/bin"
     $sbindir = "${exec_prefix}/sbin"

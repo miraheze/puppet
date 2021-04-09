@@ -12,14 +12,6 @@ role::trafficserver::mapping_rules:
       replacement: https://backends.miraheze.org
       params:
           - '@plugin=/usr/lib/trafficserver/modules/tslua.so'
-          - '@pparam=/etc/trafficserver/lua/normalize-path.lua'
-          # decode    :  /  @  !  $  (  )  *  ,  ;
-          - '@pparam="3A 2F 40 21 24 28 29 2A 2C 3B"'
-          # encode    [  ]  &  '  +  =
-          - '@pparam="5B 5D 26 27 2B 3D"'
-          - '@plugin=/usr/lib/trafficserver/modules/tslua.so'
-          - '@pparam=/etc/trafficserver/lua/rb-mw-mangling.lua'
-          - '@plugin=/usr/lib/trafficserver/modules/tslua.so'
           - '@pparam=/etc/trafficserver/lua/x-miraheze-debug-routing.lua'
           # Re-use origin server connections if origin IP and port match
           - '@plugin=/usr/lib/trafficserver/modules/conf_remap.so'
@@ -137,4 +129,3 @@ role::trafficserver::storage_elements:
 
 role::trafficserver::cache::req_handling: {}
 role::traficserver::cache::alternate_domains: {}
-

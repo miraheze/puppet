@@ -1,6 +1,6 @@
 # === class role::trafficserver
 #
-# Sets up a Traffic Server instance.
+# Sets up Traffic Server.
 #
 class role::trafficserver (
     String $user                                                = lookup('role::trafficserver::user', {default_value => 'trafficserver'}),
@@ -44,15 +44,12 @@ class role::trafficserver (
         notify  => Service['trafficserver'],
     }
 
-    $default_instance = true
-    $instance_name = 'backend'
-    $paths = trafficserver::get_paths($default_instance, 'backend')
+    $paths = trafficserver::get_paths()
 
-    trafficserver::instance { $instance_name:
+    class { '::trafficserver':
         paths                   => $paths,
-        default_instance        => $default_instance,
         http_port               => 80,
-        https_port               => 443,
+        https_port              => 443,
         network_settings        => $network_settings,
         http_settings           => $http_settings,
         h2_settings             => $h2_settings,
@@ -74,7 +71,6 @@ class role::trafficserver (
         logs                    => $logs,
         parent_rules            => $parent_rules,
         error_page              => template('role/trafficserver/errorpage.html.erb'),
-        x_forwarded_for         => 1,
         systemd_hardening       => $systemd_hardening,
         res_track_memory        => $res_track_memory,
     }
@@ -85,19 +81,6 @@ class role::trafficserver (
             source    => "puppet:///modules/role/trafficserver/${default_lua_script}.lua",
             unit_test => "puppet:///modules/role/trafficserver/${default_lua_script}_test.lua",
         }
-    }
-
-    trafficserver::lua_script { 'x-mediawiki-original':
-        source    => 'puppet:///modules/role/trafficserver/x-mediawiki-original.lua',
-        unit_test => 'puppet:///modules/role/trafficserver/x-mediawiki-original_test.lua',
-    }
-
-    trafficserver::lua_script { 'normalize-path':
-        source    => 'puppet:///modules/role/trafficserver/normalize-path.lua',
-    }
-
-    trafficserver::lua_script { 'rb-mw-mangling':
-        source    => 'puppet:///modules/role/trafficserver/rb-mw-mangling.lua',
     }
 
     trafficserver::lua_script { 'x-miraheze-debug-routing':
