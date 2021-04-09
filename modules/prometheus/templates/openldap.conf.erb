@@ -1,5 +1,3 @@
 ---
-server: tcp:port=9142
-client: tcp:host=127.0.0.1:port=389
-binddn: cn=monitor,dc=miraheze,dc=org
-bindpw: <%= @monitor_pass %>
+ldapUser: "cn=monitor,dc=miraheze,dc=org"
+ldapPass: "<%= @monitor_pass %>"

@@ -1,38 +1,30 @@
 class prometheus::openldap_exporter {
 
-    require_package(['python-ldaptor', 'python-yaml', 'python-twisted-core'])
-
     $monitor_pass = lookup('prometheus::openldap_exporter::monitor_pass')
 
-    file { '/opt/prometheus-openldap-exporter_0+git20171128-3_amd64.deb':
+    file { '/usr/loca/bin/prometheus-openldap-exporter':
         ensure  => present,
-        source  => 'puppet:///modules/prometheus/packages/prometheus-openldap-exporter_0+git20171128-3_amd64.deb',
+        source  => 'puppet:///modules/prometheus/openldap/openldap_exporter-linux',
     }
 
-    package { 'prometheus-openldap-exporter':
-        ensure      => installed,
-        provider    => dpkg,
-        source      => '/opt/prometheus-openldap-exporter_0+git20171128-3_amd64.deb',
-        require     => [
-            File['/opt/prometheus-openldap-exporter_0+git20171128-3_amd64.deb'],
-            Package['python-ldaptor'],
-            Package['python-yaml'],
-            Package['python-twisted-core']
-        ]
-    }
-
-    file { '/etc/prometheus/openldap-exporter.yaml':
+    file { '/etc/openldap-exporter.yaml':
         ensure  => present,
         mode    => '0440',
         owner   => 'prometheus',
         group   => 'prometheus',
         content => template('prometheus/openldap.conf.erb'),
+        require => File['/usr/loca/bin/prometheus-openldap-exporter'],
         notify  => Service['prometheus-openldap-exporter'],
     }
 
-    service { 'prometheus-openldap-exporter':
-        ensure  => running,
-        require => File['/etc/prometheus/openldap-exporter.yaml'],
+    systemd::service { 'prometheus-openldap-exporter':
+        ensure  => present,
+        restart => true,
+        content => systemd_template('prometheus-openldap-exporter'),
+        service_params => {
+            enable  => true,
+            require => File['/etc/openldap-exporter.yaml'],
+        }
     }
 
     $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])

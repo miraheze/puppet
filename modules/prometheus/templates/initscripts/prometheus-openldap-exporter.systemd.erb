@@ -1,0 +1,11 @@
+[Unit]
+Description=Prometheus exporter for Varnish
+Documentation=https://prometheus.io/docs/introduction/overview/
+
+[Service]
+Restart=always
+User=prometheus
+ExecStart=/usr/bin/prometheus-varnish-exporter -raw -web.listen-address :<%= @listen_port %>
+
+[Install]
+WantedBy=multi-user.target
