@@ -1,5 +1,7 @@
 class prometheus::openldap_exporter {
 
+    require_package(['python-ldaptor', 'python-yaml', 'python-twisted-core'])
+
     $monitor_pass = lookup('prometheus::openldap_exporter::monitor_pass')
 
     file { '/opt/prometheus-openldap-exporter_0+git20171128-3_amd64.deb':
@@ -11,7 +13,12 @@ class prometheus::openldap_exporter {
         ensure      => installed,
         provider    => dpkg,
         source      => '/opt/prometheus-openldap-exporter_0+git20171128-3_amd64.deb',
-        require     => File['/opt/prometheus-openldap-exporter_0+git20171128-3_amd64.deb'],
+        require     => [
+            File['/opt/prometheus-openldap-exporter_0+git20171128-3_amd64.deb'],
+            Package['python-ldaptor'],
+            Package['python-yaml'],
+            Package['python-twisted-core']
+        ]
     }
 
     file { '/etc/prometheus/openldap-exporter.yaml':
