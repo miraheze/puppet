@@ -50,7 +50,6 @@ role::trafficserver::inbound_tls_settings:
   session_cache_buckets: 32768
   session_ticket_enable: 0
   load_elevated: 1
-  do_ocsp: 0
   ssl_handshake_timeout_in: 60
   prioritize_chacha: 1
 
