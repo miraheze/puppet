@@ -113,10 +113,13 @@ function do_global_send_response()
 
     if ts.client_request.header['X-Miraheze-Debug'] == nil then
         ts.client_response.header['Backend-Timing'] = nil
-        ts.client_response.header['X-ATS-Timestamp'] = nil
         ts.client_response.header['X-Powered-By'] = nil
         ts.client_response.header['X-Timestamp '] = nil
         ts.client_response.header['X-Trans-Id'] = nil
+    end
+
+    if ts.client_request.header['X-Miraheze-Debug'] then
+        ts.client_response.header['X-ATS-Timestamp'] = os.time()
     end
 
     return 0

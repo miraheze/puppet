@@ -132,14 +132,6 @@ describe("Busted unit testing framework", function()
       assert.are.equals(nil, _G.ts.server_response.header['Vary'])
     end)
 
-    it("test - do_global_send_response cache miss", function()
-      _G.ts.http.get_cache_lookup_status = function() return TS_LUA_CACHE_LOOKUP_MISS end
-
-      assert.are.equals(0, do_global_send_response())
-      assert.are.equals('pass-test-hostname miss', ts.client_response.header['X-Cache-Int'])
-      assert(ts.client_response.header['X-ATS-Timestamp'] > 1567423579)
-    end)
-
     it("test - do_global_send_response cache hit", function()
       _G.ts.http.get_cache_lookup_status = function() return TS_LUA_CACHE_LOOKUP_HIT_FRESH end
 
