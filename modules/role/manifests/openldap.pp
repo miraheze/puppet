@@ -26,26 +26,9 @@ class role::openldap (
     }
 
     # LDAP monitoring support
-    -> openldap::server::module { 'back_monitor':
-        ensure => present,
-    }
-    -> openldap::server::database { 'monitor':
+    openldap::server::database { 'cn=monitor':
         ensure  => present,
-        suffix  => 'cn=monitor',
         backend => 'monitor',
-        rootdn  => "cn=admin,dc=miraheze,dc=org",
-        rootpw  => $admin_password,
-    }
-    -> openldap::server::access { 'admin-monitor-access':
-        ensure => present,
-        what   => 'dn.subtree="cn=monitor"',
-        suffix => 'cn=monitor',
-        access => [
-            "by dn=\"cn=admin,dc=miraheze,dc=org\" write",
-            "by dn=\"cn=monitor,dc=miraheze,dc=org\" read",
-            "by self write",
-            'by * none',
-        ],
     }
 
     # Allow everybody to try to bind
@@ -70,8 +53,24 @@ class role::openldap (
         ],
     }
 
+    openldap::server::access { 'admin-monitor-access':
+        ensure => present,
+        what   => 'dn.subtree="cn=monitor"',
+        suffix => 'cn=monitor',
+        access => [
+            'by dn="cn=admin,dc=miraheze,dc=org" write',
+            'by dn="cn=monitor,dc=miraheze,dc=org" read',
+            'by self write',
+            'by * none',
+        ],
+    }
+
     # Modules
     openldap::server::module { 'back_mdb':
+        ensure => present,
+    }
+
+    openldap::server::module { 'back_monitor':
         ensure => present,
     }
 
