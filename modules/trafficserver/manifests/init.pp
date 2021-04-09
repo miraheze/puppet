@@ -192,7 +192,7 @@
 #                       { 'devname'  => 'sdb3', 'volume' => 2, 'id' => 'cache.disk.1' }, ],
 #  }
 #
-define trafficserver (
+class trafficserver (
     Trafficserver::Paths $paths,
     Optional[Stdlib::Port] $http_port = undef,
     Optional[Stdlib::Port] $https_port = undef,
