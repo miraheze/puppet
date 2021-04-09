@@ -29,7 +29,6 @@ class role::openldap (
     -> openldap::server::module { 'back_monitor':
         ensure => present,
     }
-
     -> openldap::server::database { 'monitor':
         ensure  => present,
         suffix  => 'cn=monitoring,cn=Monitor',
@@ -37,7 +36,6 @@ class role::openldap (
         rootdn  => "cn=admin,cn=monitor",
         rootpw  => $admin_password,
     }
-
     -> openldap::server::access { 'admin-monitor-access':
         ensure => present,
         what   => 'dn.subtree="cn=monitoring,cn=Monitor"',
