@@ -31,17 +31,19 @@ class role::openldap (
     }
     -> openldap::server::database { 'monitor':
         ensure  => present,
-        suffix  => 'cn=monitoring,cn=Monitor',
+        suffix  => 'cn=monitor',
         backend => 'monitor',
-        rootdn  => "cn=admin,cn=monitor",
+        rootdn  => "cn=admin,dc=miraheze,dc=org",
         rootpw  => $admin_password,
     }
     -> openldap::server::access { 'admin-monitor-access':
         ensure => present,
-        what   => 'dn.subtree="cn=monitoring,cn=Monitor"',
-        suffix => 'cn=monitoring,cn=Monitor',
+        what   => 'dn.subtree="cn=monitor"',
+        suffix => 'cn=monitor',
         access => [
-            "by dn.base=\"cn=admin,dc=miraheze,dc=org\" read",
+            "by dn=\"cn=admin,dc=miraheze,dc=org\" write",
+            "by dn=\"cn=monitor,dc=miraheze,dc=org\" read",
+            "by self write",
             'by * none',
         ],
     }
