@@ -69,22 +69,6 @@ class role::openldap (
             'by * break',
         ],
     }
-access to dn.subtree="cn=Monitor"
-by dn.exact="uid=Admin,dc=my,dc=org" write
-by users read
-
-by * none
-    # Allow everybody to try to bind
-    openldap::server::access { '0 on cn=monitoring,cn=Monitor':
-        what     => 'attrs=userPassword,shadowLastChange',
-        access   => [
-            'by dn="cn=admin,dc=miraheze,dc=org" write',
-            'by group.exact="cn=Administrators,ou=groups,dc=miraheze,dc=org" write',
-            'by self write',
-            'by anonymous auth',
-            'by * none',
-        ],
-    }
 
     # Modules
     openldap::server::module { 'back_mdb':
