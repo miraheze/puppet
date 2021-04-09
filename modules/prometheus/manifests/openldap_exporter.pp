@@ -3,8 +3,10 @@ class prometheus::openldap_exporter {
     $monitor_pass = lookup('prometheus::openldap_exporter::monitor_pass')
 
     file { '/usr/local/bin/prometheus-openldap-exporter':
-        ensure  => present,
-        source  => 'puppet:///modules/prometheus/openldap/openldap_exporter-linux',
+        ensure => file,
+        mode   => '0555',
+        source => 'puppet:///modules/prometheus/openldap/openldap_exporter-linux',
+        notify => Service['prometheus-openldap-exporter'],
     }
 
     file { '/etc/openldap-exporter.yaml':
