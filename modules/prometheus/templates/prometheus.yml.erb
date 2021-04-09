@@ -118,6 +118,13 @@ scrape_configs:
         '<%= host %>:9154',
 <%- end -%>
       ]
+  - job_name: openldap
+    static_configs:
+      - targets: [
+<%- @host_openldap.sort.each do |host| -%>
+        '<%= host %>:9142',
+<%- end -%>
+      ]
   - job_name: 'blackbox_https_mediawiki_cp'
     metrics_path: /probe
     params:

@@ -20,7 +20,11 @@ class mediawiki(
     include mediawiki::monitoring
 
     if lookup(jobrunner) {
-        include mediawiki::jobrunner
+        include mediawiki::jobqueue::runner
+    }
+
+    if lookup(jobchron) {
+        include mediawiki::jobqueue::chron
     }
 
     file { [

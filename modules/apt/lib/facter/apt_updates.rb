@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 apt_package_updates = nil
 apt_dist_updates = nil
 
@@ -11,7 +13,7 @@ def get_updates(upgrade_option)
     unless apt_get_result.nil?
       apt_updates = [[], []]
       apt_get_result.each_line do |line|
-        next unless line =~ %r{^Inst\s}
+        next unless %r{^Inst\s}.match?(line)
         package = line.gsub(%r{^Inst\s([^\s]+)\s.*}, '\1').strip
         apt_updates[0].push(package)
         security_matches = [
@@ -26,66 +28,54 @@ def get_updates(upgrade_option)
       end
     end
   end
-
-  setcode do
-    if !apt_updates.nil? && apt_updates.length == 2
-      apt_updates != [[], []]
-    end
-  end
   apt_updates
 end
 
 Facter.add('apt_has_updates') do
   confine osfamily: 'Debian'
-  apt_package_updates = get_updates('upgrade')
+  setcode do
+    apt_package_updates = get_updates('upgrade')
+    if !apt_package_updates.nil? && apt_package_updates.length == 2
+      apt_package_updates != [[], []]
+    end
+  end
 end
 
 Facter.add('apt_has_dist_updates') do
   confine osfamily: 'Debian'
-  apt_dist_updates = get_updates('dist-upgrade')
+  setcode do
+    apt_dist_updates = get_updates('dist-upgrade')
+    if !apt_dist_updates.nil? && apt_dist_updates.length == 2
+      apt_dist_updates != [[], []]
+    end
+  end
 end
 
 Facter.add('apt_package_updates') do
   confine apt_has_updates: true
   setcode do
-    if Facter.version < '2.0.0'
-      apt_package_updates[0].join(',')
-    else
-      apt_package_updates[0]
-    end
+    apt_package_updates[0]
   end
 end
 
 Facter.add('apt_package_dist_updates') do
   confine apt_has_dist_updates: true
   setcode do
-    if Facter.version < '2.0.0'
-      apt_dist_updates[0].join(',')
-    else
-      apt_dist_updates[0]
-    end
+    apt_dist_updates[0]
   end
 end
 
 Facter.add('apt_package_security_updates') do
   confine apt_has_updates: true
   setcode do
-    if Facter.version < '2.0.0'
-      apt_package_updates[1].join(',')
-    else
-      apt_package_updates[1]
-    end
+    apt_package_updates[1]
   end
 end
 
 Facter.add('apt_package_security_dist_updates') do
   confine apt_has_dist_updates: true
   setcode do
-    if Facter.version < '2.0.0'
-      apt_dist_updates[1].join(',')
-    else
-      apt_dist_updates[1]
-    end
+    apt_dist_updates[1]
   end
 end
 

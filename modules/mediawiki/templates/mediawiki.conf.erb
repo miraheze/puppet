@@ -73,6 +73,9 @@ server {
 		return 301 https://donate.miraheze.org;
 	}
 
+	location /.well-known/change-password {
+		return 301 /wiki/Special:ChangePassword;
+	}
 }
 
 server {
@@ -129,6 +132,10 @@ server {
 
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
+	}
+
+	location /.well-known/change-password {
+		return 301 /wiki/Special:ChangePassword;
 	}
 }
 
@@ -262,11 +269,15 @@ server {
 	include /etc/nginx/mediawiki-includes;
 
 	location = /robots.txt {
-			rewrite ^(.*)$ /robots.php;
+		rewrite ^(.*)$ /robots.php;
 	}
 
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
+	}
+
+	location /.well-known/change-password {
+		return 301 /wiki/Special:ChangePassword;
 	}
 }
 

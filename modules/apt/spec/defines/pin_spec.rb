@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 describe 'apt::pin', type: :define do
   let :pre_condition do
@@ -5,11 +7,18 @@ describe 'apt::pin', type: :define do
   end
   let(:facts) do
     {
-      os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-      lsbdistid: 'Debian',
-      osfamily: 'Debian',
-      lsbdistcodename: 'jessie',
-      puppetversion: Puppet.version,
+      os: {
+        family: 'Debian',
+        name: 'Debian',
+        release: {
+          major: '8',
+          full: '8.0',
+        },
+        distro: {
+          codename: 'jessie',
+          id: 'Debian',
+        },
+      },
     }
   end
   let(:title) { 'my_pin' }
