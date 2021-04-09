@@ -19,17 +19,16 @@ class role::openldap (
     }
 
     openldap::server::database { 'dc=miraheze,dc=org':
-        ensure    => present,
+        ensure  => present,
         directory => '/var/lib/ldap/miraheze',
         rootdn    => 'cn=admin,dc=miraheze,dc=org',
         rootpw    => $admin_password,
-    } ->
+    }
+
     # LDAP monitoring support
-    openldap::server::database { 'monitor':
+    openldap::server::database { 'cn=monitor':
         ensure  => present,
-        suffix  => 'cn=monitor',
         backend => 'monitor',
-        rootdn  => "cn=admin,cn=monitor",
     }
 
     # Allow everybody to try to bind
