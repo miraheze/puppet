@@ -2,7 +2,7 @@ class prometheus::openldap_exporter {
 
     $monitor_pass = lookup('prometheus::openldap_exporter::monitor_pass')
 
-    file { '/usr/loca/bin/prometheus-openldap-exporter':
+    file { '/usr/local/bin/prometheus-openldap-exporter':
         ensure  => present,
         source  => 'puppet:///modules/prometheus/openldap/openldap_exporter-linux',
     }
@@ -13,8 +13,8 @@ class prometheus::openldap_exporter {
         owner   => 'prometheus',
         group   => 'prometheus',
         content => template('prometheus/openldap.conf.erb'),
-        require => File['/usr/loca/bin/prometheus-openldap-exporter'],
         notify  => Service['prometheus-openldap-exporter'],
+        require => File['/usr/local/bin/prometheus-openldap-exporter'],
     }
 
     systemd::service { 'prometheus-openldap-exporter':

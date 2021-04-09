@@ -1,11 +1,11 @@
 [Unit]
-Description=Prometheus exporter for Varnish
-Documentation=https://prometheus.io/docs/introduction/overview/
+Description=Prometheus OpenLDAP Exporter
+ConditionPathExists=/etc/openldap-exporter.yaml
 
 [Service]
 Restart=always
 User=prometheus
-ExecStart=/usr/bin/prometheus-varnish-exporter -raw -web.listen-address :<%= @listen_port %>
+ExecStart=/usr/local/bin/prometheus-openldap-exporter --config /etc/openldap-exporter.yaml
 
 [Install]
 WantedBy=multi-user.target
