@@ -9,8 +9,6 @@ regex_redirect https://<%= property['regex_domain_ats'] %>/ https://<%= property
 redirect https://<%= property['additional_domain'] %>/ https://<%= property['redirect'] %>/
 <%- end -%>
 <%- if property['url'] -%>
-regex_redirect https://<%= property['url'] %>/ https://<%= property['redirect'] %>/
-<%- else -%>
 redirect https://<%= property['url'] %>/ https://<%= property['redirect'] %>/
 <%- end -%>
 <%- end -%>
