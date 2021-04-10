@@ -27,7 +27,6 @@ class role::trafficserver (
     Boolean $systemd_hardening                                  = lookup('role::trafficserver::systemd_hardening', {default_value => true}),
 ) {
 
-
     # Add hostname to the configuration file read by the default global Lua
     # plugin
     file { "/etc/trafficserver/lua/default.lua.conf":
@@ -69,9 +68,7 @@ class role::trafficserver (
         res_track_memory        => $res_track_memory,
     }
 
-
     $module_path = get_module_path($module_name)
-
     $csp_whitelist = loadyaml("${module_path}/data/csp_whitelist.yaml")
     $frame_whitelist = loadyaml("${module_path}/data/frame_whitelist.yaml")
 

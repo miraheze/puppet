@@ -38,12 +38,7 @@ ProtectSystem=strict
 ReadWritePaths=<%= @paths['logdir'] %>
 ReadWritePaths=<%= @paths['runtimedir'] %>
 ReadWritePaths=<%= @paths['cachedir'] %>
-<% if @update_ocsp -%>
-ReadWritePaths=/var/cache/ocsp
-ReadWritePaths=<%= @paths['sysconfdir'] %>
 <% end -%>
-<% end -%>
-<% if @service_name != 'trafficserver' -%>
+
 [Install]
 WantedBy=multi-user.target
-<% end -%>

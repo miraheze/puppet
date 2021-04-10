@@ -1,13 +1,13 @@
 # https://docs.trafficserver.apache.org/en/latest/admin-guide/files/remap.config.en.html
 # This file is managed by Puppet.
 
-<% @sslredirects.each_pair do | name, property | %>
-<% if property['mobiledomain'] -%>
-redirect https://<%= property['mobiledomain'] %>/ http://<%= property['redirect'] %>/
-<% end -%>
+<%- @sslredirects.each_pair do | name, property | -%>
+<%- if property['mobiledomain'] -%>
+redirect https://<%= property['mobiledomain'] %>/ https://<%= property['redirect'] %>/
+<%- end -%>
 redirect https://<%= property['url'] %>/ https://<%= property['redirect'] %>/
-<% end %>
+<%- end -%>
 
-<% @mapping_rules.each do |rule| -%>
+<%- @mapping_rules.each do |rule| -%>
 <%= rule['type'] %> <%= rule['target'] %> <%= rule['replacement'] %> <%= rule.fetch('params', []).join(' ') %>
-<% end -%>
+<%- end -%>
