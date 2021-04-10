@@ -17,7 +17,6 @@ class role::trafficserver (
     Hash $alternate_domains                                     = lookup('role::trafficserver::cache::alternate_domains', {'default_value' => {}}),
     Array[TrafficServer::Mapping_rule] $mapping_rules           = lookup('role::trafficserver::mapping_rules', {default_value => []}),
     Optional[TrafficServer::Negative_Caching] $negative_caching = lookup('role::trafficserver::negative_caching', {default_value => undef}),
-    String $default_lua_script                                  = lookup('role::trafficserver::default_lua_script', {default_value => ''}),
     Array[TrafficServer::Storage_element] $storage              = lookup('role::trafficserver::storage_elements', {default_value => []}),
     Array[TrafficServer::Log_format] $log_formats               = lookup('role::trafficserver::log_formats', {default_value => []}),
     Array[TrafficServer::Log_filter] $log_filters               = lookup('role::trafficserver::log_filters', {default_value => []}),
@@ -28,14 +27,10 @@ class role::trafficserver (
     Boolean $systemd_hardening                                  = lookup('role::trafficserver::systemd_hardening', {default_value => true}),
 ) {
 
-    $global_lua_script = $default_lua_script? {
-        ''      => '',
-        default => "/etc/trafficserver/lua/${default_lua_script}.lua",
-    }
 
     # Add hostname to the configuration file read by the default global Lua
     # plugin
-    file { "/etc/trafficserver/lua/${default_lua_script}.lua.conf":
+    file { "/etc/trafficserver/lua/default.lua.conf":
         ensure  => present,
         owner   => root,
         group   => root,
@@ -58,7 +53,6 @@ class role::trafficserver (
         enable_xdebug           => $enable_xdebug,
         enable_compress         => $enable_compress,
         origin_coalescing       => $origin_coalescing,
-        global_lua_script       => $global_lua_script,
         max_lua_states          => $max_lua_states,
         storage                 => $storage,
         ram_cache_size          => $ram_cache_size,
@@ -75,12 +69,16 @@ class role::trafficserver (
         res_track_memory        => $res_track_memory,
     }
 
+
+    $module_path = get_module_path($module_name)
+
+    $csp_whitelist = loadyaml("${module_path}/data/csp_whitelist.yaml")
+    $frame_whitelist = loadyaml("${module_path}/data/frame_whitelist.yaml")
+
     # Install default Lua script
-    if $default_lua_script != '' {
-        trafficserver::lua_script { $default_lua_script:
-            source    => "puppet:///modules/role/trafficserver/${default_lua_script}.lua",
-            unit_test => "puppet:///modules/role/trafficserver/${default_lua_script}_test.lua",
-        }
+    trafficserver::lua_script { 'default':
+        content   => template('role/trafficserver/default.lua.erb'),;
+        unit_test => 'puppet:///modules/role/trafficserver/default_test.lua',
     }
 
     trafficserver::lua_script { 'x-miraheze-debug-routing':

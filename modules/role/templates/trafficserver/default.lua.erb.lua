@@ -120,6 +120,8 @@ function do_global_send_response()
         ts.client_response.header['X-ATS-Timestamp'] = os.time()
     end
 
+    ts.client_response.header['Content-Security-Policy'] = "default-src 'self' blob: data: <%- @csp_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self' <%- @frame_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%>"
+
     return 0
 end
 

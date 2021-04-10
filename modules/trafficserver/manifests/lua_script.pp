@@ -11,6 +11,9 @@
 # [*source*]
 #   Lua script source file
 #
+# [*content*]
+#   Lua script content file (template)
+#
 # [*unit_test*]
 #   Busted unit test source file for this Lua script (optional)
 #
@@ -23,6 +26,7 @@
 #
 define trafficserver::lua_script(
     Stdlib::Filesource           $source,
+    Optional                     $content       = undef,
     Optional[Stdlib::Filesource] $unit_test     = undef,
     String                       $service_name  = 'trafficserver',
     Stdlib::Absolutepath         $config_prefix = '/etc/trafficserver',
@@ -50,8 +54,9 @@ define trafficserver::lua_script(
     }
 
     file { "${lua_path}/${title}.lua":
-        *      => $defaults,
-        source => $source,
+        *       => $defaults,
+        source  => $source,
+        content => $content,
     }
 
     # Upon Lua scripts modification, run busted and reload trafficserver iff
