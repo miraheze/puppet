@@ -1,6 +1,10 @@
 # https://docs.trafficserver.apache.org/en/latest/admin-guide/files/remap.config.en.html
 # This file is managed by Puppet.
 
+map https://miraheze.org https://backends.miraheze.org @plugin=/usr/lib/trafficserver/modules/tslua.so @pparam=/etc/trafficserver/lua/x-miraheze-debug-routing.lua @plugin=/usr/lib/trafficserver/modules/conf_remap.so @pparam=proxy.config.http.server_session_sharing.match=2
+
+regex_map https://(.*).miraheze.org https://backends.miraheze.org @plugin=/usr/lib/trafficserver/modules/tslua.so @pparam=/etc/trafficserver/lua/x-miraheze-debug-routing.lua @plugin=/usr/lib/trafficserver/modules/conf_remap.so @pparam=proxy.config.http.server_session_sharing.match=2
+
 <%- @sslredirects.each_pair do | name, property | -%>
 <%- if property['regex_domain_ats'] -%>
 regex_redirect https://<%= property['regex_domain_ats'] %>/ https://<%= property['redirect'] %>/
