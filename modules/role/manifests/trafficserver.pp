@@ -77,7 +77,7 @@ class role::trafficserver (
 
     # Install default Lua script
     trafficserver::lua_script { 'default':
-        content   => template('role/trafficserver/default.lua.erb'),;
+        content   => template('role/trafficserver/default.lua.erb'),
         unit_test => 'puppet:///modules/role/trafficserver/default_test.lua',
     }
 
