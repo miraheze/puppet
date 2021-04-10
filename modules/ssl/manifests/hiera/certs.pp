@@ -6,7 +6,10 @@ define ssl::hiera::certs (
     String $hsts     = 'weak',
     Optional[String] $redirect = undef,
     Optional[String] $sslname  = undef,
+    # Deprecated use additional_domain
     Optional[String] $mobiledomain  = undef,
+    Optional[String] $additional_domain  = undef,
+    Optional[String] $regex_domain_ats  = undef,
     Optional[Boolean] $disable_event = true,
 ) {
     if $sslname == undef {
