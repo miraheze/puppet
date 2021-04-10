@@ -25,7 +25,7 @@
 #      }
 #
 define trafficserver::lua_script(
-    Stdlib::Filesource           $source,
+    Optional[Stdlib::Filesource] $source        = undef,
     Optional                     $content       = undef,
     Optional[Stdlib::Filesource] $unit_test     = undef,
     String                       $service_name  = 'trafficserver',
