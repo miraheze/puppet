@@ -7,15 +7,6 @@ role::trafficserver::mapping_rules:
     - type: map
       target: https://matomo.miraheze.org
       replacement: https://mon2.miraheze.org
-    - type: map
-      target: /
-      replacement: https://backends.miraheze.org
-      params:
-          - '@plugin=/usr/lib/trafficserver/modules/tslua.so'
-          - '@pparam=/etc/trafficserver/lua/x-miraheze-debug-routing.lua'
-          # Re-use origin server connections if origin IP and port match
-          - '@plugin=/usr/lib/trafficserver/modules/conf_remap.so'
-          - '@pparam=proxy.config.http.server_session_sharing.match=2'
 
 role::trafficserver::parent_rules:
   - dest_domain: 'backends.miraheze.org'
