@@ -2,11 +2,11 @@
 # This file is managed by Puppet.
 
 <%- @sslcerts.each_pair do | name, property |-%>
-<% if property['sslname'] -%>
+<%- if property['sslname'] -%>
 dest_ip=* ssl_cert_name=<%= property['sslname'] %>.crt ssl_key_name=<%= property['sslname'] %>.key
-<% else -%>
+<%- else -%>
 dest_ip=* ssl_cert_name=<%= property['url'] %>.crt ssl_key_name=<%= property['url'] %>.key
-<% end -%>
+<%- end -%>
 <%- end -%>
 
 # Redirects
