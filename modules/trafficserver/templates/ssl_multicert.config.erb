@@ -13,3 +13,6 @@ dest_ip=* ssl_cert_name=<%= property['url'] %>.crt ssl_key_name=<%= property['ur
 <%- @sslredirects.each_pair do | name, property | -%>
 dest_ip=* ssl_cert_name=<%= property['sslname'] %>.crt ssl_key_name=<%= property['sslname'] %>.key
 <%- end -%>
+
+# m.miraheze.org
+dest_ip=* ssl_cert_name=m.miraheze.org.crt ssl_key_name=m.miraheze.org.key
