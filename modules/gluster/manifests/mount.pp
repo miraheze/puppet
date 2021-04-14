@@ -73,12 +73,10 @@ define gluster::mount (
 		}
 	}
 
-	exec { $title:
-		command => "/bin/mkdir -p '${title}'",
-		user    => 'root',
-		group   => 'root',
-		creates => $title,
-		before  => Mount[$title],
+	file { $title:
+		ensure => directory,
+		user   => 'root',
+		group  => 'root',
 	}
 
 	if !defined(File['glusterfs.pem']) {
