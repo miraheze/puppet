@@ -75,7 +75,7 @@ define gluster::mount (
 
 	file { $title:
 		ensure => directory,
-		user   => 'root',
+		owner  => 'root',
 		group  => 'root',
 	}
 
