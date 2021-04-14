@@ -75,8 +75,8 @@ define gluster::mount (
 
 	file { $title:
 		ensure => directory,
-		owner  => 'root',
-		group  => 'root',
+		owner  => 'www-data',
+		group  => 'www-data',
 	}
 
 	if !defined(File['glusterfs.pem']) {
