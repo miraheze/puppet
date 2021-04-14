@@ -133,7 +133,7 @@ define gluster::mount (
 	mount { $title:
 		ensure   => $ensure,
 		fstype   => 'glusterfs',
-		remounts => false,
+		remounts => true,
 		device   => $volume,
 		options  => $mount_options,
 		require  => File['/var/lib/glusterd/secure-access']
