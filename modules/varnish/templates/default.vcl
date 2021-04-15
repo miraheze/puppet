@@ -410,6 +410,10 @@ sub vcl_deliver {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
 	}
 
+	// *** HTTPS deliver code - disable Google ad targeting (FLoC)
+	// See https://github.com/wicg/floc#opting-out-of-computation
+	set resp.http.Permissions-Policy = "interest-cohort=()";
+
 	set resp.http.Content-Security-Policy = "default-src 'self' blob: data: <%- @csp_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self' <%- @frame_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%>";
 
 	return (deliver);
