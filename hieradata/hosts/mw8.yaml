@@ -1,6 +1,6 @@
 users::groups:
   - mediawiki-admins
-jobrunner: false
+jobrunner: true
 contactgroups: ['icingaadmins', 'sre', 'mediawiki']
 role::mediawiki::use_strict_firewall: true
 mediawiki::branch: 'REL1_35'
