@@ -5,9 +5,11 @@ class ssl::wildcard (
 ) {
 
     if defined(Service['nginx']) {
-        $restart_nginx = Service['nginx']
+        $restart_service = Service['nginx']
+    } elsif defined(Service['trafficserver']) {
+        $restart_service = Service['trafficserver']
     } else {
-        $restart_nginx = undef
+        $restart_service = undef
     }
 
     if !defined(File['wildcard.miraheze.org-2020-2']) {
@@ -15,7 +17,7 @@ class ssl::wildcard (
             ensure => 'present',
             source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020-2.crt',
             path   => "${ssl_cert_path}/wildcard.miraheze.org-2020-2.crt",
-            notify => $restart_nginx,
+            notify => $restart_service,
         }
     }
 
@@ -27,7 +29,7 @@ class ssl::wildcard (
             owner  => 'root',
             group  => 'ssl-cert',
             mode   => '0660',
-            notify => $restart_nginx,
+            notify => $restart_service,
         }
     }
 }

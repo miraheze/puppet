@@ -324,15 +324,6 @@ class trafficserver (
         }
     }
 
-    include ssl::wildcard
-    include ssl::hiera
-
-    ssl::cert { 'm.miraheze.org': }
-
-    Class['ssl::wildcard'] ~> Service['trafficserver']
-    Class['ssl::hiera'] ~> Service['trafficserver']
-    Ssl::Cert['m.miraheze.org'] ~> Service['trafficserver']
-
     ## Service
 
     if ($http_port and $http_port < 1024) or ($https_port and $https_port < 1024) {

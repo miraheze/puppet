@@ -21,9 +21,11 @@ define ssl::hiera::certs (
     }
 
     if defined(Service['nginx']) {
-        $restart_nginx = Service['nginx']
+        $restart_service = Service['nginx']
+    } elsif defined(Service['trafficserver']) {
+        $restart_service = Service['trafficserver']
     } else {
-        $restart_nginx = undef
+        $restart_service = undef
     }
 
     if !defined(File[$sslurl]) {
@@ -31,7 +33,7 @@ define ssl::hiera::certs (
             ensure => present,
             path   => "/etc/ssl/localcerts/${sslurl}.crt",
             source => "puppet:///ssl/certificates/${sslurl}.crt",
-            notify => $restart_nginx,
+            notify => $restart_service,
         }
     }
 
@@ -43,7 +45,7 @@ define ssl::hiera::certs (
             owner  => 'root',
             group  => 'ssl-cert',
             mode   => '0660',
-            notify => $restart_nginx,
+            notify => $restart_service,
         }
     }
 }

@@ -81,4 +81,10 @@ class role::trafficserver (
     trafficserver::lua_script { 'x-miraheze-debug-routing':
         source    => 'puppet:///modules/role/trafficserver/x-miraheze-debug-routing.lua',
     }
+
+    # We do this last so it detects trafficserver service
+    include ssl::wildcard
+    include ssl::hiera
+
+    ssl::cert { 'm.miraheze.org': }
 }
