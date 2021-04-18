@@ -11,7 +11,7 @@ class role::trafficserver (
     Optional[Trafficserver::HTTP_settings] $http_settings       = lookup('role::trafficserver::http_settings', {default_value => undef}),
     Optional[Trafficserver::H2_settings] $h2_settings           = lookup('role::trafficserver::h2_settings', {default_value => undef}),
     Boolean $enable_xdebug                                      = lookup('role::trafficserver::enable_xdebug', {default_value => false}),
-    Boolean $enable_compress                                    = lookup('role::trafficserver::enable_compress', {default_value => true}),
+    Boolean $enable_compress                                    = lookup('role::trafficserver::enable_compress', {default_value => false}),
     Boolean $origin_coalescing                                  = lookup('role::trafficserver::origin_coalescing', {default_value => true}),
     Hash $req_handling                                          = lookup('role::trafficserver::cache::req_handling'),
     Hash $alternate_domains                                     = lookup('role::trafficserver::cache::alternate_domains', {'default_value' => {}}),
