@@ -73,12 +73,10 @@ define gluster::mount (
 		}
 	}
 
-	exec { $title:
-		command => "/bin/mkdir -p '${title}'",
-		user    => 'root',
-		group   => 'root',
-		creates => $title,
-		before  => Mount[$title],
+	file { $title:
+		ensure => directory,
+		owner  => 'www-data',
+		group  => 'www-data',
 	}
 
 	if !defined(File['glusterfs.pem']) {
@@ -135,7 +133,7 @@ define gluster::mount (
 	mount { $title:
 		ensure   => $ensure,
 		fstype   => 'glusterfs',
-		remounts => false,
+		remounts => true,
 		device   => $volume,
 		options  => $mount_options,
 		require  => File['/var/lib/glusterd/secure-access']
