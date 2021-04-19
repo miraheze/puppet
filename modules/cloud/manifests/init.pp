@@ -70,4 +70,9 @@ class cloud (
         ensure => present,
         source => 'puppet:///modules/cloud/pve.logrotate.conf',
     }
+
+    logrotate::conf { 'pve-firewall':
+        ensure => present,
+        source => 'puppet:///modules/cloud/pve-firewall.logrotate.conf',
+    }
 }
