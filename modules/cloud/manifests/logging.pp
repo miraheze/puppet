@@ -15,7 +15,7 @@ define cloud::logging (
 	Array  $file_source_options,
 	String $program_name,
 ) {
-	syslog_ng::rewrite { 'r_program':
+	syslog_ng::rewrite { "r_program_${program_name}":
 		params => {
 			'type'      => 'set',
 			'options'   => [
@@ -36,7 +36,7 @@ define cloud::logging (
 				'source' => "s_file_${title}",
 			},
 			{
-				'rewrite' => 'r_program'
+				'rewrite' => "r_program_${program_name}"
 			},
 			{
 				'destination' => 'd_graylog_syslog_tls',
