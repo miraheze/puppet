@@ -20,7 +20,11 @@ class mediawiki(
     include mediawiki::monitoring
 
     if lookup(jobrunner) {
-        include mediawiki::jobrunner
+        include mediawiki::jobqueue::runner
+    }
+
+    if lookup(jobchron) {
+        include mediawiki::jobqueue::chron
     }
 
     file { [
@@ -140,5 +144,27 @@ class mediawiki(
         environment => 'HOME=/srv/mediawiki/config',
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
+    }
+
+    require_package('vmtouch')
+
+    file { '/usr/local/bin/generateVmtouch.py':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/bin/generateVmtouch.py',
+    }
+
+    systemd::service { 'vmtouch':
+        ensure  => present,
+        content => systemd_template('vmtouch'),
+        restart => true,
+    }
+
+    cron { 'vmtouch':
+        ensure  => present,
+        command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
+        user    => 'root',
+        minute  => '0',
+        hour    => '*/1',
     }
 }

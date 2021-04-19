@@ -29,6 +29,13 @@ class prometheus::redis_exporter (
         ]
     }
 
+    file { '/etc/redis/jobQueueCollector.lua':
+        ensure => present,
+        mode   => '0555',
+        source => 'puppet:///modules/prometheus/redis/jobQueueCollector.lua',
+        notify => Service['prometheus-redis-exporter'],
+    }
+
     $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
     $firewall.each |$key, $value| {
         ufw::allow { "Prometheus  9121 ${value['ipaddress']}":

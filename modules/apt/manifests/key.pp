@@ -29,16 +29,20 @@
 #   Specifies a keyserver to provide the GPG key. Valid options: a string containing a domain name or a full URL (http://, https://,
 #   hkp:// or hkps://). The hkps:// protocol is currently only supported on Ubuntu 18.04.
 #
+# @param weak_ssl
+#    Specifies whether strict SSL verification on a https URL should be disabled. Valid options: true or false.
+#
 # @param options
 #   Passes additional options to `apt-key adv --keyserver-options`.
 #
 define apt::key (
-  Pattern[/\A(0x)?[0-9a-fA-F]{8}\Z/, /\A(0x)?[0-9a-fA-F]{16}\Z/, /\A(0x)?[0-9a-fA-F]{40}\Z/] $id     = $title,
-  Enum['present', 'absent', 'refreshed'] $ensure                                                     = present,
-  Optional[String] $content                                                                          = undef,
-  Optional[Pattern[/\Ahttps?:\/\//, /\Aftp:\/\//, /\A\/\w+/]] $source                                = undef,
-  Pattern[/\A((hkp|hkps|http|https):\/\/)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?$/] $server = $::apt::keyserver,
-  Optional[String] $options                                                                          = undef,
+  Pattern[/\A(0x)?[0-9a-fA-F]{8}\Z/, /\A(0x)?[0-9a-fA-F]{16}\Z/, /\A(0x)?[0-9a-fA-F]{40}\Z/] $id                        = $title,
+  Enum['present', 'absent', 'refreshed'] $ensure                                                                        = present,
+  Optional[String] $content                                                                                             = undef,
+  Optional[Pattern[/\Ahttps?:\/\//, /\Aftp:\/\//, /\A\/\w+/]] $source                                                   = undef,
+  Pattern[/\A((hkp|hkps|http|https):\/\/)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?(\/[a-zA-Z\d\-_.]+)*\/?$/] $server = $::apt::keyserver,
+  Boolean $weak_ssl                                                                                                     = false,
+  Optional[String] $options                                                                                             = $::apt::key_options,
   ) {
 
   case $ensure {
@@ -49,25 +53,26 @@ define apt::key (
 
       if !defined(Anchor["apt_key ${id} present"]) {
         apt_key { $title:
-          ensure  => present,
-          refresh => $ensure == 'refreshed',
-          id      => $id,
-          source  => $source,
-          content => $content,
-          server  => $server,
-          options => $options,
+          ensure   => present,
+          refresh  => $ensure == 'refreshed',
+          id       => $id,
+          source   => $source,
+          content  => $content,
+          server   => $server,
+          weak_ssl => $weak_ssl,
+          options  => $options,
         } -> anchor { "apt_key ${id} present": }
 
         case $facts['os']['name'] {
           'Debian': {
             if versioncmp($facts['os']['release']['major'], '9') >= 0 {
-              ensure_packages(['dirmngr'])
+              ensure_packages(['gnupg'])
               Apt::Key<| title == $title |>
             }
           }
           'Ubuntu': {
             if versioncmp($facts['os']['release']['full'], '17.04') >= 0 {
-              ensure_packages(['dirmngr'])
+              ensure_packages(['gnupg'])
               Apt::Key<| title == $title |>
             }
           }
@@ -78,17 +83,18 @@ define apt::key (
 
     absent: {
       if defined(Anchor["apt_key ${id} present"]){
-        fail("key with id ${_id} already ensured as present")
+        fail("key with id ${id} already ensured as present")
       }
 
       if !defined(Anchor["apt_key ${id} absent"]){
         apt_key { $title:
-          ensure  => $ensure,
-          id      => $id,
-          source  => $source,
-          content => $content,
-          server  => $server,
-          options => $options,
+          ensure   => $ensure,
+          id       => $id,
+          source   => $source,
+          content  => $content,
+          server   => $server,
+          weak_ssl => $weak_ssl,
+          options  => $options,
         } -> anchor { "apt_key ${id} absent": }
       }
     }

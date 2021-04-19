@@ -1,23 +1,32 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'apt::source', type: :define do
-  GPG_KEY_ID = '6F6B15509CF8E59E6E469F327F438280EF8D349F'.freeze
+  GPG_KEY_ID = '6F6B15509CF8E59E6E469F327F438280EF8D349F'
 
   let :title do
     'my_source'
   end
 
-  context 'with mostly defaults' do
-    let :facts do
-      {
-        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-        lsbdistid: 'Debian',
-        lsbdistcodename: 'jessie',
-        osfamily: 'Debian',
-        puppetversion: Puppet.version,
-      }
-    end
+  let :facts do
+    {
+      os: {
+        family: 'Debian',
+        name: 'Debian',
+        release: {
+          major: '8',
+          full: '8.0',
+        },
+        distro: {
+          codename: 'jessie',
+          id: 'Debian',
+        },
+      },
+    }
+  end
 
+  context 'with mostly defaults' do
     let :params do
       {
         'include' => { 'deb' => false, 'src' => true },
@@ -31,15 +40,6 @@ describe 'apt::source', type: :define do
   end
 
   context 'with no defaults' do
-    let :facts do
-      {
-        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-        lsbdistid: 'Debian',
-        lsbdistcodename: 'jessie',
-        osfamily: 'Debian',
-        puppetversion: Puppet.version,
-      }
-    end
     let :params do
       {
         'comment'        => 'foo',
@@ -72,15 +72,6 @@ describe 'apt::source', type: :define do
   end
 
   context 'when allow_unsigned true' do
-    let :facts do
-      {
-        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-        lsbdistid: 'Debian',
-        lsbdistcodename: 'jessie',
-        osfamily: 'Debian',
-        puppetversion: Puppet.version,
-      }
-    end
     let :params do
       {
         'include'        => { 'src' => false },
@@ -93,15 +84,6 @@ describe 'apt::source', type: :define do
   end
 
   context 'with architecture equals x86_64' do
-    let :facts do
-      {
-        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-        lsbdistid: 'Debian',
-        lsbdistcodename: 'jessie',
-        osfamily: 'Debian',
-        puppetversion: Puppet.version,
-      }
-    end
     let :params do
       {
         'location'     => 'http://debian.mirror.iweb.ca/debian/',
@@ -115,15 +97,6 @@ describe 'apt::source', type: :define do
   end
 
   context 'with ensure => absent' do
-    let :facts do
-      {
-        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-        lsbdistid: 'Debian',
-        lsbdistcodename: 'jessie',
-        osfamily: 'Debian',
-        puppetversion: Puppet.version,
-      }
-    end
     let :params do
       {
         'ensure' => 'absent',
@@ -139,15 +112,22 @@ describe 'apt::source', type: :define do
     context 'with no release' do
       let :facts do
         {
-          os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-          lsbdistid: 'Debian',
-          osfamily: 'Debian',
-          puppetversion: Puppet.version,
+          os: {
+            family: 'Debian',
+            name: 'Debian',
+            release: {
+              major: '8',
+              full: '8.0',
+            },
+            distro: {
+              id: 'Debian',
+            },
+          },
         }
       end
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{lsbdistcodename fact not available: release parameter required})
+        is_expected.to raise_error(Puppet::Error, %r{os.distro.codename fact not available: release parameter required})
       end
     end
   end

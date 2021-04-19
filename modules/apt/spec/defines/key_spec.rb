@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-GPG_KEY_ID = '6F6B15509CF8E59E6E469F327F438280EF8D349F'.freeze
+GPG_KEY_ID = '6F6B15509CF8E59E6E469F327F438280EF8D349F'
 
 title_key_example = { id: GPG_KEY_ID,
                       ensure: 'present',
@@ -44,11 +46,18 @@ describe 'apt::key' do
 
   let(:facts) do
     {
-      os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-      lsbdistid: 'Debian',
-      osfamily: 'Debian',
-      lsbdistcodename: 'jessie',
-      puppetversion: Puppet.version,
+      os: {
+        family: 'Debian',
+        name: 'Debian',
+        release: {
+          major: '8',
+          full: '8.0',
+        },
+        distro: {
+          codename: 'jessie',
+          id: 'Debian',
+        },
+      },
     }
   end
 
@@ -377,6 +386,32 @@ describe 'apt::key' do
 
       it 'informs the user of the impossibility' do
         is_expected.to raise_error(%r{already ensured as absent})
+      end
+    end
+  end
+
+  describe 'defaults' do
+    context 'when setting keyserver on the apt class' do
+      let :pre_condition do
+        'class { "apt":
+          keyserver => "keyserver.example.com",
+        }'
+      end
+
+      it 'uses default keyserver' do
+        is_expected.to contain_apt_key(title).with_server('keyserver.example.com')
+      end
+    end
+
+    context 'when setting key_options on the apt class' do
+      let :pre_condition do
+        'class { "apt":
+          key_options => "http-proxy=http://proxy.example.com:8080",
+        }'
+      end
+
+      it 'uses default keyserver' do
+        is_expected.to contain_apt_key(title).with_options('http-proxy=http://proxy.example.com:8080')
       end
     end
   end

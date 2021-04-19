@@ -2,7 +2,6 @@
 
 #### Table of Contents
 
-
 1. [Module Description - What the module does and why it is useful](#module-description)
 1. [Setup - The basics of getting started with apt](#setup)
     * [What apt affects](#what-apt-affects)
@@ -19,24 +18,35 @@
 1. [Limitations - OS compatibility, etc.](#limitations)
 1. [Development - Guide for contributing to the module](#development)
 
+<a id="module-description"></a>
+
 ## Module Description
 
 The apt module lets you use Puppet to manage APT (Advanced Package Tool) sources, keys, and other configuration options.
 
 APT is a package manager available on Debian, Ubuntu, and several other operating systems. The apt module provides a series of classes, defines, types, and facts to help you automate APT package management.
 
-**Note**: For this module to correctly autodetect which version of Debian/Ubuntu (or derivative) you're running, you need to make sure the 'lsb-release' package is installed. We highly recommend you either make this part of your provisioning layer, if you run many Debian or derivative systems, or ensure that you have Facter 2.2.0 or later installed, which will pull this dependency in for you.
+**Note**: Prior to Puppet 7, for this module to correctly autodetect which version of
+Debian/Ubuntu (or derivative) you're running, you need to make sure the `lsb-release` package is
+installed. With Puppet 7 the `lsb-release` package is not needed.
+
+<a id="setup"></a>
 
 ## Setup
+
+<a id="what-apt-affects"></a>
 
 ### What apt affects
 
 * Your system's `preferences` file and `preferences.d` directory
 * Your system's `sources.list` file and `sources.list.d` directory
+* Your system's `apt.conf.d` directory
 * System repositories
 * Authentication keys
 
-**Note:** This module offers `purge` parameters which, if set to `true`, **destroy** any configuration on the node's `sources.list(.d)` and `preferences(.d)` that you haven't declared through Puppet. The default for these parameters is `false`.
+**Note:** This module offers `purge` parameters which, if set to `true`, **destroy** any configuration on the node's `sources.list(.d)`, `preferences(.d)` and `apt.conf.d` that you haven't declared through Puppet. The default for these parameters is `false`.
+
+<a id="beginning-with-apt"></a>
 
 ### Beginning with apt
 
@@ -48,7 +58,11 @@ include apt
 
 **Note:** The main `apt` class is required by all other classes, types, and defined types in this module. You must declare it whenever you use the module.
 
+<a id="usage"></a>
+
 ## Usage
+
+<a id="add-gpg-keys"></a>
 
 ### Add GPG keys
 
@@ -64,6 +78,8 @@ apt::key { 'puppetlabs':
 }
 ```
 
+<a id="prioritize-backports"></a>
+
 ### Prioritize backports
 
 ```puppet
@@ -76,9 +92,11 @@ By default, the `apt::backports` class drops a pin file for backports, pinning i
 
 If you raise the priority through the `pin` parameter to 500, normal policy goes into effect and Apt installs or upgrades to the newest version. This means that if a package is available from backports, it and its dependencies are pulled in from backports unless you explicitly set the `ensure` attribute of the `package` resource to `installed`/`present` or a specific version.
 
+<a id="update-the-list-of-packages"></a>
+
 ### Update the list of packages
 
-By default, Puppet runs `apt-get update` on the first Puppet run after you include the `apt` class, and anytime `notify  => Exec['apt_update']` occurs; i.e., whenever config files get updated or other relevant changes occur. If you set `update['frequency']` to 'always', the update runs on every Puppet run. You can also set `update['frequency']` to 'daily' or 'weekly':
+By default, Puppet runs `apt-get update` on the first Puppet run after you include the `apt` class, and anytime `notify => Exec['apt_update']` occurs; i.e., whenever config files get updated or other relevant changes occur. If you set `update['frequency']` to 'always', the update runs on every Puppet run. You can also set `update['frequency']` to 'daily' or 'weekly':
 
 ```puppet
 class { 'apt':
@@ -87,7 +105,8 @@ class { 'apt':
   },
 }
 ```
-When `Exec['apt_update']` is triggered, it generates a `Notice` message. Because the default [logging level for agents](https://docs.puppet.com/puppet/latest/configuration.html#loglevel) is `notice`, this causes the repository update to appear in logs and agent reports. Some tools, such as [The Foreman](https://www.theforeman.org), report the update notice as a significant change. To eliminate these updates from reports, set the [loglevel](https://docs.puppet.com/puppet/latest/metaparameter.html#loglevel) metaparameter for `Exec['apt_update']` above the agent logging level:
+
+When `Exec['apt_update']` is triggered, it generates a `notice`-level message. Because the default [logging level for agents](https://puppet.com/docs/puppet/latest/configuration.html#loglevel) is `notice`, this causes the repository update to appear in agent logs. To silence these updates from the default log output, set the [loglevel](https://puppet.com/docs/puppet/latest/metaparameter.html#loglevel) metaparameter for `Exec['apt_update']` above the agent logging level:
 
 ```puppet
 class { 'apt':
@@ -97,6 +116,10 @@ class { 'apt':
   },
 }
 ```
+
+> **NOTE:** Every `Exec['apt_update']` run will generate a corrective change, even if the apt caches are not updated. For example, setting an update frequency of `always` can result in every Puppet run resulting in a corrective change. This is a known issue. For details, see [MODULES-10763](https://tickets.puppetlabs.com/browse/MODULES-10763).
+
+<a id="pin-a-specific-release"></a>
 
 ### Pin a specific release
 
@@ -119,6 +142,8 @@ apt::pin { 'stable':
 ```
 
 To pin multiple packages, pass them to the `packages` parameter as an array or a space-delimited string.
+
+<a id="add-a-personal-package-archive-repository"></a>
 
 ### Add a Personal Package Archive (PPA) repository
 
@@ -159,6 +184,8 @@ apt::source { 'puppetlabs':
 }
 ```
 
+<a id="configure-apt-from-hiera"></a>
+
 ### Configure Apt from Hiera
 
 Instead of specifying your sources directly as resources, you can instead just include the `apt` class, which will pick up the values automatically from hiera.
@@ -186,36 +213,38 @@ apt::sources:
       server: 'pgp.mit.edu'
 ```
 
+<a id="replace-the-default-sourceslist-file"></a>
+
 ### Replace the default `sources.list` file
 
 The following example replaces the default `/etc/apt/sources.list`. Along with this code, be sure to use the `purge` parameter, or you might get duplicate source warnings when running Apt.
 
 ```puppet
-apt::source { "archive.ubuntu.com-${lsbdistcodename}":
+apt::source { "archive.ubuntu.com-${facts['os']['distro']['codename']}":
   location => 'http://archive.ubuntu.com/ubuntu',
   key      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
   repos    => 'main universe multiverse restricted',
 }
 
-apt::source { "archive.ubuntu.com-${lsbdistcodename}-security":
+apt::source { "archive.ubuntu.com-${facts['os']['distro']['codename']}-security":
   location => 'http://archive.ubuntu.com/ubuntu',
   key      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
   repos    => 'main universe multiverse restricted',
-  release  => "${lsbdistcodename}-security"
+  release  => "${facts['os']['distro']['codename']}-security"
 }
 
-apt::source { "archive.ubuntu.com-${lsbdistcodename}-updates":
+apt::source { "archive.ubuntu.com-${facts['os']['distro']['codename']}-updates":
   location => 'http://archive.ubuntu.com/ubuntu',
   key      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
   repos    => 'main universe multiverse restricted',
-  release  => "${lsbdistcodename}-updates"
+  release  => "${facts['os']['distro']['codename']}-updates"
 }
 
-apt::source { "archive.ubuntu.com-${lsbdistcodename}-backports":
+apt::source { "archive.ubuntu.com-${facts['os']['distro']['codename']}-backports":
  location => 'http://archive.ubuntu.com/ubuntu',
  key      => '630239CC130E1A7FD81A27B140976EAF437D05B5',
  repos    => 'main universe multiverse restricted',
- release  => "${lsbdistcodename}-backports"
+ release  => "${facts['os']['distro']['codename']}-backports"
 }
 ```
 
@@ -248,6 +277,8 @@ class { 'apt':
 }
 ```
 
+<a id="reference"></a>
+
 ## Reference
 
 ### Facts
@@ -270,13 +301,15 @@ class { 'apt':
 
 ### More Information
 
-See [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-apt/blob/master/REFERENCE.md) for all other reference documentation.
+See [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-apt/blob/main/REFERENCE.md) for all other reference documentation.
+
+<a id="limitations"></a>
 
 ## Limitations
 
 This module is not designed to be split across [run stages](https://docs.puppetlabs.com/puppet/latest/reference/lang_run_stages.html).
 
-For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-apt/blob/master/metadata.json)
+For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-apt/blob/main/metadata.json)
 
 ### Adding new sources or PPAs
 
@@ -288,8 +321,17 @@ Class['apt::update'] -> Package <| provider == 'apt' |>
 
 ## Development
 
-Puppet modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can't access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve. We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
+Acceptance tests for this module leverage [puppet_litmus](https://github.com/puppetlabs/puppet_litmus).
+To run the acceptance tests follow the instructions [here](https://puppetlabs.github.io/litmus/Running-acceptance-tests.html).
+You can also find a tutorial and walkthrough of using Litmus and the PDK on [YouTube](https://www.youtube.com/watch?v=FYfR7ZEGHoE).
 
-For more information, see our [module contribution guide.](https://docs.puppetlabs.com/forge/contributing.html)
+If you run into an issue with this module, or if you would like to request a feature, please [file a ticket](https://tickets.puppetlabs.com/browse/MODULES/).
+Every Monday the Puppet IA Content Team has [office hours](https://puppet.com/community/office-hours) in the [Puppet Community Slack](http://slack.puppet.com/), alternating between an EMEA friendly time (1300 UTC) and an Americas friendly time (0900 Pacific, 1700 UTC).
 
-To see who's already involved, see the [list of contributors.](https://github.com/puppetlabs/puppetlabs-apt/graphs/contributors)
+If you have problems getting this module up and running, please [contact Support](http://puppetlabs.com/services/customer-support).
+
+If you submit a change to this module, be sure to regenerate the reference documentation as follows:
+
+```bash
+puppet strings generate --format markdown --out REFERENCE.md
+```

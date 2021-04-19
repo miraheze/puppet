@@ -1,16 +1,23 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'apt::setting' do
   let(:pre_condition) { 'class { "apt": }' }
   let :facts do
     {
-      os: { distro: { codename: 'wheezy' }, family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-      lsbdistrelease: '8.0',
-      lsbdistcodename: 'jessie',
-      operatingsystem: 'Debian',
-      osfamily: 'Debian',
-      lsbdistid: 'Debian',
-      puppetversion: Puppet.version,
+      os: {
+        family: 'Debian',
+        name: 'Debian',
+        release: {
+          major: '8',
+          full: '8.0',
+        },
+        distro: {
+          codename: 'jessie',
+          id: 'Debian',
+        },
+      },
     }
   end
   let(:title) { 'conf-teddybear' }
@@ -51,7 +58,6 @@ describe 'apt::setting' do
         is_expected.to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]').with(ensure: 'file',
                                                                                                                 owner: 'root',
                                                                                                                 group: 'root',
-                                                                                                                mode: '0644',
                                                                                                                 source: params[:source].to_s)
       }
     end
@@ -63,7 +69,6 @@ describe 'apt::setting' do
         is_expected.to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]').with(ensure: 'file',
                                                                                                                 owner: 'root',
                                                                                                                 group: 'root',
-                                                                                                                mode: '0644',
                                                                                                                 content: params[:content].to_s)
       }
     end
@@ -77,11 +82,18 @@ describe 'apt::setting' do
     end
     let(:facts) do
       {
-        os: { family: 'Debian', name: 'Debian', release: { major: '8', full: '8.0' } },
-        lsbdistid: 'Debian',
-        osfamily: 'Debian',
-        lsbdistcodename: 'jessie',
-        puppetversion: Puppet.version,
+        os: {
+          family: 'Debian',
+          name: 'Debian',
+          release: {
+            major: '8',
+            full: '8.0',
+          },
+          distro: {
+            codename: 'jessie',
+            id: 'Debian',
+          },
+        },
       }
     end
     let(:title) { 'conf-teddybear' }
@@ -121,11 +133,7 @@ describe 'apt::setting' do
     context 'with priority=1.2' do
       let(:params) { default_params.merge(priority: 1.2) }
 
-      if Puppet::Util::Package.versioncmp(Puppet.version, '4.0') >= 0 || ENV['FUTURE_PARSER'] == 'yes'
-        it { is_expected.to compile.and_raise_error(%r{expects a value of type}) }
-      else
-        it { is_expected.to compile.and_raise_error(%r{priority must be an integer or a zero-padded integer}) }
-      end
+      it { is_expected.to compile.and_raise_error(%r{expects a value of type}) }
     end
   end
 

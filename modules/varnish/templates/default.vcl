@@ -67,11 +67,6 @@ backend jobrunner3 {
 	.port = "8089";
 }
 
-backend test3 {
-	.host = "127.0.0.1";
-	.port = "8091";
-}
-
 # test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
@@ -93,6 +88,11 @@ backend mw10_test {
 backend mw11_test {
 	.host = "127.0.0.1";
 	.port = "8088";
+}
+
+backend test3 {
+	.host = "127.0.0.1";
+	.port = "8091";
 }
 
 # end test backend
@@ -187,6 +187,14 @@ sub mw_rate_limit {
 			(req.url ~ "^/wiki" || req.url ~ "^/w/(api|index)\.php")
 			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
+			# Stopgap for Googlebot sending suspicious requests with inpval parameter
+			if (
+				req.http.User-Agent ~ "(?i)Googlebot"
+				&& req.url ~ "inpval"
+			) {
+				return (synth(403, "Forbidden"));
+			}
+
 			if (req.url ~ "^/w/index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
 				# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
 				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
@@ -275,15 +283,10 @@ sub mw_vcl_recv {
 	}
 
 	# We can rewrite those to one domain name to increase cache hits!
-	if (req.url ~ "^/w/resources") {
+	if (req.url ~ "^/w/(skins|resources|extensions)/" ) {
 		set req.http.Host = "meta.miraheze.org";
 	}
 
-	# Do not cache rest.php (Parsoid new entry point)
-	if (req.url ~ "^/w/rest.php") {
-		return (pass);
-	}
- 
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
 	}
@@ -291,12 +294,6 @@ sub mw_vcl_recv {
 	if (req.url ~ "^/healthcheck$") {
 		set req.http.Host = "login.miraheze.org";
 		set req.url = "/wiki/Main_Page";
-		return (pass);
-	}
-	
-	# Temporary solution to fix CookieWarning issue with ElectronPDF
-	if (req.http.X-Real-IP == "51.195.236.212" || req.http.X-Real-IP == "2001:41d0:800:178a::10" ||
-		req.http.X-Real-IP == "51.195.236.246" || req.http.X-Real-IP == "2001:41d0:800:1bbd::13") {
 		return (pass);
 	}
 
@@ -393,8 +390,9 @@ sub vcl_deliver {
 	}
 
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
-		if (req.url !~ "^/wiki/Special\:Banner") {
-			set resp.http.Cache-Control = "private, s-maxage=0, maxage=0, must-revalidate";
+		// ...but exempt CentralNotice banner special pages
+		if (req.url !~ "^/(wiki/|w/index\.php\?title=)Special:Banner") {
+			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
 		}
 	}
 
@@ -411,6 +409,10 @@ sub vcl_deliver {
 	} else {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
 	}
+
+	// *** HTTPS deliver code - disable Google ad targeting (FLoC)
+	// See https://github.com/wicg/floc#opting-out-of-computation
+	set resp.http.Permissions-Policy = "interest-cohort=()";
 
 	set resp.http.Content-Security-Policy = "default-src 'self' blob: data: <%- @csp_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self' <%- @frame_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%>";
 

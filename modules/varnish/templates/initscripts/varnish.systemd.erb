@@ -13,13 +13,13 @@ PIDFile=%t/%p.pid
 Restart=always
 KillMode=process
 SyslogIdentifier=varnish
-ExecReload=/usr/local/sbin/reload-vcl -f /etc/varnish/default.vcl -d <%= @vcl_reload_delay_s %> -a
+ExecReload=/usr/local/sbin/reload-vcl <%= @reload_vcl_opts %>
 # We start varnishd(1) without specifying a VCL file (-f ''). Use reload-vcl in
 # ExecStartPost to load and label separate VCL files first, and the main one
 # last. This is necessary given that the main VCL file might reference the
 # label of separate VCLs, and would otherwise fail to compile if loaded
 # directly with -f.
-ExecStartPost=/usr/local/sbin/reload-vcl -f /etc/varnish/default.vcl -d <%= @vcl_reload_delay_s %> -a --start-child
+ExecStartPost=/usr/local/sbin/reload-vcl <%= @reload_vcl_opts %> --start-child
 ExecStart=/usr/sbin/varnishd \
 -P %t/%p.pid \
 -a :81 \

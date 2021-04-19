@@ -68,6 +68,14 @@ server {
 	location /discord {
 		return 301 https://discord.gg/v7HeT96;
 	}
+
+	location /donate {
+		return 301 https://donate.miraheze.org;
+	}
+
+	location /.well-known/change-password {
+		return 301 /wiki/Special:ChangePassword;
+	}
 }
 
 server {
@@ -124,6 +132,10 @@ server {
 
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
+	}
+
+	location /.well-known/change-password {
+		return 301 /wiki/Special:ChangePassword;
 	}
 }
 
@@ -223,29 +235,29 @@ server {
 	}
 }
 
-<% @sslcerts.each_pair do | name, property | -%>
+<%- @sslcerts.each_pair do | name, property | -%>
 server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
-<% if property['mobiledomain'] %>
-	server_name <%= property['url'] %> <%= property['mobiledomain'] %>;
-<% else %>
+<%- if property['additional_domain'] -%>
+	server_name <%= property['url'] %> <%= property['additional_domain'] %>;
+<%- else -%>
 	server_name <%= property['url'] %>;
-<% end %>
+<%- end -%>
 	root /srv/mediawiki;
-<% if property['sslname'] %>
+<%- if property['sslname'] -%>
 	ssl_certificate /etc/ssl/localcerts/<%= property['sslname'] %>.crt;
 	ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
-<% else %>
+<%- else -%>
 	ssl_certificate /etc/ssl/localcerts/<%= property['url'] %>.crt;
 	ssl_certificate_key /etc/ssl/private/<%= property['url'] %>.key;
-<% end %>
+<%- end -%>
 
-<% if property['hsts'] == "strict" %>  
+<%- if property['hsts'] == "strict" -%>  
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-<% else %>
+<%- else -%>
 	add_header Strict-Transport-Security "max-age=604800";
-<% end %>
+<%- end -%>
 
 	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
 
@@ -257,12 +269,16 @@ server {
 	include /etc/nginx/mediawiki-includes;
 
 	location = /robots.txt {
-			rewrite ^(.*)$ /robots.php;
+		rewrite ^(.*)$ /robots.php;
 	}
 
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
 	}
+
+	location /.well-known/change-password {
+		return 301 /wiki/Special:ChangePassword;
+	}
 }
 
-<% end -%>
+<%- end -%>

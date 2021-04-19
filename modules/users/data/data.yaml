@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [rhinos, universalomega]
+    members: [rhinos]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.2-fpm *',
@@ -119,8 +119,8 @@ users:
     realname: Zppix
     ssh_keys: []
   universalomega:
-    ensure: present
+    ensure: absent
     uid: 1013
     name: universalomega
     realname: Universal Omega 
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDdBJtIRO4d5xw8jrqelIeTO4zRQHsliPDdLZdp9j56yhu5U39Nl0K5w5Cgt7jBwDc9xGNR4b/132MjlOfhOAI0K2lK+JUAxYMO/fH1LYoTnBIU49fl0E0RW5TH7zAaiZXy6LpdTDdfZoK22c8qvgR2WzRKxJzt9FivtyE9TBrtV2MDsYg9Yro1NwqOHeAWtIIV+P9q8Va8fO1c7fq9lgPxCxy6fFJLvLdjEHiis7BRdNl2yFn1d+tiWbHKdeJcR4gHt9jP+nQxvxl/XWxNt7TeKUnl77qjDRgH9nVXFkkfZYB4ZTPRv+UNIxx0nVkyuXlIKdlqxAD9rZ/E+NHElMYJKKBUguwtGawcoy8nDelE39ILfes9iWkA+n+vbmTnmGxBTUN3gD73UxjfdrOTUQztVWt0ddJgE1xmp5mUzh3HUnoR7w0tWScnFxUInkBv1Ht08AEXM2ngxd6LCFs2Lu08blzS3wNX8+o10X7SZ2lv7WUuRo+Yt5YYobi1EYG8GKVY5qdNHZDjrz1a93pJpwE37AmuzKFX6J2WsvxRMEtTorKbmEvMRgfuhwaqoPLgXvbYWATNFmauNOaSnFGN6YQW+N9sA4xky/eRK7uqctBOCneubt1EDA1GAYIJb4M6+aciUT+us9kzwZoHEwuCnE4CMnC6Bf1V+Rtqyb+Ps36K5w== universal.omega000@gmail.com]
+    ssh_keys: []

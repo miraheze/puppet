@@ -26,4 +26,9 @@ class base::mail {
     mailalias { 'root':
         recipient => 'root@miraheze.org',
     }
+
+    file { '/etc/mailname':
+        ensure  => present,
+        content => 'miraheze.org',
+    }
 }

@@ -33,9 +33,6 @@ class phabricator {
 
     $password = lookup('passwords::irc::mirahezebots')
 
-    include ssl::wildcard
-    ssl::cert { 'miraheze.wiki': }
-
     nginx::site { 'phab.miraheze.wiki':
         ensure  => present,
         source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
@@ -47,6 +44,9 @@ class phabricator {
         source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
         monitor => false,
     }
+
+    include ssl::wildcard
+    ssl::cert { 'miraheze.wiki': }
 
     file { '/srv/phab':
         ensure => directory,
