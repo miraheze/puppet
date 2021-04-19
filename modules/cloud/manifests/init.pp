@@ -57,4 +57,30 @@ class cloud (
         ensure => present,
         require => Apt::Source['proxmox_apt']
     }
+
+    cloud::logging { 'pveproxy':
+        file_source_options => [
+            '/var/log/pveproxy/access.log',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name => 'pveproxy',
+    }
+
+    cloud::logging { 'pve-firewall':
+        file_source_options => [
+            '/var/log/pve-firewall.log',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name => 'pve-firewall',
+    }
+
+    logrotate::conf { 'pve':
+        ensure => present,
+        source => 'puppet:///modules/cloud/pve.logrotate.conf',
+    }
+
+    logrotate::conf { 'pve-firewall':
+        ensure => present,
+        source => 'puppet:///modules/cloud/pve-firewall.logrotate.conf',
+    }
 }
