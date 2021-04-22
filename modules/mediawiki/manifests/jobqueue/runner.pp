@@ -12,7 +12,7 @@ class mediawiki::jobqueue::runner {
 
     $redis_password = lookup('passwords::redis::master')
 
-    if lookup('jobrunnerintensive::intensive', {'default_value' => false}) {
+    if lookup('jobrunner::intensive', {'default_value' => false}) {
         $config = 'jobrunner-hi.json.erb'
     } else {
         $config = 'jobrunner.json.erb'
