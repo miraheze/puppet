@@ -71,3 +71,9 @@ location ~ ^/(.+)/v1/ {
 location /sitemaps/ {
 	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.miraheze.org/$1/sitemaps/$2 permanent;
 }
+
+# Redirect /entity/* to /wiki/Special:EntityData/*
+# Fixes T7174
+location ~ ^/entity/(.*) {
+	return 301 /wiki/Special:EntityData/$1;
+}
