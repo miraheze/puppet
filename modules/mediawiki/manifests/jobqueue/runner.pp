@@ -12,9 +12,15 @@ class mediawiki::jobqueue::runner {
 
     $redis_password = lookup('passwords::redis::master')
 
+    if lookup('jobrunnerintensive::intensive', {'default_value' => false}) {
+        $config = 'jobrunner-hi.json.erb'
+    } else {
+        $config = 'jobrunner.json.erb'
+    }
+
     file { '/srv/jobrunner/jobrunner.json':
         ensure  => present,
-        content => template('mediawiki/jobrunner.json.erb'),
+        content => template("mediawiki/${config}"),
         notify  => Service['jobrunner'],
         require => Git::Clone['JobRunner'],
     }

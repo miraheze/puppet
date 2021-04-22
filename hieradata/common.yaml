@@ -1,5 +1,6 @@
 jobchron: false
 jobrunner: false
+jobrunner::intensive: false
 mailserver: false
 arcanist: false
 puppetmaster: false
