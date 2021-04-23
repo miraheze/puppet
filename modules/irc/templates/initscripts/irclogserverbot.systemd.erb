@@ -1,0 +1,12 @@
+[Unit]
+Description=Miraheze Server to IRC log bot
+
+[Service]
+Type=simple
+User=irc
+SyslogIdentifier=irclogbot
+ExecStart=/usr/bin/python3 /usr/local/bin/irclogbot.py
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
