@@ -30,7 +30,7 @@ class role::irc {
         network      => 'chat.freenode.net',
         network_port => '6697',
         channel      => '#miraheze-sre',
-        port         => '5071',
+        udp_port     => '5071',
     }
 
     $firewallall = query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
