@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $USER = 'root' ]
+then
+  ACTOR=$SUDO_USER
+else
+  ACTOR=$USER
+fi
+
+echo '!log' "[$ACTOR@$HOSTNAME] $*" | nc -q0 -u 51.195.236.249 5071

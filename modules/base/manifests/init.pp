@@ -34,6 +34,12 @@ class base {
         source => 'puppet:///modules/base/environment/gen_fingerprints',
         mode   => '0555',
     }
+
+    file { '/usr/local/bin/logsalmsg':
+        ensure => present,
+        source => 'puppet:///modules/base/logsalmsg',
+        mode   => '0555',
+    }
     
     class { 'apt::backports':
         include => {

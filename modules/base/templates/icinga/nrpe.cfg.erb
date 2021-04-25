@@ -31,6 +31,7 @@ command[check_bacula_private]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula
 command[check_bacula_phab]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H phab2-fd -B BackupPhabStatic -w 15d -c 30d
 command[check_gdnsd_datacenters]=/usr/lib/nagios/plugins/check_gdnsd_datacenters
 command[check_irc_rcbot]=/usr/lib/nagios/plugins/check_procs -a ircrcbot.py -c 1:1
+command[check_irc_logserverbot]=/usr/lib/nagios/plugins/check_procs -a irclogserverbot.py -c 1:1
 command[check_irc_logbot]=/usr/lib/nagios/plugins/check_procs -a adminlogbot.py -c 1:1
 command[check_ircecho]=/usr/lib/nagios/plugins/check_procs -a /usr/local/bin/ircecho -c 1:1
 command[check_ntp_time]=/usr/lib/nagios/plugins/check_ntp_time -H time.cloudflare.com -w 5 -c 10

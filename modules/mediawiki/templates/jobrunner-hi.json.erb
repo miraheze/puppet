@@ -2,15 +2,11 @@
 // This file is managed by Puppet
 {
     "groups": {
-        "basic": {
+        "hi": {
             // Number of runner processes in this group
             "runners": 1,
             // Job types to include ("*" means "all")
             "include": [
-                "*"
-            ],
-            // Job types to exempt (useful when combined with "*")
-            "exclude": [
                 "DataDumpGenerateJob",
                 "RequestWikiAIJob"
             ]
@@ -24,15 +20,19 @@
         },
         // How long jobs can be claimed before being recycled
         "claimTTL": {
-            "*": 3600
+            "*": 3600,
+            "DataDumpGenerateJob": 86400
         },
         // runJobs.php process time limits
         "real": {
-            "*": 130
+            "*": 130,
+            "DataDumpGenerateJob": 9000
         },
         // runJobs.php memory limits
         "memory": {
-            "*": "192M"
+            "*": "192M",
+            "DataDumpGenerateJob": "300M",
+            "RequestWikiAIJob": "1500M"
         }
     },
 
