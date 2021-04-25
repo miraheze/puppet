@@ -1,4 +1,4 @@
-role::trafficserver::enable_xdebug: true
+role::trafficserver::enable_xdebug: false
 role::trafficserver::systemd_hardening: false
 
 # Define hosts. If not defined everything automatically
