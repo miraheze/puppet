@@ -24,8 +24,6 @@ role::trafficserver::parent_rules:
     parent_is_proxy: 'false'
     round_robin: 'strict'
 
-role::trafficserver::default_lua_script: 'default'
-
 role::trafficserver::enable_compress: false
 
 role::trafficserver::inbound_tls_settings:
