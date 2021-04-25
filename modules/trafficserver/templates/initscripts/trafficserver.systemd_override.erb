@@ -1,0 +1,44 @@
+[Service]
+ExecStart=
+ExecStart=/usr/bin/traffic_manager --nosyslog
+PIDFile=<%= @paths['runtimedir'] %>/manager.lock
+Restart=always
+RestartSec=1
+ExecReload=
+# XXX: `traffic_server -C verify_config` is broken: it causes configuration
+# reloads, which cause errors with ascii_pipe logs
+#ExecReload=/usr/bin/traffic_server -C verify_config
+ExecReload=/usr/bin/traffic_ctl config reload
+# traffic_manager is terminated with SIGTERM and exits with the received signal
+# number (15)
+SuccessExitStatus=15
+
+SyslogIdentifier=trafficserver
+
+LimitNOFILE=500000
+LimitMEMLOCK=90000
+
+<%- if @systemd_hardening -%>
+# Security options
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+PrivateTmp=yes
+
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+
+CapabilityBoundingSet=CAP_DAC_OVERRIDE CAP_SETGID CAP_SETUID CAP_SYS_PTRACE CAP_FOWNER <%- if @privileged_port -%>CAP_NET_BIND_SERVICE<%- end -%>
+
+SystemCallFilter=~@keyring @clock @cpu-emulation @obsolete @module @raw-io @reboot @swap
+
+# The entire file system hierarchy is mounted read-only, except for the API
+# file system subtrees /dev, /proc and /sys
+ProtectSystem=strict
+
+# Whitelist read/write directories
+ReadWritePaths=<%= @paths['logdir'] %>
+ReadWritePaths=<%= @paths['runtimedir'] %>
+ReadWritePaths=<%= @paths['cachedir'] %>
+<%- end -%>
+
+[Install]
+WantedBy=multi-user.target

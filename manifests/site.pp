@@ -115,6 +115,7 @@ node 'test3.miraheze.org' {
 
 node 'test4.miraheze.org' {
     include base
+    include role::trafficserver
 
     ufw::allow { 'http port 443 51.195.236.249':
         proto => 'tcp',

@@ -1,0 +1,127 @@
+role::trafficserver::enable_xdebug: true
+role::trafficserver::systemd_hardening: false
+
+# Define hosts. If not defined everything automatically
+# goes to mediawiki backends.
+role::trafficserver::mapping_rules:
+    - type: map
+      target: https://matomo.miraheze.org
+      replacement: https://mon2.miraheze.org
+    - type: regex_redirect
+      target: https://(.*).m.miraheze.org
+      replacement: https://$1.miraheze.org
+    - type: redirect
+      target: https://m.miraheze.org
+      replacement: https://miraheze.org
+
+role::trafficserver::parent_rules:
+  - dest_domain: 'backends.miraheze.org'
+    parent:
+      - "mw8.miraheze.org:443"
+      - "mw9.miraheze.org:443"
+      - "mw10.miraheze.org:443"
+      - "mw11.miraheze.org:443"
+    parent_is_proxy: 'false'
+    round_robin: 'strict'
+
+role::trafficserver::default_lua_script: 'default'
+
+role::trafficserver::enable_compress: false
+
+role::trafficserver::inbound_tls_settings:
+  cert_path: '/etc/ssl/localcerts/'
+  private_key_path: '/etc/ssl/private/'
+  common:
+    cipher_suite: '-ALL:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-RSA-AES128-GCM-SHA256'
+    cipher_suite_tlsv1_3: 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256'
+    groups_list: 'X25519:prime256v1'
+    enable_tlsv1: 0
+    enable_tlsv1_1: 0
+    enable_tlsv1_2: 1
+    enable_tlsv1_3: 1
+  max_record_size: 16383
+  session_cache: 2
+  session_cache_timeout: 86400
+  session_cache_auto_clear: 1
+  session_cache_size: 512000
+  session_cache_buckets: 32768
+  session_ticket_enable: 0
+  load_elevated: 1
+  ssl_handshake_timeout_in: 60
+  prioritize_chacha: 1
+
+role::trafficserver::outbound_tls_settings:
+  common:
+    cipher_suite: '-ALL:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384'
+    cipher_suite_tlsv1_3: 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256'
+    enable_tlsv1: 0
+    enable_tlsv1_1: 0
+    enable_tlsv1_2: 1
+    enable_tlsv1_3: 1
+  verify_origin: true
+  cacert_dirpath: '/etc/ssl/certs'
+  cacert_filename: 'ca-certificates.crt'
+
+role::trafficserver::log_formats:
+  - name: backend
+    # TTFetchHeaders is the amount of time between the first origin server
+    # connection attempt (or shared session attached in case of connection
+    # reuse) and when the first byte is received from the origin.
+    # ClientTTFB is the time spent between the very beginning of this session
+    # and when the response header write to the client starts.
+    format: 'Date:%<cqtd> Time:%<cqtt> ConnAttempts:%<sca> ConnReuse:%<sstc> TTFetchHeaders:%<{TS_MILESTONE_SERVER_FIRST_READ-TS_MILESTONE_SERVER_FIRST_CONNECT}msdms> ClientTTFB:%<{TS_MILESTONE_UA_BEGIN_WRITE-TS_MILESTONE_SM_START}msdms> CacheReadTime:%<{TS_MILESTONE_CACHE_OPEN_READ_END-TS_MILESTONE_CACHE_OPEN_READ_BEGIN}msdms> CacheWriteTime:%<{TS_MILESTONE_CACHE_OPEN_WRITE_END-TS_MILESTONE_CACHE_OPEN_WRITE_BEGIN}msdms> TotalSMTime:%<{TS_MILESTONE_SM_FINISH-TS_MILESTONE_SM_START}msdms> OriginServer:%<shn> OriginServerTime:%<stms> CacheResultCode:%<crc> CacheWriteResult:%<cwr> ReqMethod:%<cqhm> RespStatus:%<pssc> OriginStatus:%<sssc> ReqURL:%<cquuc> ReqHeader:User-Agent:%<{User-agent}cqh> ReqHeader:Host:%<{Host}cqh> ReqHeader:X-Real-IP:%<{X-Real-IP}cqh> ReqHeader:Cookie:%<{Cookie}cqh> BerespHeader:Set-Cookie:%<{Set-Cookie}ssh[0:16]> BerespHeader:Cache-Control:%<{Cache-Control}ssh> BerespHeader:Connection:%<{Connection}ssh> RespHeader:X-Cache-Int:%<{X-Cache-Int}psh> RespHeader:Backend-Timing:%<{Backend-Timing}psh>'
+  - name: frontend
+    # Format string for atskafka. Note that the string is tab-separated (TSV)
+    format: "dt:%<cqtd>T%<cqtt>Z  hostname:%{::fqdn}  time_firstbyte:%<{TS_MILESTONE_UA_BEGIN_WRITE-TS_MILESTONE_SM_START}msdms>  time_total:%<{TS_MILESTONE_UA_CLOSE-TS_MILESTONE_SM_START}msdms>  ip:%<{X-Real-IP}psh>  cache_status:%<{X-Cache-Status}psh> http_status:%<pssc> response_size:%<pscl> http_method:%<cqhm> uri_host:%<{Host}cqh> uri_path:%<cquup> content_type:%<{Content-Type}psh> referer:%<{Referer}cqh> user_agent:%<{User-Agent}cqh> accept_language:%<{Accept-Language}cqh> range:%<{Range}cqh> x_cache:%<{X-Cache}psh> accept:%<{Accept}cqh> backend:%<{Server}psh>"
+
+role::trafficserver::logs:
+  - filename: backend
+    format: backend
+    mode: ascii_pipe
+    ensure: present
+  - filename: frontend
+    format: frontend
+    mode: ascii_pipe
+    ensure: present
+
+role::trafficserver::network_settings:
+  connections_throttle: 0
+  sock_option_flag_in: 0x5
+  default_inactivity_timeout: 360
+  max_connections_in: 270000
+  max_connections_active_in: 90000
+
+role::trafficserver::http_settings:
+  accept_no_activity_timeout: 180
+  connect_attempts_timeout: 9
+  keep_alive_no_activity_timeout_in: 120
+  keep_alive_no_activity_timeout_out: 120
+  post_connect_attempts_timeout: 11
+  transaction_no_activity_timeout_in: 200
+  transaction_no_activity_timeout_out: 180
+  send_100_continue_response: 0
+  max_post_size: 0
+  keep_alive_enabled_out: 1
+  keep_alive_post_out: 1
+  server_session_sharing_match: both
+  server_session_sharing_pool: thread
+  allow_half_open: 1
+
+role::trafficserver::h2_settings:
+  stream_priority_enabled: 0
+  max_settings_per_frame: 7
+  max_settings_per_minute: 14
+  max_settings_frames_per_minute: 14
+  max_ping_frames_per_minute: 60
+  max_priority_frames_per_minute: 0
+  min_avg_window_update: 2560.0
+  accept_no_activity_timeout: 180
+  no_activity_timeout_in: 180
+  stream_error_rate_threshold: 1.0
+
+role::trafficserver::storage_elements:
+    - pathname: '/srv/trafficserver'
+      size: '10G'
+
+role::trafficserver::cache::req_handling: {}
+role::traficserver::cache::alternate_domains: {}
