@@ -38,7 +38,15 @@ class role::trafficserver (
         notify  => Service['trafficserver'],
     }
 
-    $paths = trafficserver::get_paths()
+    $paths = {
+        sysconfdir    => '/etc/trafficserver',
+        datadir       => '/var/cache/trafficserver',
+        runtimedir    => '/run/trafficserver',
+        logdir        => '/var/log/trafficserver',
+        cachedir      => '/var/cache/trafficserver',
+        records       => '/etc/trafficserver/records.config',
+        ssl_multicert => '/etc/trafficserver/ssl_multicert.config',
+    }
 
     class { '::trafficserver':
         paths                   => $paths,

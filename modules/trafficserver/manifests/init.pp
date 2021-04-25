@@ -12,7 +12,7 @@
 # === Parameters
 #
 # [*paths*]
-#   Mapping of trafficserver paths. See Trafficserver::Paths and trafficserver::get_paths()
+#   Mapping of trafficserver paths. See Trafficserver::Paths and trafficserver.pp
 #
 # [*http_port*]
 #   Bind trafficserver to this TCP port for HTTP requests.
