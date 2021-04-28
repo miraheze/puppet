@@ -39,7 +39,7 @@ define users::user(
         }
     }
 
-    if !is_array($ssh_keys) {
+    if !($ssh_keys =~ Array) {
         fail("${name} is not a valid ssh_keys array: ${ssh_keys}")
     }
 
