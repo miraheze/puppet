@@ -18,6 +18,7 @@ class base::packages {
         'molly-guard',
         'mtr',
         'nano',
+        'needrestart',
         'net-tools',
         'parted',
         'pigz',
