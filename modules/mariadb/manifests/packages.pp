@@ -5,7 +5,8 @@ class mariadb::packages(
 
     package { [
         'mydumper',
-        'percona-toolkit'
+        'percona-toolkit',
+        'sshfs'
     ]:
         ensure => present,
     }
@@ -26,13 +27,13 @@ class mariadb::packages(
     }
 
     # First installs can trip without this
-    exec {'apt_update_mariadb':
+    exec { 'apt_update_mariadb':
         command     => '/usr/bin/apt-get update',
         refreshonly => true,
         logoutput   => true,
     }
 
-    package {[
+    package { [
         "mariadb-server-${version}",
         "mariadb-backup"
     ]:
