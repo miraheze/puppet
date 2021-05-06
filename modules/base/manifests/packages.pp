@@ -18,7 +18,6 @@ class base::packages {
         'molly-guard',
         'mtr',
         'nano',
-        'needrestart',
         'net-tools',
         'parted',
         'pigz',
@@ -36,6 +35,10 @@ class base::packages {
 
     package { $packages:
         ensure => present,
+    }
+
+    package { 'needrestart':
+        ensure  => 'purged',
     }
 
     if os_version('debian >= stretch') {
