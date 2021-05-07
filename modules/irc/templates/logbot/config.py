@@ -29,7 +29,7 @@ twitter_api_params = {
 }
 
 # Channels to join
-targets = ("#miraheze-sre", "#miraheze-sre-security")
+targets = ("#miraheze-sre")
 
 # Name of nickserv user
 nickserv = "nickserv"
@@ -51,9 +51,8 @@ port = 6697
 
 ssl = True
 
-# Map irc nick to real name
+# Map irc nick to wiki username
 author_map = {
-    "JohnLewis": "John",
     "SPF|Cloud": "Southparkfan"
 }
 
@@ -100,16 +99,18 @@ identica_username = ""
 identica_password = ""
 
 # Check the logger's username or cloak against a trust list
-check_users = False
+check_users = True
 
 # A semantic query to use to search the wiki for a trust list; example:
 #   user_query = ("[[IRC Nick::+]] or [[IRC Cloak::+]]|?IRC Nick|?IRC Cloak
 #                 "|limit=500|format=json")
 user_query = ""
 
+user_url = "https://meta.miraheze.org/w/api.php?action=query&list=globalallusers&agugroup=sysadmin&format=json"
+
 # The query path URL; example:
 #   wiki_query_path = "/wiki/Special:Ask/"
 wiki_query_path = ""
 
 # Whether we "warn" or "error" if the user isn't in the trust list
-required_users_mode = "warn"
+required_users_mode = "error"
