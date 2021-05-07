@@ -101,16 +101,8 @@ identica_password = ""
 # Check the logger's username or cloak against a trust list
 check_users = True
 
-# A semantic query to use to search the wiki for a trust list; example:
-#   user_query = ("[[IRC Nick::+]] or [[IRC Cloak::+]]|?IRC Nick|?IRC Cloak
-#                 "|limit=500|format=json")
-user_query = ""
-
+# Users that are allowed to log messages
 allowed_users = ("Southparkfan", "paladox", "Reception123", "RhinosF1", "MirahezeLSBot")
-
-# The query path URL; example:
-#   wiki_query_path = "/wiki/Special:Ask/"
-wiki_query_path = ""
 
 # Whether we "warn" or "error" if the user isn't in the trust list
 required_users_mode = "error"
