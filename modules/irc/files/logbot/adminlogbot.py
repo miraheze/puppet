@@ -194,7 +194,7 @@ class logbot(ircbot.SingleServerIRCBot):
                         user_json = json.loads(user_json)
                     user_json_cache_file.close()
                 username = self.find_user(author, cloak, user_json)
-                if username:
+                if username and username in self.config.allowed_users:
                     author = "[[" + username + "]]"
                 else:
                     if self.config.required_users_mode == "warn":
