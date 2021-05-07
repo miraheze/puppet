@@ -169,52 +169,25 @@ class logbot(ircbot.SingleServerIRCBot):
         elif line.lower().startswith("!log "):
             logging.debug("'%s' got '%s'; Attempting to log." %
                           (self.name, line))
-            if self.config.check_users:
-                try:
-                    cache_filename = '%s/%s-users_json.cache' %\
-                                     (self.config.cachedir, self.name)
-                except AttributeError:
-                    cache_filename = '/var/lib/adminbot/%s-users_json.cache' %\
-                                     self.name
-
-                cache_stale = self.is_stale(cache_filename)
-                if cache_stale:
-                    user_json = ''
-                    user_json_cache_file = open(cache_filename, 'w+')
-                    if self.config.user_query:
-                        user_json = self.get_query(self.config.user_query)
-                    elif self.config.user_url:
-                        user_json = self.get_json_from_url(
-                            self.config.user_url)
-                    user_json_cache_file.write(json.dumps(user_json))
-                else:
-                    user_json_cache_file = open(cache_filename, 'r')
-                    user_json = user_json_cache_file.read()
-                    if user_json:
-                        user_json = json.loads(user_json)
-                    user_json_cache_file.close()
-                username = self.find_user(author, cloak, user_json)
-                if username and username in self.config.allowed_users:
-                    author = "[[" + username + "]]"
-                else:
-                    if self.config.required_users_mode == "warn":
-                            self.connection.privmsg(event.target,
-                                                "Not a trusted nick or cloak."
-                                                " This is just a warning,"
-                                                " for now."
-                                                " Please add your nick"
-                                                " or cloak added"
-                                                " to the trust list"
-                                                " or your user page.")
-                    if self.config.required_users_mode == "error":
-                            self.connection.privmsg(event.target,
-                                                "Not a trusted nick"
-                                                " or cloak. Not logging."
-                                                " Please add your nick"
-                                                " or cloak added"
-                                                " to the trust list"
-                                                " or your user page.")
-                            return
+            if self.config.check_users and author not in self.config.allowed_users:
+                 if self.config.required_users_mode == "warn":
+                        self.connection.privmsg(event.target,
+                                            "Not a trusted nick or cloak."
+                                            " This is just a warning,"
+                                            " for now."
+                                            " Please add your nick"
+                                            " or cloak added"
+                                            " to the trust list"
+                                            " or your user page.")
+                if self.config.required_users_mode == "error":
+                        self.connection.privmsg(event.target,
+                                            "Not a trusted nick"
+                                            " or cloak. Not logging."
+                                            " Please add your nick"
+                                            " or cloak added"
+                                            " to the trust list"
+                                            " or your user page.")
+                        return
             if self.config.enable_projects:
                 arr = line.split(" ", 2)
                 
