@@ -52,31 +52,6 @@ class logbot(ircbot.SingleServerIRCBot):
             query = query.replace(match, replace)
         return query
 
-    def get_query(self, query):
-        if not query:
-            return {}
-        query = self.ask_encode(query)
-        url = "%s://%s%s%s", (self.config.wiki_connection[0],
-                              self.config.wiki_connection[1],
-                              self.config.wiki_query_path, query)
-        return self.get_json_from_url(url)
-
-    def get_json_from_url(self, url):
-        if not url:
-            return {}
-        f = urllib.urlopen(url)
-        results = f.read()
-        return json.loads(results)
-
-    def find_user(self, author, cloak, user_json):
-        for result in user_json['items']:
-            username = result["label"]
-            usernick = result["irc_nick"][0]
-            usercloak = result["irc_cloak"][0]
-            if author == usernick or cloak == usercloak:
-                return username
-        return ''
-
     def is_stale(self, cache_filename):
         if os.path.exists(cache_filename):
             stat = os.stat(cache_filename)
