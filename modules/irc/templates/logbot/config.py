@@ -106,7 +106,7 @@ check_users = True
 #                 "|limit=500|format=json")
 user_query = ""
 
-user_url = "https://meta.miraheze.org/w/api.php?action=query&list=globalallusers&agugroup=sysadmin&format=json"
+allowed_users = ("Southparkfan", "paladox", "Reception123", "RhinosF1", "MirahezeLSBot")
 
 # The query path URL; example:
 #   wiki_query_path = "/wiki/Special:Ask/"
