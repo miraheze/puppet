@@ -91,6 +91,9 @@ class role::db {
         ],
     }
 
+    # Will use parameters (soon)
+    class { 'dbbackup::dumper': }
+
     # We only need to rung a single instance of mysqld_exporter,
     # listens on port 9104 by default.
     prometheus::mysqld_exporter::instance { 'main':

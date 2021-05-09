@@ -16,7 +16,7 @@ class role::dbbackup {
         ],
     }
 
-    class { '::dbbackup':
+    class { 'dbbackup::storage':
         backup_dir      =>  '/srv/backups',
         clusters        =>  $clusters,
         backup_user     =>  'dbbackup-user',

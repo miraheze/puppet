@@ -6,7 +6,6 @@ class mariadb::packages(
     package { [
         'mydumper',
         'percona-toolkit',
-        'sshfs'
     ]:
         ensure => present,
     }

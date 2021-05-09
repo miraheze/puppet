@@ -1,5 +1,5 @@
-# class: dbbackup
-class dbbackup(
+# class: dbbackup::storage
+class dbbackup::storage(
     Optional[String]    $backup_dir     = '/srv/backups',
     Array               $clusters       = [],
     String              $backup_user    = undef,
