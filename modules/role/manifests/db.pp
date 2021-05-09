@@ -85,7 +85,7 @@ class role::db {
     # Dedicated account for database backup transfers
     users::user { 'dbbackup-user':
         ensure      => present,
-        uid         => 3001,
+        uid         => 3101,
         ssh_keys    => [
             'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILV8ZJLdefzSMcPe1o40Nw6TjXvt17JSpvxhIwZI0YcF'
         ],
