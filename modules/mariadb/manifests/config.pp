@@ -19,6 +19,7 @@ class mariadb::config(
     $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
     $roundcubemail_password = lookup('passwords::roundcubemail')
     $mariadb_replica_password = lookup('passwords::mariadb_replica_password')
+    $dbbackup_user_password = lookup('passwords::db::dbbackup_user')
 
     $server_id = inline_template(
         "<%= @virtual_ip_address.split('.').inject(0)\
