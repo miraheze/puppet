@@ -82,6 +82,15 @@ class role::db {
         ],
     }
 
+    # Dedicated account for database backup transfers
+    users::user { 'dbbackup-user':
+        ensure      => present,
+        uid         => 3001,
+        ssh_keys    => [
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILV8ZJLdefzSMcPe1o40Nw6TjXvt17JSpvxhIwZI0YcF'
+        ],
+    }
+
     # We only need to rung a single instance of mysqld_exporter,
     # listens on port 9104 by default.
     prometheus::mysqld_exporter::instance { 'main':

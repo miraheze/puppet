@@ -63,4 +63,13 @@ class role::dbbackup {
             'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFX1yvcRAMqwlbkkhMPhK1GFYrLYM18qC1YUcuUEErxz dbcopy@db6'
         ],
     }
+
+    # Dedicated account for database backup transfers
+    users::user { 'dbbackup-user':
+        ensure      => present,
+        uid         => 3001,
+        ssh_keys    => [
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILV8ZJLdefzSMcPe1o40Nw6TjXvt17JSpvxhIwZI0YcF'
+        ],
+    }
 }
