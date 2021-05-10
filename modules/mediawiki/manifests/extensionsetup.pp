@@ -141,7 +141,7 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
     exec { 'datatransfer_composer':
-        command     => "wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer require phpoffice/phpspreadsheet",
+        command     => "wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar require phpoffice/phpspreadsheet",
         creates     => '/srv/mediawiki/w/extensions/DataTransfer/composer.phar',
         cwd         => '/srv/mediawiki/w/extensions/DataTransfer',
         path        => '/usr/bin',
