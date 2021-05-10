@@ -14,6 +14,20 @@ class role::dbbackup {
         ssh_keys    => [
             'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILV8ZJLdefzSMcPe1o40Nw6TjXvt17JSpvxhIwZI0YcF'
         ],
+    } ->
+    file { '/home/dbbackup-user/.ssh':
+        ensure  => directory,
+        owner   => 'dbbackup-user',
+        group   => 'dbbackup-user',
+        mode    => '0700',
+    } ->
+    file { '/home/dbbackup-user/.ssh/id_ed25519':
+        ensure      => present,
+        source      => 'puppet:///private/dbbackup/dbbackup-user.id_ed25519',
+        owner       => 'dbbackup-user',
+        group       => 'dbbackup-user',
+        mode        => '0400',
+        show_diff   => false,
     }
 
     class { 'dbbackup::storage':
