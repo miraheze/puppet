@@ -13,19 +13,19 @@ class dbbackup::dumper(
     ensure_packages(['sshfs'])
 
     $mount_clusters.each |String $clusterName| {
-        file {
+        file { "${mount_local_dir_prefix}${clusterName}":
             ensure  => directory,
             owner   => $mount_user,
             group   => $mount_group,
             mode    => '0750',
         } ->
-        mount { "${mount_dir_prefix}${clusterName}":
+        mount { "${mount_local_dir_prefix}${clusterName}":
             ensure      => mounted,
             atboot      => true,
             device      => "${mount_user}@${mount_host}:${mount_remote_dir_prefix}${clusterName}",
             dump        => 0,
             fstype      => 'fuse.sshfs',
-            options     => "StrictHostKeyChecking=yes,IdentityFile=${mount_ssh_key_file}",
+            options     => "StrictHostKeyChecking=yes,allow_other,default_permissions,IdentityFile=${mount_ssh_key_file}",
             pass        => 0,
             remounts    => false,
         }
