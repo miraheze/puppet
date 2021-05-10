@@ -1,5 +1,7 @@
 # class: role::db
-class role::db {
+class role::db(
+    Optional[Array] $backup_clusters    = lookup('role::db::backup_clusters', {'default_value' => undef})
+) {
     include mariadb::packages
 
     $mediawiki_password = lookup('passwords::db::mediawiki')
@@ -82,31 +84,39 @@ class role::db {
         ],
     }
 
-    # Dedicated account for database backup transfers
-    users::user { 'dbbackup-user':
-        ensure      => present,
-        uid         => 3101,
-        ssh_keys    => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILV8ZJLdefzSMcPe1o40Nw6TjXvt17JSpvxhIwZI0YcF'
-        ],
-    } ->
-    file { '/home/dbbackup-user/.ssh':
-        ensure  => directory,
-        owner   => 'dbbackup-user',
-        group   => 'dbbackup-user',
-        mode    => '0700',
-    } ->
-    file { '/home/dbbackup-user/.ssh/id_ed25519':
-        ensure      => present,
-        source      => 'puppet:///private/dbbackup/dbbackup-user.id_ed25519',
-        owner       => 'dbbackup-user',
-        group       => 'dbbackup-user',
-        mode        => '0400',
-        show_diff   => false,
+    if $backup_clusters {
+        # Dedicated account for database backup transfers
+        users::user { 'dbbackup-user':
+            ensure      => present,
+            uid         => 3101,
+            ssh_keys    => [
+                'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILV8ZJLdefzSMcPe1o40Nw6TjXvt17JSpvxhIwZI0YcF'
+            ],
+        } ->
+        file { '/home/dbbackup-user/.ssh':
+            ensure  => directory,
+            owner   => 'dbbackup-user',
+            group   => 'dbbackup-user',
+            mode    => '0700',
+        } ->
+        file { '/home/dbbackup-user/.ssh/id_ed25519':
+            ensure      => present,
+            source      => 'puppet:///private/dbbackup/dbbackup-user.id_ed25519',
+            owner       => 'dbbackup-user',
+            group       => 'dbbackup-user',
+            mode        => '0400',
+            show_diff   => false,
+        } ->
+        class { 'dbbackup::dumper':
+            mount_host                  => 'dbbackup1.miraheze.org',
+            mount_user                  => 'dbbackup-user',
+            mount_group                 => 'dbbackup-user',
+            mount_ssh_key_file          => '/home/dbbackup-user/.ssh/id_ed25519',
+            mount_local_dir_prefix      => '/mnt/dbbackup1-',
+            mount_remote_dir_prefix     => '/srv/backups/',
+            mount_clusters              => $backup_clusters,
+        }
     }
-
-    # Will use parameters (soon)
-    class { 'dbbackup::dumper': }
 
     # We only need to rung a single instance of mysqld_exporter,
     # listens on port 9104 by default.
