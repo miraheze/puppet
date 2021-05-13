@@ -53,7 +53,7 @@ ssl = True
 
 # Map irc nick to real name
 author_map = {
-    "JohnLewis": "John",
+    "Crepusculum": "Universal Omega",
     "SPF|Cloud": "Southparkfan"
 }
 
