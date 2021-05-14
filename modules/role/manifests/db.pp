@@ -86,9 +86,15 @@ class role::db(
 
     if $backup_clusters {
         # Dedicated account for database backup transfers
+        # dbbackup-user uid/gid/group must be equal on servers
+        users::group { 'dbbackup-user':
+            ensure  => present,
+            gid     => 3201,
+        } ->
         users::user { 'dbbackup-user':
             ensure      => present,
-            uid         => 3101,
+            uid         => 3201,
+            gid         => 3201,
             ssh_keys    => [
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILV8ZJLdefzSMcPe1o40Nw6TjXvt17JSpvxhIwZI0YcF'
             ],
