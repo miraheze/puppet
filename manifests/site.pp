@@ -21,7 +21,7 @@ node /^db1[123]\.miraheze\.org$/ {
     include bacula::client
 }
 
-node /^dbbackup[12]\.miraheze\.org$/ {
+node 'dbbackup1.miraheze.org' {
     include base
     include role::dbbackup
 }
