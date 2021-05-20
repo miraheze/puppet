@@ -42,7 +42,7 @@ notifications:
     on_success: always
     on_failure: always
     channels:
-      - "chat.freenode.org#voxpupuli-notifications"
+      - "irc.libera.chat#voxpupuli-notifications"
 deploy:
   provider: puppetforge
   username: puppet

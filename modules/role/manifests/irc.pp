@@ -4,7 +4,7 @@ class role::irc {
 
     class { 'irc::ircrcbot':
         nickname     => 'MirahezeRC',
-        network      => 'chat.freenode.net',
+        network      => 'irc.libera.chat',
         network_port => '6697',
         channel      => '#miraheze-feed',
         udp_port     => '5070',
@@ -27,7 +27,7 @@ class role::irc {
 
     class { 'irc::irclogserverbot':
         nickname     => 'MirahezeLSBot',
-        network      => 'chat.freenode.net',
+        network      => 'irc.libera.chat',
         network_port => '6697',
         channel      => '#miraheze-sre',
         udp_port     => '5071',
