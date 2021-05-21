@@ -8,8 +8,17 @@ location /.well-known/acme-challenge/ {
 	try_files $uri =404;
 }
 
-location ~ ^/(\.git|config) {
+location ~ ^/(\.git|config|landing|dblist) {
         deny all;
+}
+
+location ~ ^/w/(cache|maintenance|mw-config|vendor) {
+	deny all;
+}
+
+# Cache certain non-static.miraheze.org static resources
+location ~ ^/w/((skins|resources)|extensions/[A-Za-z0-9]+.*)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=)?$ {
+	expires 1d;
 }
 
 location ~ \.php {
@@ -21,10 +30,6 @@ location ~ \.php {
 	fastcgi_buffers 32 32k;
 	fastcgi_buffer_size 64k;
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-}
-
-location ~ ^/w/(cache|maintenance|mw-config|vendor) {
-	deny all;
 }
 
 location = / {
