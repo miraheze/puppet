@@ -146,7 +146,7 @@ sub mw_evaluate_cookie {
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
 		&& req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)$"
-		&& req.url !~ "^/w/((skins|resources)|extensions/[A-Za-z0-9]+.*)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)?$"
+		&& req.url !~ "^/w/((skins|resources)|extensions/[A-Za-z0-9]+.*)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=)?$"
 		&& req.url !~ "^/(wiki/?)?$"
 	) {
 		# To prevent issues, we do not want vcl_backend_fetch to add ?useformat=mobile
@@ -157,8 +157,6 @@ sub mw_evaluate_cookie {
 	} else {
 		# These resources can be cached regardless of cookie value, remove cookie
 		# to avoid passing requests to the backend.
-		# todo: rely on Cache-Control?
-		# https://info.varnish-software.com/blog/yet-another-post-on-caching-vs-cookies
 		call mw_stash_cookie;
 	}
 }
