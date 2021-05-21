@@ -146,7 +146,7 @@ sub mw_evaluate_cookie {
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
 		&& req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)$"
-		&& req.url !~ "^/w/((skins|resources)|extensions/[A-Za-z0-9]+.*)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=)?$"
+		&& req.url !~ "^/w/(skins|resources|extensions)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=?)?$"
 		&& req.url !~ "^/(wiki/?)?$"
 	) {
 		# To prevent issues, we do not want vcl_backend_fetch to add ?useformat=mobile
@@ -178,7 +178,7 @@ sub mw_identify_device {
 
 sub mw_rate_limit {
 	# Allow higher limits for static.mh.o, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") {
+	if (req.http.Host == "static.miraheze.org") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
 		}
