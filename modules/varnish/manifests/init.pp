@@ -166,6 +166,6 @@ class varnish (
         command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
         user    => 'root',
         minute  => '0',
-        hour    => '*/1',
+        hour    => '*/5',
     }
 }
