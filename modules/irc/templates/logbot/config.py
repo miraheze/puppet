@@ -29,7 +29,7 @@ twitter_api_params = {
 }
 
 # Channels to join
-targets = ("#miraheze-sre", "#miraheze-sre-security")
+targets = ("#miraheze-sre")
 
 # Name of nickserv user
 nickserv = "nickserv"
@@ -43,7 +43,7 @@ nick_username = "mirahezebots"
 # Password to identify with
 nick_password = "<%= @mirahezebots_password %>"
 
-# Network to join (ex: irc.freenode.net)
+# Network to join (ex: irc.libera.chat)
 network = "irc.libera.chat"
 
 # Port to use when joining network (ex: 7000). Should support SSL.
