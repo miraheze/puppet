@@ -7,6 +7,7 @@ puppetmaster: false
 puppetserver: false
 puppet_major_version: 6
 mediawiki::branch: 'REL1_35'
+mediawiki::branch_mw_config:  'master'
 letsencrypt: false
 use_gluster_new: true
 mediawiki::use_redis: false
