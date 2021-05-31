@@ -86,7 +86,7 @@ class role::mediawiki {
     file { '/usr/local/bin/remountGluster.sh':
         ensure => 'present',
         mode   => '0755',
-        source => 'puppet:///modules/profile/mediawiki/bin/remountGluster.sh',
+        source => 'puppet:///modules/role/mediawiki/bin/remountGluster.sh',
     }
 
     cron { 'check_mount':
