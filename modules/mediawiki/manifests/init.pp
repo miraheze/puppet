@@ -128,6 +128,12 @@ class mediawiki(
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
     }
+    
+    file { '/usr/local/bin/mwscript':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/mwscript.py',
+    }
 
     file { '/usr/local/bin/pushServices.sh':
         ensure => 'present',
