@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/env python3
 """
 Script to check if reverse DNS entry for hostname matches given regex.
 
