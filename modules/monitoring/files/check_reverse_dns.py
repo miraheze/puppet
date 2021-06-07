@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#! /usr/bin/python3
 """
 Script to check if reverse DNS entry for hostname matches given regex.
 
@@ -63,9 +63,9 @@ def get_reverse_dnshostname(hostname):
                 dns_resolver = resolver.Resolver(configure=False)
                 dns_resolver.nameservers = ['1.1.1.1']
 
-                resolved_ip_addr = str(dns_resolver.resolve(hostname, 'A')[0])
+                resolved_ip_addr = str(dns_resolver.query(hostname, 'A')[0])
                 ptr_record = reversename.from_address(resolved_ip_addr)
-                rev_host = str(resolver.resolve(ptr_record, "PTR")[0]).rstrip('.')
+                rev_host = str(resolver.query(ptr_record, "PTR")[0]).rstrip('.')
 
                 return rev_host
         except (resolver.NXDOMAIN, resolver.NoAnswer):
