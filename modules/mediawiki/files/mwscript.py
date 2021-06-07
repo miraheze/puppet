@@ -19,7 +19,7 @@ print("Will execute:")
 print(command)
 print(logcommand)
 confirm = input("Type 'Y' to confirm: ")
-if confirm == 'Y':
+if confirm.upper() == 'Y':
     os.system(command)
     os.system(logcommand)
     print('Done!')
