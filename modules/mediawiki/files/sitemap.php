@@ -1,6 +1,6 @@
 <?php
 
-$databaseJsonFileName = '/srv/mediawiki/w/cache/databases.json';
+$databaseJsonFileName = '/srv/mediawiki/cache/databases.json';
 $databasesArray = file_exists( $databaseJsonFileName ) ?
 	json_decode( file_get_contents( $databaseJsonFileName ), true ) : [ 'combi' => [] ];
 
