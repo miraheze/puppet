@@ -38,7 +38,6 @@ command[check_ntp_time]=/usr/lib/nagios/plugins/check_ntp_time -H time.cloudflar
 command[check_phd]=/usr/lib/nagios/plugins/check_procs -a phd -c 1:
 command[check_redis]=/usr/lib/nagios/plugins/check_procs -a redis-server -c 1:1
 command[check_jobchron]=/usr/lib/nagios/plugins/check_procs -a redisJobChronService -c 1:1
-command[check_jobqueue]=/usr/bin/sudo -u www-data /usr/lib/nagios/plugins/check_jobqueue
 command[check_icinga_config]=/usr/lib/nagios/plugins/check_icinga_config /etc/icinga/icinga.cfg
 # glusterfsd brick
 command[check_glusterd_volume]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfsd -c 1:
