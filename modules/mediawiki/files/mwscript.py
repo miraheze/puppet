@@ -10,7 +10,7 @@ if len(script.split('/')) == 1:
 else:
     scriptsplit = script.split('/')
     if scriptsplit[2] == "removePII.php":
-        raise Exception("Can not run removePII with mwscript")
+        raise Exception("Can not run RemovePII with mwscript")
     script = script = f'/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
 wiki = sys.argv[2]
 command = f'sudo -u www-data php {script} --wiki={wiki}'
