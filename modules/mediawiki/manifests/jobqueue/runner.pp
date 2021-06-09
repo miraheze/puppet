@@ -60,8 +60,8 @@ class mediawiki::jobqueue::runner {
             ensure   => present,
             command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/maintenance/updateSpecialPages.php > /dev/null',
             user     => 'www-data',
-            minute   => 5,
-            hour     => 24,
+            minute   => '5',
+            hour     => '24',
         }
 
         cron { 'update rottenlinks on all wikis':
