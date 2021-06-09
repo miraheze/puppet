@@ -56,6 +56,14 @@ class mediawiki::jobqueue::runner {
             hour    => '12',
         }
 
+        cron { 'update_special_pages':
+            ensure   => present,
+            command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/maintenance/updateSpecialPages.php > /dev/null',
+            user     => 'www-data',
+            minute   => 5,
+            hour     => 0,
+        }
+
         cron { 'update rottenlinks on all wikis':
             ensure   => present,
             command  => '/usr/local/bin/fileLockScript.sh /tmp/rotten_links_file_lock "/usr/bin/nice -19 /usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php"',
