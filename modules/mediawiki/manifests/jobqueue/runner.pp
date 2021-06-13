@@ -58,7 +58,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'update_special_pages':
             ensure   => present,
-            command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json /srv/mediawiki/w/maintenance/updateSpecialPages.php > /dev/null',
+            command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/maintenance/updateSpecialPages.php > /dev/null',
             user     => 'www-data',
             minute   => '30',
             hour     => '23',
