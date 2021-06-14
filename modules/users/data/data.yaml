@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [paladox, reception, southparkfan, void]
+    members: [reception, southparkfan, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -93,11 +93,11 @@ users:
     realname: ImBoPhil
     ssh_keys: []
   paladox:
-    ensure: present
+    ensure: absent
     uid: 1009
     name: paladox
     realname: Paladox
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINS7Yzicrs27/ZGUUGRKaZqhYJVJ+Kcgx9iQrVj/fXJZ paladox]
+    ssh_keys: []
   macfan:
     ensure: absent
     uid: 1010
