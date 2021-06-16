@@ -53,8 +53,7 @@ ssl = True
 
 # Map irc nick to real name
 author_map = {
-    "Crepusculum": "Universal Omega",
-    "SPF|Cloud": "Southparkfan"
+    "Voidwalker": "Void"
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)
