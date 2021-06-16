@@ -1,5 +1,0 @@
-# Only add a domain if really necessary.
-# Allows external websites to frame Miraheze. 
-# DOES NOT allow Miraheze wikis to frame external sites.
-# For that, use csp_whitelist.
-url1: '*.miraheze.org'
