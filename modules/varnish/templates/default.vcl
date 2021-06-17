@@ -9,8 +9,8 @@
 # please contact Southparkfan <southparkfan [at] miraheze [dot] org>.
 
 # Marker to tell the VCL compiler that this VCL has been adapted to the
-# new 4.0 format.
-vcl 4.0;
+# new 4.1 format.
+vcl 4.1;
 
 import directors;
 import std;
