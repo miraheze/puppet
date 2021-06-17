@@ -370,11 +370,6 @@ sub vcl_backend_fetch {
 }
 
 sub vcl_backend_response {
-	# Don't cache 50x responses
-	if (beresp.status == 500 || beresp.status == 502 || beresp.status == 503 || beresp.status == 504) {
-		set beresp.uncacheable = true;
-	}
-
 	if (beresp.ttl <= 0s) {
 		set beresp.ttl = 1800s;
 		set beresp.uncacheable = true;
