@@ -10,7 +10,7 @@
 
 # Marker to tell the VCL compiler that this VCL has been adapted to the
 # new 4.0 format.
-vcl 4.1;
+vcl 4.0;
 
 import directors;
 import std;
@@ -108,7 +108,9 @@ sub vcl_init {
 
 
 acl purge {
+	# localhost
 	"localhost";
+	"127.0.0.1";
 	# mw8
 	"51.195.236.221";
 	"2001:41d0:800:178a::7";
@@ -346,6 +348,17 @@ sub vcl_hash {
 	}
 }
 
+sub vcl_hit {
+	if (!obj.ttl > 0s) {
+		return (pass);
+	}
+
+	# Force lookup if the request is a no-cache request from the client.
+	if (req.http.Cache-Control ~ "no-cache") {
+		return (miss);
+	}
+}
+
 sub vcl_backend_fetch {
 	if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php\?title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1") {
 		if (bereq.url ~ "\?") {
@@ -357,6 +370,11 @@ sub vcl_backend_fetch {
 }
 
 sub vcl_backend_response {
+	# Don't cache 50x responses
+	if (beresp.status == 500 || beresp.status == 502 || beresp.status == 503 || beresp.status == 504) {
+		set beresp.uncacheable = true;
+	}
+
 	if (beresp.ttl <= 0s) {
 		set beresp.ttl = 1800s;
 		set beresp.uncacheable = true;
