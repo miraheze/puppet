@@ -105,7 +105,6 @@ class mediawiki(
     $recaptcha_sitekey     = lookup('passwords::recaptcha::sitekey')
     $recaptcha_secretkey   = lookup('passwords::recaptcha::secretkey')
     $matomotoken           = lookup('passwords::mediawiki::matomotoken')
-    $yandextranslation_key = lookup('passwords::mediawiki::yandextranslationkey')
     $ldap_password         = lookup('passwords::mediawiki::ldap_password')
 
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
@@ -128,6 +127,12 @@ class mediawiki(
         ensure => 'present',
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
+    }
+    
+    file { '/usr/local/bin/mwscript':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/mwscript.py',
     }
 
     file { '/usr/local/bin/pushServices.sh':

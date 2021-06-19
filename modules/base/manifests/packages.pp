@@ -37,6 +37,10 @@ class base::packages {
         ensure => present,
     }
 
+    package { 'needrestart':
+        ensure  => 'purged',
+    }
+
     if os_version('debian >= stretch') {
         require_package('dirmngr')
     }

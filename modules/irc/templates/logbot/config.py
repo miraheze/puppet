@@ -44,7 +44,7 @@ nick_username = "mirahezebots"
 nick_password = "<%= @mirahezebots_password %>"
 
 # Network to join (ex: irc.freenode.net)
-network = "chat.freenode.net"
+network = "irc.libera.chat"
 
 # Port to use when joining network (ex: 7000). Should support SSL.
 port = 6697
@@ -53,8 +53,7 @@ ssl = True
 
 # Map irc nick to real name
 author_map = {
-    "JohnLewis": "John",
-    "SPF|Cloud": "Southparkfan"
+    "Voidwalker": "Void"
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)

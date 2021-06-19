@@ -82,4 +82,18 @@ class role::mediawiki {
           volume    => lookup('gluster_volume', {'default_value' => 'gluster3.miraheze.org:/static'}),
         }
     }
+
+    file { '/usr/local/bin/remountGluster.sh':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/role/mediawiki/bin/remountGluster.sh',
+    }
+
+    cron { 'check_mount':
+        ensure  => present,
+        command => '/bin/bash /usr/local/bin/remountGluster.sh',
+        user    => 'root',
+        minute  => '*/1',
+        hour    => '*',
+    }
 }

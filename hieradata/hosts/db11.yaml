@@ -5,3 +5,6 @@ mariadb::config::max_connections: 500
 mariadb::config::tmpdir: /srv/tmp
 mariadb::config::table_definition_cache: 10000 
 mariadb::config::table_open_cache: 10000
+
+role::db::backup_clusters:
+    - c2

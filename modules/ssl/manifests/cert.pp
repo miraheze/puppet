@@ -4,16 +4,18 @@ define ssl::cert (
     String $certificate    = $title,
 ) {
     if defined(Service['nginx']) {
-        $restart_nginx = Service['nginx']
+        $restart_service = Service['nginx']
+    } elsif defined(Service['trafficserver']) {
+        $restart_service = Service['trafficserver']
     } else {
-        $restart_nginx = undef
+        $restart_service = undef
     }
 
     if !defined(File["/etc/ssl/localcerts/${certificate}.crt"]) {
         file { "/etc/ssl/localcerts/${certificate}.crt":
             ensure => $ensure,
             source => "puppet:///ssl/certificates/${certificate}.crt",
-            notify => $restart_nginx,
+            notify => $restart_service,
         }
     }
 
@@ -24,7 +26,7 @@ define ssl::cert (
             owner  => 'root',
             group  => 'ssl-cert',
             mode   => '0660',
-            notify => $restart_nginx,
+            notify => $restart_service,
         }
     }
 }

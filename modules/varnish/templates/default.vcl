@@ -145,8 +145,8 @@ sub mw_evaluate_cookie {
 	if (req.http.Cookie ~ "([sS]ession|Token|mf_useformat|stopMobileRedirect)=" 
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
-		&& req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(png|jpe?g|svg)$"
-		&& req.url !~ "^/w/resources/assets/.*\.png$"
+		&& req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)$"
+		&& req.url !~ "^/w/(skins|resources|extensions)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=?)?$"
 		&& req.url !~ "^/(wiki/?)?$"
 	) {
 		# To prevent issues, we do not want vcl_backend_fetch to add ?useformat=mobile
@@ -155,6 +155,8 @@ sub mw_evaluate_cookie {
 		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	} else {
+		# These resources can be cached regardless of cookie value, remove cookie
+		# to avoid passing requests to the backend.
 		call mw_stash_cookie;
 	}
 }
@@ -176,7 +178,7 @@ sub mw_identify_device {
 
 sub mw_rate_limit {
 	# Allow higher limits for static.mh.o, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") {
+	if (req.http.Host == "static.miraheze.org") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
 		}
@@ -384,7 +386,7 @@ sub vcl_deliver {
 	if (
 		req.http.Host == "static.miraheze.org" ||
 		req.url ~ "/w/api.php" ||
-		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt||stl|STL)$"
+		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
 	) {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}

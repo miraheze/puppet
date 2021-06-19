@@ -3,3 +3,4 @@
 # DOES NOT allow Miraheze wikis to frame external sites.
 # For that, use csp_whitelist.
 url1: '*.miraheze.org'
+url2: 'worldsanskrit.net'

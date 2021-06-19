@@ -2,12 +2,12 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [johnflewis, paladox, reception, southparkfan]
+    members: [reception, southparkfan, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [rhinos]
+    members: [rhinos, universalomega]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.2-fpm *',
@@ -39,13 +39,11 @@ groups:
 
 users:
   johnflewis:
-    ensure: present
+    ensure: absent
     uid: 1000
     name: johnflewis
     realname: John Lewis
-    ssh_keys:
-        - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAnZCIzrz6zMQdqQrd2fl17m31ksgMbsJJZJ1vgBviK7YR7mq2snJGVwD1BTFemqNPblMCGAEzsgcJ9kjgE/FF0TwzFnkmFxcGlJXmWsGvdS5oFljEzw8jVCQ7zFMetGeTtAhjqx3kiRIprQ/GR6HforNUNxUCiV48Z2USLR6toa91VF75FnxBQBw5dAi6KpN+chBqeaG9+kIw2z3TkZjuBxw5B+lE4IKd7b152rHmfMNuQNP+zioXLfDz2afNWNlS0Zi0jJdh/K0HOEsytvyF2nZ3917V4LPPPQG1eOWGNI1eh745fgk0UdMsg4V7dsgfvetxoitDyCrd07a0Z/LZpSxJkfdHoJjxoLtXwDfZDJora+I/M2H8N2ZDzBZNCH4km/TVWoaHjGh838+Y3YkALcs84IUFd+7gFQaSQ6KvlepYoNeAu6zCx7kQc6cJIXy5UTS6xa6Jr8nolqqjoMnH4vz8TC3DEd0eT8PwoaOtBgj+QjlXAzbWwG+YTKKwmXTccId6H9mZN4XHL7FAMgkg/AQsv5DCOcdllasJ4Bs7cI61fXDzj44c38lroJ1DgMyhiQRrnHOZIKdloBwQHBF2Gz7BWL+GADfiiBpyDhpVCkFfhcDByFIm4QkX66VVXFW7MHzG5GqTL+j8RBZiYXH7OIY2rxWP/zy/vub7i+acVHE= john@miraheze
-        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILJBzm4Xd0C49N1rurbnFsZJ8YEtWyj8JsvhwqZN6llV john@miraheze
+    ssh_keys: []
   southparkfan:
     ensure: present
     uid: 1001
@@ -95,11 +93,11 @@ users:
     realname: ImBoPhil
     ssh_keys: []
   paladox:
-    ensure: present
+    ensure: absent
     uid: 1009
     name: paladox
     realname: Paladox
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINS7Yzicrs27/ZGUUGRKaZqhYJVJ+Kcgx9iQrVj/fXJZ paladox]
+    ssh_keys: []
   macfan:
     ensure: absent
     uid: 1010
@@ -119,8 +117,14 @@ users:
     realname: Zppix
     ssh_keys: []
   universalomega:
-    ensure: absent
+    ensure: present
     uid: 1013
     name: universalomega
     realname: Universal Omega 
-    ssh_keys: []
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCibNiTDRcbwece0HAnkuX7yxwGUvW+moKqcvKWM52rgl8wDvkBc5HVvpYpb5IRBHuZ0REudOKt3jdudhxyMJ0QkDcO1Jyn6Y34ShzV+ePAwsBibVEZ1x3NJ7ekU/lnbRRtzJixY2OFDao9CkSjR7sSCVYy2ZknB9DZYEgVxdIWPKXGEtv7LzumaYPHbpU4PDj/IIRbEb2MKVGgxznrDyL+ZkaO5U3JZl2zorDti4r/Ya/UWypm15szLn4al3ok0W9c8upcqOBtbnQ/MNBx0FW7/GuvNJChi9ODmEYoPffheiOPT5y4QStd+5OKG62M8jfc9YgoaKWTx805+3tkb0jcUvHKsd/qJtGd7yu3N6JHtRVQanMsB0JQvhM+Re0QkCkHhVuU+tyO/v/40lxQrLbcm3cummpnLdgW6EB8ZwRE+5Eqpfo5mf/NDwW15vbw/GaTwJe9bClqOAFyhvCV/cmMAmMGObDFJNfExXDN/4i+imcAPQdeQzgsnCBf3cqfQBPJMHraObnyYYXcEksjjbbREQdc/4VxhQ4Qhf0bO3liFG/O05X2d6lOeZviBIhBWbGRT36GEQa8a6GB9PiUv4RpDDY+O13MKHL9Jy33l61aIA+Pd8uVptF2eEAdAAzezbH1N41r86NhPk500ZqoMwF3EDwSdsJumjHMNCfBvVqMaQ== universal.omega000@gmail.com]
+  void:
+    ensure: present
+    uid: 1014
+    name: void
+    realname: Voidwalker 
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWIwmB8ZkwnyvWoMwVfWxmPH6QkP2X2l0TfipMXeWHf void@miraheze.org]

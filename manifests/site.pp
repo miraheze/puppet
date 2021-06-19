@@ -10,7 +10,7 @@ node /^cloud[345]\.miraheze\.org$/ {
     include role::cloud
 }
 
-node /^cp(3|1[012])\.miraheze\.org$/ {
+node /^cp(3|1[23])\.miraheze\.org$/ {
     include base
     include role::varnish
 }
@@ -21,7 +21,7 @@ node /^db1[123]\.miraheze\.org$/ {
     include bacula::client
 }
 
-node /^dbbackup[12]\.miraheze\.org$/ {
+node 'dbbackup1.miraheze.org' {
     include base
     include role::dbbackup
 }
@@ -115,6 +115,7 @@ node 'test3.miraheze.org' {
 
 node 'test4.miraheze.org' {
     include base
+    include role::trafficserver
 
     ufw::allow { 'http port 443 51.195.236.249':
         proto => 'tcp',

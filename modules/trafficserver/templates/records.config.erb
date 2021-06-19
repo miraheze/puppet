@@ -1,0 +1,238 @@
+# https://docs.trafficserver.apache.org/en/latest/admin-guide/files/records.config.en.html
+# This file is managed by Puppet.
+
+# traffic_manager TCP ports
+CONFIG proxy.config.http.server_ports STRING<% if @https_port -%> <%= @https_port %>:ssl <%= @https_port %>:ipv6:ssl<% end -%><% if @http_port -%> <%= @http_port %> <%= @http_port %>:ipv6<% end -%>
+
+CONFIG proxy.config.admin.user_id STRING <%= @user %>
+
+CONFIG proxy.config.http.insert_request_via_str INT 1
+CONFIG proxy.config.http.insert_client_ip INT 0
+CONFIG proxy.config.http.insert_squid_x_forwarded_for INT 1
+CONFIG proxy.config.http.response_server_enabled INT 2
+
+CONFIG proxy.config.url_remap.pristine_host_hdr INT 1
+CONFIG proxy.config.disable_configuration_modification INT 1
+
+CONFIG proxy.config.plugin.lua.max_states INT <%= @max_lua_states %>
+
+<% if @res_track_memory -%>
+CONFIG proxy.config.res_track_memory INT <%= @res_track_memory %>
+<% end -%>
+
+<% if @network_settings -%>
+# Network settings
+CONFIG proxy.config.net.connections_throttle INT <%= @network_settings['connections_throttle'] %>
+CONFIG proxy.config.net.sock_option_flag_in INT <%= @network_settings['sock_option_flag_in'] %>
+CONFIG proxy.config.net.default_inactivity_timeout INT <%= @network_settings['default_inactivity_timeout'] %>
+CONFIG proxy.config.net.max_connections_in INT <%= @network_settings['max_connections_in'] %>
+CONFIG proxy.config.net.max_connections_active_in INT <%= @network_settings['max_connections_active_in'] %>
+<% end -%>
+
+<% if @h2_settings -%>
+# HTTP/2 settings
+CONFIG proxy.config.http2.stream_priority_enabled INT <%= @h2_settings['stream_priority_enabled'] %>
+CONFIG proxy.config.http2.max_settings_per_frame INT <%= @h2_settings['max_settings_per_frame'] %>
+CONFIG proxy.config.http2.max_settings_per_minute INT <%= @h2_settings['max_settings_per_minute'] %>
+CONFIG proxy.config.http2.max_settings_frames_per_minute INT <%= @h2_settings['max_settings_frames_per_minute'] %>
+CONFIG proxy.config.http2.max_ping_frames_per_minute INT <%= @h2_settings['max_ping_frames_per_minute'] %>
+CONFIG proxy.config.http2.max_priority_frames_per_minute INT <%= @h2_settings['max_priority_frames_per_minute'] %>
+CONFIG proxy.config.http2.min_avg_window_update FLOAT <%= @h2_settings['min_avg_window_update'] %>
+CONFIG proxy.config.http2.accept_no_activity_timeout INT <%= @h2_settings['accept_no_activity_timeout'] %>
+CONFIG proxy.config.http2.no_activity_timeout_in INT <%= @h2_settings['no_activity_timeout_in'] %>
+CONFIG proxy.config.http2.stream_error_rate_threshold FLOAT <%= @h2_settings['stream_error_rate_threshold'] %>
+<% end -%>
+
+<% if @http_settings -%>
+# HTTP settings
+CONFIG proxy.config.http.connect_attempts_timeout INT <%= @http_settings['connect_attempts_timeout'] %>
+CONFIG proxy.config.http.post_connect_attempts_timeout INT <%= @http_settings['post_connect_attempts_timeout'] %>
+CONFIG proxy.config.http.transaction_no_activity_timeout_in INT <%= @http_settings['transaction_no_activity_timeout_in'] %>
+CONFIG proxy.config.http.transaction_no_activity_timeout_out INT <%= @http_settings['transaction_no_activity_timeout_out'] %>
+CONFIG proxy.config.http.keep_alive_no_activity_timeout_in INT <%= @http_settings['keep_alive_no_activity_timeout_in'] %>
+CONFIG proxy.config.http.keep_alive_no_activity_timeout_out INT <%= @http_settings['keep_alive_no_activity_timeout_out'] %>
+CONFIG proxy.config.http.accept_no_activity_timeout INT <%= @http_settings['accept_no_activity_timeout'] %>
+CONFIG proxy.config.http.send_100_continue_response INT <%= @http_settings['send_100_continue_response'] %>
+CONFIG proxy.config.http.max_post_size INT <%= @http_settings['max_post_size'] %>
+CONFIG proxy.config.http.allow_half_open INT <%= @http_settings['allow_half_open'] %>
+# keep-alive configuration for connections against origin servers
+CONFIG proxy.config.http.keep_alive_enabled_out INT <%= @http_settings['keep_alive_enabled_out'] %>
+CONFIG proxy.config.http.keep_alive_post_out INT <%= @http_settings['keep_alive_post_out'] %>
+
+# Origin server connection reuse
+CONFIG proxy.config.http.server_session_sharing.match STRING <%= @http_settings['server_session_sharing_match'] %>
+CONFIG proxy.config.http.server_session_sharing.pool STRING <%= @http_settings['server_session_sharing_pool'] %>
+<% end -%>
+# Allow origin server connection reuse for requests with Authorization
+CONFIG proxy.config.http.auth_server_session_private INT 0
+
+<% if @enable_caching -%>
+<% if @required_headers -%>
+CONFIG proxy.config.http.cache.required_headers INT <%= @required_headers %>
+<% end -%>
+CONFIG proxy.config.http.cache.cache_responses_to_cookies INT 1
+CONFIG proxy.config.http.cache.guaranteed_max_lifetime INT <%= @guaranteed_max_lifetime %>
+# Do not accept inbound connections until the cache is enabled
+CONFIG proxy.config.http.wait_for_cache INT 2
+
+<% if @negative_caching -%>
+# Negative Response Caching
+CONFIG proxy.config.http.negative_caching_enabled INT 1
+CONFIG proxy.config.http.negative_caching_list STRING <%= @negative_caching['status_codes'].join(' ') %>
+CONFIG proxy.config.http.negative_caching_lifetime INT <%= @negative_caching['lifetime'] %>
+<% end -%>
+
+# RAM Cache
+CONFIG proxy.config.cache.ram_cache.size INT <%= @ram_cache_size %>
+CONFIG proxy.config.cache.ram_cache_cutoff INT 8388608 # 8MB
+# 0=no compression, 1=Fastlz, 2=Libz, 3=Liblzma
+CONFIG proxy.config.cache.ram_cache.compress INT 2
+
+# Disk Cache
+# max_doc_size needs to be disabled in order for Read While Writer to function
+# properly. See cache-basics.en.html#read-while-writer. We use Lua to avoid
+# caching documents with explicit Content-Length > 1G, see
+# do_global_read_response().
+CONFIG proxy.config.cache.max_doc_size INT 0
+<% else -%>
+CONFIG proxy.config.http.cache.http INT 0
+CONFIG proxy.config.http.insert_age_in_response INT 0
+<% end -%>
+
+<% if @parent_rules and @parent_rules != [] -%>
+# Parent proxy
+CONFIG proxy.config.http.parent_proxy_routing_enable INT 1
+CONFIG proxy.config.http.parent_proxy.self_detect INT 0
+CONFIG proxy.config.http.parent_proxy.retry_time INT 1
+CONFIG proxy.config.http.no_dns_just_forward_to_parent INT <%= @disable_dns_resolution %>
+<% if @http_settings -%>
+CONFIG proxy.config.http.parent_proxy.connect_attempts_timeout INT <%= @http_settings['connect_attempts_timeout'] %>
+<% end -%>
+<% end -%>
+
+<% if @enable_xdebug -%>
+# XDebug Plugin
+CONFIG proxy.config.diags.debug.enabled INT 1
+CONFIG proxy.config.diags.debug.tags STRING xdebug.headers
+<% end -%>
+
+<% if @collapsed_forwarding -%>
+CONFIG proxy.config.http.cache.open_write_fail_action INT 1
+CONFIG proxy.config.http.number_of_redirections INT 10
+CONFIG proxy.config.http.redirect_use_orig_cache_key INT 1
+<% else -%>
+# Request coalescing default values:
+# proxy.config.cache.enable_read_while_writer 1
+# proxy.config.http.cache.max_open_read_retries -1
+# proxy.config.http.cache.max_open_write_retries 1
+# proxy.config.http.cache.open_write_fail_action 0
+<% if @origin_coalescing -%>
+CONFIG proxy.config.cache.enable_read_while_writer INT 1
+CONFIG proxy.config.http.cache.max_open_read_retries INT 50
+CONFIG proxy.config.http.cache.max_open_write_retries INT 150
+<% else -%>
+# Disable RWW
+CONFIG proxy.config.cache.enable_read_while_writer INT 0
+# Set everything else to the default
+CONFIG proxy.config.http.cache.max_open_read_retries INT -1
+CONFIG proxy.config.http.cache.max_open_write_retries INT 1
+<% end -%>
+<% end -%>
+# In any case, fail open
+CONFIG proxy.config.http.cache.open_write_fail_action INT 0
+
+# logging: send diags to stdout/stderr (systemd journal)
+CONFIG proxy.config.diags.output.status STRING O
+CONFIG proxy.config.diags.output.note STRING O
+CONFIG proxy.config.diags.output.warning STRING O
+CONFIG proxy.config.diags.output.error STRING E
+CONFIG proxy.config.diags.output.fatal STRING E
+CONFIG proxy.config.diags.output.alert STRING E
+CONFIG proxy.config.diags.output.emergency STRING E
+# ATS stops logging if the logging directory has less than
+# max_space_mb_headroom (default: 1000 MB) available
+CONFIG proxy.config.log.max_space_mb_headroom INT 0
+# Do not rotate logfiles
+CONFIG proxy.config.log.rolling_enabled INT 0
+# Flush logs immediately
+CONFIG proxy.config.log.max_secs_per_buffer INT 0
+# React immediatelly to log files being rotated
+CONFIG proxy.config.log.file_stat_frequency INT 1
+# Bumped from the default (9216) to address the following error: "Skipping the
+# current log entry because its size exceeds the maximum payload space in a log
+# buffer"
+CONFIG proxy.config.log.log_buffer_size INT 147456
+CONFIG proxy.config.log.max_line_size INT 147456
+
+<% if @inbound_tls_settings -%>
+# Incoming TLS settings
+CONFIG proxy.config.ssl.server.honor_cipher_order INT 1
+CONFIG proxy.config.ssl.TLSv1 INT <%= @inbound_tls_settings['common']['enable_tlsv1'] %>
+CONFIG proxy.config.ssl.TLSv1_1 INT <%= @inbound_tls_settings['common']['enable_tlsv1_1'] %>
+CONFIG proxy.config.ssl.TLSv1_2 INT <%= @inbound_tls_settings['common']['enable_tlsv1_2'] %>
+CONFIG proxy.config.ssl.TLSv1_3 INT <%= @inbound_tls_settings['common']['enable_tlsv1_3'] %>
+<% if @inbound_tls_settings['common']['cipher_suite'] -%>
+CONFIG proxy.config.ssl.server.cipher_suite STRING <%= @inbound_tls_settings['common']['cipher_suite'] %>
+<% end -%>
+<% if @inbound_tls_settings['common']['cipher_suite_tlsv1_3'] -%>
+CONFIG proxy.config.ssl.server.TLSv1_3.cipher_suites STRING <%= @inbound_tls_settings['common']['cipher_suite_tlsv1_3'] %>
+<% end -%>
+<% if @inbound_tls_settings['common']['groups_list'] -%>
+CONFIG proxy.config.ssl.server.groups_list STRING <%= @inbound_tls_settings['common']['groups_list'] %>
+<% end -%>
+CONFIG proxy.config.ssl.server.cert.path STRING <%= @inbound_tls_settings['cert_path'] %>
+CONFIG proxy.config.ssl.server.private_key.path STRING <%= @inbound_tls_settings['private_key_path'] %>
+CONFIG proxy.config.ssl.max_record_size INT <%= @inbound_tls_settings['max_record_size'] %>
+CONFIG proxy.config.ssl.session_cache INT <%= @inbound_tls_settings['session_cache'] %>
+<% if @inbound_tls_settings['session_cache_timeout'] -%>
+CONFIG proxy.config.ssl.session_cache.timeout INT <%= @inbound_tls_settings['session_cache_timeout'] %>
+<% end -%>
+<% if @inbound_tls_settings['session_cache_auto_clear'] -%>
+CONFIG proxy.config.ssl.session_cache.auto_clear INT <%= @inbound_tls_settings['session_cache_auto_clear'] %>
+<% end -%>
+<% if @inbound_tls_settings['session_cache_size'] -%>
+CONFIG proxy.config.ssl.session_cache.size INT <%= @inbound_tls_settings['session_cache_size'] %>
+<% end -%>
+<% if @inbound_tls_settings['session_cache_buckets'] -%>
+CONFIG proxy.config.ssl.session_cache.num_buckets INT <%= @inbound_tls_settings['session_cache_buckets'] %>
+<% end -%>
+<% if @inbound_tls_settings['load_elevated'] -%>
+CONFIG proxy.config.ssl.cert.load_elevated INT <%= @inbound_tls_settings['load_elevated'] %>
+<% end -%>
+CONFIG proxy.config.ssl.server.session_ticket.enable INT <%= @inbound_tls_settings['session_ticket_enable'] %>
+<% if @inbound_tls_settings['session_ticket_filename'] -%>
+CONFIG proxy.config.ssl.server.ticket_key.filename STRING <%= @inbound_tls_settings['session_ticket_filename'] %>
+<% end -%>
+<% if @inbound_tls_settings['session_ticket_number'] -%>
+CONFIG proxy.config.ssl.server.session_ticket.number INT <%= @inbound_tls_settings['session_ticket_number'] %>
+<% end -%>
+CONFIG proxy.config.ssl.handshake_timeout_in INT <%= @inbound_tls_settings['ssl_handshake_timeout_in'] %>
+CONFIG proxy.config.ssl.server.prioritize_chacha INT <%= @inbound_tls_settings['prioritize_chacha'] %>
+<% end -%>
+<% if @outbound_tls_settings -%>
+# Outbound TLS settings
+CONFIG proxy.config.ssl.client.TLSv1 INT <%= @outbound_tls_settings['common']['enable_tlsv1'] %>
+CONFIG proxy.config.ssl.client.TLSv1_1 INT <%= @outbound_tls_settings['common']['enable_tlsv1_1'] %>
+CONFIG proxy.config.ssl.client.TLSv1_2 INT <%= @outbound_tls_settings['common']['enable_tlsv1_2'] %>
+CONFIG proxy.config.ssl.client.TLSv1_3 INT <%= @outbound_tls_settings['common']['enable_tlsv1_3'] %>
+<% if @outbound_tls_settings['common']['cipher_suite'] -%>
+CONFIG proxy.config.ssl.client.cipher_suite STRING <%= @outbound_tls_settings['common']['cipher_suite'] %>
+<% end -%>
+<% if @outbound_tls_settings['common']['cipher_suite_tlsv1_3'] -%>
+CONFIG proxy.config.ssl.client.TLSv1_3.cipher_suites STRING <%= @outbound_tls_settings['common']['cipher_suite_tlsv1_3'] %>
+<% end -%>
+<% if @outbound_tls_settings['common']['groups_list'] -%>
+CONFIG proxy.config.ssl.client.groups_list STRING <%= @outbound_tls_settings['common']['groups_list'] %>
+<% end -%>
+<% if @outbound_tls_settings['verify_origin'] -%>
+# Origin server certificate validation settings
+CONFIG proxy.config.ssl.client.verify.server INT 2
+CONFIG proxy.config.ssl.client.CA.cert.path STRING <%= @outbound_tls_settings['cacert_dirpath'] %>
+<% if @outbound_tls_settings['cacert_filename'] -%>
+CONFIG proxy.config.ssl.client.CA.cert.filename STRING <%= @outbound_tls_settings['cacert_filename'] %>
+<% end -%>
+<% end -%>
+<% end -%>
+
+# Location of HTML template for error pages
+CONFIG proxy.config.body_factory.template_sets_dir STRING <%= @error_template_path %>

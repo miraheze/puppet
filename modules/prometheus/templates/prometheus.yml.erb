@@ -71,10 +71,6 @@ scrape_configs:
 <%- @host_mariadb.sort.each do |host| -%>
         '<%= host %>:9104',
 <%- end -%>
-        # Replicas. At some point this should be automatically generated.
-        'dbbackup1.miraheze.org:9104',
-        'dbbackup1.miraheze.org:9105',
-        'dbbackup2.miraheze.org:9106',
       ]
   - job_name: nginx
     static_configs:
@@ -132,9 +128,8 @@ scrape_configs:
     static_configs:
       - targets:
         - https://cp3.miraheze.org/wiki/Main_Page
-        - https://cp10.miraheze.org/wiki/Main_Page
-        - https://cp11.miraheze.org/wiki/Main_Page
         - https://cp12.miraheze.org/wiki/Main_Page
+        - https://cp13.miraheze.org/wiki/Main_Page
         - https://test4.miraheze.org/wiki/Main_Page
     relabel_configs:
       - source_labels: [__address__]

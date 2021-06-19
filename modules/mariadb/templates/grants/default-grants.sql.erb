@@ -18,4 +18,11 @@ GRANT USAGE, PROCESS, REPLICATION CLIENT
 
 -- Grants for 'replica'@'%'
 
-GRANT REPLICATION SLAVE ON *.* TO 'replica'@'%' IDENTIFIED BY '<%= @mariadb_replica_password %>';
+GRANT REPLICATION SLAVE
+    ON *.* TO 'replica'@'%'
+    IDENTIFIED BY '<%= @mariadb_replica_password %>';
+
+-- Grants for 'dbbackup_user'@'%'
+GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT, SHOW DATABASES, SHOW VIEW, LOCK TABLES, RELOAD
+    ON *.* TO 'dbbackup_user'@'%'
+    IDENTIFIED BY '<%= @dbbackup_user_password %>';

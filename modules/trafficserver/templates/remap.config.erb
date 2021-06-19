@@ -1,0 +1,28 @@
+# https://docs.trafficserver.apache.org/en/latest/admin-guide/files/remap.config.en.html
+# This file is managed by Puppet.
+
+<%- @sslredirects.each_pair do | name, property | -%>
+<%- if property['regex_domain_ats'] -%>
+regex_redirect https://<%= property['regex_domain_ats'] %>/ https://<%= property['redirect'] %>/
+<%- end -%>
+<%- if property['url'] -%>
+redirect https://<%= property['url'] %>/ https://<%= property['redirect'] %>/
+<%- end -%>
+<%- end -%>
+
+<%- @sslcerts.each_pair do | name, property | -%>
+<%- if property['regex_domain_ats'] -%>
+regex_map https://<%= property['regex_domain_ats'] %> https://backends.miraheze.org @plugin=/usr/lib/trafficserver/modules/tslua.so @pparam=/etc/trafficserver/lua/x-miraheze-debug-routing.lua @plugin=/usr/lib/trafficserver/modules/conf_remap.so @pparam=proxy.config.http.server_session_sharing.match=2
+<%- end -%>
+<%- if property['url'] -%>
+map https://<%= property['url'] %> https://backends.miraheze.org @plugin=/usr/lib/trafficserver/modules/tslua.so @pparam=/etc/trafficserver/lua/x-miraheze-debug-routing.lua @plugin=/usr/lib/trafficserver/modules/conf_remap.so @pparam=proxy.config.http.server_session_sharing.match=2
+<%- end -%>
+<%- end -%>
+
+<%- @mapping_rules.each do |rule| -%>
+<%= rule['type'] %> <%= rule['target'] %> <%= rule['replacement'] %> <%= rule.fetch('params', []).join(' ') %>
+<%- end -%>
+
+map https://miraheze.org https://backends.miraheze.org @plugin=/usr/lib/trafficserver/modules/tslua.so @pparam=/etc/trafficserver/lua/x-miraheze-debug-routing.lua @plugin=/usr/lib/trafficserver/modules/conf_remap.so @pparam=proxy.config.http.server_session_sharing.match=2
+
+regex_map https://(.*).miraheze.org https://backends.miraheze.org @plugin=/usr/lib/trafficserver/modules/tslua.so @pparam=/etc/trafficserver/lua/x-miraheze-debug-routing.lua @plugin=/usr/lib/trafficserver/modules/conf_remap.so @pparam=proxy.config.http.server_session_sharing.match=2

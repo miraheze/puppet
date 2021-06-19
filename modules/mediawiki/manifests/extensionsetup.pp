@@ -111,16 +111,6 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
 
-    exec { 'validator_composer':
-        command     => $composer,
-        creates     => '/srv/mediawiki/w/extensions/Validator/composer.phar',
-        cwd         => '/srv/mediawiki/w/extensions/Validator',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/mediawiki/w/extensions/Validator',
-        user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
-    }
-
     exec { 'wikibasequalityconstraints_composer':
         command     => $composer,
         creates     => '/srv/mediawiki/w/extensions/WikibaseQualityConstraints/composer.phar',
@@ -147,6 +137,15 @@ class mediawiki::extensionsetup {
         cwd         => '/srv/mediawiki/w/extensions/CreateWiki',
         path        => '/usr/bin',
         environment => 'HOME=/srv/mediawiki/w/extensions/CreateWiki',
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+    exec { 'datatransfer_composer':
+        command     => "wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar require phpoffice/phpspreadsheet",
+        creates     => '/srv/mediawiki/w/extensions/DataTransfer/composer.phar',
+        cwd         => '/srv/mediawiki/w/extensions/DataTransfer',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/mediawiki/w/extensions/DataTransfer',
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
