@@ -29,7 +29,6 @@ class mediawiki(
 
     file { [
         '/srv/mediawiki',
-        '/srv/mediawiki/cache',
         '/srv/mediawiki/dblist',
     ]:
         ensure => 'directory',
