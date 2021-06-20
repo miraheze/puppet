@@ -1,7 +1,7 @@
 #! /bin/bash
 
 usage(){
-        echo "Usage: /usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/<dblist>.json /srv/mediawiki/w/<maintenance script> <any other options if needed>"
+        echo "Usage: /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/<dblist>.json /srv/mediawiki/w/<maintenance script> <any other options if needed>"
         exit 1
 }
 

@@ -14,7 +14,7 @@ else:
     script = script = f'/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
 wiki = sys.argv[2]
 if wiki in ("all", "foreachwikiindblist"):
-    command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/w/cache/databases.json {script}'
+    command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json {script}'
 elif wiki in ("extension", "skin"):
     extension = input("Type the ManageWiki name of the extension or skin: ")
     generate = f'php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={extension}'
