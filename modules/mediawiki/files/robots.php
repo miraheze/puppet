@@ -4,7 +4,10 @@ define( 'MW_NO_SESSION', 1 );
 
 require_once( '/srv/mediawiki/w/includes/WebStart.php' );
 
-$page = WikiPage::factory( Title::newFromText( 'MediaWiki:Robots.txt' ) );
+$wikiPageFactory = MediaWikiServices::getInstance()->getWikiPageFactory();
+$titleFactory = MediaWikiServices::getInstance()->getTitleFactory();
+
+$page = $wikiPageFactory->newFromTitle( $titleFactory->newFromText( 'Robots.txt', NS_MEDIAWIKI ) );
 
 $databaseJsonFileName = '/srv/mediawiki/cache/databases.json';
 $databasesArray = file_exists( $databaseJsonFileName ) ?
