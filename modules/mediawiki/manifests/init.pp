@@ -133,7 +133,7 @@ class mediawiki(
     file { '/usr/local/bin/mwscript':
         ensure => 'present',
         mode   => '0755',
-        source => 'puppet:///modules/mediawiki/mwscript.py',
+        source => 'puppet:///modules/mediawiki/bin/mwscript.py',
     }
 
     file { '/usr/local/bin/pushServices.sh':
