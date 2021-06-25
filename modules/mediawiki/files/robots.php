@@ -4,6 +4,8 @@ define( 'MW_NO_SESSION', 1 );
 
 require_once( '/srv/mediawiki/w/includes/WebStart.php' );
 
+use MediaWiki\MediaWikiServices;
+
 $wikiPageFactory = MediaWikiServices::getInstance()->getWikiPageFactory();
 $titleFactory = MediaWikiServices::getInstance()->getTitleFactory();
 
