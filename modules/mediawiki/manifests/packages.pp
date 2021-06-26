@@ -19,7 +19,7 @@ class mediawiki::packages {
         'librsvg2-dev',
         'libjpeg-dev',
         'libgif-dev',
-        'libwebp-dev',
+        'libwebp',
         'p7zip-full',
         'vmtouch',
         'xvfb',
