@@ -33,8 +33,8 @@ confirm = input("Type 'Y' to confirm: ")
 if confirm.upper() == 'Y':
     if 'generate' in locals():
         os.system(generate)
-    os.system(command)
-    os.system(logcommand)
+    return_value = os.system(command)
+    os.system(f'{logcommand} (END - exit={str(return_value)}')
     print('Done!')
 else:
     print('Aborted!')
