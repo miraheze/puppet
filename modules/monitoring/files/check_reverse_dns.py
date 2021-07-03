@@ -65,7 +65,7 @@ def check_records(hostname):
     if list(nameservers) ==  ['ns1.miraheze.org.', 'ns2.miraheze.org.']:
         return 'NS'
     try:
-        cname = str(dns_resolver.resolve(hostname, 'CNAME')[0])
+        cname = str(dns_resolver.query(hostname, 'CNAME')[0])
     except resolver.NoAnswer:
         cname = None
         
