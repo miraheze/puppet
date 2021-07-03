@@ -25,106 +25,124 @@ import re
 import sys
 import tldextract
 
+
 def get_args():
-        """
-        Return specified arguments
+    """Return specified arguments.
 
-        :return: parsed arguments from argparse
-        """
+    :return: parsed arguments from argparse
+    """
 
-        parser = argparse.ArgumentParser(
-                description="Check reverse DNS entry for hostname"
-        )
-        parser.add_argument(
-                '-H',
-                '--hostname',
-                required=True,
-                help="hostname to check",
-                dest="hostname"
-        )
-        parser.add_argument(
-                '-r',
-                '--regex',
-                required=True,
-                help="regex for match",
-                dest="regex"
-        )
+    parser = argparse.ArgumentParser(
+        description="Check reverse DNS entry for hostname"
+    )
+    parser.add_argument(
+        '-H',
+        '--hostname',
+        required=True,
+        help="hostname to check",
+        dest="hostname"
+    )
+    parser.add_argument(
+        '-r',
+        '--regex',
+        required=True,
+        help="regex for match",
+        dest="regex"
+    )
 
-        return parser.parse_args()
+    return parser.parse_args()
 
 
 def check_records(hostname):
+    """Check NS and CNAME records for given hostname."""
+    uses_cf_at_root = False
     nameservers = []
     domain_parts = tldextract.extract(hostname)
     root_domain = "{}.{}".format(domain_parts.domain, domain_parts.suffix)
     dns_resolver = resolver.Resolver(configure=False)
     dns_resolver.nameservers = ['1.1.1.1']
-    nameserversans = dns_resolver.query(root_domain, 'NS')
-    for nameserver in nameserversans:
-        nameservers.append(str(nameserver))
-    if sorted(list(nameservers)) ==  sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
-        return 'NS'
+
+    try:
+        nameserversans = dns_resolver.query(root_domain, 'NS')
+        for nameserver in nameserversans:
+            nameserver = str(nameserver)
+            nameservers.append(nameserver)
+            if nameserver.endswith('.ns.cloudflare.com.') and root_domain == hostname:
+                uses_cf_at_root = True
+
+        if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
+            return 'NS'
+    except resolver.NoAnswer:
+        nameservers = None
+
     try:
         cname = str(dns_resolver.query(hostname, 'CNAME')[0])
     except resolver.NoAnswer:
         cname = None
-        
+
     if cname == 'mw-lb.miraheze.org.':
         return 'CNAME'
-    return {'NS': nameservers, 'CNAME':  cname}
+    elif cname is None and uses_cf_at_root:
+        return 'CFCNAME'
+    return {'NS': nameservers, 'CNAME': cname}
 
 
 def get_reverse_dnshostname(hostname):
-        """
-        Retrieve reverse DNS entry for given hostname
+    """Retrieve reverse DNS entry for given hostname.
 
-        :param hostname: hostname to find reverse DNS entry for
-        :return: reverse DNS entry if possible, otherwise returns UNKOWN and exits"
-        """
+    :param hostname: hostname to find reverse DNS entry for
+    :return: reverse DNS entry if possible, otherwise returns UNKOWN and exits"
+    """
 
-        try:
-                dns_resolver = resolver.Resolver(configure=False)
-                dns_resolver.nameservers = ['1.1.1.1']
+    try:
+        dns_resolver = resolver.Resolver(configure=False)
+        dns_resolver.nameservers = ['1.1.1.1']
 
-                resolved_ip_addr = str(dns_resolver.query(hostname, 'A')[0])
-                ptr_record = reversename.from_address(resolved_ip_addr)
-                rev_host = str(resolver.query(ptr_record, "PTR")[0]).rstrip('.')
+        resolved_ip_addr = str(dns_resolver.query(hostname, 'A')[0])
+        ptr_record = reversename.from_address(resolved_ip_addr)
+        rev_host = str(resolver.query(ptr_record, "PTR")[0]).rstrip('.')
 
-                return rev_host
-        except (resolver.NXDOMAIN, resolver.NoAnswer):
-                print("rDNS WARNING - reverse DNS entry for {} could not be found".format(hostname))
-                sys.exit(1)
+        return rev_host
+    except (resolver.NXDOMAIN, resolver.NoAnswer):
+        print("rDNS WARNING - reverse DNS entry for {} could not be found".format(hostname))
+        sys.exit(1)
+
 
 def main():
-        """Execute functions"""
+    """Execute functions."""
 
-        args = get_args()
-        try:
-                rdns_hostname = get_reverse_dnshostname(args.hostname)
-        except resolver.NoNameservers:
-                print("rDNS CRITICAL - {} All nameservers failed to answer the query.".format(args.hostname))
-                sys.exit(2)
+    args = get_args()
+    try:
+        rdns_hostname = get_reverse_dnshostname(args.hostname)
+    except resolver.NoNameservers:
+        print("rDNS CRITICAL - {} All nameservers failed to answer the query.".format(args.hostname))
+        sys.exit(2)
 
-        match = re.search(args.regex, rdns_hostname)
+    match = re.search(args.regex, rdns_hostname)
 
-        if match:
-                text = "SSL OK - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname)
-        else:
-                print("rDNS CRITICAL - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname))
-                sys.exit(2)
-        
-        records = check_records(args.hostname)
-        if records ==  'NS':
-            text = text + ' - NS  RECORDS OK'
-            print(text)
-            sys.exit(0)
-        elif records == 'CNAME':
-            text = text + ' - CNAME OK'
-            print(text)
-            sys.exit(0)
-        else:
-            print(f'SSL WARNING - rDNS OK but records conflict. {str(records)}')
-            sys.exit(1)
+    if match:
+        text = "SSL OK - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname)
+    else:
+        print("rDNS CRITICAL - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname))
+        sys.exit(2)
+
+    records = check_records(args.hostname)
+    if records == 'NS':
+        text = text + ' - NS  RECORDS OK'
+        print(text)
+        sys.exit(0)
+    elif records == 'CNAME':
+        text = text + ' - CNAME OK'
+        print(text)
+        sys.exit(0)
+    elif records == 'CFCNAME':
+        text = text + ' - CNAME FLAT'
+        print(text)
+        sys.exit(0)
+    else:
+        print(f'SSL WARNING - rDNS OK but records conflict. {str(records)}')
+        sys.exit(1)
+
 
 if __name__ == "__main__":
-        main()
+    main()
