@@ -54,30 +54,36 @@ def get_args():
 
 
 def check_records(hostname):
-    uses_cf_at_root = False
-    nameservers = []
-    domain_parts = tldextract.extract(hostname)
-    root_domain = "{}.{}".format(domain_parts.domain, domain_parts.suffix)
-    dns_resolver = resolver.Resolver(configure=False)
-    dns_resolver.nameservers = ['1.1.1.1']
-    nameserversans = dns_resolver.query(root_domain, 'NS')
-    for nameserver in nameserversans:
-        nameservers.append(str(nameserver))
-        if nameserver.endswith('.ns.cloudflare.com.') and root_domain == hostname:
-            uses_cf_at_root = True
-        
-    if sorted(list(nameservers)) ==  sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
-        return 'NS'
-    try:
-        cname = str(dns_resolver.query(hostname, 'CNAME')[0])
-    except resolver.NoAnswer:
-        cname = None
-        
-    if cname == 'mw-lb.miraheze.org.':
-        return 'CNAME'
-    elif CNAME is None and uses_cf_at_root:
-        return 'CFCNAME'
-    return {'NS': nameservers, 'CNAME':  cname}
+        uses_cf_at_root = False
+        nameservers = []
+        domain_parts = tldextract.extract(hostname)
+        root_domain = "{}.{}".format(domain_parts.domain, domain_parts.suffix)
+        dns_resolver = resolver.Resolver(configure=False)
+        dns_resolver.nameservers = ['1.1.1.1']
+
+        try:
+                nameserversans = dns_resolver.query(root_domain, 'NS')
+                for nameserver in nameserversans:
+                        nameserver = str(nameserver)
+                        nameservers.append(nameserver)
+                        if nameserver.endswith('.ns.cloudflare.com.') and root_domain == hostname:
+                                uses_cf_at_root = True
+
+                if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
+                        return 'NS'
+        except resolver.NoAnswer:
+                nameservers = None
+
+        try:
+                cname = str(dns_resolver.query(hostname, 'CNAME')[0])
+        except resolver.NoAnswer:
+                cname = None
+
+        if cname == 'mw-lb.miraheze.org.':
+                return 'CNAME'
+        elif CNAME is None and uses_cf_at_root:
+                return 'CFCNAME'
+        return {'NS': nameservers, 'CNAME':  cname}
 
 
 def get_reverse_dnshostname(hostname):
@@ -118,23 +124,23 @@ def main():
         else:
                 print("rDNS CRITICAL - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname))
                 sys.exit(2)
-        
+
         records = check_records(args.hostname)
         if records ==  'NS':
-            text = text + ' - NS  RECORDS OK'
-            print(text)
-            sys.exit(0)
+                text = text + ' - NS  RECORDS OK'
+                print(text)
+                sys.exit(0)
         elif records == 'CNAME':
-            text = text + ' - CNAME OK'
-            print(text)
-            sys.exit(0)
+                text = text + ' - CNAME OK'
+                print(text)
+                sys.exit(0)
         elif records == 'CFCNAME':
-            text = text + ' - CNAME FLAT'
-            print(text)
-            sys.exit(0)
+                text = text + ' - CNAME FLAT'
+                print(text)
+                sys.exit(0)
         else:
-            print(f'SSL WARNING - rDNS OK but records conflict. {str(records)}')
-            sys.exit(1)
+                print(f'SSL WARNING - rDNS OK but records conflict. {str(records)}')
+                sys.exit(1)
 
 if __name__ == "__main__":
         main()
