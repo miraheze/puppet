@@ -28,13 +28,14 @@ print("Will execute:")
 if 'generate' in locals():
     print(generate)
 print(command)
-print(logcommand)
 confirm = input("Type 'Y' to confirm: ")
 if confirm.upper() == 'Y':
     if 'generate' in locals():
         os.system(generate)
     return_value = os.system(command)
-    os.system(f'{logcommand} (END - exit={str(return_value)}')
+    logcommand = f'{logcommand} (END - exit={str(return_value)}'
+    print(f'Logging via {logcommand}')
+    os.system(logcommand)
     print('Done!')
 else:
     print('Aborted!')
