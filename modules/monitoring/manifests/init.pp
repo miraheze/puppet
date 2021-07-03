@@ -256,10 +256,8 @@ class monitoring (
         require => Package['nagios-nrpe-plugin'],
     }
     
-    package { 'tldextract':
+    package { 'python3-tldextract':
         ensure => present,
-        name => tldexract,
-        provider => pip3,
     }
 
     monitoring::services { 'Check correctness of the icinga configuration':
