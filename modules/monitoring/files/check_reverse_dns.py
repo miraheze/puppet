@@ -54,7 +54,6 @@ def get_args():
 
 
 def check_records(hostname):
-    uses_cf_at_root = False
     nameservers = []
     domain_parts = tldextract.extract(hostname)
     root_domain = "{}.{}".format(domain_parts.domain, domain_parts.suffix)
@@ -63,9 +62,6 @@ def check_records(hostname):
     nameserversans = dns_resolver.query(root_domain, 'NS')
     for nameserver in nameserversans:
         nameservers.append(str(nameserver))
-        if nameserver.endswith('.ns.cloudflare.com.') and root_domain == hostname:
-            uses_cf_at_root = True
-        
     if sorted(list(nameservers)) ==  sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
         return 'NS'
     try:
@@ -75,8 +71,6 @@ def check_records(hostname):
         
     if cname == 'mw-lb.miraheze.org.':
         return 'CNAME'
-    elif CNAME is None and uses_cf_at_root:
-        return 'CFCNAME'
     return {'NS': nameservers, 'CNAME':  cname}
 
 
@@ -126,10 +120,6 @@ def main():
             sys.exit(0)
         elif records == 'CNAME':
             text = text + ' - CNAME OK'
-            print(text)
-            sys.exit(0)
-        elif records == 'CFCNAME':
-            text = text + ' - CNAME FLAT'
             print(text)
             sys.exit(0)
         else:
