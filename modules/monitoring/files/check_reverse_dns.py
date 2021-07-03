@@ -62,7 +62,7 @@ def check_records(hostname):
     nameserversans = dns_resolver.query(root_domain, 'NS')
     for nameserver in nameserversans:
         nameservers.append(str(nameserver))
-    if list(nameservers).sort() ==  ['ns1.miraheze.org.', 'ns2.miraheze.org.'].sort():
+    if sorted(list(nameservers)) ==  sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
         return 'NS'
     try:
         cname = str(dns_resolver.query(hostname, 'CNAME')[0])
