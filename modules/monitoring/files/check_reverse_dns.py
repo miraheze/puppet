@@ -59,7 +59,7 @@ def check_records(hostname):
     root_domain = "{}.{}".format(domain_parts.domain, domain_parts.suffix)
     dns_resolver = resolver.Resolver(configure=False)
     dns_resolver.nameservers = ['1.1.1.1']
-    nameserversans = dns_resolver.resolve(root_domain, 'NS')
+    nameserversans = dns_resolver.query(root_domain, 'NS')
     for nameserver in nameserversans:
         nameservers.append(str(nameserver))
     if list(nameservers) ==  ['ns1.miraheze.org.', 'ns2.miraheze.org.']:
