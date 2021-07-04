@@ -240,7 +240,6 @@ sub mw_vcl_recv {
 	} else if (req.url ~ "/w/undefined/api.php") {
 		set req.url = regsuball(req.url, "/w/undefined/api.php", "/w/api.php");
 	}
-        
 	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = jobrunner3;
 		return (pass);
