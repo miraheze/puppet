@@ -9,7 +9,7 @@
 # please contact Southparkfan <southparkfan [at] miraheze [dot] org>.
 
 # Marker to tell the VCL compiler that this VCL has been adapted to the
-# new 4.0 format.
+# new 4.1 format.
 vcl 4.1;
 
 import directors;
@@ -108,7 +108,9 @@ sub vcl_init {
 
 
 acl purge {
+	# localhost
 	"localhost";
+	"127.0.0.1";
 	# mw8
 	"51.195.236.221";
 	"2001:41d0:800:178a::7";
@@ -343,6 +345,17 @@ sub vcl_hash {
 	# FIXME: try if we can make this ^/wiki/ only?
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
 		hash_data(req.http.X-Device);
+	}
+}
+
+sub vcl_hit {
+	if (!obj.ttl > 0s) {
+		return (pass);
+	}
+
+	# Force lookup if the request is a no-cache request from the client.
+	if (req.http.Cache-Control ~ "no-cache") {
+		return (miss);
 	}
 }
 
