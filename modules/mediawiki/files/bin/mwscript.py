@@ -23,17 +23,18 @@ else:
     command = f'sudo -u www-data php {script} --wiki={wiki}'
 if len(sys.argv) == 4:
     command = f'{command} {sys.argv[3]}'
-logcommand = f'/usr/local/bin/logsalmsg "{command}"'
+logcommand = f'/usr/local/bin/logsalmsg "{command}'
 print("Will execute:")
 if 'generate' in locals():
     print(generate)
 print(command)
-print(logcommand)
 confirm = input("Type 'Y' to confirm: ")
 if confirm.upper() == 'Y':
     if 'generate' in locals():
         os.system(generate)
-    os.system(command)
+    return_value = os.system(command)
+    logcommand = f'{logcommand} (END - exit={str(return_value)})"'
+    print(f'Logging via {logcommand}')
     os.system(logcommand)
     print('Done!')
 else:
