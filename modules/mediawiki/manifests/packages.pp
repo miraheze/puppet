@@ -13,6 +13,7 @@ class mediawiki::packages {
         'locales-all',
         'oggvideotools',
         'libvips-tools',
+        'lillypond',
         'poppler-utils',
         'python-pip',
         'netpbm',
