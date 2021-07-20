@@ -5,5 +5,5 @@ bind_pw = <%= @ldap_password %>
 search_base = ou=people,dc=miraheze,dc=org
 scope = sub
 
-query_filter = (|(mailacceptinggeneralid=%s)(maildrop=%s))
+query_filter = (&(objectClass=postfixUser)(|(mailacceptinggeneralid=%s)(maildrop=%s)))
 result_attribute = uid
