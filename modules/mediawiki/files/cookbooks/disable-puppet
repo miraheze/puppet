@@ -1,0 +1,6 @@
+#! /usr/bin/python3
+# -*- coding: utf-8 -*-
+from os import system
+system('logsalmsg Disabling puppet for mediawiki update')
+system('sudo puppet agent -tv')
+system('sudo puppet agent --disable "Updating MediaWiki')
