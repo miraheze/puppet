@@ -27,6 +27,7 @@ class mediawiki::packages {
         'timidity',
         'librsvg2-bin',
         'texlive-latex-extra',
+        'python3-requests',
     ]
 
     # First installs can trip without this

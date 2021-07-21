@@ -135,6 +135,14 @@ class mediawiki(
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/mwscript.py',
     }
+    $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet', 'check-read-only']
+    $cookbooks.each |$cookbook| {
+      file {"/usr/local/bin/${cookbook}":
+          ensure => 'present',
+          mode   => '0755',
+          source => "puppet:///modules/mediawiki/cookbooks/${cookbook}",
+      }
+    }
 
     file { '/usr/local/bin/pushServices.sh':
         ensure => 'present',
