@@ -6,5 +6,5 @@ if response['query']['general']['readonly'] == False:
     print('Site is READ-WRITE')
     exit(0)
 else:
-    print(response['query']['general']['readonly'])
+    print(response['query']['general']['readonlyreason'])
     exit(1)
