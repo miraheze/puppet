@@ -1,7 +1,7 @@
 users::groups:
   - mediawiki-admins
 jobrunner: true
-jobrunner::intensive: false
+jobrunner::intensive: true
 letsencrypt: false
 mwservices: false
 contactgroups: ['icingaadmins', 'sre', 'mediawiki']
