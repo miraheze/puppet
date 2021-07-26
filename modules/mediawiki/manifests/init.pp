@@ -108,7 +108,7 @@ class mediawiki(
     $matomotoken           = lookup('passwords::mediawiki::matomotoken')
     $ldap_password         = lookup('passwords::mediawiki::ldap_password')
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
-	$oauth2_privatekey     = lookup('passwords::mediawiki::oauth2_privatekey')
+    $oauth2_privatekey     = lookup('passwords::mediawiki::oauth2_privatekey')
 
     class { '::nutcracker': }
 
