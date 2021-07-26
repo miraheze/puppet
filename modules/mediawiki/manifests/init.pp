@@ -29,6 +29,7 @@ class mediawiki(
 
     file { [
         '/srv/mediawiki',
+        '/srv/mediawiki/cache',
         '/srv/mediawiki/dblist',
     ]:
         ensure => 'directory',
@@ -106,8 +107,8 @@ class mediawiki(
     $recaptcha_secretkey   = lookup('passwords::recaptcha::secretkey')
     $matomotoken           = lookup('passwords::mediawiki::matomotoken')
     $ldap_password         = lookup('passwords::mediawiki::ldap_password')
-
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
+	$oauth2_privatekey     = lookup('passwords::mediawiki::oauth2_privatekey')
 
     class { '::nutcracker': }
 
@@ -127,6 +128,20 @@ class mediawiki(
         ensure => 'present',
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
+    }
+    
+    file { '/usr/local/bin/mwscript':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/bin/mwscript.py',
+    }
+    $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet', 'check-read-only']
+    $cookbooks.each |$cookbook| {
+      file {"/usr/local/bin/${cookbook}":
+          ensure => 'present',
+          mode   => '0755',
+          source => "puppet:///modules/mediawiki/cookbooks/${cookbook}",
+      }
     }
 
     file { '/usr/local/bin/pushServices.sh':

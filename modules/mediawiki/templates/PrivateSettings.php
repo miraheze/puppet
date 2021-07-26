@@ -26,3 +26,6 @@ $wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
 
 // writer-user password (ldap)
 $wmgLdapPassword = "<%= @ldap_password %>";
+
+// OAuth2 private key
+$wgOAuth2PrivateKey = "<%= @oauth2_privatekey %>";
