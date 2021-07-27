@@ -288,6 +288,11 @@ sub mw_vcl_recv {
 	if (req.url ~ "^/w/(skins|resources|extensions)/" ) {
 		set req.http.Host = "meta.miraheze.org";
 	}
+	
+	# Never Cache OAUTH2 Rest.php requests
+	if (req.url ~ "^/w/rest.php/oauth2/.*" ) {
+		return (pass);
+	}
 
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
