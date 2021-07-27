@@ -289,8 +289,8 @@ sub mw_vcl_recv {
 		set req.http.Host = "meta.miraheze.org";
 	}
 	
-	# Never Cache OAUTH2 Rest.php requests
-	if (req.url ~ "^/w/rest.php/oauth2/.*" ) {
+	# api & rest.php are not safe cached
+	if (req.url ~ "^/w/(api|rest).php/.*" ) {
 		return (pass);
 	}
 
