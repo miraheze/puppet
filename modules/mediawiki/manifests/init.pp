@@ -149,6 +149,12 @@ class mediawiki(
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/pushServices.sh',
     }
+    
+    file { '/srv/mediawiki/config/OAuth2.key':
+        ensure => present,
+        mode   => '0755',
+        source => 'puppet:///private/mediawiki/OAuth2.key',
+    }
 
     exec { 'ExtensionMessageFiles':
         command     => 'nice -n 15 php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php',
