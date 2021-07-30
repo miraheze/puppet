@@ -39,6 +39,11 @@ class mediawiki(
     }
     $mwclone = '/srv/mediawiki-staging/w'
     $configclone = '/srv/mediawiki-staging/config'
+    file { '/usr/local/bin/deploy-mediawiki':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/bin/deploy-mediawiki',
+    }
     } else {
     $mwclone = '/srv/mediawiki/w'
     $configclone = '/srv/mediawiki/config'
