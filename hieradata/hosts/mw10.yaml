@@ -11,6 +11,3 @@ nginx::use_graylog: true
 puppet_cron_time: '2,32'
 
 puppetserver_hostname: 'puppet3.miraheze.org'
-mediawiki::is_canary: true
-mediawiki::default_sync: 'all'
-mediawiki::remote_sync: false
