@@ -30,8 +30,8 @@ class mediawiki(
         file { [
         '/srv/mediawiki-staging',
         '/srv/mediawiki-staging/cache',
-        '/srv/mediwiki/w'
-        '/srv/mediawiki/config'
+        '/srv/mediwiki/w',
+        '/srv/mediawiki/config',
     ]:
         ensure => 'directory',
         owner  => 'www-data',
