@@ -12,3 +12,4 @@ nginx::use_graylog: true
 puppet_cron_time: '2,32'
 puppetserver_hostname: 'puppet3.miraheze.org'
 mediawiki::php::fpm::childs: 18
+mediawiki::use_staging: true
