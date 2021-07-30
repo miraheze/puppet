@@ -3,6 +3,13 @@ import argparse
 import os
 
 def run(args):
+    loginfo = {}
+    for arg in vars(args).items():
+        if arg[1] is not None and arg[1] is not False:
+            loginfo[arg[0]] = arg[1]
+    synced = loginfo['servers']
+    del loginfo['servers']
+    os.system(f'/usr/bin/logsalmsg starting deploy of {str(loginfo)} to {synced}')
     if args.config:
         os.system('sudo -u www-data cp -r /srv/mediawiki-staging/config/* /srv/mediawiki/config/')
     if args.world:
@@ -26,6 +33,7 @@ def run(args):
         serverlist = str(args.servers).split(',')
         for server in serverlist:
             print(f'I will eventually deploy to {server}')
+    os.system(f'/usr/bin/logsalmsg finished deploy of {str(loginfo)} to {synced}')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
