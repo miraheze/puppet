@@ -29,7 +29,6 @@ class mediawiki(
     if lookup(mediawiki::use_staging) {
         file { [
         '/srv/mediawiki-staging',
-        '/srv/mediawiki-staging/cache',
         '/srv/mediwiki/w',
         '/srv/mediawiki/config',
     ]:
