@@ -26,6 +26,24 @@ class mediawiki(
     if lookup(jobchron) {
         include mediawiki::jobqueue::chron
     }
+    if lookup(mediawiki::use_staging) {
+        file { [
+        '/srv/mediawiki-staging',
+        '/srv/mediawiki-staging/cache',
+        '/srv/mediwiki/w'
+        '/srv/mediawiki/config'
+    ]:
+        ensure => 'directory',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0755',
+    }
+    $mwclone = '/srv/mediawiki-staging/w'
+    $configclone = '/srv/mediawiki-staging/config'
+    } else {
+    $mwclone = '/srv/mediawiki/w'
+    $configclone = '/srv/mediawiki/config'
+    }
 
     file { [
         '/srv/mediawiki',
@@ -42,7 +60,7 @@ class mediawiki(
 
     git::clone { 'MediaWiki config':
         ensure    => 'latest',
-        directory => '/srv/mediawiki/config',
+        directory => $configclone,
         origin    => 'https://github.com/miraheze/mw-config.git',
         branch    => $branch_mw_config,
         owner     => 'www-data',
@@ -53,7 +71,7 @@ class mediawiki(
 
     git::clone { 'MediaWiki core':
         ensure             => 'latest',
-        directory          => '/srv/mediawiki/w',
+        directory          => $mwclone,
         origin             => 'https://github.com/miraheze/mediawiki.git',
         branch             => $branch,
         owner              => 'www-data',
