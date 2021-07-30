@@ -15,3 +15,5 @@ puppetserver_hostname: puppet3.miraheze.org
 role::salt::minions::salt_master: 'puppet3.miraheze.org'
 dns: false
 mediawiki::use_staging: false
+mediawiki::is_canary: false
+mediawiki::default_sync: 'skip'
