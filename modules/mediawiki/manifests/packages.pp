@@ -28,6 +28,7 @@ class mediawiki::packages {
         'librsvg2-bin',
         'texlive-latex-extra',
         'python3-requests',
+        'rsync',
     ]
 
     # First installs can trip without this
