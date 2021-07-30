@@ -29,7 +29,7 @@ class mediawiki(
     if lookup(mediawiki::use_staging) {
         file { [
         '/srv/mediawiki-staging',
-        '/srv/mediwiki/w',
+        '/srv/mediawiki/w',
         '/srv/mediawiki/config',
     ]:
         ensure => 'directory',
