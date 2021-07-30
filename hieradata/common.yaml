@@ -14,3 +14,4 @@ mediawiki::use_redis: false
 puppetserver_hostname: puppet3.miraheze.org
 role::salt::minions::salt_master: 'puppet3.miraheze.org'
 dns: false
+mediawiki::use_staging: false
