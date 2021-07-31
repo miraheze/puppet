@@ -44,6 +44,13 @@ class mediawiki(
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/deploy-mediawiki',
     }
+    exec { 'MediaWiki Config Sync':
+        command     => "deploy-mediawiki --config --sync=${lookup(mediawiki::default_sync)}",
+        cwd         => '/srv/mediawiki-staging',
+        refreshonly => true,
+        user        => www-data,
+        subscribe   => Git::Clone['MediaWiki Config'],
+    }
     } else {
     $mwclone = '/srv/mediawiki/w'
     $configclone = '/srv/mediawiki/config'
