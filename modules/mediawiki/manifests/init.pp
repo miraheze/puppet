@@ -45,7 +45,7 @@ class mediawiki(
         source => 'puppet:///modules/mediawiki/bin/deploy-mediawiki',
     }
     exec { 'MediaWiki Config Sync':
-        command     => "deploy-mediawiki --config --sync=${lookup(mediawiki::default_sync)}",
+        command     => "/usr/local/bin/deploy-mediawiki --config --sync=${lookup(mediawiki::default_sync)}",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
         user        => www-data,
