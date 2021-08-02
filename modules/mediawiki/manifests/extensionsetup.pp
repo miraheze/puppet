@@ -1,6 +1,6 @@
 # MediaWiki extension setup
 class mediawiki::extensionsetup {
-    if (lookup(mediawiki::use_staging) {
+    if lookup(mediawiki::use_staging) {
         $mwpath = '/srv/mediawiki-staging/w/'
     } else {
         $mwpath = '/srv/mediawiki/w/'
