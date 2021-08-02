@@ -1,12 +1,17 @@
 # MediaWiki extension setup
 class mediawiki::extensionsetup {
+    if (lookup(mediawiki::use_staging) {
+        $mwpath = '/srv/mediawiki-staging/w/'
+    } else {
+        $mwpath = '/srv/mediawiki/w/'
+    }
     $composer = 'wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar install --no-dev'
     exec { 'wikibase_composer':
         command     => $composer,
-        creates     => '/srv/mediawiki/w/extensions/Wikibase/composer.phar',
-        cwd         => '/srv/mediawiki/w/extensions/Wikibase',
+        creates     => "${mwpath}extensions/Wikibase/composer.phar",
+        cwd         => "${mwpath}extensions/Wikibase",
         path        => '/usr/bin',
-        environment => 'HOME=/srv/mediawiki/w/extensions/Wikibase',
+        environment => "HOME=${mwpath}extensions/Wikibase",
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
