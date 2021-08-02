@@ -9,7 +9,8 @@ def run(args):
             loginfo[arg[0]] = arg[1]
     synced = loginfo['servers']
     del loginfo['servers']
-    os.system(f'/usr/local/bin/logsalmsg starting deploy of "{str(loginfo)}" to {synced}')
+    if not nolog:
+        os.system(f'/usr/local/bin/logsalmsg starting deploy of "{str(loginfo)}" to {synced}')
     if args.config:
         os.system('sudo -u www-data cp -r /srv/mediawiki-staging/config/* /srv/mediawiki/config/')
     if args.world:
@@ -33,13 +34,15 @@ def run(args):
         serverlist = str(args.servers).split(',')
         for server in serverlist:
             print(f'I will eventually deploy to {server}')
-    os.system(f'/usr/local/bin/logsalmsg finished deploy of "{str(loginfo)}" to {synced}')
+    if not nolog:
+        os.system(f'/usr/local/bin/logsalmsg finished deploy of "{str(loginfo)}" to {synced}')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--l10n', dest='l10n', action='store_true')
+    parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--servers', dest='servers', required=True)
