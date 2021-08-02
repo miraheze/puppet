@@ -46,7 +46,7 @@ def run(args):
     if FAIL == 1:
         fintext = f'{fintext} - FAIL: {exitcodes}'
     else:
-        fntext = f'{fintext} - SUCCESS'
+        fintext = f'{fintext} - SUCCESS'
     if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {fintext}')
     else:
