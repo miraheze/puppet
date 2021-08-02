@@ -119,7 +119,7 @@ class mediawiki::extensionsetup {
     exec { 'wikibasequalityconstraints_composer':
         command     => $composer,
         creates     => "${mwpath}extensions/WikibaseQualityConstraints/composer.phar",
-        cwd         => "${mwpath}extensions/WikibaseQualityConstraint"',
+        cwd         => "${mwpath}extensions/WikibaseQualityConstraints",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/WikibaseQualityConstraints",
         user        => 'www-data',
