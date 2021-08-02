@@ -11,7 +11,7 @@ def run(args):
     synced = loginfo['servers']
     del loginfo['servers']
     text = f'starting deploy of "{str(loginfo)}" to {synced}'
-    if not nolog:
+    if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {text}')
     else:
         print(text)
@@ -46,7 +46,7 @@ def run(args):
         fintext = f'{fintext} - FAIL: {exitcodes}'
     else:
         fntext = f'{fintext} - SUCCESS'
-    if not nolog:
+    if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {fintext}')
     else:
         print(fintext)
