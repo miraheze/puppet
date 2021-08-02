@@ -4,28 +4,32 @@ import os
 
 def run(args):
     loginfo = {}
+    exitcodes = []
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
     synced = loginfo['servers']
     del loginfo['servers']
+    text = f'starting deploy of "{str(loginfo)}" to {synced}'
     if not nolog:
-        os.system(f'/usr/local/bin/logsalmsg starting deploy of "{str(loginfo)}" to {synced}')
+        os.system(f'/usr/local/bin/logsalmsg {text}')
+    else:
+        print(text)
     if args.config:
-        os.system('sudo -u www-data cp -r /srv/mediawiki-staging/config/* /srv/mediawiki/config/')
+        exitcodes.append(os.system('sudo -u www-data cp -r /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
     if args.world:
-        os.system('sudo -u www-data cp -r /srv/mediawiki-staging/w/* /srv/mediawiki/w/')
+        exitcodes.append(os.system('sudo -u www-data cp -r /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
     if args.files:
         files = str(args.files).split(',')
         for file in files:
-            os.system(f'sudo -u www-data cp /srv/mediawiki-staging/{file} /srv/mediawiki/{file}')
+            exitcodes.append(os.system(f'sudo -u www-data cp /srv/mediawiki-staging/{file} /srv/mediawiki/{file}'))
     if args.folders:
         folders = str(args.folders).split(',')
         for folder in folders:
-            os.system(f'sudo -u www-data cp -r /srv/mediawiki-staging/{folder} /srv/mediawiki/{folder}')
+            exitcodes.append(os.system(f'sudo -u www-data cp -r /srv/mediawiki-staging/{folder} /srv/mediawiki/{folder}'))
     if args.l10n:
-        os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php')
-        os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --wiki=loginwiki')
+        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
+        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --wiki=loginwiki'))
     if args.servers == 'skip':
         print('very good because I have not wrote the rsync client')
     elif args.servers == 'all':
@@ -34,8 +38,18 @@ def run(args):
         serverlist = str(args.servers).split(',')
         for server in serverlist:
             print(f'I will eventually deploy to {server}')
+    fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
+    for code in exitcodes:
+        if code != 0:
+            FAIL = 1
+    if FAIL == 1:
+        fintext = f'{fintext} - FAIL: {exitcodes}'
+    else:
+        fntext = f'{fintext} - SUCCESS'
     if not nolog:
-        os.system(f'/usr/local/bin/logsalmsg finished deploy of "{str(loginfo)}" to {synced}')
+        os.system(f'/usr/local/bin/logsalmsg {fintext}')
+    else:
+        print(fintext)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
