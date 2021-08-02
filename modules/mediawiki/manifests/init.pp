@@ -29,16 +29,36 @@ class mediawiki(
     if lookup(mediawiki::use_staging) {
         file { [
         '/srv/mediawiki-staging',
-        '/srv/mediawiki/w',
-        '/srv/mediawiki/config',
     ]:
         ensure => 'directory',
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0755',
     }
-    $mwclone = '/srv/mediawiki-staging/w'
-    $configclone = '/srv/mediawiki-staging/config'
+    git::clone { 'MediaWiki config':
+        ensure    => 'latest',
+        directory => '/srv/mediawiki-staging/config',
+        origin    => 'https://github.com/miraheze/mw-config.git',
+        branch    => $branch_mw_config,
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
+        require   => File['/srv/mediawiki'],
+    }
+
+    git::clone { 'MediaWiki core':
+        ensure             => 'latest',
+        directory          => '/srv/mediawiki-staging/w',
+        origin             => 'https://github.com/miraheze/mediawiki.git',
+        branch             => $branch,
+        owner              => 'www-data',
+        group              => 'www-data',
+        mode               => '0755',
+        timeout            => '1500',
+        depth              => '5',
+        recurse_submodules => true,
+        require            => File['/srv/mediawiki'],
+    }
     file { '/usr/local/bin/deploy-mediawiki':
         ensure => 'present',
         mode   => '0755',
@@ -51,13 +71,12 @@ class mediawiki(
         user        => www-data,
         subscribe   => Git::Clone['MediaWiki config'],
     }
-    } else {
-    $mwclone = '/srv/mediawiki/w'
-    $configclone = '/srv/mediawiki/config'
     }
 
     file { [
         '/srv/mediawiki',
+        '/srv/mediawiki/w',
+        '/srv/mediawiki/config',
         '/srv/mediawiki/cache',
         '/srv/mediawiki/dblist',
     ]:
@@ -68,31 +87,6 @@ class mediawiki(
     }
 
     include ::imagemagick::install
-
-    git::clone { 'MediaWiki config':
-        ensure    => 'latest',
-        directory => $configclone,
-        origin    => 'https://github.com/miraheze/mw-config.git',
-        branch    => $branch_mw_config,
-        owner     => 'www-data',
-        group     => 'www-data',
-        mode      => '0755',
-        require   => File['/srv/mediawiki'],
-    }
-
-    git::clone { 'MediaWiki core':
-        ensure             => 'latest',
-        directory          => $mwclone,
-        origin             => 'https://github.com/miraheze/mediawiki.git',
-        branch             => $branch,
-        owner              => 'www-data',
-        group              => 'www-data',
-        mode               => '0755',
-        timeout            => '1500',
-        depth              => '5',
-        recurse_submodules => true,
-        require            => File['/srv/mediawiki'],
-    }
 
     git::clone { 'landing':
         ensure             => 'latest',
