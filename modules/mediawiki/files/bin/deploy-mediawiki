@@ -39,6 +39,7 @@ def run(args):
         for server in serverlist:
             print(f'I will eventually deploy to {server}')
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
+    FAIL = 0
     for code in exitcodes:
         if code != 0:
             FAIL = 1
