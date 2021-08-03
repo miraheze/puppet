@@ -3,8 +3,10 @@ class mediawiki::extensionsetup {
     if lookup(mediawiki::use_staging) {
         $mwpath = '/srv/mediawiki-staging/w/'
         file { [
-        '/srv/mediawiki/w/extensions/OAuth/.composer/cache/vcs/',
-        '/srv/mediawiki-staging/w/extensions/OAuth/.composer/cache/vcs/']:
+        '/srv/mediawiki/w/extensions/OAuth/.composer/cache',
+        '/srv/mediawiki-staging/w/extensions/OAuth/.composer/cache',
+        '/srv/mediawiki/w/extensions/OAuth/vendor/league/oauth2-server/.git',
+        '/srv/mediawiki-staging/w/extensions/OAuth/vendor/league/oauth2-server/.git']:
             ensure  => absent,
             force   => true,
             recurse => true,
