@@ -2,11 +2,20 @@
 class mediawiki::extensionsetup {
     if lookup(mediawiki::use_staging) {
         $mwpath = '/srv/mediawiki-staging/w/'
-        $composer = 'wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar install --no-dev --no-cache'
+        file { [
+        '/srv/mediawiki/w/extensions/OAuth/.composer/cache',
+        '/srv/mediawiki-staging/w/extensions/OAuth/.composer/cache',
+        '/srv/mediawiki/w/extensions/OAuth/vendor/league/oauth2-server/.git',
+        '/srv/mediawiki-staging/w/extensions/OAuth/vendor/league/oauth2-server/.git']:
+            ensure  => absent,
+            force   => true,
+            recurse => true,
+            require => Exec['oauth_composer'],
+        }
     } else {
         $mwpath = '/srv/mediawiki/w/'
-        $composer = 'wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar install --no-dev'
     }
+    $composer = 'wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar install --no-dev'
     exec { 'wikibase_composer':
         command     => $composer,
         creates     => "${mwpath}extensions/Wikibase/composer.phar",
