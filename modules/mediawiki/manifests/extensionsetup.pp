@@ -111,7 +111,7 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}extensions/OATHAuth/composer.phar",
         cwd         => "${mwpath}extensions/OATHAuth",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}OATHAuth/Widgets",
+        environment => "HOME=${mwpath}extensions/OATHAuth",
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
