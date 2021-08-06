@@ -26,7 +26,7 @@ class varnish::stunnel4 {
         source => 'puppet:///modules/varnish/stunnel/stunnel4.logrotate.conf',
     }
 
-    ['mon2', 'mw8', 'mw9', 'mw10', 'mw11'].each |$host| {
+    ['mon2', 'mw8', 'mw9', 'mw10', 'mw11', 'test3'].each |$host| {
         monitoring::services { "Stunnel Http for ${host}":
             check_command => 'nrpe',
             vars          => {
