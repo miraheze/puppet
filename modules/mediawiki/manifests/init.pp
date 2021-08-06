@@ -132,7 +132,6 @@ class mediawiki(
     $noreply_password      = lookup('passwords::mail::noreply')
     $mediawiki_upgradekey  = lookup('passwords::mediawiki::upgradekey')
     $mediawiki_secretkey   = lookup('passwords::mediawiki::secretkey')
-    $recaptcha_sitekey     = lookup('passwords::recaptcha::sitekey')
     $recaptcha_secretkey   = lookup('passwords::recaptcha::secretkey')
     $matomotoken           = lookup('passwords::mediawiki::matomotoken')
     $ldap_password         = lookup('passwords::mediawiki::ldap_password')
