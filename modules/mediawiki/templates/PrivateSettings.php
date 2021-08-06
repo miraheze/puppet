@@ -14,8 +14,7 @@ $wmgSMTPPassword = "<%= @noreply_password %>";
 $wgUpgradeKey = "<%= @mediawiki_upgradekey %>";
 $wgSecretKey = "<%= @mediawiki_secretkey %>";
 
-// ReCaptchaNoCaptcha secret keys
-$wgReCaptchaSiteKey = "<%= @recaptcha_sitekey %>";
+// ReCaptchaNoCaptcha secret key
 $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
 
 // Matomo Token
