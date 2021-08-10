@@ -244,7 +244,7 @@ sub mw_vcl_recv {
 		set req.backend_hint = jobrunner3;
 		return (pass);
 	} else if (req.http.Host == "sslrequest.miraheze.org") {
-		set req.backend_hint = jobrunner3
+		set req.backend_hint = jobrunner3;
 		return (pass)
 	} else if (req.http.X-Miraheze-Debug == "mw8.miraheze.org") {
 		set req.backend_hint = mw8_test;
