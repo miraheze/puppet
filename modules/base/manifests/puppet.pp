@@ -6,13 +6,23 @@ class base::puppet (
 ) {
     $crontime = fqdn_rand(60, 'puppet-params-crontime')
 
-    apt::source { 'puppetlabs':
+    file { '/etc/apt/trusted.gpg.d/puppetlabs.gpg':
+        ensure => present,
+        source => 'puppet:///modules/base/puppet/puppetlabs.gpg',
+    }
+
+    apt::source { 'proxmox_apt':
         location => 'http://apt.puppetlabs.com',
         repos    => "puppet${puppet_major_version}",
-        key      => {
-            'id'     => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
-            'server' => 'keyserver.ubuntu.com',
-        },
+        require  => File['/etc/apt/trusted.gpg.d/puppetlabs.gpg'],
+        notify   => Exec['apt_update_puppetlabs'],
+    }
+
+    exec {'apt_update_puppetlabs':
+        command     => '/usr/bin/apt-get update',
+        refreshonly => true,
+        logoutput   => true,
+        require     => Apt::Pin['proxmox_pin'],
     }
 
     package { 'puppet-agent':
