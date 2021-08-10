@@ -22,7 +22,6 @@ class base::puppet (
         command     => '/usr/bin/apt-get update',
         refreshonly => true,
         logoutput   => true,
-        require     => Apt::Pin['proxmox_pin'],
     }
 
     package { 'puppet-agent':
