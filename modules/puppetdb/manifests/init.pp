@@ -26,7 +26,7 @@
 #
 class puppetdb(
     String $db_rw_host = lookup('puppetdb::db_rw_host', {'default_value' => 'localhost'}),
-    String $puppetdb_jvm_opts = lookup('puppetdb::jvm_opts', {'default_value' =>'-Xmx510m'}),
+    String $puppetdb_jvm_opts = lookup('puppetdb::jvm_opts', {'default_value' =>'-Xmx1G'}),
     String $db_user = lookup('puppetdb::db_user', {'default_value' =>'puppetdb'}),
     Boolean $perform_gc = lookup('puppetdb::perform_gc', {'default_value' => true}),
     Integer $command_processing_threads = lookup('puppetdb::command_processing_threads', {'default_value' => 2}),
