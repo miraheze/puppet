@@ -1,2 +1,3 @@
 puppetserver_hostname: 'puppet3.miraheze.org'
 dns: true
+puppet_major_version: 6
