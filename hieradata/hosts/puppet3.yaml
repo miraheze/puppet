@@ -11,4 +11,3 @@ role::salt::minions::salt_master_key: true
 puppetdb::command_processing_threads: 4
 puppetserver_hostname: 'puppet3.miraheze.org'
 role::salt::minions::salt_master: 'puppet3.miraheze.org'
-puppet_major_version: 7
