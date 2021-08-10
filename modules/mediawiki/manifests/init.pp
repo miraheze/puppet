@@ -215,4 +215,11 @@ class mediawiki(
         minute  => '0',
         hour    => '*/1',
     }
+
+    sudo::user { 'www-data_sudo_itself':
+        user       => 'www-data',
+        privileges => [
+            'ALL = (www-data) NOPASSWD: ALL',
+        ],
+    }
 }
