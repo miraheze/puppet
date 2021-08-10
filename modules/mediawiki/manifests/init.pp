@@ -49,7 +49,6 @@ class mediawiki(
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
         user        => www-data,
-        subscribe   => Git::Clone['MediaWiki config'],
     }
     } else {
     $mwclone = '/srv/mediawiki/w'
