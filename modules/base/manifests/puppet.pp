@@ -11,7 +11,7 @@ class base::puppet (
         source => 'puppet:///modules/base/puppet/puppetlabs.gpg',
     }
 
-    apt::source { 'proxmox_apt':
+    apt::source { 'puppetlabs':
         location => 'http://apt.puppetlabs.com',
         repos    => "puppet${puppet_major_version}",
         require  => File['/etc/apt/trusted.gpg.d/puppetlabs.gpg'],
