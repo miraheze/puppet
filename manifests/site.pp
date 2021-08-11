@@ -86,6 +86,12 @@ node /^mw([89]|1[01])\.miraheze\.org$/ {
     include prometheus::php_fpm
 }
 
+node 'mwtask1.miraheze.org' {
+    include base
+    include role::mediawiki
+    include prometheus::php_fpm
+}
+
 node /^ns[12]\.miraheze\.org$/ {
     include base
     include role::dns
