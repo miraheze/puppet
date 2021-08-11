@@ -30,6 +30,8 @@ def run(args):
     if args.l10n:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --wiki=loginwiki'))
+    if args.gitinfo:
+        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --use-staging --wiki=loginwiki'))
     if args.servers == 'skip':
         print('very good because I have not wrote the rsync client')
     elif args.servers == 'all':
@@ -57,6 +59,7 @@ if __name__ == '__main__':
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--l10n', dest='l10n', action='store_true')
+    parser.add_argument('--gitinfo', dest='gitinfo', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
