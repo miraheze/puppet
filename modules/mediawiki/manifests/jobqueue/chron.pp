@@ -2,7 +2,11 @@
 #
 # JobQueue Chron runner on redis masters only
 class mediawiki::jobqueue::chron {
-    require mediawiki::jobqueue::runner
+    git::clone { 'JobRunner':
+        ensure    => latest,
+        directory => '/srv/jobrunner',
+        origin    => 'https://github.com/miraheze/jobrunner-service',
+    }
 
     systemd::service { 'jobchron':
         ensure  => present,
