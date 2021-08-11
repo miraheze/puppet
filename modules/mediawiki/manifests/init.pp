@@ -180,9 +180,10 @@ class mediawiki(
     }
     
     file { '/srv/mediawiki/config/OAuth2.key':
-        ensure => present,
-        mode   => '0755',
-        source => 'puppet:///private/mediawiki/OAuth2.key',
+        ensure  => present,
+        mode    => '0755',
+        source  => 'puppet:///private/mediawiki/OAuth2.key',
+        require => Git::Clone['MediaWiki config'],
     }
 
     exec { 'ExtensionMessageFiles':
