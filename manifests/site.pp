@@ -46,9 +46,7 @@ node 'jobchron1.miraheze.org' {
 
 node 'jobrunner3.miraheze.org' {
     include base
-    include role::redis
     include role::mediawiki
-    include prometheus::redis_exporter
 }
 
 node 'jobrunner4.miraheze.org' {
