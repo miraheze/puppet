@@ -1,8 +1,9 @@
 #! /usr/bin/python3
 import argparse
 import os
+import time
 
-def run(args):
+def run(args, start):
     loginfo = {}
     exitcodes = []
     for arg in vars(args).items():
@@ -45,16 +46,18 @@ def run(args):
     for code in exitcodes:
         if code != 0:
             FAIL = 1
+    timetaken = int(time.time() - start)
     if FAIL == 1:
         fintext = f'{fintext} - FAIL: {exitcodes}'
     else:
         fintext = f'{fintext} - SUCCESS'
     if not args.nolog:
-        os.system(f'/usr/local/bin/logsalmsg {fintext}')
+        os.system(f'/usr/local/bin/logsalmsg {fintext} in {str(timetaken)}s')
     else:
-        print(fintext)
+        print(f'{fintext} in {str(timetaken)}s')
 
 if __name__ == '__main__':
+    start = time.time()
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
@@ -64,4 +67,4 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--servers', dest='servers', required=True)
-    run(parser.parse_args())
+    run(parser.parse_args(), start)
