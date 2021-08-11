@@ -37,6 +37,12 @@ node 'graylog2.miraheze.org' {
     include role::graylog
 }
 
+node 'jobchron1.miraheze.org' {
+    include base
+    include role::redis
+    include prometheus::redis_exporter
+}
+
 node 'jobrunner3.miraheze.org' {
     include base
     include role::redis
