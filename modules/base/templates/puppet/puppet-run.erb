@@ -38,7 +38,7 @@ fi
 timeout -k 60 300 apt-get update -qq |& logger -t puppet-agent-cronjob
 
 # puppet run logged via syslog
-timeout -k 60 1800 nice -n 19 puppet agent \
+timeout -k 60 1800 puppet agent \
   --onetime \
   --no-daemonize \
   --verbose \
