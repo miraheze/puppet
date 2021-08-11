@@ -44,11 +44,6 @@ node 'jobchron1.miraheze.org' {
     include mediawiki::jobqueue::chron
 }
 
-node 'jobrunner3.miraheze.org' {
-    include base
-    include role::mediawiki
-}
-
 node 'jobrunner4.miraheze.org' {
     include base
     include role::mediawiki
