@@ -8,6 +8,15 @@ class mediawiki::jobqueue::chron {
         origin    => 'https://github.com/miraheze/jobrunner-service',
     }
 
+    $redis_password = lookup('passwords::redis::master')
+
+    file { '/srv/jobrunner/jobrunner.json':
+        ensure  => present,
+        content => template('mediawiki/jobrunner.json.erb'),
+        notify  => Service['jobchron'],
+        require => Git::Clone['JobRunner'],
+    }
+
     systemd::service { 'jobchron':
         ensure  => present,
         content => systemd_template('jobchron'),
