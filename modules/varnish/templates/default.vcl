@@ -67,6 +67,12 @@ backend mw12 {
 	.probe = mwhealth;
 }
 
+backend mw13 {
+	.host = "127.0.0.1";
+	.port = "8093";
+	.probe = mwhealth;
+}
+
 # to be used for acme/letsencrypt only
 backend mwtask1 {
 	.host = "127.0.0.1";
@@ -97,6 +103,11 @@ backend mw11_test {
 }
 
 backend mw12_test {
+	.host = "127.0.0.1";
+	.port = "8092";
+}
+
+backend mw13_test {
 	.host = "127.0.0.1";
 	.port = "8092";
 }
@@ -136,6 +147,9 @@ acl purge {
 	# mw12
 	"51.195.236.220";
 	"2001:41d0:800:178a::6";
+	# mw13
+	"51.195.236.251";
+	"2001:41d0:800:1bbd::5";
 	# mon2
 	"51.195.236.249";
 	"2001:41d0:800:1bbd::3";
@@ -272,6 +286,9 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw12.miraheze.org") {
 		set req.backend_hint = mw12_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw13.miraheze.org") {
+		set req.backend_hint = mw13_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test3;
