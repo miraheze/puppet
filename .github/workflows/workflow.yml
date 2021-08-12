@@ -1,0 +1,26 @@
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.7', '3.9']
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Python ${{ matrix.python }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }} 
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgnutls28-dev
+          pip install -U pip flake8
+      - name: Run tests
+        run: |
+          flake8 modules
