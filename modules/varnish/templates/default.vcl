@@ -110,7 +110,6 @@ backend mw12_test {
 backend mw13_test {
 	.host = "127.0.0.1";
 	.port = "8093";
-
 }
 
 backend test3 {
