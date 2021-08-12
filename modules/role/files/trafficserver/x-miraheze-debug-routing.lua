@@ -14,6 +14,8 @@ function do_remap()
         ["mw9.miraheze.org"]   = "mw9.miraheze.org",
         ["mw10.miraheze.org"]  = "mw10.miraheze.org",
         ["mw11.miraheze.org"]  = "mw11.miraheze.org",
+        ["mw12.miraheze.org"]  = "mw12.miraheze.org",
+        ["mw13.miraheze.org"]  = "mw13.miraheze.org",
         ["test3.miraheze.org"] = "test3.miraheze.org",
     }
 
