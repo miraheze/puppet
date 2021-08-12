@@ -127,6 +127,7 @@ sub vcl_init {
 	mediawiki.add_backend(mw10);
 	mediawiki.add_backend(mw11);
 	mediawiki.add_backend(mw12);
+	mediawiki.add_backend(mw13);
 }
 
 
