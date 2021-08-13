@@ -27,7 +27,7 @@ def run(args, start):
     if args.folders:
         folders = str(args.folders).split(',')
         for folder in folders:
-            exitcodes.append(os.system(f'sudo -u www-data cp -r /srv/mediawiki-staging/{folder} /srv/mediawiki/{folder}'))
+            exitcodes.append(os.system(f'sudo -u www-data cp -r /srv/mediawiki-staging/{folder}/* /srv/mediawiki/{folder}/'))
     if args.l10n:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --wiki=loginwiki'))
