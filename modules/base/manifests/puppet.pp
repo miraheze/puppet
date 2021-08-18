@@ -1,18 +1,27 @@
 # class base::puppet
 class base::puppet (
     Optional[String] $puppet_cron_time = lookup('puppet_cron_time', {'default_value' => undef}),
-    Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 6}),
+    Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 7}),
     String $puppetserver_hostname = lookup('puppetserver_hostname', {'default_value' => 'puppet3.miraheze.org'}),
 ) {
     $crontime = fqdn_rand(60, 'puppet-params-crontime')
 
+    file { '/etc/apt/trusted.gpg.d/puppetlabs.gpg':
+        ensure => present,
+        source => 'puppet:///modules/base/puppet/puppetlabs.gpg',
+    }
+
     apt::source { 'puppetlabs':
         location => 'http://apt.puppetlabs.com',
         repos    => "puppet${puppet_major_version}",
-        key      => {
-            'id'     => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
-            'server' => 'keyserver.ubuntu.com',
-        },
+        require  => File['/etc/apt/trusted.gpg.d/puppetlabs.gpg'],
+        notify   => Exec['apt_update_puppetlabs'],
+    }
+
+    exec {'apt_update_puppetlabs':
+        command     => '/usr/bin/apt-get update',
+        refreshonly => true,
+        logoutput   => true,
     }
 
     package { 'puppet-agent':
@@ -72,7 +81,7 @@ class base::puppet (
     if !lookup('puppetserver') {
         file { '/etc/puppetlabs/puppet/puppet.conf':
             ensure  => present,
-            content => template("base/puppet/puppet.${puppet_major_version}.conf.erb"),
+            content => template("base/puppet/puppet.conf.erb"),
             mode    => '0444',
             require => Package['puppet-agent'],
         }

@@ -61,8 +61,20 @@ backend mw11 {
 	.probe = mwhealth;
 }
 
+backend mw12 {
+	.host = "127.0.0.1";
+	.port = "8092";
+	.probe = mwhealth;
+}
+
+backend mw13 {
+	.host = "127.0.0.1";
+	.port = "8093";
+	.probe = mwhealth;
+}
+
 # to be used for acme/letsencrypt only
-backend jobrunner3 {
+backend mwtask1 {
 	.host = "127.0.0.1";
 	.port = "8089";
 }
@@ -90,6 +102,16 @@ backend mw11_test {
 	.port = "8088";
 }
 
+backend mw12_test {
+	.host = "127.0.0.1";
+	.port = "8092";
+}
+
+backend mw13_test {
+	.host = "127.0.0.1";
+	.port = "8093";
+}
+
 backend test3 {
 	.host = "127.0.0.1";
 	.port = "8091";
@@ -104,6 +126,8 @@ sub vcl_init {
 	mediawiki.add_backend(mw9);
 	mediawiki.add_backend(mw10);
 	mediawiki.add_backend(mw11);
+	mediawiki.add_backend(mw12);
+	mediawiki.add_backend(mw13);
 }
 
 
@@ -121,15 +145,18 @@ acl purge {
 	# mw11
 	"51.195.236.255";
 	"2001:41d0:800:1bbd::10";
+	# mw12
+	"51.195.236.220";
+	"2001:41d0:800:178a::6";
+	# mw13
+	"51.195.236.251";
+	"2001:41d0:800:1bbd::5";
 	# mon2
 	"51.195.236.249";
 	"2001:41d0:800:1bbd::3";
-	# jobrunner3
-	"51.195.236.220";
-	"2001:41d0:800:178a::6";
-	# jobrunner4
-	"51.195.236.251";
-	"2001:41d0:800:1bbd::5";
+	# mwtask1
+	"198.244.181.23";
+	"2001:41d0:800:1bbd::15";
 	# test3
 	"51.195.236.247";
 	"2001:41d0:800:1bbd::14";
@@ -240,9 +267,11 @@ sub mw_vcl_recv {
 	} else if (req.url ~ "/w/undefined/api.php") {
 		set req.url = regsuball(req.url, "/w/undefined/api.php", "/w/api.php");
 	}
-
 	if (req.url ~ "^/\.well-known") {
-		set req.backend_hint = jobrunner3;
+		set req.backend_hint = mwtask1;
+		return (pass);
+	} else if (req.http.Host == "sslrequest.miraheze.org") {
+		set req.backend_hint = mwtask1;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw8.miraheze.org") {
 		set req.backend_hint = mw8_test;
@@ -255,6 +284,12 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw11.miraheze.org") {
 		set req.backend_hint = mw11_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw12.miraheze.org") {
+		set req.backend_hint = mw12_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw13.miraheze.org") {
+		set req.backend_hint = mw13_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test3;

@@ -126,7 +126,6 @@ class mediawiki(
     $noreply_password      = lookup('passwords::mail::noreply')
     $mediawiki_upgradekey  = lookup('passwords::mediawiki::upgradekey')
     $mediawiki_secretkey   = lookup('passwords::mediawiki::secretkey')
-    $recaptcha_sitekey     = lookup('passwords::recaptcha::sitekey')
     $recaptcha_secretkey   = lookup('passwords::recaptcha::secretkey')
     $matomotoken           = lookup('passwords::mediawiki::matomotoken')
     $ldap_password         = lookup('passwords::mediawiki::ldap_password')
@@ -174,9 +173,10 @@ class mediawiki(
     }
     
     file { '/srv/mediawiki/config/OAuth2.key':
-        ensure => present,
-        mode   => '0755',
-        source => 'puppet:///private/mediawiki/OAuth2.key',
+        ensure  => present,
+        mode    => '0755',
+        source  => 'puppet:///private/mediawiki/OAuth2.key',
+        require => Git::Clone['MediaWiki config'],
     }
 
     exec { 'ExtensionMessageFiles':
@@ -209,5 +209,12 @@ class mediawiki(
         user    => 'root',
         minute  => '0',
         hour    => '*/1',
+    }
+
+    sudo::user { 'www-data_sudo_itself':
+        user       => 'www-data',
+        privileges => [
+            'ALL = (www-data) NOPASSWD: ALL',
+        ],
     }
 }

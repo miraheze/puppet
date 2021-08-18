@@ -1,18 +1,14 @@
 users::groups:
   - mediawiki-admins
-jobchron: true
-jobrunner: true
-jobrunner::intensive: false
 letsencrypt: true
-mwservices: true
+jobrunner: true
+jobrunner::intensive: true
 contactgroups: ['icingaadmins', 'sre', 'mediawiki']
 role::mediawiki::use_strict_firewall: true
 mediawiki::branch: 'REL1_36'
-mediawiki::php::fpm::childs: 1
-mediawiki::php::fpm::fpm_min_restart_threshold: 1
+mediawiki::php::fpm::childs: 32
+php::php_fpm::fpm_workers_multiplier: 1.0
 php::php_version: '7.3'
-redis::heap: '1000mb'
-mediawiki::jobqueue::runner::cron: true
 nginx::use_graylog: true
 puppet_cron_time: '2,32'
 puppetserver_hostname: 'puppet3.miraheze.org'

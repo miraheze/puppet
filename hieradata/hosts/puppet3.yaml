@@ -1,7 +1,7 @@
 users::groups:
   - puppet-users
 puppetserver: true
-puppetserver_java_opts: '-Xms2500M -Xmx2500M'
+puppetserver_java_opts: '-Xms2000M -Xmx2000M'
 puppetdb_enable: true
 puppetdb_hostname: puppet3.miraheze.org
 puppetdb::db_ssl: true

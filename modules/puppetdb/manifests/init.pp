@@ -26,7 +26,7 @@
 #
 class puppetdb(
     String $db_rw_host = lookup('puppetdb::db_rw_host', {'default_value' => 'localhost'}),
-    String $puppetdb_jvm_opts = lookup('puppetdb::jvm_opts', {'default_value' =>'-Xmx510m'}),
+    String $puppetdb_jvm_opts = lookup('puppetdb::jvm_opts', {'default_value' =>'-Xmx1G'}),
     String $db_user = lookup('puppetdb::db_user', {'default_value' =>'puppetdb'}),
     Boolean $perform_gc = lookup('puppetdb::perform_gc', {'default_value' => true}),
     Integer $command_processing_threads = lookup('puppetdb::command_processing_threads', {'default_value' => 2}),
@@ -145,6 +145,7 @@ class puppetdb(
         'ssl-key'                   => '/etc/puppetlabs/puppetdb/ssl/private.pem',
         'ssl-cert'                  => '/etc/puppetlabs/puppetdb/ssl/public.pem',
         'ssl-ca-cert'               => '/etc/puppetlabs/puppetdb/ssl/ca.pem',
+        'access-log-config'         => '/etc/puppetlabs/puppetdb/request-logging.xml',
     }
 
     if $bind_ip {

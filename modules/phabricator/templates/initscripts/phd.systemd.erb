@@ -9,7 +9,8 @@ User=www-data
 Group=www-data
 ExecStart=/srv/phab/phabricator/bin/phd start
 ExecStop=/srv/phab/phabricator/bin/phd stop --force
-RemainAfterExit=yes
+RestartSec=10
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
