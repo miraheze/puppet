@@ -43,7 +43,7 @@ def run(args, start):
         print('Sync skipped. Mediawiki deploy has not passed canary stage.')
         sync = False
     elif args.servers == 'all':
-        serverlist = ['mw8', 'mw9', 'mw10', 'mw11', 'mw12', mw13', 'mwtask1']
+        serverlist = ['mw8', 'mw9', 'mw10', 'mw12', mw13', 'mwtask1']
         sync = True
     else:
         serverlist = str(args.servers).split(',')
@@ -55,11 +55,11 @@ def run(args, start):
         if len(rsyncpaths) > 0:
             for path in rsyncpaths:
                 for server in serverlist:
-                    exitcodes.append(os.system(f'rsync -Pr -e 'ssh -i /srv/mediawiki-staging/deploykey' {path} www-data@{server}:{path}')
+                    exitcodes.append(os.system(f'rsync -Pr --delete -e "ssh -i /srv/mediawiki-staging/deploykey" {path} www-data@{server}:{path}')
         if len(rsyncfiles) > 0:
             for file in rsyncfiles:
                 for server in serverlist:
-                    exitcodes.append(os.system(f'rsync -P -e 'ssh -i /srv/mediawiki-staging/deploykey' {file} www-data@{server}:{file}')
+                    exitcodes.append(os.system(f'rsync -P --delete -e "ssh -i /srv/mediawiki-staging/deploykey" {file} www-data@{server}:{file}')
         
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
     FAIL = 0
