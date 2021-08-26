@@ -15,7 +15,7 @@ class mediawiki::packages {
         'libvips-tools',
         'lilypond',
         'poppler-utils',
-        'python-pip',
+#       'python-pip', # Temporarily remove, not compatible with Debian 11
         'netpbm',
         'librsvg2-dev',
         'libjpeg-dev',
