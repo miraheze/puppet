@@ -14,6 +14,7 @@ class mediawiki::packages {
         'oggvideotools',
         'libvips-tools',
         'lilypond',
+        'ploticus',
         'poppler-utils',
 #       'python-pip', # Temporarily remove, not compatible with Debian 11
         'netpbm',
@@ -41,18 +42,6 @@ class mediawiki::packages {
     package { $packages:
         ensure  => present,
         require => Exec['apt_update_mediawiki_packages'],
-    }
-
-    file { '/opt/ploticus_2.42-3+b4_amd64.deb':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/packages/ploticus/ploticus_2.42-3+b4_amd64.deb',
-    }
-
-    package { 'ploticus':
-        ensure      => installed,
-        provider    => dpkg,
-        source      => '/opt/ploticus_2.42-3+b4_amd64.deb',
-        require     => File['/opt/ploticus_2.42-3+b4_amd64.deb'],
     }
 
     file { '/opt/texvc_3.0.0+git20160613-1_amd64.deb':
