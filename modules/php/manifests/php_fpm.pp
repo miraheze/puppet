@@ -167,7 +167,6 @@ class php::php_fpm(
         'xmlreader',
         'xmlwriter',
         'xsl',
-        'wddx',
     ]:
         package_name => '',
     }
