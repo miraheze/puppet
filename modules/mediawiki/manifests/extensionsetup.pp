@@ -18,6 +18,7 @@ class mediawiki::extensionsetup {
     $composer = 'composer install --no-dev'
     exec { 'wikibase_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/Wikibase",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/Wikibase",
@@ -27,6 +28,7 @@ class mediawiki::extensionsetup {
 
     exec { 'maps_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}/extensions/Maps",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/Maps",
@@ -36,6 +38,7 @@ class mediawiki::extensionsetup {
 
     exec { 'flow_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/Flow",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/Flow",
@@ -45,6 +48,7 @@ class mediawiki::extensionsetup {
 
     exec { 'oauth_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/OAuth",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/OAuth",
@@ -54,6 +58,7 @@ class mediawiki::extensionsetup {
 
     exec { 'templatestyles_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/TemplateStyles",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/TemplateStyles",
@@ -63,6 +68,7 @@ class mediawiki::extensionsetup {
 
     exec { 'antispoof_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/AntiSpoof",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/AntiSpoof",
@@ -72,6 +78,7 @@ class mediawiki::extensionsetup {
 
     exec { 'kartographer_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/Kartographer",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/Kartographer",
@@ -81,6 +88,7 @@ class mediawiki::extensionsetup {
 
     exec { 'timedmediahandler_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/TimedMediaHandler",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/TimedMediaHandler",
@@ -90,6 +98,7 @@ class mediawiki::extensionsetup {
 
     exec { 'translate_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/Translate",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/Translate",
@@ -99,6 +108,7 @@ class mediawiki::extensionsetup {
 
     exec { 'oathauth_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/OATHAuth",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/OATHAuth",
@@ -108,6 +118,7 @@ class mediawiki::extensionsetup {
     
     exec { 'lingo_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/Lingo",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/Lingo",
@@ -117,6 +128,7 @@ class mediawiki::extensionsetup {
 
     exec { 'wikibasequalityconstraints_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/WikibaseQualityConstraints",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/WikibaseQualityConstraints",
@@ -126,6 +138,7 @@ class mediawiki::extensionsetup {
 
     exec { 'wikibaselexeme_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/WikibaseLexeme",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/WikibaseLexeme",
@@ -135,6 +148,7 @@ class mediawiki::extensionsetup {
 
     exec { 'createwiki_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/CreateWiki",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/CreateWiki",
@@ -144,6 +158,7 @@ class mediawiki::extensionsetup {
 
     exec { 'datatransfer_composer':
         command     => "composer require phpoffice/phpspreadsheet",
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/DataTransfer",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/DataTransfer",
@@ -153,6 +168,7 @@ class mediawiki::extensionsetup {
 
     exec { 'bootstrap_composer':
         command     => $composer,
+        onlyif      => "[ ! -d "vendor" ]"
         cwd         => "${mwpath}extensions/Bootstrap",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}extensions/Bootstrap",
