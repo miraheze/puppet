@@ -14,6 +14,7 @@ class mediawiki::packages {
         'oggvideotools',
         'libvips-tools',
         'lilypond',
+        'php-luasandbox',
         'ploticus',
         'poppler-utils',
 #       'python-pip', # Temporarily remove, not compatible with Debian 11
