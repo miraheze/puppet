@@ -43,14 +43,6 @@ class mediawiki::packages {
         require => Exec['apt_update_mediawiki_packages'],
     }
 
-    file { '/opt/texvc_3.0.0+git20160613-1_amd64.deb':
-        ensure  => absent,
-    }
-
-    package { 'texvc':
-        ensure      => purged,
-    }
-
     package { [ 'ocaml' ]:
         ensure          => present,
         install_options => ['--no-install-recommends'],
