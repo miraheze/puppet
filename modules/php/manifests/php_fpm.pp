@@ -88,17 +88,14 @@ class php::php_fpm(
         }
     }
 
-    php::extension { 'msgpack': }
-
-    php::extension {
-        'apcu':
-            package_name => 'php-apcu';
-        'redis':
-            package_name => 'php-redis';
-        'luasandbox':
-            package_name => 'php-luasandbox';
-        'wikidiff2':
-            package_name => 'php-wikidiff2';
+    php::extension { [
+        'apcu',
+        'msgpack',
+        'redis',
+        'luasandbox',
+        'wikidiff2',
+    ]:
+        ensure => present
     }
 
     # Extensions that require configuration.
