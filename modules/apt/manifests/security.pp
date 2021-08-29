@@ -15,7 +15,7 @@ class apt::security (
     $_repos = $repos
   }
   if ($facts['os']['name'] == 'Debian' or $facts['os']['name'] == 'Ubuntu') {
-    if debian::codename::ge('bullseye') {
+    if os_version('debian >= bullseye') {
       $securityDist = "-security"
     } else {
       $securityDist = ""
