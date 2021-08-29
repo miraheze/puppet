@@ -44,7 +44,7 @@ class mediawiki::packages {
     }
 
     package { [ 'ocaml' ]:
-        ensure          => purgef,
+        ensure          => purged,
     }
 
     file { '/usr/local/bin/mediawiki-firejail-convert':
