@@ -72,7 +72,6 @@ class php::php_fpm(
     }
 
     $core_extensions =  [
-        'apcu',
         'bcmath',
         'curl',
         'gd',
@@ -91,11 +90,11 @@ class php::php_fpm(
 
     php::extension { 'msgpack': }
 
-    php::extension { 'redis':
-        package_name => "php-redis",
-    }
-
     php::extension {
+        'apcu':
+            package_name => 'php-apcu';
+        'redis':
+            package_name => 'php-redis';
         'luasandbox':
             package_name => 'php-luasandbox';
         'wikidiff2':
