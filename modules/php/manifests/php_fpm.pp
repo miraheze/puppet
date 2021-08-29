@@ -95,26 +95,11 @@ class php::php_fpm(
         package_name => "php-redis",
     }
 
-    if $version == '7.3' {
-        require_package('liblua5.1-0')
-
-        # make sure to rebuild against the selected php version
-        file { '/usr/lib/php/20180731/luasandbox.so':
-            ensure => present,
-            source => "puppet:///modules/php/luasandbox/${version}.luasandbox.so",
-        }
-
-        file { '/usr/lib/php/20180731/wikidiff2.so':
-            ensure => present,
-            source => "puppet:///modules/php/wikidiff2/wikidiff2.so",
-        }
-
-        php::extension {
-            'luasandbox':
-                package_name => '';
-            'wikidiff2':
-                package_name => '';
-        }
+    php::extension {
+        'luasandbox':
+            package_name => 'php-luasandbox';
+        'wikidiff2':
+            package_name => 'php-wikidiff2';
     }
 
     # Extensions that require configuration.
