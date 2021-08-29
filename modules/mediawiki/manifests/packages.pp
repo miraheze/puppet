@@ -28,7 +28,6 @@ class mediawiki::packages {
         'xvfb',
         'timidity',
         'librsvg2-bin',
-        'texlive-latex-extra',
         'python3-requests',
         'rsync',
     ]
