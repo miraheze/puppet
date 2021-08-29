@@ -15,11 +15,16 @@ class apt::security (
     $_repos = $repos
   }
   if ($facts['os']['name'] == 'Debian' or $facts['os']['name'] == 'Ubuntu') {
+    if os_version('debian >= bullseye') {
+      $securityDist = "-security"
+    } else {
+      $securityDist = ""
+    }
     unless $location {
       $_location = $::apt::security['location']
     }
     unless $release {
-      $_release = "${facts['os']['distro']['codename']}/updates"
+      $_release = "${facts['os']['distro']['codename']}${securityDist}/updates"
     }
     unless $repos {
       $_repos = $::apt::security['repos']
