@@ -28,7 +28,6 @@ class mediawiki::packages {
         'xvfb',
         'timidity',
         'librsvg2-bin',
-        'texlive-latex-extra',
         'python3-requests',
         'rsync',
     ]
@@ -46,18 +45,11 @@ class mediawiki::packages {
     }
 
     file { '/opt/texvc_3.0.0+git20160613-1_amd64.deb':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/packages/texvc/texvc_3.0.0+git20160613-1_amd64.deb',
+        ensure  => absent,
     }
 
     package { 'texvc':
-        ensure      => installed,
-        provider    => dpkg,
-        source      => '/opt/texvc_3.0.0+git20160613-1_amd64.deb',
-        require     => [
-            File['/opt/texvc_3.0.0+git20160613-1_amd64.deb'],
-            Package['texlive-latex-extra'],
-        ],
+        ensure      => purged,
     }
 
     package { [ 'ocaml' ]:
