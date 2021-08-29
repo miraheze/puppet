@@ -20,6 +20,8 @@ def run(args, start):
         exitcodes.append(os.system('sudo -u www-data cp -r /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
     if args.world:
         exitcodes.append(os.system('sudo -u www-data cp -r /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
+        exitcodes.append(os.system('sudo -u www-data wget -O composer.phar https://getcomposer.org/composer-1.phar | sudo -u www-data php'))
+        exitcodes.append(os.system('sudo -u www-data php composer.phar install --no-dev'))
     if args.files:
         files = str(args.files).split(',')
         for file in files:
