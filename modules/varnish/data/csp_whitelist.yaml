@@ -1,5 +1,5 @@
 # Only add a domain if really necessary.
-# There should be a discussion before adding it and at least 2 ops members should sign off unless it's a emergency.
+# See https://meta.miraheze.org/wiki/Tech:CSP_Whitelist_Policy.
 url1: '*.miraheze.org'
 url2: '*.wikimedia.org'
 url3: '*.wikipedia.org'
