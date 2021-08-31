@@ -51,7 +51,10 @@ class mediawiki::php (
         default => 'absent'
     }
 
+    # Built on test3
+    # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
     if $php_version == '7.3' {
+        # Compatiable with php 7.3 only
         file { '/usr/lib/php/20180731/tideways_xhprof.so':
             ensure => $profiling_ensure,
             mode   => '0755',
@@ -59,6 +62,7 @@ class mediawiki::php (
             before => Php::Extension['tideways-xhprof'],
         }
     } else {
+        # Compatiable with php 7.4 only
         file { '/usr/lib/php/20190902/tideways_xhprof.so':
             ensure => $profiling_ensure,
             mode   => '0755',
@@ -76,6 +80,5 @@ class mediawiki::php (
             'extension'                       => 'tideways_xhprof.so',
             'tideways_xhprof.clock_use_rdtsc' => '0',
         },
-        require  => File['/usr/lib/php/20180731/tideways_xhprof.so'],
     }
 }
