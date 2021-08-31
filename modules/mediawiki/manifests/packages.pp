@@ -43,10 +43,6 @@ class mediawiki::packages {
         require => Exec['apt_update_mediawiki_packages'],
     }
 
-    package { [ 'ocaml' ]:
-        ensure          => purged,
-    }
-
     file { '/usr/local/bin/mediawiki-firejail-convert':
         source => 'puppet:///modules/mediawiki/mediawiki-firejail-convert.py',
         owner  => 'www-data',
