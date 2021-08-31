@@ -2,8 +2,8 @@ puppetserver_hostname: 'puppet3.miraheze.org'
 mariadb::config::innodb_buffer_pool_instances: 1
 mariadb::config::innodb_buffer_pool_size: '1G'
 mariadb::config::max_connections: 500
-mariadb::config::table_definition_cache: 10000 
-mariadb::config::table_open_cache: 10000
+mariadb::config::table_definition_cache: 20000 
+mariadb::config::table_open_cache: 20000
 
 role::db::backup_clusters:
     - c2
