@@ -15,6 +15,12 @@ class base::monitoring {
         notify  => Service['nagios-nrpe-server'],
     }
 
+    file { '/usr/lib/nagios/plugins/check_phpfpm':
+        ensure => present,
+        source => 'puppet:///modules/base/icinga/check_phpfpm',
+        mode   => '0555',
+    }
+
     $puppetmaster_version = lookup('puppetmaster_version', {'default_value' => 6})
     file { '/usr/lib/nagios/plugins/check_puppet_run':
         ensure  => present,
@@ -37,6 +43,7 @@ class base::monitoring {
     sudo::user { 'nrpe_sudo':
         user       => 'nagios',
         privileges => [
+            'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_phpfpm',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_smart',
         ],
@@ -74,6 +81,15 @@ class base::monitoring {
         vars            => {
             nrpe_command    => 'check_apt',
         },
+    }
+
+    ['mw8', 'mw9', 'mw10', 'mw11', 'mw12', 'mw13'].each |$host| {
+        monitoring::services { "PHP-FPM for ${host}":
+            check_command => 'nrpe',
+            vars          => {
+                nrpe_command => "check_phpfpm_${host}",
+            },
+        }
     }
 
     monitoring::services { 'NTP time':
