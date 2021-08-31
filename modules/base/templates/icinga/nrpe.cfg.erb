@@ -55,6 +55,13 @@ command[check_stunnel_mw12]=/usr/lib/nagios/plugins/check_http -H localhost:8092
 command[check_stunnel_mw13]=/usr/lib/nagios/plugins/check_http -H localhost:8093
 command[check_stunnel_mwtask1]=/usr/lib/nagios/plugins/check_http -H localhost:8089
 command[check_stunnel_test3]=/usr/lib/nagios/plugins/check_http -H localhost:8091
+# check PHP-FPM
+command[check_phpfpm_mw8]=/usr/lib/nagios/plugins/check_phpfpm -H 127.0.0.1 -p 9253
+command[check_phpfpm_mw9]=/usr/lib/nagios/plugins/check_phpfpm -H 127.0.0.1 -p 9253
+command[check_phpfpm_mw10]=/usr/lib/nagios/plugins/check_phpfpm -H 127.0.0.1 -p 9253
+command[check_phpfpm_mw11]=/usr/lib/nagios/plugins/check_phpfpm -H 127.0.0.1 -p 9253
+command[check_phpfpm_mw12]=/usr/lib/nagios/plugins/check_phpfpm -H 127.0.0.1 -p 9253
+command[check_phpfpm_mw13]=/usr/lib/nagios/plugins/check_phpfpm -H 127.0.0.1 -p 9253
 command[check_pdns_recursor]=/usr/lib/nagios/plugins/check_dns -s 127.0.0.1 -H miraheze.org
 command[check_smart_sata]=/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sd[a-z] -i ata
 command[check_smart_nvme]=/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/nvme[0-9] -i nvme -l
