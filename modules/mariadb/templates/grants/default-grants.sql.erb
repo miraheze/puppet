@@ -3,6 +3,7 @@
 GRANT ALL PRIVILEGES
     ON *.* TO 'root'@'localhost'
     IDENTIFIED BY '<%= @password %>'
+    REQUIRE SSL
     WITH GRANT OPTION;
 
 -- Grants for 'icinga'@'%'
@@ -10,7 +11,7 @@ GRANT ALL PRIVILEGES
 GRANT REPLICATION CLIENT ON *.* TO 'icinga'@'%'
     IDENTIFIED BY '<%= @icinga_password %>';
 
--- Grants for 'exporter'@'local'
+-- Grants for 'exporter'@'localhost'
 
 GRANT USAGE, PROCESS, REPLICATION CLIENT
     ON *.* TO 'exporter'@'localhost'
@@ -20,9 +21,11 @@ GRANT USAGE, PROCESS, REPLICATION CLIENT
 
 GRANT REPLICATION SLAVE
     ON *.* TO 'replica'@'%'
-    IDENTIFIED BY '<%= @mariadb_replica_password %>';
+    IDENTIFIED BY '<%= @mariadb_replica_password %>'
+    REQUIRE SSL;
 
 -- Grants for 'dbbackup_user'@'%'
 GRANT USAGE, PROCESS, REPLICATION CLIENT, SELECT, SHOW DATABASES, SHOW VIEW, LOCK TABLES, RELOAD
     ON *.* TO 'dbbackup_user'@'%'
-    IDENTIFIED BY '<%= @dbbackup_user_password %>';
+    IDENTIFIED BY '<%= @dbbackup_user_password %>'
+    REQUIRE SSL;
