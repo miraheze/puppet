@@ -146,8 +146,6 @@ class mediawiki(
 
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
 
-    class { '::nutcracker': }
-
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
         content => template('mediawiki/PrivateSettings.php'),
