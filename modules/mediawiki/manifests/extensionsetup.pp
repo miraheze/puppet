@@ -17,7 +17,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'install_composer':
-        command     => 'wget -O /usr/bin/composer https://getcomposer.org/download/2.1.6/composer.phar',
+        command     => 'wget -O /usr/bin/composer https://getcomposer.org/download/2.1.6/composer.phar && chmod 0755 /usr/bin/composer',
         creates     => '/usr/bin/composer',
         path        => '/usr/bin',
         user        => 'root',
