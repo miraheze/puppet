@@ -84,7 +84,7 @@ class base::monitoring {
     }
 
     ['mw8', 'mw9', 'mw10', 'mw11', 'mw12', 'mw13'].each |$host| {
-        monitoring::services { "PHP-FPM for ${host}":
+        monitoring::services { "PHP-FPM on ${host}":
             check_command => 'nrpe',
             vars          => {
                 nrpe_command => "check_phpfpm_${host}",
