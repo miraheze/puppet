@@ -1,7 +1,6 @@
 # MediaWiki packages
 class mediawiki::packages {
     $packages = [
-        'composer',
         'djvulibre-bin',
         'dvipng',
         'firejail',
