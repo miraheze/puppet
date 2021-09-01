@@ -6,7 +6,7 @@ long = False
 if len(sys.argv) < 3:
     raise Exception("Not Enough Parameters")
 script = sys.argv[1]
-if script == 'importDump.php':
+if script in ['importDump.php', 'deleteBatch.php', 'importImages.php', 'rebuildall.php']:
     long = True
 if len(script.split('/')) == 1:
     script = f'/srv/mediawiki/w/maintenance/{sys.argv[1]}'
