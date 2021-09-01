@@ -7,7 +7,11 @@ ui.logo:
 mysql.port: 3306
 mysql.user: 'phabricator'
 mysql.host: 'db13.miraheze.org'
-storage.mysql-engine.max-size: 0
+
+# https://secure.phabricator.com/book/phabricator/article/configuring_file_storage/
+# Needs to match php.ini upload_max_filesize
+# Needs to match php.ini post_max_size for conduit
+storage.mysql-engine.max-size: 10000000
 
 metamta.default-address: 'noreply@miraheze.org'
 metamta.single-reply-handler-prefix: 'phabricator'

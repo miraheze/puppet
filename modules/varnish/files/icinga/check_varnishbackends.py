@@ -29,13 +29,13 @@ import sys
 import subprocess
 import re
 
+
 def runcommand(command, exit_on_fail=True):
     try:
         process = subprocess.Popen(command.split(" "), stdout=subprocess.PIPE)
         output, unused_err = process.communicate()
-        retcode = process.poll()
         return output
-    except OSError as e:
+    except OSError:
         print("Error: Executing command failed,  does it exist?")
         sys.exit(2)
 
@@ -47,7 +47,7 @@ def main(argv):
     o.add_argument('-s', '--secret', action='store', dest='secret', default='/etc/varnish/secret', help='The path to the secret file')
     o.add_argument('-p', '--path', action='store', dest='path', default='/usr/bin/varnishadm', help='The path to the varnishadm binary')
 
-    options= o.parse_args()
+    options = o.parse_args()
     command = runcommand("%(path)s -S %(secret)s -T %(host)s:%(port)s backend.list" % options.__dict__)
     backends = command.split(b"\n")
     backends_healthy, backends_sick = [], []
