@@ -56,7 +56,7 @@ class varnish (
         group   => 'varnish',
     }
 
-    $max_threads = max($::processorcount * 250, '500')
+    $max_threads = max(floor($::processorcount * 250), '500')
     systemd::service { 'varnish':
         ensure  => present,
         content => systemd_template('varnish'),
