@@ -15,9 +15,9 @@ class base::monitoring {
         notify  => Service['nagios-nrpe-server'],
     }
 
-    file { '/usr/lib/nagios/plugins/check_phpfpm':
+    file { '/usr/lib/nagios/plugins/check_phpfpm_status':
         ensure => present,
-        source => 'puppet:///modules/base/icinga/check_phpfpm',
+        source => 'puppet:///modules/base/icinga/check_phpfpm_status',
         mode   => '0555',
     }
 
@@ -43,7 +43,7 @@ class base::monitoring {
     sudo::user { 'nrpe_sudo':
         user       => 'nagios',
         privileges => [
-            'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_phpfpm',
+            'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_phpfpm_status',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_smart',
         ],
