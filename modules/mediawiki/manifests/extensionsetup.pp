@@ -15,7 +15,7 @@ class mediawiki::extensionsetup {
     } else {
         $mwpath = '/srv/mediawiki/w/'
     }
-    $composer = 'wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar install --no-dev'
+    $composer = 'wget -O composer.phar https://getcomposer.org/download/2.1.6/composer.phar | php && php composer.phar install --no-dev'
     exec { 'wikibase_composer':
         command     => $composer,
         creates     => "${mwpath}extensions/Wikibase/composer.phar",
@@ -157,7 +157,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'datatransfer_composer':
-        command     => "wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar require phpoffice/phpspreadsheet",
+        command     => "wget -O composer.phar https://getcomposer.org/download/2.1.6/composer.phar | php && php composer.phar require phpoffice/phpspreadsheet",
         creates     => "${mwpath}extensions/DataTransfer/composer.phar",
         cwd         => "${mwpath}extensions/DataTransfer",
         path        => '/usr/bin',
