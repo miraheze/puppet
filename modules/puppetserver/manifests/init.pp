@@ -193,11 +193,10 @@ class puppetserver(
         source => 'puppet:///modules/puppetserver/puppetserver.logrotate.conf',
     }
 
-    systemd::service { 'puppetserver':
-        ensure  => present,
-        content => systemd_template('puppetserver'),
-        restart => true,
-        require => Package['puppetserver'],
+    service { 'puppetserver':
+        ensure   => running,
+        provider => 'systemd',
+        require  => Package['puppetserver'],
     }
 
     ufw::allow { 'puppetserver':
