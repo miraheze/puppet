@@ -69,6 +69,14 @@ class icingaweb2 (
         require => File['/etc/icingaweb2'],
     }
 
+    file { '/etc/icingaweb2/config.ini':
+        ensure => present,
+        source => 'puppet:///modules/icingaweb2/config.ini',
+        owner  => 'www-data',
+        group  => 'icingaweb2',
+        require => File['/etc/icingaweb2'],
+    }
+
     file { '/etc/icingaweb2/groups.ini':
         ensure  => present,
         content => template('icingaweb2/groups.ini.erb'),

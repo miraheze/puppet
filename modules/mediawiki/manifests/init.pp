@@ -154,6 +154,14 @@ class mediawiki(
         require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
     }
 
+    file { '/srv/mediawiki/w/404.php':
+        ensure  => 'link',
+        target  => '/srv/mediawiki/config/404.php',
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
+    }
+
     $wikiadmin_password    = lookup('passwords::db::wikiadmin')
     $mediawiki_password    = lookup('passwords::db::mediawiki')
     $redis_password        = lookup('passwords::redis::master')
@@ -165,8 +173,6 @@ class mediawiki(
     $ldap_password         = lookup('passwords::mediawiki::ldap_password')
 
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
-
-    class { '::nutcracker': }
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',

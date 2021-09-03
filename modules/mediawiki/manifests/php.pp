@@ -51,33 +51,34 @@ class mediawiki::php (
         default => 'absent'
     }
 
+    # Built on test3
+    # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
     if $php_version == '7.3' {
+        # Compatiable with php 7.3 only
         file { '/usr/lib/php/20180731/tideways_xhprof.so':
             ensure => $profiling_ensure,
             mode   => '0755',
-            source => 'puppet:///modules/mediawiki/php/tideways_xhprof.so',
-        }
-
-        php::extension { 'tideways-xhprof':
-            ensure   => $profiling_ensure,
-            package_name => '',
-            priority => 30,
-            sapis    => ['fpm'],
-            config   => {
-                'extension'                       => 'tideways_xhprof.so',
-                'tideways_xhprof.clock_use_rdtsc' => '0',
-            },
-            require  => File['/usr/lib/php/20180731/tideways_xhprof.so'],
+            source => 'puppet:///modules/mediawiki/php/tideways_xhprof_7_3.so',
+            before => Php::Extension['tideways-xhprof'],
         }
     } else {
-        php::extension { 'tideways':
-            ensure   => $profiling_ensure,
-            priority => 30,
-            sapis    => ['fpm'],
-            config   => {
-                'extension'                       => 'tideways.so',
-                'tideways_xhprof.clock_use_rdtsc' => '0',
-            }
+        # Compatiable with php 7.4 only
+        file { '/usr/lib/php/20190902/tideways_xhprof.so':
+            ensure => $profiling_ensure,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/tideways_xhprof_7_4.so',
+            before => Php::Extension['tideways-xhprof'],
         }
+    }
+
+    php::extension { 'tideways-xhprof':
+        ensure   => $profiling_ensure,
+        package_name => '',
+        priority => 30,
+        sapis    => ['fpm'],
+        config   => {
+            'extension'                       => 'tideways_xhprof.so',
+            'tideways_xhprof.clock_use_rdtsc' => '0',
+        },
     }
 }

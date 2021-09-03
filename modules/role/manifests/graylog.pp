@@ -10,7 +10,7 @@ class role::graylog {
 
     class { 'mongodb::globals':
         manage_package_repo => true,
-        version             => '4.4.7',
+        version             => '4.4.8',
     }->
     class { 'mongodb::server':
         bind_ip => ['127.0.0.1'],
@@ -21,7 +21,7 @@ class role::graylog {
     }
 
     class { 'elasticsearch':
-        version         => '7.13.4',
+        version         => '7.14.1',
         manage_repo     => true,
         config          => {
             'cluster.name'  => 'graylog',
@@ -40,7 +40,7 @@ class role::graylog {
         version => '4.1',
     }->
     class { 'graylog::server':
-        package_version => '4.1.2-1',
+        package_version => '4.1.3-1',
         config          => {
             'password_secret'          => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'       => lookup('passwords::graylog::root_password_sha2'),
