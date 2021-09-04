@@ -19,7 +19,8 @@ def run(args, start):
     if args.config:
         exitcodes.append(os.system('sudo -u www-data cp -r /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
     if args.world:
-        exitcodes.append(os.system('cd /srv/mediawiki-staging/w && sudo -u www-data wget -O composer.phar https://getcomposer.org/composer-1.phar | sudo -u www-data php'))
+        os.chdir('/srv/mediawiki-staging/w')
+        exitcodes.append(os.system('sudo -u www-data wget -O composer.phar https://getcomposer.org/composer-1.phar | sudo -u www-data php'))
         exitcodes.append(os.system('sudo -u www-data php composer.phar install --no-dev'))
         exitcodes.append(os.system('sudo -u www-data cp -r /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
     if args.files:
