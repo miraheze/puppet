@@ -27,7 +27,7 @@ script-src:
   - 'js-wiki-cdn.reviservices.com'
   - 'wikiplus-app.com'
   - 'cdnjs.cloudflare.com'
-  - 'cdn.jsdelivr.com'
+  - 'cdn.jsdelivr.net'
 
 style-src:
   - "'self'"
@@ -46,7 +46,7 @@ style-src:
   - 'wikidata.org'
   - 'www.gstatic.com'
   - 'fonts.googleapis.com'
-  - 'cdn.jsdelivr.com'
+  - 'cdn.jsdelivr.net'
 
 img-src:
   - "'self'"
