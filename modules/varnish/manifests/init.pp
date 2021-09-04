@@ -39,9 +39,7 @@ class varnish (
     }
     
     $module_path = get_module_path($module_name)
-
     $csp_whitelist = loadyaml("${module_path}/data/csp.yaml")
-    $frame_whitelist = loadyaml("${module_path}/data/frame_whitelist.yaml")
 
     file { '/etc/varnish/default.vcl':
         ensure  => present,
