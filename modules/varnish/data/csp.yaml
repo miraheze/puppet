@@ -115,3 +115,5 @@ frame-src:
   - '*.youtube-nocookie.com'
   - 'player.twitch.tv'
   - 'platform.twitter.com'
+  - 'discord.com'
+  - 'discordapp.com'
