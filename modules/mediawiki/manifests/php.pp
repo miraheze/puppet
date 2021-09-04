@@ -16,9 +16,9 @@ class mediawiki::php (
                 'memory_limit'              => '512M',
                 'opcache'                   => {
                     'enable'                  => 1,
-                    'interned_strings_buffer' => 50,
-                    'memory_consumption'      => 512,
-                    'max_accelerated_files'   => 20000,
+                    'interned_strings_buffer' => 96,
+                    'memory_consumption'      => 1024,
+                    'max_accelerated_files'   => 24000,
                     'max_wasted_percentage'   => 10,
                     'validate_timestamps'     => 1,
                     'revalidate_freq'         => 10,
