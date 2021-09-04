@@ -7,10 +7,10 @@ worker_processes <%= @nginx_worker_processes %>;
 worker_processes <%= scope.lookupvar('::virtual_processor_count') %>;
 <% end %>
 pid /run/nginx.pid;
-worker_rlimit_nofile 16192; # Twice the number of worker_connections
+worker_rlimit_nofile 20000; # Twice the number of worker_connections
 
 events {
-	worker_connections 8096;
+	worker_connections 19000;
 	use epoll;
 	multi_accept on;
 }
