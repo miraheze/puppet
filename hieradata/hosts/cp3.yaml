@@ -1,5 +1,6 @@
-vpncloud::server_ip: 10.0.1.4
-nginx::worker_processes: 4
+users::groups: 'cache-admins'
 varnish::cache_file_size: '10G'
 base::syslog::syslog_daemon: 'rsyslog'
 puppetserver_hostname: 'puppet3.miraheze.org'
+# Triples the amount of connections we can handle
+nginx::worker_processes: 3
