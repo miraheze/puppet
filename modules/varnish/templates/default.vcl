@@ -456,7 +456,7 @@ sub vcl_deliver {
 	// See https://github.com/wicg/floc#opting-out-of-computation
 	set resp.http.Permissions-Policy = "interest-cohort=()";
 
-	set resp.http.Content-Security-Policy = "default-src 'self' blob: data: <%- @csp_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self' <%- @frame_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%>";
+	set resp.http.Content-Security-Policy = "<%- @csp_whitelist.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 
 	return (deliver);
 }
