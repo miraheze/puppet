@@ -7,6 +7,7 @@ default-src:
 script-src:
   - "'self'"
   - "'unsafe-inline'"
+  - "'unsafe-eval'"
   - '*.miraheze.org'
   - '*.wikimedia.org'
   - '*.wikipedia.org'
