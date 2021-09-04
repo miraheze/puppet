@@ -37,15 +37,15 @@ class mediawiki(
     }
     
     if lookup(mediawiki::is_canary) {
-        file { '/srv/mediawiki-staging/deploykey.pub' {
+        file { '/srv/mediawiki-staging/deploykey.pub':
             ensure => present,
-            contents => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy'
+            contents => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy',
             owner  => 'www-data',
             group  => 'www-data',
             mode   => '0440',
         }
         
-        file { '/srv/mediawiki-staging/deploykey' {
+        file { '/srv/mediawiki-staging/deploykey':
             ensure => present,
             source => 'puppet:///private/mediawiki/mediawiki-deploy-key-private',
             owner  => 'www-data',
