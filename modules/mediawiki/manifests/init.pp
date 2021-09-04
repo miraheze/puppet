@@ -33,8 +33,9 @@ class mediawiki(
             uid      => 33,
             gid      => 33,
             system   => true,
-            homedir     => '/var/www'
+            homedir  => '/var/www'
             shell    => '/bin/bash',
+            system   => true,
             ssh_keys => [
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy'
             ],
