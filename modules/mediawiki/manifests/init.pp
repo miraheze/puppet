@@ -33,7 +33,7 @@ class mediawiki(
             uid      => 33,
             gid      => 33,
             system   => true,
-            homedir  => '/var/www'
+            homedir  => '/var/www',
             shell    => '/bin/bash',
             system   => true,
             ssh_keys => [
