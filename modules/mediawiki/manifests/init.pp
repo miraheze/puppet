@@ -30,12 +30,12 @@ class mediawiki(
     if lookup(mediawiki::remote_sync) {
         users::user { 'www-data':
             ensure   => present,
-            uid      => x,
-            gid      => x,
+            uid      => 33,
+            gid      => 33,
             system   => true,
-            home     => '/var/www'
+            homedir     => '/var/www'
             shell    => '/bin/bash',
-            ssh-keys => [
+            ssh_keys => [
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy'
             ],
         }
