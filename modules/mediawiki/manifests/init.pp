@@ -28,9 +28,16 @@ class mediawiki(
     }
     
     if lookup(mediawiki::remote_sync) {
-        users::key { 'www-data':
-            ensure  => present,
-            content => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy',
+        users::user { 'www-data':
+            ensure   => present,
+            uid      => x,
+            gid      => x,
+            system   => true,
+            home     => '/var/www'
+            shell    => '/bin/bash',
+            ssh-keys => [
+                'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy'
+            ],
         }
     }
     
