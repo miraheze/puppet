@@ -32,6 +32,7 @@ script-src:
 
 style-src:
   - "'self'"
+  - 'data:'
   - "'unsafe-inline'"
   - '*.miraheze.org'
   - '*.wikimedia.org'
@@ -111,3 +112,6 @@ frame-src:
   - 'www.recaptcha.net'
   - 'web.libera.chat'
   - 'snap.berkeley.edu'
+  - '*.youtube-nocookie.com'
+  - 'player.twitch.tv'
+  - 'platform.twitter.com'
