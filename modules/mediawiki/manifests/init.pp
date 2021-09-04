@@ -32,6 +32,18 @@ class mediawiki(
             ensure  => present,
             content => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy',
         }
+        file { '/var/www/.ssh':
+            ensure => directory,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0400',
+        }
+        file { '/var/www/.ssh/authorized_keys':
+            ensure => file,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0400',
+        }
     }
     
     if lookup(mediawiki::is_canary) {
@@ -40,7 +52,7 @@ class mediawiki(
             content => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy',
             owner  => 'www-data',
             group  => 'www-data',
-            mode   => '0440',
+            mode   => '0400',
         }
         
         file { '/srv/mediawiki-staging/deploykey':
@@ -48,7 +60,7 @@ class mediawiki(
             source => 'puppet:///private/mediawiki/mediawiki-deploy-key-private',
             owner  => 'www-data',
             group  => 'www-data',
-            mode   => '0440',
+            mode   => '0400',
         }
     }
     
