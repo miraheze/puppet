@@ -28,7 +28,7 @@ class mediawiki(
     }
     
     if lookup(mediawiki::remote_sync) {
-        ssh_authorized_key { 'www-data-deploys':
+        ssh_authorized_key { 'MediaWikiDeploy':
             ensure => present,
             user   => 'www-data',
             type   => 'ssh-ed25519',
