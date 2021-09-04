@@ -61,12 +61,14 @@ class mariadb::config(
         require => Package["mariadb-server-${version}"],
     }
 
-    file { $tmpdir:
-        ensure  => directory,
-        owner   => 'mysql',
-        group   => 'mysql',
-        mode    => '0775',
-        require => Package["mariadb-server-${version}"],
+    if $tmpdir != '/tmp' {
+        file { $tmpdir:
+            ensure  => directory,
+            owner   => 'mysql',
+            group   => 'mysql',
+            mode    => '0775',
+            require => Package["mariadb-server-${version}"],
+        }
     }
 
     file { '/etc/mysql/miraheze':
