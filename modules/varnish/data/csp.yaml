@@ -60,7 +60,6 @@ img-src:
   - 'maxcdn.bootstrapcdn.com'
   - '*.twimg.com'
   - 'i.imgur.com'
-  - 'm.media-amazon.com'
   - 'image.tmdb.org'
   - '*.googleusercontent.com'
   - '*.fontawesome.com'
