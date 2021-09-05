@@ -58,7 +58,6 @@ img-src:
   - 'maps.google.com'
   - 'www.gstatic.com'
   - 'maxcdn.bootstrapcdn.com'
-  - 'images.uncyc.org'
   - '*.twimg.com'
   - 'i.imgur.com'
   - 'm.media-amazon.com'
