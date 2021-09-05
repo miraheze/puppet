@@ -87,6 +87,7 @@ img-src:
   - 'mc-uc.netease.com'
   - 'db.onlinewebfonts.com'
   - 'openlayers.org'
+  - 'discordapp.com'
 
 font-src:
   - "'self'"
