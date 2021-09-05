@@ -2,7 +2,7 @@
 # See https://meta.miraheze.org/wiki/Tech:CSP_Whitelist_Policy.
 default-src: 
   - "'self'"
-  - '*.miraheze.org' 
+  - '*.miraheze.org'
 
 script-src:
   - "'self'"
