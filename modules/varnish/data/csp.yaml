@@ -2,7 +2,7 @@
 # See https://meta.miraheze.org/wiki/Tech:CSP_Whitelist_Policy.
 default-src: 
   - "'self'"
-  - '*.miraheze.org'
+  - '*.miraheze.org' 
 
 script-src:
   - "'self'"
@@ -87,6 +87,8 @@ img-src:
   - 'db.onlinewebfonts.com'
   - 'openlayers.org'
   - 'discordapp.com'
+  - 'imgbb.com'
+  - 'postimages.org'
 
 font-src:
   - "'self'"
