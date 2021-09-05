@@ -87,6 +87,8 @@ img-src:
   - 'db.onlinewebfonts.com'
   - 'openlayers.org'
   - 'discordapp.com'
+  - 'imgbb.com'
+  - 'postimages.org'
 
 font-src:
   - "'self'"
