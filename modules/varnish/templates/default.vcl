@@ -121,13 +121,13 @@ backend test3 {
 
 
 sub vcl_init {
-	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(mw8);
-	mediawiki.add_backend(mw9);
-	mediawiki.add_backend(mw10);
-	mediawiki.add_backend(mw11);
-	mediawiki.add_backend(mw12);
-	mediawiki.add_backend(mw13);
+	new mediawiki = directors.random();
+	mediawiki.add_backend(mw8, 100);
+	mediawiki.add_backend(mw9, 100);
+	mediawiki.add_backend(mw10, 100);
+	mediawiki.add_backend(mw11, 100);
+	mediawiki.add_backend(mw12, 100);
+	mediawiki.add_backend(mw13, 100);
 }
 
 
