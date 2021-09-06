@@ -1,8 +1,7 @@
 # MediaWiki extension setup
 class mediawiki::extensionsetup {
-    if lookup(mediawiki::use_staging) {
-        $mwpath = '/srv/mediawiki-staging/w'
-        file { [
+    $mwpath = '/srv/mediawiki-staging/w'
+    file { [
         '/srv/mediawiki/w/extensions/OAuth/.composer/cache',
         '/srv/mediawiki-staging/w/extensions/OAuth/.composer/cache',
         '/srv/mediawiki/w/extensions/OAuth/vendor/league/oauth2-server/.git',
@@ -11,9 +10,6 @@ class mediawiki::extensionsetup {
             force   => true,
             recurse => true,
             require => Exec['oauth_composer'],
-        }
-    } else {
-        $mwpath = '/srv/mediawiki/w'
     }
 
     exec { 'install_composer':
