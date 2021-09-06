@@ -8,6 +8,8 @@ define users::user(
     String                  $shell      = '/bin/bash',
     Optional[Array[String]] $privileges = undef,
     Array[String]           $ssh_keys   = [],
+    Boolean                 $system     = false,
+    String                  $homedir    = "/home/${name}",
 ) {
 
     user { $name:
@@ -20,10 +22,12 @@ define users::user(
         shell      => $shell,
         managehome => true,
         allowdupe  => false,
+        system     => $system,
+        home       => $homedir,
     }
 
     if $ensure == 'present' {
-        file { "/home/${name}":
+        file { $homedir:
             ensure       => 'present',
             source       => [
                 "puppet:///modules/users/home/${name}/",

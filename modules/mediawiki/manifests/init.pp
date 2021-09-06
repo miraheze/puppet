@@ -26,6 +26,51 @@ class mediawiki(
     if lookup(jobchron) {
         include mediawiki::jobqueue::chron
     }
+    
+    if lookup(mediawiki::remote_sync) {
+        users::user { 'www-data':
+            ensure   => present,
+            uid      => 33,
+            gid      => 33,
+            system   => true,
+            homedir  => '/var/www',
+            shell    => '/bin/bash',
+            ssh_keys => [
+                'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy'
+            ],
+        }
+        file { '/var/www/.ssh':
+            ensure => directory,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0400',
+        }
+        file { '/var/www/.ssh/authorized_keys':
+            ensure => file,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0400',
+        }
+    }
+    
+    if lookup(mediawiki::is_canary) {
+        file { '/srv/mediawiki-staging/deploykey.pub':
+            ensure => present,
+            content => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy',
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0400',
+        }
+        
+        file { '/srv/mediawiki-staging/deploykey':
+            ensure => present,
+            source => 'puppet:///private/mediawiki/mediawiki-deploy-key-private',
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0400',
+        }
+    }
+    
     if lookup(mediawiki::use_staging) {
         file { [
         '/srv/mediawiki-staging',
@@ -120,6 +165,14 @@ class mediawiki(
         require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
     }
 
+    file { '/srv/mediawiki/w/404.php':
+        ensure  => 'link',
+        target  => '/srv/mediawiki/config/404.php',
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
+    }
+
     $wikiadmin_password    = lookup('passwords::db::wikiadmin')
     $mediawiki_password    = lookup('passwords::db::mediawiki')
     $redis_password        = lookup('passwords::redis::master')
@@ -131,8 +184,6 @@ class mediawiki(
     $ldap_password         = lookup('passwords::mediawiki::ldap_password')
 
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
-
-    class { '::nutcracker': }
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
