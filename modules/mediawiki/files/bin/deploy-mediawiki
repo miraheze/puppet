@@ -8,7 +8,7 @@ def check_up(server):
     up = False
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
     req = requests.get('https://meta.miraheze.org/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
-    if req.status_code == 200 and 'miraheze' in req.text and 'mw10' in req.headers['X-Served-By']:
+    if req.status_code == 200 and 'miraheze' in req.text and server in req.headers['X-Served-By']:
         up = True
     return up
 
@@ -88,7 +88,7 @@ def run(args, start):
         if len(rsyncfiles) > 0:
             for file in rsyncfiles:
                 for server in serverlist:
-                    exitcodes.append(os.system(f'rsync -P --delete -e "ssh -i /srv/mediawiki-staging/deploykey" {file} www-data@{server}.miraheze.org:{file}'))
+                    exitcodes.append(os.system(f'rsync -P -e "ssh -i /srv/mediawiki-staging/deploykey" {file} www-data@{server}.miraheze.org:{file}'))
                     if not check_up(server):
                         print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
                         if not args.force:
@@ -112,7 +112,7 @@ def run(args, start):
     else:
         print(f'{fintext} in {str(timetaken)}s')
     if FAIL == 1:
-        sys.exit(1)
+        exit(1)
 
 if __name__ == '__main__':
     start = time.time()
