@@ -109,9 +109,9 @@ class EchoReader():
         return unique
 
     def escape(self, string):
-        escaped_string = re.sub('\\\;', self.uniques[';'], string)
-        escaped_string = re.sub('\\\:', self.uniques[':'], escaped_string)
-        escaped_string = re.sub('\\\,', self.uniques[','], escaped_string)
+        escaped_string = re.sub(r'\\\;', self.uniques[';'], string)
+        escaped_string = re.sub(r'\\\:', self.uniques[':'], escaped_string)
+        escaped_string = re.sub(r'\\\,', self.uniques[','], escaped_string)
         return escaped_string
 
     def unescape(self, string):
@@ -182,7 +182,7 @@ class EventHandler(pyinotify.ProcessEvent):
                 # set a 450 max message size and hope is enough.
                 # We anyway catch and silently drop the message later on if that
                 # turns out to not be true
-                outputs = [s[0+i:450+i] for i in range(0, len(s), 450)]
+                outputs = [s[0 + i:450 + i] for i in range(0, len(s), 450)]
                 for out in outputs:
                     bot.connection.privmsg(chans, out)
             except (irc.client.ServerNotConnectedError, irc.client.MessageTooLong,
