@@ -25,7 +25,7 @@ class logbot(ircbot.SingleServerIRCBot):
         sasl_password = config.nick_username + ':' + config.nick_password
         server = [config.network, config.port, sasl_password]
         ircbot.SingleServerIRCBot.__init__(self, [server], config.nick,
-                config.nick)
+                                           config.nick)
 
     def connect(self, *args, **kwargs):
         if self.config.ssl:
@@ -37,7 +37,7 @@ class logbot(ircbot.SingleServerIRCBot):
 
     def get_version(self):
         return ('Miraheze Log Bot -- '
-            'https://meta.miraheze.org/wiki/Tech:Server_admin_log')
+                'https://meta.miraheze.org/wiki/Tech:Server_admin_log')
 
     def get_cloak(self, source):
         if re.search("/", source) and re.search("@", source):
@@ -117,19 +117,19 @@ class logbot(ircbot.SingleServerIRCBot):
                                           "(objectclass=groupofnames)")
                 if not projectdata:
                     self.connection.privmsg(event.target,
-                                        "Can't contact LDAP"
-                                        " for project list.")
+                                            "Can't contact LDAP"
+                                            " for project list.")
                 for obj in projectdata:
                     projects.append(obj[1]["cn"][0])
 
                 if self.config.service_group_rdn:
                     sgdata = ds.search_s(self.config.service_group_rdn +
-                        "," + base, ldap.SCOPE_SUBTREE,
-                        "(objectclass=groupofnames)")
+                                         "," + base, ldap.SCOPE_SUBTREE,
+                                         "(objectclass=groupofnames)")
                     if not sgdata:
                         self.connection.privmsg(event.target,
-                                            "Can't contact LDAP"
-                                            " for service group list.")
+                                                "Can't contact LDAP"
+                                                " for service group list.")
                     for obj in sgdata:
                         projects.append(obj[1]["cn"][0])
 
@@ -156,13 +156,13 @@ class logbot(ircbot.SingleServerIRCBot):
                           (self.name, line))
             try:
                 self.connection.privmsg(event.target,
-                                    "I am a logbot running on %s." %
-                                    gethostname())
+                                        "I am a logbot running on %s." %
+                                        gethostname())
                 self.connection.privmsg(event.target,
-                                    "Messages are logged to %s." %
-                                    self.config.log_url)
+                                        "Messages are logged to %s." %
+                                        self.config.log_url)
                 self.connection.privmsg(event.target,
-                                    "To log a message, type !log <msg>.")
+                                        "To log a message, type !log <msg>.")
             except Exception:
                 self.connection.privmsg(event.target,
                                         "To log a message, type !log <msg>.")
@@ -198,7 +198,7 @@ class logbot(ircbot.SingleServerIRCBot):
                     author = "[[" + username + "]]"
                 else:
                     if self.config.required_users_mode == "warn":
-                            self.connection.privmsg(event.target,
+                        self.connection.privmsg(event.target,
                                                 "Not a trusted nick or cloak."
                                                 " This is just a warning,"
                                                 " for now."
@@ -207,17 +207,17 @@ class logbot(ircbot.SingleServerIRCBot):
                                                 " to the trust list"
                                                 " or your user page.")
                     if self.config.required_users_mode == "error":
-                            self.connection.privmsg(event.target,
+                        self.connection.privmsg(event.target,
                                                 "Not a trusted nick"
                                                 " or cloak. Not logging."
                                                 " Please add your nick"
                                                 " or cloak added"
                                                 " to the trust list"
                                                 " or your user page.")
-                            return
+                        return
             if self.config.enable_projects:
                 arr = line.split(" ", 2)
-                
+
                 if len(arr) < 2:
                     self.connection.privmsg(event.target,
                                             "Project not found, O.o. Try !log"
@@ -347,5 +347,5 @@ while True:
     for bot in bots:
         try:
             bot.ircobj.process_once(timeout=0.1)
-        except:
+        except Exception:
             logging.exception('Died in main event loop')
