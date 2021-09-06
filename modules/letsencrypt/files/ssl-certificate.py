@@ -12,28 +12,28 @@ import subprocess
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser(description="Script to generate LetsEncrypt certs or generate a CSR.")
 ap.add_argument("-c", "--csr", required=False,
-               action="store_true", default=False, help="generates a CSR")
+                action="store_true", default=False, help="generates a CSR")
 ap.add_argument("-d", "--domain", required=True,
-               help="name of the domain")
+                help="name of the domain")
 ap.add_argument("-g", "--generate", required=False,
-               action="store_true", default=False, help="generates LetsEncrypt SSL Certificate")
+                action="store_true", default=False, help="generates LetsEncrypt SSL Certificate")
 ap.add_argument("--no-use-key", required=False,
-               action="store_true", default=False, help="Creates a brand new private key along side a certificate.")
+                action="store_true", default=False, help="Creates a brand new private key along side a certificate.")
 ap.add_argument("-o", "--overwrite", required=False,
-               action="store_true", default=False, help="overwrites the certname replacing it with a updated version")
+                action="store_true", default=False, help="overwrites the certname replacing it with a updated version")
 ap.add_argument("-p", "--private", required=False,
-               action="store_true", default=False, help="outputs private key")
+                action="store_true", default=False, help="outputs private key")
 ap.add_argument("-q", "--quiet", required=False,
-               action="store_true", default=False, help="makes script quieter")
+                action="store_true", default=False, help="makes script quieter")
 ap.add_argument("-r", "--renew", required=False,
-               action="store_true", default=False, help="renews LetsEncrypt SSL Certificate")
+                action="store_true", default=False, help="renews LetsEncrypt SSL Certificate")
 ap.add_argument("--revoke", required=False,
-               action="store_true", default=False, help="allows you to revoke certificates (also deletes them)")
+                action="store_true", default=False, help="allows you to revoke certificates (also deletes them)")
 ap.add_argument("-s", "--secondary", required=False,
-               help="allows you to add other domains to the same cert, eg www.<domain>")
+                help="allows you to add other domains to the same cert, eg www.<domain>")
 ap.add_argument("-v", "--version", action="version", version="%(prog)s 1.0")
 ap.add_argument("-w", "--wildcard", required=False,
-               action="store_true", default=False, help="auths against DNS supporting wildcards")
+                action="store_true", default=False, help="auths against DNS supporting wildcards")
 args = vars(ap.parse_args())
 
 
