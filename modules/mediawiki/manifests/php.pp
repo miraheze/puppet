@@ -30,7 +30,6 @@ class mediawiki::php (
                 'track_errors'        => 'Off',
                 'upload_max_filesize' => '250M',
                 'variables_order'     => 'GPCS',
-                'auto_prepend_file'   => '/srv/mediawiki/config/PhpAutoPrepend.php',
             },
             fpm_pool_config => {
                 'request_terminate_timeout_track_finished' => 'yes',
