@@ -230,16 +230,6 @@ class mediawiki(
         require => Git::Clone['MediaWiki config'],
     }
 
-    exec { 'ExtensionMessageFiles':
-        command     => 'nice -n 15 php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php',
-        creates     => '/srv/mediawiki/config/ExtensionMessageFiles.php',
-        cwd         => '/srv/mediawiki/config',
-        path        => '/usr/bin',
-        environment => 'HOME=/srv/mediawiki/config',
-        user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
-    }
-
     require_package('vmtouch')
 
     file { '/usr/local/bin/generateVmtouch.py':
