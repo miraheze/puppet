@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
 import sys
-sys.path.insert(0, r'/etc/irclogbot/mwclient')
 import mwclient
 import datetime
+
+sys.path.insert(0, r'/etc/irclogbot/mwclient')
 
 months = ["January", "February", "March", "April", "May", "June", "July",
           "August", "September", "October", "November", "December"]
@@ -56,7 +57,7 @@ def log(config, message, project, author):
         if not re.search('\[\[Category:' + config.wiki_category + '\]\]',
                          text):
             lines.append('<noinclude>[[Category:' +
-                    config.wiki_category + ']]</noinclude>')
+                         config.wiki_category + ']]</noinclude>')
 
     page.save(
         '\n'.join(lines),
@@ -68,8 +69,8 @@ def log(config, message, project, author):
 
     if config.enable_identica:
         snapi = statusnet.StatusNet({'user': config.identica_username,
-            'passwd': config.identica_password,
-            'api': 'https://identi.ca/api'})
+                                    'passwd': config.identica_password,
+                                    'api': 'https://identi.ca/api'})
         snapi.update(micro_update)
 
     if config.enable_twitter:
