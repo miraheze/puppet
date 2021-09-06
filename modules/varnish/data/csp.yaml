@@ -51,6 +51,7 @@ style-src:
   - 'fonts.googleapis.com'
   - 'cdn.jsdelivr.net'
   - 'platform.twitter.com'
+  - 'ton.twimg.com'
 
 img-src:
   - "'self'"
@@ -90,6 +91,7 @@ img-src:
   - 'imgbb.com'
   - 'postimages.org'
   - 'platform.twitter.com'
+  - 'syndication.twitter.com'
 
 font-src:
   - "'self'"
@@ -121,3 +123,4 @@ frame-src:
   - 'discord.com'
   - 'discordapp.com'
   - 'embed.nicovideo.jp'
+  - 'syndication.twitter.com'
