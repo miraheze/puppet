@@ -13,7 +13,6 @@ class mediawiki(
     include mediawiki::packages
     include mediawiki::logging
     include mediawiki::php
-    include mediawiki::extensionsetup
     include mediawiki::servicessetup
 
 
@@ -72,6 +71,7 @@ class mediawiki(
     }
     
     if lookup(mediawiki::use_staging) {
+        include mediawiki::extensionsetup
         file { [
         '/srv/mediawiki-staging',
     ]:
