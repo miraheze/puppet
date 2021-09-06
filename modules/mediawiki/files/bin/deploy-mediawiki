@@ -51,7 +51,7 @@ def run(args, start):
         rsyncfiles.append('/srv/mediawiki/cache/l10nupdate-*.json')
         rsyncpaths.append(f'/srv/mediawiki/cache/l10n')
     if args.gitinfo:
-        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --use-staging --wiki=loginwiki'))
+        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --use-staging --wiki=loginwiki'))
     if args.servers == 'skip':
         print('Sync skipped. Mediawiki deploy has not passed canary stage.')
         sync = False
