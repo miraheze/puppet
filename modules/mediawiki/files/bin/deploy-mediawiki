@@ -72,6 +72,7 @@ def run(args, start):
         else:
             print(f'Canary check failed for localhost. Aborting... - use --force to proceed')
             os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for localhost')
+            exit(3)
     if sync:
         if len(rsyncpaths) > 0:
             for path in rsyncpaths:
