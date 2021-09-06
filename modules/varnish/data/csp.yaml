@@ -50,6 +50,7 @@ style-src:
   - 'www.gstatic.com'
   - 'fonts.googleapis.com'
   - 'cdn.jsdelivr.net'
+  - 'platform.twitter.com'
 
 img-src:
   - "'self'"
@@ -88,6 +89,7 @@ img-src:
   - 'discordapp.com'
   - 'imgbb.com'
   - 'postimages.org'
+  - 'platform.twitter.com'
 
 font-src:
   - "'self'"
