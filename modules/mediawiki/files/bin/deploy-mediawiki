@@ -61,9 +61,17 @@ def run(args, start):
     else:
         serverlist = str(args.servers).split(',')
         sync = True
-    #### TODO: Add a canary check here to see if UP
-    for server in serverlist:
-            print(f'Deploying to {server}...')
+    up = False
+    headers = {'host': 'meta.miraheze.org'}
+    req = requests.get('https://localhost/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=False)
+    if req.status_code == 200 and 'miraheze' in req.text:
+        up = True
+    if not up:
+        if args.force:
+            print('Ignoring canary error due to --force')
+        else:
+            print(f'Canary check failed for localhost. Aborting... - use --force to proceed')
+            os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for localhost')
     if sync:
         if len(rsyncpaths) > 0:
             for path in rsyncpaths:
