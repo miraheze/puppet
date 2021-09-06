@@ -29,6 +29,7 @@ script-src:
   - 'wikiplus-app.com'
   - 'cdnjs.cloudflare.com'
   - 'cdn.jsdelivr.net'
+  - 'cdn.syndication.twimg.com'
 
 style-src:
   - "'self'"
