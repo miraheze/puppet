@@ -39,7 +39,7 @@ def run(args, start):
         files = str(args.files).split(',')
         for file in files:
             exitcodes.append(os.system(f'sudo -u www-data rsync -P --delete /srv/mediawiki-staging/{file} /srv/mediawiki/{file}'))
-            rsyncfiles.append(file)
+            rsyncfiles.append(f'/srv/mediawiki/{file}')
     if args.folders:
         folders = str(args.folders).split(',')
         for folder in folders:
