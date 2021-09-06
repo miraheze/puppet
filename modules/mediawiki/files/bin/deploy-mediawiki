@@ -28,22 +28,22 @@ def run(args, start):
     else:
         print(text)
     if args.config:
-        exitcodes.append(os.system('sudo -u www-data cp -r /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
+        exitcodes.append(os.system('sudo -u www-data rsync -Pr --delete --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
         rsyncpaths.append('/srv/mediawiki/config')
     if args.world:
         os.chdir('/srv/mediawiki-staging/w')
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev'))
-        exitcodes.append(os.system('sudo -u www-data cp -r /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
+        exitcodes.append(os.system('sudo -u www-data rsync -Pr --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
         rsyncpaths.append('/srv/mediawiki/w')
     if args.files:
         files = str(args.files).split(',')
         for file in files:
-            exitcodes.append(os.system(f'sudo -u www-data cp /srv/mediawiki-staging/{file} /srv/mediawiki/{file}'))
+            exitcodes.append(os.system(f'sudo -u www-data rsync -P --delete /srv/mediawiki-staging/{file} /srv/mediawiki/{file}'))
             rsyncfiles.append(file)
     if args.folders:
         folders = str(args.folders).split(',')
         for folder in folders:
-            exitcodes.append(os.system(f'sudo -u www-data cp -r /srv/mediawiki-staging/{folder}/* /srv/mediawiki/{folder}/'))
+            exitcodes.append(os.system(f'sudo -u www-data rsync -Pr --delete --exclude=".*" /srv/mediawiki-staging/{folder}/* /srv/mediawiki/{folder}/'))
             rsyncpaths.append(f'/srv/mediawiki/{folder}')
     if args.l10n:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
