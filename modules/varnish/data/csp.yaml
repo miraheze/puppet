@@ -30,6 +30,7 @@ script-src:
   - 'cdnjs.cloudflare.com'
   - 'cdn.jsdelivr.net'
   - 'cdn.syndication.twimg.com'
+  - 'scratchblocks.github.io'
 
 style-src:
   - "'self'"
