@@ -31,6 +31,7 @@ script-src:
   - 'cdn.jsdelivr.net'
   - 'cdn.syndication.twimg.com'
   - 'scratchblocks.github.io'
+  - 'openlayers.org'
 
 style-src:
   - "'self'"
