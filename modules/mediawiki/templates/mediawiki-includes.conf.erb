@@ -8,7 +8,7 @@ location /.well-known/acme-challenge/ {
 	try_files $uri =404;
 }
 
-location ~ ^/(\.git|config|landing|dblist|cache) {
+location ~ ^/(\.git|config|landing|dblist|cache|ErrorPages) {
         deny all;
 }
 
