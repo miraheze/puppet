@@ -151,6 +151,18 @@ class mediawiki(
         require            => File['/srv/mediawiki'],
     }
 
+    git::clone { 'ErrorPages':
+        ensure             => 'latest',
+        directory          => '/srv/mediawiki/ErrorPages',
+        origin             => 'https://github.com/miraheze/ErrorPages.git',
+        branch             => 'master',
+        owner              => 'www-data',
+        group              => 'www-data',
+        mode               => '0755',
+        timeout            => '550',
+        require            => File['/srv/mediawiki'],
+    }
+
     file { '/srv/mediawiki/robots.php':
         ensure  => 'present',
         source  => 'puppet:///modules/mediawiki/robots.php',
@@ -166,14 +178,6 @@ class mediawiki(
     file { '/srv/mediawiki/w/LocalSettings.php':
         ensure  => 'link',
         target  => '/srv/mediawiki/config/LocalSettings.php',
-        owner   => 'www-data',
-        group   => 'www-data',
-        require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
-    }
-
-    file { '/srv/mediawiki/w/404.php':
-        ensure  => 'link',
-        target  => '/srv/mediawiki/config/404.php',
         owner   => 'www-data',
         group   => 'www-data',
         require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
