@@ -61,15 +61,22 @@ backend mw11 {
 	.probe = mwhealth;
 }
 
-# to be used for acme/letsencrypt only
-backend jobrunner3 {
+backend mw12 {
 	.host = "127.0.0.1";
-	.port = "8089";
+	.port = "8092";
+	.probe = mwhealth;
 }
 
-backend test3 {
+backend mw13 {
 	.host = "127.0.0.1";
-	.port = "8091";
+	.port = "8093";
+	.probe = mwhealth;
+}
+
+# to be used for acme/letsencrypt only
+backend mwtask1 {
+	.host = "127.0.0.1";
+	.port = "8089";
 }
 
 # test mediawiki backend with out health check
@@ -95,6 +102,21 @@ backend mw11_test {
 	.port = "8088";
 }
 
+backend mw12_test {
+	.host = "127.0.0.1";
+	.port = "8092";
+}
+
+backend mw13_test {
+	.host = "127.0.0.1";
+	.port = "8093";
+}
+
+backend test3 {
+	.host = "127.0.0.1";
+	.port = "8091";
+}
+
 # end test backend
 
 
@@ -104,6 +126,8 @@ sub vcl_init {
 	mediawiki.add_backend(mw9);
 	mediawiki.add_backend(mw10);
 	mediawiki.add_backend(mw11);
+	mediawiki.add_backend(mw12);
+	mediawiki.add_backend(mw13);
 }
 
 
@@ -121,15 +145,18 @@ acl purge {
 	# mw11
 	"51.195.236.255";
 	"2001:41d0:800:1bbd::10";
+	# mw12
+	"51.195.236.220";
+	"2001:41d0:800:178a::6";
+	# mw13
+	"51.195.236.251";
+	"2001:41d0:800:1bbd::5";
 	# mon2
 	"51.195.236.249";
 	"2001:41d0:800:1bbd::3";
-	# jobrunner3
-	"51.195.236.220";
-	"2001:41d0:800:178a::6";
-	# jobrunner4
-	"51.195.236.251";
-	"2001:41d0:800:1bbd::5";
+	# mwtask1
+	"198.244.181.23";
+	"2001:41d0:800:1bbd::15";
 	# test3
 	"51.195.236.247";
 	"2001:41d0:800:1bbd::14";
@@ -145,8 +172,8 @@ sub mw_evaluate_cookie {
 	if (req.http.Cookie ~ "([sS]ession|Token|mf_useformat|stopMobileRedirect)=" 
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
-		&& req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(png|jpe?g|svg)$"
-		&& req.url !~ "^/w/resources/assets/.*\.png$"
+		&& req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)$"
+		&& req.url !~ "^/w/(skins|resources|extensions)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=?)?$"
 		&& req.url !~ "^/(wiki/?)?$"
 	) {
 		# To prevent issues, we do not want vcl_backend_fetch to add ?useformat=mobile
@@ -155,6 +182,8 @@ sub mw_evaluate_cookie {
 		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	} else {
+		# These resources can be cached regardless of cookie value, remove cookie
+		# to avoid passing requests to the backend.
 		call mw_stash_cookie;
 	}
 }
@@ -176,7 +205,7 @@ sub mw_identify_device {
 
 sub mw_rate_limit {
 	# Allow higher limits for static.mh.o, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") {
+	if (req.http.Host == "static.miraheze.org") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
 		}
@@ -187,6 +216,14 @@ sub mw_rate_limit {
 			(req.url ~ "^/wiki" || req.url ~ "^/w/(api|index)\.php")
 			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
+			# Stopgap for Googlebot sending suspicious requests with inpval parameter
+			if (
+				req.http.User-Agent ~ "(?i)Googlebot"
+				&& req.url ~ "inpval"
+			) {
+				return (synth(403, "Forbidden"));
+			}
+
 			if (req.url ~ "^/w/index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
 				# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
 				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
@@ -230,9 +267,11 @@ sub mw_vcl_recv {
 	} else if (req.url ~ "/w/undefined/api.php") {
 		set req.url = regsuball(req.url, "/w/undefined/api.php", "/w/api.php");
 	}
-
 	if (req.url ~ "^/\.well-known") {
-		set req.backend_hint = jobrunner3;
+		set req.backend_hint = mwtask1;
+		return (pass);
+	} else if (req.http.Host == "sslrequest.miraheze.org") {
+		set req.backend_hint = mwtask1;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw8.miraheze.org") {
 		set req.backend_hint = mw8_test;
@@ -245,6 +284,12 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw11.miraheze.org") {
 		set req.backend_hint = mw11_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw12.miraheze.org") {
+		set req.backend_hint = mw12_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw13.miraheze.org") {
+		set req.backend_hint = mw13_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test3;
@@ -275,15 +320,15 @@ sub mw_vcl_recv {
 	}
 
 	# We can rewrite those to one domain name to increase cache hits!
-	if (req.url ~ "^/w/resources") {
+	if (req.url ~ "^/w/(skins|resources|extensions)/" ) {
 		set req.http.Host = "meta.miraheze.org";
 	}
-
-	# Do not cache rest.php (Parsoid new entry point)
-	if (req.url ~ "^/w/rest.php") {
+	
+	# api & rest.php are not safe cached
+	if (req.url ~ "^/w/(api|rest).php/.*" ) {
 		return (pass);
 	}
- 
+
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
 	}
@@ -291,12 +336,6 @@ sub mw_vcl_recv {
 	if (req.url ~ "^/healthcheck$") {
 		set req.http.Host = "login.miraheze.org";
 		set req.url = "/wiki/Main_Page";
-		return (pass);
-	}
-	
-	# Temporary solution to fix CookieWarning issue with ElectronPDF
-	if (req.http.X-Real-IP == "51.195.236.212" || req.http.X-Real-IP == "2001:41d0:800:178a::10" ||
-		req.http.X-Real-IP == "51.195.236.246" || req.http.X-Real-IP == "2001:41d0:800:1bbd::13") {
 		return (pass);
 	}
 
@@ -387,15 +426,24 @@ sub vcl_deliver {
 	if (
 		req.http.Host == "static.miraheze.org" ||
 		req.url ~ "/w/api.php" ||
-		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt)$"
+		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
 	) {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
 
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
-		if (req.url !~ "^/wiki/Special\:Banner") {
-			set resp.http.Cache-Control = "private, s-maxage=0, maxage=0, must-revalidate";
+		// ...but exempt CentralNotice banner special pages
+		if (req.url !~ "^/(wiki/|w/index\.php\?title=)Special:Banner") {
+			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
 		}
+	}
+
+	if (req.url ~ "^/w/load\.php" ) {
+		set resp.http.Age = 0;
+	}
+
+	if (req.url ~ "^(/w/api\.php*|/w/index\.php\?title\=Special\:|/wiki/Special\:|/w/index\.php\?title\=Special%3A|/wiki/Special%3A).+$") {
+		set resp.http.X-Robots-Tag = "noindex";
 	}
 
 	if (obj.hits > 0) {
@@ -404,7 +452,13 @@ sub vcl_deliver {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
 	}
 
-	set resp.http.Content-Security-Policy = "default-src 'self' blob: data: <%- @csp_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self' <%- @frame_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%>";
+	// *** HTTPS deliver code - disable Google ad targeting (FLoC)
+	// See https://github.com/wicg/floc#opting-out-of-computation
+	set resp.http.Permissions-Policy = "interest-cohort=()";
+
+	set resp.http.Content-Security-Policy = "<%- @csp_whitelist.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+
+	return (deliver);
 }
 
 sub vcl_backend_error {

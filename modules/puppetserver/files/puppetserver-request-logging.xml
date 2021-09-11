@@ -15,13 +15,8 @@
         </encoder>
     </appender>
 
-    <appender name="JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="JSON" class="ch.qos.logback.core.FileAppender">
         <file>/var/log/puppetlabs/puppetserver/puppetserver-access.log.json</file>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-access.log.json.%d{yyyy-MM-dd}</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
 
         <encoder class="net.logstash.logback.encoder.AccessEventCompositeJsonEncoder">
             <providers>

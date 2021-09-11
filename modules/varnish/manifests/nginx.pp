@@ -1,14 +1,21 @@
 # class to handle Varnish nginx (using hiera coolness)
 class varnish::nginx {
+
+    file { '/etc/nginx/sites-enabled/default':
+        ensure => absent,
+        notify => Service['nginx'],
+    }
+
     $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
     $sslredirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
-
-    # Used to whitelist miraheze ips within the rate limiter
-    $ip_4 = query_nodes("domain='$domain'", 'ipaddress')
-    $ip_6 = query_nodes("domain='$domain'", 'ipaddress6')
 
     nginx::site { 'mediawiki':
         ensure  => present,
         content => template('varnish/mediawiki.conf'),
     }
+
+    include ssl::wildcard
+    include ssl::hiera
+
+    ssl::cert { 'm.miraheze.org': }
 }

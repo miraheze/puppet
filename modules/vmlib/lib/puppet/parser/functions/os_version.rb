@@ -45,10 +45,11 @@ module Puppet::Parser::Functions
       'zesty'    => '17.04',
     },
     'Debian' => {
-      'wheezy'  => '7',
-      'jessie'  => '8',
-      'stretch' => '9',
-      'buster'  => '10',
+      'wheezy'   => '7',
+      'jessie'   => '8',
+      'stretch'  => '9',
+      'buster'   => '10',
+      'bullseye' => '11',
     }
   }
 

@@ -1,16 +1,5 @@
 # class: letsencrypt
-class letsencrypt {
-    include ::apt
-
-    if os_version('debian == stretch') {
-        apt::pin { 'certbot_backports':
-            priority   => 740,
-            originator => 'Debian',
-            release    => 'stretch-backports',
-            packages   => 'certbot',
-        }
-    }
-    
+class letsencrypt {    
     require_package('certbot')
 
     file { '/etc/letsencrypt/cli.ini':
@@ -73,6 +62,27 @@ class letsencrypt {
         owner  => 'root',
         group  => 'root',
         mode   => '0400',
+    }
+
+    # We do not need to run the ssl renewal cron,
+    # we run our own service.
+    file { '/etc/cron.d/certbot':
+        ensure => absent,
+        require => Package['certbot'],
+    }
+
+    service { 'certbot':
+        ensure    => 'stopped',
+        enable    => 'mask',
+        provider  => 'systemd',
+        require   => Package['certbot'],
+    }
+
+    service { 'certbot.timer':
+        ensure    => 'stopped',
+        enable    => 'mask',
+        provider  => 'systemd',
+        require   => Package['certbot'],
     }
 
     include letsencrypt::web

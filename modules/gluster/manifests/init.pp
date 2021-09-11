@@ -114,5 +114,10 @@ class gluster {
         program_name => 'glusterd',
     }
 
+    logrotate::conf { 'glusterfs-common':
+        ensure => present,
+        source => 'puppet:///modules/gluster/glusterfs-common.logrotate.conf',
+    }
+
     include prometheus::gluster_exporter
 }

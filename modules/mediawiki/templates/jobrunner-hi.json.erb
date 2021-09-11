@@ -1,0 +1,57 @@
+// Configuration file for MediaWiki Jobrunner
+// This file is managed by Puppet
+{
+    "groups": {
+        "hi": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "DataDumpGenerateJob",
+                "RequestWikiAIJob"
+            ]
+        }
+    },
+
+    "limits": {
+        // How many times to let jobs be recycled before abandoning
+        "attempts": {
+            "*": 2
+        },
+        // How long jobs can be claimed before being recycled
+        "claimTTL": {
+            "*": 3600,
+            "DataDumpGenerateJob": 86400
+        },
+        // runJobs.php process time limits
+        "real": {
+            "*": 130,
+            "DataDumpGenerateJob": 9000
+        },
+        // runJobs.php memory limits
+        "memory": {
+            "*": "192M",
+            "DataDumpGenerateJob": "300M",
+            "RequestWikiAIJob": "1750M"
+        }
+    },
+
+    "redis": {
+        // Ready queue trackers
+        "aggregators": [
+            "51.195.236.215:6379"
+        ],
+        // Main queue servers
+        "queues": [
+            "51.195.236.215:6379",
+            "51.195.236.215:6379"
+        ],
+        "password": "<%= @redis_password %>"
+    },
+
+    // Address to send statsd metrics to
+    "statsd": "",
+
+    // Command used to launch a runner for a given job queue
+    "dispatcher": "nice -15 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
+}

@@ -10,22 +10,22 @@ PrivateDevices=true
 ProtectSystem=full
 ProtectHome=true
 PIDFile=%t/%p.pid
-Restart=on-failure
-KillMode=process
+Restart=always
+KillMode=control-group
 SyslogIdentifier=varnish
-ExecReload=/usr/local/sbin/reload-vcl -f /etc/varnish/default.vcl -d <%= @vcl_reload_delay_s %> -a
+ExecReload=/usr/local/sbin/reload-vcl <%= @reload_vcl_opts %>
 # We start varnishd(1) without specifying a VCL file (-f ''). Use reload-vcl in
 # ExecStartPost to load and label separate VCL files first, and the main one
 # last. This is necessary given that the main VCL file might reference the
 # label of separate VCLs, and would otherwise fail to compile if loaded
 # directly with -f.
-ExecStartPost=/usr/local/sbin/reload-vcl -f /etc/varnish/default.vcl -d <%= @vcl_reload_delay_s %> -a --start-child
+ExecStartPost=/usr/local/sbin/reload-vcl <%= @reload_vcl_opts %> --start-child
 ExecStart=/usr/sbin/varnishd \
 -P %t/%p.pid \
 -a :81 \
 -T localhost:6082 \
 -f '' \
--p thread_pool_min=250 -p thread_pool_max=<%= @processorcount * 250 -%> -p thread_pool_timeout=120 \
+-p thread_pool_min=250 -p thread_pool_max=<%= @max_threads -%> -p thread_pool_timeout=120 \
 -p vsl_reclen=2048 \
 -p workspace_backend=128k \
 -S /etc/varnish/secret \
@@ -33,6 +33,7 @@ ExecStart=/usr/sbin/varnishd \
 -p vcc_err_unref=off \
 -p http_max_hdr=128
 ExecReload=/usr/share/varnish/varnishreload
+ExecStopPost=/usr/bin/rm -rf /var/lib/varnish/*
 
 [Install]
 WantedBy=multi-user.target

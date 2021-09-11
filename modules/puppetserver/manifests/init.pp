@@ -39,28 +39,28 @@ class puppetserver(
 
     file { '/etc/puppetlabs/puppet/auth.conf':
         ensure  => present,
-        source  => "puppet:///modules/puppetserver/auth.${puppet_major_version}.conf",
+        source  => 'puppet:///modules/puppetserver/auth.conf',
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/fileserver.conf':
         ensure  => present,
-        source  => "puppet:///modules/puppetserver/fileserver.${puppet_major_version}.conf",
+        source  => 'puppet:///modules/puppetserver/fileserver.conf',
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/hiera.yaml':
         ensure  => present,
-        source  => "puppet:///modules/puppetserver/hiera.${puppet_major_version}.yaml",
+        source  => 'puppet:///modules/puppetserver/hiera.yaml',
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/puppet.conf':
         ensure  => present,
-        content => template("puppetserver/puppet.${puppet_major_version}.conf.erb"),
+        content => template("puppetserver/puppet.conf.erb"),
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
@@ -188,11 +188,15 @@ class puppetserver(
         notify              => Service['puppetserver'],
     }
 
-    systemd::service { 'puppetserver':
-        ensure  => present,
-        content => systemd_template('puppetserver'),
-        restart => true,
-        require => Package['puppetserver'],
+    logrotate::conf { 'puppetserver':
+        ensure => present,
+        source => 'puppet:///modules/puppetserver/puppetserver.logrotate.conf',
+    }
+
+    service { 'puppetserver':
+        ensure   => running,
+        provider => 'systemd',
+        require  => Package['puppetserver'],
     }
 
     ufw::allow { 'puppetserver':

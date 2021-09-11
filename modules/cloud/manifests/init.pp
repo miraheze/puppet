@@ -57,4 +57,44 @@ class cloud (
         ensure => present,
         require => Apt::Source['proxmox_apt']
     }
+
+    # Only run on a weekday of our choice, and vary it between servers
+    $dow = fqdn_rand(5, 'md_checkarray_dow') + 1
+    # Only run within a specific (February compatible) day of month range
+    $dom_start = fqdn_rand(28 - 7, 'md_checkarray_dom') + 1
+    $dom_end = $dom_start + 7
+    # Replace the default mdadm script from upstream with our own
+    file { '/etc/cron.d/mdadm':
+        ensure  => $cron_ensure,
+        content => template('cloud/mdadm-cron.erb'),
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+    }
+    
+    cloud::logging { 'pveproxy':
+        file_source_options => [
+            '/var/log/pveproxy/access.log',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name => 'pveproxy',
+    }
+
+    cloud::logging { 'pve-firewall':
+        file_source_options => [
+            '/var/log/pve-firewall.log',
+            { 'flags' => 'no-parse' }
+        ],
+        program_name => 'pve-firewall',
+    }
+
+    logrotate::conf { 'pve':
+        ensure => present,
+        source => 'puppet:///modules/cloud/pve.logrotate.conf',
+    }
+
+    logrotate::conf { 'pve-firewall':
+        ensure => present,
+        source => 'puppet:///modules/cloud/pve-firewall.logrotate.conf',
+    }
 }

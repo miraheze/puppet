@@ -1,66 +1,52 @@
 # class: role::dbbackup
 class role::dbbackup {
-    include ssl::wildcard
-
-    $icinga_password = lookup('passwords::db::icinga')
-
-    class { 'mariadb::packages':
-    } ->
-    file { '/etc/ssl/private':
-        ensure  => directory,
-        owner   => 'root',
-        group   => 'mysql',
-        mode    => '0750',
-    } ->
-    class { 'mariadb::config':
-        config          => 'mariadb/config/mw.cnf.erb',
-        instances       => true,
-        password        => lookup('passwords::db::root'),
-        server_role     => 'slave',
-        icinga_password => $icinga_password,
-        require         => File['/etc/ssl/private'],
-    }
-
-    $fwPort = query_facts("domain='$domain' and (Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
-
     $clusters = lookup('role::dbbackup::clusters')
-    $clusters.map |String $clusterName, Hash[String, Integer]$clusterDetails| {
-        mariadb::instance { $clusterName:
-            port      => $clusterDetails['port'],
-            read_only => 1,
-            require   => Class['mariadb::config'],
-        }
-
-        prometheus::mysqld_exporter::instance { $clusterName:
-            client_socket  => "/run/mysqld/mysqld.${clusterName}.sock",
-            listen_address => ":${clusterDetails['monitoring_port']}"
-        }
-
-        $fwPort.each |$key, $value| {
-            ufw::allow { "mariadb inbound ${clusterDetails['port']}/tcp for ${value['ipaddress']}":
-                proto => 'tcp',
-                port  => $clusterDetails['port'],
-                from  => $value['ipaddress'],
-            }
-
-            ufw::allow { "mariadb inbound ${clusterDetails['port']}/tcp for ${value['ipaddress6']}":
-                proto => 'tcp',
-                port  => $clusterDetails['port'],
-                from  => $value['ipaddress6'],
-            }
-        }
-
-        motd::role { "role::dbbackup, cluster ${clusterName}":
-            description => "database replica (for backup) of cluster ${clusterName}",
+    $clusters.map |String $cluster| {
+        motd::role { "role::dbbackup, cluster ${cluster}":
+            description => "database replica (for backup) of cluster ${cluster}",
         }
     }
 
-    # Create a user to allow db transfers between servers
-    users::user { 'dbcopy':
+    # Dedicated account for database backup transfers
+    # dbbackup-user uid/gid/group must be equal on servers
+    users::group { 'dbbackup-user':
+        ensure  => present,
+        gid     => 3201,
+    } ->
+    users::user { 'dbbackup-user':
         ensure      => present,
-        uid         => 3000,
+        uid         => 3201,
+        gid         => 3201,
         ssh_keys    => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFX1yvcRAMqwlbkkhMPhK1GFYrLYM18qC1YUcuUEErxz dbcopy@db6'
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILV8ZJLdefzSMcPe1o40Nw6TjXvt17JSpvxhIwZI0YcF'
         ],
+    } ->
+    file { '/home/dbbackup-user/.ssh':
+        ensure  => directory,
+        owner   => 'dbbackup-user',
+        group   => 'dbbackup-user',
+        mode    => '0700',
+    } ->
+    file { '/home/dbbackup-user/.ssh/id_ed25519':
+        ensure      => present,
+        source      => 'puppet:///private/dbbackup/dbbackup-user.id_ed25519',
+        owner       => 'dbbackup-user',
+        group       => 'dbbackup-user',
+        mode        => '0400',
+        show_diff   => false,
+    }
+
+    file { '/srv/backups':
+        ensure  => directory,
+        owner   => 'dbbackup-user',
+        group   => 'dbbackup-user',
+        mode    => '0750',
+        require => Users::User['dbbackup-user'],
+    } ->
+    class { 'dbbackup::storage':
+        backup_dir      =>  '/srv/backups',
+        clusters        =>  $clusters,
+        backup_user     =>  'dbbackup-user',
+        backup_group    =>  'dbbackup-user',
     }
 }

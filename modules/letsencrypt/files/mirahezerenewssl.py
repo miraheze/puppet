@@ -2,8 +2,6 @@
 
 from filelock import FileLock
 from flask import Flask
-app = Flask(__name__)
-from flask import Flask
 from flask import request
 import logging
 import os
@@ -36,5 +34,6 @@ def post():
                 lock.release()
                 lock_acquired = True
     return '', 204
+
 
 app.run(host='0.0.0.0', port=5000, threaded=True)

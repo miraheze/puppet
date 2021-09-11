@@ -42,4 +42,4 @@ smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_
 notify_classes = delay, resource, software
 
 smtpd_sender_login_maps = ldap:/etc/postfix/ldap/smtpd_sender_login_maps
-smtpd_sender_restrictions = reject_unauthenticated_sender_login_mismatch
+smtpd_sender_restrictions = reject_sender_login_mismatch

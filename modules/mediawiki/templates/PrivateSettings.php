@@ -14,15 +14,11 @@ $wmgSMTPPassword = "<%= @noreply_password %>";
 $wgUpgradeKey = "<%= @mediawiki_upgradekey %>";
 $wgSecretKey = "<%= @mediawiki_secretkey %>";
 
-// ReCaptchaNoCaptcha secret keys
-$wgReCaptchaSiteKey = "<%= @recaptcha_sitekey %>";
+// ReCaptcha secret key
 $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
 
 // Matomo Token
 $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
-
-// Translate Yandex API key
-$wmgYandexTranslationKey = "<%= @yandextranslation_key %>";
 
 // Extension:DiscordNotifications global webhook
 $wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";

@@ -14,12 +14,17 @@ class apt::security (
   if $repos {
     $_repos = $repos
   }
-  if ($facts['lsbdistid'] == 'Debian' or $facts['lsbdistid'] == 'Ubuntu') {
+  if ($facts['os']['name'] == 'Debian' or $facts['os']['name'] == 'Ubuntu') {
+    if os_version('debian >= bullseye') {
+      $securityDist = "-security"
+    } else {
+      $securityDist = ""
+    }
     unless $location {
       $_location = $::apt::security['location']
     }
     unless $release {
-      $_release = "${facts['lsbdistcodename']}/updates"
+      $_release = "${facts['os']['distro']['codename']}${securityDist}/updates"
     }
     unless $repos {
       $_repos = $::apt::security['repos']

@@ -19,6 +19,7 @@ class mariadb::config(
     $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
     $roundcubemail_password = lookup('passwords::roundcubemail')
     $mariadb_replica_password = lookup('passwords::mariadb_replica_password')
+    $dbbackup_user_password = lookup('passwords::db::dbbackup_user')
 
     $server_id = inline_template(
         "<%= @virtual_ip_address.split('.').inject(0)\
@@ -60,12 +61,14 @@ class mariadb::config(
         require => Package["mariadb-server-${version}"],
     }
 
-    file { $tmpdir:
-        ensure  => directory,
-        owner   => 'mysql',
-        group   => 'mysql',
-        mode    => '0775',
-        require => Package["mariadb-server-${version}"],
+    if $tmpdir != '/tmp' {
+        file { $tmpdir:
+            ensure  => directory,
+            owner   => 'mysql',
+            group   => 'mysql',
+            mode    => '0775',
+            require => Package["mariadb-server-${version}"],
+        }
     }
 
     file { '/etc/mysql/miraheze':

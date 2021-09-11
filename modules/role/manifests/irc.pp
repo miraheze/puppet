@@ -4,7 +4,7 @@ class role::irc {
 
     class { 'irc::ircrcbot':
         nickname     => 'MirahezeRC',
-        network      => 'chat.freenode.net',
+        network      => 'irc.libera.chat',
         network_port => '6697',
         channel      => '#miraheze-feed',
         udp_port     => '5070',
@@ -21,6 +21,29 @@ class role::irc {
         ufw::allow { "ircrcbot port ${value['ipaddress6']} IPv6":
             proto => 'udp',
             port  => 5070,
+            from  => $value['ipaddress6'],
+        }
+    }
+
+    class { 'irc::irclogserverbot':
+        nickname     => 'MirahezeLSBot',
+        network      => 'irc.libera.chat',
+        network_port => '6697',
+        channel      => '#miraheze-sre',
+        udp_port     => '5071',
+    }
+
+    $firewallall = query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
+    $firewallall.each |$key, $value| {
+        ufw::allow { "irclogserverbot port ${value['ipaddress']} IPv4":
+            proto => 'udp',
+            port  => 5071,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "irclogserverbot port ${value['ipaddress6']} IPv6":
+            proto => 'udp',
+            port  => 5071,
             from  => $value['ipaddress6'],
         }
     }

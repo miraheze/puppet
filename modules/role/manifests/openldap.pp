@@ -19,9 +19,16 @@ class role::openldap (
     }
 
     openldap::server::database { 'dc=miraheze,dc=org':
+        ensure    => present,
         directory => '/var/lib/ldap/miraheze',
         rootdn    => 'cn=admin,dc=miraheze,dc=org',
         rootpw    => $admin_password,
+    }
+
+    # LDAP monitoring support
+    openldap::server::database { 'cn=monitor':
+        ensure  => present,
+        backend => 'monitor',
     }
 
     # Allow everybody to try to bind
@@ -46,8 +53,24 @@ class role::openldap (
         ],
     }
 
+    openldap::server::access { 'admin-monitor-access':
+        ensure => present,
+        what   => 'dn.subtree="cn=monitor"',
+        suffix => 'cn=monitor',
+        access => [
+            'by dn="cn=admin,dc=miraheze,dc=org" write',
+            'by dn="cn=monitor,dc=miraheze,dc=org" read',
+            'by self write',
+            'by * none',
+        ],
+    }
+
     # Modules
     openldap::server::module { 'back_mdb':
+        ensure => present,
+    }
+
+    openldap::server::module { 'back_monitor':
         ensure => present,
     }
 
@@ -124,6 +147,8 @@ class role::openldap (
         uri        => ["ldaps://${::fqdn}"],
         tls_cacert => '/etc/ssl/certs/Sectigo.crt',
     }
+
+    include prometheus::openldap_exporter
 
     require_package('ldapvi')
 

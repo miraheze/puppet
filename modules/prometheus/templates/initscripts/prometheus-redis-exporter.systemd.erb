@@ -6,7 +6,7 @@ Documentation=https://github.com/oliver006/redis_exporter
 Restart=always
 User=www-data
 EnvironmentFile=/etc/default/prometheus-redis
-ExecStart=/usr/local/bin/redis_exporter --log-format=txt --namespace=redis --web.listen-address=:9121 --web.telemetry-path=/metrics -redis.password ${EXPORTER_REDIS_PASSWORD}
+ExecStart=/usr/local/bin/redis_exporter --log-format=txt --namespace=redis --web.listen-address=:9121 --web.telemetry-path=/metrics --script=/etc/redis/jobQueueCollector.lua -redis.password ${EXPORTER_REDIS_PASSWORD}
 ExecReload=/bin/kill -HUP $MAINPID
 SyslogIdentifier=redis_exporter
 SendSIGKILL=no

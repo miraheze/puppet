@@ -1,15 +1,16 @@
 # class: varnish
-class varnish(
+class varnish (
     String $cache_file_name = '/srv/varnish/cache_storage.bin',
     String $cache_file_size = '15G',
-    Boolean $use_new_cache = false,
-){
+) {
     include varnish::nginx
+    include varnish::stunnel4
     include prometheus::varnish_prometheus_exporter
 
-    package { [ 'varnish', 'stunnel4', 'varnish-modules' ]:
-        ensure => present,
-    }
+    ensure_packages(['varnish', 'varnish-modules'])
+
+    $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
+    $reload_vcl_opts = "-f /etc/varnish/default.vcl -d ${vcl_reload_delay_s} -a"
 
     file { '/usr/local/sbin/reload-vcl':
         source => 'puppet:///modules/varnish/varnish/reload-vcl.py',
@@ -36,28 +37,15 @@ class varnish(
         require => File['/var/lib/varnish'],
         notify  => Service['varnish'],
     }
-
-    service { 'stunnel4':
-        ensure  => 'running',
-        require => Package['stunnel4'],
-    }
     
     $module_path = get_module_path($module_name)
-
-    $csp_whitelist = loadyaml("${module_path}/data/csp_whitelist.yaml")
-    $frame_whitelist = loadyaml("${module_path}/data/frame_whitelist.yaml")
+    $csp_whitelist = loadyaml("${module_path}/data/csp.yaml")
 
     file { '/etc/varnish/default.vcl':
         ensure  => present,
         content => template('varnish/default.vcl'),
-        notify  => Exec['varnish-server-syntax'],
+        notify  => Exec['load-new-vcl-file'],
         require => Package['varnish'],
-    }
-
-    exec { 'varnish-server-syntax':
-        command     => '/usr/sbin/varnishd -C -f /etc/varnish/default.vcl',
-        refreshonly => true,
-        notify      => Service['varnish'],
     }
 
     file { '/srv/varnish':
@@ -66,7 +54,7 @@ class varnish(
         group   => 'varnish',
     }
 
-    $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
+    $max_threads = max(floor($::processorcount * 250), 500)
     systemd::service { 'varnish':
         ensure  => present,
         content => systemd_template('varnish'),
@@ -88,34 +76,36 @@ class varnish(
         require => Service['varnish'],
     }
 
+    service { 'varnishncsa':
+        ensure  => 'stopped',
+        require => Package['varnish'],
+    }
+
     # Unfortunately, varnishlog can't log to syslog
     logrotate::conf { 'varnishlog_logs':
         ensure  => present,
         source  => 'puppet:///modules/varnish/varnish/varnishlog.logrotate.conf',
     }
 
-    include ssl::wildcard
-    include ssl::hiera
+    # This mechanism with the touch/rm conditionals in the pair of execs
+    #   below should ensure that reload-vcl failures are retried on
+    #   future puppet runs until they succeed.
+    $vcl_failed_file = "/var/tmp/reload-vcl-failed"
 
-    ssl::cert { 'm.miraheze.org': }
-
-    file { '/etc/nginx/sites-enabled/default':
-        ensure => absent,
-        notify => Service['nginx'],
+    exec { 'load-new-vcl-file':
+        require     => Service['varnish'],
+        subscribe   => File['/etc/varnish/default.vcl'],
+        command     => "/usr/local/sbin/reload-vcl ${reload_vcl_opts} || (touch ${vcl_failed_file}; false)",
+        unless      => "test -f ${vcl_failed_file}",
+        path        => '/bin:/usr/bin',
+        refreshonly => true,
     }
 
-    file { '/etc/default/stunnel4':
-        ensure  => present,
-        source  => 'puppet:///modules/varnish/stunnel/stunnel.default',
-        notify  => Service['stunnel4'],
-        require => Package['stunnel4'],
-    }
-
-    file { '/etc/stunnel/mediawiki.conf':
-        ensure  => present,
-        source  => 'puppet:///modules/varnish/stunnel/stunnel.conf',
-        notify  => Service['stunnel4'],
-        require => Package['stunnel4'],
+    exec { 'retry-load-new-vcl-file':
+        require => Exec['load-new-vcl-file'],
+        command => "/usr/local/sbin/reload-vcl ${reload_vcl_opts} && (rm ${vcl_failed_file}; true)",
+        onlyif  => "test -f ${vcl_failed_file}",
+        path    => '/bin:/usr/bin',
     }
 
     file { '/usr/lib/nagios/plugins/check_varnishbackends':
@@ -142,11 +132,6 @@ class varnish(
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nginx_errorrate' ],
     }
 
-    logrotate::conf { 'stunnel4':
-        ensure => present,
-        source => 'puppet:///modules/varnish/stunnel/stunnel4.logrotate.conf',
-    }
-
     monitoring::services { 'Varnish Backends':
         check_command => 'nrpe',
         vars          => {
@@ -161,13 +146,25 @@ class varnish(
         },
     }
 
-    ['mon2', 'mw8', 'mw9', 'mw10', 'mw11', 'test3'].each |$host| {
-        monitoring::services { "Stunnel Http for ${host}":
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => "check_stunnel_${host}",
-                nrpe_timeout => '10s',
-            },
-        }
+    require_package('vmtouch')
+
+    file { '/usr/local/bin/generateVmtouch.py':
+        ensure => 'present',
+        mode   => '0755',
+        source => 'puppet:///modules/varnish/vmtouch/generateVmtouch.py',
+    }
+
+    systemd::service { 'vmtouch':
+        ensure  => present,
+        content => systemd_template('vmtouch'),
+        restart => true,
+    }
+
+    cron { 'vmtouch':
+        ensure  => present,
+        command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
+        user    => 'root',
+        minute  => '0',
+        hour    => '*/5',
     }
 }

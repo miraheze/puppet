@@ -27,14 +27,15 @@
 import argparse
 import sys
 import subprocess
+import re
+
 
 def runcommand(command, exit_on_fail=True):
     try:
         process = subprocess.Popen(command.split(" "), stdout=subprocess.PIPE)
         output, unused_err = process.communicate()
-        retcode = process.poll()
         return output
-    except OSError as e:
+    except OSError:
         print("Error: Executing command failed,  does it exist?")
         sys.exit(2)
 
@@ -46,16 +47,16 @@ def main(argv):
     o.add_argument('-s', '--secret', action='store', dest='secret', default='/etc/varnish/secret', help='The path to the secret file')
     o.add_argument('-p', '--path', action='store', dest='path', default='/usr/bin/varnishadm', help='The path to the varnishadm binary')
 
-    options= o.parse_args()
+    options = o.parse_args()
     command = runcommand("%(path)s -S %(secret)s -T %(host)s:%(port)s backend.list" % options.__dict__)
     backends = command.split(b"\n")
     backends_healthy, backends_sick = [], []
     for line in backends:
-        if line.startswith(b"boot") and line.find(b"test") == -1:
+        if line.startswith(b"vcl") and line.find(b"test") == -1:
             if (line.find(b"Healthy") != -1) or (line.find(b"healthy") != -1) or (line.find(b"good") != -1):
-                backends_healthy.append(line.split(b" ")[0].replace(b"boot.", b""))
+                backends_healthy.append(re.sub(b'vcl.+\.', b"", line.split(b" ")[0]))
             else:
-                backends_sick.append(line.split(b" ")[0].replace(b"boot.", b""))
+                backends_sick.append(re.sub(b'vcl.+\.', b"", line.split(b" ")[0]))
 
     if backends_sick:
         print(("%s backends are down.  %s" % (len(backends_sick), str(b" ".join(backends_sick), 'utf-8'))))

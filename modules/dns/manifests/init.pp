@@ -1,37 +1,9 @@
 # dns
 class dns {
-    include ::apt
     include prometheus::node_gdnsd
 
-    if os_version('debian stretch') {
-        apt::pin { 'debian_stretch_backports':
-            priority   => 740,
-            originator => 'Debian',
-            release    => 'stretch-backports',
-            packages   => 'gdnsd',
-        }
-
-        package { 'gdnsd':
-            ensure  => installed,
-            require => Apt::Pin['debian_stretch_backports'],
-        }
-    } else {
-        package { 'gdnsd':
-            ensure  => installed,
-        }
-    }
-
-    service { 'gdnsd':
-        ensure     => running,
-        hasrestart => true,
-        hasstatus  => true,
-        require    => [ Package['gdnsd'], Exec['gdnsd-syntax'] ],
-    }
-
-    exec { 'gdnsd-syntax':
-        command     => '/usr/sbin/gdnsd checkconf',
-        notify      => Service['gdnsd'],
-        refreshonly => true,
+    package { 'gdnsd':
+        ensure  => installed,
     }
 
     git::clone { 'dns':
@@ -42,6 +14,26 @@ class dns {
         group     => 'root',
         before    => Package['gdnsd'],
         notify    => Exec['gdnsd-syntax'],
+    }
+
+    file { '/usr/share/GeoIP/GeoLite2-Country.mmdb':
+        ensure => present,
+        source => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
+        mode   => '0444',
+        notify => Exec['gdnsd-syntax'],
+    }
+
+    exec { 'gdnsd-syntax':
+        command     => '/usr/sbin/gdnsd checkconf',
+        notify      => Service['gdnsd'],
+        refreshonly => true,
+    }
+
+    service { 'gdnsd':
+        ensure     => running,
+        hasrestart => true,
+        hasstatus  => true,
+        require    => [ Package['gdnsd'], Exec['gdnsd-syntax'] ],
     }
 
     file { '/usr/lib/nagios/plugins/check_gdnsd_datacenters':
@@ -62,11 +54,5 @@ class dns {
         vars          => {
             nrpe_command => 'check_gdnsd_datacenters',
         },
-    }
-
-    file { '/usr/share/GeoIP/GeoLite2-Country.mmdb':
-        ensure => present,
-        source => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
-        mode   => '0444',
     }
 }

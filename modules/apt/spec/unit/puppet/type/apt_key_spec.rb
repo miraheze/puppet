@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'puppet'
 
@@ -31,6 +33,10 @@ describe Puppet::Type.type(:apt_key) do
 
     it 'refresh is not set' do
       expect(resource[:refresh]).to eq nil
+    end
+
+    it 'weak_ssl is not set' do
+      expect(resource[:weak_ssl]).to eq nil
     end
   end
 
@@ -104,6 +110,20 @@ describe Puppet::Type.type(:apt_key) do
 
     it 'source is set to the URL' do
       expect(resource[:source]).to eq 'http://apt.puppetlabs.com/pubkey.gpg'
+    end
+  end
+
+  context 'with source and weak_ssl' do
+    let(:resource) do
+      Puppet::Type.type(:apt_key).new(
+        id: 'EF8D349F',
+        source: 'https://apt.puppetlabs.com/pubkey.gpg',
+        weak_ssl: true,
+      )
+    end
+
+    it 'source is set to the URL' do
+      expect(resource[:source]).to eq 'https://apt.puppetlabs.com/pubkey.gpg'
     end
   end
 

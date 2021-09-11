@@ -72,7 +72,6 @@ class php::php_fpm(
     }
 
     $core_extensions =  [
-        'apcu',
         'bcmath',
         'curl',
         'gd',
@@ -89,30 +88,14 @@ class php::php_fpm(
         }
     }
 
-    php::extension { 'redis':
-        package_name => "php-redis",
-    }
-
-    if $version == '7.3' {
-        require_package('liblua5.1-0')
-
-        # make sure to rebuild against the selected php version
-        file { '/usr/lib/php/20180731/luasandbox.so':
-            ensure => present,
-            source => "puppet:///modules/php/luasandbox/${version}.luasandbox.so",
-        }
-
-        file { '/usr/lib/php/20180731/wikidiff2.so':
-            ensure => present,
-            source => "puppet:///modules/php/wikidiff2/wikidiff2.so",
-        }
-
-        php::extension {
-            'luasandbox':
-                package_name => '';
-            'wikidiff2':
-                package_name => '';
-        }
+    php::extension { [
+        'apcu',
+        'msgpack',
+        'redis',
+        'luasandbox',
+        'wikidiff2',
+    ]:
+        ensure => present
     }
 
     # Extensions that require configuration.
@@ -120,6 +103,13 @@ class php::php_fpm(
         'xml':
             package_name => "php${version}-xml",
             priority     => 15;
+        'memcached':
+            priority => 25,
+            config   => {
+                'extension'                   => 'memcached.so',
+                'memcached.serializer'        => 'php',
+                'memcached.store_retry_count' => '0'
+            };
         'igbinary':
             config   => {
                 'extension'                => 'igbinary.so',
@@ -158,7 +148,6 @@ class php::php_fpm(
         'xmlreader',
         'xmlwriter',
         'xsl',
-        'wddx',
     ]:
         package_name => '',
     }
