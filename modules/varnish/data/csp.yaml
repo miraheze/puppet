@@ -94,6 +94,8 @@ img-src:
   - 'postimages.org'
   - 'platform.twitter.com'
   - 'syndication.twitter.com'
+  - 'img.newspapers.com'
+  - 'cdn.smutstone.com'
 
 font-src:
   - "'self'"
@@ -127,3 +129,7 @@ frame-src:
   - 'discordapp.com'
   - 'embed.nicovideo.jp'
   - 'syndication.twitter.com'
+  - 'open.spotify.com'
+  - 'www.gofundme.com'
+  - 'archive.org'
+  - 'w.soundcloud.com'
