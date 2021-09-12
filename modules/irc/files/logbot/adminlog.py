@@ -1,8 +1,10 @@
 #!/usr/bin/python3
 
 import sys
-import mwclient
-import datetime
+sys.path.insert(0, r'/etc/irclogbot/mwclient')
+
+import mwclient # noqa: E402
+import datetime # noqa: E402
 
 sys.path.insert(0, r'/etc/irclogbot/mwclient')
 
