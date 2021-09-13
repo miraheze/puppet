@@ -78,7 +78,7 @@ class mediawiki::extensionsetup {
     exec { 'antispoof_composer':
         command     => $composer,
         creates     => "${mwpath}/extensions/AntiSpoof/vendor",
-        cwd         => "${mwpath}extensions/AntiSpoof",
+        cwd         => "${mwpath}/extensions/AntiSpoof",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/AntiSpoof",
         user        => 'www-data',
