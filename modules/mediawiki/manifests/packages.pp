@@ -27,6 +27,7 @@ class mediawiki::packages {
         'xvfb',
         'timidity',
         'librsvg2-bin',
+        'python3-minimal',
         'python3-requests',
         'rsync',
     ]
