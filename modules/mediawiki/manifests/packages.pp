@@ -12,6 +12,9 @@ class mediawiki::packages {
         'ffmpeg2theora',
         'locales-all',
         'oggvideotools',
+        'libxi-dev',
+        'ibglu1-mesa-dev',
+        'libglew-dev',
         'libvips-tools',
         'lilypond',
         'ploticus',
@@ -23,6 +26,7 @@ class mediawiki::packages {
         'libgif-dev',
         'libwebp-dev',
         'p7zip-full',
+        'python-is-python3',
         'vmtouch',
         'xvfb',
         'timidity',
@@ -31,6 +35,8 @@ class mediawiki::packages {
         'python3-requests',
         'rsync',
     ]
+
+apt-get install build-essential libxi-dev libglu1-mesa-dev libglew-dev pkg-config
 
     # First installs can trip without this
     exec {'apt_update_mediawiki_packages':
