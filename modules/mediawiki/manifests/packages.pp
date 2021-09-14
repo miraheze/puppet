@@ -36,8 +36,6 @@ class mediawiki::packages {
         'rsync',
     ]
 
-apt-get install build-essential libxi-dev libglu1-mesa-dev libglew-dev pkg-config
-
     # First installs can trip without this
     exec {'apt_update_mediawiki_packages':
         command     => '/usr/bin/apt-get update',
