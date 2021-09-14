@@ -13,7 +13,7 @@ class mediawiki::packages {
         'locales-all',
         'oggvideotools',
         'libxi-dev',
-        'ibglu1-mesa-dev',
+        'libglu1-mesa-dev',
         'libglew-dev',
         'libvips-tools',
         'lilypond',
