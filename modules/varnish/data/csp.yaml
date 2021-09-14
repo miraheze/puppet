@@ -118,6 +118,7 @@ media-src:
 
 frame-src:
   - "'self'"
+  - '*.miraheze.org'
   - 'www.google.com'
   - 'www.recaptcha.net'
   - 'web.libera.chat'
