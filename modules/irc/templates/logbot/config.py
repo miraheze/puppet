@@ -53,6 +53,7 @@ ssl = True
 
 # Map irc nick to real name
 author_map = {
+    "CosmicAlpha": "Universal Omega",
     "Voidwalker": "Void"
 }
 
