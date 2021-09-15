@@ -134,3 +134,8 @@ frame-src:
   - 'www.gofundme.com'
   - 'archive.org'
   - 'w.soundcloud.com'
+
+connect-src:
+  - "'self'"
+  - '*.miraheze.org'
+  - 'www.wikidata.org'
