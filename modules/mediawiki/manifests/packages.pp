@@ -26,7 +26,6 @@ class mediawiki::packages {
         'libgif-dev',
         'libwebp-dev',
         'p7zip-full',
-        'python-is-python3',
         'vmtouch',
         'xvfb',
         'timidity',
