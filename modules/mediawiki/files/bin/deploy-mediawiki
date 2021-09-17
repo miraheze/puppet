@@ -13,6 +13,10 @@ def check_up(server):
     return up
 
 def run(args, start):
+    if args.ignoretime:
+        rsyncparams = '--delete'
+    else:
+        rsyncparams = '--delete --update'
     loginfo = {}
     exitcodes = []
     for arg in vars(args).items():
@@ -28,22 +32,22 @@ def run(args, start):
     else:
         print(text)
     if args.config:
-        exitcodes.append(os.system('sudo -u www-data rsync -Pr --delete --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r {rysncparams} --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
         rsyncpaths.append('/srv/mediawiki/config')
     if args.world:
         os.chdir('/srv/mediawiki-staging/w')
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev'))
-        exitcodes.append(os.system('sudo -u www-data rsync -Pr --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r {rysncparams} --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
         rsyncpaths.append('/srv/mediawiki/w')
     if args.files:
         files = str(args.files).split(',')
         for file in files:
-            exitcodes.append(os.system(f'sudo -u www-data rsync -P --delete /srv/mediawiki-staging/{file} /srv/mediawiki/{file}'))
+            exitcodes.append(os.system(f'sudo -u www-data rsync {rysncparams} /srv/mediawiki-staging/{file} /srv/mediawiki/{file}'))
             rsyncfiles.append(f'/srv/mediawiki/{file}')
     if args.folders:
         folders = str(args.folders).split(',')
         for folder in folders:
-            exitcodes.append(os.system(f'sudo -u www-data rsync -Pr --delete --exclude=".*" /srv/mediawiki-staging/{folder}/* /srv/mediawiki/{folder}/'))
+            exitcodes.append(os.system(f'sudo -u www-data rsync -r {rysncparams} --exclude=".*" /srv/mediawiki-staging/{folder}/* /srv/mediawiki/{folder}/'))
             rsyncpaths.append(f'/srv/mediawiki/{folder}')
     if args.l10n:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
@@ -77,7 +81,7 @@ def run(args, start):
         if len(rsyncpaths) > 0:
             for path in rsyncpaths:
                 for server in serverlist:
-                    exitcodes.append(os.system(f'rsync -Pr --delete -e "ssh -i /srv/mediawiki-staging/deploykey" {path} www-data@{server}.miraheze.org:{path}'))
+                    exitcodes.append(os.system(f'rsync -r {rysncparams} -e "ssh -i /srv/mediawiki-staging/deploykey" {path} www-data@{server}.miraheze.org:{path}'))
                     if not check_up(server):
                         print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
                         if not args.force:
@@ -88,7 +92,7 @@ def run(args, start):
         if len(rsyncfiles) > 0:
             for file in rsyncfiles:
                 for server in serverlist:
-                    exitcodes.append(os.system(f'rsync -P -e "ssh -i /srv/mediawiki-staging/deploykey" {file} www-data@{server}.miraheze.org:{file}'))
+                    exitcodes.append(os.system(f'rsync {rysncparams} -e "ssh -i /srv/mediawiki-staging/deploykey" {file} www-data@{server}.miraheze.org:{file}'))
                     if not check_up(server):
                         print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
                         if not args.force:
@@ -126,4 +130,5 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--servers', dest='servers', required=True)
+    parser.add_argument('--ignore-time', dest='ignoretime', action='store_true') 
     run(parser.parse_args(), start)
