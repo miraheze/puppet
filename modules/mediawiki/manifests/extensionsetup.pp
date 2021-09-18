@@ -184,4 +184,14 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
+
+    exec { 'femiwiki_npm':
+        command     => 'npm install',
+        creates     => "${mwpath}/skins/Femiwiki/node_modules",
+        cwd         => "${mwpath}/skins/Femiwiki",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/skins/Femiwiki",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 }
