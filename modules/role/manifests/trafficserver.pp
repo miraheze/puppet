@@ -76,6 +76,7 @@ class role::trafficserver (
         res_track_memory        => $res_track_memory,
     }
 
+    $module_path = get_module_path($module_name)
     $csp_whitelist = loadyaml("${module_path}/data/csp.yaml")
 
     # Install default Lua script
