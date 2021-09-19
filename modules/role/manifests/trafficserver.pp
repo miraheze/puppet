@@ -76,10 +76,7 @@ class role::trafficserver (
         res_track_memory        => $res_track_memory,
     }
 
-    # $module_path = get_module_path($module_name)
-    $module_path = get_module_path('varnish')
-    $csp_whitelist = loadyaml("${module_path}/data/csp_whitelist.yaml")
-    $frame_whitelist = loadyaml("${module_path}/data/frame_whitelist.yaml")
+    $csp_whitelist = loadyaml("${module_path}/data/csp.yaml")
 
     # Install default Lua script
     trafficserver::lua_script { 'default':
