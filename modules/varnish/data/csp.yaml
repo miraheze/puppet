@@ -80,6 +80,7 @@ img-src:
   - 'docs.blender.org'
   - '*.imgbox.com'
   - 'www.mikrodev.com'
+  - 'tile.openstreetmap.org'
   - '*.tile.openstreetmap.org'
   - 'cdn.discordapp.com'
   - 'na.llnet.sims3storee.cdn.ea.com'
