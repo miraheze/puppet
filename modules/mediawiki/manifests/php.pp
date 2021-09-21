@@ -39,7 +39,6 @@ class mediawiki::php (
             version => $php_version,
             # Make sure that php is installed before composer is ran
             before => [
-                Class['mediawiki::extensionsetup'],
                 Class['mediawiki::servicessetup'],
             ],
         }
