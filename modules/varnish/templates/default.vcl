@@ -117,6 +117,11 @@ backend test3 {
 	.port = "8091";
 }
 
+backend mwtask1_test {
+	.host = "127.0.0.1";
+	.port = "8089";
+}
+
 # end test backend
 
 
@@ -294,6 +299,10 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test3;
 		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mwtask1.miraheze.org") {
+		set req.backend_hint = mwtask1_test;
+		return (pass);
+	}
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
