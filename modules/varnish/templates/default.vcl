@@ -302,7 +302,6 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "mwtask1.miraheze.org") {
 		set req.backend_hint = mwtask1_test;
 		return (pass);
-	}
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
