@@ -174,7 +174,7 @@ class mediawiki(
         target  => '/srv/mediawiki/config/LocalSettings.php',
         owner   => 'www-data',
         group   => 'www-data',
-        require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
+        require => [ File['/srv/mediawiki/w'], File['/srv/mediawiki/config'] ],
     }
 
     $wikiadmin_password    = lookup('passwords::db::wikiadmin')
