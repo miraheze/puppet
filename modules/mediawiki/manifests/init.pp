@@ -73,49 +73,49 @@ class mediawiki(
     if lookup(mediawiki::use_staging) {
         include mediawiki::extensionsetup
         file { [
-        '/srv/mediawiki-staging',
-    ]:
-        ensure => 'directory',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0755',
-    }
-    git::clone { 'MediaWiki config':
-        ensure    => 'latest',
-        directory => '/srv/mediawiki-staging/config',
-        origin    => 'https://github.com/miraheze/mw-config.git',
-        branch    => $branch_mw_config,
-        owner     => 'www-data',
-        group     => 'www-data',
-        mode      => '0755',
-        require   => File['/srv/mediawiki'],
-    }
+            '/srv/mediawiki-staging',
+        ]:
+            ensure => 'directory',
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0755',
+        }
+        git::clone { 'MediaWiki config':
+            ensure    => 'latest',
+            directory => '/srv/mediawiki-staging/config',
+            origin    => 'https://github.com/miraheze/mw-config.git',
+            branch    => $branch_mw_config,
+            owner     => 'www-data',
+            group     => 'www-data',
+            mode      => '0755',
+            require   => File['/srv/mediawiki'],
+        }
 
-    git::clone { 'MediaWiki core':
-        ensure             => 'latest',
-        directory          => '/srv/mediawiki-staging/w',
-        origin             => 'https://github.com/miraheze/mediawiki.git',
-        branch             => $branch,
-        owner              => 'www-data',
-        group              => 'www-data',
-        mode               => '0755',
-        timeout            => '1500',
-        depth              => '5',
-        recurse_submodules => true,
-        require            => File['/srv/mediawiki'],
-    }
-    file { '/usr/local/bin/deploy-mediawiki':
-        ensure => 'present',
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/bin/deploy-mediawiki',
-    }
-    exec { 'MediaWiki Config Sync':
-        command     => "/usr/local/bin/deploy-mediawiki --config --servers=${lookup(mediawiki::default_sync)}",
-        cwd         => '/srv/mediawiki-staging',
-        refreshonly => true,
-        user        => www-data,
-        subscribe   => Git::Clone['MediaWiki config'],
-    }
+        git::clone { 'MediaWiki core':
+            ensure             => 'latest',
+            directory          => '/srv/mediawiki-staging/w',
+            origin             => 'https://github.com/miraheze/mediawiki.git',
+            branch             => $branch,
+            owner              => 'www-data',
+            group              => 'www-data',
+            mode               => '0755',
+            timeout            => '1500',
+            depth              => '5',
+            recurse_submodules => true,
+            require            => File['/srv/mediawiki'],
+        }
+        file { '/usr/local/bin/deploy-mediawiki':
+            ensure => 'present',
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/bin/deploy-mediawiki',
+        }
+        exec { 'MediaWiki Config Sync':
+            command     => "/usr/local/bin/deploy-mediawiki --config --servers=${lookup(mediawiki::default_sync)}",
+            cwd         => '/srv/mediawiki-staging',
+            refreshonly => true,
+            user        => www-data,
+            subscribe   => Git::Clone['MediaWiki config'],
+        }
     }
 
     file { [
@@ -214,11 +214,11 @@ class mediawiki(
     }
     $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet', 'check-read-only']
     $cookbooks.each |$cookbook| {
-      file {"/usr/local/bin/${cookbook}":
-          ensure => 'present',
-          mode   => '0755',
-          source => "puppet:///modules/mediawiki/cookbooks/${cookbook}",
-      }
+        file {"/usr/local/bin/${cookbook}":
+            ensure => 'present',
+            mode   => '0755',
+            source => "puppet:///modules/mediawiki/cookbooks/${cookbook}",
+        }
     }
 
     file { '/usr/local/bin/pushServices.sh':
