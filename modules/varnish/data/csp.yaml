@@ -140,3 +140,4 @@ connect-src:
   - "'self'"
   - '*.miraheze.org'
   - 'www.wikidata.org'
+  - '*.wikipedia.org'
