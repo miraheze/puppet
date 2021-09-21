@@ -174,7 +174,7 @@ class mediawiki(
         target  => '/srv/mediawiki/config/LocalSettings.php',
         owner   => 'www-data',
         group   => 'www-data',
-        require => [ Git::Clone['MediaWiki config'], Git::Clone['MediaWiki core'] ],
+        require => [ File['/srv/mediawiki/w'], File['/srv/mediawiki/config'] ],
     }
 
     $wikiadmin_password    = lookup('passwords::db::wikiadmin')
@@ -192,7 +192,7 @@ class mediawiki(
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
         content => template('mediawiki/PrivateSettings.php'),
-        require => Git::Clone['MediaWiki config'],
+        require => File['/srv/mediawiki/config'],
     }
 
     file { '/usr/local/bin/fileLockScript.sh':
@@ -231,7 +231,7 @@ class mediawiki(
         ensure  => present,
         mode    => '0755',
         source  => 'puppet:///private/mediawiki/OAuth2.key',
-        require => Git::Clone['MediaWiki config'],
+        require => File['/srv/mediawiki/config'],
     }
 
     require_package('vmtouch')
