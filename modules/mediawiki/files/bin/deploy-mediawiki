@@ -33,12 +33,12 @@ def run(args, start):
         print(text)
     if args.config:
         exitcodes.append(os.system(f'sudo -u www-data rsync -r {rsyncparams} --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
-        rsyncpaths.append('/srv/mediawiki/config')
+        rsyncpaths.append('/srv/mediawiki/config/')
     if args.world:
         os.chdir('/srv/mediawiki-staging/w')
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev'))
         exitcodes.append(os.system(f'sudo -u www-data rsync -r {rsyncparams} --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
-        rsyncpaths.append('/srv/mediawiki/w')
+        rsyncpaths.append('/srv/mediawiki/w/')
     if args.files:
         files = str(args.files).split(',')
         for file in files:
@@ -48,12 +48,12 @@ def run(args, start):
         folders = str(args.folders).split(',')
         for folder in folders:
             exitcodes.append(os.system(f'sudo -u www-data rsync -r {rsyncparams} --exclude=".*" /srv/mediawiki-staging/{folder}/* /srv/mediawiki/{folder}/'))
-            rsyncpaths.append(f'/srv/mediawiki/{folder}')
+            rsyncpaths.append(f'/srv/mediawiki/{folder}/')
     if args.l10n:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --wiki=loginwiki'))
         rsyncfiles.append('/srv/mediawiki/cache/l10nupdate-*.json')
-        rsyncpaths.append(f'/srv/mediawiki/cache/l10n')
+        rsyncpaths.append(f'/srv/mediawiki/cache/l10n/')
     if args.gitinfo:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --use-staging --wiki=loginwiki'))
     if args.servers == 'skip':
@@ -81,7 +81,7 @@ def run(args, start):
         if len(rsyncpaths) > 0:
             for path in rsyncpaths:
                 for server in serverlist:
-                    exitcodes.append(os.system(f'rsync -r {rsyncparams} -e "ssh -i /srv/mediawiki-staging/deploykey" {path} www-data@{server}.miraheze.org:{path}'))
+                    exitcodes.append(os.system(f'sudo -u www-data rsync -r {rsyncparams} -e "ssh -i /srv/mediawiki-staging/deploykey" {path} www-data@{server}.miraheze.org:{path}'))
                     if not check_up(server):
                         print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
                         if not args.force:
@@ -92,7 +92,7 @@ def run(args, start):
         if len(rsyncfiles) > 0:
             for file in rsyncfiles:
                 for server in serverlist:
-                    exitcodes.append(os.system(f'rsync {rsyncparams} -e "ssh -i /srv/mediawiki-staging/deploykey" {file} www-data@{server}.miraheze.org:{file}'))
+                    exitcodes.append(os.system(f'sudo -u www-data rsync {rsyncparams} -e "ssh -i /srv/mediawiki-staging/deploykey" {file} www-data@{server}.miraheze.org:{file}'))
                     if not check_up(server):
                         print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
                         if not args.force:
