@@ -7,6 +7,7 @@ from twisted.internet import protocol
 
 recver = None
 
+
 class RCBot(irc.IRCClient):
     nickname = "<%= @nickname %>"
     password = "mirahezebots:<%= @mirahezebots_password %>"
@@ -27,6 +28,7 @@ class RCBot(irc.IRCClient):
         # with 'unexpected end of data'.
         self.msg(self.channel, str(broadcast, 'utf-8', 'ignore'))
 
+
 class RCFactory(protocol.ClientFactory):
     protocol = RCBot
 
@@ -36,6 +38,7 @@ class RCFactory(protocol.ClientFactory):
 
     def clientConnectionFailed(self, connector, reason):
         print("Could not connect: %s" % (reason,))
+
 
 class Echo(DatagramProtocol):
 
