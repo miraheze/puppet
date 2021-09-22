@@ -14,9 +14,9 @@ def check_up(server):
 
 def run(args, start):
     if args.ignoretime:
-        rsyncparams = '--delete'
+        rsyncparams = ''
     else:
-        rsyncparams = '--delete --update'
+        rsyncparams = '--update'
     loginfo = {}
     exitcodes = []
     for arg in vars(args).items():
@@ -32,12 +32,12 @@ def run(args, start):
     else:
         print(text)
     if args.config:
-        exitcodes.append(os.system(f'sudo -u www-data rsync -r {rsyncparams} --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
         rsyncpaths.append('/srv/mediawiki/config/')
     if args.world:
         os.chdir('/srv/mediawiki-staging/w')
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev'))
-        exitcodes.append(os.system(f'sudo -u www-data rsync -r {rsyncparams} --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
         rsyncpaths.append('/srv/mediawiki/w/')
     if args.files:
         files = str(args.files).split(',')
@@ -47,7 +47,7 @@ def run(args, start):
     if args.folders:
         folders = str(args.folders).split(',')
         for folder in folders:
-            exitcodes.append(os.system(f'sudo -u www-data rsync -r {rsyncparams} --exclude=".*" /srv/mediawiki-staging/{folder}/* /srv/mediawiki/{folder}/'))
+            exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/{folder}/* /srv/mediawiki/{folder}/'))
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
     if args.l10n:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
@@ -80,8 +80,10 @@ def run(args, start):
     if sync:
         if len(rsyncpaths) > 0:
             for path in rsyncpaths:
+                print(f'Start {path} deploys.')
                 for server in serverlist:
-                    exitcodes.append(os.system(f'sudo -u www-data rsync -r {rsyncparams} -e "ssh -i /srv/mediawiki-staging/deploykey" {path} www-data@{server}.miraheze.org:{path}'))
+                    print(f'Deploying {path} to {server}.')
+                    exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete -r {rsyncparams} -e "ssh -i /srv/mediawiki-staging/deploykey" {path} www-data@{server}.miraheze.org:{path}'))
                     if not check_up(server):
                         print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
                         if not args.force:
@@ -89,9 +91,13 @@ def run(args, start):
                             exit(3)
                         else:
                             print('Ignoring canary error due to --force')
+                    print(f'Deployed {path} to {server}.')
+                print(f'Finished {path} deploys.')
         if len(rsyncfiles) > 0:
             for file in rsyncfiles:
+                print(f'Start {file} deploys.')
                 for server in serverlist:
+                    print(f'Deploying {file} to {server}.')
                     exitcodes.append(os.system(f'sudo -u www-data rsync {rsyncparams} -e "ssh -i /srv/mediawiki-staging/deploykey" {file} www-data@{server}.miraheze.org:{file}'))
                     if not check_up(server):
                         print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
@@ -100,6 +106,7 @@ def run(args, start):
                             exit(3)
                         else:
                             print('Ignoring canary error due to --force')
+                    print(f'Deployed {file} to {server}.')
         
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
     FAIL = 0
