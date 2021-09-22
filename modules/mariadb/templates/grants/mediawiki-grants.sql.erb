@@ -2,7 +2,8 @@
 
 GRANT USAGE
     ON *.* TO 'mediawiki'@'%'
-    IDENTIFIED BY '<%= @mediawiki_password %>';
+    IDENTIFIED BY '<%= @mediawiki_password %>'
+    REQUIRE SSL;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
     ON `%wiki%`.* TO 'mediawiki'@'%';
@@ -22,11 +23,18 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
     ON `survey`.* TO 'mediawiki'@'%';
 
+-- Grants for 'cargouser'@''
+
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
+    on `%wiki`.* TO 'cargouser'@'%'
+    IDENTIFIED BY '<%= @mediawiki_password %>';
+
 -- Grants for 'wikiadmin'@''
 
 GRANT USAGE
     ON *.* TO 'wikiadmin'@'%'
-    IDENTIFIED BY '<%= @wikiadmin_password %>';
+    IDENTIFIED BY '<%= @wikiadmin_password %>'
+    REQUIRE SSL;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
     ON `%wiki%`.* TO 'wikiadmin'@'%';

@@ -12,10 +12,14 @@ class mediawiki::packages {
         'ffmpeg2theora',
         'locales-all',
         'oggvideotools',
+        'libxi-dev',
+        'libglu1-mesa-dev',
+        'libglew-dev',
         'libvips-tools',
         'lilypond',
+        'ploticus',
         'poppler-utils',
-        'python-pip',
+#       'python-pip', # Temporarily remove, not compatible with Debian 11
         'netpbm',
         'librsvg2-dev',
         'libjpeg-dev',
@@ -26,7 +30,7 @@ class mediawiki::packages {
         'xvfb',
         'timidity',
         'librsvg2-bin',
-        'texlive-latex-extra',
+        'python3-minimal',
         'python3-requests',
         'rsync',
     ]
@@ -41,38 +45,6 @@ class mediawiki::packages {
     package { $packages:
         ensure  => present,
         require => Exec['apt_update_mediawiki_packages'],
-    }
-
-    file { '/opt/ploticus_2.42-3+b4_amd64.deb':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/packages/ploticus/ploticus_2.42-3+b4_amd64.deb',
-    }
-
-    package { 'ploticus':
-        ensure      => installed,
-        provider    => dpkg,
-        source      => '/opt/ploticus_2.42-3+b4_amd64.deb',
-        require     => File['/opt/ploticus_2.42-3+b4_amd64.deb'],
-    }
-
-    file { '/opt/texvc_3.0.0+git20160613-1_amd64.deb':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/packages/texvc/texvc_3.0.0+git20160613-1_amd64.deb',
-    }
-
-    package { 'texvc':
-        ensure      => installed,
-        provider    => dpkg,
-        source      => '/opt/texvc_3.0.0+git20160613-1_amd64.deb',
-        require     => [
-            File['/opt/texvc_3.0.0+git20160613-1_amd64.deb'],
-            Package['texlive-latex-extra'],
-        ],
-    }
-
-    package { [ 'ocaml' ]:
-        ensure          => present,
-        install_options => ['--no-install-recommends'],
     }
 
     file { '/usr/local/bin/mediawiki-firejail-convert':

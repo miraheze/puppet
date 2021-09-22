@@ -13,4 +13,4 @@ with open('/etc/vmtouch-files.list', mode='wt') as filesList:
     filesList.write('\n')
 
 # After writing to file we restart the service to pickup the changes.
-os.system( 'sudo service vmtouch restart' )
+os.system('sudo service vmtouch restart')

@@ -11,7 +11,7 @@
 // For examples see http://pear.php.net/manual/en/package.database.mdb2.intro-dsn.php
 // NOTE: for SQLite use absolute path (Linux): 'sqlite:////full/path/to/sqlite.db?mode=0646'
 //       or (Windows): 'sqlite:///C:/full/path/to/sqlite.db'
-$config['db_dsnw'] = 'mysqli://<%= @db_user_name %>:<%= @db_user_password %>@<%= @db_host %>/<%= @db_name %>';
+$config['db_dsnw'] = 'mysqli://<%= @db_user_name %>:<%= @db_user_password %>@<%= @db_host %>/<%= @db_name %>?verify_server_cert=true&key=wildcard.miraheze.org-2020-2.key&cert=wildcard.miraheze.org-2020-2.crt';
 
 // ----------------------------------
 // IMAP

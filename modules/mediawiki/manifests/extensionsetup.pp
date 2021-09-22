@@ -1,8 +1,7 @@
 # MediaWiki extension setup
 class mediawiki::extensionsetup {
-    if lookup(mediawiki::use_staging) {
-        $mwpath = '/srv/mediawiki-staging/w/'
-        file { [
+    $mwpath = '/srv/mediawiki-staging/w'
+    file { [
         '/srv/mediawiki/w/extensions/OAuth/.composer/cache',
         '/srv/mediawiki-staging/w/extensions/OAuth/.composer/cache',
         '/srv/mediawiki/w/extensions/OAuth/vendor/league/oauth2-server/.git',
@@ -11,167 +10,183 @@ class mediawiki::extensionsetup {
             force   => true,
             recurse => true,
             require => Exec['oauth_composer'],
-        }
-    } else {
-        $mwpath = '/srv/mediawiki/w/'
     }
-    $composer = 'wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar install --no-dev'
+
+    exec { 'install_composer':
+        command     => 'wget -O /usr/bin/composer https://getcomposer.org/download/2.1.6/composer.phar && chmod 0755 /usr/bin/composer',
+        creates     => '/usr/bin/composer',
+        path        => '/usr/bin',
+        user        => 'root',
+    }
+
+    $composer = 'composer install --no-dev'
+
     exec { 'wikibase_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/Wikibase/composer.phar",
-        cwd         => "${mwpath}extensions/Wikibase",
+        creates     => "${mwpath}/extensions/Wikibase/vendor",
+        cwd         => "${mwpath}/extensions/Wikibase",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/Wikibase",
+        environment => "HOME=${mwpath}/extensions/Wikibase",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'maps_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/Maps/composer.phar",
+        creates     => "${mwpath}/extensions/Maps/vendor",
         cwd         => "${mwpath}/extensions/Maps",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/Maps",
+        environment => "HOME=${mwpath}/extensions/Maps",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'flow_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/Flow/composer.phar",
-        cwd         => "${mwpath}extensions/Flow",
+        creates     => "${mwpath}/extensions/Flow/vendor",
+        cwd         => "${mwpath}/extensions/Flow",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/Flow",
+        environment => "HOME=${mwpath}/extensions/Flow",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'oauth_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/OAuth/composer.phar",
-        cwd         => "${mwpath}extensions/OAuth",
+        creates     => "${mwpath}/extensions/OAuth/vendor",
+        cwd         => "${mwpath}/extensions/OAuth",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/OAuth",
+        environment => "HOME=${mwpath}/extensions/OAuth",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'templatestyles_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/TemplateStyles/composer.phar",
-        cwd         => "${mwpath}extensions/TemplateStyles",
+        creates     => "${mwpath}/extensions/TemplateStyles/vendor",
+        cwd         => "${mwpath}/extensions/TemplateStyles",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/TemplateStyles",
+        environment => "HOME=${mwpath}/extensions/TemplateStyles",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'antispoof_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/AntiSpoof/composer.phar",
-        cwd         => "${mwpath}extensions/AntiSpoof",
+        creates     => "${mwpath}/extensions/AntiSpoof/vendor",
+        cwd         => "${mwpath}/extensions/AntiSpoof",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/AntiSpoof",
+        environment => "HOME=${mwpath}/extensions/AntiSpoof",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'kartographer_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/Kartographer/composer.phar",
-        cwd         => "${mwpath}extensions/Kartographer",
+        creates     => "${mwpath}/extensions/Kartographer/vendor",
+        cwd         => "${mwpath}/extensions/Kartographer",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/Kartographer",
+        environment => "HOME=${mwpath}/extensions/Kartographer",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'timedmediahandler_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/TimedMediaHandler/composer.phar",
-        cwd         => "${mwpath}extensions/TimedMediaHandler",
+        creates     => "${mwpath}/extensions/TimedMediaHandler/vendor",
+        cwd         => "${mwpath}/extensions/TimedMediaHandler",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/TimedMediaHandler",
+        environment => "HOME=${mwpath}/extensions/TimedMediaHandler",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'translate_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/Translate/composer.phar",
-        cwd         => "${mwpath}extensions/Translate",
+        creates     => "${mwpath}/extensions/Translate/vendor",
+        cwd         => "${mwpath}/extensions/Translate",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/Translate",
+        environment => "HOME=${mwpath}/extensions/Translate",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'oathauth_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/OATHAuth/composer.phar",
-        cwd         => "${mwpath}extensions/OATHAuth",
+        creates     => "${mwpath}/extensions/OATHAuth/vendor",
+        cwd         => "${mwpath}/extensions/OATHAuth",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/OATHAuth",
+        environment => "HOME=${mwpath}/extensions/OATHAuth",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
     
     exec { 'lingo_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/Lingo/composer.phar",
-        cwd         => "${mwpath}extensions/Lingo",
+        creates     => "${mwpath}/extensions/Lingo/vendor",
+        cwd         => "${mwpath}/extensions/Lingo",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/Lingo",
+        environment => "HOME=${mwpath}/extensions/Lingo",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'wikibasequalityconstraints_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/WikibaseQualityConstraints/composer.phar",
-        cwd         => "${mwpath}extensions/WikibaseQualityConstraints",
+        creates     => "${mwpath}/extensions/WikibaseQualityConstraints/vendor",
+        cwd         => "${mwpath}/extensions/WikibaseQualityConstraints",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/WikibaseQualityConstraints",
+        environment => "HOME=${mwpath}/extensions/WikibaseQualityConstraints",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'wikibaselexeme_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/WikibaseLexeme/composer.phar",
-        cwd         => "${mwpath}extensions/WikibaseLexeme",
+        creates     => "${mwpath}/extensions/WikibaseLexeme/vendor",
+        cwd         => "${mwpath}/extensions/WikibaseLexeme",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/WikibaseLexeme",
+        environment => "HOME=${mwpath}/extensions/WikibaseLexeme",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'createwiki_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/CreateWiki/composer.phar",
-        cwd         => "${mwpath}extensions/CreateWiki",
+        creates     => "${mwpath}/extensions/CreateWiki/vendor",
+        cwd         => "${mwpath}/extensions/CreateWiki",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/CreateWiki",
+        environment => "HOME=${mwpath}/extensions/CreateWiki",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'datatransfer_composer':
-        command     => "wget -O composer.phar https://getcomposer.org/composer-1.phar | php && php composer.phar require phpoffice/phpspreadsheet",
-        creates     => "${mwpath}extensions/DataTransfer/composer.phar",
-        cwd         => "${mwpath}extensions/DataTransfer",
+        command     => 'composer require phpoffice/phpspreadsheet',
+        creates     => "${mwpath}/extensions/DataTransfer/vendor",
+        cwd         => "${mwpath}/extensions/DataTransfer",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/DataTransfer",
+        environment => "HOME=${mwpath}/extensions/DataTransfer",
         user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
     exec { 'bootstrap_composer':
         command     => $composer,
-        creates     => "${mwpath}extensions/Bootstrap/composer.phar",
-        cwd         => "${mwpath}extensions/Bootstrap",
+        creates     => "${mwpath}/extensions/Bootstrap/vendor",
+        cwd         => "${mwpath}/extensions/Bootstrap",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}extensions/Bootstrap",
+        environment => "HOME=${mwpath}/extensions/Bootstrap",
+        user        => 'www-data',
+        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+    }
+
+    exec { 'femiwiki_npm':
+        command     => 'npm install',
+        creates     => "${mwpath}/skins/Femiwiki/node_modules",
+        cwd         => "${mwpath}/skins/Femiwiki",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/skins/Femiwiki",
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
