@@ -5,6 +5,7 @@ default-src:
   - '*.miraheze.org'
 
 script-src:
+  - 'blob:'
   - "'self'"
   - "'unsafe-inline'"
   - "'unsafe-eval'"
