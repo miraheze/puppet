@@ -11,7 +11,7 @@ else:
     scriptsplit = script.split('/')
     script = script = f'/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
 wiki = sys.argv[2]
-if wiki in ("all", "foreachwikiindblist"):
+if wiki == 'all':
     command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json {script}'
 elif wiki in ("extension", "skin"):
     extension = input("Type the ManageWiki name of the extension or skin: ")
