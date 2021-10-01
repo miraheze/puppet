@@ -7,21 +7,18 @@ class base::ufw {
         port  => 22,
     }
 
-    $firewallIpv4 = query_nodes("domain='$domain' and Class[Role::Icinga2]", 'ipaddress')
-    $firewallIpv4.each |$key| {
-        ufw::allow { "nrpe ${key}":
+    $firewallRules = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+    $firewallRules.each |$key, $value| {
+        ufw::allow { "nrpe ${value['ipaddress']} IPv4":
             proto => 'tcp',
             port  => 5666,
-            from  => $key,
+            from  => $value['ipaddress'],
         }
-    }
 
-    $firewallIpv6 = query_nodes("domain='$domain' and Class[Role::Icinga2]", 'ipaddress6')
-    $firewallIpv6.each |$key| {
-        ufw::allow { "nrpe ${key}":
+        ufw::allow { "nrpe ${value['ipaddress6']} IPv6":
             proto => 'tcp',
             port  => 5666,
-            from  => $key,
+            from  => $value['ipaddress6'],
         }
     }
 
