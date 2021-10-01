@@ -4,7 +4,8 @@ import os.path
 from glob import glob
 
 files = [
-    '/srv/mediawiki/cache/databases.json'
+    '/srv/mediawiki/cache/databases.json',
+    '/srv/mediawiki/cache/extension-list.json'
 ]
 
 l10nLangs = [
