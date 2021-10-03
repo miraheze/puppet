@@ -9,16 +9,3 @@ paths:
   /page_save:
     x-modules:
       - path: sys/page_save.js
-  /parsoid:
-    x-modules:
-      - path: sys/parsoid.js
-        options:
-          parsoidHost: 'meta.miraheze.org/w/rest.php'
-          response_cache_control: '{{options.purged_cache_control}}'
-          grace_ttl: '1000000'
-          # A list of pages that we don't currently want to re-render on
-          # each edit. Most of these are huge bot-edited pages, which are
-          # rarely viewed in any case.
-          rerenderBlacklist:
-            # <domain> :
-            #   - '<page>'
