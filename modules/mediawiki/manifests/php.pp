@@ -71,6 +71,7 @@ class mediawiki::php (
 
     php::extension { 'tideways-xhprof':
         ensure   => $profiling_ensure,
+        package_name => '',
         priority => 30,
         config   => {
             'extension'                       => 'tideways_xhprof.so',
