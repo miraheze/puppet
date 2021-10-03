@@ -72,9 +72,7 @@ class mediawiki(
     
     if lookup(mediawiki::use_staging) {
         include mediawiki::extensionsetup
-        file { [
-            '/srv/mediawiki-staging',
-        ]:
+        file { '/srv/mediawiki-staging':
             ensure => 'directory',
             owner  => 'www-data',
             group  => 'www-data',
