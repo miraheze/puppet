@@ -18,6 +18,7 @@ class mediawiki::packages {
         'libvips-tools',
         'lilypond',
         'ploticus',
+        'poolcounter',
         'poppler-utils',
 #       'python-pip', # Temporarily remove, not compatible with Debian 11
         'netpbm',
