@@ -3,7 +3,7 @@ class mediawiki::php (
     Integer $php_fpm_childs = lookup('mediawiki::php::fpm::childs', {'default_value' => 26}),
     Integer $fpm_min_restart_threshold = lookup('mediawiki::php::fpm::fpm_min_restart_threshold', {'default_value' => 6}),
     String $php_version = lookup('php::php_version', {'default_value' => '7.2'}),
-    Optional[Boolean] $use_tideways = undef,
+    Boolean $use_tideways = lookup('mediawiki::php::use_tideways', {'default_value' => false}),
 ) {
     
     if !defined(Class['php::php_fpm']) {
@@ -73,10 +73,9 @@ class mediawiki::php (
         ensure   => $profiling_ensure,
         package_name => '',
         priority => 30,
-        sapis    => ['fpm'],
         config   => {
             'extension'                       => 'tideways_xhprof.so',
             'tideways_xhprof.clock_use_rdtsc' => '0',
-        },
+        }
     }
 }
