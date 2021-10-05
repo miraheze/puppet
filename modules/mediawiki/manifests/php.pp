@@ -9,6 +9,9 @@ class mediawiki::php (
     if !defined(Class['php::php_fpm']) {
         class { 'php::php_fpm':
             config  => {
+                'apc'                       => {
+                    'shm_size' => '128M'
+                },
                 'display_errors'            => 'Off',
                 'error_log'                 => 'syslog',
                 'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
