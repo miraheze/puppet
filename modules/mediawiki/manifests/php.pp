@@ -10,7 +10,7 @@ class mediawiki::php (
         class { 'php::php_fpm':
             config  => {
                 'apc'                       => {
-                    'shm_size' => '256M'
+                    'shm_size' => '1024M'
                 },
                 'display_errors'            => 'Off',
                 'error_log'                 => 'syslog',
@@ -21,7 +21,7 @@ class mediawiki::php (
                     'enable'                  => 1,
                     'interned_strings_buffer' => 50,
                     'memory_consumption'      => 512,
-                    'max_accelerated_files'   => 20000,
+                    'max_accelerated_files'   => 24000,
                     'max_wasted_percentage'   => 10,
                     'validate_timestamps'     => 1,
                     'revalidate_freq'         => 10,
