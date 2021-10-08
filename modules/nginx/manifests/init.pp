@@ -38,7 +38,6 @@ class nginx (
     $module_path = get_module_path('varnish')
 
     $cache_proxies = query_facts("domain='$domain' and Class['Role::Varnish']", ['ipaddress', 'ipaddress6'])
-    $frame_whitelist = loadyaml("${module_path}/data/frame_whitelist.yaml")
     file { '/etc/nginx/nginx.conf':
         content => template('nginx/nginx.conf.erb'),
         require => Package['nginx'],
