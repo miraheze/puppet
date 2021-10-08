@@ -14,7 +14,7 @@ def check_up(server):
 
 def run(args, start):
     if args.ignoretime:
-        rsyncparams = ''
+        rsyncparams = '--inplace'
     else:
         rsyncparams = '--update'
     loginfo = {}
