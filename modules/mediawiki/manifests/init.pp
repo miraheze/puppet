@@ -90,7 +90,7 @@ class mediawiki(
         }
 
         git::clone { 'MediaWiki core':
-            ensure             => 'latest',
+            ensure             => present,
             directory          => '/srv/mediawiki-staging/w',
             origin             => 'https://github.com/miraheze/mediawiki.git',
             branch             => $branch,
