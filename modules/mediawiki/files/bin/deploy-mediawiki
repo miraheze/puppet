@@ -36,8 +36,8 @@ def run(args, start):
         rsyncpaths.append('/srv/mediawiki/config/')
     if args.world:
         os.chdir('/srv/mediawiki-staging/w')
-        exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules'))
-        exitcodes.append(os.system('sudo -u www-data composer install --no-dev'))
+        exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
+        exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
         rsyncpaths.append('/srv/mediawiki/w/')
     if args.files:
