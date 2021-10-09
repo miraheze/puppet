@@ -58,8 +58,8 @@ def log(config, message, project, author):
     if config.wiki_category:
         if not re.search(r'\[\[Category:' + config.wiki_category + r'\]\]',
                          text):
-            lines.append('<noinclude>[[Category:'
-                         + config.wiki_category + ']]</noinclude>')
+            lines.append('<noinclude>[[Category:' +
+                         config.wiki_category + ']]</noinclude>')
 
     page.save(
         '\n'.join(lines),

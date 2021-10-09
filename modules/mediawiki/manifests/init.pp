@@ -105,7 +105,7 @@ class mediawiki(
         file { '/usr/local/bin/deploy-mediawiki':
             ensure => 'present',
             mode   => '0755',
-            source => 'puppet:///modules/mediawiki/bin/deploy-mediawiki',
+            source => 'puppet:///modules/mediawiki/bin/deploy-mediawiki.py',
         }
         exec { 'MediaWiki Config Sync':
             command     => "/usr/local/bin/deploy-mediawiki --config --servers=${lookup(mediawiki::default_sync)}",
@@ -215,7 +215,7 @@ class mediawiki(
         file {"/usr/local/bin/${cookbook}":
             ensure => 'present',
             mode   => '0755',
-            source => "puppet:///modules/mediawiki/cookbooks/${cookbook}",
+            source => "puppet:///modules/mediawiki/cookbooks/${cookbook}.py",
         }
     }
 

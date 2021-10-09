@@ -103,7 +103,7 @@ class bacula::director {
 
     file { '/usr/lib/nagios/plugins/check_bacula_backups':
         ensure  => present,
-        source  => 'puppet:///modules/bacula/check_bacula_backups',
+        source  => 'puppet:///modules/bacula/check_bacula_backups.py',
         mode    => '0555',
         require => Package['monitoring-plugins'],
     }
