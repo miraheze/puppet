@@ -54,9 +54,9 @@ def main(argv):
     for line in backends:
         if line.startswith(b"vcl") and line.find(b"test") == -1:
             if (line.find(b"Healthy") != -1) or (line.find(b"healthy") != -1) or (line.find(b"good") != -1):
-                backends_healthy.append(re.sub(b'vcl.+\.', b"", line.split(b" ")[0]))
+                backends_healthy.append(re.sub(br'vcl.+\.', b"", line.split(b" ")[0]))
             else:
-                backends_sick.append(re.sub(b'vcl.+\.', b"", line.split(b" ")[0]))
+                backends_sick.append(re.sub(br'vcl.+\.', b"", line.split(b" ")[0]))
 
     if backends_sick:
         print(("%s backends are down.  %s" % (len(backends_sick), str(b" ".join(backends_sick), 'utf-8'))))

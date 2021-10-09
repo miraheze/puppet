@@ -7,6 +7,7 @@ from twisted.internet import protocol
 
 recver = None
 
+
 class RCBot(irc.IRCClient):
     nickname = "<%= @nickname %>"
     password = "mirahezebots:<%= @mirahezebots_password %>"
@@ -27,6 +28,7 @@ class RCBot(irc.IRCClient):
         # with 'unexpected end of data'.
         self.msg(self.channel, str(broadcast, 'utf-8', 'ignore'))
 
+
 class RCFactory(protocol.ClientFactory):
     protocol = RCBot
 
@@ -37,6 +39,7 @@ class RCFactory(protocol.ClientFactory):
     def clientConnectionFailed(self, connector, reason):
         print("Could not connect: %s" % (reason,))
 
+
 class Echo(DatagramProtocol):
 
     def datagramReceived(self, data, host_port):
@@ -46,10 +49,10 @@ class Echo(DatagramProtocol):
             recver.gotUDP(data)
 
 
-reactor.listenUDP(<%= @udp_port %>, Echo())
-<% if @network_port == '6697' %>
-reactor.connectSSL("<%= @network %>", <%= @network_port %>, RCFactory(), ssl.ClientContextFactory())
-<% else %>
-reactor.connectTCP("<%= @network %>", <%= @network_port %>, RCFactory())
-<% end %>
+reactor.listenUDP(<%= @udp_port %>, Echo())  # noqa: E225,E999
+<% if @network_port == '6697' %>  # noqa: E225
+reactor.connectSSL("<%= @network %>", <%= @network_port %>, RCFactory(), ssl.ClientContextFactory())  # noqa: E225
+<% else %>  # noqa: E225
+reactor.connectTCP("<%= @network %>", <%= @network_port %>, RCFactory())  # noqa: E225
+<% end %>  # noqa: E225
 reactor.run()

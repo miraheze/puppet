@@ -4,12 +4,11 @@ daemonize yes
 pidfile /var/run/redis/redis-server.pid
 port <%= @port %>
 timeout 0
-tcp-keepalive 0
 loglevel notice
 syslog-enabled yes
 syslog-ident redis-server
 databases 1
-tcp-backlog 511
+tcp-backlog 1024
 
 #stop-writes-on-bgsave-error no
 <%- if @jobrunner -%>
