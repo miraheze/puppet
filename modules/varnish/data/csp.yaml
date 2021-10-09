@@ -143,4 +143,3 @@ connect-src:
   - '*.wikipedia.org'
   - 'www.mediawiki.org'
   - '*.wikimedia.org'
-  
