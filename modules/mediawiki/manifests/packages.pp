@@ -12,6 +12,9 @@ class mediawiki::packages {
         'ffmpeg2theora',
         'locales-all',
         'oggvideotools',
+        'libxi-dev',
+        'libglu1-mesa-dev',
+        'libglew-dev',
         'libvips-tools',
         'lilypond',
         'ploticus',
@@ -27,6 +30,7 @@ class mediawiki::packages {
         'xvfb',
         'timidity',
         'librsvg2-bin',
+        'python3-minimal',
         'python3-requests',
         'rsync',
     ]
