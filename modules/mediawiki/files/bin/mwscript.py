@@ -34,7 +34,7 @@ print(command)
 confirm = input("Type 'Y' to confirm: ")
 if confirm.upper() == 'Y':
     if long:
-        os.system(f'{command} (START)'})
+        os.system(f'{command} (START)')
     if 'generate' in locals():
         os.system(generate)
     return_value = os.system(command)
