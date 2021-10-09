@@ -40,10 +40,10 @@ class ParsePeriodAction(argparse.Action):
         super(ParsePeriodAction, self).__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-	    m = re.match(r'(\d+(?:\.\d+)?)(%s)\Z' % '|'.join(list(MULTIPLIERS.keys())), values)
-	    if not m:
-	        raise ValueError('invalid period - %s' % value)
-	    setattr(namespace, self.dest, timedelta(seconds=float(m.group(1)) * MULTIPLIERS[m.group(2)]))
+        m = re.match(r'(\d+(?:\.\d+)?)(%s)\Z' % '|'.join(list(MULTIPLIERS.keys())), values)
+        if not m:
+            raise ValueError('invalid period - %s' % value)
+        setattr(namespace, self.dest, timedelta(seconds=float(m.group(1)) * MULTIPLIERS[m.group(2)]))
 
 
 def main(argv):
@@ -56,7 +56,7 @@ def main(argv):
     parser.set_defaults(bconsole='/usr/sbin/bconsole')
     options = vars(parser.parse_args())
     if not options['hostid'] or not options['backupid']:
-      parser.error("-H and -B should be specified.")
+        parser.error("-H and -B should be specified.")
     exit_status, message = OK, None
     child = pexpect.spawn(options['bconsole'], ['-n'])
     hostid = options['hostid']

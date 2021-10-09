@@ -4,6 +4,7 @@ import os
 import time
 import requests
 
+
 def check_up(server):
     up = False
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
@@ -11,6 +12,7 @@ def check_up(server):
     if req.status_code == 200 and 'miraheze' in req.text and server in req.headers['X-Served-By']:
         up = True
     return up
+
 
 def run(args, start):
     if args.ignoretime:
@@ -108,7 +110,7 @@ def run(args, start):
                         else:
                             print('Ignoring canary error due to --force')
                     print(f'Deployed {file} to {server}.')
-        
+
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
     FAIL = 0
     for code in exitcodes:
@@ -126,6 +128,7 @@ def run(args, start):
     if FAIL == 1:
         exit(1)
 
+
 if __name__ == '__main__':
     start = time.time()
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -138,5 +141,5 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--servers', dest='servers', required=True)
-    parser.add_argument('--ignore-time', dest='ignoretime', action='store_true') 
+    parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     run(parser.parse_args(), start)

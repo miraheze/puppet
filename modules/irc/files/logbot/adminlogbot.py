@@ -151,7 +151,7 @@ class logbot(ircbot.SingleServerIRCBot):
 
         if (line.startswith(self.config.nick) or
             line.startswith("!%s" % self.config.nick) or
-            line.lower() == "!log help"):
+                line.lower() == "!log help"):
             logging.debug("'%s' got '%s'; displaying help message." %
                           (self.name, line))
             try:
