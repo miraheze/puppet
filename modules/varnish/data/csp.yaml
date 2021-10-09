@@ -141,3 +141,8 @@ connect-src:
   - "'self'"
   - '*.miraheze.org'
   - 'www.wikidata.org'
+  - '*.wikipedia.org'
+  - 'www.mediawiki.org'
+  - '*.wikimedia.org'
+  - '*.wikinews.org'
+  - '*.wiktionary.org'
