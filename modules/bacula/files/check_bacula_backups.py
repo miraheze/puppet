@@ -42,7 +42,7 @@ class ParsePeriodAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
 	    m = re.match(r'(\d+(?:\.\d+)?)(%s)\Z' % '|'.join(list(MULTIPLIERS.keys())), values)
 	    if not m:
-	        raise ValueError('invalid period - %s' % value)
+	        raise ValueError('invalid period - %s' % values)
 	    setattr(namespace, self.dest, timedelta(seconds=float(m.group(1)) * MULTIPLIERS[m.group(2)]))
 
 
