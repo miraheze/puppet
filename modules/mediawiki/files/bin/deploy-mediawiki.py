@@ -56,7 +56,7 @@ def run(args, start):
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki=loginwiki'))
         # rsyncfiles.append('/srv/mediawiki/cache/l10nupdate-*.json')
-        rsyncpaths.append(f'/srv/mediawiki/cache/l10n/')
+        rsyncpaths.append('/srv/mediawiki/cache/l10n/')
     if args.gitinfo:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --use-staging --wiki=loginwiki'))
     if args.servers == 'skip':
@@ -77,8 +77,8 @@ def run(args, start):
         if args.force:
             print('Ignoring canary error due to --force')
         else:
-            print(f'Canary check failed for localhost. Aborting... - use --force to proceed')
-            os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for localhost')
+            print('Canary check failed for localhost. Aborting... - use --force to proceed')
+            os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for localhost')
             exit(3)
     if sync:
         if len(rsyncpaths) > 0:

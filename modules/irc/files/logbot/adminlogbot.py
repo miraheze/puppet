@@ -123,8 +123,8 @@ class logbot(ircbot.SingleServerIRCBot):
                     projects.append(obj[1]["cn"][0])
 
                 if self.config.service_group_rdn:
-                    sgdata = ds.search_s(self.config.service_group_rdn +
-                                         "," + base, ldap.SCOPE_SUBTREE,
+                    sgdata = ds.search_s(self.config.service_group_rdn
+                                         + "," + base, ldap.SCOPE_SUBTREE,
                                          "(objectclass=groupofnames)")
                     if not sgdata:
                         self.connection.privmsg(event.target,
@@ -149,9 +149,9 @@ class logbot(ircbot.SingleServerIRCBot):
             author = self.config.author_map[author]
         line = event.arguments[0]
 
-        if (line.startswith(self.config.nick) or
-            line.startswith("!%s" % self.config.nick) or
-                line.lower() == "!log help"):
+        if (line.startswith(self.config.nick)
+                or line.startswith("!%s" % self.config.nick)
+                or line.lower() == "!log help"):
             logging.debug("'%s' got '%s'; displaying help message." %
                           (self.name, line))
             try:
@@ -233,8 +233,8 @@ class logbot(ircbot.SingleServerIRCBot):
 
                 if project not in projects:
                     self.connection.privmsg(event.target,
-                                            project +
-                                            " is not a valid project.")
+                                            project
+                                            + " is not a valid project.")
                 return
                 message = arr[2]
             else:
