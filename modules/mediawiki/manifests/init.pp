@@ -107,6 +107,11 @@ class mediawiki(
             mode   => '0755',
             source => 'puppet:///modules/mediawiki/bin/deploy-mediawiki.py',
         }
+        file { '/usr/local/bin/mwupgradetool':
+            ensure => 'present',
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/bin/mwupgradetool.py',
+        }
         exec { 'MediaWiki Config Sync':
             command     => "/usr/local/bin/deploy-mediawiki --config --servers=${lookup(mediawiki::default_sync)}",
             cwd         => '/srv/mediawiki-staging',
