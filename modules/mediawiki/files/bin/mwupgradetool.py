@@ -1,6 +1,8 @@
-import os, requests
+import os
+import requests
 canary = 'mw11'
 serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
+
 
 def check_up(server):
     up = False
@@ -10,14 +12,15 @@ def check_up(server):
         up = True
     return up
 
+
 def check_ro(server):
-    up = False
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
     req = requests.get('https://meta.miraheze.org/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
     response = req.json()
     if response['query']['general']['readonly']:
         return True
     return False
+
 
 print("Welcome to the MediaWiki Upgrade tool!")
 input("Please confirm you are running this script on the canary server: (press enter)")
