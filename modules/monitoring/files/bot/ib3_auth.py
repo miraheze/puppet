@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 class AbstractAuth(object):
     """Base class for authentication mixins."""
+
     def __init__(
             self, server_list, nickname, realname,
             ident_password, username=None, **kwargs):
@@ -51,6 +52,7 @@ class AbstractAuth(object):
 
 class SASL(AbstractAuth):
     """Authenticate using SASL before joining channels."""
+
     def __init__(self, *args, **kwargs):
         super(SASL, self).__init__(*args, **kwargs)
         self.ircobj._on_connect = self._handle_connect
