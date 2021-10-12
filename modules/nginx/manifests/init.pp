@@ -1,7 +1,8 @@
 # nginx
 class nginx (
     Variant[String, Integer] $nginx_worker_processes = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
-    Boolean $use_graylog                             = false,
+    Boolean $use_graylog                             = lookup('nginx::use_graylog', {'default_value' => false}),
+    Boolean $enable_keepalive                        = lookup('nginx::enable_keepalive', {'default_value' => true}),
 ) {
     # Ensure Apache is absent: https://phabricator.miraheze.org/T253
     package { 'apache2':
