@@ -42,6 +42,12 @@ def run(args, start):
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
         rsyncpaths.append('/srv/mediawiki/w/')
+    if args.landing:
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/landing/* /srv/mediawiki/landing/'))
+        rsyncpaths.append('/srv/mediawiki/landing/')
+    if args.errorpages:
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/ErrorPages/* /srv/mediawiki/ErrorPages/'))
+        rsyncpaths.append('/srv/mediawiki/ErrorPages/')
     if args.files:
         files = str(args.files).split(',')
         for file in files:
@@ -134,6 +140,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
+    parser.add_argument('--landing', dest='landing', action='store_true')
+    parser.add_argument('--errorpages', dest='errorpages', action='store_true')
     parser.add_argument('--l10n', dest='l10n', action='store_true')
     parser.add_argument('--gitinfo', dest='gitinfo', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
