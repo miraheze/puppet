@@ -97,10 +97,10 @@ class role::db(
 
     cron { 'DB_backups':
         ensure  => present,
-        command => "/usr/bin/mydumper -G -E -R -m -v 3 -t 2 -c -x '^(?!([0-9a-z]+wiki.(objectcache|querycache|querycachetwo|recentchanges|searchindex)))' --trx-consistency-only -o '/srv/backups/dbs' -L '/srv/backups/recent.log'",
+        command => "/usr/bin/mydumper -G -E -R -m -v 3 -t 1 -c -x '^(?!([0-9a-z]+wiki.(objectcache|querycache|querycachetwo|recentchanges|searchindex)))' --trx-consistency-only -o '/srv/backups/dbs' -L '/srv/backups/recent.log'",
         user    => 'root',
         minute  => '0',
-        hour    => '0',
+        hour    => '6',
     }
 
     motd::role { 'role::db':
