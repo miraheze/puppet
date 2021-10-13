@@ -1,4 +1,0 @@
-role::dbbackup::clusters:
-    - c2
-    - c3
-    - c4
