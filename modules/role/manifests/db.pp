@@ -13,14 +13,14 @@ class role::db(
     $icinga_password = lookup('passwords::db::icinga')
     $roundcubemail_password = lookup('passwords::roundcubemail')
     $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
- 
+
     include ssl::wildcard
 
     file { '/etc/ssl/private':
-        ensure  => directory,
-        owner   => 'root',
-        group   => 'mysql',
-        mode    => '0750',
+        ensure => directory,
+        owner  => 'root',
+        group  => 'mysql',
+        mode   => '0750',
     }
 
     class { 'mariadb::config':
@@ -89,7 +89,20 @@ class role::db(
     prometheus::mysqld_exporter::instance { 'main':
         client_socket => '/run/mysqld/mysqld.sock'
     }
-    
+
+    # Backup provisioning
+    file { '/srv/backups':
+        ensure => directory,
+    }
+
+    cron { 'DB_backups':
+        ensure  => present,
+        command => "/usr/bin/mydumper -G -E -R -m -v 3 -t 2 -c -x '^(?!([0-9a-z]+wiki.(objectcache|querycache|querycachetwo|recentchanges|searchindex)))' --trx-consistency-only -o '/srv/backups/dbs' -L '/srv/backups/recent.log'"
+        user    => 'root',
+        minute  => '0',
+        hour    => '0',
+    }
+
     motd::role { 'role::db':
         description => 'general database server',
     }
