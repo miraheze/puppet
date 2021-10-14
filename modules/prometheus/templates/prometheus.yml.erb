@@ -125,7 +125,7 @@ scrape_configs:
     static_configs:
       - targets: [
 <%- @host_elasticsearch.sort.each do |host| -%>
-        '<%= host %>:_',
+        '<%= host %>:9206',
 <%- end -%>
       ]
   - job_name: 'blackbox_https_mediawiki_cp'
