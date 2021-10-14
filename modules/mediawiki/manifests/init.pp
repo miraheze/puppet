@@ -5,7 +5,6 @@ class mediawiki(
     Optional[Boolean] $use_memcached = undef,
 ) {
     include mediawiki::favicons
-    include mediawiki::cron
     if lookup('mwservices', {'default_value' => false}) {
         include mediawiki::services_cron
     }
