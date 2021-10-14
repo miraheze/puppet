@@ -25,4 +25,19 @@ class prometheus::es_exporter {
         override => true,
         restart  => true,
     }
+
+    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall.each |$key, $value| {
+        ufw::allow { "prometheus 9206 ${value['ipaddress']}":
+            proto => 'tcp',
+            port  => 9206,
+            from  => $value['ipaddress'],
+        }
+
+        ufw::allow { "prometheus 9206 ${value['ipaddress6']}":
+            proto => 'tcp',
+            port  => 9206,
+            from  => $value['ipaddress6'],
+        }
+    }
 }
