@@ -30,6 +30,7 @@ node /^gluster[34]\.miraheze\.org$/ {
 node 'graylog2.miraheze.org' {
     include base
     include role::graylog
+    include prometheus::es_exporter
 }
 
 node 'jobchron1.miraheze.org' {
