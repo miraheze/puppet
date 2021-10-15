@@ -126,7 +126,6 @@ class mediawiki(
         '/srv/mediawiki/w',
         '/srv/mediawiki/config',
         '/srv/mediawiki/cache',
-        '/srv/mediawiki/dblist',
     ]:
         ensure => 'directory',
         owner  => 'www-data',
