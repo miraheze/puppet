@@ -255,11 +255,28 @@ class monitoring (
         mode    => '0755',
         require => Package['nagios-nrpe-plugin'],
     }
-    
+
     package { 'python3-tldextract':
         ensure => present,
     }
 
+    # Setup webhook for grafana to call
+    require_package('python3-flask', 'python3-filelock')
+
+    file { '/usr/local/bin/grafana-webhook.py':
+        ensure  => present,
+        source  => 'puppet:///modules/monitoring/grafana-webhook.py',
+        mode    => '0755',
+        notify  => Service['grafana-webhook'],
+    }
+
+    systemd::service { 'grafana-webhook':
+        ensure  => present,
+        content => systemd_template('grafana-webhook'),
+        restart => true,
+    }
+
+    # Icinga monitoring
     monitoring::services { 'Check correctness of the icinga configuration':
         check_command => 'nrpe',
         vars          => {
