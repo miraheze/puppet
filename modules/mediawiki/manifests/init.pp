@@ -224,7 +224,7 @@ class mediawiki(
     }
 
     file { '/usr/local/bin/pushServices.sh':
-        ensure => 'present',
+        ensure => 'absent',
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/pushServices.sh',
     }
