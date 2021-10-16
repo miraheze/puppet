@@ -1,6 +1,6 @@
 # = Class: role::openldap
 #
-# Sets up Citeoid, Proton and Restbase.
+# Sets up OpenLDAP
 #
 # = Parameters
 #
