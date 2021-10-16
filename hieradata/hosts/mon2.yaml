@@ -32,7 +32,7 @@ icinga2::globals::constants:
   NodeName: 'mon2.miraheze.org'
   ZoneName: 'mon2.miraheze.org'
   TicketSalt: ''
-  MaxConcurrentChecks: 6
+  MaxConcurrentChecks: 4
 icinga2::globals::user: 'nagios'
 icinga2::globals::group: 'nagios'
 icinga2::globals::icinga2_bin: '/usr/sbin/icinga2'
