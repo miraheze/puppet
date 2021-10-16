@@ -1,7 +1,7 @@
 # class: mediawiki::services_cron
 class mediawiki::services_cron {
     file { '/srv/services':
-        ensure => 'absent',
+        ensure => 'directory',
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0755',
