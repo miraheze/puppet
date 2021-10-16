@@ -103,11 +103,6 @@ node 'puppet3.miraheze.org' {
     include role::salt
 }
 
-node /^services[34]\.miraheze\.org$/ {
-    include base
-    include role::services
-}
-
 node 'test3.miraheze.org' {
     include base
     include role::mediawiki
