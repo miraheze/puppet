@@ -127,6 +127,7 @@ frame-src:
   - 'web.libera.chat'
   - 'snap.berkeley.edu'
   - '*.youtube-nocookie.com'
+  - 'www.youtube.com'
   - 'player.twitch.tv'
   - 'platform.twitter.com'
   - 'discord.com'
