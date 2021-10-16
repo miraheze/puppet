@@ -7,7 +7,7 @@ from flask import request
 app = Flask(__name__)
 
 
-@app.route('/ ', methods=['POST'])
+@app.route('/', methods=['POST'])
 def post():
     lock_acquired = False
 
