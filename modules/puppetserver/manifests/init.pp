@@ -73,7 +73,7 @@ class puppetserver(
     }
 
     git::clone { 'services':
-        ensure    => present,
+        ensure    => absent,
         directory => '/etc/puppetlabs/puppet/services',
         origin    => 'https://github.com/miraheze/services.git',
         require   => Package['puppet-agent'],
@@ -212,6 +212,7 @@ class puppetserver(
     }
 
     cron { 'services-git':
+        ensure  => absent,
         command => '/usr/bin/git -C /etc/puppetlabs/puppet/services pull',
         user    => 'root',
         hour    => '*',
