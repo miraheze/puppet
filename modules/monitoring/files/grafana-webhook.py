@@ -3,9 +3,9 @@
 from filelock import FileLock
 from flask import Flask
 from flask import request
-import os
 
 app = Flask(__name__)
+
 
 @app.route('/ ', methods=['POST'])
 def post():
