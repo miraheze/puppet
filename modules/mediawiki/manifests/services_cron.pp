@@ -1,14 +1,14 @@
 # class: mediawiki::services_cron
 class mediawiki::services_cron {
     file { '/srv/services':
-        ensure => 'directory',
+        ensure => 'absent',
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0755',
     }
 
     file { '/srv/services/id_rsa':
-        ensure  => present,
+        ensure  => absent,
         source  => 'puppet:///private/acme/id_rsa',
         owner   => 'www-data',
         group   => 'www-data',
@@ -17,7 +17,7 @@ class mediawiki::services_cron {
     }
 
     cron { 'generate_services':
-        ensure  => present,
+        ensure  => absent,
         command => '/bin/bash /usr/local/bin/pushServices.sh',
         user    => 'www-data',
         minute  => '*/5',
