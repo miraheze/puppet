@@ -78,6 +78,7 @@ class mediawiki(
             group  => 'www-data',
             mode   => '0755',
         }
+
         git::clone { 'MediaWiki config':
             ensure    => 'latest',
             directory => '/srv/mediawiki-staging/config',
@@ -102,22 +103,63 @@ class mediawiki(
             recurse_submodules => true,
             require            => File['/srv/mediawiki'],
         }
+
+        git::clone { 'landing':
+            ensure             => 'latest',
+            directory          => '/srv/mediawiki-staging/landing',
+            origin             => 'https://github.com/miraheze/landing.git',
+            branch             => 'master',
+            owner              => 'www-data',
+            group              => 'www-data',
+            mode               => '0755',
+            require            => File['/srv/mediawiki'],
+        }
+
+        git::clone { 'ErrorPages':
+            ensure             => 'latest',
+            directory          => '/srv/mediawiki-staging/ErrorPages',
+            origin             => 'https://github.com/miraheze/ErrorPages.git',
+            branch             => 'master',
+            owner              => 'www-data',
+            group              => 'www-data',
+            mode               => '0755',
+            require            => File['/srv/mediawiki'],
+        }
+
         file { '/usr/local/bin/deploy-mediawiki':
             ensure => 'present',
             mode   => '0755',
             source => 'puppet:///modules/mediawiki/bin/deploy-mediawiki.py',
         }
+
         file { '/usr/local/bin/mwupgradetool':
             ensure => 'present',
             mode   => '0755',
             source => 'puppet:///modules/mediawiki/bin/mwupgradetool.py',
         }
+
         exec { 'MediaWiki Config Sync':
             command     => "/usr/local/bin/deploy-mediawiki --config --servers=${lookup(mediawiki::default_sync)}",
             cwd         => '/srv/mediawiki-staging',
             refreshonly => true,
             user        => www-data,
             subscribe   => Git::Clone['MediaWiki config'],
+        }
+
+        exec { 'Landing Sync':
+            command     => "/usr/local/bin/deploy-mediawiki --landing --servers=${lookup(mediawiki::default_sync)}",
+            cwd         => '/srv/mediawiki-staging',
+            refreshonly => true,
+            user        => www-data,
+            subscribe   => Git::Clone['landing'],
+        }
+
+        exec { 'ErrorPages Sync':
+            command     => "/usr/local/bin/deploy-mediawiki --errorpages --servers=${lookup(mediawiki::default_sync)}",
+            cwd         => '/srv/mediawiki-staging',
+            refreshonly => true,
+            user        => www-data,
+            subscribe   => Git::Clone['ErrorPages'],
         }
     }
 
@@ -134,30 +176,6 @@ class mediawiki(
     }
 
     include ::imagemagick::install
-
-    git::clone { 'landing':
-        ensure             => 'latest',
-        directory          => '/srv/mediawiki/landing',
-        origin             => 'https://github.com/miraheze/landing.git',
-        branch             => 'master',
-        owner              => 'www-data',
-        group              => 'www-data',
-        mode               => '0755',
-        timeout            => '550',
-        require            => File['/srv/mediawiki'],
-    }
-
-    git::clone { 'ErrorPages':
-        ensure             => 'latest',
-        directory          => '/srv/mediawiki/ErrorPages',
-        origin             => 'https://github.com/miraheze/ErrorPages.git',
-        branch             => 'master',
-        owner              => 'www-data',
-        group              => 'www-data',
-        mode               => '0755',
-        timeout            => '550',
-        require            => File['/srv/mediawiki'],
-    }
 
     file { '/srv/mediawiki/robots.php':
         ensure  => 'present',
