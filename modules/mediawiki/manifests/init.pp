@@ -147,7 +147,7 @@ class mediawiki(
         }
 
         exec { 'Landing Sync':
-            command     => "/usr/local/bin/deploy-mediawiki --landing --servers=${lookup(mediawiki::default_sync)}",
+            command     => "/usr/local/bin/deploy-mediawiki --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
             cwd         => '/srv/mediawiki-staging',
             refreshonly => true,
             user        => www-data,
@@ -155,7 +155,7 @@ class mediawiki(
         }
 
         exec { 'ErrorPages Sync':
-            command     => "/usr/local/bin/deploy-mediawiki --errorpages --servers=${lookup(mediawiki::default_sync)}",
+            command     => "/usr/local/bin/deploy-mediawiki --errorpages --servers=${lookup(mediawiki::default_sync)} --no-log",
             cwd         => '/srv/mediawiki-staging',
             refreshonly => true,
             user        => www-data,
