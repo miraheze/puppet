@@ -60,7 +60,7 @@ class mediawiki(
             group  => 'www-data',
             mode   => '0400',
         }
-        
+
         file { '/srv/mediawiki-staging/deploykey':
             ensure => present,
             source => 'puppet:///private/mediawiki/mediawiki-deploy-key-private',
@@ -69,7 +69,7 @@ class mediawiki(
             mode   => '0400',
         }
     }
-    
+
     if lookup(mediawiki::use_staging) {
         include mediawiki::extensionsetup
         file { '/srv/mediawiki-staging':
@@ -147,7 +147,7 @@ class mediawiki(
         }
 
         exec { 'Landing Sync':
-            command     => "/usr/local/bin/deploy-mediawiki --landing --servers=${lookup(mediawiki::default_sync)}",
+            command     => "/usr/local/bin/deploy-mediawiki --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
             cwd         => '/srv/mediawiki-staging',
             refreshonly => true,
             user        => www-data,
@@ -155,7 +155,7 @@ class mediawiki(
         }
 
         exec { 'ErrorPages Sync':
-            command     => "/usr/local/bin/deploy-mediawiki --errorpages --servers=${lookup(mediawiki::default_sync)}",
+            command     => "/usr/local/bin/deploy-mediawiki --errorpages --servers=${lookup(mediawiki::default_sync)} --no-log",
             cwd         => '/srv/mediawiki-staging',
             refreshonly => true,
             user        => www-data,
