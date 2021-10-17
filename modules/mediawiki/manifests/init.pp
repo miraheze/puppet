@@ -60,7 +60,7 @@ class mediawiki(
             group  => 'www-data',
             mode   => '0400',
         }
-        
+
         file { '/srv/mediawiki-staging/deploykey':
             ensure => present,
             source => 'puppet:///private/mediawiki/mediawiki-deploy-key-private',
@@ -69,7 +69,7 @@ class mediawiki(
             mode   => '0400',
         }
     }
-    
+
     if lookup(mediawiki::use_staging) {
         include mediawiki::extensionsetup
         file { '/srv/mediawiki-staging':
