@@ -112,14 +112,6 @@ class mediawiki::jobqueue::runner {
             hour     => '5',
             monthday => [ '6', '21' ],
         }
-        cron { 'compress_old_revs':
-            ensure   => present,
-            command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/maintenance/compressOld.php -t concat > /dev/null',
-            user     => 'www-data',
-            minute   => '0',
-            hour     => '5',
-            weekday => [ '5' ],
-        }
     }
 
     monitoring::services { 'JobRunner Service':
