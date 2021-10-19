@@ -45,7 +45,7 @@ class prometheus::nginx {
         ferm::service { 'prometheus nginx':
             proto  => 'tcp',
             port   => '9113',
-            srange => '($firewall_rules_str)',
+            srange => "(${firewall_rules_str})",
         }
     }
 }
