@@ -1,10 +1,10 @@
 # role: mediawiki
 class role::mediawiki (
-    Boolean $strictFirewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
+    Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
 ) {
     include ::mediawiki
 
-    if $strictFirewall {
+    if $strict_firewall {
         $firewall_rules = query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
         $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
         $firewall_rules_str = join($firewall_rules_mapped, ' ')
