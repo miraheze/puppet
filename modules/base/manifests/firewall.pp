@@ -4,7 +4,7 @@ class base::firewall (
 ) {
     if $firewall_mode == 'ufw' {
         # Ensure ferm is purged when installing ufw.
-        package { 'germ':
+        package { 'ferm':
           ensure => purged,
         }
 
