@@ -65,6 +65,9 @@ def run(args, start):
         rsyncpaths.append('/srv/mediawiki/cache/l10n/')
     if args.gitinfo:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --use-staging --wiki=loginwiki'))
+    if args.extensionlist:
+        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki'))
+        rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
     if args.servers == 'skip':
         print('Sync skipped. Mediawiki deploy has not passed canary stage.')
         sync = False
@@ -144,6 +147,7 @@ if __name__ == '__main__':
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
     parser.add_argument('--l10n', dest='l10n', action='store_true')
     parser.add_argument('--gitinfo', dest='gitinfo', action='store_true')
+    parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--force', dest='force', action='store_true')
     parser.add_argument('--files', dest='files')
