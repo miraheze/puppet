@@ -8,7 +8,7 @@ class base {
     include base::sysctl
     include base::timezone
     include base::upgrades
-    include base::ufw
+    include base::firewall
     include base::monitoring
     include ssh
     include users
@@ -40,7 +40,7 @@ class base {
         source => 'puppet:///modules/base/logsalmsg',
         mode   => '0555',
     }
-    
+
     class { 'apt::backports':
         include => {
             'deb' => true,
