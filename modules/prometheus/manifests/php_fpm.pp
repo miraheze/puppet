@@ -42,7 +42,7 @@ class prometheus::php_fpm {
         ferm::service { 'prometheus php-fpm':
             proto  => 'tcp',
             port   => '9253',
-            srange => '($firewall_rules_str)',
+            srange => "(${firewall_rules_str})",
         }
     }
 }
