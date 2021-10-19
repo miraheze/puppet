@@ -72,13 +72,6 @@ class puppetserver(
         require   => Package['puppet-agent'],
     }
 
-    git::clone { 'services':
-        ensure    => absent,
-        directory => '/etc/puppetlabs/puppet/services',
-        origin    => 'https://github.com/miraheze/services.git',
-        require   => Package['puppet-agent'],
-    }
-
     git::clone { 'ssl':
         ensure    => present,
         directory => '/etc/puppetlabs/puppet/ssl-cert',
