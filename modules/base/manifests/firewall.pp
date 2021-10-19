@@ -69,7 +69,7 @@ class base::firewall (
         ferm::service { 'nrpe':
             proto  => 'tcp',
             port   => '5666',
-            srange => "($firewall_rules_str)",
+            srange => "(${firewall_rules_str})",
         }
 
         ferm::service { 'ssh':
