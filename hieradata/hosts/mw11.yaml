@@ -15,3 +15,5 @@ mediawiki::is_canary: true
 mediawiki::default_sync: 'all'
 mediawiki::remote_sync: false
 mediawiki::use_staging: true
+
+base::firewall::mode: ferm
