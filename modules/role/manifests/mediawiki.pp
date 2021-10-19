@@ -1,33 +1,38 @@
 # role: mediawiki
-class role::mediawiki {
+class role::mediawiki (
+    Boolean $strictFirewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
+) {
     include ::mediawiki
 
-    $strictFirewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
     if $strictFirewall {
         $firewall_rules = query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
         $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
         $firewall_rules_str = join($firewall_rules_mapped, ' ')
 
         ferm::service { 'http':
-            proto  => 'tcp',
-            port   => '80',
-            srange => '($firewall_rules_str)',
+            proto   => 'tcp',
+            port    => '80',
+            srange  => '($firewall_rules_str)',
+            notrack => true,
         }
 
         ferm::service { 'https':
-            proto  => 'tcp',
-            port   => '443',
-            srange => '($firewall_rules_str)',
+            proto    => 'tcp',
+            port    => '443',
+            srange  => '($firewall_rules_str)',
+            notrack => true,
         }
     } else {
         ferm::service { 'http':
-            proto => 'tcp',
-            port  => '80',
+            proto   => 'tcp',
+            port    => '80',
+            notrack => true,
         }
 
         ferm::service { 'https':
-            proto => 'tcp',
-            port  => '443',
+            proto   => 'tcp',
+            port    => '443',
+            notrack => true,
         }
     }
 
