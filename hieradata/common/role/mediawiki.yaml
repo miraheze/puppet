@@ -1,0 +1,2 @@
+# Default all mediawiki application servers to ferm
+base::firewall::mode: ferm
