@@ -14,3 +14,5 @@ puppetserver_hostname: 'puppet3.miraheze.org'
 mediawiki::php::fpm::childs: 18
 mediawiki::use_staging: true
 mediawiki::remote_sync: false
+
+base::firewall::mode: ferm

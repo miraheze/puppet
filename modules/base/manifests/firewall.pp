@@ -4,7 +4,7 @@ class base::firewall (
 ) {
     if $firewall_mode == 'ufw' {
         # Ensure ferm is purged when installing ufw.
-        package { 'germ':
+        package { 'ferm':
           ensure => purged,
         }
 
@@ -15,8 +15,8 @@ class base::firewall (
           port  => 22,
         }
 
-        $firewallRules = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
-        $firewallRules.each |$key, $value| {
+        $firewall_rules = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        $firewall_rules.each |$key, $value| {
           ufw::allow { "nrpe ${value['ipaddress']} IPv4":
             proto => 'tcp',
             port  => 5666,
@@ -69,7 +69,7 @@ class base::firewall (
         ferm::service { 'nrpe':
             proto  => 'tcp',
             port   => '5666',
-            srange => '($firewall_rules_str)',
+            srange => "(${firewall_rules_str})",
         }
 
         ferm::service { 'ssh':
