@@ -22,7 +22,7 @@ def post():
             try:
                 message = content['state'] + ' : ' + content['title']
                 if content['alerts'][0]['labels']['team'] == 'mediawiki':
-                    message = message + ' https://grafana.miraheze.org/d/dsHv5-4nz/mediawiki?orgId=1'
+                    message = message + ' https://grafana.miraheze.org/d/dsHv5-4nz/mediawiki'
                 x = open('/var/log/icinga2/irc.log', 'a+')
                 x.write(message)
                 x.close()
