@@ -13,3 +13,5 @@ php::php_version: '7.4'
 mediawiki::jobqueue::runner::cron: true
 nginx::use_graylog: true
 puppetserver_hostname: 'puppet3.miraheze.org'
+
+base::firewall::mode: ferm
