@@ -4,44 +4,30 @@ class role::mediawiki {
 
     $strictFirewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
     if $strictFirewall {
-        $firewallIpv4 = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2])", 'ipaddress')
-        $firewallIpv4.each |$key| {
-            ufw::allow { "http port ${key}":
-                proto => 'tcp',
-                port  => 80,
-                from  => $key,
-            }
+        $firewall_rules = query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+        $firewall_rules_str = join($firewall_rules_mapped, ' ')
 
-            ufw::allow { "https port ${key}":
-                proto => 'tcp',
-                port  => 443,
-                from  => $key,
-            }
+        ferm::service { 'http':
+            proto  => 'tcp',
+            port   => '80',
+            srange => '($firewall_rules_str)',
         }
 
-        $firewallIpv6 = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2])", 'ipaddress6')
-        $firewallIpv6.each |$key| {
-            ufw::allow { "http port ${key}":
-                proto => 'tcp',
-                port  => 80,
-                from  => $key,
-            }
-
-            ufw::allow { "https port ${key}":
-                proto => 'tcp',
-                port  => 443,
-                from  => $key,
-            }
+        ferm::service { 'https':
+            proto  => 'tcp',
+            port   => '443',
+            srange => '($firewall_rules_str)',
         }
     } else {
-        ufw::allow { 'http port tcp':
+        ferm::service { 'http':
             proto => 'tcp',
-            port  => 80,
+            port  => '80',
         }
 
-        ufw::allow { 'https port tcp':
+        ferm::service { 'https':
             proto => 'tcp',
-            port  => 443,
+            port  => '443',
         }
     }
 
