@@ -12,14 +12,14 @@ class role::mediawiki (
         ferm::service { 'http':
             proto   => 'tcp',
             port    => '80',
-            srange  => '($firewall_rules_str)',
+            srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
         ferm::service { 'https':
             proto    => 'tcp',
             port    => '443',
-            srange  => '($firewall_rules_str)',
+            srange  => "(${firewall_rules_str})",
             notrack => true,
         }
     } else {
