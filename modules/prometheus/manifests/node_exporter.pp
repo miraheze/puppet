@@ -114,7 +114,7 @@ class prometheus::node_exporter (
         ferm::service { 'prometheus node-exporter':
             proto  => 'tcp',
             port   => '9100',
-            srange => '($firewall_rules_str)',
+            srange => "(${firewall_rules_str})",
         }
     }
 }
