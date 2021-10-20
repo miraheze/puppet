@@ -12,19 +12,23 @@ class role::varnish {
         port  => 443,
     }
 
-    $firewall = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "Direct Varnish access ipv4 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 81,
-            from  => $value['ipaddress'],
-        }
+    ferm::service { 'http':
+        proto => 'tcp',
+        port  => '80',
+    }
 
-        ufw::allow { "Direct Varnish access ipv6 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 81,
-            from  => $value['ipaddress6'],
-        }
+    ferm::service { 'https':
+        proto => 'tcp',
+        port  => '443',
+    }
+
+    $firewall_rules = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'direct varnish access':
+        proto  => 'tcp',
+        port   => '81',
+        srange => "(${firewall_rules_str})",
     }
 
     motd::role { 'role::varnish':
