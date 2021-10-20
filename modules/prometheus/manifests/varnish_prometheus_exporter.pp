@@ -9,18 +9,12 @@ class prometheus::varnish_prometheus_exporter (
         restart => true,
     }
 
-    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "prometheus ${listen_port} ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => $listen_port,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "prometheus ${listen_port} ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => $listen_port,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Role::Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'prometheus varnish_exporter':
+        proto  => 'tcp',
+        port   => $listen_port,
+        srange => "(${firewall_rules_str})",
     }
 }
