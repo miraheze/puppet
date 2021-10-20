@@ -27,18 +27,12 @@ class prometheus::es_exporter {
         restart  => true,
     }
 
-    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "prometheus 9206 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 9206,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "prometheus 9206 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 9206,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'prometheus es_exporter':
+        proto  => 'tcp',
+        port   => '9206',
+        srange => "(${firewall_rules_str})",
     }
 }
