@@ -44,19 +44,13 @@ class role::memcached (
         extra_options => $extra_options,
     }
 
-    $firewall = query_facts("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "Memcached port - ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => $port,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "Memcached port - ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => $port,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'memcached':
+        proto  => 'tcp',
+        port   => $port,
+        srange => "(${firewall_rules_str})",
     }
 
     motd::role { 'role::memcached':
