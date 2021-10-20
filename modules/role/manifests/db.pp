@@ -60,19 +60,13 @@ class role::db(
         content => template('mariadb/grants/icinga2-grants.sql.erb'),
     }
 
-    $fwPort3306 = query_facts("domain='$domain' and (Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator])", ['ipaddress', 'ipaddress6'])
-    $fwPort3306.each |$key, $value| {
-        ufw::allow { "mariadb inbound 3306/tcp for ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 3306,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "mariadb inbound 3306/tcp for ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 3306,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'mariadb':
+        proto  => 'tcp',
+        port   => '3306',
+        srange => "(${firewall_rules_str})",
     }
 
     # Create a user to allow db transfers between servers
