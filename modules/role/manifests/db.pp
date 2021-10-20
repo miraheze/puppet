@@ -64,9 +64,10 @@ class role::db(
     $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
     $firewall_rules_str = join($firewall_rules_mapped, ' ')
     ferm::service { 'mariadb':
-        proto  => 'tcp',
-        port   => '3306',
-        srange => "(${firewall_rules_str})",
+        proto   => 'tcp',
+        port    => '3306',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
     }
 
     # Create a user to allow db transfers between servers
