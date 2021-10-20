@@ -1,1 +1,3 @@
 redis::heap: '1000mb'
+
+base::firewall::mode: ferm
