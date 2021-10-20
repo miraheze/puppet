@@ -48,9 +48,10 @@ class role::memcached (
     $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
     $firewall_rules_str = join($firewall_rules_mapped, ' ')
     ferm::service { 'memcached':
-        proto  => 'tcp',
-        port   => $port,
-        srange => "(${firewall_rules_str})",
+        proto   => 'tcp',
+        port    => $port,
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
     }
 
     motd::role { 'role::memcached':
