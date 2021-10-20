@@ -8,15 +8,17 @@ class role::grafana {
 
     if !defined(Ferm::Service['http']) {
         ferm::service { 'http':
-            proto => 'tcp',
-            port  => '80',
+            proto   => 'tcp',
+            port    => '80',
+            notrack => true,
         }
     }
 
     if !defined(Ferm::Service['https']) {
         ferm::service { 'https':
-            proto => 'tcp',
-            port  => '443',
+            proto   => 'tcp',
+            port    => '443',
+            notrack => true,
         }
     }
 }
