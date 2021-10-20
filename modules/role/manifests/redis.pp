@@ -10,9 +10,10 @@ class role::redis {
     $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
     $firewall_rules_str = join($firewall_rules_mapped, ' ')
     ferm::service { 'redis':
-        proto  => 'tcp',
-        port   => '6379',
-        srange => "(${firewall_rules_str})",
+        proto   => 'tcp',
+        port    => '6379',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
     }
 
     motd::role { 'role::redis':
