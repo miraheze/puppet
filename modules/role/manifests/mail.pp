@@ -7,24 +7,24 @@ class role::mail {
     include dovecot
     include prometheus::postfix_exporter
 
-    ufw::allow { 'smtp':
+    ferm::service { 'smtp':
         proto => 'tcp',
-        port  => 25,
+        port  => '25',
     }
 
-    ufw::allow { 'smtp-ssl':
+    ferm::service { 'smtp-ssl':
         proto => 'tcp',
-        port  => 587,
+        port  => '587',
     }
 
-    ufw::allow { 'imap':
+    ferm::service { 'imap':
         proto => 'tcp',
-        port  => 143,
+        port  => '143',
     }
 
-    ufw::allow { 'imap-ssl':
+    ferm::service { 'imap-ssl':
         proto => 'tcp',
-        port  => 993,
+        port  => '993',
     }
 
     motd::role { 'role::mail':
