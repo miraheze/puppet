@@ -1,6 +1,7 @@
 # MediaWiki packages
 class mediawiki::packages {
     $packages = [
+        'default-jdk',
         'djvulibre-bin',
         'dvipng',
         'firejail',
@@ -17,6 +18,7 @@ class mediawiki::packages {
         'libglew-dev',
         'libvips-tools',
         'lilypond',
+        'maven',
         'ploticus',
         'poppler-utils',
 #       'python-pip', # Temporarily remove, not compatible with Debian 11
