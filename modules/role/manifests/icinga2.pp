@@ -87,10 +87,20 @@ class role::icinga2 (
         icinga_api_password   => $icingaweb2_icinga_api_password,
         ldap_password         => $ldap_password,
     }
-    
-    ensure_resource_duplicate('ufw::allow', 'http', {'proto' => 'tcp', 'port' => '80'})
 
-    ensure_resource_duplicate('ufw::allow', 'https', {'proto' => 'tcp', 'port' => '443'})
+    if !defined(Ferm::Service['http']) {
+        ferm::service { 'http':
+            proto => 'tcp',
+            port  => '80',
+        }
+    }
+
+    if !defined(Ferm::Service['https']) {
+        ferm::service { 'https':
+            proto => 'tcp',
+            port  => '443',
+        }
+    }
 
     motd::role { 'icinga2':
         description => 'central monitoring server which runs icinga2',

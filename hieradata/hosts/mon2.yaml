@@ -110,3 +110,4 @@ icinga2::globals::reserved:
   - ZonesDir
 
 nginx::use_graylog: true
+base::firewall::mode: ferm
