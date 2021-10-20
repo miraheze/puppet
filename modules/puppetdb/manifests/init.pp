@@ -180,18 +180,12 @@ class puppetdb(
         },
     }
 
-    $fwPort8081 = query_facts("domain='$domain' and Class[Role::Icinga2]", ['ipaddress', 'ipaddress6'])
-    $fwPort8081.each |$key, $value| {
-        ufw::allow { "icinga2 inbound 8081/tcp for ${value['ipaddress']}":
-            proto   => 'tcp',
-            port    => 8081,
-            from    => $value['ipaddress'],
-        }
-
-        ufw::allow { "icinga2 inbound 8081/tcp for ${value['ipaddress6']}":
-            proto   => 'tcp',
-            port    => 8081,
-            from    => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'icinga access port 8081':
+        proto  => 'tcp',
+        port   => '8081',
+        srange => "(${firewall_rules_str})",
     }
 }

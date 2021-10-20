@@ -199,9 +199,10 @@ class puppetserver(
         require  => Package['puppetserver'],
     }
 
-    ufw::allow { 'puppetserver':
-        proto => 'tcp',
-        port  => '8140',
+    ferm::service { 'puppetserver':
+        proto   => 'tcp',
+        port    => '8140',
+        notrack => true,
     }
 
     cron { 'puppet-git':
