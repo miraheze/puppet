@@ -19,87 +19,53 @@ class role::services (
     Boolean $restbase = lookup('enable_restbase', {'default_value' => true})
 ) {
 
-    $firewallMon = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
 
     if $citoid {
         class { '::services::citoid': }
 
-        $firewallMon.each |$key, $value| {
-            ufw::allow { "citoid monitoring ${value['ipaddress']}":
-                proto => 'tcp',
-                port  => 6927,
-                from  => $value['ipaddress'],
-            }
+        ferm::service { 'citoid':
+            proto  => 'tcp',
+            port   => '6927',
+            srange => "(${firewall_rules_str})",
+        }
 
-            ufw::allow { "citoid monitoring ${value['ipaddress6']}":
-                proto => 'tcp',
-                port  => 6927,
-                from  => $value['ipaddress6'],
-            }
-
-            ufw::allow { "zotero monitoring ${value['ipaddress']}":
-                proto => 'tcp',
-                port  => 1969,
-                from  => $value['ipaddress'],
-            }
-
-            ufw::allow { "zotero monitoring ${value['ipaddress6']}":
-                proto => 'tcp',
-                port  => 1969,
-                from  => $value['ipaddress6'],
-            }
+        ferm::service { 'zotero':
+            proto  => 'tcp',
+            port   => '1969',
+            srange => "(${firewall_rules_str})",
         }
     }
 
     if $proton {
         class { '::services::proton': }
 
-        $firewallMon.each |$key, $value| {
-            ufw::allow { "proton monitoring ${value['ipaddress']}":
-                proto => 'tcp',
-                port  => 3030,
-                from  => $value['ipaddress'],
-            }
-
-            ufw::allow { "proton monitoring ${value['ipaddress6']}":
-                proto => 'tcp',
-                port  => 3030,
-                from  => $value['ipaddress6'],
-            }
+        ferm::service { 'proton':
+            proto  => 'tcp',
+            port   => '3030',
+            srange => "(${firewall_rules_str})",
         }
     }
 
     if $restbase {
         class { '::services::restbase': }
 
-        $firewallMon.each |$key, $value| {
-            ufw::allow { "restbase monitoring ${value['ipaddress']}":
-                proto => 'tcp',
-                port  => 7231,
-                from  => $value['ipaddress'],
-            }
-
-            ufw::allow { "restbase monitoring ${value['ipaddress6']}":
-                proto => 'tcp',
-                port  => 7231,
-                from  => $value['ipaddress6'],
-            }
+        ferm::service { 'restbase':
+            proto  => 'tcp',
+            port   => '7231',
+            srange => "(${firewall_rules_str})",
         }
     }
 
-    $firewallMediaWiki = query_facts('Class[Role::Mediawiki] or Class[Role::Services]', ['ipaddress', 'ipaddress6'])
-    $firewallMediaWiki.each |$key, $value| {
-        ufw::allow { "${value['ipaddress']} 443":
-            proto => 'tcp',
-            port  => 443,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "${value['ipaddress6']} 443":
-            proto => 'tcp',
-            port  => 443,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_mediawiki_rules = query_facts('Class[Role::Mediawiki] or Class[Role::Services]', ['ipaddress', 'ipaddress6'])
+    $firewall_mediawiki_rules_mapped = $firewall_mediawiki_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_mediawiki_rules_str = join($firewall_mediawiki_rules_mapped, ' ')
+    ferm::service { 'mediawiki access 443':
+        proto  => 'tcp',
+        port   => '443',
+        srange => "(${firewall_rules_str})",
     }
 
     motd::role { 'role::services':
