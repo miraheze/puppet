@@ -27,7 +27,7 @@ class role::irc {
         srange => "(${firewall_irc_rules_str})",
     }
 
-    $firewall_all_rules = query_facts('Class[Role::Mediawiki', ['ipaddress', 'ipaddress6'])
+    $firewall_all_rules = query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
     $firewall_all_rules_mapped = $firewall_all_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
     $firewall_all_rules_str = join($firewall_all_rules_mapped, ' ')
     ferm::service { 'irclogserverbot':
