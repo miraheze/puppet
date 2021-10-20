@@ -18,7 +18,7 @@ class role::irc {
         udp_port     => '5071',
     }
 
-    $firewall_irc_rules = query_facts('Class[Role::Mediawiki', ['ipaddress', 'ipaddress6'])
+    $firewall_irc_rules = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
     $firewall_irc_rules_mapped = $firewall_irc_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
     $firewall_irc_rules_str = join($firewall_irc_rules_mapped, ' ')
     ferm::service { 'ircrcbot':
