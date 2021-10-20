@@ -6,3 +6,5 @@ role::memcached::max_seq_reqs: 200
 role::memcached::size: 10000
 role::memcached::extended_options: []
 role::memcached::port: 11211
+
+base::firewall::mode: ferm
