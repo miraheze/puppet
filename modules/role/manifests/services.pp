@@ -65,7 +65,7 @@ class role::services (
     ferm::service { 'mediawiki access 443':
         proto  => 'tcp',
         port   => '443',
-        srange => "(${firewall_rules_str})",
+        srange => "(${firewall_mediawiki_rules_str})",
     }
 
     motd::role { 'role::services':
