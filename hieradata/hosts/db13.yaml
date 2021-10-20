@@ -7,3 +7,5 @@ mariadb::config::table_open_cache: 50000
 
 role::db::backup_clusters:
     - c4
+
+base::firewall::mode: ferm
