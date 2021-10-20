@@ -9,21 +9,6 @@ class role::irc {
         channel      => '#miraheze-feed',
         udp_port     => '5070',
     }
- 
-    $firewallRulesIrc = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
-    $firewallRulesIrc.each |$key, $value| {
-        ufw::allow { "ircrcbot port ${value['ipaddress']} IPv4":
-            proto => 'udp',
-            port  => 5070,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "ircrcbot port ${value['ipaddress6']} IPv6":
-            proto => 'udp',
-            port  => 5070,
-            from  => $value['ipaddress6'],
-        }
-    }
 
     class { 'irc::irclogserverbot':
         nickname     => 'MirahezeLSBot',
@@ -33,19 +18,22 @@ class role::irc {
         udp_port     => '5071',
     }
 
-    $firewallall = query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
-    $firewallall.each |$key, $value| {
-        ufw::allow { "irclogserverbot port ${value['ipaddress']} IPv4":
-            proto => 'udp',
-            port  => 5071,
-            from  => $value['ipaddress'],
-        }
+    $firewall_irc_rules = query_facts('Class[Role::Mediawiki', ['ipaddress', 'ipaddress6'])
+    $firewall_irc_rules_mapped = $firewall_irc_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_irc_rules_str = join($firewall_irc_rules_mapped, ' ')
+    ferm::service { 'ircrcbot':
+        proto  => 'tcp',
+        port   => '5070',
+        srange => "(${firewall_irc_rules_str})",
+    }
 
-        ufw::allow { "irclogserverbot port ${value['ipaddress6']} IPv6":
-            proto => 'udp',
-            port  => 5071,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_all_rules = query_facts('Class[Role::Mediawiki', ['ipaddress', 'ipaddress6'])
+    $firewall_all_rules_mapped = $firewall_all_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_all_rules_str = join($firewall_all_rules_mapped, ' ')
+    ferm::service { 'irclogserverbot':
+        proto  => 'tcp',
+        port   => '5071',
+        srange => "(${firewall_all_rules_str})",
     }
 
     motd::role { 'role::irc':
