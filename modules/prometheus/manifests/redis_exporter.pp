@@ -36,18 +36,12 @@ class prometheus::redis_exporter (
         notify => Service['prometheus-redis-exporter'],
     }
 
-    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "Prometheus  9121 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 9121,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "Prometheus 9121 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 9121,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'prometheus redis_exporter':
+        proto  => 'tcp',
+        port   => '9121',
+        srange => "(${firewall_rules_str})",
     }
 }
