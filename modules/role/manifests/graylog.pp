@@ -87,7 +87,7 @@ class role::graylog {
     ferm::service { 'graylog 12210 venet':
         proto  => 'tcp',
         port   => '12210',
-        srange => "(${firewall_syslog_rules_str})",
+        srange => "(${firewall_syslog_venet_rules_str})",
     }
 
     $firewall_icinga_rules = query_facts("Class['Role::Icinga2'] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
@@ -96,7 +96,7 @@ class role::graylog {
     ferm::service { 'graylog 12201':
         proto  => 'tcp',
         port   => '12201',
-        srange => "(${firewall_syslog_rules_str})",
+        srange => "(${firewall_icinga_rules_str})",
     }
 
     motd::role { 'role::graylog':
