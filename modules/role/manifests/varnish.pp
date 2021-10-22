@@ -14,9 +14,16 @@ class role::varnish {
         notrack => true,
     }
 
-    $firewall_rules = query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
-    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
-    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Mediawiki]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
     ferm::service { 'direct varnish access':
         proto   => 'tcp',
         port    => '81',
