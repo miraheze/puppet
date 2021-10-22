@@ -148,3 +148,5 @@ connect-src:
   - '*.wikimedia.org'
   - '*.wikinews.org'
   - '*.wiktionary.org'
+  - 'cdn.jsdelivr.net'
+  - 'storage.googleapis.com'
