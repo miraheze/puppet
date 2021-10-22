@@ -13,3 +13,5 @@ puppet_cron_time: '4,34'
 puppetserver_hostname: 'puppet3.miraheze.org'
 
 base::firewall::mode: ferm
+
+mediawiki::php::fpm::fpm_min_restart_threshold: 14
