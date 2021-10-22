@@ -60,9 +60,16 @@ class role::db(
         content => template('mariadb/grants/icinga2-grants.sql.erb'),
     }
 
-    $firewall_rules = query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator]', ['ipaddress', 'ipaddress6'])
-    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
-    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
     ferm::service { 'mariadb':
         proto   => 'tcp',
         port    => '3306',
