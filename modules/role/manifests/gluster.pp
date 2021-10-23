@@ -2,9 +2,17 @@
 class role::gluster {
     include ::gluster
 
-    $firewall_rules = query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Gluster]', ['ipaddress', 'ipaddress6'])
-    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
-    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    $firewall_rules_str = join(
+        query_facts('CClass[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Gluster]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+
     ferm::service { 'gluster 24007':
         proto   => 'tcp',
         port    => '24007',
