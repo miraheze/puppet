@@ -3,7 +3,7 @@ class role::gluster {
     include ::gluster
 
     $firewall_rules_str = join(
-        query_facts('CClass[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Gluster]', ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Gluster]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }
