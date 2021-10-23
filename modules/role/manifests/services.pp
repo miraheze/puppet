@@ -18,10 +18,16 @@ class role::services (
     Boolean $proton   = lookup('enable_proton', {'default_value' => true}),
     Boolean $restbase = lookup('enable_restbase', {'default_value' => true})
 ) {
-
-    $firewall_rules = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
-    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
-    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
 
     if $citoid {
         class { '::services::citoid': }
@@ -59,9 +65,16 @@ class role::services (
         }
     }
 
-    $firewall_mediawiki_rules = query_facts('Class[Role::Mediawiki] or Class[Role::Services]', ['ipaddress', 'ipaddress6'])
-    $firewall_mediawiki_rules_mapped = $firewall_mediawiki_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
-    $firewall_mediawiki_rules_str = join($firewall_mediawiki_rules_mapped, ' ')
+    $firewall_mediawiki_rules_str = join(
+        query_facts('Class[Role::Mediawiki] or Class[Role::Services]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
     ferm::service { 'mediawiki access 443':
         proto  => 'tcp',
         port   => '443',
