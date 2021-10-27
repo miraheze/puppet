@@ -138,6 +138,7 @@ frame-src:
   - 'www.gofundme.com'
   - 'archive.org'
   - 'w.soundcloud.com'
+  - 'query.wikidata.org'
 
 connect-src:
   - "'self'"
