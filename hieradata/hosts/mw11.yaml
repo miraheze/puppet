@@ -14,3 +14,8 @@ puppetserver_hostname: 'puppet3.miraheze.org'
 mediawiki::is_canary: true
 mediawiki::default_sync: 'all'
 mediawiki::remote_sync: false
+mediawiki::use_staging: true
+
+base::firewall::mode: ferm
+
+mediawiki::php::fpm::fpm_min_restart_threshold: 14

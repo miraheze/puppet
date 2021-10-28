@@ -1,0 +1,11 @@
+[Unit]
+Description=Webhook for grafana to call
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/bin/grafana-webhook.py
+User=root
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

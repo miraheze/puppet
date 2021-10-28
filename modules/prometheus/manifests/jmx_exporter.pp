@@ -84,18 +84,12 @@ define prometheus::jmx_exporter (
         links   => 'follow',
     }
 
-    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "Prometheus  ${port} ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => $port,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "Prometheus ${port} ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => $port,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { "prometheus ${port} jmx_exporter":
+        proto  => 'tcp',
+        port   => $port,
+        srange => "(${firewall_rules_str})",
     }
 }

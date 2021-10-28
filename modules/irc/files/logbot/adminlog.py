@@ -2,8 +2,11 @@
 
 import sys
 sys.path.insert(0, r'/etc/irclogbot/mwclient')
-import mwclient
-import datetime
+
+import mwclient  # noqa: E402
+import datetime  # noqa: E402
+
+sys.path.insert(0, r'/etc/irclogbot/mwclient')
 
 months = ["January", "February", "March", "April", "May", "June", "July",
           "August", "September", "October", "November", "December"]
@@ -47,16 +50,16 @@ def log(config, message, project, author):
                 header_date = None
             break
     if header_date != [now.year, now.month, now.day]:
-        lines.insert(position-1, "")
-        lines.insert(position-1, logline)
-        lines.insert(position-1, now.strftime("{0} %Y-%m-%d {0}".format(header)))
+        lines.insert(position - 1, "")
+        lines.insert(position - 1, logline)
+        lines.insert(position - 1, now.strftime("{0} %Y-%m-%d {0}".format(header)))
     else:
         lines.insert(position, logline)
     if config.wiki_category:
-        if not re.search('\[\[Category:' + config.wiki_category + '\]\]',
+        if not re.search(r'\[\[Category:' + config.wiki_category + r'\]\]',
                          text):
-            lines.append('<noinclude>[[Category:' +
-                    config.wiki_category + ']]</noinclude>')
+            lines.append('<noinclude>[[Category:'
+                         + config.wiki_category + ']]</noinclude>')
 
     page.save(
         '\n'.join(lines),
@@ -68,8 +71,8 @@ def log(config, message, project, author):
 
     if config.enable_identica:
         snapi = statusnet.StatusNet({'user': config.identica_username,
-            'passwd': config.identica_password,
-            'api': 'https://identi.ca/api'})
+                                     'passwd': config.identica_password,
+                                     'api': 'https://identi.ca/api'})
         snapi.update(micro_update)
 
     if config.enable_twitter:

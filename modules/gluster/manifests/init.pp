@@ -60,20 +60,6 @@ class gluster {
         ],
     }
 
-    $module_path = get_module_path($module_name)
-
-    $firewall = loadyaml("${module_path}/data/firewall.yaml")
-
-    $firewall.each |$key, $value| {
-        $value.each |$port| {
-            ufw::allow { "glusterfs ${key} ${port}":
-                proto => 'tcp',
-                port  => $port,
-                from  => $key,
-            }
-        }
-    }
-
     monitoring::services { 'glusterd':
         check_command => 'nrpe',
         vars          => {

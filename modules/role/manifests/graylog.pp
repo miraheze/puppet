@@ -10,7 +10,7 @@ class role::graylog {
 
     class { 'mongodb::globals':
         manage_package_repo => true,
-        version             => '4.4.8',
+        version             => '4.4.9',
     }->
     class { 'mongodb::server':
         bind_ip => ['127.0.0.1'],
@@ -21,7 +21,7 @@ class role::graylog {
     }
 
     class { 'elasticsearch':
-        version         => '7.14.1',
+        version         => '7.15.0',
         manage_repo     => true,
         config          => {
             'cluster.name'  => 'graylog',
@@ -40,7 +40,7 @@ class role::graylog {
         version => '4.1',
     }->
     class { 'graylog::server':
-        package_version => '4.1.3-1',
+        package_version => '4.1.6-1',
         config          => {
             'password_secret'          => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'       => lookup('passwords::graylog::root_password_sha2'),
@@ -58,68 +58,73 @@ class role::graylog {
     }
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
-    $fwHttps = query_facts("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
-    $fwHttps.each |$key, $value| {
-        ufw::allow { "graylog access 443/tcp for ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 443,
-            from  => $value['ipaddress'],
+    $firewall_http_rules_str = join(
+        query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
         }
-
-        ufw::allow { "graylog access 443/tcp for ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 443,
-            from  => $value['ipaddress6'],
-        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+    ferm::service { 'access graylog 443':
+        proto  => 'tcp',
+        port   => '443',
+        srange => "(${firewall_http_rules_str})",
     }
 
     # syslog-ng > graylog 12210/tcp
     # non-OpenVZ (RamNode)
-    $fwSyslog = query_facts("domain='$domain' and Class[Base] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
-    $fwSyslog.each |$key, $value| {
-        ufw::allow { "graylog access 12210/tcp for ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 12210,
-            from  => $value['ipaddress'],
+    $firewall_syslog_rules_str = join(
+        query_facts("Class[Base] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
         }
-
-        ufw::allow { "graylog access 12210/tcp for ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 12210,
-            from  => $value['ipaddress6'],
-        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+    ferm::service { 'graylog 12210':
+        proto  => 'tcp',
+        port   => '12210',
+        srange => "(${firewall_syslog_rules_str})",
     }
+
 
     # syslog-ng > graylog 12210/tcp
     # puppet facter returns the wrong IP addresses by default for RamNode VMs with the venet0:0 interface
-    $fwSyslogVenet = query_facts("domain='$domain' and Class[Base] and network='127.0.0.1'", ['ipaddress_venet0:0', 'ipaddress6_venet0'])
-    $fwSyslogVenet.each |$key, $value| {
-        ufw::allow { "graylog access 12210/tcp for ${value['ipaddress_venet0:0']}":
-            proto => 'tcp',
-            port  => 12210,
-            from  => $value['ipaddress_venet0:0'],
+    $firewall_syslog_venet_rules_str = join(
+        query_facts("Class[Base] and network='127.0.0.1'", ['ipaddress_venet0:0', 'ipaddress6_venet0'])
+        .map |$key, $value| {
+            "${value['ipaddress_venet0:0']} ${value['ipaddress6_venet0']}"
         }
-
-        ufw::allow { "graylog access 12210/tcp for ${value['ipaddress6_venet0']}":
-            proto => 'tcp',
-            port  => 12210,
-            from  => $value['ipaddress6_venet0'],
-        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+    ferm::service { 'graylog 12210 venet':
+        proto  => 'tcp',
+        port   => '12210',
+        srange => "(${firewall_syslog_venet_rules_str})",
     }
 
-    $fwIcinga = query_facts("domain='$domain' and Class['Role::Icinga2'] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
-    $fwIcinga.each |$key, $value| {
-        ufw::allow { "graylog access 12201/tcp for ${value['ipaddess']}":
-            proto => 'tcp',
-            port  => 12201,
-            from  => $value['ipaddress'],
+    $firewall_icinga_rules_str = join(
+        query_facts("Class['Role::Icinga2'] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
         }
-
-        ufw::allow { "graylog access 12201/tcp for ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 12201,
-            from  => $value['ipaddress6'],
-        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+    ferm::service { 'graylog 12201':
+        proto  => 'tcp',
+        port   => '12201',
+        srange => "(${firewall_icinga_rules_str})",
     }
 
     motd::role { 'role::graylog':

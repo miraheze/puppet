@@ -8,33 +8,34 @@
 import argparse
 import os
 import subprocess
- 
+
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser(description="Script to generate LetsEncrypt certs or generate a CSR.")
 ap.add_argument("-c", "--csr", required=False,
-    action="store_true", default=False, help="generates a CSR")
+                action="store_true", default=False, help="generates a CSR")
 ap.add_argument("-d", "--domain", required=True,
-    help="name of the domain")
+                help="name of the domain")
 ap.add_argument("-g", "--generate", required=False,
-    action="store_true", default=False, help="generates LetsEncrypt SSL Certificate")
+                action="store_true", default=False, help="generates LetsEncrypt SSL Certificate")
 ap.add_argument("--no-use-key", required=False,
-    action="store_true", default=False, help="Creates a brand new private key along side a certificate.")
+                action="store_true", default=False, help="Creates a brand new private key along side a certificate.")
 ap.add_argument("-o", "--overwrite", required=False,
-    action="store_true", default=False, help="overwrites the certname replacing it with a updated version")
+                action="store_true", default=False, help="overwrites the certname replacing it with a updated version")
 ap.add_argument("-p", "--private", required=False,
-    action="store_true", default=False, help="outputs private key")
+                action="store_true", default=False, help="outputs private key")
 ap.add_argument("-q", "--quiet", required=False,
-    action="store_true", default=False, help="makes script quieter")
+                action="store_true", default=False, help="makes script quieter")
 ap.add_argument("-r", "--renew", required=False,
-    action="store_true", default=False, help="renews LetsEncrypt SSL Certificate")
+                action="store_true", default=False, help="renews LetsEncrypt SSL Certificate")
 ap.add_argument("--revoke", required=False,
-    action="store_true", default=False, help="allows you to revoke certificates (also deletes them)")
+                action="store_true", default=False, help="allows you to revoke certificates (also deletes them)")
 ap.add_argument("-s", "--secondary", required=False,
-    help="allows you to add other domains to the same cert, eg www.<domain>")
+                help="allows you to add other domains to the same cert, eg www.<domain>")
 ap.add_argument("-v", "--version", action="version", version="%(prog)s 1.0")
 ap.add_argument("-w", "--wildcard", required=False,
-    action="store_true", default=False, help="auths against DNS supporting wildcards")
+                action="store_true", default=False, help="auths against DNS supporting wildcards")
 args = vars(ap.parse_args())
+
 
 class SslCertificate:
     def __init__(self):
@@ -53,7 +54,7 @@ class SslCertificate:
         self.renew = args['renew']
         self.revoke = args['revoke']
         if args['secondary']:
-            self.secondary_domain = " -d " +  args['secondary']
+            self.secondary_domain = " -d " + args['secondary']
         else:
             self.secondary_domain = ""
         self.wildcard = args['wildcard']
@@ -131,11 +132,11 @@ class SslCertificate:
                 print("Re-generating a new wildcard SSL cert for {0}".format(self.domain))
 
             if self.no_existing_key:
-                os.system( "/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain) )
+                os.system("/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain))
 
                 os.system("/usr/bin/certbot --no-verify-ssl --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
 
-                os.system( "/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain) )
+                os.system("/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain))
             else:
                 os.system("/usr/bin/certbot --no-verify-ssl --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {2} -d {0} {1}".format(self.domain, self.secondary_domain, self.overwrite))
 
@@ -146,11 +147,11 @@ class SslCertificate:
                 print("Re-generating a new SSL cert for {0}".format(self.domain))
 
             if self.no_existing_key:
-                os.system( "/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain) )
+                os.system("/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain))
 
                 os.system("/usr/bin/certbot --force-renewal --expand  --no-verify-ssl {1} --noninteractive renew --cert-name {0}".format(self.domain, self.quiet))
 
-                os.system( "/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain) )
+                os.system("/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{0}.conf".format(self.domain))
             else:
                 os.system("/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl {1} --noninteractive renew --cert-name {0}".format(self.domain, self.quiet))
 
@@ -163,15 +164,15 @@ class SslCertificate:
             os.system("/bin/cat /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
 
     def revoke_letsencrypt_certificate(self):
-            if not self.quiet:
-                print("Revoking LetsEncrypt certificate at /etc/letsencrypt/live/{0}".format(self.domain))
+        if not self.quiet:
+            print("Revoking LetsEncrypt certificate at /etc/letsencrypt/live/{0}".format(self.domain))
 
-            os.system("/usr/bin/certbot revoke --cert-path /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
+        os.system("/usr/bin/certbot revoke --cert-path /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
 
-            if not self.quiet:
-                print("Deleting LetsEncrypt certificate at /etc/letsencrypt/live/{0}".format(self.domain))
+        if not self.quiet:
+            print("Deleting LetsEncrypt certificate at /etc/letsencrypt/live/{0}".format(self.domain))
 
-            os.system("/usr/bin/certbot delete --cert-name {0}".format(self.domain))
+        os.system("/usr/bin/certbot delete --cert-name {0}".format(self.domain))
 
 
 cert = SslCertificate()

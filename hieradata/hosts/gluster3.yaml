@@ -1,2 +1,4 @@
 puppetserver_hostname: 'puppet3.miraheze.org'
 gluster_client: true
+
+base::firewall::mode: ferm

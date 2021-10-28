@@ -42,7 +42,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'purge_abusefilter':
             ensure  => present,
-            command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/AbuseFilter/maintenance/purgeOldLogIPData.php >> /var/log/mediawiki/cron/purge_abusefilter.log',
+            command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/AbuseFilter/maintenance/PurgeOldLogIPData.php >> /var/log/mediawiki/cron/purge_abusefilter.log',
             user    => 'www-data',
             minute  => '5',
             hour    => '18',

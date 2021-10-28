@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 class AbstractAuth(object):
     """Base class for authentication mixins."""
+
     def __init__(
             self, server_list, nickname, realname,
             ident_password, username=None, **kwargs):
@@ -41,15 +42,17 @@ class AbstractAuth(object):
         self._ident_password = ident_password
 
         super(AbstractAuth, self).__init__(
-                server_list=server_list,
-                nickname=nickname,
-                realname=realname,
-                username=self._username,
-                **kwargs)
+            server_list=server_list,
+            nickname=nickname,
+            realname=realname,
+            username=self._username,
+            **kwargs
+        )
 
 
 class SASL(AbstractAuth):
     """Authenticate using SASL before joining channels."""
+
     def __init__(self, *args, **kwargs):
         super(SASL, self).__init__(*args, **kwargs)
         self.ircobj._on_connect = self._handle_connect
@@ -78,7 +81,8 @@ class SASL(AbstractAuth):
                 username=self._username,
                 password=self._ident_password)
             conn.send_raw('AUTHENTICATE {}'.format(
-                    base64.b64encode(creds.encode('utf8')).decode('utf8')))
+                base64.b64encode(creds.encode('utf8')).decode('utf8'))
+            )
         else:
             logger.warning('Unexpcted AUTHENTICATE response: %s', event)
             conn.disconnect()

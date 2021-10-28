@@ -6,19 +6,21 @@ class role::redis {
         maxmemory => $redis_heap,
     }
 
-    $firewall = query_facts("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Icinga2])", ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "Redis port - ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 6379,
-            from  => $value['ipaddress'],
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
         }
-
-        ufw::allow { "Redis port - ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 6379,
-            from  => $value['ipaddress6'],
-        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+    ferm::service { 'redis':
+        proto   => 'tcp',
+        port    => '6379',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
     }
 
     motd::role { 'role::redis':

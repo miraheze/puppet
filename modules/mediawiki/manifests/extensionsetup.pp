@@ -1,8 +1,7 @@
 # MediaWiki extension setup
 class mediawiki::extensionsetup {
-    if lookup(mediawiki::use_staging) {
-        $mwpath = '/srv/mediawiki-staging/w'
-        file { [
+    $mwpath = '/srv/mediawiki-staging/w'
+    file { [
         '/srv/mediawiki/w/extensions/OAuth/.composer/cache',
         '/srv/mediawiki-staging/w/extensions/OAuth/.composer/cache',
         '/srv/mediawiki/w/extensions/OAuth/vendor/league/oauth2-server/.git',
@@ -11,9 +10,6 @@ class mediawiki::extensionsetup {
             force   => true,
             recurse => true,
             require => Exec['oauth_composer'],
-        }
-    } else {
-        $mwpath = '/srv/mediawiki/w'
     }
 
     exec { 'install_composer':
@@ -78,7 +74,7 @@ class mediawiki::extensionsetup {
     exec { 'antispoof_composer':
         command     => $composer,
         creates     => "${mwpath}/extensions/AntiSpoof/vendor",
-        cwd         => "${mwpath}extensions/AntiSpoof",
+        cwd         => "${mwpath}/extensions/AntiSpoof",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/AntiSpoof",
         user        => 'www-data',
@@ -183,5 +179,15 @@ class mediawiki::extensionsetup {
         environment => "HOME=${mwpath}/extensions/Bootstrap",
         user        => 'www-data',
         require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+    }
+
+    exec { 'femiwiki_npm':
+        command     => 'npm install',
+        creates     => "${mwpath}/skins/Femiwiki/node_modules",
+        cwd         => "${mwpath}/skins/Femiwiki",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/skins/Femiwiki",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
     }
 }

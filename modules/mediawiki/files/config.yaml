@@ -95,10 +95,3 @@ services:
           host: '{{request.params.domain}}'
           user-agent: '{{user-agent}}'
         body: '{{ default(request.query, {}) }}'
-      # the template used for contacting RESTBase
-      restbase_req:
-        method: '{{request.method}}'
-        uri: https://{{domain}}/api/rest_v1/{+path}
-        query: '{{ default(request.query, {}) }}'
-        headers: '{{request.headers}}'
-        body: '{{request.body}}'

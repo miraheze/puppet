@@ -1,72 +1,45 @@
 # role: mediawiki
-class role::mediawiki {
+class role::mediawiki (
+    Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
+) {
     include ::mediawiki
 
-    $strictFirewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
-    if $strictFirewall {
-        $firewallIpv4 = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2])", 'ipaddress')
-        $firewallIpv4.each |$key| {
-            ufw::allow { "http port ${key}":
-                proto => 'tcp',
-                port  => 80,
-                from  => $key,
+    if $strict_firewall {
+        $firewall_rules_str = join(
+            query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+            .map |$key, $value| {
+                "${value['ipaddress']} ${value['ipaddress6']}"
             }
+            .flatten()
+            .unique()
+            .sort(),
+            ' '
+        )
 
-            ufw::allow { "https port ${key}":
-                proto => 'tcp',
-                port  => 443,
-                from  => $key,
-            }
+        ferm::service { 'http':
+            proto   => 'tcp',
+            port    => '80',
+            srange  => "(${firewall_rules_str})",
+            notrack => true,
         }
 
-        $firewallIpv6 = query_nodes("domain='$domain' and (Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2])", 'ipaddress6')
-        $firewallIpv6.each |$key| {
-            ufw::allow { "http port ${key}":
-                proto => 'tcp',
-                port  => 80,
-                from  => $key,
-            }
-
-            ufw::allow { "https port ${key}":
-                proto => 'tcp',
-                port  => 443,
-                from  => $key,
-            }
-        }
-
-        # Temporarily to test ats (apache traffic server)
-        ufw::allow { 'http port 80 51.195.236.214':
-            proto => 'tcp',
-            port  => 80,
-            from  => '51.195.236.214',
-        }
-
-        ufw::allow { 'https port 80 2001:41d0:800:178a::12':
-            proto => 'tcp',
-            port  => 80,
-            from  => '2001:41d0:800:178a::12',
-        }
-
-        ufw::allow { 'http port 443 51.195.236.214':
-            proto => 'tcp',
-            port  => 443,
-            from  => '51.195.236.214',
-        }
-
-        ufw::allow { 'https port 443 2001:41d0:800:178a::12':
-            proto => 'tcp',
-            port  => 443,
-            from  => '2001:41d0:800:178a::12',
+        ferm::service { 'https':
+            proto    => 'tcp',
+            port    => '443',
+            srange  => "(${firewall_rules_str})",
+            notrack => true,
         }
     } else {
-        ufw::allow { 'http port tcp':
-            proto => 'tcp',
-            port  => 80,
+        ferm::service { 'http':
+            proto   => 'tcp',
+            port    => '80',
+            notrack => true,
         }
 
-        ufw::allow { 'https port tcp':
-            proto => 'tcp',
-            port  => 443,
+        ferm::service { 'https':
+            proto   => 'tcp',
+            port    => '443',
+            notrack => true,
         }
     }
 

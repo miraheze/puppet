@@ -8,7 +8,7 @@ location /.well-known/acme-challenge/ {
 	try_files $uri =404;
 }
 
-location ~ ^/(\.git|config|landing|dblist|cache) {
+location ~ ^/(\.git|config|landing|cache) {
         deny all;
 }
 
@@ -59,19 +59,6 @@ location ^~ /wiki/ {
 location ~ ^/m/(.*) {
 	return 301 /w/index.php?title=Special:UrlRedirector/$1;
 }
-
-location /api/rest_v1/ {
-	rewrite    ^/api/rest_v1/(.*)$ /$host/v1/$1 break;
-
-	# the upstream backend 'restbase-lb.miraheze.org' is defined in sites-enabled/mediawiki
-	proxy_pass https://restbase-lb.miraheze.org;
-}
-
-# Restbase uses /<domain>/v1/. We redirect /api/rest_v1/ to /$host/v1/$1 above.
-location ~ ^/(.+)/v1/ {
-	# the upstream backend 'restbase-lb.miraheze.org' is defined in sited-enabled/mediawiki
-	proxy_pass https://restbase-lb.miraheze.org;
- }
 	
 location /sitemaps/ {
 	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.miraheze.org/$1/sitemaps/$2 permanent;

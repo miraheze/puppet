@@ -10,7 +10,7 @@ node /^cloud[345]\.miraheze\.org$/ {
     include role::cloud
 }
 
-node /^cp(3|1[234])\.miraheze\.org$/ {
+node /^cp(1[2345])\.miraheze\.org$/ {
     include base
     include role::varnish
 }
@@ -19,11 +19,6 @@ node /^db1[123]\.miraheze\.org$/ {
     include base
     include role::db
     include bacula::client
-}
-
-node 'dbbackup1.miraheze.org' {
-    include base
-    include role::dbbackup
 }
 
 node /^gluster[34]\.miraheze\.org$/ {
@@ -35,6 +30,7 @@ node /^gluster[34]\.miraheze\.org$/ {
 node 'graylog2.miraheze.org' {
     include base
     include role::graylog
+    include prometheus::es_exporter
 }
 
 node 'jobchron1.miraheze.org' {
@@ -107,23 +103,6 @@ node 'test3.miraheze.org' {
     include base
     include role::mediawiki
     include prometheus::php_fpm
-}
-
-node 'test4.miraheze.org' {
-    include base
-    include role::trafficserver
-
-    ufw::allow { 'http port 443 51.195.236.249':
-        proto => 'tcp',
-        port  => 443,
-        from  => '51.195.236.249',
-    }
-
-    ufw::allow { 'https port 443 2001:41d0:800:1bbd::3':
-        proto => 'tcp',
-        port  => 443,
-        from  => '2001:41d0:800:1bbd::3',
-    }
 }
 
 # ensures all servers have basic class if puppet runs

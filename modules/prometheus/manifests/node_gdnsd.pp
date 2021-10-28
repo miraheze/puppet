@@ -24,7 +24,7 @@ class prometheus::node_gdnsd (
         mode   => '0555',
         owner  => 'root',
         group  => 'root',
-        source => 'puppet:///modules/prometheus/gdnsd/prometheus-gdnsd-stats',
+        source => 'puppet:///modules/prometheus/gdnsd/prometheus-gdnsd-stats.py',
     }
 
     # Collect every minute

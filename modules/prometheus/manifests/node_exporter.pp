@@ -90,18 +90,31 @@ class prometheus::node_exporter (
         require   => Package['prometheus-node-exporter'],
     }
 
-    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "Prometheus 9100 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 9100,
-            from  => $value['ipaddress'],
-        }
+    # TODO: Remove once all modules use ferm.
+    $firewall_mode = lookup('base::firewall::mode', {'default_value' => 'ufw'})
+    $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    if $firewall_mode == 'ufw' {
+        $firewall_rules.each |$key, $value| {
+            ufw::allow { "Prometheus 9100 ${value['ipaddress']}":
+                proto => 'tcp',
+                port  => 9100,
+                from  => $value['ipaddress'],
+            }
 
-        ufw::allow { "Prometheus 9100 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 9100,
-            from  => $value['ipaddress6'],
+            ufw::allow { "Prometheus 9100 ${value['ipaddress6']}":
+                proto => 'tcp',
+                port  => 9100,
+                from  => $value['ipaddress6'],
+            }
+        }
+    } else {
+        $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+        $firewall_rules_str = join($firewall_rules_mapped, ' ')
+
+        ferm::service { 'prometheus node-exporter':
+            proto  => 'tcp',
+            port   => '9100',
+            srange => "(${firewall_rules_str})",
         }
     }
 }

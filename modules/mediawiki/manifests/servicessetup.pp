@@ -13,7 +13,7 @@ class mediawiki::servicessetup {
     }
 
     exec { 'mathoid_npm':
-        command     => 'npm install --cache /tmp/npm-cache',
+        command     => 'npm install --no-optional --cache /tmp/npm-cache',
         creates     => '/srv/mathoid/node_modules',
         cwd         => '/srv/mathoid',
         path        => '/usr/bin',

@@ -7,10 +7,6 @@
 # There are several workaround available (such as using the resolver option
 # with a low cache expiration timeout), but that's not recommended due to DNS
 # spoofing attacks. This is not the preferred solution, but works reliably.
-upstream restbase-lb.miraheze.org {
-	server services3.miraheze.org:443 weight=1 max_fails=2 fail_timeout=5s;
-	server services4.miraheze.org:443 weight=1 max_fails=2 fail_timeout=5s;
-}
 
 server {
 	listen 80 backlog=1024;
@@ -66,7 +62,7 @@ server {
 	}
 
 	location /discord {
-		return 301 https://discord.gg/v7HeT96;
+		return 301 https://discord.gg/TVAJTE4CUn;
 	}
 
 	location /donate {
@@ -124,7 +120,7 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	error_page 404 /w/404.php;
+	error_page 404 /ErrorPages/404.php;
 
 	include /etc/nginx/mediawiki-includes;
 
@@ -268,7 +264,7 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	error_page 404 /w/404.php;
+	error_page 404 /ErrorPages/404.php;
 
 	include /etc/nginx/mediawiki-includes;
 

@@ -117,17 +117,22 @@ backend test3 {
 	.port = "8091";
 }
 
+backend mwtask1_test {
+	.host = "127.0.0.1";
+	.port = "8089";
+}
+
 # end test backend
 
 
 sub vcl_init {
-	new mediawiki = directors.round_robin();
-	mediawiki.add_backend(mw8);
-	mediawiki.add_backend(mw9);
-	mediawiki.add_backend(mw10);
-	mediawiki.add_backend(mw11);
-	mediawiki.add_backend(mw12);
-	mediawiki.add_backend(mw13);
+	new mediawiki = directors.random();
+	mediawiki.add_backend(mw8, 100);
+	mediawiki.add_backend(mw9, 100);
+	mediawiki.add_backend(mw10, 100);
+	mediawiki.add_backend(mw11, 100);
+	mediawiki.add_backend(mw12, 100);
+	mediawiki.add_backend(mw13, 100);
 }
 
 
@@ -294,6 +299,9 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test3;
 		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mwtask1.miraheze.org") {
+		set req.backend_hint = mwtask1_test;
+		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
@@ -456,7 +464,7 @@ sub vcl_deliver {
 	// See https://github.com/wicg/floc#opting-out-of-computation
 	set resp.http.Permissions-Policy = "interest-cohort=()";
 
-	set resp.http.Content-Security-Policy = "default-src 'self' blob: data: <%- @csp_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%> 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self' <%- @frame_whitelist.each_pair do |config, value| -%> <%= value %> <%- end -%>";
+	set resp.http.Content-Security-Policy = "<%- @csp_whitelist.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 
 	return (deliver);
 }

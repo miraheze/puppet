@@ -18,18 +18,13 @@ class prometheus::php_fpm {
         require => File['/usr/local/bin/prometheus-phpfpm-exporter'],
     }
 
-    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "Prometheus php-fpm 9253 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 9253,
-            from  => $value['ipaddress'],
-        }
+    $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
 
-        ufw::allow { "Prometheus php-fpm 9253 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 9253,
-            from  => $value['ipaddress6'],
-        }
+    ferm::service { 'prometheus php-fpm':
+        proto  => 'tcp',
+        port   => '9253',
+        srange => "(${firewall_rules_str})",
     }
 }

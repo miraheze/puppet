@@ -21,6 +21,7 @@ class base::packages {
         'net-tools',
         'parted',
         'pigz',
+        'python3-distro',
         'ruby',
         'ruby-safe-yaml',
         'screen',

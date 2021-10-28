@@ -6,19 +6,14 @@ class role::postgresql {
         use_ssl  => lookup('postgresql::ssl', {'default_value' => false}),
     }
 
-    $firewall = query_facts('Class[Role::Puppetserver]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "postgresql ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 5432,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "postgresql ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 5432,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Role::Puppetserver]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'postgresql':
+        proto   => 'tcp',
+        port    => '5432',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
     }
 
     motd::role { 'role::postgresql':

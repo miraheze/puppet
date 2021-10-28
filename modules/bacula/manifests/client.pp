@@ -22,18 +22,12 @@ class bacula::client {
         notify  => Service['bacula-fd'],
     }
 
-    $firewall = query_facts('Class[Bacula::Director]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "bacula 9102 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 9102,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "bacula 9102 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 9102,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Bacula::Director]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'bacula client 9102':
+        proto  => 'tcp',
+        port   => '9102',
+        srange => "(${firewall_rules_str})",
     }
 }

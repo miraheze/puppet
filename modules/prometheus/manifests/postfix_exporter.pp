@@ -21,18 +21,12 @@ class prometheus::postfix_exporter {
         ],
     }
 
-    $firewall = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "Prometheus 9154 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 9154,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "Prometheus 9154 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 9154,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'prometheus postfix_exporter':
+        proto  => 'tcp',
+        port   => '9154',
+        srange => "(${firewall_rules_str})",
     }
 }

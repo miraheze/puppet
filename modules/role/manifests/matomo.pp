@@ -2,9 +2,21 @@
 class role::matomo {
     include ::matomo
 
-    ensure_resource_duplicate('ufw::allow', 'http', {'proto' => 'tcp', 'port' => '80'})
+    if !defined(Ferm::Service['http']) {
+        ferm::service { 'http':
+            proto   => 'tcp',
+            port    => '80',
+            notrack => true,
+        }
+    }
 
-    ensure_resource_duplicate('ufw::allow', 'https', {'proto' => 'tcp', 'port' => '443'})
+    if !defined(Ferm::Service['https']) {
+        ferm::service { 'https':
+            proto   => 'tcp',
+            port    => '443',
+            notrack => true,
+        }
+    }
 
     motd::role { 'role::matomo':
         description => 'central analytics server',

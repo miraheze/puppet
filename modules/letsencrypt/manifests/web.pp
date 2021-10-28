@@ -16,19 +16,13 @@ class letsencrypt::web {
         restart => true,
     }
 
-    $firewall = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "Icinga 5000 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => 5000,
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "Icinga 5000 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => 5000,
-            from  => $value['ipaddress6'],
-        }
+    $firewall_rules = query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
+    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    ferm::service { 'icinga 5000':
+        proto  => 'tcp',
+        port   => '5000',
+        srange => "(${firewall_rules_str})",
     }
 
     monitoring::services { 'MirahezeRenewSsl':
