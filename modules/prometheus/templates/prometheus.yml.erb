@@ -2,7 +2,6 @@
 
 global:
   scrape_interval:     30s # By default, scrape targets every 30 seconds.
-  evaluation_interval: 30s # By default, scrape targets every 30 seconds.
   scrape_timeout: 30s
 
   # Attach these labels to any time series or alerts when communicating with
@@ -38,8 +37,6 @@ scrape_configs:
       - targets: ['localhost:9090']
 
   - job_name: node
-    # If prometheus-node-exporter is installed, grab stats about the local
-    # machine by default.
     static_configs:
       - targets: [
 <%- @host.sort.each do |host| -%>
