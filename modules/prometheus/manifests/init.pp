@@ -28,8 +28,13 @@ class prometheus {
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
-        notify  => Service['prometheus'],
+        notify  => Exec['prometheus-reload'],
         require => Package['prometheus'],
+    }
+
+    exec { 'prometheus-reload':
+        command     => '/bin/systemctl reload prometheus',
+        refreshonly => true,
     }
 
     service { 'prometheus':
