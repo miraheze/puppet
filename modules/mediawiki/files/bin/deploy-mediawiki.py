@@ -40,6 +40,7 @@ def run(args, start):
         os.chdir('/srv/mediawiki-staging/w')
         exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
+        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --wiki=loginwiki'))
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
         rsyncpaths.append('/srv/mediawiki/w/')
     if args.landing:
@@ -63,8 +64,6 @@ def run(args, start):
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki=loginwiki'))
         # rsyncfiles.append('/srv/mediawiki/cache/l10nupdate-*.json')
         rsyncpaths.append('/srv/mediawiki/cache/l10n/')
-    if args.gitinfo:
-        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --use-staging --wiki=loginwiki'))
     if args.extensionlist:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki'))
         rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
@@ -146,7 +145,6 @@ if __name__ == '__main__':
     parser.add_argument('--landing', dest='landing', action='store_true')
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
     parser.add_argument('--l10n', dest='l10n', action='store_true')
-    parser.add_argument('--gitinfo', dest='gitinfo', action='store_true')
     parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--force', dest='force', action='store_true')
