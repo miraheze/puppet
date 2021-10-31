@@ -9,12 +9,6 @@ global:
   external_labels:
       monitor: 'miraheze'
 
-# Alertmanager configuration
-alerting:
-  alertmanagers:
-  - static_configs:
-    - targets: ['localhost:9093']
-
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
   # - "first_rules.yml"
