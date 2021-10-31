@@ -1,9 +1,8 @@
 # Sample config for Prometheus.
 
 global:
-  scrape_interval:     30s # By default, scrape targets every 30 seconds.
-  evaluation_interval: 30s # By default, scrape targets every 30 seconds.
-  scrape_timeout: 30s
+  scrape_interval: 60s # By default scrapes targets every 30 seconds.
+  scrape_timeout: 60s
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
@@ -26,10 +25,6 @@ rule_files:
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: 'prometheus'
-
-    # Override the global default and scrape targets from this job every 30 seconds.
-    scrape_interval: 30s
-    scrape_timeout: 30s
 
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
