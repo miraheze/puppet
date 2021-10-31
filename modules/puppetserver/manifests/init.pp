@@ -205,14 +205,6 @@ class puppetserver(
         minute  => [ '9', '19', '29', '39', '49', '59' ],
     }
 
-    cron { 'services-git':
-        ensure  => absent,
-        command => '/usr/bin/git -C /etc/puppetlabs/puppet/services pull',
-        user    => 'root',
-        hour    => '*',
-        minute  => [ '9', '19', '29', '39', '49', '59' ],
-    }
-
     cron { 'ssl-git':
         command => '/usr/bin/git -C /etc/puppetlabs/puppet/ssl-cert pull',
         user    => 'root',
