@@ -2,14 +2,11 @@
 # It was mostly written by Southparkfan, with some stuff by Wikimedia.
 
 # Credits go to Southparkfan and the contributors of Wikimedia's Varnish configuration.
-# See their Puppet repo (https://github.com/wikimedia/operations-puppet)
+# See their Puppet repo (https://github.com/wikimedia/puppet)
 # for the LICENSE.
 
-# If you have any questions about the Varnish setup,
-# please contact Southparkfan <southparkfan [at] miraheze [dot] org>.
-
 # Marker to tell the VCL compiler that this VCL has been adapted to the
-# new 4.0 format.
+# new 4.1 format.
 vcl 4.1;
 
 import directors;
