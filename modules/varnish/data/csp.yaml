@@ -123,6 +123,7 @@ frame-src:
   - "'self'"
   - '*.miraheze.org'
   - 'www.google.com'
+  - 'docs.google.com'
   - 'www.recaptcha.net'
   - 'web.libera.chat'
   - 'snap.berkeley.edu'
@@ -139,6 +140,7 @@ frame-src:
   - 'archive.org'
   - 'w.soundcloud.com'
   - 'query.wikidata.org'
+  - 'player.vimeo.com'
 
 connect-src:
   - "'self'"
