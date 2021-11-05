@@ -59,6 +59,9 @@ def run(args, start):
         for folder in folders:
             exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/{folder}/* /srv/mediawiki/{folder}/'))
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
+    if args.l10nupdate:
+        exitcodes.append(os.system('sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki=loginwiki'))
+        args.l10n = True
     if args.l10n:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki=loginwiki'))
@@ -144,6 +147,7 @@ if __name__ == '__main__':
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
+    parser.add_argument('--l10nupdate', dest='l10nupdate', action='store_true')
     parser.add_argument('--l10n', dest='l10n', action='store_true')
     parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
