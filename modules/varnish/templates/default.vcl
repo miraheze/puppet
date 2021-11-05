@@ -447,7 +447,7 @@ sub vcl_deliver {
 		set resp.http.Age = 0;
 	}
 
-	if (req.url ~ "^(/w/api\.php*|/w/index\.php\?*|/wiki/Special\:|/wiki/Special%3A).+$") {
+	if (req.url ~ "^(/w/(api|index|rest)\.php*|/wiki/Special(\:|%3A)).+$") {
 		set resp.http.X-Robots-Tag = "noindex";
 	}
 
