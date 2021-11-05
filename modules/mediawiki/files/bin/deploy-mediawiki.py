@@ -43,6 +43,7 @@ def run(args, start):
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --wiki=loginwiki'))
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
         rsyncpaths.append('/srv/mediawiki/w/')
+        rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
     if args.landing:
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/landing/* /srv/mediawiki/landing/'))
         rsyncpaths.append('/srv/mediawiki/landing/')
