@@ -33,7 +33,7 @@ echo "User-Agent: SemrushBot" . "\r\n";
 echo "Disallow: /" . "\r\n\n";
 
 # Disallow indexing /w/
-echo "# Disallow indexing /w/index.php?" . "\r\n\n";
+echo "# Disallow indexing /w/" . "\r\n\n";
 echo "User-agent: *" . "\r\n\n";
 echo "Allow: /w/load.php?" . "\r\n\n";
 echo "Disallow: /w/" . "\r\n\n";
