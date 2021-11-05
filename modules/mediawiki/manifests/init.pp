@@ -5,7 +5,6 @@ class mediawiki(
     Optional[Boolean] $use_memcached = undef,
 ) {
     include mediawiki::favicons
-    include mediawiki::cron
     include mediawiki::nginx
     include mediawiki::packages
     include mediawiki::logging
