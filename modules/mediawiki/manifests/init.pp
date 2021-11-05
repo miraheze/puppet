@@ -157,6 +157,19 @@ class mediawiki(
             user        => www-data,
             subscribe   => Git::Clone['ErrorPages'],
         }
+        
+        cron { 'l10n-modern-deploy':
+        ensure  => present,
+        command => 'deploy-mediawiki --l10nupdate --servers=${lookup(mediawiki::default_sync)}',
+        user    => 'www-data',
+        minute  => '0',
+        hour    => '23',
+        }
+        
+    }
+    
+    cron {'update.php for LocalisationUpdate':
+        ensure = absent,
     }
 
     file { [
