@@ -89,7 +89,7 @@ class base::puppet (
 
     service { 'puppet':
         ensure => stopped,
-        enable => mask,
+        enable => false,
     }
 
     file { '/usr/local/bin/puppet-enabled':
