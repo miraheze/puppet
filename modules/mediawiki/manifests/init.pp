@@ -201,16 +201,15 @@ class mediawiki(
         require => [ File['/srv/mediawiki/w'], File['/srv/mediawiki/config'] ],
     }
 
-    $wikiadmin_password    = lookup('passwords::db::wikiadmin')
-    $mediawiki_password    = lookup('passwords::db::mediawiki')
-    $redis_password        = lookup('passwords::redis::master')
-    $noreply_password      = lookup('passwords::mail::noreply')
-    $mediawiki_upgradekey  = lookup('passwords::mediawiki::upgradekey')
-    $mediawiki_secretkey   = lookup('passwords::mediawiki::secretkey')
-    $recaptcha_secretkey   = lookup('passwords::recaptcha::secretkey')
-    $matomotoken           = lookup('passwords::mediawiki::matomotoken')
-    $ldap_password         = lookup('passwords::mediawiki::ldap_password')
-
+    $wikiadmin_password         = lookup('passwords::db::wikiadmin')
+    $mediawiki_password         = lookup('passwords::db::mediawiki')
+    $redis_password             = lookup('passwords::redis::master')
+    $noreply_password           = lookup('passwords::mail::noreply')
+    $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
+    $mediawiki_secretkey        = lookup('passwords::mediawiki::secretkey')
+    $recaptcha_secretkey        = lookup('passwords::recaptcha::secretkey')
+    $matomotoken                = lookup('passwords::mediawiki::matomotoken')
+    $ldap_password              = lookup('passwords::mediawiki::ldap_password')
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
@@ -230,12 +229,13 @@ class mediawiki(
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
     }
-    
+
     file { '/usr/local/bin/mwscript':
         ensure => 'present',
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/mwscript.py',
     }
+
     $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet', 'check-read-only']
     $cookbooks.each |$cookbook| {
         file {"/usr/local/bin/${cookbook}":
@@ -244,7 +244,7 @@ class mediawiki(
             source => "puppet:///modules/mediawiki/cookbooks/${cookbook}.py",
         }
     }
-    
+
     file { '/srv/mediawiki/config/OAuth2.key':
         ensure  => present,
         mode    => '0755',
