@@ -10,8 +10,6 @@ class mediawiki(
     include mediawiki::logging
     include mediawiki::php
     include mediawiki::servicessetup
-
-
     include mediawiki::monitoring
 
     if lookup(jobrunner) {
@@ -21,7 +19,7 @@ class mediawiki(
     if lookup(jobchron) {
         include mediawiki::jobqueue::chron
     }
-    
+
     if lookup(mediawiki::remote_sync) {
         users::user { 'www-data':
             ensure   => present,
@@ -34,12 +32,14 @@ class mediawiki(
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy'
             ],
         }
+
         file { '/var/www/.ssh':
             ensure => directory,
             owner  => 'www-data',
             group  => 'www-data',
             mode   => '0400',
         }
+
         file { '/var/www/.ssh/authorized_keys':
             ensure => file,
             owner  => 'www-data',
@@ -47,7 +47,7 @@ class mediawiki(
             mode   => '0400',
         }
     }
-    
+
     if lookup(mediawiki::is_canary) {
         file { '/srv/mediawiki-staging/deploykey.pub':
             ensure => present,
@@ -157,7 +157,7 @@ class mediawiki(
             user        => www-data,
             subscribe   => Git::Clone['ErrorPages'],
         }
-        
+
         cron { 'l10n-modern-deploy':
             ensure  => present,
             command => "/usr/local/bin/deploy-mediawiki --l10nupdate --servers=${lookup(mediawiki::default_sync)}",
@@ -165,11 +165,6 @@ class mediawiki(
             minute  => '0',
             hour    => '23',
         }
-        
-    }
-    
-    cron {'update.php for LocalisationUpdate':
-        ensure => absent,
     }
 
     file { [
