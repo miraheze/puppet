@@ -5,6 +5,7 @@
   ],
   "settings" : {
     "index" : {
+      "codec": "best_compression",
       "max_result_window": 10000000,
       "analysis" : {
         "analyzer" : {
