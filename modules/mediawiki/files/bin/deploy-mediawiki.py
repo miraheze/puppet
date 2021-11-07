@@ -37,7 +37,7 @@ def run(args, start):
         if args.pull:
             pull = str(args.pull).split(',')
             if 'world' not in pull:
-                pull.append('world');
+                pull.append('world')
                 args.pull = ','.join(pull)
         else:
             args.pull = 'world'
