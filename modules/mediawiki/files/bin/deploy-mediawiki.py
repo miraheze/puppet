@@ -37,20 +37,17 @@ def run(args, start):
         args.pull = 'world'
     if args.pull:
         pull = str(args.pull).split(',')
+        base = '/srv/mediawiki-staging'
         if args.world and 'world' not in pull:
             pull.append('world')
         if 'config' in pull:
-            os.chdir('/srv/mediawiki-staging/config')
-            exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
+            exitcodes.append(os.system(f'sudo -u www-data git -C {base}/config pull --quiet'))
         if 'world' in pull:
-            os.chdir('/srv/mediawiki-staging/w')
-            exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
+            exitcodes.append(os.system(f'sudo -u www-data git -C {base}/w pull --recurse-submodules --quiet'))
         if 'landing' in pull:
-            os.chdir('/srv/mediawiki-staging/landing')
-            exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
+            exitcodes.append(os.system(f'sudo -u www-data git -C {base}/landing pull --quiet'))
         if 'errorpages' in pull:
-            os.chdir('/srv/mediawiki-staging/ErrorPages')
-            exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
+            exitcodes.append(os.system(f'sudo -u www-data git -C {base}/ErrorPages pull --quiet'))
     if args.config:
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
         rsyncpaths.append('/srv/mediawiki/config/')
