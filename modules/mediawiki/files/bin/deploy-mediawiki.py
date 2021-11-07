@@ -33,17 +33,12 @@ def run(args, start):
         os.system(f'/usr/local/bin/logsalmsg {text}')
     else:
         print(text)
-    if args.world:
-        if args.pull:
-            pull = str(args.pull).split(',')
-            if 'world' not in pull:
-                pull.append('world')
-                args.pull = ','.join(pull)
-            pull = None
-        else:
-            args.pull = 'world'
+    if args.world and not args.pull:
+        args.pull = 'world'
     if args.pull:
         pull = str(args.pull).split(',')
+        if args.world and 'world' not in pull:
+            pull.append('world')
         if 'config' in pull:
             os.chdir('/srv/mediawiki-staging/config')
             exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
