@@ -33,12 +33,33 @@ def run(args, start):
         os.system(f'/usr/local/bin/logsalmsg {text}')
     else:
         print(text)
+    if args.world:
+        if args.pull:
+            pull = str(args.pull).split(',')
+            if 'world' not in pull:
+                pull.append('world');
+                args.pull = ','.join(pull)
+        else:
+            args.pull = 'world'
+    if args.pull:
+        directories = str(args.pull).split(',')
+        if 'config' in directories:
+            os.chdir('/srv/mediawiki-staging/config')
+            exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
+        if 'world' in directories:
+            os.chdir('/srv/mediawiki-staging/w')
+            exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
+        if 'landing' in directories:
+            os.chdir('/srv/mediawiki-staging/landing')
+            exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
+        if 'errorpages' in directories:
+            os.chdir('/srv/mediawiki-staging/ErrorPages')
+            exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
     if args.config:
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
         rsyncpaths.append('/srv/mediawiki/config/')
     if args.world:
         os.chdir('/srv/mediawiki-staging/w')
-        exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --wiki=loginwiki'))
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
@@ -145,6 +166,7 @@ def run(args, start):
 if __name__ == '__main__':
     start = time.time()
     parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--pull', dest='pull')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
