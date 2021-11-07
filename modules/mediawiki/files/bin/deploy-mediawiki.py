@@ -34,10 +34,11 @@ def run(args, start):
     else:
         print(text)
     if args.world and not args.pull:
-        args.pull = 'world'
-    if args.pull:
-        pull = str(args.pull).split(',')
-        if args.world and 'world' not in pull:
+        pull = ['world']
+    if args.pull or args.world:
+        if args.pull:
+            pull = str(args.pull).split(',')
+        elif args.world and 'world' not in pull:
             pull.append('world')
         if 'config' in pull:
             exitcodes.append(os.system('sudo -u www-data git -C /srv/mediawiki-staging/config pull --quiet'))
