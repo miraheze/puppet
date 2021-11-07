@@ -160,7 +160,7 @@ class mediawiki(
         
         cron { 'l10n-modern-deploy':
             ensure  => present,
-            command => "/usr/local/bin/deploy-mediawiki --l10nupdate --servers=${lookup(mediawiki::default_sync)}",
+            command => "/usr/bin/ionice -c idle /usr/bin/nice -n 15 /usr/local/bin/deploy-mediawiki --l10nupdate --servers=${lookup(mediawiki::default_sync)}",
             user    => 'www-data',
             minute  => '0',
             hour    => '23',
