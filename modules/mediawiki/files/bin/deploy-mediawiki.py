@@ -39,20 +39,21 @@ def run(args, start):
             if 'world' not in pull:
                 pull.append('world')
                 args.pull = ','.join(pull)
+            pull = None
         else:
             args.pull = 'world'
     if args.pull:
-        directories = str(args.pull).split(',')
-        if 'config' in directories:
+        pull = str(args.pull).split(',')
+        if 'config' in pull:
             os.chdir('/srv/mediawiki-staging/config')
             exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
-        if 'world' in directories:
+        if 'world' in pull:
             os.chdir('/srv/mediawiki-staging/w')
             exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
-        if 'landing' in directories:
+        if 'landing' in pull:
             os.chdir('/srv/mediawiki-staging/landing')
             exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
-        if 'errorpages' in directories:
+        if 'errorpages' in pull:
             os.chdir('/srv/mediawiki-staging/ErrorPages')
             exitcodes.append(os.system('sudo -u www-data git pull --recurse-submodules --quiet'))
     if args.config:
