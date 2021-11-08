@@ -1,7 +1,7 @@
 users::groups:
   - mediawiki-admins
 jobrunner: false
-contactgroups: ['icingaadmins', 'sre', 'mediawiki']
+contactgroups: ['sre', 'mediawiki']
 role::mediawiki::use_strict_firewall: false
 vpncloud::server_ip: 10.0.1.7
 mediawiki::branch: 'REL1_37'
