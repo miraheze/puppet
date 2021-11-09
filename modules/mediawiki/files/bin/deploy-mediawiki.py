@@ -59,7 +59,7 @@ def run(args, start):
             pull = str(args.pull).split(',')
         elif args.world and 'world' not in pull:
             pull.append('world')
-        for each repo in pull:
+        for repo in pull:
             if repo = 'world':
                 sm = True
             else:
