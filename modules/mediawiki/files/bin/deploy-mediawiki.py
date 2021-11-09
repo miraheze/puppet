@@ -18,7 +18,7 @@ def check_up(server):
 
 
 def _get_staging_path(repo):
-    return f'/srv/mediawik-staging/{repos[repo]}'
+    return f'/srv/mediawiki-staging/{repos[repo]}'
 
 
 def _get_deployed_path(repo):
