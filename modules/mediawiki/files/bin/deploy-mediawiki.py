@@ -65,7 +65,7 @@ def run(args, start):
             else:
                 sm = False
             try:
-                exitcodes.append(os.system(_construct_git_pull(repos[repo], submodules=sm)))
+                exitcodes.append(os.system(_construct_git_pull(repo, submodules=sm)))
             except KeyError:
                 print(f'Failed to pull {repo} due to invalid name')
     if args.config:
