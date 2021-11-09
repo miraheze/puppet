@@ -22,7 +22,7 @@ def _get_staging_path(repo):
 
 
 def _get_deployed_path(repo):
-    return f'/srv/mediawiki/w{repos[repo]}'
+    return f'/srv/mediawiki/{repos[repo]}'
 
 
 def _construct_git_pull(repo, submodules=False):
