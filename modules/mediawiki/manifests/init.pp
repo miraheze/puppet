@@ -164,6 +164,8 @@ class mediawiki(
             user    => 'www-data',
             minute  => '0',
             hour    => '23',
+            month   => '*',
+            weekday => [ '7' ],
         }
     }
 
