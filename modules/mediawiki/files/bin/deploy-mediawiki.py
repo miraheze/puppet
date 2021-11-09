@@ -5,6 +5,9 @@ import time
 import requests
 
 
+repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
+
+
 def check_up(server):
     up = False
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
@@ -12,6 +15,22 @@ def check_up(server):
     if req.status_code == 200 and 'miraheze' in req.text and server in req.headers['X-Served-By']:
         up = True
     return up
+
+
+def _get_staging_path(repo):
+    return f'/srv/mediawik-staging/{repos[repo]}'
+
+
+def _get_deployed_path(repo):
+    return f'/srv/mediawiki/w{repos[repo]}'
+
+
+def _construct_git_pull(repo, submodules=False):
+    if submodules:
+        extrap = '--recurse-submodules'
+    else:
+        extrap = ''
+    return f'sudo -u www-data git -C {_get_staging_path(repo)} pull {extrap} --quiet'
 
 
 def run(args, start):
@@ -40,30 +59,31 @@ def run(args, start):
             pull = str(args.pull).split(',')
         elif args.world and 'world' not in pull:
             pull.append('world')
-        if 'config' in pull:
-            exitcodes.append(os.system('sudo -u www-data git -C /srv/mediawiki-staging/config pull --quiet'))
-        if 'world' in pull:
-            exitcodes.append(os.system('sudo -u www-data git -C /srv/mediawiki-staging/w pull --recurse-submodules --quiet'))
-        if 'landing' in pull:
-            exitcodes.append(os.system('sudo -u www-data git -C /srv/mediawiki-staging/landing pull --quiet'))
-        if 'errorpages' in pull:
-            exitcodes.append(os.system('sudo -u www-data git -C /srv/mediawiki-staging/ErrorPages pull --quiet'))
+        for each repo in pull:
+            if repo = 'world':
+                sm = True
+            else:
+                sm = False
+            try:
+                exitcodes.append(os.system(_construct_git_pull(repos[repo], submodules=sm)))
+            except KeyError:
+                print(f'Failed to pull {repo} due to invalid name')
     if args.config:
-        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/config/* /srv/mediawiki/config/'))
-        rsyncpaths.append('/srv/mediawiki/config/')
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path('config')}/* {_get_deployed_path('config')}'))
+        rsyncpaths.append(_get_deployed_path('config'))
     if args.world:
-        os.chdir('/srv/mediawiki-staging/w')
+        os.chdir(_get_staging_path('world'))
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --wiki=loginwiki'))
-        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'))
-        rsyncpaths.append('/srv/mediawiki/w/')
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path('world')}/* {_get_deployed_path('world')}'))
+        rsyncpaths.append(_get_deployed_path('world'))
         rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
     if args.landing:
-        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/landing/* /srv/mediawiki/landing/'))
-        rsyncpaths.append('/srv/mediawiki/landing/')
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path('landing')}/* {_get_deployed_path('landing')}'))
+        rsyncpaths.append(_get_deployed_path('landing'))
     if args.errorpages:
-        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" /srv/mediawiki-staging/ErrorPages/* /srv/mediawiki/ErrorPages/'))
-        rsyncpaths.append('/srv/mediawiki/ErrorPages/')
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path('errorpages')}/* {_get_deployed_path('errorpages')}'))
+        rsyncpaths.append(_get_deployed_path('errorpages'))
     if args.files:
         files = str(args.files).split(',')
         for file in files:
