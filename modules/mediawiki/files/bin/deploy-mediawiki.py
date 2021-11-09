@@ -67,7 +67,6 @@ def run(args, start):
     if args.l10n:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki=loginwiki'))
-        # rsyncfiles.append('/srv/mediawiki/cache/l10nupdate-*.json')
         rsyncpaths.append('/srv/mediawiki/cache/l10n/')
     if args.extensionlist:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki'))
