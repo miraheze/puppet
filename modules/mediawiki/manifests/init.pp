@@ -10,8 +10,6 @@ class mediawiki(
     include mediawiki::logging
     include mediawiki::php
     include mediawiki::servicessetup
-
-
     include mediawiki::monitoring
 
     if lookup(jobrunner) {
@@ -21,7 +19,7 @@ class mediawiki(
     if lookup(jobchron) {
         include mediawiki::jobqueue::chron
     }
-    
+
     if lookup(mediawiki::remote_sync) {
         users::user { 'www-data':
             ensure   => present,
@@ -34,12 +32,14 @@ class mediawiki(
                 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy'
             ],
         }
+
         file { '/var/www/.ssh':
             ensure => directory,
             owner  => 'www-data',
             group  => 'www-data',
             mode   => '0400',
         }
+
         file { '/var/www/.ssh/authorized_keys':
             ensure => file,
             owner  => 'www-data',
@@ -47,7 +47,7 @@ class mediawiki(
             mode   => '0400',
         }
     }
-    
+
     if lookup(mediawiki::is_canary) {
         file { '/srv/mediawiki-staging/deploykey.pub':
             ensure => present,
@@ -157,7 +157,7 @@ class mediawiki(
             user        => www-data,
             subscribe   => Git::Clone['ErrorPages'],
         }
-        
+
         cron { 'l10n-modern-deploy':
             ensure  => present,
             command => "/usr/local/bin/deploy-mediawiki --l10nupdate --servers=${lookup(mediawiki::default_sync)}",
@@ -165,11 +165,6 @@ class mediawiki(
             minute  => '0',
             hour    => '23',
         }
-        
-    }
-    
-    cron {'update.php for LocalisationUpdate':
-        ensure => absent,
     }
 
     file { [
@@ -206,16 +201,15 @@ class mediawiki(
         require => [ File['/srv/mediawiki/w'], File['/srv/mediawiki/config'] ],
     }
 
-    $wikiadmin_password    = lookup('passwords::db::wikiadmin')
-    $mediawiki_password    = lookup('passwords::db::mediawiki')
-    $redis_password        = lookup('passwords::redis::master')
-    $noreply_password      = lookup('passwords::mail::noreply')
-    $mediawiki_upgradekey  = lookup('passwords::mediawiki::upgradekey')
-    $mediawiki_secretkey   = lookup('passwords::mediawiki::secretkey')
-    $recaptcha_secretkey   = lookup('passwords::recaptcha::secretkey')
-    $matomotoken           = lookup('passwords::mediawiki::matomotoken')
-    $ldap_password         = lookup('passwords::mediawiki::ldap_password')
-
+    $wikiadmin_password         = lookup('passwords::db::wikiadmin')
+    $mediawiki_password         = lookup('passwords::db::mediawiki')
+    $redis_password             = lookup('passwords::redis::master')
+    $noreply_password           = lookup('passwords::mail::noreply')
+    $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
+    $mediawiki_secretkey        = lookup('passwords::mediawiki::secretkey')
+    $recaptcha_secretkey        = lookup('passwords::recaptcha::secretkey')
+    $matomotoken                = lookup('passwords::mediawiki::matomotoken')
+    $ldap_password              = lookup('passwords::mediawiki::ldap_password')
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
@@ -235,12 +229,13 @@ class mediawiki(
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/foreachwikiindblist',
     }
-    
+
     file { '/usr/local/bin/mwscript':
         ensure => 'present',
         mode   => '0755',
         source => 'puppet:///modules/mediawiki/bin/mwscript.py',
     }
+
     $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet', 'check-read-only']
     $cookbooks.each |$cookbook| {
         file {"/usr/local/bin/${cookbook}":
@@ -249,7 +244,7 @@ class mediawiki(
             source => "puppet:///modules/mediawiki/cookbooks/${cookbook}.py",
         }
     }
-    
+
     file { '/srv/mediawiki/config/OAuth2.key':
         ensure  => present,
         mode    => '0755',
