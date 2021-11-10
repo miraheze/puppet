@@ -74,7 +74,7 @@ def run(args, start):
     if args.world:
         os.chdir(_get_staging_path('world'))
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
-        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --wiki=loginwiki'))
+        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki'))
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("world")}/* {_get_deployed_path("world")}'))
         rsyncpaths.append(_get_deployed_path('world'))
         rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
