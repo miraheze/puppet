@@ -30,7 +30,7 @@ def run(args):
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
     if args.arguments:
-        command = f'{command} {args.arguments}'
+        command += ' ' + ' '.join(args.arguments)
     logcommand = f'/usr/local/bin/logsalmsg "{command}'
     print("Will execute:")
     if 'generate' in locals():
@@ -54,9 +54,11 @@ def run(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('script', required=True)
-    parser.add_argument('wiki', required=True)
-    parser.add_argument('arguments', nargs='*')
+    parser.add_argument('script')
+    parser.add_argument('wiki')
+    parser.add_argument('arguments', nargs='*', default='')
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
-    run(parser.parse_args())
+
+    args, args.arguments = parser.parse_known_args()
+    run(args)
