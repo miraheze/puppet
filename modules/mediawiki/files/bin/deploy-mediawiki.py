@@ -18,11 +18,11 @@ def check_up(server):
 
 
 def _get_staging_path(repo):
-    return f'/srv/mediawiki-staging/{repos[repo]}'
+    return f'/srv/mediawiki-staging/{repos[repo]}/'
 
 
 def _get_deployed_path(repo):
-    return f'/srv/mediawiki/{repos[repo]}'
+    return f'/srv/mediawiki/{repos[repo]}/'
 
 
 def _construct_git_pull(repo, submodules=False):
@@ -69,20 +69,20 @@ def run(args, start):
             except KeyError:
                 print(f'Failed to pull {repo} due to invalid name')
     if args.config:
-        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("config")}/* {_get_deployed_path("config")}'))
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("config")}* {_get_deployed_path("config")}'))
         rsyncpaths.append(_get_deployed_path('config'))
     if args.world:
         os.chdir(_get_staging_path('world'))
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki'))
-        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("world")}/* {_get_deployed_path("world")}'))
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("world")}* {_get_deployed_path("world")}'))
         rsyncpaths.append(_get_deployed_path('world'))
         rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
     if args.landing:
-        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("landing")}/* {_get_deployed_path("landing")}'))
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("landing")}* {_get_deployed_path("landing")}'))
         rsyncpaths.append(_get_deployed_path('landing'))
     if args.errorpages:
-        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("errorpages")}/* {_get_deployed_path("errorpages")}'))
+        exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("errorpages")}* {_get_deployed_path("errorpages")}'))
         rsyncpaths.append(_get_deployed_path('errorpages'))
     if args.files:
         files = str(args.files).split(',')
