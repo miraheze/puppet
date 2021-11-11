@@ -38,14 +38,15 @@ def run(args):
     print(command)
     confirm = input("Type 'Y' to confirm: ")
     if confirm.upper() == 'Y':
-        if long:
+        if long and not args.nolog:
             os.system(f'{logcommand} (START)"')
         if 'generate' in locals():
             os.system(generate)
         return_value = os.system(command)
         logcommand = f'{logcommand} (END - exit={str(return_value)})"'
-        print(f'Logging via {logcommand}')
-        os.system(logcommand)
+        if not args.nolog:
+            print(f'Logging via {logcommand}')
+            os.system(logcommand)
         print('Done!')
     else:
         print('Aborted!')
@@ -57,4 +58,5 @@ if __name__ == '__main__':
     parser.add_argument('wiki', required=True)
     parser.add_argument('arguments', nargs='*')
     parser.add_argument('--extension', '--skin', dest='extension')
+    parser.add_argument('--no-log', dest='nolog', action='store_true')
     run(parser.parse_args())
