@@ -5,18 +5,18 @@ import os
 
 
 def run(args):
-    longScripts = ('importDump.php', 'deleteBatch.php', 'importImages.php', 'rebuildall.php')
+    longscripts = ('importDump.php', 'deleteBatch.php', 'importImages.php', 'rebuildall.php')
     long = False
 
     script = args.script
-    if script in longScripts:
+    if script in longscripts:
         long = True
     if len(script.split('/')) == 1:
         script = f'/srv/mediawiki/w/maintenance/{script}'
     else:
         scriptsplit = script.split('/')
         script = f'/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
-        if scriptsplit[2] in longScripts:
+        if scriptsplit[2] in longscripts:
             long = True
 
     wiki = args.wiki
