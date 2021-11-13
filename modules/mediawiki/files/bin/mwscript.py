@@ -36,8 +36,8 @@ def run(args):
     if 'generate' in locals():
         print(generate)
     print(command)
-    confirm = input("Type 'Y' to confirm: ")
-    if confirm.upper() == 'Y':
+    confirm = args.confirm or input("Type 'Y' to confirm: ")
+    if confirm == True or confirm.upper() == 'Y':
         if long and not args.nolog:
             os.system(f'{logcommand} (START)"')
         if 'generate' in locals():
@@ -59,6 +59,7 @@ if __name__ == '__main__':
     parser.add_argument('arguments', nargs='*', default='')
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
+    parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_false')
 
     args, args.arguments = parser.parse_known_args()
     run(args)
