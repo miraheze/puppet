@@ -6,7 +6,7 @@ class role::mediawiki (
 
     if $strict_firewall {
         $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+            query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
             .map |$key, $value| {
                 "${value['ipaddress']} ${value['ipaddress6']}"
             }
