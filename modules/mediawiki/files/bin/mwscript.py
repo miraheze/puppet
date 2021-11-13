@@ -43,7 +43,7 @@ def run(args):
         if 'generate' in locals():
             os.system(generate)
         return_value = os.system(command)
-        logcommand = f'{logcommand} (END - exit={str(return_value)})"'
+        logcommand += f' (END - exit={str(return_value)})"'
         if not args.nolog:
             print(f'Logging via {logcommand}')
             os.system(logcommand)
