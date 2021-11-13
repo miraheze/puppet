@@ -36,8 +36,7 @@ def run(args):
     if 'generate' in locals():
         print(generate)
     print(command)
-    confirm = args.confirm or input("Type 'Y' to confirm: ")
-    if confirm is True or confirm.upper() == 'Y':
+    if args.confirm or input("Type 'Y' to confirm: ").upper() == 'Y':
         if long and not args.nolog:
             os.system(f'{logcommand} (START)"')
         if 'generate' in locals():
