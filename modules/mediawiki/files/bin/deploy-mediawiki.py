@@ -38,7 +38,7 @@ def _construct_rsync_command(time, dest, recursive=True, local=True, location=''
     if (location == (dest or '')) and server:  # ignore location if not specified, if given must equal dest.
         return f'sudo -u www-data rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} www-data@{server}.miraheze.org:{dest}'
     else:
-        raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}'
+        raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
     
 
         
