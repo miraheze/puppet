@@ -82,22 +82,16 @@ def run(args, start):
                 exitcodes.append(os.system(_construct_git_pull(repo, submodules=sm)))
             except KeyError:
                 print(f'Failed to pull {repo} due to invalid name')
-    if args.config:
-        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path("config")}*', dest=_get_deployed_path("config"))))
-        rsyncpaths.append(_get_deployed_path('config'))
-    if args.world:
-        os.chdir(_get_staging_path('world'))
-        exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
-        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki'))
-        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path("world")}*', dest=_get_deployed_path("world"))))
-        rsyncpaths.append(_get_deployed_path('world'))
-        rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
-    if args.landing:
-        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path("landing")}*', dest=_get_deployed_path("landing"))))
-        rsyncpaths.append(_get_deployed_path('landing'))
-    if args.errorpages:
-        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path("errorpages")}*', dest=_get_deployed_path("errorpages"))))
-        rsyncpaths.append(_get_deployed_path('errorpages'))
+    options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
+    for option in options:
+        if options[option]:
+            if options[option] == 'world':
+                os.chdir(_get_staging_path('world'))
+                exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
+                exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki'))
+                rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
+            exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(options[option])}*', dest=_get_deployed_path(options[option]))))
+            rsyncpaths.append(_get_deployed_path(options[option]))
     if args.files:
         files = str(args.files).split(',')
         for file in files:
