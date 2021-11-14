@@ -17,14 +17,15 @@ def check_up(server):
         up = True
     return up
 
-def remote_sync_file(time, serverlist, path, recursive=True):
+
+def remote_sync_file(time, serverlist, path, recursive=True, force=False):
     print(f'Start {path} deploys.')
     for server in serverlist:
         print(f'Deploying {path} to {server}.')
-        ec = os.system(_construct_rsync_command(time=args.ignoretime, local=False, dest=path, server=server, recursive=recursive))
+        ec = os.system(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
         if not check_up(server):
             print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
-            if not args.force:
+            if not force:
                 os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}')
                 exit(3)
             else:
@@ -151,9 +152,9 @@ def run(args, start):
             exit(3)
     if sync:
         for path in rsyncpaths:
-            exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=serverlist, path=path))
+            exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=serverlist, path=path, force=args.force))
         for file in rsyncfiles:
-            exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=serverlist, path=file, recursive=False))
+            exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=serverlist, path=file, recursive=False, force=args.force))
 
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
     FAIL = 0
