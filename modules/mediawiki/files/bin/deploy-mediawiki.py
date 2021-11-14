@@ -149,7 +149,7 @@ def run(args, start):
             print('Canary check failed for localhost. Aborting... - use --force to proceed')
             os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for localhost')
             exit(3)
-    if sync
+    if sync:
         for path in rsyncpaths:
             exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=serverlist, path=path))
         for file in rsyncfiles:
