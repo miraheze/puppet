@@ -8,6 +8,7 @@ import requests
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
 DEPLOYUSER = 'www-data'
 
+
 def check_up(server):
     up = False
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
@@ -24,6 +25,7 @@ def _get_staging_path(repo):
 def _get_deployed_path(repo):
     return f'/srv/mediawiki/{repos[repo]}/'
 
+
 def _construct_rsync_command(time, dest, recursive=True, local=True, location='', server=None):
     if time:
         params = '--inplace'
@@ -39,9 +41,8 @@ def _construct_rsync_command(time, dest, recursive=True, local=True, location=''
         return f'sudo -u www-data rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} www-data@{server}.miraheze.org:{dest}'
     else:
         raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
-    
 
-        
+
 def _construct_git_pull(repo, submodules=False):
     if submodules:
         extrap = '--recurse-submodules'
