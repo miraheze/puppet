@@ -82,20 +82,20 @@ def run(args, start):
             except KeyError:
                 print(f'Failed to pull {repo} due to invalid name')
     if args.config:
-        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location='_get_staging_path("config")}*', dest=_get_deployed_path("config")))
+        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path("config")}*', dest=_get_deployed_path("config"))))
         rsyncpaths.append(_get_deployed_path('config'))
     if args.world:
         os.chdir(_get_staging_path('world'))
         exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki'))
-        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location='_get_staging_path("world")}*', dest=_get_deployed_path("world")))
+        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path("world")}*', dest=_get_deployed_path("world"))))
         rsyncpaths.append(_get_deployed_path('world'))
         rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
     if args.landing:
-        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location='_get_staging_path("landing")}*', dest=_get_deployed_path("landing")))
+        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path("landing")}*', dest=_get_deployed_path("landing"))))
         rsyncpaths.append(_get_deployed_path('landing'))
     if args.errorpages:
-        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location='_get_staging_path("errorpages")}*', dest=_get_deployed_path("errorpages")))
+        exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path("errorpages")}*', dest=_get_deployed_path("errorpages"))))
         rsyncpaths.append(_get_deployed_path('errorpages'))
     if args.files:
         files = str(args.files).split(',')
@@ -105,7 +105,7 @@ def run(args, start):
     if args.folders:
         folders = str(args.folders).split(',')
         for folder in folders:
-            exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest='/srv/mediawiki/{folder}/'))
+            exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest='/srv/mediawiki/{folder}/')))
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
     if args.l10nupdate:
         exitcodes.append(os.system('sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki=loginwiki'))
