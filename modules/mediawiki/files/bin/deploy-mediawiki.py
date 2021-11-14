@@ -17,6 +17,22 @@ def check_up(server):
         up = True
     return up
 
+def remote_sync_file(time, serverlist, path, recursive=True):
+    print(f'Start {path} deploys.')
+    for server in serverlist:
+        print(f'Deploying {path} to {server}.')
+        ec = os.system(_construct_rsync_command(time=args.ignoretime, local=False, dest=path, server=server, recursive=recursive))
+        if not check_up(server):
+            print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
+            if not args.force:
+                os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}')
+                exit(3)
+            else:
+                print('Ignoring canary error due to --force')
+        print(f'Deployed {path} to {server}.')
+    print(f'Finished {path} deploys.')
+    return ec
+
 
 def _get_staging_path(repo):
     return f'/srv/mediawiki-staging/{repos[repo]}/'
@@ -133,36 +149,11 @@ def run(args, start):
             print('Canary check failed for localhost. Aborting... - use --force to proceed')
             os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for localhost')
             exit(3)
-    if sync:
-        if len(rsyncpaths) > 0:
-            for path in rsyncpaths:
-                print(f'Start {path} deploys.')
-                for server in serverlist:
-                    print(f'Deploying {path} to {server}.')
-                    exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, local=False, dest=path, server=server)))
-                    if not check_up(server):
-                        print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
-                        if not args.force:
-                            os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}')
-                            exit(3)
-                        else:
-                            print('Ignoring canary error due to --force')
-                    print(f'Deployed {path} to {server}.')
-                print(f'Finished {path} deploys.')
-        if len(rsyncfiles) > 0:
-            for file in rsyncfiles:
-                print(f'Start {file} deploys.')
-                for server in serverlist:
-                    print(f'Deploying {file} to {server}.')
-                    exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, local=False, recursive=False, dest=file, server=server)))
-                    if not check_up(server):
-                        print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
-                        if not args.force:
-                            os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}')
-                            exit(3)
-                        else:
-                            print('Ignoring canary error due to --force')
-                    print(f'Deployed {file} to {server}.')
+    if sync
+        for path in rsyncpaths:
+            exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=serverlist, path=path))
+        for file in rsyncfiles:
+            exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=serverlist, path=file, recursive=False))
 
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
     FAIL = 0
