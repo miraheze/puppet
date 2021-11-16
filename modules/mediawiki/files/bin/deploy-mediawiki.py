@@ -133,11 +133,11 @@ def run(args, start):
         for folder in folders:
             rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest='/srv/mediawiki/{folder}/'))
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
-    
+
     if args.extensionlist:  # when adding skins/exts
         rebuild.append('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki')
         rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
-    
+
     for cmd in rsync:  # move staged content to live
         exitcodes.append(os.system(cmd))
 
@@ -150,7 +150,7 @@ def run(args, start):
         rebuild.append('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki=loginwiki')
         rsyncpaths.append('/srv/mediawiki/cache/l10n/')
 
-    for cmd in postinstall:  # cmds to run after rsync & install (like 
+    for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
         exitcodes.append(os.system(cmd))
     for cmd in rebuild:  # update ext list + l10n
         exitcodes.append(os.system(cmd))
@@ -180,9 +180,9 @@ def run(args, start):
         if code != 0:
             FAIL = 1
     if FAIL == 1:
-        fintext =+ ' - FAIL: {exitcodes}'
+        fintext = + ' - FAIL: {exitcodes}'
     else:
-        fintext =+ ' - SUCCESS'
+        fintext = + ' - SUCCESS'
     fintext =+ f'in {str(int(time.time() - start))}s'
     if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {fintext}')
