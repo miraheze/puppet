@@ -9,6 +9,14 @@ repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': '
 DEPLOYUSER = 'www-data'
 
 
+def run_command(cmd):
+    start = time.time()
+    print(f'Execute: {cmd}')
+    ec = os.system(cmd)
+    print(f'Completed in {str(int(time.time() - start))}s!')
+    return ec
+
+
 def non_zero_code(ec, exit=True):
     for code in ec:
         if code != 0:
@@ -123,13 +131,13 @@ def run(args, start):
                 print(f'Failed to pull {repo} due to invalid name')
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     for cmd in stage:  # setup env, git pull etc
-        exitcodes.append(os.system(cmd))
+        exitcodes.append(run_command(cmd))
     non_zero_code(exitcodes)
     for option in options:  # configure rsync & custom data for repos
         if options[option]:
             if options[option] == 'world':  # install steps for w
                 os.chdir(_get_staging_path('world'))
-                exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
+                exitcodes.append(run_command('sudo -u www-data composer install --no-dev --quiet'))
                 rebuild.append('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki')
                 rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
             rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(options[option])}*', dest=_get_deployed_path(options[option])))
@@ -151,11 +159,11 @@ def run(args, start):
         rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
 
     for cmd in rsync:  # move staged content to live
-        exitcodes.append(os.system(cmd))
+        exitcodes.append(run_command(cmd))
     non_zero_code(exitcodes)
     # These need to be setup late because dodgy
     if args.l10nupdate:  # used by automated maint
-        os.system('sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki=loginwiki')  # gives garbage errors
+        run_command('sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki=loginwiki')  # gives garbage errors
         args.l10n = True  # imply --l10n
     if args.l10n:  # setup l10n
         postinstall.append('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php')
@@ -163,10 +171,10 @@ def run(args, start):
         rsyncpaths.append('/srv/mediawiki/cache/l10n/')
 
     for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
-        exitcodes.append(os.system(cmd))
+        exitcodes.append(run_command(cmd))
     non_zero_code(exitcodes)
     for cmd in rebuild:  # update ext list + l10n
-        exitcodes.append(os.system(cmd))
+        exitcodes.append(run_command(cmd))
     non_zero_code(exitcodes)
 
     # see if we are online - exit code 3 if not
