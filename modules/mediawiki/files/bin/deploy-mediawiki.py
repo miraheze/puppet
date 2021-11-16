@@ -25,10 +25,10 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
         up = True
     if force:
             print(f'Ignoring canary check error on {server}@{domain} due to --force')
-        else:
-            print(f'Canary check failed for {server}@{domain}. Aborting... - use --force to proceed')
-            os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}@{domain}')
-            exit(3)
+    else:
+        print(f'Canary check failed for {server}@{domain}. Aborting... - use --force to proceed')
+        os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}@{domain}')
+        exit(3)
     return up
 
 
@@ -87,6 +87,7 @@ def run(args, start):
     text = f'starting deploy of "{str(loginfo)}" to {synced}'
     rsyncpaths = []
     rsyncfiles = []
+    rsync = []
     if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {text}')
     else:
@@ -115,17 +116,17 @@ def run(args, start):
                 exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
                 exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki'))
                 rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
-            exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(options[option])}*', dest=_get_deployed_path(options[option]))))
+            rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(options[option])}*', dest=_get_deployed_path(options[option])))
             rsyncpaths.append(_get_deployed_path(options[option]))
     if args.files:
         files = str(args.files).split(',')
         for file in files:
-            exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, recursive=False, location=f'/srv/mediawiki-staging/{file}', dest=f'/srv/mediawiki/{file}')))
+            rsync.append(_construct_rsync_command(time=args.ignoretime, recursive=False, location=f'/srv/mediawiki-staging/{file}', dest=f'/srv/mediawiki/{file}'))
             rsyncfiles.append(f'/srv/mediawiki/{file}')
     if args.folders:
         folders = str(args.folders).split(',')
         for folder in folders:
-            exitcodes.append(os.system(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest='/srv/mediawiki/{folder}/')))
+            rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest='/srv/mediawiki/{folder}/'))
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
     if args.l10nupdate:
         exitcodes.append(os.system('sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki=loginwiki'))
@@ -146,6 +147,8 @@ def run(args, start):
     else:
         serverlist = str(args.servers).split(',')
         sync = True
+    for cmd in rsync:
+        exitcodes.append(os.system(cmd))
     check_up(Debug=None, Host='meta.miraheze.org', domain='https://localhost', verify=False, force=args.force)
     if sync:
         for path in rsyncpaths:
