@@ -88,6 +88,9 @@ def run(args, start):
     rsyncpaths = []
     rsyncfiles = []
     rsync = []
+    rebuild = []
+    postinstall = []
+    stage = []
     if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {text}')
     else:
@@ -105,39 +108,57 @@ def run(args, start):
             else:
                 sm = False
             try:
-                exitcodes.append(os.system(_construct_git_pull(repo, submodules=sm)))
+                stage.append(_construct_git_pull(repo, submodules=sm))
             except KeyError:
                 print(f'Failed to pull {repo} due to invalid name')
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
-    for option in options:
+    for cmd in stage:  # setup env, git pull etc
+        exitcodes.append(os.system(cmd))
+    for option in options:  # configure rsync & custom data for repos
         if options[option]:
-            if options[option] == 'world':
+            if options[option] == 'world':  # install steps for w
                 os.chdir(_get_staging_path('world'))
                 exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
-                exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki'))
+                rebuild.append('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki')
                 rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
             rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(options[option])}*', dest=_get_deployed_path(options[option])))
             rsyncpaths.append(_get_deployed_path(options[option]))
-    if args.files:
+    if args.files:  # specfic extra files
         files = str(args.files).split(',')
         for file in files:
             rsync.append(_construct_rsync_command(time=args.ignoretime, recursive=False, location=f'/srv/mediawiki-staging/{file}', dest=f'/srv/mediawiki/{file}'))
             rsyncfiles.append(f'/srv/mediawiki/{file}')
-    if args.folders:
+    if args.folders:  # specfic extra folders
         folders = str(args.folders).split(',')
         for folder in folders:
             rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest='/srv/mediawiki/{folder}/'))
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
-    if args.l10nupdate:
-        exitcodes.append(os.system('sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki=loginwiki'))
-        args.l10n = True
-    if args.l10n:
-        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php'))
-        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki=loginwiki'))
-        rsyncpaths.append('/srv/mediawiki/cache/l10n/')
-    if args.extensionlist:
-        exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki'))
+    
+    if args.extensionlist:  # when adding skins/exts
+        rebuild.append('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki')
         rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
+    
+    for cmd in rsync:  # move staged content to live
+        exitcodes.append(os.system(cmd))
+
+    # These need to be setup late because dodgy
+    if args.l10nupdate:  # used by automated maint
+        os.system('sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki=loginwiki')  # gives garbage errors
+        args.l10n = True  # imply --l10n
+    if args.l10n:  # setup l10n
+        postinstall.append('sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki=loginwiki --output /srv/mediawiki/config/ExtensionMessageFiles.php')
+        rebuild.append('sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki=loginwiki')
+        rsyncpaths.append('/srv/mediawiki/cache/l10n/')
+
+    for cmd in postinstall:  # cmds to run after rsync & install (like 
+        exitcodes.append(os.system(cmd))
+    for cmd in rebuild:  # update ext list + l10n
+        exitcodes.append(os.system(cmd))
+
+    # see if we are online - exit code 3 if not
+    check_up(Debug=None, Host='meta.miraheze.org', domain='https://localhost', verify=False, force=args.force)
+
+    # decide what servers to remote on
     if args.servers == 'skip':
         print('Sync skipped. Mediawiki deploy has not passed canary stage.')
         sync = False
@@ -147,9 +168,7 @@ def run(args, start):
     else:
         serverlist = str(args.servers).split(',')
         sync = True
-    for cmd in rsync:
-        exitcodes.append(os.system(cmd))
-    check_up(Debug=None, Host='meta.miraheze.org', domain='https://localhost', verify=False, force=args.force)
+
     if sync:
         for path in rsyncpaths:
             exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=serverlist, path=path, force=args.force))
