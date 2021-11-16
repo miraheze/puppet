@@ -1,5 +1,6 @@
-import importlib  
+import importlib
 mwd = importlib.import_module("deploy-mediawiki")
+
 
 def test_non_zero_ec_only_one_zero():
     assert not mwd.non_zero_code([0], exit=False)
@@ -14,7 +15,7 @@ def test_non_zero_ec_zero_one():
 
 
 def test_non_zero_ec_one_one():
-    assert mwd.non_zero_code([1,1], exit=False)
+    assert mwd.non_zero_code([1, 1], exit=False)
 
 
 def test_non_zero_ec_only_one_one():
@@ -37,7 +38,6 @@ def test_check_up_debug():
 
 def test_get_staging_path():
     assert mwd._get_staging_path('world') == '/srv/mediawiki-staging/w/'
-    
 
 
 def test_get_deployed_path():
