@@ -9,6 +9,16 @@ repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': '
 DEPLOYUSER = 'www-data'
 
 
+def non_zero_code(ec, exit=True):
+    for code in ec:
+        if code != 0:
+            if exit:
+                print('Exiting due to non-zero status.')
+                exit(1)
+            return True
+    return False
+
+
 def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=True, force=False):
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
@@ -63,7 +73,7 @@ def _construct_rsync_command(time, dest, recursive=True, local=True, location=''
             raise Exception('Location must be specified for local rsync.')
         return f'sudo -u {DEPLOYUSER} rsync {params} --exclude=".*" {location} {dest}'
     if (location == (dest or '')) and server:  # ignore location if not specified, if given must equal dest.
-        return f'sudo -u www-data rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} www-data@{server}.miraheze.org:{dest}'
+        return f'sudo -u www-data rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.miraheze.org:{dest}'
     else:
         raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
@@ -114,6 +124,7 @@ def run(args, start):
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     for cmd in stage:  # setup env, git pull etc
         exitcodes.append(os.system(cmd))
+    non_zero_code(exitcodes)
     for option in options:  # configure rsync & custom data for repos
         if options[option]:
             if options[option] == 'world':  # install steps for w
@@ -123,6 +134,7 @@ def run(args, start):
                 rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
             rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(options[option])}*', dest=_get_deployed_path(options[option])))
             rsyncpaths.append(_get_deployed_path(options[option]))
+    non_zero_code(exitcodes)
     if args.files:  # specfic extra files
         files = str(args.files).split(',')
         for file in files:
@@ -140,7 +152,7 @@ def run(args, start):
 
     for cmd in rsync:  # move staged content to live
         exitcodes.append(os.system(cmd))
-
+    non_zero_code(exitcodes)
     # These need to be setup late because dodgy
     if args.l10nupdate:  # used by automated maint
         os.system('sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki=loginwiki')  # gives garbage errors
@@ -152,8 +164,10 @@ def run(args, start):
 
     for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
         exitcodes.append(os.system(cmd))
+    non_zero_code(exitcodes)
     for cmd in rebuild:  # update ext list + l10n
         exitcodes.append(os.system(cmd))
+    non_zero_code(exitcodes)
 
     # see if we are online - exit code 3 if not
     check_up(Debug=None, Host='meta.miraheze.org', domain='https://localhost', verify=False, force=args.force)
@@ -175,20 +189,18 @@ def run(args, start):
             exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=serverlist, path=file, recursive=False, force=args.force))
 
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
-    FAIL = 0
-    for code in exitcodes:
-        if code != 0:
-            FAIL = 1
-    if FAIL == 1:
+
+    failed = non_zero_code(ec=exitcodes, exit=False)
+    if failed:
         fintext = + ' - FAIL: {exitcodes}'
     else:
         fintext = + ' - SUCCESS'
-    fintext =+ f'in {str(int(time.time() - start))}s'
+    fintext = + f'in {str(int(time.time() - start))}s'
     if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {fintext}')
     else:
         print(fintext)
-    if FAIL == 1:
+    if failed:
         exit(1)
 
 
