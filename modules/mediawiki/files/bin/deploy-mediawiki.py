@@ -21,7 +21,7 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
         headers = {'host': Host}
     up = False
     req = requests.get(f'{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
-    if req.status_code == 200 and 'miraheze' in req.text and Debug and Debug in req.headers['X-Served-By']):
+    if req.status_code == 200 and 'miraheze' in req.text and Debug and Debug in req.headers['X-Served-By']:
         up = True
     if force:
             print(f'Ignoring canary check error on {server}@{domain} due to --force')
