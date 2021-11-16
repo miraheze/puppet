@@ -20,7 +20,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgnutls28-dev
-          pip install -U pip flake8
+          pip install -U pip flake8 pytest pytest-xdist
       - name: Run tests
         run: |
           flake8 modules --ignore=E501,W503
+          pytest -n auto

@@ -39,14 +39,15 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
         headers = {'host': Host}
     up = False
     req = requests.get(f'{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
-    if req.status_code == 200 and 'miraheze' in req.text and Debug and Debug in req.headers['X-Served-By']:
+    if req.status_code == 200 and 'miraheze' in req.text and (Debug is not None and Debug in req.headers['X-Served-By']):
         up = True
-    if force:
-        print(f'Ignoring canary check error on {server}@{domain} due to --force')
-    else:
-        print(f'Canary check failed for {server}@{domain}. Aborting... - use --force to proceed')
-        os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}@{domain}')
-        exit(3)
+    if not up:
+        if force:
+            print(f'Ignoring canary check error on {server}@{domain} due to --force')
+        else:
+            print(f'Canary check failed for {server}@{domain}. Aborting... - use --force to proceed')
+            os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}@{domain}')
+            exit(3)
     return up
 
 
@@ -69,7 +70,7 @@ def _get_deployed_path(repo):
     return f'/srv/mediawiki/{repos[repo]}/'
 
 
-def _construct_rsync_command(time, dest, recursive=True, local=True, location='', server=None):
+def _construct_rsync_command(time, dest, recursive=True, local=True, location=None, server=None):
     if time:
         params = '--inplace'
     else:
@@ -77,10 +78,12 @@ def _construct_rsync_command(time, dest, recursive=True, local=True, location=''
     if recursive:
         params = params + ' -r --delete'
     if local:
-        if location == '':
+        if location == None:
             raise Exception('Location must be specified for local rsync.')
         return f'sudo -u {DEPLOYUSER} rsync {params} --exclude=".*" {location} {dest}'
-    if (location == (dest or '')) and server:  # ignore location if not specified, if given must equal dest.
+    if location == None:
+        location = dest
+    if location == dest and server:  # ignore location if not specified, if given must equal dest.
         return f'sudo -u www-data rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.miraheze.org:{dest}'
     else:
         raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
