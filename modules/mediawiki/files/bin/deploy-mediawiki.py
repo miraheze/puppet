@@ -180,15 +180,15 @@ def run(args, start):
     for code in exitcodes:
         if code != 0:
             FAIL = 1
-    timetaken = int(time.time() - start)
     if FAIL == 1:
-        fintext = f'{fintext} - FAIL: {exitcodes}'
+        fintext =+ ' - FAIL: {exitcodes}'
     else:
-        fintext = f'{fintext} - SUCCESS'
+        fintext =+ ' - SUCCESS'
+    fintext =+ f'in {str(int(time.time() - start))}s'
     if not args.nolog:
-        os.system(f'/usr/local/bin/logsalmsg {fintext} in {str(timetaken)}s')
+        os.system(f'/usr/local/bin/logsalmsg {fintext}')
     else:
-        print(f'{fintext} in {str(timetaken)}s')
+        print(fintext)
     if FAIL == 1:
         exit(1)
 
