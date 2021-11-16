@@ -24,7 +24,7 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
     if req.status_code == 200 and 'miraheze' in req.text and Debug and Debug in req.headers['X-Served-By']:
         up = True
     if force:
-            print(f'Ignoring canary check error on {server}@{domain} due to --force')
+        print(f'Ignoring canary check error on {server}@{domain} due to --force')
     else:
         print(f'Canary check failed for {server}@{domain}. Aborting... - use --force to proceed')
         os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}@{domain}')
