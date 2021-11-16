@@ -159,15 +159,14 @@ def run(args, start):
     check_up(Debug=None, Host='meta.miraheze.org', domain='https://localhost', verify=False, force=args.force)
 
     # decide what servers to remote on
+    sync = True
     if args.servers == 'skip':
-        print('Sync skipped. Mediawiki deploy has not passed canary stage.')
         sync = False
+        print('Sync skipped. Mediawiki deploy has not passed canary stage.')
     elif args.servers == 'all':
         serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
-        sync = True
     else:
         serverlist = str(args.servers).split(',')
-        sync = True
 
     if sync:
         for path in rsyncpaths:
