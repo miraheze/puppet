@@ -78,10 +78,10 @@ def _construct_rsync_command(time, dest, recursive=True, local=True, location=No
     if recursive:
         params = params + ' -r --delete'
     if local:
-        if location == None:
+        if location is None:
             raise Exception('Location must be specified for local rsync.')
         return f'sudo -u {DEPLOYUSER} rsync {params} --exclude=".*" {location} {dest}'
-    if location == None:
+    if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
         return f'sudo -u www-data rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.miraheze.org:{dest}'
