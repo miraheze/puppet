@@ -9,11 +9,16 @@ repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': '
 DEPLOYUSER = 'www-data'
 
 
-def check_up(server):
+def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=True):
+    if not Debug and not Host:
+        raise Exception('Host or Debug must be specified')
+    if Debug:
+        headers = {'X-Miraheze-Debug': f'{Debug}.miraheze.org'}
+    if Host:
+        headers = {'host': Host}
     up = False
-    headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
-    req = requests.get('https://meta.miraheze.org/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
-    if req.status_code == 200 and 'miraheze' in req.text and server in req.headers['X-Served-By']:
+    req = requests.get(f'{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
+    if req.status_code == 200 and 'miraheze' in req.text and Debug and Debug in req.headers['X-Served-By']):
         up = True
     return up
 
@@ -23,7 +28,7 @@ def remote_sync_file(time, serverlist, path, recursive=True, force=False):
     for server in serverlist:
         print(f'Deploying {path} to {server}.')
         ec = os.system(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
-        if not check_up(server):
+        if not check_up(Debug=server):
             print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
             if not force:
                 os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}')
@@ -138,12 +143,7 @@ def run(args, start):
     else:
         serverlist = str(args.servers).split(',')
         sync = True
-    up = False
-    headers = {'host': 'meta.miraheze.org'}
-    req = requests.get('https://localhost/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=False)
-    if req.status_code == 200 and 'miraheze' in req.text:
-        up = True
-    if not up:
+    if not check_up(Debug=None, Host='meta.miraheze.org', domain='https://localhost', verify=False):
         if args.force:
             print('Ignoring canary error due to --force')
         else:
