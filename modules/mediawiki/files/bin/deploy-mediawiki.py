@@ -9,17 +9,26 @@ repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': '
 DEPLOYUSER = 'www-data'
 
 
-def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=True):
+def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=True, force=False):
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
         headers = {'X-Miraheze-Debug': f'{Debug}.miraheze.org'}
+        server = Debug
+    else:
+        server = 'localhost'
     if Host:
         headers = {'host': Host}
     up = False
     req = requests.get(f'{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
     if req.status_code == 200 and 'miraheze' in req.text and Debug and Debug in req.headers['X-Served-By']):
         up = True
+    if force:
+            print(f'Ignoring canary check error on {server}@{domain} due to --force')
+        else:
+            print(f'Canary check failed for {server}@{domain}. Aborting... - use --force to proceed')
+            os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}@{domain}')
+            exit(3)
     return up
 
 
@@ -28,13 +37,7 @@ def remote_sync_file(time, serverlist, path, recursive=True, force=False):
     for server in serverlist:
         print(f'Deploying {path} to {server}.')
         ec = os.system(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
-        if not check_up(Debug=server):
-            print(f'Canary check failed for {server}. Aborting... - use --force to proceed')
-            if not force:
-                os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}')
-                exit(3)
-            else:
-                print('Ignoring canary error due to --force')
+        check_up(Debug=server, force=force)
         print(f'Deployed {path} to {server}.')
     print(f'Finished {path} deploys.')
     return ec
@@ -143,13 +146,7 @@ def run(args, start):
     else:
         serverlist = str(args.servers).split(',')
         sync = True
-    if not check_up(Debug=None, Host='meta.miraheze.org', domain='https://localhost', verify=False):
-        if args.force:
-            print('Ignoring canary error due to --force')
-        else:
-            print('Canary check failed for localhost. Aborting... - use --force to proceed')
-            os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for localhost')
-            exit(3)
+    check_up(Debug=None, Host='meta.miraheze.org', domain='https://localhost', verify=False, force=args.force)
     if sync:
         for path in rsyncpaths:
             exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=serverlist, path=path, force=args.force))
