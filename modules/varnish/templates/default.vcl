@@ -434,6 +434,19 @@ sub vcl_deliver {
 		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
 	) {
 		set resp.http.Access-Control-Allow-Origin = "*";
+
+		// Handle CORS preflight requests
+		if (resp.reason == "CORS Preflight") {
+			set resp.reason = "OK";
+			set resp.http.Connection = "keep-alive";
+			set resp.http.Content-Length = "0";
+
+			// allow Range requests, and avoid other CORS errors when debugging from test3
+			set resp.http.Access-Control-Allow-Origin = "*";
+			set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
+			set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
+			set resp.http.Access-Control-Max-Age = "86400";
+		}
 	}
 
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
