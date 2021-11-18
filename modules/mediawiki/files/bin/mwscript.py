@@ -5,7 +5,7 @@ import os
 
 
 def run(args):
-    longscripts = ('importDump.php', 'deleteBatch.php', 'importImages.php', 'rebuildall.php')
+    longscripts = ('deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'refreshLinks.php')
     long = False
 
     script = args.script
