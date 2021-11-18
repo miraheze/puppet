@@ -58,7 +58,7 @@ if __name__ == '__main__':
     parser.add_argument('arguments', nargs='*', default='')
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
-    parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_false')
+    parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_true')
 
     args, args.arguments = parser.parse_known_args()
     run(args)
