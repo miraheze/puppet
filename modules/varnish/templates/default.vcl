@@ -249,6 +249,7 @@ sub vcl_synth {
 	}
 
 	if (resp.reason == "T217669") {
+		set resp.reason = "OK";
 		set resp.http.Connection = "keep-alive";
 		set resp.http.Content-Length = "0";
 		set resp.http.Access-Control-Allow-Origin = "*";
@@ -284,19 +285,6 @@ sub mw_vcl_recv {
 	call mw_rate_limit;
 	call mw_identify_device;
 
-	# HACK for phabricator.wikimedia.org/T217669
-	if (req.url ~ "/w(iki)?/undefined/api.php") {
-		set req.url = regsuball(req.url, "/w(iki)?/undefined/api.php", "/w/api.php");
-		return (synth(200, "T217669"));
-	}
-
-	if (req.http.Host == "static.miraheze.org") {
-		// CORS preflight requests
-		if (req.method == "OPTIONS" && req.http.Origin) {
-			return (synth(200, "CORS Preflight"));
-		}
-	}
-
 	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = mwtask1;
 		return (pass);
@@ -329,6 +317,19 @@ sub mw_vcl_recv {
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
+	}
+
+	// HACK for phabricator.wikimedia.org/T217669
+	if (req.url ~ "/w(iki)?/undefined/api.php") {
+		set req.url = regsuball(req.url, "/w(iki)?/undefined/api.php", "/w/api.php");
+		return (synth(200, "T217669"));
+	}
+
+	if (req.http.Host == "static.miraheze.org") {
+		// CORS preflight requests
+		if (req.method == "OPTIONS" && req.http.Origin) {
+			return (synth(200, "CORS Preflight"));
+		}
 	}
 
 	# We never want to cache non-GET/HEAD requests.
