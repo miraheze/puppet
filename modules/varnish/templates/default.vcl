@@ -247,6 +247,29 @@ sub vcl_synth {
 		set resp.status = 302;
 		return (deliver);
 	}
+
+	if (resp.reason == "T217669") {
+		set resp.reason = "OK";
+		set resp.http.Connection = "keep-alive";
+		set resp.http.Content-Length = "0";
+		set resp.http.Access-Control-Allow-Origin = "*";
+	}
+
+	// Handle CORS preflight requests
+	if (
+		req.http.Host == "static.miraheze.org" &&
+		resp.reason == "CORS Preflight"
+	) {
+		set resp.reason = "OK";
+		set resp.http.Connection = "keep-alive";
+		set resp.http.Content-Length = "0";
+
+		// allow Range requests, and avoid other CORS errors when debugging with X-Miraheze-Debug
+		set resp.http.Access-Control-Allow-Origin = "*";
+		set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
+		set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
+		set resp.http.Access-Control-Max-Age = "86400";
+	}
 }
 
 sub recv_purge {
@@ -263,12 +286,6 @@ sub mw_vcl_recv {
 	call mw_rate_limit;
 	call mw_identify_device;
 
-	# HACK for T217669
-	if (req.url ~ "/wiki/undefined/api.php") {
-		set req.url = regsuball(req.url, "/wiki/undefined/api.php", "/w/api.php");
-	} else if (req.url ~ "/w/undefined/api.php") {
-		set req.url = regsuball(req.url, "/w/undefined/api.php", "/w/api.php");
-	}
 	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = mwtask1;
 		return (pass);
@@ -301,6 +318,19 @@ sub mw_vcl_recv {
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
+	}
+
+	// HACK for phabricator.wikimedia.org/T217669
+	if (req.url ~ "/w(iki)?/undefined/api.php") {
+		set req.url = regsuball(req.url, "/w(iki)?/undefined/api.php", "/w/api.php");
+		return (synth(200, "T217669"));
+	}
+
+	if (req.http.Host == "static.miraheze.org") {
+		// CORS preflight requests
+		if (req.method == "OPTIONS" && req.http.Origin) {
+			return (synth(200, "CORS Preflight"));
+		}
 	}
 
 	# We never want to cache non-GET/HEAD requests.
@@ -425,12 +455,10 @@ sub vcl_backend_response {
 
 sub vcl_deliver {
 	# We set Access-Control-Allow-Origin to * for all files hosted on
-	# static.miraheze.org. We also set a hack for phabricator.wikimedia.org/T217669.
-	# And finally we also set this header for some images hosted on the
-	# same site as the wiki (private).
+	# static.miraheze.org. We also set this header for some images hosted
+	# on the same site as the wiki (private).
 	if (
 		req.http.Host == "static.miraheze.org" ||
-		req.url ~ "/w/api.php" ||
 		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
 	) {
 		set resp.http.Access-Control-Allow-Origin = "*";
