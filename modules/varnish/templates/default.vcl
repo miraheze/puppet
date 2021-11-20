@@ -254,6 +254,7 @@ sub vcl_synth {
 		set resp.http.Connection = "keep-alive";
 		set resp.http.Content-Length = "0";
 		set resp.http.Access-Control-Allow-Origin = "*";
+		return (deliver);
 	}
 
 	// Handle CORS preflight requests
