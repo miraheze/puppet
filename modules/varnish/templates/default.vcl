@@ -255,19 +255,20 @@ sub vcl_synth {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
 
-	if (req.http.Host == "static.miraheze.org") {
-		// Handle CORS preflight requests
-		if (resp.reason == "CORS Preflight") {
-			set resp.reason = "OK";
-			set resp.http.Connection = "keep-alive";
-			set resp.http.Content-Length = "0";
+	// Handle CORS preflight requests
+	if (
+		req.http.Host == "static.miraheze.org" &&
+		resp.reason == "CORS Preflight"
+	) {
+		set resp.reason = "OK";
+		set resp.http.Connection = "keep-alive";
+		set resp.http.Content-Length = "0";
 
-			// allow Range requests, and avoid other CORS errors when debugging from test3
-			set resp.http.Access-Control-Allow-Origin = "*";
-			set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
-			set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
-			set resp.http.Access-Control-Max-Age = "86400";
-		}
+		// allow Range requests, and avoid other CORS errors when debugging with X-Miraheze-Debug
+		set resp.http.Access-Control-Allow-Origin = "*";
+		set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
+		set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
+		set resp.http.Access-Control-Max-Age = "86400";
 	}
 }
 
