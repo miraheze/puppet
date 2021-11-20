@@ -249,6 +249,7 @@ sub vcl_synth {
 	}
 
 	if (resp.reason == "T217669") {
+		set resp.http.Location = req.http.Location;
 		set resp.reason = "OK";
 		set resp.http.Connection = "keep-alive";
 		set resp.http.Content-Length = "0";
@@ -322,7 +323,7 @@ sub mw_vcl_recv {
 
 	// HACK for phabricator.wikimedia.org/T217669
 	if (req.url ~ "/w(iki)?/undefined/api.php") {
-		set req.url = regsuball(req.url, "/w(iki)?/undefined/api.php", "/w/api.php");
+		set req.http.Location = "https://" + req.http.Host + regsuball(req.url, "/w(iki)?/undefined/api.php", "/w/api.php");
 		return (synth(200, "T217669"));
 	}
 
