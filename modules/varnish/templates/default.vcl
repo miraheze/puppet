@@ -250,8 +250,6 @@ sub vcl_synth {
 
 	if (resp.reason == "T217669") {
 		set resp.reason = "OK";
-		set resp.http.Connection = "keep-alive";
-		set resp.http.Content-Length = "0";
 		set resp.http.Access-Control-Allow-Origin = "*";
 		return (deliver);
 	}
