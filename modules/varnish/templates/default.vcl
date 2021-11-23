@@ -285,6 +285,11 @@ sub mw_vcl_recv {
 	call mw_rate_limit;
 	call mw_identify_device;
 
+	// HACK for phabricator.wikimedia.org/T217669
+	if (req.url ~ "/w(iki)?/undefined/api.php") {
+		set req.url = regsuball(req.url, "/w(iki)?/undefined/api.php", "/w/api.php");
+	}
+
 	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = mwtask1;
 		return (pass);
@@ -321,7 +326,6 @@ sub mw_vcl_recv {
 
 	// HACK for phabricator.wikimedia.org/T217669
 	if (req.url ~ "/w(iki)?/undefined/api.php") {
-		set req.url = regsuball(req.url, "/w(iki)?/undefined/api.php", "/w/api.php");
 		return (synth(200, "T217669"));
 	}
 
