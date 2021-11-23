@@ -285,6 +285,14 @@ sub mw_vcl_recv {
 	call mw_rate_limit;
 	call mw_identify_device;
 
+	// HACK for phabricator.wikimedia.org/T217669
+	if (req.url ~ "/w(iki)?/undefined/api.php") {
+		set req.url = regsuball(req.url, "/w(iki)?/undefined/api.php", "/w/api.php");
+		set req.backend_hint = mediawiki.backend();
+
+		return (synth(200, "T217669"));
+	}
+
 	if (req.url ~ "^/\.well-known") {
 		set req.backend_hint = mwtask1;
 		return (pass);
@@ -319,12 +327,6 @@ sub mw_vcl_recv {
 		set req.backend_hint = mediawiki.backend();
 	}
 
-	// HACK for phabricator.wikimedia.org/T217669
-	if (req.url ~ "/w(iki)?/undefined/api.php") {
-		set req.url = regsuball(req.url, "/w(iki)?/undefined/api.php", "/w/api.php");
-		return (synth(200, "T217669"));
-	}
-
 	if (req.http.Host == "static.miraheze.org") {
 		// CORS preflight requests
 		if (req.method == "OPTIONS" && req.http.Origin) {
@@ -357,7 +359,7 @@ sub mw_vcl_recv {
 	if (req.url ~ "^/w/(skins|resources|extensions)/" ) {
 		set req.http.Host = "meta.miraheze.org";
 	}
-	
+
 	# api & rest.php are not safe cached
 	if (req.url ~ "^/w/(api|rest).php/.*" ) {
 		return (pass);
