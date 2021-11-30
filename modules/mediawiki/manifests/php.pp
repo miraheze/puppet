@@ -7,12 +7,6 @@ class mediawiki::php (
 ) {
     
     if !defined(Class['php::php_fpm']) {
-        # Support php7.4 under buster
-        class { 'php::apt':
-            php_version => $php_version,
-            before => Class['php::php_fpm']
-        }
-
         class { 'php::php_fpm':
             config  => {
                 'apc'                       => {
