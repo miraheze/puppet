@@ -114,11 +114,6 @@ backend test3 {
 	.port = "8091";
 }
 
-backend mwtask1_test {
-	.host = "127.0.0.1";
-	.port = "8089";
-}
-
 # end test backend
 
 
@@ -293,10 +288,11 @@ sub mw_vcl_recv {
 		return (synth(200, "T217669"));
 	}
 
-	if (req.url ~ "^/\.well-known") {
-		set req.backend_hint = mwtask1;
-		return (pass);
-	} else if (req.http.Host == "sslrequest.miraheze.org") {
+	if (
+		req.url ~ "^/\.well-known" ||
+		req.http.Host == "sslrequest.miraheze.org" ||
+		req.http.X-Miraheze-Debug == "mwtask1.miraheze.org"
+	) {
 		set req.backend_hint = mwtask1;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw8.miraheze.org") {
@@ -319,9 +315,6 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test3;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mwtask1.miraheze.org") {
-		set req.backend_hint = mwtask1_test;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
