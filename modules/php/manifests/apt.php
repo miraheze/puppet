@@ -6,9 +6,9 @@ class php::apt (
     if $php_version === '7.4' and os_version('debian buster') {
         include ::apt
 
-        file { '/etc/apt/trusted.gpg.d/php.gpg':
+        file { '/etc/apt/trusted.gpg.d/wikimedia-apt-key.asc':
             ensure => present,
-            source => 'puppet:///modules/php/key/php.gpg',
+            source => 'puppet:///modules/php/key/wikimedia-apt-key.asc',
         }
 
         # We use wikimedias php 7.4 repo to get the 7.4 packages.
@@ -17,7 +17,7 @@ class php::apt (
             release  => "${::lsbdistcodename}-wikimedia",
             repos    => 'component/php74',
             notify   => Exec['apt_update_php'],
-            require  => File['/etc/apt/trusted.gpg.d/php.gpg'],
+            require  => File['/etc/apt/trusted.gpg.d/wikimedia-apt-key.asc'],
             before   => Package['php7.4-common', 'php7.4-opcache'] # To prevent installing problems
         }
 
