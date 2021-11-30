@@ -2,8 +2,8 @@
 class php::apt (
   Enum['7.0', '7.1', '7.2', '7.3', '7.4'] $php_version = '7.3'
 ) {
-    # Only need this for buster and if php version selected in 7.4
-    if $php_version === '7.4' and os_version('debian buster') {
+    # Only do this for buster and if php version selected in 7.4
+    if $php_version === '7.4' and os_version('debian buster') and and !defined(Apt::Source['wikimedia-php74']) {
         include ::apt
 
         file { '/etc/apt/trusted.gpg.d/wikimedia-apt-key.asc':
