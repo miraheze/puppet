@@ -46,6 +46,10 @@ class base::packages {
         require_package('dirmngr')
     }
 
+    if os_version('debian >= bullseye') {
+        require_package('python-is-python3')
+    }
+
     # Get rid of this
     package { [ 'apt-listchanges' ]:
         ensure => absent,
