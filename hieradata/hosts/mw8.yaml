@@ -3,7 +3,6 @@ users::groups:
 jobrunner: true
 contactgroups: ['sre', 'mediawiki']
 role::mediawiki::use_strict_firewall: true
-mediawiki::branch: 'REL1_36'
 mediawiki::php::fpm::childs: 32
 php::php_fpm::fpm_workers_multiplier: 1.0
 php::php_version: '7.4'
