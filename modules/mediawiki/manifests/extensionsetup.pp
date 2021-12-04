@@ -182,7 +182,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'femiwiki_npm':
-        command     => 'npm install --no-optional --only=production --cache=/tmp/npm-cache',
+        command     => 'npm install --no-optional --only=production',
         creates     => "${mwpath}/skins/Femiwiki/node_modules",
         cwd         => "${mwpath}/skins/Femiwiki",
         path        => '/usr/bin',
