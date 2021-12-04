@@ -9,7 +9,6 @@ class mediawiki(
     include mediawiki::packages
     include mediawiki::logging
     include mediawiki::php
-    include mediawiki::servicessetup
     include mediawiki::monitoring
 
     if lookup(jobrunner) {
@@ -18,6 +17,16 @@ class mediawiki(
 
     if lookup(jobchron) {
         include mediawiki::jobqueue::chron
+    }
+
+    file { '/etc/mathoid':
+        ensure  => directory,
+    }
+
+    file { '/etc/mathoid/config.yaml':
+        ensure  => present,
+        source  => 'puppet:///modules/mediawiki/config.yaml',
+        require => File['/etc/mathoid'],
     }
 
     if lookup(mediawiki::remote_sync) {
@@ -165,6 +174,28 @@ class mediawiki(
             minute  => '0',
             hour    => '23',
         }
+    }
+
+    git::clone { 'mathoid':
+        ensure    => latest,
+        directory => '/srv/mathoid',
+        origin    => 'https://github.com/miraheze/mediawiki-mathoid-deploy.git',
+        branch    => 'master',
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
+        require   => Package['librsvg2-dev'],
+    }
+
+    git::clone { '3d2png':
+        ensure    => latest,
+        directory => '/srv/3d2png',
+        origin    => 'https://github.com/miraheze/mediawiki-3d2png-deploy.git',
+        branch    => 'master',
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
+        require   => Package['libjpeg-dev'],
     }
 
     file { [
