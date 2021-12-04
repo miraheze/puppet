@@ -24,6 +24,9 @@ class base::sysctl {
             'net.ipv4.tcp_max_syn_backlog' => 262144,
             'net.ipv4.tcp_max_tw_buckets'  => 360000,
 
+            # Swapping makes things too slow and should be done rarely
+            # 0 = only swap in OOM conditions (it does NOT disable swap.)
+            'vm.swappiness'                    => 0,
             'net.ipv4.tcp_keepalive_time'      => 300,
             'net.ipv4.tcp_keepalive_intvl'     => 1,
             'net.ipv4.tcp_keepalive_probes'    => 2,
@@ -65,10 +68,6 @@ class base::sysctl {
     }
 
     if $::virtual == 'kvm' {
-        sysctl::parameters { 'avoid swap usage':
-            values  => { 'vm.swappiness' => lookup('base::sysctl::swap_value', {'default_value' => 1}), },
-        }
-
         sysctl::parameters { 'increase open files limit':
             values  => { 'fs.file-max' => 26384062, },
         }
