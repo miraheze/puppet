@@ -179,7 +179,7 @@ class mediawiki(
     git::clone { 'mathoid':
         ensure             => 'latest',
         directory          => '/srv/mathoid',
-        origin             => 'https://github.com/miraheze/mediawiki-mathoid-deploy.git',
+        origin             => 'https://github.com/miraheze/mathoid-deploy.git',
         branch             => 'master',
         owner              => 'www-data',
         group              => 'www-data',
@@ -191,7 +191,7 @@ class mediawiki(
     git::clone { '3d2png':
         ensure             => 'latest',
         directory          => '/srv/3d2png',
-        origin             => 'https://github.com/miraheze/mediawiki-3d2png-deploy.git',
+        origin             => 'https://github.com/miraheze/3d2png-deploy.git',
         branch             => 'master',
         owner              => 'www-data',
         group              => 'www-data',
