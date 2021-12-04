@@ -11,16 +11,6 @@ class mediawiki::servicessetup {
         require   => Package['librsvg2-dev'],
     }
 
-    file { '/etc/mathoid':
-        ensure  => directory,
-    }
-
-    file { '/etc/mathoid/config.yaml':
-        ensure  => present,
-        source  => 'puppet:///modules/mediawiki/config.yaml',
-        require => File['/etc/mathoid'],
-    }
-
     git::clone { '3d2png':
         ensure    => latest,
         directory => '/srv/3d2png',
