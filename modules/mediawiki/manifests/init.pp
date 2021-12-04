@@ -177,25 +177,27 @@ class mediawiki(
     }
 
     git::clone { 'mathoid':
-        ensure    => 'latest',
-        directory => '/srv/mathoid',
-        origin    => 'https://github.com/miraheze/mediawiki-mathoid-deploy.git',
-        branch    => 'master',
-        owner     => 'www-data',
-        group     => 'www-data',
-        mode      => '0755',
-        require   => Package['librsvg2-dev'],
+        ensure             => 'latest',
+        directory          => '/srv/mathoid',
+        origin             => 'https://github.com/miraheze/mediawiki-mathoid-deploy.git',
+        branch             => 'master',
+        owner              => 'www-data',
+        group              => 'www-data',
+        mode               => '0755',
+        recurse_submodules => true,
+        require            => Package['librsvg2-dev'],
     }
 
     git::clone { '3d2png':
-        ensure    => 'latest',
-        directory => '/srv/3d2png',
-        origin    => 'https://github.com/miraheze/mediawiki-3d2png-deploy.git',
-        branch    => 'master',
-        owner     => 'www-data',
-        group     => 'www-data',
-        mode      => '0755',
-        require   => Package['libjpeg-dev'],
+        ensure             => 'latest',
+        directory          => '/srv/3d2png',
+        origin             => 'https://github.com/miraheze/mediawiki-3d2png-deploy.git',
+        branch             => 'master',
+        owner              => 'www-data',
+        group              => 'www-data',
+        mode               => '0755',
+        recurse_submodules => true,
+        require            => Package['libjpeg-dev'],
     }
 
     file { [
