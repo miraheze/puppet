@@ -1,6 +1,6 @@
 <?php
 
-define( 'MW_NO_SESSION', 1 );
+define( 'MW_NO_SESSION', 'warn' );
 
 require_once( '/srv/mediawiki/w/includes/WebStart.php' );
 
@@ -77,5 +77,7 @@ if ( $databasesArray['combi'] ) {
 if ( $page->exists() ) {
 	echo "# -- BEGIN CUSTOM -- #\r\n\n";
 
-	echo ContentHandler::getContentText( $page->getContent() ) ?: '';
+	$content = $page->getContent();
+
+	echo ( $content instanceof TextContent ) ? $content->getText() : '';
 }
