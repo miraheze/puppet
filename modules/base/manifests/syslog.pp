@@ -1,7 +1,17 @@
 # class base::syslog
 class base::syslog (
         String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
-    ) {
+) {
+
+        if os_version('debian >= bullseye') {
+                file { '/var/log/journal' :
+                        ensure  => absent,
+                        recurse => true,
+                        force   => true,
+                        notify  => Service['systemd-journald'],
+                }
+        }
+
         if $syslog_daemon == 'rsyslog' {
                 include ::rsyslog
 
