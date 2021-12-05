@@ -2,8 +2,9 @@
 class base::syslog (
         String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
 ) {
-
         if os_version('debian >= bullseye') {
+                # Made the unit slower
+                # We don't need persistant journals
                 file { '/var/log/journal' :
                         ensure  => absent,
                         recurse => true,
