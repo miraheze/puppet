@@ -11,6 +11,11 @@ class base::syslog (
                         force   => true,
                         notify  => Service['systemd-journald'],
                 }
+
+                # Have to define this in order to restart it
+                service { 'systemd-journald':
+                        ensure  => 'running',
+                }
         }
 
         if $syslog_daemon == 'rsyslog' {
