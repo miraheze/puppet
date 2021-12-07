@@ -5,7 +5,7 @@ mailserver: false
 arcanist: false
 puppetmaster: false
 puppetserver: false
-mediawiki::branch: 'REL1_36'
+mediawiki::branch: 'REL1_37'
 mediawiki::branch_mw_config: 'master'
 letsencrypt: false
 use_gluster_new: true
