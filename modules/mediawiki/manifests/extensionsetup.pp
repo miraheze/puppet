@@ -31,16 +31,6 @@ class mediawiki::extensionsetup {
         require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
-    exec { 'maps_composer':
-        command     => $composer,
-        creates     => "${mwpath}/extensions/Maps/vendor",
-        cwd         => "${mwpath}/extensions/Maps",
-        path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/Maps",
-        user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
-    }
-
     exec { 'flow_composer':
         command     => $composer,
         creates     => "${mwpath}/extensions/Flow/vendor",
