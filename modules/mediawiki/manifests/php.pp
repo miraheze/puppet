@@ -53,7 +53,6 @@ class mediawiki::php (
         default => 'absent'
     }
 
-    # Built on test3
     # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
     file { '/usr/lib/php/20190902/tideways_xhprof.so':
         ensure => $profiling_ensure,
