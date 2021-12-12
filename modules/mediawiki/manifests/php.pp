@@ -41,10 +41,6 @@ class mediawiki::php (
             fpm_min_child => $php_fpm_childs,
             fpm_min_restart_threshold => $fpm_min_restart_threshold,
             version => $php_version,
-            # Make sure that php is installed before composer is ran
-            before => [
-                Class['mediawiki::servicessetup'],
-            ],
         }
     }
 
