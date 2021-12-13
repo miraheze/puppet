@@ -12,5 +12,5 @@ puppetserver_hostname: 'puppet3.miraheze.org'
 
 base::firewall::mode: ferm
 
-mediawiki::php::fpm::fpm_min_restart_threshold: 14
+mediawiki::php::fpm::fpm_min_restart_threshold: 8
 mediawiki::php::use_tideways: true
