@@ -3,7 +3,8 @@ users::groups:
 jobrunner: true
 contactgroups: ['sre', 'mediawiki']
 role::mediawiki::use_strict_firewall: true
-mediawiki::php::fpm::childs: 32
+mediawiki::php::fpm::childs: 16
+mediawiki::php::fpm::fpm_max_memory: 256
 php::php_fpm::fpm_workers_multiplier: 1.0
 php::php_version: '7.4'
 nginx::use_graylog: true
