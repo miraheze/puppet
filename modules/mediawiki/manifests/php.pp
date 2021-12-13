@@ -21,7 +21,7 @@ class mediawiki::php (
                 'opcache'                   => {
                     'enable'                  => 1,
                     'interned_strings_buffer' => 50,
-                    'memory_consumption'      =  $fpm_max_memory,
+                    'memory_consumption'      => $fpm_max_memory,
                     'max_accelerated_files'   => 24000,
                     'max_wasted_percentage'   => 10,
                     'validate_timestamps'     => 1,
