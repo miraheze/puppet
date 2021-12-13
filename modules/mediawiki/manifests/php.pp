@@ -50,24 +50,12 @@ class mediawiki::php (
         default => 'absent'
     }
 
-    # Built on test3
     # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
-    if $php_version == '7.3' {
-        # Compatiable with php 7.3 only
-        file { '/usr/lib/php/20180731/tideways_xhprof.so':
-            ensure => $profiling_ensure,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/php/tideways_xhprof_7_3.so',
-            before => Php::Extension['tideways-xhprof'],
-        }
-    } else {
-        # Compatiable with php 7.4 only
-        file { '/usr/lib/php/20190902/tideways_xhprof.so':
-            ensure => $profiling_ensure,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/php/tideways_xhprof_7_4.so',
-            before => Php::Extension['tideways-xhprof'],
-        }
+    file { '/usr/lib/php/20190902/tideways_xhprof.so':
+        ensure => $profiling_ensure,
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/php/tideways_xhprof.so',
+        before => Php::Extension['tideways-xhprof'],
     }
 
     php::extension { 'tideways-xhprof':
