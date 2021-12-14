@@ -17,3 +17,5 @@ blacklist ${PATH}/ncat
 blacklist /etc/ssh
 blacklist /root
 blacklist /home
+
+caps.drop all
