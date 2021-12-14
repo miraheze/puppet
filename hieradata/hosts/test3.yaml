@@ -10,7 +10,7 @@ php::php_version: '7.4'
 mediawiki::php::use_tideways: true
 nginx::use_graylog: true
 puppetserver_hostname: 'puppet3.miraheze.org'
-mediawiki::php::fpm::childs: 16
+mediawiki::php::fpm::childs: 12
 mediawiki::php::fpm::fpm_max_memory: 256
 mediawiki::use_staging: true
 mediawiki::remote_sync: false
