@@ -4,7 +4,9 @@ jobrunner: true
 contactgroups: ['sre', 'mediawiki']
 role::mediawiki::use_strict_firewall: true
 mediawiki::branch: 'REL1_37'
-mediawiki::php::fpm::childs: 32
+mediawiki::php::fpm::childs: 16
+mediawiki::php::fpm::fpm_max_memory: 256
+mediawiki::php::fpm::fpm_min_restart_threshold: 8
 php::php_fpm::fpm_workers_multiplier: 1.0
 php::php_version: '7.3'
 nginx::use_graylog: true
@@ -16,5 +18,3 @@ mediawiki::remote_sync: false
 mediawiki::use_staging: true
 
 base::firewall::mode: ferm
-
-mediawiki::php::fpm::fpm_min_restart_threshold: 14
