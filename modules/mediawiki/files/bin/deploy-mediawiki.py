@@ -113,7 +113,7 @@ def run(args, start):
         serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
         sync = True
     elif args.servers == 'scsvg':
-        serverlist = ['mw111', 'mw112', 'mw121', 'mw122', 'mw131', 'mw132', 'mw141', 'mw142']
+        serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mw131', 'mw132']
         sync = True
     else:
         serverlist = str(args.servers).split(',')
