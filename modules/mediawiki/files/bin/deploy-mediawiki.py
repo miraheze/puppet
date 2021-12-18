@@ -107,9 +107,9 @@ def run(args, start):
     if args.servers == 'skip':
         print('Sync skipped. Mediawiki deploy has not passed canary stage.')
         sync = False
-    elif args.servers == 'all':
+    if args.servers == 'all':
         args.servers = 'ovlon'  # ovlon is active now
-    elif args.servers == 'ovlon':
+    if args.servers == 'ovlon':
         serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
         sync = True
     elif args.servers == 'scsvg':
