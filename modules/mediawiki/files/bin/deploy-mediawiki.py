@@ -104,9 +104,6 @@ def run(args, start):
     if args.extensionlist:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki'))
         rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
-    if args.servers == 'skip':
-        print('Sync skipped. Mediawiki deploy has not passed canary stage.')
-        sync = False
     if args.servers == 'all':
         args.servers = 'ovlon'  # ovlon is active now
     if args.servers == 'ovlon':
@@ -115,6 +112,9 @@ def run(args, start):
     elif args.servers == 'scsvg':
         serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mw131', 'mw132']
         sync = True
+    elif args.servers == 'skip':
+        print('Sync skipped. Mediawiki deploy has not passed canary stage.')
+        sync = False
     else:
         serverlist = str(args.servers).split(',')
         sync = True
