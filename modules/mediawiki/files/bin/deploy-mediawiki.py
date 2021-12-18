@@ -109,7 +109,6 @@ def run(args, start):
         sync = False
     elif args.servers == 'all':
         args.servers = 'ovlon'  # ovlon is active now
-        sync = True
     elif args.servers == 'ovlon':
         serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
         sync = True
