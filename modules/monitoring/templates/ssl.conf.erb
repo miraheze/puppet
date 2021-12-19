@@ -33,7 +33,7 @@ apply Service "<%= property['url'] %> - reverse DNS" {
   check_command = "reverse_dns"
   check_interval = 7m
   vars.hostname = "<%= property['url'] %>"
-  vars.regex = "^cp[0-9]+\\.miraheze\\.org$$"
+  vars.regex = "^(test[0-9]+\\|cp[0-9]+\\).miraheze\\.org$$"
   assign where "sslchecks" in host.groups
 }
 <% end -%>
