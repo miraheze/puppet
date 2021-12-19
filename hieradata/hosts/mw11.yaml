@@ -13,7 +13,7 @@ nginx::use_graylog: true
 
 puppetserver_hostname: 'puppet3.miraheze.org'
 mediawiki::is_canary: true
-mediawiki::default_sync: 'all'
+mediawiki::default_sync: 'ovlon'
 mediawiki::remote_sync: false
 mediawiki::use_staging: true
 
