@@ -11,7 +11,7 @@ class mediawiki::php (
         class { 'php::php_fpm':
             config  => {
                 'apc'                       => {
-                    'shm_size' => '1024M'
+                    'shm_size' => '256M'
                 },
                 'display_errors'            => 'Off',
                 'error_log'                 => 'syslog',
