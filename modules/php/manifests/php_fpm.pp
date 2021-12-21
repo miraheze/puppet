@@ -176,7 +176,7 @@ class php::php_fpm(
     $base_fpm_pool_config = {
         'pm'                        => 'static',
         'pm.max_children'           => $num_workers,
-        'request_terminate_timeout' => 180,
+        'request_terminate_timeout' => 59,
     }
 
     php::fpm::pool { 'www':

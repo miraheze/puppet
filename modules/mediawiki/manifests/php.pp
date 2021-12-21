@@ -2,6 +2,7 @@
 class mediawiki::php (
     Integer $php_fpm_childs = lookup('mediawiki::php::fpm::childs', {'default_value' => 26}),
     Integer $fpm_min_restart_threshold = lookup('mediawiki::php::fpm::fpm_min_restart_threshold', {'default_value' => 6}),
+    Integer $fpm_max_memory = lookup('mediawiki::php::fpm::fpm_max_memory', {'default_value' => 512}),
     String $php_version = lookup('php::php_version', {'default_value' => '7.2'}),
     Boolean $use_tideways = lookup('mediawiki::php::use_tideways', {'default_value' => false}),
 ) {
@@ -16,11 +17,11 @@ class mediawiki::php (
                 'error_log'                 => 'syslog',
                 'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
                 'log_errors'                => 'On',
-                'memory_limit'              => '512M',
+                'memory_limit'              => "${$fpm_max_memory}M",
                 'opcache'                   => {
                     'enable'                  => 1,
                     'interned_strings_buffer' => 50,
-                    'memory_consumption'      => 512,
+                    'memory_consumption'      => $fpm_max_memory,
                     'max_accelerated_files'   => 24000,
                     'max_wasted_percentage'   => 10,
                     'validate_timestamps'     => 1,
@@ -41,10 +42,6 @@ class mediawiki::php (
             fpm_min_child => $php_fpm_childs,
             fpm_min_restart_threshold => $fpm_min_restart_threshold,
             version => $php_version,
-            # Make sure that php is installed before composer is ran
-            before => [
-                Class['mediawiki::servicessetup'],
-            ],
         }
     }
 
@@ -53,24 +50,12 @@ class mediawiki::php (
         default => 'absent'
     }
 
-    # Built on test3
     # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
-    if $php_version == '7.3' {
-        # Compatiable with php 7.3 only
-        file { '/usr/lib/php/20180731/tideways_xhprof.so':
-            ensure => $profiling_ensure,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/php/tideways_xhprof_7_3.so',
-            before => Php::Extension['tideways-xhprof'],
-        }
-    } else {
-        # Compatiable with php 7.4 only
-        file { '/usr/lib/php/20190902/tideways_xhprof.so':
-            ensure => $profiling_ensure,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/php/tideways_xhprof_7_4.so',
-            before => Php::Extension['tideways-xhprof'],
-        }
+    file { '/usr/lib/php/20190902/tideways_xhprof.so':
+        ensure => $profiling_ensure,
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/php/tideways_xhprof.so',
+        before => Php::Extension['tideways-xhprof'],
     }
 
     php::extension { 'tideways-xhprof':

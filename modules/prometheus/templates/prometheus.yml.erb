@@ -129,6 +129,18 @@ scrape_configs:
         - https://cp21.miraheze.org/wiki/Main_Page
         - https://cp30.miraheze.org/wiki/Main_Page
         - https://cp31.miraheze.org/wiki/Main_Page
+        - https://mw8.miraheze.org/wiki/Special:Version
+        - https://mw9.miraheze.org/wiki/Special:Version
+        - https://mw10.miraheze.org/wiki/Special:Version
+        - https://mw11.miraheze.org/wiki/Special:Version
+        - https://mw12.miraheze.org/wiki/Special:Version
+        - https://mw13.miraheze.org/wiki/Special:Version
+        - https://mw8.miraheze.org/wiki/Special:RecentChanges
+        - https://mw9.miraheze.org/wiki/Special:RecentChanges
+        - https://mw10.miraheze.org/wiki/Special:RecentChanges
+        - https://mw11.miraheze.org/wiki/Special:RecentChanges
+        - https://mw12.miraheze.org/wiki/Special:RecentChanges
+        - https://mw13.miraheze.org/wiki/Special:RecentChanges
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
