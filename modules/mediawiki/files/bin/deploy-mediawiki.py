@@ -107,7 +107,7 @@ def run(args, start):
     if args.servers == 'all':
         args.servers = 'ovlon'  # ovlon is active now
     if args.servers == 'ovlon':
-        serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
+        serverlist = ['mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
         sync = True
     elif args.servers == 'scsvg':
         serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mw131', 'mw132']
