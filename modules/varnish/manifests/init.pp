@@ -152,21 +152,13 @@ class varnish (
 
     file { '/usr/local/bin/generateVmtouch.py':
         ensure => 'absent',
-        mode   => '0755',
-        source => 'puppet:///modules/varnish/vmtouch/generateVmtouch.py',
     }
 
     systemd::service { 'vmtouch':
         ensure  => absent,
-        content => systemd_template('vmtouch'),
-        restart => true,
     }
 
     cron { 'vmtouch':
         ensure  => absent,
-        command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
-        user    => 'root',
-        minute  => '0',
-        hour    => '*/5',
     }
 }
