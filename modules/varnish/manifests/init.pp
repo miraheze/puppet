@@ -146,22 +146,24 @@ class varnish (
         },
     }
 
-    require_package('vmtouch')
+    package { 'vmtouch':
+        ensure => purged,
+    }
 
     file { '/usr/local/bin/generateVmtouch.py':
-        ensure => 'present',
+        ensure => 'absent',
         mode   => '0755',
         source => 'puppet:///modules/varnish/vmtouch/generateVmtouch.py',
     }
 
     systemd::service { 'vmtouch':
-        ensure  => present,
+        ensure  => absent,
         content => systemd_template('vmtouch'),
         restart => true,
     }
 
     cron { 'vmtouch':
-        ensure  => present,
+        ensure  => absent,
         command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
         user    => 'root',
         minute  => '0',
