@@ -145,20 +145,4 @@ class varnish (
             nrpe_command => 'check_nginx_errorrate',
         },
     }
-
-    package { 'vmtouch':
-        ensure => purged,
-    }
-
-    file { '/usr/local/bin/generateVmtouch.py':
-        ensure => 'absent',
-    }
-
-    systemd::service { 'vmtouch':
-        ensure  => absent,
-    }
-
-    cron { 'vmtouch':
-        ensure  => absent,
-    }
 }
