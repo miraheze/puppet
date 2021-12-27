@@ -1,10 +1,10 @@
 #!flask/bin/python3
 
 from filelock import FileLock
-from flask import Flask
-from flask import request
+from flask import Flask, jsonify, request
 import logging
 import os
+from waitress import serve
 
 app = Flask(__name__)
 
@@ -20,12 +20,13 @@ def post():
     filename = '/tmp/tmp_file.lock'
     lock = FileLock(filename)
 
+    ssl_acme = 0
     while not lock_acquired:
         with lock:
             lock.acquire()
             try:
                 logging.info("Renewed ssl certificate: {}".format(content['SERVICEDESC']))
-                os.system("/var/lib/nagios/ssl-acme -s {} -t {} -u {} >> /var/log/letsencrypt/ssl-renew.log 2>&1".format(
+                ssl_acme = os.system("/var/lib/nagios/ssl-acme -s {} -t {} -u {} >> /var/log/letsencrypt/ssl-renew.log 2>&1".format(
                     content['SERVICESTATE'],
                     content['SERVICESTATETYPE'],
                     content['SERVICEDESC']
@@ -34,7 +35,11 @@ def post():
             finally:
                 lock.release()
                 lock_acquired = True
-    return '', 204
+
+    if ssl_acme != 0:
+        return jsonify(success=False)
+
+    return jsonify(success=True)
 
 
-app.run(host='0.0.0.0', port=5000, threaded=True)
+serve(app, listen='*:5001')
