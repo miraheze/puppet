@@ -8,10 +8,7 @@ define ssl::hiera::certs (
     Optional[String] $sslname  = undef,
     # Deprecated use additional_domain
     Optional[String] $mobiledomain  = undef,
-    # When specifying this config, also specify regex_domain_ats
-    # but instead of using *.example... use .*.example...
     Optional[String] $additional_domain  = undef,
-    Optional[String] $regex_domain_ats  = undef,
     Optional[Boolean] $disable_event = true,
 ) {
     if $sslname == undef {
