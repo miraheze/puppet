@@ -1,7 +1,7 @@
 # class: letsencrypt::web
 class letsencrypt::web {
     
-    require_package('python3-flask', 'python3-filelock')
+    require_package('python3-flask', 'python3-filelock', 'python3-waitress')
 
     file { '/usr/local/bin/mirahezerenewssl.py':
         ensure  => present,
