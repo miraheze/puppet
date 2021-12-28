@@ -6,18 +6,17 @@ username = "piwik"
 password = "<%= @password %>"
 dbname = "piwik"
 tables_prefix = "piwik_"
-charset = "utf8mb4"
+adapter = "MYSQLI"
 enable_ssl = 1
 ssl_ca = "/etc/ssl/certs/Sectigo.crt"
-adapter = MYSQLI
+charset = "utf8mb4"
 
 [General]
+browser_archiving_disabled_enforce = 1
 force_ssl = 1
+enable_load_data_infile = 0
 salt = "<%= @salt %>"
 trusted_hosts[] = "matomo.miraheze.org"
-enable_load_data_infile = 0
-; disable browser trigger archiving for all requests (even those with a segment)
-browser_archiving_disabled_enforce = 1
 
 [mail]
 transport = "smtp"
@@ -92,7 +91,6 @@ Plugins[] = "UserId"
 Plugins[] = "QueuedTracking"
 Plugins[] = "DeviceDetectorCache"
 Plugins[] = "LoginLdap"
-;Plugins[] = "Login"
 
 [PluginsInstalled]
 PluginsInstalled[] = "Diagnostics"
@@ -163,7 +161,7 @@ PluginsInstalled[] = "QueuedTracking"
 PluginsInstalled[] = "TwoFactorAuth"
 PluginsInstalled[] = "DeviceDetectorCache"
 PluginsInstalled[] = "LoginLdap"
-;PluginsInstalled[] = "Login"
+PluginsInstalled[] = "CoreVue"
 
 [QueuedTracking]
 notify_queue_threshold_single_queue = 250000
@@ -190,7 +188,7 @@ use_webserver_auth = 0
 user_access_attribute_server_specification_delimiter = ";"
 user_access_attribute_server_separator = ":"
 instance_name = ""
-ldap_network_timeout = "15"
+ldap_network_timeout = 15
 
 [LoginLdap_Miraheze Ldap]
 hostname = "ldaps://ldap2.miraheze.org/"
