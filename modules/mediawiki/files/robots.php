@@ -32,6 +32,10 @@ echo "# Block SemrushBot" . "\r\n";
 echo "User-Agent: SemrushBot" . "\r\n";
 echo "Disallow: /" . "\r\n\n";
 
+echo "# Throttle MJ12Bot" . "\r\n";
+echo "User-agent: MJ12bot" . "\r\n";
+echo "Crawl-Delay: 10" . "\r\n\n";
+
 if ( $databasesArray['combi'] ) {
 	if ( preg_match( '/^(.+)\.miraheze\.org$/', $_SERVER['HTTP_HOST'], $matches ) ) {
 		$wiki = "{$matches[1]}wiki";
