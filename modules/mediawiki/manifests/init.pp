@@ -73,6 +73,21 @@ class mediawiki(
             group  => 'www-data',
             mode   => '0400',
         }
+        
+        file { '/var/www/.ssh':
+            ensure => directory,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0400',
+        }
+
+        file { '/var/www/.ssh/known_hosts':
+            content   => template('mediawiki/mw-user-known-hosts.erb'),
+            owner     => 'www-data',
+            group     => 'www-data',
+            mode      => '644',
+            require   => File['/var/www/.ssh'],
+        }
     }
 
     if lookup(mediawiki::use_staging) {
