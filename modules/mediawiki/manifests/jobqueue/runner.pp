@@ -12,6 +12,7 @@ class mediawiki::jobqueue::runner {
 
     $redis_password = lookup('passwords::redis::master')
 
+    $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '51.195.236.215:6379'})
     if lookup('jobrunner::intensive', {'default_value' => false}) {
         $config = 'jobrunner-hi.json.erb'
     } else {
