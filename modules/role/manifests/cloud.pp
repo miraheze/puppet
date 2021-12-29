@@ -13,71 +13,52 @@ class role::cloud {
         private_netmask    => lookup('role::cloud::private_netmask', {'default_value' => undef}),
     }
 
-    # cloud4 and cloud5 respectivly
-    # TODO: Either automate this or move it so it's done in a file
-    $firewall = query_facts('Class[Role::Cloud]', ['ipaddress', 'ipaddress6'])
-    $firewall.each |$key, $value| {
-        ufw::allow { "proxmox port 5900:5999 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => '5900:5999',
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "proxmox port 5900:5999 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => '5900:5999',
-            from  => $value['ipaddress6'],
-        }
-
-        ufw::allow { "proxmox port 5404:5405 ${value['ipaddress']}":
-            proto => 'udp',
-            port  => '5404:5405',
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "proxmox port 5404:5405 ${value['ipaddress6']}":
-            proto => 'udp',
-            port  => '5404:5405',
-            from  => $value['ipaddress6'],
-        }
-
-        ufw::allow { "proxmox port 3128 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => '3128',
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "proxmox port 3128 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => '3128',
-            from  => $value['ipaddress6'],
-        }
-
-        ufw::allow { "proxmox port 8006 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => '8006',
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "proxmox port 8006 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => '8006',
-            from  => $value['ipaddress6'],
-        }
-
-        ufw::allow { "proxmox port 111 ${value['ipaddress']}":
-            proto => 'tcp',
-            port  => '111',
-            from  => $value['ipaddress'],
-        }
-
-        ufw::allow { "proxmox port 111 ${value['ipaddress6']}":
-            proto => 'tcp',
-            port  => '111',
-            from  => $value['ipaddress6'],
-        }
+    ferm::conf { 'forward-ferm':
+        ensure => present,
+        prio   => 20,
+        source => 'puppet:///modules/role/cloud/forward-ferm',
     }
 
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Cloud]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+
+    ferm::service { 'proxmox port 5900:5999':
+        proto  => 'tcp',
+        port   => '5900:5999',
+        srange => "(${firewall_rules_str})",
+    }
+
+    ferm::service { 'proxmox port 5404:5405':
+        proto  => 'udp',
+        port   => '5404:5405',
+        srange => "(${firewall_rules_str})",
+    }
+
+    ferm::service { 'proxmox port 3128':
+        proto  => 'tcp',
+        port   => '3128',
+        srange => "(${firewall_rules_str})",
+    }
+
+    ferm::service { 'proxmox port 8006':
+        proto  => 'tcp',
+        port   => '8006',
+        srange => "(${firewall_rules_str})",
+    }
+
+    ferm::service { 'proxmox port 111':
+        proto  => 'tcp',
+        port   => '111',
+        srange => "(${firewall_rules_str})",
+    }
 
     motd::role { 'role::cloud':
         description => 'cloud virts to host own vps using proxmox',
