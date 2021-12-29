@@ -1,0 +1,7 @@
+domain ip {
+	table filter {
+		chain FORWARD {
+			policy ACCEPT;
+		}
+	}
+}
