@@ -110,7 +110,7 @@ def run(args, start):
         serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
         sync = True
     elif args.servers == 'scsvg':
-        serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mw131', 'mw132']
+        serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
         sync = True
     elif args.servers == 'skip':
         print('Sync skipped. Mediawiki deploy has not passed canary stage.')

@@ -73,7 +73,7 @@ node /^mw([89]|1[0123])\.miraheze\.org$/ {
 }
 
 # new hardware
-node /^mw(1[0123][12])\.miraheze\.org$/ {
+node /^mw(1[012][12])\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include prometheus::php_fpm
