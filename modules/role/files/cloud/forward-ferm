@@ -1,7 +1,6 @@
-domain ip {
-	table filter {
-		chain FORWARD {
-			policy ACCEPT;
-		}
+# Managed by puppet
+domain (ip ip6) {
+	chain FORWARD {
+		policy ACCEPT;
 	}
 }
