@@ -40,6 +40,13 @@ node 'jobchron1.miraheze.org' {
     include mediawiki::jobqueue::chron
 }
 
+node 'jobchron121.miraheze.org' {
+    include base
+    include role::redis
+    include prometheus::redis_exporter
+    include mediawiki::jobqueue::chron
+}
+
 node 'ldap2.miraheze.org' {
     include base
     include role::openldap
@@ -51,7 +58,7 @@ node 'mail2.miraheze.org' {
     include role::roundcubemail
 }
 
-node /^mem[12]\.miraheze\.org$/ {
+node /^mem([12]|1([02]1)\.miraheze\.org$/ {
     include base
     include role::memcached
 }
