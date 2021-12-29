@@ -48,7 +48,7 @@ class mediawiki(
             group  => 'www-data',
             mode   => '0400',
         }
-
+        
         file { '/var/www/.ssh/authorized_keys':
             ensure => file,
             owner  => 'www-data',
@@ -72,6 +72,21 @@ class mediawiki(
             owner  => 'www-data',
             group  => 'www-data',
             mode   => '0400',
+        }
+        
+        file { '/var/www/.ssh':
+            ensure => directory,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0400',
+        }
+
+        file { '/var/www/.ssh/known_hosts':
+            content   => template('mediawiki/mw-user-known-hosts.erb'),
+            owner     => 'www-data',
+            group     => 'www-data',
+            mode      => '644',
+            require   => File['/var/www/.ssh'],
         }
     }
 
