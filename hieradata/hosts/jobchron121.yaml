@@ -1,0 +1,4 @@
+redis::heap: '1000mb'
+
+base::firewall::mode: ferm
+puppetserver_hostname: 'puppet111.miraheze.org'
