@@ -48,7 +48,7 @@ class mediawiki(
             group  => 'www-data',
             mode   => '0400',
         }
-        
+
         file { '/var/www/.ssh/authorized_keys':
             ensure => file,
             owner  => 'www-data',
