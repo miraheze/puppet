@@ -38,7 +38,7 @@ node /^jobchron(1|121)\.miraheze\.org$/ {
     include role::redis
     include prometheus::redis_exporter
     include mediawiki::jobqueue::chron
-
+}
 
 node 'ldap2.miraheze.org' {
     include base
