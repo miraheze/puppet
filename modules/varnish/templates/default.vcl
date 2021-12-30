@@ -109,7 +109,87 @@ backend mw13_test {
 	.port = "8093";
 }
 
-backend test3 {
+backend test111 {
+	.host = "127.0.0.1";
+	.port = "8091";
+}
+
+backend mw101 {
+	.host = "127.0.0.1";
+	.port = "8085";
+	.probe = mwhealth;
+}
+
+backend mw102 {
+	.host = "127.0.0.1";
+	.port = "8086";
+	.probe = mwhealth;
+}
+
+backend mw111 {
+	.host = "127.0.0.1";
+	.port = "8087";
+	.probe = mwhealth;
+}
+
+backend mw112 {
+	.host = "127.0.0.1";
+	.port = "8088";
+	.probe = mwhealth;
+}
+
+backend mw121 {
+	.host = "127.0.0.1";
+	.port = "8092";
+	.probe = mwhealth;
+}
+
+backend mw122 {
+	.host = "127.0.0.1";
+	.port = "8093";
+	.probe = mwhealth;
+}
+
+# to be used for acme/letsencrypt only
+backend mwtask101 {
+	.host = "127.0.0.1";
+	.port = "8089";
+}
+
+# test mediawiki backend with out health check
+# to be used only by our miraheze debug plugin
+
+backend mw101_test {
+	.host = "127.0.0.1";
+	.port = "8085";
+}
+
+backend mw102_test {
+	.host = "127.0.0.1";
+	.port = "8086";
+}
+
+backend mw111_test {
+	.host = "127.0.0.1";
+	.port = "8087";
+}
+
+backend mw112_test {
+	.host = "127.0.0.1";
+	.port = "8088";
+}
+
+backend mw121_test {
+	.host = "127.0.0.1";
+	.port = "8092";
+}
+
+backend mw122_test {
+	.host = "127.0.0.1";
+	.port = "8093";
+}
+
+backend test111 {
 	.host = "127.0.0.1";
 	.port = "8091";
 }
@@ -321,6 +401,31 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test3;
 		return (pass);
+	else if (req.http.X-Miraheze-Debug == "mw101.miraheze.org") {
+		set req.backend_hint = mw101_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw102.miraheze.org") {
+		set req.backend_hint = mw102_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw111.miraheze.org") {
+		set req.backend_hint = mw111_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw112.miraheze.org") {
+		set req.backend_hint = mw112_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw121.miraheze.org") {
+		set req.backend_hint = mw121_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "mw122.miraheze.org") {
+		set req.backend_hint = mw122_test;
+		return (pass);
+	} else if (req.http.X-Miraheze-Debug == "test111.miraheze.org") {
+		set req.backend_hint = test111;
+		return (pass);
+	else if (req.http.X-Miraheze-Debug == "mwtask101.miraheze.org") {
+		set req.backend_hint = mwtask101_test;
+		return (pass);
+	}
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
