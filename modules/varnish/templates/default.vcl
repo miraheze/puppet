@@ -34,6 +34,7 @@ backend mon2 {
 	.port = "8201";
 }
 
+# OVLON - MEDIAWIKI
 backend mw8 {
 	.host = "127.0.0.1";
 	.port = "8085";
@@ -76,7 +77,7 @@ backend mwtask1 {
 	.port = "8089";
 }
 
-# test mediawiki backend with out health check
+# test ovlon mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
 backend mw8_test {
@@ -109,89 +110,92 @@ backend mw13_test {
 	.port = "8093";
 }
 
+# end test backend
+# SCSVG - MEDIAWIKI
+
 backend test111 {
 	.host = "127.0.0.1";
-	.port = "8091";
+	.port = "8101";
 }
 
 backend mw101 {
 	.host = "127.0.0.1";
-	.port = "8085";
+	.port = "8094";
 	.probe = mwhealth;
 }
 
 backend mw102 {
 	.host = "127.0.0.1";
-	.port = "8086";
+	.port = "8095";
 	.probe = mwhealth;
 }
 
 backend mw111 {
 	.host = "127.0.0.1";
-	.port = "8087";
+	.port = "8096";
 	.probe = mwhealth;
 }
 
 backend mw112 {
 	.host = "127.0.0.1";
-	.port = "8088";
+	.port = "8097";
 	.probe = mwhealth;
 }
 
 backend mw121 {
 	.host = "127.0.0.1";
-	.port = "8092";
+	.port = "8098";
 	.probe = mwhealth;
 }
 
 backend mw122 {
 	.host = "127.0.0.1";
-	.port = "8093";
+	.port = "8099";
 	.probe = mwhealth;
 }
 
 # to be used for acme/letsencrypt only
 backend mwtask101 {
 	.host = "127.0.0.1";
-	.port = "8089";
-}
-
-# test mediawiki backend with out health check
-# to be used only by our miraheze debug plugin
-
-backend mw101_test {
-	.host = "127.0.0.1";
-	.port = "8085";
-}
-
-backend mw102_test {
-	.host = "127.0.0.1";
-	.port = "8086";
-}
-
-backend mw111_test {
-	.host = "127.0.0.1";
-	.port = "8087";
-}
-
-backend mw112_test {
-	.host = "127.0.0.1";
-	.port = "8088";
-}
-
-backend mw121_test {
-	.host = "127.0.0.1";
-	.port = "8092";
-}
-
-backend mw122_test {
-	.host = "127.0.0.1";
-	.port = "8093";
+	.port = "8100";
 }
 
 backend test111 {
 	.host = "127.0.0.1";
-	.port = "8091";
+	.port = "8101";
+}
+
+# test SCSVG mediawiki backend with out health check
+# to be used only by our miraheze debug plugin
+
+backend mw101_test {
+	.host = "127.0.0.1";
+	.port = "8094";
+}
+
+backend mw102_test {
+	.host = "127.0.0.1";
+	.port = "8095";
+}
+
+backend mw111_test {
+	.host = "127.0.0.1";
+	.port = "8096";
+}
+
+backend mw112_test {
+	.host = "127.0.0.1";
+	.port = "8097";
+}
+
+backend mw121_test {
+	.host = "127.0.0.1";
+	.port = "8098";
+}
+
+backend mw122_test {
+	.host = "127.0.0.1";
+	.port = "8099";
 }
 
 # end test backend
