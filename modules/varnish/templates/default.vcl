@@ -110,6 +110,11 @@ backend mw13_test {
 	.port = "8093";
 }
 
+backend test3 {
+	.host = "127.0.0.1";
+	.port = "8091";
+}
+
 # end test backend
 # SCSVG - MEDIAWIKI
 
