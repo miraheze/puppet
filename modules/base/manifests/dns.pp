@@ -1,15 +1,17 @@
 # class base::dns
-class base::dns {
+class base::dns (
+    Boolean $use_ipv6 = lookup('base::dns::use_ipv6', {'default_value' => false})
+) {
     package { 'pdns-recursor':
         ensure => present,
     }
 
     file { '/etc/powerdns/recursor.conf':
-        mode   => '0444',
-        owner  => 'pdns',
-        group  => 'pdns',
-        notify => Service['pdns-recursor'],
-        source => 'puppet:///modules/base/dns/recursor.conf',
+        mode    => '0444',
+        owner   => 'pdns',
+        group   => 'pdns',
+        notify  => Service['pdns-recursor'],
+        content => template('base/dns/recursor.conf.erb'),
     }
 
     service { 'pdns-recursor':
@@ -25,7 +27,7 @@ class base::dns {
     }
 
     file { '/etc/resolv.conf':
-        source  => 'puppet:///modules/base/dns/resolv.conf',
+        content => template('base/dns/recursor.conf.erb'),
         require => Package['pdns-recursor'],
     }
 }
