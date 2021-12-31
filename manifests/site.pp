@@ -27,6 +27,24 @@ node /^gluster[34]\.miraheze\.org$/ {
     include role::gluster
 }
 
+node 'gluster101.miraheze.org' {
+    include base
+    include bacula::client
+    include role::gluster
+}
+
+node 'gluster111.miraheze.org' {
+    include base
+    include bacula::client
+    include role::gluster
+}
+
+node 'gluster121.miraheze.org' {
+    include base
+    include bacula::client
+    include role::gluster
+}
+
 node 'graylog2.miraheze.org' {
     include base
     include role::graylog
