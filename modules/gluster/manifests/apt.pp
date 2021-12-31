@@ -7,7 +7,7 @@ class gluster::apt {
         repos    => 'main',
         key      => {
             'id' => 'F9C958A3AEE0D2184FAD1CBD43607F0DC2F8238C',
-            'options' => 'http-proxy="http://proxyuser:proxypass@example.org:3128',
+            'options' => "http-proxy='${http_proxy}'",
         },
         notify   => Exec['apt_update_gluster'],
     }
