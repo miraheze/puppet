@@ -29,7 +29,6 @@ node /^db1[123]\.miraheze\.org$/ {
 node 'db101.miraheze.org' {
     include base
     include role::db
-    include bacula::client
 }
 
 node /^gluster[34]\.miraheze\.org$/ {
