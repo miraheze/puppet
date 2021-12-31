@@ -1,0 +1,14 @@
+puppetserver_hostname: 'puppet111.miraheze.org'
+mariadb::config::innodb_buffer_pool_instances: 1
+mariadb::config::innodb_buffer_pool_size: '1G'
+mariadb::config::max_connections: 500
+mariadb::config::table_definition_cache: 50000 
+mariadb::config::table_open_cache: 50000
+
+role::db::backup_clusters:
+    - c2
+
+base::firewall::mode: ferm
+base::syslog::syslog_daemon: 'rsyslog'
+
+mariadb::version: '10.5'
