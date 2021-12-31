@@ -165,11 +165,6 @@ backend mwtask101 {
 	.port = "8100";
 }
 
-backend test111 {
-	.host = "127.0.0.1";
-	.port = "8101";
-}
-
 # test SCSVG mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
@@ -237,15 +232,31 @@ acl purge {
 	# mw13
 	"51.195.236.251";
 	"2001:41d0:800:1bbd::5";
-	# mon2
-	"51.195.236.249";
-	"2001:41d0:800:1bbd::3";
 	# mwtask1
 	"198.244.181.23";
 	"2001:41d0:800:1bbd::15";
 	# test3
 	"51.195.236.247";
 	"2001:41d0:800:1bbd::14";
+	# mon2
+	"51.195.236.249";
+	"2001:41d0:800:1bbd::3"
+	# mw101
+	"2a10:6740::6:107";
+	# mw102
+	"2a10:6740::6:108";
+	# mw111
+	"2a10:6740::6:206";
+	# mw112
+	"2a10:6740::6:207";
+	# mw121
+	"2a10:6740::6:307";
+	# mw122
+	"2a10:6740::6:308";
+	# mwtask111
+	"2a10:6740::6:208";
+	# test101
+	"2a10:6740::6:109";
 }
 
 sub mw_stash_cookie {
@@ -410,7 +421,7 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test3;
 		return (pass);
-	else if (req.http.X-Miraheze-Debug == "mw101.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw101.miraheze.org") {
 		set req.backend_hint = mw101_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw102.miraheze.org") {
@@ -431,10 +442,9 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "test111.miraheze.org") {
 		set req.backend_hint = test111;
 		return (pass);
-	else if (req.http.X-Miraheze-Debug == "mwtask101.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mwtask101.miraheze.org") {
 		set req.backend_hint = mwtask101_test;
 		return (pass);
-	}
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
