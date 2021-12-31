@@ -1,0 +1,16 @@
+users::groups:
+  - puppet-users
+puppetserver: true
+puppetserver_java_opts: '-Xms2000M -Xmx2000M'
+puppetdb_enable: true
+puppetdb_hostname: puppet111.miraheze.org
+puppetdb::db_ssl: true
+puppetdb::db_rw_host: puppet111.miraheze.org
+postgresql::ssl: true
+puppetdb::command_processing_threads: 4
+puppetserver_hostname: 'puppet3.miraheze.org'
+role::salt::minions::salt_master: 'puppet111.miraheze.org'
+role::salt::minions::salt_master_key: true
+
+base::firewall::mode: ferm
+base::syslog::syslog_daemon: 'rsyslog'
