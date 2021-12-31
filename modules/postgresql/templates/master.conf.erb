@@ -1,4 +1,8 @@
 # replication master
 wal_level = hot_standby
 max_wal_senders = <%= @max_wal_senders %>
+<%- if @postgresql_13_or_higher -%>
+wal_keep_size = <%= @wal_keep_segments %>
+<%- else -%>
 wal_keep_segments = <%= @wal_keep_segments %>
+<%- end -%>
