@@ -99,6 +99,15 @@ node 'puppet3.miraheze.org' {
     include role::salt
 }
 
+node 'puppet111.miraheze.org' {
+    include base
+    include bacula::client
+    include role::postgresql
+    include puppetdb::database
+    include role::puppetserver
+    include role::salt
+}
+
 node 'test3.miraheze.org' {
     include base
     include role::mediawiki
