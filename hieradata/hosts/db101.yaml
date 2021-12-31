@@ -10,3 +10,5 @@ role::db::backup_clusters:
 
 base::firewall::mode: ferm
 base::syslog::syslog_daemon: 'rsyslog'
+
+mariadb::version: '10.5'
