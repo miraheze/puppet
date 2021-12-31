@@ -1,7 +1,5 @@
 # class base::dns
-class base::dns (
-    Boolean $use_ipv6 = lookup('base::dns::use_ipv6', {'default_value' => false})
-) {
+class base::dns {
     package { 'pdns-recursor':
         ensure => present,
     }
