@@ -5,9 +5,10 @@ class puppetdb::database(
     Optional[String] $master = undef
 ) {
     $pgversion = $::lsbdistcodename ? {
-        'buster'  => '11',
-        'stretch' => '9.6',
-        'jessie'  => '9.4',
+        'bullseye' => '13',
+        'buster'   => '11',
+        'stretch'  => '9.6',
+        'jessie'   => '9.4',
     }
 
     $puppetdb_pass = lookup('puppetdb::password::rw')
