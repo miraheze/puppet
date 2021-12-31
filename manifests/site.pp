@@ -1,5 +1,10 @@
 # servers
 
+node 'bast101.miraheze.org' {
+    include base
+    include role::bastion
+}
+
 node 'bacula2.miraheze.org' {
     include base
     include bacula::director
