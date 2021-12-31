@@ -14,4 +14,3 @@ role::salt::minions::salt_master_key: true
 
 base::firewall::mode: ferm
 base::syslog::syslog_daemon: 'rsyslog'
-base::dns::use_ipv6: true
