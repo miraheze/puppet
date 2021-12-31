@@ -27,6 +27,24 @@ node /^gluster[34]\.miraheze\.org$/ {
     include role::gluster
 }
 
+node 'gluster101.miraheze.org' {
+    include base
+    include bacula::client
+    include role::gluster
+}
+
+node 'gluster111.miraheze.org' {
+    include base
+    include bacula::client
+    include role::gluster
+}
+
+node 'gluster121.miraheze.org' {
+    include base
+    include bacula::client
+    include role::gluster
+}
+
 node 'graylog2.miraheze.org' {
     include base
     include role::graylog
@@ -91,6 +109,15 @@ node 'phab2.miraheze.org' {
 }
 
 node 'puppet3.miraheze.org' {
+    include base
+    include bacula::client
+    include role::postgresql
+    include puppetdb::database
+    include role::puppetserver
+    include role::salt
+}
+
+node 'puppet111.miraheze.org' {
     include base
     include bacula::client
     include role::postgresql

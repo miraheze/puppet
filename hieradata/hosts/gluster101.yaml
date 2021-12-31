@@ -1,0 +1,7 @@
+puppetserver_hostname: 'puppet111.miraheze.org'
+gluster_client: true
+gluster_volume: gluster101.miraheze.org:/static
+
+base::firewall::mode: ferm
+base::syslog::syslog_daemon: 'rsyslog'
+http_proxy: 'http://[2a10:6740::6:101]:8080'
