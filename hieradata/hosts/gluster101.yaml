@@ -4,3 +4,4 @@ gluster_client: true
 base::firewall::mode: ferm
 base::syslog::syslog_daemon: 'rsyslog'
 base::dns::use_ipv6: true
+gluster_volume: gluster101.miraheze.org:/static
