@@ -1,6 +1,6 @@
 class role::bastion {
     $firewall_rules_str = join(
-        query_nodes("domain='$domain'", ['ipaddress', 'ipaddress6'])
+        query_facts("domain='$domain'", ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }
