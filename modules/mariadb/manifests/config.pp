@@ -20,11 +20,6 @@ class mariadb::config(
     $roundcubemail_password = lookup('passwords::roundcubemail')
     $mariadb_replica_password = lookup('passwords::mariadb_replica_password')
 
-    $server_id = inline_template(
-        "<%= @virtual_ip_address.split('.').inject(0)\
-{|total,value| (total << 8 ) + value.to_i} %>"
-    )
-
     file { '/etc/my.cnf':
         owner   => 'root',
         group   => 'root',
