@@ -35,8 +35,8 @@ class postgresql::slave(
     Boolean $use_ssl = false,
 ) {
 
-    # use 9.6 on stretch
     $pgversion = $::lsbdistcodename ? {
+        'bullseye' => '13',
         'buster'  => '11',
         'stretch' => '9.6',
         'jessie'  => '9.4',
