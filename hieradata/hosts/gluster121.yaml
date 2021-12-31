@@ -1,5 +1,6 @@
 puppetserver_hostname: 'puppet111.miraheze.org'
 gluster_client: true
+gluster::only_ipv6: true
 gluster_volume: gluster101.miraheze.org:/static
 
 base::firewall::mode: ferm
