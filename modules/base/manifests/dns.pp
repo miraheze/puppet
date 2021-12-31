@@ -7,11 +7,11 @@ class base::dns (
     }
 
     file { '/etc/powerdns/recursor.conf':
-        mode    => '0444',
-        owner   => 'pdns',
-        group   => 'pdns',
-        notify  => Service['pdns-recursor'],
-        content => template('base/dns/recursor.conf.erb'),
+        mode   => '0444',
+        owner  => 'pdns',
+        group  => 'pdns',
+        notify => Service['pdns-recursor'],
+        source => 'puppet:///modules/base/dns/recursor.conf',
     }
 
     service { 'pdns-recursor':
@@ -27,7 +27,7 @@ class base::dns (
     }
 
     file { '/etc/resolv.conf':
-        content => template('base/dns/recursor.conf.erb'),
+        content => template('base/dns/resolv.conf.erb'),
         require => Package['pdns-recursor'],
     }
 }
