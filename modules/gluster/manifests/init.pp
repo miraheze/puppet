@@ -92,12 +92,15 @@ class gluster {
         }
     }
 
-    gluster::logging { 'glusterd':
-        file_source_options => [
-            '/var/log/glusterfs/glusterd.log',
-            { 'flags' => 'no-parse' }
-        ],
-        program_name => 'glusterd',
+    $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'})
+    if $syslog_daemon == 'syslog_ng' {
+        gluster::logging { 'glusterd':
+            file_source_options => [
+                '/var/log/glusterfs/glusterd.log',
+                { 'flags' => 'no-parse' }
+            ],
+            program_name => 'glusterd',
+        }
     }
 
     logrotate::conf { 'glusterfs-common':
