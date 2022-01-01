@@ -14,6 +14,7 @@ class monitoring::ircecho (
 
 
     $pyversion = $::lsbdistcodename ? {
+        'bullseye' => 'python3.9',
         'buster'  => 'python3.7',
         'stretch' => 'python3.5',
     }
