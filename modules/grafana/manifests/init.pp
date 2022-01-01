@@ -8,17 +8,24 @@ class grafana (
 
     include ::apt
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    file { '/etc/apt/trusted.gpg.d/grafana.gpg':
+        ensure => present,
+        source => 'puppet:///modules/grafana/grafana.gpg',
+    }
+
     apt::source { 'grafana_apt':
         comment  => 'Grafana stable',
         location => 'https://packages.grafana.com/oss/deb',
         release  => 'stable',
         repos    => 'main',
-        key      => {
-                'id' => 'F51A91A5EE001AA5D77D53C4C6E319C334410682',
-                'options' => "http-proxy='${http_proxy}'",
-                'server'  => 'hkp://keyserver.ubuntu.com:80',
-        },
+        require  => File['/etc/apt/trusted.gpg.d/grafana.gpg'],
+        notify   => Exec['apt_update_grafana'],
+    }
+
+    exec {'apt_update_grafana':
+        command     => '/usr/bin/apt-get update',
+        refreshonly => true,
+        logoutput   => true,
     }
 
     package { 'grafana':
