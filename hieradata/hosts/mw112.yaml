@@ -12,3 +12,5 @@ nginx::use_graylog: true
 puppetserver_hostname: 'puppet111.miraheze.org'
 
 base::firewall::mode: ferm
+http_proxy: 'http://bastion.miraheze.org:8080'
+base::syslog::syslog_daemon: 'rsyslog'
