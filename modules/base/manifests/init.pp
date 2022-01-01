@@ -1,7 +1,7 @@
 # class: base
 class base (
     Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
-    String $logsalmsg_ip = lookup('logsalmsg_ip', {'default_value' => '51.195.236.249'})
+    Boolean $use_new_mon = lookup('use_new_mon', {'default_value' => false})
 ) {
     include apt
     include base::packages
