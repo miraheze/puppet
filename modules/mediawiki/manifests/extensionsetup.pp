@@ -181,6 +181,7 @@ class mediawiki::extensionsetup {
         require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
     }
 
+    include ::nodejs
     exec { 'femiwiki_npm':
         command     => 'npm install --no-optional --only=production',
         creates     => "${mwpath}/skins/Femiwiki/node_modules",
