@@ -4,6 +4,7 @@ class grafana (
     String $mail_password = lookup('passwords::mail::noreply'),
     String $ldap_password = lookup('passwords::ldap_password'),
     String $grafana_db_host = lookup('grafana_db_host', {'default_value' => 'db11.miraheze.org'}),
+    String $grafana_ldap_server = lookup('grafana_ldap_server', {'default_value' => 'ldap2.miraheze.org'}),
 ) {
 
     include ::apt
