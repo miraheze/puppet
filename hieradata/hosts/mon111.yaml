@@ -4,6 +4,7 @@ icinga_ido_db_host: 'db101.miraheze.org'
 icingaweb_db_host: 'db101.miraheze.org'
 icinga_ido_db_host: 'db101.miraheze.org'
 grafana_db_host: 'db101.miraheze.org'
+matomo_db_host: 'db101.miraheze.org'
 
 http_proxy: 'http://[2a10:6740::6:101]:8080'
 
