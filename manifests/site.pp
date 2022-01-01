@@ -1,11 +1,21 @@
 # servers
 
+node /^bast1[02]1\.miraheze\.org$/ {
+    include base
+    include role::bastion
+}
+
 node 'bacula2.miraheze.org' {
     include base
     include bacula::director
 }
 
 node /^cloud[345]\.miraheze\.org$/ {
+    include base
+    include role::cloud
+}
+
+node /^cloud1[012]\.miraheze\.org$/ {
     include base
     include role::cloud
 }
@@ -19,6 +29,11 @@ node /^db1[123]\.miraheze\.org$/ {
     include base
     include role::db
     include bacula::client
+}
+
+node 'db101.miraheze.org' {
+    include base
+    include role::db
 }
 
 node /^gluster[34]\.miraheze\.org$/ {
@@ -63,6 +78,11 @@ node 'ldap2.miraheze.org' {
     include role::openldap
 }
 
+node 'ldap111.miraheze.org' {
+    include base
+    include role::openldap
+}
+
 node 'mail2.miraheze.org' {
     include base
     include role::mail
@@ -75,6 +95,16 @@ node /^mem[12]\.miraheze\.org$/ {
 }
 
 node 'mon2.miraheze.org' {
+    include base
+    include role::grafana
+    include role::icinga2
+    include role::irc
+    include role::matomo
+    include role::prometheus
+    include prometheus::php_fpm
+}
+
+node 'mon111.miraheze.org' {
     include base
     include role::grafana
     include role::icinga2

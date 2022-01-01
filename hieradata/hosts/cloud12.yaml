@@ -1,0 +1,3 @@
+puppetserver_hostname: 'puppet111.miraheze.org'
+base::syslog::syslog_daemon: 'rsyslog'
+install_cloud_class: false

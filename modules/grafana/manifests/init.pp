@@ -3,16 +3,29 @@ class grafana (
     String $grafana_password = lookup('passwords::db::grafana'),
     String $mail_password = lookup('passwords::mail::noreply'),
     String $ldap_password = lookup('passwords::ldap_password'),
+    String $grafana_db_host = lookup('grafana_db_host', {'default_value' => 'db11.miraheze.org'}),
 ) {
 
     include ::apt
+
+    file { '/etc/apt/trusted.gpg.d/grafana.gpg':
+        ensure => present,
+        source => 'puppet:///modules/grafana/grafana.gpg',
+    }
 
     apt::source { 'grafana_apt':
         comment  => 'Grafana stable',
         location => 'https://packages.grafana.com/oss/deb',
         release  => 'stable',
         repos    => 'main',
-        key      => 'F51A91A5EE001AA5D77D53C4C6E319C334410682',
+        require  => File['/etc/apt/trusted.gpg.d/grafana.gpg'],
+        notify   => Exec['apt_update_grafana'],
+    }
+
+    exec {'apt_update_grafana':
+        command     => '/usr/bin/apt-get update',
+        refreshonly => true,
+        logoutput   => true,
     }
 
     package { 'grafana':

@@ -5,6 +5,7 @@ class monitoring (
     String $db_password           = undef,
     String $mirahezebots_password = undef,
     String $ticket_salt           = '',
+    Optional[String] $icinga2_api_bind_host = undef,
 ) {
     group { 'nagios':
         ensure    => present,
@@ -13,13 +14,18 @@ class monitoring (
         allowdupe => false,
     }
 
+    $http_proxy = lookup('http_proxy', {'default_value' => undef})
     $version = lookup('mariadb::version', {'default_value' => '10.4'})
     apt::source { 'mariadb_apt':
         comment     => 'MariaDB stable',
         location    => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
         release     => "${::lsbdistcodename}",
         repos       => 'main',
-        key         => '177F4010FE56CA3336300305F1656F24C74CD1D8',
+        key      => {
+                'id' => '177F4010FE56CA3336300305F1656F24C74CD1D8',
+                'options' => "http-proxy='${http_proxy}'",
+                'server'  => 'hkp://keyserver.ubuntu.com:80',
+        },
     }
 
     apt::pin { 'mariadb_pin':
@@ -49,6 +55,7 @@ class monitoring (
     }
 
     class { '::icinga2::feature::api':
+        bind_host   => $icinga2_api_bind_host,
         ca_host     => $::fqdn,
         ticket_salt => $ticket_salt,
     }
