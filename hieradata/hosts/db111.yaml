@@ -13,3 +13,4 @@ base::syslog::syslog_daemon: 'rsyslog'
 
 mariadb::version: '10.5'
 http_proxy: 'http://bastion.miraheze.org:8080'
+nagios_nrpe_listening_address: '::'
