@@ -33,9 +33,9 @@ define nginx::site(
             ensure         => $monitor_service,
             check_command  => 'check_http',
             vars           => {
-                address6    => $facts['ipaddress6'],
-                http_vhost  => $::fqdn,
-                http_ssl    => true,
+                address    => $facts['ipaddress6'],
+                http_vhost => $::fqdn,
+                http_ssl   => true,
             },
         }
     }
