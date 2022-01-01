@@ -12,3 +12,4 @@ base::firewall::mode: ferm
 base::syslog::syslog_daemon: 'rsyslog'
 
 mariadb::version: '10.5'
+http_proxy: 'http://[2a10:6740::6:101]:8080'
