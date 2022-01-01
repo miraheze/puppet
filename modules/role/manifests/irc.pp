@@ -2,12 +2,21 @@
 class role::irc {
     include irc::irclogbot
 
+    $use_new_mon = lookup('use_new_mon', {'default_value' => false})
+
+    if $use_new_mon {
+        $interface = '::'
+    } else {
+        $interface = ''
+    }
+
     class { 'irc::ircrcbot':
         nickname     => 'MirahezeRC',
         network      => 'irc.libera.chat',
         network_port => '6697',
         channel      => '#miraheze-feed',
         udp_port     => '5070',
+        interface    => $interface,
     }
 
     class { 'irc::irclogserverbot':
