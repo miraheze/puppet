@@ -1,6 +1,6 @@
 [auth_ldap]
 type = "ldap"
-hostname = "ldap2.miraheze.org"
+hostname = "<%= @icinga_ldap_host %>"
 port = "636"
 root_dn = "dc=miraheze,dc=org"
 bind_dn = "cn=write-user,dc=miraheze,dc=org"
