@@ -1,4 +1,6 @@
 class role::bastion {
+    include squid
+
     motd::role { 'role::bastion':
         description => 'core access bastion host'
     }
