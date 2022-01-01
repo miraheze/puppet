@@ -8,7 +8,7 @@ matomo_db_host: 'db101.miraheze.org'
 
 icinga_ldap_host: 'ldap111.miraheze.org'
 
-http_proxy: 'http://[2a10:6740::6:101]:8080'
+http_proxy: 'http://bastion.miraheze.org:8080'
 
 icinga2_api_bind_host: '::'
 
