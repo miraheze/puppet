@@ -23,6 +23,7 @@ class monitoring (
         key      => {
                 'id' => '177F4010FE56CA3336300305F1656F24C74CD1D8',
                 'options' => "http-proxy='${http_proxy}'",
+                'server'  => 'hkp://keyserver.ubuntu.com:80',
         },
     }
 
