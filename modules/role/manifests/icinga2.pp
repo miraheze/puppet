@@ -64,7 +64,8 @@ class role::icinga2 (
     String $icingaweb2_ido_db_user_name    = lookup('icinga_ido_user_name', {'default_value' => 'icinga2'}),
     String $icingaweb2_icinga_api_password = lookup('passwords::icinga_api'),
     String $ticket_salt                    = lookup('passwords::ticket_salt', {'default_value' => ''}),
-    String $ldap_password                  = lookup('passwords::ldap_password')
+    String $ldap_password                  = lookup('passwords::ldap_password'),
+    String $icinga_ldap_host               = lookup('icinga_ldap_host', {'default_value' => 'ldap2.miraheze.org'}),
 ) {
     class { '::monitoring':
         db_host               => $icinga2_db_host,
@@ -86,6 +87,7 @@ class role::icinga2 (
         ido_db_user_password  => $ido_db_user_password ,
         icinga_api_password   => $icingaweb2_icinga_api_password,
         ldap_password         => $ldap_password,
+        icinga_ldap_host      => $icinga_ldap_host,
     }
 
     if !defined(Ferm::Service['http']) {
