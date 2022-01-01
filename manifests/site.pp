@@ -15,6 +15,11 @@ node /^cloud[345]\.miraheze\.org$/ {
     include role::cloud
 }
 
+node /^cloud1[012]\.miraheze\.org$/ {
+    include base
+    include role::cloud
+}
+
 node /^cp(2[01]|3[01])\.miraheze\.org$/ {
     include base
     include role::varnish
