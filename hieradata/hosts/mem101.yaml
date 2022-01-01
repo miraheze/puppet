@@ -9,3 +9,4 @@ role::memcached::port: 11211
 
 base::firewall::mode: ferm
 puppetserver_hostname: 'puppet111.miraheze.org'
+base::syslog::syslog_daemon: 'rsyslog'
