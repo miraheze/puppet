@@ -17,6 +17,7 @@ class grafana (
         key      => {
                 'id' => 'F51A91A5EE001AA5D77D53C4C6E319C334410682',
                 'options' => "http-proxy='${http_proxy}'",
+                'server'  => 'hkp://keyserver.ubuntu.com:80',
         },
     }
 
