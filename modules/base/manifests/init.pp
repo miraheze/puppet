@@ -1,5 +1,7 @@
 # class: base
-class base {
+class base (
+    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef})
+) {
     include apt
     include base::packages
     include base::puppet
@@ -41,9 +43,11 @@ class base {
         mode   => '0555',
     }
 
-    file { '/etc/gitconfig':
-        ensure => present,
-        source => 'puppet:///modules/base/git/gitconfig',
+    if $http_proxy {
+        file { '/etc/gitconfig':
+            ensure => present,
+            content => template('base/git/gitconfig.erb'),
+        }
     }
 
     class { 'apt::backports':
