@@ -89,7 +89,7 @@ node 'mail2.miraheze.org' {
     include role::roundcubemail
 }
 
-node /^mem[12]\.miraheze\.org$/ {
+node /^mem[12|101|121]\.miraheze\.org$/ {
     include base
     include role::memcached
 }
