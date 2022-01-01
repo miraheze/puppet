@@ -66,7 +66,7 @@ node 'graylog2.miraheze.org' {
     include prometheus::es_exporter
 }
 
-node 'jobchron1.miraheze.org' {
+node /^jobchron(1|121)\.miraheze\.org$/ {
     include base
     include role::redis
     include prometheus::redis_exporter
@@ -89,7 +89,7 @@ node 'mail2.miraheze.org' {
     include role::roundcubemail
 }
 
-node /^mem[12]\.miraheze\.org$/ {
+node /^mem([12]|1([02]1))\.miraheze\.org$/ {
     include base
     include role::memcached
 }
