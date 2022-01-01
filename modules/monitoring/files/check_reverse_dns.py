@@ -60,7 +60,7 @@ def check_records(hostname):
     domain_parts = tldextract.extract(hostname)
     root_domain = "{}.{}".format(domain_parts.domain, domain_parts.suffix)
     dns_resolver = resolver.Resolver(configure=False)
-    dns_resolver.nameservers = ['1.1.1.1']
+    dns_resolver.nameservers = ['2606:4700:4700::1111']
 
     try:
         nameserversans = dns_resolver.query(root_domain, 'NS')
