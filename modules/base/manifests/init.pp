@@ -1,6 +1,7 @@
 # class: base
 class base (
-    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
+    String $logsalmsg_ip = lookup('logsalmsg_ip', {'default_value' => '51.195.236.249'})
 ) {
     include apt
     include base::packages
@@ -39,7 +40,7 @@ class base (
 
     file { '/usr/local/bin/logsalmsg':
         ensure => present,
-        source => 'puppet:///modules/base/logsalmsg',
+        content => template("base/logsalmsg.erb"),
         mode   => '0555',
     }
 
