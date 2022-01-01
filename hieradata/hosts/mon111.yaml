@@ -12,7 +12,7 @@ http_proxy: 'http://bastion.miraheze.org:8080'
 
 icinga2_api_bind_host: '::'
 
-logsalmsg_ip: '2a10:6740::6:205'
+use_new_mon: true
 
 mariadb::version: '10.5'
 
