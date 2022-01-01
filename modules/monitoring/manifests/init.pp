@@ -5,6 +5,7 @@ class monitoring (
     String $db_password           = undef,
     String $mirahezebots_password = undef,
     String $ticket_salt           = '',
+    Optional[String] $icinga2_api_bind_host = undef,
 ) {
     group { 'nagios':
         ensure    => present,
@@ -54,6 +55,7 @@ class monitoring (
     }
 
     class { '::icinga2::feature::api':
+        bind_host   => $icinga2_api_bind_host,
         ca_host     => $::fqdn,
         ticket_salt => $ticket_salt,
     }
