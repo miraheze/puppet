@@ -19,3 +19,4 @@ base::firewall::mode: ferm
 
 http_proxy: 'http://bastion.miraheze.org:8080'
 base::syslog::syslog_daemon: 'rsyslog'
+gluster::only_ipv6: true
