@@ -120,7 +120,7 @@ node /^mw(([89]|1[0123])|1[012][12])\.miraheze\.org$/ {
     include prometheus::php_fpm
 }
 
-node /^mwtask(1|101)\.miraheze\.org$/ {
+node /^mwtask(1|111)\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include prometheus::php_fpm
