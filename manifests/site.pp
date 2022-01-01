@@ -156,7 +156,7 @@ node 'puppet111.miraheze.org' {
     include role::salt
 }
 
-node /^test(3|111)\.miraheze\.org$/ {
+node /^test(3|101)\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include prometheus::php_fpm
