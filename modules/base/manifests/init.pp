@@ -44,7 +44,6 @@ class base {
     file { '/etc/gitconfig':
         ensure => present,
         source => 'puppet:///modules/base/git/gitconfig',
-        mode   => '0555',
     }
 
     class { 'apt::backports':
