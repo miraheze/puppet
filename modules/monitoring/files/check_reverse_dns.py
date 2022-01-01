@@ -63,7 +63,7 @@ def check_records(hostname):
     dns_resolver.nameservers = ['1.1.1.1']
 
     try:
-        nameserversans = dns_resolver.query(root_domain, 'NS')
+        nameserversans = dns_resolver.resolve(root_domain, 'NS')
         for nameserver in nameserversans:
             nameserver = str(nameserver)
             nameservers.append(nameserver)
@@ -76,7 +76,7 @@ def check_records(hostname):
         nameservers = None
 
     try:
-        cname = str(dns_resolver.query(hostname, 'CNAME')[0])
+        cname = str(dns_resolver.resolve(hostname, 'CNAME')[0])
     except resolver.NoAnswer:
         cname = None
 
@@ -98,7 +98,7 @@ def get_reverse_dnshostname(hostname):
         dns_resolver = resolver.Resolver(configure=False)
         dns_resolver.nameservers = ['1.1.1.1']
 
-        resolved_ip_addr = str(dns_resolver.query(hostname, 'A')[0])
+        resolved_ip_addr = str(dns_resolver.resolve(hostname, 'A')[0])
         ptr_record = reversename.from_address(resolved_ip_addr)
         rev_host = str(resolver.query(ptr_record, "PTR")[0]).rstrip('.')
 
