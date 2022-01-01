@@ -114,13 +114,13 @@ node 'mon111.miraheze.org' {
     include prometheus::php_fpm
 }
 
-node /^mw([89]|1[0123])\.miraheze\.org$/ {
+node /^mw(([89]|1[0123])|1[012][12])\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include prometheus::php_fpm
 }
 
-node 'mwtask1.miraheze.org' {
+node /^mwtask(1|101)\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include prometheus::php_fpm
@@ -156,7 +156,7 @@ node 'puppet111.miraheze.org' {
     include role::salt
 }
 
-node 'test3.miraheze.org' {
+node /^test(3|111)\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include prometheus::php_fpm
