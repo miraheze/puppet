@@ -8,6 +8,7 @@ class base::monitoring {
     }
 
     $icinga_password = lookup('passwords::db::icinga')
+    $nagios_nrpe_listening_address = lookup('nagios_nrpe_listening_address', {'default_value' => '0.0.0.0'})
     file { '/etc/nagios/nrpe.cfg':
         ensure  => present,
         content => template('base/icinga/nrpe.cfg.erb'),
