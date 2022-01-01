@@ -1,0 +1,4 @@
+puppetserver_hostname: 'puppet111.miraheze.org'
+
+base::firewall::mode: ferm
+base::syslog::syslog_daemon: 'rsyslog'
