@@ -1,2 +1,0 @@
-[http]
-        proxy = http://bastion.miraheze.org:8080
