@@ -4,4 +4,4 @@ gluster_volume: gluster101.miraheze.org:/static
 
 base::firewall::mode: ferm
 base::syslog::syslog_daemon: 'rsyslog'
-http_proxy: 'http://bastion.miraheze.org:8080'
+http_proxy: 'http://bast.miraheze.org:8080'
