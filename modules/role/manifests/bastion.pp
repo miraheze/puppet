@@ -1,4 +1,10 @@
 class role::bastion {
+    include squid
+
+    motd::role { 'role::bastion':
+        description => 'core access bastion host'
+    }
+
     $firewall_rules_str = join(
         query_facts("domain='$domain'", ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {

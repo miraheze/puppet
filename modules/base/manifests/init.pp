@@ -1,5 +1,8 @@
 # class: base
-class base {
+class base (
+    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
+    Boolean $use_new_mon = lookup('use_new_mon', {'default_value' => false})
+) {
     include apt
     include base::packages
     include base::puppet
@@ -37,8 +40,15 @@ class base {
 
     file { '/usr/local/bin/logsalmsg':
         ensure => present,
-        source => 'puppet:///modules/base/logsalmsg',
+        content => template("base/logsalmsg.erb"),
         mode   => '0555',
+    }
+
+    if $http_proxy {
+        file { '/etc/gitconfig':
+            ensure => present,
+            content => template('base/git/gitconfig.erb'),
+        }
     }
 
     class { 'apt::backports':

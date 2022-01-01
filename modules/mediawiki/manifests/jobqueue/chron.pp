@@ -2,6 +2,8 @@
 #
 # JobQueue Chron runner on redis masters only
 class mediawiki::jobqueue::chron {
+    include ::mediawiki::php
+
     git::clone { 'JobRunner':
         ensure    => latest,
         directory => '/srv/jobrunner',

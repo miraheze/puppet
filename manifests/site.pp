@@ -1,6 +1,6 @@
 # servers
 
-node 'bast101.miraheze.org' {
+node /^bast1[02]1\.miraheze\.org$/ {
     include base
     include role::bastion
 }
@@ -36,6 +36,16 @@ node 'db101.miraheze.org' {
     include role::db
 }
 
+node 'db111.miraheze.org' {
+    include base
+    include role::db
+}
+
+node 'db121.miraheze.org' {
+    include base
+    include role::db
+}
+
 node /^gluster[34]\.miraheze\.org$/ {
     include base
     include bacula::client
@@ -66,7 +76,7 @@ node 'graylog2.miraheze.org' {
     include prometheus::es_exporter
 }
 
-node 'jobchron1.miraheze.org' {
+node /^jobchron(1|121)\.miraheze\.org$/ {
     include base
     include role::redis
     include prometheus::redis_exporter
@@ -89,7 +99,7 @@ node 'mail2.miraheze.org' {
     include role::roundcubemail
 }
 
-node /^mem[12]\.miraheze\.org$/ {
+node /^mem([12]|1([02]1))\.miraheze\.org$/ {
     include base
     include role::memcached
 }
@@ -114,13 +124,13 @@ node 'mon111.miraheze.org' {
     include prometheus::php_fpm
 }
 
-node /^mw([89]|1[0123])\.miraheze\.org$/ {
+node /^mw(([89]|1[0123])|1[012][12])\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include prometheus::php_fpm
 }
 
-node 'mwtask1.miraheze.org' {
+node /^mwtask(1|111)\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include prometheus::php_fpm
@@ -156,7 +166,7 @@ node 'puppet111.miraheze.org' {
     include role::salt
 }
 
-node 'test3.miraheze.org' {
+node /^test(3|101)\.miraheze\.org$/ {
     include base
     include role::mediawiki
     include prometheus::php_fpm
