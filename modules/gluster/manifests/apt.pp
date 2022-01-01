@@ -1,4 +1,13 @@
-class gluster::apt {
+class gluster::apt (
+    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef})
+) {
+
+    if $http_proxy {
+        file { '/etc/apt/apt.conf.d/01gluster':
+            ensure => present,
+            content => template('gluster/apt/01gluster.erb'),
+        }
+    }
 
     file { '/etc/apt/trusted.gpg.d/gluster.gpg':
         ensure => present,
