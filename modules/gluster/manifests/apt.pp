@@ -6,6 +6,7 @@ class gluster::apt (
         file { '/etc/apt/apt.conf.d/01gluster':
             ensure => present,
             content => template('gluster/apt/01gluster.erb'),
+            before  => Apt::Source['gluster_apt'],
         }
     }
 
