@@ -72,6 +72,7 @@ def run(args, start):
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("config")}* {_get_deployed_path("config")}'))
         rsyncpaths.append(_get_deployed_path('config'))
     if args.world:
+        proxy = ''
         if args.proxy:
             proxy = 'http_proxy=http://bast101.miraheze.org:8080'  # read git config you stupid software
         os.chdir(_get_staging_path('world'))
