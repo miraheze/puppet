@@ -134,7 +134,7 @@ class EchoReader():
 
 
 class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
-    def __init__(self, chans, nickname, nickname_pass, server, port=6667, ssl=False, ident_passwd=None):
+    def __init__(self, chans, nickname, nickname_pass, server, port=6667, ssl=False, ipv6=False, ident_passwd=None):
         print('Connecting to IRC server %s...' % server)
 
         self.chans = chans
@@ -142,7 +142,7 @@ class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
         kwargs = {}
         if ssl:
             import ssl
-            ssl_factory = irc.connection.Factory(wrapper=ssl.wrap_socket)
+            ssl_factory = irc.connection.Factory(ipv6=ipv6, wrapper=ssl.wrap_socket)
             kwargs['connect_factory'] = ssl_factory
 
         SingleServerIRCBot.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', **kwargs)
@@ -219,6 +219,7 @@ chans = args['channel']
 nickname = args['nickname']
 nickname_pass = args['nickname_pass']
 server = args['server'].split(':')[0]
+ipv6 = args['ipv6']
 try:
     ssl = args['server'].split(':')[1].startswith('+')
     port = int(args['server'].split(':')[1].strip('+'))
@@ -228,9 +229,9 @@ except IndexError:
 global bot
 if args['ident_passwd_file']:
     with open(args['ident_passwd_file']) as f:
-        bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl, f.read().strip())
+        bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl, ipv6, f.read().strip())
 else:
-    bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl)
+    bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl, ipv6)
 global reader
 reader = EchoReader(args['infile'])
 try:
