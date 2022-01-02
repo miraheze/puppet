@@ -5,7 +5,6 @@ class irc::ircrcbot(
     $network_port = '6697',
     $channel      = undef,
     $udp_port     = '5070',
-    $interface    = undef,
 ) {
     include ::irc
 
