@@ -77,4 +77,4 @@ command[conntrack_table_size]=/usr/lib/nagios/plugins/check_conntrack 80 90
 command[ferm_active]=/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm
 
 # cloud hardware monitoring
-command[check_smart]=/usr/bin/sudo /usr/lib/nagios/plugin/check_smart -g /dev/sda -i cciss,[0-6] -l -s
+command[check_smart]=/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sda -i cciss,[0-6] -l -s
