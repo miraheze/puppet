@@ -29,11 +29,6 @@ probe mwhealth {
 	.expected_response = 200;
 }
 
-backend mon2 {
-	.host = "127.0.0.1";
-	.port = "8201";
-}
-
 # OVLON - MEDIAWIKI
 backend mw8 {
 	.host = "127.0.0.1";
@@ -198,8 +193,22 @@ backend mw122_test {
 	.port = "8099";
 }
 
-# end test backend
+# misc services
 
+backend mon2 {
+	.host = "127.0.0.1";
+	.port = "8201";
+}
+
+backend mon111 {
+	.host = "127.0.0.1";
+	.port = "8300";
+}
+
+backend phab121 {
+	.host = "127.0.0.1";
+	.port = "8301";
+}
 
 sub vcl_init {
 	new mediawiki = directors.random();
@@ -529,6 +538,21 @@ sub vcl_recv {
 		} else {
 			return (pass);
 		}
+	}
+
+	if (req.http.Host == "grafana-new.miraheze.org" || req.http.Host == "icinga-new.miraheze.org" ||
+		req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
+		set req.backend_hint = mon111;
+
+		# Do not cache these services
+		return (pass);
+	}
+
+	if (req.http.Host == "phabricator.miraheze.org") {
+		set req.backend_hint = phab121;
+
+		# Do not cache these services
+		return (pass);
 	}
 
 	# MediaWiki specific
