@@ -18,6 +18,7 @@ class base::packages {
         'molly-guard',
         'mtr',
         'nano',
+        'netcat-openbsd',
         'net-tools',
         'parted',
         'pigz',
