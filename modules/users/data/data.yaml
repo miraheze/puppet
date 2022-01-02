@@ -33,9 +33,14 @@ groups:
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   puppet-users:
     gid: 2004
-    descriptions: limited access on puppet3 to add SSL private keys
+    description: limited access on puppet3 to add SSL private keys
     members: []
-    privileges: []                 
+    privileges: []
+  bastion:
+    gid:2005
+    description: users who require bastion access
+    members: [rhinos, universalomega]
+    privileges: []
 
 users:
   johnflewis:
