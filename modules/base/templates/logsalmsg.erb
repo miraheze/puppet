@@ -8,7 +8,8 @@ else
 fi
 
 <%- if @use_new_mon -%>
-echo '!log' "[$ACTOR@$HOSTNAME] $*" | nc -q0 -u mon111.miraheze.org 5071
+# mon111.miraheze.org
+echo '!log' "[$ACTOR@$HOSTNAME] $*" | nc -q0 -u 2a10:6740::6:205 5071
 <%- else -%>
 echo '!log' "[$ACTOR@$HOSTNAME] $*" | nc -q0 -u mon2.miraheze.org 5071
 <%- end -%>
