@@ -197,17 +197,17 @@ backend mw122_test {
 
 backend mon2 {
 	.host = "127.0.0.1";
-	.port = "8300";
+	.port = "8201";
 }
 
 backend mon111 {
 	.host = "127.0.0.1";
-	.port = "8302";
+	.port = "8300";
 }
 
 backend phab121 {
 	.host = "127.0.0.1";
-	.port = "8302";
+	.port = "8301";
 }
 
 sub vcl_init {
