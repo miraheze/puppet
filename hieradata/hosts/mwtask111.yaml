@@ -12,7 +12,7 @@ mediawiki::jobqueue::runner::cron: false
 nginx::use_graylog: true
 puppetserver_hostname: 'puppet111.miraheze.org'
 mediawiki::is_canary: true
-mediawiki::default_sync: 'svscg'
+mediawiki::default_sync: 'scsvg'
 mediawiki::remote_sync: false
 mediawiki::use_staging: true
 

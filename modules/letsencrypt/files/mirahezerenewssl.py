@@ -8,7 +8,7 @@ import os
 
 app = Flask(__name__)
 
-logging.basicConfig(filename='/var/log/letsencrypt/miraheze-renewal.log', format='%(asctime)s - %(message)s', level=logging.DEBUG)
+logging.basicConfig(filename='/var/log/letsencrypt/miraheze-renewal.log', format='%(asctime)s - %(message)s', level=logging.DEBUG, force=True)
 
 
 @app.route('/renew', methods=['POST'])
@@ -37,4 +37,4 @@ def post():
     return '', 204
 
 
-app.run(host='0.0.0.0', port=5000, threaded=True)
+app.run(host='::', port=5000, threaded=True)

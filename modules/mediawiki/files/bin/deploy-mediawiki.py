@@ -72,8 +72,10 @@ def run(args, start):
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("config")}* {_get_deployed_path("config")}'))
         rsyncpaths.append(_get_deployed_path('config'))
     if args.world:
+        if args.proxy:
+            proxy = 'http_proxy=http://bast101.miraheze.org:8080'  # read git config you stupid software
         os.chdir(_get_staging_path('world'))
-        exitcodes.append(os.system('sudo -u www-data composer install --no-dev --quiet'))
+        exitcodes.append(os.system(f'sudo -u www-data {proxy} composer install --no-dev --quiet'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki'))
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("world")}* {_get_deployed_path("world")}'))
         rsyncpaths.append(_get_deployed_path('world'))
@@ -120,6 +122,7 @@ def run(args, start):
         sync = True
     up = False
     headers = {'host': 'meta.miraheze.org'}
+    os.environ['NO_PROXY'] = 'localhost'
     req = requests.get('https://localhost/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=False)
     if req.status_code == 200 and 'miraheze' in req.text:
         up = True
@@ -196,4 +199,5 @@ if __name__ == '__main__':
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
+    parser.add_argument('--use-proxy', dest='proxy', action='store_true')
     run(parser.parse_args(), start)
