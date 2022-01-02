@@ -3,3 +3,4 @@ base::firewall::mode: ferm
 base::syslog::syslog_daemon: 'rsyslog'
 http_proxy: 'http://bast.miraheze.org:8080'
 mailserver: true
+php::php_version: '7.4'
