@@ -118,7 +118,7 @@ backend test3 {
 # end test backend
 # SCSVG - MEDIAWIKI
 
-backend test111 {
+backend test101 {
 	.host = "127.0.0.1";
 	.port = "8101";
 }
@@ -160,7 +160,7 @@ backend mw122 {
 }
 
 # to be used for acme/letsencrypt only
-backend mwtask101 {
+backend mwtask111 {
 	.host = "127.0.0.1";
 	.port = "8100";
 }
@@ -250,9 +250,9 @@ acl purge {
 	# mw112
 	"2a10:6740::6:207";
 	# mw121
-	"2a10:6740::6:307";
+	"2a10:6740::6:309";
 	# mw122
-	"2a10:6740::6:308";
+	"2a10:6740::6:310";
 	# mwtask111
 	"2a10:6740::6:208";
 	# test101
@@ -439,11 +439,11 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "mw122.miraheze.org") {
 		set req.backend_hint = mw122_test;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "test111.miraheze.org") {
-		set req.backend_hint = test111;
+	} else if (req.http.X-Miraheze-Debug == "test101.miraheze.org") {
+		set req.backend_hint = test101;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mwtask101.miraheze.org") {
-		set req.backend_hint = mwtask101_test;
+	} else if (req.http.X-Miraheze-Debug == "mwtask111.miraheze.org") {
+		set req.backend_hint = mwtask111;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
