@@ -134,7 +134,7 @@ class EchoReader():
 
 
 class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
-    def __init__(self, chans, nickname, nickname_pass, server, port=6667, ssl=False, ident_passwd=None):
+    def __init__(self, chans, nickname, nickname_pass, server, port=6667, ssl=False, ipv6=True, ident_passwd=None):
         print('Connecting to IRC server %s...' % server)
 
         self.chans = chans
