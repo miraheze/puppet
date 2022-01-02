@@ -213,13 +213,17 @@ ap.add_argument('--nickname-pass', required=True,
                 help='Password for nickname.')
 ap.add_argument('--server', required=True,
                 help='irc server to connect to, eg freenode and also including the port.')
+ap.add_argument('--ipv6', required=False,
+                help='Whether to support ipv6. Used for ipv6 only hosts')
 args = vars(ap.parse_args())
 
 chans = args['channel']
 nickname = args['nickname']
 nickname_pass = args['nickname_pass']
 server = args['server'].split(':')[0]
-ipv6 = args['ipv6']
+ipv6 = False
+if args['ipv6']:
+    ipv6 = True
 try:
     ssl = args['server'].split(':')[1].startswith('+')
     port = int(args['server'].split(':')[1].strip('+'))
