@@ -24,6 +24,9 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
     ON `incidents`.* TO 'mediawiki'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
+    ON `testincidents`.* TO 'mediawiki'@'%';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
     ON `survey`.* TO 'mediawiki'@'%';
 
 -- Grants for 'cargouser'@''
@@ -56,6 +59,9 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, L
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
     ON `incidents`.* TO 'wikiadmin'@'%';
+
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
+    ON `testincidents`.* TO 'wikiadmin'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
     ON `survey`.* TO 'wikiadmin'@'%';
