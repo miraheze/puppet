@@ -55,10 +55,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('script')
     parser.add_argument('wiki')
-    parser.add_argument('arguments', nargs='*', default='')
+    parser.add_argument('arguments', nargs='*', default=[])
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_true')
 
-    args, args.arguments = parser.parse_known_args()
+    args = parser.parse_known_args()[0]
+    args.arguments += parser.parse_known_args()[1]
+
     run(args)
