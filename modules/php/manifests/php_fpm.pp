@@ -182,4 +182,15 @@ class php::php_fpm(
     php::fpm::pool { 'www':
         config => merge($base_fpm_pool_config, $fpm_pool_config),
     }
+
+    $use_shellbox = lookup('use_shellbox', {'default_value' => false})
+
+    if $use_shellbox {
+        php::fpm::pool { 'shellbox':
+            config => {
+                'pm' => 'static',
+                'pm.max_children' => 1,
+            },
+        }
+    }
 }
