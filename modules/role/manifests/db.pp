@@ -80,7 +80,7 @@ class role::db(
     ferm::service { 'mariadb temp':
         proto   => 'tcp',
         port    => '3306',
-        srange  => "2a10:6740::6:102 2a10:6740::6:201 2a10:6740::6:302",
+        srange  => "(2a10:6740::6:102 2a10:6740::6:201 2a10:6740::6:302)",
         notrack => true,
     }
 
