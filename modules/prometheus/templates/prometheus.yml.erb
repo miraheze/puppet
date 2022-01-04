@@ -129,6 +129,7 @@ scrape_configs:
         - https://cp21.miraheze.org/wiki/Main_Page
         - https://cp30.miraheze.org/wiki/Main_Page
         - https://cp31.miraheze.org/wiki/Main_Page
+<% if ['buster'].include? @facts['os']['distro']['codename'] -%>
         - https://mw8.miraheze.org/wiki/Special:Version
         - https://mw9.miraheze.org/wiki/Special:Version
         - https://mw10.miraheze.org/wiki/Special:Version
@@ -141,6 +142,7 @@ scrape_configs:
         - https://mw11.miraheze.org/wiki/Special:RecentChanges
         - https://mw12.miraheze.org/wiki/Special:RecentChanges
         - https://mw13.miraheze.org/wiki/Special:RecentChanges
+<%- else -%>
         - https://mw101.miraheze.org/wiki/Special:Version
         - https://mw102.miraheze.org/wiki/Special:Version
         - https://mw111.miraheze.org/wiki/Special:Version
@@ -153,6 +155,7 @@ scrape_configs:
         - https://mw112.miraheze.org/wiki/Special:RecentChanges
         - https://mw121.miraheze.org/wiki/Special:RecentChanges
         - https://mw122.miraheze.org/wiki/Special:RecentChanges
+<%- end -%>
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
