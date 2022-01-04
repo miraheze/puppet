@@ -215,6 +215,18 @@ class mediawiki(
         require            => Package['libjpeg-dev'],
     }
 
+    if lookup(mediawiki::use_shellbox) {
+        git::clone { 'shellbox':
+            ensure             => present,
+            directory          => '/srv/shellbox',
+            origin             => 'https://gerrit.wikimedia.org/r/mediawiki/libs/Shellbox',
+            branch             => 'master',
+            owner              => 'www-data',
+            group              => 'www-data',
+            mode               => '0755',
+        }
+    }    
+
     file { [
         '/srv/mediawiki',
         '/srv/mediawiki/w',
