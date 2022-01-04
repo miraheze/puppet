@@ -29,6 +29,21 @@ class role::mediawiki (
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
+
+        # temp
+        ferm::service { 'http temp':
+            proto   => 'tcp',
+            port    => '80',
+            srange  => '(2a10:6740::6:107 2a10:6740::6:108 2a10:6740::6:206 2a10:6740::6:207 2a10:6740::6:309 2a10:6740::6:310 2a10:6740::6:109)',
+            notrack => true,
+        }
+
+        ferm::service { 'https temp':
+            proto    => 'tcp',
+            port    => '443',
+            srange  => '(2a10:6740::6:107 2a10:6740::6:108 2a10:6740::6:206 2a10:6740::6:207 2a10:6740::6:309 2a10:6740::6:310 2a10:6740::6:109)',
+            notrack => true,
+        }
     } else {
         ferm::service { 'http':
             proto   => 'tcp',
