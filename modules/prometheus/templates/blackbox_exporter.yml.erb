@@ -64,7 +64,11 @@ modules:
       preferred_ip_protocol: "ip4"
       no_follow_redirects: false
       fail_if_not_ssl: true
-      fail_if_not_matches_regexp:
+<% if ['buster'].include? @facts['os']['distro']['codename'] -%>
+       fail_if_not_matches_regexp:
+ <% else -%>
+       fail_if_body_not_matches_regexp:
+ <% end -%>
         - 'href="https://meta.miraheze.org/wiki/Terms_of_Use"'
       tls_config:
         insecure_skip_verify: false
