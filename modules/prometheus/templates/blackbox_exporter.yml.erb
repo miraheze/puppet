@@ -60,10 +60,10 @@ modules:
     http:
       headers:
         'Host': 'meta.miraheze.org'
-<%- if @use_new_mon -%>
-        'X-Miraheze-Debug': 'mw111.miraheze.org'
-<%- else -%>
+<% if ['buster'].include? @facts['os']['distro']['codename'] -%>
         'X-Miraheze-Debug': 'mw10.miraheze.org'
+<%- else -%>
+        'X-Miraheze-Debug': 'mw111.miraheze.org'
 <%- end -%>
       preferred_ip_protocol: "ip4"
       no_follow_redirects: false
