@@ -8,7 +8,6 @@
 class prometheus::blackbox_exporter {
     require_package('prometheus-blackbox-exporter')
 
-    $use_new_mon = lookup('use_new_mon', {'default_value' => false})
     file { '/etc/prometheus/blackbox.yml':
         ensure  => present,
         mode    => '0444',
