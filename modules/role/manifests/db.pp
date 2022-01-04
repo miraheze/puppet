@@ -77,6 +77,13 @@ class role::db(
         notrack => true,
     }
 
+    ferm::service { 'mariadb temp':
+        proto   => 'tcp',
+        port    => '3306',
+        srange  => "2a10:6740::6:102 2a10:6740::6:201 2a10:6740::6:302",
+        notrack => true,
+    }
+
     # Create a user to allow db transfers between servers
     users::user { 'dbcopy':
         ensure   => present,
