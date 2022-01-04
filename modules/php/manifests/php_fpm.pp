@@ -183,9 +183,7 @@ class php::php_fpm(
         config => merge($base_fpm_pool_config, $fpm_pool_config),
     }
 
-    $use_shellbox = lookup('use_shellbox', {'default_value' => false})
-
-    if $use_shellbox {
+    if lookup(mediawiki::use_shellbox) {
         php::fpm::pool { 'shellbox':
             config => {
                 'pm' => 'static',
