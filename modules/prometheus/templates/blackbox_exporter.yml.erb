@@ -62,9 +62,9 @@ modules:
         'Host': 'meta.miraheze.org'
 <%- if @use_new_mon -%>
         'X-Miraheze-Debug': 'mw111.miraheze.org'
-<% else -%>
+<%- else -%>
         'X-Miraheze-Debug': 'mw10.miraheze.org'
-<% end -%>
+<%- end -%>
       preferred_ip_protocol: "ip4"
       no_follow_redirects: false
       fail_if_not_ssl: true
