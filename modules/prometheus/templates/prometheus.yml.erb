@@ -159,7 +159,11 @@ scrape_configs:
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
+<% if ['buster'].include? @facts['os']['distro']['codename'] -%>
         replacement: mon2.miraheze.org:9115
+<%- else -%>
+        replacement: mon111.miraheze.org:9115
+<%- end -%>
   - job_name: 'blackbox_https'
     metrics_path: /probe
     params:
@@ -175,4 +179,8 @@ scrape_configs:
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
+<% if ['buster'].include? @facts['os']['distro']['codename'] -%>
         replacement: mon2.miraheze.org:9115
+<%- else -%>
+        replacement: mon111.miraheze.org:9115
+<%- end -%>
