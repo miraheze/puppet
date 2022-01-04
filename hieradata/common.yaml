@@ -17,4 +17,5 @@ mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'skip'
 mediawiki::remote_sync: true
+mediawiki::use_shellbox: false
 base::firewall::mode: ferm
