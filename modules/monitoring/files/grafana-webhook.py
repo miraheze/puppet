@@ -33,4 +33,4 @@ def post():
     return (message, 200, None)
 
 
-app.run(host='0.0.0.0', port=5100, threaded=True)
+app.run(host='::', port=5100, threaded=True)

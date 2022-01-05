@@ -90,12 +90,20 @@ class base::monitoring {
             $type = 'nvme'
         }
 
-
-        monitoring::services { 'SMART':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => "check_smart_${type}",
-            },
+        if ( $facts['dmi']['manufacturer'] == 'HP' ) {
+            monitoring::services { 'SMART':
+                check_command => 'nrpe',
+                vars          => {
+                    nrpe_command => 'check_smart',
+                },
+            }
+        } else {
+            monitoring::services { 'SMART':
+                check_command => 'nrpe',
+                vars          => {
+                    nrpe_command => "check_smart_${type}",
+                },
+            }
         }
     }
 }

@@ -28,6 +28,7 @@ class letsencrypt::web {
     monitoring::services { 'MirahezeRenewSsl':
         check_command => 'tcp',
         vars          => {
+            tcp_address => $::ipaddress6,
             tcp_port    => '5000',
         },
     }

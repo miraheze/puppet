@@ -1,2 +1,4 @@
+users::groups:
+  - bastion
 puppetserver_hostname: 'puppet111.miraheze.org'
 base::syslog::syslog_daemon: 'rsyslog'

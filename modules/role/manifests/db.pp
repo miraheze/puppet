@@ -77,6 +77,13 @@ class role::db(
         notrack => true,
     }
 
+    ferm::service { 'mariadb temp':
+        proto   => 'tcp',
+        port    => '3306',
+        srange  => "(2a10:6740::6:102 2a10:6740::6:201 2a10:6740::6:302)",
+        notrack => true,
+    }
+
     # Create a user to allow db transfers between servers
     users::user { 'dbcopy':
         ensure   => present,
@@ -98,7 +105,7 @@ class role::db(
     }
 
     cron { 'DB_backups':
-        ensure  => present,
+        ensure  => absent,
         command => "/usr/bin/mydumper -G -E -R -m -v 3 -t 1 -c -x '^(?!([0-9a-z]+wiki.(objectcache|querycache|querycachetwo|recentchanges|searchindex)))' --trx-consistency-only -o '/srv/backups/dbs' -L '/srv/backups/recent.log'",
         user    => 'root',
         minute  => '0',

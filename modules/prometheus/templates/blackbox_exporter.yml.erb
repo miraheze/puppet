@@ -60,11 +60,19 @@ modules:
     http:
       headers:
         'Host': 'meta.miraheze.org'
+<% if ['buster'].include? @facts['os']['distro']['codename'] -%>
         'X-Miraheze-Debug': 'mw10.miraheze.org'
+<%- else -%>
+        'X-Miraheze-Debug': 'mw111.miraheze.org'
+<%- end -%>
       preferred_ip_protocol: "ip4"
       no_follow_redirects: false
       fail_if_not_ssl: true
+<% if ['buster'].include? @facts['os']['distro']['codename'] -%>
       fail_if_not_matches_regexp:
+ <% else -%>
+      fail_if_body_not_matches_regexp:
+ <% end -%>
         - 'href="https://meta.miraheze.org/wiki/Terms_of_Use"'
       tls_config:
         insecure_skip_verify: false

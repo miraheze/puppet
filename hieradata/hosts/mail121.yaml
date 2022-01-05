@@ -1,8 +1,6 @@
-redis::heap: '1000mb'
-
-base::firewall::mode: ferm
 puppetserver_hostname: 'puppet111.miraheze.org'
+base::firewall::mode: ferm
 base::syslog::syslog_daemon: 'rsyslog'
 http_proxy: 'http://bast.miraheze.org:8080'
+mailserver: true
 php::php_version: '7.4'
-mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'

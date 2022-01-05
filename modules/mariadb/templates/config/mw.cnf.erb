@@ -29,7 +29,7 @@ transaction-isolation          = READ-COMMITTED
 binlog_format                  = ROW
 
 log-bin                        = <%= @datadir %>/mysql-bin
-expire-logs-days               = 1
+expire-logs-days               = 3
 sync-binlog                    = 1
 slave_compressed_protocol      = 1
 

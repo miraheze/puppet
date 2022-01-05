@@ -99,6 +99,12 @@ node 'mail2.miraheze.org' {
     include role::roundcubemail
 }
 
+node 'mail121.miraheze.org' {
+    include base
+    include role::mail
+    include role::roundcubemail
+}
+
 node /^mem([12]|1([02]1))\.miraheze\.org$/ {
     include base
     include role::memcached
@@ -142,6 +148,13 @@ node /^ns[12]\.miraheze\.org$/ {
 }
 
 node 'phab2.miraheze.org' {
+    include base
+    include bacula::client
+    include role::phabricator
+    include prometheus::php_fpm
+}
+
+node 'phab121.miraheze.org' {
     include base
     include bacula::client
     include role::phabricator
