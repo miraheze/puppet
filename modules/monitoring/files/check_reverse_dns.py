@@ -100,7 +100,7 @@ def get_reverse_dnshostname(hostname):
 
         resolved_ip_addr = str(dns_resolver.resolve(hostname, 'AAAA')[0])
         ptr_record = reversename.from_address(resolved_ip_addr)
-        rev_host = str(resolver.query(ptr_record, "PTR")[0]).rstrip('.')
+        rev_host = str(dns_resolver.resolve(ptr_record, "PTR")[0]).rstrip('.')
 
         return rev_host
     except (resolver.NXDOMAIN, resolver.NoAnswer):
