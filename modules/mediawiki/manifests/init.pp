@@ -216,6 +216,13 @@ class mediawiki(
     }
 
     if lookup(mediawiki::use_shellbox) {
+        php::fpm::pool { 'shellbox':
+            config => {
+                'pm' => 'static',
+                'pm.max_children' => 1,
+            },
+        }
+
         git::clone { 'shellbox':
             ensure             => present,
             directory          => '/srv/shellbox',
