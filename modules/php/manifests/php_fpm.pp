@@ -182,13 +182,4 @@ class php::php_fpm(
     php::fpm::pool { 'www':
         config => merge($base_fpm_pool_config, $fpm_pool_config),
     }
-
-    if lookup(mediawiki::use_shellbox) {
-        php::fpm::pool { 'shellbox':
-            config => {
-                'pm' => 'static',
-                'pm.max_children' => 1,
-            },
-        }
-    }
 }
