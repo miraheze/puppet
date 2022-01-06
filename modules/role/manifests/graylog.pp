@@ -16,22 +16,24 @@ class role::graylog {
         bind_ip => ['127.0.0.1'],
     }
 
-    class { 'elastic_stack::repo':
-        version => 7,
-    }
+    if os_version('debian buster') {
+        class { 'elastic_stack::repo':
+            version => 7,
+        }
 
-    class { 'elasticsearch':
-        version         => '7.16.1',
-        manage_repo     => true,
-        config          => {
-            'cluster.name'  => 'graylog',
-            'http.port'     => '9200',
-            'network.host'  => '127.0.0.1',
-        },
-        jvm_options     => ['-Xms2g', '-Xmx2g'],
-        templates => {
-            'graylog-internal' => {
-                'source' => 'puppet:///modules/role/elasticsearch/index_template.json'
+        class { 'elasticsearch':
+            version         => '7.16.1',
+            manage_repo     => true,
+            config          => {
+                'cluster.name'  => 'graylog',
+                'http.port'     => '9200',
+                'network.host'  => '127.0.0.1',
+            },
+            jvm_options     => ['-Xms2g', '-Xmx2g'],
+            templates => {
+                'graylog-internal' => {
+                    'source' => 'puppet:///modules/role/elasticsearch/index_template.json'
+                }
             }
         }
     }
