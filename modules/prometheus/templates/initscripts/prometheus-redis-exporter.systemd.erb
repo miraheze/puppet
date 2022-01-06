@@ -1,15 +1,16 @@
 [Unit]
-Description=Prometheus exporter for redis metrics
-Documentation=https://github.com/oliver006/redis_exporter
+Description=Prometheus exporter for Redis metrics
+Documentation=https://github.com/oliver006/redis_exporter man:prometheus-redis-exporter(1)
 
 [Service]
-Restart=always
-User=www-data
+Restart=on-failure
+User=prometheus
 EnvironmentFile=/etc/default/prometheus-redis
 ExecStart=/usr/local/bin/redis_exporter --log-format=txt --namespace=redis --web.listen-address=:9121 --web.telemetry-path=/metrics --script=/etc/redis/jobQueueCollector.lua -redis.password ${EXPORTER_REDIS_PASSWORD}
 ExecReload=/bin/kill -HUP $MAINPID
-SyslogIdentifier=redis_exporter
+TimeoutStopSec=20s
 SendSIGKILL=no
+SyslogIdentifier=redis_exporter
 
 [Install]
 WantedBy=multi-user.target
