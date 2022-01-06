@@ -42,7 +42,7 @@ class role::graylog {
     if $http_proxy {
         file { '/etc/apt/apt.conf.d/01graylog':
             ensure  => present,
-            content => "Acquire::http::Proxy::download.gluster.org "${http_proxy}";\n",
+            content => "Acquire::http::Proxy::download.gluster.org '${http_proxy}';\n",
             before  => Class['graylog::repository'],
         }
     }
