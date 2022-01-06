@@ -1,7 +1,6 @@
 # role: elasticsearch
 class role::elasticsearch {
     include ::java
-    include ssl::wildcard
 
     class { 'elastic_stack::repo':
         version => 7,
@@ -41,6 +40,15 @@ class role::elasticsearch {
                 'source' => 'puppet:///modules/role/elasticsearch/index_template.json'
             }
         }
+    }
+
+    file { '/etc/elasticsearch/ssl':
+        ensure => directory,
+    }
+
+    class { 'ssl::wildcard':
+        ssl_cert_path => '/etc/elasticsearch/ssl/,
+        ssl_cert_key_private_path => '/etc/elasticsearch/ssl',
     }
 
     if $es_master {
