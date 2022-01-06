@@ -18,7 +18,6 @@ mediawiki::remote_sync: false
 base::firewall::mode: ferm
 
 http_proxy: 'http://bast.miraheze.org:8080'
-base::syslog::syslog_daemon: 'rsyslog'
 gluster_volume: gluster101.miraheze.org:/static
 gluster::only_ipv6: true
 use_new_mon: true
