@@ -38,6 +38,7 @@ class role::graylog {
         }
     }
 
+    $elasticsearch_host = lookup('elasticsearch_host', {'default_value' => undef})
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
         proxy => $http_proxy,
@@ -50,6 +51,7 @@ class role::graylog {
             'root_password_sha2'       => lookup('passwords::graylog::root_password_sha2'),
             'processbuffer_processors' => 10,
             'outputbuffer_processors'  => 6
+            'elasticsearch_hosts'      => $elasticsearch_host,
         }
     }
 
