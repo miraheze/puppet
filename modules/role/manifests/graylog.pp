@@ -81,9 +81,8 @@ class role::graylog {
     }
 
     # syslog-ng > graylog 12210/tcp
-    # non-OpenVZ (RamNode)
     $firewall_syslog_rules_str = join(
-        query_facts("Class[Base] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
+        query_facts("Class[Base]", ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }
@@ -98,24 +97,6 @@ class role::graylog {
         srange => "(${firewall_syslog_rules_str})",
     }
 
-
-    # syslog-ng > graylog 12210/tcp
-    # puppet facter returns the wrong IP addresses by default for RamNode VMs with the venet0:0 interface
-    $firewall_syslog_venet_rules_str = join(
-        query_facts("Class[Base] and network='127.0.0.1'", ['ipaddress_venet0:0', 'ipaddress6_venet0'])
-        .map |$key, $value| {
-            "${value['ipaddress_venet0:0']} ${value['ipaddress6_venet0']}"
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { 'graylog 12210 venet':
-        proto  => 'tcp',
-        port   => '12210',
-        srange => "(${firewall_syslog_venet_rules_str})",
-    }
 
     $firewall_icinga_rules_str = join(
         query_facts("Class['Role::Icinga2'] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
