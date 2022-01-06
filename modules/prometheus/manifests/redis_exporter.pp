@@ -12,10 +12,10 @@ class prometheus::redis_exporter (
     }
 
     file { '/etc/redis_exporter/jobQueueCollector.lua':
-        ensure => present,
-        mode   => '0555',
-        source => 'puppet:///modules/prometheus/redis/jobQueueCollector.lua',
-        notify => Service['prometheus-redis-exporter'],
+        ensure  => present,
+        mode    => '0555',
+        source  => 'puppet:///modules/prometheus/redis/jobQueueCollector.lua',
+        notify  => Service['prometheus-redis-exporter'],
         require => File['/etc/redis_exporter'],
     }
 
