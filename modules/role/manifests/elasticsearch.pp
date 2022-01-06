@@ -1,132 +1,96 @@
 # role: elasticsearch
 class role::elasticsearch {
     include ::java
+    include ssl::wildcard
 
     class { 'elastic_stack::repo':
-        version => 6,
+        version => 7,
     }
 
-    $es_master_node = hiera('role::elasticsearch::master', false)
-    $es_data_node = hiera('role::elasticsearch::data_node', false)
-    $es_discovery_host = hiera('role::elasticsearch::discovery_host', ['es1.miraheze.org'])
-    $es_instance = hiera('role::elasticsearch::instance', 'es-01')
+    $es_master = hiera('role::elasticsearch::master', false)
+    $es_data = hiera('role::elasticsearch::data_node', false)
+    $es_discovery = hiera('role::elasticsearch::discovery_host', false)
 
     class { 'elasticsearch':
-        config => {
-            'discovery.zen.ping.unicast.hosts' => $es_discovery_host,
-            'cluster.name' => 'Miraheze',
-            'node.master' => $es_master_node,
-            'node.data' => $es_data_node,
-            'network.host' => $::fqdn,
-            'network.bind_host' => '0.0.0.0',
-            'network.publish_host' => '0.0.0.0',
-            'xpack.security.enabled' => true,
-            'xpack.security.http.ssl.enabled' => true,
-            'xpack.security.http.ssl.key' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.key",
-            'xpack.security.http.ssl.certificate' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.crt",
-            'xpack.security.transport.ssl.enabled' => true,
-            'xpack.security.transport.ssl.key' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.key",
-            'xpack.security.transport.ssl.certificate' => "/etc/elasticsearch/${es_instance}/ssl/wildcard.miraheze.org.crt",
+        config      => {
+            'discovery.seed_hosts'                           => $es_discovery,
+            'cluster.name'                                   => 'miraheze-general',
+            'node.master'                                    => $es_master,
+            'node.data'                                      => $es_data,
+            'network.host'                                   => $::fqdn,
+            'network.bind_host'                              => '::',
+            'network.publish_host'                           => '::',
+            'xpack.security.enabled'                         => true,
+            'xpack.security.http.ssl.enabled'                => true,
+            'xpack.security.http.ssl.key'                    => "/etc/ssl/private/wildcard.miraheze.org-2020-2.key",
+            'xpack.security.http.ssl.certificate'            => "/etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt",
+            'xpack.security.transport.ssl.enabled'           => true,
+            'xpack.security.transport.ssl.key'               => "/etc/ssl/private/wildcard.miraheze.org-2020-2.key",
+            'xpack.security.transport.ssl.certificate'       => "/etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt",
             'xpack.security.transport.ssl.verification_mode' => 'certificate',
             # We use a firewall so this is safe
-            'xpack.security.authc.anonymous.username' => 'elastic',
-            'xpack.security.authc.anonymous.roles' => 'superuser',
+            'xpack.security.authc.anonymous.username'        => 'elastic',
+            'xpack.security.authc.anonymous.roles'           => 'superuser',
             'xpack.security.authc.anonymous.authz_exception' => true,
         },
-        version => '6.8.1',
-    }
-
-    $es_heap = hiera('role::elasticsearch::heap', ['-Xms2g', '-Xmx2g'])
-
-    # https://www.elastic.co/guide/en/elasticsearch/reference/master/heap-size.html
-    elasticsearch::instance { $es_instance:
-        jvm_options => $es_heap,
-        init_defaults => {
-            'MAX_OPEN_FILES' => '1500000',
+        version     => '7.16.1',
+        manage_repo => true,
+        jvm_options => [ '-Xms2g', '-Xmx2g' ],
+        templates   => {
+            'graylog-internal' => {
+                'source' => 'puppet:///modules/role/elasticsearch/index_template.json'
+            }
         }
     }
 
-    file { "/etc/elasticsearch/${es_instance}/ssl":
-        ensure  => 'directory',
-        mode    => '0745',
-        require => Elasticsearch::Instance[$es_instance],
-    }
-
-    class { 'ssl::wildcard':
-        ssl_cert_path => "/etc/elasticsearch/${es_instance}/ssl",
-        ssl_cert_key_private_path => "/etc/elasticsearch/${es_instance}/ssl",
-        use_globalsign => true,
-        require => File["/etc/elasticsearch/${es_instance}/ssl"],
-    }
-
-    if $es_master_node {
+    if $es_master {
         nginx::site { 'elasticsearch-lb.miraheze.org':
             ensure  => present,
             content => template('role/elasticsearch/nginx-site.conf.erb'),
             monitor => false,
         }
 
-        ufw::allow { 'nginx port mw1':
-            proto => 'tcp',
-            port  => '443',
-            from  => '185.52.1.75',
-        }
+        $firewall_rules_str = join(
+            query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Elasticsearch]', ['ipaddress6'])
+            .map |$key, $value| {
+                "${value['ipaddress6']}"
+            }
+            .flatten()
+            .unique()
+            .sort(),
+            ' '
+        )
 
-        ufw::allow { 'nginx port mw2':
-            proto => 'tcp',
-            port  => '443',
-            from  => '185.52.2.113',
-        }
-
-        ufw::allow { 'nginx port mw3':
-            proto => 'tcp',
-            port  => '443',
-            from  => '81.4.121.113',
-        }
-
-        ufw::allow { 'nginx port test1':
-            proto => 'tcp',
-            port  => '443',
-            from  => '185.52.2.243',
+        ferm::service { 'elasticsearch ssl':
+            proto   => 'tcp',
+            port    => '443',
+            srange  => "(${firewall_rules_str})",
         }
     }
 
-    ufw::allow { 'elasticsearch data nodes access master node 9300 port (1)':
-        proto => 'tcp',
-        port  => '9300',
-        from  => '168.235.110.49',
-    }
-
-    ufw::allow { 'elasticsearch data nodes access master node 9300 port (2)':
-        proto => 'tcp',
-        port  => '9300',
-        from  => '168.235.110.25',
-    }
-
-    ufw::allow { 'elasticsearch data nodes access master node 9300 port (3)':
-        proto => 'tcp',
-        port  => '9300',
-        from  => '168.235.110.7',
-    }
-
-    if $es_data_node {
-        ufw::allow { 'elasticsearch master access data nodes 9300 port':
-            proto => 'tcp',
-            port  => '9300',
-            from  => hiera('role::elasticsearch::master_ip')
+    $firewall_es_nodes = join(
+        query_facts('Class[Role::Elasticsearch]', ['ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress6']}"
         }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+
+    ferm::service { 'elasticsearch data nodes to master':
+        proto  => 'tcp',
+        port   => '9300',
+        srange => "(${firewall_es_nodes})",
     }
 
-    sysctl::parameters { 'disable ipv6':
-        values   => {
-            # Increase TCP max buffer size
-            'net.ipv6.conf.all.disable_ipv6' => 1,
-            'net.ipv6.conf.default.disable_ipv6' => 1,
-            'net.ipv6.conf.lo.disable_ipv6' => 1,
-        },
-        priority => 60,
+    ferm::service { 'elasticsearch master access data nodes 9300 port':
+        proto  => 'tcp',
+        port   => '9300',
+        srange => "(${firewall_es_nodes})",
     }
- 
+
     motd::role { 'role::elasticsearch':
         description => 'elasticsearch server',
     }

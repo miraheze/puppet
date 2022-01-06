@@ -46,25 +46,18 @@ node 'db121.miraheze.org' {
     include role::db
 }
 
+node /^es1[012]1\.miraheze\.org$/ {
+    include base
+    include role::elasticsearch
+}
+
 node /^gluster[34]\.miraheze\.org$/ {
     include base
     include bacula::client
     include role::gluster
 }
 
-node 'gluster101.miraheze.org' {
-    include base
-    include bacula::client
-    include role::gluster
-}
-
-node 'gluster111.miraheze.org' {
-    include base
-    include bacula::client
-    include role::gluster
-}
-
-node 'gluster121.miraheze.org' {
+node /^gluster1[012]1\.miraheze\.org$/ {
     include base
     include bacula::client
     include role::gluster

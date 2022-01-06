@@ -2,3 +2,10 @@ puppetserver_hostname: 'puppet111.miraheze.org'
 base::firewall::mode: ferm
 base::syslog::syslog_daemon: 'rsyslog'
 http_proxy: 'http://bast.miraheze.org:8080'
+
+role::elasticsearch::master: true
+role::elasticsearch::data: true
+role::elasticsearch::discovery_host:
+  - es101.miraheze.org
+  - es111.miraheze.org
+  - es121.miraheze.org
