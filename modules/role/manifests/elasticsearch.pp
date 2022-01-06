@@ -7,7 +7,7 @@ class role::elasticsearch {
     }
 
     $es_master = hiera('role::elasticsearch::master', false)
-    $es_data = hiera('role::elasticsearch::data_node', false)
+    $es_data = hiera('role::elasticsearch::data', false)
     $es_discovery = hiera('role::elasticsearch::discovery_host', false)
 
     class { 'elasticsearch':
@@ -17,8 +17,6 @@ class role::elasticsearch {
             'node.master'                                    => $es_master,
             'node.data'                                      => $es_data,
             'network.host'                                   => $::fqdn,
-            'network.bind_host'                              => '::',
-            'network.publish_host'                           => '::',
             'xpack.security.enabled'                         => true,
             'xpack.security.http.ssl.enabled'                => true,
             'xpack.security.http.ssl.key'                    => "/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.key",
