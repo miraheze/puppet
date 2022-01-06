@@ -2,3 +2,4 @@ puppetserver_hostname: 'puppet111.miraheze.org'
 base::firewall::mode: ferm
 base::syslog::syslog_daemon: 'rsyslog'
 mongodb::repo::aptkey_options: 'http-proxy="http://bast.miraheze.org:8080"'
+http_proxy: 'http://bast.miraheze.org:8080'
