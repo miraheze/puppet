@@ -57,6 +57,7 @@ style-src:
   - 'ton.twimg.com'
 
 img-src:
+  - 'blob:'
   - "'self'"
   - 'data:'
   - '*.miraheze.org'
