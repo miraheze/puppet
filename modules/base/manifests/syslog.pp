@@ -1,6 +1,7 @@
 # class base::syslog
 class base::syslog (
         String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
+        String $graylog_hostname = lookup('base::syslog::graylog_hostname', {'default_value' => 'graylog2.miraheze.org'}),
 ) {
         if os_version('debian >= bullseye') {
                 # Made the unit slower
@@ -79,7 +80,7 @@ class base::syslog (
                         params => {
                                 type    => 'syslog',
                                 options => [
-                                        "graylog2.miraheze.org",
+                                        $graylog_hostname,
                                         { 
                                                 'port' => [ 12210 ] 
                                         },
