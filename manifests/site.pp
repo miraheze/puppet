@@ -69,6 +69,11 @@ node 'graylog2.miraheze.org' {
     include prometheus::es_exporter
 }
 
+node 'graylog121.miraheze.org' {
+    include base
+    include role::graylog
+}
+
 node /^jobchron(1|121)\.miraheze\.org$/ {
     include base
     include role::redis
