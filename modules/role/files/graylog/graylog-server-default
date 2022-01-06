@@ -10,6 +10,9 @@ GRAYLOG_SERVER_JAVA_OPTS="$GRAYLOG_SERVER_JAVA_OPTS -Djdk.tls.acknowledgeCloseNo
 # Pass some extra args to graylog-server. (i.e. "-d" to enable debug mode)
 GRAYLOG_SERVER_ARGS=""
 
+# Fix for log4j CVE-2021-44228
+GRAYLOG_SERVER_JAVA_OPTS="$GRAYLOG_SERVER_JAVA_OPTS -Dlog4j2.formatMsgNoLookups=true"
+
 # Program that will be used to wrap the graylog-server command. Useful to
 # support programs like authbind.
 GRAYLOG_COMMAND_WRAPPER=""
