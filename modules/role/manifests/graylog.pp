@@ -10,7 +10,7 @@ class role::graylog {
 
     class { 'mongodb::globals':
         manage_package_repo => true,
-        version             => '4.4.10',
+        version             => '5.0.5' ,
     }->
     class { 'mongodb::server':
         bind_ip => ['127.0.0.1'],
@@ -38,11 +38,13 @@ class role::graylog {
         }
     }
 
+    $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
+        proxy => $http_proxy,
         version => '4.2',
     }->
     class { 'graylog::server':
-        package_version => '4.2.4-1',
+        package_version => '4.2.5-1',
         config          => {
             'password_secret'          => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'       => lookup('passwords::graylog::root_password_sha2'),
