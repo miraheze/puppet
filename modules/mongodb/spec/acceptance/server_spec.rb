@@ -3,11 +3,25 @@ require 'spec_helper_acceptance'
 describe 'mongodb::server class' do
   case fact('osfamily')
   when 'Debian'
-    config_file = '/etc/mongodb.conf'
-    service_name = 'mongodb'
+    config_file = if fact('os.distro.codename') =~ %r{^(buster)$}
+                    '/etc/mongod.conf'
+                  else
+                    '/etc/mongodb.conf'
+                  end
+    service_name = if fact('os.distro.codename') =~ %r{^(buster)$}
+                     'mongod'
+                   else
+                     'mongodb'
+                   end
+    package_name = if fact('os.distro.codename') =~ %r{^(buster)$}
+                     'mongodb-org-server'
+                   else
+                     'mongodb-server'
+                   end
   else
     config_file = '/etc/mongod.conf'
     service_name = 'mongod'
+    package_name = 'mongodb-org-server'
   end
 
   describe 'installation' do
@@ -21,7 +35,7 @@ describe 'mongodb::server class' do
       apply_manifest(pp, catch_changes: true)
     end
 
-    describe package('mongodb-server') do
+    describe package(package_name) do
       it { is_expected.to be_installed }
     end
 
@@ -56,7 +70,7 @@ describe 'mongodb::server class' do
       apply_manifest(pp, catch_changes: true)
     end
 
-    describe package('mongodb-server') do
+    describe package(package_name) do
       it { is_expected.to be_installed }
     end
 
@@ -83,19 +97,30 @@ describe 'mongodb::server class' do
       pp = <<-EOS
         class { 'mongodb::server':
           auth           => true,
-          create_admin   => true,
+          create_admin   => false,
+          handle_creds   => true,
           store_creds    => true,
           admin_username => 'admin',
-          admin_password => 'password'
+          admin_password => 'password',
+          restart        => true,
+          set_parameter  => ['enableLocalhostAuthBypass: true']
         }
         class { 'mongodb::client': }
+
+        mongodb_user { "User admin on db admin":
+          ensure        => present,
+          password_hash => mongodb_password('admin', 'password'),
+          username      => 'admin',
+          database      => 'admin',
+          roles         => ['dbAdmin', 'userAdminAnyDatabase'],
+        }
       EOS
 
       apply_manifest(pp, catch_failures: true)
       apply_manifest(pp, catch_changes: true)
     end
 
-    describe package('mongodb-server') do
+    describe package(package_name) do
       it { is_expected.to be_installed }
     end
 
@@ -149,7 +174,7 @@ describe 'mongodb::server class' do
       apply_manifest(pp, catch_changes: true)
     end
 
-    describe package('mongodb-server') do
+    describe package(package_name) do
       it { is_expected.not_to be_installed }
     end
 
