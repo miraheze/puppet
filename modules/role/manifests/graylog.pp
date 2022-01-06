@@ -50,7 +50,7 @@ class role::graylog {
             'password_secret'          => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'       => lookup('passwords::graylog::root_password_sha2'),
             'processbuffer_processors' => 10,
-            'outputbuffer_processors'  => 6
+            'outputbuffer_processors'  => 6,
             'elasticsearch_hosts'      => $elasticsearch_host,
         }
     }
