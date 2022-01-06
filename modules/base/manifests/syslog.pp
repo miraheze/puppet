@@ -1,7 +1,8 @@
 # class base::syslog
 class base::syslog (
-        String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
-        String $graylog_hostname = lookup('base::syslog::graylog_hostname', {'default_value' => 'graylog2.miraheze.org'}),
+        String  $syslog_daemon              = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
+        String  $graylog_hostname           = lookup('base::syslog::graylog_hostname', {'default_value' => 'graylog2.miraheze.org'}),
+        Integer $graylog_resolve_ip_version = lookup('base::syslog::graylog_resolve_ip_version', {'default_value' => 4}),
 ) {
         if os_version('debian >= bullseye') {
                 # Made the unit slower
@@ -81,7 +82,7 @@ class base::syslog (
                                 type    => 'syslog',
                                 options => [
                                         $graylog_hostname,
-                                        ip-protocol(6)
+                                        ip-protocol($graylog_resolve_ip_version)
                                         { 
                                                 'port' => [ 12210 ] 
                                         },
