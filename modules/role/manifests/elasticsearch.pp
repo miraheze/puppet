@@ -50,7 +50,7 @@ class role::elasticsearch {
     }
 
     if $es_master {
-        nginx::site { 'elasticsearch-lb.miraheze.org':
+        nginx::site { 'elasticsearch.miraheze.org':
             ensure  => present,
             source  => 'puppet:///modules/role/elasticsearch/nginx.conf',
             monitor => false,
