@@ -39,15 +39,8 @@ class role::graylog {
     }
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy {
-        file { '/etc/apt/apt.conf.d/01graylog':
-            ensure  => present,
-            content => "Acquire::http::Proxy::downloads.graylog.org \"${http_proxy}\";\n",
-            before  => Class['graylog::repository'],
-        }
-    }
-
     class { 'graylog::repository':
+        proxy => $http_proxy,
         version => '4.2',
     }->
     class { 'graylog::server':
