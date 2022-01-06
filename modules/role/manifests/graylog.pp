@@ -38,7 +38,7 @@ class role::graylog {
         }
     }
 
-    $elasticsearch_host = lookup('elasticsearch_host', {'default_value' => undef})
+    $elasticsearch_host = lookup('elasticsearch_host', {'default_value' => 'http://localhost:9200'})
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
         proxy => $http_proxy,
