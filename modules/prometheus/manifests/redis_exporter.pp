@@ -4,6 +4,21 @@ class prometheus::redis_exporter (
     String $redis_password = lookup('passwords::redis::master'),
 ) {
 
+    file { '/etc/redis_exporter':
+        ensure => directory,
+        mode   => '0755',
+        owner  => 'prometheus',
+        group  => 'prometheus',
+    }
+
+    file { '/etc/redis_exporter/jobQueueCollector.lua':
+        ensure  => present,
+        mode    => '0555',
+        source  => 'puppet:///modules/prometheus/redis/jobQueueCollector.lua',
+        notify  => Service['prometheus-redis-exporter'],
+        require => File['/etc/redis_exporter'],
+    }
+
     file { '/usr/local/bin/redis_exporter':
         ensure => file,
         mode   => '0555',
@@ -27,13 +42,6 @@ class prometheus::redis_exporter (
             File['/etc/default/prometheus-redis'],
             File['/usr/local/bin/redis_exporter']
         ]
-    }
-
-    file { '/etc/redis/jobQueueCollector.lua':
-        ensure => present,
-        mode   => '0555',
-        source => 'puppet:///modules/prometheus/redis/jobQueueCollector.lua',
-        notify => Service['prometheus-redis-exporter'],
     }
 
     $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
