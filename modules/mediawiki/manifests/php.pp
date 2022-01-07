@@ -36,9 +36,6 @@ class mediawiki::php (
                 'variables_order'     => 'GPCS',
                 'auto_prepend_file' => '/srv/mediawiki/config/PhpAutoPrepend.php',
             },
-            fpm_pool_config => {
-                'request_terminate_timeout_track_finished' => 'yes',
-            },
             fpm_min_child => $php_fpm_childs,
             fpm_min_restart_threshold => $fpm_min_restart_threshold,
             version => $php_version,
