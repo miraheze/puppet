@@ -110,7 +110,6 @@ node /^mem1[02]1\.miraheze\.org$/ {
     include role::memcached
 }
 
-
 node 'mon2.miraheze.org' {
     include base
     include role::grafana
