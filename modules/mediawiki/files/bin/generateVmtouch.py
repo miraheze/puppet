@@ -22,8 +22,8 @@ l10nLangs = [
 ]
 
 globFiles = [
-    '/etc/ssl/certs',
-    '/etc/ssl/localcerts',
+    '/etc/ssl/certs/*',
+    '/etc/ssl/localcerts/*',
     '/srv/mediawiki/cache/*wiki.json',
     '/srv/mediawiki/w/extensions/*/extension.json',
     '/srv/mediawiki/w/skins/*/skin.json',
