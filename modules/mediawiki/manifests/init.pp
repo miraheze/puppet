@@ -300,26 +300,28 @@ class mediawiki(
         require => File['/srv/mediawiki/config'],
     }
 
-    require_package('vmtouch')
+    if os_version('debian buster') {
+        require_package('vmtouch')
 
-    file { '/usr/local/bin/generateVmtouch.py':
-        ensure => 'present',
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/bin/generateVmtouch.py',
-    }
+        file { '/usr/local/bin/generateVmtouch.py':
+            ensure => 'present',
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/bin/generateVmtouch.py',
+        }
 
-    systemd::service { 'vmtouch':
-        ensure  => present,
-        content => systemd_template('vmtouch'),
-        restart => true,
-    }
+        systemd::service { 'vmtouch':
+            ensure  => present,
+            content => systemd_template('vmtouch'),
+            restart => true,
+        }
 
-    cron { 'vmtouch':
-        ensure  => present,
-        command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
-        user    => 'root',
-        minute  => '0',
-        hour    => '*/1',
+        cron { 'vmtouch':
+            ensure  => present,
+            command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
+            user    => 'root',
+            minute  => '0',
+            hour    => '*/1',
+        }
     }
 
     sudo::user { 'www-data_sudo_itself':
