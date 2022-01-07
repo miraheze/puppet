@@ -82,7 +82,9 @@ class base::syslog (
                                 type    => 'syslog',
                                 options => [
                                         $graylog_hostname,
-                                        ip-protocol($graylog_resolve_ip_version),
+                                        {
+                                                'ip-protocol' => $graylog_resolve_ip_version,
+                                        },
                                         { 
                                                 'port' => [ 12210 ] 
                                         },
