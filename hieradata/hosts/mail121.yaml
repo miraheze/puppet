@@ -1,6 +1,8 @@
 puppetserver_hostname: 'puppet111.miraheze.org'
 base::firewall::mode: ferm
-base::syslog::syslog_daemon: 'rsyslog'
 http_proxy: 'http://bast.miraheze.org:8080'
 mailserver: true
+nginx::use_graylog: true
 php::php_version: '7.4'
+base::syslog::graylog_hostname: 'graylog121.miraheze.org'
+base::syslog::graylog_resolve_ip_version: 6
