@@ -1,4 +1,5 @@
 puppetserver_hostname: 'puppet111.miraheze.org'
 
 base::firewall::mode: ferm
-base::syslog::syslog_daemon: 'rsyslog'
+base::syslog::graylog_hostname: 'graylog121.miraheze.org'
+base::syslog::graylog_resolve_ip_version: 6
