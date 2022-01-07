@@ -2,7 +2,6 @@
 class mediawiki::php (
     Integer $php_fpm_childs = lookup('mediawiki::php::fpm::childs', {'default_value' => 26}),
     Integer $fpm_min_restart_threshold = lookup('mediawiki::php::fpm::fpm_min_restart_threshold', {'default_value' => 6}),
-    Integer $fpm_max_memory = lookup('mediawiki::php::fpm::fpm_max_memory', {'default_value' => 512}),
     String $php_version = lookup('php::php_version', {'default_value' => '7.2'}),
     Boolean $use_tideways = lookup('mediawiki::php::use_tideways', {'default_value' => false}),
 ) {
@@ -17,11 +16,11 @@ class mediawiki::php (
                 'error_log'                 => 'syslog',
                 'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
                 'log_errors'                => 'On',
-                'memory_limit'              => "${$fpm_max_memory}M",
+                'memory_limit'              => '512M',
                 'opcache'                   => {
                     'enable'                  => 1,
                     'interned_strings_buffer' => 50,
-                    'memory_consumption'      => $fpm_max_memory,
+                    'memory_consumption'      => 512,
                     'max_accelerated_files'   => 24000,
                     'max_wasted_percentage'   => 10,
                     'validate_timestamps'     => 1,
