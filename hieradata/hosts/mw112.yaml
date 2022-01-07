@@ -4,9 +4,8 @@ jobrunner: true
 mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
 contactgroups: ['sre', 'mediawiki']
 role::mediawiki::use_strict_firewall: true
-mediawiki::php::fpm::childs: 16
-mediawiki::php::fpm::fpm_min_restart_threshold: 8
-mediawiki::php::fpm::fpm_max_memory: 256
+mediawiki::php::fpm::childs: 32
+mediawiki::php::fpm::fpm_min_restart_threshold: 14
 php::php_fpm::fpm_workers_multiplier: 1.0
 php::php_version: '7.4'
 nginx::use_graylog: true
