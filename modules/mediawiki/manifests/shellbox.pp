@@ -55,7 +55,7 @@ class mediawiki::shellbox {
         require => File['/srv/shellbox/config'],
     }
 
-    $shellbox_secret_key = lookup('passwords::mediawiki::shellbox')
+    $shellbox_secretkey = lookup('passwords::shellbox::secretkey')
 
     nginx::site { 'shellbox':
         ensure  => present,
