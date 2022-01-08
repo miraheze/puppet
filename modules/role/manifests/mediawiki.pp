@@ -2,6 +2,7 @@
 class role::mediawiki (
     Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
 ) {
+    include ::role::mediawiki::nutcracker
     include ::mediawiki
 
     if $strict_firewall {
