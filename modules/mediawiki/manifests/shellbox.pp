@@ -16,6 +16,7 @@ class mediawiki::shellbox {
         user   => 'shellbox',
         group  => 'shellbox',
         config => {
+            'listen' => '/run/php/shellbox.sock',
             'listen.owner' => 'www-data',
             'listen.group' => 'www-data',
             'pm' => 'static',
