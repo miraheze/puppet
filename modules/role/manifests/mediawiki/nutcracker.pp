@@ -4,7 +4,7 @@ class role::mediawiki::nutcracker (
     Array[Variant[Stdlib::Host,String]] $memcached_servers_2 = lookup('memcached_servers_2', {'default_value' => []}),
 ) {
 
-    if $memcached_servers != [] {
+    if $memcached_servers_1 != [] and $memcached_servers_2 != [] {
         $pools = {
             'memcached_1'     => {
                 auto_eject_hosts     => true,
