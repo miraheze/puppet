@@ -18,3 +18,7 @@ mediawiki::is_canary: false
 mediawiki::default_sync: 'skip'
 mediawiki::remote_sync: true
 base::firewall::mode: ferm
+memcached_servers_1:
+  - 51.195.236.223:11211:1
+memcached_servers_2:
+  - 51.195.236.245:11211:1
