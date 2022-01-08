@@ -75,7 +75,7 @@ class php::php_fpm(
     # Install the runtime
     class { 'php':
         ensure         => present,
-        versions       => $version,
+        version        => $version,
         sapis          => $_sapis,
         config_by_sapi => $_config,
     }
