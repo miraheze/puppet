@@ -22,7 +22,7 @@ class php::php_fpm(
     Hash $fpm_config                          = {},
     Integer $fpm_min_child                    = 4,
     Hash $fpm_pool_config                     = {},
-    Enum['7.0', '7.1', '7.2', '7.3', '7.4'] $version = '7.2',
+    VMlib::Php_version $version               = '7.2',
     Float $fpm_workers_multiplier             = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $fpm_min_restart_threshold        = 1,
 ) {
