@@ -53,4 +53,12 @@ class mediawiki::shellbox {
         source  => 'puppet:///modules/mediawiki/shellbox_config.json',
         require => File['/srv/shellbox/config'],
     }
+
+    $shellbox_secret_key = lookup('passwords::mediawiki::shellbox')
+
+    nginx::site { 'shellbox':
+        ensure  => present,
+        content => template('mediawiki/shellbox.internal.erb'),
+        require => Nginx::Conf['mediawiki-includes'],
+    }
 }
