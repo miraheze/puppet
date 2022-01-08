@@ -217,7 +217,7 @@ class mediawiki(
         mode               => '0755',
         recurse_submodules => true,
         require            => Package['libjpeg-dev'],
-    }  
+    }
 
     file { [
         '/srv/mediawiki',
