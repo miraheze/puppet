@@ -16,7 +16,7 @@ server {
 	location ~ \.php {
 		include fastcgi_params;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_param SHELLBOX_SECRET_KEY <%= @shellbox_secret_key %>;
+		fastcgi_param SHELLBOX_SECRET_KEY <%= @shellbox_secretkey %>;
 		fastcgi_pass unix:/run/php/fpm-shellbox.sock;
 		proxy_pass http://127.0.0.1:8080;
 	}
