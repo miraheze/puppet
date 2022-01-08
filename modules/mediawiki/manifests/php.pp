@@ -1,10 +1,10 @@
 # mediawiki::php
 class mediawiki::php (
-    Integer $php_fpm_childs = lookup('mediawiki::php::fpm::childs', {'default_value' => 26}),
+    Integer $php_fpm_childs            = lookup('mediawiki::php::fpm::childs', {'default_value' => 26}),
     Integer $fpm_min_restart_threshold = lookup('mediawiki::php::fpm::fpm_min_restart_threshold', {'default_value' => 6}),
-    Integer $fpm_max_memory = lookup('mediawiki::php::fpm::fpm_max_memory', {'default_value' => 512}),
-    String $php_version = lookup('php::php_version', {'default_value' => '7.2'}),
-    Boolean $use_tideways = lookup('mediawiki::php::use_tideways', {'default_value' => false}),
+    Integer $fpm_max_memory            = lookup('mediawiki::php::fpm::fpm_max_memory', {'default_value' => 512}),
+    VMlib::Php_version $php_version    = lookup('php::php_version', {'default_value' => '7.2'}),
+    Boolean $use_tideways              = lookup('mediawiki::php::use_tideways', {'default_value' => false}),
 ) {
     
     if !defined(Class['php::php_fpm']) {

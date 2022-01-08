@@ -16,13 +16,14 @@
 # [*version*] Contains the php version you want to use, defaults to php 7.2.
 #
 class php::php_fpm(
+    Boolean $enable_fpm                       = lookup('php::enable_fpm', {'default_value' => true}),
     Hash $config                              = {},
     Hash $config_cli                          = {},
     Hash $fpm_config                          = {},
     Integer $fpm_min_child                    = 4,
     Hash $fpm_pool_config                     = {},
-    Enum['7.0', '7.1', '7.2', '7.3', '7.4'] $version = '7.2',
-    Float $fpm_workers_multiplier = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
+    VMlib::Php_version $version               = '7.2',
+    Float $fpm_workers_multiplier             = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $fpm_min_restart_threshold        = 1,
 ) {
 
@@ -50,25 +51,33 @@ class php::php_fpm(
         'enable_dl'                       => 0,
     }
 
-    # Add systemd override for php-fpm, that should prevent a reload
-    # if the fpm config files are broken.
-    # This should prevent us from shooting our own foot as happened before.
-    systemd::unit { "php${version}-fpm.service":
-        ensure   => present,
-        content  => template('php/php-fpm-systemd-override.conf.erb'),
-        override => true,
-        restart  => false,
-    }
-
-    # Install the runtime
-    class { '::php':
-        ensure         => present,
-        version        => $version,
-        sapis          => ['cli', 'fpm'],
-        config_by_sapi => {
+    if $enable_fpm {
+        $_sapis = ['cli', 'fpm']
+        $_config = {
             'cli' => merge($base_config_cli, $config_cli),
-            'fpm' => merge($base_config_cli, $base_config_fpm, $config),
-        },
+            'fpm' => merge($config_cli, $base_config_fpm, $fpm_config)
+        }
+        # Add systemd override for php-fpm, that should prevent a reload
+        # if the fpm config files are broken.
+        # This should prevent us from shooting our own foot as happened before.
+        systemd::unit { "php${version}-fpm.service":
+            ensure   => present,
+            content  => template('php/php-fpm-systemd-override.conf.erb'),
+            override => true,
+            restart  => false,
+        }
+    } else {
+        $_sapis = ['cli']
+        $_config = {
+            'cli' => merge($base_config_cli, $config_cli),
+        }
+    }
+    # Install the runtime
+    class { 'php':
+        ensure         => present,
+        versions       => $php_versions,
+        sapis          => $_sapis,
+        config_by_sapi => $_config,
     }
 
     $core_extensions =  [
@@ -152,34 +161,31 @@ class php::php_fpm(
         package_name => '',
     }
 
-    $base_fpm_config = {
-        'emergency_restart_interval'  => '60s',
-        'emergency_restart_threshold' => max($facts['virtual_processor_count'], $fpm_min_restart_threshold),
-        'error_log'                   => 'syslog',
-    }
+    ### FPM configuration
+    # You can check all configuration options at
+    # http://php.net/manual/en/install.fpm.configuration.php
+    if $enable_fpm {
+        $base_fpm_config = {
+            'emergency_restart_interval'  => '60s',
+            'emergency_restart_threshold' => max($facts['virtual_processor_count'], $fpm_min_restart_threshold),
+            'error_log'                   => 'syslog',
+        }
 
-    if $facts['virtual'] != 'openvz' {
-          $base_fpm_config_kvm = {
-                'process.priority' => -19,
-          }
-    } else {
-        $base_fpm_config_kvm = {}
-    }
+        class { '::php::fpm':
+            ensure  => present,
+            config  => merge($base_fpm_config, $fpm_config),
+        }
 
-    class { '::php::fpm':
-        ensure  => present,
-        config  => merge($base_fpm_config, $base_fpm_config_kvm, $fpm_config),
-    }
+        $num_workers =  max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
 
-    $num_workers =  max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
+        $base_fpm_pool_config = {
+            'pm'                        => 'static',
+            'pm.max_children'           => $num_workers,
+            'request_terminate_timeout' => 59,
+        }
 
-    $base_fpm_pool_config = {
-        'pm'                        => 'static',
-        'pm.max_children'           => $num_workers,
-        'request_terminate_timeout' => 59,
-    }
-
-    php::fpm::pool { 'www':
-        config => merge($base_fpm_pool_config, $fpm_pool_config),
+        php::fpm::pool { 'www':
+            config => merge($base_fpm_pool_config, $fpm_pool_config),
+        }
     }
 }

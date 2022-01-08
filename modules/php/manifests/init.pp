@@ -3,7 +3,7 @@
 # Basic installation of php - only cli modules.
 #
 class php(
-    Enum['7.0', '7.1', '7.2', '7.3', '7.4'] $version = lookup('php::php_version', {'default_value' => '7.2'}),
+    VMlib::Php_version $version               = lookup('php::php_version', {'default_value' => '7.2'}),
     Enum['present', 'absent'] $ensure         = present,
     Array[Php::Sapi] $sapis                   = ['cli'],
     Hash $config_by_sapi                      = {},
