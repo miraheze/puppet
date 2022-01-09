@@ -7,7 +7,7 @@ class role::mediawiki::nutcracker (
     if $memcached_servers_1 != [] and $memcached_servers_2 != [] {
         $nutcracker_pools = {
             'memcached_1'     => {
-                auto_eject_hosts     => true,
+                auto_eject_hosts     => false,
                 distribution         => 'ketama',
                 hash                 => 'md5',
                 listen               => '127.0.0.1:11212',
@@ -19,7 +19,7 @@ class role::mediawiki::nutcracker (
                 servers              => $memcached_servers_1,
             },
             'memcached_2'     => {
-                auto_eject_hosts     => true,
+                auto_eject_hosts     => false,
                 distribution         => 'ketama',
                 hash                 => 'md5',
                 listen               => '127.0.0.1:11213',
