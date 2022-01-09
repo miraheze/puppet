@@ -30,9 +30,9 @@ class matomo (
                 'memory_limit'              => lookup('php::fpm::memory_limit', {'default_value' => '512M'}),
                 'opcache'                   => {
                     'enable'                  => 1,
-                    'interned_strings_buffer' => 30,
-                    'memory_consumption'      => 112,
-                    'max_accelerated_files'   => 20000,
+                    'interned_strings_buffer' => 50,
+                    'memory_consumption'      => 256,
+                    'max_accelerated_files'   => 24000,
                     'max_wasted_percentage'   => 10,
                     'validate_timestamps'     => 1,
                     'revalidate_freq'         => 10,
@@ -48,7 +48,7 @@ class matomo (
             config_cli => {
                 'memory_limit' => lookup('php::cli::memory_limit', {'default_value' => '2G'}),
             },
-            fpm_min_child => 4,
+            fpm_min_child => 8,
             version => lookup('php::php_version', {'default_value' => '7.3'}),
         }
     }
