@@ -18,8 +18,8 @@ use_new_mon: true
 mariadb::version: '10.5'
 
 php::php_version: '7.4'
-php::cli::memory_limit: '3G'
-php::fpm::memory_limit: '3g'
+php::cli::memory_limit: '2G'
+php::fpm::memory_limit: '2G'
 
 php::php_fpm::fpm_workers_multiplier: 10.0
 
