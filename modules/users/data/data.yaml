@@ -20,7 +20,7 @@ groups:
   mediawiki-roots:
     gid: 2002
     description: full root on MediaWiki servers
-    members: [univeralomega]
+    members: [universalomega]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   cache-admins:
     gid: 2003
