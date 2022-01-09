@@ -1,29 +1,4 @@
 class mediawiki::shellbox {
-    group { 'shellbox':
-        ensure => present,
-        system => true,
-    }
-
-    user { 'shellbox':
-        ensure => present,
-        gid    => 'shellbox',
-        system => true,
-        home   => '/nonexistent',
-        shell  => '/usr/sbin/nologin',
-    }
-
-    php::fpm::pool { 'shellbox':
-        user   => 'shellbox',
-        group  => 'shellbox',
-        config => {
-            'listen' => '/run/php/fpm-shellbox.sock',
-            'listen.owner' => 'www-data',
-            'listen.group' => 'www-data',
-            'pm' => 'static',
-            'pm.max_children' => 1,
-        },
-    }
-
     git::clone { 'shellbox':
         ensure    => present,
         directory => '/srv/shellbox',
@@ -60,6 +35,29 @@ class mediawiki::shellbox {
     nginx::site { 'shellbox':
         ensure  => present,
         content => template('mediawiki/shellbox.internal.erb'),
-        require => Nginx::Conf['mediawiki-includes'],
+    }
+
+    php::fpm::pool { 'shellbox':
+        user   => 'shellbox',
+        group  => 'shellbox',
+        config => {
+            'listen.owner' => 'www-data',
+            'listen.group' => 'www-data',
+            'pm' => 'static',
+            'pm.max_children' => 1,
+        },
+    }
+
+    group { 'shellbox':
+        ensure => present,
+        system => true,
+    }
+
+    user { 'shellbox':
+        ensure => present,
+        gid    => 'shellbox',
+        system => true,
+        home   => '/nonexistent',
+        shell  => '/usr/sbin/nologin',
     }
 }
