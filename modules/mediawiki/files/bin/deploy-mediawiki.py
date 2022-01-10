@@ -107,8 +107,6 @@ def run(args, start):
     if args.extensionlist:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki'))
         rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
-    if args.servers == 'all':
-        args.servers = 'ovlon'  # ovlon is active now
     if args.servers == 'ovlon':
         serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
         sync = True
@@ -201,4 +199,9 @@ if __name__ == '__main__':
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--use-proxy', dest='proxy', action='store_true')
-    run(parser.parse_args(), start)
+
+    args = parser.parse_args()
+    if args.servers == 'all':
+        args.servers = 'ovlon'  # ovlon is active now
+
+    run(args, start)
