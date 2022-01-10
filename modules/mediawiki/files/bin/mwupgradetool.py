@@ -1,7 +1,7 @@
 import os
 import requests
-canary = 'mw11'
-serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
+canary = 'mwtask111'
+serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
 
 
 def check_up(server):
