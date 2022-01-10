@@ -2,6 +2,9 @@ puppetserver_hostname: 'puppet111.miraheze.org'
 base::firewall::mode: ferm
 http_proxy: 'http://bast.miraheze.org:8080'
 
+elasticsearch::api_host: es101.miraheze.org
+elasticsearch::api_port: 9200
+elasticsearch::api_protocol: https
 role::elasticsearch::master: true
 role::elasticsearch::data: true
 role::elasticsearch::discovery_host:
