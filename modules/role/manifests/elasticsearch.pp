@@ -84,14 +84,13 @@ class role::elasticsearch {
         .sort(),
         ' '
     )
-
     ferm::service { 'elasticsearch data nodes to master':
         proto  => 'tcp',
-        port   => '9300',
+        port   => '9200',
         srange => "(${firewall_es_nodes})",
     }
 
-    ferm::service { 'elasticsearch master access data nodes 9300 port':
+    ferm::service { 'elasticsearch master access data nodes 9200 port':
         proto  => 'tcp',
         port   => '9300',
         srange => "(${firewall_es_nodes})",
