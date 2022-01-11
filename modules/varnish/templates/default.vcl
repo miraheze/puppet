@@ -529,6 +529,11 @@ sub vcl_recv {
 		}
 	}
 
+        if (req.http.Host ~ "^*.betaheze.org") {
+                set req.backend_hint = test101;
+                return (pass);
+        }
+
 	if (req.http.Host == "matomo.miraheze.org") {
 		set req.backend_hint = mon2;
 
