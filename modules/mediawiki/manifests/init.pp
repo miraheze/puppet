@@ -19,6 +19,10 @@ class mediawiki(
         include mediawiki::jobqueue::chron
     }
 
+    if lookup(mediawiki::use_shellbox) {
+        include mediawiki::shellbox
+    }
+
     file { '/etc/mathoid':
         ensure  => directory,
     }
@@ -256,6 +260,7 @@ class mediawiki(
     $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
     $mediawiki_secretkey        = lookup('passwords::mediawiki::secretkey')
     $recaptcha_secretkey        = lookup('passwords::recaptcha::secretkey')
+    $shellbox_secretkey         = lookup('passwords::shellbox::secretkey')
     $matomotoken                = lookup('passwords::mediawiki::matomotoken')
     $ldap_password              = lookup('passwords::mediawiki::ldap_password')
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')

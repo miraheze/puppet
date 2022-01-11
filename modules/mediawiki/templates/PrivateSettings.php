@@ -17,6 +17,9 @@ $wgSecretKey = "<%= @mediawiki_secretkey %>";
 // ReCaptcha secret key
 $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
 
+// Shellbox secret key
+$wgShellboxSecretKey = "<%= @shellbox_secretkey %>";
+
 // Matomo Token
 $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 
