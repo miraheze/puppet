@@ -275,6 +275,10 @@ sub mw_stash_cookie {
 }
 
 sub mw_evaluate_cookie {
+        if (req.url ~ "^/w/load\.php") {
+           unset req.http.Cookie; # load.php URLs should be specfic and sessions disabled, we can ignore cookies
+        }
+
 	if (req.http.Cookie ~ "([sS]ession|Token|mf_useformat|stopMobileRedirect)=" 
 		&& req.url !~ "^/w/load\.php"
 		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
