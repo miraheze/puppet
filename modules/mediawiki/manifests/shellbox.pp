@@ -24,6 +24,12 @@ class mediawiki::shellbox {
         require => Git::Clone['shellbox'],
     }
 
+    file { '/var/tmp/shellbox':
+        ensure => directory,
+        owner  => 'shellbox',
+        group  => 'shellbox',
+    }
+
     file { '/srv/shellbox/config/config.json':
         ensure  => present,
         source  => 'puppet:///modules/mediawiki/shellbox_config.json',
