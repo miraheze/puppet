@@ -7,7 +7,7 @@ server {
 
 	location /shellbox {
 		include fastcgi_params;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_param SCRIPT_FILENAME $document_root/shellbox.php;
 		fastcgi_param SHELLBOX_SECRET_KEY <%= @shellbox_secretkey %>;
 		fastcgi_pass unix:/run/php/fpm-shellbox.sock;
 	}
