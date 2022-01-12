@@ -28,6 +28,7 @@ class mediawiki::shellbox {
         ensure => directory,
         owner  => 'shellbox',
         group  => 'shellbox',
+        mode   => '0770',
     }
 
     file { '/srv/shellbox/config/config.json':
