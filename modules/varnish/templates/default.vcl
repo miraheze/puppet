@@ -405,9 +405,9 @@ sub mw_vcl_recv {
 	if (
 		req.url ~ "^/\.well-known" ||
 		req.http.Host == "sslrequest.miraheze.org" ||
-		req.http.X-Miraheze-Debug == "mwtask1.miraheze.org"
+		req.http.X-Miraheze-Debug == "mwtask111.miraheze.org"
 	) {
-		set req.backend_hint = mwtask1;
+		set req.backend_hint = mwtask111;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw8.miraheze.org") {
 		set req.backend_hint = mw8_test;
@@ -430,7 +430,10 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
 		set req.backend_hint = test3;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw101.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mwtask1.miraheze.org") {
+		set req.backend_hint = mwtask1;
+		return (pass);
+	}  else if (req.http.X-Miraheze-Debug == "mw101.miraheze.org") {
 		set req.backend_hint = mw101_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw102.miraheze.org") {
@@ -450,9 +453,6 @@ sub mw_vcl_recv {
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "test101.miraheze.org") {
 		set req.backend_hint = test101;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mwtask111.miraheze.org") {
-		set req.backend_hint = mwtask111;
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
