@@ -1,23 +1,20 @@
 server {
-	listen *:80;
+	listen *:8080;
+	listen [::]:8080 ipv6only=on;
 
 	server_name shellbox.internal;
 	root /srv/shellbox/public_html;
 
 	location /shellbox {
-		alias /srv/shellbox/shellbox.php;
-	}
-
-	location / {
-		try_files $uri $uri/ =404;
-	}
-
-	location ~ \.php {
 		include fastcgi_params;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		fastcgi_param SHELLBOX_SECRET_KEY <%= @shellbox_secretkey %>;
 		fastcgi_pass unix:/run/php/fpm-shellbox.sock;
 		proxy_pass http://127.0.0.1:8080;
+	}
+
+	location / {
+		try_files $uri $uri/ =404;
 	}
 
 	location /srv/shellbox/public_html {
