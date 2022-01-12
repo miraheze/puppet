@@ -10,10 +10,6 @@ server {
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		fastcgi_param SHELLBOX_SECRET_KEY <%= @shellbox_secretkey %>;
 		fastcgi_pass unix:/run/php/fpm-shellbox.sock;
-
-		if ($request_uri !~ "/healthz$") {
-			proxy_pass http://127.0.0.1:8080;
-		}
 	}
 
 	location / {
