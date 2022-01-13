@@ -5,11 +5,11 @@ import sys
 
 depooled_datacenters = []
 
-raw = subprocess.check_output(['/usr/bin/gdnsdctl', 'stats'])
+raw = subprocess.check_output(['/usr/bin/gdnsdctl', 'states'])
 json_stats = json.loads(raw)
 
-for service in json_stats['services']:
-    if service['real_state'] == 'DOWN':
+for service in json_stats:
+    if json_stats[service]['real_state'] == 'DOWN':
         depooled_datacenters.append(service['service'])
 
 if len(depooled_datacenters) == 0:
