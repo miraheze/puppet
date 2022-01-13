@@ -10,13 +10,13 @@ class mediawiki::shellbox {
     }
 
     exec { 'shellbox_composer':
-        command     => 'wget -O composer.phar https://getcomposer.org/download/2.1.6/composer.phar | php && php composer.phar install --no-dev',
+        command     => 'composer install --no-dev',
         creates     => '/srv/shellbox/vendor',
         cwd         => '/srv/shellbox',
         path        => '/usr/bin',
         environment => 'HOME=/srv/shellbox',
         user        => 'www-data',
-        require     => Git::Clone['shellbox'],
+        require     => [ Git::Clone['shellbox'], Package['composer'] ],
     }
 
     file { '/srv/shellbox/config':
