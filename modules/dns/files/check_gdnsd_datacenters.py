@@ -1,17 +1,13 @@
 #! /usr/bin/python3
-import codecs
 import json
 import sys
-import urllib.request
 
 depooled_datacenters = []
 
-request = urllib.request.urlopen('http://127.0.0.1:3506/json')
+raw = subprocess.check_output(['/usr/bin/gdnsdctl', 'stats'])
+json_stats = json.loads(raw)
 
-reader = codecs.getreader("utf-8")
-json = json.load(reader(request))
-
-for service in json['services']:
+for service in json_stats['services']:
     if service['real_state'] == 'DOWN':
         depooled_datacenters.append(service['service'])
 
