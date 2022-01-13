@@ -37,6 +37,7 @@ class base::monitoring {
     sudo::user { 'nrpe_sudo':
         user       => 'nagios',
         privileges => [
+            'ALL = NOPASSWD: /usr/bin/gdnsdctl states',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_smart',
         ],
