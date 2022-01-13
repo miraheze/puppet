@@ -10,7 +10,7 @@ json_stats = json.loads(raw)
 
 for service in json_stats:
     if json_stats[service]['real_state'] == 'DOWN':
-        depooled_datacenters.append(service['service'])
+        depooled_datacenters.append(service)
 
 if len(depooled_datacenters) == 0:
     print("OK - all datacenters are online")
