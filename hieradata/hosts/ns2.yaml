@@ -1,4 +1,5 @@
-puppetserver_hostname: 'puppet3.miraheze.org'
+puppetserver_hostname: 'puppet111.miraheze.org'
 dns: true
 
 base::firewall::mode: ferm
+http_proxy: 'http://bast.miraheze.org:8080'
