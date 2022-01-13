@@ -16,7 +16,7 @@ class mediawiki::shellbox {
         path        => '/usr/bin',
         environment => 'HOME=/srv/shellbox',
         user        => 'www-data',
-        require     => [ Git::Clone['shellbox'], Package['composer'] ],
+        require     => Git::Clone['shellbox'],
     }
 
     file { '/srv/shellbox/config':
