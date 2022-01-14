@@ -104,7 +104,9 @@ users:
     uid: 1009
     name: paladox
     realname: Paladox
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINS7Yzicrs27/ZGUUGRKaZqhYJVJ+Kcgx9iQrVj/fXJZ paladox]
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINS7Yzicrs27/ZGUUGRKaZqhYJVJ+Kcgx9iQrVj/fXJZ paladox
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDmfit8EiYgJ41i0JkXKuXhmCP5ngAVB+2hpargJI8RpR+OiY2fy1KPjM6aJe5TS6V6aMFPUf15FYwvXp+IOsfqlyfbgqbKuV5pv6JRucdUlC+g18t5qqDGt+egBdHjGMk25WNSkWRHmbya/jC7XZ44MV1FuwU+8rNJbt46mwGUipedjOOUvJsQNdeIxddOskLwKSqJZAXUlvmPzkf5LJrqCjO4MMfWZa0wiWQ0qE7nPjLMjj7F+/sIvQhESHc/p6lwxyLO1mwQdJfBx1qToP6iTXe2c/UTN8XXSvQ53FW7Cx0MPgM1O+GYV41ENzcq+uhvsQeQ4j9v2ZMTZBIRBQ13
   macfan:
     ensure: absent
     uid: 1010
