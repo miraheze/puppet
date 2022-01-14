@@ -25,7 +25,7 @@ class mediawiki::php (
                     'max_accelerated_files'   => 24000,
                     'max_wasted_percentage'   => 10,
                     'validate_timestamps'     => 1,
-                    'revalidate_freq'         => 30,
+                    'revalidate_freq'         => 10,
                 },
                 'enable_dl'           => 0,
                 'post_max_size'       => '250M',
