@@ -1,3 +1,5 @@
+cluster.read-only: true
+
 # Logo/Wordmark
 ui.logo:
   'logoImagePHID': 'PHID-FILE-gtm67dpburyr56ogaqay'
