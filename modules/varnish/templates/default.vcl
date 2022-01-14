@@ -212,12 +212,12 @@ backend phab121 {
 
 sub vcl_init {
 	new mediawiki = directors.random();
-	mediawiki.add_backend(mw8, 100);
-	mediawiki.add_backend(mw9, 100);
-	mediawiki.add_backend(mw10, 100);
-	mediawiki.add_backend(mw11, 100);
-	mediawiki.add_backend(mw12, 100);
-	mediawiki.add_backend(mw13, 100);
+	mediawiki.add_backend(mw101, 100);
+	mediawiki.add_backend(mw102, 100);
+	mediawiki.add_backend(mw111, 100);
+	mediawiki.add_backend(mw112, 100);
+	mediawiki.add_backend(mw121, 100);
+	mediawiki.add_backend(mw122, 100);
 }
 
 
