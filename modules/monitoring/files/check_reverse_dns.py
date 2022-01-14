@@ -63,8 +63,8 @@ def check_records(hostname):
     root_domain = domain_parts.registered_domain
 
     if root_domain in extra_known_tlds:
-        extracted = tldextract.extract(domain_parts.subdomain + domain_parts.suffix)
-        root_domain = extracted.domain + root_domain
+        extracted = tldextract.extract(domain_parts.subdomain + '.' + domain_parts.suffix)
+        root_domain = extracted.domain + '.' + root_domain
 
     dns_resolver = resolver.Resolver(configure=False)
     dns_resolver.nameservers = ['2606:4700:4700::1111']
