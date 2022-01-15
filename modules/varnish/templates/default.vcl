@@ -537,7 +537,7 @@ sub vcl_recv {
 	}
 
 	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = mon2;
+		set req.backend_hint = mon111;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
