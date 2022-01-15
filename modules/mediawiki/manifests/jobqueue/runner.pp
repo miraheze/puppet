@@ -50,7 +50,7 @@ class mediawiki::jobqueue::runner {
         }
 
         cron { 'managewikis':
-            ensure  => present,
+            ensure  => absent,
             command => '/usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki loginwiki --write >> /var/log/mediawiki/cron/managewikis.log',
             user    => 'www-data',
             minute  => '5',
@@ -88,7 +88,7 @@ class mediawiki::jobqueue::runner {
         }
 
         cron { 'update_statistics':
-            ensure   => present,
+            ensure   => absent,
             command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/maintenance/initSiteStats.php --update --active > /dev/null',
             user     => 'www-data',
             minute   => '0',
