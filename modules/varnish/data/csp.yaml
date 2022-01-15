@@ -112,6 +112,7 @@ font-src:
   - 'fonts.gstatic.com'
   - 'cdn.jsdelivr.net'
   - 'db.onlinewebfonts.com'
+  - 'phab.miraheze.wiki'
 
 media-src:
   - "'self'"
