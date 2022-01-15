@@ -4,7 +4,7 @@ icinga_ido_db_host: 'db101.miraheze.org'
 icingaweb_db_host: 'db101.miraheze.org'
 icinga_ido_db_host: 'db101.miraheze.org'
 grafana_db_host: 'db101.miraheze.org'
-matomo_db_host: 'db101.miraheze.org'
+matomo_db_host: 'db111.miraheze.org'
 
 icinga_ldap_host: 'ldap111.miraheze.org'
 grafana_ldap_server: 'ldap111.miraheze.org'
