@@ -210,6 +210,11 @@ backend phab121 {
 	.port = "8301";
 }
 
+backend mail121 {
+	.host = "127.0.0.1";
+	.port = "8302";
+}
+
 sub vcl_init {
 	new mediawiki = directors.random();
 	mediawiki.add_backend(mw101, 100);
@@ -266,6 +271,8 @@ acl purge {
 	"2a10:6740::6:208";
 	# test101
 	"2a10:6740::6:109";
+	# mail121
+	"2a10:6740::6:307";
 }
 
 sub mw_stash_cookie {
@@ -540,16 +547,22 @@ sub vcl_recv {
 		}
 	}
 
-	if (req.http.Host == "grafana-new.miraheze.org" || req.http.Host == "icinga-new.miraheze.org" ||
-		req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
+	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
 		set req.backend_hint = mon111;
 
 		# Do not cache these services
 		return (pass);
 	}
 
-	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki" ) {
+	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki") {
 		set req.backend_hint = phab121;
+
+		# Do not cache these services
+		return (pass);
+	}
+
+	if (req.http.Host == "webmail.miraheze.org") {
+		set req.backend_hint = mail121;
 
 		# Do not cache these services
 		return (pass);
