@@ -11,8 +11,6 @@ class mariadb::config(
     Integer                      $max_connections              = 90,
     Enum['10.2', '10.3', '10.4', '10.5'] $version                      = lookup('mariadb::version', {'default_value' => '10.4'}),
     String                       $icinga_password              = undef,
-    Integer                      $table_definition_cache       = 10000,
-    Integer                      $table_open_cache             = 10000,
 ) {
     $exporter_password = lookup('passwords::db::exporter')
     $ido_db_user_password = lookup('passwords::icinga_ido')
