@@ -103,6 +103,7 @@ img-src:
   - 'img.newspapers.com'
   - 'cdn.smutstone.com'
   - 'storage.googleapis.com'
+  - 'phab.miraheze.wiki'
 
 font-src:
   - "'self'"
