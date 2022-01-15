@@ -29,95 +29,7 @@ probe mwhealth {
 	.expected_response = 200;
 }
 
-# OVLON - MEDIAWIKI
-backend mw8 {
-	.host = "127.0.0.1";
-	.port = "8085";
-	.probe = mwhealth;
-}
-
-backend mw9 {
-	.host = "127.0.0.1";
-	.port = "8086";
-	.probe = mwhealth;
-}
-
-backend mw10 {
-	.host = "127.0.0.1";
-	.port = "8087";
-	.probe = mwhealth;
-}
-
-backend mw11 {
-	.host = "127.0.0.1";
-	.port = "8088";
-	.probe = mwhealth;
-}
-
-backend mw12 {
-	.host = "127.0.0.1";
-	.port = "8092";
-	.probe = mwhealth;
-}
-
-backend mw13 {
-	.host = "127.0.0.1";
-	.port = "8093";
-	.probe = mwhealth;
-}
-
-# to be used for acme/letsencrypt only
-backend mwtask1 {
-	.host = "127.0.0.1";
-	.port = "8089";
-}
-
-# test ovlon mediawiki backend with out health check
-# to be used only by our miraheze debug plugin
-
-backend mw8_test {
-	.host = "127.0.0.1";
-	.port = "8085";
-}
-
-backend mw9_test {
-	.host = "127.0.0.1";
-	.port = "8086";
-}
-
-backend mw10_test {
-	.host = "127.0.0.1";
-	.port = "8087";
-}
-
-backend mw11_test {
-	.host = "127.0.0.1";
-	.port = "8088";
-}
-
-backend mw12_test {
-	.host = "127.0.0.1";
-	.port = "8092";
-}
-
-backend mw13_test {
-	.host = "127.0.0.1";
-	.port = "8093";
-}
-
-backend test3 {
-	.host = "127.0.0.1";
-	.port = "8091";
-}
-
-# end test backend
-# SCSVG - MEDIAWIKI
-
-backend test101 {
-	.host = "127.0.0.1";
-	.port = "8101";
-}
-
+# MEDIAWIKI
 backend mw101 {
 	.host = "127.0.0.1";
 	.port = "8094";
@@ -160,7 +72,7 @@ backend mwtask111 {
 	.port = "8100";
 }
 
-# test SCSVG mediawiki backend with out health check
+# test mediawiki backend with out health check
 # to be used only by our miraheze debug plugin
 
 backend mw101_test {
@@ -193,12 +105,13 @@ backend mw122_test {
 	.port = "8099";
 }
 
-# misc services
-
-backend mon2 {
+backend test101 {
 	.host = "127.0.0.1";
-	.port = "8201";
+	.port = "8101";
 }
+
+# end test backend
+# misc services
 
 backend mon111 {
 	.host = "127.0.0.1";
@@ -223,33 +136,6 @@ sub vcl_init {
 
 acl purge {
 	"localhost";
-	# mw8
-	"51.195.236.221";
-	"2001:41d0:800:178a::7";
-	# mw9
-	"51.195.236.222";
-	"2001:41d0:800:178a::8";
-	# mw10
-	"51.195.236.254";
-	"2001:41d0:800:1bbd::8";
-	# mw11
-	"51.195.236.255";
-	"2001:41d0:800:1bbd::10";
-	# mw12
-	"51.195.236.220";
-	"2001:41d0:800:178a::6";
-	# mw13
-	"51.195.236.251";
-	"2001:41d0:800:1bbd::5";
-	# mwtask1
-	"198.244.181.23";
-	"2001:41d0:800:1bbd::15";
-	# test3
-	"51.195.236.247";
-	"2001:41d0:800:1bbd::14";
-	# mon2
-	"51.195.236.249";
-	"2001:41d0:800:1bbd::3";
 	# mw101
 	"2a10:6740::6:107";
 	# mw102
@@ -409,31 +295,7 @@ sub mw_vcl_recv {
 	) {
 		set req.backend_hint = mwtask111;
 		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw8.miraheze.org") {
-		set req.backend_hint = mw8_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw9.miraheze.org") {
-		set req.backend_hint = mw9_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw10.miraheze.org") {
-		set req.backend_hint = mw10_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw11.miraheze.org") {
-		set req.backend_hint = mw11_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw12.miraheze.org") {
-		set req.backend_hint = mw12_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw13.miraheze.org") {
-		set req.backend_hint = mw13_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "test3.miraheze.org") {
-		set req.backend_hint = test3;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mwtask1.miraheze.org") {
-		set req.backend_hint = mwtask1;
-		return (pass);
-	}  else if (req.http.X-Miraheze-Debug == "mw101.miraheze.org") {
+	} else if (req.http.X-Miraheze-Debug == "mw101.miraheze.org") {
 		set req.backend_hint = mw101_test;
 		return (pass);
 	} else if (req.http.X-Miraheze-Debug == "mw102.miraheze.org") {
