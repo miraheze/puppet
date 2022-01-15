@@ -34,6 +34,7 @@ script-src:
   - 'cdn.syndication.twimg.com'
   - 'scratchblocks.github.io'
   - 'openlayers.org'
+  - 'phab.miraheze.wiki'
 
 style-src:
   - "'self'"
