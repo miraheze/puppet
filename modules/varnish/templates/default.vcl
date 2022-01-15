@@ -135,7 +135,6 @@ sub vcl_init {
 	mediawiki.add_backend(mw111, 100);
 	mediawiki.add_backend(mw112, 100);
 	mediawiki.add_backend(mw121, 100);
-	mediawiki.add_backend(mw122, 100);
 }
 
 
@@ -325,6 +324,10 @@ sub mw_vcl_recv {
 		return (pass);
 	} else {
 		set req.backend_hint = mediawiki.backend();
+	}
+
+	if (req.url ~ "^/w/api\.php") {
+		set req.backend_hint = mw122_test;
 	}
 
 	if (req.http.Host == "static.miraheze.org") {
