@@ -216,13 +216,13 @@ backend mail121 {
 }
 
 sub vcl_init {
-	new mediawiki = directors.random();
-	mediawiki.add_backend(mw101, 100);
-	mediawiki.add_backend(mw102, 100);
-	mediawiki.add_backend(mw111, 100);
-	mediawiki.add_backend(mw112, 100);
-	mediawiki.add_backend(mw121, 100);
-	mediawiki.add_backend(mw122, 100);
+	new mediawiki = directors.round_robin();
+	mediawiki.add_backend(mw101);
+	mediawiki.add_backend(mw102);
+	mediawiki.add_backend(mw111);
+	mediawiki.add_backend(mw112);
+	mediawiki.add_backend(mw121);
+	mediawiki.add_backend(mw122);
 }
 
 
