@@ -57,6 +57,7 @@ style-src:
   - 'cdn.jsdelivr.net'
   - 'platform.twitter.com'
   - 'ton.twimg.com'
+  - 'phab.miraheze.wiki'
 
 img-src:
   - 'blob:'
