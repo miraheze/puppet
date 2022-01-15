@@ -4,7 +4,7 @@ server_port=5666
 server_address=::
 nrpe_user=nagios
 nrpe_group=nagios
-allowed_hosts=127.0.0.1,51.195.236.249,2001:41d0:800:1bbd::3,2a10:6740::6:205
+allowed_hosts=127.0.0.1,2a10:6740::6:205
 dont_blame_nrpe=0
 allow_bash_command_substitution=0
 # command_prefix=/usr/bin/sudo
@@ -47,15 +47,6 @@ command[check_glusterd_client]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/
 # glusterd deamon
 command[check_glusterd]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterd -c 1:
 # check stunnel http
-command[check_stunnel_mon2]=/usr/lib/nagios/plugins/check_http -H localhost:8201
-command[check_stunnel_mw8]=/usr/lib/nagios/plugins/check_http -H localhost:8085
-command[check_stunnel_mw9]=/usr/lib/nagios/plugins/check_http -H localhost:8086
-command[check_stunnel_mw10]=/usr/lib/nagios/plugins/check_http -H localhost:8087
-command[check_stunnel_mw11]=/usr/lib/nagios/plugins/check_http -H localhost:8088
-command[check_stunnel_mw12]=/usr/lib/nagios/plugins/check_http -H localhost:8092
-command[check_stunnel_mw13]=/usr/lib/nagios/plugins/check_http -H localhost:8093
-command[check_stunnel_mwtask1]=/usr/lib/nagios/plugins/check_http -H localhost:8089
-command[check_stunnel_test3]=/usr/lib/nagios/plugins/check_http -H localhost:8091
 command[check_stunnel_mw101]=/usr/lib/nagios/plugins/check_http -H localhost:8094
 command[check_stunnel_mw102]=/usr/lib/nagios/plugins/check_http -H localhost:8095
 command[check_stunnel_mw111]=/usr/lib/nagios/plugins/check_http -H localhost:8096
