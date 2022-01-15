@@ -548,7 +548,7 @@ sub vcl_recv {
 		return (pass);
 	}
 
-	if (req.http.Host == "phabricator.miraheze.org") {
+	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki" ) {
 		set req.backend_hint = phab121;
 
 		# Do not cache these services
