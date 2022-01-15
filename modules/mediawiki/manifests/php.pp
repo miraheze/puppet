@@ -34,7 +34,6 @@ class mediawiki::php (
                 'track_errors'        => 'Off',
                 'upload_max_filesize' => '250M',
                 'variables_order'     => 'GPCS',
-                'auto_prepend_file' => '/srv/mediawiki/config/PhpAutoPrepend.php',
             },
             fpm_min_child => $php_fpm_childs,
             fpm_min_restart_threshold => $fpm_min_restart_threshold,
