@@ -177,9 +177,15 @@ class php::php_fpm(
         }
 
         $num_workers =  max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
+        # These numbers need to be positive integers
+        $max_spare = ceiling($num_workers * 0.3)
+        $min_spare = ceiling($num_workers * 0.1)
 
         $base_fpm_pool_config = {
-            'pm'                        => 'static',
+            'pm'                        => 'dynamic',
+            'pm.max_spare_servers'      => $max_spare,
+            'pm.min_spare_servers'      => $min_spare,
+            'pm.start_servers'          => $min_spare,
             'pm.max_children'           => $num_workers,
             'request_terminate_timeout' => 59,
         }
