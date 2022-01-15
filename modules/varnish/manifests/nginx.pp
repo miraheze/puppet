@@ -17,5 +17,6 @@ class varnish::nginx {
     include ssl::wildcard
     include ssl::hiera
 
+    ssl::cert { 'miraheze.wiki': }
     ssl::cert { 'm.miraheze.org': }
 }
