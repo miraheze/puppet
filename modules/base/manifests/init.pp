@@ -1,7 +1,6 @@
 # class: base
 class base (
-    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
-    Boolean $use_new_mon = lookup('use_new_mon', {'default_value' => false})
+    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef})
 ) {
     include apt
     include base::packages
@@ -40,7 +39,7 @@ class base (
 
     file { '/usr/local/bin/logsalmsg':
         ensure => present,
-        content => template("base/logsalmsg.erb"),
+        source => 'puppet:///modules/base/logsalmsg',
         mode   => '0555',
     }
 
