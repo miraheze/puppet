@@ -5,7 +5,7 @@ class mediawiki(
     Optional[Boolean] $use_memcached = undef,
 ) {
     # Configure cgroups used by MediaWiki
-    class { '::mediawiki::cgroup': }
+    # class { '::mediawiki::cgroup': }
 
     include mediawiki::favicons
     include mediawiki::nginx
