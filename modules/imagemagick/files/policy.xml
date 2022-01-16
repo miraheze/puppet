@@ -61,9 +61,18 @@
   <policy domain="coder" rights="none" pattern="HTTPS" />
   <policy domain="coder" rights="none" pattern="MVG" />
   <policy domain="coder" rights="none" pattern="MSL" />
+  <policy domain="coder" rights="none" pattern="HTTP" />
+  <policy domain="coder" rights="none" pattern="FTP" />
   <policy domain="coder" rights="none" pattern="TEXT" />
   <policy domain="coder" rights="none" pattern="SHOW" />
   <policy domain="coder" rights="none" pattern="WIN" />
   <policy domain="coder" rights="none" pattern="PLT" />
+  <policy domain="coder" rights="none" pattern="LABEL" />
+  <policy domain="coder" rights="none" pattern="PS" />
+  <policy domain="coder" rights="none" pattern="PS2" />
+  <policy domain="coder" rights="none" pattern="PS3" />
+  <policy domain="coder" rights="none" pattern="EPS" />
+  <policy domain="coder" rights="none" pattern="PDF" />
+  <policy domain="coder" rights="none" pattern="XPS" />
   <policy domain="path" rights="none" pattern="@*" />
 </policymap>
