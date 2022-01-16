@@ -29,7 +29,7 @@ class mediawiki::cgroup {
         value => '1',
     }
 
-    # Disable cgroup memory accounting, see: T260329
+    # Disable cgroup memory accounting
     grub::bootparam { 'cgroup.memory':
         value => 'nokmem',
     }
