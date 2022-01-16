@@ -3,8 +3,8 @@ define monitoring::services (
     $host           = $::hostname,
     $retries        = 3,
     $ensure         = present,
-    $check_interval = '2m',
-    $retry_interval = '1m',
+    $check_interval = '6m',
+    $retry_interval = '5m',
     $event_command  = undef,
     $vars           = undef,
 ) {
