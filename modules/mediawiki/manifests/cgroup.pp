@@ -29,10 +29,10 @@ class mediawiki::cgroup {
         mode   => '0755',
     }
 
-    base::service_unit { 'mw-cgroup':
+    systemd::service { 'mw-cgroup':
         ensure  => present,
-        systemd => systemd_template('mw-cgroup'),
-        refresh => false,
+        content => systemd_template('mw-cgroup'),
+        restart => false,
     }
 
     shellvar { 'GRUB_CMDLINE_LINUX':
