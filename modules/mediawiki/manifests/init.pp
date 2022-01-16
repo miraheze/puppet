@@ -4,13 +4,15 @@ class mediawiki(
     Optional[String] $branch_mw_config = undef,
     Optional[Boolean] $use_memcached = undef,
 ) {
+    # Configure cgroups used by MediaWiki
+    class { '::mediawiki::cgroup': }
+
     include mediawiki::favicons
     include mediawiki::nginx
     include mediawiki::packages
     include mediawiki::logging
     include mediawiki::php
     include mediawiki::monitoring
-    include mediawiki::cgroup
 
     if lookup(jobrunner) {
         include mediawiki::jobqueue::runner
