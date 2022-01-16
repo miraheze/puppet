@@ -19,7 +19,8 @@ apply Service "m.miraheze.org - LetsEncrypt" {
 apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   import "generic-service"
   check_command = "check_ssl_expire"
-  check_interval = 7m
+  check_interval = 20m
+  retry_interval = 20m
   vars.host = "<%= property['url'] %>"
   vars.time = "<% if property['ca'] == "LetsEncrypt" %>15<% else %>30<% end %>"
   <%- if property['ca'] == "LetsEncrypt" and property['disable_event'] == false -%>
@@ -31,7 +32,8 @@ apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
 apply Service "<%= property['url'] %> - reverse DNS" {
   import "generic-service"
   check_command = "reverse_dns"
-  check_interval = 7m
+  check_interval = 20m
+  retry_interval = 20m
   vars.hostname = "<%= property['url'] %>"
   vars.regex = "^(test|cp)[0-9]+\\.miraheze\\.org$$"
   assign where "sslchecks" in host.groups
