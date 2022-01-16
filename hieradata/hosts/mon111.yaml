@@ -22,6 +22,7 @@ php::cli::memory_limit: '3G'
 php::fpm::memory_limit: '3g'
 
 php::php_fpm::fpm_workers_multiplier: 3.0
+php::php_fpm::fpm_min_restart_threshold: 6
 
 # icinga2
 
