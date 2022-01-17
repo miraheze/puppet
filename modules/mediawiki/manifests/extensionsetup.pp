@@ -1,5 +1,8 @@
 # MediaWiki extension setup
 class mediawiki::extensionsetup {
+
+    ensure_packages('composer')
+
     $mwpath = '/srv/mediawiki-staging/w'
     file { [
         '/srv/mediawiki/w/extensions/OAuth/.composer/cache',
