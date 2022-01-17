@@ -1,4 +1,7 @@
 class mediawiki::shellbox {
+
+    ensure_packages('composer')
+
     git::clone { 'shellbox':
         ensure    => present,
         directory => '/srv/shellbox',
