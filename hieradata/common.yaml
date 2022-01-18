@@ -20,6 +20,6 @@ mediawiki::remote_sync: true
 mediawiki::use_shellbox: false
 base::firewall::mode: ferm
 memcached_servers_1:
-  - 51.195.236.223:11211:1
+  - 2a10:6740::6:105:11211:1
 memcached_servers_2:
-  - 51.195.236.245:11211:1
+  - 2a10:6740::6:308:11211:1
