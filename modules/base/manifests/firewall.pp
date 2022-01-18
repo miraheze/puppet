@@ -80,7 +80,7 @@ class base::firewall (
         }
 
         $firewall_bastion_hosts = join(
-            query_facts('Class[Base] or Class[Role::Salt]', ['ipaddress', 'ipaddress6'])
+            query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
             .map |$key, $value| {
                 "${value['ipaddress']} ${value['ipaddress6']}"
             }
