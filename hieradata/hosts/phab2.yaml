@@ -1,4 +1,0 @@
-nginx::use_graylog: true
-puppetserver_hostname: 'puppet3.miraheze.org'
-
-base::firewall::mode: ferm
