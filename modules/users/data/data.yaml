@@ -10,7 +10,6 @@ groups:
     members: [rhinos]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.3-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
