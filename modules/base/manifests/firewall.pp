@@ -79,9 +79,27 @@ class base::firewall (
             srange => "(${firewall_rules_str})",
         }
 
-        ferm::service { 'ssh':
-            proto  => 'tcp',
-            port   => '22',
+        $firewall_bastion_hosts = join(
+            query_facts('Class[Role::Bastion]', ['ipaddress', 'ipaddress6'])
+            .map |$key, $value| {
+                "${value['ipaddress']} ${value['ipaddress6']}"
+            }
+            .flatten()
+            .unique()
+            .sort(),
+            ' '
+        )
+
+        if $::fqdn =~ /^bast[0-9]+.miraheze.org/ {
+            ferm::service { 'ssh':
+                proto => 'tcp',
+                port  => '22',
+            }
+        } else {
+            ferm::service { 'ssh':
+                proto  => 'tcp',
+                port   => '22',
+                srange => "(${firewall_bastion_hosts})"
         }
 
         class { '::ulogd': }
@@ -105,11 +123,11 @@ class base::firewall (
         }
 
         monitoring::services { 'conntrack_table_size':
-            check_command   => 'nrpe',
-            vars            => {
+            check_command => 'nrpe',
+            vars          => {
                 nrpe_command => 'conntrack_table_size',
             },
-            require         => File['/usr/lib/nagios/plugins/check_conntrack'],
+            require       => File['/usr/lib/nagios/plugins/check_conntrack'],
         }
 
         sudo::user { 'nagios_check_ferm':
@@ -126,11 +144,11 @@ class base::firewall (
         }
 
         monitoring::services { 'ferm_active':
-          check_command   => 'nrpe',
-          vars            => {
-            nrpe_command  => 'ferm_active',
+          check_command => 'nrpe',
+          vars          => {
+            nrpe_command => 'ferm_active',
           },
-          require         => [
+          require       => [
             File['/usr/lib/nagios/plugins/check_ferm'],
             Sudo::User['nagios_check_ferm']
           ],
