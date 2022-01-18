@@ -13,8 +13,6 @@ http_proxy: 'http://bast.miraheze.org:8080'
 
 icinga2_api_bind_host: '::'
 
-use_new_mon: true
-
 mariadb::version: '10.5'
 
 php::php_version: '7.4'

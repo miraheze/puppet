@@ -53,7 +53,7 @@ class role::mediawiki (
     if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
         gluster::mount { '/mnt/mediawiki-static':
           ensure    => mounted,
-          volume    => lookup('gluster_volume', {'default_value' => 'gluster4.miraheze.org:/static'}),
+          volume    => lookup('gluster_volume', {'default_value' => 'gluster111.miraheze.org:/static'}),
         }
     }
 

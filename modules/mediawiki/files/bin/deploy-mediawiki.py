@@ -107,10 +107,7 @@ def run(args, start):
     if args.extensionlist:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki'))
         rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
-    if args.servers == 'ovlon':
-        serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
-        sync = True
-    elif args.servers == 'scsvg':
+    if args.servers == 'scsvg':
         serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
         sync = True
     elif args.servers == 'skip':
@@ -202,6 +199,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     if args.servers == 'all':
-        args.servers = 'ovlon'  # ovlon is active now
+        args.servers = 'scsvg'
 
     run(args, start)

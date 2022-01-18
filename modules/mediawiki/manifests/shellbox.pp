@@ -1,4 +1,7 @@
 class mediawiki::shellbox {
+
+    ensure_packages('composer')
+
     git::clone { 'shellbox':
         ensure    => present,
         directory => '/srv/shellbox',
@@ -10,7 +13,7 @@ class mediawiki::shellbox {
     }
 
     exec { 'shellbox_composer':
-        command     => 'wget -O composer.phar https://getcomposer.org/download/2.1.6/composer.phar | php && php composer.phar install --no-dev',
+        command     => 'composer install --no-dev',
         creates     => '/srv/shellbox/vendor',
         cwd         => '/srv/shellbox',
         path        => '/usr/bin',
