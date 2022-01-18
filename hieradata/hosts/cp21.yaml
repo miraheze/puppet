@@ -1,7 +1,6 @@
 users::groups: 'cache-admins'
 varnish::cache_file_size: '15G'
 base::syslog::syslog_daemon: 'rsyslog'
-puppetserver_hostname: 'puppet3.miraheze.org'
 
 base::firewall::mode: ferm
 puppetserver_hostname: 'puppet111.miraheze.org'
