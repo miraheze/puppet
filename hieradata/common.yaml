@@ -10,8 +10,8 @@ mediawiki::branch_mw_config: 'master'
 letsencrypt: false
 use_gluster_new: true
 mediawiki::use_redis: false
-puppetserver_hostname: puppet3.miraheze.org
-role::salt::minions::salt_master: 'puppet3.miraheze.org'
+puppetserver_hostname: puppet111.miraheze.org
+role::salt::minions::salt_master: 'puppet111.miraheze.org'
 dns: false
 mediawiki::use_staging: false
 mediawiki::is_canary: false
@@ -20,6 +20,6 @@ mediawiki::remote_sync: true
 mediawiki::use_shellbox: false
 base::firewall::mode: ferm
 memcached_servers_1:
-  - 51.195.236.223:11211:1
+  - 2a10:6740::6:105:11211:1
 memcached_servers_2:
-  - 51.195.236.245:11211:1
+  - 2a10:6740::6:308:11211:1

@@ -25,7 +25,3 @@ gluster::only_ipv6: true
 use_new_mon: true
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6
-memcached_servers_1:
-  - 2a10:6740::6:105:11211:1
-memcached_servers_2:
-  - 2a10:6740::6:308:11211:1
