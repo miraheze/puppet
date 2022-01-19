@@ -6,8 +6,6 @@ mariadb::config::max_connections: 500
 role::db::backup_clusters:
     - c2
 
-base::firewall::mode: ferm
-
 mariadb::version: '10.5'
 http_proxy: 'http://bast.miraheze.org:8080'
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
