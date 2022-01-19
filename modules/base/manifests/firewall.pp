@@ -48,17 +48,9 @@ class base::firewall {
         ' '
     )
 
-    if $::fqdn =~ /^bast[0-9]+.miraheze.org/ {
-        ferm::service { 'ssh':
-            proto => 'tcp',
-            port  => '22',
-        }
-    } else {
-        ferm::service { 'ssh':
-            proto  => 'tcp',
-            port   => '22',
-            srange => "(${firewall_bastion_hosts})"
-        }
+    ferm::service { 'ssh':
+        proto => 'tcp',
+        port  => '22',
     }
 
     class { '::ulogd': }
