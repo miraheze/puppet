@@ -8,7 +8,8 @@
             // Job types to include ("*" means "all")
             "include": [
                 "DataDumpGenerateJob",
-                "RequestWikiAIJob"
+                "RequestWikiAIJob",
+                "webVideoTranscode"
             ]
         }
     },
@@ -21,18 +22,21 @@
         // How long jobs can be claimed before being recycled
         "claimTTL": {
             "*": 3600,
-            "DataDumpGenerateJob": 86400
+            "DataDumpGenerateJob": 86400,
+            "webVideoTranscode": 86400
         },
         // runJobs.php process time limits
         "real": {
             "*": 130,
-            "DataDumpGenerateJob": 9000
+            "DataDumpGenerateJob": 9000,
+            "webVideoTranscode": 9000
         },
         // runJobs.php memory limits
         "memory": {
             "*": "192M",
             "DataDumpGenerateJob": "300M",
-            "RequestWikiAIJob": "1750M"
+            "RequestWikiAIJob": "1750M",
+            "webVideoTranscode": "300M"
         }
     },
 
