@@ -2,7 +2,6 @@ puppetserver_hostname: 'puppet111.miraheze.org'
 gluster::only_ipv6: true
 gluster_volume: gluster101.miraheze.org:/static
 
-base::firewall::mode: ferm
 http_proxy: 'http://bast.miraheze.org:8080'
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6
