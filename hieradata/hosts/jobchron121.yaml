@@ -1,6 +1,5 @@
 redis::heap: '1000mb'
 
-base::firewall::mode: ferm
 puppetserver_hostname: 'puppet111.miraheze.org'
 http_proxy: 'http://bast.miraheze.org:8080'
 php::php_version: '7.4'
