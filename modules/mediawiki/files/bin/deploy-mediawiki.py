@@ -72,7 +72,7 @@ def run(args, start):
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("config")}* {_get_deployed_path("config")}'))
         rsyncpaths.append(_get_deployed_path('config'))
     if args.world:
-        proxy = 'http_proxy=http://bast.miraheze.org:8080'  # read git config you stupid software
+        proxy = 'http_proxy=http://bast.miraheze.org:8080'
         os.chdir(_get_staging_path('world'))
         exitcodes.append(os.system(f'sudo -u www-data {proxy} composer install --no-dev --quiet'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki'))
