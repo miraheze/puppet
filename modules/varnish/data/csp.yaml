@@ -28,7 +28,6 @@ script-src:
   - 'recaptchaenterprise.googleapis.com'
   - 'platform.twitter.com'
   - 'js-wiki-cdn.reviservices.com'
-  - 'wikiplus-app.com'
   - 'cdnjs.cloudflare.com'
   - 'cdn.jsdelivr.net'
   - 'cdn.syndication.twimg.com'
