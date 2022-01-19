@@ -13,7 +13,6 @@ php::php_version: '7.4'
 nginx::use_graylog: true
 puppetserver_hostname: 'puppet111.miraheze.org'
 
-base::firewall::mode: ferm
 http_proxy: 'http://bast.miraheze.org:8080'
 gluster_volume: gluster101.miraheze.org:/static
 gluster::only_ipv6: true
