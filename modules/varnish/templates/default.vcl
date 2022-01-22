@@ -254,12 +254,6 @@ sub vcl_synth {
 		return (deliver);
 	}
 
-	if (resp.reason == "T217669") {
-		set resp.reason = "OK";
-		set resp.http.Access-Control-Allow-Origin = "*";
-		return (deliver);
-	}
-
 	// Handle CORS preflight requests
 	if (
 		req.http.Host == "static.miraheze.org" &&
@@ -290,14 +284,6 @@ sub recv_purge {
 sub mw_vcl_recv {
 	call mw_rate_limit;
 	call mw_identify_device;
-
-	// HACK for phabricator.wikimedia.org/T217669
-	if (req.url ~ "/w(iki)?/undefined/api.php") {
-		set req.url = regsuball(req.url, "/w(iki)?/undefined/api.php", "/w/api.php");
-		set req.backend_hint = mediawiki.backend();
-
-		return (synth(200, "T217669"));
-	}
 
 	if (
 		req.url ~ "^/\.well-known" ||
