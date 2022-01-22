@@ -12,7 +12,7 @@ class mediawiki::jobqueue::runner {
 
     $redis_password = lookup('passwords::redis::master')
 
-    $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '51.195.236.215:6379'})
+    $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '[2a10:6740::6:306]:6379'})
     if lookup('jobrunner::intensive', {'default_value' => false}) {
         $config = 'jobrunner-hi.json.erb'
     } else {
@@ -50,7 +50,7 @@ class mediawiki::jobqueue::runner {
         }
 
         cron { 'managewikis':
-            ensure  => absent,
+            ensure  => present,
             command => '/usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki loginwiki --write >> /var/log/mediawiki/cron/managewikis.log',
             user    => 'www-data',
             minute  => '5',

@@ -177,11 +177,20 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
 
+    exec { 'structurednavigation_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/StructuredNavigation/vendor",
+        cwd         => "${mwpath}/extensions/StructuredNavigation",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/StructuredNavigation",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
     host { 'registry.npmjs.org':
         ip => '2606:4700::6810:1723',
     }
 
-    include ::nodejs
     exec { 'femiwiki_npm':
         command     => 'npm install --no-optional --only=production',
         creates     => "${mwpath}/skins/Femiwiki/node_modules",

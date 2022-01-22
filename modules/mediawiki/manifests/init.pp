@@ -13,6 +13,7 @@ class mediawiki(
     include mediawiki::logging
     include mediawiki::php
     include mediawiki::monitoring
+    include ::nodejs
 
     if lookup(jobrunner) {
         include mediawiki::jobqueue::runner
