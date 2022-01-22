@@ -1,27 +1,27 @@
 # This is the VCL file for Varnish, adjusted for Miraheze's needs.
-# It was mostly written by Southparkfan, with some stuff by Wikimedia.
-
-# Credits go to Southparkfan and the contributors of Wikimedia's Varnish configuration.
-# See their Puppet repo (https://github.com/wikimedia/puppet)
-# for the LICENSE.
+# It was originally written by Southparkfan in 2015, but rewritten in 2022 by John.
+# Some material used is inspired by the Wikimedia Foundation's configuration files.
+# Their material and license is available at https://github.com/wikimedia/puppet
 
 # Marker to tell the VCL compiler that this VCL has been adapted to the
 # new 4.1 format.
 vcl 4.1;
 
+# Import some modules used
 import directors;
 import std;
 import vsthrottle;
 
+# MediaWiki configuration
 probe mwhealth {
 	.request = "GET /wiki/Main_Page HTTP/1.1"
 		"Host: login.miraheze.org"
 		"User-Agent: Varnish healthcheck"
 		"Connection: close";
-	# Check each 10s
-	.interval = 10s;
-	# May not take longer than 8s to load. Ideally this should be lowered, but sometimes latency to the NL servers could suck.
-	.timeout = 30s;
+	# Check each <%= @interval_check %>s
+	.interval = <%= @interval_check %>s;
+	# <%= @interval_timeout %>s should be our upper limit for responding to a fair light web request
+	.timeout = <%= @interval_timeout %>s;
 	# At least 4 out of 5 checks must be successful
 	# to mark the backend as healthy
 	.window = 5;
@@ -29,189 +29,65 @@ probe mwhealth {
 	.expected_response = 200;
 }
 
-# MEDIAWIKI
-backend mw101 {
+<%- @backends.each_pair do | name, property | -%>
+backend <%= name %> {
 	.host = "127.0.0.1";
-	.port = "8094";
-	.probe = mwhealth;
+	.port = "<%= property['port'] %>";
+<%- if property['probe'] -%>
+	.probe = <%= property['probe'] %>;
+<%- end -%>
+<%- end -%>
 }
 
-backend mw102 {
-	.host = "127.0.0.1";
-	.port = "8095";
-	.probe = mwhealth;
-}
-
-backend mw111 {
-	.host = "127.0.0.1";
-	.port = "8096";
-	.probe = mwhealth;
-}
-
-backend mw112 {
-	.host = "127.0.0.1";
-	.port = "8097";
-	.probe = mwhealth;
-}
-
-backend mw121 {
-	.host = "127.0.0.1";
-	.port = "8098";
-	.probe = mwhealth;
-}
-
-backend mw122 {
-	.host = "127.0.0.1";
-	.port = "8099";
-	.probe = mwhealth;
-}
-
-# to be used for acme/letsencrypt only
-backend mwtask111 {
-	.host = "127.0.0.1";
-	.port = "8100";
-}
-
-# test mediawiki backend with out health check
-# to be used only by our miraheze debug plugin
-
-backend mw101_test {
-	.host = "127.0.0.1";
-	.port = "8094";
-}
-
-backend mw102_test {
-	.host = "127.0.0.1";
-	.port = "8095";
-}
-
-backend mw111_test {
-	.host = "127.0.0.1";
-	.port = "8096";
-}
-
-backend mw112_test {
-	.host = "127.0.0.1";
-	.port = "8097";
-}
-
-backend mw121_test {
-	.host = "127.0.0.1";
-	.port = "8098";
-}
-
-backend mw122_test {
-	.host = "127.0.0.1";
-	.port = "8099";
-}
-
-backend test101 {
-	.host = "127.0.0.1";
-	.port = "8101";
-}
-
-# end test backend
-# misc services
-
-backend mon111 {
-	.host = "127.0.0.1";
-	.port = "8300";
-}
-
-backend phab121 {
-	.host = "127.0.0.1";
-	.port = "8301";
-}
-
-backend mail121 {
-	.host = "127.0.0.1";
-	.port = "8302";
-}
-
+# Initialise vcl
 sub vcl_init {
 	new mediawiki = directors.random();
-	mediawiki.add_backend(mw101, 100);
-	mediawiki.add_backend(mw102, 100);
-	mediawiki.add_backend(mw111, 100);
-	mediawiki.add_backend(mw112, 100);
-	mediawiki.add_backend(mw121, 100);
-	mediawiki.add_backend(mw122, 100);
+<%- @backend.each do | backend | -%>
+	mediawiki.add_backend(<%= backend %>, 1);
+<%- end -%>
 }
 
-
+# Purge ACL
 acl purge {
-	"localhost";
-	# mw101
-	"2a10:6740::6:107";
-	# mw102
-	"2a10:6740::6:108";
-	# mw111
-	"2a10:6740::6:206";
-	# mw112
-	"2a10:6740::6:207";
-	# mw121
-	"2a10:6740::6:309";
-	# mw122
-	"2a10:6740::6:310";
-	# mwtask111
-	"2a10:6740::6:208";
-	# test101
-	"2a10:6740::6:109";
-	# mon111
-	"2a10:6740::6:205";
-	# phab121
-	"2a10:6740::6:311";
-	# mail121
-	"2a10:6740::6:307";
+	"localhost"
+	# IPv6
+	"2a10:6740::6/64"
+	# IPv4
+	"31.24.105.128/28"
 }
 
-sub mw_stash_cookie {
+# Cookie handling logic
+sub evaluate_cookie {
+	# Replace all session/token values with a non-unique global value for caching purposes.
 	if (req.restarts == 0) {
-		unset req.http.Cookie;
+		unset req.http.X-Orig-Cookie;
+		if (req.http.Cookie) {
+			set req.http.X-Orig-Cookie = req.http.Cookie;
+			if (req.http.Cookie ~ "([Ss]ession|Token)=") {
+				set req.http.Cookie = "Token=1";
+			} else {
+				unset req.http.Cookie;
+			}
+		}
 	}
 }
 
-sub mw_evaluate_cookie {
-	if (req.http.Cookie ~ "([sS]ession|Token|mf_useformat|stopMobileRedirect)=" 
-		&& req.url !~ "^/w/load\.php"
-		# FIXME: Can this just be req.http.Host !~ "static.miraheze.org"?
-		&& req.url !~ "^/.*wiki/(thumb/)?[0-9a-f]/[0-9a-f]{1,2}/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)$"
-		&& req.url !~ "^/w/(skins|resources|extensions)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=?)?$"
-		&& req.url !~ "^/(wiki/?)?$"
-	) {
-		# To prevent issues, we do not want vcl_backend_fetch to add ?useformat=mobile
-		# when the user directly contacts the backend. The backend will directly listen to the cookies
-		# the user sets anyway, the hack in vcl_backend_fetch is only for users that are not logged in.
-		set req.http.X-Use-Mobile = "0";
-		return (pass);
-	} else {
-		# These resources can be cached regardless of cookie value, remove cookie
-		# to avoid passing requests to the backend.
-		call mw_stash_cookie;
-	}
-}
-
-sub mw_identify_device {
-	# Used in vcl_backend_fetch and vcl_hash
-	set req.http.X-Device = "desktop";
-	
+# Mobile detection logic
+sub mobile_detection {
 	# If the User-Agent matches the regex (this is the official regex used in MobileFrontend for automatic device detection), 
 	# and the cookie does NOT explicitly state the user does not want the mobile version, we
 	# set X-Device to phone-tablet. This will make vcl_backend_fetch add ?useformat=mobile to the URL sent to the backend.
 	if (req.http.User-Agent ~ "(?i)(mobi|240x240|240x320|320x320|alcatel|android|audiovox|bada|benq|blackberry|cdm-|compal-|docomo|ericsson|hiptop|htc[-_]|huawei|ipod|kddi-|kindle|meego|midp|mitsu|mmp\/|mot-|motor|ngm_|nintendo|opera.m|palm|panasonic|philips|phone|playstation|portalmmm|sagem-|samsung|sanyo|sec-|semc-browser|sendo|sharp|silk|softbank|symbian|teleca|up.browser|vodafone|webos)" && req.http.Cookie !~ "(stopMobileRedirect=true|mf_useformat=desktop)") {
 		set req.http.X-Device = "phone-tablet";
 
-		# In vcl_fetch we'll decide in which situations we should actually do something with this.
+		# In vcl_backend_fetch we'll decide in which situations we should actually do something with this.
 		set req.http.X-Use-Mobile = "1";
-	}
+	} else {
+		set req.http.X-Device = "desktop";
 }
 
-sub mw_rate_limit {
-	if (req.http.User-Agent ~ "http://mj12bot.com/") {
-		if (vsthrottle.is_denied(req.http.User-Agent, 1, 10s)) {
-			return (synth(429, "Bot Rate Limit Exceeded - Contact sre[at]miraheze[dot]org"));
-		}
-	}
+# Rate limiting logic
+sub rate_limit {
 	# Allow higher limits for static.mh.o, we can handle more of those requests
 	if (req.http.Host == "static.miraheze.org") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
@@ -224,14 +100,6 @@ sub mw_rate_limit {
 			(req.url ~ "^/wiki" || req.url ~ "^/w/(api|index)\.php")
 			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
-			# Stopgap for Googlebot sending suspicious requests with inpval parameter
-			if (
-				req.http.User-Agent ~ "(?i)Googlebot"
-				&& req.url ~ "inpval"
-			) {
-				return (synth(403, "Forbidden"));
-			}
-
 			if (req.url ~ "^/w/index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
 				# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
 				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
@@ -247,6 +115,7 @@ sub mw_rate_limit {
 	}
 }
 
+# Artificial error handling/redirects within Varnish
 sub vcl_synth {
 	if (resp.status == 752) {
 		set resp.http.Location = resp.reason;
@@ -271,6 +140,7 @@ sub vcl_synth {
 	}
 }
 
+# Purge Handling
 sub recv_purge {
 	if (req.method == "PURGE") {
 		if (!client.ip ~ purge) {
@@ -281,10 +151,8 @@ sub recv_purge {
 	}
 }
 
-sub mw_vcl_recv {
-	call mw_rate_limit;
-	call mw_identify_device;
-
+# Miraheze Debug Logic
+sub miraheze_debug {
 	if (
 		req.url ~ "^/\.well-known" ||
 		req.http.Host == "sslrequest.miraheze.org" ||
@@ -313,67 +181,91 @@ sub mw_vcl_recv {
 	} else if (req.http.X-Miraheze-Debug == "test101.miraheze.org") {
 		set req.backend_hint = test101;
 		return (pass);
-	} else {
-		set req.backend_hint = mediawiki.backend();
 	}
+}
 
+
+# Main MediaWiki Request Handling
+sub mw_request {
+	call rate_limit;
+	call mobile_detection;
+	call miraheze_debug;
+	
+	# Assigning a backend
+	set req.backend_hint = mediawiki.backend();
+
+	# Numerous static.miraheze.org specific code
 	if (req.http.Host == "static.miraheze.org") {
-		// CORS preflight requests
+		# We can do this because static.mh.o should not be capable of serving such requests anyway
+		# This could also increase cache hit rates as Cookies will be stripped entirely
+		unset req.http.Cookie;
+		unset req.http.Authization;
+
+		# Normalise thumb URLs to prevent capitalisation or odd casing duplicating numerous resources
+		set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
+
+		# CORS Prelight
 		if (req.method == "OPTIONS" && req.http.Origin) {
 			return (synth(200, "CORS Preflight"));
 		}
 	}
 
-	# We never want to cache non-GET/HEAD requests.
+	# Don't cache a non-GET or HEAD request
 	if (req.method != "GET" && req.method != "HEAD") {
-		# Zero reason to append ?useformat=true here.
+		# Zero reason to append ?useformat=true here
 		set req.http.X-Use-Mobile = "0";
 		return (pass);
 	}
 
+	# If a user is logged out, do not give them a cached page of them logged in
 	if (req.http.If-Modified-Since && req.http.Cookie ~ "LoggedOut") {
 		unset req.http.If-Modified-Since;
 	}
 
-	# Hosted on local domain and redirects to static.miraheze.org
-	if (req.url ~ "^/sitemaps") {
+	# Don't cache certain things on static
+	if (
+		req.http.Host == "static.miraheze.org" &&
+		(
+			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
+			req.url ~ "^/(.+)wiki/sitemaps" || # Do not cache sitemaps
+			req.url ~ "^/.*wiki/dumps" # Do not cache wiki dumps
+		)
+	) {
 		return (pass);
 	}
 
-	# Don't cache dumps, and such
-	if (req.http.Host == "static.miraheze.org" && (req.url !~ "^/.*wiki" || req.url ~ "^/(.+)wiki/sitemaps" || req.url ~ "^/.*wiki/dumps")) {
-		return (pass);
-	}
-
-	# We can rewrite those to one domain name to increase cache hits!
+	# We can rewrite those to one domain name to increase cache hits
 	if (req.url ~ "^/w/(skins|resources|extensions)/" ) {
 		set req.http.Host = "meta.miraheze.org";
 	}
 
-	# api & rest.php are not safe cached
+	# api & rest.php are not safe when cached
 	if (req.url ~ "^/w/(api|rest).php/.*" ) {
 		return (pass);
 	}
 
+	# A requet via OAuth should not be cached or use a cached response elsewhere
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
 	}
 
+	# GDNSD checks
 	if (req.url ~ "^/healthcheck$") {
 		set req.http.Host = "login.miraheze.org";
 		set req.url = "/wiki/Main_Page";
 		return (pass);
 	}
 
-	call mw_evaluate_cookie;
+	call evaluate_cookie;
 }
 
+# Initial sub route executed on a Varnish request, the heart of everything
 sub vcl_recv {
-	call recv_purge;
+	call recv_purge; # Check purge
 
-	unset req.http.Proxy; # https://httpoxy.org/; CVE-2016-5385
+	unset req.http.Proxy; # https://httpoxy.org/
 
-	# Normalize Accept-Encoding for better cache hit ratio
+	# Normalise Accept-Encoding for better cache hit ratio
 	if (req.http.Accept-Encoding) {
 		if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|ogg)$") {
 			# No point in compressing these
@@ -388,6 +280,7 @@ sub vcl_recv {
 		}
 	}
 
+	# Only cache js files from Matomo
 	if (req.http.Host == "matomo.miraheze.org") {
 		set req.backend_hint = mon111;
 
@@ -399,34 +292,33 @@ sub vcl_recv {
 		}
 	}
 
+	# Do not cache requests from this domain
 	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
 		set req.backend_hint = mon111;
 
-		# Do not cache these services
 		return (pass);
 	}
 
+	# Do not cache requests from this domain
 	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki" ||
             req.http.Host == "blog.miraheze.org") {
 		set req.backend_hint = phab121;
-
-		# Do not cache these services
 		return (pass);
 	}
 
+	# Do not cache requests from this domain
 	if (req.http.Host == "webmail.miraheze.org") {
 		set req.backend_hint = mail121;
-
-		# Do not cache these services
 		return (pass);
 	}
 
 	# MediaWiki specific
-	call mw_vcl_recv;
+	call mw_request;
 
 	return (hash);
 }
 
+# Defines the uniqueness of a request
 sub vcl_hash {
 	# FIXME: try if we can make this ^/wiki/ only?
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
@@ -434,7 +326,9 @@ sub vcl_hash {
 	}
 }
 
+# Initiate a backend fetch
 sub vcl_backend_fetch {
+	# Modify the end of the URL if mobile device
 	if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php(.*)title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1") {
 		if (bereq.url ~ "\?") {
 			set bereq.url = bereq.url + "&useformat=mobile";
@@ -442,20 +336,52 @@ sub vcl_backend_fetch {
 			set bereq.url = bereq.url + "?useformat=mobile";
 		}
 	}
+	
+	# Restore original cookies
+	if (bereq.http.X-Orig-Cookie) {
+		set bereq.http.Cookie = bereq.http.X-Orig-Cookie;
+		unset bereq.http.X-Orig-Cookie;
+	}
 }
 
+# Backend response, defines cacheability
 sub vcl_backend_response {
+	# Cookie magic as we did before
+	if (bereq.http.Cookie ~ "([Ss]ession|Token)=") {
+		set bereq.http.Cookie = "Token=1";
+	} else {
+		unset bereq.http.Cookie;
+	}
+
+	# A hit-for-pass action
 	if (beresp.ttl <= 0s) {
 		set beresp.ttl = 1800s;
 		set beresp.uncacheable = true;
 	}
+	
+	# Distribute caching re-calls where possible
+	if (beresp.ttl >= 60s) {
+		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
+	}
 
+	# Do not cache a backend response if HTTP code is above 400
 	if (beresp.status >= 400) {
 		set beresp.uncacheable = true;
 	}
 
-	if (beresp.http.Set-Cookie) {
-		set beresp.uncacheable = true;
+	# If we have a cookie, we can't cache it, unless we can?
+	# We can cache when cookies are stripped, and no other cookies are present
+	if (
+		bereq.http.Cookie == "Token=1"
+		&& beresp.http.Vary ~ "(?i)(^|,)\s*Cookie\s*(,|$)"
+	) {
+		set beresp.grace = 31s;
+		set beresp.keep = 0s;
+		set beresp.http.X-CDIS = "pass";
+		// HFP
+		return(pass(607s));
+	} elseif (beresp.http.Set-Cookie) {
+		set beresp.uncacheable = true; # We do this just to be safe - but we should probably log this to eliminate it?
 	}
 
 	# Cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
@@ -466,6 +392,7 @@ sub vcl_backend_response {
 	return (deliver);
 }
 
+# Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
 	# We set Access-Control-Allow-Origin to * for all files hosted on
 	# static.miraheze.org. We also set this header for some images hosted
@@ -484,29 +411,38 @@ sub vcl_deliver {
 		}
 	}
 
+	# Client side caching for load.php
 	if (req.url ~ "^/w/load\.php" ) {
 		set resp.http.Age = 0;
 	}
 
+	# Do not index certain URLs
 	if (req.url ~ "^(/w/(api|index|rest)\.php*|/wiki/Special(\:|%3A)(?!WikiForum)).+$") {
 		set resp.http.X-Robots-Tag = "noindex";
 	}
 
+	# Useful debugging information
 	if (obj.hits > 0) {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> HIT (" + obj.hits + ")";
 	} else {
 		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
 	}
 
-	// *** HTTPS deliver code - disable Google ad targeting (FLoC)
-	// See https://github.com/wicg/floc#opting-out-of-computation
+	# Disable Google ad targeting (FLoC)
 	set resp.http.Permissions-Policy = "interest-cohort=()";
 
+	# Content Security Policy
 	set resp.http.Content-Security-Policy = "<%- @csp_whitelist.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+
+	# For a 500 error, do not set cookies
+	if (resp.status >= 500 && resp.http.Set-Cookie) {
+		unset resp.http.Set-Cookie;
+	}
 
 	return (deliver);
 }
 
+# Backend response when an error occurs
 sub vcl_backend_error {
 	set beresp.http.Content-Type = "text/html; charset=utf-8";
 
