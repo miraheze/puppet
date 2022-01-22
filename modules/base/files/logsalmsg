@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $USER = 'root' ]
+if [ "$USER" = "root" ]
 then
   ACTOR=$SUDO_USER
 else
