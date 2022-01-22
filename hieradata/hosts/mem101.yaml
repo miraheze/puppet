@@ -7,7 +7,6 @@ role::memcached::size: 10000
 role::memcached::extended_options: []
 role::memcached::port: 11211
 
-base::firewall::mode: ferm
 puppetserver_hostname: 'puppet111.miraheze.org'
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6

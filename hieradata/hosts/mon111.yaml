@@ -135,4 +135,3 @@ icinga2::globals::reserved:
 nginx::use_graylog: true
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6
-base::firewall::mode: ferm

@@ -18,7 +18,6 @@ mediawiki::default_sync: 'scsvg'
 mediawiki::remote_sync: false
 mediawiki::use_staging: true
 
-base::firewall::mode: ferm
 http_proxy: 'http://bast.miraheze.org:8080'
 gluster_volume: gluster101.miraheze.org:/static
 gluster::only_ipv6: true
