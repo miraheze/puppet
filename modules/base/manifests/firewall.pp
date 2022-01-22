@@ -49,8 +49,9 @@ class base::firewall {
     )
 
     ferm::service { 'ssh':
-        proto => 'tcp',
-        port  => '22',
+        proto  => 'tcp',
+        port   => '22',
+        srange => "(${firewall_bastion_hosts})",
     }
 
     class { '::ulogd': }
