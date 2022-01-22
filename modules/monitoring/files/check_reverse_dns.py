@@ -55,10 +55,17 @@ def get_args():
 
 def check_records(hostname):
     """Check NS and CNAME records for given hostname."""
+    extra_known_tlds = ('for.uz')
     uses_cf_at_root = False
+
     nameservers = []
     domain_parts = tldextract.extract(hostname)
-    root_domain = "{}.{}".format(domain_parts.domain, domain_parts.suffix)
+    root_domain = domain_parts.registered_domain
+
+    if root_domain in extra_known_tlds:
+        extracted = tldextract.extract(domain_parts.subdomain + '.' + domain_parts.suffix)
+        root_domain = extracted.domain + '.' + root_domain
+
     dns_resolver = resolver.Resolver(configure=False)
     dns_resolver.nameservers = ['2606:4700:4700::1111']
 
