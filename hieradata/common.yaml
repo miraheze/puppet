@@ -22,3 +22,48 @@ memcached_servers_1:
   - 2a10:6740::6:105:11211:1
 memcached_servers_2:
   - 2a10:6740::6:308:11211:1
+varnish::backends:
+  mw101:
+    port: 8100
+    probe: mwhealth
+    pool: true
+  mw102:
+    port: 8101
+    probe: mwhealth
+    pool: true
+  mw111:
+    port: 8102
+    probe: mwhealth
+    pool: true
+  mw112:
+    port: 8103
+    probe: mwhealth
+    pool: true
+  mw121:
+    port: 8104
+    probe: mwhealth
+    pool: true
+  mw122:
+    port: 8105
+    probe: mwhealth
+    pool: true
+  mwtask111:
+    port: 8150
+    probe: false
+    pool: false
+  test101:
+    port: 8180
+    probe: false
+    pool: false
+  mail121:
+    port: 8200
+    probe: false
+    pool: false
+  mon111:
+    port: 8201
+    probe: false
+    pool: false
+  phab121:
+    port: 8202
+    probe: false
+    pool: false
