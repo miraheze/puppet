@@ -25,7 +25,6 @@ class mediawiki::packages {
         'libjpeg-dev',
         'libgif-dev',
         'p7zip-full',
-        'vmtouch',
         'xvfb',
         'timidity',
         'librsvg2-bin',
