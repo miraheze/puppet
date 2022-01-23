@@ -13,6 +13,8 @@ command_timeout=60
 connection_timeout=300
 # allow_weak_random_seed=1
 
+include_dir=/etc/nagios/nrpe.d/
+
 # Simplify config with puppet
 command[check_disk]=/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /
 command[check_gluster_disk]=/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /mnt/mediawiki-static
@@ -46,17 +48,6 @@ command[check_glusterd_volume]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/
 command[check_glusterd_client]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfs -c 1:
 # glusterd deamon
 command[check_glusterd]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterd -c 1:
-# check stunnel http
-command[check_stunnel_mw101]=/usr/lib/nagios/plugins/check_http -H localhost:8094
-command[check_stunnel_mw102]=/usr/lib/nagios/plugins/check_http -H localhost:8095
-command[check_stunnel_mw111]=/usr/lib/nagios/plugins/check_http -H localhost:8096
-command[check_stunnel_mw112]=/usr/lib/nagios/plugins/check_http -H localhost:8097
-command[check_stunnel_mw121]=/usr/lib/nagios/plugins/check_http -H localhost:8098
-command[check_stunnel_mw122]=/usr/lib/nagios/plugins/check_http -H localhost:8099
-command[check_stunnel_mwtask111]=/usr/lib/nagios/plugins/check_http -H localhost:8100
-command[check_stunnel_test101]=/usr/lib/nagios/plugins/check_http -H localhost:8101
-command[check_stunnel_mon111]=/usr/lib/nagios/plugins/check_http -H localhost:8300
-command[check_stunnel_phab121]=/usr/lib/nagios/plugins/check_http -H localhost:8301
 command[check_pdns_recursor]=/usr/lib/nagios/plugins/check_dns -s 127.0.0.1 -H miraheze.org
 command[check_smart_sata]=/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sd[a-z] -i ata
 command[check_smart_nvme]=/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/nvme[0-9] -i nvme -l
