@@ -84,6 +84,7 @@ sub mobile_detection {
 		set req.http.X-Use-Mobile = "1";
 	} else {
 		set req.http.X-Device = "desktop";
+	}
 }
 
 # Rate limiting logic
@@ -151,48 +152,25 @@ sub recv_purge {
 	}
 }
 
-# Miraheze Debug Logic
-sub miraheze_debug {
-	if (
-		req.url ~ "^/\.well-known" ||
-		req.http.Host == "sslrequest.miraheze.org" ||
-		req.http.X-Miraheze-Debug == "mwtask111.miraheze.org"
-	) {
-		set req.backend_hint = mwtask111;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw101.miraheze.org") {
-		set req.backend_hint = mw101_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw102.miraheze.org") {
-		set req.backend_hint = mw102_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw111.miraheze.org") {
-		set req.backend_hint = mw111_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw112.miraheze.org") {
-		set req.backend_hint = mw112_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw121.miraheze.org") {
-		set req.backend_hint = mw121_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "mw122.miraheze.org") {
-		set req.backend_hint = mw122_test;
-		return (pass);
-	} else if (req.http.X-Miraheze-Debug == "test101.miraheze.org") {
-		set req.backend_hint = test101;
-		return (pass);
-	}
-}
-
-
 # Main MediaWiki Request Handling
 sub mw_request {
 	call rate_limit;
 	call mobile_detection;
-	call miraheze_debug;
 	
 	# Assigning a backend
-	set req.backend_hint = mediawiki.backend();
+	if (req.http.X-Miraheze-Debug ~ "^(mw|test)[0-9]{3}\.miraheze\.org$") {
+		# mw101.miraheze.org -> mw101, test101.miraheze.org -> test101
+		set req.backend_hint = regsub(req.http.X-Miraheze-Debug, "^((mw|test)[0-9]{3})\.miraheze.org", "\1");
+		return (pass);
+	} elseif (
+		req.url ~ "^/\.well-known" ||
+		req.http.Host == "sslrequest.miraheze.org"
+	) {
+		set req.backend_hint = mwtask111;
+		return (pass);
+	} else {
+		set req.backend_hint = mediawiki.backend();
+	}
 
 	# Numerous static.miraheze.org specific code
 	if (req.http.Host == "static.miraheze.org") {
