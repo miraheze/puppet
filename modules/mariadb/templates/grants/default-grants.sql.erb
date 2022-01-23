@@ -14,15 +14,9 @@ GRANT REPLICATION CLIENT ON *.* TO 'icinga'@'%'
 
 -- Grants for 'exporter'@'localhost'
 
-<% if ['buster'].include? @facts['os']['distro']['codename'] -%>
-GRANT USAGE, PROCESS, REPLICATION CLIENT
-    ON *.* TO 'exporter'@'localhost'
-    IDENTIFIED BY '<%= @exporter_password %>';
-<%- else -%>
 GRANT USAGE, PROCESS, REPLICATION CLIENT, REPLICA MONITOR
     ON *.* TO 'exporter'@'localhost'
     IDENTIFIED BY '<%= @exporter_password %>';
-<%- end -%>
 
 -- Grants for 'replica'@'%'
 
