@@ -18,10 +18,10 @@ probe mwhealth {
 		"Host: login.miraheze.org"
 		"User-Agent: Varnish healthcheck"
 		"Connection: close";
-	# Check each <%= @interval_check %>s
-	.interval = <%= @interval_check %>s;
-	# <%= @interval_timeout %>s should be our upper limit for responding to a fair light web request
-	.timeout = <%= @interval_timeout %>s;
+	# Check each <%= @interval_check %>
+	.interval = <%= @interval_check %>;
+	# <%= @interval_timeout %> should be our upper limit for responding to a fair light web request
+	.timeout = <%= @interval_timeout %>;
 	# At least 4 out of 5 checks must be successful
 	# to mark the backend as healthy
 	.window = 5;
