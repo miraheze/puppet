@@ -9,7 +9,6 @@ class mediawiki::packages {
         'inkscape',
         'fonts-freefont-ttf',
         'ffmpeg',
-        'ffmpeg2theora',
         'locales-all',
         'oggvideotools',
         'libxi-dev',
