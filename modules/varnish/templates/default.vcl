@@ -344,9 +344,11 @@ sub vcl_backend_response {
 		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
 	}
 
-	# Do not cache a backend response if HTTP code is above 400
-	if (beresp.status >= 400) {
+	# Do not cache a backend response if HTTP code is above 400, except a 404, then limit TTL
+	if (beresp.status >= 400 && beresp.status != 404) {
 		set beresp.uncacheable = true;
+	} elseif (beresp.status == 404 && beresp.ttl > "10m") {
+		set beresp.ttl = 10m;
 	}
 
 	# If we have a cookie, we can't cache it, unless we can?
