@@ -29,12 +29,8 @@ class varnish::stunnel4 {
     }
 
     $backends.each_pair | $name, $property | {
-        monitoring::services { "Stunnel HTTP for ${name}":
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => "check_stunnel_${name}",
-                nrpe_timeout => '10s',
-            },
+        monitoring::nrpe { "Stunnel HTTP for ${name}":
+            command => "/usr/lib/nagios/plugins/check_http -H localhost:${property['port']}",
         }
     }
 }
