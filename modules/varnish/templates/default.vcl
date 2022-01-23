@@ -353,10 +353,6 @@ sub vcl_backend_response {
 		bereq.http.Cookie == "Token=1"
 		&& beresp.http.Vary ~ "(?i)(^|,)\s*Cookie\s*(,|$)"
 	) {
-		set beresp.grace = 31s;
-		set beresp.keep = 0s;
-		set beresp.http.X-CDIS = "pass";
-		// HFP
 		return(pass(607s));
 	} elseif (beresp.http.Set-Cookie) {
 		set beresp.uncacheable = true; # We do this just to be safe - but we should probably log this to eliminate it?
