@@ -162,7 +162,7 @@ sub mw_request {
 	# Assigning a backend
 	if (req.http.X-Miraheze-Debug ~ "^(mw|test|mwtask)[0-9]{3}\.miraheze\.org$") {
 		# mw101.miraheze.org -> mw101, test101.miraheze.org -> test101, mwtask101.miraheze.org -> mwtask101
-		set req.backend_hint = regsub(req.http.X-Miraheze-Debug, "^((mw|test)[0-9]{3})\.miraheze.org", "\1");
+		set req.backend_hint = regsub(req.http.X-Miraheze-Debug, "^((mw|test|mwtask)[0-9]{3})\.miraheze.org", "\1");
 		return (pass);
 	} elseif (
 		req.url ~ "^/\.well-known" ||
