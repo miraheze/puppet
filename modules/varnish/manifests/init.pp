@@ -40,6 +40,9 @@ class varnish (
     
     $module_path = get_module_path($module_name)
     $csp_whitelist = loadyaml("${module_path}/data/csp.yaml")
+    $backends = lookup('varnish::backends')
+    $interval_check = lookup('varnish::interval-check')
+    $interval_timeout = lookup('varnish::interval-timeout')
 
     file { '/etc/varnish/default.vcl':
         ensure  => present,
