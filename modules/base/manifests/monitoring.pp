@@ -92,6 +92,9 @@ class base::monitoring {
         },
     }
 
+    # Collect all NRPE command files
+    File <| tag == 'nrpe' |>
+
     if !$facts['is_virtual'] {
         if !empty($facts['disks']['sda']) {
             $type = 'sata'

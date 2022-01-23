@@ -8,8 +8,9 @@ define monitoring::nrpe (
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
-        content => template('monitoring/nrpecheck.erb'),
+        content => template('monitoring/nrpecheck.cfg'),
         notify  => Service['nagios-nrpe-server'],
+        tag     => 'nrpe',
     }
 
     if $ensure == 'present' {

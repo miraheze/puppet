@@ -36,8 +36,8 @@ backend <%= name %> {
 <%- if property['probe'] -%>
 	.probe = <%= property['probe'] %>;
 <%- end -%>
-<%- end -%>
 }
+<%- end -%>
 
 # Initialise vcl
 sub vcl_init {
@@ -51,11 +51,11 @@ sub vcl_init {
 
 # Purge ACL
 acl purge {
-	"localhost"
+	"localhost";
 	# IPv6
-	"2a10:6740::6/64"
+	"2a10:6740::6/64";
 	# IPv4
-	"31.24.105.128/28"
+	"31.24.105.128/28";
 }
 
 # Cookie handling logic
@@ -160,11 +160,7 @@ sub mw_request {
 	call mobile_detection;
 	
 	# Assigning a backend
-	if (req.http.X-Miraheze-Debug ~ "^(mw|test|mwtask)[0-9]{3}\.miraheze\.org$") {
-		# mw101.miraheze.org -> mw101, test101.miraheze.org -> test101, mwtask101.miraheze.org -> mwtask101
-		set req.backend_hint = regsub(req.http.X-Miraheze-Debug, "^((mw|test|mwtask)[0-9]{3})\.miraheze.org", "\1");
-		return (pass);
-	} elseif (
+	if (
 		req.url ~ "^/\.well-known" ||
 		req.http.Host == "sslrequest.miraheze.org"
 	) {
@@ -347,7 +343,7 @@ sub vcl_backend_response {
 	# Do not cache a backend response if HTTP code is above 400, except a 404, then limit TTL
 	if (beresp.status >= 400 && beresp.status != 404) {
 		set beresp.uncacheable = true;
-	} elseif (beresp.status == 404 && beresp.ttl > "10m") {
+	} elseif (beresp.status == 404 && beresp.ttl > 10m) {
 		set beresp.ttl = 10m;
 	}
 
