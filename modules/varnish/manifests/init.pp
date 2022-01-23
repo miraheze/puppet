@@ -1,7 +1,7 @@
 # class: varnish
 class varnish (
     String $cache_file_name = '/srv/varnish/cache_storage.bin',
-    String $cache_file_size = '15G',
+    String $cache_file_size = '22G',
 ) {
     include varnish::nginx
     include varnish::stunnel4
