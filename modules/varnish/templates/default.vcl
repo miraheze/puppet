@@ -126,6 +126,11 @@ sub vcl_synth {
 		return (deliver);
 	}
 
+	if (resp.reason == "healthcheck") {
+		set resp.reason = "OK";
+		synthetic("Varnish is running on <%= @hostname %>");
+	}
+
 	// Handle CORS preflight requests
 	if (
 		req.http.Host == "static.miraheze.org" &&
@@ -240,6 +245,11 @@ sub vcl_recv {
 	call recv_purge; # Check purge
 
 	unset req.http.Proxy; # https://httpoxy.org/
+
+	# Health checks, do not send request any further, if we're up, we can handle it
+	if (req.http.host == "health.miraheze.org" && req.url == "/check") {
+		return (synth(200, "healthcheck"));
+	}
 
 	# Normalise Accept-Encoding for better cache hit ratio
 	if (req.http.Accept-Encoding) {

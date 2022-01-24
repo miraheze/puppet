@@ -243,6 +243,12 @@ class mediawiki(
         require => File['/srv/mediawiki'],
     }
 
+    file { '/srv/mediawiki/healthcheck.php':
+        ensure  => 'present',
+        source  => 'puppet:///modules/mediawiki/healthcheck.php',
+        require => File['/srv/mediawiki'],
+    }
+
     file { '/srv/mediawiki/sitemap.php':
         ensure  => 'present',
         source  => 'puppet:///modules/mediawiki/sitemap.php',

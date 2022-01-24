@@ -119,6 +119,10 @@ server {
 		rewrite ^(.*)$ /robots.php;
 	}
 
+	location = /check {
+		rewrite ^(.*)$ /healthcheck.php;
+	}
+
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
 	}
