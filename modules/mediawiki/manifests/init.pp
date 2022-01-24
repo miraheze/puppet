@@ -146,14 +146,6 @@ class mediawiki(
         require => File['/srv/mediawiki/config'],
     }
 
-    cron { 'vmtouch':
-        ensure  => absent,
-        command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
-        user    => 'root',
-        minute  => '0',
-        hour    => '*/1',
-    }
-
     sudo::user { 'www-data_sudo_itself':
         user       => 'www-data',
         privileges => [
