@@ -13,6 +13,7 @@ class mediawiki(
     include mediawiki::logging
     include mediawiki::php
     include mediawiki::monitoring
+    include mediawiki::firejail
     include ::nodejs
 
     if lookup(jobrunner) {
@@ -234,8 +235,6 @@ class mediawiki(
         group  => 'www-data',
         mode   => '0755',
     }
-
-    include ::imagemagick::install
 
     file { '/srv/mediawiki/robots.php':
         ensure  => 'present',
