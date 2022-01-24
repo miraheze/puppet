@@ -1,6 +1,6 @@
 # === Class mediawiki::nginx
 #
-# nginx config using hiera
+# Nginx config using hiera
 class mediawiki::nginx {
     $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
     $php_fpm_sock = 'php/fpm-www.sock'
