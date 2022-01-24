@@ -1,6 +1,8 @@
-# MediaWiki packages
+# === Class mediawiki::packages
+#
+# Packages needed for mediawiki
 class mediawiki::packages {
-    $packages = [
+    ensure_packages([
         'djvulibre-bin',
         'dvipng',
         'firejail',
@@ -30,45 +32,5 @@ class mediawiki::packages {
         'python3-minimal',
         'python3-requests',
         'rsync',
-    ]
-
-    # First installs can trip without this
-    exec {'apt_update_mediawiki_packages':
-        command     => '/usr/bin/apt-get update',
-        refreshonly => true,
-        logoutput   => true,
-    }
-
-    package { $packages:
-        ensure  => present,
-        require => Exec['apt_update_mediawiki_packages'],
-    }
-
-    file { '/usr/local/bin/mediawiki-firejail-convert':
-        source => 'puppet:///modules/mediawiki/mediawiki-firejail-convert.py',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0555',
-    }
-
-    file { '/etc/firejail/mediawiki.local':
-        source => 'puppet:///modules/mediawiki/firejail-mediawiki.profile',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0644',
-    }
-
-    file { '/etc/firejail/mediawiki-converters.profile':
-        source => 'puppet:///modules/mediawiki/mediawiki-converters.profile',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0644',
-    }
-
-    file { '/usr/local/bin/mediawiki-firejail-ghostscript':
-        source => 'puppet:///modules/mediawiki/mediawiki-firejail-ghostscript.py',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0555',
-    }
+    ])
 }
