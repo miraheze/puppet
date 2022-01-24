@@ -19,6 +19,10 @@ class mediawiki::cgroup {
         restart => false,
     }
 
+    systemd::service { 'mw-cgroup':
+        ensure  => absent,
+    }
+
     grub::bootparam { 'cgroup_enable':
         value => 'memory',
     }
