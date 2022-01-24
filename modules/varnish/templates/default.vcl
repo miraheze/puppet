@@ -178,7 +178,7 @@ sub mw_request {
 		unset req.http.Authization;
 
 		# Normalise thumb URLs to prevent capitalisation or odd casing duplicating numerous resources
-		set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
+		# set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
 
 		# CORS Prelight
 		if (req.method == "OPTIONS" && req.http.Origin) {
