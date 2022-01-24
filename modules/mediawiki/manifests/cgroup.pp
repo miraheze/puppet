@@ -1,4 +1,4 @@
-# Class: mediawiki::cgroup
+# === Class mediawiki::cgroup
 class mediawiki::cgroup {
     ensure_packages('cgroup-tools')
 
@@ -13,9 +13,9 @@ class mediawiki::cgroup {
         mode   => '0755',
     }
 
-    systemd::service { 'mw-cgroup':
+    systemd::service { 'cgroup':
         ensure  => present,
-        content => systemd_template('mw-cgroup'),
+        content => systemd_template('cgroup'),
         restart => false,
     }
 
