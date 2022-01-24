@@ -15,7 +15,6 @@ dns: false
 mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'skip'
-mediawiki::remote_sync: true
 mediawiki::use_shellbox: false
 memcached_servers_1:
   - 2a10:6740::6:105:11211:1
