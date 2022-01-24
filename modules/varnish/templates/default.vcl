@@ -14,8 +14,8 @@ import vsthrottle;
 
 # MediaWiki configuration
 probe mwhealth {
-	.request = "GET /wiki/Main_Page HTTP/1.1"
-		"Host: login.miraheze.org"
+	.request = "GET /check HTTP/1.1"
+		"Host: health.miraheze.org"
 		"User-Agent: Varnish healthcheck"
 		"Connection: close";
 	# Check each <%= @interval_check %>
@@ -26,7 +26,7 @@ probe mwhealth {
 	# to mark the backend as healthy
 	.window = 5;
 	.threshold = 4;
-	.expected_response = 200;
+	.expected_response = 204;
 }
 
 <%- @backends.each_pair do | name, property | -%>
@@ -222,13 +222,6 @@ sub mw_request {
 
 	# A requet via OAuth should not be cached or use a cached response elsewhere
 	if (req.http.Authorization ~ "OAuth") {
-		return (pass);
-	}
-
-	# GDNSD checks
-	if (req.url ~ "^/healthcheck$") {
-		set req.http.Host = "login.miraheze.org";
-		set req.url = "/wiki/Main_Page";
 		return (pass);
 	}
 
