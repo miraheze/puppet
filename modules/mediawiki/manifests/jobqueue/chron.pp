@@ -1,4 +1,4 @@
-# class: mediawiki::jobqueue::chron
+# === Class mediawiki::jobqueue::chron
 #
 # JobQueue Chron runner on redis masters only
 class mediawiki::jobqueue::chron {
