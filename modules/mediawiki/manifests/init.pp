@@ -13,8 +13,13 @@ class mediawiki(
     include mediawiki::php
     include mediawiki::monitoring
     include mediawiki::firejail
-    include mediawiki::deploy
     include ::nodejs
+
+    if lookup(mediawiki::use_staging) {
+        include mediawiki::deploy
+    } else {
+        include mediawiki::rsync
+    }
 
     if lookup(jobrunner) {
         include mediawiki::jobqueue::runner
