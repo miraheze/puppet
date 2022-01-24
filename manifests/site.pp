@@ -28,6 +28,11 @@ node /^db1[012]1\.miraheze\.org$/ {
 node /^es1[012]1\.miraheze\.org$/ {
     include base
     include role::elasticsearch
+    
+    $es_master = hiera('role::elasticsearch::master', false)
+    if $es_master {
+        include prometheus::es_exporter
+    }
 }
 
 node /^gluster1[012]1\.miraheze\.org$/ {
@@ -39,7 +44,6 @@ node /^gluster1[012]1\.miraheze\.org$/ {
 node 'graylog121.miraheze.org' {
     include base
     include role::graylog
-    include prometheus::es_exporter
 }
 
 node 'jobchron121.miraheze.org' {
