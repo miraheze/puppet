@@ -80,7 +80,7 @@ class mediawiki::deploy {
             owner     => 'www-data',
             group     => 'www-data',
             mode      => '0755',
-            require   => File['/srv/mediawiki'],
+            require   => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
         }
 
         git::clone { 'MediaWiki core':
@@ -94,29 +94,29 @@ class mediawiki::deploy {
             timeout            => '1500',
             depth              => '5',
             recurse_submodules => true,
-            require            => File['/srv/mediawiki'],
+            require            => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
         }
 
         git::clone { 'landing':
-            ensure             => 'latest',
-            directory          => '/srv/mediawiki-staging/landing',
-            origin             => 'https://github.com/miraheze/landing.git',
-            branch             => 'master',
-            owner              => 'www-data',
-            group              => 'www-data',
-            mode               => '0755',
-            require            => File['/srv/mediawiki'],
+            ensure    => 'latest',
+            directory => '/srv/mediawiki-staging/landing',
+            origin    => 'https://github.com/miraheze/landing.git',
+            branch    => 'master',
+            owner     => 'www-data',
+            group     => 'www-data',
+            mode      => '0755',
+            require   => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
         }
 
         git::clone { 'ErrorPages':
-            ensure             => 'latest',
-            directory          => '/srv/mediawiki-staging/ErrorPages',
-            origin             => 'https://github.com/miraheze/ErrorPages.git',
-            branch             => 'master',
-            owner              => 'www-data',
-            group              => 'www-data',
-            mode               => '0755',
-            require            => File['/srv/mediawiki'],
+            ensure    => 'latest',
+            directory => '/srv/mediawiki-staging/ErrorPages',
+            origin    => 'https://github.com/miraheze/ErrorPages.git',
+            branch    => 'master',
+            owner     => 'www-data',
+            group     => 'www-data',
+            mode      => '0755',
+            require   => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
         }
 
         file { '/usr/local/bin/deploy-mediawiki':
