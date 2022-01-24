@@ -1,5 +1,5 @@
+# === Class mediawiki::shellbox
 class mediawiki::shellbox {
-
     ensure_packages('composer')
 
     git::clone { 'shellbox':
