@@ -9,22 +9,25 @@ class mediawiki::rsync {
         system   => true,
         homedir  => '/var/www',
         shell    => '/bin/bash',
+        before   => Service['nginx'],
         ssh_keys => [
             'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy'
         ],
     }
 
     file { '/var/www/.ssh':
-        ensure => directory,
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0400',
+        ensure  => directory,
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0400',
+        require => File['/var/www'],
     }
 
     file { '/var/www/.ssh/authorized_keys':
-        ensure => file,
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0400',
+        ensure  => file,
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0400',
+        require => File['/var/www/.ssh'],
     }
 }
