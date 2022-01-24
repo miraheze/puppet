@@ -1,7 +1,7 @@
 # Prometheus Elasticsearch query metrics exporter.
 
 class prometheus::es_exporter {
-    package { 'prometheus-es-exporter':
+    package { 'prometheus-elasticsearch-exporter':
         ensure => present,
     }
 
