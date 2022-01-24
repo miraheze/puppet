@@ -34,7 +34,7 @@ class mediawiki(
 
     file { '/etc/mathoid/config.yaml':
         ensure  => present,
-        source  => 'puppet:///modules/mediawiki/config.yaml',
+        source  => 'puppet:///modules/mediawiki/mathoid_config.yaml',
         require => File['/etc/mathoid'],
     }
 
