@@ -2,6 +2,8 @@
 #
 # Packages needed for mediawiki
 class mediawiki::packages {
+    include imagemagick::install
+
     ensure_packages([
         'djvulibre-bin',
         'dvipng',
