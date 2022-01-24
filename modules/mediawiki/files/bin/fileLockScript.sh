@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/bash
 
 # To run this script do the following fileLockScript.sh <lock_name> "<script>"
 
