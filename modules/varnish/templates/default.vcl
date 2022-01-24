@@ -236,7 +236,7 @@ sub vcl_recv {
 
 	# Health checks, do not send request any further, if we're up, we can handle it
 	if (req.http.host == "health.miraheze.org" && req.url == "/check") {
-		if (std.healthy(mediawiki.backend()) {
+		if (std.healthy(mediawiki.backend())) {
 			return (synth(200));
 		} else {
 			return (synth(503));
