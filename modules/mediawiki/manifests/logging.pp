@@ -1,4 +1,4 @@
-# MediaWiki logging
+# === Class mediawiki::logging
 class mediawiki::logging {
     file { [
         '/var/log/mediawiki',
