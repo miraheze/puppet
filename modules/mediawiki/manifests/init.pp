@@ -3,9 +3,7 @@ class mediawiki(
     Optional[String] $branch = undef,
     Optional[String] $branch_mw_config = undef,
 ) {
-    # Configure cgroups used by MediaWiki
-    class { '::mediawiki::cgroup': }
-
+    include mediawiki::cgroup
     include mediawiki::favicons
     include mediawiki::nginx
     include mediawiki::packages
@@ -13,7 +11,7 @@ class mediawiki(
     include mediawiki::php
     include mediawiki::monitoring
     include mediawiki::firejail
-    include ::nodejs
+    include nodejs
 
     if lookup(mediawiki::use_staging) {
         include mediawiki::deploy
