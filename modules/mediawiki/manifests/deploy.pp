@@ -80,11 +80,11 @@ class mediawiki::deploy {
             owner     => 'www-data',
             group     => 'www-data',
             mode      => '0755',
-            require   => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
+            require   => File['/srv/mediawiki-staging'],
         }
 
         git::clone { 'MediaWiki core':
-            ensure             => present,
+            ensure             => 'present',
             directory          => '/srv/mediawiki-staging/w',
             origin             => 'https://github.com/miraheze/mediawiki.git',
             branch             => $branch,
@@ -94,7 +94,7 @@ class mediawiki::deploy {
             timeout            => '1500',
             depth              => '5',
             recurse_submodules => true,
-            require            => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
+            require            => File['/srv/mediawiki-staging'],
         }
 
         git::clone { 'landing':
@@ -105,7 +105,7 @@ class mediawiki::deploy {
             owner     => 'www-data',
             group     => 'www-data',
             mode      => '0755',
-            require   => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
+            require   => File['/srv/mediawiki-staging'],
         }
 
         git::clone { 'ErrorPages':
@@ -116,7 +116,7 @@ class mediawiki::deploy {
             owner     => 'www-data',
             group     => 'www-data',
             mode      => '0755',
-            require   => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
+            require   => File['/srv/mediawiki-staging'],
         }
 
         file { '/usr/local/bin/deploy-mediawiki':
@@ -137,6 +137,7 @@ class mediawiki::deploy {
             refreshonly => true,
             user        => www-data,
             subscribe   => Git::Clone['MediaWiki config'],
+            require     => File['/srv/mediawiki'],
         }
 
         exec { 'Landing Sync':
@@ -145,6 +146,7 @@ class mediawiki::deploy {
             refreshonly => true,
             user        => www-data,
             subscribe   => Git::Clone['landing'],
+            require     => File['/srv/mediawiki'],
         }
 
         exec { 'ErrorPages Sync':
@@ -153,10 +155,11 @@ class mediawiki::deploy {
             refreshonly => true,
             user        => www-data,
             subscribe   => Git::Clone['ErrorPages'],
+            require     => File['/srv/mediawiki'],
         }
 
         cron { 'l10n-modern-deploy':
-            ensure  => present,
+            ensure  => 'present',
             command => "/usr/local/bin/deploy-mediawiki --l10nupdate --servers=${lookup(mediawiki::default_sync)}",
             user    => 'www-data',
             minute  => '0',
