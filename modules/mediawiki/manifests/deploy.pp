@@ -6,11 +6,12 @@ class mediawiki::deploy {
 
     if lookup(mediawiki::is_canary) {
         file { '/srv/mediawiki-staging/deploykey.pub':
-            ensure => present,
+            ensure  => present,
             content => 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy',
-            owner  => 'www-data',
-            group  => 'www-data',
-            mode   => '0400',
+            owner   => 'www-data',
+            group   => 'www-data',
+            mode    => '0400',
+            before  => File['/usr/local/bin/deploy-mediawiki'],
         }
 
         file { '/srv/mediawiki-staging/deploykey':
@@ -19,21 +20,23 @@ class mediawiki::deploy {
             owner  => 'www-data',
             group  => 'www-data',
             mode   => '0400',
+            before => File['/usr/local/bin/deploy-mediawiki'],
         }
         
         file { '/var/www/.ssh':
-            ensure => directory,
-            owner  => 'www-data',
-            group  => 'www-data',
-            mode   => '0400',
+            ensure  => directory,
+            owner   => 'www-data',
+            group   => 'www-data',
+            mode    => '0400',
+            require => File['/var/www'],
         }
 
         file { '/var/www/.ssh/known_hosts':
-            content   => template('mediawiki/mw-user-known-hosts.erb'),
-            owner     => 'www-data',
-            group     => 'www-data',
-            mode      => '644',
-            require   => File['/var/www/.ssh'],
+            content => template('mediawiki/mw-user-known-hosts.erb'),
+            owner   => 'www-data',
+            group   => 'www-data',
+            mode    => '644',
+            require => File['/var/www/.ssh'],
         }
     }
 
@@ -42,6 +45,20 @@ class mediawiki::deploy {
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0755',
+    }
+
+    file { '/usr/local/bin/deploy-mediawiki':
+        ensure  => 'present',
+        mode    => '0755',
+        source  => 'puppet:///modules/mediawiki/bin/deploy-mediawiki.py',
+        require => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
+    }
+
+    file { '/usr/local/bin/mwupgradetool':
+        ensure  => 'present',
+        mode    => '0755',
+        source  => 'puppet:///modules/mediawiki/bin/mwupgradetool.py',
+        require => File['/usr/local/bin/deploy-mediawiki'],
     }
 
     git::clone { 'MediaWiki config':
@@ -91,25 +108,13 @@ class mediawiki::deploy {
         require   => File['/srv/mediawiki-staging'],
     }
 
-    file { '/usr/local/bin/deploy-mediawiki':
-        ensure => 'present',
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/bin/deploy-mediawiki.py',
-    }
-
-    file { '/usr/local/bin/mwupgradetool':
-        ensure => 'present',
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/bin/mwupgradetool.py',
-    }
-
     exec { 'MediaWiki Config Sync':
         command     => "/usr/local/bin/deploy-mediawiki --config --servers=${lookup(mediawiki::default_sync)}",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
         user        => www-data,
         subscribe   => Git::Clone['MediaWiki config'],
-        require     => File['/srv/mediawiki'],
+        require     => File['/usr/local/bin/deploy-mediawiki'],
     }
 
     exec { 'Landing Sync':
@@ -118,7 +123,7 @@ class mediawiki::deploy {
         refreshonly => true,
         user        => www-data,
         subscribe   => Git::Clone['landing'],
-        require     => File['/srv/mediawiki'],
+        require     => File['/usr/local/bin/deploy-mediawiki'],
     }
 
     exec { 'ErrorPages Sync':
@@ -127,7 +132,7 @@ class mediawiki::deploy {
         refreshonly => true,
         user        => www-data,
         subscribe   => Git::Clone['ErrorPages'],
-        require     => File['/srv/mediawiki'],
+        require     => File['/usr/local/bin/deploy-mediawiki'],
     }
 
     cron { 'l10n-modern-deploy':
@@ -136,5 +141,6 @@ class mediawiki::deploy {
         user    => 'www-data',
         minute  => '0',
         hour    => '23',
+        require => File['/usr/local/bin/deploy-mediawiki'],
     }
 }
