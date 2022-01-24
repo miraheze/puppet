@@ -1,8 +1,7 @@
-# class: mediawiki
+# === Class mediawiki
 class mediawiki(
     Optional[String] $branch = undef,
     Optional[String] $branch_mw_config = undef,
-    Optional[Boolean] $use_memcached = undef,
 ) {
     # Configure cgroups used by MediaWiki
     class { '::mediawiki::cgroup': }
