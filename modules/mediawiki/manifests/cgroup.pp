@@ -1,7 +1,5 @@
 # Class: mediawiki::cgroup
-
 class mediawiki::cgroup {
-
     ensure_packages('cgroup-tools')
 
     # The cgroup-mediawiki-clean script is used as the release_agent
