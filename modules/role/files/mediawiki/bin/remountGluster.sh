@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/bash
 
 # Make sure that the mount is connected and if not remounts.
 
