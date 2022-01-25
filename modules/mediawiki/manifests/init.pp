@@ -10,7 +10,6 @@ class mediawiki(
     include mediawiki::logging
     include mediawiki::php
     include mediawiki::monitoring
-    include mediawiki::firejail
     include nodejs
 
     if lookup(mediawiki::use_staging) {
