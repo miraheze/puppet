@@ -34,4 +34,14 @@ class mediawiki::packages {
         'python3-requests',
         'rsync',
     ])
+
+    if !lookup(mediawiki::use_shellbox) {
+        package {'lilypond':
+            ensure => absent,
+        }
+    }
+
+    package {'ffmpeg2theora':
+        ensure => absent,
+    }
 }
