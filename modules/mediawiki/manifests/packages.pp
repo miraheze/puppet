@@ -3,11 +3,11 @@
 # Packages needed for mediawiki
 class mediawiki::packages {
     include imagemagick::install
+    include mediawiki::firejail
 
     ensure_packages([
         'djvulibre-bin',
         'dvipng',
-        'firejail',
         'ghostscript',
         'htmldoc',
         'inkscape',
@@ -19,7 +19,6 @@ class mediawiki::packages {
         'libglu1-mesa-dev',
         'libglew-dev',
         'libvips-tools',
-        'lilypond',
         'ploticus',
         'poppler-utils',
         'python3-pip',
