@@ -57,7 +57,7 @@ if ( $databasesArray['combi'] ) {
 				if ( substr( $db, -strlen( $suffix ) == $suffix ) ) {
 					$url = $data['u'] ?? 'https://' . substr( $db, 0, -strlen( $suffix ) ) . '.' . $suffixMatch[$suffix];
 
-					if ( !isset( $url ) || !$url ) {
+					if ( !$url ) {
 						continue;
 					}
 
