@@ -1,10 +1,11 @@
 # class: base::packages
 class base::packages {
-    $packages = [
+    ensure_packages([
         'acct',
         'apt-transport-https',
         'coreutils',
         'debian-goodies',
+        'dirmngr',
         'fatrace',
         'git',
         'gzip',
@@ -23,6 +24,7 @@ class base::packages {
         'parted',
         'pigz',
         'python3-distro',
+        'python-is-python3',
         'ruby',
         'ruby-safe-yaml',
         'screen',
@@ -33,26 +35,14 @@ class base::packages {
         'vim',
         'vnstat',
         'wipe',
-    ]
-
-    package { $packages:
-        ensure => present,
-    }
+    ])
 
     package { 'needrestart':
         ensure  => 'purged',
     }
 
-    if os_version('debian >= stretch') {
-        require_package('dirmngr')
-    }
-
-    if os_version('debian >= bullseye') {
-        require_package('python-is-python3')
-    }
-
     # Get rid of this
-    package { [ 'apt-listchanges' ]:
+    package { 'apt-listchanges':
         ensure => absent,
     }
 }
