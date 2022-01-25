@@ -44,4 +44,12 @@ class mediawiki::packages {
     package {'ffmpeg2theora':
         ensure => absent,
     }
+
+    package {'vmtouch':
+        ensure => absent,
+    }
+
+    systemd::service { 'vmtouch':
+        ensure => absent,
+    }
 }
