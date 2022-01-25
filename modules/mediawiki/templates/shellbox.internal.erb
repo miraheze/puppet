@@ -12,10 +12,6 @@ server {
 		fastcgi_pass unix:/run/php/fpm-shellbox.sock;
 	}
 
-	location / {
-		try_files $uri $uri/ =404;
-	}
-
 	location /srv/shellbox/public_html {
 		satisfy any;
 		allow 127.0.0.1;
