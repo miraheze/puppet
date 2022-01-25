@@ -1,8 +1,8 @@
 <?php
 
-define( 'MW_NO_SESSION', 'warn' );
+define( 'MW_NO_SESSION', 1 );
 
-require_once( '/srv/mediawiki/w/includes/WebStart.php' );
+require_once '/srv/mediawiki/w/includes/WebStart.php';
 
 use MediaWiki\MediaWikiServices;
 
