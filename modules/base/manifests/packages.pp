@@ -1,4 +1,4 @@
-# class: base::packages
+# === Class base::packages
 class base::packages {
     ensure_packages([
         'acct',
@@ -38,7 +38,7 @@ class base::packages {
     ])
 
     package { 'needrestart':
-        ensure  => 'purged',
+        ensure => 'purged',
     }
 
     # Get rid of this
