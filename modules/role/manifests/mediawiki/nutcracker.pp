@@ -1,4 +1,4 @@
-# role: mediawiki::nutcracker
+# === Class role::mediawiki::nutcracker
 class role::mediawiki::nutcracker (
     Array[Variant[Stdlib::Host,String]] $memcached_servers_1 = lookup('memcached_servers_1', {'default_value' => []}),
     Array[Variant[Stdlib::Host,String]] $memcached_servers_2 = lookup('memcached_servers_2', {'default_value' => []}),
@@ -42,7 +42,7 @@ class role::mediawiki::nutcracker (
             pools     => $nutcracker_pools,
         }
 
-        systemd::unit{ 'nutcracker':
+        systemd::unit { 'nutcracker':
             content  => "[Service]\nCPUAccounting=yes\n",
             override => true,
         }
