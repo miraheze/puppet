@@ -8,7 +8,6 @@ server {
 	root /srv/mediawiki/landing;
 	index index.php index.html;
 
-
 	if ($http_user_agent ~* "WordPress") {
 		return 403;
 	}
