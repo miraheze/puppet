@@ -1,11 +1,11 @@
 class httpd(
     Array[String] $modules          = [],
-    VMlib::Ensure $legacy_compat     = present,
+    VMlib::Ensure $legacy_compat    = present,
     Enum['daily', 'weekly'] $period = 'daily',
     Integer $rotate                 = 30,
 ) {
     # Package and service. Links is needed for the status page below
-    require_package('apache2', 'links')
+    ensure_packages(['apache2', 'links'])
 
     # Puppet restarts are reloads in apache, as typically that's enough
     service { 'apache2':
