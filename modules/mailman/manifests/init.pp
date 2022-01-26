@@ -11,7 +11,7 @@ class mailman (
 
     include ssl::wildcard
 
-    require_package(['libapache2-mod-uwsgi', 'libapache2-mod-proxy-uwsgi'])
+    ensure_packages(['libapache2-mod-uwsgi', 'libapache2-mod-proxy-uwsgi'])
 
     httpd::site { 'mailman.miraheze.org':
         ensure  => present,
