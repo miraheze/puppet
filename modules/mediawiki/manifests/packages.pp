@@ -40,12 +40,4 @@ class mediawiki::packages {
             ensure => absent,
         }
     }
-
-    package {'ffmpeg2theora':
-        ensure => absent,
-    }
-
-    package {'vmtouch':
-        ensure => absent,
-    }
 }
