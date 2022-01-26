@@ -17,7 +17,7 @@ define httpd::mod_conf(
     String $loadfile     = "${title}.load",
 )
 {
-    require_package('apache2')
+    ensure_packages('apache2')
 
     $flags = os_version('debian >= jessie') ? {
         true    => '-f',
