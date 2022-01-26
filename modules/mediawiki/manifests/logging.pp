@@ -1,4 +1,4 @@
-# MediaWiki logging
+# === Class mediawiki::logging
 class mediawiki::logging {
     file { [
         '/var/log/mediawiki',
@@ -13,11 +13,11 @@ class mediawiki::logging {
 
     logrotate::conf { 'mediawiki_cron_logs':
         ensure => present,
-        source => 'puppet:///modules/mediawiki/mediawiki_cron_logs.logrotate.conf',
+        source => 'puppet:///modules/mediawiki/logging/mediawiki_cron_logs.logrotate.conf',
     }
 
     logrotate::conf { 'mediawiki_debug_logs':
         ensure => present,
-        source => 'puppet:///modules/mediawiki/mediawiki_debug_logs.logrotate.conf',
+        source => 'puppet:///modules/mediawiki/logging/mediawiki_debug_logs.logrotate.conf',
     }
 }

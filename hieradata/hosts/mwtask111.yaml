@@ -14,8 +14,7 @@ mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
 nginx::use_graylog: true
 puppetserver_hostname: 'puppet111.miraheze.org'
 mediawiki::is_canary: true
-mediawiki::default_sync: 'scsvg'
-mediawiki::remote_sync: false
+mediawiki::default_sync: 'all'
 mediawiki::use_staging: true
 
 http_proxy: 'http://bast.miraheze.org:8080'

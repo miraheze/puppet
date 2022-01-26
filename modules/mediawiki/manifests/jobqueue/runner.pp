@@ -1,8 +1,8 @@
-# class: mediawiki::jobqueue::runner
+# === Class mediawiki::jobqueue::runner
 #
 # Defines a jobrunner process for jobrunner selected machine only.
 class mediawiki::jobqueue::runner {
-    require_package('python3-xmltodict')
+    ensure_packages('python3-xmltodict')
 
     git::clone { 'JobRunner':
         ensure    => latest,

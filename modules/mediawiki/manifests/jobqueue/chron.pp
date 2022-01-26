@@ -1,8 +1,8 @@
-# class: mediawiki::jobqueue::chron
+# === Class mediawiki::jobqueue::chron
 #
 # JobQueue Chron runner on redis masters only
 class mediawiki::jobqueue::chron {
-    include ::mediawiki::php
+    include mediawiki::php
 
     git::clone { 'JobRunner':
         ensure    => latest,

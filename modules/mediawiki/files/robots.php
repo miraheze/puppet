@@ -1,8 +1,8 @@
 <?php
 
-define( 'MW_NO_SESSION', 'warn' );
+define( 'MW_NO_SESSION', 1 );
 
-require_once( '/srv/mediawiki/w/includes/WebStart.php' );
+require_once '/srv/mediawiki/w/includes/WebStart.php';
 
 use MediaWiki\MediaWikiServices;
 
@@ -57,7 +57,7 @@ if ( $databasesArray['combi'] ) {
 				if ( substr( $db, -strlen( $suffix ) == $suffix ) ) {
 					$url = $data['u'] ?? 'https://' . substr( $db, 0, -strlen( $suffix ) ) . '.' . $suffixMatch[$suffix];
 
-					if ( !isset( $url ) || !$url ) {
+					if ( !$url ) {
 						continue;
 					}
 

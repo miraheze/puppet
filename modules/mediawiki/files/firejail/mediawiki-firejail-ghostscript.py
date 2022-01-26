@@ -1,9 +1,9 @@
 #! /usr/bin/python3
-# -*- coding: utf-8 -*-
 
 import subprocess
 import sys
 subprocess.call([
     '/usr/bin/firejail',
+    '--quiet',
     '--profile=/etc/firejail/mediawiki-converters.profile',
-    '/usr/bin/convert'] + sys.argv[1:])
+    '/usr/bin/gs'] + sys.argv[1:])

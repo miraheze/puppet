@@ -1,9 +1,13 @@
-# MediaWiki packages
+# === Class mediawiki::packages
+#
+# Packages needed for mediawiki
 class mediawiki::packages {
-    $packages = [
+    include imagemagick::install
+    include mediawiki::firejail
+
+    ensure_packages([
         'djvulibre-bin',
         'dvipng',
-        'firejail',
         'ghostscript',
         'htmldoc',
         'inkscape',
@@ -15,10 +19,9 @@ class mediawiki::packages {
         'libglu1-mesa-dev',
         'libglew-dev',
         'libvips-tools',
-        'lilypond',
         'ploticus',
         'poppler-utils',
-#       'python-pip', # Temporarily remove, not compatible with Debian 11
+        'python3-pip',
         'netpbm',
         'librsvg2-dev',
         'libjpeg-dev',
@@ -30,45 +33,23 @@ class mediawiki::packages {
         'python3-minimal',
         'python3-requests',
         'rsync',
-    ]
+    ])
 
-    # First installs can trip without this
-    exec {'apt_update_mediawiki_packages':
-        command     => '/usr/bin/apt-get update',
-        refreshonly => true,
-        logoutput   => true,
+    if !lookup(mediawiki::use_shellbox) {
+        package {'lilypond':
+            ensure => absent,
+        }
     }
 
-    package { $packages:
-        ensure  => present,
-        require => Exec['apt_update_mediawiki_packages'],
+    package {'ffmpeg2theora':
+        ensure => absent,
     }
 
-    file { '/usr/local/bin/mediawiki-firejail-convert':
-        source => 'puppet:///modules/mediawiki/mediawiki-firejail-convert.py',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0555',
+    package {'vmtouch':
+        ensure => absent,
     }
 
-    file { '/etc/firejail/mediawiki.local':
-        source => 'puppet:///modules/mediawiki/firejail-mediawiki.profile',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0644',
-    }
-
-    file { '/etc/firejail/mediawiki-converters.profile':
-        source => 'puppet:///modules/mediawiki/mediawiki-converters.profile',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0644',
-    }
-
-    file { '/usr/local/bin/mediawiki-firejail-ghostscript':
-        source => 'puppet:///modules/mediawiki/mediawiki-firejail-ghostscript.py',
-        owner  => 'www-data',
-        group  => 'www-data',
-        mode   => '0555',
+    systemd::service { 'vmtouch':
+        ensure => absent,
     }
 }

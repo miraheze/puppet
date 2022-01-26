@@ -63,7 +63,7 @@ location ^~ /wiki/ {
 }
 
 location ~ ^/m/(.*) {
-	return 301 /w/index.php?title=Special:UrlRedirector/$1;
+	return 301 /wiki/Special:UrlRedirector/$1;
 }
 	
 location /sitemaps/ {

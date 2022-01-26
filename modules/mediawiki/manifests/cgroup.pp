@@ -1,7 +1,5 @@
-# Class: mediawiki::cgroup
-
+# === Class mediawiki::cgroup
 class mediawiki::cgroup {
-
     ensure_packages('cgroup-tools')
 
     # The cgroup-mediawiki-clean script is used as the release_agent
@@ -15,10 +13,14 @@ class mediawiki::cgroup {
         mode   => '0755',
     }
 
-    systemd::service { 'mw-cgroup':
+    systemd::service { 'cgroup':
         ensure  => present,
-        content => systemd_template('mw-cgroup'),
+        content => systemd_template('cgroup'),
         restart => false,
+    }
+
+    systemd::service { 'mw-cgroup':
+        ensure  => absent,
     }
 
     grub::bootparam { 'cgroup_enable':

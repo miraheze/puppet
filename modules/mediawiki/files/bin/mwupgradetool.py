@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import os
 import requests
 canary = 'mwtask111'

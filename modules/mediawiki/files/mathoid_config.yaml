@@ -10,17 +10,6 @@ worker_heap_limit_mb: 160
 # Logger info
 logging:
   level: warn
-#  streams:
-#  # Use gelf-stream -> logstash
-#  - type: gelf
-#    host: logstash1003.eqiad.wmnet
-#    port: 12201
-
-# Statsd metrics reporter
-# metrics:
-  #type: log
-  #host: localhost
-  #port: 8125
 
 services:
   - name: mathoid

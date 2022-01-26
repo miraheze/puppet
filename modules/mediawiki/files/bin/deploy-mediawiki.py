@@ -1,4 +1,5 @@
 #! /usr/bin/python3
+
 import argparse
 import os
 import time
@@ -105,7 +106,7 @@ def run(args, start):
     if args.extensionlist:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki'))
         rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
-    if args.servers == 'scsvg':
+    if args.servers == 'all':
         serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
         sync = True
     elif args.servers == 'skip':
@@ -194,8 +195,4 @@ if __name__ == '__main__':
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
 
-    args = parser.parse_args()
-    if args.servers == 'all':
-        args.servers = 'scsvg'
-
-    run(args, start)
+    run(parser.parse_args(), start)
