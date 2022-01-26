@@ -48,8 +48,4 @@ class mediawiki::packages {
     package {'vmtouch':
         ensure => absent,
     }
-
-    systemd::service { 'vmtouch':
-        ensure => absent,
-    }
 }
