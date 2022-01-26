@@ -29,7 +29,6 @@ class mediawiki::deploy {
             group   => 'www-data',
             mode    => '0400',
             before  => File['/usr/local/bin/deploy-mediawiki'],
-            require => File['/var/www'],
         }
 
         file { '/var/www/.ssh/known_hosts':
