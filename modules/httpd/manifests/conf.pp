@@ -53,7 +53,8 @@ define httpd::conf(
     Optional[String] $replaces              = undef,
     Boolean $monitor                        = false,
 ) {
-    require_package('apache2')
+    ensure_packages('apache2')
+
     if $source == undef and $content == undef and $ensure == 'present' {
         fail('you must provide either "source" or "content", or ensure must be "absent"')
     }
