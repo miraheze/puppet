@@ -5,7 +5,7 @@ class roundcubemail (
     String $db_user_password      = undef,
     String $roundcubemail_des_key = undef,
 ) {
-    include ::nodejs
+    include nodejs
 
     $php_version = lookup('php::php_version', {'default_value' => '7.3'})
     if !defined(Class['php::php_fpm']) {
@@ -40,7 +40,7 @@ class roundcubemail (
         }
     }
 
-    require_package("php${php_version}-pspell")
+    ensure_packages("php${php_version}-pspell")
 
     git::clone { 'roundcubemail':
         directory          => '/srv/roundcubemail',
