@@ -21,6 +21,7 @@ class mediawiki::cgroup {
 
     systemd::service { 'mw-cgroup':
         ensure  => absent,
+        content => systemd_template('cgroup'),
     }
 
     grub::bootparam { 'cgroup_enable':
