@@ -11,7 +11,12 @@ class mailman (
 
     include ssl::wildcard
 
-    ensure_packages(['libapache2-mod-uwsgi', 'libapache2-mod-proxy-uwsgi'])
+    ensure_packages([
+        'libapache2-mod-uwsgi',
+        'libapache2-mod-proxy-uwsgi',
+        'python-mysqldb',
+        'python-pymysql',
+    ])
 
     httpd::site { 'mailman.miraheze.org':
         ensure  => present,
@@ -33,8 +38,6 @@ class mailman (
         release    => 'stretch-backports',
         packages   => 'mailman3-full',
     }
-    
-    require_package(['python-pymysql', 'python-mysqldb'])
 
     package { 'mailman3-full':
         ensure          => installed,
