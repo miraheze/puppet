@@ -23,7 +23,8 @@ class httpd::mpm(
     Enum['prefork', 'event', 'worker'] $mpm = 'worker',
     Optional[String] $source = undef,
 ) {
-    require_package('apache2')
+    ensure_packages('apache2')
+
     $selected_mod = "mpm_${mpm}"
     $available_mpms = ['prefork', 'worker', 'event']
 
