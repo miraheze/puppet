@@ -13,7 +13,7 @@
 #
 # [*fpm_pool_config*]
 #
-# [*version*] Contains the php version you want to use, defaults to php 7.2.
+# [*version*] Contains the php version you want to use, defaults to php 7.4.
 #
 class php::php_fpm(
     Boolean $enable_fpm                       = lookup('php::enable_fpm', {'default_value' => true}),
@@ -22,11 +22,10 @@ class php::php_fpm(
     Hash $fpm_config                          = {},
     Integer $fpm_min_child                    = 4,
     Hash $fpm_pool_config                     = {},
-    VMlib::Php_version $version               = '7.2',
+    VMlib::Php_version $version               = '7.4',
     Float $fpm_workers_multiplier             = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $fpm_min_restart_threshold        = 1,
 ) {
-
     $base_config_cli = {
         'include_path'           => '".:/usr/share/php"',
         'error_log'              => 'syslog',
@@ -148,7 +147,13 @@ class php::php_fpm(
             priority => 10,
     }
 
-    require_package("php${version}-dev", 'php-mail', 'php-mail-mime', 'php-mailparse', 'php-pear')
+    ensure_packages([
+        "php${version}-dev",
+        'php-mail',
+        'php-mail-mime',
+        'php-mailparse',
+        'php-pear'
+    ])
 
     # XML
     php::extension{ [
