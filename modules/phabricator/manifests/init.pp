@@ -1,7 +1,6 @@
 # class: phabricator
 class phabricator {
-
-    require_package(['python3-pygments', 'subversion'])
+    ensure_packages(['python3-pygments', 'subversion'])
 
     ensure_resource_duplicate('class', 'php::php_fpm', {
         'config'  => {
