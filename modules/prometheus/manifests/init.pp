@@ -1,7 +1,6 @@
 # class: prometheus
 class prometheus {
-
-    require_package('prometheus')
+    ensure_packages('prometheus')
 
     file { '/etc/default/prometheus':
         source  => 'puppet:///modules/prometheus/prometheus.default.conf',
