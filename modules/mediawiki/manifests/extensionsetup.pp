@@ -186,16 +186,6 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
 
-    exec { 'elastica_composer':
-        command     => $composer,
-        creates     => "${mwpath}/extensions/Elastica/vendor",
-        cwd         => "${mwpath}/extensions/Elastica",
-        path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/Elastica",
-        user        => 'www-data',
-        require     => Git::Clone['MediaWiki core'],
-    }
-
     host { 'registry.npmjs.org':
         ip => '2606:4700::6810:1723',
     }
