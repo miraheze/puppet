@@ -166,6 +166,10 @@ sub mw_request {
 	) {
 		set req.backend_hint = mwtask111;
 		return (pass);
+<%- @backends.each_pair do | name, property | -%>
+	} elseif (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
+		set req.backend_hint = <%= name %>;
+<%- end -%>
 	} else {
 		set req.backend_hint = mediawiki.backend();
 	}
