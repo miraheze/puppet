@@ -10,7 +10,7 @@ repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': '
 
 
 def check_up(server):
-    up = True
+    up = False
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
     req = requests.get('https://meta.miraheze.org/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
     if req.status_code == 200 and 'miraheze' in req.text and server in req.headers['X-Served-By']:
