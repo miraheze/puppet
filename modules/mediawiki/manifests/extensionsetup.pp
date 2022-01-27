@@ -186,6 +186,16 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
 
+    exec { 'semanticmediawiki_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/SemanticMediaWiki/vendor",
+        cwd         => "${mwpath}/extensions/SemanticMediaWiki",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/SemanticMediaWiki",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
     host { 'registry.npmjs.org':
         ip => '2606:4700::6810:1723',
     }
