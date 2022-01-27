@@ -169,6 +169,7 @@ sub mw_request {
 <%- @backends.each_pair do | name, property | -%>
 	} elseif (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
 		set req.backend_hint = <%= name %>;
+		return (pass);
 <%- end -%>
 	} else {
 		set req.backend_hint = mediawiki.backend();
@@ -252,9 +253,9 @@ sub vcl_recv {
 		if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|ogg)$") {
 			# No point in compressing these
 			unset req.http.Accept-Encoding;
-		} elsif (req.http.Accept-Encoding ~ "gzip") {
+		} elseif (req.http.Accept-Encoding ~ "gzip") {
 			set req.http.Accept-Encoding = "gzip";
-		} elsif (req.http.Accept-Encoding ~ "deflate") {
+		} elseif (req.http.Accept-Encoding ~ "deflate") {
 			set req.http.Accept-Encoding = "deflate";
 		} else {
 			# We don't understand this
@@ -367,6 +368,15 @@ sub vcl_backend_response {
 	# Cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
 	if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
 		set beresp.ttl = 43200s;
+	}
+
+	# Cache non-modified robots.txt for 12 hours, otherwise 5 minutes
+	if (bereq.url == "/robots.txt") {
+		if (beresp.http.X-Miraheze-Robots == "Custom") {
+			set beresp.ttl = 300s;
+		} else {
+			set beresp.ttl = 43200s;
+		}
 	}
 
 	return (deliver);

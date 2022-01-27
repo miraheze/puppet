@@ -16,6 +16,7 @@ $databasesArray = file_exists( $databaseJsonFileName ) ?
 	json_decode( file_get_contents( $databaseJsonFileName ), true ) : [ 'combi' => [] ];
 
 header( 'Content-Type: text/plain; charset=utf-8' );
+header( 'X-Miraheze-Robots: Default' );
 
 # Throttle YandexBot
 echo "# Throttle YandexBot" . "\r\n";
@@ -79,6 +80,8 @@ if ( $databasesArray['combi'] ) {
 }
 
 if ( $page->exists() ) {
+	header( 'X-Miraheze-Robots: Custom' );
+
 	echo "# -- BEGIN CUSTOM -- #\r\n\n";
 
 	$content = $page->getContent();
