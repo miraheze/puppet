@@ -1,4 +1,5 @@
 #! /usr/bin/python3
+
 import argparse
 import os
 import time
@@ -72,9 +73,7 @@ def run(args, start):
         exitcodes.append(os.system(f'sudo -u www-data rsync -r --delete {rsyncparams} --exclude=".*" {_get_staging_path("config")}* {_get_deployed_path("config")}'))
         rsyncpaths.append(_get_deployed_path('config'))
     if args.world:
-        proxy = ''
-        if args.proxy:
-            proxy = 'http_proxy=http://bast.miraheze.org:8080'  # read git config you stupid software
+        proxy = 'http_proxy=http://bast.miraheze.org:8080'
         os.chdir(_get_staging_path('world'))
         exitcodes.append(os.system(f'sudo -u www-data {proxy} composer install --no-dev --quiet'))
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki'))
@@ -107,10 +106,7 @@ def run(args, start):
     if args.extensionlist:
         exitcodes.append(os.system('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki'))
         rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
-    if args.servers == 'ovlon':
-        serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
-        sync = True
-    elif args.servers == 'scsvg':
+    if args.servers == 'all':
         serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
         sync = True
     elif args.servers == 'skip':
@@ -198,10 +194,5 @@ if __name__ == '__main__':
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
-    parser.add_argument('--use-proxy', dest='proxy', action='store_true')
 
-    args = parser.parse_args()
-    if args.servers == 'all':
-        args.servers = 'ovlon'  # ovlon is active now
-
-    run(args, start)
+    run(parser.parse_args(), start)

@@ -1,5 +1,0 @@
-puppetserver_hostname: 'puppet3.miraheze.org'
-
-base::firewall::mode: ferm
-elasticsearch::api_host: localhost
-elasticsearch::api_protocol: http

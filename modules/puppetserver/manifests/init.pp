@@ -225,6 +225,10 @@ class puppetserver(
 
     $geoip_key = lookup('passwords::geoipupdatekey')
 
+    file { '/usr/share/GeoIP':
+        ensure => directory,
+    }
+
     file { '/root/geoipupdate':
         ensure  => present,
         content => template('puppetserver/geoipupdate'),

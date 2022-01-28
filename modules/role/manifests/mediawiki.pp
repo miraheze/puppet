@@ -1,4 +1,4 @@
-# role: mediawiki
+# === Class role::mediawiki
 class role::mediawiki (
     Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
 ) {
@@ -30,21 +30,6 @@ class role::mediawiki (
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
-
-        # temp
-        ferm::service { 'http temp':
-            proto   => 'tcp',
-            port    => '80',
-            srange  => '(2001:41d0:801:2000::4c25 2001:41d0:801:2000::1b80 2607:5300:201:3100::929a 2607:5300:201:3100::5ebc 2a10:6740::6:107 2a10:6740::6:108 2a10:6740::6:206 2a10:6740::6:207 2a10:6740::6:309 2a10:6740::6:310 2a10:6740::6:109 2a10:6740::6:205)',
-            notrack => true,
-        }
-
-        ferm::service { 'https temp':
-            proto    => 'tcp',
-            port    => '443',
-            srange  => '(2001:41d0:801:2000::4c25 2001:41d0:801:2000::1b80 2607:5300:201:3100::929a 2607:5300:201:3100::5ebc 2a10:6740::6:107 2a10:6740::6:108 2a10:6740::6:206 2a10:6740::6:207 2a10:6740::6:309 2a10:6740::6:310 2a10:6740::6:109 2a10:6740::6:205)',
-            notrack => true,
-        }
     } else {
         ferm::service { 'http':
             proto   => 'tcp',
@@ -68,7 +53,7 @@ class role::mediawiki (
     if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
         gluster::mount { '/mnt/mediawiki-static':
           ensure    => mounted,
-          volume    => lookup('gluster_volume', {'default_value' => 'gluster4.miraheze.org:/static'}),
+          volume    => lookup('gluster_volume', {'default_value' => 'gluster111.miraheze.org:/static'}),
         }
     }
 

@@ -1,8 +1,8 @@
-# class: mediawiki::jobqueue::chron
+# === Class mediawiki::jobqueue::chron
 #
 # JobQueue Chron runner on redis masters only
 class mediawiki::jobqueue::chron {
-    include ::mediawiki::php
+    include mediawiki::php
 
     git::clone { 'JobRunner':
         ensure    => latest,
@@ -11,7 +11,7 @@ class mediawiki::jobqueue::chron {
     }
 
     $redis_password = lookup('passwords::redis::master')
-    $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '51.195.236.215:6379'})
+    $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '[2a10:6740::6:306]:6379'})
     file { '/srv/jobrunner/jobrunner.json':
         ensure  => present,
         content => template('mediawiki/jobrunner.json.erb'),

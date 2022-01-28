@@ -1,9 +1,7 @@
 nginx::use_graylog: false
 puppetserver_hostname: 'puppet111.miraheze.org'
 
-base::firewall::mode: ferm
 http_proxy: 'http://bast.miraheze.org:8080'
 php::php_version: '7.4'
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6
- 

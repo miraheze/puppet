@@ -1,4 +1,10 @@
+# === Class mediawiki::shellbox
 class mediawiki::shellbox {
+    ensure_packages('composer')
+
+    # only install lilypond in sandbox
+    ensure_packages('lilypond')
+
     git::clone { 'shellbox':
         ensure    => present,
         directory => '/srv/shellbox',
@@ -22,6 +28,13 @@ class mediawiki::shellbox {
     file { '/srv/shellbox/config':
         ensure  => directory,
         require => Git::Clone['shellbox'],
+    }
+
+    file { '/var/tmp/shellbox':
+        ensure => directory,
+        owner  => 'shellbox',
+        group  => 'shellbox',
+        mode   => '0770',
     }
 
     file { '/srv/shellbox/config/config.json':

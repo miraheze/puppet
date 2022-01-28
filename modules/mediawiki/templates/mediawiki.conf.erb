@@ -8,7 +8,6 @@ server {
 	root /srv/mediawiki/landing;
 	index index.php index.html;
 
-
 	if ($http_user_agent ~* "WordPress") {
 		return 403;
 	}
@@ -117,6 +116,10 @@ server {
 
 	location = /robots.txt {
 		rewrite ^(.*)$ /robots.php;
+	}
+
+	location = /check {
+		rewrite ^(.*)$ /healthcheck.php;
 	}
 
 	location = /sitemap.xml {

@@ -1,9 +1,9 @@
-# mediawiki::php
+# === Class mediawiki::php
 class mediawiki::php (
     Integer $php_fpm_childs            = lookup('mediawiki::php::fpm::childs', {'default_value' => 26}),
     Integer $fpm_min_restart_threshold = lookup('mediawiki::php::fpm::fpm_min_restart_threshold', {'default_value' => 6}),
     Integer $fpm_max_memory            = lookup('mediawiki::php::fpm::fpm_max_memory', {'default_value' => 512}),
-    VMlib::Php_version $php_version    = lookup('php::php_version', {'default_value' => '7.2'}),
+    VMlib::Php_version $php_version    = lookup('php::php_version', {'default_value' => '7.4'}),
     Boolean $use_tideways              = lookup('mediawiki::php::use_tideways', {'default_value' => false}),
 ) {
     
@@ -25,7 +25,7 @@ class mediawiki::php (
                     'max_accelerated_files'   => 24000,
                     'max_wasted_percentage'   => 10,
                     'validate_timestamps'     => 1,
-                    'revalidate_freq'         => 30,
+                    'revalidate_freq'         => 10,
                 },
                 'enable_dl'           => 0,
                 'post_max_size'       => '250M',
@@ -34,7 +34,6 @@ class mediawiki::php (
                 'track_errors'        => 'Off',
                 'upload_max_filesize' => '250M',
                 'variables_order'     => 'GPCS',
-                'auto_prepend_file' => '/srv/mediawiki/config/PhpAutoPrepend.php',
             },
             fpm_min_child => $php_fpm_childs,
             fpm_min_restart_threshold => $fpm_min_restart_threshold,
@@ -42,7 +41,7 @@ class mediawiki::php (
         }
     }
 
-    $profiling_ensure =  $use_tideways ? {
+    $profiling_ensure = $use_tideways ? {
         true    => 'present',
         default => 'absent'
     }

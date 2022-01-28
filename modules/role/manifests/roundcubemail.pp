@@ -20,7 +20,7 @@
 #   A key used for encryption purposes
 #
 class role::roundcubemail (
-    String $db_host               = lookup('roundcubemail_db_host', {'default_value' => 'db13.miraheze.org'}),
+    String $db_host               = lookup('roundcubemail_db_host', {'default_value' => 'db121.miraheze.org'}),
     String $db_name               = lookup('roundcubemail_db_name', {'default_value' => 'roundcubemail'}),
     String $db_user_name          = lookup('roundcubemail_user_name', {'default_value' => 'roundcubemail'}),
     String $db_user_password      = lookup('passwords::roundcubemail'),
@@ -35,18 +35,29 @@ class role::roundcubemail (
         roundcubemail_des_key => $roundcubemail_des_key,
     }
 
-    if !defined(Ferm::Service['http']) {
-        ferm::service { 'http':
-            proto => 'tcp',
-            port  => '80',
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
         }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+
+    ferm::service { 'http':
+        proto   => 'tcp',
+        port    => '80',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
     }
 
-    if !defined(Ferm::Service['https']) {
-        ferm::service { 'https':
-            proto => 'tcp',
-            port  => '443',
-        }
+    ferm::service { 'https':
+        proto    => 'tcp',
+        port    => '443',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
     }
 
     motd::role { 'roundcubemail':

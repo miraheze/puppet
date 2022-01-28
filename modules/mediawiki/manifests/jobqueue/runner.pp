@@ -1,8 +1,8 @@
-# class: mediawiki::jobqueue::runner
+# === Class mediawiki::jobqueue::runner
 #
 # Defines a jobrunner process for jobrunner selected machine only.
 class mediawiki::jobqueue::runner {
-    require_package('python3-xmltodict')
+    ensure_packages('python3-xmltodict')
 
     git::clone { 'JobRunner':
         ensure    => latest,
@@ -12,7 +12,7 @@ class mediawiki::jobqueue::runner {
 
     $redis_password = lookup('passwords::redis::master')
 
-    $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '51.195.236.215:6379'})
+    $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '[2a10:6740::6:306]:6379'})
     if lookup('jobrunner::intensive', {'default_value' => false}) {
         $config = 'jobrunner-hi.json.erb'
     } else {

@@ -1,8 +1,8 @@
 <?php
 
-define( 'MW_NO_SESSION', 'warn' );
+define( 'MW_NO_SESSION', 1 );
 
-require_once( '/srv/mediawiki/w/includes/WebStart.php' );
+require_once '/srv/mediawiki/w/includes/WebStart.php';
 
 use MediaWiki\MediaWikiServices;
 
@@ -16,6 +16,7 @@ $databasesArray = file_exists( $databaseJsonFileName ) ?
 	json_decode( file_get_contents( $databaseJsonFileName ), true ) : [ 'combi' => [] ];
 
 header( 'Content-Type: text/plain; charset=utf-8' );
+header( 'X-Miraheze-Robots: Default' );
 
 # Throttle YandexBot
 echo "# Throttle YandexBot" . "\r\n";
@@ -57,7 +58,7 @@ if ( $databasesArray['combi'] ) {
 				if ( substr( $db, -strlen( $suffix ) == $suffix ) ) {
 					$url = $data['u'] ?? 'https://' . substr( $db, 0, -strlen( $suffix ) ) . '.' . $suffixMatch[$suffix];
 
-					if ( !isset( $url ) || !$url ) {
+					if ( !$url ) {
 						continue;
 					}
 
@@ -79,6 +80,8 @@ if ( $databasesArray['combi'] ) {
 }
 
 if ( $page->exists() ) {
+	header( 'X-Miraheze-Robots: Custom' );
+
 	echo "# -- BEGIN CUSTOM -- #\r\n\n";
 
 	$content = $page->getContent();

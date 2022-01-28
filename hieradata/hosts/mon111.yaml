@@ -4,7 +4,7 @@ icinga_ido_db_host: 'db101.miraheze.org'
 icingaweb_db_host: 'db101.miraheze.org'
 icinga_ido_db_host: 'db101.miraheze.org'
 grafana_db_host: 'db101.miraheze.org'
-matomo_db_host: 'db101.miraheze.org'
+matomo_db_host: 'db111.miraheze.org'
 
 icinga_ldap_host: 'ldap111.miraheze.org'
 grafana_ldap_server: 'ldap111.miraheze.org'
@@ -13,15 +13,14 @@ http_proxy: 'http://bast.miraheze.org:8080'
 
 icinga2_api_bind_host: '::'
 
-use_new_mon: true
-
 mariadb::version: '10.5'
 
 php::php_version: '7.4'
 php::cli::memory_limit: '3G'
 php::fpm::memory_limit: '3g'
 
-php::php_fpm::fpm_workers_multiplier: 10.0
+php::php_fpm::fpm_workers_multiplier: 3.0
+php::php_fpm::fpm_min_restart_threshold: 6
 
 # icinga2
 
@@ -56,7 +55,7 @@ icinga2::globals::constants:
   NodeName: 'mon111.miraheze.org'
   ZoneName: 'mon111.miraheze.org'
   TicketSalt: ''
-  MaxConcurrentChecks: 12
+  MaxConcurrentChecks: 4
 icinga2::globals::user: 'nagios'
 icinga2::globals::group: 'nagios'
 icinga2::globals::icinga2_bin: '/usr/sbin/icinga2'
@@ -136,4 +135,3 @@ icinga2::globals::reserved:
 nginx::use_graylog: true
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6
-base::firewall::mode: ferm

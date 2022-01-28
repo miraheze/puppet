@@ -14,17 +14,9 @@ puppetserver_hostname: 'puppet111.miraheze.org'
 mediawiki::php::fpm::childs: 12
 mediawiki::php::fpm::fpm_max_memory: 256
 mediawiki::use_staging: true
-mediawiki::remote_sync: false
-
-base::firewall::mode: ferm
 
 http_proxy: 'http://bast.miraheze.org:8080'
 gluster_volume: gluster101.miraheze.org:/static
 gluster::only_ipv6: true
-use_new_mon: true
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6
-memcached_servers_1:
-  - 2a10:6740::6:105:11211:1
-memcached_servers_2:
-  - 2a10:6740::6:308:11211:1

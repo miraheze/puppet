@@ -1,6 +1,9 @@
-# class: mediawiki::favicons
+# === Class mediawiki::favicons
 class mediawiki::favicons {
-    file { [ '/usr/share/nginx', '/usr/share/nginx/favicons' ]:
+    file { [
+        '/usr/share/nginx',
+        '/usr/share/nginx/favicons',
+    ]:
         ensure => directory,
         owner  => 'www-data',
         group  => 'www-data',
