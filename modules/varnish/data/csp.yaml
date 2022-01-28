@@ -145,6 +145,7 @@ frame-src:
   - 'w.soundcloud.com'
   - 'query.wikidata.org'
   - 'player.vimeo.com'
+  - '29tb.github.io'
 
 connect-src:
   - "'self'"
