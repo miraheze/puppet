@@ -207,7 +207,7 @@ def run(args, start):
         non_zero_code(exitcodes)
         # These need to be setup late because dodgy
         if args.l10nupdate:  # used by automated maint
-            run_command(f'sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php {envinfo["wikidbname"]}')  # gives garbage errors
+            run_command(f'sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki={envinfo["wikidbname"]}')  # gives garbage errors
             args.l10n = True  # imply --l10n
         if args.l10n:  # setup l10n
             postinstall.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
@@ -221,7 +221,7 @@ def run(args, start):
         non_zero_code(exitcodes)
 
         # see if we are online - exit code 3 if not
-        check_up(Debug=None, Host={envinfo["wikiurl"]}, verify=False, force=args.force)
+        check_up(Debug=None, Host=envinfo["wikiurl"], verify=False, force=args.force)
 
     # actually set remote lists
     for option in options:
