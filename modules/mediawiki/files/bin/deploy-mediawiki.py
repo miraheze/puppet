@@ -14,7 +14,7 @@ def run_command(cmd):
     start = time.time()
     print(f'Execute: {cmd}')
     ec = os.system(cmd)
-    print(f'Completed in {str(int(time.time() - start))}s!')
+    print(f'Completed ({ec}) in {str(int(time.time() - start))}s!')
     return ec
 
 
@@ -32,32 +32,37 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
-        headers = {'X-Miraheze-Debug': f'{Debug}.miraheze.org'}
-        server = Debug
+        server = f'{Debug}.miraheze.org'
+        headers = {'X-Miraheze-Debug': server}
+        location = f'{domain}@{server}'
     else:
         os.environ['NO_PROXY'] = 'localhost'
-        server = 'https://localhost'
-    if Host:
+        domain = 'https://localhost'
         headers = {'host': Host}
+        location = f'{Host}@{domain}'
     up = False
+    print(headers)
+    print(f'{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json')
     req = requests.get(f'{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
-    if req.status_code == 200 and 'miraheze' in req.text and (Debug is not None and Debug in req.headers['X-Served-By']):
+    if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
+        print(f'Status: {req.status_code}')
+        print(f'Text: {"miraheze" in req.text}')
+        print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
         if force:
-            print(f'Ignoring canary check error on {server}@{domain} due to --force')
+            print(f'Ignoring canary check error on {location} due to --force')
         else:
-            print(f'Canary check failed for {server}@{domain}. Aborting... - use --force to proceed')
-            os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {server}@{domain}')
+            print(f'Canary check failed for {location}. Aborting... - use --force to proceed')
+            os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {location}')
             exit(3)
     return up
-
 
 def remote_sync_file(time, serverlist, path, recursive=True, force=False):
     print(f'Start {path} deploys.')
     for server in serverlist:
         print(f'Deploying {path} to {server}.')
-        ec = os.system(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
+        ec = run_command(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
         check_up(Debug=server, force=force)
         print(f'Deployed {path} to {server}.')
     print(f'Finished {path} deploys.')
@@ -141,12 +146,12 @@ def run(args, start):
     non_zero_code(exitcodes)
     for option in options:  # configure rsync & custom data for repos
         if options[option]:
-            if options[option] == 'world':  # install steps for w
+            if option == 'world':  # install steps for w
                 os.chdir(_get_staging_path('world'))
                 exitcodes.append(run_command('sudo -u www-data composer install --no-dev --quiet'))
                 rebuild.append('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki')
                 rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
-            rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(options[option])))
+            rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
             rsyncpaths.append(_get_deployed_path(option))
     non_zero_code(exitcodes)
     if args.files:  # specfic extra files
@@ -184,7 +189,7 @@ def run(args, start):
     non_zero_code(exitcodes)
 
     # see if we are online - exit code 3 if not
-    check_up(Debug=None, Host='meta.miraheze.org', verify=False, force=args.force)
+    check_up(Debug=None, Host='beta.betaheze.org', verify=False, force=args.force)
 
     # decide what servers to remote on
     sync = True
@@ -206,10 +211,10 @@ def run(args, start):
 
     failed = non_zero_code(ec=exitcodes, exit=False)
     if failed:
-        fintext = + ' - FAIL: {exitcodes}'
+        fintext += ' - FAIL: {exitcodes}'
     else:
-        fintext = + ' - SUCCESS'
-    fintext = + f'in {str(int(time.time() - start))}s'
+        fintext += ' - SUCCESS'
+    fintext += f' in {str(int(time.time() - start))}s'
     if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {fintext}')
     else:
