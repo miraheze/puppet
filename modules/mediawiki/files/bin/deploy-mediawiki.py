@@ -58,6 +58,7 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
             exit(3)
     return up
 
+
 def remote_sync_file(time, serverlist, path, recursive=True, force=False):
     print(f'Start {path} deploys.')
     for server in serverlist:
