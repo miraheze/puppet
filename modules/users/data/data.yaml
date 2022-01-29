@@ -7,10 +7,9 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [rhinos, universalomega]
+    members: [rhinos]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.3-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
@@ -20,7 +19,7 @@ groups:
   mediawiki-roots:
     gid: 2002
     description: full root on MediaWiki servers
-    members: []
+    members: [universalomega]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   cache-admins:
     gid: 2003
@@ -33,9 +32,14 @@ groups:
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   puppet-users:
     gid: 2004
-    descriptions: limited access on puppet3 to add SSL private keys
+    description: limited access on puppet111 to add SSL private keys
     members: []
-    privileges: []                 
+    privileges: []
+  bastion:
+    gid: 2005
+    description: users who require bastion access
+    members: [rhinos, universalomega]
+    privileges: []
 
 users:
   johnflewis:

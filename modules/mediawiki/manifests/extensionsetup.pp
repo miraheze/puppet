@@ -1,5 +1,7 @@
-# MediaWiki extension setup
+# === Class mediawiki::extensionsetup
 class mediawiki::extensionsetup {
+    ensure_packages('composer')
+
     $mwpath = '/srv/mediawiki-staging/w'
     file { [
         '/srv/mediawiki/w/extensions/OAuth/.composer/cache',
@@ -12,13 +14,6 @@ class mediawiki::extensionsetup {
             require => Exec['oauth_composer'],
     }
 
-    exec { 'install_composer':
-        command     => 'wget -O /usr/bin/composer https://getcomposer.org/download/2.1.6/composer.phar && chmod 0755 /usr/bin/composer',
-        creates     => '/usr/bin/composer',
-        path        => '/usr/bin',
-        user        => 'root',
-    }
-
     $composer = 'composer install --no-dev'
 
     exec { 'wikibase_composer':
@@ -28,7 +23,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/Wikibase",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'maps_composer':
@@ -38,7 +33,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/Maps",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'flow_composer':
@@ -48,7 +43,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/Flow",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'oauth_composer':
@@ -58,7 +53,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/OAuth",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'templatestyles_composer':
@@ -68,7 +63,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/TemplateStyles",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'antispoof_composer':
@@ -78,7 +73,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/AntiSpoof",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'kartographer_composer':
@@ -88,7 +83,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/Kartographer",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'timedmediahandler_composer':
@@ -98,7 +93,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/TimedMediaHandler",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'translate_composer':
@@ -108,7 +103,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/Translate",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'oathauth_composer':
@@ -118,7 +113,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/OATHAuth",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
     
     exec { 'lingo_composer':
@@ -128,7 +123,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/Lingo",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'wikibasequalityconstraints_composer':
@@ -138,7 +133,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/WikibaseQualityConstraints",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'wikibaselexeme_composer':
@@ -148,7 +143,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/WikibaseLexeme",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'createwiki_composer':
@@ -158,7 +153,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/CreateWiki",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'datatransfer_composer':
@@ -168,7 +163,7 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/DataTransfer",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
     }
 
     exec { 'bootstrap_composer':
@@ -178,11 +173,35 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/Bootstrap",
         user        => 'www-data',
-        require     => [ Git::Clone['MediaWiki core'], Exec['install_composer'] ],
+        require     => Git::Clone['MediaWiki core'],
+    }
+
+    exec { 'structurednavigation_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/StructuredNavigation/vendor",
+        cwd         => "${mwpath}/extensions/StructuredNavigation",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/StructuredNavigation",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
+    exec { 'semanticmediawiki_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/SemanticMediaWiki/vendor",
+        cwd         => "${mwpath}/extensions/SemanticMediaWiki",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/SemanticMediaWiki",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
+    host { 'registry.npmjs.org':
+        ip => '2606:4700::6810:1723',
     }
 
     exec { 'femiwiki_npm':
-        command     => 'npm install',
+        command     => 'npm install --no-optional --only=production',
         creates     => "${mwpath}/skins/Femiwiki/node_modules",
         cwd         => "${mwpath}/skins/Femiwiki",
         path        => '/usr/bin',

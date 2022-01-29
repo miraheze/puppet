@@ -50,6 +50,13 @@ class gluster {
         }
     }
 
+    $only_ipv6 = lookup('gluster::only_ipv6', {'default_value' => false})
+    file { '/etc/glusterfs/glusterd.vol':
+        ensure  => present,
+        content => template('gluster/glusterd.vol.erb'),
+        require => Package['glusterfs-server'],
+    }
+
     service { 'glusterd':
         ensure     => running,
         enable     => true,
@@ -80,7 +87,7 @@ class gluster {
         if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
             gluster::mount { '/mnt/mediawiki-static':
               ensure    => mounted,
-              volume    => lookup('gluster_volume', {'default_value' => 'gluster3.miraheze.org:/static'}),
+              volume    => lookup('gluster_volume', {'default_value' => 'gluster101.miraheze.org:/static'}),
             }
         }
 
@@ -92,12 +99,15 @@ class gluster {
         }
     }
 
-    gluster::logging { 'glusterd':
-        file_source_options => [
-            '/var/log/glusterfs/glusterd.log',
-            { 'flags' => 'no-parse' }
-        ],
-        program_name => 'glusterd',
+    $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'})
+    if $syslog_daemon == 'syslog_ng' {
+        gluster::logging { 'glusterd':
+            file_source_options => [
+                '/var/log/glusterfs/glusterd.log',
+                { 'flags' => 'no-parse' }
+            ],
+            program_name => 'glusterd',
+        }
     }
 
     logrotate::conf { 'glusterfs-common':

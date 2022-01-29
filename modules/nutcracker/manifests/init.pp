@@ -6,63 +6,58 @@
 #
 # === Parameters
 #
+# [*mbuf_size*]
+#   When set, will determine the size of nutcracker's mbufs.
+#   The default is 16384. See <https://github.com/twitter/twemproxy
+#   /blob/b2cd3ad/notes/recommendation.md> for a discussion of this
+#   option.
+#
 # [*verbosity*]
 #   Set logging level (default: 4, min: 0, max: 11).
 #
+# [*pools*]
+#   A hash defining a nutcracker server pool.
+#   See <https://github.com/twitter/twemproxy#configuration>.
+#
 # === Examples
 #
-#  class { '::nutcracker': }
+#  class { '::nutcracker':
+#    pools => {
+#      'parser' => {
+#        listen       => '127.0.0.1:11211',
+#        distribution => 'ketama',
+#        hash         => 'md5',
+#        timeout      => 250,
+#        servers      => ['10.64.0.180:11211:1', '10.64.0.181:11211:1'],
+#      },
+#    },
+#  }
 #
 class nutcracker(
-    VMlib::Ensure $ensure = present,
-    Integer $verbosity = 4,
+    Hash             $pools,
+    VMlib::Ensure   $ensure    = present,
+    Optional[String] $mbuf_size = undef,
+    Integer[0,11]    $verbosity = 4,
 ) {
 
-    require_package('nutcracker')
+    ensure_packages(['nutcracker'])
 
-    file { '/etc/nutcracker/nutcracker.yml':
-        ensure  => $ensure,
-        content => template('nutcracker/nutcracker.yml.erb'),
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0444',
-        notify  => Service['nutcracker'],
-        require => Package['nutcracker'],
+    file {
+        default:
+            ensure  => $ensure,
+            owner   => 'root',
+            group   => 'root',
+            mode    => '0444',
+            notify  => Service['nutcracker'],
+            require => Package['nutcracker'];
+        '/etc/nutcracker/nutcracker.yml':
+            content      => template('nutcracker/nutcracker.yml.erb'),
+            validate_cmd => '/usr/sbin/nutcracker --test-conf --conf-file %';
+        '/etc/default/nutcracker':
+            content => template('nutcracker/default.erb');
     }
-
-    File['/etc/nutcracker/nutcracker.yml'] {
-      validate_cmd => '/usr/sbin/nutcracker --test-conf --conf-file %',
-    }
-
-    file { '/etc/default/nutcracker':
-        ensure  => $ensure,
-        content => template('nutcracker/default.erb'),
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0444',
-        notify  => Service['nutcracker'],
-    }
-
-    file { '/etc/init/nutcracker.override':
-        ensure  => $ensure,
-        content => "limit nofile 64000 64000\n",
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0444',
-        notify  => Service['nutcracker'],
-    }
-
-    file { '/run/nutcracker':
-        ensure  => directory,
-        owner   => 'nutcracker',
-        group   => 'nutcracker',
-        require => Package['nutcracker'],
-        notify  => Service['nutcracker'],
-    }
-
     service { 'nutcracker':
         ensure  => ensure_service($ensure),
-        enable  => true,
-        require => File['/run/nutcracker'],
+        require => Package['nutcracker'],
     }
 }

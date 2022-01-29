@@ -1,12 +1,13 @@
-# role: mediawiki
+# === Class role::mediawiki
 class role::mediawiki (
     Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
 ) {
+    include ::role::mediawiki::nutcracker
     include ::mediawiki
 
     if $strict_firewall {
         $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Services] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+            query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
             .map |$key, $value| {
                 "${value['ipaddress']} ${value['ipaddress6']}"
             }
@@ -52,7 +53,7 @@ class role::mediawiki (
     if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
         gluster::mount { '/mnt/mediawiki-static':
           ensure    => mounted,
-          volume    => lookup('gluster_volume', {'default_value' => 'gluster3.miraheze.org:/static'}),
+          volume    => lookup('gluster_volume', {'default_value' => 'gluster111.miraheze.org:/static'}),
         }
     }
 

@@ -1,0 +1,24 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+letsencrypt: true
+jobrunner: true
+jobrunner::intensive: true
+contactgroups: ['sre', 'mediawiki']
+role::mediawiki::use_strict_firewall: true
+mediawiki::php::fpm::childs: 1
+php::php_fpm::fpm_workers_multiplier: 1.0
+php::php_version: '7.4'
+mediawiki::jobqueue::runner::cron: true
+mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
+nginx::use_graylog: true
+puppetserver_hostname: 'puppet111.miraheze.org'
+mediawiki::is_canary: true
+mediawiki::default_sync: 'all'
+mediawiki::use_staging: true
+
+http_proxy: 'http://bast.miraheze.org:8080'
+gluster_volume: gluster101.miraheze.org:/static
+gluster::only_ipv6: true
+base::syslog::graylog_hostname: 'graylog121.miraheze.org'
+base::syslog::graylog_resolve_ip_version: 6

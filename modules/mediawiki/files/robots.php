@@ -2,7 +2,7 @@
 
 define( 'MW_NO_SESSION', 1 );
 
-require_once( '/srv/mediawiki/w/includes/WebStart.php' );
+require_once '/srv/mediawiki/w/includes/WebStart.php';
 
 use MediaWiki\MediaWikiServices;
 
@@ -16,6 +16,7 @@ $databasesArray = file_exists( $databaseJsonFileName ) ?
 	json_decode( file_get_contents( $databaseJsonFileName ), true ) : [ 'combi' => [] ];
 
 header( 'Content-Type: text/plain; charset=utf-8' );
+header( 'X-Miraheze-Robots: Default' );
 
 # Throttle YandexBot
 echo "# Throttle YandexBot" . "\r\n";
@@ -31,6 +32,10 @@ echo "Crawl-delay: 1" . "\r\n\n";
 echo "# Block SemrushBot" . "\r\n";
 echo "User-Agent: SemrushBot" . "\r\n";
 echo "Disallow: /" . "\r\n\n";
+
+echo "# Throttle MJ12Bot" . "\r\n";
+echo "User-agent: MJ12bot" . "\r\n";
+echo "Crawl-Delay: 10" . "\r\n\n";
 
 if ( $databasesArray['combi'] ) {
 	if ( preg_match( '/^(.+)\.miraheze\.org$/', $_SERVER['HTTP_HOST'], $matches ) ) {
@@ -53,7 +58,7 @@ if ( $databasesArray['combi'] ) {
 				if ( substr( $db, -strlen( $suffix ) == $suffix ) ) {
 					$url = $data['u'] ?? 'https://' . substr( $db, 0, -strlen( $suffix ) ) . '.' . $suffixMatch[$suffix];
 
-					if ( !isset( $url ) || !$url ) {
+					if ( !$url ) {
 						continue;
 					}
 
@@ -75,7 +80,11 @@ if ( $databasesArray['combi'] ) {
 }
 
 if ( $page->exists() ) {
+	header( 'X-Miraheze-Robots: Custom' );
+
 	echo "# -- BEGIN CUSTOM -- #\r\n\n";
 
-	echo ContentHandler::getContentText( $page->getContent() ) ?: '';
+	$content = $page->getContent();
+
+	echo ( $content instanceof TextContent ) ? $content->getText() : '';
 }

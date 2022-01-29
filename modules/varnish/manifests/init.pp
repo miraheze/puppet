@@ -1,7 +1,7 @@
 # class: varnish
 class varnish (
     String $cache_file_name = '/srv/varnish/cache_storage.bin',
-    String $cache_file_size = '15G',
+    String $cache_file_size = '22G',
 ) {
     include varnish::nginx
     include varnish::stunnel4
@@ -40,6 +40,9 @@ class varnish (
     
     $module_path = get_module_path($module_name)
     $csp_whitelist = loadyaml("${module_path}/data/csp.yaml")
+    $backends = lookup('varnish::backends')
+    $interval_check = lookup('varnish::interval-check')
+    $interval_timeout = lookup('varnish::interval-timeout')
 
     file { '/etc/varnish/default.vcl':
         ensure  => present,
@@ -144,27 +147,5 @@ class varnish (
         vars          => {
             nrpe_command => 'check_nginx_errorrate',
         },
-    }
-
-    require_package('vmtouch')
-
-    file { '/usr/local/bin/generateVmtouch.py':
-        ensure => 'present',
-        mode   => '0755',
-        source => 'puppet:///modules/varnish/vmtouch/generateVmtouch.py',
-    }
-
-    systemd::service { 'vmtouch':
-        ensure  => present,
-        content => systemd_template('vmtouch'),
-        restart => true,
-    }
-
-    cron { 'vmtouch':
-        ensure  => present,
-        command => '/usr/bin/python3 /usr/local/bin/generateVmtouch.py',
-        user    => 'root',
-        minute  => '0',
-        hour    => '*/5',
     }
 }

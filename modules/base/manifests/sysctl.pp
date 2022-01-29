@@ -24,6 +24,9 @@ class base::sysctl {
             'net.ipv4.tcp_max_syn_backlog' => 262144,
             'net.ipv4.tcp_max_tw_buckets'  => 360000,
 
+            # Swapping makes things too slow and should be done rarely
+            # 0 = only swap in OOM conditions (it does NOT disable swap.)
+            'vm.swappiness'                    => 0,
             'net.ipv4.tcp_keepalive_time'      => 300,
             'net.ipv4.tcp_keepalive_intvl'     => 1,
             'net.ipv4.tcp_keepalive_probes'    => 2,
@@ -52,25 +55,21 @@ class base::sysctl {
         }
     }
 
-    if $::virtual == 'kvm' {
-        sysctl::parameters { 'avoid swap usage':
-            values  => { 'vm.swappiness' => lookup('base::sysctl::swap_value', {'default_value' => 1}), },
+    # Up to Buster Debian disabled unprivileged user namespaces in the default kernel config
+    # This changed in Bullseye mostly to allow Chromium and Firefox to setup sandboxing via namespaces
+    # But for a server deployment like ours, we have no use for it and it widens the attack surface,
+    # so we disable it. Apply this to kernels starting with 5.10 (where it was enabled in Debian)
+    if (versioncmp($::kernelversion, '5.10') >= 0) {
+        sysctl::parameters { 'disable_unprivileged_ns':
+            values => {
+              'kernel.unprivileged_userns_clone' => '0',
+            },
         }
+    }
 
+    if $::virtual == 'kvm' {
         sysctl::parameters { 'increase open files limit':
             values  => { 'fs.file-max' => 26384062, },
-        }
-
-        # Disabling transparent hugepages is strongly recommended
-        # in http://redis.io/topics/latency.
-        sysfs::parameters { 'disable_transparent_hugepages':
-            values => { 'kernel/mm/transparent_hugepage/enabled' => 'never' },
-        }
-
-        # Background save may fail under low memory condition unless
-        # vm.overcommit_memory is 1.
-        sysctl::parameters { 'vm.overcommit_memory':
-            values => { 'vm.overcommit_memory' => 1 },
         }
     }
 }

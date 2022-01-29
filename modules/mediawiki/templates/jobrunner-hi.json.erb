@@ -8,7 +8,12 @@
             // Job types to include ("*" means "all")
             "include": [
                 "DataDumpGenerateJob",
-                "RequestWikiAIJob"
+                "RequestWikiAIJob",
+                "webVideoTranscode",
+                "webVideoTranscodePrioritized"
+            ],
+            "low-priority": [
+                "webVideoTranscode"
             ]
         }
     },
@@ -21,36 +26,36 @@
         // How long jobs can be claimed before being recycled
         "claimTTL": {
             "*": 3600,
-            "DataDumpGenerateJob": 86400
+            "DataDumpGenerateJob": 86400,
+            "webVideoTranscode": 86400
         },
         // runJobs.php process time limits
         "real": {
             "*": 130,
-            "DataDumpGenerateJob": 9000
+            "DataDumpGenerateJob": 9000,
+            "webVideoTranscode": 9000
         },
         // runJobs.php memory limits
         "memory": {
             "*": "192M",
             "DataDumpGenerateJob": "300M",
-            "RequestWikiAIJob": "1750M"
+            "RequestWikiAIJob": "1750M",
+            "webVideoTranscode": "300M"
         }
     },
 
     "redis": {
         // Ready queue trackers
         "aggregators": [
-            "51.195.236.215:6379"
+            "<%= @redis_server_ip %>"
         ],
         // Main queue servers
         "queues": [
-            "51.195.236.215:6379",
-            "51.195.236.215:6379"
+            "<%= @redis_server_ip %>",
+            "<%= @redis_server_ip %>"
         ],
         "password": "<%= @redis_password %>"
     },
-
-    // Address to send statsd metrics to
-    "statsd": "",
 
     // Command used to launch a runner for a given job queue
     "dispatcher": "nice -15 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"

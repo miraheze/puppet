@@ -25,14 +25,15 @@ script-src:
   - 's7.addthis.com'
   - 'www.google.com'
   - 'www.recaptcha.net'
+  - 'recaptchaenterprise.googleapis.com'
   - 'platform.twitter.com'
   - 'js-wiki-cdn.reviservices.com'
-  - 'wikiplus-app.com'
   - 'cdnjs.cloudflare.com'
   - 'cdn.jsdelivr.net'
   - 'cdn.syndication.twimg.com'
   - 'scratchblocks.github.io'
   - 'openlayers.org'
+  - 'phab.miraheze.wiki'
 
 style-src:
   - "'self'"
@@ -55,8 +56,10 @@ style-src:
   - 'cdn.jsdelivr.net'
   - 'platform.twitter.com'
   - 'ton.twimg.com'
+  - 'phab.miraheze.wiki'
 
 img-src:
+  - 'blob:'
   - "'self'"
   - 'data:'
   - '*.miraheze.org'
@@ -80,15 +83,12 @@ img-src:
   - 'scratchblocks.github.io'
   - 'docs.blender.org'
   - '*.imgbox.com'
-  - 'www.mikrodev.com'
   - 'tile.openstreetmap.org'
   - '*.tile.openstreetmap.org'
   - 'cdn.discordapp.com'
   - 'na.llnet.sims3storee.cdn.ea.com'
   - '*.fastly.net'
   - 'minotar.net'
-  - 'img.shields.io'
-  - 'mc-uc.netease.com'
   - 'db.onlinewebfonts.com'
   - 'openlayers.org'
   - 'discordapp.com'
@@ -99,6 +99,7 @@ img-src:
   - 'img.newspapers.com'
   - 'cdn.smutstone.com'
   - 'storage.googleapis.com'
+  - 'phab.miraheze.wiki'
 
 font-src:
   - "'self'"
@@ -106,6 +107,8 @@ font-src:
   - '*.miraheze.org'
   - 'fonts.gstatic.com'
   - 'cdn.jsdelivr.net'
+  - 'db.onlinewebfonts.com'
+  - 'phab.miraheze.wiki'
 
 media-src:
   - "'self'"
@@ -125,6 +128,7 @@ frame-src:
   - 'www.google.com'
   - 'docs.google.com'
   - 'www.recaptcha.net'
+  - 'recaptchaenterprise.googleapis.com'
   - 'web.libera.chat'
   - 'snap.berkeley.edu'
   - '*.youtube-nocookie.com'

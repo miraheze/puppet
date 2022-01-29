@@ -28,6 +28,12 @@ class base::monitoring {
         mode   => '0555',
     }
 
+    file { '/usr/lib/nagios/plugins/check_ipmi_sensors':
+        ensure => present,
+        source => 'puppet:///modules/base/icinga/check_ipmi_sensors',
+        mode   => '0555',
+    }
+
     service { 'nagios-nrpe-server':
         ensure     => 'running',
         hasrestart => true,
@@ -37,8 +43,11 @@ class base::monitoring {
     sudo::user { 'nrpe_sudo':
         user       => 'nagios',
         privileges => [
+            'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_gdnsd_datacenters',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_puppet_run',
             'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_smart',
+            'ALL = NOPASSWD: /usr/sbin/ipmi-sel',
+            'ALL = NOPASSWD: /usr/sbin/ipmi-sensors',
         ],
     }
 
@@ -83,6 +92,9 @@ class base::monitoring {
         },
     }
 
+    # Collect all NRPE command files
+    File <| tag == 'nrpe' |>
+
     if !$facts['is_virtual'] {
         if !empty($facts['disks']['sda']) {
             $type = 'sata'
@@ -90,12 +102,31 @@ class base::monitoring {
             $type = 'nvme'
         }
 
+        if ( $facts['dmi']['manufacturer'] == 'HP' ) {
+            package { 'freeipmi':
+                ensure => installed
+            }
 
-        monitoring::services { 'SMART':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => "check_smart_${type}",
-            },
+            monitoring::services { 'SMART':
+                check_command => 'nrpe',
+                vars          => {
+                    nrpe_command => 'check_smart',
+                },
+            }
+
+            monitoring::services { 'IPMI Sensors':
+                check_command => 'nrpe',
+                vars          => {
+                    nrpe_command => 'check_ipmi_sensors',
+                },
+            }
+        } else {
+            monitoring::services { 'SMART':
+                check_command => 'nrpe',
+                vars          => {
+                    nrpe_command => "check_smart_${type}",
+                },
+            }
         }
     }
 }

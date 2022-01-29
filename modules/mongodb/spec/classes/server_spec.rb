@@ -20,7 +20,11 @@ describe 'mongodb::server' do
 
       let(:config_file) do
         if facts[:os]['family'] == 'Debian'
-          '/etc/mongodb.conf'
+          if facts[:os]['release']['major'] =~ %r{(10)}
+            '/etc/mongod.conf'
+          else
+            '/etc/mongodb.conf'
+          end
         else
           '/etc/mongod.conf'
         end
@@ -37,7 +41,13 @@ describe 'mongodb::server' do
       describe 'with defaults' do
         it_behaves_like 'server classes'
 
-        it { is_expected.to contain_package('mongodb_server').with_ensure('present').with_name('mongodb-server').with_tag('mongodb_package') }
+        if facts[:os]['family'] == 'RedHat' || facts[:os]['family'] == 'Suse'
+          it { is_expected.to contain_package('mongodb_server').with_ensure('present').with_name('mongodb-org-server').with_tag('mongodb_package') }
+        elsif facts[:os]['release']['major'] =~ %r{(10)}
+          it { is_expected.to contain_package('mongodb_server').with_ensure('4.4.8').with_name('mongodb-org-server').with_tag('mongodb_package') }
+        else
+          it { is_expected.to contain_package('mongodb_server').with_ensure('present').with_name('mongodb-server').with_tag('mongodb_package') }
+        end
 
         it do
           is_expected.to contain_file(config_file).
@@ -152,14 +162,24 @@ describe 'mongodb::server' do
         it { is_expected.to contain_file('/root/.mongorc.js') }
       end
 
-      describe 'when specifying set_parameter value' do
+      describe 'when specifying set_parameter array value' do
+        let :params do
+          {
+            set_parameter: ['textSearchEnable=true']
+          }
+        end
+
+        it { is_expected.to contain_file(config_file).with_content(%r{^setParameter:\n  textSearchEnable=true}) }
+      end
+
+      describe 'when specifying set_parameter string value' do
         let :params do
           {
             set_parameter: 'textSearchEnable=true'
           }
         end
 
-        it { is_expected.to contain_file(config_file).with_content(%r{^setParameter: textSearchEnable=true}) }
+        it { is_expected.to contain_file(config_file).with_content(%r{^setParameter:\n  textSearchEnable=true}) }
       end
 
       describe 'with journal:' do
@@ -358,7 +378,7 @@ describe 'mongodb::server' do
           let(:rsConf) do
             {
               'rsTest' => {
-                'ensure'  => 'present',
+                'ensure' => 'present',
                 'members' => [
                   'mongo1:27017',
                   'mongo2:27017',

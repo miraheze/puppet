@@ -1,0 +1,12 @@
+role::memcached::threads: ~
+role::memcached::version: 'present'
+role::memcached::growth_factor: 1.25
+role::memcached::min_slab_size: 48
+role::memcached::max_seq_reqs: 200
+role::memcached::size: 11264
+role::memcached::extended_options: []
+role::memcached::port: 11211
+
+puppetserver_hostname: 'puppet111.miraheze.org'
+base::syslog::graylog_hostname: 'graylog121.miraheze.org'
+base::syslog::graylog_resolve_ip_version: 6

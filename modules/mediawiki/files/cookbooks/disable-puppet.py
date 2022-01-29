@@ -1,5 +1,5 @@
 #! /usr/bin/python3
-# -*- coding: utf-8 -*-
+
 from os import system
 import sys
 system(f'logsalmsg Disabling puppet for {sys.argv[1]}')

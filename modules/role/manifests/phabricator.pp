@@ -2,18 +2,29 @@
 class role::phabricator {
     include ::phabricator
 
-    if !defined(Ferm::Service['http']) {
-        ferm::service { 'http':
-            proto => 'tcp',
-            port  => '80',
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
         }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+
+    ferm::service { 'http':
+        proto   => 'tcp',
+        port    => '80',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
     }
 
-    if !defined(Ferm::Service['https']) {
-        ferm::service { 'https':
-            proto => 'tcp',
-            port  => '443',
-        }
+    ferm::service { 'https':
+        proto    => 'tcp',
+        port    => '443',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
     }
 
     motd::role { 'role::phabricator':

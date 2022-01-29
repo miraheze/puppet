@@ -1,7 +1,25 @@
 # class base::syslog
 class base::syslog (
-        String $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
-    ) {
+        String  $syslog_daemon              = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'}),
+        String  $graylog_hostname           = lookup('base::syslog::graylog_hostname', {'default_value' => 'graylog2.miraheze.org'}),
+        Integer $graylog_resolve_ip_version = lookup('base::syslog::graylog_resolve_ip_version', {'default_value' => 4}),
+) {
+        if os_version('debian >= bullseye') {
+                # Made the unit slower
+                # We don't need persistant journals
+                file { '/var/log/journal' :
+                        ensure  => absent,
+                        recurse => true,
+                        force   => true,
+                        notify  => Service['systemd-journald'],
+                }
+
+                # Have to define this in order to restart it
+                service { 'systemd-journald':
+                        ensure  => 'running',
+                }
+        }
+
         if $syslog_daemon == 'rsyslog' {
                 include ::rsyslog
 
@@ -63,7 +81,10 @@ class base::syslog (
                         params => {
                                 type    => 'syslog',
                                 options => [
-                                        "graylog2.miraheze.org",
+                                        $graylog_hostname,
+                                        {
+                                                'ip-protocol' => $graylog_resolve_ip_version,
+                                        },
                                         { 
                                                 'port' => [ 12210 ] 
                                         },

@@ -1,4 +1,5 @@
 #! /usr/bin/python3
+
 import argparse
 import os
 import time
@@ -34,7 +35,7 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
         headers = {'X-Miraheze-Debug': f'{Debug}.miraheze.org'}
         server = Debug
     else:
-        server = 'localhost'
+        server = 'https://localhost'
     if Host:
         headers = {'host': Host}
     up = False
@@ -132,6 +133,7 @@ def run(args, start):
                 stage.append(_construct_git_pull(repo, submodules=sm))
             except KeyError:
                 print(f'Failed to pull {repo} due to invalid name')
+
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     for cmd in stage:  # setup env, git pull etc
         exitcodes.append(run_command(cmd))
@@ -159,11 +161,11 @@ def run(args, start):
 
     if args.extensionlist:  # when adding skins/exts
         rebuild.append('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki')
-        rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
+        rsyncfiles.append('/srv/mediawiki/cache/extension-list.json'
 
     for cmd in rsync:  # move staged content to live
         exitcodes.append(run_command(cmd))
-    non_zero_code(exitcodes)
+        non_zero_code(exitcodes)
     # These need to be setup late because dodgy
     if args.l10nupdate:  # used by automated maint
         run_command('sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki=loginwiki')  # gives garbage errors
@@ -181,7 +183,7 @@ def run(args, start):
     non_zero_code(exitcodes)
 
     # see if we are online - exit code 3 if not
-    check_up(Debug=None, Host='meta.miraheze.org', domain='https://localhost', verify=False, force=args.force)
+    check_up(Debug=None, Host='meta.miraheze.org', verify=False, force=args.force)
 
     # decide what servers to remote on
     sync = True
@@ -192,6 +194,7 @@ def run(args, start):
         serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
     else:
         serverlist = str(args.servers).split(',')
+
 
     if sync:
         for path in rsyncpaths:
@@ -232,4 +235,5 @@ if __name__ == '__main__':
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
+
     run(parser.parse_args(), start)

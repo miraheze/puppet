@@ -1,14 +1,28 @@
-memcached:
-  listen: 127.0.0.1:11212
-  preconnect: true
-  hash: md5
-  server_connections: 1
-  distribution: ketama
-  auto_eject_hosts: false
-  server_retry_timeout: 30000
-  server_failure_limit: 3
-  timeout: 500
-  backlog: 1024
-  servers:
-    # Memcached server (mem2)
-    - 51.195.236.245:11211:1
+<%
+def map_servers(map)
+  serverlist = []
+  map.keys.sort_by(&:to_s).each do |shard|
+    server = map[shard]
+    serverlist << "#{server['host']}:#{server['port']}:1 \"#{shard}\""
+  end
+  serverlist
+end
+-%>
+<% @pools.keys.sort_by(&:to_s).each do |key| -%>
+<%= key %>:
+<% pool = @pools[key]
+if pool.include? "server_map" then
+  pool["servers"] = map_servers(pool["server_map"])
+  pool.delete("server_map")
+end -%>
+<% pool.keys.sort_by(&:to_s).each do |k| -%>
+<% if pool[k].is_a?Array -%>
+  <%= k %>:
+<% pool[k].each do |v| -%>
+    - <%= v %>
+<% end -%>
+<% else -%>
+  <%= k %>: <%= pool[k] %>
+<% end -%>
+<% end -%>
+<% end -%>

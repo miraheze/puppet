@@ -1,11 +1,12 @@
 # class: matomo
 class matomo (
     String $ldap_password = lookup('passwords::matomo::ldap_password'),
+    String $matomo_db_host = lookup('matomo_db_host', {'default_value' => 'db12.miraheze.org'}),
 ) {
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '4.5.0', # Current stable
+        branch             => '4.6.2', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',

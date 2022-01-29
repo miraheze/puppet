@@ -78,7 +78,7 @@ class memcached(
         # have notls on localhost
         $listen = [$facts['networking']['ip'], 'notls:localhost']
     } else {
-        $listen = [$ip]
+        $listen = [$ip, '::']
     }
 
     package { 'memcached':

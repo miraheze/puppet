@@ -1,10 +1,10 @@
 log_facility=daemon
 pid_file=/var/run/nagios/nrpe.pid
 server_port=5666
-server_address=0.0.0.0
+server_address=::
 nrpe_user=nagios
 nrpe_group=nagios
-allowed_hosts=127.0.0.1,51.195.236.249,2001:41d0:800:1bbd::3
+allowed_hosts=127.0.0.1,2a10:6740::6:205
 dont_blame_nrpe=0
 allow_bash_command_substitution=0
 # command_prefix=/usr/bin/sudo
@@ -12,6 +12,8 @@ debug=0
 command_timeout=60
 connection_timeout=300
 # allow_weak_random_seed=1
+
+include_dir=/etc/nagios/nrpe.d/
 
 # Simplify config with puppet
 command[check_disk]=/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /
@@ -30,7 +32,7 @@ command[check_bacula_databasesdb12]=/usr/bin/sudo /usr/lib/nagios/plugins/check_
 command[check_bacula_databasesdb13]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H db13-fd -B BackupDatabasesDB13 -w 8d -c 15d
 command[check_bacula_private]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H puppet3-fd -B BackupPrivateGit -w 8d -c 15d
 command[check_bacula_phab]=/usr/bin/sudo /usr/lib/nagios/plugins/check_bacula_backups -H phab2-fd -B BackupPhabStatic -w 15d -c 30d
-command[check_gdnsd_datacenters]=/usr/lib/nagios/plugins/check_gdnsd_datacenters
+command[check_gdnsd_datacenters]=/usr/bin/sudo /usr/lib/nagios/plugins/check_gdnsd_datacenters
 command[check_irc_rcbot]=/usr/lib/nagios/plugins/check_procs -a ircrcbot.py -c 1:1
 command[check_irc_logserverbot]=/usr/lib/nagios/plugins/check_procs -a irclogserverbot.py -c 1:1
 command[check_irc_logbot]=/usr/lib/nagios/plugins/check_procs -a adminlogbot.py -c 1:1
@@ -46,16 +48,6 @@ command[check_glusterd_volume]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/
 command[check_glusterd_client]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfs -c 1:
 # glusterd deamon
 command[check_glusterd]=/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterd -c 1:
-# check stunnel http
-command[check_stunnel_mon2]=/usr/lib/nagios/plugins/check_http -H localhost:8201
-command[check_stunnel_mw8]=/usr/lib/nagios/plugins/check_http -H localhost:8085
-command[check_stunnel_mw9]=/usr/lib/nagios/plugins/check_http -H localhost:8086
-command[check_stunnel_mw10]=/usr/lib/nagios/plugins/check_http -H localhost:8087
-command[check_stunnel_mw11]=/usr/lib/nagios/plugins/check_http -H localhost:8088
-command[check_stunnel_mw12]=/usr/lib/nagios/plugins/check_http -H localhost:8092
-command[check_stunnel_mw13]=/usr/lib/nagios/plugins/check_http -H localhost:8093
-command[check_stunnel_mwtask1]=/usr/lib/nagios/plugins/check_http -H localhost:8089
-command[check_stunnel_test3]=/usr/lib/nagios/plugins/check_http -H localhost:8091
 command[check_pdns_recursor]=/usr/lib/nagios/plugins/check_dns -s 127.0.0.1 -H miraheze.org
 command[check_smart_sata]=/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sd[a-z] -i ata
 command[check_smart_nvme]=/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/nvme[0-9] -i nvme -l
@@ -65,3 +57,7 @@ command[conntrack_table_size]=/usr/lib/nagios/plugins/check_conntrack 80 90
 
 # ferm_active
 command[ferm_active]=/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm
+
+# cloud hardware monitoring
+command[check_smart]=/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sda -i cciss,[0-6] -l -s
+command[check_ipmi_sensors]=/usr/lib/nagios/plugins/check_ipmi_sensors --xT Memory

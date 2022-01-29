@@ -17,7 +17,10 @@ $wgSecretKey = "<%= @mediawiki_secretkey %>";
 // ReCaptcha secret key
 $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
 
-// Matomo Token
+// Shellbox secret key
+$wgShellboxSecretKey = "<%= @shellbox_secretkey %>";
+
+// Matomo token
 $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 
 // Extension:DiscordNotifications global webhook

@@ -49,7 +49,7 @@ class Echo(DatagramProtocol):
             recver.gotUDP(data)
 
 
-reactor.listenUDP(<%= @udp_port %>, Echo())  # noqa: E225,E999
+reactor.listenUDP(<%= @udp_port %>, Echo(), interface='::')  # noqa: E225,E999
 <% if @network_port == '6697' %>  # noqa: E225
 reactor.connectSSL("<%= @network %>", <%= @network_port %>, RCFactory(), ssl.ClientContextFactory())  # noqa: E225
 <% else %>  # noqa: E225

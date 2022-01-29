@@ -1,4 +1,4 @@
-# role: memcached
+# === Class role::memcached
 class role::memcached (
     String            $version          = lookup('role::memcached::version'),
     Stdlib::Port      $port             = lookup('role::memcached::port'),
@@ -9,7 +9,6 @@ class role::memcached (
     Float             $growth_factor    = lookup('role::memcached::growth_factor'),
     Optional[Integer] $threads          = lookup('role::memcached::threads'),
 ) {
-
     include prometheus::memcached_exporter
 
     if !empty( $extended_options ) {

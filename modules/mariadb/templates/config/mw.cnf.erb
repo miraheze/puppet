@@ -28,9 +28,8 @@ tmpdir                         = <%= @tmpdir %>
 transaction-isolation          = READ-COMMITTED
 binlog_format                  = ROW
 
-server-id                      = <%= @server_id %>
 log-bin                        = <%= @datadir %>/mysql-bin
-expire-logs-days               = 1
+expire-logs-days               = 3
 sync-binlog                    = 1
 slave_compressed_protocol      = 1
 
@@ -40,9 +39,8 @@ tmp-table-size                 = 64M
 max-heap-table-size            = 64M
 max-connections                = <%= @max_connections %>
 open-files-limit               = 200000
-table-definition-cache         = <%= @table_definition_cache %>
-table-open-cache               = <%= @table_open_cache %>
-table-open-cache-instances     = 2
+table-open-cache               = 50000
+table-definition-cache         = 40000
 
 # thread and connection handling
 thread_handling                = pool-of-threads
@@ -56,10 +54,16 @@ extra_max_connections          = 10
 query-cache-type               = 0
 query-cache-size               = 0
 thread-cache-size              = 100
+interactive_timeout            = 28800
+wait_timeout                   = 3600
 
 innodb-flush-method            = O_DIRECT
+innodb_thread_concurrency      = 0
+innodb_io_capacity             = 1000
+innodb_stats_sample_pages      = 16
+innodb_stats_method            = nulls_unequal
 innodb-log-files-in-group      = 2
-innodb-log-file-size           = 64M
+innodb-log-file-size           = 256M
 innodb-flush-log-at-trx-commit = 1
 innodb-file-per-table          = 1
 innodb-buffer-pool-size        = <%= @innodb_buffer_pool_size %>
@@ -68,6 +72,9 @@ innodb_lock_wait_timeout       = 120
 innodb-stats-on-metadata       = OFF
 innodb_ft_total_cache_size     = 150000000
 innodb_adaptive_hash_index     = OFF
+innodb_purge_threads           = 1
+
+join_cache_level               = 8
 
 performance_schema = off
 

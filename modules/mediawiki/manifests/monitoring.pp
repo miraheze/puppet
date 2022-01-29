@@ -1,6 +1,5 @@
-# MediaWiki monitoring
+# === Class mediawiki::monitoring
 class mediawiki::monitoring {
-
     monitoring::services { 'MediaWiki Rendering':
         check_command => 'check_mediawiki',
         vars          => {

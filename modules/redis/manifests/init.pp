@@ -1,6 +1,6 @@
 # class: redis
 class redis (
-    Integer$port = 6379,
+    Integer $port = 6379,
     String $maxmemory = '512mb',
     String $maxmemory_policy = 'allkeys-lru',
     Integer $maxmemory_samples = 5,
@@ -28,6 +28,18 @@ class redis (
         group   => 'redis',
         mode    => '0755',
         require => Package['redis-server'],
+    }
+
+    # Disabling transparent hugepages is strongly recommended
+    # in http://redis.io/topics/latency.
+    sysfs::parameters { 'disable_transparent_hugepages':
+        values => { 'kernel/mm/transparent_hugepage/enabled' => 'never' },
+    }
+
+    # Background save may fail under low memory condition unless
+    # vm.overcommit_memory is 1.
+    sysctl::parameters { 'vm.overcommit_memory':
+        values => { 'vm.overcommit_memory' => 1 },
     }
 
     systemd::service { 'redis-server':

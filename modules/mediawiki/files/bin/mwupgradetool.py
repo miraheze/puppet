@@ -1,7 +1,9 @@
+#! /usr/bin/python3
+
 import os
 import requests
-canary = 'mw11'
-serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
+canary = 'mwtask111'
+serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
 
 
 def check_up(server):
@@ -42,7 +44,7 @@ print('Will now check mediawiki branch')
 os.system('git -C /srv/mediawiki-staging/w rev-parse --abbrev-ref HEAD')
 input('Confirm: ')
 print('Will now deploy to canary server')
-os.system('deploy-mediawiki --world --l10n --gitinfo --force --ignore-time --servers=skip')
+os.system('deploy-mediawiki --world --l10n --force --ignore-time --servers=skip')
 if check_up(canary) and check_ro(canary):
     print('Canary deploy done')
 else:
@@ -50,7 +52,7 @@ else:
 input('Press enter to rollout: ')
 for server in serverlist:
     print(f'Will now deploy to {server}')
-    os.system(f'deploy-mediawiki --world --l10n --gitinfo --force --ignore-time --servers={server}')
+    os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --servers={server}')
     if check_up(server) and check_ro(server):
         print(f'{server} deploy done')
     else:
