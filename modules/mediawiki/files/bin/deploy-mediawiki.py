@@ -141,6 +141,7 @@ def _construct_git_pull(repo, submodules=False):
 def run(args, start):
     envinfo = get_environment_info()
     servers = get_server_list(envinfo, args.servers)
+    options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     if envinfo['canary'] in servers:
         loginfo = {}
         exitcodes = []
@@ -177,7 +178,6 @@ def run(args, start):
                 except KeyError:
                     print(f'Failed to pull {repo} due to invalid name')
 
-        options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
         non_zero_code(exitcodes)
@@ -189,22 +189,18 @@ def run(args, start):
                     rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]}')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
-                rsyncpaths.append(_get_deployed_path(option))
         non_zero_code(exitcodes)
         if args.files:  # specfic extra files
             files = str(args.files).split(',')
             for file in files:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, recursive=False, location=f'/srv/mediawiki-staging/{file}', dest=f'/srv/mediawiki/{file}'))
-                rsyncfiles.append(f'/srv/mediawiki/{file}')
         if args.folders:  # specfic extra folders
             folders = str(args.folders).split(',')
             for folder in folders:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest='/srv/mediawiki/{folder}/'))
-                rsyncpaths.append(f'/srv/mediawiki/{folder}/')
 
         if args.extensionlist:  # when adding skins/exts
             rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
-            rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
 
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))
@@ -216,7 +212,6 @@ def run(args, start):
         if args.l10n:  # setup l10n
             postinstall.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
             rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki={envinfo["wikidbname"]}')
-            rsyncpaths.append('/srv/mediawiki/cache/l10n/')
 
         for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
             exitcodes.append(run_command(cmd))
@@ -227,6 +222,24 @@ def run(args, start):
 
         # see if we are online - exit code 3 if not
         check_up(Debug=None, Host={envinfo["wikiurl"]}, verify=False, force=args.force)
+
+    # actually set remote lists
+    for option in options:
+        if options[option]:
+            rsyncpaths.append(_get_deployed_path(option))
+    if args.files:
+        for file in str(args.files).split(','):
+            rsyncfiles.append(f'/srv/mediawiki/{file}')
+    if args.folders:
+        for folder in str(args.folders).split(','):
+            rsyncfiles.append(f'/srv/mediawiki/{folder}/')
+    if args.extensionlist:
+            rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
+    if args.l10n:  # setup l10n
+            rsyncpaths.append('/srv/mediawiki/cache/l10n/')
+    
+
+
 
     for path in rsyncpaths:
         exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=path, force=args.force, envinfo=envinfo))
