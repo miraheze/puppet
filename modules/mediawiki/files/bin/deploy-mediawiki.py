@@ -85,7 +85,7 @@ def _construct_rsync_command(time, dest, recursive=True, local=True, location=No
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        return f'sudo -u www-data rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.miraheze.org:{dest}'
+        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.miraheze.org:{dest}'
     else:
         raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
@@ -145,8 +145,8 @@ def run(args, start):
                 exitcodes.append(run_command('sudo -u www-data composer install --no-dev --quiet'))
                 rebuild.append('sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki=loginwiki')
                 rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
-            rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(options[option])}*', dest=_get_deployed_path(options[option])))
-            rsyncpaths.append(_get_deployed_path(options[option]))
+            rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(options[option])))
+            rsyncpaths.append(_get_deployed_path(option))
     non_zero_code(exitcodes)
     if args.files:  # specfic extra files
         files = str(args.files).split(',')
@@ -161,11 +161,11 @@ def run(args, start):
 
     if args.extensionlist:  # when adding skins/exts
         rebuild.append('sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki=loginwiki')
-        rsyncfiles.append('/srv/mediawiki/cache/extension-list.json'
+        rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
 
     for cmd in rsync:  # move staged content to live
         exitcodes.append(run_command(cmd))
-        non_zero_code(exitcodes)
+    non_zero_code(exitcodes)
     # These need to be setup late because dodgy
     if args.l10nupdate:  # used by automated maint
         run_command('sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki=loginwiki')  # gives garbage errors
