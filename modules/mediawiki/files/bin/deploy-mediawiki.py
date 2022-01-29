@@ -26,7 +26,7 @@ ENVIRONMENTS = {
 HOSTNAME = socket.gethostname()
 
 def get_environment_info():
-    if HOSTNAME.split('.').startswith('test'):
+    if HOSTNAME.split('.')[0].startswith('test'):
         return ENVIRONMENTS['beta']
     return ENVIRONMENTS['prod']
 
@@ -94,10 +94,10 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
 def remote_sync_file(time, serverlist, path, envinfo, recursive=True, force=False):
     print(f'Start {path} deploys.')
     for server in serverlist:
-        if envinfo['canary'] == server:
+        if envinfo['canary'] == server.split('.')[0]:
             print(f'Deploying {path} to {server}.')
             ec = run_command(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
-            check_up(Debug=server, force=force, domain=envinfo['wikiurl'])
+            check_up(Debug=server, force=force, domain=f'https://envinfo["wikiurl"]')
             print(f'Deployed {path} to {server}.')
     print(f'Finished {path} deploys.')
     return ec
