@@ -33,7 +33,7 @@ def test_check_up_no_debug_host():
 
 
 def test_check_up_debug():
-    assert mwd.check_up(Debug='mw8')
+    assert mwd.check_up(Debug='mwtask111')
 
 
 def test_get_staging_path():
