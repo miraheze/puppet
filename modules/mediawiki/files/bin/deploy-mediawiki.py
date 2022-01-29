@@ -235,7 +235,7 @@ def run(args, start):
             rsyncfiles.append(f'/srv/mediawiki/{folder}/')
     if args.extensionlist:
             rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
-    if args.l10n:  # setup l10n
+    if args.l10n:
             rsyncpaths.append('/srv/mediawiki/cache/l10n/')
     
 
