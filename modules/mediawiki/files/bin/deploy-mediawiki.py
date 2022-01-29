@@ -35,6 +35,7 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
         headers = {'X-Miraheze-Debug': f'{Debug}.miraheze.org'}
         server = Debug
     else:
+        os.environ['NO_PROXY'] = 'localhost'
         server = 'https://localhost'
     if Host:
         headers = {'host': Host}
@@ -190,11 +191,10 @@ def run(args, start):
     if args.servers == 'skip':
         sync = False
         print('Sync skipped. Mediawiki deploy has not passed canary stage.')
-    elif args.servers == 'all':
-        serverlist = ['mw8', 'mw9', 'mw10', 'mw12', 'mw13', 'mwtask1']
+    elif args.servers in ('all', 'scsvg'):
+        serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
     else:
         serverlist = str(args.servers).split(',')
-
 
     if sync:
         for path in rsyncpaths:
