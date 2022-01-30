@@ -411,13 +411,6 @@ sub vcl_deliver {
 		set resp.http.X-Robots-Tag = "noindex";
 	}
 
-	# Useful debugging information
-	if (obj.hits > 0) {
-		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> HIT (" + obj.hits + ")";
-	} else {
-		set resp.http.X-Cache = "<%= scope.lookupvar('::hostname') %> MISS (0)";
-	}
-
 	# Disable Google ad targeting (FLoC)
 	set resp.http.Permissions-Policy = "interest-cohort=()";
 
@@ -429,7 +422,41 @@ sub vcl_deliver {
 		unset resp.http.Set-Cookie;
 	}
 
+	# Identify uncacheable content
+	if (obj.uncacheable) {
+		set resp.http.X-Cache = resp.http.X-Cache + " UNCACHEABLE";
+	}
+
 	return (deliver);
+}
+
+# Hit code, default logic is appended
+sub vcl_hit {
+	# Add X-Cache header
+	set resp.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> HIT (" + obj.hits + ")";
+
+	# Is the request graced?
+	if (obj.ttl <= 0 && obj.grace > 0s) {
+		set resp.http.X-Cache = resp.http.X-Cache + " GRACE";
+	}
+}
+
+# Miss code, default logic is appended
+sub vcl_miss {
+	# Add X-Cache header
+	set resp.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> MISS";
+}
+
+# Pass code, default logic is appended
+sub vcl_pass {
+	# Add X-Cache header
+	set resp.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> PASS";
+}
+
+# Synthetic code, default logic is appended
+sub vcl_synth {
+	# Add X-Cache header
+	set resp.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> SYNTH";
 }
 
 # Backend response when an error occurs
