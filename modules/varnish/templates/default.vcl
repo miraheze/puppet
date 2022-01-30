@@ -422,6 +422,9 @@ sub vcl_deliver {
 		unset resp.http.Set-Cookie;
 	}
 
+	# Set X-Cache from request
+	set resp.http.X-Cache = req.http.X-Cache;
+
 	# Identify uncacheable content
 	if (obj.uncacheable) {
 		set resp.http.X-Cache = resp.http.X-Cache + " UNCACHEABLE";
@@ -433,30 +436,30 @@ sub vcl_deliver {
 # Hit code, default logic is appended
 sub vcl_hit {
 	# Add X-Cache header
-	set resp.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> HIT (" + obj.hits + ")";
+	set req.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> HIT (" + obj.hits + ")";
 
 	# Is the request graced?
-	if (obj.ttl <= 0 && obj.grace > 0s) {
-		set resp.http.X-Cache = resp.http.X-Cache + " GRACE";
+	if (obj.ttl <= 0s && obj.grace > 0s) {
+		set req.http.X-Cache = req.http.X-Cache + " GRACE";
 	}
 }
 
 # Miss code, default logic is appended
 sub vcl_miss {
 	# Add X-Cache header
-	set resp.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> MISS";
+	set req.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> MISS";
 }
 
 # Pass code, default logic is appended
 sub vcl_pass {
 	# Add X-Cache header
-	set resp.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> PASS";
+	set req.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> PASS";
 }
 
 # Synthetic code, default logic is appended
 sub vcl_synth {
 	# Add X-Cache header
-	set resp.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> SYNTH";
+	set req.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> SYNTH";
 }
 
 # Backend response when an error occurs
