@@ -235,10 +235,10 @@ def run(args, start):
         for folder in str(args.folders).split(','):
             rsyncfiles.append(f'/srv/mediawiki/{folder}/')
     if args.extensionlist:
-            rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
+        rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
     if args.l10n:
-            rsyncpaths.append('/srv/mediawiki/cache/l10n/')
-    
+        rsyncpaths.append('/srv/mediawiki/cache/l10n/')
+
     for path in rsyncpaths:
         exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=path, force=args.force, envinfo=envinfo))
     for file in rsyncfiles:
