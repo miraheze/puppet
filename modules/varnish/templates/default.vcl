@@ -365,7 +365,17 @@ sub vcl_backend_response {
 		bereq.http.Cookie == "Token=1"
 		&& beresp.http.Vary ~ "(?i)(^|,)\s*Cookie\s*(,|$)"
 	) {
-		return(pass(607s));
+		# We can cache when:
+		# * Wiki is public; and
+		# * action=raw
+		if (
+			bereq.http.X-Wiki-Visibility == "Public"
+			&& bereq.url ~ "(&|\?)action=raw"
+		) {
+			unset bereq.http.Cookie;
+		} else {
+			return(pass(607s));
+		}
 	} elseif (beresp.http.Set-Cookie) {
 		set beresp.uncacheable = true; # We do this just to be safe - but we should probably log this to eliminate it?
 	}
