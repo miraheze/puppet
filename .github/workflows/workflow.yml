@@ -2,10 +2,12 @@ on:
   push:
     paths:
       - '**.py'
+      - '.github/**'
 
   pull_request:
     paths:
       - '**.py'
+      - '.github/**'
 
 jobs:
   build:
