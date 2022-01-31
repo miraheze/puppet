@@ -1,13 +1,20 @@
 on:
   push:
+    paths:
+      - '**.py'
+      - '.github/**'
+
   pull_request:
+    paths:
+      - '**.py'
+      - '.github/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ['3.7', '3.9']
+        python: ['3.9', '3.10']
     steps:
       - uses: actions/checkout@v2
         with:
