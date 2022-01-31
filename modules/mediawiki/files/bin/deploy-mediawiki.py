@@ -18,13 +18,14 @@ ENVIRONMENTS = {
         'canary': 'test101',
     },
     'prod': {
-        'wikidbname': 'testwiki',  # don't use loginwiki anymore - we want this to be an experimental wiki
+        'wikidbname': 'testwiki',  # don't use loginwiki anymore - we want this to be an experimental wiki
         'wikiurl': 'publictestwiki.com',
         'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122'],
         'canary': 'mwtask111',
     }
 }
 HOSTNAME = socket.gethostname()
+
 
 def get_environment_info():
     if HOSTNAME.split('.')[0].startswith('test'):
@@ -39,8 +40,6 @@ def get_server_list(envinfo, servers):
     if servers == 'skip':
         return [envinfo['canary']]
     return servers.split(',')
-    
-    
 
 
 def run_command(cmd):
@@ -240,9 +239,6 @@ def run(args, start):
     if args.l10n:
             rsyncpaths.append('/srv/mediawiki/cache/l10n/')
     
-
-
-
     for path in rsyncpaths:
         exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=path, force=args.force, envinfo=envinfo))
     for file in rsyncfiles:
