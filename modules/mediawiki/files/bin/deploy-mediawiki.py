@@ -5,6 +5,7 @@ import os
 import time
 import requests
 import socket
+from sys import exit
 
 
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
@@ -50,13 +51,12 @@ def run_command(cmd):
     return ec
 
 
-def non_zero_code(ec, exit=True):
+def non_zero_code(ec, quit=True):
     for code in ec:
         if code != 0:
-            if exit:
+            if quit:
                 print('Exiting due to non-zero status.')
                 exit(1)
-            return True
     return False
 
 
@@ -70,7 +70,7 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
     else:
         os.environ['NO_PROXY'] = 'localhost'
         domain = 'https://localhost'
-        headers = {'host': Host}
+        headers = {'host': f'https://{Host}'}
         location = f'{Host}@{domain}'
     up = False
     print(headers)
@@ -94,10 +94,12 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
 def remote_sync_file(time, serverlist, path, envinfo, recursive=True, force=False):
     print(f'Start {path} deploys.')
     for server in serverlist:
+        print(envinfo['canary'])
+        print(server.split('.')[0])
         if envinfo['canary'] == server.split('.')[0]:
             print(f'Deploying {path} to {server}.')
             ec = run_command(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
-            check_up(Debug=server, force=force, domain=f'https://envinfo["wikiurl"]')
+            check_up(Debug=server, force=force, domain=envinfo['wikiurl'])
             print(f'Deployed {path} to {server}.')
     print(f'Finished {path} deploys.')
     return ec
