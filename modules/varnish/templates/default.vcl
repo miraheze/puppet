@@ -369,7 +369,7 @@ sub vcl_backend_response {
 		# * Wiki is public; and
 		# * action=raw
 		if (
-			bereq.http.X-Wiki-Visibility == "Public"
+			beresp.http.X-Wiki-Visibility == "Public"
 			&& bereq.url ~ "(&|\?)action=raw"
 		) {
 			unset bereq.http.Cookie;
