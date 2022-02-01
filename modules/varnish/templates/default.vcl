@@ -373,6 +373,7 @@ sub vcl_backend_response {
 			&& bereq.url ~ "(&|\?)action=raw"
 		) {
 			unset bereq.http.Cookie;
+			unset beresp.http.Set-Cookie;
 		} else {
 			return(pass(607s));
 		}
