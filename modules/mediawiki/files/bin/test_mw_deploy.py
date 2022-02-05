@@ -2,27 +2,27 @@ import importlib
 mwd = importlib.import_module("deploy-mediawiki")
 
 
-def test_non_zero_ec_only_one_zero():
+def test_non_zero_ec_only_one_zero()-> None:
     assert not mwd.non_zero_code([0], exit=False)
 
 
-def test_non_zero_ec_multi_zero():
+def test_non_zero_ec_multi_zero()-> None:
     assert not mwd.non_zero_code([0, 0], exit=False)
 
 
-def test_non_zero_ec_zero_one():
+def test_non_zero_ec_zero_one()-> None:
     assert mwd.non_zero_code([1, 0], exit=False)
 
 
-def test_non_zero_ec_one_one():
+def test_non_zero_ec_one_one()-> None:
     assert mwd.non_zero_code([1, 1], exit=False)
 
 
-def test_non_zero_ec_only_one_one():
+def test_non_zero_ec_only_one_one()-> None:
     assert mwd.non_zero_code([1], exit=False)
 
 
-def test_check_up_no_debug_host():
+def test_check_up_no_debug_host()-> None:
     failed = False
     try:
         mwd.check_up()
@@ -32,19 +32,19 @@ def test_check_up_no_debug_host():
     assert failed
 
 
-def test_check_up_debug():
+def test_check_up_debug()-> None:
     assert mwd.check_up(Debug='mwtask111')
 
 
-def test_get_staging_path():
+def test_get_staging_path()-> None:
     assert mwd._get_staging_path('world') == '/srv/mediawiki-staging/w/'
 
 
-def test_get_deployed_path():
+def test_get_deployed_path()-> None:
     assert mwd._get_deployed_path('world') == '/srv/mediawiki/w/'
 
 
-def test_construct_rsync_no_location_local():
+def test_construct_rsync_no_location_local()-> None:
     failed = False
     try:
         mwd._construct_rsync_command(time=False, dest='/srv/mediawiki/w/')
@@ -54,7 +54,7 @@ def test_construct_rsync_no_location_local():
     assert failed
 
 
-def test_construct_rsync_no_server_remote():
+def test_construct_rsync_no_server_remote()-> None:
     failed = False
     try:
         mwd._construct_rsync_command(time=False, dest='/srv/mediawiki/w/', local=False)
@@ -64,7 +64,7 @@ def test_construct_rsync_no_server_remote():
     assert failed
 
 
-def test_construct_rsync_conflict_options_remote():
+def test_construct_rsync_conflict_options_remote()-> None:
     failed = False
     try:
         mwd._construct_rsync_command(time=False, dest='/srv/mediawiki/w/', location='garbage', local=False, server='test')
@@ -74,7 +74,7 @@ def test_construct_rsync_conflict_options_remote():
     assert failed
 
 
-def test_construct_rsync_conflict_options_no_server_remote():
+def test_construct_rsync_conflict_options_no_server_remote()-> None:
     failed = False
     try:
         mwd._construct_rsync_command(time=False, dest='/srv/mediawiki/w/', location='garbage', local=False)
@@ -84,41 +84,41 @@ def test_construct_rsync_conflict_options_no_server_remote():
     assert failed
 
 
-def test_construct_rsync_local_dir_update():
+def test_construct_rsync_local_dir_update()-> None:
     assert mwd._construct_rsync_command(time=False, dest='/srv/mediawiki/w/', location='/home/') == 'sudo -u www-data rsync --update -r --delete --exclude=".*" /home/ /srv/mediawiki/w/'
 
 
-def test_construct_rsync_local_file_update():
+def test_construct_rsync_local_file_update()-> None:
     assert mwd._construct_rsync_command(time=False, dest='/srv/mediawiki/w/test.txt', location='/home/test.txt', recursive=False) == 'sudo -u www-data rsync --update --exclude=".*" /home/test.txt /srv/mediawiki/w/test.txt'
 
 
-def test_construct_rsync_remote_dir_update():
+def test_construct_rsync_remote_dir_update()-> None:
     assert mwd._construct_rsync_command(time=False, dest='/srv/mediawiki/w/', local=False, server='test') == 'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/w/ www-data@test.miraheze.org:/srv/mediawiki/w/'
 
 
-def test_construct_rsync_remote_file_update():
+def test_construct_rsync_remote_file_update()-> None:
     assert mwd._construct_rsync_command(time=False, dest='/srv/mediawiki/w/test.txt', recursive=False, local=False, server='test') == 'sudo -u www-data rsync --update -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/w/test.txt www-data@test.miraheze.org:/srv/mediawiki/w/test.txt'
 
 
-def test_construct_rsync_local_dir_time():
+def test_construct_rsync_local_dir_time()-> None:
     assert mwd._construct_rsync_command(time=True, dest='/srv/mediawiki/w/', location='/home/') == 'sudo -u www-data rsync --inplace -r --delete --exclude=".*" /home/ /srv/mediawiki/w/'
 
 
-def test_construct_rsync_local_file_time():
+def test_construct_rsync_local_file_time()-> None:
     assert mwd._construct_rsync_command(time=True, dest='/srv/mediawiki/w/test.txt', location='/home/test.txt', recursive=False) == 'sudo -u www-data rsync --inplace --exclude=".*" /home/test.txt /srv/mediawiki/w/test.txt'
 
 
-def test_construct_rsync_remote_dir_time():
+def test_construct_rsync_remote_dir_time()-> None:
     assert mwd._construct_rsync_command(time=True, dest='/srv/mediawiki/w/', local=False, server='test') == 'sudo -u www-data rsync --inplace -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/w/ www-data@test.miraheze.org:/srv/mediawiki/w/'
 
 
-def test_construct_rsync_remote_file_time():
+def test_construct_rsync_remote_file_time()-> None:
     assert mwd._construct_rsync_command(time=True, dest='/srv/mediawiki/w/test.txt', recursive=False, local=False, server='test') == 'sudo -u www-data rsync --inplace -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/w/test.txt www-data@test.miraheze.org:/srv/mediawiki/w/test.txt'
 
 
-def test_construct_git_pull_sm():
+def test_construct_git_pull_sm()-> None:
     assert mwd._construct_git_pull('world', submodules=True) == 'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet'
 
 
-def test_construct_git_pull():
+def test_construct_git_pull()-> None:
     assert mwd._construct_git_pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull  --quiet'

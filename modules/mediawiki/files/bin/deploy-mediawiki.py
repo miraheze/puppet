@@ -1,8 +1,11 @@
 #! /usr/bin/python3
 
 import argparse
+from ctypes import Union
+from msilib import sequence
 import os
 import time
+from typing import Sequence
 import requests
 import socket
 from sys import exit
@@ -27,22 +30,23 @@ ENVIRONMENTS = {
 HOSTNAME = socket.gethostname()
 
 
-def get_environment_info():
+def get_environment_info()-> dict[str,list[str]]:
     if HOSTNAME.split('.')[0].startswith('test'):
         return ENVIRONMENTS['beta']
     return ENVIRONMENTS['prod']
 
 
-def get_server_list(envinfo, servers):
+def get_server_list(envinfo: dict[str,list[str]], servers:str)-> list[str]:
     if servers in ('all', 'scsvg'):
         slist = envinfo['servers']
-        return slist.append(envinfo['canary'])
+        slist.append(envinfo['canary'])
+        return slist
     if servers == 'skip':
         return [envinfo['canary']]
     return servers.split(',')
 
 
-def run_command(cmd):
+def run_command(cmd: str)-> int:
     start = time.time()
     print(f'Execute: {cmd}')
     ec = os.system(cmd)
@@ -50,7 +54,7 @@ def run_command(cmd):
     return ec
 
 
-def non_zero_code(ec, quit=True):
+def non_zero_code(ec: list[int], quit:bool=True)-> bool:
     for code in ec:
         if code != 0:
             if quit:
@@ -59,7 +63,7 @@ def non_zero_code(ec, quit=True):
     return False
 
 
-def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=True, force=False):
+def check_up(Debug:Union[None, str]=None, Host:Union[None, str]=None, domain:str='https://meta.miraheze.org', verify:bool=True, force:bool=False)-> bool:
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
@@ -90,7 +94,7 @@ def check_up(Debug=None, Host=None, domain='https://meta.miraheze.org', verify=T
     return up
 
 
-def remote_sync_file(time, serverlist, path, envinfo, recursive=True, force=False):
+def remote_sync_file(time:str, serverlist:list[str], path:str, envinfo:dict[str,list[str]], recursive:bool=True, force:bool=False)-> int:
     print(f'Start {path} deploys.')
     for server in serverlist:
         print(envinfo['canary'])
@@ -104,15 +108,15 @@ def remote_sync_file(time, serverlist, path, envinfo, recursive=True, force=Fals
     return ec
 
 
-def _get_staging_path(repo):
+def _get_staging_path(repo:str)-> str:
     return f'/srv/mediawiki-staging/{repos[repo]}/'
 
 
-def _get_deployed_path(repo):
+def _get_deployed_path(repo:str)-> str:
     return f'/srv/mediawiki/{repos[repo]}/'
 
 
-def _construct_rsync_command(time, dest, recursive=True, local=True, location=None, server=None):
+def _construct_rsync_command(time:str, dest:str, recursive:bool=True, local:bool=True, location:Union[None,str]=None, server:Union[None,str]=None)-> str:
     if time:
         params = '--inplace'
     else:
@@ -131,7 +135,7 @@ def _construct_rsync_command(time, dest, recursive=True, local=True, location=No
         raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
 
-def _construct_git_pull(repo, submodules=False):
+def _construct_git_pull(repo:str, submodules:bool=False)-> str:
     if submodules:
         extrap = '--recurse-submodules'
     else:
@@ -139,7 +143,7 @@ def _construct_git_pull(repo, submodules=False):
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull {extrap} --quiet'
 
 
-def run(args, start):
+def run(args:argparse.Namespace, start:float)-> None:
     envinfo = get_environment_info()
     servers = get_server_list(envinfo, args.servers)
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
@@ -246,7 +250,7 @@ def run(args, start):
 
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
 
-    failed = non_zero_code(ec=exitcodes, exit=False)
+    failed = non_zero_code(ec=exitcodes, quit=False)
     if failed:
         fintext += ' - FAIL: {exitcodes}'
     else:

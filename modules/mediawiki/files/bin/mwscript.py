@@ -4,7 +4,7 @@ import argparse
 import os
 
 
-def run(args):
+def run(args:argparse.Namespace)-> None:
     longscripts = ('deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'refreshLinks.php', 'purgeList.php', 'cargoRecreateData.php')
     long = False
 

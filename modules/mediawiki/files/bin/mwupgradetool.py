@@ -6,7 +6,7 @@ canary = 'mwtask111'
 serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
 
 
-def check_up(server):
+def check_up(server:str)-> bool:
     up = False
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
     req = requests.get('https://meta.miraheze.org/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
@@ -15,7 +15,7 @@ def check_up(server):
     return up
 
 
-def check_ro(server):
+def check_ro(server:str)-> bool:
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
     req = requests.get('https://meta.miraheze.org/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
     response = req.json()
