@@ -6,7 +6,7 @@ canary = 'mwtask111'
 serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
 
 
-def check_up(server:str)-> bool:
+def check_up(server: str) -> bool:
     up = False
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
     req = requests.get('https://meta.miraheze.org/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
@@ -15,7 +15,7 @@ def check_up(server:str)-> bool:
     return up
 
 
-def check_ro(server:str)-> bool:
+def check_ro(server: str) -> bool:
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
     req = requests.get('https://meta.miraheze.org/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
     response = req.json()
@@ -24,8 +24,8 @@ def check_ro(server:str)-> bool:
     return False
 
 
-print("Welcome to the MediaWiki Upgrade tool!")
-input("Please confirm you are running this script on the canary server: (press enter)")
+print('Welcome to the MediaWiki Upgrade tool!')
+input('Please confirm you are running this script on the canary server: (press enter)')
 input('MediaWiki -> RO - Running puppet to sync config')
 os.system('sudo puppet agent -tv')
 print('Config deployed')

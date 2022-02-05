@@ -52,12 +52,13 @@ def run_command(cmd: str) -> int:
     return ec
 
 
-def non_zero_code(ec: list[int], quit: bool = True) -> bool:
+def non_zero_code(ec: list[int], leave: bool = True) -> bool:
     for code in ec:
         if code != 0:
-            if quit:
+            if leave:
                 print('Exiting due to non-zero status.')
                 exit(1)
+            return True
     return False
 
 
@@ -224,7 +225,7 @@ def run(args: argparse.Namespace, start: float) -> None:
         non_zero_code(exitcodes)
 
         # see if we are online - exit code 3 if not
-        check_up(Debug=None, Host=envinfo["wikiurl"], verify=False, force=args.force)
+        check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force)
 
     # actually set remote lists
     for option in options:
@@ -248,7 +249,7 @@ def run(args: argparse.Namespace, start: float) -> None:
 
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
 
-    failed = non_zero_code(ec=exitcodes, quit=False)
+    failed = non_zero_code(ec=exitcodes, leave=False)
     if failed:
         fintext += ' - FAIL: {exitcodes}'
     else:
