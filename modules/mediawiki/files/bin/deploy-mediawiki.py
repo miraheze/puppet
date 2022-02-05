@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 import argparse
-from ctypes import Union
+from typing import Union
 import os
 import time
 import requests
