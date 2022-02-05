@@ -24,6 +24,6 @@ jobs:
           pip install -r .github/pythonchecks.txt
       - name: Run tests
         run: |
-          flake8 modules/mediawiki --ignore=E501,W503
+          flake8 modules/mediawiki --ignore=E501,W503,SF301
           pytest -n auto
           mypy --ignore-missing-imports
