@@ -71,18 +71,16 @@ def check_up(Debug: Optional[str] = None, Host: Optional[str] = None, domain: st
         location = f'{domain}@{server}'
     else:
         os.environ['NO_PROXY'] = 'localhost'
-        domain = 'https://localhost'
-        headers = {'host': f'https://{Host}'}
+        domain = 'localhost'
+        headers = {'host': f'{Host}'}
         location = f'{Host}@{domain}'
     up = False
-    print(headers)
-    print(f'{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json')
-    req = requests.get(f'{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
+    req = requests.get(f'https://{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
     if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
         print(f'Status: {req.status_code}')
-        print(f'Text: {"miraheze" in req.text}')
+        print(f'Text: {"miraheze" in req.text} \n {req.text}')
         print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
         if force:
             print(f'Ignoring canary check error on {location} due to --force')
@@ -96,13 +94,13 @@ def check_up(Debug: Optional[str] = None, Host: Optional[str] = None, domain: st
 def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: dict[str, list[str]], recursive: bool = True, force: bool = False) -> int:
     print(f'Start {path} deploys.')
     for server in serverlist:
-        print(envinfo['canary'])
-        print(server.split('.')[0])
-        if envinfo['canary'] == server.split('.')[0]:
+        if envinfo['canary'] != server.split('.')[0]:
             print(f'Deploying {path} to {server}.')
             ec = run_command(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
             check_up(Debug=server, force=force, domain=envinfo['wikiurl'])  # type: ignore
             print(f'Deployed {path} to {server}.')
+        else:
+           return 0
     print(f'Finished {path} deploys.')
     return ec
 
@@ -251,7 +249,7 @@ def run(args: argparse.Namespace, start: float) -> None:
 
     failed = non_zero_code(ec=exitcodes, leave=False)
     if failed:
-        fintext += ' - FAIL: {exitcodes}'
+        fintext += f' - FAIL: {exitcodes}'
     else:
         fintext += ' - SUCCESS'
     fintext += f' in {str(int(time.time() - start))}s'
