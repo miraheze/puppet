@@ -25,7 +25,7 @@ def test_non_zero_ec_only_one_one() -> None:
 def test_check_up_no_debug_host() -> None:
     failed = False
     try:
-        mwd.check_up()
+        mwd.check_up(nolog=True)
     except Exception as e:
         assert str(e) == 'Host or Debug must be specified'
         failed = True
@@ -33,7 +33,7 @@ def test_check_up_no_debug_host() -> None:
 
 
 def test_check_up_debug() -> None:
-    assert mwd.check_up(Debug='mwtask111')
+    assert mwd.check_up(nolog=True, Debug='mwtask111')
 
 
 def test_get_staging_path() -> None:

@@ -169,11 +169,11 @@ def run(args: argparse.Namespace, start: float) -> None:
             print(text)
         if args.world and not args.pull:
             pull = ['world']
-        if args.pull or args.world:
-            if args.pull:
-                pull = str(args.pull).split(',')
-            elif args.world and 'world' not in pull:
-                pull.append('world')
+        if args.pull:
+            pull = str(args.pull).split(',')
+        if args.world and 'world' not in pull:
+            pull.append('world')
+        if args.pull:
             for repo in pull:
                 if repo == 'world':
                     sm = True
