@@ -148,25 +148,26 @@ def run(args: argparse.Namespace, start: float) -> None:
     envinfo = get_environment_info()
     servers = get_server_list(envinfo, args.servers)
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
+    exitcodes = []
+    loginfo = {}
+    rsyncpaths = []
+    rsyncfiles = []
+    rsync = []
+    rebuild = []
+    postinstall = []
+    stage = []
     if envinfo['canary'] in servers:
-        loginfo = {}
-        exitcodes = []
         for arg in vars(args).items():
             if arg[1] is not None and arg[1] is not False:
                 loginfo[arg[0]] = arg[1]
         synced = loginfo['servers']
         del loginfo['servers']
         text = f'starting deploy of "{str(loginfo)}" to {synced}'
-        rsyncpaths = []
-        rsyncfiles = []
-        rsync = []
-        rebuild = []
-        postinstall = []
-        stage = []
         if not args.nolog:
             os.system(f'/usr/local/bin/logsalmsg {text}')
         else:
             print(text)
+        pull = []
         if args.world and not args.pull:
             pull = ['world']
         if args.pull:
