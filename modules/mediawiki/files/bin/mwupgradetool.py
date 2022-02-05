@@ -7,12 +7,11 @@ serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
 
 
 def check_up(server: str) -> bool:
-    up = False
     headers = {'X-Miraheze-Debug': f'{server}.miraheze.org'}
     req = requests.get('https://meta.miraheze.org/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers)
     if req.status_code == 200 and 'miraheze' in req.text and server in req.headers['X-Served-By']:
-        up = True
-    return up
+        return True
+    return False
 
 
 def check_ro(server: str) -> bool:
