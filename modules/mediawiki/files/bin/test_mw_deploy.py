@@ -1,5 +1,5 @@
 import importlib
-mwd = importlib.import_module('deploy-mediawik')
+mwd = importlib.import_module('deploy-mediawiki')
 
 
 def test_non_zero_ec_only_one_zero() -> None:
