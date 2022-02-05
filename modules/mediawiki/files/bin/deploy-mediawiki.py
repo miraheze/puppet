@@ -62,7 +62,7 @@ def non_zero_code(ec: list[int], leave: bool = True) -> bool:
     return False
 
 
-def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'https://meta.miraheze.org', verify: bool = True, force: bool = False) -> bool:
+def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False) -> bool:
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
