@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 import argparse
-from typing import Union
+from typing import Optional, Union  # TODO: Use TypedDict too
 import os
 import time
 import requests
@@ -30,17 +30,17 @@ HOSTNAME = socket.gethostname()
 
 def get_environment_info() -> dict[str, list[str]]:
     if HOSTNAME.split('.')[0].startswith('test'):
-        return ENVIRONMENTS['beta']
-    return ENVIRONMENTS['prod']
+        return ENVIRONMENTS['beta']  # type: ignore
+    return ENVIRONMENTS['prod']  # type: ignore
 
 
 def get_server_list(envinfo: dict[str, list[str]], servers: str) -> list[str]:
     if servers in ('all', 'scsvg'):
         slist = envinfo['servers']
-        slist.append(envinfo['canary'])
+        slist.append(envinfo['canary'])  # type: ignore
         return slist
     if servers == 'skip':
-        return [envinfo['canary']]
+        return [envinfo['canary']]  # type: ignore
     return servers.split(',')
 
 
@@ -62,7 +62,7 @@ def non_zero_code(ec: list[int], leave: bool = True) -> bool:
     return False
 
 
-def check_up(Debug: Union[None, str] = None, Host: Union[None, str] = None, domain: str = 'https://meta.miraheze.org', verify: bool = True, force: bool = False) -> bool:
+def check_up(Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'https://meta.miraheze.org', verify: bool = True, force: bool = False) -> bool:
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
@@ -101,7 +101,7 @@ def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: dict[
         if envinfo['canary'] == server.split('.')[0]:
             print(f'Deploying {path} to {server}.')
             ec = run_command(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
-            check_up(Debug=server, force=force, domain=envinfo['wikiurl'])
+            check_up(Debug=server, force=force, domain=envinfo['wikiurl'])  # type: ignore
             print(f'Deployed {path} to {server}.')
     print(f'Finished {path} deploys.')
     return ec
@@ -225,7 +225,7 @@ def run(args: argparse.Namespace, start: float) -> None:
         non_zero_code(exitcodes)
 
         # see if we are online - exit code 3 if not
-        check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force)
+        check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force)  # type: ignore
 
     # actually set remote lists
     for option in options:
