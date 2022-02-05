@@ -62,7 +62,7 @@ def non_zero_code(ec: list[int], leave: bool = True) -> bool:
     return False
 
 
-def check_up(Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'https://meta.miraheze.org', verify: bool = True, force: bool = False) -> bool:
+def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'https://meta.miraheze.org', verify: bool = True, force: bool = False) -> bool:
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
@@ -86,21 +86,25 @@ def check_up(Debug: Optional[str] = None, Host: Optional[str] = None, domain: st
             print(f'Ignoring canary check error on {location} due to --force')
         else:
             print(f'Canary check failed for {location}. Aborting... - use --force to proceed')
-            os.system(f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {location}')
+            message = f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {location}'
+            if nolog:
+                print(message)
+            else:
+                os.system(message)
             exit(3)
     return up
 
 
-def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: dict[str, list[str]], recursive: bool = True, force: bool = False) -> int:
+def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: dict[str, list[str]], nolog: bool, recursive: bool = True, force: bool = False) -> int:
     print(f'Start {path} deploys.')
     for server in serverlist:
         if envinfo['canary'] != server.split('.')[0]:
             print(f'Deploying {path} to {server}.')
             ec = run_command(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
-            check_up(Debug=server, force=force, domain=envinfo['wikiurl'])  # type: ignore
+            check_up(Debug=server, force=force, domain=envinfo['wikiurl'], nolog=nolog)  # type: ignore
             print(f'Deployed {path} to {server}.')
         else:
-           return 0
+            return 0
     print(f'Finished {path} deploys.')
     return ec
 
@@ -187,8 +191,8 @@ def run(args: argparse.Namespace, start: float) -> None:
             if options[option]:
                 if option == 'world':  # install steps for w
                     os.chdir(_get_staging_path('world'))
-                    exitcodes.append(run_command('sudo -u www-data composer install --no-dev --quiet'))
-                    rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]}')
+                    exitcodes.append(run_command('sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
+                    rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]}')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes)
@@ -209,7 +213,7 @@ def run(args: argparse.Namespace, start: float) -> None:
         non_zero_code(exitcodes)
         # These need to be setup late because dodgy
         if args.l10nupdate:  # used by automated maint
-            run_command(f'sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --wiki={envinfo["wikidbname"]}')  # gives garbage errors
+            run_command(f'sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --quiet --wiki={envinfo["wikidbname"]}')  # gives garbage errors
             args.l10n = True  # imply --l10n
         if args.l10n:  # setup l10n
             postinstall.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
@@ -223,7 +227,7 @@ def run(args: argparse.Namespace, start: float) -> None:
         non_zero_code(exitcodes)
 
         # see if we are online - exit code 3 if not
-        check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force)  # type: ignore
+        check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force, nolog=args.nolog)  # type: ignore
 
     # actually set remote lists
     for option in options:
@@ -241,9 +245,9 @@ def run(args: argparse.Namespace, start: float) -> None:
         rsyncpaths.append('/srv/mediawiki/cache/l10n/')
 
     for path in rsyncpaths:
-        exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=path, force=args.force, envinfo=envinfo))
+        exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=path, force=args.force, envinfo=envinfo, nolog=args.nolog))
     for file in rsyncfiles:
-        exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=file, recursive=False, force=args.force, envinfo=envinfo))
+        exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=file, recursive=False, force=args.force, envinfo=envinfo, nolog=args.nolog))
 
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
 
