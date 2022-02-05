@@ -3,23 +3,23 @@ mwd = importlib.import_module('deploy-mediawiki')
 
 
 def test_non_zero_ec_only_one_zero() -> None:
-    assert not mwd.non_zero_code([0], exit=False)
+    assert not mwd.non_zero_code([0], leave=False)
 
 
 def test_non_zero_ec_multi_zero() -> None:
-    assert not mwd.non_zero_code([0, 0], exit=False)
+    assert not mwd.non_zero_code([0, 0], leave=False)
 
 
 def test_non_zero_ec_zero_one() -> None:
-    assert mwd.non_zero_code([1, 0], exit=False)
+    assert mwd.non_zero_code([1, 0], leave=False)
 
 
 def test_non_zero_ec_one_one() -> None:
-    assert mwd.non_zero_code([1, 1], exit=False)
+    assert mwd.non_zero_code([1, 1], leave=False)
 
 
 def test_non_zero_ec_only_one_one() -> None:
-    assert mwd.non_zero_code([1], exit=False)
+    assert mwd.non_zero_code([1], leave=False)
 
 
 def test_check_up_no_debug_host() -> None:
