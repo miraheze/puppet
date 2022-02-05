@@ -8,5 +8,6 @@ subprocess.call(
         '--quiet',
         '--profile=/etc/firejail/mediawiki-converters.profile',
         '/usr/bin/gs',
-    ] + sys.argv[1:],
+    ]
+    + sys.argv[1:],
 )
