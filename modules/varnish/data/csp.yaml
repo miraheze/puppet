@@ -146,6 +146,7 @@ frame-src:
   - 'w.soundcloud.com'
   - 'query.wikidata.org'
   - 'player.vimeo.com'
+  - 'www.bing.com'
 
 connect-src:
   - "'self'"
