@@ -100,6 +100,7 @@ img-src:
   - 'cdn.smutstone.com'
   - 'storage.googleapis.com'
   - 'phab.miraheze.wiki'
+  - '*.fbcdn.net'
 
 font-src:
   - "'self'"
