@@ -543,8 +543,8 @@ sub vcl_backend_error {
 				<div class="row">
 					<div class="col-md-6">
 						<h2>What can I do?</h2>
-						<p class="lead">If you're a wiki visitor or owner</p>
-						<p>Try again in a few minutes. If the problem persists, please report this on <a href="https://phabricator.miraheze.org">phabricator.</a> We apologize for the inconvenience. Our sysadmins should be attempting to solve the issue ASAP!</p>
+						<p class="lead">If you're a wiki visitor or bureaucrat</p>
+						<p>Try again in a few minutes. If the problem persists, please report this on <a href="https://phabricator.miraheze.org">phabricator.</a> We apologize for the inconvenience. Miraheze Site Reliability Engineering should be attempting to solve the issue as soon as humanely</p>
 					</div>
 					<div class="col-md-6">
 						<a class="twitter-timeline" data-width="500" data-height="350" text-align: center href="https://twitter.com/miraheze?ref_src=twsrc%5Etfw">Tweets by miraheze</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
