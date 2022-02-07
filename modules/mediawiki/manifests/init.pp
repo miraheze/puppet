@@ -82,6 +82,18 @@ class mediawiki(
         require => File['/srv/mediawiki'],
     }
 
+    file { '/srv/mediawiki/favicon.php':
+        ensure  => 'present',
+        source  => 'puppet:///modules/mediawiki/favicon.php',
+        require => File['/srv/mediawiki'],
+    }
+
+    file { '/srv/mediawiki/touch.php':
+        ensure  => 'present',
+        source  => 'puppet:///modules/mediawiki/touch.php',
+        require => File['/srv/mediawiki'],
+    }
+
     file { '/srv/mediawiki/healthcheck.php':
         ensure  => 'present',
         source  => 'puppet:///modules/mediawiki/healthcheck.php',
