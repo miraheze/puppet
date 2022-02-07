@@ -13,8 +13,6 @@ class base::puppet (
 
     apt::source { 'puppetlabs':
         location => 'http://apt.puppetlabs.com',
-        # Temporarily until bullseye is supported
-        release  => 'buster',
         repos    => "puppet${puppet_major_version}",
         require  => File['/etc/apt/trusted.gpg.d/puppetlabs.gpg'],
         notify   => Exec['apt_update_puppetlabs'],
