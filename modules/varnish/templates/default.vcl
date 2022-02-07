@@ -251,7 +251,7 @@ sub vcl_recv {
 	# Normalise Accept-Encoding for better cache hit ratio
 	if (req.http.Accept-Encoding) {
 		if (
-			req.http.Host = "static.miraheze.org"
+			req.http.Host == "static.miraheze.org"
 			&& req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|mp4|ogg)$"
 		) {
 			# No point in compressing these
