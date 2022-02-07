@@ -13,7 +13,7 @@ function streamFavicon() {
 
 	$favicon = $wgFavicon;
 	if ( $favicon === '/favicon.ico' ) {
-		$favicon = '/default.ico';
+		$favicon = '/favicons/default.ico';
 	}
 
 	$req = RequestContext::getMain()->getRequest();
