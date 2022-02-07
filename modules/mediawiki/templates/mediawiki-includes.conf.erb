@@ -42,11 +42,11 @@ location = / {
 }
 
 location = /favicon.ico {
-	try_files /../../usr/share/nginx/favicons/$host.ico /../../usr/share/nginx/favicons/default.ico;
+	rewrite ^(.*)$ /favicon.php;
 }
 
 location = /apple-touch-icon.png {
-	try_files /../../usr/share/nginx/favicons/apple-touch-icon-$host.png /../../usr/share/nginx/favicons/apple-touch-icon-default.png;
+	rewrite ^(.*)$ /touch.php;
 }
 
 location = /wiki {
