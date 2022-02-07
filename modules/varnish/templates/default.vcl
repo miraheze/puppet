@@ -543,7 +543,7 @@ sub vcl_backend_error {
 				<div class="row">
 					<div class="col-md-6">
 						<h2>What can I do?</h2>
-						<p>Try again in a few minutes. If the problem persists, please report this on <a href="https://phabricator.miraheze.org">Phabricator</a>. If Phabricator is also down, you may join our <a href="https://discord.gg/TVAJTE4CUn">Discord server</a> or IRC (<a href="https://web.libera.chat/?channel=#miraheze-sre">#miraheze-sre</a>) for additional updates. We apologise for the inconvenience. Our system administrators should be attempting to resolve the issue ASAP!</p>
+						<p>Try again in a few minutes. If the problem persists, please report this on <a href="https://phabricator.miraheze.org">Phabricator</a>. If Phabricator is also down, you may join our <a href="https://discord.gg/TVAJTE4CUn">Discord server</a> or IRC (<a href="https://web.libera.chat/?channel=#miraheze-sre">#miraheze-sre</a>) for additional updates. We apologise for the inconvenience. The Miraheze Site Reliability Engineering team should be attempting to resolve the issue as soon as possible.</p>
 					</div>
 					<div class="col-md-6">
 						<a class="twitter-timeline" data-width="500" data-height="350" text-align: center href="https://twitter.com/miraheze?ref_src=twsrc%5Etfw">Tweets by Miraheze</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
