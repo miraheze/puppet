@@ -1,12 +1,12 @@
 # class: matomo
 class matomo (
     String $ldap_password = lookup('passwords::matomo::ldap_password'),
-    String $matomo_db_host = lookup('matomo_db_host', {'default_value' => 'db12.miraheze.org'}),
+    String $matomo_db_host = lookup('matomo_db_host', {'default_value' => 'db111.miraheze.org'}),
 ) {
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '4.6.2', # Current stable
+        branch             => '4.7.1', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
@@ -21,36 +21,34 @@ class matomo (
         require     => Git::Clone['matomo'],
     }
 
-    if !defined(Class['php::php_fpm']) {
-        class { 'php::php_fpm':
-            config  => {
-                'display_errors'            => 'Off',
-                'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
-                'log_errors'                => 'On',
-                'memory_limit'              => lookup('php::fpm::memory_limit', {'default_value' => '512M'}),
-                'opcache'                   => {
-                    'enable'                  => 1,
-                    'interned_strings_buffer' => 30,
-                    'memory_consumption'      => 112,
-                    'max_accelerated_files'   => 20000,
-                    'max_wasted_percentage'   => 10,
-                    'validate_timestamps'     => 1,
-                    'revalidate_freq'         => 10,
-                },
-                'enable_dl'           => 0,
-                'post_max_size'       => '60M',
-                'register_argc_argv'  => 'Off',
-                'request_order'       => 'GP',
-                'track_errors'        => 'Off',
-                'upload_max_filesize' => '100M',
-                'variables_order'     => 'GPCS',
+    class { 'php::php_fpm':
+        config  => {
+            'display_errors'            => 'Off',
+            'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
+            'log_errors'                => 'On',
+            'memory_limit'              => lookup('php::fpm::memory_limit', {'default_value' => '1G'}),
+            'opcache'                   => {
+                'enable'                  => 1,
+                'interned_strings_buffer' => 30,
+                'memory_consumption'      => 112,
+                'max_accelerated_files'   => 20000,
+                'max_wasted_percentage'   => 10,
+                'validate_timestamps'     => 1,
+                'revalidate_freq'         => 10,
             },
-            config_cli => {
-                'memory_limit' => lookup('php::cli::memory_limit', {'default_value' => '2G'}),
-            },
-            fpm_min_child => 4,
-            version => lookup('php::php_version', {'default_value' => '7.3'}),
-        }
+            'enable_dl'           => 0,
+            'post_max_size'       => '60M',
+            'register_argc_argv'  => 'Off',
+            'request_order'       => 'GP',
+            'track_errors'        => 'Off',
+            'upload_max_filesize' => '100M',
+            'variables_order'     => 'GPCS',
+        },
+        config_cli => {
+            'memory_limit' => lookup('php::cli::memory_limit', {'default_value' => '1G'}),
+        },
+        fpm_min_child => 4,
+        version => lookup('php::php_version', {'default_value' => '7.4'}),
     }
 
     include ssl::wildcard

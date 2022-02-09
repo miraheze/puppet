@@ -64,6 +64,11 @@ node 'mail121.miraheze.org' {
     include role::roundcubemail
 }
 
+node 'matomo101.miraheze.org' {
+    include base
+    include role::matomo
+}
+
 node /^mem1[02]1\.miraheze\.org$/ {
     include base
     include role::memcached
@@ -74,7 +79,6 @@ node 'mon111.miraheze.org' {
     include role::grafana
     include role::icinga2
     include role::irc
-    include role::matomo
     include role::prometheus
     include prometheus::php_fpm
 }
