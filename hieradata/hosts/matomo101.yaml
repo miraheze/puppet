@@ -1,1 +1,2 @@
 matomo_db_host: 'db111.miraheze.org'
+http_proxy: 'http://bast.miraheze.org:8080'
