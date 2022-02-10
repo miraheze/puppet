@@ -15,8 +15,6 @@ icinga2_api_bind_host: '::'
 mariadb::version: '10.5'
 
 php::php_version: '7.4'
-php::cli::memory_limit: '3G'
-php::fpm::memory_limit: '3g'
 
 php::php_fpm::fpm_workers_multiplier: 5.0
 php::php_fpm::fpm_min_restart_threshold: 6
