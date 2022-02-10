@@ -1,14 +1,12 @@
 # class: redis
 class redis (
+    Boolean $persist = true,
     Integer $port = 6379,
     String $maxmemory = '512mb',
     String $maxmemory_policy = 'allkeys-lru',
     Integer $maxmemory_samples = 5,
     Variant[Boolean, String] $password = false,
 ) {
-
-    $jobrunner = lookup('jobrunner', {'default_value' => false})
-
     package { 'redis-server':
         ensure  => present,
     }

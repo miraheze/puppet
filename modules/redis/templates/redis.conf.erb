@@ -11,13 +11,10 @@ databases 1
 tcp-backlog 1024
 
 #stop-writes-on-bgsave-error no
-<%- if @jobrunner -%>
+<%- if @persist -%>
 save 60 1
 rdbcompression yes
 rdbchecksum yes
-<%- end -%>
-
-<%- if @jobrunner -%>
 appendonly no
 <%- else -%>
 # Disable persitence
@@ -29,7 +26,9 @@ slave-serve-stale-data yes
 slave-read-only no
 slave-priority 100
 
+<%- if @password -%>
 requirepass <%= @password %>
+<%- end -%>
 
 maxmemory <%= @maxmemory %>
 maxmemory-policy <%= @maxmemory_policy %>
