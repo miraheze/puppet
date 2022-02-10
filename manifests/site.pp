@@ -67,6 +67,7 @@ node 'mail121.miraheze.org' {
 node 'matomo101.miraheze.org' {
     include base
     include role::matomo
+    include prometheus::php_fpm
 }
 
 node /^mem1[02]1\.miraheze\.org$/ {
