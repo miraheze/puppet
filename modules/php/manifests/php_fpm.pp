@@ -20,7 +20,7 @@ class php::php_fpm(
     Hash $config                              = {},
     Hash $config_cli                          = {},
     Hash $fpm_config                          = {},
-    Integer $fpm_min_child                    = lookup('php::php_fpm::fpm_min_child', {'default_value' => 4},
+    Integer $fpm_min_child                    = lookup('php::php_fpm::fpm_min_child', {'default_value' => 4}),
     Hash $fpm_pool_config                     = {},
     VMlib::Php_version $version               = '7.2',
     Float $fpm_workers_multiplier             = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
