@@ -5,7 +5,7 @@
 # and reports status to the prometheus scraper
 # from https://github.com/wikimedia/puppet/blob/b347052863d4d2e87b37d6c2d9f44f833cfd9dc2/modules/prometheus/manifests/blackbox_exporter.pp
 
-class prometheus::blackbox_exporter {
+class prometheus::exporter::blackbox {
     require_package('prometheus-blackbox-exporter')
 
     file { '/etc/prometheus/blackbox.yml':

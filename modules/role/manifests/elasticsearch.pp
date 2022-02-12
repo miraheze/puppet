@@ -1,6 +1,7 @@
 # role: elasticsearch
 class role::elasticsearch {
     include ::java
+    include prometheus::exporter::elasticsearch
 
     class { 'elastic_stack::repo':
         version => 7,

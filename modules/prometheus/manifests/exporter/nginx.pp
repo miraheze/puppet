@@ -1,7 +1,7 @@
-# = Class: prometheus::nginx
+# = Class: prometheus::exporter::nginx
 #
 
-class prometheus::nginx {
+class prometheus::exporter::nginx {
 
     file { '/usr/local/bin/nginx-prometheus-exporter':
         ensure => file,

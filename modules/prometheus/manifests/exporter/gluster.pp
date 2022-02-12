@@ -1,7 +1,7 @@
 # = Class: prometheus::gluster_exporter
 #
 
-class prometheus::gluster_exporter {
+class prometheus::exporter::gluster {
 
     file { '/etc/gluster-exporter.toml':
         ensure  => present,

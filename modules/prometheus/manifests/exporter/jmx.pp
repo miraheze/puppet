@@ -1,5 +1,4 @@
-
-# == Define prometheus::jmx_exporter
+# == Define prometheus::exporter::jmx
 #
 # Renders a Prometheus JMX Exporter config file.
 #
@@ -30,7 +29,7 @@
 #    source must be specified.
 #
 # from https://github.com/wikimedia/puppet/blob/e652ddf8a73a946a84e006b7d33d2d0e3edd788e/modules/profile/manifests/prometheus/jmx_exporter.pp
-define prometheus::jmx_exporter (
+define prometheus::exporter::jmx (
     Stdlib::Port               $port,
     Stdlib::Unixpath           $config_file,
     Optional[Stdlib::Unixpath] $config_dir = undef,

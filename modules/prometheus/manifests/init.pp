@@ -1,5 +1,9 @@
 # class: prometheus
-class prometheus {
+class prometheus (
+    Hash $global_extra = {},
+    Array $scrape_extra = [],
+    Integer $port = 9100
+) {
 
     require_package('prometheus')
 
@@ -11,30 +15,62 @@ class prometheus {
         require => Package['prometheus'],
     }
 
-    $host = query_nodes("domain='$domain'", 'fqdn')
-    $host_gluster = query_nodes("domain='$domain' and Class[Prometheus::Gluster_exporter]", 'fqdn')
-    $host_mariadb = query_nodes("domain='$domain' and Class[Role::Db]", 'fqdn')
-    $host_nginx = query_nodes("domain='$domain' and Class[Prometheus::Nginx]", 'fqdn')
-    $host_php_fpm = query_nodes("domain='$domain' and Class[Prometheus::Php_fpm]", 'fqdn')
-    $host_redis = query_nodes("domain='$domain' and Class[Prometheus::Redis_exporter]", 'fqdn')
-    $host_puppetserver = query_nodes("domain='$domain' and Class[Role::Puppetserver]", 'fqdn')
-    $host_memcached = query_nodes("domain='$domain' and Class[Prometheus::Memcached_exporter]", 'fqdn')
-    $host_elasticsearch = query_nodes("domain='$domain' and Class[Prometheus::Es_exporter]", 'fqdn')
-    $host_postfix = query_nodes("domain='$domain' and Class[Postfix]", 'fqdn')
-    $host_openldap = query_nodes("domain='$domain' and Class[Role::Openldap]", 'fqdn')
+    file { '/etc/prometheus/targets':
+        ensure => directory
+    }
+
+    $global_default = {
+        'scrape_interval' => '15s',
+        'scrape_timeout' => '15s',
+    }
+    $global_config = merge($global_default, $global_extra)
+
+    $scrape_default = [
+        {
+            'job_name' => 'prometheus',
+            'scrape_interval' => '30s',
+            'scrape_timeout' => '30s',
+            'static_configs' => [
+                {
+                    'targets' => [
+                        'localhost:9090'
+                    ],
+                }
+            ]
+        }
+        {
+            'job_name' => 'node',
+            'file_sd_configs' => [
+                {
+                    'files' => [
+                        '/etc/prometheus/targets/nodes.yaml'
+                    ]
+                }
+            ]
+        }
+    ]
+    $scrape_config = merge($scrape_extra, $scrape_default)
+
+    $common_config = {
+        'global' => $global_config,
+        'rule_files' => [],
+        'scrape_configs' => $scrape_config
+    }
 
     file { '/etc/prometheus/prometheus.yml':
-        content => template('prometheus/prometheus.yml.erb'),
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0444',
-        notify  => Exec['prometheus-reload'],
-        require => Package['prometheus'],
+        content => ordered_yaml($common_config),
+        notify  => Exec['prometheus-reload']
     }
 
     exec { 'prometheus-reload':
         command     => '/bin/systemctl reload prometheus',
         refreshonly => true,
+    }
+
+    file { '/etc/prometheus/targets/nodes.yaml':
+        ensure => present,
+        mode   => '0444',
+        content => template('prometheus/nodes.erb')
     }
 
     service { 'prometheus':

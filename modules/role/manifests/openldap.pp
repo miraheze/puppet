@@ -148,7 +148,7 @@ class role::openldap (
         tls_cacert => '/etc/ssl/certs/Sectigo.crt',
     }
 
-    include prometheus::openldap_exporter
+    include prometheus::exporter::openldap
 
     require_package('ldapvi')
 

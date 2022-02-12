@@ -95,7 +95,7 @@ class role::db(
 
     # We only need to run a single instance of mysqld_exporter,
     # listens on port 9104 by default.
-    prometheus::mysqld_exporter::instance { 'main':
+    prometheus::exporter::mariadb { 'main':
         client_socket => '/run/mysqld/mysqld.sock'
     }
 
