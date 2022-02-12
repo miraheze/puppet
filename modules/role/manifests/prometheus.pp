@@ -2,20 +2,16 @@
 class role::prometheus {
     include prometheus::exporter::blackbox
 
-    $blackbox_mediawiki_urls = []
-
-    query_nodes('Class[Role::MediaWiki]').each |$host| {
-        $blackbox_mediawiki_urls = $blackbox_mediawiki_urls + [
-            "https://${host}/wiki/Main_Page",
-            "https://${host}/wiki/Special:Version",
-            "https://${host}/wiki/Special:RecentChanges"
-        ]
+    $blackbox_mediawiki_urls = query_nodes('Class[Role::MediaWiki]').map |$host| {
+        [ 'Main_Page', 'Special:Version', 'Special:RecentChanges' ].map |$page| {
+            "https://${host}/wiki/${page}"
+        }
     }
 
     file { '/etc/prometheus/targets/blackbox_mediawiki_urls.yaml':
         ensure  => present,
         mode    => '0444',
-        content => ordered_yaml([{'targets' => $blackbox_mediawiki_urls}])
+        content => ordered_yaml([{'targets' => $blackbox_mediawiki_urls.flatten}])
     }
 
     $blackbox_web_urls = [
@@ -300,14 +296,22 @@ class role::prometheus {
         ].flatten,
     }
 
-#    $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
-#    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
-#    $firewall_rules_str = join($firewall_rules_mapped, ' ')
-#    ferm::service { 'prometheus':
-#        proto  => 'tcp',
-#        port   => '9090',
-#        srange => "(${firewall_rules_str})",
-#    }
+    $firewall_grafana = join(
+        query_facts('Class[Role::Grafana]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+
+    ferm::service { 'prometheus':
+        proto  => 'tcp',
+        port   => '9090',
+        srange => "(${firewall_grafana})",
+    }
 
     motd::role { 'role::prometheus':
         description => 'central Prometheus server',
