@@ -39,21 +39,21 @@ class role::prometheus {
             },
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/blackbox_mediawiki_urls.yaml' ]
+                    'files' => [ 'targets/blackbox_mediawiki_urls.yaml' ]
                 }
             ],
             'relabel_configs' => [
                 {
                     'source_labels' => [ '__address__' ],
-                    'target_labels' => '__param_target',
+                    'target_label' => '__param_target',
                 },
                 {
                     'source_labels' => [ '__param_target' ],
-                    'target_labels' => 'instance',
+                    'target_label' => 'instance',
                 },
                 {
-                    'source_labels' => '__address__',
-                    'target_labels' => 'mon111.miraheze.org:9115',
+                    'target_label' => '__address__',
+                    'replacement' => 'mon111.miraheze.org:9115',
                 }
             ]
         },
@@ -65,21 +65,21 @@ class role::prometheus {
             },
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/blackbox_web_urls.yaml' ]
+                    'files' => [ 'targets/blackbox_web_urls.yaml' ]
                 }
             ],
             'relabel_configs' => [
                 {
                     'source_labels' => [ '__address__' ],
-                    'target_labels' => '__param_target',
+                    'target_label' => '__param_target',
                 },
                 {
                     'source_labels' => [ '__param_target' ],
-                    'target_labels' => 'instance',
+                    'target_label' => 'instance',
                 },
                 {
-                    'source_labels' => '__address__',
-                    'target_labels' => 'mon111.miraheze.org:9115',
+                    'target_label' => '__address__',
+                    'replacement' => 'mon111.miraheze.org:9115',
                 }
             ]
         }
@@ -90,7 +90,7 @@ class role::prometheus {
             'job_name' => 'fpm',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/fpm.yaml' ]
+                    'files' => [ 'targets/fpm.yaml' ]
                 }
             ]
         }
@@ -107,7 +107,7 @@ class role::prometheus {
             'job_name' => 'varnish',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/varnish.yaml' ]
+                    'files' => [ 'targets/varnish.yaml' ]
                 }
             ]
         }
@@ -124,7 +124,7 @@ class role::prometheus {
             'job_name' => 'redis',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/redis.yaml' ]
+                    'files' => [ 'targets/redis.yaml' ]
                 }
             ]
         }
@@ -141,7 +141,7 @@ class role::prometheus {
             'job_name' => 'mariadb',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/mariadb.yaml' ]
+                    'files' => [ 'targets/mariadb.yaml' ]
                 }
             ]
         }
@@ -158,7 +158,7 @@ class role::prometheus {
             'job_name' => 'nginx',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/nginx.yaml' ]
+                    'files' => [ 'targets/nginx.yaml' ]
                 }
             ]
         }
@@ -175,7 +175,7 @@ class role::prometheus {
             'job_name' => 'gluster',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/gluster.yaml' ]
+                    'files' => [ 'targets/gluster.yaml' ]
                 }
             ]
         }
@@ -192,7 +192,7 @@ class role::prometheus {
             'job_name' => 'puppetserver',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/puppetserver.yaml' ]
+                    'files' => [ 'targets/puppetserver.yaml' ]
                 }
             ]
         }
@@ -209,7 +209,7 @@ class role::prometheus {
             'job_name' => 'puppetdb',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/puppetdb.yaml' ]
+                    'files' => [ 'targets/puppetdb.yaml' ]
                 }
             ]
         }
@@ -226,7 +226,7 @@ class role::prometheus {
             'job_name' => 'memcached',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/memcached.yaml' ]
+                    'files' => [ 'targets/memcached.yaml' ]
                 }
             ]
         }
@@ -243,7 +243,7 @@ class role::prometheus {
             'job_name' => 'postfix',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/postfix.yaml' ]
+                    'files' => [ 'targets/postfix.yaml' ]
                 }
             ]
         }
@@ -260,7 +260,7 @@ class role::prometheus {
             'job_name' => 'openldap',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/openldap.yaml' ]
+                    'files' => [ 'targets/openldap.yaml' ]
                 }
             ]
         }
@@ -277,7 +277,7 @@ class role::prometheus {
             'job_name' => 'elasticsearch',
             'file_sd_configs' => [
                 {
-                    'files' => [ '/etc/prometheus/targets/elasticsearch.yaml' ]
+                    'files' => [ 'targets/elasticsearch.yaml' ]
                 }
             ]
         }
