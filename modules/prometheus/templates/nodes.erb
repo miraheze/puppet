@@ -2,9 +2,9 @@
 hosts = [];
 
 @servers.each do |server|
-  target = "${server}:{@port}"
+  target = "#{server}:#{@port}"
   hosts.push ( target )
 end
 -%>
 # File managed by puppet
-<%= scope.function_ordered_yaml([{ 'targets' => hosts }]) %>
+<%= scope.call_function( 'ordered_yaml', [{ 'targets' => hosts }] ) %>

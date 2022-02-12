@@ -37,7 +37,7 @@ class prometheus (
                     ],
                 }
             ]
-        }
+        },
         {
             'job_name' => 'node',
             'file_sd_configs' => [
@@ -49,7 +49,7 @@ class prometheus (
             ]
         }
     ]
-    $scrape_config = merge($scrape_extra, $scrape_default)
+    $scrape_config = concat($scrape_extra, $scrape_default)
 
     $common_config = {
         'global' => $global_config,
@@ -66,6 +66,8 @@ class prometheus (
         command     => '/bin/systemctl reload prometheus',
         refreshonly => true,
     }
+
+    $servers = query_nodes('Class[Base]')
 
     file { '/etc/prometheus/targets/nodes.yaml':
         ensure => present,

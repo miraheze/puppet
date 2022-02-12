@@ -9,7 +9,7 @@ class role::prometheus {
             "https://${host}/wiki/Main_Page",
             "https://${host}/wiki/Special:Version",
             "https://${host}/wiki/Special:RecentChanges"
-        ];
+        ]
     }
 
     file { '/etc/prometheus/targets/blackbox_mediawiki_urls.yaml':
@@ -42,7 +42,7 @@ class role::prometheus {
                     'files' => [ '/etc/prometheus/targets/blackbox_mediawiki_urls.yaml' ]
                 }
             ],
-            'relabel_configs' => {
+            'relabel_configs' => [
                 {
                     'source_labels' => [ '__address__' ],
                     'target_labels' => '__param_target',
@@ -55,7 +55,7 @@ class role::prometheus {
                     'source_labels' => '__address__',
                     'target_labels' => 'mon111.miraheze.org:9115',
                 }
-            }
+            ]
         },
         {
             'job_name' => 'blackbox/web',
@@ -68,7 +68,7 @@ class role::prometheus {
                     'files' => [ '/etc/prometheus/targets/blackbox_web_urls.yaml' ]
                 }
             ],
-            'relabel_configs' => {
+            'relabel_configs' => [
                 {
                     'source_labels' => [ '__address__' ],
                     'target_labels' => '__param_target',
@@ -81,7 +81,7 @@ class role::prometheus {
                     'source_labels' => '__address__',
                     'target_labels' => 'mon111.miraheze.org:9115',
                 }
-            }
+            ]
         }
     ]
 

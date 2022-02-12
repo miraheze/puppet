@@ -1,11 +1,11 @@
 define prometheus::class (
     String $dest,
-    String $class,
+    String $module,
     Integer $port,
 ) {
-    $servers = query_nodes("Class[${class}]")
+    $servers = query_nodes("Class[${module}]")
 
-    file { $dest,
+    file { $dest:
         ensure => present,
         mode   => '0444',
         content => template('prometheus/nodes.erb')
