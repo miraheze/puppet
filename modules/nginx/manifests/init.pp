@@ -74,5 +74,5 @@ class nginx (
     }
 
     # Include nginx prometheus exported on all hosts that use the nginx class
-    include prometheus::nginx
+    include prometheus::exporter::nginx
 }

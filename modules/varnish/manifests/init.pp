@@ -5,7 +5,7 @@ class varnish (
 ) {
     include varnish::nginx
     include varnish::stunnel4
-    include prometheus::varnish_prometheus_exporter
+    include prometheus::exporter::varnish
 
     ensure_packages(['varnish', 'varnish-modules'])
 

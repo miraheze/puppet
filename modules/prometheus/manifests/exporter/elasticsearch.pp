@@ -1,6 +1,5 @@
 # Prometheus Elasticsearch query metrics exporter.
-
-class prometheus::es_exporter {
+class prometheus::exporter::elasticsearch {
     package { ['python3-click', 'python3-colorama', 'python3-configobj', 'python3-decorator', 'python3-elasticsearch', 'python3-prometheus-client']:
         ensure => present,
     }

@@ -37,7 +37,7 @@ class role::puppetserver (
     }
 
     # Used for puppetserver
-    prometheus::jmx_exporter { "puppetserver_${::hostname}":
+    prometheus::exporter::jmx { "puppetserver_${::hostname}":
         port        => 9400,
         config_file => '/etc/puppetlabs/puppetserver/jvm_prometheus_jmx_exporter.yaml',
         content      => template('role/puppetserver/jvm_prometheus_jmx_exporter.yaml.erb'),
@@ -45,7 +45,7 @@ class role::puppetserver (
     }
 
     # Used for puppetdb
-    prometheus::jmx_exporter { "puppetdb_${::hostname}":
+    prometheus::exporter::jmx { "puppetdb_${::hostname}":
         port        => 9401,
         config_file => '/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml',
         content      => template('role/puppetdb/jvm_prometheus_jmx_exporter.yaml.erb'),

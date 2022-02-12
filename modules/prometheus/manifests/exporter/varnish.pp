@@ -1,4 +1,4 @@
-class prometheus::varnish_prometheus_exporter (
+class prometheus::exporter::varnish (
     String $listen_port = '9131',
 ) {
     require_package('prometheus-varnish-exporter')

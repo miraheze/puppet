@@ -1,4 +1,4 @@
-# == Define: prometheus::mysqld_exporter::instance
+# == Define: prometheus::exporter::mariadb
 #
 # Prometheus exporter for MySQL server metrics. The exporter is most effective
 # when ran alongside the MySQL server to be monitored, connecting via a local
@@ -19,11 +19,24 @@
 #   ip/host and port, colon separated, where the prometheus exporter will listen for
 #   http metrics requests. Host can be omitted.
 
-define prometheus::mysqld_exporter::instance (
+define prometheus::exporter::mariadb (
     Stdlib::Unixpath $client_socket   = '/run/mysqld/mysqld.sock',
     String           $listen_address  = ':9104',
 ) {
-    include prometheus::mysqld_exporter::common
+    require_package('prometheus-mysqld-exporter')
+
+    file { '/etc/default/prometheus':
+        ensure => directory,
+        mode   => '0550',
+        owner  => 'prometheus',
+        group  => 'prometheus'
+    }
+
+    systemd::unit { 'prometheus-mysqld-exporter@':
+        ensure  => present,
+        content => systemd_template('prometheus-mysqld-exporter@'),
+        require => Package['prometheus-mysqld-exporter']
+    }
 
     $my_cnf = "/var/lib/prometheus/.my.${title}.cnf"
     $service = "prometheus-mysqld-exporter@${title}"

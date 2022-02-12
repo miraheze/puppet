@@ -1,6 +1,6 @@
 # dns
 class dns {
-    include prometheus::node_gdnsd
+    include prometheus::exporter::gdnsd
 
     package { 'gdnsd':
         ensure  => installed,

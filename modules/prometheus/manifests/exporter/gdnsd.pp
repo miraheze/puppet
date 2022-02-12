@@ -1,4 +1,4 @@
-# = Class: prometheus::node_gdnsd
+# = Class: prometheus::exporter::gdnsd
 #
 # Periodically export gdnsd stats via node-exporter textfile collector.
 #
@@ -9,7 +9,7 @@
 # aggregate stats on other dimensions rather than per-cluster or per-site.
 # from https://github.com/wikimedia/puppet/blob/production/modules/prometheus/manifests/node_gdnsd.pp
 
-class prometheus::node_gdnsd (
+class prometheus::exporter::gdnsd (
     VMlib::Ensure $ensure = 'present',
     String $outfile = '/var/lib/prometheus/node.d/gdnsd.prom',
 ) {

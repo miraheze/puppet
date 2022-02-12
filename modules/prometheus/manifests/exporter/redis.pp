@@ -1,6 +1,6 @@
-# = Class: prometheus::redis
+# = Class: prometheus::exporter::redis
 #
-class prometheus::redis_exporter (
+class prometheus::exporter::redis (
     String $redis_password = lookup('passwords::redis::master'),
 ) {
 

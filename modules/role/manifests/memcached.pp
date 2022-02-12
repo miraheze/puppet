@@ -9,7 +9,7 @@ class role::memcached (
     Float             $growth_factor    = lookup('role::memcached::growth_factor'),
     Optional[Integer] $threads          = lookup('role::memcached::threads'),
 ) {
-    include prometheus::memcached_exporter
+    include prometheus::exporter::memcached
 
     if !empty( $extended_options ) {
         $base_extra_options = {

@@ -1,5 +1,4 @@
-class prometheus::openldap_exporter {
-
+class prometheus::exporter::openldap {
     $monitor_pass = lookup('prometheus::openldap_exporter::monitor_pass')
 
     file { '/usr/local/bin/prometheus-openldap-exporter':

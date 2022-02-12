@@ -1,6 +1,6 @@
 # base::monitoring
 class base::monitoring {
-    include ::prometheus::node_exporter
+    include prometheus::exporter::node
 
     $nagios_packages = [ 'monitoring-plugins', 'nagios-nrpe-server', ]
     package { $nagios_packages:

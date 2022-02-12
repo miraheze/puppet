@@ -1,0 +1,9 @@
+<%-
+hosts = [];
+
+hosts.push( {
+  'targets' => @servers.map { |s| "#{s}:#{@port}" }
+} )
+-%>
+# File managed by puppet
+<%= scope.call_function( 'ordered_yaml', [hosts] ) %>

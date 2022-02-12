@@ -1,4 +1,4 @@
-class prometheus::postfix_exporter {
+class prometheus::exporter::postfix {
 
     file { '/opt/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb':
         ensure  => present,

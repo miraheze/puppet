@@ -1,6 +1,6 @@
-# = Class: prometheus::php_fpm
+# = Class: prometheus::exporter::fpm
 #
-class prometheus::php_fpm {
+class prometheus::exporter::fpm {
 
     file { '/usr/local/bin/prometheus-phpfpm-exporter':
         ensure => file,

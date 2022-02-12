@@ -28,11 +28,6 @@ node /^db1[012]1\.miraheze\.org$/ {
 node /^es1[012]1\.miraheze\.org$/ {
     include base
     include role::elasticsearch
-    
-    $es_master = hiera('role::elasticsearch::master', false)
-    if $es_master {
-        include prometheus::es_exporter
-    }
 }
 
 node /^gluster1[012]1\.miraheze\.org$/ {
@@ -49,7 +44,6 @@ node 'graylog121.miraheze.org' {
 node 'jobchron121.miraheze.org' {
     include base
     include role::redis
-    include prometheus::redis_exporter
     include mediawiki::jobqueue::chron
 }
 
@@ -67,7 +61,6 @@ node 'mail121.miraheze.org' {
 node 'matomo101.miraheze.org' {
     include base
     include role::matomo
-    include prometheus::php_fpm
 }
 
 node /^mem1[02]1\.miraheze\.org$/ {
@@ -80,20 +73,16 @@ node 'mon111.miraheze.org' {
     include role::grafana
     include role::icinga2
     include role::irc
-    include role::prometheus
-    include prometheus::php_fpm
 }
 
 node /^mw1[012][12]\.miraheze\.org$/ {
     include base
     include role::mediawiki
-    include prometheus::php_fpm
 }
 
 node 'mwtask111.miraheze.org' {
     include base
     include role::mediawiki
-    include prometheus::php_fpm
 }
 
 node /^ns[12]\.miraheze\.org$/ {
@@ -105,7 +94,11 @@ node 'phab121.miraheze.org' {
     include base
     include bacula::client
     include role::phabricator
-    include prometheus::php_fpm
+}
+
+node 'prometheus101.miraheze.org' {
+    include base
+    include role::prometheus
 }
 
 node 'puppet111.miraheze.org' {
@@ -120,7 +113,6 @@ node 'puppet111.miraheze.org' {
 node 'test101.miraheze.org' {
     include base
     include role::mediawiki
-    include prometheus::php_fpm
 }
 
 # ensures all servers have basic class if puppet runs

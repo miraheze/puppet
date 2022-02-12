@@ -1,7 +1,6 @@
 # == Class: glusters
 
 class gluster {
-
     include gluster::apt
 
     include ssl::wildcard
@@ -115,5 +114,5 @@ class gluster {
         source => 'puppet:///modules/gluster/glusterfs-common.logrotate.conf',
     }
 
-    include prometheus::gluster_exporter
+    include prometheus::exporter::gluster
 }
