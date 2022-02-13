@@ -63,7 +63,7 @@ class base::monitoring {
     }
 
     monitoring::nrpe { 'Puppet':
-        command => '/usr/lib/nagios/plugins/check_puppet_run -w 3600 -c 43200'
+        command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_puppet_run -w 3600 -c 43200'
     }
 
     monitoring::services { 'SSH':
