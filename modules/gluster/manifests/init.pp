@@ -71,7 +71,7 @@ class gluster {
     }
 
     monitoring::nrpe { 'glusterd Volume':
-        command => '/usr/lib/nagios/plugins/check_proc -a /usr/sbin/glusterfsd -c 1:'
+        command => '/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfsd -c 1:'
     }
 
     if lookup('gluster_client', {'default_value' => false}) {
