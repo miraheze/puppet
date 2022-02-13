@@ -135,17 +135,11 @@ class varnish (
         privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nginx_errorrate' ],
     }
 
-    monitoring::services { 'Varnish Backends':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_varnishbackends',
-        },
+    monitoring::nrpe { 'Varnish Backends':
+        command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_varnishbackends'
     }
 
-    monitoring::services { 'HTTP 4xx/5xx ERROR Rate':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_nginx_errorrate',
-        },
+    monitoring::nrpe { 'HTTP 4xx/5xx ERROR Rate':
+        command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_nginx_errorrate'
     }
 }

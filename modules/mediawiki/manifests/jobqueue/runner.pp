@@ -115,10 +115,7 @@ class mediawiki::jobqueue::runner {
         }
     }
 
-    monitoring::services { 'JobRunner Service':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_jobrunner',
-        },
+    monitoring::nrpe { 'JobRunner Service':
+        command => '/usr/lib/nagios/plugins/check_procs -a redisJobRunnerService -c 1:1'
     }
 }

@@ -59,98 +59,92 @@
 # SOFTWARE.
 #
 define gluster::mount (
-	String $volume,
-	Optional[String] $options                                             = undef,
-	Enum['defined', 'present', 'unmounted', 'absent', 'mounted'] $ensure  = 'mounted',
+    String $volume,
+    Optional[String] $options                                             = undef,
+    Enum['defined', 'present', 'unmounted', 'absent', 'mounted'] $ensure  = 'mounted',
 ) {
 
-	include gluster::apt
+    include gluster::apt
 
-	if !defined(Package['glusterfs-client']) {
-		package { 'glusterfs-client':
-			ensure   => installed,
-			require  => Class['gluster::apt'],
-		}
-	}
+    if !defined(Package['glusterfs-client']) {
+        package { 'glusterfs-client':
+            ensure   => installed,
+            require  => Class['gluster::apt'],
+        }
+    }
 
-	file { $title:
-		ensure => directory,
-		owner  => 'www-data',
-		group  => 'www-data',
-	}
+    file { $title:
+        ensure => directory,
+        owner  => 'www-data',
+        group  => 'www-data',
+    }
 
-	if !defined(File['glusterfs.pem']) {
-		file { 'glusterfs.pem':
-			ensure => 'present',
-			source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020-2.crt',
-			path   => '/etc/ssl/glusterfs.pem',
-			owner  => 'root',
-			group  => 'root',
-		}
-	}
+    if !defined(File['glusterfs.pem']) {
+        file { 'glusterfs.pem':
+            ensure => 'present',
+            source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020-2.crt',
+            path   => '/etc/ssl/glusterfs.pem',
+            owner  => 'root',
+            group  => 'root',
+        }
+    }
 
-	if !defined(File['glusterfs.key']) {
-		file { 'glusterfs.key':
-			ensure => 'present',
-			source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
-			path   => '/etc/ssl/glusterfs.key',
-			owner  => 'root',
-			group  => 'root',
-			mode   => '0660',
-		}
-	}
+    if !defined(File['glusterfs.key']) {
+        file { 'glusterfs.key':
+            ensure => 'present',
+            source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
+            path   => '/etc/ssl/glusterfs.key',
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0660',
+        }
+    }
 
-	if !defined(File['glusterfs.ca']) {
-		file { 'glusterfs.ca':
-			ensure => 'present',
-			source => 'puppet:///ssl/ca/Sectigo.crt',
-			path   => '/etc/ssl/glusterfs.ca',
-			owner  => 'root',
-			group  => 'root',
-		}
-	}
+    if !defined(File['glusterfs.ca']) {
+        file { 'glusterfs.ca':
+            ensure => 'present',
+            source => 'puppet:///ssl/ca/Sectigo.crt',
+            path   => '/etc/ssl/glusterfs.ca',
+            owner  => 'root',
+            group  => 'root',
+        }
+    }
 
-	if !defined(File['/var/lib/glusterd/secure-access']) {
-		file { '/var/lib/glusterd':
-			ensure  => directory,
-			require => Package['glusterfs-client'],
-		}
+    if !defined(File['/var/lib/glusterd/secure-access']) {
+        file { '/var/lib/glusterd':
+            ensure  => directory,
+            require => Package['glusterfs-client'],
+        }
 
-		file { '/var/lib/glusterd/secure-access':
-			ensure  => present,
-			source  => 'puppet:///modules/gluster/secure-access',
-			require => File['/var/lib/glusterd'],
-		}
-	}
+        file { '/var/lib/glusterd/secure-access':
+            ensure  => present,
+            source  => 'puppet:///modules/gluster/secure-access',
+            require => File['/var/lib/glusterd'],
+        }
+    }
 
-	$only_ipv6 = lookup('gluster::only_ipv6', {'default_value' => false})
-	$ipv6 = $only_ipv6 ? {
-		true   => 'xlator-option=transport.address-family=inet6',
-		default => '',
-	}
-	$base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec,${ipv6}"
+    $only_ipv6 = lookup('gluster::only_ipv6', {'default_value' => false})
+    $ipv6 = $only_ipv6 ? {
+        true   => 'xlator-option=transport.address-family=inet6',
+        default => '',
+    }
+    $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec,${ipv6}"
 
-	$mount_options = $options ? {
-		undef   => $base_options,
-		default => "${base_options},${options}",
-	}
+    $mount_options = $options ? {
+        undef   => $base_options,
+        default => "${base_options},${options}",
+    }
 
-	mount { $title:
-		ensure   => $ensure,
-		fstype   => 'glusterfs',
-		remounts => true,
-		device   => $volume,
-		options  => $mount_options,
-		require  => File['/var/lib/glusterd/secure-access']
-	}
+    mount { $title:
+        ensure   => $ensure,
+        fstype   => 'glusterfs',
+        remounts => true,
+        device   => $volume,
+        options  => $mount_options,
+        require  => File['/var/lib/glusterd/secure-access']
+    }
 
-	if !defined(Monitoring::Services['Check Gluster Clients']) {
-		monitoring::services { 'Check Gluster Clients':
-			check_command => 'nrpe',
-			vars          => {
-				nrpe_command => 'check_glusterd_client',
-			},
-		}
-	}
-
+    monitoring::nrpe { 'Check Gluster Clients':
+        command => '/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterfs -c 1:'
+    }
 }

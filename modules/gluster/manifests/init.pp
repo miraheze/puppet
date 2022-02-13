@@ -66,18 +66,12 @@ class gluster {
         ],
     }
 
-    monitoring::services { 'glusterd':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_glusterd',
-        },
+    monitoring::nrpe { 'glusterd':
+        command => '/usr/lib/nagios/plugins/check_procs -a /usr/sbin/glusterd -c 1:'
     }
 
-    monitoring::services { 'glusterd_volume':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_glusterd_volume',
-        },
+    monitoring::nrpe { 'glusterd Volume':
+        command => '/usr/lib/nagios/plugins/check_proc -a /usr/sbin/glusterfsd -c 1:'
     }
 
     if lookup('gluster_client', {'default_value' => false}) {
@@ -90,11 +84,8 @@ class gluster {
             }
         }
 
-        monitoring::services { 'Gluster Disk Space':
-            check_command => 'nrpe',
-            vars          => {
-                nrpe_command => 'check_gluster_disk',
-            },
+        monitoring::nrpe { 'Gluster Disk Space':
+            command => '/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /mnt/mediawiki-static'
         }
     }
 

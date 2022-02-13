@@ -55,10 +55,7 @@ class monitoring::ircecho (
         restart => true,
     }
 
-    monitoring::services { 'IRCEcho':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_ircecho',
-        },
+    monitoring::nrpe { 'IRCEcho':
+        command => '/usr/lib/nagios/plugins/check_procs -a /usr/local/bin/ircecho -c 1:1'
     }
 }

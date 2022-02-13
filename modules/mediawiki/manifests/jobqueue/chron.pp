@@ -25,10 +25,7 @@ class mediawiki::jobqueue::chron {
         restart => true,
     }
 
-    monitoring::services { 'JobChron Service':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_jobchron',
-        },
+    monitoring::nrpe { 'JobChron Service':
+        command => '/usr/lib/nagios/plugins/check_procs -a redisJobChronService -c 1:1'
     }
 }

@@ -47,10 +47,7 @@ class redis (
         require => Package['redis-server'],
     }
 
-    monitoring::services { 'Redis Process':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_redis',
-        },
+    monitoring::nrpe { 'Redis Process':
+        command => '/usr/lib/nagios/plugins/check_procs -a redis-server -c 1:1'
     }
 }

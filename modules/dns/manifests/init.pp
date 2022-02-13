@@ -49,10 +49,7 @@ class dns {
         },
     }
 
-    monitoring::services { 'GDNSD Datacenters':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_gdnsd_datacenters',
-        },
+    monitoring::nrpe { 'GDNSD Datacenters':
+        command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_gdnsd_datacenters'
     }
 }

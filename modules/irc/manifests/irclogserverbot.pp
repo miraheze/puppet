@@ -23,10 +23,7 @@ class irc::irclogserverbot(
         restart => true,
     }
 
-    monitoring::services { 'IRC Log Server Bot':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_irc_logserverbot',
-        },
+    monitoring::nrpe { 'IRC Log Server Bot':
+        command => '/usr/lib/nagios/plugins/check_procs -a irclogserverbot.py -c 1:1'
     }
 }

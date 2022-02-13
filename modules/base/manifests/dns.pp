@@ -17,11 +17,8 @@ class base::dns {
         require => Package['pdns-recursor'],
     }
 
-    monitoring::services { 'PowerDNS Recursor':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_pdns_recursor',
-        },
+    monitoring::nrpe { 'PowerDNS Recursor':
+        command => '/usr/lib/nagios/plugins/check_dns -s 127.0.0.1 -H miraheze.org'
     }
 
     file { '/etc/resolv.conf':

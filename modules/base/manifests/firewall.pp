@@ -74,12 +74,8 @@ class base::firewall {
         mode   => '0755',
     }
 
-    monitoring::services { 'conntrack_table_size':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'conntrack_table_size',
-        },
-        require       => File['/usr/lib/nagios/plugins/check_conntrack'],
+    monitoring::nrpe { 'conntrack_table_size':
+        command' => '/usr/lib/nagios/plugins/check_conntrack 80 90'
     }
 
     sudo::user { 'nagios_check_ferm':
@@ -95,14 +91,7 @@ class base::firewall {
         mode   => '0555',
     }
 
-    monitoring::services { 'ferm_active':
-      check_command => 'nrpe',
-      vars          => {
-        nrpe_command => 'ferm_active',
-      },
-      require       => [
-        File['/usr/lib/nagios/plugins/check_ferm'],
-        Sudo::User['nagios_check_ferm']
-      ],
+    monitoring::nrpe { 'ferm_active':
+        command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm'
     }
 }

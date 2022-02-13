@@ -159,10 +159,7 @@ class phabricator {
         },
      }
 
-    monitoring::services { 'phd':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_phd',
-        },
+    monitoring::nrpe { 'phd':
+        command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'
     }
 }

@@ -188,5 +188,9 @@ class php::php_fpm(
         php::fpm::pool { 'www':
             config => merge($base_fpm_pool_config, $fpm_pool_config),
         }
+
+        monitoring::nrpe { 'php-fpm':
+            command => "/usr/lib/nagios/plugins/check_procs -C php-fpm${version} -c 1:"
+        }
     }
 }

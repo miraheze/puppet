@@ -23,10 +23,7 @@ class irc::ircrcbot(
         restart => true,
     }
 
-    monitoring::services { 'IRC RC Bot':
-        check_command => 'nrpe',
-        vars          => {
-            nrpe_command => 'check_irc_rcbot',
-        },
+    monitoring::nrpe { 'IRC RC Bot':
+        command => '/usr/lib/nagios/plugins/check_procs -a ircrcbot.py -c 1:1'
     }
 }

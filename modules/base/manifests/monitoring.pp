@@ -7,10 +7,9 @@ class base::monitoring {
         ensure => present,
     }
 
-    $icinga_password = lookup('passwords::db::icinga')
     file { '/etc/nagios/nrpe.cfg':
         ensure  => present,
-        content => template('base/icinga/nrpe.cfg.erb'),
+        source  => 'puppet:///modules/base/icinga/nrpe.cfg',
         require => Package['nagios-nrpe-server'],
         notify  => Service['nagios-nrpe-server'],
     }
@@ -53,80 +52,30 @@ class base::monitoring {
 
     monitoring::hosts { $::hostname: }
 
-    monitoring::services { 'Disk Space':
-        check_command   => 'nrpe',
-        vars            => {
-            nrpe_command    => 'check_disk',
-        },
+    monitoring::nrpe { 'Disk Space':
+        command => '/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /'
     }
 
-    monitoring::services { 'Current Load':
-        check_command   => 'nrpe',
-        vars            => {
-            nrpe_command    => 'check_load',
-        },
+    monitoring::nrpe { 'Current Load':
+        command => "/usr/lib/nagios/plugins/check_load -w ${facts['virtual_processor_count']}*1.7 -c ${facts['virtual_processor_count']}*2.0"
     }
 
-    monitoring::services { 'Puppet':
-        check_command   => 'nrpe',
-        vars            => {
-            nrpe_command    => 'check_puppet_run',
-        },
+    monitoring::nrpe { 'Puppet':
+        command => '/usr/lib/nagios/plugins/check_puppet_run -w 3600 -c 43200'
     }
 
     monitoring::services { 'SSH':
-        check_command   => 'ssh',
+        check_command => 'ssh'
     }
 
-    monitoring::services { 'APT':
-        check_command   => 'nrpe',
-        vars            => {
-            nrpe_command    => 'check_apt',
-        },
+    monitoring::nrpe { 'APT':
+        command => '/usr/lib/nagios/plugins/check_apt -o'
     }
 
-    monitoring::services { 'NTP time':
-        check_command   => 'nrpe',
-        vars            => {
-            nrpe_command    => 'check_ntp_time',
-        },
+    monitoring::nrpe { 'NTP time':
+        command => '/usr/lib/nagios/plugins/check_ntp_time -H time.cloudflare.com -w 5 -c 10'
     }
 
     # Collect all NRPE command files
     File <| tag == 'nrpe' |>
-
-    if !$facts['is_virtual'] {
-        if !empty($facts['disks']['sda']) {
-            $type = 'sata'
-        } else {
-            $type = 'nvme'
-        }
-
-        if ( $facts['dmi']['manufacturer'] == 'HP' ) {
-            package { 'freeipmi':
-                ensure => installed
-            }
-
-            monitoring::services { 'SMART':
-                check_command => 'nrpe',
-                vars          => {
-                    nrpe_command => 'check_smart',
-                },
-            }
-
-            monitoring::services { 'IPMI Sensors':
-                check_command => 'nrpe',
-                vars          => {
-                    nrpe_command => 'check_ipmi_sensors',
-                },
-            }
-        } else {
-            monitoring::services { 'SMART':
-                check_command => 'nrpe',
-                vars          => {
-                    nrpe_command => "check_smart_${type}",
-                },
-            }
-        }
-    }
 }
