@@ -75,7 +75,7 @@ class base::firewall {
     }
 
     monitoring::nrpe { 'conntrack_table_size':
-        command' => '/usr/lib/nagios/plugins/check_conntrack 80 90'
+        command => '/usr/lib/nagios/plugins/check_conntrack 80 90'
     }
 
     sudo::user { 'nagios_check_ferm':
