@@ -56,8 +56,10 @@ class base::monitoring {
         command => '/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /'
     }
 
+    $loadCrit = $facts['virtual_processor_count'] * 2.0
+    $loadWarn = $facts['virtual_processor_count'] * 1.7
     monitoring::nrpe { 'Current Load':
-        command => "/usr/lib/nagios/plugins/check_load -w ${facts['virtual_processor_count']}*1.7 -c ${facts['virtual_processor_count']}*2.0"
+        command => "/usr/lib/nagios/plugins/check_load -w ${loadWarn} -c ${loadCrit}"
     }
 
     monitoring::nrpe { 'Puppet':
