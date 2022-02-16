@@ -175,6 +175,11 @@ sub mw_request {
 		set req.backend_hint = mediawiki.backend();
 	}
 
+	# Rewrite hostname to static.miraheze.org for caching
+	if (req.url ~ "^/static/") {
+		set req.http.host = "static.miraheze.org";
+	}
+
 	# Numerous static.miraheze.org specific code
 	if (req.http.Host == "static.miraheze.org") {
 		# We can do this because static.mh.o should not be capable of serving such requests anyway
