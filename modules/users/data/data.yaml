@@ -103,7 +103,7 @@ users:
     uid: 1009
     name: paladox
     realname: Paladox
-    ssh_keys: []
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBfGqvKZGTNhHU4onyQnZud29RxCL8bBhTKU6wLhhTks paladox]
   macfan:
     ensure: absent
     uid: 1010
