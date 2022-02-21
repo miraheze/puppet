@@ -158,11 +158,11 @@ def run(args: argparse.Namespace, start: float) -> None:
     rebuild = []
     postinstall = []
     stage = []
+    for arg in vars(args).items():
+        if arg[1] is not None and arg[1] is not False:
+            loginfo[arg[0]] = arg[1]
+    synced = loginfo['servers']
     if envinfo['canary'] in servers:
-        for arg in vars(args).items():
-            if arg[1] is not None and arg[1] is not False:
-                loginfo[arg[0]] = arg[1]
-        synced = loginfo['servers']
         del loginfo['servers']
         text = f'starting deploy of "{str(loginfo)}" to {synced}'
         if not args.nolog:
