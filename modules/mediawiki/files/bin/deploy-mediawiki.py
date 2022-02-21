@@ -52,9 +52,11 @@ def run_command(cmd: str) -> int:
     return ec
 
 
-def non_zero_code(ec: list[int], leave: bool = True) -> bool:
+def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool:
     for code in ec:
         if code != 0:
+            if not nolog:
+                os.system('/usr/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
             if leave:
                 print('Exiting due to non-zero status.')
                 exit(1)
@@ -187,16 +189,16 @@ def run(args: argparse.Namespace, start: float) -> None:
 
         for cmd in stage:  # setup env, git pull etc
             exitcodes.append(run_command(cmd))
-        non_zero_code(exitcodes)
+        non_zero_code(exitcodes, nolog=args.nolog)
         for option in options:  # configure rsync & custom data for repos
             if options[option]:
                 if option == 'world':  # install steps for w
                     os.chdir(_get_staging_path('world'))
-                    exitcodes.append(run_command('sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
+                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
                     rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]}')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
-        non_zero_code(exitcodes)
+        non_zero_code(exitcodes, nolog=args.nolog)
         if args.files:  # specfic extra files
             files = str(args.files).split(',')
             for file in files:
@@ -222,10 +224,10 @@ def run(args: argparse.Namespace, start: float) -> None:
 
         for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
             exitcodes.append(run_command(cmd))
-        non_zero_code(exitcodes)
+        non_zero_code(exitcodes, nolog=args.nolog)
         for cmd in rebuild:  # update ext list + l10n
-            exitcodes.append(run_command(cmd))
-        non_zero_code(exitcodes)
+            exitcodes.append(run_command(cmd), nolog=args.nolog)
+        non_zero_code(exitcodes, nolog=args.nolog)
 
         # see if we are online - exit code 3 if not
         check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force, nolog=args.nolog)  # type: ignore
