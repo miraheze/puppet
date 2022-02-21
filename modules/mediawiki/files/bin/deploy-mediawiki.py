@@ -226,7 +226,7 @@ def run(args: argparse.Namespace, start: float) -> None:
             exitcodes.append(run_command(cmd))
         non_zero_code(exitcodes, nolog=args.nolog)
         for cmd in rebuild:  # update ext list + l10n
-            exitcodes.append(run_command(cmd), nolog=args.nolog)
+            exitcodes.append(run_command(cmd))
         non_zero_code(exitcodes, nolog=args.nolog)
 
         # see if we are online - exit code 3 if not
