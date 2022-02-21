@@ -38,7 +38,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [rhinos, universalomega]
+    members: [macfan, rhinos, universalomega]
     privileges: []
 
 users:
