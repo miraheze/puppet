@@ -4,7 +4,7 @@ import argparse
 import os
 
 
-def run(args):
+def run(args: argparse.Namespace) -> None:
     longscripts = ('deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'refreshLinks.php', 'purgeList.php', 'cargoRecreateData.php')
     long = False
 
@@ -32,7 +32,7 @@ def run(args):
     if args.arguments:
         command += ' ' + ' '.join(args.arguments)
     logcommand = f'/usr/local/bin/logsalmsg "{command}'
-    print("Will execute:")
+    print('Will execute:')
     if 'generate' in locals():
         print(generate)
     print(command)
