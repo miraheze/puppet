@@ -206,7 +206,7 @@ def run(args: argparse.Namespace, start: float) -> None:
         if args.folders:  # specfic extra folders
             folders = str(args.folders).split(',')
             for folder in folders:
-                rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest='/srv/mediawiki/{folder}/'))
+                rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extensionlist:  # when adding skins/exts
             rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
