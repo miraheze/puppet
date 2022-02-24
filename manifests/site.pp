@@ -114,6 +114,7 @@ node 'test101.miraheze.org' {
     include base
     include role::mediawiki
     include role::redis
+    include mediawiki::jobqueue::chron
 }
 
 # ensures all servers have basic class if puppet runs
