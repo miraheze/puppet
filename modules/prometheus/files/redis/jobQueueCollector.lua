@@ -4,7 +4,7 @@
 local result = {}
 local queues = { 'l-unclaimed', 'z-abandoned' }
 -- Below is a list of jobs we want to monitor specifically
-local jobs = { '*', 'CreateWikiJob', 'RequestWikiAIJob', 'RemovePIIJob', 'DataDumpGenerateJob', 'GlobalNewFilesDeleteJob', 'GlobalNewFilesInsertJob', 'GlobalNewFilesMoveJob', 'MWScriptJob', 'NamespaceMigrationJob', 'LocalRenameUserJob', 'LocalGlobalUserPageCacheUpdateJob', 'replaceText', 'webVideoTranscode', 'webVideoTranscodePrioritized', 'refreshLinks', 'refreshLinksPrioritized', 'htmlCacheUpdate', 'recentChangesUpdate' }
+local jobs = { '*', 'CreateWikiJob', 'RequestWikiAIJob', 'RemovePIIJob', 'DataDumpGenerateJob', 'GlobalNewFilesDeleteJob', 'GlobalNewFilesInsertJob', 'GlobalNewFilesMoveJob', 'MWScriptJob', 'NamespaceMigrationJob', 'LocalRenameUserJob', 'LocalGlobalUserPageCacheUpdateJob', 'replaceText', 'webVideoTranscode', 'webVideoTranscodePrioritized', 'refreshLinks', 'refreshLinksPrioritized', 'htmlCacheUpdate', 'recentChangesUpdate', 'RecordLintJob' }
 
 for _,job in ipairs(jobs) do
 	for _,queue in ipairs(queues) do
