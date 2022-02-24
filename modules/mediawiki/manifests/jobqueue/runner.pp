@@ -2,30 +2,9 @@
 #
 # Defines a jobrunner process for jobrunner selected machine only.
 class mediawiki::jobqueue::runner {
+    include mediawiki::jobqueue::shared
     ensure_packages('python3-xmltodict')
 
-    git::clone { 'JobRunner':
-        ensure    => latest,
-        directory => '/srv/jobrunner',
-        origin    => 'https://github.com/miraheze/jobrunner-service',
-    }
-
-    $redis_password = lookup('passwords::redis::master')
-    $wiki = lookup('mediawiki::jobqueue::wiki')
-
-    $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '[2a10:6740::6:306]:6379'})
-    if lookup('jobrunner::intensive', {'default_value' => false}) {
-        $config = 'jobrunner-hi.json.erb'
-    } else {
-        $config = 'jobrunner.json.erb'
-    }
-
-    file { '/srv/jobrunner/jobrunner.json':
-        ensure  => present,
-        content => template("mediawiki/${config}"),
-        notify  => Service['jobrunner'],
-        require => Git::Clone['JobRunner'],
-    }
 
     systemd::service { 'jobrunner':
         ensure  => present,
