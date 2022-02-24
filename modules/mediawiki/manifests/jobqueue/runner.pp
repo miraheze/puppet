@@ -3,6 +3,7 @@
 # Defines a jobrunner process for jobrunner selected machine only.
 class mediawiki::jobqueue::runner {
     include mediawiki::jobqueue::shared
+    $wiki = lookup('mediawiki::jobqueue::wiki')
     ensure_packages('python3-xmltodict')
 
 
