@@ -11,6 +11,7 @@ class mediawiki::jobqueue::runner {
     }
 
     $redis_password = lookup('passwords::redis::master')
+    $wiki = lookup('mediawiki::jobqueue::wiki')
 
     $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '[2a10:6740::6:306]:6379'})
     if lookup('jobrunner::intensive', {'default_value' => false}) {
@@ -51,7 +52,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'managewikis':
             ensure  => present,
-            command => '/usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki loginwiki --write >> /var/log/mediawiki/cron/managewikis.log',
+            command => "/usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki ${wiki} --write >> /var/log/mediawiki/cron/managewikis.log",
             user    => 'www-data',
             minute  => '5',
             hour    => '12',
@@ -76,15 +77,16 @@ class mediawiki::jobqueue::runner {
             month   => '*',
             weekday => [ '6' ],
         }
-
-        cron { 'generate sitemap index':
-            ensure  => present,
-            command => '/usr/bin/python3 /srv/mediawiki/w/extensions/MirahezeMagic/py/generateSitemapIndex.py',
-            user    => 'www-data',
-            minute  => '0',
-            hour    => '0',
-            month   => '*',
-            weekday => [ '7' ],
+        if $wiki == 'metawiki' {
+            cron { 'generate sitemap index':
+                ensure  => present,
+                command => '/usr/bin/python3 /srv/mediawiki/w/extensions/MirahezeMagic/py/generateSitemapIndex.py',
+                user    => 'www-data',
+                minute  => '0',
+                hour    => '0',
+                month   => '*',
+                weekday => [ '7' ],
+            }
         }
 
         cron { 'update_statistics':
