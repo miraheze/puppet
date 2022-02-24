@@ -16,6 +16,7 @@ mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
 mediawiki::use_shellbox: false
+mediawiki::jobqueue::wiki: 'loginwiki'
 memcached_servers_1:
   - 2a10:6740::6:105:11211:1
 memcached_servers_2:

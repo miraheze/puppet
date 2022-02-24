@@ -1,7 +1,7 @@
 users::groups:
   - mediawiki-admins
   - mediawiki-roots
-jobrunner: false
+jobrunner: true
 contactgroups: ['sre', 'mediawiki']
 role::mediawiki::use_strict_firewall: false
 vpncloud::server_ip: 10.0.1.7
@@ -20,3 +20,7 @@ gluster_volume: gluster101.miraheze.org:/static
 gluster::only_ipv6: true
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6
+
+mediawiki::jobqueue::runner::cron: true
+mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:109]:6379'
+mediawiki::jobqueue::wiki: 'betawiki'
