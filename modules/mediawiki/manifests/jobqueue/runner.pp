@@ -10,6 +10,7 @@ class mediawiki::jobqueue::runner {
     systemd::service { 'jobrunner':
         ensure  => present,
         content => systemd_template('jobrunner'),
+        subscribe => File['/srv/jobrunner/jobrunner.json'],
         restart => true,
     }
 
