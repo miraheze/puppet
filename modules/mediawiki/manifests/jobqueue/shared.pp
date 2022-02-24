@@ -21,7 +21,6 @@ class mediawiki::jobqueue::shared {
    file { '/srv/jobrunner/jobrunner.json':
       ensure  => present,
       content => template("mediawiki/${config}"),
-      notify  => Service['jobrunner'],
       require => Git::Clone['JobRunner'],
    }
 }
