@@ -1,7 +1,7 @@
 users::groups:
   - mediawiki-admins
   - mediawiki-roots
-jobrunner: false
+jobrunner: true
 contactgroups: ['sre', 'mediawiki']
 role::mediawiki::use_strict_firewall: false
 vpncloud::server_ip: 10.0.1.7
