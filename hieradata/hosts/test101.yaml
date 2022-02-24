@@ -23,3 +23,4 @@ base::syslog::graylog_resolve_ip_version: 6
 
 mediawiki::jobqueue::runner::cron: true
 mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:109]:6379'
+mediawiki::jobqueue::wiki: 'betawiki'
