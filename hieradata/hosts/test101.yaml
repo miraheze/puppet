@@ -20,3 +20,6 @@ gluster_volume: gluster101.miraheze.org:/static
 gluster::only_ipv6: true
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6
+
+mediawiki::jobqueue::runner::cron: true
+mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:109]:6379'
