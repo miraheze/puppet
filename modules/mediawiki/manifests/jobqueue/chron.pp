@@ -8,6 +8,7 @@ class mediawiki::jobqueue::chron {
     systemd::service { 'jobchron':
         ensure  => present,
         content => systemd_template('jobchron'),
+        subscribe => File['/srv/jobrunner/jobrunner.json'],
         restart => true,
     }
 
