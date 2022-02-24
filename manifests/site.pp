@@ -113,6 +113,7 @@ node 'puppet111.miraheze.org' {
 node 'test101.miraheze.org' {
     include base
     include role::mediawiki
+    include role::redis
 }
 
 # ensures all servers have basic class if puppet runs
