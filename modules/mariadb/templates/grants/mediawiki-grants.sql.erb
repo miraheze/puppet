@@ -18,7 +18,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, L
     ON `mhglobal`.* TO 'mediawiki'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `testglobal`.* TO 'mediawiki'@'%';
+    ON `testglobal`.* TO 'mediawiki'@'2a10:6740::6:109';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
     ON `incidents`.* TO 'mediawiki'@'%';
@@ -52,7 +52,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, L
     ON `mhglobal`.* TO 'wikiadmin'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `testglobal`.* TO 'wikiadmin'@'%';
+    ON `testglobal`.* TO 'wikiadmin'@'2a10:6740::6:109';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
     ON `incidents`.* TO 'wikiadmin'@'%';
