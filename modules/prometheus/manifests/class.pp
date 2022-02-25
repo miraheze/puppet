@@ -3,7 +3,7 @@ define prometheus::class (
     String $module,
     Integer $port,
 ) {
-    $servers = query_nodes("Class[${module}]")
+    $servers = query_nodes("Class[${module}] or Define[${module}]")
 
     file { $dest:
         ensure => present,
