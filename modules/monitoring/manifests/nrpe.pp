@@ -1,6 +1,7 @@
 define monitoring::nrpe (
     String $command,
-    VMlib::Ensure $ensure = present,
+    VMlib::Ensure $ensure  = present,
+    Optional[String] $docs = undef,
 ) {
     $title_safe  = regsubst($title, '[\W]', '-', 'G')
     @file { "/etc/nagios/nrpe.d/${title_safe}.cfg":
@@ -16,6 +17,7 @@ define monitoring::nrpe (
     if $ensure == 'present' {
         monitoring::services { $title:
             check_command => 'nrpe',
+            docs          => $docs,
             vars          => {
                 nrpe_command => "check_${title}",
                 nrpe_timeout => '60s',

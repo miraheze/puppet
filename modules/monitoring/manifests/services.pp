@@ -6,6 +6,7 @@ define monitoring::services (
     $check_interval = '2m',
     $retry_interval = '1m',
     $event_command  = undef,
+    $docs           = undef,
     $vars           = undef,
 ) {
     @@icinga2::object::service { "${::hostname} ${title}":
@@ -22,6 +23,7 @@ define monitoring::services (
         enable_active_checks   => true,
         volatile               => false,
         event_command          => $event_command,
+        notes_url              => $docs,
         target                 => '/etc/icinga2/conf.d/puppet_services.conf',
         vars                   => $vars,
     }
