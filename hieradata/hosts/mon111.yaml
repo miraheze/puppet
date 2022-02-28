@@ -27,7 +27,6 @@ icinga2::repo:
   repos: main
   key: 
     id: F51A91A5EE001AA5D77D53C4C6E319C334410682
-    options: "http-proxy='http://[2a10:6740::6:101]:8080'"
     source: http://packages.icinga.com/icinga.key
 
 icinga2::globals::package_name: 'icinga2'
