@@ -27,6 +27,16 @@ class icinga2::repo {
     Class['Apt::Update'] -> Package<|tag == 'icinga2'|>
 
     include ::apt
+
+    $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    if $http_proxy {
+        file { '/etc/apt/apt.conf.d/01icinga':
+            ensure => present,
+            content => template('icinga2/apt/01icinga.erb'),
+            before  => Apt::Source['icinga-stable-release'],
+        }
+    }
+
     apt::source { 'icinga-stable-release':
       * => $repo,
     }
