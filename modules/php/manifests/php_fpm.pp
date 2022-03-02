@@ -190,7 +190,8 @@ class php::php_fpm(
         }
 
         monitoring::nrpe { 'php-fpm':
-            command => "/usr/lib/nagios/plugins/check_procs -C php-fpm${version} -c 1:"
+            command => "/usr/lib/nagios/plugins/check_procs -C php-fpm${version} -c 1:",
+            docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#PHP-FPM'
         }
     }
 }
