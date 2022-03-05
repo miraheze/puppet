@@ -3,7 +3,8 @@
 GRANT USAGE
     ON *.* TO 'mediawiki'@'%'
     IDENTIFIED BY '<%= @mediawiki_password %>'
-    REQUIRE SSL;
+    REQUIRE SSL
+    WITH MAX_STATEMENT_TIME 600;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
     ON `%wiki%`.* TO 'mediawiki'@'%';
