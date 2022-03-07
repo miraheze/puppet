@@ -64,7 +64,7 @@ class mediawiki(
         require            => Package['libjpeg-dev'],
     }
 
-    git::clone { 'femiwiki-deploy':
+    git::clone { 'femiwiki_deploy':
         ensure             => 'latest',
         directory          => '/srv/mediawiki/femiwiki-deploy',
         origin             => 'https://github.com/miraheze/femiwiki-deploy.git',
