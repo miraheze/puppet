@@ -74,7 +74,7 @@ class mediawiki(
         mode               => '0755',
     }
 
-    file { '/srv/mediawiki/femwiki-deploy/node_modules':
+    file { '/srv/mediawiki/femiwiki-deploy/node_modules':
         ensure  => 'link',
         target  => '/srv/mediawiki/w/skins/femiwiki/node_modules',
         owner   => 'www-data',
