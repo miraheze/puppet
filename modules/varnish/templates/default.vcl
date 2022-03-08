@@ -91,7 +91,7 @@ sub mobile_detection {
 
 # Rate limiting logic
 sub rate_limit {
-	# Allow higher limits for static.mh.o, we can handle more of those requests
+	# Allow higher limits for static.miraheze.org, we can handle more of those requests
 	if (req.http.Host == "static.miraheze.org") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
@@ -177,10 +177,10 @@ sub mw_request {
 
 	# Numerous static.miraheze.org specific code
 	if (req.http.Host == "static.miraheze.org") {
-		# We can do this because static.mh.o should not be capable of serving such requests anyway
+		# We can do this because static.miraheze.org should not be capable of serving such requests anyway
 		# This could also increase cache hit rates as Cookies will be stripped entirely
 		unset req.http.Cookie;
-		unset req.http.Authization;
+		unset req.http.Authorization;
 
 		# Normalise thumb URLs to prevent capitalisation or odd casing duplicating numerous resources
 		# set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
