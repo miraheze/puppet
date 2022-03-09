@@ -407,8 +407,11 @@ sub vcl_deliver {
 	# static.miraheze.org. We also set this header for some images hosted
 	# on the same site as the wiki (private).
 	if (
-		req.http.Host == "static.miraheze.org" ||
-		req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
+		(
+	 	 	 req.http.Host == "static.miraheze.org" &&
+			 req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
+		) ||
+	 	req.url ~ "(?i)\/w\/img_auth\.php\/(.*)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
 	) {
 		set resp.http.Access-Control-Allow-Origin = "*";
 	}
