@@ -62,7 +62,6 @@ class prometheus::exporter::mariadb {
 
     service { 'prometheus-mysqld-exporter':
         ensure  => running,
-        require => File['/lib/systemd/system/prometheus-mysqld-exporter'],
     }
 
     $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
