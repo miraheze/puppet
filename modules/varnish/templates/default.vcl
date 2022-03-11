@@ -333,6 +333,11 @@ sub vcl_backend_fetch {
 		set bereq.http.Cookie = bereq.http.X-Orig-Cookie;
 		unset bereq.http.X-Orig-Cookie;
 	}
+
+	if (bereq.http.X-Range) {
+		set bereq.http.Range = bereq.http.X-Range;
+		unset bereq.http.X-Range;
+	}
 }
 
 # Backend response, defines cacheability
@@ -396,6 +401,12 @@ sub vcl_backend_response {
 		} else {
 			set beresp.ttl = 43200s;
 		}
+	}
+
+	if (beresp.http.Content-Range) {
+		// Varnish itself doesn't ask for ranges, so this must have been
+		// a passed range request
+		set beresp.http.X-Content-Range = beresp.http.Content-Range;
 	}
 
 	return (deliver);
@@ -470,6 +481,14 @@ sub vcl_hit {
 sub vcl_miss {
 	# Add X-Cache header
 	set req.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> MISS";
+	
+	// Convert range requests into pass
+	if (req.http.Range) {
+		// Varnish strips the Range header before copying req into bereq. Save it into
+		// a header and restore it in cluster_fe_backend_fetch
+		set req.http.X-Range = req.http.Range;
+		return (pass);
+	}
 }
 
 # Pass code, default logic is appended
