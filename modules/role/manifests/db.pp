@@ -3,6 +3,7 @@ class role::db(
     Optional[Array] $backup_clusters    = lookup('role::db::backup_clusters', {'default_value' => undef})
 ) {
     include mariadb::packages
+    include prometheus::exporter::mariadb
 
     $mediawiki_password = lookup('passwords::db::mediawiki')
     $wikiadmin_password = lookup('passwords::db::wikiadmin')
@@ -91,12 +92,6 @@ class role::db(
         ssh_keys => [
             'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFX1yvcRAMqwlbkkhMPhK1GFYrLYM18qC1YUcuUEErxz dbcopy@db6'
         ],
-    }
-
-    # We only need to run a single instance of mysqld_exporter,
-    # listens on port 9104 by default.
-    prometheus::exporter::mariadb { 'main':
-        client_socket => '/run/mysqld/mysqld.sock'
     }
 
     # Backup provisioning

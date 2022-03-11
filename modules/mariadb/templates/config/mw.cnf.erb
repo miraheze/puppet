@@ -83,6 +83,10 @@ log-queries-not-using-indexes  = 1
 slow-query-log                 = 0
 slow-query-log-file            = /var/log/mysql/mysql-slow.log
 
+user_stats                     = 1
+plugin_load_add                = query_response_time
+query_response_time_stats      = ON
+
 ssl
 ssl-capath                     = /etc/ssl/certs
 ssl-cert                       = /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt
