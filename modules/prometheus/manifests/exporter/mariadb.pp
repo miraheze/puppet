@@ -38,7 +38,7 @@ define prometheus::exporter::mariadb (
         require => Package['prometheus-mysqld-exporter']
     }
 
-    $my_cnf = "/var/lib/prometheus/.my.${title}.cnf"
+    $my_cnf = "/var/lib/prometheus/.my.cnf"
     $service = "prometheus-mysqld-exporter@${title}"
     $common_options = [
         "web.listen-address \"${listen_address}\"",
