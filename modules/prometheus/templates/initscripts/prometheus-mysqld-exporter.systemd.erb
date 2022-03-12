@@ -1,13 +1,13 @@
 [Unit]
 Description=Prometheus exporter for MySQL (instance %i)
 Documentation=https://prometheus.io/docs/introduction/overview/
-ConditionPathExists=/etc/default/prometheus-mysqld-exporter@%i
+ConditionPathExists=/etc/default/prometheus-mysqld-exporter
 
 [Service]
 Restart=always
 User=prometheus
 Group=prometheus
-EnvironmentFile=/etc/default/prometheus-mysqld-exporter@%i
+EnvironmentFile=/etc/default/prometheus-mysqld-exporter
 ExecStart=/usr/bin/prometheus-mysqld-exporter $ARGS
 
 [Install]
