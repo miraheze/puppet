@@ -1,5 +1,5 @@
 class roundcubemail (
-    String $db_host               = 'db13.miraheze.org',
+    String $db_host               = 'db112.miraheze.org',
     String $db_name               = 'roundcubemail',
     String $db_user_name          = 'roundcubemail',
     String $db_user_password      = undef,
