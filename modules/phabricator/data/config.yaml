@@ -6,7 +6,7 @@ ui.logo:
 # MySQL
 mysql.port: 3306
 mysql.user: 'phabricator'
-mysql.host: 'db121.miraheze.org'
+mysql.host: 'db112.miraheze.org'
 
 # https://secure.phabricator.com/book/phabricator/article/configuring_file_storage/
 # Needs to match php.ini upload_max_filesize
