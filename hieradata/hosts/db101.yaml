@@ -1,12 +1,4 @@
 puppetserver_hostname: 'puppet111.miraheze.org'
-mariadb::config::innodb_buffer_pool_instances: 1
-mariadb::config::innodb_buffer_pool_size: '5G'
-mariadb::config::max_connections: 500
-
-role::db::backup_clusters:
-    - c2
-
-mariadb::version: '10.5'
 http_proxy: 'http://bast.miraheze.org:8080'
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6

@@ -1,0 +1,1 @@
+mariadb::config::innodb_buffer_pool_size: '3G'

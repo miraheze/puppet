@@ -1,7 +1,5 @@
 # class: role::db
-class role::db(
-    Optional[Array] $backup_clusters    = lookup('role::db::backup_clusters', {'default_value' => undef})
-) {
+class role::db {
     include mariadb::packages
     include prometheus::exporter::mariadb
 
@@ -27,7 +25,6 @@ class role::db(
     class { 'mariadb::config':
         config          => 'mariadb/config/mw.cnf.erb',
         password        => lookup('passwords::db::root'),
-        server_role     => 'master',
         icinga_password => $icinga_password,
     }
 
