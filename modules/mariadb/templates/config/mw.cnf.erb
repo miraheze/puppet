@@ -62,7 +62,6 @@ innodb_thread_concurrency      = 0
 innodb_io_capacity             = 1000
 innodb_stats_sample_pages      = 16
 innodb_stats_method            = nulls_unequal
-innodb-log-files-in-group      = 2
 innodb-log-file-size           = 256M
 innodb-flush-log-at-trx-commit = 1
 innodb-file-per-table          = 1
@@ -82,7 +81,7 @@ log-queries-not-using-indexes  = 1
 slow-query-log                 = 0
 slow-query-log-file            = /var/log/mysql/mysql-slow.log
 
-user_stats                     = 1
+userstat                       = 1
 plugin_load_add                = query_response_time
 query_response_time_stats      = ON
 
