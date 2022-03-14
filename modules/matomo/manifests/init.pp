@@ -1,7 +1,7 @@
 # class: matomo
 class matomo (
-    String $ldap_password = lookup('passwords::matomo::ldap_password'),
-    String $matomo_db_host = lookup('matomo_db_host', {'default_value' => 'db111.miraheze.org'}),
+    String $ldap_password  = lookup('passwords::matomo::ldap_password'),
+    String $matomo_db_host = 'db112.miraheze.org',
 ) {
     git::clone { 'matomo':
         directory          => '/srv/matomo',
