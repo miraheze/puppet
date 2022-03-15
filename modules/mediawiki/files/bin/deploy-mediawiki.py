@@ -25,14 +25,14 @@ class EnvironmentList(TypedDict):
     prod: Environment
 
 
-ENVIRONMENTS = {
-    'beta': {
+EnvironmentList: ENVIRONMENTS = {
+    'beta': Environment: {
         'wikidbname': 'betawiki',
         'wikiurl': 'beta.betaheze.org',
         'servers': [],
         'canary': 'test101',
     },
-    'prod': {
+    'prod': Environment: {
         'wikidbname': 'testwiki',  # don't use loginwiki anymore - we want this to be an experimental wiki
         'wikiurl': 'publictestwiki.com',
         'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122'],
