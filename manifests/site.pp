@@ -5,11 +5,6 @@ node /^bast1[02]1\.miraheze\.org$/ {
     include role::bastion
 }
 
-node 'bacula2.miraheze.org' {
-    include base
-    include bacula::director
-}
-
 node /^cloud1[012]\.miraheze\.org$/ {
     include base
     include role::cloud
@@ -32,7 +27,6 @@ node /^es1[012]1\.miraheze\.org$/ {
 
 node /^gluster1[012]1\.miraheze\.org$/ {
     include base
-    include bacula::client
     include role::gluster
 }
 
@@ -92,7 +86,6 @@ node /^ns[12]\.miraheze\.org$/ {
 
 node 'phab121.miraheze.org' {
     include base
-    include bacula::client
     include role::phabricator
 }
 
@@ -103,7 +96,6 @@ node 'prometheus101.miraheze.org' {
 
 node 'puppet111.miraheze.org' {
     include base
-    include bacula::client
     include role::postgresql
     include puppetdb::database
     include role::puppetserver
