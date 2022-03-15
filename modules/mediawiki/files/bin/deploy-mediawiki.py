@@ -12,11 +12,13 @@ from sys import exit
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
 DEPLOYUSER = 'www-data'
 
+
 class Environment(TypedDict):
     wikidbname: str
     wikiurl: str
     servers: list
     canary: str
+
 
 class EnvironmentList(TypedDict):
     beta: Environment
