@@ -115,7 +115,7 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
     return up
 
 
-def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: dict[str, list[str]], nolog: bool, recursive: bool = True, force: bool = False) -> int:
+def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Environment, nolog: bool, recursive: bool = True, force: bool = False) -> int:
     print(f'Start {path} deploys.')
     for server in serverlist:
         if envinfo['canary'] != server.split('.')[0]:
