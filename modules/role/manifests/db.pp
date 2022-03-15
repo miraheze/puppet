@@ -12,6 +12,7 @@ class role::db {
     $icinga_password = lookup('passwords::db::icinga')
     $roundcubemail_password = lookup('passwords::roundcubemail')
     $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
+    $ido_db_user_password = lookup('passwords::icinga_ido')
 
     include ssl::wildcard
 
