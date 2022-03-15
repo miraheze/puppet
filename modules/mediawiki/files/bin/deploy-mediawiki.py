@@ -25,20 +25,24 @@ class EnvironmentList(TypedDict):
     prod: Environment
 
 
-EnvironmentList: ENVIRONMENTS = {
-    'beta': Environment: {
-        'wikidbname': 'betawiki',
-        'wikiurl': 'beta.betaheze.org',
-        'servers': [],
-        'canary': 'test101',
-    },
-    'prod': Environment: {
-        'wikidbname': 'testwiki',  # don't use loginwiki anymore - we want this to be an experimental wiki
-        'wikiurl': 'publictestwiki.com',
-        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122'],
-        'canary': 'mwtask111',
-    },
+Environment: beta = {
+    'wikidbname': 'betawiki',
+    'wikiurl': 'beta.betaheze.org',
+    'servers': [],
+    'canary': 'test101',
 }
+Environment: prod = {
+    'wikidbname': 'testwiki',  # don't use loginwiki anymore - we want this to be an experimental wiki
+    'wikiurl': 'publictestwiki.com',
+    'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122'],
+    'canary': 'mwtask111',
+}
+EnvironmentList: ENVIRONMENTS = {
+    'beta': beta,
+    'prod': prod,
+}
+del beta
+del prod
 HOSTNAME = socket.gethostname()
 
 
