@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 import argparse
-from typing import Optional, Union  # Use TypedDict too
+from typing import Optional, Union, TypedDict
 import os
 import time
 import requests
@@ -11,6 +11,18 @@ from sys import exit
 
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
 DEPLOYUSER = 'www-data'
+
+class Environment(TypedDict):
+    wikidbname: str
+    wikiurl: str
+    servers: list
+    canary: str
+
+class EnvironmentList(TypedDict):
+    beta: Environment
+    prod: Environment
+
+
 ENVIRONMENTS = {
     'beta': {
         'wikidbname': 'betawiki',
@@ -28,19 +40,19 @@ ENVIRONMENTS = {
 HOSTNAME = socket.gethostname()
 
 
-def get_environment_info() -> dict[str, list[str]]:
+def get_environment_info() -> Environment:
     if HOSTNAME.split('.')[0].startswith('test'):
-        return ENVIRONMENTS['beta']  # type: ignore
-    return ENVIRONMENTS['prod']  # type: ignore
+        return ENVIRONMENTS['beta']
+    return ENVIRONMENTS['prod']
 
 
-def get_server_list(envinfo: dict[str, list[str]], servers: str) -> list[str]:
+def get_server_list(envinfo: Environment, servers: str) -> list[str]:
     if servers in ('all', 'scsvg'):
         slist = envinfo['servers']
-        slist.append(envinfo['canary'])  # type: ignore
+        slist.append(envinfo['canary'])
         return slist
     if servers == 'skip':
-        return [envinfo['canary']]  # type: ignore
+        return [envinfo['canary']]
     return servers.split(',')
 
 
