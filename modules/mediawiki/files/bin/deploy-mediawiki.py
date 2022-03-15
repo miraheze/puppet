@@ -17,7 +17,6 @@ class Environment(TypedDict):
     wikidbname: str
     wikiurl: str
     servers: list
-    canary: str
 
 
 class EnvironmentList(TypedDict):
@@ -28,14 +27,12 @@ class EnvironmentList(TypedDict):
 beta: Environment = {
     'wikidbname': 'betawiki',
     'wikiurl': 'beta.betaheze.org',
-    'servers': [],
-    'canary': 'test101',
+    'servers': ['test101'],
 }
 prod: Environment = {
     'wikidbname': 'testwiki',  # don't use loginwiki anymore - we want this to be an experimental wiki
     'wikiurl': 'publictestwiki.com',
-    'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122'],
-    'canary': 'mwtask111',
+    'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
 }
 ENVIRONMENTS: EnvironmentList = {
     'beta': beta,
@@ -43,22 +40,18 @@ ENVIRONMENTS: EnvironmentList = {
 }
 del beta
 del prod
-HOSTNAME = socket.gethostname()
+HOSTNAME = socket.gethostname().split('.')[0]
 
 
 def get_environment_info() -> Environment:
-    if HOSTNAME.split('.')[0].startswith('test'):
+    if HOSTNAME.startswith('test'):
         return ENVIRONMENTS['beta']
     return ENVIRONMENTS['prod']
 
 
 def get_server_list(envinfo: Environment, servers: str) -> list[str]:
     if servers in ('all', 'scsvg'):
-        slist = envinfo['servers']
-        slist.append(envinfo['canary'])
-        return slist
-    if servers == 'skip':
-        return [envinfo['canary']]
+        return envinfo['servers']
     return servers.split(',')
 
 
@@ -118,10 +111,10 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
 def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Environment, nolog: bool, recursive: bool = True, force: bool = False) -> int:
     print(f'Start {path} deploys.')
     for server in serverlist:
-        if envinfo['canary'] != server.split('.')[0]:
+        if HOSTNAME != server.split('.')[0]:
             print(f'Deploying {path} to {server}.')
             ec = run_command(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
-            check_up(Debug=server, force=force, domain=envinfo['wikiurl'], nolog=nolog)  # type: ignore
+            check_up(Debug=server, force=force, domain=envinfo['wikiurl'], nolog=nolog)
             print(f'Deployed {path} to {server}.')
         else:
             return 0
@@ -180,7 +173,7 @@ def run(args: argparse.Namespace, start: float) -> None:
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
     synced = loginfo['servers']
-    if envinfo['canary'] in servers:
+    if HOSTNAME in servers:
         del loginfo['servers']
         text = f'starting deploy of "{str(loginfo)}" to {synced}'
         if not args.nolog:
