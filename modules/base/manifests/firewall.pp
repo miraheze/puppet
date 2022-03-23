@@ -19,11 +19,9 @@ class base::firewall (
     }
 
     if $block_abuse {
-        $block_abuse.each |String $ip| {
         ferm::rule { 'drop-abuse-net-miaheze':
             prio => '01',
             rule => "saddr (${$block_abuse.join(' ')}) DROP;",
-        }
         }
     }
 
