@@ -1,5 +1,7 @@
 # firewall for all servers
-class base::firewall {
+class base::firewall (
+    Array[String] $block_abuse = lookup('block_abuse', {'default_value' => []}),
+) {
     include ferm
     # Increase the size of conntrack table size (default is 65536)
     sysctl::parameters { 'ferm_conntrack':
@@ -14,6 +16,15 @@ class base::firewall {
     exec { 'bump nf_conntrack hash table size':
         command => '/bin/echo 32768 > /sys/module/nf_conntrack/parameters/hashsize',
         onlyif  => "/bin/grep --invert-match --quiet '^32768$' /sys/module/nf_conntrack/parameters/hashsize",
+    }
+
+    if $block_abuse {
+        $block_abuse.each |String $ip| {
+        ferm::rule { 'drop-abuse-net-miaheze':
+            prio => '01',
+            rule => "saddr (${$block_abuse.join(' ')}) DROP;",
+        }
+        }
     }
 
     ferm::conf { 'main':
