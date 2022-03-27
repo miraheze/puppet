@@ -53,7 +53,7 @@ def get_command_array(command: str) -> list[str]:
     commandfile = arraycommand[0]
     arraycommand.remove(commandfile)
     commandopts = ' '.join(arraycommand)
-    return commandfile, commandopts
+    return [commandfile, commandopts]
 
 
 def get_environment_info() -> Environment:
@@ -69,8 +69,7 @@ def get_server_list(envinfo: Environment, servers: str) -> list[str]:
 
 
 def run_batch_command(commands: list[str], tag: str, exitcodes: list[int]) -> list[int]:
-    processes: ProcessList = {}
-    processes['operations'] = []
+    processes: ProcessList = {'operations': []}
     print(f'Start {tag} deploys.')
     for operation in commands:
         normalised_command = get_command_array(operation)
