@@ -70,7 +70,7 @@ def run_batch_command(commands: list[str], tag: str, exitcodes: list[int]) -> in
     for command in commands:
         normalised_command = get_command_array(command)
         print(f'Scheduling {command}')
-        p = subprocess.Popen(command)
+        p = subprocess.Popen(normalised_command)
         processes[command] = p
     for p in processes.keys():
         processes[p].wait()
