@@ -26,7 +26,7 @@ class EnvironmentList(TypedDict):
 
 
 class ProcessList(TypedDict):
-    operation: list[subprocess.Popen]
+    operations: list[subprocess.Popen]
 
 
 beta: Environment = {
@@ -70,14 +70,14 @@ def get_server_list(envinfo: Environment, servers: str) -> list[str]:
 
 def run_batch_command(commands: list[str], tag: str, exitcodes: list[int]) -> list[int]:
     processes: ProcessList = {}
-    processes[operation] = []
+    processes['operations'] = []
     print(f'Start {tag} deploys.')
     for operation in commands:
         normalised_command = get_command_array(operation)
         print(f'Scheduling {operation}')
         pop = subprocess.Popen(normalised_command)
-        processes[operation].append(pop)
-    for p in processes[operation]:
+        processes['operations'].append(pop)
+    for p in processes['operations']:
         processes[p].wait()
         print(f'Completed {p} (Exit:{processes[p].returncode})')
         exitcodes.append(processes[p].returncode)
