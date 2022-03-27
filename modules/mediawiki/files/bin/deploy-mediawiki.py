@@ -77,9 +77,9 @@ def run_batch_command(commands: list[str], tag: str, exitcodes: list[int]) -> li
         pop = subprocess.Popen(normalised_command)
         processes['operations'].append(pop)
     for p in processes['operations']:
-        processes[p].wait()
-        print(f'Completed {p} (Exit:{processes[p].returncode})')
-        exitcodes.append(processes[p].returncode)
+        p.wait()
+        print(f'Completed {p} (Exit:{p.returncode})')
+        exitcodes.append(p.returncode)
     return exitcodes
 
 
