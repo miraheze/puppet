@@ -43,6 +43,15 @@ del prod
 HOSTNAME = socket.gethostname().split('.')[0]
 
 
+
+def get_command_array(command: str) -> list[str]:
+    arraycommand = command.split(' ')
+    commandfile = arraycommand[0]
+    arraycommand.remove(commandfile)
+    commandopts = ' '.join(arraycommand)
+    return commandfile, commandopts
+
+
 def get_environment_info() -> Environment:
     if HOSTNAME.startswith('test'):
         return ENVIRONMENTS['beta']
