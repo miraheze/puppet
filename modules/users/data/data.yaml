@@ -129,7 +129,7 @@ users:
     uid: 1013
     name: universalomega
     realname: Universal Omega 
-    ssh_keys: []
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCibNiTDRcbwece0HAnkuX7yxwGUvW+moKqcvKWM52rgl8wDvkBc5HVvpYpb5IRBHuZ0REudOKt3jdudhxyMJ0QkDcO1Jyn6Y34ShzV+ePAwsBibVEZ1x3NJ7ekU/lnbRRtzJixY2OFDao9CkSjR7sSCVYy2ZknB9DZYEgVxdIWPKXGEtv7LzumaYPHbpU4PDj/IIRbEb2MKVGgxznrDyL+ZkaO5U3JZl2zorDti4r/Ya/UWypm15szLn4al3ok0W9c8upcqOBtbnQ/MNBx0FW7/GuvNJChi9ODmEYoPffheiOPT5y4QStd+5OKG62M8jfc9YgoaKWTx805+3tkb0jcUvHKsd/qJtGd7yu3N6JHtRVQanMsB0JQvhM+Re0QkCkHhVuU+tyO/v/40lxQrLbcm3cummpnLdgW6EB8ZwRE+5Eqpfo5mf/NDwW15vbw/GaTwJe9bClqOAFyhvCV/cmMAmMGObDFJNfExXDN/4i+imcAPQdeQzgsnCBf3cqfQBPJMHraObnyYYXcEksjjbbREQdc/4VxhQ4Qhf0bO3liFG/O05X2d6lOeZviBIhBWbGRT36GEQa8a6GB9PiUv4RpDDY+O13MKHL9Jy33l61aIA+Pd8uVptF2eEAdAAzezbH1N41r86NhPk500ZqoMwF3EDwSdsJumjHMNCfBvVqMaQ== universal.omega000@gmail.com]
   void:
     ensure: present
     uid: 1014
