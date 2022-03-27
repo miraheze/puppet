@@ -26,7 +26,7 @@ class EnvironmentList(TypedDict):
 
 
 class ProcessList(TypedDict):
-    command: subprocess.Popen   
+    command: subprocess.Popen
 
 
 beta: Environment = {
