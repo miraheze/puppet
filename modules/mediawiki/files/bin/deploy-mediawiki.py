@@ -70,7 +70,7 @@ def get_server_list(envinfo: Environment, servers: str) -> list[str]:
 
 def run_batch_command(commands: list[str], tag: str, exitcodes: list[int]) -> list[int]:
     processes: ProcessList = {'operations': []}
-    print(f'Start {tag} deploys.')
+    print(f'Start {tag} commands.')
     for operation in commands:
         normalised_command = get_command_array(operation)
         print(f'Scheduling {operation}')
@@ -80,6 +80,7 @@ def run_batch_command(commands: list[str], tag: str, exitcodes: list[int]) -> li
         p.wait()
         print(f'Completed {p} (Exit:{p.returncode})')
         exitcodes.append(p.returncode)
+    print(f'completed {tag} commands')
     return exitcodes
 
 
