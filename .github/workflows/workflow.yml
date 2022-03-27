@@ -33,4 +33,6 @@ jobs:
         run: |
           flake8 modules/mediawiki --ignore=E501,W503,SFS301
           pytest -n auto
+          coverage run -m pytest modules/mediawiki
+          coverage report --fail-under=35
           mypy modules/mediawiki --ignore-missing-imports
