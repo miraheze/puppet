@@ -137,7 +137,7 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
     return up
 
 
-def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Environment, nolog: bool, recursive: bool = True, force: bool = False) -> int:
+def remote_sync_file(time: str, serverlist: list[str], path: str, exitcodes: list[int], recursive: bool = True) -> int:
     print(f'Start {path} deploys to {serverlist}.')
     sync_cmds = []
     for server in serverlist:
@@ -148,7 +148,7 @@ def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Envir
             continue
     ec = run_batch_command(sync_cmds, 'remote sync', exitcodes)
     print(f'Finished {path} deploys to {serverlist}.')
-    return ec
+    return ec  # noqa: R504
 
 
 def _get_staging_path(repo: str) -> str:
