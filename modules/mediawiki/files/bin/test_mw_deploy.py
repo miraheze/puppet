@@ -122,3 +122,15 @@ def test_construct_git_pull_sm() -> None:
 
 def test_construct_git_pull() -> None:
     assert mwd._construct_git_pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull  --quiet'
+
+
+def test_get_command_array() -> None:
+    assert mwd.get_command_array('sudo -u www-data echo test') == ['sudo', '-u www-data echo test']
+
+
+def test_run_command() -> None:
+    assert mwd.run_command('echo test') == 0
+
+
+def test_batched_command() -> None:
+    assert mwd.run_batch_command('echo test 1', 'echo test 2'] == [0, 0]
