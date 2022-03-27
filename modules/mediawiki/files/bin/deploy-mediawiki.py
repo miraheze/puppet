@@ -190,7 +190,7 @@ def run(args: argparse.Namespace, start: float) -> None:
     envinfo = get_environment_info()
     servers = get_server_list(envinfo, args.servers)
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
-    exitcodes = []
+    exitcodes: List[int] = []
     loginfo = {}
     rsyncpaths = []
     rsyncfiles = []
