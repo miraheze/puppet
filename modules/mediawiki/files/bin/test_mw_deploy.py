@@ -133,4 +133,4 @@ def test_run_command() -> None:
 
 
 def test_batched_command() -> None:
-    assert mwd.run_batch_command('echo test 1', 'echo test 2'] == [0, 0]
+    assert mwd.run_batch_command(['echo test 1', 'echo test 2'])== [0, 0]
