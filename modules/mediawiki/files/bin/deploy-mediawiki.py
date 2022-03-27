@@ -137,7 +137,7 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
     return up
 
 
-def remote_sync_file(time: str, serverlist: list[str], path: str, exitcodes: list[int], recursive: bool = True) -> int:
+def remote_sync_file(time: str, serverlist: list[str], path: str, exitcodes: list[int], recursive: bool = True) -> list[int]:
     print(f'Start {path} deploys to {serverlist}.')
     sync_cmds = []
     for server in serverlist:
@@ -288,9 +288,9 @@ def run(args: argparse.Namespace, start: float) -> None:
         rsyncpaths.append('/srv/mediawiki/cache/l10n/')
 
     for path in rsyncpaths:
-        exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=path, force=args.force, envinfo=envinfo, nolog=args.nolog))
+        exitcodes = remote_sync_file(time=args.ignoretime, serverlist=servers, path=path, exitcodes=exitcodes)
     for file in rsyncfiles:
-        exitcodes.append(remote_sync_file(time=args.ignoretime, serverlist=servers, path=file, recursive=False, force=args.force, envinfo=envinfo, nolog=args.nolog))
+        exitcodes = remote_sync_file(time=args.ignoretime, serverlist=servers, path=file, exitcodes=exitcodes, recursive=False)
 
     fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
 
