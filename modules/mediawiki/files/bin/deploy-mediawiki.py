@@ -143,7 +143,7 @@ def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Envir
     for server in serverlist:
         if HOSTNAME != server.split('.')[0]:
             print(f'Scheduling {path} for {server}.')
-            sync_cmds.append(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive)))
+            sync_cmds.append(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
         else:
             continue
     ec = run_batch_command(sync_cmds, 'remote sync', exitcodes)
