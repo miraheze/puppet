@@ -7,6 +7,7 @@ import time
 import requests
 import socket
 from sys import exit
+import subprocess
 
 
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
@@ -43,7 +44,6 @@ del prod
 HOSTNAME = socket.gethostname().split('.')[0]
 
 
-
 def get_command_array(command: str) -> list[str]:
     arraycommand = command.split(' ')
     commandfile = arraycommand[0]
@@ -62,6 +62,21 @@ def get_server_list(envinfo: Environment, servers: str) -> list[str]:
     if servers in ('all', 'scsvg'):
         return envinfo['servers']
     return servers.split(',')
+
+
+def run_batch_command(commands: list[str], tag: str, exitcodes: list[int]) -> int:
+    processes = {}
+    print(f'Start {tag} deploys.')
+    for command in commands:
+        normalised_command = get_command_array(command)
+        print(f'Scheduling {command}')
+        p = subprocess.Popen(command)
+        processes[command] = p
+    for p in processes.keys():
+        processes[p].wait()
+        print(f'Completed {p} (Exit:{processes[p].returncode})')
+        exitcodes.append(processes[p].returncode)
+    return exitcodes
 
 
 def run_command(cmd: str) -> int:
