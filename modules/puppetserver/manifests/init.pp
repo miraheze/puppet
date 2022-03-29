@@ -182,6 +182,30 @@ class puppetserver(
             program_name        => 'puppetserver_access',
             notify              => Service['puppetserver'],
         }
+    } else {
+        file { '/etc/puppetlabs/puppetserver/logback.xml':
+            ensure => present,
+            source => 'puppet:///modules/puppetserver/puppetserver_logback.xml',
+            notify => Service['puppetserver'],
+        }
+
+        file { '/etc/puppetlabs/puppetserver/request-logging.xml':
+            ensure => present,
+            source => 'puppet:///modules/puppetserver/puppetserver-request-logging.xml',
+            notify => Service['puppetserver'],
+        }
+
+        rsyslog::input::file { 'puppetserver':
+            path              => '/var/log/puppetlabs/puppetserver/puppetserver.log.json',
+            syslog_tag_prefix => '',
+            use_udp           => true,
+        }
+
+        rsyslog::input::file { 'puppetserver-access':
+            path              => '/var/log/puppetlabs/puppetserver/puppetserver-access.log.json',
+            syslog_tag_prefix => '',
+            use_udp           => true,
+        }
     }
 
     logrotate::conf { 'puppetserver':

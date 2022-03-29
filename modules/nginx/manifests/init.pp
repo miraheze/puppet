@@ -3,6 +3,7 @@ class nginx (
     Variant[String, Integer] $nginx_worker_processes = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
     Boolean $use_graylog                             = lookup('nginx::use_graylog', {'default_value' => false}),
     Boolean $enable_keepalive                        = lookup('nginx::enable_keepalive', {'default_value' => true}),
+    Integer $logrotate_number                        = lookup('nginx::logrotate_number', {'default_value' => 12}),
 ) {
     # Ensure Apache is absent: https://phabricator.miraheze.org/T253
     package { 'apache2':
@@ -69,8 +70,8 @@ class nginx (
     }
 
     logrotate::conf { 'nginx':
-        ensure => present,
-        source => 'puppet:///modules/nginx/logrotate',
+        ensure  => present,
+        content => template('nginx/logrotate.erb'),
     }
 
     # Include nginx prometheus exported on all hosts that use the nginx class
