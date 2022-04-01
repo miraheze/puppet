@@ -67,7 +67,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     for code in ec:
         if code != 0:
             if not nolog:
-                os.system('/usr/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
+                os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
             if leave:
                 print('Exiting due to non-zero status.')
                 exit(1)
