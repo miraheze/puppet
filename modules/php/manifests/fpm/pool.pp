@@ -32,6 +32,7 @@ define php::fpm::pool(
     String $user = 'www-data',
     String $group = 'www-data',
     Hash $config = {},
+    Integer $php_fpm_max_requests = lookup('mediawiki::php::fpm::max_requests', {'default_value' => 1000}),
 ){
     if !defined(Class['php::fpm']) {
         fail('php::fpm::pools can only be configured if php::fpm is defined')
@@ -43,7 +44,7 @@ define php::fpm::pool(
     } else {
         $listen = "127.0.0.1:${port}"
     }
-
+    
     $base_config = {
         'user'   => $user,
         'group'  => $group,
@@ -54,7 +55,7 @@ define php::fpm::pool(
         'listen.backlog' => 256,
         'pm'     => 'static',
         'pm.max_children' => $facts['virtual_processor_count'],
-        'pm.max_requests' => 1000,
+        'pm.max_requests' => $php_fpm_max_requests,
         'pm.status_path' => '/php_status',
         'access.format'  => '%{%Y-%m-%dT%H:%M:%S}t [%p] %{microseconds}d %{HTTP_HOST}e/%r %m/%s %{mega}M',
         'process.dumpable' => yes,
