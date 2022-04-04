@@ -104,7 +104,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False) -> bool:
+def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443) -> bool:
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
@@ -117,12 +117,18 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
         headers = {'host': f'{Host}'}
         location = f'{Host}@{domain}'
     up = False
-    req = requests.get(f'https://{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
+    if port == 443:
+        proto = 'https://'
+    else:
+        proto = 'http://'
+    req = requests.get(f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
     if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
         print(f'Status: {req.status_code}')
         print(f'Text: {"miraheze" in req.text} \n {req.text}')
+        if not 'X-Served-By' in req.headers.keys():
+            req.headers["X-Served-By"] = 'None'
         print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
         if force:
             print(f'Ignoring canary check error on {location} due to --force')
@@ -229,7 +235,7 @@ def run(args: argparse.Namespace, start: float) -> None:
 
         # setup env, git pull etc
         exitcodes = run_batch_command(stage, 'staging', exitcodes)
-        non_zero_code(exitcodes, nolog=args.nolog)
+        non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
         for option in options:  # configure rsync & custom data for repos
             if options[option]:
                 if option == 'world':  # install steps for w
@@ -238,7 +244,7 @@ def run(args: argparse.Namespace, start: float) -> None:
                     rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]}')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
-        non_zero_code(exitcodes, nolog=args.nolog)
+        non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
         if args.files:  # specfic extra files
             files = str(args.files).split(',')
             for file in files:
@@ -253,7 +259,7 @@ def run(args: argparse.Namespace, start: float) -> None:
 
         # move staged content to live
         exitcodes = run_batch_command(rsync, 'rsync', exitcodes)
-        non_zero_code(exitcodes)
+        non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
         # These need to be setup late because dodgy
         if args.l10nupdate:  # used by automated maint
             run_command(f'sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --quiet --wiki={envinfo["wikidbname"]}')  # gives garbage errors
@@ -264,13 +270,16 @@ def run(args: argparse.Namespace, start: float) -> None:
 
         # cmds to run after rsync & install (like mergemessage)
         exitcodes = run_batch_command(postinstall, 'post-install', exitcodes)
-        non_zero_code(exitcodes, nolog=args.nolog)
+        non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
         # update ext list + l10n
         exitcodes = run_batch_command(rebuild, 'rebuild', exitcodes)
-        non_zero_code(exitcodes, nolog=args.nolog)
+        non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
 
         # see if we are online - exit code 3 if not
-        check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force, nolog=args.nolog)  # type: ignore
+        if args.port:
+            check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force, nolog=args.nolog, port=args.port)
+        else:
+            check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force, nolog=args.nolog)
 
     # actually set remote lists
     for option in options:
@@ -305,7 +314,8 @@ def run(args: argparse.Namespace, start: float) -> None:
     else:
         print(fintext)
     if failed:
-        exit(1)
+        return 1
+    return 0
 
 
 if __name__ == '__main__':
@@ -325,5 +335,6 @@ if __name__ == '__main__':
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
+    parser.add_argument('--port', dest='port')
 
-    run(parser.parse_args(), start)
+    exit(run(parser.parse_args(), start))
