@@ -143,20 +143,23 @@ def test_run_command() -> None:
 def test_batched_command() -> None:
     assert mwd.run_batch_command(['echo test 1', 'echo test 2'], 'testrun', []) == [0, 0]
 
+
 def test_get_envinfo() -> None:
-    assert mwd.get_environment_info() == {'servers':
-                                          [
-                                              'mw101',
-                                              'mw102',
-                                              'mw111',
-                                              'mw112',
-                                              'mw121',
-                                              'mw122',
-                                              'mwtask111'
-                                           ],
-                                          'wikidbname': 'testwiki',
-                                          'wikiurl': 'publictestwiki.com'
-                                          }
+    assert mwd.get_environment_info() == {
+        'servers':
+        [
+            'mw101',
+            'mw102',
+            'mw111',
+            'mw112',
+            'mw121',
+            'mw122',
+            'mwtask111',
+        ],
+        'wikidbname': 'testwiki',
+        'wikiurl': 'publictestwiki.com'
+                                        }
+
 
 def test_get_servers_all() -> None:
     assert mwd.get_server_list(mwd.get_environment_info(), 'all') == [
@@ -166,8 +169,8 @@ def test_get_servers_all() -> None:
                                               'mw112',
                                               'mw121',
                                               'mw122',
-                                              'mwtask111'
-                                           ]
+                                              'mwtask111',
+                                                                      ]
 
 
 def test_get_servers_two() -> None:
