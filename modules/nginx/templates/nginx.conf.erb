@@ -61,7 +61,6 @@ http {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	<% if @use_graylog -%>
 	# Custom log format for graylog
 	log_format graylog2_json escape=json '{ "timestamp": "$msec", '
 		'"remote_addr": "$remote_addr", '
@@ -79,22 +78,20 @@ http {
 		'"ssl_cipher": "$ssl_cipher", '
 		'"nginx_access_log": true }';
 
-	<% else -%>
 	# Add response time to access.log
 	log_format miraheze '$remote_addr - $remote_user [$time_local] '
 			'"$request_method $scheme://$host$request_uri" $status $body_bytes_sent '
 			'"$http_referer" "$http_user_agent" $request_time '
 			'$ssl_protocol/$ssl_cipher';
-	<% end -%>
 
 	# Logging
-	<% if @use_graylog -%>
+	<%- if @use_graylog -%>
 	access_log syslog:server=127.0.0.1:10514 graylog2_json;
 	error_log syslog:server=127.0.0.1:10514 error;
-	<% else -%>
+	<%- end -%>
+
 	access_log /var/log/nginx/access.log miraheze;
 	error_log /var/log/nginx/error.log error;
-	<% end -%>
 
 	# Set real IP for cache proxy web requests
 	<%- @cache_proxies.sort.each do |key, value| -%>

@@ -98,6 +98,12 @@ class gluster {
             ],
             program_name => 'glusterd',
         }
+    } else {
+        rsyslog::input::file { 'glusterd':
+            path              => '/var/log/glusterfs/glusterd.log',
+            syslog_tag_prefix => '',
+            use_udp           => true,
+        }
     }
 
     logrotate::conf { 'glusterfs-common':
