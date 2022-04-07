@@ -170,7 +170,7 @@ class icingaweb2 (
         require => File['/etc/icingaweb2/modules/monitoring'],
     }
 
-    include ssl::wildcard
+    ssl::wildcard { 'icingaweb2 wildcard': }
 
     nginx::site { 'icinga2':
         ensure => present,
