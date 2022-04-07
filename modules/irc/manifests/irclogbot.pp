@@ -15,6 +15,10 @@ class irc::irclogbot {
 
     $mirahezebots_password = lookup('passwords::irc::mirahezebots')
     $mirahezelogbot_password = lookup('passwords::mediawiki::mirahezelogbot')
+    $mirahezelogbot_consumer_token = lookup('passwords::mediawiki::mirahezelogbot_consumer_token')
+    $mirahezelogbot_consumer_secret = lookup('passwords::mediawiki::mirahezelogbot_consumer_secret')
+    $mirahezelogbot_access_token = lookup('passwords::mediawiki::mirahezelogbot_access_token')
+    $mirahezelogbot_access_secret = lookup('passwords::mediawiki::mirahezelogbot_access_secret')
 
     file { '/etc/irclogbot/adminlog.py':
         ensure => present,

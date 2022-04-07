@@ -19,8 +19,14 @@ def log(config, message, project, author):
     if config.wiki_category:
         import re
 
-    site = mwclient.Site(config.wiki_connection, path=config.wiki_path, clients_useragent='Miraheze-LogBot/0.1 run by Miraheze Operation')
-    site.login(config.wiki_user, config.wiki_pass, domain=config.wiki_domain)
+    site = mwclient.Site(config.wiki_connection,
+                         path=config.wiki_path,
+                         clients_useragent='Miraheze-LogBot/0.2 run by Miraheze SRE',
+                         consumer_token=config.wiki_consumer_token,
+                         consumer_secret=config.wiki_consumer_secret,
+                         access_token=config.wiki_access_token,
+                         access_secret=config.wiki_access_secret
+                        )
     if config.enable_projects:
         project = project.capitalize()
         pagename = config.wiki_page % project

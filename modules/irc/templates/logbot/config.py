@@ -73,6 +73,16 @@ wiki_user = "MirahezeLogbot"
 # Password of wiki bot user
 wiki_pass = "<%= @mirahezelogbot_password %>"
 
+# OAUTH
+
+wiki_consumer_token = "<%= @mirahezelogbot_consumer_token %>"
+
+wiki_consumer_secret = "<%= @mirahezelogbot_consumer_secret %>"
+
+wiki_access_token = "<%= @mirahezelogbot_access_token %>"
+
+wiki_access_secret = "<%= @mirahezelogbot_access_secret %>"
+
 # Whether to use a bot flag or not
 wiki_bot = True
 
