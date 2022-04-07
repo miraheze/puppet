@@ -37,7 +37,7 @@ class base::syslog (
                         rsyslog::conf { 'remote_syslog':
                                 content  => template('base/rsyslog/remote_syslog.conf.erb'),
                                 priority => 30,
-                                require  => Class['ssl::wildcard']
+                                require  => Ssl::Wildcard['rsyslog wildcard']
                         }
 
                         $ensure_enabled = $rsyslog_udp_localhost ? {
