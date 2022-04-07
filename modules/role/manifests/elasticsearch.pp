@@ -45,7 +45,7 @@ class role::elasticsearch {
         ensure => directory,
     }
 
-    class { 'ssl::wildcard':
+    ssl::wildcard { 'elasticsearch wildcard':
         ssl_cert_path => '/etc/elasticsearch/ssl/',
         ssl_cert_key_private_path => '/etc/elasticsearch/ssl',
     }
