@@ -14,7 +14,7 @@ class varnish::nginx {
         content => template('varnish/mediawiki.conf'),
     }
 
-    ssl::wildcard { 'nginx wildcard': }
+    ssl::wildcard { 'varnish nginx wildcard': }
 
     include ssl::hiera
 
