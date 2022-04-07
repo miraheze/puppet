@@ -14,15 +14,15 @@
 #
 define rsyslog::input::file(
     String  $path,
-    Enum['on','off'] $reopen_on_truncate         = 'on',
-    Pattern[/[a-zA-Z0-9_-]+/] $syslog_tag_prefix = 'input-file-',
-    Pattern[/[a-zA-Z0-9_-]+/] $syslog_tag        = $title,
-    Integer $priority                            = 10,
-    Optional[String] $startmsg_regex             = undef,
-    Enum['on','off'] $addmetadata                = 'off',
-    Enum['on','off'] $addceetag                  = 'off',
-    Boolean          $use_udp                  = false,
-    Boolean          $parse_json                  = false,
+    Enum['on','off'] $reopen_on_truncate                            = 'on',
+    Varient[Pattern[/[a-zA-Z0-9_-]+/], Enum['']] $syslog_tag_prefix = 'input-file-',
+    Pattern[/[a-zA-Z0-9_-]+/] $syslog_tag                           = $title,
+    Integer $priority                                               = 10,
+    Optional[String] $startmsg_regex                                = undef,
+    Enum['on','off'] $addmetadata                                   = 'off',
+    Enum['on','off'] $addceetag                                     = 'off',
+    Boolean          $use_udp                                       = false,
+    Boolean          $parse_json                                    = false,
 ) {
 
     rsyslog::conf { "${syslog_tag_prefix}${syslog_tag}":
