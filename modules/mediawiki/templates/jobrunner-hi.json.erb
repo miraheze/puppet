@@ -11,8 +11,7 @@
                 "RequestWikiAIJob",
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized",
-                "RecordLintJob",
-                "refreshLinks"
+                "RecordLintJob"
             ]
         }
     },
@@ -30,17 +29,16 @@
         },
         // runJobs.php process time limits
         "real": {
-            "*": 130,
+            "*": 300,
             "DataDumpGenerateJob": 9000,
             "webVideoTranscode": 9000
         },
         // runJobs.php memory limits
         "memory": {
-            "*": "192M",
+            "*": "300M",
             "DataDumpGenerateJob": "300M",
             "RequestWikiAIJob": "1750M",
-            "webVideoTranscode": "300M",
-            "refreshLinks": "500M"
+            "webVideoTranscode": "300M"
         }
     },
 
