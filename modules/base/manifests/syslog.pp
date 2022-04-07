@@ -41,7 +41,7 @@ class base::syslog (
                         }
 
                         rsyslog::conf { 'remote_syslog_rule_parse_json':
-                                content  => template('base/rsyslog/remote_syslog_parse_json.conf.erb'),
+                                content  => template('base/rsyslog/remote_syslog_rule_parse_json.conf.erb'),
                                 priority => 10,
                                 require  => Ssl::Wildcard['rsyslog wildcard']
                         }
