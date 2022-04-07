@@ -1,5 +1,5 @@
-# class: ssl::wildcard
-class ssl::wildcard (
+# define: ssl::wildcard
+define ssl::wildcard (
     $ssl_cert_path = '/etc/ssl/localcerts',
     $ssl_cert_key_private_path = '/etc/ssl/private',
 ) {
@@ -10,20 +10,18 @@ class ssl::wildcard (
         $restart_nginx = undef
     }
 
-    if !defined(File['wildcard.miraheze.org-2020-2']) {
-        file { 'wildcard.miraheze.org-2020-2':
+    if !defined(File["${ssl_cert_path}/wildcard.miraheze.org-2020-2.crt"]) {
+        file { "${ssl_cert_path}/wildcard.miraheze.org-2020-2.crt":
             ensure => 'present',
             source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020-2.crt',
-            path   => "${ssl_cert_path}/wildcard.miraheze.org-2020-2.crt",
             notify => $restart_nginx,
         }
     }
 
-    if !defined(File['wildcard.miraheze.org-2020-2_private']) {
-        file { 'wildcard.miraheze.org-2020-2_private':
+    if !defined(File["${ssl_cert_key_private_path}/wildcard.miraheze.org-2020-2.key"]) {
+        file { "${ssl_cert_key_private_path}/wildcard.miraheze.org-2020-2.key":
             ensure => 'present',
             source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
-            path   => "${ssl_cert_key_private_path}/wildcard.miraheze.org-2020-2.key",
             owner  => 'root',
             group  => 'ssl-cert',
             mode   => '0660',
