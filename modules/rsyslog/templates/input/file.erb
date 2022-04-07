@@ -1,32 +1,5 @@
 # This file managed by puppet rsyslog::input::file
 
-$DefaultNetstreamDriverCAFile /etc/ssl/certs/Sectigo.crt
-# $DefaultNetstreamDriverCertFile /etc/rsyslog/ssl/cert.pem
-# $DefaultNetstreamDriverKeyFile /etc/rsyslog/ssl/server.key
-
-<%- if @use_udp -%>
-ruleset(name="imfile_udp_localhost_<%= @title %>" queue.type="LinkedList") {
-<%- if @parse_json -%>
-  action(type="mmjsonparse" name="mmjsonparse_imfile_udp_localhost")
-<%- end -%>
-
-<%- @syslog_host.sort.each do |log_host| -%>
-  <% host, port = log_host.split(':') %>
-  action(type="omfwd" name="imfile_udp_fwd_<%= @title %>_<%= log_host %>" Target="<%= host %>" Port="<%= port or '6514' %>"
-    StreamDriver="gtls" StreamDriverAuthMode="x509/certvalid" StreamDriverMode="1"
-    Protocol="tcp" template="RSYSLOG_SyslogProtocol23Format"
-    action.resumeRetryCount="-1"
-<%- if @syslog_queue_size > 0 -%>
-    queue.type="LinkedList" queue.size="<%= @syslog_queue_size %>" queue.filename="imfile_udp_<%= @title %>_<%= log_host %>"
-    queue.highWatermark="<%= (@syslog_queue_size * 0.7).to_i %>" queue.lowWatermark="<%= (@syslog_queue_size * 0.6).to_i %>"
-    queue.checkpointInterval="5"
-    queue.saveonshutdown="on"
-<%- end -%>
-    )
-<%- end -%>
-}
-<%- end -%>
-
 input(type="imfile"
       File="<%= @path %>"
       reopenOnTruncate="<%= @reopen_on_truncate %>"
@@ -36,7 +9,9 @@ input(type="imfile"
       addMetadata="<%= @addmetadata %>"
       addCeeTag="<%= @addceetag %>"
       Tag="<%= @syslog_tag_prefix %><%= @syslog_tag %>"
-<%- if @use_udp -%>
-      ruleset="imfile_udp_localhost_<%= @title %>"
+<%- if @use_udp and @parse_json -%>
+      ruleset="rsyslog_udp_localhost_rule_parse_json"
+<%- elsif @use_udp -%>
+      ruleset="rsyslog_udp_localhost_rule"
 <%- end -%>
       )
