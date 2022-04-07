@@ -34,6 +34,18 @@ class base::syslog (
 
                         ssl::wildcard { 'rsyslog wildcard': }
 
+                        rsyslog::conf { 'remote_syslog_rule':
+                                content  => template('base/rsyslog/remote_syslog_rule.conf.erb'),
+                                priority => 10,
+                                require  => Ssl::Wildcard['rsyslog wildcard']
+                        }
+
+                        rsyslog::conf { 'remote_syslog_rule_parse_json':
+                                content  => template('base/rsyslog/remote_syslog_parse_json.conf.erb'),
+                                priority => 10,
+                                require  => Ssl::Wildcard['rsyslog wildcard']
+                        }
+
                         rsyslog::conf { 'remote_syslog':
                                 content  => template('base/rsyslog/remote_syslog.conf.erb'),
                                 priority => 30,
