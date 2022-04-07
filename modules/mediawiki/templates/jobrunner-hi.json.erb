@@ -30,16 +30,14 @@
         },
         // runJobs.php process time limits
         "real": {
-            "*": 130,
+            "*": 300,
             "DataDumpGenerateJob": 9000,
             "webVideoTranscode": 9000
         },
         // runJobs.php memory limits
         "memory": {
-            "*": "192M",
-            "DataDumpGenerateJob": "300M",
+            "*": "300M",
             "RequestWikiAIJob": "1750M",
-            "webVideoTranscode": "300M",
             "refreshLinks": "500M"
         }
     },
