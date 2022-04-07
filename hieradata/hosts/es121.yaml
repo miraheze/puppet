@@ -7,5 +7,6 @@ role::elasticsearch::discovery_host:
   - es111.miraheze.org
   - es121.miraheze.org
 
-base::syslog::graylog_hostname: 'graylog121.miraheze.org'
-base::syslog::graylog_resolve_ip_version: 6
+base::syslog::syslog_daemon: rsyslog
+base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
+base::syslog::rsyslog_udp_localhost: true
