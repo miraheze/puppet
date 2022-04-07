@@ -1,7 +1,8 @@
 # role: graylog
 class role::graylog {
-    include ssl::wildcard
     include ::java
+
+    ssl::wildcard { 'graylog wildcard': }
 
     nginx::site { 'graylog_proxy':
         ensure  => present,
