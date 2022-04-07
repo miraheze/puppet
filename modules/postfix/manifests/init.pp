@@ -6,7 +6,7 @@ class postfix {
         'postfix-pcre',
     ]
 
-    include ssl::wildcard
+    ssl::wildcard { 'postfix wildcard': }
 
     package { $packages:
         ensure => present,

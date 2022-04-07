@@ -32,12 +32,12 @@ class base::syslog (
                 if !empty( $syslog_host ) {
                         require_package('rsyslog-gnutls')
 
-                        include ssl::wildcard
+                        ssl::wildcard { 'rsyslog wildcard': }
 
                         rsyslog::conf { 'remote_syslog':
                                 content  => template('base/rsyslog/remote_syslog.conf.erb'),
                                 priority => 30,
-                                require  => Class['ssl::wildcard']
+                                require  => Ssl::Wildcard['rsyslog wildcard']
                         }
 
                         $ensure_enabled = $rsyslog_udp_localhost ? {

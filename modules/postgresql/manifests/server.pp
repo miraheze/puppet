@@ -65,7 +65,7 @@ class postgresql::server(
     }
 
     if $use_ssl {
-        include ssl::wildcard
+        ssl::wildcard { 'postgresql wildcard': }
 
          file { "/etc/postgresql/${pgversion}/main/ssl":
              ensure => directory,

@@ -51,7 +51,7 @@ class matomo (
         version => lookup('php::php_version', {'default_value' => '7.4'}),
     }
 
-    include ssl::wildcard
+    ssl::wildcard { 'matomo wildcard': }
 
     nginx::site { 'matomo.miraheze.org':
         ensure  => present,
