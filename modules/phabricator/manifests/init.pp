@@ -45,7 +45,7 @@ class phabricator {
         monitor => false,
     }
 
-    include ssl::wildcard
+    ssl::wildcard { 'phabricator wildcard': }
     ssl::cert { 'miraheze.wiki': }
 
     file { '/srv/phab':
