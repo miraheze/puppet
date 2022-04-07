@@ -38,11 +38,4 @@ define rsyslog::input::file(
         }
     }
 
-    if $parse_json and !defined(Rsyslog::Conf['mmjsonparse']) {
-        rsyslog::conf { 'mmjsonparse':
-            content  => 'module(load="mmjsonparse")',
-            priority => 00,
-        }
-    }
-
 }
