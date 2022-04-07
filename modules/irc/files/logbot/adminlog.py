@@ -25,7 +25,8 @@ def log(config, message, project, author):
                          consumer_token=config.wiki_consumer_token,
                          consumer_secret=config.wiki_consumer_secret,
                          access_token=config.wiki_access_token,
-                         access_secret=config.wiki_access_secret)
+                         access_secret=config.wiki_access_secret
+                        )
     if config.enable_projects:
         project = project.capitalize()
         pagename = config.wiki_page % project
