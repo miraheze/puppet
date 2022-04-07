@@ -5,7 +5,7 @@ $DefaultNetstreamDriverCAFile /etc/ssl/certs/Sectigo.crt
 # $DefaultNetstreamDriverKeyFile /etc/rsyslog/ssl/server.key
 
 <%- if @use_udp -%>
-ruleset(name="imfile_udp_localhost" queue.type="LinkedList") {
+ruleset(name="imfile_udp_localhost_<%= @title %>" queue.type="LinkedList") {
 <%- if @parse_json -%>
   action(type="mmjsonparse" name="mmjsonparse_imfile_udp_localhost")
 <%- end -%>
@@ -37,6 +37,6 @@ input(type="imfile"
       addCeeTag="<%= @addceetag %>"
       Tag="<%= @syslog_tag_prefix %><%= @syslog_tag %>"
 <%- if @use_udp -%>
-      ruleset="imfile_udp_localhost"
+      ruleset="imfile_udp_localhost_<%= @title %>"
 <%- end -%>
       )
