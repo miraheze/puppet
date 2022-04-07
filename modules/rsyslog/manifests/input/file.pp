@@ -25,7 +25,8 @@ define rsyslog::input::file(
     Boolean          $parse_json                                    = false,
 ) {
 
-    $syslog_host = lookup('base::syslog::syslog_host', {'default_value' => []})
+    $syslog_host       = lookup('base::syslog::syslog_host', {'default_value' => []})
+    $syslog_queue_size = lookup('base::syslog::syslog_queue_size', {'default_value' => 10000})
     rsyslog::conf { "${syslog_tag_prefix}${syslog_tag}":
         content  => template('rsyslog/input/file.erb'),
         priority => $priority,
