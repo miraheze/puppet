@@ -1,3 +1,6 @@
 http_proxy: 'http://bast.miraheze.org:8080'
 php::php_fpm::fpm_workers_multiplier: 2.0
 php::php_fpm::fpm_min_child: 2
+
+base::syslog::syslog_daemon: rsyslog
+base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
