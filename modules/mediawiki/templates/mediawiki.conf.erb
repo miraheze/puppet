@@ -129,6 +129,10 @@ server {
 	location /.well-known/change-password {
 		return 301 /wiki/Special:ChangePassword;
 	}
+
+	location ~ ^/static/((?!(private))(.+))$ {
+		alias /mnt/mediawiki-static/$1;
+	}
 }
 
 server {
@@ -173,11 +177,11 @@ server {
  	}
 
 	location = /favicon.ico {
-		try_files /../../usr/share/nginx/favicons/$host.ico /../../usr/share/nginx/favicons/default.ico;
+		try_files /../../srv/mediawiki/favicons/$host.ico /../../srv/mediawiki/favicons/default.ico;
 	}
 
 	location = /apple-touch-icon.png {
-		try_files /../../usr/share/nginx/favicons/apple-touch-icon-$host.png /../../usr/share/nginx/favicons/apple-touch-icon-default.png;
+		try_files /../../srv/mediawiki/favicons/apple-touch-icon-$host.png /../../srv/mediawiki/favicons/apple-touch-icon-default.png;
 	}
 
 	location /private/ {

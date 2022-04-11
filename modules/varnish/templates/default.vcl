@@ -175,6 +175,11 @@ sub mw_request {
 		set req.backend_hint = mediawiki.backend();
 	}
 
+	# Rewrite hostname to static.miraheze.org for caching
+	if (req.url ~ "^/static/") {
+		set req.http.Host = "static.miraheze.org";
+	}
+
 	# Numerous static.miraheze.org specific code
 	if (req.http.Host == "static.miraheze.org") {
 		# We can do this because static.miraheze.org should not be capable of serving such requests anyway
@@ -240,7 +245,7 @@ sub vcl_recv {
 	unset req.http.Proxy; # https://httpoxy.org/
 
 	# Health checks, do not send request any further, if we're up, we can handle it
-	if (req.http.host == "health.miraheze.org" && req.url == "/check") {
+	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
 		if (std.healthy(mediawiki.backend())) {
 			return (synth(200));
 		} else {
