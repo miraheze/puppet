@@ -129,10 +129,6 @@ server {
 	location /.well-known/change-password {
 		return 301 /wiki/Special:ChangePassword;
 	}
-
-	location ~ ^/static/((?!(private))(.+))$ {
-		alias /mnt/mediawiki-static/$1;
-	}
 }
 
 server {
