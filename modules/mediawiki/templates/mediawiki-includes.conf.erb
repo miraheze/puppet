@@ -70,6 +70,10 @@ location /sitemaps/ {
 	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.miraheze.org/$1/sitemaps/$2 permanent;
 }
 
+location ~ ^/static/((?!(private))(.+))$ {
+	alias /mnt/mediawiki-static/$1;
+}
+
 # Redirect /entity/* to /wiki/Special:EntityData/*
 # Fixes T7174
 location ~ ^/entity/(.*) {
