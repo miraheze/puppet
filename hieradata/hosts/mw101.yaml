@@ -20,3 +20,4 @@ gluster::only_ipv6: true
 base::syslog::syslog_daemon: rsyslog
 base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
 base::syslog::rsyslog_udp_localhost: true
+nginx::logrotate_number: 2
