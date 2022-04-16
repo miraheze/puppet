@@ -18,6 +18,10 @@ GRANT USAGE, PROCESS, REPLICATION CLIENT, REPLICA MONITOR
     ON *.* TO 'exporter'@'localhost'
     IDENTIFIED BY '<%= @exporter_password %>';
 
+GRANT SELECT
+    ON mysql.user TO 'exporter'@'localhost'
+    IDENTIFIED BY '<%= @exporter_password %>';
+
 -- Grants for 'replica'@'%'
 
 GRANT REPLICATION SLAVE
