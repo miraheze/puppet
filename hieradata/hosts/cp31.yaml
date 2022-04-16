@@ -6,4 +6,5 @@ puppetserver_hostname: 'puppet111.miraheze.org'
 base::syslog::syslog_daemon: rsyslog
 base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
 base::syslog::rsyslog_udp_localhost: true
+nginx::use_graylog: true
 nginx::logrotate_number: 2
