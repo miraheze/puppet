@@ -68,6 +68,7 @@ http {
 		'"time_local": "$time_local", '
 		'"request_method": "$request_method", '
 		'"request_host": "$host", '
+		'"request_path": "$host$request_uri", '
 		'"request_uri": "$scheme://$host$request_uri", '
 		'"status": "$status", '
 		'"body_bytes_sent": "$body_bytes_sent",'
