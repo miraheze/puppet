@@ -194,9 +194,10 @@ class role::prometheus {
         }
     ]
 
+    # jmx based
     prometheus::class { 'puppetserver':
         dest   => '/etc/prometheus/targets/puppetserver.yaml',
-        module => 'Prometheus::Exporter::Puppetserver',
+        module => 'Role::Puppetserver',
         port   => 9400
     }
 
@@ -211,9 +212,10 @@ class role::prometheus {
         }
     ]
 
+    # jmx based
     prometheus::class { 'puppetdb':
         dest   => '/etc/prometheus/targets/puppetdb.yaml',
-        module => 'Prometheus::Exporter::Puppetdb',
+        module => 'Puppetdb',
         port   => 9401
     }
 
