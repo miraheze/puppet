@@ -76,6 +76,8 @@ http {
 		'"request_time": "$request_time", '
 		'"ssl_protocol": "$ssl_protocol", '
 		'"ssl_cipher": "$ssl_cipher", '
+		'"request_host": "$host", '
+		'"request_path": "$request_uri", '
 		'"nginx_access_log": true }';
 
 	# Add response time to access.log
