@@ -30,6 +30,7 @@ ExecStart=/usr/sbin/varnishd \
 -p workspace_backend=128k \
 -S /etc/varnish/secret \
 -s file,<%= @cache_file_name %>,<%= @cache_file_size %> \
+-p http_req_size=24576 \
 -p vcc_err_unref=off \
 -p http_max_hdr=128
 -p nuke_limit=1000
