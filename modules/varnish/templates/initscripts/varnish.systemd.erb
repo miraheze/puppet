@@ -32,6 +32,7 @@ ExecStart=/usr/sbin/varnishd \
 -s file,<%= @cache_file_name %>,<%= @cache_file_size %> \
 -p vcc_err_unref=off \
 -p http_max_hdr=128
+-p nuke_limit=1000
 ExecReload=/usr/share/varnish/varnishreload
 ExecStopPost=/usr/bin/rm -rf /var/lib/varnish/*
 
