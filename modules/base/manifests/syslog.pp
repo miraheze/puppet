@@ -30,8 +30,9 @@ class base::syslog (
                 }
 
                 logrotate::conf { 'rsyslog':
-                        ensure => present,
-                        source => 'puppet:///modules/base/rsyslog/rsyslog.logrotate.conf',
+                        ensure  => present,
+                        source  => 'puppet:///modules/base/rsyslog/rsyslog.logrotate.conf',
+                        require => Class['rsyslog'],
                 }
 
                 if !empty( $syslog_host ) {
