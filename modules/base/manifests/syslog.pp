@@ -29,6 +29,12 @@ class base::syslog (
                         notify => Service['rsyslog'],
                 }
 
+                logrotate::conf { 'rsyslog':
+                        ensure  => present,
+                        source  => 'puppet:///modules/base/rsyslog/rsyslog.logrotate.conf',
+                        require => Class['rsyslog'],
+                }
+
                 if !empty( $syslog_host ) {
                         require_package('rsyslog-gnutls')
 
