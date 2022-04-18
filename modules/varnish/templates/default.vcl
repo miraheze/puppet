@@ -342,6 +342,12 @@ sub vcl_backend_fetch {
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
+	/* Don't cache private, no-cache, no-store objects. */
+	if (beresp.http.Cache-Control ~ "(?i:private|no-cache|no-store)") {
+		set beresp.ttl = 0s;
+		// translated to hit-for-pass below
+	}
+
 	# Cookie magic as we did before
 	if (bereq.http.Cookie ~ "([Ss]ession|Token)=") {
 		set bereq.http.Cookie = "Token=1";
