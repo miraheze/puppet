@@ -49,7 +49,7 @@ class role::prometheus {
                 },
                 {
                     'target_label' => '__address__',
-                    'replacement' => 'mon111.miraheze.org:9115',
+                    'replacement' => '127.0.0.1:9115',
                 }
             ]
         },
@@ -75,7 +75,7 @@ class role::prometheus {
                 },
                 {
                     'target_label' => '__address__',
-                    'replacement' => 'mon111.miraheze.org:9115',
+                    'replacement' => '127.0.0.1:9115',
                 }
             ]
         }
