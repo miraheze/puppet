@@ -2,7 +2,7 @@
 class role::prometheus {
     include prometheus::exporter::blackbox
 
-    $blackbox_mediawiki_urls = query_nodes('Class[Role::MediaWiki]').map |$host| {
+    $blackbox_mediawiki_urls = query_nodes('Class[Role::Varnish] or Class[Role::MediaWiki]').map |$host| {
         [ 'Main_Page', 'Special:Version', 'Special:RecentChanges' ].map |$page| {
             "https://${host}/wiki/${page}"
         }
@@ -49,7 +49,7 @@ class role::prometheus {
                 },
                 {
                     'target_label' => '__address__',
-                    'replacement' => 'mon111.miraheze.org:9115',
+                    'replacement' => '127.0.0.1:9115',
                 }
             ]
         },
@@ -75,7 +75,7 @@ class role::prometheus {
                 },
                 {
                     'target_label' => '__address__',
-                    'replacement' => 'mon111.miraheze.org:9115',
+                    'replacement' => '127.0.0.1:9115',
                 }
             ]
         }
