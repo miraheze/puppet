@@ -26,7 +26,7 @@
         <file>/var/log/puppetlabs/puppetserver/puppetserver.log.json</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-             <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-access.log.json.%d{yyyy-MM-dd}</fileNamePattern>
+             <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver.log.json.%d{yyyy-MM-dd}</fileNamePattern>
              <maxHistory>1</maxHistory>
          </rollingPolicy>
 
