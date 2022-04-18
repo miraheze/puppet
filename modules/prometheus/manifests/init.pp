@@ -68,6 +68,9 @@ class prometheus (
     }
 
     $servers = query_nodes('Class[Base]')
+              .flatten()
+              .unique()
+              .sort()
 
     file { '/etc/prometheus/targets/nodes.yaml':
         ensure => present,
