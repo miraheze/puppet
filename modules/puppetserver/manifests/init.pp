@@ -208,11 +208,6 @@ class puppetserver(
         }
     }
 
-    logrotate::conf { 'puppetserver':
-        ensure => present,
-        source => 'puppet:///modules/puppetserver/puppetserver.logrotate.conf',
-    }
-
     service { 'puppetserver':
         ensure   => running,
         provider => 'systemd',
