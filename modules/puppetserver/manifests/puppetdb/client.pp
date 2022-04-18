@@ -64,9 +64,4 @@ class puppetserver::puppetdb::client(
             use_udp           => true,
         }
     }
-
-    logrotate::conf { 'puppetdb':
-        ensure => present,
-        source => 'puppet:///modules/puppetserver/puppetdb.logrotate.conf',
-    }
 }
