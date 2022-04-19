@@ -355,7 +355,6 @@ sub vcl_backend_response {
 		unset bereq.http.Cookie;
 	}
 
-
 	# Distribute caching re-calls where possible
 	if (beresp.ttl >= 60s) {
 		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
