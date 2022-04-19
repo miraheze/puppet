@@ -436,14 +436,11 @@ sub vcl_backend_response {
 	}
 
 	// set a 601s hit-for-pass object based on response conditions in vcl_backend_response:
-	//    Calculated TTL <= 0 + Status < 500 + No underlying cache hit:
+	//    Calculated TTL <= 0 + Status < 500:
 	//    These are generally uncacheable responses.  The 5xx exception
 	//    avoids us accidentally replacing a good stale/grace object with
 	//    an hfp (and then repeatedly passing on potentially-cacheable
-	//    content) due to an isolated 5xx response, and the exception for
-	//    underlying cache hits (detected from X-Cache-Int) is to avoid
-	//    creating a persist HFP object when a lower-level varnish
-	//    returned an expired object under grace-mode rules.
+	//    content) due to an isolated 5xx response.
 	if (beresp.ttl <= 0s && beresp.status < 500) {
 		set beresp.grace = 31s;
 		set beresp.keep = 0s;
