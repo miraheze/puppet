@@ -7,6 +7,9 @@ class role::prometheus {
             "https://${host}/wiki/${page}"
         }
     }
+    .flatten()
+    .unique()
+    .sort()
 
     file { '/etc/prometheus/targets/blackbox_mediawiki_urls.yaml':
         ensure  => present,
