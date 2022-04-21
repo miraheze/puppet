@@ -22,6 +22,7 @@ http {
 	tcp_nodelay on;
 	client_max_body_size 250M;
 	server_names_hash_bucket_size 112;
+	http2_max_field_size 8k;
 
 	<%- if @enable_keepalive -%>
 	# Keepalive
