@@ -18,6 +18,7 @@ class mediawiki::php (
                 'error_reporting'           => 'E_ALL & ~E_DEPRECATED & ~E_STRICT',
                 'log_errors'                => 'On',
                 'memory_limit'              => "${$fpm_max_memory}M",
+                'max_execution_time'        => 220,
                 'opcache'                   => {
                     'enable'                  => 1,
                     'interned_strings_buffer' => 50,
