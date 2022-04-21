@@ -33,6 +33,9 @@ probe mwhealth {
 backend <%= name %> {
 	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
+	.connect_timeout = "3s";
+	.first_byte_timeout = "65s";
+	.between_bytes_timeout = "33s";
 <%- if property['probe'] -%>
 	.probe = <%= property['probe'] %>;
 <%- end -%>
