@@ -73,6 +73,31 @@ varnish::backends:
     port: 8203
     probe: false
     pool: false
+  # mw* without probe and pool
+  mw101_test:
+    port: 8100
+    probe: false
+    pool: false
+  mw102_test:
+    port: 8101
+    probe: false
+    pool: false
+  mw111_test:
+    port: 8102
+    probe: false
+    pool: false
+  mw112_test:
+    port: 8103
+    probe: false
+    pool: false
+  mw121_test:
+    port: 8104
+    probe: false
+    pool: false
+  mw122_test:
+    port: 8105
+    probe: false
+    pool: false
 
 # Logging
 base::syslog::syslog_daemon: rsyslog
