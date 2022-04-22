@@ -32,6 +32,7 @@ class role::prometheus {
     $blackbox_jobs = [
         {
             'job_name' => 'blackbox/mediawiki',
+            'scrape_timeout' => '60s',
             'metrics_path' => '/probe',
             'params' => {
                 'module' => [ 'https_mediawiki_cp' ],
@@ -58,6 +59,7 @@ class role::prometheus {
         },
         {
             'job_name' => 'blackbox/web',
+            'scrape_timeout' => '60s',
             'metrics_path' => '/probe',
             'params' => {
                 'module' => [ 'https_200_300_connect' ],
