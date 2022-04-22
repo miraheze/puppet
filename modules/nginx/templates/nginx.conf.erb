@@ -24,11 +24,8 @@ http {
 	server_names_hash_bucket_size 112;
 	http2_max_field_size 8k;
 
-	<%- if @enable_keepalive -%>
-	# Keepalive
-	keepalive_requests 150;
-	keepalive_timeout 2;
-	<%- end -%>
+	keepalive_timeout <%= @keepalive_timeout %>;
+	keepalive_requests <%= @keepalive_requests %>;
 
 	include /etc/nginx/mime.types;
 	default_type application/octet-stream;
