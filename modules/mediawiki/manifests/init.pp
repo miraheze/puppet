@@ -65,13 +65,13 @@ class mediawiki(
     }
 
     git::clone { 'femiwiki-deploy':
-        ensure             => 'latest',
-        directory          => '/srv/mediawiki/femiwiki-deploy',
-        origin             => 'https://github.com/miraheze/femiwiki-deploy.git',
-        branch             => 'master',
-        owner              => 'www-data',
-        group              => 'www-data',
-        mode               => '0755',
+        ensure    => 'latest',
+        directory => '/srv/mediawiki/femiwiki-deploy',
+        origin    => 'https://github.com/miraheze/femiwiki-deploy.git',
+        branch    => 'master',
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
     }
 
     file { '/srv/mediawiki/femiwiki-deploy/node_modules':
@@ -79,7 +79,6 @@ class mediawiki(
         target  => '/srv/mediawiki/w/skins/femiwiki/node_modules',
         owner   => 'www-data',
         group   => 'www-data',
-        require => File['/srv/mediawiki/w'],
     }
 
     file { [
