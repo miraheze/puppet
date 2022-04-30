@@ -74,11 +74,12 @@ class mediawiki(
         mode      => '0755',
     }
 
-    file { '/srv/mediawiki/femiwiki-deploy/node_modules':
+    file { '/srv/mediawiki/w/skins/femiwiki/node_modules':
         ensure  => 'link',
-        target  => '/srv/mediawiki/w/skins/femiwiki/node_modules',
+        target  => '/srv/mediawiki/femiwiki-deploy/node_modules',
         owner   => 'www-data',
         group   => 'www-data',
+        require => File['/srv/mediawiki/w'],
     }
 
     file { [
