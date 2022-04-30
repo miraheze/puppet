@@ -64,6 +64,24 @@ class mediawiki(
         require            => Package['libjpeg-dev'],
     }
 
+    git::clone { 'femiwiki-deploy':
+        ensure    => 'latest',
+        directory => '/srv/mediawiki/femiwiki-deploy',
+        origin    => 'https://github.com/miraheze/femiwiki-deploy.git',
+        branch    => 'master',
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
+    }
+
+    file { '/srv/mediawiki/w/skins/femiwiki/node_modules':
+        ensure  => 'link',
+        target  => '/srv/mediawiki/femiwiki-deploy/node_modules',
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => File['/srv/mediawiki/w'],
+    }
+
     file { [
         '/srv/mediawiki',
         '/srv/mediawiki/w',
