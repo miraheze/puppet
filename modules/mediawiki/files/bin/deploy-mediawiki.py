@@ -206,7 +206,7 @@ def run(args: argparse.Namespace, start: float) -> None:
                 if option == 'world':  # install steps for w
                     os.chdir(_get_staging_path('world'))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
-                    rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]}')
+                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
