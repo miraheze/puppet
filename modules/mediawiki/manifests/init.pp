@@ -79,7 +79,7 @@ class mediawiki(
         target  => '/srv/mediawiki/femiwiki-deploy/node_modules',
         owner   => 'www-data',
         group   => 'www-data',
-        require => File['/srv/mediawiki/w'],
+        require => [ Git::Clone['femiwiki-deploy'], File['/srv/mediawiki/w'] ],
     }
 
     file { [
