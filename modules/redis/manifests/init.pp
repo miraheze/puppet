@@ -49,6 +49,6 @@ class redis (
 
     monitoring::nrpe { 'Redis Process':
         command => '/usr/lib/nagios/plugins/check_procs -a redis-server -c 1:1',
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Redis'
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Redis_Service'
     }
 }
