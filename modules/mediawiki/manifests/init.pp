@@ -30,6 +30,15 @@ class mediawiki(
         include mediawiki::shellbox
     }
 
+    if !lookup('jobrunner::intensive', {'default_value' => false}) {
+        cron { 'clean-temp-files':
+            ensure  => present,
+            command => 'find /tmp -type f -user www-data -amin +30 -delete',
+            user    => 'www-data',
+            special => 'hourly',
+        }
+    }
+
     file { '/etc/mathoid':
         ensure  => directory,
     }
