@@ -1,7 +1,7 @@
 apply Service "wc.miraheze.org" {
   import "generic-service"
   check_command = "check_ssl_expire"
-  docs = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL"
+  docs = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
   vars.host = "miraheze.org"
   vars.time = "30"
 
@@ -11,7 +11,7 @@ apply Service "wc.miraheze.org" {
 apply Service "m.miraheze.org - LetsEncrypt" {
   import "generic-service"
   check_command = "check_ssl_expire"
-  docs = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL"
+  docs = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
   vars.host = "m.miraheze.org"
   vars.time = "15"
   assign where "sslchecks" in host.groups
@@ -22,7 +22,7 @@ apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   import "generic-service"
   check_command = "check_ssl_expire"
   check_interval = 30m
-  docs = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL"
+  docs = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
   vars.host = "<%= property['url'] %>"
   vars.time = "<% if property['ca'] == "LetsEncrypt" %>15<% else %>30<% end %>"
   <%- if property['ca'] == "LetsEncrypt" and property['disable_event'] == false -%>
@@ -35,7 +35,7 @@ apply Service "<%= property['url'] %> - reverse DNS" {
   import "generic-service"
   check_command = "reverse_dns"
   check_interval = 30m
-  docs = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Reverse_DNS"
+  docs = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Reverse_DNS_Checks"
   vars.hostname = "<%= property['url'] %>"
   vars.regex = "^(test|cp)[0-9]+\\.miraheze\\.org$$"
   assign where "sslchecks" in host.groups
