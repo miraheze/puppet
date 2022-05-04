@@ -27,7 +27,7 @@ class letsencrypt::web {
 
     monitoring::services { 'MirahezeRenewSsl':
         check_command => 'tcp',
-        docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#MirahezeRenewSsl',
+        docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#MirahezeRenewSSL',
         vars          => {
             tcp_address => $::ipaddress6,
             tcp_port    => '5000',
