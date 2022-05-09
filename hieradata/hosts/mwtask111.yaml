@@ -1,7 +1,6 @@
 users::groups:
   - mediawiki-admins
   - mediawiki-roots
-letsencrypt: true
 jobrunner: true
 jobrunner::intensive: true
 contactgroups: ['sre', 'mediawiki']

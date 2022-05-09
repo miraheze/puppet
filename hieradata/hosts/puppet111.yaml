@@ -1,6 +1,7 @@
 users::groups:
   - puppet-users
 puppetserver: true
+letsencrypt: true
 puppetserver_java_opts: '-Xms2000M -Xmx2000M'
 puppetdb_enable: true
 puppetdb_hostname: puppet111.miraheze.org
