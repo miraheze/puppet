@@ -166,7 +166,11 @@ class SslCertificate:
         os.system("/bin/cat /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
 
         if self.private:
-            os.system("/bin/cat /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
+#            os.system("/bin/cat /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
+            print("Private key is being copied to /etc/puppetlabs/puppet/ssl-keys")
+            os.system("cp /etc/letsencrypt/live/{0}/privkey.pem /etc/puppetlabs/puppet/ssl-keys")
+            os.system("mv /etc/puppetlabs/puppet/ssl-keys/privkey.pem /etc/puppetlabs/puppet/ssl-keys/{0}.key")
+            os.system("cd /etc/puppetlabs/puppet/ssl-keys && git add . && git commit -m "add {0} key" && git push")
 
     def revoke_letsencrypt_certificate(self):
         if not self.quiet:
