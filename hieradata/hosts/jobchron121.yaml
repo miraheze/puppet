@@ -1,3 +1,7 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+
 redis::heap: '1000mb'
 
 puppetserver_hostname: 'puppet111.miraheze.org'
