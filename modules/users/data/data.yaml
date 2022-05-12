@@ -24,7 +24,7 @@ groups:
   cache-admins:
     gid: 2003
     descriptions: limited sudo on cache proxies
-    members: []
+    members: [universalomega]
     privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/varnishadm',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service varnish *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
