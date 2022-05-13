@@ -3,8 +3,8 @@
 # Basic installation of php - only cli modules.
 #
 class php(
-    VMlib::Php_version $version               = lookup('php::php_version', {'default_value' => '7.2'}),
-    Enum['present', 'absent'] $ensure         = present,
+    VMlib::Php_version $version               = lookup('php::php_version', {'default_value' => '7.4'}),
+    VMlib::Ensure $ensure                     = present,
     Array[Php::Sapi] $sapis                   = ['cli'],
     Hash $config_by_sapi                      = {},
     Hash $extensions                          = {}
@@ -12,9 +12,7 @@ class php(
     requires_os('debian >= stretch')
  
     # We need php-common everywhere
-    package { [ "php${version}-common", "php${version}-opcache" ]:
-        ensure  => $ensure,
-    }
+    ensure_packages(["php${version}-common", "php${version}-opcache"])
 
     $config_dir = "/etc/php/${version}"
 
@@ -30,7 +28,7 @@ class php(
         'date'                   => {
             'timezone' => 'UTC',
         },
-        'default_socket_timeout' => 2,
+        'default_socket_timeout' => 1,
         'display_errors'         => 'On',
         'log_errors'             => 'On',
         'include_path'           => '".:/usr/share/php"',
