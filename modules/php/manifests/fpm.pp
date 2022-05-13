@@ -87,4 +87,9 @@ class php::fpm(
         purge   => true,
         require => Package["php${php::version}-fpm"]
     }
+
+    monitoring::nrpe { 'php-fpm':
+        command => "/usr/lib/nagios/plugins/check_procs -C php-fpm${php::version} -c 1:",
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#PHP-FPM'
+    }
 }
