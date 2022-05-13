@@ -15,11 +15,10 @@ role::mediawiki::use_strict_firewall: true
 mediawiki::php::fpm::childs: 1
 mediawiki::php::fpm::fpm_workers_multiplier: 1.0
 mediawiki::php::fpm_config:
-  memory_limit: '256M'
   post_max_size: '250M'
   upload_max_filesize: '250M'
 
-mediawiki::php::cli_max_memory: 256
+mediawiki::php::memory_limit: '256M'
 
 mediawiki::is_canary: true
 mediawiki::use_staging: true
