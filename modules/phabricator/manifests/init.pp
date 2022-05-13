@@ -1,12 +1,18 @@
 # class: phabricator
 class phabricator {
-
     ensure_packages(['python3-pygments', 'subversion'])
 
     $fpm_config = {
-        'date' => {
-            'timezone' => 'UTC',
-        },
+        'include_path'                    => '".:/usr/share/php"',
+        'error_log'                       => 'syslog',
+        'pcre.backtrack_limit'            => 5000000,
+        'date.timezone'                   => 'UTC',
+        'display_errors'                  => 0,
+        'error_reporting'                 => 'E_ALL & ~E_STRICT',
+        'mysql'                           => { 'connect_timeout' => 3 },
+        'default_socket_timeout'          => 60,
+        'session.upload_progress.enabled' => 0,
+        'enable_dl'                       => 0,
         'opcache' => {
                 'enable' => 1,
                 'interned_strings_buffer' => 40,
