@@ -2,7 +2,7 @@
 class mediawiki::php (
     Float $fpm_workers_multiplier      = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $php_fpm_childs            = lookup('mediawiki::php::fpm::childs', {'default_value' => 26}),
-    Integer $cli_max_memory            = lookup('mediawiki::php::cli_max_memory', {'default_value' => 256}),
+    Integer $max_memory                = lookup('mediawiki::php::max_memory', {'default_value' => 256}),
     Integer $request_timeout           = lookup('mediawiki::php::request_timeout', {'default_value' => 60}),
     VMlib::Php_version $php_version    = lookup('php::php_version', {'default_value' => '7.4'}),
     Boolean $enable_fpm                = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
@@ -16,7 +16,7 @@ class mediawiki::php (
         'pcre.backtrack_limit'   => 5000000,
         'date.timezone'          => 'UTC',
         'display_errors'         => 'stderr',
-        'memory_limit'           => "${$cli_max_memory}M",
+        'memory_limit'           => "${$max_memory}M",
         'error_reporting'        => 'E_ALL & ~E_STRICT',
         'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
@@ -69,7 +69,6 @@ class mediawiki::php (
 
     # First, extensions provided as core extensions; these are version-specific
     # and are provided as php$version-$extension
-    #
     $core_extensions =  [
         'bcmath',
         'bz2',
