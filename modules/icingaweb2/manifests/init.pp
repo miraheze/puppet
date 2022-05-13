@@ -16,12 +16,19 @@ class icingaweb2 (
         fail('You must include the icinga2 base class before using any icingaweb2 feature class!')
     }
 
-    $fpm_config = lookup('php::fpm::config', {default_value => undef})
-
-    $base_config_fpm = {
-        'date' => {
-            'timezone' => 'UTC',
-        },
+    $fpm_config = {
+        'include_path'                    => '".:/usr/share/php"',
+        'error_log'                       => 'syslog',
+        'pcre.backtrack_limit'            => 5000000,
+        'date.timezone'                   => 'UTC',
+        'display_errors'                  => 0,
+        'error_reporting'                 => 'E_ALL & ~E_STRICT',
+        'log_errors'                      => 'On',
+        'memory_limit'                    => lookup('php::fpm::memory_limit', {'default_value' => '512M'}),
+        'mysql'                           => { 'connect_timeout' => 3 },
+        'default_socket_timeout'          => 60,
+        'session.upload_progress.enabled' => 0,
+        'enable_dl'                       => 0,
         'opcache' => {
             'enable' => 1,
             'interned_strings_buffer' => 30,
@@ -54,7 +61,7 @@ class icingaweb2 (
         version        => $php_version,
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
-            'fpm' => merge($base_config_fpm, $fpm_config),
+            'fpm' => $fpm_config,
         },
     }
 
