@@ -149,15 +149,8 @@ class mediawiki::php (
         'xmlreader',
         'xmlwriter',
         'xsl',
-        'wddx',
     ]:
         package_name => '',
-    }
-
-    if $phpdbg {
-      package { "php${php_version}-phpdbg":
-        ensure => present
-      }
     }
 
     ### FPM configuration
