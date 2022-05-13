@@ -1,7 +1,6 @@
 # === Class mediawiki::php
 class mediawiki::php (
     Float $fpm_workers_multiplier      = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
-    Integer $fpm_min_restart_threshold = lookup('mediawiki::php::fpm::fpm_min_restart_threshold', {'default_value' => 6}),
     Integer $php_fpm_childs            = lookup('mediawiki::php::fpm::childs', {'default_value' => 26}),
     Integer $cli_max_memory            = lookup('mediawiki::php::cli_max_memory', {'default_value' => 256}),
     Integer $request_timeout           = lookup('mediawiki::php::request_timeout', {'default_value' => 60}),
