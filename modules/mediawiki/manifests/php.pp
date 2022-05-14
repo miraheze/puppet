@@ -93,7 +93,6 @@ class mediawiki::php (
     # but we prefer to handle the transitions with other tools than puppet.
     php::extension { [
         'apcu',
-        'geoip',
         'msgpack',
         'redis',
         'luasandbox',
