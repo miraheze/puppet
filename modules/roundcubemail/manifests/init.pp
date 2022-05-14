@@ -86,6 +86,8 @@ class roundcubemail (
             priority     => 10;
         'mysqli':
             package_name => "php${php_version}-mysql";
+        'pdo_mysql':
+            package_name => '';
     }
 
     $num_workers = max(floor($facts['virtual_processor_count'] * 1.5), 4)
