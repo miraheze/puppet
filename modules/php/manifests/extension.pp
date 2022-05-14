@@ -1,8 +1,8 @@
 define php::extension(
-    Enum['present', 'absent'] $ensure = 'present',
-    String $package_name              = "php-${title}",
-    Integer[0,99] $priority           = 20,
-    Optional[Hash] $config            = undef,
+    VMlib::Ensure $ensure = 'present',
+    String $package_name = "php-${title}",
+    Integer[0,99] $priority = 20,
+    Optional[Hash] $config = undef,
     Optional[Array[Php::Sapi]] $sapis = undef,
 ) {
     if !defined(Class['php']) {
