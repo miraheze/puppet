@@ -26,7 +26,9 @@ class php::php_fpm(
     Float $fpm_workers_multiplier             = lookup('php::php_fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $fpm_min_restart_threshold        = 1,
 ) {
-    include prometheus::exporter::fpm
+    if $enable_fpm {
+        include prometheus::exporter::fpm
+    }
 
     $base_config_cli = {
         'include_path'           => '".:/usr/share/php"',
