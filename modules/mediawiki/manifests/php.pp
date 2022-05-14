@@ -97,6 +97,7 @@ class mediawiki::php (
         'redis',
         'luasandbox',
         'wikidiff2',
+        'yaml',
     ]:
         ensure => present
     }
@@ -192,10 +193,11 @@ class mediawiki::php (
     }
 
     php::extension { 'tideways-xhprof':
-        ensure   => $profiling_ensure,
+        ensure => $profiling_ensure,
+        package_name => '',
         priority => 30,
-        config   => {
-            'extension'                       => 'tideways_xhprof.so',
+        config => {
+            'extension' => 'tideways_xhprof.so',
             'tideways_xhprof.clock_use_rdtsc' => '0',
         }
     }
