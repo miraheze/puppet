@@ -16,7 +16,7 @@
 #   the defaults.
 #
 class php::fpm(
-    VMlib::Ensure = 'present',
+    VMlib::Ensure $ensure = 'present',
     Hash $config = {},
 ) {
     if !defined(Class['php']) {
