@@ -8,9 +8,7 @@ class php(
     Array[Php::Sapi] $sapis                   = ['cli'],
     Hash $config_by_sapi                      = {},
     Hash $extensions                          = {}
-) {
-    requires_os('debian >= stretch')
- 
+) { 
     # We need php-common everywhere
     ensure_packages(["php${version}-common", "php${version}-opcache"])
 
@@ -33,7 +31,7 @@ class php(
         'log_errors'             => 'On',
         'include_path'           => '".:/usr/share/php"',
         'max_execution_time'     => 60,
-        'memory_limit'           => '256M',
+        'memory_limit'           => '100M',
         'mysql'                  => {
             'connect_timeout' => 1,
         },
