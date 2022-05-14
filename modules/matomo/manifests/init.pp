@@ -53,15 +53,6 @@ class matomo (
         'upload_max_filesize' => '100M',
     }
 
-    $core_extensions =  [
-        'curl',
-        'gd',
-        'gmp',
-        'intl',
-        'mbstring',
-        'ldap',
-    ]
-
     $php_version = lookup('php::php_version', {'default_value' => '7.4'})
 
     # Install the runtime
@@ -75,12 +66,25 @@ class matomo (
         },
     }
 
+    $core_extensions =  [
+        'curl',
+        'gd',
+        'gmp',
+        'intl',
+        'mbstring',
+        'ldap',
+    ]
+
     $core_extensions.each |$extension| {
         php::extension { $extension:
             package_name => "php${php_version}-${extension}",
             sapis        => ['cli', 'fpm'],
         }
     }
+
+    php::extension { 'redis':
+         ensure => present
+     }
 
     class { '::php::fpm':
         ensure => present,
