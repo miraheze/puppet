@@ -101,7 +101,10 @@ class matomo (
             package_name => "php${php_version}-mysql";
     }
 
-    $num_workers = max(floor($facts['virtual_processor_count'] * 1.5), 4)
+    $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
+    $fpm_min_child = lookup('php::fpm::fpm_min_child', {'default_value' => 4})
+
+    $num_workers = max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
     # These numbers need to be positive integers
     $max_spare = ceiling($num_workers * 0.3)
     $min_spare = ceiling($num_workers * 0.1)
