@@ -90,6 +90,8 @@ class icingaweb2 (
             priority     => 10;
         'mysqli':
             package_name => "php${php_version}-mysql";
+        'pdo_mysql':
+            package_name => '';
     }
 
     $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
