@@ -30,8 +30,17 @@ function streamAppleTouch() {
 
 	$status = $client->execute();
 	if ( !$status->isOK() ) {
-		header( 'HTTP/1.1 500 Internal Server Error' );
-		return;
+		$touch = '/favicons/apple-touch-icon-default.png';
+		$url = wfExpandUrl( $touch, PROTO_CANONICAL );
+		$client = MediaWikiServices::getInstance()
+			->getHttpRequestFactory()
+			->create( $url );
+
+		$status = $client->execute();
+		if ( !$status->isOK() ) {
+			header( 'HTTP/1.1 500 Internal Server Error' );
+			return;
+		}
 	}
 
 	$content = $client->getContent();
