@@ -1,7 +1,7 @@
 # === Class mediawiki::php
 class mediawiki::php (
     Float $fpm_workers_multiplier      = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
-    Integer $php_fpm_childs            = lookup('mediawiki::php::fpm::childs', {'default_value' => 26}),
+    Integer $fpm_min_child             = lookup('mediawiki::php::fpm::fpm_min_child', {'default_value' => 4}),
     Integer $request_timeout           = lookup('mediawiki::php::request_timeout', {'default_value' => 60}),
     VMlib::Php_version $php_version    = lookup('php::php_version', {'default_value' => '7.4'}),
     Boolean $enable_fpm                = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
@@ -166,8 +166,8 @@ class mediawiki::php (
         }
 
         # This will add an fpm pool
-        # We want a minimum of 4 workers
-        $num_workers = max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), 4)
+        # We want a minimum of $fpm_min_child workers
+        $num_workers = max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
         php::fpm::pool { 'www':
             config => {
                 'pm'                        => 'static',
