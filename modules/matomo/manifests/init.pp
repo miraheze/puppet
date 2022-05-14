@@ -85,9 +85,9 @@ class matomo (
     class { '::php::fpm':
         ensure => present,
         config => {
-            'emergency_restart_interval' => '60s',
+            'emergency_restart_interval'  => '60s',
             'emergency_restart_threshold' => $facts['virtual_processor_count'],
-            'process.priority'           => -19,
+            'process.priority'            => -19,
         },
     }
 
