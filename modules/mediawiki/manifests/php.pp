@@ -164,11 +164,10 @@ class mediawiki::php (
             }
         }
 
-        # This will add an fpm pool listening on port 8000
+        # This will add an fpm pool
         # We want a minimum of 4 workers
         $num_workers = max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), 4)
         php::fpm::pool { 'www':
-            port   => 8000,
             config => {
                 'pm'                        => 'static',
                 'pm.max_children'           => $num_workers,
