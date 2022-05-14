@@ -90,6 +90,17 @@ class roundcubemail (
             package_name => '';
     }
 
+    # XML
+     php::extension{ [
+         'dom',
+         'simplexml',
+         'xmlreader',
+         'xmlwriter',
+         'xsl',
+     ]:
+         package_name => '',
+     }
+
     $num_workers = max(floor($facts['virtual_processor_count'] * 1.5), 4)
     # These numbers need to be positive integers
     $max_spare = ceiling($num_workers * 0.3)
