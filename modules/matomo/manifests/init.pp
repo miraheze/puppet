@@ -86,6 +86,17 @@ class matomo (
          ensure => present
      }
 
+    # XML
+    php::extension{ [
+        'dom',
+        'simplexml',
+        'xmlreader',
+        'xmlwriter',
+        'xsl',
+    ]:
+        package_name => '',
+    }
+
     class { '::php::fpm':
         ensure => present,
         config => {
