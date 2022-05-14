@@ -108,6 +108,11 @@ class php::php_fpm(
         ensure => present
     }
 
+    php::extension { ['yaml']:
+        package_name => "php${version}-yaml",
+        ensure       => present
+    }
+
     # Extensions that require configuration.
     php::extension {
         'xml':
