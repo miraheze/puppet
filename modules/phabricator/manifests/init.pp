@@ -35,6 +35,7 @@ class phabricator {
         'intl',
         'mbstring',
         'ldap',
+        'zip',
     ]
 
     $php_version = lookup('php::php_version', {'default_value' => '7.4'})
