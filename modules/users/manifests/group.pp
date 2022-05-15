@@ -1,6 +1,6 @@
 # class: users::group
 define users::group(
-    VMlib::Ensure $ensure  = 'present',
+    VMlib::Ensure $ensure  = present,
     Optional[Integer] $gid = undef,
     Array $privileges      = [],
 )
