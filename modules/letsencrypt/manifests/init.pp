@@ -1,6 +1,6 @@
-# class: letsencrypt
+# === Class letsencrypt
 class letsencrypt {    
-    require_package('certbot')
+    ensure_packages('certbot')
 
     file { '/etc/letsencrypt/cli.ini':
         ensure  => present,
