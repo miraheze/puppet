@@ -36,7 +36,7 @@ class base::syslog (
                 }
 
                 if !empty( $syslog_host ) {
-                        require_package('rsyslog-gnutls')
+                        ensure_packages('rsyslog-gnutls')
 
                         ssl::wildcard { 'rsyslog wildcard': }
 
