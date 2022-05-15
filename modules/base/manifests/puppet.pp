@@ -30,7 +30,7 @@ class base::puppet (
     }
 
     # facter needs this for proper "virtual"/"is_virtual" resolution
-    require_package('virt-what')
+    ensure_packages('virt-what')
 
     file { '/usr/bin/facter':
         ensure  => link,
