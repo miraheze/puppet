@@ -1,7 +1,7 @@
 class monitoring::ircecho (
     String $mirahezebots_password = undef,
 ) {
-    require_package(['python3-pyinotify', 'python3-irc'])
+    ensure_packages(['python3-pyinotify', 'python3-irc'])
 
     file { '/usr/local/bin/ircecho':
         ensure => 'present',
