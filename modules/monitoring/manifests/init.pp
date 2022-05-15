@@ -268,7 +268,7 @@ class monitoring (
     }
 
     # Setup webhook for grafana to call
-    require_package('python3-flask', 'python3-filelock')
+    ensure_packages(['python3-flask', 'python3-filelock'])
 
     file { '/usr/local/bin/grafana-webhook.py':
         ensure  => present,
