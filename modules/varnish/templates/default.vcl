@@ -161,6 +161,7 @@ sub mw_request {
 	
 	# Assigning a backend
 	if (
+		req.url ~ "^/w/thumb_handler\.php/" ||
 		req.url ~ "^/\.well-known" ||
 		req.http.Host == "sslrequest.miraheze.org"
 	) {
