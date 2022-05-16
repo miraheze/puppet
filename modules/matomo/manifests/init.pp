@@ -86,17 +86,6 @@ class matomo (
          ensure => present
      }
 
-    # XML
-    php::extension{ [
-        'dom',
-        'simplexml',
-        'xmlreader',
-        'xmlwriter',
-        'xsl',
-    ]:
-        package_name => '',
-    }
-
     class { '::php::fpm':
         ensure => present,
         config => {
@@ -110,11 +99,25 @@ class matomo (
     php::extension {
         default:
             sapis        => ['cli', 'fpm'];
+        'xml':
+            package_name => "php${php_version}-xml",
+            priority     => 15;
         'mysqlnd':
             package_name => '',
             priority     => 10;
         'mysqli':
             package_name => "php${php_version}-mysql";
+    }
+
+    # XML
+    php::extension{ [
+        'dom',
+        'simplexml',
+        'xmlreader',
+        'xmlwriter',
+        'xsl',
+    ]:
+        package_name => '',
     }
 
     $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
