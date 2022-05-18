@@ -49,7 +49,6 @@ class gluster {
         }
     }
 
-    $only_ipv6 = lookup('gluster::only_ipv6', {'default_value' => false})
     file { '/etc/glusterfs/glusterd.vol':
         ensure  => present,
         content => template('gluster/glusterd.vol.erb'),
