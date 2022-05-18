@@ -84,6 +84,23 @@ class role::prometheus {
         }
     ]
 
+    $cadvisor_job = [
+        {
+            'job_name'        => 'cadvisor',
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/cadvisor.yaml' ]
+                }
+            ]
+        }
+    ]
+
+    prometheus::class { 'cadvisor':
+        dest   => '/etc/prometheus/targets/cadvisor.yaml',
+        module => 'Prometheus::Exporter::Cadvisor',
+        port   => 4194,
+    }
+
     $fpm_job = [
         {
             'job_name' => 'fpm',
