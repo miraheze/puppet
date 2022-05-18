@@ -74,8 +74,6 @@ class gluster {
     }
 
     if lookup('gluster_client', {'default_value' => false}) {
-        # $gluster_volume_backup = lookup('gluster_volume_backup', {'default_value' => 'glusterfs2.miraheze.org:/prodvol'})
-        # backup-volfile-servers=
         if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
             gluster::mount { '/mnt/mediawiki-static':
               ensure    => mounted,
