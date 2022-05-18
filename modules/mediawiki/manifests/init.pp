@@ -3,6 +3,8 @@ class mediawiki(
     Optional[String] $branch = undef,
     Optional[String] $branch_mw_config = undef,
 ) {
+    include prometheus::exporter::cadvisor
+
     include mediawiki::cgroup
     include mediawiki::favicons
     include mediawiki::nginx
