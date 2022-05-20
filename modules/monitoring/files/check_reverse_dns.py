@@ -55,7 +55,7 @@ def get_args():
 
 def check_records(hostname):
     """Check NS and CNAME records for given hostname."""
-    extra_known_tlds = ('for.uz')
+    extra_known_tlds = ('eu.org','for.uz')
     uses_cf_at_root = False
 
     nameservers = []
