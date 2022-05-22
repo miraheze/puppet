@@ -225,10 +225,6 @@ def run(args: argparse.Namespace, start: float) -> None:
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))
         non_zero_code(exitcodes)
-        # These need to be setup late because dodgy
-        if args.l10nupdate:  # used by automated maint
-            run_command(f'sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --quiet --wiki={envinfo["wikidbname"]}')  # gives garbage errors
-            args.l10n = True  # imply --l10n
         if args.l10n:  # setup l10n
             postinstall.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
             rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki={envinfo["wikidbname"]}')
@@ -287,7 +283,6 @@ if __name__ == '__main__':
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
-    parser.add_argument('--l10nupdate', dest='l10nupdate', action='store_true')
     parser.add_argument('--l10n', dest='l10n', action='store_true')
     parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
