@@ -136,7 +136,7 @@ class mediawiki::deploy {
     }
 
     cron { 'l10n-modern-deploy':
-        ensure  => 'present',
+        ensure  => absent,
         command => "/usr/local/bin/deploy-mediawiki --l10nupdate --servers=${lookup(mediawiki::default_sync)}",
         user    => 'www-data',
         minute  => '0',
