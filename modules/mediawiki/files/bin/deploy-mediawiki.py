@@ -7,7 +7,7 @@ import time
 import requests
 import socket
 from sys import exit
-from langcodes import Language
+from langcodes import tag_is_valid
 
 
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
@@ -232,7 +232,7 @@ def run(args: argparse.Namespace, start: float) -> None:
         non_zero_code(exitcodes)
         if args.l10n:  # setup l10n
             if args.lang:
-                if not Language.get(args.lang).is_valid():
+                if not tag_is_valid(args.lang):
                     raise ValueError('Language is not valid.')
 
                 lang = f'--lang={args.lang}'
