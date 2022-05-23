@@ -7,6 +7,7 @@ import time
 import requests
 import socket
 from sys import exit
+from langcodes import Language
 
 
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
@@ -149,7 +150,7 @@ def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')  # noqa: R503
 
 
-def _construct_git_pull(repo: str, submodules: bool = False, branch: Union[bool, str] = False) -> str:
+def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None) -> str:
     if submodules:
         extrap = '--recurse-submodules'
     else:
@@ -192,18 +193,13 @@ def run(args: argparse.Namespace, start: float) -> None:
         if args.world and 'world' not in pull:
             pull.append('world')
         if pull:
-            if args.branch:
-                branch = args.branch
-            else:
-                branch = False
-
             for repo in pull:
                 if repo == 'world':
                     sm = True
                 else:
                     sm = False
                 try:
-                    stage.append(_construct_git_pull(repo, submodules=sm, branch=branch))
+                    stage.append(_construct_git_pull(repo, submodules=sm, branch=args.branch))
                 except KeyError:
                     print(f'Failed to pull {repo} due to invalid name')
 
@@ -236,6 +232,9 @@ def run(args: argparse.Namespace, start: float) -> None:
         non_zero_code(exitcodes)
         if args.l10n:  # setup l10n
             if args.lang:
+                if not Language.get(args.lang).is_valid():
+                    raise ValueError('Language is not valid.')
+
                 lang = f'--lang={args.lang}'
             else:
                 lang = ''
