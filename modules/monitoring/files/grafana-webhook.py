@@ -20,11 +20,20 @@ def post():
         with lock:
             lock.acquire()
             try:
-                message = content['state'] + ' : ' + content['title']
-                if content['alerts'][0]['labels']['team'] == 'mediawiki':
-                    message = message + ' https://grafana.miraheze.org/d/GtxbP1Xnk/mediawiki'
                 x = open('/var/log/icinga2/irc.log', 'a+')
-                x.write(message)
+                for alert in content['alerts']:
+                    status = alert['status']
+                    description = alert['annotations']['description']
+
+                    page = ''
+                    if alert['labels']['page'] == 'yes':
+                       page = '!sre '
+
+                    message = f'[Grafana] {page}{status}: {description}'
+
+                    if alert['labels']['team'] == 'mediawiki' and not alert['labels']['dashboard']:
+                        message += ' https://grafana.miraheze.org/d/GtxbP1Xnk/mediawiki'
+                    x.write(message)
                 x.close()
                 lock_acquired = True
             finally:
