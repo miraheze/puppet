@@ -157,7 +157,7 @@ def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[st
         extrap = ''
 
     if branch:
-        extrap += f'--branch={branch}'
+        extrap += f' --branch={branch}'
 
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull {extrap} --quiet'
 
@@ -232,8 +232,9 @@ def run(args: argparse.Namespace, start: float) -> None:
         non_zero_code(exitcodes)
         if args.l10n:  # setup l10n
             if args.lang:
-                if not tag_is_valid(args.lang):
-                    raise ValueError('Language is not valid.')
+                for language in str(args.lang).split(','):
+                    if not tag_is_valid(language):
+                        raise ValueError(f'{language} is not a valid language.')
 
                 lang = f'--lang={args.lang}'
             else:
