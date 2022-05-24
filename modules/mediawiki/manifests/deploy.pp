@@ -43,7 +43,7 @@ class mediawiki::deploy {
     ensure_packages(
         'langcodes',
         {
-            ensure   => present,
+            ensure   => '3.0.0',
             provider => 'pip3',
             before   => File['/usr/local/bin/deploy-mediawiki'],
             require  => Package['python3-pip'],
