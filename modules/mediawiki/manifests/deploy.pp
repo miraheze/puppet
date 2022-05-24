@@ -40,6 +40,16 @@ class mediawiki::deploy {
         }
     }
 
+    ensure_packages(
+        'langcodes',
+        {
+            ensure   => present,
+            provider => 'pip3',
+            before   => File['/usr/local/bin/deploy-mediawiki'],
+            require  => Package['python3-pip'],
+	},
+    )
+
     file { '/srv/mediawiki-staging':
         ensure => 'directory',
         owner  => 'www-data',
