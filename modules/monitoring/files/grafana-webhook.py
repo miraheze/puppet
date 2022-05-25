@@ -51,7 +51,7 @@ def post():
             finally:
                 lock.release()
                 lock_acquired = True
-    return (message, 200, None)
+    return '', 204
 
 
 app.run(host='::', port=5100, threaded=True)
