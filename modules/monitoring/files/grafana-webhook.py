@@ -23,20 +23,23 @@ def post():
                 irc = open('/var/log/icinga2/irc.log', 'a+')
                 for alert in content['alerts']:
                     status = alert['status']
-                    description = alert['annotations']['description']
+                    summary = alert['annotations']['summary']
 
                     page = ''
                     if alert['labels']['page'] == 'yes':
                        page = '!sre '
 
-                    message = f'[Grafana] {page}{status}: {description}'
+                    message = f'[Grafana] {page}{status}: {summary}'
 
+                    dashboard = ''
                     if alert['labels']['team'] == 'mediawiki' and not alert['labels']['dashboard']:
                         dashboard = ' https://grafana.miraheze.org/d/GtxbP1Xnk/mediawiki'
+                    elif alert['labels']['dashboard']:
+                        dashboard = ' ' + alert['labels']['dashboard']
 
-                        # We don't want to truncate part of a URL if it's going to be truncated below
-                        if len(message + dashboard) <= 450:
-                            message += dashboard
+                    # We don't want to truncate part of a URL if it's going to be truncated below
+                    if len(message + dashboard) <= 450:
+                        message += dashboard
 
                     # Truncate the message to guarantee it will fit in an IRC message
                     if len(message) > 450:
