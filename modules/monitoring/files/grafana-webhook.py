@@ -20,7 +20,9 @@ def post():
         with lock:
             lock.acquire()
             try:
-                irc = open('/var/log/icinga2/irc.log', 'a+')
+                irc = open('/var/log/icinga2/irc.log', 'a')
+                messages = []
+
                 for alert in content['alerts']:
                     status = alert['status']
                     summary = alert['annotations']['summary']
@@ -45,7 +47,9 @@ def post():
                     if len(message) > 450:
                         message = message[:447] + '...'
 
-                    irc.write(message)
+                    messages.append( f'{message}\n' )
+
+                irc.writelines(messages)
                 irc.close()
                 lock_acquired = True
             finally:
