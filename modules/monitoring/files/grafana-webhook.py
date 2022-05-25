@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
 def post():
+    status = 500
     lock_acquired = False
 
     content = request.get_json()
@@ -20,9 +21,7 @@ def post():
         with lock:
             lock.acquire()
             try:
-                irc = open('/var/log/icinga2/irc.log', 'a')
                 messages = []
-
                 for alert in content['alerts']:
                     status = alert['status']
                     summary = alert['annotations']['summary']
@@ -49,13 +48,16 @@ def post():
 
                     messages.append( f'{message}\n' )
 
+                irc = open('/var/log/icinga2/irc.log', 'a')
                 irc.writelines(messages)
                 irc.close()
+
                 lock_acquired = True
+                status = 204
             finally:
                 lock.release()
                 lock_acquired = True
-    return '', 204
+    return '', status
 
 
 app.run(host='::', port=5100, threaded=True)
