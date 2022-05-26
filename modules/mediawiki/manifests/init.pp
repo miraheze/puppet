@@ -30,6 +30,15 @@ class mediawiki(
         include mediawiki::shellbox
     }
 
+    if !lookup('jobrunner::intensive', {'default_value' => false}) {
+        cron { 'clean-tmp-files':
+            ensure  => present,
+            command => 'find /tmp/ -user www-data -amin +30 \( -iname "magick-*" -or -iname "transform_*" -or -iname "lci_*" -or -iname "svg_*" \) -delete',
+            user    => 'www-data',
+            special => 'hourly',
+        }
+    }
+
     file { '/etc/mathoid':
         ensure  => directory,
     }
@@ -62,6 +71,24 @@ class mediawiki(
         mode               => '0755',
         recurse_submodules => true,
         require            => Package['libjpeg-dev'],
+    }
+
+    git::clone { 'femiwiki-deploy':
+        ensure    => 'latest',
+        directory => '/srv/mediawiki/femiwiki-deploy',
+        origin    => 'https://github.com/miraheze/femiwiki-deploy.git',
+        branch    => 'master',
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
+    }
+
+    file { '/srv/mediawiki/w/skins/Femiwiki/node_modules':
+        ensure  => 'link',
+        target  => '/srv/mediawiki/femiwiki-deploy/node_modules',
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => [ Git::Clone['femiwiki-deploy'], File['/srv/mediawiki/w'] ],
     }
 
     file { [

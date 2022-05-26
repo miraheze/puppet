@@ -1,5 +1,5 @@
 class monitoring (
-    String $db_host               = 'db13.miraheze.org',
+    String $db_host,
     String $db_name               = 'icinga',
     String $db_user               = 'icinga2',
     String $db_password           = undef,
@@ -268,7 +268,7 @@ class monitoring (
     }
 
     # Setup webhook for grafana to call
-    require_package('python3-flask', 'python3-filelock')
+    ensure_packages(['python3-flask', 'python3-filelock'])
 
     file { '/usr/local/bin/grafana-webhook.py':
         ensure  => present,

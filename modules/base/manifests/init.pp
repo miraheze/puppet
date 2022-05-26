@@ -19,10 +19,6 @@ class base (
         include letsencrypt
     }
 
-    if lookup('arcanist') {
-        include base::arcanist
-    }
-
     if !lookup('mailserver') {
         include base::mail
     }

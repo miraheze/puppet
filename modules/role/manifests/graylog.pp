@@ -46,7 +46,7 @@ class role::graylog {
         version => '4.2',
     }->
     class { 'graylog::server':
-        package_version => '4.2.7-1',
+        package_version => '4.2.9-1',
         config          => {
             'password_secret'          => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'       => lookup('passwords::graylog::root_password_sha2'),
@@ -64,7 +64,7 @@ class role::graylog {
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
     $firewall_http_rules_str = join(
-        query_facts('Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }

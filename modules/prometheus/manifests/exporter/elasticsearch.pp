@@ -1,8 +1,13 @@
 # Prometheus Elasticsearch query metrics exporter.
 class prometheus::exporter::elasticsearch {
-    package { ['python3-click', 'python3-colorama', 'python3-configobj', 'python3-decorator', 'python3-elasticsearch', 'python3-prometheus-client']:
-        ensure => present,
-    }
+    ensure_packages([
+        'python3-click',
+        'python3-colorama',
+        'python3-configobj',
+        'python3-decorator',
+        'python3-elasticsearch',
+        'python3-prometheus-client',
+    ])
 
     file { '/opt/prometheus-es-exporter_0.11.1-1_all.deb':
         ensure  => present,
@@ -15,7 +20,6 @@ class prometheus::exporter::elasticsearch {
         source      => '/opt/prometheus-es-exporter_0.11.1-1_all.deb',
         require     => File['/opt/prometheus-es-exporter_0.11.1-1_all.deb'],
     }
-
 
     file { '/etc/prometheus-es-exporter':
         ensure  => directory,

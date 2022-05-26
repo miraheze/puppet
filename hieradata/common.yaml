@@ -2,12 +2,10 @@ jobchron: false
 jobrunner: false
 jobrunner::intensive: false
 mailserver: false
-puppetmaster: false
 puppetserver: false
 mediawiki::branch: 'REL1_37'
 mediawiki::branch_mw_config: 'master'
 letsencrypt: false
-use_gluster_new: true
 puppetserver_hostname: puppet111.miraheze.org
 role::salt::minions::salt_master: 'puppet111.miraheze.org'
 dns: false

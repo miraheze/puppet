@@ -44,11 +44,7 @@ class postgresql::server(
         ensure => $ensure,
     }
     
-    if os_version('debian >= buster') {
-        require_package('pgtop')
-    } else {
-        require_package('ptop')
-    }
+    ensure_packages('pgtop')
 
     class { '::postgresql::dirs':
         ensure    => $ensure,

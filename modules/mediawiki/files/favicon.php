@@ -30,8 +30,17 @@ function streamFavicon() {
 
 	$status = $client->execute();
 	if ( !$status->isOK() ) {
-		header( 'HTTP/1.1 500 Internal Server Error' );
-		return;
+		$favicon = '/favicons/default.ico';
+		$url = wfExpandUrl( $favicon, PROTO_CANONICAL );
+		$client = MediaWikiServices::getInstance()
+			->getHttpRequestFactory()
+			->create( $url );
+
+		$status = $client->execute();
+		if ( !$status->isOK() ) {
+			header( 'HTTP/1.1 500 Internal Server Error' );
+			return;
+		}
 	}
 
 	$content = $client->getContent();
