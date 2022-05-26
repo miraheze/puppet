@@ -100,7 +100,7 @@ node 'puppet111.miraheze.org' {
     include puppetdb::database
     include role::puppetserver
     include role::salt
-	include letsencrypt::nginx
+    include letsencrypt::nginx
 }
 
 node 'test101.miraheze.org' {
