@@ -22,7 +22,7 @@ server {
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
-Okay 
+
 	location /.well-known/acme-challenge/ {
 		alias /var/www/challenges/;
 		try_files $uri =404;

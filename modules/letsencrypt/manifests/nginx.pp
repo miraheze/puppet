@@ -3,7 +3,6 @@
 # Nginx config using hiera
 class letsencrypt::nginx {
     $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
-    $php_fpm_sock = 'php/fpm-www.sock'
 
     nginx::site { 'letsencrypt':
         ensure  => present,
