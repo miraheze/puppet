@@ -2,7 +2,6 @@ jobchron: false
 jobrunner: false
 jobrunner::intensive: false
 mailserver: false
-arcanist: false
 puppetmaster: false
 puppetserver: false
 mediawiki::branch: 'REL1_37'
@@ -62,11 +61,15 @@ varnish::backends:
     probe: false
     pool: false
   mon111:
-    port: 8201
+    port: 8204
     probe: false
     pool: false
   phab121:
     port: 8202
+    probe: false
+    pool: false
+  puppet111:
+    port: 8150
     probe: false
     pool: false
   matomo101:

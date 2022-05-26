@@ -165,6 +165,7 @@ sub mw_request {
 		req.http.Host == "sslrequest.miraheze.org"
 	) {
 		set req.backend_hint = mwtask111;
+		set req.backend_hint = puppet111;
 		return (pass);
 <%- @backends.each_pair do | name, property | -%>
 	} elseif (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
