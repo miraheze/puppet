@@ -84,6 +84,23 @@ class letsencrypt {
         provider  => 'systemd',
         require   => Package['certbot'],
     }
+    
+    git::clone { 'landing':
+        ensure     => 'latest',
+        directory  => '/srv/mediawiki/landing',
+        origin     => 'https://github.com/miraheze/landing.git',
+        branch     => 'master',
+        owner      => 'www-data',
+        group      => 'www-data',
+        mode       => '0755',
+        require    => File['/srv/mediawiki'],
+    }
+    
+    file { '/srv/mediawiki':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'www-data',
+    }
 
     include letsencrypt::web
 }
