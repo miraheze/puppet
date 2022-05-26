@@ -67,11 +67,11 @@ varnish::backends:
     probe: false
     pool: false
   matomo101:
-    port: 8204
+    port: 8203
     probe: false
     pool: false
   puppet111:
-    port: 8203
+    port: 8204
     probe: false
     pool: false
 
