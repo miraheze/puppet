@@ -61,7 +61,7 @@ varnish::backends:
     probe: false
     pool: false
   mon111:
-    port: 8204
+    port: 8201
     probe: false
     pool: false
   phab121:
@@ -69,7 +69,7 @@ varnish::backends:
     probe: false
     pool: false
   puppet111:
-    port: 8150
+    port: 8205
     probe: false
     pool: false
   matomo101:
