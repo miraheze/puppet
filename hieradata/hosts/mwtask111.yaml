@@ -3,7 +3,6 @@ users::groups:
   - mediawiki-roots
 
 contactgroups: ['sre', 'mediawiki']
-letsencrypt: true
 
 jobrunner: true
 jobrunner::intensive: true

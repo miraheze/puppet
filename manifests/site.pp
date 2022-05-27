@@ -77,6 +77,7 @@ node /^mw1[012][12]\.miraheze\.org$/ {
 node 'mwtask111.miraheze.org' {
     include base
     include role::mediawiki
+    include role::letsencrypt
 }
 
 node /^ns[12]\.miraheze\.org$/ {
@@ -100,6 +101,7 @@ node 'puppet111.miraheze.org' {
     include puppetdb::database
     include role::puppetserver
     include role::salt
+    include role::letsencrypt
     include letsencrypt::nginx
 }
 
