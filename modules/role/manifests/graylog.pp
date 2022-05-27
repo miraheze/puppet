@@ -17,28 +17,6 @@ class role::graylog {
         bind_ip => ['127.0.0.1'],
     }
 
-    if os_version('debian buster') {
-        class { 'elastic_stack::repo':
-            version => 7,
-        }
-
-        class { 'elasticsearch':
-            version         => '7.16.1',
-            manage_repo     => true,
-            config          => {
-                'cluster.name'  => 'graylog',
-                'http.port'     => '9200',
-                'network.host'  => '127.0.0.1',
-            },
-            jvm_options     => ['-Xms2g', '-Xmx2g'],
-            templates => {
-                'graylog-internal' => {
-                    'source' => 'puppet:///modules/role/elasticsearch/index_template.json'
-                }
-            }
-        }
-    }
-
     $elasticsearch_host = lookup('elasticsearch_host', {'default_value' => 'http://localhost:9200'})
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
