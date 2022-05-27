@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
 def post():
-    status = 500
+    status_code = 500
     lock_acquired = False
 
     content = request.get_json()
@@ -53,11 +53,11 @@ def post():
                 irc.close()
 
                 lock_acquired = True
-                status = 204
+                status_code = 204
             finally:
                 lock.release()
                 lock_acquired = True
-    return '', status
+    return '', status_code
 
 
 app.run(host='::', port=5100, threaded=True)
