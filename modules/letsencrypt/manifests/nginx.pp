@@ -9,7 +9,7 @@ class letsencrypt::nginx {
         content => template('letsencrypt/nginx.conf.erb'),
     }
 
-    ssl::wildcard { 'mediawiki nginx wildcard': }
+    ssl::wildcard { 'letsencrypt nginx wildcard': }
 
     include ssl::hiera
 }
