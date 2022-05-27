@@ -157,6 +157,7 @@ frame-src:
   - 'query.wikidata.org'
   - 'player.vimeo.com'
   - 'www.bing.com'
+  - 'wma.wmcloud.org'
 
 connect-src:
   - "'self'"
