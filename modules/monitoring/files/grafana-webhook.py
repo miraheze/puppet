@@ -33,10 +33,10 @@ def post():
                     message = f'[Grafana] {page}{status}: {summary}'
 
                     dashboard = ''
-                    if alert['labels']['team'] == 'mediawiki' and not alert['labels']['dashboard']:
+                    if alert['labels']['team'] == 'mediawiki' and not alert['DashboardURL']:
                         dashboard = ' https://grafana.miraheze.org/d/GtxbP1Xnk/mediawiki'
-                    elif alert['labels']['dashboard']:
-                        dashboard = ' ' + alert['labels']['dashboard']
+                    elif alert['DashboardURL']:
+                        dashboard = ' ' + alert['DashboardURL']
 
                     # We don't want to truncate part of a URL if it's going to be truncated below
                     if len(message + dashboard) <= 450:
