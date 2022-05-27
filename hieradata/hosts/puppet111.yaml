@@ -1,5 +1,6 @@
 users::groups:
   - puppet-users
+letsencrypt: true
 puppetserver: true
 puppetserver_java_opts: '-Xms2000M -Xmx2000M'
 puppetdb_enable: true
