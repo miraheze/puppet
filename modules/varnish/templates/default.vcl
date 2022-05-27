@@ -160,14 +160,8 @@ sub mw_request {
 	call mobile_detection;
 	
 	# Assigning a backend
-	if (
-		req.url ~ "^/\.well-known" ||
-		req.http.Host == "sslrequest.miraheze.org"
-	) {
-		set req.backend_hint = puppet111;
-		return (pass);
 <%- @backends.each_pair do | name, property | -%>
-	} elseif (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
+	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
 		set req.backend_hint = <%= name %>;
 		return (pass);
 <%- end -%>
@@ -269,6 +263,14 @@ sub vcl_recv {
 			# We don't understand this
 			unset req.http.Accept-Encoding;
 		}
+	}
+
+	if (
+		req.url ~ "^/\.well-known" ||
+		req.http.Host == "sslrequest.miraheze.org"
+	) {
+		set req.backend_hint = puppet111;
+		return (pass);
 	}
 
         if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
