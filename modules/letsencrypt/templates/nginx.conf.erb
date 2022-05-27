@@ -6,7 +6,7 @@ server {
 	listen [::]:443 deferred ssl http2 ipv6only=on backlog=4096;
 
 	server_name miraheze.org www.miraheze.org;
-	root /var/www/challenges/;
+	root /var/www/html/;
 	index index.php index.html;
 
 	if ($http_user_agent ~* "WordPress") {
