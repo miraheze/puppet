@@ -34,7 +34,7 @@ groups:
     gid: 2004
     description: limited access on puppet111 to add SSL private keys
     members: [macfan]
-    privileges: []
+    privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate']
   bastion:
     gid: 2005
     description: users who require bastion access
