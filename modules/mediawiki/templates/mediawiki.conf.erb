@@ -31,11 +31,6 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	location /.well-known/acme-challenge/ {
-		alias /var/www/challenges/;
-		try_files $uri =404;
-	}
-
 	location ~ ^/(\.git|config) {
 		deny all;
 	}
