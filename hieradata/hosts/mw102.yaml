@@ -21,7 +21,6 @@ php::php_version: '7.4'
 
 http_proxy: 'http://bast.miraheze.org:8080'
 gluster_volume: gluster101.miraheze.org:/static
-gluster::only_ipv6: true
 
 base::syslog::syslog_daemon: rsyslog
 base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]

@@ -15,14 +15,6 @@ class base (
     include ssh
     include users
 
-    if lookup('letsencrypt') {
-        include letsencrypt
-    }
-
-    if lookup('arcanist') {
-        include base::arcanist
-    }
-
     if !lookup('mailserver') {
         include base::mail
     }

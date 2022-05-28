@@ -6,7 +6,7 @@ class matomo (
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '4.9.1', # Current stable
+        branch             => '4.10.0', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
@@ -82,20 +82,10 @@ class matomo (
         }
     }
 
+    # Requires igbinary to be installed
     php::extension { 'redis':
          ensure => present
      }
-
-    # XML
-    php::extension{ [
-        'dom',
-        'simplexml',
-        'xmlreader',
-        'xmlwriter',
-        'xsl',
-    ]:
-        package_name => '',
-    }
 
     class { '::php::fpm':
         ensure => present,
@@ -110,6 +100,14 @@ class matomo (
     php::extension {
         default:
             sapis        => ['cli', 'fpm'];
+        'xml':
+            package_name => "php${php_version}-xml",
+            priority     => 15;
+        'igbinary':
+             config   => {
+                 'extension'                => 'igbinary.so',
+                 'igbinary.compact_strings' => 'Off',
+             };
         'mysqlnd':
             package_name => '',
             priority     => 10;
@@ -117,20 +115,30 @@ class matomo (
             package_name => "php${php_version}-mysql";
     }
 
+    # XML
+    php::extension{ [
+        'dom',
+        'simplexml',
+        'xmlreader',
+        'xmlwriter',
+        'xsl',
+    ]:
+        package_name => '',
+    }
+
     $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
     $fpm_min_child = lookup('php::fpm::fpm_min_child', {'default_value' => 4})
 
+    # This will add an fpm pool
+    # We want a minimum of $fpm_min_child workers
     $num_workers = max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
-    # These numbers need to be positive integers
-    $max_spare = ceiling($num_workers * 0.3)
-    $min_spare = ceiling($num_workers * 0.1)
+    $request_timeout = lookup('php::fpm::request_timeout', {'default_value' => 60})
     php::fpm::pool { 'www':
         config => {
-            'pm'                   => 'dynamic',
-            'pm.max_spare_servers' => $max_spare,
-            'pm.min_spare_servers' => $min_spare,
-            'pm.start_servers'     => $min_spare,
-            'pm.max_children'      => $num_workers,
+            'pm'                        => 'static',
+            'pm.max_children'           => $num_workers,
+            'request_terminate_timeout' => $request_timeout,
+            'request_slowlog_timeout'   => 15,
         }
     }
 

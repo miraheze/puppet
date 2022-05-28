@@ -134,13 +134,4 @@ class mediawiki::deploy {
         subscribe   => Git::Clone['ErrorPages'],
         require     => File['/usr/local/bin/deploy-mediawiki'],
     }
-
-    cron { 'l10n-modern-deploy':
-        ensure  => 'present',
-        command => "/usr/local/bin/deploy-mediawiki --l10nupdate --servers=${lookup(mediawiki::default_sync)}",
-        user    => 'www-data',
-        minute  => '0',
-        hour    => '23',
-        require => File['/usr/local/bin/deploy-mediawiki'],
-    }
 }

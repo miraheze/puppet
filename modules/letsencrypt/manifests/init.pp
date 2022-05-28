@@ -1,6 +1,6 @@
-# class: letsencrypt
+# === Class letsencrypt
 class letsencrypt {    
-    require_package('certbot')
+    ensure_packages('certbot')
 
     file { '/etc/letsencrypt/cli.ini':
         ensure  => present,
@@ -11,7 +11,7 @@ class letsencrypt {
         require => Package['certbot'],
     }
 
-    ['/var/www/.well-known', '/var/www/.well-known/acme-challenge'].each |$folder| {
+    ['/var/www', '/var/www/.well-known', '/var/www/.well-known/acme-challenge'].each |$folder| {
         file { "${folder}":
             ensure => directory,
             owner  => 'root',

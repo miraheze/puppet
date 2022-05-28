@@ -160,21 +160,18 @@ sub mw_request {
 	call mobile_detection;
 	
 	# Assigning a backend
-	if (
-		req.url ~ "^/w/thumb_handler\.php/" ||
-		req.url ~ "^/\.well-known" ||
-		req.http.Host == "sslrequest.miraheze.org"
-	) {
+	if (req.url ~ "^/w/thumb_handler\.php/") {
 		set req.backend_hint = mwtask111;
 		return (pass);
+  }
 <%- @backends.each_pair do | name, property | -%>
-	} elseif (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
+	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
 		set req.backend_hint = <%= name %>;
 		return (pass);
-<%- end -%>
-	} else {
-		set req.backend_hint = mediawiki.backend();
 	}
+<%- end -%>
+
+	set req.backend_hint = mediawiki.backend();
 
 	# Rewrite hostname to static.miraheze.org for caching
 	if (req.url ~ "^/static/") {
@@ -270,6 +267,14 @@ sub vcl_recv {
 			# We don't understand this
 			unset req.http.Accept-Encoding;
 		}
+	}
+
+	if (
+		req.url ~ "^/\.well-known" ||
+		req.http.Host == "sslrequest.miraheze.org"
+	) {
+		set req.backend_hint = puppet111;
+		return (pass);
 	}
 
         if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
@@ -496,7 +501,7 @@ sub vcl_deliver {
 	set resp.http.Permissions-Policy = "interest-cohort=()";
 
 	# Content Security Policy
-	set resp.http.Content-Security-Policy = "<%- @csp_whitelist.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+	set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 
 	# For a 500 error, do not set cookies
 	if (resp.status >= 500 && resp.http.Set-Cookie) {

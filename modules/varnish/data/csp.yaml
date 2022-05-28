@@ -70,6 +70,7 @@ img-src:
   - '*.miraheze.org'
   - '*.betaheze.org'
   - 'upload.wikimedia.org'
+  - 'wikimedia.org'
   - 'maps.google.com'
   - 'www.gstatic.com'
   - 'maxcdn.bootstrapcdn.com'

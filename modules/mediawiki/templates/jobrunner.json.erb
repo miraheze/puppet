@@ -46,12 +46,11 @@
         ],
         // Main queue servers
         "queues": [
-            "<%= @redis_server_ip %>",
             "<%= @redis_server_ip %>"
         ],
         "password": "<%= @redis_password %>"
     },
 
     // Command used to launch a runner for a given job queue
-    "dispatcher": "nice -15 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
+    "dispatcher": "nice -15 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --maxjobs=1 --memory-limit=%(maxmem)x --result=json"
 }

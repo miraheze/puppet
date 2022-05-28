@@ -53,9 +53,7 @@ class prometheus::exporter::node (
     }
     $textfile_directory = '/var/lib/prometheus/node.d'
 
-    package { 'prometheus-node-exporter':
-      ensure => 'present'
-    }
+    ensure_packages('prometheus-node-exporter')
 
     $collectors_enabled = concat($collectors_default, $collectors_extra)
 

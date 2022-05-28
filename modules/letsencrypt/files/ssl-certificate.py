@@ -124,7 +124,9 @@ class SslCertificate:
         os.system("/bin/cat /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
 
         if self.private:
-            os.system("/bin/cat /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
+            print("Private key is being copied and pushed to /etc/puppetlabs/puppet/ssl-keys")
+            os.system("cp /etc/letsencrypt/live/{0}/privkey.pem /home/puppet-users/ssl-keys/{0}.key".format(self.domain))
+            os.system("cd /home/puppet-users/ssl-keys/ && git add . && git commit -m 'add {0} key' && git push origin master".format(self.domain))
 
     def renew_letsencrypt_certificate(self):
         if self.wildcard:
@@ -161,7 +163,10 @@ class SslCertificate:
         os.system("/bin/cat /etc/letsencrypt/live/{0}/fullchain.pem".format(self.domain))
 
         if self.private:
-            os.system("/bin/cat /etc/letsencrypt/live/{0}/privkey.pem".format(self.domain))
+            print("Private key is being copied and pushed to /etc/puppetlabs/puppet/ssl-keys")
+            os.system("cp /etc/letsencrypt/live/{0}/privkey.pem /home/puppet-users/ssl-keys/{0}.key".format(self.domain))
+            os.system("cd /home/puppet-users/ssl-keys/ && git add . && git commit -m 'add {0} key' && git push origin master".format(self.domain))
+
 
     def revoke_letsencrypt_certificate(self):
         if not self.quiet:

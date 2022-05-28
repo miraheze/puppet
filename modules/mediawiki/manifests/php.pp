@@ -47,7 +47,7 @@ class mediawiki::php (
         # if the fpm config files are broken.
         systemd::unit { "php${php_version}-fpm.service":
             ensure   => present,
-            content  => template('php/php-fpm-systemd-override.conf.erb'),
+            content  => init_template('php-fpm', 'systemd_override'),
             override => true,
             restart  => false,
         }

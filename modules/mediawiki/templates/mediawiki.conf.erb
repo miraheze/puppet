@@ -31,11 +31,6 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	location /.well-known/acme-challenge/ {
-		alias /var/www/challenges/;
-		try_files $uri =404;
-	}
-
 	location ~ ^/(\.git|config) {
 		deny all;
 	}
@@ -57,10 +52,6 @@ server {
 
 	location /donate {
 		return 301 https://donate.miraheze.org;
-	}
-
-	location /.well-known/change-password {
-		return 301 /wiki/Special:ChangePassword;
 	}
 }
 
@@ -125,10 +116,6 @@ server {
 
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
-	}
-
-	location /.well-known/change-password {
-		return 301 /wiki/Special:ChangePassword;
 	}
 }
 
@@ -270,10 +257,6 @@ server {
 
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
-	}
-
-	location /.well-known/change-password {
-		return 301 /wiki/Special:ChangePassword;
 	}
 }
 

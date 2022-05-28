@@ -14,7 +14,6 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
-                 'ALL = (ALL) NOPASSWD: /root/ssl-certificate',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
     gid: 2002
@@ -32,9 +31,9 @@ groups:
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   puppet-users:
     gid: 2004
-    description: limited access on puppet111 to add SSL private keys
+    description: limited access on puppet111 to add SSL certificates
     members: [macfan]
-    privileges: []
+    privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate']
   bastion:
     gid: 2005
     description: users who require bastion access

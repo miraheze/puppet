@@ -85,6 +85,9 @@ class icingaweb2 (
     php::extension {
         default:
             sapis        => ['cli', 'fpm'];
+        'xml':
+            package_name => "php${php_version}-xml",
+            priority     => 15;
         'mysqlnd':
             package_name => '',
             priority     => 10;

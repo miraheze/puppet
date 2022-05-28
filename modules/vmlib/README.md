@@ -135,22 +135,6 @@ resources on every run.
         content => ordered_json($options),
     }
 
-
-## ordered_yaml
-
-`ordered_yaml( mixed $data )`
-
-Emit a hash as YAML with keys (both shallow and deep) in sorted order.
-
-### Examples
-
-    # Render a Puppet hash as a configuration file:
-    $options = { 'useGraphite' => true, 'minVal' => '0.1' }
-    file { '/etc/kibana/config.yaml':
-        content => ordered_yaml($options),
-    }
-
-
 ## os_version
 
 `os_version( string $version_predicate )`
@@ -186,28 +170,6 @@ merged together. In case of duplicate keys, hashes to the right win.
 ### Example
 
     php_ini({'server' => {'port' => 80}}) # => server.port = 80
-
-
-## require_package
-
-`require_package( string $package_name [, string $... ] )`
-
-Declare one or more packages a dependency for the current scope.
-This is equivalent to declaring and requiring the package resources.
-In other words, it ensures the package(s) are installed before
-evaluating any of the resources in the current scope.
-
-### Examples
-
-    # Single package
-    require_package('python-redis')
-
-    # Multiple packages as arguments
-    require_package('redis-server', 'python-redis')
-
-    # Multiple packages as array
-    $deps = [ 'redis-server', 'python-redis' ]
-    require_package($deps)
 
 
 ## requires_os

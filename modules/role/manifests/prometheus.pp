@@ -14,7 +14,7 @@ class role::prometheus {
     file { '/etc/prometheus/targets/blackbox_mediawiki_urls.yaml':
         ensure  => present,
         mode    => '0444',
-        content => ordered_yaml([{'targets' => $blackbox_mediawiki_urls.flatten}])
+        content => to_yaml([{'targets' => $blackbox_mediawiki_urls.flatten}])
     }
 
     $blackbox_web_urls = [
@@ -26,7 +26,7 @@ class role::prometheus {
     file { '/etc/prometheus/targets/blackbox_web_urls.yaml':
         ensure  => present,
         mode    => '0444',
-        content => ordered_yaml([{'targets' => $blackbox_web_urls}])
+        content => to_yaml([{'targets' => $blackbox_web_urls}])
     }
 
     $blackbox_jobs = [
@@ -83,6 +83,23 @@ class role::prometheus {
             ]
         }
     ]
+
+    $cadvisor_job = [
+        {
+            'job_name'        => 'cadvisor',
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/cadvisor.yaml' ]
+                }
+            ]
+        }
+    ]
+
+    prometheus::class { 'cadvisor':
+        dest   => '/etc/prometheus/targets/cadvisor.yaml',
+        module => 'Prometheus::Exporter::Cadvisor',
+        port   => 4194,
+    }
 
     $fpm_job = [
         {
@@ -297,7 +314,8 @@ class role::prometheus {
         scrape_extra => [
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
             $gluster_job, $puppetserver_job, $puppetdb_job, $memcached_job,
-            $postfix_job, $openldap_job, $elasticsearch_job, $varnish_job
+            $postfix_job, $openldap_job, $elasticsearch_job, $varnish_job,
+            $cadvisor_job
         ].flatten,
     }
 
