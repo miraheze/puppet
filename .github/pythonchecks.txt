@@ -18,3 +18,4 @@ mypy==0.931
 types-requests==2.27.7
 pytest-xdist==2.5.0
 requests==2.27.1
+filelock==3.6.0
