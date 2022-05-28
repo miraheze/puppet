@@ -164,8 +164,9 @@ sub mw_request {
 	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
 		set req.backend_hint = <%= name %>;
 		return (pass);
+	}
 <%- end -%>
-	} else {
+	else {
 		set req.backend_hint = mediawiki.backend();
 	}
 
