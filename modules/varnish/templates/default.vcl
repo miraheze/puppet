@@ -164,10 +164,10 @@ sub mw_request {
 	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
 		set req.backend_hint = <%= name %>;
 		return (pass);
-<%- end -%>
-	} else {
-		set req.backend_hint = mediawiki.backend();
 	}
+<%- end -%>
+
+	set req.backend_hint = mediawiki.backend();
 
 	# Rewrite hostname to static.miraheze.org for caching
 	if (req.url ~ "^/static/") {
