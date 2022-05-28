@@ -163,7 +163,7 @@ sub mw_request {
 	if (req.url ~ "^/w/thumb_handler\.php/") {
 		set req.backend_hint = mwtask111;
 		return (pass);
-  }
+	}
 <%- @backends.each_pair do | name, property | -%>
 	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
 		set req.backend_hint = <%= name %>;
