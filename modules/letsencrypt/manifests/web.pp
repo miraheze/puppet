@@ -1,5 +1,7 @@
 # === Class letsencrypt::web
 class letsencrypt::web {
+    include letsencrypt::nginx
+
     ensure_packages(['python3-flask', 'python3-filelock'])
 
     file { '/usr/local/bin/mirahezerenewssl.py':
