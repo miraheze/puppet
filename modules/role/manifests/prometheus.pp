@@ -14,7 +14,7 @@ class role::prometheus {
     file { '/etc/prometheus/targets/blackbox_mediawiki_urls.yaml':
         ensure  => present,
         mode    => '0444',
-        content => ordered_yaml([{'targets' => $blackbox_mediawiki_urls.flatten}])
+        content => to_yaml([{'targets' => $blackbox_mediawiki_urls.flatten}])
     }
 
     $blackbox_web_urls = [
@@ -26,7 +26,7 @@ class role::prometheus {
     file { '/etc/prometheus/targets/blackbox_web_urls.yaml':
         ensure  => present,
         mode    => '0444',
-        content => ordered_yaml([{'targets' => $blackbox_web_urls}])
+        content => to_yaml([{'targets' => $blackbox_web_urls}])
     }
 
     $blackbox_jobs = [
