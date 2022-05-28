@@ -116,7 +116,9 @@ users:
     uid: 1011
     name: rhinos
     realname: RhinosF1
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH8iKI9ff7+owNvqsCeUKlpyL3S60WPruIClQ4XfoKCq rhinosf1@miraheze.org]
+    ssh_keys: 
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH8iKI9ff7+owNvqsCeUKlpyL3S60WPruIClQ4XfoKCq rhinosf1@miraheze.org
+      - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBBgq/U/8o+ze01AjRBvqGFe5i6ZEAC20IqOFtBgPu81gPM7B6mygQH/YTSJyBQ9oh7RAtXocveCx5+mhy06QBOk=
   zppix:
     ensure: absent
     uid: 1012
