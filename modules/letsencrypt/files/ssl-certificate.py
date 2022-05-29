@@ -103,9 +103,9 @@ class SslCertificate:
                 print('Generating Wildcard SSL certificate with LetsEncrypt')
 
             if self.no_existing_key:
-                os.system(f'/usr/bin/certbot --force-renewal --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                os.system(f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
             else:
-                os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
 
             if not self.quiet:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
@@ -114,9 +114,9 @@ class SslCertificate:
                 print('Generating SSL certificate with LetsEncrypt')
 
             if self.no_existing_key:
-                os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --expand  --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
             else:
-                os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --reuse-key --expand  --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --reuse-key --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
 
             if not self.quiet:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
@@ -136,11 +136,11 @@ class SslCertificate:
             if self.no_existing_key:
                 os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
 
-                os.system(f'/usr/bin/certbot --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                os.system(f'/usr/bin/certbot --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
 
                 os.system(f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
             else:
-                os.system(f'/usr/bin/certbot --reuse-key --expand  --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
+                os.system(f'/usr/bin/certbot --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
 
             if not self.quiet:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
@@ -151,11 +151,11 @@ class SslCertificate:
             if self.no_existing_key:
                 os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
 
-                os.system(f'/usr/bin/certbot --force-renewal --expand  --no-verify-ssl {self.quiet} --noninteractive renew --cert-name {self.domain}')
+                os.system(f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl {self.quiet} --noninteractive renew --cert-name {self.domain}')
 
                 os.system(f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
             else:
-                os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand  --no-verify-ssl {self.quiet} --noninteractive renew --cert-name {self.domain}')
+                os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl {self.quiet} --noninteractive renew --cert-name {self.domain}')
 
             if not self.quiet:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
