@@ -151,7 +151,7 @@ def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local
 
 
 def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None) -> str:
-    extrap = ' '
+    extrap = ''
     if submodules:
         extrap = ' --recurse-submodules'
 
