@@ -8,6 +8,10 @@
 import argparse
 import os
 import subprocess
+import urllib3
+
+# Suppress ssl warnings (no checking ssl here since it won't be valid when generating the cert)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser(description='Script to generate LetsEncrypt certs or generate a CSR.')
