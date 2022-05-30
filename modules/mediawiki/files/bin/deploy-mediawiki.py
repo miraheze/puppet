@@ -151,15 +151,14 @@ def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local
 
 
 def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None) -> str:
+    extrap = ' '
     if submodules:
-        extrap = '--recurse-submodules'
-    else:
-        extrap = ''
+        extrap = ' --recurse-submodules'
 
     if branch:
         extrap += f' origin {branch}'
 
-    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull {extrap} --quiet'
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull{extrap} --quiet'
 
 
 def run(args: argparse.Namespace, start: float) -> None:
