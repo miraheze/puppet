@@ -45,6 +45,12 @@ GRANT USAGE
     IDENTIFIED BY '<%= @wikiadmin_password %>'
     REQUIRE SSL;
 
+-- test101 - only allow test to reach beta
+GRANT USAGE
+    ON *.* TO 'wikiadmin'@'2a10:6740::6:109'
+    IDENTIFIED BY '<%= @mediawiki_password %>'
+    REQUIRE SSL;
+
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
     ON `%wiki%`.* TO 'wikiadmin'@'%';
 
