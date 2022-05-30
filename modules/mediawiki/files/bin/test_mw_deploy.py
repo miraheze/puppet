@@ -129,4 +129,6 @@ def test_construct_git_pull_branch() -> None:
 
 
 def test_construct_git_pull_branch_sm() -> None:
-    assert mwd._construct_git_pull('config', submodules=True, branch='test') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
+    command = mwd._construct_git_pull('config', submodules=True, branch='test')
+    assert command == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
+    assert '  ' not in command
