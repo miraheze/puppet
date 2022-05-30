@@ -121,11 +121,11 @@ def test_construct_git_pull_sm() -> None:
 
 
 def test_construct_git_pull() -> None:
-    assert mwd._construct_git_pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull  --quiet'
+    assert mwd._construct_git_pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet'
 
 
 def test_construct_git_pull_branch() -> None:
-    assert mwd._construct_git_pull('config', branch='myfunbranch') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull  origin myfunbranch --quiet'
+    assert mwd._construct_git_pull('config', branch='myfunbranch') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
 
 
 def test_construct_git_pull_branch_sm() -> None:
