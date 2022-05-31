@@ -10,7 +10,7 @@ import os
 import subprocess
 
 # Suppress ssl warnings (no checking ssl here since it won't be valid when generating the cert)
-os.environ["PYTHONWARNINGS"] = "ignore:Unverified HTTPS request"
+os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser(description='Script to generate LetsEncrypt certs or generate a CSR.')
