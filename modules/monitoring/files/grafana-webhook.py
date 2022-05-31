@@ -27,15 +27,13 @@ def post():
                     summary = alert['annotations']['summary']
 
                     page = ''
-                    if alert['labels']['page'] == 'yes':
+                    if 'page' in alert['labels'] and alert['labels']['page'] == 'yes':
                        page = '!sre '
 
-                    message = f'[Grafana] {page}{status}: {summary}'
+                    message = f'[Grafana] {page}{status.upper()}: {summary}'
 
                     dashboard = ''
-                    if alert['labels']['team'] == 'mediawiki' and not alert['dashboardURL']:
-                        dashboard = ' https://grafana.miraheze.org/d/GtxbP1Xnk/mediawiki'
-                    elif alert['dashboardURL']:
+                    if alert['dashboardURL']:
                         dashboard = ' ' + alert['dashboardURL']
 
                     # We don't want to truncate part of a URL if it's going to be truncated below
