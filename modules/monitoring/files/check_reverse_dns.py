@@ -1,5 +1,4 @@
-#! /usr/bin/python3
-
+#!/usr/bin/env python3
 """
 Script to check if reverse DNS entry for hostname matches given regex.
 
@@ -20,7 +19,6 @@ You should have received a copy of the GNU General Public License along with
 this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-
 import argparse
 from dns import reversename, resolver
 import re
@@ -35,21 +33,21 @@ def get_args():
     """
 
     parser = argparse.ArgumentParser(
-        description='Check reverse DNS entry for hostname'
+        description="Check reverse DNS entry for hostname"
     )
     parser.add_argument(
         '-H',
         '--hostname',
         required=True,
-        help='hostname to check',
-        dest='hostname'
+        help="hostname to check",
+        dest="hostname"
     )
     parser.add_argument(
         '-r',
         '--regex',
         required=True,
-        help='regex for match',
-        dest='regex'
+        help="regex for match",
+        dest="regex"
     )
 
     return parser.parse_args()
@@ -57,14 +55,14 @@ def get_args():
 
 def check_records(hostname):
     """Check NS and CNAME records for given hostname."""
-    domains_as_tlds = ('eu.org','for.uz')
+    extra_known_tlds = ('eu.org','for.uz')
     uses_cf_at_root = False
 
     nameservers = []
     domain_parts = tldextract.extract(hostname)
     root_domain = domain_parts.registered_domain
 
-    if root_domain in domains_as_tlds:
+    if root_domain in extra_known_tlds:
         extracted = tldextract.extract(domain_parts.subdomain + '.' + domain_parts.suffix)
         root_domain = extracted.domain + '.' + root_domain
 
@@ -100,7 +98,7 @@ def get_reverse_dnshostname(hostname):
     """Retrieve reverse DNS entry for given hostname.
 
     :param hostname: hostname to find reverse DNS entry for
-    :return: reverse DNS entry if possible, otherwise returns UNKOWN and exits
+    :return: reverse DNS entry if possible, otherwise returns UNKOWN and exits"
     """
 
     try:
@@ -109,11 +107,11 @@ def get_reverse_dnshostname(hostname):
 
         resolved_ip_addr = str(dns_resolver.resolve(hostname, 'AAAA')[0])
         ptr_record = reversename.from_address(resolved_ip_addr)
-        rev_host = str(dns_resolver.resolve(ptr_record, 'PTR')[0]).rstrip('.')
+        rev_host = str(dns_resolver.resolve(ptr_record, "PTR")[0]).rstrip('.')
 
         return rev_host
     except (resolver.NXDOMAIN, resolver.NoAnswer):
-        print(f'rDNS WARNING - reverse DNS entry for {hostname} could not be found')
+        print("rDNS WARNING - reverse DNS entry for {} could not be found".format(hostname))
         sys.exit(1)
 
 
@@ -124,28 +122,28 @@ def main():
     try:
         rdns_hostname = get_reverse_dnshostname(args.hostname)
     except resolver.NoNameservers:
-        print(f'rDNS CRITICAL - {args.hostname} All nameservers failed to answer the query.')
+        print("rDNS CRITICAL - {} All nameservers failed to answer the query.".format(args.hostname))
         sys.exit(2)
 
     match = re.search(args.regex, rdns_hostname)
 
     if match:
-        text = f'SSL OK - {args.hostname} reverse DNS resolves to {rdns_hostname}')
+        text = "SSL OK - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname)
     else:
-        print(f'rDNS CRITICAL - {args.hostname} reverse DNS resolves to {rdns_hostname}')
+        print("rDNS CRITICAL - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname))
         sys.exit(2)
 
     records = check_records(args.hostname)
     if records == 'NS':
-        text += ' - NS  RECORDS OK'
+        text = text + ' - NS  RECORDS OK'
         print(text)
         sys.exit(0)
     elif records == 'CNAME':
-        text += ' - CNAME OK'
+        text = text + ' - CNAME OK'
         print(text)
         sys.exit(0)
     elif records == 'CFCNAME':
-        text += ' - CNAME FLAT'
+        text = text + ' - CNAME FLAT'
         print(text)
         sys.exit(0)
     else:
@@ -153,5 +151,5 @@ def main():
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
