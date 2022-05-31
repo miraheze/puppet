@@ -33,7 +33,7 @@ def post():
                     message = f'[Grafana] {page}{status.upper()}: {summary}'
 
                     if alert['dashboardURL']:
-                        dashboard = ' ' + alert['dashboardURL']
+                        dashboard = ' ' + alert['dashboardURL'].replace('http', 'https', 1)
 
                         # We don't want to truncate part of a URL if it's going to be truncated below
                         if len(message + dashboard) <= 450:
