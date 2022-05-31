@@ -1,18 +1,13 @@
-#!flask/bin/python3
+#! /usr/bin/env python3
 
 from filelock import FileLock
-from flask import Flask
-from flask import request
+import json
+import time
+import webhook_listener
 
-app = Flask(__name__)
 
-
-@app.route('/', methods=['POST'])
-def post():
-    status_code = 500
+def alert_to_irc(alerts):
     lock_acquired = False
-
-    content = request.get_json()
 
     filename = '/tmp/tmp_webhook_file.lock'
     lock = FileLock(filename)
@@ -21,23 +16,28 @@ def post():
         with lock:
             lock.acquire()
             try:
-                alerts = content['alerts']
                 messages = []
-                for i in alerts:
-                    status = alerts[i]['status']
-                    summary = alerts[i]['annotations']['summary']
+                for alert in alerts:
+                    status = alert['status']
+
+                    annotations = alert['annotations']
+                    labels = alert['labels']
+                    if 'summary' not in annotations:
+                        continue
+
+                    summary = annotations['summary']
 
                     page = ''
-                    if alerts[i]['labels']['page'] == 'yes':
+                    if 'page' in labels and labels['page'] == 'yes':
                        page = '!sre '
 
                     message = f'[Grafana] {page}{status}: {summary}'
 
                     dashboard = ''
-                    if alerts[i]['labels']['team'] == 'mediawiki' and not alerts[i]['DashboardURL']:
+                    if labels['team'] == 'mediawiki' and not alert['DashboardURL']:
                         dashboard = ' https://grafana.miraheze.org/d/GtxbP1Xnk/mediawiki'
-                    elif alerts[i]['DashboardURL']:
-                        dashboard = ' ' + alerts[i]['DashboardURL']
+                    elif alert['DashboardURL']:
+                        dashboard = ' ' + alert['DashboardURL']
 
                     # We don't want to truncate part of a URL if it's going to be truncated below
                     if len(message + dashboard) <= 450:
@@ -54,11 +54,24 @@ def post():
                 irc.close()
 
                 lock_acquired = True
-                status_code = 204
             finally:
                 lock.release()
                 lock_acquired = True
-    return '', status_code
+    return
 
 
-app.run(host='::', port=5100, threaded=True)
+def process_post_request(request, *args, **kwargs):
+    body_raw = request.body.read(int(request.headers['Content-Length'])) if int(request.headers.get('Content-Length',0)) > 0 else '{}'
+    body = json.loads(body_raw.decode('utf-8'))
+    
+    if 'alerts' in body:
+        alert_to_irc(body['alerts'])
+
+    return
+
+
+webhooks = webhook_listener.Listener(handlers={'POST': process_post_request}, host='::', port=5100)
+webhooks.start()
+
+while True:
+    time.sleep(300)
