@@ -7,11 +7,7 @@ server {
 
 	server_name miraheze.org www.miraheze.org;
 	root /var/www/html/;
-	index index.php index.html;
-
-	if ($http_user_agent ~* "WordPress") {
-		return 403;
-	}
+	index index.html;
 
 	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
@@ -19,9 +15,6 @@ server {
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
 	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
-
-	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
 
 	location /.well-known/acme-challenge/ {
 		alias /var/www/challenges/;
