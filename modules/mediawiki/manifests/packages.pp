@@ -39,7 +39,7 @@ class mediawiki::packages {
         ensure_packages(
             'lilypond',
             {
-                'ensure' => absent,
+                ensure => absent,
             },
         )
     }
