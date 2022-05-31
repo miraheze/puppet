@@ -32,13 +32,12 @@ def post():
 
                     message = f'[Grafana] {page}{status.upper()}: {summary}'
 
-                    dashboard = ''
                     if alert['dashboardURL']:
-                        dashboard = ' ' + alert['dashboardURL']
+                        dashboard = ' ' + alert['dashboardURL'].replace('http', 'https', 1)
 
-                    # We don't want to truncate part of a URL if it's going to be truncated below
-                    if len(message + dashboard) <= 450:
-                        message += dashboard
+                        # We don't want to truncate part of a URL if it's going to be truncated below
+                        if len(message + dashboard) <= 450:
+                            message += dashboard
 
                     # Truncate the message to guarantee it will fit in an IRC message
                     if len(message) > 450:
