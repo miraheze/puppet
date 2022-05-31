@@ -21,23 +21,22 @@ def post():
         with lock:
             lock.acquire()
             try:
-                alerts = content['alerts']
                 messages = []
-                for i in alerts:
-                    status = alerts[i]['status']
-                    summary = alerts[i]['annotations']['summary']
+                for alert in content['alerts']:
+                    status = alert['status']
+                    summary = alert['annotations']['summary']
 
                     page = ''
-                    if alerts[i]['labels']['page'] == 'yes':
+                    if alert['labels']['page'] == 'yes':
                        page = '!sre '
 
                     message = f'[Grafana] {page}{status}: {summary}'
 
                     dashboard = ''
-                    if alerts[i]['labels']['team'] == 'mediawiki' and not alerts[i]['DashboardURL']:
+                    if alert['labels']['team'] == 'mediawiki' and not alert['DashboardURL']:
                         dashboard = ' https://grafana.miraheze.org/d/GtxbP1Xnk/mediawiki'
-                    elif alerts[i]['DashboardURL']:
-                        dashboard = ' ' + alerts[i]['DashboardURL']
+                    elif alert['DashboardURL']:
+                        dashboard = ' ' + alert['DashboardURL']
 
                     # We don't want to truncate part of a URL if it's going to be truncated below
                     if len(message + dashboard) <= 450:
