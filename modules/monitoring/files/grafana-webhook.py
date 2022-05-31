@@ -30,7 +30,7 @@ def post():
                     if alert['labels']['page'] == 'yes':
                        page = '!sre '
 
-                    message = f'[Grafana] {page}{status}: {summary}'
+                    message = f'[Grafana] {page}{status.upper()}: {summary}'
 
                     dashboard = ''
                     if alert['labels']['team'] == 'mediawiki' and not alert['dashboardURL']:
