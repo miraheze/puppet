@@ -32,17 +32,20 @@ class postgresql::server(
     String $pgversion        = '9.6',
 ) {
 
-    package { [
-        "postgresql-${pgversion}",
-        "postgresql-${pgversion}-debversion",
-        "postgresql-client-${pgversion}",
-        "postgresql-contrib-${pgversion}",
-        'libdbi-perl',
-        'libdbd-pg-perl',
-        'check-postgres',
-    ]:
-        ensure => $ensure,
-    }
+    ensure_packages(
+        [
+            "postgresql-${pgversion}",
+            "postgresql-${pgversion}-debversion",
+            "postgresql-client-${pgversion}",
+            "postgresql-contrib-${pgversion}",
+            'check-postgres',
+            'libdbd-pg-perl',
+            'libdbi-perl',
+        ],
+        {
+            ensure => $ensure,
+        },
+    )
     
     ensure_packages('pgtop')
 
