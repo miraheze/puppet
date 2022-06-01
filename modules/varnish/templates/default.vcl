@@ -267,7 +267,7 @@ sub vcl_recv {
 
 	if (
 		req.url ~ "^/\.well-known" ||
-		req.http.Host == "sslrequest.miraheze.org"
+		req.http.Host == "letsencrypt.miraheze.org"
 	) {
 		set req.backend_hint = puppet111;
 		return (pass);
