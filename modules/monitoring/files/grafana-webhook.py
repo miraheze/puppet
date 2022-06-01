@@ -31,10 +31,7 @@ def post():
                         body = alert['labels']['alertname']
 
                     page = ''
-                    if 'page' in alert['annotations'] and alert['annotations']['page'] == 'yes':
-                        page = '!sre '
-                    elif 'page' in alert['labels'] and alert['labels']['page'] == 'yes':
-                        # Deprecated: migrate to use annotations
+                    if 'page' in alert['labels']:
                         page = '!sre '
 
                     message = f'[Grafana] {page}{status.upper()}: {body}'
