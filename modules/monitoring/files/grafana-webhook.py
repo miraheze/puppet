@@ -25,19 +25,22 @@ def post():
                 for alert in content['alerts']:
                     status = alert['status']
 
-                    if status == 'resolved':
-                        body = alert['labels']['alertname']
-                    else:
+                    if status == 'firing' and 'summary' in alert['annotations']:
                         body = alert['annotations']['summary']
+                    else:
+                        body = alert['labels']['alertname']
 
                     page = ''
-                    if 'page' in alert['labels'] and alert['labels']['page'] == 'yes':
-                       page = '!sre '
+                    if 'page' in alert['annotations'] and alert['annotations']['page'] == 'yes':
+                        page = '!sre '
+                    elif 'page' in alert['labels'] and alert['labels']['page'] == 'yes':
+                        # Deprecated: migrate to use annotations
+                        page = '!sre '
 
                     message = f'[Grafana] {page}{status.upper()}: {body}'
 
                     if alert['dashboardURL']:
-                        dashboard = ' ' + alert['dashboardURL'].replace('http', 'https', 1)
+                        dashboard = ' ' + alert['dashboardURL'].replace('http://', 'https://', 1)
 
                         # We don't want to truncate part of a URL if it's going to be truncated below
                         if len(message + dashboard) <= 450:
