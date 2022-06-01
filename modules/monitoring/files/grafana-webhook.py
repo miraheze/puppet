@@ -24,13 +24,17 @@ def post():
                 messages = []
                 for alert in content['alerts']:
                     status = alert['status']
-                    summary = alert['annotations']['summary']
+
+                    if status == 'resolved':
+                        body = alert['labels']['alertname']
+                    else:
+                        body = alert['annotations']['summary']
 
                     page = ''
                     if 'page' in alert['labels'] and alert['labels']['page'] == 'yes':
                        page = '!sre '
 
-                    message = f'[Grafana] {page}{status.upper()}: {summary}'
+                    message = f'[Grafana] {page}{status.upper()}: {body}'
 
                     if alert['dashboardURL']:
                         dashboard = ' ' + alert['dashboardURL'].replace('http', 'https', 1)
