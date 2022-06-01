@@ -5,6 +5,7 @@ define ssl::hiera::certs (
     String $ca,
     String $hsts     = 'weak',
     Optional[String] $redirect = undef,
+    Optional[Hash] $path_redirects = undef,
     Optional[String] $sslname  = undef,
     Optional[String] $additional_domain  = undef,
     Optional[Boolean] $disable_event = true,
