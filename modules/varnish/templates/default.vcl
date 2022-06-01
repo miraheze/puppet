@@ -1,4 +1,4 @@
- # This is the VCL file for Varnish, adjusted for Miraheze's needs.
+# This is the VCL file for Varnish, adjusted for Miraheze's needs.
 # It was originally written by Southparkfan in 2015, but rewritten in 2022 by John.
 # Some material used is inspired by the Wikimedia Foundation's configuration files.
 # Their material and license is available at https://github.com/wikimedia/puppet
