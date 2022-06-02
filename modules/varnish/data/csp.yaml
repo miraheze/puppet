@@ -118,6 +118,7 @@ font-src:
   - 'cdn.jsdelivr.net'
   - 'db.onlinewebfonts.com'
   - 'phab.miraheze.wiki'
+  - 'upload.wikimedia.org'
 
 media-src:
   - "'self'"
