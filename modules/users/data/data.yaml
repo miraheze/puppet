@@ -34,6 +34,7 @@ groups:
     description: (archived group) limited access on puppet111 to manage SSL certificates
     members: []
     privileges: []
+
   bastion:
     gid: 2005
     description: users who require bastion access
@@ -43,7 +44,7 @@ groups:
   letsencrypt-admins:
     gid: 2006
     description: limited sudo access on puppet111 to manage SSL certificates
-    members: []
+    members: [macfan]
     privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate',
                  'ALL = (ALL) NOPASSWD: /var/lib/nagios/ssl-acme']
 
