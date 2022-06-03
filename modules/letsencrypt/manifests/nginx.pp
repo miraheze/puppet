@@ -7,6 +7,7 @@ class letsencrypt::nginx {
     nginx::site { 'letsencrypt':
         ensure  => present,
         content => template('letsencrypt/nginx.conf.erb'),
+        monitor => false,
     }
 
     ssl::wildcard { 'letsencrypt nginx wildcard': }
