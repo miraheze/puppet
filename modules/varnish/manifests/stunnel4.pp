@@ -33,6 +33,10 @@ class varnish::stunnel4 {
             monitoring::nrpe { "Stunnel HTTP for ${name}":
                 command => "/usr/lib/nagios/plugins/check_http -H localhost:${property['port']} -e 500",
             }
+        } elsif $name == 'puppet111' {
+            monitoring::nrpe { "Stunnel HTTP for ${name}":
+                command => "/usr/lib/nagios/plugins/check_http -H localhost:${property['port']} -e 403",
+            }
         } else {
             monitoring::nrpe { "Stunnel HTTP for ${name}":
                 command => "/usr/lib/nagios/plugins/check_http -H localhost:${property['port']}",
