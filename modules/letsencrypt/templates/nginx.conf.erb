@@ -6,8 +6,7 @@ server {
 	listen [::]:443 deferred ssl http2 ipv6only=on backlog=4096;
 
 	server_name miraheze.org www.miraheze.org;
-	root /var/www/html/;
-	index index.html;
+	root /var/www/html;
 
 	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
