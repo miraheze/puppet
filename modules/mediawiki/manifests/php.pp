@@ -77,6 +77,7 @@ class mediawiki::php (
         'gmp',
         'intl',
         'mbstring',
+        'zip',
     ]
 
     $core_extensions.each |$extension| {
