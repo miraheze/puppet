@@ -310,6 +310,12 @@ sub vcl_recv {
 		return (pass);
 	}
 
+	# Do not cache requests from this domain
+	if (req.http.Host == "reports.miraheze.org") {
+		set req.backend_hint = reports121;
+		return (pass);
+	}
+
 	# MediaWiki specific
 	call mw_request;
 
