@@ -73,6 +73,10 @@ varnish::backends:
     port: 8204
     probe: false
     pool: false
+  reports121:
+    port: 8205
+    probe: false
+    pool: false
 
 # Logging
 base::syslog::syslog_daemon: rsyslog
