@@ -1,5 +1,7 @@
 # class: reports
 class reports {
+    ensure_packages('mariadb-client')
+
     git::clone { 'TSPortal':
         directory          => '/srv/TSPortal',
         origin             => 'https://github.com/miraheze/TSPortal',
