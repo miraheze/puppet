@@ -1,0 +1,9 @@
+-- Grants for 'reports'@''
+
+GRANT USAGE
+    ON *.* TO 'reports'@'%'
+    IDENTIFIED BY '<%= @reports_password %>'
+    REQUIRE SSL;
+
+GRANT ALL PRIVILEGES
+    ON `reports`.* TO 'reports'@'%';
