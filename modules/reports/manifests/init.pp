@@ -152,7 +152,7 @@ class reports {
 
     file { '/srv/TSPortal/.env':
         ensure  => present,
-        content => template('matomo/.env.erb'),
+        content => template('reports/.env.erb'),
         owner   => 'www-data',
         group   => 'www-data',
         require => Git::Clone['TSPortal'],
