@@ -6,7 +6,7 @@ class letsencrypt::nginx {
 
     nginx::site { 'letsencrypt':
         ensure  => present,
-        content => template('letsencrypt/nginx.conf.erb'),
+        source  => 'puppet:///modules/letsencrypt/nginx.conf',
         monitor => false,
     }
 
