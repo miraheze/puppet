@@ -140,10 +140,10 @@ class puppetserver(
         ],
     }
 
-    file { '/home/puppet-users':
+    file { '/home/letsencrypt-admins':
         ensure  => directory,
         owner   => 'root',
-        group   => 'puppet-users',
+        group   => 'letsencrypt-admins',
         mode    => '0770',
     }
  
