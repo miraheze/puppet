@@ -66,7 +66,7 @@ class role::db {
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator] or Class[Role::Matomo]', ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator] or Class[Role::Matomo] or Class[Role::Reports]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }
