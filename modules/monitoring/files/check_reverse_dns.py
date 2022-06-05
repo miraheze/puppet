@@ -26,6 +26,9 @@ import sys
 import tldextract
 
 
+sys.excepthook = lambda type, value, traceback: print(f'{type.__name__}: {value}')
+
+
 def get_args():
     """Return specified arguments.
 
@@ -51,9 +54,6 @@ def get_args():
     )
 
     return parser.parse_args()
-
-
-sys.excepthook = lambda type, value, traceback: print(f'{type.__name__}: {value}')
 
 
 def check_records(hostname):
