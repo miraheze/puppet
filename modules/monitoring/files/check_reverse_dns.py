@@ -53,6 +53,9 @@ def get_args():
     return parser.parse_args()
 
 
+sys.excepthook = lambda type, value, traceback: print(f'{type.__name__}: {value}')
+
+
 def check_records(hostname):
     """Check NS and CNAME records for given hostname."""
     extra_known_tlds = ('eu.org','for.uz')
