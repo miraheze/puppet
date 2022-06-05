@@ -31,7 +31,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   puppet-users:
     gid: 2004
-    description: (archived group) limited access on puppet111 to manage SSL certificates
+    description: limited access on puppet servers
     members: []
     privileges: []
 
@@ -43,7 +43,7 @@ groups:
     
   letsencrypt-admins:
     gid: 2006
-    description: limited sudo access on puppet111 to manage SSL certificates
+    description: limited sudo access to manage SSL certificates
     members: [macfan]
     privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate',
                  'ALL = (ALL) NOPASSWD: /var/lib/nagios/ssl-acme']
