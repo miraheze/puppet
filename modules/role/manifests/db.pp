@@ -62,7 +62,7 @@ class role::db {
 
     file { '/etc/mysql/miraheze/reports-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/freports-grants.sql.erb'),
+        content => template('mariadb/grants/reports-grants.sql.erb'),
     }
 
     $firewall_rules_str = join(
