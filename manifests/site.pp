@@ -103,6 +103,11 @@ node 'puppet111.miraheze.org' {
     include role::letsencrypt
 }
 
+node 'reports121.miraheze.org' {
+    include base
+    include role::reports
+}
+
 node 'test101.miraheze.org' {
     include base
     include role::mediawiki
