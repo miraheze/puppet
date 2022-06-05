@@ -13,6 +13,7 @@ class role::db {
     $roundcubemail_password = lookup('passwords::roundcubemail')
     $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
     $ido_db_user_password = lookup('passwords::icinga_ido')
+    $reports_password = lookup('passwords::db::reports')
 
     ssl::wildcard { 'db wildcard': }
 
@@ -57,6 +58,11 @@ class role::db {
     file { '/etc/mysql/miraheze/icinga2-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/icinga2-grants.sql.erb'),
+    }
+
+    file { '/etc/mysql/miraheze/reports-grants.sql':
+        ensure  => present,
+        content => template('mariadb/grants/freports-grants.sql.erb'),
     }
 
     $firewall_rules_str = join(
