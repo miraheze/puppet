@@ -138,7 +138,7 @@ class reports {
         }
     }
 
-    sslcert::wildcard { 'reports wildcard': }
+    ssl::wildcard { 'reports wildcard': }
 
     nginx::site { 'reports.miraheze.org':
         ensure  => present,
