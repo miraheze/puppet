@@ -1,5 +1,5 @@
 users::groups:
-  - puppet-users
+  - ssl-admins
 puppetserver: true
 puppetserver_java_opts: '-Xms2000M -Xmx2000M'
 puppetdb_enable: true
