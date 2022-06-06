@@ -1,5 +1,5 @@
-# base::ssl
-class base::ssl {
+# base::sslcert
+class base::sslcert {
     $sslPackages = [
         'openssl',
         'ssl-cert',
