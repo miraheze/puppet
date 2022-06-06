@@ -1,16 +1,16 @@
-# === Class acme::nginx
+# === Class ssl::nginx
 #
 # Nginx config using hiera
-class acme::nginx {
+class ssl::nginx {
     $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
 
-    nginx::site { 'acme':
+    nginx::site { 'ssl':
         ensure  => present,
-        source  => 'puppet:///modules/acme/nginx.conf',
+        source  => 'puppet:///modules/ssl/nginx.conf',
         monitor => false,
     }
 
-    sslcert::wildcard { 'acme nginx wildcard': }
+    sslcert::wildcard { 'ssl nginx wildcard': }
 
     include sslcert::hiera
 }
