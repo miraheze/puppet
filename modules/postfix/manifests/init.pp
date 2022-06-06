@@ -6,7 +6,7 @@ class postfix {
         'postfix-pcre',
     ]
 
-    sslcert::wildcard { 'postfix wildcard': }
+    ssl::wildcard { 'postfix wildcard': }
 
     package { $packages:
         ensure => present,
