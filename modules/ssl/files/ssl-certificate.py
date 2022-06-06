@@ -127,9 +127,9 @@ class SslCertificate:
         os.system(f'/bin/cat /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
         if self.private:
-            print('Private key is being copied and pushed to /home/puppet-users/ssl-keys')
-            os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /home/puppet-users/ssl-keys/{self.domain}.key')
-            os.system(f"cd /home/puppet-users/ssl-keys/ && git add . && git commit -m 'add {self.domain} key' && git push origin master")
+            print('Private key is being copied and pushed to /home/ssl-admins/ssl-keys')
+            os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /home/ssl-admins/ssl-keys/{self.domain}.key')
+            os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'add {self.domain} key' && git push origin master")
 
     def renew_letsencrypt_certificate(self):
         if self.wildcard:
