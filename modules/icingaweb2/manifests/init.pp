@@ -250,7 +250,7 @@ class icingaweb2 (
         require => File['/etc/icingaweb2/modules/monitoring'],
     }
 
-    ssl::wildcard { 'icingaweb2 wildcard': }
+    sslcert::wildcard { 'icingaweb2 wildcard': }
 
     nginx::site { 'icinga2':
         ensure => present,
