@@ -1,6 +1,6 @@
 # class: dovecot
 class dovecot {
-    sslcert::wildcard { 'dovecot wildcard': }
+    ssl::wildcard { 'dovecot wildcard': }
 
     package { [ 'dovecot-core', 'dovecot-imapd', 'dovecot-ldap' ]:
         ensure => present,
