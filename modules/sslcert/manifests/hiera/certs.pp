@@ -1,5 +1,5 @@
 # define resource handler, same as current manual cert handler
-define ssl::hiera::certs (
+define sslcert::hiera::certs (
     String $url,
     # This is not used in this file, but is used in icinga2.
     String $ca,
