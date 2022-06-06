@@ -26,6 +26,13 @@ class ssl {
         require => File['/var/www/.well-known/acme-challenge'],
     }
 
+    file { '/home/ssl-admins':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'ssl-admins',
+        mode    => '0770',
+    }
+
     file { '/root/ssl':
         ensure => directory,
         owner  => 'root',
