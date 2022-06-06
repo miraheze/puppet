@@ -1,5 +1,5 @@
-# defined type: ssl::cert
-define ssl::cert (
+# defined type: sslcert::certificate
+define sslcert::certificate (
     VMlib::Ensure $ensure = 'present',
     String $certificate    = $title,
 ) {
