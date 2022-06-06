@@ -58,7 +58,7 @@ class grafana (
         require => Package['grafana'],
     }
 
-    sslcert::wildcard { 'grafana wildcard': }
+    ssl::wildcard { 'grafana wildcard': }
 
     nginx::site { 'grafana.miraheze.org':
         ensure => present,
