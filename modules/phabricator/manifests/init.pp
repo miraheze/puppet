@@ -115,8 +115,8 @@ class phabricator {
         monitor => false,
     }
 
-    sslcert::wildcard { 'phabricator wildcard': }
-    sslcert::certificate { 'miraheze.wiki': }
+    ssl::wildcard { 'phabricator wildcard': }
+    ssl::cert { 'miraheze.wiki': }
 
     file { '/srv/phab':
         ensure => directory,
