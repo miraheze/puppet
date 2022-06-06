@@ -10,7 +10,7 @@ class letsencrypt::nginx {
         monitor => false,
     }
 
-    ssl::wildcard { 'letsencrypt nginx wildcard': }
+    sslcert::wildcard { 'letsencrypt nginx wildcard': }
 
-    include ssl::hiera
+    include sslcert::hiera
 }
