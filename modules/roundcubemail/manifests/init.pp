@@ -137,7 +137,7 @@ class roundcubemail (
         require => Git::Clone['roundcubemail'],
     }
 
-    ssl::wildcard { 'roundcubemail wildcard': }
+    sslcert::wildcard { 'roundcubemail wildcard': }
 
     nginx::site { 'mail':
         ensure => present,
