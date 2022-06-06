@@ -6,7 +6,7 @@ class base (
     include base::packages
     include base::puppet
     include base::syslog
-    include base::sslcert
+    include base::ssl
     include base::sysctl
     include base::timezone
     include base::upgrades
