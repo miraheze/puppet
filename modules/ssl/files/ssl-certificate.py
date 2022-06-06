@@ -1,6 +1,6 @@
 #!/usr/bin/python3 -u
 
-# Generate an SSL certificate (LetsEncrypt) with a CSR and private key.
+# Generate an SSL certificate with a CSR and private key.
 #
 # John Lewis
 # Paladox
