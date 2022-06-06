@@ -31,15 +31,20 @@ groups:
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   puppet-users:
     gid: 2004
-    description: limited access on puppet111 to manage SSL certificates
-    members: [macfan, universalomega]
-    privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate',
-                 'ALL = (ALL) NOPASSWD: /var/lib/nagios/ssl-acme']
+    description: limited access on puppet servers
+    members: []
+    privileges: []
   bastion:
     gid: 2005
     description: users who require bastion access
     members: [macfan, rhinos, universalomega, agent]
     privileges: []
+  ssl-admins:
+    gid: 2006
+    description: limited sudo access to manage SSL certificates
+    members: [macfan, universalomega]
+    privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate',
+                 'ALL = (ALL) NOPASSWD: /var/lib/nagios/ssl-acme']
 
 users:
   johnflewis:
