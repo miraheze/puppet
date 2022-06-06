@@ -142,7 +142,7 @@ class matomo (
         }
     }
 
-    sslcert::wildcard { 'matomo wildcard': }
+    ssl::wildcard { 'matomo wildcard': }
 
     nginx::site { 'matomo.miraheze.org':
         ensure  => present,
