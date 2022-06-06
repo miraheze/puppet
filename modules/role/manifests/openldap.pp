@@ -8,14 +8,14 @@ class role::openldap (
     String $admin_password = lookup('profile::openldap::admin_password'),
     String $ldapvi_password = lookup('profile::openldap::ldapvi_password'),
 ) {
-    sslcert::wildcard { 'openldap wildcard': }
+    ssl::wildcard { 'openldap wildcard': }
 
     class { 'openldap::server':
         ldaps_ifs => ['/'],
         ssl_ca    => '/etc/ssl/certs/Sectigo.crt',
         ssl_cert  => '/etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt',
         ssl_key   => '/etc/ssl/private/wildcard.miraheze.org-2020-2.key',
-        require   => Sslcert::Wildcard['openldap wildcard']
+        require   => Ssl::Wildcard['openldap wildcard']
     }
 
     openldap::server::database { 'dc=miraheze,dc=org':
