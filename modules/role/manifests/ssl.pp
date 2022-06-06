@@ -1,6 +1,6 @@
-# role: letsencrypt
-class role::letsencrypt {
-    include ::letsencrypt
+# role: ssl
+class role::ssl {
+    include ::ssl
 
     $firewall_srange = join(
         query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
@@ -31,7 +31,7 @@ class role::letsencrypt {
         }
     }
 
-    motd::role { 'role::letsencrypt':
-        description => 'LetsEncrypt server',
+    motd::role { 'role::ssl':
+        description => 'SSL management server',
     }
 }
