@@ -38,24 +38,24 @@ class base::syslog (
                 if !empty( $syslog_host ) {
                         ensure_packages('rsyslog-gnutls')
 
-                        sslcert::wildcard { 'rsyslog wildcard': }
+                        ssl::wildcard { 'rsyslog wildcard': }
 
                         rsyslog::conf { 'remote_syslog_rule':
                                 content  => template('base/rsyslog/remote_syslog_rule.conf.erb'),
                                 priority => 10,
-                                require  => Sslcert::Wildcard['rsyslog wildcard']
+                                require  => Ssl::Wildcard['rsyslog wildcard']
                         }
 
                         rsyslog::conf { 'remote_syslog_rule_parse_json':
                                 content  => template('base/rsyslog/remote_syslog_rule_parse_json.conf.erb'),
                                 priority => 10,
-                                require  => Sslcert::Wildcard['rsyslog wildcard']
+                                require  => Ssl::Wildcard['rsyslog wildcard']
                         }
 
                         rsyslog::conf { 'remote_syslog':
                                 content  => template('base/rsyslog/remote_syslog.conf.erb'),
                                 priority => 30,
-                                require  => Sslcert::Wildcard['rsyslog wildcard']
+                                require  => Ssl::Wildcard['rsyslog wildcard']
                         }
 
                         $ensure_enabled = $rsyslog_udp_localhost ? {
