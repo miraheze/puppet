@@ -4,13 +4,13 @@
 class ssl::nginx {
     $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
 
-    nginx::site { 'ssl':
+    nginx::site { 'ssl-acme':
         ensure  => present,
         source  => 'puppet:///modules/ssl/nginx.conf',
         monitor => false,
     }
 
-    sslcert::wildcard { 'ssl nginx wildcard': }
+    sslcert::wildcard { 'ssl-acme nginx wildcard': }
 
-    include sslcert::hiera
+    include ssl::hiera
 }
