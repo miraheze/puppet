@@ -1,5 +1,5 @@
-# define: sslcert::wildcard
-define sslcert::wildcard (
+# define: ssl::wildcard
+define ssl::wildcard (
     $ssl_cert_path = '/etc/ssl/localcerts',
     $ssl_cert_key_private_path = '/etc/ssl/private',
 ) {
