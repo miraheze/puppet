@@ -76,6 +76,7 @@ class mediawiki::php (
         'gd',
         'gmp',
         'intl',
+        'ldap',
         'mbstring',
         'zip',
     ]
