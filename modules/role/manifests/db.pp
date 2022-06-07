@@ -15,7 +15,7 @@ class role::db {
     $ido_db_user_password = lookup('passwords::icinga_ido')
     $reports_password = lookup('passwords::db::reports')
 
-    sslcert::wildcard { 'db wildcard': }
+    ssl::wildcard { 'db wildcard': }
 
     file { '/etc/ssl/private':
         ensure => directory,
