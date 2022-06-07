@@ -10,7 +10,7 @@ class ssl::nginx {
         monitor => false,
     }
 
-    sslcert::wildcard { 'ssl-acme nginx wildcard': }
+    ssl::wildcard { 'ssl-acme nginx wildcard': }
 
     include ssl::hiera
 }
