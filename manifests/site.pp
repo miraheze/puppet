@@ -38,7 +38,6 @@ node 'graylog121.miraheze.org' {
 node 'jobchron121.miraheze.org' {
     include base
     include role::redis
-    include mediawiki::jobqueue::chron
 }
 
 node 'ldap111.miraheze.org' {
@@ -112,7 +111,6 @@ node 'test101.miraheze.org' {
     include base
     include role::mediawiki
     include role::redis
-    include mediawiki::jobqueue::chron
 }
 
 # ensures all servers have basic class if puppet runs
