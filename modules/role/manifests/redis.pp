@@ -1,6 +1,7 @@
 # role: redis
 class role::redis {
     include prometheus::exporter::redis
+    include mediawiki::jobqueue::chron
 
     $redis_heap = lookup('redis::heap', {'default_value' => '7000mb'})
     class { '::redis':
@@ -27,6 +28,6 @@ class role::redis {
     }
 
     motd::role { 'role::redis':
-        description => 'Redis caching server',
+        description => 'Redis jobchron server',
     }
 }
