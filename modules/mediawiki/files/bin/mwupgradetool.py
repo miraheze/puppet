@@ -43,7 +43,7 @@ print('Will now check mediawiki branch')
 os.system('git -C /srv/mediawiki-staging/w rev-parse --abbrev-ref HEAD')
 input('Confirm: ')
 print('Will now deploy to canary server')
-os.system('deploy-mediawiki --world --l10n --force --ignore-time --servers=skip')
+os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --servers={canary}')
 if check_up(canary) and check_ro(canary):
     print('Canary deploy done')
 else:
