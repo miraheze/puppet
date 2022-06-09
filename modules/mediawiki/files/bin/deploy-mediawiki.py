@@ -5,8 +5,8 @@ from __future__ import annotations
 import argparse
 import os
 import socket
-from typing import TYPE_CHECKING, TypedDict
 import time
+from typing import TYPE_CHECKING, TypedDict
 from sys import exit
 
 from langcodes import tag_is_valid
