@@ -31,6 +31,6 @@ jobs:
           pip install -r .github/pythonchecks.txt
       - name: Run tests
         run: |
-          flake8 modules/mediawiki modules/letsencrypt --ignore=E501,W503,SFS301
+          flake8 modules/mediawiki modules/letsencrypt --enable-extensions=TC,TC1 --ignore=E501,W503,SFS301
           pytest -vv -n auto
           mypy modules/mediawiki modules/letsencrypt --ignore-missing-imports
