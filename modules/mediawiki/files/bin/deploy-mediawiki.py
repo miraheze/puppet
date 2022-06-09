@@ -6,8 +6,8 @@ import argparse
 import os
 import socket
 import time
-from typing import TYPE_CHECKING, TypedDict
 from sys import exit
+from typing import TYPE_CHECKING, TypedDict
 
 from langcodes import tag_is_valid
 
