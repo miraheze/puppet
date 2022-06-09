@@ -18,5 +18,6 @@ mypy==0.931
 types-requests==2.27.7
 pytest-xdist==2.5.0
 requests==2.27.1
-filelock==3.6.0
+filelock==3.0.12; python_version < 3.10
+filelock==3.7.0; python_version > 3.9
 langcodes==3.3.0
