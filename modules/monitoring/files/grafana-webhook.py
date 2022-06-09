@@ -1,6 +1,7 @@
 #!flask/bin/python3
 
 from filelock import FileLock
+
 from flask import Flask, request
 
 app = Flask(__name__)
@@ -46,11 +47,10 @@ def post():
                     if len(message) > 450:
                         message = message[:447] + '...'
 
-                    messages.append( f'{message}\n' )
+                    messages.append(f'{message}\n')
 
-                irc = open('/var/log/icinga2/irc.log', 'a')
-                irc.writelines(messages)
-                irc.close()
+                with open('/var/log/icinga2/irc.log', 'a') as irc:
+                    irc.writelines(messages)
 
                 lock_acquired = True
                 status_code = 204
