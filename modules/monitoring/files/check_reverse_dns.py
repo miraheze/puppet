@@ -20,10 +20,11 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import argparse
-from dns import reversename, resolver
 import re
 import sys
+
 import tldextract
+from dns import resolver, reversename
 
 
 def get_args():
@@ -55,7 +56,7 @@ def get_args():
 
 def check_records(hostname):
     """Check NS and CNAME records for given hostname."""
-    extra_known_tlds = ('eu.org','for.uz')
+    extra_known_tlds = ('eu.org', 'for.uz')
     uses_cf_at_root = False
 
     nameservers = []
@@ -63,7 +64,8 @@ def check_records(hostname):
     root_domain = domain_parts.registered_domain
 
     if root_domain in extra_known_tlds:
-        extracted = tldextract.extract(domain_parts.subdomain + '.' + domain_parts.suffix)
+        extracted = tldextract.extract(
+            domain_parts.subdomain + '.' + domain_parts.suffix)
         root_domain = extracted.domain + '.' + root_domain
 
     dns_resolver = resolver.Resolver(configure=False)
@@ -111,7 +113,8 @@ def get_reverse_dnshostname(hostname):
 
         return rev_host
     except (resolver.NXDOMAIN, resolver.NoAnswer):
-        print(f"rDNS WARNING - reverse DNS entry for {hostname} could not be found")
+        print(
+            f"rDNS WARNING - reverse DNS entry for {hostname} could not be found")
         sys.exit(1)
 
 
@@ -122,7 +125,8 @@ def main():
     try:
         rdns_hostname = get_reverse_dnshostname(args.hostname)
     except resolver.NoNameservers:
-        print(f"rDNS CRITICAL - {args.hostname} All nameservers failed to answer the query.")
+        print(
+            f"rDNS CRITICAL - {args.hostname} All nameservers failed to answer the query.")
         sys.exit(2)
 
     match = re.search(args.regex, rdns_hostname)
@@ -130,7 +134,8 @@ def main():
     if match:
         text = f"SSL OK - {args.hostname} reverse DNS resolves to {rdns_hostname}"
     else:
-        print(f"rDNS CRITICAL - {args.hostname} reverse DNS resolves to {rdns_hostname}")
+        print(
+            f"rDNS CRITICAL - {args.hostname} reverse DNS resolves to {rdns_hostname}")
         sys.exit(2)
 
     records = check_records(args.hostname)

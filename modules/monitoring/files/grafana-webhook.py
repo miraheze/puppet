@@ -1,8 +1,7 @@
 #!flask/bin/python3
 
 from filelock import FileLock
-from flask import Flask
-from flask import request
+from flask import Flask, request
 
 app = Flask(__name__)
 

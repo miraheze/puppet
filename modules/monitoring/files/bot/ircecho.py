@@ -12,15 +12,15 @@
 
 import argparse
 import logging
-import pyinotify
-import threading
 import random
-import string
 import re
+import string
 import sys
+import threading
 
 import ib3_auth
 import irc.client  # for exceptions.
+import pyinotify
 from irc.bot import SingleServerIRCBot
 
 logging.basicConfig()
@@ -95,7 +95,8 @@ class EchoReader():
                     s = input()
                     # this throws an exception if not connected.
                     s = beautify_message(s)
-                    self.bot.connection.privmsg(self.chans, s.replace('\n', ''))
+                    self.bot.connection.privmsg(
+                        self.chans, s.replace('\n', ''))
                 except EOFError:
                     # Once the input is finished, the bot should exit
                     break
@@ -142,10 +143,12 @@ class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
         kwargs = {}
         if ssl:
             import ssl
-            ssl_factory = irc.connection.Factory(ipv6=True, wrapper=ssl.wrap_socket)
+            ssl_factory = irc.connection.Factory(
+                ipv6=True, wrapper=ssl.wrap_socket)
             kwargs['connect_factory'] = ssl_factory
 
-        SingleServerIRCBot.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', **kwargs)
+        SingleServerIRCBot.__init__(
+            self, [(server, port)], nickname_pass, 'IRC echo bot', **kwargs)
         if ident_passwd is not None:
             ib3_auth.SASL.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', ident_passwd,
                                    **kwargs)
@@ -228,7 +231,8 @@ except IndexError:
 global bot
 if args['ident_passwd_file']:
     with open(args['ident_passwd_file']) as f:
-        bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl, f.read().strip())
+        bot = EchoBot(chans, nickname, nickname_pass,
+                      server, port, ssl, f.read().strip())
 else:
     bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl)
 global reader
