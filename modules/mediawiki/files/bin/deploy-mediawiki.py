@@ -7,7 +7,7 @@ import os
 import socket
 import time
 from sys import exit
-from typing import TYPE_CHECKING, TypedDict
+from typing import TypedDict
 
 from langcodes import tag_is_valid
 
