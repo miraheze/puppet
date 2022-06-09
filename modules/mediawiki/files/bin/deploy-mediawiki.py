@@ -14,10 +14,6 @@ from langcodes import tag_is_valid
 import requests
 
 
-if TYPE_CHECKING:
-    from typing import Optional, Union
-
-
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
 DEPLOYUSER = 'www-data'
 
