@@ -1,14 +1,16 @@
 #! /usr/bin/python3
 
 from __future__ import annotations
+
 import argparse
 from typing import TYPE_CHECKING, TypedDict
 import os
 import time
-import requests
 import socket
 from sys import exit
+
 from langcodes import tag_is_valid
+import requests
 
 
 if TYPE_CHECKING:
