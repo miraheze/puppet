@@ -23,8 +23,9 @@ import argparse
 import re
 import sys
 
-import tldextract
 from dns import resolver, reversename
+
+import tldextract
 
 
 def get_args():
@@ -34,21 +35,21 @@ def get_args():
     """
 
     parser = argparse.ArgumentParser(
-        description="Check reverse DNS entry for hostname"
+        description='Check reverse DNS entry for hostname',
     )
     parser.add_argument(
         '-H',
         '--hostname',
         required=True,
-        help="hostname to check",
-        dest="hostname"
+        help='hostname to check',
+        dest='hostnam',
     )
     parser.add_argument(
         '-r',
         '--regex',
         required=True,
-        help="regex for match",
-        dest="regex"
+        help='regex for match',
+        dest='regex',
     )
 
     return parser.parse_args()
@@ -79,7 +80,7 @@ def check_records(hostname):
             if nameserver.endswith('.ns.cloudflare.com.') or nameserver.endswith('.dreamhost.com.'):
                 uses_cf_at_root = True
 
-        if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
+        if sorted(nameservers) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
             return 'NS'
     except resolver.NoAnswer:
         nameservers = None
@@ -109,12 +110,11 @@ def get_reverse_dnshostname(hostname):
 
         resolved_ip_addr = str(dns_resolver.resolve(hostname, 'AAAA')[0])
         ptr_record = reversename.from_address(resolved_ip_addr)
-        rev_host = str(dns_resolver.resolve(ptr_record, "PTR")[0]).rstrip('.')
+        return str(dns_resolver.resolve(ptr_record, 'PTR')[0]).rstrip('.')
 
-        return rev_host
     except (resolver.NXDOMAIN, resolver.NoAnswer):
         print(
-            f"rDNS WARNING - reverse DNS entry for {hostname} could not be found")
+            f'rDNS WARNING - reverse DNS entry for {hostname} could not be found')
         sys.exit(1)
 
 
@@ -126,16 +126,16 @@ def main():
         rdns_hostname = get_reverse_dnshostname(args.hostname)
     except resolver.NoNameservers:
         print(
-            f"rDNS CRITICAL - {args.hostname} All nameservers failed to answer the query.")
+            f'rDNS CRITICAL - {args.hostname} All nameservers failed to answer the query.')
         sys.exit(2)
 
     match = re.search(args.regex, rdns_hostname)
 
     if match:
-        text = f"SSL OK - {args.hostname} reverse DNS resolves to {rdns_hostname}"
+        text = f'SSL OK - {args.hostname} reverse DNS resolves to {rdns_hostname}'
     else:
         print(
-            f"rDNS CRITICAL - {args.hostname} reverse DNS resolves to {rdns_hostname}")
+            f'rDNS CRITICAL - {args.hostname} reverse DNS resolves to {rdns_hostname}')
         sys.exit(2)
 
     records = check_records(args.hostname)
