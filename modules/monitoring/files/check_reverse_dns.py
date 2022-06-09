@@ -111,7 +111,7 @@ def get_reverse_dnshostname(hostname):
 
         return rev_host
     except (resolver.NXDOMAIN, resolver.NoAnswer):
-        print("rDNS WARNING - reverse DNS entry for {} could not be found".format(hostname))
+        print(f"rDNS WARNING - reverse DNS entry for {hostname} could not be found")
         sys.exit(1)
 
 
@@ -122,15 +122,15 @@ def main():
     try:
         rdns_hostname = get_reverse_dnshostname(args.hostname)
     except resolver.NoNameservers:
-        print("rDNS CRITICAL - {} All nameservers failed to answer the query.".format(args.hostname))
+        print(f"rDNS CRITICAL - {args.hostname} All nameservers failed to answer the query.")
         sys.exit(2)
 
     match = re.search(args.regex, rdns_hostname)
 
     if match:
-        text = "SSL OK - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname)
+        text = f"SSL OK - {args.hostname} reverse DNS resolves to {rdns_hostname}"
     else:
-        print("rDNS CRITICAL - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname))
+        print(f"rDNS CRITICAL - {args.hostname} reverse DNS resolves to {rdns_hostname}")
         sys.exit(2)
 
     records = check_records(args.hostname)
