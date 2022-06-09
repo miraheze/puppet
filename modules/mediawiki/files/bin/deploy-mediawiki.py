@@ -1,13 +1,17 @@
 #! /usr/bin/python3
 
 import argparse
-from typing import Optional, Union, TypedDict
+from typing import TYPE_CHECKING
 import os
 import time
 import requests
 import socket
 from sys import exit
 from langcodes import tag_is_valid
+
+
+if TYPE_CHECKING:
+    from typing import Optional, Union, TypedDict
 
 
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
