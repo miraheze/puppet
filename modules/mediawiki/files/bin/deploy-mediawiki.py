@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import argparse
 import os
-from typing import TYPE_CHECKING, TypedDict
 import socket
+from typing import TYPE_CHECKING, TypedDict
 import time
 from sys import exit
 
