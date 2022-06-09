@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
-import argparse
 from __future__ import annotations
+import argparse
 from typing import TYPE_CHECKING, TypedDict
 import os
 import time
