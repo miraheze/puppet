@@ -1,3 +1,4 @@
+## TESTING ONLY
 pytest==6.2.5
 wheel==0.37.1
 flake8==4.0.1
@@ -18,7 +19,10 @@ flake8-type-checking==1.5.0
 mypy==0.931
 types-requests==2.27.7
 pytest-xdist==2.5.0
+## ACTUAL
 requests==2.27.1
-filelock==3.6.0
+filelock==3.0.12; python_version < '3.10'
+types-filelock; python_version < '3.10'
+filelock==3.7.0; python_version > '3.9'
 langcodes==3.3.0
 flake8-import-order==0.18.1
