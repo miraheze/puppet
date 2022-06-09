@@ -1,7 +1,8 @@
 #! /usr/bin/python3
 
 import argparse
-from typing import TYPE_CHECKING
+from __future__ import annotations
+from typing import TYPE_CHECKING, TypedDict
 import os
 import time
 import requests
@@ -11,7 +12,7 @@ from langcodes import tag_is_valid
 
 
 if TYPE_CHECKING:
-    from typing import Optional, Union, TypedDict
+    from typing import Optional, Union
 
 
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
