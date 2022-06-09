@@ -1,7 +1,9 @@
 #! /usr/bin/python3
 
 import os
+
 import requests
+
 canary = 'mwtask111'
 serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
 
