@@ -1,10 +1,11 @@
 #!flask/bin/python3
 
+import logging
+import os
+
 from filelock import FileLock
 from flask import Flask
 from flask import request
-import logging
-import os
 
 app = Flask(__name__)
 
