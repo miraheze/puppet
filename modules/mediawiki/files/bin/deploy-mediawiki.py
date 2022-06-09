@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import argparse
-from typing import TYPE_CHECKING, TypedDict
 import os
-import time
+from typing import TYPE_CHECKING, TypedDict
 import socket
+import time
 from sys import exit
 
 from langcodes import tag_is_valid
+
 import requests
 
 
