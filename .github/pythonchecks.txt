@@ -19,6 +19,7 @@ flake8-type-checking==1.5.0
 mypy==0.931
 types-requests==2.27.7
 pytest-xdist==2.5.0
+vermin==1.4.0
 ## ACTUAL
 requests==2.27.1
 filelock==3.0.12; python_version < '3.10'
