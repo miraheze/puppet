@@ -19,22 +19,23 @@ import sys
 import threading
 
 import ib3_auth
-import irc.client  # for exceptions.
-import pyinotify
+
 from irc.bot import SingleServerIRCBot
+import irc.client  # for exceptions.
+
+import pyinotify
 
 logging.basicConfig()
 logger = logging.getLogger()
 
 
 def beautify_message(m):
-    '''Clean up formatting of alert messages.'''
+    """Clean up formatting of alert messages."""
     m = m.strip()                           # Strip trailing whitespace
     m = re.sub(r'(\w+): \1:\b', r'\1', m)   # Dedupe severity
     m = re.sub(r' {2,}', ' ', m)            # Collapse whitespace
     m = m.replace(': -', ':')               # Combine separators
-    m = m.strip(':-')                       # Strip trailing separators
-    return m
+    return m.strip(':-')                       # Strip trailing separators
 
 
 class EchoNotifier(threading.Thread):
@@ -48,16 +49,16 @@ class EchoNotifier(threading.Thread):
 
 
 class EchoReader():
-    '''
-    Essentially an initalization class
-    '''
+    """Essentially an initalization class"""
 
     def __init__(self, infile='', associatedchannel=''):
         self.infile = infile
         self.associatedchannel = associatedchannel
-        self.uniques = {';': 'UNIQ_' + self.get_unique_string() + '_QINU',
-                        ':': 'UNIQ_' + self.get_unique_string() + '_QINU',
-                        ',': 'UNIQ_' + self.get_unique_string() + '_QINU'}
+        self.uniques = {
+            ';': 'UNIQ_' + self.get_unique_string() + '_QINU',
+            ':': 'UNIQ_' + self.get_unique_string() + '_QINU',
+            ',': 'UNIQ_' + self.get_unique_string() + '_QINU',
+                        }
 
         if self.infile:
             print('Using infile')
@@ -70,9 +71,9 @@ class EchoReader():
                 filename = self.unescape(temparr[0])
                 try:
                     print('Opening: ' + filename)
-                    f = open(filename)
-                    f.seek(0, 2)
-                    self.files[filename] = f
+                    with open(filename) as f:
+                        f.seek(0, 2)
+                        self.files[filename] = f
                 except IOError:
                     print('Failed to open file: ' + filename)
                     self.files[filename] = None
@@ -112,20 +113,18 @@ class EchoReader():
     def escape(self, string):
         escaped_string = re.sub(r'\\\;', self.uniques[';'], string)
         escaped_string = re.sub(r'\\\:', self.uniques[':'], escaped_string)
-        escaped_string = re.sub(r'\\\,', self.uniques[','], escaped_string)
-        return escaped_string
+        return re.sub(r'\\\,', self.uniques[','], escaped_string)
 
     def unescape(self, string):
         unescaped_string = re.sub(self.uniques[';'], ';', string)
         unescaped_string = re.sub(self.uniques[':'], ':', unescaped_string)
-        unescaped_string = re.sub(self.uniques[','], ',', unescaped_string)
-        return unescaped_string
+        return re.sub(self.uniques[','], ',', unescaped_string)
 
     def readfile(self, filename):
         if self.files[filename]:
             return self.files[filename].read()
         else:
-            return
+            return None
 
     def getchannels(self, filename):
         if filename in self.associations:
