@@ -25,7 +25,6 @@ script-src:
   - 'www.mediawiki.org'
   - 'wikidata.org'
   - 'www.gstatic.com'
-  - 's7.addthis.com'
   - 'www.google.com'
   - 'www.recaptcha.net'
   - 'recaptchaenterprise.googleapis.com'
