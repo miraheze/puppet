@@ -19,6 +19,10 @@ enable_load_data_infile = 0
 salt = "<%= @salt %>"
 trusted_hosts[] = "matomo.miraheze.org"
 
+[Tracker]
+;https://github.com/piwik/piwik/issues/6398#issuecomment-91093146
+bulk_requests_use_transaction = 0
+
 [mail]
 transport = "smtp"
 port = 25
