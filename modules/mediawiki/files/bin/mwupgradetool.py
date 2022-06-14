@@ -44,20 +44,20 @@ print('Will now check mediawiki branch')
 os.system('git -C /srv/mediawiki-staging/w rev-parse --abbrev-ref HEAD')
 input('Confirm: ')
 print('Will now deploy to canary server')
-os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --servers={canary}')
+os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --extension-list --servers={canary}')
 if check_up(canary) and check_ro(canary):
     print('Canary deploy done')
 else:
     print('Canary is not online')
 input('Press enter to rollout: ')
 print(f'Deploying to {hatedserver}')
-os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --servers={hatedserver}')
+os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --extension-list --servers={hatedserver}')
 if check_up(hatedserver) and check_ro(hatedserver):
     print(f'{hatedserver} deploy done')
 else:
     print(f'{hatedserver} is not online')
 input('Confirm mass rolout:')
-os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --servers={serverlist}')
+os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --extension-list --servers={serverlist}')
 print('Deployment done')
 input('Please merge RW change and press enter: ')
 print('Running puppet')
