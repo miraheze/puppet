@@ -46,31 +46,10 @@ class role::gluster {
         notrack => true,
     }
 
-    ferm::service { 'gluster 49152-49251':
+    # From gluster version 10 onwards bricks ports are randomised between base_port (49152) and max_port (65535). To check ports run `sudo gluster volume status all`.
+    ferm::service { 'gluster 49152-65535':
         proto   => 'tcp',
-        port    => '49152:49251',
-        srange  => "(${firewall_rules_str})",
-        notrack => true,
-    }
-
-    # Manually defined the ports for the bricks as it seems to change unpredictably? To check ports run `sudo gluster volume status all`
-    ferm::service { 'gluster 58088':
-        proto   => 'tcp',
-        port    => '58088',
-        srange  => "(${firewall_rules_str})",
-        notrack => true,
-    }
-
-    ferm::service { 'gluster 50689':
-        proto   => 'tcp',
-        port    => '50689',
-        srange  => "(${firewall_rules_str})",
-        notrack => true,
-    }
-
-    ferm::service { 'gluster 49974':
-        proto   => 'tcp',
-        port    => '49974',
+        port    => '49152:65535',
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
