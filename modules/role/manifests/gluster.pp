@@ -14,7 +14,7 @@ class role::gluster {
     )
 
     ferm::service { 'gluster 111':
-        proto   => 'tcp',
+        proto   => 'udp',
         port    => '111',
         srange  => "(${firewall_rules_str})",
         notrack => true,
