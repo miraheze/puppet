@@ -13,6 +13,13 @@ class role::gluster {
         ' '
     )
 
+    ferm::service { 'gluster 111':
+        proto   => 'tcp',
+        port    => '111',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
+    }
+
     ferm::service { 'gluster 24007':
         proto   => 'tcp',
         port    => '24007',
@@ -40,23 +47,9 @@ class role::gluster {
         srange => "(${firewall_rules_str})",
     }
 
-    ferm::service { 'gluster 49152':
+    ferm::service { 'gluster 49152-49251':
         proto   => 'tcp',
-        port    => '49152',
-        srange  => "(${firewall_rules_str})",
-        notrack => true,
-    }
-
-    ferm::service { 'gluster 49153':
-        proto   => 'tcp',
-        port    => '49153',
-        srange  => "(${firewall_rules_str})",
-        notrack => true,
-    }
-
-    ferm::service { 'gluster 49154':
-        proto   => 'tcp',
-        port    => '49154',
+        port    => '49152:49251',
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
