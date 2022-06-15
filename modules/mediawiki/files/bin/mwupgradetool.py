@@ -26,8 +26,8 @@ def check_ro(server: str) -> bool:
 
 print('Welcome to the MediaWiki Upgrade tool!')
 input('Please confirm you are running this script on the canary server: (press enter)')
-input('MediaWiki -> RO - Running puppet to sync config')
-os.system('sudo puppet agent -tv')
+print('MediaWiki -> RO - Syncing config')
+os.system('deploy-mediawiki --config --pull=config --servers=all')
 print('Config deployed')
 print('Checking RO on Canary Server')
 if not check_ro(canary):
