@@ -1,3 +1,6 @@
 option transport.socket.ssl-enabled on
+option transport.socket.ssl-own-cert /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt
+option transport.socket.ssl-private-key /etc/ssl/private/wildcard.miraheze.org-2020-2.key
+option transport.socket.ssl-ca-list /etc/ssl/certs/Sectigo.crt
 option transport.socket.ssl-cert-depth 2
 option transport.socket.ssl-cipher-list 'HIGH:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1:TLSv1.2:TLSv1.3:!3DES:!RC4:!aNULL:!ADH'
