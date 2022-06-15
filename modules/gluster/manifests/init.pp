@@ -14,7 +14,7 @@ class gluster {
         file { 'glusterfs.pem':
             ensure => 'present',
             source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020-2.crt',
-            path   => '/etc/ssl/glusterfs.pem',
+            path   => '/usr/lib/ssl/glusterfs.pem',
             owner  => 'root',
             group  => 'root',
         }
@@ -24,7 +24,7 @@ class gluster {
         file { 'glusterfs.key':
             ensure => 'present',
             source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
-            path   => '/etc/ssl/glusterfs.key',
+            path   => '/usr/lib/ssl/glusterfs.key',
             owner  => 'root',
             group  => 'root',
             mode   => '0660',
@@ -35,7 +35,7 @@ class gluster {
         file { 'glusterfs.ca':
             ensure => 'present',
             source => 'puppet:///ssl/ca/Sectigo.crt',
-            path   => '/etc/ssl/glusterfs.ca',
+            path   => '/usr/lib/ssl/glusterfs.ca',
             owner  => 'root',
             group  => 'root',
         }
