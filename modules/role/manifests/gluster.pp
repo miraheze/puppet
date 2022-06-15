@@ -13,7 +13,13 @@ class role::gluster {
         ' '
     )
 
-    ferm::service { 'gluster 111':
+    ferm::service { 'gluster tcp 111':
+        proto   => 'tcp',
+        port    => '111',
+        srange  => "(${firewall_rules_str})",
+    }
+
+    ferm::service { 'gluster udp 111':
         proto   => 'udp',
         port    => '111',
         srange  => "(${firewall_rules_str})",
