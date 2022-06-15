@@ -53,6 +53,28 @@ class role::gluster {
         notrack => true,
     }
 
+    # Manually defined the ports for the bricks as it seems to change unpredictably? To check ports run `sudo gluster volume status all`
+    ferm::service { 'gluster 58088':
+        proto   => 'tcp',
+        port    => '58088',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
+    }
+
+    ferm::service { 'gluster 50689':
+        proto   => 'tcp',
+        port    => '50689',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
+    }
+
+    ferm::service { 'gluster 49974':
+        proto   => 'tcp',
+        port    => '49974',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
+    }
+
     motd::role { 'role::gluster':
         description => 'A file storage network solution.',
     }
