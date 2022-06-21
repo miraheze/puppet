@@ -95,7 +95,8 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
     if not up:
         print(f'Status: {req.status_code}')
         print(f'Text: {"miraheze" in req.text} \n {req.text}')
-        print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
+        if 'X-Served-By' in req.headers:
+            print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
         if force:
             print(f'Ignoring canary check error on {location} due to --force')
         else:
