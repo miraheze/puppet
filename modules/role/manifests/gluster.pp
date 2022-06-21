@@ -29,21 +29,18 @@ class role::gluster {
         proto   => 'tcp',
         port    => '24007',
         srange  => "(${firewall_rules_str})",
-        notrack => true,
     }
 
     ferm::service { 'gluster 24008':
         proto   => 'tcp',
         port    => '24008',
         srange  => "(${firewall_rules_str})",
-        notrack => true,
     }
 
     ferm::service { 'gluster 24009':
         proto   => 'tcp',
         port    => '24009',
         srange  => "(${firewall_rules_str})",
-        notrack => true,
     }
 
     # From gluster version 10 onwards bricks ports are randomised between base_port (49152) and max_port (65535). To check ports run `sudo gluster volume status all`.
@@ -51,7 +48,6 @@ class role::gluster {
         proto   => 'tcp',
         port    => '49152:65535',
         srange  => "(${firewall_rules_str})",
-        notrack => true,
     }
 
     motd::role { 'role::gluster':
