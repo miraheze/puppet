@@ -215,9 +215,8 @@ class puppetserver(
     }
 
     ferm::service { 'puppetserver':
-        proto   => 'tcp',
-        port    => '8140',
-        notrack => true,
+        proto => 'tcp',
+        port  => '8140',
     }
 
     cron { 'puppet-git':
