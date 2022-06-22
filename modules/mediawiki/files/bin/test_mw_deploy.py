@@ -36,6 +36,10 @@ def test_check_up_debug() -> None:
     assert mwd.check_up(nolog=True, Debug='mwtask111')
 
 
+def test_check_up_debug_fail() -> None:
+    assert not mwd.check_up(nolog=True, Debug='mwtask111', domain='httpstat.us/500', force=True)
+
+
 def test_get_staging_path() -> None:
     assert mwd._get_staging_path('world') == '/srv/mediawiki-staging/w/'
 
