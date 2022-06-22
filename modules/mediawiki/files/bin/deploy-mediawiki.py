@@ -76,7 +76,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False) -> bool:
+def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443) -> bool:
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
@@ -89,12 +89,18 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
         headers = {'host': f'{Host}'}
         location = f'{Host}@{domain}'
     up = False
-    req = requests.get(f'https://{domain}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
+    if port == 443:
+        proto = 'https://'
+    else:
+        proto = 'http://'
+    req = requests.get(f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
     if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
         print(f'Status: {req.status_code}')
         print(f'Text: {"miraheze" in req.text} \n {req.text}')
+        if 'X-Served-By' not in req.headers:
+            req.headers['X-Served-By'] = 'None'
         print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
         if force:
             print(f'Ignoring canary check error on {location} due to --force')
@@ -250,7 +256,10 @@ def run(args: argparse.Namespace, start: float) -> None:
         non_zero_code(exitcodes, nolog=args.nolog)
 
         # see if we are online - exit code 3 if not
-        check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force, nolog=args.nolog)  # type: ignore
+        if args.port:
+            check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force, nolog=args.nolog, port=args.port)
+        else:
+            check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force, nolog=args.nolog)
 
     # actually set remote lists
     for option in options:
@@ -306,5 +315,6 @@ if __name__ == '__main__':
     parser.add_argument('--lang', dest='lang')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
+    parser.add_argument('--port', dest='port')
 
     run(parser.parse_args(), start)
