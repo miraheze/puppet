@@ -26,9 +26,9 @@ def run(args: argparse.Namespace) -> None:
     elif wiki == 'active':
         long = True
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/active.json {script}'
-    elif wiki == 'deleted':
+    elif wiki == 'beta':
         long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/deleted.json {script}'
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/beta.json {script}'
     elif args.extension:
         long = True
         generate = f'php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension}'
