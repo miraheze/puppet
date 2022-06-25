@@ -92,7 +92,7 @@ class role::graylog {
     }
     
     rsyslog::input::file { 'graylog':
-         path              => '/var/log/graylog-server/graylog-server.log',
+         path              => '/var/log/graylog-server/server.log',
          syslog_tag_prefix => '',
          use_udp           => true,
      }
