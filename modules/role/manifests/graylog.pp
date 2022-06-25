@@ -90,6 +90,12 @@ class role::graylog {
         port   => '12201',
         srange => "(${firewall_icinga_rules_str})",
     }
+    
+    rsyslog::input::file { 'graylog':
+         path              => '/var/log/graylog-server/graylog-server.log',
+         syslog_tag_prefix => '',
+         use_udp           => true,
+     }
 
     motd::role { 'role::graylog':
         description => 'central logging server',
