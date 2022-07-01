@@ -8,7 +8,7 @@ import os
 
 app = Flask(__name__)
 
-logging.basicConfig(filename='/var/log/letsencrypt/miraheze-renewal.log', format='%(asctime)s - %(message)s', level=logging.DEBUG, force=True)
+logging.basicConfig(filename='/var/log/ssl/miraheze-renewal.log', format='%(asctime)s - %(message)s', level=logging.DEBUG, force=True)
 
 
 @app.route('/renew', methods=['POST'])
@@ -24,8 +24,8 @@ def post():
         with lock:
             lock.acquire()
             try:
-                logging.info(f'Renewed ssl certificate: {content["SERVICEDESC"]}')
-                os.system(f'/var/lib/nagios/ssl-acme -s {content["SERVICESTATE"]} -t {content["SERVICESTATETYPE"]} -u {content["SERVICEDESC"]} >> /var/log/letsencrypt/ssl-renew.log 2>&1')
+                logging.info(f'Renewed SSL certificate: {content["SERVICEDESC"]}')
+                os.system(f'/var/lib/nagios/ssl-acme -s {content["SERVICESTATE"]} -t {content["SERVICESTATETYPE"]} -u {content["SERVICEDESC"]} >> /var/log/ssl/ssl-renew.log 2>&1')
                 lock_acquired = True
             finally:
                 lock.release()

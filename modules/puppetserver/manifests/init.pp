@@ -141,9 +141,8 @@ class puppetserver(
     }
 
     file { '/home/puppet-users':
-        ensure  => directory,
+        ensure  => absent,
         owner   => 'root',
-        group   => 'puppet-users',
         mode    => '0770',
     }
  
