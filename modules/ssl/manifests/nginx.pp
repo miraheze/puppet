@@ -2,11 +2,6 @@
 #
 # Nginx config using hiera
 class ssl::nginx {
-    nginx::site { 'letsencrypt':
-        ensure  => absent,
-        monitor => false,
-    }
-
     nginx::site { 'ssl-acme':
         ensure  => present,
         source  => 'puppet:///modules/ssl/nginx.conf',
