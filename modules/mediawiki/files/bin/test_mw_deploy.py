@@ -202,7 +202,7 @@ def test_run() -> None:
     args.ignoretime = False
     args.pull = False
     args.branch = False
-    assert mwd.prep(args) == {'servers': 'all', 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignore-time': False, 'debug-url': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'post-install': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': 'all', 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
 def test_run_log() -> None:
@@ -224,7 +224,7 @@ def test_run_log() -> None:
     args.ignoretime = False
     args.pull = False
     args.branch = False
-    assert mwd.prep(args) == {'servers': 'all', 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'port': 443}, 'branch': '', 'nolog': False, 'force': False, 'port': 443, 'ignore-time': False, 'debug-url': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'post-install': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': 'all', 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'port': 443}, 'branch': '', 'nolog': False, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
 def test_l10n_no_lang() -> None:
