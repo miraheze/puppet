@@ -6,9 +6,8 @@ import argparse
 import os
 import socket
 import time
-from sys import exit
 import subprocess
-
+from sys import exit
 from typing import TypedDict
 
 from langcodes import tag_is_valid

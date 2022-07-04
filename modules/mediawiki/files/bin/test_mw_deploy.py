@@ -1,7 +1,8 @@
+import argparse
 import importlib
 import time
-import argparse
 import socket
+
 import pytest
 mwd = importlib.import_module('deploy-mediawiki')
 
@@ -34,10 +35,6 @@ def test_check_up_no_debug_host() -> None:
         assert str(e) == 'Host or Debug must be specified'
         failed = True
     assert failed
-
-
-def test_check_up_debug_fail() -> None:
-    assert not mwd.check_up(nolog=True, Debug='mwtask111', domain='httpstat.us/500', force=True)
 
 
 def test_check_up_debug() -> None:
@@ -169,7 +166,7 @@ def test_get_envinfo() -> None:
             'mwtask111',
         ],
         'wikidbname': 'testwiki',
-        'wikiurl': 'publictestwiki.com'
+        'wikiurl': 'publictestwiki.com',
                                         }
 
 
@@ -221,6 +218,7 @@ def test_run_log() -> None:
     args.l10n = False
     args.nolog = False
     assert mwd.run(args, time.time()) == 0
+
 
 @pytest.mark.server(url='/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', response=[{'id': 1}], method='GET')
 def test_run_full_suites() -> None:

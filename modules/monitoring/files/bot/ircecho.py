@@ -20,8 +20,8 @@ import threading
 
 import ib3_auth
 
-from irc.bot import SingleServerIRCBot
 import irc.client  # for exceptions.
+from irc.bot import SingleServerIRCBot
 
 import pyinotify
 
@@ -135,7 +135,7 @@ class EchoReader():
 
 class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
     def __init__(self, chans, nickname, nickname_pass, server, port=6667, ssl=False, ipv6=True, ident_passwd=None):
-        print('Connecting to IRC server %s...' % server)
+        print(f'Connecting to IRC server {server}...')
 
         self.chans = chans
         self.nickname = nickname
@@ -189,8 +189,8 @@ class EventHandler(pyinotify.ProcessEvent):
                     bot.connection.privmsg(chans, out)
             except (irc.client.ServerNotConnectedError, irc.client.MessageTooLong,
                     UnicodeDecodeError) as e:
-                print(('Error writing: %s'
-                      'Dropping this message: "%s"') % (e, s))
+                print(f'Error writing: {e}'
+                      'Dropping this message: "{s}"')
 
     def process_IN_CREATE(self, event):
         try:
