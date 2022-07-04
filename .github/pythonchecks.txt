@@ -22,8 +22,6 @@ pytest-xdist==2.5.0
 flake8-import-order==0.18.1
 vermin==1.4.0
 coverage==6.3.2
-pytest-mock-server==0.3.0
-werkzeug==2.0.0
 ## ACTUAL
 requests==2.27.1
 filelock==3.0.12; python_version < '3.10'

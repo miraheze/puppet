@@ -1,9 +1,7 @@
 import argparse
 import importlib
-import socket
 import time
 
-import pytest
 mwd = importlib.import_module('deploy-mediawiki')
 
 
