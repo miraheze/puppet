@@ -244,7 +244,7 @@ def _get_git_commands(world: bool, pull: str | None, branch: str | None) -> list
 
 
 def prep(args: argparse.Namespace) -> deploymap:
-    map = {
+    deploymentmap = {
         'servers': [],
         'doworld': args.world,
         'loginfo': {},
@@ -266,89 +266,89 @@ def prep(args: argparse.Namespace) -> deploymap:
         },
     }
     envinfo = get_environment_info()
-    map['debug-url'] = envinfo['wikiurl']
-    map['servers'] = get_server_list(envinfo, args.servers)
+    deploymentmap['debug-url'] = envinfo['wikiurl']
+    deploymentmap['servers'] = get_server_list(envinfo, args.servers)
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     loginfo = {}
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
-    map['loginfo'] = loginfo
-    map['servers'] = loginfo['servers']
-    map['commands']['stage'] = _get_git_commands(args.world, args.pull, args.branch)
+    deploymentmap['loginfo'] = loginfo
+    deploymentmap['servers'] = loginfo['servers']
+    deploymentmap['commands']['stage'] = _get_git_commands(args.world, args.pull, args.branch)
     for option in options:  # configure rsync & custom data for repos
         if options[option]:
             if option == 'world':  # install steps for w
-                map['commands']['rebuild'].append(WikiCommand('MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', envinfo['wikidbname']))
-                map['remote']['paths'].append('/srv/mediawiki/cache/gitinfo/')
-            map['commands']['rsync'].append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
-            map['remote']['paths'].append(_get_deployed_path(option))
+                deploymentmap['commands']['rebuild'].append(WikiCommand('MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', envinfo['wikidbname']))
+                deploymentmap['remote']['paths'].append('/srv/mediawiki/cache/gitinfo/')
+            deploymentmap['commands']['rsync'].append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
+            deploymentmap['remote']['paths'].append(_get_deployed_path(option))
     if args.files:  # specfic extra files
         files = str(args.files).split(',')
         for file in files:
-            map['commands']['rsync'].append(_construct_rsync_command(time=args.ignoretime, recursive=False, location=f'/srv/mediawiki-staging/{file}', dest=f'/srv/mediawiki/{file}'))
-            map['remote']['files'].append(f'/srv/mediawiki/{file}')
+            deploymentmap['commands']['rsync'].append(_construct_rsync_command(time=args.ignoretime, recursive=False, location=f'/srv/mediawiki-staging/{file}', dest=f'/srv/mediawiki/{file}'))
+            deploymentmap['remote']['files'].append(f'/srv/mediawiki/{file}')
     if args.folders:  # specfic extra folders
         folders = str(args.folders).split(',')
         for folder in folders:
-            map['commands']['rsync'].append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
-            map['remote']['paths'].append(f'/srv/mediawiki/{folder}/')
+            deploymentmap['commands']['rsync'].append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
+            deploymentmap['remote']['paths'].append(f'/srv/mediawiki/{folder}/')
 
     if args.extensionlist:  # when adding skins/exts
-        map['commands']['rebuild'].append(WikiCommand('/srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php', envinfo['wikidbname']))
-        map['remote']['files'].append('/srv/mediawiki/cache/extension-list.json')
+        deploymentmap['commands']['rebuild'].append(WikiCommand('/srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php', envinfo['wikidbname']))
+        deploymentmap['remote']['files'].append('/srv/mediawiki/cache/extension-list.json')
 
     # These need to be setup late because dodgy
     if args.l10n:  # setup l10n
-        map['commands']['post-install'].append(WikiCommand('/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', envinfo['wikidbname']))
-        map['commands']['rebuild'].append(_construct_l10n_command(args.lang, envinfo['wikidbname']))
-        map['remote']['paths'].append('/srv/mediawiki/cache/l10n/')
-    return map
+        deploymentmap['commands']['post-install'].append(WikiCommand('/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', envinfo['wikidbname']))
+        deploymentmap['commands']['rebuild'].append(_construct_l10n_command(args.lang, envinfo['wikidbname']))
+        deploymentmap['remote']['paths'].append('/srv/mediawiki/cache/l10n/')
+    return deploymentmap
 
 
-def run(map: deploymap, start: float) -> int:
+def run(deploymentmap: deploymap, start: float) -> int:
     exitcodes = []
-    info = map['loginfo']
-    del map['loginfo']['servers']
-    if HOSTNAME in map['servers']:
-        del map['loginfo']['servers']
-        text = f'starting deploy of {info} to {map["servers"]}'
-        if not map['nolog']:
+    info = deploymentmap['loginfo']
+    del deploymentmap['loginfo']['servers']
+    if HOSTNAME in deploymentmap['servers']:
+        del deploymentmap['loginfo']['servers']
+        text = f'starting deploy of {info} to {deploymentmap["servers"]}'
+        if not deploymentmap['nolog']:
             os.system(f'/usr/local/bin/logsalmsg {text}')
         else:
             print(text)
         # setup env, git pull etc
-        exitcodes = run_batch_command(map['commands']['stage'], 'staging', exitcodes)
-        if map['doworld']:
+        exitcodes = run_batch_command(deploymentmap['commands']['stage'], 'staging', exitcodes)
+        if deploymentmap['doworld']:
             os.chdir(_get_staging_path('world'))
-            exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer install --no-dev --quiet'))   
-        non_zero_code(exitcodes, nolog=map['nolog'], leave=(not map['force']))
-        exitcodes = run_batch_command(map['commands']['rsync'], 'rsync', exitcodes)
-        non_zero_code(exitcodes, nolog=map['nolog'], leave=(not map['force']))
+            exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer install --no-dev --quiet'))
+        non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
+        exitcodes = run_batch_command(deploymentmap['commands']['rsync'], 'rsync', exitcodes)
+        non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
         # cmds to run after rsync & install (like mergemessage)
-        exitcodes = run_batch_command(map['commands']['post-install'], 'post-install', exitcodes)
-        non_zero_code(exitcodes, nolog=map['nolog'], leave=(not map['force']))
+        exitcodes = run_batch_command(deploymentmap['commands']['post-install'], 'post-install', exitcodes)
+        non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
         # update ext list + l10n
-        exitcodes = run_batch_command(map['rebuild']['stage'], 'rebuild', exitcodes)
-        non_zero_code(exitcodes, nolog=map['nolog'], leave=(not map['force']))
-    for path in map['remote']['paths']:
-        exitcodes = remote_sync_file(time=map['ignore-time'], serverlist=map['servers'], path=path, exitcodes=exitcodes)
-    for file in map['remote']['files']:
-        exitcodes = remote_sync_file(time=map['ignore-time'], serverlist=map['servers'], path=file, exitcodes=exitcodes, recursive=False)
-    fintext = f'finished deploy of {info} to {map["servers"]}'
+        exitcodes = run_batch_command(deploymentmap['rebuild']['stage'], 'rebuild', exitcodes)
+        non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
+    for path in deploymentmap['remote']['paths']:
+        exitcodes = remote_sync_file(time=deploymentmap['ignore-time'], serverlist=deploymentmap['servers'], path=path, exitcodes=exitcodes)
+    for file in deploymentmap['remote']['files']:
+        exitcodes = remote_sync_file(time=deploymentmap['ignore-time'], serverlist=deploymentmap['servers'], path=file, exitcodes=exitcodes, recursive=False)
+    fintext = f'finished deploy of {info} to {deploymentmap["servers"]}'
 
     failed = non_zero_code(ec=exitcodes, leave=False)
     # see if we are online - exit code 3 if not
-    if map['port']:
-        check_up(Debug=None, Host=map['debug-url'], verify=False, force=map['force'], nolog=map['nolog'], port=map['port'])
+    if deploymentmap['port']:
+        check_up(Debug=None, Host=deploymentmap['debug-url'], verify=False, force=deploymentmap['force'], nolog=deploymentmap['nolog'], port=deploymentmap['port'])
     else:
-        check_up(Debug=None, Host=map['debug-url'], verify=False, force=map['force'], nolog=map['nolog'])
+        check_up(Debug=None, Host=deploymentmap['debug-url'], verify=False, force=deploymentmap['force'], nolog=deploymentmap['nolog'])
     if failed:
         fintext += f' - FAIL: {exitcodes}'
     else:
         fintext += ' - SUCCESS'
     fintext += f' in {str(int(time.time() - start))}s'
-    if not map['nolog']:
+    if not deploymentmap['nolog']:
         os.system(f'/usr/local/bin/logsalmsg {fintext}')
     else:
         print(fintext)
