@@ -221,8 +221,10 @@ def test_run_log() -> None:
 def test_l10n_no_lang() -> None:
     assert str(mwd._construct_l10n_command(None, 'testwiki')) == 'sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki=testwiki'
 
+
 def test_l10n_one_lang() -> None:
     assert str(mwd._construct_l10n_command('en', 'testwiki')) == 'sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --lang=en --quiet --wiki=testwiki'
+
 
 def test_l10n_multi_lang() -> None:
     assert str(mwd._construct_l10n_command('en,es', 'testwiki')) == 'sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --lang=en,es --quiet --wiki=testwiki'
