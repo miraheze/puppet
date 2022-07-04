@@ -202,7 +202,53 @@ def test_prep() -> None:
     args.ignoretime = False
     args.pull = False
     args.branch = False
-    assert mwd.prep(args) == {'servers': 'all', 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+
+
+def test_prep_single_server() -> None:
+    parser = argparse.ArgumentParser()
+    args, unknown = parser.parse_known_args()
+    del unknown
+    args.servers = 'mw101'
+    args.config = False
+    args.world = False
+    args.landing = False
+    args.errorpages = False
+    args.files = ''
+    args.folders = ''
+    args.extensionlist = False
+    args.l10n = False
+    args.nolog = True
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    assert mwd.prep(args) == {'servers': ['mw101'], 'doworld': False, 'loginfo': {'servers': 'mw101', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+
+
+def test_prep_single_server() -> None:
+    parser = argparse.ArgumentParser()
+    args, unknown = parser.parse_known_args()
+    del unknown
+    args.servers = 'mw101,mw102'
+    args.config = False
+    args.world = False
+    args.landing = False
+    args.errorpages = False
+    args.files = ''
+    args.folders = ''
+    args.extensionlist = False
+    args.l10n = False
+    args.nolog = True
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    assert mwd.prep(args) == {'servers': ['mw101', 'mw102'], 'doworld': False, 'loginfo': {'servers': 'mw101', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+
+
 
 
 def test_prep_log() -> None:
@@ -224,7 +270,7 @@ def test_prep_log() -> None:
     args.ignoretime = False
     args.pull = False
     args.branch = False
-    assert mwd.prep(args) == {'servers': 'all', 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'port': 443}, 'branch': '', 'nolog': False, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'port': 443}, 'branch': '', 'nolog': False, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
 def test_prep_world() -> None:
@@ -332,7 +378,7 @@ def test_prep_landing() -> None:
             'files': [],
             'paths': ['/srv/mediawiki/landing/'],
         },
-        'servers': 'all',
+        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
     }
 
 
@@ -392,7 +438,7 @@ def test_prep_world_extlist() -> None:
             'files': ['/srv/mediawiki/cache/extension-list.json'],
             'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/'],
         },
-        'servers': 'all',
+        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
     }
 
 
@@ -442,7 +488,7 @@ def test_prep_folder_test() -> None:
             'files': [],
             'paths': ['/srv/mediawiki/test/'],
         },
-        'servers': 'all',
+        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
     }
 
 
@@ -492,7 +538,7 @@ def test_prep_file_test() -> None:
             'files': ['/srv/mediawiki/test.txt'],
             'paths': [],
         },
-        'servers': 'all',
+        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
     }
 
 
@@ -553,7 +599,7 @@ def test_prep_world_l10n() -> None:
             'files': [],
             'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/', '/srv/mediawiki/cache/l10n/'],
         },
-        'servers': 'all',
+        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
     }
 
 

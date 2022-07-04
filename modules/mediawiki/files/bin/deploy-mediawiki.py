@@ -300,7 +300,6 @@ def prep(args: argparse.Namespace) -> deploymap:
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
     deploymentmap['loginfo'] = loginfo
-    deploymentmap['servers'] = loginfo['servers']
     deploymentmap['commands']['stage'] = _get_git_commands(args.world, args.pull, args.branch)
     for option in options:  # configure rsync & custom data for repos
         if options[option]:
@@ -335,10 +334,11 @@ def prep(args: argparse.Namespace) -> deploymap:
 def run(deploymentmap: deploymap, start: float) -> int:
     exitcodes: list[int] = []
     info = deploymentmap['loginfo']
+    pretty_servers = deploymentmap['loginfo']['servers']
     del deploymentmap['loginfo']['servers']
     if HOSTNAME in deploymentmap['servers']:
         del deploymentmap['loginfo']['servers']
-        text = f'starting deploy of {info} to {deploymentmap["servers"]}'
+        text = f'starting deploy of {info} to {pretty_servers}'
         if not deploymentmap['nolog']:
             os.system(f'/usr/local/bin/logsalmsg {text}')
         else:
@@ -361,7 +361,7 @@ def run(deploymentmap: deploymap, start: float) -> int:
         exitcodes = remote_sync_file(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=path, exitcodes=exitcodes)
     for file in deploymentmap['remote']['files']:
         exitcodes = remote_sync_file(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=file, exitcodes=exitcodes, recursive=False)
-    fintext = f'finished deploy of {info} to {deploymentmap["servers"]}'
+    fintext = f'finished deploy of {info} to {pretty_servers}'
 
     failed = non_zero_code(ec=exitcodes, leave=False)
     # see if we are online - exit code 3 if not
