@@ -33,6 +33,10 @@ class EnvironmentList(TypedDict):
 class ProcessList(TypedDict):
     operations: list[subprocess.Popen]
 
+class WikiCommand:
+    def __init__(self, command: str, wiki: str) -> WikiCommand:
+        self = f'sudo -u {DEPLOYUSER} {command} --wiki={wiki}'
+
 
 beta: Environment = {
     'wikidbname': 'betawiki',
@@ -73,7 +77,7 @@ def get_server_list(envinfo: Environment, servers: str) -> list[str]:
     return servers.split(',')
 
 
-def run_batch_command(commands: list[str], tag: str, exitcodes: list[int]) -> list[int]:
+def run_batch_command(commands: list[str | WikiCommand], tag: str, exitcodes: list[int]) -> list[int]:
     processes: ProcessList = {'operations': []}
     print(f'Start {tag} commands.')
     for operation in commands:
@@ -89,7 +93,7 @@ def run_batch_command(commands: list[str], tag: str, exitcodes: list[int]) -> li
     return exitcodes
 
 
-def run_command(cmd: str) -> int:
+def run_command(cmd: str | WikiCommand) -> int:
     start = time.time()
     print(f'Execute: {cmd}')
     ec = os.system(cmd)
@@ -206,12 +210,12 @@ def run(args: argparse.Namespace, start: float) -> int:
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     exitcodes: list[int] = []
     loginfo = {}
-    rsyncpaths = []
-    rsyncfiles = []
-    rsync = []
-    rebuild = []
-    postinstall = []
-    stage = []
+    rsyncpaths: list[str] = []
+    rsyncfiles: list[str] = []
+    rsync: list[str] = []
+    rebuild: list[WikiCommand] = []
+    postinstall: list[WikiCommand] = []
+    stage: list[str] = []
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
@@ -249,7 +253,7 @@ def run(args: argparse.Namespace, start: float) -> int:
                 if option == 'world':  # install steps for w
                     os.chdir(_get_staging_path('world'))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer install --no-dev --quiet'))
-                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
+                    rebuild.append(WikiCommand('MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', {envinfo["wikidbname"]}))
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
