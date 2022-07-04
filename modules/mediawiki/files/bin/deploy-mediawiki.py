@@ -44,6 +44,32 @@ class WikiCommand:
         return f'sudo -u {DEPLOYUSER} php {self.command} --wiki={self.wiki}'  # noqa: F841
 
 
+class CommandMap(TypedDict):
+    stage: list[str]
+    rsync: list[str]
+    postinstall: list[WikiCommand]
+    rebuild: list[WikiCommand]
+
+
+class RemoteMap(TypedDict):
+    paths: list[str]
+    files: list[str]
+
+
+class deploymap(TypedDict):
+    servers: list[str]
+    doworld: bool
+    loginfo: dict
+    branch: str
+    nolog: bool
+    force: bool
+    port: int
+    ignoretime: bool
+    debugurl: str
+    commands: CommandMap
+    remote: RemoteMap
+
+
 beta: Environment = {
     'wikidbname': 'betawiki',
     'wikiurl': 'beta.betaheze.org',
@@ -252,12 +278,12 @@ def prep(args: argparse.Namespace) -> deploymap:
         'nolog': args.nolog,
         'force': args.force,
         'port': args.port,
-        'ignore-time': args.ignoretime,
-        'debug-url': '',
+        'ignoretime': args.ignoretime,
+        'debugurl': '',
         'commands': {
             'stage': [],
             'rsync': [],
-            'post-install': [],
+            'postinstall': [],
             'rebuild': [],
         },
         'remote': {
@@ -266,7 +292,7 @@ def prep(args: argparse.Namespace) -> deploymap:
         },
     }
     envinfo = get_environment_info()
-    deploymentmap['debug-url'] = envinfo['wikiurl']
+    deploymentmap['debugurl'] = envinfo['wikiurl']
     deploymentmap['servers'] = get_server_list(envinfo, args.servers)
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     loginfo = {}
@@ -300,7 +326,7 @@ def prep(args: argparse.Namespace) -> deploymap:
 
     # These need to be setup late because dodgy
     if args.l10n:  # setup l10n
-        deploymentmap['commands']['post-install'].append(WikiCommand('/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', envinfo['wikidbname']))
+        deploymentmap['commands']['postinstall'].append(WikiCommand('/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', envinfo['wikidbname']))
         deploymentmap['commands']['rebuild'].append(_construct_l10n_command(args.lang, envinfo['wikidbname']))
         deploymentmap['remote']['paths'].append('/srv/mediawiki/cache/l10n/')
     return deploymentmap
@@ -326,23 +352,23 @@ def run(deploymentmap: deploymap, start: float) -> int:
         exitcodes = run_batch_command(deploymentmap['commands']['rsync'], 'rsync', exitcodes)
         non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
         # cmds to run after rsync & install (like mergemessage)
-        exitcodes = run_batch_command(deploymentmap['commands']['post-install'], 'post-install', exitcodes)
+        exitcodes = run_batch_command(deploymentmap['commands']['postinstall'], 'post-install', exitcodes)
         non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
         # update ext list + l10n
         exitcodes = run_batch_command(deploymentmap['rebuild']['stage'], 'rebuild', exitcodes)
         non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
     for path in deploymentmap['remote']['paths']:
-        exitcodes = remote_sync_file(time=deploymentmap['ignore-time'], serverlist=deploymentmap['servers'], path=path, exitcodes=exitcodes)
+        exitcodes = remote_sync_file(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=path, exitcodes=exitcodes)
     for file in deploymentmap['remote']['files']:
-        exitcodes = remote_sync_file(time=deploymentmap['ignore-time'], serverlist=deploymentmap['servers'], path=file, exitcodes=exitcodes, recursive=False)
+        exitcodes = remote_sync_file(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=file, exitcodes=exitcodes, recursive=False)
     fintext = f'finished deploy of {info} to {deploymentmap["servers"]}'
 
     failed = non_zero_code(ec=exitcodes, leave=False)
     # see if we are online - exit code 3 if not
     if deploymentmap['port']:
-        check_up(Debug=None, Host=deploymentmap['debug-url'], verify=False, force=deploymentmap['force'], nolog=deploymentmap['nolog'], port=deploymentmap['port'])
+        check_up(Debug=None, Host=deploymentmap['debugurl'], verify=False, force=deploymentmap['force'], nolog=deploymentmap['nolog'], port=deploymentmap['port'])
     else:
-        check_up(Debug=None, Host=deploymentmap['debug-url'], verify=False, force=deploymentmap['force'], nolog=deploymentmap['nolog'])
+        check_up(Debug=None, Host=deploymentmap['debugurl'], verify=False, force=deploymentmap['force'], nolog=deploymentmap['nolog'])
     if failed:
         fintext += f' - FAIL: {exitcodes}'
     else:
