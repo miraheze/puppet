@@ -271,7 +271,7 @@ def run(args: argparse.Namespace, start: float) -> int:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extensionlist:  # when adding skins/exts
-            rebuild.append(WikiCommand('/srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php',envinfo["wikidbname"]))
+            rebuild.append(WikiCommand('/srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php', envinfo['wikidbname']))
 
         # move staged content to live
         exitcodes = run_batch_command(rsync, 'rsync', exitcodes)
@@ -288,7 +288,7 @@ def run(args: argparse.Namespace, start: float) -> int:
                 lang = ''
 
             postinstall.append(WikiCommand('/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', envinfo['wikidbname']))
-            rebuild.append(WikiCommand('/srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet', envinfo['wikidbname']))
+            rebuild.append(WikiCommand(f'/srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet', envinfo['wikidbname']))
 
         # cmds to run after rsync & install (like mergemessage)
         exitcodes = run_batch_command(postinstall, 'post-install', exitcodes)
