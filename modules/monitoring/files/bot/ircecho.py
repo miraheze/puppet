@@ -58,7 +58,7 @@ class EchoReader():
             ';': 'UNIQ_' + self.get_unique_string() + '_QINU',
             ':': 'UNIQ_' + self.get_unique_string() + '_QINU',
             ',': 'UNIQ_' + self.get_unique_string() + '_QINU',
-                        }
+                       }
 
         if self.infile:
             print('Using infile')

@@ -5,8 +5,8 @@ from __future__ import annotations
 import argparse
 import os
 import socket
-import time
 import subprocess
+import time
 from sys import exit
 from typing import TypedDict
 

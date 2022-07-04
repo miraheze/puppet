@@ -1,7 +1,7 @@
 import argparse
 import importlib
-import time
 import socket
+import time
 
 import pytest
 mwd = importlib.import_module('deploy-mediawiki')
@@ -167,19 +167,19 @@ def test_get_envinfo() -> None:
         ],
         'wikidbname': 'testwiki',
         'wikiurl': 'publictestwiki.com',
-                                        }
+                                         }
 
 
 def test_get_servers_all() -> None:
     assert mwd.get_server_list(mwd.get_environment_info(), 'all') == [
-                                              'mw101',
-                                              'mw102',
-                                              'mw111',
-                                              'mw112',
-                                              'mw121',
-                                              'mw122',
-                                              'mwtask111',
-                                                                      ]
+        'mw101',
+        'mw102',
+        'mw111',
+        'mw112',
+        'mw121',
+        'mw122',
+        'mwtask111',
+                                                                     ]
 
 
 def test_get_servers_two() -> None:
