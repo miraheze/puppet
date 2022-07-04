@@ -270,9 +270,6 @@ def prep(args: argparse.Namespace) -> deploymap:
     map['servers'] = get_server_list(envinfo, args.servers)
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     loginfo = {}
-    rsync: list[str] = []
-    rebuild: list[WikiCommand] = []
-    postinstall: list[WikiCommand] = []
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
@@ -307,7 +304,6 @@ def prep(args: argparse.Namespace) -> deploymap:
         map['commands']['rebuild'].append(_construct_l10n_command(args.lang, envinfo['wikidbname']))
         map['remote']['paths'].append('/srv/mediawiki/cache/l10n/')
     return map
-
 
 
 def run(map: deploymap, start: float) -> int:
@@ -360,6 +356,7 @@ def run(map: deploymap, start: float) -> int:
         return 1
     return 0
 
+
 if __name__ == '__main__':
     start = time.time()
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -379,6 +376,5 @@ if __name__ == '__main__':
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
-
 
     exit(run(prep(parser.parse_args()), start))

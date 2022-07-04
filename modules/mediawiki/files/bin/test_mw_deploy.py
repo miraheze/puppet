@@ -1,6 +1,5 @@
 import argparse
 import importlib
-import time
 
 mwd = importlib.import_module('deploy-mediawiki')
 
@@ -259,7 +258,7 @@ def test_pull_array_world() -> None:
         'sudo -u www-data git -C /srv/mediawiki-staging/landing/ pull --quiet',
         'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet',
         'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet',
-   ]
+    ]
 
 
 def test_pull_single_world() -> None:
