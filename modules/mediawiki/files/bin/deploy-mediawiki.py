@@ -273,18 +273,22 @@ def run(args: argparse.Namespace, start: float) -> int:
                     rebuild.append(WikiCommand('MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', envinfo['wikidbname']))
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
+                rsyncpaths.append(_get_deployed_path(option))
         non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
         if args.files:  # specfic extra files
             files = str(args.files).split(',')
             for file in files:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, recursive=False, location=f'/srv/mediawiki-staging/{file}', dest=f'/srv/mediawiki/{file}'))
+                rsyncfiles.append(f'/srv/mediawiki/{file}')
         if args.folders:  # specfic extra folders
             folders = str(args.folders).split(',')
             for folder in folders:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
+                rsyncpaths.append(f'/srv/mediawiki/{folder}/')
 
         if args.extensionlist:  # when adding skins/exts
             rebuild.append(WikiCommand('/srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php', envinfo['wikidbname']))
+            rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
 
         # move staged content to live
         exitcodes = run_batch_command(rsync, 'rsync', exitcodes)
@@ -293,6 +297,7 @@ def run(args: argparse.Namespace, start: float) -> int:
         if args.l10n:  # setup l10n
             postinstall.append(WikiCommand('/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', envinfo['wikidbname']))
             rebuild.append(_construct_l10n_command(args.lang, envinfo['wikidbname']))
+            rsyncpaths.append('/srv/mediawiki/cache/l10n/')
 
         # cmds to run after rsync & install (like mergemessage)
         exitcodes = run_batch_command(postinstall, 'post-install', exitcodes)
@@ -306,21 +311,6 @@ def run(args: argparse.Namespace, start: float) -> int:
             check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force, nolog=args.nolog, port=args.port)
         else:
             check_up(Debug=None, Host=envinfo['wikiurl'], verify=False, force=args.force, nolog=args.nolog)
-
-    # actually set remote lists
-    for option in options:
-        if options[option]:
-            rsyncpaths.append(_get_deployed_path(option))
-    if args.files:
-        for file in str(args.files).split(','):
-            rsyncfiles.append(f'/srv/mediawiki/{file}')
-    if args.folders:
-        for folder in str(args.folders).split(','):
-            rsyncpaths.append(f'/srv/mediawiki/{folder}/')
-    if args.extensionlist:
-        rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
-    if args.l10n:
-        rsyncpaths.append('/srv/mediawiki/cache/l10n/')
 
     for path in rsyncpaths:
         exitcodes = remote_sync_file(time=args.ignoretime, serverlist=servers, path=path, exitcodes=exitcodes)
