@@ -35,7 +35,7 @@ def beautify_message(m):
     m = re.sub(r'(\w+): \1:\b', r'\1', m)   # Dedupe severity
     m = re.sub(r' {2,}', ' ', m)            # Collapse whitespace
     m = m.replace(': -', ':')               # Combine separators
-    return m.strip(':-')                       # Strip trailing separators
+    return m.strip(':-')                    # Strip trailing separators
 
 
 class EchoNotifier(threading.Thread):
