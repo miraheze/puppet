@@ -35,5 +35,5 @@ jobs:
           pytest -vv -n auto
           mypy modules/mediawiki modules/ssl modules/monitoring --ignore-missing-imports
           coverage run --branch -m pytest modules/mediawiki
-          coverage report --fail-under=35
+          coverage report --fail-under=70
           vermin -v --eval-annotations --backport argparse --backport importlib --backport ipaddress --backport typing --no-parse-comments . 
