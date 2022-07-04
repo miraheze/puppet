@@ -2,13 +2,9 @@ jobchron: false
 jobrunner: false
 jobrunner::intensive: false
 mailserver: false
-arcanist: false
-puppetmaster: false
 puppetserver: false
-mediawiki::branch: 'REL1_37'
+mediawiki::branch: 'REL1_38'
 mediawiki::branch_mw_config: 'master'
-letsencrypt: false
-use_gluster_new: true
 puppetserver_hostname: puppet111.miraheze.org
 role::salt::minions::salt_master: 'puppet111.miraheze.org'
 dns: false
@@ -73,3 +69,15 @@ varnish::backends:
     port: 8203
     probe: false
     pool: false
+  puppet111:
+    port: 8204
+    probe: false
+    pool: false
+  reports121:
+    port: 8205
+    probe: false
+    pool: false
+
+# Logging
+base::syslog::syslog_daemon: rsyslog
+base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]

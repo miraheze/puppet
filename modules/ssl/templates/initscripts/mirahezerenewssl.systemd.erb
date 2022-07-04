@@ -1,0 +1,11 @@
+[Unit]
+Description=Miraheze Renewing SSL REST api service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/bin/mirahezerenewssl.py
+User=root
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

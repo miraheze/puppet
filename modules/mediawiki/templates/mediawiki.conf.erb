@@ -1,8 +1,9 @@
 server {
-	listen 80 backlog=1024;
-	listen [::]:80 ipv6only=on backlog=1024;
-	listen 443 ssl http2 backlog=1024;
-	listen [::]:443 ssl http2 ipv6only=on backlog=1024;
+	# We can only set backlog once per port (so this will be applied to the others below)
+	listen 80 deferred backlog=4096;
+	listen [::]:80 deferred ipv6only=on backlog=4096;
+	listen 443 ssl deferred http2 backlog=4096;
+	listen [::]:443 deferred ssl http2 ipv6only=on backlog=4096;
 
 	server_name miraheze.org www.miraheze.org;
 	root /srv/mediawiki/landing;
@@ -30,11 +31,6 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	location /.well-known/acme-challenge/ {
-		alias /var/www/challenges/;
-		try_files $uri =404;
-	}
-
 	location ~ ^/(\.git|config) {
 		deny all;
 	}
@@ -56,10 +52,6 @@ server {
 
 	location /donate {
 		return 301 https://donate.miraheze.org;
-	}
-
-	location /.well-known/change-password {
-		return 301 /wiki/Special:ChangePassword;
 	}
 }
 
@@ -125,10 +117,6 @@ server {
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
 	}
-
-	location /.well-known/change-password {
-		return 301 /wiki/Special:ChangePassword;
-	}
 }
 
 server {
@@ -173,11 +161,11 @@ server {
  	}
 
 	location = /favicon.ico {
-		try_files /../../usr/share/nginx/favicons/$host.ico /../../usr/share/nginx/favicons/default.ico;
+		try_files /../../srv/mediawiki/favicons/$host.ico /../../srv/mediawiki/favicons/default.ico;
 	}
 
 	location = /apple-touch-icon.png {
-		try_files /../../usr/share/nginx/favicons/apple-touch-icon-$host.png /../../usr/share/nginx/favicons/apple-touch-icon-default.png;
+		try_files /../../srv/mediawiki/favicons/apple-touch-icon-$host.png /../../srv/mediawiki/favicons/apple-touch-icon-default.png;
 	}
 
 	location /private/ {
@@ -269,10 +257,6 @@ server {
 
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
-	}
-
-	location /.well-known/change-password {
-		return 301 /wiki/Special:ChangePassword;
 	}
 }
 

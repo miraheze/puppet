@@ -95,9 +95,16 @@ class mariadb::config(
         override => true,
         restart  => false,
     }
+    
+    rsyslog::input::file { 'mysql':
+        path              => '/var/log/mysql/mysql-error.log',
+        syslog_tag_prefix => '',
+        use_udp           => true,
+    }
 
     monitoring::services { 'MariaDB':
         check_command => 'mysql',
+        docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars          => {
             mysql_hostname  => $::fqdn,
             mysql_username  => 'icinga',

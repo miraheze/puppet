@@ -90,14 +90,12 @@ class ferm {
     # Starting with Bullseye iptables default to the nft backend, but for ferm
     # we need the legacy backend
     if os_version('debian >= bullseye') {
-        exec { "update_alternative_iptables":
-            command => "/usr/bin/update-alternatives --force --set iptables /usr/sbin/iptables-legacy",
-            unless  => "/usr/bin/update-alternatives --query iptables | /bin/grep 'Value: /usr/sbin/iptables-legacy'",
+        alternatives::select { 'iptables':
+            path => '/usr/sbin/iptables-legacy',
         }
 
-        exec { "update_alternative_ip6tables":
-            command => "/usr/bin/update-alternatives --force --set ip6tables /usr/sbin/ip6tables-legacy",
-            unless  => "/usr/bin/update-alternatives --query ip6tables | /bin/grep 'Value: /usr/sbin/ip6tables-legacy'",
+        alternatives::select { 'ip6tables':
+            path => '/usr/sbin/ip6tables-legacy',
         }
     }
 

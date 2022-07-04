@@ -16,6 +16,7 @@ class mediawiki::nginx {
         require => Nginx::Conf['mediawiki-includes'],
     }
 
-    include ssl::wildcard
+    ssl::wildcard { 'mediawiki nginx wildcard': }
+
     include ssl::hiera
 }

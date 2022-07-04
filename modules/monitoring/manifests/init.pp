@@ -1,5 +1,5 @@
 class monitoring (
-    String $db_host               = 'db13.miraheze.org',
+    String $db_host,
     String $db_name               = 'icinga',
     String $db_user               = 'icinga2',
     String $db_password           = undef,
@@ -7,6 +7,14 @@ class monitoring (
     String $ticket_salt           = '',
     Optional[String] $icinga2_api_bind_host = undef,
 ) {
+    ensure_packages([
+        'nagios-nrpe-plugin',
+        'python3-dnspython',
+        'python3-filelock',
+        'python3-flask',
+        'python3-tldextract',
+    ])
+
     group { 'nagios':
         ensure    => present,
         name      => 'nagios',
@@ -42,10 +50,13 @@ class monitoring (
         logoutput   => true,
     }
 
-    package { "mariadb-client-${version}":
-        ensure  => present,
-        require => Apt::Source['mariadb_apt'],
-    }
+    ensure_packages(
+        "mariadb-client-${version}",
+        {
+            ensure  => present,
+            require => Apt::Source['mariadb_apt'],
+        },
+    )
 
     class { '::icinga2':
         manage_repo => true,
@@ -234,10 +245,6 @@ class monitoring (
         mode   => '0400',
     }
 
-    package { 'nagios-nrpe-plugin':
-        ensure => present,
-    }
-
     # includes a irc bot to relay messages from icinga to irc
     class { '::monitoring::ircecho':
         mirahezebots_password => $mirahezebots_password,
@@ -251,10 +258,6 @@ class monitoring (
         require => Package['nagios-nrpe-plugin'],
     }
 
-    package { 'python3-dnspython':
-        ensure => present,
-    }
-
     file { '/usr/lib/nagios/plugins/check_reverse_dns.py':
         source  => 'puppet:///modules/monitoring/check_reverse_dns.py',
         owner   => 'root',
@@ -263,13 +266,7 @@ class monitoring (
         require => Package['nagios-nrpe-plugin'],
     }
 
-    package { 'python3-tldextract':
-        ensure => present,
-    }
-
     # Setup webhook for grafana to call
-    require_package('python3-flask', 'python3-filelock')
-
     file { '/usr/local/bin/grafana-webhook.py':
         ensure  => present,
         source  => 'puppet:///modules/monitoring/grafana-webhook.py',

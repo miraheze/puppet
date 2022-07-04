@@ -1,0 +1,8 @@
+# NOTE: This file is managed by Puppet.
+#
+# Provide a UDP syslog input to accept JSON payloads (in the syslog message) and forwards them to
+# Graylog.
+
+module(load="imudp")
+
+input(type="imudp" port="10514" address="localhost" ruleset="rsyslog_udp_localhost_rule_parse_json")

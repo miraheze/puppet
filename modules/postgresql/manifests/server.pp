@@ -32,23 +32,22 @@ class postgresql::server(
     String $pgversion        = '9.6',
 ) {
 
-    package { [
-        "postgresql-${pgversion}",
-        "postgresql-${pgversion}-debversion",
-        "postgresql-client-${pgversion}",
-        "postgresql-contrib-${pgversion}",
-        'libdbi-perl',
-        'libdbd-pg-perl',
-        'check-postgres',
-    ]:
-        ensure => $ensure,
-    }
+    ensure_packages(
+        [
+            "postgresql-${pgversion}",
+            "postgresql-${pgversion}-debversion",
+            "postgresql-client-${pgversion}",
+            "postgresql-contrib-${pgversion}",
+            'check-postgres',
+            'libdbd-pg-perl',
+            'libdbi-perl',
+        ],
+        {
+            ensure => $ensure,
+        },
+    )
     
-    if os_version('debian >= buster') {
-        require_package('pgtop')
-    } else {
-        require_package('ptop')
-    }
+    ensure_packages('pgtop')
 
     class { '::postgresql::dirs':
         ensure    => $ensure,
@@ -65,7 +64,7 @@ class postgresql::server(
     }
 
     if $use_ssl {
-        include ssl::wildcard
+        ssl::wildcard { 'postgresql wildcard': }
 
          file { "/etc/postgresql/${pgversion}/main/ssl":
              ensure => directory,

@@ -11,7 +11,8 @@
                 "RequestWikiAIJob",
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized",
-                "RecordLintJob"
+                "RecordLintJob",
+                "refreshLinks"
             ]
         }
     },
@@ -38,7 +39,8 @@
             "*": "192M",
             "DataDumpGenerateJob": "300M",
             "RequestWikiAIJob": "1750M",
-            "webVideoTranscode": "300M"
+            "webVideoTranscode": "300M",
+            "refreshLinks": "500M"
         }
     },
 
@@ -56,5 +58,5 @@
     },
 
     // Command used to launch a runner for a given job queue
-    "dispatcher": "nice -15 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
+    "dispatcher": "php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --maxjobs 1 --result=json"
 }

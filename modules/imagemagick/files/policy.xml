@@ -45,17 +45,17 @@
   exceeds policy maximum so memory limit is 1GB).
 -->
 <policymap>
-  <!-- <policy domain="resource" name="temporary-path" value="/tmp"/> -->
-  <!-- <policy domain="resource" name="map" value="4GiB"/> -->
-  <!-- <policy domain="resource" name="area" value="1GB"/> -->
-  <!-- <policy domain="resource" name="disk" value="16EB"/> -->
-  <!-- <policy domain="resource" name="file" value="768"/> -->
-  <!-- <policy domain="resource" name="thread" value="4"/> -->
-  <!-- <policy domain="resource" name="throttle" value="0"/> -->
-  <!-- <policy domain="resource" name="time" value="3600"/> -->
-  <!-- <policy domain="system" name="precision" value="6"/> -->
+  <!-- <policy domain="resource" name="temporary-path" value="/tmp" /> -->
+  <!-- <policy domain="resource" name="area" value="1GB" /> -->
+  <!-- <policy domain="resource" name="file" value="768" /> -->
+  <!-- <policy domain="system" name="precision" value="6" /> -->
+  <policy domain="resource" name="disk" value="1GiB" />
   <policy domain="resource" name="memory" value="128MiB" />
-  <policy domain="cache" name="shared-secret" value="passphrase" />
+  <policy domain="resource" name="map" value="256MiB" />
+  <policy domain="resource" name="time" value="120" />
+  <policy domain="resource" name="thread" value="2" />
+  <policy domain="resource" name="throttle" value="5" />
+  <policy domain="cache" name="shared-secret" value="passphrase" stealth="True" />
   <policy domain="coder" rights="none" pattern="EPHEMERAL" />
   <policy domain="coder" rights="none" pattern="URL" />
   <policy domain="coder" rights="none" pattern="HTTPS" />

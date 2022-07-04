@@ -20,7 +20,7 @@ jobs:
         with:
           submodules: true
       - name: Python ${{ matrix.python }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }} 
       - name: Install packages
@@ -31,7 +31,8 @@ jobs:
           pip install -r .github/pythonchecks.txt
       - name: Run tests
         run: |
-          flake8 modules/mediawiki --ignore=E501,W503,SFS301
+          flake8 modules/mediawiki modules/ssl --ignore=E501,W503,SFS301
+          pytest -vv -n auto
+          mypy modules/mediawiki modules/ssl --ignore-missing-imports
           coverage run --branch -m pytest modules/mediawiki
           coverage report --fail-under=35
-          mypy modules/mediawiki --ignore-missing-imports

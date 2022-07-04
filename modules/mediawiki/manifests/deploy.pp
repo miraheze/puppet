@@ -40,6 +40,16 @@ class mediawiki::deploy {
         }
     }
 
+    ensure_packages(
+        'langcodes',
+        {
+            ensure   => '3.3.0',
+            provider => 'pip3',
+            before   => File['/usr/local/bin/deploy-mediawiki'],
+            require  => Package['python3-pip'],
+	},
+    )
+
     file { '/srv/mediawiki-staging':
         ensure => 'directory',
         owner  => 'www-data',
@@ -133,14 +143,5 @@ class mediawiki::deploy {
         user        => www-data,
         subscribe   => Git::Clone['ErrorPages'],
         require     => File['/usr/local/bin/deploy-mediawiki'],
-    }
-
-    cron { 'l10n-modern-deploy':
-        ensure  => 'present',
-        command => "/usr/local/bin/deploy-mediawiki --l10nupdate --servers=${lookup(mediawiki::default_sync)}",
-        user    => 'www-data',
-        minute  => '0',
-        hour    => '23',
-        require => File['/usr/local/bin/deploy-mediawiki'],
     }
 }

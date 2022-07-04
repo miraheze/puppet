@@ -83,7 +83,7 @@ define gluster::mount (
         file { 'glusterfs.pem':
             ensure => 'present',
             source => 'puppet:///ssl/certificates/wildcard.miraheze.org-2020-2.crt',
-            path   => '/etc/ssl/glusterfs.pem',
+            path   => '/usr/lib/ssl/glusterfs.pem',
             owner  => 'root',
             group  => 'root',
         }
@@ -93,7 +93,7 @@ define gluster::mount (
         file { 'glusterfs.key':
             ensure => 'present',
             source => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
-            path   => '/etc/ssl/glusterfs.key',
+            path   => '/usr/lib/ssl/glusterfs.key',
             owner  => 'root',
             group  => 'root',
             mode   => '0660',
@@ -104,7 +104,7 @@ define gluster::mount (
         file { 'glusterfs.ca':
             ensure => 'present',
             source => 'puppet:///ssl/ca/Sectigo.crt',
-            path   => '/etc/ssl/glusterfs.ca',
+            path   => '/usr/lib/ssl/glusterfs.ca',
             owner  => 'root',
             group  => 'root',
         }
@@ -123,12 +123,7 @@ define gluster::mount (
         }
     }
 
-    $only_ipv6 = lookup('gluster::only_ipv6', {'default_value' => false})
-    $ipv6 = $only_ipv6 ? {
-        true   => 'xlator-option=transport.address-family=inet6',
-        default => '',
-    }
-    $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec,${ipv6}"
+    $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec,xlator-option=transport.address-family=inet6"
 
     $mount_options = $options ? {
         undef   => $base_options,

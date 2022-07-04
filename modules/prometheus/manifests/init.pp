@@ -5,7 +5,7 @@ class prometheus (
     Integer $port = 9100
 ) {
 
-    require_package('prometheus')
+    ensure_packages('prometheus')
 
     file { '/etc/default/prometheus':
         source  => 'puppet:///modules/prometheus/prometheus.default.conf',
@@ -58,7 +58,7 @@ class prometheus (
     }
 
     file { '/etc/prometheus/prometheus.yml':
-        content => ordered_yaml($common_config),
+        content => to_yaml($common_config),
         notify  => Exec['prometheus-reload']
     }
 
@@ -68,6 +68,9 @@ class prometheus (
     }
 
     $servers = query_nodes('Class[Base]')
+              .flatten()
+              .unique()
+              .sort()
 
     file { '/etc/prometheus/targets/nodes.yaml':
         ensure => present,

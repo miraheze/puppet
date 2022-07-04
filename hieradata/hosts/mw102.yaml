@@ -1,20 +1,35 @@
 users::groups:
   - mediawiki-admins
   - mediawiki-roots
-jobrunner: false
-mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
+
 contactgroups: ['sre', 'mediawiki']
+
+jobrunner: true
+mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
+
 role::mediawiki::use_strict_firewall: true
-mediawiki::php::fpm::childs: 16
-mediawiki::php::fpm::fpm_min_restart_threshold: 8
-mediawiki::php::fpm::fpm_max_memory: 256
-php::php_fpm::fpm_workers_multiplier: 1.0
+
+mediawiki::php::fpm::fpm_min_child: 16
+mediawiki::php::fpm::fpm_workers_multiplier: 1.0
+mediawiki::php::fpm_config:
+  post_max_size: '250M'
+  upload_max_filesize: '250M'
+
+mediawiki::php::memory_limit: '256M'
+
 php::php_version: '7.4'
-nginx::use_graylog: true
-puppetserver_hostname: 'puppet111.miraheze.org'
 
 http_proxy: 'http://bast.miraheze.org:8080'
 gluster_volume: gluster101.miraheze.org:/static
-gluster::only_ipv6: true
-base::syslog::graylog_hostname: 'graylog121.miraheze.org'
-base::syslog::graylog_resolve_ip_version: 6
+
+base::syslog::syslog_daemon: rsyslog
+base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
+base::syslog::rsyslog_udp_localhost: true
+
+# NGINX
+nginx::keepalive_timeout: 2
+nginx::keepalive_requests: 150
+nginx::logrotate_number: 2
+nginx::use_graylog: true
+
+puppetserver_hostname: 'puppet111.miraheze.org'

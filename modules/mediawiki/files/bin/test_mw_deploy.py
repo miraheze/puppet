@@ -44,6 +44,10 @@ def test_check_up_debug() -> None:
     assert mwd.check_up(nolog=True, Debug='mwtask111')
 
 
+def test_check_up_debug_fail() -> None:
+    assert not mwd.check_up(nolog=True, Debug='mwtask111', domain='httpstat.us/500', force=True)
+
+
 def test_get_staging_path() -> None:
     assert mwd._get_staging_path('world') == '/srv/mediawiki-staging/w/'
 
@@ -130,6 +134,14 @@ def test_construct_git_pull_sm() -> None:
 
 def test_construct_git_pull() -> None:
     assert mwd._construct_git_pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull  --quiet'
+
+
+def test_construct_git_pull_branch() -> None:
+    assert mwd._construct_git_pull('config', branch='myfunbranch') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
+
+
+def test_construct_git_pull_branch_sm() -> None:
+    assert mwd._construct_git_pull('config', submodules=True, branch='test') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
 
 
 def test_get_command_array() -> None:

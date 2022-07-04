@@ -52,6 +52,7 @@ define mariadb::instance(
 
     monitoring::services { "MariaDB ${title}":
         check_command => 'mysql',
+        docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars          => {
             mysql_hostname  => $::fqdn,
             mysql_port      => $port,

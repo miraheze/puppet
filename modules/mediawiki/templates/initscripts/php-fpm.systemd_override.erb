@@ -1,0 +1,5 @@
+[Service]
+ExecReload=
+ExecReload=/usr/sbin/php-fpm<%= @php_version %> -t
+ExecReload=/bin/kill -USR2 $MAINPID
+CPUAccounting=yes

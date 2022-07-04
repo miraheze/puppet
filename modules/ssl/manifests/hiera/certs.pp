@@ -5,6 +5,7 @@ define ssl::hiera::certs (
     String $ca,
     String $hsts     = 'weak',
     Optional[String] $redirect = undef,
+    Optional[Hash] $path_redirects = undef,
     Optional[String] $sslname  = undef,
     Optional[String] $additional_domain  = undef,
     Optional[Boolean] $disable_event = true,
@@ -21,19 +22,17 @@ define ssl::hiera::certs (
         $restart_nginx = undef
     }
 
-    if !defined(File[$sslurl]) {
-        file { $sslurl:
+    if !defined(File["/etc/ssl/localcerts/${sslurl}.crt"]) {
+        file { "/etc/ssl/localcerts/${sslurl}.crt":
             ensure => present,
-            path   => "/etc/ssl/localcerts/${sslurl}.crt",
             source => "puppet:///ssl/certificates/${sslurl}.crt",
             notify => $restart_nginx,
         }
     }
 
-    if !defined(File["${sslurl}_private"]) {
-        file { "${sslurl}_private":
+    if !defined(File["/etc/ssl/private/${sslurl}.key"]) {
+        file { "/etc/ssl/private/${sslurl}.key":
             ensure => present,
-            path   => "/etc/ssl/private/${sslurl}.key",
             source => "puppet:///ssl-keys/${sslurl}.key",
             owner  => 'root',
             group  => 'ssl-cert',

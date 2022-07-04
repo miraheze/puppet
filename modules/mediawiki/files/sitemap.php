@@ -1,43 +1,37 @@
 <?php
 
-$databaseJsonFileName = '/srv/mediawiki/cache/databases.json';
-$databasesArray = file_exists( $databaseJsonFileName ) ?
-	json_decode( file_get_contents( $databaseJsonFileName ), true ) : [ 'combi' => [] ];
+define( 'MW_NO_SESSION', 1 );
+require_once '/srv/mediawiki/w/includes/WebStart.php';
 
-if ( $databasesArray['combi'] ) {
-	if ( preg_match( '/^(.+)\.miraheze\.org$/', $_SERVER['HTTP_HOST'], $matches ) ) {
-		$wiki = "{$matches[1]}wiki";
-		if ( !isset( $databasesArray['combi']["{$wiki}"] ) ) {
-			return;
-		}
+use MediaWiki\MediaWikiServices;
 
-		header( "Location: https://static.miraheze.org/{$wiki}/sitemaps/sitemap.xml", true, 302 );
-	} else {
-		$customDomainFound = false;
-		$suffixes = [ 'wiki' ];
-		$suffixMatch = array_flip( [ 'miraheze.org' => 'wiki' ] );
-		foreach ( $databasesArray['combi'] as $db => $data ) {
-			foreach ( $suffixes as $suffix ) {
-				if ( substr( $db, -strlen( $suffix ) == $suffix ) ) {
-					$url = $data['u'] ?? 'https://' . substr( $db, 0, -strlen( $suffix ) ) . '.' . $suffixMatch[$suffix];
+function streamSitemapIndex() {
+	global $wgDBname;
+	wfResetOutputBuffers();
 
-					if ( !$url ) {
-						continue;
-					}
+	$url = "https://static.miraheze.org/{$wgDBname}/sitemaps/sitemap.xml";
 
-					if ( $url === "https://{$_SERVER['HTTP_HOST']}" ) {
-						$customDomainFound = $db;
-					}
-				}
-			}
-
-			continue;
-		}
-
-		if ( $customDomainFound ) {
-			header( "Location: https://static.miraheze.org/{$customDomainFound}/sitemaps/sitemap.xml", true, 302 );
-		}
+	$req = RequestContext::getMain()->getRequest();
+	if ( $req->getHeader( 'X-Sitemap-Loop' ) !== false ) {
+		header( 'HTTP/1.1 500 Internal Server Error' );
+		return;
 	}
+
+	$client = MediaWikiServices::getInstance()
+		->getHttpRequestFactory()
+		->create( $url );
+	$client->setHeader( 'X-Sitemap-Loop', '1' );
+
+	$status = $client->execute();
+	if ( !$status->isOK() ) {
+		header( 'HTTP/1.1 404 Not Found' );
+		return;
+	}
+
+	$content = $client->getContent();
+	header( 'Content-Length: ' . strlen( $content ) );
+	header( 'Content-Type: ' . $client->getResponseHeader( 'Content-Type' ) );
+	echo $content;
 }
 
-exit();
+streamSitemapIndex();

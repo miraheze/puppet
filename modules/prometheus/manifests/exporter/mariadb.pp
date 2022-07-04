@@ -4,7 +4,7 @@
 # when ran alongside the MySQL server to be monitored, connecting via a local
 # UNIX socket is supported.
 class prometheus::exporter::mariadb {
-    require_package('prometheus-mysqld-exporter')
+    ensure_packages('prometheus-mysqld-exporter')
 
     file { '/etc/default/prometheus':
         ensure => directory,

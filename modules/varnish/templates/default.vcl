@@ -160,19 +160,18 @@ sub mw_request {
 	call mobile_detection;
 	
 	# Assigning a backend
-	if (
-		req.url ~ "^/\.well-known" ||
-		req.http.Host == "sslrequest.miraheze.org"
-	) {
-		set req.backend_hint = mwtask111;
-		return (pass);
 <%- @backends.each_pair do | name, property | -%>
-	} elseif (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
+	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
 		set req.backend_hint = <%= name %>;
 		return (pass);
+	}
 <%- end -%>
-	} else {
-		set req.backend_hint = mediawiki.backend();
+
+	set req.backend_hint = mediawiki.backend();
+
+	# Rewrite hostname to static.miraheze.org for caching
+	if (req.url ~ "^/static/") {
+		set req.http.Host = "static.miraheze.org";
 	}
 
 	# Numerous static.miraheze.org specific code
@@ -240,7 +239,7 @@ sub vcl_recv {
 	unset req.http.Proxy; # https://httpoxy.org/
 
 	# Health checks, do not send request any further, if we're up, we can handle it
-	if (req.http.host == "health.miraheze.org" && req.url == "/check") {
+	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
 		if (std.healthy(mediawiki.backend())) {
 			return (synth(200));
 		} else {
@@ -264,6 +263,15 @@ sub vcl_recv {
 			# We don't understand this
 			unset req.http.Accept-Encoding;
 		}
+	}
+
+	if (
+		req.url ~ "^/\.well-known" ||
+		req.http.Host == "ssl.miraheze.org" ||
+		req.http.Host == "acme.miraheze.org"
+	) {
+		set req.backend_hint = puppet111;
+		return (pass);
 	}
 
         if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
@@ -303,6 +311,12 @@ sub vcl_recv {
 		return (pass);
 	}
 
+	# Do not cache requests from this domain
+	if (req.http.Host == "reports.miraheze.org") {
+		set req.backend_hint = reports121;
+		return (pass);
+	}
+
 	# MediaWiki specific
 	call mw_request;
 
@@ -337,6 +351,12 @@ sub vcl_backend_fetch {
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
+	/* Don't cache private, no-cache, no-store objects. */
+	if (beresp.http.Cache-Control ~ "(?i:private|no-cache|no-store)") {
+		set beresp.ttl = 0s;
+		// translated to hit-for-pass below
+	}
+
 	# Cookie magic as we did before
 	if (bereq.http.Cookie ~ "([Ss]ession|Token)=") {
 		set bereq.http.Cookie = "Token=1";
@@ -344,12 +364,6 @@ sub vcl_backend_response {
 		unset bereq.http.Cookie;
 	}
 
-	# A hit-for-pass action
-	if (beresp.ttl <= 0s) {
-		set beresp.ttl = 1800s;
-		set beresp.uncacheable = true;
-	}
-	
 	# Distribute caching re-calls where possible
 	if (beresp.ttl >= 60s) {
 		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
@@ -398,6 +412,59 @@ sub vcl_backend_response {
 		}
 	}
 
+	// Compress compressible things if the backend didn't already, but
+	// avoid explicitly-defined CL < 860 bytes.  We've seen varnish do
+	// gzipping on CL:0 302 responses, resulting in output that has CE:gzip
+	// and CL:20 and sends a pointless gzip header.
+	// Very small content may actually inflate from gzipping, and
+	// sub-one-packet content isn't saving a lot of latency for the gzip
+	// costs (to the server and the client, who must also decompress it).
+	// The magic 860 number comes from Akamai, Google recommends anywhere
+	// from 150-1000.  See also:
+	// https://webmasters.stackexchange.com/questions/31750/what-is-recommended-minimum-object-size-for-gzip-performance-benefits
+	if (beresp.http.content-type ~ "json|text|html|script|xml|icon|ms-fontobject|ms-opentype|x-font|sla"
+		&& (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 860)) {
+			set beresp.do_gzip = true;
+	}
+	// SVGs served by MediaWiki are part of the interface. That makes them
+	// very hot objects, as a result the compression time overhead is a
+	// non-issue. Several of them tend to be requested at the same time,
+	// as the browser finds out about them when parsing stylesheets that
+	// contain multiple. This means that the "less than 1 packet" rationale
+	// for not compressing very small objects doesn't apply either. Lastly,
+	// since they're XML, they contain a fair amount of repetitive content
+	// even when small, which means that gzipped SVGs tend to be
+	// consistantly smaller than their uncompressed version, even when tiny.
+	// For all these reasons, it makes sense to have a lower threshold for
+	// SVG. Applying it to XML in general is a more unknown tradeoff, as it
+	// would affect small API responses that are more likely to be cold
+	// objects due to low traffic to specific API URLs.
+	if (beresp.http.content-type ~ "svg" && (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 150)) {
+		set beresp.do_gzip = true;
+	}
+
+	// set a 601s hit-for-pass object based on response conditions in vcl_backend_response:
+	//    Calculated TTL <= 0 + Status < 500:
+	//    These are generally uncacheable responses.  The 5xx exception
+	//    avoids us accidentally replacing a good stale/grace object with
+	//    an hfp (and then repeatedly passing on potentially-cacheable
+	//    content) due to an isolated 5xx response.
+	if (beresp.ttl <= 0s && beresp.status < 500) {
+		set beresp.grace = 31s;
+		set beresp.keep = 0s;
+		return(pass(601s));
+	}
+
+	// hit-for-pass objects >= 8388608 size and if domain == static.miraheze.org or
+	// hit-for-pass objects >= 67108864 size and if domain != static.miraheze.org.
+	// Do cache if Content-Length is missing.
+	if (std.integer(beresp.http.Content-Length, 0) >= 8388608 && bereq.http.Host == "static.miraheze.org" ||
+		std.integer(beresp.http.Content-Length, 0) >= 67108864 && bereq.http.Host != "static.miraheze.org"
+	) {
+		// HFP
+		return(pass(beresp.ttl));
+	}
+
 	return (deliver);
 }
 
@@ -437,7 +504,7 @@ sub vcl_deliver {
 	set resp.http.Permissions-Policy = "interest-cohort=()";
 
 	# Content Security Policy
-	set resp.http.Content-Security-Policy = "<%- @csp_whitelist.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+	set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 
 	# For a 500 error, do not set cookies
 	if (resp.status >= 500 && resp.http.Set-Cookie) {
