@@ -198,7 +198,12 @@ def test_run() -> None:
     args.extensionlist = False
     args.l10n = False
     args.nolog = True
-    assert mwd.run(args, time.time()) == 0
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    assert mwd.prep(args) == {'servers': 'all', 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignore-time': False, 'debug-url': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'post-install': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
 def test_run_log() -> None:
@@ -215,7 +220,12 @@ def test_run_log() -> None:
     args.extensionlist = False
     args.l10n = False
     args.nolog = False
-    assert mwd.run(args, time.time()) == 0
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    assert mwd.prep(args) == {'servers': 'all', 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'port': 443}, 'branch': '', 'nolog': False, 'force': False, 'port': 443, 'ignore-time': False, 'debug-url': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'post-install': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
 def test_l10n_no_lang() -> None:
@@ -231,7 +241,56 @@ def test_l10n_multi_lang() -> None:
 
 
 def test_l10n_bad_lang() -> None:
+    failed = False
     try:
         str(mwd._construct_l10n_command('aaaa', 'testwiki'))
     except ValueError as e:
         assert str(e) == 'aaaa is not a valid language.'
+        failed = True
+    assert failed
+
+
+def test_pull_only_world() -> None:
+    assert mwd._get_git_commands(True, None, None) == ['sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet']
+
+
+def test_pull_array_world() -> None:
+    assert mwd._get_git_commands(True, 'landing,config', None) == [
+        'sudo -u www-data git -C /srv/mediawiki-staging/landing/ pull --quiet',
+        'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet',
+        'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet',
+   ]
+
+
+def test_pull_single_world() -> None:
+    assert mwd._get_git_commands(True, 'landing', None) == [
+        'sudo -u www-data git -C /srv/mediawiki-staging/landing/ pull --quiet',
+        'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet',
+    ]
+
+
+def test_pull_array_noworld() -> None:
+    assert mwd._get_git_commands(False, 'landing,config', None) == [
+        'sudo -u www-data git -C /srv/mediawiki-staging/landing/ pull --quiet',
+        'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet',
+    ]
+
+
+def test_pull_single_noworld() -> None:
+    assert mwd._get_git_commands(False, 'landing', None) == ['sudo -u www-data git -C /srv/mediawiki-staging/landing/ pull --quiet']
+
+
+def test_pull_none() -> None:
+    assert mwd._get_git_commands(False, None, None) == []
+
+
+def test_pull_world_fake(capsys) -> None:
+    mwd._get_git_commands(True, 'garbage', None)
+    captured = capsys.readouterr()
+    assert captured.out == 'Failed to pull garbage due to invalid name\n'
+
+
+def test_pull_noworld_fake(capsys) -> None:
+    mwd._get_git_commands(False, 'garbage', None)
+    captured = capsys.readouterr()
+    assert captured.out == 'Failed to pull garbage due to invalid name\n'
