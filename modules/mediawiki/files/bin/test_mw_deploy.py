@@ -183,7 +183,7 @@ def test_get_servers_two() -> None:
     assert mwd.get_server_list(mwd.get_environment_info(), 'mw101,mw111') == ['mw101', 'mw111']
 
 
-def test_run() -> None:
+def test_prep() -> None:
     parser = argparse.ArgumentParser()
     args, unknown = parser.parse_known_args()
     del unknown
@@ -205,7 +205,7 @@ def test_run() -> None:
     assert mwd.prep(args) == {'servers': 'all', 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
-def test_run_log() -> None:
+def test_prep_log() -> None:
     parser = argparse.ArgumentParser()
     args, unknown = parser.parse_known_args()
     del unknown
@@ -225,6 +225,336 @@ def test_run_log() -> None:
     args.pull = False
     args.branch = False
     assert mwd.prep(args) == {'servers': 'all', 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'port': 443}, 'branch': '', 'nolog': False, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+
+
+def test_prep_world() -> None:
+    parser = argparse.ArgumentParser()
+    args, unknown = parser.parse_known_args()
+    del unknown
+    args.servers = 'all'
+    args.config = False
+    args.world = True
+    args.landing = False
+    args.errorpages = False
+    args.files = ''
+    args.folders = ''
+    args.extensionlist = False
+    args.l10n = False
+    args.nolog = True
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    assert mwd.prep(args) == {
+        'branch': '',
+        'commands': {
+            'postinstall': [],
+            'rebuild': [
+                mwd.WikiCommand(
+                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', 
+                    wiki='testwiki',
+                ),
+            ],
+            'rsync': [
+                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'
+            ],
+            'stage': [
+                'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet'
+            ]
+        },
+        'debugurl': 'publictestwiki.com',
+        'doworld': True,
+        'force': False,
+        'ignoretime': False,
+        'loginfo': {
+            'files': '',
+            'folders': '',
+            'nolog': True,
+            'port': 443,
+            'servers': 'all',
+            'world': True
+        },
+        'nolog': True,
+        'port': 443,
+        'remote': {
+            'files': [],
+            'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/']
+        },
+        'servers': 'all'
+    }
+
+
+def test_prep_landing() -> None:
+    parser = argparse.ArgumentParser()
+    args, unknown = parser.parse_known_args()
+    del unknown
+    args.servers = 'all'
+    args.config = False
+    args.world = False
+    args.landing = True
+    args.errorpages = False
+    args.files = ''
+    args.folders = ''
+    args.extensionlist = False
+    args.l10n = False
+    args.nolog = True
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    assert mwd.prep(args) == {
+        'branch': '',
+        'commands': {
+            'postinstall': [],
+            'rebuild': [],
+            'rsync': [
+                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/landing/* /srv/mediawiki/landing/'
+            ],
+            'stage': []
+        },
+        'debugurl': 'publictestwiki.com',
+        'doworld': False,
+        'force': False,
+        'ignoretime': False,
+        'loginfo': {
+            'files': '',
+            'folders': '',
+            'landing': True,
+            'nolog': True,
+            'port': 443,
+            'servers': 'all'
+        },
+        'nolog': True,
+        'port': 443,
+        'remote': {
+            'files': [],
+            'paths': ['/srv/mediawiki/landing/']
+        },
+        'servers': 'all',
+    }
+
+
+def test_prep_world_extlist() -> None:
+    parser = argparse.ArgumentParser()
+    args, unknown = parser.parse_known_args()
+    del unknown
+    args.servers = 'all'
+    args.config = False
+    args.world = True
+    args.landing = False
+    args.errorpages = False
+    args.files = ''
+    args.folders = ''
+    args.extensionlist = True
+    args.l10n = False
+    args.nolog = True
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    assert mwd.prep(args) == {
+        'branch': '',
+        'commands': {
+            'postinstall': [],
+            'rebuild': [
+                mwd.WikiCommand(
+                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', 
+                    wiki='testwiki',
+                ),
+                mwd.WikiCommand(command='/srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php', wiki='testwiki'),
+            ],
+            'rsync': [
+                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'
+            ],
+            'stage': [
+                'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet'
+            ]
+        },
+        'debugurl': 'publictestwiki.com',
+        'doworld': True,
+        'force': False,
+        'ignoretime': False,
+        'loginfo': {
+            'files': '',
+            'folders': '',
+            'nolog': True,
+            'port': 443,
+            'servers': 'all',
+            'world': True,
+            'extensionlist': True,
+        },
+        'nolog': True,
+        'port': 443,
+        'remote': {
+            'files': ['/srv/mediawiki/cache/extension-list.json'],
+            'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/']
+        },
+        'servers': 'all'
+    }
+
+
+def test_prep_folder_test() -> None:
+    parser = argparse.ArgumentParser()
+    args, unknown = parser.parse_known_args()
+    del unknown
+    args.servers = 'all'
+    args.config = False
+    args.world = False
+    args.landing = False
+    args.errorpages = False
+    args.files = ''
+    args.folders = 'test'
+    args.extensionlist = False
+    args.l10n = False
+    args.nolog = True
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    assert mwd.prep(args) == {
+        'branch': '',
+        'commands': {
+            'postinstall': [],
+            'rebuild': [],
+            'rsync': [
+                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/test/* /srv/mediawiki/test/'
+            ],
+            'stage': []
+        },
+        'debugurl': 'publictestwiki.com',
+        'doworld': False,
+        'force': False,
+        'ignoretime': False,
+        'loginfo': {
+            'files': '',
+            'folders': 'test',
+            'nolog': True,
+            'port': 443,
+            'servers': 'all'
+        },
+        'nolog': True,
+        'port': 443,
+        'remote': {
+            'files': [],
+            'paths': ['/srv/mediawiki/test/']
+        },
+        'servers': 'all',
+    }
+
+
+def test_prep_file_test() -> None:
+    parser = argparse.ArgumentParser()
+    args, unknown = parser.parse_known_args()
+    del unknown
+    args.servers = 'all'
+    args.config = False
+    args.world = False
+    args.landing = False
+    args.errorpages = False
+    args.files = 'test.txt'
+    args.folders = ''
+    args.extensionlist = False
+    args.l10n = False
+    args.nolog = True
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    assert mwd.prep(args) == {
+        'branch': '',
+        'commands': {
+            'postinstall': [],
+            'rebuild': [],
+            'rsync': [
+                'sudo -u www-data rsync --update --exclude=".*" /srv/mediawiki-staging/test.txt /srv/mediawiki/test.txt'
+            ],
+            'stage': []
+        },
+        'debugurl': 'publictestwiki.com',
+        'doworld': False,
+        'force': False,
+        'ignoretime': False,
+        'loginfo': {
+            'files': 'test.txt',
+            'folders': '',
+            'nolog': True,
+            'port': 443,
+            'servers': 'all'
+        },
+        'nolog': True,
+        'port': 443,
+        'remote': {
+            'files': ['/srv/mediawiki/test.txt'],
+            'paths': []
+        },
+        'servers': 'all',
+    }
+
+
+def test_prep_world() -> None:
+    parser = argparse.ArgumentParser()
+    args, unknown = parser.parse_known_args()
+    del unknown
+    args.servers = 'all'
+    args.config = False
+    args.world = True
+    args.landing = False
+    args.errorpages = False
+    args.files = ''
+    args.folders = ''
+    args.extensionlist = False
+    args.l10n = True
+    args.nolog = True
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    args.lang = False
+    assert mwd.prep(args) == {
+        'branch': '',
+        'commands': {
+            'postinstall': [mwd.WikiCommand(command='/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', wiki='testwiki')],
+            'rebuild': [
+                mwd.WikiCommand(
+                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', 
+                    wiki='testwiki',
+                ),
+                mwd.WikiCommand(command='/srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet', wiki='testwiki'),
+            ],
+            'rsync': [
+                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'
+            ],
+            'stage': [
+                'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet'
+            ]
+        },
+        'debugurl': 'publictestwiki.com',
+        'doworld': True,
+        'force': False,
+        'ignoretime': False,
+        'loginfo': {
+            'files': '',
+            'folders': '',
+            'nolog': True,
+            'port': 443,
+            'servers': 'all',
+            'world': True,
+            'l10n': True,
+        },
+        'nolog': True,
+        'port': 443,
+        'remote': {
+            'files': [],
+            'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/', '/srv/mediawiki/cache/l10n/'],
+        },
+        'servers': 'all'
+    }
 
 
 def test_l10n_no_lang() -> None:
