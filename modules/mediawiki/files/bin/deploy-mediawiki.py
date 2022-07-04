@@ -35,8 +35,12 @@ class ProcessList(TypedDict):
 
 
 class WikiCommand:
-    def __init__(self, command: str, wiki: str) -> WikiCommand:
+    def __init__(self, command: str, wiki: str) -> None:
         self = f'sudo -u {DEPLOYUSER} {command} --wiki={wiki}'  # noqa: F841
+    
+    
+    def __str__ (self):
+        return f'{self}'
 
 
 beta: Environment = {
@@ -58,8 +62,8 @@ del prod
 HOSTNAME = socket.gethostname().split('.')[0]
 
 
-def get_command_array(command: str) -> list[str]:
-    arraycommand = command.split(' ')
+def get_command_array(command: str | WikiCommand) -> list[str]:
+    arraycommand = str(command).split(' ')
     commandfile = arraycommand[0]
     arraycommand.remove(commandfile)
     commandopts = ' '.join(arraycommand)
@@ -97,7 +101,7 @@ def run_batch_command(commands: list[str | WikiCommand], tag: str, exitcodes: li
 def run_command(cmd: str | WikiCommand) -> int:
     start = time.time()
     print(f'Execute: {cmd}')
-    ec = os.system(cmd)
+    ec = os.system(str(cmd))
     print(f'Completed ({ec}) in {str(int(time.time() - start))}s!')
     return ec
 
