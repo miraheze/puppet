@@ -184,7 +184,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
     return up
 
 
-def remote_sync_file(time: str, serverlist: list[str], path: str, exitcodes: list[int], recursive: bool = True) -> list[int]:
+def remote_sync_file(time: bool, serverlist: list[str], path: str, exitcodes: list[int], recursive: bool = True) -> list[int]:
     print(f'Start {path} deploys to {serverlist}.')
     sync_cmds = []
     for server in serverlist:
@@ -206,7 +206,7 @@ def _get_deployed_path(repo: str) -> str:
     return f'/srv/mediawiki/{repos[repo]}/'
 
 
-def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local: bool = True, location: None | str = None, server: None | str = None) -> str:
+def _construct_rsync_command(time: bool, dest: str, recursive: bool = True, local: bool = True, location: None | str = None, server: None | str = None) -> str:
     if time:
         params = '--inplace'
     else:
@@ -270,7 +270,7 @@ def _get_git_commands(world: bool, pull: str | None, branch: str | None) -> list
 
 
 def prep(args: argparse.Namespace) -> deploymap:
-    deploymentmap = {
+    deploymentmap: deploymap = {
         'servers': [],
         'doworld': args.world,
         'loginfo': {},
@@ -333,7 +333,7 @@ def prep(args: argparse.Namespace) -> deploymap:
 
 
 def run(deploymentmap: deploymap, start: float) -> int:
-    exitcodes = []
+    exitcodes: list[int] = []
     info = deploymentmap['loginfo']
     del deploymentmap['loginfo']['servers']
     if HOSTNAME in deploymentmap['servers']:
@@ -355,7 +355,7 @@ def run(deploymentmap: deploymap, start: float) -> int:
         exitcodes = run_batch_command(deploymentmap['commands']['postinstall'], 'post-install', exitcodes)
         non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
         # update ext list + l10n
-        exitcodes = run_batch_command(deploymentmap['rebuild']['stage'], 'rebuild', exitcodes)
+        exitcodes = run_batch_command(deploymentmap['commands']['rebuild'], 'rebuild', exitcodes)
         non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
     for path in deploymentmap['remote']['paths']:
         exitcodes = remote_sync_file(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=path, exitcodes=exitcodes)
