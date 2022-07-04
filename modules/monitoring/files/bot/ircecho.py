@@ -195,7 +195,7 @@ class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
         try:
             print('Reopening file: ' + event.pathname)
-            reader.files[event.pathname] = open(event.pathname)
+            reader.files[event.pathname] = open(event.pathname)  # noqa: SIM115
         except IOError:
             print('Failed to reopen file: ' + event.pathname)
             pass
