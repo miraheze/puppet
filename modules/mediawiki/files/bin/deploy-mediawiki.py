@@ -200,7 +200,7 @@ def _construct_git_pull(repo: str, submodules: bool = False, branch: str | None 
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull{extrap}--quiet'
 
 
-def run(args: argparse.Namespace, start: float) -> None:
+def run(args: argparse.Namespace, start: float) -> int:
     envinfo = get_environment_info()
     servers = get_server_list(envinfo, args.servers)
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
