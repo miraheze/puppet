@@ -81,7 +81,7 @@ def get_server_list(envinfo: Environment, servers: str) -> list[str]:
     return servers.split(',')
 
 
-def run_batch_command(commands: list[str | WikiCommand], tag: str, exitcodes: list[int]) -> list[int]:
+def run_batch_command(commands: list[str] | list[WikiCommand], tag: str, exitcodes: list[int]) -> list[int]:
     processes: ProcessList = {'operations': []}
     print(f'Start {tag} commands.')
     for operation in commands:
@@ -257,7 +257,7 @@ def run(args: argparse.Namespace, start: float) -> int:
                 if option == 'world':  # install steps for w
                     os.chdir(_get_staging_path('world'))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer install --no-dev --quiet'))
-                    rebuild.append(WikiCommand('MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', {envinfo['wikidbname']}))
+                    rebuild.append(WikiCommand('MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', envinfo['wikidbname']))
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
@@ -271,7 +271,7 @@ def run(args: argparse.Namespace, start: float) -> int:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extensionlist:  # when adding skins/exts
-            rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
+            rebuild.append(WikiCommand('/srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php',envinfo["wikidbname"]))
 
         # move staged content to live
         exitcodes = run_batch_command(rsync, 'rsync', exitcodes)
@@ -287,8 +287,8 @@ def run(args: argparse.Namespace, start: float) -> int:
             else:
                 lang = ''
 
-            postinstall.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
-            rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
+            postinstall.append(WikiCommand('/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', envinfo['wikidbname']))
+            rebuild.append(WikiCommand('/srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet', envinfo['wikidbname']))
 
         # cmds to run after rsync & install (like mergemessage)
         exitcodes = run_batch_command(postinstall, 'post-install', exitcodes)
