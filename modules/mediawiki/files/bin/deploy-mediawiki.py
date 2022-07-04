@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import pprint
 import socket
 import subprocess
 import time
@@ -402,5 +403,12 @@ if __name__ == '__main__':
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
+    parser.add_argument('--noop', dest='noop', action='store_true')
 
-    exit(run(prep(parser.parse_args()), start))
+    args = parser.parse_args()
+    deployment_map = prep(args)
+    if args.noop:
+        pp = pprint.PrettyPrinter(depth=4)
+        pp.pprint(deployment_map)
+        exit(0)
+    exit(run(deployment_map, start))
