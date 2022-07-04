@@ -252,16 +252,16 @@ def test_prep_world() -> None:
             'postinstall': [],
             'rebuild': [
                 mwd.WikiCommand(
-                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', 
+                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php',
                     wiki='testwiki',
                 ),
             ],
             'rsync': [
-                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'
+                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/',
             ],
             'stage': [
-                'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet'
-            ]
+                'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet',
+            ],
         },
         'debugurl': 'publictestwiki.com',
         'doworld': True,
@@ -273,15 +273,15 @@ def test_prep_world() -> None:
             'nolog': True,
             'port': 443,
             'servers': 'all',
-            'world': True
+            'world': True,
         },
         'nolog': True,
         'port': 443,
         'remote': {
             'files': [],
-            'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/']
+            'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/'],
         },
-        'servers': 'all'
+        'servers': 'all',
     }
 
 
@@ -310,9 +310,9 @@ def test_prep_landing() -> None:
             'postinstall': [],
             'rebuild': [],
             'rsync': [
-                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/landing/* /srv/mediawiki/landing/'
+                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/landing/* /srv/mediawiki/landing/',
             ],
-            'stage': []
+            'stage': [],
         },
         'debugurl': 'publictestwiki.com',
         'doworld': False,
@@ -324,13 +324,13 @@ def test_prep_landing() -> None:
             'landing': True,
             'nolog': True,
             'port': 443,
-            'servers': 'all'
+            'servers': 'all',
         },
         'nolog': True,
         'port': 443,
         'remote': {
             'files': [],
-            'paths': ['/srv/mediawiki/landing/']
+            'paths': ['/srv/mediawiki/landing/'],
         },
         'servers': 'all',
     }
@@ -361,17 +361,17 @@ def test_prep_world_extlist() -> None:
             'postinstall': [],
             'rebuild': [
                 mwd.WikiCommand(
-                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', 
+                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php',
                     wiki='testwiki',
                 ),
                 mwd.WikiCommand(command='/srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php', wiki='testwiki'),
             ],
             'rsync': [
-                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'
+                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/',
             ],
             'stage': [
-                'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet'
-            ]
+                'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet',
+            ],
         },
         'debugurl': 'publictestwiki.com',
         'doworld': True,
@@ -390,9 +390,9 @@ def test_prep_world_extlist() -> None:
         'port': 443,
         'remote': {
             'files': ['/srv/mediawiki/cache/extension-list.json'],
-            'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/']
+            'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/'],
         },
-        'servers': 'all'
+        'servers': 'all',
     }
 
 
@@ -421,9 +421,9 @@ def test_prep_folder_test() -> None:
             'postinstall': [],
             'rebuild': [],
             'rsync': [
-                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/test/* /srv/mediawiki/test/'
+                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/test/* /srv/mediawiki/test/',
             ],
-            'stage': []
+            'stage': [],
         },
         'debugurl': 'publictestwiki.com',
         'doworld': False,
@@ -434,13 +434,13 @@ def test_prep_folder_test() -> None:
             'folders': 'test',
             'nolog': True,
             'port': 443,
-            'servers': 'all'
+            'servers': 'all',
         },
         'nolog': True,
         'port': 443,
         'remote': {
             'files': [],
-            'paths': ['/srv/mediawiki/test/']
+            'paths': ['/srv/mediawiki/test/'],
         },
         'servers': 'all',
     }
@@ -471,9 +471,9 @@ def test_prep_file_test() -> None:
             'postinstall': [],
             'rebuild': [],
             'rsync': [
-                'sudo -u www-data rsync --update --exclude=".*" /srv/mediawiki-staging/test.txt /srv/mediawiki/test.txt'
+                'sudo -u www-data rsync --update --exclude=".*" /srv/mediawiki-staging/test.txt /srv/mediawiki/test.txt',
             ],
-            'stage': []
+            'stage': [],
         },
         'debugurl': 'publictestwiki.com',
         'doworld': False,
@@ -484,19 +484,19 @@ def test_prep_file_test() -> None:
             'folders': '',
             'nolog': True,
             'port': 443,
-            'servers': 'all'
+            'servers': 'all',
         },
         'nolog': True,
         'port': 443,
         'remote': {
             'files': ['/srv/mediawiki/test.txt'],
-            'paths': []
+            'paths': [],
         },
         'servers': 'all',
     }
 
 
-def test_prep_world() -> None:
+def test_prep_world_l10n() -> None:
     parser = argparse.ArgumentParser()
     args, unknown = parser.parse_known_args()
     del unknown
@@ -522,17 +522,17 @@ def test_prep_world() -> None:
             'postinstall': [mwd.WikiCommand(command='/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', wiki='testwiki')],
             'rebuild': [
                 mwd.WikiCommand(
-                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', 
+                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php',
                     wiki='testwiki',
                 ),
                 mwd.WikiCommand(command='/srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet', wiki='testwiki'),
             ],
             'rsync': [
-                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/'
+                'sudo -u www-data rsync --update -r --delete --exclude=".*" /srv/mediawiki-staging/w/* /srv/mediawiki/w/',
             ],
             'stage': [
-                'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet'
-            ]
+                'sudo -u www-data git -C /srv/mediawiki-staging/w/ pull --recurse-submodules --quiet',
+            ],
         },
         'debugurl': 'publictestwiki.com',
         'doworld': True,
@@ -553,7 +553,7 @@ def test_prep_world() -> None:
             'files': [],
             'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/', '/srv/mediawiki/cache/l10n/'],
         },
-        'servers': 'all'
+        'servers': 'all',
     }
 
 
