@@ -246,7 +246,7 @@ def test_prep_multi_server() -> None:
     args.ignoretime = False
     args.pull = False
     args.branch = False
-    assert mwd.prep(args) == {'servers': ['mw101', 'mw102'], 'doworld': False, 'loginfo': {'servers': 'mw101', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': ['mw101', 'mw102'], 'doworld': False, 'loginfo': {'servers': 'mw101,mw102', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
 def test_prep_log() -> None:
@@ -325,7 +325,7 @@ def test_prep_world() -> None:
             'files': [],
             'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/'],
         },
-        'servers': 'all',
+        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
     }
 
 
