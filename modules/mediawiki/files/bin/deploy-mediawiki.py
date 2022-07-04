@@ -8,6 +8,7 @@ import socket
 import time
 from sys import exit
 import subprocess
+
 from typing import TypedDict
 
 from langcodes import tag_is_valid
@@ -307,7 +308,7 @@ def run(args: argparse.Namespace, start: float) -> None:
             rsyncfiles.append(f'/srv/mediawiki/{file}')
     if args.folders:
         for folder in str(args.folders).split(','):
-            rsyncfiles.append(f'/srv/mediawiki/{folder}/')
+            rsyncpaths.append(f'/srv/mediawiki/{folder}/')
     if args.extensionlist:
         rsyncfiles.append('/srv/mediawiki/cache/extension-list.json')
     if args.l10n:

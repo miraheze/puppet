@@ -1,12 +1,12 @@
-# === Class letsencrypt::web
-class letsencrypt::web {
-    include letsencrypt::nginx
+# === Class ssl::web
+class ssl::web {
+    include ssl::nginx
 
     ensure_packages(['python3-flask', 'python3-filelock'])
 
     file { '/usr/local/bin/mirahezerenewssl.py':
         ensure  => present,
-        source  => 'puppet:///modules/letsencrypt/mirahezerenewssl.py',
+        source  => 'puppet:///modules/ssl/mirahezerenewssl.py',
         mode    => '0755',
         notify  => Service['mirahezerenewssl'],
     }

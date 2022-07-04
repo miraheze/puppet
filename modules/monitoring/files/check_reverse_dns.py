@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#! /usr/bin/python3
+
 """
 Script to check if reverse DNS entry for hostname matches given regex.
 
@@ -18,6 +19,7 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program. If not, see <http://www.gnu.org/licenses/>.
 """
+
 
 import argparse
 import re
@@ -59,16 +61,15 @@ def get_args():
 
 def check_records(hostname):
     """Check NS and CNAME records for given hostname."""
-    extra_known_tlds = ('eu.org', 'for.uz')
+    domains_as_tlds = ('eu.org','for.uz')
     uses_cf_at_root = False
 
     nameservers = []
     domain_parts = tldextract.extract(hostname)
     root_domain = domain_parts.registered_domain
 
-    if root_domain in extra_known_tlds:
-        extracted = tldextract.extract(
-            domain_parts.subdomain + '.' + domain_parts.suffix)
+    if root_domain in domains_as_tlds:
+        extracted = tldextract.extract(domain_parts.subdomain + '.' + domain_parts.suffix)
         root_domain = extracted.domain + '.' + root_domain
 
     dns_resolver = resolver.Resolver(configure=False)
@@ -103,7 +104,7 @@ def get_reverse_dnshostname(hostname):
     """Retrieve reverse DNS entry for given hostname.
 
     :param hostname: hostname to find reverse DNS entry for
-    :return: reverse DNS entry if possible, otherwise returns UNKOWN and exits"
+    :return: reverse DNS entry if possible, otherwise returns UNKOWN and exits
     """
 
     try:
@@ -142,15 +143,15 @@ def main():
 
     records = check_records(args.hostname)
     if records == 'NS':
-        text = text + ' - NS  RECORDS OK'
+        text += ' - NS  RECORDS OK'
         print(text)
         sys.exit(0)
     elif records == 'CNAME':
-        text = text + ' - CNAME OK'
+        text += ' - CNAME OK'
         print(text)
         sys.exit(0)
     elif records == 'CFCNAME':
-        text = text + ' - CNAME FLAT'
+        text += ' - CNAME FLAT'
         print(text)
         sys.exit(0)
     else:

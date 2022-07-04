@@ -141,9 +141,8 @@ class puppetserver(
     }
 
     file { '/home/puppet-users':
-        ensure  => directory,
+        ensure  => absent,
         owner   => 'root',
-        group   => 'puppet-users',
         mode    => '0770',
     }
  
@@ -215,9 +214,8 @@ class puppetserver(
     }
 
     ferm::service { 'puppetserver':
-        proto   => 'tcp',
-        port    => '8140',
-        notrack => true,
+        proto => 'tcp',
+        port  => '8140',
     }
 
     cron { 'puppet-git':

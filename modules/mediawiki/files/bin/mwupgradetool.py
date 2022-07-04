@@ -5,7 +5,8 @@ import os
 import requests
 
 canary = 'mwtask111'
-serverlist = ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']
+hatedserver = 'mw101'
+serverlist = 'mw102,mw111,mw112,mw121,mw122'
 
 
 def check_up(server: str) -> bool:
@@ -27,13 +28,13 @@ def check_ro(server: str) -> bool:
 
 print('Welcome to the MediaWiki Upgrade tool!')
 input('Please confirm you are running this script on the canary server: (press enter)')
-input('MediaWiki -> RO - Running puppet to sync config')
-os.system('sudo puppet agent -tv')
+print('MediaWiki -> RO - Syncing config')
+os.system('deploy-mediawiki --config --pull=config --servers=all')
 print('Config deployed')
 print('Checking RO on Canary Server')
 if not check_ro(canary):
     input('Stopping deploy - RO check failed - Press enter to resume')
-for server in serverlist:
+for server in ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']:
     print(f'Confirming RO on {server}')
     if not check_ro(server):
         input(f'RO check failed on {server} - Press enter to resume')
@@ -45,19 +46,20 @@ print('Will now check mediawiki branch')
 os.system('git -C /srv/mediawiki-staging/w rev-parse --abbrev-ref HEAD')
 input('Confirm: ')
 print('Will now deploy to canary server')
-os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --servers={canary}')
+os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --extension-list --servers={canary}')
 if check_up(canary) and check_ro(canary):
     print('Canary deploy done')
 else:
     print('Canary is not online')
 input('Press enter to rollout: ')
-for server in serverlist:
-    print(f'Will now deploy to {server}')
-    os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --servers={server}')
-    if check_up(server) and check_ro(server):
-        print(f'{server} deploy done')
-    else:
-        input(f'{server} is not online - Proceed? ')
+print(f'Deploying to {hatedserver}')
+os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --extension-list --servers={hatedserver}')
+if check_up(hatedserver) and check_ro(hatedserver):
+    print(f'{hatedserver} deploy done')
+else:
+    print(f'{hatedserver} is not online')
+input('Confirm mass rolout:')
+os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --extension-list --servers={serverlist}')
 print('Deployment done')
 input('Please merge RW change and press enter: ')
 print('Running puppet')

@@ -100,7 +100,7 @@ node 'puppet111.miraheze.org' {
     include puppetdb::database
     include role::puppetserver
     include role::salt
-    include role::letsencrypt
+    include role::ssl
 }
 
 node 'reports121.miraheze.org' {

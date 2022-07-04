@@ -1,12 +1,12 @@
-# === Class letsencrypt
-class letsencrypt {    
+# === Class ssl
+class ssl {    
     ensure_packages('certbot')
 
     file { '/etc/letsencrypt/cli.ini':
         ensure  => present,
         owner   => 'root',
         group   => 'root',
-        source  => 'puppet:///modules/letsencrypt/cli.ini',
+        source  => 'puppet:///modules/ssl/letsencrypt.ini',
         mode    => '0644',
         require => Package['certbot'],
     }
@@ -26,6 +26,13 @@ class letsencrypt {
         require => File['/var/www/.well-known/acme-challenge'],
     }
 
+    file { '/home/ssl-admins':
+        ensure  => directory,
+        owner   => 'root',
+        group   => 'ssl-admins',
+        mode    => '0770',
+    }
+
     file { '/root/ssl':
         ensure => directory,
         owner  => 'root',
@@ -37,7 +44,7 @@ class letsencrypt {
         ensure => present,
         owner  => 'root',
         group  => 'root',
-        source => 'puppet:///modules/letsencrypt/ssl-certificate.py',
+        source => 'puppet:///modules/ssl/ssl-certificate.py',
         mode   => '0775',
     }
 
@@ -50,7 +57,7 @@ class letsencrypt {
 
     file { '/var/lib/nagios/ssl-acme':
         ensure => present,
-        source => 'puppet:///modules/letsencrypt/ssl-acme',
+        source => 'puppet:///modules/ssl/ssl-acme',
         owner  => 'root',
         group  => 'root',
         mode   => '0775',
@@ -85,5 +92,5 @@ class letsencrypt {
         require   => Package['certbot'],
     }
 
-    include letsencrypt::web
+    include ssl::web
 }

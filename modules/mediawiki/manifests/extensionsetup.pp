@@ -195,4 +195,14 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+
+    exec { 'chameleon_composer':
+        command     => 'composer require jeroen/file-fetcher',
+        creates     => "${mwpath}/skins/chameleon/vendor",
+        cwd         => "${mwpath}/skins/chameleon",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/skins/chameleon",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 }
