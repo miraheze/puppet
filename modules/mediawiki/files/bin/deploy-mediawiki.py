@@ -7,6 +7,7 @@ import os
 import socket
 import subprocess
 import time
+from dataclasses import dataclass
 from sys import exit
 from typing import TypedDict
 
@@ -34,11 +35,10 @@ class ProcessList(TypedDict):
     operations: list[subprocess.Popen]
 
 
+@dataclass
 class WikiCommand:
-    def __init__(self, command: str, wiki: str) -> None:
-        self.command = command
-        self.wiki = wiki
-
+    command: str
+    wiki: str
 
     def __str__(self):
         return 'sudo -u {DEPLOYUSER} php {self.command} --wiki={self.wiki}'  # noqa: F841
