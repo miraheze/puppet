@@ -46,7 +46,7 @@ def get_args():
         '--hostname',
         required=True,
         help='hostname to check',
-        dest='hostnam',
+        dest='hostname',
     )
     parser.add_argument(
         '-r',
