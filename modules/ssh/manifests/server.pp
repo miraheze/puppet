@@ -38,6 +38,8 @@ class ssh::server (
 
     if $::ipaddress6 == undef {
         $aliases = [ $::hostname, $::ipaddress ]
+    } elsif $::ipaddress6 != undef and $::ipaddress == undef {
+        $aliases = [ $::hostname, $::ipaddress6 ]
     } else {
         $aliases = [ $::hostname, $::ipaddress, $::ipaddress6 ]
     }

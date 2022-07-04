@@ -36,8 +36,11 @@ class mediawiki::packages {
     ])
 
     if !lookup(mediawiki::use_shellbox) {
-        package {'lilypond':
-            ensure => absent,
-        }
+        ensure_packages(
+            'lilypond',
+            {
+                ensure => absent,
+            },
+        )
     }
 }

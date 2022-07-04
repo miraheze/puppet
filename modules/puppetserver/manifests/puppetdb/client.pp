@@ -51,10 +51,17 @@ class puppetserver::puppetdb::client(
             program_name        => 'puppetdb',
             notify              => Service['puppetdb'],
         }
-    }
+    } else {
+        file { '/etc/puppetlabs/puppetdb/logback.xml':
+            ensure => present,
+            source => 'puppet:///modules/puppetserver/puppetdb_logback.xml',
+            notify => Service['puppetdb'],
+        }
 
-    logrotate::conf { 'puppetdb':
-        ensure => present,
-        source => 'puppet:///modules/puppetserver/puppetdb.logrotate.conf',
+        rsyslog::input::file { 'puppetdb':
+            path              => '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
+            syslog_tag_prefix => '',
+            use_udp           => true,
+        }
     }
 }

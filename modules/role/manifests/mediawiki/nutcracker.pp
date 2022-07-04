@@ -47,6 +47,11 @@ class role::mediawiki::nutcracker (
             override => true,
         }
 
+        monitoring::nrpe { 'nutcracker process':
+            command => '/usr/lib/nagios/plugins/check_procs -c 1:1 -u nutcracker -C nutcracker',
+            docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Nutcracker'
+        }
+
         ferm::rule { 'skip_nutcracker_conntrack_out_1':
             desc  => 'Skip outgoing connection tracking for Nutcracker',
             table => 'raw',

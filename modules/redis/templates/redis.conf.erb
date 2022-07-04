@@ -5,6 +5,7 @@ pidfile /var/run/redis/redis-server.pid
 port <%= @port %>
 timeout 0
 loglevel notice
+logfile /var/log/redis/redis-server.log
 syslog-enabled yes
 syslog-ident redis-server
 databases 1

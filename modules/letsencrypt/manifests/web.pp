@@ -1,7 +1,8 @@
-# class: letsencrypt::web
+# === Class letsencrypt::web
 class letsencrypt::web {
-    
-    require_package('python3-flask', 'python3-filelock')
+    include letsencrypt::nginx
+
+    ensure_packages(['python3-flask', 'python3-filelock'])
 
     file { '/usr/local/bin/mirahezerenewssl.py':
         ensure  => present,
@@ -27,6 +28,7 @@ class letsencrypt::web {
 
     monitoring::services { 'MirahezeRenewSsl':
         check_command => 'tcp',
+        docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#MirahezeRenewSSL',
         vars          => {
             tcp_address => $::ipaddress6,
             tcp_port    => '5000',

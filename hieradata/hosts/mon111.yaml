@@ -1,5 +1,3 @@
-puppetserver_hostname: 'puppet111.miraheze.org'
-
 icinga_ido_db_host: 'db112.miraheze.org'
 icingaweb_db_host: 'db112.miraheze.org'
 icinga_ido_db_host: 'db112.miraheze.org'
@@ -14,10 +12,9 @@ icinga2_api_bind_host: '::'
 
 mariadb::version: '10.5'
 
+php::fpm::fpm_workers_multiplier: 5.0
+php::fpm::fpm_min_child: 4
 php::php_version: '7.4'
-
-php::php_fpm::fpm_workers_multiplier: 5.0
-php::php_fpm::fpm_min_restart_threshold: 6
 
 # icinga2
 
@@ -51,7 +48,7 @@ icinga2::globals::constants:
   NodeName: 'mon111.miraheze.org'
   ZoneName: 'mon111.miraheze.org'
   TicketSalt: ''
-  MaxConcurrentChecks: 40
+  MaxConcurrentChecks: 80
 icinga2::globals::user: 'nagios'
 icinga2::globals::group: 'nagios'
 icinga2::globals::icinga2_bin: '/usr/sbin/icinga2'
@@ -129,5 +126,8 @@ icinga2::globals::reserved:
   - ZonesDir
 
 nginx::use_graylog: true
-base::syslog::graylog_hostname: 'graylog121.miraheze.org'
-base::syslog::graylog_resolve_ip_version: 6
+base::syslog::syslog_daemon: rsyslog
+base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
+base::syslog::rsyslog_udp_localhost: true
+
+puppetserver_hostname: 'puppet111.miraheze.org'

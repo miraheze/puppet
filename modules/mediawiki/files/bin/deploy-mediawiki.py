@@ -1,13 +1,18 @@
 #! /usr/bin/python3
 
+from __future__ import annotations
+
 import argparse
-from typing import Optional, Union, TypedDict
 import os
-import time
-import requests
 import socket
+import time
 from sys import exit
 import subprocess
+from typing import TypedDict
+
+from langcodes import tag_is_valid
+
+import requests
 
 
 repos = {'config': 'config', 'world': 'w', 'landing': 'landing', 'errorpages': 'ErrorPages'}
@@ -96,7 +101,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     for code in ec:
         if code != 0:
             if not nolog:
-                os.system('/usr/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
+                os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
             if leave:
                 print('Exiting due to non-zero status.')
                 exit(1)
@@ -104,7 +109,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443) -> bool:
+def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443) -> bool:
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
@@ -165,7 +170,7 @@ def _get_deployed_path(repo: str) -> str:
     return f'/srv/mediawiki/{repos[repo]}/'
 
 
-def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local: bool = True, location: Union[None, str] = None, server: Union[None, str] = None) -> str:
+def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local: bool = True, location: None | str = None, server: None | str = None) -> str:
     if time:
         params = '--inplace'
     else:
@@ -184,12 +189,15 @@ def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')  # noqa: R503
 
 
-def _construct_git_pull(repo: str, submodules: bool = False) -> str:
+def _construct_git_pull(repo: str, submodules: bool = False, branch: str | None = None) -> str:
+    extrap = ' '
     if submodules:
-        extrap = '--recurse-submodules'
-    else:
-        extrap = ''
-    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull {extrap} --quiet'
+        extrap += '--recurse-submodules '
+
+    if branch:
+        extrap += f'origin {branch} '
+
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull{extrap}--quiet'
 
 
 def run(args: argparse.Namespace, start: float) -> None:
@@ -229,7 +237,7 @@ def run(args: argparse.Namespace, start: float) -> None:
                 else:
                     sm = False
                 try:
-                    stage.append(_construct_git_pull(repo, submodules=sm))
+                    stage.append(_construct_git_pull(repo, submodules=sm, branch=args.branch))
                 except KeyError:
                     print(f'Failed to pull {repo} due to invalid name')
 
@@ -240,8 +248,8 @@ def run(args: argparse.Namespace, start: float) -> None:
             if options[option]:
                 if option == 'world':  # install steps for w
                     os.chdir(_get_staging_path('world'))
-                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} composer install --no-dev --quiet'))
-                    rebuild.append(f'sudo -u {DEPLOYUSER} php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]}')
+                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer install --no-dev --quiet'))
+                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
@@ -265,8 +273,17 @@ def run(args: argparse.Namespace, start: float) -> None:
             run_command(f'sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --quiet --wiki={envinfo["wikidbname"]}')  # gives garbage errors
             args.l10n = True  # imply --l10n
         if args.l10n:  # setup l10n
+            if args.lang:
+                for language in str(args.lang).split(','):
+                    if not tag_is_valid(language):
+                        raise ValueError(f'{language} is not a valid language.')
+
+                lang = f'--lang={args.lang}'
+            else:
+                lang = ''
+
             postinstall.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
-            rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet --wiki={envinfo["wikidbname"]}')
+            rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
 
         # cmds to run after rsync & install (like mergemessage)
         exitcodes = run_batch_command(postinstall, 'post-install', exitcodes)
@@ -322,17 +339,18 @@ if __name__ == '__main__':
     start = time.time()
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--pull', dest='pull')
+    parser.add_argument('--branch', dest='branch')
     parser.add_argument('--config', dest='config', action='store_true')
     parser.add_argument('--world', dest='world', action='store_true')
     parser.add_argument('--landing', dest='landing', action='store_true')
     parser.add_argument('--errorpages', dest='errorpages', action='store_true')
-    parser.add_argument('--l10nupdate', dest='l10nupdate', action='store_true')
     parser.add_argument('--l10n', dest='l10n', action='store_true')
     parser.add_argument('--extension-list', dest='extensionlist', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--force', dest='force', action='store_true')
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
+    parser.add_argument('--lang', dest='lang')
     parser.add_argument('--servers', dest='servers', required=True)
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')

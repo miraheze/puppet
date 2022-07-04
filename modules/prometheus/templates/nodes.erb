@@ -1,4 +1,6 @@
 <%-
+require 'yaml'
+
 hosts = [];
 
 hosts.push( {
@@ -6,4 +8,4 @@ hosts.push( {
 } )
 -%>
 # File managed by puppet
-<%= scope.call_function( 'ordered_yaml', [hosts] ) %>
+<%= hosts.to_yaml %>

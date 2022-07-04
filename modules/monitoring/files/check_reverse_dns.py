@@ -20,10 +20,14 @@ this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
 import argparse
-from dns import reversename, resolver
 import re
 import sys
+
+from dns import resolver, reversename
+
 import tldextract
+
+sys.excepthook = lambda type, value, traceback: print(f'{type.__name__}: {value}')
 
 
 def get_args():
@@ -33,21 +37,21 @@ def get_args():
     """
 
     parser = argparse.ArgumentParser(
-        description="Check reverse DNS entry for hostname"
+        description='Check reverse DNS entry for hostname',
     )
     parser.add_argument(
         '-H',
         '--hostname',
         required=True,
-        help="hostname to check",
-        dest="hostname"
+        help='hostname to check',
+        dest='hostnam',
     )
     parser.add_argument(
         '-r',
         '--regex',
         required=True,
-        help="regex for match",
-        dest="regex"
+        help='regex for match',
+        dest='regex',
     )
 
     return parser.parse_args()
@@ -55,7 +59,7 @@ def get_args():
 
 def check_records(hostname):
     """Check NS and CNAME records for given hostname."""
-    extra_known_tlds = ('for.uz')
+    extra_known_tlds = ('eu.org', 'for.uz')
     uses_cf_at_root = False
 
     nameservers = []
@@ -63,7 +67,8 @@ def check_records(hostname):
     root_domain = domain_parts.registered_domain
 
     if root_domain in extra_known_tlds:
-        extracted = tldextract.extract(domain_parts.subdomain + '.' + domain_parts.suffix)
+        extracted = tldextract.extract(
+            domain_parts.subdomain + '.' + domain_parts.suffix)
         root_domain = extracted.domain + '.' + root_domain
 
     dns_resolver = resolver.Resolver(configure=False)
@@ -77,7 +82,7 @@ def check_records(hostname):
             if nameserver.endswith('.ns.cloudflare.com.') or nameserver.endswith('.dreamhost.com.'):
                 uses_cf_at_root = True
 
-        if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
+        if sorted(nameservers) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
             return 'NS'
     except resolver.NoAnswer:
         nameservers = None
@@ -107,11 +112,11 @@ def get_reverse_dnshostname(hostname):
 
         resolved_ip_addr = str(dns_resolver.resolve(hostname, 'AAAA')[0])
         ptr_record = reversename.from_address(resolved_ip_addr)
-        rev_host = str(dns_resolver.resolve(ptr_record, "PTR")[0]).rstrip('.')
+        return str(dns_resolver.resolve(ptr_record, 'PTR')[0]).rstrip('.')
 
-        return rev_host
     except (resolver.NXDOMAIN, resolver.NoAnswer):
-        print("rDNS WARNING - reverse DNS entry for {} could not be found".format(hostname))
+        print(
+            f'rDNS WARNING - reverse DNS entry for {hostname} could not be found')
         sys.exit(1)
 
 
@@ -122,15 +127,17 @@ def main():
     try:
         rdns_hostname = get_reverse_dnshostname(args.hostname)
     except resolver.NoNameservers:
-        print("rDNS CRITICAL - {} All nameservers failed to answer the query.".format(args.hostname))
+        print(
+            f'rDNS CRITICAL - {args.hostname} All nameservers failed to answer the query.')
         sys.exit(2)
 
     match = re.search(args.regex, rdns_hostname)
 
     if match:
-        text = "SSL OK - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname)
+        text = f'SSL OK - {args.hostname} reverse DNS resolves to {rdns_hostname}'
     else:
-        print("rDNS CRITICAL - {} reverse DNS resolves to {}".format(args.hostname, rdns_hostname))
+        print(
+            f'rDNS CRITICAL - {args.hostname} reverse DNS resolves to {rdns_hostname}')
         sys.exit(2)
 
     records = check_records(args.hostname)
@@ -151,5 +158,5 @@ def main():
         sys.exit(1)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

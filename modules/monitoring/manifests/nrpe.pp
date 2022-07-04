@@ -1,8 +1,8 @@
 define monitoring::nrpe (
     String $command,
-    VMlib::Ensure $ensure       = present,
-    Optional[String] $docs      = undef,
-    Optional[Boolean] $critical = false
+    VMlib::Ensure $ensure = present,
+    Boolean $critical = false,
+    Optional[Stdlib::HTTPSUrl] $docs = undef,
 ) {
     $title_safe  = regsubst($title, '[\W]', '-', 'G')
     @file { "/etc/nagios/nrpe.d/${title_safe}.cfg":

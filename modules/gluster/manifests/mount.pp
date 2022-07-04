@@ -123,12 +123,7 @@ define gluster::mount (
         }
     }
 
-    $only_ipv6 = lookup('gluster::only_ipv6', {'default_value' => false})
-    $ipv6 = $only_ipv6 ? {
-        true   => 'xlator-option=transport.address-family=inet6',
-        default => '',
-    }
-    $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec,${ipv6}"
+    $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec,xlator-option=transport.address-family=inet6"
 
     $mount_options = $options ? {
         undef   => $base_options,

@@ -1,10 +1,10 @@
 # class: users::key
 define users::key(
-  VMlib::Ensure $ensure      = present,
-  String $user              = $title,
-  Optional[Boolean] $skey   = undef,
-  VMlib::Sourceurl $source   = undef,
-  Optional[String] $content = undef,
+  VMlib::Ensure     $ensure  = present,
+  String            $user    = $title,
+  Optional[Boolean] $skey    = undef,
+  VMlib::Sourceurl  $source  = undef,
+  Optional[String]  $content = undef,
 ) {
     if $skey {
         if !defined(File["/etc/ssh/userkeys/${user}.d/"]) {

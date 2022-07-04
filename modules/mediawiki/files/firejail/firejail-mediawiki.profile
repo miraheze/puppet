@@ -15,6 +15,7 @@ blacklist ${PATH}/nc
 blacklist ${PATH}/ncat
 
 blacklist /etc/ssh
+blacklist /var/www/.ssh
 blacklist /root
 blacklist /home
 

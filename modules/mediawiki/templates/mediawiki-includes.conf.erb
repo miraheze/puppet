@@ -3,11 +3,6 @@ index index.php index.html;
 fastcgi_read_timeout 140;
 send_timeout 140;
 
-location /.well-known/acme-challenge/ {
-	alias /var/www/challenges/;
-	try_files $uri =404;
-}
-
 location ~ ^/(\.git|config|landing|cache) {
         deny all;
 }
@@ -42,11 +37,11 @@ location = / {
 }
 
 location = /favicon.ico {
-	try_files /../../usr/share/nginx/favicons/$host.ico /../../usr/share/nginx/favicons/default.ico;
+	rewrite ^(.*)$ /favicon.php;
 }
 
 location = /apple-touch-icon.png {
-	try_files /../../usr/share/nginx/favicons/apple-touch-icon-$host.png /../../usr/share/nginx/favicons/apple-touch-icon-default.png;
+	rewrite ^(.*)$ /touch.php;
 }
 
 location = /wiki {
@@ -68,6 +63,10 @@ location ~ ^/m/(.*) {
 	
 location /sitemaps/ {
 	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.miraheze.org/$1/sitemaps/$2 permanent;
+}
+
+location ~ ^/static/((?!(private))(.+))$ {
+	alias /mnt/mediawiki-static/$1;
 }
 
 # Redirect /entity/* to /wiki/Special:EntityData/*

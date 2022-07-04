@@ -1,7 +1,7 @@
 /var/log/nginx/*.log {
         daily
         missingok
-        rotate 12
+        rotate <%= @logrotate_number %>
         compress
         notifempty
         create 0640 www-data adm

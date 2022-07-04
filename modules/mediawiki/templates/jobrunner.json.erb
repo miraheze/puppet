@@ -14,8 +14,7 @@
                 "DataDumpGenerateJob",
                 "RequestWikiAIJob",
                 "webVideoTranscode",
-                "webVideoTranscodePrioritized",
-                "RecordLintJob"
+                "webVideoTranscodePrioritized"
             ]
         }
     },
@@ -31,11 +30,12 @@
         },
         // runJobs.php process time limits
         "real": {
-            "*": 130
+            "*": 300
         },
         // runJobs.php memory limits
         "memory": {
-            "*": "192M"
+            "*": "192M",
+            "refreshLinks": "350M"
         }
     },
 
@@ -46,7 +46,6 @@
         ],
         // Main queue servers
         "queues": [
-            "<%= @redis_server_ip %>",
             "<%= @redis_server_ip %>"
         ],
         "password": "<%= @redis_password %>"

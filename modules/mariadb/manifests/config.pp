@@ -98,6 +98,7 @@ class mariadb::config(
 
     monitoring::services { 'MariaDB':
         check_command => 'mysql',
+        docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars          => {
             mysql_hostname  => $::fqdn,
             mysql_username  => 'icinga',

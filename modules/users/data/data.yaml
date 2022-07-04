@@ -14,7 +14,6 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
-                 'ALL = (ALL) NOPASSWD: /root/ssl-certificate',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
     gid: 2002
@@ -24,7 +23,7 @@ groups:
   cache-admins:
     gid: 2003
     descriptions: limited sudo on cache proxies
-    members: []
+    members: [universalomega]
     privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/varnishadm',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service varnish *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
@@ -32,13 +31,14 @@ groups:
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   puppet-users:
     gid: 2004
-    description: limited access on puppet111 to add SSL private keys
-    members: [macfan]
-    privileges: []
+    description: limited access on puppet111 to manage SSL certificates
+    members: [macfan, universalomega]
+    privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate',
+                 'ALL = (ALL) NOPASSWD: /var/lib/nagios/ssl-acme']
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [macfan, rhinos, universalomega]
+    members: [macfan, rhinos, universalomega, agent]
     privileges: []
 
 users:
@@ -91,7 +91,7 @@ users:
     uid: 1007
     name: reception
     realname: Reception
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEA7U+sWg/K7BM7KEVwsLEFnkmOv6//eotDh8W6FmG4D3t3/6q7ysQS8QEYtply8MWSusTCH1s/QfpPrhtxEq6Qm8LfjikbfeltfCZHmzGlqC98DRFMhGIgiFC4SVqRc9FCWv3ZQ8nnVp++VdiOoXB5rf8uENtlDlCLoA2RXuCCYBUMbScbbuDKPI/ipHuSx0kp04pGpX/QTULES3AJgjV2IZtLMh9cF27psEdjE1lRwt9aeB0Cgb9302AqQycXV2Oqcs9Y6TwkN6IWSvEo+5AenGZW9nqN0y0VekQNqMWMl4xLZDG8zNoq0tZcdSEXmz9D9XBOEg5d4blRkX5wzaCDYHhDbDJ71x2bgH/ifzQMaRYN6vLU8q3qlCxSq2Hk7rcEwK6/fqrOdZlavh0v59zsypuixYF+kRNtqipup21LV/2+jlc5DWqLUiW1ORCbdl2pvTEHNnKpaQO3tPa8PSht0EhaLl8st+nLOiGJgxtlf886lLBEbk+6y4tybtTJlCg5Z0FSZZpODD9DxktqUla+L44l6h6X4we/VnDJ6sWKOQqNZABZwv7sYlMxYt5Ncm04fcWTlVuUIToaflkIWitawHTwyauru8MenyHNT/gTYnwY8kc+jy44cO2QHWYERsNAXAAj2DRgn/b4x1oK7WNydAPPSxwblzuq0dgD8VJ0dE8= rsa-key-20161113]
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCqiDxzUPZxtV5oSXMTzzM3rj3wOk6n0qhFjgkCiCCt eddsa-key-20220531]
   imbophil:
     ensure: absent
     uid: 1008
@@ -129,10 +129,16 @@ users:
     uid: 1013
     name: universalomega
     realname: Universal Omega 
-    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCibNiTDRcbwece0HAnkuX7yxwGUvW+moKqcvKWM52rgl8wDvkBc5HVvpYpb5IRBHuZ0REudOKt3jdudhxyMJ0QkDcO1Jyn6Y34ShzV+ePAwsBibVEZ1x3NJ7ekU/lnbRRtzJixY2OFDao9CkSjR7sSCVYy2ZknB9DZYEgVxdIWPKXGEtv7LzumaYPHbpU4PDj/IIRbEb2MKVGgxznrDyL+ZkaO5U3JZl2zorDti4r/Ya/UWypm15szLn4al3ok0W9c8upcqOBtbnQ/MNBx0FW7/GuvNJChi9ODmEYoPffheiOPT5y4QStd+5OKG62M8jfc9YgoaKWTx805+3tkb0jcUvHKsd/qJtGd7yu3N6JHtRVQanMsB0JQvhM+Re0QkCkHhVuU+tyO/v/40lxQrLbcm3cummpnLdgW6EB8ZwRE+5Eqpfo5mf/NDwW15vbw/GaTwJe9bClqOAFyhvCV/cmMAmMGObDFJNfExXDN/4i+imcAPQdeQzgsnCBf3cqfQBPJMHraObnyYYXcEksjjbbREQdc/4VxhQ4Qhf0bO3liFG/O05X2d6lOeZviBIhBWbGRT36GEQa8a6GB9PiUv4RpDDY+O13MKHL9Jy33l61aIA+Pd8uVptF2eEAdAAzezbH1N41r86NhPk500ZqoMwF3EDwSdsJumjHMNCfBvVqMaQ== universal.omega000@gmail.com]
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOjFNXqnu7gdALTWOWbhch32vsYmLS/xcfU9NepYXpFZ universalomega@miraheze.org]
   void:
     ensure: present
     uid: 1014
     name: void
     realname: Voidwalker 
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWIwmB8ZkwnyvWoMwVfWxmPH6QkP2X2l0TfipMXeWHf void@miraheze.org]
+  agent:
+    ensure: present
+    uid: 1015
+    name: Agent
+    realname: Agent
+    ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC3BBLjDJfi9b8FHoPSLtervl088Qtyc+6iY2ffWaFxzsEEzibJH09biXvmhJ1tSV2ZRwmMOpaQPT36YdNJ1qTiUduDrvKYLH0x/WcUhbmUCsS5aJn2jGrbg7suKoKiwvLB7lRwwN4FnFyRDp/1kWHhusey1uc09EP3KAd29sPcrm9j0aocRCZEp6Kpi4smS6R416T/v+TLAJ1KQ6wAOvoHglVcFqfoihqUnqSiFt2DYR/aPF4IVulHalEgHATQy4p/x8NOML24WJF/RT7WxJ7P+sg9ZSjGqyQg33sYCJc4gtDLgtWRmfKzUc/461vjATJh9brnsQVW3bEQAeQrixRh5Dqk1/tFN/pFGDnqPZkkhVrhazs4c8v7zJmEeROMUYuCfMNFmzdLwwfS1wPZCvEW1fCr0KLHNZpewqjkbLeznGuklF2QFepY/V1Fj/479UNGxp6Bfg/vxZ35OLWtq7lbNMTGTJmapbthh/+J08cYmO1Uyl9EWFRP/OqF2LqCyiEDfzKfvzOg9GJ+sWj51dlzZsz//L/oOhNtjykoYMocq6jYOKFxJ3kWrCCS0X7xyqXZiS74+P68rVFHc1v9/O2/s67Zn4xALCxtKnpp1fi7TlU4SN/QWE8X58YPt/y2dogGmoXfzpLwC1IMwLVV36Ya+hgpzioIQwTGfPLFJDiwyw== agent@miraheze.org]

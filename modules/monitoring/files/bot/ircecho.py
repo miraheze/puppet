@@ -12,29 +12,30 @@
 
 import argparse
 import logging
-import pyinotify
-import threading
 import random
-import string
 import re
+import string
 import sys
+import threading
 
 import ib3_auth
-import irc.client  # for exceptions.
+
 from irc.bot import SingleServerIRCBot
+import irc.client  # for exceptions.
+
+import pyinotify
 
 logging.basicConfig()
 logger = logging.getLogger()
 
 
 def beautify_message(m):
-    '''Clean up formatting of alert messages.'''
+    """Clean up formatting of alert messages."""
     m = m.strip()                           # Strip trailing whitespace
     m = re.sub(r'(\w+): \1:\b', r'\1', m)   # Dedupe severity
     m = re.sub(r' {2,}', ' ', m)            # Collapse whitespace
     m = m.replace(': -', ':')               # Combine separators
-    m = m.strip(':-')                       # Strip trailing separators
-    return m
+    return m.strip(':-')                       # Strip trailing separators
 
 
 class EchoNotifier(threading.Thread):
@@ -48,16 +49,16 @@ class EchoNotifier(threading.Thread):
 
 
 class EchoReader():
-    '''
-    Essentially an initalization class
-    '''
+    """Essentially an initalization class"""
 
     def __init__(self, infile='', associatedchannel=''):
         self.infile = infile
         self.associatedchannel = associatedchannel
-        self.uniques = {';': 'UNIQ_' + self.get_unique_string() + '_QINU',
-                        ':': 'UNIQ_' + self.get_unique_string() + '_QINU',
-                        ',': 'UNIQ_' + self.get_unique_string() + '_QINU'}
+        self.uniques = {
+            ';': 'UNIQ_' + self.get_unique_string() + '_QINU',
+            ':': 'UNIQ_' + self.get_unique_string() + '_QINU',
+            ',': 'UNIQ_' + self.get_unique_string() + '_QINU',
+                        }
 
         if self.infile:
             print('Using infile')
@@ -70,9 +71,9 @@ class EchoReader():
                 filename = self.unescape(temparr[0])
                 try:
                     print('Opening: ' + filename)
-                    f = open(filename)
-                    f.seek(0, 2)
-                    self.files[filename] = f
+                    with open(filename) as f:
+                        f.seek(0, 2)
+                        self.files[filename] = f
                 except IOError:
                     print('Failed to open file: ' + filename)
                     self.files[filename] = None
@@ -95,7 +96,8 @@ class EchoReader():
                     s = input()
                     # this throws an exception if not connected.
                     s = beautify_message(s)
-                    self.bot.connection.privmsg(self.chans, s.replace('\n', ''))
+                    self.bot.connection.privmsg(
+                        self.chans, s.replace('\n', ''))
                 except EOFError:
                     # Once the input is finished, the bot should exit
                     break
@@ -111,20 +113,18 @@ class EchoReader():
     def escape(self, string):
         escaped_string = re.sub(r'\\\;', self.uniques[';'], string)
         escaped_string = re.sub(r'\\\:', self.uniques[':'], escaped_string)
-        escaped_string = re.sub(r'\\\,', self.uniques[','], escaped_string)
-        return escaped_string
+        return re.sub(r'\\\,', self.uniques[','], escaped_string)
 
     def unescape(self, string):
         unescaped_string = re.sub(self.uniques[';'], ';', string)
         unescaped_string = re.sub(self.uniques[':'], ':', unescaped_string)
-        unescaped_string = re.sub(self.uniques[','], ',', unescaped_string)
-        return unescaped_string
+        return re.sub(self.uniques[','], ',', unescaped_string)
 
     def readfile(self, filename):
         if self.files[filename]:
             return self.files[filename].read()
         else:
-            return
+            return None
 
     def getchannels(self, filename):
         if filename in self.associations:
@@ -142,10 +142,12 @@ class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
         kwargs = {}
         if ssl:
             import ssl
-            ssl_factory = irc.connection.Factory(ipv6=True, wrapper=ssl.wrap_socket)
+            ssl_factory = irc.connection.Factory(
+                ipv6=True, wrapper=ssl.wrap_socket)
             kwargs['connect_factory'] = ssl_factory
 
-        SingleServerIRCBot.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', **kwargs)
+        SingleServerIRCBot.__init__(
+            self, [(server, port)], nickname_pass, 'IRC echo bot', **kwargs)
         if ident_passwd is not None:
             ib3_auth.SASL.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', ident_passwd,
                                    **kwargs)
@@ -228,7 +230,8 @@ except IndexError:
 global bot
 if args['ident_passwd_file']:
     with open(args['ident_passwd_file']) as f:
-        bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl, f.read().strip())
+        bot = EchoBot(chans, nickname, nickname_pass,
+                      server, port, ssl, f.read().strip())
 else:
     bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl)
 global reader

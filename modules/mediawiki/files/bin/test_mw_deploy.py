@@ -132,6 +132,14 @@ def test_construct_git_pull() -> None:
     assert mwd._construct_git_pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull  --quiet'
 
 
+def test_construct_git_pull_branch() -> None:
+    assert mwd._construct_git_pull('config', branch='myfunbranch') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull origin myfunbranch --quiet'
+
+
+def test_construct_git_pull_branch_sm() -> None:
+    assert mwd._construct_git_pull('config', submodules=True, branch='test') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --recurse-submodules origin test --quiet'
+
+
 def test_get_command_array() -> None:
     assert mwd.get_command_array('sudo -u www-data echo test') == ['sudo', '-u www-data echo test']
 
@@ -247,3 +255,4 @@ def test_run_full_suites() -> None:
     assert mwd.run(args, time.time()) == 1
     args.servers = f'{socket.gethostname().split(".")[0]}, mygarbageserver.local'
     assert mwd.run(args, time.time()) == 1
+    assert mwd._construct_git_pull('config') == 'sudo -u www-data git -C /srv/mediawiki-staging/config/ pull --quiet'

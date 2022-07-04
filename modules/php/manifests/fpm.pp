@@ -16,8 +16,8 @@
 #   the defaults.
 #
 class php::fpm(
-    Enum['present', 'absent'] $ensure = 'present',
-    Hash $config                      = {},
+    VMlib::Ensure $ensure = 'present',
+    Hash $config = {},
 ) {
     if !defined(Class['php']) {
         fail('php::fpm is not meant to be used before the php class is declared.')
@@ -27,6 +27,7 @@ class php::fpm(
         fail('You need to declare fpm as a sapi in the php class to be able to use fpm')
     }
 
+    include prometheus::exporter::fpm
 
     $main_config_file = "${php::config_dir}/fpm/php-fpm.conf"
     # Default config values
@@ -86,5 +87,10 @@ class php::fpm(
         recurse => true,
         purge   => true,
         require => Package["php${php::version}-fpm"]
+    }
+
+    monitoring::nrpe { 'php-fpm':
+        command => "/usr/lib/nagios/plugins/check_procs -C php-fpm${php::version} -c 1:",
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#PHP-FPM'
     }
 }

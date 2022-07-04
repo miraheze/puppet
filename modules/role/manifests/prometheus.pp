@@ -2,16 +2,19 @@
 class role::prometheus {
     include prometheus::exporter::blackbox
 
-    $blackbox_mediawiki_urls = query_nodes('Class[Role::MediaWiki]').map |$host| {
+    $blackbox_mediawiki_urls = query_nodes('Class[Role::Varnish] or Class[Role::MediaWiki]').map |$host| {
         [ 'Main_Page', 'Special:Version', 'Special:RecentChanges' ].map |$page| {
             "https://${host}/wiki/${page}"
         }
     }
+    .flatten()
+    .unique()
+    .sort()
 
     file { '/etc/prometheus/targets/blackbox_mediawiki_urls.yaml':
         ensure  => present,
         mode    => '0444',
-        content => ordered_yaml([{'targets' => $blackbox_mediawiki_urls.flatten}])
+        content => to_yaml([{'targets' => $blackbox_mediawiki_urls.flatten}])
     }
 
     $blackbox_web_urls = [
@@ -23,7 +26,7 @@ class role::prometheus {
     file { '/etc/prometheus/targets/blackbox_web_urls.yaml':
         ensure  => present,
         mode    => '0444',
-        content => ordered_yaml([{'targets' => $blackbox_web_urls}])
+        content => to_yaml([{'targets' => $blackbox_web_urls}])
     }
 
     $blackbox_jobs = [
@@ -49,7 +52,7 @@ class role::prometheus {
                 },
                 {
                     'target_label' => '__address__',
-                    'replacement' => 'mon111.miraheze.org:9115',
+                    'replacement' => '127.0.0.1:9115',
                 }
             ]
         },
@@ -75,11 +78,28 @@ class role::prometheus {
                 },
                 {
                     'target_label' => '__address__',
-                    'replacement' => 'mon111.miraheze.org:9115',
+                    'replacement' => '127.0.0.1:9115',
                 }
             ]
         }
     ]
+
+    $cadvisor_job = [
+        {
+            'job_name'        => 'cadvisor',
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/cadvisor.yaml' ]
+                }
+            ]
+        }
+    ]
+
+    prometheus::class { 'cadvisor':
+        dest   => '/etc/prometheus/targets/cadvisor.yaml',
+        module => 'Prometheus::Exporter::Cadvisor',
+        port   => 4194,
+    }
 
     $fpm_job = [
         {
@@ -194,9 +214,10 @@ class role::prometheus {
         }
     ]
 
+    # jmx based
     prometheus::class { 'puppetserver':
         dest   => '/etc/prometheus/targets/puppetserver.yaml',
-        module => 'Prometheus::Exporter::Puppetserver',
+        module => 'Role::Puppetserver',
         port   => 9400
     }
 
@@ -211,9 +232,10 @@ class role::prometheus {
         }
     ]
 
+    # jmx based
     prometheus::class { 'puppetdb':
         dest   => '/etc/prometheus/targets/puppetdb.yaml',
-        module => 'Prometheus::Exporter::Puppetdb',
+        module => 'Puppetdb',
         port   => 9401
     }
 
@@ -292,7 +314,8 @@ class role::prometheus {
         scrape_extra => [
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
             $gluster_job, $puppetserver_job, $puppetdb_job, $memcached_job,
-            $postfix_job, $openldap_job, $elasticsearch_job, $varnish_job
+            $postfix_job, $openldap_job, $elasticsearch_job, $varnish_job,
+            $cadvisor_job
         ].flatten,
     }
 
