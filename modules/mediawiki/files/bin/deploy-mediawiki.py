@@ -41,7 +41,7 @@ class WikiCommand:
     wiki: str
 
     def __str__(self):
-        return 'sudo -u {DEPLOYUSER} php {self.command} --wiki={self.wiki}'  # noqa: F841
+        return f'sudo -u {DEPLOYUSER} php {self.command} --wiki={self.wiki}'  # noqa: F841
 
 
 beta: Environment = {
@@ -210,6 +210,17 @@ def _construct_git_pull(repo: str, submodules: bool = False, branch: str | None 
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo)} pull{extrap}--quiet'
 
 
+def _construct_l10n_command(lang: str | None, db: str) -> WikiCommand:
+    if lang:
+        for language in str(lang).split(','):
+            if not tag_is_valid(language):
+                raise ValueError(f'{language} is not a valid language.')
+        lang = f' --lang={lang}'
+    else:
+        lang = ''
+    return WikiCommand(f'/srv/mediawiki/w/maintenance/rebuildLocalisationCache.php{lang} --quiet', db)
+
+
 def run(args: argparse.Namespace, start: float) -> int:
     envinfo = get_environment_info()
     servers = get_server_list(envinfo, args.servers)
@@ -280,17 +291,8 @@ def run(args: argparse.Namespace, start: float) -> int:
         non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
         # These need to be setup late because dodgy
         if args.l10n:  # setup l10n
-            if args.lang:
-                for language in str(args.lang).split(','):
-                    if not tag_is_valid(language):
-                        raise ValueError(f'{language} is not a valid language.')
-
-                lang = f'--lang={args.lang}'
-            else:
-                lang = ''
-
             postinstall.append(WikiCommand('/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', envinfo['wikidbname']))
-            rebuild.append(WikiCommand(f'/srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet', envinfo['wikidbname']))
+            rebuild.append(_construct_l10n_command(args.lang, envinfo['wikidbname']))
 
         # cmds to run after rsync & install (like mergemessage)
         exitcodes = run_batch_command(postinstall, 'post-install', exitcodes)
