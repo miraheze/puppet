@@ -58,7 +58,7 @@ class EchoReader():
             ';': 'UNIQ_' + self.get_unique_string() + '_QINU',
             ':': 'UNIQ_' + self.get_unique_string() + '_QINU',
             ',': 'UNIQ_' + self.get_unique_string() + '_QINU',
-                       }
+        }
 
         if self.infile:
             print('Using infile')
@@ -134,7 +134,7 @@ class EchoReader():
 
 
 class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
-    def __init__(self, chans, nickname, nickname_pass, server, port=6667, ssl=False, ipv6=True, ident_passwd=None):
+    def __init__(self, chans, nickname, nickname_pass, server, port=6667, ssl=False, ipv6=True, ident_passwd=None):  # noqa: U100
         print(f'Connecting to IRC server {server}...')
 
         self.chans = chans
@@ -152,10 +152,10 @@ class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
             ib3_auth.SASL.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', ident_passwd,
                                    **kwargs)
 
-    def on_nicknameinuse(self, c, e):
+    def on_nicknameinuse(self, c, e):  # noqa: U100
         c.nick(c.get_nickname() + '_')
 
-    def on_welcome(self, c, e):
+    def on_welcome(self, c, e):  # noqa: U100
         print('Connected')
 
         c.nick(self.nickname)

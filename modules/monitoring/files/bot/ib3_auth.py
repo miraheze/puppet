@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is a cut down and slightly modified part of IRC Bot Behavior Bundle
-# (IB3)
+#
 # Copyright (C) 2017 Bryan Davis and contributors
 # Modified August 2018 by Alex Monk <krenair@gmail.com> for python-irc 8.5.3
 #  compatibility.
@@ -62,7 +62,7 @@ class SASL(AbstractAuth):
             self.connection.add_global_handler(
                 event, getattr(self, f'_handle_{event}'))
 
-    def _handle_connect(self, sock):
+    def _handle_connect(self, sock):  # noqa: U100
         """Send CAP REQ :sasl on connect."""
         self.connection.cap('REQ', 'sasl')
 
@@ -84,15 +84,15 @@ class SASL(AbstractAuth):
             logger.warning('Unexpcted AUTHENTICATE response: %s', event)
             conn.disconnect()
 
-    def _handle_903(self, conn, event):
+    def _handle_903(self, conn, event):  # noqa: U100
         """Handle 903 RPL_SASLSUCCESS responses."""
         self.connection.cap('END')
 
-    def _handle_908(self, conn, event):
+    def _handle_908(self, conn, event):  # noqa: U100
         """Handle 908 RPL_SASLMECHS responses."""
         logger.warning('SASL PLAIN not supported: %s', event)
         self.die()
 
-    def _handle_welcome(self, conn, event):
+    def _handle_welcome(self, conn, event):  # noqa: U100
         """Handle WELCOME message."""
         logger.info('Connected to server %s', conn.get_server_name())
