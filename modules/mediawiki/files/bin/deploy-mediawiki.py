@@ -269,9 +269,6 @@ def run(args: argparse.Namespace, start: float) -> int:
         exitcodes = run_batch_command(rsync, 'rsync', exitcodes)
         non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
         # These need to be setup late because dodgy
-        if args.l10nupdate:  # used by automated maint
-            run_command(f'sudo -u www-data ionice -c idle /usr/bin/nice -n 15 /usr/bin/php /srv/mediawiki/w/extensions/LocalisationUpdate/update.php --quiet --wiki={envinfo["wikidbname"]}')  # gives garbage errors
-            args.l10n = True  # imply --l10n
         if args.l10n:  # setup l10n
             if args.lang:
                 for language in str(args.lang).split(','):
