@@ -37,9 +37,8 @@ class ProcessList(TypedDict):
 class WikiCommand:
     def __init__(self, command: str, wiki: str) -> None:
         self = f'sudo -u {DEPLOYUSER} {command} --wiki={wiki}'  # noqa: F841
-    
-    
-    def __str__ (self):
+
+    def __str__(self):
         return f'{self}'
 
 
