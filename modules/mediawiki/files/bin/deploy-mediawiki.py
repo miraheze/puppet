@@ -33,9 +33,10 @@ class EnvironmentList(TypedDict):
 class ProcessList(TypedDict):
     operations: list[subprocess.Popen]
 
+
 class WikiCommand:
     def __init__(self, command: str, wiki: str) -> WikiCommand:
-        self = f'sudo -u {DEPLOYUSER} {command} --wiki={wiki}'
+        self = f'sudo -u {DEPLOYUSER} {command} --wiki={wiki}'  # noqa: F841
 
 
 beta: Environment = {
@@ -253,7 +254,7 @@ def run(args: argparse.Namespace, start: float) -> int:
                 if option == 'world':  # install steps for w
                     os.chdir(_get_staging_path('world'))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer install --no-dev --quiet'))
-                    rebuild.append(WikiCommand('MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', {envinfo["wikidbname"]}))
+                    rebuild.append(WikiCommand('MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', {envinfo['wikidbname']}))
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog, leave=(not args.force))
