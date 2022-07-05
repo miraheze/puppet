@@ -60,17 +60,15 @@ class RemoteMap(TypedDict):
 
 
 class deploymap(TypedDict):
-    servers: list[str]
     doworld: bool
     loginfo: dict
-    branch: str
     nolog: bool
     force: bool
     port: int
-    ignoretime: bool
     debugurl: str
     commands: CommandMap
     remote: RemoteMap
+    runprep: bool
 
 
 beta: Environment = {
@@ -274,16 +272,16 @@ def _get_git_commands(world: bool, pull: str | None, branch: str | None) -> list
 
 
 def prep(args: argparse.Namespace) -> deploymap:
+    envinfo = get_environment_info()
+    servers = get_server_list(envinfo, args.servers)
     deploymentmap: deploymap = {
-        'servers': [],
         'doworld': args.world,
         'loginfo': {},
-        'branch': '',
         'nolog': args.nolog,
         'force': args.force,
         'port': args.port,
-        'ignoretime': args.ignoretime,
-        'debugurl': '',
+        'debugurl': envinfo['wikiurl'],
+        'runprep': (HOSTNAME in servers),
         'commands': {
             'stage': [],
             'rsync': [],
@@ -296,9 +294,6 @@ def prep(args: argparse.Namespace) -> deploymap:
             'commands': [],
         },
     }
-    envinfo = get_environment_info()
-    deploymentmap['debugurl'] = envinfo['wikiurl']
-    deploymentmap['servers'] = get_server_list(envinfo, args.servers)
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     loginfo = {}
     file_commands: list[str] = []
@@ -336,9 +331,9 @@ def prep(args: argparse.Namespace) -> deploymap:
         deploymentmap['commands']['rebuild'].append(_construct_l10n_command(args.lang, envinfo['wikidbname']))
         deploymentmap['remote']['paths'].append('/srv/mediawiki/cache/l10n/')
     for path in deploymentmap['remote']['paths']:
-        path_commands = [*path_commands, *remote_sync_file_prep(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=path)]
+        path_commands = [*path_commands, *remote_sync_file_prep(time=args.ignoretime, serverlist=servers, path=path)]
     for file in deploymentmap['remote']['files']:
-        file_commands = [*file_commands, *remote_sync_file_prep(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=file, recursive=False)]
+        file_commands = [*file_commands, *remote_sync_file_prep(time=args.ignoretime, serverlist=servers, path=file, recursive=False)]
     deploymentmap['remote']['commands'] = [*path_commands, *file_commands]
 
     return deploymentmap
@@ -348,13 +343,13 @@ def run(deploymentmap: deploymap, start: float) -> int:
     exitcodes: list[int] = []
     info = deploymentmap['loginfo']
     pretty_servers = deploymentmap['loginfo']['servers']
-    del deploymentmap['loginfo']['servers']
-    if HOSTNAME in deploymentmap['servers']:
-        text = f'starting deploy of {info} to {pretty_servers}'
-        if not deploymentmap['nolog']:
-            os.system(f'/usr/local/bin/logsalmsg {text}')
-        else:
-            print(text)
+    del info['servers']
+    text = f'starting deploy of {info} to {pretty_servers}'
+    if not deploymentmap['nolog']:
+        os.system(f'/usr/local/bin/logsalmsg {text}')
+    else:
+        print(text)
+    if deploymentmap['runprep']:
         # setup env, git pull etc
         exitcodes = run_batch_command(deploymentmap['commands']['stage'], 'staging', exitcodes)
         if deploymentmap['doworld']:
@@ -368,8 +363,8 @@ def run(deploymentmap: deploymap, start: float) -> int:
         non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
         # update ext list + l10n
         exitcodes = run_batch_command(deploymentmap['commands']['rebuild'], 'rebuild', exitcodes)
-        non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
-        exitcodes = run_batch_command(deploymentmap['remote']['commands'], 'remote-sync', exitcodes)
+    non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
+    exitcodes = run_batch_command(deploymentmap['remote']['commands'], 'remote-sync', exitcodes)
     fintext = f'finished deploy of {info} to {pretty_servers}'
 
     failed = non_zero_code(ec=exitcodes, leave=False)
