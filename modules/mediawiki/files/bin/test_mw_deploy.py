@@ -185,7 +185,7 @@ def test_get_servers_two() -> None:
 def test_prep() -> None:
     args = mwd.get_parsed_args()
     args.servers = 'all'
-    assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all'}, 'branch': '', 'nolog': False, 'force': False, 'port': None, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all'}, 'branch': '', 'nolog': False, 'force': False, 'port': None, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'commands': [], 'files': [], 'paths': []}}
 
 
 def test_prep_server_nonsense() -> None:
@@ -203,25 +203,25 @@ def test_prep_server_nonsense() -> None:
 def test_prep_single_server() -> None:
     args = mwd.get_parsed_args()
     args.servers = 'mw101'
-    assert mwd.prep(args) == {'servers': ['mw101'], 'doworld': False, 'loginfo': {'servers': 'mw101'}, 'branch': '', 'force': False, 'port': None, 'nolog': False, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': ['mw101'], 'doworld': False, 'loginfo': {'servers': 'mw101'}, 'branch': '', 'force': False, 'port': None, 'nolog': False, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'commands': [], 'files': [], 'paths': []}}
 
 
 def test_prep_multi_server() -> None:
     args = mwd.get_parsed_args()
     args.servers = 'mw101,mw102'
-    assert mwd.prep(args) == {'servers': ['mw101', 'mw102'], 'doworld': False, 'loginfo': {'servers': 'mw101,mw102'}, 'branch': '', 'force': False, 'port': None, 'nolog': False, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': ['mw101', 'mw102'], 'doworld': False, 'loginfo': {'servers': 'mw101,mw102'}, 'branch': '', 'force': False, 'port': None, 'nolog': False, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'commands': [], 'files': [], 'paths': []}}
 
 
 def test_prep_nolog() -> None:
     args = mwd.get_parsed_args()
     args.servers = 'all'
     args.nolog = True
-    assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all', 'nolog': True}, 'branch': '', 'nolog': True, 'force': False, 'port': None, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all', 'nolog': True}, 'branch': '', 'nolog': True, 'force': False, 'port': None, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'commands': [], 'files': [], 'paths': []}}
 
 
 def test_prep_world() -> None:
     args = mwd.get_parsed_args()
-    args.servers = 'all'
+    args.servers = 'mw101'
     args.world = True
     assert mwd.prep(args) == {
         'branch': '',
@@ -245,7 +245,7 @@ def test_prep_world() -> None:
         'force': False,
         'ignoretime': False,
         'loginfo': {
-            'servers': 'all',
+            'servers': 'mw101',
             'world': True,
         },
         'nolog': False,
@@ -253,14 +253,18 @@ def test_prep_world() -> None:
         'remote': {
             'files': [],
             'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/'],
+            'commands': [
+                'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/cache/gitinfo/ www-data@mw101.miraheze.org:/srv/mediawiki/cache/gitinfo/',
+                'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/w/ www-data@mw101.miraheze.org:/srv/mediawiki/w/',
+            ],
         },
-        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
+        'servers': ['mw101'],
     }
 
 
 def test_prep_landing() -> None:
     args = mwd.get_parsed_args()
-    args.servers = 'all'
+    args.servers = 'mw101'
     args.landing = True
     assert mwd.prep(args) == {
         'branch': '',
@@ -278,21 +282,24 @@ def test_prep_landing() -> None:
         'ignoretime': False,
         'loginfo': {
             'landing': True,
-            'servers': 'all',
+            'servers': 'mw101',
         },
         'nolog': False,
         'port': None,
         'remote': {
             'files': [],
             'paths': ['/srv/mediawiki/landing/'],
+            'commands': [
+                'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/landing/ www-data@mw101.miraheze.org:/srv/mediawiki/landing/',
+            ],
         },
-        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
+        'servers': ['mw101'],
     }
 
 
 def test_prep_world_extlist() -> None:
     args = mwd.get_parsed_args()
-    args.servers = 'all'
+    args.servers = 'mw101'
     args.world = True
     args.extensionlist = True
     assert mwd.prep(args) == {
@@ -318,7 +325,7 @@ def test_prep_world_extlist() -> None:
         'force': False,
         'ignoretime': False,
         'loginfo': {
-            'servers': 'all',
+            'servers': 'mw101',
             'world': True,
             'extensionlist': True,
         },
@@ -327,14 +334,19 @@ def test_prep_world_extlist() -> None:
         'remote': {
             'files': ['/srv/mediawiki/cache/extension-list.json'],
             'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/'],
+            'commands': [
+                'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/cache/gitinfo/ www-data@mw101.miraheze.org:/srv/mediawiki/cache/gitinfo/',
+                'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/w/ www-data@mw101.miraheze.org:/srv/mediawiki/w/',
+                'sudo -u www-data rsync --update -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/cache/extension-list.json www-data@mw101.miraheze.org:/srv/mediawiki/cache/extension-list.json',
+            ],
         },
-        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
+        'servers': ['mw101'],
     }
 
 
 def test_prep_folder_test() -> None:
     args = mwd.get_parsed_args()
-    args.servers = 'all'
+    args.servers = 'mw101'
     args.folders = 'test'
     assert mwd.prep(args) == {
         'branch': '',
@@ -352,21 +364,24 @@ def test_prep_folder_test() -> None:
         'ignoretime': False,
         'loginfo': {
             'folders': 'test',
-            'servers': 'all',
+            'servers': 'mw101',
         },
         'nolog': False,
         'port': None,
         'remote': {
             'files': [],
             'paths': ['/srv/mediawiki/test/'],
+            'commands': [
+                'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/test/ www-data@mw101.miraheze.org:/srv/mediawiki/test/',
+            ],
         },
-        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
+        'servers': ['mw101'],
     }
 
 
 def test_prep_file_test() -> None:
     args = mwd.get_parsed_args()
-    args.servers = 'all'
+    args.servers = 'mw101'
     args.files = 'test.txt'
     assert mwd.prep(args) == {
         'branch': '',
@@ -384,21 +399,24 @@ def test_prep_file_test() -> None:
         'ignoretime': False,
         'loginfo': {
             'files': 'test.txt',
-            'servers': 'all',
+            'servers': 'mw101',
         },
         'nolog': False,
         'port': None,
         'remote': {
             'files': ['/srv/mediawiki/test.txt'],
             'paths': [],
+            'commands': [
+                'sudo -u www-data rsync --update -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/test.txt www-data@mw101.miraheze.org:/srv/mediawiki/test.txt',
+            ],
         },
-        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
+        'servers': ['mw101'],
     }
 
 
 def test_prep_world_l10n() -> None:
     args = mwd.get_parsed_args()
-    args.servers = 'all'
+    args.servers = 'mw101'
     args.world = True
     args.l10n = True
     assert mwd.prep(args) == {
@@ -424,7 +442,7 @@ def test_prep_world_l10n() -> None:
         'force': False,
         'ignoretime': False,
         'loginfo': {
-            'servers': 'all',
+            'servers': 'mw101',
             'world': True,
             'l10n': True,
         },
@@ -433,8 +451,13 @@ def test_prep_world_l10n() -> None:
         'remote': {
             'files': [],
             'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/', '/srv/mediawiki/cache/l10n/'],
+            'commands': [
+                'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/cache/gitinfo/ www-data@mw101.miraheze.org:/srv/mediawiki/cache/gitinfo/',
+                'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/w/ www-data@mw101.miraheze.org:/srv/mediawiki/w/',
+                'sudo -u www-data rsync --update -r --delete -e "ssh -i /srv/mediawiki-staging/deploykey" /srv/mediawiki/cache/l10n/ www-data@mw101.miraheze.org:/srv/mediawiki/cache/l10n/',
+            ],
         },
-        'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
+        'servers': ['mw101'],
     }
 
 

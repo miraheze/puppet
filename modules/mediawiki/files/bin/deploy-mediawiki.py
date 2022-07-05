@@ -56,6 +56,7 @@ class CommandMap(TypedDict):
 class RemoteMap(TypedDict):
     paths: list[str]
     files: list[str]
+    commands: list[str]
 
 
 class deploymap(TypedDict):
@@ -191,18 +192,14 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
     return up
 
 
-def remote_sync_file(time: bool, serverlist: list[str], path: str, exitcodes: list[int], recursive: bool = True) -> list[int]:
-    print(f'Start {path} deploys to {serverlist}.')
+def remote_sync_file_prep(time: bool, serverlist: list[str], path: str, recursive: bool = True) -> list[str]:
     sync_cmds = []
     for server in serverlist:
         if HOSTNAME != server.split('.')[0]:
-            print(f'Scheduling {path} for {server}.')
             sync_cmds.append(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
         else:
             continue
-    ec = run_batch_command(sync_cmds, 'remote sync', exitcodes)
-    print(f'Finished {path} deploys to {serverlist}.')
-    return ec  # noqa: R504
+    return sync_cmds
 
 
 def _get_staging_path(repo: str) -> str:
@@ -296,6 +293,7 @@ def prep(args: argparse.Namespace) -> deploymap:
         'remote': {
             'paths': [],
             'files': [],
+            'commands': [],
         },
     }
     envinfo = get_environment_info()
@@ -303,6 +301,8 @@ def prep(args: argparse.Namespace) -> deploymap:
     deploymentmap['servers'] = get_server_list(envinfo, args.servers)
     options = {'config': args.config, 'world': args.world, 'landing': args.landing, 'errorpages': args.errorpages}
     loginfo = {}
+    file_commands: list[str] = []
+    path_commands: list[str] = []
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
@@ -335,6 +335,12 @@ def prep(args: argparse.Namespace) -> deploymap:
         deploymentmap['commands']['postinstall'].append(WikiCommand('/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', envinfo['wikidbname']))
         deploymentmap['commands']['rebuild'].append(_construct_l10n_command(args.lang, envinfo['wikidbname']))
         deploymentmap['remote']['paths'].append('/srv/mediawiki/cache/l10n/')
+    for path in deploymentmap['remote']['paths']:
+        path_commands = [*path_commands, *remote_sync_file_prep(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=path)]
+    for file in deploymentmap['remote']['files']:
+        file_commands = [*file_commands, *remote_sync_file_prep(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=file, recursive=False)]
+    deploymentmap['remote']['commands'] = [*path_commands, *file_commands]
+
     return deploymentmap
 
 
@@ -363,10 +369,7 @@ def run(deploymentmap: deploymap, start: float) -> int:
         # update ext list + l10n
         exitcodes = run_batch_command(deploymentmap['commands']['rebuild'], 'rebuild', exitcodes)
         non_zero_code(exitcodes, nolog=deploymentmap['nolog'], leave=(not deploymentmap['force']))
-    for path in deploymentmap['remote']['paths']:
-        exitcodes = remote_sync_file(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=path, exitcodes=exitcodes)
-    for file in deploymentmap['remote']['files']:
-        exitcodes = remote_sync_file(time=deploymentmap['ignoretime'], serverlist=deploymentmap['servers'], path=file, exitcodes=exitcodes, recursive=False)
+        exitcodes = run_batch_command(deploymentmap['remote']['commands'], 'remote-sync', exitcodes)
     fintext = f'finished deploy of {info} to {pretty_servers}'
 
     failed = non_zero_code(ec=exitcodes, leave=False)
