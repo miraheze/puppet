@@ -7,6 +7,10 @@ def test_non_zero_ec_only_one_zero() -> None:
     assert not mwd.non_zero_code([0], leave=False)
 
 
+def test_non_zero_ec_only_one_log() -> None:
+    assert mwd.non_zero_code([1], leave=False, nolog=False)
+
+
 def test_non_zero_ec_multi_zero() -> None:
     assert not mwd.non_zero_code([0, 0], leave=False)
 
