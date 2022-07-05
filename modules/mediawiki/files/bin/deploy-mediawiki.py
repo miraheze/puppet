@@ -104,14 +104,14 @@ def get_environment_info() -> Environment:
     return ENVIRONMENTS['prod']
 
 
-def get_server_list(envinfo: Environment, servers: str | None) -> list[str]:
+def get_server_list(envservers: list[str], servers: str | None) -> list[str]:
     servers = str(servers)
     if servers in ('all', 'scsvg'):
-        return envinfo['servers']
+        return envservers
     serverlist = servers.split(',')
     for server in serverlist:
-        if server not in envinfo['servers']:
-            raise ValueError(f'{server} is not a valid server - available servers: {envinfo["servers"]}')
+        if server not in envservers:
+            raise ValueError(f'{server} is not a valid server - available servers: {envservers}')
     return serverlist
 
 
@@ -273,7 +273,7 @@ def _get_git_commands(world: bool, pull: str | None, branch: str | None) -> list
 
 def prep(args: argparse.Namespace) -> deploymap:
     envinfo = get_environment_info()
-    servers = get_server_list(envinfo, args.servers)
+    servers = get_server_list(envinfo['servers'], args.servers)
     deploymentmap: deploymap = {
         'doworld': args.world,
         'loginfo': {},
