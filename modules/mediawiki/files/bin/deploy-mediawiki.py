@@ -305,7 +305,7 @@ def prep(args: argparse.Namespace) -> deploymap:
     for option in options:  # configure rsync & custom data for repos
         if options[option]:
             if option == 'world':  # install steps for w
-                deploymentmap['commands']['rebuild'].append(WikiCommand('MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', envinfo['wikidbname']))
+                deploymentmap['commands']['rebuild'].append(WikiCommand('MW_INSTALL_PATH=/srv/mediawiki-staging/w /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php', envinfo['wikidbname']))
                 deploymentmap['remote']['paths'].append('/srv/mediawiki/cache/gitinfo/')
             deploymentmap['commands']['rsync'].append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
             deploymentmap['remote']['paths'].append(_get_deployed_path(option))
