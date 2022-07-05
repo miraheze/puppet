@@ -107,7 +107,11 @@ def get_environment_info() -> Environment:
 def get_server_list(envinfo: Environment, servers: str) -> list[str]:
     if servers in ('all', 'scsvg'):
         return envinfo['servers']
-    return servers.split(',')
+    serverlist = servers.split(',')
+    for server in serverlist:
+        if server not in envinfo['servers']:
+            raise ValueError(f'{server} is not a valid server - available servers: {envinfo["servers"]}')
+    return serverlist
 
 
 def run_batch_command(commands: list[str] | list[WikiCommand], tag: str, exitcodes: list[int]) -> list[int]:

@@ -205,6 +205,33 @@ def test_prep() -> None:
     assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
+def test_prep_server_nonsense() -> None:
+    parser = argparse.ArgumentParser()
+    args, unknown = parser.parse_known_args()
+    del unknown
+    args.servers = 'None'
+    args.config = False
+    args.world = False
+    args.landing = False
+    args.errorpages = False
+    args.files = ''
+    args.folders = ''
+    args.extensionlist = False
+    args.l10n = False
+    args.nolog = True
+    args.force = False
+    args.port = 443
+    args.ignoretime = False
+    args.pull = False
+    args.branch = False
+    failed = False
+    try:
+         mwd.prep(args)
+    except ValueError as e:
+        assert str(e) == "None is not a valid server - available servers: ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111']"
+        failed = True
+    assert failed
+
 def test_prep_single_server() -> None:
     parser = argparse.ArgumentParser()
     args, unknown = parser.parse_known_args()
@@ -296,7 +323,7 @@ def test_prep_world() -> None:
             'postinstall': [],
             'rebuild': [
                 mwd.WikiCommand(
-                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php',
+                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php',
                     wiki='testwiki',
                 ),
             ],
@@ -405,7 +432,7 @@ def test_prep_world_extlist() -> None:
             'postinstall': [],
             'rebuild': [
                 mwd.WikiCommand(
-                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php',
+                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php',
                     wiki='testwiki',
                 ),
                 mwd.WikiCommand(command='/srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php', wiki='testwiki'),
@@ -566,7 +593,7 @@ def test_prep_world_l10n() -> None:
             'postinstall': [mwd.WikiCommand(command='/srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --output /srv/mediawiki/config/ExtensionMessageFiles.php', wiki='testwiki')],
             'rebuild': [
                 mwd.WikiCommand(
-                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php',
+                    command='MW_INSTALL_PATH=/srv/mediawiki-staging/w /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --conf=/srv/mediawiki-staging/config/LocalSettings.php',
                     wiki='testwiki',
                 ),
                 mwd.WikiCommand(command='/srv/mediawiki/w/maintenance/rebuildLocalisationCache.php --quiet', wiki='testwiki'),
