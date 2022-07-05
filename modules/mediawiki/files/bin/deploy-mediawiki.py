@@ -388,6 +388,7 @@ def run(deploymentmap: deploymap, start: float) -> int:
         return 1
     return 0
 
+
 def get_parsed_args():
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--pull', dest='pull')

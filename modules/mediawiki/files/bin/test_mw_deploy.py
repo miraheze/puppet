@@ -1,4 +1,3 @@
-import argparse
 import importlib
 
 mwd = importlib.import_module('deploy-mediawiki')
