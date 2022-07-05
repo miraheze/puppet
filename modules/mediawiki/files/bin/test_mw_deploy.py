@@ -184,46 +184,14 @@ def test_get_servers_two() -> None:
 
 
 def test_prep() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+    args = mwd.get_parsed_args()
     args.servers = 'all'
-    args.config = False
-    args.world = False
-    args.landing = False
-    args.errorpages = False
-    args.files = ''
-    args.folders = ''
-    args.extensionlist = False
-    args.l10n = False
-    args.nolog = True
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
-    assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all'}, 'branch': '', 'nolog': False, 'force': False, 'port': None, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
 def test_prep_server_nonsense() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+    args = mwd.get_parsed_args()
     args.servers = 'None'
-    args.config = False
-    args.world = False
-    args.landing = False
-    args.errorpages = False
-    args.files = ''
-    args.folders = ''
-    args.extensionlist = False
-    args.l10n = False
-    args.nolog = True
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
     failed = False
     try:
         mwd.prep(args)
@@ -234,90 +202,28 @@ def test_prep_server_nonsense() -> None:
 
 
 def test_prep_single_server() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+    args = mwd.get_parsed_args()
     args.servers = 'mw101'
-    args.config = False
-    args.world = False
-    args.landing = False
-    args.errorpages = False
-    args.files = ''
-    args.folders = ''
-    args.extensionlist = False
-    args.l10n = False
-    args.nolog = True
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
-    assert mwd.prep(args) == {'servers': ['mw101'], 'doworld': False, 'loginfo': {'servers': 'mw101', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': ['mw101'], 'doworld': False, 'loginfo': {'servers': 'mw101'}, 'branch': '', 'force': False, 'port': None, 'nolog': False, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
 def test_prep_multi_server() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+    args = mwd.get_parsed_args()
     args.servers = 'mw101,mw102'
-    args.config = False
-    args.world = False
-    args.landing = False
-    args.errorpages = False
-    args.files = ''
-    args.folders = ''
-    args.extensionlist = False
-    args.l10n = False
-    args.nolog = True
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
-    assert mwd.prep(args) == {'servers': ['mw101', 'mw102'], 'doworld': False, 'loginfo': {'servers': 'mw101,mw102', 'files': '', 'folders': '', 'nolog': True, 'port': 443}, 'branch': '', 'nolog': True, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    assert mwd.prep(args) == {'servers': ['mw101', 'mw102'], 'doworld': False, 'loginfo': {'servers': 'mw101,mw102'}, 'branch': '', 'force': False, 'port': None, 'nolog': False, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
-def test_prep_log() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+def test_prep_nolog() -> None:
+    args = mwd.get_parsed_args()
     args.servers = 'all'
-    args.config = False
-    args.world = False
-    args.landing = False
-    args.errorpages = False
-    args.files = ''
-    args.folders = ''
-    args.extensionlist = False
-    args.l10n = False
-    args.nolog = False
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
-    assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all', 'files': '', 'folders': '', 'port': 443}, 'branch': '', 'nolog': False, 'force': False, 'port': 443, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
+    args.nolog = True
+    assert mwd.prep(args) == {'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'], 'doworld': False, 'loginfo': {'servers': 'all', 'nolog': True}, 'branch': '', 'nolog': True, 'force': False, 'port': None, 'ignoretime': False, 'debugurl': 'publictestwiki.com', 'commands': {'stage': [], 'rsync': [], 'postinstall': [], 'rebuild': []}, 'remote': {'paths': [], 'files': []}}
 
 
 def test_prep_world() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+    args = mwd.get_parsed_args()
     args.servers = 'all'
-    args.config = False
     args.world = True
-    args.landing = False
-    args.errorpages = False
-    args.files = ''
-    args.folders = ''
-    args.extensionlist = False
-    args.l10n = False
-    args.nolog = True
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
     assert mwd.prep(args) == {
         'branch': '',
         'commands': {
@@ -340,15 +246,11 @@ def test_prep_world() -> None:
         'force': False,
         'ignoretime': False,
         'loginfo': {
-            'files': '',
-            'folders': '',
-            'nolog': True,
-            'port': 443,
             'servers': 'all',
             'world': True,
         },
-        'nolog': True,
-        'port': 443,
+        'nolog': False,
+        'port': None,
         'remote': {
             'files': [],
             'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/'],
@@ -358,24 +260,9 @@ def test_prep_world() -> None:
 
 
 def test_prep_landing() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+    args = mwd.get_parsed_args()
     args.servers = 'all'
-    args.config = False
-    args.world = False
     args.landing = True
-    args.errorpages = False
-    args.files = ''
-    args.folders = ''
-    args.extensionlist = False
-    args.l10n = False
-    args.nolog = True
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
     assert mwd.prep(args) == {
         'branch': '',
         'commands': {
@@ -391,15 +278,11 @@ def test_prep_landing() -> None:
         'force': False,
         'ignoretime': False,
         'loginfo': {
-            'files': '',
-            'folders': '',
             'landing': True,
-            'nolog': True,
-            'port': 443,
             'servers': 'all',
         },
-        'nolog': True,
-        'port': 443,
+        'nolog': False,
+        'port': None,
         'remote': {
             'files': [],
             'paths': ['/srv/mediawiki/landing/'],
@@ -409,24 +292,10 @@ def test_prep_landing() -> None:
 
 
 def test_prep_world_extlist() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+    args = mwd.get_parsed_args()
     args.servers = 'all'
-    args.config = False
     args.world = True
-    args.landing = False
-    args.errorpages = False
-    args.files = ''
-    args.folders = ''
     args.extensionlist = True
-    args.l10n = False
-    args.nolog = True
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
     assert mwd.prep(args) == {
         'branch': '',
         'commands': {
@@ -450,16 +319,12 @@ def test_prep_world_extlist() -> None:
         'force': False,
         'ignoretime': False,
         'loginfo': {
-            'files': '',
-            'folders': '',
-            'nolog': True,
-            'port': 443,
             'servers': 'all',
             'world': True,
             'extensionlist': True,
         },
-        'nolog': True,
-        'port': 443,
+        'nolog': False,
+        'port': None,
         'remote': {
             'files': ['/srv/mediawiki/cache/extension-list.json'],
             'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/'],
@@ -469,24 +334,9 @@ def test_prep_world_extlist() -> None:
 
 
 def test_prep_folder_test() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+    args = mwd.get_parsed_args()
     args.servers = 'all'
-    args.config = False
-    args.world = False
-    args.landing = False
-    args.errorpages = False
-    args.files = ''
     args.folders = 'test'
-    args.extensionlist = False
-    args.l10n = False
-    args.nolog = True
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
     assert mwd.prep(args) == {
         'branch': '',
         'commands': {
@@ -502,14 +352,11 @@ def test_prep_folder_test() -> None:
         'force': False,
         'ignoretime': False,
         'loginfo': {
-            'files': '',
             'folders': 'test',
-            'nolog': True,
-            'port': 443,
             'servers': 'all',
         },
-        'nolog': True,
-        'port': 443,
+        'nolog': False,
+        'port': None,
         'remote': {
             'files': [],
             'paths': ['/srv/mediawiki/test/'],
@@ -519,24 +366,9 @@ def test_prep_folder_test() -> None:
 
 
 def test_prep_file_test() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+    args = mwd.get_parsed_args()
     args.servers = 'all'
-    args.config = False
-    args.world = False
-    args.landing = False
-    args.errorpages = False
     args.files = 'test.txt'
-    args.folders = ''
-    args.extensionlist = False
-    args.l10n = False
-    args.nolog = True
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
     assert mwd.prep(args) == {
         'branch': '',
         'commands': {
@@ -553,13 +385,10 @@ def test_prep_file_test() -> None:
         'ignoretime': False,
         'loginfo': {
             'files': 'test.txt',
-            'folders': '',
-            'nolog': True,
-            'port': 443,
             'servers': 'all',
         },
-        'nolog': True,
-        'port': 443,
+        'nolog': False,
+        'port': None,
         'remote': {
             'files': ['/srv/mediawiki/test.txt'],
             'paths': [],
@@ -569,25 +398,10 @@ def test_prep_file_test() -> None:
 
 
 def test_prep_world_l10n() -> None:
-    parser = argparse.ArgumentParser()
-    args, unknown = parser.parse_known_args()
-    del unknown
+    args = mwd.get_parsed_args()
     args.servers = 'all'
-    args.config = False
     args.world = True
-    args.landing = False
-    args.errorpages = False
-    args.files = ''
-    args.folders = ''
-    args.extensionlist = False
     args.l10n = True
-    args.nolog = True
-    args.force = False
-    args.port = 443
-    args.ignoretime = False
-    args.pull = False
-    args.branch = False
-    args.lang = False
     assert mwd.prep(args) == {
         'branch': '',
         'commands': {
@@ -611,16 +425,12 @@ def test_prep_world_l10n() -> None:
         'force': False,
         'ignoretime': False,
         'loginfo': {
-            'files': '',
-            'folders': '',
-            'nolog': True,
-            'port': 443,
             'servers': 'all',
             'world': True,
             'l10n': True,
         },
-        'nolog': True,
-        'port': 443,
+        'nolog': False,
+        'port': None,
         'remote': {
             'files': [],
             'paths': ['/srv/mediawiki/cache/gitinfo/', '/srv/mediawiki/w/', '/srv/mediawiki/cache/l10n/'],

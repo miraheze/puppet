@@ -8,6 +8,7 @@ import pprint
 import socket
 import subprocess
 import time
+import warnings
 from dataclasses import dataclass
 from sys import exit
 from typing import TypedDict
@@ -104,7 +105,8 @@ def get_environment_info() -> Environment:
     return ENVIRONMENTS['prod']
 
 
-def get_server_list(envinfo: Environment, servers: str) -> list[str]:
+def get_server_list(envinfo: Environment, servers: str | None) -> list[str]:
+    servers = str(servers)
     if servers in ('all', 'scsvg'):
         return envinfo['servers']
     serverlist = servers.split(',')
@@ -386,9 +388,7 @@ def run(deploymentmap: deploymap, start: float) -> int:
         return 1
     return 0
 
-
-if __name__ == '__main__':
-    start = time.time()
+def get_parsed_args():
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--pull', dest='pull')
     parser.add_argument('--branch', dest='branch')
@@ -403,12 +403,21 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang')
-    parser.add_argument('--servers', dest='servers', required=True)
+    parser.add_argument('--servers', dest='servers')
     parser.add_argument('--ignore-time', dest='ignoretime', action='store_true')
     parser.add_argument('--port', dest='port')
     parser.add_argument('--noop', dest='noop', action='store_true')
 
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
+    if unknown:
+        warnings.warn(f'Arguments {unknown} ignored')
+    return args
+
+
+if __name__ == '__main__':
+    start = time.time()
+
+    args = get_parsed_args()
     deployment_map = prep(args)
     if args.noop:
         pp = pprint.PrettyPrinter(depth=4)
