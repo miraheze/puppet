@@ -338,7 +338,6 @@ def run(deploymentmap: deploymap, start: float) -> int:
     pretty_servers = deploymentmap['loginfo']['servers']
     del deploymentmap['loginfo']['servers']
     if HOSTNAME in deploymentmap['servers']:
-        del deploymentmap['loginfo']['servers']
         text = f'starting deploy of {info} to {pretty_servers}'
         if not deploymentmap['nolog']:
             os.system(f'/usr/local/bin/logsalmsg {text}')
