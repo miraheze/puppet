@@ -131,10 +131,10 @@ def run_batch_command(commands: list[str] | list[WikiCommand], tag: str, exitcod
     return exitcodes
 
 
-def run_command(cmd: str | WikiCommand) -> int:
+def run_command(cmd: str) -> int:
     start = time.time()
     print(f'Execute: {cmd}')
-    ec = os.system(str(cmd))
+    ec = os.system(cmd)
     print(f'Completed ({ec}) in {str(int(time.time() - start))}s!')
     return ec
 
