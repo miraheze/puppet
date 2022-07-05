@@ -151,7 +151,8 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443) -> bool:
+
+def get_debug_url(Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', port: int = 443) -> str:
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
@@ -163,12 +164,17 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         domain = 'localhost'
         headers = {'host': f'{Host}'}
         location = f'{Host}@{domain}'
-    up = False
     if port == 443:
         proto = 'https://'
     else:
         proto = 'http://'
-    req = requests.get(f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
+    return f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers
+
+
+def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443) -> bool:
+    url, headers = get_debug_url(Debug, Host, domain, port)
+    req = requests.get(url, headers=headers, verify=verify)
+    up = False
     if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
@@ -178,10 +184,10 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
             req.headers['X-Served-By'] = 'None'
         print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
         if force:
-            print(f'Ignoring canary check error on {location} due to --force')
+            print(f'Ignoring canary check error on {url} (H:{headers}) due to --force')
         else:
-            print(f'Canary check failed for {location}. Aborting... - use --force to proceed')
-            message = f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {location}'
+            print(f'Canary check failed for {url} (H:{headers}). Aborting... - use --force to proceed')
+            message = f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {url} (H:{headers})'
             if nolog:
                 print(message)
             else:
