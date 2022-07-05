@@ -36,6 +36,7 @@ def test_check_up_no_debug_host() -> None:
         failed = True
     assert failed
 
+
 def test_get_url_no_debug() -> None:
     assert mwd.get_debug_url(Host='publictestwiki.com') == ('https://localhost:443/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', {'host': 'publictestwiki.com'})
 

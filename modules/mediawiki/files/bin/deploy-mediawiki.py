@@ -151,19 +151,16 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-
 def get_debug_url(Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', port: int = 443) -> str:
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
         server = f'{Debug}.miraheze.org'
         headers = {'X-Miraheze-Debug': server}
-        location = f'{domain}@{server}'
     else:
         os.environ['NO_PROXY'] = 'localhost'
         domain = 'localhost'
         headers = {'host': f'{Host}'}
-        location = f'{Host}@{domain}'
     if port == 443:
         proto = 'https://'
     else:
