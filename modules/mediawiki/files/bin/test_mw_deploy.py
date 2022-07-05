@@ -226,11 +226,12 @@ def test_prep_server_nonsense() -> None:
     args.branch = False
     failed = False
     try:
-         mwd.prep(args)
+        mwd.prep(args)
     except ValueError as e:
         assert str(e) == "None is not a valid server - available servers: ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111']"
         failed = True
     assert failed
+
 
 def test_prep_single_server() -> None:
     parser = argparse.ArgumentParser()
