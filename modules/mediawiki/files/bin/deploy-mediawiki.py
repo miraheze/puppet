@@ -151,7 +151,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-def get_debug_url(Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', port: int = 443) -> str:
+def get_debug_url(Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', port: int = 443) -> tuple[str, dict[str, str]]:
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:
