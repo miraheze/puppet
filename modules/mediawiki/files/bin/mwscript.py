@@ -2,12 +2,20 @@
 
 import argparse
 import os
+from typing import TypedDict, Optional
 
 
-def run(args: argparse.Namespace) -> None:
+class CommandInfo(TypedDict):
+    command: str
+    generate: Optional[str]
+    long: bool
+    nolog: bool
 
+
+def get_commands(args: argparse.Namespace) -> CommandInfo:
     longscripts = ('deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'refreshLinks.php', 'purgeList.php', 'cargoRecreateData.php')
-    validDBLists = ('active', 'beta')
+    long = False
+    generate = None
 
     script = args.script
     long = (script in longscripts)
@@ -20,16 +28,19 @@ def run(args: argparse.Namespace) -> None:
         long = (scriptsplit[2] in longscripts)
 
     validDBLists = ('active', 'beta')
-
-    if args.arguments[0].endswith('wiki') or args.arguments in [*'all', *validDBLists]:
-        wiki = args.arguments[0]
-        args.arguments.remove(wiki)
-        if args.arguments == []:
-            args.arguments = False
-    elif not args.extension:
-        raise ValueError(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments} / {args.extension}')
-    else:
-        wiki = ''
+    
+    try:
+        if args.extension:
+            wiki = ''
+        elif args.arguments[0].endswith('wiki') or args.arguments[0] in [*['all'], *validDBLists]:
+            wiki = args.arguments[0]
+            args.arguments.remove(wiki)
+            if args.arguments == []:
+                args.arguments = False
+        else:
+            raise ValueError(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *validDBLists]}')
+    except IndexError:
+        raise ValueError('Not enough Arguments given.')
 
     if wiki == 'all':
         long = True
@@ -45,20 +56,23 @@ def run(args: argparse.Namespace) -> None:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
     if args.arguments:
         command += ' ' + ' '.join(args.arguments)
+    return {'long': long, 'generate': generate, 'command': command, 'nolog': args.nolog}
 
-    logcommand = f'/usr/local/bin/logsalmsg "{command}'
+
+def run(info: CommandInfo) -> None:  # pragma: no cover
+    logcommand = f'/usr/local/bin/logsalmsg "{info["command"]}'
     print('Will execute:')
-    if 'generate' in locals():
-        print(generate)
-    print(command)
+    if info['generate']:
+        print(info["generate"])
+    print(info["command"])
     if args.confirm or input("Type 'Y' to confirm: ").upper() == 'Y':
-        if long and not args.nolog:
+        if info['long'] and not info['nolog']:
             os.system(f'{logcommand} (START)"')
-        if 'generate' in locals():
-            os.system(generate)
-        return_value = os.system(command)
+        if info["generate"]:
+            os.system(info["generate"])  # type: ignore
+        return_value = os.system(info["command"])
         logcommand += f' (END - exit={str(return_value)})"'
-        if not args.nolog:
+        if not info['nolog']:
             print(f'Logging via {logcommand}')
             os.system(logcommand)
         print('Done!')
@@ -66,8 +80,8 @@ def run(args: argparse.Namespace) -> None:
         print('Aborted!')
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Process some integers.')
+def get_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description='Run a MediaWiki Script')
     parser.add_argument('script')
     parser.add_argument('arguments', nargs='*', default=[])
     parser.add_argument('--extension', '--skin', dest='extension')
@@ -76,5 +90,8 @@ if __name__ == '__main__':
 
     args = parser.parse_known_args()[0]
     args.arguments += parser.parse_known_args()[1]
+    return args
 
-    run(args)
+if __name__ == '__main__':  # pragma: no cover
+
+    run(get_commands(get_args()))

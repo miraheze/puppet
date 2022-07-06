@@ -100,7 +100,7 @@ def get_command_array(command: str | WikiCommand) -> list[str]:
 
 def get_environment_info() -> Environment:
     if HOSTNAME.startswith('test'):
-        return ENVIRONMENTS['beta']
+        return ENVIRONMENTS['beta']  # pragma: no cover
     return ENVIRONMENTS['prod']
 
 
@@ -144,7 +144,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
         if code != 0:
             if not nolog:
                 os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
-            if leave:
+            if leave:  # pragma: no cover
                 print('Exiting due to non-zero status.')
                 exit(1)
             return True
@@ -182,7 +182,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
         if force:
             print(f'Ignoring canary check error on {url} (H:{headers}) due to --force')
-        else:
+        else:  # pragma: no cover
             print(f'Canary check failed for {url} (H:{headers}). Aborting... - use --force to proceed')
             message = f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {url} (H:{headers})'
             if nolog:
@@ -198,7 +198,7 @@ def remote_sync_file_prep(time: bool, serverlist: list[str], path: str, recursiv
     for server in serverlist:
         if HOSTNAME != server.split('.')[0]:
             sync_cmds.append(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
-        else:
+        else:  # pragma: no cover
             continue
     return sync_cmds
 
@@ -342,7 +342,7 @@ def prep(args: argparse.Namespace) -> deploymap:
     return deploymentmap
 
 
-def run(deploymentmap: deploymap, start: float) -> int:
+def run(deploymentmap: deploymap, start: float) -> int:  # pragma: no cover
     exitcodes: list[int] = []
     info = deploymentmap['loginfo']
     pretty_servers = deploymentmap['loginfo']['servers']
@@ -416,7 +416,7 @@ def get_parsed_args():
     return args
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     start = time.time()
 
     args = get_parsed_args()
