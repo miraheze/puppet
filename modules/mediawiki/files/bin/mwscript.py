@@ -1,8 +1,10 @@
 #! /usr/bin/python3
 
+from __future__ import annotations
+
 import argparse
 import os
-from typing import TypedDict, TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 if TYPE_CHECKING:
     from typing import Optional
 
@@ -12,6 +14,7 @@ class CommandInfo(TypedDict):
     generate: Optional[str]
     long: bool
     nolog: bool
+    confirm: bool
 
 
 def get_commands(args: argparse.Namespace) -> CommandInfo:
@@ -32,7 +35,8 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     validDBLists = ('active', 'beta')
 
     try:
-        if args.extension:
+        # We don't handle errror cases first as that's simply a failback and it would not be simpler.
+        if args.extension:  # noqa: SIM106
             wiki = ''
         elif args.arguments[0].endswith('wiki') or args.arguments[0] in [*['all'], *validDBLists]:
             wiki = args.arguments[0]
@@ -58,7 +62,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
     if args.arguments:
         command += ' ' + ' '.join(args.arguments)
-    return {'long': long, 'generate': generate, 'command': command, 'nolog': args.nolog}
+    return {'long': long, 'generate': generate, 'command': command, 'nolog': args.nolog, 'confirm': args.confirm}
 
 
 def run(info: CommandInfo) -> None:  # pragma: no cover
@@ -67,7 +71,7 @@ def run(info: CommandInfo) -> None:  # pragma: no cover
     if info['generate']:
         print(info['generate'])
     print(info['command'])
-    if args.confirm or input("Type 'Y' to confirm: ").upper() == 'Y':
+    if info['confirm'] or input("Type 'Y' to confirm: ").upper() == 'Y':
         if info['long'] and not info['nolog']:
             os.system(f'{logcommand} (START)"')
         if info['generate']:
