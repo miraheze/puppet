@@ -32,7 +32,6 @@ jobs:
       - name: Run tests
         run: |
           flake8 modules/mediawiki modules/ssl modules/monitoring --enable-extensions=TC,TC1 --ignore=E501,W503,SFS301 --max-complexity 14
-          pytest -vv -n auto
           mypy modules/mediawiki modules/ssl modules/monitoring --ignore-missing-imports
           coverage run --branch -m pytest modules/mediawiki
           coverage report --fail-under=70
