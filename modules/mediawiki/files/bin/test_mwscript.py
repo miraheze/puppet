@@ -1,8 +1,8 @@
 import os
 
-import pytest
-
 import mwscript
+
+import pytest
 
 
 def test_get_command_simple():
