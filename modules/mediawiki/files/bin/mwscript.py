@@ -5,22 +5,32 @@ import os
 
 
 def run(args: argparse.Namespace) -> None:
+
     longscripts = ('deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'refreshLinks.php', 'purgeList.php', 'cargoRecreateData.php')
-    long = False
+    validDBLists = ('active', 'beta')
 
     script = args.script
-    if script in longscripts:
-        long = True
+    long = (script in longscripts)
+
     if len(script.split('/')) == 1:
         script = f'/srv/mediawiki/w/maintenance/{script}'
     else:
         scriptsplit = script.split('/')
         script = f'/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
-        if scriptsplit[2] in longscripts:
-            long = True
+        long = (scriptsplit[2] in longscripts)
 
-    wiki = args.wiki
     validDBLists = ('active', 'beta')
+
+    if args.arguments[0].endswith('wiki') or args.arguments in [*'all', *validDBLists]:
+        wiki = args.arguments[0]
+        args.arguments.remove(wiki)
+        if args.arguments == []:
+            args.arguments = False
+    elif not args.extension:
+        raise ValueError(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments} / {args.extension}')
+    else:
+        wiki = ''
+
     if wiki == 'all':
         long = True
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json {script}'
@@ -35,6 +45,7 @@ def run(args: argparse.Namespace) -> None:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
     if args.arguments:
         command += ' ' + ' '.join(args.arguments)
+
     logcommand = f'/usr/local/bin/logsalmsg "{command}'
     print('Will execute:')
     if 'generate' in locals():
@@ -58,7 +69,6 @@ def run(args: argparse.Namespace) -> None:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('script')
-    parser.add_argument('wiki')
     parser.add_argument('arguments', nargs='*', default=[])
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
