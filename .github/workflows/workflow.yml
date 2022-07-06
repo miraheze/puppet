@@ -36,4 +36,4 @@ jobs:
           mypy modules/mediawiki modules/ssl modules/monitoring --ignore-missing-imports
           coverage run --branch -m pytest modules/mediawiki
           coverage report --fail-under=70
-          vermin -v --eval-annotations --backport argparse --backport importlib --backport ipaddress --backport typing --no-parse-comments . 
+          vermin -v --eval-annotations --backport argparse --backport importlib --backport ipaddress --backport typing --backport dataclasses --no-parse-comments . 
