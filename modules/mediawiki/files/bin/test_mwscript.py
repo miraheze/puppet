@@ -21,7 +21,7 @@ def test_get_command_extension_list():
     args = mwscript.get_args()
     args.script = 'test.php'
     args.extension = 'CheckUser'
-    assert mwscript.get_commands(args) == {'confirm': False, 'command': f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/CheckUser.json /srv/mediawiki/w/maintenance/test.php', 'generate': 'php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension=CheckUser', 'long': True, 'nolog': False}
+    assert mwscript.get_commands(args) == {'confirm': False, 'command': f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.environ["LOGNAME"]}/CheckUser.json /srv/mediawiki/w/maintenance/test.php', 'generate': 'php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension=CheckUser', 'long': True, 'nolog': False}
 
 
 def test_get_command_all():
