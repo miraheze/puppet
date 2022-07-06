@@ -1,5 +1,7 @@
-import mwscript
 import os
+
+import mwscript
+
 
 def test_get_command_simple():
     args = mwscript.get_args()
@@ -15,7 +17,7 @@ def test_get_command_extension():
     assert mwscript.get_commands(args) == {'command': 'sudo -u www-data php /srv/mediawiki/w/extensions/CheckUser/maintenance/test.php --wiki=metawiki', 'generate': None, 'long': False, 'nolog': False}
 
 
-def test_get_command_simple():
+def test_get_command_extension_list():
     args = mwscript.get_args()
     args.script = 'test.php'
     args.extension = 'CheckUser'

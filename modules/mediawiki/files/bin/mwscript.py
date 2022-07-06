@@ -2,7 +2,9 @@
 
 import argparse
 import os
-from typing import TypedDict, Optional
+from typing import TypedDict, TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import Optional
 
 
 class CommandInfo(TypedDict):
@@ -28,7 +30,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
         long = (scriptsplit[2] in longscripts)
 
     validDBLists = ('active', 'beta')
-    
+
     try:
         if args.extension:
             wiki = ''
@@ -60,17 +62,17 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
 
 
 def run(info: CommandInfo) -> None:  # pragma: no cover
-    logcommand = f'/usr/local/bin/logsalmsg "{info["command"]}'
+    logcommand = f'/usr/local/bin/logsalmsg {info["command"]}'
     print('Will execute:')
     if info['generate']:
-        print(info["generate"])
-    print(info["command"])
+        print(info['generate'])
+    print(info['command'])
     if args.confirm or input("Type 'Y' to confirm: ").upper() == 'Y':
         if info['long'] and not info['nolog']:
             os.system(f'{logcommand} (START)"')
-        if info["generate"]:
-            os.system(info["generate"])  # type: ignore
-        return_value = os.system(info["command"])
+        if info['generate']:
+            os.system(info['generate'])  # type: ignore
+        return_value = os.system(info['command'])
         logcommand += f' (END - exit={str(return_value)})"'
         if not info['nolog']:
             print(f'Logging via {logcommand}')
@@ -91,6 +93,7 @@ def get_args() -> argparse.Namespace:
     args = parser.parse_known_args()[0]
     args.arguments += parser.parse_known_args()[1]
     return args
+
 
 if __name__ == '__main__':  # pragma: no cover
 
