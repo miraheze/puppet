@@ -36,9 +36,9 @@ class ssl {
     
     file { '/etc/puppetlabs/puppet/ssl-keys':
         ensure  => directory,
-        owner   => 'root',
+        owner   => 'puppet',
         group   => 'ssl-admins',
-        mode    => '0770',
+        mode    => '0660',
         recurse => true,
     }
 
