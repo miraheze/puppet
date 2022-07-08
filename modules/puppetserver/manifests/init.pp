@@ -139,12 +139,6 @@ class puppetserver(
             Git::Clone['ssl']
         ],
     }
-
-    file { '/home/puppet-users':
-        ensure  => absent,
-        owner   => 'root',
-        mode    => '0770',
-    }
  
     if $puppetdb_enable {
         class { 'puppetserver::puppetdb::client':
