@@ -31,7 +31,6 @@ class ssl {
         owner   => 'root',
         group   => 'ssl-admins',
         mode    => '0770',
-        recurse => true,
     }
     
     file { '/etc/puppetlabs/puppet/ssl-keys':
@@ -39,7 +38,6 @@ class ssl {
         owner   => 'puppet',
         group   => 'ssl-admins',
         mode    => '0660',
-        recurse => true,
     }
 
     file { '/root/ssl':
