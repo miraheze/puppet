@@ -178,9 +178,9 @@ class SslCertificate:
             print(f'Deleting LetsEncrypt certificate at /etc/letsencrypt/live/{self.domain}')
 
         os.system(f'/usr/bin/certbot delete --cert-name {self.domain}')
-        
+
         if not self.quiet:
-            print(f'Removing key from private git')
+            print('Removing key from private git')
 
         os.system(f'rm -rf /home/ssl-admins/ssl-keys/{self.domain}.key')
         os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'remove {self.domain} key' && git push origin master")
