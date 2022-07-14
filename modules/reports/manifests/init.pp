@@ -1,6 +1,6 @@
 # class: reports
 class reports {
-    ensure_packages('mariadb-client')
+    ensure_packages(['mariadb-client', 'composer'])
 
     git::clone { 'TSPortal':
         directory          => '/srv/TSPortal',
@@ -11,8 +11,9 @@ class reports {
         group              => 'www-data',
     }
 
-    exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
-        creates     => '/srv/TSPortal/composer.phar',
+    exec { 'reports_composer':
+        command     => 'composer install --no-dev',
+        creates     => '/srv/TSPortal/vendor',
         cwd         => '/srv/TSPortal',
         path        => '/usr/bin',
         environment => 'HOME=/srv/TSPortal',
