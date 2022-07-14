@@ -34,15 +34,6 @@ class ssl {
         recurse => true,
         max_files => '7000',
     }
-    
-    file { '/etc/puppetlabs/puppet/ssl-keys':
-        ensure  => directory,
-        owner   => 'puppet',
-        group   => 'ssl-admins',
-        mode    => '0660',
-        recurse => true,
-        max_files => '7000',
-    }
 
     file { '/root/ssl':
         ensure => directory,
