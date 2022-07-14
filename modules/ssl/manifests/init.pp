@@ -28,11 +28,9 @@ class ssl {
 
     file { '/home/ssl-admins':
         ensure  => directory,
-        owner   => 'puppet',
+        owner   => 'root',
         group   => 'ssl-admins',
-        mode    => '0660',
-        recurse => true,
-        max_files => '7000',
+        mode    => '0770',
     }
     
     file { '/etc/puppetlabs/puppet/ssl-keys':
@@ -40,8 +38,6 @@ class ssl {
         owner   => 'puppet',
         group   => 'ssl-admins',
         mode    => '0660',
-        recurse => true,
-        max_files => '7000',
     }
 
     file { '/root/ssl':
