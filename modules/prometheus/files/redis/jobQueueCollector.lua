@@ -64,6 +64,7 @@ local jobs = {
 	'SMWUpdateJob',
 	'TTMServerMessageUpdateJob',
 	'ThumbnailRender',
+	'TranslatableBundleDeleteJob',
 	'TranslatableBundleMoveJob',
 	'TranslatablePageMoveJob',
 	'TranslateDeleteJob',
