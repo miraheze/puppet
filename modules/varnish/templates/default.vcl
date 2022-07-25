@@ -47,6 +47,13 @@ sub vcl_init {
 	mediawiki.add_backend(<%= name %>, 1);
 <%- end -%>
 <%- end -%>
+
+	new mediawiki_thumb = directors.random();
+<%- @backends.each_pair do | name, property | -%>
+<%- if property['thumb'] -%>
+	mediawiki_thumb.add_backend(<%= name %>, 1);
+<%- end -%>
+<%- end -%>
 }
 
 # Purge ACL
@@ -158,7 +165,14 @@ sub recv_purge {
 sub mw_request {
 	call rate_limit;
 	call mobile_detection;
-	
+
+	# Force thumb_handler to go through seperate
+	# mw* servers.
+	if (req.url ~ "^/w/thumb_handler\.php/") {
+ 		set req.backend_hint = mediawiki_thumb.backend();
+ 		return (pass);
+ 	}
+
 	# Assigning a backend
 <%- @backends.each_pair do | name, property | -%>
 	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
