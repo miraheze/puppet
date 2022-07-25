@@ -28,7 +28,7 @@ varnish::backends:
   mw102:
     port: 8101
     probe: mwhealth
-    pool: true
+    thumb: true
   mw111:
     port: 8102
     probe: mwhealth
@@ -44,7 +44,7 @@ varnish::backends:
   mw122:
     port: 8105
     probe: mwhealth
-    pool: true
+    thumb: true
   mwtask111:
     port: 8150
     probe: false
