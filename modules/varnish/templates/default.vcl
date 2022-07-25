@@ -240,11 +240,7 @@ sub vcl_recv {
 
 	# Health checks, do not send request any further, if we're up, we can handle it
 	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
-		if (std.healthy(mediawiki.backend())) {
-			return (synth(200));
-		} else {
-			return (synth(503));
-		}
+		return (synth(200));
 	}
 
 	# Normalise Accept-Encoding for better cache hit ratio
