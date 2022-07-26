@@ -1,6 +1,6 @@
 <?php
 
-// Return a 204 if all is good
-http_response_code(204);
+// Return a 200 if all is good
+http_response_code(200);
 
 // TODO: Implement any logic to fail while nginx is still up?
