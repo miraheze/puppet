@@ -37,6 +37,7 @@ define nginx::site(
                 http_vhost       => $::fqdn,
                 http_ssl         => true,
                 http_ignore_body => true,
+                http_timeout     => 20,
             },
         }
     }
