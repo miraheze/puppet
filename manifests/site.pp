@@ -5,7 +5,7 @@ node /^bast1[02]1\.miraheze\.org$/ {
     include role::bastion
 }
 
-node /^cloud1[012]\.miraheze\.org$/ {
+node /^cloud1[01234]\.miraheze\.org$/ {
     include base
     include role::cloud
 }
