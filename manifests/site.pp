@@ -25,7 +25,7 @@ node /^es1[34]1\.miraheze\.org$/ {
     include role::elasticsearch
 }
 
-node /^gluster1[012]1\.miraheze\.org$/ {
+node /^gluster1[012][12]\.miraheze\.org$/ {
     include base
     include role::gluster
 }
