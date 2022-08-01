@@ -20,7 +20,7 @@ node /^db1([012]1|12)\.miraheze\.org$/ {
     include role::db
 }
 
-node /^es1[01234]1\.miraheze\.org$/ {
+node /^es1[34]1\.miraheze\.org$/ {
     include base
     include role::elasticsearch
 }
