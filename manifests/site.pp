@@ -94,6 +94,11 @@ node 'prometheus101.miraheze.org' {
     include role::prometheus
 }
 
+node 'prometheus131.miraheze.org' {
+    include base
+    include role::prometheus
+}
+
 node 'puppet111.miraheze.org' {
     include base
     include role::postgresql
