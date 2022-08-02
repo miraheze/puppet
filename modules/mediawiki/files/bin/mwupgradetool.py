@@ -2,7 +2,7 @@
 
 import os
 import requests
-canary = 'mwtask111'
+canary = 'mwtask141'
 hatedserver = 'mw131'
 serverlist = 'mw121,mw122,mw132,mw141,mw142'
 
