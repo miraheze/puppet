@@ -45,7 +45,7 @@ varnish::backends:
     port: 8109
     probe: mwhealth
     pool: true
-  mwtask111:
+  mwtask141:
     port: 8150
     probe: false
     pool: false
