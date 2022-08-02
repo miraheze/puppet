@@ -33,11 +33,11 @@ def test_check_up_no_debug_host() -> None:
 
 
 def test_check_up_debug() -> None:
-    assert mwd.check_up(nolog=True, Debug='mwtask111')
+    assert mwd.check_up(nolog=True, Debug='mwtask141')
 
 
 def test_check_up_debug_fail() -> None:
-    assert not mwd.check_up(nolog=True, Debug='mwtask111', domain='httpstat.us/500', force=True)
+    assert not mwd.check_up(nolog=True, Debug='mwtask141', domain='httpstat.us/500', force=True)
 
 
 def test_get_staging_path() -> None:
