@@ -26,12 +26,12 @@ class monitoring (
     if $http_proxy {
         file { '/etc/apt/apt.conf.d/01icinga2':
             ensure => present,
-            content => template('gluster/apt/01icinga2.erb'),
+            content => template('monitoring/apt/01icinga2.erb'),
         }
 
         file { '/etc/apt/apt.conf.d/01mariadb':
             ensure => present,
-            content => template('gluster/apt/0mariadb.erb'),
+            content => template('monitoring/apt/0mariadb.erb'),
             before  => Apt::Source['mariadb_apt'],
         }
     }
