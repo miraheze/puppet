@@ -108,13 +108,6 @@ node 'reports121.miraheze.org' {
     include role::reports
 }
 
-node 'test101.miraheze.org' {
-    include base
-    include role::mediawiki
-    include role::redis
-    include mediawiki::jobqueue::chron
-}
-
 node 'test131.miraheze.org' {
     include base
     include role::mediawiki
