@@ -21,14 +21,6 @@ memcached_servers_3:
 varnish::interval-check: '60s'
 varnish::interval-timeout: '60s'
 varnish::backends:
-  mw111:
-    port: 8102
-    probe: mwhealth
-    pool: true
-  mw112:
-    port: 8103
-    probe: mwhealth
-    pool: true
   mw121:
     port: 8104
     probe: mwhealth
