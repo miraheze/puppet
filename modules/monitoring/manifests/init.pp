@@ -23,6 +23,19 @@ class monitoring (
     }
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    if $http_proxy {
+        file { '/etc/apt/apt.conf.d/01icinga2':
+            ensure => present,
+            content => template('gluster/apt/01icinga2.erb'),
+        }
+
+        file { '/etc/apt/apt.conf.d/01mariadb':
+            ensure => present,
+            content => template('gluster/apt/0mariadb.erb'),
+            before  => Apt::Source['mariadb_apt'],
+        }
+    }
+
     $version = lookup('mariadb::version', {'default_value' => '10.4'})
     apt::source { 'mariadb_apt':
         comment     => 'MariaDB stable',
@@ -31,7 +44,6 @@ class monitoring (
         repos       => 'main',
         key      => {
                 'id' => '177F4010FE56CA3336300305F1656F24C74CD1D8',
-                'options' => "http-proxy='${http_proxy}'",
                 'server'  => 'hkp://keyserver.ubuntu.com:80',
         },
     }
