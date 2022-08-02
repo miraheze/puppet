@@ -1,11 +1,10 @@
 # === Class role::mediawiki::nutcracker
 class role::mediawiki::nutcracker (
     Array[Variant[Stdlib::Host,String]] $memcached_servers_1 = lookup('memcached_servers_1', {'default_value' => []}),
-    Array[Variant[Stdlib::Host,String]] $memcached_servers_2 = lookup('memcached_servers_2', {'default_value' => []}),
     Array[Variant[Stdlib::Host,String]] $memcached_servers_3 = lookup('memcached_servers_3', {'default_value' => []}),
 ) {
 
-    if $memcached_servers_1 != [] and $memcached_servers_2 != [] {
+    if $memcached_servers_1 != [] and $memcached_servers_3 != [] {
         $nutcracker_pools = {
             'memcached_1'     => {
                 auto_eject_hosts     => false,
@@ -18,18 +17,6 @@ class role::mediawiki::nutcracker (
                 server_retry_timeout => 30000,  # milliseconds
                 timeout              => 500,    # milliseconds
                 servers              => $memcached_servers_1,
-            },
-            'memcached_2'     => {
-                auto_eject_hosts     => false,
-                distribution         => 'ketama',
-                hash                 => 'md5',
-                listen               => '127.0.0.1:11213',
-                preconnect           => true,
-                server_connections   => 1,
-                server_failure_limit => 3,
-                server_retry_timeout => 30000,  # milliseconds
-                timeout              => 500,    # milliseconds
-                servers              => $memcached_servers_2,
             },
             'memcached_3'     => {
                 auto_eject_hosts     => false,
