@@ -57,7 +57,7 @@ node 'matomo101.miraheze.org' {
     include role::matomo
 }
 
-node /^mem1[023]1\.miraheze\.org$/ {
+node /^mem1[03]1\.miraheze\.org$/ {
     include base
     include role::memcached
 }
