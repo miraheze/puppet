@@ -79,6 +79,11 @@ node 'mwtask111.miraheze.org' {
     include role::mediawiki
 }
 
+node 'mwtask141.miraheze.org' {
+    include base
+    include role::mediawiki
+}
+
 node /^ns[12]\.miraheze\.org$/ {
     include base
     include role::dns
