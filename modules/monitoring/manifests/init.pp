@@ -31,7 +31,7 @@ class monitoring (
 
         file { '/etc/apt/apt.conf.d/01mariadb':
             ensure => present,
-            content => template('monitoring/apt/0mariadb.erb'),
+            content => template('monitoring/apt/01mariadb.erb'),
             before  => Apt::Source['mariadb_apt'],
         }
     }
