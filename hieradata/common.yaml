@@ -49,7 +49,7 @@ varnish::backends:
     port: 8150
     probe: false
     pool: false
-  test101:
+  test131:
     port: 8180
     probe: false
     pool: false
