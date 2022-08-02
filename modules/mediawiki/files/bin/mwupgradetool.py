@@ -32,7 +32,7 @@ print('Config deployed')
 print('Checking RO on Canary Server')
 if not check_ro(canary):
     input('Stopping deploy - RO check failed - Press enter to resume')
-for server in ['mw111', 'mw112', 'mw121', 'mw122', 'mw131', 'mw132']:
+for server in ['mw121', 'mw122', 'mw131', 'mw132', 'mw141', 'mw142']:
     print(f'Confirming RO on {server}')
     if not check_ro(server):
         input(f'RO check failed on {server} - Press enter to resume')
