@@ -4,7 +4,7 @@ import os
 import requests
 canary = 'mwtask111'
 hatedserver = 'mw101'
-serverlist = 'mw102,mw111,mw112,mw121,mw122'
+serverlist = 'mw102,mw111,mw112,mw121,mw122,mw131,mw132'
 
 
 def check_up(server: str) -> bool:
@@ -32,7 +32,7 @@ print('Config deployed')
 print('Checking RO on Canary Server')
 if not check_ro(canary):
     input('Stopping deploy - RO check failed - Press enter to resume')
-for server in ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122']:
+for server in ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mw131', 'mw132']:
     print(f'Confirming RO on {server}')
     if not check_ro(server):
         input(f'RO check failed on {server} - Press enter to resume')
