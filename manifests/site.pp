@@ -74,11 +74,6 @@ node /^mw1[234][12]\.miraheze\.org$/ {
     include role::mediawiki
 }
 
-node 'mwtask111.miraheze.org' {
-    include base
-    include role::mediawiki
-}
-
 node 'mwtask141.miraheze.org' {
     include base
     include role::mediawiki
