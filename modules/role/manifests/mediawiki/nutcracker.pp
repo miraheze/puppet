@@ -16,7 +16,7 @@ class role::mediawiki::nutcracker (
                 server_connections   => 1,
                 server_failure_limit => 3,
                 server_retry_timeout => 30000,  # milliseconds
-                timeout              => 250,    # milliseconds
+                timeout              => 500,    # milliseconds
                 servers              => $memcached_servers_1,
             },
             'memcached_2'     => {
@@ -28,7 +28,7 @@ class role::mediawiki::nutcracker (
                 server_connections   => 1,
                 server_failure_limit => 3,
                 server_retry_timeout => 30000,  # milliseconds
-                timeout              => 250,    # milliseconds
+                timeout              => 500,    # milliseconds
                 servers              => $memcached_servers_2,
             },
             'memcached_3'     => {
@@ -40,7 +40,7 @@ class role::mediawiki::nutcracker (
                 server_connections   => 1,
                 server_failure_limit => 3,
                 server_retry_timeout => 30000,  # milliseconds
-                timeout              => 250,    # milliseconds
+                timeout              => 500,    # milliseconds
                 servers              => $memcached_servers_3,
             },
         }
