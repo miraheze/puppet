@@ -25,7 +25,6 @@ icinga2::repo:
   key:
     id: F51A91A5EE001AA5D77D53C4C6E319C334410682
     source: http://packages.icinga.com/icinga.key
-    options: http-proxy='http://bast.miraheze.org:8080'
 
 icinga2::globals::package_name: 'icinga2'
 icinga2::globals::service_name: 'icinga2'
