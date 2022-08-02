@@ -271,7 +271,7 @@ sub vcl_recv {
 	}
 
         if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
-                set req.backend_hint = test101;
+                set req.backend_hint = test131;
                 return (pass);
         }
 
