@@ -69,7 +69,7 @@ node 'mon111.miraheze.org' {
     include role::irc
 }
 
-node /^mw1[123][12]\.miraheze\.org$/ {
+node /^mw1[1234][12]\.miraheze\.org$/ {
     include base
     include role::mediawiki
 }

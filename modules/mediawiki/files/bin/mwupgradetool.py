@@ -4,7 +4,7 @@ import os
 import requests
 canary = 'mwtask111'
 hatedserver = 'mw131'
-serverlist = 'mw111,mw112,mw121,mw122,mw132'
+serverlist = 'mw111,mw112,mw121,mw122,mw132,mw141,mw142'
 
 
 def check_up(server: str) -> bool:
