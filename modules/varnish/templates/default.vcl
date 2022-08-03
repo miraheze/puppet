@@ -289,7 +289,7 @@ sub vcl_recv {
 
 	# Do not cache requests from this domain
 	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
-		set req.backend_hint = mon111;
+		set req.backend_hint = mon141;
 
 		return (pass);
 	}
