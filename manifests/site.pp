@@ -41,11 +41,6 @@ node 'jobchron121.miraheze.org' {
     include mediawiki::jobqueue::chron
 }
 
-node 'ldap111.miraheze.org' {
-    include base
-    include role::openldap
-}
-
 node 'ldap141.miraheze.org' {
     include base
     include role::openldap
