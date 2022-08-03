@@ -2,7 +2,6 @@
 class role::mediawiki::nutcracker (
     Hash $nutcracker_config = lookup('role::mediawiki::nutcracker::config', {'default_value' => undef}),
 ) {
-
     if $nutcracker_config != undef {
         $nutcracker_pools = {
             $nutcracker_config.each |String $pool_name, Hash $pool_data| {
