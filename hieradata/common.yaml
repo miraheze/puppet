@@ -65,7 +65,7 @@ varnish::backends:
     port: 8202
     probe: false
     pool: false
-  matomo101:
+  matomo131:
     port: 8203
     probe: false
     pool: false
