@@ -52,11 +52,6 @@ node 'mail121.miraheze.org' {
     include role::roundcubemail
 }
 
-node 'matomo101.miraheze.org' {
-    include base
-    include role::matomo
-}
-
 node 'matomo131.miraheze.org' {
     include base
     include role::matomo
