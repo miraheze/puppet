@@ -7,4 +7,4 @@ else
   ACTOR=$USER
 fi
 
-echo '!log' "[$ACTOR@$HOSTNAME] $*" | nc -q0 -u mon111.miraheze.org 5071
+echo '!log' "[$ACTOR@$HOSTNAME] $*" | nc -q0 -u mon141.miraheze.org 5071
