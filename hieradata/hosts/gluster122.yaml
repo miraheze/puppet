@@ -5,4 +5,4 @@ base::syslog::graylog_resolve_ip_version: 6
 
 http_proxy: 'http://bast.miraheze.org:8080'
 
-puppetserver_hostname: 'puppet111.miraheze.org'
+puppetserver_hostname: 'puppet141.miraheze.org'

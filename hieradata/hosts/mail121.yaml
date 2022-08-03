@@ -10,4 +10,4 @@ base::syslog::graylog_resolve_ip_version: 6
 nginx::use_graylog: true
 mailserver: true
 
-puppetserver_hostname: 'puppet111.miraheze.org'
+puppetserver_hostname: 'puppet141.miraheze.org'

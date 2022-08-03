@@ -4,7 +4,7 @@
 #
 # === Parameters
 #
-# [*puppetdb_hostname*] The hostname for the puppetdb server, eg puppet111.miraheze.org
+# [*puppetdb_hostname*] The hostname for the puppetdb server, eg puppet141.miraheze.org
 #
 class puppetserver::puppetdb::client(
     String $puppetdb_hostname,

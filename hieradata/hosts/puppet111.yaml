@@ -8,7 +8,7 @@ puppetdb::db_ssl: true
 puppetdb::db_rw_host: puppet111.miraheze.org
 postgresql::ssl: true
 puppetdb::command_processing_threads: 10
-puppetserver_hostname: 'puppet111.miraheze.org'
+puppetserver_hostname: 'puppet141.miraheze.org'
 role::salt::minions::salt_master: 'puppet111.miraheze.org'
 role::salt::minions::salt_master_key: true
 

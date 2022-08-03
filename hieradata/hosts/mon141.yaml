@@ -131,4 +131,4 @@ base::syslog::syslog_daemon: rsyslog
 base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
 base::syslog::rsyslog_udp_localhost: true
 
-puppetserver_hostname: 'puppet111.miraheze.org'
+puppetserver_hostname: 'puppet141.miraheze.org'
