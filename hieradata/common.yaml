@@ -15,7 +15,7 @@ mediawiki::use_shellbox: false
 mediawiki::jobqueue::wiki: 'loginwiki'
 mediawiki::monitoring::host: 'login.miraheze.org'
 
-role::mediawiki::nutcracker::pools:
+role::mediawiki::nutcracker::config:
   memcached_1:
     port: 11212
     servers:
