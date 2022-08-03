@@ -1,35 +1,24 @@
 # === Class role::mediawiki::nutcracker
 class role::mediawiki::nutcracker (
-    Array[Variant[Stdlib::Host,String]] $memcached_servers_1 = lookup('memcached_servers_1', {'default_value' => []}),
-    Array[Variant[Stdlib::Host,String]] $memcached_servers_3 = lookup('memcached_servers_3', {'default_value' => []}),
+    Hash $memcached_servers = lookup('memcached_servers', {'default_value' => undef}),
 ) {
 
-    if $memcached_servers_1 != [] and $memcached_servers_3 != [] {
+    if $memcached_servers != undef {
         $nutcracker_pools = {
-            'memcached_1'     => {
-                auto_eject_hosts     => false,
-                distribution         => 'ketama',
-                hash                 => 'md5',
-                listen               => '127.0.0.1:11212',
-                preconnect           => true,
-                server_connections   => 1,
-                server_failure_limit => 3,
-                server_retry_timeout => 30000,  # milliseconds
-                timeout              => 500,    # milliseconds
-                servers              => $memcached_servers_1,
-            },
-            'memcached_3'     => {
-                auto_eject_hosts     => false,
-                distribution         => 'ketama',
-                hash                 => 'md5',
-                listen               => '127.0.0.1:11214',
-                preconnect           => true,
-                server_connections   => 1,
-                server_failure_limit => 3,
-                server_retry_timeout => 30000,  # milliseconds
-                timeout              => 500,    # milliseconds
-                servers              => $memcached_servers_3,
-            },
+            $memcached_servers.each |String $pool_name, Hash $pool_data| {
+                $pool_name => {
+                    auto_eject_hosts     => false,
+                    distribution         => 'ketama',
+                    hash                 => 'md5',
+                    listen               => "127.0.0.1:${pool_data['port']}",
+                    preconnect           => true,
+                    server_connections   => 1,
+                    server_failure_limit => 3,
+                    server_retry_timeout => 30000, # milliseconds
+                    timeout              => 500,   # milliseconds
+                    servers              => $pool_data['server'],
+                },
+            }
         }
 
         # Ship a tmpfiles.d configuration to create /run/nutcracker
