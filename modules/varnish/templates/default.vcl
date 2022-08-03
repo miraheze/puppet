@@ -277,7 +277,7 @@ sub vcl_recv {
 
 	# Only cache js files from Matomo
 	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = matomo101;
+		set req.backend_hint = matomo131;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
