@@ -69,7 +69,7 @@ varnish::backends:
     port: 8203
     probe: false
     pool: false
-  puppet111:
+  puppet141:
     port: 8204
     probe: false
     pool: false

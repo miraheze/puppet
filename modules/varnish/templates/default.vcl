@@ -266,7 +266,7 @@ sub vcl_recv {
 		req.http.Host == "ssl.miraheze.org" ||
 		req.http.Host == "acme.miraheze.org"
 	) {
-		set req.backend_hint = puppet111;
+		set req.backend_hint = puppet141;
 		return (pass);
 	}
 
