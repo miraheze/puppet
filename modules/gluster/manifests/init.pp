@@ -103,6 +103,15 @@ class gluster {
         }
     }
 
+    # flush vm more steadily in the background. helps avoid large performance
+    #   spikes related to flushing out disk write cache.
+    sysctl::parameters { 'gluster_vm_settings':
+        values => {
+            'vm.dirty_ratio'            => 40,  # default 20
+            'vm.dirty_background_ratio' => 5,   # default 10
+        },
+    }
+
     logrotate::conf { 'glusterfs-common':
         ensure => present,
         source => 'puppet:///modules/gluster/glusterfs-common.logrotate.conf',
