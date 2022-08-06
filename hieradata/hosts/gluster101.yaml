@@ -1,4 +1,3 @@
-gluster_client: true
 gluster_volume: gluster101.miraheze.org:/static
 
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
