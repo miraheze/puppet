@@ -123,7 +123,7 @@ define gluster::mount (
         }
     }
 
-    $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec,xlator-option=transport.address-family=inet6"
+    $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec,xlator-option=transport.address-family=inet6,direct-io-mode=enable"
 
     $mount_options = $options ? {
         undef   => $base_options,
