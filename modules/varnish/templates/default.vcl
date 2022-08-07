@@ -322,7 +322,7 @@ sub vcl_recv {
 # Defines the uniqueness of a request
 sub vcl_hash {
 	# FIXME: try if we can make this ^/wiki/ only?
-	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
+	if (req.url ~ "^/wiki/" || req.url ~ "^/w/(index|load)\.php") {
 		hash_data(req.http.X-Device);
 	}
 }
