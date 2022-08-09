@@ -3,17 +3,9 @@ jobrunner: false
 jobrunner::intensive: false
 mailserver: false
 puppetserver: false
-mediawiki::branch: 'REL1_38'
-mediawiki::branch_mw_config: 'master'
 puppetserver_hostname: puppet141.miraheze.org
 role::salt::minions::salt_master: 'puppet141.miraheze.org'
 dns: false
-mediawiki::use_staging: false
-mediawiki::is_canary: false
-mediawiki::default_sync: 'all'
-mediawiki::use_shellbox: false
-mediawiki::jobqueue::wiki: 'loginwiki'
-mediawiki::monitoring::host: 'login.miraheze.org'
 memcached_servers_1:
   - 2a10:6740::6:105:11211:1
 memcached_servers_3:
