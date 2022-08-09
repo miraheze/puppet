@@ -1,0 +1,8 @@
+mediawiki::branch: 'REL1_38'
+mediawiki::branch_mw_config: 'master'
+mediawiki::use_staging: false
+mediawiki::is_canary: false
+mediawiki::default_sync: 'all'
+mediawiki::use_shellbox: false
+mediawiki::jobqueue::wiki: 'loginwiki'
+mediawiki::monitoring::host: 'login.miraheze.org'
