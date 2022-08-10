@@ -78,7 +78,7 @@ def check_records(hostname):
         for nameserver in nameserversans:
             nameserver = str(nameserver)
             nameservers.append(nameserver)
-            if nameserver.endswith('.ns.cloudflare.com.') or nameserver.endswith('.dreamhost.com.'):
+            if nameserver.endswith('.ns.cloudflare.com.') or nameserver.endswith('.dreamhost.com.') or nameserver.endswith('.ns.porkbun.com.'):
                 uses_cf_at_root = True
 
         if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
