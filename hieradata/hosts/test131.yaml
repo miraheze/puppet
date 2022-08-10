@@ -6,7 +6,7 @@ contactgroups: ['sre', 'mediawiki']
 
 jobrunner: true
 mediawiki::jobqueue::runner::cron: true
-mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:109]:6379'
+mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:406]:6379'
 mediawiki::jobqueue::wiki: 'betawiki'
 
 role::mediawiki::use_strict_firewall: true
