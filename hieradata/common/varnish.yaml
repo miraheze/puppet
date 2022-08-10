@@ -1,4 +1,4 @@
-varnish::interval-check: '20s'
+varnish::interval-check: '60s'
 varnish::interval-timeout: '60s'
 varnish::backends:
   mw121:
