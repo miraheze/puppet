@@ -18,7 +18,7 @@ memcached_servers_1:
   - 2a10:6740::6:105:11211:1
 memcached_servers_3:
   - 2a10:6740::6:405:11211:1
-varnish::interval-check: '20s'
+varnish::interval-check: '60s'
 varnish::interval-timeout: '60s'
 varnish::backends:
   mw121:
