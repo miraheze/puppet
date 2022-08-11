@@ -60,7 +60,7 @@ def get_args():
 def check_records(hostname):
     """Check NS and CNAME records for given hostname."""
     domains_as_tlds = ('eu.org','for.uz')
-    uses_cf_at_root = False
+    cname_check_impossible = False
 
     nameservers = []
     domain_parts = tldextract.extract(hostname)
@@ -78,8 +78,14 @@ def check_records(hostname):
         for nameserver in nameserversans:
             nameserver = str(nameserver)
             nameservers.append(nameserver)
-            if nameserver.endswith('.ns.cloudflare.com.') or nameserver.endswith('.dreamhost.com.') or nameserver.endswith('.ns.porkbun.com.'):
-                uses_cf_at_root = True
+            flatten_manadatory_providers = [
+                'ns.cloudlfare.com',
+                'dreamhost.com',
+                'porkbun.com',
+            ]
+            for provider in flatten_manadatory_providers:
+                if nameserver.endswith(f'.{provider}'):
+                    cname_check_impossible = True
 
         if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
             return 'NS'
@@ -93,8 +99,8 @@ def check_records(hostname):
 
     if cname == 'mw-lb.miraheze.org.':
         return 'CNAME'
-    elif cname is None and uses_cf_at_root:
-        return 'CFCNAME'
+    elif cname is None and cname_check_impossible:
+        return 'CNAMEFLAT'
     return {'NS': nameservers, 'CNAME': cname}
 
 
@@ -146,7 +152,7 @@ def main():
         text += ' - CNAME OK'
         print(text)
         sys.exit(0)
-    elif records == 'CFCNAME':
+    elif records == 'CNAMEFLAT':
         text += ' - CNAME FLAT'
         print(text)
         sys.exit(0)
