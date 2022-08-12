@@ -3,8 +3,5 @@ http_proxy: 'http://bast.miraheze.org:8080'
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6
 
-# 80% of ram
-mariadb::config::innodb_buffer_pool_size: '14G'
-
 # must be set for replication to work
 mariadb::config::replication_id: 2
