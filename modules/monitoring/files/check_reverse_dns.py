@@ -81,7 +81,7 @@ def check_records(hostname):
             flatten_manadatory_providers = [
                 'ns.cloudlfare.com',
                 'dreamhost.com',
-                'porkbun.com',
+                'ns.porkbun.com',
             ]
             for provider in flatten_manadatory_providers:
                 if nameserver.endswith(f'.{provider}'):
