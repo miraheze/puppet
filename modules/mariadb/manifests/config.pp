@@ -8,7 +8,7 @@ class mariadb::config(
     Integer           $max_connections              = 500,
     Enum['10.5']      $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
     String            $icinga_password              = undef,
-    Optional[Integer]  $replication_id               = undef,
+    Optional[Integer] $server_id                    = undef,
 ) {
     $exporter_password = lookup('passwords::db::exporter')
     $ido_db_user_password = lookup('passwords::icinga_ido')

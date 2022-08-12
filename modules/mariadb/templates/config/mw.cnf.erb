@@ -28,8 +28,8 @@ tmpdir                         = <%= @tmpdir %>
 transaction-isolation          = READ-COMMITTED
 binlog_format                  = ROW
 
-<%- if @replication_id -%>
-slave_id = <%= @replication_id %>
+<%- if @server_id -%>
+server_id = <%= @server_id %>
 <%- end -%>
 log-bin                        = <%= @datadir %>/mysql-bin
 expire-logs-days               = 3

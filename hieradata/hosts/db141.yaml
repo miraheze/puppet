@@ -4,4 +4,4 @@ base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 base::syslog::graylog_resolve_ip_version: 6
 
 # must be set for replication to work
-mariadb::config::replication_id: 2
+mariadb::config::server_id: 2
