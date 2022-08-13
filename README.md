@@ -1,6 +1,6 @@
 # Miraheze's Puppet configuration
 
-[Miraheze](https://meta.miraheze.org/) is a non-profit wiki farm that provides free MediaWiki hosting. Miraheze is powered by volunteers only, and we believe our code should be open source.
+[Miraheze](https://meta.miraheze.org/) is a not-for-profit wiki farm that provides free MediaWiki hosting. Miraheze is powered by volunteers only, and we believe our code should be open source.
 
 This repository contains our production Puppet configuration. Contributions (see below) are always welcome.
 
