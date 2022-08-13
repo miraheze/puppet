@@ -179,6 +179,12 @@ class SslCertificate:
 
         os.system(f'/usr/bin/certbot delete --cert-name {self.domain}')
 
+        if not self.quiet:
+            print('Removing key from private git')
+
+        os.system(f'rm -rf /home/ssl-admins/ssl-keys/{self.domain}.key')
+        os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'remove {self.domain} key' && git push origin master")
+
 
 cert = SslCertificate()
 cert.on_init()
