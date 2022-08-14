@@ -36,6 +36,7 @@ script-src:
   - 'scratchblocks.github.io'
   - 'openlayers.org'
   - 'phab.miraheze.wiki'
+  - 'www.gstatic.cn'
 
 style-src:
   - "'self'"
