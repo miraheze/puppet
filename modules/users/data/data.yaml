@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [johnflewis, paladox, reception, void]
+    members: [johnflewis, paladox, reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -18,12 +18,12 @@ groups:
   mediawiki-roots:
     gid: 2002
     description: full root on MediaWiki servers
-    members: [universalomega]
+    members: []
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   cache-admins:
     gid: 2003
     description: limited sudo access on cache proxies
-    members: [universalomega]
+    members: []
     privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/varnishadm',
                  'ALL = (ALL) NOPASSWD: /usr/bin/varnishlog',
                  'ALL = (ALL) NOPASSWD: /usr/bin/varnishstat',
