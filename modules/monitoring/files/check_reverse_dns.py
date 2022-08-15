@@ -84,7 +84,7 @@ def check_records(hostname):
                 'ns.porkbun.com',
             ]
             for provider in flatten_manadatory_providers:
-                if nameserver.endswith(f'.{provider}'):
+                if nameserver.endswith(f'.{provider}.'):
                     cname_check_impossible = True
 
         if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
