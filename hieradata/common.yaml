@@ -16,12 +16,12 @@ mediawiki::jobqueue::wiki: 'loginwiki'
 mediawiki::monitoring::host: 'login.miraheze.org'
 
 role::mediawiki::nutcracker::config:
-  memcached_1:
+  mem101:
     port: 11212
     servers:
       - 2a10:6740::6:105:11211:1
 
-  memcached_2:
+  mem131:
     port: 11214
     servers:
       - 2a10:6740::6:405:11211:1
