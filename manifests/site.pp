@@ -15,7 +15,7 @@ node /^cp(2[01]|3[01])\.miraheze\.org$/ {
     include role::varnish
 }
 
-node /^db1([01234]1|12)\.miraheze\.org$/ {
+node /^db1([0234]1|12)\.miraheze\.org$/ {
     include base
     include role::db
 }
