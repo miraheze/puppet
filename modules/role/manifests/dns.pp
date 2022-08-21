@@ -2,6 +2,10 @@
 class role::dns {
     include ::dns
 
+    package { 'python3-dnspython':
+        ensure => latest
+    }
+
     ferm::service { 'dns_udp':
         proto => 'udp',
         port  => '53',
