@@ -85,7 +85,7 @@ def collect_gdnsd_stats(stats, registry):
         lat_req = resolver.Resolver(configure=False)
         lat_req.nameservers = ['127.0.0.1']
         lat_s = time.time()
-        dns.resolve('miraheze.org')
+        lat_req.resolve('miraheze.org')
         lat_e = time.time()
         latency.set(round((lat_e - lat_s) * 1000, 2))
     except ValueError:
