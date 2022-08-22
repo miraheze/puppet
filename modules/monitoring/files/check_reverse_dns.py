@@ -78,14 +78,12 @@ def check_records(hostname):
         for nameserver in nameserversans:
             nameserver = str(nameserver)
             nameservers.append(nameserver)
-            flatten_manadatory_providers = [
-                'ns.cloudlfare.com',
-                'dreamhost.com',
-                'ns.porkbun.com',
-            ]
-            for provider in flatten_manadatory_providers:
-                if nameserver.endswith(f'.{provider}.'):
-                    cname_check_impossible = True
+            flatten_manadatory_providers = (
+                '.ns.cloudlfare.com.',
+                '.dreamhost.com.',
+                '.ns.porkbun.com.',
+            )
+            cname_check_impossible = nameserver.endswith(flatten_manadatory_providers)
 
         if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
             return 'NS'
