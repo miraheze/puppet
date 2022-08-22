@@ -50,12 +50,10 @@ class role::mediawiki (
         description => 'MediaWiki server',
     }
 
-    # $gluster_volume_backup = lookup('gluster_volume_backup', {'default_value' => 'glusterfs2.miraheze.org:/mvol'})
-    # backup-volfile-servers=
     if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
         gluster::mount { '/mnt/mediawiki-static':
           ensure    => mounted,
-          volume    => lookup('gluster_volume', {'default_value' => 'gluster111.miraheze.org:/static'}),
+          volume    => lookup('gluster_volume', {'default_value' => 'gluster.miraheze.org:/static'}),
         }
     }
 

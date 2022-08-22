@@ -3,17 +3,20 @@ class matomo (
     String $ldap_password  = lookup('passwords::matomo::ldap_password'),
     String $matomo_db_host = 'db112.miraheze.org',
 ) {
+    ensure_packages('composer')
+
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '4.10.1', # Current stable
+        branch             => '4.11.0', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
     }
 
-    exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
-        creates     => '/srv/matomo/composer.phar',
+    exec { 'matomo_composer':
+        command     => 'composer install --no-dev',
+        creates     => '/srv/matomo/vendor',
         cwd         => '/srv/matomo',
         path        => '/usr/bin',
         environment => 'HOME=/srv/matomo',

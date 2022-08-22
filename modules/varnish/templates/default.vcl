@@ -240,11 +240,7 @@ sub vcl_recv {
 
 	# Health checks, do not send request any further, if we're up, we can handle it
 	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
-		if (std.healthy(mediawiki.backend())) {
-			return (synth(200));
-		} else {
-			return (synth(503));
-		}
+		return (synth(200));
 	}
 
 	# Normalise Accept-Encoding for better cache hit ratio
@@ -270,18 +266,18 @@ sub vcl_recv {
 		req.http.Host == "ssl.miraheze.org" ||
 		req.http.Host == "acme.miraheze.org"
 	) {
-		set req.backend_hint = puppet111;
+		set req.backend_hint = puppet141;
 		return (pass);
 	}
 
         if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
-                set req.backend_hint = test101;
+                set req.backend_hint = test131;
                 return (pass);
         }
 
 	# Only cache js files from Matomo
 	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = matomo101;
+		set req.backend_hint = matomo131;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
@@ -293,7 +289,7 @@ sub vcl_recv {
 
 	# Do not cache requests from this domain
 	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
-		set req.backend_hint = mon111;
+		set req.backend_hint = mon141;
 
 		return (pass);
 	}

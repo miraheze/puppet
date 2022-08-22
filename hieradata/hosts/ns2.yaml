@@ -1,2 +1,2 @@
-puppetserver_hostname: 'puppet111.miraheze.org'
+puppetserver_hostname: 'puppet141.miraheze.org'
 dns: true

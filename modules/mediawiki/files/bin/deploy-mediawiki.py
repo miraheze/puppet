@@ -74,12 +74,12 @@ class deploymap(TypedDict):
 beta: Environment = {
     'wikidbname': 'betawiki',
     'wikiurl': 'beta.betaheze.org',
-    'servers': ['test101'],
+    'servers': ['test131'],
 }
 prod: Environment = {
     'wikidbname': 'testwiki',  # don't use loginwiki anymore - we want this to be an experimental wiki
     'wikiurl': 'publictestwiki.com',
-    'servers': ['mw101', 'mw102', 'mw111', 'mw112', 'mw121', 'mw122', 'mwtask111'],
+    'servers': ['mw121', 'mw122', 'mw131', 'mw132', 'mw141', 'mw142', 'mwtask141'],
 }
 ENVIRONMENTS: EnvironmentList = {
     'beta': beta,

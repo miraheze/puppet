@@ -57,10 +57,10 @@ modules:
     http:
       headers:
         'Host': 'meta.miraheze.org'
-        'X-Miraheze-Debug': 'mw111.miraheze.org'
+        'X-Miraheze-Debug': 'mw122.miraheze.org'
       no_follow_redirects: false
       fail_if_not_ssl: true
       fail_if_body_not_matches_regexp:
-        - 'href="https://meta.miraheze.org/wiki/Terms_of_Use"'
+        - 'href="https://meta.miraheze.org/wiki/(Special:MyLanguage\/)?Terms_of_Use"'
       tls_config:
         insecure_skip_verify: false

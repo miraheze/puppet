@@ -3,8 +3,8 @@ icingaweb_db_host: 'db112.miraheze.org'
 icinga_ido_db_host: 'db112.miraheze.org'
 grafana_db_host: 'db112.miraheze.org'
 
-icinga_ldap_host: 'ldap111.miraheze.org'
-grafana_ldap_server: 'ldap111.miraheze.org'
+icinga_ldap_host: 'ldap141.miraheze.org'
+grafana_ldap_server: 'ldap141.miraheze.org'
 
 http_proxy: 'http://bast.miraheze.org:8080'
 
@@ -22,9 +22,10 @@ icinga2::repo:
   location: http://packages.icinga.com/debian
   release: 'icinga-%{facts.os.distro.codename}'
   repos: main
-  key: 
+  key:
     id: F51A91A5EE001AA5D77D53C4C6E319C334410682
     source: http://packages.icinga.com/icinga.key
+    options: http-proxy='http://bast.miraheze.org:8080'
 
 icinga2::globals::package_name: 'icinga2'
 icinga2::globals::service_name: 'icinga2'
@@ -45,10 +46,10 @@ icinga2::globals::constants:
   PluginDir: '/usr/lib/nagios/plugins'
   PluginContribDir: '/usr/lib/nagios/plugins'
   ManubulonPluginDir: '/usr/lib/nagios/plugins'
-  NodeName: 'mon111.miraheze.org'
-  ZoneName: 'mon111.miraheze.org'
+  NodeName: 'mon141.miraheze.org'
+  ZoneName: 'mon141.miraheze.org'
   TicketSalt: ''
-  MaxConcurrentChecks: 120
+  MaxConcurrentChecks: 40
 icinga2::globals::user: 'nagios'
 icinga2::globals::group: 'nagios'
 icinga2::globals::icinga2_bin: '/usr/sbin/icinga2'
@@ -130,4 +131,4 @@ base::syslog::syslog_daemon: rsyslog
 base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
 base::syslog::rsyslog_udp_localhost: true
 
-puppetserver_hostname: 'puppet111.miraheze.org'
+puppetserver_hostname: 'puppet141.miraheze.org'

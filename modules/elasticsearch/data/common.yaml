@@ -4,7 +4,7 @@ elasticsearch::api_basic_auth_password: ~
 elasticsearch::api_basic_auth_username: ~
 elasticsearch::api_ca_file: ~
 elasticsearch::api_ca_path: ~
-elasticsearch::api_host: es101.miraheze.org
+elasticsearch::api_host: es131.miraheze.org
 elasticsearch::api_port: 9200
 elasticsearch::api_protocol: https
 elasticsearch::api_timeout: 10

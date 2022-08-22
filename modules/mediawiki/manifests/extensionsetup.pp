@@ -45,6 +45,15 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+    exec { 'ipinfo_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/IPInfo/vendor",
+        cwd         => "${mwpath}/extensions/IPInfo",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/IPInfo",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 
     exec { 'oauth_composer':
         command     => $composer,

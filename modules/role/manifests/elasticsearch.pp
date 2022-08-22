@@ -31,7 +31,7 @@ class role::elasticsearch {
             'xpack.security.authc.anonymous.roles'           => 'superuser',
             'xpack.security.authc.anonymous.authz_exception' => true,
         },
-        version     => '7.16.1',
+        version     => '7.10.2',
         manage_repo => true,
         jvm_options => [ '-Xms2g', '-Xmx2g' ],
         templates   => {

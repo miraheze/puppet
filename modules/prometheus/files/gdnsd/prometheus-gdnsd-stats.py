@@ -22,9 +22,11 @@ import subprocess
 import json
 import requests
 import re
+import time
 
 from prometheus_client import CollectorRegistry, Gauge, write_to_textfile
 from prometheus_client.exposition import generate_latest
+from dns import resolver
 
 log = logging.getLogger(__name__)
 
@@ -77,6 +79,15 @@ def collect_gdnsd_stats(stats, registry):
             'uptime', 'gdnsd daemon uptime', namespace='gdnsd',
             registry=registry)
         uptime.set(stats['uptime'])
+        latency = Gauge(
+            'latency', 'gdnsd request latency', namespace='gdnsd',
+            registry=registry)
+        lat_req = resolver.Resolver(configure=False)
+        lat_req.nameservers = ['127.0.0.1']
+        lat_s = time.time()
+        lat_req.resolve('miraheze.org')
+        lat_e = time.time()
+        latency.set(round((lat_e - lat_s) * 1000, 2))
     except ValueError:
         log.exception('Failed to parse stats {}'.format(stats))
 
