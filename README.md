@@ -20,7 +20,7 @@ As a quick overview, you can email security concerns to security@miraheze.org, o
 
 # Licensing
 This repository is licensed per the GNU General Public License, Version 3.
-The full license is available in LICENSE.md.
+The full license is available in [LICENSE.md](LICENSE.md).
 
 The repository is made of an assortment of code developed by hand, reusing PuppetLabs Forge and code by the Wikimedia Foundation.
 Attritubtions should exist in module directories if code if fully unmodified or slightly.
