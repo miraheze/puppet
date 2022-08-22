@@ -79,7 +79,7 @@ def check_records(hostname):
             nameserver = str(nameserver)
             nameservers.append(nameserver)
             flatten_manadatory_providers = (
-                '.ns.cloudlfare.com.',
+                '.ns.cloudflare.com.',
                 '.dreamhost.com.',
                 '.ns.porkbun.com.',
             )
