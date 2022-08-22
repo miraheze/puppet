@@ -1,0 +1,14 @@
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Run typos
+        run: |
+           ! grep -E -r --binary-files=without-match --color=always --file=typos --exclude=typos --exclude-dir=.git
