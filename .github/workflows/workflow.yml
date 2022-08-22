@@ -17,8 +17,6 @@ jobs:
         python: ['3.9', '3.10']
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: true
       - name: Python ${{ matrix.python }}
         uses: actions/setup-python@v4
         with:
