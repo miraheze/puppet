@@ -1,4 +1,3 @@
-jobchron: false
 jobrunner: false
 jobrunner::intensive: false
 mailserver: false

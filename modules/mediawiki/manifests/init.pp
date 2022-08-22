@@ -22,10 +22,6 @@ class mediawiki(
         include mediawiki::jobqueue::runner
     }
 
-    if lookup(jobchron) {
-        include mediawiki::jobqueue::chron
-    }
-
     if lookup(mediawiki::use_shellbox) {
         include mediawiki::shellbox
     }
