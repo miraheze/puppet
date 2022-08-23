@@ -11,7 +11,7 @@ class PuppetDB::ASTNode
     name.to_s.split('::').collect(&:capitalize).join('::')
   end
 
-  # Generate the the query code for a subquery
+  # Generate the query code for a subquery
   #
   # As a special case, the from_mode of :none will not wrap the
   # subquery at all, returning it as is.
