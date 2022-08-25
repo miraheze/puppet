@@ -642,7 +642,7 @@ requires SSL/TLS client certificates. This module offers multiple choices to con
 One of your Icinga masters needs to behave as a CA. With the class
 `icinga2::pki::ca` you can do the following to fulfill this requirement:
 
-* Use the the `icinga2` CLI to generate a complete new CA
+* Use the `icinga2` CLI to generate a complete new CA
 ``` puppet
 include ::icinga2
 class { '::icinga2::pki::ca':
