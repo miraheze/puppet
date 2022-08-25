@@ -4,7 +4,7 @@ class role::irc {
 
     class { 'irc::ircrcbot':
         nickname     => 'MirahezeRC',
-        # irc.libera.chat (ipv6 address, have to hardcode it.
+        # irc.libera.chat ipv6 address; we have to hardcode it.
         # This is because it's either picking up the ipv4 address
         # for the hostname or it doesn't support getting the ipv6
         # address from hostname.
@@ -16,7 +16,7 @@ class role::irc {
 
     class { 'irc::irclogserverbot':
         nickname     => 'MirahezeLSBot',
-        # irc.libera.chat (ipv6 address, have to hardcode it.
+        # irc.libera.chat ipv6 address; we have to hardcode it.
         # This is because it's either picking up the ipv4 address
         # for the hostname or it doesn't support getting the ipv6
         # address from hostname.
