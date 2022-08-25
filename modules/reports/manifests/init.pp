@@ -3,12 +3,11 @@ class reports {
     ensure_packages(['mariadb-client', 'composer'])
 
     git::clone { 'TSPortal':
-        directory          => '/srv/TSPortal',
-        origin             => 'https://github.com/miraheze/TSPortal',
-        branch             => 'v7',
-        recurse_submodules => true,
-        owner              => 'www-data',
-        group              => 'www-data',
+        directory => '/srv/TSPortal',
+        origin    => 'https://github.com/miraheze/TSPortal',
+        branch    => 'v7',
+        owner     => 'www-data',
+        group     => 'www-data',
     }
 
     exec { 'reports_composer':
