@@ -28,14 +28,10 @@ $config['db_dsnw'] = 'mysqli://<%= @db_user_name %>:<%= @db_user_password %>@<%=
 // For example %n = mail.domain.tld, %t = domain.tld
 // WARNING: After hostname change update of mail_host column in users table is
 //          required to match old user data records with the new host.
-$config['default_host'] = 'tls://mail.miraheze.org:143';
-//$config['default_host'] = 'ssl://mail.miraheze.org:993';
+$config['imap_host'] = 'tls://mail.miraheze.org:143';
 
 $config['smtp_user'] = '%u';
 $config['smtp_pass'] = '%p';
-
-// TCP port used for IMAP connections
-// $config['default_port'] = 993;
 
 // ----------------------------------
 // SMTP
@@ -50,7 +46,7 @@ $config['smtp_pass'] = '%p';
 // %d - domain (http hostname $_SERVER['HTTP_HOST'] without the first part)
 // %z - IMAP domain (IMAP hostname without the first part)
 // For example %n = mail.domain.tld, %t = domain.tld
-$config['smtp_server'] = 'tls://mail.miraheze.org:587';
+$config['smtp_host'] = 'tls://mail.miraheze.org:587';
 
 // provide an URL where a user can get support for this Roundcube installation
 // PLEASE DO NOT LINK TO THE ROUNDCUBE.NET WEBSITE HERE!
