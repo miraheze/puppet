@@ -121,12 +121,11 @@ class roundcubemail (
     ensure_packages(["php${php_version}-pspell"])
 
     git::clone { 'roundcubemail':
-        directory          => '/srv/roundcubemail',
-        origin             => 'https://github.com/roundcube/roundcubemail',
-        branch             => '1.6.0',
-        recurse_submodules => true,
-        owner              => 'www-data',
-        group              => 'www-data',
+        directory => '/srv/roundcubemail',
+        origin    => 'https://github.com/roundcube/roundcubemail',
+        branch    => '1.6.0', # Current stable
+        owner     => 'www-data',
+        group     => 'www-data',
     }
 
     file { '/srv/roundcubemail/config/config.inc.php':
