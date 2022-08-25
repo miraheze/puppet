@@ -5,21 +5,50 @@
 // ----------------------------------
 // SQL DATABASE
 // ----------------------------------
+
 // Database connection string (DSN) for read+write operations
 // Format (compatible with PEAR MDB2): db_provider://user:password@host/database
 // Currently supported db_providers: mysql, pgsql, sqlite, mssql, sqlsrv, oracle
 // For examples see http://pear.php.net/manual/en/package.database.mdb2.intro-dsn.php
-// NOTE: for SQLite use absolute path (Linux): 'sqlite:////full/path/to/sqlite.db?mode=0646'
+// Note: for SQLite use absolute path (Linux): 'sqlite:////full/path/to/sqlite.db?mode=0646'
 //       or (Windows): 'sqlite:///C:/full/path/to/sqlite.db'
+// Note: Various drivers support various additional arguments for connection,
+//       for Mysql: key, cipher, cert, capath, ca, verify_server_cert,
+//       for Postgres: application_name, sslmode, sslcert, sslkey, sslrootcert, sslcrl, sslcompression, service.
+//       e.g. 'mysql://roundcube:@localhost/roundcubemail?verify_server_cert=false'
 $config['db_dsnw'] = 'mysqli://<%= @db_user_name %>:<%= @db_user_password %>@<%= @db_host %>/<%= @db_name %>?verify_server_cert=true&key=wildcard.miraheze.org-2020-2.key&cert=wildcard.miraheze.org-2020-2.crt';
+
+
+// ----------------------------------
+// LOGGING/DEBUGGING
+// ----------------------------------
+
+// log driver:  'syslog', 'stdout' or 'file'.
+$config['log_driver'] = 'syslog';
+
+// Syslog ident string to use, if using the 'syslog' log driver.
+$config['syslog_id'] = 'roundcubemail';
+
+// Log successful/failed logins to <log_dir>/userlogins.log or to syslog
+$config['log_logins'] = true;
+
+// Log IMAP conversation to <log_dir>/imap.log or to syslog
+// $config['imap_debug'] = true;
+
+// Log SMTP conversation to <log_dir>/smtp.log or to syslog
+// $config['smtp_debug'] = true;
+
 
 // ----------------------------------
 // IMAP
 // ----------------------------------
-// The IMAP host chosen to perform the log-in.
+
+// The IMAP host (and optionally port number) chosen to perform the log-in.
 // Leave blank to show a textbox at login, give a list of hosts
 // to display a pulldown menu or set one host as string.
-// To use SSL/TLS connection, enter hostname with prefix ssl:// or tls://
+// Enter hostname with prefix ssl:// to use Implicit TLS, or use
+// prefix tls:// to use STARTTLS.
+// If port number is omitted it will be set to 993 (for ssl://) or 143 otherwise.
 // Supported replacement variables:
 // %n - hostname ($_SERVER['SERVER_NAME'])
 // %t - hostname without the first part
@@ -30,15 +59,15 @@ $config['db_dsnw'] = 'mysqli://<%= @db_user_name %>:<%= @db_user_password %>@<%=
 //          required to match old user data records with the new host.
 $config['imap_host'] = 'tls://mail.miraheze.org:143';
 
-$config['smtp_user'] = '%u';
-$config['smtp_pass'] = '%p';
 
 // ----------------------------------
 // SMTP
 // ----------------------------------
-// SMTP server host (for sending mails).
-// Enter hostname with prefix tls:// to use STARTTLS, or use
-// prefix ssl:// to use the deprecated SSL over SMTP (aka SMTPS)
+
+// SMTP server host (and optional port number) for sending mails.
+// Enter hostname with prefix ssl:// to use Implicit TLS, or use
+// prefix tls:// to use STARTTLS.
+// If port number is omitted it will be set to 465 (for ssl://) or 587 otherwise.
 // Supported replacement variables:
 // %h - user's IMAP hostname
 // %n - hostname ($_SERVER['SERVER_NAME'])
@@ -46,32 +75,67 @@ $config['smtp_pass'] = '%p';
 // %d - domain (http hostname $_SERVER['HTTP_HOST'] without the first part)
 // %z - IMAP domain (IMAP hostname without the first part)
 // For example %n = mail.domain.tld, %t = domain.tld
+// To specify different SMTP servers for different IMAP hosts provide an array
+// of IMAP host (no prefix or port) and SMTP server e.g. ['imap.example.com' => 'smtp.example.net']
 $config['smtp_host'] = 'tls://mail.miraheze.org:587';
 
-// provide an URL where a user can get support for this Roundcube installation
-// PLEASE DO NOT LINK TO THE ROUNDCUBE.NET WEBSITE HERE!
-$config['support_url'] = '';
+// SMTP username (if required) if you use %u as the username Roundcube
+// will use the current username for login
+$config['smtp_user'] = '%u';
 
-//$config['smtp_auth_type'] = 'LOGIN';
+// SMTP password (if required) if you use %p as the password Roundcube
+// will use the current user's password for login
+$config['smtp_pass'] = '%p';
 
-// replace Roundcube logo with this image
-// specify an URL relative to the document root of this Roundcube installation
-// an array can be used to specify different logos for specific template files
-// '*' for default logo
-// ':favicon' for favicon
-// ':print' for logo on all print templates (e.g. messageprint, contactprint)
-// ':small' for small screen logo in Elastic
-// different logos can be specified for different skins by prefixing the skin name to the array key
-// config applied in order: <skin>:<template>, <skin>:*, <template>, *
-// for example array("*" => "/images/roundcube_logo.png", "messageprint" => "/images/roundcube_logo_print.png", "elastic:*" => "/images/logo.png")
+
+// ----------------------------------
+// SYSTEM
+// ----------------------------------
+
+// Logo image replacement. Specifies location of the image as:
+// - URL relative to the document root of this Roundcube installation
+// - full URL with http:// or https:// prefix
+// - URL relative to the current skin folder (when starts with a '/')
+//
+// An array can be used to specify different logos for specific template files
+// The array key specifies the place(s) the logo should be applied to and
+// is made up of (up to) 3 parts:
+// - skin name prefix (always with colon, can be replaced with *)
+// - template name (or * for all templates)
+// - logo type - it is used for logos used on multiple templates and the available types include:
+//      '[favicon]' for favicon
+//      '[print]' for logo on all print templates (e.g. messageprint, contactprint)
+//      '[small]' for small screen logo in supported skins
+//      '[dark]' and '[small-dark]' for dark mode logo in supported skins
+//      '[link]' for adding a URL link to the logo image
+//
+// Example config for skin_logo
+/*
+   [
+     // show the image /images/logo_login_small.png for the Login screen in the Elastic skin on small screens
+     "elastic:login[small]" => "/images/logo_login_small.png",
+     // show the image /images/logo_login.png for the Login screen in the Elastic skin
+     "elastic:login" => "/images/logo_login.png",
+     // add a link to the logo on the Login screen in the Elastic skin
+     "elastic:login[link]" => "https://www.example.com",
+     // add a link to the logo on all screens in the Elastic skin
+     "elastic:*[link]" => "https://www.example.com",
+     // add a link to the logo on all screens for all skins
+     "[link]" => "https://www.example.com",
+     // show the image /images/logo_small.png in the Elastic skin
+     "elastic:*[small]" => "/images/logo_small.png",
+     // show the image /images/larry.png in the Larry skin
+     "larry:*" => "/images/larry.png",
+     // show the image /images/logo_login.png on the login template in all skins
+     "login" => "/images/logo_login.png",
+     // show the image /images/logo_print.png for all print type logos in all skins
+     "[print]" => "/images/logo_print.png",
+   ];
+*/
 $config['skin_logo'] = 'https://static.miraheze.org/metawiki/3/35/Miraheze_Logo.svg';
 
-$config['skin'] = 'elastic';
-
-// This key is used for encrypting purposes, like storing of imap password
-// in the session. For historical reasons it's called DES_key, but it's used
-// with any configured cipher_method (see below).
-$config['des_key'] = '<%= @roundcubemail_des_key %>';
+// Session lifetime in minutes (set to 24 hours)
+$config['session_lifetime'] = 1440;
 
 // Automatically add this domain to user names for login
 // Only for IMAP servers that require full e-mail addresses for login
@@ -88,14 +152,37 @@ $config['username_domain'] = 'miraheze.org';
 // Name your service. This is displayed on the login screen and in the window title
 $config['product_name'] = 'Miraheze Mail';
 
-// $config['imap_debug'] = true;
-// $config['smtp_debug'] = true;
+// This key is used for encrypting purposes, like storing of imap password
+// in the session. For historical reasons it's called DES_key, but it's used
+// with any configured cipher_method (see below).
+// For the default cipher_method a required key length is 24 characters.
+$config['des_key'] = '<%= @roundcubemail_des_key %>';
+
+
+// ----------------------------------
+// USER PREFERENCES
+// ----------------------------------
+
+// Skin name: folder from skins/
+$config['skin'] = 'elastic';
+
 
 // ----------------------------------
 // PLUGINS
 // ----------------------------------
+
 // List of active plugins (in plugins/ directory)
-$config['plugins'] = array('filesystem_attachments', 'help', 'markasjunk', 'userinfo');
+$config['plugins'] = [
+	'filesystem_attachments',
+	'help',
+	'markasjunk',
+	'userinfo',
+];
+
+
+// ----------------------------------
+// USER INTERFACE
+// ----------------------------------
 
 // Set the spell checking engine. Possible values:
 // - 'googie'  - the default (also used for connecting to Nox Spell Server, see 'spellcheck_uri' setting)
@@ -106,10 +193,3 @@ $config['plugins'] = array('filesystem_attachments', 'help', 'markasjunk', 'user
 // connect to http://spell.roundcube.net which is a hosted service provided by Roundcube.
 // You can connect to any other googie-compliant service by setting 'spellcheck_uri' accordingly.
 $config['spellcheck_engine'] = 'pspell';
-
-$config['log_driver'] = 'syslog';
-$config['syslog_id'] = 'roundcubemail';
-$config['log_logins'] = true;
-
-// Set session lifetime to 24 hours
-$config['session_lifetime'] = 1440;
