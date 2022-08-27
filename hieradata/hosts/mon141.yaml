@@ -3,9 +3,6 @@ icingaweb_db_host: 'db112.miraheze.org'
 icinga_ido_db_host: 'db112.miraheze.org'
 grafana_db_host: 'db112.miraheze.org'
 
-icinga_ldap_host: 'ldap.miraheze.org'
-grafana_ldap_host: 'ldap.miraheze.org'
-
 http_proxy: 'http://bast.miraheze.org:8080'
 
 icinga2_api_bind_host: '::'
