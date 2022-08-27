@@ -1,4 +1,4 @@
-server_host = ldaps://ldap141.miraheze.org
+server_host = ldaps://ldap.miraheze.org
 bind = yes
 bind_dn = cn=write-user,dc=miraheze,dc=org
 bind_pw = <%= @ldap_password %>
