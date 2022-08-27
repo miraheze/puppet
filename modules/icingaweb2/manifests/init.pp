@@ -9,7 +9,7 @@ class icingaweb2 (
     String $ido_db_user_password = undef,
     String $icinga_api_password  = undef,
     String $ldap_password        = undef,
-    String $icinga_ldap_host     = 'ldap141.miraheze.org',
+    String $icinga_ldap_host     = 'ldap.miraheze.org',
 ) {
 
     if ! defined(Class['::icinga2']) {
