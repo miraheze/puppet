@@ -4,7 +4,6 @@
 
 class prometheus::exporter::varnishreqs (
     VMlib::Ensure $ensure = 'present',
-    String $outfile = '/var/lib/prometheus/node.d/varnishreqs.prom',
 ) {
     ensure_packages([
         'python3-prometheus-client',
@@ -23,6 +22,6 @@ class prometheus::exporter::varnishreqs (
     cron { 'varnish-requests-exporter':
         ensure  => $ensure,
         user    => 'root',
-        command => "/usr/local/bin/varnish-requests-exporter --outfile ${outfile}",
+        command => "/usr/local/bin/varnish-requests-exporter",
     }
 }
