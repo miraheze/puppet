@@ -130,7 +130,7 @@ class roundcubemail (
 
     file { '/srv/roundcubemail/composer.json':
         ensure  => present,
-        source  => '/srv/roundcubemail/composer.json-dist'
+        source  => '/srv/roundcubemail/composer.json-dist',
         owner   => 'www-data',
         group   => 'www-data',
         replace => false,
@@ -149,7 +149,7 @@ class roundcubemail (
 
     exec { 'roundcubemail_js_deps':
         command     => 'bin/install-jsdeps.sh',
-        creates     => '/srv/roundcubemail/skins/elastic/deps/less.min.js'
+        creates     => '/srv/roundcubemail/skins/elastic/deps/less.min.js',
         cwd         => '/srv/roundcubemail',
         path        => '/usr/bin',
         environment => 'HOME=/srv/roundcubemail',
