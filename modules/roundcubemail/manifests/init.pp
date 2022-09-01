@@ -88,6 +88,9 @@ class roundcubemail (
             package_name => "php${php_version}-mysql";
         'pdo_mysql':
             package_name => '';
+        'xml':
+            package_name => "php${php_version}-xml",
+            priority     => 15;
     }
 
     # XML
