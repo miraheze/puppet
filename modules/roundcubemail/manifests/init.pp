@@ -128,7 +128,7 @@ class roundcubemail (
         group     => 'www-data',
     }
 
-    file { '/srv/roundcubemail/composer.json'
+    file { '/srv/roundcubemail/composer.json':
         ensure  => present,
         source  => '/srv/roundcubemail/composer.json-dist'
         owner   => 'www-data',
