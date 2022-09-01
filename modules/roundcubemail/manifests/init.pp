@@ -118,7 +118,7 @@ class roundcubemail (
         }
     }
 
-    ensure_packages(["php${php_version}-pspell"])
+    ensure_packages(["php${php_version}-pspell", "composer"])
 
     git::clone { 'roundcubemail':
         directory => '/srv/roundcubemail',
@@ -126,6 +126,26 @@ class roundcubemail (
         branch    => '1.6.0', # Current stable
         owner     => 'www-data',
         group     => 'www-data',
+    }
+
+    exec { 'roundcubemail_composer':
+        command     => 'composer install --no-dev',
+        creates     => '/srv/roundcubemail/vendor',
+        cwd         => '/srv/roundcubemail',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/roundcubemail',
+        user        => 'www-data',
+        require     => Git::Clone['roundcubemail'],
+    }
+
+    exec { 'roundcubemail_js_deps':
+        command     => 'bin/install-jsdeps.sh',
+        creates     => '/srv/roundcubemail/skins/elastic/deps/less.min.js'
+        cwd         => '/srv/roundcubemail',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/roundcubemail',
+        user        => 'www-data',
+        require     => Git::Clone['roundcubemail'],
     }
 
     file { '/srv/roundcubemail/config/config.inc.php':
