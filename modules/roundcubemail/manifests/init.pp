@@ -128,6 +128,15 @@ class roundcubemail (
         group     => 'www-data',
     }
 
+    file { '/srv/roundcubemail/composer.json'
+        ensure  => present,
+        source  => '/srv/roundcubemail/composer.json-dist'
+        owner   => 'www-data',
+        group   => 'www-data',
+        replace => false,
+        require => Git::Clone['roundcubemail'],
+    }
+
     exec { 'roundcubemail_composer':
         command     => 'composer install --no-dev',
         creates     => '/srv/roundcubemail/vendor',
@@ -135,7 +144,7 @@ class roundcubemail (
         path        => '/usr/bin',
         environment => 'HOME=/srv/roundcubemail',
         user        => 'www-data',
-        require     => Git::Clone['roundcubemail'],
+        require     => File['/srv/roundcubemail/composer.json'],
     }
 
     exec { 'roundcubemail_js_deps':
