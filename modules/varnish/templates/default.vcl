@@ -26,6 +26,7 @@ probe mwhealth {
 	# to mark the backend as healthy
 	.window = 5;
 	.threshold = 4;
+        .initial = 4;
 	.expected_response = 204;
 }
 
