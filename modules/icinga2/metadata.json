@@ -1,88 +1,119 @@
 {
   "name": "icinga-icinga2",
-  "version": "2.0.1",
+  "version": "3.4.0",
   "author": "Icinga Development Team",
   "summary": "Icinga 2 Puppet Module",
   "license": "Apache-2.0",
   "source": "git://github.com/icinga/puppet-icinga2",
   "project_page": "https://github.com/icinga/puppet-icinga2",
   "issues_url": "https://github.com/icinga/puppet-icinga2/issues",
-  "tags": ["monitoring"],
-  "requirements": [
-    { "name": "puppet", "version_requirement": ">= 4.10.0 < 7.0.0" }
-  ],
   "dependencies": [
-    { "name": "puppetlabs/stdlib", "version_requirement": ">= 4.16.0 < 6.0.0" },
-    { "name": "puppetlabs/concat", "version_requirement": ">= 2.1.0 < 6.0.0" }
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 5.0.0 < 9.0.0"
+    },
+    {
+      "name": "puppetlabs/concat",
+      "version_requirement": ">= 2.1.0 < 8.0.0"
+    }
   ],
   "operatingsystem_support": [
     {
       "operatingsystem": "Windows",
       "operatingsystemrelease": [
-        "Server 2012",
         "Server 2012 R2",
-        "Server 2016"
+        "Server 2016",
+        "Server 2019"
       ]
     },
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
         "6",
-        "7"
+        "7",
+        "8"
       ]
     },
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
         "6",
-        "7"
+        "7",
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "Rocky",
+      "operatingsystemrelease": [
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "AlmaLinux",
+      "operatingsystemrelease": [
+        "8"
       ]
     },
     {
       "operatingsystem": "Fedora",
       "operatingsystemrelease": [
-        "25",
-        "26",
-        "27",
-        "28",
-        "29"
+        "32",
+        "33",
+        "34",
+        "35"
       ]
     },
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "7",
         "8",
-        "9"
+        "9",
+        "10",
+        "11"
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "14.04",
         "16.04",
-        "18.04"
+        "18.04",
+        "20.04"
       ]
     },
     {
       "operatingsystem": "SLES",
       "operatingsystemrelease": [
-        "12"
+        "12",
+        "15"
       ]
     },
     {
       "operatingsystem": "FreeBSD",
       "operatingsystemrelease": [
         "11",
-        "10"
+        "12",
+        "13"
       ]
     }
-  ]
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 4.12.0 < 8.0.0"
+    }
+  ],
+  "tags": [
+    "monitoring"
+  ],
+  "pdk-version": "2.4.0",
+  "template-url": "pdk-default#2.4.0",
+  "template-ref": "tags/2.4.0-0-gfa6b6d2"
 }

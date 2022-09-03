@@ -1,77 +1,72 @@
-# == Define: icinga2::object::dependency
+# @summary
+#   Manage Icinga 2 dependency objects.
 #
-# Manage Icinga 2 dependency objects.
+# @param ensure
+#   Set to present enables the object, absent disables it.
 #
-# === Parameters
+# @param dependency_name
+#   Set the Icinga 2 name of the dependency object.
 #
-# [*ensure*]
-#   Set to present enables the object, absent disables it. Defaults to present.
-#
-# [*dependency_name*]
-#   Set the Icinga 2 name of the dependency object. Defaults to title of the define resource.
-#
-# [*parent_host_name*]
+# @param parent_host_name
 #   The parent host.
 #
-# [*parent_service_name*]
+# @param parent_service_name
 #   The parent service. If omitted, this dependency object is treated as host
 #   dependency.
 #
-# [*child_host_name*]
+# @param child_host_name
 #   The child host.
 #
-# [*child_service_name*]
+# @param child_service_name
 #   The child service. If omitted, this dependency object is treated as host
 #   dependency.
 #
-# [*disable_checks*]
-#   Whether to disable checks when this dependency fails. Defaults to false.
+# @param disable_checks
+#   Whether to disable checks when this dependency fails.
 #
-# [*disable_notifications*]
-#   Whether to disable notifications when this dependency fails. Defaults to
+# @param disable_notifications
+#   Whether to disable notifications when this dependency fails.
 #   true.
 #
-# [*ignore_soft_states*]
-#   Whether to ignore soft states for the reachability calculation. Defaults to
+# @param ignore_soft_states
+#   Whether to ignore soft states for the reachability calculation.
 #   true.
 #
-# [*period*]
+# @param period
 #   Time period during which this dependency is enabled.
 #
-# [*states*]
-#   A list of state filters when this dependency should be OK. Defaults to [ OK,
-#   Warning ] for services and [ Up ] for hosts.
+# @param states
+#   A list of state filters when this dependency should be OK.
 #
-# [*apply*]
+# @param apply
 #   Dispose an apply instead an object if set to 'true'. Value is taken as statement,
-#   i.e. 'vhost => config in host.vars.vhosts'. Defaults to false.
+#   i.e. 'vhost => config in host.vars.vhosts'.
 #
-# [*prefix*]
-#   Set dependency_name as prefix in front of 'apply for'. Only effects if apply is a string. Defaults to false.
+# @param prefix
+#   Set dependency_name as prefix in front of 'apply for'. Only effects if apply is a string.
 #
-# [*apply_target*]
+# @param apply_target
 #   An object type on which to target the apply rule. Valid values are `Host`
-#   and `Service`. Defaults to `Host`.
+#   and `Service`.
 #
-# [*assign*]
+# @param assign
 #   Assign user group members using the group assign rules.
 #
-# [*ignore*]
+# @param ignore
 #   Exclude users using the group ignore rules.
 #
-# [*template*]
-#   Set to true creates a template instead of an object. Defaults to false.
+# @param template
+#   Set to true creates a template instead of an object.
 #
-# [*import*]
-#   Sorted List of templates to include. Defaults to an empty list.
+# @param import
+#   Sorted List of templates to include.
 #
-# [*target*]
+# @param target
 #   Destination config file to store in this object. File will be declared the
 #   first time.
 #
-# [*order*]
-#   String or integer to set the position in the target file, sorted alpha numeric. Defaults to 70.
-#
+# @param order
+#   String or integer to set the position in the target file, sorted alpha numeric.
 #
 define icinga2::object::dependency (
   Stdlib::Absolutepath          $target,
@@ -87,7 +82,7 @@ define icinga2::object::dependency (
   Optional[String]              $period                = undef,
   Optional[Array]               $states                = undef,
   Variant[Boolean, String]      $apply                 = false,
-  Variant[String, Boolean]      $prefix                = false,
+  Variant[Boolean, String]      $prefix                = false,
   Enum['Host', 'Service']       $apply_target          = 'Host',
   Array                         $assign                = [],
   Array                         $ignore                = [],

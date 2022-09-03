@@ -1,0 +1,12 @@
+---
+icinga::repos:
+  'icinga-stable-release':
+    location: https://packages.icinga.com/ubuntu
+  'icinga-testing-builds':
+    location: https://packages.icinga.com/ubuntu
+  'icinga-snapshot-builds':
+    location: https://packages.icinga.com/ubuntu
+  'netways-plugins-release':
+    location: https://packages.netways.de/plugins/ubuntu
+  'netways-extras-release':
+    location: https://packages.netways.de/extras/ubuntu

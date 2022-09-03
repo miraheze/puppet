@@ -1,19 +1,14 @@
-# == Class: icinga2::feature::mainlog
+# @summary
+#   Configures the Icinga 2 feature mainlog.
 #
-# This module configures the Icinga 2 feature mainlog.
+# @param ensure
+#   Set to 'present' enables the feature mainlog, 'absent' disabled it.
 #
-# === Parameters
+# @param severity
+#   You can set the log severity to 'information', 'notice', 'warning' or 'debug'.
 #
-# [*ensure*]
-#   Set to 'present' enables the feature mainlog, 'absent' disabled it. Defaults to 'present'.
-#
-# [*severity*]
-#   You can set the log severity to 'information', 'notice', 'warning' or 'debug'. Defaults to 'information'.
-#
-# [*path*]
-#   Absolute path to the log file. Default depends on platform, '/var/log/icinga2/icinga2.log' on Linux
-#   and 'C:/ProgramData/icinga2/var/log/icinga2/icinga2.log' on Windows.
-#
+# @param path
+#   Absolute path to the log file.
 #
 class icinga2::feature::mainlog(
   Enum['absent', 'present']    $ensure   = present,

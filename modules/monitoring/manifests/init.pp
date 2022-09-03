@@ -163,22 +163,6 @@ class monitoring (
         notify  => Service['icinga2'],
     }
 
-    file { '/etc/icinga2/features-available/checker.conf':
-        source  => 'puppet:///modules/monitoring/checker.conf',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        require => Package['icinga2'],
-        notify  => Service['icinga2'],
-    }
-
-    file { 'features-enabled-checker.conf':
-        path => '/etc/icinga2/features-enabled/checker.conf',
-        ensure  => 'link',
-        target  => '/etc/icinga2/features-available/checker.conf',
-        require => File['/etc/icinga2/features-available/checker.conf'],
-    }
-
     file { '/etc/icinga2/scripts/mail-host-notification.sh':
         source  => 'puppet:///modules/monitoring/scripts/mail-host-notification.sh',
         owner   => 'root',

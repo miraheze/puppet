@@ -61,180 +61,302 @@
 #   - all attributes or variables (custom attributes) from the host, service or user contexts:
 #       host.name, service.check_command, user.groups, ...
 #
+# Assignment with += and -=:
+#
+# Now it's possible to build an Icinga DSL code snippet like
+#
+#  vars += config
+#
+# simply use a string with the prefix '+ ', e.g.
+#
+#  vars => '+ config',
+#
+# The blank between + and the proper string 'config' is imported for the parser because numbers
+#
+#   attr => '+ -14',
+#
+# are also possible now. For numbers -= can be built, too:
+#
+#   attr => '- -14',
+#
+# Arrays can also be marked to merge with '+' or reduce by '-' as the first item of the array:
+#
+#   attr => [ '+', item1, item2, ... ]
+#
+# Result: attr += [ item1, item2, ... ]
+#
+#   attr => [ '-' item1, item2, ... ]
+#
+# Result: attr -= [ item1, item2, ... ]
+#
+# That all works for attributes and custom attributes!
+#
+# Finally dictionaries can be merged when a key '+' is set:
+#
+#   attr => {
+#     '+'    => true,
+#     'key1' => 'val1',
+#   }
+#
+# Result:
+#
+#   attr += {
+#     "key1" = "val1"
+#   }
+#
+# If 'attr' is a custom attribute this just works since level 3 of the dictionary:
+#
+#   vars => {
+#     'level1' => {
+#       'level2' => {
+#         'level3' => {
+#           '+' => true,
+#           ...
+#         },
+#       },
+#     },
+#   },
+#
+# Parsed to:
+#
+#   vars.level1["level2"] += level3
+#
+# Now it's also possible to add multiple custom attributes:
+#
+#   vars => [
+#     {
+#       'a' => '1',
+#       'b' => '2',
+#     },
+#     'config',
+#     {
+#       'c' => {
+#         'd' => {
+#           '+' => true,
+#           'e' => '5',
+#         },
+#       },
+#     },
+#   ],
+#
+# And you'll get:
+#
+#   vars.a = "1"
+#   vars.b = "2"
+#   vars += config
+#   vars.c["d"] += {
+#     "e" = "5"
+#   }
+#
+# Note: Using an Array always means merge '+=' all items to vars.
+#
 # === What isn't supported?
 #
-# It's not currently possible to use arrays or dictionaries in a string, like
+# It's not currently possible to use dictionaries in a string WITH nested array or hash, like
 #
-#   attr => 'array1 + [ item1, item2, ... ]' or attr => 'hash1 + { item1, ... }'
-#
-# Assignments other than simple attribution are not currently possible either, e.g. building something like
-#
-#   vars += config
-#
-# but you can use the following instead:
-#
-#   vars = vars + config
+#   attr1 => 'hash1 + { item1 => value1, item2 => [ value1, value2 ], ... ]'
+#   attr2 => 'hash2 + { item1 => value1, item2 => { ... },... }'
 #
 #
 require 'puppet'
 
-module Puppet
-  module Icinga2
-    module Utils
+module Puppet::Icinga2
+  # Module: Utils with methods to parse Icinga 2 DSL config
+  module Utils
+    def self.value_types(value)
+      if value.match?(%r{^(-?\d+\.?\d*[dhms]?|true|false|null|\{{2}.*\}{2})$|^!?(host|service|user)\.}) || @constants.index { |x| @hash_attrs.include?(x) ? value =~ %r{^!?(#{x})(\..+$|$)} : value =~ %r{^!?#{x}$} }
+        value
+      else
+        value.dump
+      end
+    end
 
-      def self.attributes(attrs, globals, consts, indent=2)
+    def self.attribute_types(attr)
+      if %r{^[a-zA-Z0-9_]+$}.match?(attr)
+        attr
+      else
+        "\"#{attr}\""
+      end
+    end
 
-        def self.value_types(value)
+    def self.parse(row)
+      result = ''
 
-          if value =~ /^-?\d+\.?\d*[dhms]?$/ || value =~ /^(true|false|null)$/ || value =~ /^!?(host|service|user)\./ || value =~ /^\{{2}.*\}{2}$/
-            result = value
-          else
-            if $constants.index { |x| if $hash_attrs.include?(x) then value =~ /^!?(#{x})(\..+$|$)/ else value =~ /^!?#{x}$/ end }
-              result = value
-            else
-              result = value.dump
-            end
-          end
-
-          return result
-        end
-
-
-        def self.attribute_types(attr)
-          if attr =~ /^[a-zA-Z0-9_]+$/
-            result = attr
-          else
-            result = "\"#{attr}\""
-          end
-
-          return result
-        end
-
-
-        def self.parse(row)
-          result = ''
-
-          # parser is disabled
-          if row =~ /^-:(.*)$/m
-            return $1
-          end
-
-          # scan function
-          if row =~ /^\{{2}(.+)\}{2}$/m
-            result += "{{%s}}" % [ $1 ]
-          # scan expression + function (function should contain expressions, but we donno parse it)
-          elsif row =~ /^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s\{{2}(.+)\}{2}$/m
-            result += "%s %s {{%s}}" % [ parse($1), $2, $3 ]
-          # scan expression
-          elsif row =~ /^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s(.+)$/
-            result += "%s %s %s" % [ parse($1), $2, parse($3) ]
-          else
-            if row =~ /^(.+)\((.*)$/
-              result += "%s(%s" % [ $1, $2.split(',').map {|x| parse(x.lstrip)}.join(', ') ]
-            elsif row =~ /^(.*)\)$/
-              result += "%s)" % [ $1.split(',').map {|x| parse(x.lstrip)}.join(', ') ]
-            elsif row =~ /^\((.*)$/
-              result += "(%s" % [ parse($1) ]
-            else
-              result += value_types(row.to_s)
-            end
-          end
-
-          return result.gsub(/" in "/, ' in ')
-        end
-
-
-        def self.process_array(items, indent=2)
-          result = ''
-
-          items.each do |value|
-            if value.is_a?(Hash)
-              result += "\n%s{\n%s%s}, " % [ ' ' * indent, process_hash(value, indent + 2), ' ' * indent ]
-            elsif value.is_a?(Array)
-              result += "[ %s], " % [ process_array(value, indent+2) ]
-            else
-              result += "%s, " % [ parse(value) ] if value
-            end
-          end
-
-          return result
-        end
-
-
-        def self.process_hash(attrs, indent=2, level=3, prefix=' '*indent)
-          result = ''
-          attrs.each do |attr, value|
-            if value.is_a?(Hash)
-              if value.empty?
-                result += case level
-                  when 1 then "%s%s = {}\n" % [ prefix, attribute_types(attr) ]
-                  when 2 then "%s[\"%s\"] = {}\n" % [ prefix, attr ]
-                  else "%s%s = {}\n" % [ prefix, attribute_types(attr) ]
-                end
-              else
-                result += case level
-                  when 1 then process_hash(value, indent, 2, "%s%s" % [ prefix, attr ])
-                  when 2 then "%s[\"%s\"] = {\n%s%s}\n" % [ prefix, attr, process_hash(value, indent), ' ' * (indent-2) ]
-                  else "%s%s = {\n%s%s}\n" % [ prefix, attribute_types(attr), process_hash(value, indent+2), ' ' * indent ]
-                end
-              end
-            elsif value.is_a?(Array)
-              result += case level
-                when 2 then "%s[\"%s\"] = [ %s]\n" % [ prefix, attribute_types(attr), process_array(value) ]
-                else "%s%s = [ %s]\n" % [ prefix, attribute_types(attr), process_array(value) ]
-              end
-            else
-              if level > 1
-                if level == 3
-                  result += "%s%s = %s\n" % [ prefix, attribute_types(attr), parse(value) ] if value != :nil
-                  #result += "%s%s = %s\n" % [ prefix, attr, parse(value) ] if value != :nil
-                else
-                  #result += "%s[\"%s\"] = %s\n" % [ prefix, attribute_types(attr), parse(value) ] if value != :nil
-                  result += "%s[\"%s\"] = %s\n" % [ prefix, attr, parse(value) ] if value != :nil
-                end
-              else
-                result += "%s%s = %s\n" % [ prefix, attr, parse(value) ] if value != :nil
-              end
-            end
-          end
-
-          return result
-        end
-
-
-        # globals (params.pp) and all keys of attrs hash itselfs must not quoted
-        $constants = globals.concat(consts.keys) << "name"
-
-        # select all attributes and constants if there value is a hash
-        $hash_attrs = attrs.merge(consts).select { |x,y| y.is_a?(Hash) }.keys
-
-        # initialize returned configuration
-        config = ''
-
-        attrs.each do |attr, value|
-
-          if attr =~ /^(assign|ignore) where$/
-            value.each do |x|
-              config += "%s%s %s\n" % [ ' ' * indent, attr, parse(x) ] if x
-            end
-          else
-            if value.is_a?(Hash)
-              if ['vars'].include?(attr)
-                config += process_hash(value, indent+2, 1, "%s%s." % [ ' ' * indent, attr])
-              else
-                config += "%s%s = {\n%s%s}\n" % [ ' ' * indent, attr, process_hash(value, indent+2), ' ' * indent ]
-              end
-            elsif value.is_a?(Array)
-              config += "%s%s = [ %s]\n" % [ ' ' * indent, attr, process_array(value) ]
-            else
-              config += "%s%s = %s\n" % [ ' ' * indent, attr, parse(value) ]
-            end
-          end
-        end
-
-        return config
+      # parser is disabled
+      if row =~ %r{^-:(.*)$}m
+        return Regexp.last_match(1)
       end
 
+      if row =~ %r{^\{{2}(.+)\}{2}$}m
+        # scan function
+        result += '{{%{expr}}}' % { expr: Regexp.last_match(1) }
+      elsif row =~ %r{^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s\{{2}(.+)\}{2}$}m
+        # scan expression + function (function should contain expressions, but we donno parse it)
+        result += '%{expr} %{op} {{%{fct}}}' % { expr: parse(Regexp.last_match(1)), op: Regexp.last_match(2), fct: Regexp.last_match(3) }
+      elsif row =~ %r{^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s(.+)$}
+        # scan expression
+        result += '%{expr1} %{op} %{expr2}' % { expr1: parse(Regexp.last_match(1)), op: Regexp.last_match(2), expr2: parse(Regexp.last_match(3)) }
+      elsif row =~ %r{^(.+)\((.*)$}
+        result += '%{fct}(%{param}' % { fct: Regexp.last_match(1), param: Regexp.last_match(2).split(',').map { |x| parse(x.lstrip) }.join(', ') }
+      elsif row =~ %r{^(.*)\)(.+)?$}
+        # closing bracket ) with optional access of an attribute e.g. '.arguments'
+        result += '%{param})%{expr}' % { param: Regexp.last_match(1).split(',').map { |x| parse(x.lstrip) }.join(', '), expr: Regexp.last_match(2) }
+      elsif row =~ %r{^\((.*)$}
+        result += '(%{expr}' % { expr: parse(Regexp.last_match(1)) }
+      elsif row =~ %r{^\s*\[\s*(.*)\s*\]\s?(.+)?$}
+        # parse array
+        result += '[ %{lst}]' % { lst: process_array(Regexp.last_match(1).split(',')) }
+        result += ' %{expr}' % { expr: parse(Regexp.last_match(2)) } if Regexp.last_match(2)
+      elsif row =~ %r{^\s*\{\s*(.*)\s*\}\s?(.+)?$}
+        # parse hash
+        result += "{\n%{expr}}" % { expr: process_hash(Hash[Regexp.last_match(1).gsub(%r{\s*=>\s*|\s*,\s*}, ',').split(',').each_slice(2).to_a]) }
+        result += ' %{expr}' % { expr: parse(Regexp.last_match(2)) } if Regexp.last_match(2)
+      else
+        result += value_types(row.to_s.strip)
+      end
+      result.gsub(%r{" in "}, ' in ')
+    end
+
+    def self.process_array(items, indent = 2)
+      result = ''
+      items.each do |value_frozen|
+        value = value_frozen.dup
+        if value.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
+          value = value.unwrap
+          value = '-:"' + value + '"' if value.is_a?(String)
+        end
+        if value.is_a?(Hash)
+          result += "\n%{ind1}{\n%{expr}%{ind2}}, " % { ind1: ' ' * indent, expr: process_hash(value, indent + 2), ind2: ' ' * indent }
+        elsif value.is_a?(Array)
+          result += '[ %{lst}], ' % { lst: process_array(value, indent + 2) }
+        else
+          result += '%{expr}, ' % { expr: parse(value) } if value
+        end
+      end
+      result
+    end
+
+    def self.process_hash(attrs, indent = 2, level = 3, prefix = ' ' * indent)
+      result = ''
+      attrs.each do |attr, value_frozen|
+        value = value_frozen.dup
+        if value.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
+          value = value.unwrap
+          value = '-:"' + value + '"' if value.is_a?(String)
+        end
+        result += if value.is_a?(Hash)
+                    op = '+' if value.delete('+')
+                    if value.empty?
+                      case level
+                      when 1 then
+                        "%{pre}%{att} #{op}= {}\n" % { pre: prefix, att: attribute_types(attr) }
+                      when 2 then
+                        "%{pre}[\"%{att}\"] #{op}= {}\n" % { pre: prefix, att: attr }
+                      else
+                        "%{pre}%{att} #{op}= {}\n" % { pre: prefix, att: attribute_types(attr) }
+                      end
+                    else
+                      case level
+                      when 1 then
+                        process_hash(value, indent, 2, '%{pre}%{att}' % { pre: prefix, att: attr })
+                      when 2 then
+                        "%{pre}[\"%{att}\"] #{op}= {\n%{lst}%{ind}}\n" % { pre: prefix, att: attr, lst: process_hash(value, indent), ind: ' ' * (indent - 2) }
+                      else
+                        "%{pre}%{att} #{op}= {\n%{lst}%{ind}}\n" % { pre: prefix, att: attribute_types(attr), lst: process_hash(value, indent + 2), ind: ' ' * indent }
+                      end
+                    end
+                  elsif value.is_a?(Array)
+                    op = value.delete_at(0) if value[0] == '+' || value[0] == '-'
+                    case level
+                    when 2 then
+                      "%{pre}[\"%{att}\"] #{op}= [ %{lst}]\n" % { pre: prefix, att: attribute_types(attr), lst: process_array(value) }
+                    else
+                      "%{pre}%{att} #{op}= [ %{lst}]\n" % { pre: prefix, att: attribute_types(attr), lst: process_array(value) }
+                    end
+                  else
+                    # String: attr = '+ value' -> attr += 'value'
+                    if value =~ %r{^([\+,-])\s+}
+                      operator = "#{Regexp.last_match(1)}="
+                      value = value.sub(%r{^[\+,-]\s+}, '')
+                    else
+                      operator = '='
+                    end
+                    if level == 3
+                      "%{pre}%{att} #{operator} %{val}\n" % { pre: prefix, att: attribute_types(attr), val: parse(value) } if value != :nil
+                    elsif level > 1
+                      "%{pre}[\"%{att}\"] #{operator} %{val}\n" % { pre: prefix, att: attr, val: parse(value) } if value != :nil
+                    else
+                      "%{pre}%{att} #{operator} %{val}\n" % { pre: prefix, att: attr, val: parse(value) } if value != :nil
+                    end
+                  end
+      end
+      result
+    end
+
+    def self.attributes(attrs, globals, consts, indent = 2)
+      # globals (params.pp) and all keys of attrs hash itselfs must not quoted
+      @constants = globals.concat(consts.keys) << 'name'
+
+      # select all attributes and constants if there value is a hash
+      @hash_attrs = attrs.merge(consts).select { |_x, y| y.is_a?(Hash) }.keys
+
+      # initialize returned configuration
+      config = ''
+
+      attrs.each do |attr, value_frozen|
+        value = value_frozen.dup
+        if value.is_a?(Puppet::Pops::Types::PSensitiveType::Sensitive)
+          value = value.unwrap
+          value = '-:"' + value + '"' if value.is_a?(String) && !@constants.include?(value)
+        end
+
+        if %r{^(assign|ignore) where$}.match?(attr)
+          value.each do |x|
+            config += "%{ind}%{att} %{expr}\n" % { ind: ' ' * indent, att: attr, expr: parse(x) } if x
+          end
+        elsif attr == 'vars'
+          if value.is_a?(Hash)
+            # delete pair of key '+' because a merge at this point is not allowed
+            value.delete('+')
+            config += process_hash(value, indent + 2, 1, '%{ind}%{att}.' % { ind: ' ' * indent, att: attr })
+          elsif value.is_a?(Array)
+            value.each do |item_frozen|
+              item = item_frozen.dup
+              if item.is_a?(String)
+                config += "%{ind}%{att} += %{lst}\n" % { ind: ' ' * indent, att: attr, lst: item.sub(%r{^[\+,-]\s+}, '') }
+              else
+                item.delete('+')
+                config += if item.empty?
+                            "%{ind}%{att} += {}\n" % { ind: ' ' * indent, att: attr }
+                          else
+                            process_hash(item, indent + 2, 1, '%{ind}%{att}.' % { ind: ' ' * indent, att: attr })
+                          end
+              end
+            end
+          else
+            op = '+' if %r{^\+\s+}.match?(value)
+            config += "%{ind}%{att} #{op}= %{val}\n" % { ind: ' ' * indent, att: attr, val: parse(value.sub(%r{^\+\s+}, '')) }
+          end
+        else
+          config += if value.is_a?(Hash)
+                      op = '+' if value.delete('+')
+                      if !value.empty?
+                        "%{ind}%{att} #{op}= {\n%{lst}%{blnk}}\n" % { ind: ' ' * indent, att: attr, lst: process_hash(value, indent + 2), blnk: ' ' * indent }
+                      else
+                        "%{ind}%{att} #{op}= {}\n" % { ind: ' ' * indent, att: attr }
+                      end
+                    elsif value.is_a?(Array)
+                      op = value.delete_at(0) if value[0] == '+' || value[0] == '-'
+                      "%{ind}%{att} #{op}= [ %{lst}]\n" % { ind: ' ' * indent, att: attr, lst: process_array(value) }
+                    elsif value =~ %r{^([\+,-])\s+}
+                      # String: attr = '+ config' -> attr += config
+                      "%{ind}%{att} #{Regexp.last_match(1)}= %{expr}\n" % { ind: ' ' * indent, att: attr, expr: parse(value.sub(%r{^[\+,-]\s+}, '')) }
+                    else
+                      "%{ind}%{att} = %{expr}\n" % { ind: ' ' * indent, att: attr, expr: parse(value) }
+                    end
+        end
+      end
+      config
     end
   end
 end

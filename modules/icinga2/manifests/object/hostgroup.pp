@@ -1,37 +1,35 @@
-# == Define: icinga2::object::hostgroup
+# @summary
+#   Manage Icinga 2 HostGroup objects.
 #
-# Manage Icinga 2 HostGroup objects.
+# @example
+#   icinga2::object::hostgroup { 'monitoring-hosts':
+#     display_name => 'Linux Servers',
+#     groups       => [ 'linux-servers' ],
+#     target       => '/etc/icinga2/conf.d/groups2.conf',
+#     assign       => [ 'host.name == NodeName' ],
+#   }
 #
-# === Parameters
+# @param ensure
+#   Set to present enables the object, absent disables it.
 #
-# [*ensure*]
-#   Set to present enables the object, absent disables it. Defaults to present.
-#
-# [*display_name*]
+# @param display_name
 #   A short description of the host group.
 #
-# [*groups*]
+# @param groups
 #   An array of nested group names.
 #
-# [*assign*]
-#   Assign host group members using the group assign rules.
+# @param assign
+#   Assign host group members using the group rules.
 #
-# [*target*]
+# @param ignore
+#   Ignore host group members using the group rules.
+#
+# @param target
 #   Destination config file to store in this object. File will be declared at the
 #   first time.
 #
-# [*order*]
-#   String or integer to set the position in the target file, sorted alpha numeric. Defaults to 55.
-#
-# === Examples
-#
-# icinga2::object::hostgroup { 'monitoring-hosts':
-#   display_name => 'Linux Servers',
-#   groups       => [ 'linux-servers' ],
-#   target       => '/etc/icinga2/conf.d/groups2.conf',
-#   assign       => [ 'host.name == NodeName' ],
-# }
-#
+# @param order
+#   String or integer to set the position in the target file, sorted alpha numeric.
 #
 define icinga2::object::hostgroup(
   Stdlib::Absolutepath        $target,
