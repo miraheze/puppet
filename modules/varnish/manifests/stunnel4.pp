@@ -18,9 +18,16 @@ class varnish::stunnel4 {
         require => Package['stunnel4'],
     }
 
-    service { 'stunnel4':
-        ensure  => 'running',
-        require => Package['stunnel4'],
+    systemd::service { 'stunnel4':
+        ensure  => present,
+        content => systemd_template('stunnel4'),
+        service_params => {
+            enable  => true,
+            require => [
+                Package['stunnel4'],
+                File['/etc/stunnel/mediawiki.conf'],
+            ],
+        }
     }
 
     logrotate::conf { 'stunnel4':
