@@ -1,0 +1,18 @@
+[Unit]
+Description=Universal SSL tunnel for network daemons
+Documentation=man:stunnel https://www.stunnel.org/docs.html
+After=network.target
+After=syslog.target
+
+[Service]
+Type=forking
+ExecStart=/usr/bin/stunnel4 /etc/stunnel/mediawiki.conf
+PIDFile=/run/stunnel4.pid
+TimeoutSec=600
+Restart=always
+PrivateTmp=yes
+LimitNOFILE=infinity
+
+[Install]
+WantedBy=multi-user.target
+Alias=stunnel.target
