@@ -1,0 +1,29 @@
+---
+version: 5
+
+defaults:
+  datadir: 'data'
+  data_hash: 'yaml_data'
+
+hierarchy:
+  - name: 'Operating System Major/Minor Version'
+    path: '%{facts.os.family}/%{facts.os.name}/%{facts.os.release.major}.%{facts.os.release.minor}.yaml'
+
+  - name: 'Operating System Major Version'
+    path: '%{facts.os.family}/%{facts.os.name}/%{facts.os.release.major}.yaml'
+
+  - name: 'Operating System'
+    path: '%{facts.os.family}/%{facts.os.name}/common.yaml'
+
+  - name: 'Operating System Family Major Version'
+    path: '%{facts.os.family}/%{facts.os.release.major}.yaml'
+
+  - name: 'Operating System Family'
+    path: '%{facts.os.family}/common.yaml'
+
+  - name: 'Kernel Type'
+    path: '%{facts.kernel}-kernel.yaml'
+
+  - name: 'common'
+    path: 'common.yaml'
+

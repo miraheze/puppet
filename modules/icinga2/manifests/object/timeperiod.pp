@@ -1,43 +1,39 @@
-# == Define: icinga2::object::timeperiod
+# @summary
+#   Manage Icinga 2 timeperiod objects.
 #
-# Manage Icinga 2 timeperiod objects.
+# @param ensure
+#   Set to present enables the object, absent disables it.
 #
-# === Parameters
+# @param timeperiod_name
+#   Set the Icinga 2 name of the timeperiod object.
 #
-# [*ensure*]
-#   Set to present enables the object, absent disables it. Defaults to present.
+# @param display_name
+#   A short description of the time period.
 #
-# [*timeperiod_name*]
-#   Set the Icinga 2 name of the timeperiod object. Defaults to title of the define resource.
+# @param import
+#   Sorted List of templates to include.
 #
-# [*display_name*]
-# 	A short description of the time period.
-#
-# [*import*]
-#   Sorted List of templates to include. Defaults to [ "legacy-timeperiod" ].
-#
-# [*ranges*]
-# 	A dictionary containing information which days and durations apply to this
+# @param ranges
+#   A dictionary containing information which days and durations apply to this
 #   timeperiod.
 #
-# [*prefer_includes*]
-# 	Boolean whether to prefer timeperiods includes or excludes. Default to true.
+# @param prefer_includes
+#   Boolean whether to prefer timeperiods includes or excludes.
 #
-# [*excludes*]
-# 	An array of timeperiods, which should exclude from your timerange.
+# @param excludes
+#   An array of timeperiods, which should exclude from your timerange.
 #
-# [*includes*]
-# 	An array of timeperiods, which should include into your timerange
+# @param includes
+#   An array of timeperiods, which should include into your timerange
 #
-# [*template*]
-#   Set to true creates a template instead of an object. Defaults to false.
+# @param template
+#   Set to true creates a template instead of an object.
 #
-# [*target*]
+# @param target
 #   Destination config file to store this object in. File will be declared on the first run.
 #
-# [*order*]
-#   String or integer to control the position in the target file, sorted alpha numeric. Defaults to 35.
-#
+# @param order
+#   String or integer to control the position in the target file, sorted alpha numeric.
 #
 define icinga2::object::timeperiod (
   Stdlib::Absolutepath         $target,

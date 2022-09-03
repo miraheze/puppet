@@ -1,36 +1,24 @@
-# == Class: icinga2::pki::ca
+# @summary
+#   This class provides multiple ways to create the CA used by Icinga 2.
 #
-# This class provides multiple ways to create the CA used by Icinga 2. By default it will create
-# a CA by using the icinga2 CLI. If you want to use your own CA you will either have to transfer
-# it by using a file resource or you can set the content of your certificat and key in this class.
+# @example Let Icinga 2 generate a CA for you:
+#   include icinga2
+#   include icinga2::pki::ca
 #
-# The certificate of the icinga2 instance itself will be created, is signed by the new CA and
-# has the CN based on the constant NodeName.
+# @example Set the content of CA certificate and key:
+#   include icinga2
 #
-# === Parameters
+#   class { 'icinga2::pki::ca':
+#     ca_cert => '-----BEGIN CERTIFICATE----- ...',
+#     ca_key  => '-----BEGIN RSA PRIVATE KEY----- ...',
+#   }
 #
-# [*ca_cert*]
+# @param ca_cert
 #   Content of the CA certificate. If this is unset, a certificate will be generated with the
 #   Icinga 2 CLI.
 #
-# [*ca_key*]
+# @param ca_key
 #   Content of the CA key. If this is unset, a key will be generated with the Icinga 2 CLI.
-#
-# === Examples
-#
-# Let Icinga 2 generate a CA for you:
-#
-# include icinga2
-# class { 'icinga2::pki::ca': }
-#
-# Set the content of CA certificate and key:
-#
-# include icinga2
-# class { 'icinga2::pki::ca':
-#   ca_cert => '-----BEGIN CERTIFICATE----- ...',
-#   ca_key  => '-----BEGIN RSA PRIVATE KEY----- ...',
-# }
-#
 #
 class icinga2::pki::ca(
   Optional[String]               $ca_cert         = undef,
@@ -46,29 +34,33 @@ class icinga2::pki::ca(
   $group       = $::icinga2::globals::group
   $node_name   = $::icinga2::_constants['NodeName']
 
-  $_ssl_key_path    = "${::icinga2::globals::cert_dir}/${node_name}.key"
-  $_ssl_csr_path    = "${::icinga2::globals::cert_dir}/${node_name}.csr"
-  $_ssl_cert_path   = "${::icinga2::globals::cert_dir}/${node_name}.crt"
-  $_ssl_cacert_path = "${::icinga2::globals::cert_dir}/ca.crt"
+  $_ssl_key_path    = "${cert_dir}/${node_name}.key"
+  $_ssl_csr_path    = "${cert_dir}/${node_name}.csr"
+  $_ssl_cert_path   = "${cert_dir}/${node_name}.crt"
+  $_ssl_cacert_path = "${cert_dir}/ca.crt"
 
   File {
     owner => $user,
     group => $group,
   }
 
-  $_ca_key_mode = undef
-
+  $_ca_key_mode = '0600'
 
   if !$ca_cert or !$ca_key {
     exec { 'create-icinga2-ca':
-      command => "${icinga2_bin} pki new-ca",
-      creates => "${ca_dir}/ca.crt",
-      before  => File[$_ssl_cacert_path],
-      notify  => Class['::icinga2::service'],
+      command     => "\"${icinga2_bin}\" pki new-ca",
+      environment => ["ICINGA2_USER=${user}", "ICINGA2_GROUP=${group}"],
+      creates     => "${ca_dir}/ca.crt",
+      before      => File[$_ssl_cacert_path],
+      notify      => Class['::icinga2::service'],
     }
   } else {
     $_ca_cert     = $ca_cert
     $_ca_key      = $ca_key
+
+    file { $ca_dir:
+      ensure => directory,
+    }
 
     file { "${ca_dir}/ca.crt":
       ensure  => file,
@@ -78,31 +70,37 @@ class icinga2::pki::ca(
     }
 
     file { "${ca_dir}/ca.key":
-      ensure  => file,
-      mode    => $_ca_key_mode,
-      content => $_ca_key,
-      tag     => 'icinga2::config::file',
+      ensure    => file,
+      mode      => $_ca_key_mode,
+      content   => $_ca_key,
+      tag       => 'icinga2::config::file',
+      show_diff => false,
+      backup    => false,
     }
   }
 
   file { $_ssl_cacert_path:
     ensure => file,
-    source => "${ca_dir}/ca.crt",
+    source => "${ca_dir}/ca.crt"
   }
 
   exec { 'icinga2 pki create certificate signing request':
-    command => "${icinga2_bin} pki new-cert --cn ${node_name} --key ${_ssl_key_path} --csr ${_ssl_csr_path}",
-    creates => $_ssl_key_path,
-    require => File[$_ssl_cacert_path],
+    command     => "\"${icinga2_bin}\" pki new-cert --cn ${node_name} --key ${_ssl_key_path} --csr ${_ssl_csr_path}",
+    environment => ["ICINGA2_USER=${user}", "ICINGA2_GROUP=${group}"],
+    creates     => $_ssl_key_path,
+    require     => File[$_ssl_cacert_path],
   }
 
   -> file { $_ssl_key_path:
-    ensure => file,
-    mode   => $_ca_key_mode,
+    ensure    => file,
+    mode      => $_ca_key_mode,
+    show_diff => false,
+    backup    => false,
   }
 
   exec { 'icinga2 pki sign certificate':
-    command     => "${icinga2_bin} pki sign-csr --csr ${_ssl_csr_path} --cert ${_ssl_cert_path}",
+    command     => "\"${icinga2_bin}\" pki sign-csr --csr ${_ssl_csr_path} --cert ${_ssl_cert_path}",
+    environment => ["ICINGA2_USER=${user}", "ICINGA2_GROUP=${group}"],
     subscribe   => Exec['icinga2 pki create certificate signing request'],
     refreshonly => true,
     notify      => Class['::icinga2::service'],

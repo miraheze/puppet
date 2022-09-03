@@ -1,15 +1,14 @@
-# == Class: icinga2::feature::checker
+# @summary
+#   Configures the Icinga 2 feature checker.
 #
-# This module configures the Icinga 2 feature checker.
+# @param ensure
+#   Set to present enables the feature checker, absent disabled it.
 #
-# === Parameters
+# @param concurrent_checks
+#   The maximum number of concurrent checks.
 #
-# [*ensure*]
-#   Set to present enables the feature checker, absent disabled it. Defaults to present.
-#
-# [*concurrent_checks*]
-#   The maximum number of concurrent checks. Defaults to 512.
-#
+# @note Deprecated in Icinga 2.11, replaced by global constant
+#   MaxConcurrentChecks which will be set if you still use concurrent_checks.
 #
 class icinga2::feature::checker(
   Enum['absent', 'present'] $ensure            = present,

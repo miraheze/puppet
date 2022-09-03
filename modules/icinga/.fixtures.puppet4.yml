@@ -1,0 +1,16 @@
+fixtures:
+  forge_modules:
+    stdlib:
+      repo: puppetlabs/stdlib
+      ref: 5.2.0
+    concat:
+      repo: puppetlabs/concat
+      ref: 5.3.0
+    apt:
+      repo: puppetlabs/apt
+      ref: 6.3.0
+    zypprepo:
+      repo: puppet/zypprepo
+      ref: 2.2.2
+    icinga2:
+      repo: icinga/icinga2

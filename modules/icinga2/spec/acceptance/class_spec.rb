@@ -1,13 +1,32 @@
 require 'spec_helper_acceptance'
 
 describe 'icinga2 class' do
-
   describe 'with API, IDO mysql and pgsql' do
     let(:pp) do
       <<-MANIFEST
+        case $::facts['os']['name'] {
+          'redhat', 'centos': {
+            if Integer($::facts['os']['release']['major']) < 8 {
+              $epel      = true
+              $backports = false
+            }
+          } # RedHat
+          'debian', 'ubuntu': {
+            if $::facts['os']['distro']['codename'] in [ 'stretch', 'trusty' ] {
+              $epel      = false
+              $backports = true
+            }
+          } # Debian
+        }
+
+        class { '::icinga::repos':
+          manage_epel         => $epel,
+          configure_backports => $backports,
+        }
+
         class { 'icinga2':
-          manage_repo => true,
-          constants   => {
+          manage_repos => true,
+          constants    => {
             'TicketSalt' => 'topsecret4ticketid',
           },
         }
@@ -25,7 +44,7 @@ describe 'icinga2 class' do
           password      => 'topsecret4idomysql',
           database      => 'icinga2',
           import_schema => true,
-        } 
+        }
         include ::postgresql::server
         postgresql::server::db { 'icinga2':
           user     => 'icinga2',
@@ -46,7 +65,7 @@ describe 'icinga2 class' do
           ensure      => present,
           password    => 'topsecret4ticketid',
           permissions => [ 'actions/generate-ticket' ],
-          target      => '/etc/icinga2/conf.d/api-users.conf',          
+          target      => '/etc/icinga2/conf.d/api-users.conf',
         }
       MANIFEST
     end
@@ -58,8 +77,11 @@ describe 'icinga2 class' do
     end
 
     describe service('icinga2') do
-      it { should be_enabled }
-      it { should be_running }
+      it { is_expected.to be_running }
+    end
+
+    describe port(5665) do
+      it { is_expected.to be_listening }
     end
 
     describe command("mysql icinga2 -Ns -e 'select version from icinga_dbversion;'") do
@@ -77,5 +99,4 @@ describe 'icinga2 class' do
       its(:stdout) { is_expected.to match %r{e1cfea2cff7bc91bd9be1f0f02ef40a0e5233c2e} }
     end
   end
-
 end

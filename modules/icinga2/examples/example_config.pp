@@ -1,17 +1,19 @@
 class { '::icinga2':
-  manage_repo => true,
-  confd       => 'example.d',
+  manage_repos => true,
+  confd        => 'example.d',
 }
 
 file { '/etc/icinga2/example.d':
-  ensure => directory,
-  tag    => 'icinga2::config::file',
+  ensure  => directory,
+  tag     => 'icinga2::config::file',
+  purge   => true,
+  recurse => true,
 }
 
 
-/*
- * Hosts
- */
+#
+# Hosts
+#
 ::icinga2::object::host { 'generic-host':
   template           => true,
   target             => '/etc/icinga2/example.d/templates.conf',
@@ -26,16 +28,16 @@ file { '/etc/icinga2/example.d':
   import   => [ 'generic-host' ],
   address  => '127.0.0.1',
   address6 => '::1',
-  vars           => {
+  vars     => {
     os           => 'Linux',
     http_vhosts  => {
       http       => {
         http_uri => '/',
       },
     },
-    disks              => {
-      disk             => {},
-      'disk /'         => {
+    disks        => {
+      disk     => {},
+      'disk /' => {
         disk_partition => '/',
       },
     },
@@ -59,9 +61,9 @@ file { '/etc/icinga2/example.d':
   assign       => [ 'host.vars.os == Windows' ],
 }
 
-/*
- * Services
- */
+#
+# Services
+#
 ::icinga2::object::service { 'generic-service':
   template           => true,
   target             => '/etc/icinga2/example.d/templates.conf',
@@ -99,15 +101,15 @@ file { '/etc/icinga2/example.d':
   apply         => 'vhost => config in host.vars.http_vhosts',
   import        => [ 'generic-service' ],
   check_command => 'http',
-  vars          => 'vars + config',
+  vars          => '+ config',
 }
 
 ::icinga2::object::service { 'disk':
   target        => '/etc/icinga2/example.d/services.conf',
-  apply         => 'fs => config in host.vars.disks',
+  apply         => 'disk => config in host.vars.disks',
   import        => [ 'generic-service' ],
-  check_command => 'disk',
-  vars          => 'vars + config',
+  check_command => '-:"disk"',
+  vars          => '+ config',
 }
 
 ::icinga2::object::service { 'icinga':
@@ -119,11 +121,11 @@ file { '/etc/icinga2/example.d':
 }
 
 ::icinga2::object::service { 'load':
-  target            => '/etc/icinga2/example.d/services.conf',
-  apply             => true,
-  import            => [ 'generic-service' ],
-  check_command     => 'load',
-  vars              => {
+  target        => '/etc/icinga2/example.d/services.conf',
+  apply         => true,
+  import        => [ 'generic-service' ],
+  check_command => 'load',
+  vars          => {
     backup_downtime => '02:00-03:00',
   },
   assign        => [ 'host.name == NodeName' ],
@@ -164,9 +166,9 @@ file { '/etc/icinga2/example.d':
 }
 
 
-/*
- * Users
- */
+#
+# Users
+#
 ::icinga2::object::user { 'generic-user':
   template => true,
   target   => '/etc/icinga2/example.d/templates.conf',
@@ -186,7 +188,7 @@ file { '/etc/icinga2/example.d':
   apply_target => 'Service',
   author       => 'icingaadmin',
   comment      => 'Scheduled downtime for backup',
-  ranges   => {
+  ranges       => {
     monday    => 'service.vars.backup_downtime',
     tuesday   => 'service.vars.backup_downtime',
     wednesday => 'service.vars.backup_downtime',
@@ -195,7 +197,7 @@ file { '/etc/icinga2/example.d':
     saturday  => 'service.vars.backup_downtime',
     sunday    => 'service.vars.backup_downtime',
   },
-  assign => [ 'service.vars.backup_downtime' ],
+  assign       => [ 'service.vars.backup_downtime' ],
 }
 
 ::icinga2::object::user { 'icingaadmin':
@@ -212,9 +214,9 @@ file { '/etc/icinga2/example.d':
 }
 
 
-/*
- * Notifications
- */
+#
+# Notifications
+#
 ::icinga2::object::notificationcommand { 'mail-host-notification':
   target  => '/etc/icinga2/example.d/commands.conf',
   command => [ 'SysconfDir + /icinga2/scripts/mail-host-notification.sh' ],
@@ -292,9 +294,9 @@ file { '/etc/icinga2/example.d':
 }
 
 
-/*
- * Timeperiods
- */
+#
+# Timeperiods
+#
 ::icinga2::object::timeperiod { '24x7':
   target       => '/etc/icinga2/example.d/timeperiods.conf',
   import       => [ 'legacy-timeperiod' ],

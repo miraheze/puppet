@@ -1,0 +1,20 @@
+---
+icinga::repos:
+  icinga-stable-release:
+    descr: 'ICINGA (stable release for SUSE $releasever)'
+    baseurl: 'https://packages.icinga.com/SUSE/$releasever/release/'
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://packages.icinga.com/icinga.key
+  icinga-testing-builds:
+    descr: 'ICINGA (testing builds for SUSE $releasever)'
+    baseurl: 'https://packages.icinga.com/SUSE/$releasever/testing/'
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://packages.icinga.com/icinga.key
+  icinga-snapshot-builds:
+    descr: 'ICINGA (snapshot builds for SUSE $releasever)'
+    baseurl: 'https://packages.icinga.com/SUSE/$releasever/snapshot/'
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://packages.icinga.com/icinga.key

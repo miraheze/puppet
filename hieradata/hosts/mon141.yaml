@@ -56,32 +56,46 @@ icinga2::globals::icinga2_bin: '/usr/sbin/icinga2'
 
 # common
 icinga2::feature::command::command_path: '/var/run/icinga2/cmd/icinga2.cmd'
-icinga2::manage_repo: true
+icinga2::manage_repos: true
 icinga2::plugins:
   - plugins
   - plugins-contrib
   - windows-plugins
   - nscp
 icinga2::features:
+  - checker
   - mainlog
   - notification
 icinga2::globals::reserved:
   - Acknowledgement
+  - ApiBindHost
+  - ApiBindPort
+  - ApiEnvironment
   - ApplicationType
+  - Array
   - AttachDebugger
   - BuildCompilerName
   - BuildCompilerVersion
   - BuildHostName
+  - Checkable
+  - Command
   - Concurrency
+  - ConfigObject
+  - Configuration
   - Critical
   - Custom
+  - CustomVarObject
+  - DateTime
   - Deprecated
+  - Dictionary
   - Down
   - DowntimeEnd
   - DowntimeRemoved
   - DowntimeStart
+  - Environment
   - FlappingEnd
   - FlappingStart
+  - Function
   - HostDown
   - HostUp
   - IncludeConfDir
@@ -90,14 +104,18 @@ icinga2::globals::reserved:
   - LocalStateDir
   - LogCritical
   - LogDebug
+  - Logger
   - LogInformation
   - LogNotice
   - LogWarning
   - Math
+  - MaxConcurrentChecks
   - ModAttrPath
+  - Namespace
   - NodeName
   - OK
   - ObjectsPath
+  - PerfdataValue
   - PidPath
   - PkgDataDir
   - PlatformArchitecture
@@ -108,6 +126,7 @@ icinga2::globals::reserved:
   - PrefixDir
   - Problem
   - Recovery
+  - Reference
   - RunAsGroup
   - RunAsUser
   - RunDir
@@ -116,8 +135,10 @@ icinga2::globals::reserved:
   - ServiceUnknown
   - ServiceWarning
   - StatePath
+  - StreamLogger
   - SysconfDir
   - System
+  - Type
   - Types
   - Unknown
   - Up

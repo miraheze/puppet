@@ -1,78 +1,83 @@
-# == Define: icinga2::object::apiuser
+# @summary
+#   Manage Icinga 2 ApiUser objects.
 #
-# Manage Icinga 2 ApiUser objects.
+# @example Create an user with full permissions:
+#   ::icinga2::object::apiuser { 'director':
+#     ensure      => present,
+#     password    => 'Eih5Weefoo2oa8sh',
+#     permissions => [ '*' ],
+#     target      => '/etc/icinga2/conf.d/api-users.conf',
+#   }
 #
-# === Parameters
+# @example Create an user with restricted permissions for Icinga Web 2:
+#   ::icinga2::object::apiuser { 'icingaweb2':
+#     ensure      => present,
+#     password    => '12e2ef553068b519',
+#     permissions => [ 'status/query', 'actions/*', 'objects/modify/*', 'objects/query/*' ],
+#     target      => '/etc/icinga2/conf.d/api-users.conf',
+#   }
 #
-# [*ensure*]
-#   Set to present enables the object, absent disables it. Defaults to present.
+# @example Create user who's only allowed to query hosts and services:
+#   ::icinga2::object::apiuser { 'read':
+#     ensure      => present,
+#     password    => 'read',
+#     permissions => [
+#       {
+#         permission => 'objects/query/Host',
+#         filter     => '{{ regex("^Linux", host.vars.os) }}'
+#       },
+#       { 
+#         permission => 'objects/query/Service',
+#         filter     => '{{ regex("^Linux", host.vars.os) }}'
+#       },
+#     ],
+#     target      => '/etc/icinga2/conf.d/api-users.conf',
+#   }
 #
-# [*apiuser_name*]
-#   Set the name of the apiuser object. Defaults to title of the define resource.
+# @param ensure
+#   Set to present enables the object, absent disables it.
 #
-# [*password*]
-#   Password string.
+# @param apiuser_name
+#   Set the name of the apiuser object.
 #
-# [*client_cn*]
+# @param password
+#   Password string. The password parameter isn't parsed anymore.
+#
+# @param client_cn
 #   Optional. Client Common Name (CN).
 #
-# [*permissions*]
+# @param permissions
 #   Array of permissions. Either as string or dictionary with the keys permission
 #   and filter. The latter must be specified as function.
 #
-# [*target*]
+# @param target
 #   Destination config file to store in this object. File will be declared at the
 #   first time.
 #
-# [*order*]
-#   String or integer to set the position in the target file, sorted alpha numeric. Defaults to 10.
-#
-# === Examples
-#
-# ::icinga2::object::apiuser { 'director':
-#   ensure      => present,
-#   password    => 'Eih5Weefoo2oa8sh',
-#   permissions => [ '*' ],
-#   target      => '/etc/icinga2/conf.d/api-users.conf',
-# }
-#
-# ::icinga2::object::apiuser { 'icingaweb2':
-#   ensure      => present,
-#   password    => '12e2ef553068b519',
-#   permissions => [ 'status/query', 'actions/*', 'objects/modify/*', 'objects/query/*' ],
-#   target      => '/etc/icinga2/conf.d/api-users.conf',
-# }
-#
-# ::icinga2::object::apiuser { 'read':
-#   ensure      => present,
-#   password    => 'read',
-#   permissions => [
-#     {
-#       permission => 'objects/query/Host',
-#       filter     => '{{ regex("^Linux", host.vars.os) }}'
-#     },
-#     { 
-#       permission => 'objects/query/Service',
-#       filter     => '{{ regex("^Linux", host.vars.os) }}'
-#     },
-#   ],
-#   target      => '/etc/icinga2/conf.d/api-users.conf',
-# }
-#
+# @param [Variant[String, Integer]] order
+#   String or integer to set the position in the target file, sorted alpha numeric.
 #
 define icinga2::object::apiuser(
-  Stdlib::Absolutepath        $target,
-  Enum['absent', 'present']   $ensure       = present,
-  String                      $apiuser_name = $title,
-  Optional[Array]             $permissions  = undef,
-  Optional[String]            $password     = undef,
-  Optional[String]            $client_cn    = undef,
-  Variant[String, Integer]    $order        = 30,
+  Stdlib::Absolutepath                          $target,
+  Enum['absent', 'present']                     $ensure       = present,
+  String                                        $apiuser_name = $title,
+  Optional[Array]                               $permissions  = undef,
+  Optional[Variant[String, Sensitive[String]]]  $password     = undef,
+  Optional[String]                              $client_cn    = undef,
+  Variant[String, Integer]                      $order        = 30,
 ) {
+
+  $_password = if $password =~ String {
+    Sensitive($password)
+  } elsif $password =~ Sensitive {
+    $password
+  } else {
+    undef
+  }
 
   # compose the attributes
   $attrs = {
-    password    => $password,
+    password    => $_password,
     client_cn   => $client_cn,
     permissions => $permissions,
   }

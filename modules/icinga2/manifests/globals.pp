@@ -1,92 +1,79 @@
-# == Class: icinga2::globals
+# @summary
+#   This class loads the default parameters by doing a hiera lookup.
 #
-# This class loads the default parameters by doing a hiera lookup.
+# @note This parameters depend on the os plattform. Changes maybe will break the functional capability of the supported plattforms and versions. Please only do changes when you know what you're doing.
 #
-# NOTE: This parameters depend on the os plattform. Changes maybe will
-#       break the functional capability of the supported plattforms and versions.
-#       Please only do changes when you know what you're doing.
+# @api private
 #
-# === Parameters
-#
-# [*package_name*]
+# @param package_name
 #   The name of the icinga package to manage.
 #
-# [*service_name*]
+# @param service_name
 #   The name of the icinga service to manage.
 #
-# [*user*]
+# @param user
 #   User as the icinga process runs.
 #   CAUTION: This does not manage the user context for the runnig icinga 2 process!
 #   The parameter is only used for ownership of files or directories.
-#   
-# [*group*]
+#
+# @param group
 #   Group as the icinga process runs.
 #   CAUTION: This does not manage the group context for the runnig icinga 2 process!
 #   The parameter is only used for group membership of files or directories.
 #
-# [*ido_mysql_package_name*]
+# @param logon_account
+#   The user context in which the service should run.
+#   ATM only relevant on Windows.
+#
+# @param selinux_package_name
+#   The name of the icinga selinux package.
+#
+# @param ido_mysql_package_name
 #   The name of the icinga package that's needed for MySQL.
-#   
-# [*ido_mysql_schema*]
+#
+# @param ido_mysql_schema
 #   Path to the MySQL schema to import.
 #
-# [*ido_pgsql_package_name*]
+# @param ido_pgsql_package_name
 #   The name of the icinga package that's needed for Postrgesql.
-#   
-# [*ido_pgsql_schema*]
+#
+# @param ido_pgsql_schema
 #   Path to the Postgresql schema to import.
 #
-# [*icinga2_bin*]
+# @param icinga2_bin
 #   Path to the icinga2 binary.
 #
-# [*conf_dir*]
+# @param conf_dir
 #   Location of the configuration directory of Icinga.
 #
-# [*lib_dir*]
+# @param lib_dir
 #   Path to the directory contained the system libs.
 #
-# [*log_dir*]
+# @param log_dir
 #   Location to store Icinga log files.
 #
-# [*run_dir*]
+# @param run_dir
 #   Runtime directory of Icinga.
 #
-# [*spool_dir*]
+# @param spool_dir
 #   Path to spool files of Icinga.
 #
-# [*cache_dir*]
+# @param cache_dir
 #   Path to cache files of Icinga.
 #
-# [*cert_dir*]
+# @param cert_dir
 #   Path to the directory where Icinga stores keys and certificates.
 #
-# [*ca_dir*]
+# @param ca_dir
 #   Path to CA.
 #
-# [*reserved_words*]
-#   Reserved words of the Icinga DSL. These words are not quoted by the
-#   parser (function icinga2_attributes) of this module.
-
-# [*service_reload*]
+# @param service_reload
 #   How to do a reload of the Icinga process.
-#
-# [*constants*]
-#   Set default constants.
-#
-#
-# === Examples
-#
-# This class is private and should not be called by others than this module.
-#
 #
 class icinga2::globals(
   String                 $package_name,
   String                 $service_name,
-  Optional[String]       $user,
-  Optional[String]       $group,
-  Optional[String]       $ido_mysql_package_name,
   String                 $ido_mysql_schema,
-  Optional[String]       $ido_pgsql_package_name,
   String                 $ido_pgsql_schema,
   Stdlib::Absolutepath   $icinga2_bin,
   Stdlib::Absolutepath   $conf_dir,
@@ -98,14 +85,20 @@ class icinga2::globals(
   Stdlib::Absolutepath   $cert_dir,
   Stdlib::Absolutepath   $ca_dir,
   Array[String]          $reserved,
-  Optional[String]       $service_reload,
+  Optional[String]       $user                   = undef,
+  Optional[String]       $group                  = undef,
+  Optional[String]       $logon_account          = undef,
+  Optional[String]       $selinux_package_name   = undef,
+  Optional[String]       $ido_mysql_package_name = undef,
+  Optional[String]       $ido_pgsql_package_name = undef,
+  Optional[String]       $service_reload         = undef,
 ) {
 
   assert_private()
 
-  if ( versioncmp($puppetversion, '6' ) >= 0 and versioncmp(load_module_metadata('stdlib')['version'], '5.1.0') < 0 ) {                                                                             
-    fail('You be affected by this bug: https://github.com/Icinga/puppet-icinga2/issues/505 so you should update your stdlib to version 5.1 or higher')                                                             
-  }   
+  if ( versioncmp($::facts['puppetversion'], '6' ) >= 0 and versioncmp(load_module_metadata('stdlib')['version'], '5.1.0') < 0 ) {
+    fail('You be affected by this bug: https://github.com/Icinga/puppet-icinga2/issues/505 so you should update your stdlib to version 5.1 or higher')
+  }
 
   $constants =  lookup('icinga2::globals::constants', Hash, 'deep', {})
 
