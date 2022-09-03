@@ -11,7 +11,7 @@ PIDFile=/run/stunnel4.pid
 TimeoutSec=600
 Restart=always
 PrivateTmp=yes
-LimitNOFILE=infinity
+LimitNOFILE=500000
 
 [Install]
 WantedBy=multi-user.target
