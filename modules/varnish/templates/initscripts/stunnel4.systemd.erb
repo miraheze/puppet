@@ -7,7 +7,7 @@ After=syslog.target
 [Service]
 Type=forking
 ExecStart=/usr/bin/stunnel4 /etc/stunnel/mediawiki.conf
-PIDFile=/run/stunnel4.pid
+PIDFile=/run/stunnel.pid
 TimeoutSec=600
 Restart=always
 PrivateTmp=yes
