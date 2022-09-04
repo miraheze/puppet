@@ -19,6 +19,7 @@ class mediawiki::packages {
         'libglu1-mesa-dev',
         'libglew-dev',
         'libvips-tools',
+        'nodejs',
         'ploticus',
         'poppler-utils',
         'python3-pip',

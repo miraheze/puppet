@@ -10,7 +10,6 @@ class mediawiki(
     include mediawiki::logging
     include mediawiki::php
     include mediawiki::monitoring
-    include nodejs
 
     if lookup(mediawiki::use_staging) {
         include mediawiki::deploy
