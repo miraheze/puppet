@@ -44,6 +44,10 @@ class varnish::stunnel4 {
             monitoring::nrpe { "Stunnel HTTP for ${name}":
                 command => "/usr/lib/nagios/plugins/check_http -H localhost:${property['port']} -e 403",
             }
+        } elsif $name == 'mon141' {
+            monitoring::nrpe { "Stunnel HTTP for ${name}":
+                command => "/usr/lib/nagios/plugins/check_http -H localhost:${property['port']} -e 404",
+            }
         } else {
             monitoring::nrpe { "Stunnel HTTP for ${name}":
                 command => "/usr/lib/nagios/plugins/check_http -I localhost -p ${property['port']} -j HEAD -H health.miraheze.org -u/check",
