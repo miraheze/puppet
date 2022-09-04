@@ -5,8 +5,6 @@ class roundcubemail (
     String $db_user_password      = undef,
     String $roundcubemail_des_key = undef,
 ) {
-    include ::nodejs
-
     $config_cli = {
         'include_path'           => '".:/usr/share/php"',
         'error_log'              => 'syslog',
@@ -121,7 +119,11 @@ class roundcubemail (
         }
     }
 
-    ensure_packages(["php${php_version}-pspell", "composer"])
+    ensure_packages([
+        "php${php_version}-pspell",
+        'composer',
+        'nodejs',
+    ])
 
     git::clone { 'roundcubemail':
         directory => '/srv/roundcubemail',
