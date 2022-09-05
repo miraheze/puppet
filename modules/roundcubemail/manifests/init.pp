@@ -92,15 +92,15 @@ class roundcubemail (
     }
 
     # XML
-     php::extension{ [
-         'dom',
-         'simplexml',
-         'xmlreader',
-         'xmlwriter',
-         'xsl',
-     ]:
-         package_name => '',
-     }
+    php::extension{ [
+        'dom',
+        'simplexml',
+        'xmlreader',
+        'xmlwriter',
+        'xsl',
+    ]:
+        package_name => '',
+    }
 
     $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
     $fpm_min_child = lookup('php::fpm::fpm_min_child', {'default_value' => 4})
@@ -202,5 +202,5 @@ class roundcubemail (
             http_ssl   => true,
             http_vhost => 'webmail.miraheze.org',
         },
-     }
+    }
 }
