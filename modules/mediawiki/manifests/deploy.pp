@@ -47,7 +47,7 @@ class mediawiki::deploy {
             provider => 'pip3',
             before   => File['/usr/local/bin/deploy-mediawiki'],
             require  => Package['python3-pip'],
-  },
+        },
     )
 
     file { '/srv/mediawiki-staging':
