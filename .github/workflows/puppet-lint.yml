@@ -25,22 +25,3 @@ jobs:
       uses: scottbrenner/puppet-lint-action@master
       with:
         args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-2sp_soft_tabs-check --no-documentation-check --no-variable_scope-check --no-variable_is_lowercase-check --no-selector_inside_resource-check --no-single_quote_string_with_variables-check --fix ./
-
-    - name: Push the changes
-      continue-on-error: true
-      if: github.event_name == 'pull_request'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        if ! git diff --exit-code --quiet; then
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@users.noreply.github.com"
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git checkout -b ${GITHUB_HEAD_REF}
-          git add .
-          git commit -am "CI: lint puppet code to standards" -m "Check commit and GitHub actions for more details"
-          git pull origin ${GITHUB_HEAD_REF} --rebase
-          git push --set-upstream origin ${GITHUB_HEAD_REF}
-        else
-          echo "No changes to commit"
-        fi
