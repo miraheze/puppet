@@ -19,9 +19,9 @@ class prometheus::exporter::openldap {
     }
 
     systemd::service { 'prometheus-openldap-exporter':
-        ensure  => present,
-        restart => true,
-        content => systemd_template('prometheus-openldap-exporter'),
+        ensure         => present,
+        restart        => true,
+        content        => systemd_template('prometheus-openldap-exporter'),
         service_params => {
             enable  => true,
             require => File['/etc/openldap-exporter.yaml'],

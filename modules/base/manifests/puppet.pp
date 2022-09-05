@@ -81,7 +81,7 @@ class base::puppet (
     if !lookup('puppetserver') {
         file { '/etc/puppetlabs/puppet/puppet.conf':
             ensure  => present,
-            content => template("base/puppet/puppet.conf.erb"),
+            content => template('base/puppet/puppet.conf.erb'),
             mode    => '0444',
             require => Package['puppet-agent'],
         }

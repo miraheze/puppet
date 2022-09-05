@@ -145,7 +145,7 @@ class reports {
         source  => 'puppet:///modules/reports/nginx.conf',
         monitor => true,
     }
-    
+
     $salt = lookup('passwords::piwik::salt')
     $password = lookup('passwords::db::reports')
     $app_key = lookup('reports::app_key')

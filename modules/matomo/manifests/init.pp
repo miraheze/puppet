@@ -152,7 +152,7 @@ class matomo (
         source  => 'puppet:///modules/matomo/nginx.conf',
         monitor => true,
     }
-    
+
     $salt = lookup('passwords::piwik::salt')
     $password = lookup('passwords::db::piwik')
     $noreply_password = lookup('passwords::mail::noreply')

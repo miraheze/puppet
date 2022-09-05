@@ -5,30 +5,30 @@ class role::graylog {
     ssl::wildcard { 'graylog wildcard': }
 
     nginx::site { 'graylog_proxy':
-        ensure  => present,
-        source  => 'puppet:///modules/role/graylog/graylog.miraheze.org.conf',
+        ensure => present,
+        source => 'puppet:///modules/role/graylog/graylog.miraheze.org.conf',
     }
 
     class { 'mongodb::globals':
         manage_package_repo => true,
         version             => '4.4.14' ,
-    }->
-    class { 'mongodb::server':
+    }
+    -> class { 'mongodb::server':
         bind_ip => ['127.0.0.1'],
     }
 
     $elasticsearch_host = lookup('elasticsearch_host', {'default_value' => 'http://localhost:9200'})
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
-        proxy => $http_proxy,
+        proxy   => $http_proxy,
         version => '4.3',
-    }->
-    class { 'graylog::server':
+    }
+    -> class { 'graylog::server':
         package_version => '4.3.5-1',
         config          => {
-            'password_secret'          => lookup('passwords::graylog::password_secret'),
-            'root_password_sha2'       => lookup('passwords::graylog::root_password_sha2'),
-            'elasticsearch_hosts'      => $elasticsearch_host,
+            'password_secret'     => lookup('passwords::graylog::password_secret'),
+            'root_password_sha2'  => lookup('passwords::graylog::root_password_sha2'),
+            'elasticsearch_hosts' => $elasticsearch_host,
         }
     }
 
@@ -59,7 +59,7 @@ class role::graylog {
 
     # syslog-ng > graylog 12210/tcp
     $firewall_syslog_rules_str = join(
-        query_facts("Class[Base]", ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }
@@ -90,7 +90,7 @@ class role::graylog {
         port   => '12201',
         srange => "(${firewall_icinga_rules_str})",
     }
-    
+
     rsyslog::input::file { 'graylog':
          path              => '/var/log/graylog-server/server.log',
          syslog_tag_prefix => '',

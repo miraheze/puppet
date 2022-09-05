@@ -78,16 +78,16 @@ class role::icinga2 (
     }
 
     class { '::icingaweb2':
-        db_host               => $icingaweb2_db_host,
-        db_name               => $icingaweb2_db_name,
-        db_user_name          => $icingaweb2_db_user_name,
-        db_user_password      => $icingaweb2_db_user_password,
-        ido_db_host           => $icingaweb2_ido_db_host,
-        ido_db_name           => $icingaweb2_ido_db_name,
-        ido_db_user_name      => $icingaweb2_ido_db_user_name,
-        ido_db_user_password  => $ido_db_user_password ,
-        icinga_api_password   => $icingaweb2_icinga_api_password,
-        ldap_password         => $ldap_password,
+        db_host              => $icingaweb2_db_host,
+        db_name              => $icingaweb2_db_name,
+        db_user_name         => $icingaweb2_db_user_name,
+        db_user_password     => $icingaweb2_db_user_password,
+        ido_db_host          => $icingaweb2_ido_db_host,
+        ido_db_name          => $icingaweb2_ido_db_name,
+        ido_db_user_name     => $icingaweb2_ido_db_user_name,
+        ido_db_user_password => $ido_db_user_password ,
+        icinga_api_password  => $icingaweb2_icinga_api_password,
+        ldap_password        => $ldap_password,
     }
 
     if !defined(Ferm::Service['http']) {

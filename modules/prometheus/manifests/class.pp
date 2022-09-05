@@ -9,8 +9,8 @@ define prometheus::class (
                .sort()
 
     file { $dest:
-        ensure => present,
-        mode   => '0444',
+        ensure  => present,
+        mode    => '0444',
         content => template('prometheus/nodes.erb')
     }
 }

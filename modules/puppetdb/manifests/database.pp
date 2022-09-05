@@ -32,11 +32,11 @@ class puppetdb::database(
     # Create the puppetdb user for localhost
     # This works on every server and is used for read-only db lookups
     postgresql::user { 'puppetdb@localhost':
-        ensure    => present,
-        user      => 'puppetdb',
-        database  => 'puppetdb',
-        password  => $puppetdb_pass,
-        master    => true,
+        ensure   => present,
+        user     => 'puppetdb',
+        database => 'puppetdb',
+        password => $puppetdb_pass,
+        master   => true,
     }
 
     # Create the database

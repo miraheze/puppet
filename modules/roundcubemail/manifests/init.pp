@@ -163,10 +163,10 @@ class roundcubemail (
     }
 
     file { '/srv/roundcubemail/config/config.inc.php':
-        ensure => present,
+        ensure  => present,
         content => template('roundcubemail/config.inc.php.erb'),
-        owner  => 'www-data',
-        group  => 'www-data',
+        owner   => 'www-data',
+        group   => 'www-data',
         require => Git::Clone['roundcubemail'],
     }
 
@@ -197,8 +197,8 @@ class roundcubemail (
     }
 
     monitoring::services { 'webmail.miraheze.org HTTPS':
-        check_command  => 'check_http',
-        vars           => {
+        check_command => 'check_http',
+        vars          => {
             http_ssl   => true,
             http_vhost => 'webmail.miraheze.org',
         },

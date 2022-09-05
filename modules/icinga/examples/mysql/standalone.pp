@@ -20,16 +20,16 @@ class { '::icinga::ido':
 }
 
 class { '::icinga::web':
-  backend_db_type     => $icinga::ido::db_type,
-  backend_db_host     => $icinga::ido::db_host,
-  backend_db_pass     => $icinga::ido::db_pass,
-  db_type             => 'mysql',
-  db_host             => 'localhost',
-  db_pass             => 'icingaweb2',
-  default_admin_user  => 'admin',
-  default_admin_pass  => 'admin',
-  manage_database     => true,
-  api_pass            => $icinga::server::web_api_pass,
+  backend_db_type    => $icinga::ido::db_type,
+  backend_db_host    => $icinga::ido::db_host,
+  backend_db_pass    => $icinga::ido::db_pass,
+  db_type            => 'mysql',
+  db_host            => 'localhost',
+  db_pass            => 'icingaweb2',
+  default_admin_user => 'admin',
+  default_admin_pass => 'admin',
+  manage_database    => true,
+  api_pass           => $icinga::server::web_api_pass,
 }
 
 class { '::icinga::web::director':

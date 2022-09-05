@@ -108,7 +108,7 @@ define git::clone(
                         require     => Exec["git_clone_${title}"],
                         before      => Exec["git_pull_${title}"],
                     }
-                } 
+                }
                 else {
                     exec { "git_checkout_${title}":
                         cwd         => $directory,

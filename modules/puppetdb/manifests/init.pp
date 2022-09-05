@@ -49,7 +49,7 @@ class puppetdb(
     }
 
     package { 'puppetdb-termini':
-        ensure   => present,
+        ensure  => present,
         require => Apt::Source['puppetlabs'],
     }
 
@@ -58,7 +58,7 @@ class puppetdb(
         ensure => link,
         target => '/etc/puppetlabs/puppetdb',
     }
- 
+
     file { '/var/lib/puppetdb':
         ensure => directory,
         owner  => 'puppetdb',

@@ -4,7 +4,7 @@ class gluster::apt (
 
     if $http_proxy {
         file { '/etc/apt/apt.conf.d/01gluster':
-            ensure => present,
+            ensure  => present,
             content => template('gluster/apt/01gluster.erb'),
             before  => Apt::Source['gluster_apt'],
         }
@@ -18,15 +18,15 @@ class gluster::apt (
     apt::source { 'gluster_apt':
         comment  => 'GlusterFS',
         location => "https://download.gluster.org/pub/gluster/glusterfs/10/LATEST/Debian/${::lsbdistcodename}/amd64/apt",
-        release  => "${::lsbdistcodename}",
+        release  => $::lsbdistcodename,
         repos    => 'main',
         require  => File['/etc/apt/trusted.gpg.d/gluster.gpg'],
         notify   => Exec['apt_update_gluster'],
     }
 
     apt::pin { 'gluster_pin':
-        priority        => 600,
-        origin          => 'download.gluster.org'
+        priority => 600,
+        origin   => 'download.gluster.org'
     }
 
     # First installs can trip without this

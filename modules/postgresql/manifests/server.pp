@@ -46,7 +46,7 @@ class postgresql::server(
             ensure => $ensure,
         },
     )
-    
+
     ensure_packages('pgtop')
 
     class { '::postgresql::dirs':

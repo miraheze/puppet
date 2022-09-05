@@ -8,10 +8,10 @@ class mediawiki::jobqueue::shared {
       directory => '/srv/jobrunner',
       origin    => 'https://github.com/miraheze/jobrunner-service',
   }
-  
+
   $redis_password = lookup('passwords::redis::master')
   $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '[2a10:6740::6:306]:6379'})
-  
+
   if lookup('jobrunner::intensive', {'default_value' => false}) {
       $config = 'jobrunner-hi.json.erb'
    } else {

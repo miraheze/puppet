@@ -13,7 +13,7 @@ define monitoring::wiki (
 
     monitoring::services {"${wikifqdn} ${protocol_string}":
         check_command => 'check_http',
-        vars            => {
+        vars          => {
             address     => $wikifqdn,
             http_expect => "HTTP/${http_version} 200",
             http_ssl    => $enable_ssl ? {

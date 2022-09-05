@@ -30,8 +30,8 @@ class prometheus::exporter::memcached (
     }
 
     systemd::service { 'prometheus-memcached-exporter':
-        ensure   => present,
-        content  => systemd_template('memcached'),
+        ensure  => present,
+        content => systemd_template('memcached'),
     }
 
     $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])

@@ -16,9 +16,9 @@ class apt::security (
   }
   if ($facts['os']['name'] == 'Debian' or $facts['os']['name'] == 'Ubuntu') {
     if os_version('debian >= bullseye') {
-      $securityDist = "-security"
+      $securityDist = '-security'
     } else {
-      $securityDist = ""
+      $securityDist = ''
     }
     unless $location {
       $_location = $::apt::security['location']

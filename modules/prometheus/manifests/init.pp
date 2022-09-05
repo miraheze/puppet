@@ -73,14 +73,14 @@ class prometheus (
               .sort()
 
     file { '/etc/prometheus/targets/nodes.yaml':
-        ensure => present,
-        mode   => '0444',
+        ensure  => present,
+        mode    => '0444',
         content => template('prometheus/nodes.erb')
     }
 
     service { 'prometheus':
-        ensure    => running,
-        require   => Package['prometheus'],
+        ensure  => running,
+        require => Package['prometheus'],
     }
 
     monitoring::services { 'Prometheus':

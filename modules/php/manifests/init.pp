@@ -8,7 +8,7 @@ class php(
     Array[Php::Sapi] $sapis                   = ['cli'],
     Hash $config_by_sapi                      = {},
     Hash $extensions                          = {}
-) { 
+) {
     # We need php-common everywhere
     ensure_packages(["php${version}-common", "php${version}-opcache"])
 

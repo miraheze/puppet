@@ -1,15 +1,15 @@
 class prometheus::exporter::postfix {
 
     file { '/opt/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb':
-        ensure  => present,
-        source  => 'puppet:///modules/prometheus/packages/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb',
+        ensure => present,
+        source => 'puppet:///modules/prometheus/packages/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb',
     }
 
     package { 'prometheus-postfix-exporter':
-        ensure      => installed,
-        provider    => dpkg,
-        source      => '/opt/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb',
-        require     => File['/opt/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb'],
+        ensure   => installed,
+        provider => dpkg,
+        source   => '/opt/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb',
+        require  => File['/opt/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb'],
     }
 
     systemd::service { 'prometheus-postfix-exporter':

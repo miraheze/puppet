@@ -27,7 +27,7 @@ class role::mediawiki (
         }
 
         ferm::service { 'https':
-            proto    => 'tcp',
+            proto   => 'tcp',
             port    => '443',
             srange  => "(${firewall_rules_str})",
             notrack => true,
@@ -52,8 +52,8 @@ class role::mediawiki (
 
     if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
         gluster::mount { '/mnt/mediawiki-static':
-          ensure    => mounted,
-          volume    => lookup('gluster_volume', {'default_value' => 'gluster.miraheze.org:/static'}),
+          ensure => mounted,
+          volume => lookup('gluster_volume', {'default_value' => 'gluster.miraheze.org:/static'}),
         }
     }
 

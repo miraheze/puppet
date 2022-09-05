@@ -22,20 +22,20 @@ class mediawiki::deploy {
             mode   => '0400',
             before => File['/usr/local/bin/deploy-mediawiki'],
         }
-        
+
         file { '/var/www/.ssh':
-            ensure  => directory,
-            owner   => 'www-data',
-            group   => 'www-data',
-            mode    => '0400',
-            before  => File['/usr/local/bin/deploy-mediawiki'],
+            ensure => directory,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0400',
+            before => File['/usr/local/bin/deploy-mediawiki'],
         }
 
         file { '/var/www/.ssh/known_hosts':
             content => template('mediawiki/mw-user-known-hosts.erb'),
             owner   => 'www-data',
             group   => 'www-data',
-            mode    => '644',
+            mode    => '0644',
             require => File['/var/www/.ssh'],
         }
     }

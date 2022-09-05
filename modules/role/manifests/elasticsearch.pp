@@ -20,11 +20,11 @@ class role::elasticsearch {
             'network.host'                                   => $::fqdn,
             'xpack.security.enabled'                         => true,
             'xpack.security.http.ssl.enabled'                => true,
-            'xpack.security.http.ssl.key'                    => "/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.key",
-            'xpack.security.http.ssl.certificate'            => "/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.crt",
+            'xpack.security.http.ssl.key'                    => '/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.key',
+            'xpack.security.http.ssl.certificate'            => '/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.crt',
             'xpack.security.transport.ssl.enabled'           => true,
-            'xpack.security.transport.ssl.key'               => "/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.key",
-            'xpack.security.transport.ssl.certificate'       => "/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.crt",
+            'xpack.security.transport.ssl.key'               => '/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.key',
+            'xpack.security.transport.ssl.certificate'       => '/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.crt',
             'xpack.security.transport.ssl.verification_mode' => 'certificate',
             # We use a firewall so this is safe
             'xpack.security.authc.anonymous.username'        => 'elastic',
@@ -46,7 +46,7 @@ class role::elasticsearch {
     }
 
     ssl::wildcard { 'elasticsearch wildcard':
-        ssl_cert_path => '/etc/elasticsearch/ssl/',
+        ssl_cert_path             => '/etc/elasticsearch/ssl/',
         ssl_cert_key_private_path => '/etc/elasticsearch/ssl',
     }
 
@@ -60,7 +60,7 @@ class role::elasticsearch {
         $firewall_rules_str = join(
             query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Elasticsearch]', ['ipaddress6'])
             .map |$key, $value| {
-                "${value['ipaddress6']}"
+                $value['ipaddress6']
             }
             .flatten()
             .unique()
@@ -69,16 +69,16 @@ class role::elasticsearch {
         )
 
         ferm::service { 'elasticsearch ssl':
-            proto   => 'tcp',
-            port    => '443',
-            srange  => "(${firewall_rules_str})",
+            proto  => 'tcp',
+            port   => '443',
+            srange => "(${firewall_rules_str})",
         }
     }
 
     $firewall_es_nodes = join(
         query_facts('Class[Role::Elasticsearch]', ['ipaddress6'])
         .map |$key, $value| {
-            "${value['ipaddress6']}"
+            $value['ipaddress6']
         }
         .flatten()
         .unique()

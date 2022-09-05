@@ -22,7 +22,7 @@ class prometheus::exporter::nginx {
     }
 
     $firewall_rules = join(
-        query_facts("Class[Prometheus]", ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }

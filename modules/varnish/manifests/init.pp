@@ -37,7 +37,7 @@ class varnish (
         require => File['/var/lib/varnish'],
         notify  => Service['varnish'],
     }
-    
+
     $module_path = get_module_path($module_name)
     $csp = loadyaml("${module_path}/data/csp.yaml")
     $backends = lookup('varnish::backends')
@@ -52,15 +52,15 @@ class varnish (
     }
 
     file { '/srv/varnish':
-        ensure  => directory,
-        owner   => 'varnish',
-        group   => 'varnish',
+        ensure => directory,
+        owner  => 'varnish',
+        group  => 'varnish',
     }
 
     $max_threads = max(floor($::processorcount * 250), 500)
     systemd::service { 'varnish':
-        ensure  => present,
-        content => systemd_template('varnish'),
+        ensure         => present,
+        content        => systemd_template('varnish'),
         service_params => {
             enable  => true,
             require => [
@@ -86,14 +86,14 @@ class varnish (
 
     # Unfortunately, varnishlog can't log to syslog
     logrotate::conf { 'varnishlog_logs':
-        ensure  => present,
-        source  => 'puppet:///modules/varnish/varnish/varnishlog.logrotate.conf',
+        ensure => present,
+        source => 'puppet:///modules/varnish/varnish/varnishlog.logrotate.conf',
     }
 
     # This mechanism with the touch/rm conditionals in the pair of execs
     #   below should ensure that reload-vcl failures are retried on
     #   future puppet runs until they succeed.
-    $vcl_failed_file = "/var/tmp/reload-vcl-failed"
+    $vcl_failed_file = '/var/tmp/reload-vcl-failed'
 
     exec { 'load-new-vcl-file':
         require     => Service['varnish'],
