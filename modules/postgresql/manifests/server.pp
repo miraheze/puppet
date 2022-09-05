@@ -66,11 +66,11 @@ class postgresql::server(
     if $use_ssl {
         ssl::wildcard { 'postgresql wildcard': }
 
-         file { "/etc/postgresql/${pgversion}/main/ssl":
-             ensure => directory,
-             owner  => 'postgres',
-             group  => 'postgres',
-         }
+        file { "/etc/postgresql/${pgversion}/main/ssl":
+            ensure => directory,
+            owner  => 'postgres',
+            group  => 'postgres',
+        }
 
         file { "/etc/postgresql/${pgversion}/main/ssl/wildcard.miraheze.org.key":
             ensure  => 'present',
