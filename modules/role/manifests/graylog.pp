@@ -92,10 +92,10 @@ class role::graylog {
     }
 
     rsyslog::input::file { 'graylog':
-         path              => '/var/log/graylog-server/server.log',
-         syslog_tag_prefix => '',
-         use_udp           => true,
-     }
+        path              => '/var/log/graylog-server/server.log',
+        syslog_tag_prefix => '',
+        use_udp           => true,
+    }
 
     motd::role { 'role::graylog':
         description => 'central logging server',
