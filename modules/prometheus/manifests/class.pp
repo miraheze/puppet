@@ -4,9 +4,9 @@ define prometheus::class (
     Integer $port,
 ) {
     $servers = query_nodes("Class[${module}] or Define[${module}]")
-               .flatten()
-               .unique()
-               .sort()
+        .flatten()
+        .unique()
+        .sort()
 
     file { $dest:
         ensure  => present,
