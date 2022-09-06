@@ -9,6 +9,8 @@ class  { 'syslog_ng':
 
 syslog_ng::rewrite { 'r_truncate':
   params => [
-    { 'set' => ['"$(substr ${MSG} 0 14400))"']   }
+    # lint:ignore:single_quote_string_with_variables
+    { 'set' => ['"$(substr ${MSG} 0 14400))"'] }
+    # lint:endignore
   ]
 }
