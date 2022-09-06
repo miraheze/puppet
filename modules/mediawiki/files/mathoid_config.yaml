@@ -36,7 +36,6 @@ services:
       # list of enabled renders
       svg: true
       img: true
-      png: true
       texvcinfo: true
       no_check: true
       speech: true
