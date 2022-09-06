@@ -24,4 +24,4 @@ jobs:
       continue-on-error: true
       uses: scottbrenner/puppet-lint-action@master
       with:
-        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check ./
+        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check ./
