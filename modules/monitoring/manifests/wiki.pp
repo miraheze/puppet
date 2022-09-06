@@ -11,15 +11,17 @@ define monitoring::wiki (
     $testuri  = "/wiki/${testpage}"
     $protocol_string = upcase($protocol)
 
+    $http_ssl = $enable_ssl ? {
+        true    => true,
+        default => false,
+    }
+
     monitoring::services {"${wikifqdn} ${protocol_string}":
         check_command => 'check_http',
         vars          => {
             address     => $wikifqdn,
             http_expect => "HTTP/${http_version} 200",
-            http_ssl    => $enable_ssl ? {
-                true    => true,
-                default => false,
-            },
+            http_ssl    => $http_ssl,
             http_vhost  => $wikifqdn,
             http_uri    => $testuri,
         },
