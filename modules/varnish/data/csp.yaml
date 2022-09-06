@@ -1,5 +1,5 @@
 # Only add a domain pursuant to the policy below. Please also be restrictive in which list.
-# See https://meta.miraheze.org/wiki/Tech:CSP_Whitelist_Policy.
+# See https://meta.miraheze.org/wiki/Tech:CSP_Policy.
 default-src: 
   - "'self'"
   - '*.miraheze.org'
