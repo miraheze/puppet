@@ -1,15 +1,18 @@
 # role: elasticsearch
 class role::elasticsearch {
+    $es_master = lookup('role::elasticsearch::master', {'default_value' => false})
+    $es_data = lookup('role::elasticsearch::data', {'default_value' => false})
+    $es_discovery = lookup('role::elasticsearch::discovery_host', {'default_value' => false})
+
     include ::java
-    include prometheus::exporter::elasticsearch
+
+    if $es_master {
+        include prometheus::exporter::elasticsearch
+    }
 
     class { 'elastic_stack::repo':
         version => 7,
     }
-
-    $es_master = hiera('role::elasticsearch::master', false)
-    $es_data = hiera('role::elasticsearch::data', false)
-    $es_discovery = hiera('role::elasticsearch::discovery_host', false)
 
     class { 'elasticsearch':
         config      => {
