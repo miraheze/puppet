@@ -1,11 +1,11 @@
-# nginx::site
+# == Define: nginx::site
 define nginx::site(
-    VMlib::Ensure $ensure     = present,
-    Optional[String] $content = undef,
-    VMlib::Sourceurl $source  = undef,
-    Boolean $monitor          = true,
+    VMlib::Ensure                $ensure  = 'present',
+    Boolean                      $monitor = true,
+    Optional[String]             $content = undef,
+    Optional[Stdlib::Filesource] $source  = undef,
 ) {
-    include ::nginx
+    include nginx
 
     $basename = regsubst($title, '[\W_]', '-', 'G')
 
