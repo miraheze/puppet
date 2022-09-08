@@ -97,15 +97,15 @@ class icingaweb2 (
     }
 
     # XML
-     php::extension{ [
-         'dom',
-         'simplexml',
-         'xmlreader',
-         'xmlwriter',
-         'xsl',
-     ]:
-         package_name => '',
-     }
+    php::extension{ [
+        'dom',
+        'simplexml',
+        'xmlreader',
+        'xmlwriter',
+        'xsl',
+    ]:
+        package_name => '',
+    }
 
     $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
     $fpm_min_child = lookup('php::fpm::fpm_min_child', {'default_value' => 4})
@@ -139,18 +139,18 @@ class icingaweb2 (
     }
 
     file { '/etc/icingaweb2/authentication.ini':
-        ensure => present,
+        ensure  => present,
         content => template('icingaweb2/authentication.ini.erb'),
-        owner  => 'www-data',
-        group  => 'icingaweb2',
+        owner   => 'www-data',
+        group   => 'icingaweb2',
         require => File['/etc/icingaweb2'],
     }
 
     file { '/etc/icingaweb2/config.ini':
-        ensure => present,
-        source => 'puppet:///modules/icingaweb2/config.ini',
-        owner  => 'www-data',
-        group  => 'icingaweb2',
+        ensure  => present,
+        source  => 'puppet:///modules/icingaweb2/config.ini',
+        owner   => 'www-data',
+        group   => 'icingaweb2',
         require => File['/etc/icingaweb2'],
     }
 
@@ -171,10 +171,10 @@ class icingaweb2 (
     }
 
     file { '/etc/icingaweb2/roles.ini':
-        ensure => present,
+        ensure  => present,
         content => template('icingaweb2/roles.ini.erb'),
-        owner  => 'www-data',
-        group  => 'icingaweb2',
+        owner   => 'www-data',
+        group   => 'icingaweb2',
     }
 
     file { '/etc/icingaweb2/enabledModules':
@@ -232,10 +232,10 @@ class icingaweb2 (
         mode    => '2755',
         require => File['/etc/icingaweb2/modules'],
     }
-    
+
     file { '/etc/icingaweb2/modules/monitoring/backends.ini':
         ensure  => present,
-        content  => template('icingaweb2/backends.ini.erb'),
+        content => template('icingaweb2/backends.ini.erb'),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2/modules/monitoring'],
@@ -257,10 +257,10 @@ class icingaweb2 (
     }
 
     monitoring::services { 'icinga.miraheze.org HTTPS':
-        check_command  => 'check_http',
-        vars           => {
+        check_command => 'check_http',
+        vars          => {
             http_ssl   => true,
             http_vhost => 'icinga.miraheze.org',
         },
-     }
+    }
 }

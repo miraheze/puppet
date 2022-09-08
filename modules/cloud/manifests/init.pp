@@ -8,15 +8,15 @@ class cloud {
 
     apt::source { 'proxmox_apt':
         location => 'http://download.proxmox.com/debian/pve',
-        release  => "${::lsbdistcodename}",
+        release  => $::lsbdistcodename,
         repos    => 'pve-no-subscription',
         require  => File['/etc/apt/trusted.gpg.d/proxmox.gpg'],
         notify   => Exec['apt_update_proxmox'],
     }
 
     apt::pin { 'proxmox_pin':
-        priority        => 600,
-        origin          => 'download.proxmox.com'
+        priority => 600,
+        origin   => 'download.proxmox.com'
     }
 
     # First installs can trip without this
@@ -28,7 +28,7 @@ class cloud {
     }
 
     package { ['proxmox-ve', 'open-iscsi']:
-        ensure => present,
+        ensure  => present,
         require => Apt::Source['proxmox_apt']
     }
 
@@ -39,7 +39,7 @@ class cloud {
                 '/var/log/pveproxy/access.log',
                 { 'flags' => 'no-parse' }
             ],
-            program_name => 'pveproxy',
+            program_name        => 'pveproxy',
         }
 
         cloud::logging { 'pve-firewall':
@@ -47,7 +47,7 @@ class cloud {
                 '/var/log/pve-firewall.log',
                 { 'flags' => 'no-parse' }
             ],
-            program_name => 'pve-firewall',
+            program_name        => 'pve-firewall',
         }
     } else {
         rsyslog::input::file { 'pveproxy':
@@ -79,7 +79,7 @@ class cloud {
         monitoring::nrpe { 'IPMI Sensors':
             command => '/usr/lib/nagios/plugins/check_ipmi_sensors --xT Memory'
         }
-        
+
         monitoring::nrpe { 'SMART':
             command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sda -i cciss,[0-6] -l -s'
         }

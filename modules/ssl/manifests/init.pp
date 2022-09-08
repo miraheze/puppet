@@ -1,5 +1,5 @@
 # === Class ssl
-class ssl {    
+class ssl {
     ensure_packages('certbot')
 
     file { '/etc/letsencrypt/cli.ini':
@@ -12,7 +12,7 @@ class ssl {
     }
 
     ['/var/www', '/var/www/.well-known', '/var/www/.well-known/acme-challenge'].each |$folder| {
-        file { "${folder}":
+        file { $folder:
             ensure => directory,
             owner  => 'root',
             group  => 'root',
@@ -27,11 +27,11 @@ class ssl {
     }
 
     file { '/home/ssl-admins':
-        ensure  => directory,
-        owner   => 'puppet',
-        group   => 'ssl-admins',
-        mode    => '0660',
-        recurse => true,
+        ensure    => directory,
+        owner     => 'puppet',
+        group     => 'ssl-admins',
+        mode      => '0660',
+        recurse   => true,
         max_files => '7000',
     }
 
@@ -76,22 +76,22 @@ class ssl {
     # We do not need to run the ssl renewal cron,
     # we run our own service.
     file { '/etc/cron.d/certbot':
-        ensure => absent,
+        ensure  => absent,
         require => Package['certbot'],
     }
 
     service { 'certbot':
-        ensure    => 'stopped',
-        enable    => 'mask',
-        provider  => 'systemd',
-        require   => Package['certbot'],
+        ensure   => 'stopped',
+        enable   => 'mask',
+        provider => 'systemd',
+        require  => Package['certbot'],
     }
 
     service { 'certbot.timer':
-        ensure    => 'stopped',
-        enable    => 'mask',
-        provider  => 'systemd',
-        require   => Package['certbot'],
+        ensure   => 'stopped',
+        enable   => 'mask',
+        provider => 'systemd',
+        require  => Package['certbot'],
     }
 
     include ssl::web

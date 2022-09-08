@@ -70,5 +70,5 @@ class grafana (
             http_ssl   => true,
             http_vhost => 'grafana.miraheze.org',
         },
-     }
+    }
 }

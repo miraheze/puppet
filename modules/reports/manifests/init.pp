@@ -98,10 +98,10 @@ class reports {
             package_name => "php${php_version}-xml",
             priority     => 15;
         'igbinary':
-             config   => {
-                 'extension'                => 'igbinary.so',
-                 'igbinary.compact_strings' => 'Off',
-             };
+            config   => {
+                'extension'                => 'igbinary.so',
+                'igbinary.compact_strings' => 'Off',
+            };
         'mysqlnd':
             package_name => '',
             priority     => 10;
@@ -145,7 +145,7 @@ class reports {
         source  => 'puppet:///modules/reports/nginx.conf',
         monitor => true,
     }
-    
+
     $salt = lookup('passwords::piwik::salt')
     $password = lookup('passwords::db::reports')
     $app_key = lookup('reports::app_key')

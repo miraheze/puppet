@@ -87,8 +87,8 @@ class matomo (
 
     # Requires igbinary to be installed
     php::extension { 'redis':
-         ensure => present
-     }
+        ensure => present
+    }
 
     class { '::php::fpm':
         ensure => present,
@@ -107,10 +107,10 @@ class matomo (
             package_name => "php${php_version}-xml",
             priority     => 15;
         'igbinary':
-             config   => {
-                 'extension'                => 'igbinary.so',
-                 'igbinary.compact_strings' => 'Off',
-             };
+            config   => {
+                'extension'                => 'igbinary.so',
+                'igbinary.compact_strings' => 'Off',
+            };
         'mysqlnd':
             package_name => '',
             priority     => 10;
@@ -152,7 +152,7 @@ class matomo (
         source  => 'puppet:///modules/matomo/nginx.conf',
         monitor => true,
     }
-    
+
     $salt = lookup('passwords::piwik::salt')
     $password = lookup('passwords::db::piwik')
     $noreply_password = lookup('passwords::mail::noreply')

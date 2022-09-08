@@ -40,7 +40,7 @@ class nginx (
 
     $module_path = get_module_path('varnish')
 
-    $cache_proxies = query_facts("domain='$domain' and Class['Role::Varnish']", ['ipaddress', 'ipaddress6'])
+    $cache_proxies = query_facts("domain='${domain}' and Class['Role::Varnish']", ['ipaddress', 'ipaddress6'])
     file { '/etc/nginx/nginx.conf':
         content => template('nginx/nginx.conf.erb'),
         require => Package['nginx'],
@@ -52,7 +52,7 @@ class nginx (
         source => 'puppet:///modules/nginx/fastcgi_params',
         notify => Service['nginx'],
     }
- 
+
     exec { 'nginx unmask':
         command     => '/bin/systemctl unmask nginx.service',
         refreshonly => true,

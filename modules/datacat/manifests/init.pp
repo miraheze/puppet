@@ -50,10 +50,10 @@ define datacat(
 
   if $ensure == 'absent' {
     file { $title:
-      ensure                  => $ensure,
-      path                    => $path,
-      backup                  => $backup,
-      force                   => $force,
+      ensure => $ensure,
+      path   => $path,
+      backup => $backup,
+      force  => $force,
     }
   } else {
     file { $title:

@@ -22,6 +22,6 @@ class prometheus::exporter::varnishreqs (
     cron { 'varnish-requests-exporter':
         ensure  => $ensure,
         user    => 'root',
-        command => "/usr/local/bin/varnish-requests-exporter",
+        command => '/usr/local/bin/varnish-requests-exporter',
     }
 }

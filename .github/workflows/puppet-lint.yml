@@ -1,0 +1,27 @@
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - '**.pp'
+      - '.github/**'
+
+  pull_request:
+    branches: [ master ]
+    paths:
+      - '**.pp'
+      - '.github/**'
+
+jobs:
+  puppet-lint:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: puppet-lint
+      continue-on-error: true
+      uses: scottbrenner/puppet-lint-action@master
+      with:
+        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check ./

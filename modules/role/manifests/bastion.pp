@@ -11,7 +11,7 @@ class role::bastion {
     }
 
     $squid_access_hosts_str = join(
-        query_facts("domain='$domain'", ['ipaddress', 'ipaddress6'])
+        query_facts("domain='${domain}'", ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }

@@ -68,8 +68,8 @@ define gluster::mount (
 
     if !defined(Package['glusterfs-client']) {
         package { 'glusterfs-client':
-            ensure   => installed,
-            require  => Class['gluster::apt'],
+            ensure  => installed,
+            require => Class['gluster::apt'],
         }
     }
 
@@ -123,7 +123,7 @@ define gluster::mount (
         }
     }
 
-    $base_options = "defaults,transport=tcp,noauto,x-systemd.automount,noexec,xlator-option=transport.address-family=inet6"
+    $base_options = 'defaults,transport=tcp,noauto,x-systemd.automount,noexec,xlator-option=transport.address-family=inet6'
 
     $mount_options = $options ? {
         undef   => $base_options,

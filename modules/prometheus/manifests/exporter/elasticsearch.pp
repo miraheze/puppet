@@ -10,15 +10,15 @@ class prometheus::exporter::elasticsearch {
     ])
 
     file { '/opt/prometheus-es-exporter_0.11.1-1_all.deb':
-        ensure  => present,
-        source  => 'puppet:///modules/prometheus/packages/prometheus-es-exporter_0.11.1-1_all.deb',
+        ensure => present,
+        source => 'puppet:///modules/prometheus/packages/prometheus-es-exporter_0.11.1-1_all.deb',
     }
 
     package { 'prometheus-es-exporter':
-        ensure      => installed,
-        provider    => dpkg,
-        source      => '/opt/prometheus-es-exporter_0.11.1-1_all.deb',
-        require     => File['/opt/prometheus-es-exporter_0.11.1-1_all.deb'],
+        ensure   => installed,
+        provider => dpkg,
+        source   => '/opt/prometheus-es-exporter_0.11.1-1_all.deb',
+        require  => File['/opt/prometheus-es-exporter_0.11.1-1_all.deb'],
     }
 
     file { '/etc/prometheus-es-exporter':

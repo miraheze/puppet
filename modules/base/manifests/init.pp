@@ -37,7 +37,7 @@ class base (
 
     if $http_proxy {
         file { '/etc/gitconfig':
-            ensure => present,
+            ensure  => present,
             content => template('base/git/gitconfig.erb'),
         }
     }
@@ -53,12 +53,12 @@ class base (
 
     # Used by salt-user
     users::user { 'salt-user':
-        ensure      => present,
-        uid         => 3100,
-        ssh_keys    => [
+        ensure     => present,
+        uid        => 3100,
+        ssh_keys   => [
             'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILVTOQ4vISRH4ictbbGprgCDFt7iU7hEE0HXjOOrlKvU salt-user@miraheze'
         ],
-        privileges  => ['ALL = (ALL) NOPASSWD: ALL'],
+        privileges => ['ALL = (ALL) NOPASSWD: ALL'],
     }
 
     # Global vim defaults

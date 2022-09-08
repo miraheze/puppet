@@ -29,9 +29,9 @@ class prometheus::exporter::redis (
     }
 
     file { '/etc/default/prometheus-redis':
-        ensure => present,
+        ensure  => present,
         content => template('prometheus/prometheus-redis-default.erb'),
-        notify => Service['prometheus-redis-exporter'],
+        notify  => Service['prometheus-redis-exporter'],
     }
 
     systemd::service { 'prometheus-redis-exporter':

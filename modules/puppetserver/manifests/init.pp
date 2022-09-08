@@ -60,7 +60,7 @@ class puppetserver(
 
     file { '/etc/puppetlabs/puppet/puppet.conf':
         ensure  => present,
-        content => template("puppetserver/puppet.conf.erb"),
+        content => template('puppetserver/puppet.conf.erb'),
         require => Package['puppet-agent'],
         notify  => Service['puppetserver'],
     }
@@ -139,7 +139,7 @@ class puppetserver(
             Git::Clone['ssl']
         ],
     }
- 
+
     if $puppetdb_enable {
         class { 'puppetserver::puppetdb::client':
             puppetdb_hostname => $puppetdb_hostname,

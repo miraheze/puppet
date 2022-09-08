@@ -9,7 +9,7 @@ class mediawiki::php (
     String $memory_limit               = lookup('mediawiki::php::memory_limit', {'default_value' => '256M'}),
     Optional[Hash] $fpm_config         = lookup('mediawiki::php::fpm_config', {default_value => undef}),
 ) {
-    
+
     $config_cli = {
         'include_path'           => '".:/usr/share/php"',
         'error_log'              => 'syslog',
@@ -195,11 +195,11 @@ class mediawiki::php (
     }
 
     php::extension { 'tideways-xhprof':
-        ensure => $profiling_ensure,
+        ensure       => $profiling_ensure,
         package_name => '',
-        priority => 30,
-        config => {
-            'extension' => 'tideways_xhprof.so',
+        priority     => 30,
+        config       => {
+            'extension'                       => 'tideways_xhprof.so',
             'tideways_xhprof.clock_use_rdtsc' => '0',
         }
     }

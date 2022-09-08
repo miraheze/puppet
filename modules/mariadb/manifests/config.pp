@@ -96,7 +96,7 @@ class mariadb::config(
         override => true,
         restart  => false,
     }
-    
+
     rsyslog::input::file { 'mysql':
         path              => '/var/log/mysql/mysql-error.log',
         syslog_tag_prefix => '',
@@ -107,11 +107,11 @@ class mariadb::config(
         check_command => 'mysql',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars          => {
-            mysql_hostname  => $::fqdn,
-            mysql_username  => 'icinga',
-            mysql_password  => $icinga_password,
-            mysql_ssl       => true,
-            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
+            mysql_hostname => $::fqdn,
+            mysql_username => 'icinga',
+            mysql_password => $icinga_password,
+            mysql_ssl      => true,
+            mysql_cacert   => '/etc/ssl/certs/Sectigo.crt',
         },
     }
 }

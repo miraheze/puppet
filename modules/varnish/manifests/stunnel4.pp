@@ -19,8 +19,8 @@ class varnish::stunnel4 {
     }
 
     systemd::service { 'stunnel4':
-        ensure  => present,
-        content => systemd_template('stunnel4'),
+        ensure         => present,
+        content        => systemd_template('stunnel4'),
         service_params => {
             enable  => true,
             require => [

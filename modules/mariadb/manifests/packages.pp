@@ -12,22 +12,22 @@ class mariadb::packages(
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     apt::source { 'mariadb_apt':
-        comment     => 'MariaDB stable',
-        location    => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
-        release     => "${::lsbdistcodename}",
-        repos       => 'main',
+        comment  => 'MariaDB stable',
+        location => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
+        release  => $::lsbdistcodename,
+        repos    => 'main',
         key      => {
-                'id' => '177F4010FE56CA3336300305F1656F24C74CD1D8',
+                'id'      => '177F4010FE56CA3336300305F1656F24C74CD1D8',
                 'options' => "http-proxy='${http_proxy}'",
                 'server'  => 'hkp://keyserver.ubuntu.com:80',
         },
     }
 
     apt::pin { 'mariadb_pin':
-        priority        => 600,
-        origin          => 'ams2.mirrors.digitalocean.com',
-        require         => Apt::Source['mariadb_apt'],
-        notify          => Exec['apt_update_mariadb'],
+        priority => 600,
+        origin   => 'ams2.mirrors.digitalocean.com',
+        require  => Apt::Source['mariadb_apt'],
+        notify   => Exec['apt_update_mariadb'],
     }
 
     # First installs can trip without this
@@ -39,7 +39,7 @@ class mariadb::packages(
 
     package { [
         "mariadb-server-${version}",
-        "mariadb-backup"
+        'mariadb-backup'
     ]:
         ensure  => present,
         require => Exec['apt_update_mariadb'],

@@ -54,7 +54,7 @@ class role::roundcubemail (
     }
 
     ferm::service { 'https':
-        proto    => 'tcp',
+        proto   => 'tcp',
         port    => '443',
         srange  => "(${firewall_rules_str})",
         notrack => true,
