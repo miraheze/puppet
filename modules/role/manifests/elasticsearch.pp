@@ -1,8 +1,8 @@
 # role: elasticsearch
 class role::elasticsearch {
-    $es_master = hiera('role::elasticsearch::master', false)
-    $es_data = hiera('role::elasticsearch::data', false)
-    $es_discovery = hiera('role::elasticsearch::discovery_host', false)
+    $es_master = lookup('role::elasticsearch::master', {'default_value' => false})
+    $es_data = lookup('role::elasticsearch::data', {'default_value' => false})
+    $es_discovery = lookup('role::elasticsearch::discovery_host', {'default_value' => false})
 
     include ::java
 
