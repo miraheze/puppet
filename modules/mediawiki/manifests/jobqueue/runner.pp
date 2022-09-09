@@ -8,10 +8,10 @@ class mediawiki::jobqueue::runner {
 
 
     systemd::service { 'jobrunner':
-        ensure  => present,
-        content => systemd_template('jobrunner'),
+        ensure    => present,
+        content   => systemd_template('jobrunner'),
         subscribe => File['/srv/jobrunner/jobrunner.json'],
-        restart => true,
+        restart   => true,
     }
 
     if lookup('mediawiki::jobqueue::runner::cron', {'default_value' => false}) {

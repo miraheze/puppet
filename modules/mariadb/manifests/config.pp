@@ -8,6 +8,7 @@ class mariadb::config(
     Integer           $max_connections              = 500,
     Enum['10.5']      $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
     String            $icinga_password              = undef,
+    Optional[Integer] $server_id                    = undef,
 ) {
     $exporter_password = lookup('passwords::db::exporter')
     $ido_db_user_password = lookup('passwords::icinga_ido')
@@ -95,7 +96,7 @@ class mariadb::config(
         override => true,
         restart  => false,
     }
-    
+
     rsyslog::input::file { 'mysql':
         path              => '/var/log/mysql/mysql-error.log',
         syslog_tag_prefix => '',
@@ -106,11 +107,11 @@ class mariadb::config(
         check_command => 'mysql',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars          => {
-            mysql_hostname  => $::fqdn,
-            mysql_username  => 'icinga',
-            mysql_password  => $icinga_password,
-            mysql_ssl       => true,
-            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
+            mysql_hostname => $::fqdn,
+            mysql_username => 'icinga',
+            mysql_password => $icinga_password,
+            mysql_ssl      => true,
+            mysql_cacert   => '/etc/ssl/certs/Sectigo.crt',
         },
     }
 }

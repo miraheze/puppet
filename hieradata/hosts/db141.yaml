@@ -1,0 +1,7 @@
+puppetserver_hostname: 'puppet141.miraheze.org'
+http_proxy: 'http://bast.miraheze.org:8080'
+base::syslog::graylog_hostname: 'graylog121.miraheze.org'
+base::syslog::graylog_resolve_ip_version: 6
+
+# must be set for replication to work
+mariadb::config::server_id: 2

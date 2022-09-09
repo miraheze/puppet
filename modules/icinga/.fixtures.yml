@@ -1,0 +1,27 @@
+# This file can be used to install module dependencies for unit testing
+# See https://github.com/puppetlabs/puppetlabs_spec_helper#using-fixtures for details
+---
+fixtures:
+  forge_modules:
+    stdlib:
+      repo: puppetlabs/stdlib
+    concat:
+      repo: puppetlabs/concat
+    apt:
+      repo: puppetlabs/apt
+    zypprepo:
+      repo: puppet/zypprepo
+    yumrepo_core:
+      repo: puppetlabs-yumrepo_core
+      puppet_version: ">= 6.0.0"
+    redis:
+      repo: puppet/redis
+    augeas:
+      repo: puppetlabs/augeas_core
+      puppet_version: ">= 6.0.0"
+    icinga2:
+      repo: icinga/icinga2
+  repositories:
+    facts: 'https://github.com/puppetlabs/puppetlabs-facts.git'
+    puppet_agent: 'https://github.com/puppetlabs/puppetlabs-puppet_agent.git'
+    provision: 'https://github.com/puppetlabs/provision.git'

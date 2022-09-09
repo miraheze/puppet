@@ -1,111 +1,111 @@
-# == Class: icinga2::feature::influxdb
+# @summary
+#   Configures the Icinga 2 feature influxdb.
 #
-# This module configures the Icinga 2 feature influxdb.
+# @example
+#   class { 'icinga2::feature::influxdb':
+#     host     => "10.10.0.15",
+#     username => "icinga2",
+#     password => "supersecret",
+#     database => "icinga2"
+#   }
 #
-# === Parameters
+# @param ensure
+#   Set to present enables the feature influxdb, absent disables it.
 #
-# [*ensure*]
-#   Set to present enables the feature influxdb, absent disables it. Defaults to present.
+# @param host
+#    InfluxDB host address.
 #
-# [*host*]
-#    InfluxDB host address. Icinga defaults to 127.0.0.1.
+# @param port
+#    InfluxDB HTTP port.
 #
-# [*port*]
-#    InfluxDB HTTP port. Icinga defaults to 8086.
+# @param database
+#    InfluxDB database name.
 #
-# [*database*]
-#    InfluxDB database name. Icinga defaults to icinga2.
-#
-# [*username*]
+# @param username
 #    InfluxDB user name.
 #
-# [*password*]
-#    InfluxDB user password.
+# @param password
+#    InfluxDB user password. The password parameter isn't parsed anymore.
 #
-# [*enable_ssl*]
+# @param basic_auth
+#    Username and password for HTTP basic authentication.
+#
+# @param enable_ssl
 #    Either enable or disable SSL. Other SSL parameters are only affected if this is set to 'true'.
-#    Icinga defaults to 'false'.
 #
-# [*ssl_key_path*]
+# @param ssl_noverify
+#    Disable TLS peer verification.
+#
+# @param ssl_key_path
 #   Location of the private key.
 #
-# [*ssl_cert_path*]
+# @param ssl_cert_path
 #   Location of the certificate.
 #
-# [*ssl_cacert_path*]
+# @param ssl_cacert_path
 #   Location of the CA certificate.
 #
-# [*ssl_key*]
+# @param ssl_key
 #   The private key in a base64 encoded string to store in ssl_key_path file.
-#   Default depends on platform:
-#     /var/lib/icinga2/certs/InfluxdbWriter_influxdb.key on Linux
 #
-# [*ssl_cert*]
+# @param ssl_cert
 #   The certificate in a base64 encoded string to store in ssl_cert_path file.
-#   Default depends on platform:
-#     /var/lib/icinga2/certs/InfluxdbWriter_influxdb.crt on Linux
 #
-# [*ssl_cacert*]
+# @param ssl_cacert
 #   The CA root certificate in a base64 encoded to store in ssl_cacert_path file.
-#   Default depends on platform:
-#     /var/lib/icinga2/certs/InfluxdbWriter_influxdb_ca.crt on Linux
 #
-# [*host_measurement*]
-#    The value of this is used for the measurement setting in host_template. Icinga defaults to '$host.check_command$'.
+# @param host_measurement
+#    The value of this is used for the measurement setting in host_template.
 #
-# [*host_tags*]
+# @param host_tags
 #    Tags defined in this hash will be set in the host_template.
 #
-#  [*service_measurement*]
-#    The value of this is used for the measurement setting in host_template. Icinga defaults to '$service.check_command$'.
+# @param service_measurement
+#    The value of this is used for the measurement setting in host_template.
 #
-# [*service_tags*]
+# @param service_tags
 #    Tags defined in this hash will be set in the service_template.
 #
-# [*enable_send_thresholds*]
-#    Whether to send warn, crit, min & max tagged data. Icinga defaults to 'false'.
+# @param enable_send_thresholds
+#    Whether to send warn, crit, min & max tagged data.
 #
-# [*enable_send_metadata*]
-#    Whether to send check metadata e.g. states, execution time, latency etc. Icinga defaults to 'false'.
+# @param enable_send_metadata
+#    Whether to send check metadata e.g. states, execution time, latency etc.
 #
-# [*flush_interval*]
-#    How long to buffer data points before transfering to InfluxDB. Icinga defaults to '10s'.
+# @param flush_interval
+#    How long to buffer data points before transfering to InfluxDB.
 #
-# [*flush_threshold*]
-#    How many data points to buffer before forcing a transfer to InfluxDB. Icinga defaults to '1024'.
+# @param flush_threshold
+#    How many data points to buffer before forcing a transfer to InfluxDB.
 #
-# === Example
-#
-# class { 'icinga2::feature::influxdb':
-#   host     => "10.10.0.15",
-#   username => "icinga2",
-#   password => "supersecret",
-#   database => "icinga2"
-# }
-#
+# @param enable_ha
+#   Enable the high availability functionality. Only valid in a cluster setup.
 #
 class icinga2::feature::influxdb(
-  Enum['absent', 'present']                $ensure                 = present,
-  Optional[Stdlib::Host]                   $host                   = undef,
-  Optional[Stdlib::Port::Unprivileged]     $port                   = undef,
-  Optional[String]                         $database               = undef,
-  Optional[String]                         $username               = undef,
-  Optional[String]                         $password               = undef,
-  Optional[Boolean]                        $enable_ssl             = undef,
-  Optional[Stdlib::Absolutepath]           $ssl_key_path           = undef,
-  Optional[Stdlib::Absolutepath]           $ssl_cert_path          = undef,
-  Optional[Stdlib::Absolutepath]           $ssl_cacert_path        = undef,
-  Optional[String]                         $ssl_key                = undef,
-  Optional[String]                         $ssl_cert               = undef,
-  Optional[String]                         $ssl_cacert             = undef,
-  Optional[String]                         $host_measurement       = undef,
-  Optional[Hash]                           $host_tags              = undef,
-  Optional[String]                         $service_measurement    = undef,
-  Optional[Hash]                           $service_tags           = undef,
-  Optional[Boolean]                        $enable_send_thresholds = undef,
-  Optional[Boolean]                        $enable_send_metadata   = undef,
-  Optional[Icinga2::Interval]              $flush_interval         = undef,
-  Optional[Integer[1]]                     $flush_threshold        = undef,
+  Enum['absent', 'present']                     $ensure                 = present,
+  Optional[Stdlib::Host]                        $host                   = undef,
+  Optional[Stdlib::Port]                        $port                   = undef,
+  Optional[String]                              $database               = undef,
+  Optional[String]                              $username               = undef,
+  Optional[Variant[String, Sensitive[String]]]  $password               = undef,
+  Optional[Icinga2::BasicAuth]                  $basic_auth             = undef,
+  Optional[Boolean]                             $enable_ssl             = undef,
+  Optional[Boolean]                             $ssl_noverify           = undef,
+  Optional[Stdlib::Absolutepath]                $ssl_key_path           = undef,
+  Optional[Stdlib::Absolutepath]                $ssl_cert_path          = undef,
+  Optional[Stdlib::Absolutepath]                $ssl_cacert_path        = undef,
+  Optional[Stdlib::Base64]                      $ssl_key                = undef,
+  Optional[Stdlib::Base64]                      $ssl_cert               = undef,
+  Optional[Stdlib::Base64]                      $ssl_cacert             = undef,
+  String                                        $host_measurement       = '$host.check_command$',
+  Hash                                          $host_tags              = { hostname => '$host.name$' },
+  String                                        $service_measurement    = '$service.check_command$',
+  Hash                                          $service_tags           = { hostname => '$host.name$', service => '$service.name$' },
+  Optional[Boolean]                             $enable_send_thresholds = undef,
+  Optional[Boolean]                             $enable_send_metadata   = undef,
+  Optional[Icinga2::Interval]                   $flush_interval         = undef,
+  Optional[Integer[1]]                          $flush_threshold        = undef,
+  Optional[Boolean]                             $enable_ha              = undef,
 ) {
 
   if ! defined(Class['::icinga2']) {
@@ -116,10 +116,22 @@ class icinga2::feature::influxdb(
   $group         = $::icinga2::globals::group
   $conf_dir      = $::icinga2::globals::conf_dir
   $ssl_dir       = $::icinga2::globals::cert_dir
+
   $_ssl_key_mode = '0600'
+
   $_notify       = $ensure ? {
     'present' => Class['::icinga2::service'],
     default   => undef,
+  }
+
+  if $basic_auth {
+    $_basic_auth = if $basic_auth['password'] =~ String {
+      $basic_auth + { 'password' => Sensitive($password) }
+    } elsif $basic_auth['password'] =~ Sensitive {
+      $basic_auth
+    }
+  } else {
+    $_basic_auth = undef
   }
 
   File {
@@ -143,10 +155,11 @@ class icinga2::feature::influxdb(
       $_ssl_key = $ssl_key
 
       file { $_ssl_key_path:
-        ensure  => file,
-        mode    => $_ssl_key_mode,
-        content => $_ssl_key,
-        tag     => 'icinga2::config::file',
+        ensure    => file,
+        mode      => $_ssl_key_mode,
+        content   => $_ssl_key,
+        show_diff => false,
+        tag       => 'icinga2::config::file',
       }
     } else {
       $_ssl_key_path = $ssl_key_path
@@ -189,14 +202,24 @@ class icinga2::feature::influxdb(
     }
 
     $attrs_ssl = {
-      ssl_enable  => $enable_ssl,
-      ssl_ca_cert => $_ssl_cacert_path,
-      ssl_cert    => $_ssl_cert_path,
-      ssl_key     => $_ssl_key_path,
+      ssl_enable            => $enable_ssl,
+      ssl_insecure_noverify => $ssl_noverify,
+      ssl_ca_cert           => $_ssl_cacert_path,
+      ssl_cert              => $_ssl_cert_path,
+      ssl_key               => $_ssl_key_path,
     }
   } # enable_ssl
   else {
     $attrs_ssl = { ssl_enable  => $enable_ssl }
+  }
+
+  $_password = if $password =~ String {
+    # The password parameter isn't parsed anymore.
+    "-:\"${password}\""
+  } elsif $password =~ Sensitive {
+    $password
+  } else {
+    undef
   }
 
   $attrs = {
@@ -204,13 +227,15 @@ class icinga2::feature::influxdb(
     port                   => $port,
     database               => $database,
     username               => $username,
-    password               => $password,
+    password               => $_password,
+    basic_auth             => $_basic_auth,
     host_template          => $host_template,
     service_template       => $service_template,
     enable_send_thresholds => $enable_send_thresholds,
     enable_send_metadata   => $enable_send_metadata,
     flush_interval         => $flush_interval,
     flush_threshold        => $flush_threshold,
+    enable_ha              => $enable_ha,
   }
 
   # create object
@@ -218,7 +243,7 @@ class icinga2::feature::influxdb(
     object_name => 'influxdb',
     object_type => 'InfluxdbWriter',
     attrs       => delete_undef_values(merge($attrs, $attrs_ssl)),
-    attrs_list  => keys($attrs),
+    attrs_list  => concat(keys($attrs), keys($attrs_ssl)),
     target      => "${conf_dir}/features-available/influxdb.conf",
     notify      => $_notify,
     order       => 10,

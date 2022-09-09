@@ -1,6 +1,7 @@
 # role: varnish
 class role::varnish {
     include ::varnish
+    include prometheus::exporter::varnishreqs
 
     ferm::service { 'http':
         proto   => 'tcp',

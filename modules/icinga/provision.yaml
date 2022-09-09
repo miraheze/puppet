@@ -1,0 +1,15 @@
+---
+vagrant:
+  provisioner: vagrant
+  images:
+    - 'bento/centos-6'
+    - 'bento/centos-7'
+    - 'bento/centos-8'
+    - 'bento/debian-8'
+    - 'bento/debian-9'
+    - 'bento/debian-10'
+    - 'bento/ubuntu-16.04'
+    - 'bento/ubuntu-18.04'
+    - 'bento/ubuntu-20.04'
+  params:
+    vagrant_provider: virtualbox

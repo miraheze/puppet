@@ -12,7 +12,7 @@ define monitoring::hosts (
                 mail => {
                     groups => $contacts,
                 },
-                irc => {
+                irc  => {
                     groups => [ 'icingaadmins' ],
                 },
             },

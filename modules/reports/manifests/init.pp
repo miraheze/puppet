@@ -1,18 +1,18 @@
 # class: reports
 class reports {
-    ensure_packages('mariadb-client')
+    ensure_packages(['mariadb-client', 'composer'])
 
     git::clone { 'TSPortal':
-        directory          => '/srv/TSPortal',
-        origin             => 'https://github.com/miraheze/TSPortal',
-        branch             => 'v6',
-        recurse_submodules => true,
-        owner              => 'www-data',
-        group              => 'www-data',
+        directory => '/srv/TSPortal',
+        origin    => 'https://github.com/miraheze/TSPortal',
+        branch    => 'v7',
+        owner     => 'www-data',
+        group     => 'www-data',
     }
 
-    exec { 'curl -sS https://getcomposer.org/installer | php && php composer.phar install':
-        creates     => '/srv/TSPortal/composer.phar',
+    exec { 'reports_composer':
+        command     => 'composer install --no-dev',
+        creates     => '/srv/TSPortal/vendor',
         cwd         => '/srv/TSPortal',
         path        => '/usr/bin',
         environment => 'HOME=/srv/TSPortal',
@@ -98,10 +98,10 @@ class reports {
             package_name => "php${php_version}-xml",
             priority     => 15;
         'igbinary':
-             config   => {
-                 'extension'                => 'igbinary.so',
-                 'igbinary.compact_strings' => 'Off',
-             };
+            config   => {
+                'extension'                => 'igbinary.so',
+                'igbinary.compact_strings' => 'Off',
+            };
         'mysqlnd':
             package_name => '',
             priority     => 10;
@@ -145,7 +145,7 @@ class reports {
         source  => 'puppet:///modules/reports/nginx.conf',
         monitor => true,
     }
-    
+
     $salt = lookup('passwords::piwik::salt')
     $password = lookup('passwords::db::reports')
     $app_key = lookup('reports::app_key')

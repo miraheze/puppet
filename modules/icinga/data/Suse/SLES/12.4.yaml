@@ -1,0 +1,6 @@
+---
+icinga::repos:
+  server_monitoring:
+    descr: 'Server Monitoring Software (SLE 12 SP4)'
+    baseurl: 'https://download.opensuse.org/repositories/server:/monitoring/SLE_12_SP4/'
+    gpgkey: 'https://download.opensuse.org/repositories/server:/monitoring/SLE_12_SP4/repodata/repomd.xml.key'

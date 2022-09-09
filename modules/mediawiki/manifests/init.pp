@@ -10,7 +10,6 @@ class mediawiki(
     include mediawiki::logging
     include mediawiki::php
     include mediawiki::monitoring
-    include nodejs
 
     if lookup(mediawiki::use_staging) {
         include mediawiki::deploy
@@ -20,10 +19,6 @@ class mediawiki(
 
     if lookup(jobrunner) {
         include mediawiki::jobqueue::runner
-    }
-
-    if lookup(jobchron) {
-        include mediawiki::jobqueue::chron
     }
 
     if lookup(mediawiki::use_shellbox) {

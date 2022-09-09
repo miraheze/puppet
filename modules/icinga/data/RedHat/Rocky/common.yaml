@@ -1,0 +1,14 @@
+---
+icinga::repos:
+  epel:
+    descr: 'Extra Packages for Enterprise Linux %{facts.os.release.major} - $basearch'
+    mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-%{facts.os.release.major}&arch=$basearch'
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-%{facts.os.release.major}
+  powertools:
+    descr: 'Rocky Linux $releasever - PowerTools'
+    mirrorlist: 'https://mirrors.rockylinux.org/mirrorlist?arch=$basearch&repo=PowerTools-$releasever'
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-rockyofficial

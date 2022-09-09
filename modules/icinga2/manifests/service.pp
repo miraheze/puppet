@@ -1,18 +1,8 @@
-# == Class: icinga2::service
+# @summary
+#   This class handles the Icinga 2 service. By default the service will
+#   start on boot and will be restarted if stopped.
 #
-# This class handles the Icinga 2 service. By default the service will start on boot and will be restarted if stopped.
-#
-# === Parameters
-#
-# This class does not provide any parameters.
-# To control the behaviour of this class, have a look at the parameters:
-# * icinga2::ensure
-# * icinga2::enable
-#
-# === Examples
-#
-# This class is private and should not be called by others than this module.
-#
+# @api private
 #
 class icinga2::service {
 
@@ -23,6 +13,8 @@ class icinga2::service {
   $manage_service = $::icinga2::manage_service
   $service_name   = $::icinga2::globals::service_name
   $reload         = $::icinga2::globals::service_reload
+  $logon_account  = $::icinga2::globals::logon_account
+
   $hasrestart     = $reload ? {
     undef   => false,
     default => true,

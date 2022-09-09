@@ -5,8 +5,6 @@ class roundcubemail (
     String $db_user_password      = undef,
     String $roundcubemail_des_key = undef,
 ) {
-    include ::nodejs
-
     $config_cli = {
         'include_path'           => '".:/usr/share/php"',
         'error_log'              => 'syslog',
@@ -88,18 +86,21 @@ class roundcubemail (
             package_name => "php${php_version}-mysql";
         'pdo_mysql':
             package_name => '';
+        'xml':
+            package_name => "php${php_version}-xml",
+            priority     => 15;
     }
 
     # XML
-     php::extension{ [
-         'dom',
-         'simplexml',
-         'xmlreader',
-         'xmlwriter',
-         'xsl',
-     ]:
-         package_name => '',
-     }
+    php::extension{ [
+        'dom',
+        'simplexml',
+        'xmlreader',
+        'xmlwriter',
+        'xsl',
+    ]:
+        package_name => '',
+    }
 
     $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
     $fpm_min_child = lookup('php::fpm::fpm_min_child', {'default_value' => 4})
@@ -118,22 +119,54 @@ class roundcubemail (
         }
     }
 
-    ensure_packages(["php${php_version}-pspell"])
+    ensure_packages([
+        "php${php_version}-pspell",
+        'composer',
+        'nodejs',
+    ])
 
     git::clone { 'roundcubemail':
-        directory          => '/srv/roundcubemail',
-        origin             => 'https://github.com/roundcube/roundcubemail',
-        branch             => '1.5.1', # we are using the beta for the new skin
-        recurse_submodules => true,
-        owner              => 'www-data',
-        group              => 'www-data',
+        directory => '/srv/roundcubemail',
+        origin    => 'https://github.com/roundcube/roundcubemail',
+        branch    => '1.6.0', # Current stable
+        owner     => 'www-data',
+        group     => 'www-data',
+    }
+
+    file { '/srv/roundcubemail/composer.json':
+        ensure  => present,
+        source  => '/srv/roundcubemail/composer.json-dist',
+        owner   => 'www-data',
+        group   => 'www-data',
+        replace => false,
+        require => Git::Clone['roundcubemail'],
+    }
+
+    exec { 'roundcubemail_composer':
+        command     => 'composer install --no-dev',
+        creates     => '/srv/roundcubemail/vendor',
+        cwd         => '/srv/roundcubemail',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/roundcubemail',
+        user        => 'www-data',
+        require     => File['/srv/roundcubemail/composer.json'],
+    }
+
+    exec { 'roundcubemail_js_deps':
+        command     => 'bin/install-jsdeps.sh',
+        creates     => '/srv/roundcubemail/skins/elastic/deps/less.min.js',
+        cwd         => '/srv/roundcubemail',
+        path        => '/usr/bin',
+        environment => 'HOME=/srv/roundcubemail',
+        user        => 'www-data',
+        require     => Git::Clone['roundcubemail'],
     }
 
     file { '/srv/roundcubemail/config/config.inc.php':
-        ensure => present,
+        ensure  => present,
         content => template('roundcubemail/config.inc.php.erb'),
-        owner  => 'www-data',
-        group  => 'www-data',
+        owner   => 'www-data',
+        group   => 'www-data',
         require => Git::Clone['roundcubemail'],
     }
 
@@ -164,10 +197,10 @@ class roundcubemail (
     }
 
     monitoring::services { 'webmail.miraheze.org HTTPS':
-        check_command  => 'check_http',
-        vars           => {
+        check_command => 'check_http',
+        vars          => {
             http_ssl   => true,
             http_vhost => 'webmail.miraheze.org',
         },
-     }
+    }
 }

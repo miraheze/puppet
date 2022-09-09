@@ -1,0 +1,37 @@
+---
+icinga::repos:
+  'icinga-stable-release':
+    location: https://packages.icinga.com/debian
+    release: 'icinga-%{facts.os.distro.codename}'
+    repos: main
+    key: 
+      id: F51A91A5EE001AA5D77D53C4C6E319C334410682
+      source: https://packages.icinga.com/icinga.key
+  'icinga-testing-builds':
+    location: https://packages.icinga.com/debian
+    release: 'icinga-%{facts.os.distro.codename}-testing'
+    repos: main
+    key: 
+      id: F51A91A5EE001AA5D77D53C4C6E319C334410682
+      source: https://packages.icinga.com/icinga.key
+  'icinga-snapshot-builds':
+    location: https://packages.icinga.com/debian
+    release: 'icinga-%{facts.os.distro.codename}-snapshots'
+    repos: main
+    key: 
+      id: F51A91A5EE001AA5D77D53C4C6E319C334410682
+      source: https://packages.icinga.com/icinga.key
+  'netways-plugins-release':
+    location: https://packages.netways.de/plugins/debian
+    release: '%{facts.os.distro.codename}'
+    repos: main
+    key:
+      id: 0DEE49417F457646CC0C29AD03E3F1C5E8B2FC5E
+      source: https://packages.netways.de/netways-repo.asc
+  'netways-extras-release':
+    location: https://packages.netways.de/extras/debian
+    release: '%{facts.os.distro.codename}'
+    repos: main
+    key:
+      id: 0DEE49417F457646CC0C29AD03E3F1C5E8B2FC5E
+      source: https://packages.netways.de/netways-repo.asc

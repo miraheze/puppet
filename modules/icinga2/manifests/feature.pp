@@ -1,7 +1,7 @@
-# == Define: icinga2::feature
+# @summary
+#   Private define resource to used by this module only.
 #
-# Private define resource to used by this module only.
-#
+# @api private
 #
 define icinga2::feature(
   Enum['absent', 'present'] $ensure  = present,
@@ -15,7 +15,7 @@ define icinga2::feature(
   $conf_dir = $::icinga2::globals::conf_dir
 
   $_ensure = $ensure ? {
-    'present' => file,
+    'present' => link,
     default   => absent,
   }
 
@@ -23,7 +23,7 @@ define icinga2::feature(
     ensure  => $_ensure,
     owner   => $user,
     group   => $group,
-    content => "include \"../features-available/${feature}.conf\"\r\n",
+    target  => "../features-available/${feature}.conf",
     require => Concat["${conf_dir}/features-available/${feature}.conf"],
     notify  => Class['::icinga2::service'],
   }

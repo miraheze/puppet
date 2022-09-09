@@ -4,10 +4,10 @@ class gluster {
     include gluster::apt
 
     ssl::wildcard { 'gluster wildcard': }
-    
+
     package { 'glusterfs-server':
-        ensure   => installed,
-        require  => Class['gluster::apt'],
+        ensure  => installed,
+        require => Class['gluster::apt'],
     }
 
     if !defined(File['glusterfs.pem']) {
@@ -76,8 +76,8 @@ class gluster {
     if lookup('gluster_client', {'default_value' => false}) {
         if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
             gluster::mount { '/mnt/mediawiki-static':
-              ensure    => mounted,
-              volume    => lookup('gluster_volume', {'default_value' => 'gluster101.miraheze.org:/static'}),
+              ensure => mounted,
+              volume => lookup('gluster_volume', {'default_value' => 'gluster101.miraheze.org:/static'}),
             }
         }
 
@@ -93,7 +93,7 @@ class gluster {
                 '/var/log/glusterfs/glusterd.log',
                 { 'flags' => 'no-parse' }
             ],
-            program_name => 'glusterd',
+            program_name        => 'glusterd',
         }
     } else {
         rsyslog::input::file { 'glusterd':

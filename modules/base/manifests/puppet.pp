@@ -2,7 +2,7 @@
 class base::puppet (
     Optional[String] $puppet_cron_time = lookup('puppet_cron_time', {'default_value' => undef}),
     Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 7}),
-    String $puppetserver_hostname = lookup('puppetserver_hostname', {'default_value' => 'puppet111.miraheze.org'}),
+    String $puppetserver_hostname = lookup('puppetserver_hostname', {'default_value' => 'puppet141.miraheze.org'}),
 ) {
     $crontime = fqdn_rand(60, 'puppet-params-crontime')
 
@@ -81,7 +81,7 @@ class base::puppet (
     if !lookup('puppetserver') {
         file { '/etc/puppetlabs/puppet/puppet.conf':
             ensure  => present,
-            content => template("base/puppet/puppet.conf.erb"),
+            content => template('base/puppet/puppet.conf.erb'),
             mode    => '0444',
             require => Package['puppet-agent'],
         }

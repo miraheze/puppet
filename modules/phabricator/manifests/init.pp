@@ -219,7 +219,7 @@ class phabricator {
             http_vhost  => 'phab.miraheze.wiki',
             http_uri    => 'https://phab.miraheze.wiki/file/data/b6eckvcmsmmjwe6gb2as/PHID-FILE-c6u44mun2axi3qq63u5t/ManageWiki-GH.png'
         },
-     }
+    }
 
     monitoring::services { 'phabricator.miraheze.org HTTPS':
         check_command => 'check_http',
@@ -227,7 +227,7 @@ class phabricator {
             http_ssl   => true,
             http_vhost => 'phabricator.miraheze.org',
         },
-     }
+    }
 
     monitoring::nrpe { 'phd':
         command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'

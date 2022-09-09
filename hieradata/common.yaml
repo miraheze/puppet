@@ -1,12 +1,11 @@
-jobchron: false
 jobrunner: false
 jobrunner::intensive: false
 mailserver: false
 puppetserver: false
 mediawiki::branch: 'REL1_38'
 mediawiki::branch_mw_config: 'master'
-puppetserver_hostname: puppet111.miraheze.org
-role::salt::minions::salt_master: 'puppet111.miraheze.org'
+puppetserver_hostname: puppet141.miraheze.org
+role::salt::minions::salt_master: 'puppet141.miraheze.org'
 dns: false
 mediawiki::use_staging: false
 mediawiki::is_canary: false
@@ -77,7 +76,7 @@ varnish::backends:
     port: 8203
     probe: false
     pool: false
-  puppet111:
+  puppet141:
     port: 8204
     probe: false
     pool: false

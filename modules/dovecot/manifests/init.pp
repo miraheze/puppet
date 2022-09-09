@@ -21,8 +21,8 @@ class dovecot {
     }
 
     service { 'dovecot':
-        ensure    => 'running',
-        require   => Package['dovecot-core'],
+        ensure  => 'running',
+        require => Package['dovecot-core'],
     }
 
     monitoring::services { 'IMAP':

@@ -2,7 +2,7 @@
 class role::prometheus {
     include prometheus::exporter::blackbox
 
-    $blackbox_mediawiki_urls = query_nodes('Class[Role::Varnish] or Class[Role::MediaWiki]').map |$host| {
+    $blackbox_mediawiki_urls = query_nodes('Class[Role::Mediawiki]').map |$host| {
         [ 'Miraheze', 'Special:Version', 'Special:RecentChanges' ].map |$page| {
             "https://${host}/wiki/${page}"
         }

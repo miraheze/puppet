@@ -1,14 +1,10 @@
 # base::ssl
 class base::ssl {
-    $sslPackages = [
+    ensure_packages([
         'openssl',
         'ssl-cert',
         'ca-certificates',
-    ]
-
-    package { $sslPackages:
-        ensure => present,
-    }
+    ])
 
     file { 'authority certificates':
         path    => '/etc/ssl/certs',

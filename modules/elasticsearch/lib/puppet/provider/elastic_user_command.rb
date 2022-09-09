@@ -56,7 +56,7 @@ class Puppet::Provider::ElasticUserCommand < Puppet::Provider
     end
   end
 
-  # Fetch an array of provider objects from the the list of local users.
+  # Fetch an array of provider objects from the list of local users.
   def self.instances
     fetch_users.map do |user|
       new user

@@ -15,7 +15,7 @@ node /^cp(2[01]|3[01])\.miraheze\.org$/ {
     include role::varnish
 }
 
-node /^db1([012]1|12)\.miraheze\.org$/ {
+node /^db1([0234]1|12)\.miraheze\.org$/ {
     include base
     include role::db
 }
@@ -25,7 +25,7 @@ node /^es1[34]1\.miraheze\.org$/ {
     include role::elasticsearch
 }
 
-node /^gluster1[012][12]\.miraheze\.org$/ {
+node /^gluster1[02][12]\.miraheze\.org$/ {
     include base
     include role::gluster
 }
@@ -94,7 +94,7 @@ node 'prometheus131.miraheze.org' {
     include role::prometheus
 }
 
-node 'puppet111.miraheze.org' {
+node 'puppet141.miraheze.org' {
     include base
     include role::postgresql
     include puppetdb::database

@@ -13,7 +13,6 @@ Unattended-Upgrade::Package-Blacklist {
 	"mariadb-";
 	"php-";
 	"php7.4-";
-	"php7.3-";
 	"puppetdb";
 	"puppet-";
 	"redis-";

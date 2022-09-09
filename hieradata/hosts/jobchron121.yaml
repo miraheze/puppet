@@ -2,6 +2,8 @@ users::groups:
   - mediawiki-admins
   - mediawiki-roots
 
+contactgroups: ['sre', 'mediawiki']
+
 redis::heap: '1000mb'
 
 http_proxy: 'http://bast.miraheze.org:8080'
@@ -13,4 +15,4 @@ mediawiki::php::enable_fpm: false
 
 php::php_version: '7.4'
 
-puppetserver_hostname: 'puppet111.miraheze.org'
+puppetserver_hostname: 'puppet141.miraheze.org'

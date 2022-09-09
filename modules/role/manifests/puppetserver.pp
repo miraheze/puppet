@@ -20,10 +20,10 @@
 #   Options for java (which runs the puppetserver)
 #
 class role::puppetserver (
-    String  $puppetdb_hostname      = lookup('puppetdb_hostname', {'default_value' => 'puppet111.miraheze.org'}),
+    String  $puppetdb_hostname      = lookup('puppetdb_hostname', {'default_value' => 'puppet141.miraheze.org'}),
     Boolean $puppetdb_enable        = lookup('puppetdb_enable', {'default_value' => false}),
     Integer $puppet_major_version   = lookup('puppet_major_version', {'default_value' => 7}),
-    String  $puppetserver_hostname  = lookup('puppetserver_hostname', {'default_value' => 'puppet111.miraheze.org'}),
+    String  $puppetserver_hostname  = lookup('puppetserver_hostname', {'default_value' => 'puppet141.miraheze.org'}),
     String  $puppetserver_java_options = lookup('puppetserver_java_opts', {'default_value' => '-Xms300m -Xmx300m'}),
 ) {
 
@@ -40,7 +40,7 @@ class role::puppetserver (
     prometheus::exporter::jmx { "puppetserver_${::hostname}":
         port        => 9400,
         config_file => '/etc/puppetlabs/puppetserver/jvm_prometheus_jmx_exporter.yaml',
-        content      => template('role/puppetserver/jvm_prometheus_jmx_exporter.yaml.erb'),
+        content     => template('role/puppetserver/jvm_prometheus_jmx_exporter.yaml.erb'),
         notify      => Service['puppetserver']
     }
 
@@ -48,7 +48,7 @@ class role::puppetserver (
     prometheus::exporter::jmx { "puppetdb_${::hostname}":
         port        => 9401,
         config_file => '/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml',
-        content      => template('role/puppetdb/jvm_prometheus_jmx_exporter.yaml.erb'),
+        content     => template('role/puppetdb/jvm_prometheus_jmx_exporter.yaml.erb'),
         notify      => Service['puppetdb']
     }
 

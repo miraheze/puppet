@@ -1,50 +1,44 @@
-# == Define: icinga2::object::notificationcommand
+# @summary
+#   Manage Icinga 2 notificationcommand objects.
 #
-# Manage Icinga 2 notificationcommand objects.
+# @param ensure
+#   Set to present enables the object, absent disables it.
 #
-# === Parameters
+# @param notificationcommand_name
+#   Set the Icinga 2 name of the notificationcommand object.
 #
-# [*ensure*]
-#   Set to present enables the object, absent disables it. Defaults to present.
+# @param command
+#   The command. This can either be an array of individual command arguments.
+#   Alternatively a string can be specified in which case the shell interpreter
+#   (usually /bin/sh) takes care of parsing the command.
 #
-# [*notificationcommand_name*]
-#   Set the Icinga 2 name of the notificationcommand object. Defaults to title of the define resource.
+# @param env
+#   A dictionary of macros which should be exported as environment variables
+#   prior to executing the command.
 #
-# [*execute*]
-#   The "execute" script method takes care of executing the notification.
+# @param vars
+#   A dictionary containing custom attributes that are specific to this service,
+#   a string to do operations on this dictionary or an array for multiple use
+#   of custom attributes.
 #
-# [*command*]
-# 	 The command. This can either be an array of individual command arguments.
-#    Alternatively a string can be specified in which case the shell interpreter
-#    (usually /bin/sh) takes care of parsing the command.
+# @param timeout
+#   The command timeout in seconds.
 #
-# [*env*]
-# 	 A dictionary of macros which should be exported as environment variables
-#    prior to executing the command.
+# @param arguments
+#   A dictionary of command arguments.
 #
-# [*vars*]
-# 	 A dictionary containing custom attributes that are specific to this command
-#    or a string to do operations on this dictionary.
+# @param template
+#   Set to true creates a template instead of an object.
 #
-# [*timeout*]
-# 	 The command timeout in seconds. Defaults to 60 seconds.
+# @param import
+#   Sorted List of templates to include.
 #
-# [*arguments*]
-# 	 A dictionary of command arguments.
-#
-# [*template*]
-#   Set to true creates a template instead of an object. Defaults to false.
-#
-# [*import*]
-#   Sorted List of templates to include. Defaults to an empty list.
-#
-# [*target*]
+# @param target
 #   Destination config file to store in this object. File will be declared the
 #   first time.
 #
-# [*order*]
-#   String or integer to set the position in the target file, sorted alpha numeric. Defaults to 25.
-#
+# @param order
+#   String or integer to set the position in the target file, sorted alpha numeric.
 #
 define icinga2::object::notificationcommand (
   Stdlib::Absolutepath                 $target,
@@ -52,8 +46,8 @@ define icinga2::object::notificationcommand (
   String                               $notificationcommand_name = $title,
   Optional[Variant[Array, String]]     $command                  = undef,
   Optional[Hash]                       $env                      = undef,
-  Optional[Variant[String, Hash]]      $vars                     = undef,
-  Optional[Integer[1]]                 $timeout                  = undef,
+  Optional[Icinga2::CustomAttributes]  $vars                     = undef,
+  Optional[Icinga2::Interval]          $timeout                  = undef,
   Optional[Hash]                       $arguments                = undef,
   Boolean                              $template                 = false,
   Array                                $import                   = [],

@@ -124,7 +124,7 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
-    
+
     exec { 'lingo_composer':
         command     => $composer,
         creates     => "${mwpath}/extensions/Lingo/vendor",

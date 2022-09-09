@@ -1,0 +1,9 @@
+---
+icinga::repos:
+  epel:
+    descr: 'Extra Packages for Enterprise Linux %{facts.os.release.major} - $basearch'
+    mirrorlist: 'https://mirrors.fedoraproject.org/metalink?repo=epel-%{facts.os.release.major}&arch=$basearch'
+    baseurl: 'https://download.fedoraproject.org/pub/epel/%{facts.os.release.major}/$basearch'
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-%{facts.os.release.major}

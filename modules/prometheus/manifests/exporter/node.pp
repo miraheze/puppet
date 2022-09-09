@@ -83,9 +83,9 @@ class prometheus::exporter::node (
     }
 
     service { 'prometheus-node-exporter':
-        ensure    => running,
-        enable    => true,
-        require   => Package['prometheus-node-exporter'],
+        ensure  => running,
+        enable  => true,
+        require => Package['prometheus-node-exporter'],
     }
 
     $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])

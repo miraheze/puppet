@@ -87,8 +87,8 @@ class memcached(
     }
 
     systemd::service { 'memcached':
-        ensure   => present,
-        content  => systemd_template('memcached'),
+        ensure  => present,
+        content => systemd_template('memcached'),
     }
 
     monitoring::services { 'memcached':

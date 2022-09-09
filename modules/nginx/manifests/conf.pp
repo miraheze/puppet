@@ -1,11 +1,10 @@
-# nginx::conf
-#
+# == Define: nginx::conf
 define nginx::conf(
-    VMlib::Ensure $ensure       = present,
-    Optional[String] $content  = undef,
-    VMlib::Sourceurl $source    = undef,
+    VMlib::Ensure                $ensure  = 'present',
+    Optional[String]             $content = undef,
+    Optional[Stdlib::Filesource] $source  = undef,
 ) {
-    include ::nginx
+    include nginx
 
     $basename = regsubst($title, '[\W_]', '-', 'G')
 

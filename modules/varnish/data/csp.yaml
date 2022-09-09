@@ -1,5 +1,5 @@
 # Only add a domain pursuant to the policy below. Please also be restrictive in which list.
-# See https://meta.miraheze.org/wiki/Tech:CSP_Whitelist_Policy.
+# See https://meta.miraheze.org/wiki/Tech:CSP_Policy.
 default-src: 
   - "'self'"
   - '*.miraheze.org'
@@ -27,7 +27,6 @@ script-src:
   - 'www.gstatic.com'
   - 'www.google.com'
   - 'www.recaptcha.net'
-  - 'recaptchaenterprise.googleapis.com'
   - 'platform.twitter.com'
   - 'wiki-assets.sumin.wiki'
   - 'cdnjs.cloudflare.com'
@@ -36,6 +35,7 @@ script-src:
   - 'scratchblocks.github.io'
   - 'openlayers.org'
   - 'phab.miraheze.wiki'
+  - 'www.gstatic.cn'
 
 style-src:
   - "'self'"
@@ -139,7 +139,6 @@ frame-src:
   - 'www.google.com'
   - 'docs.google.com'
   - 'www.recaptcha.net'
-  - 'recaptchaenterprise.googleapis.com'
   - 'web.libera.chat'
   - 'snap.berkeley.edu'
   - '*.youtube-nocookie.com'

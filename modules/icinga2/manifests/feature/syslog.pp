@@ -1,23 +1,19 @@
-# == Class: icinga2::feature::syslog
+# @summary
+#   Configures the Icinga 2 feature syslog.
 #
-# This module configures the Icinga 2 feature syslog.
+# @param ensure
+#   Set to present enables the feature syslog, absent disables it.
 #
-# === Parameters
-#
-# [*ensure*]
-#   Set to present enables the feature syslog, absent disables it. Defaults to present.
-#
-# [*severity*]
+# @param severity
 #   You can choose the log severity between information, notice, warning or debug.
 #
-# [*facility*]
+# @param facility
 #   Defines the facility to use for syslog entries. This can be a facility constant
 #   like FacilityDaemon.
 #
-#
 class icinga2::feature::syslog(
   Enum['absent', 'present']        $ensure   = present,
-  Optional[Icinga2::LogSeverity]   $severity = undef,
+  Icinga2::LogSeverity             $severity = 'warning',
   Optional[Icinga2::LogFacility]   $facility = undef,
 ) {
 

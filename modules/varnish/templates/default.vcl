@@ -26,6 +26,7 @@ probe mwhealth {
 	# to mark the backend as healthy
 	.window = 5;
 	.threshold = 4;
+        .initial = 4;
 	.expected_response = 204;
 }
 
@@ -266,7 +267,7 @@ sub vcl_recv {
 		req.http.Host == "ssl.miraheze.org" ||
 		req.http.Host == "acme.miraheze.org"
 	) {
-		set req.backend_hint = puppet111;
+		set req.backend_hint = puppet141;
 		return (pass);
 	}
 
