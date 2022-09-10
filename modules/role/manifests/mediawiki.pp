@@ -70,4 +70,11 @@ class role::mediawiki (
         minute  => '*/1',
         hour    => '*',
     }
+
+    # Allow sockets in TIME_WAIT state to be re-used.
+    # This helps prevent exhaustion of ephemeral port or conntrack sessions.
+    # See <http://vincent.bernat.im/en/blog/2014-tcp-time-wait-state-linux.html>
+    sysctl::parameters { 'tcp_tw_reuse':
+        values => { 'net.ipv4.tcp_tw_reuse' => 1 },
+    }
 }
