@@ -86,6 +86,10 @@ class memcached(
         before => Service['memcached'],
     }
 
+    file { '/etc/memcached.conf':
+        content => '# Refer to memcached.service unit for configuration.',
+    }
+
     systemd::service { 'memcached':
         ensure  => present,
         content => systemd_template('memcached'),
