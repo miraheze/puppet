@@ -23,7 +23,7 @@ mediawiki::php::enable_request_profiling: true
 
 mediawiki::use_staging: true
 mediawiki::monitoring::host: 'beta.betaheze.org'
-mediawiki::branch: 'REL1_38'
+mediawiki::branch: 'REL1_39'
 
 php::php_version: '7.4'
 
