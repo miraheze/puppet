@@ -71,6 +71,12 @@ class role::mediawiki (
         hour    => '*',
     }
 
+    # Using fastcgi we need more local ports
+    sysctl::parameters { 'raise_port_range':
+        values   => { 'net.ipv4.ip_local_port_range' => '22500 65535', },
+        priority => 90,
+    }
+
     # Allow sockets in TIME_WAIT state to be re-used.
     # This helps prevent exhaustion of ephemeral port or conntrack sessions.
     # See <http://vincent.bernat.im/en/blog/2014-tcp-time-wait-state-linux.html>
