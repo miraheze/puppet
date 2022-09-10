@@ -4,8 +4,8 @@ class role::mediawiki (
 ) {
     include prometheus::exporter::cadvisor
 
-    include ::role::mediawiki::nutcracker
-    include ::mediawiki
+    include role::mediawiki::nutcracker
+    include mediawiki
 
     if $strict_firewall {
         $firewall_rules_str = join(
@@ -46,10 +46,6 @@ class role::mediawiki (
         }
     }
 
-    motd::role { 'role::mediawiki':
-        description => 'MediaWiki server',
-    }
-
     if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
         gluster::mount { '/mnt/mediawiki-static':
           ensure => mounted,
@@ -82,5 +78,9 @@ class role::mediawiki (
     # See <http://vincent.bernat.im/en/blog/2014-tcp-time-wait-state-linux.html>
     sysctl::parameters { 'tcp_tw_reuse':
         values => { 'net.ipv4.tcp_tw_reuse' => 1 },
+    }
+
+    motd::role { 'role::mediawiki':
+        description => 'MediaWiki server',
     }
 }
