@@ -32,6 +32,13 @@ class role::varnish {
         notrack => true,
     }
 
+    sysctl::parameters { 'cache proxy network tuning':
+        values => {
+            # Increase the number of ephemeral ports
+            'net.ipv4.ip_local_port_range'       => [ 4001, 65534 ],
+        }
+    }
+
     # tcp_tw_(reuse|recycle): both are off by default
     # http://vincent.bernat.im/en/blog/2014-tcp-time-wait-state-linux.html
     #    _recycle is dangerous: it violates RFCs, and probably breaks
