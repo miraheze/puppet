@@ -8,5 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run typos
+        continue-on-error: true
         run: |
            ! grep -E -r --binary-files=without-match --color=always --file=typos --exclude=typos --exclude-dir=.git
