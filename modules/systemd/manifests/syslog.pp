@@ -40,7 +40,7 @@
 #   Default: startswith
 #
 define systemd::syslog(
-    Wmflib::Ensure                $ensure                 = 'present',
+    VMlib::Ensure                 $ensure                 = 'present',
     Stdlib::Unixpath              $base_dir               = '/var/log',
     String[1]                     $owner                  = $title,
     String[1]                     $group                  = $title,
