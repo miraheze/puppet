@@ -1,3 +1,4 @@
+name: Check Python for MediaWiki Modules
 on:
   push:
     paths:
