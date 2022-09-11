@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
-describe 'sort', :if => Puppet::Util::Package.versioncmp(Puppet.version, '6.0.0') < 0 do
+describe 'sort', if: Puppet::Util::Package.versioncmp(Puppet.version, '6.0.0') < 0 do
   describe 'signature validation' do
     it { is_expected.not_to eq(nil) }
     it { is_expected.to run.with_params.and_raise_error(Puppet::ParseError, %r{wrong number of arguments}i) }
@@ -29,5 +31,9 @@ describe 'sort', :if => Puppet::Util::Package.versioncmp(Puppet.version, '6.0.0'
     it { is_expected.to run.with_params('').and_return('') }
     it { is_expected.to run.with_params('a').and_return('a') }
     it { is_expected.to run.with_params('cbda').and_return('abcd') }
+  end
+
+  context 'when called with a number' do
+    it { is_expected.to run.with_params('9478').and_return('4789') }
   end
 end

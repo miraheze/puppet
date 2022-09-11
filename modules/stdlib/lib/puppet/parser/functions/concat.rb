@@ -1,24 +1,29 @@
+# frozen_string_literal: true
+
 #
 # concat.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:concat, :type => :rvalue, :doc => <<-DOC
-    Appends the contents of multiple arrays into array 1.
+  newfunction(:concat, type: :rvalue, doc: <<-DOC
+    @summary
+      Appends the contents of multiple arrays into array 1.
 
-    *Example:*
+    @example Example usage
 
-        concat(['1','2','3'],['4','5','6'],['7','8','9'])
+      concat(['1','2','3'],'4') returns ['1','2','3','4']
+      concat(['1','2','3'],'4',['5','6','7']) returns ['1','2','3','4','5','6','7']
 
-    Would result in:
+    > *Note:*
+      Since Puppet 4.0, you can use the `+`` operator for concatenation of arrays and
+      merge of hashes, and the `<<`` operator for appending:
 
-      ['1','2','3','4','5','6','7','8','9']
+    `['1','2','3'] + ['4','5','6'] + ['7','8','9']` returns `['1','2','3','4','5','6','7','8','9']`
+    `[1, 2, 3] << 4` returns `[1, 2, 3, 4]`
+    `[1, 2, 3] << [4, 5]` returns `[1, 2, 3, [4, 5]]`
 
-    Note: Since Puppet 4.0 concatenation of arrays and hashes can be done with the + operator.
-
-      ['1','2','3'] + ['4','5','6'] + ['7','8','9']
+    @return [Array] The single concatenated array
   DOC
-             ) do |arguments|
-
+  ) do |arguments|
     # Check that more than 2 arguments have been given ...
     raise(Puppet::ParseError, "concat(): Wrong number of arguments given (#{arguments.size} for < 2)") if arguments.size < 2
 

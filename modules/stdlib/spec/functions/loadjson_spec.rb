@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'loadjson' do
@@ -6,8 +8,12 @@ describe 'loadjson' do
 
   describe 'when calling with valid arguments' do
     before :each do
-      allow(File).to receive(:read).with(%r{\/(stdlib|test)\/metadata.json}, :encoding => 'utf-8').and_return('{"name": "puppetlabs-stdlib"}')
+      # In Puppet 7, there are two prior calls to File.read prior to the responses we want to mock
+      allow(File).to receive(:read).with(anything, anything).and_call_original
+      allow(File).to receive(:read).with(%r{\/(stdlib|test)\/metadata.json}, encoding: 'utf-8').and_return('{"name": "puppetlabs-stdlib"}')
       allow(File).to receive(:read).with(%r{\/(stdlib|test)\/metadata.json}).and_return('{"name": "puppetlabs-stdlib"}')
+      # Additional modules used by litmus which are identified while running these dues to being in fixtures
+      allow(File).to receive(:read).with(%r{\/(provision|puppet_agent|facts)\/metadata.json}, encoding: 'utf-8')
     end
 
     context 'when a non-existing file is specified' do
@@ -70,7 +76,7 @@ describe 'loadjson' do
       let(:filename) do
         'https://example.local/myhash.json'
       end
-      let(:basic_auth) { { :http_basic_authentication => ['', ''] } }
+      let(:basic_auth) { { http_basic_authentication: ['', ''] } }
       let(:data) { { 'key' => 'value', 'ķęŷ' => 'νậŀųề', 'キー' => '値' } }
       let(:json) { '{"key":"value", {"ķęŷ":"νậŀųề" }, {"キー":"値" }' }
 
@@ -86,7 +92,7 @@ describe 'loadjson' do
         'https://user1:pass1@example.local/myhash.json'
       end
       let(:url_no_auth) { 'https://example.local/myhash.json' }
-      let(:basic_auth) { { :http_basic_authentication => ['user1', 'pass1'] } }
+      let(:basic_auth) { { http_basic_authentication: ['user1', 'pass1'] } }
       let(:data) { { 'key' => 'value', 'ķęŷ' => 'νậŀųề', 'キー' => '値' } }
       let(:json) { '{"key":"value", {"ķęŷ":"νậŀųề" }, {"キー":"値" }' }
 
@@ -102,7 +108,7 @@ describe 'loadjson' do
         'https://user1@example.local/myhash.json'
       end
       let(:url_no_auth) { 'https://example.local/myhash.json' }
-      let(:basic_auth) { { :http_basic_authentication => ['user1', ''] } }
+      let(:basic_auth) { { http_basic_authentication: ['user1', ''] } }
       let(:data) { { 'key' => 'value', 'ķęŷ' => 'νậŀųề', 'キー' => '値' } }
       let(:json) { '{"key":"value", {"ķęŷ":"νậŀųề" }, {"キー":"値" }' }
 
@@ -117,7 +123,7 @@ describe 'loadjson' do
       let(:filename) do
         'https://example.local/myhash.json'
       end
-      let(:basic_auth) { { :http_basic_authentication => ['', ''] } }
+      let(:basic_auth) { { http_basic_authentication: ['', ''] } }
       let(:json) { ',;{"key":"value"}' }
 
       it {
@@ -131,7 +137,7 @@ describe 'loadjson' do
       let(:filename) do
         'https://example.local/myhash.json'
       end
-      let(:basic_auth) { { :http_basic_authentication => ['', ''] } }
+      let(:basic_auth) { { http_basic_authentication: ['', ''] } }
 
       it {
         expect(OpenURI).to receive(:open_uri).with(filename, basic_auth).and_raise OpenURI::HTTPError, '404 File not Found'

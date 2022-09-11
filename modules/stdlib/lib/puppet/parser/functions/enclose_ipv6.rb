@@ -1,12 +1,18 @@
+# frozen_string_literal: true
+
 #
 # enclose_ipv6.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:enclose_ipv6, :type => :rvalue, :doc => <<-DOC
-    Takes an array of ip addresses and encloses the ipv6 addresses with square brackets.
-  DOC
-             ) do |arguments|
+  newfunction(:enclose_ipv6, type: :rvalue, doc: <<-DOC
+    @summary
+      Takes an array of ip addresses and encloses the ipv6 addresses with square brackets.
 
+    @return
+      encloses the ipv6 addresses with square brackets.
+
+  DOC
+  ) do |arguments|
     require 'ipaddr'
 
     rescuable_exceptions = [ArgumentError]

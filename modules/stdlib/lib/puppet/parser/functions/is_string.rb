@@ -1,12 +1,20 @@
+# frozen_string_literal: true
+
 #
 # is_string.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:is_string, :type => :rvalue, :doc => <<-DOC
-    Returns true if the variable passed to this function is a string.
-    DOC
-             ) do |arguments|
+  newfunction(:is_string, type: :rvalue, doc: <<-DOC
+    @summary
+      **Deprecated:** Returns true if the variable passed to this function is a string.
 
+    @return [Boolean]
+      Returns `true` or `false`
+
+    > **Note:* **Deprecated** Will be removed in a future version of stdlib. See
+    [`validate_legacy`](#validate_legacy).
+    DOC
+  ) do |arguments|
     function_deprecation([:is_string, 'This method is deprecated, please use the stdlib validate_legacy function,
                           with Stdlib::Compat::String. There is further documentation for validate_legacy function in the README.'])
 

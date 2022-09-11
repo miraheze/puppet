@@ -1,19 +1,24 @@
+# frozen_string_literal: true
+
 #
 #  chop.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:chop, :type => :rvalue, :doc => <<-DOC
-    Returns a new string with the last character removed. If the string ends
-    with `\r\n`, both characters are removed. Applying chop to an empty
-    string returns an empty string. If you wish to merely remove record
-    separators then you should use the `chomp` function.
+  newfunction(:chop, type: :rvalue, doc: <<-DOC
+    @summary
+      **Deprecated** Returns a new string with the last character removed.
+
+    If the string ends with `\r\n`, both characters are removed. Applying
+    chop to an empty string returns an empty string. If you wish to merely
+    remove record separators then you should use the `chomp` function.
     Requires a string or array of strings as input.
 
-    Note: from Puppet 6.0.0, the compatible function with the same name in Puppet core
-    will be used instead of this function.
-    DOC
-             ) do |arguments|
+    > *Note:* **Deprecated** from Puppet 6.0.0, this function has been replaced with a
+    built-in [`chop`](https://puppet.com/docs/puppet/latest/function.html#chop) function.
 
+    @return [String] The given String, sans the last character.
+    DOC
+  ) do |arguments|
     raise(Puppet::ParseError, "chop(): Wrong number of arguments given (#{arguments.size} for 1)") if arguments.empty?
 
     value = arguments[0]
