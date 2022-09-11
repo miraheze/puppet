@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'validate_array' do
@@ -30,6 +32,7 @@ describe 'validate_array' do
       it { is_expected.to run.with_params([], 1).and_raise_error(Puppet::ParseError, %r{is not an Array}) }
       it { is_expected.to run.with_params([], true).and_raise_error(Puppet::ParseError, %r{is not an Array}) }
       it { is_expected.to run.with_params([], 'one').and_raise_error(Puppet::ParseError, %r{is not an Array}) }
+      it { is_expected.to run.with_params(nil).and_raise_error(Puppet::ParseError, %r{is not an Array}) }
     end
   end
 end

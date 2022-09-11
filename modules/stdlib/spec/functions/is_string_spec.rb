@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'is_string' do
@@ -18,6 +20,7 @@ describe 'is_string' do
   it { is_expected.to run.with_params(-3.7).and_return(false) }
   it { is_expected.to run.with_params('-3.7').and_return(false) }
 
+  it { is_expected.to run.with_params(:undef).and_return(false) }
   it { is_expected.to run.with_params([]).and_return(false) }
   it { is_expected.to run.with_params([1]).and_return(false) }
   it { is_expected.to run.with_params({}).and_return(false) }
@@ -25,6 +28,7 @@ describe 'is_string' do
   it { is_expected.to run.with_params(false).and_return(false) }
   it { is_expected.to run.with_params('one').and_return(true) }
   it { is_expected.to run.with_params('0001234').and_return(true) }
+  it { is_expected.to run.with_params('aaa' => 'www.com').and_return(false) }
 
   context 'with  deprecation warning' do
     after(:each) do

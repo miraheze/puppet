@@ -1,10 +1,14 @@
+# frozen_string_literal: true
+
 #
 # any2bool.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:any2bool, :type => :rvalue, :doc => <<-DOC
-    This converts 'anything' to a boolean. In practise it does the following:
+  newfunction(:any2bool, type: :rvalue, doc: <<-DOC
+    @summary
+      Converts 'anything' to a boolean.
 
+    In practise it does the following:
     * Strings such as Y,y,1,T,t,TRUE,yes,'true' will return true
     * Strings such as 0,F,f,N,n,FALSE,no,'false' will return false
     * Booleans will just return their original value
@@ -14,9 +18,10 @@ module Puppet::Parser::Functions
 
     Also see the built-in [`Boolean.new`](https://puppet.com/docs/puppet/latest/function.html#conversion-to-boolean)
     function.
-  DOC
-             ) do |arguments|
 
+    @return [Boolean] The boolean value of the object that was given
+  DOC
+  ) do |arguments|
     raise(Puppet::ParseError, "any2bool(): Wrong number of arguments given (#{arguments.size} for 1)") if arguments.empty?
 
     # If argument is already Boolean, return it

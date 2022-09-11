@@ -1,23 +1,25 @@
+# frozen_string_literal: true
+
 #
 # prefix.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:prefix, :type => :rvalue, :doc => <<-DOC
-    This function applies a prefix to all elements in an array or a hash.
+  newfunction(:prefix, type: :rvalue, doc: <<-DOC
+    @summary
+      This function applies a prefix to all elements in an array or a hash.
 
-    *Examples:*
+    @example **Usage**
 
-        prefix(['a','b','c'], 'p')
+      prefix(['a','b','c'], 'p')
+      Will return: ['pa','pb','pc']
 
-    Will return: ['pa','pb','pc']
-
-    Note that since Puppet 4.0.0 the general way to modify values is in array is by using the map
+    > *Note:* since Puppet 4.0.0 the general way to modify values is in array is by using the map
     function in Puppet. This example does the same as the example above:
+    ['a', 'b', 'c'].map |$x| { "p${x}" }
 
-        ['a', 'b', 'c'].map |$x| { "p${x}" }
+    @return [Hash] or [Array] The passed values now contains the passed prefix
     DOC
-             ) do |arguments|
-
+  ) do |arguments|
     # Technically we support two arguments but only first is mandatory ...
     raise(Puppet::ParseError, "prefix(): Wrong number of arguments given (#{arguments.size} for 1)") if arguments.empty?
 

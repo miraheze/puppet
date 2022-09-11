@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 # These facter facts return the value of the Puppet vardir and environment path
 # settings for the node running puppet or puppet agent.  The intent is to
 # enable Puppet modules to automatically have insight into a place where they
-# can place variable data, or for modules running on the puppet master to know
+# can place variable data, or for modules running on the puppet server to know
 # where environments are stored.
 #
 # The values should be directly usable in a File resource path attribute.
@@ -16,7 +18,7 @@ rescue LoadError => e
   load rb_file if File.exist?(rb_file) || raise(e)
 end
 
-# These will be nil if Puppet is not available.
+# Facter fact returns the value of the Puppet vardir
 Facter.add(:puppet_vardir) do
   setcode do
     Facter::Util::PuppetSettings.with_puppet do
@@ -25,6 +27,7 @@ Facter.add(:puppet_vardir) do
   end
 end
 
+# Facter fact returns the value of the Puppet environment path
 Facter.add(:puppet_environmentpath) do
   setcode do
     Facter::Util::PuppetSettings.with_puppet do
@@ -33,6 +36,7 @@ Facter.add(:puppet_environmentpath) do
   end
 end
 
+# Facter fact returns the value of the Puppet server
 Facter.add(:puppet_server) do
   setcode do
     Facter::Util::PuppetSettings.with_puppet do

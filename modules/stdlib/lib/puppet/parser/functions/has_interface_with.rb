@@ -1,23 +1,26 @@
+# frozen_string_literal: true
+
 #
 # has_interface_with
 #
 module Puppet::Parser::Functions
-  newfunction(:has_interface_with, :type => :rvalue, :doc => <<-DOC
-    Returns boolean based on kind and value:
-      * macaddress
-      * netmask
-      * ipaddress
-      * network
+  newfunction(:has_interface_with, type: :rvalue, doc: <<-DOC
+    @summary
+      Returns boolean based on kind and value.
 
-    has_interface_with("macaddress", "x:x:x:x:x:x")
-    has_interface_with("ipaddress", "127.0.0.1")    => true
-    etc.
+    @return
+      boolean values `true` or `false`
 
-    If no "kind" is given, then the presence of the interface is checked:
-    has_interface_with("lo")                        => true
+    Valid kinds are `macaddress`, `netmask`, `ipaddress` and `network`.
+
+    @example **Usage**
+      has_interface_with("macaddress", "x:x:x:x:x:x") # Returns `false`
+      has_interface_with("ipaddress", "127.0.0.1") # Returns `true`
+
+    @example If no "kind" is given, then the presence of the interface is checked:
+      has_interface_with("lo") # Returns `true`
     DOC
-             ) do |args|
-
+  ) do |args|
     raise(Puppet::ParseError, "has_interface_with(): Wrong number of arguments given (#{args.size} for 1 or 2)") if args.empty? || args.size > 2
 
     interfaces = lookupvar('interfaces')
@@ -40,7 +43,7 @@ module Puppet::Parser::Functions
       catch :undefined_variable do
         factval = lookupvar(kind)
       end
-    rescue Puppet::ParseError # rubocop:disable Lint/HandleExceptions : Eat the exception if strict_variables = true is set
+    rescue Puppet::ParseError
     end
     if factval == value
       return true
@@ -56,7 +59,7 @@ module Puppet::Parser::Functions
         catch :undefined_variable do
           factval = lookupvar("#{kind}_#{iface}")
         end
-      rescue Puppet::ParseError # rubocop:disable Lint/HandleExceptions : Eat the exception if strict_variables = true is set
+      rescue Puppet::ParseError
       end
       if value == factval
         result = true

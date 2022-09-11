@@ -1,4 +1,15 @@
+# frozen_string_literal: true
+
 Puppet::Type.type(:file_line).provide(:ruby) do
+  desc <<-DOC
+    @summary
+      This type allows puppet to manage small config files.
+
+    The implementation matches the full line, including whitespace at the
+    beginning and end.  If the line is not contained in the given file, Puppet
+    will append the line to the end of the file to ensure the desired state.
+    Multiple resources may be declared to manage multiple lines in the same file.
+  DOC
   def exists?
     found = false
     lines_count = 0
@@ -68,7 +79,7 @@ Puppet::Type.type(:file_line).provide(:ruby) do
     #  small-ish config files that can fit into memory without
     #  too much trouble.
 
-    @lines ||= File.readlines(resource[:path], :encoding => resource[:encoding])
+    @lines ||= File.readlines(resource[:path], encoding: resource[:encoding])
   rescue TypeError => _e
     # Ruby 1.8 doesn't support open_args
     @lines ||= File.readlines(resource[:path])
@@ -83,13 +94,13 @@ Puppet::Type.type(:file_line).provide(:ruby) do
   end
 
   def count_matches(regex)
-    lines.select { |line|
+    lines.count do |line|
       if resource[:replace_all_matches_not_matching_line].to_s == 'true'
         line.match(regex) unless line.chomp == resource[:line]
       else
         line.match(regex)
       end
-    }.size
+    end
   end
 
   def handle_create_with_match

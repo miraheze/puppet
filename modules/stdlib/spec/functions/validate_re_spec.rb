@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'validate_re' do
@@ -40,14 +42,14 @@ describe 'validate_re' do
 
     describe 'non-string inputs' do
       [
-        1,             # Fixnum
-        3.14,          # Float
-        nil,           # NilClass
-        true,          # TrueClass
-        false,         # FalseClass
-        ['10'],        # Array
-        :key,          # Symbol
-        { :key => 'val' }, # Hash
+        1,                  # Fixnum
+        3.14,               # Float
+        nil,                # NilClass
+        true,               # TrueClass
+        false,              # FalseClass
+        ['10'],             # Array
+        :key,               # Symbol
+        { key: 'val' },  # Hash
       ].each do |input|
         it { is_expected.to run.with_params(input, '.*').and_raise_error(Puppet::ParseError, %r{needs to be a String}) }
       end

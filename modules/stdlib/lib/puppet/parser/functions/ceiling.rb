@@ -1,16 +1,21 @@
+# frozen_string_literal: true
+
 #
 #  ceiling.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:ceiling, :type => :rvalue, :doc => <<-DOC
-    Returns the smallest integer greater or equal to the argument.
+  newfunction(:ceiling, type: :rvalue, doc: <<-DOC
+    @summary
+      **Deprecated** Returns the smallest integer greater or equal to the argument.
     Takes a single numeric value as an argument.
 
-    Note: from Puppet 6.0.0, the compatible function with the same name in Puppet core
-    will be used instead of this function.
-    DOC
-             ) do |arguments|
+    > *Note:*
+      **Deprecated** from Puppet 6.0.0, this function has been replaced with a
+      built-in [`ceiling`](https://puppet.com/docs/puppet/latest/function.html#ceiling) function.
 
+    @return [Integer] The rounded value
+    DOC
+  ) do |arguments|
     raise(Puppet::ParseError, "ceiling(): Wrong number of arguments given (#{arguments.size} for 1)") if arguments.size != 1
 
     begin
