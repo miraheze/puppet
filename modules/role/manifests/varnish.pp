@@ -32,6 +32,12 @@ class role::varnish {
         notrack => true,
     }
 
+    sysctl::parameters { 'varnish increase connections':
+        values => {
+            'net.core.somaxconn' => 16384,
+        }
+    }
+
     sysctl::parameters { 'cache proxy network tuning':
         values => {
             # Increase the number of ephemeral ports
