@@ -34,6 +34,12 @@ class role::varnish {
 
     sysctl::parameters { 'cache proxy network tuning':
         values => {
+            'net.core.somaxconn' => 16384,
+        }
+    }
+
+    sysctl::parameters { 'cache proxy network tuning':
+        values => {
             # Increase the number of ephemeral ports
             'net.ipv4.ip_local_port_range'       => [ 4001, 65534 ],
         }
