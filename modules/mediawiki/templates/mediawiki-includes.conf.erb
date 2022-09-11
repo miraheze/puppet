@@ -13,7 +13,7 @@ location ~ ^/w/((skins|resources)|extensions/[A-Za-z0-9]+.*)/.*\.(gif|jpe?g|png|
 	expires 1d;
 }
 
-location /w/rest.php {
+location /w/rest.php/ {
 	try_files $uri $uri/ /w/rest.php?$args;
 }
 
