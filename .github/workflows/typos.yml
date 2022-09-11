@@ -1,3 +1,4 @@
+name: Check for Typos
 on:
   push:
   pull_request:
