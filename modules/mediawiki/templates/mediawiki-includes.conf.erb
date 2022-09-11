@@ -1,8 +1,5 @@
 index index.php index.html;
 
-fastcgi_read_timeout 140;
-send_timeout 140;
-
 location ~ ^/(\.git|config|landing|cache) {
         deny all;
 }
@@ -24,12 +21,10 @@ location ~ \.php {
 	include fastcgi_params;
 	fastcgi_index index.php;
 	fastcgi_split_path_info ^(.+\.php)(.*)$;
-	try_files $fastcgi_script_name =404;
 	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 	fastcgi_buffers 32 32k;
 	fastcgi_buffer_size 64k;
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-	fastcgi_read_timeout 140;
 }
 
 location = / {
@@ -54,7 +49,6 @@ location ^~ /wiki/ {
 	fastcgi_buffers 32 32k;
 	fastcgi_buffer_size 64k;
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-	fastcgi_read_timeout 140;
 }
 
 location ~ ^/m/(.*) {
