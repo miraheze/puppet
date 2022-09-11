@@ -1,4 +1,4 @@
-name: Check Python for MediaWiki Modules
+name: Check Python
 on:
   push:
     paths:
