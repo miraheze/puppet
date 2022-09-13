@@ -46,6 +46,7 @@ local jobs = {
 	'MessageUpdateJob',
 	'MoveTranslatableBundleJob',
 	'NamespaceMigrationJob',
+	'PageProperties',
 	'PublishStashedFile',
 	'PurgeEntityData',
 	'RecordLintJob',
