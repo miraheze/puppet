@@ -20,7 +20,7 @@ Unattended-Upgrade::Package-Blacklist {
 };
 
 Unattended-Upgrade::Mail "sre-infrastructure@miraheze.org";
-Unattended-Upgrade::MailOnlyOnError "true";
+Unattended-Upgrade::MailReport "only-on-error";
 
 Unattended-Upgrade::Remove-Unused-Dependencies "true";
 
