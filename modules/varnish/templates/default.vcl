@@ -32,7 +32,7 @@ probe mwhealth {
 
 <%- @backends.each_pair do | name, property | -%>
 backend <%= name %> {
-	.host = "localhost";
+	.host = "::1";
 	.port = "<%= property['port'] %>";
 <%- if property['probe'] -%>
 	.probe = <%= property['probe'] %>;
