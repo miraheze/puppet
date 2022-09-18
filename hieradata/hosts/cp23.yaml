@@ -1,0 +1,9 @@
+users::groups: 'cache-admins'
+varnish::cache_file_size: '55G'
+nginx::worker_processes: 4
+puppetserver_hostname: 'puppet141.miraheze.org'
+
+base::syslog::syslog_daemon: rsyslog
+base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
+base::syslog::rsyslog_udp_localhost: true
+nginx::logrotate_number: 2
