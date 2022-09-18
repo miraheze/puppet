@@ -4,7 +4,7 @@ class role::prometheus {
 
     $blackbox_mediawiki_urls = query_nodes('Class[Role::Mediawiki]').map |$host| {
         [ 'Miraheze' ].map |$page| {
-            "https://${host}/wiki/${page}"
+            "https://${host}/wiki/${page}?safemode=1"
         }
     }
     .flatten()
