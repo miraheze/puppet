@@ -220,7 +220,7 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/PageProperties/vendor",
         cwd         => "${mwpath}/extensions/PageProperties",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/PageProperties/Lingo",
+        environment => "HOME=${mwpath}/extensions/PageProperties",
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
