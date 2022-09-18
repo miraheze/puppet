@@ -214,4 +214,14 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+
+    exec { 'pageproperties_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/PageProperties/vendor",
+        cwd         => "${mwpath}/extensions/PageProperties",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/PageProperties",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 }
