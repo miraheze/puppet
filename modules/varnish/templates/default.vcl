@@ -54,7 +54,7 @@ sub vcl_init {
 acl purge {
 	"localhost";
 	# IPv6
-	"2a10:6740::6/64";
+	"2a10:6740::/64";
 	# IPv4
 	"31.24.105.128/28";
 }
