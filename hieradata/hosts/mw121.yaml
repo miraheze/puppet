@@ -6,7 +6,7 @@ contactgroups: ['sre', 'mediawiki']
 
 role::mediawiki::use_strict_firewall: true
 
-mediawiki::php::fpm::fpm_min_child: 16
+mediawiki::php::fpm::fpm_min_child: 20
 mediawiki::php::fpm::fpm_workers_multiplier: 1.0
 mediawiki::php::fpm_config:
   post_max_size: '250M'
