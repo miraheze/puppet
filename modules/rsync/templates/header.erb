@@ -1,0 +1,18 @@
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+
+uid = nobody
+gid = nogroup
+use chroot = <%= @use_chroot %>
+<% if @log_file %>log file = <%= @log_file %><% end %>
+log format = %t %a %m %f %b
+syslog facility = local3
+timeout = <%= @timeout %>
+address = <%= @address %>
+<%- if @rsyncd_conf != {} -%>
+<%=
+    @rsyncd_conf.map { |k, v|
+        [ k, v ].join(' = ')
+    }.join("\n")
+%>
+<%- end -%>

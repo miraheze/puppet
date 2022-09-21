@@ -1,0 +1,6 @@
+puppetserver_hostname: 'puppet141.miraheze.org'
+base::syslog::graylog_hostname: 'graylog121.miraheze.org'
+
+# Swift config
+
+swift_object_enable: true
