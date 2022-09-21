@@ -44,7 +44,7 @@ define rsync::quickdatacopy(
   Stdlib::Unixpath $module_path,
   Optional[Stdlib::Unixpath] $file_path = undef,
   Boolean $auto_sync = true,
-  Wmflib::Ensure $ensure = present,
+  VMlib::Ensure $ensure = present,
   Optional[Integer] $bwlimit = undef,
   Optional[String] $exclude = undef,
   Optional[Boolean] $delete = false,
