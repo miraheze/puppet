@@ -108,6 +108,21 @@ node 'reports121.miraheze.org' {
     include role::reports
 }
 
+node 'swiftproxy111.miraheze.org' {
+    include base
+    include role::swift
+}
+
+node 'swiftac111.miraheze.org' {
+    include base
+    include role::swift
+}
+
+node /^swiftobject11[12345]\.miraheze\.org$/ {
+    include base
+    include role::swift
+}
+
 node 'test131.miraheze.org' {
     include base
     include role::mediawiki
