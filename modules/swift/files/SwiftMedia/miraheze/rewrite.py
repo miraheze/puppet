@@ -7,7 +7,6 @@
 
 import re
 import urllib.parse
-import urllib.request
 
 from swift.common import swob
 from swift.common.utils import get_logger
@@ -48,7 +47,7 @@ class _MirahezeRewriteContext(WSGIContext):
         # go to the thumb media store for unknown files
         reqorig.host = self.thumbhost
         # upload doesn't like our User-agent.
-        proxy_handler = urllib.request.ProxyHandler(({'https': self.thumbhost})
+        proxy_handler = urllib.request.ProxyHandler({'https': self.thumbhost})
         redirect_handler = DumbRedirectHandler()
         opener = urllib.request.build_opener(redirect_handler, proxy_handler)
         # Pass on certain headers from the caller squid to the scalers
