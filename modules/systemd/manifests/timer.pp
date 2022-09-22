@@ -26,7 +26,7 @@
 define systemd::timer(
     Array[Systemd::Timer::Schedule, 1] $timer_intervals,
     String $unit_name="${title}.service",
-    Wmflib::Ensure $ensure = 'present',
+    VMlib::Ensure $ensure = 'present',
     Integer $splay = 0,
     Systemd::Timer::Interval $accuracy = '15sec',
 ) {
