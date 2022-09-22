@@ -7,7 +7,6 @@
 
 import re
 import urllib.parse
-import urllib.request
 
 from swift.common import swob
 from swift.common.utils import get_logger
