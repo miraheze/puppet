@@ -37,7 +37,7 @@ use = egg:swift#proxy
 [filter:cache]
 use = egg:swift#memcache
 # See proxy-server.conf-sample for options
-memcache_servers = 2a10:6740::6:201
+memcache_servers = [2a10:6740::6:201]
 memcache_serialization_support = 2
 # per worker!
 memcache_max_connections = 5
