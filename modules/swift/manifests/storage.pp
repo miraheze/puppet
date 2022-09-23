@@ -39,8 +39,10 @@ class swift::storage {
     }
     
     service { 'swift-object-replicator':
-        ensure => stopped,
-        enable => mask,
+        ensure   => 'stopped',
+        enable   => 'mask',
+        provider => 'systemd',
+        require  => Package['swift-object'],
     }
 
     # object-reconstructor and container-sharder are not used in WMF deployment, yet are enabled
