@@ -2,7 +2,12 @@
 -- Author: John Lewis, Miraheze
 
 local result = {}
-local queues = { 'l-unclaimed', 'z-abandoned' }
+local queues = {
+	'l-unclaimed',
+	'z-abandoned',
+	'z-claimed',
+	'z-delayed'
+}
 
 -- Below is a list of jobs we want to monitor specifically
 local jobs = {
