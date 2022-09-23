@@ -51,17 +51,24 @@ class swift::ac {
         'swift-account',
         'swift-account-auditor',
         'swift-account-reaper',
-        'swift-account-replicator',
         'swift-container',
         'swift-container-auditor',
-        'swift-container-replicator',
         'swift-container-updater',
     ]:
         ensure => running,
     }
 
-    # object-reconstructor and container-sharder are not used in WMF deployment, yet are enabled
-    # by the Debian package.
+    service { [
+        'swift-account-replicator',
+        'swift-container-replicator',
+    ]:
+        ensure   => 'stopped',
+        enable   => 'mask',
+        provider => 'systemd',
+        require  => Package['swift-object'],
+    }
+
+    # object-reconstructor and container-sharder are not used.
     # Remove their unit so 'systemctl <action> swift*' exits zero.
     # If one of the units matching the wildcard is masked then systemctl
     # exits non-zero on e.g. restart.
