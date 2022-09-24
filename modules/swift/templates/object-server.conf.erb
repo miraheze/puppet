@@ -321,31 +321,7 @@ concurrency = 0
 # ionice_priority =
 
 [object-updater]
-# You can override the default log routing for this app here (don't use set!):
-log_name = swift-object-updater
-# log_facility = LOG_LOCAL0
-# log_level = INFO
-# log_address = /dev/log
-#
-interval = 600
-# concurrency = 1
-# node_timeout = <whatever's in the DEFAULT section or 10>
-# slowdown will sleep that amount between objects
-# slowdown = 0.01
-#
-# recon_cache_path = /var/cache/swift
-#
-# You can set scheduling priority of processes. Niceness values range from -20
-# (most favorable to the process) to 19 (least favorable to the process).
-# nice_priority =
-#
-# You can set I/O scheduling class and priority of processes. I/O niceness
-# class values are IOPRIO_CLASS_RT (realtime), IOPRIO_CLASS_BE (best-effort) and
-# IOPRIO_CLASS_IDLE (idle). I/O niceness priority is a number which goes from
-# 0 to 7. The higher the value, the lower the I/O priority of the process.
-# Work only with ionice_class.
-# ionice_class =
-# ionice_priority =
+concurrency = 1
 
 [object-auditor]
 files_per_second = 5
