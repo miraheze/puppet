@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
-class swift::storage {
+class swift::storage (
+    Optional[Integer] $object_server_default_workers = lookup('swift::storage::object_server_default_workers', {'default_value' => undef})
+) {
     ensure_packages(['swift-object'])
 
     class { 'rsync::server':
