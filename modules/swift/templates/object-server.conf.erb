@@ -278,48 +278,6 @@ reclaim_age = 10
 # ionice_class =
 # ionice_priority =
 
-[object-reconstructor]
-# You can override the default log routing for this app here (don't use set!):
-# Unless otherwise noted, each setting below has the same meaning as described
-# in the [object-replicator] section, however these settings apply to the EC
-# reconstructor
-#
-log_name = swift-object-reconstructor
-# log_facility = LOG_LOCAL0
-# log_level = INFO
-# log_address = /dev/log
-#
-# daemonize = on
-#
-# Time in seconds to wait between reconstruction passes
-interval = 900
-                           
-# run_pause is deprecated, use interval instead
-# run_pause = 30
-#
-# concurrency = 1
-concurrency = 0
-# stats_interval = 300
-# node_timeout = 10
-# http_timeout = 60
-# lockup_timeout = 1800
-# reclaim_age = 604800
-# ring_check_interval = 15
-# recon_cache_path = /var/cache/swift
-# handoffs_first = False
-#
-# You can set scheduling priority of processes. Niceness values range from -20
-# (most favorable to the process) to 19 (least favorable to the process).
-# nice_priority =
-#
-# You can set I/O scheduling class and priority of processes. I/O niceness
-# class values are IOPRIO_CLASS_RT (realtime), IOPRIO_CLASS_BE (best-effort) and
-# IOPRIO_CLASS_IDLE (idle). I/O niceness priority is a number which goes from
-# 0 to 7. The higher the value, the lower the I/O priority of the process.
-# Work only with ionice_class.
-# ionice_class =
-# ionice_priority =
-
 [object-updater]
 concurrency = 1
 
