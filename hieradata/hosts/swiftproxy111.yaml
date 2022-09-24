@@ -13,3 +13,4 @@ base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 # Swift config
 
 swift_proxy_enable: true
+swift::proxy::num_workers: 12

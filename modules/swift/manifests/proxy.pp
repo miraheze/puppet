@@ -1,7 +1,8 @@
 # == Class: swift::proxy
 
 class swift::proxy (
-    Hash[String, String] $user_accounts = lookup('swift_accounts', {'default_value' => []})
+    Hash[String, String] $user_accounts = lookup('swift_accounts', {'default_value' => []}),
+    Integer              $num_workers   = lookup('swift::proxy::num_workers', {'default_value' => $::processorcount}),
 ){
 
     ensure_packages(['swift-proxy'])
