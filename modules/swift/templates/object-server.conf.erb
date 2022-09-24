@@ -189,94 +189,18 @@ recon_cache_path = /var/cache/swift
 #recon_lock_path = /var/lock
 
 [object-replicator]
-# You can override the default log routing for this app here (don't use set!):
-log_name = swift-object-replicator
-# log_facility = LOG_LOCAL0
-# log_level = INFO
-# log_address = /dev/log
-#
-# daemonize = on
-#
-# Time in seconds to wait between replication passes
-interval = 900
-
-# run_pause is deprecated, use interval instead
-# run_pause = 30
-#
 concurrency = 0
-# stats_interval = 300
-#
-# default is rsync, alternative is ssync
-# sync_method = rsync
-#
-# max duration of a partition rsync
-# rsync_timeout = 900
-#
-# bandwidth limit for rsync in kB/s. 0 means unlimited
-# rsync_bwlimit = 0
-#
-# passed to rsync for io op timeout
-# rsync_io_timeout = 30
-#
-# Allow rsync to compress data which is transmitted to destination node
-# during sync. However, this is applicable only when destination node is in
-# a different region than the local one.
-# NOTE: Objects that are already compressed (for example: .tar.gz, .mp3) might
-# slow down the syncing process.
-# rsync_compress = no
-#
-# Format of the rysnc module where the replicator will send data. See
-# etc/rsyncd.conf-sample for some usage examples.
-# rsync_module = {replication_ip}::object
-#
-# node_timeout = <whatever's in the DEFAULT section or 10>
-# max duration of an http request; this is for REPLICATE finalization calls and
-# so should be longer than node_timeout
-# http_timeout = 60
-#
-# attempts to kill all workers if nothing replicates for lockup_timeout seconds
-# lockup_timeout = 1800
-#
-# The replicator also performs reclamation
-reclaim_age = 10
-#
-# ring_check_interval = 15
-# recon_cache_path = /var/cache/swift
-#
-# limits how long rsync error log lines are
-# 0 means to log the entire line
-# rsync_error_log_line_length = 0
-#
-# handoffs_first and handoff_delete are options for a special case
-# such as disk full in the cluster. These two options SHOULD NOT BE
-# CHANGED, except for such an extreme situations. (e.g. disks filled up
-# or are about to fill up. Anyway, DO NOT let your drives fill up)
-# handoffs_first is the flag to replicate handoffs prior to canonical
-# partitions. It allows to force syncing and deleting handoffs quickly.
-# If set to a True value(e.g. "True" or "1"), partitions
-# that are not supposed to be on the node will be replicated first.
-# handoffs_first = False
-#
-# handoff_delete is the number of replicas which are ensured in swift.
-# If the number less than the number of replicas is set, object-replicator
-# could delete local handoffs even if all replicas are not ensured in the
-# cluster. Object-replicator would remove local handoff partition directories
-# after syncing partition when the number of successful responses is greater
-# than or equal to this number. By default(auto), handoff partitions will be
-# removed  when it has successfully replicated to all the canonical nodes.
-# handoff_delete = auto
-#
-# You can set scheduling priority of processes. Niceness values range from -20
-# (most favorable to the process) to 19 (least favorable to the process).
-# nice_priority =
-#
-# You can set I/O scheduling class and priority of processes. I/O niceness
-# class values are IOPRIO_CLASS_RT (realtime), IOPRIO_CLASS_BE (best-effort) and
-# IOPRIO_CLASS_IDLE (idle). I/O niceness priority is a number which goes from
-# 0 to 7. The higher the value, the lower the I/O priority of the process.
-# Work only with ionice_class.
-# ionice_class =
-# ionice_priority =
+# Don't let replication rsyncs starve other processes of CPU or I/O.
+nice_priority = 1
+# ionice_class and ionice_priority must be specified together.
+# (However, we currently use the deadline I/O schedule everywhere, which
+# does not pay attention to ionice settings.  But set them here anyway, as
+# schedulers can be changed via sysfs, and this makes experimentation
+# easier.)
+# BE is the default
+ionice_class = IOPRIO_CLASS_BE
+# default is 4; higher number => less important
+ionice_priority = 5
 
 [object-updater]
 concurrency = 1
