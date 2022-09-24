@@ -348,48 +348,9 @@ interval = 600
 # ionice_priority =
 
 [object-auditor]
-# You can override the default log routing for this app here (don't use set!):
-log_name = swift-object-auditor
-# log_facility = LOG_LOCAL0
-# log_level = INFO
-# log_address = /dev/log
-#
-# Time in seconds to wait between auditor passes
-interval = 900
-#
-# You can set the disk chunk size that the auditor uses making it larger if
-# you like for more efficient local auditing of larger objects
-# disk_chunk_size = 65536
 files_per_second = 5
-
-concurrency = 0
-# default is 10000000 but we change it to 5000000
 bytes_per_second = 5000000
-
-# log_time = 3600
-# zero_byte_files_per_second = 50
-# recon_cache_path = /var/cache/swift
-
-# Takes a comma separated list of ints. If set, the object auditor will
-# increment a counter for every object whose size is <= to the given break
-# points and report the result after a full scan.
-# object_size_stats =
-#
-# You can set scheduling priority of processes. Niceness values range from -20
-# (most favorable to the process) to 19 (least favorable to the process).
-# nice_priority =
-#
-# You can set I/O scheduling class and priority of processes. I/O niceness
-# class values are IOPRIO_CLASS_RT (realtime), IOPRIO_CLASS_BE (best-effort) and
-# IOPRIO_CLASS_IDLE (idle). I/O niceness priority is a number which goes from
-# 0 to 7. The higher the value, the lower the I/O priority of the process.
-# Work only with ionice_class.
-# ionice_class =
-# ionice_priority =
-
-# The auditor will cleanup old rsync tempfiles after they are "old
-# enough" to delete.  You can configure the time elapsed in seconds
-# before rsync tempfiles will be unlinked, or the default value of
-# "auto" try to use object-replicator's rsync_timeout + 900 and fallback
-# to 86400 (1 day).
-# rsync_tempfile_timeout = auto
+# object auditing is less important than replication
+nice_priority = 2
+ionice_class = IOPRIO_CLASS_BE
+ionice_priority = 6
