@@ -65,7 +65,10 @@ class swift::ac {
         ensure   => 'stopped',
         enable   => 'mask',
         provider => 'systemd',
-        require  => Package['swift-object'],
+        require  => [
+            Package['swift-account'],
+            Package['swift-container'],
+        ],
     }
 
     # object-reconstructor and container-sharder are not used.
