@@ -36,22 +36,8 @@ class varnish::stunnel4 {
     }
 
     $backends.each | $name, $property | {
-        if $name =~ /^mw.+$/ {
-            monitoring::nrpe { "Stunnel HTTP for ${name}":
-                command => "/usr/lib/nagios/plugins/check_http -I localhost -p ${property['port']} -j HEAD -H health.miraheze.org -u/check",
-            }
-        } elsif $name == 'phab121' {
-            monitoring::nrpe { "Stunnel HTTP for ${name}":
-                command => "/usr/lib/nagios/plugins/check_http -H localhost:${property['port']} -e 500",
-            }
-        } elsif $name == 'puppet141' {
-            monitoring::nrpe { "Stunnel HTTP for ${name}":
-                command => "/usr/lib/nagios/plugins/check_http -H localhost:${property['port']} -e 403",
-            }
-        } else {
-            monitoring::nrpe { "Stunnel HTTP for ${name}":
-                command => "/usr/lib/nagios/plugins/check_http -H localhost:${property['port']}",
-            }
+        monitoring::nrpe { "Stunnel for ${name}":
+            command => "/usr/lib/nagios/plugins/check_tcp -I localhost -p ${property['port']}",
         }
     }
 }
