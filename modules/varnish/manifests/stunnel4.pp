@@ -37,7 +37,7 @@ class varnish::stunnel4 {
 
     $backends.each | $name, $property | {
         monitoring::nrpe { "Stunnel for ${name}":
-            command => "/usr/lib/nagios/plugins/check_tcp -I localhost -p ${property['port']}",
+            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${property['port']}",
         }
     }
 }
