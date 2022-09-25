@@ -1,5 +1,5 @@
 users::groups: 'cache-admins'
-varnish::cache_file_size: '22G'
+varnish::cache_file_size: '55G'
 nginx::worker_processes: 4
 puppetserver_hostname: 'puppet141.miraheze.org'
 
