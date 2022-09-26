@@ -3,6 +3,7 @@ class role::elasticsearch {
     $es_master = lookup('role::elasticsearch::master', {'default_value' => false})
     $es_data = lookup('role::elasticsearch::data', {'default_value' => false})
     $es_discovery = lookup('role::elasticsearch::discovery_host', {'default_value' => false})
+    $es_master_hosts = lookup('role::elasticsearch::master_hosts', {'default_value' => undef})
 
     include ::java
 
@@ -16,7 +17,7 @@ class role::elasticsearch {
 
     class { 'elasticsearch':
         config      => {
-            'cluster.initial_master_nodes'                   => [ $es_master ],
+            'cluster.initial_master_nodes'                   => $es_master_hosts,
             'discovery.seed_hosts'                           => $es_discovery,
             'cluster.name'                                   => 'miraheze-general',
             'node.master'                                    => $es_master,
