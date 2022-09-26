@@ -115,12 +115,12 @@ node 'swiftproxy111.miraheze.org' {
 
 node 'swiftac111.miraheze.org' {
     include base
-    include role::swift
+    include role::ceph::mon
 }
 
 node /^swiftobject11[12345]\.miraheze\.org$/ {
     include base
-    include role::swift
+    include role::ceph::osd
 }
 
 node 'test131.miraheze.org' {

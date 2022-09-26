@@ -80,3 +80,57 @@ varnish::backends:
 # Logging
 base::syslog::syslog_daemon: rsyslog
 base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
+
+# ceph
+role::ceph::keyring:mon:
+  client.admin:
+    caps:
+      mds: allow *
+      mgr: allow *
+      mon: allow *
+      osd: allow *
+  client.bootstrap-mds:
+    caps:
+      mon: allow profile bootstrap-mds
+  client.bootstrap-mgr:
+    caps:
+      mon: allow profile bootstrap-mgr
+  client.bootstrap-osd:
+    keyring_path: /var/lib/ceph/bootstrap-osd/ceph.keyring
+    caps:
+      mgr: allow r
+      mon: profile bootstrap-osd
+  mon.swiftac111:
+    keyring_path: /etc/ceph/ceph.mon.swiftac111.keyring
+    import_to_ceph: false
+    caps:
+      mon: allow *
+  mgr.swiftac111:
+    keyring_path: /var/lib/ceph/mgr/ceph-cloudcephmon1002/keyring
+    caps:
+      mon: allow profile mgr
+      osd: allow *
+      mds: allow *
+  mds.swiftac111:
+    keyring_path: /var/lib/ceph/mgr/ceph-swiftac111/keyring
+    caps:
+      mon: allow profile mds
+      osd: allow rwx
+      mds: allow *
+
+role::ceph::mon::hosts:
+  "swiftac111.miraheze.org":
+    public:
+      addr: "2a10:6740::6:202"
+
+role::ceph::mds::hosts:
+  "swiftac111.miraheze.org":
+    public:
+      addr: "2a10:6740::6:202"
+
+role::ceph::osd::hosts:
+  "swiftobject111.miraheze.org":
+    public:
+      addr: "2a10:6740::6:203"
+
+profile::ceph::fsid: "e98fc6f6-24f6-4a38-b173-659f120e51da"

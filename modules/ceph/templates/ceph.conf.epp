@@ -1,0 +1,47 @@
+<%#- SPDX-License-Identifier: Apache-2.0 -%>
+<%- | String                     $fsid,
+      Hash[String,Hash]          $mon_hosts,
+      Hash[String,Hash]          $osd_hosts = {},
+      Hash[String,Hash]          $mds_hosts = {},
+      Boolean                    $enable_v2_messenger,
+| -%>
+[global]
+  auth cluster required = cephx
+  auth service required = cephx
+  auth client required = cephx
+
+  fsid = <%= $fsid %>
+
+  # Required if you use ipv6
+  ms bind ipv6 = true
+
+  # we log to syslog instead
+  log file = none
+  log to syslog = true
+  err to syslog = true
+
+  # We don't want replication
+  osd pool default size = 1
+  osd pool default min size = 1
+
+  mon initial members = <%= join($mon_hosts.keys().map |$k| {"${k.split('[.]')[0]}"}, ',') %>
+<% if $enable_v2_messenger {-%>
+  mon host = <%= $mon_hosts.values().map |$v| {"[v2:${v['public']['addr']}:3300/0,v1:${v['public']['addr']}:6789/0]"}.join(',') %>
+<% } -%>
+[mon]
+    mon cluster log to syslog = true
+<% $mon_hosts.each |$fqdn, $host_data| {%>
+[mon.<%= $fqdn.split('[.]')[0] %>]
+    host = <%= $fqdn.split('[.]')[0] %>
+    mon addr = <%= $host_data['public']['addr'] %>
+<% } -%>
+<% $osd_hosts.each |$fqdn, $host_data| {%>
+[osd.<%= $fqdn.split('[.]')[0] %>]
+    host = <%= $fqdn.split('[.]')[0] %>
+    public addr = <%= $host_data['public']['addr'] %>
+<% } -%>
+<% $mds_hosts.each |$fqdn, $host_data| {%>
+[mds.<%= $fqdn.split('[.]')[0] %>]
+    host = <%= $fqdn.split('[.]')[0] %>
+    public addr = <%= $host_data['public']['addr'] %>
+<% } -%>
