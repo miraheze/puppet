@@ -16,6 +16,7 @@ class role::elasticsearch {
 
     class { 'elasticsearch':
         config      => {
+            'cluster.initial_master_nodes'                   => [ $es_master ],
             'discovery.seed_hosts'                           => $es_discovery,
             'cluster.name'                                   => 'miraheze-general',
             'node.master'                                    => $es_master,
