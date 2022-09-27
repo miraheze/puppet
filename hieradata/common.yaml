@@ -106,7 +106,7 @@ role::ceph::keyring:mon:
     caps:
       mon: allow *
   mgr.swiftac111:
-    keyring_path: /var/lib/ceph/mgr/ceph-cloudcephmon1002/keyring
+    keyring_path: /var/lib/ceph/mgr/ceph-swiftac111/keyring
     caps:
       mon: allow profile mgr
       osd: allow *
