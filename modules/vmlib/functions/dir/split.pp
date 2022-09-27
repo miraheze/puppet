@@ -6,8 +6,8 @@
 # @param dirs either an absolute path or a array of absolute paths.
 # @return an array of absolute paths after being cut into individual paths.
 # @example calling the function
-#  VMlib::dir::split('/opt/puppetlabs') => ['/opt', '/opt/puppetlabs']
-function VMlib::dir::split(
+#  vmlib::dir::split('/opt/puppetlabs') => ['/opt', '/opt/puppetlabs']
+function vmlib::dir::split(
     Variant[Stdlib::Unixpath, Array[Stdlib::Unixpath]] $dirs
 ) >> Array[Stdlib::Unixpath] {
     [$dirs].flatten.unique.map |$dir| {
