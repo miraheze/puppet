@@ -133,4 +133,4 @@ role::ceph::osd::hosts:
     public:
       addr: "2a10:6740::6:203"
 
-profile::ceph::fsid: "e98fc6f6-24f6-4a38-b173-659f120e51da"
+role::ceph::fsid: "e98fc6f6-24f6-4a38-b173-659f120e51da"
