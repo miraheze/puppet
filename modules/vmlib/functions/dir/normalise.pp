@@ -6,10 +6,10 @@
 # @param dirs either an absolute path or a array of absolute paths.
 # @return an array of absolute paths after being normalised
 # @example calling the function
-#  VMlib::dir::normalise('/opt/puppetlabs/') => ['/opt/puppetlabs']
-#  VMlib::dir::normalise('/opt/puppetlabs') => ['/opt/puppetlabs']
-#  VMlib::dir::normalise(['/opt/puppetlabs', '/tmp/']) => ['/opt/puppetlabs', '/tmp']
-function VMlib::dir::normalise(
+#  vmlib::dir::normalise('/opt/puppetlabs/') => ['/opt/puppetlabs']
+#  vmlib::dir::normalise('/opt/puppetlabs') => ['/opt/puppetlabs']
+#  vmlib::dir::normalise(['/opt/puppetlabs', '/tmp/']) => ['/opt/puppetlabs', '/tmp']
+function vmlib::dir::normalise(
     Variant[Stdlib::Unixpath, Array[Stdlib::Unixpath]] $dirs
 ) >> Array[Stdlib::Unixpath] {
     [$dirs].flatten.unique.map |$dir| {
