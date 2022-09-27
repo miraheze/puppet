@@ -83,19 +83,19 @@ base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
 
 # ceph
 role::ceph::keyring:mon:
-  client.admin:
+  admin:
     caps:
       mds: allow *
       mgr: allow *
       mon: allow *
       osd: allow *
-  client.bootstrap-mds:
+  bootstrap-mds:
     caps:
       mon: allow profile bootstrap-mds
-  client.bootstrap-mgr:
+  bootstrap-mgr:
     caps:
       mon: allow profile bootstrap-mgr
-  client.bootstrap-osd:
+  bootstrap-osd:
     keyring_path: /var/lib/ceph/bootstrap-osd/ceph.keyring
     caps:
       mgr: allow r
