@@ -26,7 +26,7 @@ class role::ceph::mon(
 
     ferm::service { 'ceph_mgr_and_mds':
         proto  => 'tcp',
-        port   => 6800:7300,
+        port   => '6800:7300',
         srange => "(${firewall_rules_str})",
         before => Class['ceph::common'],
     }
