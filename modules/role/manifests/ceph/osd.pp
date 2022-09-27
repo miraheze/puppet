@@ -6,9 +6,11 @@ class role::ceph::osd(
     Hash[String[1],Hash]       $osd_hosts                       = lookup('role::ceph::osd::hosts'),
     Hash[String,Hash]          $mds_hosts                       = lookup('role::ceph::mds::hosts'),
     String[1]                  $fsid                            = lookup('role::ceph::fsid'),
-    Ceph::Auth::Conf           $ceph_auth_conf                  = lookup('role::ceph::keyring:mon')
+    Ceph::Auth::Conf           $keyring_mon                     = lookup('role::ceph::keyring:mon'),
+    Ceph::Auth::Conf           $keyring_mon_private             = lookup('role::ceph::keyring:mon_private')
 ) {
 
+    $ceph_auth_conf = deep_merge($keyring_mon, $keyring_mon_private)
     class { 'ceph::auth::deploy':
         configuration  => $ceph_auth_conf,
         selected_creds => true,
