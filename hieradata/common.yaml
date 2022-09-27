@@ -112,7 +112,7 @@ role::ceph::keyring:mon:
       osd: allow *
       mds: allow *
   mds.swiftac111:
-    keyring_path: /var/lib/ceph/mgr/ceph-swiftac111/keyring
+    keyring_path: /var/lib/ceph/mgs/ceph-swiftac111/keyring
     caps:
       mon: allow profile mds
       osd: allow rwx
