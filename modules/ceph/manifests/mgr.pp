@@ -37,7 +37,7 @@ class ceph::mgr (
         Ceph::Auth::Keyring['admin'] -> Exec['ceph-mgr-check']
     }
 
-    service { "ceph-mgr@${::hostname}":
+    service { 'ceph-mgr":
         ensure    => running,
         enable    => true,
         require   => Ceph::Auth::Keyring[$client],
