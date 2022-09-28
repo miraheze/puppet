@@ -6,7 +6,8 @@ class role::ceph::osd(
     Hash[String[1],Hash]       $osd_hosts                       = lookup('role::ceph::osd::hosts'),
     Hash[String,Hash]          $mds_hosts                       = lookup('role::ceph::mds::hosts'),
     String[1]                  $fsid                            = lookup('role::ceph::fsid'),
-    Ceph::Auth::Conf           $keyring_mon                     = lookup('role::ceph::keyring:mon')
+    Ceph::Auth::Conf           $keyring_mon                     = lookup('role::ceph::keyring:mon'),
+    Array[String[1]]           $selected_creds                  = lookup('role::ceph::selected_creds'),
 ) {
 
     # We don't want to type this so we don't have it in the constructor.
@@ -15,7 +16,7 @@ class role::ceph::osd(
 
     class { 'ceph::auth::deploy':
         configuration  => $ceph_auth_conf,
-        selected_creds => true,
+        selected_creds => $selected_creds,
     }
 
     if ! defined(Ceph::Auth::Keyring['admin']) {
