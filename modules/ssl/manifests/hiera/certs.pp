@@ -32,11 +32,12 @@ define ssl::hiera::certs (
 
     if !defined(File["/etc/ssl/private/${sslurl}.key"]) {
         file { "/etc/ssl/private/${sslurl}.key":
-            ensure => present,
-            source => "puppet:///ssl-keys/${sslurl}.key",
-            owner  => 'root',
-            group  => 'ssl-cert',
-            mode   => '0660',
+            ensure    => present,
+            source    => "puppet:///ssl-keys/${sslurl}.key",
+            owner     => 'root',
+            group     => 'ssl-cert',
+            mode      => '0660',
+            show_diff => false,
             notify => $restart_nginx,
         }
     }
