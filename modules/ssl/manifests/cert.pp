@@ -25,7 +25,7 @@ define ssl::cert (
             group     => 'ssl-cert',
             mode      => '0660',
             show_diff => false,
-            notify => $restart_nginx,
+            notify    => $restart_nginx,
         }
     }
 }
