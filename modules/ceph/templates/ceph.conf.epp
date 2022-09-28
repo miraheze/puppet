@@ -26,7 +26,7 @@
 
   mon initial members = <%= join($mon_hosts.keys().map |$k| {"${k.split('[.]')[0]}"}, ',') %>
 <% if $enable_v2_messenger {-%>
-  mon host = <%= $mon_hosts.values().map |$v| {"[v2:${v['public']['addr']}:3300/0,v1:${v['public']['addr']}:6789/0]"}.join(',') %>
+  mon host = <%= $mon_hosts.values().map |$v| {"[v2:[${v['public']['addr']}]:3300/0,v1:[${v['public']['addr']}]:6789/0]"}.join(',') %>
 <% } -%>
 [mon]
     mon cluster log to syslog = true
