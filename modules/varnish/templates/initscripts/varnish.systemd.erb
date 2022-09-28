@@ -31,7 +31,7 @@ ExecStart=/usr/sbin/varnishd \
 -p vsl_reclen=2048 \
 -p workspace_backend=128k \
 -S /etc/varnish/secret \
--s file,<%= @cache_file_name %>,<%= @cache_file_size %> \
+<%= @storage %> \
 -p http_req_size=24576 \
 -p listen_depth=4096 -p vcc_err_unref=off \
 -p http_max_hdr=128 \

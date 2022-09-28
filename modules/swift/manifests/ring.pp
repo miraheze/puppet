@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 class swift::ring {
 
-    # lint:ignore:puppet_url_without_modules
     file { '/etc/swift/account.builder':
         ensure    => present,
         source    => 'puppet:///private/swift/account.builder',
