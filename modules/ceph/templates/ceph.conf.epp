@@ -12,6 +12,8 @@
 
   fsid = <%= $fsid %>
 
+  ms bind ipv4 = false
+
   # Required if you use ipv6
   ms bind ipv6 = true
 
