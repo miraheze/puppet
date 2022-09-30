@@ -58,19 +58,6 @@ class swift::ac {
         ensure => running,
     }
 
-    service { [
-        'swift-account-replicator',
-        'swift-container-replicator',
-    ]:
-        ensure   => 'stopped',
-        enable   => 'mask',
-        provider => 'systemd',
-        require  => [
-            Package['swift-account'],
-            Package['swift-container'],
-        ],
-    }
-
     # object-reconstructor and container-sharder are not used.
     # Remove their unit so 'systemctl <action> swift*' exits zero.
     # If one of the units matching the wildcard is masked then systemctl
