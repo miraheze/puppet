@@ -40,13 +40,6 @@ class swift::storage (
         ensure => running,
     }
 
-    service { 'swift-object-replicator':
-        ensure   => 'stopped',
-        enable   => 'mask',
-        provider => 'systemd',
-        require  => Package['swift-object'],
-    }
-
     # object-reconstructor and container-sharder are not used in WMF deployment, yet are enabled
     # by the Debian package.
     # Remove their unit so 'systemctl <action> swift*' exits zero.

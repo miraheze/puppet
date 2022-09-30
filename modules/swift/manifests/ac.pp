@@ -51,24 +51,13 @@ class swift::ac {
         'swift-account',
         'swift-account-auditor',
         'swift-account-reaper',
+        'swift-account-replicator',
         'swift-container',
         'swift-container-auditor',
+        'swift-container-replicator',
         'swift-container-updater',
     ]:
         ensure => running,
-    }
-
-    service { [
-        'swift-account-replicator',
-        'swift-container-replicator',
-    ]:
-        ensure   => 'stopped',
-        enable   => 'mask',
-        provider => 'systemd',
-        require  => [
-            Package['swift-account'],
-            Package['swift-container'],
-        ],
     }
 
     # object-reconstructor and container-sharder are not used.
