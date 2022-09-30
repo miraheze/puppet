@@ -51,8 +51,10 @@ class swift::ac {
         'swift-account',
         'swift-account-auditor',
         'swift-account-reaper',
+        'swift-account-replicator',
         'swift-container',
         'swift-container-auditor',
+        'swift-container-replicator',
         'swift-container-updater',
     ]:
         ensure => running,
