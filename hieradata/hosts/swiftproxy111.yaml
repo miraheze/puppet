@@ -10,6 +10,8 @@ role::memcached::port: 11211
 puppetserver_hostname: 'puppet141.miraheze.org'
 base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 
+nginx::client_max_body_size: "0"
+
 # Swift config
 
 swift_proxy_enable: true
