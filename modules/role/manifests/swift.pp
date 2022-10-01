@@ -59,6 +59,13 @@ class role::swift {
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
+
+        ferm::service { 'swift-rsync':
+            proto   => 'tcp',
+            port    => '873',
+            notrack => true,
+            srange  => "(${firewall_rules_str})",
+        }
     }
 
     $object = lookup('swift_object_enable', {'default_value' => false})
@@ -70,6 +77,13 @@ class role::swift {
             port    => '6000',
             srange  => "(${firewall_rules_str})",
             notrack => true,
+        }
+
+        ferm::service { 'swift-rsync':
+            proto   => 'tcp',
+            port    => '873',
+            notrack => true,
+            srange  => "(${firewall_rules_str})",
         }
     }
 
