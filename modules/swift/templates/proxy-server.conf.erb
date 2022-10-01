@@ -12,7 +12,7 @@ swift_dir = /etc/swift
 user = swift
 
 [pipeline:main]
-pipeline = rewrite healthcheck cache tempurl tempauth cors staticweb proxy-logging proxy-server
+pipeline = rewrite healthcheck cache tempurl ratelimit tempauth cors staticweb proxy-logging proxy-server
 
 [app:proxy-server]
 use = egg:swift#proxy
