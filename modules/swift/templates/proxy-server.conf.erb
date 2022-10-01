@@ -23,7 +23,7 @@ account_autocreate = true
 use = egg:swift#tempauth
 token_life = 604800
 <% @accounts.sort.map do |name, info| -%>
-<% key = @credentials[name] -%>
+<% key = @accounts_keys[name] -%>
 <%= "user_#{info['user'].gsub(':', '_')} = #{key} #{info['access']} #{info['auth']}/v1/#{info['account_name']}" %>
 <% end -%>
 
