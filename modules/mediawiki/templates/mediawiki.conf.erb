@@ -204,18 +204,7 @@ server {
 
 	location ~ ^/(.+)wiki/thumb/(archive/)?[0-9a-f]/[0-9a-f][0-9a-f]/([^/]+)/[^/]*([0-9]+)px-.*$ {
 		expires 1w;
-
-		# Thumbnail handler for MediaWiki
-		# This location only matches on a thumbnail's url
-		# If the file does not exist we use @thumb_handler to run the thumb_handler.php script
-		try_files $uri $uri/ @thumb_handler;
 	}
-
-	# Thumbnail 404 handler, only called by try_files when a thumbnail does not exist
-	location @thumb_handler {
-		# Do a rewrite here so that thumb.php gets the correct arguments
-		rewrite ^/(.+)wiki/thumb/(.+)$ https://$1.miraheze.org/w/thumb_handler.php/$2;
- 	}
 
 	location = /favicon.ico {
 		try_files /../../srv/mediawiki/favicons/$host.ico /../../srv/mediawiki/favicons/default.ico;
