@@ -17,7 +17,7 @@ nginx::client_max_body_size: "0"
 swift_proxy_enable: true
 swift::proxy::num_workers: 12
 
-role::swift::accounts:
+swift::accounts:
     super_admin:
         access:       '.admin .reseller_admin'
         account_name: 'AUTH_admin'
