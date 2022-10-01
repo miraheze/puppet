@@ -23,8 +23,8 @@ pipeline = recon object-server
 
 [app:object-server]
 use = egg:swift#object
-# 200MB (value is in bytes)
-keep_cache_size = 209715200
+# 1GB (value is in bytes)
+keep_cache_size = 1073741824
 allowed_headers = content-disposition,
 	content-encoding,
 	x-delete-at,
