@@ -312,8 +312,8 @@ class _MirahezeRewriteContext(WSGIContext):
                 req.path)
             if match:
 	        container = match.group('container') # mw
-                proj = match.group('proj')  # <wiki>
-                obj = match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
+                proj = match.group('proj') # <wiki>
+                obj = match.group('path') # a876297c277d80dfd826e1f23dbfea3f.png
 
         # math renderings
         if match is None:
@@ -322,17 +322,18 @@ class _MirahezeRewriteContext(WSGIContext):
                 (r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f]/.+)$'),
                 req.path)
             if match:
-	        container = match.group('container')
+	        container = match.group('container') # mw
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
 
         # score renderings
         if match is None:
             # /metawiki/score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
-            # /metawiki-mw/score/override-midi/8/i/8i9pzt87wtpy45lpz1rox8wusjkt7ki.ogg
-            match = re.match(r'^/(?P<proj>[^/]+)/(?P<path>score/.+)$', req.path)
+            # /metawiki/score/override-midi/8/i/8i9pzt87wtpy45lpz1rox8wusjkt7ki.ogg
+            match = re.match(r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>score/.+)$', req.path)
             if match:
-                proj = match.group('proj') # <container>
+	        container = match.group('container') # mw
+                proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
 
         if match is None:
@@ -346,7 +347,7 @@ class _MirahezeRewriteContext(WSGIContext):
                 # Get the object path relative to the zone (and thus container)
                 obj = match.group('path')  # e.g. "archive/a/ab/..."
 
-        #if match is None:
+        # if match is None:
         #    match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
         #    if match:
         #        what = match.group('what')
@@ -356,11 +357,11 @@ class _MirahezeRewriteContext(WSGIContext):
         #        elif what == 'backend':
         #            req.host = '127.0.0.1:%s' % self.bind_port
         #            req.path_info = "/v1/%s/monitoring/backend" % self.account
-
+        #
         #            app_iter = self._app_call(env)
         #            status = self._get_status_int()
         #            headers = self._response_headers
-
+        #
         #            resp = swob.Response(status=status, headers=headers, app_iter=app_iter)
         #        else:
         #            resp = swob.HTTPNotFound('Monitoring type not found "%s"' % (req.path))
@@ -387,10 +388,6 @@ class _MirahezeRewriteContext(WSGIContext):
 
         # Internally rewrite the URL based on the regex it matched...
         if match:
-
-            # Add 2-digit shard to the container if it is supposed to be sharded.
-            # We may thus have an "actual" container name like "<proj><lang><repo><zone>.<shard>"
-
             # Save a url with just the account name in it.
             req.path_info = "/v1/%s" % (self.account)
             port = self.bind_port
