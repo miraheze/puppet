@@ -37,7 +37,6 @@ class _MirahezeRewriteContext(WSGIContext):
         self.user_agent = conf['user_agent'].strip()
         self.bind_port = conf['bind_port'].strip()
 
-    # unused at the momemnt
     def handle404(self, reqorig, url, container, obj):
         """
         Return a swob.Response which fetches the thumbnail from the thumb
@@ -71,22 +70,25 @@ class _MirahezeRewriteContext(WSGIContext):
             urlobj[2] = urllib.parse.quote(urlobj[2], '%/')
             encodedurl = urllib.parse.urlunsplit(urlobj)
 
-            # if sitelang, we're supposed to mangle the URL so that
-            # http://upload.wm.o/wikipedia/commons/thumb/a/a2/Foo_.jpg/330px-Foo_.jpg
-            # changes to
-            # http://commons.wp.o/w/thumb_handler.php/a/a2/Foo_.jpg/330px-Foo_.jpg
-            # log the result of the match here to test and make sure it's
-            # sane before enabling the config
             match = re.match(
-                r'^http://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
-                encodedurl)
+                    r'^https://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
+                    encodedurl)
             if match:
-                proj = match.group('proj')
-                self.logger.warn(
-                    "sitelang match has proj %s encodedurl %s" % (
-                        proj, encodedurl))
+                proj = match.group('proj').removesuffix("wiki")
+                hostname = '%s.miraheze.org' % (proj)
+                # ok, replace the URL with just the part starting with thumb/
+                # take off the first two parts of the path.
+                encodedurl = 'https://%s/w/thumb_handler.php/%s' % (
+                    hostname, match.group('path'))
+                # add in the X-Original-URI with the swift got (minus the hostname)
+                opener.addheaders.append(
+                    ('X-Original-URI', list(urlparse.urlsplit(reqorig.url))[2]))
             else:
-                self.logger.warn("no sitelang match on encodedurl: %s" % encodedurl)
+                # ASSERT this code should never be hit since only thumbs
+                # should call the 404 handler
+                self.logger.warn("non-thumb in 404 handler! encodedurl = %s" % encodedurl)
+                resp = swob.HTTPNotFound('Unexpected error')
+                return resp
 
             # ok, call the encoded url
             upcopy = opener.open(encodedurl)
@@ -109,10 +111,21 @@ class _MirahezeRewriteContext(WSGIContext):
         c_t = uinfo.get_content_type()
 
         resp = swob.Response(app_iter=upcopy, content_type=c_t)
+
+        headers_whitelist = [
+            'Content-Length',
+            'Content-Disposition',
+            'Last-Modified',
+            'Accept-Ranges',
+            'XKey',
+            'Server',
+            'Nginx-Request-Date',
+            'Nginx-Response-Date'
+        ]
         # add in the headers if we've got them
-        for header in ['Content-Length', 'Content-Disposition', 'Last-Modified', 'Accept-Ranges']:
+        for header in headers_whitelist:
             if uinfo.get(header) is not None:
-                resp.headers[header] = uinfo.get(header)
+                resp.headers[header] = uinfo.getheader(header)
 
         # also add CORS; see also our CORS middleware
         resp.headers['Access-Control-Allow-Origin'] = '*'
@@ -199,7 +212,7 @@ class _MirahezeRewriteContext(WSGIContext):
             # Then encode to a byte sequence using utf-8
             req.path_info = newpath.encode('utf-8')
 
-            #self.logger.warn(container + self.decodeStr(obj))
+            # self.logger.warn(container + self.decodeStr(obj))
 
             # do_start_response just remembers what it got called with,
             # because our 404 handler will generate a different response.
@@ -293,6 +306,7 @@ class _MirahezeRewriteContext(WSGIContext):
         # (g) https://static.miraheze.org/<proj>/timeline/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/timeline/<relpath>
 
+	zone = False
         match = re.match(
             (r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/'
              r'((?P<zone>transcoded|thumb)/)?'
@@ -305,6 +319,7 @@ class _MirahezeRewriteContext(WSGIContext):
                 obj = "%s/%s/%s" % (match.group('zone'), match.group('path'), match.group('shard')) # e.g. "thumb/a/ab/..."
             else:
 	        obj = match.group('path')  # e.g. "archive/a/ab/..."
+	        zone = match.group('zone') # for detecting if it's thumb
 
         if match is None:
             match = re.match(
@@ -411,8 +426,12 @@ class _MirahezeRewriteContext(WSGIContext):
 
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
-                resp = swob.HTTPNotFound('File not found: %s' % req.path)
-                return resp(env, start_response)
+                if zone == 'thumb':
+                    resp = self.handle404(reqorig, url, container, obj)
+                    return resp(env, start_response)
+                else:
+                    resp = swob.HTTPNotFound('File not found: %s' % req.path)
+                    return resp(env, start_response)
             else:
                 # Return the response verbatim
                 return swob.Response(status=status, headers=headers,
