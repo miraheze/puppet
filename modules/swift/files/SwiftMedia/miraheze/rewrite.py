@@ -307,7 +307,7 @@ class _MirahezeRewriteContext(WSGIContext):
         # (g) https://static.miraheze.org/<proj>/timeline/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/timeline/<relpath>
 
-	zone = False
+        zone = False
         match = re.match(
             (r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/'
              r'((?P<zone>transcoded|thumb)/)?'
