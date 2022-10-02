@@ -125,7 +125,7 @@ class _MirahezeRewriteContext(WSGIContext):
         # add in the headers if we've got them
         for header in headers_whitelist:
             if uinfo.get(header) is not None:
-                resp.headers[header] = uinfo.getheader(header)
+                resp.headers[header] = uinfo.get(header)
 
         # also add CORS; see also our CORS middleware
         resp.headers['Access-Control-Allow-Origin'] = '*'
