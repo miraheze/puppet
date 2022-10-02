@@ -91,17 +91,18 @@ class _MirahezeRewriteContext(WSGIContext):
             # ok, call the encoded url
             upcopy = opener.open(encodedurl)
         except urllib.error.HTTPError as error:
-            # Wrap the urllib error HTTPError into a swob HTTPException
+            # Wrap the urllib2 HTTPError into a swob HTTPException
             status = error.code
+            body = error.fp.read()
+            headers = list(error.hdrs.items())
             if status not in swob.RESPONSE_REASONS:
                 # Generic status description in case of unknown status reasons.
                 status = "%s Error" % status
-            return swob.HTTPException(status=status, body=error.msg, headers=list(error.hdrs.items()))
+            return swob.HTTPException(status=status, body=body, headers=headers)
         except urllib.error.URLError as error:
             msg = 'There was a problem while contacting the image scaler: %s' % \
                   error.reason
-            resp = swob.exc.HTTPServiceUnavailable(msg)
-            return resp
+            return swob.exc.HTTPServiceUnavailable(msg)
 
         # get the Content-Type.
         uinfo = upcopy.info()
@@ -213,7 +214,7 @@ class _MirahezeRewriteContext(WSGIContext):
             return self.app(env, start_response)
 
     def _handle_request(self, env, start_response):
-	    # In python3, we have to care about bytes vs strings
+        # In python3, we have to care about bytes vs strings
         # req.path_info is url-encoded ASCII
         # req.path is the byte stream resulting from url-decoding path_info
         # turned into a string using the latin1 encoding (even though mw
@@ -226,7 +227,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         req = swob.Request(env)
 
-	    # If the client has sent us URL-encoded invalid utf-8, then say
+        # If the client has sent us URL-encoded invalid utf-8, then say
         # 400 immediately and don't log a backtrace
         try:
             urllib.parse.unquote(req.path, errors="strict")
@@ -304,6 +305,21 @@ class _MirahezeRewriteContext(WSGIContext):
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/transcoded/<relpath>
         # (h) https://static.miraheze.org/<proj>/timeline/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<proj>-mw/timeline/<relpath>
+
+        match = re.match(
+            (r'^/(?P<proj>[^/]+)/(?P<lang>[^/]+)/'
+             r'((?P<zone>transcoded|thumb)/)?'
+             r'(?P<path>((temp|archive)/)?[0-9a-f]/(?P<shard>[0-9a-f]{2})/.+)$'),
+            req.path)
+        if match:
+            proj = match.group('proj')
+            lang = match.group('lang')
+            repo = 'local'  # the upload repo name is "local"
+            # Get the repo zone (if not provided that means "public")
+            zone = (match.group('zone') if match.group('zone') else 'public')
+            # Get the object path relative to the zone (and thus container)
+            obj = match.group('path')  # e.g. "archive/a/ab/..."
+            shard = match.group('shard')
 
         if match is None:
             match = re.match(
