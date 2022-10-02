@@ -22,7 +22,7 @@ define monitoring::nrpe (
             critical      => $critical,
             vars          => {
                 nrpe_command => "check_${title}",
-                nrpe_timeout => '60s',
+                nrpe_timeout => '60',
             },
         }
     }
