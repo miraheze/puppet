@@ -70,6 +70,7 @@ class _MirahezeRewriteContext(WSGIContext):
             urlobj[2] = urllib.parse.quote(urlobj[2], '%/')
             encodedurl = urllib.parse.urlunsplit(urlobj)
 
+            self.logger.warn("encodedurl %s" % encodedurl)
             match = re.match(
                     r'^https://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
                     encodedurl)
@@ -104,7 +105,7 @@ class _MirahezeRewriteContext(WSGIContext):
         except urllib.error.URLError as error:
             msg = 'There was a problem while contacting the image scaler: %s' % \
                   error.reason
-            return swob.exc.HTTPServiceUnavailable(msg)
+            return swob.HTTPServiceUnavailable(msg)
 
         # get the Content-Type.
         uinfo = upcopy.info()
