@@ -327,7 +327,7 @@ class _MirahezeRewriteContext(WSGIContext):
                 r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>timeline/.+)$',
                 req.path)
             if match:
-	        container = match.group('container') # mw
+                container = match.group('container') # mw
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path') # a876297c277d80dfd826e1f23dbfea3f.png
 
@@ -338,7 +338,7 @@ class _MirahezeRewriteContext(WSGIContext):
                 (r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f]/.+)$'),
                 req.path)
             if match:
-	        container = match.group('container') # mw
+                container = match.group('container') # mw
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
 
@@ -348,7 +348,7 @@ class _MirahezeRewriteContext(WSGIContext):
             # /metawiki/score/override-midi/8/i/8i9pzt87wtpy45lpz1rox8wusjkt7ki.ogg
             match = re.match(r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>score/.+)$', req.path)
             if match:
-	        container = match.group('container') # mw
+                container = match.group('container') # mw
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
 
