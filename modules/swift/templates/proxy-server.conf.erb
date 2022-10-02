@@ -72,7 +72,7 @@ set access_log_facility = LOG_LOCAL1
 [filter:rewrite]
 # the auth system turns our login and key into an account / token pair.
 # the account remains valid forever, but the token times out.
-account = <%= @accounts['super_admin']['account_name'] %>
+account = <%= @accounts['mw_media']['account_name'] %>
 # upload doesn't like our User-agent (Python-urllib/2.6), otherwise we could call it using urllib2.urlopen()
 user_agent = Mozilla/5.0
 
