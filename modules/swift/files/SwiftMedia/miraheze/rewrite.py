@@ -46,9 +46,7 @@ class _MirahezeRewriteContext(WSGIContext):
         # go to the thumb media store for unknown files
         reqorig.host = self.thumbhost
         # upload doesn't like our User-agent.
-        proxy_handler = urllib.request.ProxyHandler({'http': self.thumbhost})
-        redirect_handler = DumbRedirectHandler()
-        opener = urllib.request.build_opener(redirect_handler, proxy_handler)
+        opener = urllib.request.build_opener()
         # Pass on certain headers from the caller squid to the scalers
         opener.addheaders = []
         if reqorig.headers.get('User-Agent') is not None:
@@ -72,7 +70,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
             self.logger.warn("encodedurl %s" % encodedurl)
             match = re.match(
-                    r'^http://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
+                    r'^https://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
                     encodedurl)
             if match:
                 proj = match.group('proj').removesuffix("wiki")
