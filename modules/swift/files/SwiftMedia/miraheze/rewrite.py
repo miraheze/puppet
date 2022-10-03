@@ -72,7 +72,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
             self.logger.warn("encodedurl %s" % encodedurl)
             match = re.match(
-                    r'^https://(?P<host>[^/]+)/(?P<container>[^-/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
+                    r'^http://(?P<host>[^/]+)/(?P<container>[^-/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
                     encodedurl)
             if match:
                 proj = match.group('proj').removesuffix("wiki")
