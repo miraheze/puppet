@@ -197,11 +197,6 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	# Increase cache hits on varnish
-	location ~ ^/(?!(private\/))(.+)wiki/(?!(dumps|thumb/(archive/)?[0-9a-f]/[0-9a-f][0-9a-f]/([^/]+)/[^/]*([0-9]+)px-.*$)) {
-		expires 1w;
-	}
-
 	location = /favicon.ico {
 		try_files /../../srv/mediawiki/favicons/$host.ico /../../srv/mediawiki/favicons/default.ico;
 	}
