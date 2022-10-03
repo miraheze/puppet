@@ -83,7 +83,7 @@ class _MirahezeRewriteContext(WSGIContext):
                     hostname, match.group('path'))
                 # add in the X-Original-URI with the swift got (minus the hostname)
                 opener.addheaders.append(
-                    ('X-Original-URI', list(urlparse.urlsplit(reqorig.url))[2]))
+                    ('X-Original-URI', list(urllib.parse.urlsplit(reqorig.url))[2]))
             else:
                 # ASSERT this code should never be hit since only thumbs
                 # should call the 404 handler
