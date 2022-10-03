@@ -261,17 +261,6 @@ class _MirahezeRewriteContext(WSGIContext):
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
 
-        if match is None:
-            # regular uploads
-            match = re.match(
-                (r'^/(?P<proj>[^/]+)/'
-                 r'(?P<path>(.+))$'),
-                req.path)
-            if match:
-                proj = match.group('proj')
-                # Get the object path relative to the zone (and thus container)
-                obj = match.group('path')  # e.g. "archive/a/ab/..."
-
         # if match is None:
         #    match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
         #    if match:
