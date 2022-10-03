@@ -74,7 +74,7 @@ class base::monitoring {
     }
 
     monitoring::nrpe { 'APT':
-        command => '/usr/lib/nagios/plugins/check_apt -o',
+        command => '/usr/lib/nagios/plugins/check_apt -o -t 60',
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#APT'
     }
 
