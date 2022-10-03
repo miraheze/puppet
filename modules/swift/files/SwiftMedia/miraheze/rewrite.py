@@ -171,29 +171,6 @@ class _MirahezeRewriteContext(WSGIContext):
         # Keep a copy of the original request so we can ask the scalers for it
         reqorig = swob.Request(req.environ.copy())
 
-        path = env['PATH_INFO']
-        if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
-            match = re.match(
-                r'^/v1/AUTH_admin/(?P<proj>[^/]+)-avatars$',
-                req.path)
-            if match:
-                proj = match.group('proj')  # <wiki>
-                obj = ''
-
-            if match is None:
-                match = re.match(
-                    r'^/v1/AUTH_admin/(?P<proj>[^/]+)-avatars/(?P<path>.+)$',
-                    req.path)
-                if match:
-                    proj = match.group('proj')  # <wiki>
-                    obj = 'avatars/' + match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
-            
-            if match is None:
-                return self.app(env, start_response)
-        else:
-            match = None
-            
-
 	# Containers have 1 component: container.
         #
         # Projects are the wiki db name.
@@ -235,6 +212,24 @@ class _MirahezeRewriteContext(WSGIContext):
             else:
                 obj = match.group('path')  # e.g. "archive/a/ab/..."
                 zone = match.group('zone') # for detecting if it's thumb
+
+        if match is None:
+            match = re.match(
+                r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>avatars/.+)$',
+                req.path)
+            if match:
+                container = match.group('container') # mw
+                proj = match.group('proj') # <wiki>
+                obj = match.group('path')
+
+        if match is None:
+            match = re.match(
+                r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>awards/.+)$',
+                req.path)
+            if match:
+                container = match.group('container') # mw
+                proj = match.group('proj') # <wiki>
+                obj = match.group('path')
 
         if match is None:
             match = re.match(
