@@ -198,7 +198,7 @@ class _MirahezeRewriteContext(WSGIContext):
         # (g) https://static.miraheze.org/<proj>/timeline/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/timeline/<relpath>
 
-        zone = False
+        zone = ''
         match = re.match(
             (r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/'
              r'((?P<zone>transcoded|thumb)/)?'
@@ -211,7 +211,7 @@ class _MirahezeRewriteContext(WSGIContext):
                 obj = "%s/%s" % (match.group('zone'), match.group('path')) # e.g. "thumb/a/ab/..."
             else:
                 obj = match.group('path')  # e.g. "archive/a/ab/..."
-                zone = match.group('zone') # for detecting if it's thumb
+            zone = (match.group('zone') if match.group('zone') else '') # for detecting if it's thumb
 
         if match is None:
             match = re.match(
