@@ -72,7 +72,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
             self.logger.warn("encodedurl %s" % encodedurl)
             match = re.match(
-                    r'^https://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
+                    r'^http://(?P<host>[^/]+)/(?P<container>[^-/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
                     encodedurl)
             if match:
                 proj = match.group('proj').removesuffix("wiki")
@@ -83,7 +83,7 @@ class _MirahezeRewriteContext(WSGIContext):
                     hostname, match.group('path'))
                 # add in the X-Original-URI with the swift got (minus the hostname)
                 opener.addheaders.append(
-                    ('X-Original-URI', list(urlparse.urlsplit(reqorig.url))[2]))
+                    ('X-Original-URI', list(urllib.parse.urlsplit(reqorig.url))[2]))
             else:
                 # ASSERT this code should never be hit since only thumbs
                 # should call the 404 handler
@@ -141,92 +141,6 @@ class _MirahezeRewriteContext(WSGIContext):
             resp = swob.HTTPBadRequest('Failed to decode request')
             return resp(env, start_response)
 
-    def handle_request_put(self, env, start_response):
-        try:
-            return self._handle_request_put(env, start_response)
-        except UnicodeDecodeError:
-            self.logger.exception('Failed to decode request %r', env)
-            resp = swob.HTTPBadRequest('Failed to decode request')
-            return resp(env, start_response)
-
-    def _handle_request_put(self, env, start_response):
-        req = swob.Request(env)
-
-        # Double (or triple, etc.) slashes in the URL should be ignored;
-        # collapse them. fixes T34864
-        req.path_info = re.sub(r'/{2,}', '/', req.path_info)
-
-        if env['REQUEST_METHOD'] not in ('DELETE'):
-            match = re.match(
-                r'^/v1/AUTH_admin/(?P<proj>[^/]+)-timeline-render$',
-                req.path)
-            if match:
-                proj = match.group('proj')  # <wiki>
-                obj = 'timeline'
-        else:
-            match = None
-
-        if match is None:
-            match = re.match(
-                r'^/v1/AUTH_admin/(?P<proj>[^/]+)-timeline-render/(?P<path>.+)$',
-                req.path)
-            if match:
-                proj = match.group('proj')  # <wiki>
-                obj = 'timeline/' + match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
-
-        if env['REQUEST_METHOD'] not in ('DELETE'):
-            if match is None:
-                match = re.match(
-                    r'^/v1/AUTH_admin/(?P<proj>[^/]+)-avatars$',
-                    req.path)
-                if match:
-                    proj = match.group('proj')  # <wiki>
-                    obj = 'avatars'
-        else:
-            match = None
-
-        if match is None:
-            match = re.match(
-                r'^/v1/AUTH_admin/(?P<proj>[^/]+)-avatars/(?P<path>.+)$',
-                req.path)
-            if match:
-                proj = match.group('proj')  # <wiki>
-                obj = 'avatars/' + match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
-
-        if match:
-            # Get the per-project "conceptual" container name, e.g. "<proj><lang><repo><zone>"
-            container = "%s-%s" % (proj, "mw")
-            # Add 2-digit shard to the container if it is supposed to be sharded.
-            # We may thus have an "actual" container name like "<proj><lang><repo><zone>.<shard>"
-
-            # Save a url with just the account name in it.
-            req.path_info = "/v1/%s" % (self.account)
-            port = self.bind_port
-            req.host = '127.0.0.1:%s' % port
-            url = req.url[:]
-
-	        # Create a path to our object's name.
-            # Make the correct unicode string we want
-            newpath = "/v1/%s/%s/%s" % (self.account, container,
-                                        urllib.parse.unquote(obj,
-                                                             errors='strict'))
-            # Then encode to a byte sequence using utf-8
-            req.path_info = newpath.encode('utf-8')
-
-            # self.logger.warn(container + self.decodeStr(obj))
-
-            # do_start_response just remembers what it got called with,
-            # because our 404 handler will generate a different response.
-            app_iter = self._app_call(env)
-            status = self._get_status_int()
-            headers = self._response_headers
-
-            # Return the response verbatim
-            return swob.Response(status=status, headers=headers,
-                                 app_iter=app_iter)(env, start_response)
-        else:
-            return self.app(env, start_response)
-
     def _handle_request(self, env, start_response):
         # In python3, we have to care about bytes vs strings
         # req.path_info is url-encoded ASCII
@@ -257,29 +171,6 @@ class _MirahezeRewriteContext(WSGIContext):
         # Keep a copy of the original request so we can ask the scalers for it
         reqorig = swob.Request(req.environ.copy())
 
-        path = env['PATH_INFO']
-        if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
-            match = re.match(
-                r'^/v1/AUTH_admin/(?P<proj>[^/]+)-avatars$',
-                req.path)
-            if match:
-                proj = match.group('proj')  # <wiki>
-                obj = ''
-
-            if match is None:
-                match = re.match(
-                    r'^/v1/AUTH_admin/(?P<proj>[^/]+)-avatars/(?P<path>.+)$',
-                    req.path)
-                if match:
-                    proj = match.group('proj')  # <wiki>
-                    obj = 'avatars/' + match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
-            
-            if match is None:
-                return self.app(env, start_response)
-        else:
-            match = None
-            
-
 	# Containers have 1 component: container.
         #
         # Projects are the wiki db name.
@@ -307,7 +198,7 @@ class _MirahezeRewriteContext(WSGIContext):
         # (g) https://static.miraheze.org/<proj>/timeline/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/timeline/<relpath>
 
-        zone = False
+        zone = ''
         match = re.match(
             (r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/'
              r'((?P<zone>transcoded|thumb)/)?'
@@ -317,10 +208,28 @@ class _MirahezeRewriteContext(WSGIContext):
             container = match.group('container') # mw
             proj = match.group('proj') # <wiki>
             if match.group('zone'):
-                obj = "%s/%s/%s" % (match.group('zone'), match.group('path'), match.group('shard')) # e.g. "thumb/a/ab/..."
+                obj = "%s/%s" % (match.group('zone'), match.group('path')) # e.g. "thumb/a/ab/..."
             else:
                 obj = match.group('path')  # e.g. "archive/a/ab/..."
-                zone = match.group('zone') # for detecting if it's thumb
+            zone = (match.group('zone') if match.group('zone') else '') # for detecting if it's thumb
+
+        if match is None:
+            match = re.match(
+                r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>avatars/.+)$',
+                req.path)
+            if match:
+                container = match.group('container') # mw
+                proj = match.group('proj') # <wiki>
+                obj = match.group('path')
+
+        if match is None:
+            match = re.match(
+                r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>awards/.+)$',
+                req.path)
+            if match:
+                container = match.group('container') # mw
+                proj = match.group('proj') # <wiki>
+                obj = match.group('path')
 
         if match is None:
             match = re.match(
@@ -351,17 +260,6 @@ class _MirahezeRewriteContext(WSGIContext):
                 container = match.group('container') # mw
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
-
-        if match is None:
-            # regular uploads
-            match = re.match(
-                (r'^/(?P<proj>[^/]+)/'
-                 r'(?P<path>(.+))$'),
-                req.path)
-            if match:
-                proj = match.group('proj')
-                # Get the object path relative to the zone (and thus container)
-                obj = match.group('path')  # e.g. "archive/a/ab/..."
 
         # if match is None:
         #    match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
@@ -450,12 +348,13 @@ class MirahezeRewrite(object):
         self.logger = get_logger(conf)
 
     def __call__(self, env, start_response):
-        if env['REQUEST_METHOD'] in ('PUT', 'POST'):
-            context = _MirahezeRewriteContext(self, self.conf)
-            return context.handle_request_put(env, start_response)
-
         # end-users should only do GET/HEAD, nothing else needs a rewrite
         if env['REQUEST_METHOD'] not in ('HEAD', 'GET'):
+            return self.app(env, start_response)
+
+        # do nothing on authenticated and authentication requests
+        path = env['PATH_INFO']
+        if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
             return self.app(env, start_response)
 
         context = _MirahezeRewriteContext(self, self.conf)
