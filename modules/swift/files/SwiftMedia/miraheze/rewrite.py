@@ -296,7 +296,6 @@ class _MirahezeRewriteContext(WSGIContext):
 
         # Internally rewrite the URL based on the regex it matched...
         if match:
-            containers = (container if container else 'mw') # for detecting the container, default to mw
             # Save a url with just the account name in it.
             req.path_info = "/v1/%s" % (self.account)
             port = self.bind_port
@@ -304,7 +303,7 @@ class _MirahezeRewriteContext(WSGIContext):
             url = req.url[:]
             # Create a path to our object's name.
             # Make the correct unicode string we want
-            newpath = "/v1/%s/%s/%s/%s" % (self.account, containers,
+            newpath = "/v1/%s/%s/%s/%s" % (self.account, "mw",
 	                                proj,
                                         urllib.parse.unquote(obj,
                                                              errors='strict'))
@@ -321,7 +320,7 @@ class _MirahezeRewriteContext(WSGIContext):
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
                 if zone == 'thumb':
-                    resp = self.handle404(reqorig, url, container, obj)
+                    resp = self.handle404(reqorig, url, "mw", obj)
                     return resp(env, start_response)
                 else:
                     resp = swob.HTTPNotFound('File not found: %s' % req.path)
