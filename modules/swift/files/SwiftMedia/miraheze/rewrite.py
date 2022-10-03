@@ -296,7 +296,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         # Internally rewrite the URL based on the regex it matched...
         if match:
-            container = (container if container else 'mw') # for detecting the container, default to mw
+            containers = (container if container else 'mw') # for detecting the container, default to mw
             # Save a url with just the account name in it.
             req.path_info = "/v1/%s" % (self.account)
             port = self.bind_port
@@ -304,7 +304,7 @@ class _MirahezeRewriteContext(WSGIContext):
             url = req.url[:]
             # Create a path to our object's name.
             # Make the correct unicode string we want
-            newpath = "/v1/%s/%s/%s/%s" % (self.account, container,
+            newpath = "/v1/%s/%s/%s/%s" % (self.account, containers,
 	                                proj,
                                         urllib.parse.unquote(obj,
                                                              errors='strict'))
