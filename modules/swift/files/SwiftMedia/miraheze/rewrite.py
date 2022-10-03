@@ -72,7 +72,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
             self.logger.warn("encodedurl %s" % encodedurl)
             match = re.match(
-                    r'^http://(?P<host>[^/]+)/(?P<container>[^-/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
+                    r'^http://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
                     encodedurl)
             if match:
                 proj = match.group('proj').removesuffix("wiki")
@@ -200,12 +200,11 @@ class _MirahezeRewriteContext(WSGIContext):
 
         zone = ''
         match = re.match(
-            (r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/'
+            (r'^(?P<proj>[^/]+)/'
              r'((?P<zone>transcoded|thumb)/)?'
              r'(?P<path>((temp|archive)/)?[0-9a-f]/[0-9a-f]{2}/.+)$'),
             req.path)
         if match:
-            container = match.group('container') # mw
             proj = match.group('proj') # <wiki>
             if match.group('zone'):
                 obj = "%s/%s" % (match.group('zone'), match.group('path')) # e.g. "thumb/a/ab/..."
@@ -215,28 +214,25 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
             match = re.match(
-                r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>avatars/.+)$',
+                r'^/(?P<proj>[^/]+)/(?P<path>avatars/.+)$',
                 req.path)
             if match:
-                container = match.group('container') # mw
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')
 
         if match is None:
             match = re.match(
-                r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>awards/.+)$',
+                r'^/(?P<proj>[^/]+)/(?P<path>awards/.+)$',
                 req.path)
             if match:
-                container = match.group('container') # mw
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')
 
         if match is None:
             match = re.match(
-                r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>timeline/.+)$',
+                r'^/(?P<proj>[^/]+)/(?P<path>timeline/.+)$',
                 req.path)
             if match:
-                container = match.group('container') # mw
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path') # a876297c277d80dfd826e1f23dbfea3f.png
 
@@ -244,10 +240,9 @@ class _MirahezeRewriteContext(WSGIContext):
         if match is None:
             # /metawiki/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png (legacy)
             match = re.match(
-                (r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f]/.+)$'),
+                (r'^/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f]/.+)$'),
                 req.path)
             if match:
-                container = match.group('container') # mw
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
 
@@ -255,9 +250,8 @@ class _MirahezeRewriteContext(WSGIContext):
         if match is None:
             # /metawiki/score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
             # /metawiki/score/override-midi/8/i/8i9pzt87wtpy45lpz1rox8wusjkt7ki.ogg
-            match = re.match(r'^/(?P<container>[^/]+)/(?P<proj>[^/]+)/(?P<path>score/.+)$', req.path)
+            match = re.match(r'^/(?P<proj>[^/]+)/(?P<path>score/.+)$', req.path)
             if match:
-                container = match.group('container') # mw
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path')  # score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
 
@@ -302,6 +296,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         # Internally rewrite the URL based on the regex it matched...
         if match:
+            container = (container if container else 'mw') # for detecting the container, default to mw
             # Save a url with just the account name in it.
             req.path_info = "/v1/%s" % (self.account)
             port = self.bind_port
