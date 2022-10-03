@@ -20,6 +20,13 @@ class role::swift {
         include ::swift::proxy
         include role::memcached
 
+        ferm::service { '8080':
+            proto   => 'tcp',
+            port    => '8080',
+            srange  => "(${firewall_rules_str})",
+            notrack => true,
+        }
+
         ferm::service { 'http':
             proto   => 'tcp',
             port    => '80',
