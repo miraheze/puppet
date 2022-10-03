@@ -215,7 +215,7 @@ server {
 	}
 
         location / {
-                proxy_pass http://swift-lb.miraheze.org/mw/;
+                proxy_pass http://swift-lb.miraheze.org;
                 proxy_http_version 1.1;
                 proxy_set_header Connection "";
         }
