@@ -1,3 +1,8 @@
+# swift
+upstream swift {
+    server swift-lb.miraheze.org;
+}
+
 server {
 	# We can only set backlog once per port (so this will be applied to the others below)
 	listen 80 deferred backlog=4096;
@@ -210,7 +215,7 @@ server {
 	}
 
         location / {
-		proxy_pass http://swift-lb.miraheze.org;
+		proxy_pass http://swift;
 		proxy_http_version 1.1;
 		proxy_set_header Connection close; # should be default
                 proxy_set_header Upgrade $http_upgrade;
