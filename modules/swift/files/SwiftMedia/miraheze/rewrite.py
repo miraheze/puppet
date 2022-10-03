@@ -200,7 +200,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         zone = ''
         match = re.match(
-            (r'^(?P<proj>[^/]+)/'
+            (r'^/(?P<proj>[^/]+)/'
              r'((?P<zone>transcoded|thumb)/)?'
              r'(?P<path>((temp|archive)/)?[0-9a-f]/[0-9a-f]{2}/.+)$'),
             req.path)
