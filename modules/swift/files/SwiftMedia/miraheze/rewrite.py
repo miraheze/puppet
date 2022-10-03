@@ -352,6 +352,11 @@ class MirahezeRewrite(object):
         if env['REQUEST_METHOD'] not in ('HEAD', 'GET'):
             return self.app(env, start_response)
 
+        # do nothing on authenticated and authentication requests
+        path = env['PATH_INFO']
+        if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
+            return self.app(env, start_response)
+
         context = _MirahezeRewriteContext(self, self.conf)
         return context.handle_request(env, start_response)
 
