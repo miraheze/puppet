@@ -208,7 +208,7 @@ class _MirahezeRewriteContext(WSGIContext):
             container = match.group('container') # mw
             proj = match.group('proj') # <wiki>
             if match.group('zone'):
-                obj = "%s/%s/%s" % (match.group('zone'), match.group('path'), match.group('shard')) # e.g. "thumb/a/ab/..."
+                obj = "%s/%s" % (match.group('zone'), match.group('path')) # e.g. "thumb/a/ab/..."
             else:
                 obj = match.group('path')  # e.g. "archive/a/ab/..."
                 zone = match.group('zone') # for detecting if it's thumb
