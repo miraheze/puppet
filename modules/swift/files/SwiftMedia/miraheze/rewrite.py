@@ -46,7 +46,7 @@ class _MirahezeRewriteContext(WSGIContext):
         # go to the thumb media store for unknown files
         reqorig.host = self.thumbhost
         # upload doesn't like our User-agent.
-        proxy_handler = urllib.request.ProxyHandler({'https': self.thumbhost})
+        proxy_handler = urllib.request.ProxyHandler({'http': self.thumbhost})
         redirect_handler = DumbRedirectHandler()
         opener = urllib.request.build_opener(redirect_handler, proxy_handler)
         # Pass on certain headers from the caller squid to the scalers
