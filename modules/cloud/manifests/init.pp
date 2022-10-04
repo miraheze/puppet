@@ -81,7 +81,7 @@ class cloud {
         }
 
         monitoring::nrpe { 'SMART':
-            command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sda -i cciss,[0-6] -l -s'
+            command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_smart -g /dev/sd[a-z] -i cciss,[0-6] -l -s'
         }
     } else {
         monitoring::nrpe { 'IPMI Sensors':
