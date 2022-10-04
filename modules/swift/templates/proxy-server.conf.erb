@@ -69,6 +69,13 @@ paste.filter_factory = miraheze.cors:filter_factory
 use = egg:swift#proxy_logging
 set access_log_facility = LOG_LOCAL1
 
+[filter:ensure_max_age]
+paste.filter_factory = miraheze.ensure_max_age:filter_factory
+methods_list = HEAD GET
+status_list = 200
+max_age = 86400
+host_list = static-new.miraheze.org
+
 [filter:rewrite]
 # the auth system turns our login and key into an account / token pair.
 # the account remains valid forever, but the token times out.
