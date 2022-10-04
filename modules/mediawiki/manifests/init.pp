@@ -147,6 +147,7 @@ class mediawiki(
     $matomotoken                = lookup('passwords::mediawiki::matomotoken')
     $ldap_password              = lookup('passwords::mediawiki::ldap_password')
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
+    $swift_password             = lookup('mediawiki::swift_password')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
