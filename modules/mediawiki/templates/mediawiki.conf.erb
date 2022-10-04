@@ -210,24 +210,9 @@ server {
 	}
 
         location / {
-                proxy_pass http://[2a10:6740::6:201]:8080;
+                proxy_pass https://swift-lb.miraheze.org;
                 proxy_http_version 1.1;
                 proxy_set_header Connection close; # should be default
-                proxy_set_header Upgrade $http_upgrade;
-
-                proxy_redirect off;
-                proxy_buffering off;
-
-                # With proxy buffering off, proxy_buffer_size is still used to
-                # define the singular chunk of buffer the content passes
-                # through.  Apparently if nginx can't read all the response
-                # headers in the first such chunk, it fails with 502.  Upping
-                # this to 8k (from def 4k) solves it.
-                # --
-                # Raising this further from 8K to 32K
-                # Note 32KB is also the similar default limit in our varnishes (http_resp_size)
-                proxy_buffer_size       32k;
-                proxy_buffers         4 32k;
         }
 }
 
