@@ -301,7 +301,7 @@ class _MirahezeRewriteContext(WSGIContext):
             url = req.url[:]
             # Create a path to our object's name.
             # Make the correct unicode string we want
-            newpath = "/v1/%s/%s/%s/%s" % (self.account, "mw",
+            newpath = "/v1/%s/%s/%s/%s" % (self.account, "miraheze-mw",
 	                                proj,
                                         urllib.parse.unquote(obj,
                                                              errors='strict'))
@@ -318,7 +318,7 @@ class _MirahezeRewriteContext(WSGIContext):
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
                 if zone == 'thumb':
-                    resp = self.handle404(reqorig, url, "mw", obj)
+                    resp = self.handle404(reqorig, url, "miraheze-mw", obj)
                     return resp(env, start_response)
                 else:
                     resp = swob.HTTPNotFound('File not found: %s' % req.path)
