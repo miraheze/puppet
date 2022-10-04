@@ -28,3 +28,7 @@ $wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
 
 // writer-user password (ldap)
 $wmgLdapPassword = "<%= @ldap_password %>";
+
+// Swift
+
+$wmgSwiftPassword = "<%= @swift_password %>";
