@@ -63,6 +63,6 @@ class swift {
     $swift_admin_password = hiera('passwords::mediawiki::swift::admin')
     file { '/etc/swift-env.sh':
         ensure  => 'present',
-        content => template('mediawiki/swift-env.sh.erb'),
+        content => template('swift/swift-env.sh.erb'),
     }
 }
