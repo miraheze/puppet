@@ -56,5 +56,7 @@ class swift {
 
     file { '/var/log/swift':
         ensure  => directory,
+        owner   => 'swift',
+        group   => 'swift',
     }
 }
