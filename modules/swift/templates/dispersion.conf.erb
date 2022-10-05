@@ -1,6 +1,6 @@
 [dispersion]
 auth_url = https://swift-lb.miraheze.org/auth/v1.0
-auth_user = <%= @accounts[@dispersion_account]['user'] %>
-auth_key = <%= @credentials[@dispersion_account] %>
+auth_user = <%= @accounts['dispersion']['user'] %>
+auth_key = <%= @accounts_keys['dispersion'] %>
 swift_dir = /etc/swift
 dispersion_coverage = 6.0
