@@ -14,7 +14,8 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
-                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+                 'ALL = (ALL) NOPASSWD: /bin/journalctl *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/swift *',]
   mediawiki-roots:
     gid: 2002
     description: full root on MediaWiki servers
