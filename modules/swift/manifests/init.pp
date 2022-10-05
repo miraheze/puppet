@@ -59,4 +59,9 @@ class swift {
         owner   => 'swift',
         group   => 'swift',
     }
+
+    file { '/etc/swift-env.sh':
+        ensure  => 'present',
+        content => template('mediawiki/swift-env.sh.erb'),
+    }
 }
