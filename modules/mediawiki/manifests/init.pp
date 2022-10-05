@@ -195,4 +195,9 @@ class mediawiki(
             'ALL = (www-data) NOPASSWD: ALL',
         ],
     }
+
+    file { '/etc/swift-env.sh':
+         ensure  => 'present',
+         content => template('mediawiki/swift-env.sh.erb'),
+     }
 }
