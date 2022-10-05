@@ -15,6 +15,15 @@ class swift::proxy (
         notify  => Service['swift-proxy'],
     }
 
+    file { '/etc/swift/dispersion.conf':
+        owner     => 'swift',
+        group     => 'swift',
+        mode      => '0440',
+        content   => template('swift/dispersion.conf.erb'),
+        require   => Package['swift'],
+        show_diff => false,
+    }
+
     # Supports bullseye
     file { '/usr/local/lib/python3.9/dist-packages/miraheze/':
         owner   => 'root',

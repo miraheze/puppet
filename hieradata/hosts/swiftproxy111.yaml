@@ -29,3 +29,8 @@ swift::accounts:
         account_name: 'AUTH_mw'
         auth:         'http://swift-lb.miraheze.org'
         user:         'mw:media'
+    dispersion:
+        access:       '.admin'
+        account_name: 'AUTH_dispersion'
+        auth:         'http://swift-lb.miraheze.org'
+        user:         'swift:dispersion'
