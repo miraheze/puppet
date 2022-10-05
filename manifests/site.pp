@@ -108,7 +108,7 @@ node 'reports121.miraheze.org' {
     include role::reports
 }
 
-node 'swiftproxy111.miraheze.org' {
+node /^swiftproxy1[13]1\.miraheze\.org$/ {
     include base
     include role::swift
 }
