@@ -67,4 +67,12 @@ class swift::storage (
         mode   => '0440',
         source => 'puppet:///modules/swift/swift-drive-audit.conf',
     }
+
+    monitoring::services { 'Swift Object Service':
+        check_command => 'tcp',
+        vars          => {
+            tcp_address => $::ipaddress6,
+            tcp_port    => '6000',
+        },
+    }
 }
