@@ -18,7 +18,6 @@ class role::swift {
     $proxy = lookup('swift_proxy_enable', {'default_value' => false})
     if $proxy {
         include ::swift::proxy
-        include role::memcached
 
         ferm::service { 'http':
             proto   => 'tcp',
@@ -33,12 +32,16 @@ class role::swift {
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
+        
+        if lookup('swift_enable_memcache', {'default_value' => false}) {
+            include role::memcached
 
-        ferm::service { 'swift_memcache_11211':
-            proto   => 'tcp',
-            port    => '11211',
-            srange  => "(${firewall_rules_str})",
-            notrack => true,
+            ferm::service { 'swift_memcache_11211':
+                proto   => 'tcp',
+                port    => '11211',
+                srange  => "(${firewall_rules_str})",
+                notrack => true,
+            }
         }
     }
 
