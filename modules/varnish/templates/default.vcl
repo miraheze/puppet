@@ -348,6 +348,13 @@ sub vcl_backend_fetch {
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
+	# T9808: Assign restrictive Cache-Control if one is missing
+	if (!beresp.http.Cache-Control) {
+		set beresp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
+		set beresp.ttl = 0s;
+		// translated to hit-for-pass below
+	}
+
 	/* Don't cache private, no-cache, no-store objects. */
 	if (beresp.http.Cache-Control ~ "(?i:private|no-cache|no-store)") {
 		set beresp.ttl = 0s;
