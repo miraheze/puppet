@@ -64,5 +64,6 @@ class swift {
     file { '/etc/swift-env.sh':
         ensure  => 'present',
         content => template('swift/swift-env.sh.erb'),
+        mode    => '0755',
     }
 }
