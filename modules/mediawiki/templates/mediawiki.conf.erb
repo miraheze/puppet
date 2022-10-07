@@ -207,6 +207,8 @@ server {
                 proxy_set_header Connection close; # should be default
 
                 proxy_set_header Host $host;
+                proxy_set_header X-Client-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         }
 }
 
