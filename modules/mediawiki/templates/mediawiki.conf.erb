@@ -195,15 +195,7 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
-
-	location = /favicon.ico {
-		try_files /../../srv/mediawiki/favicons/$host.ico /../../srv/mediawiki/favicons/default.ico;
-	}
-
-	location = /apple-touch-icon.png {
-		try_files /../../srv/mediawiki/favicons/apple-touch-icon-$host.png /../../srv/mediawiki/favicons/apple-touch-icon-default.png;
-	}
+	add_header X-Frame-Options "ALLOW-FROM static-new.miraheze.org";
 
 	location /private/ {
 		deny all;
