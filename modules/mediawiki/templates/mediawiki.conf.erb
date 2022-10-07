@@ -205,6 +205,8 @@ server {
                 proxy_pass https://swift-lb.miraheze.org;
                 proxy_http_version 1.1;
                 proxy_set_header Connection close; # should be default
+
+                proxy_set_header Host $host;
         }
 }
 
