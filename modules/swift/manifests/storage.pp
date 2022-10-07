@@ -4,6 +4,20 @@ class swift::storage (
 ) {
     ensure_packages(['swift-object'])
 
+    systemd::service { 'rsync':
+        ensure   => present,
+        content  => init_template('rsync', 'systemd_override'),
+        override => true,
+        restart  => true,
+    }
+
+    systemd::service { 'swift-object-replicator':
+        ensure   => present,
+        content  => init_template('swift-object-replicator', 'systemd_override'),
+        override => true,
+        restart  => true,
+    }
+
     class { 'rsync::server':
         log_file => '/var/log/rsyncd.log',
     }
