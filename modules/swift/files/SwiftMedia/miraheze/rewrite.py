@@ -196,7 +196,11 @@ class _MirahezeRewriteContext(WSGIContext):
         # (g) https://static.miraheze.org/<proj>/timeline/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/timeline/<relpath>
 
+	# public container
+        container = 'miraheze-mw'
+	proj = ''
         zone = ''
+
         match = re.match(
             (r'^/(?P<proj>[^/]+)/'
              r'((?P<zone>transcoded|thumb)/)?'
@@ -212,10 +216,10 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
             match = re.match(
-                r'^/(?P<proj>[^/]+)/(?P<path>avatars/.+)$',
+                r'^/(?P<proj>[^/]+)/(?P<zone>avatars)/(?P<path>.+)$',
                 req.path)
             if match:
-                proj = match.group('proj') # <wiki>
+                container = 'miraheze-avatars'
                 obj = match.group('path')
 
         if match is None:
@@ -301,10 +305,15 @@ class _MirahezeRewriteContext(WSGIContext):
             url = req.url[:]
             # Create a path to our object's name.
             # Make the correct unicode string we want
-            newpath = "/v1/%s/%s/%s/%s" % (self.account, "miraheze-mw",
-	                                proj,
-                                        urllib.parse.unquote(obj,
-                                                             errors='strict'))
+            if project:
+		    newpath = "/v1/%s/%s/%s/%s" % (self.account, container,
+						proj,
+						urllib.parse.unquote(obj,
+								     errors='strict'))
+            else:
+		    newpath = "/v1/%s/%s/%s" % (self.account, container,
+						urllib.parse.unquote(obj,
+								     errors='strict'))
             # Then encode to a byte sequence using utf-8
             req.path_info = newpath.encode('utf-8')
             # self.logger.warn("new path is %s" % req.path_info)
