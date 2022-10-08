@@ -158,19 +158,16 @@ class _MirahezeRewriteContext(WSGIContext):
         # Keep a copy of the original request so we can ask the scalers for it
         reqorig = swob.Request(req.environ.copy())
 
-        # do nothing on authenticated and authentication requests
-        path = env['PATH_INFO']
-        if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
 	# We want to rewrite some paths that are using authentication.
 	# In MediaWiki we cannot change what container to use
 	# for some extensions.
-        if match is None:
         match = re.match(
-		r'^/v1/AUTH_mw/miraheze-(?P<proj>.+)-avatars$',
+                r'^/v1/AUTH_mw/miraheze-(?P<wiki>.+)-(?P<proj>.+)/(?P<path>.+)$',
                 req.path)
         if match:
-                proj = match.group('proj') # <wiki>
-                obj = '/avatars/' + match.group('path')
+                wiki = match.group('wiki') # <wiki>
+                proj = match.group('proj') # <proj>
+                obj = match.group('path') # <path>
 
         # Internally rewrite the URL based on the regex it matched...
         if match:
@@ -181,7 +178,8 @@ class _MirahezeRewriteContext(WSGIContext):
             url = req.url[:]
             # Create a path to our object's name.
             # Make the correct unicode string we want
-            newpath = "/v1/%s/%s/%s/%s" % (self.account, "miraheze-mw",
+            newpath = "/v1/%s/%s/%s/%s/%s" % (self.account, "miraheze-mw",
+	                                wiki,
 	                                proj,
                                         urllib.parse.unquote(obj,
                                                              errors='strict'))
