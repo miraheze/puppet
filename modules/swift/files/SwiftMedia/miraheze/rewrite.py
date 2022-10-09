@@ -131,6 +131,223 @@ class _MirahezeRewriteContext(WSGIContext):
 
         return resp
 
+    def handle_request_authentication(self, env, start_response):
+        try:
+            return self._handle_request_authentication(env, start_response)
+        except UnicodeDecodeError:
+            self.logger.exception('Failed to decode request %r', env)
+            resp = swob.HTTPBadRequest('Failed to decode request')
+            return resp(env, start_response)
+
+    def _handle_request_authentication(self, env, start_response):
+        req = swob.Request(env)
+
+        # If the client has sent us URL-encoded invalid utf-8, then say
+        # 400 immediately and don't log a backtrace
+        try:
+            urllib.parse.unquote(req.path, errors="strict")
+        except UnicodeDecodeError:
+            resp = swob.HTTPBadRequest('Failed to decode request')
+            return resp(env, start_response)
+
+        # Double (or triple, etc.) slashes in the URL should be ignored;
+        # collapse them.
+        # mojibake-safe since 0x2F is / in all relevant encodings
+        req.path_info = re.sub(r'/{2,}', '/', req.path_info)
+
+        # Keep a copy of the original request so we can ask the scalers for it
+        reqorig = swob.Request(req.environ.copy())
+
+        # We want to rewrite some paths that are using authentication.
+        # In MediaWiki we cannot change what container to use
+        # for some extensions.
+
+        # Default public container
+        container = 'miraheze-mw'
+        # Sometimes a project isn't defined
+        proj = ''
+
+        match = re.match(
+                r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump/(?P<path>.+)$',
+                req.path)
+        if match:
+                wiki = 'metawiki' # always use meta with the exception of beta
+                obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump-betawiki/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        wiki = 'betawiki' # always use beta
+                        obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        container = 'miraheze-mw-private'
+                        wiki = match.group('wiki') # <wiki>
+                        if match.group('proj') != 'public':
+                                proj = match.group('proj') # <proj>
+                        obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        container = 'miraheze-mw-private'
+                        wiki = match.group('wiki') # <wiki>
+                        if match.group('proj') != 'public':
+                                proj = match.group('proj') # <proj>
+                        obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+                        if match.group('proj') != 'public':
+                                proj = match.group('proj') # <proj>
+                        obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+                        if match.group('proj') != 'public':
+                                proj = match.group('proj') # <proj>
+                        obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+                        obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw-private/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        container = 'miraheze-mw-private'
+                        wiki = match.group('wiki') # <wiki>
+                        obj = match.group('path') # <path>
+
+        # Internally rewrite the URL based on the regex it matched...
+        if match:
+            # Save a url with just the account name in it.
+            req.path_info = "/v1/%s" % (self.account)
+            port = self.bind_port
+            req.host = '127.0.0.1:%s' % port
+            url = req.url[:]
+            # Create a path to our object's name.
+            # Make the correct unicode string we want
+            if proj:
+                newpath = "/v1/%s/%s/%s/%s/%s" % (self.account, container,
+                                                wiki,
+                                                proj,
+                                                urllib.parse.unquote(obj,
+                                                                    errors='strict'))
+            else:
+                newpath = "/v1/%s/%s/%s/%s" % (self.account, container,
+                                            wiki,
+                                            urllib.parse.unquote(obj,
+                                                                errors='strict'))
+
+            # Then encode to a byte sequence using utf-8
+            req.path_info = newpath.encode('utf-8')
+            # self.logger.warn("new path is %s" % req.path_info)
+
+            # Because we do re-writting above, when a object is moved we have to also update
+            # X-Copy-From as it doesn't go through our rewrites.
+            if "HTTP_X_COPY_FROM" in env:
+                match = re.match(
+                        r'^/miraheze-(?P<wiki>[^/]+)-public-ImportDump/(?P<path>.+)$',
+                        env['HTTP_X_COPY_FROM'])
+                if match:
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw/metawiki/%s" % match.group('path')
+
+                if match is None:
+                    match = re.match(
+                            r'^/miraheze-(?P<wiki>[^/]+)-public-ImportDump-betawiki/(?P<path>.+)$',
+                            env['HTTP_X_COPY_FROM'])
+                    if match:
+                        env['HTTP_X_COPY_FROM'] = "/miraheze-mw/betawiki/%s" % match.group('path')
+
+                if match is None:
+                    match = re.match(
+                            r'^/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)/(?P<path>.+)$',
+                            env['HTTP_X_COPY_FROM'])
+                    if match:
+                        if match.group('proj') != 'public':
+                            env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path'))
+                        else:
+                            env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s" % (match.group('wiki'), match.group('path'))
+
+                if match is None:
+                    match = re.match(
+                            r'^/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)/(?P<path>.+)$',
+                            env['HTTP_X_COPY_FROM'])
+                    if match:
+                        if match.group('proj') != 'public':
+                            env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path'))
+                        else:
+                            env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s" % (match.group('wiki'), match.group('path'))
+
+                if match is None:
+                    match = re.match(
+                            r'^/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)/(?P<path>.+)$',
+                            env['HTTP_X_COPY_FROM'])
+                    if match:
+                        if match.group('proj') != 'public':
+                            env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path'))
+                        else:
+                            env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s" % (match.group('wiki'), match.group('path'))
+
+                if match is None:
+                    match = re.match(
+                            r'^/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)/(?P<path>.+)$',
+                            env['HTTP_X_COPY_FROM'])
+                    if match:
+                        if match.group('proj') != 'public':
+                            env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path'))
+                        else:
+                            env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s" % (match.group('wiki'), match.group('path'))
+
+                if match is None:
+                    match = re.match(
+                            r'^/miraheze-(?P<wiki>[^/]+)-mw/(?P<path>.+)$',
+                            env['HTTP_X_COPY_FROM'])
+                    if match:
+                        env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s" % (match.group('wiki'), match.group('path'))
+
+                if match is None:
+                    match = re.match(
+                            r'^/miraheze-(?P<wiki>[^/]+)-mw-private/(?P<path>.+)$',
+                            env['HTTP_X_COPY_FROM'])
+                    if match:
+                        env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s" % (match.group('wiki'), match.group('path'))
+
+            # do_start_response just remembers what it got called with,
+            # because our 404 handler will generate a different response.
+            app_iter = self._app_call(env)
+            status = self._get_status_int()
+            headers = self._response_headers
+
+            # Return the response verbatim
+            return swob.Response(status=status, headers=headers,
+                                 app_iter=app_iter)(env, start_response)
+        else:
+            return self.app(env, start_response)
+
     def handle_request(self, env, start_response):
         try:
             return self._handle_request(env, start_response)
@@ -340,14 +557,16 @@ class MirahezeRewrite(object):
         self.logger = get_logger(conf)
 
     def __call__(self, env, start_response):
-        # end-users should only do GET/HEAD, nothing else needs a rewrite
+        # end-users should only do GET/HEAD
         if env['REQUEST_METHOD'] not in ('HEAD', 'GET'):
-            return self.app(env, start_response)
+            context = _MirahezeRewriteContext(self, self.conf)
+            return context.handle_request_authentication(env, start_response)
 
         # do nothing on authenticated and authentication requests
         path = env['PATH_INFO']
         if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
-            return self.app(env, start_response)
+            context = _MirahezeRewriteContext(self, self.conf)
+            return context.handle_request_authentication(env, start_response)
 
         context = _MirahezeRewriteContext(self, self.conf)
         return context.handle_request(env, start_response)
