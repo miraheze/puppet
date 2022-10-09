@@ -210,7 +210,7 @@ class _MirahezeRewriteContext(WSGIContext):
         if match is None:
                 match = re.match(
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)(?P<query>\?.+)$',
-                        req.path)
+                        env['REQUEST_URI'])
                 if match:
                         container = 'miraheze-mw-private'
                         wiki = match.group('wiki') # <wiki>
@@ -241,7 +241,7 @@ class _MirahezeRewriteContext(WSGIContext):
         if match is None:
                 match = re.match(
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)(?P<query>\?.+)$',
-                        req.path)
+                        env['REQUEST_URI'])
                 if match:
                         wiki = match.group('wiki') # <wiki>
                         if match.group('proj') != 'public':
@@ -258,12 +258,10 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)(?P<query>\?.+)$',
-                        req.path)
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw(?P<query>\?.+)$',
+                        env['REQUEST_URI'])
                 if match:
                         wiki = match.group('wiki') # <wiki>
-                        if match.group('proj') != 'public':
-                                proj = match.group('proj') # <proj>
 			query = match.group('query') # query
 
         if match is None:
@@ -274,6 +272,15 @@ class _MirahezeRewriteContext(WSGIContext):
                         container = 'miraheze-mw-private'
                         wiki = match.group('wiki') # <wiki>
                         obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw-private(?P<query>\?.+)$',
+                        env['REQUEST_URI'])
+                if match:
+                        container = 'miraheze-mw-private'
+                        wiki = match.group('wiki') # <wiki>
+			query = match.group('query') # query
 
         # Internally rewrite the URL based on the regex it matched...
         if match:
