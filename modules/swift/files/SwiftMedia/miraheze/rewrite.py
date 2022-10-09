@@ -259,13 +259,7 @@ class _MirahezeRewriteContext(WSGIContext):
             req.path_info = newpath.encode('utf-8')
             # self.logger.warn("new path is %s" % req.path_info)
 
-            # do_start_response just remembers what it got called with,
-            # because our 404 handler will generate a different response.
-            app_iter = self._app_call(env)
-            status = self._get_status_int()
-            headers = self._response_headers
-
-            # Because we do rewritting above, when a object is moved we have to also update
+            # Because we do re-writting above, when a object is moved we have to also update
             # X-Copy-From as it doesn't go through our rewrites.
             if "HTTP_X_COPY_FROM" in env:
                 match = re.match(
@@ -327,6 +321,12 @@ class _MirahezeRewriteContext(WSGIContext):
                             env['HTTP_X_COPY_FROM'])
                     if match:
                         env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s" % (match.group('wiki'), match.group('path'))
+
+            # do_start_response just remembers what it got called with,
+            # because our 404 handler will generate a different response.
+            app_iter = self._app_call(env)
+            status = self._get_status_int()
+            headers = self._response_headers
 
             # Return the response verbatim
             return swob.Response(status=status, headers=headers,
