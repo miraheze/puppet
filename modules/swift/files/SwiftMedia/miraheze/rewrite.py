@@ -172,6 +172,7 @@ class _MirahezeRewriteContext(WSGIContext):
                 req.path)
         if match:
                 wiki = match.group('wiki') # <wiki>
+                proj = 'ImportDump'
                 obj = match.group('path') # <path>
 
         if match is None:
