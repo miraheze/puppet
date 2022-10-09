@@ -171,9 +171,16 @@ class _MirahezeRewriteContext(WSGIContext):
                 r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump/(?P<path>.+)$',
                 req.path)
         if match:
-                wiki = match.group('wiki') # <wiki>
-                proj = 'ImportDump'
+                wiki = 'metawiki' # always use meta with the exception of beta
                 obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump-betawiki/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        wiki = 'betawiki' # always use beta
+                        obj = match.group('path') # <path>
 
         if match is None:
                 match = re.match(
