@@ -162,21 +162,37 @@ class _MirahezeRewriteContext(WSGIContext):
 	# In MediaWiki we cannot change what container to use
 	# for some extensions.
 
+	# Default public container
+	container = 'miraheze-mw'
+	# Sometimes a project isn't defined
+	proj = ''
+
         match = re.match(
-                r'^/v1/AUTH_mw/miraheze-(?P<wiki>.+)-(?P<proj>.+)/(?P<path>.+)$',
+                r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump/(?P<path>.+)$',
                 req.path)
         if match:
                 wiki = match.group('wiki') # <wiki>
-                proj = match.group('proj') # <proj>
                 obj = match.group('path') # <path>
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>.+)-(?P<proj>.+)/(?P<path>.+)$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        container = 'miraheze-mw-private'
+                        wiki = match.group('wiki') # <wiki>
+                        if match.group('proj') != 'public':
+                                proj = match.group('proj') # <proj>
+                        obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)/(?P<path>.+)$',
                         req.path)
                 if match:
                         wiki = match.group('wiki') # <wiki>
-                        proj = match.group('proj') # <proj>
+                        if match.group('proj') != 'public':
+                                proj = match.group('proj') # <proj>
                         obj = match.group('path') # <path>
 
         # Internally rewrite the URL based on the regex it matched...
@@ -188,11 +204,18 @@ class _MirahezeRewriteContext(WSGIContext):
             url = req.url[:]
             # Create a path to our object's name.
             # Make the correct unicode string we want
-            newpath = "/v1/%s/%s/%s/%s/%s" % (self.account, "miraheze-mw",
-	                                wiki,
-	                                proj,
-                                        urllib.parse.unquote(obj,
-                                                             errors='strict'))
+	    if proj:
+                newpath = "/v1/%s/%s/%s/%s/%s" % (self.account, "miraheze-mw",
+	                                    wiki,
+	                                    proj,
+                                            urllib.parse.unquote(obj,
+                                                                 errors='strict'))
+            else:
+                newpath = "/v1/%s/%s/%s/%s" % (self.account, "miraheze-mw",
+	                                    wiki,
+                                            urllib.parse.unquote(obj,
+                                                                 errors='strict'))
+
             # Then encode to a byte sequence using utf-8
             req.path_info = newpath.encode('utf-8')
             # self.logger.warn("new path is %s" % req.path_info)
