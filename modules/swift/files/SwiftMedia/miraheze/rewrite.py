@@ -277,6 +277,13 @@ class _MirahezeRewriteContext(WSGIContext):
 
                 if match is None:
                     match = re.match(
+                            r'^/miraheze-(?P<wiki>[^/]+)-public-ImportDump-betawiki/(?P<path>.+)$',
+                            env['HTTP_X_COPY_FROM'])
+                    if match:
+                        env['HTTP_X_COPY_FROM'] = "/miraheze-mw/betawiki/%s" % match.group('path')
+
+                if match is None:
+                    match = re.match(
                             r'^/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)/(?P<path>.+)$',
                             env['HTTP_X_COPY_FROM'])
                     if match:
