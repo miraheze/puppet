@@ -177,7 +177,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)/(?P<path>.+)$',
                         req.path)
                 if match:
                         container = 'miraheze-mw-private'
@@ -188,7 +188,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)/(?P<path>.+)$',
                         req.path)
                 if match:
                         container = 'miraheze-mw-private'
@@ -217,6 +217,23 @@ class _MirahezeRewriteContext(WSGIContext):
                                 proj = match.group('proj') # <proj>
                         obj = match.group('path') # <path>
 
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+                        obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw-private/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        container = 'miraheze-mw-private'
+                        wiki = match.group('wiki') # <wiki>
+                        obj = match.group('path') # <path>
+
         # Internally rewrite the URL based on the regex it matched...
         if match:
             # Save a url with just the account name in it.
@@ -227,13 +244,13 @@ class _MirahezeRewriteContext(WSGIContext):
             # Create a path to our object's name.
             # Make the correct unicode string we want
             if proj:
-                newpath = "/v1/%s/%s/%s/%s/%s" % (self.account, "miraheze-mw",
+                newpath = "/v1/%s/%s/%s/%s/%s" % (self.account, container,
                                                 wiki,
                                                 proj,
                                                 urllib.parse.unquote(obj,
                                                                     errors='strict'))
             else:
-                newpath = "/v1/%s/%s/%s/%s" % (self.account, "miraheze-mw",
+                newpath = "/v1/%s/%s/%s/%s" % (self.account, container,
                                             wiki,
                                             urllib.parse.unquote(obj,
                                                                 errors='strict'))
@@ -247,6 +264,57 @@ class _MirahezeRewriteContext(WSGIContext):
             app_iter = self._app_call(env)
             status = self._get_status_int()
             headers = self._response_headers
+	    
+	    # Because we do rewritting above, when a object is moved we have to also update
+	    # X-Copy-From as it doesn't go through our rewrites.
+            copy_from = (env['HTTP_X_COPY_FROM'] if env['HTTP_X_COPY_FROM'] else '')
+            match = re.match(
+                    r'^/miraheze-(?P<wiki>[^/]+)-public-ImportDump/(?P<path>.+)$',
+                    copy_from)
+            if match:
+                env['HTTP_X_COPY_FROM'] = "/miraheze-mw/metawiki/%s" % match.group('path)
+
+            if match is None:
+                match = re.match(
+                        r'^/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        copy_from)
+                if match:
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path))
+
+            if match is None:
+                match = re.match(
+                        r'^/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        copy_from)
+                if match:
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path))
+
+            if match is None:
+                match = re.match(
+                        r'^/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        copy_from)
+                if match:
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path))
+
+            if match is None:
+                match = re.match(
+                        r'^/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)/(?P<path>.+)$',
+                        copy_from)
+                if match:
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path))
+
+            if match is None:
+                match = re.match(
+                        r'^/miraheze-(?P<wiki>[^/]+)-mw/(?P<path>.+)$',
+                        copy_from)
+                if match:
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s" % (match.group('wiki'), match.group('path))
+
+            if match is None:
+                match = re.match(
+                        r'^/miraheze-(?P<wiki>[^/]+)-mw-private/(?P<path>.+)$',
+                        copy_from)
+                if match:
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s" % (match.group('wiki'), match.group('path))
 
             # Return the response verbatim
             return swob.Response(status=status, headers=headers,
