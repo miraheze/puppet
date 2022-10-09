@@ -86,4 +86,9 @@ user_agent = Mozilla/5.0
 # sending thumbnail requests to thumbor
 thumbhost = static-new.miraheze.org
 
+thumbnail_update_expiry_headers = true
+thumbnail_expiry = 2592000 # 30 days
+thumbnail_user = 'user_mw'
+thumbnail_key = <%= @swift_password%>
+
 paste.filter_factory = miraheze.rewrite:filter_factory
