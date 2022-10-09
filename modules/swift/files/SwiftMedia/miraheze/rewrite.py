@@ -272,49 +272,49 @@ class _MirahezeRewriteContext(WSGIContext):
                     r'^/miraheze-(?P<wiki>[^/]+)-public-ImportDump/(?P<path>.+)$',
                     copy_from)
             if match:
-                env['HTTP_X_COPY_FROM'] = "/miraheze-mw/metawiki/%s" % match.group('path)
+                env['HTTP_X_COPY_FROM'] = "/miraheze-mw/metawiki/%s" % match.group('path')
 
             if match is None:
                 match = re.match(
                         r'^/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)/(?P<path>.+)$',
                         copy_from)
                 if match:
-                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path))
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path'))
 
             if match is None:
                 match = re.match(
                         r'^/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)/(?P<path>.+)$',
                         copy_from)
                 if match:
-                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path))
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path'))
 
             if match is None:
                 match = re.match(
                         r'^/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)/(?P<path>.+)$',
                         copy_from)
                 if match:
-                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path))
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path'))
 
             if match is None:
                 match = re.match(
                         r'^/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)/(?P<path>.+)$',
                         copy_from)
                 if match:
-                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path))
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s/%s" % (match.group('wiki'), match.group('proj'), match.group('path'))
 
             if match is None:
                 match = re.match(
                         r'^/miraheze-(?P<wiki>[^/]+)-mw/(?P<path>.+)$',
                         copy_from)
                 if match:
-                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s" % (match.group('wiki'), match.group('path))
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw/%s/%s" % (match.group('wiki'), match.group('path'))
 
             if match is None:
                 match = re.match(
                         r'^/miraheze-(?P<wiki>[^/]+)-mw-private/(?P<path>.+)$',
                         copy_from)
                 if match:
-                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s" % (match.group('wiki'), match.group('path))
+                    env['HTTP_X_COPY_FROM'] = "/miraheze-mw-private/%s/%s" % (match.group('wiki'), match.group('path'))
 
             # Return the response verbatim
             return swob.Response(status=status, headers=headers,
