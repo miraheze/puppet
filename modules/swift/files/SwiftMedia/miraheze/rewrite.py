@@ -206,15 +206,15 @@ class _MirahezeRewriteContext(WSGIContext):
             # Make the correct unicode string we want
             if proj:
                 newpath = "/v1/%s/%s/%s/%s/%s" % (self.account, "miraheze-mw",
-	                                    wiki,
-	                                    proj,
-                                            urllib.parse.unquote(obj,
-                                                                 errors='strict'))
+                                                wiki,
+                                                proj,
+                                                urllib.parse.unquote(obj,
+                                                                    errors='strict'))
             else:
                 newpath = "/v1/%s/%s/%s/%s" % (self.account, "miraheze-mw",
-	                                    wiki,
+                                            wiki,
                                             urllib.parse.unquote(obj,
-                                                                 errors='strict'))
+                                                                errors='strict'))
 
             # Then encode to a byte sequence using utf-8
             req.path_info = newpath.encode('utf-8')
