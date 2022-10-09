@@ -158,14 +158,14 @@ class _MirahezeRewriteContext(WSGIContext):
         # Keep a copy of the original request so we can ask the scalers for it
         reqorig = swob.Request(req.environ.copy())
 
-	# We want to rewrite some paths that are using authentication.
-	# In MediaWiki we cannot change what container to use
-	# for some extensions.
+        # We want to rewrite some paths that are using authentication.
+        # In MediaWiki we cannot change what container to use
+        # for some extensions.
 
-	# Default public container
-	container = 'miraheze-mw'
-	# Sometimes a project isn't defined
-	proj = ''
+        # Default public container
+        container = 'miraheze-mw'
+        # Sometimes a project isn't defined
+        proj = ''
 
         match = re.match(
                 r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump/(?P<path>.+)$',
