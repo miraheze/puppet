@@ -164,8 +164,11 @@ class _MirahezeRewriteContext(WSGIContext):
 
         # Default public container
         container = 'miraheze-mw'
+	obj = ''
         # Sometimes a project isn't defined
         proj = ''
+	# Only used for some paths
+	query = ''
 
         match = re.match(
                 r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump/(?P<path>.+)$',
@@ -206,6 +209,17 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)(?P<query>\?.+)$',
+                        req.path)
+                if match:
+                        container = 'miraheze-mw-private'
+                        wiki = match.group('wiki') # <wiki>
+                        if match.group('proj') != 'public':
+                                proj = match.group('proj') # <proj>
+			query = match.group('query') # query
+
+        if match is None:
+                match = re.match(
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)/(?P<path>.+)$',
                         req.path)
                 if match:
@@ -226,11 +240,31 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)(?P<query>\?.+)$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+                        if match.group('proj') != 'public':
+                                proj = match.group('proj') # <proj>
+			query = match.group('query') # query
+
+        if match is None:
+                match = re.match(
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw/(?P<path>.+)$',
                         req.path)
                 if match:
                         wiki = match.group('wiki') # <wiki>
                         obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)(?P<query>\?.+)$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+                        if match.group('proj') != 'public':
+                                proj = match.group('proj') # <proj>
+			query = match.group('query') # query
 
         if match is None:
                 match = re.match(
@@ -250,7 +284,17 @@ class _MirahezeRewriteContext(WSGIContext):
             url = req.url[:]
             # Create a path to our object's name.
             # Make the correct unicode string we want
-            if proj:
+            if query:
+                if proj:
+                    newpath = "/v1/%s/%s/%s/%s%s" % (self.account, container,
+                                                    wiki,
+                                                    proj,
+                                                    query)
+                else:
+                    newpath = "/v1/%s/%s/%s%s" % (self.account, container,
+                                                    wiki,
+                                                    query)
+            elif proj:
                 newpath = "/v1/%s/%s/%s/%s/%s" % (self.account, container,
                                                 wiki,
                                                 proj,
