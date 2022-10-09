@@ -8,6 +8,7 @@ class swift::proxy (
 
     ensure_packages(['swift-proxy'])
 
+    $swift_password = lookup('mediawiki::swift_password')
     file { '/etc/swift/proxy-server.conf':
         ensure  => present,
         content => template('swift/proxy-server.conf.erb'),
