@@ -161,6 +161,7 @@ class _MirahezeRewriteContext(WSGIContext):
 	# We want to rewrite some paths that are using authentication.
 	# In MediaWiki we cannot change what container to use
 	# for some extensions.
+
         match = re.match(
                 r'^/v1/AUTH_mw/miraheze-(?P<wiki>.+)-(?P<proj>.+)/(?P<path>.+)$',
                 req.path)
@@ -168,6 +169,15 @@ class _MirahezeRewriteContext(WSGIContext):
                 wiki = match.group('wiki') # <wiki>
                 proj = match.group('proj') # <proj>
                 obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>.+)-(?P<proj>.+)/(?P<path>.+)$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+                        proj = match.group('proj') # <proj>
+                        obj = match.group('path') # <path>
 
         # Internally rewrite the URL based on the regex it matched...
         if match:
