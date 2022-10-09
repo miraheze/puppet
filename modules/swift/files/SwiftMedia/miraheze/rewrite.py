@@ -204,7 +204,7 @@ class _MirahezeRewriteContext(WSGIContext):
             url = req.url[:]
             # Create a path to our object's name.
             # Make the correct unicode string we want
-	    if proj:
+            if proj:
                 newpath = "/v1/%s/%s/%s/%s/%s" % (self.account, "miraheze-mw",
 	                                    wiki,
 	                                    proj,
