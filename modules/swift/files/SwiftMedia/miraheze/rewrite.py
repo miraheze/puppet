@@ -189,7 +189,7 @@ class _MirahezeRewriteContext(WSGIContext):
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
-                        query = "?limit={}".format(match.group('limit'))
+                        query = "limit={}".format(match.group('limit'))
                         if match.group('format'):
                                 query += "&format={}".format(match.group('format'))
                         if match.group('marker'):
@@ -212,7 +212,7 @@ class _MirahezeRewriteContext(WSGIContext):
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump-betawiki\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
-                        query = "?limit={}".format(match.group('limit'))
+                        query = "limit={}".format(match.group('limit'))
                         if match.group('format'):
                                 query += "&format={}".format(match.group('format'))
                         if match.group('marker'):
@@ -239,7 +239,7 @@ class _MirahezeRewriteContext(WSGIContext):
                         env['REQUEST_URI'])
                 if match:
                         container = "miraheze-mw-private"
-                        query = "?limit={}".format(match.group('limit'))
+                        query = "limit={}".format(match.group('limit'))
                         if match.group('format'):
                                 query += "&format={}".format(match.group('format'))
                         if match.group('marker'):
@@ -269,7 +269,7 @@ class _MirahezeRewriteContext(WSGIContext):
                         env['REQUEST_URI'])
                 if match:
                         container = "miraheze-mw-private"
-                        query = "?limit={}".format(match.group('limit'))
+                        query = "limit={}".format(match.group('limit'))
                         if match.group('format'):
                                 query += "&format={}".format(match.group('format'))
                         if match.group('marker'):
@@ -297,7 +297,7 @@ class _MirahezeRewriteContext(WSGIContext):
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
-                        query = "?limit={}".format(match.group('limit'))
+                        query = "limit={}".format(match.group('limit'))
                         if match.group('format'):
                                 query += "&format={}".format(match.group('format'))
                         if match.group('marker'):
@@ -325,7 +325,7 @@ class _MirahezeRewriteContext(WSGIContext):
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
-                        query = "?limit={}".format(match.group('limit'))
+                        query = "limit={}".format(match.group('limit'))
                         if match.group('format'):
                                 query += "&format={}".format(match.group('format'))
                         if match.group('marker'):
@@ -358,7 +358,7 @@ class _MirahezeRewriteContext(WSGIContext):
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
-                        query = "?limit={}".format(match.group('limit'))
+                        query = "limit={}".format(match.group('limit'))
                         if match.group('format'):
                                 query += "&format={}".format(match.group('format'))
                         if match.group('marker'):
@@ -383,7 +383,7 @@ class _MirahezeRewriteContext(WSGIContext):
                         env['REQUEST_URI'])
                 if match:
                         container = "miraheze-mw-private"
-                        query = "?limit={}".format(match.group('limit'))
+                        query = "limit={}".format(match.group('limit'))
                         if match.group('format'):
                                 query += "&format={}".format(match.group('format'))
                         if match.group('marker'):
@@ -392,6 +392,9 @@ class _MirahezeRewriteContext(WSGIContext):
                                 query += "&prefix={}%2F{}".format(match.group('wiki'), match.group('prefix'))
                         if match.group('delimiter'):
                                 query += "&delimiter={}".format(match.group('delimiter'))
+
+        self.logger.info("requesr uri {}".format(env['REQUEST_URI']))
+        self.logger.info(req.path_info)
 
         # Internally rewrite the URL based on the regex it matched...
         if match:
@@ -403,7 +406,7 @@ class _MirahezeRewriteContext(WSGIContext):
             # Create a path to our object's name.
             # Make the correct unicode string we want
             if query:
-                newpath = "/v1/%s/%s%s" % (self.account, container, query)
+                newpath = "/v1/%s/%s" % (self.account, container)
             elif proj:
                 newpath = "/v1/%s/%s/%s/%s/%s" % (self.account, container,
                                                 wiki,
@@ -418,6 +421,12 @@ class _MirahezeRewriteContext(WSGIContext):
 
             # Then encode to a byte sequence using utf-8
             req.path_info = newpath.encode('utf-8')
+		
+            # If we're adding a query to a url we have to use
+            # query_string.
+            if query:
+                req.query_string = query
+
             # self.logger.warn("new path is %s" % req.path_info)
 
             # Because we do re-writting above, when a object is moved we have to also update
