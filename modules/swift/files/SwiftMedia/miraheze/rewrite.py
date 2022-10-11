@@ -338,6 +338,18 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-score-render/?(?P<path>.+)?$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+			# under swift this is score-render so we have to use
+			# the old path we were using.
+                        proj = 'score' # <proj>
+                        if match.group('path'):
+                                obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)/?(?P<path>.+)?$',
                         req.path)
                 if match:
