@@ -426,9 +426,6 @@ class _MirahezeRewriteContext(WSGIContext):
                         if match.group('delimiter'):
                                 query += "&delimiter={}".format(match.group('delimiter'))
 
-        self.logger.info("requesr uri {}".format(env['REQUEST_URI']))
-        self.logger.info(req.path_info)
-
         # Internally rewrite the URL based on the regex it matched...
         if match:
             # Save a url with just the account name in it.
