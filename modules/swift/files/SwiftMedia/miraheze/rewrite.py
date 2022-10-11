@@ -707,6 +707,12 @@ class _MirahezeRewriteContext(WSGIContext):
                 proj = match.group('proj') # <wiki>
                 obj = match.group('path') # sitemaps/sitemap-betawiki-NS_0-0.xml.gz
 
+        if match is None:
+            match = re.match(r'^/(?P<proj>[^/]+)/(?P<path>dumps/.+)$', req.path)
+            if match:
+                proj = match.group('proj') # <wiki>
+                obj = match.group('path') # dumps/betawiki_image_2492bce2822dfaa09ff0.tar.gz
+
         # if match is None:
         #    match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
         #    if match:
