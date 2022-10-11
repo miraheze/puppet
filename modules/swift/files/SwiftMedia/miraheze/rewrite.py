@@ -179,13 +179,6 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump(?P<query>\?[^/]+)',
-                        env['REQUEST_URI'])
-                if match:
-                        wiki = 'metawiki' # always use meta with the exception of beta
-                        query = match.group('query') # <query>
-        if match is None:
-                match = re.match(
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
@@ -224,6 +217,81 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-timeline-render/?(?P<path>.+)?$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+			# under swift this is timeline-render so we have to use
+			# the old path we were using.
+                        proj = 'timeline' # <proj>
+                        if match.group('path'):
+                                obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-score-render/?(?P<path>.+)?$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+			# under swift this is score-render so we have to use
+			# the old path we were using.
+                        proj = 'score' # <proj>
+                        if match.group('path'):
+                                obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-dumps-backup/?(?P<path>.+)?$',
+                        req.path)
+                if match:
+                        wiki = match.group('wiki') # <wiki>
+			# under swift this is dumps so we have to use
+			# the old path we were using.
+                        proj = 'dumps' # <proj>
+                        if match.group('path'):
+                                obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-timeline-render/?(?P<path>.+)?$',
+                        req.path)
+                if match:
+                        container = 'miraheze-mw-private'
+                        wiki = match.group('wiki') # <wiki>
+			# under swift this is timeline-render so we have to use
+			# the old path we were using.
+                        proj = 'timeline' # <proj>
+                        if match.group('path'):
+                                obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-score-render/?(?P<path>.+)?$',
+                        req.path)
+                if match:
+                        container = 'miraheze-mw-private'
+                        wiki = match.group('wiki') # <wiki>
+			# under swift this is timeline-render so we have to use
+			# the old path we were using.
+                        proj = 'score' # <proj>
+                        if match.group('path'):
+                                obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-dumps-backup/?(?P<path>.+)?$',
+                        req.path)
+                if match:
+                        container = 'miraheze-mw-private'
+                        wiki = match.group('wiki') # <wiki>
+			# under swift this is timeline-render so we have to use
+			# the old path we were using.
+                        proj = 'dumps' # <proj>
+                        if match.group('path'):
+                                obj = match.group('path') # <path>
+
+        if match is None:
+                match = re.match(
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)/(?P<path>.+)$',
                         req.path)
                 if match:
@@ -251,19 +319,6 @@ class _MirahezeRewriteContext(WSGIContext):
                                         query += "&prefix={}%2F{}".format(match.group('wiki'), match.group('prefix'))
                         if match.group('delimiter'):
                                 query += "&delimiter={}".format(match.group('delimiter'))
-
-        if match is None:
-                match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-timeline-render/?(?P<path>.+)?$',
-                        req.path)
-                if match:
-                        container = 'miraheze-mw-private'
-                        wiki = match.group('wiki') # <wiki>
-			# under swift this is timeline-render so we have to use
-			# the old path we were using.
-                        proj = 'timeline' # <proj>
-                        if match.group('path'):
-                                obj = match.group('path') # <path>
 
         if match is None:
                 match = re.match(
@@ -324,29 +379,6 @@ class _MirahezeRewriteContext(WSGIContext):
                         if match.group('delimiter'):
                                 query += "&delimiter={}".format(match.group('delimiter'))
 
-        if match is None:
-                match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-timeline-render/?(?P<path>.+)?$',
-                        req.path)
-                if match:
-                        wiki = match.group('wiki') # <wiki>
-			# under swift this is timeline-render so we have to use
-			# the old path we were using.
-                        proj = 'timeline' # <proj>
-                        if match.group('path'):
-                                obj = match.group('path') # <path>
-
-        if match is None:
-                match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-score-render/?(?P<path>.+)?$',
-                        req.path)
-                if match:
-                        wiki = match.group('wiki') # <wiki>
-			# under swift this is score-render so we have to use
-			# the old path we were using.
-                        proj = 'score' # <proj>
-                        if match.group('path'):
-                                obj = match.group('path') # <path>
 
         if match is None:
                 match = re.match(
