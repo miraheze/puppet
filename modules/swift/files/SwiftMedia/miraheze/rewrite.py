@@ -220,36 +220,42 @@ class _MirahezeRewriteContext(WSGIContext):
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-timeline-render/?(?P<path>.+)?$',
                         req.path)
                 if match:
-                        wiki = match.group('wiki') # <wiki>
-			# under swift this is timeline-render so we have to use
-			# the old path we were using.
-                        proj = 'timeline' # <proj>
                         if match.group('path'):
+                                wiki = match.group('wiki') # <wiki>
+                                # under swift this is timeline-render so we have to use
+                                # the old path we were using.
+                                proj = 'timeline' # <proj>
                                 obj = match.group('path') # <path>
+                        else:
+                                query = "limit=1&prefix={}%2Ftimeline%2F".format(match.group('wiki'))
 
         if match is None:
                 match = re.match(
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-score-render/?(?P<path>.+)?$',
                         req.path)
                 if match:
-                        wiki = match.group('wiki') # <wiki>
-			# under swift this is score-render so we have to use
-			# the old path we were using.
-                        proj = 'score' # <proj>
                         if match.group('path'):
+                                wiki = match.group('wiki') # <wiki>
+                                # under swift this is score-render so we have to use
+                                # the old path we were using.
+                                proj = 'score' # <proj>
                                 obj = match.group('path') # <path>
+                        else:
+                                query = "limit=1&prefix={}%score%2F".format(match.group('wiki'))
 
         if match is None:
                 match = re.match(
                         r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-dumps-backup/?(?P<path>.+)?$',
                         req.path)
                 if match:
-                        wiki = match.group('wiki') # <wiki>
-			# under swift this is dumps so we have to use
-			# the old path we were using.
-                        proj = 'dumps' # <proj>
                         if match.group('path'):
+                                wiki = match.group('wiki') # <wiki>
+                                # under swift this is dumps-backup so we have to use
+                                # the old path we were using.
+                                proj = 'dumps' # <proj>
                                 obj = match.group('path') # <path>
+                        else:
+                                query = "limit=1&prefix={}%dumps%2F".format(match.group('wiki'))
 
         if match is None:
                 match = re.match(
@@ -257,12 +263,14 @@ class _MirahezeRewriteContext(WSGIContext):
                         req.path)
                 if match:
                         container = 'miraheze-mw-private'
-                        wiki = match.group('wiki') # <wiki>
-			# under swift this is timeline-render so we have to use
-			# the old path we were using.
-                        proj = 'timeline' # <proj>
                         if match.group('path'):
+                                wiki = match.group('wiki') # <wiki>
+                                # under swift this is timeline-render so we have to use
+                                # the old path we were using.
+                                proj = 'dumps' # <proj>
                                 obj = match.group('path') # <path>
+                        else:
+                                query = "limit=1&prefix={}%timeline%2F".format(match.group('wiki'))
 
         if match is None:
                 match = re.match(
@@ -270,12 +278,14 @@ class _MirahezeRewriteContext(WSGIContext):
                         req.path)
                 if match:
                         container = 'miraheze-mw-private'
-                        wiki = match.group('wiki') # <wiki>
-			# under swift this is timeline-render so we have to use
-			# the old path we were using.
-                        proj = 'score' # <proj>
                         if match.group('path'):
+                                wiki = match.group('wiki') # <wiki>
+                                # under swift this is score-render so we have to use
+                                # the old path we were using.
+                                proj = 'dumps' # <proj>
                                 obj = match.group('path') # <path>
+                        else:
+                                query = "limit=1&prefix={}%score%2F".format(match.group('wiki'))
 
         if match is None:
                 match = re.match(
@@ -283,12 +293,14 @@ class _MirahezeRewriteContext(WSGIContext):
                         req.path)
                 if match:
                         container = 'miraheze-mw-private'
-                        wiki = match.group('wiki') # <wiki>
-			# under swift this is timeline-render so we have to use
-			# the old path we were using.
-                        proj = 'dumps' # <proj>
                         if match.group('path'):
+                                wiki = match.group('wiki') # <wiki>
+                                # under swift this is dumps-backup so we have to use
+                                # the old path we were using.
+                                proj = 'dumps' # <proj>
                                 obj = match.group('path') # <path>
+                        else:
+                                query = "limit=1&prefix={}%dumps%2F".format(match.group('wiki'))
 
         if match is None:
                 match = re.match(
@@ -485,7 +497,7 @@ class _MirahezeRewriteContext(WSGIContext):
                                                 urllib.parse.unquote(obj,
                                                                     errors='strict'))
                 else:
-                    newpath = "/v1/%s/%s/%s/%s" % (self.account, containerwiki)
+                    newpath = "/v1/%s/%s/%s" % (self.account, container, wiki)
 
             # Then encode to a byte sequence using utf-8
             req.path_info = newpath.encode('utf-8')
