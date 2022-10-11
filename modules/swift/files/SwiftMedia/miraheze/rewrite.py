@@ -202,7 +202,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump-betawiki\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump-betawiki\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
                         query = "limit={}".format(match.group('limit'))
@@ -304,7 +304,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
                         container = "miraheze-mw-private"
@@ -334,7 +334,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
                         container = "miraheze-mw-private"
@@ -364,7 +364,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
                         query = "limit={}".format(match.group('limit'))
@@ -377,6 +377,8 @@ class _MirahezeRewriteContext(WSGIContext):
                                         query += "&prefix={}%2F{}%2F{}".format(match.group('wiki'), match.group('proj'), match.group('prefix'))
                                 else:
                                         query += "&prefix={}%2F{}".format(match.group('wiki'), match.group('prefix'))
+                        else:
+                                query += "&prefix={}%2F".format(match.group('wiki'))
                         if match.group('delimiter'):
                                 query += "&delimiter={}".format(match.group('delimiter'))
 
@@ -390,6 +392,10 @@ class _MirahezeRewriteContext(WSGIContext):
                                 proj = match.group('proj') # <proj>
                         if match.group('path'):
                                 obj = match.group('path') # <path>
+                        elif match.group('proj') != 'public':
+                                query = "limit=1&prefix={}%2F{}%2F".format(match.group('wiki'), match.group('proj'))
+                        else:
+                                query = "limit=1&prefix={}%2F".format(match.group('wiki'))
 
 
         if match is None:
@@ -404,7 +410,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
                         query = "limit={}".format(match.group('limit'))
@@ -431,7 +437,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
                         query = "limit={}".format(match.group('limit'))
@@ -456,7 +462,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw-private\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-mw-private\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
                         env['REQUEST_URI'])
                 if match:
                         container = "miraheze-mw-private"
