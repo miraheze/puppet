@@ -179,18 +179,21 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump\?.+',
                         env['REQUEST_URI'])
                 if match:
-                        query = "limit={}".format(match.group('limit'))
-                        if match.group('format'):
-                                query += "&format={}".format(match.group('format'))
-                        if match.group('marker'):
-                                query += "&marker={}".format(match.group('marker'))
-                        if match.group('prefix'):
-                                query += "&prefix={}%2F{}".format("metawiki", match.group('prefix'))
-                        if match.group('delimiter'):
-                                query += "&delimiter={}".format(match.group('delimiter'))
+                        query_match = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
+                        query = "limit={}".format(query_match['limit'])
+                        if 'format' in query_match and query_match['format']:
+                                query += "&format={}".format(query_match['format'])
+                        if 'marker' in query_match and query_match['marker']:
+                                query += "&marker={}".format(query_match['marker'])
+                        if 'prefix' in query_match and query_match['prefix']:
+                                query += "&prefix={}%2F{}".format("metawiki", urllib.parse.quote(query_match['prefix'], safe=''))
+                        else:
+                                query += "&prefix={}%2F{}%2F".format("metawiki", "ImportDump")
+                        if 'delimiter' in query_match and query_match['delimiter']:
+                                query += "&delimiter={}".format(urllib.parse.quote(query_match['delimiter'], safe=''))
 
         if match is None:
                 match = re.match(
@@ -202,18 +205,21 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump-betawiki\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-ImportDump-betawiki\?.+$',
                         env['REQUEST_URI'])
                 if match:
-                        query = "limit={}".format(match.group('limit'))
-                        if match.group('format'):
-                                query += "&format={}".format(match.group('format'))
-                        if match.group('marker'):
-                                query += "&marker={}".format(match.group('marker'))
-                        if match.group('prefix'):
-                                query += "&prefix={}%2F{}".format("betawiki", match.group('prefix'))
-                        if match.group('delimiter'):
-                                query += "&delimiter={}".format(match.group('delimiter'))
+                        query_match = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
+                        query = "limit={}".format(query_match['limit'])
+                        if 'format' in query_match and query_match['format']:
+                                query += "&format={}".format(query_match['format'])
+                        if 'marker' in query_match and query_match['marker']:
+                                query += "&marker={}".format(query_match['marker'])
+                        if 'prefix' in query_match and query_match['prefix']:
+                                query += "&prefix={}%2F{}".format("betawiki", urllib.parse.quote(query_match['prefix'], safe=''))
+                        else:
+                                query += "&prefix={}%2F{}%2F".format("betawiki", "ImportDump")
+                        if 'delimiter' in query_match and query_match['delimiter']:
+                                query += "&delimiter={}".format(urllib.parse.quote(query_match['delimiter'], safe=''))
 
         if match is None:
                 match = re.match(
@@ -304,22 +310,28 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-local-(?P<proj>[^/]+)\?.+$',
                         env['REQUEST_URI'])
                 if match:
                         container = "miraheze-mw-private"
-                        query = "limit={}".format(match.group('limit'))
-                        if match.group('format'):
-                                query += "&format={}".format(match.group('format'))
-                        if match.group('marker'):
-                                query += "&marker={}".format(match.group('marker'))
-                        if match.group('prefix'):
+                        query_match = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
+                        query = "limit={}".format(query_match['limit'])
+                        if 'format' in query_match and query_match['format']:
+                                query += "&format={}".format(query_match['format'])
+                        if 'marker' in query_match and query_match['marker']:
+                                query += "&marker={}".format(query_match['marker'])
+                        if 'prefix' in query_match and query_match['prefix']:
                                 if match.group('proj') != 'public':
-                                        query += "&prefix={}%2F{}%2F{}".format(match.group('wiki'), match.group('proj'), match.group('prefix'))
+                                        query += "&prefix={}%2F{}%2F{}".format(match.group('wiki'), match.group('proj'), urllib.parse.quote(query_match['prefix'], safe=''))
                                 else:
-                                        query += "&prefix={}%2F{}".format(match.group('wiki'), match.group('prefix'))
-                        if match.group('delimiter'):
-                                query += "&delimiter={}".format(match.group('delimiter'))
+                                        query += "&prefix={}%2F{}".format(match.group('wiki'), urllib.parse.quote(query_match['prefix'], safe=''))
+                        else:
+                                if match.group('proj') != 'public':
+                                    query += "&prefix={}%2F{}%2F".format(match.group('wiki'), match.group('proj'))
+                                else:
+                                    query += "&prefix={}%2F".format(match.group('wiki'))
+                        if 'delimiter' in query_match and query_match['delimiter']:
+                                query += "&delimiter={}".format(urllib.parse.quote(query_match['delimiter'], safe=''))
 
         if match is None:
                 match = re.match(
@@ -334,22 +346,28 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-private-(?P<proj>[^/]+)\?.+$',
                         env['REQUEST_URI'])
                 if match:
                         container = "miraheze-mw-private"
-                        query = "limit={}".format(match.group('limit'))
-                        if match.group('format'):
-                                query += "&format={}".format(match.group('format'))
-                        if match.group('marker'):
-                                query += "&marker={}".format(match.group('marker'))
-                        if match.group('prefix'):
+                        query_match = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
+                        query = "limit={}".format(query_match['limit'])
+                        if 'format' in query_match and query_match['format']:
+                                query += "&format={}".format(query_match['format'])
+                        if 'marker' in query_match and query_match['marker']:
+                                query += "&marker={}".format(query_match['marker'])
+                        if 'prefix' in query_match and query_match['prefix']:
                                 if match.group('proj') != 'public':
-                                        query += "&prefix={}%2F{}%2F{}".format(match.group('wiki'), match.group('proj'), match.group('prefix'))
+                                        query += "&prefix={}%2F{}%2F{}".format(match.group('wiki'), match.group('proj'), urllib.parse.quote(query_match['prefix'], safe=''))
                                 else:
-                                        query += "&prefix={}%2F{}".format(match.group('wiki'), match.group('prefix'))
-                        if match.group('delimiter'):
-                                query += "&delimiter={}".format(match.group('delimiter'))
+                                        query += "&prefix={}%2F{}".format(match.group('wiki'), urllib.parse.quote(query_match['prefix'], safe=''))
+                        else:
+                                if match.group('proj') != 'public':
+                                    query += "&prefix={}%2F{}%2F".format(match.group('wiki'), match.group('proj'))
+                                else:
+                                    query += "&prefix={}%2F".format(match.group('wiki'))
+                        if 'delimiter' in query_match and query_match['delimiter']:
+                                query += "&delimiter={}".format(urllib.parse.quote(query_match['delimiter'], safe=''))
 
         if match is None:
                 match = re.match(
@@ -364,23 +382,27 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-local-(?P<proj>[^/]+)\?.+$',
                         env['REQUEST_URI'])
                 if match:
-                        query = "limit={}".format(match.group('limit'))
-                        if match.group('format'):
-                                query += "&format={}".format(match.group('format'))
-                        if match.group('marker'):
-                                query += "&marker={}".format(match.group('marker'))
-                        if match.group('prefix'):
+                        query_match = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
+                        query = "limit={}".format(query_match['limit'])
+                        if 'format' in query_match and query_match['format']:
+                                query += "&format={}".format(query_match['format'])
+                        if 'marker' in query_match and query_match['marker']:
+                                query += "&marker={}".format(query_match['marker'])
+                        if 'prefix' in query_match and query_match['prefix']:
                                 if match.group('proj') != 'public':
-                                        query += "&prefix={}%2F{}%2F{}".format(match.group('wiki'), match.group('proj'), match.group('prefix'))
+                                        query += "&prefix={}%2F{}%2F{}".format(match.group('wiki'), match.group('proj'), urllib.parse.quote(query_match['prefix'], safe=''))
                                 else:
-                                        query += "&prefix={}%2F{}".format(match.group('wiki'), match.group('prefix'))
+                                        query += "&prefix={}%2F{}".format(match.group('wiki'), urllib.parse.quote(query_match['prefix'], safe=''))
                         else:
-                                query += "&prefix={}%2F".format(match.group('wiki'))
-                        if match.group('delimiter'):
-                                query += "&delimiter={}".format(match.group('delimiter'))
+                                if match.group('proj') != 'public':
+                                    query += "&prefix={}%2F{}%2F".format(match.group('wiki'), match.group('proj'))
+                                else:
+                                    query += "&prefix={}%2F".format(match.group('wiki'))
+                        if 'delimiter' in query_match and query_match['delimiter']:
+                                query += "&delimiter={}".format(urllib.parse.quote(query_match['delimiter'], safe=''))
 
         if match is None:
                 match = re.match(
@@ -410,21 +432,27 @@ class _MirahezeRewriteContext(WSGIContext):
 
         if match is None:
                 match = re.match(
-                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)\?limit\=(?P<limit>[^/]+)(\&format=(?P<format>[^/]+))?(\&marker=(?P<marker>[^/]+))?(\&prefix=(?P<prefix>[^/]+))?(\&delimiter=(?P<delimiter>[^/]+))?$',
+                        r'^/v1/AUTH_mw/miraheze-(?P<wiki>[^/]+)-public-(?P<proj>[^/]+)\?.+$',
                         env['REQUEST_URI'])
                 if match:
-                        query = "limit={}".format(match.group('limit'))
-                        if match.group('format'):
-                                query += "&format={}".format(match.group('format'))
-                        if match.group('marker'):
-                                query += "&marker={}".format(match.group('marker'))
-                        if match.group('prefix'):
+                        query_match = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
+                        query = "limit={}".format(query_match['limit'])
+                        if 'format' in query_match and query_match['format']:
+                                query += "&format={}".format(query_match['format'])
+                        if 'marker' in query_match and query_match['marker']:
+                                query += "&marker={}".format(query_match['marker'])
+                        if 'prefix' in query_match and query_match['prefix']:
                                 if match.group('proj') != 'public':
-                                        query += "&prefix={}%2F{}%2F{}".format(match.group('wiki'), match.group('proj'), match.group('prefix'))
+                                        query += "&prefix={}%2F{}%2F{}".format(match.group('wiki'), match.group('proj'), urllib.parse.quote(query_match['prefix'], safe=''))
                                 else:
-                                        query += "&prefix={}%2F{}".format(match.group('wiki'), match.group('prefix'))
-                        if match.group('delimiter'):
-                                query += "&delimiter={}".format(match.group('delimiter'))
+                                        query += "&prefix={}%2F{}".format(match.group('wiki'), urllib.parse.quote(query_match['prefix'], safe=''))
+                        else:
+                                if match.group('proj') != 'public':
+                                    query += "&prefix={}%2F{}%2F".format(match.group('wiki'), match.group('proj'))
+                                else:
+                                    query += "&prefix={}%2F".format(match.group('wiki'))
+                        if 'delimiter' in query_match and query_match['delimiter']:
+                                query += "&delimiter={}".format(urllib.parse.quote(query_match['delimiter'], safe=''))
 
         if match is None:
                 match = re.match(
