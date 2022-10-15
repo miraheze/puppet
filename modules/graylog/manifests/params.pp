@@ -5,11 +5,12 @@ class graylog::params {
   $repository_release = 'stable'
 
   $default_config = {
-    'bin_dir'             => '/usr/share/graylog-server/bin',
-    'data_dir'            => '/var/lib/graylog-server',
-    'plugin_dir'          => '/usr/share/graylog-server/plugin',
-    'message_journal_dir' => '/var/lib/graylog-server/journal',
-    'is_master'           => true,
+    'bin_dir'                     => '/usr/share/graylog-server/bin',
+    'data_dir'                    => '/var/lib/graylog-server',
+    'plugin_dir'                  => '/usr/share/graylog-server/plugin',
+    'message_journal_dir'         => '/var/lib/graylog-server/journal',
+    'is_master'                   => true,
+    'prometheus_exporter_enabled' => true,
   }
 
   $server_user = 'graylog'
