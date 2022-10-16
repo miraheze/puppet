@@ -202,7 +202,7 @@ class _MirahezeRewriteContext(WSGIContext):
         match = re.match(
             (r'^/(?P<proj>[^/]+)/'
              r'((?P<zone>transcoded|thumb)/)?'
-             r'(?P<path>((temp|archive)/)?[0-9a-f]/[0-9a-f]{2}/.+)$'),
+             r'(?P<path>((temp|archive)/)?[0-9a-f]/[0-9a-f]{2}/.+)$')
             req.path)
         if match:
             proj = match.group('proj')
@@ -248,10 +248,8 @@ class _MirahezeRewriteContext(WSGIContext):
         if match is None:
             # /metawiki/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png (legacy)
             match = re.match(
-                (r'^(/(?P<proj>[^/]+)/(?P<repo>math)/'
-                 r'(?P<path>[0-9a-f]/[0-9a-f]/.+)$'),
+                (r'^/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f]/.+)$'),
                 req.path)
-
             if match:
                 proj = match.group('proj')
                 repo = 'local'
