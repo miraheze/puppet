@@ -22,6 +22,8 @@ use = egg:swift#recon
 
 [account-replicator]
 concurrency = 1
+# default is 7 days
+reclaim_age = 21600 # 6 hours in seconds
 
 [account-auditor]
 concurrency = 1
