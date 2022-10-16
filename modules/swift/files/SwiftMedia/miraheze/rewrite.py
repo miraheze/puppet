@@ -340,10 +340,7 @@ class _MirahezeRewriteContext(WSGIContext):
             newpath = "/v1/%s/%s/%s" % (self.account, container,
                                         urllib.parse.unquote(obj,
                                                              errors='strict'))
-            newpath = "/v1/%s/%s/%s/%s" % (self.account, "miraheze-mw",
-	                                proj,
-                                        urllib.parse.unquote(obj,
-                                                             errors='strict'))
+
             # Then encode to a byte sequence using utf-8
             req.path_info = newpath.encode('utf-8')
             # self.logger.warn("new path is %s" % req.path_info)
