@@ -17,6 +17,9 @@ mount_check = false
 # fallocate_reserve = 1%
 disable_fallocate = false
 fallocate_reserve = 2%
+# default is 7 days
+# 6 hours in seconds
+reclaim_age = 21600
 
 [pipeline:main]
 pipeline = recon object-server
@@ -40,9 +43,6 @@ recon_cache_path = /var/cache/swift
 
 [object-replicator]
 concurrency = 1
-# default is 7 days
-# 6 hours in seconds
-reclaim_age = 21600
 # Don't let replication rsyncs starve other processes of CPU or I/O.
 nice_priority = 1
 # ionice_class and ionice_priority must be specified together.
