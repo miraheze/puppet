@@ -254,9 +254,9 @@ class _MirahezeRewriteContext(WSGIContext):
 
             if match:
                 proj = match.group('proj')
-                repo = match.group('repo')  # math
-                zone = ''
-                obj = match.group('path')  # c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
+                repo = 'local'
+                zone = 'public'
+                obj = 'math/' + match.group('path')  # math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
 
         # score renderings
         if match is None:
@@ -273,9 +273,9 @@ class _MirahezeRewriteContext(WSGIContext):
             match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>sitemaps)/(?P<path>.+)$', req.path)
             if match:
                 proj = match.group('proj')
-                repo = 'public'
-                zone = ''
-                obj = match.group('path') # sitemap-betawiki-NS_0-0.xml.gz
+                repo = 'local'
+                zone = 'public'
+                obj = 'sitemaps/' + match.group('path') # sitemaps/sitemap-betawiki-NS_0-0.xml.gz
 
         if match is None:
             match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>dumps)/(?P<path>.+)$', req.path)
