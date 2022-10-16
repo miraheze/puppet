@@ -40,6 +40,8 @@ recon_cache_path = /var/cache/swift
 
 [object-replicator]
 concurrency = 1
+# default is 7 days
+reclaim_age = 21600 # 6 hours in seconds
 # Don't let replication rsyncs starve other processes of CPU or I/O.
 nice_priority = 1
 # ionice_class and ionice_priority must be specified together.
