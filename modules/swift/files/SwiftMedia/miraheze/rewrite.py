@@ -197,73 +197,93 @@ class _MirahezeRewriteContext(WSGIContext):
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/timeline/<relpath>
 
         zone = ''
+
+        # regular uploads
         match = re.match(
             (r'^/(?P<proj>[^/]+)/'
              r'((?P<zone>transcoded|thumb)/)?'
              r'(?P<path>((temp|archive)/)?[0-9a-f]/[0-9a-f]{2}/.+)$'),
             req.path)
         if match:
-            proj = match.group('proj') # <wiki>
-            if match.group('zone'):
-                obj = "%s/%s" % (match.group('zone'), match.group('path')) # e.g. "thumb/a/ab/..."
-            else:
-                obj = match.group('path')  # e.g. "archive/a/ab/..."
-            zone = (match.group('zone') if match.group('zone') else '') # for detecting if it's thumb
+            proj = match.group('proj')
+            repo = 'local'  # the upload repo name is "local"
+            # Get the repo zone (if not provided that means "public")
+            zone = (match.group('zone') if match.group('zone') else 'public')
+            # Get the object path relative to the zone (and thus container)
+            obj = match.group('path')  # e.g. "archive/a/ab/..."
+
+        # timeline renderings
+        if match is None:
+            # /metawiki/timeline/a876297c277d80dfd826e1f23dbfea3f.png
+            match = re.match(
+                r'^/(?P<proj>[^/]+)/(?P<repo>timeline)/(?P<path>.+)$',
+                req.path)
+            if match:
+                proj = match.group('proj')  # metawiki
+                repo = match.group('repo')  # timeline
+                zone = 'render'
+                obj = match.group('path')  # a876297c277d80dfd826e1f23dbfea3f.png
 
         if match is None:
             match = re.match(
-                r'^/(?P<proj>[^/]+)/(?P<path>avatars/.+)$',
+                r'^/(?P<proj>[^/]+)/(?P<repo>avatars)/(?P<path>.+)$',
                 req.path)
             if match:
-                proj = match.group('proj') # <wiki>
+                proj = match.group('proj')  # metawiki
+                repo = match.group('repo')  # avatars
+                zone = ''
                 obj = match.group('path')
 
         if match is None:
             match = re.match(
-                r'^/(?P<proj>[^/]+)/(?P<path>awards/.+)$',
+                r'^/(?P<proj>[^/]+)/(?P<repo>awards)/(?P<path>.+)$',
                 req.path)
             if match:
-                proj = match.group('proj') # <wiki>
+                proj = match.group('proj')  # metawiki
+                repo = match.group('repo')  # awards
+                zone = ''
                 obj = match.group('path')
-
-        if match is None:
-            match = re.match(
-                r'^/(?P<proj>[^/]+)/(?P<path>timeline/.+)$',
-                req.path)
-            if match:
-                proj = match.group('proj') # <wiki>
-                obj = match.group('path') # a876297c277d80dfd826e1f23dbfea3f.png
 
         # math renderings
         if match is None:
             # /metawiki/math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png (legacy)
             match = re.match(
-                (r'^/(?P<proj>[^/]+)/(?P<path>math/[0-9a-f]/[0-9a-f]/.+)$'),
+                (r'^(/(?P<proj>[^/]+)/(?P<repo>math)/'
+                 r'(?P<path>[0-9a-f]/[0-9a-f]/.+)$'),
                 req.path)
+
             if match:
-                proj = match.group('proj') # <wiki>
-                obj = match.group('path')  # math/c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
+                proj = match.group('proj')
+                repo = match.group('repo')  # math
+                zone = ''
+                obj = match.group('path')  # c/9/f/c9f2055dadfb49853eff822a453d9ceb.png
 
         # score renderings
         if match is None:
             # /metawiki/score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
             # /metawiki/score/override-midi/8/i/8i9pzt87wtpy45lpz1rox8wusjkt7ki.ogg
-            match = re.match(r'^/(?P<proj>[^/]+)/(?P<path>score/.+)$', req.path)
+            match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>score)/(?P<path>.+)$', req.path)
             if match:
-                proj = match.group('proj') # <wiki>
-                obj = match.group('path')  # score/j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
+                proj = match.group('proj')
+                repo = match.group('repo')  # score
+                zone = 'render'
+                obj = match.group('path')  # j/q/jqn99bwy8777srpv45hxjoiu24f0636/jqn99bwy.png
 
         if match is None:
-            match = re.match(r'^/(?P<proj>[^/]+)/(?P<path>sitemaps/.+)$', req.path)
+            match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>sitemaps)/(?P<path>.+)$', req.path)
             if match:
-                proj = match.group('proj') # <wiki>
-                obj = match.group('path') # sitemaps/sitemap-betawiki-NS_0-0.xml.gz
+                proj = match.group('proj')
+                repo = 'public'
+                zone = ''
+                obj = match.group('path') # sitemap-betawiki-NS_0-0.xml.gz
 
         if match is None:
-            match = re.match(r'^/(?P<proj>[^/]+)/(?P<path>dumps/.+)$', req.path)
+            match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>dumps)/(?P<path>.+)$', req.path)
             if match:
-                proj = match.group('proj') # <wiki>
-                obj = match.group('path') # dumps/betawiki_image_2492bce2822dfaa09ff0.tar.gz
+                proj = match.group('proj')
+                repo = 'dumps'
+                zone = 'backup'
+                obj = match.group('path')
 
         # if match is None:
         #    match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
@@ -313,6 +333,13 @@ class _MirahezeRewriteContext(WSGIContext):
             url = req.url[:]
             # Create a path to our object's name.
             # Make the correct unicode string we want
+            if zone:
+                 container = "miraheze-%s-%s-%s" % (proj, repo, zone)
+            else:
+                 container = "miraheze-%s-%s" % (proj, repo)
+            newpath = "/v1/%s/%s/%s" % (self.account, container,
+                                        urllib.parse.unquote(obj,
+                                                             errors='strict'))
             newpath = "/v1/%s/%s/%s/%s" % (self.account, "miraheze-mw",
 	                                proj,
                                         urllib.parse.unquote(obj,
