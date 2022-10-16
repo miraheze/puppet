@@ -23,6 +23,9 @@ recon_cache_path = /var/cache/swift
 
 [container-replicator]
 concurrency = 1
+# default is 7 days
+# 6 hours in seconds
+reclaim_age = 21600
 
 [container-updater]
 concurrency = 1

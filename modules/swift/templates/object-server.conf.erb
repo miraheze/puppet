@@ -17,6 +17,9 @@ mount_check = false
 # fallocate_reserve = 1%
 disable_fallocate = false
 fallocate_reserve = 2%
+# default is 7 days
+# 6 hours in seconds
+reclaim_age = 21600
 
 [pipeline:main]
 pipeline = recon object-server
