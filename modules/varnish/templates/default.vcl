@@ -127,6 +127,14 @@ sub vcl_synth {
 		return (deliver);
 	}
 
+	// Homepage redirect to commons
+	if (resp.reason == "Commons Redirect") {
+		set resp.reason = "Moved Permanently";
+		set resp.http.Location = "https://commons.miraheze.org/";
+		set resp.http.Connection = "keep-alive";
+		set resp.http.Content-Length = "0";
+	}
+
 	// Handle CORS preflight requests
 	if (
 		(req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") &&
@@ -242,6 +250,10 @@ sub vcl_recv {
 	# Health checks, do not send request any further, if we're up, we can handle it
 	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
 		return (synth(200));
+	}
+	
+	if ((req.http.host == "static.miraheze.org" || req.http.host == "static-new.miraheze.org") && req.url == "/") {
+		return (synth(301, "Commons Redirect"));
 	}
 
 	# Normalise Accept-Encoding for better cache hit ratio
