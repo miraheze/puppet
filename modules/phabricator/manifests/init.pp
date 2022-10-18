@@ -1,5 +1,7 @@
 # class: phabricator
-class phabricator {
+class phabricator (
+  Integer $request_timeout = lookup('phabricator::php::request_timeout', {'default_value' => 60}),
+) {
     ensure_packages(['python3-pygments', 'subversion'])
 
     $fpm_config = {
@@ -88,16 +90,12 @@ class phabricator {
     $fpm_min_child = lookup('php::fpm::fpm_min_child', {'default_value' => 4})
 
     $num_workers = max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
-    # These numbers need to be positive integers
-    $max_spare = ceiling($num_workers * 0.3)
-    $min_spare = ceiling($num_workers * 0.1)
     php::fpm::pool { 'www':
         config => {
-            'pm'                   => 'dynamic',
-            'pm.max_spare_servers' => $max_spare,
-            'pm.min_spare_servers' => $min_spare,
-            'pm.start_servers'     => $min_spare,
-            'pm.max_children'      => $num_workers,
+            'pm'                        => 'static',
+            'pm.max_children'           => $num_workers,
+            'request_terminate_timeout' => $request_timeout,
+            'request_slowlog_timeout'   => 15,
         }
     }
 
