@@ -72,7 +72,7 @@ class swift::storage (
     }
 
     package { 'swift-drive-audit':
-        ensure => present,
+        ensure => purged,
     }
 
     file { '/etc/swift/swift-drive-audit.conf':
