@@ -18,6 +18,10 @@ pipeline = ensure_max_age rewrite healthcheck cache tempurl ratelimit tempauth c
 use = egg:swift#proxy
 # allow_account_management = true
 account_autocreate = true
+# Increase this for the object servers although
+# this also impacts the account/container.
+# Default is 10.
+node_timeout = 40
 
 [filter:tempauth]
 use = egg:swift#tempauth
