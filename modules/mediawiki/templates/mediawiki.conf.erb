@@ -117,6 +117,10 @@ server {
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
 	}
+
+	location / {
+		rewrite ^/(.*)$ /wiki/$1 redirect;
+	}
 }
 
 server {
@@ -291,6 +295,10 @@ server {
 
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
+	}
+
+	location / {
+		rewrite ^/(.*)$ /wiki/$1 redirect;
 	}
 }
 
