@@ -118,7 +118,7 @@ server {
 		rewrite ^(.*)$ /sitemap.php;
 	}
 
-	location / {
+	location ~ ^/((?!(wiki|w/)).)*$ {
 		rewrite ^/(.*)$ /wiki/$1 redirect;
 	}
 }
@@ -297,7 +297,7 @@ server {
 		rewrite ^(.*)$ /sitemap.php;
 	}
 
-	location / {
+	location ~ ^/((?!(wiki|w/)).)*$ {
 		rewrite ^/(.*)$ /wiki/$1 redirect;
 	}
 }
