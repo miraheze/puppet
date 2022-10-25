@@ -59,9 +59,10 @@ class mediawiki::jobqueue::runner {
             weekday => [ '6' ],
         }
         if $wiki == 'metawiki' {
+            $swift_password = lookup('mediawiki::swift_password')
             cron { 'generate sitemap index':
                 ensure  => present,
-                command => '/usr/bin/python3 /srv/mediawiki/w/extensions/MirahezeMagic/py/generateSitemapIndex.py',
+                command => "/usr/bin/python3 /srv/mediawiki/w/extensions/MirahezeMagic/py/generateSitemapIndex.py -A https://swift-lb.miraheze.org/auth/v1.0 -U mw:media -K ${swift_password}",
                 user    => 'www-data',
                 minute  => '0',
                 hour    => '0',
