@@ -6,10 +6,10 @@ require_once '/srv/mediawiki/w/includes/WebStart.php';
 use MediaWiki\MediaWikiServices;
 
 function streamSitemapIndex() {
-	global $wgDBname;
+	global $wgDBname, $wmgUploadHostname;
 	wfResetOutputBuffers();
 
-	$url = "https://static.miraheze.org/{$wgDBname}/sitemaps/sitemap.xml";
+	$url = "https://{$wmgUploadHostname}/{$wgDBname}/sitemaps/sitemap.xml";
 
 	$req = RequestContext::getMain()->getRequest();
 	if ( $req->getHeader( 'X-Sitemap-Loop' ) !== false ) {
