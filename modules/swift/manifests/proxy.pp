@@ -47,6 +47,18 @@ class swift::proxy (
         monitor => false,
     }
 
+    monitoring::services { 'HTTP':
+        check_command => 'check_http',
+        vars          => {
+            address6         => $facts['ipaddress6'],
+            http_vhost       => $::fqdn,
+            http_ignore_body => true,
+            # We redirect / in varnish so the 404 is expected in the backend.
+            # We don't serve index page.
+            http_expect => 'HTTP/1.1 404',
+        },
+    }
+
     monitoring::services { 'HTTPS':
         check_command => 'check_http',
         vars          => {
