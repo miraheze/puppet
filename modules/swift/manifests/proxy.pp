@@ -42,16 +42,33 @@ class swift::proxy (
     ssl::wildcard { 'swift wildcard': }
 
     nginx::site { 'swift':
-        ensure => present,
-        source => 'puppet:///modules/swift/nginx/swift.conf',
+        ensure  => present,
+        source  => 'puppet:///modules/swift/nginx/swift.conf',
+        monitor => false,
     }
 
-    # TODO: get monotoring working
-    #monitoring::services { 'Swift Proxy':
-    #    check_command => 'tcp',
-    #    vars          => {
-    #        tcp_address => $::ipaddress6,
-    #        tcp_port    => '8080',
-    #    },
-    #}
+    monitoring::services { 'HTTP':
+        check_command => 'check_http',
+        vars          => {
+            address6         => $facts['ipaddress6'],
+            http_vhost       => $::fqdn,
+            http_ignore_body => true,
+            # We redirect / in varnish so the 404 is expected in the backend.
+            # We don't serve index page.
+            http_expect => 'HTTP/1.1 404',
+        },
+    }
+
+    monitoring::services { 'HTTPS':
+        check_command => 'check_http',
+        vars          => {
+            address6         => $facts['ipaddress6'],
+            http_vhost       => $::fqdn,
+            http_ssl         => true,
+            http_ignore_body => true,
+            # We redirect / in varnish so the 404 is expected in the backend.
+            # We don't serve index page.
+            http_expect => 'HTTP/1.1 404',
+        },
+    }
 }
