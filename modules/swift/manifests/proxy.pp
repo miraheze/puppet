@@ -51,7 +51,7 @@ class swift::proxy (
         check_command => 'check_http',
         vars          => {
             address6         => $facts['ipaddress6'],
-            http_vhost       => $::fqdn,
+            http_vhost       => 'swift-lb.miraheze.org',
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
             # We don't serve index page.
@@ -63,12 +63,20 @@ class swift::proxy (
         check_command => 'check_http',
         vars          => {
             address6         => $facts['ipaddress6'],
-            http_vhost       => $::fqdn,
+            http_vhost       => 'swift-lb.miraheze.org',
             http_ssl         => true,
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
             # We don't serve index page.
             http_expect => 'HTTP/1.1 404',
+        },
+    }
+
+    monitoring::services { 'Swift Proxy':
+        check_command => 'tcp',
+        vars          => {
+            tcp_address => $::ipaddress6,
+            tcp_port    => '8080',
         },
     }
 }
