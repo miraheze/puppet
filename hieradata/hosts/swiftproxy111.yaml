@@ -15,7 +15,7 @@ nginx::client_max_body_size: "0"
 # Swift config
 
 swift_proxy_enable: true
-swift::proxy::num_workers: 24
+swift::proxy::num_workers: 48
 swift_enable_memcache: true
 
 swift::accounts:
