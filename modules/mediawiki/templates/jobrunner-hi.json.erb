@@ -9,7 +9,8 @@
             "include": [
                 "DataDumpGenerateJob",
                 "RequestWikiAIJob",
-                "RecordLintJob"
+                "RecordLintJob",
+                "refreshLinks"
             ]
         },
         "transcode": {
@@ -43,7 +44,8 @@
         // runJobs.php memory limits
         "memory": {
             "*": "300M",
-            "RequestWikiAIJob": "1750M"
+            "RequestWikiAIJob": "1750M",
+            "refreshLinks": "500M"
         }
     },
 
