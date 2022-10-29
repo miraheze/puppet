@@ -7,8 +7,6 @@ Description=Miraheze JobRunner
 Type=simple
 ExecStart=/srv/jobrunner/redisJobRunnerService --config-file=/srv/jobrunner/jobrunner.json
 User=www-data
-StandardOutput=syslog
-StandardError=syslog
 SyslogIdentifier=jobrunner
 Restart=always
 
