@@ -20,7 +20,7 @@
     "limits": {
         // How many times to let jobs be recycled before abandoning
         "attempts": {
-            "*": 2
+            "*": 3
         },
         // How long jobs can be claimed before being recycled
         "claimTTL": {
@@ -32,11 +32,11 @@
         "real": {
             "*": 130,
             "DataDumpGenerateJob": 9000,
-            "webVideoTranscode": 9000
+            "webVideoTranscode": 86400
         },
         // runJobs.php memory limits
         "memory": {
-            "*": "192M",
+            "*": "300M",
             "DataDumpGenerateJob": "300M",
             "RequestWikiAIJob": "1750M",
             "webVideoTranscode": "300M",
