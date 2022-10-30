@@ -9,6 +9,7 @@ ExecStart=/usr/bin/redis-server /etc/redis/redis.conf
 Restart=always
 User=redis
 Group=redis
+LimitNOFILE=10032
 
 [Install]
 WantedBy=multi-user.target
