@@ -20,6 +20,15 @@ class redis (
         notify  => Service['redis-server'],
     }
 
+    # ensure that /var/run/redis is created at boot
+    file { '/etc/tmpfiles.d/redis-startup.conf':
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        content => 'd /var/run/redis 0755 redis redis',
+    }
+
     file { '/srv/redis':
         ensure  => directory,
         owner   => 'redis',
