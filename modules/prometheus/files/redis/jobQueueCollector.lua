@@ -53,6 +53,7 @@ local jobs = {
 	'RemovePIIJob',
 	'RenderTranslationPageJob',
 	'RequestWikiAIJob',
+	'SetContainersAccessJob',
 	'SMW\\ChangePropagationClassUpdateJob',
 	'SMW\\ChangePropagationDispatchJob',
 	'SMW\\ChangePropagationUpdateJob',
