@@ -197,8 +197,23 @@ class mediawiki(
     }
 
     file { '/etc/swift-env.sh':
-         ensure  => 'present',
-         content => template('mediawiki/swift-env.sh.erb'),
-         mode    => '0755',
-     }
+        ensure  => 'present',
+        content => template('mediawiki/swift-env.sh.erb'),
+        mode    => '0755',
+    }
+ 
+    file { '/tmp/magick-tmp':
+        ensure => directory,
+        owner  => 'www-data',
+        group  => 'root',
+        mode   => '0755',
+    }
+
+    tidy { [ '/tmp', '/tmp/magick-tmp' ]:
+        matches => [ '*.png', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v' ],
+        age     => '2h',
+        type    => 'ctime',
+        backup  => false,
+        recurse => 1,
+    }
 }
