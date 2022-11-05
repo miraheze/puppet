@@ -9,7 +9,7 @@ class swift::ac {
     rsync::server::module { 'account':
         uid             => 'swift',
         gid             => 'swift',
-        max_connections => 5,
+        max_connections => 5 * 2,
         path            => '/srv/node/',
         read_only       => 'no',
         lock_file       => '/var/lock/account.lock',
@@ -17,7 +17,7 @@ class swift::ac {
     rsync::server::module { 'container':
         uid             => 'swift',
         gid             => 'swift',
-        max_connections => 5,
+        max_connections => 5 * 2,
         path            => '/srv/node/',
         read_only       => 'no',
         lock_file       => '/var/lock/container.lock',
