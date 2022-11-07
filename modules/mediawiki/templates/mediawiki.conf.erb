@@ -54,8 +54,8 @@ server {
 			return 301 /$arg_lang;
 		}
 
-		# rewrite path to lang, so that /en will act the
-		# same as ?lang=en, but without the ?lang be needed 
+		# rewrite path to lang, so that, for example, /en will act the
+		# same as ?lang=en, but without the ?lang being needed 
 		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
 
 		# if we aren't using a user selected language,
@@ -271,8 +271,8 @@ server {
 			return 301 /$arg_lang;
 		}
 
-		# rewrite path to lang, so that /en will act the
-		# same as ?lang=en, but without the ?lang be needed 
+		# rewrite path to lang, so that, for example, /en will act the
+		# same as ?lang=en, but without the ?lang being needed 
 		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
 
 		# if we aren't using a user selected language,
