@@ -13,12 +13,6 @@ server {
 		return 403;
 	}
 
-	if ( $http_accept_language ~ ^(..) ) {
-		set $lang $1;
-	}
-
-	set $args lang=$lang&$args;
-
 	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
 	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
 
@@ -52,6 +46,28 @@ server {
 
 	location /donate {
 		return 301 https://donate.miraheze.org;
+	}
+
+	location ~ ^/((?!(css|images)).)*$ {
+		# redirect query parameter to path
+		if ($arg_lang != '') {
+			return 301 /$arg_lang;
+		}
+
+		# rewrite path to lang, so that, for example, /en will act the
+		# same as ?lang=en, but without the ?lang being needed 
+		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
+
+		# if we aren't using a user selected language,
+		# use $http_accept_language
+		if ( $http_accept_language ~ ^(..) ) {
+			set $lang $1;
+		}
+
+		# redirect to language if not default
+		if ($lang != 'en') {
+			return 301 /$lang;
+		}
 	}
 }
 
@@ -247,6 +263,28 @@ server {
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 		fastcgi_read_timeout 140;
 		send_timeout 140;
+	}
+
+	location ~ ^/((?!(css|images)).)*$ {
+		# redirect query parameter to path
+		if ($arg_lang != '') {
+			return 301 /$arg_lang;
+		}
+
+		# rewrite path to lang, so that, for example, /en will act the
+		# same as ?lang=en, but without the ?lang being needed 
+		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
+
+		# if we aren't using a user selected language,
+		# use $http_accept_language
+		if ( $http_accept_language ~ ^(..) ) {
+			set $lang $1;
+		}
+
+		# redirect to language if not default
+		if ($lang != 'en') {
+			return 301 /$lang;
+		}
 	}
 }
 
