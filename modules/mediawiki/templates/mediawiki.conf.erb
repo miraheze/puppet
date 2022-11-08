@@ -5,7 +5,7 @@ server {
 	listen 443 ssl deferred http2 backlog=4096;
 	listen [::]:443 deferred ssl http2 ipv6only=on backlog=4096;
 
-	server_name miraheze.org www.miraheze.org;
+	server_name miraheze.org;
 	root /srv/mediawiki/landing;
 	index index.php index.html;
 
