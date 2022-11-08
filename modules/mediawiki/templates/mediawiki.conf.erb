@@ -29,6 +29,10 @@ server {
 		deny all;
 	}
 
+	location ~ /donate {
+		return 301 https://donate.miraheze.org;
+	}
+
 	location ~ \.php {
 		include fastcgi_params;
 		fastcgi_index index.php;
@@ -42,10 +46,6 @@ server {
 
 	location /discord {
 		return 301 https://discord.gg/TVAJTE4CUn;
-	}
-
-	location /donate {
-		return 301 https://donate.miraheze.org;
 	}
 
 	location ~ ^/((?!(css|images)).)*$ {
