@@ -50,23 +50,23 @@ server {
 
 	location ~ ^/((?!(css|images)).)*$ {
 		# redirect query parameter to path
-		if ($arg_lang != '') {
-			return 302 /$arg_lang;
+		if ($arg_uselang != '') {
+			return 302 /$arg_uselang;
 		}
 
-		# rewrite path to lang, so that, for example, /en will act the
-		# same as ?lang=en, but without the ?lang being needed 
-		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
+		# rewrite path to uselang, so that, for example, /en will act the
+		# same as ?uselang=en, but without the ?uselang being needed 
+		rewrite ^/([a-z\-]+)(/.*)?$ /$2?uselang=$1 break;
 
 		# if we aren't using a user selected language,
 		# use $http_accept_language
 		if ( $http_accept_language ~ ^(..) ) {
-			set $lang $1;
+			set $uselang $1;
 		}
 
 		# rewrite to language if not default
-		if ($lang != 'en') {
-			rewrite ^(.*) $1?lang=$lang break;
+		if ($uselang != 'en') {
+			rewrite ^(.*) $1?uselang=$uselang break;
 		}
 	}
 }
@@ -267,23 +267,23 @@ server {
 
 	location ~ ^/((?!(css|images)).)*$ {
 		# redirect query parameter to path
-		if ($arg_lang != '') {
-			return 302 /$arg_lang;
+		if ($arg_uselang != '') {
+			return 302 /$arg_uselang;
 		}
 
-		# rewrite path to lang, so that, for example, /en will act the
-		# same as ?lang=en, but without the ?lang being needed 
-		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
+		# rewrite path to uselang, so that, for example, /en will act the
+		# same as ?uselang=en, but without the ?uselang being needed 
+		rewrite ^/([a-z\-]+)(/.*)?$ /$2?uselang=$1 break;
 
 		# if we aren't using a user selected language,
 		# use $http_accept_language
 		if ( $http_accept_language ~ ^(..) ) {
-			set $lang $1;
+			set $uselang $1;
 		}
 
 		# rewrite to language if not default
-		if ($lang != 'en') {
-			rewrite ^(.*) $1?lang=$lang break;
+		if ($uselang != 'en') {
+			rewrite ^(.*) $1?uselang=$uselang break;
 		}
 	}
 }
