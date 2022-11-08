@@ -34,7 +34,7 @@ echo "Crawl-Delay: 10" . "\r\n\n";
 
 # Dynamic sitemap url
 echo "# Dynamic sitemap url" . "\r\n";
-echo "Sitemap: https://{$wmgUploadHostname}/{$wgDBname}/sitemaps/sitemap.xml" . "\r\n\n";
+echo "Sitemap: {$wgServer}/sitemap.xml" . "\r\n\n";
 
 if ( $page->exists() ) {
 	header( 'X-Miraheze-Robots: Custom' );
