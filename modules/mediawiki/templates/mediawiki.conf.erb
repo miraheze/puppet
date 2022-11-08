@@ -51,7 +51,7 @@ server {
 	location ~ ^/((?!(css|images)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang != '') {
-			return 301 /$arg_lang;
+			return 302 /$arg_lang;
 		}
 
 		# rewrite path to lang, so that, for example, /en will act the
@@ -64,9 +64,9 @@ server {
 			set $lang $1;
 		}
 
-		# redirect to language if not default
+		# rewrite to language if not default
 		if ($lang != 'en') {
-			return 301 /$lang;
+			rewrite ^(.*) $1?lang=$lang break;
 		}
 	}
 }
@@ -268,7 +268,7 @@ server {
 	location ~ ^/((?!(css|images)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang != '') {
-			return 301 /$arg_lang;
+			return 302 /$arg_lang;
 		}
 
 		# rewrite path to lang, so that, for example, /en will act the
@@ -281,9 +281,9 @@ server {
 			set $lang $1;
 		}
 
-		# redirect to language if not default
+		# rewrite to language if not default
 		if ($lang != 'en') {
-			return 301 /$lang;
+			rewrite ^(.*) $1?lang=$lang break;
 		}
 	}
 }
