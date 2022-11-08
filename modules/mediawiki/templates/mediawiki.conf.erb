@@ -64,9 +64,9 @@ server {
 			set $lang $1;
 		}
 
-		# redirect to language if not default
+		# rewrite to language if not default
 		if ($lang != 'en') {
-			return 302 /$lang;
+			rewrite ^(.*) $1?lang=$lang break;
 		}
 	}
 }
@@ -281,9 +281,9 @@ server {
 			set $lang $1;
 		}
 
-		# redirect to language if not default
+		# rewrite to language if not default
 		if ($lang != 'en') {
-			return 302 /$lang;
+			rewrite ^(.*) $1?lang=$lang break;
 		}
 	}
 }
