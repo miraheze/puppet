@@ -48,7 +48,7 @@ server {
 		return 301 https://discord.gg/TVAJTE4CUn;
 	}
 
-	location ~ ^/((?!(css|images)).)*$ {
+	location ~ ^/((?!(css|discord|images)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang != '') {
 			return 301 /$arg_lang;
