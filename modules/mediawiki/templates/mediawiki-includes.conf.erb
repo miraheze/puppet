@@ -17,6 +17,10 @@ location /w/rest.php/ {
 	try_files $uri $uri/ /w/rest.php?$args;
 }
 
+location ~ ^/index.php {
+	rewrite ^/(.*)$ /w/$1 permanent;
+}
+
 location ~ \.php {
 	include fastcgi_params;
 	fastcgi_index index.php;
