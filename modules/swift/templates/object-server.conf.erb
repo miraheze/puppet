@@ -42,10 +42,7 @@ recon_cache_path = /var/cache/swift
 #recon_lock_path = /var/lock
 
 [object-replicator]
-concurrency = 1
-# default 30 seconds
-# 1800s is 30 minutes
-interval = 1800
+concurrency = 3
 # Don't let replication rsyncs starve other processes of CPU or I/O.
 nice_priority = 1
 # ionice_class and ionice_priority must be specified together.
