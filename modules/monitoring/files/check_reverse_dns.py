@@ -82,6 +82,7 @@ def check_records(hostname):
                 '.ns.cloudflare.com.',
                 '.dreamhost.com.',
                 '.ns.porkbun.com.',
+                '.registrar-servers.com.',
             )
             cname_check_impossible = nameserver.endswith(flatten_manadatory_providers)
 
