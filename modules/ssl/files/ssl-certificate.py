@@ -1,4 +1,4 @@
-!/usr/bin/python3 -u
+#!/usr/bin/python3 -u
 
 # Generate an SSL certificate with a CSR and private key.
 #
@@ -125,7 +125,7 @@ class SslCertificate:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
         os.system(f'/bin/cat /etc/letsencrypt/live/{self.domain}/fullchain.pem')
-#PUSH TO GH
+
         os.system(f'git config --global core.sshCommand "ssh -i /var/lib/nagios/id_rsa -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bast.miraheze.org:8080 %h %p\'"')
         os.system(f'git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org" &&   git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"')
         os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
