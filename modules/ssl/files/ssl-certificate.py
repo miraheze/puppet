@@ -134,7 +134,8 @@ class SslCertificate:
         os.system(f'echo \'\t url: \'{self.domain}\' \' >> /srv/ssl/ssl/certs.yaml')
         os.system(f'echo \'\t ca: \'LetsEncrypt\' \' >> /srv/ssl/ssl/certs.yaml')
         os.system(f'echo \'\t disable-event: \'false\' \n \' >> /home/reception/certs.yaml')
-        os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for ${self.domain}"')
+        os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
+        os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}"')
         os.system(f'git -C /srv/ssl/ssl/ push origin master')
 
         if self.private:
