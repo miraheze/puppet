@@ -37,7 +37,7 @@ class _MirahezeRewriteContext(WSGIContext):
         self.user_agent = conf['user_agent'].strip()
         self.bind_port = conf['bind_port'].strip()
 
-    def handle404(self, reqorig, url, container, obj):
+    def handle404(self, reqorig, url, obj):
         """
         Return a swob.Response which fetches the thumbnail from the thumb
         host and returns it. Note also that the thumb host might write it out
@@ -352,7 +352,7 @@ class _MirahezeRewriteContext(WSGIContext):
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
                 if zone == 'thumb':
-                    resp = self.handle404(reqorig, url,  container, obj)
+                    resp = self.handle404(reqorig, url, obj)
                     return resp(env, start_response)
                 else:
                     resp = swob.HTTPNotFound('File not found: %s' % req.path)
