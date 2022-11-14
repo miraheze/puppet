@@ -134,7 +134,7 @@ class SslCertificate:
         os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
 
         certs = open('/srv/ssl/ssl/certs.yaml', 'w')
-        certs.write(f'{self.domain.translate(str.maketrans('', '', string.punctuation))}:\n')
+        certs.write(self.domain.translate(str.maketrans('', '', string.punctuation)) + ':\n')
         certs.write(f"  url: '{self.domain}'\n")
         certs.write("  ca: 'LetsEncrypt'\n")
         certs.write('  disable-event: false\n')
