@@ -133,12 +133,11 @@ class SslCertificate:
         os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
         os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
 
-        certs = open('/srv/ssl/ssl/certs.yaml', 'w')
-        certs.write(self.domain.translate(str.maketrans('', '', string.punctuation)) + ':\n')
-        certs.write(f"  url: '{self.domain}'\n")
-        certs.write("  ca: 'LetsEncrypt'\n")
-        certs.write('  disable-event: false\n')
-        certs.close()
+        with open('/srv/ssl/ssl/certs.yaml', 'w') as certs:
+            certs.write(self.domain.translate(str.maketrans('', '', string.punctuation)) + ':\n')
+            certs.write(f"  url: '{self.domain}'\n")
+            certs.write("  ca: 'LetsEncrypt'\n")
+            certs.write('  disable-event: false\n')
 
         os.system('git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
         os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {getpass.getuser()}"')
