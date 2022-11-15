@@ -48,19 +48,18 @@ server {
 		return 301 https://discord.gg/TVAJTE4CUn;
 	}
 
-	location /en {
-		return 301 /;
-	}
-
-	location ~ ^/((?!(css|discord|en|images)).)*$ {
+	location ~ ^/((?!(css|discord|images)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang != '' && $arg_lang != 'en') {
 			return 301 /$arg_lang;
 		}
 
+		# redirect en (default) to /
 		if ($arg_lang == 'en') {
 			return 301 /;
 		}
+
+		rewrite ^/en(/.*)?$ / permanent;
 
 		# rewrite path to lang, so that, for example, /en will act the
 		# same as ?lang=en, but without the ?lang being needed 
@@ -273,19 +272,18 @@ server {
 		send_timeout 140;
 	}
 
-	location /en {
-		return 301 /;
-	}
-
-	location ~ ^/((?!(css|en|images)).)*$ {
+	location ~ ^/((?!(css|images)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang != '' && $arg_lang != 'en') {
 			return 301 /$arg_lang;
 		}
 
+		# redirect en (default) to /
 		if ($arg_lang == 'en') {
 			return 301 /;
 		}
+
+		rewrite ^/en(/.*)?$ / permanent;
 
 		# rewrite path to lang, so that, for example, /en will act the
 		# same as ?lang=en, but without the ?lang being needed 
