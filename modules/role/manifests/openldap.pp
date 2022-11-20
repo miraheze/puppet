@@ -128,6 +128,16 @@ class role::openldap (
         path   => '/etc/ldap/schema/dyngroup.schema',
     }
 
+    file { '/etc/ldap/schema/postfix.schema':
+        source => 'puppet:///modules/role/openldap/postfix.schema',
+    }
+
+    openldap::server::schema { 'postfix':
+        ensure  => present,
+        path    => '/etc/ldap/schema/postfix.schema',
+        require => File['/etc/ldap/schema/postfix.schema'],
+    }
+
     openldap::server::schema { 'ppolicy':
         ensure => present,
         path   => '/etc/ldap/schema/ppolicy.schema',
