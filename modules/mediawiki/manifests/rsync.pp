@@ -11,7 +11,7 @@ class mediawiki::rsync {
         shell    => '/bin/bash',
         before   => Service['nginx'],
         ssh_keys => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDktIRXHBi4hDZvb6tBrPZ0Ag6TxLbXoQ7CkisQqOY6V MediaWikiDeploy'
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy'
         ],
     }
 
