@@ -30,3 +30,14 @@ objectclass (
         mailacceptinggeneralid $ maildrop
        )
   )
+
+objectclass (
+  1.3.6.1.4.1.4203.666.1.101
+  NAME 'postfixGroup'
+  DESC 'Postfix mail group class'
+  SUP top
+  AUXILIARY
+  MAY  (
+        mailacceptinggeneralid
+       )
+  )
