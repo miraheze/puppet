@@ -40,9 +40,6 @@
 # [*icingaweb2_ido_db_user_name*]
 #   The database user name for the ido database.
 #
-# [*icingaweb2_icinga_api_password*]
-#   The api password for icinga2.
-#
 # [*ticket_salt*]
 #   Private key for CSR auto-signing.
 #
@@ -62,7 +59,6 @@ class role::icinga2 (
     String $icingaweb2_ido_db_host          = lookup('icinga_ido_db_host', {'default_value' => 'db112.miraheze.org'}),
     String $icingaweb2_ido_db_name          = lookup('icinga_ido_db_name', {'default_value' => 'icinga'}),
     String $icingaweb2_ido_db_user_name     = lookup('icinga_ido_user_name', {'default_value' => 'icinga2'}),
-    String $icingaweb2_icinga_api_password  = lookup('passwords::icinga_api'),
     String $ticket_salt                     = lookup('passwords::ticket_salt', {'default_value' => ''}),
     String $ldap_password                   = lookup('passwords::ldap_password'),
     Optional[String] $icinga2_api_bind_host = lookup('icinga2_api_bind_host', {'default_value' => undef}),
@@ -86,7 +82,6 @@ class role::icinga2 (
         ido_db_name          => $icingaweb2_ido_db_name,
         ido_db_user_name     => $icingaweb2_ido_db_user_name,
         ido_db_user_password => $ido_db_user_password ,
-        icinga_api_password  => $icingaweb2_icinga_api_password,
         ldap_password        => $ldap_password,
     }
 
