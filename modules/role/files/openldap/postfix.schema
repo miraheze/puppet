@@ -1,4 +1,5 @@
-# LICENSED: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+# Licensed: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+# From https://github.com/credativ/postfix-ldap-schema
 # Schema as required by Postfix: http://www.postfix.org/LDAP_README.html
 
 attributetype (
