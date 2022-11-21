@@ -88,10 +88,16 @@ class prometheus::exporter::node (
         require => Package['prometheus-node-exporter'],
     }
 
-    $firewall_rules = query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
-    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
-    $firewall_rules_str = join($firewall_rules_mapped, ' ')
-
+    $firewall_rules_str = join(
+        query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
     ferm::service { 'prometheus node-exporter':
         proto  => 'tcp',
         port   => '9100',
