@@ -6,9 +6,16 @@ class role::postgresql {
         use_ssl  => lookup('postgresql::ssl', {'default_value' => false}),
     }
 
-    $firewall_rules = query_facts('Class[Role::Puppetserver]', ['ipaddress', 'ipaddress6'])
-    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
-    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Puppetserver]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
     ferm::service { 'postgresql':
         proto   => 'tcp',
         port    => '5432',
