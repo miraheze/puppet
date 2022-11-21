@@ -221,14 +221,6 @@ class monitoring (
         mode   => '0755',
     }
 
-    file { '/var/lib/nagios/id_rsa2':
-        ensure => present,
-        source => 'puppet:///private/icinga2/id_rsa2',
-        owner  => 'nagios',
-        group  => 'nagios',
-        mode   => '0400',
-    }
-
     # includes a irc bot to relay messages from icinga to irc
     class { '::monitoring::ircecho':
         mirahezebots_password => $mirahezebots_password,
