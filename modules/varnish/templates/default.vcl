@@ -574,12 +574,12 @@ sub vcl_backend_error {
 	synthetic( {"<!DOCTYPE html>
 	<html lang="en">
 		<head>
-			<meta charset="utf-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta name="description" content="Backend Fetch Failed">
+			<meta charset="utf-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+			<meta name="description" content="Backend Fetch Failed" />
 			<title>"} + beresp.status + " " + beresp.reason + {"</title>
 			<!-- Bootstrap core CSS -->
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 			<style>
 				/* Error Page Inline Styles */
 				body {
@@ -592,17 +592,15 @@ sub vcl_backend_error {
 					line-height: 2.1428571435;
 					color: inherit;
 					padding: 10px 0px;
-				}
-				/* Everything but the jumbotron gets side spacing for mobile-first views */
-				.masthead, .body-content {
-					padding-left: 15px;
-					padding-right: 15px;
-				}
-				/* Main body and button */
-				.jumbotron {
 					text-align: center;
 					background-color: transparent;
 				}
+				/* Everything but the jumbotron gets side spacing for mobile-first views */
+				.body-content {
+					padding-left: 15px;
+					padding-right: 15px;
+				}
+				/* button */
 				.jumbotron .btn {
 					font-size: 21px;
 					padding: 14px 24px;
@@ -612,10 +610,6 @@ sub vcl_backend_error {
 					from { opacity: 0; }
 					to   { opacity: 1; }
 				}
-				/* Colors */
-				.green {color:#5cb85c;}
-				.orange {color:#f0ad4e;}
-				.red {color:#d9534f;}
 				/* Dark mode */
 				@media (prefers-color-scheme: dark) {
 					body {
@@ -627,12 +621,6 @@ sub vcl_backend_error {
 					}
 				}
 			</style>
-			<script>
-				function loadDomain() {
-					var display = document.getElementById("display-domain");
-					display.innerHTML = document.domain;
-				}
-			</script>
 		</head>
 		<div class="container">
 			<!-- Jumbotron -->
