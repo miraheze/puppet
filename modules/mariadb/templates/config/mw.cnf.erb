@@ -49,18 +49,8 @@ open-files-limit               = 200000
 table-open-cache               = 50000
 table-definition-cache         = 40000
 
-# thread and connection handling
-thread_handling                = pool-of-threads
-thread_pool_stall_limit        = 10
-thread_pool_size               = 32
-thread_pool_max_threads        = 2000
-back_log                       = 500
-# For port 3307
-# https://github.com/wikimedia/puppet/commit/7927ece6f1c77b2279d3c84c23e90c207261c639
-extra_max_connections          = 10
 query-cache-type               = 0
 query-cache-size               = 0
-thread-cache-size              = 100
 interactive_timeout            = 28800
 wait_timeout                   = 3600
 
