@@ -90,6 +90,12 @@ class mariadb::config(
         require => Package["mariadb-server-${version}"],
     }
 
+    logrotate::conf { 'mysql-server':
+        ensure => present,
+        source => 'puppet:///modules/mariadb/mysql-server.logrotate.conf',
+        require => Package["mariadb-server-${version}"],
+    }
+
     systemd::unit { 'mariadb.service':
         ensure   => present,
         content  => template('mariadb/mariadb-systemd-override.conf.erb'),
