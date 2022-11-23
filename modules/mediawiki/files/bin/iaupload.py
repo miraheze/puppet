@@ -36,7 +36,7 @@ item.session.proxies = {
 # get last modification time from file to use as date in archive.org
 mtime = os.path.getmtime(args.file)
 dt = datetime.fromtimestamp(mtime)
-date = datetime.strptime(dt, '%Y-%m-%d')
+date = datetime.strftime(dt, '%Y-%m-%d')
 
 # metadata
 md = {
