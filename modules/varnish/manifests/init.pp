@@ -57,14 +57,7 @@ class varnish (
         group  => 'varnish',
     }
 
-    $mem_gb = $facts['memorysize_mb'] / 1024.0
-    if ($mem_gb < 90.0) {
-        $fe_mem_gb = 1
-    } else {
-        $fe_mem_gb = ceiling(0.7 * ($mem_gb - 100.0))
-    }
-
-    $storage = "-s malloc,${fe_mem_gb}G -s file,${cache_file_name},${cache_file_size}"
+    $storage = "-s file,${cache_file_name},${cache_file_size}"
 
     $max_threads = max(floor($::processorcount * 250), 500)
     systemd::service { 'varnish':
