@@ -57,7 +57,8 @@ class varnish (
         group  => 'varnish',
     }
 
-    $storage = "-s file,${cache_file_name},${cache_file_size}"
+    # TODO: On bigger memory hosts increase Transient size
+    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,500M"
 
     $max_threads = max(floor($::processorcount * 250), 500)
     systemd::service { 'varnish':
