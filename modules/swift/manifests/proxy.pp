@@ -55,7 +55,7 @@ class swift::proxy (
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
             # We don't serve index page.
-            http_expect => 'HTTP/1.1 404',
+            http_expect      => 'HTTP/1.1 404',
         },
     }
 
@@ -68,7 +68,7 @@ class swift::proxy (
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
             # We don't serve index page.
-            http_expect => 'HTTP/1.1 404',
+            http_expect      => 'HTTP/1.1 404',
         },
     }
 
