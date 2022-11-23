@@ -49,7 +49,7 @@ class role::swift {
             srange  => "(${monitoring_firewall_rules_str})",
             notrack => true,
         }
-        
+
         if lookup('swift_enable_memcache', {'default_value' => false}) {
             include role::memcached
 

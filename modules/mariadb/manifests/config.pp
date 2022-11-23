@@ -91,8 +91,8 @@ class mariadb::config(
     }
 
     logrotate::conf { 'mysql-server':
-        ensure => present,
-        source => 'puppet:///modules/mariadb/mysql-server.logrotate.conf',
+        ensure  => present,
+        source  => 'puppet:///modules/mariadb/mysql-server.logrotate.conf',
         require => Package["mariadb-server-${version}"],
     }
 
