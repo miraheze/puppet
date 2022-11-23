@@ -81,6 +81,16 @@ class role::varnish {
         }
     }
 
+    # flush vm more steadily in the background. helps avoid large performance
+    #   spikes related to flushing out disk write cache.
+    sysctl::parameters { 'varnish_role_vm_settings':
+        values => {
+            'vm.dirty_ratio'            => 40,  # default 20
+            'vm.dirty_background_ratio' => 5,   # default 10
+            'vm.dirty_expire_centisecs' => 500, # default 3000
+        },
+    }
+
     motd::role { 'role::varnish':
         description => 'Varnish caching server',
     }
