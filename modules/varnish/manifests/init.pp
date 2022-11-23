@@ -50,8 +50,7 @@ class varnish (
             require => [
                 Package['varnish'],
                 File['/usr/local/sbin/reload-vcl'],
-                File['/etc/varnish/default.vcl'],
-                Mount['/var/lib/varnish']
+                File['/etc/varnish/default.vcl']
             ],
         }
     }
