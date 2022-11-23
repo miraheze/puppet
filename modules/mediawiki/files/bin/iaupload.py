@@ -1,9 +1,10 @@
 #! /usr/bin/python3
 
 import argparse
-import datetime
 import internetarchive
 import os
+
+from datetime import datetime
 
 os.environ['HTTP_PROXY'] = 'http://bast.miraheze.org:8080'
 os.environ['HTTPS_PROXY'] = 'http://bast.miraheze.org:8080'
