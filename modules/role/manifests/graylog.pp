@@ -76,7 +76,7 @@ class role::graylog {
 
 
     $firewall_icinga_rules_str = join(
-        query_facts("Class['Role::Icinga2'] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }
