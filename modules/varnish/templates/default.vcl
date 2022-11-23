@@ -274,6 +274,10 @@ sub vcl_recv {
 		}
 	}
 
+	if (req.http.upgrade ~ "(?i)websocket") {
+		return (pipe);
+	}
+
 	if (
 		req.url ~ "^/\.well-known" ||
 		req.http.Host == "ssl.miraheze.org" ||
