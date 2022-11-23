@@ -46,12 +46,12 @@ class swift {
             ensure  => file,
             content => template('swift/swift.conf.erb');
         '/var/cache/swift':
-            ensure  => directory,
-            mode    => '0755';
+            ensure => directory,
+            mode   => '0755';
         # Create swift user home.
         '/var/lib/swift':
-            ensure  => directory,
-            mode    => '0755',
+            ensure => directory,
+            mode   => '0755',
     }
 
     file { '/var/log/swift':
