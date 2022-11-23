@@ -50,12 +50,12 @@ server {
 
 	location ~ ^/((?!(css|discord|images)).)*$ {
 		# redirect query parameter to path
-		if ($arg_lang != '' && $arg_lang != 'en') {
+		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
 		}
 
 		# redirect en (default) to /
-		if ($arg_lang == 'en') {
+		if ($arg_lang = 'en') {
 			return 301 /;
 		}
 
@@ -274,12 +274,12 @@ server {
 
 	location ~ ^/((?!(css|images)).)*$ {
 		# redirect query parameter to path
-		if ($arg_lang != '' && $arg_lang != 'en') {
+		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
 		}
 
 		# redirect en (default) to /
-		if ($arg_lang == 'en') {
+		if ($arg_lang = 'en') {
 			return 301 /;
 		}
 
