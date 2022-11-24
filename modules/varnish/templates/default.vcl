@@ -360,6 +360,14 @@ sub vcl_backend_fetch {
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
+	if (std.integer(beresp.http.content-length, 0) > 1000) {
+		# most responses go into on-disk storage
+		set beresp.storage = storage.s0;
+	} else {
+		# tiny ones go into malloc
+		set beresp.storage = storage.s1;
+	}
+
 	# T9808: Assign restrictive Cache-Control if one is missing
 	if (!beresp.http.Cache-Control) {
 		set beresp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
