@@ -124,9 +124,6 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	error_page 404 /ErrorPages/404.php;
-	error_page 502 /ErrorPages/502.html;
-
 	include /etc/nginx/mediawiki-includes;
 
 	location = /robots.txt {
@@ -332,9 +329,6 @@ server {
 	add_header x-xss-protection "1; mode=block" always;
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
-
-	error_page 404 /ErrorPages/404.php;
-	error_page 502 /ErrorPages/502.html;
 
 	include /etc/nginx/mediawiki-includes;
 
