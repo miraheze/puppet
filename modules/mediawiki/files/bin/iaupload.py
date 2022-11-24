@@ -28,6 +28,9 @@ parser.add_argument(
     '--subject', dest='subject', default='miraheze;wikiteam',
     help='Subject (topics) of the file for archive.org. Multiple topics can be separated by a semicolon. Optional. Default: miraheze;wikiteam')
 parser.add_argument(
+    '--collection', dest='collection', default='opensource',
+    help='The name of the collection to use on archive.org. Optional. Default: opensource')
+parser.add_argument(
     '--file', dest='file', required=True,
     help='The local path to the file to be uploaded to archive.org. Required.')
 args = parser.parse_args()
@@ -48,11 +51,12 @@ date = datetime.strftime(dt, '%Y-%m-%d')
 # set metadata
 # see https://archive.org/developers/metadata-schema for valid options
 md = {
-    'title': args.title,
+    'collection': args.collection,
+    'date': date,
     'description': args.description,
     'mediatype': args.mediatype,
     'subject': args.subject,
-    'date': date,
+    'title': args.title,
 }
 
 # actually upload the file
