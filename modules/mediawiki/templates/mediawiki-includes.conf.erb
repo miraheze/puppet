@@ -1,5 +1,9 @@
 index index.php index.html;
 
+error_page 404 /ErrorPages/404.php;
+error_page 502 /ErrorPages/502.html;
+error_page 504 /ErrorPages/504.php;
+
 location ~ ^/(\.git|config|landing|cache) {
         deny all;
 }
