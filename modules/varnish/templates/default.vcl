@@ -350,10 +350,6 @@ sub vcl_pipe {
         set bereq.http.upgrade = req.http.upgrade;
         set bereq.http.connection = req.http.connection;
     }
-
-    // Similarly to pass-traffic, pipe-traffic should also pick backends
-    // randomly to avoid focus on a single node
-    set bereq.backend = mediawiki.backend();
 }
 
 # Initiate a backend fetch
