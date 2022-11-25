@@ -274,6 +274,10 @@ sub vcl_recv {
 		}
 	}
 
+	if (req.http.upgrade ~ "(?i)websocket") {
+		return (pipe);
+	}
+
 	if (
 		req.url ~ "^/\.well-known" ||
 		req.http.Host == "ssl.miraheze.org" ||
@@ -338,6 +342,14 @@ sub vcl_hash {
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
 		hash_data(req.http.X-Device);
 	}
+}
+
+sub vcl_pipe {
+    // for websockets over pipe
+    if (req.http.upgrade) {
+        set bereq.http.upgrade = req.http.upgrade;
+        set bereq.http.connection = req.http.connection;
+    }
 }
 
 # Initiate a backend fetch
