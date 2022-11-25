@@ -67,7 +67,7 @@ class ssl {
 
     file { '/var/lib/nagios/id_ed25519':
         ensure => present,
-        source => 'puppet:///private/acme/id_ed25519.pub',
+        source => 'puppet:///private/acme/id_ed25519',
         owner  => 'root',
         group  => 'root',
         mode   => '0400',
