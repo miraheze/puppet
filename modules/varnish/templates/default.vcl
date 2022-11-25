@@ -274,10 +274,6 @@ sub vcl_recv {
 		}
 	}
 
-	if (req.http.upgrade ~ "(?i)websocket") {
-		return (pipe);
-	}
-
 	if (
 		req.url ~ "^/\.well-known" ||
 		req.http.Host == "ssl.miraheze.org" ||
@@ -307,6 +303,10 @@ sub vcl_recv {
 	# Do not cache requests from this domain
 	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
 		set req.backend_hint = mon141;
+
+		if (req.http.upgrade ~ "(?i)websocket") {
+			return (pipe);
+		}
 
 		return (pass);
 	}
