@@ -65,12 +65,20 @@ class ssl {
         mode   => '0775',
     }
 
-    file { '/var/lib/nagios/id_rsa':
+    file { '/var/lib/nagios/id_ed25519':
         ensure => present,
-        source => 'puppet:///private/acme/id_rsa',
+        source => 'puppet:///private/acme/id_ed25519.pub',
         owner  => 'root',
         group  => 'root',
         mode   => '0400',
+    }
+
+    file { '/var/lib/nagios/id_ed25519.pub':
+        ensure => present,
+        source => 'puppet:///private/acme/id_ed25519.pub',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0644',
     }
 
     # We do not need to run the ssl renewal cron,
