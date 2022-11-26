@@ -72,7 +72,7 @@ class mediawiki::jobqueue::runner {
 
             cron { 'purge_parsercache':
                 ensure  => present,
-                command => '/usr/bin/php /srv/mediawiki/w/maintenance/purgeParserCache.php --age 1814400 --msleep 200 --wiki loginwiki',
+                command => '/usr/bin/php /srv/mediawiki/w/maintenance/purgeParserCache.php --age 864000 --msleep 200 --wiki loginwiki',
                 user    => 'www-data',
                 special => 'daily',
             }
