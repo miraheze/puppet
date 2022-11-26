@@ -1,5 +1,0 @@
----
-syslog_ng::package_name: syslog-ng-core
-syslog_ng::module_prefix: syslog-ng-mod-
-syslog_ng::init_config_file: /etc/default/syslog-ng
-syslog_ng::init_config_hash: {}
