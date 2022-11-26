@@ -46,9 +46,9 @@ class mediawiki(
         )
 
         file { '/usr/local/bin/iaupload':
-            ensure  => present,
-            mode    => '0755',
-            source  => 'puppet:///modules/mediawiki/bin/iaupload.py',
+            ensure => present,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/bin/iaupload.py',
         }
     }
 
