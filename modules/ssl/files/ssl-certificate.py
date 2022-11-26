@@ -133,7 +133,7 @@ class SslCertificate:
         os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
         os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
 
-        with open('/srv/ssl/ssl/certs.yaml', 'w') as certs:
+        with open('/srv/ssl/ssl/certs.yaml', 'a') as certs:
             certs.write(self.domain.translate(str.maketrans('', '', string.punctuation)) + ':\n')
             certs.write(f"  url: '{self.domain}'\n")
             certs.write("  ca: 'LetsEncrypt'\n")
