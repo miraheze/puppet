@@ -35,6 +35,16 @@ class mediawiki(
     }
 
     if lookup('jobrunner::intensive', {'default_value' => false}) {
+        ensure_packages(
+            'internetarchive',
+            {
+                ensure   => '3.0.2',
+                provider => 'pip3',
+                before   => File['/usr/local/bin/iaupload'],
+                require  => Package['python3-pip'],
+            },
+        )
+
         file { '/usr/local/bin/iaupload':
             ensure  => present,
             mode    => '0755',
