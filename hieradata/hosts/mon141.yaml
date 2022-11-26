@@ -145,8 +145,6 @@ icinga2::globals::reserved:
   - ZonesDir
 
 nginx::use_graylog: true
-base::syslog::syslog_daemon: rsyslog
-base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
 base::syslog::rsyslog_udp_localhost: true
 
 puppetserver_hostname: 'puppet141.miraheze.org'
