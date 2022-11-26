@@ -125,8 +125,6 @@ class SslCertificate:
             if not self.quiet:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
-        os.system(f'/bin/cat /etc/letsencrypt/live/{self.domain}/fullchain.pem')
-
         if not self.quiet:
             print('Pushing LetsEncrypt SSL certificate to GitHub')
 
