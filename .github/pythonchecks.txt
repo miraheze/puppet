@@ -24,3 +24,4 @@ filelock==3.0.12; python_version < '3.10'
 types-filelock; python_version < '3.10'
 filelock==3.7.0; python_version > '3.9'
 langcodes==3.3.0
+internetarchive==3.0.2
