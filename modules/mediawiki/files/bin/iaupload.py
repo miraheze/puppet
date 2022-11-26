@@ -43,16 +43,16 @@ item.session.proxies = {
     'https': 'http://bast.miraheze.org:8080',
 }
 
-# get last modification time from file to use as the publication date in archive.org
+# get last modification time from file to use as the dump date in archive.org
 mtime = os.path.getmtime(args.file)
 dt = datetime.fromtimestamp(mtime)
-date = datetime.strftime(dt, '%Y-%m-%d')
+dumpdate = datetime.strftime(dt, '%Y-%m-%d')
 
 # set metadata
 # see https://archive.org/developers/metadata-schema for valid options
 md = {
     'collection': args.collection,
-    'date': date,
+    'date-dumped': dumpdate,
     'description': args.description,
     'mediatype': args.mediatype,
     'subject': args.subject,
@@ -60,4 +60,4 @@ md = {
 }
 
 # actually upload the file
-item.upload(args.file, metadata=md)
+item.upload(args.file, metadata=md, verbose=True, queue_derive=False)
