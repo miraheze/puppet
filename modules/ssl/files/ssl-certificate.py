@@ -7,6 +7,7 @@
 
 import argparse
 import os
+import string
 import subprocess
 
 # Suppress ssl warnings (no checking ssl here since it won't be valid when generating the cert)
@@ -124,7 +125,24 @@ class SslCertificate:
             if not self.quiet:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
-        os.system(f'/bin/cat /etc/letsencrypt/live/{self.domain}/fullchain.pem')
+        if not self.quiet:
+            print('Pushing LetsEncrypt SSL certificate to GitHub')
+
+        os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bast.miraheze.org:8080 %h %p\'"')
+        os.system('git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"')
+        os.system('git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"')
+        os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
+        os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
+
+        with open('/srv/ssl/ssl/certs.yaml', 'a') as certs:
+            certs.write(self.domain.translate(str.maketrans('', '', string.punctuation)) + ':\n')
+            certs.write(f"  url: '{self.domain}'\n")
+            certs.write("  ca: 'LetsEncrypt'\n")
+            certs.write('  disable_event: false\n')
+
+        os.system('git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
+        os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
+        os.system('git -C /srv/ssl/ssl/ push origin master')
 
         if self.private:
             print('Private key is being copied and pushed to /home/ssl-admins/ssl-keys')
