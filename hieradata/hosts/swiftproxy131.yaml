@@ -1,5 +1,4 @@
 puppetserver_hostname: 'puppet141.miraheze.org'
-base::syslog::graylog_hostname: 'graylog121.miraheze.org'
 
 nginx::client_max_body_size: "0"
 nginx::logrotate_number: 2
