@@ -32,35 +32,16 @@ class cloud {
         require => Apt::Source['proxmox_apt']
     }
 
-    $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'})
-    if $syslog_daemon == 'syslog_ng' {
-        cloud::logging { 'pveproxy':
-            file_source_options => [
-                '/var/log/pveproxy/access.log',
-                { 'flags' => 'no-parse' }
-            ],
-            program_name        => 'pveproxy',
-        }
+    rsyslog::input::file { 'pveproxy':
+        path              => '/var/log/pveproxy/access.log',
+        syslog_tag_prefix => '',
+        use_udp           => true,
+    }
 
-        cloud::logging { 'pve-firewall':
-            file_source_options => [
-                '/var/log/pve-firewall.log',
-                { 'flags' => 'no-parse' }
-            ],
-            program_name        => 'pve-firewall',
-        }
-    } else {
-        rsyslog::input::file { 'pveproxy':
-            path              => '/var/log/pveproxy/access.log',
-            syslog_tag_prefix => '',
-            use_udp           => true,
-        }
-
-        rsyslog::input::file { 'pve-firewall':
-            path              => '/var/log/pve-firewall.log',
-            syslog_tag_prefix => '',
-            use_udp           => true,
-        }
+    rsyslog::input::file { 'pve-firewall':
+        path              => '/var/log/pve-firewall.log',
+        syslog_tag_prefix => '',
+        use_udp           => true,
     }
 
     logrotate::conf { 'pve':

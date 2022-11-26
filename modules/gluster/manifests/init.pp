@@ -86,21 +86,10 @@ class gluster {
         }
     }
 
-    $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'})
-    if $syslog_daemon == 'syslog_ng' {
-        gluster::logging { 'glusterd':
-            file_source_options => [
-                '/var/log/glusterfs/glusterd.log',
-                { 'flags' => 'no-parse' }
-            ],
-            program_name        => 'glusterd',
-        }
-    } else {
-        rsyslog::input::file { 'glusterd':
-            path              => '/var/log/glusterfs/glusterd.log',
-            syslog_tag_prefix => '',
-            use_udp           => true,
-        }
+    rsyslog::input::file { 'glusterd':
+        path              => '/var/log/glusterfs/glusterd.log',
+        syslog_tag_prefix => '',
+        use_udp           => true,
     }
 
     logrotate::conf { 'glusterfs-common':

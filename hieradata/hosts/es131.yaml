@@ -9,6 +9,4 @@ role::elasticsearch::discovery_host:
 role::elasticsearch::master_hosts:
   - es131
 
-base::syslog::syslog_daemon: rsyslog
-base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
 base::syslog::rsyslog_udp_localhost: true
