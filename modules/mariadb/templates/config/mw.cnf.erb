@@ -76,6 +76,9 @@ innodb_lock_wait_timeout       = 120
 innodb-stats-on-metadata       = OFF
 innodb_ft_total_cache_size     = 150000000
 innodb_adaptive_hash_index     = OFF
+# From 10.5.7+ the default has been changed to 90%.
+# Change this back to 75%.
+innodb_max_dirty_pages_pct     = 75
 innodb_purge_threads           = 1
 
 join_cache_level               = 8
