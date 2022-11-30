@@ -181,7 +181,7 @@ class puppetdb(
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role:Icinga2]', ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }
