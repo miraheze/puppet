@@ -224,4 +224,14 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+
+    exec { 'WikibaseEdtf_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/WikibaseEdtf/vendor",
+        cwd         => "${mwpath}/extensions/WikibaseEdtf",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/WikibaseEdtf",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 }
