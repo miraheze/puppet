@@ -39,7 +39,7 @@ class varnish (
     }
 
     # TODO: On bigger memory hosts increase Transient size
-    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,500M"
+    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,1G"
 
     # Default is 5000 in varnish
     $max_threads = max(floor($::processorcount * 250), 5000)
