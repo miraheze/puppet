@@ -52,7 +52,7 @@ class base::monitoring {
     monitoring::hosts { $::hostname: }
 
     monitoring::nrpe { 'Disk Space':
-        command => '/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /',
+        command => '/usr/lib/nagios/plugins/check_disk -w 6% -c 3% -p /',
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Disk_Space'
     }
 
