@@ -100,4 +100,6 @@ ssl-cert                       = /etc/ssl/localcerts/wildcard.miraheze.org-2020-
 ssl-key                        = /etc/ssl/private/wildcard.miraheze.org-2020-2.key
 tls_version                    = TLSv1.2,TLSv1.3
 
+optimizer_switch               = 'mrr=on,mrr_cost_based=on,mrr_sort_keys=on,optimize_join_buffer_size=on,rowid_filter=off'
+
 !includedir /etc/mysql/conf.d/
