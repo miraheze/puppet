@@ -1,7 +1,0 @@
-puppetserver_hostname: 'puppet141.miraheze.org'
-base::syslog::graylog_hostname: 'graylog121.miraheze.org'
-
-# Swift config
-
-swift_object_enable: true
-swift::storage::object_server_default_workers: 48
