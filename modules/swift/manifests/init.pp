@@ -66,4 +66,15 @@ class swift {
         content => template('swift/swift-env.sh.erb'),
         mode    => '0755',
     }
+
+    logrotate::conf { 'swift':
+        ensure => present,
+        source => 'puppet:///modules/swift/swift.logrotate.conf',
+    }
+
+    rsyslog::conf { 'swift':
+        source   => 'puppet:///modules/swift/swift.rsyslog.conf',
+        priority => 40,
+        require  => File['/var/log/swift'],
+    }
 }
