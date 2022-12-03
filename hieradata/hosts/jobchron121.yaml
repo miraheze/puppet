@@ -4,7 +4,7 @@ users::groups:
 
 contactgroups: ['sre', 'mediawiki']
 
-redis::heap: '1000mb'
+redis::heap: '1GB'
 
 http_proxy: 'http://bast.miraheze.org:8080'
 
