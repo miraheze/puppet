@@ -213,7 +213,7 @@ sub mw_request {
 
 	# Don't cache certain things on static
 	if (
-		(req.http.Host == "static.miraheze.org") &&
+		req.http.Host == "static.miraheze.org" &&
 		(
 			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
 			req.url ~ "^/(.+)wiki/sitemaps" || # Do not cache sitemaps
@@ -252,7 +252,7 @@ sub vcl_recv {
 		return (synth(200));
 	}
 	
-	if ((req.http.host == "static.miraheze.org") && req.url == "/") {
+	if (req.http.host == "static.miraheze.org" && req.url == "/") {
 		return (synth(301, "Commons Redirect"));
 	}
 
