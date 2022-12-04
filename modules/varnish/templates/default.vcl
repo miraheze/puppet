@@ -92,8 +92,8 @@ sub mobile_detection {
 
 # Rate limiting logic
 sub rate_limit {
-	# Allow higher limits for static.miraheze.org/static-new.miraheze.org, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") {
+	# Allow higher limits for static.miraheze.org, we can handle more of those requests
+	if (req.http.Host == "static.miraheze.org") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
 		}
@@ -137,7 +137,7 @@ sub vcl_synth {
 
 	// Handle CORS preflight requests
 	if (
-		(req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") &&
+		req.http.Host == "static.miraheze.org" &&
 		resp.reason == "CORS Preflight"
 	) {
 		set resp.reason = "OK";
@@ -184,7 +184,7 @@ sub mw_request {
 	}
 
 	# Numerous static.miraheze.org specific code
-	if (req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") {
+	if (req.http.Host == "static.miraheze.org") {
 		# We can do this because static.miraheze.org should not be capable of serving such requests anyway
 		# This could also increase cache hit rates as Cookies will be stripped entirely
 		unset req.http.Cookie;
@@ -213,7 +213,7 @@ sub mw_request {
 
 	# Don't cache certain things on static
 	if (
-		(req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") &&
+		(req.http.Host == "static.miraheze.org") &&
 		(
 			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
 			req.url ~ "^/(.+)wiki/sitemaps" || # Do not cache sitemaps
@@ -252,14 +252,14 @@ sub vcl_recv {
 		return (synth(200));
 	}
 	
-	if ((req.http.host == "static.miraheze.org" || req.http.host == "static-new.miraheze.org") && req.url == "/") {
+	if ((req.http.host == "static.miraheze.org") && req.url == "/") {
 		return (synth(301, "Commons Redirect"));
 	}
 
 	# Normalise Accept-Encoding for better cache hit ratio
 	if (req.http.Accept-Encoding) {
 		if (
-			(req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org")
+			(req.http.Host == "static.miraheze.org")
 			&& req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|mp4|ogg)$"
 		) {
 			# No point in compressing these
@@ -486,8 +486,8 @@ sub vcl_backend_response {
 	// hit-for-pass objects >= 8388608 size and if domain == static.miraheze.org or
 	// hit-for-pass objects >= 67108864 size and if domain != static.miraheze.org.
 	// Do cache if Content-Length is missing.
-	if (std.integer(beresp.http.Content-Length, 0) >= 8388608 && (bereq.http.Host == "static.miraheze.org" || bereq.http.Host == "static-new.miraheze.org") ||
-		std.integer(beresp.http.Content-Length, 0) >= 67108864 && (bereq.http.Host != "static.miraheze.org" || bereq.http.Host != "static-new.miraheze.org")
+	if (std.integer(beresp.http.Content-Length, 0) >= 8388608 && bereq.http.Host == "static.miraheze.org" ||
+		std.integer(beresp.http.Content-Length, 0) >= 67108864 && bereq.http.Host != "static.miraheze.org"
 	) {
 		// HFP
 		return(pass(beresp.ttl));
@@ -503,7 +503,7 @@ sub vcl_deliver {
 	# on the same site as the wiki (private).
 	if (
 		(
-	 	 	 (req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") &&
+	 	 	 req.http.Host == "static.miraheze.org" &&
 			 req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
 		) ||
 	 	req.url ~ "^(?i)\/w\/img_auth\.php\/(.*)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
