@@ -74,7 +74,7 @@ paste.filter_factory = miraheze.ensure_max_age:filter_factory
 methods_list = HEAD GET
 status_list = 200
 max_age = 86400
-host_list = static-new.miraheze.org
+host_list = static.miraheze.org
 
 [filter:rewrite]
 # the auth system turns our login and key into an account / token pair.
@@ -84,6 +84,6 @@ account = <%= @accounts['mw_media']['account_name'] %>
 user_agent = Mozilla/5.0
 
 # sending thumbnail requests to thumbor
-thumbhost = static-new.miraheze.org
+thumbhost = static.miraheze.org
 
 paste.filter_factory = miraheze.rewrite:filter_factory
