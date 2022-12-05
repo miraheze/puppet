@@ -20,7 +20,6 @@ mediawiki::php::memory_limit: '500M'
 php::php_version: '7.4'
 
 http_proxy: 'http://bast.miraheze.org:8080'
-gluster_volume: gluster.miraheze.org:/static
 
 base::syslog::rsyslog_udp_localhost: true
 
