@@ -109,6 +109,7 @@ class mediawiki(
         '/srv/mediawiki/w',
         '/srv/mediawiki/config',
         '/srv/mediawiki/cache',
+        '/srv/mediawiki/stopforumspam',
     ]:
         ensure => 'directory',
         owner  => 'www-data',
@@ -205,6 +206,13 @@ class mediawiki(
         mode    => '0755',
         source  => 'puppet:///private/mediawiki/OAuth2.key',
         require => File['/srv/mediawiki/config'],
+    }
+
+    file { '/srv/mediawiki/stopforumspam/listed_ip_30_ipv46_all.txt':
+        ensure  => present,
+        mode    => '0755',
+        source  => 'puppet:///private/mediawiki/listed_ip_30_ipv46_all.txt',
+        require => File['/srv/mediawiki/stopforumspam'],
     }
 
     sudo::user { 'www-data_sudo_itself':
