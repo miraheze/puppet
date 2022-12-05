@@ -212,7 +212,7 @@ class mediawiki(
         ensure  => present,
         mode    => '0755',
         source  => 'puppet:///private/mediawiki/listed_ip_30_ipv46_all.txt',
-        require => File['/srv/mediawiki/config'],
+        require => File['/srv/mediawiki/stopforumspam'],
     }
 
     sudo::user { 'www-data_sudo_itself':
