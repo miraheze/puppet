@@ -21,10 +21,6 @@ account_autocreate = true
 conn_timeout = 2.0
 node_timeout = 20
 
-[filter:tempurl]
-use = egg:swift#tempurl
-methods = GET HEAD
-
 [filter:tempauth]
 use = egg:swift#tempauth
 token_life = 604800
