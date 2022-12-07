@@ -47,7 +47,7 @@ define nginx::site(
     }
 
     $ensure_link = $ensure ? {
-        present => link,
+        'present' => link,
         default => 'absent',
     }
     file { "/etc/nginx/sites-enabled/${basename}":
