@@ -49,6 +49,11 @@ class swift::proxy (
         monitor => false,
     }
 
+    nginx::site { 'default':
+        ensure  => present,
+        monitor => false,
+    }
+
     monitoring::services { 'HTTP':
         check_command => 'check_http',
         vars          => {
