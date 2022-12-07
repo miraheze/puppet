@@ -2,8 +2,8 @@
 # This file is managed by Puppet!
 
 [DEFAULT]
-# Only in object-server must you use ipv6 without bracket.
-bind_ip = [::]
+# Only in proxy-server and object-server must you use ipv6 without bracket.
+bind_ip = ::
 bind_port = 80
 workers = <%= @num_workers %>
 # bind_timeout = 30
