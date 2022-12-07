@@ -83,7 +83,7 @@ class swift::proxy (
         check_command => 'tcp',
         vars          => {
             tcp_address => $::ipaddress6,
-            tcp_port    => '8080',
+            tcp_port    => '80',
         },
     }
 }
