@@ -51,8 +51,7 @@ define nginx::site(
         default => 'absent',
     }
     file { "/etc/nginx/sites-enabled/${basename}":
-        ensure  => $ensure_link,
-        ensure => link,
+        ensure => $ensure_link,
         target => "/etc/nginx/sites-available/${basename}",
         notify => Service['nginx'],
     }
