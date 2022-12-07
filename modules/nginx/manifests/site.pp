@@ -47,6 +47,7 @@ define nginx::site(
     }
 
     file { "/etc/nginx/sites-enabled/${basename}":
+        ensure  => $ensure,
         ensure => link,
         target => "/etc/nginx/sites-available/${basename}",
         notify => Service['nginx'],
