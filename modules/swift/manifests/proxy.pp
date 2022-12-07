@@ -50,7 +50,7 @@ class swift::proxy (
     }
 
     nginx::site { 'default':
-        ensure  => present,
+        ensure  => absent,
         monitor => false,
     }
 
