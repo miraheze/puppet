@@ -1,5 +1,0 @@
-gluster_volume: gluster101.miraheze.org:/static
-
-http_proxy: 'http://bast.miraheze.org:8080'
-
-puppetserver_hostname: 'puppet141.miraheze.org'
