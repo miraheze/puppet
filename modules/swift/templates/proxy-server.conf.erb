@@ -12,7 +12,7 @@ swift_dir = /etc/swift
 user = swift
 
 [pipeline:main]
-pipeline = proxy-logging listing_formats ensure_max_age rewrite healthcheck cache tempurl ratelimit tempauth cors staticweb proxy-logging proxy-server
+pipeline = proxy-logging listing_formats ensure_max_age rewrite healthcheck cache tempurl ratelimit tempauth cors proxy-logging proxy-server
 
 [app:proxy-server]
 use = egg:swift#proxy
@@ -48,9 +48,6 @@ log_sleep_time_seconds = 3
 # containers with > 200 objects limited to 30/s PUT/DELETE/POST and listings
 container_ratelimit_200 = 30
 container_listing_ratelimit_200 = 30
-
-[filter:staticweb]
-use = egg:swift#staticweb
 
 [filter:tempurl]
 use = egg:swift#tempurl
