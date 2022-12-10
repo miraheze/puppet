@@ -12,7 +12,7 @@ swift_dir = /etc/swift
 user = swift
 
 [pipeline:main]
-pipeline = proxy-logging ensure_max_age rewrite healthcheck cache tempurl ratelimit tempauth cors staticweb proxy-logging proxy-server
+pipeline = proxy-logging listing_formats ensure_max_age rewrite healthcheck cache tempurl ratelimit tempauth cors staticweb proxy-logging proxy-server
 
 [app:proxy-server]
 use = egg:swift#proxy
@@ -70,6 +70,9 @@ paste.filter_factory = miraheze.cors:filter_factory
 [filter:proxy-logging]
 use = egg:swift#proxy_logging
 set access_log_facility = LOG_LOCAL1
+
+[filter:listing_formats]
+use = egg:swift#listing_formats
 
 [filter:ensure_max_age]
 paste.filter_factory = miraheze.ensure_max_age:filter_factory
