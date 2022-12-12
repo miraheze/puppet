@@ -145,23 +145,6 @@ class role::prometheus {
         port   => 9113
     }
 
-    $gluster_job = [
-        {
-            'job_name' => 'gluster',
-            'file_sd_configs' => [
-                {
-                    'files' => [ 'targets/gluster.yaml' ]
-                }
-            ]
-        }
-    ]
-
-    prometheus::class { 'gluster':
-        dest   => '/etc/prometheus/targets/gluster.yaml',
-        module => 'Prometheus::Exporter::Gluster',
-        port   => 9050
-    }
-
     $puppetserver_job = [
         {
             'job_name' => 'puppetserver',
@@ -272,7 +255,7 @@ class role::prometheus {
         global_extra => $global_extra,
         scrape_extra => [
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
-            $gluster_job, $puppetserver_job, $puppetdb_job, $memcached_job,
+            $puppetserver_job, $puppetdb_job, $memcached_job,
             $postfix_job, $openldap_job, $elasticsearch_job, $varnish_job,
             $cadvisor_job
         ].flatten,
