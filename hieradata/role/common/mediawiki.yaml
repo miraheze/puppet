@@ -1,0 +1,43 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+
+# Base
+http_proxy: 'http://bast.miraheze.org:8080'
+base::syslog::rsyslog_udp_localhost: true
+
+# Jobrunner
+jobrunner: true
+
+# MediaWiki
+role::mediawiki::use_strict_firewall: true
+mediawiki::branch: 'REL1_38'
+mediawiki::branch_mw_config: 'master'
+mediawiki::use_staging: false
+mediawiki::is_canary: false
+mediawiki::default_sync: 'all'
+mediawiki::use_shellbox: false
+mediawiki::jobqueue::wiki: 'loginwiki'
+mediawiki::monitoring::host: 'login.miraheze.org'
+mediawiki::php::fpm::fpm_min_child: 20
+mediawiki::php::fpm::fpm_workers_multiplier: 1.0
+mediawiki::php::fpm_config:
+  post_max_size: '250M'
+  upload_max_filesize: '250M'
+mediawiki::php::memory_limit: '500M'
+mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
+
+# Nutcracker (MediaWiki)
+memcached_servers_1:
+  - 2a10:6740::6:105:11211:1
+memcached_servers_3:
+  - 2a10:6740::6:405:11211:1
+
+# PHP
+php::php_version: '7.4'
+
+# NGINX
+nginx::keepalive_timeout: 2
+nginx::keepalive_requests: 150
+nginx::logrotate_number: 2
+nginx::use_graylog: true
