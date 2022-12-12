@@ -63,7 +63,7 @@ class phabricator (
         ensure => present,
         config => {
             'emergency_restart_interval'  => '60s',
-            'emergency_restart_threshold' => $facts['virtual_processor_count'],
+            'emergency_restart_threshold' => $facts['processors']['count'],
             'process.priority'            => -19,
         },
     }
@@ -89,7 +89,7 @@ class phabricator (
     $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
     $fpm_min_child = lookup('php::fpm::fpm_min_child', {'default_value' => 4})
 
-    $num_workers = max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
+    $num_workers = max(floor($facts['processors']['count'] * $fpm_workers_multiplier), $fpm_min_child)
     php::fpm::pool { 'www':
         config => {
             'pm'                        => 'static',
