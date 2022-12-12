@@ -4,7 +4,7 @@ user www-data;
 <%- if @nginx_worker_processes != 'auto' -%>
 worker_processes <%= @nginx_worker_processes %>;
 <%- else -%>
-worker_processes <%= scope.lookupvar('::virtual_processor_count') -%>;
+worker_processes <%= scope.lookupvar('::processorcount') %>;
 <%- end -%>
 pid /run/nginx.pid;
 worker_rlimit_nofile 16192; # Twice the number of worker_connections
