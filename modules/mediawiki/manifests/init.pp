@@ -12,7 +12,10 @@ class mediawiki(
     include mediawiki::monitoring
 
     if lookup(mediawiki::use_staging) {
-        include mediawiki::deploy
+        class { 'mediawiki::deploy':
+            branch           => $branch,
+            branch_mw_config => $branch_mw_config
+        }
     } else {
         include mediawiki::rsync
     }
