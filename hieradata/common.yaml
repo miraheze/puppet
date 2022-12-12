@@ -1,3 +1,4 @@
+## NOTE namespaced keys (i.e. with ::) will NOT be looked up here
 jobrunner: false
 jobrunner::intensive: false
 mailserver: false
