@@ -1,7 +1,10 @@
 # === Class mediawiki::deploy
 #
 # MediaWiki deploy files
-class mediawiki::deploy {
+class mediawiki::deploy (
+    Optional[String] $branch = undef,
+    Optional[String] $branch_mw_config = undef,
+) {
     include mediawiki::extensionsetup
 
     if lookup(mediawiki::is_canary) {
