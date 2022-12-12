@@ -56,7 +56,7 @@ define php::fpm::pool(
         'listen.allowed_clients' => '127.0.0.1',
         'listen.backlog' => 256,
         'pm'     => 'static',
-        'pm.max_children' => $facts['virtual_processor_count'],
+        'pm.max_children' => $facts['processors']['count'],
         'pm.max_requests' => 1000,
         'pm.status_path' => '/php_status',
         'access.format'  => '%{%Y-%m-%dT%H:%M:%S}t [%p] %{microseconds}d %{HTTP_HOST}e/%r %m/%s %{mega}M',
