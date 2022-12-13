@@ -8,6 +8,7 @@ base::syslog::rsyslog_udp_localhost: true
 
 # Jobrunner
 jobrunner: true
+jobrunner::intensive: false
 
 # MediaWiki
 role::mediawiki::use_strict_firewall: true
