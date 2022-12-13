@@ -2,7 +2,6 @@
 mailserver: false
 puppetserver: false
 puppetserver_hostname: puppet141.miraheze.org
-role::salt::minions::salt_master: 'puppet141.miraheze.org'
 dns: false
 
 # Logging
