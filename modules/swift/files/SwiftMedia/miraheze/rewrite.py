@@ -46,8 +46,9 @@ class _MirahezeRewriteContext(WSGIContext):
         # go to the thumb media store for unknown files
         reqorig.host = self.thumbhost
         # upload doesn't like our User-agent.
-        opener = urllib.request.build_opener()
-        # Pass on certain headers from the caller squid to the scalers
+	redirect_handler = DumbRedirectHandler()
+        opener = urllib.request.build_opener(redirect_handler)
+
         opener.addheaders = []
         if reqorig.headers.get('User-Agent') is not None:
             opener.addheaders.append(('User-Agent', reqorig.headers.get('User-Agent')))
@@ -57,6 +58,7 @@ class _MirahezeRewriteContext(WSGIContext):
                                'Accept', 'Accept-Encoding', 'X-Original-URI']:
             if reqorig.headers.get(header_to_pass) is not None:
                 opener.addheaders.append((header_to_pass, reqorig.headers.get(header_to_pass)))
+
         # At least in theory, we shouldn't be handing out links to originals
         # that we don't have (or in the case of thumbs, can't generate).
         # However, someone may have a formerly valid link to a file, so we
@@ -68,7 +70,6 @@ class _MirahezeRewriteContext(WSGIContext):
             urlobj[2] = urllib.parse.quote(urlobj[2], '%/')
             encodedurl = urllib.parse.urlunsplit(urlobj)
 
-            self.logger.warn("encodedurl %s" % encodedurl)
             match = re.match(
                     r'^http://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
                     encodedurl)
@@ -351,7 +352,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
-                if zone == 'thumb':
+                if repo === 'local' and zone == 'thumb':
                     resp = self.handle404(reqorig, url,  container, obj)
                     return resp(env, start_response)
                 else:
