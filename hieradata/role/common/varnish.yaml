@@ -1,0 +1,71 @@
+# Base
+base::syslog::rsyslog_udp_localhost: true
+users::groups: 'cache-admins'
+
+# NGINX
+nginx::worker_processes: 6
+nginx::logrotate_number: 4
+
+# Varnish
+varnish::interval-check: '60s'
+varnish::interval-timeout: '60s'
+varnish::backends:
+  mw121:
+    port: 8104
+    probe: mwhealth
+    pool: true
+  mw122:
+    port: 8105
+    probe: mwhealth
+    pool: true
+  mw131:
+    port: 8106
+    probe: mwhealth
+    pool: true
+  mw132:
+    port: 8107
+    probe: mwhealth
+    pool: true
+  mw141:
+    port: 8108
+    probe: mwhealth
+    pool: true
+  mw142:
+    port: 8109
+    probe: mwhealth
+    pool: true
+  mwtask141:
+    port: 8150
+    probe: false
+    pool: false
+  test131:
+    port: 8180
+    probe: false
+    pool: false
+  mail121:
+    port: 8200
+    probe: false
+    pool: false
+  mon141:
+    port: 8201
+    probe: false
+    pool: false
+  phab121:
+    port: 8202
+    probe: false
+    pool: false
+  matomo131:
+    port: 8203
+    probe: false
+    pool: false
+  puppet141:
+    port: 8204
+    probe: false
+    pool: false
+  reports121:
+    port: 8205
+    probe: false
+    pool: false
+
+## Overide this per host if the space is smaller
+varnish::cache_file_size: '55G'
