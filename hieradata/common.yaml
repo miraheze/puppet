@@ -4,65 +4,6 @@ puppetserver: false
 puppetserver_hostname: puppet141.miraheze.org
 role::salt::minions::salt_master: 'puppet141.miraheze.org'
 dns: false
-varnish::interval-check: '60s'
-varnish::interval-timeout: '60s'
-varnish::backends:
-  mw121:
-    port: 8104
-    probe: mwhealth
-    pool: true
-  mw122:
-    port: 8105
-    probe: mwhealth
-    pool: true
-  mw131:
-    port: 8106
-    probe: mwhealth
-    pool: true
-  mw132:
-    port: 8107
-    probe: mwhealth
-    pool: true
-  mw141:
-    port: 8108
-    probe: mwhealth
-    pool: true
-  mw142:
-    port: 8109
-    probe: mwhealth
-    pool: true
-  mwtask141:
-    port: 8150
-    probe: false
-    pool: false
-  test131:
-    port: 8180
-    probe: false
-    pool: false
-  mail121:
-    port: 8200
-    probe: false
-    pool: false
-  mon141:
-    port: 8201
-    probe: false
-    pool: false
-  phab121:
-    port: 8202
-    probe: false
-    pool: false
-  matomo131:
-    port: 8203
-    probe: false
-    pool: false
-  puppet141:
-    port: 8204
-    probe: false
-    pool: false
-  reports121:
-    port: 8205
-    probe: false
-    pool: false
 
 # Logging
 base::syslog::syslog_daemon: rsyslog
