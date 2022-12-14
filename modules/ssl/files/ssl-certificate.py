@@ -207,9 +207,9 @@ class SslCertificate:
         os.system('git -C /srv/ssl/ssl/ push origin master')
 
         if self.private and self.newprivate is True:
-                print('New private key is being copied and pushed to /home/ssl-admins/ssl-keys')
-                os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /home/ssl-admins/ssl-keys/{self.domain}.key')
-                os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'add {self.domain} key' && git push origin master")
+            print('New private key is being copied and pushed to /home/ssl-admins/ssl-keys')
+            os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /home/ssl-admins/ssl-keys/{self.domain}.key')
+            os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'add {self.domain} key' && git push origin master")
 
     def revoke_letsencrypt_certificate(self):
         if not self.quiet:
