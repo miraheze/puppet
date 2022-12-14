@@ -131,7 +131,7 @@ class SslCertificate:
         os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bast.miraheze.org:8080 %h %p\'"')
         os.system('git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"')
         os.system('git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"')
-        os.system('git -C /srv/ssl/ssl/ reset --hard origin')
+        os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
         os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
         os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
 
