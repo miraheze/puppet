@@ -132,6 +132,7 @@ class SslCertificate:
         os.system('git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"')
         os.system('git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"')
         os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
+        os.system('git -C /srv/ssl/ssl/ pull')
         os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
         os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
 
