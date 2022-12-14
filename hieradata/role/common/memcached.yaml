@@ -6,5 +6,3 @@ role::memcached::max_seq_reqs: 200
 role::memcached::size: 10240
 role::memcached::extended_options: []
 role::memcached::port: 11211
-
-puppetserver_hostname: 'puppet141.miraheze.org'

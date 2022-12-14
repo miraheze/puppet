@@ -1,0 +1,2 @@
+base::syslog::syslog_daemon: rsyslog
+base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]

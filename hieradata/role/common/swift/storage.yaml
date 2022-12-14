@@ -1,0 +1,2 @@
+rsync::server::address: '::'
+swift::storage::object_server_default_workers: 100

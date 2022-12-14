@@ -32,8 +32,7 @@ node 'graylog121.miraheze.org' {
 
 node 'jobchron121.miraheze.org' {
     include base
-    include role::redis
-    include mediawiki::jobqueue::chron
+    include role::mediawiki::jobchron
 }
 
 node 'ldap141.miraheze.org' {
@@ -105,17 +104,17 @@ node 'reports121.miraheze.org' {
 
 node /^swiftproxy1[13]1\.miraheze\.org$/ {
     include base
-    include role::swift
+    include role::swift::proxy
 }
 
 node 'swiftac111.miraheze.org' {
     include base
-    include role::swift
+    include role::swift::ac
 }
 
 node /^swiftobject1[12][12345]\.miraheze\.org$/ {
     include base
-    include role::swift
+    include role::swift::storage
 }
 
 node 'test131.miraheze.org' {

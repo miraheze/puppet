@@ -1,5 +1,0 @@
-puppetserver_hostname: 'puppet141.miraheze.org'
-
-# Swift config
-
-swift_object_enable: true

@@ -43,8 +43,8 @@ icinga2::globals::constants:
   PluginDir: '/usr/lib/nagios/plugins'
   PluginContribDir: '/usr/lib/nagios/plugins'
   ManubulonPluginDir: '/usr/lib/nagios/plugins'
-  NodeName: 'mon141.miraheze.org'
-  ZoneName: 'mon141.miraheze.org'
+  NodeName: '%{facts.networking.fqdn}'
+  ZoneName: '%{facts.networking.fqdn}'
   TicketSalt: ''
   MaxConcurrentChecks: 40
 icinga2::globals::user: 'nagios'
@@ -146,5 +146,3 @@ icinga2::globals::reserved:
 
 nginx::use_graylog: true
 base::syslog::rsyslog_udp_localhost: true
-
-puppetserver_hostname: 'puppet141.miraheze.org'

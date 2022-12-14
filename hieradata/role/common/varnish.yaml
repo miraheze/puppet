@@ -1,12 +1,9 @@
-# Base
-base::syslog::rsyslog_udp_localhost: true
 users::groups: 'cache-admins'
+base::syslog::rsyslog_udp_localhost: true
 
-# NGINX
 nginx::worker_processes: 6
 nginx::logrotate_number: 4
 
-# Varnish
 varnish::interval-check: '60s'
 varnish::interval-timeout: '60s'
 varnish::backends:
@@ -66,6 +63,4 @@ varnish::backends:
     port: 8205
     probe: false
     pool: false
-
-## Overide this per host if the space is smaller
 varnish::cache_file_size: '55G'
