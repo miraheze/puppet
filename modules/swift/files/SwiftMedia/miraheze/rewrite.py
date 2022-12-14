@@ -353,7 +353,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
-                if repo === 'local' and zone == 'thumb':
+                if repo == 'local' and zone == 'thumb':
                     resp = self.handle404(reqorig, url,  container, obj)
                     return resp(env, start_response)
                 else:
