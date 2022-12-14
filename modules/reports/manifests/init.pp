@@ -5,7 +5,7 @@ class reports {
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',
         origin    => 'https://github.com/miraheze/TSPortal',
-        branch    => 'v9',
+        branch    => 'v10',
         owner     => 'www-data',
         group     => 'www-data',
     }
@@ -152,6 +152,7 @@ class reports {
     $reports_mediawiki_identifier = lookup('reports::reports_mediawiki_identifier')
     $reports_mediawiki_secret = lookup('reports::reports_mediawiki_secret')
     $reports_discord_webhook = lookup('reports::reports_discord_webhook')
+    $reports_write_key = lookup('reports::reports_write_key')
 
     file { '/srv/TSPortal/.env':
         ensure  => present,
