@@ -157,7 +157,7 @@ class SslCertificate:
             if not self.quiet:
                 print(f'Re-generating a new wildcard SSL cert for {self.domain}')
 
-            if os.path.exists(f"/etc/letsencrypt/renewal/{self.domain}.conf"):
+            if os.path.exists(f'/etc/letsencrypt/renewal/{self.domain}.conf'):
                 if self.no_existing_key:
                     self.newprivvate = True
 
@@ -178,7 +178,7 @@ class SslCertificate:
             if not self.quiet:
                 print(f'Re-generating a new SSL cert for {self.domain}')
 
-            if os.path.exists(f"/etc/letsencrypt/renewal/{self.domain}.conf"):
+            if os.path.exists(f'/etc/letsencrypt/renewal/{self.domain}.conf'):
                 if self.no_existing_key:
                     os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
 
@@ -206,8 +206,7 @@ class SslCertificate:
         os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
         os.system('git -C /srv/ssl/ssl/ push origin master')
 
-        if self.private:
-            if self.newprivate is True:
+        if self.private and self.newprivate is True:
                 print('New private key is being copied and pushed to /home/ssl-admins/ssl-keys')
                 os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /home/ssl-admins/ssl-keys/{self.domain}.key')
                 os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'add {self.domain} key' && git push origin master")
