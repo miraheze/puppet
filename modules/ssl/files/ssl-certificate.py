@@ -159,7 +159,7 @@ class SslCertificate:
 
             if os.path.exists(f'/etc/letsencrypt/renewal/{self.domain}.conf'):
                 if self.no_existing_key:
-                    self.newprivvate = True
+                    self.newprivate = True
 
                     os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
 
@@ -169,7 +169,7 @@ class SslCertificate:
                 else:
                     os.system(f'/usr/bin/certbot --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
             else:
-                self.newprivvate = True
+                self.newprivate = True
                 os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
 
             if not self.quiet:
@@ -180,7 +180,7 @@ class SslCertificate:
 
             if os.path.exists(f'/etc/letsencrypt/renewal/{self.domain}.conf'):
                 if self.no_existing_key:
-                    self.newprivvate = True
+                    self.newprivate = True
 
                     os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
 
@@ -196,7 +196,7 @@ class SslCertificate:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
         if not self.quiet:
-            self.newprivvate = True
+            self.newprivate = True
             print('Pushing LetsEncrypt SSL certificate to GitHub')
 
         os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bast.miraheze.org:8080 %h %p\'"')
