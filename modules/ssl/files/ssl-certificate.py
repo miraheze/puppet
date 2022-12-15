@@ -110,11 +110,11 @@ class SslCertificate:
             if self.no_existing_key:
                 out = os.system(f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
                 if out != 0:
-                     sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
+                    sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
             else:
                 out = os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl certonly --manual --preferred-challenges dns-01 {self.overwrite} -d {self.domain} {self.secondary_domain}')
                 if out != 0:
-                     sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
+                    sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
 
             if not self.quiet:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
@@ -125,11 +125,11 @@ class SslCertificate:
             if self.no_existing_key:
                 out = os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
                 if out != 0:
-                     sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
+                    sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
             else:
                 out = os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --reuse-key --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
                 if out != 0:
-                     sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
+                    sys.exit("Error: Certbot failed (either the domain isn't pointed or we are being rate limited)")
 
             if not self.quiet:
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
