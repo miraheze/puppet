@@ -56,6 +56,12 @@ class ssl {
         group  => 'root',
         mode   => '0770',
     }
+    file { '/srv/dns':
+        ensure => directory,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0770',
+    }
 
     file { '/var/lib/nagios/ssl-acme':
         ensure => present,
