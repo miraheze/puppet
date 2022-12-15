@@ -97,10 +97,15 @@ class _MirahezeRewriteContext(WSGIContext):
             # Wrap the urllib2 HTTPError into a swob HTTPException
             status = error.code
             body = error.fp.read()
-            headers = list(error.hdrs.items())
+            headers = dict(list(error.hdrs.items()))
             if status not in swob.RESPONSE_REASONS:
                 # Generic status description in case of unknown status reasons.
                 status = "%s Error" % status
+            # We're having itermittent issues with Transfer-Encoding,
+            # remove it from the headers. This is added from urllib anyways.
+            # See https://github.com/django/daphne/issues/371#issuecomment-862186611
+            if headers.get('Transfer-Encoding') is not None :
+                del headers['Transfer-Encoding']
             return swob.HTTPException(status=status, body=body, headers=headers)
         except urllib.error.URLError as error:
             msg = 'There was a problem while contacting the image scaler: %s' % \
