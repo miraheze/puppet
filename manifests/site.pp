@@ -1,6 +1,6 @@
 # servers
 
-node /^bast1[02]1\.miraheze\.org$/ {
+node /^bast1[024]1\.miraheze\.org$/ {
     include base
     include role::bastion
 }
