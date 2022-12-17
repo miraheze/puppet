@@ -87,7 +87,7 @@ class role::db {
         ensure   => present,
         uid      => 3000,
         ssh_keys => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFzspt8e1F5zk6/SOLUvBljwxEExv+uIPCRAh8ap7bSL dbcopy@db111'
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOL4FH2aRAwbSGP1HLmo1YzaXRci2YnkTGJvT2E6Ay0d dbcopy@db101'
         ],
     }
 
