@@ -171,6 +171,7 @@ class mediawiki(
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
     $swift_password             = lookup('mediawiki::swift_password')
     $swift_temp_url_key         = lookup('mediawiki::swift_temp_url_key')
+    $reports_write_key          = lookup('reports::reports_write_key')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
