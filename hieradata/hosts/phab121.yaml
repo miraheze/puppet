@@ -7,3 +7,5 @@ php::php_version: '7.4'
 nginx::use_graylog: false
 
 puppetserver_hostname: 'puppet141.miraheze.org'
+
+nginx::client_max_body_size: "10M"
