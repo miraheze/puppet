@@ -34,3 +34,6 @@ $wmgSwiftPassword = "<%= @swift_password %>";
 
 // Swift temp URL key for mw
 $wmgSwiftTempUrlKey = "<%= @swift_temp_url_key %>";
+
+// Reports write key
+$wgMirahezeReportsWriteKey = "<%= @reports_write_key %>";
