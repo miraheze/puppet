@@ -66,7 +66,7 @@ class mediawiki::extensionsetup {
     }
 
     exec { 'oauth_lcobucci_composer':
-        command     => "composer require 'lcobucci/jwt:4.1.5",
+        command     => "composer require 'lcobucci/jwt:4.1.5'",
         creates     => "${mwpath}/extensions/OAuth/vendor",
         cwd         => "${mwpath}/extensions/OAuth",
         path        => '/usr/bin',
