@@ -65,6 +65,16 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
 
+    exec { 'oauth_lcobucci_composer':
+        command     => 'composer require "lcobucci/jwt:4.1.5" --update-no-dev',
+        unless      => 'composer show --installed lcobucci/jwt 4.1.5',
+        cwd         => "${mwpath}/extensions/OAuth",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/OAuth",
+        user        => 'www-data',
+        require     => Exec['oauth_composer'],
+    }
+
     exec { 'templatestyles_composer':
         command     => $composer,
         creates     => "${mwpath}/extensions/TemplateStyles/vendor",
