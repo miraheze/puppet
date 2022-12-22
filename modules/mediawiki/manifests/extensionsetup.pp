@@ -16,12 +16,12 @@ class mediawiki::extensionsetup {
 
     $composer = 'composer install --no-dev'
 
-    exec { 'psysh_composer':
+    exec { 'vendor_psysh_composer':
         command     => 'composer require "psy/psysh:0.11.8" --update-no-dev',
         unless      => 'composer show --installed psy/psysh 0.11.8',
-        cwd         => "${mwpath}",
+        cwd         => "${mwpath}/vendor",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}",
+        environment => "HOME=${mwpath}/vendor",
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
