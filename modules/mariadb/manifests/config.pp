@@ -122,7 +122,7 @@ class mariadb::config(
     }
 
     monitoring::services { 'MariaDB Connections':
-        check_command => 'mysql_query',
+        check_command => 'check_mysql_query',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars => {
             mysql_hostname  => $::fqdn,
