@@ -254,7 +254,7 @@ class role::prometheus {
         'job_name'        => 'statsd_exporter',
         'scheme'          => 'http',
         'file_sd_configs' => [
-          { 'files' => [ "${targets_path}/statsd_exporter_*.yaml"] },
+          { 'files' => [ "${targets_path}/statsd_exporter.yaml"] },
         ],
       },
     ]
