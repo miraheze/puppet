@@ -131,7 +131,7 @@ class mariadb::config(
             mysql_ssl       => true,
             mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
             query           => "SHOW STATUS WHERE Variable_name = 'Threads_connected'",
-            warning         => '80%',
+            warning         => '1%',
             critical        => '90%',
             max_connections => '500',
         },
