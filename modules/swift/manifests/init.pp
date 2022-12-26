@@ -33,6 +33,8 @@ class swift {
 
     $hash_path_suffix = lookup('swift_hash_path_suffix')
 
+    ensure_packages(['python3-statsd'])
+
     file {
         default:
             owner   => 'swift',

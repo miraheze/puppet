@@ -249,6 +249,22 @@ class role::prometheus {
         port   => 9206
     }
 
+    $statsd_exporter_job = [
+      {
+        'job_name'        => 'statsd_exporter',
+        'scheme'          => 'http',
+        'file_sd_configs' => [
+          { 'files' => [ 'targets/statsd_exporter.yaml' ] },
+        ],
+      },
+    ]
+
+    prometheus::class{ 'statsd_exporter':
+        dest   => '/etc/prometheus/targets/statsd_exporter.yaml',
+        module => 'Prometheus::Exporter::Statsd_exporter',
+        port   => 9112,
+    }
+
     $global_extra = {}
 
     class { '::prometheus':
@@ -256,8 +272,8 @@ class role::prometheus {
         scrape_extra => [
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
             $puppetserver_job, $puppetdb_job, $memcached_job,
-            $postfix_job, $openldap_job, $elasticsearch_job, $varnish_job,
-            $cadvisor_job
+            $postfix_job, $openldap_job, $elasticsearch_job, $statsd_exporter_job,
+            $varnish_job, $cadvisor_job
         ].flatten,
     }
 
