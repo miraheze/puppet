@@ -152,52 +152,52 @@ prometheus::exporter::statsd_exporter::mappings:
       method: "$2"
       status: "$3"
 
-  # Swift per-account stats reporter (WMF specific)
-  - match: swift\.([^.]+)\.stats\.([^.]+)\.bytes
+  # Swift per-account stats reporter
+  - match: swift\.stats\.([^.]+)\.bytes
     match_type: regex
     name: swift_account_stats_bytes_total
     labels:
-      account: "$2"
-  - match: swift\.([^.]+)\.stats\.([^.]+)\.containers
+      account: "$1"
+  - match: swift\.stats\.([^.]+)\.containers
     match_type: regex
     name: swift_account_stats_containers_total
     labels:
-      account: "$2"
-  - match: swift\.([^.]+)\.stats\.([^.]+)\.objects
+      account: "$1"
+  - match: swift\.stats\.([^.]+)\.objects
     match_type: regex
     name: swift_account_stats_objects_total
     labels:
-      account: "$2"
+      account: "$1"
 
-  # Swift containers stats reporter (WMF specific)
-  - match: swift\.([^.]+)\.containers\.([^.]+)\.([^.]+)\.bytes
+  # Swift containers stats reporter
+  - match: swift\.containers\.([^.]+)\.([^.]+)\.bytes
     match_type: regex
     name: swift_container_stats_bytes_total
     labels:
-      account: "$2"
-      class: "$3"
-  - match: swift\.([^.]+)\.containers\.([^.]+)\.([^.]+)\.objects
+      account: "$1"
+      class: "$2"
+  - match: swift\.containers\.([^.]+)\.([^.]+)\.objects
     match_type: regex
     name: swift_container_stats_objects_total
     labels:
-      account: "$2"
-      class: "$3"
+      account: "$1"
+      class: "$2"
 
   ## $2 can be copies_expected/copies_found/missing_<integer>/overlapping/pct_found/retries
   - match: swift\.([^.]+)\.dispersion\.object\.([^.]+)
     match_type: regex
-    name: "swift_dispersion_object_$2"
-  - match: swift\.([^.]+)\.dispersion\.container\.([^.]+)
+    name: "swift_dispersion_object_$1"
+  - match: swift\.dispersion\.container\.([^.]+)
     match_type: regex
-    name: "swift_dispersion_container_$2"
+    name: "swift_dispersion_container_$1"
   ## storage policy-specific metrics
-  - match: swift\.([^.]+)\.dispersion\.([^.]+)\.object\.([^.]+)
+  - match: swift\.dispersion\.([^.]+)\.object\.([^.]+)
     match_type: regex
-    name: "swift_dispersion_policy_object_$3"
+    name: "swift_dispersion_policy_object_$2"
     labels:
-      storage_policy: "$2"
-  - match: swift\.([^.]+)\.dispersion\.([^.]+)\.container\.([^.]+)
+      storage_policy: "$1"
+  - match: swift\.dispersion\.([^.]+)\.container\.([^.]+)
     match_type: regex
-    name: "swift_dispersion_policy_container_$3"
+    name: "swift_dispersion_policy_container_$2"
     labels:
-      storage_policy: "$2"
+      storage_policy: "$1"
