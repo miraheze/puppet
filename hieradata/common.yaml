@@ -85,3 +85,5 @@ base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
 # TODO: Add support for class based hiera
 rsync::server::address: '::'
 swift::storage::object_server_default_workers: 100
+
+role::swift::stats_reporter_host: swiftproxy111.miraheze.org

@@ -1,5 +1,7 @@
 # role: swift
-class role::swift {
+class role::swift (
+    String $stats_reporter_host = lookup('role::swift::stats_reporter_host'),
+) {
 
     include ::swift
     include ::swift::ring
@@ -18,6 +20,27 @@ class role::swift {
     $proxy = lookup('swift_proxy_enable', {'default_value' => false})
     if $proxy {
         include ::swift::proxy
+
+        # TODO: Put this as a param to the role
+        $accounts      = lookup('swift::accounts')
+        $accounts_keys = lookup('swift::accounts_keys')
+
+        $stats_ensure = ($stats_reporter_host == $facts['networking']['fqdn']).bool2str('present','absent')
+
+        class { 'swift::stats_reporter':
+            ensure      => $stats_ensure,
+            accounts    => $accounts,
+            credentials => $accounts_keys,
+        }
+
+        swift::stats::stats_container { 'mw-media':
+            ensure        => $stats_ensure,
+            account_name  => 'AUTH_mw',
+            container_set => 'mw-media',
+            statsd_host   => 'localhost',
+            statsd_port   => '9125',
+            statsd_prefix => 'swift.containers.mw-media',
+        }
 
         ferm::service { 'http':
             proto   => 'tcp',
