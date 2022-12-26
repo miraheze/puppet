@@ -259,10 +259,10 @@ class role::prometheus {
       },
     ]
 
-    prometheus::class_config{ "statsd_exporter":
-        dest       => '/etc/prometheus/targets/statsd_exporter.yaml',
-        class_name => 'Prometheus::Exporter::Statsd_exporter',
-        port       => 9112,
+    prometheus::class{ 'statsd_exporter':
+        dest   => '/etc/prometheus/targets/statsd_exporter.yaml',
+        module => 'Prometheus::Exporter::Statsd_exporter',
+        port   => 9112,
     }
 
     $global_extra = {}

@@ -90,6 +90,8 @@ class role::swift {
         }
     }
 
+    include ::prometheus::exporter::statsd_exporter
+
     motd::role { 'role::swift':
         description => 'Openstack Swift Service (Accounting, Container, Proxy, Object)',
     }
