@@ -2,7 +2,18 @@ class prometheus::exporter::statsd_exporter (
     Array[Hash] $mappings      = lookup('prometheus::exporter::statsd_exporter::mappings'),
     String $listen_address     = ':9112',
 ) {
-    ensure_packages('prometheus-statsd-exporter')
+
+    file { '/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb':
+        ensure  => present,
+        source  => 'puppet:///modules/prometheus/statsd_exporter/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb',
+    }
+
+    package { 'prometheus-statsd-exporter':
+        ensure      => installed,
+        provider    => dpkg,
+        source      => '/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb',
+        require     => File['/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb'],
+    }
 
     $basedir = '/etc/prometheus'
     $config = "${basedir}/statsd_exporter.conf"
