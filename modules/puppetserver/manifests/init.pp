@@ -247,7 +247,7 @@ class puppetserver(
         weekday => '0',
     }
     
-    monitoring::nrpe { 'Backups - SSLKeys':
+    monitoring::nrpe { 'Backups SSLKeys':
         command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sslkeys-backup.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
         critical => true
@@ -262,7 +262,7 @@ class puppetserver(
         weekday => '0',
     }
 
-    monitoring::nrpe { 'Backups - Private':
+    monitoring::nrpe { 'Backups Private':
         command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/private-backup.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
         critical => true
