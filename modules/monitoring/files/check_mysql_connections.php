@@ -50,17 +50,13 @@ if (isset($options['ssl-verify-server-cert'])) {
 // Connect to the MySQL server using the host, user, and password options
 $conn = new mysqli($host, $user, $pass);
 
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
-
 if (!empty($ssl_options)) {
     $conn->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, $ssl_options['ssl_verify_server_cert']);
     $conn->ssl_set($ssl_options['ssl_key'], $ssl_options['ssl_cert'], $ssl_options['ssl_ca'], NULL, NULL);
 }
 
 if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
+    echo 'Connection failed: ' . $conn->connect_error;
     exit(2);
 }
 
@@ -68,7 +64,7 @@ if ($conn->connect_error) {
 $result = $conn->query('SHOW STATUS WHERE Variable_name = "Threads_connected"');
 
 if (!$result) {
-    die('Query failed: ' . $conn->error);
+    echo 'Query failed: ' . $conn->error;
     exit(2);
 }
 
