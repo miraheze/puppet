@@ -32,40 +32,42 @@ $warning_threshold = (int) $options['warning-threshold'];
 $ssl_options = [];
 
 if (isset($options['ssl-key'])) {
-    $ssl_options['ssl_key'] = $options['ssl-key'];
+    $ssl_options['key'] = $options['ssl-key'];
 }
 
 if (isset($options['ssl-cert'])) {
-    $ssl_options['ssl_cert'] = $options['ssl-cert'];
+    $ssl_options['cert'] = $options['ssl-cert'];
 }
 
 if (isset($options['ssl-ca'])) {
-    $ssl_options['ssl_ca'] = $options['ssl-ca'];
+    $ssl_options['ca'] = $options['ssl-ca'];
 }
 
 if (isset($options['ssl-verify-server-cert'])) {
-    $ssl_options['ssl_verify_server_cert'] = (bool) $options['ssl-verify-server-cert'];
+    $ssl_options['verify_server_cert'] = (bool)$options['ssl-verify-server-cert'];
 }
 
-// Connect to the MySQL server using the host, user, and password options
-$conn = new mysqli($host, $user, $pass);
+// Connect to the MySQL server using SSL
+$conn = mysqli_init();
 
+// Set the SSL options
 if (!empty($ssl_options)) {
-    $conn->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, $ssl_options['ssl_verify_server_cert']);
-    $conn->ssl_set($ssl_options['ssl_key'], $ssl_options['ssl_cert'], $ssl_options['ssl_ca'], NULL, NULL);
+mysqli_ssl_set($conn, $ssl_options['key'], $ssl_options['cert'], $ssl_options['ca'], NULL, NULL);
 }
 
-if ($conn->connect_error) {
-    echo 'Connection failed: ' . $conn->connect_error;
-    exit(2);
+// Connect to the MySQL server
+$success = mysqli_real_connect($conn, $host, $user, $pass, null, null, null, $ssl_options['verify_server_cert']);
+
+if (!$success) {
+die('Connection failed: ' . mysqli_connect_error());
 }
 
 // Retrieve the current number of connections from the SHOW STATUS output
 $result = $conn->query('SHOW STATUS WHERE Variable_name = "Threads_connected"');
 
 if (!$result) {
-    echo 'Query failed: ' . $conn->error;
-    exit(2);
+die('Query failed: ' . $conn->error);
+exit(2);
 }
 
 $row = $result->fetch_assoc();
@@ -78,12 +80,12 @@ $connection_usage = $current_connections / $max_connections * 100;
 
 // Display a message and exit status based on the connection usage percentage
 if ($connection_usage >= $critical_threshold) {
-    echo 'Critical connection usage: ' . round($connection_usage, 2) . "%\n";
-    exit(2);
+echo 'Critical connection usage: ' . round($connection_usage, 2) . "%\n";
+exit(2);
 } elseif ($connection_usage >= $warning_threshold) {
-    echo 'Warning connection usage: ' . round($connection_usage, 2) . "%\n";
-    exit(1);
+echo 'Warning connection usage: ' . round($connection_usage, 2) . "%\n";
+exit(1);
 } else {
-    echo 'OK connection usage: ' . round($connection_usage, 2) . "%\n";
-    exit(0);
+echo 'OK connection usage: ' . round($connection_usage, 2) . "%\n";
+exit(0);
 }
