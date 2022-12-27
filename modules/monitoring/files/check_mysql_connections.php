@@ -9,6 +9,8 @@
  * @author Universal Omega
  */
 
+ini_set( 'display_errors', 'stderr' );
+
 // Parse the command-line options
 $options = getopt( '', [
 	'host:',
