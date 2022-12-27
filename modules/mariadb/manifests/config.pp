@@ -120,4 +120,19 @@ class mariadb::config(
             mysql_cacert   => '/etc/ssl/certs/Sectigo.crt',
         },
     }
+
+    monitoring::services { 'MariaDB Connections':
+        check_command => 'mysql_connections',
+        docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
+        vars => {
+            mysql_hostname  => $::fqdn,
+            mysql_username  => 'icinga',
+            mysql_password  => $icinga_password,
+            mysql_ssl       => true,
+            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
+            warning         => '80%',
+            critical        => '90%',
+            max_connections => $max_connections,
+        },
+    }
 }

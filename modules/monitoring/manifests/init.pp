@@ -242,6 +242,14 @@ class monitoring (
         require => Package['nagios-nrpe-plugin'],
     }
 
+    file { '/usr/lib/nagios/plugins/check_mysql_connections.php':
+        source  => 'puppet:///modules/monitoring/check_mysql_connections.php',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => Package['nagios-nrpe-plugin'],
+    }
+
     # Setup webhook for grafana to call
     file { '/usr/local/bin/grafana-webhook.py':
         ensure => present,
