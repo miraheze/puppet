@@ -236,4 +236,35 @@ class puppetserver(
             tcp_port    => '8140',
         },
     }
+
+    # Backups
+    cron { 'backups-sslkeys':
+        ensure  => present,
+        command => '/usr/local/bin/miraheze-backup backup sslkeys > /var/log/sslkeys-backup.log',
+        user    => 'root',
+        minute  => '0',
+        hour    => '6',
+        weekday => '0',
+    }
+    
+    monitoring::nrpe { 'Backups - SSLKeys':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sslkeys-backup.log',
+        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+        critical => true
+    }
+
+    cron { 'backups-private':
+        ensure  => present,
+        command => '/usr/local/bin/miraheze-backup backup private > /var/log/private-backup.log',
+        user    => 'root',
+        minute  => '0',
+        hour    => '3',
+        weekday => '0',
+    }
+
+    monitoring::nrpe { 'Backups - Private':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/private-backup.log',
+        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+        critical => true
+    }
 }
