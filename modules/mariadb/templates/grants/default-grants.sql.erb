@@ -8,7 +8,7 @@ GRANT ALL PRIVILEGES
 
 -- Grants for 'icinga'@'%'
 
-GRANT SELECT, REPLICATION CLIENT ON *.* TO 'icinga'@'%'
+GRANT REPLICATION CLIENT ON *.* TO 'icinga'@'%'
     IDENTIFIED BY '<%= @icinga_password %>'
     REQUIRE SSL;
 
