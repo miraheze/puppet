@@ -4,7 +4,6 @@ class prometheus::exporter::elasticsearch {
         'python3-click',
         'python3-colorama',
         'python3-configobj',
-        'python3-decorator',
         'python3-elasticsearch',
         'python3-prometheus-client',
     ])
