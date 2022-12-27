@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @author Universal Omega
+ */
+
 // Parse the command-line options
 $options = getopt('', [
     'host:',
