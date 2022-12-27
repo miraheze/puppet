@@ -47,22 +47,8 @@ if (isset($options['ssl-verify-server-cert'])) {
     $ssl_options['ssl_verify_server_cert'] = (bool) $options['ssl-verify-server-cert'];
 }
 
-// Build the connection string
-$connection_string = "host=$host;user=$user;password=$pass;";
-
-// Connect with SAL
-if (!empty($ssl_options)) {
-    $connection_string .= "ssl-key={$ssl_options['ssl_key']};ssl-cert={$ssl_options['ssl_cert']};ssl-ca={$ssl_options['ssl_ca']};";
-}
-
-// Connect to the MySQL server using the connection string
-$conn = mysqli_init();
-$success = mysqli_real_connect($conn, null, null, null, null, null, null, $connection_string);
-
-if (!$success) {
-    die('Connection failed: ' . mysqli_connect_error());
-    exit(2);
-}
+// Connect to the MySQL server using SSL
+$conn = new mysqli($host, $user, $pass, null, null, null, $ssl_options);
 
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
