@@ -1,5 +1,5 @@
 mariadb::config::innodb_buffer_pool_size: '3G'
 http_proxy: 'http://bast.miraheze.org:8080'
 role::db::weekly_misc: ['reports']
-role::db::fortnightly_misc: ['grafana', 'icinga', 'icingaweb2', 'roundcubemail', 'phabricator_badges', 'phabricator_calendar', 'phabricator_dashboard', 'phabricator_file', 'phabricator_herald', 'phabricator_maniphest', 'phabricator_metamta', 'phabricator_paste', 'phabricator_phame', 'phabricator_project', 'phabricator_repository', 'phabricator_search', 'phabricator_user']
+role::db::fortnightly_misc: ['grafana', 'icinga', 'icingaweb2', 'roundcubemail']
 role::db::monthly_misc: ['piwik']
