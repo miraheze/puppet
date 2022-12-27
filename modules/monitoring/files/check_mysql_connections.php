@@ -38,6 +38,11 @@ if (isset($options['ssl-verify-server-cert'])) {
 // Connect to the MySQL server using SSL
 $conn = mysqli_init();
 
+// Use SSL
+if (!empty($ssl_options)) {
+mysqli_ssl_set($conn);
+}
+
 // Connect to the MySQL server
 $success = mysqli_real_connect($conn, $host, $user, $pass, null, null, null, $ssl_options['verify_server_cert']);
 
