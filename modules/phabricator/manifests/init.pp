@@ -230,4 +230,19 @@ class phabricator (
     monitoring::nrpe { 'phd':
         command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'
     }
+
+    cron { 'backups-phabricator':
+        ensure   => present,
+        command  => '/usr/local/bin/miraheze-backup backup phabricator > /var/log/phabricator-backup.log',
+        user     => 'root',
+        minute   => '0',
+        hour     => '1',
+        monthday => ['1', '15'],
+    }
+
+    monitoring::nrpe { 'Backups Phabricator Static':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/phabricator-backup.log',
+        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+        critical => true
+    }
 }
