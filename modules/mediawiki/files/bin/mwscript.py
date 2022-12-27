@@ -5,7 +5,7 @@ import os
 
 
 def run(args: argparse.Namespace) -> None:
-    longscripts = ('deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
+    longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
     long = False
 
     script = args.script
@@ -13,6 +13,8 @@ def run(args: argparse.Namespace) -> None:
         long = True
     if len(script.split('/')) == 1:
         script = f'/srv/mediawiki/w/maintenance/{script}'
+        if scriptsplit[1] in longscripts:
+            long = True
     else:
         scriptsplit = script.split('/')
         script = f'/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
