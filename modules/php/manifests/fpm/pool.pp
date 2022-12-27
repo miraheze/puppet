@@ -74,4 +74,11 @@ define php::fpm::pool(
         mode    => '0444',
         notify  => Service["php${php::version}-fpm"]
     }
+
+    # Configure rsyslog to monitor the php slowlog file and send the log messages to Graylog
+    rsyslog::input::file { 'php-slowlog':
+        path              => "/var/log/php${php::version}-fpm-${title_safe}-slowlog.log",
+        syslog_tag_prefix => '',
+        use_udp           => true,
+    }
 }
