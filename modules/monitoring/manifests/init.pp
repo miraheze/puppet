@@ -266,7 +266,7 @@ class monitoring (
 
     # Icinga monitoring
     monitoring::nrpe { 'Check correctness of the icinga configuration':
-        command => '/usr/lib/nagios/plugins/check_icinga_config /etc/icinga/icinga.cfg'
+        command => '/usr/lib/nagios/plugins/check_icinga_config'
     }
 
     cron { 'remove_icinga2_perfdata_2_days':
