@@ -1,0 +1,139 @@
+#!/usr/bin/python3
+# Backup script for Miraheze
+# Created by John Lewis 2022
+
+import argparse
+import time
+import tarfile
+import os
+import json
+
+from fabric import Connection
+from datetime import datetime
+
+parser = argparse.ArgumentParser(description='Provides backup and download functionality for Miraheze backups from PCA.')
+parser.add_argument('action', choices=['backup', 'download'], help='Action to be ran')
+parser.add_argument('type', choices=['private', 'sslkeys', 'phabricator', 'sql', 'mediawiki-xml'], help='Type of backup to handle using the action')
+parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
+parser.add_argument('--database', dest='database', help='Specific database to download or backup')
+args = parser.parse_args()
+
+
+def pca_connection():
+    return Connection('gateways.storage.bhs.cloud.ovh.net', gateway='nc -6 -X connect -x bast.miraheze.org:8080 %h %p', user='pca', connect_kwargs={'password': '<%= @pca_password %>'})
+
+
+def backup_private(dt: str):
+    tar = tarfile.open('private.tar.gz', 'w:gz')
+    tar.add('/etc/puppetlabs/puppet/private', arcname='private')
+    tar.close()
+
+    pca_connection().put('private.tar.gz', f'private/{dt}.tar.gz', False)
+
+    os.remove('private.tar.gz')
+
+
+def backup_sslkeys(dt: str):
+    tar = tarfile.open('sslkeys.tar.gz', 'w:gz')
+    tar.add('/etc/puppetlabs/puppet/ssl-keys', arcname='sslkeys')
+    tar.close()
+
+    pca_connection().put('sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
+
+    os.remove('sslkeys.tar.gz')
+
+
+def backup_phabricator(dt: str):
+    tar = tarfile.open('phabricator.tar.gz', 'w:gz')
+    tar.add('/srv/phab/images', arcname='phabricator')
+    tar.close()
+
+    pca_connection().put('phabricator.tar.gz', f'phabricator/{dt}.tar.gz', False)
+
+    os.remove('phabricator.tar.gz')
+
+
+def backup_sql(dt: str, database: str):
+    if database is None:
+        os.system('/usr/bin/mydumper -N -W -k --less-locking -t 4 -c -x \'^(.*wiki(?!.*(objectcache|querycache|querycachetwo|recentchanges|searchindex)))\' --trx-consistency-only -o \'/srv/backups/dbs\'')
+        dbs = [file for file in os.listdir('/srv/backups/dbs') if os.path.isdir(file)]
+    else:
+        os.system(f'/usr/bin/mysqldump -C --ignore-table={database}.objectcache --ignore-table={database}.querycache --ignore-table={database}.querycachetwo --ignore-table={database}.searchindex --ignore-table={database}.recentchanges {database} > /srv/backups/dbs/{database}')
+        dbs = [database]
+
+    for db in dbs:
+        tar = tarfile.open(f'{db}.tar.gz', 'w:gz')
+        tar.add(f'/srv/backups/dbs/{db}', arcname=db)
+        tar.close()
+
+        pca_connection().put(f'{db}.tar.gz', f'sql/{db}/{dt}.tar.gz', False)
+
+        os.remove(f'{db}.tar.gz')
+
+        try:
+            os.remove(f'/srv/backups/db/{db}')
+        except OSError:
+            os.rmdir(f'/srv/backups/db/{db}')
+
+
+def backup_mediawiki_xml(dt: str, database: str):
+    if database is None:
+        dbs = json.load(open('/srv/mediawiki/cache/databases.json'))['combi'].keys()
+    else:
+        dbs = [database]
+
+    for db in dbs:
+        os.system(f'/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}')
+
+        pca_connection().put(f'/srv/backups/{db}.tar.gz', f'mediawiki-xml/{db}/{dt}.tar.gz', False)
+
+        os.remove(f'/srv/backups/{db}.tar.gz')
+
+
+def backup(source: str, database: str):
+    dt = datetime.now().strftime('%Y-%m-%d')
+    ts = time.time()
+    print(f'Starting backup of \'{source}\' for date {dt}...')
+
+    if source == 'private':
+        backup_private(dt)
+    elif source == 'sslkeys':
+        backup_sslkeys(dt)
+    elif source == 'phabricator':
+        backup_phabricator(dt)
+    elif source == 'sql':
+        backup_sql(dt, database)
+    elif source == 'mediawiki-xml':
+        backup_mediawiki_xml(dt, database)
+
+    print(f'Completed! This took {time.time() - ts}s')
+
+
+def download_pca(file: str):
+    try:
+        pca_connection().get(file)
+    except:
+        print('Unable to download file! Check if the file is available within PCA and then try again!')
+
+
+def download(source: str, dt: str, database: str):
+    ts = time.time()
+    print(f'Downloading backup of \'{source}\' for date {dt}...')
+
+    if source in ['private', 'sslkeys', 'phabricator']:
+        download_pca(f'{source}/{dt}.tar.gz')
+    elif source in ['sql', 'mediawiki-xml']:
+        download_pca(f'{source}/{database}/{dt}.tar.gz')
+
+    print(f'Completed! This took {time.time() - ts}s')
+
+
+if __name__ == '__main__':
+
+    if args.action == 'backup':
+        backup(args.type, args.database)
+    elif args.action == 'download':
+        if not args.date:
+            parser.exit(1, '--date is required when downloading a file!')
+
+        download(args.type, args.date, args.database)
