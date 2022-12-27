@@ -12,7 +12,7 @@ class base (
     include base::upgrades
     include base::firewall
     include base::monitoring
-    include base::backups
+    include base::backup
     include ssh
     include users
 
