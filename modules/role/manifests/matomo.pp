@@ -2,7 +2,9 @@
 class role::matomo {
 
     include prometheus::exporter::redis
-    include ::redis
+    class { '::redis':
+        password => lookup('passwords::redis::master')
+    }
     include ::matomo
 
     $firewall_srange = join(
