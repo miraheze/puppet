@@ -58,6 +58,7 @@ class mediawiki::jobqueue::runner {
             month   => '*',
             weekday => [ '6' ],
         }
+        
         if $wiki == 'loginwiki' {
             $swift_password = lookup('mediawiki::swift_password')
             cron { 'generate sitemap index':
@@ -103,6 +104,22 @@ class mediawiki::jobqueue::runner {
             minute   => '0',
             hour     => '5',
             monthday => [ '6', '21' ],
+        }
+
+        cron { 'backups-mediawiki-xml':
+            ensure   => present,
+            command  => '/usr/local/bin/miraheze-backup backup mediawiki-xml > /var/log/mediawiki-xml-backup.log',
+            user     => 'root',
+            minute   => '0',
+            hour     => '1',
+            monthday => ['27'],
+            month    => ['0', '3', '6', '9']
+        }
+
+        monitoring::nrpe { 'Backups MediaWiki XML':
+            command  => '/usr/lib/nagios/plugins/check_file_age -w 8640000 -c 11232000 -f /var/log/mediawiki-xml-backup.log',
+            docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+            critical => true
         }
     }
 
