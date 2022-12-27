@@ -1,7 +1,7 @@
 # class: role::db
 class role::db (
-    Optional[Array[String]] $weekly_misc = lookup('role::db:weekly_misc')
-    Optional[Array[String]] $fortnightly_misc = lookup('role::db::fornightly_misc')
+    Optional[Array[String]] $weekly_misc = lookup('role::db:weekly_misc'),
+    Optional[Array[String]] $fortnightly_misc = lookup('role::db::fornightly_misc'),
     Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc')
 ) {
     include mariadb::packages
