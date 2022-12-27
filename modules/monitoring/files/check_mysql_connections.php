@@ -47,8 +47,17 @@ if (isset($options['ssl-verify-server-cert'])) {
     $ssl_options['ssl_verify_server_cert'] = (bool) $options['ssl-verify-server-cert'];
 }
 
-// Connect to the MySQL server using SSL
-$conn = new mysqli($host, $user, $pass, null, null, null, $ssl_options);
+// Connect to the MySQL server using the host, user, and password options
+$conn = new mysqli($host, $user, $pass);
+
+if ($conn->connect_error) {
+    die('Connection failed: ' . $conn->connect_error);
+}
+
+if (!empty($ssl_options)) {
+    $conn->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, $ssl_options['ssl_verify_server_cert']);
+    $conn->ssl_set($ssl_options['ssl_key'], $ssl_options['ssl_cert'], $ssl_options['ssl_ca'], NULL, NULL);
+}
 
 if ($conn->connect_error) {
     die('Connection failed: ' . $conn->connect_error);
