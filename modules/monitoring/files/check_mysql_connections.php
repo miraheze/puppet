@@ -61,25 +61,24 @@ exit(2);
 }
 
 $row = $result->fetch_assoc();
-$current_connections = (int) $row['Value'];
+$current_connections = (int)$row['Value'];
 
 $result->free();
 
 // Calculate the connection usage percentage
 $connection_usage = $current_connections / $max_connections * 100;
 
-// Set the current connections value as an icinga custom variable
-$icinga_current_connections = "current_connections=$current_connections";
-
 // Display a message and exit status based on the connection usage percentage
 if ($connection_usage >= $critical_threshold) {
 echo 'Critical connection usage: ' . round($connection_usage, 2) . "%\n";
+echo 'Current connections: ' . $current_connections;
 exit(2);
 } elseif ($connection_usage >= $warning_threshold) {
 echo 'Warning connection usage: ' . round($connection_usage, 2) . "%\n";
+echo 'Current connections: ' . $current_connections;
 exit(1);
 } else {
 echo 'OK connection usage: ' . round($connection_usage, 2) . "%\n";
-echo $icinga_current_connections;
+echo 'Current connections: ' . $current_connections;
 exit(0);
 }
