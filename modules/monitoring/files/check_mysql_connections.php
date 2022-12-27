@@ -40,7 +40,7 @@ $conn = mysqli_init();
 
 // Use SSL
 if (!empty($ssl_options)) {
-mysqli_ssl_set($conn);
+mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
 }
 
 // Connect to the MySQL server
