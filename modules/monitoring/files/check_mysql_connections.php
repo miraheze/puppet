@@ -45,23 +45,23 @@ if (isset($options['ssl-verify-server-cert'])) {
 $conn = mysqli_init();
 
 if (!empty($ssl_options)) {
-mysqli_ssl_set($conn, NULL, NULL, $ssl_options['ca'], NULL, NULL);
+    mysqli_ssl_set($conn, NULL, NULL, $ssl_options['ca'], NULL, NULL);
 }
 
 // Connect to the MySQL server
 $success = mysqli_real_connect($conn, $host, $user, $pass, null, null, null, $ssl_options['verify_server_cert']);
 
 if (!$success) {
-echo 'Connection failed: ' . mysqli_connect_error();
-exit(2);
+    echo 'Connection failed: ' . mysqli_connect_error();
+    exit(2);
 }
 
 // Retrieve the current number of connections from the SHOW STATUS output
 $result = $conn->query('SHOW STATUS WHERE Variable_name = "Threads_connected"');
 
 if (!$result) {
-echo 'Query failed: ' . $conn->error;
-exit(2);
+    echo 'Query failed: ' . $conn->error;
+    exit(2);
 }
 
 $row = $result->fetch_assoc();
@@ -74,15 +74,15 @@ $connection_usage = $current_connections / $max_connections * 100;
 
 // Display a message and exit status based on the connection usage percentage
 if ($connection_usage >= $critical_threshold) {
-echo 'Critical connection usage: ' . round($connection_usage, 2) . "%\n";
-echo 'Current connections: ' . $current_connections;
-exit(2);
+    echo 'Critical connection usage: ' . round($connection_usage, 2) . "%\n";
+    echo 'Current connections: ' . $current_connections;
+    exit(2);
 } elseif ($connection_usage >= $warning_threshold) {
-echo 'Warning connection usage: ' . round($connection_usage, 2) . "%\n";
-echo 'Current connections: ' . $current_connections;
-exit(1);
+    echo 'Warning connection usage: ' . round($connection_usage, 2) . "%\n";
+    echo 'Current connections: ' . $current_connections;
+    exit(1);
 } else {
-echo 'OK connection usage: ' . round($connection_usage, 2) . "%\n";
-echo 'Current connections: ' . $current_connections;
-exit(0);
+    echo 'OK connection usage: ' . round($connection_usage, 2) . "%\n";
+    echo 'Current connections: ' . $current_connections;
+    exit(0);
 }
