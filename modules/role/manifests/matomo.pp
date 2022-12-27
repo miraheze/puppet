@@ -1,7 +1,7 @@
 # role: matomo
 class role::matomo {
+    include ::role::redis
     include ::matomo
-    include redis
 
     $firewall_srange = join(
         query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
