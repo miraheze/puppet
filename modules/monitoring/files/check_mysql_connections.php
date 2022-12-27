@@ -9,15 +9,13 @@ $options = getopt('', [
     'max-connections:',
     'critical-threshold:',
     'warning-threshold:',
-    'ssl-key:',
-    'ssl-cert:',
     'ssl-ca:',
     'ssl-verify-server-cert:'
 ]);
 
 // Check that the required options have been provided
 if (!isset($options['host']) || !isset($options['user']) || !isset($options['password']) || !isset($options['max-connections']) || !isset($options['critical-threshold']) || !isset($options['warning-threshold'])) {
-    die('Usage: php connection_usage.php --host=HOST --user=USER --password=PASSWORD --max-connections=MAX_CONNECTIONS --critical-threshold=CRITICAL_THRESHOLD --warning-threshold=WARNING_THRESHOLD [--ssl-key=SSL_KEY] [--ssl-cert=SSL_CERT] [--ssl-ca=SSL_CA] [--ssl-verify-server-cert=SSL_VERIFY_SERVER_CERT]' . "\n");
+    die('Usage: php connection_usage.php --host=HOST --user=USER --password=PASSWORD --max-connections=MAX_CONNECTIONS --critical-threshold=CRITICAL_THRESHOLD --warning-threshold=WARNING_THRESHOLD [--ssl-ca=SSL_CA] [--ssl-verify-server-cert=SSL_VERIFY_SERVER_CERT]' . "\n");
 }
 
 // Parse the options
@@ -50,14 +48,15 @@ mysqli_ssl_set($conn, NULL, NULL, $ssl_options['ca'], NULL, NULL);
 $success = mysqli_real_connect($conn, $host, $user, $pass, null, null, null, $ssl_options['verify_server_cert']);
 
 if (!$success) {
-die('Connection failed: ' . mysqli_connect_error());
+echo 'Connection failed: ' . mysqli_connect_error();
+exit(2);
 }
 
 // Retrieve the current number of connections from the SHOW STATUS output
 $result = $conn->query('SHOW STATUS WHERE Variable_name = "Threads_connected"');
 
 if (!$result) {
-die('Query failed: ' . $conn->error);
+echo 'Query failed: ' . $conn->error;
 exit(2);
 }
 
@@ -69,6 +68,9 @@ $result->free();
 // Calculate the connection usage percentage
 $connection_usage = $current_connections / $max_connections * 100;
 
+// Set the current connections value as an icinga custom variable
+$icinga_current_connections = "current_connections=$current_connections";
+
 // Display a message and exit status based on the connection usage percentage
 if ($connection_usage >= $critical_threshold) {
 echo 'Critical connection usage: ' . round($connection_usage, 2) . "%\n";
@@ -78,5 +80,6 @@ echo 'Warning connection usage: ' . round($connection_usage, 2) . "%\n";
 exit(1);
 } else {
 echo 'OK connection usage: ' . round($connection_usage, 2) . "%\n";
+echo $icinga_current_connections;
 exit(0);
 }
