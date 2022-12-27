@@ -226,16 +226,6 @@ class monitoring (
         mirahezebots_password => $mirahezebots_password,
     }
 
-    ensure_packages(
-        'mysql-connector-python',
-        {
-            ensure   => '2.1.7',
-            provider => 'pip3',
-            before   => File['/usr/lib/nagios/plugins/check_mysql_connections.py'],
-            require  => Package['python3-pip'],
-        },
-    )
-
     file { '/usr/lib/nagios/plugins/check_icinga_config':
         source  => 'puppet:///modules/monitoring/check_icinga_config',
         owner   => 'root',
@@ -252,8 +242,8 @@ class monitoring (
         require => Package['nagios-nrpe-plugin'],
     }
 
-    file { '/usr/lib/nagios/plugins/check_mysql_connections.py':
-        source  => 'puppet:///modules/monitoring/check_mysql_connections.py',
+    file { '/usr/lib/nagios/plugins/check_mysql_connections.php':
+        source  => 'puppet:///modules/monitoring/check_mysql_connections.php',
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
