@@ -31,29 +31,12 @@ $warning_threshold = (int) $options['warning-threshold'];
 // Build the SSL options array
 $ssl_options = [];
 
-if (isset($options['ssl-key'])) {
-    $ssl_options['key'] = $options['ssl-key'];
-}
-
-if (isset($options['ssl-cert'])) {
-    $ssl_options['cert'] = $options['ssl-cert'];
-}
-
-if (isset($options['ssl-ca'])) {
-    $ssl_options['ca'] = $options['ssl-ca'];
-}
-
 if (isset($options['ssl-verify-server-cert'])) {
     $ssl_options['verify_server_cert'] = (bool)$options['ssl-verify-server-cert'];
 }
 
 // Connect to the MySQL server using SSL
 $conn = mysqli_init();
-
-// Set the SSL options
-if (!empty($ssl_options)) {
-mysqli_ssl_set($conn, $ssl_options['key'], $ssl_options['cert'], $ssl_options['ca'], NULL, NULL);
-}
 
 // Connect to the MySQL server
 $success = mysqli_real_connect($conn, $host, $user, $pass, null, null, null, $ssl_options['verify_server_cert']);
