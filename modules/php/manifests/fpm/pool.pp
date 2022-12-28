@@ -79,6 +79,6 @@ define php::fpm::pool(
     rsyslog::input::file { 'php-slowlog':
         path              => "/var/log/php${php::version}-fpm-${title_safe}-slowlog.log",
         syslog_tag_prefix => '',
-        use_udp           => true,
+        use_udp           => lookup('base::syslog::rsyslog_udp_localhost', {'default_value' => false}),
     }
 }
