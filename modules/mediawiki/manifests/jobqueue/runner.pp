@@ -113,7 +113,7 @@ class mediawiki::jobqueue::runner {
             minute   => '0',
             hour     => '1',
             monthday => ['27'],
-            month    => ['1', '3', '6', '9']
+            month    => ['3', '6', '9', '12']
         }
 
         monitoring::nrpe { 'Backups MediaWiki XML':
