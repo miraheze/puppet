@@ -4,6 +4,9 @@ users::groups:
 
 contactgroups: ['sre', 'mediawiki']
 
+jobrunner: true
+mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
+
 role::mediawiki::use_strict_firewall: true
 
 mediawiki::php::fpm::fpm_min_child: 20
@@ -17,10 +20,7 @@ mediawiki::php::memory_limit: '500M'
 php::php_version: '7.4'
 
 http_proxy: 'http://bast.miraheze.org:8080'
-gluster_volume: gluster.miraheze.org:/static
 
-base::syslog::syslog_daemon: rsyslog
-base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
 base::syslog::rsyslog_udp_localhost: true
 
 # NGINX

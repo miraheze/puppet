@@ -1,6 +1,0 @@
----
-syslog_ng::package_name: syslog-ng
-syslog_ng::module_prefix: syslog-ng-
-syslog_ng::init_config_file: /etc/sysconfig/syslog-ng
-syslog_ng::init_config_hash:
-  SYSLOGNG_OPTIONS: '"-p /var/run/syslog-ng.pid"'

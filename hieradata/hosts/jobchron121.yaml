@@ -4,11 +4,9 @@ users::groups:
 
 contactgroups: ['sre', 'mediawiki']
 
-redis::heap: '1000mb'
+redis::heap: '1GB'
 
 http_proxy: 'http://bast.miraheze.org:8080'
-base::syslog::graylog_hostname: 'graylog121.miraheze.org'
-base::syslog::graylog_resolve_ip_version: 6
 
 mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
 mediawiki::php::enable_fpm: false

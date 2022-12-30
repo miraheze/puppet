@@ -1,5 +1,3 @@
 users::groups:
   - bastion
 puppetserver_hostname: 'puppet141.miraheze.org'
-base::syslog::graylog_hostname: 'graylog121.miraheze.org'
-base::syslog::graylog_resolve_ip_version: 6

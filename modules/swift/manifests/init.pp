@@ -33,6 +33,8 @@ class swift {
 
     $hash_path_suffix = lookup('swift_hash_path_suffix')
 
+    ensure_packages(['python3-statsd'])
+
     file {
         default:
             owner   => 'swift',
@@ -55,9 +57,9 @@ class swift {
     }
 
     file { '/var/log/swift':
-        ensure  => directory,
-        owner   => 'swift',
-        group   => 'swift',
+        ensure => directory,
+        owner  => 'swift',
+        group  => 'swift',
     }
 
     $swift_password = lookup('mediawiki::swift_password')
@@ -65,5 +67,16 @@ class swift {
         ensure  => 'present',
         content => template('swift/swift-env.sh.erb'),
         mode    => '0755',
+    }
+
+    logrotate::conf { 'swift':
+        ensure => present,
+        source => 'puppet:///modules/swift/swift.logrotate.conf',
+    }
+
+    rsyslog::conf { 'swift':
+        source   => 'puppet:///modules/swift/swift.rsyslog.conf',
+        priority => 40,
+        require  => File['/var/log/swift'],
     }
 }

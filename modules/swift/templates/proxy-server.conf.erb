@@ -2,22 +2,29 @@
 # This file is managed by Puppet!
 
 [DEFAULT]
-# Only in object-server must you use ipv6 without bracket.
-bind_ip = [::]
-bind_port = 8080
+# Only in proxy-server and object-server must you use ipv6 without bracket.
+bind_ip = ::
+bind_port = 80
 workers = <%= @num_workers %>
 # bind_timeout = 30
 # backlog = 4096
 swift_dir = /etc/swift
 user = swift
 
+log_statsd_host = localhost
+log_statsd_port = 9125
+log_statsd_metric_prefix = swift.<%= @facts['networking']['hostname'] %>
+log_statsd_sample_rate_factor = 1
+
 [pipeline:main]
-pipeline = ensure_max_age rewrite healthcheck cache tempurl ratelimit tempauth cors staticweb proxy-logging proxy-server
+pipeline = proxy-logging listing_formats ensure_max_age rewrite healthcheck cache tempurl ratelimit tempauth cors proxy-logging proxy-server
 
 [app:proxy-server]
 use = egg:swift#proxy
 # allow_account_management = true
 account_autocreate = true
+conn_timeout = 2.0
+node_timeout = 20
 
 [filter:tempauth]
 use = egg:swift#tempauth
@@ -41,14 +48,11 @@ memcache_max_connections = 12
 use = egg:swift#ratelimit
 # accounts limited to 5/s PUT/DELETE to containers
 account_ratelimit = 5
-account_whitelist = AUTH_admin
+account_whitelist = AUTH_mw
 log_sleep_time_seconds = 3
 # containers with > 200 objects limited to 30/s PUT/DELETE/POST and listings
 container_ratelimit_200 = 30
 container_listing_ratelimit_200 = 30
-
-[filter:staticweb]
-use = egg:swift#staticweb
 
 [filter:tempurl]
 use = egg:swift#tempurl
@@ -69,12 +73,15 @@ paste.filter_factory = miraheze.cors:filter_factory
 use = egg:swift#proxy_logging
 set access_log_facility = LOG_LOCAL1
 
+[filter:listing_formats]
+use = egg:swift#listing_formats
+
 [filter:ensure_max_age]
 paste.filter_factory = miraheze.ensure_max_age:filter_factory
 methods_list = HEAD GET
 status_list = 200
 max_age = 86400
-host_list = static-new.miraheze.org
+host_list = static.miraheze.org
 
 [filter:rewrite]
 # the auth system turns our login and key into an account / token pair.
@@ -84,6 +91,6 @@ account = <%= @accounts['mw_media']['account_name'] %>
 user_agent = Mozilla/5.0
 
 # sending thumbnail requests to thumbor
-thumbhost = static-new.miraheze.org
+thumbhost = static.miraheze.org
 
 paste.filter_factory = miraheze.rewrite:filter_factory

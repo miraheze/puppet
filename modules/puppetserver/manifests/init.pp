@@ -152,53 +152,28 @@ class puppetserver(
         }
     }
 
-    $syslog_daemon = lookup('base::syslog::syslog_daemon', {'default_value' => 'syslog_ng'})
-    if $syslog_daemon == 'syslog_ng' {
-        puppetserver::logging { 'puppetserver':
-            file_path           => '/etc/puppetlabs/puppetserver/logback.xml',
-            file_source         => 'puppet:///modules/puppetserver/puppetserver_logback.xml',
-            file_source_options => [
-                '/var/log/puppetlabs/puppetserver/puppetserver.log.json',
-                { 'flags' => 'no-parse' }
-            ],
-            program_name        => 'puppetserver',
-            notify              => Service['puppetserver'],
-        }
+    file { '/etc/puppetlabs/puppetserver/logback.xml':
+        ensure => present,
+        source => 'puppet:///modules/puppetserver/puppetserver_logback.xml',
+        notify => Service['puppetserver'],
+    }
 
-        puppetserver::logging { 'puppetserver_access':
-            file_path           => '/etc/puppetlabs/puppetserver/request-logging.xml',
-            file_source         => 'puppet:///modules/puppetserver/puppetserver-request-logging.xml',
-            file_source_options => [
-                '/var/log/puppetlabs/puppetserver/puppetserver-access.log.json',
-                { 'flags' => 'no-parse' }
-            ],
-            program_name        => 'puppetserver_access',
-            notify              => Service['puppetserver'],
-        }
-    } else {
-        file { '/etc/puppetlabs/puppetserver/logback.xml':
-            ensure => present,
-            source => 'puppet:///modules/puppetserver/puppetserver_logback.xml',
-            notify => Service['puppetserver'],
-        }
+    file { '/etc/puppetlabs/puppetserver/request-logging.xml':
+        ensure => present,
+        source => 'puppet:///modules/puppetserver/puppetserver-request-logging.xml',
+        notify => Service['puppetserver'],
+    }
 
-        file { '/etc/puppetlabs/puppetserver/request-logging.xml':
-            ensure => present,
-            source => 'puppet:///modules/puppetserver/puppetserver-request-logging.xml',
-            notify => Service['puppetserver'],
-        }
+    rsyslog::input::file { 'puppetserver':
+        path              => '/var/log/puppetlabs/puppetserver/puppetserver.log.json',
+        syslog_tag_prefix => '',
+        use_udp           => true,
+    }
 
-        rsyslog::input::file { 'puppetserver':
-            path              => '/var/log/puppetlabs/puppetserver/puppetserver.log.json',
-            syslog_tag_prefix => '',
-            use_udp           => true,
-        }
-
-        rsyslog::input::file { 'puppetserver-access':
-            path              => '/var/log/puppetlabs/puppetserver/puppetserver-access.log.json',
-            syslog_tag_prefix => '',
-            use_udp           => true,
-        }
+    rsyslog::input::file { 'puppetserver-access':
+        path              => '/var/log/puppetlabs/puppetserver/puppetserver-access.log.json',
+        syslog_tag_prefix => '',
+        use_udp           => true,
     }
 
     service { 'puppetserver':
@@ -260,5 +235,36 @@ class puppetserver(
         vars          => {
             tcp_port    => '8140',
         },
+    }
+
+    # Backups
+    cron { 'backups-sslkeys':
+        ensure  => present,
+        command => '/usr/local/bin/miraheze-backup backup sslkeys > /var/log/sslkeys-backup.log',
+        user    => 'root',
+        minute  => '0',
+        hour    => '6',
+        weekday => '0',
+    }
+    
+    monitoring::nrpe { 'Backups SSLKeys':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sslkeys-backup.log',
+        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+        critical => true
+    }
+
+    cron { 'backups-private':
+        ensure  => present,
+        command => '/usr/local/bin/miraheze-backup backup private > /var/log/private-backup.log',
+        user    => 'root',
+        minute  => '0',
+        hour    => '3',
+        weekday => '0',
+    }
+
+    monitoring::nrpe { 'Backups Private':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/private-backup.log',
+        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+        critical => true
     }
 }

@@ -16,6 +16,16 @@ class mediawiki::extensionsetup {
 
     $composer = 'composer install --no-dev'
 
+    exec { 'vendor_psysh_composer':
+        command     => 'composer require "psy/psysh:0.11.8" --update-no-dev',
+        unless      => 'composer show --installed psy/psysh 0.11.8',
+        cwd         => "${mwpath}/vendor",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/vendor",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
     exec { 'wikibase_composer':
         command     => $composer,
         creates     => "${mwpath}/extensions/Wikibase/vendor",
@@ -63,6 +73,16 @@ class mediawiki::extensionsetup {
         environment => "HOME=${mwpath}/extensions/OAuth",
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
+    }
+
+    exec { 'oauth_lcobucci_composer':
+        command     => 'composer require "lcobucci/jwt:4.1.5" --update-no-dev',
+        unless      => 'composer show --installed lcobucci/jwt 4.1.5',
+        cwd         => "${mwpath}/extensions/OAuth",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/OAuth",
+        user        => 'www-data',
+        require     => Exec['oauth_composer'],
     }
 
     exec { 'templatestyles_composer':
@@ -221,6 +241,16 @@ class mediawiki::extensionsetup {
         cwd         => "${mwpath}/extensions/PageProperties",
         path        => '/usr/bin',
         environment => "HOME=${mwpath}/extensions/PageProperties",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
+    exec { 'WikibaseEdtf_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/WikibaseEdtf/vendor",
+        cwd         => "${mwpath}/extensions/WikibaseEdtf",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/WikibaseEdtf",
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }

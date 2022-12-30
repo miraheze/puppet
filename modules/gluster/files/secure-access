@@ -1,3 +1,0 @@
-option transport.socket.ssl-enabled on
-option transport.socket.ssl-cert-depth 2
-option transport.socket.ssl-cipher-list 'HIGH:!SSLv2:!SSLv3:!TLSv1:!TLSv1.1:TLSv1.2:TLSv1.3:!3DES:!RC4:!aNULL:!ADH'

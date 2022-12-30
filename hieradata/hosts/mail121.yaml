@@ -1,11 +1,8 @@
 http_proxy: 'http://bast.miraheze.org:8080'
 
-php::fpm::fpm_workers_multiplier: 1.5
-php::fpm::fpm_min_child: 4
+php::fpm::fpm_workers_multiplier: 2.0
+php::fpm::fpm_min_child: 8
 php::php_version: '7.4'
-
-base::syslog::graylog_hostname: 'graylog121.miraheze.org'
-base::syslog::graylog_resolve_ip_version: 6
 
 nginx::use_graylog: true
 mailserver: true

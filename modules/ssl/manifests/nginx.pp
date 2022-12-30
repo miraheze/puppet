@@ -9,6 +9,4 @@ class ssl::nginx {
     }
 
     ssl::wildcard { 'ssl-acme nginx wildcard': }
-
-    include ssl::hiera
 }

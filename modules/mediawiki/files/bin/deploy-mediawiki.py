@@ -77,6 +77,8 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
 
 
 def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443) -> bool:
+    if verify is False:
+        os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
     if Debug:

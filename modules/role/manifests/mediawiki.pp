@@ -46,27 +46,6 @@ class role::mediawiki (
         }
     }
 
-    if !defined(Gluster::Mount['/mnt/mediawiki-static']) {
-        gluster::mount { '/mnt/mediawiki-static':
-          ensure => mounted,
-          volume => lookup('gluster_volume', {'default_value' => 'gluster.miraheze.org:/static'}),
-        }
-    }
-
-    file { '/usr/local/bin/remountGluster.sh':
-        ensure => 'present',
-        mode   => '0755',
-        source => 'puppet:///modules/role/mediawiki/bin/remountGluster.sh',
-    }
-
-    cron { 'check_mount':
-        ensure  => present,
-        command => '/bin/bash /usr/local/bin/remountGluster.sh',
-        user    => 'root',
-        minute  => '*/1',
-        hour    => '*',
-    }
-
     # Using fastcgi we need more local ports
     sysctl::parameters { 'raise_port_range':
         values   => { 'net.ipv4.ip_local_port_range' => '22500 65535', },

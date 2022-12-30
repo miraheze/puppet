@@ -145,23 +145,6 @@ class role::prometheus {
         port   => 9113
     }
 
-    $gluster_job = [
-        {
-            'job_name' => 'gluster',
-            'file_sd_configs' => [
-                {
-                    'files' => [ 'targets/gluster.yaml' ]
-                }
-            ]
-        }
-    ]
-
-    prometheus::class { 'gluster':
-        dest   => '/etc/prometheus/targets/gluster.yaml',
-        module => 'Prometheus::Exporter::Gluster',
-        port   => 9050
-    }
-
     $puppetserver_job = [
         {
             'job_name' => 'puppetserver',
@@ -266,15 +249,31 @@ class role::prometheus {
         port   => 9206
     }
 
+    $statsd_exporter_job = [
+      {
+        'job_name'        => 'statsd_exporter',
+        'scheme'          => 'http',
+        'file_sd_configs' => [
+          { 'files' => [ 'targets/statsd_exporter.yaml' ] },
+        ],
+      },
+    ]
+
+    prometheus::class{ 'statsd_exporter':
+        dest   => '/etc/prometheus/targets/statsd_exporter.yaml',
+        module => 'Prometheus::Exporter::Statsd_exporter',
+        port   => 9112,
+    }
+
     $global_extra = {}
 
     class { '::prometheus':
         global_extra => $global_extra,
         scrape_extra => [
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
-            $gluster_job, $puppetserver_job, $puppetdb_job, $memcached_job,
-            $postfix_job, $openldap_job, $elasticsearch_job, $varnish_job,
-            $cadvisor_job
+            $puppetserver_job, $puppetdb_job, $memcached_job,
+            $postfix_job, $openldap_job, $elasticsearch_job, $statsd_exporter_job,
+            $varnish_job, $cadvisor_job
         ].flatten,
     }
 

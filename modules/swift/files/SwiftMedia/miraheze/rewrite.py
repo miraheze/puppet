@@ -46,8 +46,10 @@ class _MirahezeRewriteContext(WSGIContext):
         # go to the thumb media store for unknown files
         reqorig.host = self.thumbhost
         # upload doesn't like our User-agent.
-        opener = urllib.request.build_opener()
-        # Pass on certain headers from the caller squid to the scalers
+        proxy_handler = urllib.request.ProxyHandler({'http': self.thumbhost})
+        redirect_handler = DumbRedirectHandler()
+        opener = urllib.request.build_opener(redirect_handler, proxy_handler)
+
         opener.addheaders = []
         if reqorig.headers.get('User-Agent') is not None:
             opener.addheaders.append(('User-Agent', reqorig.headers.get('User-Agent')))
@@ -57,6 +59,7 @@ class _MirahezeRewriteContext(WSGIContext):
                                'Accept', 'Accept-Encoding', 'X-Original-URI']:
             if reqorig.headers.get(header_to_pass) is not None:
                 opener.addheaders.append((header_to_pass, reqorig.headers.get(header_to_pass)))
+
         # At least in theory, we shouldn't be handing out links to originals
         # that we don't have (or in the case of thumbs, can't generate).
         # However, someone may have a formerly valid link to a file, so we
@@ -68,9 +71,8 @@ class _MirahezeRewriteContext(WSGIContext):
             urlobj[2] = urllib.parse.quote(urlobj[2], '%/')
             encodedurl = urllib.parse.urlunsplit(urlobj)
 
-            self.logger.warn("encodedurl %s" % encodedurl)
             match = re.match(
-                    r'^https://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
+                    r'^http://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
                     encodedurl)
             if match:
                 proj = match.group('proj').removesuffix("wiki")
@@ -95,10 +97,15 @@ class _MirahezeRewriteContext(WSGIContext):
             # Wrap the urllib2 HTTPError into a swob HTTPException
             status = error.code
             body = error.fp.read()
-            headers = list(error.hdrs.items())
+            headers = dict(list(error.hdrs.items()))
             if status not in swob.RESPONSE_REASONS:
                 # Generic status description in case of unknown status reasons.
                 status = "%s Error" % status
+            # We're having itermittent issues with Transfer-Encoding,
+            # remove it from the headers. This is added from urllib anyways.
+            # See https://github.com/django/daphne/issues/371#issuecomment-862186611
+            if headers.get('Transfer-Encoding') is not None :
+                del headers['Transfer-Encoding']
             return swob.HTTPException(status=status, body=body, headers=headers)
         except urllib.error.URLError as error:
             msg = 'There was a problem while contacting the image scaler: %s' % \
@@ -351,7 +358,7 @@ class _MirahezeRewriteContext(WSGIContext):
 
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
-                if zone == 'thumb':
+                if repo == 'local' and zone == 'thumb':
                     resp = self.handle404(reqorig, url, obj)
                     return resp(env, start_response)
                 else:

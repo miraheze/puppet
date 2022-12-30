@@ -63,7 +63,7 @@ class phabricator (
         ensure => present,
         config => {
             'emergency_restart_interval'  => '60s',
-            'emergency_restart_threshold' => $facts['virtual_processor_count'],
+            'emergency_restart_threshold' => $facts['processors']['count'],
             'process.priority'            => -19,
         },
     }
@@ -89,7 +89,7 @@ class phabricator (
     $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
     $fpm_min_child = lookup('php::fpm::fpm_min_child', {'default_value' => 4})
 
-    $num_workers = max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
+    $num_workers = max(floor($facts['processors']['count'] * $fpm_workers_multiplier), $fpm_min_child)
     php::fpm::pool { 'www':
         config => {
             'pm'                        => 'static',
@@ -229,5 +229,20 @@ class phabricator (
 
     monitoring::nrpe { 'phd':
         command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'
+    }
+
+    cron { 'backups-phabricator':
+        ensure   => present,
+        command  => '/usr/local/bin/miraheze-backup backup phabricator > /var/log/phabricator-backup.log',
+        user     => 'root',
+        minute   => '0',
+        hour     => '1',
+        monthday => ['1', '15'],
+    }
+
+    monitoring::nrpe { 'Backups Phabricator Static':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/phabricator-backup.log',
+        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+        critical => true
     }
 }

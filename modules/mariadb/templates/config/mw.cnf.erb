@@ -67,7 +67,6 @@ wait_timeout                   = 3600
 innodb-flush-method            = O_DIRECT
 innodb_thread_concurrency      = 0
 innodb_io_capacity             = 1000
-innodb_stats_sample_pages      = 16
 innodb_stats_method            = nulls_unequal
 innodb-log-file-size           = 256M
 innodb-flush-log-at-trx-commit = 1
@@ -77,6 +76,9 @@ innodb_lock_wait_timeout       = 120
 innodb-stats-on-metadata       = OFF
 innodb_ft_total_cache_size     = 150000000
 innodb_adaptive_hash_index     = OFF
+# From 10.5.7+ the default has been changed to 90%.
+# Change this back to 75%.
+innodb_max_dirty_pages_pct     = 75
 innodb_purge_threads           = 1
 
 join_cache_level               = 8
@@ -97,5 +99,7 @@ ssl-capath                     = /etc/ssl/certs
 ssl-cert                       = /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt
 ssl-key                        = /etc/ssl/private/wildcard.miraheze.org-2020-2.key
 tls_version                    = TLSv1.2,TLSv1.3
+
+optimizer_switch               = 'mrr=on,mrr_cost_based=on,mrr_sort_keys=on,optimize_join_buffer_size=on,rowid_filter=off'
 
 !includedir /etc/mysql/conf.d/

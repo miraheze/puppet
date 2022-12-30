@@ -5,7 +5,7 @@ class reports {
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',
         origin    => 'https://github.com/miraheze/TSPortal',
-        branch    => 'v9',
+        branch    => 'v10',
         owner     => 'www-data',
         group     => 'www-data',
     }
@@ -85,7 +85,7 @@ class reports {
         ensure => present,
         config => {
             'emergency_restart_interval'  => '60s',
-            'emergency_restart_threshold' => $facts['virtual_processor_count'],
+            'emergency_restart_threshold' => $facts['processors']['count'],
             'process.priority'            => -19,
         },
     }
@@ -127,7 +127,7 @@ class reports {
 
     # This will add an fpm pool
     # We want a minimum of $fpm_min_child workers
-    $num_workers = max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
+    $num_workers = max(floor($facts['processors']['count'] * $fpm_workers_multiplier), $fpm_min_child)
     $request_timeout = lookup('php::fpm::request_timeout', {'default_value' => 60})
     php::fpm::pool { 'www':
         config => {
@@ -152,6 +152,7 @@ class reports {
     $reports_mediawiki_identifier = lookup('reports::reports_mediawiki_identifier')
     $reports_mediawiki_secret = lookup('reports::reports_mediawiki_secret')
     $reports_discord_webhook = lookup('reports::reports_discord_webhook')
+    $reports_write_key = lookup('reports::reports_write_key')
 
     file { '/srv/TSPortal/.env':
         ensure  => present,

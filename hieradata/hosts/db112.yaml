@@ -1,4 +1,5 @@
 mariadb::config::innodb_buffer_pool_size: '3G'
 http_proxy: 'http://bast.miraheze.org:8080'
-base::syslog::graylog_hostname: 'graylog121.miraheze.org'
-base::syslog::graylog_resolve_ip_version: 6
+role::db::weekly_misc: ['reports']
+role::db::fortnightly_misc: ['grafana', 'icinga', 'icingaweb2', 'roundcubemail']
+role::db::monthly_misc: ['piwik']

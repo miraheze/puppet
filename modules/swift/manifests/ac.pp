@@ -88,18 +88,18 @@ class swift::ac {
     }
 
     monitoring::services { 'Swift Account Service':
-         check_command => 'tcp',
-         vars          => {
-             tcp_address => $::ipaddress6,
-             tcp_port    => '6002',
-         },
-     }
+        check_command => 'tcp',
+        vars          => {
+            tcp_address => $::ipaddress6,
+            tcp_port    => '6002',
+        },
+    }
 
     monitoring::services { 'Swift Container Service':
-         check_command => 'tcp',
-         vars          => {
-             tcp_address => $::ipaddress6,
-             tcp_port    => '6001',
-         },
-     }
+        check_command => 'tcp',
+        vars          => {
+            tcp_address => $::ipaddress6,
+            tcp_port    => '6001',
+        },
+    }
 }

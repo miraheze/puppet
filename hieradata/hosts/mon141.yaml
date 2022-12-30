@@ -14,14 +14,15 @@ php::php_version: '7.4'
 
 # icinga2
 
-icinga2::repo:
-  location: http://packages.icinga.com/debian
-  release: 'icinga-%{facts.os.distro.codename}'
-  repos: main
-  key:
-    id: F51A91A5EE001AA5D77D53C4C6E319C334410682
-    source: http://packages.icinga.com/icinga.key
-    options: http-proxy='http://bast.miraheze.org:8080'
+icinga::repos:
+  'icinga-stable-release':
+    location: http://packages.icinga.com/debian
+    release: 'icinga-%{facts.os.distro.codename}'
+    repos: main
+    key: 
+      id: F51A91A5EE001AA5D77D53C4C6E319C334410682
+      source: http://packages.icinga.com/icinga.key
+      options: http-proxy='http://bast.miraheze.org:8080'
 
 icinga2::globals::package_name: 'icinga2'
 icinga2::globals::service_name: 'icinga2'
@@ -144,8 +145,6 @@ icinga2::globals::reserved:
   - ZonesDir
 
 nginx::use_graylog: true
-base::syslog::syslog_daemon: rsyslog
-base::syslog::syslog_host: [ 'graylog121.miraheze.org:12210' ]
 base::syslog::rsyslog_udp_localhost: true
 
 puppetserver_hostname: 'puppet141.miraheze.org'

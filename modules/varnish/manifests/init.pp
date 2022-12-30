@@ -19,25 +19,6 @@ class varnish (
         mode   => '0555',
     }
 
-    # Avoid race condition where varnish starts, before /var/lib/varnish was mounted as tmpfs
-    file { '/var/lib/varnish':
-        ensure  => directory,
-        owner   => 'varnish',
-        group   => 'varnish',
-        require => Package['varnish'],
-    }
-
-    mount { '/var/lib/varnish':
-        ensure  => mounted,
-        device  => 'tmpfs',
-        fstype  => 'tmpfs',
-        options => 'noatime,defaults,size=128M',
-        pass    => 0,
-        dump    => 0,
-        require => File['/var/lib/varnish'],
-        notify  => Service['varnish'],
-    }
-
     $module_path = get_module_path($module_name)
     $csp = loadyaml("${module_path}/data/csp.yaml")
     $backends = lookup('varnish::backends')
@@ -57,16 +38,11 @@ class varnish (
         group  => 'varnish',
     }
 
-    $mem_gb = $facts['memorysize_mb'] / 1024.0
-    if ($mem_gb < 90.0) {
-        $fe_mem_gb = 1
-    } else {
-        $fe_mem_gb = ceiling(0.7 * ($mem_gb - 100.0))
-    }
+    # TODO: On bigger memory hosts increase Transient size
+    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,1G"
 
-    $storage = "-s malloc,${fe_mem_gb}G -s file,${cache_file_name},${cache_file_size}"
-
-    $max_threads = max(floor($::processorcount * 250), 500)
+    # Default is 5000 in varnish
+    $max_threads = max(floor($::processorcount * 250), 5000)
     systemd::service { 'varnish':
         ensure         => present,
         content        => systemd_template('varnish'),
@@ -75,8 +51,7 @@ class varnish (
             require => [
                 Package['varnish'],
                 File['/usr/local/sbin/reload-vcl'],
-                File['/etc/varnish/default.vcl'],
-                Mount['/var/lib/varnish']
+                File['/etc/varnish/default.vcl']
             ],
         }
     }

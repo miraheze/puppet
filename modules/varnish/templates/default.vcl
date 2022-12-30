@@ -92,8 +92,8 @@ sub mobile_detection {
 
 # Rate limiting logic
 sub rate_limit {
-	# Allow higher limits for static.miraheze.org/static-new.miraheze.org, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") {
+	# Allow higher limits for static.miraheze.org, we can handle more of those requests
+	if (req.http.Host == "static.miraheze.org") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
 		}
@@ -137,7 +137,7 @@ sub vcl_synth {
 
 	// Handle CORS preflight requests
 	if (
-		(req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") &&
+		req.http.Host == "static.miraheze.org" &&
 		resp.reason == "CORS Preflight"
 	) {
 		set resp.reason = "OK";
@@ -184,7 +184,7 @@ sub mw_request {
 	}
 
 	# Numerous static.miraheze.org specific code
-	if (req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") {
+	if (req.http.Host == "static.miraheze.org") {
 		# We can do this because static.miraheze.org should not be capable of serving such requests anyway
 		# This could also increase cache hit rates as Cookies will be stripped entirely
 		unset req.http.Cookie;
@@ -213,7 +213,7 @@ sub mw_request {
 
 	# Don't cache certain things on static
 	if (
-		(req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") &&
+		req.http.Host == "static.miraheze.org" &&
 		(
 			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
 			req.url ~ "^/(.+)wiki/sitemaps" || # Do not cache sitemaps
@@ -252,15 +252,15 @@ sub vcl_recv {
 		return (synth(200));
 	}
 	
-	if ((req.http.host == "static.miraheze.org" || req.http.host == "static-new.miraheze.org") && req.url == "/") {
+	if (req.http.host == "static.miraheze.org" && req.url == "/") {
 		return (synth(301, "Commons Redirect"));
 	}
 
 	# Normalise Accept-Encoding for better cache hit ratio
 	if (req.http.Accept-Encoding) {
 		if (
-			(req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org")
-			&& req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|mp4|ogg)$"
+			req.http.Host == "static.miraheze.org" &&
+			req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|mp4|ogg)$"
 		) {
 			# No point in compressing these
 			unset req.http.Accept-Encoding;
@@ -304,6 +304,10 @@ sub vcl_recv {
 	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
 		set req.backend_hint = mon141;
 
+		if (req.http.upgrade ~ "(?i)websocket") {
+			return (pipe);
+		}
+
 		return (pass);
 	}
 
@@ -338,6 +342,14 @@ sub vcl_hash {
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
 		hash_data(req.http.X-Device);
 	}
+}
+
+sub vcl_pipe {
+    // for websockets over pipe
+    if (req.http.upgrade) {
+        set bereq.http.upgrade = req.http.upgrade;
+        set bereq.http.connection = req.http.connection;
+    }
 }
 
 # Initiate a backend fetch
@@ -474,8 +486,8 @@ sub vcl_backend_response {
 	// hit-for-pass objects >= 8388608 size and if domain == static.miraheze.org or
 	// hit-for-pass objects >= 67108864 size and if domain != static.miraheze.org.
 	// Do cache if Content-Length is missing.
-	if (std.integer(beresp.http.Content-Length, 0) >= 8388608 && (bereq.http.Host == "static.miraheze.org" || bereq.http.Host == "static-new.miraheze.org") ||
-		std.integer(beresp.http.Content-Length, 0) >= 67108864 && (bereq.http.Host != "static.miraheze.org" || bereq.http.Host != "static-new.miraheze.org")
+	if (std.integer(beresp.http.Content-Length, 0) >= 8388608 && bereq.http.Host == "static.miraheze.org" ||
+		std.integer(beresp.http.Content-Length, 0) >= 67108864 && bereq.http.Host != "static.miraheze.org"
 	) {
 		// HFP
 		return(pass(beresp.ttl));
@@ -491,7 +503,7 @@ sub vcl_deliver {
 	# on the same site as the wiki (private).
 	if (
 		(
-	 	 	 (req.http.Host == "static.miraheze.org" || req.http.Host == "static-new.miraheze.org") &&
+	 	 	 req.http.Host == "static.miraheze.org" &&
 			 req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
 		) ||
 	 	req.url ~ "^(?i)\/w\/img_auth\.php\/(.*)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
@@ -574,12 +586,12 @@ sub vcl_backend_error {
 	synthetic( {"<!DOCTYPE html>
 	<html lang="en">
 		<head>
-			<meta charset="utf-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta name="description" content="Backend Fetch Failed">
+			<meta charset="utf-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+			<meta name="description" content="Backend Fetch Failed" />
 			<title>"} + beresp.status + " " + beresp.reason + {"</title>
 			<!-- Bootstrap core CSS -->
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
 			<style>
 				/* Error Page Inline Styles */
 				body {
@@ -592,17 +604,15 @@ sub vcl_backend_error {
 					line-height: 2.1428571435;
 					color: inherit;
 					padding: 10px 0px;
-				}
-				/* Everything but the jumbotron gets side spacing for mobile-first views */
-				.masthead, .body-content {
-					padding-left: 15px;
-					padding-right: 15px;
-				}
-				/* Main body and button */
-				.jumbotron {
 					text-align: center;
 					background-color: transparent;
 				}
+				/* Everything but the jumbotron gets side spacing for mobile-first views */
+				.body-content {
+					padding-left: 15px;
+					padding-right: 15px;
+				}
+				/* button */
 				.jumbotron .btn {
 					font-size: 21px;
 					padding: 14px 24px;
@@ -612,10 +622,6 @@ sub vcl_backend_error {
 					from { opacity: 0; }
 					to   { opacity: 1; }
 				}
-				/* Colors */
-				.green {color:#5cb85c;}
-				.orange {color:#f0ad4e;}
-				.red {color:#d9534f;}
 				/* Dark mode */
 				@media (prefers-color-scheme: dark) {
 					body {
@@ -627,12 +633,6 @@ sub vcl_backend_error {
 					}
 				}
 			</style>
-			<script>
-				function loadDomain() {
-					var display = document.getElementById("display-domain");
-					display.innerHTML = document.domain;
-				}
-			</script>
 		</head>
 		<div class="container">
 			<!-- Jumbotron -->

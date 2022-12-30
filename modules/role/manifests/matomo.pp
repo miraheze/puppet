@@ -1,7 +1,11 @@
 # role: matomo
 class role::matomo {
+
+    include prometheus::exporter::redis
+    class { '::redis':
+        password => lookup('passwords::redis::master')
+    }
     include ::matomo
-    include redis
 
     $firewall_srange = join(
         query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])

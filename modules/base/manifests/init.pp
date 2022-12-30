@@ -12,6 +12,7 @@ class base (
     include base::upgrades
     include base::firewall
     include base::monitoring
+    include base::backup
     include ssh
     include users
 
@@ -56,7 +57,7 @@ class base (
         ensure     => present,
         uid        => 3100,
         ssh_keys   => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILVTOQ4vISRH4ictbbGprgCDFt7iU7hEE0HXjOOrlKvU salt-user@miraheze'
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHTYeA06i16YF6VeCO0ctaCaSgK/8rNQ32aJqx9eNXmJ salt-user@puppet141'
         ],
         privileges => ['ALL = (ALL) NOPASSWD: ALL'],
     }

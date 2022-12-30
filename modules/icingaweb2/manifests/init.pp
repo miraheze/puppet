@@ -7,7 +7,6 @@ class icingaweb2 (
     String $ido_db_name          = 'icinga',
     String $ido_db_user_name     = 'icinga2',
     String $ido_db_user_password = undef,
-    String $icinga_api_password  = undef,
     String $ldap_password        = undef,
 ) {
 
@@ -75,7 +74,7 @@ class icingaweb2 (
         ensure => present,
         config => {
             'emergency_restart_interval'  => '60s',
-            'emergency_restart_threshold' => $facts['virtual_processor_count'],
+            'emergency_restart_threshold' => $facts['processors']['count'],
             'process.priority'            => -19,
         },
     }
@@ -110,17 +109,15 @@ class icingaweb2 (
     $fpm_workers_multiplier = lookup('php::fpm::fpm_workers_multiplier', {'default_value' => 1.5})
     $fpm_min_child = lookup('php::fpm::fpm_min_child', {'default_value' => 4})
 
-    $num_workers = max(floor($facts['virtual_processor_count'] * $fpm_workers_multiplier), $fpm_min_child)
-    # These numbers need to be positive integers
-    $max_spare = ceiling($num_workers * 0.3)
-    $min_spare = ceiling($num_workers * 0.1)
+    # This will add an fpm pool
+    # We want a minimum of $fpm_min_child workers
+    $num_workers = max(floor($facts['processors']['count'] * $fpm_workers_multiplier), $fpm_min_child)
     php::fpm::pool { 'www':
         config => {
-            'pm'                   => 'dynamic',
-            'pm.max_spare_servers' => $max_spare,
-            'pm.min_spare_servers' => $min_spare,
-            'pm.start_servers'     => $min_spare,
-            'pm.max_children'      => $num_workers,
+            'pm'                        => 'static',
+            'pm.max_children'           => $num_workers,
+            'request_terminate_timeout' => 60,
+            'request_slowlog_timeout'   => 15,
         }
     }
 

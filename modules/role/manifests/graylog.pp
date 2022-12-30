@@ -1,6 +1,7 @@
 # role: graylog
 class role::graylog {
     include ::java
+    include prometheus::exporter::graylog
 
     ssl::wildcard { 'graylog wildcard': }
 
@@ -24,7 +25,7 @@ class role::graylog {
         version => '4.3',
     }
     -> class { 'graylog::server':
-        package_version => '4.3.8-1',
+        package_version => '4.3.9-1',
         config          => {
             'password_secret'     => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'  => lookup('passwords::graylog::root_password_sha2'),
@@ -76,7 +77,7 @@ class role::graylog {
 
 
     $firewall_icinga_rules_str = join(
-        query_facts("Class['Role::Icinga2'] and network!='127.0.0.1'", ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
         .map |$key, $value| {
             "${value['ipaddress']} ${value['ipaddress6']}"
         }

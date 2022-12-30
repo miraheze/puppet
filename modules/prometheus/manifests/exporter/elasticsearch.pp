@@ -4,7 +4,6 @@ class prometheus::exporter::elasticsearch {
         'python3-click',
         'python3-colorama',
         'python3-configobj',
-        'python3-decorator',
         'python3-elasticsearch',
         'python3-prometheus-client',
     ])
@@ -43,9 +42,16 @@ class prometheus::exporter::elasticsearch {
         restart  => true,
     }
 
-    $firewall_rules = query_facts('Class[Prometheus] or Class[Role::Grafana]', ['ipaddress', 'ipaddress6'])
-    $firewall_rules_mapped = $firewall_rules.map |$key, $value| { "${value['ipaddress']} ${value['ipaddress6']}" }
-    $firewall_rules_str = join($firewall_rules_mapped, ' ')
+    $firewall_rules_str = join(
+        query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
     ferm::service { 'prometheus es_exporter':
         proto  => 'tcp',
         port   => '9206',

@@ -221,14 +221,6 @@ class monitoring (
         mode   => '0755',
     }
 
-    file { '/var/lib/nagios/id_rsa2':
-        ensure => present,
-        source => 'puppet:///private/icinga2/id_rsa2',
-        owner  => 'nagios',
-        group  => 'nagios',
-        mode   => '0400',
-    }
-
     # includes a irc bot to relay messages from icinga to irc
     class { '::monitoring::ircecho':
         mirahezebots_password => $mirahezebots_password,
@@ -244,6 +236,14 @@ class monitoring (
 
     file { '/usr/lib/nagios/plugins/check_reverse_dns.py':
         source  => 'puppet:///modules/monitoring/check_reverse_dns.py',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => Package['nagios-nrpe-plugin'],
+    }
+
+    file { '/usr/lib/nagios/plugins/check_mysql_connections.php':
+        source  => 'puppet:///modules/monitoring/check_mysql_connections.php',
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
@@ -266,7 +266,7 @@ class monitoring (
 
     # Icinga monitoring
     monitoring::nrpe { 'Check correctness of the icinga configuration':
-        command => '/usr/lib/nagios/plugins/check_icinga_config /etc/icinga/icinga.cfg'
+        command => '/usr/lib/nagios/plugins/check_icinga_config'
     }
 
     cron { 'remove_icinga2_perfdata_2_days':

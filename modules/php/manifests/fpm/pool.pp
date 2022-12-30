@@ -56,8 +56,8 @@ define php::fpm::pool(
         'listen.allowed_clients' => '127.0.0.1',
         'listen.backlog' => 256,
         'pm'     => 'static',
-        'pm.max_children' => $facts['virtual_processor_count'],
-        'pm.max_requests' => 1000,
+        'pm.max_children' => $facts['processors']['count'],
+        'pm.max_requests' => 5000,
         'pm.status_path' => '/php_status',
         'access.format'  => '%{%Y-%m-%dT%H:%M:%S}t [%p] %{microseconds}d %{HTTP_HOST}e/%r %m/%s %{mega}M',
         'process.dumpable' => yes,
@@ -73,5 +73,12 @@ define php::fpm::pool(
         group   => 'root',
         mode    => '0444',
         notify  => Service["php${php::version}-fpm"]
+    }
+
+    # Configure rsyslog to monitor the php slowlog file and send the log messages to Graylog
+    rsyslog::input::file { 'php-slowlog':
+        path              => "/var/log/php${php::version}-fpm-${title_safe}-slowlog.log",
+        syslog_tag_prefix => '',
+        use_udp           => lookup('base::syslog::rsyslog_udp_localhost', {'default_value' => false}),
     }
 }

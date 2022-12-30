@@ -34,9 +34,11 @@ class swift::proxy (
         notify  => Service['swift-proxy'],
     }
 
-    service { 'swift-proxy':
-        ensure  => running,
-        require => Package['swift-proxy'],
+    # stock Debian package uses start-stop-daemon --chuid and init.d script to
+    # start swift-proxy, our proxy binds to port 80 so it isn't going to work.
+    # Use a modified version of 'swift-proxy' systemd unit
+    systemd::service { 'swift-proxy':
+        content => systemd_template('swift-proxy'),
     }
 
     ssl::wildcard { 'swift wildcard': }
@@ -44,6 +46,11 @@ class swift::proxy (
     nginx::site { 'swift':
         ensure  => present,
         source  => 'puppet:///modules/swift/nginx/swift.conf',
+        monitor => false,
+    }
+
+    nginx::site { 'default':
+        ensure  => absent,
         monitor => false,
     }
 
@@ -55,7 +62,7 @@ class swift::proxy (
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
             # We don't serve index page.
-            http_expect => 'HTTP/1.1 404',
+            http_expect      => 'HTTP/1.1 404',
         },
     }
 
@@ -68,7 +75,7 @@ class swift::proxy (
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
             # We don't serve index page.
-            http_expect => 'HTTP/1.1 404',
+            http_expect      => 'HTTP/1.1 404',
         },
     }
 
@@ -76,7 +83,7 @@ class swift::proxy (
         check_command => 'tcp',
         vars          => {
             tcp_address => $::ipaddress6,
-            tcp_port    => '8080',
+            tcp_port    => '80',
         },
     }
 }

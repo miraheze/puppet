@@ -12,7 +12,10 @@ class mediawiki(
     include mediawiki::monitoring
 
     if lookup(mediawiki::use_staging) {
-        include mediawiki::deploy
+        class { 'mediawiki::deploy':
+            branch           => $branch,
+            branch_mw_config => $branch_mw_config
+        }
     } else {
         include mediawiki::rsync
     }
@@ -31,6 +34,24 @@ class mediawiki(
             command => 'find /tmp/ -user www-data -amin +30 \( -iname "magick-*" -or -iname "transform_*" -or -iname "lci_*" -or -iname "svg_* -or -iname "localcopy_*" \) -delete',
             user    => 'www-data',
             special => 'hourly',
+        }
+    }
+
+    if lookup('jobrunner::intensive', {'default_value' => false}) {
+        ensure_packages(
+            'internetarchive',
+            {
+                ensure   => '3.0.2',
+                provider => 'pip3',
+                before   => File['/usr/local/bin/iaupload'],
+                require  => Package['python3-pip'],
+            },
+        )
+
+        file { '/usr/local/bin/iaupload':
+            ensure => present,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/bin/iaupload.py',
         }
     }
 
@@ -91,6 +112,7 @@ class mediawiki(
         '/srv/mediawiki/w',
         '/srv/mediawiki/config',
         '/srv/mediawiki/cache',
+        '/srv/mediawiki/stopforumspam',
     ]:
         ensure => 'directory',
         owner  => 'www-data',
@@ -148,6 +170,8 @@ class mediawiki(
     $ldap_password              = lookup('passwords::mediawiki::ldap_password')
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
     $swift_password             = lookup('mediawiki::swift_password')
+    $swift_temp_url_key         = lookup('mediawiki::swift_temp_url_key')
+    $reports_write_key          = lookup('reports::reports_write_key')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
@@ -189,6 +213,13 @@ class mediawiki(
         require => File['/srv/mediawiki/config'],
     }
 
+    file { '/srv/mediawiki/stopforumspam/listed_ip_30_ipv46_all.txt':
+        ensure  => present,
+        mode    => '0755',
+        source  => 'puppet:///private/mediawiki/listed_ip_30_ipv46_all.txt',
+        require => File['/srv/mediawiki/stopforumspam'],
+    }
+
     sudo::user { 'www-data_sudo_itself':
         user       => 'www-data',
         privileges => [
@@ -201,7 +232,7 @@ class mediawiki(
         content => template('mediawiki/swift-env.sh.erb'),
         mode    => '0755',
     }
- 
+
     file { '/tmp/magick-tmp':
         ensure => directory,
         owner  => 'www-data',

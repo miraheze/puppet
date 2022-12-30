@@ -13,9 +13,7 @@ class role::mediawiki::nutcracker (
                 listen               => '127.0.0.1:11212',
                 preconnect           => true,
                 server_connections   => 1,
-                server_failure_limit => 3,
-                server_retry_timeout => 30000,  # milliseconds
-                timeout              => 500,    # milliseconds
+                timeout              => 1000,    # milliseconds
                 servers              => $memcached_servers_1,
             },
             'memcached_3'     => {
@@ -25,9 +23,7 @@ class role::mediawiki::nutcracker (
                 listen               => '127.0.0.1:11214',
                 preconnect           => true,
                 server_connections   => 1,
-                server_failure_limit => 3,
-                server_retry_timeout => 30000,  # milliseconds
-                timeout              => 500,    # milliseconds
+                timeout              => 1000,    # milliseconds
                 servers              => $memcached_servers_3,
             },
         }
