@@ -30,7 +30,7 @@ class mediawiki(
 
     if !lookup('jobrunner::intensive', {'default_value' => false}) {
         cron { 'clean-tmp-files':
-            ensure  => present,
+            ensure  => absent,
             command => 'find /tmp/ -user www-data -amin +30 \( -iname "magick-*" -or -iname "transform_*" -or -iname "lci_*" -or -iname "svg_* -or -iname "localcopy_*" \) -delete',
             user    => 'www-data',
             special => 'hourly',
@@ -243,7 +243,7 @@ class mediawiki(
     tidy { [ '/tmp', '/tmp/magick-tmp' ]:
         matches => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v' ],
         age     => '2h',
-        type    => 'ctime',
+        type    => 'atime',
         backup  => false,
         recurse => 1,
     }
