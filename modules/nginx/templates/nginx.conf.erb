@@ -119,7 +119,7 @@ http {
 		root /var/www/html;
 
 		location /server-status {
-		stub_status;
+			stub_status  on;
 			access_log off;
 			allow 127.0.0.1;
 		}
