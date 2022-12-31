@@ -3,22 +3,24 @@
 
 class prometheus::exporter::nginx {
 
-    file { '/usr/local/bin/nginx-prometheus-exporter':
-        ensure => file,
-        mode   => '0555',
-        owner  => 'root',
-        group  => 'root',
-        source => 'puppet:///modules/prometheus/nginx/nginx-prometheus-exporter',
-        notify => Service['nginx-prometheus-exporter'],
+    systemd::service { 'nginx-prometheus-exporter':
+        ensure  => absent,
+        content => systemd_template('nginx-prometheus-exporter'),
     }
 
-    systemd::service { 'nginx-prometheus-exporter':
-        ensure  => present,
-        content => systemd_template('nginx-prometheus-exporter'),
-        restart => true,
-        require => [
-            File['/usr/local/bin/nginx-prometheus-exporter'],
-        ],
+    ensure_packages('prometheus-nginx-exporter')
+
+    file { '/etc/default/prometheus-nginx-exporter':
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => "ARGS='-nginx.scrape-uri=http://localhost:8090/server-status'\n",
+        require => Package['prometheus-nginx-exporter'],
+    }
+
+    service { 'prometheus-nginx-exporter':
+        ensure    => running,
+        subscribe => File['/etc/default/prometheus-nginx-exporter'],
     }
 
     $firewall_rules = join(
