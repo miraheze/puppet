@@ -82,11 +82,11 @@ http {
 		'"request_path": "$request_uri", '
 		'"nginx_access_log": true }';
 
-	# Add response time to access.log
+	# Add response time and status to access.log
 	log_format miraheze '$remote_addr - $remote_user [$time_local] '
-			'"$request_method $scheme://$host$request_uri" $status $body_bytes_sent '
-			'"$http_referer" "$http_user_agent" $request_time '
-			'$ssl_protocol/$ssl_cipher';
+		'"$request_method $scheme://$host$request_uri" $status $body_bytes_sent '
+		'"$http_referer" "$http_user_agent" $request_time '
+		'$ssl_protocol/$ssl_cipher';
 
 	# Logging
 	<%- if @use_graylog -%>
