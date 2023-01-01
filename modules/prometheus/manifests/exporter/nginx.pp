@@ -2,12 +2,6 @@
 #
 
 class prometheus::exporter::nginx {
-
-    systemd::service { 'nginx-prometheus-exporter':
-        ensure  => absent,
-        content => systemd_template('nginx-prometheus-exporter'),
-    }
-
     ensure_packages('prometheus-nginx-exporter')
 
     file { '/etc/default/prometheus-nginx-exporter':
