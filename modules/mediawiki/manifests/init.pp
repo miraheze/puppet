@@ -93,7 +93,7 @@ class mediawiki(
         ensure    => 'latest',
         directory => '/srv/mediawiki/femiwiki-deploy',
         origin    => 'https://github.com/miraheze/femiwiki-deploy.git',
-        branch    => 'master',
+        branch    => $branch,
         owner     => 'www-data',
         group     => 'www-data',
         mode      => '0755',
