@@ -10,6 +10,6 @@ class prometheus::exporter::graylog (
     cron { 'prometheus_graylog_stats':
         ensure  => $ensure,
         user    => 'root',
-        command => "/usr/bin/wget http://127.0.0.1:9833/ -O ${outfile}",
+        command => "/usr/bin/wget http://127.0.0.1:9833/ -O ${outfile} > /dev/null 2>&1",
     }
 }
