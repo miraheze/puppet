@@ -8,12 +8,13 @@ import tarfile
 import os
 import json
 import glob
+import requests
 
 from fabric import Connection
 from datetime import datetime
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for Miraheze backups from PCA.')
-parser.add_argument('action', choices=['backup', 'download'], help='Action to be ran')
+parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
 parser.add_argument('type', choices=['private', 'sslkeys', 'phabricator', 'sql', 'mediawiki-xml'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
@@ -24,12 +25,34 @@ def pca_connection():
     return Connection('gateways.storage.bhs.cloud.ovh.net', gateway='nc -6 -X connect -x bast.miraheze.org:8080 %h %p', user='pca', connect_kwargs={'password': '<%= @pca_password %>'})
 
 
+def pca_web(method: str, url: str, expiry: int):
+    pca_password = <%= @pca_password %>
+    proxies = { 'https': 'http://bast.miraheze.org:8080' }
+    json_data = { "auth": { "identity": { "methods": ["password"], "password": { "user": { "name": pca_password.split('.')[1], "domain": { "id": "default" }, "password": pca_password.split('.')[2] } } }, "scope": { "project": { "id": "76f9bc606a8044e08db7ebd118f6b19a", "domain": { "id": "default" } } } } }
+
+    token = requests.post(f'https://auth.cloud.ovh.net/v3/auth/tokens', json=json_data, proxies=proxies, headers={ 'Content-Type': 'application/json' }).headers.get('X-Subject-Token')
+    headers = { 'X-AUTH-TOKEN': token }
+    
+    if method == 'GET':
+        return requests.get(url, headers=headers, proxies=proxies)
+    elif method == 'POST':
+        if expiry > 0:
+            headers['X-Delete-After'] = f'{expiry*604800}'
+        
+        return requests.post(url, headers=headers, proxies=proxies)
+    elif method == 'HEAD':
+        return requests.head(url, headers=headers, proxies=proxies)
+    else:
+        raise Exception('Method is not currently implemented in Miraheze-Backup')
+
+
 def backup_private(dt: str):
     tar = tarfile.open('private.tar.gz', 'w:gz')
     tar.add('/etc/puppetlabs/puppet/private', arcname='private')
     tar.close()
 
     pca_connection().put('private.tar.gz', f'private/{dt}.tar.gz', False)
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/private/{dt}.tar.gz', 4)
 
     os.remove('private.tar.gz')
 
@@ -40,6 +63,7 @@ def backup_sslkeys(dt: str):
     tar.close()
 
     pca_connection().put('sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sslkeys/{dt}.tar.gz', 4)
 
     os.remove('sslkeys.tar.gz')
 
@@ -53,6 +77,7 @@ def backup_phabricator(dt: str):
     tar.close()
 
     pca_connection().put('phabricator.tar.gz', f'phabricator/{dt}.tar.gz', False)
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phabricator/{dt}.tar.gz', 4)
 
     os.remove('phabricator.tar.gz')
 
@@ -73,6 +98,7 @@ def backup_sql(dt: str, database: str):
         tar.close()
 
         pca_connection().put(f'{db}.tar.gz', f'sql/{db}/{dt}.tar.gz', False)
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.tar.gz', 5)
 
         os.remove(f'{db}.tar.gz')
 
@@ -87,6 +113,7 @@ def backup_mediawiki_xml(dt: str, database: str):
         os.system(f'/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}')
 
         pca_connection().put(f'/srv/backups/{db}.tar.gz', f'mediawiki-xml/{db}/{dt}.tar.gz', False)
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{db}/{dt}.tar.gz', 13)
 
         os.remove(f'/srv/backups/{db}.tar.gz')
 
@@ -111,10 +138,18 @@ def backup(source: str, database: str):
 
 
 def download_pca(file: str):
-    try:
-        pca_connection().get(file)
-    except:
-        print('Unable to download file! Check if the file is available within PCA and then try again!')
+    check_header = pca_web('HEAD', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0).headers.get('X-Ovh-Retrieval-State')
+    
+    if check_header == 'sealed':
+        print(f'{file} is unable to be downloaded as the file is sealed. Please unfreeze the file using the unfreeze command.')
+    elif check_header == 'unsealing':
+        unseal_time = pca_web('HEAD', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
+        print(f'{file} is unable to be downloaded as the file is being unsealed. Please try again in {unseal_time}s.')
+    else:
+        try:
+            pca_connection().get(file)
+        except:
+            print('Unable to download file! Please raise this on Phabricator if this is a repeat issue.')
 
 
 def download(source: str, dt: str, database: str):
@@ -129,6 +164,29 @@ def download(source: str, dt: str, database: str):
     print(f'Completed! This took {time.time() - ts}s')
 
 
+def find_backups(source: str, database: str):
+    all_backups = pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}', 0)
+    backups_list = list(all_backups.text.split("\n"))
+    
+    if source in ['database', 'mediawiki-xml']:
+        for backup_item in backups_list:
+            if backup_item.split('/')[0] == database:
+                print(backup_item.split('/')[1].split('.')[0])
+    else:
+        for backup_item in backups_list:
+            print(backup_item)
+
+
+def unfreeze_backup(source: str, dt: str, database: str):
+    if source in ['private', 'sslkeys', 'phabricator']:
+        file = f'{source}/{dt}.tar.gz'
+    elif source in ['sql', 'mediawiki-xml']:
+        file = f'{source}/{database}/{dt}.tar.gz'
+
+    pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0)
+    available_in = pca_web('HEAD', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
+    print(f'{file} has been unfrozen. It will be available to download in {int(available_in)/60} minutes.')
+
 if __name__ == '__main__':
 
     if args.action == 'backup':
@@ -138,3 +196,10 @@ if __name__ == '__main__':
             parser.exit(1, '--date is required when downloading a file!')
 
         download(args.type, args.date, args.database)
+    elif args.action == 'find':
+        find_backups(args.type, args.database)
+    elif args.action == 'unfreeze':
+        if not args.date:
+            parser.exit(1, '--date is required when unfreezing a file!')
+
+        unfreeze_backup(args.type, args.date, args.database)
