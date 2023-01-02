@@ -118,7 +118,7 @@ class role::db (
         user     => 'root',
         minute   => '0',
         hour     => '3',
-        monthday => ['2', '16'],
+        monthday => [fqdn_rand(14, 'db-backups'), fqdn_rand(14, 'db-backups') + 14],
     }
 
     monitoring::nrpe { 'Backups SQL':
