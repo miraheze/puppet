@@ -7,6 +7,7 @@ import time
 import tarfile
 import os
 import json
+import glob
 
 from fabric import Connection
 from datetime import datetime
@@ -59,24 +60,21 @@ def backup_phabricator(dt: str):
 def backup_sql(dt: str, database: str):
     if database is None:
         os.system('/usr/bin/mydumper -N -W -k --less-locking -t 4 -c -x \'^(.*wiki(?!.*(objectcache|querycache|querycachetwo|recentchanges|searchindex)))\' --trx-consistency-only -o \'/srv/backups/dbs\'')
-        dbs = [file for file in os.listdir('/srv/backups/dbs') if os.path.isdir(file)]
+        dbs = [file for file in os.listdir('/srv/mariadb') if os.path.isdir(f'/srv/mariadb/{file}') and file[-4:] == 'wiki']
     else:
-        os.system(f'/usr/bin/mysqldump -C --ignore-table={database}.objectcache --ignore-table={database}.querycache --ignore-table={database}.querycachetwo --ignore-table={database}.searchindex --ignore-table={database}.recentchanges {database} > /srv/backups/dbs/{database}')
+        os.system(f'/usr/bin/mysqldump -C --ignore-table={database}.objectcache --ignore-table={database}.querycache --ignore-table={database}.querycachetwo --ignore-table={database}.searchindex --ignore-table={database}.recentchanges {database} > /srv/backups/dbs/{database}.backup')
         dbs = [database]
 
     for db in dbs:
         tar = tarfile.open(f'{db}.tar.gz', 'w:gz')
-        tar.add(f'/srv/backups/dbs/{db}', arcname=db)
+        for dbfile in glob.glob(f'/srv/backups/dbs/{db}.*'):
+            tar.add(dbfile, arcname=db)
+            os.remove(dbfile)
         tar.close()
 
         pca_connection().put(f'{db}.tar.gz', f'sql/{db}/{dt}.tar.gz', False)
 
         os.remove(f'{db}.tar.gz')
-
-        try:
-            os.remove(f'/srv/backups/db/{db}')
-        except OSError:
-            os.rmdir(f'/srv/backups/db/{db}')
 
 
 def backup_mediawiki_xml(dt: str, database: str):
