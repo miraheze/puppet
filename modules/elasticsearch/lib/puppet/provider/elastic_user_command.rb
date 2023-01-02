@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Parent provider for Elasticsearch Shield/X-Pack file-based user management
 # tools.
 class Puppet::Provider::ElasticUserCommand < Puppet::Provider
@@ -18,11 +20,11 @@ class Puppet::Provider::ElasticUserCommand < Puppet::Provider
   # Run the user management command with specified tool arguments.
   def self.command_with_path(args, configdir = nil)
     options = {
-      :combine            => true,
-      :custom_environment => {
+      combine: true,
+      custom_environment: {
         'ES_PATH_CONF' => configdir || '/etc/elasticsearch'
       },
-      :failonfail => true
+      failonfail: true
     }
 
     execute(
@@ -41,22 +43,26 @@ class Puppet::Provider::ElasticUserCommand < Puppet::Provider
     end
 
     debug("Raw command output: #{output}")
-    output.split("\n").select { |u|
+    matching_lines = output.split("\n").select do |u|
       # Keep only expected "user : role1,role2" formatted lines
-      u[/^[^:]+:\s+\S+$/]
-    }.map { |u|
+      u[%r{^[^:]+:\s+\S+$}]
+    end
+
+    users = matching_lines.map do |u|
       # Break into ["user ", " role1,role2"]
       u.split(':').first.strip
-    }.map do |user|
+    end
+
+    users.map do |user|
       {
-        :name => user,
-        :ensure => :present,
-        :provider => name
+        name: user,
+        ensure: :present,
+        provider: name
       }
     end
   end
 
-  # Fetch an array of provider objects from the list of local users.
+  # Fetch an array of provider objects from the the list of local users.
   def self.instances
     fetch_users.map do |user|
       new user
@@ -92,7 +98,7 @@ class Puppet::Provider::ElasticUserCommand < Puppet::Provider
     end
 
     self.class.command_with_path(arguments, resource[:configdir])
-    @property_hash = self.class.fetch_users.detect do |u|
+    @property_hash = self.class.fetch_users.find do |u|
       u[:name] == resource[:name]
     end
   end

@@ -16,7 +16,7 @@ class elastic_stack::repo (
   Boolean           $prerelease    = false,
   Optional[Integer] $priority      = undef,
   String            $proxy         = 'absent',
-  Integer           $version       = 6,
+  Integer           $version       = 7,
   Optional[String]  $base_repo_url = undef,
 ) {
   if $prerelease {
@@ -31,7 +31,7 @@ class elastic_stack::repo (
     $version_prefix = ''
   }
 
-  if $version > 2 {
+  if $version > 2 { # lint:ignore:version_comparison
     $_repo_url = $base_repo_url ? {
       undef   => 'https://artifacts.elastic.co/packages',
       default => $base_repo_url,
@@ -64,7 +64,7 @@ class elastic_stack::repo (
   $key_source='https://artifacts.elastic.co/GPG-KEY-elasticsearch'
   $description='Elastic package repository.'
 
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian': {
       include apt
 
@@ -99,13 +99,13 @@ class elastic_stack::repo (
         command     => 'yum clean metadata expire-cache --disablerepo="*" --enablerepo="elastic"',
         refreshonly => true,
         returns     => [0, 1],
-        path        => [ '/bin', '/usr/bin', '/usr/local/bin' ],
+        path        => ['/bin', '/usr/bin', '/usr/local/bin'],
         cwd         => '/',
       }
     }
     'Suse': {
       # Older versions of SLES do not ship with rpmkeys
-      if $::operatingsystem == 'SLES' and versioncmp($::operatingsystemmajrelease, '11') <= 0 {
+      if $facts['os']['name'] == 'SLES' and versioncmp($facts['os']['release']['major'], '11') <= 0 {
         $_import_cmd = "rpm --import ${key_source}"
       }
       else {
@@ -116,7 +116,7 @@ class elastic_stack::repo (
         command => $_import_cmd,
         unless  => "test $(rpm -qa gpg-pubkey | grep -i 'D88E42B4' | wc -l) -eq 1",
         notify  => Zypprepo['elastic'],
-        path    => [ '/bin', '/usr/bin', '/usr/local/bin' ],
+        path    => ['/bin', '/usr/bin', '/usr/local/bin'],
         cwd     => '/',
       }
 
@@ -133,12 +133,12 @@ class elastic_stack::repo (
       ~> exec { 'elastic_zypper_refresh_elastic':
         command     => 'zypper refresh elastic',
         refreshonly => true,
-        path        => [ '/bin', '/usr/bin', '/usr/local/bin' ],
+        path        => ['/bin', '/usr/bin', '/usr/local/bin'],
         cwd         => '/',
       }
     }
     default: {
-      fail("\"${module_name}\" provides no repository information for OSfamily \"${::osfamily}\"")
+      fail("\"${module_name}\" provides no repository information for OSfamily \"${facts['os']['family']}\"")
     }
   }
 }
