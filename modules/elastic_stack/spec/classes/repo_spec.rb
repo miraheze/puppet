@@ -1,26 +1,28 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 def url(format, version)
   case version
   when %r{^2}
-    repo_type = (format == 'yum') ? 'centos' : 'debian'
+    repo_type = format == 'yum' ? 'centos' : 'debian'
     "https://packages.elastic.co/elasticsearch/#{version}/#{repo_type}"
   else
     "https://artifacts.elastic.co/packages/#{version}/#{format}"
   end
 end
 
-def declare_apt(version: '6.x', **params)
+def declare_apt(version: '7.x', **params)
   params[:location] ||= url('apt', version)
   contain_apt__source('elastic').with(params)
 end
 
-def declare_yum(version: '6.x', **params)
+def declare_yum(version: '7.x', **params)
   params[:baseurl] ||= url('yum', version)
   contain_yumrepo('elastic').with(params)
 end
 
-def declare_zypper(version: '6.x', **params)
+def declare_zypper(version: '7.x', **params)
   params[:baseurl] ||= url('yum', version)
   contain_zypprepo('elastic').with(params)
 end
@@ -29,7 +31,7 @@ describe 'elastic_stack::repo', type: 'class' do
   default_params = {}
   rpm_key_cmd = 'rpmkeys --import https://artifacts.elastic.co/GPG-KEY-elasticsearch'
 
-  on_supported_os(facterversion: '2.4').each do |os, facts|
+  on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:facts) { facts }
 
@@ -70,6 +72,19 @@ describe 'elastic_stack::repo', type: 'class' do
         end
       end
 
+      context 'with "version => 6"' do
+        let(:params) { default_params.merge(version: 6) }
+
+        case facts[:os]['family']
+        when 'Debian'
+          it { is_expected.to declare_apt(version: '6.x') }
+        when 'RedHat'
+          it { is_expected.to declare_yum(version: '6.x') }
+        when 'Suse'
+          it { is_expected.to declare_zypper(version: '6.x') }
+        end
+      end
+
       context 'with "priority => 99"' do
         let(:params) { default_params.merge(priority: 99) }
 
@@ -88,11 +103,11 @@ describe 'elastic_stack::repo', type: 'class' do
 
         case facts[:os]['family']
         when 'Debian'
-          it { is_expected.to declare_apt(version: '6.x-prerelease') }
+          it { is_expected.to declare_apt(version: '7.x-prerelease') }
         when 'RedHat'
-          it { is_expected.to declare_yum(version: '6.x-prerelease') }
+          it { is_expected.to declare_yum(version: '7.x-prerelease') }
         when 'Suse'
-          it { is_expected.to declare_zypper(version: '6.x-prerelease') }
+          it { is_expected.to declare_zypper(version: '7.x-prerelease') }
         end
       end
 
@@ -101,11 +116,11 @@ describe 'elastic_stack::repo', type: 'class' do
 
         case facts[:os]['family']
         when 'Debian'
-          it { is_expected.to declare_apt(version: 'oss-6.x') }
+          it { is_expected.to declare_apt(version: 'oss-7.x') }
         when 'RedHat'
-          it { is_expected.to declare_yum(version: 'oss-6.x') }
+          it { is_expected.to declare_yum(version: 'oss-7.x') }
         when 'Suse'
-          it { is_expected.to declare_zypper(version: 'oss-6.x') }
+          it { is_expected.to declare_zypper(version: 'oss-7.x') }
         end
       end
 
@@ -114,11 +129,11 @@ describe 'elastic_stack::repo', type: 'class' do
 
         case facts[:os]['family']
         when 'Debian'
-          it { is_expected.to declare_apt(version: 'oss-6.x-prerelease') }
+          it { is_expected.to declare_apt(version: 'oss-7.x-prerelease') }
         when 'RedHat'
-          it { is_expected.to declare_yum(version: 'oss-6.x-prerelease') }
+          it { is_expected.to declare_yum(version: 'oss-7.x-prerelease') }
         when 'Suse'
-          it { is_expected.to declare_zypper(version: 'oss-6.x-prerelease') }
+          it { is_expected.to declare_zypper(version: 'oss-7.x-prerelease') }
         end
       end
 
@@ -127,11 +142,11 @@ describe 'elastic_stack::repo', type: 'class' do
 
         case facts[:os]['family']
         when 'Debian'
-          it { is_expected.to declare_apt(location: 'https://mymirror.example.org/elastic-artifacts/packages/6.x/apt') }
+          it { is_expected.to declare_apt(location: 'https://mymirror.example.org/elastic-artifacts/packages/7.x/apt') }
         when 'RedHat'
-          it { is_expected.to declare_yum(baseurl: 'https://mymirror.example.org/elastic-artifacts/packages/6.x/yum') }
+          it { is_expected.to declare_yum(baseurl: 'https://mymirror.example.org/elastic-artifacts/packages/7.x/yum') }
         when 'Suse'
-          it { is_expected.to declare_zypper(baseurl: 'https://mymirror.example.org/elastic-artifacts/packages/6.x/yum') }
+          it { is_expected.to declare_zypper(baseurl: 'https://mymirror.example.org/elastic-artifacts/packages/7.x/yum') }
         end
       end
 
