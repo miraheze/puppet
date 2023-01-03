@@ -1,0 +1,6 @@
+---
+opensearch::defaults_location: /etc/conf.d
+opensearch::init_template: "%{module_name}/etc/init.d/opensearch.openrc.erb"
+opensearch::package_name: app-misc/opensearch
+opensearch::pid_dir: /run/opensearch
+opensearch::service_provider: openrc

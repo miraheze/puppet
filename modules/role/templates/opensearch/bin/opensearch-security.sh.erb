@@ -1,0 +1,22 @@
+#! /bin/bash
+
+# Generates the index
+bash /usr/share/opensearch/plugins/opensearch-security/tools/securityadmin.sh \
+  -cd /etc/opensearch/opensearch-security \
+  -icl \
+  -nhnv \
+  -rev -h <%= @os_master_hosts[0] %>.miraheze.org \
+  -cert /etc/opensearch/ssl/opensearch-admin-cert.pem \
+  -key /etc/opensearch/ssl/opensearch-admin-key.pem  \
+  -cacert /etc/opensearch/ssl/opensearch-ca.pem \
+
+# Reloads config on all nodes
+bash /usr/share/opensearch/plugins/opensearch-security/tools/securityadmin.sh \
+  -cd /etc/opensearch/opensearch-security \
+  -icl \
+  -nhnv \
+  -rev -h <%= @os_master_hosts[0] %>.miraheze.org \
+  -cert /etc/opensearch/ssl/opensearch-admin-cert.pem \
+  -key /etc/opensearch/ssl/opensearch-admin-key.pem  \
+  -cacert /etc/opensearch/ssl/opensearch-ca.pem \
+  -rl
