@@ -3,6 +3,12 @@ ui.logo:
   'logoImagePHID': 'PHID-FILE-gtm67dpburyr56ogaqay'
   'wordmarkText': 'Miraheze'
 
+# favicon
+ui.favicons:
+  'source': 'PHID-FILE-gtm67dpburyr56ogaqay'
+  'width': 80
+  'height': 80
+
 # MySQL
 mysql.port: 3306
 mysql.user: 'phabricator'
