@@ -47,4 +47,4 @@ smtpd_sender_login_maps = ldap:/etc/postfix/ldap/smtpd_sender_login_maps
 smtpd_sender_restrictions = reject_sender_login_mismatch
 strict_mailbox_ownership = no
 
-header_checks = regexp:/^X-Spam-Level: [^*]*[*]{7,}$/ DISCARD
+header_checks = regexp:/etc/postfix/header_checks
