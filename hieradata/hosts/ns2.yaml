@@ -1,2 +1,3 @@
 puppetserver_hostname: 'puppet141.miraheze.org'
 dns: true
+ssl_admins::puppetns: true
