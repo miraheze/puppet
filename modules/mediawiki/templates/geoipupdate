@@ -1,11 +1,15 @@
 #!/bin/bash
 
-wget 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=<%= @geoip_key %>&suffix=tar.gz' -O geoip.tar.gz
+wget 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=<%= @geoip_key %>&suffix=tar.gz' -O geoip-city.tar.gz
 
-tar zxvf geoip.tar.gz
+wget 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN&license_key=<%= @geoip_key %>&suffix=tar.gz' -O geoip-asn.tar.gz
+
+tar zxvf geoip-*.tar.gz
 
 mv GeoLite2-Country_*/GeoLite2-Country.mmdb /srv/mediawiki/geoip/GeoLite2-Country.mmdb
 
-chown -R www-data:www-data /srv/mediawiki/geoip/GeoLite2-Country.mmdb
+mv GeoLite2-ASN*/GeoLite2-ASN.mmdb /srv/mediawiki/geoip/GeoLite2-ASN.mmdb
 
-rm -rf GeoLite2-Country_20* && rm geoip.tar.gz
+chown www-data:www-data /srv/mediawiki/geoip/GeoLite2-*.mmdb
+
+rm -rf GeoLite2-* && rm geoip-*.tar.gz
