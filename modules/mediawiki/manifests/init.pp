@@ -216,14 +216,14 @@ class mediawiki(
 
     file { '/srv/mediawiki/stopforumspam/listed_ip_30_ipv46_all.txt':
         ensure  => present,
-        mode    => '0755',
+        mode    => '0444',
         source  => 'puppet:///private/mediawiki/listed_ip_30_ipv46_all.txt',
         require => File['/srv/mediawiki/stopforumspam'],
     }
 
     file { '/srv/mediawiki/geoip/GeoLite2-Country.mmdb':
         ensure  => present,
-        mode    => '0755',
+        mode    => '0444',
         source  => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
         require => File['/srv/mediawiki/geoip'],
     }
