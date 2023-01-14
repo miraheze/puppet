@@ -197,6 +197,14 @@ sub mw_request {
 		if (req.method == "OPTIONS" && req.http.Origin) {
 			return (synth(200, "CORS Preflight"));
 		}
+		# From Wikimedia: https://gerrit.wikimedia.org/r/c/operations/puppet/+/120617/7/templates/varnish/upload-frontend.inc.vcl.erb
+		# required for Extension:MultiMediaViewer: T10285
+		if (req.url ~ "(?i)(\?|&)download(=|&|$)") {
+			/* Pretend that the parameter wasn't there for caching purposes */
+			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?$", "");
+			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?&", "\1");
+			set req.http.X-Content-Disposition = "attachment";
+		}
 	}
 
 	# Don't cache a non-GET or HEAD request
