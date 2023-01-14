@@ -4,7 +4,7 @@ wget 'https://www.stopforumspam.com/downloads/listed_ip_30_ipv46_all.zip' -O sto
 
 unzip stopforumspam-ip-denylist.zip
 
-mv listed_ip_30_ipv46_all.txt /root/private/files/stopforumspam/listed_ip_30_ipv46_all.txt
+mv listed_ip_30_ipv46_all.txt /root/private/files/mediawiki/listed_ip_30_ipv46_all.txt
 
 git -C /root/private add . && git -C /root/private commit -m "Update StopForumSpam denylist" && git -C /root/private push
 
