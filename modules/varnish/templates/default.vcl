@@ -203,7 +203,7 @@ sub mw_request {
 			/* Pretend that the parameter wasn't there for caching purposes */
 			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?$", "");
 			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?&", "\1");
-			set req.http.X-Content-Disposition = "attachment";
+			set req.http.Content-Disposition = "attachment";
 		}
 	}
 
