@@ -1,0 +1,11 @@
+#!/bin/bash
+
+wget 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=<%= @geoip_key %>&suffix=tar.gz' -O geoip.tar.gz
+
+tar zxvf geoip.tar.gz
+
+mv GeoLite2-Country_*/GeoLite2-Country.mmdb /srv/mediawiki/geoip/GeoLite2-Country.mmdb
+
+chown -R www-data:www-data /srv/mediawiki/geoip/GeoLite2-Country.mmdb
+
+rm -rf GeoLite2-Country_20* && rm geoip.tar.gz
