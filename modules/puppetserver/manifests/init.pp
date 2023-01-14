@@ -230,6 +230,20 @@ class puppetserver(
         minute   => 0,
     }
 
+    file { '/root/updatesfs':
+        ensure  => present,
+        content => template('puppetserver/updatesfs'),
+        mode    => '0555',
+    }
+
+    cron { 'updatesfs':
+        ensure   => present,
+        command  => '/root/updatesfs',
+        user     => 'root',
+        hour     => 23,
+        minute   => 0,
+    }
+    
     monitoring::services { 'puppetserver':
         check_command => 'tcp',
         vars          => {
