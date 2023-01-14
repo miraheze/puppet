@@ -113,6 +113,7 @@ class mediawiki(
         '/srv/mediawiki/config',
         '/srv/mediawiki/cache',
         '/srv/mediawiki/stopforumspam',
+        '/srv/mediawiki/geoip',
     ]:
         ensure => 'directory',
         owner  => 'www-data',
@@ -218,6 +219,13 @@ class mediawiki(
         mode    => '0755',
         source  => 'puppet:///private/mediawiki/listed_ip_30_ipv46_all.txt',
         require => File['/srv/mediawiki/stopforumspam'],
+    }
+
+    file { '/srv/mediawiki/geoip/GeoLite2-Country.mmdb':
+        ensure  => present,
+        mode    => '0755',
+        source  => 'puppet:///private/files/geoip/GeoLite2-Country.mmdb',
+        require => File['/srv/mediawiki/geoip'],
     }
 
     sudo::user { 'www-data_sudo_itself':
