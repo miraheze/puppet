@@ -4,10 +4,6 @@ wget 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Countr
 
 tar zxvf geoip.tar.gz
 
-cp GeoLite2-Country_*/GeoLite2-Country.mmdb /srv/mediawiki/geoip/GeoLite2-Country.mmdb
-
-chown www-data:www-data /srv/mediawiki/geoip/GeoLite2-Country.mmdb
-
 mv GeoLite2-Country_*/GeoLite2-Country.mmdb /root/private/files/geoip/GeoLite2-Country.mmdb
 
 git -C /root/private add . && git -C /root/private commit -m "GeoIPUpdate" && git -C /root/private push
