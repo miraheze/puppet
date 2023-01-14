@@ -224,7 +224,7 @@ class mediawiki(
     file { '/srv/mediawiki/geoip/GeoLite2-Country.mmdb':
         ensure  => present,
         mode    => '0755',
-        source  => 'puppet:///private/files/geoip/GeoLite2-Country.mmdb',
+        source  => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
         require => File['/srv/mediawiki/geoip'],
     }
 
