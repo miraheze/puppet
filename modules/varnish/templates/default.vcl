@@ -603,7 +603,7 @@ sub vcl_backend_error {
 			<meta name="description" content="Backend Fetch Failed" />
 			<title>"} + beresp.status + " " + beresp.reason + {"</title>
 			<!-- Bootstrap core CSS -->
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" />
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin"anonymous"/>
 			<style>
 				/* Error Page Inline Styles */
 				body {
