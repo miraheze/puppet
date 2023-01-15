@@ -234,7 +234,7 @@ sub mw_request {
 	}
 
 	# A requet via OAuth should not be cached or use a cached response elsewhere
-	if (req.http.Authorization ~ "OAuth") {
+	if (req.http.Authorization ~ "OAuth" || req.http.Authorization ~ "Bearer") {
 		return (pass);
 	}
 
