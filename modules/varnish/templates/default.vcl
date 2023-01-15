@@ -203,7 +203,7 @@ sub mw_request {
 			/* Pretend that the parameter wasn't there for caching purposes */
 			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?$", "");
 			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?&", "\1");
-			set req.http.Content-Disposition = "attachment";
+			set req.http.X-Content-Disposition = "attachment";
 		}
 	}
 
@@ -553,6 +553,10 @@ sub vcl_deliver {
 	# Identify uncacheable content
 	if (obj.uncacheable) {
 		set resp.http.X-Cache = resp.http.X-Cache + " UNCACHEABLE";
+	}
+
+	if (req.http.X-Content-Disposition == "attachment") {
+		set resp.http.Content-Disposition = "attachment";
 	}
 
 	return (deliver);
