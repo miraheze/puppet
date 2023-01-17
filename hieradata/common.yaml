@@ -2,7 +2,7 @@ jobrunner: false
 jobrunner::intensive: false
 mailserver: false
 puppetserver: false
-mediawiki::branch: 'REL1_38'
+mediawiki::branch: 'REL1_39'
 mediawiki::branch_mw_config: 'master'
 puppetserver_hostname: puppet141.miraheze.org
 role::salt::minions::salt_master: 'puppet141.miraheze.org'
