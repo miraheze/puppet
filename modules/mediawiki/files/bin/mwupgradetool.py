@@ -17,7 +17,7 @@ def check_up(server: str) -> bool:
 
 print('Welcome to the MediaWiki Upgrade tool!')
 input('Please confirm you are running this script on the canary server: (press enter)')
-if sys.argv[2] == 'prep':
+if sys.argv[1] == 'prep':
     print('Starting staging update')
     input('Press enter when branch updated in puppet: ')
     os.system('sudo -u www-data rm -rf /srv/mediawiki-staging/w')
@@ -32,7 +32,7 @@ if sys.argv[2] == 'prep':
     else:
         print('Canary is not online')
     print('Deployment done, run with "fleet" to rollout')
-if sys.argv[2] == 'fleet':
+if sys.argv[1] == 'fleet':
     input('Press enter when all servers pooled: ')
     input('Confirm mass rolout:')
     os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --extension-list --servers={serverlist}')
