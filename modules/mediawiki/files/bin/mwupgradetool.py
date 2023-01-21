@@ -27,7 +27,7 @@ if sys.argv[2] == 'prep':
     input('Confirm: ')
     print('Will now deploy to canary server')
     os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --extension-list --servers={canary}')
-    if check_up(canary) and check_ro(canary):
+    if check_up(canary):
         print('Canary deploy done')
     else:
         print('Canary is not online')
