@@ -33,7 +33,7 @@ if sys.argv[2] == 'prep':
         print('Canary is not online')
     print('Deployment done, run with "fleet" to rollout')
 if sys.argv[2] == 'fleet':
-    input('Press enter when branch updated in puppet: ')
+    input('Press enter when all servers pooled: ')
     input('Confirm mass rolout:')
     os.system(f'deploy-mediawiki --world --l10n --force --ignore-time --extension-list --servers={serverlist}')
     print('Deployment done')
