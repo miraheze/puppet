@@ -84,7 +84,8 @@ class base::firewall (
     }
 
     monitoring::nrpe { 'conntrack_table_size':
-        command => '/usr/lib/nagios/plugins/check_conntrack 80 90'
+        command => '/usr/lib/nagios/plugins/check_conntrack 80 90',
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Conntrack_Table'
     }
 
     sudo::user { 'nagios_check_ferm':
@@ -101,6 +102,8 @@ class base::firewall (
     }
 
     monitoring::nrpe { 'ferm_active':
-        command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm'
+        command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm',
+        docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Ferm',
+        critical => true
     }
 }
