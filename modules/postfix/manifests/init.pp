@@ -24,6 +24,12 @@ class postfix {
         notify => Service['postfix'],
     }
 
+    file { '/etc/postfix/header_checks':
+        ensure => present,
+        source => 'puppet:///modules/postfix/header_checks',
+        notify => Service['postfix'],
+    }
+
     file { '/etc/postfix/ldap':
         ensure => directory,
     }
