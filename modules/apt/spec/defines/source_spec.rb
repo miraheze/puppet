@@ -19,11 +19,11 @@ describe 'apt::source' do
         family: 'Debian',
         name: 'Debian',
         release: {
-          major: '8',
-          full: '8.0',
+          major: '9',
+          full: '9.0',
         },
         distro: {
-          codename: 'jessie',
+          codename: 'stretch',
           id: 'Debian',
         },
       },
@@ -58,7 +58,7 @@ describe 'apt::source' do
       end
 
       it {
-        is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{hello.there jessie main\n})
+        is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{hello.there stretch main\n})
       }
 
       it { is_expected.to contain_file('/etc/apt/sources.list.d/my_source.list').that_notifies('Class[Apt::Update]') }
@@ -109,11 +109,14 @@ describe 'apt::source' do
           location: 'http://debian.mirror.iweb.ca/debian/',
           release: 'sid',
           repos: 'testing',
-          key: { 'ensure' => 'refreshed',
-                 'id' => GPG_KEY_ID,
-                 'server' => 'pgp.mit.edu',
-                 'content' => 'GPG key content',
-                 'source'  => 'http://apt.puppetlabs.com/pubkey.gpg' },
+          key: {
+            'ensure' => 'refreshed',
+            'id' => GPG_KEY_ID,
+            'server' => 'pgp.mit.edu',
+            'content' => 'GPG key content',
+            'source'  => 'http://apt.puppetlabs.com/pubkey.gpg',
+            'weak_ssl' => true,
+          },
           pin: '10',
           architecture: 'x86_64',
           allow_unsigned: true,
@@ -136,9 +139,23 @@ describe 'apt::source' do
                                                                                                                                                     id: GPG_KEY_ID,
                                                                                                                                                     server: 'pgp.mit.edu',
                                                                                                                                                     content: 'GPG key content',
-                                                                                                                                                    source: 'http://apt.puppetlabs.com/pubkey.gpg')
+                                                                                                                                                    source: 'http://apt.puppetlabs.com/pubkey.gpg',
+                                                                                                                                                    weak_ssl: true)
       }
     end
+  end
+
+  context 'with allow_insecure true' do
+    let :params do
+      {
+        location: 'hello.there',
+        allow_insecure: true,
+      }
+    end
+
+    it {
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb \[allow-insecure=yes\] hello.there stretch main\n})
+    }
   end
 
   context 'with allow_unsigned true' do
@@ -150,7 +167,65 @@ describe 'apt::source' do
     end
 
     it {
-      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb \[trusted=yes\] hello.there jessie main\n})
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb \[trusted=yes\] hello.there stretch main\n})
+    }
+  end
+
+  context 'with check_valid_until false' do
+    let :params do
+      {
+        location: 'hello.there',
+        check_valid_until: false,
+      }
+    end
+
+    it {
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb \[check-valid-until=false\] hello.there stretch main\n})
+    }
+  end
+
+  context 'with check_valid_until true' do
+    let :params do
+      {
+        location: 'hello.there',
+        check_valid_until: true,
+      }
+    end
+
+    it {
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb hello.there stretch main\n})
+    }
+  end
+
+  context 'with keyring set' do
+    let :params do
+      {
+        location: 'hello.there',
+        keyring: '/usr/share/keyrings/foo-archive-keyring.gpg',
+      }
+    end
+
+    it {
+      is_expected.to contain_apt__setting('list-my_source')
+        .with(ensure: 'present')
+        .with_content(%r{# my_source\ndeb \[signed-by=/usr/share/keyrings/foo-archive-keyring.gpg\] hello.there stretch main\n})
+    }
+  end
+
+  context 'with keyring, architecture and allow_unsigned set' do
+    let :params do
+      {
+        location: 'hello.there',
+        architecture: 'amd64',
+        allow_unsigned: true,
+        keyring: '/usr/share/keyrings/foo-archive-keyring.gpg',
+      }
+    end
+
+    it {
+      is_expected.to contain_apt__setting('list-my_source')
+        .with(ensure: 'present')
+        .with_content(%r{# my_source\ndeb \[arch=amd64 trusted=yes signed-by=/usr/share/keyrings/foo-archive-keyring.gpg\] hello.there stretch main\n})
     }
   end
 
@@ -174,11 +249,11 @@ describe 'apt::source' do
           family: 'Debian',
           name: 'Debian',
           release: {
-            major: '8',
-            full: '8.0',
+            major: '9',
+            full: '9.0',
           },
           distro: {
-            codename: 'jessie',
+            codename: 'stretch',
             id: 'Debian',
           },
         },
@@ -269,7 +344,7 @@ describe 'apt::source' do
     end
 
     it {
-      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb-src hello.there jessie main\n})
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb-src hello.there stretch main\n})
     }
   end
 
@@ -282,7 +357,7 @@ describe 'apt::source' do
     end
 
     it {
-      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb hello.there jessie main\ndeb-src hello.there jessie main\n})
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{# my_source\ndeb hello.there stretch main\ndeb-src hello.there stretch main\n})
     }
   end
 
@@ -309,9 +384,9 @@ describe 'apt::source' do
     end
 
     it {
-      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{deb-src hello.there jessie main\n})
+      is_expected.to contain_apt__setting('list-my_source').with(ensure: 'present').with_content(%r{deb-src hello.there stretch main\n})
     }
-    it { is_expected.to contain_apt__setting('list-my_source').without_content(%r{deb hello.there jessie main\n}) }
+    it { is_expected.to contain_apt__setting('list-my_source').without_content(%r{deb hello.there stretch main\n}) }
   end
 
   context 'with ensure => absent' do

@@ -9,22 +9,22 @@ describe 'apt::update', type: :class do
       'we are due for a run'                         => 1_406_660_561,
       'the update-success-stamp file does not exist' => -1,
     }.each_pair do |desc, factval|
-      context "when $::apt_update_last_success indicates #{desc}" do
+      context "when $apt_update_last_success indicates #{desc}" do
         let(:facts) do
           {
             os: {
               family: 'Debian',
               name: 'Debian',
               release: {
-                major: '8',
-                full: '8.0',
+                major: '9',
+                full: '9.0',
               },
               distro: {
-                codename: 'jessie',
+                codename: 'stretch',
                 id: 'Debian',
               },
             },
-            apt_update_last_success: factval,
+            'apt::apt_update_last_success': factval,
           }
         end
         let(:pre_condition) do
@@ -37,18 +37,18 @@ describe 'apt::update', type: :class do
         end
       end
     end
-    context 'when $::apt_update_last_success is nil' do
+    context 'when $apt_update_last_success is nil' do
       let(:facts) do
         {
           os: {
             family: 'Debian',
             name: 'Debian',
             release: {
-              major: '8',
-              full: '8.0',
+              major: '9',
+              full: '9.0',
             },
             distro: {
-              codename: 'jessie',
+              codename: 'stretch',
               id: 'Debian',
             },
           },
@@ -61,6 +61,36 @@ describe 'apt::update', type: :class do
         is_expected.to contain_exec('apt_update').with('refreshonly' => false)
       end
     end
+    context 'and Exec[apt_update] refreshonly is overridden to true and has recent run' do
+      let(:facts) do
+        {
+          os: {
+            family: 'Debian',
+            name: 'Debian',
+            release: {
+              major: '9',
+              full: '9.0',
+            },
+            distro: {
+              codename: 'stretch',
+              id: 'Debian',
+            },
+          },
+          'apt::apt_update_last_success': Time.now.to_i,
+        }
+      end
+      let(:pre_condition) do
+        "
+        class{'::apt': update => {'frequency' => 'always' },}
+        Exec <| title=='apt_update' |> { refreshonly => true }
+        "
+      end
+
+      it 'skips an apt-get update run' do
+        # set the apt_update exec's refreshonly attribute to false
+        is_expected.to contain_exec('apt_update').with('refreshonly' => true)
+      end
+    end
   end
   context "when apt::update['frequency']='reluctantly'" do
     {
@@ -68,22 +98,22 @@ describe 'apt::update', type: :class do
       'we are due for a run'                         => 1_406_660_561,
       'the update-success-stamp file does not exist' => -1,
     }.each_pair do |desc, factval|
-      context "when $::apt_update_last_success indicates #{desc}" do
+      context "when $apt_update_last_success indicates #{desc}" do
         let(:facts) do
           {
             os: {
               family: 'Debian',
               name: 'Debian',
               release: {
-                major: '8',
-                full: '8.0',
+                major: '9',
+                full: '9.0',
               },
               distro: {
-                codename: 'jessie',
+                codename: 'stretch',
                 id: 'Debian',
               },
             },
-            apt_update_last_success: factval,
+            'apt::apt_update_last_success': factval,
           }
         end
         let(:pre_condition) { "class{ '::apt': update => {'frequency' => 'reluctantly' },}" }
@@ -94,18 +124,18 @@ describe 'apt::update', type: :class do
         end
       end
     end
-    context 'when $::apt_update_last_success is nil' do
+    context 'when $apt_update_last_success is nil' do
       let(:facts) do
         {
           os: {
             family: 'Debian',
             name: 'Debian',
             release: {
-              major: '8',
-              full: '8.0',
+              major: '9',
+              full: '9.0',
             },
             distro: {
-              codename: 'jessie',
+              codename: 'stretch',
               id: 'Debian',
             },
           },
@@ -122,22 +152,22 @@ describe 'apt::update', type: :class do
   ['daily', 'weekly'].each do |update_frequency|
     context "when apt::update['frequency'] has the value of #{update_frequency}" do
       { 'we are due for a run' => 1_406_660_561, 'the update-success-stamp file does not exist' => -1 }.each_pair do |desc, factval|
-        context "when $::apt_update_last_success indicates #{desc}" do
+        context "when $apt_update_last_success indicates #{desc}" do
           let(:facts) do
             {
               os: {
                 family: 'Debian',
                 name: 'Debian',
                 release: {
-                  major: '8',
-                  full: '8.0',
+                  major: '9',
+                  full: '9.0',
                 },
                 distro: {
-                  codename: 'jessie',
+                  codename: 'stretch',
                   id: 'Debian',
                 },
               },
-              apt_update_last_success: factval,
+              'apt::apt_update_last_success': factval,
             }
           end
           let(:pre_condition) { "class{ '::apt': update => {'frequency' => '#{update_frequency}',} }" }
@@ -148,22 +178,22 @@ describe 'apt::update', type: :class do
           end
         end
       end
-      context 'when the $::apt_update_last_success fact has a recent value' do
+      context 'when the $apt_update_last_success fact has a recent value' do
         let(:facts) do
           {
             os: {
               family: 'Debian',
               name: 'Debian',
               release: {
-                major: '8',
-                full: '8.0',
+                major: '9',
+                full: '9.0',
               },
               distro: {
-                codename: 'jessie',
+                codename: 'stretch',
                 id: 'Debian',
               },
             },
-            apt_update_last_success: Time.now.to_i,
+            'apt::apt_update_last_success': Time.now.to_i,
           }
         end
         let(:pre_condition) { "class{ '::apt': update => {'frequency' => '#{update_frequency}',} }" }
@@ -173,22 +203,22 @@ describe 'apt::update', type: :class do
           is_expected.to contain_exec('apt_update').with('refreshonly' => true)
         end
       end
-      context 'when $::apt_update_last_success is nil' do
+      context 'when $apt_update_last_success is nil' do
         let(:facts) do
           {
             os: {
               family: 'Debian',
               name: 'Debian',
               release: {
-                major: '8',
-                full: '8.0',
+                major: '9',
+                full: '9.0',
               },
               distro: {
-                codename: 'jessie',
+                codename: 'stretch',
                 id: 'Debian',
               },
             },
-            apt_update_last_success: nil,
+            'apt::apt_update_last_success': nil,
           }
         end
         let(:pre_condition) { "class{ '::apt': update => {'frequency' => '#{update_frequency}',} }" }

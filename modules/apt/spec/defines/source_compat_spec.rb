@@ -15,11 +15,11 @@ describe 'apt::source', type: :define do
         family: 'Debian',
         name: 'Debian',
         release: {
-          major: '8',
-          full: '8.0',
+          major: '9',
+          full: '9.0',
         },
         distro: {
-          codename: 'jessie',
+          codename: 'stretch',
           id: 'Debian',
         },
       },
@@ -35,7 +35,7 @@ describe 'apt::source', type: :define do
     end
 
     it {
-      is_expected.to contain_apt__setting('list-my_source').with_content(%r{# my_source\ndeb-src http://debian.mirror.iweb.ca/debian/ jessie main\n})
+      is_expected.to contain_apt__setting('list-my_source').with_content(%r{# my_source\ndeb-src http://debian.mirror.iweb.ca/debian/ stretch main\n})
     }
   end
 
@@ -71,6 +71,18 @@ describe 'apt::source', type: :define do
     }
   end
 
+  context 'when allow_insecure true' do
+    let :params do
+      {
+        'include'        => { 'src' => false },
+        'location'       => 'http://debian.mirror.iweb.ca/debian/',
+        'allow_insecure' => true,
+      }
+    end
+
+    it { is_expected.to contain_apt__setting('list-my_source').with_content(%r{# my_source\ndeb \[allow-insecure=yes\] http://debian.mirror.iweb.ca/debian/ stretch main\n}) }
+  end
+
   context 'when allow_unsigned true' do
     let :params do
       {
@@ -80,7 +92,7 @@ describe 'apt::source', type: :define do
       }
     end
 
-    it { is_expected.to contain_apt__setting('list-my_source').with_content(%r{# my_source\ndeb \[trusted=yes\] http://debian.mirror.iweb.ca/debian/ jessie main\n}) }
+    it { is_expected.to contain_apt__setting('list-my_source').with_content(%r{# my_source\ndeb \[trusted=yes\] http://debian.mirror.iweb.ca/debian/ stretch main\n}) }
   end
 
   context 'with architecture equals x86_64' do
@@ -92,7 +104,7 @@ describe 'apt::source', type: :define do
     end
 
     it {
-      is_expected.to contain_apt__setting('list-my_source').with_content(%r{# my_source\ndeb \[arch=x86_64\] http://debian.mirror.iweb.ca/debian/ jessie main\n})
+      is_expected.to contain_apt__setting('list-my_source').with_content(%r{# my_source\ndeb \[arch=x86_64\] http://debian.mirror.iweb.ca/debian/ stretch main\n})
     }
   end
 
