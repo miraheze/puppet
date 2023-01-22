@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 require 'open-uri'
-require 'net/ftp'
+begin
+  require 'net/ftp'
+rescue LoadError
+  # Ruby 3.0 changed net-ftp to a default gem
+end
 require 'tempfile'
 
 Puppet::Type.type(:apt_key).provide(:apt_key) do
@@ -124,6 +128,9 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
       f.close
       f
     else
+      exceptions = [OpenURI::HTTPError]
+      exceptions << Net::FTPPermError if defined?(Net::FTPPermError)
+
       begin
         # Only send basic auth if URL contains userinfo
         # Some webservers (e.g. Amazon S3) return code 400 if empty basic auth is sent
@@ -138,7 +145,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do
           parsed_value.userinfo = ''
           key = open(parsed_value, http_basic_authentication: user_pass).read
         end
-      rescue OpenURI::HTTPError, Net::FTPPermError => e
+      rescue *exceptions => e
         raise(_('%{_e} for %{_resource}') % { _e: e.message, _resource: resource[:source] })
       rescue SocketError
         raise(_('could not resolve %{_resource}') % { _resource: resource[:source] })

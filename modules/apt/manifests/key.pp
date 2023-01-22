@@ -6,7 +6,7 @@
 # @example Declare Apt key for apt.puppetlabs.com source
 #   apt::key { 'puppetlabs':
 #     id      => '6F6B15509CF8E59E6E469F327F438280EF8D349F',
-#     server  => 'hkps.pool.sks-keyservers.net',
+#     server  => 'keyserver.ubuntu.com',
 #     options => 'http-proxy="http://proxyuser:proxypass@example.org:3128"',
 #   }
 #
@@ -40,14 +40,13 @@ define apt::key (
   Enum['present', 'absent', 'refreshed'] $ensure                                                                        = present,
   Optional[String] $content                                                                                             = undef,
   Optional[Pattern[/\Ahttps?:\/\//, /\Aftp:\/\//, /\A\/\w+/]] $source                                                   = undef,
-  Pattern[/\A((hkp|hkps|http|https):\/\/)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?(\/[a-zA-Z\d\-_.]+)*\/?$/] $server = $::apt::keyserver,
+  Pattern[/\A((hkp|hkps|http|https):\/\/)?([a-z\d])([a-z\d-]{0,61}\.)+[a-z\d]+(:\d{2,5})?(\/[a-zA-Z\d\-_.]+)*\/?$/] $server = $apt::keyserver,
   Boolean $weak_ssl                                                                                                     = false,
-  Optional[String] $options                                                                                             = $::apt::key_options,
-  ) {
-
+  Optional[String] $options                                                                                             = $apt::key_options,
+) {
   case $ensure {
     /^(refreshed|present)$/: {
-      if defined(Anchor["apt_key ${id} absent"]){
+      if defined(Anchor["apt_key ${id} absent"]) {
         fail("key with id ${id} already ensured as absent")
       }
 
@@ -76,17 +75,19 @@ define apt::key (
               Apt::Key<| title == $title |>
             }
           }
-          default: { }
+          default: {
+            # Nothing in here
+          }
         }
       }
     }
 
-    absent: {
-      if defined(Anchor["apt_key ${id} present"]){
+    /^absent$/: {
+      if defined(Anchor["apt_key ${id} present"]) {
         fail("key with id ${id} already ensured as present")
       }
 
-      if !defined(Anchor["apt_key ${id} absent"]){
+      if !defined(Anchor["apt_key ${id} absent"]) {
         apt_key { $title:
           ensure   => $ensure,
           id       => $id,

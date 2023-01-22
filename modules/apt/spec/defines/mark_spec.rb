@@ -13,11 +13,11 @@ describe 'apt::mark', type: :define do
         family: 'Debian',
         name: 'Debian',
         release: {
-          major: '8',
-          full: '8.0',
+          major: '9',
+          full: '9.0',
         },
         distro: {
-          codename: 'jessie',
+          codename: 'stretch',
           id: 'Debian',
         },
       },
@@ -32,7 +32,7 @@ describe 'apt::mark', type: :define do
     end
 
     it {
-      is_expected.to contain_exec('/usr/bin/apt-mark manual my_source')
+      is_expected.to contain_exec('apt-mark manual my_source')
     }
   end
 
@@ -45,6 +45,52 @@ describe 'apt::mark', type: :define do
 
     it do
       is_expected.to raise_error(Puppet::PreformattedError, %r{expects a match for Enum\['auto', 'hold', 'manual', 'unhold'\], got 'foobar'})
+    end
+  end
+
+  [
+    'package',
+    'package1',
+    'package_name',
+    'package-name',
+  ].each do |value|
+    describe 'with a valid resource title' do
+      let :title do
+        value
+      end
+
+      let :params do
+        {
+          'setting' => 'manual',
+        }
+      end
+
+      it do
+        is_expected.to contain_exec("apt-mark manual #{title}")
+      end
+    end
+  end
+
+  [
+    '|| ls -la ||',
+    'packakge with space',
+    'package<>|',
+    '|| touch /tmp/foo.txt ||',
+  ].each do |value|
+    describe 'with an invalid resource title' do
+      let :title do
+        value
+      end
+
+      let :params do
+        {
+          'setting' => 'manual',
+        }
+      end
+
+      it do
+        is_expected.to raise_error(Puppet::PreformattedError, %r{Invalid package name: #{title}})
+      end
     end
   end
 end

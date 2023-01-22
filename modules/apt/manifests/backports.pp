@@ -7,7 +7,7 @@
 #     repos    => 'main universe multiverse restricted',
 #     key      => {
 #       id     => '630239CC130E1A7FD81A27B140976EAF437D05B5',
-#       server => 'hkps.pool.sks-keyservers.net',
+#       server => 'keyserver.ubuntu.com',
 #     },
 #   }
 #
@@ -21,7 +21,7 @@
 #
 # @param release
 #   Specifies a distribution of the Apt repository containing the backports to manage. Used in populating the `source.list` configuration file.
-#   Default: on Debian and Ubuntu, `${facts['os']['distro']['codename']}-backports`. We recommend keeping this default, except on other operating
+#   Default: on Debian and Ubuntu, `${fact('os.distro.codename')}-backports`. We recommend keeping this default, except on other operating
 #   systems.
 #
 # @param repos
@@ -53,8 +53,8 @@ class apt::backports (
   Optional[String] $release                     = undef,
   Optional[String] $repos                       = undef,
   Optional[Variant[String, Hash]] $key          = undef,
-  Optional[Variant[Integer, String, Hash]] $pin = 200,
-  Optional[Variant[Hash]] $include              = {},
+  Variant[Integer, String, Hash] $pin           = 200,
+  Variant[Hash] $include                        = {},
 ) {
   include apt
 
@@ -76,16 +76,20 @@ class apt::backports (
     }
   }
   unless $location {
-    $_location = $::apt::backports['location']
+    $_location = $apt::backports['location']
   }
   unless $release {
-    $_release = "${facts['os']['distro']['codename']}-backports"
+    if fact('os.distro.codename') {
+      $_release = "${fact('os.distro.codename')}-backports"
+    } else {
+      fail('os.distro.codename fact not available: release parameter required')
+    }
   }
   unless $repos {
-    $_repos = $::apt::backports['repos']
+    $_repos = $apt::backports['repos']
   }
   unless $key {
-    $_key =  $::apt::backports['key']
+    $_key =  $apt::backports['key']
   }
 
   if $pin =~ Hash {

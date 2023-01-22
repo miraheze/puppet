@@ -2,6 +2,114 @@
 
 All notable changes to this project will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v9.0.1](https://github.com/puppetlabs/puppetlabs-apt/tree/v9.0.1) (2022-12-20)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v9.0.0...v9.0.1)
+
+### Fixed
+
+- \(bugfix\) - Declare minimum Puppet version 6.24.0 [\#1079](https://github.com/puppetlabs/puppetlabs-apt/pull/1079) ([pmcmaw](https://github.com/pmcmaw))
+- Do not remove PPA sources.list.d files if purge is enabled [\#1069](https://github.com/puppetlabs/puppetlabs-apt/pull/1069) ([Programie](https://github.com/Programie))
+- \(CONT-173\) - Updating deprecated facter instances [\#1068](https://github.com/puppetlabs/puppetlabs-apt/pull/1068) ([jordanbreen28](https://github.com/jordanbreen28))
+- pdksync - \(CONT-130\) Dropping Support for Debian 9 [\#1065](https://github.com/puppetlabs/puppetlabs-apt/pull/1065) ([jordanbreen28](https://github.com/jordanbreen28))
+- \(GH-1057\) Regex fix to allow dotted resources [\#1058](https://github.com/puppetlabs/puppetlabs-apt/pull/1058) ([LukasAud](https://github.com/LukasAud))
+- \(GH-1055\) Fix hardcoded cache path [\#1056](https://github.com/puppetlabs/puppetlabs-apt/pull/1056) ([chelnak](https://github.com/chelnak))
+- \(GH-cat-9\) Update module to match current syntax standard [\#1053](https://github.com/puppetlabs/puppetlabs-apt/pull/1053) ([david22swan](https://github.com/david22swan))
+
+## [v9.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v9.0.0) (2022-08-18)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.5.0...v9.0.0)
+
+### Changed
+
+- Harden PPA defined type [\#1052](https://github.com/puppetlabs/puppetlabs-apt/pull/1052) ([chelnak](https://github.com/chelnak))
+
+### Added
+
+- Deal with net-ftp being unavailable [\#1050](https://github.com/puppetlabs/puppetlabs-apt/pull/1050) ([ekohl](https://github.com/ekohl))
+- pdksync - \(GH-cat-11\) Certify Support for Ubuntu 22.04 [\#1046](https://github.com/puppetlabs/puppetlabs-apt/pull/1046) ([david22swan](https://github.com/david22swan))
+
+### Fixed
+
+- Harden apt-mark defined type [\#1051](https://github.com/puppetlabs/puppetlabs-apt/pull/1051) ([chelnak](https://github.com/chelnak))
+
+## [v8.5.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.5.0) (2022-08-03)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.4.1...v8.5.0)
+
+### Added
+
+- \(GH-1038\) add support for `check-valid-until` configuration [\#1042](https://github.com/puppetlabs/puppetlabs-apt/pull/1042) ([david22swan](https://github.com/david22swan))
+
+## [v8.4.1](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.4.1) (2022-06-20)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.4.0...v8.4.1)
+
+### Fixed
+
+- \(ISSUE-1036\) Conditional `gnupg` include added to init.pp [\#1039](https://github.com/puppetlabs/puppetlabs-apt/pull/1039) ([david22swan](https://github.com/david22swan))
+
+## [v8.4.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.4.0) (2022-06-06)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.3.0...v8.4.0)
+
+### Changed
+
+- \(GH-iac-334\) Remove code specific to unsupported OSs [\#1024](https://github.com/puppetlabs/puppetlabs-apt/pull/1024) ([david22swan](https://github.com/david22swan))
+
+### Added
+
+- enable allow-insecure for apt::source defined types, includes new tes… [\#1014](https://github.com/puppetlabs/puppetlabs-apt/pull/1014) ([hesco](https://github.com/hesco))
+
+### Fixed
+
+- pdksync - \(GH-iac-334\) Remove Support for Ubuntu 14.04 [\#1023](https://github.com/puppetlabs/puppetlabs-apt/pull/1023) ([david22swan](https://github.com/david22swan))
+- pdksync - \(GH-iac-334\) Remove Support for Ubuntu 16.04 [\#1022](https://github.com/puppetlabs/puppetlabs-apt/pull/1022) ([david22swan](https://github.com/david22swan))
+- \(MODULES-11301\) Don't install gnupg if not needed [\#1020](https://github.com/puppetlabs/puppetlabs-apt/pull/1020) ([simondeziel](https://github.com/simondeziel))
+- Use fact\(\) function for all os.distro.\* facts [\#1017](https://github.com/puppetlabs/puppetlabs-apt/pull/1017) ([root-expert](https://github.com/root-expert))
+- \(maint\) Fix resource ordering when apt-transport-https is needed [\#1015](https://github.com/puppetlabs/puppetlabs-apt/pull/1015) ([smortex](https://github.com/smortex))
+- Omit empty options in source.list template to fix MODULES-11174 [\#1013](https://github.com/puppetlabs/puppetlabs-apt/pull/1013) ([mpdude](https://github.com/mpdude))
+- Replace `arm64` for `aarch64` in `::apt::source` [\#1012](https://github.com/puppetlabs/puppetlabs-apt/pull/1012) ([mpdude](https://github.com/mpdude))
+- Fixed gpg file for Ubuntu versions 21.04 and later. [\#1011](https://github.com/puppetlabs/puppetlabs-apt/pull/1011) ([Conzar](https://github.com/Conzar))
+- \(MODULES-10763\) Remove frequency collector [\#1010](https://github.com/puppetlabs/puppetlabs-apt/pull/1010) ([LTangaF](https://github.com/LTangaF))
+
+## [v8.3.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.3.0) (2021-10-04)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.2.0...v8.3.0)
+
+### Added
+
+- \(MODULES-11173\) Add per-host overrides for apt::proxy [\#1007](https://github.com/puppetlabs/puppetlabs-apt/pull/1007) ([maturnbull](https://github.com/maturnbull))
+
+### Fixed
+
+- pdksync - \(IAC-1598\) - Remove Support for Debian 8 [\#1008](https://github.com/puppetlabs/puppetlabs-apt/pull/1008) ([david22swan](https://github.com/david22swan))
+
+## [v8.2.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.2.0) (2021-08-25)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.1.0...v8.2.0)
+
+### Added
+
+- \(maint\) Add support for Debian 11 [\#1001](https://github.com/puppetlabs/puppetlabs-apt/pull/1001) ([smortex](https://github.com/smortex))
+
+### Fixed
+
+- \(main\) Allow stdlib 8.0.0 [\#1000](https://github.com/puppetlabs/puppetlabs-apt/pull/1000) ([smortex](https://github.com/smortex))
+
+## [v8.1.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.1.0) (2021-07-26)
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.0.2...v8.1.0)
+
+### Added
+
+- \[MODULES-9695\] - Add support for signed-by in source entries [\#991](https://github.com/puppetlabs/puppetlabs-apt/pull/991) ([johanfleury](https://github.com/johanfleury))
+
+### Fixed
+
+- apt::source: pass the weak\_ssl param to apt::key [\#993](https://github.com/puppetlabs/puppetlabs-apt/pull/993) ([kenyon](https://github.com/kenyon))
+- \(IAC-1597\) Increasing MAX\_RETRY\_COUNT [\#987](https://github.com/puppetlabs/puppetlabs-apt/pull/987) ([pmcmaw](https://github.com/pmcmaw))
+
 ## [v8.0.2](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.0.2) (2021-03-29)
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.0.1...v8.0.2)

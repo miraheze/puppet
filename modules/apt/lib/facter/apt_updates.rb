@@ -9,7 +9,7 @@ apt_dist_updates = nil
 def get_updates(upgrade_option)
   apt_updates = nil
   if File.executable?('/usr/bin/apt-get')
-    apt_get_result = Facter::Util::Resolution.exec("/usr/bin/apt-get -s -o Debug::NoLocking=true #{upgrade_option} 2>&1")
+    apt_get_result = Facter::Core::Execution.execute("/usr/bin/apt-get -s -o Debug::NoLocking=true #{upgrade_option} 2>&1")
     unless apt_get_result.nil?
       apt_updates = [[], []]
       apt_get_result.each_line do |line|

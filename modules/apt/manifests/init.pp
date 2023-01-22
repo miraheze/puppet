@@ -37,10 +37,14 @@
 #   Configures various update settings. Valid options: a hash made up from the following keys:
 #
 # @option update [String] :frequency
-#   Specifies how often to run `apt-get update`. If the exec resource `apt_update` is notified, `apt-get update` runs regardless of this value.
-#   Valid options: 'always' (at every Puppet run); 'daily' (if the value of `apt_update_last_success` is less than current epoch time minus 86400);
-#   'weekly' (if the value of `apt_update_last_success` is less than current epoch time minus 604800); and 'reluctantly' (only if the exec resource
-#   `apt_update` is notified). Default: 'reluctantly'.
+#   Specifies how often to run `apt-get update`. If the exec resource `apt_update` is notified,
+#   `apt-get update` runs regardless of this value.
+#   Valid options:
+#     'always' (at every Puppet run); 
+#      daily' (if the value of `apt_update_last_success` is less than current epoch time minus 86400);
+#     'weekly' (if the value of `apt_update_last_success` is less than current epoch time minus 604800);
+#     'reluctantly' (only if the exec resource `apt_update` is notified).
+#   Default: 'reluctantly'.
 #
 # @option update [Integer] :loglevel
 #   Specifies the log level of logs outputted to the console. Default: undef.
@@ -50,6 +54,9 @@
 #
 # @option update [Integer] :tries
 #    Specifies how many times to retry the update after receiving a DNS or HTTP error. Default: undef.
+#
+# @param update_defaults
+#   The default update settings that are combined and merged with the passed `update` value
 #
 # @param purge
 #   Specifies whether to purge any existing settings that aren't managed by Puppet. Valid options: a hash made up from the following keys:
@@ -66,8 +73,14 @@
 # @option purge [Boolean] :preferences.d.
 #   Specifies whether to purge any unmanaged entries from preferences.d. Default false.
 #
+# @param purge_defaults
+#   The default purge settings that are combined and merged with the passed `purge` value
+#
 # @param proxy
 #   Configures Apt to connect to a proxy server. Valid options: a hash matching the locally defined type apt::proxy.
+#
+# @param proxy_defaults
+#   The default proxy settings that are combined and merged with the passed `proxy` value
 #
 # @param sources
 #   Creates new `apt::source` resources. Valid options: a hash to be passed to the create_resources function linked above.
@@ -121,39 +134,46 @@
 # @param sources_list_force
 #   Specifies whether to perform force purge or delete. Default false.
 #
+# @param include_defaults
+#
+# @param apt_conf_d
+#   The path to the file `apt.conf.d`
+#
+# @param source_key_defaults
+#   The fault `source_key` settings
+#
 class apt (
-  Hash $update_defaults         = $apt::params::update_defaults,
-  Hash $purge_defaults          = $apt::params::purge_defaults,
-  Hash $proxy_defaults          = $apt::params::proxy_defaults,
-  Hash $include_defaults        = $apt::params::include_defaults,
-  String $provider              = $apt::params::provider,
-  String $keyserver             = $apt::params::keyserver,
-  Optional[String] $key_options = $apt::params::key_options,
-  Optional[String] $ppa_options = $apt::params::ppa_options,
-  Optional[String] $ppa_package = $apt::params::ppa_package,
-  Optional[Hash] $backports     = $apt::params::backports,
-  Hash $confs                   = $apt::params::confs,
-  Hash $update                  = $apt::params::update,
-  Hash $purge                   = $apt::params::purge,
-  Apt::Proxy $proxy             = $apt::params::proxy,
-  Hash $sources                 = $apt::params::sources,
-  Hash $keys                    = $apt::params::keys,
-  Hash $ppas                    = $apt::params::ppas,
-  Hash $pins                    = $apt::params::pins,
-  Hash $settings                = $apt::params::settings,
-  Boolean $manage_auth_conf     = $apt::params::manage_auth_conf,
-  Array[Apt::Auth_conf_entry]
-    $auth_conf_entries          = $apt::params::auth_conf_entries,
-  String $auth_conf_owner       = $apt::params::auth_conf_owner,
-  String $root                  = $apt::params::root,
-  String $sources_list          = $apt::params::sources_list,
-  String $sources_list_d        = $apt::params::sources_list_d,
-  String $conf_d                = $apt::params::conf_d,
-  String $preferences           = $apt::params::preferences,
-  String $preferences_d         = $apt::params::preferences_d,
-  String $apt_conf_d            = $apt::params::apt_conf_d,
-  Hash $config_files            = $apt::params::config_files,
-  Boolean $sources_list_force   = $apt::params::sources_list_force,
+  Hash $update_defaults                           = $apt::params::update_defaults,
+  Hash $purge_defaults                            = $apt::params::purge_defaults,
+  Hash $proxy_defaults                            = $apt::params::proxy_defaults,
+  Hash $include_defaults                          = $apt::params::include_defaults,
+  String $provider                                = $apt::params::provider,
+  String $keyserver                               = $apt::params::keyserver,
+  Optional[String] $key_options                   = $apt::params::key_options,
+  Optional[Array[String]] $ppa_options            = $apt::params::ppa_options,
+  Optional[String] $ppa_package                   = $apt::params::ppa_package,
+  Optional[Hash] $backports                       = $apt::params::backports,
+  Hash $confs                                     = $apt::params::confs,
+  Hash $update                                    = $apt::params::update,
+  Hash $purge                                     = $apt::params::purge,
+  Apt::Proxy $proxy                               = $apt::params::proxy,
+  Hash $sources                                   = $apt::params::sources,
+  Hash $keys                                      = $apt::params::keys,
+  Hash $ppas                                      = $apt::params::ppas,
+  Hash $pins                                      = $apt::params::pins,
+  Hash $settings                                  = $apt::params::settings,
+  Boolean $manage_auth_conf                       = $apt::params::manage_auth_conf,
+  Array[Apt::Auth_conf_entry] $auth_conf_entries  = $apt::params::auth_conf_entries,
+  String $auth_conf_owner                         = $apt::params::auth_conf_owner,
+  String $root                                    = $apt::params::root,
+  String $sources_list                            = $apt::params::sources_list,
+  String $sources_list_d                          = $apt::params::sources_list_d,
+  String $conf_d                                  = $apt::params::conf_d,
+  String $preferences                             = $apt::params::preferences,
+  String $preferences_d                           = $apt::params::preferences_d,
+  String $apt_conf_d                              = $apt::params::apt_conf_d,
+  Hash $config_files                              = $apt::params::config_files,
+  Boolean $sources_list_force                     = $apt::params::sources_list_force,
 
   Hash $source_key_defaults = {
     'server'  => $keyserver,
@@ -163,7 +183,6 @@ class apt (
   }
 
 ) inherits apt::params {
-
   if $facts['os']['family'] != 'Debian' {
     fail('This module only works on Debian or derivatives like Ubuntu')
   }
@@ -181,8 +200,8 @@ class apt (
     assert_type(Integer, $update['tries'])
   }
 
-  $_update = merge($::apt::update_defaults, $update)
-  include ::apt::update
+  $_update = merge($apt::update_defaults, $update)
+  include apt::update
 
   if $purge['sources.list'] {
     assert_type(Boolean, $purge['sources.list'])
@@ -203,11 +222,37 @@ class apt (
     assert_type(Boolean, $purge['apt.conf.d'])
   }
 
-  $_purge = merge($::apt::purge_defaults, $purge)
-  $_proxy = merge($apt::proxy_defaults, $proxy)
+  $_purge = merge($apt::purge_defaults, $purge)
+
+  if $proxy['perhost'] {
+    $_perhost = $proxy['perhost'].map |$item| {
+      $_item = merge($apt::proxy_defaults, $item)
+      $_scheme = $_item['https'] ? {
+        true    => 'https',
+        default => 'http',
+      }
+      $_port = $_item['port'] ? {
+        Integer => ":${_item['port']}",
+        default => ''
+      }
+      $_target = $_item['direct'] ? {
+        true    => 'DIRECT',
+        default => "${_scheme}://${_item['host']}${_port}/",
+      }
+      merge($item, {
+          'scheme' => $_scheme,
+          'target' => $_target,
+        }
+      )
+    }
+  } else {
+    $_perhost = {}
+  }
+
+  $_proxy = merge($apt::proxy_defaults, $proxy, { 'perhost' => $_perhost })
 
   $confheadertmp = epp('apt/_conf_header.epp')
-  $proxytmp = epp('apt/proxy.epp', {'proxies' => $_proxy})
+  $proxytmp = epp('apt/proxy.epp', { 'proxies' => $_proxy })
   $updatestamptmp = epp('apt/15update-stamp.epp')
 
   if $_proxy['ensure'] == 'absent' or $_proxy['host'] {
@@ -227,9 +272,7 @@ class apt (
       true    => nil,
       default => undef,
     }
-  }
-  else
-    {
+  } else {
     $sources_list_ensure = $_purge['sources.list'] ? {
       true    => file,
       default => file,
@@ -238,17 +281,11 @@ class apt (
       true    => "# Repos managed by puppet.\n",
       default => undef,
     }
-    }
+  }
 
   $preferences_ensure = $_purge['preferences'] ? {
     true    => absent,
     default => file,
-  }
-
-  if $_update['frequency'] == 'always' {
-    Exec <| title=='apt_update' |> {
-      refreshonly => false,
-    }
   }
 
   apt::setting { 'conf-update-stamp':
@@ -258,7 +295,7 @@ class apt (
 
   file { 'sources.list':
     ensure  => $sources_list_ensure,
-    path    => $::apt::sources_list,
+    path    => $apt::sources_list,
     owner   => root,
     group   => root,
     content => $sources_list_content,
@@ -267,7 +304,7 @@ class apt (
 
   file { 'sources.list.d':
     ensure  => directory,
-    path    => $::apt::sources_list_d,
+    path    => $apt::sources_list_d,
     owner   => root,
     group   => root,
     purge   => $_purge['sources.list.d'],
@@ -277,7 +314,7 @@ class apt (
 
   file { 'preferences':
     ensure => $preferences_ensure,
-    path   => $::apt::preferences,
+    path   => $apt::preferences,
     owner  => root,
     group  => root,
     notify => Class['apt::update'],
@@ -285,7 +322,7 @@ class apt (
 
   file { 'preferences.d':
     ensure  => directory,
-    path    => $::apt::preferences_d,
+    path    => $apt::preferences_d,
     owner   => root,
     group   => root,
     purge   => $_purge['preferences.d'],
@@ -295,7 +332,7 @@ class apt (
 
   file { 'apt.conf.d':
     ensure  => directory,
-    path    => $::apt::apt_conf_d,
+    path    => $apt::apt_conf_d,
     owner   => root,
     group   => root,
     purge   => $_purge['apt.conf.d'],
@@ -346,6 +383,19 @@ class apt (
     create_resources('apt::pin', $pins)
   }
 
-  # required for adding GPG keys on Debian 9 (and derivatives)
-  ensure_packages(['gnupg'])
+  case $facts['os']['name'] {
+    'Debian': {
+      if versioncmp($facts['os']['release']['major'], '9') >= 0 {
+        ensure_packages(['gnupg'])
+      }
+    }
+    'Ubuntu': {
+      if versioncmp($facts['os']['release']['full'], '17.04') >= 0 {
+        ensure_packages(['gnupg'])
+      }
+    }
+    default: {
+      # Nothing in here
+    }
+  }
 }

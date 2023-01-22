@@ -45,11 +45,11 @@ describe 'apt' do
         family: 'Debian',
         name: 'Debian',
         release: {
-          major: '8',
-          full: '8.0',
+          major: '9',
+          full: '9.0',
         },
         distro: {
-          codename: 'jessie',
+          codename: 'stretch',
           id: 'Debian',
         },
       },
@@ -101,7 +101,69 @@ describe 'apt' do
         is_expected.to contain_apt__setting('conf-proxy').with(priority: '01').with_content(
           %r{Acquire::http::proxy "http://localhost:8080/";},
         ).without_content(
-          %r{Acquire::https::proxy},
+          %r{Acquire::https::proxy },
+        )
+      }
+    end
+
+    context 'when host=localhost and per-host[proxyscope]=proxyhost' do
+      let(:params) { { proxy: { 'host' => 'localhost', 'perhost' => [{ 'scope' => 'proxyscope', 'host' => 'proxyhost' }] } } }
+
+      it {
+        is_expected.to contain_apt__setting('conf-proxy').with(priority: '01').with_content(
+          %r{Acquire::http::proxy::proxyscope "http://proxyhost:8080/";},
+        )
+      }
+    end
+
+    context 'when host=localhost and per-host[proxyscope]=proxyhost:8081' do
+      let(:params) { { proxy: { 'host' => 'localhost', 'perhost' => [{ 'scope' => 'proxyscope', 'host' => 'proxyhost', 'port' => 8081 }] } } }
+
+      it {
+        is_expected.to contain_apt__setting('conf-proxy').with(priority: '01').with_content(
+          %r{Acquire::http::proxy::proxyscope "http://proxyhost:8081/";},
+        )
+      }
+    end
+
+    context 'when host=localhost and per-host[proxyscope]=[https]proxyhost' do
+      let(:params) { { proxy: { 'host' => 'localhost', 'perhost' => [{ 'scope' => 'proxyscope', 'host' => 'proxyhost', 'https' => true }] } } }
+
+      it {
+        is_expected.to contain_apt__setting('conf-proxy').with(priority: '01').with_content(
+          %r{Acquire::https::proxy::proxyscope "https://proxyhost:8080/";},
+        )
+      }
+    end
+
+    context 'when host=localhost and per-host[proxyscope]=[direct]' do
+      let(:params) { { proxy: { 'host' => 'localhost', 'perhost' => [{ 'scope' => 'proxyscope', 'direct' => true }] } } }
+
+      it {
+        is_expected.to contain_apt__setting('conf-proxy').with(priority: '01').with_content(
+          %r{Acquire::http::proxy::proxyscope "DIRECT";},
+        )
+      }
+    end
+
+    context 'when host=localhost and per-host[proxyscope]=[https][direct]' do
+      let(:params) { { proxy: { 'host' => 'localhost', 'perhost' => [{ 'scope' => 'proxyscope', 'https' => true, 'direct' => true }] } } }
+
+      it {
+        is_expected.to contain_apt__setting('conf-proxy').with(priority: '01').with_content(
+          %r{Acquire::https::proxy::proxyscope "DIRECT";},
+        )
+      }
+    end
+
+    context 'when host=localhost and per-host[proxyscope]=proxyhost and per-host[proxyscope2]=proxyhost2' do
+      let(:params) { { proxy: { 'host' => 'localhost', 'perhost' => [{ 'scope' => 'proxyscope', 'host' => 'proxyhost' }, { 'scope' => 'proxyscope2', 'host' => 'proxyhost2' }] } } }
+
+      it {
+        is_expected.to contain_apt__setting('conf-proxy').with(priority: '01').with_content(
+          %r{Acquire::http::proxy::proxyscope "http://proxyhost:8080/";},
+        ).with_content(
+          %r{Acquire::http::proxy::proxyscope2 "http://proxyhost2:8080/";},
         )
       }
     end
@@ -113,7 +175,7 @@ describe 'apt' do
         is_expected.to contain_apt__setting('conf-proxy').with(priority: '01').with_content(
           %r{Acquire::http::proxy "http://localhost:8180/";},
         ).without_content(
-          %r{Acquire::https::proxy},
+          %r{Acquire::https::proxy },
         )
       }
     end
@@ -280,34 +342,6 @@ describe 'apt' do
 
   context 'with entries for /etc/apt/auth.conf' do
     facts_hash = {
-      'Ubuntu 14.04' => {
-        os: {
-          family: 'Debian',
-          name: 'Ubuntu',
-          release: {
-            major: '14',
-            full: '14.04',
-          },
-          distro: {
-            codename: 'trusty',
-            id: 'Ubuntu',
-          },
-        },
-      },
-      'Ubuntu 16.04' => {
-        os: {
-          family: 'Debian',
-          name: 'Ubuntu',
-          release: {
-            major: '16',
-            full: '16.04',
-          },
-          distro: {
-            codename: 'xenial',
-            id: 'Ubuntu',
-          },
-        },
-      },
       'Ubuntu 18.04' => {
         os: {
           family: 'Debian',
@@ -319,34 +353,6 @@ describe 'apt' do
           distro: {
             codename: 'bionic',
             id: 'Ubuntu',
-          },
-        },
-      },
-      'Debian 7.0' => {
-        os: {
-          family: 'Debian',
-          name: 'Debian',
-          release: {
-            major: '7',
-            full: '7.0',
-          },
-          distro: {
-            codename: 'wheezy',
-            id: 'Debian',
-          },
-        },
-      },
-      'Debian 8.0' => {
-        os: {
-          family: 'Debian',
-          name: 'Debian',
-          release: {
-            major: '8',
-            full: '8.0',
-          },
-          distro: {
-            codename: 'jessie',
-            id: 'Debian',
           },
         },
       },
@@ -407,16 +413,6 @@ describe 'apt' do
             super().merge(manage_auth_conf: true)
           end
 
-          # Going forward starting with Ubuntu 16.04 and Debian 9.0
-          # /etc/apt/auth.conf is owned by _apt. In previous versions it is
-          # root.
-          auth_conf_owner = case os
-                            when 'Ubuntu 14.04', 'Debian 7.0', 'Debian 8.0'
-                              'root'
-                            else
-                              '_apt'
-                            end
-
           auth_conf_content = "// This file is managed by Puppet. DO NOT EDIT.
 machine deb.example.net login foologin password secret
 machine apt.example.com login aptlogin password supersecret
@@ -424,7 +420,7 @@ machine apt.example.com login aptlogin password supersecret
 
           it {
             is_expected.to contain_file('/etc/apt/auth.conf').with(ensure: 'present',
-                                                                   owner: auth_conf_owner,
+                                                                   owner: '_apt',
                                                                    group: 'root',
                                                                    mode: '0600',
                                                                    notify: 'Class[Apt::Update]',
@@ -473,11 +469,11 @@ machine apt.example.com login aptlogin password supersecret
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            major: '16',
-            full: '16.04',
+            major: '18',
+            full: '18.04',
           },
           distro: {
-            codename: 'xenial',
+            codename: 'bionic',
             id: 'Ubuntu',
           },
         },
@@ -512,7 +508,7 @@ machine apt.example.com login aptlogin password supersecret
       is_expected.to contain_apt__setting('list-puppetlabs').with(ensure: 'present')
     }
 
-    it { is_expected.to contain_file('/etc/apt/sources.list.d/puppetlabs.list').with_content(%r{^deb http://apt.puppetlabs.com xenial main$}) }
+    it { is_expected.to contain_file('/etc/apt/sources.list.d/puppetlabs.list').with_content(%r{^deb http://apt.puppetlabs.com bionic main$}) }
   end
 
   context 'with confs defined on valid os.family' do
@@ -522,11 +518,11 @@ machine apt.example.com login aptlogin password supersecret
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            major: '16',
-            full: '16.04',
+            major: '18',
+            full: '18.04',
           },
           distro: {
-            codename: 'xenial',
+            codename: 'bionic',
             id: 'Ubuntu',
           },
         },
@@ -559,11 +555,11 @@ machine apt.example.com login aptlogin password supersecret
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            major: '16',
-            full: '16.04',
+            major: '18',
+            full: '18.04',
           },
           distro: {
-            codename: 'xenial',
+            codename: 'bionic',
             id: 'Ubuntu',
           },
         },
@@ -596,11 +592,11 @@ machine apt.example.com login aptlogin password supersecret
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            major: '16',
-            full: '16.04',
+            major: '18',
+            full: '18.04',
           },
           distro: {
-            codename: 'xenial',
+            codename: 'bionic',
             id: 'Ubuntu',
           },
         },
@@ -624,11 +620,11 @@ machine apt.example.com login aptlogin password supersecret
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            major: '16',
-            full: '16.04',
+            major: '18',
+            full: '18.04',
           },
           distro: {
-            codename: 'xenial',
+            codename: 'bionic',
             id: 'Ubuntu',
           },
         },
@@ -652,11 +648,11 @@ machine apt.example.com login aptlogin password supersecret
           family: 'Debian',
           name: 'Ubuntu',
           release: {
-            major: '16',
-            full: '16.04',
+            major: '18',
+            full: '18.04',
           },
           distro: {
-            codename: 'xenial',
+            codename: 'bionic',
             id: 'Ubuntu',
           },
         },
