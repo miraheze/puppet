@@ -157,6 +157,7 @@ frame-src:
   - 'player.vimeo.com'
   - 'www.bing.com'
   - 'lucid.app'
+  - 'scratch.mit.edu'
 
 connect-src:
   - "'self'"
