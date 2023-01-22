@@ -170,3 +170,4 @@ connect-src:
   - '*.wiktionary.org'
   - 'cdn.jsdelivr.net'
   - 'storage.googleapis.com'
+  - '*.youtube-nocookie.com'
