@@ -14,7 +14,7 @@ class mediawiki::extensionsetup {
             require => Exec['oauth_composer'],
     }
 
-    $composer = 'composer install --no-dev'
+    $composer = 'http_proxy=http://bast.miraheze.org:8080 composer install --no-dev'
 
     exec { 'vendor_psysh_composer':
         command     => 'composer require "psy/psysh:0.11.8" --update-no-dev',
