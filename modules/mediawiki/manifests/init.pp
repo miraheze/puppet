@@ -234,13 +234,6 @@ class mediawiki(
         source  => 'puppet:///private/geoip/GeoLite2-City.mmdb',
         require => File['/srv/mediawiki/geoip'],
     }
-
-    file { '/srv/mediawiki/geoip/GeoLite2-Country.mmdb':
-        ensure  => present,
-        mode    => '0444',
-        source  => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
-        require => File['/srv/mediawiki/geoip'],
-    }
     
     sudo::user { 'www-data_sudo_itself':
         user       => 'www-data',
