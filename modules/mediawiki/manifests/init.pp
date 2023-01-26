@@ -221,13 +221,20 @@ class mediawiki(
         require => File['/srv/mediawiki/stopforumspam'],
     }
 
-    file { '/srv/mediawiki/geoip/GeoLite2-Country.mmdb':
+    file { '/srv/mediawiki/geoip/GeoLite2-ASN.mmdb':
         ensure  => present,
         mode    => '0444',
-        source  => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
+        source  => 'puppet:///private/geoip/GeoLite2-ASN.mmdb',
         require => File['/srv/mediawiki/geoip'],
     }
-
+    
+    file { '/srv/mediawiki/geoip/GeoLite2-City.mmdb':
+        ensure  => present,
+        mode    => '0444',
+        source  => 'puppet:///private/geoip/GeoLite2-City.mmdb',
+        require => File['/srv/mediawiki/geoip'],
+    }
+    
     sudo::user { 'www-data_sudo_itself':
         user       => 'www-data',
         privileges => [
