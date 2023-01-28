@@ -1,19 +1,11 @@
 #!/bin/bash
 
-wget 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN&license_key=<%= @geoip_key %>&suffix=tar.gz' -O geoip-asn.tar.gz
+wget 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=<%= @geoip_key %>&suffix=tar.gz' -O geoip.tar.gz
 
-wget 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=<%= @geoip_key %>&suffix=tar.gz' -O geoip-city.tar.gz
-
-wget 'https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=<%= @geoip_key %>&suffix=tar.gz' -O geoip-country.tar.gz
-
-tar zxvf geoip-*.tar.gz
-
-mv GeoLite2-ASN_*/GeoLite2-ASN.mmdb /root/private/files/geoip/GeoLite2-ASN.mmdb
-
-mv GeoLite2-City_*/GeoLite2-City.mmdb /root/private/files/geoip/GeoLite2-City.mmdb
+tar zxvf geoip.tar.gz
 
 mv GeoLite2-Country_*/GeoLite2-Country.mmdb /root/private/files/geoip/GeoLite2-Country.mmdb
 
 git -C /root/private add . && git -C /root/private commit -m "GeoIPUpdate" && git -C /root/private push
 
-rm -rf GeoLite2-* && rm geoip-*.tar.gz
+rm -rf GeoLite2-Country_20* && rm geoip.tar.gz
