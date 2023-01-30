@@ -112,7 +112,6 @@ local jobs = {
 	'refreshLinksDynamic',
 	'refreshLinksPrioritized',
 	'renameUser',
-	'replaceText',
 	'revertedTagUpdate',
 	'sendMail',
 	'setUserMentorDatabaseJob',
