@@ -185,6 +185,16 @@ class mediawiki::extensionsetup {
         require     => Git::Clone['MediaWiki core'],
     }
 
+    exec { 'mirahezemagic_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/MirahezeMagic/vendor",
+        cwd         => "${mwpath}/extensions/MirahezeMagic",
+        path        => '/usr/bin',
+        environment => "HOME=${mwpath}/extensions/MirahezeMagic",
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+
     exec { 'datatransfer_composer':
         command     => 'composer require phpoffice/phpspreadsheet',
         creates     => "${mwpath}/extensions/DataTransfer/vendor",
