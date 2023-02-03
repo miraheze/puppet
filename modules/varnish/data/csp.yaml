@@ -37,6 +37,7 @@ script-src:
   - 'phab.miraheze.wiki'
   - 'www.gstatic.cn'
   - 'hcaptcha.com'
+  - '*.hcaptcha.com'
 
 style-src:
   - "'self'"
@@ -63,6 +64,7 @@ style-src:
   - 'ton.twimg.com'
   - 'phab.miraheze.wiki'
   - 'hcaptcha.com'
+  - '*.hcaptcha.com'
 
 img-src:
   - 'blob:'
@@ -161,6 +163,7 @@ frame-src:
   - 'lucid.app'
   - 'scratch.mit.edu'
   - 'hcaptcha.com'
+  - '*.hcaptcha.com'
 
 connect-src:
   - "'self'"
@@ -176,3 +179,4 @@ connect-src:
   - 'storage.googleapis.com'
   - '*.youtube-nocookie.com'
   - 'hcaptcha.com'
+  - '*.hcaptcha.com'
