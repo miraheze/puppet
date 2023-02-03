@@ -17,6 +17,9 @@ $wgSecretKey = "<%= @mediawiki_secretkey %>";
 // ReCaptcha secret key
 $wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
 
+// hCaptcha secret key
+$wgHCaptchaSecretKey = "<%= @hcaptcha_secretkey %>";
+
 // Shellbox secret key
 $wgShellboxSecretKey = "<%= @shellbox_secretkey %>";
 
