@@ -36,7 +36,7 @@ script-src:
   - 'openlayers.org'
   - 'phab.miraheze.wiki'
   - 'www.gstatic.cn'
-  - '*.hcaptcha.com'
+  - 'hcaptcha.com'
 
 style-src:
   - "'self'"
@@ -62,7 +62,7 @@ style-src:
   - 'platform.twitter.com'
   - 'ton.twimg.com'
   - 'phab.miraheze.wiki'
-  - '*.hcaptcha.com'
+  - 'hcaptcha.com'
 
 img-src:
   - 'blob:'
@@ -160,7 +160,7 @@ frame-src:
   - 'www.bing.com'
   - 'lucid.app'
   - 'scratch.mit.edu'
-  - '*.hcaptcha.com'
+  - 'hcaptcha.com'
 
 connect-src:
   - "'self'"
@@ -175,4 +175,4 @@ connect-src:
   - 'cdn.jsdelivr.net'
   - 'storage.googleapis.com'
   - '*.youtube-nocookie.com'
-  - '*.hcaptcha.com'
+  - 'hcaptcha.com'
