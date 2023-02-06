@@ -169,6 +169,7 @@ class mediawiki(
     $shellbox_secretkey         = lookup('passwords::shellbox::secretkey')
     $matomotoken                = lookup('passwords::mediawiki::matomotoken')
     $ldap_password              = lookup('passwords::mediawiki::ldap_password')
+    $discord_experimental_webhook = lookup('mediawiki::discord_experimental_webhook')
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
     $swift_password             = lookup('mediawiki::swift_password')
     $swift_temp_url_key         = lookup('mediawiki::swift_temp_url_key')
