@@ -28,6 +28,7 @@ $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 
 // Extension:DiscordNotifications global webhook
 $wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
+$wgDiscordExperimentalWebhook = "<%= @discord_experimental_webhook %>";
 
 // writer-user password (ldap)
 $wmgLdapPassword = "<%= @ldap_password %>";
