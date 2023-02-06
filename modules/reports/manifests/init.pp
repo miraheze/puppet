@@ -161,4 +161,11 @@ class reports {
         group   => 'www-data',
         require => Git::Clone['TSPortal'],
     }
+
+    cron { 'Task Scheduler':
+        ensure => present,
+        command => '/usr/bin/php /srv/TSPortal/artisan schedule:run >> /dev/null 2>&1',
+        user => 'www-data',
+        minute => '*'
+    }
 }
