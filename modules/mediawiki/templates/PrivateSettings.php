@@ -14,9 +14,6 @@ $wmgSMTPPassword = "<%= @noreply_password %>";
 $wgUpgradeKey = "<%= @mediawiki_upgradekey %>";
 $wgSecretKey = "<%= @mediawiki_secretkey %>";
 
-// ReCaptcha secret key
-$wgReCaptchaSecretKey = "<%= @recaptcha_secretkey %>";
-
 // hCaptcha secret key
 $wgHCaptchaSecretKey = "<%= @hcaptcha_secretkey %>";
 
