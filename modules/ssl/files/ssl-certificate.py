@@ -216,7 +216,7 @@ class SslCertificate:
         os.system('git -C /srv/ssl/ssl/ pull')
         os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
         os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
-        os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
+        os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for {self.domain}"')
         os.system('git -C /srv/ssl/ssl/ push origin master')
 
         if self.private and self.newprivate is True:
