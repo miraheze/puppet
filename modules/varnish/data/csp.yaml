@@ -113,6 +113,7 @@ img-src:
   - 'storage.googleapis.com'
   - 'phab.miraheze.wiki'
   - '*.fbcdn.net'
+  - 'i.ytimg.com'
 
 font-src:
   - "'self'"
@@ -135,7 +136,6 @@ media-src:
   - 'embed.nicovideo.jp'
   - '*.youtube.com'
   - '*.youtube-nocookie.com'
-  - 'i.ytimg.com'
   - 'player.twitch.tv'
   - 'clips.twitch.tv'
   - 'player.vimeo.com'
@@ -151,7 +151,6 @@ frame-src:
   - 'snap.berkeley.edu'
   - '*.youtube-nocookie.com'
   - 'www.youtube.com'
-  - 'i.ytimg.com'
   - 'player.twitch.tv'
   - 'platform.twitter.com'
   - 'discord.com'
