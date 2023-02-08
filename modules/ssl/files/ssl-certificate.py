@@ -203,10 +203,10 @@ class SslCertificate:
                 os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --reuse-key --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
 
             if not self.quiet:
+                self.newprivate = True
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
         if not self.quiet:
-            self.newprivate = True
             print('Pushing LetsEncrypt SSL certificate to GitHub')
 
         os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bast.miraheze.org:8080 %h %p\'"')
