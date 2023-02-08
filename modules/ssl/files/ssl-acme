@@ -60,7 +60,7 @@ WARNING)
                 # Lets Renew here
                 if [ -f "/etc/letsencrypt/live/${URL}/fullchain.pem" ]
                 then
-                    sudo /root/ssl-certificate -d $URL -q -r -p -o
+                    sudo /root/ssl-certificate -d $URL -r -p -o
                 fi
                 ;;
         esac
