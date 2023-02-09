@@ -200,10 +200,10 @@ class SslCertificate:
                 else:
                     os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl {self.quiet} --noninteractive renew --cert-name {self.domain}')
             else:
+                self.newprivate = True
                 os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --reuse-key --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
 
             if not self.quiet:
-                self.newprivate = True
                 print(f'LetsEncrypt certificate at: /etc/letsencrypt/live/{self.domain}/fullchain.pem')
 
         if not self.quiet:
