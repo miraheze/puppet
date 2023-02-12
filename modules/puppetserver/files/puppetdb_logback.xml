@@ -7,7 +7,6 @@
 
     <appender name="F1" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/var/log/puppetlabs/puppetdb/puppetdb.log</file>
-        <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>/var/log/puppetlabs/puppetdb/puppetdb-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <maxHistory>15</maxHistory>
@@ -33,7 +32,6 @@
 
     <appender name="STATUS" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/var/log/puppetlabs/puppetdb/puppetdb-status.log</file>
-        <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
             <fileNamePattern>/var/log/puppetlabs/puppetdb/puppetdb-status-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
