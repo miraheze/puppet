@@ -59,8 +59,8 @@ class monitoring (
     )
 
     class { '::icinga2':
-        manage_repo => true,
-        constants   => {
+        manage_repos => true,
+        constants    => {
             'TicketSalt' => $ticket_salt
         }
     }
