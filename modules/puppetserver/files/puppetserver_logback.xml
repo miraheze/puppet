@@ -8,12 +8,13 @@
     <appender name="F1" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- TODO: this path should not be hard-coded -->
         <file>/var/log/puppetlabs/puppetserver/puppetserver.log</file>
-        <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>15</maxHistory>
         </rollingPolicy>
+
         <encoder>
             <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5p [%t] [%c{2}] %m%n</pattern>
         </encoder>
@@ -23,7 +24,7 @@
         <file>/var/log/puppetlabs/puppetserver/puppetserver.log.json</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-             <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver.log.json.%d{yyyy-MM-dd}</fileNamePattern>
+             <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-%d{yyyy-MM-dd}.log.json.gz</fileNamePattern>
              <maxHistory>1</maxHistory>
          </rollingPolicy>
 
@@ -32,12 +33,13 @@
 
     <appender name="STATUS" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/var/log/puppetlabs/puppetserver/puppetserver-status.log</file>
-        <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-status-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-status-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>15</maxHistory>
         </rollingPolicy>
+
         <encoder>
             <!-- note that this will only log the JSON message (%m) and a newline (%n)-->
             <pattern>%m%n</pattern>
