@@ -10,10 +10,7 @@
         <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>/var/log/puppetlabs/puppetdb/puppetdb-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <!-- each file should be at most 200MB, keep 90 days worth of history, but at most 1GB total-->
-            <maxFileSize>200MB</maxFileSize>
-            <maxHistory>90</maxHistory>
-            <totalSizeCap>1GB</totalSizeCap>
+            <maxHistory>15</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5p [%c{2}] %m%n</pattern>
@@ -40,10 +37,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- rollover daily -->
             <fileNamePattern>/var/log/puppetlabs/puppetdb/puppetdb-status-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <!-- each file should be at most 200MB, keep 90 days worth of history, but at most 1GB total-->
-            <maxFileSize>200MB</maxFileSize>
-            <maxHistory>90</maxHistory>
-            <totalSizeCap>1GB</totalSizeCap>
+            <maxHistory>15</maxHistory>
         </rollingPolicy>
         <encoder>
             <!-- note that this will only log the JSON message (%m) and a newline (%n)-->
