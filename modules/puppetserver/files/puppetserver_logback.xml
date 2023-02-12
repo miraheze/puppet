@@ -36,7 +36,7 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- rollover daily -->
             <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-status-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <maxHistory>20</maxHistory>
+            <maxHistory>15</maxHistory>
         </rollingPolicy>
         <encoder>
             <!-- note that this will only log the JSON message (%m) and a newline (%n)-->
