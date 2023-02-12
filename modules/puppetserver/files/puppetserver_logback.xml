@@ -11,7 +11,7 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>15</maxHistory>
         </rollingPolicy>
 
@@ -24,7 +24,7 @@
         <file>/var/log/puppetlabs/puppetserver/puppetserver.log.json</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-             <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver.log.json.%d{yyyy-MM-dd}</fileNamePattern>
+             <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-%d{yyyy-MM-dd}.log.json.gz</fileNamePattern>
              <maxHistory>1</maxHistory>
          </rollingPolicy>
 
@@ -36,7 +36,7 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-status-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-status-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <maxHistory>15</maxHistory>
         </rollingPolicy>
 
