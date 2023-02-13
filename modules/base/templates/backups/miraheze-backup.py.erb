@@ -187,7 +187,7 @@ def delete_backups(source: str, delete_all: bool, database: str):
         all_backups = pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}', 0)
         backups_list = list(all_backups.text.split("\n"))
         for backup_item in backups_list:
-            pca_web('DELETE', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{backup_item}', 13)
+            pca_web('DELETE', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}/{backup_item}', 0)
             print(f'Deleted file {backup_item}')
     else:
 
