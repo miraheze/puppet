@@ -158,7 +158,9 @@ def download(source: str, dt: str, database: str):
 
     if source in ['private', 'sslkeys', 'phabricator']:
         download_pca(f'{source}/{dt}.tar.gz')
-    elif source in ['sql', 'mediawiki-xml']:
+    elif source in ['mediawiki-xml']:
+        download_pca(f'{source}/{database}/{dt}.xml.gz')
+    elif source in ['sql']:
         download_pca(f'{source}/{database}/{dt}.tar.gz')
 
     print(f'Completed! This took {time.time() - ts}s')
