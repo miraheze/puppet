@@ -114,7 +114,7 @@ class role::db (
 
     cron { 'backups-sql':
         ensure   => present,
-        command  => '/usr/local/bin/miraheze-backup backup sql > /var/log/sql-backup.log',
+        command  => '/usr/local/bin/miraheze-backup backup sql > /var/log/sql-backup.log 2>&1',
         user     => 'root',
         minute   => '0',
         hour     => '3',
@@ -130,7 +130,7 @@ class role::db (
     $weekly_misc.each |String $db| {
         cron { "backups-${db}":
             ensure  => present,
-            command => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup.log",
+            command => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup-weekly.log 2>&1",
             user    => 'root',
             minute  => '0',
             hour    => '5',
@@ -138,7 +138,7 @@ class role::db (
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sql-${db}-backup.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sql-${db}-backup-weekly.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
@@ -147,7 +147,7 @@ class role::db (
     $fortnightly_misc.each |String $db| {
         cron { "backups-${db}":
             ensure   => present,
-            command  => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup.log",
+            command  => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup-fortnightly.log 2>&1",
             user     => 'root',
             minute   => '0',
             hour     => '5',
@@ -155,7 +155,7 @@ class role::db (
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/sql-${db}-backup.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/sql-${db}-backup-fortnightly.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
@@ -164,7 +164,7 @@ class role::db (
     $monthly_misc.each |String $db| {
         cron { "backups-${db}":
             ensure   => present,
-            command  => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup.log",
+            command  => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup-monthly.log 2>&1",
             user     => 'root',
             minute   => '0',
             hour     => '5',
@@ -172,7 +172,7 @@ class role::db (
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 3024000 -c 3456000 -f /var/log/sql-${db}-backup.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 3024000 -c 3456000 -f /var/log/sql-${db}-backup-monthly.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
