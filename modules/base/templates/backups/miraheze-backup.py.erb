@@ -18,8 +18,8 @@ parser.add_argument('action', choices=['backup', 'download', 'find', 'delete', '
 parser.add_argument('type', choices=['private', 'sslkeys', 'phabricator', 'sql', 'mediawiki-xml'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
-parser.add_argument('--delete-all', required=False, action='store_true', default=False, help='Delete all backups for the "type" selected')
-parser.add_argument('--file-name', dest='date', help='Specify the file to delete. To be used with "delete" action')
+parser.add_argument('--delete-all', dest='delete_all', required=False, action='store_true', default=False, help='Delete all backups for the "type" selected')
+parser.add_argument('--file-name', dest='file_name', help='Specify the file to delete. To be used with "delete" action')
 args = parser.parse_args()
 
 
