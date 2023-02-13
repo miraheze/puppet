@@ -108,7 +108,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'backups-mediawiki-xml':
             ensure   => present,
-            command  => '/usr/local/bin/miraheze-backup backup mediawiki-xml > /var/log/mediawiki-xml-backup.log',
+            command  => '/usr/local/bin/miraheze-backup backup mediawiki-xml > /var/log/mediawiki-xml-backup.log 2>&1',
             user     => 'root',
             minute   => '0',
             hour     => '1',
