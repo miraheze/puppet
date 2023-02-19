@@ -290,25 +290,25 @@ class _MirahezeRewriteContext(WSGIContext):
                 zone = 'backup'
                 obj = match.group('path')
 
-        # if match is None:
-        #    match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
-        #    if match:
-        #        what = match.group('what')
-        #        if what == 'frontend':
-        #            headers = {'Content-Type': 'application/octet-stream'}
-        #            resp = swob.Response(headers=headers, body="OK\n")
-        #        elif what == 'backend':
-        #            req.host = '127.0.0.1:%s' % self.bind_port
-        #            req.path_info = "/v1/%s/monitoring/backend" % self.account
-        #
-        #            app_iter = self._app_call(env)
-        #            status = self._get_status_int()
-        #            headers = self._response_headers
-        #
-        #            resp = swob.Response(status=status, headers=headers, app_iter=app_iter)
-        #        else:
-        #            resp = swob.HTTPNotFound('Monitoring type not found "%s"' % (req.path))
-        #        return resp(env, start_response)
+        if match is None:
+            match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
+            if match:
+                what = match.group('what')
+                if what == 'frontend':
+                    headers = {'Content-Type': 'application/octet-stream'}
+                    resp = swob.Response(headers=headers, body="OK\n")
+                elif what == 'backend':
+                    req.host = '127.0.0.1:%s' % self.bind_port
+                    req.path_info = "/v1/%s/monitoring/backend" % self.account
+
+                    app_iter = self._app_call(env)
+                    status = self._get_status_int()
+                    headers = self._response_headers
+
+                    resp = swob.Response(status=status, headers=headers, app_iter=app_iter)
+                else:
+                    resp = swob.HTTPNotFound('Monitoring type not found "%s"' % (req.path))
+                return resp(env, start_response)
 
         if match is None:
             match = re.match(r'^/(?P<path>[^/]+)?$', req.path)
