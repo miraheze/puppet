@@ -2,4 +2,4 @@ mariadb::config::innodb_buffer_pool_size: '3G'
 http_proxy: 'http://bast.miraheze.org:8080'
 role::db::weekly_misc: ['reports']
 role::db::fortnightly_misc: ['grafana', 'icinga', 'icingaweb2', 'roundcubemail']
-role::db::monthly_misc: ['piwik']
+role::db::monthly_misc: ['']
