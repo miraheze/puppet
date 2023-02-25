@@ -14,14 +14,17 @@ class mediawiki::extensionsetup {
             require => Exec['oauth_composer'],
     }
 
-    $composer = 'http_proxy=http://bast.miraheze.org:8080 composer install --no-dev'
+    $composer = 'composer install --no-dev'
 
     exec { 'vendor_psysh_composer':
         command     => 'composer require "psy/psysh:0.11.8" --update-no-dev',
         unless      => 'composer show --installed psy/psysh 0.11.8',
         cwd         => "${mwpath}/vendor",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/vendor",
+        environment => [
+            "HOME=${mwpath}/vendor",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -31,7 +34,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/Wikibase/vendor",
         cwd         => "${mwpath}/extensions/Wikibase",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/Wikibase",
+        environment => [
+            "HOME=${mwpath}/extensions/Wikibase",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -41,7 +47,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/Maps/vendor",
         cwd         => "${mwpath}/extensions/Maps",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/Maps",
+        environment => [
+            "HOME=${mwpath}/extensions/Maps",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -51,7 +60,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/Flow/vendor",
         cwd         => "${mwpath}/extensions/Flow",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/Flow",
+        environment => [
+            "HOME=${mwpath}/extensions/Flow",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -60,7 +72,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/IPInfo/vendor",
         cwd         => "${mwpath}/extensions/IPInfo",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/IPInfo",
+        environment => [
+            "HOME=${mwpath}/extensions/IPInfo",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -70,7 +85,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/OAuth/vendor",
         cwd         => "${mwpath}/extensions/OAuth",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/OAuth",
+        environment => [
+            "HOME=${mwpath}/extensions/OAuth",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -80,7 +98,10 @@ class mediawiki::extensionsetup {
         unless      => 'composer show --installed lcobucci/jwt 4.1.5',
         cwd         => "${mwpath}/extensions/OAuth",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/OAuth",
+        environment => [
+            "HOME=${mwpath}/extensions/OAuth",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Exec['oauth_composer'],
     }
@@ -90,7 +111,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/TemplateStyles/vendor",
         cwd         => "${mwpath}/extensions/TemplateStyles",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/TemplateStyles",
+        environment => [
+            "HOME=${mwpath}/extensions/TemplateStyles",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -100,7 +124,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/AntiSpoof/vendor",
         cwd         => "${mwpath}/extensions/AntiSpoof",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/AntiSpoof",
+        environment => [
+            "HOME=${mwpath}/extensions/AntiSpoof",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -110,7 +137,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/Kartographer/vendor",
         cwd         => "${mwpath}/extensions/Kartographer",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/Kartographer",
+        environment => [
+            "HOME=${mwpath}/extensions/Kartographer",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -120,7 +150,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/TimedMediaHandler/vendor",
         cwd         => "${mwpath}/extensions/TimedMediaHandler",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/TimedMediaHandler",
+        environment => [
+            "HOME=${mwpath}/extensions/TimedMediaHandler",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -130,7 +163,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/Translate/vendor",
         cwd         => "${mwpath}/extensions/Translate",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/Translate",
+        environment => [
+            "HOME=${mwpath}/extensions/Translate",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -140,7 +176,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/OATHAuth/vendor",
         cwd         => "${mwpath}/extensions/OATHAuth",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/OATHAuth",
+        environment => [
+            "HOME=${mwpath}/extensions/OATHAuth",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -150,7 +189,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/Lingo/vendor",
         cwd         => "${mwpath}/extensions/Lingo",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/Lingo",
+        environment => [
+            "HOME=${mwpath}/extensions/Lingo",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -160,7 +202,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/WikibaseQualityConstraints/vendor",
         cwd         => "${mwpath}/extensions/WikibaseQualityConstraints",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/WikibaseQualityConstraints",
+        environment => [
+            "HOME=${mwpath}/extensions/WikibaseQualityConstraints",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -170,7 +215,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/WikibaseLexeme/vendor",
         cwd         => "${mwpath}/extensions/WikibaseLexeme",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/WikibaseLexeme",
+        environment => [
+            "HOME=${mwpath}/extensions/WikibaseLexeme",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -180,7 +228,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/CreateWiki/vendor",
         cwd         => "${mwpath}/extensions/CreateWiki",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/CreateWiki",
+        environment => [
+            "HOME=${mwpath}/extensions/CreateWiki",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -190,7 +241,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/DataTransfer/vendor",
         cwd         => "${mwpath}/extensions/DataTransfer",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/DataTransfer",
+        environment => [
+            "HOME=${mwpath}/extensions/DataTransfer",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -200,7 +254,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/Bootstrap/vendor",
         cwd         => "${mwpath}/extensions/Bootstrap",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/Bootstrap",
+        environment => [
+            "HOME=${mwpath}/extensions/Bootstrap",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -210,7 +267,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/StructuredNavigation/vendor",
         cwd         => "${mwpath}/extensions/StructuredNavigation",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/StructuredNavigation",
+        environment => [
+            "HOME=${mwpath}/extensions/StructuredNavigation",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -220,7 +280,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/SemanticMediaWiki/vendor",
         cwd         => "${mwpath}/extensions/SemanticMediaWiki",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/SemanticMediaWiki",
+        environment => [
+            "HOME=${mwpath}/extensions/SemanticMediaWiki",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -230,7 +293,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/skins/chameleon/vendor",
         cwd         => "${mwpath}/skins/chameleon",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/skins/chameleon",
+        environment => [
+            "HOME=${mwpath}/skins/chameleon",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -240,7 +306,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/PageProperties/vendor",
         cwd         => "${mwpath}/extensions/PageProperties",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/PageProperties",
+        environment => [
+            "HOME=${mwpath}/extensions/PageProperties",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
@@ -250,7 +319,10 @@ class mediawiki::extensionsetup {
         creates     => "${mwpath}/extensions/WikibaseEdtf/vendor",
         cwd         => "${mwpath}/extensions/WikibaseEdtf",
         path        => '/usr/bin',
-        environment => "HOME=${mwpath}/extensions/WikibaseEdtf",
+        environment => [
+            "HOME=${mwpath}/extensions/WikibaseEdtf",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
