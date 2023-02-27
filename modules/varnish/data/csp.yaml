@@ -113,6 +113,16 @@ img-src:
   - 'phab.miraheze.wiki'
   - '*.fbcdn.net'
   - 'i.ytimg.com'
+  - '*.imgbb.com'
+  - 'simgbb.com'
+  - '*.simgbb.com'
+  - 'ibb.co'
+  - '*.ibb.co'
+  - '*.postimages.org'
+  - 'postimgs.org'
+  - '*.postimgs.org'
+  - 'postimg.cc'
+  - '*.postimg.cc'
 
 font-src:
   - "'self'"
