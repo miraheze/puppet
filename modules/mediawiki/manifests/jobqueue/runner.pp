@@ -58,7 +58,7 @@ class mediawiki::jobqueue::runner {
             month   => '*',
             weekday => [ '6' ],
         }
-        
+
         if $wiki == 'loginwiki' {
             $swift_password = lookup('mediawiki::swift_password')
             cron { 'generate sitemap index':
