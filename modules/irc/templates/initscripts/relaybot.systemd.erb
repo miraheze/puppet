@@ -4,6 +4,7 @@ Description=IrcToDiscordRelay
 [Service]
 WorkingDirectory=<%= @install_path %>
 ExecStart=/usr/bin/dotnet run --project <%= @install_path %>/IrcToDiscordRelay.csproj --configuration Production
+Environment=HOME=/root
 User=irc
 SyslogIdentifier=relaybot
 Restart=on-failure
