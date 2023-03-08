@@ -6,7 +6,20 @@ class irc::relaybot {
     $bot_token = lookup('passwords::irc::relaybot::bot_token')
     $irc_password = lookup('passwords::irc::relaybot::irc_password')
 
-    file { $gpg_file:
+    file { '/opt/packages-microsoft-prod.deb':
+        ensure => present,
+        source => 'puppet:///modules/irc/relaybot/packages-microsoft-prod.deb',
+    }
+
+    package { 'packages-microsoft-prod':
+        ensure   => installed,
+        provider => dpkg,
+        source   => '/opt/packages-microsoft-prod.deb',
+        require  => File['/opt/packages-microsoft-prod.deb'],
+        notify   => Exec['apt_update'],
+    }
+
+/*    file { $gpg_file:
         ensure => present,
         owner  => 'root',
         group  => 'root',
@@ -26,11 +39,11 @@ class irc::relaybot {
         },
         require  => File[$gpg_file],
         notify   => Exec['apt_update'],
-    }
+    } */
 
     package { 'dotnet-sdk-6.0':
         ensure => installed,
-        require => Apt::Source['microsoft'],
+        require => Package['packages-microsoft-prod'],
     }
 
     file { $install_path:
