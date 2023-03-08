@@ -1,15 +1,10 @@
 # class: irc::relaybot
 class irc::relaybot {
-    $apt_transport_package = 'apt-transport-https'
     $gpg_file = '/etc/apt/trusted.gpg.d/microsoft.gpg'
     $install_path = '/srv/relaybot'
 
     $bot_token = lookup('passwords::irc::relaybot::bot_token')
     $irc_password = lookup('passwords::irc::relaybot::irc_password')
-
-    package { $apt_transport_package:
-        ensure => installed,
-    }
 
     file { $gpg_file:
         ensure => present,
@@ -29,10 +24,7 @@ class irc::relaybot {
             'deb' => true,
             'src' => false,
         },
-        require  => [
-            File[$gpg_file],
-            Package[$apt_transport_package],
-        ],
+        require  => File[$gpg_file],
         notify   => Exec['apt_update'],
     }
 
