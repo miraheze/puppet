@@ -33,7 +33,7 @@ class irc::relaybot {
         require => Apt::Source['microsoft'],
     }
 
-    file { $install_path:
+    file { '/srv/relaybot':
         ensure => 'directory',
         owner  => 'root',
         group  => 'root',
