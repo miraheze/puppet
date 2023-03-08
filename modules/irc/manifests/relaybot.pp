@@ -33,10 +33,18 @@ class irc::relaybot {
         require => Apt::Source['microsoft'],
     }
 
+    file { $install_path:
+        ensure => 'directory',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    }
+
     git::clone { 'IrcToDiscordRelay':
         ensure    => latest,
         origin    => 'https://github.com/Universal-Omega/IrcToDiscordRelay.git',
         directory => $install_path,
+        require   => File[$install_path],
     }
 
     file { "${install_path}/config.ini":
