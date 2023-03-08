@@ -57,6 +57,5 @@ class irc::relaybot {
             Package['dotnet-sdk-6.0'],
             File["${install_path}/config.ini"],
         ],
-        environment => ['HOME=/root'],
     }
 }
