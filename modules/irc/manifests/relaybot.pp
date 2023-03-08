@@ -11,24 +11,11 @@ class irc::relaybot {
         file { '/etc/apt/apt.conf.d/01irc':
             ensure  => present,
             content => template('irc/relaybot/aptproxy.erb'),
-            before  => Package['packages-microsoft-prod'],
+            before  => Apt::Source['microsoft'],
         }
     }
 
-    file { '/opt/packages-microsoft-prod.deb':
-        ensure => present,
-        source => 'puppet:///modules/irc/relaybot/packages-microsoft-prod.deb',
-    }
-
-    package { 'packages-microsoft-prod':
-        ensure   => installed,
-        provider => dpkg,
-        source   => '/opt/packages-microsoft-prod.deb',
-        require  => File['/opt/packages-microsoft-prod.deb'],
-        notify   => Exec['apt_update'],
-    }
-
-/*    file { $gpg_file:
+    file { $gpg_file:
         ensure => present,
         owner  => 'root',
         group  => 'root',
@@ -48,11 +35,11 @@ class irc::relaybot {
         },
         require  => File[$gpg_file],
         notify   => Exec['apt_update'],
-    } */
+    }
 
     package { 'dotnet-sdk-6.0':
         ensure => installed,
-        require => Package['packages-microsoft-prod'],
+        require => Apt::Source['microsoft'],
     }
 
     file { $install_path:
