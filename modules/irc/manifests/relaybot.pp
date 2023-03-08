@@ -33,7 +33,7 @@ class irc::relaybot {
         require => Apt::Source['microsoft'],
     }
 
-    file { '/srv/relaybot':
+    file { $install_path:
         ensure => 'directory',
         owner  => 'root',
         group  => 'root',
@@ -61,7 +61,7 @@ class irc::relaybot {
         content => systemd_template('relaybot'),
         restart => true,
         require => [
-            Git::Clone[$install_path],
+            Git::Clone['IrcToDiscordRelay'],
             Package['dotnet-sdk-6.0'],
             File["${install_path}/config.ini"],
         ],
