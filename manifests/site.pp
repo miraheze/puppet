@@ -123,6 +123,7 @@ node 'test131.miraheze.org' {
     include role::mediawiki
     include role::redis
     include mediawiki::jobqueue::chron
+    include irc::irclogbot
 }
 
 # ensures all servers have basic class if puppet runs
