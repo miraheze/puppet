@@ -65,7 +65,10 @@ class irc::relaybot {
         require => Git::Clone['IrcToDiscordRelay'],
     }
 
-    file { '/srv/relaybot/.dotnet':
+    file { [
+        '/srv/relaybot/.dotnet',
+        '/srv/relaybot/.local'
+    ]:
         ensure => directory,
         owner  => 'irc',
         group  => 'irc',
