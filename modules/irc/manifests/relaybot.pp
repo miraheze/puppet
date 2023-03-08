@@ -1,4 +1,7 @@
+# class: irc::relaybot
 class irc::relaybot {
+    include irc
+
     $apt_transport_package = 'apt-transport-https'
     $gpg_file = '/etc/apt/trusted.gpg.d/microsoft.gpg'
     $install_path = '/srv/relaybot'
