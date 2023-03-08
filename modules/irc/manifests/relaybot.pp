@@ -44,8 +44,8 @@ class irc::relaybot {
 
     file { $install_path:
         ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
+        owner  => 'www-data',
+        group  => 'www-data',
         mode   => '0755',
     }
 
