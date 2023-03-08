@@ -51,7 +51,7 @@ class irc::relaybot {
 
     systemd::service { 'relaybot':
         ensure  => present,
-        content => systemd_template('irc/relaybot.service.erb'),
+        content => systemd_template('relaybot'),
         restart => true,
         require => [
             Git::Clone[$install_path],
