@@ -44,8 +44,8 @@ class irc::relaybot {
 
     file { $install_path:
         ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
+        owner  => 'irc',
+        group  => 'irc',
         mode   => '0755',
     }
 
@@ -53,6 +53,9 @@ class irc::relaybot {
         ensure    => latest,
         origin    => 'https://github.com/Universal-Omega/IrcToDiscordRelay.git',
         directory => $install_path,
+        owner     => 'irc',
+        group     => 'irc',
+        mode      => '0755',
         require   => File[$install_path],
     }
 
@@ -63,16 +66,6 @@ class irc::relaybot {
         mode    => '0644',
         content => template('irc/relaybot/config.ini.erb'),
         require => Git::Clone['IrcToDiscordRelay'],
-    }
-
-    file { [
-        '/srv/relaybot/.dotnet',
-        '/srv/relaybot/.local'
-    ]:
-        ensure => directory,
-        owner  => 'irc',
-        group  => 'irc',
-        mode   => '0755',
     }
 
     systemd::service { 'relaybot':
