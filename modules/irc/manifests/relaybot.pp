@@ -44,15 +44,13 @@ class irc::relaybot {
         ensure     => latest,
         source     => 'https://github.com/Universal-Omega/IrcToDiscordRelay',
         target     => $install_path,
-        user       => 'irc',
-        group      => 'irc',
         target_dir => '',
     }
 
     file { "${install_path}/config.ini":
         ensure  => file,
-        owner   => 'irc',
-        group   => 'irc',
+        owner   => 'root',
+        group   => 'root',
         mode    => '0644',
         content => template('irc/relaybot/config.ini.erb'),
         require => Git::Clone['IrcToDiscordRelay'],
@@ -67,6 +65,6 @@ class irc::relaybot {
             Package['dotnet-sdk-6.0'],
             File["${install_path}/config.ini"],
         ],
-        environment => ['HOME=/home/irc'],
+        environment => ['HOME=/root'],
     }
 }
