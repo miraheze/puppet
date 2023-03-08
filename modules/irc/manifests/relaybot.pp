@@ -53,6 +53,9 @@ class irc::relaybot {
         ensure    => latest,
         origin    => 'https://github.com/Universal-Omega/IrcToDiscordRelay.git',
         directory => $install_path,
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
         require   => File[$install_path],
     }
 
