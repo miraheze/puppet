@@ -34,10 +34,9 @@ class irc::relaybot {
     }
 
     git::clone { 'IrcToDiscordRelay':
-        ensure     => latest,
-        source     => 'https://github.com/Universal-Omega/IrcToDiscordRelay',
-        target     => $install_path,
-        target_dir => '',
+        ensure    => latest,
+        origin    => 'https://github.com/Universal-Omega/IrcToDiscordRelay.git',
+        directory => $install_path,
     }
 
     file { "${install_path}/config.ini":
