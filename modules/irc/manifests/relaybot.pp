@@ -1,6 +1,5 @@
 # class: irc::relaybot
 class irc::relaybot {
-    $gpg_file = '/etc/apt/trusted.gpg.d/microsoft.gpg'
     $install_path = '/srv/relaybot'
 
     $bot_token = lookup('passwords::irc::relaybot::bot_token')
