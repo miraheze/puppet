@@ -11,7 +11,7 @@ class irc::relaybot {
         file { '/etc/apt/apt.conf.d/01irc':
             ensure  => present,
             content => template('irc/relaybot/aptproxy.erb'),
-            before  => Apt::Source['microsoft'],
+            before  => Package['packages-microsoft-prod'],
         }
     }
 
