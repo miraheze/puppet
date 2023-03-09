@@ -31,7 +31,7 @@ class irc::relaybot {
 
     package { 'dotnet-sdk-6.0':
         ensure => installed,
-        require => Apt::Source['microsoft'],
+        require => Package['packages-microsoft-prod'],
     }
 
     file { $install_path:
