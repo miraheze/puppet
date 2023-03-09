@@ -1,0 +1,14 @@
+[Unit]
+Description=Miraheze IRC<->Discord relay bot
+
+[Service]
+Type=simple
+User=irc
+SyslogIdentifier=relaybot
+ExecStart=/usr/bin/dotnet run --project <%= @install_path %>/IrcToDiscordRelay.csproj --configuration Release
+Restart=on-failure
+WorkingDirectory=<%= @install_path %>
+Environment=HOME=<%= @install_path %>
+
+[Install]
+WantedBy=multi-user.target
