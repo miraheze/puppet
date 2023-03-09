@@ -27,8 +27,6 @@ class irc::relaybot {
         require  => File['/opt/packages-microsoft-prod.deb'],
     }
 
-    Package['packages-microsoft-prod'] -> Exec['apt_update']
-
     package { 'dotnet-sdk-6.0':
         ensure => installed,
         require => Package['packages-microsoft-prod'],
