@@ -50,12 +50,13 @@ class irc::relaybot {
     }
 
     file { "${install_path}/config.ini":
-        ensure  => file,
+        ensure  => present,
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
         content => template('irc/relaybot/config.ini.erb'),
         require => Git::Clone['IrcToDiscordRelay'],
+        notify  => Service['relaybot'],
     }
 
     systemd::service { 'relaybot':
