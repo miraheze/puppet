@@ -1,7 +1,6 @@
 # class: irc
 class irc {
     ensure_packages([
-        'python',
         'python3',
         'python3-twisted',
         'python3-irc',
