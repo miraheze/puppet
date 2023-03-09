@@ -80,6 +80,6 @@ class irc::relaybot {
     }
 
     monitoring::nrpe { 'IRC Relay Bot':
-        command => '/usr/lib/nagios/plugins/check_procs -a relaybot -c 1:1'
+        command => '/usr/lib/nagios/plugins/check_procs -a relaybot -c 2:2'
     }
 }
