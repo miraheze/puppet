@@ -15,26 +15,23 @@ class irc::relaybot {
         }
     }
 
-    file { $gpg_file:
+    file { '/opt/packages-microsoft-prod.deb':
         ensure => present,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0444',
-        source => 'puppet:///modules/irc/relaybot/microsoft-keyring.gpg',
-        notify => Exec['apt_update'],
+        source => 'puppet:///modules/irc/relaybot/packages-microsoft-prod.deb',
     }
 
-    apt::source { 'microsoft':
-        comment  => 'The official Microsoft package repository',
-        location => 'https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod',
-        release  => 'bullseye',
-        repos    => 'main',
-        include  => {
-            'deb' => true,
-            'src' => false,
-        },
-        require  => File[$gpg_file],
+    package { 'packages-microsoft-prod':
+        ensure   => installed,
+        provider => dpkg,
+        source   => '/opt/packages-microsoft-prod.deb',
+        require  => File['/opt/packages-microsoft-prod.deb'],
         notify   => Exec['apt_update'],
+    }
+
+    exec { 'apt_update':
+        command     => '/usr/bin/apt-get update',
+        refreshonly => true,
+        subscribe   => Package['packages-microsoft-prod'],
     }
 
     package { 'dotnet-sdk-6.0':
