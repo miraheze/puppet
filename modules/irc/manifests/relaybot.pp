@@ -38,9 +38,9 @@ class irc::relaybot {
         mode   => '0755',
     }
 
-    git::clone { 'IrcToDiscordRelay':
+    git::clone { 'IRC-Discord-Relay':
         ensure    => latest,
-        origin    => 'https://github.com/Universal-Omega/IrcToDiscordRelay.git',
+        origin    => 'https://github.com/Universal-Omega/IRC-Discord-Relay.git',
         directory => $install_path,
         owner     => 'irc',
         group     => 'irc',
@@ -54,7 +54,7 @@ class irc::relaybot {
         group   => 'root',
         mode    => '0644',
         content => template('irc/relaybot/config.ini.erb'),
-        require => Git::Clone['IrcToDiscordRelay'],
+        require => Git::Clone['IRC-Discord-Relay'],
         notify  => Service['relaybot'],
     }
 
@@ -63,7 +63,7 @@ class irc::relaybot {
         content => systemd_template('relaybot'),
         restart => true,
         require => [
-            Git::Clone['IrcToDiscordRelay'],
+            Git::Clone['IRC-Discord-Relay'],
             Package['dotnet-sdk-6.0'],
             File["${install_path}/config.ini"],
         ],
