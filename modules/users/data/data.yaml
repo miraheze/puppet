@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [paladox, reception, universalomega, void]
+    members: [paladox, reception, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -130,11 +130,11 @@ users:
     realname: Zppix
     ssh_keys: []
   universalomega:
-    ensure: present
+    ensure: absent
     uid: 1013
     name: universalomega
     realname: Universal Omega 
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOjFNXqnu7gdALTWOWbhch32vsYmLS/xcfU9NepYXpFZ universalomega@miraheze.org]
+    ssh_keys: []
   void:
     ensure: present
     uid: 1014
