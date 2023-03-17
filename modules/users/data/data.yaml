@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [johnflewis, paladox, reception, universalomega, void]
+    members: [paladox, reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -50,13 +50,11 @@ groups:
 
 users:
   johnflewis:
-    ensure: present
+    ensure: absent
     uid: 1000
     name: johnflewis
     realname: John Lewis
-    ssh_keys:
-      - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAnZCIzrz6zMQdqQrd2fl17m31ksgMbsJJZJ1vgBviK7YR7mq2snJGVwD1BTFemqNPblMCGAEzsgcJ9kjgE/FF0TwzFnkmFxcGlJXmWsGvdS5oFljEzw8jVCQ7zFMetGeTtAhjqx3kiRIprQ/GR6HforNUNxUCiV48Z2USLR6toa91VF75FnxBQBw5dAi6KpN+chBqeaG9+kIw2z3TkZjuBxw5B+lE4IKd7b152rHmfMNuQNP+zioXLfDz2afNWNlS0Zi0jJdh/K0HOEsytvyF2nZ3917V4LPPPQG1eOWGNI1eh745fgk0UdMsg4V7dsgfvetxoitDyCrd07a0Z/LZpSxJkfdHoJjxoLtXwDfZDJora+I/M2H8N2ZDzBZNCH4km/TVWoaHjGh838+Y3YkALcs84IUFd+7gFQaSQ6KvlepYoNeAu6zCx7kQc6cJIXy5UTS6xa6Jr8nolqqjoMnH4vz8TC3DEd0eT8PwoaOtBgj+QjlXAzbWwG+YTKKwmXTccId6H9mZN4XHL7FAMgkg/AQsv5DCOcdllasJ4Bs7cI61fXDzj44c38lroJ1DgMyhiQRrnHOZIKdloBwQHBF2Gz7BWL+GADfiiBpyDhpVCkFfhcDByFIm4QkX66VVXFW7MHzG5GqTL+j8RBZiYXH7OIY2rxWP/zy/vub7i+acVHE= john@miraheze
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILJBzm4Xd0C49N1rurbnFsZJ8YEtWyj8JsvhwqZN6llV john@miraheze
+    ssh_keys: []
   southparkfan:
     ensure: absent
     uid: 1001
