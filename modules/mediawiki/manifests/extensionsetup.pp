@@ -326,4 +326,16 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+    exec { 'nearbypages_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/NearbyPages/vendor",
+        cwd         => "${mwpath}/extensions/NearbyPages",
+        path        => '/usr/bin',
+        environment => [
+            "HOME=${mwpath}/extensions/NearbyPages",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 }
