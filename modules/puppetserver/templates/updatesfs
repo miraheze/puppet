@@ -8,4 +8,4 @@ mv listed_ip_30_ipv46_all.txt /root/private/files/mediawiki/listed_ip_30_ipv46_a
 
 git -C /root/private add . && git -C /root/private commit -m "Update StopForumSpam denylist" && git -C /root/private push
 
-rm listed_ip_30_ipv46_all.txt && rm stopforumspam-ip-denylist.zip
+rm stopforumspam-ip-denylist.zip
