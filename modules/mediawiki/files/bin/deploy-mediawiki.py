@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 
 import argparse
-from typing import Optional, Union, TypedDict
+from typing import Optional, TypedDict
 import os
 import time
 import requests
