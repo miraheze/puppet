@@ -15,7 +15,7 @@ nginx::logrotate_number: 2
 # Swift config
 
 swift_proxy_enable: true
-swift::proxy::num_workers: 60
+swift::proxy::num_workers: 72
 swift_enable_memcache: true
 
 swift::accounts:
