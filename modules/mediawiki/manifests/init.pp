@@ -173,6 +173,7 @@ class mediawiki(
     $swift_password             = lookup('mediawiki::swift_password')
     $swift_temp_url_key         = lookup('mediawiki::swift_temp_url_key')
     $reports_write_key          = lookup('reports::reports_write_key')
+    $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
