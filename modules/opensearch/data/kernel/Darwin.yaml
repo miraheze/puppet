@@ -1,0 +1,5 @@
+---
+opensearch::download_tool: curl -o
+opensearch::download_tool_insecure: curl --insecure -o
+opensearch::opensearch_user: opensearch
+opensearch::opensearch_group: opensearch

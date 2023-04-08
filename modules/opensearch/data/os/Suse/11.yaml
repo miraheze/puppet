@@ -1,0 +1,4 @@
+---
+opensearch::init_template: "%{module_name}/etc/init.d/opensearch.SLES.erb"
+opensearch::pid_dir: ~
+opensearch::service_provider: init

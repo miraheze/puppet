@@ -1,0 +1,3 @@
+---
+opensearch::init_template: "%{module_name}/etc/init.d/opensearch.RedHat.erb"
+opensearch::service_provider: init
