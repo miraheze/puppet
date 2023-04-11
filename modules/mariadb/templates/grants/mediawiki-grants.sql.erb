@@ -35,11 +35,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
 GRANT USAGE
     ON *.* TO 'cargouser'@'%'
     IDENTIFIED BY '<%= @mediawiki_password %>'
-    REQUIRE SSL
     WITH MAX_STATEMENT_TIME 600;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    on `%wikicargo`.* TO 'cargouser'@'%';
+    on `%cargo`.* TO 'cargouser'@'%';
 
 -- Grants for 'wikiadmin'@''
 
