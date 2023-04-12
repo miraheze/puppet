@@ -308,6 +308,11 @@ sub vcl_recv {
 		}
 	}
 
+	# Temporary: Return a 200 response on all static.miraheze.org requests without consulting the backends
+	if (req.http.Host == "static.miraheze.org") {
+		return(synth(200));
+	}
+
 	# Do not cache requests from this domain
 	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
 		set req.backend_hint = mon141;
