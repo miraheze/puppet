@@ -296,7 +296,7 @@ if args.confarg is not None:
         enable_projects = True
 
     bots.append(logbot(module, conf))
-    logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
+    logging.basicConfig(stream=sys.stderr, level=conf.logging_level,
                         format=LOG_FORMAT)
 else:
     # Enumerate bot configs in /etc/adminbot;
@@ -318,7 +318,7 @@ else:
 
             if ('enable_projects' in conf.__dict__) and conf.enable_projects:
                 enable_projects = True
-    logging.basicConfig(filename="/var/log/adminbot.log", level=logging.DEBUG,
+    logging.basicConfig(filename="/var/log/adminbot.log", level=conf.logging_level,
                         format=LOG_FORMAT)
 
 if not bots:
