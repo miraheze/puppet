@@ -1,3 +1,6 @@
+# Logging levels: INFO or DEBUG
+logging_level = "DEBUG"
+
 # If true, !log <project> <message>
 # If false, !log <message>
 enable_projects = False
