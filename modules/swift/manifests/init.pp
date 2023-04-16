@@ -57,9 +57,10 @@ class swift {
     }
 
     file { '/var/log/swift':
-        ensure => directory,
-        owner  => 'swift',
-        group  => 'swift',
+        ensure  => directory,
+        owner   => 'swift',
+        group   => 'swift',
+        require => Package['swift'],
     }
 
     $swift_password = lookup('mediawiki::swift_password')
