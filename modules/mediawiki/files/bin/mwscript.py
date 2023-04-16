@@ -9,19 +9,32 @@ def run(args: argparse.Namespace) -> None:
     long = False
 
     script = args.script
-    scriptsplit = script.split('/')
-    if script in longscripts:
-        long = True
-    if len(scriptsplit) == 1:
-        script = f'/srv/mediawiki/w/maintenance/{script}'
-    elif len(scriptsplit) == 2:
-        script = f'/srv/mediawiki/w/maintenance/{scriptsplit[0]}/{scriptsplit[1]}'
-        if scriptsplit[1] in longscripts:
-            long = True
+    if not script.endswith('.php'):
+        if not args.runner:
+        print('Error: Specifiy --use-runner or --140 to enable MaintenanceRunner')
+        sys.exit(2)
+        if args.runner:
+            print(f'WARNING: Please log usage of {longscript}. Support for longscripts has not been added')
+    if args.runner:
+        runner = '/srv/mediawiki/w/maintenance/run.php '
     else:
-        script = f'/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
-        if scriptsplit[2] in longscripts:
+        runner = ''
+    if args.runner and not script.endswith('.php'):  # assume class if not
+        scriptsplit = script.split('/')
+        if script in longscripts:
             long = True
+        if len(scriptsplit) == 1:
+            script = f'{runner}/srv/mediawiki/w/maintenance/{script}'
+        elif len(scriptsplit) == 2:
+            script = f'{runner}/srv/mediawiki/w/maintenance/{scriptsplit[0]}/{scriptsplit[1]}'
+            if scriptsplit[1] in longscripts:
+                long = True
+        else:
+            script = f'{runner}/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
+            if scriptsplit[2] in longscripts:
+                long = True
+    else:
+        print('WARNING: Use of classes is not well tested. Please use with caution.')
 
     wiki = args.wiki
     validDBLists = ('active', 'beta')
@@ -33,10 +46,10 @@ def run(args: argparse.Namespace) -> None:
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.json {script}'
     elif args.extension:
         long = True
-        generate = f'php /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension}'
+        generate = f'php {runner}/srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension}'
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
     else:
-        command = f'sudo -u www-data php {script} --wiki={wiki}'
+        command = f'sudo -u www-data php {runner}{script} --wiki={wiki}'
     if args.arguments:
         command += ' ' + ' '.join(args.arguments)
     logcommand = f'/usr/local/bin/logsalmsg "{command}'
@@ -67,6 +80,7 @@ if __name__ == '__main__':
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_true')
+    parser.add_argument('--use-runner', '--140', dest='runner', action='store_true')
 
     args = parser.parse_known_args()[0]
     args.arguments += parser.parse_known_args()[1]
