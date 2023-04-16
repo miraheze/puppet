@@ -32,4 +32,5 @@ jobs:
         run: |
           flake8 modules/mediawiki modules/ssl --ignore=E501,W503,SFS301
           pytest -vv -n auto
+          coverage run --branch -m pytest modules/mediawiki
           mypy modules/mediawiki modules/ssl --ignore-missing-imports
