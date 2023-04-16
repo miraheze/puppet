@@ -102,4 +102,20 @@ class swift::ac {
             tcp_port    => '6001',
         },
     }
+
+    # Backups
+    cron { 'backups-swift-account-container':
+        ensure  => present,
+        command => '/usr/local/bin/miraheze-backup backup swift_account_container > /var/log/swift-account-container-backup.log',
+        user    => 'root',
+        minute  => '0',
+        hour    => '6',
+        weekday => '0',
+    }
+    
+    monitoring::nrpe { 'Backups Swift Account Container':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/swift-account-container-backup.log',
+        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+        critical => true
+    }
 }
