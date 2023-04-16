@@ -18,7 +18,6 @@ class CommandInfo(TypedDict):
     confirm: bool
 
 
-
 def get_commands(args: argparse.Namespace) -> CommandInfo:
     longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
     long = False
@@ -116,6 +115,7 @@ def get_args() -> argparse.Namespace:
     args = parser.parse_known_args()[0]
     args.arguments += parser.parse_known_args()[1]
     return args
+
 
 if __name__ == '__main__':
 
