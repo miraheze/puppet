@@ -24,10 +24,9 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
     long = False
     generate = None
     try:
-        # We don't handle errror cases first as that's simply a failback and it would not be simpler.
-        if args.extension:  # noqa: SIM106
+        if args.extension:
             wiki = ''
-        elif args.arguments[0].endswith('wiki') or args.arguments[0] in [*['all'], *validDBLists]:  # noqa: SIM106
+        elif args.arguments[0].endswith('wiki') or args.arguments[0] in [*['all'], *validDBLists]:
             wiki = args.arguments[0]
             args.arguments.remove(wiki)
             if args.arguments == []:

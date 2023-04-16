@@ -155,7 +155,7 @@ def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
         return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.miraheze.org:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
-    raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')  # noqa: R503
+    raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
 
 def _construct_git_pull(repo: str, submodules: bool = False, branch: Optional[str] = None) -> str:
