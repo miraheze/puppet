@@ -56,7 +56,7 @@ def test_get_command_args():
     assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data php /srv/mediawiki/w/maintenance/test.php --wiki=metawiki --test', 'generate': None, 'long': False, 'nolog': False}
 
 
-def test_get_command_subdir_runner():
+def test_get_command_subdir():
     args = mwscript.get_args()
     args.script = 'subdir/test.php'
     args.arguments = ['metawiki']
@@ -119,6 +119,7 @@ def test_get_command_args_runner():
     args.runner = True
     assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data php /srv/mediawiki/w/maintenance/run.php /srv/mediawiki/w/maintenance/test.php --wiki=metawiki --test', 'generate': None, 'long': False, 'nolog': False}
 
+
 def test_get_command_subdir_runner():
     args = mwscript.get_args()
     args.script = 'subdir/test.php'
@@ -134,4 +135,3 @@ def test_get_command_class():
     args.runner = True
     args.confirm = True
     assert mwscript.get_commands(args) == {'confirm': True, 'command': 'sudo -u www-data php /srv/mediawiki/w/maintenance/run.php test --wiki=metawiki --test', 'generate': None, 'long': False, 'nolog': False}
-

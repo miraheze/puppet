@@ -43,11 +43,10 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
         if not args.runner:
             print('Error: Specifiy --use-runner or --140 to enable MaintenanceRunner')
             sys.exit(2)
-        if args.runner:
-            if not args.confirm:
+        if args.runner and not args.confirm:
                 print(f'WARNING: Please log usage of {longscripts}. Support for longscripts has not been added')
                 print('WARNING: Use of classes is not well tested. Please use with caution.')
-                if not input("Type 'Y' to confirm (or any other key to stop - rerun without --140/--use-runner): ").upper() =='Y': sys.exit(2)
+                if input("Type 'Y' to confirm (or any other key to stop - rerun without --140/--use-runner): ").upper() != 'Y': sys.exit(2)
     if args.runner:
         runner = '/srv/mediawiki/w/maintenance/run.php '
     else:
