@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import sys
 
 
 def run(args: argparse.Namespace) -> None:
@@ -11,15 +12,15 @@ def run(args: argparse.Namespace) -> None:
     script = args.script
     if not script.endswith('.php'):
         if not args.runner:
-        print('Error: Specifiy --use-runner or --140 to enable MaintenanceRunner')
-        sys.exit(2)
+            print('Error: Specifiy --use-runner or --140 to enable MaintenanceRunner')
+            sys.exit(2)
         if args.runner:
-            print(f'WARNING: Please log usage of {longscript}. Support for longscripts has not been added')
+            print(f'WARNING: Please log usage of {longscripts}. Support for longscripts has not been added')
     if args.runner:
         runner = '/srv/mediawiki/w/maintenance/run.php '
     else:
         runner = ''
-    if args.runner and not script.endswith('.php'):  # assume class if not
+    if args.runner and script.endswith('.php'):  # assume class if not
         scriptsplit = script.split('/')
         if script in longscripts:
             long = True
@@ -49,7 +50,7 @@ def run(args: argparse.Namespace) -> None:
         generate = f'php {runner}/srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension}'
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
     else:
-        command = f'sudo -u www-data php {runner}{script} --wiki={wiki}'
+        command = f'sudo -u www-data php {script} --wiki={wiki}'
     if args.arguments:
         command += ' ' + ' '.join(args.arguments)
     logcommand = f'/usr/local/bin/logsalmsg "{command}'
