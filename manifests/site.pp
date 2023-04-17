@@ -25,11 +25,6 @@ node /^es1[34]1\.miraheze\.org$/ {
     include role::elasticsearch
 }
 
-node 'graylog121.miraheze.org' {
-    include base
-    include role::graylog
-}
-
 node 'graylog131.miraheze.org' {
     include base
     include role::graylog
