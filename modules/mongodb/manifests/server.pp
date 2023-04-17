@@ -1,4 +1,18 @@
-# This installs a MongoDB server. See README.md for more details.
+# @summary This installs a MongoDB server. See README.md for more details.
+#
+# @param tls
+#   Ensure tls is enabled.
+# @param tls_key
+#   Defines the path of the file that contains the TLS/SSL certificate and key.
+# @param tls_ca
+#   Defines the path of the file that contains the certificate chain for verifying client certificates.
+# @param tls_conn_without_cert
+#   Set to true to bypass client certificate validation for clients that do not present a certificate.
+# @param tls_invalid_hostnames
+#   Set to true to disable the validation of the hostnames in TLS certificates.
+# @param tls_mode
+#   Defines if TLS is used for all network connections. Allowed values are 'requireTLS', 'preferTLS' or 'allowTLS'.
+#
 class mongodb::server (
   Variant[Boolean, String] $ensure                              = $mongodb::params::ensure,
   String $user                                                  = $mongodb::params::user,
@@ -71,11 +85,19 @@ class mongodb::server (
   Boolean $ssl_weak_cert                                        = false,
   Boolean $ssl_invalid_hostnames                                = false,
   Enum['requireSSL', 'preferSSL', 'allowSSL'] $ssl_mode         = 'requireSSL',
+  Boolean $tls                                                  = false,
+  Optional[Stdlib::Absolutepath] $tls_key                       = undef,
+  Optional[Stdlib::Absolutepath] $tls_ca                        = undef,
+  Boolean $tls_conn_without_cert                                = false,
+  Boolean $tls_invalid_hostnames                                = false,
+  Enum['requireTLS', 'preferTLS', 'allowTLS'] $tls_mode         = 'requireTLS',
   Boolean $restart                                              = $mongodb::params::restart,
   Optional[String] $storage_engine                              = undef,
   Boolean $create_admin                                         = $mongodb::params::create_admin,
   String $admin_username                                        = $mongodb::params::admin_username,
   Optional[Variant[String, Sensitive[String]]] $admin_password  = undef,
+  Enum['scram_sha_1', 'scram_sha_256'] $admin_auth_mechanism    = $mongodb::params::admin_auth_mechanism,
+  Boolean $admin_update_password                                = false,
   Boolean $handle_creds                                         = $mongodb::params::handle_creds,
   Boolean $store_creds                                          = $mongodb::params::store_creds,
   Array $admin_roles                                            = $mongodb::params::admin_roles,
@@ -105,9 +127,11 @@ class mongodb::server (
   }
   if $create_admin and ($service_ensure == 'running' or $service_ensure == true) {
     mongodb::db { 'admin':
-      user     => $admin_username,
-      password => $admin_password_unsensitive,
-      roles    => $admin_roles,
+      user            => $admin_username,
+      auth_mechanism  => $admin_auth_mechanism,
+      password        => $admin_password_unsensitive,
+      roles           => $admin_roles,
+      update_password => $admin_update_password,
     }
 
     # Make sure it runs before other DB creation
