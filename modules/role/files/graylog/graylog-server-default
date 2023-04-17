@@ -1,5 +1,5 @@
 # Path to the java executable.
-JAVA=/usr/bin/java
+JAVA=/usr/share/graylog-server/jvm/bin/java
 
 # Default Java options for heap and garbage collection.
 GRAYLOG_SERVER_JAVA_OPTS="-Xms2g -Xmx2g -XX:NewRatio=1 -server -XX:+ResizeTLAB -XX:+UseConcMarkSweepGC -XX:+CMSConcurrentMTEnabled -XX:+CMSClassUnloadingEnabled -XX:-OmitStackTraceInFastThrow"
