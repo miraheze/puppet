@@ -11,7 +11,6 @@ class mongodb::params inherits mongodb::globals {
   $restart               = true
   $create_admin          = false
   $admin_username        = 'admin'
-  $admin_auth_mechanism  = 'scram_sha_1'
   $admin_roles           = [
     'userAdmin', 'readWrite', 'dbAdmin', 'dbAdminAnyDatabase', 'readAnyDatabase',
     'readWriteAnyDatabase', 'userAdminAnyDatabase', 'clusterAdmin',

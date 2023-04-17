@@ -54,9 +54,9 @@ describe Puppet::Type.type(:mongodb_user).provider(:mongodb) do
       cmd_json = <<-EOS.gsub(%r{^\s*}, '').gsub(%r{$\n}, '')
       {
         "createUser":"new_user",
+        "pwd":"pass",
         "customData":{"createdBy":"Puppet Mongodb_user['new_user']"},
         "roles":[{"role":"role1","db":"new_database"},{"role":"role2","db":"other_database"}],
-        "pwd":"pass",
         "digestPassword":false
       }
       EOS
@@ -69,7 +69,7 @@ describe Puppet::Type.type(:mongodb_user).provider(:mongodb) do
 
   describe 'destroy' do
     it 'removes a user' do
-      allow(provider).to receive(:mongo_eval).with('db.dropUser("new_user")', 'new_database')
+      allow(provider).to receive(:mongo_eval).with('db.dropUser("new_user")')
       provider.destroy
       expect(provider).to have_received(:mongo_eval)
     end

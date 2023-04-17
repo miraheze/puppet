@@ -53,25 +53,17 @@ Puppet::Type.type(:mongodb_user).provide(:mongodb, parent: Puppet::Provider::Mon
 
       command = {
         createUser: @resource[:username],
+        pwd: password_hash,
         customData: {
           createdBy: "Puppet Mongodb_user['#{@resource[:name]}']"
         },
         roles: role_hashes(@resource[:roles], @resource[:database]),
+        digestPassword: false
       }
 
       if mongo_4? || mongo_5?
-        if @resource[:auth_mechanism] == :scram_sha_256
-          command[:mechanisms] = ['SCRAM-SHA-256']
-          command[:pwd] = @resource[:password]
-          command[:digestPassword] = true
-        else
-          command[:mechanisms] = ['SCRAM-SHA-1']
-          command[:pwd] = password_hash
-          command[:digestPassword] = false
-        end
-      else
-        command[:pwd] = password_hash
-        command[:digestPassword] = false
+        # SCRAM-SHA-256 requires digestPassword to be true.
+        command[:mechanisms] = ['SCRAM-SHA-1']
       end
 
       mongo_eval("db.runCommand(#{command.to_json})", @resource[:database])
@@ -89,7 +81,7 @@ Puppet::Type.type(:mongodb_user).provide(:mongodb, parent: Puppet::Provider::Mon
   end
 
   def destroy
-    mongo_eval("db.dropUser(#{@resource[:username].to_json})", @resource[:database])
+    mongo_eval("db.dropUser(#{@resource[:username].to_json})")
   end
 
   def exists?
@@ -119,10 +111,6 @@ Puppet::Type.type(:mongodb_user).provide(:mongodb, parent: Puppet::Provider::Mon
         pwd: @resource[:password],
         digestPassword: true
       }
-
-      if mongo_4? || mongo_5?
-        command[:mechanisms] = @resource[:auth_mechanism] == :scram_sha_256 ? ['SCRAM-SHA-256'] : ['SCRAM-SHA-1']
-      end
 
       mongo_eval("db.runCommand(#{command.to_json})", @resource[:database])
     end

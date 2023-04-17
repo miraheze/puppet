@@ -538,30 +538,6 @@ Default: False
 Ssl authorization mode. Valid options are: requireSSL, preferSSL, allowSSL.
 Default: requireSSL
 
-##### `tls`
-Set to true to enable tls. Default: <>
-*Important*: You need to have tls_key set as well, and the file needs to
-pre-exist on node. If you wish to use certificate validation, tls_ca must also
-be set.
-
-##### `tls_key`
-Default: <>
-
-##### `tls_ca`
-Default: <>
-
-##### `tls_conn_without_cert`
-Set to true to disable mandatory TLS client authentication
-Default: False
-
-##### `tls_invalid_hostnames`
-Set to true to disable fqdn TLS cert check
-Default: False
-
-##### `tls_mode`
-Tls authorization mode. Valid options are: requireTLS, preferTLS, allowTLS.
-Default: requireTLS
-
 ##### `service_manage`
 Whether or not the MongoDB service resource should be part of the catalog.
 Default: true
@@ -584,16 +560,6 @@ Administrator user name
 
 ##### `admin_password`
 Administrator user password
-
-##### `admin_auth_mechanism`
-Administrator authentication mechanism.
-scram_sha_256 password synchronization verification is not supported.
-Default: 'scram_sha_1'
-
-##### `admin_update_password`
-Update password.
-Used with SCRAM-SHA-256 because password verification is not supported.
-Default: false
 
 ##### `admin_roles`
 Administrator user roles
@@ -681,17 +647,6 @@ For more information please refer to [MongoDB Authentication Process](http://doc
 
 ##### `password`
 Plain-text user password (will be hashed)
-
-##### `auth_mechanism`
-Authentication mechanism.
-Can be either 'scram_sha_1' or 'scram_sha_256'.
-scram_sha_256 password synchronization verification is not supported.
-Default: 'scram_sha_1'
-
-##### `update_password`
-Update password.
-Used with SCRAM-SHA-256 because password verification is not supported.
-Default: false
 
 ##### `roles`
 Array with user roles as string.
