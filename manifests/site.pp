@@ -30,6 +30,11 @@ node 'graylog121.miraheze.org' {
     include role::graylog
 }
 
+node 'graylog131.miraheze.org' {
+    include base
+    include role::graylog
+}
+
 node 'jobchron121.miraheze.org' {
     include base
     include role::redis
