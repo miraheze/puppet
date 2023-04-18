@@ -6,7 +6,7 @@ role::opensearch::data: true
 role::opensearch::discovery_host:
   - os131.miraheze.org
   - os141.miraheze.org
-role::elasticsearch::master_hosts:
+role::opensearch::master_hosts:
   - os131
 
 base::syslog::rsyslog_udp_localhost: true
