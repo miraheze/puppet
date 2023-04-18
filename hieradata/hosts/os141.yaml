@@ -1,0 +1,11 @@
+puppetserver_hostname: 'puppet141.miraheze.org'
+http_proxy: 'http://bast.miraheze.org:8080'
+
+role::opensearch::data: true
+role::opensearch::discovery_host:
+  - os131.miraheze.org
+  - os141.miraheze.org
+role::opensearch::master_hosts:
+  - os131
+
+base::syslog::rsyslog_udp_localhost: true
