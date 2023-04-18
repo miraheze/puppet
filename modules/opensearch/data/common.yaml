@@ -4,7 +4,7 @@ opensearch::api_basic_auth_password: ~
 opensearch::api_basic_auth_username: ~
 opensearch::api_ca_file: ~
 opensearch::api_ca_path: ~
-opensearch::api_host: es131.miraheze.org
+opensearch::api_host: os131.miraheze.org
 opensearch::api_port: 9200
 opensearch::api_protocol: https
 opensearch::api_timeout: 10
