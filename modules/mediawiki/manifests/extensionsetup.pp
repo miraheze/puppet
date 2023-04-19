@@ -338,4 +338,16 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+    exec { 'webauthn_composer':
+        command     => $composer,
+        created     => "${mwpath}/extensions/WebAuthn/vendor",
+        cwd         => "${mwpath}/extensions/WebAuthn",
+        path        => "/usr/bin"
+        environment => [
+            "HOME=${mwpath}/extensions/WebAuthn",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 }
