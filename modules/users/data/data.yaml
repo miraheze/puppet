@@ -151,5 +151,5 @@ users:
     ensure: present
     uid: 1016
     name: alex
-    realname: Alex 
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICPdPDIUcsM/V6/uypn/mAlVB4gPnpF5lHrdLSqQowEr alex@blueselene.com]
+    realname: Alex
+    ssh_keys: [sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAILkdph0uGGdN7UxPSCZObGDJYP7eNL8rlEr3USV8QFjcAAAABHNzaDo= alex@blueselene.com FIDO2]
