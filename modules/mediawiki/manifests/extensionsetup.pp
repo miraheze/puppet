@@ -342,7 +342,7 @@ class mediawiki::extensionsetup {
         command     => $composer,
         created     => "${mwpath}/extensions/WebAuthn/vendor",
         cwd         => "${mwpath}/extensions/WebAuthn",
-        path        => "/usr/bin"
+        path        => "/usr/bin",
         environment => [
             "HOME=${mwpath}/extensions/WebAuthn",
             'HTTP_PROXY=http://bast.miraheze.org:8080'
