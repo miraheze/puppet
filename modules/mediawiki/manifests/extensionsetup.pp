@@ -340,7 +340,7 @@ class mediawiki::extensionsetup {
     }
     exec { 'webauthn_composer':
         command     => $composer,
-        created     => "${mwpath}/extensions/WebAuthn/vendor",
+        creates     => "${mwpath}/extensions/WebAuthn/vendor",
         cwd         => "${mwpath}/extensions/WebAuthn",
         path        => "/usr/bin",
         environment => [
