@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [alex, macfan]
+    members: [agent, alex, macfan]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
