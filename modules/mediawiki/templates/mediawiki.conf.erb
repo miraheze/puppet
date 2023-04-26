@@ -1,9 +1,9 @@
 server {
 	# We can only set backlog once per port (so this will be applied to the others below)
 	listen 80 deferred backlog=4096;
-	listen [::]:80 deferred ipv6only=on backlog=4096;
+	listen [::]:80 deferred backlog=4096;
 	listen 443 ssl deferred http2 backlog=4096;
-	listen [::]:443 deferred ssl http2 ipv6only=on backlog=4096;
+	listen [::]:443 deferred ssl http2 backlog=4096;
 
 	server_name miraheze.org;
 	root /srv/mediawiki/landing;
