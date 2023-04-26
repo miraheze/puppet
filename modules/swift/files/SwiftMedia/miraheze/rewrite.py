@@ -280,7 +280,7 @@ class _MirahezeRewriteContext(WSGIContext):
                 proj = match.group('proj')
                 repo = 'local'
                 zone = 'public'
-                obj = 'sitemaps/' + match.group('path') # sitemaps/sitemap-betawiki-NS_0-0.xml.gz
+                obj = 'sitemaps/' + match.group('path') # sitemaps/sitemap-metawikibeta-NS_0-0.xml.gz
 
         if match is None:
             match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>dumps)/(?P<path>.+)$', req.path)
