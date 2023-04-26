@@ -15,10 +15,4 @@ class base::upgrades {
         source  => 'puppet:///modules/base/apt/20auto-upgrades',
         require => Package['unattended-upgrades'],
     }
-
-    # http://askubuntu.com/a/556169
-    file { '/etc/cron.daily/apt':
-        ensure => 'link',
-        target => '/etc/cron.daily/apt.disabled',
-    }
 }
