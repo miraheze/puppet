@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [agent, alex, macfan]
+    members: [agent, macfan]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
@@ -39,7 +39,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [alex, macfan, agent]
+    members: [macfan, agent]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -148,8 +148,8 @@ users:
     realname: Agent
     ssh_keys: [ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC3BBLjDJfi9b8FHoPSLtervl088Qtyc+6iY2ffWaFxzsEEzibJH09biXvmhJ1tSV2ZRwmMOpaQPT36YdNJ1qTiUduDrvKYLH0x/WcUhbmUCsS5aJn2jGrbg7suKoKiwvLB7lRwwN4FnFyRDp/1kWHhusey1uc09EP3KAd29sPcrm9j0aocRCZEp6Kpi4smS6R416T/v+TLAJ1KQ6wAOvoHglVcFqfoihqUnqSiFt2DYR/aPF4IVulHalEgHATQy4p/x8NOML24WJF/RT7WxJ7P+sg9ZSjGqyQg33sYCJc4gtDLgtWRmfKzUc/461vjATJh9brnsQVW3bEQAeQrixRh5Dqk1/tFN/pFGDnqPZkkhVrhazs4c8v7zJmEeROMUYuCfMNFmzdLwwfS1wPZCvEW1fCr0KLHNZpewqjkbLeznGuklF2QFepY/V1Fj/479UNGxp6Bfg/vxZ35OLWtq7lbNMTGTJmapbthh/+J08cYmO1Uyl9EWFRP/OqF2LqCyiEDfzKfvzOg9GJ+sWj51dlzZsz//L/oOhNtjykoYMocq6jYOKFxJ3kWrCCS0X7xyqXZiS74+P68rVFHc1v9/O2/s67Zn4xALCxtKnpp1fi7TlU4SN/QWE8X58YPt/y2dogGmoXfzpLwC1IMwLVV36Ya+hgpzioIQwTGfPLFJDiwyw== agent@miraheze.org]
   alex:
-    ensure: present
+    ensure: absent
     uid: 1016
     name: alex
     realname: Alex
-    ssh_keys: [sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAILkdph0uGGdN7UxPSCZObGDJYP7eNL8rlEr3USV8QFjcAAAABHNzaDo= alex@blueselene.com FIDO2]
+    ssh_keys: []
