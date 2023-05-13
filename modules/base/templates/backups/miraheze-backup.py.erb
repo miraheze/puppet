@@ -70,7 +70,7 @@ def backup_sslkeys(dt: str):
 
 def backup_swift_account_container(dt: str):
     tar = tarfile.open('swift_account_container.tar.gz', 'w:gz')
-    tar.add('/srv/nodes', arcname='swift_account_container')
+    tar.add('/srv/node', arcname='swift_account_container')
     tar.close()
 
     pca_connection().put('swift_account_container.tar.gz', f'swift_account_container/{dt}.tar.gz', False)
