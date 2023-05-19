@@ -39,6 +39,14 @@ class mediawiki::jobqueue::runner {
             hour    => '12',
         }
 
+        cron { 'update sfs database':
+            ensure  => present,
+            command => "/usr/bin/php /srv/mediawiki/w/extensions/StopForumSpam/maintenance/updateDenyList.php --wiki metawiki >> /var/log/mediawiki/cron/updatesfsdenylist.log",
+            user    => 'www-data',
+            minute  => '0',
+            hour    => '0',
+        }
+
         cron { 'update rottenlinks on all wikis':
             ensure   => present,
             command  => '/usr/local/bin/fileLockScript.sh /tmp/rotten_links_file_lock "/usr/bin/nice -n 15 /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php"',
