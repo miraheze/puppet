@@ -22,7 +22,7 @@ mediawiki::php::memory_limit: '256M'
 mediawiki::php::enable_request_profiling: true
 
 mediawiki::use_staging: true
-mediawiki::monitoring::host: 'meta.betaheze.org'
+mediawiki::monitoring::host: 'test.betaheze.org'
 mediawiki::branch: 'REL1_40'
 
 php::php_version: '7.4'
