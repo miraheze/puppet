@@ -39,7 +39,7 @@ class role::mediawiki::nutcracker (
         }
 
         systemd::unit { 'nutcracker':
-            content  => "[Service]\nCPUAccounting=yes\n",
+            content  => "[Service]\nCPUAccounting=yes\nRestart=always\n",
             override => true,
         }
 
