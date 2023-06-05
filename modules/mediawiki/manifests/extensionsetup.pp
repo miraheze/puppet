@@ -352,7 +352,7 @@ class mediawiki::extensionsetup {
     }
     exec { 'oojsplus_composer':
         command     => $composer,
-        creates     => "${mwpath}/extensions/OOJSPLus/vendor",
+        creates     => "${mwpath}/extensions/OOJSPlus/vendor",
         cwd         => "${mwpath}/extensions/OOJSPlus",
         path        => "/usr/bin",
         environment => [
