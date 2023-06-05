@@ -350,4 +350,16 @@ class mediawiki::extensionsetup {
         user        => 'www-data',
         require     => Git::Clone['MediaWiki core'],
     }
+    exec { 'oojsplus_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/OOJSPLus/vendor",
+        cwd         => "${mwpath}/extensions/OOJSPlus",
+        path        => "/usr/bin",
+        environment => [
+            "HOME=${mwpath}/extensions/OOJSPlus",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
 }
