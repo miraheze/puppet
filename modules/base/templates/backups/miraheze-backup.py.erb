@@ -188,7 +188,7 @@ def download(source: str, dt: str, database: str):
     elif source in ['mediawiki-xml']:
         download_pca(f'{source}/{database}/{dt}.xml.gz')
     elif source in ['grafana']:
-        download_pca(f'sql/{source}/{dt}.xml.gz')
+        download_pca(f'sql/{source}/{dt}.tar.gz')
     elif source in ['sql']:
         download_pca(f'{source}/{database}/{dt}.tar.gz')
 
