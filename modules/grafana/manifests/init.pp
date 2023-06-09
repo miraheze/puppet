@@ -29,7 +29,7 @@ class grafana (
         logoutput   => true,
     }
 
-    package { 'grafana':
+    package { ['grafana', 'sqlite3']:
         ensure  => present,
         require => Apt::Source['grafana_apt'],
     }
