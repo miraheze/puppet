@@ -15,7 +15,7 @@ from datetime import datetime
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for Miraheze backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
-parser.add_argument('type', choices=['private', 'sslkeys', 'phabricator', 'sql', 'mediawiki-xml', 'swift_account_container'], help='Type of backup to handle using the action')
+parser.add_argument('type', choices=['private', 'sslkeys', 'phabricator', 'sql', 'mediawiki-xml', 'swift_account_container', 'grafana'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
@@ -114,6 +114,18 @@ def backup_sql(dt: str, database: str):
         os.remove(f'{db}.tar.gz')
 
 
+def backup_grafana_db(dt: str):
+    os.system(f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"')
+    tar = tarfile.open('grafana.tar.gz', 'w:gz')
+    tar.add('/var/lib/grafana/grafana_backup.db', arcname='grafana_backup.db')
+    tar.close()
+    
+    pca_connection().put('grafana.tar.gz', f'sql/{dt}.tar.gz', False)
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{dt}.tar.gz', 4)
+
+    os.remove('grafana.tar.gz')
+
+
 def backup_mediawiki_xml(dt: str, database: str):
     if database is None:
         dbs = json.load(open('/srv/mediawiki/cache/databases.json'))['combi'].keys()
@@ -144,6 +156,8 @@ def backup(source: str, database: str):
         backup_phabricator(dt)
     elif source == 'sql':
         backup_sql(dt, database)
+    elif source == 'grafana':
+        backup_grafana_db(dt)
     elif source == 'mediawiki-xml':
         backup_mediawiki_xml(dt, database)
 
@@ -173,6 +187,8 @@ def download(source: str, dt: str, database: str):
         download_pca(f'{source}/{dt}.tar.gz')
     elif source in ['mediawiki-xml']:
         download_pca(f'{source}/{database}/{dt}.xml.gz')
+    elif source in ['grafana']:
+        download_pca(f'sql/{database}/{dt}.xml.gz')
     elif source in ['sql']:
         download_pca(f'{source}/{database}/{dt}.tar.gz')
 
@@ -195,6 +211,8 @@ def find_backups(source: str, database: str):
 def unfreeze_backup(source: str, dt: str, database: str):
     if source in ['private', 'sslkeys', 'phabricator']:
         file = f'{source}/{dt}.tar.gz'
+    elif source in ['grafana']:
+        file = f'sql/{database}/{dt}.tar.gz'
     elif source in ['sql', 'mediawiki-xml']:
         file = f'{source}/{database}/{dt}.tar.gz'
 
