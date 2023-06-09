@@ -11,7 +11,6 @@ class role::db (
     $wikiadmin_password = lookup('passwords::db::wikiadmin')
     $piwik_password = lookup('passwords::db::piwik')
     $phabricator_password = lookup('passwords::db::phabricator')
-    $grafana_password = lookup('passwords::db::grafana')
     $exporter_password = lookup('passwords::db::exporter')
     $icinga_password = lookup('passwords::db::icinga')
     $roundcubemail_password = lookup('passwords::roundcubemail')
@@ -32,11 +31,6 @@ class role::db (
         config          => 'mariadb/config/mw.cnf.erb',
         password        => lookup('passwords::db::root'),
         icinga_password => $icinga_password,
-    }
-
-    file { '/etc/mysql/miraheze/grafana-grants.sql':
-        ensure  => present,
-        content => template('mariadb/grants/grafana-grants.sql.erb'),
     }
 
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':

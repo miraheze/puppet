@@ -29,11 +29,8 @@ password = <%= @mail_password %>
 from_address = noreply@miraheze.org
 
 [database]
-url = mysql://grafana:<%= @grafana_password %>@<%= @grafana_db_host %>:3306/grafana
-type = mysql
-ssl_mode = true
-ca_cert_path = /etc/ssl/certs/Sectigo.crt
-server_cert_name = *.miraheze.org
+type = sqlite3
+path = grafana.db
 
 [security]
 cookie_secure = true
