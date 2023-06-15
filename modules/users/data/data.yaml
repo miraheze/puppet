@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [paladox, reception, void]
+    members: [paladox, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -93,11 +93,11 @@ users:
     realname: Corey Chambers
     ssh_keys: []
   reception:
-    ensure: present
+    ensure: absent
     uid: 1007
     name: reception
     realname: Reception
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCqiDxzUPZxtV5oSXMTzzM3rj3wOk6n0qhFjgkCiCCt eddsa-key-20220531]
+    ssh_keys: []
   imbophil:
     ensure: absent
     uid: 1008
