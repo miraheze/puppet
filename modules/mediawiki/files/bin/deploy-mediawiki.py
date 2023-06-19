@@ -33,7 +33,7 @@ beta: Environment = {
 prod: Environment = {
     'wikidbname': 'testwiki',  # don't use loginwiki anymore - we want this to be an experimental wiki
     'wikiurl': 'publictestwiki.com',
-    'servers': ['mw121', 'mw122', 'mw131', 'mw132', 'mw141', 'mw142', 'mwtask141'],
+    'servers': ['mw121', 'mw122', 'mw131', 'mw132', 'mw133', 'mw134', 'mw141', 'mw142', 'mwtask141'],
 }
 ENVIRONMENTS: EnvironmentList = {
     'beta': beta,
