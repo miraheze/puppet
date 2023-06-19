@@ -79,7 +79,7 @@ echo "Disallow: /*?*&search=" . "\r\n";
 echo "Disallow: /*?section=" . "\r\n";
 echo "Disallow: /*?*&section=" . "\r\n\n";
 
-# Throttle YandexBot
+# Throttle YandexBot TODO: Crawl-delay is not respected since 2018
 echo "# Throttle YandexBot" . "\r\n";
 echo "User-Agent: YandexBot" . "\r\n";
 echo "Crawl-Delay: 2.5" . "\r\n\n";
@@ -87,7 +87,7 @@ echo "Crawl-Delay: 2.5" . "\r\n\n";
 # Throttle BingBot
 echo "# Throttle BingBot" . "\r\n";
 echo "User-agent: bingbot" . "\r\n";
-echo "Crawl-delay: 1" . "\r\n\n";
+echo "Crawl-delay: 5" . "\r\n\n";
 
 # Block SemrushBot
 echo "# Block SemrushBot" . "\r\n";
@@ -112,6 +112,31 @@ echo "Disallow: /" . "\r\n\n";
 # Block PetalBot
 echo "# Block PetalBot" . "\r\n";
 echo "User-agent: PetalBot" . "\r\n";
+echo "Disallow: /" . "\r\n\n";
+
+# Block DotBot
+echo "# Block DotBot" . "\r\n";
+echo "User-agent: DotBot" . "\r\n";
+echo "Disallow: /" . "\r\n\n";
+
+# Block MegaIndex
+echo "# Block MegaIndex" . "\r\n";
+echo "User-agent: MegaIndex" . "\r\n";
+echo "Disallow: /" . "\r\n\n";
+
+# Block serpstatbot
+echo "# Block serpstatbot" . "\r\n";
+echo "User-agent: serpstatbot" . "\r\n";
+echo "Disallow: /" . "\r\n\n";
+
+# Block Barkrowler
+echo "# Block Barkrowler" . "\r\n";
+echo "User-agent: Barkrowler" . "\r\n";
+echo "Disallow: /" . "\r\n\n";
+
+# Block SeekportBot
+echo "# Block SeekportBot" . "\r\n";
+echo "User-agent: SeekportBot" . "\r\n";
 echo "Disallow: /" . "\r\n\n";
 
 # Dynamic sitemap url
