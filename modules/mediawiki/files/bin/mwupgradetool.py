@@ -4,7 +4,7 @@ import os
 import requests
 import sys
 canary = 'mwtask141'
-serverlist = 'mw121,mw122,mw131,mw132,mw133,mw134,mw141,mw142'
+serverlist = 'mw121,mw122,mw131,mw132,mw133,mw134,mw141,mw142,mw143'
 
 
 def check_up(server: str) -> bool:
