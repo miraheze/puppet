@@ -31,7 +31,7 @@ echo "Disallow: /wiki/Property%3A" . "\r\n";
 echo "Disallow: /wiki/property:" . "\r\n";
 echo "Disallow: /wiki/Especial:" . "\r\n";
 echo "Disallow: /wiki/Especial%3A" . "\r\n";
-echo "Disallow: /wiki/especial:" . "\r\n";
+echo "Disallow: /wiki/especial:" . "\r\n\n";
 
 # Throttle YandexBot TODO: Crawl-delay is not respected since 2018
 echo "# Throttle YandexBot" . "\r\n";
