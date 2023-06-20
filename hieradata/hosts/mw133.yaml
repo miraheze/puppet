@@ -9,7 +9,7 @@ mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
 
 role::mediawiki::use_strict_firewall: true
 
-mediawiki::php::fpm::fpm_min_child: 20
+mediawiki::php::fpm::fpm_min_child: 24
 mediawiki::php::fpm::fpm_workers_multiplier: 1.0
 mediawiki::php::fpm_config:
   post_max_size: '250M'
