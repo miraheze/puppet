@@ -46,7 +46,7 @@ icinga2::globals::constants:
   NodeName: 'mon141.miraheze.org'
   ZoneName: 'mon141.miraheze.org'
   TicketSalt: ''
-  MaxConcurrentChecks: 40
+  MaxConcurrentChecks: 80
 icinga2::globals::user: 'nagios'
 icinga2::globals::group: 'nagios'
 icinga2::globals::icinga2_bin: '/usr/sbin/icinga2'
