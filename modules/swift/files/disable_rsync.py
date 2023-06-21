@@ -4,7 +4,7 @@ import errno
 
 RESERVE = 10000 * 2 ** 20  # 10G
 
-DEVICES = '/srv/node1'
+DEVICES = '/srv/node'
 
 path_template = '/etc/rsync.d/disable_%s.conf'
 config_template = '''
