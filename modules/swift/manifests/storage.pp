@@ -23,11 +23,16 @@ class swift::storage (
         log_file => '/var/log/rsyncd.log',
     }
 
-    $swift_devices.each | $device | {
+    $swift_devices.each | $device, $full | {
+        if $full {
+            $max_conn = -1
+        } else {
+            $max_conn = 5 * 4
+        }
         rsync::server::module { "object_${device}":
             uid             => 'swift',
             gid             => 'swift',
-            max_connections => 5 * 4,
+            max_connections => $max_conn,
             path            => '/srv/node/',
             read_only       => 'no',
             lock_file       => "/var/lock/object_${device}.lock",
@@ -93,6 +98,7 @@ class swift::storage (
     }
 
     file { '/etc/cron.d/devicecheck':
+        ensure  => absent,
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
