@@ -85,6 +85,21 @@ class swift::storage (
         source => 'puppet:///modules/swift/swift-drive-audit.conf',
     }
 
+    file { '/usr/local/bin/disable_rsync.py':
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+        source => 'puppet:///modules/swift/disable_rsync.py',
+    }
+
+    file { '/etc/cron.d/devicecheck':
+        mode    => '0444',
+        owner   => 'root',
+        group   => 'root',
+        source => 'puppet:///modules/swift/devicecheck.cron',
+        require => File['/usr/local/bin/disable_rsync.py'],
+    }
+
     monitoring::services { 'Swift Object Service':
         check_command => 'tcp',
         vars          => {
