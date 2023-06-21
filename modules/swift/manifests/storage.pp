@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 class swift::storage (
-    Optional[Integer] $object_server_default_workers = lookup('swift::storage::object_server_default_workers', {'default_value' => undef})
+    Optional[Integer] $object_server_default_workers = lookup('swift::storage::object_server_default_workers', {'default_value' => undef}),
+    Array $swift_devices = lookup('swift::storage::devices')
 ) {
     ensure_packages(['swift-object'])
 
@@ -22,13 +23,15 @@ class swift::storage (
         log_file => '/var/log/rsyncd.log',
     }
 
-    rsync::server::module { 'object':
-        uid             => 'swift',
-        gid             => 'swift',
-        max_connections => 5 * 4,
-        path            => '/srv/node/',
-        read_only       => 'no',
-        lock_file       => '/var/lock/object.lock',
+    $swift_devices.each | $device | {
+        rsync::server::module { "object_${device}":
+            uid             => 'swift',
+            gid             => 'swift',
+            max_connections => 5 * 4,
+            path            => '/srv/node/',
+            read_only       => 'no',
+            lock_file       => "/var/lock/object_${device}.lock",
+        }
     }
 
     # set up swift specific configs
@@ -80,6 +83,21 @@ class swift::storage (
         group  => 'root',
         mode   => '0440',
         source => 'puppet:///modules/swift/swift-drive-audit.conf',
+    }
+
+    file { '/usr/local/bin/disable_rsync.py':
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+        source => 'puppet:///modules/swift/disable_rsync.py',
+    }
+
+    file { '/etc/cron.d/devicecheck':
+        mode    => '0444',
+        owner   => 'root',
+        group   => 'root',
+        source => 'puppet:///modules/swift/devicecheck.cron',
+        require => File['/usr/local/bin/disable_rsync.py'],
     }
 
     monitoring::services { 'Swift Object Service':

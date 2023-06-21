@@ -91,3 +91,10 @@ rsync::server::address: '::'
 swift::storage::object_server_default_workers: 100
 
 role::swift::stats_reporter_host: swiftproxy111.miraheze.org
+
+swift::storage::devices:
+  - sdd
+  - sde
+  - sdf
+  - sda31
+  - sda32
