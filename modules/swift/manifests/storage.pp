@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 class swift::storage (
     Optional[Integer] $object_server_default_workers = lookup('swift::storage::object_server_default_workers', {'default_value' => undef}),
-    Array $swift_devices = lookup('swift::storage::devices')
+    Hash $swift_devices = lookup('swift::storage::devices')
 ) {
     ensure_packages(['swift-object'])
 
