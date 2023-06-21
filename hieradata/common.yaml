@@ -93,8 +93,8 @@ swift::storage::object_server_default_workers: 100
 role::swift::stats_reporter_host: swiftproxy111.miraheze.org
 
 swift::storage::devices:
-  - sdd
-  - sde
-  - sdf
-  - sda31
-  - sda32
+  sdd: true
+  sde: true
+  sdf: true
+  sda31: true
+  sda32: false
