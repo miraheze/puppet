@@ -21,6 +21,7 @@ class swift::storage (
 
     class { 'rsync::server':
         log_file => '/var/log/rsyncd.log',
+        ignore   => [ 'frag-objects_disable_*' ],
     }
 
     $swift_devices.each | $device | {

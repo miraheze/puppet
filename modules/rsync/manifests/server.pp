@@ -8,6 +8,7 @@
 # @param wrap_with_stunnel if true rsync will be wrapped in an ssltunnle
 # @param ensure_service the ensure state of the service
 # @param log_file path to the log file to use
+# @param ignore ignore purging certain files for rsync_fragments
 
 class rsync::server(
     Variant[
@@ -21,6 +22,7 @@ class rsync::server(
     Boolean                    $wrap_with_stunnel = false,
     Stdlib::Ensure::Service    $ensure_service    = 'running',
     Optional[Stdlib::Unixpath] $log_file          = undef,
+    Optional[Array]            $ignore            = undef,
 ) {
     ensure_packages(['rsync'])
 
@@ -77,6 +79,7 @@ class rsync::server(
         ensure  => directory,
         recurse => true,
         purge   => true,
+        ignore  => $ignore,
     }
 
     file { "${rsync_fragments}/header":

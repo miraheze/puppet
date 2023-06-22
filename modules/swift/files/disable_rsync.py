@@ -9,7 +9,7 @@ RESERVE = 1
 
 DEVICES = '/srv/node'
 
-path_template = '/etc/rsync.d/object_disable_%s.conf'
+path_template = '/etc/rsync.d/frag-objects_disable_%s.conf'
 config_template = '''
 [object_%s]
 max connections = -1
