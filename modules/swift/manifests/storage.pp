@@ -19,16 +19,9 @@ class swift::storage (
         restart  => true,
     }
 
-    file { '/etc/rsync.disable.d':
-        ensure  => directory,
-    }
-
     class { 'rsync::server':
         log_file => '/var/log/rsyncd.log',
-        rsyncd_conf => {
-            '&include' => '/etc/rsync.disable.d',
-        }
-        require => File['/etc/rsync.disable.d'],
+        ignore   => [ 'frag-objects_disable_*' ],
     }
 
     $swift_devices.each | $device | {
