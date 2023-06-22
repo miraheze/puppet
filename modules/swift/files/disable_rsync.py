@@ -1,8 +1,11 @@
 #!/usr/bin/env python
-import os
-import errno
 
-RESERVE = 10000 * 2 ** 20  # 10G
+import errno
+import os
+import shutil
+
+# Percentage
+RESERVE = 1
 
 DEVICES = '/srv/node'
 
@@ -28,9 +31,8 @@ def enable_rsync(device):
 
 for device in os.listdir(DEVICES):
     path = os.path.join(DEVICES, device)
-    st = os.statvfs(path)
-    free = st.f_bavail * st.f_frsize
-    if free < RESERVE:
+    total, _, free = shutil.disk_usage(path)
+    if ((free/total) * 100) < RESERVE:
         disable_rsync(device)
     else:
         enable_rsync(device)
