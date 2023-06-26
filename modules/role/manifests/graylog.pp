@@ -22,10 +22,10 @@ class role::graylog {
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
         proxy   => $http_proxy,
-        version => '5.0',
+        version => '5.1',
     }
     -> class { 'graylog::server':
-        package_version => '5.0.6-1',
+        package_version => '5.1.2-1',
         config          => {
             'password_secret'     => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'  => lookup('passwords::graylog::root_password_sha2'),
