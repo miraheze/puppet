@@ -6,6 +6,8 @@ class mediawiki::jobqueue::shared {
         ensure    => latest,
         directory => '/srv/jobrunner',
         origin    => 'https://github.com/miraheze/jobrunner-service',
+        owner     => 'www-data',
+        group     => 'www-data',
     }
 
     exec { 'jobrunner_composer':
