@@ -8,8 +8,6 @@ class mediawiki::jobqueue::shared {
         origin    => 'https://github.com/miraheze/jobrunner-service',
     }
 
-    ensure_packages('composer')
-
     exec { 'jobrunner_composer':
         command     => 'composer install --no-dev',
         creates     => '/srv/jobrunner/vendor',
