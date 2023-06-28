@@ -191,6 +191,22 @@ class matomo (
         user                      => 'www-data',
     }
 
+    ['last2', 'january'].each | $key | {
+        $optimize_command = "/usr/bin/php /srv/matomo/console database:optimize-archive-tables ${key}"
+        systemd::timer::job { "matomo-optimize-${key}":
+            description               => "Runs the Matomo's Optimize ${key} process.",
+            command                   => "/bin/bash -c '${optimize_command}'",
+            interval                  => {
+                'start'    => 'OnCalendar',
+                'interval' => 'monthly',
+            },
+            logfile_basedir           => '/var/log/matomo',
+            logfile_name              => "matomo-optimize-${key}.log",
+            syslog_identifier         => "matomo-optimize-${key}",
+            user                      => 'www-data',
+        }
+    }
+
     file { '/usr/local/bin/fileLockScript.sh':
         ensure => absent,
         mode   => '0755',
@@ -222,7 +238,7 @@ class matomo (
     }
     
     cron { 'optimize_matomo_tables':
-        ensure  => present,
+        ensure  => absent,
         command => '/usr/local/bin/optimizeMatomoTables.sh',
         user    => 'www-data',
         special => 'monthly',
