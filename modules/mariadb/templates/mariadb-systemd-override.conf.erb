@@ -2,3 +2,5 @@
 [Service]
 TimeoutStartSec=0
 Restart=always
+# Default is 32768 in mariadb systemd service
+LimitNOFILE=200000
