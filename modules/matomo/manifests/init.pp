@@ -165,6 +165,48 @@ class matomo (
         require => Git::Clone['matomo'],
     }
 
+    file { '/var/log/matomo':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0755',
+        require => Git::Clone['matomo'],
+    }
+
+    # Install a systemd timer to run the Archive task periodically.
+    # Running it once a day to avoid performance penalties on high trafficated websites
+    # (https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/#important-tips-for-medium-to-high-traffic-websites)
+    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --url=\"https://matomo.miraheze.org/\""
+
+    systemd::timer::job { 'matomo-archiver':
+        description               => "Runs the Matomo's archive process.",
+        command                   => "/bin/bash -c '${archiver_command}'",
+        interval                  => {
+            'start'    => 'OnCalendar',
+            'interval' => '*-*-* 00/8:00:00',
+        },
+        logfile_basedir           => '/var/log/matomo',
+        logfile_name              => 'matomo-archive.log',
+        syslog_identifier         => 'matomo-archiver',
+        user                      => 'www-data',
+    }
+
+    ['last2', 'january'].each | $key | {
+        $optimize_command = "/usr/bin/php /srv/matomo/console database:optimize-archive-tables ${key}"
+        systemd::timer::job { "matomo-optimize-${key}":
+            description               => "Runs the Matomo's Optimize ${key} process.",
+            command                   => "/bin/bash -c '${optimize_command}'",
+            interval                  => {
+                'start'    => 'OnCalendar',
+                'interval' => 'monthly',
+            },
+            logfile_basedir           => '/var/log/matomo',
+            logfile_name              => "matomo-optimize-${key}.log",
+            syslog_identifier         => "matomo-optimize-${key}",
+            user                      => 'www-data',
+        }
+    }
+
     file { '/usr/local/bin/fileLockScript.sh':
         ensure => absent,
         mode   => '0755',
@@ -173,7 +215,7 @@ class matomo (
     }
 
     file { '/usr/local/bin/runMatomoArchive.sh':
-        ensure => present,
+        ensure => absent,
         mode   => '0755',
         source => 'puppet:///modules/matomo/runMatomoArchive.sh',
         owner  => 'www-data',
@@ -189,14 +231,14 @@ class matomo (
     }
 
     cron { 'archive_matomo':
-        ensure  => present,
+        ensure  => absent,
         command => '/usr/local/bin/runMatomoArchive.sh',
         user    => 'www-data',
         special => 'daily',
     }
     
     cron { 'optimize_matomo_tables':
-        ensure  => present,
+        ensure  => absent,
         command => '/usr/local/bin/optimizeMatomoTables.sh',
         user    => 'www-data',
         special => 'monthly',
