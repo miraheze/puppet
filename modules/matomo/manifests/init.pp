@@ -157,6 +157,7 @@ class matomo (
     $password = lookup('passwords::db::piwik')
     $noreply_password = lookup('passwords::mail::noreply')
 
+    $cache_proxies = query_facts("domain='${domain}' and Class['Role::Varnish']", ['ipaddress', 'ipaddress6'])
     file { '/srv/matomo/config/config.ini.php':
         ensure  => present,
         content => template('matomo/config.ini.php.erb'),
