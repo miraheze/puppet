@@ -8,7 +8,7 @@ jobrunner: true
 mediawiki::jobqueue::runner::beta: true
 mediawiki::jobqueue::runner::cron: true
 mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:406]:6379'
-mediawiki::jobqueue::wiki: 'metawikibeta'
+mediawiki::jobqueue::wiki: 'loginwikibeta'
 
 role::mediawiki::use_strict_firewall: true
 vpncloud::server_ip: 10.0.1.7
