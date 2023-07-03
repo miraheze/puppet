@@ -4,8 +4,18 @@
 class mediawiki::jobqueue::runner {
     include mediawiki::jobqueue::shared
     $wiki = lookup('mediawiki::jobqueue::wiki')
+    $wiki = lookup('mediawiki::jobqueue::runner::beta')
     ensure_packages('python3-xmltodict')
 
+    $beta = lookup('mediawiki::jobqueue::runner::beta')
+    $database = $beta ? {
+      true    => 'databases',
+      default => 'beta',
+    }
+    $sf_wiki = $beta ? {
+        true => 'metawikibeta',
+        default => 'metawiki',
+    }
 
     systemd::service { 'jobrunner':
         ensure    => present,
@@ -17,7 +27,7 @@ class mediawiki::jobqueue::runner {
     if lookup('mediawiki::jobqueue::runner::cron', {'default_value' => false}) {
         cron { 'purge_checkuser':
             ensure  => present,
-            command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/CheckUser/maintenance/purgeOldData.php >> /var/log/mediawiki/cron/purge_checkuser.log',
+            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/extensions/CheckUser/maintenance/purgeOldData.php >> /var/log/mediawiki/cron/purge_checkuser.log",
             user    => 'www-data',
             minute  => '5',
             hour    => '6',
@@ -25,7 +35,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'purge_abusefilter':
             ensure  => present,
-            command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/AbuseFilter/maintenance/PurgeOldLogIPData.php >> /var/log/mediawiki/cron/purge_abusefilter.log',
+            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/extensions/AbuseFilter/maintenance/PurgeOldLogIPData.php >> /var/log/mediawiki/cron/purge_abusefilter.log",
             user    => 'www-data',
             minute  => '5',
             hour    => '18',
@@ -41,7 +51,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'update sfs database':
             ensure  => present,
-            command => "/usr/bin/php /srv/mediawiki/w/extensions/StopForumSpam/maintenance/updateDenyList.php --wiki metawiki >> /var/log/mediawiki/cron/updatesfsdenylist.log",
+            command => "/usr/bin/php /srv/mediawiki/w/extensions/StopForumSpam/maintenance/updateDenyList.php --wiki ${sf_wiki} >> /var/log/mediawiki/cron/updatesfsdenylist.log",
             user    => 'www-data',
             minute  => '0',
             hour    => '0',
@@ -49,7 +59,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'update rottenlinks on all wikis':
             ensure   => present,
-            command  => '/usr/local/bin/fileLockScript.sh /tmp/rotten_links_file_lock "/usr/bin/nice -n 15 /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php"',
+            command  => \"/usr/local/bin/fileLockScript.sh /tmp/rotten_links_file_lock "/usr/bin/nice -n 15 /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php"\",
             user     => 'www-data',
             minute   => '0',
             hour     => '0',
@@ -59,7 +69,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'generate sitemaps for all wikis':
             ensure  => present,
-            command => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php',
+            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database} /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php",
             user    => 'www-data',
             minute  => '0',
             hour    => '0',
