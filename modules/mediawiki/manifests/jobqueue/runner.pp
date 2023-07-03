@@ -112,9 +112,19 @@ class mediawiki::jobqueue::runner {
             }
         }
 
+
+        if $wiki == 'loginwikibeta' {
+            cron { 'purge_parsercache':
+                ensure  => present,
+                command => '/usr/bin/php /srv/mediawiki/w/maintenance/purgeParserCache.php --age 864000 --msleep 200 --wiki loginwikibeta',
+                user    => 'www-data',
+                special => 'daily',
+            }
+        }
+
         cron { 'update_statistics':
             ensure   => present,
-            command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/maintenance/initSiteStats.php --update --active > /dev/null',
+            command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/maintenance/initSiteStats.php --update --active > /dev/null",
             user     => 'www-data',
             minute   => '0',
             hour     => '5',
@@ -123,7 +133,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'update_sites':
             ensure   => present,
-            command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/populateWikibaseSitesTable.php > /dev/null',
+            command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/populateWikibaseSitesTable.php > /dev/null",
             user     => 'www-data',
             minute   => '0',
             hour     => '5',
@@ -132,7 +142,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'clean_gu_cache':
             ensure   => present,
-            command  => '/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/w/extensions/GlobalUsage/maintenance/refreshGlobalimagelinks.php --pages=existing,nonexisting > /dev/null',
+            command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/extensions/GlobalUsage/maintenance/refreshGlobalimagelinks.php --pages=existing,nonexisting > /dev/null",
             user     => 'www-data',
             minute   => '0',
             hour     => '5',
