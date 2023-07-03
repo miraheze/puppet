@@ -69,7 +69,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'generate sitemaps for all wikis':
             ensure  => present,
-            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database} /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php",
+            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php",
             user    => 'www-data',
             minute  => '0',
             hour    => '0',
