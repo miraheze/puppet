@@ -12,6 +12,7 @@ mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
 mediawiki::use_shellbox: false
 mediawiki::jobqueue::wiki: 'loginwiki'
+mediawiki::jobqueue::runner::beta: false
 mediawiki::monitoring::host: 'login.miraheze.org'
 memcached_servers_1:
   - 2a10:6740::6:510:11211:1
