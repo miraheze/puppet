@@ -8,8 +8,8 @@ class mediawiki::jobqueue::runner {
 
     $beta = lookup('mediawiki::jobqueue::runner::beta')
     $database = $beta ? {
-      true    => 'databases',
-      default => 'beta',
+      true    => 'beta',
+      default => 'databases',
     }
     $sf_wiki = $beta ? {
         true => 'metawikibeta',
