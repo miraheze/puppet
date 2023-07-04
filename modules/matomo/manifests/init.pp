@@ -197,6 +197,7 @@ class matomo (
     {
         '1' => '*-*-* 00/8:00:00',
         '2' => '*-*-* 00/8:01:00',
+        '3' => '*-*-* 00/8:02:00',
     }.each | String $concurrent, String $interval | {
         systemd::timer::job { "matomo-archiver-${concurrent}":
             description               => "Runs the Matomo's archive process.",
