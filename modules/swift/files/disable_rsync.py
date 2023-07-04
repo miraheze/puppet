@@ -32,7 +32,7 @@ def enable_rsync(device):
 for device in os.listdir(DEVICES):
     path = os.path.join(DEVICES, device)
     total, _, free = shutil.disk_usage(path)
-    if ((free/total) * 100) < RESERVE:
+    if ((free/total) * 100 < RESERVE):
         disable_rsync(device)
     else:
         enable_rsync(device)
