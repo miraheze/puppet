@@ -8,7 +8,6 @@ import shutil
 RESERVE = 1
 
 DEVICES = '/srv/node'
-disable_%
 path_template = '/etc/rsync.disable//frag-disable_%s.conf'
 config_template = '''
 [object_%s]
