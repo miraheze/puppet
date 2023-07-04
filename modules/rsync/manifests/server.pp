@@ -22,7 +22,7 @@ class rsync::server(
     Boolean                    $wrap_with_stunnel = false,
     Stdlib::Ensure::Service    $ensure_service    = 'running',
     Optional[Stdlib::Unixpath] $log_file          = undef,
-    Optional[String]              $custom_command           = undef,
+    Optional[String]           $custom_command    = undef,
 ) {
     ensure_packages(['rsync'])
 
@@ -79,7 +79,6 @@ class rsync::server(
         ensure  => directory,
         recurse => true,
         purge   => true,
-        ignore  => $ignore,
     }
 
     file { "${rsync_fragments}/header":
