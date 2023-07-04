@@ -178,27 +178,14 @@ class matomo (
     # (https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/#important-tips-for-medium-to-high-traffic-websites)
     $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --url=\"https://matomo.miraheze.org/\""
 
-    systemd::timer::job { 'matomo-archiver':
-        ensure => absent,
-        description               => "Runs the Matomo's archive process.",
-        command                   => "/bin/bash -c '${archiver_command}'",
-        interval                  => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-* 00/8:00:00',
-        },
-        logfile_basedir           => '/var/log/matomo',
-        logfile_name              => 'matomo-archive.log',
-        syslog_identifier         => 'matomo-archiver',
-        user                      => 'www-data',
-    }
-
     # Create concurrent archivers
     # https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/
-    {
+    $concurrentHash = {
         '1' => '*-*-* 00/8:00:00',
         '2' => '*-*-* 00/8:01:00',
-        '3' => '*-*-* 00/8:02:00',
-    }.each | String $concurrent, String $interval | {
+        '3' => '*-*-* 00/8:02:00'
+    }
+    $concurrentHash.each | String $concurrent, String $interval | {
         systemd::timer::job { "matomo-archiver-${concurrent}":
             description               => "Runs the Matomo's archive process.",
             command                   => "/bin/bash -c '${archiver_command}'",
