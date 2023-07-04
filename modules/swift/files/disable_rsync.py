@@ -15,18 +15,22 @@ config_template = '''
 max connections = -1
 '''
 
+def applyConfig(device):
+    os.system("cat /etc/rsync.d/header /etc/rsync.d/frag-* > /etc/rsyncd.conf")
+    os.system("service rsync restart")
+
+
 def disable_rsync(device):
-    with open(path_template % device, 'w') as f:
-        f.write(config_template.lstrip() % device)
+    if not os.path.isfile(path_template % device):
+        with open(path_template % device, 'w') as f:
+            f.write(config_template.lstrip() % device)
+        if os.path.isfile(path_template % device):
+            applyConfig(device)
 
 
 def enable_rsync(device):
-    try:
+    if os.path.isfile(path_template % device):
         os.unlink(path_template % device)
-    except OSError as e:
-        # ignore file does not exist
-        if e.errno != errno.ENOENT:
-            raise
 
 
 for device in os.listdir(DEVICES):
