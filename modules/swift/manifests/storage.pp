@@ -25,6 +25,7 @@ class swift::storage (
 
     file { '/etc/rsync_footer':
         source => 'puppet:///modules/swift/rsync_footer',
+        notify => Exec['compile fragments']
     }
 
     $command = @("COMMAND"/L)
