@@ -203,7 +203,7 @@ class matomo (
             command                   => "/bin/bash -c '${archiver_command}'",
             interval                  => {
                 'start'    => 'OnCalendar',
-                'interval' => '*-*-* 00/8:00:00',
+                'interval' => $interval,
             },
             logfile_basedir           => '/var/log/matomo',
             logfile_name              => "matomo-archive-${concurrent}.log",
