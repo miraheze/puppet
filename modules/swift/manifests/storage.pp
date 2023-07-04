@@ -35,6 +35,10 @@ class swift::storage (
     class { 'rsync::server':
         log_file       => '/var/log/rsyncd.log',
         custom_command => $command,
+        require        => [
+            File['/etc/rsync.disable.d'],
+            File['/etc/rsync_footer'],
+        ],
     }
 
     $swift_devices.each | $device | {
