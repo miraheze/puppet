@@ -19,9 +19,27 @@ class swift::storage (
         restart  => true,
     }
 
+    file { '/etc/rsync.disable.d':
+        ensure  => directory,
+    }
+
+    file { '/etc/rsync_footer':
+        source => 'puppet:///modules/swift/rsync_footer',
+        notify => Exec['compile fragments']
+    }
+
+    $command = @("COMMAND"/L)
+    ls /etc/rsync.d/frag-* 1>/dev/null 2>/dev/null && \
+    if [ $? -eq 0 ]; then cat /etc/rsync.d/header /etc/rsync.d/frag-* /etc/rsync_footer > /etc/rsyncd.conf; \
+    else cat /etc/rsync.d/header > /etc/rsyncd.conf; fi; $(exit 0) \
+    | COMMAND
     class { 'rsync::server':
-        log_file => '/var/log/rsyncd.log',
-        ignore   => [ 'frag-objects_disable_*' ],
+        log_file       => '/var/log/rsyncd.log',
+        custom_command => $command,
+        require        => [
+            File['/etc/rsync.disable.d'],
+            File['/etc/rsync_footer'],
+        ],
     }
 
     $swift_devices.each | $device | {
