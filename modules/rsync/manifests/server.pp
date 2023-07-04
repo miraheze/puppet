@@ -8,7 +8,7 @@
 # @param wrap_with_stunnel if true rsync will be wrapped in an ssltunnle
 # @param ensure_service the ensure state of the service
 # @param log_file path to the log file to use
-# @param ignore ignore purging certain files for rsync_fragments
+# @param custom_command command that gets put to the exec
 
 class rsync::server(
     Variant[
