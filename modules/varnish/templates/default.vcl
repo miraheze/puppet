@@ -94,7 +94,7 @@ sub mobile_detection {
 sub rate_limit {
 	# Allow higher limits for static.miraheze.org, we can handle more of those requests
 	if (req.http.Host == "static.miraheze.org") {
-		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 500, 1s)) {
+		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
 		}
 	} else {
