@@ -59,6 +59,13 @@ acl purge {
 	"31.24.105.128/28";
 }
 
+acl miraheze_nets {
+	# IPv6
+	"2a10:6740::/64";
+	# IPv4
+	"31.24.105.128/28";
+}
+
 # Cookie handling logic
 sub evaluate_cookie {
 	# Replace all session/token values with a non-unique global value for caching purposes.
@@ -93,28 +100,33 @@ sub mobile_detection {
 # Rate limiting logic
 sub rate_limit {
 	# Allow higher limits for static.miraheze.org, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org") {
-		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
-			return (synth(429, "Varnish Rate Limit Exceeded"));
-		}
-	} else {
-		# Do not limit /w/load.php, /w/resources, /favicon.ico, etc
-		# T6283: remove rate limit for IABot (temporarily?)
-		if (
-			(req.url ~ "^/wiki" || req.url ~ "^/w/(api|index)\.php")
-			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
-		) {
-			if (req.url ~ "^/w/index\.php\?title=\S+\:MathShowImage&hash=[0-9a-z]+&mode=mathml") {
-				# The Math extension at Special:MathShowImage may cause lots of requests, which should not fail
-				if (vsthrottle.is_denied("math:" + req.http.X-Real-IP, 120, 10s)) {
-					return (synth(429, "Varnish Rate Limit Exceeded"));
-				}
-			} else {
-				# Fallback
-				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 20, 2s)) {
-					return (synth(429, "Varnish Rate Limit Exceeded"));
-				}
-			}
+	if (req.http.Host == "static.miraheze.org"&& vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
+		return (synth(429, "Varnish Rate Limit Exceeded"));
+	}
+
+	// Ratelimit miss/pass requests per IP:
+	//   * Excluded for now:
+	//       * all MF IPs
+	//       * T6283: remove rate limit for IABot (temporarily?)
+	//       * seemingly-authenticated requests (simple cookie check)
+	//   * MW rest.php and MW API, Wikidata: 1000/10s (100/s long term, with 1000 burst)
+	//   * All others: 1000/50s (20/s long term, with 1000 burst)
+	//       (current data leads us to believe sustaining 20/s should be
+	//       nearly impossible against standard MW outputs without
+	//       concurrency>1)
+	if (
+		req.http.Cookie !~ "([sS]ession|Token)=" &&
+		std.ip(req.http.X-Client-IP, "192.0.2.1") !~ miraheze_nets &&
+		&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
+	) {
+		if (req.url ~ "^/(w/api.php|w/rest.php|wiki/Special:EntityData)") {
+		    if (vsthrottle.is_denied("rest:" + req.http.X-Client-IP, 1000, 10s)) {
+			return (synth(429, "Too Many Requests"));
+		    }
+		} else {
+		    if (vsthrottle.is_denied("mwrtl:" + req.http.X-Client-IP, 1000, 50s)) {
+			return (synth(429, "Too Many Requests"));
+		    }
 		}
 	}
 }
