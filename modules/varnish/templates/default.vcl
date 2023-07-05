@@ -111,7 +111,7 @@ sub rate_limit {
 				}
 			} else {
 				# Fallback
-				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 12, 2s)) {
+				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 20, 2s)) {
 					return (synth(429, "Varnish Rate Limit Exceeded"));
 				}
 			}
