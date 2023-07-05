@@ -100,33 +100,32 @@ sub mobile_detection {
 # Rate limiting logic
 sub rate_limit {
 	# Allow higher limits for static.miraheze.org, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org"&& vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
-		return (synth(429, "Varnish Rate Limit Exceeded"));
-	}
-
-	// Ratelimit miss/pass requests per IP:
-	//   * Excluded for now:
-	//       * all MF IPs
-	//       * T6283: remove rate limit for IABot (temporarily?)
-	//       * seemingly-authenticated requests (simple cookie check)
-	//   * MW rest.php and MW API, Wikidata: 1000/10s (100/s long term, with 1000 burst)
-	//   * All others: 1000/50s (20/s long term, with 1000 burst)
-	//       (current data leads us to believe sustaining 20/s should be
-	//       nearly impossible against standard MW outputs without
-	//       concurrency>1)
-	if (
-		req.http.Cookie !~ "([sS]ession|Token)=" &&
-		std.ip(req.http.X-Client-IP, "192.0.2.1") !~ miraheze_nets &&
-		&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
-	) {
-		if (req.url ~ "^/(w/api.php|w/rest.php|wiki/Special:EntityData)") {
-		    if (vsthrottle.is_denied("rest:" + req.http.X-Client-IP, 1000, 10s)) {
-			return (synth(429, "Too Many Requests"));
-		    }
-		} else {
-		    if (vsthrottle.is_denied("mwrtl:" + req.http.X-Client-IP, 1000, 50s)) {
-			return (synth(429, "Too Many Requests"));
-		    }
+	if (req.http.Host == "static.miraheze.org") {
+		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
+			return (synth(429, "Varnish Rate Limit Exceeded"));
+		}
+	} else {
+		// Ratelimit miss/pass requests per IP:
+		//   * Excluded for now:
+		//       * all MF IPs
+		//       * T6283: remove rate limit for IABot (temporarily?)
+		//       * seemingly-authenticated requests (simple cookie check)
+		//   * MW rest.php and MW API, Wikidata: 1000/10s (100/s long term, with 1000 burst)
+		//   * All others (excludes static): 1000/50s (20/s long term, with 1000 burst)
+		if (
+			req.http.Cookie !~ "([sS]ession|Token)=" &&
+			std.ip(req.http.X-Client-IP, "192.0.2.1") !~ miraheze_nets &&
+			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
+		) {
+			if (req.url ~ "^/(w/api.php|w/rest.php|wiki/Special:EntityData)") {
+			    if (vsthrottle.is_denied("rest:" + req.http.X-Client-IP, 1000, 10s)) {
+				return (synth(429, "Too Many Requests"));
+			    }
+			} else {
+			    if (vsthrottle.is_denied("mwrtl:" + req.http.X-Client-IP, 1000, 50s)) {
+				return (synth(429, "Too Many Requests"));
+			    }
+			}
 		}
 	}
 }
