@@ -94,14 +94,6 @@ class role::db (
         ensure => directory,
     }
 
-    cron { 'DB_backups':
-        ensure  => absent,
-        command => "/usr/bin/mydumper -N -W -k --less-locking -m -v 3 -t 1 -c -x '^(?!((mysql|performance_schema|information_schema).+|[0-9a-z]+wiki.(objectcache|querycache|querycachetwo|recentchanges|searchindex)))' --trx-consistency-only -o '/srv/backups/dbs' -L '/srv/backups/recent.log'",
-        user    => 'root',
-        minute  => '0',
-        hour    => fqdn_rand(23, 'mydumper'),
-    }
-
     motd::role { 'role::db':
         description => 'general database server',
     }
