@@ -114,7 +114,7 @@ sub rate_limit {
 		//   * All others (excludes static): 1000/50s (20/s long term, with 1000 burst)
 		if (
 			req.http.Cookie !~ "([sS]ession|Token)=" &&
-			std.ip(req.http.X-Client-IP, "192.0.2.1") !~ miraheze_nets &&
+			std.ip(req.http.X-Real-IP, "192.0.2.1") !~ miraheze_nets &&
 			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
 			if (req.url ~ "^/(w/api.php|w/rest.php|wiki/Special:EntityData)") {
