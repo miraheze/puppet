@@ -2,3 +2,5 @@ http_proxy: 'http://bast.miraheze.org:8080'
 
 # must be set for replication to work
 mariadb::config::server_id: 2
+
+mariadb::config::innodb_buffer_pool_size: '8G'
