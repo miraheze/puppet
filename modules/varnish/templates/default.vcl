@@ -115,7 +115,7 @@ sub rate_limit {
 		if (
 			req.http.Cookie !~ "([sS]ession|Token)=" &&
 			std.ip(req.http.X-Real-IP, "192.0.2.1") !~ miraheze_nets &&
-			&& (req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
+			(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
 			if (req.url ~ "^/(w/api.php|w/rest.php|wiki/Special:EntityData)") {
 			    if (vsthrottle.is_denied("rest:" + req.http.X-Client-IP, 1000, 10s)) {
