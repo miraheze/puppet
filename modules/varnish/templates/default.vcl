@@ -118,11 +118,11 @@ sub rate_limit {
 			(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
 			if (req.url ~ "^/(w/api.php|w/rest.php|wiki/Special:EntityData)") {
-			    if (vsthrottle.is_denied("rest:" + req.http.X-Client-IP, 1000, 10s)) {
+			    if (vsthrottle.is_denied("rest:" + req.http.X-Real-IP, 1000, 10s)) {
 				return (synth(429, "Too Many Requests"));
 			    }
 			} else {
-			    if (vsthrottle.is_denied("mwrtl:" + req.http.X-Client-IP, 1000, 50s)) {
+			    if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 1000, 50s)) {
 				return (synth(429, "Too Many Requests"));
 			    }
 			}
