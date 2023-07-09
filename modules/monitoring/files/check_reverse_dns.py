@@ -96,7 +96,11 @@ def check_records(hostname):
     except resolver.NoAnswer:
         cname = None
 
-    if re.match("[A-Za-z]+.miraheze.org", cname):
+    if (
+        re.match("[A-Za-z]+.miraheze.org", cname) and
+        not re.match("cp[1-9][0-9]*.miraheze.org", cname) and
+        not re.match("(webmail|phabricator|grafana|icinga|matomo|static|donate|reports).miraheze.org", cname)
+       ):
         return 'CNAME'
     elif cname is None and cname_check_impossible:
         return 'CNAMEFLAT'
