@@ -10,6 +10,7 @@ class mediawiki::jobqueue::shared {
         ensure    => latest,
         directory => '/srv/jobrunner',
         origin    => 'https://github.com/miraheze/jobrunner-service',
+        branch    => 'miraheze'
         owner     => 'www-data',
         group     => 'www-data',
     }
