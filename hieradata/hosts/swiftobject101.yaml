@@ -1,0 +1,62 @@
+puppetserver_hostname: 'puppet141.miraheze.org'
+
+# Swift config
+
+swift_object_enable: true
+
+prometheus::exporter::statsd_exporter::mappings:
+  # Object-related services
+  - match: swift.*.object-auditor.errors
+    name: swift_object_auditor_errors_total
+  - match: swift.*.object-auditor.quarantines
+    name: swift_object_auditor_quarantines_total
+  - match: swift.*.object-auditor.timing
+    name: swift_object_auditor_seconds
+
+  - match: swift.*.object-replicator.partition.delete.timing
+    name: swift_object_replicator_partition_delete_seconds
+  - match: swift.*.object-replicator.partition.delete.count.*
+    name: swift_object_replicator_partition_delete_total
+    labels:
+       device: "$2"
+  - match: swift.*.object-replicator.partition.update.timing
+    name: swift_object_replicator_partition_update_seconds
+  - match: swift.*.object-replicator.partition.update.count.*
+    name: swift_object_replicator_partition_update_total
+    labels:
+       device: "$2"
+  - match: swift.*.object-replicator.suffix.hashes
+    name: swift_object_replicator_suffix_hashes_total
+  - match: swift.*.object-replicator.suffix.syncs
+    name: swift_object_replicator_suffix_syncs_total
+
+  - match: swift.*.object-server.quarantines
+    name: swift_object_server_quarantines_total
+  - match: swift.*.object-server.async_pendings
+    name: swift_object_server_async_pendings_total
+  # Generic per-method success/error
+  - match: swift.*.object-server.*.timing
+    name: swift_object_server_success_seconds
+    labels:
+        method: "$2"
+  - match: swift.*.object-server.*.errors.timing
+    name: swift_object_server_errors_seconds
+    labels:
+        method: "$2"
+  # PUT-specific per-device success timing
+  - match: swift.*.object-server.PUT.*.timing
+    name: swift_object_server_device_success_seconds
+    labels:
+        method: "PUT"
+        device: "$2"
+
+  - match: swift.*.object-updater.errors
+    name: swift_object_updater_errors_total
+  - match: swift.*.object-updater.failures
+    name: swift_object_updater_failures_total
+  - match: swift.*.object-updater.successes
+    name: swift_object_updater_successes_total
+  - match: swift.*.object-updater.timing
+    name: swift_object_updater_seconds
+  - match: swift.*.object-updater.unlinks
+    name: swift_object_updater_unlinks_total

@@ -113,7 +113,7 @@ node 'swiftac111.miraheze.org' {
     include role::swift
 }
 
-node /^swiftobject1[12][123]\.miraheze\.org$/ {
+node /^swiftobject1[012][123]\.miraheze\.org$/ {
     include base
     include role::swift
 }
