@@ -4,7 +4,7 @@
     "groups": {
         "basic": {
             // Number of runner processes in this group
-            "runners": 1,
+            "runners": 2,
             // Job types to include ("*" means "all")
             "include": [
                 "*"
@@ -18,7 +18,23 @@
                 "refreshLinksDynamic",
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized"
+            ],
+            "low-priority": [
+                "htmlCacheUpdate"
             ]
+        },
+        "html": {
+            // Number of runner processes in this group
+            "runners": 1,
+            "include": [
+                "htmlCacheUpdate",
+                "refreshLinks",
+                "refreshLinksDynamic"
+            ],
+            "low-priority": [
+                "refreshLinksDynamic",
+                "refreshLinks"
+            ],
         },
         "hi": {
             // Number of runner processes in this group
@@ -27,9 +43,7 @@
             "include": [
                 "DataDumpGenerateJob",
                 "RequestWikiAIJob",
-                "RecordLintJob",
-                "refreshLinks",
-                "refreshLinksDynamic"
+                "RecordLintJob"
             ]
         },
         "transcode": {
@@ -44,7 +58,9 @@
     "limits": {
         // How many times to let jobs be recycled before abandoning
         "attempts": {
-            "*": 3
+            "*": 3,
+            "LocalPageMoveJob": 6,
+            "renameUser": 6
         },
         // How long jobs can be claimed before being recycled
         "claimTTL": {
@@ -63,9 +79,7 @@
         // runJobs.php memory limits
         "memory": {
             "*": "300M",
-            "RequestWikiAIJob": "2000M",
-            "refreshLinks": "500M",
-            "refreshLinksDynamic": "500M"
+            "RequestWikiAIJob": "2000M"
         }
     },
 
