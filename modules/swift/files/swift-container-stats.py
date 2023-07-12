@@ -30,6 +30,8 @@ CONTAINER_SETS = {
         re.compile(r'-deleted(\.[a-z0-9][a-z0-9])?$'):    'deleted',
         re.compile(r'-transcoded(\.[a-z0-9][a-z0-9])?$'): 'transcoded',
         re.compile(r'-render(\.[a-z0-9][a-z0-9])?$'):     'render',
+        re.compile(r'-avatars(\.[a-z0-9][a-z0-9])?$'):     'avatars',
+        re.compile(r'-awards(\.[a-z0-9][a-z0-9])?$'):     'awards',
         re.compile(r'-dumps-backup(_segments)?$'):     'dumps',
     },
 }
