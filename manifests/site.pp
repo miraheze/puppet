@@ -120,6 +120,7 @@ node /^swiftobject1[012][123]\.miraheze\.org$/ {
 
 node 'test131.miraheze.org' {
     include base
+    include role::memcached
     include role::mediawiki
     include role::redis
     include mediawiki::jobqueue::chron
