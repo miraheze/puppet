@@ -40,7 +40,6 @@ nginx::use_graylog: true
 
 puppetserver_hostname: 'puppet141.miraheze.org'
 
-
 # memcached
 
 role::memcached::threads: ~
