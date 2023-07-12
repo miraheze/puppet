@@ -90,7 +90,7 @@ class mediawiki::jobqueue::runner {
 
             cron { 'purge_parsercache':
                 ensure  => present,
-                command => '/usr/bin/php /srv/mediawiki/w/maintenance/purgeParserCache.php --age 864000 --msleep 200 --wiki loginwiki',
+                command => '/usr/bin/php /srv/mediawiki/w/maintenance/purgeParserCache.php --wiki loginwiki --tag pc1 --age 864000 --msleep 200',
                 user    => 'www-data',
                 special => 'daily',
             }
@@ -116,7 +116,7 @@ class mediawiki::jobqueue::runner {
         if $wiki == 'loginwikibeta' {
             cron { 'purge_parsercache':
                 ensure  => present,
-                command => '/usr/bin/php /srv/mediawiki/w/maintenance/purgeParserCache.php --age 864000 --msleep 200 --wiki loginwikibeta',
+                command => '/usr/bin/php /srv/mediawiki/w/maintenance/purgeParserCache.php --wiki loginwikibeta --tag pc1 --age 864000 --msleep 200',
                 user    => 'www-data',
                 special => 'daily',
             }
