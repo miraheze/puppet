@@ -47,12 +47,18 @@
 <policymap>
   <!-- <policy domain="system" name="precision" value="6" /> -->
   <!-- <policy domain="resource" name="temporary-path" value="/tmp" /> -->
-  <!-- <policy domain="resource" name="memory" value="2GiB" /> -->
+  <%- if @memory -%>
+  <policy domain="resource" name="memory" value="<%= @memory %>" />
+  <%- end -%>
   <!-- <policy domain="resource" name="map" value="4GiB" /> -->
   <!-- <policy domain="resource" name="area" value="1GB" /> -->
-  <!-- <policy domain="resource" name="disk" value="16EB" /> -->
+  <%- if @disk -%>
+  <policy domain="resource" name="disk" value="<%= @disk %>" />
+  <%- end -%>
   <!-- <policy domain="resource" name="file" value="768" /> -->
-  <!-- <policy domain="resource" name="thread" value="4" /> -->
+  <%- if @thread -%>
+  <!-- <policy domain="resource" name="thread" value="<%= @thread %>" /> -->
+  <%- end -%>
   <!-- <policy domain="resource" name="throttle" value="0" /> -->
   <!-- <policy domain="resource" name="time" value="3600" /> -->
   <policy domain="coder" rights="none" pattern="EPHEMERAL" />
