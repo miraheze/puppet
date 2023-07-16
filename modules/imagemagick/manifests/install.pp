@@ -9,7 +9,7 @@ class imagemagick::install {
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => template('imagemagick/policy.xml'),
+        content => template('imagemagick/policy.xml.erb'),
         require => Package['imagemagick', 'webp'],
     }
 }
