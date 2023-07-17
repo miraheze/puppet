@@ -47,6 +47,7 @@ local jobs = {
 	'MoveTranslatableBundleJob',
 	'NamespaceMigrationJob',
 	'PageProperties',
+	'parsoidCachePrewarm',
 	'PublishStashedFile',
 	'PurgeEntityData',
 	'RecordLintJob',
