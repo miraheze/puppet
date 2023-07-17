@@ -37,7 +37,7 @@
             "low-priority": [
                 "refreshLinksDynamic",
                 "refreshLinks"
-            ],
+            ]
         },
         "hi": {
             // Number of runner processes in this group
@@ -90,6 +90,9 @@
         // runJobs.php memory limits
         "memory": {
             "*": "300M",
+            "refreshLinks": "700M",
+            "refreshLinksDynamic": "700M",
+            "refreshLinksPrioritized": "700M",
             "RequestWikiAIJob": "2000M"
         }
     },

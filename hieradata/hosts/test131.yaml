@@ -39,3 +39,13 @@ nginx::logrotate_number: 2
 nginx::use_graylog: true
 
 puppetserver_hostname: 'puppet141.miraheze.org'
+
+# memcached
+role::memcached::threads: ~
+role::memcached::version: 'present'
+role::memcached::growth_factor: 1.25
+role::memcached::min_slab_size: 48
+role::memcached::max_seq_reqs: 200
+role::memcached::size: 512
+role::memcached::extended_options: []
+role::memcached::port: 11211

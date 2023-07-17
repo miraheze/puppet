@@ -1,4 +1,4 @@
-role::memcached::threads: ~
+role::memcached::threads: 2
 role::memcached::version: 'present'
 role::memcached::growth_factor: 1.25
 role::memcached::min_slab_size: 48
