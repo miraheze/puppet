@@ -11,11 +11,14 @@
             ],
             // Job types to exempt (useful when combined with "*")
             "exclude": [
+                "AssembleUploadChunks",
                 "DataDumpGenerateJob",
+                "PublishStashedFile",
                 "RecordLintJob",
                 "RequestWikiAIJob",
                 "refreshLinks",
                 "refreshLinksDynamic",
+                "uploadFromUrl",
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized"
             ],
@@ -51,6 +54,14 @@
             "include": [
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized"
+            ]
+        },
+        "upload": {
+            "runners": 1,
+            "include": [
+                "AssembleUploadChunks",
+                "PublishStashedFile",
+                "uploadFromUrl"
             ]
         }
     },
