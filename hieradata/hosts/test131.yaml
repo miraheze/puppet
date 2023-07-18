@@ -5,6 +5,7 @@ users::groups:
 contactgroups: ['sre', 'mediawiki']
 
 jobrunner: true
+jobrunner::intensive: true
 mediawiki::jobqueue::runner::beta: true
 mediawiki::jobqueue::runner::cron: true
 mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:406]:6379'
