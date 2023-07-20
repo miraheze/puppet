@@ -12,6 +12,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nutcracker *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
