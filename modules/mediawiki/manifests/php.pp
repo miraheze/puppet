@@ -89,7 +89,7 @@ class mediawiki::php (
     # Extensions that are installed with package-name php-$extension and, based
     # on the php version selected above, will install the proper extension
     # version based on apt priorities.
-    # php-luasandbox and  php-wikidiff2 are special cases as the package is *not*
+    # php-wikidiff2 are special cases as the package is *not*
     # compatible with all supported PHP versions.
     # Technically, it would be needed to inject ensure => latest in the packages,
     # but we prefer to handle the transitions with other tools than puppet.
@@ -97,11 +97,22 @@ class mediawiki::php (
         'apcu',
         'msgpack',
         'redis',
-        'luasandbox',
         'wikidiff2',
         'yaml',
     ]:
         ensure => present
+    }
+
+    file { '/usr/lib/php/20190902/luasandbox.so':
+        ensure => present,
+        mode   => '0755',
+        source => 'puppet:///modules/mediawiki/php/luasandbox.so',
+        before => Php::Extension['luasandbox'],
+    }
+
+    php::extension{ 'luasandbox':
+        ensure       => present,
+        package_name => '',
     }
 
     # Extensions that require configuration.
