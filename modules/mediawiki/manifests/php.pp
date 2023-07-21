@@ -103,11 +103,14 @@ class mediawiki::php (
         ensure => present
     }
 
+    ensure_package('liblua5.1-0')
+
     file { '/usr/lib/php/20190902/luasandbox.so':
-        ensure => present,
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/php/luasandbox.so',
-        before => Php::Extension['luasandbox'],
+        ensure  => present,
+        mode    => '0755',
+        source  => 'puppet:///modules/mediawiki/php/luasandbox.so',
+        before  => Php::Extension['luasandbox'],
+        require => Package['liblua5.1-0'],
     }
 
     php::extension{ 'luasandbox':
