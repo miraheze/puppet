@@ -1,4 +1,4 @@
-# vmflib
+# vmlib
 
 Custom Puppet functions and types that help you get things done.
 
