@@ -197,7 +197,7 @@ class phabricator (
 
     file { '/srv/phab/phabricator/conf/local/local.json':
         ensure  => present,
-        content => template('phabricator/local.json.erb'),
+        content => to_json_pretty($phab_settings),
         notify  => Service['phd'],
         require => Git::Clone['phabricator'],
     }
