@@ -2,22 +2,7 @@
 #
 # Sets up a Puppet DB server.
 #
-# = Parameters
-#
-# [*puppetdb_hostname*]
-#   The hostname for puppetdb server.
-#
-# [*puppetdb_enable*]
-#   A boolean on whether to enable puppetdb for the centralised puppetserver.
-#
-# [*puppet_major_version*]
-#   A integer for the version of puppetserver you want installed.
-#
-class role::puppetdb (
-    String  $puppetdb_hostname      = lookup('puppetdb_hostname', {'default_value' => 'puppet141.miraheze.org'}),
-    Boolean $puppetdb_enable        = lookup('puppetdb_enable', {'default_value' => false}),
-    Integer $puppet_major_version   = lookup('puppet_major_version', {'default_value' => 7})
-) {
+class role::puppetdb {
 
     class { 'puppetdb': }
 
