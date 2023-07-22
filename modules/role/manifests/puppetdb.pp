@@ -19,21 +19,18 @@ class role::puppetdb (
     Integer $puppet_major_version   = lookup('puppet_major_version', {'default_value' => 7})
 ) {
 
-    $puppetserver_java_opts = "${puppetserver_java_options} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::fqdn}:9400:/etc/puppetlabs/puppetserver/jvm_prometheus_jmx_exporter.yaml"
-    class { '::puppetserver':
-        puppetdb_hostname      => $puppetdb_hostname,
-        puppetdb_enable        => $puppetdb_enable,
-        puppet_major_version   => $puppet_major_version,
-        puppetserver_hostname  => $puppetserver_hostname ,
-        puppetserver_java_opts => $puppetserver_java_opts,
+    class { 'puppetdb': }
+
+    file { '/etc/puppetlabs/puppetdb/logback.xml':
+        ensure => present,
+        source => 'puppet:///modules/role/puppetdb/puppetdb_logback.xml',
+        notify => Service['puppetdb'],
     }
 
-    # Used for puppetserver
-    prometheus::exporter::jmx { "puppetserver_${::hostname}":
-        port        => 9400,
-        config_file => '/etc/puppetlabs/puppetserver/jvm_prometheus_jmx_exporter.yaml',
-        content     => template('role/puppetserver/jvm_prometheus_jmx_exporter.yaml.erb'),
-        notify      => Service['puppetserver']
+    rsyslog::input::file { 'puppetdb':
+        path              => '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
+        syslog_tag_prefix => '',
+        use_udp           => true,
     }
 
     # Used for puppetdb
@@ -44,7 +41,7 @@ class role::puppetdb (
         notify      => Service['puppetdb']
     }
 
-    motd::role { 'role::puppetserver':
+    motd::role { 'role::puppetdb':
         description => 'puppetdb',
     }
 }
