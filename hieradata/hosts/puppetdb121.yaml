@@ -1,0 +1,13 @@
+puppetserver: true
+puppetserver_java_opts: '-Xms2000M -Xmx2000M'
+puppetdb_enable: true
+puppetdb_hostname: puppet141.miraheze.org
+puppetdb::db_ssl: true
+puppetdb::db_rw_host: puppet141.miraheze.org
+postgresql::ssl: true
+puppetdb::command_processing_threads: 10
+puppetserver_hostname: 'puppet141.miraheze.org'
+role::salt::minions::salt_master: 'puppet141.miraheze.org'
+role::salt::minions::salt_master_key: true
+
+http_proxy: 'http://bast.miraheze.org:8080'
