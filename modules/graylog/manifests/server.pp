@@ -14,10 +14,10 @@ class graylog::server(
   }
 
   # Check mandatory settings
-  if ! has_key($config, 'password_secret') {
+  if !('password_secret' in $config) {
     fail('Missing "password_secret" config setting!')
   }
-  if has_key($config, 'root_password_sha2') {
+  if ('root_password_sha2' in $config) {
     if length($config['root_password_sha2']) < 64 {
       fail('The root_password_sha2 parameter does not look like a SHA256 checksum!')
     }
