@@ -6,8 +6,10 @@
 module Puppet::Parser::Functions
   newfunction(:pick, type: :rvalue, doc: <<-EOS
     @summary
-      This function is similar to a coalesce function in SQL in that it will return
+      This function will return
       the first value in a list of values that is not undefined or an empty string.
+
+    This function is similar to a coalesce function in SQL.
 
     @return
       the first value in a list of values that is not undefined or an empty string.
@@ -29,6 +31,7 @@ module Puppet::Parser::Functions
     args.delete(:undefined)
     args.delete('')
     raise Puppet::ParseError, 'pick(): must receive at least one non empty value' if args[0].to_s.empty?
+
     return args[0]
   end
 end
