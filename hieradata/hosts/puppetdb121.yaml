@@ -1,5 +1,5 @@
 puppetserver: true
-puppetserver_java_opts: '-Xms2000M -Xmx2000M'
+puppetserver_java_opts: '-Xms2g -Xmx2g'
 puppetdb_enable: true
 puppetdb_hostname: puppet141.miraheze.org
 puppetdb::db_ssl: true
