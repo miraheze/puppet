@@ -26,6 +26,22 @@ class role::puppetdb {
         notify      => Service['puppetdb']
     }
 
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Puppetserver]', ['ipaddress', 'ipaddress6'])
+        .map |$key, $value| {
+            "${value['ipaddress']} ${value['ipaddress6']}"
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+    ferm::service { 'puppetdb port 8081':
+        proto  => 'tcp',
+        port   => '8081',
+        srange => "(${firewall_rules_str})",
+    }
+
     motd::role { 'role::puppetdb':
         description => 'puppetdb',
     }
