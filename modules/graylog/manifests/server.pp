@@ -1,6 +1,6 @@
 class graylog::server(
   $package_version = $graylog::params::package_version,
-  $config = undef,
+  Optional[Hash] $config = undef,
   $user = $graylog::params::server_user,
   $group = $graylog::params::server_group,
   $ensure = running,
@@ -8,9 +8,6 @@ class graylog::server(
 ) inherits graylog::params {
   if $config == undef {
     fail('Missing "config" setting!')
-  }
-  if ! is_hash($config) {
-    fail('$config needs to be a hash data type!')
   }
 
   # Check mandatory settings
