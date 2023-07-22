@@ -109,8 +109,11 @@ Puppet::Type.newtype(:opensearch_template) do
             end
 
       fail(format('Could not find any content at %s', self[:source])) unless tmp
-
-      self[:content] = PSON.load(tmp.content)
+      self[:content] = if Puppet::Util::Package.versioncmp(Puppet.version, '8.0.0').negative?
+                   PSON.load(tmp.content)
+                 else
+                   JSON.parse(tmp.content)
+                 end
     end
   end
   # rubocop:enable Style/SignalException
