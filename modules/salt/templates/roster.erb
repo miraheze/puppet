@@ -13,4 +13,6 @@
   user: salt-user
   priv: /home/salt-user/.ssh/id_ed25519
   sudo: True         # Whether to sudo to root, not enabled by default
+  ssh_max_procs: <%= scope.lookupvar('::processorcount') %>
+  ssh_wipe: True
 <%- end -%>
