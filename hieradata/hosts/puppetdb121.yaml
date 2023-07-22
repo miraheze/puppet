@@ -4,4 +4,5 @@ puppetdb::db_rw_host: puppet141.miraheze.org
 postgresql::ssl: true
 puppetdb::command_processing_threads: 10
 puppetserver_hostname: 'puppet141.miraheze.org'
+puppetdb::jvm_opts: '-Xmx2G'
 http_proxy: 'http://bast.miraheze.org:8080'
