@@ -3,7 +3,7 @@
 # JobQueue resources for both runner & chron
 class mediawiki::jobqueue::shared {
     if !defined(Package['composer']) {
-        ensure_packages('composer')
+        stdlib::ensure_packages('composer')
     }
 
     git::clone { 'JobRunner':

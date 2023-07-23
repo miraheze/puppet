@@ -10,7 +10,7 @@ class php(
     Hash $extensions                          = {}
 ) {
     # We need php-common everywhere
-    ensure_packages(["php${version}-common", "php${version}-opcache"])
+    stdlib::ensure_packages(["php${version}-common", "php${version}-opcache"])
 
     $config_dir = "/etc/php/${version}"
 

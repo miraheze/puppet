@@ -160,7 +160,7 @@ class role::openldap (
 
     include prometheus::exporter::openldap
 
-    ensure_packages('ldapvi')
+    stdlib::ensure_packages('ldapvi')
 
     file { '/etc/ldapvi.conf':
         content => template('role/openldap/ldapvi.conf.erb'),

@@ -4,7 +4,7 @@
 class mediawiki::jobqueue::runner {
     include mediawiki::jobqueue::shared
     $wiki = lookup('mediawiki::jobqueue::wiki')
-    ensure_packages('python3-xmltodict')
+    stdlib::ensure_packages('python3-xmltodict')
 
     $beta = lookup('mediawiki::jobqueue::runner::beta')
     $database = $beta ? {

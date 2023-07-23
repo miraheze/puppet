@@ -18,7 +18,7 @@ class postgresql::postgis(
         'bullseye' => 'postgresql-13-postgis-3',
     },
 ) {
-    ensure_packages(
+    stdlib::ensure_packages(
         [
             $postgresql_postgis_package,
             "${postgresql_postgis_package}-scripts",

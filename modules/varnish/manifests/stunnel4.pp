@@ -1,6 +1,6 @@
 # class: varnish::stunnel4
 class varnish::stunnel4 {
-    ensure_packages('stunnel4')
+    stdlib::ensure_packages('stunnel4')
 
     file { '/etc/default/stunnel4':
         ensure  => present,

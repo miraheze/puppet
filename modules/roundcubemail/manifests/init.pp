@@ -117,7 +117,7 @@ class roundcubemail (
         }
     }
 
-    ensure_packages([
+    stdlib::ensure_packages([
         "php${php_version}-pspell",
         'composer',
         'nodejs',

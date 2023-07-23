@@ -1,6 +1,6 @@
 # === Class mediawiki::cgroup
 class mediawiki::cgroup {
-    ensure_packages('cgroup-tools')
+    stdlib::ensure_packages('cgroup-tools')
 
     # The cgroup-mediawiki-clean script is used as the release_agent
     # script for the cgroup. When the last task in the cgroup exits,

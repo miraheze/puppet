@@ -1,6 +1,6 @@
 # === Class ssl
 class ssl {
-    ensure_packages('certbot')
+    stdlib::ensure_packages('certbot')
 
     file { '/etc/letsencrypt/cli.ini':
         ensure  => present,

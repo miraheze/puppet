@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 class swift::ac {
-    ensure_packages(['swift-account', 'swift-container'])
+    stdlib::ensure_packages(['swift-account', 'swift-container'])
 
     class { 'rsync::server':
         log_file => '/var/log/rsyncd.log',

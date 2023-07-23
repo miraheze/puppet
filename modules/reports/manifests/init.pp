@@ -1,6 +1,6 @@
 # class: reports
 class reports {
-    ensure_packages(['mariadb-client', 'composer'])
+    stdlib::ensure_packages(['mariadb-client', 'composer'])
 
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',

@@ -5,7 +5,7 @@ class prometheus (
     Integer $port = 9100
 ) {
 
-    ensure_packages('prometheus')
+    stdlib::ensure_packages('prometheus')
 
     file { '/etc/default/prometheus':
         source  => 'puppet:///modules/prometheus/prometheus.default.conf',

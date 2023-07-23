@@ -2,7 +2,7 @@
 class phabricator (
   Integer $request_timeout = lookup('phabricator::php::request_timeout', {'default_value' => 60}),
 ) {
-    ensure_packages(['python3-pygments', 'subversion'])
+    stdlib::ensure_packages(['python3-pygments', 'subversion'])
 
     $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',

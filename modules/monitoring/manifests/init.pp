@@ -7,7 +7,7 @@ class monitoring (
     String $ticket_salt           = '',
     Optional[String] $icinga2_api_bind_host = undef,
 ) {
-    ensure_packages([
+    stdlib::ensure_packages([
         'nagios-nrpe-plugin',
         'python3-dnspython',
         'python3-filelock',
@@ -50,7 +50,7 @@ class monitoring (
         logoutput   => true,
     }
 
-    ensure_packages(
+    stdlib::ensure_packages(
         "mariadb-client-${version}",
         {
             ensure  => present,

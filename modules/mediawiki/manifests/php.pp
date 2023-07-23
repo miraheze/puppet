@@ -103,7 +103,7 @@ class mediawiki::php (
         ensure => present
     }
 
-    ensure_packages('liblua5.1-0')
+    stdlib::ensure_packages('liblua5.1-0')
 
     file { '/usr/lib/php/20190902/luasandbox.so':
         ensure  => present,

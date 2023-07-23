@@ -13,7 +13,7 @@ class prometheus::exporter::gdnsd (
     VMlib::Ensure $ensure = 'present',
     String $outfile = '/var/lib/prometheus/node.d/gdnsd.prom',
 ) {
-    ensure_packages([
+    stdlib::ensure_packages([
         'python3-prometheus-client',
         'python3-requests',
     ])

@@ -1,7 +1,7 @@
 class prometheus::exporter::varnish (
     String $listen_port = '9131',
 ) {
-    ensure_packages('prometheus-varnish-exporter')
+    stdlib::ensure_packages('prometheus-varnish-exporter')
 
     systemd::service { 'prometheus-varnish-exporter':
         ensure  => present,

@@ -54,7 +54,7 @@ class cloud {
         source => 'puppet:///modules/cloud/pve-firewall.logrotate.conf',
     }
 
-    ensure_packages(['freeipmi-tools'])
+    stdlib::ensure_packages(['freeipmi-tools'])
 
     if ( $facts['dmi']['manufacturer'] == 'HP' ) {
         monitoring::nrpe { 'IPMI Sensors':

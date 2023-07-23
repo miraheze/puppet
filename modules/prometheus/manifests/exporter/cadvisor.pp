@@ -1,5 +1,5 @@
 class prometheus::exporter::cadvisor {
-    ensure_packages('cadvisor')
+    stdlib::ensure_packages('cadvisor')
 
     systemd::service { 'cadvisor':
         content   => init_template('cadvisor', 'systemd_override'),

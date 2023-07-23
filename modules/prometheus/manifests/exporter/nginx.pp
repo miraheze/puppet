@@ -2,7 +2,7 @@
 #
 
 class prometheus::exporter::nginx {
-    ensure_packages('prometheus-nginx-exporter')
+    stdlib::ensure_packages('prometheus-nginx-exporter')
 
     file { '/etc/default/prometheus-nginx-exporter':
         owner   => 'root',
