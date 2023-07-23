@@ -23,7 +23,7 @@ class prometheus (
         'scrape_interval' => '15s',
         'scrape_timeout' => '15s',
     }
-    $global_config = merge($global_default, $global_extra)
+    $global_config = $global_default + $global_extra
 
     $scrape_default = [
         {
