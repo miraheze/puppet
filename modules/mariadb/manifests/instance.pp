@@ -54,7 +54,7 @@ define mariadb::instance(
         check_command => 'mysql',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars          => {
-            mysql_hostname => $::fqdn,
+            mysql_hostname => $facts['networking']['fqdn'],
             mysql_port     => $port,
             mysql_username => 'icinga',
             mysql_password => $icinga_password,
