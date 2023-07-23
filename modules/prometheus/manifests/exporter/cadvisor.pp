@@ -9,9 +9,9 @@ class prometheus::exporter::cadvisor {
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Prometheus] or Class[Role::Grafana]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Prometheus] or Class[Role::Grafana]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
