@@ -63,9 +63,9 @@ class role::elasticsearch {
         }
 
         $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Elasticsearch]', ['ipaddress6'])
+            query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Elasticsearch]", ['networking'])
             .map |$key, $value| {
-                $value['ipaddress6']
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
             }
             .flatten()
             .unique()
@@ -81,15 +81,16 @@ class role::elasticsearch {
     }
 
     $firewall_es_nodes = join(
-        query_facts('Class[Role::Elasticsearch]', ['ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Elasticsearch]", ['networking'])
         .map |$key, $value| {
-            $value['ipaddress6']
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
         .sort(),
         ' '
     )
+
     ferm::service { 'elasticsearch data nodes to master':
         proto  => 'tcp',
         port   => '9200',
