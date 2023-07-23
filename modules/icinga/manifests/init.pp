@@ -53,7 +53,7 @@ class icinga(
   Array[String]                        $extra_packages  = [],
   Enum['file', 'syslog']               $logging_type    = 'file',
   Optional[Icinga::LogLevel]           $logging_level   = undef,
-  String                               $cert_name       = $::fqdn,
+  String                               $cert_name       = $facts['networking']['fqdn'],
   Boolean                              $prepare_web     = false,
 ) {
 
