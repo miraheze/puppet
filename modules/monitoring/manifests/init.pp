@@ -67,7 +67,7 @@ class monitoring (
 
     class { '::icinga2::feature::api':
         bind_host   => $icinga2_api_bind_host,
-        ca_host     => $::fqdn,
+        ca_host     => $facts['networking']['fqdn'],
         ticket_salt => $ticket_salt,
     }
 

@@ -18,7 +18,7 @@ class role::opensearch (
             'cluster.name'                                          => 'miraheze-general',
             'node.master'                                           => $os_master,
             'node.data'                                             => $os_data,
-            'network.host'                                          => $::fqdn,
+            'network.host'                                          => $facts['networking']['fqdn'],
             'plugins.security.ssl.http.enabled'                     => true,
             'plugins.security.ssl.http.pemkey_filepath'             => '/etc/opensearch/ssl/opensearch-node-key.pem',
             'plugins.security.ssl.http.pemcert_filepath'            => '/etc/opensearch/ssl/opensearch-node.crt',
