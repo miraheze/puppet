@@ -20,7 +20,8 @@
                 "RequestWikiAIJob",
                 "uploadFromUrl",
                 "webVideoTranscode",
-                "webVideoTranscodePrioritized"
+                "webVideoTranscodePrioritized",
+                "NamespaceMigrationJob"
             ],
             "low-priority": [
                 "htmlCacheUpdate"
@@ -37,13 +38,11 @@
         },
         // How long jobs can be claimed before being recycled
         "claimTTL": {
-            "*": 3600,
-            "NamespaceMigrationJob": 9000,
+            "*": 3600
         },
         // runJobs.php process time limits
         "real": {
-            "*": 300,
-            "NamespaceMigrationJob": 9000
+            "*": 300
         },
         // runJobs.php memory limits
         "memory": {
