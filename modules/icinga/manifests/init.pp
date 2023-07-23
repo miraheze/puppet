@@ -176,7 +176,7 @@ class icinga(
       }
 
       if $ssh_public_key {
-        ssh_authorized_key { "${icinga_user}@${::fqdn}":
+        ssh_authorized_key { "${icinga_user}@${facts['networking']['fqdn']}":
           ensure => present,
           user   => $icinga_user,
           key    => $ssh_public_key,
