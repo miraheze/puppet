@@ -4,9 +4,9 @@ class swift::proxy (
     Integer              $num_workers   = lookup('swift::proxy::num_workers', {'default_value' => $::processorcount}),
     Hash                 $accounts      = lookup('swift::accounts'),
     Hash                 $accounts_keys = lookup('swift::accounts_keys'),
-){
+) {
 
-    ensure_packages(['swift-proxy'])
+    stdlib::ensure_packages(['swift-proxy'])
 
     file { '/etc/swift/proxy-server.conf':
         ensure  => present,
