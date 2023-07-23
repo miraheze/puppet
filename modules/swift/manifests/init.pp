@@ -29,11 +29,9 @@ class swift {
         },
     }
 
-    ensure_packages(['swift', 'python3-swift', 'python3-swiftclient'])
+    stdlib::ensure_packages(['swift', 'python3-swift', 'python3-swiftclient', 'python3-statsd'])
 
     $hash_path_suffix = lookup('swift_hash_path_suffix')
-
-    ensure_packages(['python3-statsd'])
 
     file {
         default:
