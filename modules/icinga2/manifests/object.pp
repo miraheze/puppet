@@ -78,10 +78,10 @@ define icinga2::object(
     fail('The object type must be different from the apply target')
   }
 
-  $_attrs = merge($attrs, {
+  $_attrs = $attrs + {
     'assign where' => $assign,
     'ignore where' => $ignore,
-  })
+  }
 
   $_content = template('icinga2/object.conf.erb')
 

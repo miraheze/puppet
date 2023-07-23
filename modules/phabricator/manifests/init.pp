@@ -193,7 +193,7 @@ class phabricator (
         ],
     }
 
-    $phab_settings = merge($phab_yaml, $phab_private, $phab_setting)
+    $phab_settings = $phab_yaml + $phab_private + $phab_setting
 
     file { '/srv/phab/phabricator/conf/local/local.json':
         ensure  => present,

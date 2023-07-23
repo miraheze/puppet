@@ -124,12 +124,7 @@ class opensearch::config {
     }
 
     # Generate Opensearch config
-    $data = merge(
-      $opensearch::config,
-      { 'path.data' => $opensearch::datadir },
-      { 'path.logs' => $opensearch::logdir },
-      $_tls_config
-    )
+    $data = $opensearch::config + { 'path.data' => $opensearch::datadir } + { 'path.logs' => $opensearch::logdir } + $_tls_config
 
     file { "${opensearch::configdir}/opensearch.yml":
       ensure  => 'file',

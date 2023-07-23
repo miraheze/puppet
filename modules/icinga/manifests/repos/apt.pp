@@ -37,7 +37,7 @@ class icinga::repos::apt {
     if $managed[$repo_name] {
       Apt::Source[$repo_name] -> Package <| title != 'apt-transport-https' |>
       apt::source { $repo_name:
-        *       =>  merge({ ensure => present }, $repo_config),
+        *       =>  { ensure => present } + $repo_config,
         require => File['/etc/apt/sources.list.d/netways-plugins.list', '/etc/apt/sources.list.d/netways-extras.list'],
       }
     }
