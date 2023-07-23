@@ -113,7 +113,7 @@ class mariadb::config(
         check_command => 'mysql',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars          => {
-            mysql_hostname => $::fqdn,
+            mysql_hostname => $facts['networking']['fqdn'],
             mysql_username => 'icinga',
             mysql_password => $icinga_password,
             mysql_ssl      => true,
@@ -125,7 +125,7 @@ class mariadb::config(
         check_command => 'mysql_connections',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars => {
-            mysql_hostname  => $::fqdn,
+            mysql_hostname  => $facts['networking']['fqdn'],
             mysql_username  => 'icinga',
             mysql_password  => $icinga_password,
             mysql_ssl       => true,
