@@ -48,7 +48,7 @@ class php::fpm(
         'daemonize' => 'no',
     }
 
-    $full_global_config = merge($default_config, $config, $immutable_config)
+    $full_global_config = $default_config + $config + $immutable_config
     file { $main_config_file:
         ensure  => $ensure,
         content => template("php/php${php::version}-fpm.conf.erb"),
