@@ -122,7 +122,7 @@ class swift::storage (
     monitoring::services { 'Swift Object Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $facts['networking']['ip6'],
             tcp_port    => '6000',
         },
     }
