@@ -130,10 +130,7 @@ define java::sap (
       fail ( "unsupported platform ${$facts['kernel']}" ) }
   }
 
-  $_os_architecture = $facts['os']['architecture'] ? {
-    undef => $facts['architecture'],
-    default => $facts['os']['architecture']
-  }
+  $_os_architecture = $facts['os']['architecture']
 
   if ($_os_architecture != 'x86_64' and $_os_architecture != 'amd64') {
     fail ("unsupported platform ${_os_architecture}")
