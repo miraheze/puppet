@@ -20,7 +20,8 @@
                 "refreshLinksDynamic",
                 "uploadFromUrl",
                 "webVideoTranscode",
-                "webVideoTranscodePrioritized"
+                "webVideoTranscodePrioritized",
+                "NamespaceMigrationJob"
             ],
             "low-priority": [
                 "htmlCacheUpdate"
@@ -45,8 +46,16 @@
             // Job types to include ("*" means "all")
             "include": [
                 "DataDumpGenerateJob",
-                "RequestWikiAIJob",
                 "RecordLintJob"
+            ]
+        },
+        "managewiki": {
+            // Number of runner processes in this group
+            "runners": 2,
+            // Job types to include ("*" means "all")
+            "include": [
+                "NamespaceMigrationJob",
+                "RequestWikiAIJob"
             ]
         },
         "transcode": {
