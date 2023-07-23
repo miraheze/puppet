@@ -51,13 +51,13 @@ describe 'apt::key' do
         name: 'Debian',
         release: {
           major: '9',
-          full: '9.0',
+          full: '9.0'
         },
         distro: {
           codename: 'stretch',
-          id: 'Debian',
-        },
-      },
+          id: 'Debian'
+        }
+      }
     }
   end
 
@@ -68,10 +68,11 @@ describe 'apt::key' do
   describe 'normal operation' do
     describe 'default options' do
       it 'contains the apt_key' do
-        is_expected.to contain_apt_key(title).with(default_apt_key_example(title))
+        expect(subject).to contain_apt_key(title).with(default_apt_key_example(title))
       end
+
       it 'contains the apt_key present anchor' do
-        is_expected.to contain_anchor("apt_key #{title} present")
+        expect(subject).to contain_anchor("apt_key #{title} present")
       end
     end
 
@@ -82,42 +83,44 @@ describe 'apt::key' do
 
       let :params do
         {
-          id: GPG_KEY_ID,
+          id: GPG_KEY_ID
         }
       end
 
       it 'contains the apt_key' do
-        is_expected.to contain_apt_key(title).with(title_key_example)
+        expect(subject).to contain_apt_key(title).with(title_key_example)
       end
+
       it 'contains the apt_key present anchor' do
-        is_expected.to contain_anchor("apt_key #{GPG_KEY_ID} present")
+        expect(subject).to contain_anchor("apt_key #{GPG_KEY_ID} present")
       end
     end
 
     describe 'ensure => absent' do
       let :params do
         {
-          ensure: 'absent',
+          ensure: 'absent'
         }
       end
 
       it 'contains the apt_key' do
-        is_expected.to contain_apt_key(title).with(absent_apt_key(title))
+        expect(subject).to contain_apt_key(title).with(absent_apt_key(title))
       end
+
       it 'contains the apt_key absent anchor' do
-        is_expected.to contain_anchor("apt_key #{title} absent")
+        expect(subject).to contain_anchor("apt_key #{title} absent")
       end
     end
 
     describe 'ensure => refreshed' do
       let :params do
         {
-          ensure: 'refreshed',
+          ensure: 'refreshed'
         }
       end
 
       it 'contains the apt_key with refresh => true' do
-        is_expected.to contain_apt_key(title).with(
+        expect(subject).to contain_apt_key(title).with(
           ensure: 'present',
           refresh: true,
         )
@@ -130,53 +133,55 @@ describe 'apt::key' do
           content: 'GPG key content',
           source: 'http://apt.puppetlabs.com/pubkey.gpg',
           server: 'pgp.mit.edu',
-          options: 'debug',
+          options: 'debug'
         }
       end
 
       it 'contains the apt_key' do
-        is_expected.to contain_apt_key(title).with(bunch_things_apt_key_example(title, params))
+        expect(subject).to contain_apt_key(title).with(bunch_things_apt_key_example(title, params))
       end
+
       it 'contains the apt_key present anchor' do
-        is_expected.to contain_anchor("apt_key #{title} present")
+        expect(subject).to contain_anchor("apt_key #{title} present")
       end
     end
 
     context 'when domain with dash' do
       let(:params) do
         {
-          server: 'p-gp.m-it.edu',
+          server: 'p-gp.m-it.edu'
         }
       end
 
       it 'contains the apt_key' do
-        is_expected.to contain_apt_key(title).with(id: title,
-                                                   server: 'p-gp.m-it.edu')
+        expect(subject).to contain_apt_key(title).with(id: title,
+                                                       server: 'p-gp.m-it.edu')
       end
     end
 
     context 'with url' do
       let :params do
         {
-          server: 'hkp://pgp.mit.edu',
+          server: 'hkp://pgp.mit.edu'
         }
       end
 
       it 'contains the apt_key' do
-        is_expected.to contain_apt_key(title).with(id: title,
-                                                   server: 'hkp://pgp.mit.edu')
+        expect(subject).to contain_apt_key(title).with(id: title,
+                                                       server: 'hkp://pgp.mit.edu')
       end
     end
+
     context 'when url with port number' do
       let :params do
         {
-          server: 'hkp://pgp.mit.edu:80',
+          server: 'hkp://pgp.mit.edu:80'
         }
       end
 
       it 'contains the apt_key' do
-        is_expected.to contain_apt_key(title).with(id: title,
-                                                   server: 'hkp://pgp.mit.edu:80')
+        expect(subject).to contain_apt_key(title).with(id: title,
+                                                       server: 'hkp://pgp.mit.edu:80')
       end
     end
   end
@@ -185,159 +190,166 @@ describe 'apt::key' do
     context 'when domain begin with dash' do
       let(:params) do
         {
-          server: '-pgp.mit.edu',
+          server: '-pgp.mit.edu'
         }
       end
 
       it 'fails' do
-        is_expected .to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
 
     context 'when domain begin with dot' do
       let(:params) do
         {
-          server: '.pgp.mit.edu',
+          server: '.pgp.mit.edu'
         }
       end
 
       it 'fails' do
-        is_expected .to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
 
     context 'when domain end with dot' do
       let(:params) do
         {
-          server: 'pgp.mit.edu.',
+          server: 'pgp.mit.edu.'
         }
       end
 
       it 'fails' do
-        is_expected .to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
+
     context 'when character url exceeded' do
       let :params do
         {
-          server: 'hkp://pgpiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii.mit.edu',
+          server: 'hkp://pgpiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii.mit.edu'
         }
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
+
     context 'with incorrect port number url' do
       let :params do
         {
-          server: 'hkp://pgp.mit.edu:8008080',
+          server: 'hkp://pgp.mit.edu:8008080'
         }
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
+
     context 'with incorrect protocol for url' do
       let :params do
         {
-          server: 'abc://pgp.mit.edu:80',
+          server: 'abc://pgp.mit.edu:80'
         }
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
+
     context 'with missing port number url' do
       let :params do
         {
-          server: 'hkp://pgp.mit.edu:',
+          server: 'hkp://pgp.mit.edu:'
         }
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
+
     context 'with url ending with a dot' do
       let :params do
         {
-          server: 'hkp://pgp.mit.edu.',
+          server: 'hkp://pgp.mit.edu.'
         }
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
+
     context 'when url begins with a dash' do
       let(:params) do
         {
-          server: 'hkp://-pgp.mit.edu',
+          server: 'hkp://-pgp.mit.edu'
         }
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
+
     context 'with invalid key' do
       let :title do
         'Out of rum. Why? Why are we out of rum?'
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
 
     context 'with invalid source' do
       let :params do
         {
-          source: 'afp://puppetlabs.com/key.gpg',
+          source: 'afp://puppetlabs.com/key.gpg'
         }
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{evaluating a Resource})
+        expect(subject).to raise_error(%r{evaluating a Resource})
       end
     end
 
     context 'with invalid content' do
       let :params do
         {
-          content: [],
+          content: []
         }
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a})
+        expect(subject).to raise_error(%r{expects a})
       end
     end
 
     context 'with invalid server' do
       let :params do
         {
-          server: 'two bottles of rum',
+          server: 'two bottles of rum'
         }
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a match})
+        expect(subject).to raise_error(%r{expects a match})
       end
     end
 
     context 'with invalid options' do
       let :params do
         {
-          options: {},
+          options: {}
         }
       end
 
       it 'fails' do
-        is_expected.to raise_error(%r{expects a})
+        expect(subject).to raise_error(%r{expects a})
       end
     end
 
@@ -345,12 +357,12 @@ describe 'apt::key' do
       ['foo', 'aabsent', 'absenta', 'apresent', 'presenta', 'refresh', 'arefreshed', 'refresheda'].each do |param|
         let :params do
           {
-            ensure: param,
+            ensure: param
           }
         end
 
         it 'fails' do
-          is_expected.to raise_error(%r{for Enum\['absent', 'present', 'refreshed'\], got})
+          expect(subject).to raise_error(%r{for Enum\['absent', 'present', 'refreshed'\], got})
         end
       end
     end
@@ -362,19 +374,21 @@ describe 'apt::key' do
       end
 
       it 'contains two apt::key resource - duplicate' do
-        is_expected.to contain_apt__key('duplicate').with(id: title,
-                                                          ensure: 'present')
+        expect(subject).to contain_apt__key('duplicate').with(id: title,
+                                                              ensure: 'present')
       end
+
       it 'contains two apt::key resource - title' do
-        is_expected.to contain_apt__key(title).with(id: title,
-                                                    ensure: 'present')
+        expect(subject).to contain_apt__key(title).with(id: title,
+                                                        ensure: 'present')
       end
 
       it 'contains only a single apt_key - duplicate' do
-        is_expected.to contain_apt_key('duplicate').with(default_apt_key_example(title))
+        expect(subject).to contain_apt_key('duplicate').with(default_apt_key_example(title))
       end
+
       it 'contains only a single apt_key - no title' do
-        is_expected.not_to contain_apt_key(title)
+        expect(subject).not_to contain_apt_key(title)
       end
     end
 
@@ -385,7 +399,7 @@ describe 'apt::key' do
       end
 
       it 'informs the user of the impossibility' do
-        is_expected.to raise_error(%r{already ensured as absent})
+        expect(subject).to raise_error(%r{already ensured as absent})
       end
     end
   end
@@ -399,7 +413,7 @@ describe 'apt::key' do
       end
 
       it 'uses default keyserver' do
-        is_expected.to contain_apt_key(title).with_server('keyserver.example.com')
+        expect(subject).to contain_apt_key(title).with_server('keyserver.example.com')
       end
     end
 
@@ -411,7 +425,7 @@ describe 'apt::key' do
       end
 
       it 'uses default keyserver' do
-        is_expected.to contain_apt_key(title).with_options('http-proxy=http://proxy.example.com:8080')
+        expect(subject).to contain_apt_key(title).with_options('http-proxy=http://proxy.example.com:8080')
       end
     end
   end

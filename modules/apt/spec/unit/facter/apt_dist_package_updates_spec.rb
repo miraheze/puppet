@@ -11,7 +11,8 @@ describe 'apt_package_dist_updates fact' do
     before(:each) do
       allow(Facter.fact(:apt_has_dist_updates)).to receive(:value).and_return(false)
     end
-    it { is_expected.to be nil }
+
+    it { is_expected.to be_nil }
   end
 
   describe 'when apt has updates' do
@@ -28,6 +29,7 @@ describe 'apt_package_dist_updates fact' do
                    "Conf planet.rb (22-2~bpo8+1 Debian Backports:-backports [all])\n"
       allow(Facter::Core::Execution).to receive(:execute).with('/usr/bin/apt-get -s -o Debug::NoLocking=true dist-upgrade 2>&1').and_return(apt_output)
     end
+
     it { is_expected.to eq(['extremetuxracer', 'planet.rb']) }
   end
 end

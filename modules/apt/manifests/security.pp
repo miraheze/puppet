@@ -4,7 +4,7 @@ class apt::security (
   Optional[String] $release                     = undef,
   Optional[String] $repos                       = 'main',
   Optional[Variant[Integer, String, Hash]] $pin = 200,
-){
+) {
   if $location {
     $_location = $location
   }
@@ -16,13 +16,13 @@ class apt::security (
   }
   if ($facts['os']['name'] == 'Debian' or $facts['os']['name'] == 'Ubuntu') {
     unless $location {
-      $_location = $::apt::security['location']
+      $_location = $apt::security['location']
     }
     unless $release {
       $_release = "${facts['os']['distro']['codename']}-security/updates"
     }
     unless $repos {
-      $_repos = $::apt::security['repos']
+      $_repos = $apt::security['repos']
     }
   } else {
     unless $location and $release and $repos and $key {
