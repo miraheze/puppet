@@ -22,7 +22,7 @@ class graylog::server(
     fail('Missing "root_password_sha2" config setting!')
   }
 
-  $data = merge($::graylog::params::default_config, $config)
+  $data = $::graylog::params::default_config + $config
 
   anchor { 'graylog::server::start': }
   anchor { 'graylog::server::end': }
