@@ -36,7 +36,7 @@ define postgresql::user(
     VMlib::Ensure $ensure = 'present'
 ) {
 
-    $pgversion = $::lsbdistcodename ? {
+    $pgversion = $facts['os']['distro']['codename'] ? {
         'bullseye' => '13',
         'buster'  => '11',
         'stretch' => '9.6',
