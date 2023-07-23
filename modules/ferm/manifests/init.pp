@@ -27,7 +27,7 @@ class ferm {
         before  => Package['ferm', 'libnet-dns-perl', 'conntrack'],
     }
 
-    ensure_packages(['ferm', 'libnet-dns-perl', 'conntrack'])
+    stdlib::ensure_packages(['ferm', 'libnet-dns-perl', 'conntrack'])
 
     file {'/usr/local/sbin/ferm-status':
         ensure  => file,
