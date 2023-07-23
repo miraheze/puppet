@@ -1,6 +1,6 @@
 # base::ssl
 class base::ssl {
-    ensure_packages([
+    stdlib::ensure_packages([
         'openssl',
         'ssl-cert',
         'ca-certificates',
