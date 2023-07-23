@@ -66,7 +66,7 @@ define php::fpm::pool(
     }
 
 
-    $pool_config = merge($base_config, $config)
+    $pool_config = $base_config + $config
     file { "${php::config_dir}/fpm/pool.d/${filename_safe}.conf":
         content => template("php/php${php::version}-fpm.pool.conf.erb"),
         owner   => 'root',
