@@ -90,7 +90,7 @@ class swift::ac {
     monitoring::services { 'Swift Account Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $facts['networking']['ip6'],
             tcp_port    => '6002',
         },
     }
@@ -98,7 +98,7 @@ class swift::ac {
     monitoring::services { 'Swift Container Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $facts['networking']['ip6'],
             tcp_port    => '6001',
         },
     }

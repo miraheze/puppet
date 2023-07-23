@@ -576,7 +576,7 @@ sub vcl_deliver {
 # Hit code, default logic is appended
 sub vcl_hit {
 	# Add X-Cache header
-	set req.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> HIT (" + obj.hits + ")";
+	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> HIT (" + obj.hits + ")";
 
 	# Is the request graced?
 	if (obj.ttl <= 0s && obj.grace > 0s) {
@@ -587,19 +587,19 @@ sub vcl_hit {
 # Miss code, default logic is appended
 sub vcl_miss {
 	# Add X-Cache header
-	set req.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> MISS";
+	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> MISS";
 }
 
 # Pass code, default logic is appended
 sub vcl_pass {
 	# Add X-Cache header
-	set req.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> PASS";
+	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> PASS";
 }
 
 # Synthetic code, default logic is appended
 sub vcl_synth {
 	# Add X-Cache header
-	set req.http.X-Cache = "<%= scope.lookupvar( '::hostname' ) %> SYNTH";
+	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> SYNTH";
 }
 
 # Backend response when an error occurs

@@ -8,16 +8,15 @@ class role::matomo {
     include ::matomo
 
     $firewall_srange = join(
-        query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Varnish] or Class[Role::Icinga2]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
         .sort(),
         ' '
     )
-
     ferm::service { 'http':
         proto   => 'tcp',
         port    => '80',

@@ -47,7 +47,7 @@ class base::sysctl {
     # unprivileged bpf is a feature introduced in Linux 4.4: https://lwn.net/Articles/660331/
     # We don't need it and it widens the attacks surface for local privilege escalation
     # significantly, so we're disabling it by enabling kernel.unprivileged_bpf_disabled
-    if (versioncmp($::kernelversion, '4.4') >= 0) {
+    if (versioncmp($facts['kernelversion'], '4.4') >= 0) {
         sysctl::parameters { 'disable_unprivileged_bpf':
             values => {
               'kernel.unprivileged_bpf_disabled' => '1',
@@ -59,7 +59,7 @@ class base::sysctl {
     # This changed in Bullseye mostly to allow Chromium and Firefox to setup sandboxing via namespaces
     # But for a server deployment like ours, we have no use for it and it widens the attack surface,
     # so we disable it. Apply this to kernels starting with 5.10 (where it was enabled in Debian)
-    if (versioncmp($::kernelversion, '5.10') >= 0) {
+    if (versioncmp($facts['kernelversion'], '5.10') >= 0) {
         sysctl::parameters { 'disable_unprivileged_ns':
             values => {
               'kernel.unprivileged_userns_clone' => '0',
@@ -67,7 +67,7 @@ class base::sysctl {
         }
     }
 
-    if $::virtual == 'kvm' {
+    if $facts['virtual'] == 'kvm' {
         sysctl::parameters { 'increase open files limit':
             values  => { 'fs.file-max' => 26384062, },
         }
