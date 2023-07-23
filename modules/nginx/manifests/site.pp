@@ -66,8 +66,8 @@ define nginx::site(
             ensure        => $monitor_service,
             check_command => 'check_http',
             vars          => {
-                address6         => $facts['ipaddress6'],
-                http_vhost       => $::fqdn,
+                address6         => $facts['networking']['ip6'],
+                http_vhost       => $facts['networking']['fqdn'],
                 http_ssl         => true,
                 http_ignore_body => true,
             },
