@@ -11,7 +11,7 @@ describe 'apt_update_last_success fact' do
     it 'has a value of -1' do
       allow(Facter.fact(:osfamily)).to receive(:value).and_return('Debian')
       allow(File).to receive(:exist?).with('/var/lib/apt/periodic/update-success-stamp').and_return(false)
-      is_expected.to eq(-1)
+      expect(subject).to eq(-1)
     end
   end
 
@@ -20,7 +20,7 @@ describe 'apt_update_last_success fact' do
       allow(Facter.fact(:osfamily)).to receive(:value).and_return('Debian')
       allow(File).to receive(:exist?).and_return(true)
       allow(File).to receive(:mtime).and_return(1_407_660_561)
-      is_expected.to eq(1_407_660_561)
+      expect(subject).to eq(1_407_660_561)
     end
   end
 end
