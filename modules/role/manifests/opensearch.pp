@@ -169,16 +169,15 @@ class role::opensearch (
         }
 
         $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]', ['ipaddress6'])
+            query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]", ['networking'])
             .map |$key, $value| {
-                $value['ipaddress6']
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
             }
             .flatten()
             .unique()
             .sort(),
             ' '
         )
-
         ferm::service { 'opensearch ssl':
             proto  => 'tcp',
             port   => '443',
@@ -191,9 +190,9 @@ class role::opensearch (
     }
 
     $firewall_os_nodes = join(
-        query_facts('Class[Role::Opensearch]', ['ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Opensearch]", ['networking'])
         .map |$key, $value| {
-            $value['ipaddress6']
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
