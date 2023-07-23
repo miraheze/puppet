@@ -5,7 +5,7 @@ class mediawiki::monitoring {
         docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#MediaWiki_Rendering',
         vars          => {
             host    => lookup('mediawiki::monitoring::host'),
-            address => $facts['ipaddress'],
+            address => $facts['networking']['ip6'],
         },
     }
 }
