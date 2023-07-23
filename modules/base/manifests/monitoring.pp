@@ -49,7 +49,7 @@ class base::monitoring {
         ],
     }
 
-    monitoring::hosts { $::hostname: }
+    monitoring::hosts { $facts['networking']['hostname']: }
 
     monitoring::nrpe { 'Disk Space':
         command  => '/usr/lib/nagios/plugins/check_disk -w 10% -c 5% -p /',
