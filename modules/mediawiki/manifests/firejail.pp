@@ -2,7 +2,7 @@
 #
 # Firejail files for MediaWiki
 class mediawiki::firejail {
-    ensure_packages('firejail')
+    stdlib::ensure_packages('firejail')
 
     file { '/usr/local/bin/mediawiki-firejail-convert':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-convert.py',
