@@ -58,7 +58,7 @@ class prometheus (
     }
 
     file { '/etc/prometheus/prometheus.yml':
-        content => to_yaml($common_config),
+        content => stdlib::to_yaml($common_config),
         notify  => Exec['prometheus-reload']
     }
 
