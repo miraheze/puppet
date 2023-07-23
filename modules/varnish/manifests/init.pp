@@ -42,7 +42,7 @@ class varnish (
     $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,1G"
 
     # Default is 5000 in varnish
-    $max_threads = max(floor($::processorcount * 250), 5000)
+    $max_threads = max(floor($facts['processors']['count'] * 250), 5000)
     systemd::service { 'varnish':
         ensure         => present,
         content        => systemd_template('varnish'),
