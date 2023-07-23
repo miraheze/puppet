@@ -20,7 +20,8 @@
                 "refreshLinksDynamic",
                 "uploadFromUrl",
                 "webVideoTranscode",
-                "webVideoTranscodePrioritized"
+                "webVideoTranscodePrioritized",
+                "NamespaceMigrationJob"
             ],
             "low-priority": [
                 "htmlCacheUpdate"
@@ -45,8 +46,16 @@
             // Job types to include ("*" means "all")
             "include": [
                 "DataDumpGenerateJob",
-                "RequestWikiAIJob",
                 "RecordLintJob"
+            ]
+        },
+        "managewiki": {
+            // Number of runner processes in this group
+            "runners": 2,
+            // Job types to include ("*" means "all")
+            "include": [
+                "NamespaceMigrationJob",
+                "RequestWikiAIJob"
             ]
         },
         "transcode": {
@@ -77,6 +86,7 @@
         "claimTTL": {
             "*": 3600,
             "DataDumpGenerateJob": 86400,
+            "NamespaceMigrationJob": 9000,
             "webVideoTranscode": 86400,
             "webVideoTranscodePrioritized": 86400
         },
@@ -84,6 +94,7 @@
         "real": {
             "*": 300,
             "DataDumpGenerateJob": 9000,
+            "NamespaceMigrationJob": 9000,
             "webVideoTranscode": 86400,
             "webVideoTranscodePrioritized": 86400
         },
