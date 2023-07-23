@@ -41,7 +41,7 @@ class mediawiki::php (
         $_sapis = ['cli', 'fpm']
         $_config = {
             'cli' => $config_cli,
-            'fpm' => merge($config_cli, $base_config_fpm, $fpm_config)
+            'fpm' => $config_cli + $base_config_fpm + $fpm_config
         }
         # Add systemd override for php-fpm, that should prevent a reload
         # if the fpm config files are broken.
