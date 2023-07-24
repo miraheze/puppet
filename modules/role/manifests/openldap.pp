@@ -184,7 +184,7 @@ class role::openldap (
     }
 
     $firewall_rules = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Prometheus]", ['networking'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and (Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Mail] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap])", ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
