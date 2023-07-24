@@ -199,7 +199,7 @@ class role::openldap (
         srange => "(${firewall_rules})",
     }
 
-    # restart slapd if it uses more than 50% of memory (T130593)
+    # restart slapd if it uses more than 50% of memory
     cron { 'restart_slapd':
         ensure  => present,
         minute  => fqdn_rand(60, $title),
@@ -210,7 +210,7 @@ class role::openldap (
     monitoring::services { 'LDAP':
         check_command => 'ldap',
         vars          => {
-            ldap_address => $::fqdn,
+            ldap_address => $facts['networking']['fqdn'],
             ldap_base    => 'dc=miraheze,dc=org',
             ldap_v3      => true,
             ldap_ssl     => true,
