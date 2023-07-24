@@ -119,7 +119,7 @@ class icinga(
         $icinga_shell = '/bin/false'
       }
 
-      case $::osfamily {
+      case $facts['os']['family'] {
         'redhat': {
           package { [ 'nagios-common', $icinga_package ]+$extra_packages:
             ensure => installed,
