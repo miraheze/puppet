@@ -48,7 +48,7 @@ class ssh::server (
     @@sshkey { $facts['networking']['fqdn']:
         ensure       => present,
         type         => 'ecdsa-sha2-nistp256',
-        key          => $::sshecdsakey,
+        key          => $facts['ssh']['ecdsa']['key'],
         host_aliases => $aliases,
     }
 }
