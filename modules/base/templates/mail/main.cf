@@ -4,11 +4,11 @@ append_dot_mydomain = no
 readme_directory = no
 
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
-myhostname = <%= @fqdn %>
+myhostname = <%= @facts['networking']['fqdn'] %>
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 myorigin = /etc/mailname
-mydestination = <%= @fqdn %>, localhost.miraheze.org, localhost
+mydestination = <%= @facts['networking']['fqdn'] %>, localhost.miraheze.org, localhost
 relayhost = mail.miraheze.org
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 mailbox_size_limit = 0
