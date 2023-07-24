@@ -10,11 +10,7 @@ class openldap::params {
       $server_owner             = 'openldap'
       $server_package           = 'slapd'
       $server_service           = 'slapd'
-      if $::operatingsystem == 'Debian' and versioncmp($::operatingsystemmajrelease, '5') <= 0 {
-        $server_service_hasstatus = false
-      } else {
-        $server_service_hasstatus = true
-      }
+      $server_service_hasstatus = true
       $utils_package            = 'ldap-utils'
       $escape_ldapi_ifs         = false
     }
@@ -61,7 +57,7 @@ class openldap::params {
       $escape_ldapi_ifs         = true
     }
     default: {
-      fail "Operating System family ${::osfamily} not supported"
+      fail "Operating System family ${facts['os']['family']} not supported"
     }
   }
 }
