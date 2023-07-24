@@ -15,7 +15,7 @@ class monitoring::ircecho (
         notify => Service['ircecho'],
     }
 
-    $pyversion = $::lsbdistcodename ? {
+    $pyversion = $facts['os']['distro']['codename'] ? {
         'bullseye' => 'python3.9',
     }
 

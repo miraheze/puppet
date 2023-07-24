@@ -8,7 +8,7 @@ class cloud {
 
     apt::source { 'proxmox_apt':
         location => 'http://download.proxmox.com/debian/pve',
-        release  => $::lsbdistcodename,
+        release  => $facts['os']['distro']['codename'],
         repos    => 'pve-no-subscription',
         require  => File['/etc/apt/trusted.gpg.d/proxmox.gpg'],
         notify   => Exec['apt_update_proxmox'],

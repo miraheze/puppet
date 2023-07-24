@@ -27,7 +27,7 @@ class monitoring (
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
         location => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
-        release  => $::lsbdistcodename,
+        release  => $facts['os']['distro']['codename'],
         repos    => 'main',
         key      => {
                 'id'      => '177F4010FE56CA3336300305F1656F24C74CD1D8',
