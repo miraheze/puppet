@@ -1,7 +1,7 @@
 # See README.md for details.
 define openldap::server::schema(
   $ensure        = undef,
-  $path          = $::osfamily ? {
+  $path          = $facts['os']['family'] ? {
     'Debian' => "/etc/ldap/schema/${title}.schema",
     'Redhat' => "/etc/openldap/schema/${title}.schema",
     'Archlinux' => "/etc/openldap/schema/${title}.schema",
