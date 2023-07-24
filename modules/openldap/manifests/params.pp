@@ -1,6 +1,6 @@
 # See README.md for details.
 class openldap::params {
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian': {
       $client_package           = 'libldap-2.4-2'
       $client_conffile          = '/etc/ldap/ldap.conf'
