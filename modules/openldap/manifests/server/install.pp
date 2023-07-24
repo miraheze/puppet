@@ -9,7 +9,7 @@ class openldap::server::install {
     contain ::openldap::utils
   }
 
-  if $::osfamily == 'Debian' {
+  if $facts['os']['family'] == 'Debian' {
     file { '/var/cache/debconf/slapd.preseed':
       ensure  => file,
       mode    => '0644',
