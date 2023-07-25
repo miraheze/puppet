@@ -13,7 +13,6 @@ class phabricator (
         'error_reporting'                 => 'E_ALL & ~E_STRICT',
         'mysql'                           => { 'connect_timeout' => 3 },
         'default_socket_timeout'          => 60,
-        'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
         'opcache' => {
                 'enable' => 1,
@@ -24,7 +23,7 @@ class phabricator (
                 'validate_timestamps' => 1,
                 'revalidate_freq' => 10,
         },
-        'max_execution_time' => 230,
+        'max_execution_time' => 60,
         'post_max_size' => '10M',
         'track_errors' => 'Off',
         'upload_max_filesize' => '10M',
