@@ -3,3 +3,4 @@ http_proxy: 'http://bast.miraheze.org:8080'
 role::db::weekly_misc: ['reports']
 role::db::fortnightly_misc: ['grafana', 'icinga', 'icingaweb2', 'roundcubemail']
 role::db::monthly_misc: []
+role::db::enable_bin_logs: false
