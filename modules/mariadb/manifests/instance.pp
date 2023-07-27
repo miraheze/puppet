@@ -26,6 +26,7 @@ define mariadb::instance(
     Optional[Variant[String, Boolean]]  $innodb_buffer_pool_size = false,
     Optional[String]                    $template = 'mariadb/config/instance.cnf.erb',
     Optional[Integer]                   $read_only = 1,
+    Boolean                             $enable_bin_logs = true,
 ) {
     file { $datadir:
         ensure => directory,
