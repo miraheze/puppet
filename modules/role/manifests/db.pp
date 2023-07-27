@@ -2,7 +2,8 @@
 class role::db (
     Optional[Array[String]] $weekly_misc = lookup('role::db::weekly_misc', {'default_value' => []}),
     Optional[Array[String]] $fortnightly_misc = lookup('role::db::fornightly_misc', {'default_value' => []}),
-    Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []})
+    Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []}),
+    Boolean $enable_bin_logs = lookup('role::db::enable_bin_logs', {'default_value' => true}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
@@ -31,6 +32,7 @@ class role::db (
         config          => 'mariadb/config/mw.cnf.erb',
         password        => lookup('passwords::db::root'),
         icinga_password => $icinga_password,
+        enable_bin_logs => $enable_bin_logs,
     }
 
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':
