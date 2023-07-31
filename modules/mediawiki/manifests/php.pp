@@ -1,13 +1,14 @@
 # === Class mediawiki::php
 class mediawiki::php (
-    Float $fpm_workers_multiplier      = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
-    Integer $fpm_min_child             = lookup('mediawiki::php::fpm::fpm_min_child', {'default_value' => 4}),
-    Integer $request_timeout           = lookup('mediawiki::php::request_timeout', {'default_value' => 60}),
-    VMlib::Php_version $php_version    = lookup('php::php_version', {'default_value' => '7.4'}),
-    Boolean $enable_fpm                = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
-    Boolean $enable_request_profiling  = lookup('mediawiki::php::enable_request_profiling', {'default_value' => false}),
-    String $memory_limit               = lookup('mediawiki::php::memory_limit', {'default_value' => '256M'}),
-    Optional[Hash] $fpm_config         = lookup('mediawiki::php::fpm_config', {default_value => undef}),
+    Float $fpm_workers_multiplier        = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
+    Integer $fpm_min_child               = lookup('mediawiki::php::fpm::fpm_min_child', {'default_value' => 4}),
+    Integer $request_timeout             = lookup('mediawiki::php::request_timeout', {'default_value' => 60}),
+    VMlib::Php_version $php_version      = lookup('php::php_version', {'default_value' => '7.4'}),
+    Boolean $enable_fpm                  = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
+    Boolean $enable_request_profiling    = lookup('mediawiki::php::enable_request_profiling', {'default_value' => false}),
+    String $memory_limit                 = lookup('mediawiki::php::memory_limit', {'default_value' => '256M'}),
+    Optional[Hash] $fpm_config           = lookup('mediawiki::php::fpm_config', {default_value => undef}),
+    Integer $emergency_restart_threshold = lookup('mediawiki::php::emergency_restart_threshold', {default_value => $facts['processors']['count']}),
 ) {
 
     $config_cli = {
@@ -176,7 +177,7 @@ class mediawiki::php (
             ensure => present,
             config => {
                 'emergency_restart_interval'  => '60s',
-                'emergency_restart_threshold' => $facts['processors']['count'],
+                'emergency_restart_threshold' => $emergency_restart_threshold,
                 'process.priority'            => -19,
             }
         }
