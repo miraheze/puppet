@@ -37,7 +37,7 @@ def pca_web(method: str, url: str, expiry: int):
         return requests.get(url, headers=headers, proxies=proxies)
     elif method == 'POST':
         if expiry > 0:
-            headers['X-Delete-After'] = expiry * 604800
+            headers['X-Delete-After'] = f'{expiry*604800}'
         
         return requests.post(url, headers=headers, proxies=proxies)
     elif method == 'HEAD':
