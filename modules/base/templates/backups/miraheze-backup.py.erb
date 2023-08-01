@@ -24,9 +24,9 @@ args = parser.parse_args()
 def pca_connection(status, *args):
     with Connection('gateways.storage.bhs.cloud.ovh.net', gateway='nc -6 -X connect -x bast.miraheze.org:8080 %h %p', user='pca', connect_kwargs={'password': '<%= @pca_password %>'}) as c:
         if status == 'GET':
-            c.get(args)
+            c.get(*args)
         else:
-            c.put(args)
+            c.put(*args)
 
 
 def pca_web(method: str, url: str, expiry: int):
