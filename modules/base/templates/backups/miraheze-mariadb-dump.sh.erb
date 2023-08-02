@@ -1,4 +1,4 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 /usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table=$1.objectcache --ignore-table=$1.querycache --ignore-table=$1.querycachetwo --ignore-table=$1.recentchanges --ignore-table=$1.searchindex $1 | /usr/bin/nice /usr/bin/pigz -p <%= @facts['processors']['count']/8 > 1 ? @facts['processors']['count']/8 : 1 %> > /srv/backups/dbs/$1.sql.gz
