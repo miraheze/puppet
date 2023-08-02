@@ -242,11 +242,13 @@ def find_backups(source: str, database: str):
 
 
 def unfreeze_backup(source: str, dt: str, database: str):
-    if source in ['private', 'sslkeys', 'phabricator']:
+    if source in ['private', 'sslkeys', 'phabricator', 'swift_account_container']:
         file = f'{source}/{dt}.tar.gz'
     elif source in ['grafana']:
         file = f'sql/{source}/{dt}.tar.gz'
-    elif source in ['sql', 'mediawiki-xml']:
+    elif source in ['mediawiki-xml']:
+        file = f'sql/{source}/{database}/{dt}.xml.gz'
+    elif source in ['sql']:
         file = f'{source}/{database}/{dt}.sql.gz'
 
     pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0)
