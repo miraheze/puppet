@@ -21,12 +21,12 @@ parser.add_argument('--database', dest='database', help='Specific database to do
 args = parser.parse_args()
 
 
-def pca_connection(status, *args):
-    with Connection('gateways.storage.bhs.cloud.ovh.net', gateway='nc -6 -X connect -x bast.miraheze.org:8080 %h %p', user='pca', connect_kwargs={'password': '<%= @pca_password %>'}) as c:
-        if status == 'GET':
-            c.get(*args)
-        else:
-            c.put(*args)
+def pca_connection():
+    try:
+        return pca_connection.connection
+    except AttributeError:
+        pca_connection.connection = Connection('gateways.storage.bhs.cloud.ovh.net', gateway='nc -6 -X connect -x bast.miraheze.org:8080 %h %p', user='pca', connect_kwargs={'password': '<%= @pca_password %>'})
+        return pca_connection.connection
 
 
 def pca_web(method: str, url: str, expiry: int):
@@ -55,7 +55,7 @@ def backup_private(dt: str):
     tar.add('/etc/puppetlabs/puppet/private', arcname='private')
     tar.close()
 
-    pca_connection('PUT', 'private.tar.gz', f'private/{dt}.tar.gz', False)
+    pca_connection().put('private.tar.gz', f'private/{dt}.tar.gz', False)
 
     os.remove('private.tar.gz')
 
@@ -68,7 +68,7 @@ def backup_sslkeys(dt: str):
     tar.add('/etc/puppetlabs/puppet/ssl-keys', arcname='sslkeys')
     tar.close()
 
-    pca_connection('PUT', 'sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
+    pca_connection().put('sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
 
     os.remove('sslkeys.tar.gz')
 
@@ -81,7 +81,7 @@ def backup_swift_account_container(dt: str):
     tar.add('/srv/node', arcname='swift_account_container')
     tar.close()
 
-    pca_connection('PUT', 'swift_account_container.tar.gz', f'swift-account-container/{dt}.tar.gz', False)
+    pca_connection().put('swift_account_container.tar.gz', f'swift-account-container/{dt}.tar.gz', False)
 
     os.remove('swift_account_container.tar.gz')
 
@@ -97,7 +97,7 @@ def backup_phabricator(dt: str):
     tar.add('/srv/phab/images', arcname='phabricator')
     tar.close()
 
-    pca_connection('PUT', 'phabricator.tar.gz', f'phabricator/{dt}.tar.gz', False)
+    pca_connection().put('phabricator.tar.gz', f'phabricator/{dt}.tar.gz', False)
 
     os.remove('phabricator.tar.gz')
 
@@ -119,7 +119,7 @@ def backup_sql(dt: str, database: str):
 
         os.system(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= @facts['processors']['count']/8 > 1 ? @facts['processors']['count']/8 : 1 %> > /srv/backups/dbs/{db}.sql.gz')
 
-        pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
+        pca_connection().put(f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
 
         os.remove(f'/srv/backups/dbs/{db}.sql.gz')
 
@@ -133,7 +133,7 @@ def backup_grafana_db(dt: str):
     tar.add('/var/lib/grafana/grafana_backup.db', arcname='grafana_backup.db')
     tar.close()
     
-    pca_connection('PUT', 'grafana.tar.gz', f'sql/grafana/{dt}.tar.gz', False)
+    pca_connection().put('grafana.tar.gz', f'sql/grafana/{dt}.tar.gz', False)
 
     os.remove('grafana.tar.gz')
     os.remove('/var/lib/grafana/grafana_backup.db')
@@ -154,7 +154,7 @@ def backup_mediawiki_xml(dt: str, database: str):
     for db in dbs:
         os.system(f'/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}')
 
-        pca_connection('PUT', f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
+        pca_connection().put(f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
 
         os.remove(f'/srv/backups/{db}.xml.gz')
 
@@ -207,7 +207,7 @@ def download_pca(file: str):
         print(f'{file} is unable to be downloaded as the file is being unsealed. Please try again in {unseal_time}s.')
     else:
         try:
-            pca_connection('GET', file)
+            pca_connection().get(file)
         except:
             print('Unable to download file! Please raise this on Phabricator if this is a repeat issue.')
 
