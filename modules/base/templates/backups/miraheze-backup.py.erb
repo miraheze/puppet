@@ -14,7 +14,7 @@ from fabric import Connection
 from datetime import datetime
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for Miraheze backups from PCA.')
-parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
+parser.add_argument('action', choices=['backup', 'delete', 'download', 'find', 'unfreeze'], help='Action to be ran')
 parser.add_argument('type', choices=['private', 'sslkeys', 'phabricator', 'sql', 'mediawiki-xml', 'swift_account_container', 'grafana'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
@@ -46,6 +46,8 @@ def pca_web(method: str, url: str, expiry: int):
         return requests.post(url, headers=headers, proxies=proxies)
     elif method == 'HEAD':
         return requests.head(url, headers=headers, proxies=proxies)
+    elif method == 'DELETE':
+        return requests.delete(url, headers=headers, proxies=proxies)
     else:
         raise Exception('Method is not currently implemented in Miraheze-Backup')
 
@@ -226,6 +228,20 @@ def download(source: str, dt: str, database: str):
     print(f'Completed! This took {time.time() - ts}s')
 
 
+def delete():
+    all_backups = pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql', 0)
+    backups_list = list(all_backups.text.split("\n"))
+    for backup_item in backups_list:
+        if backup_item.startswith(f'piwik/'):
+            pca_web('DELETE', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{backup_item}', 0)
+
+    all_backups_segments = pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}_segments', 0)
+    backups_segments_list = list(all_backups_segments.text.split("\n"))
+    for backup_item in backups_segments_list:
+        if backup_item.startswith(f'piwik/'):
+            pca_web('DELETE', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{backup_item}', 0)
+
+
 def find_backups(source: str, database: str):
     all_backups = pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}', 0)
     backups_list = list(all_backups.text.split("\n"))
@@ -255,6 +271,8 @@ if __name__ == '__main__':
 
     if args.action == 'backup':
         backup(args.type, args.database)
+    elif args.action == 'delete':
+        delete()
     elif args.action == 'download':
         if not args.date:
             parser.exit(1, '--date is required when downloading a file!')
