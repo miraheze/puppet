@@ -117,7 +117,7 @@ def backup_sql(dt: str, database: str):
     for db in dbs:
         print(f'Backing up database \'{db}\'...')
 
-        os.system(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz > /srv/backups/dbs/{db}.sql.gz')
+        os.system(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= @facts['processors']['count']/8 > 1 ? @facts['processors']['count']/8 : 1 %> > /srv/backups/dbs/{db}.sql.gz')
 
         pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
 
