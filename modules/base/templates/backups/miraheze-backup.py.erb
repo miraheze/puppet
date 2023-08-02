@@ -160,7 +160,7 @@ def backup_mediawiki_xml(dt: str, database: str):
         segments_expire(f'mediawiki-xml', f'{db}/{dt}.xml.gz', 13)
 
 
-def segments_expire(source: str, path: str, object: str, expire: int):
+def segments_expire(source: str, object: str, expire: int):
     """We have to apply the X-Delete-After header to segments as well if they exist for a object.
     Doing it just for a main object doesn't apply it to all the segments of the object.
     """
