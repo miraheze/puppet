@@ -56,9 +56,11 @@ def backup_private(dt: str):
     tar.close()
 
     pca_connection('PUT', 'private.tar.gz', f'private/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/private/{dt}.tar.gz', 4)
 
     os.remove('private.tar.gz')
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/private/{dt}.tar.gz', 4)
+    segments_expire(f'private', f'{dt}.tar.gz', 4)
 
 
 def backup_sslkeys(dt: str):
@@ -67,9 +69,11 @@ def backup_sslkeys(dt: str):
     tar.close()
 
     pca_connection('PUT', 'sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sslkeys/{dt}.tar.gz', 4)
 
     os.remove('sslkeys.tar.gz')
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sslkeys/{dt}.tar.gz', 4)
+    segments_expire(f'sslkeys', f'{dt}.tar.gz', 4)
 
 
 def backup_swift_account_container(dt: str):
@@ -78,9 +82,11 @@ def backup_swift_account_container(dt: str):
     tar.close()
 
     pca_connection('PUT', 'swift_account_container.tar.gz', f'swift-account-container/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/swift-account-container/{dt}.tar.gz', 4)
 
     os.remove('swift_account_container.tar.gz')
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/swift-account-container/{dt}.tar.gz', 4)
+    segments_expire(f'swift-account-container', f'{dt}.tar.gz', 4)
 
 
 def backup_phabricator(dt: str):
@@ -92,9 +98,11 @@ def backup_phabricator(dt: str):
     tar.close()
 
     pca_connection('PUT', 'phabricator.tar.gz', f'phabricator/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phabricator/{dt}.tar.gz', 4)
 
     os.remove('phabricator.tar.gz')
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phabricator/{dt}.tar.gz', 4)
+    segments_expire(f'phabricator', f'{dt}.tar.gz', 4)
 
 
 def backup_sql(dt: str, database: str):
@@ -110,9 +118,11 @@ def backup_sql(dt: str, database: str):
         os.system(f'/usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/gzip > /srv/backups/dbs/{db}.sql.gz')
 
         pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
-        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.tar.gz', 5)
 
         os.remove(f'/srv/backups/dbs/{db}.sql.gz')
+
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.tar.gz', 5)
+        segments_expire(f'sql', f'{db}/{dt}.tar.gz', 5)
 
 
 def backup_grafana_db(dt: str):
@@ -122,7 +132,12 @@ def backup_grafana_db(dt: str):
     tar.close()
     
     pca_connection('PUT', 'grafana.tar.gz', f'sql/grafana/{dt}.tar.gz', False)
+
+    os.remove('grafana.tar.gz')
+    os.remove('/var/lib/grafana/grafana_backup.db')
+
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/grafana/{dt}.tar.gz', 4)
+    segments_expire(f'sql', f'grafana/{dt}.tar.gz', 4)
 
     os.remove('grafana.tar.gz')
     os.remove('/var/lib/grafana/grafana_backup.db')
@@ -138,9 +153,23 @@ def backup_mediawiki_xml(dt: str, database: str):
         os.system(f'/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}')
 
         pca_connection('PUT', f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
-        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{db}/{dt}.xml.gz', 13)
 
         os.remove(f'/srv/backups/{db}.xml.gz')
+
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{db}/{dt}.xml.gz', 13)
+        segments_expire(f'mediawiki-xml', f'{db}/{dt}.xml.gz', 13)
+
+
+def segments_expire(source: str, object: str, expire: int):
+    """We have to apply the X-Delete-After header to segments as well if they exist for a object.
+    Doing it just for a main object doesn't apply it to all the segments of the object.
+    """
+    segments = pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}_segments', 0)
+    segments_list = list(segments.text.split("\n"))
+
+    for segment in segments_list:
+            if segment.startswith(f'{object}/'):
+                pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}_segments/{segment}', expire)
 
 
 def backup(source: str, database: str):
