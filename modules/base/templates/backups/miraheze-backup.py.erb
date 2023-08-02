@@ -247,7 +247,7 @@ def unfreeze_backup(source: str, dt: str, database: str):
     elif source in ['grafana']:
         file = f'sql/{source}/{dt}.tar.gz'
     elif source in ['mediawiki-xml']:
-        file = f'sql/{source}/{database}/{dt}.xml.gz'
+        file = f'{source}/{database}/{dt}.xml.gz'
     elif source in ['sql']:
         file = f'{source}/{database}/{dt}.sql.gz'
 
