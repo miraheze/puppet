@@ -115,7 +115,7 @@ def backup_sql(dt: str, database: str):
         os.makedirs(f'/srv/backups/dbs')
 
     for db in dbs:
-        os.system(f'/usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice -n 19 /usr/bin/pigz > /srv/backups/dbs/{db}.sql.gz')
+        os.system(f'/usr/bin/nice -n 19 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice -n 19 /usr/bin/pigz > /srv/backups/dbs/{db}.sql.gz')
 
         pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
 
