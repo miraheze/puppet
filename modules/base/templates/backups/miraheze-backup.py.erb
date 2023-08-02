@@ -107,7 +107,7 @@ def backup_phabricator(dt: str):
 
 def backup_sql(dt: str, database: str):
     if database is None:
-        dbs = [file for file in os.listdir('/srv/mariadb') if os.path.isdir(f'/srv/mariadb/{file}') and file[-4:] == 'wiki']
+        dbs = [file for file in sorted(os.listdir('/srv/mariadb')) if os.path.isdir(f'/srv/mariadb/{file}') and file[-4:] == 'wiki']
     else:
         dbs = [database]
 
