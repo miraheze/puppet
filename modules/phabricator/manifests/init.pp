@@ -232,7 +232,7 @@ class phabricator (
 
     cron { 'backups-phabricator':
         ensure   => present,
-        command  => '/usr/local/bin/miraheze-backup backup phabricator > /var/log/phabricator-backup.log',
+        command  => '/usr/local/bin/miraheze-backup backup phabricator > /var/log/phabricator-backup.log 2>&1',
         user     => 'root',
         minute   => '0',
         hour     => '1',
