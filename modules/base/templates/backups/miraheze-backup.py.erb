@@ -58,7 +58,7 @@ def backup_private(dt: str):
 
     pca_connection('PUT', 'private.tar.gz', f'private/{dt}.tar.gz', False)
 
-    subprocess.call('rm -f private.tar.gz', shell=True)
+    subprocess.call(f'rm -f private.tar.gz', shell=True)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/private/{dt}.tar.gz', 4)
     segments_expire(f'private', f'{dt}.tar.gz', 4)
@@ -71,7 +71,7 @@ def backup_sslkeys(dt: str):
 
     pca_connection('PUT', 'sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
 
-    subprocess.call('rm -f sslkeys.tar.gz', shell=True)
+    subprocess.call(f'rm -f sslkeys.tar.gz', shell=True)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sslkeys/{dt}.tar.gz', 4)
     segments_expire(f'sslkeys', f'{dt}.tar.gz', 4)
@@ -84,7 +84,7 @@ def backup_swift_account_container(dt: str):
 
     pca_connection('PUT', 'swift_account_container.tar.gz', f'swift-account-container/{dt}.tar.gz', False)
 
-    subprocess.call('rm -f swift_account_container.tar.gz', shell=True)
+    subprocess.call(f'rm -f swift_account_container.tar.gz', shell=True)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/swift-account-container/{dt}.tar.gz', 4)
     segments_expire(f'swift-account-container', f'{dt}.tar.gz', 4)
@@ -94,13 +94,13 @@ def backup_phabricator(dt: str):
     subprocess.check_call(f'/srv/phab/phabricator/bin/storage dump --compress --output backup.tar.gz', shell=True)
     tar = tarfile.open('phabricator.tar.gz', 'w:gz')
     tar.add('backup.tar.gz', arcname='db')
-    subprocess.call('rm -f backup.tar.gz', shell=True)
+    subprocess.call(f'rm -f backup.tar.gz', shell=True)
     tar.add('/srv/phab/images', arcname='phabricator')
     tar.close()
 
     pca_connection('PUT', 'phabricator.tar.gz', f'phabricator/{dt}.tar.gz', False)
 
-    subprocess.call('rm -f phabricator.tar.gz', shell=True)
+    subprocess.call(f'rm -f phabricator.tar.gz', shell=True)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phabricator/{dt}.tar.gz', 4)
     segments_expire(f'phabricator', f'{dt}.tar.gz', 4)
@@ -135,7 +135,7 @@ def backup_grafana_db(dt: str):
     
     pca_connection('PUT', 'grafana.tar.gz', f'sql/grafana/{dt}.tar.gz', False)
 
-    subprocess.call('rm -f grafana.tar.gz /var/lib/grafana/grafana_backup.db', shell=True)
+    subprocess.call(f'rm -f grafana.tar.gz /var/lib/grafana/grafana_backup.db', shell=True)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/grafana/{dt}.tar.gz', 4)
     segments_expire(f'sql', f'grafana/{dt}.tar.gz', 4)
@@ -152,7 +152,7 @@ def backup_mediawiki_xml(dt: str, database: str):
 
         pca_connection('PUT', f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
 
-        subprocess.call('rm -f /srv/backups/{db}.xml.gz', shell=True)
+        subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
 
         pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{db}/{dt}.xml.gz', 13)
         segments_expire(f'mediawiki-xml', f'{db}/{dt}.xml.gz', 13)
