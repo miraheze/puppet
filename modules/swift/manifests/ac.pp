@@ -106,7 +106,7 @@ class swift::ac {
     # Backups
     cron { 'backups-swift-account-container':
         ensure  => present,
-        command => '/usr/local/bin/miraheze-backup backup swift_account_container > /var/log/swift-account-container-backup.log',
+        command => '/usr/local/bin/miraheze-backup backup swift-account-container > /var/log/swift-account-container-backup.log',
         user    => 'root',
         minute  => '0',
         hour    => '6',
