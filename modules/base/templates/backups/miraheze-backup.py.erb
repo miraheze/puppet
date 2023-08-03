@@ -3,12 +3,13 @@
 # Created by John Lewis 2022
 
 import argparse
-import time
-import tarfile
-import os
-import json
 import glob
+import json
+import os
 import requests
+import subprocess
+import tarfile
+import time
 
 from fabric import Connection
 from datetime import datetime
@@ -60,7 +61,7 @@ def backup_private(dt: str):
 
     pca_connection('PUT', 'private.tar.gz', f'private/{dt}.tar.gz', False)
 
-    os.remove('private.tar.gz')
+    subprocess.call(f'rm -f private.tar.gz', shell=True)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/private/{dt}.tar.gz', 4)
     segments_expire(f'private', f'{dt}.tar.gz', 4)
@@ -73,7 +74,7 @@ def backup_sslkeys(dt: str):
 
     pca_connection('PUT', 'sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
 
-    os.remove('sslkeys.tar.gz')
+    subprocess.call(f'rm -f sslkeys.tar.gz', shell=True)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sslkeys/{dt}.tar.gz', 4)
     segments_expire(f'sslkeys', f'{dt}.tar.gz', 4)
@@ -86,23 +87,23 @@ def backup_swift_account_container(dt: str):
 
     pca_connection('PUT', 'swift_account_container.tar.gz', f'swift-account-container/{dt}.tar.gz', False)
 
-    os.remove('swift_account_container.tar.gz')
+    subprocess.call(f'rm -f swift_account_container.tar.gz', shell=True)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/swift-account-container/{dt}.tar.gz', 4)
     segments_expire(f'swift-account-container', f'{dt}.tar.gz', 4)
 
 
 def backup_phabricator(dt: str):
-    os.system('/srv/phab/phabricator/bin/storage dump --compress --output backup.tar.gz')
+    subprocess.check_call(f'/srv/phab/phabricator/bin/storage dump --compress --output backup.tar.gz', shell=True)
     tar = tarfile.open('phabricator.tar.gz', 'w:gz')
     tar.add('backup.tar.gz', arcname='db')
-    os.remove('backup.tar.gz')
+    subprocess.call(f'rm -f backup.tar.gz', shell=True)
     tar.add('/srv/phab/images', arcname='phabricator')
     tar.close()
 
     pca_connection('PUT', 'phabricator.tar.gz', f'phabricator/{dt}.tar.gz', False)
 
-    os.remove('phabricator.tar.gz')
+    subprocess.call(f'rm -f phabricator.tar.gz', shell=True)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phabricator/{dt}.tar.gz', 4)
     segments_expire(f'phabricator', f'{dt}.tar.gz', 4)
@@ -120,32 +121,27 @@ def backup_sql(dt: str, database: str):
     for db in dbs:
         print(f'Backing up database \'{db}\'...')
 
-        os.system(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= @facts['processors']['count']/8 > 1 ? @facts['processors']['count']/8 : 1 %> > /srv/backups/dbs/{db}.sql.gz')
-
+        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= @facts['processors']['count']/8 > 1 ? @facts['processors']['count']/8 : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True)
         pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
 
-        os.remove(f'/srv/backups/dbs/{db}.sql.gz')
+        subprocess.check_call(f'rm -f /srv/backups/dbs/{db}.sql.gz', shell=True)
 
         pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.sql.gz', 5)
         segments_expire(f'sql', f'{db}/{dt}.sql.gz', 5)
 
 
 def backup_grafana_db(dt: str):
-    os.system(f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"')
+    subprocess.check_call(f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"', shell=True)
     tar = tarfile.open('grafana.tar.gz', 'w:gz')
     tar.add('/var/lib/grafana/grafana_backup.db', arcname='grafana_backup.db')
     tar.close()
     
     pca_connection('PUT', 'grafana.tar.gz', f'sql/grafana/{dt}.tar.gz', False)
 
-    os.remove('grafana.tar.gz')
-    os.remove('/var/lib/grafana/grafana_backup.db')
+    subprocess.call(f'rm -f grafana.tar.gz /var/lib/grafana/grafana_backup.db', shell=True)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/grafana/{dt}.tar.gz', 4)
     segments_expire(f'sql', f'grafana/{dt}.tar.gz', 4)
-
-    os.remove('grafana.tar.gz')
-    os.remove('/var/lib/grafana/grafana_backup.db')
 
 
 def backup_mediawiki_xml(dt: str, database: str):
@@ -155,11 +151,11 @@ def backup_mediawiki_xml(dt: str, database: str):
         dbs = [database]
 
     for db in dbs:
-        os.system(f'/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}')
+        subprocess.check_call(f'/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}', shell=True)
 
         pca_connection('PUT', f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
 
-        os.remove(f'/srv/backups/{db}.xml.gz')
+        subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
 
         pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{db}/{dt}.xml.gz', 13)
         segments_expire(f'mediawiki-xml', f'{db}/{dt}.xml.gz', 13)
