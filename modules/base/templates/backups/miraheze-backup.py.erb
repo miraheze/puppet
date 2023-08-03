@@ -118,13 +118,13 @@ def backup_sql(dt: str, database: str):
     for db in dbs:
         print(f'Backing up database \'{db}\'...')
 
-        subprocess.check_call(f'/usr/local/bin/miraheze-mariadb-dump {db}', shell=True)
-        # pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
+        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= @facts['processors']['count']/8 > 1 ? @facts['processors']['count']/8 : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True)
+        pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
 
         subprocess.check_call(f'rm -f /srv/backups/dbs/{db}.sql.gz', shell=True)
 
-        # pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.sql.gz', 5)
-        # segments_expire(f'sql', f'{db}/{dt}.sql.gz', 5)
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.sql.gz', 5)
+        segments_expire(f'sql', f'{db}/{dt}.sql.gz', 5)
 
 
 def backup_grafana_db(dt: str):
