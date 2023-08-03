@@ -7,10 +7,12 @@
 #web2:
 #  host: 192.168.42.2
 
-<%- @host.sort.each do |host| -%>
-<%= host %>:
-  host: <%= host %>
+roster_defaults:
   user: salt-user
   priv: /home/salt-user/.ssh/id_ed25519
   sudo: True         # Whether to sudo to root, not enabled by default
+
+<%- @host.sort.each do |host| -%>
+<%= host %>:
+  host: <%= host %>
 <%- end -%>
