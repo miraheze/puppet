@@ -13,6 +13,5 @@ roster_defaults:
   sudo: True         # Whether to sudo to root, not enabled by default
 
 <%- @host.sort.each do |host| -%>
-<%= host %>:
-  host: <%= host %>
+<%= host %>: <%= host %>
 <%- end -%>
