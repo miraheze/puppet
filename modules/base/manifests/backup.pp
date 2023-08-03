@@ -10,9 +10,4 @@ class base::backup (
         mode    => '0555',
         content => template('base/backups/miraheze-backup.py.erb'),
     }
-
-    file { '/usr/local/bin/miraheze-mariadb-dump':
-        mode    => '0555',
-        content => template('base/backups/miraheze-mariadb-dump.sh.erb'),
-    }
 }
