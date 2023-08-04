@@ -38,7 +38,7 @@ class mediawiki(
     }
 
     if lookup('jobrunner::intensive', {'default_value' => false}) {
-        ensure_packages(
+        stdlib::ensure_packages(
             'internetarchive',
             {
                 ensure   => '3.0.2',
@@ -216,10 +216,11 @@ class mediawiki(
     }
 
     file { '/srv/mediawiki/stopforumspam/listed_ip_90_ipv46_all.txt':
-        ensure  => present,
-        mode    => '0755',
-        source  => 'puppet:///private/mediawiki/listed_ip_90_ipv46_all.txt',
-        require => File['/srv/mediawiki/stopforumspam'],
+        ensure    => present,
+        mode      => '0755',
+        source    => 'puppet:///private/mediawiki/listed_ip_90_ipv46_all.txt',
+        show_diff => false,
+        require   => File['/srv/mediawiki/stopforumspam'],
     }
 
     sudo::user { 'www-data_sudo_itself':

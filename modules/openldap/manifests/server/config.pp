@@ -23,7 +23,7 @@ class openldap::server::config {
   }
   $slapd_ldap_urls = "${slapd_ldap_ifs} ${slapd_ldapi_ifs} ${slapd_ldaps_ifs}"
 
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Debian': {
       shellvar { 'slapd':
         ensure   => present,
@@ -100,7 +100,7 @@ class openldap::server::config {
       }
     }
     default: {
-      fail "Operating System Family ${::osfamily} not yet supported"
+      fail "Operating System Family ${facts['os']['family']} not yet supported"
     }
   }
 }

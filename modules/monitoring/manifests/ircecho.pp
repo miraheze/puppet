@@ -1,7 +1,7 @@
 class monitoring::ircecho (
     String $mirahezebots_password = undef,
 ) {
-    ensure_packages([
+    stdlib::ensure_packages([
         'python3-irc',
         'python3-pyinotify',
     ])
@@ -15,7 +15,7 @@ class monitoring::ircecho (
         notify => Service['ircecho'],
     }
 
-    $pyversion = $::lsbdistcodename ? {
+    $pyversion = $facts['os']['distro']['codename'] ? {
         'bullseye' => 'python3.9',
     }
 

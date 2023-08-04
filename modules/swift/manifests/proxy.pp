@@ -4,9 +4,9 @@ class swift::proxy (
     Integer              $num_workers   = lookup('swift::proxy::num_workers', {'default_value' => $::processorcount}),
     Hash                 $accounts      = lookup('swift::accounts'),
     Hash                 $accounts_keys = lookup('swift::accounts_keys'),
-){
+) {
 
-    ensure_packages(['swift-proxy'])
+    stdlib::ensure_packages(['swift-proxy'])
 
     file { '/etc/swift/proxy-server.conf':
         ensure  => present,
@@ -57,7 +57,7 @@ class swift::proxy (
     monitoring::services { 'HTTP':
         check_command => 'check_http',
         vars          => {
-            address6         => $facts['ipaddress6'],
+            address6         => $facts['networking']['ip6'],
             http_vhost       => 'swift-lb.miraheze.org',
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
@@ -69,7 +69,7 @@ class swift::proxy (
     monitoring::services { 'HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6         => $facts['ipaddress6'],
+            address6         => $facts['networking']['ip6'],
             http_vhost       => 'swift-lb.miraheze.org',
             http_ssl         => true,
             http_ignore_body => true,
@@ -82,7 +82,7 @@ class swift::proxy (
     monitoring::services { 'Swift Proxy':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $facts['networking']['ip6'],
             tcp_port    => '80',
         },
     }

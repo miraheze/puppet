@@ -168,31 +168,6 @@ predicate syntax.
     requires_os('ubuntu >= trusty')
 
 
-## ssl_ciphersuite
-
-`ssl_ciphersuite( string $servercode, string $encryption_type, boolean $hsts )`
-
-Outputs the ssl configuration directives for use with either Nginx
-or Apache using our selection of ciphers and SSL options.
-
-Takes three arguments:
-
-- The server to configure for: 'apache' or 'nginx'
-- The compatibility mode,indicating the degree of compatibility we
-  want to retain with older browsers (basically, IE6, IE7 and
-  Android prior to 3.0)
-- hsts - optional boolean, true emits our standard public HSTS
-
-Whenever called, this function will output a list of strings that
-can be safely used in your configuration file as the ssl
-configuration part.
-
-### Examples
-
-    ssl_ciphersuite('apache', 'compat', true)
-    ssl_ciphersuite('nginx', 'strong')
-
-
 ## validate_ensure
 `validate_ensure( string $ensure )`
 

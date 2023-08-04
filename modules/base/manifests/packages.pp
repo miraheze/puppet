@@ -1,6 +1,6 @@
 # === Class base::packages
 class base::packages {
-    ensure_packages([
+    stdlib::ensure_packages([
         'acct',
         'apt-transport-https',
         'coreutils',

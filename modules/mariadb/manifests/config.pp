@@ -9,6 +9,7 @@ class mariadb::config(
     Enum['10.5']      $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
     String            $icinga_password              = undef,
     Optional[Integer] $server_id                    = undef,
+    Boolean           $enable_bin_logs              = true,
 ) {
     $exporter_password = lookup('passwords::db::exporter')
     $ido_db_user_password = lookup('passwords::icinga_ido')
@@ -113,7 +114,7 @@ class mariadb::config(
         check_command => 'mysql',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars          => {
-            mysql_hostname => $::fqdn,
+            mysql_hostname => $facts['networking']['fqdn'],
             mysql_username => 'icinga',
             mysql_password => $icinga_password,
             mysql_ssl      => true,
@@ -125,7 +126,7 @@ class mariadb::config(
         check_command => 'mysql_connections',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
         vars => {
-            mysql_hostname  => $::fqdn,
+            mysql_hostname  => $facts['networking']['fqdn'],
             mysql_username  => 'icinga',
             mysql_password  => $icinga_password,
             mysql_ssl       => true,

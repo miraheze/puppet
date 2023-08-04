@@ -48,7 +48,7 @@ class openldap::server::slapdconf {
     fail 'You must specify a ssl_cert'
   }
 
-  if $::osfamily == 'Debian' {
+  if $facts['os']['family'] == 'Debian' {
     openldap::server::database { 'dc=my-domain,dc=com':
       ensure => absent,
     }

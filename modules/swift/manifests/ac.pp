@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 class swift::ac {
-    ensure_packages(['swift-account', 'swift-container'])
+    stdlib::ensure_packages(['swift-account', 'swift-container'])
 
     class { 'rsync::server':
         log_file => '/var/log/rsyncd.log',
@@ -90,7 +90,7 @@ class swift::ac {
     monitoring::services { 'Swift Account Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $facts['networking']['ip6'],
             tcp_port    => '6002',
         },
     }
@@ -98,7 +98,7 @@ class swift::ac {
     monitoring::services { 'Swift Container Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $facts['networking']['ip6'],
             tcp_port    => '6001',
         },
     }
@@ -106,7 +106,7 @@ class swift::ac {
     # Backups
     cron { 'backups-swift-account-container':
         ensure  => present,
-        command => '/usr/local/bin/miraheze-backup backup swift_account_container > /var/log/swift-account-container-backup.log',
+        command => '/usr/local/bin/miraheze-backup backup swift-account-container > /var/log/swift-account-container-backup.log 2>&1',
         user    => 'root',
         minute  => '0',
         hour    => '6',

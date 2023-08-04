@@ -15,13 +15,6 @@ class Puppet::Provider::Openldap < Puppet::Provider
       '-H', "ldap:///#{dn}???#{filter}"
     ]
 
-    if 'squeeze' == Facter.value(:lsbdistcodename)
-      arguments = [
-        '-b', base,
-        '-H', "ldap:///#{dn}???#{filter}"
-      ]
-    end
-
     original_slapcat(*arguments)
   end
   def slapcat(*args); self.class.slapcat(*args); end

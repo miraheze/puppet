@@ -43,7 +43,7 @@ class mediawiki::deploy (
         }
     }
 
-    ensure_packages(
+    stdlib::ensure_packages(
         'langcodes',
         {
             ensure   => '3.3.0',

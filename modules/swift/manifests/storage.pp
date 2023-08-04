@@ -3,7 +3,7 @@ class swift::storage (
     Optional[Integer] $object_server_default_workers = lookup('swift::storage::object_server_default_workers', {'default_value' => undef}),
     Array $swift_devices = lookup('swift::storage::devices')
 ) {
-    ensure_packages(['swift-object'])
+    stdlib::ensure_packages(['swift-object'])
 
     systemd::service { 'rsync':
         ensure   => present,
@@ -122,7 +122,7 @@ class swift::storage (
     monitoring::services { 'Swift Object Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $facts['networking']['ip6'],
             tcp_port    => '6000',
         },
     }

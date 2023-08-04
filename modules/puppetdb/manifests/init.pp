@@ -71,7 +71,7 @@ class puppetdb(
         group  => 'puppetdb',
     }
 
-    $jvm_opts = "${puppetdb_jvm_opts} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::fqdn}:9401:/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml"
+    $jvm_opts = "${puppetdb_jvm_opts} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${facts['networking']['fqdn']}:9401:/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml"
     file { '/etc/default/puppetdb':
         ensure  => present,
         owner   => 'root',
@@ -111,10 +111,10 @@ class puppetdb(
     }
 
     if $perform_gc {
-        $db_settings = merge(
-            $default_db_settings,
-            { 'report-ttl' => '1d', 'gc-interval' => '20' }
-        )
+        $db_settings = $default_db_settings + {
+            'report-ttl' => '1d',
+            'gc-interval' => '20'
+        }
     } else {
         $db_settings = $default_db_settings
     }
@@ -125,10 +125,9 @@ class puppetdb(
 
     #read db settings
     if $db_ro_host {
-        $read_db_settings = merge(
-            $default_db_settings,
-            {'subname' => "//${db_ro_host}:5432/puppetdb${ssl}"}
-        )
+        $read_db_settings = $default_db_settings + {
+            'subname' => "//${db_ro_host}:5432/puppetdb${ssl}"
+        }
         puppetdb::config { 'read-database':
             settings => $read_db_settings,
         }
@@ -155,7 +154,7 @@ class puppetdb(
     }
 
     if $bind_ip {
-        $actual_jetty_settings = merge($jetty_settings, {'ssl-host' => $bind_ip})
+        $actual_jetty_settings = $jetty_settings + {'ssl-host' => $bind_ip}
     } else {
         $actual_jetty_settings = $jetty_settings
     }

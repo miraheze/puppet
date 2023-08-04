@@ -14,7 +14,8 @@ mediawiki::jobqueue::wiki: 'loginwikibeta'
 role::mediawiki::use_strict_firewall: true
 vpncloud::server_ip: 10.0.1.7
 
-mediawiki::php::fpm::fpm_min_child: 8
+mediawiki::php::fpm::fpm_min_child: 10
+mediawiki::php::emergency_restart_threshold: 5
 mediawiki::php::fpm::fpm_workers_multiplier: 1.0
 mediawiki::php::fpm_config:
   post_max_size: '250M'

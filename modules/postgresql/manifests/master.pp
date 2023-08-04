@@ -35,9 +35,9 @@
 #  include postgresql::master
 
 class postgresql::master(
-    String $master_server = $::fqdn,
+    String $master_server = $facts['networking']['fqdn'],
     Optional[Array] $includes = [],
-    String $pgversion = $::lsbdistcodename ? {
+    String $pgversion = $facts['os']['distro']['codename'] ? {
         'bullseye' => '13',
         'buster'  => '11',
         'stretch' => '9.6',

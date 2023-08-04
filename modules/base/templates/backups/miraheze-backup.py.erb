@@ -3,26 +3,34 @@
 # Created by John Lewis 2022
 
 import argparse
-import time
-import tarfile
-import os
-import json
 import glob
+import json
+import os
 import requests
+import subprocess
+import tarfile
+import time
 
 from fabric import Connection
 from datetime import datetime
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for Miraheze backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
-parser.add_argument('type', choices=['private', 'sslkeys', 'phabricator', 'sql', 'mediawiki-xml', 'swift_account_container', 'grafana'], help='Type of backup to handle using the action')
+parser.add_argument('type', choices=['private', 'sslkeys', 'phabricator', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
 
 
-def pca_connection():
-    return Connection('gateways.storage.bhs.cloud.ovh.net', gateway='nc -6 -X connect -x bast.miraheze.org:8080 %h %p', user='pca', connect_kwargs={'password': '<%= @pca_password %>'})
+def pca_connection(status, *args):
+    with Connection('gateways.storage.bhs.cloud.ovh.net', gateway='nc -6 -X connect -x bast.miraheze.org:8080 %h %p', user='pca', connect_kwargs={'password': '<%= @pca_password %>'}) as c:
+        if status == 'GET':
+            c.get(*args)
+        else:
+            try:
+                c.put(*args)
+            except IOError:
+                print(f'WARNING: encountered IOError uploading {args[0]} to {args[1]}') 
 
 
 def pca_web(method: str, url: str, expiry: int):
@@ -37,7 +45,7 @@ def pca_web(method: str, url: str, expiry: int):
         return requests.get(url, headers=headers, proxies=proxies)
     elif method == 'POST':
         if expiry > 0:
-            headers['X-Delete-After'] = expiry * 604800
+            headers['X-Delete-After'] = f'{expiry*604800}'
         
         return requests.post(url, headers=headers, proxies=proxies)
     elif method == 'HEAD':
@@ -51,10 +59,12 @@ def backup_private(dt: str):
     tar.add('/etc/puppetlabs/puppet/private', arcname='private')
     tar.close()
 
-    pca_connection().put('private.tar.gz', f'private/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/private/{dt}.tar.gz', 4)
+    pca_connection('PUT', 'private.tar.gz', f'private/{dt}.tar.gz', False)
 
-    os.remove('private.tar.gz')
+    subprocess.call(f'rm -f private.tar.gz', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/private/{dt}.tar.gz', 4)
+    segments_expire(f'private', f'{dt}.tar.gz', 4)
 
 
 def backup_sslkeys(dt: str):
@@ -62,10 +72,12 @@ def backup_sslkeys(dt: str):
     tar.add('/etc/puppetlabs/puppet/ssl-keys', arcname='sslkeys')
     tar.close()
 
-    pca_connection().put('sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sslkeys/{dt}.tar.gz', 4)
+    pca_connection('PUT', 'sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
 
-    os.remove('sslkeys.tar.gz')
+    subprocess.call(f'rm -f sslkeys.tar.gz', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sslkeys/{dt}.tar.gz', 4)
+    segments_expire(f'sslkeys', f'{dt}.tar.gz', 4)
 
 
 def backup_swift_account_container(dt: str):
@@ -73,29 +85,33 @@ def backup_swift_account_container(dt: str):
     tar.add('/srv/node', arcname='swift_account_container')
     tar.close()
 
-    pca_connection().put('swift_account_container.tar.gz', f'swift-account-container/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/swift-account-container/{dt}.tar.gz', 4)
+    pca_connection('PUT', 'swift_account_container.tar.gz', f'swift-account-container/{dt}.tar.gz', False)
 
-    os.remove('swift_account_container.tar.gz')
+    subprocess.call(f'rm -f swift_account_container.tar.gz', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/swift-account-container/{dt}.tar.gz', 4)
+    segments_expire(f'swift-account-container', f'{dt}.tar.gz', 4)
 
 
 def backup_phabricator(dt: str):
-    os.system('/srv/phab/phabricator/bin/storage dump --compress --output backup.tar.gz')
+    subprocess.check_call(f'/srv/phab/phabricator/bin/storage dump --compress --output backup.tar.gz', shell=True)
     tar = tarfile.open('phabricator.tar.gz', 'w:gz')
     tar.add('backup.tar.gz', arcname='db')
-    os.remove('backup.tar.gz')
+    subprocess.call(f'rm -f backup.tar.gz', shell=True)
     tar.add('/srv/phab/images', arcname='phabricator')
     tar.close()
 
-    pca_connection().put('phabricator.tar.gz', f'phabricator/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phabricator/{dt}.tar.gz', 4)
+    pca_connection('PUT', 'phabricator.tar.gz', f'phabricator/{dt}.tar.gz', False)
 
-    os.remove('phabricator.tar.gz')
+    subprocess.call(f'rm -f phabricator.tar.gz', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phabricator/{dt}.tar.gz', 4)
+    segments_expire(f'phabricator', f'{dt}.tar.gz', 4)
 
 
 def backup_sql(dt: str, database: str):
     if database is None:
-        dbs = [file for file in os.listdir('/srv/mariadb') if os.path.isdir(f'/srv/mariadb/{file}') and file[-4:] == 'wiki']
+        dbs = [file for file in sorted(os.listdir('/srv/mariadb')) if os.path.isdir(f'/srv/mariadb/{file}') and file[-4:] == 'wiki']
     else:
         dbs = [database]
 
@@ -103,25 +119,29 @@ def backup_sql(dt: str, database: str):
         os.makedirs(f'/srv/backups/dbs')
 
     for db in dbs:
-        os.system(f'/usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/gzip > /srv/backups/dbs/{db}.sql.gz')
+        print(f'Backing up database \'{db}\'...')
 
-        pca_connection().put(f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
-        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.tar.gz', 5)
+        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= @facts['processors']['count']/8 > 1 ? @facts['processors']['count']/8 : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True)
+        pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
 
-        os.remove(f'/srv/backups/dbs/{db}.sql.gz')
+        subprocess.check_call(f'rm -f /srv/backups/dbs/{db}.sql.gz', shell=True)
+
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.sql.gz', 5)
+        segments_expire(f'sql', f'{db}/{dt}.sql.gz', 5)
 
 
 def backup_grafana_db(dt: str):
-    os.system(f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"')
+    subprocess.check_call(f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"', shell=True)
     tar = tarfile.open('grafana.tar.gz', 'w:gz')
     tar.add('/var/lib/grafana/grafana_backup.db', arcname='grafana_backup.db')
     tar.close()
     
-    pca_connection().put('grafana.tar.gz', f'sql/grafana/{dt}.tar.gz', False)
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/grafana/{dt}.tar.gz', 4)
+    pca_connection('PUT', 'grafana.tar.gz', f'sql/grafana/{dt}.tar.gz', False)
 
-    os.remove('grafana.tar.gz')
-    os.remove('/var/lib/grafana/grafana_backup.db')
+    subprocess.call(f'rm -f grafana.tar.gz /var/lib/grafana/grafana_backup.db', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/grafana/{dt}.tar.gz', 4)
+    segments_expire(f'sql', f'grafana/{dt}.tar.gz', 4)
 
 
 def backup_mediawiki_xml(dt: str, database: str):
@@ -131,12 +151,32 @@ def backup_mediawiki_xml(dt: str, database: str):
         dbs = [database]
 
     for db in dbs:
-        os.system(f'/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}')
+        try:
+            subprocess.check_call(f'/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}', shell=True)
+        except subprocess.CalledProcessError as e:
+            print(f'WARNING: encountered CalledProcessError backing up {db} with returned code {e.returncode} and output:\n')
+            print(f'{e.output}\n')
+            subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
+            continue
 
-        pca_connection().put(f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
+        pca_connection('PUT', f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
+
+        subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
+
         pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{db}/{dt}.xml.gz', 13)
+        segments_expire(f'mediawiki-xml', f'{db}/{dt}.xml.gz', 13)
 
-        os.remove(f'/srv/backups/{db}.xml.gz')
+
+def segments_expire(source: str, object: str, expire: int):
+    """We have to apply the X-Delete-After header to segments as well if they exist for a object.
+    Doing it just for a main object doesn't apply it to all the segments of the object.
+    """
+    segments = pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}_segments', 0)
+    segments_list = list(segments.text.split("\n"))
+
+    for segment in segments_list:
+            if segment.startswith(f'{object}/'):
+                pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}_segments/{segment}', expire)
 
 
 def backup(source: str, database: str):
@@ -148,7 +188,7 @@ def backup(source: str, database: str):
         backup_private(dt)
     elif source == 'sslkeys':
         backup_sslkeys(dt)
-    elif source == 'swift_account_container':
+    elif source == 'swift-account-container':
         backup_swift_account_container(dt)
     elif source == 'phabricator':
         backup_phabricator(dt)
@@ -172,7 +212,7 @@ def download_pca(file: str):
         print(f'{file} is unable to be downloaded as the file is being unsealed. Please try again in {unseal_time}s.')
     else:
         try:
-            pca_connection().get(file)
+            pca_connection('GET', file)
         except:
             print('Unable to download file! Please raise this on Phabricator if this is a repeat issue.')
 
@@ -181,7 +221,7 @@ def download(source: str, dt: str, database: str):
     ts = time.time()
     print(f'Downloading backup of \'{source}\' for date {dt}...')
 
-    if source in ['private', 'sslkeys', 'phabricator', 'swift_account_container']:
+    if source in ['private', 'sslkeys', 'phabricator', 'swift-account-container']:
         download_pca(f'{source}/{dt}.tar.gz')
     elif source in ['mediawiki-xml']:
         download_pca(f'{source}/{database}/{dt}.xml.gz')
@@ -207,11 +247,13 @@ def find_backups(source: str, database: str):
 
 
 def unfreeze_backup(source: str, dt: str, database: str):
-    if source in ['private', 'sslkeys', 'phabricator']:
+    if source in ['private', 'sslkeys', 'phabricator', 'swift-account-container']:
         file = f'{source}/{dt}.tar.gz'
     elif source in ['grafana']:
         file = f'sql/{source}/{dt}.tar.gz'
-    elif source in ['sql', 'mediawiki-xml']:
+    elif source in ['mediawiki-xml']:
+        file = f'{source}/{database}/{dt}.xml.gz'
+    elif source in ['sql']:
         file = f'{source}/{database}/{dt}.sql.gz'
 
     pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0)

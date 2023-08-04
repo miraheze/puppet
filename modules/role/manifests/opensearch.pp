@@ -18,7 +18,7 @@ class role::opensearch (
             'cluster.name'                                          => 'miraheze-general',
             'node.master'                                           => $os_master,
             'node.data'                                             => $os_data,
-            'network.host'                                          => $::fqdn,
+            'network.host'                                          => $facts['networking']['fqdn'],
             'plugins.security.ssl.http.enabled'                     => true,
             'plugins.security.ssl.http.pemkey_filepath'             => '/etc/opensearch/ssl/opensearch-node-key.pem',
             'plugins.security.ssl.http.pemcert_filepath'            => '/etc/opensearch/ssl/opensearch-node.crt',
@@ -169,16 +169,15 @@ class role::opensearch (
         }
 
         $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]', ['ipaddress6'])
+            query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]", ['networking'])
             .map |$key, $value| {
-                $value['ipaddress6']
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
             }
             .flatten()
             .unique()
             .sort(),
             ' '
         )
-
         ferm::service { 'opensearch ssl':
             proto  => 'tcp',
             port   => '443',
@@ -191,9 +190,9 @@ class role::opensearch (
     }
 
     $firewall_os_nodes = join(
-        query_facts('Class[Role::Opensearch]', ['ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Opensearch]", ['networking'])
         .map |$key, $value| {
-            $value['ipaddress6']
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()

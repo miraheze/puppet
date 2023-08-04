@@ -55,7 +55,7 @@ class roundcubemail (
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
             'cli' => $config_cli,
-            'fpm' => merge($config_cli, $config_fpm),
+            'fpm' => $config_cli + $config_fpm,
         },
     }
 
@@ -117,7 +117,7 @@ class roundcubemail (
         }
     }
 
-    ensure_packages([
+    stdlib::ensure_packages([
         "php${php_version}-pspell",
         'composer',
         'nodejs',

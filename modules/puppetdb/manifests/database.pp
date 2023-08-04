@@ -4,7 +4,7 @@
 class puppetdb::database(
     Optional[String] $master = undef
 ) {
-    $pgversion = $::lsbdistcodename ? {
+    $pgversion = $facts['os']['distro']['codename'] ? {
         'bullseye' => '13',
     }
 

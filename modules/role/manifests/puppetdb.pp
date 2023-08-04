@@ -19,7 +19,7 @@ class role::puppetdb {
     }
 
     # Used for puppetdb
-    prometheus::exporter::jmx { "puppetdb_${::hostname}":
+    prometheus::exporter::jmx { "puppetdb_${facts['networking']['hostname']}":
         port        => 9401,
         config_file => '/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml',
         content     => template('role/puppetdb/jvm_prometheus_jmx_exporter.yaml.erb'),
@@ -27,9 +27,9 @@ class role::puppetdb {
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Puppetserver] and Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Puppetserver]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()

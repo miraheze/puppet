@@ -36,19 +36,19 @@ class ssh::server (
         content => template('ssh/sshd_config.erb'),
     }
 
-    if $::ipaddress6 == undef {
-        $aliases = [ $::hostname, $::ipaddress ]
-    } elsif $::ipaddress6 != undef and $::ipaddress == undef {
-        $aliases = [ $::hostname, $::ipaddress6 ]
+    if $facts['networking']['ip6'] == undef {
+        $aliases = [ $facts['networking']['hostname'], $facts['networking']['ip'] ]
+    } elsif $facts['networking']['ip6'] != undef and $facts['networking']['ip'] == undef {
+        $aliases = [ $facts['networking']['hostname'], $facts['networking']['ip6'] ]
     } else {
-        $aliases = [ $::hostname, $::ipaddress, $::ipaddress6 ]
+        $aliases = [ $facts['networking']['hostname'], $facts['networking']['ip'], $facts['networking']['ip6'] ]
     }
 
-    debug("Storing ecdsa-sha2-nistp256 SSH hostkey for ${::fqdn}")
-    @@sshkey { $::fqdn:
+    debug("Storing ecdsa-sha2-nistp256 SSH hostkey for ${facts['networking']['fqdn']}")
+    @@sshkey { $facts['networking']['fqdn']:
         ensure       => present,
         type         => 'ecdsa-sha2-nistp256',
-        key          => $::sshecdsakey,
+        key          => $facts['ssh']['ecdsa']['key'],
         host_aliases => $aliases,
     }
 }

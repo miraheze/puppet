@@ -2,7 +2,9 @@
 class role::db (
     Optional[Array[String]] $weekly_misc = lookup('role::db::weekly_misc', {'default_value' => []}),
     Optional[Array[String]] $fortnightly_misc = lookup('role::db::fornightly_misc', {'default_value' => []}),
-    Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []})
+    Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []}),
+    Boolean $enable_bin_logs = lookup('role::db::enable_bin_logs', {'default_value' => true}),
+    Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
@@ -31,6 +33,7 @@ class role::db (
         config          => 'mariadb/config/mw.cnf.erb',
         password        => lookup('passwords::db::root'),
         icinga_password => $icinga_password,
+        enable_bin_logs => $enable_bin_logs,
     }
 
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':
@@ -64,9 +67,9 @@ class role::db (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator] or Class[Role::Matomo] or Class[Role::Reports]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator] or Class[Role::Matomo] or Class[Role::Reports]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
@@ -98,19 +101,21 @@ class role::db (
         description => 'general database server',
     }
 
-    cron { 'backups-sql':
-        ensure   => present,
-        command  => '/usr/local/bin/miraheze-backup backup sql > /var/log/sql-backup.log 2>&1',
-        user     => 'root',
-        minute   => '0',
-        hour     => '3',
-        monthday => [fqdn_rand(13, 'db-backups') + 1, fqdn_rand(13, 'db-backups') + 15],
-    }
-
-    monitoring::nrpe { 'Backups SQL':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sql-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    if $backup_sql {
+        cron { 'backups-sql':
+            ensure   => present,
+            command  => '/usr/local/bin/miraheze-backup backup sql > /var/log/sql-backup.log 2>&1',
+            user     => 'root',
+            minute   => '0',
+            hour     => '3',
+            monthday => [fqdn_rand(13, 'db-backups') + 1, fqdn_rand(13, 'db-backups') + 15],
+        }
+    
+        monitoring::nrpe { 'Backups SQL':
+            command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sql-backup.log',
+            docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+            critical => true
+        }
     }
 
     $weekly_misc.each |String $db| {

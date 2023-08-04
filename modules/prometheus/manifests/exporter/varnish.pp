@@ -1,7 +1,7 @@
 class prometheus::exporter::varnish (
     String $listen_port = '9131',
 ) {
-    ensure_packages('prometheus-varnish-exporter')
+    stdlib::ensure_packages('prometheus-varnish-exporter')
 
     systemd::service { 'prometheus-varnish-exporter':
         ensure  => present,
@@ -10,9 +10,9 @@ class prometheus::exporter::varnish (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Prometheus]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()

@@ -3,7 +3,7 @@ class matomo (
     String $ldap_password  = lookup('passwords::matomo::ldap_password'),
     String $matomo_db_host = 'db112.miraheze.org',
 ) {
-    ensure_packages('composer')
+    stdlib::ensure_packages('composer')
 
     git::clone { 'matomo':
         directory          => '/srv/matomo',
@@ -65,7 +65,7 @@ class matomo (
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
             'cli' => $config_cli,
-            'fpm' => merge($config_cli, $config_fpm),
+            'fpm' => $config_cli + $config_fpm,
         },
     }
 

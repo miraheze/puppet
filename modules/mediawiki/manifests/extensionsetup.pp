@@ -1,6 +1,6 @@
 # === Class mediawiki::extensionsetup
 class mediawiki::extensionsetup {
-    ensure_packages('composer')
+    stdlib::ensure_packages('composer')
 
     $mwpath = '/srv/mediawiki-staging/w'
     file { [

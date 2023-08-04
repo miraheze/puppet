@@ -2,7 +2,7 @@
 #
 
 class prometheus::exporter::nginx {
-    ensure_packages('prometheus-nginx-exporter')
+    stdlib::ensure_packages('prometheus-nginx-exporter')
 
     file { '/etc/default/prometheus-nginx-exporter':
         owner   => 'root',
@@ -18,16 +18,15 @@ class prometheus::exporter::nginx {
     }
 
     $firewall_rules = join(
-        query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Prometheus]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
         .sort(),
         ' '
     )
-
     ferm::service { 'prometheus nginx':
         proto  => 'tcp',
         port   => '9113',

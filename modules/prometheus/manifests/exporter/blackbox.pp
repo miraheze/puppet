@@ -6,7 +6,7 @@
 # from https://github.com/wikimedia/puppet/blob/b347052863d4d2e87b37d6c2d9f44f833cfd9dc2/modules/prometheus/manifests/blackbox_exporter.pp
 
 class prometheus::exporter::blackbox {
-    ensure_packages('prometheus-blackbox-exporter')
+    stdlib::ensure_packages('prometheus-blackbox-exporter')
 
     file { '/etc/prometheus/blackbox.yml':
         ensure  => present,

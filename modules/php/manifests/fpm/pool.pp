@@ -57,7 +57,7 @@ define php::fpm::pool(
         'listen.backlog' => 256,
         'pm'     => 'static',
         'pm.max_children' => $facts['processors']['count'],
-        'pm.max_requests' => 5000,
+        'pm.max_requests' => 12000,
         'pm.status_path' => '/php_status',
         'access.format'  => '%{%Y-%m-%dT%H:%M:%S}t [%p] %{microseconds}d %{HTTP_HOST}e/%r %m/%s %{mega}M',
         'process.dumpable' => yes,
@@ -66,7 +66,7 @@ define php::fpm::pool(
     }
 
 
-    $pool_config = merge($base_config, $config)
+    $pool_config = $base_config + $config
     file { "${php::config_dir}/fpm/pool.d/${filename_safe}.conf":
         content => template("php/php${php::version}-fpm.pool.conf.erb"),
         owner   => 'root',

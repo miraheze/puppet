@@ -2,7 +2,7 @@
 class phabricator (
   Integer $request_timeout = lookup('phabricator::php::request_timeout', {'default_value' => 60}),
 ) {
-    ensure_packages(['python3-pygments', 'subversion'])
+    stdlib::ensure_packages(['python3-pygments', 'subversion'])
 
     $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',
@@ -13,7 +13,6 @@ class phabricator (
         'error_reporting'                 => 'E_ALL & ~E_STRICT',
         'mysql'                           => { 'connect_timeout' => 3 },
         'default_socket_timeout'          => 60,
-        'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
         'opcache' => {
                 'enable' => 1,
@@ -24,7 +23,7 @@ class phabricator (
                 'validate_timestamps' => 1,
                 'revalidate_freq' => 10,
         },
-        'max_execution_time' => 230,
+        'max_execution_time' => 60,
         'post_max_size' => '10M',
         'track_errors' => 'Off',
         'upload_max_filesize' => '10M',
@@ -193,11 +192,11 @@ class phabricator (
         ],
     }
 
-    $phab_settings = merge($phab_yaml, $phab_private, $phab_setting)
+    $phab_settings = $phab_yaml + $phab_private + $phab_setting
 
     file { '/srv/phab/phabricator/conf/local/local.json':
         ensure  => present,
-        content => to_json_pretty($phab_settings),
+        content => stdlib::to_json_pretty($phab_settings),
         notify  => Service['phd'],
         require => Git::Clone['phabricator'],
     }
@@ -233,7 +232,7 @@ class phabricator (
 
     cron { 'backups-phabricator':
         ensure   => present,
-        command  => '/usr/local/bin/miraheze-backup backup phabricator > /var/log/phabricator-backup.log',
+        command  => '/usr/local/bin/miraheze-backup backup phabricator > /var/log/phabricator-backup.log 2>&1',
         user     => 'root',
         minute   => '0',
         hour     => '1',
