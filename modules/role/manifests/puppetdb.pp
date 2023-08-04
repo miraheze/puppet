@@ -27,7 +27,7 @@ class role::puppetdb {
     }
 
     $firewall_rules_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Puppetserver]", ['networking'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Puppetserver] and Class[Role::Icinga2]", ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

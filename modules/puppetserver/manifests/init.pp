@@ -144,12 +144,6 @@ class puppetserver(
         class { 'puppetserver::puppetdb::client':
             puppetdb_hostname => $puppetdb_hostname,
         }
-
-        file { '/usr/bin/puppetdb':
-            ensure  => link,
-            target  => '/opt/puppetlabs/bin/puppetdb',
-            require => Package['puppetserver'],
-        }
     }
 
     file { '/etc/puppetlabs/puppetserver/logback.xml':
