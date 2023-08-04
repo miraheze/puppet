@@ -4,6 +4,7 @@ class role::db (
     Optional[Array[String]] $fortnightly_misc = lookup('role::db::fornightly_misc', {'default_value' => []}),
     Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []}),
     Boolean $enable_bin_logs = lookup('role::db::enable_bin_logs', {'default_value' => true}),
+    Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => false}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
@@ -100,19 +101,21 @@ class role::db (
         description => 'general database server',
     }
 
-    cron { 'backups-sql':
-        ensure   => present,
-        command  => '/usr/local/bin/miraheze-backup backup sql > /var/log/sql-backup.log 2>&1',
-        user     => 'root',
-        minute   => '0',
-        hour     => '3',
-        monthday => [fqdn_rand(13, 'db-backups') + 1, fqdn_rand(13, 'db-backups') + 15],
-    }
-
-    monitoring::nrpe { 'Backups SQL':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sql-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    if $backup_sql {
+        cron { 'backups-sql':
+            ensure   => present,
+            command  => '/usr/local/bin/miraheze-backup backup sql > /var/log/sql-backup.log 2>&1',
+            user     => 'root',
+            minute   => '0',
+            hour     => '3',
+            monthday => [fqdn_rand(13, 'db-backups') + 1, fqdn_rand(13, 'db-backups') + 15],
+        }
+    
+        monitoring::nrpe { 'Backups SQL':
+            command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sql-backup.log',
+            docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+            critical => true
+        }
     }
 
     $weekly_misc.each |String $db| {
