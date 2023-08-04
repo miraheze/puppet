@@ -184,6 +184,12 @@ class puppetdb(
         enable => true,
     }
 
+    rsyslog::input::file { 'puppetdb':
+        path              => '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
+        syslog_tag_prefix => '',
+        use_udp           => true,
+    }
+
     monitoring::services { 'puppetdb':
         check_command => 'tcp',
         vars          => {
