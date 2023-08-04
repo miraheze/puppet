@@ -152,19 +152,17 @@ def backup_mediawiki_xml(dt: str, database: str):
 
     for db in dbs:
         try:
+            date = datetime.date.today()
             subprocess.check_call(f'/usr/bin/php /srv/mediawiki/w/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}', shell=True)
+
+            subprocess.check_call(f'/usr/local/bin/iaupload --title miraheze-{db}-{date.day}{date.month}{date.year} --file /srv/backups/{db}.xml.gz', shell=True)
+
+            subprocess.check_call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
         except subprocess.CalledProcessError as e:
             print(f'WARNING: encountered CalledProcessError backing up {db} with returned code {e.returncode} and output:\n')
             print(f'{e.output}\n')
             subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
             continue
-
-        pca_connection('PUT', f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
-
-        subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
-
-        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{db}/{dt}.xml.gz', 13)
-        segments_expire(f'mediawiki-xml', f'{db}/{dt}.xml.gz', 13)
 
 
 def segments_expire(source: str, object: str, expire: int):
