@@ -41,7 +41,7 @@ class mediawiki(
         stdlib::ensure_packages(
             'internetarchive',
             {
-                ensure   => '3.0.2',
+                ensure   => '3.3.0',
                 provider => 'pip3',
                 before   => File['/usr/local/bin/iaupload'],
                 require  => Package['python3-pip'],
