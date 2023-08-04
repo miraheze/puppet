@@ -93,6 +93,7 @@ node 'puppet141.miraheze.org' {
     include base
     include role::postgresql
     include puppetdb::database
+    include role::puppetdb
     include role::puppetserver
     include role::salt
     include role::ssl

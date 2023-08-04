@@ -53,6 +53,12 @@ class puppetdb(
         require => Apt::Source['puppetlabs'],
     }
 
+    file { '/etc/puppetlabs/puppetdb/logback.xml':
+        ensure => present,
+        source => 'puppet:///modules/puppetdb/puppetdb_logback.xml',
+        notify => Service['puppetdb'],
+    }
+
     file { '/usr/bin/puppetdb':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/puppetdb',
@@ -176,6 +182,12 @@ class puppetdb(
     service { 'puppetdb':
         ensure => running,
         enable => true,
+    }
+
+    rsyslog::input::file { 'puppetdb':
+        path              => '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
+        syslog_tag_prefix => '',
+        use_udp           => true,
     }
 
     monitoring::services { 'puppetdb':
