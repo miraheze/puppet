@@ -156,6 +156,7 @@ def backup_mediawiki_xml(dt: str, database: str):
         except subprocess.CalledProcessError as e:
             print(f'WARNING: encountered CalledProcessError backing up {db} with returned code {e.returncode} and output:\n')
             print(f'{e.output}\n')
+            subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
             continue
 
         pca_connection('PUT', f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
