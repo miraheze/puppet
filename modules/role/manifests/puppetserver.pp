@@ -44,14 +44,6 @@ class role::puppetserver (
         notify      => Service['puppetserver']
     }
 
-    # Used for puppetdb
-    prometheus::exporter::jmx { "puppetdb_${facts['networking']['hostname']}":
-        port        => 9401,
-        config_file => '/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml',
-        content     => template('role/puppetdb/jvm_prometheus_jmx_exporter.yaml.erb'),
-        notify      => Service['puppetdb']
-    }
-
     motd::role { 'role::puppetserver':
         description => 'Centralised puppetserver',
     }
