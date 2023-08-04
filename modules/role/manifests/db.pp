@@ -4,7 +4,7 @@ class role::db (
     Optional[Array[String]] $fortnightly_misc = lookup('role::db::fornightly_misc', {'default_value' => []}),
     Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []}),
     Boolean $enable_bin_logs = lookup('role::db::enable_bin_logs', {'default_value' => true}),
-    Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => false}),
+    Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
