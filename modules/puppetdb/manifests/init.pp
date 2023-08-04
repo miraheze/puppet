@@ -56,7 +56,7 @@ class puppetdb(
     file { '/usr/bin/puppetdb':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/puppetdb',
-        require => Package['puppetserver'],
+        require => Package['puppetdb'],
     }
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
