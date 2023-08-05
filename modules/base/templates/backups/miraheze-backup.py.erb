@@ -172,7 +172,8 @@ def backup_mediawiki_xml(dt: str, database: str):
             else:
                 # To be ssafe if 'private' key is not in the json then we don't back it up.
                 continue
-            private = json.load(open(f'/srv/mediawiki/cache/{db}.json'))['states']['private']
+        else:
+            continue
 
 
 def segments_expire(source: str, object: str, expire: int):
