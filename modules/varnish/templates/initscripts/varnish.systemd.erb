@@ -36,7 +36,7 @@ ExecStart=/usr/sbin/varnishd \
 -S /etc/varnish/secret \
 <%= @storage %> \
 -p http_req_size=24576 \
--p listen_depth=4096 -p vcc_err_unref=off \
+-p listen_depth=16384 -p vcc_err_unref=off \
 -p http_max_hdr=128 \
 -p default_ttl=3600 \
 -p nuke_limit=1000
