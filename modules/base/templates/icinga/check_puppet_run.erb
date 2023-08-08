@@ -9,7 +9,7 @@
 # file to determine when last Puppet ran
 
 require 'optparse'
-require 'safe_yaml'
+require 'yaml'
 
 PRINT_FAILED_RESOURCES_NO = 3 # Number of failed resources to print. Don't set this high
 
@@ -23,7 +23,6 @@ failcount = 0
 warn = 0
 crit = 0
 enabled_only = false
-SafeYAML::OPTIONS[:default_mode] = :safe
 
 opt = OptionParser.new
 
@@ -64,12 +63,12 @@ end
 
 if File.exists?(adminlockfile)
        enabled = false
-       disabled_message = YAML.load_file(adminlockfile)["disabled_message"]
+       disabled_message = YAML.safe_load(File.read(adminlockfile))["disabled_message"]
 end
 
 if File.exists?(summaryfile)
     begin
-        summary = YAML.load_file(summaryfile)
+        summary = YAML.safe_load(File.read(summaryfile))
         if !enabled
             summary["time"]["last_disabled_check"] = Time.now.to_i
             File.open(summaryfile, 'w') { |f| f.write(YAML.dump summary) }
@@ -151,7 +150,7 @@ if !enabled
 end
 
 if failcount > 0
-    report = YAML.load_file(reportfile)
+    report = YAML.safe_load(File.read(reportfile))
     failed_resources = report["resource_statuses"].select { |_, r| r["failed"] }.map { |_, r| r["resource"] }
     failed_resources = failed_resources[0..PRINT_FAILED_RESOURCES_NO]
     puts "CRITICAL: Puppet has #{failcount} failures. " +
