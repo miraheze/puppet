@@ -26,7 +26,6 @@ class base::packages {
         'python-is-python3',
         'python3-distro',
         'ruby',
-        'ruby-safe-yaml',
         'screen',
         'strace',
         'tcpdump',
