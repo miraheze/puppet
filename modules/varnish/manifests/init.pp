@@ -2,6 +2,7 @@
 class varnish (
     String $cache_file_name = '/srv/varnish/cache_storage.bin',
     String $cache_file_size = '22G',
+    Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
 ) {
     include varnish::nginx
     include varnish::stunnel4
@@ -41,8 +42,6 @@ class varnish (
     # TODO: On bigger memory hosts increase Transient size
     $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,1G"
 
-    # Default is 5000 in varnish
-    $max_threads = max(floor($facts['processors']['count'] * 250), 5000)
     systemd::service { 'varnish':
         ensure         => present,
         content        => systemd_template('varnish'),
