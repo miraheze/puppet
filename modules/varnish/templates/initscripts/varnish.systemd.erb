@@ -28,7 +28,9 @@ ExecStart=/usr/sbin/varnishd \
 -a :81 \
 -T localhost:6082 \
 -f '' \
--p thread_pool_min=250 -p thread_pool_max=<%= @max_threads -%> -p thread_pool_timeout=120 \
+-p thread_pool_min=250 \
+-p thread_pool_max=<%= @max_threads -%> \
+-p thread_pool_timeout=120 \
 -p vsl_reclen=2048 \
 -p workspace_backend=128k \
 -S /etc/varnish/secret \
