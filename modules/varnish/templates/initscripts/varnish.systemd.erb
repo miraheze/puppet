@@ -29,7 +29,7 @@ ExecStart=/usr/sbin/varnishd \
 -T localhost:6082 \
 -f '' \
 -p thread_pool_min=250 \
--p thread_pool_max=<%= @max_threads -%> \
+-p thread_pool_max=<%= @thread_pool_max -%> \
 -p thread_pool_timeout=120 \
 -p vsl_reclen=2048 \
 -p workspace_backend=128k \
