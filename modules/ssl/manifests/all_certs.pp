@@ -23,6 +23,13 @@ class ssl::all_certs {
         show_diff => false,
         recurse   => remote,
         purge     => true,
+        ignore    => [
+            '.git',
+            # TODO: Move to seperate directory to allow us
+            # to not use this hack.
+            'opensearch-admin-key.pem',
+            'opensearch-node-key.pem'
+        ],
         notify    => $restart_nginx,
     }
 }
