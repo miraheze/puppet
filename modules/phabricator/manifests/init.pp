@@ -119,6 +119,11 @@ class phabricator (
         ensure => directory,
     }
 
+    file { '/srv/phab/libext':
+        ensure  => directory,
+        require => File['/srv/phab']
+    }
+
     git::clone { 'arcanist':
         ensure    => present,
         directory => '/srv/phab/arcanist',
@@ -133,26 +138,11 @@ class phabricator (
         require   => File['/srv/phab'],
     }
 
-    #exec { "chk_phab_ext_git_exist":
-    #    command => 'true',
-    #    path    =>  ['/usr/bin', '/usr/sbin', '/bin'],
-    #    onlyif  => 'test ! -d /srv/phab/phabricator/src/extensions/.git'
-    #}
-
-    #file {'remove_phab_ext_dir_if_no_git':
-    #    ensure  => absent,
-    #    path    => '/srv/phab/phabricator/src/extensions',
-    #    recurse => true,
-    #    purge   => true,
-    #    force   => true,
-    #    require => Exec['chk_phab_ext_git_exist'],
-    #}
-
     git::clone { 'phabricator-extensions':
         ensure    => latest,
-        directory => '/srv/phab/phabricator/src/extensions',
+        directory => '/srv/phab/libext/phab-extensions',
         origin    => 'https://github.com/miraheze/phabricator-extensions.git',
-        require   => File['/srv/phab'],
+        require   => File['/srv/phab/libext'],
     }
 
     file { '/srv/phab/repos':
