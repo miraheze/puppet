@@ -1,3 +1,7 @@
+# Load extension
+load-libraries:
+  - '/srv/phab/libext/phab-extensions'
+
 # Logo/Wordmark
 ui.logo:
   'logoImagePHID': 'PHID-FILE-gtm67dpburyr56ogaqay'
