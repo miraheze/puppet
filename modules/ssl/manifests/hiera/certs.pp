@@ -10,6 +10,17 @@ define ssl::hiera::certs (
     Optional[String] $additional_domain  = undef,
     Optional[Boolean] $disable_event = true,
 ) {
+
+    if !defined(File['/etc/ssl/localcerts']) {
+        file { '/etc/ssl/localcerts':
+            ensure  => directory,
+            owner   => 'root',
+            group   => 'ssl-cert',
+            mode    => '0775',
+            require => Package['ssl-cert'],
+        }
+    }
+
     if $sslname == undef {
         $sslurl = $url
     } else {
