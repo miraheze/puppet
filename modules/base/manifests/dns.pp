@@ -15,7 +15,7 @@ class base::dns {
         owner  => 'pdns',
         group  => 'pdns',
         notify => Service['pdns-recursor'],
-        source => template('base/dns/recursor.conf.erb'),
+        content => template('base/dns/recursor.conf.erb'),
     }
 
     service { 'pdns-recursor':
