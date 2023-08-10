@@ -9,7 +9,7 @@ class base::dns {
         owner  => 'pdns',
         group  => 'pdns',
         notify => Service['pdns-recursor'],
-        source => 'puppet:///modules/base/dns/recursor.conf',
+        source => template('base/dns/recursor.conf.erb'),
     }
 
     service { 'pdns-recursor':
