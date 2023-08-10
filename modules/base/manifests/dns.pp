@@ -6,7 +6,7 @@ class base::dns {
 
     if $facts['processors']['count'] < 4 {
         $threads = 4
-    } elsif {
+    } else {
         $threads = $facts['processors']['count']
     }
 
