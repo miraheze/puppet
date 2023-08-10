@@ -218,6 +218,20 @@ class matomo (
         }
     }
 
+    $queuedtracking_command = "/usr/bin/php /srv/matomo/console queuedtracking:process"
+    systemd::timer::job { 'matomo-queuedtracking':
+        description               => "Runs the Matomo's Plugin QueuedTracking process.",
+        command                   => "/bin/bash -c '${queuedtracking_command}'",
+        interval                  => {
+            'start'    => 'OnCalendar',
+            'interval' => '*-*-* *:*:00',
+        },
+        logfile_basedir           => '/var/log/matomo',
+        logfile_name              => 'matomo-queuedtracking.log',
+        syslog_identifier         => 'matomo-queuedtracking',
+        user                      => 'www-data',
+    }
+
     file { '/usr/local/bin/fileLockScript.sh':
         ensure => absent,
         mode   => '0755',
