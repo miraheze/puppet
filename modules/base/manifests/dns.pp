@@ -4,6 +4,12 @@ class base::dns {
         ensure => present,
     }
 
+    if $facts['processors']['count'] < 4 {
+        $threads = 4
+    } elsif {
+        $threads = $facts['processors']['count']
+    }
+
     file { '/etc/powerdns/recursor.conf':
         mode   => '0444',
         owner  => 'pdns',
