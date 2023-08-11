@@ -12,8 +12,8 @@ PrivateDevices=true
 ProtectSystem=full
 ProtectHome=true
 PIDFile=%t/%p.pid
-Restart=always
-KillMode=control-group
+Restart=on-failure
+KillMode=process
 Environment="MALLOC_CONF=thp:never"
 SyslogIdentifier=varnish
 ExecReload=/usr/local/sbin/reload-vcl <%= @reload_vcl_opts %>
