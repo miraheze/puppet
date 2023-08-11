@@ -74,7 +74,6 @@ def get_cmd_output(cmd):
 def auto_discard(vadm_cmd):
     """
     Discard loaded VCLs such as:
-        available   auto/warm          0 vcl-$(uuid)
         available   auto    warm        0    vcl-$(uuid)
 
     Do *not* try discarding the currently active VCL, eg:
