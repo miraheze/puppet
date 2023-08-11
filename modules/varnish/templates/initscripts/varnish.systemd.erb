@@ -12,7 +12,7 @@ PrivateDevices=true
 ProtectSystem=full
 ProtectHome=true
 PIDFile=%t/%p.pid
-Restart=always
+Restart=on-failure
 KillMode=process
 Environment="MALLOC_CONF=thp:never"
 SyslogIdentifier=varnish
