@@ -75,9 +75,10 @@ def auto_discard(vadm_cmd):
     """
     Discard loaded VCLs such as:
         available   auto/warm          0 vcl-$(uuid)
+        available   auto    warm        0    vcl-$(uuid)
 
     Do *not* try discarding the currently active VCL, eg:
-        active      auto/warm          3 vcl-$(uuid)
+        active   auto    warm        3    vcl-$(uuid)
 
     as well as VCLs with a label pointing to them:
         available   auto/warm          0 vcl-$(uuid) (1 label)
