@@ -40,8 +40,6 @@ ExecStart=/usr/sbin/varnishd \
 -p http_max_hdr=128 \
 -p default_ttl=3600 \
 -p nuke_limit=1000
-ExecReload=/usr/share/varnish/varnishreload
-ExecStopPost=/usr/bin/rm -rf /var/lib/varnish/*
 
 [Install]
 WantedBy=multi-user.target
