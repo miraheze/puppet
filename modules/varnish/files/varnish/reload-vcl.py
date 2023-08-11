@@ -91,7 +91,7 @@ def auto_discard(vadm_cmd):
 
     vcl_list_cmd = vadm_cmd + ['vcl.list']
     for line in get_cmd_output(vcl_list_cmd).splitlines():
-        match = re.match(r'^available\s+\S+\s+[0-9]+\s+(boot|vcl-\S+)$', line.decode("utf-8"))
+        match = re.match(r'^available\s+\S+\s+\S+\s+[0-9]+\s+(boot|vcl-\S+)$', line.decode("utf-8"))
         if match:
             vcl_discard_cmd = vadm_cmd + ['vcl.discard', match.group(1)]
             do_cmd(vcl_discard_cmd)
