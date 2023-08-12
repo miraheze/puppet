@@ -170,7 +170,7 @@ def backup_mediawiki_xml(dt: str, database: str):
                     subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
                     continue
             else:
-                # To be ssafe if 'private' key is not in the json then we don't back it up.
+                # To be safe if 'private' key is not in the json then we don't back it up.
                 continue
         else:
             continue
