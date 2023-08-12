@@ -247,11 +247,6 @@ sub mw_request {
 		set req.http.Host = "meta.miraheze.org";
 	}
 
-	# api & rest.php are not safe when cached
-	if (req.url ~ "^/w/(api|rest).php/.*" ) {
-		return (pass);
-	}
-
 	# A requet via OAuth should not be cached or use a cached response elsewhere
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
