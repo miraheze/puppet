@@ -8,6 +8,6 @@ class base::backup (
 
     file { '/usr/local/bin/miraheze-backup':
         mode    => '0555',
-        content => template('base/backups/miraheze-backup.py.erb'),
+        source => 'puppet:///modules/base/backups/miraheze-backup.py',
     }
 }
