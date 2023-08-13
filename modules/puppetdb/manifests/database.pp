@@ -5,6 +5,7 @@ class puppetdb::database(
     Optional[String] $master = undef
 ) {
     $pgversion = $facts['os']['distro']['codename'] ? {
+        'bookworm' => '15',
         'bullseye' => '13',
     }
 
