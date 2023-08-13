@@ -19,11 +19,16 @@ parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze']
 parser.add_argument('type', choices=['private', 'sslkeys', 'phabricator', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
+parser.add_argument('--passwd_file', dest='passwd_file', required=True, help='path to file that contains the password.)
 args = parser.parse_args()
 
 
+with open(args.passwd_file) as file:
+    password = file
+
+
 def pca_connection(status, *args):
-    with Connection('gateways.storage.bhs.cloud.ovh.net', gateway='nc -6 -X connect -x bast.miraheze.org:8080 %h %p', user='pca', connect_kwargs={'password': '<%= @pca_password %>'}) as c:
+    with Connection('gateways.storage.bhs.cloud.ovh.net', gateway='nc -6 -X connect -x bast.miraheze.org:8080 %h %p', user='pca', connect_kwargs={'password': password}) as c:
         if status == 'GET':
             c.get(*args)
         else:
@@ -34,9 +39,8 @@ def pca_connection(status, *args):
 
 
 def pca_web(method: str, url: str, expiry: int):
-    pca_password = "<%= @pca_password %>"
     proxies = { 'https': 'http://bast.miraheze.org:8080' }
-    json_data = { "auth": { "identity": { "methods": ["password"], "password": { "user": { "name": pca_password.split('.')[1], "domain": { "id": "default" }, "password": pca_password.split('.')[2] } } }, "scope": { "project": { "id": "76f9bc606a8044e08db7ebd118f6b19a", "domain": { "id": "default" } } } } }
+    json_data = { "auth": { "identity": { "methods": ["password"], "password": { "user": { "name": password.split('.')[1], "domain": { "id": "default" }, "password": password.split('.')[2] } } }, "scope": { "project": { "id": "76f9bc606a8044e08db7ebd118f6b19a", "domain": { "id": "default" } } } } }
 
     token = requests.post(f'https://auth.cloud.ovh.net/v3/auth/tokens', json=json_data, proxies=proxies, headers={ 'Content-Type': 'application/json' }).headers.get('X-Subject-Token')
     headers = { 'X-AUTH-TOKEN': token }
