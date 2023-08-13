@@ -61,6 +61,16 @@ define postgresql::user(
         $xpath = "/files${pg_hba_file}/*[type='${type}'][database='${database}'][user='${user}'][address='${cidr}'][method='${_method}']"
     }
 
+    # Starting with Bookworm passwords are hashed with salted Scram-SHA256. The user is still tested for existance,
+    # but no password changes are supported T326325
+    $password_md5    = md5("${password}${user}")
+    if (versioncmp($facts['os']['release']['major'], '12') >= 0) {
+        $password_clause = "LIKE 'SCRAM-SHA-256\\\$4096:%'"
+    } else {
+        $password_clause = "= 'md5${password_md5}'"
+    }
+    $password_check = "/usr/bin/psql -Atc \"SELECT 1 FROM pg_authid WHERE rolname = '${user}' AND rolpassword ${password_clause};\" | grep 1"
+
     if $ensure == 'present' {
         exec { "create_user-${name}":
             command => "/usr/bin/createuser --no-superuser --no-createdb --no-createrole ${user}",
@@ -70,12 +80,10 @@ define postgresql::user(
 
         # This will not be run on a slave as it is read-only
         if $master and $password {
-            $password_md5 = md5("${password}${user}")
-
             exec { "pass_set-${name}":
                 command   => $pass_set,
                 user      => 'postgres',
-                onlyif    => "/usr/bin/test -n \"\$(/usr/bin/psql -Atc \"SELECT 1 FROM pg_authid WHERE rolname = '${user}' AND rolpassword IS DISTINCT FROM 'md5${password_md5}';\")\"",
+                unless    => $password_check,
                 subscribe => Exec["create_user-${name}"],
             }
         }
