@@ -29,11 +29,11 @@ define postgresql::user(
     Optional[String] $password = undef,
     String $database = 'template1',
     String $type = 'host',
-    String $method = 'md5',
     String $cidr = '127.0.0.1/32',
     String $attrs = '',
     Boolean $master = true,
-    VMlib::Ensure $ensure = 'present'
+    VMlib::Ensure $ensure = 'present',
+    Optional[String[1]] $method = undef,
 ) {
 
     $pgversion = $facts['os']['distro']['codename'] ? {
@@ -43,6 +43,7 @@ define postgresql::user(
         'stretch' => '9.6',
         'jessie'  => '9.4',
     }
+    $_method = $method.lest || { ($pgversion >= 15).bool2str('scram-sha-256', 'md5') }
 
     $pg_hba_file = "/etc/postgresql/${pgversion}/main/pg_hba.conf"
 
@@ -54,10 +55,10 @@ define postgresql::user(
 
     # xpath expression to identify the user entry in pg_hba.conf
     if $type == 'local' {
-        $xpath = "/files${pg_hba_file}/*[type='${type}'][database='${database}'][user='${user}'][method='${method}']"
+        $xpath = "/files${pg_hba_file}/*[type='${type}'][database='${database}'][user='${user}'][method='${_method}']"
     }
     else {
-        $xpath = "/files${pg_hba_file}/*[type='${type}'][database='${database}'][user='${user}'][address='${cidr}'][method='${method}']"
+        $xpath = "/files${pg_hba_file}/*[type='${type}'][database='${database}'][user='${user}'][address='${cidr}'][method='${_method}']"
     }
 
     if $ensure == 'present' {
@@ -84,7 +85,7 @@ define postgresql::user(
                 "set 01/type \'${type}\'",
                 "set 01/database \'${database}\'",
                 "set 01/user \'${user}\'",
-                "set 01/method \'${method}\'",
+                "set 01/method \'${_method}\'",
             ]
         } else {
             $changes = [
@@ -92,7 +93,7 @@ define postgresql::user(
                 "set 01/database \'${database}\'",
                 "set 01/user \'${user}\'",
                 "set 01/address \'${cidr}\'",
-                "set 01/method \'${method}\'",
+                "set 01/method \'${_method}\'",
             ]
         }
 
