@@ -37,13 +37,13 @@ define postgresql::user(
 ) {
 
     $pgversion = $facts['os']['distro']['codename'] ? {
-        'bookworm' => '15',
-        'bullseye' => '13',
-        'buster'  => '11',
-        'stretch' => '9.6',
-        'jessie'  => '9.4',
+        'bookworm' => 15,
+        'bullseye' => 13,
+        'buster'  => 11,
+        'stretch' => 9.6,
+        'jessie'  => 9.4,
     }
-    $_method = $method.lest || { ($pgversion >= 15).bool2str('scram-sha-256', 'md5') }
+    $_method = $method.lest || { ($pgversion >= '15').bool2str('scram-sha-256', 'md5') }
 
     $pg_hba_file = "/etc/postgresql/${pgversion}/main/pg_hba.conf"
 
