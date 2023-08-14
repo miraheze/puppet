@@ -26,7 +26,7 @@
 #   /usr/lib/jvm for Debian and /usr/java for RedHat.
 #
 # @param manage_basedir
-#   Whether to manage the basedir directory.  Defaults to false.
+#   Whether to manage the basedir directory.
 #   Note: /usr/lib/jvm is managed for Debian by default, separate from this parameter.
 #
 # @param manage_symlink
@@ -36,20 +36,19 @@
 #   The name for the optional symlink in the installation directory.
 #
 define java::sap (
-  $ensure         = 'present',
-  $version        = '8',
-  $version_full   = undef,
-  $java           = 'jdk',
-  $proxy_server   = undef,
-  $proxy_type     = undef,
-  $basedir        = undef,
-  $manage_basedir = true,
-  $manage_symlink = false,
-  $symlink_name   = undef,
+  Enum['present']                                 $ensure         = 'present',
+  String[1]                                       $version        = '8',
+  Optional[String]                                $version_full   = undef,
+  String[1]                                       $java           = 'jdk',
+  Optional[String]                                $proxy_server   = undef,
+  Optional[Enum['none', 'http', 'https', 'ftp']]  $proxy_type     = undef,
+  Optional[String]                                $basedir        = undef,
+  Boolean                                         $manage_basedir = true,
+  Boolean                                         $manage_symlink = false,
+  Optional[String]                                $symlink_name   = undef,
 ) {
-
   # archive module is used to download the java package
-  include ::archive
+  include archive
 
   # validate java edition to download
   if $java !~ /(jre|jdk)/ {
@@ -58,25 +57,22 @@ define java::sap (
 
   # determine version and installation path
   if $version_full {
-
     $_version_array = $version_full.scanf('%i')
     $_version_int = $_version_array[0]
-
     $_version_full = $version_full
-
   } else {
     $_version = $version
     $_version_int = Numeric($_version)
     # use default versions if full version parameter is not provided
     case $version {
       '7' : {
-        $_version_full = '7.1.070'
+        $_version_full = '7.1.072'
         if ($java != 'jdk') {
           fail('java parameter is not jdk. jre is not supported on version 7')
         }
       }
       '8' : {
-        $_version_full = '8.1.063'
+        $_version_full = '8.1.065'
         if ($java != 'jdk') {
           fail('java parameter is not jdk. jre is not supported on version 8')
         }
@@ -121,23 +117,26 @@ define java::sap (
           }
         }
         default : {
-          fail ("unsupported os family ${$facts['os']['name']}") }
+          fail ("unsupported os family ${$facts['os']['name']}")
+        }
       }
-
       $creates_path = "${_basedir}/${_creates_folder}"
     }
     default : {
-      fail ( "unsupported platform ${$facts['kernel']}" ) }
+      fail ( "unsupported platform ${$facts['kernel']}" )
+    }
   }
 
-  $_os_architecture = $facts['os']['architecture']
+  $_os_architecture = $facts['os']['architecture'] ? {
+    default => $facts['os']['architecture']
+  }
 
   if ($_os_architecture != 'x86_64' and $_os_architecture != 'amd64') {
     fail ("unsupported platform ${_os_architecture}")
   }
 
   # download links look like this (examples):
-  # https://tools.hana.ondemand.com/additional/sapjvm-8.1.063-linux-x64.zip
+  # https://tools.hana.ondemand.com/additional/sapjvm-8.1.065-linux-x64.zip
   # https://github.com/SAP/SapMachine/releases/download/sapmachine-11.0.7/sapmachine-jre-11.0.7_linux-x64_bin.tar.gz
   # https://github.com/SAP/SapMachine/releases/download/sapmachine-11.0.7/sapmachine-jdk-11.0.7_linux-x64_bin.tar.gz
   # https://github.com/SAP/SapMachine/releases/download/sapmachine-14.0.1/sapmachine-jdk-14.0.1_linux-x64_bin.tar.gz
@@ -181,7 +180,7 @@ define java::sap (
     'present' : {
       case $facts['kernel'] {
         'Linux' : {
-          if ($manage_basedir or $facts['os']['family'] == 'Debian'){
+          if ($manage_basedir or $facts['os']['family'] == 'Debian') {
             if (!defined(File[$_basedir])) {
               file { $_basedir:
                 ensure => 'directory',
@@ -209,7 +208,6 @@ define java::sap (
               require => Archive["/tmp/${archive_filename}"],
             }
           }
-
         }
         default : {
           fail ("unsupported platform ${$facts['kernel']}")
@@ -220,5 +218,4 @@ define java::sap (
       notice ("Action ${ensure} not supported.")
     }
   }
-
 }

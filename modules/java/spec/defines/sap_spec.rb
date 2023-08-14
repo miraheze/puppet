@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'java::sap', type: :define do
@@ -12,7 +14,7 @@ describe 'java::sap', type: :define do
           java: 'jdk',
           basedir: '/usr/java',
           manage_symlink: true,
-          symlink_name: 'java_home',
+          symlink_name: 'java_home'
         }
       end
       let(:title) { 'jdk11_symlink' }
@@ -31,14 +33,14 @@ describe 'java::sap', type: :define do
       let(:params) { { ensure: 'present', version: '7', java: 'jdk' } }
       let(:title) { 'jdk7' }
 
-      it { is_expected.to contain_archive('/tmp/sapjvm-7.1.070-linux-x64.zip') }
+      it { is_expected.to contain_archive('/tmp/sapjvm-7.1.072-linux-x64.zip') }
     end
 
     context 'when sapjvm 8' do
       let(:params) { { ensure: 'present', version: '8', java: 'jdk' } }
       let(:title) { 'jdk8' }
 
-      it { is_expected.to contain_archive('/tmp/sapjvm-8.1.063-linux-x64.zip') }
+      it { is_expected.to contain_archive('/tmp/sapjvm-8.1.065-linux-x64.zip') }
     end
 
     context 'when sapmachine 11 jdk' do
@@ -74,20 +76,20 @@ describe 'java::sap', type: :define do
         {
           ensure: 'present',
           version_full: '11.0.7',
-          java: 'jdk',
+          java: 'jdk'
         }
       end
       let(:title) { 'jdk1107' }
 
       let(:pre_condition) do
-        <<-EOL
+        <<-MANIFEST
         java::sap {
           'jdk1106':
             ensure       => 'present',
             version_full => '11.0.6',
             java         => 'jdk',
         }
-        EOL
+        MANIFEST
       end
 
       it { is_expected.to compile }
@@ -99,13 +101,14 @@ describe 'java::sap', type: :define do
           ensure: 'present',
           version: '8',
           java: 'jdk',
-          basedir: '/usr/java',
+          basedir: '/usr/java'
         }
       end
       let(:title) { 'jdk8' }
 
-      it { is_expected.to contain_archive('/tmp/sapjvm-8.1.063-linux-x64.zip') }
+      it { is_expected.to contain_archive('/tmp/sapjvm-8.1.065-linux-x64.zip') }
     end
+
     context 'when manage_basedir is set to true' do
       let(:params) do
         {
@@ -113,7 +116,7 @@ describe 'java::sap', type: :define do
           version: '8',
           java: 'jdk',
           basedir: '/usr/java',
-          manage_basedir: true,
+          manage_basedir: true
         }
       end
       let(:title) { 'jdk8' }
@@ -123,20 +126,20 @@ describe 'java::sap', type: :define do
   end
 
   context 'with Ubuntu 64-bit' do
-    let(:facts) { { kernel: 'Linux', os: { family: 'Debian', architecture: 'amd64', name: 'Ubuntu', release: { full: '16.04' } } } }
+    let(:facts) { { kernel: 'Linux', os: { family: 'Debian', architecture: 'amd64', name: 'Ubuntu', release: { full: '18.04' } } } }
 
     context 'when sapjvm 7' do
       let(:params) { { ensure: 'present', version: '7', java: 'jdk' } }
       let(:title) { 'jdk7' }
 
-      it { is_expected.to contain_archive('/tmp/sapjvm-7.1.070-linux-x64.zip') }
+      it { is_expected.to contain_archive('/tmp/sapjvm-7.1.072-linux-x64.zip') }
     end
 
     context 'when sapjvm 8' do
       let(:params) { { ensure: 'present', version: '8', java: 'jdk' } }
       let(:title) { 'jdk8' }
 
-      it { is_expected.to contain_archive('/tmp/sapjvm-8.1.063-linux-x64.zip') }
+      it { is_expected.to contain_archive('/tmp/sapjvm-8.1.065-linux-x64.zip') }
     end
 
     context 'when sapmachine 11 jdk' do
@@ -172,25 +175,26 @@ describe 'java::sap', type: :define do
         {
           ensure: 'present',
           version_full: '11.0.7',
-          java: 'jdk',
+          java: 'jdk'
         }
       end
       let(:title) { 'jdk1107' }
 
       let(:pre_condition) do
-        <<-EOL
+        <<-MANIFEST
         java::sap {
           'jdk1106':
             ensure       => 'present',
             version_full => '11.0.6',
             java         => 'jdk',
         }
-        EOL
+        MANIFEST
       end
 
       it { is_expected.to compile }
     end
   end
+
   describe 'incompatible OSes' do
     [
       {
@@ -199,9 +203,9 @@ describe 'java::sap', type: :define do
           family: 'Windows',
           name: 'Windows',
           release: {
-            full: '8.1',
-          },
-        },
+            full: '8.1'
+          }
+        }
       },
       {
         kernel: 'Darwin',
@@ -209,9 +213,9 @@ describe 'java::sap', type: :define do
           family: 'Darwin',
           name: 'Darwin',
           release: {
-            full: '13.3.0',
-          },
-        },
+            full: '13.3.0'
+          }
+        }
       },
       {
         kernel: 'AIX',
@@ -219,9 +223,9 @@ describe 'java::sap', type: :define do
           family: 'AIX',
           name: 'AIX',
           release: {
-            full: '7100-02-00-000',
-          },
-        },
+            full: '7100-02-00-000'
+          }
+        }
       },
       {
         kernel: 'AIX',
@@ -229,9 +233,9 @@ describe 'java::sap', type: :define do
           family: 'AIX',
           name: 'AIX',
           release: {
-            full: '6100-07-04-1216',
-          },
-        },
+            full: '6100-07-04-1216'
+          }
+        }
       },
       {
         kernel: 'AIX',
@@ -239,9 +243,9 @@ describe 'java::sap', type: :define do
           family: 'AIX',
           name: 'AIX',
           release: {
-            full: '5300-12-01-1016',
-          },
-        },
+            full: '5300-12-01-1016'
+          }
+        }
       },
     ].each do |facts|
       let(:facts) { facts }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 java_7_path = '/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java'
@@ -6,17 +8,16 @@ java_8_path = '/usr/lib/jvm/oracle-java8-jre-amd64/bin/java'
 java_8_home = '/usr/lib/jvm/oracle-java8-jre-amd64'
 
 def unlink_and_delete(filename)
-  if File.symlink?(filename)
-    File.unlink(filename)
-  end
+  File.unlink(filename) if File.symlink?(filename)
   return unless File.exist?(filename)
+
   File.delete(filename)
 end
 
 def symlink_and_test(symlink_path, java_home)
   File.symlink(symlink_path, './java_test')
-  expect(Facter::Util::Resolution).to receive(:which).with('java').and_return('./java_test')
-  expect(File).to receive(:realpath).with('./java_test').and_return(symlink_path)
+  allow(Facter::Core::Execution).to receive(:which).with('java').and_return('./java_test')
+  allow(File).to receive(:realpath).with('./java_test').and_return(symlink_path)
   expect(Facter.value(:java_default_home)).to eql java_home
 end
 
@@ -46,8 +47,8 @@ describe 'java_default_home' do
 
   context 'when java not present, return nil' do
     it do
-      allow(Facter::Util::Resolution).to receive(:exec) # Catch all other calls
-      expect(Facter::Util::Resolution).to receive(:which).with('java').at_least(1).and_return(nil)
+      allow(Facter::Core::Execution).to receive(:execute) # Catch all other calls
+      expect(Facter::Core::Execution).to receive(:which).with('java').at_least(1).and_return(nil)
       expect(Facter.value(:java_default_home)).to be_nil
     end
   end

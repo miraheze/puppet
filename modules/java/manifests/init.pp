@@ -35,16 +35,16 @@
 #    The path to where the JRE is installed. This will be set as an
 #    environment variable.
 #
-class java(
-  String $distribution                                              = 'jdk',
-  Pattern[/present|installed|latest|^[.+_0-9a-zA-Z:~-]+$/] $version = 'present',
-  Optional[String] $package                                         = undef,
-  Optional[Array] $package_options                                  = undef,
-  Optional[String] $java_alternative                                = undef,
-  Optional[String] $java_alternative_path                           = undef,
-  Optional[String] $java_home                                       = undef
+class java (
+  String                                                    $distribution           = 'jdk',
+  Pattern[/present|installed|latest|^[.+_0-9a-zA-Z:~-]+$/]  $version                = 'present',
+  Optional[String]                                          $package                = undef,
+  Optional[Array]                                           $package_options        = undef,
+  Optional[String]                                          $java_alternative       = undef,
+  Optional[String]                                          $java_alternative_path  = undef,
+  Optional[String]                                          $java_home              = undef
 ) {
-  include ::java::params
+  contain java::params
 
   $default_package_name = $distribution in $java::params::java ? {
     false   => undef,
@@ -55,7 +55,6 @@ class java(
     undef   => $default_package_name,
     default => $package,
   }
-
 
   ## Weird logic........
   ## If $java_alternative is set, use that.
@@ -76,8 +75,8 @@ class java(
   $use_java_alternative_path = $java_alternative_path ? {
     undef                   => $use_java_package_name ? {
       $default_package_name => $distribution in $java::params::java ? {
-      default               => $java::params::java[$distribution]['alternative_path'],
-      false                 => undef,
+        default               => $java::params::java[$distribution]['alternative_path'],
+        false                 => undef,
       },
       default               => undef,
     },
@@ -102,13 +101,23 @@ class java(
       $use_java_alternative_path == undef or $use_java_home == undef
     ) and (
       !($distribution in $java::params::java)
-    )) {
+  )) {
     fail("Java distribution ${distribution} is not supported. Missing default values.")
   }
 
   $jre_flag = $use_java_package_name ? {
     /headless/ => '--jre-headless',
     default    => '--jre'
+  }
+
+  # Enable legacy repo to install net-tools-deprecated package
+  # If SUSE OS major version is >= 15 and minor version is > 3
+  if ($facts['os']['family'] in ['SLES', 'SUSE']) and (versioncmp($facts['os']['release']['major'], '15') >= 0 and versioncmp($facts['os']['release']['minor'], '3') == 1) {
+    exec { 'Enable legacy repos':
+      path    => '/bin:/usr/bin/:/sbin:/usr/sbin',
+      command => 'SUSEConnect --product sle-module-legacy/15.5/x86_64',
+      unless  => 'SUSEConnect --status-text | grep sle-module-legacy/15.5/x86_64',
+    }
   }
 
   if $facts['os']['family'] == 'Debian' {
@@ -119,13 +128,10 @@ class java(
     }
   }
 
-  anchor { 'java::begin:': }
-  -> package { 'java':
+  package { 'java':
     ensure          => $version,
     install_options => $package_options,
     name            => $use_java_package_name,
   }
   -> class { 'java::config': }
-  -> anchor { 'java::end': }
-
 }
