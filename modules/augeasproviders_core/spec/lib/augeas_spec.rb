@@ -1,6 +1,8 @@
-module AugeasSpec
-  class Error < StandardError
-  end
+# frozen_string_literal: true
+
+module AugeasSpec end
+
+class AugeasSpec::Error < StandardError
 end
 
 require 'augeas_spec/augparse'
@@ -11,8 +13,4 @@ RSpec.configure do |config|
   config.extend AugeasSpec::Fixtures
   config.include AugeasSpec::Augparse
   config.include AugeasSpec::Fixtures
-
-  config.before :each do
-    Puppet::Util::Storage.stubs(:store)
-  end
 end

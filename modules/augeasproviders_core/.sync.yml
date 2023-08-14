@@ -1,6 +1,10 @@
 ---
-.travis.yml:
-  forge_password: "coX6r+20OFHKTVGYb4E+1lr4AFCG5h1GeqjWY0Esfz5vAs42d/ZbLzwP6j19VXWehBitGRWkBerWU9ZIneIcPUQlRhRRCWt+XCv+6XZREdq2610RIZnva4NsLD/SCzXdC9gSfIWvGnI9fWNAQS/stgC/jkyCkFNn2i0s7qWEvA0="
+.github/workflows/ci.yml:
+  additional_packages: 'libaugeas-dev'
+Gemfile:
+  optional:
+    ':test':
+      - gem: ruby-augeas
 spec/spec_helper.rb:
-  ap_lib_loadpath: "$LOAD_PATH.unshift(dir, File.join(dir, 'lib'), File.join(dir, '..', 'lib'))"
-  ap_load_core: false
+  spec_overrides:
+    - "require 'spec_helper_local'"
