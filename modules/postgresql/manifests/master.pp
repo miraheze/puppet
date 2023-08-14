@@ -69,7 +69,7 @@ class postgresql::master(
         group   => 'root',
         mode    => '0444',
         content => template('postgresql/master.conf.erb'),
-        require => Class['postgresql::server'],
+        require => Package["postgresql-${pgversion}"],
     }
 
     if $ensure == 'present' {
