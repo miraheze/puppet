@@ -53,23 +53,32 @@ class postgresql::master(
     String $locale = 'en_US.UTF-8',
 ) {
 
-    $data_dir = "${root_dir}/${pgversion}/main"
+    $_pgversion = $pgversion ? {
+        undef   => $facts['os']['distro']['codename'] ? {
+            'buster'   => 11,
+            'bullseye' => 13,
+            'bookworm' => 15,
+            default    => fail("${title} not supported by: ${$facts['os']['distro']['codename']})")
+        },
+        default => $pgversion,
+    }
+    $data_dir = "${root_dir}/${_pgversion}/main"
 
     class { '::postgresql::server':
         ensure    => $ensure,
-        pgversion => $pgversion,
+        pgversion => $_pgversion,
         includes  => [ $includes, 'master.conf'],
         root_dir  => $root_dir,
         use_ssl   => $use_ssl,
     }
 
-    file { "/etc/postgresql/${pgversion}/main/master.conf":
+    file { "/etc/postgresql/${_pgversion}/main/master.conf":
         ensure  => $ensure,
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
         content => template('postgresql/master.conf.erb'),
-        require => Package["postgresql-${pgversion}"],
+        require => Package["postgresql-${_pgversion}"],
     }
 
     if $ensure == 'present' {
