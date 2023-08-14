@@ -85,7 +85,8 @@ class ulogd (
     notify  => Service['ulogd2'],
   }
   service {'ulogd2':
-    ensure => 'running',
-    enable => true,
+    ensure   => 'running',
+    enable   => true,
+    require => Package['ulogd2'],
   }
 }
