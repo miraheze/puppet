@@ -34,18 +34,21 @@ define postgresql::user(
     Boolean $master = true,
     VMlib::Ensure $ensure = 'present',
     Optional[String[1]] $method = undef,
+    Optional[Numeric] $pgversion     = undef,
 ) {
 
-    $pgversion = $facts['os']['distro']['codename'] ? {
-        'bookworm' => 15,
-        'bullseye' => 13,
-        'buster'  => 11,
-        'stretch' => 9.6,
-        'jessie'  => 9.4,
+    $_pgversion = $pgversion ? {
+        undef   => $facts['os']['distro']['codename'] ? {
+            'bookworm' => 15,
+            'bullseye' => 13,
+            'buster'   => 11,
+            default    => fail("unsupported pgversion: ${pgversion}"),
+        },
+        default => $pgversion,
     }
-    $_method = $method.lest || { ($pgversion >= 15).bool2str('scram-sha-256', 'md5') }
+    $_method = $method.lest || { ($_pgversion >= 15).bool2str('scram-sha-256', 'md5') }
 
-    $pg_hba_file = "/etc/postgresql/${pgversion}/main/pg_hba.conf"
+    $pg_hba_file = "/etc/postgresql/${_pgversion}/main/pg_hba.conf"
 
     # Check if our user exists and store it
     $userexists = "/usr/bin/psql --tuples-only -c \'SELECT rolname FROM pg_catalog.pg_roles;\' | /bin/grep -P \'^ ${user}$\'"

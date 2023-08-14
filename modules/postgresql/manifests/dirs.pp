@@ -22,11 +22,19 @@
 class postgresql::dirs(
     VMlib::Ensure $ensure    = 'present',
     String $root_dir  = '/var/lib/postgresql',
-    String $pgversion = '9.6',
+    Optional[Numeric] $pgversion = undef,
 ) {
-    $data_dir = "${root_dir}/${pgversion}/main"
+    $_pgversion = $pgversion ? {
+        undef   => $facts['os']['distro']['codename'] ? {
+            'bookworm' => 15,
+            'bullseye' => 13,
+            default   => 11,
+        },
+        default => $pgversion,
+    }
+    $data_dir = "${root_dir}/${_pgversion}/main"
 
-    file {  [ $root_dir, "${root_dir}/${pgversion}" ] :
+    file {  [ $root_dir, "${root_dir}/${_pgversion}" ] :
         ensure => ensure_directory($ensure),
         owner  => 'postgres',
         group  => 'postgres',
