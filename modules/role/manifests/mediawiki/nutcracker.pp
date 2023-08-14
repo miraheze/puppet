@@ -63,28 +63,28 @@ class role::mediawiki::nutcracker (
             desc  => 'Skip outgoing connection tracking for Nutcracker',
             table => 'raw',
             chain => 'OUTPUT',
-            rule  => 'proto tcp sport (6378:6382 11212) NOTRACK;',
+            rule  => 'proto tcp sport (11212 11214 11215) NOTRACK;',
         }
 
         ferm::rule { 'skip_nutcracker_conntrack_in_1':
             desc  => 'Skip incoming connection tracking for Nutcracker',
             table => 'raw',
             chain => 'PREROUTING',
-            rule  => 'proto tcp dport (6378:6382 11212) NOTRACK;',
+            rule  => 'proto tcp dport (11212 11214 11215) NOTRACK;',
         }
 
         ferm::rule { 'skip_nutcracker_conntrack_out_2':
             desc  => 'Skip outgoing connection tracking for Nutcracker',
             table => 'raw',
             chain => 'OUTPUT',
-            rule  => 'proto tcp sport (6378:6382 11214) NOTRACK;',
+            rule  => 'proto tcp sport (11212 11214 11215) NOTRACK;',
         }
 
         ferm::rule { 'skip_nutcracker_conntrack_in_2':
             desc  => 'Skip incoming connection tracking for Nutcracker',
             table => 'raw',
             chain => 'PREROUTING',
-            rule  => 'proto tcp dport (6378:6382 11214) NOTRACK;',
+            rule  => 'proto tcp dport (11212 11214 11215) NOTRACK;',
         }
     }
 }
