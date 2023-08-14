@@ -37,13 +37,7 @@
 class postgresql::master(
     String $master_server = $facts['networking']['fqdn'],
     Optional[Array] $includes = [],
-    String $pgversion = $facts['os']['distro']['codename'] ? {
-        'bookworm' => '15',
-        'bullseye' => '13',
-        'buster'  => '11',
-        'stretch' => '9.6',
-        'jessie'  => '9.4',
-    },
+    Optional[Numeric] $pgversion                   = undef,
     VMlib::Ensure $ensure = 'present',
     Integer $max_wal_senders = 5,
     Integer $checkpoint_segments = 64,
@@ -83,7 +77,7 @@ class postgresql::master(
 
     if $ensure == 'present' {
         exec { 'pg-initdb':
-            command => "/usr/lib/postgresql/${pgversion}/bin/initdb --locale ${locale} -D ${data_dir}",
+            command => "/usr/lib/postgresql/${_pgversion}/bin/initdb --locale ${locale} -D ${data_dir}",
             user    => 'postgres',
             unless  => "/usr/bin/test -f ${data_dir}/PG_VERSION",
             require => Class['postgresql::server'],
