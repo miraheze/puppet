@@ -23,25 +23,24 @@ Puppet::Type.newtype(:augeas) do
   feature :execute_changes, 'Actually make the changes'
 
   @doc = <<-'EOT'
-    Apply a change or an array of changes to the filesystem
-    using the augeas tool.
+    @summary Apply a change or an array of changes to the filesystem using the augeas tool.
 
     Requires:
 
     - [Augeas](http://www.augeas.net)
     - The ruby-augeas bindings
 
-    Sample usage with a string:
+    @example Sample usage with a string:
 
-        augeas{"test1" :
+        augeas { "test1":
           context => "/files/etc/sysconfig/firstboot",
           changes => "set RUN_FIRSTBOOT YES",
           onlyif  => "match other_value size > 0",
         }
 
-    Sample usage with an array and custom lenses:
+    @example Sample usage with an array and custom lenses:
 
-        augeas{"jboss_conf":
+        augeas { "jboss_conf":
           context   => "/files",
           changes   => [
               "set etc/jbossas/jbossas.conf/JBOSS_IP $ipaddress",
@@ -129,7 +128,8 @@ Puppet::Type.newtype(:augeas) do
   end
 
   newparam(:load_path) do
-    desc "Optional colon-separated list or array of directories; these directories are searched for schema definitions. The agent's `$libdir/augeas/lenses` path will always be added to support pluginsync."
+    desc "Optional colon-separated list or array of directories; these directories are searched for schema definitions.
+    The agent's `$libdir/augeas/lenses` path will always be added to support pluginsync."
     defaultto ''
   end
 
@@ -162,7 +162,7 @@ Puppet::Type.newtype(:augeas) do
   validate do
     has_lens = !self[:lens].nil?
     has_incl = !self[:incl].nil?
-    fail(_('You must specify both the lens and incl parameters, or neither.')) if has_lens != has_incl
+    raise(Puppet::Error, _('You must specify both the lens and incl parameters, or neither.')) if has_lens != has_incl
   end
 
   newparam(:show_diff, boolean: true, parent: Puppet::Parameter::Boolean) do
