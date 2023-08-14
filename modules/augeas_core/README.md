@@ -1,86 +1,49 @@
-
-# augeas_core
-
-[![Modules Status](https://github.com/puppetlabs/puppetlabs-augeas_core/workflows/%5BDaily%5D%20Unit%20Tests%20with%20nightly%20Puppet%20gem/badge.svg?branch=main)](https://github.com/puppetlabs/puppetlabs-augeas_core/actions)
-[![Modules Status](https://github.com/puppetlabs/puppetlabs-augeas_core/workflows/Static%20Code%20Analysis/badge.svg?branch=main)](https://github.com/puppetlabs/puppetlabs-augeas_core/actions) 
-[![Modules Status](https://github.com/puppetlabs/puppetlabs-augeas_core/workflows/Unit%20Tests%20with%20nightly%20Puppet%20gem/badge.svg?branch=main)](https://github.com/puppetlabs/puppetlabs-augeas_core/actions) 
-[![Modules Status](https://github.com/puppetlabs/puppetlabs-augeas_core/workflows/Unit%20Tests%20with%20released%20Puppet%20gem/badge.svg?branch=main)](https://github.com/puppetlabs/puppetlabs-augeas_core/actions)
+# augeasproviders\_core: library for building alternative Augeas-based providers for Puppet
 
 
-#### Table of Contents
+[![Build Status](https://github.com/voxpupuli/puppet-augeasproviders_core/workflows/CI/badge.svg)](https://github.com/voxpupuli/puppet-augeasproviders_core/actions?query=workflow%3ACI)
+[![Release](https://github.com/voxpupuli/puppet-augeasproviders_core/actions/workflows/release.yml/badge.svg)](https://github.com/voxpupuli/puppet-augeasproviders_core/actions/workflows/release.yml)
+[![Code Coverage](https://coveralls.io/repos/github/voxpupuli/puppet-augeasproviders_core/badge.svg?branch=master)](https://coveralls.io/github/voxpupuli/puppet-augeasproviders_core)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/puppet/augeasproviders_core.svg)](https://forge.puppetlabs.com/puppet/augeasproviders_core)
+[![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/puppet/augeasproviders_core.svg)](https://forge.puppetlabs.com/puppet/augeasproviders_core)
+[![Puppet Forge - endorsement](https://img.shields.io/puppetforge/e/puppet/augeasproviders_core.svg)](https://forge.puppetlabs.com/puppet/augeasproviders_core)
+[![Puppet Forge - scores](https://img.shields.io/puppetforge/f/puppet/augeasproviders_core.svg)](https://forge.puppetlabs.com/puppet/augeasproviders_core)
+[![puppetmodule.info docs](http://www.puppetmodule.info/images/badge.png)](http://www.puppetmodule.info/m/puppet-augeasproviders_core)
+[![Apache-2 License](https://img.shields.io/github/license/voxpupuli/puppet-augeasproviders_core.svg)](LICENSE)
+[![Donated by Camptocamp](https://img.shields.io/badge/donated%20by-camptocamp-fb7047.svg)](#transfer-notice)
 
-1. [Description](#description)
-2. [Setup - The basics of getting started with augeas_core](#setup)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with augeas_core](#beginning-with-augeas)
-3. [Usage - Configuration options and additional functionality](#usage)
-4. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
+## Module description
 
-<a id="description"></a>
-## Description
+This module provides a library for module authors to create new types and
+providers around config files, using the Augeas configuration library to read
+and modify them.
 
-The `augeas_core` module is used to manage configuration files using Augeas. This module is suitable for any host for which there are Augeas libraries and ruby bindings.
+The advantage of using Augeas over the default Puppet `parsedfile`
+implementations is that Augeas will go to great lengths to preserve file
+formatting and comments, while also failing safely when needed.
 
-<a id="setup"></a>
-## Setup
+If you're a user, you want to see the main augeasproviders project at
+[augeasproviders.com](http://augeasproviders.com).
 
-<a id="setup-requirements"></a>
-### Setup Requirements
+## Requirements
 
-The augeas libraries and ruby bindings must be installed in order to use this module. If you are using `puppet-agent` packages, then those prerequisites are already satisfied for most platforms.
+Ensure both Augeas and ruby-augeas 0.3.0+ bindings are installed and working as
+normal.
 
-<a id="beginning-with-augeas"></a>
-### Beginning with augeas_core
+See [Puppet/Augeas pre-requisites](http://docs.puppetlabs.com/guides/augeas.html#pre-requisites).
 
-To manage a configuration file using `augeas`, use the following code:
+## Development documentation
 
-```
-augeas { 'add_services_entry':
-  context => '/files/etc/services',
-  incl    => '/etc/services',
-  lens    => 'Services.lns',
-  changes => [
-    'ins service-name after service-name[last()]',
-    'set service-name[last()] "Doom"',
-    'set service-name[. = "Doom"]/port "666"',
-    'set service-name[. = "Doom"]/protocol "udp"'
-  ]
-}
-```
+See docs/ (run `make`) or [augeasproviders.com](http://augeasproviders.com/documentation/).
 
-<a id="usage"></a>
-## Usage
+## Issues
 
-Please see REFERENCE.md for the reference documentation and [examples](https://puppet.com/docs/puppet/latest/resources_augeas.html) for details on usage.
+Please file any issues or suggestions [on GitHub](https://github.com/voxpupuli/puppet-augeasproviders_core/issues).
 
-<a id="reference"></a>
-## Reference
+## Transfer Notice
 
-Please see REFERENCE.md for the reference documentation.
+This plugin was originally authored by [hercules-team](http://augeasproviders.com).
+The maintainer preferred that Puppet Community take ownership of the module for future improvement and maintenance.
+Existing pull requests and issues were transferred over, please fork and continue to contribute here instead of Camptocamp.
 
-This module is documented using Puppet Strings.
-
-For a quick primer on how Strings works, please see [this blog post](https://puppet.com/blog/using-puppet-strings-generate-great-documentation-puppet-modules) or the [README.md](https://github.com/puppetlabs/puppet-strings/blob/master/README.md) for Puppet Strings.
-
-To generate documentation locally, run the following command:
-```
-bundle install
-bundle exec puppet strings generate ./lib/**/*.rb
-```
-This command will create a browsable `_index.html` file in the `doc` directory. The references available here are all generated from YARD-style comments embedded in the code base. When any development happens on this module, the impacted documentation should also be updated.
-
-<a id="limitations"></a>
-## Limitations
-
-This module is only available on platforms that have augeas libraries and ruby bindings installed.
-
-<a id="development"></a>
-## Development
-
-Puppet Labs modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can't access the huge number of platforms and myriad of hardware, software, and deployment configurations that Puppet is intended to serve.
-
-We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things.
-
-For more information, see our [module contribution guide.](https://puppet.com/docs/puppet/latest/contributing.html)
+Previously: https://github.com/hercules-team/augeasproviders_core

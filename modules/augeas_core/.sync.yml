@@ -1,59 +1,10 @@
-.rubocop.yml:
-  default_configs:
-    Style/SignalException:
-      Enabled: false
-    Layout/IndentHeredoc:
-      Enabled: false
-    Metrics/BlockNesting:
-      Enabled: false
-    Metrics/LineLength:
-      Enabled: false
-    Style/AccessorMethodName:
-      Enabled: false
-    Style/DoubleNegation:
-      Enabled: false
-    Style/MultipleComparison:
-      Enabled: false
-    Style/NumericPredicate:
-      Enabled: false
-    Style/PredicateName:
-      Enabled: false
-    Style/SignalException:
-      Enabled: false
-    Style/VariableName:
-      Enabled: false
+---
+.github/workflows/ci.yml:
+  additional_packages: 'libaugeas-dev'
 Gemfile:
   optional:
-    ':development':
-      - gem: 'github_changelog_generator'
-        git: 'https://github.com/skywinder/github-changelog-generator'
-        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
-        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
-  required:
-    ':system_tests':
-      - gem: 'puppet-module-posix-system-r#{minor_version}'
-        platforms: ruby
-      - gem: 'puppet-module-win-system-r#{minor_version}'
-        platforms:
-          - mswin
-          - mingw
-          - x64_mingw
-      - gem: beaker
-        version: '~> 3.34'
-        from_env: BEAKER_VERSION
-      - gem: beaker-abs
-        from_env: BEAKER_ABS_VERSION
-        version: '~> 0.5'
-      - gem: beaker-pe
-      - gem: beaker-hostgenerator
-        from_env: BEAKER_HOSTGENERATOR_VERSION
-      - gem: beaker-rspec
-        from_env: BEAKER_RSPEC_VERSION
-      - gem: beaker-puppet
-        from_env: BEAKER_PUPPET_VERSION
-        version: '~> 0.16'
-    ':development':
-      - gem: puppet-strings
-
-Rakefile:
-  changelog_version_tag_pattern: '%s'
+    ':test':
+      - gem: ruby-augeas
+spec/spec_helper.rb:
+  spec_overrides:
+    - "require 'spec_helper_local'"
