@@ -1,3 +1,0 @@
-[submodule "augeas"]
-	path = spec/fixtures/augeas
-	url = https://github.com/hercules-team/augeas.git
