@@ -7,10 +7,10 @@ worker_processes <%= @nginx_worker_processes %>;
 worker_processes <%= @facts['processors']['count'] %>;
 <%- end -%>
 pid /run/nginx.pid;
-worker_rlimit_nofile 16192; # Twice the number of worker_connections
+worker_rlimit_nofile 262144; # Twice the number of worker_connections
 
 events {
-	worker_connections 8096;
+	worker_connections 131072;
 	multi_accept off;
 }
 
