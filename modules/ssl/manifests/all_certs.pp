@@ -1,10 +1,12 @@
 # Class for loading all certificates.
 class ssl::all_certs {
-    if defined(Service['nginx']) {
-        $restart_nginx = Service['nginx']
-    } else {
-        $restart_nginx = undef
-    }
+    # For now, assume nginx service is always defined; the function seems to be always returning false
+    # We only load this class from nginx definitions anyway
+    #if defined(Service['nginx']) {
+    $restart_nginx = Service['nginx']
+    #} else {
+    #    $restart_nginx = undef
+    #}
 
     file { '/etc/ssl/localcerts':
         ensure  => directory,
