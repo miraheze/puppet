@@ -33,6 +33,7 @@ ExecStart=/usr/sbin/varnishd \
 -p thread_pool_timeout=120 \
 -p vsl_reclen=2048 \
 -p workspace_backend=128k \
+-p vcc_allow_inline_c=true \
 -S /etc/varnish/secret \
 <%= @storage %> \
 -p http_req_size=24576 \
