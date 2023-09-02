@@ -16,7 +16,7 @@ C{
 
    #define RATE 0.2
    #define BASE -20.3
-   #define MEMORY 1/1024.0 %>
+   #define MEMORY 1/1024.0
    const double adm_param = pow(MEMORY, RATE) / pow(2.0, BASE);
 }C
 
