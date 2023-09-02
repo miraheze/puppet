@@ -196,6 +196,12 @@ sub mw_request {
 
 	# Numerous static.miraheze.org specific code
 	if (req.http.Host == "static.miraheze.org") {
+		unset req.http.X-Range;
+
+	    if (req.http.Range) {
+	        set req.hash_ignore_busy = true;
+	    }
+
 		# We can do this because static.miraheze.org should not be capable of serving such requests anyway
 		# This could also increase cache hit rates as Cookies will be stripped entirely
 		unset req.http.Cookie;
@@ -247,12 +253,12 @@ sub mw_request {
 				}
 			}
 		}
-	}
 
-    // Fixup borked client Range: headers
-    if (req.http.Range ~ "(?i)bytes:") {
-        set req.http.Range = regsub(req.http.Range, "(?i)bytes:\s*", "bytes=");
-    }
+	    // Fixup borked client Range: headers
+	    if (req.http.Range ~ "(?i)bytes:") {
+	        set req.http.Range = regsub(req.http.Range, "(?i)bytes:\s*", "bytes=");
+	    }
+	}
 
 	# Don't cache a non-GET or HEAD request
 	if (req.method != "GET" && req.method != "HEAD") {
@@ -422,10 +428,21 @@ sub vcl_backend_fetch {
 		set bereq.http.Cookie = bereq.http.X-Orig-Cookie;
 		unset bereq.http.X-Orig-Cookie;
 	}
+
+    if (bereq.http.X-Range) {
+        set bereq.http.Range = bereq.http.X-Range;
+        unset bereq.http.X-Range;
+    }
 }
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
+    if (beresp.http.Content-Range) {
+        // Varnish itself doesn't ask for ranges, so this must have been
+        // a passed range request
+        set beresp.http.X-Content-Range = beresp.http.Content-Range;
+    }
+
 	# T9808: Assign restrictive Cache-Control if one is missing
 	if (!beresp.http.Cache-Control) {
 		set beresp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
@@ -552,17 +569,27 @@ sub vcl_backend_response {
 
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
-	# We set Access-Control-Allow-Origin to * for all files hosted on
-	# static.miraheze.org. We also set this header for some images hosted
-	# on the same site as the wiki (private).
-	if (
-		(
-	 	 	 req.http.Host == "static.miraheze.org" &&
-			 req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
-		) ||
-	 	req.url ~ "^(?i)\/w\/img_auth\.php\/(.*)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
-	) {
-		set resp.http.Access-Control-Allow-Origin = "*";
+    if (resp.http.X-Content-Range) {
+        set resp.http.Content-Range = resp.http.X-Content-Range;
+        unset resp.http.X-Content-Range;
+    }
+
+	if ( req.http.Host == "static.miraheze.org" ) {
+		unset resp.http.Set-Cookie;
+		unset resp.http.Cache-Control;
+
+	    if (req.http.X-Content-Disposition == "attachment") {
+	        set resp.http.Content-Disposition = "attachment";
+	    }
+
+	    // Prevent browsers from content sniffing.
+	    set resp.http.X-Content-Type-Options = "nosniff";
+
+		call add_upload_cors_headers;
+	}
+
+    if ( req.url ~ "^(?i)\/w\/img_auth\.php\/(.+)" ) {
+		call add_upload_cors_headers;
 	}
 
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
@@ -606,6 +633,23 @@ sub vcl_deliver {
 	}
 
 	return (deliver);
+}
+
+sub add_upload_cors_headers {
+    set resp.http.Access-Control-Allow-Origin = "*";
+
+    // Headers exposed for CORS:
+    // - Age, Content-Length, Date, X-Cache
+    //
+    // - X-Content-Duration: used for OGG audio and video files.
+    //   Firefox 41 dropped support for this header, but OGV.js still supports it.
+    //   See <https://bugzilla.mozilla.org/show_bug.cgi?id=1160695#c27> and
+    //   <https://github.com/brion/ogv.js/issues/88>.
+    //
+    // - Content-Range: indicates total file and actual range returned for RANGE
+    //   requests. Used by ogv.js to eliminate an extra HEAD request
+    //   to get the total file size.
+    set resp.http.Access-Control-Expose-Headers = "Age, Date, Content-Length, Content-Range, X-Content-Duration, X-Cache";
 }
 
 # Hit code, default logic is appended
