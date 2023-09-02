@@ -7,6 +7,19 @@
 # new 4.1 format.
 vcl 4.1;
 
+// Includes for Exp cache admission policy, admission probability exponentially
+// decreasing with size. See mf_admission_policies.
+C{
+   #include <stdlib.h>
+   #include <math.h>
+   #include <errno.h>
+
+   #define RATE 0.2
+   #define BASE -20.3
+   #define MEMORY 1/1024.0 %>
+   const double adm_param = pow(MEMORY, RATE) / pow(2.0, BASE);
+}C
+
 # Import some modules used
 import directors;
 import std;
@@ -437,6 +450,50 @@ sub vcl_backend_fetch {
 	}
 }
 
+sub mf_admission_policies {
+    // hit-for-pass objects >= 8388608 size. Do cache if Content-Length is missing.
+    if (std.integer(beresp.http.Content-Length, 0) >= 8388608) {
+        // HFP
+        set beresp.http.X-CDIS = "pass";
+        return(pass(beresp.ttl));
+    }
+
+if (beresp.status == 200 && bereq.http.X-CDIS == "miss") {
+C{
+   const struct gethdr_s hdr = { HDR_BERESP, "\017Content-Length:" };
+   const char *clen_hdr = VRT_GetHdr(ctx, &hdr);
+   // Set CL:0 by default
+   unsigned long int clen = 0;
+
+   // If Content-Length has been specified
+   if (clen_hdr) {
+       errno = 0;
+       clen = strtoul(clen_hdr, NULL, 10);
+       if (errno)
+           clen = 0;
+   }
+
+   if (clen) {
+       const double clen_neg = -1.0 * (double)clen;
+       const double admissionprob = exp(clen_neg/adm_param);
+       const double urand = drand48();
+
+       Vmod_std_Func.log(ctx, "Admission Probability: ", VRT_REAL_string(ctx, admissionprob), vrt_magic_string_end);
+       Vmod_std_Func.log(ctx, "Admission Urand: ", VRT_REAL_string(ctx, urand), vrt_magic_string_end);
+
+       // If admission test succeeds, mark as uncacheable
+       if (admissionprob < urand) {
+           // HFM with ttl=67 to avoid stalling
+           VRT_l_beresp_ttl(ctx,67);
+           VRT_l_beresp_uncacheable(ctx,1);
+       }
+    }
+}C
+}
+
+    return (deliver);
+}
+
 # Backend response, defines cacheability
 sub vcl_backend_response {
 	if (beresp.http.Content-Range) {
@@ -598,7 +655,11 @@ sub vcl_backend_response {
 		return(pass(beresp.ttl));
 	}
 
-	return (deliver);
+    // It is important that this happens after the code responsible for translating TTL<=0
+    // (uncacheable) responses into hit-for-pass.
+    call mf_admission_policies;
+
+	// return (deliver);
 }
 
 # Last sub route activated, clean up of HTTP headers etc.
