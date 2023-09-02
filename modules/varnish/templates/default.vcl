@@ -586,10 +586,10 @@ sub vcl_backend_response {
 			unset bereq.http.Cookie;
 			unset beresp.http.Set-Cookie;
 		} else {
-	        set beresp.grace = 31s;
-	        set beresp.keep = 0s;
-	        set beresp.http.X-CDIS = "pass";
-	        // HFP
+			set beresp.grace = 31s;
+			set beresp.keep = 0s;
+			set beresp.http.X-CDIS = "pass";
+			// HFP
 			return(pass(607s));
 		}
 	} elseif (beresp.http.Set-Cookie) {
