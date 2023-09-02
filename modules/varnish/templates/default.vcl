@@ -519,11 +519,11 @@ sub vcl_backend_response {
 		// translated to hit-for-pass below
 	}
 
-    /* Especially don't cache Set-Cookie responses. */
-    if ((beresp.ttl > 0s || beresp.http.Cache-Control ~ "public") && beresp.http.Set-Cookie) {
-        set beresp.ttl = 0s;
-        // translated to hit-for-pass below
-    }
+	/* Especially don't cache Set-Cookie responses. */
+	if ((beresp.ttl > 0s || beresp.http.Cache-Control ~ "public") && beresp.http.Set-Cookie) {
+		set beresp.ttl = 0s;
+		// translated to hit-for-pass below
+	}
 	// Set a maximum cap on the TTL for 404s. Objects that don't exist now may
 	// be created later on, and we want to put a limit on the amount of time
 	// it takes for new resources to be visible.
@@ -586,6 +586,10 @@ sub vcl_backend_response {
 			unset bereq.http.Cookie;
 			unset beresp.http.Set-Cookie;
 		} else {
+	        set beresp.grace = 31s;
+	        set beresp.keep = 0s;
+	        set beresp.http.X-CDIS = "pass";
+	        // HFP
 			return(pass(607s));
 		}
 	} elseif (beresp.http.Set-Cookie) {
