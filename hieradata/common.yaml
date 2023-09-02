@@ -20,8 +20,8 @@ memcached_servers_3:
   - '2a10:6740::6:405:11211:1 "shard01"'
 memcached_servers_test:
   - '2a10:6740::6:406:11211:1 "shard01"'
-varnish::interval-check: '60s'
-varnish::interval-timeout: '60s'
+varnish::interval-check: '10s'
+varnish::interval-timeout: '10s'
 varnish::backends:
   mw131:
     port: 8106
