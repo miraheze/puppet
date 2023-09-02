@@ -211,12 +211,48 @@ sub mw_request {
 		# From Wikimedia: https://gerrit.wikimedia.org/r/c/operations/puppet/+/120617/7/templates/varnish/upload-frontend.inc.vcl.erb
 		# required for Extension:MultiMediaViewer: T10285
 		if (req.url ~ "(?i)(\?|&)download(=|&|$)") {
-			/* Pretend that the parameter wasn't there for caching purposes */
-			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?$", "");
-			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?&", "\1");
 			set req.http.X-Content-Disposition = "attachment";
 		}
+
+		// Strip away all query parameters
+		set req.url = regsub(req.url, "\?.*$", "");
+		
+		// Replace double slashes
+		set req.url = regsuball(req.url, "/{2,}", "/");
+
+		// Thumb fixups
+		if (req.url ~ "(?i)/thumb/") {
+			// Normalize end of thumbnail URL (redundant filename)
+			// Lowercase last part of the URL, to avoid case variations on extension or thumbnail parameters
+			// eg. /metawiki/thumb/0/06/Foo.jpg/120px-FOO.JPG => /metawiki/thumb/0/06/Foo.jpg/120px-foo.jpg
+			set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
+
+			// In the abbreviated case, where MediaWiki turns the end of the thumbnail URL into -thumbnail.ext
+			// (see abbrvThreshold in FileRepo), there is no need to copy over the canonical filename
+			// However, we filter out potentially abusive use of -thumbnail.ext on short filenames (<= 160 characters), where the
+			// normalization is warranted.
+			if ( req.url ~ "[^/]{161,}/[^/]+$" ) {
+				// Abbreviated case, ensure that the end of the URL is thumbnail.ext
+				set req.url = regsub(req.url, "/([^/]+)/((?:qlow-)?(?:lossy-)?(?:lossless-)?(?:page\d+-)?(?:lang[0-9a-z-]+-)?\d+px-(?:(?:seek=|seek%3d)\d+-)?)[^/]+\.(\w+)$", "/\1/\2thumbnail.\3");
+			} else {
+				// Copy canonical filename from beginning of URL to thumbnail parameters at the end
+				// eg. /metawiki/thumb/0/06/Foo.jpg/120px-bar.jpg => /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg.jpg
+				set req.url = regsub(req.url, "/([^/]+)/((?:qlow-)?(?:lossy-)?(?:lossless-)?(?:page\d+-)?(?:lang[0-9a-z-]+-)?\d+px-(?:(?:seek=|seek%3d)\d+-)?)[^/]+\.(\w+)$", "/\1/\2\1.\3");
+
+				// Last pass, clean up any redundant extension
+				// .jpg.jpg => .jpg, .JPG.jpg => .JPG
+				// eg. /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg.jpg => /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg
+				if (req.url ~ "(?i)(.*)(\.\w+)\2$") {
+					set req.url = regsub(req.url, "(?i)(.*)(\.\w+)\2$", "\1\2");
+				}
+			}
+		}
 	}
+
+    // Fixup borked client Range: headers
+    if (req.http.Range ~ "(?i)bytes:") {
+        set req.http.Range = regsub(req.http.Range, "(?i)bytes:\s*", "bytes=");
+    }
 
 	# Don't cache a non-GET or HEAD request
 	if (req.method != "GET" && req.method != "HEAD") {
@@ -230,13 +266,17 @@ sub mw_request {
 		unset req.http.If-Modified-Since;
 	}
 
+	# Do not cache dumps and also pipe requests.
+	if ( req.http.Host == "static.miraheze.org" && req.url ~ "^/.*wiki/dumps" ) {
+		return (pipe);
+	}
+
 	# Don't cache certain things on static
 	if (
 		req.http.Host == "static.miraheze.org" &&
 		(
 			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
-			req.url ~ "^/(.+)wiki/sitemaps" || # Do not cache sitemaps
-			req.url ~ "^/.*wiki/dumps" # Do not cache wiki dumps
+			req.url ~ "^/(.+)wiki/sitemaps" # Do not cache sitemaps
 		)
 	) {
 		return (pass);
