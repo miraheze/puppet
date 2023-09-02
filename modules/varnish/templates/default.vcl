@@ -478,9 +478,6 @@ C{
        const double admissionprob = exp(clen_neg/adm_param);
        const double urand = drand48();
 
-       Vmod_std_Func.log(ctx, "Admission Probability: ", VRT_REAL_string(ctx, admissionprob), vrt_magic_string_end);
-       Vmod_std_Func.log(ctx, "Admission Urand: ", VRT_REAL_string(ctx, urand), vrt_magic_string_end);
-
        // If admission test succeeds, mark as uncacheable
        if (admissionprob < urand) {
            // HFM with ttl=67 to avoid stalling
