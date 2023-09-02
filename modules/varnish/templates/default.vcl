@@ -458,6 +458,18 @@ sub vcl_backend_response {
 		// translated to hit-for-pass below
 	}
 
+    /* Especially don't cache Set-Cookie responses. */
+    if ((beresp.ttl > 0s || beresp.http.Cache-Control ~ "public") && beresp.http.Set-Cookie) {
+        set beresp.ttl = 0s;
+        // translated to hit-for-pass below
+    }
+    // Set a maximum cap on the TTL for 404s. Objects that don't exist now may
+    // be created later on, and we want to put a limit on the amount of time
+    // it takes for new resources to be visible.
+    elsif (beresp.status == 404 && beresp.ttl > 10m) {
+        set beresp.ttl = "10m";
+    }
+
 	# Cookie magic as we did before
 	if (bereq.http.Cookie ~ "([Ss]ession|Token)=") {
 		set bereq.http.Cookie = "Token=1";
@@ -465,16 +477,36 @@ sub vcl_backend_response {
 		unset bereq.http.Cookie;
 	}
 
-	# Distribute caching re-calls where possible
-	if (beresp.ttl >= 60s) {
-		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
-	}
-
 	# Do not cache a backend response if HTTP code is above 400, except a 404, then limit TTL
 	if (beresp.status >= 400 && beresp.status != 404) {
 		set beresp.uncacheable = true;
 	} elseif (beresp.status == 404 && beresp.ttl > 10m) {
 		set beresp.ttl = 10m;
+	}
+
+    // Set keep, which influences the amount of time objects are kept available
+    // in cache for IMS requests (TTL+grace+keep). Scale keep to the app-provided
+    // TTL.
+    if (beresp.ttl > 0s) {
+        if (beresp.http.ETag || beresp.http.Last-Modified) {
+            if (beresp.ttl < 1d) {
+                set beresp.keep = beresp.ttl;
+            } else {
+                set beresp.keep = 1d;
+            }
+        }
+
+        // Hard TTL cap on all fetched objects (default 1d)
+        if (beresp.ttl > 1d) {
+            set beresp.ttl = 1d;
+        }
+
+        set beresp.grace = 20m;
+    }
+
+	# Distribute caching re-calls where possible
+	if (beresp.ttl >= 60s) {
+		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
 	}
 
 	# If we have a cookie, we can't cache it, unless we can?
