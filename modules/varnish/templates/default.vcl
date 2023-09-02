@@ -669,16 +669,17 @@ sub vcl_backend_response {
 
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
-    if (req.method != "PURGE") {
-        // we copy through from beresp->resp->req here for the initial hit-for-pass case
-        if (resp.http.X-CDIS) {
-            set req.http.X-CDIS = resp.http.X-CDIS;
-            unset resp.http.X-CDIS;
-        }
+	if (req.method != "PURGE") {
+		// we copy through from beresp->resp->req here for the initial hit-for-pass case
+		if (resp.http.X-CDIS) {
+			set req.http.X-CDIS = resp.http.X-CDIS;
+			unset resp.http.X-CDIS;
+		}
 
-        if (!req.http.X-CDIS) {
-            set req.http.X-CDIS = "bug";
-    }
+		if (!req.http.X-CDIS) {
+			set req.http.X-CDIS = "bug";
+		}
+	}
 
 	if (resp.http.X-Content-Range) {
 		set resp.http.Content-Range = resp.http.X-Content-Range;
