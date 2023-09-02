@@ -463,12 +463,12 @@ sub vcl_backend_response {
         set beresp.ttl = 0s;
         // translated to hit-for-pass below
     }
-    // Set a maximum cap on the TTL for 404s. Objects that don't exist now may
-    // be created later on, and we want to put a limit on the amount of time
-    // it takes for new resources to be visible.
-    elsif (beresp.status == 404 && beresp.ttl > 10m) {
-        set beresp.ttl = "10m";
-    }
+	// Set a maximum cap on the TTL for 404s. Objects that don't exist now may
+	// be created later on, and we want to put a limit on the amount of time
+	// it takes for new resources to be visible.
+	elsif (beresp.status == 404 && beresp.ttl > 10m) {
+		set beresp.ttl = 10m;
+	}
 
 	# Cookie magic as we did before
 	if (bereq.http.Cookie ~ "([Ss]ession|Token)=") {
