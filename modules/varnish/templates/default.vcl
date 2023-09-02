@@ -26,7 +26,7 @@ probe mwhealth {
 	# to mark the backend as healthy
 	.window = 5;
 	.threshold = 4;
-        .initial = 4;
+	.initial = 4;
 	.expected_response = 204;
 }
 
@@ -118,13 +118,13 @@ sub rate_limit {
 			(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
 			if (req.url ~ "^/(w/api.php|w/rest.php|wiki/Special:EntityData)") {
-			    if (vsthrottle.is_denied("rest:" + req.http.X-Real-IP, 1000, 10s)) {
-				return (synth(429, "Too Many Requests"));
-			    }
+				if (vsthrottle.is_denied("rest:" + req.http.X-Real-IP, 1000, 10s)) {
+					return (synth(429, "Too Many Requests"));
+				}
 			} else {
-			    if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 1000, 50s)) {
-				return (synth(429, "Too Many Requests"));
-			    }
+				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 1000, 50s)) {
+					return (synth(429, "Too Many Requests"));
+				}
 			}
 		}
 	}
@@ -198,9 +198,9 @@ sub mw_request {
 	if (req.http.Host == "static.miraheze.org") {
 		unset req.http.X-Range;
 
-	    if (req.http.Range) {
-	        set req.hash_ignore_busy = true;
-	    }
+		if (req.http.Range) {
+			set req.hash_ignore_busy = true;
+		}
 
 		# We can do this because static.miraheze.org should not be capable of serving such requests anyway
 		# This could also increase cache hit rates as Cookies will be stripped entirely
@@ -254,10 +254,10 @@ sub mw_request {
 			}
 		}
 
-	    // Fixup borked client Range: headers
-	    if (req.http.Range ~ "(?i)bytes:") {
-	        set req.http.Range = regsub(req.http.Range, "(?i)bytes:\s*", "bytes=");
-	    }
+		// Fixup borked client Range: headers
+		if (req.http.Range ~ "(?i)bytes:") {
+			set req.http.Range = regsub(req.http.Range, "(?i)bytes:\s*", "bytes=");
+		}
 	}
 
 	# Don't cache a non-GET or HEAD request
@@ -343,10 +343,10 @@ sub vcl_recv {
 		return (pass);
 	}
 
-        if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
-                set req.backend_hint = test131;
-                return (pass);
-        }
+		if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
+				set req.backend_hint = test131;
+				return (pass);
+		}
 
 	# Only cache js files from Matomo
 	if (req.http.Host == "matomo.miraheze.org") {
@@ -373,7 +373,7 @@ sub vcl_recv {
 
 	# Do not cache requests from this domain
 	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki" ||
-            req.http.Host == "blog.miraheze.org") {
+		req.http.Host == "blog.miraheze.org") {
 		set req.backend_hint = phab121;
 		return (pass);
 	}
@@ -405,11 +405,11 @@ sub vcl_hash {
 }
 
 sub vcl_pipe {
-    // for websockets over pipe
-    if (req.http.upgrade) {
-        set bereq.http.upgrade = req.http.upgrade;
-        set bereq.http.connection = req.http.connection;
-    }
+	// for websockets over pipe
+	if (req.http.upgrade) {
+		set bereq.http.upgrade = req.http.upgrade;
+		set bereq.http.connection = req.http.connection;
+	}
 }
 
 # Initiate a backend fetch
@@ -429,19 +429,19 @@ sub vcl_backend_fetch {
 		unset bereq.http.X-Orig-Cookie;
 	}
 
-    if (bereq.http.X-Range) {
-        set bereq.http.Range = bereq.http.X-Range;
-        unset bereq.http.X-Range;
-    }
+	if (bereq.http.X-Range) {
+		set bereq.http.Range = bereq.http.X-Range;
+		unset bereq.http.X-Range;
+	}
 }
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
-    if (beresp.http.Content-Range) {
-        // Varnish itself doesn't ask for ranges, so this must have been
-        // a passed range request
-        set beresp.http.X-Content-Range = beresp.http.Content-Range;
-    }
+	if (beresp.http.Content-Range) {
+		// Varnish itself doesn't ask for ranges, so this must have been
+		// a passed range request
+		set beresp.http.X-Content-Range = beresp.http.Content-Range;
+	}
 
 	# T9808: Assign restrictive Cache-Control if one is missing
 	if (!beresp.http.Cache-Control) {
@@ -569,26 +569,26 @@ sub vcl_backend_response {
 
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
-    if (resp.http.X-Content-Range) {
-        set resp.http.Content-Range = resp.http.X-Content-Range;
-        unset resp.http.X-Content-Range;
-    }
+	if (resp.http.X-Content-Range) {
+		set resp.http.Content-Range = resp.http.X-Content-Range;
+		unset resp.http.X-Content-Range;
+	}
 
 	if ( req.http.Host == "static.miraheze.org" ) {
 		unset resp.http.Set-Cookie;
 		unset resp.http.Cache-Control;
 
-	    if (req.http.X-Content-Disposition == "attachment") {
-	        set resp.http.Content-Disposition = "attachment";
-	    }
+		if (req.http.X-Content-Disposition == "attachment") {
+			set resp.http.Content-Disposition = "attachment";
+		}
 
-	    // Prevent browsers from content sniffing.
-	    set resp.http.X-Content-Type-Options = "nosniff";
+		// Prevent browsers from content sniffing.
+		set resp.http.X-Content-Type-Options = "nosniff";
 
 		call add_upload_cors_headers;
 	}
 
-    if ( req.url ~ "^(?i)\/w\/img_auth\.php\/(.+)" ) {
+	if ( req.url ~ "^(?i)\/w\/img_auth\.php\/(.+)" ) {
 		call add_upload_cors_headers;
 	}
 
@@ -636,20 +636,20 @@ sub vcl_deliver {
 }
 
 sub add_upload_cors_headers {
-    set resp.http.Access-Control-Allow-Origin = "*";
+	set resp.http.Access-Control-Allow-Origin = "*";
 
-    // Headers exposed for CORS:
-    // - Age, Content-Length, Date, X-Cache
-    //
-    // - X-Content-Duration: used for OGG audio and video files.
-    //   Firefox 41 dropped support for this header, but OGV.js still supports it.
-    //   See <https://bugzilla.mozilla.org/show_bug.cgi?id=1160695#c27> and
-    //   <https://github.com/brion/ogv.js/issues/88>.
-    //
-    // - Content-Range: indicates total file and actual range returned for RANGE
-    //   requests. Used by ogv.js to eliminate an extra HEAD request
-    //   to get the total file size.
-    set resp.http.Access-Control-Expose-Headers = "Age, Date, Content-Length, Content-Range, X-Content-Duration, X-Cache";
+	// Headers exposed for CORS:
+	// - Age, Content-Length, Date, X-Cache
+	//
+	// - X-Content-Duration: used for OGG audio and video files.
+	//   Firefox 41 dropped support for this header, but OGV.js still supports it.
+	//   See <https://bugzilla.mozilla.org/show_bug.cgi?id=1160695#c27> and
+	//   <https://github.com/brion/ogv.js/issues/88>.
+	//
+	// - Content-Range: indicates total file and actual range returned for RANGE
+	//   requests. Used by ogv.js to eliminate an extra HEAD request
+	//   to get the total file size.
+	set resp.http.Access-Control-Expose-Headers = "Age, Date, Content-Length, Content-Range, X-Content-Duration, X-Cache";
 }
 
 # Hit code, default logic is appended
