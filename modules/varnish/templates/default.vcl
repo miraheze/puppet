@@ -132,34 +132,38 @@ sub rate_limit {
 
 # Artificial error handling/redirects within Varnish
 sub vcl_synth {
-	if (resp.status == 752) {
-		set resp.http.Location = resp.reason;
-		set resp.status = 302;
-		return (deliver);
-	}
-
-	// Homepage redirect to commons
-	if (resp.reason == "Commons Redirect") {
-		set resp.reason = "Moved Permanently";
-		set resp.http.Location = "https://commons.miraheze.org/";
-		set resp.http.Connection = "keep-alive";
-		set resp.http.Content-Length = "0";
-	}
-
-	// Handle CORS preflight requests
-	if (
-		req.http.Host == "static.miraheze.org" &&
-		resp.reason == "CORS Preflight"
-	) {
-		set resp.reason = "OK";
-		set resp.http.Connection = "keep-alive";
-		set resp.http.Content-Length = "0";
-
-		// allow Range requests, and avoid other CORS errors when debugging with X-Miraheze-Debug
-		set resp.http.Access-Control-Allow-Origin = "*";
-		set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
-		set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
-		set resp.http.Access-Control-Max-Age = "86400";
+	if (req.method != "PURGE") {
+		if (resp.status == 752) {
+			set resp.http.Location = resp.reason;
+			set resp.status = 302;
+			return (deliver);
+		}
+	
+		// Homepage redirect to commons
+		if (resp.reason == "Commons Redirect") {
+			set resp.reason = "Moved Permanently";
+			set resp.http.Location = "https://commons.miraheze.org/";
+			set resp.http.Connection = "keep-alive";
+			set resp.http.Content-Length = "0";
+		}
+	
+		// Handle CORS preflight requests
+		if (
+			req.http.Host == "static.miraheze.org" &&
+			resp.reason == "CORS Preflight"
+		) {
+			set resp.reason = "OK";
+			set resp.http.Connection = "keep-alive";
+			set resp.http.Content-Length = "0";
+	
+			// allow Range requests, and avoid other CORS errors when debugging with X-Miraheze-Debug
+			set resp.http.Access-Control-Allow-Origin = "*";
+			set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
+			set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
+			set resp.http.Access-Control-Max-Age = "86400";
+		} else {
+			call add_upload_cors_headers;
+		}
 	}
 }
 
@@ -207,13 +211,11 @@ sub mw_request {
 		unset req.http.Cookie;
 		unset req.http.Authorization;
 
-		# Normalise thumb URLs to prevent capitalisation or odd casing duplicating numerous resources
-		# set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
-
 		# CORS Prelight
 		if (req.method == "OPTIONS" && req.http.Origin) {
 			return (synth(200, "CORS Preflight"));
 		}
+
 		# From Wikimedia: https://gerrit.wikimedia.org/r/c/operations/puppet/+/120617/7/templates/varnish/upload-frontend.inc.vcl.erb
 		# required for Extension:MultiMediaViewer: T10285
 		if (req.url ~ "(?i)(\?|&)download(=|&|$)") {
