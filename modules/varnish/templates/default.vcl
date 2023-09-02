@@ -673,7 +673,7 @@ sub vcl_miss {
     // Convert range requests into pass
     if (req.http.Range) {
         // Varnish strips the Range header before copying req into bereq. Save it into
-        // a header and restore it in cluster_fe_backend_fetch
+        // a header and restore it in vcl_backend_fetch
         set req.http.X-Range = req.http.Range;
         return (pass);
     }
