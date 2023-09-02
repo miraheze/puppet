@@ -322,6 +322,8 @@ sub vcl_recv {
 
 	unset req.http.Proxy; # https://httpoxy.org/
 
+	unset req.http.X-CDIS;
+
 	# Health checks, do not send request any further, if we're up, we can handle it
 	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
 		return (synth(200));
@@ -458,7 +460,7 @@ sub mf_admission_policies {
         return(pass(beresp.ttl));
     }
 
-if (beresp.status == 200 && bereq.http.X-CDIS == "miss") {
+if (bereq.http.Host == "static.miraheze.org" && beresp.status == 200 && bereq.http.X-CDIS == "miss") {
 C{
    const struct gethdr_s hdr = { HDR_BERESP, "\017Content-Length:" };
    const char *clen_hdr = VRT_GetHdr(ctx, &hdr);
@@ -493,6 +495,11 @@ C{
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
+    // This prevents the application layer from setting this in a response.
+    // We'll be setting this same variable internally in VCL in hit-for-pass
+    // cases later.
+    unset beresp.http.X-CDIS;
+
 	if (beresp.http.Content-Range) {
 		// Varnish itself doesn't ask for ranges, so this must have been
 		// a passed range request
@@ -639,6 +646,7 @@ sub vcl_backend_response {
 	if (beresp.ttl <= 0s && beresp.status < 500) {
 		set beresp.grace = 31s;
 		set beresp.keep = 0s;
+		set beresp.http.X-CDIS = "pass";
 		return(pass(601s));
 	}
 
@@ -652,15 +660,26 @@ sub vcl_backend_response {
 		return(pass(beresp.ttl));
 	}
 
-    // It is important that this happens after the code responsible for translating TTL<=0
-    // (uncacheable) responses into hit-for-pass.
-    call mf_admission_policies;
+	// It is important that this happens after the code responsible for translating TTL<=0
+	// (uncacheable) responses into hit-for-pass.
+	call mf_admission_policies;
 
 	// return (deliver);
 }
 
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
+    if (req.method != "PURGE") {
+        // we copy through from beresp->resp->req here for the initial hit-for-pass case
+        if (resp.http.X-CDIS) {
+            set req.http.X-CDIS = resp.http.X-CDIS;
+            unset resp.http.X-CDIS;
+        }
+
+        if (!req.http.X-CDIS) {
+            set req.http.X-CDIS = "bug";
+    }
+
 	if (resp.http.X-Content-Range) {
 		set resp.http.Content-Range = resp.http.X-Content-Range;
 		unset resp.http.X-Content-Range;
@@ -746,6 +765,8 @@ sub add_upload_cors_headers {
 
 # Hit code, default logic is appended
 sub vcl_hit {
+	set req.http.X-CDIS = "hit";
+
 	# Add X-Cache header
 	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> HIT (" + obj.hits + ")";
 
@@ -757,6 +778,8 @@ sub vcl_hit {
 
 # Miss code, default logic is appended
 sub vcl_miss {
+	set req.http.X-CDIS = "miss";
+
 	# Add X-Cache header
 	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> MISS";
 
@@ -771,6 +794,8 @@ sub vcl_miss {
 
 # Pass code, default logic is appended
 sub vcl_pass {
+	set req.http.X-CDIS = "pass";
+
 	# Add X-Cache header
 	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> PASS";
 }
