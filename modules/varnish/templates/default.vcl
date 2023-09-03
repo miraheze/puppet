@@ -146,6 +146,8 @@ sub rate_limit {
 # Artificial error handling/redirects within Varnish
 sub vcl_synth {
 	if (req.method != "PURGE") {
+		set resp.http.X-CDIS = "int";
+
 		if (resp.status == 752) {
 			set resp.http.Location = resp.reason;
 			set resp.status = 302;
