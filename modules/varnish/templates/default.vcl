@@ -86,7 +86,7 @@ sub evaluate_cookie {
 		unset req.http.X-Orig-Cookie;
 		if (req.http.Cookie) {
 			set req.http.X-Orig-Cookie = req.http.Cookie;
-			if (req.http.Cookie ~ "([Ss]ession|Token)=") {
+			if (req.http.Cookie ~ "([sS]ession|Token)=") {
 				set req.http.Cookie = "Token=1";
 			} else {
 				unset req.http.Cookie;
@@ -275,16 +275,16 @@ sub mw_request {
 		}
 	}
 
+	# If a user is logged out, do not give them a cached page of them logged in
+	if (req.http.If-Modified-Since && req.http.Cookie ~ "LoggedOut") {
+		unset req.http.If-Modified-Since;
+	}
+
 	# Don't cache a non-GET or HEAD request
 	if (req.method != "GET" && req.method != "HEAD") {
 		# Zero reason to append ?useformat=true here
 		set req.http.X-Use-Mobile = "0";
 		return (pass);
-	}
-
-	# If a user is logged out, do not give them a cached page of them logged in
-	if (req.http.If-Modified-Since && req.http.Cookie ~ "LoggedOut") {
-		unset req.http.If-Modified-Since;
 	}
 
 	# Do not cache dumps and also pipe requests.
@@ -308,12 +308,12 @@ sub mw_request {
 		set req.http.Host = "meta.miraheze.org";
 	}
 
+	call evaluate_cookie;
+
 	# A requet via OAuth should not be cached or use a cached response elsewhere
-	if (req.http.Authorization ~ "OAuth") {
+	if (req.http.Authorization ~ "^OAuth ") {
 		return (pass);
 	}
-
-	call evaluate_cookie;
 }
 
 # Initial sub route executed on a Varnish request, the heart of everything
@@ -333,24 +333,6 @@ sub vcl_recv {
 		return (synth(301, "Commons Redirect"));
 	}
 
-	# Normalise Accept-Encoding for better cache hit ratio
-	if (req.http.Accept-Encoding) {
-		if (
-			req.http.Host == "static.miraheze.org" &&
-			req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|mp4|ogg)$"
-		) {
-			# No point in compressing these
-			unset req.http.Accept-Encoding;
-		} elseif (req.http.Accept-Encoding ~ "gzip") {
-			set req.http.Accept-Encoding = "gzip";
-		} elseif (req.http.Accept-Encoding ~ "deflate") {
-			set req.http.Accept-Encoding = "deflate";
-		} else {
-			# We don't understand this
-			unset req.http.Accept-Encoding;
-		}
-	}
-
 	if (
 		req.url ~ "^/\.well-known" ||
 		req.http.Host == "ssl.miraheze.org" ||
@@ -360,10 +342,10 @@ sub vcl_recv {
 		return (pass);
 	}
 
-		if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
-				set req.backend_hint = test131;
-				return (pass);
-		}
+	if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
+		set req.backend_hint = test131;
+		return (pass);
+	}
 
 	# Only cache js files from Matomo
 	if (req.http.Host == "matomo.miraheze.org") {
@@ -499,6 +481,12 @@ sub vcl_backend_response {
     // We'll be setting this same variable internally in VCL in hit-for-pass
     // cases later.
     unset beresp.http.X-CDIS;
+
+	if (bereq.http.Cookie ~ "([sS]ession|Token)=") {
+		set bereq.http.Cookie = "Token=1";
+	} else {
+		unset bereq.http.Cookie;
+	}
 
 	if (beresp.http.Content-Range) {
 		// Varnish itself doesn't ask for ranges, so this must have been
