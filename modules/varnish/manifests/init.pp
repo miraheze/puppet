@@ -26,6 +26,14 @@ class varnish (
     $interval_check = lookup('varnish::interval-check')
     $interval_timeout = lookup('varnish::interval-timeout')
 
+    # (1024.0 * 1024.0) converts to megabytes.
+    $mem_gb = $facts['memory']['system']['total_bytes'] / (1024.0 * 1024.0) / 1024.0
+    if ($mem_gb < 90.0) {
+        $v_mem_gb = 1
+    } else {
+        $v_mem_gb = ceiling(0.7 * ($mem_gb - 100.0))
+    }
+
     file { '/etc/varnish/default.vcl':
         ensure  => present,
         content => template('varnish/default.vcl'),
@@ -40,7 +48,7 @@ class varnish (
     }
 
     # TODO: On bigger memory hosts increase Transient size
-    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,1G"
+    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,${v_mem_gb}G"
 
     systemd::service { 'varnish':
         ensure         => present,

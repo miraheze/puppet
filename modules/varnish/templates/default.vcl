@@ -7,6 +7,19 @@
 # new 4.1 format.
 vcl 4.1;
 
+// Includes for Exp cache admission policy, admission probability exponentially
+// decreasing with size. See mf_admission_policies.
+C{
+   #include <stdlib.h>
+   #include <math.h>
+   #include <errno.h>
+
+   #define RATE 0.2
+   #define BASE -20.3
+   #define MEMORY <%= @v_mem_gb.to_i/1024.0 %>
+   const double adm_param = pow(MEMORY, RATE) / pow(2.0, BASE);
+}C
+
 # Import some modules used
 import directors;
 import std;
@@ -26,7 +39,7 @@ probe mwhealth {
 	# to mark the backend as healthy
 	.window = 5;
 	.threshold = 4;
-        .initial = 4;
+	.initial = 4;
 	.expected_response = 204;
 }
 
@@ -73,7 +86,7 @@ sub evaluate_cookie {
 		unset req.http.X-Orig-Cookie;
 		if (req.http.Cookie) {
 			set req.http.X-Orig-Cookie = req.http.Cookie;
-			if (req.http.Cookie ~ "([Ss]ession|Token)=") {
+			if (req.http.Cookie ~ "([sS]ession|Token)=") {
 				set req.http.Cookie = "Token=1";
 			} else {
 				unset req.http.Cookie;
@@ -118,13 +131,13 @@ sub rate_limit {
 			(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
 			if (req.url ~ "^/(w/api.php|w/rest.php|wiki/Special:EntityData)") {
-			    if (vsthrottle.is_denied("rest:" + req.http.X-Real-IP, 1000, 10s)) {
-				return (synth(429, "Too Many Requests"));
-			    }
+				if (vsthrottle.is_denied("rest:" + req.http.X-Real-IP, 1000, 10s)) {
+					return (synth(429, "Too Many Requests"));
+				}
 			} else {
-			    if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 1000, 50s)) {
-				return (synth(429, "Too Many Requests"));
-			    }
+				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 1000, 50s)) {
+					return (synth(429, "Too Many Requests"));
+				}
 			}
 		}
 	}
@@ -132,34 +145,40 @@ sub rate_limit {
 
 # Artificial error handling/redirects within Varnish
 sub vcl_synth {
-	if (resp.status == 752) {
-		set resp.http.Location = resp.reason;
-		set resp.status = 302;
-		return (deliver);
-	}
+	if (req.method != "PURGE") {
+		set resp.http.X-CDIS = "int";
 
-	// Homepage redirect to commons
-	if (resp.reason == "Commons Redirect") {
-		set resp.reason = "Moved Permanently";
-		set resp.http.Location = "https://commons.miraheze.org/";
-		set resp.http.Connection = "keep-alive";
-		set resp.http.Content-Length = "0";
-	}
-
-	// Handle CORS preflight requests
-	if (
-		req.http.Host == "static.miraheze.org" &&
-		resp.reason == "CORS Preflight"
-	) {
-		set resp.reason = "OK";
-		set resp.http.Connection = "keep-alive";
-		set resp.http.Content-Length = "0";
-
-		// allow Range requests, and avoid other CORS errors when debugging with X-Miraheze-Debug
-		set resp.http.Access-Control-Allow-Origin = "*";
-		set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
-		set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
-		set resp.http.Access-Control-Max-Age = "86400";
+		if (resp.status == 752) {
+			set resp.http.Location = resp.reason;
+			set resp.status = 302;
+			return (deliver);
+		}
+	
+		// Homepage redirect to commons
+		if (resp.reason == "Commons Redirect") {
+			set resp.reason = "Moved Permanently";
+			set resp.http.Location = "https://commons.miraheze.org/";
+			set resp.http.Connection = "keep-alive";
+			set resp.http.Content-Length = "0";
+		}
+	
+		// Handle CORS preflight requests
+		if (
+			req.http.Host == "static.miraheze.org" &&
+			resp.reason == "CORS Preflight"
+		) {
+			set resp.reason = "OK";
+			set resp.http.Connection = "keep-alive";
+			set resp.http.Content-Length = "0";
+	
+			// allow Range requests, and avoid other CORS errors when debugging with X-Miraheze-Debug
+			set resp.http.Access-Control-Allow-Origin = "*";
+			set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
+			set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
+			set resp.http.Access-Control-Max-Age = "86400";
+		} else {
+			call add_upload_cors_headers;
+		}
 	}
 }
 
@@ -196,26 +215,71 @@ sub mw_request {
 
 	# Numerous static.miraheze.org specific code
 	if (req.http.Host == "static.miraheze.org") {
+		unset req.http.X-Range;
+
+		if (req.http.Range) {
+			set req.hash_ignore_busy = true;
+		}
+
 		# We can do this because static.miraheze.org should not be capable of serving such requests anyway
 		# This could also increase cache hit rates as Cookies will be stripped entirely
 		unset req.http.Cookie;
 		unset req.http.Authorization;
 
-		# Normalise thumb URLs to prevent capitalisation or odd casing duplicating numerous resources
-		# set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
-
 		# CORS Prelight
 		if (req.method == "OPTIONS" && req.http.Origin) {
 			return (synth(200, "CORS Preflight"));
 		}
+
 		# From Wikimedia: https://gerrit.wikimedia.org/r/c/operations/puppet/+/120617/7/templates/varnish/upload-frontend.inc.vcl.erb
 		# required for Extension:MultiMediaViewer: T10285
 		if (req.url ~ "(?i)(\?|&)download(=|&|$)") {
-			/* Pretend that the parameter wasn't there for caching purposes */
-			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?$", "");
-			set req.url = regsub(req.url, "(?i)(\?|&)download(=[^&]+)?&", "\1");
 			set req.http.X-Content-Disposition = "attachment";
 		}
+
+		// Strip away all query parameters
+		set req.url = regsub(req.url, "\?.*$", "");
+		
+		// Replace double slashes
+		set req.url = regsuball(req.url, "/{2,}", "/");
+
+		// Thumb fixups
+		if (req.url ~ "(?i)/thumb/") {
+			// Normalize end of thumbnail URL (redundant filename)
+			// Lowercase last part of the URL, to avoid case variations on extension or thumbnail parameters
+			// eg. /metawiki/thumb/0/06/Foo.jpg/120px-FOO.JPG => /metawiki/thumb/0/06/Foo.jpg/120px-foo.jpg
+			set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
+
+			// In the abbreviated case, where MediaWiki turns the end of the thumbnail URL into -thumbnail.ext
+			// (see abbrvThreshold in FileRepo), there is no need to copy over the canonical filename
+			// However, we filter out potentially abusive use of -thumbnail.ext on short filenames (<= 160 characters), where the
+			// normalization is warranted.
+			if ( req.url ~ "[^/]{161,}/[^/]+$" ) {
+				// Abbreviated case, ensure that the end of the URL is thumbnail.ext
+				set req.url = regsub(req.url, "/([^/]+)/((?:qlow-)?(?:lossy-)?(?:lossless-)?(?:page\d+-)?(?:lang[0-9a-z-]+-)?\d+px-(?:(?:seek=|seek%3d)\d+-)?)[^/]+\.(\w+)$", "/\1/\2thumbnail.\3");
+			} else {
+				// Copy canonical filename from beginning of URL to thumbnail parameters at the end
+				// eg. /metawiki/thumb/0/06/Foo.jpg/120px-bar.jpg => /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg.jpg
+				set req.url = regsub(req.url, "/([^/]+)/((?:qlow-)?(?:lossy-)?(?:lossless-)?(?:page\d+-)?(?:lang[0-9a-z-]+-)?\d+px-(?:(?:seek=|seek%3d)\d+-)?)[^/]+\.(\w+)$", "/\1/\2\1.\3");
+
+				// Last pass, clean up any redundant extension
+				// .jpg.jpg => .jpg, .JPG.jpg => .JPG
+				// eg. /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg.jpg => /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg
+				if (req.url ~ "(?i)(.*)(\.\w+)\2$") {
+					set req.url = regsub(req.url, "(?i)(.*)(\.\w+)\2$", "\1\2");
+				}
+			}
+		}
+
+		// Fixup borked client Range: headers
+		if (req.http.Range ~ "(?i)bytes:") {
+			set req.http.Range = regsub(req.http.Range, "(?i)bytes:\s*", "bytes=");
+		}
+	}
+
+	# If a user is logged out, do not give them a cached page of them logged in
+	if (req.http.If-Modified-Since && req.http.Cookie ~ "LoggedOut") {
+		unset req.http.If-Modified-Since;
 	}
 
 	# Don't cache a non-GET or HEAD request
@@ -225,9 +289,9 @@ sub mw_request {
 		return (pass);
 	}
 
-	# If a user is logged out, do not give them a cached page of them logged in
-	if (req.http.If-Modified-Since && req.http.Cookie ~ "LoggedOut") {
-		unset req.http.If-Modified-Since;
+	# Do not cache dumps and also pipe requests.
+	if ( req.http.Host == "static.miraheze.org" && req.url ~ "^/.*wiki/dumps" ) {
+		return (pipe);
 	}
 
 	# Don't cache certain things on static
@@ -235,8 +299,7 @@ sub mw_request {
 		req.http.Host == "static.miraheze.org" &&
 		(
 			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
-			req.url ~ "^/(.+)wiki/sitemaps" || # Do not cache sitemaps
-			req.url ~ "^/.*wiki/dumps" # Do not cache wiki dumps
+			req.url ~ "^/(.+)wiki/sitemaps" # Do not cache sitemaps
 		)
 	) {
 		return (pass);
@@ -247,12 +310,12 @@ sub mw_request {
 		set req.http.Host = "meta.miraheze.org";
 	}
 
+	call evaluate_cookie;
+
 	# A requet via OAuth should not be cached or use a cached response elsewhere
-	if (req.http.Authorization ~ "OAuth") {
+	if (req.http.Authorization ~ "^OAuth ") {
 		return (pass);
 	}
-
-	call evaluate_cookie;
 }
 
 # Initial sub route executed on a Varnish request, the heart of everything
@@ -261,6 +324,8 @@ sub vcl_recv {
 
 	unset req.http.Proxy; # https://httpoxy.org/
 
+	unset req.http.X-CDIS;
+
 	# Health checks, do not send request any further, if we're up, we can handle it
 	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
 		return (synth(200));
@@ -268,24 +333,6 @@ sub vcl_recv {
 	
 	if (req.http.host == "static.miraheze.org" && req.url == "/") {
 		return (synth(301, "Commons Redirect"));
-	}
-
-	# Normalise Accept-Encoding for better cache hit ratio
-	if (req.http.Accept-Encoding) {
-		if (
-			req.http.Host == "static.miraheze.org" &&
-			req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|tbz|mp3|mp4|ogg)$"
-		) {
-			# No point in compressing these
-			unset req.http.Accept-Encoding;
-		} elseif (req.http.Accept-Encoding ~ "gzip") {
-			set req.http.Accept-Encoding = "gzip";
-		} elseif (req.http.Accept-Encoding ~ "deflate") {
-			set req.http.Accept-Encoding = "deflate";
-		} else {
-			# We don't understand this
-			unset req.http.Accept-Encoding;
-		}
 	}
 
 	if (
@@ -297,10 +344,10 @@ sub vcl_recv {
 		return (pass);
 	}
 
-        if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
-                set req.backend_hint = test131;
-                return (pass);
-        }
+	if (req.http.Host ~ "^(.*\.)?betaheze\.org") {
+		set req.backend_hint = test131;
+		return (pass);
+	}
 
 	# Only cache js files from Matomo
 	if (req.http.Host == "matomo.miraheze.org") {
@@ -327,7 +374,7 @@ sub vcl_recv {
 
 	# Do not cache requests from this domain
 	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki" ||
-            req.http.Host == "blog.miraheze.org") {
+		req.http.Host == "blog.miraheze.org") {
 		set req.backend_hint = phab121;
 		return (pass);
 	}
@@ -359,11 +406,11 @@ sub vcl_hash {
 }
 
 sub vcl_pipe {
-    // for websockets over pipe
-    if (req.http.upgrade) {
-        set bereq.http.upgrade = req.http.upgrade;
-        set bereq.http.connection = req.http.connection;
-    }
+	// for websockets over pipe
+	if (req.http.upgrade) {
+		set bereq.http.upgrade = req.http.upgrade;
+		set bereq.http.connection = req.http.connection;
+	}
 }
 
 # Initiate a backend fetch
@@ -382,10 +429,80 @@ sub vcl_backend_fetch {
 		set bereq.http.Cookie = bereq.http.X-Orig-Cookie;
 		unset bereq.http.X-Orig-Cookie;
 	}
+
+	if (bereq.http.X-Range) {
+		set bereq.http.Range = bereq.http.X-Range;
+		unset bereq.http.X-Range;
+	}
+}
+
+sub mf_admission_policies {
+    // hit-for-pass objects >= 8388608 size. Do cache if Content-Length is missing.
+    if (bereq.http.Host == "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 8388608) {
+        // HFP
+        set beresp.http.X-CDIS = "pass";
+        return(pass(beresp.ttl));
+    }
+
+    // hit-for-pass objects >= 67108864 size. Do cache if Content-Length is missing.
+    if (bereq.http.Host != "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
+        // HFP
+        set beresp.http.X-CDIS = "pass";
+        return(pass(beresp.ttl));
+    }
+
+if (bereq.http.Host == "static.miraheze.org" && beresp.status == 200 && bereq.http.X-CDIS == "miss") {
+C{
+   const struct gethdr_s hdr = { HDR_BERESP, "\017Content-Length:" };
+   const char *clen_hdr = VRT_GetHdr(ctx, &hdr);
+   // Set CL:0 by default
+   unsigned long int clen = 0;
+
+   // If Content-Length has been specified
+   if (clen_hdr) {
+       errno = 0;
+       clen = strtoul(clen_hdr, NULL, 10);
+       if (errno)
+           clen = 0;
+   }
+
+   if (clen) {
+       const double clen_neg = -1.0 * (double)clen;
+       const double admissionprob = exp(clen_neg/adm_param);
+       const double urand = drand48();
+
+       // If admission test succeeds, mark as uncacheable
+       if (admissionprob < urand) {
+           // HFM with ttl=67 to avoid stalling
+           VRT_l_beresp_ttl(ctx,67);
+           VRT_l_beresp_uncacheable(ctx,1);
+       }
+    }
+}C
+}
+
+    return (deliver);
 }
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
+	// This prevents the application layer from setting this in a response.
+	// We'll be setting this same variable internally in VCL in hit-for-pass
+	// cases later.
+	unset beresp.http.X-CDIS;
+
+	if (bereq.http.Cookie ~ "([sS]ession|Token)=") {
+		set bereq.http.Cookie = "Token=1";
+	} else {
+		unset bereq.http.Cookie;
+	}
+
+	if (beresp.http.Content-Range) {
+		// Varnish itself doesn't ask for ranges, so this must have been
+		// a passed range request
+		set beresp.http.X-Content-Range = beresp.http.Content-Range;
+	}
+
 	# T9808: Assign restrictive Cache-Control if one is missing
 	if (!beresp.http.Cache-Control) {
 		set beresp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
@@ -399,6 +516,18 @@ sub vcl_backend_response {
 		// translated to hit-for-pass below
 	}
 
+	/* Especially don't cache Set-Cookie responses. */
+	if ((beresp.ttl > 0s || beresp.http.Cache-Control ~ "public") && beresp.http.Set-Cookie) {
+		set beresp.ttl = 0s;
+		// translated to hit-for-pass below
+	}
+	// Set a maximum cap on the TTL for 404s. Objects that don't exist now may
+	// be created later on, and we want to put a limit on the amount of time
+	// it takes for new resources to be visible.
+	elsif (beresp.status == 404 && beresp.ttl > 10m) {
+		set beresp.ttl = 10m;
+	}
+
 	# Cookie magic as we did before
 	if (bereq.http.Cookie ~ "([Ss]ession|Token)=") {
 		set bereq.http.Cookie = "Token=1";
@@ -406,16 +535,36 @@ sub vcl_backend_response {
 		unset bereq.http.Cookie;
 	}
 
-	# Distribute caching re-calls where possible
-	if (beresp.ttl >= 60s) {
-		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
-	}
-
 	# Do not cache a backend response if HTTP code is above 400, except a 404, then limit TTL
 	if (beresp.status >= 400 && beresp.status != 404) {
 		set beresp.uncacheable = true;
 	} elseif (beresp.status == 404 && beresp.ttl > 10m) {
 		set beresp.ttl = 10m;
+	}
+
+    // Set keep, which influences the amount of time objects are kept available
+    // in cache for IMS requests (TTL+grace+keep). Scale keep to the app-provided
+    // TTL.
+    if (beresp.ttl > 0s) {
+        if (beresp.http.ETag || beresp.http.Last-Modified) {
+            if (beresp.ttl < 1d) {
+                set beresp.keep = beresp.ttl;
+            } else {
+                set beresp.keep = 1d;
+            }
+        }
+
+        // Hard TTL cap on all fetched objects (default 1d)
+        if (beresp.ttl > 1d) {
+            set beresp.ttl = 1d;
+        }
+
+        set beresp.grace = 20m;
+    }
+
+	# Distribute caching re-calls where possible
+	if (beresp.ttl >= 60s) {
+		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
 	}
 
 	# If we have a cookie, we can't cache it, unless we can?
@@ -434,6 +583,10 @@ sub vcl_backend_response {
 			unset bereq.http.Cookie;
 			unset beresp.http.Set-Cookie;
 		} else {
+			set beresp.grace = 31s;
+			set beresp.keep = 0s;
+			set beresp.http.X-CDIS = "pass";
+			// HFP
 			return(pass(607s));
 		}
 	} elseif (beresp.http.Set-Cookie) {
@@ -494,35 +647,52 @@ sub vcl_backend_response {
 	if (beresp.ttl <= 0s && beresp.status < 500) {
 		set beresp.grace = 31s;
 		set beresp.keep = 0s;
+		set beresp.http.X-CDIS = "pass";
 		return(pass(601s));
 	}
 
-	// hit-for-pass objects >= 8388608 size and if domain == static.miraheze.org or
-	// hit-for-pass objects >= 67108864 size and if domain != static.miraheze.org.
-	// Do cache if Content-Length is missing.
-	if (std.integer(beresp.http.Content-Length, 0) >= 8388608 && bereq.http.Host == "static.miraheze.org" ||
-		std.integer(beresp.http.Content-Length, 0) >= 67108864 && bereq.http.Host != "static.miraheze.org"
-	) {
-		// HFP
-		return(pass(beresp.ttl));
-	}
+	// It is important that this happens after the code responsible for translating TTL<=0
+	// (uncacheable) responses into hit-for-pass.
+	call mf_admission_policies;
 
-	return (deliver);
+	// return (deliver);
 }
 
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
-	# We set Access-Control-Allow-Origin to * for all files hosted on
-	# static.miraheze.org. We also set this header for some images hosted
-	# on the same site as the wiki (private).
-	if (
-		(
-	 	 	 req.http.Host == "static.miraheze.org" &&
-			 req.url ~ "(?i)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
-		) ||
-	 	req.url ~ "^(?i)\/w\/img_auth\.php\/(.*)\.(gif|jpg|jpeg|pdf|png|css|js|json|woff|woff2|svg|eot|ttf|otf|ico|sfnt|stl|STL)$"
-	) {
-		set resp.http.Access-Control-Allow-Origin = "*";
+	if (req.method != "PURGE") {
+		// we copy through from beresp->resp->req here for the initial hit-for-pass case
+		if (resp.http.X-CDIS) {
+			set req.http.X-CDIS = resp.http.X-CDIS;
+			unset resp.http.X-CDIS;
+		}
+
+		if (!req.http.X-CDIS) {
+			set req.http.X-CDIS = "bug";
+		}
+	}
+
+	if (resp.http.X-Content-Range) {
+		set resp.http.Content-Range = resp.http.X-Content-Range;
+		unset resp.http.X-Content-Range;
+	}
+
+	if ( req.http.Host == "static.miraheze.org" ) {
+		unset resp.http.Set-Cookie;
+		unset resp.http.Cache-Control;
+
+		if (req.http.X-Content-Disposition == "attachment") {
+			set resp.http.Content-Disposition = "attachment";
+		}
+
+		// Prevent browsers from content sniffing.
+		set resp.http.X-Content-Type-Options = "nosniff";
+
+		call add_upload_cors_headers;
+	}
+
+	if ( req.url ~ "^(?i)\/w\/img_auth\.php\/(.+)" ) {
+		call add_upload_cors_headers;
 	}
 
 	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php") {
@@ -568,8 +738,27 @@ sub vcl_deliver {
 	return (deliver);
 }
 
+sub add_upload_cors_headers {
+	set resp.http.Access-Control-Allow-Origin = "*";
+
+	// Headers exposed for CORS:
+	// - Age, Content-Length, Date, X-Cache
+	//
+	// - X-Content-Duration: used for OGG audio and video files.
+	//   Firefox 41 dropped support for this header, but OGV.js still supports it.
+	//   See <https://bugzilla.mozilla.org/show_bug.cgi?id=1160695#c27> and
+	//   <https://github.com/brion/ogv.js/issues/88>.
+	//
+	// - Content-Range: indicates total file and actual range returned for RANGE
+	//   requests. Used by ogv.js to eliminate an extra HEAD request
+	//   to get the total file size.
+	set resp.http.Access-Control-Expose-Headers = "Age, Date, Content-Length, Content-Range, X-Content-Duration, X-Cache";
+}
+
 # Hit code, default logic is appended
 sub vcl_hit {
+	set req.http.X-CDIS = "hit";
+
 	# Add X-Cache header
 	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> HIT (" + obj.hits + ")";
 
@@ -581,12 +770,24 @@ sub vcl_hit {
 
 # Miss code, default logic is appended
 sub vcl_miss {
+	set req.http.X-CDIS = "miss";
+
 	# Add X-Cache header
 	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> MISS";
+
+    // Convert range requests into pass
+    if (req.http.Range) {
+        // Varnish strips the Range header before copying req into bereq. Save it into
+        // a header and restore it in vcl_backend_fetch
+        set req.http.X-Range = req.http.Range;
+        return (pass);
+    }
 }
 
 # Pass code, default logic is appended
 sub vcl_pass {
+	set req.http.X-CDIS = "pass";
+
 	# Add X-Cache header
 	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> PASS";
 }
