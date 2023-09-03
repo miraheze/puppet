@@ -649,16 +649,6 @@ sub vcl_backend_response {
 		return(pass(601s));
 	}
 
-	// hit-for-pass objects >= 8388608 size and if domain == static.miraheze.org or
-	// hit-for-pass objects >= 67108864 size and if domain != static.miraheze.org.
-	// Do cache if Content-Length is missing.
-	if (std.integer(beresp.http.Content-Length, 0) >= 8388608 && bereq.http.Host == "static.miraheze.org" ||
-		std.integer(beresp.http.Content-Length, 0) >= 67108864 && bereq.http.Host != "static.miraheze.org"
-	) {
-		// HFP
-		return(pass(beresp.ttl));
-	}
-
 	// It is important that this happens after the code responsible for translating TTL<=0
 	// (uncacheable) responses into hit-for-pass.
 	call mf_admission_policies;
