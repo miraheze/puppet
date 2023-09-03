@@ -477,10 +477,10 @@ C{
 
 # Backend response, defines cacheability
 sub vcl_backend_response {
-    // This prevents the application layer from setting this in a response.
-    // We'll be setting this same variable internally in VCL in hit-for-pass
-    // cases later.
-    unset beresp.http.X-CDIS;
+	// This prevents the application layer from setting this in a response.
+	// We'll be setting this same variable internally in VCL in hit-for-pass
+	// cases later.
+	unset beresp.http.X-CDIS;
 
 	if (bereq.http.Cookie ~ "([sS]ession|Token)=") {
 		set bereq.http.Cookie = "Token=1";
