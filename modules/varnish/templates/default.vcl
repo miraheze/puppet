@@ -436,7 +436,14 @@ sub vcl_backend_fetch {
 
 sub mf_admission_policies {
     // hit-for-pass objects >= 8388608 size. Do cache if Content-Length is missing.
-    if (std.integer(beresp.http.Content-Length, 0) >= 8388608) {
+    if (bereq.http.Host == "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 8388608) {
+        // HFP
+        set beresp.http.X-CDIS = "pass";
+        return(pass(beresp.ttl));
+    }
+
+    // hit-for-pass objects >= 67108864 size. Do cache if Content-Length is missing.
+    if (bereq.http.Host != "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
         // HFP
         set beresp.http.X-CDIS = "pass";
         return(pass(beresp.ttl));
