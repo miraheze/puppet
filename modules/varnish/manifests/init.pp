@@ -39,8 +39,7 @@ class varnish (
         group  => 'varnish',
     }
 
-    $facts['memory']['system']['total_bytes']
-    $mem_gb = $facts['memorysize_mb'] / 1024.0
+    $mem_gb = $facts['memory']['system']['total_bytes'] / 1024.0
     if ($mem_gb < 90.0) {
         $v_mem_gb = 1
     } else {
