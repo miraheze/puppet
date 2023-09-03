@@ -39,8 +39,15 @@ class varnish (
         group  => 'varnish',
     }
 
+    $mem_gb = $facts['memorysize_mb'] / 1024.0
+    if ($mem_gb < 90.0) {
+        $v_mem_gb = 1
+    } else {
+        $v_mem_gb = ceiling(0.7 * ($mem_gb - 100.0))
+    }
+
     # TODO: On bigger memory hosts increase Transient size
-    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,1G"
+    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,${v_mem_gb}G"
 
     systemd::service { 'varnish':
         ensure         => present,
