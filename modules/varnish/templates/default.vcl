@@ -303,6 +303,10 @@ sub mw_request {
 
 	call evaluate_cookie;
 
+	if (req.url ~ "^/w/rest.php/.*" ) {
+		return (pass);
+	}
+
 	# A requet via OAuth should not be cached or use a cached response elsewhere
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
