@@ -870,7 +870,7 @@ sub vcl_backend_error {
 						<p>Please try again in a few minutes. If the problem persists, please report this on <a href="https://phabricator.miraheze.org">Phabricator</a> or join our <a href="https://discord.gg/TVAJTE4CUn">Discord server</a> or IRC channel (<a href="https://web.libera.chat/?channel=#miraheze-sre">#miraheze-sre</a>) for additional updates. We apologise for the inconvenience. Our Site Reliability Engineers are working to correct the issue.</p>
 					</div>
 					<div class="col-md-6">
-						<a class="twitter-timeline" data-width="500" data-height="350" href="https://twitter.com/MirahezeStatus?ref_src=twsrc%5Etfw">Tweets by MirahezeStatus</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+						<iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fmiraheze&tabs=timeline&width=500&height=350&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=817755263474624" width="500" height="350" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
 					</div>
 				</div>
 			</div>
