@@ -21,22 +21,6 @@ class role::mediawiki::nutcracker (
         ],
     }
 
-    $redis_mediawiki_test_pool = {
-        auto_eject_hosts     => false,
-        distribution         => 'ketama',
-        redis                => true,
-        redis_auth           => "\"${lookup('passwords::redis::master')}\"",
-        hash                 => 'md5',
-        listen               => '/var/run/nutcracker/redis_mediawiki_test.sock 0666',
-        server_connections   => 1,
-        server_failure_limit => 3,
-        server_retry_timeout => 30000,  # milliseconds
-        timeout              => 1000,   # milliseconds
-        servers              => [
-            '2a10:6740::6:406:6379:1'
-        ],
-    }
-
     if $memcached_servers_1 != [] and $memcached_servers_3 != [] {
         $nutcracker_pools = {
             'memcached_1'     => {
@@ -69,8 +53,7 @@ class role::mediawiki::nutcracker (
                 timeout              => 500,    # milliseconds
                 servers              => $memcached_servers_test,
             },
-            'redis_mediawiki'        =>  $redis_mediawiki_pool,
-            'redis_mediawiki_test'   =>  $redis_mediawiki_test_pool,
+            'redis_mediawiki'   =>  $redis_mediawiki_pool,
         }
 
         # Ship a tmpfiles.d configuration to create /run/nutcracker
