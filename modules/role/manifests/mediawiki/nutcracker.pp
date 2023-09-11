@@ -9,7 +9,7 @@ class role::mediawiki::nutcracker (
         auto_eject_hosts     => false,
         distribution         => 'ketama',
         redis                => true,
-        redis_auth           => "\"${lookup('passwords::redis::master')}"\",
+        redis_auth           => "\"${lookup('passwords::redis::master')}\"",
         hash                 => 'md5',
         listen               => '/var/run/nutcracker/redis_mediawiki.sock 0666',
         server_connections   => 1,
