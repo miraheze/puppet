@@ -8,8 +8,7 @@ loglevel notice
 logfile /var/log/redis/redis-server.log
 syslog-enabled yes
 syslog-ident redis-server
-databases 1
-tcp-backlog 1024
+tcp-backlog 16384
 
 #stop-writes-on-bgsave-error no
 <%- if @persist -%>
