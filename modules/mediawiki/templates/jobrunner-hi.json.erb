@@ -96,7 +96,7 @@
         // runJobs.php process time limits
         "real": {
             "*": 300,
-            "DataDumpGenerateJob": 9000,
+            "DataDumpGenerateJob": 21600,
             "NamespaceMigrationJob": 9000,
             "refreshLinks": 9000,
             "refreshLinksDynamic": 9000,
@@ -107,6 +107,7 @@
         // runJobs.php memory limits
         "memory": {
             "*": "300M",
+            "DataDumpGenerateJob": "512M",
             "refreshLinks": "700M",
             "refreshLinksDynamic": "700M",
             "refreshLinksPrioritized": "700M",
