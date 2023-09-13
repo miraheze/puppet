@@ -16,7 +16,7 @@ class base::firewall {
         onlyif  => "/bin/grep --invert-match --quiet '^32768$' /sys/module/nf_conntrack/parameters/hashsize",
     }
 
-    $block_abuse = split(file('puppet:///private/firewall/block_abuse'), /\r/)
+    $block_abuse = split(file('/etc/puppetlabs/puppet/private/files/firewall/block_abuse'), /[\r\n]/)
 
     if $block_abuse != undef and $block_abuse != [] {
         ferm::rule { 'drop-abuse-net-miaheze':
