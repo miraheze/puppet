@@ -1,7 +1,5 @@
 # firewall for all servers
-class base::firewall (
-    Array[String] $block_abuse = split(file('puppet:///private/firewall/block_abuse'), /\r/),
-) {
+class base::firewall {
     include ferm
     # Increase the size of conntrack table size (default is 65536)
     sysctl::parameters { 'ferm_conntrack':
@@ -17,6 +15,8 @@ class base::firewall (
         command => '/bin/echo 32768 > /sys/module/nf_conntrack/parameters/hashsize',
         onlyif  => "/bin/grep --invert-match --quiet '^32768$' /sys/module/nf_conntrack/parameters/hashsize",
     }
+
+    $block_abuse = split(file('puppet:///private/firewall/block_abuse'), /\r/)
 
     if $block_abuse != undef and $block_abuse != [] {
         ferm::rule { 'drop-abuse-net-miaheze':
