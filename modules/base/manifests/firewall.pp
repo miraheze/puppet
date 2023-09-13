@@ -1,6 +1,6 @@
 # firewall for all servers
 class base::firewall (
-    Array[String] $block_abuse = lookup('block_abuse', {'default_value' => []}),
+    Array[String] $block_abuse = split(file('puppet:///private/firewall/block_abuse'), /\r/),
 ) {
     include ferm
     # Increase the size of conntrack table size (default is 65536)
