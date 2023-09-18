@@ -643,7 +643,7 @@ sub vcl_backend_response {
 	//    avoids us accidentally replacing a good stale/grace object with
 	//    an hfp (and then repeatedly passing on potentially-cacheable
 	//    content) due to an isolated 5xx response.
-	if (beresp.ttl <= 0s && beresp.status < 500) {
+	if (beresp.ttl <= 0s && beresp.status < 500 && (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ " hit")) {
 		set beresp.grace = 31s;
 		set beresp.keep = 0s;
 		set beresp.http.X-CDIS = "pass";
