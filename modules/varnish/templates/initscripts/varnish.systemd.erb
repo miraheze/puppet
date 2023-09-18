@@ -14,7 +14,7 @@ ProtectHome=true
 PIDFile=%t/%p.pid
 Restart=on-failure
 KillMode=process
-Environment="MALLOC_CONF=thp:never,narenas:2"
+Environment="MALLOC_CONF=thp:never,narenas:4"
 SyslogIdentifier=varnish
 ExecReload=/usr/local/sbin/reload-vcl <%= @reload_vcl_opts %>
 # We start varnishd(1) without specifying a VCL file (-f ''). Use reload-vcl in
