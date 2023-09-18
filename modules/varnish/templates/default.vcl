@@ -16,8 +16,8 @@ C{
 
    #define RATE 0.0
    #define BASE -20.3
-   #define MEMORY <%= @v_mem_gb.to_i/1024.0 %>
-   const double adm_param = pow(MEMORY, RATE) / pow(2.0, BASE);
+   #define DISK <%= @cache_file_size.to_i/1024.0 %>
+   const double adm_param = pow(DISK, RATE) / pow(2.0, BASE);
 }C
 
 # Import some modules used
