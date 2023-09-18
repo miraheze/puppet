@@ -655,10 +655,10 @@ sub vcl_backend_response {
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
 	if (req.method != "PURGE") {
-        if(req.http.X-CDIS == "hit") {
-            // obj.hits isn't known in vcl_hit, and not useful for other states
-            set req.http.X-CDIS = "hit/" + obj.hits;
-        }
+		if(req.http.X-CDIS == "hit") {
+				// obj.hits isn't known in vcl_hit, and not useful for other states
+				set req.http.X-CDIS = "hit/" + obj.hits;
+		}
 
 		// we copy through from beresp->resp->req here for the initial hit-for-pass case
 		if (resp.http.X-CDIS) {
@@ -672,9 +672,9 @@ sub vcl_deliver {
 
         // X-Cache-Int gets appended-to as we traverse cache layers
         if (resp.http.X-Cache-Int) {
-            set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @hostname %> " + req.http.X-CDIS;
+            set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
         } else {
-            set resp.http.X-Cache-Int = "<%= @hostname %> " + req.http.X-CDIS;
+            set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
         }
 
         set resp.http.X-Cache-Status = regsuball(resp.http.X-Cache, "cp[0-9]{2} (hit|miss|pass|int)(?:/[0-9]+)?", "\1");
