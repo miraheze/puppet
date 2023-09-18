@@ -856,6 +856,7 @@ sub vcl_synth {
 
 # Backend response when an error occurs
 sub vcl_backend_error {
+	set beresp.http.X-CDIS = "int";
 	set beresp.http.Content-Type = "text/html; charset=utf-8";
 
 	synthetic( {"<!DOCTYPE html>
