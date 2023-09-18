@@ -621,7 +621,7 @@ sub vcl_backend_response {
 	//    avoids us accidentally replacing a good stale/grace object with
 	//    an hfp (and then repeatedly passing on potentially-cacheable
 	//    content) due to an isolated 5xx response.
-	if (beresp.ttl <= 0s && beresp.status < 500 && (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ "hit")) {
+	if (beresp.ttl <= 0s && beresp.status < 500 && (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ " hit")) {
 		set beresp.grace = 31s;
 		set beresp.keep = 0s;
 		set beresp.http.X-CDIS = "pass";
@@ -655,6 +655,11 @@ sub vcl_backend_response {
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
 	if (req.method != "PURGE") {
+        if(req.http.X-CDIS == "hit") {
+            // obj.hits isn't known in vcl_hit, and not useful for other states
+            set req.http.X-CDIS = "hit/" + obj.hits;
+        }
+
 		// we copy through from beresp->resp->req here for the initial hit-for-pass case
 		if (resp.http.X-CDIS) {
 			set req.http.X-CDIS = resp.http.X-CDIS;
@@ -664,6 +669,38 @@ sub vcl_deliver {
 		if (!req.http.X-CDIS) {
 			set req.http.X-CDIS = "bug";
 		}
+
+        // X-Cache-Int gets appended-to as we traverse cache layers
+        if (resp.http.X-Cache-Int) {
+            set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @hostname %> " + req.http.X-CDIS;
+        } else {
+            set resp.http.X-Cache-Int = "<%= @hostname %> " + req.http.X-CDIS;
+        }
+
+        set resp.http.X-Cache-Status = regsuball(resp.http.X-Cache, "cp[0-9]{4} (hit|miss|pass|int)(?:/[0-9]+)?", "\1");
+
+        unset resp.http.X-Cache-Int;
+        unset resp.http.Via;
+
+        if (resp.http.X-Cache-Status ~ "hit$") {
+            set resp.http.X-Cache-Status = "hit-front";
+        } elsif (resp.http.X-Cache-Status ~ "hit,[^,]+$") {
+            set resp.http.X-Cache-Status = "hit-local";
+        } elsif (resp.http.X-Cache-Status ~ "hit") {
+            set resp.http.X-Cache-Status = "hit-remote";
+        } elsif (resp.http.X-Cache-Status ~ "int$") {
+            set resp.http.X-Cache-Status = "int-front";
+        } elsif (resp.http.X-Cache-Status ~ "int,[^,]+$") {
+            set resp.http.X-Cache-Status = "int-local";
+        } elsif (resp.http.X-Cache-Status ~ "int") {
+            set resp.http.X-Cache-Status = "int-remote";
+        } elsif (resp.http.X-Cache-Status ~ "miss$") {
+            set resp.http.X-Cache-Status = "miss";
+        } elsif (resp.http.X-Cache-Status ~ "pass$") {
+            set resp.http.X-Cache-Status = "pass";
+        } else {
+            set resp.http.X-Cache-Status = "unknown";
+        }
 	}
 
 	// Provides custom error html if error response has no body
@@ -793,8 +830,28 @@ sub vcl_pass {
 
 # Synthetic code, default logic is appended
 sub vcl_synth {
-	# Add X-Cache header
-	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> SYNTH";
+    if (req.method != "PURGE") {
+        set resp.http.X-CDIS = "int";
+
+		// we copy through from beresp->resp->req here for the initial hit-for-pass case
+		if (resp.http.X-CDIS) {
+			set req.http.X-CDIS = resp.http.X-CDIS;
+			unset resp.http.X-CDIS;
+		}
+
+		if (!req.http.X-CDIS) {
+			set req.http.X-CDIS = "bug";
+		}
+
+        // X-Cache-Int gets appended-to as we traverse cache layers
+        if (resp.http.X-Cache-Int) {
+            set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @hostname %> " + req.http.X-CDIS;
+        } else {
+            set resp.http.X-Cache-Int = "<%= @hostname %> " + req.http.X-CDIS;
+        }
+	}
+
+    return (deliver);
 }
 
 # Backend response when an error occurs
