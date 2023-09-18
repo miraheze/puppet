@@ -544,51 +544,29 @@ sub vcl_backend_response {
     // Set keep, which influences the amount of time objects are kept available
     // in cache for IMS requests (TTL+grace+keep). Scale keep to the app-provided
     // TTL.
-    if (beresp.ttl > 0s) {
-        if (beresp.http.ETag || beresp.http.Last-Modified) {
-            if (beresp.ttl < 1d) {
-                set beresp.keep = beresp.ttl;
-            } else {
-                set beresp.keep = 1d;
-            }
-        }
+	if (beresp.ttl > 0s) {
+		if (beresp.http.ETag || beresp.http.Last-Modified) {
+			if (beresp.ttl < 1d) {
+				set beresp.keep = beresp.ttl;
+			} else {
+				set beresp.keep = 1d;
+			}
+		}
 
-        // Hard TTL cap on all fetched objects (default 1d)
-        if (beresp.ttl > 1d) {
-            set beresp.ttl = 1d;
-        }
+		// Hard TTL cap on all fetched objects (default 1d)
+		if (beresp.ttl > 1d) {
+			set beresp.ttl = 1d;
+		}
 
-        set beresp.grace = 20m;
-    }
+		set beresp.grace = 20m;
+	}
 
 	# Distribute caching re-calls where possible
 	if (beresp.ttl >= 60s) {
 		set beresp.ttl = beresp.ttl * std.random( 0.95, 1.00 );
 	}
 
-	# If we have a cookie, we can't cache it, unless we can?
-	# We can cache when cookies are stripped, and no other cookies are present
-	if (
-		bereq.http.Cookie == "Token=1"
-		&& beresp.http.Vary ~ "(?i)(^|,)\s*Cookie\s*(,|$)"
-	) {
-		# We can cache when:
-		# * Wiki is public; and
-		# * action=raw
-		if (
-			beresp.http.X-Wiki-Visibility == "Public"
-			&& bereq.url ~ "(&|\?)action=raw"
-		) {
-			unset bereq.http.Cookie;
-			unset beresp.http.Set-Cookie;
-		} else {
-			set beresp.grace = 31s;
-			set beresp.keep = 0s;
-			set beresp.http.X-CDIS = "pass";
-			// HFP
-			return(pass(607s));
-		}
-	} elseif (beresp.http.Set-Cookie) {
+	if (beresp.http.Set-Cookie) {
 		set beresp.uncacheable = true; # We do this just to be safe - but we should probably log this to eliminate it?
 	}
 
@@ -643,7 +621,7 @@ sub vcl_backend_response {
 	//    avoids us accidentally replacing a good stale/grace object with
 	//    an hfp (and then repeatedly passing on potentially-cacheable
 	//    content) due to an isolated 5xx response.
-	if (beresp.ttl <= 0s && beresp.status < 500 && (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ " hit")) {
+	if (beresp.ttl <= 0s && beresp.status < 500 && (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ "hit")) {
 		set beresp.grace = 31s;
 		set beresp.keep = 0s;
 		set beresp.http.X-CDIS = "pass";
@@ -669,6 +647,11 @@ sub vcl_deliver {
 		if (!req.http.X-CDIS) {
 			set req.http.X-CDIS = "bug";
 		}
+	}
+
+	// Provides custom error html if error response has no body
+	if (resp.http.Content-Length == "0" && resp.status >= 400) {
+		return(synth(resp.status));
 	}
 
 	if (resp.http.X-Content-Range) {
