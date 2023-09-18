@@ -429,15 +429,18 @@ sub vcl_backend_fetch {
 		unset bereq.http.X-Orig-Cookie;
 	}
 
-	if (bereq.http.X-Range) {
-		set bereq.http.Range = bereq.http.X-Range;
-		unset bereq.http.X-Range;
-	}
+    if (bereq.http.X-Range) {
+        set bereq.http.Range = bereq.http.X-Range;
+        unset bereq.http.X-Range;
+    }
 }
 
 sub mf_admission_policies {
     // hit-for-pass objects >= 8388608 size. Do cache if Content-Length is missing.
     if (bereq.http.Host == "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 8388608) {
+        set beresp.uncachable = true;
+        set beresp.uncacheable = true;
+        set beresp.ttl = 20s;
         // HFP
         set beresp.http.X-CDIS = "pass";
         return(pass(beresp.ttl));
