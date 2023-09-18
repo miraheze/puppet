@@ -14,7 +14,7 @@ C{
    #include <math.h>
    #include <errno.h>
 
-   #define RATE 0.2
+   #define RATE 0.0
    #define BASE -20.3
    #define MEMORY <%= @v_mem_gb.to_i/1024.0 %>
    const double adm_param = pow(MEMORY, RATE) / pow(2.0, BASE);
