@@ -628,6 +628,23 @@ sub vcl_backend_response {
 		return(pass(601s));
 	}
 
+    // set a 607s hit-for-pass object based on response conditions in vcl_backend_response:
+    //    Token=1 + Vary:Cookie:
+    //    All requests with real login session|token cookies share the
+    //    Cookie:Token=1 value for Vary purposes.  This allows them to
+    //    share a single hit-for-pass object here if the response
+    //    shouldn't be shared between users (Vary:Cookie).
+    if (
+        bereq.http.Cookie == "Token=1"
+        && beresp.http.Vary ~ "(?i)(^|,)\s*Cookie\s*(,|$)"
+    ) {
+        set beresp.grace = 31s;
+        set beresp.keep = 0s;
+        set beresp.http.X-CDIS = "pass";
+        // HFP
+        return(pass(607s));
+    }
+
 	// It is important that this happens after the code responsible for translating TTL<=0
 	// (uncacheable) responses into hit-for-pass.
 	call mf_admission_policies;
