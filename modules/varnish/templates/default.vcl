@@ -670,39 +670,39 @@ sub vcl_deliver {
 			set req.http.X-CDIS = "bug";
 		}
 
-        // X-Cache-Int gets appended-to as we traverse cache layers
-        if (resp.http.X-Cache-Int) {
-            set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
-        } else {
-            set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
-        }
+		// X-Cache-Int gets appended-to as we traverse cache layers
+		if (resp.http.X-Cache-Int) {
+				set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
+		} else {
+				set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
+		}
 
-	set resp.http.X-Cache = resp.http.X-Cache-Int;
+		set resp.http.X-Cache = resp.http.X-Cache-Int;
 
-        set resp.http.X-Cache-Status = regsuball(resp.http.X-Cache, "cp[0-9]{2} (hit|miss|pass|int)(?:/[0-9]+)?", "\1");
+		set resp.http.X-Cache-Status = regsuball(resp.http.X-Cache, "cp[0-9]{2} (hit|miss|pass|int)(?:/[0-9]+)?", "\1");
 
-        unset resp.http.X-Cache-Int;
-        unset resp.http.Via;
+		unset resp.http.X-Cache-Int;
+		unset resp.http.Via;
 
-        if (resp.http.X-Cache-Status ~ "hit$") {
-            set resp.http.X-Cache-Status = "hit-front";
-        } elsif (resp.http.X-Cache-Status ~ "hit,[^,]+$") {
-            set resp.http.X-Cache-Status = "hit-local";
-        } elsif (resp.http.X-Cache-Status ~ "hit") {
-            set resp.http.X-Cache-Status = "hit-remote";
-        } elsif (resp.http.X-Cache-Status ~ "int$") {
-            set resp.http.X-Cache-Status = "int-front";
-        } elsif (resp.http.X-Cache-Status ~ "int,[^,]+$") {
-            set resp.http.X-Cache-Status = "int-local";
-        } elsif (resp.http.X-Cache-Status ~ "int") {
-            set resp.http.X-Cache-Status = "int-remote";
-        } elsif (resp.http.X-Cache-Status ~ "miss$") {
-            set resp.http.X-Cache-Status = "miss";
-        } elsif (resp.http.X-Cache-Status ~ "pass$") {
-            set resp.http.X-Cache-Status = "pass";
-        } else {
-            set resp.http.X-Cache-Status = "unknown";
-        }
+		if (resp.http.X-Cache-Status ~ "hit$") {
+				set resp.http.X-Cache-Status = "hit-front";
+		} elsif (resp.http.X-Cache-Status ~ "hit,[^,]+$") {
+				set resp.http.X-Cache-Status = "hit-local";
+		} elsif (resp.http.X-Cache-Status ~ "hit") {
+				set resp.http.X-Cache-Status = "hit-remote";
+		} elsif (resp.http.X-Cache-Status ~ "int$") {
+				set resp.http.X-Cache-Status = "int-front";
+		} elsif (resp.http.X-Cache-Status ~ "int,[^,]+$") {
+				set resp.http.X-Cache-Status = "int-local";
+		} elsif (resp.http.X-Cache-Status ~ "int") {
+				set resp.http.X-Cache-Status = "int-remote";
+		} elsif (resp.http.X-Cache-Status ~ "miss$") {
+				set resp.http.X-Cache-Status = "miss";
+		} elsif (resp.http.X-Cache-Status ~ "pass$") {
+				set resp.http.X-Cache-Status = "pass";
+		} else {
+				set resp.http.X-Cache-Status = "unknown";
+		}
 	}
 
 	// Provides custom error html if error response has no body
