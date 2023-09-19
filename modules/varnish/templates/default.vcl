@@ -759,14 +759,6 @@ sub vcl_deliver {
 		unset resp.http.Set-Cookie;
 	}
 
-	# Set X-Cache from request
-	set resp.http.X-Cache = req.http.X-Cache;
-
-	# Identify uncacheable content
-	if (obj.uncacheable) {
-		set resp.http.X-Cache = resp.http.X-Cache + " UNCACHEABLE";
-	}
-
 	if (req.http.X-Content-Disposition == "attachment") {
 		set resp.http.Content-Disposition = "attachment";
 	}
