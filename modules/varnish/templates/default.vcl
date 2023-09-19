@@ -800,24 +800,22 @@ sub vcl_hit {
 sub vcl_miss {
 	set req.http.X-CDIS = "miss";
 
-	# Add X-Cache header
-	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> MISS";
+	// Convert range requests into pass
+	if (req.http.Range) {
+		// Varnish strips the Range header before copying req into bereq. Save it into
+		// a header and restore it in vcl_backend_fetch
+		set req.http.X-Range = req.http.Range;
+		return (pass);
+	}
 
-    // Convert range requests into pass
-    if (req.http.Range) {
-        // Varnish strips the Range header before copying req into bereq. Save it into
-        // a header and restore it in vcl_backend_fetch
-        set req.http.X-Range = req.http.Range;
-        return (pass);
-    }
+	return (fetch);
 }
 
 # Pass code, default logic is appended
 sub vcl_pass {
 	set req.http.X-CDIS = "pass";
 
-	# Add X-Cache header
-	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> PASS";
+	return (fetch);
 }
 
 # Synthetic code, default logic is appended
