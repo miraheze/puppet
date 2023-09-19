@@ -794,14 +794,6 @@ sub add_upload_cors_headers {
 # Hit code, default logic is appended
 sub vcl_hit {
 	set req.http.X-CDIS = "hit";
-
-	# Add X-Cache header
-	set req.http.X-Cache = "<%= @facts['networking']['hostname'] %> HIT (" + obj.hits + ")";
-
-	# Is the request graced?
-	if (obj.ttl <= 0s && obj.grace > 0s) {
-		set req.http.X-Cache = req.http.X-Cache + " GRACE";
-	}
 }
 
 # Miss code, default logic is appended
