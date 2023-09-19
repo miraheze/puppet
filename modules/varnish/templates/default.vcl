@@ -828,9 +828,9 @@ sub vcl_synth {
 
 		// X-Cache-Int gets appended-to as we traverse cache layers
 		if (resp.http.X-Cache-Int) {
-				set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
+			set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
 		} else {
-				set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
+			set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
 		}
 	}
 
