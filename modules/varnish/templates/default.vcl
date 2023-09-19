@@ -656,8 +656,8 @@ sub vcl_backend_response {
 sub vcl_deliver {
 	if (req.method != "PURGE") {
 		if(req.http.X-CDIS == "hit") {
-				// obj.hits isn't known in vcl_hit, and not useful for other states
-				set req.http.X-CDIS = "hit/" + obj.hits;
+			// obj.hits isn't known in vcl_hit, and not useful for other states
+			set req.http.X-CDIS = "hit/" + obj.hits;
 		}
 
 		// we copy through from beresp->resp->req here for the initial hit-for-pass case
@@ -671,9 +671,9 @@ sub vcl_deliver {
 		}
 
 		if (resp.http.X-Cache-Int) {
-				set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
+			set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
 		} else {
-				set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
+			set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
 		}
 
 		set resp.http.X-Cache = resp.http.X-Cache-Int;
@@ -684,23 +684,23 @@ sub vcl_deliver {
 		unset resp.http.Via;
 
 		if (resp.http.X-Cache-Status ~ "hit$") {
-				set resp.http.X-Cache-Status = "hit-front";
+			set resp.http.X-Cache-Status = "hit-front";
 		} elsif (resp.http.X-Cache-Status ~ "hit,[^,]+$") {
-				set resp.http.X-Cache-Status = "hit-local";
+			set resp.http.X-Cache-Status = "hit-local";
 		} elsif (resp.http.X-Cache-Status ~ "hit") {
-				set resp.http.X-Cache-Status = "hit-remote";
+			set resp.http.X-Cache-Status = "hit-remote";
 		} elsif (resp.http.X-Cache-Status ~ "int$") {
-				set resp.http.X-Cache-Status = "int-front";
+			set resp.http.X-Cache-Status = "int-front";
 		} elsif (resp.http.X-Cache-Status ~ "int,[^,]+$") {
-				set resp.http.X-Cache-Status = "int-local";
+			set resp.http.X-Cache-Status = "int-local";
 		} elsif (resp.http.X-Cache-Status ~ "int") {
-				set resp.http.X-Cache-Status = "int-remote";
+			set resp.http.X-Cache-Status = "int-remote";
 		} elsif (resp.http.X-Cache-Status ~ "miss$") {
-				set resp.http.X-Cache-Status = "miss";
+			set resp.http.X-Cache-Status = "miss";
 		} elsif (resp.http.X-Cache-Status ~ "pass$") {
-				set resp.http.X-Cache-Status = "pass";
+			set resp.http.X-Cache-Status = "pass";
 		} else {
-				set resp.http.X-Cache-Status = "unknown";
+			set resp.http.X-Cache-Status = "unknown";
 		}
 	}
 
