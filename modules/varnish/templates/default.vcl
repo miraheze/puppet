@@ -670,7 +670,6 @@ sub vcl_deliver {
 			set req.http.X-CDIS = "bug";
 		}
 
-		// X-Cache-Int gets appended-to as we traverse cache layers
 		if (resp.http.X-Cache-Int) {
 				set resp.http.X-Cache-Int = resp.http.X-Cache-Int + ", <%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
 		} else {
