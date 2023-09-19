@@ -7,19 +7,6 @@
 # new 4.1 format.
 vcl 4.1;
 
-// Includes for Exp cache admission policy, admission probability exponentially
-// decreasing with size. See mf_admission_policies.
-C{
-   #include <stdlib.h>
-   #include <math.h>
-   #include <errno.h>
-
-   #define RATE 0.0
-   #define BASE -20.3
-   #define DISK <%= @cache_file_size.to_i/1024.0 %>
-   const double adm_param = pow(DISK, RATE) / pow(2.0, BASE);
-}C
-
 # Import some modules used
 import directors;
 import std;
@@ -449,36 +436,6 @@ sub mf_admission_policies {
         set beresp.http.X-CDIS = "pass";
         return(pass(beresp.ttl));
     }
-
-if (bereq.http.Host == "static.miraheze.org" && beresp.status == 200 && bereq.http.X-CDIS == "miss") {
-C{
-   const struct gethdr_s hdr = { HDR_BERESP, "\017Content-Length:" };
-   const char *clen_hdr = VRT_GetHdr(ctx, &hdr);
-   // Set CL:0 by default
-   unsigned long int clen = 0;
-
-   // If Content-Length has been specified
-   if (clen_hdr) {
-       errno = 0;
-       clen = strtoul(clen_hdr, NULL, 10);
-       if (errno)
-           clen = 0;
-   }
-
-   if (clen) {
-       const double clen_neg = -1.0 * (double)clen;
-       const double admissionprob = exp(clen_neg/adm_param);
-       const double urand = drand48();
-
-       // If admission test succeeds, mark as uncacheable
-       if (admissionprob < urand) {
-           // HFM with ttl=67 to avoid stalling
-           VRT_l_beresp_ttl(ctx,67);
-           VRT_l_beresp_uncacheable(ctx,1);
-       }
-    }
-}C
-}
 
     return (deliver);
 }
