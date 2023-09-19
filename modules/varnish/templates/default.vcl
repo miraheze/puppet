@@ -677,6 +677,8 @@ sub vcl_deliver {
             set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
         }
 
+	set resp.http.X-Cache = resp.http.X-Cache-Int;
+
         set resp.http.X-Cache-Status = regsuball(resp.http.X-Cache, "cp[0-9]{2} (hit|miss|pass|int)(?:/[0-9]+)?", "\1");
 
         unset resp.http.X-Cache-Int;
