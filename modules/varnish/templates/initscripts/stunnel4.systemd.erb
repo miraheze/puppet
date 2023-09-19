@@ -6,6 +6,7 @@ After=syslog.target
 
 [Service]
 Type=forking
+TasksMax=infinity
 ExecStart=/usr/bin/stunnel4 /etc/stunnel/mediawiki.conf
 PIDFile=/run/stunnel.pid
 TimeoutSec=600
