@@ -3,6 +3,11 @@ class role::varnish {
     include ::varnish
     include prometheus::exporter::varnishreqs
 
+    ferm::conf { 'varnish-connlimits':
+        prio    => '01',
+        source  => 'puppet:///modules/role/firewall/varnish-connlimits.conf'
+    }
+
     ferm::service { 'http':
         proto   => 'tcp',
         port    => '80',
