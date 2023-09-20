@@ -20,6 +20,25 @@ class varnish (
         mode   => '0555',
     }
 
+    # Avoid race condition where varnish starts, before /var/lib/varnish was mounted as tmpfs
+    file { '/var/lib/varnish':
+        ensure  => directory,
+        owner   => 'varnish',
+        group   => 'varnish',
+        require => Package['varnish'],
+    }
+
+    mount { '/var/lib/varnish':
+        ensure  => mounted,
+        device  => 'tmpfs',
+        fstype  => 'tmpfs',
+        options => 'noatime,defaults,size=256M',
+        pass    => 0,
+        dump    => 0,
+        require => File['/var/lib/varnish'],
+        notify  => Service['varnish'],
+    }
+
     $module_path = get_module_path($module_name)
     $csp = loadyaml("${module_path}/data/csp.yaml")
     $backends = lookup('varnish::backends')
