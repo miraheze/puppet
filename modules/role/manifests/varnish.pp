@@ -1,6 +1,7 @@
 # role: varnish
 class role::varnish {
     include ::varnish
+    include fail2ban
     include prometheus::exporter::varnishreqs
 
     ferm::conf { 'varnish-connlimits':
