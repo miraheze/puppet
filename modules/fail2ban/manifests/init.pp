@@ -1,0 +1,28 @@
+# Fail2ban setup
+class fail2ban {
+  stdlib::ensure_packages(['fail2ban']);
+
+  file { '/etc/fail2ban/filter.d/miraheze-custom-01.conf':
+    ensure  => 'file',
+    source  => 'puppet:///private/fail2ban/miraheze-custom-01.conf',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    require => Package['fail2ban'],
+  }
+
+  file { '/etc/fail2ban/jail.local':
+    ensure  => 'file',
+    source  => 'puppet:///private/fail2ban/jail.local',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    require => File['/etc/fail2ban/filter.d/miraheze-custom-01.conf'],
+  }
+
+  service { 'fail2ban':
+    ensure  => 'running',
+    enable  => true,
+    require => [Package['fail2ban'], File['/etc/fail2ban/jail.local']],
+  }
+}
