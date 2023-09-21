@@ -11,6 +11,14 @@ class fail2ban {
     require => Package['fail2ban'],
   }
 
+  # Disable default jail config
+  file { '/etc/fail2ban/jail.d':
+    ensure  => 'directory',
+    recurse => true,
+    purge   => true,
+    require => Package['fail2ban'],
+  }
+
   file { '/etc/fail2ban/jail.local':
     ensure  => 'file',
     source  => 'puppet:///private/fail2ban/jail.local',
