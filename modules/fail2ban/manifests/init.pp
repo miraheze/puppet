@@ -9,6 +9,7 @@ class fail2ban {
     group   => 'root',
     mode    => '0644',
     require => Package['fail2ban'],
+    notify  => Service['fail2ban'],
   }
 
   # Disable default jail config
@@ -26,11 +27,12 @@ class fail2ban {
     group   => 'root',
     mode    => '0644',
     require => File['/etc/fail2ban/filter.d/miraheze-custom-01.conf'],
+    notify  => Service['fail2ban'],
   }
 
   service { 'fail2ban':
     ensure  => 'running',
     enable  => true,
-    require => [Package['fail2ban'], File['/etc/fail2ban/jail.local']],
+    require => Package['fail2ban'],
   }
 }
