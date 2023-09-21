@@ -20,6 +20,15 @@ class role::varnish {
         notrack => true,
     }
 
+    # Don't allow public traffic to reach its port directly
+    # but set notrack to true
+    ferm::service { 'varnish_http':
+        proto   => 'tcp',
+        port    => '81',
+        src     => "(127.0.0.1 ::1)",
+        notrack => true,
+    }
+
     $firewall_rules_str = join(
         query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Mediawiki]", ['networking'])
         .map |$key, $value| {
