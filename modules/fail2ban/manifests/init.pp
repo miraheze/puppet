@@ -20,6 +20,16 @@ class fail2ban {
     require => Package['fail2ban'],
   }
 
+  file { '/etc/fail2ban/fail2ban.local':
+    ensure  => 'file',
+    source  => 'puppet:///modules/fail2ban/fail2ban.local',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    require => Package['fail2ban'],
+    notify  => Service['fail2ban'],
+  }
+
   file { '/etc/fail2ban/jail.local':
     ensure  => 'file',
     source  => 'puppet:///private/fail2ban/jail.local',
