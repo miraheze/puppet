@@ -25,7 +25,7 @@ class role::varnish {
     ferm::service { 'varnish_http':
         proto   => 'tcp',
         port    => '81',
-        src     => "(127.0.0.1 ::1)",
+        srange  => "(127.0.0.1 ::1)",
         notrack => true,
     }
 
