@@ -9,5 +9,5 @@
 # NOTICE -- (un)bans are logged at this level
 # INFO -- ALL matches are logged at this level
 # DEBUG
-loglevel = WARNING
+loglevel = NOTICE
 
