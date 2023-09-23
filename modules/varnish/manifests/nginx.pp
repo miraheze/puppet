@@ -6,6 +6,7 @@ class varnish::nginx {
         notify => Service['nginx'],
     }
 
+    $backends = lookup('varnish::backends')
     $sslcerts = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
     $sslredirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
 
