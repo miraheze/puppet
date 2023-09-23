@@ -5,7 +5,6 @@ class varnish (
     Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
 ) {
     include varnish::nginx
-    include varnish::stunnel4
     include prometheus::exporter::varnish
 
     stdlib::ensure_packages(['varnish', 'varnish-modules'])
