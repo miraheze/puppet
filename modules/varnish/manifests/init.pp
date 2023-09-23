@@ -151,4 +151,10 @@ class varnish (
     monitoring::nrpe { 'HTTP 4xx/5xx ERROR Rate':
         command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_nginx_errorrate'
     }
+
+    $backends.each | $name, $property | {
+        monitoring::nrpe { "Nginx Backend for ${name}":
+            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${property['port']}",
+        }
+    }
 }
