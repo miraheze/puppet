@@ -98,7 +98,7 @@ class base::sysctl {
 
     if $facts['virtual'] == 'kvm' {
         sysctl::parameters { 'increase open files limit':
-            values  => { 'fs.file-max' => 26384062, },
+            values  => { 'fs.file-max' => 9223372036854775807, },
         }
     }
 }
