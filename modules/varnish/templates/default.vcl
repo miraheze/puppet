@@ -335,16 +335,24 @@ sub vcl_recv {
 		return (pass);
 	}
 
-	# Only cache js files from Matomo
 	if (req.http.Host == "matomo.miraheze.org") {
 		set req.backend_hint = matomo121;
 
-		# Yes, we only care about this file
-		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
-			return (hash);
-		} else {
+		# If a user is logged out, do not give them a cached page of them logged in
+		if (req.http.If-Modified-Since && req.http.Cookie ~ "LoggedOut") {
+			unset req.http.If-Modified-Since;
+		}
+	
+		# Don't cache a non-GET or HEAD request
+		if (req.method != "GET" && req.method != "HEAD") {
+			# Zero reason to append ?useformat=true here
+			set req.http.X-Use-Mobile = "0";
 			return (pass);
 		}
+
+		call evaluate_cookie;
+
+		return (hash);
 	}
 
 	# Do not cache requests from this domain
