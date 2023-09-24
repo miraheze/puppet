@@ -56,7 +56,7 @@ class matomo (
         'upload_max_filesize' => '100M',
     }
 
-    $php_version = lookup('php::php_version', {'default_value' => '7.4'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
     class { '::php':
