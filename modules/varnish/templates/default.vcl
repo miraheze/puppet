@@ -345,8 +345,6 @@ sub vcl_recv {
 	
 		# Don't cache a non-GET or HEAD request
 		if (req.method != "GET" && req.method != "HEAD") {
-			# Zero reason to append ?useformat=true here
-			set req.http.X-Use-Mobile = "0";
 			return (pass);
 		}
 
