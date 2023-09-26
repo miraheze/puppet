@@ -121,7 +121,7 @@ class icingaweb2 (
         }
     }
 
-    package { [ 'icingaweb2', 'icingaweb2-module-monitoring', 'icingacli' ]:
+    package { [ 'icingaweb2', 'icingacli' ]:
         ensure  => present,
         require => Apt::Source['icinga-stable-release'],
     }
