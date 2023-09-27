@@ -219,8 +219,8 @@ def run(args: argparse.Namespace, start: float) -> None:
                     os.chdir(_get_staging_path('world'))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer install --no-dev --quiet'))
                     scriptOptions = ''
-                    if os.path.isfile('/srv/mediawiki-staging/w/maintenance/run.php'):
-                        scriptOptions = '/srv/mediawiki-staging/w/maintenance/run.php'
+                    if os.path.isfile('/srv/mediawiki/w/maintenance/run.php'):
+                        scriptOptions = '/srv/mediawiki/w/maintenance/run.php'
                     rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/w php {scriptOptions} /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
@@ -236,8 +236,8 @@ def run(args: argparse.Namespace, start: float) -> None:
 
         if args.extensionlist:  # when adding skins/exts
             scriptOptions = ''
-            if os.path.isfile('/srv/mediawiki-staging/w/maintenance/run.php'):
-                scriptOptions = '/srv/mediawiki-staging/w/maintenance/run.php'
+            if os.path.isfile('/srv/mediawiki/w/maintenance/run.php'):
+                scriptOptions = '/srv/mediawiki/w/maintenance/run.php'
             rebuild.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
 
         for cmd in rsync:  # move staged content to live
@@ -254,8 +254,8 @@ def run(args: argparse.Namespace, start: float) -> None:
                 lang = ''
 
             scriptOptions = ''
-            if os.path.isfile('/srv/mediawiki-staging/w/maintenance/run.php'):
-                scriptOptions = '/srv/mediawiki-staging/w/maintenance/run.php'
+            if os.path.isfile('/srv/mediawiki/w/maintenance/run.php'):
+                scriptOptions = '/srv/mediawiki/w/maintenance/run.php'
             postinstall.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --extensions-dir=/srv/mediawiki/w/extensions:/srv/mediawiki/w/skins --output /srv/mediawiki/config/ExtensionMessageFiles.php')
             rebuild.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
 
