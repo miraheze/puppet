@@ -230,26 +230,4 @@ class matomo (
         syslog_identifier         => 'matomo-queuedtracking',
         user                      => 'www-data',
     }
-
-    file { '/usr/local/bin/optimizeMatomoTables.sh':
-        ensure => present,
-        mode   => '0755',
-        source => 'puppet:///modules/matomo/optimizeMatomoTables.sh',
-        owner  => 'www-data',
-        group  => 'www-data',
-    }
-
-    cron { 'archive_matomo':
-        ensure  => absent,
-        command => '/usr/local/bin/runMatomoArchive.sh',
-        user    => 'www-data',
-        special => 'daily',
-    }
-    
-    cron { 'optimize_matomo_tables':
-        ensure  => absent,
-        command => '/usr/local/bin/optimizeMatomoTables.sh',
-        user    => 'www-data',
-        special => 'monthly',
-    }
 }
