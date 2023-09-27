@@ -231,21 +231,6 @@ class matomo (
         user                      => 'www-data',
     }
 
-    file { '/usr/local/bin/fileLockScript.sh':
-        ensure => absent,
-        mode   => '0755',
-        owner  => 'www-data',
-        group  => 'www-data',
-    }
-
-    file { '/usr/local/bin/runMatomoArchive.sh':
-        ensure => absent,
-        mode   => '0755',
-        source => 'puppet:///modules/matomo/runMatomoArchive.sh',
-        owner  => 'www-data',
-        group  => 'www-data',
-    }
-
     file { '/usr/local/bin/optimizeMatomoTables.sh':
         ensure => present,
         mode   => '0755',
