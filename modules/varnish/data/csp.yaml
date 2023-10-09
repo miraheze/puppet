@@ -129,6 +129,7 @@ font-src:
   - 'data:'
   - '*.miraheze.org'
   - '*.betaheze.org'
+  - 'fonts.googleapis.com'
   - 'fonts.gstatic.com'
   - 'cdn.jsdelivr.net'
   - 'fastly.jsdelivr.net'
