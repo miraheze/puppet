@@ -386,9 +386,9 @@ sub vcl_recv {
 # Defines the uniqueness of a request
 sub vcl_hash {
 	# FIXME: try if we can make this ^/wiki/ only?
-	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
-		hash_data(req.http.X-Device);
-	}
+	# if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
+	#	hash_data(req.http.X-Device);
+	# }
 }
 
 sub vcl_pipe {
@@ -402,13 +402,16 @@ sub vcl_pipe {
 # Initiate a backend fetch
 sub vcl_backend_fetch {
 	# Modify the end of the URL if mobile device
-	if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php(.*)title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1") {
+	if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php(.*)title=[^$]") && bereq.http.X-Use-Mobile == "1") {
 		if (bereq.url ~ "\?") {
 			set bereq.url = bereq.url + "&useformat=mobile";
 		} else {
 			set bereq.url = bereq.url + "?useformat=mobile";
 		}
 	}
+
+	# Make sure X-Use-Mobile is unset
+	unset bereq.http.X-Use-Mobile;
 	
 	# Restore original cookies
 	if (bereq.http.X-Orig-Cookie) {
