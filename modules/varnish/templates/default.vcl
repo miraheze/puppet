@@ -88,17 +88,11 @@ sub mobile_detection {
 	# and the cookie does NOT explicitly state the user does not want the mobile version, we
 	# set X-Device to phone-tablet. This will make vcl_backend_fetch add ?useformat=mobile to the URL sent to the backend.
 	if (req.http.User-Agent ~ "(?i)(mobi|240x240|240x320|320x320|alcatel|android|audiovox|bada|benq|blackberry|cdm-|compal-|docomo|ericsson|hiptop|htc[-_]|huawei|ipod|kddi-|kindle|meego|midp|mitsu|mmp\/|mot-|motor|ngm_|nintendo|opera.m|palm|panasonic|philips|phone|playstation|portalmmm|sagem-|samsung|sanyo|sec-|semc-browser|sendo|sharp|silk|softbank|symbian|teleca|up.browser|vodafone|webos)" && req.http.Cookie !~ "(stopMobileRedirect=true|mf_useformat=desktop)") {
-		set req.http.X-Device = "phone-tablet";
+		set req.http.X-Subdomain = "M";
+	}
 
-		# In vcl_backend_fetch we'll decide in which situations we should actually do something with this.
-		set req.http.X-Use-Mobile = "1";
-	} else {
-		if (req.http.Cookie ~ "mf_useformat=true") {
-			set req.http.X-Device = "phone-tablet";
-			set req.http.X-Use-Mobile = "1";
-		} else {
-			set req.http.X-Device = "desktop";
-		}
+	if (req.http.Cookie ~ "mf_useformat=") {
+		set req.http.X-Subdomain = "M";
 	}
 }
 
@@ -391,8 +385,8 @@ sub vcl_recv {
 # Defines the uniqueness of a request
 sub vcl_hash {
 	# FIXME: try if we can make this ^/wiki/ only?
-	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php") {
-		hash_data(req.http.X-Device);
+	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php" || req.url ~ "^/w/index.php") {
+		hash_data(req.http.X-Subdomain);
 	}
 }
 
@@ -406,15 +400,6 @@ sub vcl_pipe {
 
 # Initiate a backend fetch
 sub vcl_backend_fetch {
-	# Modify the end of the URL if mobile device
-	if ((bereq.url ~ "^/wiki/[^$]" || bereq.url ~ "^/w/index.php(.*)title=[^$]") && bereq.http.X-Device == "phone-tablet" && bereq.http.X-Use-Mobile == "1") {
-		if (bereq.url ~ "\?") {
-			set bereq.url = bereq.url + "&useformat=mobile";
-		} else {
-			set bereq.url = bereq.url + "?useformat=mobile";
-		}
-	}
-	
 	# Restore original cookies
 	if (bereq.http.X-Orig-Cookie) {
 		set bereq.http.Cookie = bereq.http.X-Orig-Cookie;
