@@ -528,62 +528,67 @@ sub vcl_backend_response {
 	}
 
 	# Cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
-	if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
-		set beresp.ttl = 43200s;
-	}
+    if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
+        set beresp.ttl = 43200s;
+    }
 
-	# Cache non-modified robots.txt for 12 hours, otherwise 5 minutes
-	if (bereq.url == "/robots.txt") {
-		if (beresp.http.X-Miraheze-Robots == "Custom") {
-			set beresp.ttl = 300s;
-		} else {
-			set beresp.ttl = 43200s;
-		}
-	}
+    # Cache non-modified robots.txt for 12 hours, otherwise 5 minutes
+    if (bereq.url == "/robots.txt") {
+        if (beresp.http.X-Miraheze-Robots == "Custom") {
+            set beresp.ttl = 300s;
+        } else {
+            set beresp.ttl = 43200s;
+        }
+    }
 
-	// Compress compressible things if the backend didn't already, but
-	// avoid explicitly-defined CL < 860 bytes.  We've seen varnish do
-	// gzipping on CL:0 302 responses, resulting in output that has CE:gzip
-	// and CL:20 and sends a pointless gzip header.
-	// Very small content may actually inflate from gzipping, and
-	// sub-one-packet content isn't saving a lot of latency for the gzip
-	// costs (to the server and the client, who must also decompress it).
-	// The magic 860 number comes from Akamai, Google recommends anywhere
-	// from 150-1000.  See also:
-	// https://webmasters.stackexchange.com/questions/31750/what-is-recommended-minimum-object-size-for-gzip-performance-benefits
-	if (beresp.http.content-type ~ "json|text|html|script|xml|icon|ms-fontobject|ms-opentype|x-font|sla"
-		&& (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 860)) {
-			set beresp.do_gzip = true;
-	}
-	// SVGs served by MediaWiki are part of the interface. That makes them
-	// very hot objects, as a result the compression time overhead is a
-	// non-issue. Several of them tend to be requested at the same time,
-	// as the browser finds out about them when parsing stylesheets that
-	// contain multiple. This means that the "less than 1 packet" rationale
-	// for not compressing very small objects doesn't apply either. Lastly,
-	// since they're XML, they contain a fair amount of repetitive content
-	// even when small, which means that gzipped SVGs tend to be
-	// consistantly smaller than their uncompressed version, even when tiny.
-	// For all these reasons, it makes sense to have a lower threshold for
-	// SVG. Applying it to XML in general is a more unknown tradeoff, as it
-	// would affect small API responses that are more likely to be cold
-	// objects due to low traffic to specific API URLs.
-	if (beresp.http.content-type ~ "svg" && (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 150)) {
-		set beresp.do_gzip = true;
-	}
+    // Compress compressible things if the backend didn't already, but
+    // avoid explicitly-defined CL < 860 bytes.  We've seen varnish do
+    // gzipping on CL:0 302 responses, resulting in output that has CE:gzip
+    // and CL:20 and sends a pointless gzip header.
+    // Very small content may actually inflate from gzipping, and
+    // sub-one-packet content isn't saving a lot of latency for the gzip
+    // costs (to the server and the client, who must also decompress it).
+    // The magic 860 number comes from Akamai, Google recommends anywhere
+    // from 150-1000.  See also:
+    // https://webmasters.stackexchange.com/questions/31750/what-is-recommended-minimum-object-size-for-gzip-performance-benefits
+    if (beresp.http.content-type ~ "json|text|html|script|xml|icon|ms-fontobject|ms-opentype|x-font|sla"
+        && (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 860)) {
+            set beresp.do_gzip = true;
+    }
 
-	// set a 601s hit-for-pass object based on response conditions in vcl_backend_response:
-	//    Calculated TTL <= 0 + Status < 500:
-	//    These are generally uncacheable responses.  The 5xx exception
-	//    avoids us accidentally replacing a good stale/grace object with
-	//    an hfp (and then repeatedly passing on potentially-cacheable
-	//    content) due to an isolated 5xx response.
-	if (beresp.ttl <= 0s && beresp.status < 500 && (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ " hit")) {
-		set beresp.grace = 31s;
-		set beresp.keep = 0s;
-		set beresp.http.X-CDIS = "pass";
-		return(pass(601s));
-	}
+    // SVGs served by MediaWiki are part of the interface. That makes them
+    // very hot objects, as a result the compression time overhead is a
+    // non-issue. Several of them tend to be requested at the same time,
+    // as the browser finds out about them when parsing stylesheets that
+    // contain multiple. This means that the "less than 1 packet" rationale
+    // for not compressing very small objects doesn't apply either. Lastly,
+    // since they're XML, they contain a fair amount of repetitive content
+    // even when small, which means that gzipped SVGs tend to be
+    // consistantly smaller than their uncompressed version, even when tiny.
+    // For all these reasons, it makes sense to have a lower threshold for
+    // SVG. Applying it to XML in general is a more unknown tradeoff, as it
+    // would affect small API responses that are more likely to be cold
+    // objects due to low traffic to specific API URLs.
+    if (beresp.http.content-type ~ "svg" && (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 150)) {
+        set beresp.do_gzip = true;
+    }
+
+    // set a 601s hit-for-pass object based on response conditions in vcl_backend_response:
+    //    Calculated TTL <= 0 + Status < 500:
+    //    These are generally uncacheable responses.  The 5xx exception
+    //    avoids us accidentally replacing a good stale/grace object with
+    //    an hfp (and then repeatedly passing on potentially-cacheable
+    //    content) due to an isolated 5xx response.
+    if (beresp.ttl <= 0s && beresp.status < 500 && (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ " hit")) {
+        set beresp.grace = 31s;
+        set beresp.keep = 0s;
+        set beresp.http.X-CDIS = "pass";
+        return(pass(601s));
+    }
+
+    if (beresp.ttl > 60s && (bereq.url ~ "mobileaction=" || bereq.url ~ "useformat=")) {
+        set beresp.ttl = 60 s;
+    }
 
     // set a 607s hit-for-pass object based on response conditions in vcl_backend_response:
     //    Token=1 + Vary:Cookie:
