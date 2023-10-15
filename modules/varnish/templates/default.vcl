@@ -93,7 +93,12 @@ sub mobile_detection {
 		# In vcl_backend_fetch we'll decide in which situations we should actually do something with this.
 		set req.http.X-Use-Mobile = "1";
 	} else {
-		set req.http.X-Device = "desktop";
+		if (req.http.Cookie ~ "mf_useformat=true") {
+			set req.http.X-Device = "phone-tablet";
+			set req.http.X-Use-Mobile = "1";
+		} else {
+			set req.http.X-Device = "desktop";
+		}
 	}
 }
 
