@@ -309,6 +309,10 @@ sub vcl_recv {
 
 	unset req.http.X-CDIS;
 
+	if (req.restarts == 0) {
+        unset req.http.X-Subdomain;
+    }
+
 	# Health checks, do not send request any further, if we're up, we can handle it
 	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
 		return (synth(200));
