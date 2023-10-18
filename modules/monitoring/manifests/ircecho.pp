@@ -16,6 +16,7 @@ class monitoring::ircecho (
     }
 
     $pyversion = $facts['os']['distro']['codename'] ? {
+        'bookworm' => 'python3.11',
         'bullseye' => 'python3.9',
     }
 
