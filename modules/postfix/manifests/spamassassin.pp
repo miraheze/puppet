@@ -1,7 +1,7 @@
 # class: spamassassin
 class postfix::spamassassin {
     $packages = [
-        'spamassassin',
+        'spamd',
         'spamc'
     ]
 
