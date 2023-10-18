@@ -16,7 +16,7 @@
 //       for Mysql: key, cipher, cert, capath, ca, verify_server_cert,
 //       for Postgres: application_name, sslmode, sslcert, sslkey, sslrootcert, sslcrl, sslcompression, service.
 //       e.g. 'mysql://roundcube:@localhost/roundcubemail?verify_server_cert=false'
-$config['db_dsnw'] = 'mysqli://<%= @db_user_name %>:<%= @db_user_password %>@<%= @db_host %>/<%= @db_name %>?verify_server_cert=true&key=wildcard.miraheze.org-2020-2.key&cert=wildcard.miraheze.org-2020-2.crt';
+$config['db_dsnw'] = 'mysqli://<%= @db_user_name %>:<%= @db_user_password %>@<%= @db_host %>/<%= @db_name %>?verify_server_cert=false&ca=/etc/ssl/certs/Sectigo.crt';
 
 
 // ----------------------------------
