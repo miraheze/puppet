@@ -7,8 +7,8 @@ Before=apache2.service
 Type=forking
 User=www-data
 Group=www-data
-ExecStart=/srv/phab/phabricator/bin/phd start
-ExecStop=/srv/phab/phabricator/bin/phd stop --force
+ExecStart=/srv/phab/phorge/bin/phd start
+ExecStop=/srv/phab/phorge/bin/phd stop --force
 RestartSec=10
 Restart=always
 
