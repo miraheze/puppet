@@ -12,6 +12,7 @@ class php::default_extensions (
     if !defined(Class['php']) {
         fail('php::default_extensions is a private class and should only be called within the php class')
     }
+
     # Basic extensions we want to configure everywhere
     $base_extensions = [
         'calendar',
@@ -34,12 +35,14 @@ class php::default_extensions (
 
     # TODO: Remove when we no longer support php 7.4
     if ($version == '7.4' or $version == undef) {
-        $base_extensions += [ 'json' ]
+        $_base_extensions = [ 'json' ] + $base_extensions
+    } else {
+        $_base_extensions = $base_extensions
     }
 
     # None of these extensions need to install a package - they're part of the core
     # package on debian. So, pass an empty string as a package name.
-    php::extension { $base_extensions:
+    php::extension { $_base_extensions:
         package_name => '',
         priority     => 20,
     }
