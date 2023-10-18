@@ -131,7 +131,7 @@ class phabricator (
         require   => File['/srv/phab'],
     }
 
-    git::clone { 'phabricator':
+    git::clone { 'phorge':
         ensure    => present,
         directory => '/srv/phab/phabricator',
         origin    => 'https://github.com/phorgeit/phorge.git',
