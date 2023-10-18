@@ -133,7 +133,7 @@ class phabricator (
 
     git::clone { 'phorge':
         ensure    => present,
-        directory => '/srv/phab/phabricator',
+        directory => '/srv/phab/phorge',
         origin    => 'https://github.com/phorgeit/phorge.git',
         require   => File['/srv/phab'],
     }
@@ -184,18 +184,18 @@ class phabricator (
 
     $phab_settings = $phab_yaml + $phab_private + $phab_setting
 
-    file { '/srv/phab/phabricator/conf/local/local.json':
+    file { '/srv/phab/phorge/conf/local/local.json':
         ensure  => present,
         content => stdlib::to_json_pretty($phab_settings),
         notify  => Service['phd'],
-        require => Git::Clone['phabricator'],
+        require => Git::Clone['phorge'],
     }
 
     systemd::service { 'phd':
         ensure  => present,
         content => systemd_template('phd'),
         restart => true,
-        require => File['/srv/phab/phabricator/conf/local/local.json'],
+        require => File['/srv/phab/phorge/conf/local/local.json'],
     }
 
     monitoring::services { 'phab.miraheze.wiki HTTPS':
