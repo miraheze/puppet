@@ -106,12 +106,22 @@ class mediawiki::php (
 
     stdlib::ensure_packages('liblua5.1-0')
 
-    file { '/usr/lib/php/20190902/luasandbox.so':
-        ensure  => present,
-        mode    => '0755',
-        source  => 'puppet:///modules/mediawiki/php/luasandbox.so',
-        before  => Php::Extension['luasandbox'],
-        require => Package['liblua5.1-0'],
+    if ($php_version == '8.2') {
+        file { '/usr/lib/php/20220829/luasandbox.so':
+            ensure  => present,
+            mode    => '0755',
+            source  => 'puppet:///modules/mediawiki/php/luasandbox.php82.so',
+            before  => Php::Extension['luasandbox'],
+            require => Package['liblua5.1-0'],
+        }
+    } else {
+        file { '/usr/lib/php/20190902/luasandbox.so':
+            ensure  => present,
+            mode    => '0755',
+            source  => 'puppet:///modules/mediawiki/php/luasandbox.php74.so',
+            before  => Php::Extension['luasandbox'],
+            require => Package['liblua5.1-0'],
+        }
     }
 
     php::extension{ 'luasandbox':
@@ -214,20 +224,38 @@ class mediawiki::php (
     }
 
     # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
-    file { '/usr/lib/php/20190902/tideways_xhprof.so':
-        ensure => $profiling_ensure,
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/php/tideways_xhprof.so',
-        before => Php::Extension['tideways-xhprof'],
-    }
+    if ($php_version == '8.2') {
+        file { '/usr/lib/php/20220829/xhprof.so':
+            ensure => $profiling_ensure,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/xhprof.php82.so',
+            before => Php::Extension['xhprof'],
+        }
 
-    php::extension { 'tideways-xhprof':
-        ensure       => $profiling_ensure,
-        package_name => '',
-        priority     => 30,
-        config       => {
-            'extension'                       => 'tideways_xhprof.so',
-            'tideways_xhprof.clock_use_rdtsc' => '0',
+        php::extension { 'xhprof':
+            ensure       => $profiling_ensure,
+            package_name => '',
+            priority     => 30,
+            config       => {
+                'extension' => 'xhprof.so',
+            }
+        }
+    } else {
+        file { '/usr/lib/php/20190902/tideways_xhprof.so':
+            ensure => $profiling_ensure,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/tideways_xhprof.php74.so',
+            before => Php::Extension['tideways-xhprof'],
+        }
+
+        php::extension { 'tideways-xhprof':
+            ensure       => $profiling_ensure,
+            package_name => '',
+            priority     => 30,
+            config       => {
+                'extension'                       => 'tideways_xhprof.so',
+                'tideways_xhprof.clock_use_rdtsc' => '0',
+            }
         }
     }
 
