@@ -27,7 +27,10 @@ class monitoring (
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
         location => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
-        release  => $facts['os']['distro']['codename'],
+        # Use $facts['os']['distro']['codename'] when we upgrade the mariadb version
+        # to higher then 10.5 and supports bookworm.
+        # release  => $facts['os']['distro']['codename'],
+        release  => 'bullseye',
         repos    => 'main',
         key      => {
                 'id'      => '177F4010FE56CA3336300305F1656F24C74CD1D8',
