@@ -86,10 +86,6 @@ class role::openldap (
         ensure => present,
     }
 
-    openldap::server::module { 'ppolicy':
-        ensure => present,
-    }
-
     openldap::server::module { 'deref':
         ensure => present,
     }
