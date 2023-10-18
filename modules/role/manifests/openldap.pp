@@ -108,10 +108,10 @@ class role::openldap (
         path   => '/etc/ldap/schema/cosine.schema',
     }
 
-    openldap::server::schema { 'nis':
-        ensure => present,
-        path   => '/etc/ldap/schema/nis.ldif',
-    }
+    # openldap::server::schema { 'nis':
+    #    ensure => present,
+    #    path   => '/etc/ldap/schema/nis.ldif',
+    # }
 
     openldap::server::schema { 'inetorgperson':
         ensure => present,
