@@ -7,7 +7,7 @@ After=network.target postfix.service
 User=prometheus
 SupplementaryGroups=systemd-journal postdrop
 EnvironmentFile=/etc/default/prometheus-postfix-exporter
-ExecStart=/usr/bin/prometheus-postfix-exporter --postfix.logfile_path="" $ARGS
+ExecStart=/usr/bin/prometheus-postfix-exporter $ARGS
 
 [Install]
 WantedBy=multi-user.target
