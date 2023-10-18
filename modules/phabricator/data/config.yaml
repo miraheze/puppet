@@ -16,6 +16,7 @@ mysql.host: 'db112.miraheze.org'
 # Needs to match php.ini upload_max_filesize
 # Needs to match php.ini post_max_size for conduit
 storage.mysql-engine.max-size: 10000000
+storage.default-namespace: 'phabricator'
 
 metamta.default-address: 'noreply@miraheze.org'
 metamta.single-reply-handler-prefix: 'phabricator'

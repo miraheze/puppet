@@ -39,7 +39,7 @@ class phabricator (
         'zip',
     ]
 
-    $php_version = lookup('php::php_version', {'default_value' => '7.4'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
     class { '::php':
@@ -127,14 +127,14 @@ class phabricator (
     git::clone { 'arcanist':
         ensure    => present,
         directory => '/srv/phab/arcanist',
-        origin    => 'https://github.com/phacility/arcanist.git',
+        origin    => 'https://github.com/phorgeit/arcanist.git',
         require   => File['/srv/phab'],
     }
 
     git::clone { 'phabricator':
         ensure    => present,
         directory => '/srv/phab/phabricator',
-        origin    => 'https://github.com/phacility/phabricator.git',
+        origin    => 'https://github.com/phorgeit/phorge.git',
         require   => File['/srv/phab'],
     }
 
