@@ -53,10 +53,9 @@ class role::openldap (
         ],
     }
 
-    openldap::server::access { 'admin-monitor-access':
+    openldap::server::access { 'admin-monitor-access on cn=monitor':
         ensure => present,
         what   => 'dn.subtree="cn=monitor"',
-        suffix => 'cn=monitor',
         access => [
             'by dn="cn=admin,dc=miraheze,dc=org" write',
             'by dn="cn=monitor,dc=miraheze,dc=org" read',
