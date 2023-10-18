@@ -85,7 +85,7 @@ define openldap::server::database (
     dboptions       => $dboptions,
     synctype        => $synctype,
     mirrormode      => $mirrormode,
-    multiprovider   => $multiprovider,
+    # multiprovider   => $multiprovider,
     syncusesubentry => $syncusesubentry,
     syncrepl        => $syncrepl,
     limits          => $limits,
