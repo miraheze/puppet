@@ -9,7 +9,7 @@ class postfix::spamassassin {
         ensure => present,
     }
 
-    service { 'spamassassin':
+    service { 'spamd':
         ensure => running,
     }
 
