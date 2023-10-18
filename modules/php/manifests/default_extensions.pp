@@ -6,7 +6,9 @@
 #
 # This is only used as part of the php class, should not be called without it.
 #
-class php::default_extensions {
+class php::default_extensions (
+    Optional[VMlib::Php_version] $version = undef
+) {
     if !defined(Class['php']) {
         fail('php::default_extensions is a private class and should only be called within the php class')
     }
@@ -19,7 +21,6 @@ class php::default_extensions {
         'ftp',
         'gettext',
         'iconv',
-        'json',
         'phar',
         'posix',
         'readline',
@@ -30,6 +31,11 @@ class php::default_extensions {
         'sysvshm',
         'tokenizer'
     ]
+
+    # TODO: Remove when we no longer support php 7.4
+    if ($version == '7.4' or $version == undef) {
+        $base_extensions += [ 'json' ]
+    }
 
     # None of these extensions need to install a package - they're part of the core
     # package on debian. So, pass an empty string as a package name.
