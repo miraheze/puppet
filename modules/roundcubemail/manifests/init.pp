@@ -126,7 +126,7 @@ class roundcubemail (
     git::clone { 'roundcubemail':
         directory => '/srv/roundcubemail',
         origin    => 'https://github.com/roundcube/roundcubemail',
-        branch    => '1.6.0', # Current stable
+        branch    => '1.6.4', # Current stable
         owner     => 'www-data',
         group     => 'www-data',
     }
