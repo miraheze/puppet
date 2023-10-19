@@ -2,6 +2,7 @@
 define ssl::wildcard (
     $ssl_cert_path = '/etc/ssl/localcerts',
     $ssl_cert_key_private_path = '/etc/ssl/private',
+    $reload_nginx = true,
 ) {
 
     if !defined(File['/etc/ssl/localcerts']) {
@@ -14,7 +15,8 @@ define ssl::wildcard (
         }
     }
 
-    if defined(Service['nginx']) {
+
+    if $reload_nginx {
         $restart_nginx = Service['nginx']
     } else {
         $restart_nginx = undef
