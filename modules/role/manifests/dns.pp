@@ -6,7 +6,7 @@ class role::dns {
     # If less than 500mib change vm.swappiness to 1
     # fixes an issue on machines that only have 500mib available.
     if ($mem < 0.5) {
-        sysctl::parameters { 'varnish_role_vm_settings':
+        sysctl::parameters { 'vm_swappiness':
             values => {
                 'vm.swappiness' => 1,
             },
