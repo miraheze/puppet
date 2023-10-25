@@ -194,11 +194,11 @@ class SslCertificate:
 
                     os.system(f"/usr/bin/sed -i 's/reuse_key = True/reuse_key = False/g' /etc/letsencrypt/renewal/{self.domain}.conf")
 
-                    os.system(f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl {self.quiet} --noninteractive --no-random-sleep-on-renew renew renew --cert-name {self.domain}')
+                    os.system(f'/usr/bin/certbot --force-renewal --expand --no-verify-ssl {self.quiet} --noninteractive --no-random-sleep-on-renew renew --cert-name {self.domain}')
 
                     os.system(f"/usr/bin/sed -i 's/reuse_key = False/reuse_key = True/g' /etc/letsencrypt/renewal/{self.domain}.conf")
                 else:
-                    os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl {self.quiet} --noninteractive --no-random-sleep-on-renew renew renew --cert-name {self.domain}')
+                    os.system(f'/usr/bin/certbot --force-renewal --reuse-key --expand --no-verify-ssl {self.quiet} --noninteractive --no-random-sleep-on-renew renew --cert-name {self.domain}')
             else:
                 self.newprivate = True
                 os.system(f'/usr/bin/certbot {self.quiet} --noninteractive --force-renewal --reuse-key --expand --no-verify-ssl certonly -a webroot {self.overwrite} -d {self.domain} {self.secondary_domain}')
