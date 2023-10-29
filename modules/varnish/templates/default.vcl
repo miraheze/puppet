@@ -38,6 +38,13 @@ backend <%= name %> {
 	.probe = <%= property['probe'] %>;
 <%- end -%>
 }
+
+<%- if property['pool'] -%>
+backend <%= name %>_test {
+	.host = "localhost";
+	.port = "<%= property['port'] %>";
+}
+<%- end -%>
 <%- end -%>
 
 # Initialise vcl
@@ -187,7 +194,7 @@ sub mw_request {
 	# Assigning a backend
 <%- @backends.each_pair do | name, property | -%>
 	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
-		set req.backend_hint = <%= name %>;
+		set req.backend_hint = <%= name %>_test;
 		return (pass);
 	}
 <%- end -%>
