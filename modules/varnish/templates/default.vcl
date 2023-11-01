@@ -39,7 +39,7 @@ backend <%= name %> {
 <%- end -%>
 }
 
-<%- if property['pool'] -%>
+<%- if property['xdebug'] -%>
 backend <%= name %>_test {
 	.host = "localhost";
 	.port = "<%= property['port'] %>";
@@ -193,7 +193,7 @@ sub mw_request {
 	
 	# Assigning a backend
 <%- @backends.each_pair do | name, property | -%>
-<%- if property['pool'] -%>
+<%- if property['xdebug'] -%>
 	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
 		set req.backend_hint = <%= name %>_test;
 		return (pass);
