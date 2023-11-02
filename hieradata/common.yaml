@@ -62,6 +62,7 @@ varnish::backends:
     port: 8150
     probe: false
     pool: false
+    xdebug: true
   test131:
     port: 8180
     probe: false
