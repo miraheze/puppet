@@ -193,12 +193,8 @@ def run(args: argparse.Namespace, start: float) -> None:
         else:
             print(text)
         pull = []
-        if args.world and not args.pull:
-            pull = ['world']
         if args.pull:
             pull = str(args.pull).split(',')
-        if args.world and 'world' not in pull:
-            pull.append('world')
         if pull:
             for repo in pull:
                 if repo == 'world':
