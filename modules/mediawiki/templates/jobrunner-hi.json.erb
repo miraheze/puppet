@@ -13,6 +13,7 @@
             "exclude": [
                 "AssembleUploadChunks",
                 "DataDumpGenerateJob",
+                "parsoidCachePrewarm",
                 "PublishStashedFile",
                 "RecordLintJob",
                 "RequestWikiAIJob",
@@ -56,6 +57,14 @@
             "include": [
                 "NamespaceMigrationJob",
                 "RequestWikiAIJob"
+            ]
+        },
+        "parseroidcache": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "parsoidCachePrewarm"
             ]
         },
         "transcode": {
