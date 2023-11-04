@@ -98,6 +98,7 @@
             "*": 300,
             "DataDumpGenerateJob": 21600,
             "NamespaceMigrationJob": 9000,
+            "parsoidCachePrewarm": 300,
             "refreshLinks": 9000,
             "refreshLinksDynamic": 9000,
             "refreshLinksPrioritized": 9000,
@@ -106,8 +107,9 @@
         },
         // runJobs.php memory limits
         "memory": {
-            "*": "300M",
+            "*": "500M",
             "DataDumpGenerateJob": "512M",
+            "parsoidCachePrewarm": "700M",
             "refreshLinks": "700M",
             "refreshLinksDynamic": "700M",
             "refreshLinksPrioritized": "700M",
