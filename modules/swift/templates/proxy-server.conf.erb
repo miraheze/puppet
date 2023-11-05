@@ -17,7 +17,7 @@ log_statsd_metric_prefix = swift.<%= @facts['networking']['hostname'] %>
 log_statsd_sample_rate_factor = 1
 
 [pipeline:main]
-pipeline = proxy-logging listing_formats ensure_max_age rewrite healthcheck cache tempurl ratelimit tempauth cors proxy-logging proxy-server
+pipeline = proxy-logging listing_formats ensure_max_age rewrite healthcheck cache container_sync tempurl ratelimit tempauth cors proxy-logging proxy-server
 
 [app:proxy-server]
 use = egg:swift#proxy
