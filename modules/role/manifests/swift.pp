@@ -7,7 +7,7 @@ class role::swift (
     include ::swift::ring
 
     $firewall_rules_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Swift] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus]", ['networking'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and (Class[Role::Swift] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus])", ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
