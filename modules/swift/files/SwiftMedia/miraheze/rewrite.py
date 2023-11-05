@@ -56,7 +56,7 @@ class _MirahezeRewriteContext(WSGIContext):
         else:
             opener.addheaders.append(('User-Agent', self.user_agent))
         for header_to_pass in ['X-Forwarded-For', 'X-Forwarded-Proto',
-                               'Accept', 'Accept-Encoding', 'X-Original-URI']:
+                               'Accept', 'Accept-Encoding', 'X-Original-URI', 'X-Client-IP', 'X-Real-IP']:
             if reqorig.headers.get(header_to_pass) is not None:
                 opener.addheaders.append((header_to_pass, reqorig.headers.get(header_to_pass)))
 
