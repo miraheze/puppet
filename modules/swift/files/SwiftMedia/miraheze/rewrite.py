@@ -359,7 +359,7 @@ class _MirahezeRewriteContext(WSGIContext):
             headers = self._response_headers
 
             if env['REQUEST_METHOD'] in ('HEAD'):
-                 headers.append('Connection', 'close')
+                 headers.append(('Connection', 'close'))
 
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
