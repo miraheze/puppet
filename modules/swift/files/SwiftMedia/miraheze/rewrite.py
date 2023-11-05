@@ -37,7 +37,7 @@ class _MirahezeRewriteContext(WSGIContext):
         self.user_agent = conf['user_agent'].strip()
         self.bind_port = conf['bind_port'].strip()
 
-    def handle404(self, reqorig, url, container, obj):
+    def handle404(self, reqorig, url, container, obj, env):
         """
         Return a swob.Response which fetches the thumbnail from the thumb
         host and returns it. Note also that the thumb host might write it out
@@ -84,6 +84,8 @@ class _MirahezeRewriteContext(WSGIContext):
                 # add in the X-Original-URI with the swift got (minus the hostname)
                 opener.addheaders.append(
                     ('X-Original-URI', list(urllib.parse.urlsplit(reqorig.url))[2]))
+                if env['REQUEST_METHOD'] in ('HEAD'):
+                    opener.addheaders.append(('Connection', 'close'))
             else:
                 # ASSERT this code should never be hit since only thumbs
                 # should call the 404 handler
@@ -356,10 +358,13 @@ class _MirahezeRewriteContext(WSGIContext):
             status = self._get_status_int()
             headers = self._response_headers
 
+            if env['REQUEST_METHOD'] in ('HEAD'):
+                 headers.append('Connection', 'close')
+
             if status == 404:
                 # only send thumbs to the 404 handler; just return a 404 for everything else.
                 if repo == 'local' and zone == 'thumb':
-                    resp = self.handle404(reqorig, url,  container, obj)
+                    resp = self.handle404(reqorig, url, container, obj, env)
                     return resp(env, start_response)
                 else:
                     resp = swob.HTTPNotFound('File not found: %s' % req.path)
