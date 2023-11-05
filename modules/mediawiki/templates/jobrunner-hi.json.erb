@@ -22,7 +22,8 @@
                 "uploadFromUrl",
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized",
-                "NamespaceMigrationJob"
+                "NamespaceMigrationJob",
+                "smw.changePropagationClassUpdate"
             ],
             "low-priority": [
                 "htmlCacheUpdate"
@@ -65,6 +66,14 @@
             // Job types to include ("*" means "all")
             "include": [
                 "parsoidCachePrewarm"
+            ]
+        },
+        "smw": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "smw.changePropagationClassUpdate"
             ]
         },
         "transcode": {
