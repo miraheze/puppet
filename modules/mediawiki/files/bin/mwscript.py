@@ -7,7 +7,7 @@ import os
 import sys
 from typing import TYPE_CHECKING, TypedDict
 if TYPE_CHECKING:
-    from typing import Optional
+    from typing import Optional, Union
 
 
 class CommandInfo(TypedDict):
@@ -18,9 +18,15 @@ class CommandInfo(TypedDict):
     confirm: bool
 
 
-def get_commands(args: argparse.Namespace) -> CommandInfo:
+def syscheck(result: Union[CommandInfo, int]) -> CommandInfo:
+    if isinstance(result, int):
+        sys.exit(result)
+    return result
+
+
+def get_commands(args: argparse.Namespace) -> Union[CommandInfo, int]:
     validDBLists = ('active', 'beta')
-    longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
+    longscripts = ('compressold', 'deletebatch', 'importdump', 'importimages', 'nukens', 'rebuildall', 'rebuildimages', 'refreshlinks', 'runjobs', 'purgelist', 'cargorecreatedata')
     long = False
     generate = None
     try:
@@ -33,39 +39,35 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
                 args.arguments = False
         else:
             print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *validDBLists]}')
-            sys.exit(2)
+            return 2
     except IndexError:
         print('Not enough Arguments given.')
-        sys.exit(2)
+        return 2
     script = args.script
-    if not script.endswith('.php'):
-        if not args.runner:
-            print('Error: Specifiy --use-runner or --140 to enable MaintenanceRunner')
-            sys.exit(2)
-        if args.runner and not args.confirm:
-            print(f'WARNING: Please log usage of {longscripts}. Support for longscripts has not been added')
-            print('WARNING: Use of classes is not well tested. Please use with caution.')
-            if input("Type 'Y' to confirm (or any other key to stop - rerun without --140/--use-runner): ").upper() != 'Y':
-                sys.exit(2)
-    if args.runner:
+    if not script.endswith('.php') and args.norunphp:
+        print('Error: You can not use a class and specify --no-runner')
+        return 2
+    if not args.norunphp:
         runner = '/srv/mediawiki/w/maintenance/run.php '
     else:
         runner = ''
     if script.endswith('.php'):  # assume class if not
         scriptsplit = script.split('/')
-        if script in longscripts:
+        if script.split('.')[0].lower() in longscripts:
             long = True
         if len(scriptsplit) == 1:
             script = f'{runner}/srv/mediawiki/w/maintenance/{script}'
         elif len(scriptsplit) == 2:
             script = f'{runner}/srv/mediawiki/w/maintenance/{scriptsplit[0]}/{scriptsplit[1]}'
-            if scriptsplit[1] in longscripts:
+            if scriptsplit[1].split('.')[0].lower() in longscripts:
                 long = True
         else:
             script = f'{runner}/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
-            if scriptsplit[2] in longscripts:
+            if scriptsplit[2].split('.')[0].lower() in longscripts:
                 long = True
     else:
+        if script.lower() in longscripts:
+            long = True
         script = f'{runner}{script}'
 
     if wiki == 'all':
@@ -113,7 +115,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_true')
-    parser.add_argument('--use-runner', '--140', dest='runner', action='store_true')
+    parser.add_argument('--no-use-runner', dest='norunphp', action='store_true')
 
     args = parser.parse_known_args()[0]
     args.arguments += parser.parse_known_args()[1]
@@ -122,4 +124,4 @@ def get_args() -> argparse.Namespace:
 
 if __name__ == '__main__':
 
-    run(get_commands(get_args()))
+    run(syscheck(get_commands(get_args())))
