@@ -20,7 +20,7 @@ class CommandInfo(TypedDict):
 
 def get_commands(args: argparse.Namespace) -> CommandInfo:
     validDBLists = ('active', 'beta')
-    longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
+    longscripts = ('compressold', 'deletebatch', 'importdump', 'importimages', 'nukens', 'rebuildall', 'rebuildimages', 'refreshlinks', 'runjobs', 'purgelist', 'cargorecreatedata')
     long = False
     generate = None
     try:
@@ -42,24 +42,19 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
         if args.norunphp:
             print('Error: Specifiy --use-runner or --140 to enable MaintenanceRunner')
             sys.exit(2)
-        elif not args.confirm:
-            print(f'WARNING: Please log usage of {longscripts}. Support for longscripts has not been added')
-            print('WARNING: Use of classes is not well tested. Please use with caution.')
-            if input("Type 'Y' to confirm (or any other key to stop - rerun without --140/--use-runner): ").upper() != 'Y':
-                sys.exit(2)
     if not args.norunphp:
         runner = '/srv/mediawiki/w/maintenance/run.php '
     else:
         runner = ''
     if script.endswith('.php'):  # assume class if not
         scriptsplit = script.split('/')
-        if script in longscripts:
+        if script.split('.')[0].lower() in longscripts:
             long = True
         if len(scriptsplit) == 1:
             script = f'{runner}/srv/mediawiki/w/maintenance/{script}'
         elif len(scriptsplit) == 2:
             script = f'{runner}/srv/mediawiki/w/maintenance/{scriptsplit[0]}/{scriptsplit[1]}'
-            if scriptsplit[1] in longscripts:
+            if scriptsplit[1].split('.')[0].lower() in longscripts:
                 long = True
         else:
             script = f'{runner}/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
@@ -67,6 +62,8 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
                 long = True
     else:
         script = f'{runner}{script}'
+        if script.lower() in longscripts:
+            long = True
 
     if wiki == 'all':
         long = True
