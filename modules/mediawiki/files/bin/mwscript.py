@@ -45,7 +45,7 @@ def get_commands(args: argparse.Namespace) -> Union[CommandInfo, int]:
         return 2
     script = args.script
     if not script.endswith('.php') and args.norunphp:
-        print('Error: You can't use a class and specify --no-runner')
+        print('Error: You can not use a class and specify --no-runner')
         return 2
     if not args.norunphp:
         runner = '/srv/mediawiki/w/maintenance/run.php '
