@@ -18,6 +18,12 @@ class CommandInfo(TypedDict):
     confirm: bool
 
 
+def syscheck(result: [CommandInfo, Int]) -> CommandInfo:
+    if ininstance(result, int):
+        sys.exit(result)
+    return result
+
+
 def get_commands(args: argparse.Namespace) -> CommandInfo:
     validDBLists = ('active', 'beta')
     longscripts = ('compressold', 'deletebatch', 'importdump', 'importimages', 'nukens', 'rebuildall', 'rebuildimages', 'refreshlinks', 'runjobs', 'purgelist', 'cargorecreatedata')
@@ -33,14 +39,14 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
                 args.arguments = False
         else:
             print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *validDBLists]}')
-            sys.exit(2)
+            return 2
     except IndexError:
         print('Not enough Arguments given.')
-        sys.exit(2)
+        return 2
     script = args.script
     if not script.endswith('.php') and args.norunphp:
-            print('Error: Specifiy --use-runner or --140 to enable MaintenanceRunner')
-            sys.exit(2)
+        print('Error: Specifiy --use-runner or --140 to enable MaintenanceRunner')
+        return 2
     if not args.norunphp:
         runner = '/srv/mediawiki/w/maintenance/run.php '
     else:
@@ -118,4 +124,4 @@ def get_args() -> argparse.Namespace:
 
 if __name__ == '__main__':
 
-    run(get_commands(get_args()))
+    run(syscheck(get_commands(get_args())))
