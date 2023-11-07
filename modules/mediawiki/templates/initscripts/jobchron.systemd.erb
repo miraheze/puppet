@@ -5,7 +5,7 @@ Description=Miraheze JobChron
 
 [Service]
 Type=simple
-ExecStart=/srv/jobrunner/redisJobChronService --config-file=/srv/jobrunner/jobrunner-cleanup.json
+ExecStart=/srv/jobrunner/redisJobChronService --config-file=/srv/jobrunner/jobchron.json
 User=www-data
 StandardOutput=syslog
 StandardError=syslog
