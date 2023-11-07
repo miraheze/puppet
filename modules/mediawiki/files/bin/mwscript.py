@@ -61,9 +61,9 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
             if scriptsplit[2] in longscripts:
                 long = True
     else:
-        script = f'{runner}{script}'
         if script.lower() in longscripts:
             long = True
+        script = f'{runner}{script}'
 
     if wiki == 'all':
         long = True
