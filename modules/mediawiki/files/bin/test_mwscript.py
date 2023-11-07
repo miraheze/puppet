@@ -177,3 +177,10 @@ def test_get_command_nowiki():
     args.arguments = []
     args.norunphp = True
     assert mwscript.get_commands(args) == 2
+
+def test_get_command_longextension():
+    args = mwscript.get_args()
+    args.script = 'extensions/Cargo/cargoRecreateData.php'
+    args.arguments = []
+    assert mwscript.syscheck(mwscript.get_commands(args)) == {'confirm': False, 'command': 'sudo -u www-data php /srv/mediawiki/w/maintenance/run.php /srv/mediawiki/w/extensions/Cargo/maintenance/rebuilCargoData.php --wiki=metawiki', 'generate': None, 'long': True, 'nolog': False}
+
