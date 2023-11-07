@@ -5,6 +5,7 @@ users::groups:
 contactgroups: ['sre', 'mediawiki']
 
 redis::heap: '1GB'
+redis::maxmemory_policy: 'volatile-lru'
 
 http_proxy: 'http://bast.miraheze.org:8080'
 
