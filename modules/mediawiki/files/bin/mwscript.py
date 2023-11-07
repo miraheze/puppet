@@ -32,7 +32,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
             if args.arguments == []:
                 args.arguments = False
         else:
-            print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *validDBLists]}')
+            print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*['all'], *validDBLists]}')
             sys.exit(2)
     except IndexError:
         print('Not enough Arguments given.')
@@ -86,7 +86,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
 
 
 def run(info: CommandInfo) -> None:  # pragma: no cover
-    logcommand = f'/usr/local/bin/logsalmsg "{info["command"]}'
+    logcommand = f'/usr/local/bin/logsalmsg "{info['command']}'
     print('Will execute:')
     if info['generate']:
         print(info['generate'])
