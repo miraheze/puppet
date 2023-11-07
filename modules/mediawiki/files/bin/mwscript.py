@@ -5,9 +5,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
-from typing import TYPE_CHECKING, TypedDict
-if TYPE_CHECKING:
-    from typing import Optional, Union
+from typing import TypedDict
 
 
 class CommandInfo(TypedDict):
