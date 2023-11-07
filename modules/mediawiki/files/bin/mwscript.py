@@ -63,7 +63,7 @@ def get_commands(args: argparse.Namespace) -> Union[CommandInfo, int]:
                 long = True
         else:
             script = f'{runner}/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
-            if scriptsplit[2] in longscripts:
+            if scriptsplit[2].split('.')[0].lower() in longscripts:
                 long = True
     else:
         if script.lower() in longscripts:
