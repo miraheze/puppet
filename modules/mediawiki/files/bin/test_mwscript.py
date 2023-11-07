@@ -153,4 +153,3 @@ def test_get_command_long_runner_class_mixed():
     args.script = 'rEbUiLdAll'
     args.arguments = ['metawiki']
     assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data php /srv/mediawiki/w/maintenance/run.php rEbUiLdAll --wiki=metawiki', 'generate': None, 'long': True, 'nolog': False}
-
