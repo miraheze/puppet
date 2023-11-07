@@ -1,12 +1,15 @@
 # role: redis
-class role::redis {
+class role::redis (
+    $maxmemory = lookup('redis::heap', {'default_value' => '7000mb'}),
+    $maxmemory_policy = lookup('redis::maxmemory_policy', {'default_value' => 'allkeys-lru'})
+) {
     include prometheus::exporter::redis
 
-    $redis_heap = lookup('redis::heap', {'default_value' => '7000mb'})
     class { '::redis':
         persist   => false,
         password  => lookup('passwords::redis::master'),
-        maxmemory => $redis_heap,
+        maxmemory => $maxmemory,
+        maxmemory_policy => $maxmemory_policy,
     }
 
     $firewall_rules_str = join(
