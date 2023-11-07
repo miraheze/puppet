@@ -7,7 +7,7 @@ import os
 import sys
 from typing import TYPE_CHECKING, TypedDict
 if TYPE_CHECKING:
-    from typing import Optional
+    from typing import Optional, Union
 
 
 class CommandInfo(TypedDict):
@@ -18,13 +18,13 @@ class CommandInfo(TypedDict):
     confirm: bool
 
 
-def syscheck(result: [CommandInfo, int]) -> CommandInfo:
+def syscheck(result: Union[CommandInfo, int]) -> CommandInfo:
     if isinstance(result, int):
         sys.exit(result)
     return result
 
 
-def get_commands(args: argparse.Namespace) -> CommandInfo:
+def get_commands(args: argparse.Namespace) -> Union[CommandInfo, int]:
     validDBLists = ('active', 'beta')
     longscripts = ('compressold', 'deletebatch', 'importdump', 'importimages', 'nukens', 'rebuildall', 'rebuildimages', 'refreshlinks', 'runjobs', 'purgelist', 'cargorecreatedata')
     long = False
