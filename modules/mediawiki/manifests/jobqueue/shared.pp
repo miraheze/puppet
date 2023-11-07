@@ -43,9 +43,9 @@ class mediawiki::jobqueue::shared {
         require => Git::Clone['JobRunner'],
     }
 
-    file { '/srv/jobrunner/jobrunner-cleanup.json':
+    file { '/srv/jobrunner/jobchron.json':
         ensure  => present,
-        content => template('mediawiki/jobrunner-cleanup.json.erb'),
+        content => template('mediawiki/jobchron.json.erb'),
         require => Git::Clone['JobRunner'],
     }
 }
