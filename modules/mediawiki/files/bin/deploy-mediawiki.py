@@ -100,10 +100,10 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
         up = True
     if not up:
         print(f'Status: {req.status_code}')
-        print(f'Text: {"miraheze" in req.text} \n {req.text}')
+        print(f'Text: {'miraheze' in req.text} \n {req.text}')
         if 'X-Served-By' not in req.headers:
             req.headers['X-Served-By'] = 'None'
-        print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
+        print(f'Debug: {(Debug is None or Debug in req.headers['X-Served-By'])}')
         if force:
             print(f'Ignoring canary check error on {location} due to --force')
         else:
@@ -217,7 +217,7 @@ def run(args: argparse.Namespace, start: float) -> None:
                     scriptOptions = ''
                     if os.path.isfile('/srv/mediawiki-staging/w/maintenance/run.php'):
                         scriptOptions = '/srv/mediawiki-staging/w/maintenance/run.php'
-                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/w php {scriptOptions} /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
+                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/w php {scriptOptions} /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo['wikidbname']} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
@@ -234,7 +234,7 @@ def run(args: argparse.Namespace, start: float) -> None:
             scriptOptions = ''
             if os.path.isfile('/srv/mediawiki/w/maintenance/run.php'):
                 scriptOptions = '/srv/mediawiki/w/maintenance/run.php'
-            rebuild.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
+            rebuild.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo['wikidbname']}')
 
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))
@@ -252,8 +252,8 @@ def run(args: argparse.Namespace, start: float) -> None:
             scriptOptions = ''
             if os.path.isfile('/srv/mediawiki/w/maintenance/run.php'):
                 scriptOptions = '/srv/mediawiki/w/maintenance/run.php'
-            postinstall.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --extensions-dir=/srv/mediawiki/w/extensions:/srv/mediawiki/w/skins --output /srv/mediawiki/config/ExtensionMessageFiles.php')
-            rebuild.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
+            postinstall.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo['wikidbname']} --extensions-dir=/srv/mediawiki/w/extensions:/srv/mediawiki/w/skins --output /srv/mediawiki/config/ExtensionMessageFiles.php')
+            rebuild.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo['wikidbname']}')
 
         for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
             exitcodes.append(run_command(cmd))
