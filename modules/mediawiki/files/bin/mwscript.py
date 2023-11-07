@@ -38,8 +38,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
         print('Not enough Arguments given.')
         sys.exit(2)
     script = args.script
-    if not script.endswith('.php'):
-        if args.norunphp:
+    if not script.endswith('.php') and args.norunphp:
             print('Error: Specifiy --use-runner or --140 to enable MaintenanceRunner')
             sys.exit(2)
     if not args.norunphp:
