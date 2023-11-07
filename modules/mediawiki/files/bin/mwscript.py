@@ -18,8 +18,8 @@ class CommandInfo(TypedDict):
     confirm: bool
 
 
-def syscheck(result: [CommandInfo, Int]) -> CommandInfo:
-    if ininstance(result, int):
+def syscheck(result: [CommandInfo, int]) -> CommandInfo:
+    if isinstance(result, int):
         sys.exit(result)
     return result
 
