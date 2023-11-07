@@ -1,0 +1,27 @@
+// Configuration file for MediaWiki JobChron
+// This file is managed by Puppet
+{
+    "groups": {
+        "basic": {
+            // Number of runner processes in this group
+            "runners": 0
+		}
+    },
+
+    "limits": {},
+
+    "redis": {
+        // Ready queue trackers
+        "aggregators": [
+            "<%= @redis_server_ip %>"
+        ],
+        // Main queue servers
+        "queues": [
+            "<%= @redis_server_ip %>"
+        ],
+        "password": "<%= @redis_password %>"
+    },
+
+    // Command used to launch a runner for a given job queue
+    "dispatcher": "nothing"
+}
