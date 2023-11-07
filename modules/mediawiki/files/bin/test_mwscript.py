@@ -171,7 +171,7 @@ def test_get_command_wiki_typo():
     assert mwscript.get_commands(args) == 2
 
 
-def test_get_command_nowiki):
+def test_get_command_nowiki():
     args = mwscript.get_args()
     args.script = 'test'
     args.arguments = []
