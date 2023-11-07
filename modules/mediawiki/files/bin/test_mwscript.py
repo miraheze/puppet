@@ -132,3 +132,25 @@ def test_get_command_class():
     args.arguments = ['metawiki', '--test']
     args.confirm = True
     assert mwscript.get_commands(args) == {'confirm': True, 'command': 'sudo -u www-data php /srv/mediawiki/w/maintenance/run.php test --wiki=metawiki --test', 'generate': None, 'long': False, 'nolog': False}
+
+
+def test_get_command_long_runner():
+    args = mwscript.get_args()
+    args.script = 'rebuildall.php'
+    args.arguments = ['metawiki']
+    assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data php /srv/mediawiki/w/maintenance/run.php /srv/mediawiki/w/maintenance/rebuildall.php --wiki=metawiki', 'generate': None, 'long': True, 'nolog': False}
+
+
+def test_get_command_long_runner_class_lower():
+    args = mwscript.get_args()
+    args.script = 'rebuildall'
+    args.arguments = ['metawiki']
+    assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data php /srv/mediawiki/w/maintenance/run.php rebuildall --wiki=metawiki', 'generate': None, 'long': True, 'nolog': False}
+
+
+def test_get_command_long_runner_class_mixed():
+    args = mwscript.get_args()
+    args.script = 'rEbUiLdAll'
+    args.arguments = ['metawiki']
+    assert mwscript.get_commands(args) == {'confirm': False, 'command': 'sudo -u www-data php /srv/mediawiki/w/maintenance/run.php rEbUiLdAll --wiki=metawiki', 'generate': None, 'long': True, 'nolog': False}
+
