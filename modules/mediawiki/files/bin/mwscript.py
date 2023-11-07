@@ -12,19 +12,19 @@ if TYPE_CHECKING:
 
 class CommandInfo(TypedDict):
     command: str
-    generate: Optional[str]
+    generate: str | None
     long: bool
     nolog: bool
     confirm: bool
 
 
-def syscheck(result: Union[CommandInfo, int]) -> CommandInfo:
+def syscheck(result: CommandInfo | int) -> CommandInfo:
     if isinstance(result, int):
         sys.exit(result)
     return result
 
 
-def get_commands(args: argparse.Namespace) -> Union[CommandInfo, int]:
+def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     validDBLists = ('active', 'beta')
     longscripts = ('compressold', 'deletebatch', 'importdump', 'importimages', 'nukens', 'rebuildall', 'rebuildimages', 'refreshlinks', 'runjobs', 'purgelist', 'cargorecreatedata')
     long = False
