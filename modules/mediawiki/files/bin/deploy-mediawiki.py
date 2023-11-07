@@ -6,7 +6,7 @@ import os
 import time
 import requests
 import socket
-from sys import exit
+import sys
 from langcodes import tag_is_valid
 
 
@@ -71,7 +71,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
                 os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
             if leave:
                 print('Exiting due to non-zero status.')
-                exit(1)
+                sys.exit(1)
             return True
     return False
 
@@ -113,7 +113,7 @@ def check_up(nolog: bool, Debug: Optional[str] = None, Host: Optional[str] = Non
                 print(message)
             else:
                 os.system(message)
-            exit(3)
+            sys.exit(3)
     return up
 
 
@@ -301,7 +301,7 @@ def run(args: argparse.Namespace, start: float) -> None:
     else:
         print(fintext)
     if failed:
-        exit(1)
+        sys.exit(1)
 
 
 if __name__ == '__main__':
