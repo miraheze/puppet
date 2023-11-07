@@ -107,14 +107,14 @@ define apt::source (
     # Newer oses, do not need the package for HTTPS transport.
     $_transport_https_releases = ['9']
     if (fact('os.release.major') in $_transport_https_releases) and $_location =~ /(?i:^https:\/\/)/ {
-      ensure_packages('apt-transport-https')
+      stdlib::ensure_packages('apt-transport-https')
       Package['apt-transport-https'] -> Class['apt::update']
     }
   } else {
     $_location = undef
   }
 
-  $includes = merge($apt::include_defaults, $include)
+  $includes = $apt::include_defaults + $include
 
   if $key and $keyring {
     fail('parameters key and keyring are mutualy exclusive')
@@ -125,7 +125,7 @@ define apt::source (
       unless $key['id'] {
         fail('key hash must contain at least an id entry')
       }
-      $_key = merge($apt::source_key_defaults, $key)
+      $_key = $apt::source_key_defaults + $key
     } else {
       $_key = { 'id' => assert_type(String[1], $key) }
     }
@@ -143,7 +143,7 @@ define apt::source (
       'comment'          => $comment,
       'includes'         => $includes,
       'options'          => delete_undef_values({
-          'arch'              => $architecture,
+          'arch'              => $_architecture,
           'trusted'           => $allow_unsigned ? { true => 'yes', false => undef },
           'allow-insecure'    => $allow_insecure ? { true => 'yes', false => undef },
           'signed-by'         => $keyring,
@@ -164,7 +164,7 @@ define apt::source (
 
   if $pin {
     if $pin =~ Hash {
-      $_pin = merge($pin, { 'ensure' => $ensure, 'before' => $_before })
+      $_pin = $pin + { 'ensure' => $ensure, 'before' => $_before }
     } elsif ($pin =~ Numeric or $pin =~ String) {
       $url_split = split($location, '[:\/]+')
       $host      = $url_split[1]

@@ -11,10 +11,22 @@
             ],
             // Job types to exempt (useful when combined with "*")
             "exclude": [
+                "AssembleUploadChunks",
                 "DataDumpGenerateJob",
+                "PublishStashedFile",
+                "refreshLinks",
+                "refreshLinksDynamic",
+                "refreshLinksPrioritized",
+                "parsoidCachePrewarm",
                 "RequestWikiAIJob",
+                "smw.changePropagationClassUpdate",
+                "uploadFromUrl",
                 "webVideoTranscode",
-                "webVideoTranscodePrioritized"
+                "webVideoTranscodePrioritized",
+                "NamespaceMigrationJob"
+            ],
+            "low-priority": [
+                "htmlCacheUpdate"
             ]
         }
     },
@@ -22,7 +34,9 @@
     "limits": {
         // How many times to let jobs be recycled before abandoning
         "attempts": {
-            "*": 3
+            "*": 3,
+            "LocalPageMoveJob": 6,
+            "renameUser": 6
         },
         // How long jobs can be claimed before being recycled
         "claimTTL": {
@@ -34,8 +48,7 @@
         },
         // runJobs.php memory limits
         "memory": {
-            "*": "300M",
-            "refreshLinks": "500M"
+            "*": "300M"
         }
     },
 
@@ -52,5 +65,5 @@
     },
 
     // Command used to launch a runner for a given job queue
-    "dispatcher": "nice -15 php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
+    "dispatcher": "nice -19 php /srv/mediawiki/w/maintenance/run.php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
 }

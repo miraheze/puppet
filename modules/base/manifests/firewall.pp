@@ -1,7 +1,5 @@
 # firewall for all servers
-class base::firewall (
-    Array[String] $block_abuse = lookup('block_abuse', {'default_value' => []}),
-) {
+class base::firewall {
     include ferm
     # Increase the size of conntrack table size (default is 65536)
     sysctl::parameters { 'ferm_conntrack':
@@ -18,6 +16,8 @@ class base::firewall (
         onlyif  => "/bin/grep --invert-match --quiet '^32768$' /sys/module/nf_conntrack/parameters/hashsize",
     }
 
+    $block_abuse = split(file('/etc/puppetlabs/puppet/private/files/firewall/block_abuse'), /[\r\n]/)
+
     if $block_abuse != undef and $block_abuse != [] {
         ferm::rule { 'drop-abuse-net-miaheze':
             prio => '01',
@@ -31,9 +31,9 @@ class base::firewall (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Icinga2]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
@@ -47,16 +47,15 @@ class base::firewall (
     }
 
     $firewall_bastion_hosts = join(
-        query_facts('Class[Base]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Base]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
         .sort(),
         ' '
     )
-
     ferm::service { 'ssh':
         proto  => 'tcp',
         port   => '22',

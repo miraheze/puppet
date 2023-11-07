@@ -9,11 +9,11 @@ RSpec.configure do |c|
   c.before :suite do
     # lsb-release is needed for facter 3 (puppet 6) to resolve os.distro facts. Not needed with facter
     # 4 (puppet 7).
-    lsb_package = <<-MANIFEST
-package { 'lsb-release':
-  ensure => installed,
-}
-MANIFEST
+    lsb_package = <<~MANIFEST
+      package { 'lsb-release':
+        ensure => installed,
+      }
+    MANIFEST
     include PuppetLitmus
     extend PuppetLitmus
     apply_manifest(lsb_package)
@@ -40,6 +40,7 @@ def retry_on_error_matching(max_retry_count = MAX_RETRY_COUNT, retry_wait_interv
     yield
   rescue StandardError => e
     raise('Attempted this %{value0} times. Raising %{value1}' % { value0: max_retry_count, value1: e }) unless try < max_retry_count && (error_matcher.nil? || e.message =~ error_matcher)
+
     sleep retry_wait_interval_secs
     retry
   end

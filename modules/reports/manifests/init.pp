@@ -1,6 +1,6 @@
 # class: reports
 class reports {
-    ensure_packages(['mariadb-client', 'composer'])
+    stdlib::ensure_packages(['mariadb-client', 'composer'])
 
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',
@@ -61,7 +61,7 @@ class reports {
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
             'cli' => $config_cli,
-            'fpm' => merge($config_cli, $config_fpm),
+            'fpm' => $config_cli + $config_fpm,
         },
     }
 

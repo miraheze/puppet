@@ -1,22 +1,26 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
+# rubocop:disable RSpec/InstanceVariable
 describe Puppet::Type.type(:openldap_database) do
-  before(:each) do
+  before do
     @provider_class = described_class.provide(:simple) { mk_resource_methods }
-    @provider_class.stubs(:suitable?).returns true
-    described_class.stubs(:defaultprovider).returns @provider_class
+    allow(@provider_class).to receive(:suitable?).and_return(true)
+    allow(described_class).to receive(:defaultprovider).and_return(@provider_class)
   end
 
   describe 'namevar validation' do
     it 'has :suffix as its namevar' do
       expect(described_class.key_attributes).to eq([:suffix])
     end
+
     it 'does not invalid suffixes' do
-      skip('must implement validation')
       expect { described_class.new(name: 'foo bar') }.to raise_error(Puppet::Error, %r{Invalid value})
       expect { described_class.new(name: 'cn=admin,dc=example,dc=com') }.to raise_error(Puppet::Error, %r{Invalid value})
       expect { described_class.new(name: 'dc=example, dc=com') }.to raise_error(Puppet::Error, %r{Invalid value})
     end
+
     it 'allows valid suffix' do
       expect { described_class.new(name: 'dc=example,dc=com') }.not_to raise_error
       expect { described_class.new(name: 'cn=config') }.not_to raise_error
@@ -24,14 +28,14 @@ describe Puppet::Type.type(:openldap_database) do
   end
 
   describe 'when validating attributes' do
-    [:suffix, :provider].each do |param|
-      it "should have a #{param} parameter" do
+    %i[suffix provider].each do |param|
+      it "has a #{param} parameter" do
         expect(described_class.attrtype(param)).to eq(:param)
       end
     end
 
-    [:backend, :directory].each do |property|
-      it "should have a #{property} property" do
+    %i[backend directory].each do |property|
+      it "has a #{property} property" do
         expect(described_class.attrtype(property)).to eq(:property)
       end
     end
@@ -40,44 +44,47 @@ describe Puppet::Type.type(:openldap_database) do
   describe 'when validating values' do
     describe 'ensure' do
       it 'supports present as a value for ensure' do
-        expect { described_class.new(name: 'foo', ensure: :present) }.not_to raise_error
+        expect { described_class.new(name: 'dc=foo', ensure: :present) }.not_to raise_error
       end
+
       it 'supports absent as a value for ensure' do
-        expect { described_class.new(name: 'foo', ensure: :absent) }.not_to raise_error
+        expect { described_class.new(name: 'dc=foo', ensure: :absent) }.not_to raise_error
       end
+
       it 'does not support other values' do
-        expect { described_class.new(name: 'foo', ensure: :foo) }.to raise_error(Puppet::Error, %r{Invalid value})
+        expect { described_class.new(name: 'dc=foo', ensure: :foo) }.to raise_error(Puppet::Error, %r{Invalid value})
       end
     end
 
     describe 'backend' do
-      ['bdb', 'hdb', 'mdb', 'monitor', 'config', 'relay', 'ldap'].each do |b|
-        it "should support #{b} as a value for backend" do
-          expect { described_class.new(name: 'foo', backend: b) }.not_to raise_error
+      %w[bdb hdb mdb monitor config relay ldap].each do |b|
+        it "supports #{b} as a value for backend" do
+          expect { described_class.new(name: 'dc=foo', backend: b) }.not_to raise_error
         end
       end
       it 'supports config as a value for backend' do
-        expect { described_class.new(name: 'foo', backend: 'config') }.not_to raise_error
+        expect { described_class.new(name: 'dc=foo', backend: 'config') }.not_to raise_error
       end
+
       it 'does not support other values' do
-        expect { described_class.new(name: 'foo', backend: 'bar') }.to raise_error(Puppet::Error, %r{Invalid value})
+        expect { described_class.new(name: 'dc=foo', backend: 'bar') }.to raise_error(Puppet::Error, %r{Invalid value})
       end
     end
 
     describe 'directory' do
       it 'supports an absolute path as a value for directory' do
-        expect { described_class.new(name: 'foo', directory: '/bar/baz') }.not_to raise_error
+        expect { described_class.new(name: 'dc=foo', directory: '/bar/baz') }.not_to raise_error
       end
+
       it 'does not support other values' do
-        skip('Must implement validation')
-        expect { described_class.new(name: 'foo', directory: 'bar/baz') }.to raise_error(Puppet::Error, %r{kjsflkjdsflk})
+        expect { described_class.new(name: 'dc=foo', directory: 'bar/baz') }.to raise_error(Puppet::Error, %r{Invalid value})
       end
     end
   end
 
   describe 'rootpw' do
-    before(:each) do
-      @resource = described_class.new(name: 'foo')
+    before do
+      @resource = described_class.new(name: 'dc=foo')
       @password = described_class.attrclass(:rootpw).new(resource: @resource, should: 'secret')
     end
 
@@ -97,4 +104,17 @@ describe Puppet::Type.type(:openldap_database) do
       expect(@password.should_to_s('newpass')).to match(%r{^\[new password hash redacted\]$})
     end
   end
+
+  describe 'organization' do
+    it 'sets organization to foo.bar' do
+      @resource = described_class.new(name: 'foo', suffix: 'dc=foo,dc=bar')
+      expect(@resource[:organization]).to eq('foo.bar')
+    end
+
+    it 'is nil when suffix is not using dc' do
+      @resource = described_class.new(name: 'foo', suffix: 'o=foo,dc=bar')
+      expect(@resource[:organization]).to be_nil
+    end
+  end
 end
+# rubocop:enable RSpec/InstanceVariable

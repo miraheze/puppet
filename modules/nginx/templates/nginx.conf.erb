@@ -4,15 +4,14 @@ user www-data;
 <%- if @nginx_worker_processes != 'auto' -%>
 worker_processes <%= @nginx_worker_processes %>;
 <%- else -%>
-worker_processes <%= scope.lookupvar('::processorcount') %>;
+worker_processes <%= @facts['processors']['count'] %>;
 <%- end -%>
 pid /run/nginx.pid;
-worker_rlimit_nofile 16192; # Twice the number of worker_connections
+worker_rlimit_nofile 262144; # Twice the number of worker_connections
 
 events {
-	worker_connections 8096;
-	use epoll;
-	multi_accept on;
+	worker_connections 131072;
+	multi_accept off;
 }
 
 http {
@@ -21,6 +20,7 @@ http {
 	tcp_nopush on;
 	tcp_nodelay on;
 	client_max_body_size <%= @nginx_client_max_body_size %>;
+	client_body_buffer_size 64k;
 	http2_max_field_size 8k;
 	types_hash_max_size 2048;
 	# 512 x 4
@@ -41,7 +41,7 @@ http {
 	ssl_protocols TLSv1.2 TLSv1.3;
 	ssl_prefer_server_ciphers on;
 	ssl_stapling on;
-	ssl_session_cache shared:SSL:20m;
+	ssl_session_cache shared:SSL:60m;
 	ssl_session_timeout 60m;
 
 	# GZIP Settings
@@ -56,7 +56,7 @@ http {
 	video/mpeg video/webmv video/x-flv;
 
 	# Default headers
-	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
@@ -99,9 +99,11 @@ http {
 
 	# Set real IP for cache proxy web requests
 	<%- @cache_proxies.sort.each do |key, value| -%>
-	set_real_ip_from <%= value['ipaddress'] %>; # <%= key %>
-	<%- if value['ipaddress6'] -%>
-	set_real_ip_from <%= value['ipaddress6'] %>;
+	<%- if value['networking']['ip'] -%>
+	set_real_ip_from <%= value['networking']['ip'] %>; # <%= key %>
+	<%- end -%>
+	<%- if value['networking']['ip6'] -%>
+	set_real_ip_from <%= value['networking']['ip6'] %>; # <%= key %>
 	<%- end -%>
 
 	<%- end -%>

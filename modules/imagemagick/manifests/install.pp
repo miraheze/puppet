@@ -2,7 +2,7 @@
 #
 # Installs imagemagick and our custom policy
 class imagemagick::install {
-    ensure_packages(['imagemagick', 'webp'])
+    stdlib::ensure_packages(['imagemagick', 'webp'])
 
     file { '/etc/ImageMagick-6/policy.xml':
         ensure  => present,

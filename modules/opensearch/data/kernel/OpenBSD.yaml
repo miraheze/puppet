@@ -1,0 +1,10 @@
+---
+opensearch::datadir: /var/opensearch/data
+opensearch::download_tool: 'ftp -o'
+opensearch::opensearch_user: _opensearch
+opensearch::opensearch_group: _opensearch
+opensearch::homedir: /usr/local/opensearch
+opensearch::init_template: "%{module_name}/etc/init.d/opensearch.OpenBSD.erb"
+opensearch::package_dir: /var/cache/opensearch
+opensearch::service_provider:  openbsd
+opensearch::manage_repo: false

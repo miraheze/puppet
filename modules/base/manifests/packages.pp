@@ -1,6 +1,6 @@
 # === Class base::packages
 class base::packages {
-    ensure_packages([
+    stdlib::ensure_packages([
         'acct',
         'apt-transport-https',
         'coreutils',
@@ -26,7 +26,6 @@ class base::packages {
         'python-is-python3',
         'python3-distro',
         'ruby',
-        'ruby-safe-yaml',
         'screen',
         'strace',
         'tcpdump',

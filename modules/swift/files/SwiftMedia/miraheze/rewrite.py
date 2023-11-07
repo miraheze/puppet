@@ -56,7 +56,7 @@ class _MirahezeRewriteContext(WSGIContext):
         else:
             opener.addheaders.append(('User-Agent', self.user_agent))
         for header_to_pass in ['X-Forwarded-For', 'X-Forwarded-Proto',
-                               'Accept', 'Accept-Encoding', 'X-Original-URI']:
+                               'Accept', 'Accept-Encoding', 'X-Original-URI', 'X-Client-IP', 'X-Real-IP']:
             if reqorig.headers.get(header_to_pass) is not None:
                 opener.addheaders.append((header_to_pass, reqorig.headers.get(header_to_pass)))
 
@@ -280,7 +280,7 @@ class _MirahezeRewriteContext(WSGIContext):
                 proj = match.group('proj')
                 repo = 'local'
                 zone = 'public'
-                obj = 'sitemaps/' + match.group('path') # sitemaps/sitemap-betawiki-NS_0-0.xml.gz
+                obj = 'sitemaps/' + match.group('path') # sitemaps/sitemap-metawikibeta-NS_0-0.xml.gz
 
         if match is None:
             match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>dumps)/(?P<path>.+)$', req.path)

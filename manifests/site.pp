@@ -10,7 +10,7 @@ node /^cloud1[01234]\.miraheze\.org$/ {
     include role::cloud
 }
 
-node /^cp(2[23]|3[23])\.miraheze\.org$/ {
+node /^cp(2[45]|3[2345])\.miraheze\.org$/ {
     include base
     include role::varnish
 }
@@ -20,12 +20,12 @@ node /^db1([0234][12]|12)\.miraheze\.org$/ {
     include role::db
 }
 
-node /^es1[34]1\.miraheze\.org$/ {
+node /^os1[34]1\.miraheze\.org$/ {
     include base
-    include role::elasticsearch
+    include role::opensearch
 }
 
-node 'graylog121.miraheze.org' {
+node 'graylog131.miraheze.org' {
     include base
     include role::graylog
 }
@@ -47,7 +47,7 @@ node 'mail121.miraheze.org' {
     include role::roundcubemail
 }
 
-node 'matomo131.miraheze.org' {
+node 'matomo121.miraheze.org' {
     include base
     include role::matomo
 }
@@ -64,7 +64,7 @@ node 'mon141.miraheze.org' {
     include role::irc
 }
 
-node /^mw1[234][12]\.miraheze\.org$/ {
+node /^mw1[234][1234]\.miraheze\.org$/ {
     include base
     include role::mediawiki
 }
@@ -93,9 +93,17 @@ node 'puppet141.miraheze.org' {
     include base
     include role::postgresql
     include puppetdb::database
+    include role::puppetdb
     include role::puppetserver
     include role::salt
     include role::ssl
+}
+
+node 'puppetdb121.miraheze.org' {
+    include base
+    include role::postgresql
+    include puppetdb::database
+    include role::puppetdb
 }
 
 node 'reports121.miraheze.org' {
@@ -113,13 +121,14 @@ node 'swiftac111.miraheze.org' {
     include role::swift
 }
 
-node /^swiftobject1[12][123]\.miraheze\.org$/ {
+node /^swiftobject1[012][123]\.miraheze\.org$/ {
     include base
     include role::swift
 }
 
 node 'test131.miraheze.org' {
     include base
+    include role::memcached
     include role::mediawiki
     include role::redis
     include mediawiki::jobqueue::chron

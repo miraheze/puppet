@@ -12,13 +12,13 @@ describe 'apt::pin', type: :define do
         name: 'Debian',
         release: {
           major: '9',
-          full: '9.0',
+          full: '9.0'
         },
         distro: {
           codename: 'stretch',
-          id: 'Debian',
-        },
-      },
+          id: 'Debian'
+        }
+      }
     }
   end
   let(:title) { 'my_pin' }
@@ -31,7 +31,7 @@ describe 'apt::pin', type: :define do
     let :params do
       {
         'packages' => 'vim',
-        'version'  => '1',
+        'version' => '1'
       }
     end
 
@@ -42,7 +42,7 @@ describe 'apt::pin', type: :define do
     let :params do
       {
         'packages' => 'vim',
-        'origin'   => 'test',
+        'origin' => 'test'
       }
     end
 
@@ -52,33 +52,34 @@ describe 'apt::pin', type: :define do
   context 'without defaults' do
     let :params do
       {
-        'explanation'     => 'foo',
-        'order'           => 99,
-        'release'         => '1',
-        'codename'        => 'bar',
+        'explanation' => 'foo',
+        'order' => 99,
+        'release' => '1',
+        'codename' => 'bar',
         'release_version' => '2',
-        'component'       => 'baz',
-        'originator'      => 'foobar',
-        'label'           => 'foobaz',
-        'priority'        => 10,
+        'component' => 'baz',
+        'originator' => 'foobar',
+        'label' => 'foobaz',
+        'priority' => 10
       }
     end
 
     it { is_expected.to contain_apt__setting('pref-my_pin').with_content(%r{Explanation: foo\nPackage: \*\nPin: release a=1, n=bar, v=2, c=baz, o=foobar, l=foobaz\nPin-Priority: 10\n}) }
+
     it {
-      is_expected.to contain_apt__setting('pref-my_pin').with('priority' => 99)
+      expect(subject).to contain_apt__setting('pref-my_pin').with('priority' => 99)
     }
   end
 
   context 'with ensure absent' do
     let :params do
       {
-        'ensure' => 'absent',
+        'ensure' => 'absent'
       }
     end
 
     it {
-      is_expected.to contain_apt__setting('pref-my_pin').with('ensure' => 'absent')
+      expect(subject).to contain_apt__setting('pref-my_pin').with('ensure' => 'absent')
     }
   end
 
@@ -92,65 +93,65 @@ describe 'apt::pin', type: :define do
     context 'with invalid order' do
       let :params do
         {
-          'order' => 'foo',
+          'order' => 'foo'
         }
       end
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{expects an Integer value, got String})
+        expect(subject).to raise_error(Puppet::Error, %r{expects an Integer value, got String})
       end
     end
 
     context 'with packages == * and version' do
       let :params do
         {
-          'version' => '1',
+          'version' => '1'
         }
       end
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{parameter version cannot be used in general form})
+        expect(subject).to raise_error(Puppet::Error, %r{parameter version cannot be used in general form})
       end
     end
 
     context 'with packages == * and release and origin' do
       let :params do
         {
-          'origin'  => 'test',
-          'release' => 'foo',
+          'origin' => 'test',
+          'release' => 'foo'
         }
       end
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{parameters release and origin are mutually exclusive})
+        expect(subject).to raise_error(Puppet::Error, %r{parameters release and origin are mutually exclusive})
       end
     end
 
     context 'with specific release and origin' do
       let :params do
         {
-          'release'  => 'foo',
-          'origin'   => 'test',
-          'packages' => 'vim',
+          'release' => 'foo',
+          'origin' => 'test',
+          'packages' => 'vim'
         }
       end
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{parameters release, origin, and version are mutually exclusive})
+        expect(subject).to raise_error(Puppet::Error, %r{parameters release, origin, and version are mutually exclusive})
       end
     end
 
     context 'with specific version and origin' do
       let :params do
         {
-          'version'  => '1',
-          'origin'   => 'test',
-          'packages' => 'vim',
+          'version' => '1',
+          'origin' => 'test',
+          'packages' => 'vim'
         }
       end
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{parameters release, origin, and version are mutually exclusive})
+        expect(subject).to raise_error(Puppet::Error, %r{parameters release, origin, and version are mutually exclusive})
       end
     end
   end

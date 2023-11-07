@@ -1,0 +1,8 @@
+---
+opensearch::datadir: /var/lib/opensearch
+opensearch::download_tool: wget -O
+opensearch::download_tool_insecure: wget --no-check-certificate -O
+opensearch::opensearch_user: opensearch
+opensearch::opensearch_group: opensearch
+opensearch::homedir: /usr/share/opensearch
+opensearch::package_dir: /opt/opensearch/swdl

@@ -1,31 +1,46 @@
 # See README.md for details.
-define openldap::server::database(
-  $ensure                                   = present,
-  Optional[Stdlib::Absolutepath] $directory = undef,
-  $suffix                                   = $title,
-  $relay                                    = undef,
-  $backend                                  = undef,
-  $rootdn                                   = undef,
-  $rootpw                                   = undef,
-  $initdb                                   = undef,
-  $readonly                                 = false,
-  $sizelimit                                = undef,
-  $dbmaxsize                                = undef,
-  $timelimit                                = undef,
-  $updateref                                = undef,
-  $limits                                   = undef,
+define openldap::server::database (
+  Enum['present', 'absent']                     $ensure          = present,
+  Optional[Stdlib::Absolutepath]                $directory       = undef,
+  String[1]                                     $suffix          = $title,
+  Optional[String[1]]                           $relay           = undef,
+  Optional[String[1]]                           $backend         = undef,
+  Optional[String[1]]                           $rootdn          = undef,
+  Optional[String[1]]                           $rootpw          = undef,
+  Optional[Boolean]                             $initdb          = undef,
+  Boolean                                       $readonly        = false,
+  Optional[String[1]]                           $sizelimit       = undef,
+  Optional[String[1]]                           $dbmaxsize       = undef,
+  Optional[String[1]]                           $timelimit       = undef,
+  Optional[String[1]]                           $updateref       = undef,
+  Array[String[1]]                              $limits          = [],
   # BDB/HDB options
-  $dboptions                                = undef,
-  $synctype                                 = undef,
+  Hash[String[1],Variant[String[1],Array[String[1]]]] $dboptions = {},
+  Optional[String[1]]                           $synctype        = undef,
   # Synchronization options
-  $mirrormode                               = undef,
-  $syncusesubentry                          = undef,
-  $syncrepl                                 = undef,
-  $security                                 = undef,
+  Optional[Boolean]                             $mirrormode      = undef,
+  Optional[Boolean]                             $multiprovider   = undef,
+  Optional[String[1]]                           $syncusesubentry = undef,
+  Optional[Variant[String[1],Array[String[1]]]] $syncrepl        = undef,
+  Hash[
+    Enum[
+      'transport',
+      'sasl',
+      'simple_bind',
+      'ssf',
+      'tls',
+      'update_sasl',
+      'update_ssf',
+      'update_tls',
+      'update_transport',
+    ],
+    Integer[0]
+  ]                                             $security        = {},
 ) {
+  include openldap::server
 
-  if ! defined(Class['openldap::server']) {
-    fail 'class ::openldap::server has not been evaluated'
+  if $mirrormode != undef and $multiprovider != undef {
+    warning('multiprovider is an openldap2.5+ replacement for mirrormode.')
   }
 
   $manage_directory = $backend ? {
@@ -33,30 +48,21 @@ define openldap::server::database(
     'config'  => undef,
     'relay'   => undef,
     'ldap'    => undef,
-    default   => $directory ? {
-      undef   => '/var/lib/ldap',
-      default => $directory,
-    },
+    default   => $directory.lest || { $openldap::server::default_directory },
   }
 
-  if $::openldap::server::provider == 'augeas' {
-    Class['openldap::server::install']
-    -> Openldap::Server::Database[$title]
-    ~> Class['openldap::server::service']
-  } else {
-    Class['openldap::server::service']
-    -> Openldap::Server::Database[$title]
-    -> Class['openldap::server']
-  }
-  if $title != 'dc=my-domain,dc=com' and $::osfamily == 'Debian' {
+  Class['openldap::server::service']
+  -> Openldap::Server::Database[$title]
+  -> Class['openldap::server']
+  if $title != 'dc=my-domain,dc=com' and fact('os.family') == 'RedHat' {
     Openldap::Server::Database['dc=my-domain,dc=com'] -> Openldap::Server::Database[$title]
   }
 
   if $ensure == present and $backend != 'monitor' and $backend != 'config' and $backend != 'relay' and $backend != 'ldap' {
     file { $manage_directory:
       ensure => directory,
-      owner  => $::openldap::server::owner,
-      group  => $::openldap::server::group,
+      owner  => $openldap::server::owner,
+      group  => $openldap::server::group,
       before => Openldap_database[$title],
     }
   }
@@ -65,8 +71,7 @@ define openldap::server::database(
     ensure          => $ensure,
     suffix          => $suffix,
     relay           => $relay,
-    provider        => $::openldap::server::provider,
-    target          => $::openldap::server::conffile,
+    target          => $openldap::server::conffile,
     backend         => $backend,
     directory       => $manage_directory,
     rootdn          => $rootdn,
@@ -80,10 +85,10 @@ define openldap::server::database(
     dboptions       => $dboptions,
     synctype        => $synctype,
     mirrormode      => $mirrormode,
+    # multiprovider   => $multiprovider,
     syncusesubentry => $syncusesubentry,
     syncrepl        => $syncrepl,
     limits          => $limits,
     security        => $security,
   }
-
 }

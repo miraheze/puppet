@@ -63,11 +63,14 @@ def check_records(hostname):
     cname_check_impossible = False
 
     nameservers = []
-    domain_parts = tldextract.extract(hostname)
+
+    no_cache_extract = tldextract.TLDExtract(cache_dir=None)
+
+    domain_parts = no_cache_extract(hostname)
     root_domain = domain_parts.registered_domain
 
     if root_domain in domains_as_tlds:
-        extracted = tldextract.extract(domain_parts.subdomain + '.' + domain_parts.suffix)
+        extracted = no_cache_extract(domain_parts.subdomain + '.' + domain_parts.suffix)
         root_domain = extracted.domain + '.' + root_domain
 
     dns_resolver = resolver.Resolver(configure=False)

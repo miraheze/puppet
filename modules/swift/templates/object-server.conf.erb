@@ -16,7 +16,7 @@ mount_check = false
 # file size or not. Percentage will be used if the value ends with a '%'.
 # fallocate_reserve = 1%
 disable_fallocate = false
-fallocate_reserve = 2%
+fallocate_reserve = 1%
 # default is 7 days
 # 6 hours in seconds
 reclaim_age = 21600
@@ -63,6 +63,8 @@ ionice_priority = 5
 
 # Double the default (900 seconds) to give aged filesystems a better chance of completion
 rsync_timeout = 1800
+
+rsync_module = {replication_ip}::object_{device}
 
 [object-updater]
 concurrency = 1

@@ -5,36 +5,49 @@ users::groups:
 contactgroups: ['sre', 'mediawiki']
 
 jobrunner: true
+jobrunner::intensive: true
+mediawiki::jobqueue::runner::beta: true
 mediawiki::jobqueue::runner::cron: true
 mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:406]:6379'
-mediawiki::jobqueue::wiki: 'betawiki'
+mediawiki::jobqueue::wiki: 'loginwikibeta'
 
 role::mediawiki::use_strict_firewall: true
 vpncloud::server_ip: 10.0.1.7
 
-mediawiki::php::fpm::fpm_min_child: 8
+mediawiki::php::fpm::fpm_min_child: 10
+mediawiki::php::emergency_restart_threshold: 5
 mediawiki::php::fpm::fpm_workers_multiplier: 1.0
 mediawiki::php::fpm_config:
   post_max_size: '250M'
   upload_max_filesize: '250M'
 
-mediawiki::php::memory_limit: '256M'
+mediawiki::php::memory_limit: '500M'
 mediawiki::php::enable_request_profiling: true
 
 mediawiki::use_staging: true
-mediawiki::monitoring::host: 'beta.betaheze.org'
-mediawiki::branch: 'REL1_39'
+mediawiki::monitoring::host: 'test.mirabeta.org'
+mediawiki::branch: 'REL1_41'
 
-php::php_version: '7.4'
+php::php_version: '8.2'
 
 http_proxy: 'http://bast.miraheze.org:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 
 # NGINX
-nginx::keepalive_timeout: 2
-nginx::keepalive_requests: 150
+nginx::keepalive_timeout: 75
+nginx::keepalive_requests: 1000
 nginx::logrotate_number: 2
 nginx::use_graylog: true
 
 puppetserver_hostname: 'puppet141.miraheze.org'
+
+# memcached
+role::memcached::threads: ~
+role::memcached::version: 'present'
+role::memcached::growth_factor: 1.25
+role::memcached::min_slab_size: 48
+role::memcached::max_seq_reqs: 200
+role::memcached::size: 512
+role::memcached::extended_options: []
+role::memcached::port: 11211

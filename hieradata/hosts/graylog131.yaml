@@ -1,0 +1,4 @@
+puppetserver_hostname: 'puppet141.miraheze.org'
+mongodb::repo::aptkey_options: 'http-proxy="http://bast.miraheze.org:8080"'
+http_proxy: 'http://bast.miraheze.org:8080'
+elasticsearch_host: 'https://opensearch.miraheze.org'

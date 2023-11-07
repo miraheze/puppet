@@ -23,42 +23,56 @@
 #  include postgresql::server
 #
 class postgresql::server(
-    VMlib::Ensure $ensure = 'present',
-    Optional[Array] $includes = [],
-    String $listen_addresses = '*',
-    String $port             = '5432',
-    String $root_dir         = '/var/lib/postgresql',
-    Boolean $use_ssl          = false,
-    String $pgversion        = '9.6',
+    VMlib::Ensure $ensure        = 'present',
+    Optional[Array] $includes    = [],
+    String $listen_addresses     = '*',
+    String $port                 = '5432',
+    String $root_dir             = '/var/lib/postgresql',
+    Boolean $use_ssl             = false,
+    Optional[Numeric] $pgversion = undef,
 ) {
 
-    ensure_packages(
-        [
-            "postgresql-${pgversion}",
-            "postgresql-${pgversion}-debversion",
-            "postgresql-client-${pgversion}",
-            "postgresql-contrib-${pgversion}",
-            'check-postgres',
-            'libdbd-pg-perl',
-            'libdbi-perl',
-        ],
-        {
-            ensure => $ensure,
-        },
-    )
+    case $facts['os']['distro']['codename'] {
+        'buster': {
+            $_pgversion_default = 11
+        }
+        'bullseye': {
+            $_pgversion_default = 13
+        }
+        'bookworm': {
+            $_pgversion_default = 15
+        }
+        default: {
+            fail("${title} not supported by: ${$facts['os']['distro']['codename']})")
+        }
+    }
+    $_pgversion = $pgversion ? {
+        undef   => $_pgversion_default,
+        default => $pgversion,
+    }
 
-    ensure_packages('pgtop')
+    package { [
+        "postgresql-${_pgversion}",
+        "postgresql-${_pgversion}-debversion",
+        "postgresql-client-${_pgversion}",
+        'libdbi-perl',
+        'libdbd-pg-perl',
+        'check-postgres',
+        'pgtop',
+    ]:
+        ensure => $ensure,
+    }
 
     class { '::postgresql::dirs':
         ensure    => $ensure,
-        pgversion => $pgversion,
+        pgversion => $_pgversion,
         root_dir  => $root_dir,
     }
 
-    $data_dir = "${root_dir}/${pgversion}/main"
+    $data_dir = "${root_dir}/${_pgversion}/main"
 
     exec { 'pgreload':
-        command     => "/usr/bin/pg_ctlcluster ${pgversion} main reload",
+        command     => "/usr/bin/pg_ctlcluster ${_pgversion} main reload",
         user        => 'postgres',
         refreshonly => true,
     }
@@ -66,29 +80,29 @@ class postgresql::server(
     if $use_ssl {
         ssl::wildcard { 'postgresql wildcard': }
 
-        file { "/etc/postgresql/${pgversion}/main/ssl":
+        file { "/etc/postgresql/${_pgversion}/main/ssl":
             ensure => directory,
             owner  => 'postgres',
             group  => 'postgres',
         }
 
-        file { "/etc/postgresql/${pgversion}/main/ssl/wildcard.miraheze.org.key":
+        file { "/etc/postgresql/${_pgversion}/main/ssl/wildcard.miraheze.org.key":
             ensure  => 'present',
             source  => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
             owner   => 'postgres',
             group   => 'postgres',
             mode    => '0600',
-            require => File["/etc/postgresql/${pgversion}/main/ssl"],
+            require => File["/etc/postgresql/${_pgversion}/main/ssl"],
         }
 
-        file { "/etc/postgresql/${pgversion}/main/ssl.conf":
+        file { "/etc/postgresql/${_pgversion}/main/ssl.conf":
             ensure  => $ensure,
             content => template('postgresql/ssl.conf.erb'),
             owner   => 'root',
             group   => 'root',
             mode    => '0444',
             before  => Service['postgresql'],
-            require => File["/etc/postgresql/${pgversion}/main/ssl/wildcard.miraheze.org.key"],
+            require => File["/etc/postgresql/${_pgversion}/main/ssl/wildcard.miraheze.org.key"],
         }
     }
 
@@ -96,7 +110,7 @@ class postgresql::server(
         ensure  => ensure_service($ensure),
     }
 
-    file { "/etc/postgresql/${pgversion}/main/postgresql.conf":
+    file { "/etc/postgresql/${_pgversion}/main/postgresql.conf":
         ensure  => $ensure,
         content => template('postgresql/postgresql.conf.erb'),
         owner   => 'root',

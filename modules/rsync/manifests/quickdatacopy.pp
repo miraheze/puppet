@@ -59,9 +59,9 @@ define rsync::quickdatacopy(
           fail('the title of rsync::quickdatacopy must not include whitespace')
       }
 
-      ensure_packages(['rsync'])
+      stdlib::ensure_packages(['rsync'])
 
-      if $source_host == $::fqdn {
+      if $source_host == $facts['networking']['fqdn'] {
 
           include rsync::server
 
@@ -96,10 +96,10 @@ define rsync::quickdatacopy(
           default => "--chown=${chown}",
       }
 
-      if $dest_host == $::fqdn {
+      if $dest_host == $facts['networking']['fqdn'] {
 
           if $server_uses_stunnel {
-              ensure_packages(['stunnel4'])
+              stdlib::ensure_packages(['stunnel4'])
 
               file { $ssl_wrapper_path:
                   ensure  => $ensure,
@@ -127,7 +127,7 @@ define rsync::quickdatacopy(
       # Default to 'absent' to handle proper cleanup when 'flipping' replication
       # (i.e. swap source and dest hosts)
 
-      if $auto_sync and ($dest_host == $::fqdn) {
+      if $auto_sync and ($dest_host == $facts['networking']['fqdn']) {
           $timer_ensure = $ensure
       } else {
           $timer_ensure = 'absent'

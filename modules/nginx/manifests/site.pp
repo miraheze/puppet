@@ -64,10 +64,10 @@ define nginx::site(
     if !defined(Monitoring::Services['HTTPS']) {
         monitoring::services { 'HTTPS':
             ensure        => $monitor_service,
-            check_command => 'check_http',
+            check_command => 'check_curl',
             vars          => {
-                address6         => $facts['ipaddress6'],
-                http_vhost       => $::fqdn,
+                address6         => $facts['networking']['ip6'],
+                http_vhost       => $facts['networking']['fqdn'],
                 http_ssl         => true,
                 http_ignore_body => true,
             },

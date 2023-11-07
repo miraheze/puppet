@@ -13,11 +13,19 @@ charset = "utf8mb4"
 
 [General]
 browser_archiving_disabled_enforce = 1
+assume_secure_protocol = 1
 force_ssl = 1
 noreply_email_address = "noreply@miraheze.org"
 enable_load_data_infile = 0
 salt = "<%= @salt %>"
 trusted_hosts[] = "matomo.miraheze.org"
+maintenance_mode = 0
+enable_internet_features = 0
+enable_tracking_failures_notification = 0
+
+[Tracker]
+bulk_requests_use_transaction = 0
+record_statistics = 1
 
 [mail]
 transport = "smtp"

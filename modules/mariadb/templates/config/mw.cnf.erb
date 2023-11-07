@@ -16,10 +16,6 @@ bind-address                   = ::
 key-buffer-size                = 16M
 myisam-recover-options         = FORCE,BACKUP
 
-# Default to read only on startup.
-# Unset it by doing `set global read_only = 0`
-read_only                      = 1
-
 max-allowed-packet             = 64M
 max-connect-errors             = 1000000
 sql-mode                       = STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_AUTO_VALUE_ON_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE
@@ -35,10 +31,12 @@ binlog_format                  = ROW
 <%- if @server_id -%>
 server_id = <%= @server_id %>
 <%- end -%>
+<%- if @enable_bin_logs -%>
 log-bin                        = <%= @datadir %>/mysql-bin
 expire-logs-days               = 3
 sync-binlog                    = 1
 slave_compressed_protocol      = 1
+<%- end -%>
 
 local_infile                   = 0
 
@@ -46,8 +44,8 @@ tmp-table-size                 = 64M
 max-heap-table-size            = 64M
 max-connections                = <%= @max_connections %>
 open-files-limit               = 200000
-table-open-cache               = 50000
-table-definition-cache         = 40000
+table_open_cache               = 150000
+table_definition_cache         = 75400
 
 # thread and connection handling
 thread_handling                = pool-of-threads
@@ -66,6 +64,7 @@ wait_timeout                   = 3600
 
 innodb-flush-method            = O_DIRECT
 innodb_thread_concurrency      = 0
+innodb_flush_neighbors         = 0
 innodb_io_capacity             = 1000
 innodb_stats_method            = nulls_unequal
 innodb-log-file-size           = 256M
@@ -74,7 +73,10 @@ innodb-file-per-table          = 1
 innodb-buffer-pool-size        = <%= @innodb_buffer_pool_size %>
 innodb_lock_wait_timeout       = 120
 innodb-stats-on-metadata       = OFF
-innodb_ft_total_cache_size     = 150000000
+# Defaults to 8000000 (8MB)
+# We set this to 150000000 (200MB)
+innodb_ft_cache_size           = 200000000
+innodb_ft_total_cache_size     = 640000000
 innodb_adaptive_hash_index     = OFF
 # From 10.5.7+ the default has been changed to 90%.
 # Change this back to 75%.

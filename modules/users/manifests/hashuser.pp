@@ -5,13 +5,13 @@ define users::hashuser(
 
     $uinfo = $phash['users'][$name]
 
-    if has_key($uinfo, 'gid') {
+    if ('gid' in $uinfo) {
         $group_id = $uinfo['gid']
     } else {
         $group_id = $uinfo['uid']
     }
 
-    if has_key($uinfo, 'ssh_keys') {
+    if ('ssh_keys' in $uinfo) {
         $key_set = $uinfo['ssh_keys']
     } else {
         $key_set = []

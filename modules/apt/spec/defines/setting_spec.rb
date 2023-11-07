@@ -11,13 +11,13 @@ describe 'apt::setting' do
         name: 'Debian',
         release: {
           major: '9',
-          full: '9.0',
+          full: '9.0'
         },
         distro: {
           codename: 'stretch',
-          id: 'Debian',
-        },
-      },
+          id: 'Debian'
+        }
+      }
     }
   end
   let(:title) { 'conf-teddybear' }
@@ -27,11 +27,11 @@ describe 'apt::setting' do
   describe 'when using the defaults' do
     context 'without source or content' do
       it do
-        is_expected.to raise_error(Puppet::Error, %r{needs either of })
+        expect(subject).to raise_error(Puppet::Error, %r{needs either of })
       end
     end
 
-    context 'with title=conf-teddybear ' do
+    context 'with title=conf-teddybear' do
       let(:params) { default_params }
 
       it { is_expected.to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]') }
@@ -55,10 +55,10 @@ describe 'apt::setting' do
       let(:params) { { source: 'puppet:///la/die/dah' } }
 
       it {
-        is_expected.to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]').with(ensure: 'file',
-                                                                                                                owner: 'root',
-                                                                                                                group: 'root',
-                                                                                                                source: params[:source].to_s)
+        expect(subject).to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]').with(ensure: 'file',
+                                                                                                                    owner: 'root',
+                                                                                                                    group: 'root',
+                                                                                                                    source: params[:source].to_s)
       }
     end
 
@@ -66,10 +66,10 @@ describe 'apt::setting' do
       let(:params) { default_params }
 
       it {
-        is_expected.to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]').with(ensure: 'file',
-                                                                                                                owner: 'root',
-                                                                                                                group: 'root',
-                                                                                                                content: params[:content].to_s)
+        expect(subject).to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]').with(ensure: 'file',
+                                                                                                                    owner: 'root',
+                                                                                                                    group: 'root',
+                                                                                                                    content: params[:content].to_s)
       }
     end
   end
@@ -87,13 +87,13 @@ describe 'apt::setting' do
           name: 'Debian',
           release: {
             major: '9',
-            full: '9.0',
+            full: '9.0'
           },
           distro: {
             codename: 'stretch',
-            id: 'Debian',
-          },
-        },
+            id: 'Debian'
+          }
+        }
       }
     end
     let(:title) { 'conf-teddybear' }
@@ -109,7 +109,7 @@ describe 'apt::setting' do
       let(:params) { default_params.merge(source: 'la') }
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{cannot have both })
+        expect(subject).to raise_error(Puppet::Error, %r{cannot have both })
       end
     end
 
@@ -118,7 +118,7 @@ describe 'apt::setting' do
       let(:params) { default_params }
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{must start with either})
+        expect(subject).to raise_error(Puppet::Error, %r{must start with either})
       end
     end
 
@@ -126,7 +126,7 @@ describe 'apt::setting' do
       let(:params) { default_params.merge(ensure: 'banana') }
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{Enum\['absent', 'file', 'present'\]})
+        expect(subject).to raise_error(Puppet::Error, %r{Enum\['absent', 'file', 'present'\]})
       end
     end
 
@@ -147,7 +147,7 @@ describe 'apt::setting' do
     let(:params) { default_params.merge(ensure: 'absent') }
 
     it {
-      is_expected.to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]').with(ensure: 'absent')
+      expect(subject).to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]').with(ensure: 'absent')
     }
   end
 end

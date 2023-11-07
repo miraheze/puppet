@@ -1,6 +1,6 @@
 # Prometheus Elasticsearch query metrics exporter.
 class prometheus::exporter::elasticsearch {
-    ensure_packages([
+    stdlib::ensure_packages([
         'python3-click',
         'python3-colorama',
         'python3-configobj',
@@ -43,9 +43,9 @@ class prometheus::exporter::elasticsearch {
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Prometheus]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()

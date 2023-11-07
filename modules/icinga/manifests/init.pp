@@ -53,7 +53,7 @@ class icinga(
   Array[String]                        $extra_packages  = [],
   Enum['file', 'syslog']               $logging_type    = 'file',
   Optional[Icinga::LogLevel]           $logging_level   = undef,
-  String                               $cert_name       = $::fqdn,
+  String                               $cert_name       = $facts['networking']['fqdn'],
   Boolean                              $prepare_web     = false,
 ) {
 
@@ -119,7 +119,7 @@ class icinga(
         $icinga_shell = '/bin/false'
       }
 
-      case $::osfamily {
+      case $facts['os']['family'] {
         'redhat': {
           package { [ 'nagios-common', $icinga_package ]+$extra_packages:
             ensure => installed,
@@ -176,7 +176,7 @@ class icinga(
       }
 
       if $ssh_public_key {
-        ssh_authorized_key { "${icinga_user}@${::fqdn}":
+        ssh_authorized_key { "${icinga_user}@${facts['networking']['fqdn']}":
           ensure => present,
           user   => $icinga_user,
           key    => $ssh_public_key,

@@ -2,7 +2,7 @@
 class ssl::web {
     include ssl::nginx
 
-    ensure_packages(['python3-flask', 'python3-filelock'])
+    stdlib::ensure_packages(['python3-flask', 'python3-filelock'])
 
     file { '/usr/local/bin/mirahezerenewssl.py':
         ensure => present,
@@ -18,9 +18,9 @@ class ssl::web {
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Icinga2]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
@@ -37,7 +37,7 @@ class ssl::web {
         check_command => 'tcp',
         docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#MirahezeRenewSSL',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $facts['networking']['ip6'],
             tcp_port    => '5000',
         },
     }

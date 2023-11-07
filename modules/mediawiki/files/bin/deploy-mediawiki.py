@@ -6,7 +6,7 @@ import os
 import time
 import requests
 import socket
-from sys import exit
+import sys
 from langcodes import tag_is_valid
 
 
@@ -26,14 +26,14 @@ class EnvironmentList(TypedDict):
 
 
 beta: Environment = {
-    'wikidbname': 'betawiki',
-    'wikiurl': 'beta.betaheze.org',
+    'wikidbname': 'metawikibeta',
+    'wikiurl': 'meta.mirabeta.org',
     'servers': ['test131'],
 }
 prod: Environment = {
     'wikidbname': 'testwiki',  # don't use loginwiki anymore - we want this to be an experimental wiki
     'wikiurl': 'publictestwiki.com',
-    'servers': ['mw121', 'mw122', 'mw131', 'mw132', 'mw141', 'mw142', 'mwtask141'],
+    'servers': ['mw131', 'mw132', 'mw133', 'mw134', 'mw141', 'mw142', 'mw143', 'mwtask141'],
 }
 ENVIRONMENTS: EnvironmentList = {
     'beta': beta,
@@ -71,7 +71,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
                 os.system('/usr/local/bin/logsalmsg DEPLOY ABORTED: Non-Zero Exit Code in prep, see output.')
             if leave:
                 print('Exiting due to non-zero status.')
-                exit(1)
+                sys.exit(1)
             return True
     return False
 
@@ -113,7 +113,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
                 print(message)
             else:
                 os.system(message)
-            exit(3)
+            sys.exit(3)
     return up
 
 
@@ -155,7 +155,7 @@ def _construct_rsync_command(time: str, dest: str, recursive: bool = True, local
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
         return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.miraheze.org:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
-    raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')  # noqa: R503
+    raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
 
 def _construct_git_pull(repo: str, submodules: bool = False, branch: str | None = None) -> str:
@@ -193,12 +193,8 @@ def run(args: argparse.Namespace, start: float) -> None:
         else:
             print(text)
         pull = []
-        if args.world and not args.pull:
-            pull = ['world']
         if args.pull:
             pull = str(args.pull).split(',')
-        if args.world and 'world' not in pull:
-            pull.append('world')
         if pull:
             for repo in pull:
                 if repo == 'world':
@@ -218,7 +214,10 @@ def run(args: argparse.Namespace, start: float) -> None:
                 if option == 'world':  # install steps for w
                     os.chdir(_get_staging_path('world'))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer install --no-dev --quiet'))
-                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/w php /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
+                    scriptOptions = ''
+                    if os.path.isfile('/srv/mediawiki-staging/w/maintenance/run.php'):
+                        scriptOptions = '/srv/mediawiki-staging/w/maintenance/run.php'
+                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/w php {scriptOptions} /srv/mediawiki-staging/w/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append('/srv/mediawiki/cache/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
@@ -232,7 +231,10 @@ def run(args: argparse.Namespace, start: float) -> None:
                 rsync.append(_construct_rsync_command(time=args.ignoretime, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extensionlist:  # when adding skins/exts
-            rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
+            scriptOptions = ''
+            if os.path.isfile('/srv/mediawiki/w/maintenance/run.php'):
+                scriptOptions = '/srv/mediawiki/w/maintenance/run.php'
+            rebuild.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]}')
 
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))
@@ -247,8 +249,11 @@ def run(args: argparse.Namespace, start: float) -> None:
             else:
                 lang = ''
 
-            postinstall.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --output /srv/mediawiki/config/ExtensionMessageFiles.php')
-            rebuild.append(f'sudo -u www-data php /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
+            scriptOptions = ''
+            if os.path.isfile('/srv/mediawiki/w/maintenance/run.php'):
+                scriptOptions = '/srv/mediawiki/w/maintenance/run.php'
+            postinstall.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/extensions/MirahezeMagic/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --extensions-dir=/srv/mediawiki/w/extensions:/srv/mediawiki/w/skins --output /srv/mediawiki/config/ExtensionMessageFiles.php')
+            rebuild.append(f'sudo -u www-data php {scriptOptions} /srv/mediawiki/w/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
 
         for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
             exitcodes.append(run_command(cmd))
@@ -296,7 +301,7 @@ def run(args: argparse.Namespace, start: float) -> None:
     else:
         print(fintext)
     if failed:
-        exit(1)
+        sys.exit(1)
 
 
 if __name__ == '__main__':

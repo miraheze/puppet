@@ -38,3 +38,6 @@ $wmgSwiftTempUrlKey = "<%= @swift_temp_url_key %>";
 
 // Reports write key
 $wgMirahezeReportsWriteKey = "<%= @reports_write_key %>";
+
+// Google Translate API key for Meta
+$wmgTranslateGoogleTranslateMetaKey = "<%= @google_translate_apikey_meta %>";

@@ -1,16 +1,6 @@
 class prometheus::exporter::postfix {
 
-    file { '/opt/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb':
-        ensure => present,
-        source => 'puppet:///modules/prometheus/packages/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb',
-    }
-
-    package { 'prometheus-postfix-exporter':
-        ensure   => installed,
-        provider => dpkg,
-        source   => '/opt/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb',
-        require  => File['/opt/prometheus-postfix-exporter_0.2.0-3+b2_amd64.deb'],
-    }
+    ensure_packages(['prometheus-postfix-exporter'])
 
     systemd::service { 'prometheus-postfix-exporter':
         ensure  => present,
@@ -22,9 +12,9 @@ class prometheus::exporter::postfix {
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Prometheus]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()

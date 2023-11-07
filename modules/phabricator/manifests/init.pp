@@ -2,7 +2,7 @@
 class phabricator (
   Integer $request_timeout = lookup('phabricator::php::request_timeout', {'default_value' => 60}),
 ) {
-    ensure_packages(['python3-pygments', 'subversion'])
+    stdlib::ensure_packages(['python3-pygments', 'subversion'])
 
     $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',
@@ -13,7 +13,6 @@ class phabricator (
         'error_reporting'                 => 'E_ALL & ~E_STRICT',
         'mysql'                           => { 'connect_timeout' => 3 },
         'default_socket_timeout'          => 60,
-        'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
         'opcache' => {
                 'enable' => 1,
@@ -24,7 +23,7 @@ class phabricator (
                 'validate_timestamps' => 1,
                 'revalidate_freq' => 10,
         },
-        'max_execution_time' => 230,
+        'max_execution_time' => 60,
         'post_max_size' => '10M',
         'track_errors' => 'Off',
         'upload_max_filesize' => '10M',
@@ -40,7 +39,7 @@ class phabricator (
         'zip',
     ]
 
-    $php_version = lookup('php::php_version', {'default_value' => '7.4'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
     class { '::php':
@@ -120,40 +119,30 @@ class phabricator (
         ensure => directory,
     }
 
+    file { '/srv/phab/libext':
+        ensure  => directory,
+        require => File['/srv/phab']
+    }
+
     git::clone { 'arcanist':
         ensure    => present,
         directory => '/srv/phab/arcanist',
-        origin    => 'https://github.com/phacility/arcanist.git',
+        origin    => 'https://github.com/phorgeit/arcanist.git',
         require   => File['/srv/phab'],
     }
 
-    git::clone { 'phabricator':
+    git::clone { 'phorge':
         ensure    => present,
-        directory => '/srv/phab/phabricator',
-        origin    => 'https://github.com/phacility/phabricator.git',
+        directory => '/srv/phab/phorge',
+        origin    => 'https://github.com/phorgeit/phorge.git',
         require   => File['/srv/phab'],
     }
-
-    #exec { "chk_phab_ext_git_exist":
-    #    command => 'true',
-    #    path    =>  ['/usr/bin', '/usr/sbin', '/bin'],
-    #    onlyif  => 'test ! -d /srv/phab/phabricator/src/extensions/.git'
-    #}
-
-    #file {'remove_phab_ext_dir_if_no_git':
-    #    ensure  => absent,
-    #    path    => '/srv/phab/phabricator/src/extensions',
-    #    recurse => true,
-    #    purge   => true,
-    #    force   => true,
-    #    require => Exec['chk_phab_ext_git_exist'],
-    #}
 
     git::clone { 'phabricator-extensions':
         ensure    => latest,
-        directory => '/srv/phab/phabricator/src/extensions',
+        directory => '/srv/phab/libext/phab-extensions',
         origin    => 'https://github.com/miraheze/phabricator-extensions.git',
-        require   => File['/srv/phab'],
+        require   => File['/srv/phab/libext'],
     }
 
     file { '/srv/phab/repos':
@@ -193,20 +182,20 @@ class phabricator (
         ],
     }
 
-    $phab_settings = merge($phab_yaml, $phab_private, $phab_setting)
+    $phab_settings = $phab_yaml + $phab_private + $phab_setting
 
-    file { '/srv/phab/phabricator/conf/local/local.json':
+    file { '/srv/phab/phorge/conf/local/local.json':
         ensure  => present,
-        content => template('phabricator/local.json.erb'),
+        content => stdlib::to_json_pretty($phab_settings),
         notify  => Service['phd'],
-        require => Git::Clone['phabricator'],
+        require => Git::Clone['phorge'],
     }
 
     systemd::service { 'phd':
         ensure  => present,
         content => systemd_template('phd'),
         restart => true,
-        require => File['/srv/phab/phabricator/conf/local/local.json'],
+        require => File['/srv/phab/phorge/conf/local/local.json'],
     }
 
     monitoring::services { 'phab.miraheze.wiki HTTPS':
@@ -233,7 +222,7 @@ class phabricator (
 
     cron { 'backups-phabricator':
         ensure   => present,
-        command  => '/usr/local/bin/miraheze-backup backup phabricator > /var/log/phabricator-backup.log',
+        command  => '/usr/local/bin/miraheze-backup backup phabricator > /var/log/phabricator-backup.log 2>&1',
         user     => 'root',
         minute   => '0',
         hour     => '1',

@@ -39,7 +39,7 @@ class prometheus::exporter::statsd_exporter (
     }
 
     file { $config:
-        content => to_yaml({'defaults' => $defaults, 'mappings' => $mappings}),
+        content => stdlib::to_yaml({'defaults' => $defaults, 'mappings' => $mappings}),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
@@ -62,9 +62,9 @@ class prometheus::exporter::statsd_exporter (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Prometheus]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()

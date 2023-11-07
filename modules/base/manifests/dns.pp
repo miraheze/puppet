@@ -4,12 +4,18 @@ class base::dns {
         ensure => present,
     }
 
+    if $facts['processors']['count'] < 4 {
+        $threads = 4
+    } else {
+        $threads = $facts['processors']['count']
+    }
+
     file { '/etc/powerdns/recursor.conf':
         mode   => '0444',
         owner  => 'pdns',
         group  => 'pdns',
         notify => Service['pdns-recursor'],
-        source => 'puppet:///modules/base/dns/recursor.conf',
+        content => template('base/dns/recursor.conf.erb'),
     }
 
     service { 'pdns-recursor':

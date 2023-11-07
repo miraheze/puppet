@@ -13,7 +13,8 @@
 #   Major version which should be installed, e.g. '8u101' or '9.0.4'. Must be used together with version_minor.
 #
 # @param version_minor
-#   Minor version which should be installed, e.g. 'b12' (for version = '8') or '11' (for version != '8'). Must be used together with version_major.
+#   Minor version which should be installed, e.g. 'b12' (for version = '8') or '11' (for version != '8'). 
+#   Must be used together with version_major.
 #
 # @param java
 #   Type of Java Standard Edition to install, jdk or jre.
@@ -24,12 +25,15 @@
 # @param proxy_type
 #   Proxy server type (none|http|https|ftp). (passed to archive)
 #
+# @param url
+#   Full URL
+#
 # @param basedir
 #   Directory under which the installation will occur. If not set, defaults to
 #   /usr/lib/jvm for Debian and /usr/java for RedHat.
 #
 # @param manage_basedir
-#   Whether to manage the basedir directory.  Defaults to false.
+#   Whether to manage the basedir directory.
 #   Note: /usr/lib/jvm is managed for Debian by default, separate from this parameter.
 #
 # @param package_type
@@ -44,22 +48,22 @@
 #   The name for the optional symlink in the installation directory.
 #
 define java::adopt (
-  $ensure         = 'present',
-  $version        = '8',
-  $version_major  = undef,
-  $version_minor  = undef,
-  $java           = 'jdk',
-  $proxy_server   = undef,
-  $proxy_type     = undef,
-  $basedir        = undef,
-  $manage_basedir = true,
-  $package_type   = undef,
-  $manage_symlink = false,
-  $symlink_name   = undef,
+  Enum['present']   $ensure         = 'present',
+  String[1]         $version        = '8',
+  Optional[String]  $version_major  = undef,
+  Optional[String]  $version_minor  = undef,
+  String[1]         $java           = 'jdk',
+  Optional[String]  $proxy_server   = undef,
+  Optional[String]  $proxy_type     = undef,
+  Optional[String]  $url            = undef,
+  Optional[String]  $basedir        = undef,
+  Boolean           $manage_basedir = true,
+  Optional[String]  $package_type   = undef,
+  Boolean           $manage_symlink = false,
+  Optional[String]  $symlink_name   = undef,
 ) {
-
   # archive module is used to download the java package
-  include ::archive
+  include archive
 
   # validate java Standard Edition to download
   if $java !~ /(jre|jdk)/ {
@@ -68,7 +72,6 @@ define java::adopt (
 
   # determine AdoptOpenJDK Java major and minor version, and installation path
   if $version_major and $version_minor {
-
     $release_major = $version_major
     $release_minor = $version_minor
 
@@ -102,7 +105,6 @@ define java::adopt (
     } else {
       fail ("unsupported version ${_version}")
     }
-
   } else {
     $_version = $version
     $_version_int = Numeric($_version)
@@ -172,7 +174,8 @@ define java::adopt (
           }
         }
         default : {
-          fail ("unsupported platform ${$facts['os']['name']}") }
+          fail ("unsupported platform ${$facts['os']['name']}")
+        }
       }
 
       $creates_path = "${_basedir}/${install_path}"
@@ -180,12 +183,12 @@ define java::adopt (
       $destination_dir = '/tmp/'
     }
     default : {
-      fail ( "unsupported platform ${$facts['kernel']}" ) }
+      fail ( "unsupported platform ${$facts['kernel']}" )
+    }
   }
 
   # set java architecture nomenclature
   $os_architecture = $facts['os']['architecture'] ? {
-    undef => $facts['architecture'],
     default => $facts['os']['architecture']
   }
 
@@ -234,20 +237,21 @@ define java::adopt (
     $spacer = '%2B'
     $download_folder_prefix = 'jdk-'
   }
-  $source = "https://github.com/AdoptOpenJDK/openjdk${_version}-binaries/releases/download/${download_folder_prefix}${release_major}${spacer}${release_minor}/${package_name}"
+
+  # if complete URL is provided, use this value for source in archive resource
+  if $url {
+    $source = $url
+  }
+  else {
+    $source = "https://github.com/AdoptOpenJDK/openjdk${_version}-binaries/releases/download/${download_folder_prefix}${release_major}${spacer}${release_minor}/${package_name}"
+    notice ("Default source url : ${source}")
+  }
 
   # full path to the installer
   $destination = "${destination_dir}${package_name}"
   notice ("Destination is ${destination}")
 
-  case $_package_type {
-    'tar.gz' : {
-      $install_command = "tar -zxf ${destination} -C ${_basedir}"
-    }
-    default : {
-      $install_command = "tar -zxf ${destination} -C ${_basedir}"
-    }
-  }
+  $install_command = ['tar', '-zxf', $destination, '-C', $_basedir]
 
   case $ensure {
     'present' : {
@@ -265,8 +269,9 @@ define java::adopt (
           case $facts['os']['family'] {
             'Debian' : {
               ensure_resource('file', $_basedir, {
-                ensure => directory,
-              })
+                  ensure => directory,
+                }
+              )
               $install_requires = [Archive[$destination], File[$_basedir]]
             }
             default : {
@@ -287,7 +292,7 @@ define java::adopt (
             path    => '/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin',
             command => $install_command,
             creates => $creates_path,
-            require => $install_requires
+            require => $install_requires,
           }
 
           if ($manage_symlink and $symlink_name) {
@@ -297,7 +302,6 @@ define java::adopt (
               require => Exec["Install AdoptOpenJDK java ${java} ${_version} ${release_major} ${release_minor}"],
             }
           }
-
         }
         default : {
           fail ("unsupported platform ${$facts['kernel']}")
@@ -308,5 +312,4 @@ define java::adopt (
       notice ("Action ${ensure} not supported.")
     }
   }
-
 }

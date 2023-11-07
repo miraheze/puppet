@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v4.2.0](https://github.com/voxpupuli/puppet-mongodb/tree/v4.2.0) (2022-12-07)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-mongodb/compare/v4.1.1...v4.2.0)
+
+**Implemented enhancements:**
+
+- Add TLS options [\#645](https://github.com/voxpupuli/puppet-mongodb/pull/645) ([poloz-lab](https://github.com/poloz-lab))
+- SCRAM-SHA-256 support [\#643](https://github.com/voxpupuli/puppet-mongodb/pull/643) ([poloz-lab](https://github.com/poloz-lab))
+
+**Fixed bugs:**
+
+- Auth in mongod 3.6 [\#437](https://github.com/voxpupuli/puppet-mongodb/issues/437)
+- mongodb\_user ignores `database` parameter when removing a user [\#644](https://github.com/voxpupuli/puppet-mongodb/pull/644) ([SeanHood](https://github.com/SeanHood))
+- Fix ReplicaSet with Auth creation \(new error message to handle\) [\#632](https://github.com/voxpupuli/puppet-mongodb/pull/632) ([BDelacour](https://github.com/BDelacour))
+
+## [v4.1.1](https://github.com/voxpupuli/puppet-mongodb/tree/v4.1.1) (2022-03-12)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-mongodb/compare/v4.1.0...v4.1.1)
+
+**Fixed bugs:**
+
+- Do not manage the repository on RedHat when manage\_package\_repo is set to false [\#637](https://github.com/voxpupuli/puppet-mongodb/pull/637) ([fe80](https://github.com/fe80))
+
+**Closed issues:**
+
+- `mongodb::repo` is always include for some family [\#636](https://github.com/voxpupuli/puppet-mongodb/issues/636)
+
 ## [v4.1.0](https://github.com/voxpupuli/puppet-mongodb/tree/v4.1.0) (2021-10-28)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-mongodb/compare/v4.0.0...v4.1.0)

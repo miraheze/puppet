@@ -72,11 +72,11 @@ class ulogd (
   # An array of supported extensions that require additional packages
   # dbi, mysql, pgsql and sqlite are options for the future
   $supported_extensions = ['JSON', 'PCAP']
-  ensure_packages('ulogd2')
+  stdlib::ensure_packages('ulogd2')
 
   $supported_extensions.each |String $extension| {
     if $extension in union($nflog, $nfct, $acct)  {
-      ensure_packages("ulogd2-${extension.downcase}")
+      stdlib::ensure_packages("ulogd2-${extension.downcase}")
     }
   }
   file {$config_file:
@@ -85,7 +85,8 @@ class ulogd (
     notify  => Service['ulogd2'],
   }
   service {'ulogd2':
-    ensure => 'running',
-    enable => true,
+    ensure   => 'running',
+    enable   => true,
+    require => Package['ulogd2'],
   }
 }

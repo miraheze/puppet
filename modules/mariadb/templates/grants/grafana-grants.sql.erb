@@ -1,9 +1,0 @@
--- Grants for 'grafana'@''
-
-GRANT USAGE
-    ON *.* TO 'grafana'@'%'
-    IDENTIFIED BY '<%= @grafana_password %>'
-    REQUIRE SSL;
-
-GRANT ALL PRIVILEGES
-    ON `grafana`.* TO 'grafana'@'%';

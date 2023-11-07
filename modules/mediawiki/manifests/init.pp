@@ -38,15 +38,19 @@ class mediawiki(
     }
 
     if lookup('jobrunner::intensive', {'default_value' => false}) {
-        ensure_packages(
-            'internetarchive',
-            {
-                ensure   => '3.0.2',
-                provider => 'pip3',
-                before   => File['/usr/local/bin/iaupload'],
-                require  => Package['python3-pip'],
-            },
-        )
+        if ($facts['os']['distro']['codename'] == 'bookworm') {
+            stdlib::ensure_packages(['python3-internetarchive'])
+        } else {
+            stdlib::ensure_packages(
+                'internetarchive',
+                {
+                    ensure   => '3.3.0',
+                    provider => 'pip3',
+                    before   => File['/usr/local/bin/iaupload'],
+                    require  => Package['python3-pip'],
+                },
+            )
+        }
 
         file { '/usr/local/bin/iaupload':
             ensure => present,
@@ -173,6 +177,7 @@ class mediawiki(
     $swift_password             = lookup('mediawiki::swift_password')
     $swift_temp_url_key         = lookup('mediawiki::swift_temp_url_key')
     $reports_write_key          = lookup('reports::reports_write_key')
+    $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
@@ -214,11 +219,12 @@ class mediawiki(
         require => File['/srv/mediawiki/config'],
     }
 
-    file { '/srv/mediawiki/stopforumspam/listed_ip_30_ipv46_all.txt':
-        ensure  => present,
-        mode    => '0755',
-        source  => 'puppet:///private/mediawiki/listed_ip_30_ipv46_all.txt',
-        require => File['/srv/mediawiki/stopforumspam'],
+    file { '/srv/mediawiki/stopforumspam/listed_ip_90_ipv46_all.txt':
+        ensure    => present,
+        mode      => '0755',
+        source    => 'puppet:///private/mediawiki/listed_ip_90_ipv46_all.txt',
+        show_diff => false,
+        require   => File['/srv/mediawiki/stopforumspam'],
     }
 
     sudo::user { 'www-data_sudo_itself':
@@ -242,7 +248,7 @@ class mediawiki(
     }
 
     tidy { [ '/tmp', '/tmp/magick-tmp' ]:
-        matches => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v' ],
+        matches => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v', 'php*', 'shellbox-*' ],
         age     => '2h',
         type    => 'atime',
         backup  => false,

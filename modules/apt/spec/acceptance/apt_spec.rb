@@ -29,10 +29,10 @@ everything_everything_pp = <<-MANIFEST
         },
         sources => $sources,
       }
-  MANIFEST
+MANIFEST
 
 describe 'apt class' do
-  context 'with reset' do
+  context 'with test start reset' do
     it 'fixes the sources.list' do
       run_shell('cp /etc/apt/sources.list /tmp')
     end
@@ -45,13 +45,14 @@ describe 'apt class' do
         apply_manifest(everything_everything_pp, catch_failures: true)
       end
     end
+
     it 'stills work' do
       run_shell('apt-get update')
       run_shell('apt-get -y --force-yes upgrade')
     end
   end
 
-  context 'with reset' do
+  context 'with test end reset' do
     it 'fixes the sources.list' do
       run_shell('cp /tmp/sources.list /etc/apt')
     end

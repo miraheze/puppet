@@ -1,0 +1,4 @@
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+
+&include /etc/rsync.disable.d

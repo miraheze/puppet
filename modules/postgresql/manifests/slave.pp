@@ -35,7 +35,8 @@ class postgresql::slave(
     Boolean $use_ssl = false,
 ) {
 
-    $pgversion = $::lsbdistcodename ? {
+    $pgversion = $facts['os']['distro']['codename'] ? {
+        'bookworm' => 15,
         'bullseye' => '13',
         'buster'  => '11',
         'stretch' => '9.6',

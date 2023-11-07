@@ -1,10 +1,14 @@
+# Load extension
+load-libraries:
+  - '/srv/phab/libext/phab-extensions'
+
 # Logo/Wordmark
 ui.logo:
   'logoImagePHID': 'PHID-FILE-gtm67dpburyr56ogaqay'
   'wordmarkText': 'Miraheze'
 
 # MySQL
-mysql.port: 3306
+mysql.port: '3306'
 mysql.user: 'phabricator'
 mysql.host: 'db112.miraheze.org'
 
@@ -12,6 +16,7 @@ mysql.host: 'db112.miraheze.org'
 # Needs to match php.ini upload_max_filesize
 # Needs to match php.ini post_max_size for conduit
 storage.mysql-engine.max-size: 10000000
+storage.default-namespace: 'phabricator'
 
 metamta.default-address: 'noreply@miraheze.org'
 metamta.single-reply-handler-prefix: 'phabricator'

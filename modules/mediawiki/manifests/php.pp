@@ -1,13 +1,14 @@
 # === Class mediawiki::php
 class mediawiki::php (
-    Float $fpm_workers_multiplier      = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
-    Integer $fpm_min_child             = lookup('mediawiki::php::fpm::fpm_min_child', {'default_value' => 4}),
-    Integer $request_timeout           = lookup('mediawiki::php::request_timeout', {'default_value' => 60}),
-    VMlib::Php_version $php_version    = lookup('php::php_version', {'default_value' => '7.4'}),
-    Boolean $enable_fpm                = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
-    Boolean $enable_request_profiling  = lookup('mediawiki::php::enable_request_profiling', {'default_value' => false}),
-    String $memory_limit               = lookup('mediawiki::php::memory_limit', {'default_value' => '256M'}),
-    Optional[Hash] $fpm_config         = lookup('mediawiki::php::fpm_config', {default_value => undef}),
+    Float $fpm_workers_multiplier        = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
+    Integer $fpm_min_child               = lookup('mediawiki::php::fpm::fpm_min_child', {'default_value' => 4}),
+    Integer $request_timeout             = lookup('mediawiki::php::request_timeout', {'default_value' => 60}),
+    VMlib::Php_version $php_version      = lookup('php::php_version', {'default_value' => '7.4'}),
+    Boolean $enable_fpm                  = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
+    Boolean $enable_request_profiling    = lookup('mediawiki::php::enable_request_profiling', {'default_value' => false}),
+    String $memory_limit                 = lookup('mediawiki::php::memory_limit', {'default_value' => '256M'}),
+    Optional[Hash] $fpm_config           = lookup('mediawiki::php::fpm_config', {default_value => undef}),
+    Integer $emergency_restart_threshold = lookup('mediawiki::php::emergency_restart_threshold', {default_value => $facts['processors']['count']}),
 ) {
 
     $config_cli = {
@@ -26,22 +27,22 @@ class mediawiki::php (
     $base_config_fpm = {
         'opcache.enable'                  => 1,
         'opcache.interned_strings_buffer' => 50,
-        'opcache.memory_consumption'      => 300,
-        'opcache.max_accelerated_files'   => 24000,
+        'opcache.memory_consumption'      => 400,
+        'opcache.max_accelerated_files'   => 40000,
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,
         'opcache.revalidate_freq'         => 10,
         'display_errors'                  => 0,
         'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
-        'apc.shm_size'                    => '256M',
+        'apc.shm_size'                    => '1024M',
         'rlimit_core'                     => 0,
     }
     if $enable_fpm {
         $_sapis = ['cli', 'fpm']
         $_config = {
             'cli' => $config_cli,
-            'fpm' => merge($config_cli, $base_config_fpm, $fpm_config)
+            'fpm' => $config_cli + $base_config_fpm + $fpm_config
         }
         # Add systemd override for php-fpm, that should prevent a reload
         # if the fpm config files are broken.
@@ -89,7 +90,7 @@ class mediawiki::php (
     # Extensions that are installed with package-name php-$extension and, based
     # on the php version selected above, will install the proper extension
     # version based on apt priorities.
-    # php-luasandbox and  php-wikidiff2 are special cases as the package is *not*
+    # php-wikidiff2 are special cases as the package is *not*
     # compatible with all supported PHP versions.
     # Technically, it would be needed to inject ensure => latest in the packages,
     # but we prefer to handle the transitions with other tools than puppet.
@@ -97,11 +98,35 @@ class mediawiki::php (
         'apcu',
         'msgpack',
         'redis',
-        'luasandbox',
         'wikidiff2',
         'yaml',
     ]:
         ensure => present
+    }
+
+    stdlib::ensure_packages('liblua5.1-0')
+
+    if ($php_version == '8.2') {
+        file { '/usr/lib/php/20220829/luasandbox.so':
+            ensure  => present,
+            mode    => '0755',
+            source  => 'puppet:///modules/mediawiki/php/luasandbox.php82.so',
+            before  => Php::Extension['luasandbox'],
+            require => Package['liblua5.1-0'],
+        }
+    } else {
+        file { '/usr/lib/php/20190902/luasandbox.so':
+            ensure  => present,
+            mode    => '0755',
+            source  => 'puppet:///modules/mediawiki/php/luasandbox.php74.so',
+            before  => Php::Extension['luasandbox'],
+            require => Package['liblua5.1-0'],
+        }
+    }
+
+    php::extension{ 'luasandbox':
+        ensure       => present,
+        package_name => '',
     }
 
     # Extensions that require configuration.
@@ -162,7 +187,7 @@ class mediawiki::php (
             ensure => present,
             config => {
                 'emergency_restart_interval'  => '60s',
-                'emergency_restart_threshold' => $facts['processors']['count'],
+                'emergency_restart_threshold' => $emergency_restart_threshold,
                 'process.priority'            => -19,
             }
         }
@@ -199,20 +224,38 @@ class mediawiki::php (
     }
 
     # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
-    file { '/usr/lib/php/20190902/tideways_xhprof.so':
-        ensure => $profiling_ensure,
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/php/tideways_xhprof.so',
-        before => Php::Extension['tideways-xhprof'],
-    }
+    if ($php_version == '8.2') {
+        file { '/usr/lib/php/20220829/xhprof.so':
+            ensure => $profiling_ensure,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/xhprof.php82.so',
+            before => Php::Extension['xhprof'],
+        }
 
-    php::extension { 'tideways-xhprof':
-        ensure       => $profiling_ensure,
-        package_name => '',
-        priority     => 30,
-        config       => {
-            'extension'                       => 'tideways_xhprof.so',
-            'tideways_xhprof.clock_use_rdtsc' => '0',
+        php::extension { 'xhprof':
+            ensure       => $profiling_ensure,
+            package_name => '',
+            priority     => 30,
+            config       => {
+                'extension' => 'xhprof.so',
+            }
+        }
+    } else {
+        file { '/usr/lib/php/20190902/tideways_xhprof.so':
+            ensure => $profiling_ensure,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/tideways_xhprof.php74.so',
+            before => Php::Extension['tideways-xhprof'],
+        }
+
+        php::extension { 'tideways-xhprof':
+            ensure       => $profiling_ensure,
+            package_name => '',
+            priority     => 30,
+            config       => {
+                'extension'                       => 'tideways_xhprof.so',
+                'tideways_xhprof.clock_use_rdtsc' => '0',
+            }
         }
     }
 

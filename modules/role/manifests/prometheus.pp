@@ -11,7 +11,7 @@ class role::prometheus {
     file { '/etc/prometheus/targets/blackbox_web_urls.yaml':
         ensure  => present,
         mode    => '0444',
-        content => to_yaml([{'targets' => $blackbox_web_urls}])
+        content => stdlib::to_yaml([{'targets' => $blackbox_web_urls}])
     }
 
     $blackbox_jobs = [
@@ -278,9 +278,9 @@ class role::prometheus {
     }
 
     $firewall_grafana = join(
-        query_facts('Class[Role::Grafana]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Grafana]", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()

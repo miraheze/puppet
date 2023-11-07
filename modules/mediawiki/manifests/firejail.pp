@@ -2,7 +2,7 @@
 #
 # Firejail files for MediaWiki
 class mediawiki::firejail {
-    ensure_packages('firejail')
+    stdlib::ensure_packages('firejail')
 
     file { '/usr/local/bin/mediawiki-firejail-convert':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-convert.py',
@@ -27,6 +27,13 @@ class mediawiki::firejail {
 
     file { '/usr/local/bin/mediawiki-firejail-ghostscript':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-ghostscript.py',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0555',
+    }
+
+    file { '/usr/local/bin/mediawiki-firejail-rsvg-convert':
+        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-rsvg-convert.py',
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0555',

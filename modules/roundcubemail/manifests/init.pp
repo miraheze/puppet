@@ -46,7 +46,7 @@ class roundcubemail (
         'ldap',
     ]
 
-    $php_version = lookup('php::php_version', {'default_value' => '7.4'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
     class { '::php':
@@ -55,7 +55,7 @@ class roundcubemail (
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
             'cli' => $config_cli,
-            'fpm' => merge($config_cli, $config_fpm),
+            'fpm' => $config_cli + $config_fpm,
         },
     }
 
@@ -117,7 +117,7 @@ class roundcubemail (
         }
     }
 
-    ensure_packages([
+    stdlib::ensure_packages([
         "php${php_version}-pspell",
         'composer',
         'nodejs',
@@ -126,7 +126,7 @@ class roundcubemail (
     git::clone { 'roundcubemail':
         directory => '/srv/roundcubemail',
         origin    => 'https://github.com/roundcube/roundcubemail',
-        branch    => '1.6.0', # Current stable
+        branch    => '1.6.4', # Current stable
         owner     => 'www-data',
         group     => 'www-data',
     }

@@ -53,10 +53,9 @@ class role::openldap (
         ],
     }
 
-    openldap::server::access { 'admin-monitor-access':
+    openldap::server::access { '2 on cn=monitor':
         ensure => present,
         what   => 'dn.subtree="cn=monitor"',
-        suffix => 'cn=monitor',
         access => [
             'by dn="cn=admin,dc=miraheze,dc=org" write',
             'by dn="cn=monitor,dc=miraheze,dc=org" read',
@@ -86,10 +85,6 @@ class role::openldap (
         ensure => present,
     }
 
-    openldap::server::module { 'ppolicy':
-        ensure => present,
-    }
-
     openldap::server::module { 'deref':
         ensure => present,
     }
@@ -113,10 +108,10 @@ class role::openldap (
         path   => '/etc/ldap/schema/cosine.schema',
     }
 
-    openldap::server::schema { 'nis':
-        ensure => present,
-        path   => '/etc/ldap/schema/nis.ldif',
-    }
+    # openldap::server::schema { 'nis':
+    #    ensure => present,
+    #    path   => '/etc/ldap/schema/nis.ldif',
+    # }
 
     openldap::server::schema { 'inetorgperson':
         ensure => present,
@@ -138,11 +133,6 @@ class role::openldap (
         require => File['/etc/ldap/schema/postfix.schema'],
     }
 
-    openldap::server::schema { 'ppolicy':
-        ensure => present,
-        path   => '/etc/ldap/schema/ppolicy.schema',
-    }
-
     openldap::server::overlay { 'ppolicy':
         ensure  => present,
         suffix  => 'cn=config',
@@ -154,13 +144,13 @@ class role::openldap (
 
     class { 'openldap::client':
         base       => 'dc=miraheze,dc=org',
-        uri        => ["ldaps://${::fqdn}"],
+        uri        => ["ldaps://${facts['networking']['fqdn']}"],
         tls_cacert => '/etc/ssl/certs/Sectigo.crt',
     }
 
     include prometheus::exporter::openldap
 
-    ensure_packages('ldapvi')
+    stdlib::ensure_packages('ldapvi')
 
     file { '/etc/ldapvi.conf':
         content => template('role/openldap/ldapvi.conf.erb'),
@@ -184,9 +174,9 @@ class role::openldap (
     }
 
     $firewall_rules = join(
-        query_facts('Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Mail] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap]', ['ipaddress', 'ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and (Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Mail] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap])", ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
@@ -199,7 +189,7 @@ class role::openldap (
         srange => "(${firewall_rules})",
     }
 
-    # restart slapd if it uses more than 50% of memory (T130593)
+    # restart slapd if it uses more than 50% of memory
     cron { 'restart_slapd':
         ensure  => present,
         minute  => fqdn_rand(60, $title),
@@ -210,7 +200,7 @@ class role::openldap (
     monitoring::services { 'LDAP':
         check_command => 'ldap',
         vars          => {
-            ldap_address => $::fqdn,
+            ldap_address => $facts['networking']['fqdn'],
             ldap_base    => 'dc=miraheze,dc=org',
             ldap_v3      => true,
             ldap_ssl     => true,

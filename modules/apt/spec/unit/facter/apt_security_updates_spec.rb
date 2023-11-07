@@ -11,7 +11,8 @@ describe 'apt_security_updates fact' do
     before(:each) do
       allow(Facter.fact(:apt_has_updates)).to receive(:value).and_return(false)
     end
-    it { is_expected.to be nil }
+
+    it { is_expected.to be_nil }
   end
 
   describe 'when apt has security updates' do

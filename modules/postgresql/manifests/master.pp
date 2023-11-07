@@ -35,14 +35,9 @@
 #  include postgresql::master
 
 class postgresql::master(
-    String $master_server = $::fqdn,
+    String $master_server = $facts['networking']['fqdn'],
     Optional[Array] $includes = [],
-    String $pgversion = $::lsbdistcodename ? {
-        'bullseye' => '13',
-        'buster'  => '11',
-        'stretch' => '9.6',
-        'jessie'  => '9.4',
-    },
+    Optional[Numeric] $pgversion                   = undef,
     VMlib::Ensure $ensure = 'present',
     Integer $max_wal_senders = 5,
     Integer $checkpoint_segments = 64,
@@ -52,28 +47,37 @@ class postgresql::master(
     String $locale = 'en_US.UTF-8',
 ) {
 
-    $data_dir = "${root_dir}/${pgversion}/main"
+    $_pgversion = $pgversion ? {
+        undef   => $facts['os']['distro']['codename'] ? {
+            'buster'   => 11,
+            'bullseye' => 13,
+            'bookworm' => 15,
+            default    => fail("${title} not supported by: ${$facts['os']['distro']['codename']})")
+        },
+        default => $pgversion,
+    }
+    $data_dir = "${root_dir}/${_pgversion}/main"
 
     class { '::postgresql::server':
         ensure    => $ensure,
-        pgversion => $pgversion,
+        pgversion => $_pgversion,
         includes  => [ $includes, 'master.conf'],
         root_dir  => $root_dir,
         use_ssl   => $use_ssl,
     }
 
-    file { "/etc/postgresql/${pgversion}/main/master.conf":
+    file { "/etc/postgresql/${_pgversion}/main/master.conf":
         ensure  => $ensure,
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
         content => template('postgresql/master.conf.erb'),
-        require => Class['postgresql::server'],
+        require => Package["postgresql-${_pgversion}"],
     }
 
     if $ensure == 'present' {
         exec { 'pg-initdb':
-            command => "/usr/lib/postgresql/${pgversion}/bin/initdb --locale ${locale} -D ${data_dir}",
+            command => "/usr/lib/postgresql/${_pgversion}/bin/initdb --locale ${locale} -D ${data_dir}",
             user    => 'postgres',
             unless  => "/usr/bin/test -f ${data_dir}/PG_VERSION",
             require => Class['postgresql::server'],

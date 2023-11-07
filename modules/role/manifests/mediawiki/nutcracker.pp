@@ -2,6 +2,7 @@
 class role::mediawiki::nutcracker (
     Array[Variant[Stdlib::Host,String]] $memcached_servers_1 = lookup('memcached_servers_1', {'default_value' => []}),
     Array[Variant[Stdlib::Host,String]] $memcached_servers_3 = lookup('memcached_servers_3', {'default_value' => []}),
+    Array[Variant[Stdlib::Host,String]] $memcached_servers_test = lookup('memcached_servers_test', {'default_value' => []}),
 ) {
 
     if $memcached_servers_1 != [] and $memcached_servers_3 != [] {
@@ -13,7 +14,7 @@ class role::mediawiki::nutcracker (
                 listen               => '127.0.0.1:11212',
                 preconnect           => true,
                 server_connections   => 1,
-                timeout              => 1000,    # milliseconds
+                timeout              => 500,    # milliseconds
                 servers              => $memcached_servers_1,
             },
             'memcached_3'     => {
@@ -23,8 +24,18 @@ class role::mediawiki::nutcracker (
                 listen               => '127.0.0.1:11214',
                 preconnect           => true,
                 server_connections   => 1,
-                timeout              => 1000,    # milliseconds
+                timeout              => 500,    # milliseconds
                 servers              => $memcached_servers_3,
+            },
+            'memcached_test'     => {
+                auto_eject_hosts     => false,
+                distribution         => 'ketama',
+                hash                 => 'md5',
+                listen               => '127.0.0.1:11215',
+                preconnect           => true,
+                server_connections   => 1,
+                timeout              => 500,    # milliseconds
+                servers              => $memcached_servers_test,
             },
         }
 
@@ -39,7 +50,7 @@ class role::mediawiki::nutcracker (
         }
 
         systemd::unit { 'nutcracker':
-            content  => "[Service]\nCPUAccounting=yes\n",
+            content  => "[Service]\nCPUAccounting=yes\nRestart=always\n",
             override => true,
         }
 
@@ -48,32 +59,18 @@ class role::mediawiki::nutcracker (
             docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Nutcracker'
         }
 
-        ferm::rule { 'skip_nutcracker_conntrack_out_1':
+        ferm::rule { 'skip_nutcracker_conntrack_out':
             desc  => 'Skip outgoing connection tracking for Nutcracker',
             table => 'raw',
             chain => 'OUTPUT',
-            rule  => 'proto tcp sport (6378:6382 11212) NOTRACK;',
+            rule  => 'proto tcp sport (11212) NOTRACK;',
         }
 
-        ferm::rule { 'skip_nutcracker_conntrack_in_1':
+        ferm::rule { 'skip_nutcracker_conntrack_in':
             desc  => 'Skip incoming connection tracking for Nutcracker',
             table => 'raw',
             chain => 'PREROUTING',
-            rule  => 'proto tcp dport (6378:6382 11212) NOTRACK;',
-        }
-
-        ferm::rule { 'skip_nutcracker_conntrack_out_2':
-            desc  => 'Skip outgoing connection tracking for Nutcracker',
-            table => 'raw',
-            chain => 'OUTPUT',
-            rule  => 'proto tcp sport (6378:6382 11214) NOTRACK;',
-        }
-
-        ferm::rule { 'skip_nutcracker_conntrack_in_2':
-            desc  => 'Skip incoming connection tracking for Nutcracker',
-            table => 'raw',
-            chain => 'PREROUTING',
-            rule  => 'proto tcp dport (6378:6382 11214) NOTRACK;',
+            rule  => 'proto tcp dport (11212) NOTRACK;',
         }
     }
 }

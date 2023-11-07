@@ -1,6 +1,6 @@
 # === Class mediawiki::extensionsetup
 class mediawiki::extensionsetup {
-    ensure_packages('composer')
+    stdlib::ensure_packages('composer')
 
     $mwpath = '/srv/mediawiki-staging/w'
     file { [
@@ -333,6 +333,30 @@ class mediawiki::extensionsetup {
         path        => '/usr/bin',
         environment => [
             "HOME=${mwpath}/extensions/NearbyPages",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+    exec { 'webauthn_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/WebAuthn/vendor",
+        cwd         => "${mwpath}/extensions/WebAuthn",
+        path        => "/usr/bin",
+        environment => [
+            "HOME=${mwpath}/extensions/WebAuthn",
+            'HTTP_PROXY=http://bast.miraheze.org:8080'
+        ],
+        user        => 'www-data',
+        require     => Git::Clone['MediaWiki core'],
+    }
+    exec { 'oojsplus_composer':
+        command     => $composer,
+        creates     => "${mwpath}/extensions/OOJSPlus/vendor",
+        cwd         => "${mwpath}/extensions/OOJSPlus",
+        path        => "/usr/bin",
+        environment => [
+            "HOME=${mwpath}/extensions/OOJSPlus",
             'HTTP_PROXY=http://bast.miraheze.org:8080'
         ],
         user        => 'www-data',

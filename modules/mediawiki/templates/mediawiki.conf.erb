@@ -1,9 +1,9 @@
 server {
 	# We can only set backlog once per port (so this will be applied to the others below)
-	listen 80 deferred backlog=4096;
-	listen [::]:80 deferred ipv6only=on backlog=4096;
-	listen 443 ssl deferred http2 backlog=4096;
-	listen [::]:443 deferred ssl http2 ipv6only=on backlog=4096;
+	listen 80 deferred backlog=4096 reuseport;
+	listen [::]:80 deferred backlog=4096 reuseport;
+	listen 443 ssl deferred http2 backlog=4096 reuseport;
+	listen [::]:443 deferred ssl http2 backlog=4096 reuseport;
 
 	server_name miraheze.org;
 	root /srv/mediawiki/landing;
@@ -18,7 +18,7 @@ server {
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
@@ -117,7 +117,7 @@ server {
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
@@ -156,7 +156,7 @@ server {
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
@@ -175,6 +175,9 @@ server {
                 proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_buffering    off;
+		proxy_buffer_size       32k;
+		proxy_buffers         4 32k;
         }
 }
 
@@ -197,7 +200,7 @@ server {
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
@@ -269,7 +272,7 @@ server {
 	add_header Strict-Transport-Security "max-age=604800";
 <%- end -%>
 
-	add_header X-Served-By '<%= scope.lookupvar('::fqdn') %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;

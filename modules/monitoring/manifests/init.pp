@@ -7,7 +7,7 @@ class monitoring (
     String $ticket_salt           = '',
     Optional[String] $icinga2_api_bind_host = undef,
 ) {
-    ensure_packages([
+    stdlib::ensure_packages([
         'nagios-nrpe-plugin',
         'python3-dnspython',
         'python3-filelock',
@@ -27,7 +27,10 @@ class monitoring (
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
         location => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
-        release  => $::lsbdistcodename,
+        # Use $facts['os']['distro']['codename'] when we upgrade the mariadb version
+        # to higher then 10.5 and supports bookworm.
+        # release  => $facts['os']['distro']['codename'],
+        release  => 'bullseye',
         repos    => 'main',
         key      => {
                 'id'      => '177F4010FE56CA3336300305F1656F24C74CD1D8',
@@ -50,7 +53,7 @@ class monitoring (
         logoutput   => true,
     }
 
-    ensure_packages(
+    stdlib::ensure_packages(
         "mariadb-client-${version}",
         {
             ensure  => present,
@@ -67,7 +70,7 @@ class monitoring (
 
     class { '::icinga2::feature::api':
         bind_host   => $icinga2_api_bind_host,
-        ca_host     => $::fqdn,
+        ca_host     => $facts['networking']['fqdn'],
         ticket_salt => $ticket_salt,
     }
 
@@ -201,7 +204,7 @@ class monitoring (
 
     $ssl = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
     $redirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
-    $sslcerts = merge( $ssl, $redirects )
+    $sslcerts = $ssl + $redirects
 
     file { '/etc/icinga2/conf.d/ssl.conf':
         ensure  => 'present',
