@@ -1,5 +1,5 @@
 # role: redis
-class role::redis {
+class role::poolcounter {
     include poolcounter
 
     $firewall_rules_str = join(
