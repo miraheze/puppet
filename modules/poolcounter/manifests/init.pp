@@ -1,4 +1,5 @@
 class poolcounter {
+    stdlib::ensure_packages(['libevent-dev'])
 
     group { 'poolcounter':
         ensure => present,
