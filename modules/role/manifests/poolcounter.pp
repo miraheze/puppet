@@ -19,6 +19,11 @@ class role::poolcounter {
         notrack => true,
     }
 
+    monitoring::nrpe { 'poolcounter process':
+        command => '/usr/lib/nagios/plugins/check_procs -c 1:1 -u poolcounter -C poolcounterd',
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Poolcounter'
+    }
+
     motd::role { 'role::poolcounter':
         description => 'Poolcounter server',
     }
