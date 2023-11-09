@@ -32,6 +32,7 @@ node 'graylog131.miraheze.org' {
 
 node 'jobchron121.miraheze.org' {
     include base
+    include role::poolcounter
     include role::redis
     include mediawiki::jobqueue::chron
 }
@@ -130,6 +131,7 @@ node 'test131.miraheze.org' {
     include base
     include role::memcached
     include role::mediawiki
+    include role::poolcounter
     include role::redis
     include mediawiki::jobqueue::chron
 }

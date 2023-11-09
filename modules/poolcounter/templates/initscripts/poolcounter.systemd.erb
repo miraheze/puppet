@@ -1,0 +1,13 @@
+[Unit]
+Description=PoolCounter
+Documentation=https://www.mediawiki.org/wiki/PoolCounter
+
+[Service]
+ExecStart=/usr/bin/poolcounterd -l :: $ARGS
+EnvironmentFile=-/etc/default/poolcounter
+User=poolcounter
+LimitNOFILE=65535
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
