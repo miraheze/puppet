@@ -1,4 +1,4 @@
-# role: redis
+# role: poolcounter
 class role::poolcounter {
     include poolcounter
 
