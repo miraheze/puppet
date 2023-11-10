@@ -73,6 +73,7 @@ node /^mw1[234][1234]\.miraheze\.org$/ {
 node 'mwtask141.miraheze.org' {
     include base
     include role::mediawiki
+    include role::mathoid
 }
 
 node /^ns[12]\.miraheze\.org$/ {

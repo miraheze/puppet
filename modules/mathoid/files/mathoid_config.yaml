@@ -1,11 +1,11 @@
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
 # Use 'ncpu' to run as many workers as there are CPU units
-num_workers: 1
+num_workers: 4
 
 # Log error messages and gracefully restart a worker if v8 reports that it
 # uses more heap (note: not RSS) than this many mb.
-worker_heap_limit_mb: 150
+worker_heap_limit_mb: 500
 
 # Number of milliseconds to wait for a heartbeat from a worker before killing
 # and restarting it
@@ -23,6 +23,8 @@ services:
     # version: ^0.4.0
     # per-service config
     conf:
+      # Bind to ipv6 (which also allows ipv4)
+      interface: '::'
       # the port to bind to
       port: 10044
       # IP address to bind to, all IPs by default
