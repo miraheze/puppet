@@ -12,7 +12,7 @@ class role::mathoid {
         .sort(),
         ' '
     )
-    ferm::service { 'redis':
+    ferm::service { 'mathoid':
         proto   => 'tcp',
         port    => '10044',
         srange  => "(${firewall_rules_str})",
