@@ -23,8 +23,8 @@ services:
     # version: ^0.4.0
     # per-service config
     conf:
-    # Bind to ipv6 (which also allows ipv4)
-    interface: '::'
+      # Bind to ipv6 (which also allows ipv4)
+      interface: '::'
       # the port to bind to
       port: 10044
       # IP address to bind to, all IPs by default
