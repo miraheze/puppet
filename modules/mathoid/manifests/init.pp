@@ -1,7 +1,7 @@
 # == Class: services::mathoid
 
 class mathoid {
-    require_package(['librsvg2-dev', 'g++'])
+    stdlib::ensure_packages(['librsvg2-dev', 'g++'])
 
     group { 'mathoid':
         ensure => present,
