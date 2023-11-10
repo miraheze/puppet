@@ -1,0 +1,72 @@
+# Number of worker processes to spawn.
+# Set to 0 to run everything in a single process without clustering.
+# Use 'ncpu' to run as many workers as there are CPU units
+num_workers: 1
+
+# Log error messages and gracefully restart a worker if v8 reports that it
+# uses more heap (note: not RSS) than this many mb.
+worker_heap_limit_mb: 150
+
+# Number of milliseconds to wait for a heartbeat from a worker before killing
+# and restarting it
+worker_heartbeat_timeout: 3750
+
+# Logger info
+logging:
+  level: warn
+
+services:
+  - name: mathoid
+    # a relative path or the name of an npm package, if different from name
+    module: ./src/app.js
+    # optionally, a version constraint of the npm package
+    # version: ^0.4.0
+    # per-service config
+    conf:
+    # Bind to ipv6 (which also allows ipv4)
+    interface: '::'
+      # the port to bind to
+      port: 10044
+      # IP address to bind to, all IPs by default
+      # interface: localhost # uncomment to only listen on localhost
+      # allow cross-domain requests to the API (default '*')
+      cors: '*'
+      # to disable use:
+      # cors: false
+      # to restrict to a particular domain, use:
+      # cors: restricted.domain.org
+      # list of enabled renders
+      svg: true
+      img: true
+      texvcinfo: true
+      no_check: true
+      speech: true
+      speech_on: false
+      speech_config:
+        semantics: true
+        domain: 'mathspeak'
+        style: 'default'
+        semantic: false
+        minSTree: false
+        speakText: true
+        enrich: false
+      mj_config:
+          extensions: "TeX/color,TeX/mediawiki-texvc,TeX/mhchem"
+          MathJax:
+            menuSettings:
+              semantics: true
+            SVG:
+              font: "TeX"
+            TeX:
+              noErrors:
+                disabled: true
+      dpi: 180
+      svgo: false
+      # the template used for contacting the MW API
+      mwapi_req:
+        method: post
+        uri: https://{{domain}}/w/api.php
+        headers:
+          host: '{{request.params.domain}}'
+          user-agent: '{{user-agent}}'
+        body: '{{ default(request.query, {}) }}'
