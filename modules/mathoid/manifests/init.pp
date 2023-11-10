@@ -34,7 +34,6 @@ class mathoid {
 
     file { '/etc/mathoid':
         ensure  => directory,
-        require => File['/etc/mediawiki'],
     }
 
     file { '/etc/mathoid/config.yaml':
