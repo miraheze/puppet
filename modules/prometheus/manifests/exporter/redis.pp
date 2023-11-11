@@ -2,7 +2,7 @@
 #
 class prometheus::exporter::redis (
     String $redis_password = lookup('passwords::redis::master'),
-    Optional[Boolean] $use_script = lookup('prometheus::exporter::redis::use_script', {default => undef}),
+    Optional[Boolean] $use_script = lookup('prometheus::exporter::redis::use_script', {'default_value' => undef}),
 ) {
 
     file { '/etc/redis_exporter':
