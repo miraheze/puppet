@@ -243,20 +243,20 @@ sub mw_request {
 			// Normalize end of thumbnail URL (redundant filename)
 			// Lowercase last part of the URL, to avoid case variations on extension or thumbnail parameters
 			// eg. /metawiki/thumb/0/06/Foo.jpg/120px-FOO.JPG => /metawiki/thumb/0/06/Foo.jpg/120px-foo.jpg
-			set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
+			// set req.url = regsub(req.url, "^(.+/)[^/]+$", "\1") + std.tolower(regsub(req.url, "^.+/([^/]+)$", "\1"));
 
 			// Copy canonical filename from beginning of URL to thumbnail parameters at the end
 			// eg. /metawiki/thumb/0/06/Foo.jpg/120px-bar.jpg => /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg.jpg
 			// Skips timestamps for archived files
 			// eg. /metawiki/thumb/archive/0/06/20231023012934!Foo.jpg/120px-bar.jpg => /metawiki/thumb/archive/0/06/20231023012934!Foo.jpg/120px-Foo.jpg.jpg
-			set req.url = regsub(req.url, "/(archive/\w/\w\w/\d{14}(?:%21|!))?([^/]+)/((?:qlow-)?(?:lossy-)?(?:lossless-)?(?:page\d+-)?(?:lang[0-9a-z-]+-)?\d+px-?(?:(?:seek=|seek%3d)\d+-)?)[^/]+\.(\w+)$", "/\1\2/\3\2.\4");
+			// set req.url = regsub(req.url, "/(archive/\w/\w\w/\d{14}(?:%21|!))?([^/]+)/((?:qlow-)?(?:lossy-)?(?:lossless-)?(?:page\d+-)?(?:lang[0-9a-z-]+-)?\d+px-?(?:(?:seek=|seek%3d)\d+-)?)[^/]+\.(\w+)$", "/\1\2/\3\2.\4");
 
 			// Last pass, clean up any redundant extension
 			// .jpg.jpg => .jpg, .JPG.jpg => .JPG
 			// eg. /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg.jpg => /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg
-			if (req.url ~ "(?i)(.*)(\.\w+)\2$") {
-				set req.url = regsub(req.url, "(?i)(.*)(\.\w+)\2$", "\1\2");
-			}
+			// if (req.url ~ "(?i)(.*)(\.\w+)\2$") {
+				// set req.url = regsub(req.url, "(?i)(.*)(\.\w+)\2$", "\1\2");
+			//}
 		}
 
 		// Fixup borked client Range: headers
