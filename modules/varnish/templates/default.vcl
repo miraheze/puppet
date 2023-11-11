@@ -249,7 +249,7 @@ sub mw_request {
 			// eg. /metawiki/thumb/0/06/Foo.jpg/120px-bar.jpg => /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg.jpg
 			// Skips timestamps for archived files
 			// eg. /metawiki/thumb/archive/0/06/20231023012934!Foo.jpg/120px-bar.jpg => /metawiki/thumb/archive/0/06/20231023012934!Foo.jpg/120px-Foo.jpg.jpg
-			set req.url = regsub(req.url, "/(archive/\w/\w\w/\d{14}(?:%21|!))?([^/]+)/((?:qlow-)?(?:lossy-)?(?:lossless-)?(?:page\d+-)?(?:lang[0-9a-z-]+-)?\d+px-[-]?(?:(?:seek=|seek%3d)\d+-)?)[^/]+\.(\w+)$", "/\1\2/\3\2.\4");
+			set req.url = regsub(req.url, "/(archive/\w/\w\w/\d{14}(?:%21|!))?([^/]+)/((?:qlow-)?(?:lossy-)?(?:lossless-)?(?:page\d+-)?(?:lang[0-9a-z-]+-)?\d+px-?(?:(?:seek=|seek%3d)\d+-)?)[^/]+\.(\w+)$", "/\1\2/\3\2.\4");
 
 			// Last pass, clean up any redundant extension
 			// .jpg.jpg => .jpg, .JPG.jpg => .JPG
