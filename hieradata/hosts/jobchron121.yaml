@@ -14,3 +14,5 @@ mediawiki::php::enable_fpm: false
 php::php_version: '8.2'
 
 puppetserver_hostname: 'puppet141.miraheze.org'
+
+prometheus::exporter::redis::use_script: true
