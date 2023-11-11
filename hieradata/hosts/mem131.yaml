@@ -3,7 +3,7 @@ role::memcached::version: 'present'
 role::memcached::growth_factor: 1.25
 role::memcached::min_slab_size: 48
 role::memcached::max_seq_reqs: 200
-role::memcached::size: 10240
+role::memcached::size: 14336
 role::memcached::extended_options: []
 role::memcached::port: 11211
 
