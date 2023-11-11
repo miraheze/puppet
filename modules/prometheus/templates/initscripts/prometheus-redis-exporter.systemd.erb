@@ -7,7 +7,7 @@ Restart=always
 User=prometheus
 Group=prometheus
 EnvironmentFile=/etc/default/prometheus-redis
-ExecStart=/usr/local/bin/redis_exporter --log-format=txt --namespace=redis --web.listen-address=:9121 --web.telemetry-path=/metrics <%= if @use_script -%>--script=/etc/redis_exporter/jobQueueCollector.lua<%- end -%> -redis.password ${EXPORTER_REDIS_PASSWORD}
+ExecStart=/usr/local/bin/redis_exporter --log-format=txt --namespace=redis --web.listen-address=:9121 --web.telemetry-path=/metrics <%- if @use_script -%>--script=/etc/redis_exporter/jobQueueCollector.lua<%- end -%> -redis.password ${EXPORTER_REDIS_PASSWORD}
 ExecReload=/bin/kill -HUP $MAINPID
 TimeoutStopSec=20s
 SendSIGKILL=no
