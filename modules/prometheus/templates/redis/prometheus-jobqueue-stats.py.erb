@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 def collect_jobqueue_stats(args, registry):
-    r = redis.Redis(host=args.host, port=args.port, password=args.password, decode_responses=True)
+    r = redis.Redis(host=args.host, port=args.port, password=<%= @redis_password %>, decode_responses=True)
 
     queues = [
         'l-unclaimed',
@@ -183,8 +183,6 @@ def main():
     parser.add_argument('--port', metavar='PORT', type=int,
                         help='The port for redis host (%(default)s)',
                         default=6379)
-    parser.add_argument('--password', metavar='PASSWORD', type=str, required=True,
-                        help='Password for redis',)
     parser.add_argument('-d', '--debug', action='store_true',
                         help='Enable debug logging (false)')
     args = parser.parse_args()
