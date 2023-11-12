@@ -20,7 +20,7 @@ class prometheus (
     }
 
     $global_default = {
-        'scrape_interval' => '60s',
+        'scrape_interval' => '1m',
     }
     $global_config = $global_default + $global_extra
 
