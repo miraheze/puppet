@@ -97,7 +97,6 @@ class role::prometheus {
     $redis_job = [
         {
             'job_name' => 'redis',
-            'scrape_timeout'  => '20s',
             'file_sd_configs' => [
                 {
                     'files' => [ 'targets/redis.yaml' ]
