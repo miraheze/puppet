@@ -15,4 +15,4 @@ php::php_version: '8.2'
 
 puppetserver_hostname: 'puppet141.miraheze.org'
 
-prometheus::exporter::redis::collect_jobqueue_stats: true
+prometheus::exporter::redis::collect_jobqueue_stats: present
