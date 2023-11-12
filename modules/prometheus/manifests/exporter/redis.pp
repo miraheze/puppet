@@ -45,8 +45,6 @@ class prometheus::exporter::redis (
         ]
     }
 
-    $redis_password = lookup('passwords::redis::master')
-
     # Collect every minute
     cron { 'prometheus_jobqueue_stats':
         ensure  => $collect_jobqueue_stats,
