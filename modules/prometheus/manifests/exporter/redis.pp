@@ -10,7 +10,7 @@ class prometheus::exporter::redis (
         mode   => '0555',
         owner  => 'root',
         group  => 'root',
-        source => 'puppet:///modules/prometheus/redis/prometheus-jobqueue-stats.py',
+        content => template('prometheus/redis/prometheus-jobqueue-stats.py.erb')
     }
 
     file { '/etc/redis_exporter':
