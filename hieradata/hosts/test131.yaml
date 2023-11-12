@@ -34,7 +34,7 @@ http_proxy: 'http://bast.miraheze.org:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 
-prometheus::exporter::redis::collect_jobqueue_stats: true
+prometheus::exporter::redis::collect_jobqueue_stats: present
 
 # NGINX
 nginx::keepalive_timeout: 75
