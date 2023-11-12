@@ -2,22 +2,27 @@
 #
 class prometheus::exporter::redis (
     String $redis_password = lookup('passwords::redis::master'),
-    Optional[Boolean] $use_script = lookup('prometheus::exporter::redis::use_script', {'default_value' => undef}),
+    VMlib::Ensure $collect_jobqueue_stats = lookup('prometheus::exporter::redis::collect_jobqueue_stats', {'default_value' => absent}),
 ) {
+
+    stdlib::ensure_packages([
+        'python3-prometheus-client',
+        'python3-redis',
+    ])
+
+    file { '/usr/local/bin/prometheus-jobqueue-stats':
+        ensure => file,
+        mode   => '0555',
+        owner  => 'root',
+        group  => 'root',
+        content => template('prometheus/redis/prometheus-jobqueue-stats.py.erb')
+    }
 
     file { '/etc/redis_exporter':
         ensure => directory,
         mode   => '0755',
         owner  => 'prometheus',
         group  => 'prometheus',
-    }
-
-    file { '/etc/redis_exporter/jobQueueCollector.lua':
-        ensure  => present,
-        mode    => '0555',
-        source  => 'puppet:///modules/prometheus/redis/jobQueueCollector.lua',
-        notify  => Service['prometheus-redis-exporter'],
-        require => File['/etc/redis_exporter'],
     }
 
     file { '/usr/local/bin/redis_exporter':
@@ -43,6 +48,13 @@ class prometheus::exporter::redis (
             File['/etc/default/prometheus-redis'],
             File['/usr/local/bin/redis_exporter']
         ]
+    }
+
+    # Collect every minute
+    cron { 'prometheus_jobqueue_stats':
+        ensure  => $collect_jobqueue_stats,
+        user    => 'root',
+        command => "/usr/local/bin/prometheus-jobqueue-stats --outfile /var/lib/prometheus/node.d/jobqueue.prom",
     }
 
     $firewall_rules_str = join(
