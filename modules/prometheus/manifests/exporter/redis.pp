@@ -49,7 +49,7 @@ class prometheus::exporter::redis (
     cron { 'prometheus_jobqueue_stats':
         ensure  => $collect_jobqueue_stats,
         user    => 'root',
-        command => "/usr/local/bin/prometheus-jobqueue-stats --password ${redis_password} --outfile /var/lib/prometheus/node.d/jobqueue.prom",
+        command => "/usr/local/bin/prometheus-jobqueue-stats --outfile /var/lib/prometheus/node.d/jobqueue.prom",
     }
 
     $firewall_rules_str = join(
