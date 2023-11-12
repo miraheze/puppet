@@ -5,6 +5,11 @@ class prometheus::exporter::redis (
     VMlib::Ensure $collect_jobqueue_stats = lookup('prometheus::exporter::redis::collect_jobqueue_stats', {'default_value' => absent}),
 ) {
 
+    stdlib::ensure_packages([
+        'python3-prometheus-client',
+        'python3-redis',
+    ])
+
     file { '/usr/local/bin/prometheus-jobqueue-stats':
         ensure => file,
         mode   => '0555',
