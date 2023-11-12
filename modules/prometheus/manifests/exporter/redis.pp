@@ -2,7 +2,7 @@
 #
 class prometheus::exporter::redis (
     String $redis_password = lookup('passwords::redis::master'),
-    Optional[Boolean] $collect_jobqueue_stats = lookup('prometheus::exporter::redis::collect_jobqueue_stats', {'default_value' => undef}),
+    VMlib::Ensure $collect_jobqueue_stats = lookup('prometheus::exporter::redis::collect_jobqueue_stats', {'default_value' => absent}),
 ) {
 
     file { '/usr/local/bin/prometheus-jobqueue-stats':
