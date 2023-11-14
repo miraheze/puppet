@@ -161,15 +161,21 @@ def collect_jobqueue_stats(args, registry):
         'jobs', 'Jobs', ['key'],
         namespace='jobqueue', registry=registry)
 
+    # For performance reasons we have to gather all of the keys
+    # before.
+    keys = r.keys( "*wiki:jobqueue:*" )
+    result_keys = [key for key in keys]
+
     for job in jobs:
         for queue in queues:
             lsum = 0
-            lkeys = r.keys( f"*:jobqueue:{job}:{queue}" )
-            for lkey in lkeys:
-                if not 'l-unclaimed' in lkey:
-                    lsum = lsum + int(r.zcard( lkey ))
-                else:
-                    lsum = lsum + int(r.llen( lkey ))
+            for lkey in result_keys:
+                if queue in lkey and (job in lkey or '*' in job):
+                    if not 'l-unclaimed' in lkey:
+                        lsum = lsum + int(r.zcard( lkey ))
+                    else:
+                        lsum = lsum + int(r.llen( lkey ))
+            
             jobqueue_stats['jobs'].labels(key = f"{job}-{queue}").set(lsum)
 
 
