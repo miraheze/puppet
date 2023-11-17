@@ -76,6 +76,14 @@ class mediawiki::jobqueue::runner {
             weekday => [ '6' ],
         }
 
+        cron { 'cleanup_upload_stash':
+            ensure  => present,
+            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/maintenance/cleanupUploadStash.php",
+            user    => 'www-data',
+            hour    => 1,
+            month   => 0,
+        }
+
         if $wiki == 'loginwiki' {
             $swift_password = lookup('mediawiki::swift_password')
             cron { 'generate sitemap index':
