@@ -81,7 +81,7 @@ class mediawiki::jobqueue::runner {
             command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/maintenance/cleanupUploadStash.php",
             user    => 'www-data',
             hour    => 1,
-            month   => 0,
+            minute  => 0,
         }
 
         if $wiki == 'loginwiki' {
