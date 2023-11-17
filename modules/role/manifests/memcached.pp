@@ -57,7 +57,6 @@ class role::memcached (
         proto   => 'tcp',
         port    => $port,
         srange  => "(${firewall_rules_str})",
-        notrack => true,
     }
 
     motd::role { 'role::memcached':
