@@ -8,7 +8,7 @@ server {
 	listen <%= property['port'] %> ssl deferred backlog=16384 reuseport;
 	listen [::]:<%= property['port'] %> ssl deferred backlog=16384 reuseport;
 
-	server_name localhost;
+	server_name <%= @facts['networking']['fqdn'] %>;
 
 	access_log  off;
 
