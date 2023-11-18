@@ -5,12 +5,15 @@ map $http_upgrade $connection_upgrade {
 
 <%- @backends.each_pair do | name, property | -%>
 server {
-	listen <%= property['port'] %> deferred backlog=16384 reuseport;
-	listen [::]:<%= property['port'] %> deferred backlog=16384 reuseport;
+	listen <%= property['port'] %> ssl deferred backlog=16384 reuseport;
+	listen [::]:<%= property['port'] %> ssl deferred backlog=16384 reuseport;
 
 	server_name localhost;
 
 	access_log  off;
+
+    ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
+	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
 
 	location / {
         proxy_pass https://<%= name %>.miraheze.org;
