@@ -76,10 +76,10 @@ class _MirahezeRewriteContext(WSGIContext):
                     encodedurl)
             if match:
 		if match.group('proj').endswith('wikibeta'):
-	                proj = match.group('proj').removesuffix("wiki")
+	                proj = match.group('proj').removesuffix("wikibeta")
 	                hostname = '%s.mirabeta.org' % (proj)
 		else:
-	                proj = match.group('proj').removesuffix("wikibeta")
+	                proj = match.group('proj').removesuffix("wiki")
 	                hostname = '%s.miraheze.org' % (proj)
                 # ok, replace the URL with just the part starting with thumb/
                 # take off the first two parts of the path.
