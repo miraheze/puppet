@@ -35,6 +35,7 @@ server_id = <%= @server_id %>
 log-bin                        = <%= @datadir %>/mysql-bin
 expire-logs-days               = 3
 sync-binlog                    = 1
+binlog_cache_size              = 10M
 slave_compressed_protocol      = 1
 <%- end -%>
 
