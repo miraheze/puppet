@@ -42,7 +42,7 @@ class mediawiki::jobqueue::runner {
 
         cron { 'managewikis':
             ensure  => present,
-            command => "/usr/bin/php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki ${wiki} --write >> /var/log/mediawiki/cron/managewikis.log",
+            command => "/usr/bin/php /srv/mediawiki/w/maintenance/run.php /srv/mediawiki/w/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki ${wiki} --write >> /var/log/mediawiki/cron/managewikis.log",
             user    => 'www-data',
             minute  => '5',
             hour    => '12',
@@ -98,7 +98,7 @@ class mediawiki::jobqueue::runner {
 
             cron { 'purge_parsercache':
                 ensure  => present,
-                command => '/usr/bin/php /srv/mediawiki/w/maintenance/purgeParserCache.php --wiki loginwiki --tag pc1 --age 604800 --msleep 200',
+                command => '/usr/bin/php /srv/mediawiki/w/maintenance/run.php /srv/mediawiki/w/maintenance/purgeParserCache.php --wiki loginwiki --tag pc1 --age 604800 --msleep 200',
                 user    => 'www-data',
                 special => 'daily',
             }
@@ -125,7 +125,7 @@ class mediawiki::jobqueue::runner {
         if $wiki == 'loginwikibeta' {
             cron { 'purge_parsercache':
                 ensure  => present,
-                command => '/usr/bin/php /srv/mediawiki/w/maintenance/purgeParserCache.php --wiki loginwikibeta --tag pc1 --age 604800 --msleep 200',
+                command => '/usr/bin/php /srv/mediawiki/w/maintenance/run.php /srv/mediawiki/w/maintenance/purgeParserCache.php --wiki loginwikibeta --tag pc1 --age 604800 --msleep 200',
                 user    => 'www-data',
                 special => 'daily',
             }
