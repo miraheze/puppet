@@ -48,8 +48,10 @@ class mediawiki::jobqueue::runner {
             hour    => '12',
         }
 
-        cron { 'update sfs database':
-            ensure  => present,
+        # Temporarily remove cron as we don't use the extension
+        # right now.
+        cron { 'update_sfs_database':
+            ensure  => absent,
             command => "/usr/bin/php /srv/mediawiki/w/extensions/StopForumSpam/maintenance/updateDenyList.php --wiki ${sf_wiki} >> /var/log/mediawiki/cron/updatesfsdenylist.log",
             user    => 'www-data',
             minute  => '0',
