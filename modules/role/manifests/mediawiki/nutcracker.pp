@@ -11,7 +11,7 @@ class role::mediawiki::nutcracker (
                 auto_eject_hosts     => false,
                 distribution         => 'ketama',
                 hash                 => 'md5',
-                listen               => '127.0.0.1:11212',
+                listen               => '/var/run/nutcracker/nutcracker_1.sock 0666',
                 preconnect           => true,
                 server_connections   => 1,
                 timeout              => 1000,    # milliseconds
@@ -21,7 +21,7 @@ class role::mediawiki::nutcracker (
                 auto_eject_hosts     => false,
                 distribution         => 'ketama',
                 hash                 => 'md5',
-                listen               => '127.0.0.1:11214',
+                listen               => '/var/run/nutcracker/nutcracker_2.sock 0666',
                 preconnect           => true,
                 server_connections   => 1,
                 timeout              => 1000,    # milliseconds
@@ -31,7 +31,7 @@ class role::mediawiki::nutcracker (
                 auto_eject_hosts     => false,
                 distribution         => 'ketama',
                 hash                 => 'md5',
-                listen               => '127.0.0.1:11215',
+                listen               => /var/run/nutcracker/nutcracker_test.sock 0666',
                 preconnect           => true,
                 server_connections   => 1,
                 timeout              => 1000,    # milliseconds
