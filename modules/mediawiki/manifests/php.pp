@@ -35,7 +35,7 @@ class mediawiki::php (
         'display_errors'                  => 0,
         'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
-        'apc.shm_size'                    => '1024M',
+        'apc.shm_size'                    => '1536',
         'rlimit_core'                     => 0,
     }
     if $enable_fpm {
