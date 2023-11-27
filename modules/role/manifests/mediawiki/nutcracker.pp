@@ -15,11 +15,11 @@ class role::mediawiki::nutcracker (
             timeout              => 1000,    # milliseconds
             servers              => $memcached_servers
         },
-        'memcached_test'     => {
+        'memcached_beta'     => {
             auto_eject_hosts     => false,
             distribution         => 'ketama',
             hash                 => 'md5',
-            listen               => '/var/run/nutcracker/nutcracker_test.sock 0666',
+            listen               => '/var/run/nutcracker/nutcracker_beta.sock 0666',
             preconnect           => true,
             server_connections   => 1,
             timeout              => 1000,    # milliseconds
