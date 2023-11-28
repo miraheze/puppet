@@ -12,7 +12,7 @@ class role::mediawiki::nutcracker (
             listen               => '/var/run/nutcracker/nutcracker.sock 0666',
             preconnect           => true,
             server_connections   => 1,
-            timeout              => 250,    # milliseconds
+            timeout              => 500,    # milliseconds
             servers              => $memcached_servers
         },
         'memcached_beta'     => {
@@ -22,7 +22,7 @@ class role::mediawiki::nutcracker (
             listen               => '/var/run/nutcracker/nutcracker_beta.sock 0666',
             preconnect           => true,
             server_connections   => 1,
-            timeout              => 250,    # milliseconds
+            timeout              => 500,    # milliseconds
             servers              => $memcached_servers_beta,
         },
     }
