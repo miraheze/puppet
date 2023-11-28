@@ -4,7 +4,6 @@ users::groups:
 
 contactgroups: ['sre', 'mediawiki']
 
-jobrunner: true
 mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
 
 nginx::worker_processes: 8
