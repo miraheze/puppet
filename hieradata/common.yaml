@@ -110,3 +110,10 @@ swift::storage::devices:
   - sda10
   - sda31
   - sda32
+
+role::mediawiki::mcrouter::shards:
+  miraheze:
+    shard01:
+      host: [2a10:6740::6:510]
+    shard02:
+      host: [2a10:6740::6:40]
