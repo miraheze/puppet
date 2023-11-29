@@ -58,3 +58,5 @@ role::mediawiki::mcrouter::shards:
   miraheze:
     shard01:
       host: [2a10:6740::6:406]
+
+role::mediawiki::use_mcrouter: true

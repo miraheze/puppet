@@ -1,10 +1,15 @@
 # === Class role::mediawiki
 class role::mediawiki (
     Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
+    Boolean $use_mcrouter = lookup('role::mediawiki::use_mcrouter', {'default_value' => false})
 ) {
     include prometheus::exporter::cadvisor
 
-    include role::mediawiki::nutcracker
+    if $use_mcrouter {
+        include role::mediawiki::mcrouter
+    } else {
+        include role::mediawiki::nutcracker
+    }
     include mediawiki
 
     if $strict_firewall {
