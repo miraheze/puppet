@@ -117,3 +117,6 @@ role::mediawiki::mcrouter::shards:
       host: [2a10:6740::6:510]
     shard02:
       host: [2a10:6740::6:40]
+
+role::mediawiki::use_mcrouter: true
+
