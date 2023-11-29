@@ -53,3 +53,8 @@ role::memcached::max_seq_reqs: 200
 role::memcached::size: 512
 role::memcached::extended_options: []
 role::memcached::port: 11211
+
+role::mediawiki::mcrouter::shards:
+  miraheze:
+    shard01:
+      host: [2a10:6740::6:406]
