@@ -81,25 +81,49 @@ class mcrouter(
     Integer           $probe_delay_initial_ms   = 3000,
     Optional[Integer] $timeouts_until_tko       = undef,
 ) {
-    stdlib::ensure_packages(['libboost-program-options1.74.0', 'libboost-regex1.74.0-icu72', 'libfmt9', 'libgflags2.2', 'libgoogle-glog0v6'])
 
-    file { '/opt/mcrouter_2023.07.17.00-1_amd64.deb':
-        ensure  => present,
-        source => 'puppet:///private/mcrouter/mcrouter_2023.07.17.00-1_amd64.deb',
-        require => [
-            Package['libboost-program-options1.74.0'],
-            Package['libboost-regex1.74.0-icu72'],
-            Package['libfmt9'],
-            Package['libgflags2.2'],
-            Package['libgoogle-glog0v6']
-        ]
-    }
+    if ($facts['os']['distro']['codename'] == 'bullseye') {
+        stdlib::ensure_packages(['libboost-context1.74.0', 'libboost-filesystem1.74.0', 'libboost-program-options1.74.0', 'libgflags2.2', 'libgoogle-glog0v6'])
 
-    package { 'mcrouter':
-        ensure      => installed,
-        provider    => dpkg,
-        source      => '/opt/mcrouter_2023.07.17.00-1_amd64.deb',
-        require     => File['/opt/mcrouter_2023.07.17.00-1_amd64.deb'],
+        file { '/opt/mcrouter_2022.01.31.00-1_amd64.deb':
+            ensure  => present,
+            source => 'puppet:///private/mcrouter/mcrouter_2022.01.31.00-1_amd64.deb',
+            require => [
+                Package['libboost-program-options1.74.0'],
+                Package['libboost-regex1.74.0-icu72'],
+                Package['libfmt9'],
+                Package['libgflags2.2'],
+                Package['libgoogle-glog0v6']
+            ]
+        }
+    
+        package { 'mcrouter':
+            ensure      => installed,
+            provider    => dpkg,
+            source      => '/opt/mcrouter_2022.01.31.00-1_amd64.deb',
+            require     => File['/opt/mcrouter_2022.01.31.00-1_amd64.deb'],
+        }
+    } else {
+        stdlib::ensure_packages(['libboost-program-options1.74.0', 'libboost-regex1.74.0-icu72', 'libfmt9', 'libgflags2.2', 'libgoogle-glog0v6'])
+
+        file { '/opt/mcrouter_2023.07.17.00-1_amd64.deb':
+            ensure  => present,
+            source => 'puppet:///private/mcrouter/mcrouter_2023.07.17.00-1_amd64.deb',
+            require => [
+                Package['libboost-program-options1.74.0'],
+                Package['libboost-regex1.74.0-icu72'],
+                Package['libfmt9'],
+                Package['libgflags2.2'],
+                Package['libgoogle-glog0v6']
+            ]
+        }
+    
+        package { 'mcrouter':
+            ensure      => installed,
+            provider    => dpkg,
+            source      => '/opt/mcrouter_2023.07.17.00-1_amd64.deb',
+            require     => File['/opt/mcrouter_2023.07.17.00-1_amd64.deb'],
+        }
     }
 
     $config = { 'pools' => $pools, 'routes' => $routes }
