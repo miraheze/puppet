@@ -51,7 +51,8 @@ role::memcached::growth_factor: 1.05
 role::memcached::min_slab_size: 5
 role::memcached::max_seq_reqs: 200
 role::memcached::size: 512
-role::memcached::extended_options: []
+role::memcached::extended_options:
+  - 'slab_reassign'
 role::memcached::port: 11211
 
 role::mediawiki::mcrouter::shards:
