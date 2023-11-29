@@ -26,9 +26,9 @@ class mediawiki::php (
     # Custom config for php-fpm
     $base_config_fpm = {
         'opcache.enable'                  => 1,
-        'opcache.interned_strings_buffer' => 50,
-        'opcache.memory_consumption'      => 400,
-        'opcache.max_accelerated_files'   => 40000,
+        'opcache.interned_strings_buffer' => 96,
+        'opcache.memory_consumption'      => 1024,
+        'opcache.max_accelerated_files'   => 50000,
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,
         'opcache.revalidate_freq'         => 10,
