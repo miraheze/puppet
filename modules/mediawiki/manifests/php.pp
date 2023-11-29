@@ -26,16 +26,16 @@ class mediawiki::php (
     # Custom config for php-fpm
     $base_config_fpm = {
         'opcache.enable'                  => 1,
-        'opcache.interned_strings_buffer' => 50,
-        'opcache.memory_consumption'      => 400,
-        'opcache.max_accelerated_files'   => 40000,
+        'opcache.interned_strings_buffer' => 96,
+        'opcache.memory_consumption'      => 1024,
+        'opcache.max_accelerated_files'   => 50000,
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,
         'opcache.revalidate_freq'         => 10,
         'display_errors'                  => 0,
         'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
-        'apc.shm_size'                    => '1536M',
+        'apc.shm_size'                    => '1024M',
         'rlimit_core'                     => 0,
     }
     if $enable_fpm {
