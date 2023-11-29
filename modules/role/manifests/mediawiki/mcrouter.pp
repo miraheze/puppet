@@ -20,23 +20,6 @@ class role::mediawiki::mcrouter(
             'route' => 'PoolRoute|miraheze'
           }
         },
-        # WAN cache: issues reads and add/cas/touch locally and issues set/delete everywhere.
-        # MediaWiki will set a prefix of /*/mw-wan when broadcasting, explicitly matching
-        # all the mw-wan routes. Broadcasting is thus completely controlled by MediaWiki,
-        # but is only allowed for set/delete operations.
-        $servers_by_dc.map |$dc, $_| {
-          {
-            'aliases' => [ "/${dc}/mw-wan/" ],
-            'route'   => {
-              'type'               => 'OperationSelectorRoute',
-              'default_policy'     => 'PoolRoute|miraheze',
-              'operation_policies' => {
-                'set'    => 'PoolRoute|miraheze',
-                'delete' => 'PoolRoute|miraheze',
-              }
-            }
-          }
-        },
     )
 
     class { 'mcrouter':
