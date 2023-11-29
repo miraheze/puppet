@@ -13,14 +13,12 @@ class role::mediawiki::mcrouter(
       role::mcrouter_pools($dc, $servers, 'plain', 11211)
     }.reduce |$memo, $value| { $memo + $value }
 
-    $routes = union(
-        $servers_by_dc.map |$dc, $_| {
-          {
-            'aliases' => [ "/${dc}/mw/" ],
-            'route' => 'PoolRoute|miraheze'
-          }
-        },
-    )
+    $routes = $servers_by_dc.map |$dc, $_| {
+      {
+        'aliases' => [ "/${dc}/mw/" ],
+        'route' => 'PoolRoute|miraheze'
+      }
+    }
 
     class { 'mcrouter':
       pools                  => $pools,
