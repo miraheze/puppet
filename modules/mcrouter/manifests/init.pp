@@ -83,17 +83,18 @@ class mcrouter(
 ) {
 
     if ($facts['os']['distro']['codename'] == 'bullseye') {
-        stdlib::ensure_packages(['libboost-context1.74.0', 'libboost-filesystem1.74.0', 'libboost-program-options1.74.0', 'libgflags2.2', 'libgoogle-glog0v6'])
+        stdlib::ensure_packages(['libboost-filesystem1.74.0', 'libboost-regex1.74.0-icu67', 'libevent-2.1-7', 'libfmt7', 'libgoogle-glog0v5', 'libjemalloc2'])
 
         file { '/opt/mcrouter_2022.01.31.00-1_amd64.deb':
             ensure  => present,
             source => 'puppet:///private/mcrouter/mcrouter_2022.01.31.00-1_amd64.deb',
             require => [
-                Package['libboost-program-options1.74.0'],
-                Package['libboost-regex1.74.0-icu72'],
-                Package['libfmt9'],
-                Package['libgflags2.2'],
-                Package['libgoogle-glog0v6']
+                Package['libboost-filesystem1.74.0'],
+                Package['libboost-regex1.74.0-icu67'],
+                Package['libevent-2.1-7'],
+                Package['libfmt7'],
+                Package['libgoogle-glog0v5'],
+                Package['libjemalloc2']
             ]
         }
     
