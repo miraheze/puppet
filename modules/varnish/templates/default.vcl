@@ -37,12 +37,20 @@ backend <%= name %> {
 <%- if property['probe'] -%>
 	.probe = <%= property['probe'] %>;
 <%- end -%>
+        .connect_timeout = 3s;
+        .first_byte_timeout = 63s;
+        .between_bytes_timeout = 31s;
+        .max_connections = 1000;
 }
 
 <%- if property['xdebug'] -%>
 backend <%= name %>_test {
 	.host = "localhost";
 	.port = "<%= property['port'] %>";
+        .connect_timeout = 3s;
+        .first_byte_timeout = 63s;
+        .between_bytes_timeout = 31s;
+        .max_connections = 1000;
 }
 <%- end -%>
 <%- end -%>
