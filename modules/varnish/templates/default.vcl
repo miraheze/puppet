@@ -52,7 +52,7 @@ sub vcl_init {
 	new mediawiki = directors.random();
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['pool'] -%>
-	mediawiki.add_backend(<%= name %>, 1);
+	mediawiki.add_backend(<%= name %>, 100);
 <%- end -%>
 <%- end -%>
 }
