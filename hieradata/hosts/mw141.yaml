@@ -6,8 +6,6 @@ contactgroups: ['sre', 'mediawiki']
 
 mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
 
-nginx::worker_processes: 8
-
 role::mediawiki::use_strict_firewall: true
 
 mediawiki::php::fpm::fpm_min_child: 24
