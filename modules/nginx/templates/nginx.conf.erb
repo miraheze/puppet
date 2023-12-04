@@ -10,8 +10,9 @@ pid /run/nginx.pid;
 worker_rlimit_nofile 262144; # Twice the number of worker_connections
 
 events {
-	worker_connections 131072;
-	multi_accept off;
+	worker_connections 30720;
+	use epoll;
+	multi_accept on;
 }
 
 http {
