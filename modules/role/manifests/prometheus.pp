@@ -2,6 +2,21 @@
 class role::prometheus {
     include prometheus::exporter::blackbox
 
+    $blackbox_mediawiki_urls = query_nodes('Class[Role::Mediawiki]').map |$host| {
+        [ 'Miraheze' ].map |$page| {
+            "https://${host}/wiki/${page}?safemode=1"
+        }
+    }
+    .flatten()
+    .unique()
+    .sort()
+
+    file { '/etc/prometheus/targets/blackbox_mediawiki_urls.yaml':
+        ensure  => present,
+        mode    => '0444',
+        content => to_yaml([{'targets' => $blackbox_mediawiki_urls.flatten}])
+    }
+
     $blackbox_web_urls = [
         'https://phabricator.miraheze.org',
         'https://matomo.miraheze.org',
