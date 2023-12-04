@@ -18,7 +18,6 @@ if ($syslogseverity-text == 'info' and
     queue.type="LinkedList" queue.size="<%= @syslog_queue_size %>" queue.filename="fwd_<%= log_host %>"
     queue.highWatermark="<%= (@syslog_queue_size * 0.7).to_i %>" queue.lowWatermark="<%= (@syslog_queue_size * 0.6).to_i %>"
     queue.checkpointInterval="5"
-    queue.saveonshutdown="on"
     queue.maxDiskSpace="<%= (@syslog_queue_size * 4096).to_i %>"
 <%- end -%>
     )
