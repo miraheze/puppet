@@ -2,9 +2,9 @@
 class role::prometheus {
     include prometheus::exporter::blackbox
 
-    $blackbox_mediawiki_urls = query_nodes('Class[Role::Mediawiki]').map |$host| {
-        [ 'Miraheze' ].map |$page| {
-            "https://${host}/wiki/${page}?safemode=1"
+    $blackbox_mediawiki_urls = query_nodes('Class[Role::Varnish] or Class[Role::MediaWiki]').map |$host| {
+        [ 'Miraheze', 'Special:RecentChanges' ].map |$page| {
+            "https://${host}/wiki/${page}"
         }
     }
     .flatten()
@@ -26,10 +26,36 @@ class role::prometheus {
     file { '/etc/prometheus/targets/blackbox_web_urls.yaml':
         ensure  => present,
         mode    => '0444',
-        content => stdlib::to_yaml([{'targets' => $blackbox_web_urls}])
+        content => to_yaml([{'targets' => $blackbox_web_urls}])
     }
 
     $blackbox_jobs = [
+        {
+            'job_name' => 'blackbox/mediawiki',
+            'metrics_path' => '/probe',
+            'params' => {
+                'module' => [ 'https_mediawiki_cp' ],
+            },
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/blackbox_mediawiki_urls.yaml' ]
+                }
+            ],
+            'relabel_configs' => [
+                {
+                    'source_labels' => [ '__address__' ],
+                    'target_label' => '__param_target',
+                },
+                {
+                    'source_labels' => [ '__param_target' ],
+                    'target_label' => 'instance',
+                },
+                {
+                    'target_label' => '__address__',
+                    'replacement' => '127.0.0.1:9115',
+                }
+            ]
+        },
         {
             'job_name' => 'blackbox/web',
             'metrics_path' => '/probe',
