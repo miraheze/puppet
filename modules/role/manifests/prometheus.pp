@@ -16,6 +16,32 @@ class role::prometheus {
 
     $blackbox_jobs = [
         {
+            'job_name' => 'blackbox/mediawiki',
+            'metrics_path' => '/probe',
+            'params' => {
+                'module' => [ 'https_mediawiki_cp' ],
+            },
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/blackbox_mediawiki_urls.yaml' ]
+                }
+            ],
+            'relabel_configs' => [
+                {
+                    'source_labels' => [ '__address__' ],
+                    'target_label' => '__param_target',
+                },
+                {
+                    'source_labels' => [ '__param_target' ],
+                    'target_label' => 'instance',
+                },
+                {
+                    'target_label' => '__address__',
+                    'replacement' => '127.0.0.1:9115',
+                }
+            ]
+        },
+        {
             'job_name' => 'blackbox/web',
             'metrics_path' => '/probe',
             'params' => {
