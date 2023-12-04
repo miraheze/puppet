@@ -19,6 +19,7 @@ if ($syslogseverity-text == 'info' and
     queue.highWatermark="<%= (@syslog_queue_size * 0.7).to_i %>" queue.lowWatermark="<%= (@syslog_queue_size * 0.6).to_i %>"
     queue.checkpointInterval="5"
     queue.saveonshutdown="on"
+    queue.maxDiskSpace="<%= (@syslog_queue_size * 4096).to_i %>"
 <%- end -%>
     )
 <%- end -%>
