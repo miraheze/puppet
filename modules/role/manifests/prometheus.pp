@@ -14,7 +14,7 @@ class role::prometheus {
     file { '/etc/prometheus/targets/blackbox_mediawiki_urls.yaml':
         ensure  => present,
         mode    => '0444',
-        content => to_yaml([{'targets' => $blackbox_mediawiki_urls.flatten}])
+        content => stdlib::to_yaml([{'targets' => $blackbox_mediawiki_urls.flatten}])
     }
 
     $blackbox_web_urls = [
