@@ -27,11 +27,13 @@ varnish::backends:
     probe: mwhealth
     pool: true
     xdebug: true
+    thumb: true
   mw132:
     port: 8107
     probe: mwhealth
     pool: true
     xdebug: true
+    thumb: true
   mw141:
     port: 8108
     probe: mwhealth
@@ -47,11 +49,13 @@ varnish::backends:
     probe: mwhealth
     pool: true
     xdebug: true
+    thumb: true
   mw134:
     port: 8111
     probe: mwhealth
     pool: true
     xdebug: true
+    thumb: true
   mw143:
     port: 8112
     probe: mwhealth

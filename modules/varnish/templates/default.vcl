@@ -58,9 +58,13 @@ backend <%= name %>_test {
 # Initialise vcl
 sub vcl_init {
 	new mediawiki = directors.random();
+	new thumb = directors.random();
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['pool'] -%>
 	mediawiki.add_backend(<%= name %>, 100);
+<%- end -%>
+<%- if property['thumb'] -%>
+	thumb.add_backend(<%= name %>, 100);
 <%- end -%>
 <%- end -%>
 }
@@ -209,7 +213,11 @@ sub mw_request {
 <%- end -%>
 <%- end -%>
 
-	set req.backend_hint = mediawiki.backend();
+	if (req.url ~ "^/w/thumb_handler.php") {
+		set req.backend_hint = thumb.backend();
+	} else {
+		set req.backend_hint = mediawiki.backend();
+	}
 
 	# Rewrite hostname to static.miraheze.org for caching
 	if (req.url ~ "^/static/") {
