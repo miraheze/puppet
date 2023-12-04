@@ -18,9 +18,15 @@ class base::dns {
         content => template('base/dns/recursor.conf.erb'),
     }
 
-    service { 'pdns-recursor':
-        ensure  => running,
-        require => Package['pdns-recursor'],
+    systemd::service { 'pdns-recursor':
+        ensure   => present,
+        override => true,
+        restart  => true,
+        content  => template('base/dns/override.conf.erb'),
+        require  => [
+          Package['pdns-recursor'],
+          File['/etc/powerdns/recursor.conf']
+        ],
     }
 
     monitoring::nrpe { 'PowerDNS Recursor':
