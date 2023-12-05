@@ -16,7 +16,7 @@
         </encoder>
     </appender>
 
-    <appender name="J1" class="ch.qos.logback.core.RollingFileAppender">
+    <appender name="J1" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/var/log/puppetlabs/puppetdb/puppetdb.log.json</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
