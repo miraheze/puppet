@@ -4,11 +4,8 @@
         <append>true</append>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-access-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <!-- each file should be at most 200MB, keep 90 days worth of history, but at most 1GB total-->
-            <maxFileSize>200MB</maxFileSize>
-            <maxHistory>90</maxHistory>
-            <totalSizeCap>1GB</totalSizeCap>
+            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-access-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%h %l %u [%t] "%r" %s %b "%i{Referer}" "%i{User-Agent}" %D %i{Content-Length} %mdc{jruby.borrow-time:--}</pattern>
@@ -17,12 +14,12 @@
 
     <appender name="JSON" class="ch.qos.logback.core.RollingFileAppender">
         <file>/var/log/puppetlabs/puppetserver/puppetserver-access.log.json</file>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-             <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-access.log.json.%d{yyyy-MM-dd}</fileNamePattern>
-             <maxHistory>1</maxHistory>
-         </rollingPolicy>
-
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-access-%d{yyyy-MM-dd}.log.json.gz</fileNamePattern>
+            <maxHistory>1</maxHistory>
+        </rollingPolicy>
         <encoder class="net.logstash.logback.encoder.AccessEventCompositeJsonEncoder">
             <providers>
                 <version/>
