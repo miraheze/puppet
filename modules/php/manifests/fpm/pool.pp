@@ -57,11 +57,11 @@ define php::fpm::pool(
         'listen.backlog' => 256,
         'pm'     => 'static',
         'pm.max_children' => $facts['processors']['count'],
-        'pm.max_requests' => 12000,
+        'pm.max_requests' => 5000,
         'pm.status_path' => '/php_status',
         'access.format'  => '%{%Y-%m-%dT%H:%M:%S}t [%p] %{microseconds}d %{HTTP_HOST}e/%r %m/%s %{mega}M',
         'process.dumpable' => yes,
-        'request_slowlog_timeout' => 15,
+        'request_slowlog_timeout' => 5,
         'slowlog' => "/var/log/php${php::version}-fpm-${title_safe}-slowlog.log",
     }
 
