@@ -28,7 +28,7 @@
             <fileNamePattern>/var/log/puppetlabs/puppetserver/puppetserver-%d{yyyy-MM-dd}.log.json.gz</fileNamePattern>
             <maxHistory>1</maxHistory>
         </rollingPolicy>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        <encoder class="ch.qos.logback.classic.encoder.JsonEncoder"/>
     </appender>
 
     <appender name="STATUS" class="ch.qos.logback.core.rolling.RollingFileAppender">
