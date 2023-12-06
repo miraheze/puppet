@@ -4,9 +4,20 @@ class prometheus::exporter::elasticsearch {
         'python3-click',
         'python3-colorama',
         'python3-configobj',
-        'python3-elasticsearch',
         'python3-prometheus-client',
     ])
+
+    file { '/opt/python3-opensearch_2.0.0-1_all.deb':
+        ensure => present,
+        source => 'puppet:///modules/prometheus/packages/python3-opensearch_2.0.0-1_all.deb',
+    }
+
+    package { 'python3-opensearch':
+        ensure   => installed,
+        provider => dpkg,
+        source   => '/opt/python3-opensearch_2.0.0-1_all.deb',
+        require  => File['/opt/python3-opensearch_2.0.0-1_all.deb'],
+    }
 
     file { '/opt/prometheus-es-exporter_0.11.1-2_all.deb':
         ensure => present,
@@ -17,7 +28,10 @@ class prometheus::exporter::elasticsearch {
         ensure   => installed,
         provider => dpkg,
         source   => '/opt/prometheus-es-exporter_0.11.1-2_all.deb',
-        require  => File['/opt/prometheus-es-exporter_0.11.1-2_all.deb'],
+        require  => [
+            File['python3-opensearch'],
+            File['/opt/prometheus-es-exporter_0.11.1-2_all.deb'],
+        ],
     }
 
     file { '/etc/prometheus-es-exporter':
