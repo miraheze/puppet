@@ -8,16 +8,16 @@ class prometheus::exporter::elasticsearch {
         'python3-prometheus-client',
     ])
 
-    file { '/opt/prometheus-es-exporter_0.11.1-1_all.deb':
+    file { '/opt/prometheus-es-exporter_0.11.1-2_all.deb':
         ensure => present,
-        source => 'puppet:///modules/prometheus/packages/prometheus-es-exporter_0.11.1-1_all.deb',
+        source => 'puppet:///modules/prometheus/packages/prometheus-es-exporter_0.11.1-2_all.deb',
     }
 
     package { 'prometheus-es-exporter':
         ensure   => installed,
         provider => dpkg,
-        source   => '/opt/prometheus-es-exporter_0.11.1-1_all.deb',
-        require  => File['/opt/prometheus-es-exporter_0.11.1-1_all.deb'],
+        source   => '/opt/prometheus-es-exporter_0.11.1-2_all.deb',
+        require  => File['/opt/prometheus-es-exporter_0.11.1-2_all.deb'],
     }
 
     file { '/etc/prometheus-es-exporter':
