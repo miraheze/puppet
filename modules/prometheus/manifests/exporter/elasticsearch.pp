@@ -29,7 +29,7 @@ class prometheus::exporter::elasticsearch {
         provider => dpkg,
         source   => '/opt/prometheus-es-exporter_0.11.1-2_all.deb',
         require  => [
-            File['python3-opensearch'],
+            Package['python3-opensearch'],
             File['/opt/prometheus-es-exporter_0.11.1-2_all.deb'],
         ],
     }
