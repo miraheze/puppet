@@ -4,10 +4,13 @@ class role::varnish {
     include fail2ban
     include prometheus::exporter::varnishreqs
 
-    ferm::conf { 'varnish-connlimits':
-        prio    => '01',
-        source  => 'puppet:///modules/role/firewall/varnish-connlimits.conf'
-    }
+    # Temporarily disabling this due to
+    # service keep being restarted on
+    # puppet runs.
+    # ferm::conf { 'varnish-connlimits':
+    #    prio    => '01',
+    #    source  => 'puppet:///modules/role/firewall/varnish-connlimits.conf'
+    # }
 
     ferm::service { 'http':
         proto   => 'tcp',
