@@ -61,7 +61,7 @@ define php::fpm::pool(
         'pm.status_path' => '/php_status',
         'access.format'  => '%{%Y-%m-%dT%H:%M:%S}t [%p] %{microseconds}d %{HTTP_HOST}e/%r %m/%s %{mega}M',
         'process.dumpable' => yes,
-        'request_slowlog_timeout' => 5,
+        'request_slowlog_timeout' => 15,
         'slowlog' => "/var/log/php${php::version}-fpm-${title_safe}-slowlog.log",
     }
 
