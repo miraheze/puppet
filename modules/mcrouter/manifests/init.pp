@@ -75,7 +75,7 @@ class mcrouter(
     String            $cluster,
     VMlib::Ensure    $ensure                   = present,
     Stdlib::Port      $port                     = 11213,
-    Integer           $cross_region_timeout_ms  = 1000,
+    Integer           $cross_region_timeout_ms  = 500,
     Integer           $cross_cluster_timeout_ms = 1000,
     Integer           $num_proxies              = 1,
     Integer           $probe_delay_initial_ms   = 3000,
