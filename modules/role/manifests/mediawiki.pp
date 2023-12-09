@@ -51,6 +51,15 @@ class role::mediawiki (
         }
     }
 
+    # Temporarily set vm.swappiness to 1 to handle
+    # sudden cases where there's a spike in memory usage.
+    # This is when all ram is used for a minute and need to use swap.
+    sysctl::parameters { 'vm_swappiness':
+        values => {
+            'vm.swappiness' => 1,
+        },
+    }
+        
     # Using fastcgi we need more local ports
     sysctl::parameters { 'raise_port_range':
         values   => { 'net.ipv4.ip_local_port_range' => '22500 65535', },
