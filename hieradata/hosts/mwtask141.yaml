@@ -22,7 +22,7 @@ mediawiki::php::memory_limit: '1G'
 mediawiki::is_canary: true
 mediawiki::use_staging: true
 
-php::php_version: '7.4'
+php::php_version: '8.2'
 
 http_proxy: 'http://bast.miraheze.org:8080'
 
