@@ -19,10 +19,10 @@ class mediawiki::extensionsetup {
     exec { 'vendor_psysh_composer':
         command     => 'composer require "psy/psysh:0.11.8" --update-no-dev',
         unless      => 'composer show --installed psy/psysh 0.11.8',
-        cwd         => "${mwpath}/vendor",
+        cwd         => "${mwpath}",
         path        => '/usr/bin',
         environment => [
-            "HOME=${mwpath}/vendor",
+            "HOME=${mwpath}",
             'HTTP_PROXY=http://bast.miraheze.org:8080'
         ],
         user        => 'www-data',
