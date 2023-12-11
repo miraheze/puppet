@@ -4,7 +4,7 @@
     "groups": {
         "basic": {
             // Number of runner processes in this group
-            "runners": 2,
+            "runners": 1,
             // Job types to include ("*" means "all")
             "include": [
                 "*"
@@ -24,7 +24,8 @@
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized",
                 "NamespaceMigrationJob",
-                "smw.changePropagationClassUpdate"
+                "smw.changePropagationClassUpdate",
+                "CreateWikiJob"
             ],
             "low-priority": [
                 "htmlCacheUpdate"
@@ -49,6 +50,14 @@
                 "RecordLintJob"
             ]
         },
+        "createwiki": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "CreateWikiJob"
+            ]
+        },
         "managewiki": {
             // Number of runner processes in this group
             "runners": 1,
@@ -60,7 +69,7 @@
         },
         "parseroidcache": {
             // Number of runner processes in this group
-            "runners": 8,
+            "runners": 4,
             // Job types to include ("*" means "all")
             "include": [
                 "parsoidCachePrewarm"
