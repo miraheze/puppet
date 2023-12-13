@@ -1,6 +1,9 @@
 # Graylog Puppet Module
 
-[![Build Status](https://travis-ci.org/Graylog2/puppet-graylog.png)](https://travis-ci.org/Graylog2/puppet-graylog)
+[![Build Status](https://github.com/Graylog2/puppet-graylog/actions/workflows/validate.yml/badge.svg)](https://github.com/Graylog2/puppet-graylog/actions?query=workflow%3Avalidate)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/graylog/graylog?color=green)](https://forge.puppet.com/modules/graylog/graylog)
+[![Puppet Forge - downloads](https://img.shields.io/puppetforge/dt/graylog/graylog)](https://forge.puppet.com/modules/graylog/graylog)
+
 
 #### Table of Contents
 
@@ -38,13 +41,12 @@ The graylog module manages the following things:
 ### Setup Requirements
 
 The module only manages Graylog itself. You need other modules to install
-the required dependencies like Java, MongoDB and Elasticsearch.
+the required dependencies like MongoDB and OpenSearch.
 
 You could use the following modules to install dependencies:
 
-* [puppetlabs/java](https://forge.puppet.com/puppetlabs/java)
 * [puppet/mongodb](https://forge.puppet.com/puppet/mongodb)
-* [elastic/elasticsearch](https://forge.puppet.com/elastic/elasticsearch)
+* [puppet/opensearch](https://forge.puppet.com/modules/puppet/opensearch)
 
 ### Beginning with graylog
 
@@ -54,7 +56,7 @@ The following modules are required to use the graylog module:
 * [puppetlabs/stdlib](https://forge.puppet.com/puppetlabs/stdlib)
 
 Those dependencies are automatically installed if you are using the Puppet
-module tool or something like [librarian-puppet](http://librarian-puppet.com/).
+module tool or something like [librarian-puppet](https://github.com/voxpupuli/librarian-puppet).
 
 #### Puppet Module Tool
 
@@ -78,10 +80,10 @@ Make sure to use the latest version of the graylog module!
 ## Usage
 
 As mentioned above, the graylog module only manages the Graylog system. Other
-requirements like Java, MongoDB and Elasticsearch need to be managed via
+requirements like MongoDB and OpenSearch need to be managed via
 other modules.
 
-The following config creates a setup with MongoDB, Elasticsearch and Graylog
+The following config creates a setup with MongoDB, OpenSearch and Graylog
 on a single node.
 
 ```puppet
@@ -92,23 +94,15 @@ class { 'mongodb::server':
   bind_ip => ['127.0.0.1'],
 }
 
-class { 'elasticsearch':
-  version      => '6.6.0',
-  repo_version => '6.x',
-  manage_repo  => true,
-}->
-elasticsearch::instance { 'graylog':
-  config => {
-    'cluster.name' => 'graylog',
-    'network.host' => '127.0.0.1',
-  }
+class { 'opensearch':
+  version => '2.9.0',
 }
 
 class { 'graylog::repository':
-  version => '3.0'
+  version => '5.1'
 }->
 class { 'graylog::server':
-  package_version => '3.0.0-12',
+  package_version => '5.1.0-6',
   config          => {
     'password_secret' => '...',    # Fill in your password secret
     'root_password_sha2' => '...', # Fill in your root password hash
@@ -120,11 +114,11 @@ class { 'graylog::server':
 
 ```puppet
 class { '::graylog::repository':
-  version => '3.0'
+  version => '5.1'
 }->
 class { '::graylog::server':
   config  => {
-    is_master                                          => true,
+    is_leader                                          => true,
     node_id_file                                       => '/etc/graylog/server/node-id',
     password_secret                                    => 'password_secret',
     root_username                                      => 'admin',
@@ -145,12 +139,9 @@ class { '::graylog::server':
     elasticsearch_shards                               => '4',
     elasticsearch_replicas                             => '1',
     elasticsearch_index_prefix                         => 'graylog',
-    elasticsearch_hosts                                => 'http://elasticsearch01.domain.local:9200,http://elasticsearch02.domain.local:9200',
+    elasticsearch_hosts                                => 'http://opensearch01.domain.local:9200,http://opensearch02.domain.local:9200',
     mongodb_uri                                        => 'mongodb://mongouser:mongopass@mongodb01.domain.local:27017,mongodb02.domain.local:27017,mongodb03.domain.local:27017/graylog',
   },
-  require => Class[
-    '::java',
-  ],
 }
 ```
 
@@ -162,7 +153,7 @@ class { '::graylog::server':
 
 * `graylog::repository`: Manages the official Graylog package repository
 * `graylog::server`: Installs, configures and manages the Graylog server service
-* `graylog::allinone`: Creates a full Graylog setup including MongoDB and Elasticsearch
+* `graylog::allinone`: Creates a full Graylog setup including MongoDB and OpenSearch
 
 #### Private Classes
 
@@ -180,7 +171,7 @@ version.
 
 It defaults to `$graylog::params::major_version`.
 
-Example: `version => '3.0'`
+Example: `version => '5.1'`
 
 ##### `url`
 
@@ -204,6 +195,14 @@ this setting should not be changed.
 
 The `graylog::server` class configures the Graylog server service.
 
+##### `package_name`
+
+This setting is used to choose the Graylog package name. It defaults to
+`graylog-server` to install Graylog Open. You can use `graylog-enterprise`
+to install the Graylog Enterprise package.
+
+Example: `package_name => 'graylog-server'`
+
 ##### `package_version`
 
 This setting is used to choose the Graylog package version. It defaults to
@@ -211,7 +210,7 @@ This setting is used to choose the Graylog package version. It defaults to
 install time. You can also use `latest` so it will always update to the latest
 stable version if a new one is available.
 
-Example: `package_version => '3.0.0-12'`
+Example: `package_version => '5.1.0-6'`
 
 ##### `config`
 
@@ -235,7 +234,7 @@ Example:
 config => {
   'password_secret'    => '...',
   'root_password_sha2' => '...',
-  'is_master'          => true,
+  'is_leader'          => true,
   'output_batch_size'  => 2500,
 }
 ```
@@ -266,10 +265,27 @@ Available options: `running`, 'stopped'
 This setting is used to configure if the Graylog service should be enabled.
 It defaults to `true`.
 
+##### `java_initial_heap_size`
+
+Sets the initial Java heap size (-Xms) for Graylog. Defaults to `1g`.
+
+##### `java_max_heap_size`
+
+Sets the maximum Java heap size (-Xmx) for Graylog. Defaults to `1g`.
+
+##### `java_opts`
+
+Additional java options for Graylog. Defaults to ``.
+
+##### `restart_on_package_upgrade`
+
+This setting restarts the `graylog-server` service if the os package is upgraded.
+It defaults to `false`.
+
 #### Class: graylog::allinone
 
 The `graylog::allinone` class configures a complete Graylog system including
-MongoDB and Elasticsearch.
+MongoDB and OpenSearch
 
 **Note:** This is nice to quickly setup a running system on a single node but
 should only be used for testing or really small setups.
@@ -281,23 +297,21 @@ Please make sure you have these installed before using the `graylog::allinone` c
 Requirements:
 
 * [puppet/mongodb](https://forge.puppet.com/puppet/mongodb)
-* [elastic/elasticsearch](https://forge.puppet.com/elastic/elasticsearch)
+* [puppet/opensearch](https://forge.puppet.com/modules/puppet/opensearch)
 
-##### `elasticsearch`
+##### `opensearch`
 
-This setting is used to configure the `elasticsearch` Puppet module.
+This setting is used to configure the `opensearch` Puppet module.
 
-There are only two possible hash keys:
+There is only on possible hash key:
 
-* `version`: The Elasticsearch version to use
-* `repo_version`: The Elasticsearch repository version to use
+* `version`: The OpenSearch version to use
 
 Example:
 
 ```
-elasticsearch => {
-  version      => '6.5.1',
-  repo_version => '6.x',
+opensearch => {
+  version => '2.9.0',
 }
 ```
 
@@ -310,7 +324,7 @@ Example:
 
 ```
 graylog => {
-  major_version => '3.0',
+  major_version => '5.1',
   config        => {
     # ... see graylog::server description for details
   },
@@ -321,8 +335,7 @@ graylog => {
 
 Supported Graylog versions:
 
-* 2.x
-* 3.x
+* 5.x
 
 Supported platforms:
 
@@ -336,8 +349,8 @@ It uses the `graylog::allinone` class to setup a complete system inside
 the Vagrant box.
 
 ```
-$ vagrant up centos7
-$ vagrant provision centos7
+$ vagrant up rockylinux8
+$ vagrant provision rockylinux8
 ```
 
 This is a quick way to see how the module behaves on a real machine.

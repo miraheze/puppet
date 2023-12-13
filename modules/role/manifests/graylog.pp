@@ -31,15 +31,9 @@ class role::graylog {
             'root_password_sha2'  => lookup('passwords::graylog::root_password_sha2'),
             'elasticsearch_hosts' => $elasticsearch_host,
             'ignore_migration_failures' => true,
-        }
-    }
-
-    file { '/etc/default/graylog-server':
-        ensure  => 'present',
-        source  => 'puppet:///modules/role/graylog/graylog-server-default',
-        owner   => 'root',
-        group   => 'root',
-        require => Class['graylog::server'],
+        },
+        java_initial_heap_size => '2g',
+        java_max_heap_size     => '2g'
     }
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access

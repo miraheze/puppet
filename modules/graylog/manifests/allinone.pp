@@ -1,36 +1,27 @@
-class graylog::allinone(
-  $elasticsearch,
+class graylog::allinone (
+  $opensearch,
   $graylog,
 ) inherits graylog::params {
-
-  class {'::mongodb::globals':
+  class { 'mongodb::globals':
     manage_package_repo => true,
-    version             => '4.0.6',
+    version             => '5.0.19',
   }
-  -> class {'::mongodb::server':
+  -> class { 'mongodb::server':
     bind_ip => ['127.0.0.1'],
   }
 
-
-  if ('version' in $elasticsearch) {
-    $es_version = $elasticsearch['version']
+  if 'version' in $opensearch {
+    $opensearch_version = $opensearch['version']
   } else {
-    $es_version = '6.6.0'
+    $opensearch_version = '2.9.0'
   }
 
-  class { 'elasticsearch':
-    version     => $es_version,
-    manage_repo => true,
-  }
-  -> elasticsearch::instance { 'graylog':
-    config => {
-      'cluster.name' => 'graylog',
-      'network.host' => '127.0.0.1',
-    },
+  class { 'opensearch':
+    version  => $opensearch_version,
+    settings => $opensearch['settings'],
   }
 
-
-  if ('major_version' in $graylog) {
+  if 'major_version' in $graylog {
     $graylog_major_version = $graylog['major_version']
   } else {
     $graylog_major_version = $graylog::params::major_version
@@ -40,6 +31,10 @@ class graylog::allinone(
     version => $graylog_major_version,
   }
   -> class { 'graylog::server':
-    config => $graylog['config'],
+    package_name           => $graylog['package_name'],
+    config                 => $graylog['config'],
+    java_initial_heap_size => $graylog['java_initial_heap_size'],
+    java_max_heap_size     => $graylog['java_max_heap_size'],
+    java_opts              => $graylog['java_opts'],
   }
 }
