@@ -201,7 +201,6 @@ sub normalize_request_nonmisc {
 	}
 }
 
-if (req.url !~ "\[" && req.url !~ "(?i)%5b") { set req.url = std.querysort(req.url); }
 # Main MediaWiki Request Handling
 sub mw_request {
 	call rate_limit;
