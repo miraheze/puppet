@@ -194,11 +194,21 @@ sub recv_purge {
 	}
 }
 
+sub normalize_request_nonmisc {
+	// Sort query parameters to improve cache efficiency.
+	if (req.url !~ "\[" && req.url !~ "(?i)%5b") {
+		set req.url = std.querysort(req.url);
+	}
+}
+
+if (req.url !~ "\[" && req.url !~ "(?i)%5b") { set req.url = std.querysort(req.url); }
 # Main MediaWiki Request Handling
 sub mw_request {
 	call rate_limit;
 	call mobile_detection;
-	
+
+	call normalize_request_nonmisc;
+
 	# Assigning a backend
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['xdebug'] -%>
