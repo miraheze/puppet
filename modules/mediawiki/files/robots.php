@@ -13,7 +13,7 @@ $page = MediaWikiServices::getInstance()
 header( 'Content-Type: text/plain; charset=utf-8' );
 header( 'Vary: X-Subdomain' );
 
-$robotsfile = MEDIAWIKI_DEPLOYMENT_DIR . '/srv/mediawiki/config/robots.txt';
+$robotsfile = '/srv/mediawiki/config/robots.txt';
 $robots = fopen( $robotsfile, 'rb' );
 $robotsfilestats = fstat( $robots );
 $mtime = $robotsfilestats['mtime'];
