@@ -77,7 +77,7 @@ class mcrouter(
     Stdlib::Port      $port                     = 11213,
     Integer           $cross_region_timeout_ms  = 500,
     Integer           $cross_cluster_timeout_ms = 1000,
-    Integer           $num_proxies              = 1,
+    Integer           $num_proxies              = 2,
     Integer           $probe_delay_initial_ms   = 3000,
     Optional[Integer] $timeouts_until_tko       = undef,
 ) {
