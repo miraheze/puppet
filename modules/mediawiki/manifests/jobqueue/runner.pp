@@ -105,6 +105,15 @@ class mediawiki::jobqueue::runner {
                 special => 'daily',
             }
 
+            cron { 'update_special_pages':
+                ensure   => present,
+                command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/maintenance/updateSpecialPages.php > /var/log/mediawiki/cron/updateSpecialPages.log 2>&1",
+                user     => 'www-data',
+                monthday => '*/3',
+                hour     => 5,
+                minute   => 0,
+            }
+
             cron { 'backups-mediawiki-xml':
                 ensure   => absent,
                 command  => '/usr/local/bin/miraheze-backup backup mediawiki-xml > /var/log/mediawiki-xml-backup.log 2>&1',
