@@ -11,6 +11,9 @@ ADDITIONAL_ARGS="--route-prefix=<%= @region %>/<%= @cluster %> \
 --file-observer-sleep-before-update-ms=100 \
 --num-proxies=<%= @num_proxies %> \
 --probe-timeout-initial=<%= @probe_delay_initial_ms %> \
+<%- if @disable_tko_tracking -%>
+--disable-tko-tracking \
+<%- end -%>
 <%- if @timeouts_until_tko -%>
 --timeouts-until-tko=<%= @timeouts_until_tko %> \
 <%- end -%>
