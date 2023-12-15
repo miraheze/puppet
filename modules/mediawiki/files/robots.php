@@ -38,4 +38,9 @@ header( "Last-modified: $lastmod" );
 fpassthru( $robots );
 
 echo "#\n#\n#----------------------------------------------------------#\n#\n#\n#\n";
+# Dynamic sitemap url
+echo "# Dynamic sitemap url" . "\r\n";
+echo "Sitemap: {$wgServer}/sitemap.xml" . "\r\n\n";
+
+echo "#\n#\n#----------------------------------------------------------#\n#\n#\n#\n";
 echo $extratext;
