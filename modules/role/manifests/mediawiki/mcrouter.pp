@@ -26,7 +26,7 @@ class role::mediawiki::mcrouter(
       region                 => 'miraheze',
       cluster                => 'mw',
       num_proxies            => $num_proxies,
-      timeouts_until_tko     => $timeouts_until_tko,
+      disable_tko_tracking   => true,
       probe_delay_initial_ms => 60000,
       port                   => 11213,
     }

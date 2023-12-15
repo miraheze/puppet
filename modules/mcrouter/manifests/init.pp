@@ -38,7 +38,12 @@
 #   the status of memcached before sending traffic again).
 #   Defaults to 3000.
 #
+# [*disable_tko_tracking*]
+#   Disable TKO tracker (marking a host down for fast failover)
+#   Default: undef
+#
 # [*timeouts_until_tko*]
+#   Must have disable_tko_tracking set to false or undef.
 #   Number of timeouts to happen before marking a memcached server as TKO.
 #   Default: undef
 #
@@ -73,12 +78,13 @@ class mcrouter(
     Array             $routes,
     String            $region,
     String            $cluster,
-    VMlib::Ensure    $ensure                   = present,
+    VMlib::Ensure     $ensure                   = present,
     Stdlib::Port      $port                     = 11213,
     Integer           $cross_region_timeout_ms  = 500,
     Integer           $cross_cluster_timeout_ms = 1000,
     Integer           $num_proxies              = 2,
     Integer           $probe_delay_initial_ms   = 3000,
+    Optional[Boolean] $disable_tko_tracking     = undef,
     Optional[Integer] $timeouts_until_tko       = undef,
 ) {
 
