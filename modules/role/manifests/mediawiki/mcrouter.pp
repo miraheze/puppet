@@ -3,7 +3,7 @@
 # == Properties
 #
 class role::mediawiki::mcrouter(
-    Integer      $num_proxies        = lookup('role::mediawiki::mcrouter::num_proxies', {'default_value' => 1}),
+    Integer      $num_proxies        = lookup('role::mediawiki::mcrouter::num_proxies', {'default_value' => 2}),
     Integer      $timeouts_until_tko = lookup('role::mediawiki::mcrouter::timeouts_until_tko', {'default_value' => 10}),
     Hash         $servers_by_dc      = lookup('role::mediawiki::mcrouter::shards')
 ) {
