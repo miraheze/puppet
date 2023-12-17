@@ -59,7 +59,7 @@ class mediawiki::jobqueue::runner {
         }
 
         cron { 'update rottenlinks on all wikis':
-            ensure   => present,
+            ensure   => absent,
             command  => "/usr/local/bin/fileLockScript.sh /tmp/rotten_links_file_lock \'/usr/bin/nice -n 15 /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/${database}.json /srv/mediawiki/w/extensions/RottenLinks/maintenance/updateExternalLinks.php\'",
             user     => 'www-data',
             minute   => '0',
