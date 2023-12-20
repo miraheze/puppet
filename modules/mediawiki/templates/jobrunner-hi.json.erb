@@ -24,6 +24,7 @@
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized",
                 "NamespaceMigrationJob",
+                "smw.update",
                 "smw.changePropagationClassUpdate",
                 "CreateWikiJob"
             ],
@@ -80,6 +81,7 @@
             "runners": 1,
             // Job types to include ("*" means "all")
             "include": [
+                "smw.update",
                 "smw.changePropagationClassUpdate"
             ]
         },
@@ -139,7 +141,9 @@
             "refreshLinks": "1400M",
             "refreshLinksDynamic": "1400M",
             "refreshLinksPrioritized": "1400M",
-            "RequestWikiAIJob": "2000M"
+            "RequestWikiAIJob": "2000M",
+            "smw.update": "1400M",
+            "smw.changePropagationClassUpdate": "1400M"
         }
     },
 
