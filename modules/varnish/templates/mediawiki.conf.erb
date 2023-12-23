@@ -65,7 +65,7 @@ server {
 	}
 
 	# Web scraper - Void
-	if ($http_user_agent ~ "+Zimit$") {
+	if ($http_user_agent ~ "\+Zimit$") {
 		return 403;
 	}
 
@@ -95,7 +95,7 @@ server {
 	}
 
 	# Web scraper - Void
-	if ($http_user_agent ~ "+Zimit$") {
+	if ($http_user_agent ~ "\+Zimit$") {
 		return 403;
 	}
 
