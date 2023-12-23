@@ -64,6 +64,11 @@ server {
 		return 403;
 	}
 
+	# Web scraper - Void
+	if ($http_user_agent ~ "+Zimit$") {
+		return 403;
+	}
+
 	location / {
 		if ($request_uri !~ "^/check$") {
 			return 301 https://$host$request_uri;
@@ -86,6 +91,11 @@ server {
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Web scraper - Void
+	if ($http_user_agent ~ "+Zimit$") {
 		return 403;
 	}
 
