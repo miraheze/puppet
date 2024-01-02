@@ -22,7 +22,41 @@ jobs:
       uses: actions/checkout@v4
 
     - name: puppet-lint
-      continue-on-error: true
       uses: scottbrenner/puppet-lint-action@master
       with:
-        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check ./
+        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check --fix ./
+
+    - name: Push the changes
+      continue-on-error: true
+      if: github.event_name == 'pull_request'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        if ! git diff --exit-code --quiet; then
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git checkout -b ${GITHUB_HEAD_REF}
+          git add .
+          git commit -am "CI: lint puppet code to standards" -m "Check commit and GitHub actions for more details"
+          git pull origin ${GITHUB_HEAD_REF} --rebase
+          git push --set-upstream origin ${GITHUB_HEAD_REF}
+        else
+          echo "No changes to commit"
+        fi
+
+  notify-irc:
+    needs: puppet-lint
+    runs-on: ubuntu-latest
+    if: ${{ always() && github.repository_owner == 'miraheze' && ( github.ref == 'refs/heads/master' || github.event_name == 'pull_request' ) }}
+    steps:
+      - name: failed
+        uses: technote-space/workflow-conclusion-action@v3
+      - uses: rectalogic/notify-irc@v2
+        if: env.WORKFLOW_CONCLUSION == 'failure'
+        with:
+          channel: "#miraheze-sre"
+          server: "irc.libera.chat"
+          nickname: miraheze-github
+          message: ${{ github.repository }} - ${{ github.actor }} the build has errored.
+          sasl_password: ${{ secrets.IRC_MIRAHEZEBOTS }}

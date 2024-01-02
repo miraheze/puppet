@@ -74,7 +74,7 @@ class role::opensearch (
         group     => 'opensearch',
         mode      => '0660',
         show_diff => false,
-        before  => Service['opensearch'],
+        before    => Service['opensearch'],
         require   => File['/etc/opensearch/ssl'],
     }
 
@@ -94,7 +94,7 @@ class role::opensearch (
         group     => 'opensearch',
         mode      => '0660',
         show_diff => false,
-        before  => Service['opensearch'],
+        before    => Service['opensearch'],
         require   => File['/etc/opensearch/ssl'],
     }
 
@@ -102,8 +102,8 @@ class role::opensearch (
     # to apply any config changes to the index.
     # This is required to be run everytime the config changes.
     file { '/usr/local/bin/opensearch-security':
-        ensure => present,
-        mode   => '0755',
+        ensure  => present,
+        mode    => '0755',
         content => template('role/opensearch/bin/opensearch-security.sh.erb'),
     }
 

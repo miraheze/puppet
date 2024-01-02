@@ -11,10 +11,10 @@ class prometheus::exporter::redis (
     ])
 
     file { '/usr/local/bin/prometheus-jobqueue-stats':
-        ensure => file,
-        mode   => '0555',
-        owner  => 'root',
-        group  => 'root',
+        ensure  => file,
+        mode    => '0555',
+        owner   => 'root',
+        group   => 'root',
         content => template('prometheus/redis/prometheus-jobqueue-stats.py.erb')
     }
 
@@ -54,7 +54,7 @@ class prometheus::exporter::redis (
     cron { 'prometheus_jobqueue_stats':
         ensure  => $collect_jobqueue_stats,
         user    => 'root',
-        command => "/usr/local/bin/prometheus-jobqueue-stats --outfile /var/lib/prometheus/node.d/jobqueue.prom",
+        command => '/usr/local/bin/prometheus-jobqueue-stats --outfile /var/lib/prometheus/node.d/jobqueue.prom',
     }
 
     $firewall_rules_str = join(

@@ -11,7 +11,7 @@ class { 'graylog::allinone':
       'plugins.security.disabled'         => true,
     },
   },
-  graylog       => {
+  graylog    => {
     major_version          => '5.1',
     config                 => {
       'password_secret'          => '16BKgz0Qelg6eFeJYh8lc4hWU1jJJmAgHlPEx6qkBa2cQQTUG300FYlPOEvXsOV4smzRtnwjHAKykE3NIWXbpL7yGLN7V2P2',

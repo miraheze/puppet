@@ -25,11 +25,11 @@ class role::graylog {
         version => '5.2',
     }
     -> class { 'graylog::server':
-        package_version => '5.2.1-1',
-        config          => {
-            'password_secret'     => lookup('passwords::graylog::password_secret'),
-            'root_password_sha2'  => lookup('passwords::graylog::root_password_sha2'),
-            'elasticsearch_hosts' => $elasticsearch_host,
+        package_version        => '5.2.1-1',
+        config                 => {
+            'password_secret'           => lookup('passwords::graylog::password_secret'),
+            'root_password_sha2'        => lookup('passwords::graylog::root_password_sha2'),
+            'elasticsearch_hosts'       => $elasticsearch_host,
             'ignore_migration_failures' => true,
         },
         java_initial_heap_size => '2g',

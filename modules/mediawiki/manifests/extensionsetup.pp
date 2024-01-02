@@ -19,7 +19,7 @@ class mediawiki::extensionsetup {
     exec { 'vendor_psysh_composer':
         command     => 'composer require "psy/psysh:0.11.8" --update-no-dev',
         unless      => 'composer show --installed psy/psysh 0.11.8',
-        cwd         => "${mwpath}",
+        cwd         => $mwpath,
         path        => '/usr/bin',
         environment => [
             "HOME=${mwpath}",
@@ -342,7 +342,7 @@ class mediawiki::extensionsetup {
         command     => $composer,
         creates     => "${mwpath}/extensions/WebAuthn/vendor",
         cwd         => "${mwpath}/extensions/WebAuthn",
-        path        => "/usr/bin",
+        path        => '/usr/bin',
         environment => [
             "HOME=${mwpath}/extensions/WebAuthn",
             'HTTP_PROXY=http://bast.miraheze.org:8080'
@@ -354,7 +354,7 @@ class mediawiki::extensionsetup {
         command     => $composer,
         creates     => "${mwpath}/extensions/OOJSPlus/vendor",
         cwd         => "${mwpath}/extensions/OOJSPlus",
-        path        => "/usr/bin",
+        path        => '/usr/bin',
         environment => [
             "HOME=${mwpath}/extensions/OOJSPlus",
             'HTTP_PROXY=http://bast.miraheze.org:8080'

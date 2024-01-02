@@ -1,7 +1,7 @@
 # == Class: swift::proxy
 
 class swift::proxy (
-    Integer              $num_workers   = lookup('swift::proxy::num_workers', {'default_value' => $::processorcount}),
+    Integer              $num_workers   = lookup('swift::proxy::num_workers', {'default_value' => $facts['processors']['count']}),
     Hash                 $accounts      = lookup('swift::accounts'),
     Hash                 $accounts_keys = lookup('swift::accounts_keys'),
 ) {
