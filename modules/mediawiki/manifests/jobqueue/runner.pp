@@ -125,7 +125,7 @@ class mediawiki::jobqueue::runner {
             }
 
             monitoring::nrpe { 'Backups MediaWiki XML':
-                ensure => absent,
+                ensure   => absent,
                 command  => '/usr/lib/nagios/plugins/check_file_age -w 8640000 -c 11232000 -f /var/log/mediawiki-xml-backup.log',
                 docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
                 critical => true

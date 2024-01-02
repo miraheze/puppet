@@ -187,46 +187,46 @@ class matomo (
     }
     $concurrentHash.each | String $concurrent, String $interval | {
         systemd::timer::job { "matomo-archiver-${concurrent}":
-            description               => "Runs the Matomo's archive process.",
-            command                   => "/bin/bash -c '${archiver_command}'",
-            interval                  => {
+            description       => "Runs the Matomo's archive process.",
+            command           => "/bin/bash -c '${archiver_command}'",
+            interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => $interval,
             },
-            logfile_basedir           => '/var/log/matomo',
-            logfile_name              => "matomo-archive-${concurrent}.log",
-            syslog_identifier         => "matomo-archiver-${concurrent}",
-            user                      => 'www-data',
+            logfile_basedir   => '/var/log/matomo',
+            logfile_name      => "matomo-archive-${concurrent}.log",
+            syslog_identifier => "matomo-archiver-${concurrent}",
+            user              => 'www-data',
         }
     }
 
     ['last2', 'january'].each | $key | {
         $optimize_command = "/usr/bin/php /srv/matomo/console database:optimize-archive-tables ${key}"
         systemd::timer::job { "matomo-optimize-${key}":
-            description               => "Runs the Matomo's Optimize ${key} process.",
-            command                   => "/bin/bash -c '${optimize_command}'",
-            interval                  => {
+            description       => "Runs the Matomo's Optimize ${key} process.",
+            command           => "/bin/bash -c '${optimize_command}'",
+            interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => 'monthly',
             },
-            logfile_basedir           => '/var/log/matomo',
-            logfile_name              => "matomo-optimize-${key}.log",
-            syslog_identifier         => "matomo-optimize-${key}",
-            user                      => 'www-data',
+            logfile_basedir   => '/var/log/matomo',
+            logfile_name      => "matomo-optimize-${key}.log",
+            syslog_identifier => "matomo-optimize-${key}",
+            user              => 'www-data',
         }
     }
 
-    $queuedtracking_command = "/usr/bin/php /srv/matomo/console queuedtracking:process"
+    $queuedtracking_command = '/usr/bin/php /srv/matomo/console queuedtracking:process'
     systemd::timer::job { 'matomo-queuedtracking':
-        description               => "Runs the Matomo's Plugin QueuedTracking process.",
-        command                   => "/bin/bash -c '${queuedtracking_command}'",
-        interval                  => {
+        description       => "Runs the Matomo's Plugin QueuedTracking process.",
+        command           => "/bin/bash -c '${queuedtracking_command}'",
+        interval          => {
             'start'    => 'OnCalendar',
             'interval' => '*-*-* *:*:00',
         },
-        logfile_basedir           => '/var/log/matomo',
-        logfile_name              => 'matomo-queuedtracking.log',
-        syslog_identifier         => 'matomo-queuedtracking',
-        user                      => 'www-data',
+        logfile_basedir   => '/var/log/matomo',
+        logfile_name      => 'matomo-queuedtracking.log',
+        syslog_identifier => 'matomo-queuedtracking',
+        user              => 'www-data',
     }
 }

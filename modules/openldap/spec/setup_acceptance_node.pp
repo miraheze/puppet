@@ -46,19 +46,19 @@ file { '/etc/ldap/ssl':
   ensure => directory,
 }
 file { "/etc/ldap/ssl/${facts['networking']['fqdn']}.key":
-  ensure  => file,
-  mode    => '0644',
-  source  => $ssl_key_source,
+  ensure => file,
+  mode   => '0644',
+  source => $ssl_key_source,
 }
 file { "/etc/ldap/ssl/${facts['networking']['fqdn']}.crt":
-  ensure  => file,
-  mode    => '0644',
-  source  => $ssl_cert_source,
+  ensure => file,
+  mode   => '0644',
+  source => $ssl_cert_source,
 }
 file { '/etc/ldap/ssl/ca.pem':
-  ensure  => file,
-  mode    => '0644',
-  source  => $ssl_cert_source,
+  ensure => file,
+  mode   => '0644',
+  source => $ssl_cert_source,
 }
 
 # Hack to work around issues with recent systemd and docker with systemd running services as non-root

@@ -14,7 +14,7 @@ class poolcounter {
     }
 
     file { '/usr/bin/poolcounterd':
-        ensure  => present,
+        ensure => present,
         mode   => '0755',
         source => 'puppet:///modules/poolcounter/binary/poolcounterd',
     }

@@ -112,7 +112,7 @@ class swift::ac {
         hour    => '6',
         weekday => '0',
     }
-    
+
     monitoring::nrpe { 'Backups Swift Account Container':
         command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/swift-account-container-backup.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',

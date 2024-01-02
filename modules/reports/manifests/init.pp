@@ -163,9 +163,9 @@ class reports {
     }
 
     cron { 'Task Scheduler':
-        ensure => present,
+        ensure  => present,
         command => '/usr/bin/php /srv/TSPortal/artisan schedule:run >> /dev/null 2>&1',
-        user => 'www-data',
-        minute => '*'
+        user    => 'www-data',
+        minute  => '*'
     }
 }

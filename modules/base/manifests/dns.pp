@@ -11,10 +11,10 @@ class base::dns {
     }
 
     file { '/etc/powerdns/recursor.conf':
-        mode   => '0444',
-        owner  => 'pdns',
-        group  => 'pdns',
-        notify => Service['pdns-recursor'],
+        mode    => '0444',
+        owner   => 'pdns',
+        group   => 'pdns',
+        notify  => Service['pdns-recursor'],
         content => template('base/dns/recursor.conf.erb'),
     }
 

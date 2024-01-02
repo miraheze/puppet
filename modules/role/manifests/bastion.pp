@@ -43,7 +43,7 @@ class role::bastion (
         )
         $firewall_rules_ports = join(
             $backends.map |$key, $value| {
-                "${value['port']}"
+                $value['port']
             }
             .flatten()
             .unique()
@@ -56,12 +56,12 @@ class role::bastion (
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
-    
+
         file { '/etc/nginx/sites-enabled/default':
             ensure => absent,
             notify => Service['nginx'],
         }
-    
+
         nginx::site { 'mediawiki':
             ensure  => present,
             content => template('role/bastion/mediawiki.conf.erb'),

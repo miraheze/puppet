@@ -54,9 +54,9 @@ class role::memcached (
         ' '
     )
     ferm::service { 'memcached':
-        proto   => 'tcp',
-        port    => $port,
-        srange  => "(${firewall_rules_str})",
+        proto  => 'tcp',
+        port   => $port,
+        srange => "(${firewall_rules_str})",
     }
 
     motd::role { 'role::memcached':

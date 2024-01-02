@@ -59,7 +59,7 @@ class role::mediawiki (
             'vm.swappiness' => 1,
         },
     }
-        
+
     # Using fastcgi we need more local ports
     sysctl::parameters { 'raise_port_range':
         values   => { 'net.ipv4.ip_local_port_range' => '22500 65535', },
