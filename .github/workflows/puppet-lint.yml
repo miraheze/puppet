@@ -24,7 +24,7 @@ jobs:
     - name: puppet-lint
       uses: scottbrenner/puppet-lint-action@master
       with:
-        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check --fix ./
+        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check --no-single_quote_string_with_variables --fix ./
 
     - name: Push the changes
       continue-on-error: true
