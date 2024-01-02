@@ -73,7 +73,7 @@ if $facts['os']['family'] == 'RedHat' {
       'ExecStartPre=',
       'ExecStartPre=/usr/bin/chown root:root /var/run/openldap',
       'ExecStart=',
-      'ExecStart=/usr/sbin/slapd -u root -h ${SLAPD_URLS} $SLAPD_OPTIONS',
+      'ExecStart=/usr/sbin/slapd -u root -h ${SLAPD_URLS} $SLAPD_OPTIONS', # lint:ignore:single_quote_string_with_variables
     ], "\n"),
   }
 }
