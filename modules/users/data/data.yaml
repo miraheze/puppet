@@ -98,7 +98,7 @@ users:
     uid: 1007
     name: reception
     realname: Reception
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILMGnrVrhB1ZfXRouXhLzjsWjx3dTVYxxvsIzTD2JJg]
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILMGnrVrhB1ZfXRouXhLzjsWjx3dTVYxxvsIzTD2JJg/ reception]
   imbophil:
     ensure: absent
     uid: 1008
