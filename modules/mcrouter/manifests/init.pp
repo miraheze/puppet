@@ -140,7 +140,7 @@ class mcrouter(
 
     file { '/etc/mcrouter/config.json':
         ensure       => $ensure,
-        content      => to_json_pretty($config),
+        content      => stdlib::to_json_pretty($config),
         owner        => 'root',
         group        => 'root',
         mode         => '0444',
