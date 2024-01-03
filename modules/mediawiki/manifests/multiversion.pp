@@ -103,12 +103,6 @@ class mediawiki::multiversion (
             class { 'mediawiki::jobqueue::runner':
                 version => $version,
             }
-
-            if lookup('mwservices', {'default_value' => false}) {
-                class { 'mediawiki::services_cron':
-                    version => $version,
-                }
-            }
         }
     }
 }
