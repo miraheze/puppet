@@ -2,12 +2,12 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [paladox, reception, universalomega, void]
+    members: [agent, paladox, reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [agent, macfan]
+    members: [macfan]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nutcracker *',
@@ -41,7 +41,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [macfan, agent]
+    members: [macfan]
     privileges: []
   ssl-admins:
     gid: 2006
