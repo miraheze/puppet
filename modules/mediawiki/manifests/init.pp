@@ -1,8 +1,5 @@
 # === Class mediawiki
-class mediawiki(
-    Optional[String] $branch = undef,
-    Optional[String] $branch_mw_config = undef,
-) {
+class mediawiki {
     include mediawiki::cgroup
     include mediawiki::favicons
     include mediawiki::nginx
