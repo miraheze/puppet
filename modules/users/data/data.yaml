@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [agent, paladox, reception, universalomega, void]
+    members: [agent, owen, paladox, reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -155,3 +155,9 @@ users:
     name: alex
     realname: Alex
     ssh_keys: []
+  owen:
+    ensure: present
+    uid: 1017
+    name: Owen
+    realname: Owen
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIdKAqYfHpbp72ZmbDbafkxsbV+ysvn2JjDFU0QL2N1O owen@miraheze]
