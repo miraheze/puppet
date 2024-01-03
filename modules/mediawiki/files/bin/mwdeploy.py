@@ -29,8 +29,8 @@ class Environment(TypedDict):
 
 
 class EnvironmentList(TypedDict):
+    beta: Environment
     prod: Environment
-    test: Environment
 
 
 beta: Environment = {
