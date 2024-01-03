@@ -26,6 +26,7 @@ script-src:
   - 'wikidata.org'
   - 'www.gstatic.com'
   - 'www.google.com'
+  - 'apis.google.com'
   - 'platform.twitter.com'
   - 'wiki-assets.sumin.wiki'
   - 'cdnjs.cloudflare.com'
@@ -148,6 +149,7 @@ media-src:
   - 'player.twitch.tv'
   - 'clips.twitch.tv'
   - 'player.vimeo.com'
+  - 'apis.google.com'
 
 frame-src:
   - "'self'"
@@ -155,6 +157,7 @@ frame-src:
   - '*.mirabeta.org'
   - 'www.google.com'
   - 'docs.google.com'
+  - 'apis.google.com'
   - 'web.libera.chat'
   - 'snap.berkeley.edu'
   - '*.youtube-nocookie.com'
