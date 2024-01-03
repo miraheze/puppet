@@ -5,7 +5,7 @@
 # = Example
 # git::clone { 'example':
 #     directory => '/path/to/location/on/server',
-#     origin => 'http://example/example.git',
+#     origin => 'http://example/example',
 #     branch => 'example2',
 # }
 #
@@ -20,6 +20,7 @@ define git::clone(
     String  $timeout = '600',
     String  $depth = 'full',
     Boolean $recurse_submodules = false,
+    Boolean $shallow_submodules = false,
     String  $mode = '0755',
     String  $umask = '022',
     Boolean $allow_unrelated_histories = false,
@@ -42,6 +43,11 @@ define git::clone(
                 default => '',
             }
 
+            $shallow_submodules_arg = $shallow_submodules ? {
+                true    => '--shallow-submodules ',
+                default => '',
+            }
+
             # if branch was specified
             if !empty($branch) {
                 $brancharg = "-b ${branch} "
@@ -51,7 +57,7 @@ define git::clone(
             }
 
             if !empty($ssh) {
-                $env = "GIT_SSH=${ssh}"
+                $env = "GIT_SSH_COMMAND=${ssh}"
             } else {
                 $env = undef
             }
@@ -70,7 +76,7 @@ define git::clone(
 
             # clone the repository
             exec { "git_clone_${title}":
-                command     => "${git} clone ${recurse_submodules_arg}${brancharg}${origin}${deptharg} ${allow_unrelated_histories_arg} ${directory}",
+                command     => "${git} clone ${recurse_submodules_arg}${shallow_submodules_arg}${brancharg}${origin}${deptharg} ${allow_unrelated_histories_arg} ${directory}",
                 provider    => shell,
                 logoutput   => on_failure,
                 cwd         => '/tmp',
@@ -133,18 +139,19 @@ define git::clone(
                     default => "remotes/origin/${branch}",
                 }
                 exec { "git_pull_${title}":
-                    cwd       => $directory,
-                    command   => "${git} pull ${recurse_submodules_arg}--quiet${deptharg} ${allow_unrelated_histories_arg}",
-                    provider  => shell,
-                    logoutput => on_failure,
+                    cwd         => $directory,
+                    command     => "${git} pull ${recurse_submodules_arg}--quiet${deptharg} ${allow_unrelated_histories_arg}",
+                    provider    => shell,
+                    logoutput   => on_failure,
+                    environment => $env,
                     # git diff --quiet will exit 1 (return false)
                     #  if there are differences
-                    unless    => "${git} fetch && /usr/bin/git diff --quiet ${remote_to_check}",
-                    user      => $owner,
-                    group     => $group,
-                    umask     => $umask,
-                    path      => '/usr/bin:/bin',
-                    require   => Exec["git_clone_${title}"],
+                    unless      => "${git} fetch && /usr/bin/git diff --quiet ${remote_to_check}",
+                    user        => $owner,
+                    group       => $group,
+                    umask       => $umask,
+                    path        => '/usr/bin:/bin',
+                    require     => Exec["git_clone_${title}"],
                 }
                 # If we want submodules up to date, then we need
                 # to run git submodule update --init after
