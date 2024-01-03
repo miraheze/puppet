@@ -16,6 +16,8 @@ jobs:
     strategy:
       matrix:
         python: ['3.11', '3.12']
+    env:
+      DEBUG_ACCESS_KEY: ${{ secrets.DEBUG_ACCESS_KEY }}
     steps:
       - uses: actions/checkout@v4
       - name: Python ${{ matrix.python }}
