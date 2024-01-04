@@ -32,7 +32,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     del mw_versions
 
     versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
-    validDBLists = ('active',) + versionLists
+    validDBLists = ('active', 'beta',) + versionLists
 
     longscripts = ('compressold', 'deletebatch', 'importdump', 'importimages', 'nukens', 'rebuildall', 'rebuildimages', 'refreshlinks', 'runjobs', 'purgelist', 'cargorecreatedata')
     long = False
