@@ -4,7 +4,7 @@
  * Monitor the connection usage of a MySQL server.
  *
  * Usage:
- *   php check_mysql_connections.php --host=HOST --user=USER --password=PASSWORD --max-connections=MAX_CONNECTIONS --critical-threshold=CRITICAL_THRESHOLD --warning-threshold=WARNING_THRESHOLD [--ssl-ca=SSL_CA] [--ssl-verify-server-cert=SSL_VERIFY_SERVER_CERT]
+ *   php check_mysql_connections.php --host=HOST --user=USER --password=PASSWORD --max-connections=MAX_CONNECTIONS --critical-threshold=CRITICAL_THRESHOLD --warning-threshold=WARNING_THRESHOLD
  *
  * @author Universal Omega
  */
@@ -20,8 +20,6 @@ $options = getopt( '', [
 	'max-connections:',
 	'critical-threshold:',
 	'warning-threshold:',
-	'ssl-ca:',
-	'ssl-verify-server-cert:'
 ] );
 
 // Check that the required options have been provided
@@ -33,7 +31,7 @@ if (
 	!isset( $options['critical-threshold'] ) ||
 	!isset( $options['warning-threshold'] )
 ) {
-	die( 'Usage: php check_mysql_connections.php --host=HOST --user=USER --password=PASSWORD --max-connections=MAX_CONNECTIONS --critical-threshold=CRITICAL_THRESHOLD --warning-threshold=WARNING_THRESHOLD [--ssl-ca=SSL_CA] [--ssl-verify-server-cert=SSL_VERIFY_SERVER_CERT]' . "\n" );
+	die( 'Usage: php check_mysql_connections.php --host=HOST --user=USER --password=PASSWORD --max-connections=MAX_CONNECTIONS --critical-threshold=CRITICAL_THRESHOLD --warning-threshold=WARNING_THRESHOLD' . "\n" );
 }
 
 // Parse the options
@@ -44,26 +42,9 @@ $max_connections = (int)$options['max-connections'];
 $critical_threshold = (int)$options['critical-threshold'];
 $warning_threshold = (int)$options['warning-threshold'];
 
-// Build the SSL options array
-$ssl_options = [];
-
-if ( isset( $options['ssl-ca'] ) ) {
-	$ssl_options['ca'] = $options['ssl-ca'];
-}
-
-if ( isset( $options['ssl-verify-server-cert'] ) ) {
-	$ssl_options['verify_server_cert'] = (bool)$options['ssl-verify-server-cert'];
-}
-
-// Connect to the MySQL server using SSL
-$conn = mysqli_init();
-
-if ( !empty( $ssl_options ) ) {
-	mysqli_ssl_set( $conn, null, null, $ssl_options['ca'], null, null );
-}
-
 // Connect to the MySQL server
-$success = mysqli_real_connect( $conn, $host, $user, $pass, null, null, null, $ssl_options['verify_server_cert'] );
+$conn = mysqli_init();
+$success = mysqli_real_connect( $conn, $host, $user, $pass, null, null, null, false );
 
 if ( !$success ) {
 	echo 'Connection failed: ' . mysqli_connect_error();
