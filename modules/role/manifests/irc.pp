@@ -2,6 +2,7 @@
 class role::irc {
     include irc::irclogbot
     include irc::relaybot
+    include irc::cvtbot
 
     class { 'irc::ircrcbot':
         nickname     => 'MirahezeRC',
