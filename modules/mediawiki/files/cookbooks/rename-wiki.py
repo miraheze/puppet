@@ -49,5 +49,5 @@ def main():
     execute_salt_command('mwtask141', f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/renameWiki.php --wiki=loginwiki --rename {oldwiki_db} {newwiki_db} $user')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
