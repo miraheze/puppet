@@ -28,13 +28,9 @@ mediawiki::use_staging: true
 mediawiki::monitoring::host: 'test.mirabeta.org'
 
 mediawiki::multiversion::versions:
-  '1.40':
-    branch: 'REL1_40'
-    default: true
   '1.41':
     branch: 'REL1_41'
-  '1.42':
-    branch: 'master'
+    default: true
 
 php::php_version: '8.2'
 
