@@ -368,7 +368,7 @@ sub vcl_recv {
 	if (req.http.host == "static.miraheze.org" && req.url == "/") {
 		return (synth(301, "Commons Redirect"));
 	}
-	
+
 	if (
 		req.url ~ "^/\.well-known" ||
 		req.http.Host == "ssl.miraheze.org" ||
