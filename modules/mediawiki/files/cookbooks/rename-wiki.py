@@ -12,7 +12,7 @@ db_clusters = {
 
 
 def get_db_cluster(oldwiki_db):
-    command = f"salt-ssh -E 'db131*' cmd.run 'USE mhglobal; SELECT wiki_dbcluster FROM cw_wikis WHERE wiki_dbname = \"{oldwiki_db}\"'"
+    command = f"salt-ssh -E 'db131*' cmd.run 'mysql -e "USE mhglobal; SELECT wiki_dbcluster FROM cw_wikis WHERE wiki_dbname = \"{oldwiki_db}\"'"
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, text=True)
     cluster_name = result.stdout.strip()
     return db_clusters.get(cluster_name)
