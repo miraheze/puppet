@@ -148,7 +148,11 @@ class logbot(ircbot.SingleServerIRCBot):
         if author in self.config.author_map:
             author = self.config.author_map[author]
         line = event.arguments[0]
-
+        if rest == self.config.relay_host:
+            import re
+            parsed = re.search(r'<(?P<discord>[a-z0-9._]*)> (?P<message>.*)', line)
+            discord_author = "@" + parsed.group('discord')
+            line = parsed.group('message')
         if (line.startswith(self.config.nick)
                 or line.startswith("!%s" % self.config.nick)
                 or line.lower() == "!log help"):
@@ -246,7 +250,7 @@ class logbot(ircbot.SingleServerIRCBot):
                 project = ""
                 message = arr[1]
             try:
-                pageurl = adminlog.log(self.config, message, project, author)
+                pageurl = adminlog.log(self.config, message, project, discord_author or author)
                 if author in self.config.title_map:
                     title = self.config.title_map[author]
                 else:
