@@ -145,14 +145,16 @@ class logbot(ircbot.SingleServerIRCBot):
             return
         author, rest = event.source.split('!')
         cloak = self.get_cloak(event.source)
-        if author in self.config.author_map:
-            author = self.config.author_map[author]
         line = event.arguments[0]
         if rest == self.config.relay_host:
             import re
             parsed = re.search(r'<(?P<discord>[a-z0-9._]*)> (?P<message>.*)', line)
             discord_author = "@" + parsed.group('discord')
             line = parsed.group('message')
+        if author in self.config.author_map:
+            author = self.config.author_map[author]
+        if discord_author in self.config.author_map:
+            discord_author = self.config.author_map[discord_author]
         if (line.startswith(self.config.nick)
                 or line.startswith("!%s" % self.config.nick)
                 or line.lower() == "!log help"):
