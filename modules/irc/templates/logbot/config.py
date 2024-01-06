@@ -129,5 +129,5 @@ wiki_query_path = ""
 # Whether we "warn" or "error" if the user isn't in the trust list
 required_users_mode = "warn"
 
-# Host for to identify Relay bot for relayied log commands
+# Host for to identify Relay bot for relayed log commands
 relay_host = "~MirahezeR@miraheze/bot/MirahezeRelay" 
