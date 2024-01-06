@@ -78,7 +78,7 @@ class mediawiki::deploy {
         group     => 'www-data',
         mode      => '0755',
         require   => File['/srv/mediawiki-staging'],
-        }
+    }
 
     git::clone { 'landing':
         ensure    => 'latest',
