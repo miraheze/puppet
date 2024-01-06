@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [macfan]
+    members: [macfan, oa]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nutcracker *',
@@ -41,12 +41,12 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [macfan]
+    members: [macfan, oa]
     privileges: []
   ssl-admins:
     gid: 2006
     description: limited sudo access to manage SSL certificates
-    members: [macfan]
+    members: [macfan, oa]
     privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate',
                  'ALL = (ALL) NOPASSWD: /var/lib/nagios/ssl-acme']
 
@@ -161,3 +161,9 @@ users:
     name: Owen
     realname: Owen
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIdKAqYfHpbp72ZmbDbafkxsbV+ysvn2JjDFU0QL2N1O owen@miraheze]
+  oa:
+    ensure: present
+    uid: 1018
+    name: OA
+    realname: Original Authority
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILD0e5CCa8BhhAmKvIHPjhN6+dMU0uQ1Z/ZHcfmqoUVP original.authority0@gmail.com]
