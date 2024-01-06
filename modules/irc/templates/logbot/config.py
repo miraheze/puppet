@@ -59,7 +59,9 @@ author_map = {
 
     # Discord usernames
     "@cosmicalpha": "Universal Omega",
-    "@agentisai": "Agent"
+    "@agentisai": "Agent",
+    "@reception123": "Reception123",
+    "@originalauthority": "Original Authority"
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)
