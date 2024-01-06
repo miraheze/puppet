@@ -55,7 +55,10 @@ ssl = True
 author_map = {
     "MirahezeLSBot_": "MirahezeLSBot",
     "CosmicAlpha": "Universal Omega",
-    "Voidwalker": "Void"
+    "Voidwalker": "Void",
+
+    # Discord usernames
+    "@cosmicalpha": "Universal Omega"
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)
