@@ -26,15 +26,22 @@ def generate_salt_command(cluster: str, command: str) -> str:
     return f'salt-ssh -E "{cluster}*" cmd.run "{command}"'
 
 
-def execute_salt_command(salt_command: str, shell: bool = False, stdout: Optional[int] = None, text: Optional[bool] = None) -> subprocess.CompletedProcess:
-    return subprocess.run(salt_command, shell=shell, stdout=stdout, text=text)
+def execute_salt_command(salt_command: str, shell: bool = False, stdout: Optional[int] = None, text: Optional[bool] = None) -> optional[subprocess.CompletedProcess]:
+    response = input(f'EXECUTE (type c(continue), s(kip), a(bort): {shell_command}')
+    if response in ['c', 'continue']:
+        return subprocess.run(salt_command, shell=shell, stdout=stdout, text=text)
+    if response in ['s', 'skip']:
+        return None
+    sys.exit(1)
 
 
 def get_db_cluster(oldwiki_db: str) -> str:
     command = generate_salt_command('db131*', f'cmd.run "mysql -e \'SELECT wiki_dbcluster FROM mhglobal.cw_wikis WHERE wiki_dbname = "{oldwiki_db}" \' "')
     result = execute_salt_command(salt_command=command, shell=True, stdout=subprocess.PIPE, text=True)
-    cluster_name = result.stdout.strip()
-    return db_clusters[cluster_name]  # type: ignore[literal-required]
+    if result:
+        cluster_name = result.stdout.strip()
+        return db_clusters[cluster_name]  # type: ignore[literal-required]
+    raise KeyboardInterrupt('Impossible to skip. Aborted.')
 
 
 def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
