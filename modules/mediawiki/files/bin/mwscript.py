@@ -112,7 +112,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.json {script}'
     elif args.extension:
         long = True
-        generate = f'php {runner}/srv/mediawiki/{args.version}/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension}'
+        generate = f'php {runner}/srv/mediawiki/{args.version}/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension} --directory=/home/{os.getlogin()}'
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
