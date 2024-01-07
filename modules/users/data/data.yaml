@@ -136,10 +136,7 @@ users:
     uid: 1013
     name: universalomega
     realname: Universal Omega
-    ssh_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKtt8ejBAxWiYHQw7VFMd/XITGiy0H6yL0YDHy6jUIjx
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOjFNXqnu7gdALTWOWbhch32vsYmLS/xcfU9NepYXpFZ4
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIApGU+6cUDu6gLhJY547Ge/2r4FU382qFx6wVGHN/+FP
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIApGU+6cUDu6gLhJY547Ge/2r4FU382qFx6wVGHN/+FP]
   void:
     ensure: present
     uid: 1014
