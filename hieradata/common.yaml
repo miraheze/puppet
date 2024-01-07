@@ -13,7 +13,7 @@ role::salt::minions::salt_master: 'puppet141.miraheze.org'
 dns: false
 mediawiki::use_staging: false
 mediawiki::is_canary: false
-mediawiki::default_sync: 'mwtask141'
+mediawiki::default_sync: 'all'
 mediawiki::use_shellbox: false
 mediawiki::jobqueue::wiki: 'loginwiki'
 mediawiki::jobqueue::runner::beta: false
