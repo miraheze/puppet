@@ -25,7 +25,7 @@ def generate_salt_command(cluster: str, command: str) -> str:
     return f'salt-ssh -E "{cluster}*" cmd.run "{command}"'
 
 
-def execute_salt_command(salt_command: str, shell: bool = False, stdout: bool = subprocess.PIPE, text: bool = False) -> None:
+def execute_salt_command(salt_command: str, shell: bool = False, stdout: int = subprocess.PIPE, text: bool = False) -> subproccess.run:
     return subprocess.run(salt_command=salt_command, shell=shell, stdout=stdout, text=text)
 
 
@@ -50,7 +50,7 @@ def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
     execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f"mysql -e 'USE {newwiki_db}; SOURCE /home/$user/oldwikidb.sql'"))
 
     # Step 3: Execute MediaWiki rename script
-    execute_salt_command(salt_command=execute_salt_command('mwtask141', f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/renameWiki.php --wiki=loginwiki --rename {oldwiki_db} {newwiki_db} $user'))
+    execute_salt_command(salt_command=generate_salt_command('mwtask141', f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/renameWiki.php --wiki=loginwiki --rename {oldwiki_db} {newwiki_db} $user'))
 
 
 def main() -> None:
