@@ -12,8 +12,6 @@ class varnish (
     $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
     $reload_vcl_opts = "-f /etc/varnish/default.vcl -d ${vcl_reload_delay_s} -a"
 
-    $debug_access_key = lookup('passwords::varnish::debug_access_key')
-
     file { '/usr/local/sbin/reload-vcl':
         source => 'puppet:///modules/varnish/varnish/reload-vcl.py',
         owner  => 'root',
@@ -45,6 +43,8 @@ class varnish (
     $backends = lookup('varnish::backends')
     $interval_check = lookup('varnish::interval-check')
     $interval_timeout = lookup('varnish::interval-timeout')
+
+    $debug_access_key = lookup('passwords::varnish::debug_access_key')
 
     # (1024.0 * 1024.0) converts to megabytes.
     $mem_gb = $facts['memory']['system']['total_bytes'] / (1024.0 * 1024.0) / 1024.0
