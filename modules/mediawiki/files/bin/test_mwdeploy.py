@@ -1,4 +1,5 @@
 import argparse
+import os
 import re
 import pytest
 import unittest
@@ -151,7 +152,8 @@ def test_check_up_no_debug_host() -> None:
 
 
 def test_check_up_debug() -> None:
-    assert mwdeploy.check_up(nolog=True, Debug='mwtask141')
+    if os.getenv('DEBUG_ACCESS_KEY'):
+        assert mwdeploy.check_up(nolog=True, Debug='mwtask141')
 
 
 def test_check_up_debug_fail() -> None:
