@@ -10,8 +10,10 @@ class mediawiki::jobqueue::runner (
         $runner = ''
     }
 
-    class { 'mediawiki::jobqueue::shared':
-        version => $version,
+    if !defined(Class['mediawiki::jobqueue::shared']) {
+        class { 'mediawiki::jobqueue::shared':
+            version => $version,
+        }
     }
 
     $wiki = lookup('mediawiki::jobqueue::wiki')
@@ -20,7 +22,6 @@ class mediawiki::jobqueue::runner (
         true    => 'beta',
         default => 'databases',
     }
-
 
     stdlib::ensure_packages('python3-xmltodict')
 
