@@ -26,8 +26,8 @@ def generate_salt_command(cluster: str, command: str) -> str:
     return f'salt-ssh -E "{cluster}*" cmd.run "{command}"'
 
 
-def execute_salt_command(salt_command: str, shell: bool = False, stdout: Optional[int] = None, text: Optional[bool] = None) -> optional[subprocess.CompletedProcess]:
-    response = input(f'EXECUTE (type c(continue), s(kip), a(bort): {shell_command}')
+def execute_salt_command(salt_command: str, shell: bool = False, stdout: Optional[int] = None, text: Optional[bool] = None) -> Optional[subprocess.CompletedProcess]:
+    response = input(f'EXECUTE (type c(continue), s(kip), a(bort): {salt_command}')
     if response in ['c', 'continue']:
         return subprocess.run(salt_command, shell=shell, stdout=stdout, text=text)
     if response in ['s', 'skip']:
