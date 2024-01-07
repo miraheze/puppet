@@ -44,6 +44,8 @@ class varnish (
     $interval_check = lookup('varnish::interval-check')
     $interval_timeout = lookup('varnish::interval-timeout')
 
+    $debug_access_key = lookup('passwords::varnish::debug_access_key')
+
     # (1024.0 * 1024.0) converts to megabytes.
     $mem_gb = $facts['memory']['system']['total_bytes'] / (1024.0 * 1024.0) / 1024.0
     if ($mem_gb < 90.0) {

@@ -26,7 +26,11 @@ mediawiki::php::enable_request_profiling: true
 
 mediawiki::use_staging: true
 mediawiki::monitoring::host: 'test.mirabeta.org'
-mediawiki::branch: 'REL1_41'
+
+mediawiki::multiversion::versions:
+  '1.41':
+    branch: 'REL1_41'
+    default: true
 
 php::php_version: '8.2'
 

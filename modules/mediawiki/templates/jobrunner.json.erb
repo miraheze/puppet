@@ -67,5 +67,5 @@
     },
 
     // Command used to launch a runner for a given job queue
-    "dispatcher": "nice -19 php /srv/mediawiki/w/maintenance/run.php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
+    "dispatcher": "nice -19 php <%= @runner %>/srv/mediawiki/<%= @version %>/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
 }
