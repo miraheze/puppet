@@ -1,11 +1,13 @@
 name: Check Python
 on:
   push:
+    branches:    
+      - master
     paths:
       - '**.py'
       - '.github/**'
 
-  pull_request:
+  pull_request_target:
     paths:
       - '**.py'
       - '.github/**'
