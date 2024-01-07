@@ -25,7 +25,7 @@ def generate_salt_command(cluster: str, command: str) -> str:
     return f'salt-ssh -E "{cluster}*" cmd.run "{command}"'
 
 
-def execute_salt_command(salt_command: str, shell: bool = False, stdout: int = subprocess.PIPE, text: bool = False) -> subprocess.CompletedProcess:
+def execute_salt_command(salt_command: str, shell: bool = False, stdout: Optional[int] = None, text: Optional[bool] = None) -> subprocess.CompletedProcess:
     return subprocess.run(salt_command=salt_command, shell=shell, stdout=stdout, text=text)
 
 
