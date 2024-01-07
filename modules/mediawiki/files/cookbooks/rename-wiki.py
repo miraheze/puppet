@@ -1,8 +1,16 @@
 import subprocess
 import argparse
+from typing import TypedDict
 
+class DbClusterMap(TypedDict):
+    c1: str
+    c2: str
+    c3: str
+    c4: str
+    c5: str
+    
 # Define the mapping of db clusters to db names
-db_clusters = {
+db_clusters: DbClusterMap = {
     'c1': 'db131',
     'c2': 'db101',
     'c3': 'db142',
@@ -11,25 +19,22 @@ db_clusters = {
 }
 
 
-def get_db_cluster(oldwiki_db):
-    command = f"salt-ssh -E 'db131*' cmd.run 'mysql -e "USE mhglobal; SELECT wiki_dbcluster FROM cw_wikis WHERE wiki_dbname = \"{oldwiki_db}\"'"
-    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, text=True)
+def generate_salt_command(cluster: str, command: str) -> str:
+    return f'salt-ssh -E "{cluster}*" cmd.run "{command}"'
+
+
+def execute_salt_command(salt_command: str, shell: bool = False, stdout: bool = subprocess.PIPE, text: bool = False) -> None:
+    return subprocess.run(salt_command, shell=shell, stdout, text)
+
+
+def get_db_cluster(oldwiki_db: str) -> str:
+    command = generate_salt_command('db131*', f'cmd.run "mysql -e \'SELECT wiki_dbcluster FROM mhglobal.cw_wikis WHERE wiki_dbname = "{oldwiki_db}" \' "')
+    result = execute_salt_command(salt_command=command, shell=True, stdout=subprocess.PIPE, text=True)
     cluster_name = result.stdout.strip()
     return db_clusters.get(cluster_name)
 
 
-def execute_salt_command(cluster, command):
-    salt_command = f"salt-ssh -E '{cluster}*' cmd.run '{command}'"
-    subprocess.run(salt_command, shell=True)
-
-
-def main():
-    parser = argparse.ArgumentParser(description='Executes the commands needed to rename wikis')
-    parser.add_argument('--oldwiki', required=True, help='Old wiki database name')
-    parser.add_argument('--newwiki', required=True, help='New wiki database name')
-
-    args = parser.parse_args()
-
+def rename_wiki(oldwiki: str, newwiki: str) -> None:
     oldwiki_db = args.oldwiki
     newwiki_db = args.newwiki
 
@@ -41,12 +46,21 @@ def main():
         return
 
     # Step 2: Execute SQL commands for rename
-    execute_salt_command(oldwiki_cluster, f'mysqldump {oldwiki_db} > oldwikidb.sql')
-    execute_salt_command(oldwiki_cluster, f"mysql -e 'CREATE DATABASE {newwiki_db}'")
-    execute_salt_command(oldwiki_cluster, f"mysql -e 'USE {newwiki_db}; SOURCE /home/$user/oldwikidb.sql'")
+    execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f'mysqldump {oldwiki_db} > oldwikidb.sql'))
+    execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f"mysql -e 'CREATE DATABASE {newwiki_db}'"))
+    execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f"mysql -e 'USE {newwiki_db}; SOURCE /home/$user/oldwikidb.sql'"))
 
     # Step 3: Execute MediaWiki rename script
-    execute_salt_command('mwtask141', f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/renameWiki.php --wiki=loginwiki --rename {oldwiki_db} {newwiki_db} $user')
+    execute_salt_command(salt_command=execute_salt_command('mwtask141', f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/renameWiki.php --wiki=loginwiki --rename {oldwiki_db} {newwiki_db} $user'))
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description='Executes the commands needed to rename wikis')
+    parser.add_argument('--oldwiki', required=True, help='Old wiki database name')
+    parser.add_argument('--newwiki', required=True, help='New wiki database name')
+
+    args = parser.parse_args()
+    rename_wiki(args.oldwiki, args.newwiki)
 
 
 if __name__ == '__main__':
