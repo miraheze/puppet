@@ -2,13 +2,15 @@ import subprocess
 import argparse
 from typing import TypedDict
 
+
 class DbClusterMap(TypedDict):
     c1: str
     c2: str
     c3: str
     c4: str
     c5: str
-    
+
+
 # Define the mapping of db clusters to db names
 db_clusters: DbClusterMap = {
     'c1': 'db131',
@@ -34,10 +36,7 @@ def get_db_cluster(oldwiki_db: str) -> str:
     return db_clusters.get(cluster_name)
 
 
-def rename_wiki(oldwiki: str, newwiki: str) -> None:
-    oldwiki_db = args.oldwiki
-    newwiki_db = args.newwiki
-
+def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
     # Step 1: Get the db cluster for the old wiki dbname
     oldwiki_cluster = get_db_cluster(oldwiki_db)
 
