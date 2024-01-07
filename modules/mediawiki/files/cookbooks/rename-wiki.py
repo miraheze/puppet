@@ -1,4 +1,5 @@
 import subprocess
+import sys
 import argparse
 from typing import Optional, TypedDict
 
@@ -29,20 +30,22 @@ def execute_salt_command(salt_command: str, shell: bool = False, stdout: Optiona
     return subprocess.run(salt_command, shell=shell, stdout=stdout, text=text)
 
 
-def get_db_cluster(oldwiki_db: str) -> Optional[str]:
+def get_db_cluster(oldwiki_db: str) -> str:
     command = generate_salt_command('db131*', f'cmd.run "mysql -e \'SELECT wiki_dbcluster FROM mhglobal.cw_wikis WHERE wiki_dbname = "{oldwiki_db}" \' "')
     result = execute_salt_command(salt_command=command, shell=True, stdout=subprocess.PIPE, text=True)
     cluster_name = result.stdout.strip()
-    return db_clusters.get(cluster_name)
+    return db_clusters[cluster_name]
 
 
 def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
     # Step 1: Get the db cluster for the old wiki dbname
     oldwiki_cluster = get_db_cluster(oldwiki_db)
 
-    if not oldwiki_cluster:
+    try:
+        oldwiki_cluster = get_db_cluster(oldwiki_db)
+    except KeyError:
         print(f'Error: Unable to determine the db cluster for {oldwiki_db}')
-        return
+        sys.exit(1)
 
     # Step 2: Execute SQL commands for rename
     execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f'mysqldump {oldwiki_db} > oldwikidb.sql'))
