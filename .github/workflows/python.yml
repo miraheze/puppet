@@ -1,8 +1,6 @@
 name: Check Python
 on:
   push:
-    branches:    
-      - master
     paths:
       - '**.py'
       - '.github/**'
