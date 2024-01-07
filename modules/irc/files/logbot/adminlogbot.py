@@ -148,9 +148,11 @@ class logbot(ircbot.SingleServerIRCBot):
         line = event.arguments[0]
         if rest == self.config.relay_host:
             import re
-            parsed = re.search(r'<(?P<discord>[a-z0-9._]*)> (?P<message>.*)', line)
-            discord_author = "@" + parsed.group('discord')
-            line = parsed.group('message')
+            parsed = re.search(r'<(?P<discord>[ a-z0-9._]*)> (?P<message>.*)', line)
+            if parsed.group('discord') is not None and parsed.group('message') is not None:
+                discord = parsed.group('discord').split()[0]
+                discord_author = "@" + discord
+                line = parsed.group('message')
         if author in self.config.author_map:
             author = self.config.author_map[author]
         if discord_author in self.config.author_map:
