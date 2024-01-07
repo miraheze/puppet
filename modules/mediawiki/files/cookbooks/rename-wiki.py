@@ -26,7 +26,7 @@ def generate_salt_command(cluster: str, command: str) -> str:
 
 
 def execute_salt_command(salt_command: str, shell: bool = False, stdout: Optional[int] = None, text: Optional[bool] = None) -> subprocess.CompletedProcess:
-    return subprocess.run(salt_command=salt_command, shell=shell, stdout=stdout, text=text)
+    return subprocess.run(salt_command, shell=shell, stdout=stdout, text=text)
 
 
 def get_db_cluster(oldwiki_db: str) -> str:
