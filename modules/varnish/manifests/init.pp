@@ -12,6 +12,8 @@ class varnish (
     $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
     $reload_vcl_opts = "-f /etc/varnish/default.vcl -d ${vcl_reload_delay_s} -a"
 
+    $debug_access_key = lookup('passwords::varnish::debug_access_key')
+
     file { '/usr/local/sbin/reload-vcl':
         source => 'puppet:///modules/varnish/varnish/reload-vcl.py',
         owner  => 'root',
