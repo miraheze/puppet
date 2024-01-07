@@ -34,7 +34,7 @@ def get_db_cluster(oldwiki_db: str) -> str:
     command = generate_salt_command('db131*', f'cmd.run "mysql -e \'SELECT wiki_dbcluster FROM mhglobal.cw_wikis WHERE wiki_dbname = "{oldwiki_db}" \' "')
     result = execute_salt_command(salt_command=command, shell=True, stdout=subprocess.PIPE, text=True)
     cluster_name = result.stdout.strip()
-    return db_clusters[cluster_name]
+    return db_clusters[cluster_name]  # type: ignore[literal-required]
 
 
 def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
