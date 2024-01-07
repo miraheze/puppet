@@ -32,7 +32,7 @@ def execute_salt_command(salt_command: str, shell: bool = False, stdout: Optiona
         return subprocess.run(salt_command, shell=shell, stdout=stdout, text=text)
     if response in ['s', 'skip']:
         return None
-    sys.exit(1)
+    sys.exit(1)  # noqa: R503
 
 
 def get_db_cluster(oldwiki_db: str) -> str:
