@@ -6,10 +6,12 @@ class mediawiki::jobqueue::chron (
 ) {
     include mediawiki::php
 
-    $versions.each |$version, $params| {
-        if $params['default'] {
-            class { 'mediawiki::jobqueue::shared':
-                version => $version,
+    if !defined(Class['mediawiki::jobqueue::shared']) {
+        $versions.each |$version, $params| {
+            if $params['default'] {
+                class { 'mediawiki::jobqueue::shared':
+                    version => $version,
+                }
             }
         }
     }
