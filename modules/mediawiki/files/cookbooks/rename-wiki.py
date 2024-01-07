@@ -1,6 +1,6 @@
 import subprocess
 import argparse
-from typing import TypedDict
+from typing import Optional, TypedDict
 
 
 class DbClusterMap(TypedDict):
