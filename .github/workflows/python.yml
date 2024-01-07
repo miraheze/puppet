@@ -1,0 +1,64 @@
+name: Check Python
+on:
+  push:
+    paths:
+      - '**.py'
+      - '.github/**'
+
+  pull_request:
+    paths:
+      - '**.py'
+      - '.github/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.12']
+    env:
+      DEBUG_ACCESS_KEY: ${{ secrets.DEBUG_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }} 
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgnutls28-dev
+          pip install -U pip
+          pip install -r .github/pythonchecks.txt
+      - name: Run tests
+        run: |
+          flake8 modules/mediawiki modules/ssl --ignore=E501,W503,SFS301,T003,PT009
+          coverage run --branch -m pytest modules
+          mypy modules/mediawiki modules/ssl --ignore-missing-imports
+
+  notify-irc:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ always() && github.repository_owner == 'miraheze' && ( github.ref == 'refs/heads/master' || github.event_name == 'pull_request' ) }}
+    steps:
+      - name: succeeded
+        uses: technote-space/workflow-conclusion-action@v3
+      - uses: rectalogic/notify-irc@v2
+        if: env.WORKFLOW_CONCLUSION == 'success'
+        with:
+          channel: "#miraheze-sre"
+          server: "irc.libera.chat"
+          nickname: miraheze-github
+          message: ${{ github.repository }} - ${{ github.actor }} the build passed.
+          sasl_password: ${{ secrets.IRC_MIRAHEZEBOTS }}
+
+      - name: failed
+        uses: technote-space/workflow-conclusion-action@v3
+      - uses: rectalogic/notify-irc@v2
+        if: env.WORKFLOW_CONCLUSION == 'failure'
+        with:
+          channel: "#miraheze-sre"
+          server: "irc.libera.chat"
+          nickname: miraheze-github
+          message: ${{ github.repository }} - ${{ github.actor }} the build has errored.
+          sasl_password: ${{ secrets.IRC_MIRAHEZEBOTS }}

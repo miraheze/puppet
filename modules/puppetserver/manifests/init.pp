@@ -79,6 +79,15 @@ class puppetserver(
         require   => Package['puppet-agent'],
     }
 
+    git::clone { 'mediawiki-repos':
+        ensure    => latest,
+        directory => '/etc/puppetlabs/puppet/mediawiki-repos',
+        origin    => 'https://github.com/miraheze/mediawiki-repos',
+        owner     => 'puppet',
+        group     => 'puppet',
+        require   => Package['puppet-agent'],
+    }
+
     file { '/etc/puppetlabs/puppet/private':
         ensure => directory,
     }

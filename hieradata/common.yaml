@@ -2,14 +2,18 @@ jobrunner: false
 jobrunner::intensive: false
 mailserver: false
 puppetserver: false
-mediawiki::branch: 'REL1_40'
-mediawiki::branch_mw_config: 'master'
+
+mediawiki::multiversion::versions:
+  '1.40':
+    branch: 'REL1_40'
+    default: true
+
 puppetserver_hostname: puppet141.miraheze.org
 role::salt::minions::salt_master: 'puppet141.miraheze.org'
 dns: false
 mediawiki::use_staging: false
 mediawiki::is_canary: false
-mediawiki::default_sync: 'all'
+mediawiki::default_sync: 'mwtask141'
 mediawiki::use_shellbox: false
 mediawiki::jobqueue::wiki: 'loginwiki'
 mediawiki::jobqueue::runner::beta: false
