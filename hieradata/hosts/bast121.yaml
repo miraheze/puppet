@@ -1,3 +1,2 @@
 users::groups:
   - bastion
-puppetserver_hostname: 'puppet141.miraheze.org'
