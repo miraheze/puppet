@@ -13,7 +13,7 @@ class salt {
             notify   => Exec['apt_update_salt'],
         }
 
-        apt::pin { 'proxmox_pin':
+        apt::pin { 'salt_pin':
             priority => 600,
             origin   => 'repo.saltproject.io'
         }
