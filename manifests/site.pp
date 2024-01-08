@@ -10,6 +10,11 @@ node /^cloud1[01234]\.miraheze\.org$/ {
     include role::cloud
 }
 
+node /^cloud1[5678]\.wikitide\.net$/ {
+    include base
+    include role::cloud
+}
+
 node /^cp(2[45]|3[2345])\.miraheze\.org$/ {
     include base
     include role::varnish
