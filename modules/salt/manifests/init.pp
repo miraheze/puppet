@@ -5,7 +5,7 @@ class salt {
     }
 
     apt::source { 'salt_apt':
-        location => 'https://repo.saltproject.io/salt/py3/debian/12/amd64/latest',
+        location => 'https://repo.saltproject.io/salt/py3/debian/${facts['os']['distro']['release']['major']}/amd64/latest',
         release  => $facts['os']['distro']['codename'],
         repos    => 'main',
         require  => File['/etc/apt/trusted.gpg.d/salt.gpg'],
