@@ -176,7 +176,7 @@ class phabricator (
                     'port'     => 465,
                     'user'     => 'noreply@wikitide.org',
                     'password' => lookup('passwords::mail::noreply'),
-                    'protocol' => 'tls',
+                    'protocol' => 'ssl',
                 },
             },
         ],
