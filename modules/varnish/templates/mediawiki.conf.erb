@@ -22,6 +22,9 @@ server {
 		<%- if property['bastproxy'] -%>
 		proxy_pass https://bastions<%= property['port'] %>;
 		<%- else -%>
+		<%- if property['domain'] -%>
+		proxy_pass https://<%= name %>.<%= property['domain'] %>;
+		<%- else -%>
 		proxy_pass https://<%= name %>.miraheze.org;
 		<%- end -%>
 		proxy_http_version 1.1;

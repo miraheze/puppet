@@ -8,8 +8,8 @@ mediawiki::multiversion::versions:
     branch: 'REL1_40'
     default: true
 
-puppetserver_hostname: puppet141.miraheze.org
-role::salt::minions::salt_master: 'puppet141.miraheze.org'
+puppetserver_hostname: puppet181.wikitide.net
+role::salt::minions::salt_master: 'puppet181.wikitide.net'
 dns: false
 mediawiki::use_staging: false
 mediawiki::is_canary: false
@@ -87,7 +87,8 @@ varnish::backends:
     port: 8203
     probe: false
     pool: false
-  puppet141:
+  puppet181:
+    domain: 'wikitide.net'
     port: 8204
     probe: false
     pool: false
