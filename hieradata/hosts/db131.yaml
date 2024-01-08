@@ -1,4 +1,3 @@
-puppetserver_hostname: 'puppet141.miraheze.org'
 http_proxy: 'http://bast.miraheze.org:8080'
 role::db::weekly_misc: ['mhglobal']
 mariadb::config::innodb_buffer_pool_size: '8G'
