@@ -87,7 +87,8 @@ varnish::backends:
     port: 8203
     probe: false
     pool: false
-  puppet141:
+  puppet181:
+    domain: 'wikitide.net'
     port: 8204
     probe: false
     pool: false
