@@ -101,7 +101,7 @@ node 'puppet141.miraheze.org' {
     include role::ssl
 }
 
-node 'puppet181.wikitide.org' {
+node 'puppet181.wikitide.net' {
     include base
     include role::postgresql
     include puppetdb::database
