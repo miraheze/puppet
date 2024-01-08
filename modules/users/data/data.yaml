@@ -148,7 +148,7 @@ users:
     uid: 1015
     name: Agent
     realname: Agent
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAZSM2hWwLO7GPxwOmMGKDGFl22b4Minb/JvYZQYZmhF agent@miraheze.org]
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYndIxzLtu9icCCMJIKTZXKk9rdJRP/Nsfyb2kfcZEy]
   alex:
     ensure: absent
     uid: 1016
