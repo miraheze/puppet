@@ -5,3 +5,4 @@ role::db::fortnightly_misc: ['icinga', 'icingaweb2', 'roundcubemail']
 role::db::monthly_misc: []
 role::db::backup_sql: false
 role::db::enable_bin_logs: false
+mariadb::version: '10.11'
