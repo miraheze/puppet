@@ -24,8 +24,12 @@ class swift::proxy (
         show_diff => false,
     }
 
-    # Supports bullseye
-    file { '/usr/local/lib/python3.9/dist-packages/miraheze/':
+    $python_version = $facts['os']['distro']['codename'] ? {
+        'bookworm' => 'python3.11',
+        'bullseye' => 'python3.9',
+    }
+
+    file { "/usr/local/lib/${python_version}/dist-packages/miraheze/":
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
