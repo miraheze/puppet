@@ -1,15 +1,15 @@
 # class: mariadb::config
 class mariadb::config(
-    String            $config                       = undef,
-    String            $password                     = undef,
-    String            $datadir                      = '/srv/mariadb',
-    String            $tmpdir                       = '/tmp',
-    String            $innodb_buffer_pool_size      = '5G',
-    Integer           $max_connections              = 500,
-    Enum['10.5']      $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
-    String            $icinga_password              = undef,
-    Optional[Integer] $server_id                    = undef,
-    Boolean           $enable_bin_logs              = true,
+    String                $config                       = undef,
+    String                $password                     = undef,
+    String                $datadir                      = '/srv/mariadb',
+    String                $tmpdir                       = '/tmp',
+    String                $innodb_buffer_pool_size      = '5G',
+    Integer               $max_connections              = 500,
+    Enum['10.5', '10.11'] $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
+    String                $icinga_password              = undef,
+    Optional[Integer]     $server_id                    = undef,
+    Boolean               $enable_bin_logs              = true,
 ) {
     $exporter_password = lookup('passwords::db::exporter')
     $ido_db_user_password = lookup('passwords::icinga_ido')
