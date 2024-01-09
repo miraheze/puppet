@@ -6,5 +6,3 @@ php::php_version: '8.2'
 
 nginx::use_graylog: true
 mailserver: true
-
-puppetserver_hostname: 'puppet141.miraheze.org'
