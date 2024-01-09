@@ -32,7 +32,7 @@ class role::bastion (
     if $enable_proxy_ipv4_ipv6 {
         $backends = lookup('varnish::backends')
         $firewall_rules_str = join(
-            query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Varnish]", ['networking'])
+            query_facts("Class[Role::Varnish]", ['networking'])
             .map |$key, $value| {
                 "${value['networking']['ip']} ${value['networking']['ip6']}"
             }
