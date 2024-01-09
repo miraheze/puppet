@@ -53,7 +53,7 @@ define mediawiki::extensionsetup (
             revision           => $params['commit'] ? {
                 undef   => '',
                 default => $params['commit'],
-            }
+            },
             owner              => 'www-data',
             group              => 'www-data',
             mode               => '0755',
