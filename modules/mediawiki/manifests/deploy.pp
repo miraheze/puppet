@@ -43,6 +43,7 @@ class mediawiki::deploy {
         {
             ensure   => '3.3.0',
             provider => 'pip3',
+            install_options => [ '--break-system-packages' ],
             before   => File['/usr/local/bin/mwdeploy'],
             require  => Package['python3-pip'],
         },
