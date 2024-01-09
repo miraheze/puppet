@@ -5,6 +5,11 @@ node /^bast1[24]1\.miraheze\.org$/ {
     include role::bastion
 }
 
+node /^bast1[68]1\.wikitide\.net$/ {
+    include base
+    include role::bastion
+}
+
 node /^cloud1[01234]\.miraheze\.org$/ {
     include base
     include role::cloud

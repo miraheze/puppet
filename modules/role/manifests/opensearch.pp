@@ -169,7 +169,7 @@ class role::opensearch (
         }
 
         $firewall_rules_str = join(
-            query_facts("Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]", ['networking'])
+            query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]', ['networking'])
             .map |$key, $value| {
                 "${value['networking']['ip']} ${value['networking']['ip6']}"
             }
@@ -190,7 +190,7 @@ class role::opensearch (
     }
 
     $firewall_os_nodes = join(
-        query_facts("Class[Role::Opensearch]", ['networking'])
+        query_facts('Class[Role::Opensearch]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

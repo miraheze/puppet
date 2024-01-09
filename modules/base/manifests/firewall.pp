@@ -31,7 +31,7 @@ class base::firewall {
     }
 
     $firewall_rules_str = join(
-        query_facts("Class[Role::Icinga2]", ['networking'])
+        query_facts('Class[Role::Icinga2]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
@@ -47,7 +47,7 @@ class base::firewall {
     }
 
     $firewall_bastion_hosts = join(
-        query_facts("Class[Base]", ['networking'])
+        query_facts('Class[Base]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
