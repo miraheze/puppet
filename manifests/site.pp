@@ -96,7 +96,7 @@ node 'mwtask141.miraheze.org' {
     include role::mathoid
 }
 
-node 'mwtask181.miraheze.org' {
+node 'mwtask181.wikitide.net' {
     include base
     include role::mediawiki
     include role::mathoid
