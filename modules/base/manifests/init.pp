@@ -57,7 +57,7 @@ class base (
         ensure     => present,
         uid        => 3100,
         ssh_keys   => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHTYeA06i16YF6VeCO0ctaCaSgK/8rNQ32aJqx9eNXmJ salt-user@puppet141'
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHTYeA06i16YF6VeCO0ctaCaSgK/8rNQ32aJqx9eNXmJ salt-user@puppet181'
         ],
         privileges => ['ALL = (ALL) NOPASSWD: ALL'],
     }
