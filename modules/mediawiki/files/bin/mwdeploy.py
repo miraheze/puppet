@@ -183,7 +183,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
 
     headers = {}
     if Debug:
-        if 'mw13' in Debug or 'mw14' in Debug:
+        if 'mw13' in Debug or 'mw14' in Debug or 'mwtask141' in Debug or 'test131' in Debug:
             host = 'miraheze.org'
         else:
             host = 'wikitide.net'
@@ -268,7 +268,7 @@ def _construct_rsync_command(time: bool | str, dest: str, recursive: bool = True
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        if 'mw13' in server or 'mw14' in server:
+        if 'mw13' in server or 'mw14' in server or 'mwtask141' in server or 'test131' in server:
             host = 'miraheze.org'
         else:
             host = 'wikitide.net'
