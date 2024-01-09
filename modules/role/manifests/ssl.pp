@@ -3,7 +3,7 @@ class role::ssl {
     include ::ssl
 
     $firewall_srange = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Varnish] or Class[Role::Icinga2]", ['networking'])
+        query_facts("Class[Role::Varnish] or Class[Role::Icinga2]", ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
