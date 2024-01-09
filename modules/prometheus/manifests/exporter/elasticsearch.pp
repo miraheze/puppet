@@ -57,7 +57,7 @@ class prometheus::exporter::elasticsearch {
     }
 
     $firewall_rules_str = join(
-        query_facts("Class[Role::Prometheus]", ['networking'])
+        query_facts('Class[Role::Prometheus]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

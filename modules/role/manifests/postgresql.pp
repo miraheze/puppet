@@ -7,7 +7,7 @@ class role::postgresql {
     }
 
     $firewall_rules_str = join(
-        query_facts("Class[Role::Puppetserver]", ['networking'])
+        query_facts('Class[Role::Puppetserver]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

@@ -9,7 +9,7 @@ class prometheus::exporter::cadvisor {
     }
 
     $firewall_rules_str = join(
-        query_facts("Class[Prometheus] or Class[Role::Grafana]", ['networking'])
+        query_facts('Class[Prometheus] or Class[Role::Grafana]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

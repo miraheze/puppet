@@ -8,7 +8,7 @@ class role::matomo {
     include ::matomo
 
     $firewall_srange = join(
-        query_facts("Class[Role::Varnish] or Class[Role::Icinga2]", ['networking'])
+        query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
