@@ -28,5 +28,3 @@ nginx::keepalive_timeout: 75
 nginx::keepalive_requests: 1000
 nginx::logrotate_number: 2
 nginx::use_graylog: true
-
-puppetserver_hostname: 'puppet141.miraheze.org'
