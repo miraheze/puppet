@@ -43,7 +43,7 @@ describe 'apt::backports', type: :class do
               full: '18.04'
             },
             distro: {
-              codename: 'bionac',
+              codename: 'bionic',
               id: 'Ubuntu'
             }
           }
@@ -52,10 +52,9 @@ describe 'apt::backports', type: :class do
 
       it {
         expect(subject).to contain_apt__source('backports').with(location: 'http://archive.ubuntu.com/ubuntu',
-                                                                 key: '630239CC130E1A7FD81A27B140976EAF437D05B5',
                                                                  repos: 'main universe multiverse restricted',
-                                                                 release: 'bionac-backports',
-                                                                 pin: { 'priority' => 200, 'release' => 'bionac-backports' })
+                                                                 release: 'bionic-backports',
+                                                                 pin: { 'priority' => 200, 'release' => 'bionic-backports' })
       }
     end
 
@@ -70,7 +69,7 @@ describe 'apt::backports', type: :class do
               full: '18.04'
             },
             distro: {
-              codename: 'bionac',
+              codename: 'bionic',
               id: 'Ubuntu'
             }
           }
@@ -106,7 +105,7 @@ describe 'apt::backports', type: :class do
               full: '18.04'
             },
             distro: {
-              codename: 'bionac',
+              codename: 'bionic',
               id: 'Ubuntu'
             }
           }
@@ -235,7 +234,7 @@ describe 'apt::backports', type: :class do
             full: '18.04'
           },
           distro: {
-            codename: 'bionac',
+            codename: 'bionic',
             id: 'Ubuntu'
           }
         }
