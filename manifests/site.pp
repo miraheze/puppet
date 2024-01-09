@@ -141,12 +141,27 @@ node /^swiftproxy1[13]1\.miraheze\.org$/ {
     include role::swift
 }
 
+node /^swiftproxy1[58]1\.wikitide\.net$/ {
+    include base
+    include role::swift
+}
+
 node 'swiftac111.miraheze.org' {
     include base
     include role::swift
 }
 
+node 'swiftac171.wikitide.net' {
+    include base
+    include role::swift
+}
+
 node /^swiftobject1[012][123]\.miraheze\.org$/ {
+    include base
+    include role::swift
+}
+
+node /^swiftobject1[5678]1\.wikitide\.net$/ {
     include base
     include role::swift
 }
