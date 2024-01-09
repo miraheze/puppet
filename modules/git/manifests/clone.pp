@@ -107,7 +107,7 @@ define git::clone(
                         command     => "${git} fetch origin ${revision}",
                         provider    => shell,
                         environment => $env,
-                        unless      => "${git} rev-parse --abbrev-ref HEAD | grep ${revision}",
+                        unless      => "${git} rev-parse HEAD | grep ${revision}",
                         user        => $owner,
                         group       => $group,
                         umask       => $umask,
@@ -127,7 +127,7 @@ define git::clone(
                         environment => $env,
                         unless      => $revision ? {
                             ''      => "${git} rev-parse --abbrev-ref HEAD | grep ${branch}",
-                            default => "${git} rev-parse --abbrev-ref HEAD | grep ${revision}",
+                            default => "${git} rev-parse HEAD | grep ${revision}",
                         },
                         user        => $owner,
                         group       => $group,
@@ -148,7 +148,7 @@ define git::clone(
                         environment => $env,
                         unless      => $revision ? {
                             ''      => "${git} rev-parse --abbrev-ref HEAD | grep ${branch}",
-                            default => "${git} rev-parse --abbrev-ref HEAD | grep ${revision}",
+                            default => "${git} rev-parse HEAD | grep ${revision}",
                         },
                         user        => $owner,
                         group       => $group,
