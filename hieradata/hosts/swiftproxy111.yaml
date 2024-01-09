@@ -7,8 +7,6 @@ role::memcached::size: 128
 role::memcached::extended_options: []
 role::memcached::port: 11211
 
-puppetserver_hostname: 'puppet141.miraheze.org'
-
 nginx::client_max_body_size: "0"
 nginx::logrotate_number: 2
 
