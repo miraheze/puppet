@@ -80,6 +80,13 @@ node 'mon141.miraheze.org' {
     include role::irc
 }
 
+node 'mon181.miraheze.org' {
+    include base
+    include role::grafana
+    include role::icinga2
+    include role::irc
+}
+
 node /^mw1[234][1234]\.miraheze\.org$/ {
     include base
     include role::mediawiki
