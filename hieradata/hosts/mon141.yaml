@@ -146,5 +146,3 @@ icinga2::globals::reserved:
 
 nginx::use_graylog: true
 base::syslog::rsyslog_udp_localhost: true
-
-puppetserver_hostname: 'puppet141.miraheze.org'
