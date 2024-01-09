@@ -101,21 +101,6 @@ define git::clone(
             }
 
             if !empty($branch) {
-                if !empty($revision) {
-                    exec { "git_fetch_${title}":
-                        cwd         => $directory,
-                        command     => "${git} fetch origin ${revision}",
-                        provider    => shell,
-                        environment => $env,
-                        unless      => "${git} rev-parse HEAD | grep ${revision}",
-                        user        => $owner,
-                        group       => $group,
-                        umask       => $umask,
-                        path        => '/usr/bin:/bin',
-                        require     => Exec["git_clone_${title}"],
-                    }
-                }
-
                 if $ensure == 'latest' {
                     exec { "git_checkout_${title}":
                         cwd         => $directory,
