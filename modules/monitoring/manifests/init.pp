@@ -27,15 +27,12 @@ class monitoring (
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
         location => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
-        # Use $facts['os']['distro']['codename'] when we upgrade the mariadb version
-        # to higher then 10.5 and supports bookworm.
-        # release  => $facts['os']['distro']['codename'],
-        release  => 'bullseye',
+        release  => $facts['os']['distro']['codename'],
         repos    => 'main',
         key      => {
-                'id'      => '177F4010FE56CA3336300305F1656F24C74CD1D8',
-                'options' => "http-proxy='${http_proxy}'",
-                'server'  => 'hkp://keyserver.ubuntu.com:80',
+            'name'    => 'mariadb_release_signing_key.pgp',
+            'source'  => 'https://mariadb.org/mariadb_release_signing_key.pgp',
+            'options' => "http-proxy='${http_proxy}'",
         },
     }
 
@@ -53,8 +50,17 @@ class monitoring (
         logoutput   => true,
     }
 
+    if $facts['os']['distro']['codename'] == 'bookworm' {
+        # It looks like on mariadb 10.11 and above
+        # it dosen't contain the version number
+        # in the package name.
+        $package_name = 'mariadb-client'
+    } else {
+        $package_name = "mariadb-client-${version}"
+    }
+
     stdlib::ensure_packages(
-        "mariadb-client-${version}",
+        $package_name,
         {
             ensure  => present,
             require => Apt::Source['mariadb_apt'],
