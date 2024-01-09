@@ -38,7 +38,7 @@ class role::graylog {
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
     $firewall_http_rules_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus]", ['networking'])
+        query_facts("Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus]", ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
@@ -55,7 +55,7 @@ class role::graylog {
 
     # syslog-ng > graylog 12210/tcp
     $firewall_syslog_rules_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Base]", ['networking'])
+        query_facts("Class[Base]", ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
@@ -72,7 +72,7 @@ class role::graylog {
 
 
     $firewall_icinga_rules_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Icinga2]", ['networking'])
+        query_facts("Class[Role::Icinga2]", ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
