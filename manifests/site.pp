@@ -96,6 +96,12 @@ node 'mwtask141.miraheze.org' {
     include role::mathoid
 }
 
+node 'mwtask181.miraheze.org' {
+    include base
+    include role::mediawiki
+    include role::mathoid
+}
+
 node /^ns[12]\.miraheze\.org$/ {
     include base
     include role::dns
