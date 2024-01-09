@@ -52,6 +52,7 @@ prod: Environment = {
         'mw181',
         'mw182',
         'mwtask141',
+        'mwtask181',
     ],
 }
 ENVIRONMENTS: EnvironmentList = {
