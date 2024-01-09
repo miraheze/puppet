@@ -1,0 +1,35 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+
+contactgroups: ['sre', 'mediawiki']
+
+jobrunner: true
+jobrunner::intensive: true
+mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
+mediawiki::jobqueue::runner::cron: true
+
+role::mediawiki::use_strict_firewall: true
+
+mediawiki::php::fpm::fpm_min_child: 1
+mediawiki::php::fpm::fpm_workers_multiplier: 1.0
+mediawiki::php::fpm_config:
+  post_max_size: '250M'
+  upload_max_filesize: '250M'
+
+mediawiki::php::memory_limit: '1G'
+
+mediawiki::is_canary: true
+mediawiki::use_staging: true
+
+php::php_version: '8.2'
+
+http_proxy: 'http://bast.miraheze.org:8080'
+
+base::syslog::rsyslog_udp_localhost: true
+
+# NGINX
+nginx::keepalive_timeout: 2
+nginx::keepalive_requests: 150
+nginx::logrotate_number: 2
+nginx::use_graylog: true
