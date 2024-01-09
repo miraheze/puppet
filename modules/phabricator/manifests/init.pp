@@ -172,10 +172,8 @@ class phabricator (
                 'key'          => 'miraheze-smtp',
                 'type'         => 'smtp',
                 'options'      => {
-                    'host'     => 'smtp.gmail.com',
+                    'host'     => 'smtp-relay.gmail.com',
                     'port'     => 465,
-                    'user'     => 'noreply@wikitide.org',
-                    'password' => lookup('passwords::mail::noreply'),
                     'protocol' => 'ssl',
                 },
             },
