@@ -37,6 +37,14 @@ class mariadb::packages(
         logoutput   => true,
     }
 
+    if $facts['os']['distro']['codename'] == 'bookworm' {
+        # It looks like on mariadb 10.11 and above
+        # it dosen't contain the version number
+        # in the package name.
+        $package_name = 'mariadb-server'
+    } else {
+        $package_name = "mariadb-server-${version}",
+    }
     package { [
         "mariadb-server-${version}",
         'mariadb-backup',
