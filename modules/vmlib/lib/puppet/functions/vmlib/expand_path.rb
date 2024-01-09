@@ -35,7 +35,7 @@ Puppet::Functions.create_function(:'vmlib::expand_path') do
   end
 
   def load_data_hash(path, context)
-    return {} unless File.exists?(path)
+    return {} unless File.exist?(path)
     context.cached_file_data(path) do |content|
       begin
         data = YAML.load(content, path)

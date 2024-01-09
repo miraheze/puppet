@@ -3,6 +3,8 @@ jobrunner::intensive: false
 mailserver: false
 puppetserver: false
 
+puppet_major_version: 8
+
 mediawiki::multiversion::versions:
   '1.40':
     branch: 'REL1_40'

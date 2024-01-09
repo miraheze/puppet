@@ -62,12 +62,12 @@ if warn.zero? || crit.zero?
     exit 3
 end
 
-if File.exists?(adminlockfile)
+if File.exist?(adminlockfile)
        enabled = false
        disabled_message = YAML.safe_load(File.read(adminlockfile))["disabled_message"]
 end
 
-if File.exists?(summaryfile)
+if File.exist?(summaryfile)
     begin
         summary = YAML.safe_load(File.read(summaryfile))
         if !enabled
@@ -151,7 +151,7 @@ if !enabled
 end
 
 if failcount > 0
-    report = YAML.safe_load(File.read(reportfile), [Puppet::Transaction::Report])
+    report = YAML.unsafe_load(File.read(reportfile))
     failed_resources = report.resource_statuses.select { |_, r| r.failed }.map { |_, r| r.resource }
     failed_resources = failed_resources[0..PRINT_FAILED_RESOURCES_NO]
     puts "CRITICAL: Puppet has #{failcount} failures. " +

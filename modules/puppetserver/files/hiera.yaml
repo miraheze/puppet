@@ -5,14 +5,12 @@ defaults:
   data_hash: yaml_data
 hierarchy:
   - name: "node hierarchy"
-    path: "hosts/%{facts.networking.hostname}.yaml"
+    path: "hosts/%{networking.hostname}.yaml"
   - name: "private node"
     datadir: "/etc/puppetlabs/puppet/private/hieradata"
-    path: "hosts/%{facts.networking.hostname}.yaml"
+    path: "hosts/%{networking.hostname}.yaml"
   - name: "common"
-    lookup_key: 'vmlib::expand_path'
-    path: "common"
+    path: "common.yaml"
   - name: "private common"
-    lookup_key: 'vmlib::expand_path'
     datadir: "/etc/puppetlabs/puppet/private/hieradata"
-    path: "common"
+    path: "common.yaml"
