@@ -3,7 +3,8 @@ class role::mediawiki (
     Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false}),
     Boolean $use_mcrouter = lookup('role::mediawiki::use_mcrouter', {'default_value' => false})
 ) {
-    include prometheus::exporter::cadvisor
+    # doesn't install on bookworm
+    # include prometheus::exporter::cadvisor
 
     if $use_mcrouter {
         include role::mediawiki::mcrouter
