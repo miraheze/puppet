@@ -7,5 +7,3 @@ role::memcached::size: 12288
 role::memcached::extended_options:
   - "modern"
 role::memcached::port: 11211
-
-puppetserver_hostname: 'puppet141.miraheze.org'
