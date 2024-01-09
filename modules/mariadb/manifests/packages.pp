@@ -17,9 +17,9 @@ class mariadb::packages(
         release  => $facts['os']['distro']['codename'],
         repos    => 'main',
         key      => {
-                'id'      => '177F4010FE56CA3336300305F1656F24C74CD1D8',
-                'options' => "http-proxy='${http_proxy}'",
-                'server'  => 'hkp://keyserver.ubuntu.com:80',
+            'name'   => 'mariadb_release_signing_key.pgp',
+            'source' => 'https://mariadb.org/mariadb_release_signing_key.pgp',
+            'options' => "http-proxy='${http_proxy}'",
         },
     }
 
