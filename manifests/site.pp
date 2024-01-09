@@ -30,6 +30,11 @@ node /^db1([0234][12]|12)\.miraheze\.org$/ {
     include role::db
 }
 
+node /^db1([5678][12])\.wikitide\.net$/ {
+    include base
+    include role::db
+}
+
 node /^os1[34]1\.miraheze\.org$/ {
     include base
     include role::opensearch
