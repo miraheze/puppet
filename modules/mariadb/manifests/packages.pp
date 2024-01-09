@@ -43,10 +43,11 @@ class mariadb::packages(
         # in the package name.
         $package_name = 'mariadb-server'
     } else {
-        $package_name = "mariadb-server-${version}",
+        $package_name = "mariadb-server-${version}"
     }
+
     package { [
-        "mariadb-server-${version}",
+        $package_name,
         'mariadb-backup',
         'libjemalloc2',
     ]:
