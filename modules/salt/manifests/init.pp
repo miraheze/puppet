@@ -36,7 +36,7 @@ class salt {
         }
     }
 
-    $host = query_nodes("networking.domain='${facts['networking']['domain']}'", 'networking.fqdn')
+    $host = query_nodes("", 'networking.fqdn')
     file { '/etc/salt/roster':
         content => template('salt/roster.erb'),
         owner   => 'root',
