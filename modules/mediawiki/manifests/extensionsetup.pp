@@ -50,6 +50,10 @@ define mediawiki::extensionsetup (
                 },
                 default    => $params['branch'],
             },
+            revision           => $params['commit'] ? {
+                undef   => '',
+                default => $params['commit'],
+            }
             owner              => 'www-data',
             group              => 'www-data',
             mode               => '0755',
