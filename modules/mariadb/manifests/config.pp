@@ -44,12 +44,21 @@ class mariadb::config(
         require => File['/etc/mysql'],
     }
 
+    if $facts['os']['distro']['codename'] == 'bookworm' {
+        # It looks like on mariadb 10.11 and above
+        # it dosen't contain the version number
+        # in the package name.
+        $package_name = 'mariadb-server'
+    } else {
+        $package_name = "mariadb-server-${version}"
+    }
+
     file { $datadir:
         ensure  => directory,
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0755',
-        require => Package["mariadb-server-${version}"],
+        require => Package[$package_name],
     }
 
     if $tmpdir != '/tmp' {
@@ -58,7 +67,7 @@ class mariadb::config(
             owner   => 'mysql',
             group   => 'mysql',
             mode    => '0775',
-            require => Package["mariadb-server-${version}"],
+            require => Package[$package_name],
         }
     }
 
@@ -67,7 +76,7 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0750',
-        require => Package["mariadb-server-${version}"],
+        require => Package[$package_name],
     }
 
     file { '/etc/mysql/miraheze/default-grants.sql':
@@ -88,13 +97,13 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0644',
-        require => Package["mariadb-server-${version}"],
+        require => Package[$package_name],
     }
 
     logrotate::conf { 'mysql-server':
         ensure  => present,
         source  => 'puppet:///modules/mariadb/mysql-server.logrotate.conf',
-        require => Package["mariadb-server-${version}"],
+        require => Package[$package_name],
     }
 
     systemd::unit { 'mariadb.service':
