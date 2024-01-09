@@ -77,7 +77,8 @@ varnish::backends:
     port: 8200
     probe: false
     pool: false
-  mon141:
+  mon181:
+    domain: 'wikitide.net'
     port: 8201
     probe: false
     pool: false
