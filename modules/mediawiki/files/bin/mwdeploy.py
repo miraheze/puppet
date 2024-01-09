@@ -183,7 +183,12 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
 
     headers = {}
     if Debug:
-        server = f'{Debug}.miraheze.org'
+        if 'mw13' in Debug or 'mw14' in Debug or 'mwtask141' in Debug or 'test131' in Debug:
+            host = 'miraheze.org'
+        else:
+            host = 'wikitide.net'
+
+        server = f'{Debug}.{host}'
         headers['X-Miraheze-Debug'] = server
         location = f'{domain}@{server}'
 
@@ -263,7 +268,12 @@ def _construct_rsync_command(time: bool | str, dest: str, recursive: bool = True
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.miraheze.org:{dest}'
+        if 'mw13' in server or 'mw14' in server or 'mwtask141' in server or 'test131' in server:
+            host = 'miraheze.org'
+        else:
+            host = 'wikitide.net'
+
+        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.{host}:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
