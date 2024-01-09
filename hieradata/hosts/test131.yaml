@@ -46,8 +46,6 @@ nginx::keepalive_requests: 1000
 nginx::logrotate_number: 2
 nginx::use_graylog: true
 
-puppetserver_hostname: 'puppet141.miraheze.org'
-
 # memcached
 role::memcached::threads: ~
 role::memcached::version: 'present'
