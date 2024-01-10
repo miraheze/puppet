@@ -1,14 +1,3 @@
-users::groups:
-  - mediawiki-admins
-  - mediawiki-roots
-
-contactgroups: ['sre', 'mediawiki']
-
-jobrunner: true
-jobrunner::intensive: true
-mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
-mediawiki::jobqueue::runner::cron: true
-
 role::mediawiki::use_strict_firewall: true
 
 mediawiki::php::fpm::fpm_min_child: 1
@@ -18,9 +7,6 @@ mediawiki::php::fpm_config:
   upload_max_filesize: '250M'
 
 mediawiki::php::memory_limit: '1G'
-
-mediawiki::is_canary: true
-mediawiki::use_staging: true
 
 php::php_version: '8.2'
 
