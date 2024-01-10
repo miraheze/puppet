@@ -29,61 +29,73 @@ varnish::interval-check: '10s'
 varnish::interval-timeout: '10s'
 varnish::backends:
   mw131:
+    domain: 'miraheze.org'
     port: 8106
     probe: mwhealth
     pool: true
     xdebug: true
   mw132:
+    domain: 'miraheze.org'
     port: 8107
     probe: mwhealth
     pool: true
     xdebug: true
   mw141:
+    domain: 'miraheze.org'
     port: 8108
     probe: mwhealth
     pool: true
     xdebug: true
   mw142:
+    domain: 'miraheze.org'
     port: 8109
     probe: mwhealth
     pool: true
     xdebug: true
   mw133:
+    domain: 'miraheze.org'
     port: 8110
     probe: mwhealth
     pool: true
     xdebug: true
   mw134:
+    domain: 'miraheze.org'
     port: 8111
     probe: mwhealth
     pool: true
     xdebug: true
   mw143:
+    domain: 'miraheze.org'
     port: 8112
     probe: mwhealth
     pool: true
     xdebug: true
   mw181:
+    domain: 'wikitide.net'
     port: 8113
     probe: mwhealth
     pool: false
     xdebug: true
   mw182:
+    domain: 'wikitide.net'
     port: 8114
     probe: mwhealth
     pool: false
     xdebug: true
   mwtask141:
+    domain: 'miraheze.org'
     port: 8150
     probe: false
     pool: false
     xdebug: true
   mwtask181:
+    domain: 'wikitide.net'
     port: 8160
     probe: false
     pool: false
     xdebug: true
   test131:
+    domain: 'miraheze.org'
     port: 8180
     probe: false
     pool: false

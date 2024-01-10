@@ -227,7 +227,7 @@ sub mw_request {
 	if (req.http.X-Miraheze-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ miraheze_nets) {
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['xdebug'] -%>
-		if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
+		if (req.http.X-Miraheze-Debug == "<%= name %>.<%= property['domain'] %>") {
 			set req.backend_hint = <%= name %>_test;
 			return (pass);
 		}
