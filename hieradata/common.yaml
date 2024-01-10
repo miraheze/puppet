@@ -82,15 +82,9 @@ varnish::backends:
     probe: mwhealth
     pool: false
     xdebug: true
-  mwtask141:
-    domain: 'miraheze.org'
-    port: 8150
-    probe: false
-    pool: false
-    xdebug: true
   mwtask181:
     domain: 'wikitide.net'
-    port: 8160
+    port: 8150
     probe: false
     pool: false
     xdebug: true
