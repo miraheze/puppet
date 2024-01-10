@@ -10,7 +10,9 @@ hierarchy:
     datadir: "/etc/puppetlabs/puppet/private/hieradata"
     path: "hosts/%{networking.hostname}.yaml"
   - name: "common"
-    path: "common.yaml"
+    lookup_key: 'vmlib::expand_path'
+    path: "common"
   - name: "private common"
+    lookup_key: 'vmlib::expand_path'
     datadir: "/etc/puppetlabs/puppet/private/hieradata"
-    path: "common.yaml"
+    path: "common"
