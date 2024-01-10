@@ -90,6 +90,11 @@ node /^mw1[5678][12]\.wikitide\.net$/ {
     include role::mediawiki
 }
 
+node 'mwtask141.miraheze.org' {
+    include base
+    include role::mediawiki
+}
+
 node 'mwtask181.wikitide.net' {
     include base
     include role::mediawiki
