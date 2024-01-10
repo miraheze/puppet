@@ -144,6 +144,7 @@ class logbot(ircbot.SingleServerIRCBot):
         if event.target not in self.config.targets:
             return
         author, rest = event.source.split('!')
+        discord_author = None
         cloak = self.get_cloak(event.source)
         line = event.arguments[0]
         if rest == self.config.relay_host:
