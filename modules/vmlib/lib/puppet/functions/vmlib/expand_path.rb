@@ -38,9 +38,9 @@ Puppet::Functions.create_function(:'vmlib::expand_path') do
     return {} unless File.exist?(path)
     context.cached_file_data(path) do |content|
       begin
-        data = YAML.load(content, path)
+        data = YAML.safe_load(content, filename: path, aliases: true)
         if data.is_a?(Hash)
-          Puppet::Pops::Lookup::HieraConfig.symkeys_to_string(data)
+          data
         else
           msg = format(_("%{path}: file does not contain a valid yaml hash"), path: path)
           raise Puppet::DataBinding::LookupError, msg if Puppet[:strict] == :error && data != false
