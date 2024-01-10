@@ -153,11 +153,11 @@ def test_check_up_no_debug_host() -> None:
 
 def test_check_up_debug() -> None:
     if os.getenv('DEBUG_ACCESS_KEY'):
-        assert mwdeploy.check_up(nolog=True, Debug='mwtask141')
+        assert mwdeploy.check_up(nolog=True, Debug='mwtask181')
 
 
 def test_check_up_debug_fail() -> None:
-    assert not mwdeploy.check_up(nolog=True, Debug='mwtask141', domain='httpstat.us/500', force=True)
+    assert not mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstat.us/500', force=True)
 
 
 def test_get_staging_path() -> None:
