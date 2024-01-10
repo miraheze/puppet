@@ -84,7 +84,7 @@ varnish::backends:
     xdebug: true
   mwtask181:
     domain: 'wikitide.net'
-    port: 8150
+    port: 8160
     probe: false
     pool: false
     xdebug: true
