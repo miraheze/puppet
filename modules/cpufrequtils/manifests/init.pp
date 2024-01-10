@@ -15,7 +15,7 @@ class cpufrequtils(
     String $governor = 'performance'
 ) {
     unless $facts['is_virtual'] {
-        ensure_packages('cpufrequtils')
+        stdlib::ensure_packages('cpufrequtils')
 
         file { '/etc/default/cpufrequtils':
             content => "GOVERNOR=${governor}\n",
