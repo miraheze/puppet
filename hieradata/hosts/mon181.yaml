@@ -1,5 +1,5 @@
-icinga_ido_db_host: 'db182.miraheze.org'
-icingaweb_db_host: 'db182.miraheze.org'
+icinga_ido_db_host: 'db182.wikitide.net'
+icingaweb_db_host: 'db182.wikitide.net'
 
 http_proxy: 'http://bast.miraheze.org:8080'
 
