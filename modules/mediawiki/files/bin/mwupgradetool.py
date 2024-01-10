@@ -3,8 +3,8 @@
 import os
 import requests
 import sys
-canary = 'mwtask141'
-serverlist = 'mw131,mw132,mw133,mw134,mw141,mw142,mw143'
+canary = 'mwtask181'
+serverlist = 'mw131,mw132,mw133,mw134,mw141,mw142,mw143,mw181,mw182'
 
 
 def check_up(server: str) -> bool:
