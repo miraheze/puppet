@@ -10,6 +10,7 @@ import os
 import string
 import subprocess
 import sys
+import yaml
 
 # Suppress ssl warnings (no checking ssl here since it won't be valid when generating the cert)
 os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
@@ -146,11 +147,22 @@ class SslCertificate:
             os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
             os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
 
-            with open('/srv/ssl/ssl/certs.yaml', 'a') as certs:
-                certs.write(self.domain.translate(str.maketrans('', '', string.punctuation)) + ':\n')
-                certs.write(f"  url: '{self.domain}'\n")
-                certs.write("  ca: 'LetsEncrypt'\n")
-                certs.write('  disable_event: false\n')
+        file_path = '/srv/ssl/ssl/certs.yaml'
+
+        with open(file_path, 'r') as certs_file:
+            certs_data = yaml.safe_load(certs_file) or {}
+
+        domain_key = self.domain.translate(str.maketrans('', '', string.punctuation))
+
+        if domain_key not in certs_data:
+            certs_data[domain_key] = {
+                'url': self.domain,
+                'ca': 'LetsEncrypt',
+                'disable_event': False
+            }
+
+            with open(file_path, 'a') as certs_file:
+                yaml.dump(certs_data, certs_file, default_flow_style=False)
 
             os.system('git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
             os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
