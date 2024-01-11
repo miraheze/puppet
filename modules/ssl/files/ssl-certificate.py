@@ -158,7 +158,7 @@ class SslCertificate:
             certs_data[domain_key] = {
                 'url': self.domain,
                 'ca': 'LetsEncrypt',
-                'disable_event': False
+                'disable_event': False,
             }
 
             with open(file_path, 'a') as certs_file:
