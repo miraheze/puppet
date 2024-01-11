@@ -27,5 +27,6 @@ requests==2.31.0; python_version == '3.12'
 filelock==3.9.0; python_version == '3.11'
 filelock==3.13.1; python_version == '3.12'
 langcodes==3.3.0
+PyYAML==6.0.1
 internetarchive==3.3.0; python_version == '3.11'
 internetarchive==3.5.0; python_version == '3.12'
