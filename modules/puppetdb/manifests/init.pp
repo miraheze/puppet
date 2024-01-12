@@ -4,7 +4,7 @@
 #
 # === Parameters
 #
-# [*db_rw_host*] The read, write db hostname, eg db4.miraheze.org.
+# [*db_rw_host*] The read, write db hostname.
 #
 # [*jvm_opts*] Puppetdb java options, eg configuring heap.
 #
@@ -16,13 +16,13 @@
 #
 # [*bind_ip*] The ip to bind to puppetdb, eg 0.0.0.0 which means any ip.
 #
-# [*db_ro_host*] The read only db hostname, eg db4.miraheze.org.
+# [*db_ro_host*] The read only db hostname.
 #
 # [*db_password*] The db password for the postgresql db.
 #
 # [*db_ssl*] Weather to enable ssl connectivity to the postgresql db.
 #
-# [*puppet_major_version*] Which puppet version to use, eg 4.
+# [*puppet_major_version*] Which puppet version to use.
 #
 class puppetdb(
     String $db_rw_host = lookup('puppetdb::db_rw_host', {'default_value' => 'localhost'}),
