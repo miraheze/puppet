@@ -35,25 +35,6 @@ class ssl {
         max_files => '7000',
     }
 
-    git::clone { 'srv-ssl':
-        ensure    => latest,
-        directory => '/srv/ssl/ssl',
-        origin    => 'git@github.com:miraheze/ssl.git',
-        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null',
-        require   => [
-            File['/var/lib/nagios/id_ed25519'],
-            File['/var/lib/nagios/id_ed25519.pub'],
-            File['/srv/ssl'],
-        ],
-    }
-
-    file { '/root/ssl':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0770',
-    }
-
     file { '/root/ssl-certificate':
         ensure => present,
         owner  => 'root',
@@ -68,6 +49,7 @@ class ssl {
         group  => 'root',
         mode   => '0770',
     }
+
     file { '/srv/dns':
         ensure => directory,
         owner  => 'root',
@@ -98,6 +80,34 @@ class ssl {
         group  => 'root',
         mode   => '0644',
     }
+
+#    git::clone { 'srv-ssl':
+#        ensure    => latest,
+#        directory => '/srv/ssl/ssl',
+#        origin    => 'git@github.com:miraheze/ssl.git',
+#        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null',
+#        require   => [
+#            File['/var/lib/nagios/id_ed25519'],
+#            File['/var/lib/nagios/id_ed25519.pub'],
+#            File['/srv/ssl'],
+#        ],
+#    }
+
+    file { '/root/ssl':
+        ensure => directory,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0770',
+    }
+
+#    file { '/root/ssl':
+#        ensure  => link,
+#        owner   => 'root',
+#        group   => 'root',
+#        mode    => '0770',
+#        target  => '/srv/ssl/ssl',
+#        require => File['/srv/ssl/ssl'],
+#    }
 
     # We do not need to run the ssl renewal cron,
     # we run our own service.
