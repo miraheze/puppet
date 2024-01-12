@@ -1,7 +1,7 @@
 # class base::puppet
 class base::puppet (
     Optional[String] $puppet_cron_time = lookup('puppet_cron_time', {'default_value' => undef}),
-    Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 7}),
+    Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 8}),
     String $puppetserver_hostname = lookup('puppetserver_hostname', {'default_value' => 'puppet181.wikitide.net'}),
 ) {
     $crontime = fqdn_rand(60, 'puppet-params-crontime')
