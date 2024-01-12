@@ -22,7 +22,7 @@
 class role::puppetserver (
     String  $puppetdb_hostname      = lookup('puppetdb_hostname', {'default_value' => 'puppet181.wikitide.net'}),
     Boolean $puppetdb_enable        = lookup('puppetdb_enable', {'default_value' => false}),
-    Integer $puppet_major_version   = lookup('puppet_major_version', {'default_value' => 7}),
+    Integer $puppet_major_version   = lookup('puppet_major_version', {'default_value' => 8}),
     String  $puppetserver_hostname  = lookup('puppetserver_hostname', {'default_value' => 'puppet181.wikitide.net'}),
     String  $puppetserver_java_options = lookup('puppetserver_java_opts', {'default_value' => '-Xms300m -Xmx300m'}),
 ) {
