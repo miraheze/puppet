@@ -35,6 +35,18 @@ class ssl {
         max_files => '7000',
     }
 
+    git::clone { 'srv-ssl':
+        ensure    => latest,
+        directory => '/srv/ssl/ssl',
+        origin    => 'git@github.com:WikiTideOrg/ssl.git',
+        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null',
+        require   => [
+            File['/var/lib/nagios/id_ed25519'],
+            File['/var/lib/nagios/id_ed25519.pub'],
+            File['/srv/ssl'],
+        ],
+    }
+
     file { '/root/ssl':
         ensure => directory,
         owner  => 'root',
