@@ -344,6 +344,25 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
             loginfo[arg[0]] = arg[1]
+
+    if loginfo['servers'] == envinfo['servers']:
+        loginfo['servers'] = 'all'
+
+    if version:
+        if args.upgrade_extensions == get_valid_extensions(args.versions):
+            loginfo['upgrade_extensions'] = 'all'
+
+        if args.upgrade_skins == get_valid_skins(args.versions):
+            loginfo['upgrade_skins'] = 'all'
+
+        valid_versions = [version for version in versions.values() if os.path.exists(f'/srv/mediawiki-staging/{version}')]
+        if args.versions == valid_versions:
+            loginfo['versions'] = 'all'
+
+        if args.upgrade_pack:
+            del loginfo['upgrade_extensions']
+            del loginfo['upgrade_skins']
+
     synced = loginfo['servers']
     if HOSTNAME in args.servers:
         del loginfo['servers']
