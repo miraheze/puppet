@@ -2,8 +2,7 @@
 
 GRANT CREATE, PROCESS
     ON *.* TO 'piwik'@'%'
-    IDENTIFIED BY '<%= @piwik_password %>'
-    REQUIRE SSL;
+    IDENTIFIED BY '<%= @piwik_password %>';
 
 GRANT SELECT, INSERT, UPDATE, INDEX, DELETE, CREATE, DROP, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES
     ON `piwik`.* TO 'piwik'@'%';
