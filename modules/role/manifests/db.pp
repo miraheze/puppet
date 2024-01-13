@@ -11,7 +11,7 @@ class role::db (
 
     $mediawiki_password = lookup('passwords::db::mediawiki')
     $wikiadmin_password = lookup('passwords::db::wikiadmin')
-    $piwik_password = lookup('passwords::db::piwik')
+    $matomo_password = lookup('passwords::db::matomo')
     $phabricator_password = lookup('passwords::db::phabricator')
     $exporter_password = lookup('passwords::db::exporter')
     $icinga_password = lookup('passwords::db::icinga')
@@ -41,9 +41,9 @@ class role::db (
         content => template('mariadb/grants/mediawiki-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/piwik-grants.sql':
+    file { '/etc/mysql/miraheze/matomo-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/piwik-grants.sql.erb'),
+        content => template('mariadb/grants/matomo-grants.sql.erb'),
     }
 
     file { '/etc/mysql/miraheze/phabricator-grants.sql':
