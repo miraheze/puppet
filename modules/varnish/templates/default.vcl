@@ -392,7 +392,7 @@ sub vcl_recv {
 		set req.backend_hint = matomo121;
 
 		# Yes, we only care about this file
-		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
+		if (req.url ~ "^/matomo.js") {
 			return (hash);
 		} else {
 			return (pass);
