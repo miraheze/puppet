@@ -43,6 +43,7 @@ class TestArchiveUploader(unittest.TestCase):
             'description': '',
             'mediatype': 'web',
             'subject': 'miraheze;wikiteam',
+            'proxy': '',
         }
         mock_parse_args.return_value = MagicMock(**mock_args)
 
