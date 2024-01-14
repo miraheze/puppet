@@ -11,13 +11,18 @@ class TestArchiveUploader(unittest.TestCase):
         self.uploader = ArchiveUploader()
 
     def test_args(self):
-        args = self.uploader.parser.parse_args(['--title', 'test_title', '--file', '/path/to/test_file'])
+        args = self.uploader.parser.parse_args([
+            '--title', 'test_title',
+            '--file', '/path/to/test_file',
+            '--proxy', '',
+        ])
         self.assertEqual(args.title, 'test_title')
         self.assertEqual(args.file, '/path/to/test_file')
         self.assertEqual(args.collection, 'opensource')
         self.assertEqual(args.description, '')
         self.assertEqual(args.mediatype, 'web')
         self.assertEqual(args.subject, 'miraheze;wikiteam')
+        self.assertEqual(args.proxy, '')
 
     @patch('argparse.ArgumentParser.parse_args')
     @patch('internetarchive.get_item')
