@@ -345,13 +345,12 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
             del loginfo['upgrade_skins']
 
     synced = loginfo['servers']
-    if HOSTNAME in args.servers:
-        del loginfo['servers']
-        text = f'starting deploy of "{str(loginfo)}" to {synced}'
-        if not args.nolog:
-            os.system(f'/usr/local/bin/logsalmsg {text}')
-        else:
-            print(text)
+    del loginfo['servers']
+    text = f'starting deploy of "{str(loginfo)}" to {synced}'
+    if not args.nolog:
+        os.system(f'/usr/local/bin/logsalmsg {text}')
+    else:
+        print(text)
 
     exitcodes = run_process(args=args)
     failed = non_zero_code(ec=exitcodes, leave=False)
