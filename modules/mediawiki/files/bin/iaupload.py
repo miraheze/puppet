@@ -39,17 +39,21 @@ class ArchiveUploader:
         self.parser.add_argument(
             '--file', dest='file', required=True,
             help='The local path to the file to be uploaded to archive.org. Required.')
+        self.parser.add_argument(
+            '--proxy', dest='proxy', default='http://bast.miraheze.org:8080',
+            help='The proxy to use for requests to archive.org. Optional. Default: http://bast.miraheze.org:8080')
 
     def upload(self):
         args = self.parser.parse_args()
 
         item = internetarchive.get_item(args.title)
 
-        # set session proxy for uploading
-        item.session.proxies = {
-            'http': 'http://bast.miraheze.org:8080',
-            'https': 'http://bast.miraheze.org:8080',
-        }
+        if args.proxy:
+            # set session proxy for uploading
+            item.session.proxies = {
+                'http': args.proxy,
+                'https': args.proxy,
+            }
 
         # get last modification time from file to use as the publication date in archive.org
         mtime = os.path.getmtime(args.file)
