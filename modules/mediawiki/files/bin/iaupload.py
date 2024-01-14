@@ -10,12 +10,6 @@ import internetarchive
 import os
 from datetime import datetime
 
-# set HTTP proxy to use for getting the item from archive.org
-# we then also set the session proxy for the item to use for uploading
-# but we can't get the item to set session proxy without also setting HTTP_PROXY here
-os.environ['HTTP_PROXY'] = 'http://bast.miraheze.org:8080'
-os.environ['HTTPS_PROXY'] = 'http://bast.miraheze.org:8080'
-
 
 class ArchiveUploader:
     def __init__(self):
@@ -49,6 +43,12 @@ class ArchiveUploader:
         item = internetarchive.get_item(args.title)
 
         if args.proxy:
+            # set HTTP proxy to use for getting the item from archive.org
+            # we then also set the session proxy for the item to use for uploading
+            # but we can't get the item to set session proxy without also setting HTTP_PROXY here
+            os.environ['HTTP_PROXY'] = args.proxy
+            os.environ['HTTPS_PROXY'] = args.proxy
+
             # set session proxy for uploading
             item.session.proxies = {
                 'http': args.proxy,
