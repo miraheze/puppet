@@ -311,6 +311,29 @@ def _construct_reset_mediawiki_run_puppet() -> str:
 
 
 def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
+    loginfo = {}
+    for arg in vars(args).items():
+        if arg[1] is not None and arg[1] is not False:
+            loginfo[arg[0]] = arg[1]
+
+    if args.servers == get_environment_info()['servers']:
+        loginfo['servers'] = ['all']
+
+    if args.versions:
+        if args.upgrade_extensions == get_valid_extensions(args.versions):
+            loginfo['upgrade_extensions'] = ['all']
+
+        if args.upgrade_skins == get_valid_skins(args.versions):
+            loginfo['upgrade_skins'] = ['all']
+
+        valid_versions = [version for version in versions.values() if os.path.exists(f'/srv/mediawiki-staging/{version}')]
+        if args.versions == valid_versions:
+            loginfo['versions'] = ['all']
+
+        if args.upgrade_pack:
+            del loginfo['upgrade_extensions']
+            del loginfo['upgrade_skins']
+
     if args.upgrade_world and not args.reset_world:
         args.world = True
         args.pull = 'world'
@@ -321,31 +344,9 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
         args.upgrade_extensions = get_valid_extensions(args.versions)
         args.upgrade_skins = get_valid_skins(args.versions)
 
-    loginfo = {}
-    for arg in vars(args).items():
-        if arg[1] is not None and arg[1] is not False:
-            loginfo[arg[0]] = arg[1]
-
-    if args.servers == get_environment_info()['servers']:
-        loginfo['servers'] = 'all'
-
-    if args.versions:
-        if args.upgrade_extensions == get_valid_extensions(args.versions):
-            loginfo['upgrade_extensions'] = 'all'
-
-        if args.upgrade_skins == get_valid_skins(args.versions):
-            loginfo['upgrade_skins'] = 'all'
-
-        valid_versions = [version for version in versions.values() if os.path.exists(f'/srv/mediawiki-staging/{version}')]
-        if args.versions == valid_versions:
-            loginfo['versions'] = 'all'
-
-        if args.upgrade_pack:
-            del loginfo['upgrade_extensions']
-            del loginfo['upgrade_skins']
-
     synced = loginfo['servers']
     del loginfo['servers']
+
     text = f'starting deploy of "{str(loginfo)}" to {synced}'
     if not args.nolog:
         os.system(f'/usr/local/bin/logsalmsg {text}')
@@ -656,6 +657,7 @@ class UpgradePackAction(argparse.Action):
         skins_in_pack = get_skins_in_pack(value)
         setattr(namespace, 'upgrade_extensions', sorted(extensions_in_pack))
         setattr(namespace, 'upgrade_skins', sorted(skins_in_pack))
+        setattr(namespace, 'upgrade_pack', value)
 
 
 class LangAction(argparse.Action):
