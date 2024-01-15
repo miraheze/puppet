@@ -418,12 +418,6 @@ sub vcl_recv {
 	}
 
 	# Do not cache requests from this domain
-	if (req.http.Host == "webmail.miraheze.org") {
-		set req.backend_hint = mail121;
-		return (pass);
-	}
-
-	# Do not cache requests from this domain
 	if (req.http.Host == "reports.miraheze.org") {
 		set req.backend_hint = reports121;
 		return (pass);
