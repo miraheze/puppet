@@ -60,7 +60,6 @@ node 'ldap141.miraheze.org' {
 node 'mail121.miraheze.org' {
     include base
     include role::mail
-    include role::roundcubemail
 }
 
 node 'matomo121.miraheze.org' {
