@@ -10,7 +10,6 @@ class mariadb::packages(
         ensure => present,
     }
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
         location => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
@@ -19,7 +18,6 @@ class mariadb::packages(
         key      => {
             'name'    => 'mariadb_release_signing_key.pgp',
             'source'  => 'https://mariadb.org/mariadb_release_signing_key.pgp',
-            'options' => "http-proxy='${http_proxy}'",
         },
     }
 
