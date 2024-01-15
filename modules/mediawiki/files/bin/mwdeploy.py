@@ -11,7 +11,7 @@ import json
 import sys
 from langcodes import tag_is_valid
 
-mw_versions = os.popen('getMWVersions').read().strip()
+mw_versions = os.popen('/usr/local/bin/getMWVersions').read().strip()
 versions = {'version': 'version'}
 if mw_versions:
     versions = json.loads(mw_versions)
@@ -724,7 +724,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang', action=LangAction, help='l10n language(s) to rebuild, defaults to all')
-    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
+    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'/usr/local/bin/getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
     parser.add_argument('--show-tags', dest='show_tags', action='store_true', help='Show change tags for extension/skin upgrades')
     parser.add_argument('--skip-schema-confirm', dest='skip_schema_confirm', action='store_true', help='Skip confirm prompts for extensions with schema changes')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
