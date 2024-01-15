@@ -332,6 +332,8 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
     if args.servers == get_environment_info()['servers']:
         loginfo['servers'] = 'all'
 
+    use_version = args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor
+
     if args.versions:
         if args.upgrade_extensions == get_valid_extensions(args.versions):
             loginfo['upgrade_extensions'] = 'all'
@@ -346,6 +348,9 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
         if args.upgrade_pack:
             del loginfo['upgrade_extensions']
             del loginfo['upgrade_skins']
+
+        if not use_version:
+            del loginfo['versions']
 
     synced = loginfo['servers']
     del loginfo['servers']
@@ -369,7 +374,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
             print(fintext)
         sys.exit(1)
 
-    if args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor:
+    if use_version:
         for version in args.versions:
             exitcodes = run_process(args=args, version=version)
             failed = non_zero_code(ec=exitcodes, leave=False)
