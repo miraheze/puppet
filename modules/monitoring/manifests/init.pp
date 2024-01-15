@@ -22,7 +22,6 @@ class monitoring (
         allowdupe => false,
     }
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
     $version = lookup('mariadb::version', {'default_value' => '10.4'})
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
@@ -32,7 +31,6 @@ class monitoring (
         key      => {
             'name'    => 'mariadb_release_signing_key.pgp',
             'source'  => 'https://mariadb.org/mariadb_release_signing_key.pgp',
-            'options' => "http-proxy='${http_proxy}'",
         },
     }
 
