@@ -311,6 +311,14 @@ def _construct_reset_mediawiki_run_puppet() -> str:
 
 
 def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
+    loginfo = {}
+    for arg in vars(args).items():
+        if arg[1] is not None and arg[1] is not False:
+            if isinstance(arg[1], list) and len(arg[1]) == 1:
+                loginfo[arg[0]] = arg[1][0]
+            else:
+                loginfo[arg[0]] = arg[1]
+
     if args.upgrade_world and not args.reset_world:
         args.world = True
         args.pull = 'world'
@@ -320,17 +328,77 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
         args.upgrade_vendor = True
         args.upgrade_extensions = get_valid_extensions(args.versions)
         args.upgrade_skins = get_valid_skins(args.versions)
-    run_process(args=args, start=start)
-    if args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor:
+
+    if args.servers == get_environment_info()['servers']:
+        loginfo['servers'] = 'all'
+
+    use_version = args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor
+
+    if args.versions:
+        if args.upgrade_extensions == get_valid_extensions(args.versions):
+            loginfo['upgrade_extensions'] = 'all'
+
+        if args.upgrade_skins == get_valid_skins(args.versions):
+            loginfo['upgrade_skins'] = 'all'
+
+        valid_versions = [version for version in versions.values() if os.path.exists(f'/srv/mediawiki-staging/{version}')]
+        if args.versions == valid_versions:
+            loginfo['versions'] = 'all'
+
+        if args.upgrade_pack:
+            del loginfo['upgrade_extensions']
+            del loginfo['upgrade_skins']
+
+        if not use_version:
+            del loginfo['versions']
+
+    synced = loginfo['servers']
+    del loginfo['servers']
+
+    text = f'starting deploy of "{str(loginfo)}" to {synced}'
+    if not args.nolog:
+        os.system(f'/usr/local/bin/logsalmsg {text}')
+    else:
+        print(text)
+
+    exitcodes = run_process(args=args)
+    failed = non_zero_code(ec=exitcodes, leave=False)
+
+    fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
+
+    if failed:
+        fintext += f' - FAIL: {exitcodes}'
+        if not args.nolog:
+            os.system(f'/usr/local/bin/logsalmsg {fintext}')
+        else:
+            print(fintext)
+        sys.exit(1)
+
+    if use_version:
         for version in args.versions:
-            run_process(args=args, start=start, version=version)
+            exitcodes = run_process(args=args, version=version)
+            failed = non_zero_code(ec=exitcodes, leave=False)
+
+            if failed:
+                fintext += f' - FAIL: {exitcodes}'
+                if not args.nolog:
+                    os.system(f'/usr/local/bin/logsalmsg {fintext}')
+                else:
+                    print(fintext)
+                sys.exit(1)
+
+    fintext += ' - SUCCESS'
+    fintext += f' in {str(int(time.time() - start))}s'
+    if not args.nolog:
+        os.system(f'/usr/local/bin/logsalmsg {fintext}')
+    else:
+        print(fintext)
 
 
-def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:  # pragma: no cover
+def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pragma: no cover
     envinfo = get_environment_info()
     options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
-    loginfo = {}
     rsyncpaths = []
     rsyncfiles = []
     rsync = []
@@ -341,18 +409,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     tagsinfo = []  # type: list[str]
     warnings = {}
 
-    for arg in vars(args).items():
-        if arg[1] is not None and arg[1] is not False:
-            loginfo[arg[0]] = arg[1]
-    synced = loginfo['servers']
     if HOSTNAME in args.servers:
-        del loginfo['servers']
-        text = f'starting deploy of "{str(loginfo)}" to {synced}'
-        if not args.nolog:
-            os.system(f'/usr/local/bin/logsalmsg {text}')
-        else:
-            print(text)
-
         if version:
             runner = ''
             runner_staging = ''
@@ -559,28 +616,17 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     for file in rsyncfiles:
         exitcodes.append(remote_sync_file(time=args.ignore_time, serverlist=args.servers, path=file, recursive=False, force=args.force, envinfo=envinfo, nolog=args.nolog))
 
-    fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
-
-    failed = non_zero_code(ec=exitcodes, leave=False)
-    if failed:
-        fintext += f' - FAIL: {exitcodes}'
-    else:
-        fintext += ' - SUCCESS'
-    fintext += f' in {str(int(time.time() - start))}s'
     if tagsinfo:
         print('TAGS:')
         for info in tagsinfo:
             print(info)
+
     if newschema:
         print('WARNING: NEW SCHEMA CHANGES DETECTED:')
         for schema in newschema:
             print(schema)
-    if not args.nolog:
-        os.system(f'/usr/local/bin/logsalmsg {fintext}')
-    else:
-        print(fintext)
-    if failed:
-        sys.exit(1)
+
+    return exitcodes
 
 
 class UpgradeExtensionsAction(argparse.Action):  # pragma: no cover
@@ -619,6 +665,7 @@ class UpgradePackAction(argparse.Action):
         skins_in_pack = get_skins_in_pack(value)
         setattr(namespace, 'upgrade_extensions', sorted(extensions_in_pack))
         setattr(namespace, 'upgrade_skins', sorted(skins_in_pack))
+        setattr(namespace, 'upgrade_pack', value)
 
 
 class LangAction(argparse.Action):
