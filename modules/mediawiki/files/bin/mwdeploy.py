@@ -314,25 +314,10 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
     loginfo = {}
     for arg in vars(args).items():
         if arg[1] is not None and arg[1] is not False:
-            loginfo[arg[0]] = arg[1]
-
-    if args.servers == get_environment_info()['servers']:
-        loginfo['servers'] = ['all']
-
-    if args.versions:
-        if args.upgrade_extensions == get_valid_extensions(args.versions):
-            loginfo['upgrade_extensions'] = ['all']
-
-        if args.upgrade_skins == get_valid_skins(args.versions):
-            loginfo['upgrade_skins'] = ['all']
-
-        valid_versions = [version for version in versions.values() if os.path.exists(f'/srv/mediawiki-staging/{version}')]
-        if args.versions == valid_versions:
-            loginfo['versions'] = ['all']
-
-        if args.upgrade_pack:
-            del loginfo['upgrade_extensions']
-            del loginfo['upgrade_skins']
+            if isinstance(arg[1], list) and len(arg[1]) == 1:
+                loginfo[arg[0]] = arg[1][0]
+            else:
+                loginfo[arg[0]] = arg[1]
 
     if args.upgrade_world and not args.reset_world:
         args.world = True
@@ -343,6 +328,24 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
         args.upgrade_vendor = True
         args.upgrade_extensions = get_valid_extensions(args.versions)
         args.upgrade_skins = get_valid_skins(args.versions)
+
+    if args.servers == get_environment_info()['servers']:
+        loginfo['servers'] = 'all'
+
+    if args.versions:
+        if args.upgrade_extensions == get_valid_extensions(args.versions):
+            loginfo['upgrade_extensions'] = 'all'
+
+        if args.upgrade_skins == get_valid_skins(args.versions):
+            loginfo['upgrade_skins'] = 'all'
+
+        valid_versions = [version for version in versions.values() if os.path.exists(f'/srv/mediawiki-staging/{version}')]
+        if args.versions == valid_versions:
+            loginfo['versions'] = 'all'
+
+        if args.upgrade_pack:
+            del loginfo['upgrade_extensions']
+            del loginfo['upgrade_skins']
 
     synced = loginfo['servers']
     del loginfo['servers']
