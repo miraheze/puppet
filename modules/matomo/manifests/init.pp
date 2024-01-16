@@ -14,6 +14,13 @@ class matomo (
         group              => 'www-data',
     }
 
+    file { '/srv/matomo/misc/GeoLite2-Country.mmdb':
+        ensure  => present,
+        source  => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
+        mode    => '0444',
+        require => Git::Clone['matomo'],
+    }
+
     exec { 'matomo_composer':
         command     => 'composer install --no-dev',
         creates     => '/srv/matomo/vendor',
