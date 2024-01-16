@@ -6,5 +6,6 @@ role::opensearch::discovery_host:
   - os151.wikitide.net
 role::opensearch::master_hosts:
   - os151
+role::opensearch::master_host: 'http://os151.wikitide.net:9200'
 
 base::syslog::rsyslog_udp_localhost: true
