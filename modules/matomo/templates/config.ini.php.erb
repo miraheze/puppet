@@ -26,12 +26,11 @@ bulk_requests_use_transaction = 0
 record_statistics = 1
 
 [mail]
+defaultHostnameIfEmpty = "miraheze.org"
 transport = "smtp"
 port = 465
-host = "smtp-relay.gmail.com"
-type = "NONE"
-username = "noreply@miraheze.org"
-encryption = "ssl"
+host = "ssl://smtp-relay.gmail.com"
+encryption = "tls"
 
 [Plugins]
 Plugins[] = "CorePluginsAdmin"
