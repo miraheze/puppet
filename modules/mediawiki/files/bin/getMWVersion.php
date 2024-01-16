@@ -3,7 +3,7 @@
 
 error_reporting( 0 );
 
-require_once '/srv/mediawiki/config/initialise/MirahezeFunctions.php';
+require_once '/srv/mediawiki-staging/config/initialise/MirahezeFunctions.php';
 
 if ( count( $argv ) < 2 ) {
 	print "Usage: getMWVersion <dbname> \n";
