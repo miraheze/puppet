@@ -70,15 +70,27 @@ varnish::backends:
     probe: mwhealth
     pool: true
     xdebug: true
-  mw181:
+  mw151:
     domain: 'wikitide.net'
     port: 8113
     probe: mwhealth
     pool: false
     xdebug: true
-  mw182:
+  mw152:
     domain: 'wikitide.net'
     port: 8114
+    probe: mwhealth
+    pool: false
+    xdebug: true
+  mw181:
+    domain: 'wikitide.net'
+    port: 8115
+    probe: mwhealth
+    pool: false
+    xdebug: true
+  mw182:
+    domain: 'wikitide.net'
+    port: 8116
     probe: mwhealth
     pool: false
     xdebug: true
