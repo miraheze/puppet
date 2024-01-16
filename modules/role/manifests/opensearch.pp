@@ -177,7 +177,7 @@ class role::opensearch (
 
         nginx::site { 'opensearch.miraheze.org':
             ensure  => present,
-            content => template('role/opensearch/nginx.erb'),
+            content => template('role/opensearch/nginx.conf.erb'),
             monitor => false,
         }
 
