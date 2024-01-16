@@ -1,0 +1,10 @@
+http_proxy: 'http://bast.miraheze.org:8080'
+
+role::opensearch::master: true
+role::opensearch::data: true
+role::opensearch::discovery_host:
+  - os151.miraheze.org
+role::opensearch::master_hosts:
+  - os151
+
+base::syslog::rsyslog_udp_localhost: true
