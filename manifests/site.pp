@@ -190,7 +190,7 @@ node 'test131.miraheze.org' {
     include mediawiki::jobqueue::chron
 }
 
-node 'test151.miraheze.org' {
+node 'test151.wikitide.net' {
     include base
     include role::memcached
     include role::mediawiki
