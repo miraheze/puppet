@@ -108,6 +108,7 @@ varnish::backends:
     probe: false
     pool: false
   matomo151:
+    domain: 'wikitide.net'
     port: 8203
     probe: false
     pool: false
