@@ -383,7 +383,7 @@ sub vcl_recv {
 	}
 
 	if (req.http.Host ~ "^(.*\.)?mirabeta\.org") {
-		set req.backend_hint = test131;
+		set req.backend_hint = test151;
 		return (pass);
 	}
 
