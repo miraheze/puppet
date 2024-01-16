@@ -27,9 +27,7 @@ allow_sign_up = true
 
 [smtp]
 enabled=true
-host = smtp.gmail.com:465
-user = noreply
-password = <%= @mail_password %>
+host = ssl://smtp-relay.gmail.com:465
 from_address = noreply@miraheze.org
 
 [database]
