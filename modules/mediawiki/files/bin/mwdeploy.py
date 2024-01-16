@@ -36,7 +36,7 @@ class EnvironmentList(TypedDict):
 beta: Environment = {
     'wikidbname': 'metawikibeta',
     'wikiurl': 'meta.mirabeta.org',
-    'servers': ['test131'],
+    'servers': ['test131', 'test151'],
 }
 prod: Environment = {
     'wikidbname': 'testwiki',

@@ -106,6 +106,12 @@ varnish::backends:
     probe: false
     pool: false
     xdebug: true
+  test151:
+    domain: 'wikitide.net'
+    port: 8180
+    probe: false
+    pool: false
+    xdebug: true
   mail121:
     port: 8200
     probe: false

@@ -190,6 +190,15 @@ node 'test131.miraheze.org' {
     include mediawiki::jobqueue::chron
 }
 
+node 'test151.miraheze.org' {
+    include base
+    include role::memcached
+    include role::mediawiki
+    include role::poolcounter
+    include role::redis
+    include mediawiki::jobqueue::chron
+}
+
 # ensures all servers have basic class if puppet runs
 node default {
     include base
