@@ -28,11 +28,10 @@ record_statistics = 1
 [mail]
 transport = "smtp"
 port = 465
-host = "smtp.gmail.com"
-type = "LOGIN"
-username = "noreply@wikitide.org"
-password = "<%= @noreply_password %>"
-encryption = "tls"
+host = "smtp-relay.gmail.com"
+type = "NONE"
+username = "noreply@miraheze.org"
+encryption = "ssl"
 
 [Plugins]
 Plugins[] = "CorePluginsAdmin"
