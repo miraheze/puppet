@@ -29,7 +29,7 @@ if ( $page->exists() ) {
 	$extratext = ( $content instanceof TextContent ) ? $content->getText() : '';
 	// Take last modified timestamp of page into account
 	$mtime = max( $mtime, wfTimestamp( TS_UNIX, $page->getTouched() ) );
-} elseif ( php_uname( 'n' ) === 'test131.miraheze.org' ) {
+} elseif ( php_uname( 'n' ) === 'test151' ) {
 	echo $dontIndex;
 }
 
