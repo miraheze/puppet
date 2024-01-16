@@ -83,6 +83,11 @@ node /^mem1[34]1\.miraheze\.org$/ {
     include role::memcached
 }
 
+node /^mem1[56]1\.wikitide\.net$/ {
+    include base
+    include role::memcached
+}
+
 node 'mon181.wikitide.net' {
     include base
     include role::grafana
