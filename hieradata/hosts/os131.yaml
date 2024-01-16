@@ -8,5 +8,6 @@ role::opensearch::discovery_host:
 role::opensearch::master_hosts:
   - os131
 role::opensearch::master_host: 'https://os131.miraheze.org:9200'
+role::opensearch::use_tls: true
 
 base::syslog::rsyslog_udp_localhost: true
