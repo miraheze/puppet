@@ -29,8 +29,8 @@ class monitoring (
         release  => $facts['os']['distro']['codename'],
         repos    => 'main',
         key      => {
-            'name'    => 'mariadb_release_signing_key.pgp',
-            'source'  => 'https://mariadb.org/mariadb_release_signing_key.pgp',
+            'name'   => 'mariadb_release_signing_key.pgp',
+            'source' => 'https://mariadb.org/mariadb_release_signing_key.pgp',
         },
     }
 

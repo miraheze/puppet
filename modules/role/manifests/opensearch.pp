@@ -34,12 +34,12 @@ class role::opensearch (
 
     class { 'opensearch':
         config      => {
-            'cluster.initial_master_nodes'                          => $os_master_hosts,
-            'discovery.seed_hosts'                                  => $os_discovery,
-            'cluster.name'                                          => 'miraheze-general',
-            'node.master'                                           => $os_master,
-            'node.data'                                             => $os_data,
-            'network.host'                                          => $facts['networking']['fqdn'],
+            'cluster.initial_master_nodes' => $os_master_hosts,
+            'discovery.seed_hosts'         => $os_discovery,
+            'cluster.name'                 => 'miraheze-general',
+            'node.master'                  => $os_master,
+            'node.data'                    => $os_data,
+            'network.host'                 => $facts['networking']['fqdn'],
         } + $tls_config,
         version     => '2.11.0',
         manage_repo => true,
@@ -58,7 +58,7 @@ class role::opensearch (
             group   => 'opensearch',
             require => File['/etc/opensearch']
         }
-    
+
         file { '/etc/opensearch/ssl/opensearch-ca.pem':
             ensure  => 'present',
             source  => 'puppet:///ssl/ca/opensearch-ca.pem',
@@ -67,7 +67,7 @@ class role::opensearch (
             before  => Service['opensearch'],
             require => File['/etc/opensearch/ssl'],
         }
-    
+
         file { '/etc/opensearch/ssl/opensearch-node.crt':
             ensure  => 'present',
             source  => 'puppet:///ssl/certificates/opensearch-node.crt',
@@ -76,7 +76,7 @@ class role::opensearch (
             before  => Service['opensearch'],
             require => File['/etc/opensearch/ssl'],
         }
-    
+
         file { '/etc/opensearch/ssl/opensearch-node-key.pem':
             ensure    => 'present',
             source    => 'puppet:///ssl-keys/opensearch-node-key.pem',
@@ -87,7 +87,7 @@ class role::opensearch (
             before    => Service['opensearch'],
             require   => File['/etc/opensearch/ssl'],
         }
-    
+
         file { '/etc/opensearch/ssl/opensearch-admin-cert.pem':
             ensure  => 'present',
             source  => 'puppet:///ssl/certificates/opensearch-admin-cert.pem',
@@ -96,7 +96,7 @@ class role::opensearch (
             before  => Service['opensearch'],
             require => File['/etc/opensearch/ssl'],
         }
-    
+
         file { '/etc/opensearch/ssl/opensearch-admin-key.pem':
             ensure    => 'present',
             source    => 'puppet:///ssl-keys/opensearch-admin-key.pem',
@@ -107,7 +107,7 @@ class role::opensearch (
             before    => Service['opensearch'],
             require   => File['/etc/opensearch/ssl'],
         }
-    
+
         # Contains everything needed to update the opensearch security index
         # to apply any config changes to the index.
         # This is required to be run everytime the config changes.
@@ -116,13 +116,13 @@ class role::opensearch (
             mode    => '0755',
             content => template('role/opensearch/bin/opensearch-security.sh.erb'),
         }
-    
+
         file { '/usr/local/bin/opensearch-generate-admin-certificate.sh':
             ensure => present,
             mode   => '0755',
             source => 'puppet:///modules/role/opensearch/opensearch-generate-admin-certificate.sh'
         }
-    
+
         [
             '/etc/opensearch/esnode.pem',
             '/etc/opensearch/esnode-key.pem',
