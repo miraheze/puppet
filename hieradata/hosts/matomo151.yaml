@@ -1,0 +1,4 @@
+http_proxy: 'http://bast.miraheze.org:8080'
+
+php::fpm::fpm_workers_multiplier: 9.0
+php::fpm::fpm_min_child: 4
