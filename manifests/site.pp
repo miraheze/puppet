@@ -131,6 +131,11 @@ node 'prometheus131.miraheze.org' {
     include role::prometheus
 }
 
+node 'prometheus151.miraheze.org' {
+    include base
+    include role::prometheus
+}
+
 node 'puppet181.wikitide.net' {
     include base
     include role::postgresql
