@@ -73,7 +73,7 @@ node 'matomo121.miraheze.org' {
     include role::matomo
 }
 
-node 'matomo151.miraheze.org' {
+node 'matomo151.wikitide.net' {
     include base
     include role::matomo
 }
