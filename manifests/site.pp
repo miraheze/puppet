@@ -40,6 +40,11 @@ node /^os1[34]1\.miraheze\.org$/ {
     include role::opensearch
 }
 
+node /^os1[56]1\.wikitide\.net$/ {
+    include base
+    include role::opensearch
+}
+
 node 'graylog131.miraheze.org' {
     include base
     include role::graylog
