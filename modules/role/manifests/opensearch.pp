@@ -29,7 +29,9 @@ class role::opensearch (
             'plugins.security.restapi.roles_enabled'                => ['all_access', 'security_rest_api_access'],
         }
     } else {
-        $tls_config = {}
+        $tls_config = {
+            'plugins.security.disabled' => true
+        }
     }
 
     class { 'opensearch':
