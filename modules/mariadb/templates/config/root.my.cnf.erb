@@ -2,4 +2,6 @@
 user=root
 password=<%= @password %>
 socket=/var/run/mysqld/mysqld.sock
+<%- if @enable_ssl -%>
 ssl
+<%- end -%>
