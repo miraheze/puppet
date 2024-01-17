@@ -181,15 +181,6 @@ node /^swiftobject1[5678]1\.wikitide\.net$/ {
     include role::swift
 }
 
-node 'test131.miraheze.org' {
-    include base
-    include role::memcached
-    include role::mediawiki
-    include role::poolcounter
-    include role::redis
-    include mediawiki::jobqueue::chron
-}
-
 node 'test151.wikitide.net' {
     include base
     include role::memcached
