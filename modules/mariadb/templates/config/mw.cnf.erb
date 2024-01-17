@@ -93,11 +93,13 @@ userstat                       = 1
 plugin_load_add                = query_response_time
 query_response_time_stats      = ON
 
+<%- if @enable_ssl -%>
 ssl
 ssl-ca                         = /etc/ssl/certs/Sectigo.crt
 ssl-cert                       = /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt
 ssl-key                        = /etc/ssl/private/wildcard.miraheze.org-2020-2.key
 tls_version                    = TLSv1.2,TLSv1.3
+<%- end -%>
 
 optimizer_switch               = 'mrr=on,mrr_cost_based=on,mrr_sort_keys=on,optimize_join_buffer_size=on,rowid_filter=off'
 
