@@ -3,3 +3,4 @@ role::db::weekly_misc: ['mhglobal']
 mariadb::config::innodb_buffer_pool_size: '18G'
 mariadb::version: '10.11'
 role::db::enable_ssl: false
+mariadb::config::server_id: 5
