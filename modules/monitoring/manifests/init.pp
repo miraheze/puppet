@@ -90,8 +90,6 @@ class monitoring (
         password        => $db_password,
         database        => $db_name,
         import_schema   => false,
-        enable_ssl      => true,
-        ssl_cacert_path => '/etc/ssl/certs/Sectigo.crt',
     }
 
     class { '::icinga2::feature::gelf':
