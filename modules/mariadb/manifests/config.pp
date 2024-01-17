@@ -132,6 +132,17 @@ class mariadb::config(
         },
     }
 
+    if $enable_ssl {
+        $ssl = {
+            mysql_ssl       => $enable_ssl,
+            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
+        }
+    } else {
+        $ssl = {
+            mysql_ssl       => false,
+            mysql_cacert    => '',
+        }
+    }
     monitoring::services { 'MariaDB Connections':
         check_command => 'mysql_connections',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
@@ -139,11 +150,9 @@ class mariadb::config(
             mysql_hostname  => $facts['networking']['fqdn'],
             mysql_username  => 'icinga',
             mysql_password  => $icinga_password,
-            mysql_ssl       => $enable_ssl,
-            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
             warning         => '80%',
             critical        => '90%',
             max_connections => $max_connections,
-        },
+        } + $ssl,
     }
 }
