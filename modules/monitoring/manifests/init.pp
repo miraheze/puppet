@@ -30,7 +30,7 @@ class monitoring (
         repos    => 'main',
         key      => {
             'name'   => 'mariadb_release_signing_key.pgp',
-            'source' => 'https://mariadb.org/mariadb_release_signing_key.pgp',
+            'source' => 'puppet:///modules/mariadb/mariadb_release_signing_key.pgp',
         },
     }
 
