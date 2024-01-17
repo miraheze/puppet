@@ -6,3 +6,4 @@ role::db::monthly_misc: []
 role::db::backup_sql: false
 role::db::enable_bin_logs: false
 mariadb::version: '10.11'
+role::db::enable_ssl: false
