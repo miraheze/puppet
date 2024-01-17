@@ -9,6 +9,8 @@ mediawiki::multiversion::versions:
   '1.40':
     branch: 'REL1_40'
     default: true
+  '1.41':
+    branch: 'REL1_41'
 
 puppetserver_hostname: puppet181.wikitide.net
 role::salt::minions::salt_master: 'puppet181.wikitide.net'
