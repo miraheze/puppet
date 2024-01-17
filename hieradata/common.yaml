@@ -100,12 +100,6 @@ varnish::backends:
     probe: false
     pool: false
     xdebug: true
-  test131:
-    domain: 'miraheze.org'
-    port: 8180
-    probe: false
-    pool: false
-    xdebug: true
   test151:
     domain: 'wikitide.net'
     port: 8181
