@@ -5,7 +5,7 @@ from flask import Flask
 from flask import request
 import logging
 import logging.handlers
-import os
+import subprocess
 
 app = Flask(__name__)
 
@@ -31,7 +31,7 @@ def post():
             lock.acquire()
             try:
                 logger.info(f'Renewed SSL certificate: {content["SERVICEDESC"]}')
-                logger.info(os.system(f'/var/lib/nagios/ssl-acme -s {content["SERVICESTATE"]} -t {content["SERVICESTATETYPE"]} -u {content["SERVICEDESC"]}'))
+                logger.info(subprocess.run(f'/var/lib/nagios/ssl-acme -s {content["SERVICESTATE"]} -t {content["SERVICESTATETYPE"]} -u {content["SERVICEDESC"]}', stderr=subprocess.STDOUT, shell=True))
                 lock_acquired = True
             finally:
                 lock.release()
