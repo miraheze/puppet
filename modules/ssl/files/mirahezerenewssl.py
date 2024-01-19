@@ -3,7 +3,6 @@
 from filelock import FileLock
 from flask import Flask
 from flask import request
-from logging.handlers import TimedRotatingFileHandler
 import logging
 import os
 
