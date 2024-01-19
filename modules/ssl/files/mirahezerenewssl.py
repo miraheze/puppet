@@ -10,7 +10,7 @@ import subprocess
 app = Flask(__name__)
 
 formatter = logging.Formatter('%(asctime)s - %(message)s', '%m-%d-%Y %I:%M:%S %p')
-handler = logging.handlers.TimedRotatingFileHandler('/var/log/ssl/miraheze-renewal-test.log', 'midnight', 1)
+handler = logging.handlers.TimedRotatingFileHandler('/var/log/ssl/miraheze-renewal.log', 'midnight', 1)
 handler.setFormatter(formatter)
 logger = logging.getLogger()
 logger.addHandler(handler)
