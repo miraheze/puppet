@@ -17,6 +17,17 @@ class ssl::web {
         mode   => '0755',
     }
 
+    file { '/var/log/ssl':
+        ensure => directory,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0750',
+        before => [
+            File['/usr/local/bin/mirahezerenewssl.py'],
+            File['/usr/local/bin/renew-ssl'],
+        ],
+    }
+
     systemd::service { 'mirahezerenewssl':
         ensure  => present,
         content => systemd_template('mirahezerenewssl'),
