@@ -33,11 +33,13 @@ def post():
                 logger.info(f'Renewed SSL certificate: {content["SERVICEDESC"]}')
                 command = subprocess.run(
                     f'/var/lib/nagios/ssl-acme -s {content["SERVICESTATE"]} -t {content["SERVICESTATETYPE"]} -u {content["SERVICEDESC"]}',
-                    stderr=subprocess.STDOUT,
                     capture_output=True,
                     text=True,
                     shell=True)
-                logger.info(command.stdout)
+                if command.stdout:
+                    logger.info(command.stdout)
+                if command.stderr:
+                    logger.info(command.stderr)
                 lock_acquired = True
             finally:
                 lock.release()
