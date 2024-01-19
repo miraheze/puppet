@@ -16,6 +16,7 @@ logger = logging.getLogger()
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
+
 @app.route('/renew', methods=['POST'])
 def post():
     lock_acquired = False
