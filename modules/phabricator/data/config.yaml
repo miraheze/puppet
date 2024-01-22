@@ -136,7 +136,7 @@ phabricator.uninstalled-applications:
   PhabricatorPholioApplication: true # we are not designers
   PhabricatorPhortuneApplication: true # we don't need billing stuff
   PhabricatorPhragmentApplication: true # puppet has hiera
-  PhabricatorPhrequentApplication: true # SPF spends all of his time well, we don't need to track it
+  PhabricatorPhrequentApplication: true # we don't need this
   PhabricatorPhrictionApplication: true # if we operate this, there will be phriction with MediaWiki
   PhabricatorPhurlApplication: true # we already have a URL shortener
   PhabricatorPonderApplication: true # I wonder if we need a Q&A system
