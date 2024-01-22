@@ -79,6 +79,11 @@ maniphest.statuses:
     transaction.icon: 'fa-check-circle'
     prefixes: [closed, closes, close, fix, fixes, fixed, resolve, resolves, resolved]
     suffixes: ['as resolved', 'as fixed']
+  'inprogress':
+    name: 'In progress'
+    name.full: 'Open, In progress'
+    transaction.icon: 'fa-forward-step'
+    claim: true
   'invalid':
     name: 'Invalid'
     name.full: 'Closed, Invalid'
@@ -140,6 +145,10 @@ phabricator.uninstalled-applications:
   
  # Custom field settings
 user.custom-field-definitions:
+  discord_user:
+    name: 'Discord Username'
+    type: text
+    search: true
   irc_nick:
     name: 'IRC Nickname'
     type: text
