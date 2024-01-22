@@ -53,10 +53,9 @@ class role::openldap (
         ],
     }
 
-    openldap::server::access { 'admin-monitor-access':
+    openldap::server::access { '2 on cn=monitor':
         ensure => present,
         what   => 'dn.subtree="cn=monitor"',
-        suffix => 'cn=monitor',
         access => [
             'by dn="cn=admin,dc=miraheze,dc=org" write',
             'by dn="cn=monitor,dc=miraheze,dc=org" read',
@@ -86,10 +85,6 @@ class role::openldap (
         ensure => present,
     }
 
-    openldap::server::module { 'ppolicy':
-        ensure => present,
-    }
-
     openldap::server::module { 'deref':
         ensure => present,
     }
@@ -113,10 +108,10 @@ class role::openldap (
         path   => '/etc/ldap/schema/cosine.schema',
     }
 
-    openldap::server::schema { 'nis':
-        ensure => present,
-        path   => '/etc/ldap/schema/nis.ldif',
-    }
+    # openldap::server::schema { 'nis':
+    #    ensure => present,
+    #    path   => '/etc/ldap/schema/nis.ldif',
+    # }
 
     openldap::server::schema { 'inetorgperson':
         ensure => present,
@@ -136,11 +131,6 @@ class role::openldap (
         ensure  => present,
         path    => '/etc/ldap/schema/postfix.schema',
         require => File['/etc/ldap/schema/postfix.schema'],
-    }
-
-    openldap::server::schema { 'ppolicy':
-        ensure => present,
-        path   => '/etc/ldap/schema/ppolicy.schema',
     }
 
     openldap::server::overlay { 'ppolicy':
@@ -184,7 +174,7 @@ class role::openldap (
     }
 
     $firewall_rules = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and (Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Mail] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap])", ['networking'])
+        query_facts('Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Mail] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

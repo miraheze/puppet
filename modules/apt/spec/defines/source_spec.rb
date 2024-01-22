@@ -35,7 +35,6 @@ describe 'apt::source' do
 
       it {
         expect(subject).to contain_apt__setting('list-my_source').with(ensure: 'present').without_content(%r{# my_source\ndeb-src hello.there wheezy main\n})
-        expect(subject).not_to contain_package('apt-transport-https')
       }
     end
   end
@@ -223,79 +222,6 @@ describe 'apt::source' do
     }
   end
 
-  context 'with a https location, install apt-transport-https' do
-    let :params do
-      {
-        location: 'HTTPS://foo.bar',
-        allow_unsigned: false
-      }
-    end
-
-    it {
-      expect(subject).to contain_package('apt-transport-https')
-    }
-  end
-
-  context 'with a https location and custom release, install apt-transport-https' do
-    let :facts do
-      {
-        os: {
-          family: 'Debian',
-          name: 'Debian',
-          release: {
-            major: '9',
-            full: '9.0'
-          },
-          distro: {
-            codename: 'stretch',
-            id: 'Debian'
-          }
-        },
-        puppetversion: Puppet.version
-      }
-    end
-    let :params do
-      {
-        location: 'HTTPS://foo.bar',
-        allow_unsigned: false,
-        release: 'customrelease'
-      }
-    end
-
-    it {
-      expect(subject).to contain_package('apt-transport-https')
-    }
-  end
-
-  context 'with a https location, do not install apt-transport-https on oses not in list eg buster' do
-    let :facts do
-      {
-        os: {
-          family: 'Debian',
-          name: 'Debian',
-          release: {
-            major: '10',
-            full: '10.0'
-          },
-          distro: {
-            codename: 'buster',
-            id: 'Debian'
-          }
-        }
-      }
-    end
-    let :params do
-      {
-        location: 'https://foo.bar',
-        allow_unsigned: false
-      }
-    end
-
-    it {
-      expect(subject).not_to contain_package('apt-transport-https')
-    }
-  end
-
   context 'with architecture equals x86_64' do
     let :facts do
       {
@@ -425,6 +351,24 @@ describe 'apt::source' do
       let(:params) { { location: 'hello.there', release: '' } }
 
       it { is_expected.to contain_apt__setting('list-my_source').with_content(%r{hello\.there  main}) }
+    end
+
+    context 'with release is /' do
+      let(:params) { { location: 'hello.there', release: '/' } }
+
+      it { is_expected.to contain_apt__setting('list-my_source').with_content(%r{hello\.there /}) }
+    end
+
+    context 'with release is test/' do
+      let(:params) { { location: 'hello.there', release: 'test/' } }
+
+      it { is_expected.to contain_apt__setting('list-my_source').with_content(%r{hello\.there test/}) }
+    end
+
+    context 'with release is test/test' do
+      let(:params) { { location: 'hello.there', release: 'test/test' } }
+
+      it { is_expected.to contain_apt__setting('list-my_source').with_content(%r{hello\.there test/test main}) }
     end
 
     context 'with invalid pin' do

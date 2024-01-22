@@ -12,7 +12,9 @@ tcp-backlog 16384
 
 #stop-writes-on-bgsave-error no
 <%- if @persist -%>
-save 60 1
+save 900 1
+save 300 10
+save 60 10000
 rdbcompression yes
 rdbchecksum yes
 appendonly no

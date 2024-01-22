@@ -7,8 +7,6 @@ contactgroups: ['sre', 'mediawiki']
 jobrunner: false
 mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
 
-nginx::worker_processes: 8
-
 role::mediawiki::use_strict_firewall: true
 
 mediawiki::php::fpm::fpm_min_child: 24
@@ -20,7 +18,7 @@ mediawiki::php::fpm_config:
 
 mediawiki::php::memory_limit: '500M'
 
-php::php_version: '7.4'
+php::php_version: '8.2'
 
 http_proxy: 'http://bast.miraheze.org:8080'
 
@@ -31,5 +29,3 @@ nginx::keepalive_timeout: 75
 nginx::keepalive_requests: 1000
 nginx::logrotate_number: 2
 nginx::use_graylog: true
-
-puppetserver_hostname: 'puppet141.miraheze.org'

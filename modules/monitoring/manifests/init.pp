@@ -22,7 +22,6 @@ class monitoring (
         allowdupe => false,
     }
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
     $version = lookup('mariadb::version', {'default_value' => '10.4'})
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
@@ -30,9 +29,8 @@ class monitoring (
         release  => $facts['os']['distro']['codename'],
         repos    => 'main',
         key      => {
-                'id'      => '177F4010FE56CA3336300305F1656F24C74CD1D8',
-                'options' => "http-proxy='${http_proxy}'",
-                'server'  => 'hkp://keyserver.ubuntu.com:80',
+            'name'   => 'mariadb_release_signing_key.pgp',
+            'source' => 'puppet:///modules/mariadb/mariadb_release_signing_key.pgp',
         },
     }
 
@@ -50,8 +48,17 @@ class monitoring (
         logoutput   => true,
     }
 
+    if $facts['os']['distro']['codename'] == 'bookworm' {
+        # It looks like on mariadb 10.11 and above
+        # it dosen't contain the version number
+        # in the package name.
+        $package_name = 'mariadb-client'
+    } else {
+        $package_name = "mariadb-client-${version}"
+    }
+
     stdlib::ensure_packages(
-        "mariadb-client-${version}",
+        $package_name,
         {
             ensure  => present,
             require => Apt::Source['mariadb_apt'],
@@ -78,13 +85,11 @@ class monitoring (
     include ::icinga2::feature::perfdata
 
     class{ '::icinga2::feature::idomysql':
-        host            => $db_host,
-        user            => $db_user,
-        password        => $db_password,
-        database        => $db_name,
-        import_schema   => false,
-        enable_ssl      => true,
-        ssl_cacert_path => '/etc/ssl/certs/Sectigo.crt',
+        host          => $db_host,
+        user          => $db_user,
+        password      => $db_password,
+        database      => $db_name,
+        import_schema => false,
     }
 
     class { '::icinga2::feature::gelf':

@@ -10,6 +10,10 @@ default_theme = light
 auto_assign_org_role = Viewer
 auto_assign_org = true
 
+[analytics]
+reporting_enabled = false
+check_for_updates = false
+
 [auth.anonymous]
 # enable anonymous access
 enabled = true
@@ -23,9 +27,7 @@ allow_sign_up = true
 
 [smtp]
 enabled=true
-host = mail.miraheze.org:25
-user = noreply
-password = <%= @mail_password %>
+host = smtp-relay.gmail.com:465
 from_address = noreply@miraheze.org
 
 [database]
@@ -33,6 +35,7 @@ type = sqlite3
 path = grafana.db
 
 [security]
+disable_gravatar = true
 cookie_secure = true
 strict_transport_security = true
 

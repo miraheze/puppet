@@ -56,7 +56,7 @@ class _MirahezeRewriteContext(WSGIContext):
         else:
             opener.addheaders.append(('User-Agent', self.user_agent))
         for header_to_pass in ['X-Forwarded-For', 'X-Forwarded-Proto',
-                               'Accept', 'Accept-Encoding', 'X-Original-URI']:
+                               'Accept', 'Accept-Encoding', 'X-Original-URI', 'X-Client-IP', 'X-Real-IP']:
             if reqorig.headers.get(header_to_pass) is not None:
                 opener.addheaders.append((header_to_pass, reqorig.headers.get(header_to_pass)))
 
@@ -75,8 +75,12 @@ class _MirahezeRewriteContext(WSGIContext):
                     r'^http://(?P<host>[^/]+)/(?P<proj>[^-/]+)/thumb/(?P<path>.+)',
                     encodedurl)
             if match:
-                proj = match.group('proj').removesuffix("wiki")
-                hostname = '%s.miraheze.org' % (proj)
+                if match.group('proj').endswith('wikibeta'):
+                    proj = match.group('proj').removesuffix("wikibeta")
+                    hostname = '%s.mirabeta.org' % (proj)
+                else:
+                    proj = match.group('proj').removesuffix("wiki")
+                    hostname = '%s.miraheze.org' % (proj)
                 # ok, replace the URL with just the part starting with thumb/
                 # take off the first two parts of the path.
                 encodedurl = 'https://%s/w/thumb_handler.php/%s' % (

@@ -46,7 +46,7 @@ class prometheus::exporter::node (
     $collectors_defaults = ['buddyinfo', 'conntrack', 'entropy', 'edac', 'filefd', 'filesystem', 'hwmon',
         'loadavg', 'mdadm', 'meminfo', 'netdev', 'netstat', 'sockstat', 'stat', 'tcpstat',
         'textfile', 'time', 'uname', 'vmstat']
-    if $::virtual == 'kvm' {
+    if $facts['virtual'] == 'kvm' {
         $collectors_default = concat($collectors_defaults, [ 'diskstats' ])
     } else {
         $collectors_default = $collectors_defaults
@@ -89,7 +89,7 @@ class prometheus::exporter::node (
     }
 
     $firewall_rules_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Prometheus]", ['networking'])
+        query_facts('Class[Prometheus]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

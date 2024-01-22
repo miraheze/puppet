@@ -27,7 +27,7 @@ class irc::relaybot {
     }
 
     package { 'dotnet-sdk-6.0':
-        ensure => installed,
+        ensure  => installed,
         require => Package['packages-microsoft-prod'],
     }
 
@@ -40,7 +40,7 @@ class irc::relaybot {
 
     git::clone { 'IRC-Discord-Relay':
         ensure    => latest,
-        origin    => 'https://github.com/WikiForge/IRC-Discord-Relay.git',
+        origin    => 'https://github.com/Universal-Omega/IRC-Discord-Relay',
         directory => $install_path,
         owner     => 'irc',
         group     => 'irc',

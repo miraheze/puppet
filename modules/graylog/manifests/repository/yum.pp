@@ -1,11 +1,11 @@
-class graylog::repository::yum(
+class graylog::repository::yum (
   $url,
   $proxy,
 ) {
   $gpg_file = '/etc/pki/rpm-gpg/RPM-GPG-KEY-graylog'
 
   file { $gpg_file:
-    ensure => present,
+    ensure => file,
     owner  => 'root',
     group  => 'root',
     mode   => '0444',

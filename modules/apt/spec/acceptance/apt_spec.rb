@@ -48,7 +48,7 @@ describe 'apt class' do
 
     it 'stills work' do
       run_shell('apt-get update')
-      run_shell('apt-get -y --force-yes upgrade')
+      run_shell('apt-get -y --allow-downgrades --allow-remove-essential --allow-change-held-packages upgrade')
     end
   end
 

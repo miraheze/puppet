@@ -50,7 +50,9 @@ class Table:
         self._chains = {}
 
     def __eq__(self, obj):
-        return self.name == obj.name and self.chains == obj.chains
+        return (
+            self.name == obj.name and sorted(self.chains) == sorted(obj.chains)
+        )
 
     def __str__(self):
         lines = ['*{}'.format(self.name)]
@@ -357,10 +359,10 @@ def main():
     ignored_chain_prefix = ('DOCKER', 'cali-', 'KUBE-')
     ignored_comment_prefixs = ('cali:')
 
-    iptables = check_output(['/sbin/iptables-save'])
-    ferm = check_output('/usr/sbin/ferm -nl --domain ip /etc/ferm/ferm.conf'.split())
-    ip6tables = check_output(['/sbin/ip6tables-save'])
-    ferm6 = check_output('/usr/sbin/ferm -nl --domain ip6 /etc/ferm/ferm.conf'.split())
+    iptables = check_output(['iptables-save'])
+    ferm = check_output('ferm -nl --domain ip /etc/ferm/ferm.conf'.split())
+    ip6tables = check_output(['ip6tables-save'])
+    ferm6 = check_output('ferm -nl --domain ip6 /etc/ferm/ferm.conf'.split())
 
     ferm_parsed = Parser(ferm.decode(), ignored_chain_prefix, ignored_comment_prefixs)
     iptables_parsed = Parser(iptables.decode(), ignored_chain_prefix, ignored_comment_prefixs)

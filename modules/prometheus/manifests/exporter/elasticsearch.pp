@@ -4,20 +4,34 @@ class prometheus::exporter::elasticsearch {
         'python3-click',
         'python3-colorama',
         'python3-configobj',
-        'python3-elasticsearch',
         'python3-prometheus-client',
     ])
 
-    file { '/opt/prometheus-es-exporter_0.11.1-1_all.deb':
+    file { '/opt/python3-opensearch_2.0.0-1_all.deb':
         ensure => present,
-        source => 'puppet:///modules/prometheus/packages/prometheus-es-exporter_0.11.1-1_all.deb',
+        source => 'puppet:///modules/prometheus/packages/python3-opensearch_2.0.0-1_all.deb',
+    }
+
+    package { 'python3-opensearch':
+        ensure   => installed,
+        provider => dpkg,
+        source   => '/opt/python3-opensearch_2.0.0-1_all.deb',
+        require  => File['/opt/python3-opensearch_2.0.0-1_all.deb'],
+    }
+
+    file { '/opt/prometheus-es-exporter_0.11.1-2_all.deb':
+        ensure => present,
+        source => 'puppet:///modules/prometheus/packages/prometheus-es-exporter_0.11.1-2_all.deb',
     }
 
     package { 'prometheus-es-exporter':
         ensure   => installed,
         provider => dpkg,
-        source   => '/opt/prometheus-es-exporter_0.11.1-1_all.deb',
-        require  => File['/opt/prometheus-es-exporter_0.11.1-1_all.deb'],
+        source   => '/opt/prometheus-es-exporter_0.11.1-2_all.deb',
+        require  => [
+            Package['python3-opensearch'],
+            File['/opt/prometheus-es-exporter_0.11.1-2_all.deb'],
+        ],
     }
 
     file { '/etc/prometheus-es-exporter':
@@ -43,7 +57,7 @@ class prometheus::exporter::elasticsearch {
     }
 
     $firewall_rules_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Prometheus]", ['networking'])
+        query_facts('Class[Role::Prometheus]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

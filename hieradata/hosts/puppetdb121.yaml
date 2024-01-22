@@ -1,9 +1,0 @@
-puppetdb_hostname: puppet121.miraheze.org
-puppetdb::db_ssl: true
-puppetdb::db_rw_host: puppetdb121.miraheze.org
-postgresql::ssl: true
-puppetdb::command_processing_threads: 10
-puppetserver_hostname: 'puppet141.miraheze.org'
-puppetdb::jvm_opts: '-Xmx2G'
-http_proxy: 'http://bast.miraheze.org:8080'
-postgresql::master::locale: 'en_GB.UTF-8'

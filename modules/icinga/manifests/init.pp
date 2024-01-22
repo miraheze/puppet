@@ -87,7 +87,7 @@ class icinga(
 
   # switch logging between mainlog and syslog
   # logging on windows only file is supported, warning output see below
-  if $logging_type == 'file' or $::kernel == 'windows' {
+  if $logging_type == 'file' or $facts['kernel'] == 'windows' {
     $_mainlog = 'present'
     $_syslog  = 'absent'
   } else {
@@ -105,7 +105,7 @@ class icinga(
     severity => $logging_level,
   }
 
-  case $::kernel {
+  case $facts['kernel'] {
     'linux': {
       $icinga_user    = $::icinga2::globals::user
       $icinga_group   = $::icinga2::globals::group

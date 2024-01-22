@@ -1,0 +1,299 @@
+map $http_upgrade $connection_upgrade {
+	default upgrade;
+	''      close;
+}
+
+<%- @backends.each_pair do | name, property | -%>
+upstream bastions<%= property['port'] %> {
+	least_conn;
+	server bast121.miraheze.org:<%= property['port'] %>;
+	server bast141.miraheze.org:<%= property['port'] %>;
+}
+
+server {
+	listen <%= property['port'] %> deferred backlog=16384 reuseport;
+	listen [::]:<%= property['port'] %> deferred backlog=16384 reuseport;
+
+	server_name localhost;
+
+	access_log  off;
+
+	location / {
+		<%- if property['bastproxy'] -%>
+		proxy_pass https://bastions<%= property['port'] %>;
+		<%- else -%>
+		<%- if property['domain'] -%>
+		proxy_pass https://<%= name %>.<%= property['domain'] %>;
+		<%- else -%>
+		proxy_pass https://<%= name %>.miraheze.org;
+		<%- end -%>
+		<%- end -%>
+		proxy_http_version 1.1;
+		proxy_set_header Connection $connection_upgrade;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Host $host;
+		# Don't clobber the Server header from the backend.
+		proxy_pass_header Server;
+		proxy_buffer_size       32k;
+		proxy_buffers         4 32k;
+		proxy_redirect off;
+		proxy_buffering    off;
+	}
+}
+
+<%- end -%>
+
+server {
+	listen 80 deferred backlog=16384 reuseport;
+	listen [::]:80 deferred backlog=16384 reuseport;
+
+	server_name ~.;
+
+	location ~ ^/check$ {
+		proxy_pass http://127.0.0.1:81;
+		proxy_http_version 1.1;
+		proxy_set_header Connection close;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_buffering    off;
+		proxy_read_timeout 60s;
+		proxy_send_timeout 60s;
+		send_timeout       60s;
+	}
+
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Web scraper - Void
+	if ($http_user_agent ~ "\+Zimit$") {
+		return 403;
+	}
+
+	location / {
+		if ($request_uri !~ "^/check$") {
+			return 301 https://$host$request_uri;
+		}
+	}
+}
+
+server {
+	# We can only set backlog once per port (so this will be applied to the others below)
+	listen 443 ssl http2 deferred backlog=16384 reuseport;
+	listen [::]:443 ssl http2 deferred  backlog=16384 reuseport;
+
+	server_name miraheze.org *.miraheze.org;
+	root /var/www/html;
+
+	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
+	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
+
+	ssl_stapling_verify on;
+	
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Web scraper - Void
+	if ($http_user_agent ~ "\+Zimit$") {
+		return 403;
+	}
+
+	location / {
+		proxy_pass http://127.0.0.1:81;
+		proxy_http_version 1.1;
+		proxy_set_header Connection $connection_upgrade;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_read_timeout 140s;
+		proxy_send_timeout 140s;
+		send_timeout       140s;
+		proxy_buffer_size       32k;
+		proxy_buffers         4 32k;
+		# Remove duplicate headers that is already added on the frontend
+		proxy_hide_header     X-XSS-Protection;
+		proxy_hide_header     X-Frame-Options;
+		proxy_buffering    off;
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+	server_name m.miraheze.org *.m.miraheze.org;
+
+	root /var/www/html;
+
+	ssl_certificate /etc/ssl/localcerts/m.miraheze.org.crt;
+	ssl_certificate_key /etc/ssl/private/m.miraheze.org.key;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+	
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	if ($host ~ ^(\w+)\.m\.miraheze\.org$) {
+		return 301 https://$1.miraheze.org$request_uri;
+	}
+
+	return 301 https://miraheze.org$request_uri;
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name phab.miraheze.wiki;
+	root /var/www/html;
+
+	ssl_certificate /etc/ssl/localcerts/miraheze.wiki.crt;
+	ssl_certificate_key /etc/ssl/private/miraheze.wiki.key;
+
+	ssl_stapling_verify on;
+	
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	location / {
+		proxy_pass http://127.0.0.1:81;
+		proxy_http_version 1.1;
+		proxy_set_header Connection $connection_upgrade;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_read_timeout 140s;
+		proxy_send_timeout 140s;
+		send_timeout       140s;
+		proxy_buffer_size       32k;
+		proxy_buffers         4 32k;
+		# Remove duplicate headers that is already added on the frontend
+		proxy_hide_header     X-XSS-Protection;
+		proxy_hide_header     X-Frame-Options;
+		proxy_buffering    off;
+	}
+}
+
+<%- @sslredirects.each_pair do | name, property | -%>
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	<%- if property['additional_domain'] -%>
+	server_name <%= property['url'] %> <%= property['additional_domain'] %>;
+	<%- else -%>
+	server_name <%= property['url'] %>;
+	<%- end -%>
+
+	root /var/www/html;
+	
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	ssl_certificate /etc/ssl/localcerts/<%= property['sslname'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
+
+	<%- if property['hsts'] == "strict" -%>
+	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+	<%- else -%>
+	add_header Strict-Transport-Security "max-age=604800";
+	<%- end -%>
+
+	<%- if property['path_redirects'] -%>
+	<%- property['path_redirects'].each_pair do | path, redirect | -%>
+	location ~* <%= path %>$ {
+		return 301 https://<%= redirect %>;
+	}
+	<%- end -%>
+	# If we are using path_redirects, make the main
+	# redirect property optional.
+	<%- if property['redirect'] -%>
+	# Only redirect if there are no other matches found.
+	# This prevents this from conflicting with
+	# redirects specified in path_redirects.
+	location / {
+		return 301 https://<%= property['redirect'] %>$request_uri;
+	}
+	<%- end -%>
+	<%- else -%>
+	# If we aren't using path_redirects, always
+	# redirect using the main redirect property.
+	return 301 https://<%= property['redirect'] %>$request_uri;
+	<%- end -%>
+}
+
+<%- end -%>
+
+<%- @sslcerts.each_pair do | name, property | -%>
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+<%- if property['additional_domain'] -%>
+	server_name <%= property['url'] %> <%= property['additional_domain'] %>;
+<%- else -%>
+	server_name <%= property['url'] %>;
+<%- end -%>
+	root /var/www/html;
+<%- if property['sslname'] -%>
+	ssl_certificate /etc/ssl/localcerts/<%= property['sslname'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
+<%- else -%>
+	ssl_certificate /etc/ssl/localcerts/<%= property['url'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= property['url'] %>.key;
+<%- end -%>
+
+	<% if property['hsts'] == "strict" %>
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+	<% else %>
+	add_header Strict-Transport-Security "max-age=604800";
+	<% end %>
+
+	# Default headers
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+	
+	# no way you are legit - rhinosf1 T8832
+	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	location / {
+		proxy_pass http://127.0.0.1:81;
+		proxy_http_version 1.1;
+		proxy_set_header Connection $connection_upgrade;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_read_timeout 140s;
+		proxy_send_timeout 140s;
+		send_timeout       140s;
+		proxy_buffer_size       32k;
+		proxy_buffers         4 32k;
+		# Remove duplicate headers that is already added on the frontend
+		proxy_hide_header     X-XSS-Protection;
+		proxy_hide_header     X-Frame-Options;
+		proxy_buffering    off;
+	}
+}
+
+<%- end -%>

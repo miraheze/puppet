@@ -11,6 +11,6 @@ http_proxy: 'http://bast.miraheze.org:8080'
 mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
 mediawiki::php::enable_fpm: false
 
-php::php_version: '7.4'
+php::php_version: '8.2'
 
-puppetserver_hostname: 'puppet141.miraheze.org'
+prometheus::exporter::redis::collect_jobqueue_stats: present

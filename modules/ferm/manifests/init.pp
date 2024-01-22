@@ -39,7 +39,7 @@ class ferm {
     service { 'ferm':
         ensure  => 'running',
         status  => '/usr/local/sbin/ferm-status',
-        start   => '/bin/systemctl restart ferm',
+        start   => '/bin/systemctl reload-or-restart ferm',
         require => [
             Package['ferm'],
             File['/usr/local/sbin/ferm-status'],

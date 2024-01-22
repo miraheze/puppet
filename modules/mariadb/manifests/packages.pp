@@ -1,6 +1,6 @@
 # class: mariadb::packages
 class mariadb::packages(
-    Enum['10.5'] $version = lookup('mariadb::version', {'default_value' => '10.5'}),
+    Enum['10.5', '10.11'] $version = lookup('mariadb::version', {'default_value' => '10.5'}),
 ) {
 
     package { [
@@ -10,16 +10,14 @@ class mariadb::packages(
         ensure => present,
     }
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
         location => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
         release  => $facts['os']['distro']['codename'],
         repos    => 'main',
         key      => {
-                'id'      => '177F4010FE56CA3336300305F1656F24C74CD1D8',
-                'options' => "http-proxy='${http_proxy}'",
-                'server'  => 'hkp://keyserver.ubuntu.com:80',
+            'name'   => 'mariadb_release_signing_key.pgp',
+            'source' => 'puppet:///modules/mariadb/mariadb_release_signing_key.pgp',
         },
     }
 
@@ -37,8 +35,17 @@ class mariadb::packages(
         logoutput   => true,
     }
 
+    if $facts['os']['distro']['codename'] == 'bookworm' {
+        # It looks like on mariadb 10.11 and above
+        # it dosen't contain the version number
+        # in the package name.
+        $package_name = 'mariadb-server'
+    } else {
+        $package_name = "mariadb-server-${version}"
+    }
+
     package { [
-        "mariadb-server-${version}",
+        $package_name,
         'mariadb-backup',
         'libjemalloc2',
     ]:

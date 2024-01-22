@@ -10,6 +10,6 @@ define logrotate::rotate(
     file { "log_rotate_${title}":
         ensure  => present,
         path    => "/etc/logrotate.d/${title}",
-        content => template('logrotate/logrotate'),
+        content => template('logrotate/logrotate.erb'),
     }
 }

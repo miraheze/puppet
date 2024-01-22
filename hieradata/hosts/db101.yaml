@@ -1,2 +1,2 @@
-puppetserver_hostname: 'puppet141.miraheze.org'
 http_proxy: 'http://bast.miraheze.org:8080'
+mariadb::config::server_id: 2

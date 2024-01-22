@@ -26,16 +26,16 @@ class mediawiki::php (
     # Custom config for php-fpm
     $base_config_fpm = {
         'opcache.enable'                  => 1,
-        'opcache.interned_strings_buffer' => 50,
-        'opcache.memory_consumption'      => 300,
-        'opcache.max_accelerated_files'   => 24000,
+        'opcache.interned_strings_buffer' => 96,
+        'opcache.memory_consumption'      => 1024,
+        'opcache.max_accelerated_files'   => 50000,
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,
         'opcache.revalidate_freq'         => 10,
         'display_errors'                  => 0,
         'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
-        'apc.shm_size'                    => '1024M',
+        'apc.shm_size'                    => '1536M',
         'rlimit_core'                     => 0,
     }
     if $enable_fpm {
@@ -106,12 +106,22 @@ class mediawiki::php (
 
     stdlib::ensure_packages('liblua5.1-0')
 
-    file { '/usr/lib/php/20190902/luasandbox.so':
-        ensure  => present,
-        mode    => '0755',
-        source  => 'puppet:///modules/mediawiki/php/luasandbox.so',
-        before  => Php::Extension['luasandbox'],
-        require => Package['liblua5.1-0'],
+    if ($php_version == '8.2') {
+        file { '/usr/lib/php/20220829/luasandbox.so':
+            ensure  => present,
+            mode    => '0755',
+            source  => 'puppet:///modules/mediawiki/php/luasandbox.php82.so',
+            before  => Php::Extension['luasandbox'],
+            require => Package['liblua5.1-0'],
+        }
+    } else {
+        file { '/usr/lib/php/20190902/luasandbox.so':
+            ensure  => present,
+            mode    => '0755',
+            source  => 'puppet:///modules/mediawiki/php/luasandbox.php74.so',
+            before  => Php::Extension['luasandbox'],
+            require => Package['liblua5.1-0'],
+        }
     }
 
     php::extension{ 'luasandbox':
@@ -214,20 +224,38 @@ class mediawiki::php (
     }
 
     # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
-    file { '/usr/lib/php/20190902/tideways_xhprof.so':
-        ensure => $profiling_ensure,
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/php/tideways_xhprof.so',
-        before => Php::Extension['tideways-xhprof'],
-    }
+    if ($php_version == '8.2') {
+        file { '/usr/lib/php/20220829/xhprof.so':
+            ensure => $profiling_ensure,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/xhprof.php82.so',
+            before => Php::Extension['xhprof'],
+        }
 
-    php::extension { 'tideways-xhprof':
-        ensure       => $profiling_ensure,
-        package_name => '',
-        priority     => 30,
-        config       => {
-            'extension'                       => 'tideways_xhprof.so',
-            'tideways_xhprof.clock_use_rdtsc' => '0',
+        php::extension { 'xhprof':
+            ensure       => $profiling_ensure,
+            package_name => '',
+            priority     => 30,
+            config       => {
+                'extension' => 'xhprof.so',
+            }
+        }
+    } else {
+        file { '/usr/lib/php/20190902/tideways_xhprof.so':
+            ensure => $profiling_ensure,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/tideways_xhprof.php74.so',
+            before => Php::Extension['tideways-xhprof'],
+        }
+
+        php::extension { 'tideways-xhprof':
+            ensure       => $profiling_ensure,
+            package_name => '',
+            priority     => 30,
+            config       => {
+                'extension'                       => 'tideways_xhprof.so',
+                'tideways_xhprof.clock_use_rdtsc' => '0',
+            }
         }
     }
 

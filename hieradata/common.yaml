@@ -2,10 +2,18 @@ jobrunner: false
 jobrunner::intensive: false
 mailserver: false
 puppetserver: false
-mediawiki::branch: 'REL1_39'
-mediawiki::branch_mw_config: 'master'
-puppetserver_hostname: puppet141.miraheze.org
-role::salt::minions::salt_master: 'puppet141.miraheze.org'
+
+puppet_major_version: 8
+
+mediawiki::multiversion::versions:
+  '1.40':
+    branch: 'REL1_40'
+    default: true
+  '1.41':
+    branch: 'REL1_41'
+
+puppetserver_hostname: puppet181.wikitide.net
+role::salt::minions::salt_master: 'puppet181.wikitide.net'
 dns: false
 mediawiki::use_staging: false
 mediawiki::is_canary: false
@@ -14,56 +22,98 @@ mediawiki::use_shellbox: false
 mediawiki::jobqueue::wiki: 'loginwiki'
 mediawiki::jobqueue::runner::beta: false
 mediawiki::monitoring::host: 'login.miraheze.org'
-memcached_servers_1:
+memcached_servers:
   - '2a10:6740::6:510:11211:1 "shard01"'
-memcached_servers_3:
-  - '2a10:6740::6:405:11211:1 "shard01"'
-memcached_servers_test:
+  - '2a10:6740::6:405:11211:1 "shard02"'
+memcached_servers_beta:
   - '2a10:6740::6:406:11211:1 "shard03"'
 varnish::interval-check: '10s'
 varnish::interval-timeout: '10s'
 varnish::backends:
   mw131:
+    domain: 'miraheze.org'
     port: 8106
     probe: mwhealth
     pool: true
+    xdebug: true
   mw132:
+    domain: 'miraheze.org'
     port: 8107
     probe: mwhealth
     pool: true
+    xdebug: true
   mw141:
+    domain: 'miraheze.org'
     port: 8108
     probe: mwhealth
     pool: true
+    xdebug: true
   mw142:
+    domain: 'miraheze.org'
     port: 8109
     probe: mwhealth
     pool: true
+    xdebug: true
   mw133:
+    domain: 'miraheze.org'
     port: 8110
     probe: mwhealth
     pool: true
+    xdebug: true
   mw134:
+    domain: 'miraheze.org'
     port: 8111
     probe: mwhealth
     pool: true
+    xdebug: true
   mw143:
+    domain: 'miraheze.org'
     port: 8112
     probe: mwhealth
     pool: true
-  mwtask141:
-    port: 8150
+    xdebug: true
+  mw151:
+    domain: 'wikitide.net'
+    port: 8113
+    probe: mwhealth
+    pool: false
+    xdebug: true
+  mw152:
+    domain: 'wikitide.net'
+    port: 8114
+    probe: mwhealth
+    pool: false
+    xdebug: true
+  mw181:
+    domain: 'wikitide.net'
+    port: 8115
+    probe: mwhealth
+    pool: false
+    xdebug: true
+  mw182:
+    domain: 'wikitide.net'
+    port: 8116
+    probe: mwhealth
+    pool: false
+    xdebug: true
+  mwtask181:
+    domain: 'wikitide.net'
+    port: 8160
     probe: false
     pool: false
-  test131:
-    port: 8180
+    xdebug: true
+  test151:
+    domain: 'wikitide.net'
+    port: 8181
     probe: false
     pool: false
+    xdebug: true
   mail121:
     port: 8200
     probe: false
     pool: false
-  mon141:
+  mon181:
+    domain: 'wikitide.net'
     port: 8201
     probe: false
     pool: false
@@ -71,11 +121,13 @@ varnish::backends:
     port: 8202
     probe: false
     pool: false
-  matomo121:
+  matomo151:
+    domain: 'wikitide.net'
     port: 8203
     probe: false
     pool: false
-  puppet141:
+  puppet181:
+    domain: 'wikitide.net'
     port: 8204
     probe: false
     pool: false
@@ -102,3 +154,13 @@ swift::storage::devices:
   - sda10
   - sda31
   - sda32
+
+role::mediawiki::mcrouter::shards:
+  miraheze:
+    shard01:
+      host: [2a10:6740::6:510]
+    shard02:
+      host: [2a10:6740::6:405]
+
+role::mediawiki::use_mcrouter: true
+

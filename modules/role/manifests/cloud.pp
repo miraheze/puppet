@@ -2,8 +2,10 @@
 class role::cloud {
     include ::cloud
 
+    class { '::cpufrequtils': }
+
     $firewall_rules_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Cloud]", ['networking'])
+        query_facts('Class[Role::Cloud]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

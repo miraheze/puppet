@@ -2,13 +2,11 @@
 ; file automatically generated or modified by Matomo; you can manually override the default values in global.ini.php by redefining them in this file.
 [database]
 host = "<%= @matomo_db_host %>"
-username = "piwik"
+username = "matomo"
 password = "<%= @password %>"
-dbname = "piwik"
-tables_prefix = "piwik_"
+dbname = "matomo"
+tables_prefix = "matomo_"
 adapter = "MYSQLI"
-enable_ssl = 1
-ssl_ca = "/etc/ssl/certs/Sectigo.crt"
 charset = "utf8mb4"
 
 [General]
@@ -28,12 +26,10 @@ bulk_requests_use_transaction = 0
 record_statistics = 1
 
 [mail]
+defaultHostnameIfEmpty = "miraheze.org"
 transport = "smtp"
-port = 25
-host = "mail.miraheze.org"
-type = "LOGIN"
-username = "noreply"
-password = "<%= @noreply_password %>"
+port = 465
+host = "ssl://smtp-relay.gmail.com"
 encryption = "tls"
 
 [Plugins]
@@ -45,7 +41,6 @@ Plugins[] = "Diagnostics"
 Plugins[] = "CoreVisualizations"
 Plugins[] = "Proxy"
 Plugins[] = "API"
-Plugins[] = "ExamplePlugin"
 Plugins[] = "Widgetize"
 Plugins[] = "Transitions"
 Plugins[] = "LanguagesManager"
@@ -65,9 +60,7 @@ Plugins[] = "VisitsSummary"
 Plugins[] = "VisitFrequency"
 Plugins[] = "VisitTime"
 Plugins[] = "VisitorInterest"
-Plugins[] = "ExampleAPI"
 Plugins[] = "RssWidget"
-Plugins[] = "Feedback"
 Plugins[] = "Monolog"
 Plugins[] = "TwoFactorAuth"
 Plugins[] = "UsersManager"
@@ -100,6 +93,7 @@ Plugins[] = "UserId"
 Plugins[] = "QueuedTracking"
 Plugins[] = "DeviceDetectorCache"
 Plugins[] = "LoginLdap"
+Plugins[] = "PagePerformance"
 
 [PluginsInstalled]
 PluginsInstalled[] = "Diagnostics"
@@ -115,7 +109,6 @@ PluginsInstalled[] = "WebsiteMeasurable"
 PluginsInstalled[] = "CoreVisualizations"
 PluginsInstalled[] = "Proxy"
 PluginsInstalled[] = "API"
-PluginsInstalled[] = "ExamplePlugin"
 PluginsInstalled[] = "Widgetize"
 PluginsInstalled[] = "Transitions"
 PluginsInstalled[] = "LanguagesManager"
@@ -133,8 +126,6 @@ PluginsInstalled[] = "VisitsSummary"
 PluginsInstalled[] = "VisitFrequency"
 PluginsInstalled[] = "VisitTime"
 PluginsInstalled[] = "VisitorInterest"
-PluginsInstalled[] = "ExampleAPI"
-PluginsInstalled[] = "ExampleRssWidget"
 PluginsInstalled[] = "Provider"
 PluginsInstalled[] = "CoreUpdater"
 PluginsInstalled[] = "CoreConsole"
@@ -161,7 +152,6 @@ PluginsInstalled[] = "Heartbeat"
 PluginsInstalled[] = "Ecommerce"
 PluginsInstalled[] = "UserId"
 PluginsInstalled[] = "RssWidget"
-PluginsInstalled[] = "Feedback"
 PluginsInstalled[] = "Marketplace"
 PluginsInstalled[] = "ProfessionalServices"
 PluginsInstalled[] = "SecurityInfo"
@@ -171,6 +161,7 @@ PluginsInstalled[] = "TwoFactorAuth"
 PluginsInstalled[] = "DeviceDetectorCache"
 PluginsInstalled[] = "LoginLdap"
 PluginsInstalled[] = "CoreVue"
+PluginsInstalled[] = "PagePerformance"
 
 [QueuedTracking]
 notify_queue_threshold_single_queue = 250000
@@ -198,6 +189,10 @@ user_access_attribute_server_specification_delimiter = ";"
 user_access_attribute_server_separator = ":"
 instance_name = ""
 ldap_network_timeout = 15
+synchronize_users_after_login = 1
+append_user_email_suffix_to_username = 1
+strip_domain_from_web_auth = 1
+enable_password_confirmation = 0
 
 [LoginLdap_Miraheze_Ldap]
 hostname = "ldaps://ldap.miraheze.org/"

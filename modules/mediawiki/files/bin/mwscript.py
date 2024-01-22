@@ -4,25 +4,56 @@ from __future__ import annotations
 
 import argparse
 import os
+import json
 import sys
-from typing import TYPE_CHECKING, TypedDict
-if TYPE_CHECKING:
-    from typing import Optional
+from typing import TypedDict
 
 
 class CommandInfo(TypedDict):
     command: str
-    generate: Optional[str]
+    generate: str | None
     long: bool
     nolog: bool
     confirm: bool
 
 
-def get_commands(args: argparse.Namespace) -> CommandInfo:
-    validDBLists = ('active', 'beta')
-    longscripts = ('compressOld.php', 'deleteBatch.php', 'importDump.php', 'importImages.php', 'nukeNS.php', 'rebuildall.php', 'rebuildImages.php', 'refreshLinks.php', 'runJobs.php', 'purgeList.php', 'cargoRecreateData.php')
+def syscheck(result: CommandInfo | int) -> CommandInfo:
+    if isinstance(result, int):
+        sys.exit(result)
+    return result
+
+
+def get_commands(args: argparse.Namespace) -> CommandInfo | int:
+    mw_versions = os.popen('getMWVersions all').read().strip()
+    versions = {}
+    if mw_versions:
+        versions = json.loads(mw_versions)
+
+    del mw_versions
+
+    versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
+    validDBLists = (
+        'active',
+        'beta',
+    ) + versionLists
+
+    longscripts = (
+        'compressold',
+        'deletebatch',
+        'importdump',
+        'importimages',
+        'nukens',
+        'rebuildall',
+        'rebuildimages',
+        'refreshlinks',
+        'runjobs',
+        'purgelist',
+        'cargorecreatedata',
+    )
+
     long = False
     generate = None
+
     try:
         if args.extension:
             wiki = ''
@@ -33,50 +64,55 @@ def get_commands(args: argparse.Namespace) -> CommandInfo:
                 args.arguments = False
         else:
             print(f'First argument should be a valid wiki if --extension not given DEBUG: {args.arguments[0]} / {args.extension} / {[*["all"], *validDBLists]}')
-            sys.exit(2)
+            return 2
     except IndexError:
         print('Not enough Arguments given.')
-        sys.exit(2)
+        return 2
+
+    if not args.version:
+        dbname = wiki
+        if not dbname:
+            dbname = 'default'
+        args.version = os.popen(f'getMWVersion {dbname}').read().strip()
+        if wiki and wiki in versionLists:
+            args.version = versions.get(wiki[:-6])
+
     script = args.script
-    if not script.endswith('.php'):
-        if not args.runner:
-            print('Error: Specifiy --use-runner or --140 to enable MaintenanceRunner')
-            sys.exit(2)
-        if args.runner and not args.confirm:
-            print(f'WARNING: Please log usage of {longscripts}. Support for longscripts has not been added')
-            print('WARNING: Use of classes is not well tested. Please use with caution.')
-            if input("Type 'Y' to confirm (or any other key to stop - rerun without --140/--use-runner): ").upper() != 'Y':
-                sys.exit(2)
-    if args.runner:
-        runner = '/srv/mediawiki/w/maintenance/run.php '
+    if not script.endswith('.php') and float(args.version) < 1.40:
+        print('Error: Use MediaWiki version 1.40 or greater (e.g. --version=1.40) to use a class for MaintenanceRunner')
+        return 2
+    if float(args.version) >= 1.40:
+        runner = f'/srv/mediawiki/{args.version}/maintenance/run.php '
     else:
         runner = ''
     if script.endswith('.php'):  # assume class if not
         scriptsplit = script.split('/')
-        if script in longscripts:
+        if script.split('.')[0].lower() in longscripts:
             long = True
         if len(scriptsplit) == 1:
-            script = f'{runner}/srv/mediawiki/w/maintenance/{script}'
+            script = f'{runner}/srv/mediawiki/{args.version}/maintenance/{script}'
         elif len(scriptsplit) == 2:
-            script = f'{runner}/srv/mediawiki/w/maintenance/{scriptsplit[0]}/{scriptsplit[1]}'
-            if scriptsplit[1] in longscripts:
+            script = f'{runner}/srv/mediawiki/{args.version}/maintenance/{scriptsplit[0]}/{scriptsplit[1]}'
+            if scriptsplit[1].split('.')[0].lower() in longscripts:
                 long = True
         else:
-            script = f'{runner}/srv/mediawiki/w/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
-            if scriptsplit[2] in longscripts:
+            script = f'{runner}/srv/mediawiki/{args.version}/{scriptsplit[0]}/{scriptsplit[1]}/maintenance/{scriptsplit[2]}'
+            if scriptsplit[2].split('.')[0].lower() in longscripts:
                 long = True
     else:
+        if script.lower() in longscripts:
+            long = True
         script = f'{runner}{script}'
 
     if wiki == 'all':
         long = True
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json {script}'
-    elif wiki in validDBLists:
+    elif wiki and wiki in validDBLists:
         long = True
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.json {script}'
     elif args.extension:
         long = True
-        generate = f'php {runner}/srv/mediawiki/w/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension}'
+        generate = f'php {runner}/srv/mediawiki/{args.version}/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension} --directory=/home/{os.getlogin()}'
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
@@ -110,10 +146,10 @@ def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Run a MediaWiki Script')
     parser.add_argument('script')
     parser.add_argument('arguments', nargs='*', default=[])
+    parser.add_argument('--version', dest='version')
     parser.add_argument('--extension', '--skin', dest='extension')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--confirm', '--yes', '-y', dest='confirm', action='store_true')
-    parser.add_argument('--use-runner', '--140', dest='runner', action='store_true')
 
     args = parser.parse_known_args()[0]
     args.arguments += parser.parse_known_args()[1]
@@ -121,5 +157,4 @@ def get_args() -> argparse.Namespace:
 
 
 if __name__ == '__main__':
-
-    run(get_commands(get_args()))
+    run(syscheck(get_commands(get_args())))

@@ -1,12 +1,7 @@
 # === Class mediawiki::deploy
 #
 # MediaWiki deploy files
-class mediawiki::deploy (
-    Optional[String] $branch = undef,
-    Optional[String] $branch_mw_config = undef,
-) {
-    include mediawiki::extensionsetup
-
+class mediawiki::deploy {
     if lookup(mediawiki::is_canary) {
         file { '/srv/mediawiki-staging/deploykey.pub':
             ensure  => present,
@@ -14,7 +9,7 @@ class mediawiki::deploy (
             owner   => 'www-data',
             group   => 'www-data',
             mode    => '0400',
-            before  => File['/usr/local/bin/deploy-mediawiki'],
+            before  => File['/usr/local/bin/mwdeploy'],
         }
 
         file { '/srv/mediawiki-staging/deploykey':
@@ -23,7 +18,7 @@ class mediawiki::deploy (
             owner  => 'www-data',
             group  => 'www-data',
             mode   => '0400',
-            before => File['/usr/local/bin/deploy-mediawiki'],
+            before => File['/usr/local/bin/mwdeploy'],
         }
 
         file { '/var/www/.ssh':
@@ -31,7 +26,7 @@ class mediawiki::deploy (
             owner  => 'www-data',
             group  => 'www-data',
             mode   => '0400',
-            before => File['/usr/local/bin/deploy-mediawiki'],
+            before => File['/usr/local/bin/mwdeploy'],
         }
 
         file { '/var/www/.ssh/known_hosts':
@@ -48,7 +43,8 @@ class mediawiki::deploy (
         {
             ensure   => '3.3.0',
             provider => 'pip3',
-            before   => File['/usr/local/bin/deploy-mediawiki'],
+            install_options => [ '--break-system-packages' ],
+            before   => File['/usr/local/bin/mwdeploy'],
             require  => Package['python3-pip'],
         },
     )
@@ -60,49 +56,35 @@ class mediawiki::deploy (
         mode   => '0755',
     }
 
-    file { '/usr/local/bin/deploy-mediawiki':
+    file { '/usr/local/bin/mwdeploy':
         ensure  => 'present',
         mode    => '0755',
-        source  => 'puppet:///modules/mediawiki/bin/deploy-mediawiki.py',
+        source  => 'puppet:///modules/mediawiki/bin/mwdeploy.py',
         require => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
     }
 
-    file { '/usr/local/bin/mwupgradetool':
-        ensure  => 'present',
+    file { '/usr/local/bin/deploy-mediawiki':
+        ensure  => 'link',
+        target  => '/usr/local/bin/mwdeploy',
         mode    => '0755',
-        source  => 'puppet:///modules/mediawiki/bin/mwupgradetool.py',
-        require => File['/usr/local/bin/deploy-mediawiki'],
+        require => File['/usr/local/bin/mwdeploy'],
     }
 
     git::clone { 'MediaWiki config':
         ensure    => 'latest',
         directory => '/srv/mediawiki-staging/config',
-        origin    => 'https://github.com/miraheze/mw-config.git',
-        branch    => $branch_mw_config,
+        origin    => 'https://github.com/miraheze/mw-config',
+        branch    => 'master',
         owner     => 'www-data',
         group     => 'www-data',
         mode      => '0755',
         require   => File['/srv/mediawiki-staging'],
     }
 
-    git::clone { 'MediaWiki core':
-        ensure             => 'present',
-        directory          => '/srv/mediawiki-staging/w',
-        origin             => 'https://github.com/miraheze/mediawiki.git',
-        branch             => $branch,
-        owner              => 'www-data',
-        group              => 'www-data',
-        mode               => '0755',
-        timeout            => '1500',
-        depth              => '5',
-        recurse_submodules => true,
-        require            => File['/srv/mediawiki-staging'],
-    }
-
     git::clone { 'landing':
         ensure    => 'latest',
         directory => '/srv/mediawiki-staging/landing',
-        origin    => 'https://github.com/miraheze/landing.git',
+        origin    => 'https://github.com/miraheze/landing',
         branch    => 'master',
         owner     => 'www-data',
         group     => 'www-data',
@@ -113,7 +95,7 @@ class mediawiki::deploy (
     git::clone { 'ErrorPages':
         ensure    => 'latest',
         directory => '/srv/mediawiki-staging/ErrorPages',
-        origin    => 'https://github.com/miraheze/ErrorPages.git',
+        origin    => 'https://github.com/miraheze/ErrorPages',
         branch    => 'master',
         owner     => 'www-data',
         group     => 'www-data',
@@ -122,29 +104,29 @@ class mediawiki::deploy (
     }
 
     exec { 'MediaWiki Config Sync':
-        command     => "/usr/local/bin/deploy-mediawiki --config --servers=${lookup(mediawiki::default_sync)}",
+        command     => "/usr/local/bin/mwdeploy --config --servers=${lookup(mediawiki::default_sync)}",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
         user        => www-data,
         subscribe   => Git::Clone['MediaWiki config'],
-        require     => File['/usr/local/bin/deploy-mediawiki'],
+        require     => File['/usr/local/bin/mwdeploy'],
     }
 
     exec { 'Landing Sync':
-        command     => "/usr/local/bin/deploy-mediawiki --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
+        command     => "/usr/local/bin/mwdeploy --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
         user        => www-data,
         subscribe   => Git::Clone['landing'],
-        require     => File['/usr/local/bin/deploy-mediawiki'],
+        require     => File['/usr/local/bin/mwdeploy'],
     }
 
     exec { 'ErrorPages Sync':
-        command     => "/usr/local/bin/deploy-mediawiki --errorpages --servers=${lookup(mediawiki::default_sync)} --no-log",
+        command     => "/usr/local/bin/mwdeploy --errorpages --servers=${lookup(mediawiki::default_sync)} --no-log",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
         user        => www-data,
         subscribe   => Git::Clone['ErrorPages'],
-        require     => File['/usr/local/bin/deploy-mediawiki'],
+        require     => File['/usr/local/bin/mwdeploy'],
     }
 }

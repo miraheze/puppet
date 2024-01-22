@@ -1,7 +1,7 @@
 # class base::syslog
 class base::syslog (
         Array[String] $syslog_host          = lookup('base::syslog::syslog_host', {'default_value' => []}),
-        Integer $syslog_queue_size          = lookup('base::syslog::syslog_queue_size', {'default_value' => 50000}),
+        Integer $syslog_queue_size          = lookup('base::syslog::syslog_queue_size', {'default_value' => 10000}),
         Boolean $rsyslog_udp_localhost      = lookup('base::syslog::rsyslog_udp_localhost', {'default_value' => false}),
 ) {
         # We don't need persistant journals, all this did was cause slowness.

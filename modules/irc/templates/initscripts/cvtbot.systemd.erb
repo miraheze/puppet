@@ -1,0 +1,14 @@
+[Unit]
+Description=Miraheze IRC CVT bot
+
+[Service]
+Type=simple
+User=irc
+SyslogIdentifier=cvtbot
+ExecStart=/usr/bin/dotnet run --project <%= @install_path %>/src/CVTBot/CVTBot.csproj --configuration Release
+Restart=always
+WorkingDirectory=<%= @install_path %>/src/CVTBot/bin/Release
+Environment=HOME=<%= @install_path %>/src/CVTBot/bin/Release
+
+[Install]
+WantedBy=multi-user.target

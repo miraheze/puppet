@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'openldap::server::dbindex' do
@@ -15,7 +17,7 @@ describe 'openldap::server::dbindex' do
         Openldap::Server::Dbindex {
           suffix => 'dc=foo,dc=example,dc=com',
         }
-        ::openldap::server::dbindex {
+        openldap::server::dbindex {
           'cn':
             attribute => 'cn',
             indices   => 'pres,sub,eq';

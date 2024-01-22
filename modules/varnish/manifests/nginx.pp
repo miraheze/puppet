@@ -12,7 +12,7 @@ class varnish::nginx {
 
     nginx::site { 'mediawiki':
         ensure  => present,
-        content => template('varnish/mediawiki.conf'),
+        content => template('varnish/mediawiki.conf.erb'),
     }
 
     include ssl::all_certs

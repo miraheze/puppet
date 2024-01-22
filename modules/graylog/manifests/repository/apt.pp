@@ -1,4 +1,4 @@
-class graylog::repository::apt(
+class graylog::repository::apt (
   $url,
   $release,
   $version,
@@ -10,7 +10,6 @@ class graylog::repository::apt(
     'downloads.graylog.org',
     'graylog-downloads.herokuapp.com',
     'graylog2-package-repository.s3.amazonaws.com',
-    'graylog-package-repository.s3.eu-west-1.amazonaws.com',
   ]
 
   anchor { 'graylog::repository::apt::begin': }
@@ -20,7 +19,7 @@ class graylog::repository::apt(
   }
 
   file { $gpg_file:
-    ensure => present,
+    ensure => file,
     owner  => 'root',
     group  => 'root',
     mode   => '0444',
@@ -45,8 +44,8 @@ class graylog::repository::apt(
   }
 
   if $proxy {
-    file {'/etc/apt/apt.conf.d/01_graylog_proxy':
-      ensure => present,
+    file { '/etc/apt/apt.conf.d/01_graylog_proxy':
+      ensure => file,
     }
     # Each file_line resource will append http or https proxy info for its specified source into the 01_graylog_proxy file.
     # If a line already exists for that source, and doesn't match the provided proxy param, that line will be replaced.
@@ -57,20 +56,20 @@ class graylog::repository::apt(
         match   => "Acquire::http::proxy::${source}",
         line    => "Acquire::http::proxy::${source} \"${proxy}\";",
         require => File['/etc/apt/apt.conf.d/01_graylog_proxy'],
-        before  => Apt::Source['graylog']
+        before  => Apt::Source['graylog'],
       }
       file_line { "Acquire::https::proxy::${source}":
         path    => '/etc/apt/apt.conf.d/01_graylog_proxy',
         match   => "Acquire::https::proxy::${source}",
         line    => "Acquire::https::proxy::${source} \"${proxy}\";",
         require => File['/etc/apt/apt.conf.d/01_graylog_proxy'],
-        before  => Apt::Source['graylog']
+        before  => Apt::Source['graylog'],
       }
     }
   }
   else {
-    file {'/etc/apt/apt.conf.d/01_graylog_proxy':
-        ensure => present,
+    file { '/etc/apt/apt.conf.d/01_graylog_proxy':
+      ensure => file,
     }
     # If proxy parameter has not been provided, remove any existing graylog package sources from the 01_graylog_proxy file (if
     # it exists)
@@ -80,7 +79,7 @@ class graylog::repository::apt(
       match             => 'graylog',
       match_for_absence => true,
       multiple          => true,
-      before            => Apt::Source['graylog']
+      before            => Apt::Source['graylog'],
     }
   }
 

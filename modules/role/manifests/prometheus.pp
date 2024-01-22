@@ -278,7 +278,7 @@ class role::prometheus {
     }
 
     $firewall_grafana = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Grafana]", ['networking'])
+        query_facts('Class[Role::Grafana]', ['networking'])
         .map |$key, $value| {
             "${value['networking']['ip']} ${value['networking']['ip6']}"
         }

@@ -10,6 +10,17 @@
 #     },
 #   }
 #
+# @example Download key behaviour to handle modern apt gpg keyrings. The `name` parameter in the key hash should be given with
+#   extension. Absence of extension will result in file formation with just name and no extension.
+#   apt::source { 'puppetlabs':
+#     location => 'http://apt.puppetlabs.com',
+#     comment  => 'Puppet8',
+#     key      => {
+#       'name'   => 'puppetlabs.gpg',
+#       'source' => 'https://apt.puppetlabs.com/keyring.gpg',
+#     },
+#   }
+#
 # @param location
 #   Required, unless ensure is set to 'absent'. Specifies an Apt repository. Valid options: a string containing a repository URL.
 #
@@ -35,12 +46,16 @@
 #   Specifies whether to request the distribution's uncompiled source code. Default false.
 #
 # @param key
-#   Creates a declaration of the apt::key defined type. Valid options: a string to be passed to the `id` parameter of the `apt::key`
-#   defined type, or a hash of `parameter => value` pairs to be passed to `apt::key`'s `id`, `server`, `content`, `source`, `weak_ssl`,
-#   and/or `options` parameters.
+#   Creates an `apt::keyring` in `/etc/apt/keyrings` (or anywhere on disk given `filename`) Valid options:
+#     * a hash of `parameter => value` pairs to be passed to `file`: `name` (title), `content`, `source`, `filename`
+#
+#   The following inputs are valid for the (deprecated) `apt::key` defined type. Valid options:
+#     * a string to be passed to the `id` parameter of the `apt::key` defined type
+#     * a hash of `parameter => value` pairs to be passed to `apt::key`: `id`, `server`, `content`, `source`, `weak_ssl`, `options`
 #
 # @param keyring
 #   Absolute path to a file containing the PGP keyring used to sign this repository. Value is used to set signed-by on the source entry.
+#   This is not necessary if the key is installed with `key` param above.
 #   See https://wiki.debian.org/DebianRepository/UseThirdParty for details.
 #
 # @param pin
@@ -49,8 +64,8 @@
 #
 # @param architecture
 #   Tells Apt to only download information for specified architectures. Valid options: a string containing one or more architecture names,
-#   separated by commas (e.g., 'i386' or 'i386,alpha,powerpc'). Default: undef (if unspecified, Apt downloads information for all architectures
-#   defined in the Apt::Architectures option).
+#   separated by commas (e.g., 'i386' or 'i386,alpha,powerpc').
+#   (if unspecified, Apt downloads information for all architectures defined in the Apt::Architectures option)
 #
 # @param allow_unsigned
 #   Specifies whether to authenticate packages from this release, even if the Release file is not signed or the signature can't be checked.
@@ -94,6 +109,12 @@ define apt::source (
     $_release = $release
   }
 
+  if $release =~ Pattern[/\/$/] {
+    $_components = $_release
+  } else {
+    $_components = "${_release} ${repos}"
+  }
+
   if $ensure == 'present' {
     if ! $location {
       fail('cannot create a source entry without specifying a location')
@@ -104,31 +125,80 @@ define apt::source (
     else {
       $_location = $location
     }
-    # Newer oses, do not need the package for HTTPS transport.
-    $_transport_https_releases = ['9']
-    if (fact('os.release.major') in $_transport_https_releases) and $_location =~ /(?i:^https:\/\/)/ {
-      stdlib::ensure_packages('apt-transport-https')
-      Package['apt-transport-https'] -> Class['apt::update']
-    }
   } else {
     $_location = undef
   }
 
   $includes = $apt::include_defaults + $include
 
-  if $key and $keyring {
-    fail('parameters key and keyring are mutualy exclusive')
-  }
-
-  if $key {
+  if $keyring {
+    if $key {
+      fail('parameters key and keyring are mutually exclusive')
+    } else {
+      $_list_keyring = $keyring
+    }
+  } elsif $key {
     if $key =~ Hash {
-      unless $key['id'] {
-        fail('key hash must contain at least an id entry')
+      unless $key['name'] or $key['id'] {
+        fail('key hash must contain a key name (for apt::keyring) or an id (for apt::key)')
       }
-      $_key = $apt::source_key_defaults + $key
+      if $key['id'] {
+        # defaults like keyserver are only relevant to apt::key
+        $_key = merge($apt::source_key_defaults, $key)
+      } else {
+        $_key = $key
+      }
     } else {
       $_key = { 'id' => assert_type(String[1], $key) }
     }
+    if $_key['ensure'] {
+      $_key_ensure = $_key['ensure']
+    } else {
+      $_key_ensure = $ensure
+    }
+
+    # Old keyserver keys handled by apt-key
+    if $_key =~ Hash and $_key['id'] {
+      # We do not want to remove keys when the source is absent.
+      if $ensure == 'present' {
+        apt::key { "Add key: ${$_key['id']} from Apt::Source ${title}":
+          ensure   => $_key_ensure,
+          id       => $_key['id'],
+          server   => $_key['server'],
+          content  => $_key['content'],
+          source   => $_key['source'],
+          options  => $_key['options'],
+          weak_ssl => $_key['weak_ssl'],
+          before   => $_before,
+        }
+      }
+      $_list_keyring = undef
+    }
+    # Modern apt keyrings
+    elsif $_key =~ Hash and $_key['name'] {
+      apt::keyring { $_key['name']:
+        ensure   => $_key_ensure,
+        content  => $_key['content'],
+        source   => $_key['source'],
+        dir      => $_key['dir'],
+        filename => $_key['filename'],
+        mode     => $_key['mode'],
+        before   => $_before,
+      }
+
+      $_list_keyring = if $_key['dir'] and $_key['filename'] {
+        "${_key['dir']}${_key['filename']}"
+      } elsif $_key['filename'] {
+        "/etc/apt/keyrings/${_key['filename']}"
+      } elsif $_key['dir'] {
+        "${_key['dir']}${_key['name']}"
+      } else {
+        "/etc/apt/keyrings/${_key['name']}"
+      }
+    }
+  } else {
+    # No `key` nor `keyring` provided
+    $_list_keyring = undef
   }
 
   $header = epp('apt/_header.epp')
@@ -146,13 +216,12 @@ define apt::source (
           'arch'              => $_architecture,
           'trusted'           => $allow_unsigned ? { true => 'yes', false => undef },
           'allow-insecure'    => $allow_insecure ? { true => 'yes', false => undef },
-          'signed-by'         => $keyring,
+          'signed-by'         => $_list_keyring,
           'check-valid-until' => $check_valid_until? { true => undef, false => 'false' },
         },
       ),
       'location'         => $_location,
-      'release'          => $_release,
-      'repos'            => $repos,
+      'components'       => $_components,
     }
   )
 
@@ -178,27 +247,5 @@ define apt::source (
       fail('Received invalid value for pin parameter')
     }
     create_resources('apt::pin', { "${name}" => $_pin })
-  }
-
-  # We do not want to remove keys when the source is absent.
-  if $key and ($ensure == 'present') {
-    if $_key =~ Hash {
-      if $_key['ensure'] != undef {
-        $_ensure = $_key['ensure']
-      } else {
-        $_ensure = $ensure
-      }
-
-      apt::key { "Add key: ${$_key['id']} from Apt::Source ${title}":
-        ensure   => $_ensure,
-        id       => $_key['id'],
-        server   => $_key['server'],
-        content  => $_key['content'],
-        source   => $_key['source'],
-        options  => $_key['options'],
-        weak_ssl => $_key['weak_ssl'],
-        before   => $_before,
-      }
-    }
   }
 }

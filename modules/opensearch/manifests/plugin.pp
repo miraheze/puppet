@@ -114,17 +114,17 @@ define opensearch::plugin (
   $_module_dir = os_plugin_name($module_dir, $name)
 
   opensearch_plugin { $name:
-    ensure                     => $ensure,
-    configdir                  => $configdir,
-    opensearch_package_name    => 'opensearch',
-    java_opts                  => $java_opts,
-    java_home                  => $java_home,
-    source                     => $file_source,
-    url                        => $url,
-    proxy                      => $_proxy,
-    plugin_dir                 => $opensearch::real_plugindir,
-    plugin_path                => $module_dir,
-    before                     => Service[$opensearch::service_name],
+    ensure                  => $ensure,
+    configdir               => $configdir,
+    opensearch_package_name => 'opensearch',
+    java_opts               => $java_opts,
+    java_home               => $java_home,
+    source                  => $file_source,
+    url                     => $url,
+    proxy                   => $_proxy,
+    plugin_dir              => $opensearch::real_plugindir,
+    plugin_path             => $module_dir,
+    before                  => Service[$opensearch::service_name],
   }
   -> file { "${opensearch::real_plugindir}/${_module_dir}":
     ensure  => $_file_ensure,

@@ -56,6 +56,7 @@ class ssl {
         group  => 'root',
         mode   => '0770',
     }
+
     file { '/srv/dns':
         ensure => directory,
         owner  => 'root',
@@ -85,6 +86,18 @@ class ssl {
         owner  => 'root',
         group  => 'root',
         mode   => '0644',
+    }
+
+    git::clone { 'srv-ssl':
+        ensure    => latest,
+        directory => '/srv/ssl/ssl',
+        origin    => 'git@github.com:miraheze/ssl.git',
+        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bast.miraheze.org:8080 %h %p\'',
+        require   => [
+            File['/var/lib/nagios/id_ed25519'],
+            File['/var/lib/nagios/id_ed25519.pub'],
+            File['/srv/ssl'],
+        ],
     }
 
     # We do not need to run the ssl renewal cron,

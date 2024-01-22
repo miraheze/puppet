@@ -94,7 +94,7 @@ def backup_swift_account_container(dt: str):
 
 
 def backup_phabricator(dt: str):
-    subprocess.check_call(f'/srv/phab/phabricator/bin/storage dump --compress --output backup.tar.gz', shell=True)
+    subprocess.check_call(f'/srv/phab/phorge/bin/storage dump --compress --output backup.tar.gz', shell=True)
     tar = tarfile.open('phabricator.tar.gz', 'w:gz')
     tar.add('backup.tar.gz', arcname='db')
     subprocess.call(f'rm -f backup.tar.gz', shell=True)

@@ -1,15 +1,21 @@
 # === Class role::mediawiki
 class role::mediawiki (
-    Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false})
+    Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false}),
+    Boolean $use_mcrouter = lookup('role::mediawiki::use_mcrouter', {'default_value' => false})
 ) {
-    include prometheus::exporter::cadvisor
+    # doesn't install on bookworm
+    # include prometheus::exporter::cadvisor
 
-    include role::mediawiki::nutcracker
+    if $use_mcrouter {
+        include role::mediawiki::mcrouter
+    } else {
+        include role::mediawiki::nutcracker
+    }
     include mediawiki
 
     if $strict_firewall {
         $firewall_rules_str = join(
-            query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Icinga2] or Class[Role::Prometheus]", ['networking'])
+            query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion]', ['networking'])
             .map |$key, $value| {
                 "${value['networking']['ip']} ${value['networking']['ip6']}"
             }
@@ -44,6 +50,15 @@ class role::mediawiki (
             port    => '443',
             notrack => true,
         }
+    }
+
+    # Temporarily set vm.swappiness to 1 to handle
+    # sudden cases where there's a spike in memory usage.
+    # This is when all ram is used for a minute and need to use swap.
+    sysctl::parameters { 'vm_swappiness':
+        values => {
+            'vm.swappiness' => 1,
+        },
     }
 
     # Using fastcgi we need more local ports

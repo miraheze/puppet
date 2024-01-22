@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/opt/puppetlabs/puppet/bin/ruby
 
 # A simple nagios check that should be run as root an
 # can check when the last run was done of puppet.
@@ -9,6 +9,7 @@
 # file to determine when last Puppet ran
 
 require 'optparse'
+require 'puppet'
 require 'yaml'
 
 PRINT_FAILED_RESOURCES_NO = 3 # Number of failed resources to print. Don't set this high
@@ -61,12 +62,12 @@ if warn.zero? || crit.zero?
     exit 3
 end
 
-if File.exists?(adminlockfile)
+if File.exist?(adminlockfile)
        enabled = false
        disabled_message = YAML.safe_load(File.read(adminlockfile))["disabled_message"]
 end
 
-if File.exists?(summaryfile)
+if File.exist?(summaryfile)
     begin
         summary = YAML.safe_load(File.read(summaryfile))
         if !enabled
@@ -150,8 +151,8 @@ if !enabled
 end
 
 if failcount > 0
-    report = YAML.safe_load(File.read(reportfile))
-    failed_resources = report["resource_statuses"].select { |_, r| r["failed"] }.map { |_, r| r["resource"] }
+    report = YAML.unsafe_load(File.read(reportfile))
+    failed_resources = report.resource_statuses.select { |_, r| r.failed }.map { |_, r| r.resource }
     failed_resources = failed_resources[0..PRINT_FAILED_RESOURCES_NO]
     puts "CRITICAL: Puppet has #{failcount} failures. " +
         "Last run #{human_time_since_last_run} ago with #{failcount} failures. " +

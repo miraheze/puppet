@@ -1,15 +1,16 @@
 # class: mariadb::config
 class mariadb::config(
-    String            $config                       = undef,
-    String            $password                     = undef,
-    String            $datadir                      = '/srv/mariadb',
-    String            $tmpdir                       = '/tmp',
-    String            $innodb_buffer_pool_size      = '5G',
-    Integer           $max_connections              = 500,
-    Enum['10.5']      $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
-    String            $icinga_password              = undef,
-    Optional[Integer] $server_id                    = undef,
-    Boolean           $enable_bin_logs              = true,
+    String                $config                       = undef,
+    String                $password                     = undef,
+    String                $datadir                      = '/srv/mariadb',
+    String                $tmpdir                       = '/tmp',
+    String                $innodb_buffer_pool_size      = '5G',
+    Integer               $max_connections              = 500,
+    Enum['10.5', '10.11'] $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
+    String                $icinga_password              = undef,
+    Optional[Integer]     $server_id                    = undef,
+    Boolean               $enable_bin_logs              = true,
+    Boolean               $enable_ssl                   = true,
 ) {
     $exporter_password = lookup('passwords::db::exporter')
     $ido_db_user_password = lookup('passwords::icinga_ido')
@@ -44,12 +45,21 @@ class mariadb::config(
         require => File['/etc/mysql'],
     }
 
+    if $facts['os']['distro']['codename'] == 'bookworm' {
+        # It looks like on mariadb 10.11 and above
+        # it dosen't contain the version number
+        # in the package name.
+        $package_name = 'mariadb-server'
+    } else {
+        $package_name = "mariadb-server-${version}"
+    }
+
     file { $datadir:
         ensure  => directory,
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0755',
-        require => Package["mariadb-server-${version}"],
+        require => Package[$package_name],
     }
 
     if $tmpdir != '/tmp' {
@@ -58,7 +68,7 @@ class mariadb::config(
             owner   => 'mysql',
             group   => 'mysql',
             mode    => '0775',
-            require => Package["mariadb-server-${version}"],
+            require => Package[$package_name],
         }
     }
 
@@ -67,7 +77,7 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0750',
-        require => Package["mariadb-server-${version}"],
+        require => Package[$package_name],
     }
 
     file { '/etc/mysql/miraheze/default-grants.sql':
@@ -88,13 +98,13 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0644',
-        require => Package["mariadb-server-${version}"],
+        require => Package[$package_name],
     }
 
     logrotate::conf { 'mysql-server':
         ensure  => present,
         source  => 'puppet:///modules/mariadb/mysql-server.logrotate.conf',
-        require => Package["mariadb-server-${version}"],
+        require => Package[$package_name],
     }
 
     systemd::unit { 'mariadb.service':
@@ -122,18 +132,27 @@ class mariadb::config(
         },
     }
 
+    if $enable_ssl {
+        $ssl = {
+            mysql_ssl       => $enable_ssl,
+            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
+        }
+    } else {
+        $ssl = {
+            mysql_ssl       => false,
+            mysql_cacert    => '',
+        }
+    }
     monitoring::services { 'MariaDB Connections':
         check_command => 'mysql_connections',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
-        vars => {
+        vars          => {
             mysql_hostname  => $facts['networking']['fqdn'],
             mysql_username  => 'icinga',
             mysql_password  => $icinga_password,
-            mysql_ssl       => true,
-            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
             warning         => '80%',
             critical        => '90%',
             max_connections => $max_connections,
-        },
+        } + $ssl,
     }
 }

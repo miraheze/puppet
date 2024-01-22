@@ -115,7 +115,7 @@ class swift::storage (
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
-        source => 'puppet:///modules/swift/devicecheck.cron',
+        source  => 'puppet:///modules/swift/devicecheck.cron',
         require => File['/usr/local/bin/disable_rsync.py'],
     }
 

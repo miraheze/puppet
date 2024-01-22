@@ -1,6 +1,3 @@
-[client]
-ssl-capath=/etc/ssl/certs
-
 [mysql]
 port                           = 3306
 socket                         = /var/run/mysqld/mysqld.sock
@@ -35,6 +32,7 @@ server_id = <%= @server_id %>
 log-bin                        = <%= @datadir %>/mysql-bin
 expire-logs-days               = 3
 sync-binlog                    = 1
+binlog_cache_size              = 10M
 slave_compressed_protocol      = 1
 <%- end -%>
 
@@ -44,7 +42,7 @@ tmp-table-size                 = 64M
 max-heap-table-size            = 64M
 max-connections                = <%= @max_connections %>
 open-files-limit               = 200000
-table_open_cache               = 150000
+table_open_cache               = 200000
 table_definition_cache         = 75400
 
 # thread and connection handling
@@ -67,7 +65,7 @@ innodb_thread_concurrency      = 0
 innodb_flush_neighbors         = 0
 innodb_io_capacity             = 1000
 innodb_stats_method            = nulls_unequal
-innodb-log-file-size           = 256M
+innodb_log_file_size           = 2G
 innodb-flush-log-at-trx-commit = 1
 innodb-file-per-table          = 1
 innodb-buffer-pool-size        = <%= @innodb_buffer_pool_size %>
@@ -88,7 +86,6 @@ join_cache_level               = 8
 performance_schema = off
 
 log-error                      = /var/log/mysql/mysql-error.log
-log-queries-not-using-indexes  = 1
 slow-query-log                 = 0
 slow-query-log-file            = /var/log/mysql/mysql-slow.log
 
@@ -96,11 +93,13 @@ userstat                       = 1
 plugin_load_add                = query_response_time
 query_response_time_stats      = ON
 
+<%- if @enable_ssl -%>
 ssl
-ssl-capath                     = /etc/ssl/certs
+ssl-ca                         = /etc/ssl/certs/Sectigo.crt
 ssl-cert                       = /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt
 ssl-key                        = /etc/ssl/private/wildcard.miraheze.org-2020-2.key
 tls_version                    = TLSv1.2,TLSv1.3
+<%- end -%>
 
 optimizer_switch               = 'mrr=on,mrr_cost_based=on,mrr_sort_keys=on,optimize_join_buffer_size=on,rowid_filter=off'
 

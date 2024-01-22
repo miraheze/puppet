@@ -39,7 +39,7 @@ class phabricator (
         'zip',
     ]
 
-    $php_version = lookup('php::php_version', {'default_value' => '7.4'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
     class { '::php':
@@ -127,14 +127,14 @@ class phabricator (
     git::clone { 'arcanist':
         ensure    => present,
         directory => '/srv/phab/arcanist',
-        origin    => 'https://github.com/phacility/arcanist.git',
+        origin    => 'https://github.com/phorgeit/arcanist.git',
         require   => File['/srv/phab'],
     }
 
-    git::clone { 'phabricator':
+    git::clone { 'phorge':
         ensure    => present,
-        directory => '/srv/phab/phabricator',
-        origin    => 'https://github.com/phacility/phabricator.git',
+        directory => '/srv/phab/phorge',
+        origin    => 'https://github.com/phorgeit/phorge.git',
         require   => File['/srv/phab'],
     }
 
@@ -172,11 +172,9 @@ class phabricator (
                 'key'          => 'miraheze-smtp',
                 'type'         => 'smtp',
                 'options'      => {
-                    'host'     => 'mail.miraheze.org',
-                    'port'     => 587,
-                    'user'     => 'noreply',
-                    'password' => lookup('passwords::mail::noreply'),
-                    'protocol' => 'tls',
+                    'host'     => 'smtp-relay.gmail.com',
+                    'port'     => 465,
+                    'protocol' => 'ssl',
                 },
             },
         ],
@@ -184,18 +182,18 @@ class phabricator (
 
     $phab_settings = $phab_yaml + $phab_private + $phab_setting
 
-    file { '/srv/phab/phabricator/conf/local/local.json':
+    file { '/srv/phab/phorge/conf/local/local.json':
         ensure  => present,
         content => stdlib::to_json_pretty($phab_settings),
         notify  => Service['phd'],
-        require => Git::Clone['phabricator'],
+        require => Git::Clone['phorge'],
     }
 
     systemd::service { 'phd':
         ensure  => present,
         content => systemd_template('phd'),
         restart => true,
-        require => File['/srv/phab/phabricator/conf/local/local.json'],
+        require => File['/srv/phab/phorge/conf/local/local.json'],
     }
 
     monitoring::services { 'phab.miraheze.wiki HTTPS':
