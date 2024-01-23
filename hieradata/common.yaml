@@ -1,6 +1,5 @@
 jobrunner: false
 jobrunner::intensive: false
-mailserver: false
 puppetserver: false
 
 puppet_major_version: 8
