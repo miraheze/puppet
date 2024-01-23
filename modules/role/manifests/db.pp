@@ -5,13 +5,14 @@ class role::db (
     Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []}),
     Boolean $enable_bin_logs = lookup('role::db::enable_bin_logs', {'default_value' => true}),
     Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
+    Boolean $enable_ssl = lookup('role::db::enable_ssl', {'default_value' => true}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
 
     $mediawiki_password = lookup('passwords::db::mediawiki')
     $wikiadmin_password = lookup('passwords::db::wikiadmin')
-    $piwik_password = lookup('passwords::db::piwik')
+    $matomo_password = lookup('passwords::db::matomo')
     $phabricator_password = lookup('passwords::db::phabricator')
     $exporter_password = lookup('passwords::db::exporter')
     $icinga_password = lookup('passwords::db::icinga')
@@ -33,6 +34,7 @@ class role::db (
         password        => lookup('passwords::db::root'),
         icinga_password => $icinga_password,
         enable_bin_logs => $enable_bin_logs,
+        enable_ssl      => $enable_ssl,
     }
 
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':
@@ -40,9 +42,9 @@ class role::db (
         content => template('mariadb/grants/mediawiki-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/piwik-grants.sql':
+    file { '/etc/mysql/miraheze/matomo-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/piwik-grants.sql.erb'),
+        content => template('mariadb/grants/matomo-grants.sql.erb'),
     }
 
     file { '/etc/mysql/miraheze/phabricator-grants.sql':

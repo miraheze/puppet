@@ -36,7 +36,7 @@ class EnvironmentList(TypedDict):
 beta: Environment = {
     'wikidbname': 'metawikibeta',
     'wikiurl': 'meta.mirabeta.org',
-    'servers': ['test131'],
+    'servers': ['test151'],
 }
 prod: Environment = {
     'wikidbname': 'testwiki',
@@ -49,6 +49,8 @@ prod: Environment = {
         'mw141',
         'mw142',
         'mw143',
+        'mw151',
+        'mw152',
         'mw181',
         'mw182',
         'mwtask181',
@@ -183,7 +185,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
 
     headers = {}
     if Debug:
-        if 'mw13' in Debug or 'mw14' in Debug or 'test131' in Debug:
+        if 'mw13' in Debug or 'mw14' in Debug:
             host = 'miraheze.org'
         else:
             host = 'wikitide.net'
@@ -268,7 +270,7 @@ def _construct_rsync_command(time: bool | str, dest: str, recursive: bool = True
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        if 'mw13' in server or 'mw14' in server or 'test131' in server:
+        if 'mw13' in server or 'mw14' in server:
             host = 'miraheze.org'
         else:
             host = 'wikitide.net'
@@ -329,7 +331,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
         args.upgrade_extensions = get_valid_extensions(args.versions)
         args.upgrade_skins = get_valid_skins(args.versions)
 
-    if args.servers == get_environment_info()['servers']:
+    if len(args.servers) > 1 and args.servers == get_environment_info()['servers']:
         loginfo['servers'] = 'all'
 
     use_version = args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor
@@ -340,10 +342,6 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
 
         if args.upgrade_skins == get_valid_skins(args.versions):
             loginfo['upgrade_skins'] = 'all'
-
-        valid_versions = [version for version in versions.values() if os.path.exists(f'/srv/mediawiki-staging/{version}')]
-        if args.versions == valid_versions:
-            loginfo['versions'] = 'all'
 
         if args.upgrade_pack:
             del loginfo['upgrade_extensions']

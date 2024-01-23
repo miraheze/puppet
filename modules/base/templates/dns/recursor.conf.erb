@@ -2,7 +2,7 @@
 allow-from = 127.0.0.0/8, ::1/128
 config-dir = /etc/powerdns
 dnssec = off
-local-address = 127.0.0.1, ::1
+local-address = ::1
 quiet = yes
 setgid = pdns
 setuid = pdns
@@ -17,11 +17,8 @@ max-cache-ttl = 600
 
 stats-ringbuffer-entries=1000
 
-# Ensure transport for outgoing queries works for ipv4 and ipv6
-query-local-address=0.0.0.0,[::]
-
 # This prevents pdns from polling a public server to check for sec fixes
 security-poll-suffix=
 
 # Forward requests to our authorative servers
-forward-zones = wikitide.net=2607:f1c0:1800:1f2::1;2a10:6740::6:314;74.208.210.151;31.24.105.140, miraheze.org=2607:f1c0:1800:1f2::1;2a10:6740::6:314;74.208.210.151;31.24.105.140, 0.0.0.0.0.4.7.6.0.1.a.2.ip6.arpa=2607:f1c0:1800:1f2::1;2a10:6740::6:314;74.208.210.151;31.24.105.140, 139.105.24.31.in-addr.arpa=2607:f1c0:1800:1f2::1;2a10:6740::6:314;74.208.210.151;31.24.105.140
+forward-zones = wikitide.net=2607:f1c0:1800:1f2::1;2a10:6740::6:314, miraheze.org=2607:f1c0:1800:1f2::1;2a10:6740::6:314, 0.0.0.0.0.4.7.6.0.1.a.2.ip6.arpa=2607:f1c0:1800:1f2::1;2a10:6740::6:314, 139.105.24.31.in-addr.arpa=2607:f1c0:1800:1f2::1;2a10:6740::6:314

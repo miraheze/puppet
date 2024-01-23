@@ -146,7 +146,7 @@ class reports {
         monitor => true,
     }
 
-    $salt = lookup('passwords::piwik::salt')
+    $salt = lookup('passwords::matomo::salt')
     $password = lookup('passwords::db::reports')
     $app_key = lookup('reports::app_key')
     $reports_mediawiki_identifier = lookup('reports::reports_mediawiki_identifier')

@@ -8,6 +8,8 @@ mediawiki::multiversion::versions:
   '1.40':
     branch: 'REL1_40'
     default: true
+  '1.41':
+    branch: 'REL1_41'
 
 puppetserver_hostname: puppet181.wikitide.net
 role::salt::minions::salt_master: 'puppet181.wikitide.net'
@@ -69,15 +71,27 @@ varnish::backends:
     probe: mwhealth
     pool: true
     xdebug: true
-  mw181:
+  mw151:
     domain: 'wikitide.net'
     port: 8113
     probe: mwhealth
     pool: false
     xdebug: true
-  mw182:
+  mw152:
     domain: 'wikitide.net'
     port: 8114
+    probe: mwhealth
+    pool: false
+    xdebug: true
+  mw181:
+    domain: 'wikitide.net'
+    port: 8115
+    probe: mwhealth
+    pool: false
+    xdebug: true
+  mw182:
+    domain: 'wikitide.net'
+    port: 8116
     probe: mwhealth
     pool: false
     xdebug: true
@@ -87,9 +101,9 @@ varnish::backends:
     probe: false
     pool: false
     xdebug: true
-  test131:
-    domain: 'miraheze.org'
-    port: 8180
+  test151:
+    domain: 'wikitide.net'
+    port: 8181
     probe: false
     pool: false
     xdebug: true
@@ -102,7 +116,8 @@ varnish::backends:
     port: 8202
     probe: false
     pool: false
-  matomo121:
+  matomo151:
+    domain: 'wikitide.net'
     port: 8203
     probe: false
     pool: false

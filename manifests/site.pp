@@ -40,6 +40,11 @@ node /^os1[34]1\.miraheze\.org$/ {
     include role::opensearch
 }
 
+node /^os1[56]1\.wikitide\.net$/ {
+    include base
+    include role::opensearch
+}
+
 node 'graylog131.miraheze.org' {
     include base
     include role::graylog
@@ -62,7 +67,17 @@ node 'matomo121.miraheze.org' {
     include role::matomo
 }
 
+node 'matomo151.wikitide.net' {
+    include base
+    include role::matomo
+}
+
 node /^mem1[34]1\.miraheze\.org$/ {
+    include base
+    include role::memcached
+}
+
+node /^mem1[56]1\.wikitide\.net$/ {
     include base
     include role::memcached
 }
@@ -106,6 +121,11 @@ node 'phab121.miraheze.org' {
 }
 
 node 'prometheus131.miraheze.org' {
+    include base
+    include role::prometheus
+}
+
+node 'prometheus151.wikitide.net' {
     include base
     include role::prometheus
 }
@@ -156,6 +176,15 @@ node /^swiftobject1[5678]1\.wikitide\.net$/ {
 }
 
 node 'test131.miraheze.org' {
+    include base
+    include role::memcached
+    include role::mediawiki
+    include role::poolcounter
+    include role::redis
+    include mediawiki::jobqueue::chron
+}
+
+node 'test151.wikitide.net' {
     include base
     include role::memcached
     include role::mediawiki

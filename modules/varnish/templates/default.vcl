@@ -383,13 +383,13 @@ sub vcl_recv {
 	}
 
 	if (req.http.Host ~ "^(.*\.)?mirabeta\.org") {
-		set req.backend_hint = test131;
+		set req.backend_hint = test151;
 		return (pass);
 	}
 
 	# Only cache js files from Matomo
 	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = matomo121;
+		set req.backend_hint = matomo151;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/matomo.js") {
