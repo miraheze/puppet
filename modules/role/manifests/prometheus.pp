@@ -198,23 +198,6 @@ class role::prometheus {
         port   => 9150
     }
 
-    $postfix_job = [
-        {
-            'job_name' => 'postfix',
-            'file_sd_configs' => [
-                {
-                    'files' => [ 'targets/postfix.yaml' ]
-                }
-            ]
-        }
-    ]
-
-    prometheus::class { 'postfix':
-        dest   => '/etc/prometheus/targets/postfix.yaml',
-        module => 'Prometheus::Exporter::Postfix',
-        port   => 9154,
-    }
-
     $openldap_job = [
         {
             'job_name' => 'openldap',
@@ -272,7 +255,7 @@ class role::prometheus {
         scrape_extra => [
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
             $puppetserver_job, $puppetdb_job, $memcached_job,
-            $postfix_job, $openldap_job, $elasticsearch_job, $statsd_exporter_job,
+            $openldap_job, $elasticsearch_job, $statsd_exporter_job,
             $varnish_job, $cadvisor_job
         ].flatten,
     }
