@@ -57,11 +57,6 @@ node 'ldap141.miraheze.org' {
     include role::openldap
 }
 
-node 'mail121.miraheze.org' {
-    include base
-    include role::mail
-}
-
 node 'matomo121.miraheze.org' {
     include base
     include role::matomo
