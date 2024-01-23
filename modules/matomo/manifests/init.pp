@@ -155,7 +155,6 @@ class matomo (
 
     $salt = lookup('passwords::piwik::salt')
     $password = lookup('passwords::db::piwik')
-    $noreply_password = lookup('passwords::mail::noreply')
 
     file { '/srv/matomo/config/config.ini.php':
         ensure  => present,
