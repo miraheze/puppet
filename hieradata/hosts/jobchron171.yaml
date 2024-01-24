@@ -1,0 +1,16 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+
+contactgroups: ['sre', 'mediawiki']
+
+redis::heap: '1GB'
+
+http_proxy: 'http://bast.miraheze.org:8080'
+
+mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
+mediawiki::php::enable_fpm: false
+
+php::php_version: '8.2'
+
+prometheus::exporter::redis::collect_jobqueue_stats: present
