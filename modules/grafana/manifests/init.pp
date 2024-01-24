@@ -74,7 +74,7 @@ class grafana (
     monitoring::services { 'grafana.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6         => $address,
+            address6   => $address,
             http_ssl   => true,
             http_vhost => 'grafana.miraheze.org',
         },
