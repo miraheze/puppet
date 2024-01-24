@@ -74,6 +74,11 @@ node 'ldap141.miraheze.org' {
     include role::openldap
 }
 
+node 'ldap171.wikitide.net' {
+    include base
+    include role::openldap
+}
+
 node 'mail121.miraheze.org' {
     include base
     include role::mail
