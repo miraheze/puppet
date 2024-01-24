@@ -3,7 +3,7 @@ define monitoring::hosts (
     $contacts    = lookup('contactgroups', {'default_value' => [ 'sre' ]}),
 ) {
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
-        $address6 = $facts['networking']['interfaces']['ens18']['ip6']
+        $address6 = $facts['networking']['interfaces']['ens19']['ip']
     } elsif ( $facts['networking']['interfaces']['ens18'] ) {
         $address6 = $facts['networking']['interfaces']['ens18']['ip6']
     } else {
