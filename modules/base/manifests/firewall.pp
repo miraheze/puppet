@@ -35,7 +35,7 @@ class base::firewall {
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else if ( $value['networking']['interfaces']['ens18'] ) {
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } else {
                 "${value['networking']['ip']} ${value['networking']['ip6']}"
@@ -57,7 +57,7 @@ class base::firewall {
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else if ( $value['networking']['interfaces']['ens18'] ) {
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } else {
                 "${value['networking']['ip']} ${value['networking']['ip6']}"
