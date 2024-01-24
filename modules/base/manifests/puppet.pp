@@ -13,9 +13,6 @@ class base::puppet (
 
     apt::source { 'puppetlabs':
         location => 'http://apt.puppetlabs.com',
-        # TODO: Once a bookworm repo is available,
-        # remove this hack.
-        release  => 'bullseye',
         repos    => "puppet${puppet_major_version}",
         require  => File['/etc/apt/trusted.gpg.d/puppetlabs.gpg'],
         notify   => Exec['apt_update_puppetlabs'],
