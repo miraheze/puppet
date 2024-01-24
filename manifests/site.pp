@@ -62,6 +62,13 @@ node 'jobchron121.miraheze.org' {
     include mediawiki::jobqueue::chron
 }
 
+node 'jobchron171.wikitide.net' {
+    include base
+    include role::poolcounter
+    include role::redis
+    include mediawiki::jobqueue::chron
+}
+
 node 'ldap141.miraheze.org' {
     include base
     include role::openldap
