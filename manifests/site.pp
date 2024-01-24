@@ -25,6 +25,11 @@ node /^cp(2[45]|3[2345])\.miraheze\.org$/ {
     include role::varnish
 }
 
+node /^cp(2[6]|3[6]|4[1]|5[1])\.wikitide\.net$/ {
+    include base
+    include role::varnish
+}
+
 node /^db1([0234][12]|12)\.miraheze\.org$/ {
     include base
     include role::db
