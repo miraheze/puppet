@@ -184,7 +184,13 @@ class role::opensearch (
         $firewall_rules_str = join(
             query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]', ['networking'])
             .map |$key, $value| {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
+                if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                    "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+                } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                    "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+                } else {
+                    "${value['networking']['ip']} ${value['networking']['ip6']}"
+                }
             }
             .flatten()
             .unique()
@@ -205,7 +211,13 @@ class role::opensearch (
     $firewall_os_nodes = join(
         query_facts('Class[Role::Opensearch]', ['networking'])
         .map |$key, $value| {
-            "${value['networking']['ip']} ${value['networking']['ip6']}"
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
         }
         .flatten()
         .unique()
@@ -225,6 +237,6 @@ class role::opensearch (
     }
 
     motd::role { 'role::opensearch':
-        description => 'opensearch server',
+        description => 'OpenSearch server',
     }
 }

@@ -58,10 +58,18 @@ class swift::proxy (
         monitor => false,
     }
 
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
+
     monitoring::services { 'HTTP':
         check_command => 'check_http',
         vars          => {
-            address6         => $facts['networking']['ip6'],
+            address6         => $address,
             http_vhost       => 'swift-lb.miraheze.org',
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
@@ -73,7 +81,7 @@ class swift::proxy (
     monitoring::services { 'HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6         => $facts['networking']['ip6'],
+            address6         => $address,
             http_vhost       => 'swift-lb.miraheze.org',
             http_ssl         => true,
             http_ignore_body => true,
@@ -86,7 +94,7 @@ class swift::proxy (
     monitoring::services { 'Swift Proxy':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $facts['networking']['ip6'],
+            tcp_address => $address,
             tcp_port    => '80',
         },
     }

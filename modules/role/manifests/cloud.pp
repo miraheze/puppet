@@ -7,7 +7,11 @@ class role::cloud {
     $firewall_rules_str = join(
         query_facts('Class[Role::Cloud]', ['networking'])
         .map |$key, $value| {
-            "${value['networking']['ip']} ${value['networking']['ip6']}"
+            if ( $value['networking']['interfaces']['vmbr1'] ) {
+                "${value['networking']['interfaces']['vmbr1']['ip']} ${value['networking']['ip']} ${value['networking']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
         }
         .flatten()
         .unique()
@@ -46,6 +50,6 @@ class role::cloud {
     }
 
     motd::role { 'role::cloud':
-        description => 'cloud virts to host own vps using proxmox',
+        description => 'Proxmox host',
     }
 }

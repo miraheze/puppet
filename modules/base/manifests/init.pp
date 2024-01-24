@@ -66,4 +66,20 @@ class base (
         mode   => '0444',
         source => 'puppet:///modules/base/environment/vimrc.local',
     }
+
+    # Global bash defaults
+    file { '/etc/bash.bashrc':
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
+        source => 'puppet:///modules/base/environment/bash.bashrc',
+    }
+
+    # Global bash defaults
+    file { '/etc/skel/.bashrc':
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
+        source => 'puppet:///modules/base/environment/.bashrc',
+    }
 }
