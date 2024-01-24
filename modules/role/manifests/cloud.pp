@@ -7,10 +7,8 @@ class role::cloud {
     $firewall_rules_str = join(
         query_facts('Class[Role::Cloud]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            if ( $value['networking']['interfaces']['vmbr1'] ) {
+                "${value['networking']['interfaces']['vmbr1']['ip']} ${value['networking']['ip']} ${value['networking']['ip6']}"
             } else {
                 "${value['networking']['ip']} ${value['networking']['ip6']}"
             }
