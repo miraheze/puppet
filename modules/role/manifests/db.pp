@@ -106,7 +106,7 @@ class role::db (
     }
 
     motd::role { 'role::db':
-        description => 'general database server',
+        description => 'MySQL database server',
     }
 
     if $backup_sql {

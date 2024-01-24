@@ -102,6 +102,6 @@ class role::icinga2 (
     }
 
     motd::role { 'icinga2':
-        description => 'central monitoring server which runs icinga2',
+        description => 'monitoring server',
     }
 }

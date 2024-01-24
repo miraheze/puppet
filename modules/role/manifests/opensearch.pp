@@ -237,6 +237,6 @@ class role::opensearch (
     }
 
     motd::role { 'role::opensearch':
-        description => 'opensearch server',
+        description => 'OpenSearch server',
     }
 }

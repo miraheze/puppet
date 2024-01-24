@@ -37,6 +37,6 @@ class role::puppetdb {
     }
 
     motd::role { 'role::puppetdb':
-        description => 'puppetdb',
+        description => 'PuppetDB server',
     }
 }

@@ -104,6 +104,6 @@ class role::elasticsearch {
     }
 
     motd::role { 'role::elasticsearch':
-        description => 'elasticsearch server',
+        description => 'ElasticSearch server',
     }
 }

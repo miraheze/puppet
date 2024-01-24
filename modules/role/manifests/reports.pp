@@ -34,6 +34,6 @@ class role::reports {
     }
 
     motd::role { 'role::reports':
-        description => 'in-house built platform for handling reports, investigations, appeals and transparency.',
+        description => 'TSPortal-hosting server',
     }
 }

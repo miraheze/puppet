@@ -34,6 +34,6 @@ class role::phabricator {
     }
 
     motd::role { 'role::phabricator':
-        description => 'phabricator instance',
+        description => 'Phorge instance',
     }
 }

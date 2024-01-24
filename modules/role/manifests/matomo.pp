@@ -38,6 +38,6 @@ class role::matomo {
     }
 
     motd::role { 'role::matomo':
-        description => 'central analytics server',
+        description => 'analytics server',
     }
 }
