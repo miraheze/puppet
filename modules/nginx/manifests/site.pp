@@ -62,11 +62,22 @@ define nginx::site(
     }
 
     if !defined(Monitoring::Services['HTTPS']) {
+        if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+            $address = $facts['networking']['interfaces']['ens19']['ip']
+            $address6 = undef
+        } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+            $address = undef
+            $address6 = $facts['networking']['interfaces']['ens18']['ip6']
+        } else {
+            $address = undef
+            $address6 = $facts['networking']['ip6']
+        }
         monitoring::services { 'HTTPS':
             ensure        => $monitor_service,
             check_command => 'check_curl',
             vars          => {
-                address6         => $facts['networking']['ip6'],
+                address          => $address,
+                address6         => $address6,
                 http_vhost       => $facts['networking']['fqdn'],
                 http_ssl         => true,
                 http_ignore_body => true,
