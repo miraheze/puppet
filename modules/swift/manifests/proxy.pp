@@ -59,7 +59,7 @@ class swift::proxy (
     }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
-        $address = undef
+        $address = $facts['networking']['interfaces']['ens19']['ip']
     } elsif ( $facts['networking']['interfaces']['ens18'] ) {
         $address = $facts['networking']['interfaces']['ens18']['ip6']
     } else {
