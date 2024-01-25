@@ -151,7 +151,8 @@ varnish::backends:
     port: 8204
     probe: false
     pool: false
-  reports121:
+  reports171:
+    domain: 'wikitide.net'
     port: 8205
     probe: false
     pool: false
