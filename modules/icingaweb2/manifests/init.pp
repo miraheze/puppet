@@ -1,9 +1,9 @@
 class icingaweb2 (
-    String $db_host              = 'db182.wikitide.net',
+    String $db_host              = 'db182-private.wikitide.net',
     String $db_name              = 'icingaweb2',
     String $db_user_name         = 'icingaweb2',
     String $db_user_password     = undef,
-    String $ido_db_host          = 'db182.wikitide.net',
+    String $ido_db_host          = 'db182-private.wikitide.net',
     String $ido_db_name          = 'icinga',
     String $ido_db_user_name     = 'icinga2',
     String $ido_db_user_password = undef,
