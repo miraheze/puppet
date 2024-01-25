@@ -7,7 +7,7 @@ class mongodb::repo::apt inherits mongodb::repo {
 
   if($mongodb::repo::ensure == 'present' or $mongodb::repo::ensure == true) {
     $mongover = split($mongodb::repo::version, '[.]')
-    if ("${mongover[0]}.${mongover[1]}" == "7.0") {
+    if ("${mongover[0]}.${mongover[1]}" == '7.0') {
       apt::source { 'mongodb':
         location => $mongodb::repo::location,
         release  => $mongodb::repo::release,

@@ -218,7 +218,7 @@ class phabricator (
     monitoring::services { 'phabricator.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6    => $address,
+            address6   => $address,
             http_ssl   => true,
             http_vhost => 'phabricator.miraheze.org',
         },
