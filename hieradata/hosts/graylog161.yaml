@@ -1,4 +1,4 @@
-mongodb::repo::aptkey_options: 'http-proxy="http://bast.miraheze.org:8080"'
-http_proxy: 'http://bast.miraheze.org:8080'
+mongodb::repo::aptkey_options: 'http-proxy="http://bastion.wikitide.net:8080"'
+http_proxy: 'http://bastion.wikitide.net:8080'
 elasticsearch_host: 'http://os151-private.wikitide.net:9200'
 mongodb_version: '7.0.5'

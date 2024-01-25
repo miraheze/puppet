@@ -30,7 +30,7 @@ class mediawiki::jobqueue::shared (
         path        => '/usr/bin',
         environment => [
             'HOME=/srv/jobrunner',
-            'HTTP_PROXY=http://bast.miraheze.org:8080'
+            'HTTP_PROXY=http://bastion.wikitide.net:8080'
         ],
         user        => 'www-data',
         require     => Git::Clone['JobRunner'],

@@ -92,7 +92,7 @@ class ssl {
         ensure    => latest,
         directory => '/srv/ssl/ssl',
         origin    => 'git@github.com:miraheze/ssl.git',
-        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bast.miraheze.org:8080 %h %p\'',
+        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bastion.wikitide.net:8080 %h %p\'',
         require   => [
             File['/var/lib/nagios/id_ed25519'],
             File['/var/lib/nagios/id_ed25519.pub'],

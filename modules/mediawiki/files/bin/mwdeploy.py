@@ -443,7 +443,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 stage.append(_construct_git_reset_hard('vendor', version=version))
                 stage.append(_construct_git_pull('vendor', submodules=True, version=version))
                 if not args.world:
-                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer update --no-dev --quiet')
+                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet')
                     rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/vendor/*', dest=f'/srv/mediawiki/{version}/vendor/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/vendor/')
 
@@ -555,7 +555,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 if option == 'world':  # install steps for world
                     option = version
                     os.chdir(_get_staging_path(version))
-                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer update --no-dev --quiet'))
+                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet'))
                     rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}/srv/mediawiki-staging/{version}/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))

@@ -1,5 +1,5 @@
 mariadb::config::innodb_buffer_pool_size: '8G'
-http_proxy: 'http://bast.miraheze.org:8080'
+http_proxy: 'http://bastion.wikitide.net:8080'
 role::db::weekly_misc: ['reports']
 role::db::fortnightly_misc: ['icinga', 'icingaweb2']
 role::db::monthly_misc: []

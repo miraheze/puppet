@@ -9,8 +9,8 @@ from datetime import datetime
 # set HTTP proxy to use for getting the item from archive.org
 # we then also set the session proxy for the item to use for uploading
 # but we can't get the item to set session proxy without also setting HTTP_PROXY here
-os.environ['HTTP_PROXY'] = 'http://bast.miraheze.org:8080'
-os.environ['HTTPS_PROXY'] = 'http://bast.miraheze.org:8080'
+os.environ['HTTP_PROXY'] = 'http://bastion.wikitide.net:8080'
+os.environ['HTTPS_PROXY'] = 'http://bastion.wikitide.net:8080'
 
 # add arguments
 parser = argparse.ArgumentParser(
@@ -39,8 +39,8 @@ item = internetarchive.get_item(args.title)
 
 # set session proxy for uploading
 item.session.proxies = {
-    'http': 'http://bast.miraheze.org:8080',
-    'https': 'http://bast.miraheze.org:8080',
+    'http': 'http://bastion.wikitide.net:8080',
+    'https': 'http://bastion.wikitide.net:8080',
 }
 
 # get last modification time from file to use as the publication date in archive.org
