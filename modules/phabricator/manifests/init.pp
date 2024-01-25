@@ -196,9 +196,18 @@ class phabricator (
         require => File['/srv/phab/phorge/conf/local/local.json'],
     }
 
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
+
     monitoring::services { 'phab.miraheze.wiki HTTPS':
         check_command => 'check_http',
         vars          => {
+            address6    => $address,
             http_expect => 'HTTP/1.1 200',
             http_ssl    => true,
             http_vhost  => 'phab.miraheze.wiki',
@@ -209,6 +218,7 @@ class phabricator (
     monitoring::services { 'phabricator.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
+            address6    => $address,
             http_ssl   => true,
             http_vhost => 'phabricator.miraheze.org',
         },
