@@ -423,7 +423,7 @@ sub vcl_recv {
 
 	# Do not cache requests from this domain
 	if (req.http.Host == "reports.miraheze.org") {
-		set req.backend_hint = reports121;
+		set req.backend_hint = reports171;
 		return (pass);
 	}
 
