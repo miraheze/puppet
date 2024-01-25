@@ -417,7 +417,7 @@ sub vcl_recv {
 	# Do not cache requests from this domain
 	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki" ||
 		req.http.Host == "blog.miraheze.org") {
-		set req.backend_hint = phab121;
+		set req.backend_hint = phorge171;
 		return (pass);
 	}
 
