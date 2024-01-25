@@ -4,12 +4,6 @@ swift_ac_enable: true
 
 role::swift::stats_reporter_host: swiftproxy171.miraheze.org
 
-swift::storage::devices:
-  - swiftobject151
-  - swiftobject161
-  - swiftobject171
-  - swiftobject181
-
 prometheus::exporter::statsd_exporter::mappings:
   # Account-related services
   - match: swift.*.account-auditor.passes
