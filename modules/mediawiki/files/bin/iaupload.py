@@ -9,8 +9,8 @@ from datetime import datetime
 # set HTTP proxy to use for getting the item from archive.org
 # we then also set the session proxy for the item to use for uploading
 # but we can't get the item to set session proxy without also setting HTTP_PROXY here
-os.environ['HTTP_PROXY'] = 'http://bast.miraheze.org:8080'
-os.environ['HTTPS_PROXY'] = 'http://bast.miraheze.org:8080'
+os.environ['HTTP_PROXY'] = 'http://bastion.wikitide.net:8080'
+os.environ['HTTPS_PROXY'] = 'http://bastion.wikitide.net:8080'
 
 # add arguments
 parser = argparse.ArgumentParser(
