@@ -79,12 +79,6 @@ node 'ldap171.wikitide.net' {
     include role::openldap
 }
 
-node 'mail121.miraheze.org' {
-    include base
-    include role::mail
-    include role::roundcubemail
-}
-
 node 'matomo121.miraheze.org' {
     include base
     include role::matomo

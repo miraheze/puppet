@@ -16,7 +16,6 @@ class role::db (
     $phabricator_password = lookup('passwords::db::phabricator')
     $exporter_password = lookup('passwords::db::exporter')
     $icinga_password = lookup('passwords::db::icinga')
-    $roundcubemail_password = lookup('passwords::roundcubemail')
     $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
     $ido_db_user_password = lookup('passwords::icinga_ido')
     $reports_password = lookup('passwords::db::reports')
@@ -53,11 +52,6 @@ class role::db (
         content => template('mariadb/grants/phabricator-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/roundcubemail-grants.sql':
-        ensure  => present,
-        content => template('mariadb/grants/roundcubemail-grants.sql.erb'),
-    }
-
     file { '/etc/mysql/miraheze/icinga2-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/icinga2-grants.sql.erb'),
@@ -69,7 +63,7 @@ class role::db (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator] or Class[Role::Matomo] or Class[Role::Reports]', ['networking'])
+        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Phabricator] or Class[Role::Matomo] or Class[Role::Reports]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"

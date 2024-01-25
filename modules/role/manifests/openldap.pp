@@ -174,7 +174,7 @@ class role::openldap (
     }
 
     $firewall_rules = join(
-        query_facts('Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Mail] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap]', ['networking'])
+        query_facts('Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"

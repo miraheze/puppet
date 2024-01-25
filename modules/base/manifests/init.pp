@@ -11,14 +11,11 @@ class base (
     include base::timezone
     include base::upgrades
     include base::firewall
+    include base::mail
     include base::monitoring
     include base::backup
     include ssh
     include users
-
-    if !lookup('mailserver') {
-        include base::mail
-    }
 
     if !lookup('dns') {
         include base::dns

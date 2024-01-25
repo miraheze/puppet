@@ -1,5 +1,4 @@
-# A class to handle GENERIC server mail internally. This will NOT work outside
-# a Miraheze Mail Server.
+# A class to handle GENERIC server mail.
 class base::mail {
     package { 'postfix':
         ensure => present,

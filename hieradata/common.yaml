@@ -1,6 +1,5 @@
 jobrunner: false
 jobrunner::intensive: false
-mailserver: false
 puppetserver: false
 
 puppet_major_version: 8
@@ -120,10 +119,6 @@ varnish::backends:
     probe: false
     pool: false
     xdebug: true
-  mail121:
-    port: 8200
-    probe: false
-    pool: false
   mon181:
     domain: 'wikitide.net'
     port: 8201

@@ -1,9 +1,0 @@
-server_host = ldaps://ldap.miraheze.org
-bind = yes
-bind_dn = cn=write-user,dc=miraheze,dc=org
-bind_pw = <%= @ldap_password %>
-search_base = ou=groups,dc=miraheze,dc=org
-scope = sub
-
-query_filter = (&(mailacceptinggeneralid=%s)(objectClass=postfixGroup))
-special_result_attribute = member
