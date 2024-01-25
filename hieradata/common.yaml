@@ -174,6 +174,10 @@ swift::storage::devices:
   - sda10
   - sda31
   - sda32
+  - swiftobject151
+  - swiftobject161
+  - swiftobject171
+  - swiftobject181
 
 role::mediawiki::mcrouter::shards:
   miraheze:

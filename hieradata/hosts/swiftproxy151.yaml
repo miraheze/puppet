@@ -8,12 +8,6 @@ swift::proxy::num_workers: 12
 
 role::swift::stats_reporter_host: swiftproxy171.miraheze.org
 
-swift::storage::devices:
-  - swiftobject151
-  - swiftobject161
-  - swiftobject171
-  - swiftobject181
-
 swift::accounts:
     super_admin:
         access:       '.admin .reseller_admin'
