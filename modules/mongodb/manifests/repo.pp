@@ -65,9 +65,7 @@ class mongodb::repo (
           'Ubuntu' => "https://${repo_domain}/apt/ubuntu",
           default  => undef
         }
-        # Temporarily force the use of bullseye since bookworm dist doesn't have 5.0.
-        # This is until we upgrade to 7.0.
-        $release     = "bullseye/${repo_path}/${mongover[0]}.${mongover[1]}"
+        $release     = "${facts['os']['distro']['codename']}/${repo_path}/${mongover[0]}.${mongover[1]}"
         $repos       = $facts['os']['name'] ? {
           'Debian' => 'main',
           'Ubuntu' => 'multiverse',
