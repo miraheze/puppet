@@ -143,6 +143,11 @@ node 'phab121.miraheze.org' {
     include role::phabricator
 }
 
+node 'phorge171.wikitide.net' {
+    include base
+    include role::phabricator
+}
+
 node 'prometheus131.miraheze.org' {
     include base
     include role::prometheus
