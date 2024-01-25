@@ -23,6 +23,11 @@ class swift::ac {
         lock_file       => '/var/lock/container.lock',
     }
 
+    $old_swift = $facts['os']['distro']['codename'] ? {
+        'bookworm' => false,
+        'bullseye' => true,
+    }
+
     # set up swift specific configs
     file {
         default:
