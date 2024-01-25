@@ -12,6 +12,7 @@ nginx::logrotate_number: 2
 
 # Swift config
 
+swift::proxy::swift_main_memcached: '[2602:294:0:b23::109]'
 swift_proxy_enable: true
 swift::proxy::num_workers: 12
 swift_enable_memcache: true
