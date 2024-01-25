@@ -9,7 +9,11 @@ default-storage-engine         = InnoDB
 socket                         = /var/run/mysqld/mysqld.sock
 pid-file                       = /var/run/mysqld/mysqld.pid
 skip-name-resolve
+<%- if @version == '10.5' -%>
+bind-address                   = ::
+<%- else -%>
 bind-address                   = 0.0.0.0,::
+<%- end -%>
 key-buffer-size                = 16M
 myisam-recover-options         = FORCE,BACKUP
 
