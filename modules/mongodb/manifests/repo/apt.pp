@@ -14,7 +14,7 @@ class mongodb::repo::apt inherits mongodb::repo {
         repos    => $mongodb::repo::repos,
         key      => {
           'name'   => "mongodb-server-${mongover[0]}.${mongover[1]}.gpg",
-          'source' => "puppet:///modules/mongodb/apt/mongodb-server-${mongover[0]}.${mongover[1]}.asc",
+          'source' => "puppet:///modules/mongodb/apt/mongodb-server-${mongover[0]}.${mongover[1]}.gpg",
         },
       }
     } else {
