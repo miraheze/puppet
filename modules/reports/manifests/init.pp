@@ -15,7 +15,10 @@ class reports {
         creates     => '/srv/TSPortal/vendor',
         cwd         => '/srv/TSPortal',
         path        => '/usr/bin',
-        environment => 'HOME=/srv/TSPortal',
+        environment => [
+            'HOME=/srv/TSPortal',
+            'HTTP_PROXY=http://bastion.wikitide.net:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['TSPortal'],
     }
