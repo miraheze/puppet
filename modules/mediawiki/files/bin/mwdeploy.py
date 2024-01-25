@@ -51,6 +51,8 @@ prod: Environment = {
         'mw143',
         'mw151',
         'mw152',
+        'mw161',
+        'mw162',
         'mw171',
         'mw172',
         'mw181',
