@@ -10,7 +10,7 @@ ui.logo:
 # MySQL
 mysql.port: '3306'
 mysql.user: 'phabricator'
-mysql.host: 'db112.miraheze.org'
+mysql.host: 'db182-private.wikitide.net'
 
 # https://secure.phabricator.com/book/phabricator/article/configuring_file_storage/
 # Needs to match php.ini upload_max_filesize
@@ -29,7 +29,7 @@ auth.require-email-verification: true
 # Phabricator
 phabricator.show-prototypes: true
 phabricator.base-uri: "https://phabricator.miraheze.org/"
-phabricator.allowed-uris: ["https://phab121.miraheze.org/"]
+phabricator.allowed-uris: ["https://phorge171.wikitide.net/"]
 phabricator.timezone: 'UTC'
 security.alternate-file-domain: "https://phab.miraheze.wiki/"
 security.require-https: true
