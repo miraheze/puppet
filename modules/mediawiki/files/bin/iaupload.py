@@ -39,8 +39,8 @@ item = internetarchive.get_item(args.title)
 
 # set session proxy for uploading
 item.session.proxies = {
-    'http': 'http://bast.miraheze.org:8080',
-    'https': 'http://bast.miraheze.org:8080',
+    'http': 'http://bastion.wikitide.net:8080',
+    'https': 'http://bastion.wikitide.net:8080',
 }
 
 # get last modification time from file to use as the publication date in archive.org

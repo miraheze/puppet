@@ -24,7 +24,7 @@ mediawiki::use_staging: true
 
 php::php_version: '8.2'
 
-http_proxy: 'http://bast.miraheze.org:8080'
+http_proxy: 'http://bastion.wikitide.net:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 

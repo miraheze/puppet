@@ -1,4 +1,4 @@
-http_proxy: 'http://bast.miraheze.org:8080'
+http_proxy: 'http://bastion.wikitide.net:8080'
 
 role::opensearch::master: true
 role::opensearch::data: true
