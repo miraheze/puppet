@@ -2,11 +2,11 @@ http_proxy: 'http://bast.miraheze.org:8080'
 
 role::opensearch::data: true
 role::opensearch::discovery_host:
-  - os151.wikitide.net
-  - os161.wikitide.net
+  - os151-private.wikitide.net
+  - os161-private.wikitide.net
 role::opensearch::master_hosts:
   - os151
-role::opensearch::master_host: 'http://os151.wikitide.net:9200'
+role::opensearch::master_host: 'http://os151-private.wikitide.net:9200'
 role::opensearch::use_tls: true
 
 base::syslog::rsyslog_udp_localhost: true
