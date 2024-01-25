@@ -172,6 +172,11 @@ node 'reports121.miraheze.org' {
     include role::reports
 }
 
+node 'reports171.wikitide.net' {
+    include base
+    include role::reports
+}
+
 node /^swiftproxy1[13]1\.miraheze\.org$/ {
     include base
     include role::swift
