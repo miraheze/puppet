@@ -6,6 +6,8 @@ nginx::logrotate_number: 2
 swift_proxy_enable: true
 swift::proxy::num_workers: 12
 
+role::swift::stats_reporter_host: swiftproxy171.miraheze.org
+
 swift::accounts:
     super_admin:
         access:       '.admin .reseller_admin'

@@ -2,6 +2,8 @@
 
 swift_object_enable: true
 
+role::swift::stats_reporter_host: swiftproxy171.miraheze.org
+
 prometheus::exporter::statsd_exporter::mappings:
   # Object-related services
   - match: swift.*.object-auditor.errors
