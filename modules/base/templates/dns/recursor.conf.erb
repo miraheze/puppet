@@ -20,5 +20,8 @@ stats-ringbuffer-entries=1000
 # This prevents pdns from polling a public server to check for sec fixes
 security-poll-suffix=
 
+# Root hints distributed by Debian w/ 4.x
+hint-file=/usr/share/dns/root.hints
+
 # Forward requests to our authorative servers
 forward-zones = wikitide.net=2607:f1c0:1800:1f2::1;2a10:6740::6:314, miraheze.org=2607:f1c0:1800:1f2::1;2a10:6740::6:314, 0.0.0.0.0.4.7.6.0.1.a.2.ip6.arpa=2607:f1c0:1800:1f2::1;2a10:6740::6:314
