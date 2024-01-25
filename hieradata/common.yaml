@@ -129,7 +129,8 @@ varnish::backends:
     port: 8201
     probe: false
     pool: false
-  phab121:
+  phorge171:
+    domain: 'wikitide.net'
     port: 8202
     probe: false
     pool: false
