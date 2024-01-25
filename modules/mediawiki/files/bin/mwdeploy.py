@@ -443,7 +443,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 stage.append(_construct_git_reset_hard('vendor', version=version))
                 stage.append(_construct_git_pull('vendor', submodules=True, version=version))
                 if not args.world:
-                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer update --no-dev --quiet')
+                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet')
                     rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/vendor/*', dest=f'/srv/mediawiki/{version}/vendor/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/vendor/')
 
