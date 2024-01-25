@@ -7,7 +7,7 @@ swift::proxy::swift_main_memcached: '[2602:294:0:b23::109]'
 swift_proxy_enable: true
 swift::proxy::num_workers: 12
 
-role::swift::stats_reporter_host: swiftproxy171.miraheze.org
+role::swift::stats_reporter_host: swiftproxy171.wikitide.net
 
 swift::accounts:
     super_admin:
