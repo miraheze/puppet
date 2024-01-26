@@ -1,10 +1,5 @@
 # servers
 
-node /^bast1[24]1\.miraheze\.org$/ {
-    include base
-    include role::bastion
-}
-
 node /^bast1[68]1\.wikitide\.net$/ {
     include base
     include role::bastion
@@ -20,17 +15,17 @@ node /^cloud1[5678]\.wikitide\.net$/ {
     include role::cloud
 }
 
-node /^cp(2[45]|3[2345])\.miraheze\.org$/ {
+node /^cp3[45]\.miraheze\.org$/ {
     include base
     include role::varnish
 }
 
-node /^cp(2[6]|3[6]|4[1]|5[1])\.wikitide\.net$/ {
+node /^cp([23]6|[45]1)\.wikitide\.net$/ {
     include base
     include role::varnish
 }
 
-node /^db1([0234][12]|12)\.miraheze\.org$/ {
+node /^db1([0234][12])\.miraheze\.org$/ {
     include base
     include role::db
 }
@@ -74,19 +69,9 @@ node 'jobchron171.wikitide.net' {
     include mediawiki::jobqueue::chron
 }
 
-node 'ldap141.miraheze.org' {
-    include base
-    include role::openldap
-}
-
 node 'ldap171.wikitide.net' {
     include base
     include role::openldap
-}
-
-node 'matomo121.miraheze.org' {
-    include base
-    include role::matomo
 }
 
 node 'matomo151.wikitide.net' {
@@ -137,19 +122,9 @@ node /^ns[12]\.miraheze\.org$/ {
     include role::dns
 }
 
-node 'phab121.miraheze.org' {
-    include base
-    include role::phabricator
-}
-
 node 'phorge171.wikitide.net' {
     include base
     include role::phabricator
-}
-
-node 'prometheus131.miraheze.org' {
-    include base
-    include role::prometheus
 }
 
 node 'prometheus151.wikitide.net' {
@@ -165,11 +140,6 @@ node 'puppet181.wikitide.net' {
     include role::puppetserver
     include role::salt
     include role::ssl
-}
-
-node 'reports121.miraheze.org' {
-    include base
-    include role::reports
 }
 
 node 'reports171.wikitide.net' {
@@ -205,15 +175,6 @@ node /^swiftobject1[012][123]\.miraheze\.org$/ {
 node /^swiftobject1[5678]1\.wikitide\.net$/ {
     include base
     include role::swift
-}
-
-node 'test131.miraheze.org' {
-    include base
-    include role::memcached
-    include role::mediawiki
-    include role::poolcounter
-    include role::redis
-    include mediawiki::jobqueue::chron
 }
 
 node 'test151.wikitide.net' {
