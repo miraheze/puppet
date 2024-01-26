@@ -29,3 +29,10 @@ nginx::keepalive_timeout: 75
 nginx::keepalive_requests: 1000
 nginx::logrotate_number: 2
 nginx::use_graylog: true
+
+role::mediawiki::mcrouter::shards:
+  miraheze:
+    shard01:
+      host: [2a10:6740::6:510]
+    shard02:
+      host: [2a10:6740::6:405]
