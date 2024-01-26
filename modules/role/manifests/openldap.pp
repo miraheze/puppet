@@ -7,7 +7,7 @@
 class role::openldap (
     String $admin_password = lookup('profile::openldap::admin_password'),
     String $ldapvi_password = lookup('profile::openldap::ldapvi_password'),
-    String $ldap_host = lookup('profile::openldap::ldap_host', {'default' => $facts['networking']['fqdn']}),
+    String $ldap_host = lookup('profile::openldap::ldap_host', {'default_value' => $facts['networking']['fqdn']}),
 ) {
     ssl::wildcard { 'openldap wildcard': }
 
