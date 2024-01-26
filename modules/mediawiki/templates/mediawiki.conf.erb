@@ -168,7 +168,7 @@ server {
 	}
 
         location / {
-                set $swift_proxy swift-lb.miraheze.org;
+                set $swift_proxy swift-lb.miraheze.org ;
                 proxy_pass https://$swift_proxy;
                 proxy_http_version 1.1;
                 proxy_set_header Connection close; # should be default
