@@ -32,8 +32,8 @@ class role::graylog {
             'elasticsearch_hosts'       => $elasticsearch_host,
             'ignore_migration_failures' => true,
         },
-        java_initial_heap_size => '2g',
-        java_max_heap_size     => '2g'
+        java_initial_heap_size => '3g',
+        java_max_heap_size     => '3g'
     }
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
