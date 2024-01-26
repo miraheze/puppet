@@ -8,7 +8,7 @@ jobrunner: true
 jobrunner::intensive: true
 mediawiki::jobqueue::runner::beta: true
 mediawiki::jobqueue::runner::cron: true
-mediawiki::jobqueue::runner::redis_ip: '[2602:294:0:c8::109]:6379'
+mediawiki::jobqueue::runner::redis_ip: '10.0.15.118:6379'
 mediawiki::jobqueue::wiki: 'loginwikibeta'
 
 role::mediawiki::use_strict_firewall: true
@@ -63,6 +63,6 @@ role::memcached::port: 11211
 role::mediawiki::mcrouter::shards:
   miraheze:
     shard01:
-      host: [2602:294:0:c8::109]
+      host: 10.0.15.118
 
 role::mediawiki::use_mcrouter: true
