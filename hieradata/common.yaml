@@ -159,7 +159,7 @@ varnish::backends:
 
 # Logging
 base::syslog::syslog_daemon: rsyslog
-base::syslog::syslog_host: [ 'graylog131.miraheze.org:12210' ]
+base::syslog::syslog_host: [ 'graylog161.wikitide.net:12210' ]
 
 ## Swift
 # TODO: Add support for class based hiera
