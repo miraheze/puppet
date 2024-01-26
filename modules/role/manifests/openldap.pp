@@ -210,7 +210,6 @@ class role::openldap (
             ldap_address => $facts['networking']['fqdn'],
             ldap_base    => 'dc=miraheze,dc=org',
             ldap_v3      => true,
-            ldap_ssl     => true,
         },
     }
 
