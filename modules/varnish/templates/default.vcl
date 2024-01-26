@@ -63,6 +63,13 @@ sub vcl_init {
 	mediawiki.add_backend(<%= name %>, 100);
 <%- end -%>
 <%- end -%>
+
+	new swift = directors.random();
+<%- @backends.each_pair do | name, property | -%>
+<%- if property['swiftpool'] -%>
+	swift.add_backend(<%= name %>, 100);
+<%- end -%>
+<%- end -%>
 }
 
 # Purge ACL
@@ -232,8 +239,14 @@ sub mw_request {
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['xdebug'] -%>
 		if (req.http.X-Miraheze-Debug == "<%= name %>.<%= property['domain'] %>") {
-			set req.backend_hint = <%= name %>_test;
+			if (req.http.Host == "static.miraheze.org") {
+				set req.backend_hint = swift.backend();
+			} else {
+				set req.backend_hint = <%= name %>_test;
+			}
 			return (pass);
+		} else {
+			unset req.http.X-Miraheze-Debug;
 		}
 <%- end -%>
 <%- end -%>
@@ -250,6 +263,8 @@ sub mw_request {
 
 	# Numerous static.miraheze.org specific code
 	if (req.http.Host == "static.miraheze.org") {
+		set req.backend_hint = swift.backend();
+
 		unset req.http.X-Range;
 
 		if (req.http.Range) {
