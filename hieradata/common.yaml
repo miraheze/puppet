@@ -166,7 +166,7 @@ base::syslog::syslog_host: [ 'graylog131.miraheze.org:12210' ]
 rsync::server::address: '::'
 swift::storage::object_server_default_workers: 100
 
-role::swift::stats_reporter_host: swiftproxy171.miraheze.org
+role::swift::stats_reporter_host: swiftproxy171.wikitide.net
 
 swift::storage::devices:
   - sdd
