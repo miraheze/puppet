@@ -1,3 +1,0 @@
-mongodb::repo::aptkey_options: 'http-proxy="http://bastion.wikitide.net:8080"'
-http_proxy: 'http://bastion.wikitide.net:8080'
-elasticsearch_host: 'https://opensearch.miraheze.org'
