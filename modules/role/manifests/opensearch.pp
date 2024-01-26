@@ -41,7 +41,7 @@ class role::opensearch (
             'cluster.name'                 => 'miraheze-general',
             'node.master'                  => $os_master,
             'node.data'                    => $os_data,
-            'network.host'                 => $facts['networking']['fqdn'],
+            'network.host'                 => '0.0.0.0',
         } + $tls_config,
         version     => '2.11.0',
         manage_repo => true,
