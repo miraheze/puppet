@@ -160,14 +160,14 @@ varnish::backends:
     domain: 'wikitide.net'
     port: 8206
     probe: false
-    swiftproxy: true
     pool: false
+    swiftpool: true
   swiftproxy171:
     domain: 'wikitide.net'
     port: 8207
     probe: false
-    swiftproxy: true
     pool: false
+    swiftpool: true
 
 # Logging
 base::syslog::syslog_daemon: rsyslog
