@@ -25,7 +25,7 @@ memcached_servers:
   - '2a10:6740::6:510:11211:1 "shard01"'
   - '2a10:6740::6:405:11211:1 "shard02"'
 memcached_servers_beta:
-  - '2a10:6740::6:406:11211:1 "shard03"'
+  - '2602:294:0:c8::109:11211:1 "shard03"'
 varnish::interval-check: '10s'
 varnish::interval-timeout: '10s'
 varnish::backends:
