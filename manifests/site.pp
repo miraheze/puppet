@@ -147,11 +147,6 @@ node 'reports171.wikitide.net' {
     include role::reports
 }
 
-node /^swiftproxy1[13]1\.miraheze\.org$/ {
-    include base
-    include role::swift
-}
-
 node /^swiftproxy1[67]1\.wikitide\.net$/ {
     include base
     include role::swift
