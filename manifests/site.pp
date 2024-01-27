@@ -20,7 +20,7 @@ node /^cp3[45]\.miraheze\.org$/ {
     include role::varnish
 }
 
-node /^cp([23]6|[45]1)\.wikitide\.net$/ {
+node /^cp([23][67]|[45]1)\.wikitide\.net$/ {
     include base
     include role::varnish
 }
