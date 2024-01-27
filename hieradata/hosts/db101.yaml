@@ -1,2 +1,0 @@
-http_proxy: 'http://bastion.wikitide.net:8080'
-mariadb::config::server_id: 2
