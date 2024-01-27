@@ -84,7 +84,7 @@ class Puppet::Provider::OpensearchREST < Puppet::Provider
   # @return Array
   #   an array of Hashes representing the found API objects, whether they be
   #   templates, pipelines, et cetera.
-  def self.api_objects(protocol = 'https',
+  def self.api_objects(protocol = 'http',
                        host = 'os151-private.wikitide.net',
                        port = 9200,
                        timeout = 10,
