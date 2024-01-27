@@ -112,6 +112,11 @@ node /^ns[12]\.miraheze\.org$/ {
     include role::dns
 }
 
+node /^ns[12]\.wikitide\.net$/ {
+    include base
+    include role::dns
+}
+
 node 'phorge171.wikitide.net' {
     include base
     include role::phabricator
