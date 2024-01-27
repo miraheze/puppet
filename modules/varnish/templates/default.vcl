@@ -63,6 +63,13 @@ sub vcl_init {
 	mediawiki.add_backend(<%= name %>, 100);
 <%- end -%>
 <%- end -%>
+
+	new swift = directors.random();
+<%- @backends.each_pair do | name, property | -%>
+<%- if property['swiftpool'] -%>
+	swift.add_backend(<%= name %>, 100);
+<%- end -%>
+<%- end -%>
 }
 
 # Purge ACL
@@ -73,6 +80,8 @@ acl purge {
 	# IPv6
 	"2a10:6740::/64";
 	"2602:294:0:c8::/64";
+	"2602:294:0:b13::/64";
+	"2602:294:0:b23::/64";
 	"2602:294:0:b12::/64";
 
 	# IPv4
@@ -83,6 +92,8 @@ acl miraheze_nets {
 	# IPv6
 	"2a10:6740::/64";
 	"2602:294:0:c8::/64";
+	"2602:294:0:b13::/64";
+	"2602:294:0:b23::/64";
 	"2602:294:0:b12::/64";
 
 	# IPv4
@@ -228,7 +239,11 @@ sub mw_request {
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['xdebug'] -%>
 		if (req.http.X-Miraheze-Debug == "<%= name %>.<%= property['domain'] %>") {
-			set req.backend_hint = <%= name %>_test;
+			if (req.http.Host == "static.miraheze.org") {
+				set req.backend_hint = swift.backend();
+			} else {
+				set req.backend_hint = <%= name %>_test;
+			}
 			return (pass);
 		}
 <%- end -%>
@@ -246,6 +261,8 @@ sub mw_request {
 
 	# Numerous static.miraheze.org specific code
 	if (req.http.Host == "static.miraheze.org") {
+		set req.backend_hint = swift.backend();
+
 		unset req.http.X-Range;
 
 		if (req.http.Range) {
@@ -383,13 +400,13 @@ sub vcl_recv {
 	}
 
 	if (req.http.Host ~ "^(.*\.)?mirabeta\.org") {
-		set req.backend_hint = test131;
+		set req.backend_hint = test151;
 		return (pass);
 	}
 
 	# Only cache js files from Matomo
 	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = matomo121;
+		set req.backend_hint = matomo151;
 
 		# Yes, we only care about this file
 		if (req.url ~ "^/matomo.js") {
@@ -413,19 +430,13 @@ sub vcl_recv {
 	# Do not cache requests from this domain
 	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki" ||
 		req.http.Host == "blog.miraheze.org") {
-		set req.backend_hint = phab121;
-		return (pass);
-	}
-
-	# Do not cache requests from this domain
-	if (req.http.Host == "webmail.miraheze.org") {
-		set req.backend_hint = mail121;
+		set req.backend_hint = phorge171;
 		return (pass);
 	}
 
 	# Do not cache requests from this domain
 	if (req.http.Host == "reports.miraheze.org") {
-		set req.backend_hint = reports121;
+		set req.backend_hint = reports171;
 		return (pass);
 	}
 

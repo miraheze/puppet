@@ -5,17 +5,17 @@ class role::db (
     Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []}),
     Boolean $enable_bin_logs = lookup('role::db::enable_bin_logs', {'default_value' => true}),
     Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
+    Boolean $enable_ssl = lookup('role::db::enable_ssl', {'default_value' => true}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
 
     $mediawiki_password = lookup('passwords::db::mediawiki')
     $wikiadmin_password = lookup('passwords::db::wikiadmin')
-    $piwik_password = lookup('passwords::db::piwik')
+    $matomo_password = lookup('passwords::db::matomo')
     $phabricator_password = lookup('passwords::db::phabricator')
     $exporter_password = lookup('passwords::db::exporter')
     $icinga_password = lookup('passwords::db::icinga')
-    $roundcubemail_password = lookup('passwords::roundcubemail')
     $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
     $ido_db_user_password = lookup('passwords::icinga_ido')
     $reports_password = lookup('passwords::db::reports')
@@ -34,6 +34,7 @@ class role::db (
         password        => lookup('passwords::db::root'),
         icinga_password => $icinga_password,
         enable_bin_logs => $enable_bin_logs,
+        enable_ssl      => $enable_ssl,
     }
 
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':
@@ -41,19 +42,14 @@ class role::db (
         content => template('mariadb/grants/mediawiki-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/piwik-grants.sql':
+    file { '/etc/mysql/miraheze/matomo-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/piwik-grants.sql.erb'),
+        content => template('mariadb/grants/matomo-grants.sql.erb'),
     }
 
     file { '/etc/mysql/miraheze/phabricator-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/phabricator-grants.sql.erb'),
-    }
-
-    file { '/etc/mysql/miraheze/roundcubemail-grants.sql':
-        ensure  => present,
-        content => template('mariadb/grants/roundcubemail-grants.sql.erb'),
     }
 
     file { '/etc/mysql/miraheze/icinga2-grants.sql':
@@ -67,9 +63,15 @@ class role::db (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Roundcubemail] or Class[Role::Phabricator] or Class[Role::Matomo] or Class[Role::Reports]', ['networking'])
+        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Phabricator] or Class[Role::Matomo] or Class[Role::Reports]', ['networking'])
         .map |$key, $value| {
-            "${value['networking']['ip']} ${value['networking']['ip6']}"
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
         }
         .flatten()
         .unique()
@@ -98,7 +100,7 @@ class role::db (
     }
 
     motd::role { 'role::db':
-        description => 'general database server',
+        description => 'MySQL database server',
     }
 
     if $backup_sql {

@@ -2,6 +2,8 @@
 
 swift_ac_enable: true
 
+role::swift::stats_reporter_host: swiftproxy171.wikitide.net
+
 prometheus::exporter::statsd_exporter::mappings:
   # Account-related services
   - match: swift.*.account-auditor.passes

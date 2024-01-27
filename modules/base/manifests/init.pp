@@ -11,14 +11,11 @@ class base (
     include base::timezone
     include base::upgrades
     include base::firewall
+    include base::mail
     include base::monitoring
     include base::backup
     include ssh
     include users
-
-    if !lookup('mailserver') {
-        include base::mail
-    }
 
     if !lookup('dns') {
         include base::dns
@@ -68,5 +65,21 @@ class base (
         group  => 'root',
         mode   => '0444',
         source => 'puppet:///modules/base/environment/vimrc.local',
+    }
+
+    # Global bash defaults
+    file { '/etc/bash.bashrc':
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
+        source => 'puppet:///modules/base/environment/bash.bashrc',
+    }
+
+    # Global bash defaults
+    file { '/etc/skel/.bashrc':
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0444',
+        source => 'puppet:///modules/base/environment/.bashrc',
     }
 }

@@ -10,6 +10,7 @@ class graylog::repository::apt (
     'downloads.graylog.org',
     'graylog-downloads.herokuapp.com',
     'graylog2-package-repository.s3.amazonaws.com',
+    'graylog-package-repository.s3.eu-west-1.amazonaws.com',
   ]
 
   anchor { 'graylog::repository::apt::begin': }

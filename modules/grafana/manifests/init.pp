@@ -63,9 +63,18 @@ class grafana (
         source => 'puppet:///modules/grafana/nginx/grafana.conf',
     }
 
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
+
     monitoring::services { 'grafana.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
+            address6   => $address,
             http_ssl   => true,
             http_vhost => 'grafana.miraheze.org',
         },

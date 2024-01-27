@@ -101,19 +101,21 @@ define git::clone(
             }
 
             if !empty($branch) {
+                $checkout_command = $revision ? {
+                    ''      => "${git} checkout ${branch}",
+                    default => "${git} checkout ${revision}",
+                }
+                $is_current_revision = $revision ? {
+                    ''      => "${git} rev-parse --abbrev-ref HEAD | grep ${branch}",
+                    default => "${git} rev-parse HEAD | grep ${revision}",
+                }
                 if $ensure == 'latest' {
                     exec { "git_checkout_${title}":
                         cwd         => $directory,
-                        command     => $revision ? {
-                            ''      => "${git} checkout ${branch}",
-                            default => "${git} checkout ${revision}",
-                        },
+                        command     => $checkout_command,
                         provider    => shell,
                         environment => $env,
-                        unless      => $revision ? {
-                            ''      => "${git} rev-parse --abbrev-ref HEAD | grep ${branch}",
-                            default => "${git} rev-parse HEAD | grep ${revision}",
-                        },
+                        unless      => $is_current_revision,
                         user        => $owner,
                         group       => $group,
                         umask       => $umask,
@@ -125,16 +127,10 @@ define git::clone(
                 else {
                     exec { "git_checkout_${title}":
                         cwd         => $directory,
-                        command     => $revision ? {
-                            ''      => "${git} checkout ${branch}",
-                            default => "${git} checkout ${revision}",
-                        },
+                        command     => $checkout_command,
                         provider    => shell,
                         environment => $env,
-                        unless      => $revision ? {
-                            ''      => "${git} rev-parse --abbrev-ref HEAD | grep ${branch}",
-                            default => "${git} rev-parse HEAD | grep ${revision}",
-                        },
+                        unless      => $is_current_revision,
                         user        => $owner,
                         group       => $group,
                         umask       => $umask,

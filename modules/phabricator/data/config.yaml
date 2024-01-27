@@ -10,7 +10,7 @@ ui.logo:
 # MySQL
 mysql.port: '3306'
 mysql.user: 'phabricator'
-mysql.host: 'db112.miraheze.org'
+mysql.host: 'db182-private.wikitide.net'
 
 # https://secure.phabricator.com/book/phabricator/article/configuring_file_storage/
 # Needs to match php.ini upload_max_filesize
@@ -29,7 +29,7 @@ auth.require-email-verification: true
 # Phabricator
 phabricator.show-prototypes: true
 phabricator.base-uri: "https://phabricator.miraheze.org/"
-phabricator.allowed-uris: ["https://phab121.miraheze.org/"]
+phabricator.allowed-uris: ["https://phorge171.wikitide.net/"]
 phabricator.timezone: 'UTC'
 security.alternate-file-domain: "https://phab.miraheze.wiki/"
 security.require-https: true
@@ -79,6 +79,11 @@ maniphest.statuses:
     transaction.icon: 'fa-check-circle'
     prefixes: [closed, closes, close, fix, fixes, fixed, resolve, resolves, resolved]
     suffixes: ['as resolved', 'as fixed']
+  'inprogress':
+    name: 'In progress'
+    name.full: 'Open, In progress'
+    transaction.icon: 'fa-forward-step'
+    claim: true
   'invalid':
     name: 'Invalid'
     name.full: 'Closed, Invalid'
@@ -131,7 +136,7 @@ phabricator.uninstalled-applications:
   PhabricatorPholioApplication: true # we are not designers
   PhabricatorPhortuneApplication: true # we don't need billing stuff
   PhabricatorPhragmentApplication: true # puppet has hiera
-  PhabricatorPhrequentApplication: true # SPF spends all of his time well, we don't need to track it
+  PhabricatorPhrequentApplication: true # we don't need this
   PhabricatorPhrictionApplication: true # if we operate this, there will be phriction with MediaWiki
   PhabricatorPhurlApplication: true # we already have a URL shortener
   PhabricatorPonderApplication: true # I wonder if we need a Q&A system
@@ -140,6 +145,10 @@ phabricator.uninstalled-applications:
   
  # Custom field settings
 user.custom-field-definitions:
+  discord_user:
+    name: 'Discord Username'
+    type: text
+    search: true
   irc_nick:
     name: 'IRC Nickname'
     type: text

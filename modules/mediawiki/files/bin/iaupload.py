@@ -34,8 +34,8 @@ class ArchiveUploader:
             '--file', dest='file', required=True,
             help='The local path to the file to be uploaded to archive.org. Required.')
         self.parser.add_argument(
-            '--proxy', dest='proxy', default='http://bast.miraheze.org:8080',
-            help='The proxy to use for requests to archive.org. Optional. Default: http://bast.miraheze.org:8080')
+            '--proxy', dest='proxy', default='http://bastion.wikitide.net:8080',
+            help='The proxy to use for requests to archive.org. Optional. Default: http://bastion.wikitide.net:8080')
 
     def upload(self):
         args = self.parser.parse_args()

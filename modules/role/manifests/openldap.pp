@@ -7,6 +7,7 @@
 class role::openldap (
     String $admin_password = lookup('profile::openldap::admin_password'),
     String $ldapvi_password = lookup('profile::openldap::ldapvi_password'),
+    String $ldap_host = lookup('profile::openldap::ldap_host', {'default_value' => $facts['networking']['fqdn']}),
 ) {
     ssl::wildcard { 'openldap wildcard': }
 
@@ -174,9 +175,15 @@ class role::openldap (
     }
 
     $firewall_rules = join(
-        query_facts('Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Mail] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap]', ['networking'])
+        query_facts('Class[Role::Grafana] or Class[Role::Graylog] or Class[Role::Matomo] or Class[Role::Mediawiki] or Class[Role::Openldap]', ['networking'])
         .map |$key, $value| {
-            "${value['networking']['ip']} ${value['networking']['ip6']}"
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
         }
         .flatten()
         .unique()
@@ -203,7 +210,6 @@ class role::openldap (
             ldap_address => $facts['networking']['fqdn'],
             ldap_base    => 'dc=miraheze,dc=org',
             ldap_v3      => true,
-            ldap_ssl     => true,
         },
     }
 

@@ -19,7 +19,7 @@ mediawiki::php::memory_limit: '500M'
 
 php::php_version: '8.2'
 
-http_proxy: 'http://bast.miraheze.org:8080'
+http_proxy: 'http://bastion.wikitide.net:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 
@@ -28,3 +28,10 @@ nginx::keepalive_timeout: 75
 nginx::keepalive_requests: 1000
 nginx::logrotate_number: 2
 nginx::use_graylog: true
+
+role::mediawiki::mcrouter::shards:
+  miraheze:
+    shard01:
+      host: [2a10:6740::6:510]
+    shard02:
+      host: [2a10:6740::6:405]

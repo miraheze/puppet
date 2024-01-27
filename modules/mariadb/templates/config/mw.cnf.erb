@@ -9,7 +9,11 @@ default-storage-engine         = InnoDB
 socket                         = /var/run/mysqld/mysqld.sock
 pid-file                       = /var/run/mysqld/mysqld.pid
 skip-name-resolve
+<%- if @version == '10.5' -%>
 bind-address                   = ::
+<%- else -%>
+bind-address                   = 0.0.0.0,::
+<%- end -%>
 key-buffer-size                = 16M
 myisam-recover-options         = FORCE,BACKUP
 
@@ -93,11 +97,13 @@ userstat                       = 1
 plugin_load_add                = query_response_time
 query_response_time_stats      = ON
 
+<%- if @enable_ssl -%>
 ssl
 ssl-ca                         = /etc/ssl/certs/Sectigo.crt
 ssl-cert                       = /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt
 ssl-key                        = /etc/ssl/private/wildcard.miraheze.org-2020-2.key
 tls_version                    = TLSv1.2,TLSv1.3
+<%- end -%>
 
 optimizer_switch               = 'mrr=on,mrr_cost_based=on,mrr_sort_keys=on,optimize_join_buffer_size=on,rowid_filter=off'
 

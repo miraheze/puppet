@@ -22,7 +22,6 @@ class monitoring (
         allowdupe => false,
     }
 
-    $http_proxy = lookup('http_proxy', {'default_value' => undef})
     $version = lookup('mariadb::version', {'default_value' => '10.4'})
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
@@ -30,9 +29,8 @@ class monitoring (
         release  => $facts['os']['distro']['codename'],
         repos    => 'main',
         key      => {
-            'name'    => 'mariadb_release_signing_key.pgp',
-            'source'  => 'https://mariadb.org/mariadb_release_signing_key.pgp',
-            'options' => "http-proxy='${http_proxy}'",
+            'name'   => 'mariadb_release_signing_key.pgp',
+            'source' => 'puppet:///modules/mariadb/mariadb_release_signing_key.pgp',
         },
     }
 
@@ -87,13 +85,11 @@ class monitoring (
     include ::icinga2::feature::perfdata
 
     class{ '::icinga2::feature::idomysql':
-        host            => $db_host,
-        user            => $db_user,
-        password        => $db_password,
-        database        => $db_name,
-        import_schema   => false,
-        enable_ssl      => true,
-        ssl_cacert_path => '/etc/ssl/certs/Sectigo.crt',
+        host          => $db_host,
+        user          => $db_user,
+        password      => $db_password,
+        database      => $db_name,
+        import_schema => false,
     }
 
     class { '::icinga2::feature::gelf':

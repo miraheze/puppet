@@ -47,16 +47,16 @@
 #   The ldap password to connect icingaweb2 to (for authentication).
 #
 class role::icinga2 (
-    String $icinga2_db_host                 = lookup('icinga_ido_db_host', {'default_value' => 'db182.wikitide.net'}),
+    String $icinga2_db_host                 = lookup('icinga_ido_db_host', {'default_value' => 'db182-private.wikitide.net'}),
     String $icinga2_db_name                 = lookup('icinga_ido_db_name', {'default_value' => 'icinga'}),
     String $icinga2_db_user                 = lookup('icinga_ido_user_name', {'default_value' => 'icinga2'}),
     String $ido_db_user_password            = lookup('passwords::icinga_ido'),
     String $mirahezebots_password           = lookup('passwords::irc::mirahezebots'),
-    String $icingaweb2_db_host              = lookup('icingaweb_db_host', {'default_value' => 'db182.wikitide.net'}),
+    String $icingaweb2_db_host              = lookup('icingaweb_db_host', {'default_value' => 'db182-private.wikitide.net'}),
     String $icingaweb2_db_name              = lookup('icingaweb_db_name', {'default_value' => 'icingaweb2'}),
     String $icingaweb2_db_user_name         = lookup('icingaweb_user_name', {'default_value' => 'icingaweb2'}),
     String $icingaweb2_db_user_password     = lookup('passwords::icingaweb2'),
-    String $icingaweb2_ido_db_host          = lookup('icinga_ido_db_host', {'default_value' => 'db182.wikitide.net'}),
+    String $icingaweb2_ido_db_host          = lookup('icinga_ido_db_host', {'default_value' => 'db182-private.wikitide.net'}),
     String $icingaweb2_ido_db_name          = lookup('icinga_ido_db_name', {'default_value' => 'icinga'}),
     String $icingaweb2_ido_db_user_name     = lookup('icinga_ido_user_name', {'default_value' => 'icinga2'}),
     String $ticket_salt                     = lookup('passwords::ticket_salt', {'default_value' => ''}),
@@ -102,6 +102,6 @@ class role::icinga2 (
     }
 
     motd::role { 'icinga2':
-        description => 'central monitoring server which runs icinga2',
+        description => 'monitoring server',
     }
 }

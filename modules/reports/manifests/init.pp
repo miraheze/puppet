@@ -5,7 +5,7 @@ class reports {
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',
         origin    => 'https://github.com/miraheze/TSPortal',
-        branch    => 'v11',
+        branch    => 'v15',
         owner     => 'www-data',
         group     => 'www-data',
     }
@@ -15,7 +15,10 @@ class reports {
         creates     => '/srv/TSPortal/vendor',
         cwd         => '/srv/TSPortal',
         path        => '/usr/bin',
-        environment => 'HOME=/srv/TSPortal',
+        environment => [
+            'HOME=/srv/TSPortal',
+            'HTTP_PROXY=http://bastion.wikitide.net:8080'
+        ],
         user        => 'www-data',
         require     => Git::Clone['TSPortal'],
     }
@@ -146,7 +149,7 @@ class reports {
         monitor => true,
     }
 
-    $salt = lookup('passwords::piwik::salt')
+    $salt = lookup('passwords::matomo::salt')
     $password = lookup('passwords::db::reports')
     $app_key = lookup('reports::app_key')
     $reports_mediawiki_identifier = lookup('reports::reports_mediawiki_identifier')

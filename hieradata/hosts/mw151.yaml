@@ -5,7 +5,7 @@ users::groups:
 contactgroups: ['sre', 'mediawiki']
 
 jobrunner: false
-mediawiki::jobqueue::runner::redis_ip: '[2a10:6740::6:306]:6379'
+mediawiki::jobqueue::runner::redis_ip: '10.0.17.120:6379'
 
 role::mediawiki::use_strict_firewall: true
 
@@ -20,7 +20,7 @@ mediawiki::php::memory_limit: '500M'
 
 php::php_version: '8.2'
 
-http_proxy: 'http://bast.miraheze.org:8080'
+http_proxy: 'http://bastion.wikitide.net:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 

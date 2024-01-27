@@ -11,7 +11,7 @@ import json
 import sys
 from langcodes import tag_is_valid
 
-mw_versions = os.popen('getMWVersions').read().strip()
+mw_versions = os.popen('/usr/local/bin/getMWVersions').read().strip()
 versions = {'version': 'version'}
 if mw_versions:
     versions = json.loads(mw_versions)
@@ -36,7 +36,7 @@ class EnvironmentList(TypedDict):
 beta: Environment = {
     'wikidbname': 'metawikibeta',
     'wikiurl': 'meta.mirabeta.org',
-    'servers': ['test131'],
+    'servers': ['test151'],
 }
 prod: Environment = {
     'wikidbname': 'testwiki',
@@ -49,6 +49,12 @@ prod: Environment = {
         'mw141',
         'mw142',
         'mw143',
+        'mw151',
+        'mw152',
+        'mw161',
+        'mw162',
+        'mw171',
+        'mw172',
         'mw181',
         'mw182',
         'mwtask181',
@@ -183,7 +189,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
 
     headers = {}
     if Debug:
-        if 'mw13' in Debug or 'mw14' in Debug or 'test131' in Debug:
+        if 'mw13' in Debug or 'mw14' in Debug:
             host = 'miraheze.org'
         else:
             host = 'wikitide.net'
@@ -268,7 +274,7 @@ def _construct_rsync_command(time: bool | str, dest: str, recursive: bool = True
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        if 'mw13' in server or 'mw14' in server or 'test131' in server:
+        if 'mw13' in server or 'mw14' in server:
             host = 'miraheze.org'
         else:
             host = 'wikitide.net'
@@ -311,6 +317,14 @@ def _construct_reset_mediawiki_run_puppet() -> str:
 
 
 def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
+    loginfo = {}
+    for arg in vars(args).items():
+        if arg[1] is not None and arg[1] is not False:
+            if isinstance(arg[1], list) and len(arg[1]) == 1:
+                loginfo[arg[0]] = arg[1][0]
+            else:
+                loginfo[arg[0]] = arg[1]
+
     if args.upgrade_world and not args.reset_world:
         args.world = True
         args.pull = 'world'
@@ -320,17 +334,73 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
         args.upgrade_vendor = True
         args.upgrade_extensions = get_valid_extensions(args.versions)
         args.upgrade_skins = get_valid_skins(args.versions)
-    run_process(args=args, start=start)
-    if args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor:
+
+    if len(args.servers) > 1 and args.servers == get_environment_info()['servers']:
+        loginfo['servers'] = 'all'
+
+    use_version = args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor
+
+    if args.versions:
+        if args.upgrade_extensions == get_valid_extensions(args.versions):
+            loginfo['upgrade_extensions'] = 'all'
+
+        if args.upgrade_skins == get_valid_skins(args.versions):
+            loginfo['upgrade_skins'] = 'all'
+
+        if args.upgrade_pack:
+            del loginfo['upgrade_extensions']
+            del loginfo['upgrade_skins']
+
+        if not use_version:
+            del loginfo['versions']
+
+    synced = loginfo['servers']
+    del loginfo['servers']
+
+    text = f'starting deploy of "{str(loginfo)}" to {synced}'
+    if not args.nolog:
+        os.system(f'/usr/local/bin/logsalmsg {text}')
+    else:
+        print(text)
+
+    exitcodes = run_process(args=args)
+    failed = non_zero_code(ec=exitcodes, leave=False)
+
+    fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
+
+    if failed:
+        fintext += f' - FAIL: {exitcodes}'
+        if not args.nolog:
+            os.system(f'/usr/local/bin/logsalmsg {fintext}')
+        else:
+            print(fintext)
+        sys.exit(1)
+
+    if use_version:
         for version in args.versions:
-            run_process(args=args, start=start, version=version)
+            exitcodes = run_process(args=args, version=version)
+            failed = non_zero_code(ec=exitcodes, leave=False)
+
+            if failed:
+                fintext += f' - FAIL: {exitcodes}'
+                if not args.nolog:
+                    os.system(f'/usr/local/bin/logsalmsg {fintext}')
+                else:
+                    print(fintext)
+                sys.exit(1)
+
+    fintext += ' - SUCCESS'
+    fintext += f' in {str(int(time.time() - start))}s'
+    if not args.nolog:
+        os.system(f'/usr/local/bin/logsalmsg {fintext}')
+    else:
+        print(fintext)
 
 
-def run_process(args: argparse.Namespace, start: float, version: str = '') -> None:  # pragma: no cover
+def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pragma: no cover
     envinfo = get_environment_info()
     options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
-    loginfo = {}
     rsyncpaths = []
     rsyncfiles = []
     rsync = []
@@ -341,18 +411,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     tagsinfo = []  # type: list[str]
     warnings = {}
 
-    for arg in vars(args).items():
-        if arg[1] is not None and arg[1] is not False:
-            loginfo[arg[0]] = arg[1]
-    synced = loginfo['servers']
     if HOSTNAME in args.servers:
-        del loginfo['servers']
-        text = f'starting deploy of "{str(loginfo)}" to {synced}'
-        if not args.nolog:
-            os.system(f'/usr/local/bin/logsalmsg {text}')
-        else:
-            print(text)
-
         if version:
             runner = ''
             runner_staging = ''
@@ -384,7 +443,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                 stage.append(_construct_git_reset_hard('vendor', version=version))
                 stage.append(_construct_git_pull('vendor', submodules=True, version=version))
                 if not args.world:
-                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer update --no-dev --quiet')
+                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet')
                     rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/vendor/*', dest=f'/srv/mediawiki/{version}/vendor/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/vendor/')
 
@@ -496,7 +555,7 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
                 if option == 'world':  # install steps for world
                     option = version
                     os.chdir(_get_staging_path(version))
-                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bast.miraheze.org:8080 composer update --no-dev --quiet'))
+                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet'))
                     rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}/srv/mediawiki-staging/{version}/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
@@ -559,28 +618,17 @@ def run_process(args: argparse.Namespace, start: float, version: str = '') -> No
     for file in rsyncfiles:
         exitcodes.append(remote_sync_file(time=args.ignore_time, serverlist=args.servers, path=file, recursive=False, force=args.force, envinfo=envinfo, nolog=args.nolog))
 
-    fintext = f'finished deploy of "{str(loginfo)}" to {synced}'
-
-    failed = non_zero_code(ec=exitcodes, leave=False)
-    if failed:
-        fintext += f' - FAIL: {exitcodes}'
-    else:
-        fintext += ' - SUCCESS'
-    fintext += f' in {str(int(time.time() - start))}s'
     if tagsinfo:
         print('TAGS:')
         for info in tagsinfo:
             print(info)
+
     if newschema:
         print('WARNING: NEW SCHEMA CHANGES DETECTED:')
         for schema in newschema:
             print(schema)
-    if not args.nolog:
-        os.system(f'/usr/local/bin/logsalmsg {fintext}')
-    else:
-        print(fintext)
-    if failed:
-        sys.exit(1)
+
+    return exitcodes
 
 
 class UpgradeExtensionsAction(argparse.Action):  # pragma: no cover
@@ -619,6 +667,7 @@ class UpgradePackAction(argparse.Action):
         skins_in_pack = get_skins_in_pack(value)
         setattr(namespace, 'upgrade_extensions', sorted(extensions_in_pack))
         setattr(namespace, 'upgrade_skins', sorted(skins_in_pack))
+        setattr(namespace, 'upgrade_pack', value)
 
 
 class LangAction(argparse.Action):
@@ -677,7 +726,7 @@ if __name__ == '__main__':
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang', action=LangAction, help='l10n language(s) to rebuild, defaults to all')
-    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
+    parser.add_argument('--versions', dest='versions', action=VersionsAction, default=[os.popen(f'/usr/local/bin/getMWVersion {get_environment_info()["wikidbname"]}').read().strip()], help='version(s) to deploy')
     parser.add_argument('--show-tags', dest='show_tags', action='store_true', help='Show change tags for extension/skin upgrades')
     parser.add_argument('--skip-schema-confirm', dest='skip_schema_confirm', action='store_true', help='Skip confirm prompts for extensions with schema changes')
     parser.add_argument('--upgrade-extensions', dest='upgrade_extensions', action=UpgradeExtensionsAction, help='extension(s) to upgrade')
