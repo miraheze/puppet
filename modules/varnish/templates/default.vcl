@@ -245,8 +245,6 @@ sub mw_request {
 				set req.backend_hint = <%= name %>_test;
 			}
 			return (pass);
-		} else {
-			unset req.http.X-Miraheze-Debug;
 		}
 <%- end -%>
 <%- end -%>
