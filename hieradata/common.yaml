@@ -30,98 +30,81 @@ varnish::interval-check: '10s'
 varnish::interval-timeout: '10s'
 varnish::backends:
   mw151:
-    domain: 'wikitide.net'
     port: 8113
     probe: mwhealth
     pool: true
     xdebug: true
   mw152:
-    domain: 'wikitide.net'
     port: 8114
     probe: mwhealth
     pool: true
     xdebug: true
   mw161:
-    domain: 'wikitide.net'
     port: 8115
     probe: mwhealth
     pool: true
     xdebug: true
   mw162:
-    domain: 'wikitide.net'
     port: 8116
     probe: mwhealth
     pool: true
     xdebug: true
   mw171:
-    domain: 'wikitide.net'
     port: 8117
     probe: mwhealth
     pool: true
     xdebug: true
   mw172:
-    domain: 'wikitide.net'
     port: 8118
     probe: mwhealth
     pool: true
     xdebug: true
   mw181:
-    domain: 'wikitide.net'
     port: 8119
     probe: mwhealth
     pool: true
     xdebug: true
   mw182:
-    domain: 'wikitide.net'
     port: 8120
     probe: mwhealth
     pool: true
     xdebug: true
   mwtask181:
-    domain: 'wikitide.net'
     port: 8160
     probe: false
     pool: false
     xdebug: true
   test151:
-    domain: 'wikitide.net'
     port: 8181
     probe: false
     pool: false
     xdebug: true
   mon181:
-    domain: 'wikitide.net'
     port: 8201
     probe: false
     pool: false
   phorge171:
-    domain: 'wikitide.net'
     port: 8202
     probe: false
     pool: false
   matomo151:
-    domain: 'wikitide.net'
     port: 8203
     probe: false
     pool: false
   puppet181:
-    domain: 'wikitide.net'
     port: 8204
     probe: false
     pool: false
   reports171:
-    domain: 'wikitide.net'
     port: 8205
     probe: false
     pool: false
   swiftproxy161:
-    domain: 'wikitide.net'
     port: 8206
     probe: false
     pool: false
     swiftpool: true
   swiftproxy171:
-    domain: 'wikitide.net'
     port: 8207
     probe: false
     pool: false
