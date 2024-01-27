@@ -29,6 +29,18 @@ memcached_servers_beta:
 varnish::interval-check: '10s'
 varnish::interval-timeout: '10s'
 varnish::backends:
+  mw151:
+    domain: 'wikitide.net'
+    port: 8113
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw152:
+    domain: 'wikitide.net'
+    port: 8114
+    probe: mwhealth
+    pool: true
+    xdebug: true
   mw161:
     domain: 'wikitide.net'
     port: 8115
