@@ -42,13 +42,6 @@ prod: Environment = {
     'wikidbname': 'testwiki',
     'wikiurl': 'publictestwiki.com',
     'servers': [
-        'mw131',
-        'mw132',
-        'mw133',
-        'mw134',
-        'mw141',
-        'mw142',
-        'mw143',
         'mw151',
         'mw152',
         'mw161',
@@ -189,12 +182,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
 
     headers = {}
     if Debug:
-        if 'mw13' in Debug or 'mw14' in Debug:
-            host = 'miraheze.org'
-        else:
-            host = 'wikitide.net'
-
-        server = f'{Debug}.{host}'
+        server = f'{Debug}.wikitide.net'
         headers['X-Miraheze-Debug'] = server
         location = f'{domain}@{server}'
 
@@ -274,12 +262,7 @@ def _construct_rsync_command(time: bool | str, dest: str, recursive: bool = True
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        if 'mw13' in server or 'mw14' in server:
-            host = 'miraheze.org'
-        else:
-            host = 'wikitide.net'
-
-        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.{host}:{dest}'
+        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.wikitide.net:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
