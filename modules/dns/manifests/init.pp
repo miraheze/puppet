@@ -42,10 +42,19 @@ class dns {
         mode   => '0755',
     }
 
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
+
     monitoring::services { 'Auth DNS':
         check_command => 'check_dns_auth',
         vars          => {
-            host    => 'miraheze.org',
+            address6 => $address,
+            host     => 'miraheze.org',
         },
     }
 
