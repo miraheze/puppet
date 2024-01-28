@@ -15,4 +15,16 @@ class mediawiki::monitoring {
             address => $address,
         },
     }
+
+    monitoring::services { 'HTTPS':
+        ensure        => $monitor_service,
+        check_command => 'check_curl',
+        vars          => {
+            address6         => $address,
+            http_vhost       => $facts['networking']['fqdn'],
+            http_ssl         => true,
+            http_ignore_body => true,
+            http_expect      => 'HTTP/2 404',
+        },
+    }
 }
