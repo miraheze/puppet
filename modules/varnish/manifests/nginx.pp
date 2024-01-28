@@ -9,7 +9,6 @@ class varnish::nginx {
     }
 
     monitoring::services { 'HTTPS':
-        ensure        => present,
         check_command => 'check_curl',
         vars          => {
             address6         => $address,
