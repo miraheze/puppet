@@ -5,11 +5,6 @@ node /^bast1[68]1\.wikitide\.net$/ {
     include role::bastion
 }
 
-node /^cloud1[01234]\.miraheze\.org$/ {
-    include base
-    include role::cloud
-}
-
 node /^cloud1[5678]\.wikitide\.net$/ {
     include base
     include role::cloud
@@ -75,7 +70,7 @@ node 'mwtask181.wikitide.net' {
     include role::mathoid
 }
 
-node /^ns[12]\.miraheze\.org$/ {
+node 'ns2.miraheze.org' {
     include base
     include role::dns
 }
@@ -116,11 +111,6 @@ node /^swiftproxy1[67]1\.wikitide\.net$/ {
 }
 
 node 'swiftac171.wikitide.net' {
-    include base
-    include role::swift
-}
-
-node /^swiftobject1[012][123]\.miraheze\.org$/ {
     include base
     include role::swift
 }
