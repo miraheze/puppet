@@ -17,7 +17,7 @@ class mediawiki::monitoring {
     }
 
     monitoring::services { 'HTTPS':
-        ensure        => $monitor_service,
+        ensure        => present,
         check_command => 'check_curl',
         vars          => {
             address6         => $address,
