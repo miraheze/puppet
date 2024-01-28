@@ -122,12 +122,6 @@ swift::storage::object_server_default_workers: 100
 role::swift::stats_reporter_host: swiftproxy171.wikitide.net
 
 swift::storage::devices:
-  - sdd
-  - sde
-  - sdf
-  - sda10
-  - sda31
-  - sda32
   - swiftobject151
   - swiftobject161
   - swiftobject171
@@ -141,4 +135,3 @@ role::mediawiki::mcrouter::shards:
       host: 10.0.16.131
 
 role::mediawiki::use_mcrouter: true
-
