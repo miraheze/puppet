@@ -70,11 +70,6 @@ node 'mwtask181.wikitide.net' {
     include role::mathoid
 }
 
-node 'ns2.miraheze.org' {
-    include base
-    include role::dns
-}
-
 node /^ns[12]\.wikitide\.net$/ {
     include base
     include role::dns
