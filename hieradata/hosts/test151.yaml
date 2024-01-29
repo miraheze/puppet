@@ -1,6 +1,7 @@
 users::groups:
   - mediawiki-admins
   - mediawiki-roots
+  - mediawiki-test-admins
 
 contactgroups: ['sre', 'mediawiki']
 
