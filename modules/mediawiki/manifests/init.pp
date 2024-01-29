@@ -2,11 +2,11 @@
 class mediawiki {
     include mediawiki::cgroup
     include mediawiki::favicons
+    include mediawiki::logging
+    include mediawiki::monitoring
     include mediawiki::nginx
     include mediawiki::packages
-    include mediawiki::logging
     include mediawiki::php
-    include mediawiki::monitoring
 
     if lookup(mediawiki::use_staging) {
         include mediawiki::deploy
