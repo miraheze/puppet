@@ -49,6 +49,16 @@ groups:
     members: [macfan, oa]
     privileges: ['ALL = (ALL) NOPASSWD: /root/ssl-certificate',
                  'ALL = (ALL) NOPASSWD: /var/lib/nagios/ssl-acme']
+  mediawiki-test-admins:
+    gid: 2007
+    description: sudo on the MediaWiki test server
+    members: []
+    privileges: ['ALL = (www-data) NOPASSWD: ALL',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
 
 users:
   johnflewis:
