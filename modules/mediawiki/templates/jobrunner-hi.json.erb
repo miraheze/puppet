@@ -4,7 +4,7 @@
     "groups": {
         "basic": {
             // Number of runner processes in this group
-            "runners": 3,
+            "runners": 1,
             // Job types to include ("*" means "all")
             "include": [
                 "*"
@@ -34,7 +34,7 @@
         },
         "html": {
             // Number of runner processes in this group
-            "runners": 3,
+            "runners": 1,
             "include": [
                 "htmlCacheUpdate",
                 "refreshLinks",
@@ -44,7 +44,7 @@
         },
         "hi": {
             // Number of runner processes in this group
-            "runners": 3,
+            "runners": 1,
             // Job types to include ("*" means "all")
             "include": [
                 "DataDumpGenerateJob",
@@ -53,7 +53,7 @@
         },
         "createwiki": {
             // Number of runner processes in this group
-            "runners": 3,
+            "runners": 1,
             // Job types to include ("*" means "all")
             "include": [
                 "CreateWikiJob"
@@ -61,7 +61,7 @@
         },
         "managewiki": {
             // Number of runner processes in this group
-            "runners": 3,
+            "runners": 1,
             // Job types to include ("*" means "all")
             "include": [
                 "NamespaceMigrationJob",
@@ -70,7 +70,7 @@
         },
         "parsoidcache": {
             // Number of runner processes in this group
-            "runners": 10,
+            "runners": 8,
             // Job types to include ("*" means "all")
             "include": [
                 "parsoidCachePrewarm"
@@ -78,7 +78,7 @@
         },
         "smw": {
             // Number of runner processes in this group
-            "runners": 3,
+            "runners": 1,
             // Job types to include ("*" means "all")
             "include": [
                 "smw.update",
@@ -86,14 +86,14 @@
             ]
         },
         "transcode": {
-            "runners": 3,
+            "runners": 1,
             "include": [
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized"
             ]
         },
         "upload": {
-            "runners": 3,
+            "runners": 1,
             "include": [
                 "AssembleUploadChunks",
                 "PublishStashedFile",
