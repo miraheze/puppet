@@ -41,7 +41,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [macfan, oa]
+    members: [alex, macfan, oa]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -52,7 +52,7 @@ groups:
   mediawiki-test-admins:
     gid: 2007
     description: sudo on the MediaWiki test server
-    members: []
+    members: [alex]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
@@ -160,11 +160,11 @@ users:
     realname: Agent
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYndIxzLtu9icCCMJIKTZXKk9rdJRP/Nsfyb2kfcZEy]
   alex:
-    ensure: absent
+    ensure: present
     uid: 1016
     name: alex
     realname: Alex
-    ssh_keys: []
+    ssh_keys: [sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIK1eR7I1K/AL6R9RxDOaldPLSDRpN5jl0+lMJq1Fa4tzAAAABHNzaDo= alex@localhost.localdomain]
   owen:
     ensure: present
     uid: 1017
