@@ -131,6 +131,7 @@ font-src:
   - '*.miraheze.org'
   - '*.mirabeta.org'
   - 'fonts.gstatic.com'
+  - 'fonts.googleapis.com'
   - 'cdn.jsdelivr.net'
   - 'fastly.jsdelivr.net'
   - 'db.onlinewebfonts.com'
