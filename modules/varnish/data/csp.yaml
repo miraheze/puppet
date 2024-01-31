@@ -39,6 +39,7 @@ script-src:
   - 'www.gstatic.cn'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
+  - 'bandcamp.com'
 
 style-src:
   - "'self'"
@@ -153,6 +154,8 @@ media-src:
   - 'clips.twitch.tv'
   - 'player.vimeo.com'
   - 'apis.google.com'
+  - 'bandcamp.com'
+
 
 frame-src:
   - "'self'"
@@ -182,6 +185,7 @@ frame-src:
   - 'scratch.mit.edu'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
+  - 'bandcamp.com'
 
 connect-src:
   - "'self'"
