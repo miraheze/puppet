@@ -133,6 +133,7 @@ font-src:
   - '*.mirabeta.org'
   - 'fonts.gstatic.com'
   - 'fonts.googleapis.com'
+  - 'cdnjs.cloudflare.com'
   - 'cdn.jsdelivr.net'
   - 'fastly.jsdelivr.net'
   - 'db.onlinewebfonts.com'
