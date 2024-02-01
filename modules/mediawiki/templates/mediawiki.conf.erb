@@ -218,7 +218,7 @@ server {
 		send_timeout 140;
 	}
 
-	location ~ ^/((?!(css|images)).)*$ {
+	location ~ ^/((?!(css|discord|img|js|lib|scss)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
