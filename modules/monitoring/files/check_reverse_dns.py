@@ -98,8 +98,7 @@ def check_records(hostname):
 
     if (
         re.match(".+\.miraheze\.org", cname) and
-        not re.match("cp[1-9][0-9]*\.miraheze\.org", cname) and
-        not re.match("(webmail|phabricator|grafana|icinga|matomo|static|donate|reports)\.miraheze\.org", cname)
+        not re.match("(phabricator|grafana|icinga|matomo|static|donate|reports)\.miraheze\.org", cname)
        ):
         return 'CNAME'
     elif cname is None and cname_check_impossible:
