@@ -11,6 +11,7 @@ describe 'apt_has_updates fact' do
     before(:each) do
       allow(Facter.fact(:osfamily)).to receive(:value).once.and_return('Redhat')
     end
+
     it { is_expected.to be_nil }
   end
 
@@ -20,6 +21,7 @@ describe 'apt_has_updates fact' do
       allow(File).to receive(:executable?) # Stub all other calls
       allow(File).to receive(:executable?).with('/usr/bin/apt-get').and_return(false)
     end
+
     it { is_expected.to be_nil }
   end
 
@@ -35,6 +37,7 @@ describe 'apt_has_updates fact' do
                    "Conf unhide.rb (22-2~bpo8+1 Debian Backports:-backports [all])\n"
       allow(Facter::Core::Execution).to receive(:execute).with('/usr/bin/apt-get -s -o Debug::NoLocking=true upgrade 2>&1').and_return(apt_output)
     end
+
     it { is_expected.to be true }
   end
 end

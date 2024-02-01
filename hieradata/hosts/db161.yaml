@@ -1,0 +1,6 @@
+http_proxy: 'http://bastion.wikitide.net:8080'
+role::db::weekly_misc: ['mhglobal']
+mariadb::config::innodb_buffer_pool_size: '30G'
+mariadb::version: '10.11'
+role::db::enable_ssl: false
+mariadb::config::server_id: 6

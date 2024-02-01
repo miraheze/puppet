@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'java::download', type: :define do
@@ -13,13 +15,13 @@ describe 'java::download', type: :define do
           version_major: '8u201',
           version_minor: 'b09',
           java_se: 'jdk',
-          url: url,
+          url: url
         }
       end
       let(:title) { 'jdk8' }
 
       it {
-        is_expected.to contain_archive('/tmp/jdk-8u201-linux-x64.rpm')
+        expect(subject).to contain_archive('/tmp/jdk-8-8u201-b09-linux-x64.rpm')
       }
     end
 
@@ -29,13 +31,13 @@ describe 'java::download', type: :define do
           ensure: 'present',
           version_major: '8u201',
           version_minor: 'b09',
-          java_se: 'jdk',
+          java_se: 'jdk'
         }
       end
       let(:title) { 'jdk8' }
 
       it {
-        is_expected.to raise_error Puppet::Error
+        expect(subject).to raise_error Puppet::Error
       }
     end
 
@@ -48,7 +50,7 @@ describe 'java::download', type: :define do
           basedir: '/usr/java',
           manage_symlink: true,
           symlink_name: 'java_home',
-          url: url,
+          url: url
         }
       end
       let(:title) { 'jdk6' }
@@ -63,7 +65,7 @@ describe 'java::download', type: :define do
           version: '6',
           java_se: 'jdk',
           basedir: '/usr/java',
-          url: url,
+          url: url
         }
       end
       let(:title) { 'jdk6_nosymlink' }
@@ -73,13 +75,13 @@ describe 'java::download', type: :define do
   end
 
   context 'with Ubuntu 64-bit' do
-    let(:facts) { { kernel: 'Linux', os: { family: 'Debian', architecture: 'amd64', name: 'Ubuntu', release: { full: '16.04' } } } }
+    let(:facts) { { kernel: 'Linux', os: { family: 'Debian', architecture: 'amd64', name: 'Ubuntu', release: { full: '18.04' } } } }
 
     context 'when passing URL to url parameter' do
       let(:params) { { ensure: 'present', version_major: '8u201', version_minor: 'b09', java_se: 'jdk', url: url } }
       let(:title) { 'jdk8' }
 
-      it { is_expected.to contain_archive('/tmp/jdk-8u201-linux-x64.tar.gz') }
+      it { is_expected.to contain_archive('/tmp/jdk-8-8u201-b09-linux-x64.tar.gz') }
     end
   end
 
@@ -90,7 +92,7 @@ describe 'java::download', type: :define do
       let(:params) { { ensure: 'present', version_major: '8u201', version_minor: 'b09', java_se: 'jdk', url: url } }
       let(:title) { 'jdk8' }
 
-      it { is_expected.to contain_archive('/tmp/jdk-8u201-linux-x64.tar.gz') }
+      it { is_expected.to contain_archive('/tmp/jdk-8-8u201-b09-linux-x64.tar.gz') }
     end
   end
 
@@ -102,9 +104,9 @@ describe 'java::download', type: :define do
           family: 'Windows',
           name: 'Windows',
           release: {
-            full: '8.1',
-          },
-        },
+            full: '8.1'
+          }
+        }
       },
       {
         kernel: 'Darwin',
@@ -112,9 +114,9 @@ describe 'java::download', type: :define do
           family: 'Darwin',
           name: 'Darwin',
           release: {
-            full: '13.3.0',
-          },
-        },
+            full: '13.3.0'
+          }
+        }
       },
       {
         kernel: 'AIX',
@@ -122,9 +124,9 @@ describe 'java::download', type: :define do
           family: 'AIX',
           name: 'AIX',
           release: {
-            full: '7100-02-00-000',
-          },
-        },
+            full: '7100-02-00-000'
+          }
+        }
       },
       {
         kernel: 'AIX',
@@ -132,9 +134,9 @@ describe 'java::download', type: :define do
           family: 'AIX',
           name: 'AIX',
           release: {
-            full: '6100-07-04-1216',
-          },
-        },
+            full: '6100-07-04-1216'
+          }
+        }
       },
       {
         kernel: 'AIX',
@@ -142,9 +144,9 @@ describe 'java::download', type: :define do
           family: 'AIX',
           name: 'AIX',
           release: {
-            full: '5300-12-01-1016',
-          },
-        },
+            full: '5300-12-01-1016'
+          }
+        }
       },
     ].each do |facts|
       let(:facts) { facts }

@@ -5,7 +5,7 @@ class prometheus (
     Integer $port = 9100
 ) {
 
-    ensure_packages('prometheus')
+    stdlib::ensure_packages('prometheus')
 
     file { '/etc/default/prometheus':
         source  => 'puppet:///modules/prometheus/prometheus.default.conf',
@@ -20,16 +20,13 @@ class prometheus (
     }
 
     $global_default = {
-        'scrape_interval' => '15s',
-        'scrape_timeout' => '15s',
+        'scrape_interval' => '1m',
     }
-    $global_config = merge($global_default, $global_extra)
+    $global_config = $global_default + $global_extra
 
     $scrape_default = [
         {
             'job_name' => 'prometheus',
-            'scrape_interval' => '30s',
-            'scrape_timeout' => '30s',
             'static_configs' => [
                 {
                     'targets' => [
@@ -49,7 +46,7 @@ class prometheus (
             ]
         }
     ]
-    $scrape_config = concat($scrape_extra, $scrape_default)
+    $scrape_config = concat($scrape_default, $scrape_extra)
 
     $common_config = {
         'global' => $global_config,
@@ -58,7 +55,7 @@ class prometheus (
     }
 
     file { '/etc/prometheus/prometheus.yml':
-        content => to_yaml($common_config),
+        content => stdlib::to_yaml($common_config),
         notify  => Exec['prometheus-reload']
     }
 

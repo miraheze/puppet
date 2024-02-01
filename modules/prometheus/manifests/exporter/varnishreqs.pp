@@ -5,7 +5,7 @@
 class prometheus::exporter::varnishreqs (
     VMlib::Ensure $ensure = 'present',
 ) {
-    ensure_packages([
+    stdlib::ensure_packages([
         'python3-prometheus-client',
         'python3-requests',
     ])

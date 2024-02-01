@@ -1,0 +1,13 @@
+# THIS FILE IS MANAGED BY puppet
+#
+# see man jail.conf for more info on setting values in this file
+
+[DEFAULT]
+# CRITICAL
+# ERROR
+# WARNING
+# NOTICE -- (un)bans are logged at this level
+# INFO -- ALL matches are logged at this level
+# DEBUG
+loglevel = NOTICE
+

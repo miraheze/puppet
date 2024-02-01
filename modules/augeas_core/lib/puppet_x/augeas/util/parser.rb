@@ -1,27 +1,29 @@
 # rubocop:disable Style/Documentation
 module PuppetX; end
+
 module PuppetX::Augeas; end
+
 module PuppetX::Augeas::Util; end
 # rubocop:enable Style/Documentation
 
 # Container for helpers to parse user provided data contained in manifests.
 module PuppetX::Augeas::Util::Parser
-  TOKEN_ARRAY_CLOSE                 = %r{\s*\]\s*}
-  TOKEN_ARRAY_OPEN                  = %r{\s*\[\s*}
-  TOKEN_ARRAY_SEPARATOR             = %r{\s*,\s*}
-  TOKEN_CLOSE_CURLY                 = %r|}|
-  TOKEN_DOUBLE_QUOTE                = %r{"}
-  TOKEN_DOUBLE_QUOTE_ESCAPED_CHAR   = %r{\\(["\\abtnvfres0-7xu])}
-  TOKEN_DOUBLE_QUOTE_UNESCAPED_CHAR = %r{[^"\\]}
-  TOKEN_HEX_CHAR                    = %r{[0-9a-fA-F]{1,2}}
-  TOKEN_OCTAL_CHAR                  = %r{[0-7]{1,3}}
-  TOKEN_OPEN_CURLY                  = %r|{|
-  TOKEN_SINGLE_QUOTE                = %r{'}
-  TOKEN_SINGLE_QUOTE_ESCAPED_CHAR   = %r{\\(['\\])}
-  TOKEN_SINGLE_QUOTE_UNESCAPED_CHAR = %r{[^'\\]}
-  TOKEN_SPACE                       = %r{\s}
-  TOKEN_UNICODE_LONG_HEX_CHAR       = %r{[0-9a-fA-F]{1,6}}
-  TOKEN_UNICODE_SHORT_HEX_CHAR      = %r{[0-9a-fA-F]{4}}
+  TOKEN_ARRAY_CLOSE                 = %r{\s*\]\s*}.freeze
+  TOKEN_ARRAY_OPEN                  = %r{\s*\[\s*}.freeze
+  TOKEN_ARRAY_SEPARATOR             = %r{\s*,\s*}.freeze
+  TOKEN_CLOSE_CURLY                 = %r|}|.freeze
+  TOKEN_DOUBLE_QUOTE                = %r{"}.freeze
+  TOKEN_DOUBLE_QUOTE_ESCAPED_CHAR   = %r{\\(["\\abtnvfres0-7xu])}.freeze
+  TOKEN_DOUBLE_QUOTE_UNESCAPED_CHAR = %r{[^"\\]}.freeze
+  TOKEN_HEX_CHAR                    = %r{[0-9a-fA-F]{1,2}}.freeze
+  TOKEN_OCTAL_CHAR                  = %r{[0-7]{1,3}}.freeze
+  TOKEN_OPEN_CURLY                  = %r|{|.freeze
+  TOKEN_SINGLE_QUOTE                = %r{'}.freeze
+  TOKEN_SINGLE_QUOTE_ESCAPED_CHAR   = %r{\\(['\\])}.freeze
+  TOKEN_SINGLE_QUOTE_UNESCAPED_CHAR = %r{[^'\\]}.freeze
+  TOKEN_SPACE                       = %r{\s}.freeze
+  TOKEN_UNICODE_LONG_HEX_CHAR       = %r{[0-9a-fA-F]{1,6}}.freeze
+  TOKEN_UNICODE_SHORT_HEX_CHAR      = %r{[0-9a-fA-F]{4}}.freeze
 
   # Parse a string into the (nearly) equivalent Ruby array. This only handles
   # arrays with string members (double-, or single-quoted), and does not
@@ -88,34 +90,34 @@ module PuppetX::Augeas::Util::Parser
     return nil if match.nil?
 
     case scanner[1]
-    when '\\' then return '\\'
-    when '"'  then return '"'
-    when 'a'  then return "\a"
-    when 'b'  then return "\b"
-    when 't'  then return "\t"
-    when 'n'  then return "\n"
-    when 'v'  then return "\v"
-    when 'f'  then return "\f"
-    when 'r'  then return "\r"
-    when 'e'  then return "\e"
-    when 's'  then return "\s"
+    when '\\' then '\\'
+    when '"'  then '"'
+    when 'a'  then "\a"
+    when 'b'  then "\b"
+    when 't'  then "\t"
+    when 'n'  then "\n"
+    when 'v'  then "\v"
+    when 'f'  then "\f"
+    when 'r'  then "\r"
+    when 'e'  then "\e"
+    when 's'  then "\s"
     when %r{[0-7]}
       # Back the scanner up by one byte so we can grab all of the potential
       # octal digits at the same time.
       scanner.pos = scanner.pos - 1
       octal_character = scanner.scan(TOKEN_OCTAL_CHAR)
 
-      return octal_character.to_i(8).chr
+      octal_character.to_i(8).chr
     when 'x'
       hex_character = scanner.scan(TOKEN_HEX_CHAR)
       return nil if hex_character.nil?
 
       hex_character.to_i(16).chr
     when 'u'
-      return unicode_short_hex_character(scanner) || unicode_long_hex_characters(scanner)
+      unicode_short_hex_character(scanner) || unicode_long_hex_characters(scanner)
     else
       # Not a valid escape sequence as far as we're concerned.
-      return nil
+      nil
     end
   end
   private :double_quote_escaped_char

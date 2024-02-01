@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'openldap::server::globalconf' do
@@ -10,24 +12,17 @@ describe 'openldap::server::globalconf' do
       end
 
       context 'without value' do
-        it { expect { is_expected.to compile }.to raise_error }
+        it { is_expected.not_to compile }
       end
 
       context 'with a value' do
         let(:params) { { value: 'bar' } }
 
-        context 'with olc provider' do
-          context 'with no parameters' do
-            let :pre_condition do
-              "class { 'openldap::server': }"
-            end
+        it { is_expected.to compile.with_all_deps }
 
-            it { is_expected.to compile.with_all_deps }
-            it {
-              is_expected.to contain_openldap__server__globalconf('foo').with(value: 'bar')
-            }
-          end
-        end
+        it {
+          is_expected.to contain_openldap_global_conf('foo').with(value: 'bar')
+        }
       end
     end
   end

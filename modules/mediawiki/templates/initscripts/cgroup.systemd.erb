@@ -2,7 +2,7 @@
 # This file is managed by Puppet.
 [Unit]
 Description=Miraheze cgroup
-Before=php7.4-fpm.service
+Before=php<%= @php_version %>-fpm.service
 
 [Service]
 Type=oneshot

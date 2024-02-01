@@ -46,14 +46,14 @@ class prometheus::exporter::node (
     $collectors_defaults = ['buddyinfo', 'conntrack', 'entropy', 'edac', 'filefd', 'filesystem', 'hwmon',
         'loadavg', 'mdadm', 'meminfo', 'netdev', 'netstat', 'sockstat', 'stat', 'tcpstat',
         'textfile', 'time', 'uname', 'vmstat']
-    if $::virtual == 'kvm' {
+    if $facts['virtual'] == 'kvm' {
         $collectors_default = concat($collectors_defaults, [ 'diskstats' ])
     } else {
         $collectors_default = $collectors_defaults
     }
     $textfile_directory = '/var/lib/prometheus/node.d'
 
-    ensure_packages('prometheus-node-exporter')
+    stdlib::ensure_packages('prometheus-node-exporter')
 
     $collectors_enabled = concat($collectors_default, $collectors_extra)
 
@@ -89,9 +89,15 @@ class prometheus::exporter::node (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Prometheus]', ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
         }
         .flatten()
         .unique()

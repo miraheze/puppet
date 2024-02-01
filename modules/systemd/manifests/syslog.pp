@@ -84,7 +84,7 @@ define systemd::syslog(
     rsyslog::conf { $title:
         ensure   => $ensure,
         content  => template('systemd/rsyslog.conf.erb'),
-        priority => 20,
+        priority => 40,
         require  => File[$local_logdir],
     }
 

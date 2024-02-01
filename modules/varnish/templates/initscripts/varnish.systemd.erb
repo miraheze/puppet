@@ -12,8 +12,9 @@ PrivateDevices=true
 ProtectSystem=full
 ProtectHome=true
 PIDFile=%t/%p.pid
-Restart=always
-KillMode=control-group
+Restart=on-failure
+KillMode=process
+Environment="MALLOC_CONF=thp:never,narenas:4"
 SyslogIdentifier=varnish
 ExecReload=/usr/local/sbin/reload-vcl <%= @reload_vcl_opts %>
 # We start varnishd(1) without specifying a VCL file (-f ''). Use reload-vcl in
@@ -27,18 +28,19 @@ ExecStart=/usr/sbin/varnishd \
 -a :81 \
 -T localhost:6082 \
 -f '' \
--p thread_pool_min=250 -p thread_pool_max=<%= @max_threads -%> -p thread_pool_timeout=120 \
+-p thread_pool_min=250 \
+-p thread_pool_max=<%= @thread_pool_max -%> \
+-p thread_pool_timeout=120 \
 -p vsl_reclen=2048 \
 -p workspace_backend=128k \
+-p vcc_allow_inline_c=true \
 -S /etc/varnish/secret \
 <%= @storage %> \
 -p http_req_size=24576 \
--p listen_depth=4096 -p vcc_err_unref=off \
+-p listen_depth=16384 -p vcc_err_unref=off \
 -p http_max_hdr=128 \
--p default_ttl=3600 \
+-p default_ttl=86400 \
 -p nuke_limit=1000
-ExecReload=/usr/share/varnish/varnishreload
-ExecStopPost=/usr/bin/rm -rf /var/lib/varnish/*
 
 [Install]
 WantedBy=multi-user.target

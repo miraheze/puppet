@@ -74,10 +74,10 @@ def get_cmd_output(cmd):
 def auto_discard(vadm_cmd):
     """
     Discard loaded VCLs such as:
-        available   auto/warm          0 vcl-$(uuid)
+        available   auto    warm        0    vcl-$(uuid)
 
     Do *not* try discarding the currently active VCL, eg:
-        active      auto/warm          3 vcl-$(uuid)
+        active   auto    warm        3    vcl-$(uuid)
 
     as well as VCLs with a label pointing to them:
         available   auto/warm          0 vcl-$(uuid) (1 label)
@@ -91,7 +91,7 @@ def auto_discard(vadm_cmd):
 
     vcl_list_cmd = vadm_cmd + ['vcl.list']
     for line in get_cmd_output(vcl_list_cmd).splitlines():
-        match = re.match(r'^available\s+\S+\s+[0-9]+\s+(boot|vcl-\S+)$', line.decode("utf-8"))
+        match = re.match(r'^available\s+\S+\s+\S+\s+[0-9]+\s+(boot|vcl-\S+)$', line.decode("utf-8"))
         if match:
             vcl_discard_cmd = vadm_cmd + ['vcl.discard', match.group(1)]
             do_cmd(vcl_discard_cmd)

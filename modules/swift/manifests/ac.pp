@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 class swift::ac {
-    ensure_packages(['swift-account', 'swift-container'])
+    stdlib::ensure_packages(['swift-account', 'swift-container'])
 
     class { 'rsync::server':
         log_file => '/var/log/rsyncd.log',
@@ -21,6 +21,11 @@ class swift::ac {
         path            => '/srv/node/',
         read_only       => 'no',
         lock_file       => '/var/lock/container.lock',
+    }
+
+    $old_swift = $facts['os']['distro']['codename'] ? {
+        'bookworm' => false,
+        'bullseye' => true,
     }
 
     # set up swift specific configs
@@ -87,10 +92,18 @@ class swift::ac {
         source => 'puppet:///modules/swift/swift-drive-audit.conf',
     }
 
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
+
     monitoring::services { 'Swift Account Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $address,
             tcp_port    => '6002',
         },
     }
@@ -98,7 +111,7 @@ class swift::ac {
     monitoring::services { 'Swift Container Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $address,
             tcp_port    => '6001',
         },
     }
@@ -106,13 +119,13 @@ class swift::ac {
     # Backups
     cron { 'backups-swift-account-container':
         ensure  => present,
-        command => '/usr/local/bin/miraheze-backup backup swift_account_container > /var/log/swift-account-container-backup.log',
+        command => '/usr/local/bin/miraheze-backup backup swift-account-container > /var/log/swift-account-container-backup.log 2>&1',
         user    => 'root',
         minute  => '0',
         hour    => '6',
         weekday => '0',
     }
-    
+
     monitoring::nrpe { 'Backups Swift Account Container':
         command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/swift-account-container-backup.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',

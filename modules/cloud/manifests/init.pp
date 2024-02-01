@@ -8,7 +8,7 @@ class cloud {
 
     apt::source { 'proxmox_apt':
         location => 'http://download.proxmox.com/debian/pve',
-        release  => $::lsbdistcodename,
+        release  => $facts['os']['distro']['codename'],
         repos    => 'pve-no-subscription',
         require  => File['/etc/apt/trusted.gpg.d/proxmox.gpg'],
         notify   => Exec['apt_update_proxmox'],
@@ -54,7 +54,7 @@ class cloud {
         source => 'puppet:///modules/cloud/pve-firewall.logrotate.conf',
     }
 
-    ensure_packages(['freeipmi-tools'])
+    stdlib::ensure_packages(['freeipmi-tools'])
 
     if ( $facts['dmi']['manufacturer'] == 'HP' ) {
         monitoring::nrpe { 'IPMI Sensors':

@@ -1,6 +1,6 @@
 # === Class mediawiki::cgroup
 class mediawiki::cgroup {
-    ensure_packages('cgroup-tools')
+    stdlib::ensure_packages('cgroup-tools')
 
     # The cgroup-mediawiki-clean script is used as the release_agent
     # script for the cgroup. When the last task in the cgroup exits,
@@ -13,6 +13,7 @@ class mediawiki::cgroup {
         mode   => '0755',
     }
 
+    $php_version = lookup('php::php_version', {'default_value' => '7.4'})
     systemd::service { 'cgroup':
         ensure  => present,
         content => systemd_template('cgroup'),

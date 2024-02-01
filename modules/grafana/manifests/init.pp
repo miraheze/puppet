@@ -1,9 +1,7 @@
 # class: grafana
 class grafana (
-    String $grafana_password = lookup('passwords::db::grafana'),
     String $mail_password = lookup('passwords::mail::noreply'),
     String $ldap_password = lookup('passwords::ldap_password'),
-    String $grafana_db_host = lookup('grafana_db_host', {'default_value' => 'db112.miraheze.org'}),
 ) {
 
     include ::apt
@@ -65,9 +63,18 @@ class grafana (
         source => 'puppet:///modules/grafana/nginx/grafana.conf',
     }
 
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
+
     monitoring::services { 'grafana.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
+            address6   => $address,
             http_ssl   => true,
             http_vhost => 'grafana.miraheze.org',
         },

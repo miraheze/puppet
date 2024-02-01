@@ -7,9 +7,6 @@ $wgDBpassword = "<%= @mediawiki_password %>";
 // Redis AUTH password
 $wmgRedisPassword = "<%= @redis_password %>";
 
-// Noreply authentication password
-$wmgSMTPPassword = "<%= @noreply_password %>";
-
 // MediaWiki secret keys
 $wgUpgradeKey = "<%= @mediawiki_upgradekey %>";
 $wgSecretKey = "<%= @mediawiki_secretkey %>";

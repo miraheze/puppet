@@ -37,7 +37,7 @@ apply Service "<%= property['url'] %> - reverse DNS" {
   check_interval = 30m
   notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Reverse_DNS_Checks"
   vars.hostname = "<%= property['url'] %>"
-  vars.regex = "^(test|cp)[0-9]+\\.miraheze\\.org$$"
+  vars.regex = "^(test|cp)[0-9]+\\.(miraheze\\.org|wikitide\\.net)$$"
   assign where "sslchecks" in host.groups
 }
 <% end -%>

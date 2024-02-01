@@ -63,11 +63,14 @@ def check_records(hostname):
     cname_check_impossible = False
 
     nameservers = []
-    domain_parts = tldextract.extract(hostname)
+
+    no_cache_extract = tldextract.TLDExtract(cache_dir=None)
+
+    domain_parts = no_cache_extract(hostname)
     root_domain = domain_parts.registered_domain
 
     if root_domain in domains_as_tlds:
-        extracted = tldextract.extract(domain_parts.subdomain + '.' + domain_parts.suffix)
+        extracted = no_cache_extract(domain_parts.subdomain + '.' + domain_parts.suffix)
         root_domain = extracted.domain + '.' + root_domain
 
     dns_resolver = resolver.Resolver(configure=False)
@@ -87,6 +90,8 @@ def check_records(hostname):
             cname_check_impossible = nameserver.endswith(flatten_manadatory_providers)
 
         if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
+            return 'NS'
+        if sorted(list(nameservers)) == sorted(['ns1.wikitide.net.', 'ns2.wikitide.net.']):
             return 'NS'
     except resolver.NoAnswer:
         nameservers = None

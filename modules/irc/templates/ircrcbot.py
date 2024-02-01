@@ -5,7 +5,12 @@ from twisted.internet import reactor, ssl
 from twisted.words.protocols import irc
 from twisted.internet import protocol
 
+import socket
+
 recver = None
+
+# Grab first valid IPv6 address for the supplied domain name
+irc_network = str(socket.getaddrinfo("<%= @network %>", None, family=socket.AF_INET6)[0][4][0])
 
 
 class RCBot(irc.IRCClient):
@@ -51,8 +56,8 @@ class Echo(DatagramProtocol):
 
 reactor.listenUDP(<%= @udp_port %>, Echo(), interface='::')  # noqa: E225,E999
 <% if @network_port == '6697' %>  # noqa: E225
-reactor.connectSSL("<%= @network %>", <%= @network_port %>, RCFactory(), ssl.ClientContextFactory())  # noqa: E225
+reactor.connectSSL(irc_network, <%= @network_port %>, RCFactory(), ssl.ClientContextFactory())  # noqa: E225
 <% else %>  # noqa: E225
-reactor.connectTCP("<%= @network %>", <%= @network_port %>, RCFactory())  # noqa: E225
+reactor.connectTCP(irc_network, <%= @network_port %>, RCFactory())  # noqa: E225
 <% end %>  # noqa: E225
 reactor.run()

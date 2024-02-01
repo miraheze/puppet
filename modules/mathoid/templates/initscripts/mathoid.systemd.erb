@@ -1,0 +1,21 @@
+[Unit]
+Description=Mediawiki Mathoid Service
+Documentation=https://www.mediawiki.org/wiki/Mathoid
+Wants=local-fs.target network.target
+After=local-fs.target network.target
+
+[Service]
+Type=simple
+User=mathoid
+Group=mathoid
+SyslogIdentifier=mathoid
+WorkingDirectory=/srv/mathoid
+ExecStart=/usr/bin/node /srv/mathoid/src/server.js -c /etc/mathoid/config.yaml
+KillMode=process
+Restart=on-success
+Restart=always
+PrivateTmp=true
+StandardOutput=syslog
+
+[Install]
+WantedBy=multi-user.target

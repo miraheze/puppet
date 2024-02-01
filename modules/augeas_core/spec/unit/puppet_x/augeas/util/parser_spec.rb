@@ -92,7 +92,8 @@ describe PuppetX::Augeas::Util::Parser do
     end
 
     it 'allows multi-character unicode hexadecimal character escapes with \\u{...}' do
-      expect(parse_to_array('["\u{7}", "\u{20}", "\u{100}", "\u{2026}", "\u{1F464}", "\u{100000}", "\u{53 74 72 69 6E 67}"]')).to eq(["\a", ' ', "\u{100}", "\u{2026}", "\u{1F464}", "\u{100000}", 'String'])
+      expect(parse_to_array('["\u{7}", "\u{20}", "\u{100}", "\u{2026}", "\u{1F464}", "\u{100000}", "\u{53 74 72 69 6E 67}"]')).to eq(["\a", ' ', "\u{100}", "\u{2026}", "\u{1F464}", "\u{100000}",
+                                                                                                                                      'String'])
     end
   end
 

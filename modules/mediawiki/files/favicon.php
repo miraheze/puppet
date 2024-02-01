@@ -3,7 +3,9 @@
 // Based on the version created by Wikimedia
 
 define( 'MW_NO_SESSION', 1 );
-require_once '/srv/mediawiki/w/includes/WebStart.php';
+
+require_once '/srv/mediawiki/config/initialise/MirahezeFunctions.php';
+require MirahezeFunctions::getMediaWiki( 'includes/WebStart.php' );
 
 use MediaWiki\MediaWikiServices;
 
@@ -31,6 +33,7 @@ function streamFavicon() {
 	$status = $client->execute();
 	if ( !$status->isOK() ) {
 		$favicon = '/favicons/default.ico';
+
 		$url = wfExpandUrl( $favicon, PROTO_CANONICAL );
 		$client = MediaWikiServices::getInstance()
 			->getHttpRequestFactory()

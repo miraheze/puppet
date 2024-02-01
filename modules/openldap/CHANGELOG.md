@@ -1,4 +1,223 @@
-## 2020-02-27 - Release 2.0.0
+# Changelog
+
+All notable changes to this project will be documented in this file.
+Each new release typically also includes the latest modulesync defaults.
+These should not affect the functionality of the module.
+
+## [v7.0.0](https://github.com/voxpupuli/puppet-openldap/tree/v7.0.0) (2023-06-28)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-openldap/compare/v6.1.0...v7.0.0)
+
+**Breaking changes:**
+
+- Drop Puppet 6 support [\#379](https://github.com/voxpupuli/puppet-openldap/pull/379) ([bastelfreak](https://github.com/bastelfreak))
+- Grant access to the specified RootDN if one is given [\#362](https://github.com/voxpupuli/puppet-openldap/pull/362) ([VictorPavlushin](https://github.com/VictorPavlushin))
+
+**Implemented enhancements:**
+
+- Improve service bootstraping on Debian [\#387](https://github.com/voxpupuli/puppet-openldap/pull/387) ([smortex](https://github.com/smortex))
+- Relax dependencies version requirements [\#385](https://github.com/voxpupuli/puppet-openldap/pull/385) ([smortex](https://github.com/smortex))
+- Allow management of the package versions installed [\#384](https://github.com/voxpupuli/puppet-openldap/pull/384) ([gcoxmoz](https://github.com/gcoxmoz))
+- Add olcMultiProvider as a database config parameter [\#383](https://github.com/voxpupuli/puppet-openldap/pull/383) ([gcoxmoz](https://github.com/gcoxmoz))
+- Add support for Puppet 8 [\#381](https://github.com/voxpupuli/puppet-openldap/pull/381) ([smortex](https://github.com/smortex))
+
+**Closed issues:**
+
+- Version 6.1.0 breaks disabling nonexistent services [\#386](https://github.com/voxpupuli/puppet-openldap/issues/386)
+
+**Merged pull requests:**
+
+- Remove unage of legacy stdlib function [\#380](https://github.com/voxpupuli/puppet-openldap/pull/380) ([smortex](https://github.com/smortex))
+
+## [v6.1.0](https://github.com/voxpupuli/puppet-openldap/tree/v6.1.0) (2023-04-13)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-openldap/compare/v6.0.1...v6.1.0)
+
+**Implemented enhancements:**
+
+- Support Ubuntu 22.04 [\#376](https://github.com/voxpupuli/puppet-openldap/pull/376) ([chrisongthb](https://github.com/chrisongthb))
+- Add EL9 support [\#375](https://github.com/voxpupuli/puppet-openldap/pull/375) ([treydock](https://github.com/treydock))
+- Add EL8 support [\#373](https://github.com/voxpupuli/puppet-openldap/pull/373) ([treydock](https://github.com/treydock))
+- Allow to configure more overlays [\#370](https://github.com/voxpupuli/puppet-openldap/pull/370) ([smortex](https://github.com/smortex))
+
+**Closed issues:**
+
+- dc=my-domain,dc=com entry in Database [\#366](https://github.com/voxpupuli/puppet-openldap/issues/366)
+
+**Merged pull requests:**
+
+- Rework default database lifecycle on Debian [\#372](https://github.com/voxpupuli/puppet-openldap/pull/372) ([smortex](https://github.com/smortex))
+- Update tests to remove skips [\#371](https://github.com/voxpupuli/puppet-openldap/pull/371) ([smortex](https://github.com/smortex))
+
+## [v6.0.1](https://github.com/voxpupuli/puppet-openldap/tree/v6.0.1) (2023-03-01)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-openldap/compare/v6.0.0...v6.0.1)
+
+**Fixed bugs:**
+
+- Rename former herculesteam dependencies to reflect transfer to Vox [\#367](https://github.com/voxpupuli/puppet-openldap/pull/367) ([gcoxmoz](https://github.com/gcoxmoz))
+
+**Merged pull requests:**
+
+- Document `openldap::server::dbindex` in the README [\#365](https://github.com/voxpupuli/puppet-openldap/pull/365) ([phaedriel](https://github.com/phaedriel))
+- Remove legacy facts from hiera configuration [\#364](https://github.com/voxpupuli/puppet-openldap/pull/364) ([smortex](https://github.com/smortex))
+
+## [v6.0.0](https://github.com/voxpupuli/puppet-openldap/tree/v6.0.0) (2022-11-22)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-openldap/compare/v5.0.1...v6.0.0)
+
+**Breaking changes:**
+
+- Update FreeBSD default version for OpenLDAP [\#356](https://github.com/voxpupuli/puppet-openldap/pull/356) ([smortex](https://github.com/smortex))
+
+**Implemented enhancements:**
+
+- Add Support for lastbind  [\#355](https://github.com/voxpupuli/puppet-openldap/pull/355) ([section1](https://github.com/section1))
+
+**Fixed bugs:**
+
+- replica chaining to support ldap backend suffix [\#354](https://github.com/voxpupuli/puppet-openldap/pull/354) ([gotvach](https://github.com/gotvach))
+- Return integers for openldap\_database olcSecurity [\#353](https://github.com/voxpupuli/puppet-openldap/pull/353) ([gcoxmoz](https://github.com/gcoxmoz))
+
+**Closed issues:**
+
+- Data type enforcement for openldap\_database security is not idempotent [\#360](https://github.com/voxpupuli/puppet-openldap/issues/360)
+
+## [v5.0.1](https://github.com/voxpupuli/puppet-openldap/tree/v5.0.1) (2022-02-02)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-openldap/compare/v5.0.0...v5.0.1)
+
+**Fixed bugs:**
+
+- Fix `$openldap::server::database::dboptions` data type [\#350](https://github.com/voxpupuli/puppet-openldap/pull/350) ([smortex](https://github.com/smortex))
+
+## [v5.0.0](https://github.com/voxpupuli/puppet-openldap/tree/v5.0.0) (2022-01-25)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-openldap/compare/v4.0.0...v5.0.0)
+
+**Breaking changes:**
+
+- Drop support for FreeBSD 11 \(EOL\) [\#331](https://github.com/voxpupuli/puppet-openldap/pull/331) ([smortex](https://github.com/smortex))
+- Be more strict with access resource titles / ACL syntax [\#324](https://github.com/voxpupuli/puppet-openldap/pull/324) ([smortex](https://github.com/smortex))
+
+**Fixed bugs:**
+
+- Fix `$openldap::server::database::dboptions` data type [\#348](https://github.com/voxpupuli/puppet-openldap/pull/348) ([smortex](https://github.com/smortex))
+- Fix `$openldap::server::database::security` data type [\#347](https://github.com/voxpupuli/puppet-openldap/pull/347) ([smortex](https://github.com/smortex))
+- Fix `$openldap::server::database::limits` data type [\#346](https://github.com/voxpupuli/puppet-openldap/pull/346) ([Donatien26](https://github.com/Donatien26))
+- Fix FreeBSD default database directory [\#342](https://github.com/voxpupuli/puppet-openldap/pull/342) ([smortex](https://github.com/smortex))
+- Fix FreeBSD slapd.d bootstrapping [\#341](https://github.com/voxpupuli/puppet-openldap/pull/341) ([smortex](https://github.com/smortex))
+- Fix FreeBSD default value for ldapi\_ifs [\#340](https://github.com/voxpupuli/puppet-openldap/pull/340) ([smortex](https://github.com/smortex))
+- Fix provider for `cn=config` bootstrap on FreeBSD [\#339](https://github.com/voxpupuli/puppet-openldap/pull/339) ([smortex](https://github.com/smortex))
+- Fix `$openldap::server::database::mirrormode` data type [\#335](https://github.com/voxpupuli/puppet-openldap/pull/335) ([smortex](https://github.com/smortex))
+
+**Closed issues:**
+
+- Wrong data type for `$openldap::server::database::limits` [\#345](https://github.com/voxpupuli/puppet-openldap/issues/345)
+- Unable to configure openldap on FreeBSD 13.0-RELEASE [\#338](https://github.com/voxpupuli/puppet-openldap/issues/338)
+- `$openldap::server::database::mirrormode` does not enable olcMirrorMode [\#333](https://github.com/voxpupuli/puppet-openldap/issues/333)
+- `undefined method 'flatten' for nil:NilClass` in openldap\_access provider [\#294](https://github.com/voxpupuli/puppet-openldap/issues/294)
+- Documentation for frontend acl is incorrect [\#282](https://github.com/voxpupuli/puppet-openldap/issues/282)
+
+**Merged pull requests:**
+
+- Fix suffix of frontend database in README [\#336](https://github.com/voxpupuli/puppet-openldap/pull/336) ([smortex](https://github.com/smortex))
+- Simplify some code duplication [\#332](https://github.com/voxpupuli/puppet-openldap/pull/332) ([smortex](https://github.com/smortex))
+
+## [v4.0.0](https://github.com/voxpupuli/puppet-openldap/tree/v4.0.0) (2021-09-27)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-openldap/compare/v3.1.0...v4.0.0)
+
+**Breaking changes:**
+
+- Drop support for openldap\_access' islast parameter [\#327](https://github.com/voxpupuli/puppet-openldap/pull/327) ([smortex](https://github.com/smortex))
+- Drop support of Debian 8, 9 and Ubuntu 16.04 \(EOL\) [\#313](https://github.com/voxpupuli/puppet-openldap/pull/313) ([smortex](https://github.com/smortex))
+- Acceptance tests for CentOS 7 , remove RHEL6 [\#309](https://github.com/voxpupuli/puppet-openldap/pull/309) ([treydock](https://github.com/treydock))
+
+**Implemented enhancements:**
+
+- Include missing class instead of raising an error [\#322](https://github.com/voxpupuli/puppet-openldap/pull/322) ([smortex](https://github.com/smortex))
+- Update FreeBSD package names [\#321](https://github.com/voxpupuli/puppet-openldap/pull/321) ([smortex](https://github.com/smortex))
+- Add support for Debian 11 [\#314](https://github.com/voxpupuli/puppet-openldap/pull/314) ([smortex](https://github.com/smortex))
+
+**Fixed bugs:**
+
+- Fix $openldap::server::database data type [\#329](https://github.com/voxpupuli/puppet-openldap/pull/329) ([smortex](https://github.com/smortex))
+- Fix openldap\_access's what parameter [\#326](https://github.com/voxpupuli/puppet-openldap/pull/326) ([smortex](https://github.com/smortex))
+- Fix data type for openldap::server::overlay::options [\#320](https://github.com/voxpupuli/puppet-openldap/pull/320) ([smortex](https://github.com/smortex))
+- Fix data type for $openldap::server::globalconf::value [\#318](https://github.com/voxpupuli/puppet-openldap/pull/318) ([smortex](https://github.com/smortex))
+- Fix purging puppet resource openldap\_access [\#315](https://github.com/voxpupuli/puppet-openldap/pull/315) ([smortex](https://github.com/smortex))
+- Fix type of $openldap::server::access\_wrapper::acl [\#312](https://github.com/voxpupuli/puppet-openldap/pull/312) ([smortex](https://github.com/smortex))
+
+**Closed issues:**
+
+- openldap::server::database initdb data type should support value false [\#328](https://github.com/voxpupuli/puppet-openldap/issues/328)
+- openldap::server::overlay does not allow tuples as options [\#319](https://github.com/voxpupuli/puppet-openldap/issues/319)
+- Regression in treatment of Globalconf [\#317](https://github.com/voxpupuli/puppet-openldap/issues/317)
+- Purging openldap\_access is highly unreliable. [\#280](https://github.com/voxpupuli/puppet-openldap/issues/280)
+
+## [v3.1.0](https://github.com/voxpupuli/puppet-openldap/tree/v3.1.0) (2021-08-28)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-openldap/compare/v3.0.0...v3.1.0)
+
+**Implemented enhancements:**
+
+- Improve initdb for openldap\_database type [\#209](https://github.com/voxpupuli/puppet-openldap/pull/209) ([treydock](https://github.com/treydock))
+
+**Fixed bugs:**
+
+- Delete database dc=my-domain,dc=com on RedHat systems [\#211](https://github.com/voxpupuli/puppet-openldap/pull/211) ([treydock](https://github.com/treydock))
+
+**Closed issues:**
+
+- Modernizing the module [\#270](https://github.com/voxpupuli/puppet-openldap/issues/270)
+
+**Merged pull requests:**
+
+- Allow up-to-date dependencies [\#310](https://github.com/voxpupuli/puppet-openldap/pull/310) ([smortex](https://github.com/smortex))
+
+## [v3.0.0](https://github.com/voxpupuli/puppet-openldap/tree/v3.0.0) (2021-08-11)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-openldap/compare/2.0.0...v3.0.0)
+
+**Breaking changes:**
+
+- Drop support for Ubuntu 14.04 [\#304](https://github.com/voxpupuli/puppet-openldap/pull/304) ([smortex](https://github.com/smortex))
+- Drop support for the augeas provider [\#291](https://github.com/voxpupuli/puppet-openldap/pull/291) ([raphink](https://github.com/raphink))
+
+**Implemented enhancements:**
+
+- Add support for Ubuntu 20.04 [\#303](https://github.com/voxpupuli/puppet-openldap/pull/303) ([smortex](https://github.com/smortex))
+- Add support for Debian 10 [\#302](https://github.com/voxpupuli/puppet-openldap/pull/302) ([smortex](https://github.com/smortex))
+- Add support for FreeBSD 13 [\#301](https://github.com/voxpupuli/puppet-openldap/pull/301) ([smortex](https://github.com/smortex))
+- Add data types for all parameters [\#300](https://github.com/voxpupuli/puppet-openldap/pull/300) ([smortex](https://github.com/smortex))
+- Remove slapd\_sockets shellvar when empty [\#299](https://github.com/voxpupuli/puppet-openldap/pull/299) ([smortex](https://github.com/smortex))
+- Switch to regular OpenLDAP packages on FreeBSD [\#296](https://github.com/voxpupuli/puppet-openldap/pull/296) ([smortex](https://github.com/smortex))
+- Move from params.pp to Hiera data [\#287](https://github.com/voxpupuli/puppet-openldap/pull/287) ([smortex](https://github.com/smortex))
+- Bootstrap cn=config database on FreeBSD [\#278](https://github.com/voxpupuli/puppet-openldap/pull/278) ([HerveMARTIN](https://github.com/HerveMARTIN))
+- Add support for Suse and SLES [\#275](https://github.com/voxpupuli/puppet-openldap/pull/275) ([SimonHoenscheid](https://github.com/SimonHoenscheid))
+- Remove dead code [\#269](https://github.com/voxpupuli/puppet-openldap/pull/269) ([smortex](https://github.com/smortex))
+- Add support for FreeBSD [\#267](https://github.com/voxpupuli/puppet-openldap/pull/267) ([smortex](https://github.com/smortex))
+- Catch olcAccess regex parse failures [\#264](https://github.com/voxpupuli/puppet-openldap/pull/264) ([spakka](https://github.com/spakka))
+
+**Fixed bugs:**
+
+- Fix starting LDAP on Suse [\#298](https://github.com/voxpupuli/puppet-openldap/pull/298) ([smortex](https://github.com/smortex))
+- Fix warning about malformed YAML file [\#285](https://github.com/voxpupuli/puppet-openldap/pull/285) ([smortex](https://github.com/smortex))
+- Unbreak with Puppet 7.4.0 / 6.21.0 on Debian 10 [\#284](https://github.com/voxpupuli/puppet-openldap/pull/284) ([smortex](https://github.com/smortex))
+
+**Closed issues:**
+
+- Warning on startup on FreeBSD with slapd\_sockets shellvar [\#277](https://github.com/voxpupuli/puppet-openldap/issues/277)
+- Multiple providers alerts [\#156](https://github.com/voxpupuli/puppet-openldap/issues/156)
+
+**Merged pull requests:**
+
+- Update badges in README.md [\#308](https://github.com/voxpupuli/puppet-openldap/pull/308) ([root-expert](https://github.com/root-expert))
+- puppetlabs/stdlib: allow 7.x [\#305](https://github.com/voxpupuli/puppet-openldap/pull/305) ([smortex](https://github.com/smortex))
+- Add management of TLS\_MOZNSS\_COMPATIBILITY to ldap.conf [\#272](https://github.com/voxpupuli/puppet-openldap/pull/272) ([gcoxmoz](https://github.com/gcoxmoz))
+
+## [2.0.0](https://github.com/voxpupuli/puppet-openldap/tree/2.0.0) (2020-03-02)
 
 - update dependencies and Puppet version [\#261](https://github.com/camptocamp/puppet-openldap/pull/261) ([Dan33l](https://github.com/Dan33l))
 - declare this module as compatible with ubuntu1804 [\#260](https://github.com/camptocamp/puppet-openldap/pull/260) ([Dan33l](https://github.com/Dan33l))
@@ -139,7 +358,7 @@
 ## 2015-06-19 - Release 1.7.0
 
 - Add `initdb` param to `openldap::server::database` define to allow to not
-initialize database.
+  initialize database.
 
 ## 2015-05-28 - Release 1.6.5
 
@@ -290,3 +509,6 @@ initialize database.
 ## 2014-07-02 Release 0.4.0
 
 - This release add ability to specify ldap* interfaces and thus removes openldap::server::ssl parameter. It also add a new type/provider/define to manage dbindex.
+
+
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*

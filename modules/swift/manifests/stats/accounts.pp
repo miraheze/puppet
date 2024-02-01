@@ -5,7 +5,7 @@ class swift::stats::accounts(
     VMlib::Ensure $ensure = present,
     $statsd_host   = 'localhost',
     $statsd_port   = 9125,
-    $statsd_prefix = "swift.stats",
+    $statsd_prefix = 'swift.stats',
 ) {
     $required_packages = [
         Package['python3-swiftclient'],

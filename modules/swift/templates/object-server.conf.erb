@@ -20,6 +20,7 @@ fallocate_reserve = 1%
 # default is 7 days
 # 6 hours in seconds
 reclaim_age = 21600
+conn_timeout = 1.5
 
 log_statsd_host = localhost
 log_statsd_port = 9125
@@ -62,12 +63,13 @@ ionice_class = IOPRIO_CLASS_BE
 ionice_priority = 5
 
 # Double the default (900 seconds) to give aged filesystems a better chance of completion
-rsync_timeout = 1800
+rsync_timeout = 3600
 
 rsync_module = {replication_ip}::object_{device}
 
 [object-updater]
 concurrency = 1
+conn_timeout = 1.5
 
 [object-auditor]
 files_per_second = 5

@@ -1,32 +1,23 @@
-pkg
-coverage
-.bundle/
-.librarian/
-.tmp/
-modules/
-_site/
-spec/fixtures/manifests
-spec/fixtures/modules
-yardoc/
-.yardoc/
+# Managed by modulesync - DO NOT EDIT
+# https://voxpupuli.org/docs/updating-files-managed-with-modulesync/
 
-## Ruby
-.rvmrc*
-.rbenv*
-.ruby-*
-
-## MAC OS
-.DS_Store
-
-## TEXTMATE
-*.tmproj
-tmtags
-
-## EMACS
-*~
-\#*
-.\#*
-
-## VIM
-*.swp
-tags
+/pkg/
+/Gemfile.lock
+/Gemfile.local
+/vendor/
+/.vendor/
+/spec/fixtures/manifests/
+/spec/fixtures/modules/
+/.vagrant/
+/.bundle/
+/.ruby-version
+/coverage/
+/log/
+/.idea/
+/.dependencies/
+/.librarian/
+/Puppetfile.lock
+*.iml
+.*.sw?
+/.yardoc/
+/Guardfile

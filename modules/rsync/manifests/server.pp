@@ -24,7 +24,7 @@ class rsync::server(
     Optional[Stdlib::Unixpath] $log_file          = undef,
     Optional[String]           $custom_command    = undef,
 ) {
-    ensure_packages(['rsync'])
+    stdlib::ensure_packages(['rsync'])
 
     $rsync_fragments = '/etc/rsync.d'
     $rsync_conf      = '/etc/rsyncd.conf'

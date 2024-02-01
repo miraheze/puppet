@@ -1,17 +1,24 @@
 # class: matomo
 class matomo (
     String $ldap_password  = lookup('passwords::matomo::ldap_password'),
-    String $matomo_db_host = 'db112.miraheze.org',
+    String $matomo_db_host = 'db182-private.wikitide.net',
 ) {
-    ensure_packages('composer')
+    stdlib::ensure_packages('composer')
 
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '4.14.2', # Current stable
+        branch             => '5.0.1', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
+    }
+
+    file { '/srv/matomo/misc/GeoLite2-Country.mmdb':
+        ensure  => present,
+        source  => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
+        mode    => '0444',
+        require => Git::Clone['matomo'],
     }
 
     exec { 'matomo_composer':
@@ -56,7 +63,7 @@ class matomo (
         'upload_max_filesize' => '100M',
     }
 
-    $php_version = lookup('php::php_version', {'default_value' => '7.4'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
     class { '::php':
@@ -65,7 +72,7 @@ class matomo (
         sapis          => ['cli', 'fpm'],
         config_by_sapi => {
             'cli' => $config_cli,
-            'fpm' => merge($config_cli, $config_fpm),
+            'fpm' => $config_cli + $config_fpm,
         },
     }
 
@@ -153,9 +160,8 @@ class matomo (
         monitor => true,
     }
 
-    $salt = lookup('passwords::piwik::salt')
-    $password = lookup('passwords::db::piwik')
-    $noreply_password = lookup('passwords::mail::noreply')
+    $salt = lookup('passwords::matomo::salt')
+    $password = lookup('passwords::db::matomo')
 
     file { '/srv/matomo/config/config.ini.php':
         ensure  => present,
@@ -180,78 +186,53 @@ class matomo (
 
     # Create concurrent archivers
     # https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/
-    $concurrentHash = {
+    $concurrent_hash = {
         '1' => '*-*-* 00/8:00:00',
         '2' => '*-*-* 00/8:01:00',
         '3' => '*-*-* 00/8:02:00',
-        '4' => '*-*-* 00/8:03:00',
-        '5' => '*-*-* 00/8:04:00'
     }
-    $concurrentHash.each | String $concurrent, String $interval | {
+    $concurrent_hash.each | String $concurrent, String $interval | {
         systemd::timer::job { "matomo-archiver-${concurrent}":
-            description               => "Runs the Matomo's archive process.",
-            command                   => "/bin/bash -c '${archiver_command}'",
-            interval                  => {
+            description       => "Runs the Matomo's archive process.",
+            command           => "/bin/bash -c '${archiver_command}'",
+            interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => $interval,
             },
-            logfile_basedir           => '/var/log/matomo',
-            logfile_name              => "matomo-archive-${concurrent}.log",
-            syslog_identifier         => "matomo-archiver-${concurrent}",
-            user                      => 'www-data',
+            logfile_basedir   => '/var/log/matomo',
+            logfile_name      => "matomo-archive-${concurrent}.log",
+            syslog_identifier => "matomo-archiver-${concurrent}",
+            user              => 'www-data',
         }
     }
 
     ['last2', 'january'].each | $key | {
         $optimize_command = "/usr/bin/php /srv/matomo/console database:optimize-archive-tables ${key}"
         systemd::timer::job { "matomo-optimize-${key}":
-            description               => "Runs the Matomo's Optimize ${key} process.",
-            command                   => "/bin/bash -c '${optimize_command}'",
-            interval                  => {
+            description       => "Runs the Matomo's Optimize ${key} process.",
+            command           => "/bin/bash -c '${optimize_command}'",
+            interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => 'monthly',
             },
-            logfile_basedir           => '/var/log/matomo',
-            logfile_name              => "matomo-optimize-${key}.log",
-            syslog_identifier         => "matomo-optimize-${key}",
-            user                      => 'www-data',
+            logfile_basedir   => '/var/log/matomo',
+            logfile_name      => "matomo-optimize-${key}.log",
+            syslog_identifier => "matomo-optimize-${key}",
+            user              => 'www-data',
         }
     }
 
-    file { '/usr/local/bin/fileLockScript.sh':
-        ensure => absent,
-        mode   => '0755',
-        owner  => 'www-data',
-        group  => 'www-data',
-    }
-
-    file { '/usr/local/bin/runMatomoArchive.sh':
-        ensure => absent,
-        mode   => '0755',
-        source => 'puppet:///modules/matomo/runMatomoArchive.sh',
-        owner  => 'www-data',
-        group  => 'www-data',
-    }
-
-    file { '/usr/local/bin/optimizeMatomoTables.sh':
-        ensure => present,
-        mode   => '0755',
-        source => 'puppet:///modules/matomo/optimizeMatomoTables.sh',
-        owner  => 'www-data',
-        group  => 'www-data',
-    }
-
-    cron { 'archive_matomo':
-        ensure  => absent,
-        command => '/usr/local/bin/runMatomoArchive.sh',
-        user    => 'www-data',
-        special => 'daily',
-    }
-    
-    cron { 'optimize_matomo_tables':
-        ensure  => absent,
-        command => '/usr/local/bin/optimizeMatomoTables.sh',
-        user    => 'www-data',
-        special => 'monthly',
+    $queuedtracking_command = '/usr/bin/php /srv/matomo/console queuedtracking:process'
+    systemd::timer::job { 'matomo-queuedtracking':
+        description       => "Runs the Matomo's Plugin QueuedTracking process.",
+        command           => "/bin/bash -c '${queuedtracking_command}'",
+        interval          => {
+            'start'    => 'OnCalendar',
+            'interval' => '*-*-* *:*:00',
+        },
+        logfile_basedir   => '/var/log/matomo',
+        logfile_name      => 'matomo-queuedtracking.log',
+        syslog_identifier => 'matomo-queuedtracking',
+        user              => 'www-data',
     }
 }

@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe 'pw_hash' do
-  it { is_expected.not_to eq(nil) }
+  it { is_expected.not_to be_nil }
 
   context 'when there are less than 3 arguments' do
     it { is_expected.to run.with_params.and_raise_error(ArgumentError, %r{wrong number of arguments}i) }
@@ -58,6 +58,17 @@ describe 'pw_hash' do
     it { is_expected.to run.with_params('password', 'bcrypt-y', '1234').and_raise_error(ArgumentError, %r{characters in salt must match}) }
   end
 
+  context 'when the third argument has an invalid strength parameter for bcrypt' do
+    it { is_expected.to run.with_params('password', 'bcrypt', '03$salt.salt.salt.salt.sa').and_raise_error(ArgumentError, %r{characters in salt must match}) }
+    it { is_expected.to run.with_params('password', 'bcrypt-a', '03$salt.salt.salt.salt.sa').and_raise_error(ArgumentError, %r{characters in salt must match}) }
+    it { is_expected.to run.with_params('password', 'bcrypt-x', '03$salt.salt.salt.salt.sa').and_raise_error(ArgumentError, %r{characters in salt must match}) }
+    it { is_expected.to run.with_params('password', 'bcrypt-y', '03$salt.salt.salt.salt.sa').and_raise_error(ArgumentError, %r{characters in salt must match}) }
+    it { is_expected.to run.with_params('password', 'bcrypt', '32$salt.salt.salt.salt.sa').and_raise_error(ArgumentError, %r{characters in salt must match}) }
+    it { is_expected.to run.with_params('password', 'bcrypt-a', '32$salt.salt.salt.salt.sa').and_raise_error(ArgumentError, %r{characters in salt must match}) }
+    it { is_expected.to run.with_params('password', 'bcrypt-x', '32$salt.salt.salt.salt.sa').and_raise_error(ArgumentError, %r{characters in salt must match}) }
+    it { is_expected.to run.with_params('password', 'bcrypt-y', '32$salt.salt.salt.salt.sa').and_raise_error(ArgumentError, %r{characters in salt must match}) }
+  end
+
   context 'when running on a platform with a weak String#crypt implementation' do
     before(:each) { allow_any_instance_of(String).to receive(:crypt).with('$1$1').and_return('a bad hash') } # rubocop:disable RSpec/AnyInstance : Unable to find a viable replacement
 
@@ -90,10 +101,12 @@ describe 'pw_hash' do
     if Puppet::Util::Package.versioncmp(Puppet.version, '4.7.0') >= 0
       describe 'when arguments are sensitive' do
         it { is_expected.to run.with_params(Puppet::Pops::Types::PSensitiveType::Sensitive.new('password'), 'md5', 'salt').and_return('$1$salt$qJH7.N4xYta3aEG/dfqo/0') }
+
         it {
-          is_expected.to run.with_params(Puppet::Pops::Types::PSensitiveType::Sensitive.new('password'), 'md5', Puppet::Pops::Types::PSensitiveType::Sensitive.new('salt'))
-                            .and_return('$1$salt$qJH7.N4xYta3aEG/dfqo/0')
+          expect(subject).to run.with_params(Puppet::Pops::Types::PSensitiveType::Sensitive.new('password'), 'md5', Puppet::Pops::Types::PSensitiveType::Sensitive.new('salt'))
+                                .and_return('$1$salt$qJH7.N4xYta3aEG/dfqo/0')
         }
+
         it { is_expected.to run.with_params('password', 'md5', Puppet::Pops::Types::PSensitiveType::Sensitive.new('salt')).and_return('$1$salt$qJH7.N4xYta3aEG/dfqo/0') }
       end
     end

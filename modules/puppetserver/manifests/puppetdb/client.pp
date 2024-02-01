@@ -4,7 +4,7 @@
 #
 # === Parameters
 #
-# [*puppetdb_hostname*] The hostname for the puppetdb server, eg puppet141.miraheze.org
+# [*puppetdb_hostname*] The hostname for the puppetdb server, eg puppet181.wikitide.net
 #
 class puppetserver::puppetdb::client(
     String $puppetdb_hostname,
@@ -35,19 +35,5 @@ class puppetserver::puppetdb::client(
     # and catalog compilation to fail with https://tickets.puppetlabs.com/browse/PDB-949
     file { '/opt/puppetlabs/puppet/facts':
         ensure => directory,
-    }
-
-    class { 'puppetdb': }
-
-    file { '/etc/puppetlabs/puppetdb/logback.xml':
-        ensure => present,
-        source => 'puppet:///modules/puppetserver/puppetdb_logback.xml',
-        notify => Service['puppetdb'],
-    }
-
-    rsyslog::input::file { 'puppetdb':
-        path              => '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
-        syslog_tag_prefix => '',
-        use_udp           => true,
     }
 }

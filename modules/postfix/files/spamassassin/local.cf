@@ -1,5 +1,0 @@
-# Score threshold - 5.0 by default
-required_score 5.0
-
-# Use Bayes Rules
-use_bayes_rules 1

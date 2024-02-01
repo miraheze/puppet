@@ -1,4 +1,4 @@
-# vmflib
+# vmlib
 
 Custom Puppet functions and types that help you get things done.
 
@@ -112,29 +112,6 @@ will produce:
     [server]
     port = 80
 
-
-## ordered_json
-
-`ordered_json( hash $data [, hash $... ] )`
-
-Serialize a hash into JSON with lexicographically sorted keys.
-
-Because the order of keys in Ruby 1.8 hashes is undefined, 'to_pson'
-is not idempotent: i.e., the serialized form of the same hash object
-can vary from one invocation to the next. This causes problems
-whenever a JSON-serialized hash is included in a file template,
-because the variations in key order are picked up as file updates by
-Puppet, causing Puppet to replace the file and refresh dependent
-resources on every run.
-
-### Examples
-
-    # Render a Puppet hash as a configuration file:
-    $options = { 'useGraphite' => true, 'minVal' => '0.1' }
-    file { '/etc/kibana/config.json':
-        content => ordered_json($options),
-    }
-
 ## os_version
 
 `os_version( string $version_predicate )`
@@ -189,31 +166,6 @@ predicate syntax.
 
     # Fail unless Trusty or newer
     requires_os('ubuntu >= trusty')
-
-
-## ssl_ciphersuite
-
-`ssl_ciphersuite( string $servercode, string $encryption_type, boolean $hsts )`
-
-Outputs the ssl configuration directives for use with either Nginx
-or Apache using our selection of ciphers and SSL options.
-
-Takes three arguments:
-
-- The server to configure for: 'apache' or 'nginx'
-- The compatibility mode,indicating the degree of compatibility we
-  want to retain with older browsers (basically, IE6, IE7 and
-  Android prior to 3.0)
-- hsts - optional boolean, true emits our standard public HSTS
-
-Whenever called, this function will output a list of strings that
-can be safely used in your configuration file as the ssl
-configuration part.
-
-### Examples
-
-    ssl_ciphersuite('apache', 'compat', true)
-    ssl_ciphersuite('nginx', 'strong')
 
 
 ## validate_ensure

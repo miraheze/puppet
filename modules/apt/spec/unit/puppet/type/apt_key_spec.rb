@@ -24,19 +24,19 @@ describe Puppet::Type.type(:apt_key) do
     end
 
     it 'source is not set' do
-      expect(resource[:source]).to eq nil
+      expect(resource[:source]).to be_nil
     end
 
     it 'content is not set' do
-      expect(resource[:content]).to eq nil
+      expect(resource[:content]).to be_nil
     end
 
     it 'refresh is not set' do
-      expect(resource[:refresh]).to eq nil
+      expect(resource[:refresh]).to be_nil
     end
 
     it 'weak_ssl is not set' do
-      expect(resource[:weak_ssl]).to eq nil
+      expect(resource[:weak_ssl]).to be_nil
     end
   end
 
@@ -164,10 +164,10 @@ describe Puppet::Type.type(:apt_key) do
 
     it 'raises an error if refresh => true and ensure => absent' do
       expect {
-        Puppet::Type.type(:apt_key).new(id:       'EF8D349F',
-                                        source:   'http://apt.puppetlabs.com/pubkey.gpg',
-                                        ensure:   :absent,
-                                        refresh:  :true)
+        Puppet::Type.type(:apt_key).new(id: 'EF8D349F',
+                                        source: 'http://apt.puppetlabs.com/pubkey.gpg',
+                                        ensure: :absent,
+                                        refresh: true)
       }.to raise_error(%r{ensure => absent and refresh => true are mutually exclusive})
     end
 

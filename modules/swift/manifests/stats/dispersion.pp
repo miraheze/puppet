@@ -4,7 +4,7 @@ class swift::stats::dispersion(
     Boolean $storage_policies = true,
     $statsd_host   = 'localhost',
     $statsd_port   = 9125,
-    $statsd_prefix = "swift.dispersion",
+    $statsd_prefix = 'swift.dispersion',
 ) {
     $required_packages = [
         Package['python3-swiftclient'],

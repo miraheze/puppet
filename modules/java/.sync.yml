@@ -1,45 +1,28 @@
 ---
 ".gitlab-ci.yml":
   delete: true
-".travis.yml":
-  global_env: 
-    - HONEYCOMB_WRITEKEY="7f3c63a70eecc61d635917de46bea4e6",HONEYCOMB_DATASET="litmus tests"
-  deploy_to_forge:
-    enabled: false
-  branches:
-  - release
-  use_litmus: true
-  litmus:
-    provision_list:
-    - ---travis_el
-    - travis_deb
-    - travis_el6
-    - travis_el7
-    - travis_el8
-    complex:
-    - collection:
-        puppet_collection:
-        - puppet6
-        provision_list:
-        - travis_ub_6
-    - collection:
-        puppet_collection:
-        - puppet5
-        provision_list:
-        - travis_ub_5
-  simplecov: true
-  notifications:
-    slack:
-      secure: Wf7Wz3KC0G9ngPiDcOIpSqcCfdvwKQqZdNH/z3GMcj/OipMAdyFSAVnBvikIl7L1c0LMU9ATEpub+jYzViT7RZywaNyer6SRAfs6MIgAYo4xxF/mOnDHAxXeUYAsBXXL4sS3NX2XWMPa9ZWUeuUQKth8O4STWgAX298QZLyYx5k=
 appveyor.yml:
   delete: true
+
 Gemfile:
   optional:
     ":development":
     - gem: github_changelog_generator
-      git: https://github.com/skywinder/github-changelog-generator
-      ref: 20ee04ba1234e9e83eb2ffb5056e23d641c7a018
-      condition: Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')
+      version: '= 1.15.2'
 spec/spec_helper.rb:
   mock_with: ":rspec"
   coverage_report: true
+.gitpod.Dockerfile:
+  unmanaged: false
+.gitpod.yml:
+  unmanaged: false
+.github/workflows/auto_release.yml:
+  unmanaged: false
+.github/workflows/ci.yml:
+  unmanaged: false
+.github/workflows/nightly.yml:
+  unmanaged: false
+.github/workflows/release.yml:
+  unmanaged: false
+.travis.yml:
+  delete: true

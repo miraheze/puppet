@@ -40,7 +40,7 @@ class nutcracker(
     Integer[0,11]    $verbosity = 4,
 ) {
 
-    ensure_packages(['nutcracker'])
+    stdlib::ensure_packages(['nutcracker'])
 
     file {
         default:

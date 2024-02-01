@@ -4,7 +4,7 @@
 #
 # === Parameters
 #
-# [*db_rw_host*] The read, write db hostname, eg db4.miraheze.org.
+# [*db_rw_host*] The read, write db hostname.
 #
 # [*jvm_opts*] Puppetdb java options, eg configuring heap.
 #
@@ -16,13 +16,11 @@
 #
 # [*bind_ip*] The ip to bind to puppetdb, eg 0.0.0.0 which means any ip.
 #
-# [*db_ro_host*] The read only db hostname, eg db4.miraheze.org.
+# [*db_ro_host*] The read only db hostname.
 #
 # [*db_password*] The db password for the postgresql db.
 #
 # [*db_ssl*] Weather to enable ssl connectivity to the postgresql db.
-#
-# [*puppet_major_version*] Which puppet version to use, eg 4.
 #
 class puppetdb(
     String $db_rw_host = lookup('puppetdb::db_rw_host', {'default_value' => 'localhost'}),
@@ -34,7 +32,6 @@ class puppetdb(
     Optional[String] $db_ro_host = lookup('puppetdb::db_ro_host', {'default_value' => undef}),
     Optional[String] $db_password = lookup('puppetdb::db_password', {'default_value' => undef}),
     Boolean $db_ssl = lookup('puppetdb::db_ssl', {'default_value' => true}),
-    Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 6})
 ) {
 
     package { 'default-jdk':
@@ -53,6 +50,18 @@ class puppetdb(
         require => Apt::Source['puppetlabs'],
     }
 
+    file { '/etc/puppetlabs/puppetdb/logback.xml':
+        ensure => present,
+        source => 'puppet:///modules/puppetdb/puppetdb_logback.xml',
+        notify => Service['puppetdb'],
+    }
+
+    file { '/usr/bin/puppetdb':
+        ensure  => link,
+        target  => '/opt/puppetlabs/bin/puppetdb',
+        require => Package['puppetdb'],
+    }
+
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
     file { '/etc/puppetdb':
         ensure => link,
@@ -65,7 +74,7 @@ class puppetdb(
         group  => 'puppetdb',
     }
 
-    $jvm_opts = "${puppetdb_jvm_opts} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${::fqdn}:9401:/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml"
+    $jvm_opts = "${puppetdb_jvm_opts} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${facts['networking']['fqdn']}:9401:/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml"
     file { '/etc/default/puppetdb':
         ensure  => present,
         owner   => 'root',
@@ -105,10 +114,10 @@ class puppetdb(
     }
 
     if $perform_gc {
-        $db_settings = merge(
-            $default_db_settings,
-            { 'report-ttl' => '1d', 'gc-interval' => '20' }
-        )
+        $db_settings = $default_db_settings + {
+            'report-ttl' => '1d',
+            'gc-interval' => '20'
+        }
     } else {
         $db_settings = $default_db_settings
     }
@@ -119,10 +128,9 @@ class puppetdb(
 
     #read db settings
     if $db_ro_host {
-        $read_db_settings = merge(
-            $default_db_settings,
-            {'subname' => "//${db_ro_host}:5432/puppetdb${ssl}"}
-        )
+        $read_db_settings = $default_db_settings + {
+            'subname' => "//${db_ro_host}:5432/puppetdb${ssl}"
+        }
         puppetdb::config { 'read-database':
             settings => $read_db_settings,
         }
@@ -149,7 +157,7 @@ class puppetdb(
     }
 
     if $bind_ip {
-        $actual_jetty_settings = merge($jetty_settings, {'ssl-host' => $bind_ip})
+        $actual_jetty_settings = $jetty_settings + {'ssl-host' => $bind_ip}
     } else {
         $actual_jetty_settings = $jetty_settings
     }
@@ -173,26 +181,16 @@ class puppetdb(
         enable => true,
     }
 
+    rsyslog::input::file { 'puppetdb':
+        path              => '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
+        syslog_tag_prefix => '',
+        use_udp           => true,
+    }
+
     monitoring::services { 'puppetdb':
         check_command => 'tcp',
         vars          => {
             tcp_port    => '8081',
         },
-    }
-
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Icinga2]', ['ipaddress', 'ipaddress6'])
-        .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
-    ferm::service { 'icinga access port 8081':
-        proto  => 'tcp',
-        port   => '8081',
-        srange => "(${firewall_rules_str})",
     }
 }

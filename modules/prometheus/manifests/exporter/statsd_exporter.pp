@@ -4,15 +4,15 @@ class prometheus::exporter::statsd_exporter (
 ) {
 
     file { '/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb':
-        ensure  => present,
-        source  => 'puppet:///modules/prometheus/statsd_exporter/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb',
+        ensure => present,
+        source => 'puppet:///modules/prometheus/statsd_exporter/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb',
     }
 
     package { 'prometheus-statsd-exporter':
-        ensure      => installed,
-        provider    => dpkg,
-        source      => '/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb',
-        require     => File['/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb'],
+        ensure   => installed,
+        provider => dpkg,
+        source   => '/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb',
+        require  => File['/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb'],
     }
 
     $basedir = '/etc/prometheus'
@@ -39,7 +39,7 @@ class prometheus::exporter::statsd_exporter (
     }
 
     file { $config:
-        content => to_yaml({'defaults' => $defaults, 'mappings' => $mappings}),
+        content => stdlib::to_yaml({'defaults' => $defaults, 'mappings' => $mappings}),
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
@@ -62,9 +62,15 @@ class prometheus::exporter::statsd_exporter (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Prometheus]', ['ipaddress', 'ipaddress6'])
+        query_facts('Class[Role::Prometheus]', ['networking'])
         .map |$key, $value| {
-            "${value['ipaddress']} ${value['ipaddress6']}"
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
         }
         .flatten()
         .unique()

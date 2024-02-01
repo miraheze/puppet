@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
 describe 'openldap::server' do
@@ -23,8 +25,8 @@ describe 'openldap::server' do
     it 'with cert, key and ca' do
       pp = <<-EOS
         class { 'openldap::server':
-          ssl_key   => "/etc/ldap/ssl/${::fqdn}.key",
-          ssl_cert  => "/etc/ldap/ssl/${::fqdn}.crt",
+          ssl_key   => "/etc/ldap/ssl/${facts['networking']['fqdn']}.key",
+          ssl_cert  => "/etc/ldap/ssl/${facts['networking']['fqdn']}.crt",
           ssl_ca    => '/etc/ldap/ssl/ca.pem',
         }
       EOS
@@ -41,7 +43,6 @@ describe 'openldap::server' do
     end
 
     it 'can connect with ldapsearch using StartTLS' do
-      skip
       ldapsearch('-LLL -x -b dc=example,dc=com -ZZ') do |r|
         expect(r.stdout).to match(%r{dn: dc=example,dc=com})
       end
@@ -53,8 +54,8 @@ describe 'openldap::server' do
       pp = <<-EOS
         class { 'openldap::server':
           ldaps_ifs => ['/'],
-          ssl_key   => "/etc/ldap/ssl/${::fqdn}.key",
-          ssl_cert  => "/etc/ldap/ssl/${::fqdn}.crt",
+          ssl_key   => "/etc/ldap/ssl/${facts['networking']['fqdn']}.key",
+          ssl_cert  => "/etc/ldap/ssl/${facts['networking']['fqdn']}.crt",
           ssl_ca    => '/etc/ldap/ssl/ca.pem',
         }
       EOS
@@ -62,6 +63,7 @@ describe 'openldap::server' do
       idempotent_apply(pp)
     end
 
+    # rubocop:disable RSpec/RepeatedExampleGroupBody
     describe port(389) do
       it { is_expected.to be_listening }
     end
@@ -69,9 +71,9 @@ describe 'openldap::server' do
     describe port(636) do
       it { is_expected.to be_listening }
     end
+    # rubocop:enable RSpec/RepeatedExampleGroupBody
 
     it 'can connect with ldapsearch using ldaps:///' do
-      skip
       ldapsearch('-LLL -x -b dc=example,dc=com -H ldaps:///') do |r|
         expect(r.stdout).to match(%r{dn: dc=example,dc=com})
       end

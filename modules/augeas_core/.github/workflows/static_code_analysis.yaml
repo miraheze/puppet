@@ -12,13 +12,15 @@ jobs:
     name: Run checks
 
     env:
-      ruby_version: 2.5
+      ruby_version: 2.6
       extra_checks: check:symlinks check:git_ignore check:dot_underscore check:test_file
 
-    runs-on: 'ubuntu-18.04'
+    runs-on: 'ubuntu-20.04'
     steps:
       - name: Checkout current PR code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Install ruby version ${{ env.ruby_version }}
         uses: ruby/setup-ruby@v1
@@ -26,7 +28,13 @@ jobs:
           ruby-version: ${{ env.ruby_version }}
 
       - name: Prepare testing environment with bundler
-        run: bundle update --jobs 4 --retry 3
+        run: |
+          git config --global core.longpaths true
+          bundle config set --local without 'release'
+          bundle update --jobs 4 --retry 3
+
+      - name: Run commits check
+        run: bundle exec rake commits
 
       - name: Run rubocop check
         run: bundle exec rake ${{ env.extra_checks }} rubocop

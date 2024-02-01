@@ -13,9 +13,15 @@ class squid {
         require => Package['squid'],
     }
 
+    systemd::unit { 'squid':
+        content  => "[Service]\nLimitNOFILE=32768\n",
+        override => true,
+        restart  => true,
+        require  => File['/etc/squid/squid.conf'],
+    }
     service { 'squid':
         ensure    => 'running',
-        require   => File['/etc/squid/squid.conf'],
+        require   => Systemd::Unit['squid'],
         subscribe => File['/etc/squid/squid.conf'],
     }
 }

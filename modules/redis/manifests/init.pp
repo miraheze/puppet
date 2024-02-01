@@ -49,6 +49,12 @@ class redis (
         values => { 'vm.overcommit_memory' => 1 },
     }
 
+    sysctl::parameters { 'redis increase connections':
+        values => {
+            'net.core.somaxconn' => 16384,
+        }
+    }
+
     systemd::service { 'redis-server':
         ensure  => present,
         content => systemd_template('redis-server'),

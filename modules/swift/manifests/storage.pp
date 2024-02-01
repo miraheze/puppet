@@ -3,7 +3,7 @@ class swift::storage (
     Optional[Integer] $object_server_default_workers = lookup('swift::storage::object_server_default_workers', {'default_value' => undef}),
     Array $swift_devices = lookup('swift::storage::devices')
 ) {
-    ensure_packages(['swift-object'])
+    stdlib::ensure_packages(['swift-object'])
 
     systemd::service { 'rsync':
         ensure   => present,
@@ -46,7 +46,7 @@ class swift::storage (
         rsync::server::module { "object_${device}":
             uid             => 'swift',
             gid             => 'swift',
-            max_connections => 5 * 4,
+            max_connections => Integer(length($swift_devices) * 4),
             path            => '/srv/node/',
             read_only       => 'no',
             lock_file       => "/var/lock/object_${device}.lock",
@@ -115,14 +115,21 @@ class swift::storage (
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
-        source => 'puppet:///modules/swift/devicecheck.cron',
+        source  => 'puppet:///modules/swift/devicecheck.cron',
         require => File['/usr/local/bin/disable_rsync.py'],
     }
 
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
     monitoring::services { 'Swift Object Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $::ipaddress6,
+            tcp_address => $address,
             tcp_port    => '6000',
         },
     }

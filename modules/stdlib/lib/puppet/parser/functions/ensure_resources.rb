@@ -2,9 +2,7 @@
 
 require 'puppet/parser/functions'
 
-Puppet::Parser::Functions.newfunction(:ensure_resources,
-                                      type: :statement,
-                                      doc: <<-DOC,
+Puppet::Parser::Functions.newfunction(:ensure_resources, type: :statement, doc: <<-DOC
   @summary
     Takes a resource type, title (only hash), and a list of attributes that describe a
     resource.
@@ -36,13 +34,15 @@ Puppet::Parser::Functions.newfunction(:ensure_resources,
     Call:
     ensure_resources('user', hiera_hash('userlist'), {'ensure' => 'present'})
 DOC
-                                     ) do |vals|
+) do |vals|
   type, title, params = vals
   raise(ArgumentError, 'Must specify a type') unless type
   raise(ArgumentError, 'Must specify a title') unless title
+
   params ||= {}
 
   raise(Puppet::ParseError, 'ensure_resources(): Requires second argument to be a Hash') unless title.is_a?(Hash)
+
   resource_hash = title.dup
   resources = resource_hash.keys
 

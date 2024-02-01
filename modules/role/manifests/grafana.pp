@@ -1,7 +1,7 @@
 # role: grafana
 class role::grafana {
     motd::role { 'role::grafana':
-        description => 'central Grafana server',
+        description => 'Grafana server',
     }
 
     include ::grafana

@@ -2,48 +2,35 @@
   default_configs:
     Style/SignalException:
       Enabled: false
-    Layout/IndentHeredoc:
-      Enabled: false
-    Metrics/BlockNesting:
-      Enabled: false
-    Metrics/LineLength:
-      Enabled: false
-    Style/AccessorMethodName:
-      Enabled: false
     Style/DoubleNegation:
       Enabled: false
     Style/MultipleComparison:
       Enabled: false
     Style/NumericPredicate:
       Enabled: false
-    Style/PredicateName:
-      Enabled: false
     Style/SignalException:
       Enabled: false
-    Style/VariableName:
+    Layout/HeredocIndentation:
+      Enabled: false
+    Layout/LineLength:
+      Enabled: false
+    Metrics/BlockNesting:
+      Enabled: false
+    Naming/AccessorMethodName:
+      Enabled: false
+    Naming/PredicateName:
+      Enabled: false
+    RSpec/VariableName:
       Enabled: false
 Gemfile:
   optional:
-    ':development':
-      - gem: 'github_changelog_generator'
-        git: 'https://github.com/skywinder/github-changelog-generator'
-        ref: '20ee04ba1234e9e83eb2ffb5056e23d641c7a018'
-        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.2.2')"
-  required:
-    ':system_tests':
-      - gem: 'puppet-module-posix-system-r#{minor_version}'
-        platforms: ruby
-      - gem: 'puppet-module-win-system-r#{minor_version}'
-        platforms:
-          - mswin
-          - mingw
-          - x64_mingw
+    ":development":
       - gem: beaker
-        version: '~> 3.34'
+        version: '~> 4.30'
         from_env: BEAKER_VERSION
       - gem: beaker-abs
         from_env: BEAKER_ABS_VERSION
-        version: '~> 0.5'
+        version: '~> 0.9'
       - gem: beaker-pe
       - gem: beaker-hostgenerator
         from_env: BEAKER_HOSTGENERATOR_VERSION
@@ -51,9 +38,24 @@ Gemfile:
         from_env: BEAKER_RSPEC_VERSION
       - gem: beaker-puppet
         from_env: BEAKER_PUPPET_VERSION
-        version: '~> 0.16'
-    ':development':
-      - gem: puppet-strings
+        version: '~> 1.22'
+      - gem: github_changelog_generator
+        version: '= 1.16.4'
+      - gem: concurrent-ruby
+        version: '= 1.1.10'
+      - gem: async
+        version: '~> 1'
+      - gem: beaker-module_install_helper
+      - gem: beaker-puppet_install_helper
+      - gem: nokogiri
 
-Rakefile:
-  changelog_version_tag_pattern: '%s'
+appveyor.yml:
+  delete: true
+.travis.yml:
+  delete: true
+.github/workflows/auto_release.yml:
+  unmanaged: false
+.github/workflows/release.yml:
+  unmanaged: false
+.gitlab-ci.yml:
+  delete: true

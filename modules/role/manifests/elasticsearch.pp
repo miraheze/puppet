@@ -22,7 +22,7 @@ class role::elasticsearch {
             'cluster.name'                                   => 'miraheze-general',
             'node.master'                                    => $es_master,
             'node.data'                                      => $es_data,
-            'network.host'                                   => $::fqdn,
+            'network.host'                                   => $facts['networking']['fqdn'],
             'xpack.security.enabled'                         => true,
             'xpack.security.http.ssl.enabled'                => true,
             'xpack.security.http.ssl.key'                    => '/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.key',
@@ -63,9 +63,9 @@ class role::elasticsearch {
         }
 
         $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Elasticsearch]', ['ipaddress6'])
+            query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Elasticsearch]", ['networking'])
             .map |$key, $value| {
-                $value['ipaddress6']
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
             }
             .flatten()
             .unique()
@@ -81,15 +81,16 @@ class role::elasticsearch {
     }
 
     $firewall_es_nodes = join(
-        query_facts('Class[Role::Elasticsearch]', ['ipaddress6'])
+        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Elasticsearch]", ['networking'])
         .map |$key, $value| {
-            $value['ipaddress6']
+            "${value['networking']['ip']} ${value['networking']['ip6']}"
         }
         .flatten()
         .unique()
         .sort(),
         ' '
     )
+
     ferm::service { 'elasticsearch data nodes to master':
         proto  => 'tcp',
         port   => '9200',
@@ -103,6 +104,6 @@ class role::elasticsearch {
     }
 
     motd::role { 'role::elasticsearch':
-        description => 'elasticsearch server',
+        description => 'ElasticSearch server',
     }
 }

@@ -12,13 +12,13 @@ describe 'apt::conf', type: :define do
         name: 'Debian',
         release: {
           major: '9',
-          full: '9.0',
+          full: '9.0'
         },
         distro: {
           codename: 'stretch',
-          id: 'Debian',
-        },
-      },
+          id: 'Debian'
+        }
+      }
     }
   end
   let :title do
@@ -29,7 +29,7 @@ describe 'apt::conf', type: :define do
     let :default_params do
       {
         priority: '00',
-        content: "Apt::Install-Recommends 0;\nApt::AutoRemove::InstallRecommends 1;\n",
+        content: "Apt::Install-Recommends 0;\nApt::AutoRemove::InstallRecommends 1;\n"
       }
     end
     let :params do
@@ -41,10 +41,10 @@ describe 'apt::conf', type: :define do
     end
 
     it {
-      is_expected.to contain_file(filename).with('ensure' => 'present',
-                                                 'content'   => %r{Apt::Install-Recommends 0;\nApt::AutoRemove::InstallRecommends 1;},
-                                                 'owner'     => 'root',
-                                                 'group'     => 'root')
+      expect(subject).to contain_file(filename).with('ensure' => 'present',
+                                                     'content' => %r{Apt::Install-Recommends 0;\nApt::AutoRemove::InstallRecommends 1;},
+                                                     'owner' => 'root',
+                                                     'group' => 'root')
     }
 
     context 'with notify_update = true (default)' do
@@ -67,12 +67,12 @@ describe 'apt::conf', type: :define do
   describe 'when creating a preference without content' do
     let :params do
       {
-        priority: '00',
+        priority: '00'
       }
     end
 
     it 'fails' do
-      is_expected.to raise_error(%r{pass in content})
+      expect(subject).to raise_error(%r{pass in content})
     end
   end
 
@@ -80,7 +80,7 @@ describe 'apt::conf', type: :define do
     let :params do
       {
         ensure: 'absent',
-        priority: '00',
+        priority: '00'
       }
     end
 
@@ -89,9 +89,9 @@ describe 'apt::conf', type: :define do
     end
 
     it {
-      is_expected.to contain_file(filename).with('ensure' => 'absent',
-                                                 'owner'     => 'root',
-                                                 'group'     => 'root')
+      expect(subject).to contain_file(filename).with('ensure' => 'absent',
+                                                     'owner' => 'root',
+                                                     'group' => 'root')
     }
   end
 end

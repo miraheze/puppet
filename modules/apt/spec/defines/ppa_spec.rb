@@ -23,12 +23,12 @@ describe 'apt::ppa' do
           name: 'Ubuntu',
           release: {
             major: '18',
-            full: '18.04',
+            full: '18.04'
           },
           distro: {
             codename: 'trusty',
-            id: 'Ubuntu',
-          },
+            id: 'Ubuntu'
+          }
         },
         puppet_vardir: '/opt/puppetlabs/puppet/cache'
       }
@@ -37,8 +37,9 @@ describe 'apt::ppa' do
     let(:title) { 'ppa:needs/substitution' }
 
     it { is_expected.not_to contain_package('python-software-properties') }
+
     it {
-      is_expected.to contain_exec('add-apt-repository-ppa:needs/substitution')
+      expect(subject).to contain_exec('add-apt-repository-ppa:needs/substitution')
         .that_notifies('Class[Apt::Update]')
         .with(*ppa_exec_params('needs', 'substitution'))
     }
@@ -58,13 +59,13 @@ describe 'apt::ppa' do
             name: 'Ubuntu',
             release: {
               major: '18',
-              full: '18.04',
+              full: '18.04'
             },
             distro: {
               codename: 'trusty',
-              id: 'Ubuntu',
-            },
-          },
+              id: 'Ubuntu'
+            }
+          }
         }
       end
 
@@ -78,7 +79,7 @@ describe 'apt::ppa' do
   [
     'ppa:foo!/bar',
     'ppa:foo/bar!',
-    'ppa:foo1.0/bar',
+    'ppa:foo1,0/bar',
     'ppa:foo/bar/foobar',
     '|| ls -la ||',
     '|| touch /tmp/foo.txt ||',
@@ -91,13 +92,13 @@ describe 'apt::ppa' do
             name: 'Ubuntu',
             release: {
               major: '18',
-              full: '18.04',
+              full: '18.04'
             },
             distro: {
               codename: 'trusty',
-              id: 'Ubuntu',
-            },
-          },
+              id: 'Ubuntu'
+            }
+          }
         }
       end
 
@@ -115,21 +116,21 @@ describe 'apt::ppa' do
           name: 'Ubuntu',
           release: {
             major: '15',
-            full: '15.10',
+            full: '15.10'
           },
           distro: {
             codename: 'wily',
-            id: 'Ubuntu',
-          },
+            id: 'Ubuntu'
+          }
         },
-        puppet_vardir: '/opt/puppetlabs/puppet/cache',
+        puppet_vardir: '/opt/puppetlabs/puppet/cache'
       }
     end
 
     let(:title) { 'ppa:user/foo' }
 
     it {
-      is_expected.to contain_exec('add-apt-repository-ppa:user/foo')
+      expect(subject).to contain_exec('add-apt-repository-ppa:user/foo')
         .that_notifies('Class[Apt::Update]')
         .with(*ppa_exec_params('user', 'foo', 'wily'))
     }
@@ -143,7 +144,7 @@ describe 'apt::ppa' do
     let :params do
       {
         package_name: 'software-properties-common',
-        package_manage: true,
+        package_manage: true
       }
     end
 
@@ -154,22 +155,23 @@ describe 'apt::ppa' do
           name: 'Ubuntu',
           release: {
             major: '18',
-            full: '18.04',
+            full: '18.04'
           },
           distro: {
             codename: 'trusty',
-            id: 'Ubuntu',
-          },
+            id: 'Ubuntu'
+          }
         },
-        puppet_vardir: '/opt/puppetlabs/puppet/cache',
+        puppet_vardir: '/opt/puppetlabs/puppet/cache'
       }
     end
 
     let(:title) { 'ppa:needs/substitution' }
 
     it { is_expected.to contain_package('software-properties-common') }
+
     it {
-      is_expected.to contain_exec('add-apt-repository-ppa:needs/substitution')
+      expect(subject).to contain_exec('add-apt-repository-ppa:needs/substitution')
         .that_notifies('Class[Apt::Update]')
         .with(*ppa_exec_params('needs', 'substitution'))
     }
@@ -187,28 +189,29 @@ describe 'apt::ppa' do
           name: 'Ubuntu',
           release: {
             major: '18',
-            full: '18.04',
+            full: '18.04'
           },
           distro: {
             codename: 'trusty',
-            id: 'Ubuntu',
-          },
+            id: 'Ubuntu'
+          }
         },
-        puppet_vardir: '/opt/puppetlabs/puppet/cache',
+        puppet_vardir: '/opt/puppetlabs/puppet/cache'
       }
     end
 
     let :params do
       {
-        package_manage: false,
+        package_manage: false
       }
     end
 
     let(:title) { 'ppa:needs/substitution' }
 
     it { is_expected.not_to contain_package('python-software-properties') }
+
     it {
-      is_expected.to contain_exec('add-apt-repository-ppa:needs/substitution')
+      expect(subject).to contain_exec('add-apt-repository-ppa:needs/substitution')
         .that_notifies('Class[Apt::Update]')
         .with(*ppa_exec_params('needs', 'substitution'))
     }
@@ -228,21 +231,21 @@ describe 'apt::ppa' do
           name: 'Ubuntu',
           release: {
             major: '18',
-            full: '18.04',
+            full: '18.04'
           },
           distro: {
             codename: 'trusty',
-            id: 'Ubuntu',
-          },
+            id: 'Ubuntu'
+          }
         },
-        puppet_vardir: '/opt/puppetlabs/puppet/cache',
+        puppet_vardir: '/opt/puppetlabs/puppet/cache'
       }
     end
 
     let :params do
       {
         package_manage: true,
-        require: 'Apt::Ppa[ppa:user/foo2]',
+        require: 'Apt::Ppa[ppa:user/foo2]'
       }
     end
 
@@ -250,8 +253,9 @@ describe 'apt::ppa' do
 
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to contain_package('software-properties-common') }
+
     it {
-      is_expected.to contain_exec('add-apt-repository-ppa:user/foo')
+      expect(subject).to contain_exec('add-apt-repository-ppa:user/foo')
         .that_notifies('Class[Apt::Update]')
         .with(*ppa_exec_params('user', 'foo'))
     }
@@ -271,28 +275,29 @@ describe 'apt::ppa' do
           name: 'Ubuntu',
           release: {
             major: '18',
-            full: '18.04',
+            full: '18.04'
           },
           distro: {
             codename: 'trusty',
-            id: 'Ubuntu',
-          },
+            id: 'Ubuntu'
+          }
         },
-        puppet_vardir: '/opt/puppetlabs/puppet/cache',
+        puppet_vardir: '/opt/puppetlabs/puppet/cache'
       }
     end
 
     let :params do
       {
-        'package_manage' => true,
+        'package_manage' => true
       }
     end
 
     let(:title) { 'ppa:user/foo' }
 
     it { is_expected.to contain_package('software-properties-common') }
+
     it {
-      is_expected.to contain_exec('add-apt-repository-ppa:user/foo')
+      expect(subject).to contain_exec('add-apt-repository-ppa:user/foo')
         .that_notifies('Class[Apt::Update]')
         .with(*ppa_exec_params('user', 'foo', 'trusty', ['http_proxy=http://localhost:8080']))
     }
@@ -312,28 +317,29 @@ describe 'apt::ppa' do
           name: 'Ubuntu',
           release: {
             major: '18',
-            full: '18.04',
+            full: '18.04'
           },
           distro: {
             codename: 'trusty',
-            id: 'Ubuntu',
-          },
+            id: 'Ubuntu'
+          }
         },
-        puppet_vardir: '/opt/puppetlabs/puppet/cache',
+        puppet_vardir: '/opt/puppetlabs/puppet/cache'
       }
     end
 
     let :params do
       {
-        package_manage: true,
+        package_manage: true
       }
     end
 
     let(:title) { 'ppa:user/foo' }
 
     it { is_expected.to contain_package('software-properties-common') }
+
     it {
-      is_expected.to contain_exec('add-apt-repository-ppa:user/foo')
+      expect(subject).to contain_exec('add-apt-repository-ppa:user/foo')
         .that_notifies('Class[Apt::Update]')
         .with(*ppa_exec_params('user', 'foo', 'trusty', ['http_proxy=http://localhost:8180']))
     }
@@ -353,28 +359,29 @@ describe 'apt::ppa' do
           name: 'Ubuntu',
           release: {
             major: '18',
-            full: '18.04',
+            full: '18.04'
           },
           distro: {
             codename: 'trusty',
-            id: 'Ubuntu',
-          },
+            id: 'Ubuntu'
+          }
         },
-        puppet_vardir: '/opt/puppetlabs/puppet/cache',
+        puppet_vardir: '/opt/puppetlabs/puppet/cache'
       }
     end
 
     let :params do
       {
-        package_manage: true,
+        package_manage: true
       }
     end
 
     let(:title) { 'ppa:user/foo' }
 
     it { is_expected.to contain_package('software-properties-common') }
+
     it {
-      is_expected.to contain_exec('add-apt-repository-ppa:user/foo')
+      expect(subject).to contain_exec('add-apt-repository-ppa:user/foo')
         .that_notifies('Class[Apt::Update]')
         .with(*ppa_exec_params('user', 'foo', 'trusty', ['http_proxy=http://localhost:8180', 'https_proxy=https://localhost:8180']))
     }
@@ -392,14 +399,14 @@ describe 'apt::ppa' do
           name: 'Ubuntu',
           release: {
             major: '18',
-            full: '18.04',
+            full: '18.04'
           },
           distro: {
             codename: 'trusty',
-            id: 'Ubuntu',
-          },
+            id: 'Ubuntu'
+          }
         },
-        puppet_vardir: '/opt/puppetlabs/puppet/cache',
+        puppet_vardir: '/opt/puppetlabs/puppet/cache'
       }
     end
 
@@ -407,15 +414,15 @@ describe 'apt::ppa' do
 
     let :params do
       {
-        ensure: 'absent',
+        ensure: 'absent'
       }
     end
 
     it {
-      is_expected.to contain_tidy("remove-apt-repository-script-#{title}")
+      expect(subject).to contain_tidy("remove-apt-repository-script-#{title}")
         .with('path' => '/opt/puppetlabs/puppet/cache/add-apt-repository-user-ubuntu-foo-trusty.sh')
 
-      is_expected.to contain_tidy("remove-apt-repository-#{title}")
+      expect(subject).to contain_tidy("remove-apt-repository-#{title}")
         .with('path' => '/etc/apt/sources.list.d/user-ubuntu-foo-trusty.list')
         .that_notifies('Class[Apt::Update]')
     }
@@ -430,20 +437,20 @@ describe 'apt::ppa' do
             name: 'Ubuntu',
             release: {
               major: '18',
-              full: '18.04',
+              full: '18.04'
             },
             distro: {
               codename: nil,
-              id: 'Ubuntu',
-            },
-          },
+              id: 'Ubuntu'
+            }
+          }
         }
       end
 
       let(:title) { 'ppa:user/foo' }
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{os.distro.codename fact not available: release parameter required})
+        expect(subject).to raise_error(Puppet::Error, %r{os.distro.codename fact not available: release parameter required})
       end
     end
 
@@ -455,20 +462,20 @@ describe 'apt::ppa' do
             name: 'Debian',
             release: {
               major: '6',
-              full: '6.0.7',
+              full: '6.0.7'
             },
             distro: {
               codename: 'wheezy',
-              id: 'Debian',
-            },
-          },
+              id: 'Debian'
+            }
+          }
         }
       end
 
       let(:title) { 'ppa:user/foo' }
 
       it do
-        is_expected.to raise_error(Puppet::Error, %r{not currently supported on Debian})
+        expect(subject).to raise_error(Puppet::Error, %r{not currently supported on Debian})
       end
     end
   end

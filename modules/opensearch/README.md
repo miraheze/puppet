@@ -226,7 +226,7 @@ The following is an example of how to override these settings:
 ```puppet
 opensearch::template { 'templatename':
   api_protocol            => 'https',
-  api_host                => $::ipaddress,
+  api_host                => $facts['networking']['ip'],
   api_port                => 9201,
   api_timeout             => 60,
   api_basic_auth_username => 'admin',
@@ -352,7 +352,7 @@ The following is an example of how to override these settings:
 ```puppet
 opensearch::snapshot_repository { 'backups':
   api_protocol            => 'https',
-  api_host                => $::ipaddress,
+  api_host                => $facts['networking']['ip'],
   api_port                => 9201,
   api_timeout             => 60,
   api_basic_auth_username => 'admin',

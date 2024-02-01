@@ -27,7 +27,7 @@ class ferm {
         before  => Package['ferm', 'libnet-dns-perl', 'conntrack'],
     }
 
-    ensure_packages(['ferm', 'libnet-dns-perl', 'conntrack'])
+    stdlib::ensure_packages(['ferm', 'libnet-dns-perl', 'conntrack'])
 
     file {'/usr/local/sbin/ferm-status':
         ensure  => file,
@@ -39,7 +39,7 @@ class ferm {
     service { 'ferm':
         ensure  => 'running',
         status  => '/usr/local/sbin/ferm-status',
-        start   => '/bin/systemctl restart ferm',
+        start   => '/bin/systemctl reload-or-restart ferm',
         require => [
             Package['ferm'],
             File['/usr/local/sbin/ferm-status'],
@@ -89,14 +89,12 @@ class ferm {
 
     # Starting with Bullseye iptables default to the nft backend, but for ferm
     # we need the legacy backend
-    if os_version('debian >= bullseye') {
-        alternatives::select { 'iptables':
-            path => '/usr/sbin/iptables-legacy',
-        }
+    alternatives::select { 'iptables':
+        path => '/usr/sbin/iptables-legacy',
+    }
 
-        alternatives::select { 'ip6tables':
-            path => '/usr/sbin/ip6tables-legacy',
-        }
+    alternatives::select { 'ip6tables':
+        path => '/usr/sbin/ip6tables-legacy',
     }
 
     # the rules are virtual resources for cases where they are defined in a

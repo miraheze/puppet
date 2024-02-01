@@ -156,12 +156,7 @@ class elasticsearch::config {
     # }
 
     # Generate Elasticsearch config
-    $_es_config = merge(
-      $elasticsearch::config,
-      { 'path.data' => $elasticsearch::datadir },
-      { 'path.logs' => $elasticsearch::logdir },
-      $_tls_config
-    )
+    $_es_config = $elasticsearch::config + { 'path.data' => $elasticsearch::datadir } + { 'path.logs' => $elasticsearch::logdir } + $_tls_config
 
     datacat_fragment { 'main_config':
       target => "${elasticsearch::configdir}/elasticsearch.yml",

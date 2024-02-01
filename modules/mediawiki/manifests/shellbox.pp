@@ -1,9 +1,9 @@
 # === Class mediawiki::shellbox
 class mediawiki::shellbox {
-    ensure_packages('composer')
+    stdlib::ensure_packages('composer')
 
     # only install lilypond in sandbox
-    ensure_packages('lilypond')
+    stdlib::ensure_packages('lilypond')
 
     git::clone { 'shellbox':
         ensure    => present,

@@ -1,0 +1,19 @@
+<%- | String $java_initial_heap_size = '1g', String $java_max_heap_size = '1g', String $java_opts = "" | -%>
+# Path to the java executable.
+#JAVA=/usr/bin/java
+
+# Default Java options for heap and garbage collection.
+GRAYLOG_SERVER_JAVA_OPTS="-Xms<%= $java_initial_heap_size %> -Xmx<%= $java_max_heap_size %> -XX:NewRatio=1 -server -XX:+ResizeTLAB -XX:-OmitStackTraceInFastThrow"
+
+# Avoid endless loop with some TLSv1.3 implementations.
+GRAYLOG_SERVER_JAVA_OPTS="$GRAYLOG_SERVER_JAVA_OPTS -Djdk.tls.acknowledgeCloseNotify=true"
+
+# Additional java opts
+GRAYLOG_SERVER_JAVA_OPTS="$GRAYLOG_SERVER_JAVA_OPTS <%= $java_opts %>"
+
+# Pass some extra args to graylog-server. (i.e. "-d" to enable debug mode)
+GRAYLOG_SERVER_ARGS=""
+
+# Program that will be used to wrap the graylog-server command. Useful to
+# support programs like authbind.
+GRAYLOG_COMMAND_WRAPPER=""

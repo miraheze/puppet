@@ -14,6 +14,7 @@ def get_updates(upgrade_option)
       apt_updates = [[], []]
       apt_get_result.each_line do |line|
         next unless %r{^Inst\s}.match?(line)
+
         package = line.gsub(%r{^Inst\s([^\s]+)\s.*}, '\1').strip
         apt_updates[0].push(package)
         security_matches = [
@@ -22,9 +23,7 @@ def get_updates(upgrade_option)
           %r{ gNewSense[^\s]+-security[, ]},
         ]
         re = Regexp.union(security_matches)
-        if line.match(re)
-          apt_updates[1].push(package)
-        end
+        apt_updates[1].push(package) if line.match(re)
       end
     end
   end
@@ -35,9 +34,7 @@ Facter.add('apt_has_updates') do
   confine osfamily: 'Debian'
   setcode do
     apt_package_updates = get_updates('upgrade')
-    if !apt_package_updates.nil? && apt_package_updates.length == 2
-      apt_package_updates != [[], []]
-    end
+    apt_package_updates != [[], []] if !apt_package_updates.nil? && apt_package_updates.length == 2
   end
 end
 
@@ -45,9 +42,7 @@ Facter.add('apt_has_dist_updates') do
   confine osfamily: 'Debian'
   setcode do
     apt_dist_updates = get_updates('dist-upgrade')
-    if !apt_dist_updates.nil? && apt_dist_updates.length == 2
-      apt_dist_updates != [[], []]
-    end
+    apt_dist_updates != [[], []] if !apt_dist_updates.nil? && apt_dist_updates.length == 2
   end
 end
 
