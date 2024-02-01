@@ -91,6 +91,8 @@ def check_records(hostname):
 
         if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
             return 'NS'
+        if sorted(list(nameservers)) == sorted(['ns1.wikitide.net.', 'ns2.wikitide.net.']):
+            return 'NS'
     except resolver.NoAnswer:
         nameservers = None
 
