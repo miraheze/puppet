@@ -25,7 +25,7 @@ node /^db1([5678][12])\.wikitide\.net$/ {
     include role::db
 }
 
-node /^os1[56]1\.wikitide\.net$/ {
+node /^os1[56][12]\.wikitide\.net$/ {
     include base
     include role::opensearch
 }
