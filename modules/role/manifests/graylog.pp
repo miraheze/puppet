@@ -40,7 +40,9 @@ class role::graylog {
     $firewall_http_rules_str = join(
         query_facts('Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['he-ipv6']['ipv6'] ) {
+                "${value['networking']['ip']} ${value['networking']['he-ipv6']['ipv6']}"
+            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
@@ -88,7 +90,9 @@ class role::graylog {
     $firewall_icinga_rules_str = join(
         query_facts('Class[Role::Icinga2]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['he-ipv6']['ipv6'] ) {
+                "${value['networking']['ip']} ${value['networking']['he-ipv6']['ipv6']}"
+            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
