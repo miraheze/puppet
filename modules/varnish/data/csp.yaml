@@ -126,6 +126,7 @@ img-src:
   - '*.postimgs.org'
   - 'postimg.cc'
   - '*.postimg.cc'
+  - '*.rbxcdn.com'
 
 font-src:
   - "'self'"
