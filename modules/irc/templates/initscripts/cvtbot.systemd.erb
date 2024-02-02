@@ -3,7 +3,7 @@ Description=Miraheze IRC CVT bot
 
 [Service]
 Type=simple
-User=root
+User=irc
 SyslogIdentifier=cvtbot
 ExecStart=/usr/bin/dotnet run --project <%= @install_path %>/src/CVTBot/CVTBot.csproj --configuration Release
 Restart=always
