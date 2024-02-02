@@ -5,3 +5,11 @@ nginx::worker_processes: 6
 
 base::syslog::rsyslog_udp_localhost: true
 nginx::logrotate_number: 2
+
+cp_use_ipsec: true
+
+cache::nodes:
+  lu:
+   - 'cp27.wikitide.net'
+  usa:
+   - 'test151.wikitide.net'

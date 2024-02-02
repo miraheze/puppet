@@ -6,8 +6,12 @@ def individual_node(node)
       # dead peer detection: need clear|restart on opposite sides of each
       #  peering, so use hostname > hostname comparison for consistency
       dpdaction = @facts['networking']['fqdn'] > node ? "restart" : "clear"
-      left_ipv4 = scope.function_ipresolve([@facts['networking']['fqdn'], 4])
-      right_ipv4 = scope.function_ipresolve([node, 4])
+      begin
+        left_ipv4 = scope.function_ipresolve([@facts['networking']['fqdn'], 4])
+        right_ipv4 = scope.function_ipresolve([node, 4])
+      rescue
+        left_ipv4 = right_ipv4 = ""
+      end
       begin
         left_ipv6 = scope.function_ipresolve([@facts['networking']['fqdn'], 6])
         right_ipv6 = scope.function_ipresolve([node, 6])

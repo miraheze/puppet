@@ -18,6 +18,10 @@ node /^cloud1[5678]\.wikitide\.net$/ {
 node /^cp([23][678]|[45]1)\.wikitide\.net$/ {
     include base
     include role::varnish
+
+    if lookup('cp_use_ipsec', {'default_value' => undef}) {
+      include role::strongswan
+    }
 }
 
 node /^db1([5678][12])\.wikitide\.net$/ {
@@ -131,6 +135,7 @@ node 'test151.wikitide.net' {
     include role::poolcounter
     include role::redis
     include mediawiki::jobqueue::chron
+    include role::strongswan
 }
 
 # ensures all servers have basic class if puppet runs

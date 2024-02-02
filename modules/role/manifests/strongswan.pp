@@ -3,7 +3,7 @@ class role::strongswan (
 ) {
     $puppet_certname = $::fqdn
 
-    $cluster_nodes = hiera('cache::nodes')
+    $cluster_nodes = lookup('cache::nodes')
     if $facts['networking']['fqdn'] =~ /^cp2/ {
         $targets = $cluster_nodes['usa']
     } elsif ( $facts['networking']['fqdn'] =~ /^cp3/ ) {
@@ -16,9 +16,9 @@ class role::strongswan (
         $targets = $cluster_nodes['usa']
     } elsif ( $facts['networking']['fqdn'] =~ /^cp5/ )  {
         $targets = $cluster_nodes['usa']
+    } elsif ( $facts['networking']['fqdn'] =~ /^test151/ ) {
+        $targets = $cluster_nodes['lu']
     }
-
-    $targets = $cluster_nodes['usa']
 
     class { '::strongswan':
         puppet_certname => $puppet_certname,
