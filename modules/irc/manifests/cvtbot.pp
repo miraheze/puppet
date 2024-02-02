@@ -5,8 +5,6 @@ class irc::cvtbot {
     # FIXME: should be cvtbot, using relaybot for now
     $irc_password = lookup('passwords::irc::relaybot::irc_password')
 
-    stdlib::ensure_packages('mono-complete')
-
     file { $install_path:
         ensure    => 'directory',
         owner     => 'irc',
@@ -45,7 +43,6 @@ class irc::cvtbot {
         restart => true,
         require => [
             Git::Clone['CVTBot'],
-            Package['mono-complete'],
             File["${install_path}/src/CVTBot.ini"],
         ],
     }
