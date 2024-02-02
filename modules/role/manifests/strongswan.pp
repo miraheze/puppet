@@ -1,7 +1,7 @@
 class role::strongswan (
     Optional[Any] $hosts = undef
 ) {
-    $puppet_certname = $::fqdn
+    $puppet_certname = $facts['networking']['fqdn']
 
     $cluster_nodes = lookup('cache::nodes')
     if $facts['networking']['fqdn'] =~ /^cp2/ {
