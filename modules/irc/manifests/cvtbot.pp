@@ -7,6 +7,8 @@ class irc::cvtbot {
 
     file { $install_path:
         ensure    => 'directory',
+        owner     => 'irc',
+        group     => 'irc',
         mode      => '0644',
         recurse   => true,
         max_files => 1500,
@@ -16,6 +18,8 @@ class irc::cvtbot {
         ensure    => present,
         origin    => 'https://github.com/Universal-Omega/CVTBot',
         directory => $install_path,
+        owner     => 'irc',
+        group     => 'irc',
         mode      => '0644',
         require   => File[$install_path],
     }
