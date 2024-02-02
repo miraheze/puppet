@@ -5,7 +5,7 @@ Description=Miraheze IRC CVT bot
 Type=simple
 User=irc
 SyslogIdentifier=cvtbot
-ExecStart=http_proxy=http://bastion.wikitide.net:8080 /usr/bin/dotnet run --project <%= @install_path %>/src/CVTBot/CVTBot.csproj --configuration Release
+ExecStart=/usr/bin/dotnet run --project <%= @install_path %>/src/CVTBot/CVTBot.csproj --configuration Release
 Restart=always
 WorkingDirectory=<%= @install_path %>/src/CVTBot/bin/Release
 Environment=HOME=<%= @install_path %>/src/CVTBot/bin/Release
