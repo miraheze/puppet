@@ -91,7 +91,9 @@ class prometheus::exporter::node (
     $firewall_rules_str = join(
         query_facts('Class[Prometheus]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['he-ipv6']['ipv6'] ) {
+                "${value['networking']['ip']} ${value['networking']['he-ipv6']['ipv6']}"
+            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
