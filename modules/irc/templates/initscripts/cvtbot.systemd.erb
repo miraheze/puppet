@@ -7,8 +7,8 @@ User=irc
 SyslogIdentifier=cvtbot
 ExecStart=/usr/bin/dotnet run --project <%= @install_path %>/src/CVTBot/CVTBot.csproj --configuration Release
 Restart=always
-WorkingDirectory=<%= @install_path %>/src/CVTBot
-Environment=HOME=<%= @install_path %>/src/CVTBot
+WorkingDirectory=<%= @install_path %>/src/CVTBot/bin/Release/net6.0
+Environment=HOME=<%= @install_path %>/src/CVTBot/bin/Release/net6.0
 Environment=HTTP_PROXY=http://bastion.wikitide.net:8080
 
 [Install]
