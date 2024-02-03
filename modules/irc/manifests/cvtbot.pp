@@ -23,6 +23,20 @@ class irc::cvtbot {
         require   => File[$install_path],
     }
 
+    exec { 'CVTBot-build':
+        command => "dotnet build --project ${install_path}/src/CVTBot/CVTBot.csproj --configuration Release",
+        creates => "${install_path}/src/CVTBot/bin/Release/net6.0",
+        unless  => "test -d ${install_path}/src/CVTBot/bin/Release/net6.0",
+        cwd     => $install_path,
+        path    => '/usr/bin',
+        environment => [
+            "HOME=${install_path}",
+            'HTTP_PROXY=http://bastion.wikitide.net:8080',
+        ],
+        user    => 'irc',
+        require => Git::Clone['CVTBot'],
+    }
+
     file { [
         "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget",
         "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet"
@@ -31,7 +45,7 @@ class irc::cvtbot {
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
-        require => Git::Clone['CVTBot'],
+        require => Exec['CVTBot-build'],
     }
 
     file { "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config":
