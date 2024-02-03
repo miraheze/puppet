@@ -2,7 +2,7 @@
 class irc::cvtbot {
     $install_path = '/srv/cvtbot'
 
-    $password = lookup('passwords::irc::cvtbot::password')
+    $password = lookup('passwords::irc::cvtbot')
 
     file { $install_path:
         ensure    => 'directory',
