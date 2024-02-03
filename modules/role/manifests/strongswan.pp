@@ -44,13 +44,13 @@ class role::strongswan (
         ' '
     )
     ferm::service { 'ipsec 500':
-        proto   => 'udp',
-        port    => '500',
-        srange  => "(${firewall_rules_str})",
+        proto  => 'udp',
+        port   => '500',
+        srange => "(${firewall_rules_str})",
     }
     ferm::service { 'ipsec 4500':
-        proto   => 'udp',
-        port    => '4500',
-        srange  => "(${firewall_rules_str})",
+        proto  => 'udp',
+        port   => '4500',
+        srange => "(${firewall_rules_str})",
     }
 }
