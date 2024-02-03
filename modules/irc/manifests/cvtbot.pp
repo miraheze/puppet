@@ -24,7 +24,7 @@ class irc::cvtbot {
     }
 
     exec { 'CVTBot-build':
-        command     => 'dotnet build --configuration Release',
+        command     => 'sudo http_proxy=http://bastion.wikitide.net:8080 dotnet build --configuration Release',
         creates     => "${install_path}/src/CVTBot/bin/Release/net6.0",
         unless      => "test -d ${install_path}/src/CVTBot/bin/Release/net6.0",
         cwd         => "${install_path}/src/CVTBot",
