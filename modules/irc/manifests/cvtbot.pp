@@ -24,11 +24,11 @@ class irc::cvtbot {
     }
 
     file { "${install_path}/src/CVTBot/.nuget/NuGet/NuGet.Config":
-        ensure  => present,
-        owner   => 'irc',
-        group   => 'irc',
-        mode    => '0644',
-        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        ensure => present,
+        owner  => 'irc',
+        group  => 'irc',
+        mode   => '0644',
+        source => 'puppet:///modules/irc/cvtbot/NuGet.Config',
     }
 
     exec { 'CVTBot-build':
