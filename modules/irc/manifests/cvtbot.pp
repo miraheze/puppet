@@ -23,6 +23,14 @@ class irc::cvtbot {
         require   => File[$install_path],
     }
 
+    file { "${install_path}/src/CVTBot/.nuget/NuGet/NuGet.Config":
+        ensure  => present,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+    }
+
     exec { 'CVTBot-build':
         command     => 'dotnet build --configuration Release',
         creates     => "${install_path}/src/CVTBot/bin",
