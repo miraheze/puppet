@@ -2,10 +2,7 @@
 class irc::cvtbot {
     $install_path = '/srv/cvtbot'
 
-    # FIXME: should be cvtbot, using relaybot for now
-    $irc_password = lookup('passwords::irc::relaybot::irc_password')
-
-    stdlib::ensure_packages('mono-complete')
+    $password = lookup('passwords::irc::cvtbot')
 
     file { $install_path:
         ensure    => 'directory',
@@ -24,6 +21,16 @@ class irc::cvtbot {
         group     => 'irc',
         mode      => '0644',
         require   => File[$install_path],
+    }
+
+    file { "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config":
+        ensure  => present,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        require => Git::Clone['CVTBot'],
+        notify  => Service['cvtbot'],
     }
 
     file { [
@@ -45,7 +52,6 @@ class irc::cvtbot {
         restart => true,
         require => [
             Git::Clone['CVTBot'],
-            Package['mono-complete'],
             File["${install_path}/src/CVTBot.ini"],
         ],
     }
