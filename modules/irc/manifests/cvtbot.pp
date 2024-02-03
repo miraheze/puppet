@@ -24,8 +24,8 @@ class irc::cvtbot {
     }
 
     file { [
-        "${install_path}/src/.nuget",
-        "${install_path}/src/.nuget/NuGet"
+        "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget",
+        "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet"
     ]:
         ensure  => directory,
         owner   => 'irc',
@@ -41,8 +41,8 @@ class irc::cvtbot {
         mode    => '0644',
         source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
         require => [
-            File["${install_path}/src/.nuget"],
-            File["${install_path}/src/.nuget/NuGet"],
+            File["${install_path}/src/CVTBot/bin/Release/net6.0/.nuget"],
+            File["${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet"],
         ],
     }
 
