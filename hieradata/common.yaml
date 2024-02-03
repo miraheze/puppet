@@ -34,51 +34,71 @@ varnish::backends:
     probe: mwhealth
     pool: true
     xdebug: true
+    private_ip: 10.0.15.115
+    private_ip_port: 80
   mw152:
     port: 8114
     probe: mwhealth
     pool: true
     xdebug: true
+    private_ip: 10.0.15.116
+    private_ip_port: 80
   mw161:
     port: 8115
     probe: mwhealth
     pool: true
     xdebug: true
+    private_ip: 10.0.16.132
+    private_ip_port: 80
   mw162:
     port: 8116
     probe: mwhealth
     pool: true
     xdebug: true
+    private_ip: 10.0.16.133
+    private_ip_port: 80
   mw171:
     port: 8117
     probe: mwhealth
     pool: true
     xdebug: true
+    private_ip: 10.0.17.122
+    private_ip_port: 80
   mw172:
     port: 8118
     probe: mwhealth
     pool: true
     xdebug: true
+    private_ip: 10.0.17.123
+    private_ip_port: 80
   mw181:
     port: 8119
     probe: mwhealth
     pool: true
     xdebug: true
+    private_ip: 10.0.18.104
+    private_ip_port: 80
   mw182:
     port: 8120
     probe: mwhealth
     pool: true
     xdebug: true
+    private_ip: 10.0.18.105
+    private_ip_port: 80
   mwtask181:
     port: 8160
     probe: false
     pool: false
     xdebug: true
+    private_ip: 10.0.18.106
+    private_ip_port: 80
   test151:
     port: 8181
     probe: false
     pool: false
     xdebug: true
+    private_ip: 10.0.15.118
+    private_ip_port: 80
   mon181:
     port: 8201
     probe: false
