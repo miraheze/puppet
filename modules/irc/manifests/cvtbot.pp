@@ -10,7 +10,7 @@ class irc::cvtbot {
         group     => 'irc',
         mode      => '0644',
         recurse   => true,
-        max_files => 1500,
+        max_files => 5000,
     }
 
     git::clone { 'CVTBot':
