@@ -24,7 +24,7 @@ class irc::cvtbot {
     }
 
     exec { 'CVTBot-build':
-        command     => 'http_proxy=http://bastion.wikitide.net:8080 dotnet build --configuration Release',
+        command     => 'dotnet build --configuration Release',
         creates     => "${install_path}/src/CVTBot/bin/Release/net6.0",
         unless      => "test -d ${install_path}/src/CVTBot/bin/Release/net6.0",
         cwd         => "${install_path}/src/CVTBot",
@@ -33,7 +33,7 @@ class irc::cvtbot {
             "HOME=${install_path}/src/CVTBot",
             'HTTP_PROXY=http://bastion.wikitide.net:8080',
         ],
-        user        => 'irc',
+        user        => 'root',
         require     => Git::Clone['CVTBot'],
     }
 
