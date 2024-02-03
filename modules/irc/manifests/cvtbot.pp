@@ -2,8 +2,7 @@
 class irc::cvtbot {
     $install_path = '/srv/cvtbot'
 
-    # FIXME: should be cvtbot, using relaybot for now
-    $irc_password = lookup('passwords::irc::relaybot::irc_password')
+    $password = lookup('passwords::irc::cvtbot::password')
 
     file { $install_path:
         ensure    => 'directory',
