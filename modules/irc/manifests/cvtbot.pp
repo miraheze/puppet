@@ -40,6 +40,7 @@ class irc::cvtbot {
         group   => 'irc',
         mode    => '0644',
         source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        before => Exec['CVTBot-build'],
         require => [
             File["${install_path}/src/CVTBot/.nuget"],
             File["${install_path}/src/CVTBot/.nuget/NuGet"],
