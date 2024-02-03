@@ -105,6 +105,11 @@ node 'puppet181.wikitide.net' {
     include role::ssl
 }
 
+node 'rdb151.wikitide.net' {
+    include base
+    include role::redis
+}
+
 node 'reports171.wikitide.net' {
     include base
     include role::reports
