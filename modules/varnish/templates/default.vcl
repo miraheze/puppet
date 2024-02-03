@@ -32,8 +32,16 @@ probe mwhealth {
 
 <%- @backends.each_pair do | name, property | -%>
 backend <%= name %> {
+<%- if property['private_ip'] and @use_private_ip -%>
+	.host = "<%= property['private_ip'] %>";
+<%- else -%>
 	.host = "127.0.0.1";
+<%- end -%>
+<%- if property['private_ip_port'] and @use_private_ip -%>
+	.port = "<%= property['private_ip_port'] %>";
+<%- else -%>
 	.port = "<%= property['port'] %>";
+<%- end -%>
 <%- if property['probe'] -%>
 	.probe = <%= property['probe'] %>;
 <%- end -%>
@@ -45,8 +53,16 @@ backend <%= name %> {
 
 <%- if property['xdebug'] -%>
 backend <%= name %>_test {
+<%- if property['private_ip'] and @use_private_ip -%>
+	.host = "<%= property['private_ip'] %>";
+<%- else -%>
 	.host = "127.0.0.1";
+<%- end -%>
+<%- if property['private_ip_port'] and @use_private_ip -%>
+	.port = "<%= property['private_ip_port'] %>";
+<%- else -%>
 	.port = "<%= property['port'] %>";
+<%- end -%>
         .connect_timeout = 3s;
         .first_byte_timeout = 63s;
         .between_bytes_timeout = 31s;
