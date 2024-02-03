@@ -24,7 +24,7 @@ class irc::cvtbot {
         require   => File[$install_path],
     }
 
-    file { "${install_path/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config":
+    file { "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config":
         ensure  => present,
         owner   => 'root',
         group   => 'root',
