@@ -5,11 +5,6 @@ node /^bast1[68]1\.wikitide\.net$/ {
     include role::bastion
 }
 
-node 'cloud12.miraheze.org' {
-    include base
-    include role::cloud
-}
-
 node /^cloud1[5678]\.wikitide\.net$/ {
     include base
     include role::cloud
@@ -73,11 +68,6 @@ node 'mwtask181.wikitide.net' {
     include base
     include role::mediawiki
     include role::mathoid
-}
-
-node 'ns2.miraheze.org' {
-    include base
-    include role::dns
 }
 
 node /^ns[12]\.wikitide\.net$/ {
