@@ -14,13 +14,24 @@ class irc::cvtbot {
     }
 
     git::clone { 'CVTBot':
-        ensure    => present,
+        ensure    => latest,
         origin    => 'https://github.com/Universal-Omega/CVTBot',
         directory => $install_path,
         owner     => 'irc',
         group     => 'irc',
         mode      => '0644',
         require   => File[$install_path],
+    }
+    
+    file { [
+        "${install_path}/src/.nuget",
+        "${install_path}/src/.nuget/NuGet"
+    ]:
+        ensure  => directory,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        require => Git::Clone['CVTBot'],
     }
 
     file { "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config":
@@ -29,8 +40,10 @@ class irc::cvtbot {
         group   => 'irc',
         mode    => '0644',
         source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
-        require => Git::Clone['CVTBot'],
-        notify  => Service['cvtbot'],
+        require => [
+            File["${install_path}/src/.nuget"],
+            File["${install_path}/src/.nuget/NuGet"],
+        ],
     }
 
     file { [
