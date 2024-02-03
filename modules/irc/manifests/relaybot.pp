@@ -48,6 +48,67 @@ class irc::relaybot {
         require   => File[$install_path],
     }
 
+    file { [
+        "${install_path}/.nuget",
+        "${install_path}/.nuget/NuGet"
+    ]:
+        ensure  => directory,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        require => Git::Clone['IRC-Discord-Relay'],
+    }
+
+    file { "${install_path}/.nuget/NuGet/NuGet.Config":
+        ensure  => present,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        before  => Exec['relaybot-build'],
+        require => [
+            File["${install_path}/.nuget"],
+            File["${install_path}/.nuget/NuGet"],
+        ],
+    }
+
+    exec { 'relaybot-build':
+        command     => 'dotnet build --configuration Release',
+        creates     => "${install_path}/bin",
+        unless      => "test -d ${install_path}/bin/Release/net6.0",
+        cwd         => $install_path,
+        path        => '/usr/bin',
+        environment => [
+            "HOME=${install_path}",
+            'HTTP_PROXY=http://bastion.wikitide.net:8080',
+        ],
+        user        => 'irc',
+        require     => Git::Clone['IRC-Discord-Relay'],
+    }
+
+    file { [
+        "${install_path}/bin/Release/net6.0/.nuget",
+        "${install_path}/bin/Release/net6.0/.nuget/NuGet"
+    ]:
+        ensure  => directory,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        require => Exec['relaybot-build'],
+    }
+
+    file { "${install_path}/bin/Release/net6.0/.nuget/NuGet/NuGet.Config":
+        ensure  => present,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        require => [
+            File["${install_path}/bin/Release/net6.0/.nuget"],
+            File["${install_path}/bin/Release/net6.0/.nuget/NuGet"],
+        ],
+    }
+
     file { "${install_path}/config.ini":
         ensure  => present,
         owner   => 'root',
