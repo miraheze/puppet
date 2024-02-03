@@ -147,7 +147,7 @@ server {
 	listen 80 deferred backlog=4096 reuseport;
 	listen [::]:80 deferred backlog=4096 reuseport;
 
-	server_name *.wikitide.net.org;
+	server_name <%= @facts['networking']['interfaces']['ens19']['ip'] %>;
 	root /srv/mediawiki;
 
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
