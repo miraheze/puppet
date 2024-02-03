@@ -13,7 +13,7 @@ class role::db (
     $mediawiki_password = lookup('passwords::db::mediawiki')
     $wikiadmin_password = lookup('passwords::db::wikiadmin')
     $matomo_password = lookup('passwords::db::matomo')
-    $phabricator_password = lookup('passwords::db::phabricator')
+    $phorge_password = lookup('passwords::db::phabricator')
     $exporter_password = lookup('passwords::db::exporter')
     $icinga_password = lookup('passwords::db::icinga')
     $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
@@ -47,9 +47,9 @@ class role::db (
         content => template('mariadb/grants/matomo-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/phabricator-grants.sql':
+    file { '/etc/mysql/miraheze/phorge-grants.sql':
         ensure  => present,
-        content => template('mariadb/grants/phabricator-grants.sql.erb'),
+        content => template('mariadb/grants/phorge-grants.sql.erb'),
     }
 
     file { '/etc/mysql/miraheze/icinga2-grants.sql':
@@ -63,7 +63,7 @@ class role::db (
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Phabricator] or Class[Role::Matomo] or Class[Role::Reports]', ['networking'])
+        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"

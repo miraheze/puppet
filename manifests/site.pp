@@ -87,7 +87,7 @@ node /^ns[12]\.wikitide\.net$/ {
 
 node 'phorge171.wikitide.net' {
     include base
-    include role::phabricator
+    include role::phorge
 }
 
 node 'prometheus151.wikitide.net' {

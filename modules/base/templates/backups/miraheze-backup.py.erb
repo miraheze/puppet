@@ -16,7 +16,7 @@ from datetime import datetime
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for Miraheze backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
-parser.add_argument('type', choices=['private', 'sslkeys', 'phabricator', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana'], help='Type of backup to handle using the action')
+parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
@@ -93,20 +93,20 @@ def backup_swift_account_container(dt: str):
     segments_expire(f'swift-account-container', f'{dt}.tar.gz', 4)
 
 
-def backup_phabricator(dt: str):
-    subprocess.check_call(f'/srv/phab/phorge/bin/storage dump --compress --output backup.tar.gz', shell=True)
-    tar = tarfile.open('phabricator.tar.gz', 'w:gz')
+def backup_phorge(dt: str):
+    subprocess.check_call(f'/srv/phorge/phorge/bin/storage dump --compress --output backup.tar.gz', shell=True)
+    tar = tarfile.open('phorge.tar.gz', 'w:gz')
     tar.add('backup.tar.gz', arcname='db')
     subprocess.call(f'rm -f backup.tar.gz', shell=True)
-    tar.add('/srv/phab/images', arcname='phabricator')
+    tar.add('/srv/phorge/images', arcname='phorge')
     tar.close()
 
-    pca_connection('PUT', 'phabricator.tar.gz', f'phabricator/{dt}.tar.gz', False)
+    pca_connection('PUT', 'phorge.tar.gz', f'phorge/{dt}.tar.gz', False)
 
-    subprocess.call(f'rm -f phabricator.tar.gz', shell=True)
+    subprocess.call(f'rm -f phorge.tar.gz', shell=True)
 
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phabricator/{dt}.tar.gz', 4)
-    segments_expire(f'phabricator', f'{dt}.tar.gz', 4)
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phorge/{dt}.tar.gz', 4)
+    segments_expire(f'phorge', f'{dt}.tar.gz', 4)
 
 
 def backup_sql(dt: str, database: str):
@@ -190,8 +190,8 @@ def backup(source: str, database: str):
         backup_sslkeys(dt)
     elif source == 'swift-account-container':
         backup_swift_account_container(dt)
-    elif source == 'phabricator':
-        backup_phabricator(dt)
+    elif source == 'phorge':
+        backup_phorge(dt)
     elif source == 'sql':
         backup_sql(dt, database)
     elif source == 'grafana':
@@ -214,14 +214,14 @@ def download_pca(file: str):
         try:
             pca_connection('GET', file)
         except:
-            print('Unable to download file! Please raise this on Phabricator if this is a repeat issue.')
+            print('Unable to download file! Please raise this on Phorge if this is a repeat issue.')
 
 
 def download(source: str, dt: str, database: str):
     ts = time.time()
     print(f'Downloading backup of \'{source}\' for date {dt}...')
 
-    if source in ['private', 'sslkeys', 'phabricator', 'swift-account-container']:
+    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container']:
         download_pca(f'{source}/{dt}.tar.gz')
     elif source in ['mediawiki-xml']:
         download_pca(f'{source}/{database}/{dt}.xml.gz')
@@ -247,7 +247,7 @@ def find_backups(source: str, database: str):
 
 
 def unfreeze_backup(source: str, dt: str, database: str):
-    if source in ['private', 'sslkeys', 'phabricator', 'swift-account-container']:
+    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container']:
         file = f'{source}/{dt}.tar.gz'
     elif source in ['grafana']:
         file = f'sql/{source}/{dt}.tar.gz'

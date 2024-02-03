@@ -1,0 +1,157 @@
+# Load extension
+load-libraries:
+  - '/srv/phorge/libext/phorge-extensions'
+
+# Logo/Wordmark
+ui.logo:
+  'logoImagePHID': 'PHID-FILE-gtm67dpburyr56ogaqay'
+  'wordmarkText': 'Miraheze'
+
+# MySQL
+mysql.port: '3306'
+mysql.user: 'phabricator'
+mysql.host: 'db182-private.wikitide.net'
+
+# https://we.phorge.it/book/phorge/article/configuring_file_storage/
+# Needs to match php.ini upload_max_filesize
+# Needs to match php.ini post_max_size for conduit
+storage.mysql-engine.max-size: 10000000
+storage.default-namespace: 'phabricator'
+
+metamta.default-address: 'noreply@miraheze.org'
+metamta.single-reply-handler-prefix: 'phabricator'
+
+# Auth
+auth.lock-config: true
+auth.require-approval: false
+auth.require-email-verification: true
+
+# Phorge
+phabricator.show-prototypes: true
+phabricator.base-uri: "https://phabricator.miraheze.org/"
+phabricator.allowed-uris: ["https://phorge171.wikitide.net/"]
+phabricator.timezone: 'UTC'
+security.alternate-file-domain: "https://phab.miraheze.wiki/"
+security.require-https: true
+security.strict-transport-security: true
+repository.default-local-path: "/srv/phorge/repos/"
+policy.allow-public: true
+user.require-real-name: false
+storage.local-disk.path: "/srv/phorge/images/"
+
+# Maniphest priorities
+maniphest.priorities:
+  '100':
+    name: 'Unbreak Now!'
+    short: 'Unbreak!'
+    color: 'pink'
+    keywords: ['unbreak']
+  '90':
+    name: 'Needs Triage'
+    short: 'Triage'
+    color: 'violet'
+    keywords: ['triage']
+  '75':
+    name: 'High'
+    short: 'High'
+    color: 'red'
+    keywords: ['high']
+  '50':
+    name: 'Normal'
+    short: 'Normal'
+    color: 'orange'
+    keywords: ['normal']
+  '25':
+    name: 'Low'
+    short: 'Low'
+    color: 'sky'
+    keywords: ['low']
+
+maniphest.statuses:
+  'open':
+    name: 'Open'
+    special: 'default'
+  'resolved':
+    name: 'Resolved'
+    name.full: 'Closed, Resolved'
+    closed: true
+    special: 'closed'
+    transaction.icon: 'fa-check-circle'
+    prefixes: [closed, closes, close, fix, fixes, fixed, resolve, resolves, resolved]
+    suffixes: ['as resolved', 'as fixed']
+  'inprogress':
+    name: 'In progress'
+    name.full: 'Open, In progress'
+    transaction.icon: 'fa-step-forward'
+    claim: true
+  'invalid':
+    name: 'Invalid'
+    name.full: 'Closed, Invalid'
+    closed: true
+    transaction.icon: 'fa-minus-circle'
+    claim: false
+    prefixes: [invalidate, invalidates, invalidated]
+    suffixes: ['as invalid']
+  'duplicate':
+    name: 'Duplicate'
+    name.full: 'Closed, Duplicate'
+    closed: true
+    special: 'duplicate'
+    transaction.icon: 'fa-files-o'
+    claim: false
+  'declined':
+    name: 'Declined'
+    name.full: 'Closed, Declined'
+    closed: true
+    transaction.icon: 'fa-thumbs-o-down'
+    prefixes: [decline, declines, declined]
+    suffixes: ['as declined']
+  'stalled':
+    name: 'Stalled'
+    name.full: 'Open, Stalled'
+    closed: false
+    transaction.icon: 'fa-spinner'
+    prefixes: [stall, stalls, stalled]
+    suffixes: ['as stalled']
+
+# Disable some Phorge applications
+phabricator.uninstalled-applications:
+  PhabricatorAlmanacApplication: true # we don't have resources to manage
+  PhabricatorChatLogApplication: true # deprecated
+  PhabricatorConpherenceApplication: true # not used, IRC used
+  PhabricatorCountdownApplication: true # niche calendar thing, not useful
+  PhabricatorDivinerApplication: true # we don't need Phorge docs locally
+  PhabricatorDrydockApplication: true # we don't have resources to manage
+  PhabricatorFactApplication: true # we don't have fact sources to graph
+  PhabricatorFundApplication: true # we don't need to fund single projects
+  PhabricatorHarbormasterApplication: true # we don't need local CI / we don't have resources
+  PhabricatorLegalpadApplication: true # we are not a law firm
+  PhabricatorMacroApplication: true # we don't need a macro databases
+  PhabricatorMultimeterApplication: true # performance sampling we don't have
+  PhabricatorNuanceApplication: true # we're not a call center
+  PhabricatorOAuthServerApplication: true # we're running MediaWiki as an OAuth
+  PhabricatorOwnersApplication: true # we don't manage source on Phorge
+  PhabricatorPackagesApplication: true # no packages to host
+  PhabricatorPhluxApplication: true # puppet has hiera
+  PhabricatorPholioApplication: true # we are not designers
+  PhabricatorPhortuneApplication: true # we don't need billing stuff
+  PhabricatorPhragmentApplication: true # puppet has hiera
+  PhabricatorPhrequentApplication: true # we don't need this
+  PhabricatorPhrictionApplication: true # if we operate this, there will be phriction with MediaWiki
+  PhabricatorPhurlApplication: true # we already have a URL shortener
+  PhabricatorPonderApplication: true # I wonder if we need a Q&A system
+  PhabricatorReleephApplication: true # we don't need to releeph GitHub of more work
+  PhabricatorSlowvoteApplication: true # we're not a polling station
+  
+ # Custom field settings
+user.custom-field-definitions:
+  discord_user:
+    name: 'Discord Username'
+    type: text
+    search: true
+  irc_nick:
+    name: 'IRC Nickname'
+    type: text
+    search: true
+
+pygments.enabled: true
