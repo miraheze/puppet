@@ -10,7 +10,7 @@ class irc::cvtbot {
         group     => 'irc',
         mode      => '0644',
         recurse   => true,
-        max_files => 1500,
+        max_files => 5000,
     }
 
     git::clone { 'CVTBot':
@@ -23,14 +23,65 @@ class irc::cvtbot {
         require   => File[$install_path],
     }
 
+    file { [
+        "${install_path}/src/CVTBot/.nuget",
+        "${install_path}/src/CVTBot/.nuget/NuGet"
+    ]:
+        ensure  => directory,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        require => Git::Clone['CVTBot'],
+    }
+
+    file { "${install_path}/src/CVTBot/.nuget/NuGet/NuGet.Config":
+        ensure  => present,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        before  => Exec['CVTBot-build'],
+        require => [
+            File["${install_path}/src/CVTBot/.nuget"],
+            File["${install_path}/src/CVTBot/.nuget/NuGet"],
+        ],
+    }
+
+    exec { 'CVTBot-build':
+        command     => 'dotnet build --configuration Release',
+        creates     => "${install_path}/src/CVTBot/bin",
+        unless      => "test -d ${install_path}/src/CVTBot/bin/Release/net6.0",
+        cwd         => "${install_path}/src/CVTBot",
+        path        => '/usr/bin',
+        environment => [
+            "HOME=${install_path}/src/CVTBot",
+            'HTTP_PROXY=http://bastion.wikitide.net:8080',
+        ],
+        user        => 'irc',
+        require     => Git::Clone['CVTBot'],
+    }
+
+    file { [
+        "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget",
+        "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet"
+    ]:
+        ensure  => directory,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0644',
+        require => Exec['CVTBot-build'],
+    }
+
     file { "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config":
         ensure  => present,
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
         source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
-        require => Git::Clone['CVTBot'],
-        notify  => Service['cvtbot'],
+        require => [
+            File["${install_path}/src/CVTBot/bin/Release/net6.0/.nuget"],
+            File["${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet"],
+        ],
     }
 
     file { [
@@ -51,7 +102,7 @@ class irc::cvtbot {
         content => systemd_template('cvtbot'),
         restart => true,
         require => [
-            Git::Clone['CVTBot'],
+            Exec['CVTBot-build'],
             File["${install_path}/src/CVTBot.ini"],
         ],
     }
