@@ -22,7 +22,7 @@ class irc::cvtbot {
         mode      => '0644',
         require   => File[$install_path],
     }
-    
+
     file { [
         "${install_path}/src/.nuget",
         "${install_path}/src/.nuget/NuGet"
