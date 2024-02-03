@@ -46,6 +46,13 @@ class role::mediawiki (
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
+
+        ferm::service { 'http_8080':
+            proto   => 'tcp',
+            port    => '8080',
+            srange  => "(${firewall_rules_str})",
+            notrack => true,
+        }
     } else {
         ferm::service { 'http':
             proto   => 'tcp',
