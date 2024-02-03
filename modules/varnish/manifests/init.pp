@@ -43,6 +43,7 @@ class varnish (
     $backends = lookup('varnish::backends')
     $interval_check = lookup('varnish::interval-check')
     $interval_timeout = lookup('varnish::interval-timeout')
+    $use_private_ip = lookup('varnish::use_private_ip', {'default_value' => undef})
 
     $debug_access_key = lookup('passwords::varnish::debug_access_key')
 
