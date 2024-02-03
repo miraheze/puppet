@@ -24,6 +24,16 @@ class irc::cvtbot {
         require   => File[$install_path],
     }
 
+    file { "${install_path/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config":
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        require => Git::Clone['CVTBot'],
+        notify  => Service['cvtbot'],
+    }
+    
     file { [
         "${install_path}/src/CVTBot.ini",
         "${install_path}/src/CVTBot-sample.ini"
