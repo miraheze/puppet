@@ -61,7 +61,6 @@ node 'mon181.wikitide.net' {
     include base
     include role::grafana
     include role::icinga2
-    include role::irc
 }
 
 node /^mw1[5678][12]\.wikitide\.net$/ {
