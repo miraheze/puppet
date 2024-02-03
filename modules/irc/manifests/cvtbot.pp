@@ -32,7 +32,7 @@ class irc::cvtbot {
         require => Git::Clone['CVTBot'],
         notify  => Service['cvtbot'],
     }
-    
+
     file { [
         "${install_path}/src/CVTBot.ini",
         "${install_path}/src/CVTBot-sample.ini"
