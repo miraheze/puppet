@@ -24,13 +24,13 @@ class irc::cvtbot {
     }
 
     exec { 'CVTBot-build':
-        command     => "dotnet build --project ${install_path}/src/CVTBot/CVTBot.csproj --configuration Release",
+        command     => 'dotnet build --configuration Release',
         creates     => "${install_path}/src/CVTBot/bin/Release/net6.0",
         unless      => "test -d ${install_path}/src/CVTBot/bin/Release/net6.0",
-        cwd         => $install_path,
+        cwd         => "${install_path}/src/CVTBot",
         path        => '/usr/bin',
         environment => [
-            "HOME=${install_path}",
+            "HOME=${install_path}/src/CVTBot",
             'HTTP_PROXY=http://bastion.wikitide.net:8080',
         ],
         user        => 'irc',
