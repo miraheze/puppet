@@ -14,7 +14,7 @@ class irc::cvtbot {
     }
 
     git::clone { 'CVTBot':
-        ensure    => latest,
+        ensure    => present,
         origin    => 'https://github.com/Universal-Omega/CVTBot',
         directory => $install_path,
         owner     => 'irc',
@@ -55,7 +55,7 @@ class irc::cvtbot {
         path        => '/usr/bin',
         environment => [
             "HOME=${install_path}/src/CVTBot",
-            'HTTP_PROXY=http://bast181.wikitide.net:8080',
+            'HTTP_PROXY=http://bastion.wikitide.net:8080',
         ],
         user        => 'irc',
         require     => Git::Clone['CVTBot'],
