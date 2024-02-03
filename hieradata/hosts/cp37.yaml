@@ -5,3 +5,4 @@ nginx::worker_processes: 6
 
 base::syslog::rsyslog_udp_localhost: true
 nginx::logrotate_number: 2
+varnish::use_private_ip: true
