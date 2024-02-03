@@ -78,7 +78,7 @@ class irc::cvtbot {
         content => systemd_template('cvtbot'),
         restart => true,
         require => [
-            Git::Clone['CVTBot'],
+            Exec['CVTBot-build'],
             File["${install_path}/src/CVTBot.ini"],
         ],
     }
