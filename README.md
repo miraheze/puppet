@@ -10,7 +10,7 @@ Pull requests are always welcome!
 
 # Issues
 
-Our issue tracker is in [Phabricator](https://phabricator.miraheze.org/maniphest/). You may directly open a new issue by clicking [here](https://phabricator.miraheze.org/maniphest/task/edit/form/1/). Please read below for security-related concerns.
+Our issue tracker is on [Phorge](https://phabricator.miraheze.org/maniphest/). You may directly open a new issue by clicking [here](https://phabricator.miraheze.org/maniphest/task/edit/form/1/). Please read below for security-related concerns.
 
 # Security Vulnerabilities
 

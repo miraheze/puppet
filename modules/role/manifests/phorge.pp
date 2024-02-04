@@ -1,6 +1,6 @@
-# role: phabricator
-class role::phabricator {
-    include ::phabricator
+# role: phorge
+class role::phorge {
+    include phorge
 
     $firewall_rules_str = join(
         query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['networking'])
@@ -35,7 +35,7 @@ class role::phabricator {
         notrack => true,
     }
 
-    motd::role { 'role::phabricator':
+    motd::role { 'role::phorge':
         description => 'Phorge instance',
     }
 }

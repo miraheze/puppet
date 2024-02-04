@@ -1,6 +1,6 @@
-# class: phabricator
-class phabricator (
-  Integer $request_timeout = lookup('phabricator::php::request_timeout', {'default_value' => 60}),
+# class: phorge
+class phorge (
+  Integer $request_timeout = lookup('phorge::php::request_timeout', {'default_value' => 60}),
 ) {
     stdlib::ensure_packages(['python3-pygments', 'subversion'])
 
@@ -102,57 +102,57 @@ class phabricator (
 
     nginx::site { 'phab.miraheze.wiki':
         ensure  => present,
-        source  => 'puppet:///modules/phabricator/phab.miraheze.wiki.conf',
+        source  => 'puppet:///modules/phorge/phab.miraheze.wiki.conf',
         monitor => false,
     }
 
     nginx::site { 'phabricator.miraheze.org':
         ensure  => present,
-        source  => 'puppet:///modules/phabricator/phabricator.miraheze.org.conf',
+        source  => 'puppet:///modules/phorge/phabricator.miraheze.org.conf',
         monitor => false,
     }
 
-    ssl::wildcard { 'phabricator wildcard': }
+    ssl::wildcard { 'phorge wildcard': }
     ssl::cert { 'miraheze.wiki': }
 
-    file { '/srv/phab':
+    file { '/srv/phorge':
         ensure => directory,
     }
 
-    file { '/srv/phab/libext':
+    file { '/srv/phorge/libext':
         ensure  => directory,
-        require => File['/srv/phab']
+        require => File['/srv/phorge']
     }
 
     git::clone { 'arcanist':
         ensure    => present,
-        directory => '/srv/phab/arcanist',
-        origin    => 'https://github.com/phorgeit/arcanist.git',
-        require   => File['/srv/phab'],
+        directory => '/srv/phorge/arcanist',
+        origin    => 'https://github.com/phorgeit/arcanist',
+        require   => File['/srv/phorge'],
     }
 
     git::clone { 'phorge':
         ensure    => present,
-        directory => '/srv/phab/phorge',
-        origin    => 'https://github.com/phorgeit/phorge.git',
-        require   => File['/srv/phab'],
+        directory => '/srv/phorge/phorge',
+        origin    => 'https://github.com/phorgeit/phorge',
+        require   => File['/srv/phorge'],
     }
 
-    git::clone { 'phabricator-extensions':
+    git::clone { 'phorge-extensions':
         ensure    => latest,
-        directory => '/srv/phab/libext/phab-extensions',
-        origin    => 'https://github.com/miraheze/phabricator-extensions.git',
-        require   => File['/srv/phab/libext'],
+        directory => '/srv/phorge/libext/phorge-extensions',
+        origin    => 'https://github.com/miraheze/phorge-extensions',
+        require   => File['/srv/phorge/libext'],
     }
 
-    file { '/srv/phab/repos':
+    file { '/srv/phorge/repos':
         ensure => directory,
         mode   => '0755',
         owner  => 'www-data',
         group  => 'www-data',
     }
 
-    file { '/srv/phab/images':
+    file { '/srv/phorge/images':
         ensure => directory,
         mode   => '0755',
         owner  => 'www-data',
@@ -160,12 +160,12 @@ class phabricator (
     }
 
     $module_path = get_module_path($module_name)
-    $phab_yaml = loadyaml("${module_path}/data/config.yaml")
-    $phab_private = {
+    $phorge_yaml = loadyaml("${module_path}/data/config.yaml")
+    $phorge_private = {
         'mysql.pass' => lookup('passwords::db::phabricator'),
     }
 
-    $phab_setting = {
+    $phorge_setting = {
         # smtp
         'cluster.mailers'      => [
             {
@@ -180,11 +180,11 @@ class phabricator (
         ],
     }
 
-    $phab_settings = $phab_yaml + $phab_private + $phab_setting
+    $phorge_settings = $phorge_yaml + $phorge_private + $phorge_setting
 
-    file { '/srv/phab/phorge/conf/local/local.json':
+    file { '/srv/phorge/phorge/conf/local/local.json':
         ensure  => present,
-        content => stdlib::to_json_pretty($phab_settings),
+        content => stdlib::to_json_pretty($phorge_settings),
         notify  => Service['phd'],
         require => Git::Clone['phorge'],
     }
@@ -193,7 +193,7 @@ class phabricator (
         ensure  => present,
         content => systemd_template('phd'),
         restart => true,
-        require => File['/srv/phab/phorge/conf/local/local.json'],
+        require => File['/srv/phorge/phorge/conf/local/local.json'],
     }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
@@ -228,17 +228,17 @@ class phabricator (
         command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'
     }
 
-    cron { 'backups-phabricator':
+    cron { 'backups-phorge':
         ensure   => present,
-        command  => '/usr/local/bin/miraheze-backup backup phabricator > /var/log/phabricator-backup.log 2>&1',
+        command  => '/usr/local/bin/miraheze-backup backup phorge > /var/log/phorge-backup.log 2>&1',
         user     => 'root',
         minute   => '0',
         hour     => '1',
         monthday => ['1', '15'],
     }
 
-    monitoring::nrpe { 'Backups Phabricator Static':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/phabricator-backup.log',
+    monitoring::nrpe { 'Backups Phorge Static':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/phorge-backup.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
         critical => true
     }
