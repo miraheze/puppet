@@ -2,10 +2,11 @@
 load-libraries:
   - '/srv/phorge/libext/phorge-extensions'
 
-# Logo/Wordmark
+# UI
 ui.logo:
   'logoImagePHID': 'PHID-FILE-gtm67dpburyr56ogaqay'
   'wordmarkText': 'Miraheze'
+ui.header-color: 'blue'
 
 # MySQL
 mysql.port: '3306'
