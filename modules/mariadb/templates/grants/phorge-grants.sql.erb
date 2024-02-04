@@ -1,8 +1,8 @@
--- Grants for 'phabricator'@''
+-- Grants for 'phorge'@''
 
 GRANT USAGE
-    ON *.* TO 'phabricator'@'%'
+    ON *.* TO 'phorge'@'%'
     IDENTIFIED BY '<%= @phorge_password %>';
 
 GRANT ALL PRIVILEGES
-    ON `phabricator%`.* TO 'phabricator'@'%';
+    ON `phabricator%`.* TO 'phorge'@'%';
