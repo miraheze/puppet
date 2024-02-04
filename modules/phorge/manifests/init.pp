@@ -2,7 +2,7 @@
 class phorge (
   Integer $request_timeout = lookup('phorge::php::request_timeout', {'default_value' => 60}),
 ) {
-    stdlib::ensure_packages(['python3-pygments', 'subversion'])
+    stdlib::ensure_packages(['mariadb-client', 'python3-pygments', 'subversion'])
 
     $fpm_config = {
         'include_path'                    => '".:/usr/share/php"',
