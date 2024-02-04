@@ -9,7 +9,7 @@ ui.logo:
 
 # MySQL
 mysql.port: '3306'
-mysql.user: 'phabricator'
+mysql.user: 'phorge'
 mysql.host: 'db182-private.wikitide.net'
 
 # https://we.phorge.it/book/phorge/article/configuring_file_storage/
