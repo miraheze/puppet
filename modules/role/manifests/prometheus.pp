@@ -3,7 +3,7 @@ class role::prometheus {
     include prometheus::exporter::blackbox
 
     $blackbox_web_urls = [
-        'https://phabricator.miraheze.org',
+        'https://issue-tracker.miraheze.org',
         'https://matomo.miraheze.org',
         'https://graylog.miraheze.org'
     ]
