@@ -84,6 +84,14 @@ class irc::cvtbot {
         ],
     }
 
+    file { "${install_path}/src/CVTBot/bin/Release/net6.0/CVTBot":
+        ensure  => present,
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0744',
+        require => "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config",
+    }
+
     file { [
         "${install_path}/src/CVTBot.ini",
         "${install_path}/src/CVTBot-sample.ini"
