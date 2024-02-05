@@ -106,9 +106,15 @@ class phorge (
         monitor => false,
     }
 
-    nginx::site { 'phabricator.miraheze.org':
+    nginx::site { 'issue-tracker.miraheze.org':
         ensure  => present,
-        source  => 'puppet:///modules/phorge/phabricator.miraheze.org.conf',
+        source  => 'puppet:///modules/phorge/issue-tracker.miraheze.org.conf',
+        monitor => false,
+    }
+
+    nginx::site { 'phabricator.miraheze.org':
+        ensure  => absent,
+        source  => 'puppet:///modules/phorge/issue-tracker.miraheze.org.conf',
         monitor => false,
     }
 
@@ -215,12 +221,12 @@ class phorge (
         },
     }
 
-    monitoring::services { 'phabricator.miraheze.org HTTPS':
+    monitoring::services { 'issue-tracker.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
             address6   => $address,
             http_ssl   => true,
-            http_vhost => 'phabricator.miraheze.org',
+            http_vhost => 'issue-tracker.miraheze.org',
         },
     }
 

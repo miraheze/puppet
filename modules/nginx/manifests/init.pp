@@ -7,7 +7,7 @@ class nginx (
     Integer                  $keepalive_requests                      = lookup('nginx::keepalive_requests', {'default_value' => 1000}),
     String                   $nginx_client_max_body_size              = lookup('nginx::client_max_body_size', {'default_value' => '250M'}),
 ) {
-    # Ensure Apache is absent: https://phabricator.miraheze.org/T253
+    # Ensure Apache is absent: https://issue-tracker.miraheze.org/T253
     package { 'apache2':
         ensure  => absent,
     }
