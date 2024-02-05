@@ -1,6 +1,7 @@
 # role: swift
 class role::swift (
     String $stats_reporter_host = lookup('role::swift::stats_reporter_host'),
+    String $swift_expirer_host = lookup('role::swift::expirer_host'),
 ) {
 
     include ::swift
@@ -105,6 +106,15 @@ class role::swift (
     $object = lookup('swift_object_enable', {'default_value' => false})
     if $object {
         include ::swift::storage
+
+        $expirer_ensure = $swift_expirer_host? {
+            $facts['networking']['fqdn'] => 'present',
+            default => 'absent',
+        }
+        class { 'swift::expirer':
+            ensure               => $expirer_ensure,
+            statsd_metric_prefix => "swift.${facts['networking']['hostname']}",
+        }
 
         ferm::service { 'swift_object_6000':
             proto   => 'tcp',
