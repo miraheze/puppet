@@ -5,8 +5,6 @@ class swift::expirer (
     $statsd_port               = 8125,
     $statsd_metric_prefix      = undef,
     $statsd_sample_rate_factor = '1',
-    $memcached_servers         = ['localhost'],
-    $memcached_port            = 11211,
     $swift_main_memcached      = lookup('swift::proxy::swift_main_memcached', {'default_value' => '[2602:294:0:b23::109]'}),
 ) {
 
