@@ -112,12 +112,6 @@ class phorge (
         monitor => false,
     }
 
-    nginx::site { 'phabricator.miraheze.org':
-        ensure  => absent,
-        source  => 'puppet:///modules/phorge/issue-tracker.miraheze.org.conf',
-        monitor => false,
-    }
-
     ssl::wildcard { 'phorge wildcard': }
     ssl::cert { 'miraheze.wiki': }
 
