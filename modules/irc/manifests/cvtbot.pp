@@ -89,7 +89,7 @@ class irc::cvtbot {
         owner   => 'irc',
         group   => 'irc',
         mode    => '0744',
-        require => "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config",
+        require => File["${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config"],
     }
 
     file { [
