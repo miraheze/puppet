@@ -121,6 +121,7 @@ swift::storage::object_server_default_workers: 100
 
 role::swift::stats_reporter_host: swiftproxy171.wikitide.net
 
+role::swift::expirer_host: 'swiftobject151.wikitide.net'
 swift::storage::devices:
   - swiftobject151
   - swiftobject161
