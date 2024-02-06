@@ -120,6 +120,7 @@
         // runJobs.php process time limits
         "real": {
             "*": 300,
+            "cirrusSearchElasticaWrite": 600,
             "DataDumpGenerateJob": 86400,
             "NamespaceMigrationJob": 9000,
             "webVideoTranscode": 86400,
@@ -128,6 +129,7 @@
         // runJobs.php memory limits
         "memory": {
             "*": "500M",
+            "cirrusSearchElasticaWrite": "1400M",
             "DataDumpGenerateJob": "512M",
             "parsoidCachePrewarm": "1400M",
             "refreshLinks": "1400M",
