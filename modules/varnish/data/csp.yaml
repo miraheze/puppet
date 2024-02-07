@@ -4,6 +4,7 @@ default-src:
   - "'self'"
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.wikitide.net'
 
 script-src:
   - 'blob:'
@@ -12,6 +13,7 @@ script-src:
   - "'unsafe-eval'"
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.wikitide.net'
   - '*.wikimedia.org'
   - '*.wikipedia.org'
   - '*.wikibooks.org'
@@ -47,6 +49,7 @@ style-src:
   - "'unsafe-inline'"
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.wikitide.net'
   - '*.wikimedia.org'
   - '*.wikipedia.org'
   - '*.wikibooks.org'
@@ -76,6 +79,7 @@ img-src:
   - 'data:'
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.wikitide.net'
   - 'upload.wikimedia.org'
   - 'wikimedia.org'
   - 'maps.google.com'
@@ -133,6 +137,7 @@ font-src:
   - 'data:'
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.wikitide.net'
   - 'fonts.gstatic.com'
   - 'fonts.googleapis.com'
   - 'cdnjs.cloudflare.com'
@@ -147,6 +152,7 @@ media-src:
   - 'blob:'
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.wikitide.net'
   - 'upload.wikimedia.org'
   - 'embed.nicovideo.jp'
   - '*.youtube.com'
@@ -162,6 +168,7 @@ frame-src:
   - "'self'"
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.wikitide.net'
   - 'www.google.com'
   - 'docs.google.com'
   - 'apis.google.com'
@@ -192,6 +199,7 @@ connect-src:
   - "'self'"
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.wikitide.net'
   - 'www.wikidata.org'
   - '*.wikipedia.org'
   - 'www.mediawiki.org'
