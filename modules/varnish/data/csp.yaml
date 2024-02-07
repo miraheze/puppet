@@ -131,7 +131,7 @@ img-src:
   - 'postimg.cc'
   - '*.postimg.cc'
   - '*.rbxcdn.com'
-
+  - 'cms-imgp.jw-cdn.org'
 font-src:
   - "'self'"
   - 'data:'
