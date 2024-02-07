@@ -36,7 +36,6 @@ script-src:
   - 'fastly.jsdelivr.net'
   - 'cdn.syndication.twimg.com'
   - 'openlayers.org'
-  - 'phab.miraheze.wiki'
   - 'www.gstatic.cn'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
@@ -68,7 +67,6 @@ style-src:
   - 'cdnjs.cloudflare.com'
   - 'platform.twitter.com'
   - 'ton.twimg.com'
-  - 'phab.miraheze.wiki'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
 
@@ -115,7 +113,6 @@ img-src:
   - 'img.newspapers.com'
   - 'cdn.smutstone.com'
   - 'storage.googleapis.com'
-  - 'phab.miraheze.wiki'
   - '*.fbcdn.net'
   - 'i.ytimg.com'
   - '*.imgbb.com'
@@ -142,7 +139,6 @@ font-src:
   - 'cdn.jsdelivr.net'
   - 'fastly.jsdelivr.net'
   - 'db.onlinewebfonts.com'
-  - 'phab.miraheze.wiki'
   - 'upload.wikimedia.org'
 
 media-src:

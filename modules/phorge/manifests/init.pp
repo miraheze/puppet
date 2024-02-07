@@ -100,9 +100,9 @@ class phorge (
 
     $password = lookup('passwords::irc::mirahezebots')
 
-    nginx::site { 'phab.miraheze.wiki':
+    nginx::site { 'phorge-static.wikitide.net':
         ensure  => present,
-        source  => 'puppet:///modules/phorge/phab.miraheze.wiki.conf',
+        source  => 'puppet:///modules/phorge/phorge-static.wikitide.net.conf',
         monitor => false,
     }
 
@@ -204,14 +204,14 @@ class phorge (
         $address = $facts['networking']['ip6']
     }
 
-    monitoring::services { 'phab.miraheze.wiki HTTPS':
+    monitoring::services { 'phorge-static.wikitide.net HTTPS':
         check_command => 'check_http',
         vars          => {
             address6    => $address,
             http_expect => 'HTTP/1.1 200',
             http_ssl    => true,
-            http_vhost  => 'phab.miraheze.wiki',
-            http_uri    => 'https://phab.miraheze.wiki/file/data/b6eckvcmsmmjwe6gb2as/PHID-FILE-c6u44mun2axi3qq63u5t/ManageWiki-GH.png'
+            http_vhost  => 'phorge-static.wikitide.net',
+            http_uri    => 'https://phorge-static.wikitide.net/file/data/b6eckvcmsmmjwe6gb2as/PHID-FILE-c6u44mun2axi3qq63u5t/ManageWiki-GH.png'
         },
     }
 
