@@ -154,7 +154,7 @@ class matomo (
 
     ssl::wildcard { 'matomo wildcard': }
 
-    nginx::site { 'matomo.miraheze.org':
+    nginx::site { 'analytics.wikitide.net':
         ensure  => present,
         source  => 'puppet:///modules/matomo/nginx.conf',
         monitor => true,
@@ -182,7 +182,7 @@ class matomo (
     # Install a systemd timer to run the Archive task periodically.
     # Running it once a day to avoid performance penalties on high trafficated websites
     # (https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/#important-tips-for-medium-to-high-traffic-websites)
-    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --url=\"https://matomo.miraheze.org/\""
+    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --url=\"https://analytics.wikitide.net/\""
 
     # Create concurrent archivers
     # https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/

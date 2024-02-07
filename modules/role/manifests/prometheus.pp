@@ -4,7 +4,7 @@ class role::prometheus {
 
     $blackbox_web_urls = [
         'https://issue-tracker.miraheze.org',
-        'https://matomo.miraheze.org',
+        'https://analytics.wikitide.net',
         'https://graylog.miraheze.org'
     ]
 
