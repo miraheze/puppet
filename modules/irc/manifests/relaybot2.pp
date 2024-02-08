@@ -95,7 +95,7 @@ class irc::relaybot2 {
 
     systemd::service { 'relaybot2':
         ensure  => present,
-        content => systemd_template('relaybot2'),
+        content => systemd_template('relaybot'),
         restart => true,
         require => [
             Git::Clone['IRC-Discord-Relay-2'],
