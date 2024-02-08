@@ -1,0 +1,20 @@
+[IRC]
+Server = irc.libera.chat
+Port = 6697
+Nickname = WikiTideRelay
+Password = <%= @irc_password %>
+UseSSL = true
+
+[Discord]
+BotToken = <%= @bot_token %>
+
+[ChannelMapping]
+1088870295970009221 = #wikitide
+1159355587486810112 = #wikitide-cvt
+1175925489135784096 = #wikitide-cvt-feed
+1130665399386656838 = #wikitide-sre
+1190824030853406761 = #wikitide-sre-security
+
+[IgnoreUsers]
+IRC = /^wm-bot(\d+)?$/
+Discord =
