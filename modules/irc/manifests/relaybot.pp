@@ -8,7 +8,7 @@ define irc::relaybot (
     $irc_password = lookup("passwords::irc::${instance}::irc_password")
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
-    if $http_proxy {
+    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01irc']) {
         file { '/etc/apt/apt.conf.d/01irc':
             ensure  => present,
             content => template('irc/relaybot/aptproxy.erb'),
@@ -16,21 +16,23 @@ define irc::relaybot (
         }
     }
 
-    file { '/opt/packages-microsoft-prod.deb':
-        ensure => present,
-        source => 'puppet:///modules/irc/relaybot/packages-microsoft-prod.deb',
-    }
+    if !defined(File['/opt/packages-microsoft-prod.deb']) {
+        file { '/opt/packages-microsoft-prod.deb':
+            ensure => present,
+            source => 'puppet:///modules/irc/relaybot/packages-microsoft-prod.deb',
+        }
 
-    package { 'packages-microsoft-prod':
-        ensure   => installed,
-        provider => dpkg,
-        source   => '/opt/packages-microsoft-prod.deb',
-        require  => File['/opt/packages-microsoft-prod.deb'],
-    }
+        package { 'packages-microsoft-prod':
+            ensure   => installed,
+            provider => dpkg,
+            source   => '/opt/packages-microsoft-prod.deb',
+            require  => File['/opt/packages-microsoft-prod.deb'],
+        }
 
-    package { 'dotnet-sdk-6.0':
-        ensure  => installed,
-        require => Package['packages-microsoft-prod'],
+        package { 'dotnet-sdk-6.0':
+            ensure  => installed,
+            require => Package['packages-microsoft-prod'],
+        }
     }
 
     file { $install_path:
