@@ -134,7 +134,9 @@ define irc::relaybot (
         ],
     }
 
-    monitoring::nrpe { "IRC-Discord Relay Bot (instance: ${instance})":
-        command => "/usr/lib/nagios/plugins/check_procs -a ${instance} -c 2:2"
+    if !defined(Monitoring::Nrpe['IRC-Discord Relay Bot']) {
+        monitoring::nrpe { 'IRC-Discord Relay Bot':
+            command => '/usr/lib/nagios/plugins/check_procs -a relaybot -c 4:4'
+        }
     }
 }
