@@ -162,7 +162,7 @@ class phorge (
     $module_path = get_module_path($module_name)
     $phorge_yaml = loadyaml("${module_path}/data/config.yaml")
     $phorge_private = {
-        'mysql.pass' => lookup('passwords::db::phabricator'),
+        'mysql.pass' => lookup('passwords::db::phorge'),
     }
 
     $phorge_setting = {

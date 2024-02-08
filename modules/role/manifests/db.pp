@@ -13,7 +13,7 @@ class role::db (
     $mediawiki_password = lookup('passwords::db::mediawiki')
     $wikiadmin_password = lookup('passwords::db::wikiadmin')
     $matomo_password = lookup('passwords::db::matomo')
-    $phorge_password = lookup('passwords::db::phabricator')
+    $phorge_password = lookup('passwords::db::phorge')
     $exporter_password = lookup('passwords::db::exporter')
     $icinga_password = lookup('passwords::db::icinga')
     $icingaweb2_db_user_password = lookup('passwords::icingaweb2')
