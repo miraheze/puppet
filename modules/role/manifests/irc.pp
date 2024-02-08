@@ -1,8 +1,15 @@
 # role: irc
 class role::irc {
     include irc::irclogbot
-    include irc::relaybot
     include irc::cvtbot
+
+    irc::relaybot { 'relaybot':
+        instance => 'relaybot'
+    }
+
+    irc::relaybot { 'relaybot2':
+        instance => 'relaybot2'
+    }
 
     class { 'irc::ircrcbot':
         nickname     => 'MirahezeRC',
