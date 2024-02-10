@@ -2,7 +2,10 @@ define monitoring::hosts (
     $ensure      = present,
     $contacts    = lookup('contactgroups', {'default_value' => [ 'sre' ]}),
 ) {
-    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+    if ( $facts['networking']['interfaces']['he-ipv6'] ) {
+        $address = undef
+        $address6 = $facts['networking']['interfaces']['he-ipv6']['ip6']
+    } elsif ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
         $address = $facts['networking']['interfaces']['ens19']['ip']
         $address6 = undef
     } elsif ( $facts['networking']['interfaces']['ens18'] ) {
