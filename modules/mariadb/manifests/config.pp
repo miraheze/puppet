@@ -120,6 +120,14 @@ class mariadb::config(
         use_udp           => true,
     }
 
+    if $enable_slow_log {
+        rsyslog::input::file { 'mysql-slow':
+            path              => '/var/log/mysql/mysql-slow.log',
+            syslog_tag_prefix => '',
+            use_udp           => true,
+        }
+    }
+
     monitoring::services { 'MariaDB':
         check_command => 'mysql',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
