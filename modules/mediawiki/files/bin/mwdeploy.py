@@ -439,10 +439,10 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     output = process.read().strip()
                     status = process.close()
                     exitcode = 0
-                    if status:
+                    if status and not args.force:
                         exitcode = os.waitstatus_to_exitcode(status)
                     exitcodes.append(exitcode)
-                    if exitcode == 0 and (args.force or output != 'Already up to date.'):
+                    if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
                         print(f'Upgrading {extension}')
                         for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
                             if not args.skip_schema_confirm and extension not in warnings:
@@ -488,10 +488,10 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     output = process.read().strip()
                     status = process.close()
                     exitcode = 0
-                    if status:
+                    if status and not args.force:
                         exitcode = os.waitstatus_to_exitcode(status)
                     exitcodes.append(exitcode)
-                    if exitcode == 0 and (args.force or output != 'Already up to date.'):
+                    if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
                         print(f'Upgrading {skin}')
                         for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
                             if not args.skip_schema_confirm and skin not in warnings:
@@ -706,6 +706,7 @@ if __name__ == '__main__':
     parser.add_argument('--extension-list', dest='extension_list', action='store_true')
     parser.add_argument('--no-log', dest='nolog', action='store_true')
     parser.add_argument('--force', dest='force', action='store_true')
+    parser.add_argument('--force-upgrade', dest='force_upgrade', action='store_true')
     parser.add_argument('--files', dest='files')
     parser.add_argument('--folders', dest='folders')
     parser.add_argument('--lang', dest='lang', action=LangAction, help='l10n language(s) to rebuild, defaults to all')
