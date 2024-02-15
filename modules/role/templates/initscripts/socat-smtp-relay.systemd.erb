@@ -1,0 +1,10 @@
+[Unit]
+Description=Socat SMTP Relay for Gmail
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/socat TCP6-LISTEN:2025,reuseaddr,fork TCP4:smtp-relay.gmail.com:465
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
