@@ -172,8 +172,8 @@ class phorge (
                 'key'          => 'miraheze-smtp',
                 'type'         => 'smtp',
                 'options'      => {
-                    'host'     => 'smtp-relay.gmail.com',
-                    'port'     => 465,
+                    'host'     => 'bastion-private.wikitide.net',
+                    'port'     => 2025,
                     'protocol' => 'ssl',
                 },
             },
