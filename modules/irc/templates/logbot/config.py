@@ -29,7 +29,7 @@ twitter_api_params = {
 }
 
 # Channels to join
-targets = ("#miraheze-sre", "#miraheze-sre-security")
+targets = ("#miraheze-sre",)
 
 # Name of nickserv user
 nickserv = "nickserv"
