@@ -7,6 +7,8 @@ class role::bastion (
         description => 'core access bastion host'
     }
 
+    stdlib::ensure_packages('socat')
+
     ferm::service { 'bastion-ssh-public':
         proto => 'tcp',
         port  => '22',
@@ -30,6 +32,12 @@ class role::bastion (
         .sort(),
         ' '
     )
+
+    ferm::service { 'bastion-socat':
+        proto  => 'tcp',
+        port   => '2025',
+        srange => "(${squid_access_hosts_str})",
+    }
 
     ferm::service { 'bastion-squid':
         proto  => 'tcp',
@@ -82,5 +90,12 @@ class role::bastion (
             ensure  => present,
             content => template('role/bastion/mediawiki.conf.erb'),
         }
+    }
+
+    systemd::service { 'socat-smtp-relay':
+        ensure  => present,
+        content => systemd_template('socat-smtp-relay'),
+        restart => true,
+        require => Package['socat'],
     }
 }
