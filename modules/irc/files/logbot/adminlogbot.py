@@ -22,10 +22,10 @@ class logbot(ircbot.SingleServerIRCBot):
     def __init__(self, name, config):
         self.config = config
         self.name = name
-        sasl_password = config.nick_username + ':' + config.nick_password
-        server = [config.network, config.port, sasl_password]
-        ircbot.SingleServerIRCBot.__init__(self, [server], config.nick,
-                                           config.nick)
+        sasl_password = config.nick_username + '\0' + config.nick_password
+        server = [config.network, config.port, config.nick_password]
+        ircbot.SingleServerIRCBot.__init__(self, [server], config.nick, config.nick,
+                                           sasl_login=sasl_password)
 
     def connect(self, *args, **kwargs):
         if self.config.ssl:
@@ -355,6 +355,6 @@ for bot in bots:
 while True:
     for bot in bots:
         try:
-            bot.ircobj.process_once(timeout=0.1)
+            bot.reactor.process_once(timeout=0.1)
         except Exception:
             logging.exception('Died in main event loop')
