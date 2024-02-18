@@ -13,6 +13,7 @@
             "exclude": [
                 "AssembleUploadChunks",
                 "DataDumpGenerateJob",
+                "ImportDumpJob",
                 "parsoidCachePrewarm",
                 "PublishStashedFile",
                 "RecordLintJob",
@@ -57,6 +58,14 @@
             // Job types to include ("*" means "all")
             "include": [
                 "CreateWikiJob"
+            ]
+        },
+        "importdump": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "ImportDumpJob"
             ]
         },
         "managewiki": {
@@ -113,6 +122,7 @@
         "claimTTL": {
             "*": 3600,
             "DataDumpGenerateJob": 86400,
+            "ImportDumpJob": 259200,
             "NamespaceMigrationJob": 9000,
             "webVideoTranscode": 86400,
             "webVideoTranscodePrioritized": 86400
@@ -122,6 +132,7 @@
             "*": 300,
             "cirrusSearchElasticaWrite": 600,
             "DataDumpGenerateJob": 86400,
+            "ImportDumpJob": 259200,
             "NamespaceMigrationJob": 9000,
             "webVideoTranscode": 86400,
             "webVideoTranscodePrioritized": 86400
@@ -131,6 +142,7 @@
             "*": "500M",
             "cirrusSearchElasticaWrite": "1400M",
             "DataDumpGenerateJob": "512M",
+            "ImportDumpJob": "2000M",
             "parsoidCachePrewarm": "1400M",
             "refreshLinks": "1400M",
             "refreshLinksDynamic": "1400M",
