@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [agent, owen, paladox, reception, universalomega, void]
+    members: [agent, reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -116,11 +116,11 @@ users:
     realname: ImBoPhil
     ssh_keys: []
   paladox:
-    ensure: present
+    ensure: absent
     uid: 1009
     name: paladox
     realname: Paladox
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBfGqvKZGTNhHU4onyQnZud29RxCL8bBhTKU6wLhhTks paladox]
+    ssh_keys: []
   macfan:
     ensure: present
     uid: 1010
@@ -166,11 +166,11 @@ users:
     realname: Alex
     ssh_keys: [sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIK1eR7I1K/AL6R9RxDOaldPLSDRpN5jl0+lMJq1Fa4tzAAAABHNzaDo= alex@localhost.localdomain]
   owen:
-    ensure: present
+    ensure: absent
     uid: 1017
     name: Owen
     realname: Owen
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIdKAqYfHpbp72ZmbDbafkxsbV+ysvn2JjDFU0QL2N1O owen@miraheze]
+    ssh_keys: []
   oa:
     ensure: present
     uid: 1018
