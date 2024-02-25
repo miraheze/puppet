@@ -409,7 +409,7 @@ sub vcl_recv {
 	}
 
 	# Do not cache requests from this domain
-	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
+	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.wikitide.net") {
 		set req.backend_hint = mon181;
 
 		if (req.http.upgrade ~ "(?i)websocket") {
