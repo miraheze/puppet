@@ -260,12 +260,12 @@ class icingaweb2 (
         $address = $facts['networking']['ip6']
     }
 
-    monitoring::services { 'icinga.miraheze.org HTTPS':
+    monitoring::services { 'monitoring.wikitide.net HTTPS':
         check_command => 'check_http',
         vars          => {
             address6   => $address,
             http_ssl   => true,
-            http_vhost => 'icinga.miraheze.org',
+            http_vhost => 'monitoring.wikitide.net',
         },
     }
 }
