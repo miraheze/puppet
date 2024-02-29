@@ -36,6 +36,20 @@ class mediawiki::deploy {
             mode    => '0644',
             require => File['/var/www/.ssh'],
         }
+
+        users::user { 'www-data':
+        ensure   => present,
+        uid      => 33,
+        gid      => 33,
+        system   => true,
+        homedir  => '/var/www',
+        shell    => '/bin/bash',
+        before   => Service['nginx'],
+        ssh_keys => [
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy'
+        ],
+    }
+
     }
 
     stdlib::ensure_packages(
