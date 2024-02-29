@@ -10,6 +10,7 @@ class mediawiki {
 
     if lookup(mediawiki::use_staging) {
         include mediawiki::deploy
+        include mediawiki::rsync
     } else {
         include mediawiki::rsync
     }
