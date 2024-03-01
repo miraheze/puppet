@@ -16,6 +16,20 @@ class irc::pywikibot {
         max_files => 5000,
     }
 
+    stdlib::ensure_packages([
+        'python3-mwparserfromhell',
+        'python3-packaging',
+        'python3-requests',
+        'python3-mwoauth',
+        'python3-pydot',
+        'python3-python-stdnum',
+        'python3-pillow',
+        'python3-google',
+        'python3-sseclient',
+        'python3-PyMySQL',
+        'python3-beautifulsoup4',
+        'python3-memento_client',
+    ])
     git::clone { 'PyWikiBot':
         ensure    => present,
         origin    => 'https://github.com/wikimedia/pywikibot',
