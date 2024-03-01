@@ -2,6 +2,7 @@
 class role::irc {
     include irc::irclogbot
     include irc::cvtbot
+    include irc::pywikibot
 
     irc::relaybot { 'relaybot':
         instance => 'relaybot'
