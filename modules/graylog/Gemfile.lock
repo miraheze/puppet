@@ -415,7 +415,7 @@ GEM
       logging (>= 1.6.1, < 3.0)
       rubyzip (~> 2.0)
       winrm (~> 2.0)
-    yard (0.9.35)
+    yard (0.9.36)
 
 PLATFORMS
   x86_64-linux
