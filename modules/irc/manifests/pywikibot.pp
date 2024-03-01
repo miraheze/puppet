@@ -26,7 +26,7 @@ class irc::pywikibot {
         'python3-pillow',
         # 'python3-google',
         # 'python3-sseclient',
-        'python3-mysql',
+        'python3-mysqldb',
         'python3-bs4',
        #  'python3-memento_client',
     ])
