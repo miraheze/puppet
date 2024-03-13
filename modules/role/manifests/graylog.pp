@@ -7,7 +7,7 @@ class role::graylog {
 
     nginx::site { 'graylog_proxy':
         ensure => present,
-        source => 'puppet:///modules/role/graylog/graylog.miraheze.org.conf',
+        source => 'puppet:///modules/role/graylog/logging.wikitide.net.conf',
     }
 
     class { 'mongodb::globals':
