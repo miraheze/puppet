@@ -93,7 +93,7 @@ class monitoring (
     }
 
     class { '::icinga2::feature::gelf':
-        host => 'graylog.miraheze.org',
+        host => 'logging.wikitide.net',
     }
 
     file { '/etc/icinga2/conf.d/commands.conf':

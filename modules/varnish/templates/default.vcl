@@ -397,7 +397,7 @@ sub vcl_recv {
 	}
 
 	# Only cache js files from Matomo
-	if (req.http.Host == "matomo.miraheze.org" || req.http.Host == "analytics.wikitide.net") {
+	if (req.http.Host == "analytics.wikitide.net") {
 		set req.backend_hint = matomo151;
 
 		# Yes, we only care about this file
@@ -409,7 +409,7 @@ sub vcl_recv {
 	}
 
 	# Do not cache requests from this domain
-	if (req.http.Host == "monitoring.wikitide.net" || req.http.Host == "grafana.miraheze.org") {
+	if (req.http.Host == "monitoring.wikitide.net" || req.http.Host == "grafana.wikitide.net") {
 		set req.backend_hint = mon181;
 
 		if (req.http.upgrade ~ "(?i)websocket") {

@@ -68,7 +68,7 @@ node /^mw1[5678][12]\.wikitide\.net$/ {
     include role::mediawiki
 }
 
-node 'mwtask181.wikitide.net' {
+node /^mwtask1[78]1\.wikitide\.net$/ {
     include base
     include role::mediawiki
     include role::mathoid
