@@ -102,6 +102,7 @@ def check_records(hostname):
         cname = None
 
     if (
+        cname is not None and
         re.match(".+\.miraheze\.org", cname) and
         not re.match("(issue-tracker|static|donate|reports)\.miraheze\.org", cname)
        ):
