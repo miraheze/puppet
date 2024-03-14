@@ -24,21 +24,19 @@ class irc::pywikibot {
         'python3-pydot',
         'python3-stdnum',
         'python3-pillow',
-        # 'python3-google',
-        # 'python3-sseclient',
         'python3-mysqldb',
         'python3-bs4',
-       #  'python3-memento_client',
     ])
+
     git::clone { 'PyWikiBot':
-        ensure    => present,
-        origin    => 'https://github.com/wikimedia/pywikibot',
-        directory => $install_path,
-        owner     => 'irc',
-        group     => 'irc',
-        mode      => '0644',
+        ensure             => present,
+        origin             => 'https://github.com/wikimedia/pywikibot',
+        directory          => $install_path,
+        owner              => 'irc',
+        group              => 'irc',
+        mode               => '0644',
         recurse_submodules => true,
-        require   => File[$install_path],
+        require            => File[$install_path],
     }
 
     file { "${install_path}/user-config.py":
@@ -61,7 +59,7 @@ class irc::pywikibot {
 
     cron { 'run pywikibot archivebot on meta':
             ensure  => present,
-            command => "/usr/bin/python3 /srv/pywikibot/pwb.py archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /srv/pywikibot/cron.log 2>&1",
+            command => '/usr/bin/python3 /srv/pywikibot/pwb.py archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /srv/pywikibot/cron.log 2>&1',
             user    => 'irc',
             minute  => '0',
             hour    => '0',
