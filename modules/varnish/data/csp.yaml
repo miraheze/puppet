@@ -45,6 +45,7 @@ style-src:
   - "'self'"
   - 'data:'
   - "'unsafe-inline'"
+  - 'miraheze.org'
   - '*.miraheze.org'
   - '*.mirabeta.org'
   - '*.wikitide.net'
@@ -74,6 +75,7 @@ img-src:
   - 'blob:'
   - "'self'"
   - 'data:'
+  - 'miraheze.org'
   - '*.miraheze.org'
   - '*.mirabeta.org'
   - '*.wikitide.net'
@@ -127,6 +129,7 @@ img-src:
   - '*.postimg.cc'
   - '*.rbxcdn.com'
   - 'cms-imgp.jw-cdn.org'
+
 font-src:
   - "'self'"
   - 'data:'
@@ -156,7 +159,6 @@ media-src:
   - 'player.vimeo.com'
   - 'apis.google.com'
   - 'bandcamp.com'
-
 
 frame-src:
   - "'self'"
