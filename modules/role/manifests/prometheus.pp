@@ -215,6 +215,25 @@ class role::prometheus {
         port   => 9142
     }
 
+    $pdns_rec_job = [
+        {
+            'job_name' => 'pdnsrec',
+            'scheme'   => 'http',
+            'metrics_path' => '/metrics',
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/pdnsrec.yaml' ]
+                }
+            ],
+        },
+    ]
+
+    prometheus::class { 'pdnsrec':
+        dest   => '/etc/prometheus/targets/pdnsrec.yaml',
+        module => 'Base::Dns',
+        port   => 9199,
+    }
+
     $elasticsearch_job = [
         {
             'job_name' => 'elasticsearch',
@@ -255,8 +274,8 @@ class role::prometheus {
         scrape_extra => [
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
             $puppetserver_job, $puppetdb_job, $memcached_job,
-            $openldap_job, $elasticsearch_job, $statsd_exporter_job,
-            $varnish_job, $cadvisor_job
+            $openldap_job, $pdns_rec_job, $elasticsearch_job,
+            $statsd_exporter_job, $varnish_job, $cadvisor_job
         ].flatten,
     }
 
