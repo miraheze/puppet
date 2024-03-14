@@ -101,7 +101,10 @@ def check_records(hostname):
     except resolver.NoAnswer:
         cname = None
 
-    if cname == 'mw-lb.miraheze.org.':
+    if (
+        re.match(".+\.miraheze\.org", cname) and
+        not re.match("(issue-tracker|static|donate|reports)\.miraheze\.org", cname)
+       ):
         return 'CNAME'
     elif cname is None and cname_check_impossible:
         return 'CNAMEFLAT'
