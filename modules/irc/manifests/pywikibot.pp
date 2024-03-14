@@ -24,12 +24,10 @@ class irc::pywikibot {
         'python3-pydot',
         'python3-stdnum',
         'python3-pillow',
-        # 'python3-google',
-        # 'python3-sseclient',
         'python3-mysqldb',
         'python3-bs4',
-       #  'python3-memento_client',
     ])
+
     git::clone { 'PyWikiBot':
         ensure    => present,
         origin    => 'https://github.com/wikimedia/pywikibot',
