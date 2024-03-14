@@ -27,3 +27,9 @@ hint-file=/usr/share/dns/root.hints
 
 # Forward requests to our authorative servers
 forward-zones = wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089, miraheze.org=2602:294:0:b23::111;2001:41d0:801:2000::4089
+
+webserver=yes
+webserver-port=9199
+webserver-address=<%= @facts['networking']['interfaces']['ens19']['ip'] %>
+webserver-loglevel=none
+webserver-allow-from=127.0.0.1,::1,10.0.0.0/8
