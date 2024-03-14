@@ -89,9 +89,17 @@ join_cache_level               = 8
 
 performance_schema = off
 
-log-error                      = /var/log/mysql/mysql-error.log
-slow-query-log                 = 0
-slow-query-log-file            = /var/log/mysql/mysql-slow.log
+log_output                     = FILE
+log_error                      = /var/log/mysql/mysql-error.log
+<%- if @enable_slow_log -%>
+slow_query_log                 = ON
+slow_query_log_file            = /var/log/mysql/mysql-slow.log
+long_query_time                = 1
+log_slow_admin_statements      = ON
+log_queries_not_using_indexes  = OFF
+<%- else -%>
+slow_query_log                 = OFF
+<%- end -%>
 
 userstat                       = 1
 plugin_load_add                = query_response_time

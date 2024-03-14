@@ -11,6 +11,7 @@ class mariadb::config(
     Optional[Integer]     $server_id                    = undef,
     Boolean               $enable_bin_logs              = true,
     Boolean               $enable_ssl                   = true,
+    Boolean               $enable_slow_log              = false,
 ) {
     $exporter_password = lookup('passwords::db::exporter')
     $ido_db_user_password = lookup('passwords::icinga_ido')
@@ -117,6 +118,14 @@ class mariadb::config(
         path              => '/var/log/mysql/mysql-error.log',
         syslog_tag_prefix => '',
         use_udp           => true,
+    }
+
+    if $enable_slow_log {
+        rsyslog::input::file { 'mysql-slow':
+            path              => '/var/log/mysql/mysql-slow.log',
+            syslog_tag_prefix => '',
+            use_udp           => true,
+        }
     }
 
     monitoring::services { 'MariaDB':

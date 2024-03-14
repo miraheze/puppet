@@ -5,6 +5,7 @@ class role::db (
     Optional[Array[String]] $fortnightly_misc = lookup('role::db::fornightly_misc', {'default_value' => []}),
     Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []}),
     Boolean $enable_bin_logs = lookup('role::db::enable_bin_logs', {'default_value' => true}),
+    Boolean $enable_slow_log = lookup('role::db::enable_slow_log', {'default_value' => false}),
     Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
     Boolean $enable_ssl = lookup('role::db::enable_ssl', {'default_value' => true}),
 ) {
@@ -36,6 +37,7 @@ class role::db (
         icinga_password => $icinga_password,
         enable_bin_logs => $enable_bin_logs,
         enable_ssl      => $enable_ssl,
+        enable_slow_log => $enable_slow_log,
     }
 
     file { '/etc/mysql/miraheze/mediawiki-grants.sql':
