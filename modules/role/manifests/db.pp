@@ -1,5 +1,6 @@
 # class: role::db
 class role::db (
+    Optional[Array[String]] $daily_misc = lookup('role::db::daily_misc', {'default_value' => []}),
     Optional[Array[String]] $weekly_misc = lookup('role::db::weekly_misc', {'default_value' => []}),
     Optional[Array[String]] $fortnightly_misc = lookup('role::db::fornightly_misc', {'default_value' => []}),
     Optional[Array[String]] $monthly_misc = lookup('role::db::monthly_misc', {'default_value' => []}),
@@ -115,6 +116,21 @@ class role::db (
 
         monitoring::nrpe { 'Backups SQL':
             command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sql-backup.log',
+            docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+            critical => true
+        }
+    }
+
+    $daily_misc.each |String $db| {
+        cron { "backups-${db}":
+            ensure  => present,
+            command => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup-daily.log 2>&1",
+            user    => 'root',
+            special => 'daily',
+        }
+
+        monitoring::nrpe { "Backups SQL ${db}":
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 129600 -c 172800 -f /var/log/sql-${db}-backup-daily.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
