@@ -4,6 +4,7 @@ append_dot_mydomain = no
 readme_directory = no
 
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+smtp_address_preference = ipv6
 myhostname = <%= @facts['networking']['fqdn'] %>
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
