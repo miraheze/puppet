@@ -9,7 +9,7 @@ myhostname = <%= @facts['networking']['fqdn'] %>
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 myorigin = /etc/mailname
-mydestination = <%= @facts['networking']['fqdn'] %>, localhost.miraheze.org, localhost
+mydestination = <%= @facts['networking']['fqdn'] %>, localhost.wikitide.net, localhost
 relayhost = [smtp-relay.gmail.com]:465
 smtp_tls_wrappermode = yes
 smtp_tls_security_level = encrypt
