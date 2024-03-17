@@ -9,16 +9,14 @@ class DbClusterMap(TypedDict):
     c2: str
     c3: str
     c4: str
-    c5: str
 
 
 # Define the mapping of db clusters to db names
 db_clusters: DbClusterMap = {
-    'c1': 'db131',
-    'c2': 'db101',
-    'c3': 'db142',
-    'c4': 'db121',
-    'c5': 'db131',
+    'c1': 'db151',
+    'c2': 'db161',
+    'c3': 'db171',
+    'c4': 'db181',
 }
 
 
@@ -36,7 +34,7 @@ def execute_salt_command(salt_command: str, shell: bool = False, stdout: Optiona
 
 
 def get_db_cluster(oldwiki_db: str) -> str:
-    command = generate_salt_command('db131*', f'cmd.run "mysql -e \'SELECT wiki_dbcluster FROM mhglobal.cw_wikis WHERE wiki_dbname = "{oldwiki_db}" \' "')
+    command = generate_salt_command('db171*', f'cmd.run "mysql -e \'SELECT wiki_dbcluster FROM mhglobal.cw_wikis WHERE wiki_dbname = "{oldwiki_db}" \' "')
     result = execute_salt_command(salt_command=command, shell=True, stdout=subprocess.PIPE, text=True)
     if result:
         cluster_name = result.stdout.strip()
@@ -60,7 +58,7 @@ def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
     execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f"mysql -e 'USE {newwiki_db}; SOURCE /home/$user/oldwikidb.sql'"))
 
     # Step 3: Execute MediaWiki rename script
-    execute_salt_command(salt_command=generate_salt_command('mwtask141', f'sudo -u www-data php /srv/mediawiki/w/extensions/CreateWiki/maintenance/renameWiki.php --wiki=loginwiki --rename {oldwiki_db} {newwiki_db} $user'))
+    execute_salt_command(salt_command=generate_salt_command('mwtask181', f'sudo -u www-data php /srv/mediawiki/1.41/extensions/CreateWiki/maintenance/renameWiki.php --wiki=loginwiki --rename {oldwiki_db} {newwiki_db} $user'))
 
 
 def main() -> None:
