@@ -130,7 +130,7 @@ class role::swift (
             srange  => "(${firewall_rules_str})",
         }
     }
-    
+
     class { 'role::prometheus::statsd_exporter':
         relay_address => '',
     }
