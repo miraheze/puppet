@@ -1,6 +1,10 @@
 class prometheus::exporter::statsd_exporter (
-    Array[Hash] $mappings      = lookup('prometheus::exporter::statsd_exporter::mappings'),
-    String $listen_address     = ':9112',
+    Enum['summary', 'histogram'] $timer_type,
+    Array[Variant[Integer, Float]] $histogram_buckets,
+    Array[Hash] $mappings = [],
+    String $relay_address = '',
+    String $listen_address = ':9112',
+    String $arguments = '',
 ) {
 
     file { '/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb':
@@ -18,7 +22,8 @@ class prometheus::exporter::statsd_exporter (
     $basedir = '/etc/prometheus'
     $config = "${basedir}/statsd_exporter.conf"
     $defaults = {
-      'timer_type' => 'summary',
+      'timer_type' => $timer_type,
+      'buckets'    => $histogram_buckets,
       'quantiles'  => [
         { 'quantile' => 0.99,
           'error'    => 0.001  },
@@ -54,7 +59,9 @@ class prometheus::exporter::statsd_exporter (
         group   => 'root',
         content => inline_template(join(['ARGS="',
             '--statsd.mapping-config=<%= @config %>',
+            '<% if not @relay_address.empty? %>--statsd.relay-address=<%= @relay_address %><% end %>',
             '--web.listen-address=<%= @listen_address %>',
+            '<%= @arguments %>',
         '"'], ' ')),
         notify  => Service['prometheus-statsd-exporter'],
     }
