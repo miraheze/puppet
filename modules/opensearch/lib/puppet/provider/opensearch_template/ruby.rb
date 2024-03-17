@@ -13,11 +13,20 @@ Puppet::Type.type(:opensearch_template).provide(
   api_uri: '_template',
   metadata: :content,
   metadata_pipeline: [
-    ->(data) { Puppet_X::Opensearch.deep_to_s data },
-    ->(data) { Puppet_X::Opensearch.deep_to_i data }
+    ->(data) { Puppet_X::Opensearch.deep_to_s(data) },
+    ->(data) { Puppet_X::Opensearch.deep_to_i(data) }
   ]
 ) do
   desc 'A REST API based provider to manage Opensearch templates.'
 
   mk_resource_methods
+
+  def self.prefetch(resources)
+    instances.each do |prov|
+      resource = resources[prov.name]
+      if resource
+        resource.provider = prov
+      end
+    end
+  end
 end

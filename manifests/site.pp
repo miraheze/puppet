@@ -1,97 +1,95 @@
 # servers
 
-node /^bast1[24]1\.miraheze\.org$/ {
+node /^bast1[68]1\.wikitide\.net$/ {
     include base
     include role::bastion
 }
 
-node /^cloud1[01234]\.miraheze\.org$/ {
+node 'bots171.wikitide.net' {
+    include base
+    include role::irc
+}
+
+node /^cloud1[5678]\.wikitide\.net$/ {
     include base
     include role::cloud
 }
 
-node /^cp(2[45]|3[2345])\.miraheze\.org$/ {
+node /^cp([23][678]|[45]1)\.wikitide\.net$/ {
     include base
     include role::varnish
 }
 
-node /^db1([0234][12]|12)\.miraheze\.org$/ {
+node /^db1([5678][12])\.wikitide\.net$/ {
     include base
     include role::db
 }
 
-node /^os1[34]1\.miraheze\.org$/ {
+node /^os1[56][12]\.wikitide\.net$/ {
     include base
     include role::opensearch
 }
 
-node 'graylog131.miraheze.org' {
+node 'graylog161.wikitide.net' {
     include base
     include role::graylog
 }
 
-node 'jobchron121.miraheze.org' {
+node 'jobchron171.wikitide.net' {
     include base
     include role::poolcounter
     include role::redis
     include mediawiki::jobqueue::chron
 }
 
-node 'ldap141.miraheze.org' {
+node 'ldap171.wikitide.net' {
     include base
     include role::openldap
 }
 
-node 'mail121.miraheze.org' {
-    include base
-    include role::mail
-    include role::roundcubemail
-}
-
-node 'matomo121.miraheze.org' {
+node 'matomo151.wikitide.net' {
     include base
     include role::matomo
 }
 
-node /^mem1[34]1\.miraheze\.org$/ {
+node /^mem1[56]1\.wikitide\.net$/ {
     include base
     include role::memcached
 }
 
-node 'mon141.miraheze.org' {
+node 'mon181.wikitide.net' {
     include base
     include role::grafana
     include role::icinga2
-    include role::irc
 }
 
-node /^mw1[234][1234]\.miraheze\.org$/ {
+node /^mw1[5678][12]\.wikitide\.net$/ {
     include base
     include role::mediawiki
 }
 
-node 'mwtask141.miraheze.org' {
+node /^mwtask1[78]1\.wikitide\.net$/ {
     include base
     include role::mediawiki
     include role::mathoid
 }
 
-node /^ns[12]\.miraheze\.org$/ {
+node /^ns[12]\.wikitide\.net$/ {
     include base
     include role::dns
 }
 
-node 'phab121.miraheze.org' {
+node 'phorge171.wikitide.net' {
     include base
-    include role::phabricator
+    include role::phorge
 }
 
-node 'prometheus131.miraheze.org' {
+node 'prometheus151.wikitide.net' {
     include base
     include role::prometheus
 }
 
-node 'puppet141.miraheze.org' {
+node 'puppet181.wikitide.net' {
     include base
     include role::postgresql
     include puppetdb::database
@@ -101,34 +99,32 @@ node 'puppet141.miraheze.org' {
     include role::ssl
 }
 
-node 'puppetdb121.miraheze.org' {
+node 'rdb151.wikitide.net' {
     include base
-    include role::postgresql
-    include puppetdb::database
-    include role::puppetdb
+    include role::redis
 }
 
-node 'reports121.miraheze.org' {
+node 'reports171.wikitide.net' {
     include base
     include role::reports
 }
 
-node /^swiftproxy1[13]1\.miraheze\.org$/ {
+node /^swiftproxy1[67]1\.wikitide\.net$/ {
     include base
     include role::swift
 }
 
-node 'swiftac111.miraheze.org' {
+node 'swiftac171.wikitide.net' {
     include base
     include role::swift
 }
 
-node /^swiftobject1[012][123]\.miraheze\.org$/ {
+node /^swiftobject1[5678]1\.wikitide\.net$/ {
     include base
     include role::swift
 }
 
-node 'test131.miraheze.org' {
+node 'test151.wikitide.net' {
     include base
     include role::memcached
     include role::mediawiki

@@ -13,6 +13,8 @@
             "exclude": [
                 "AssembleUploadChunks",
                 "DataDumpGenerateJob",
+                "ImportDumpJob",
+                "ImportDumpNotifyJob",
                 "parsoidCachePrewarm",
                 "PublishStashedFile",
                 "RecordLintJob",
@@ -59,6 +61,22 @@
                 "CreateWikiJob"
             ]
         },
+        "importdump": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "ImportDumpJob"
+            ]
+        },
+        "importdumpnotify": {
+            // Number of runner processes in this group
+            "runners": 2,
+            // Job types to include ("*" means "all")
+            "include": [
+                "ImportDumpNotifyJob"
+            ]
+        },
         "managewiki": {
             // Number of runner processes in this group
             "runners": 1,
@@ -68,9 +86,9 @@
                 "RequestWikiAIJob"
             ]
         },
-        "parseroidcache": {
+        "parsoidcache": {
             // Number of runner processes in this group
-            "runners": 4,
+            "runners": 8,
             // Job types to include ("*" means "all")
             "include": [
                 "parsoidCachePrewarm"
@@ -113,6 +131,7 @@
         "claimTTL": {
             "*": 3600,
             "DataDumpGenerateJob": 86400,
+            "ImportDumpJob": 259200,
             "NamespaceMigrationJob": 9000,
             "webVideoTranscode": 86400,
             "webVideoTranscodePrioritized": 86400
@@ -120,7 +139,9 @@
         // runJobs.php process time limits
         "real": {
             "*": 300,
+            "cirrusSearchElasticaWrite": 600,
             "DataDumpGenerateJob": 86400,
+            "ImportDumpJob": 259200,
             "NamespaceMigrationJob": 9000,
             "webVideoTranscode": 86400,
             "webVideoTranscodePrioritized": 86400
@@ -128,7 +149,9 @@
         // runJobs.php memory limits
         "memory": {
             "*": "500M",
+            "cirrusSearchElasticaWrite": "1400M",
             "DataDumpGenerateJob": "512M",
+            "ImportDumpJob": "2000M",
             "parsoidCachePrewarm": "1400M",
             "refreshLinks": "1400M",
             "refreshLinksDynamic": "1400M",
@@ -152,5 +175,5 @@
     },
 
     // Command used to launch a runner for a given job queue
-    "dispatcher": "php /srv/mediawiki/w/maintenance/run.php /srv/mediawiki/w/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
+    "dispatcher": "JOBRUNNER_RUN=true php <%= @runner %>/srv/mediawiki/<%= @version %>/maintenance/runJobs.php --wiki=%(db)x --type=%(type)x --maxtime=%(maxtime)x --memory-limit=%(maxmem)x --result=json"
 }

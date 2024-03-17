@@ -1,6 +1,10 @@
 [DEFAULT]
+<%- if @old_swift -%>
 # Only in proxy-server and object-server must you use ipv6 without bracket.
 bind_ip = [::]
+<%- else -%>
+bind_ip = ::
+<%- end -%>
 bind_port = 6001
 workers = 8
 # bind_timeout = 30
@@ -27,7 +31,7 @@ use = egg:swift#recon
 recon_cache_path = /var/cache/swift
 
 [container-replicator]
-concurrency = 1
+concurrency = 3
 # default is 7 days
 # 6 hours in seconds
 reclaim_age = 21600

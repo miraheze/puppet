@@ -1,0 +1,34 @@
+[IRC]
+Server = irc.libera.chat
+Port = 6697
+Nickname = MirahezeRelay
+Password = <%= @irc_password %>
+UseSSL = true
+
+[Discord]
+BotToken = <%= @bot_token %>
+Proxy = <%= @http_proxy %>
+
+[ChannelMapping]
+407537962553966603 = #miraheze
+443926951292567562 = #miraheze-cvt
+743072681057845378 = #miraheze-cvt-feed
+1083782689221513226 = #miraheze-cvt-feed-private
+1006800494943019019 = #miraheze-cvt-private
+903395171981459507 = #miraheze-meetings
+615786602454581249 = #miraheze-offtopic
+808001911868489748 = #miraheze-sre
+1006789349498699827 = #miraheze-tech
+1076591067912208496 = #miraheze-wikicreators
+1083323085916209213 = #miraheze-wikicreators-feed
+1216211041936080937 = #miraheze-interwiki-feed
+
+898084590508445696 = #miraheze-ballmedia-feed
+900548603989336064 = #miraheze-ballmedia-polandball-feed
+894597880306884679 = #miraheze-ballmedia-polcompball-feed
+
+844193280974389270 = #miraheze-buffalonas
+
+[IgnoreUsers]
+IRC = icinga-miraheze,/^mhbridgebot_?$/,/^MirahezeBot_?$/,/^wm-bot(\d+)?$/
+Discord = WikiAuthBot

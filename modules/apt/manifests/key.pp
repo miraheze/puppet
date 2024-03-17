@@ -64,16 +64,12 @@ define apt::key (
 
         case $facts['os']['name'] {
           'Debian': {
-            if versioncmp($facts['os']['release']['major'], '9') >= 0 {
-              stdlib::ensure_packages(['gnupg'])
-              Apt::Key<| title == $title |>
-            }
+            stdlib::ensure_packages(['gnupg'])
+            Apt::Key<| title == $title |>
           }
           'Ubuntu': {
-            if versioncmp($facts['os']['release']['full'], '17.04') >= 0 {
-              stdlib::ensure_packages(['gnupg'])
-              Apt::Key<| title == $title |>
-            }
+            stdlib::ensure_packages(['gnupg'])
+            Apt::Key<| title == $title |>
           }
           default: {
             # Nothing in here

@@ -1,9 +1,17 @@
 # === Class mediawiki::jobqueue::shared
 #
 # JobQueue resources for both runner & chron
-class mediawiki::jobqueue::shared {
+class mediawiki::jobqueue::shared (
+    String $version,
+) {
     if !defined(Package['composer']) {
         stdlib::ensure_packages('composer')
+    }
+
+    if versioncmp($version, '1.40') >= 0 {
+        $runner = "/srv/mediawiki/${version}/maintenance/run.php "
+    } else {
+        $runner = ''
     }
 
     git::clone { 'JobRunner':
@@ -22,14 +30,14 @@ class mediawiki::jobqueue::shared {
         path        => '/usr/bin',
         environment => [
             'HOME=/srv/jobrunner',
-            'HTTP_PROXY=http://bast.miraheze.org:8080'
+            'HTTP_PROXY=http://bastion.wikitide.net:8080'
         ],
         user        => 'www-data',
         require     => Git::Clone['JobRunner'],
     }
 
     $redis_password = lookup('passwords::redis::master')
-    $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => '[2a10:6740::6:306]:6379'})
+    $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => false})
 
     if lookup('jobrunner::intensive', {'default_value' => false}) {
         $config = 'jobrunner-hi.json.erb'

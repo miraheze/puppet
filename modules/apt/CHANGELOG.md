@@ -5,18 +5,33 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v9.2.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v9.2.0) - 2023-12-04
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v9.1.0...v9.2.0)
+
+### Added
+
+- Allow passing all `keyring` params in `apt::source` [#1147](https://github.com/puppetlabs/puppetlabs-apt/pull/1147) ([kenyon](https://github.com/kenyon))
+- Cleanup Debian 9 and Ubuntu pre-18.04 specialcases [#1142](https://github.com/puppetlabs/puppetlabs-apt/pull/1142) ([evgeni](https://github.com/evgeni))
+- Add support for modern keyrings [#1128](https://github.com/puppetlabs/puppetlabs-apt/pull/1128) ([praj1001](https://github.com/praj1001))
+
+### Fixed
+
+- (CAT-1483) - Enhancement of handling of apt::source's repos and release parameters [#1138](https://github.com/puppetlabs/puppetlabs-apt/pull/1138) ([Ramesh7](https://github.com/Ramesh7))
+- backports: don't hardcode an old gpg key for Ubuntu [#1129](https://github.com/puppetlabs/puppetlabs-apt/pull/1129) ([kenyon](https://github.com/kenyon))
+
 ## [v9.1.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v9.1.0) - 2023-06-08
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v9.0.2...v9.1.0)
+
+### Changed
+- (CONT-773) Add Support for Puppet 8 / Remove Support for Puppet 6 [#1101](https://github.com/puppetlabs/puppetlabs-apt/pull/1101) ([david22swan](https://github.com/david22swan))
 
 ### Added
 
 - Require stdlib 9.0.0 or newer [#1114](https://github.com/puppetlabs/puppetlabs-apt/pull/1114) ([smortex](https://github.com/smortex))
 - (CONT-1028) puppetlabs/stdlib: Allow 9.x [#1113](https://github.com/puppetlabs/puppetlabs-apt/pull/1113) ([bastelfreak](https://github.com/bastelfreak))
 - (CONT-581)  Adding deferred function support for password field [#1110](https://github.com/puppetlabs/puppetlabs-apt/pull/1110) ([Ramesh7](https://github.com/Ramesh7))
-
-### Changed
-- (CONT-773) Add Support for Puppet 8 / Remove Support for Puppet 6 [#1101](https://github.com/puppetlabs/puppetlabs-apt/pull/1101) ([david22swan](https://github.com/david22swan))
 
 ### Fixed
 
@@ -52,13 +67,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.5.0...v9.0.0)
 
+### Changed
+- Harden PPA defined type [#1052](https://github.com/puppetlabs/puppetlabs-apt/pull/1052) ([chelnak](https://github.com/chelnak))
+
 ### Added
 
 - Deal with net-ftp being unavailable [#1050](https://github.com/puppetlabs/puppetlabs-apt/pull/1050) ([ekohl](https://github.com/ekohl))
 - pdksync - (GH-cat-11) Certify Support for Ubuntu 22.04 [#1046](https://github.com/puppetlabs/puppetlabs-apt/pull/1046) ([david22swan](https://github.com/david22swan))
-
-### Changed
-- Harden PPA defined type [#1052](https://github.com/puppetlabs/puppetlabs-apt/pull/1052) ([chelnak](https://github.com/chelnak))
 
 ### Fixed
 
@@ -87,6 +102,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ### Changed
 - (GH-iac-334) Remove code specific to unsupported OSs [#1024](https://github.com/puppetlabs/puppetlabs-apt/pull/1024) ([david22swan](https://github.com/david22swan))
 
+### Added
+
+- enable allow-insecure for apt::source defined types, includes new tes… [#1014](https://github.com/puppetlabs/puppetlabs-apt/pull/1014) ([hesco](https://github.com/hesco))
+
 ### Fixed
 
 - pdksync - (GH-iac-334) Remove Support for Ubuntu 14.04 [#1023](https://github.com/puppetlabs/puppetlabs-apt/pull/1023) ([david22swan](https://github.com/david22swan))
@@ -102,6 +121,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ## [v8.3.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v8.3.0) - 2021-10-04
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.2.0...v8.3.0)
+
+### Added
+
+- (MODULES-11173) Add per-host overrides for apt::proxy [#1007](https://github.com/puppetlabs/puppetlabs-apt/pull/1007) ([maturnbull](https://github.com/maturnbull))
 
 ### Fixed
 
@@ -253,6 +276,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - Add apt::mark defined type [#879](https://github.com/puppetlabs/puppetlabs-apt/pull/879) ([tuxmea](https://github.com/tuxmea))
 - (FM-8394) add debian 10 testing [#876](https://github.com/puppetlabs/puppetlabs-apt/pull/876) ([ThoughtCrhyme](https://github.com/ThoughtCrhyme))
+- Add apt::key_options for default apt::key options [#873](https://github.com/puppetlabs/puppetlabs-apt/pull/873) ([raphink](https://github.com/raphink))
 - implement apt.conf.d purging [#869](https://github.com/puppetlabs/puppetlabs-apt/pull/869) ([lelutin](https://github.com/lelutin))
 
 ### Fixed
@@ -275,12 +299,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.3.0...7.0.0)
 
+### Changed
+- pdksync - (MODULES-8444) - Raise lower Puppet bound [#853](https://github.com/puppetlabs/puppetlabs-apt/pull/853) ([david22swan](https://github.com/david22swan))
+
 ### Added
 
 - Allow weak SSL verification for apt_key [#849](https://github.com/puppetlabs/puppetlabs-apt/pull/849) ([tuxmea](https://github.com/tuxmea))
-
-### Changed
-- pdksync - (MODULES-8444) - Raise lower Puppet bound [#853](https://github.com/puppetlabs/puppetlabs-apt/pull/853) ([david22swan](https://github.com/david22swan))
 
 ## [6.3.0](https://github.com/puppetlabs/puppetlabs-apt/tree/6.3.0) - 2019-01-22
 
@@ -288,6 +312,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Added
 
+- Add support for dist-upgrade & autoremove action [#832](https://github.com/puppetlabs/puppetlabs-apt/pull/832) ([aboks](https://github.com/aboks))
 - (MODULES-8321) - Add manage_auth_conf parameter [#831](https://github.com/puppetlabs/puppetlabs-apt/pull/831) ([eimlav](https://github.com/eimlav))
 
 ### Fixed
@@ -346,13 +371,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/5.0.1...6.0.0)
 
+### Changed
+- (MODULES-7668) Remove support for Puppet 4.7 [#780](https://github.com/puppetlabs/puppetlabs-apt/pull/780) ([jarretlavallee](https://github.com/jarretlavallee))
+
 ### Added
 
 - Check existence of gpg key in apt:ppa [#774](https://github.com/puppetlabs/puppetlabs-apt/pull/774) ([wenzhengjiang](https://github.com/wenzhengjiang))
 - Make sure PPA source file is absent when apt-add-repository fails [#768](https://github.com/puppetlabs/puppetlabs-apt/pull/768) ([wenzhengjiang](https://github.com/wenzhengjiang))
-
-### Changed
-- (MODULES-7668) Remove support for Puppet 4.7 [#780](https://github.com/puppetlabs/puppetlabs-apt/pull/780) ([jarretlavallee](https://github.com/jarretlavallee))
 
 ## [5.0.1](https://github.com/puppetlabs/puppetlabs-apt/tree/5.0.1) - 2018-07-30
 
@@ -366,13 +391,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/4.5.1...5.0.0)
 
+### Changed
+- [FM-6956] Removal of unsupported Debian 7 from apt [#760](https://github.com/puppetlabs/puppetlabs-apt/pull/760) ([david22swan](https://github.com/david22swan))
+
 ### Added
 
 - (MODULES-7468) Update apt to support Ubuntu 18.04 [#769](https://github.com/puppetlabs/puppetlabs-apt/pull/769) ([david22swan](https://github.com/david22swan))
 - Support managing login configurations in /etc/apt/auth.conf [#752](https://github.com/puppetlabs/puppetlabs-apt/pull/752) ([antaflos](https://github.com/antaflos))
-
-### Changed
-- [FM-6956] Removal of unsupported Debian 7 from apt [#760](https://github.com/puppetlabs/puppetlabs-apt/pull/760) ([david22swan](https://github.com/david22swan))
 
 ### Fixed
 
@@ -412,6 +437,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - Add a check for Puppet version to task helper [#722](https://github.com/puppetlabs/puppetlabs-apt/pull/722) ([willmeek](https://github.com/willmeek))
 - Add a facter fact for dist-upgrade [#719](https://github.com/puppetlabs/puppetlabs-apt/pull/719) ([willmeek](https://github.com/willmeek))
+- Http proxy bypass [#718](https://github.com/puppetlabs/puppetlabs-apt/pull/718) ([willmeek](https://github.com/willmeek))
 
 ### Fixed
 
@@ -420,6 +446,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Do not treat debian stable-updates as security updates [#716](https://github.com/puppetlabs/puppetlabs-apt/pull/716) ([kbarmen](https://github.com/kbarmen))
 - Install apt-transport-https in Debian 8 if needed [#714](https://github.com/puppetlabs/puppetlabs-apt/pull/714) ([btravouillon](https://github.com/btravouillon))
 - remove legacy functions [#711](https://github.com/puppetlabs/puppetlabs-apt/pull/711) ([b4ldr](https://github.com/b4ldr))
+- Fixed circular dependency for package dirmngr [#710](https://github.com/puppetlabs/puppetlabs-apt/pull/710) ([hp197](https://github.com/hp197))
 
 ## [4.3.0](https://github.com/puppetlabs/puppetlabs-apt/tree/4.3.0) - 2017-10-11
 
@@ -438,6 +465,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - Switch to deb.debian.org and remove Debian 6.0 [#702](https://github.com/puppetlabs/puppetlabs-apt/pull/702) ([tphoney](https://github.com/tphoney))
 - MODULES-4686: gpg keyserver import fails in Debian 9 (Stretch) [#698](https://github.com/puppetlabs/puppetlabs-apt/pull/698) ([deric](https://github.com/deric))
+- Fixed typo in "Configuring Apt from hiera example" [#693](https://github.com/puppetlabs/puppetlabs-apt/pull/693) ([morremeyer](https://github.com/morremeyer))
 - Ignore subkeys in apt-key's output [#665](https://github.com/puppetlabs/puppetlabs-apt/pull/665) ([tiger-jmw](https://github.com/tiger-jmw))
 - (MODULES-4118) Set dpkg option NoLocking in apt_updates fact [#640](https://github.com/puppetlabs/puppetlabs-apt/pull/640) ([jocado](https://github.com/jocado))
 
@@ -475,13 +503,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/2.3.0...2.4.0)
 
+### Changed
+- Use stdlib deprecation [#641](https://github.com/puppetlabs/puppetlabs-apt/pull/641) ([DavidS](https://github.com/DavidS))
+
 ### Added
 
+- [MODULES-4224] Implement beaker-module_install_helper [#652](https://github.com/puppetlabs/puppetlabs-apt/pull/652) ([wilson208](https://github.com/wilson208))
 - [MODULES-3562] Implement retry for tests which require modules to pull key from keyserver [#631](https://github.com/puppetlabs/puppetlabs-apt/pull/631) ([wilson208](https://github.com/wilson208))
 
 ### Fixed
 
 - [MODULES-4528] Replace Puppet.version.to_f with Puppet::Util::Package.versioncmp [#658](https://github.com/puppetlabs/puppetlabs-apt/pull/658) ([wilson208](https://github.com/wilson208))
+- apt::key is a defined type, not a class [#656](https://github.com/puppetlabs/puppetlabs-apt/pull/656) ([WhatsARanjit](https://github.com/WhatsARanjit))
 - Avoid string comparison error [#635](https://github.com/puppetlabs/puppetlabs-apt/pull/635) ([lkoranda](https://github.com/lkoranda))
 - Undef default for $notify_update in source.pp results in problem with Puppet 3.7.2 [#628](https://github.com/puppetlabs/puppetlabs-apt/pull/628) ([cpavanrun](https://github.com/cpavanrun))
 
@@ -498,12 +531,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - Fix syntax error [#619](https://github.com/puppetlabs/puppetlabs-apt/pull/619) ([DavidS](https://github.com/DavidS))
 - Fixed "unless" test condition for ppa repository [#613](https://github.com/puppetlabs/puppetlabs-apt/pull/613) ([nicobn](https://github.com/nicobn))
+- apt/params: Remove unused LSB facts [#610](https://github.com/puppetlabs/puppetlabs-apt/pull/610) ([daenney](https://github.com/daenney))
 - Fix regexp for $ensure params [#609](https://github.com/puppetlabs/puppetlabs-apt/pull/609) ([hfm](https://github.com/hfm))
 - Use hkps.pool.sks-keyservers.net instead of pgp.mit.edu [#606](https://github.com/puppetlabs/puppetlabs-apt/pull/606) ([DavidS](https://github.com/DavidS))
 - Install software-properties-common for xenial [#605](https://github.com/puppetlabs/puppetlabs-apt/pull/605) ([imphil](https://github.com/imphil))
 - Fix version check on 16.04. [#604](https://github.com/puppetlabs/puppetlabs-apt/pull/604) ([tdb](https://github.com/tdb))
 - apt::setting expects priority to be an integer, set defaults accordingly [#602](https://github.com/puppetlabs/puppetlabs-apt/pull/602) ([madddi](https://github.com/madddi))
 - Fix STRICT_VARIABLE testing [#599](https://github.com/puppetlabs/puppetlabs-apt/pull/599) ([DavidS](https://github.com/DavidS))
+- Typo: missing colon [#595](https://github.com/puppetlabs/puppetlabs-apt/pull/595) ([danielhoherd](https://github.com/danielhoherd))
 - Make apt_updates facts use /usr/bin/apt-get. [#581](https://github.com/puppetlabs/puppetlabs-apt/pull/581) ([robinelfrink](https://github.com/robinelfrink))
 
 ## [2.2.2](https://github.com/puppetlabs/puppetlabs-apt/tree/2.2.2) - 2016-02-29
@@ -519,6 +554,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - MODULES-2873 - Avoid multiple package resource declarations [#588](https://github.com/puppetlabs/puppetlabs-apt/pull/588) ([werekraken](https://github.com/werekraken))
 - Handle PPA names that contain a plus character. [#583](https://github.com/puppetlabs/puppetlabs-apt/pull/583) ([tdb](https://github.com/tdb))
 - Look for correct sources.list.d file for apt::ppa [#582](https://github.com/puppetlabs/puppetlabs-apt/pull/582) ([imphil](https://github.com/imphil))
+- fix whitespace in source.list [#577](https://github.com/puppetlabs/puppetlabs-apt/pull/577) ([amauf](https://github.com/amauf))
 - Fix apt_key tempfile race condition [#572](https://github.com/puppetlabs/puppetlabs-apt/pull/572) ([claytono](https://github.com/claytono))
 
 ## [2.2.1](https://github.com/puppetlabs/puppetlabs-apt/tree/2.2.1) - 2015-12-04
@@ -556,11 +592,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Use Debian's new official mirrors redirector [#545](https://github.com/puppetlabs/puppetlabs-apt/pull/545) ([raoulbhatia](https://github.com/raoulbhatia))
 - Revert "Fix use of $::apt::params::backports and $::apt::params::xfac… [#543](https://github.com/puppetlabs/puppetlabs-apt/pull/543) ([underscorgan](https://github.com/underscorgan))
 - Fix use of $::apt::params::backports and $::apt::params::xfacts. [#542](https://github.com/puppetlabs/puppetlabs-apt/pull/542) ([Farzy](https://github.com/Farzy))
+- hashes are not supported in selectors [#539](https://github.com/puppetlabs/puppetlabs-apt/pull/539) ([underscorgan](https://github.com/underscorgan))
+- typo [#538](https://github.com/puppetlabs/puppetlabs-apt/pull/538) ([underscorgan](https://github.com/underscorgan))
 - Don't add puppetlabs sources for lucid [#537](https://github.com/puppetlabs/puppetlabs-apt/pull/537) ([underscorgan](https://github.com/underscorgan))
 
 ## [2.1.0](https://github.com/puppetlabs/puppetlabs-apt/tree/2.1.0) - 2015-06-16
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/2.0.1...2.1.0)
+
+### Changed
+- API compatibility between 1.8.x and 2.x for apt::source [#529](https://github.com/puppetlabs/puppetlabs-apt/pull/529) ([underscorgan](https://github.com/underscorgan))
 
 ### Added
 
@@ -607,6 +648,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/1.7.0...1.8.0)
 
+### Changed
+- Various major behavioural changes [#447](https://github.com/puppetlabs/puppetlabs-apt/pull/447) ([daenney](https://github.com/daenney))
+- V2.0.0 Prep work: Removing old code / Adding placeholders [#424](https://github.com/puppetlabs/puppetlabs-apt/pull/424) ([underscorgan](https://github.com/underscorgan))
+
 ### Added
 
 - Allow changing legacy_origin [#463](https://github.com/puppetlabs/puppetlabs-apt/pull/463) ([underscorgan](https://github.com/underscorgan))
@@ -623,13 +668,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Allow ports that consist of 5 decimals [#400](https://github.com/puppetlabs/puppetlabs-apt/pull/400) ([voidus](https://github.com/voidus))
 - Add Ubuntu vivid (15.04) release [#395](https://github.com/puppetlabs/puppetlabs-apt/pull/395) ([udienz](https://github.com/udienz))
 
-### Changed
-- Various major behavioural changes [#447](https://github.com/puppetlabs/puppetlabs-apt/pull/447) ([daenney](https://github.com/daenney))
-- V2.0.0 Prep work: Removing old code / Adding placeholders [#424](https://github.com/puppetlabs/puppetlabs-apt/pull/424) ([underscorgan](https://github.com/underscorgan))
-
 ### Fixed
 
 - Update all the unit tests to look for full fingerprints [#469](https://github.com/puppetlabs/puppetlabs-apt/pull/469) ([underscorgan](https://github.com/underscorgan))
+- Fix gpg key checking warings after f588f26 [#466](https://github.com/puppetlabs/puppetlabs-apt/pull/466) ([paroga](https://github.com/paroga))
 - apt_key: fix parsing invalid dates when using GnuPG 2.x [#465](https://github.com/puppetlabs/puppetlabs-apt/pull/465) ([bootc](https://github.com/bootc))
 - Inheritance of apt::params means it can't be private [#461](https://github.com/puppetlabs/puppetlabs-apt/pull/461) ([underscorgan](https://github.com/underscorgan))
 - Cleaning 50unattended-upgrades.erb [#456](https://github.com/puppetlabs/puppetlabs-apt/pull/456) ([johanfleury](https://github.com/johanfleury))
@@ -651,6 +693,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - MODULES-1661 Fix issue with apt_key destroy, also added mutliple deletes [#408](https://github.com/puppetlabs/puppetlabs-apt/pull/408) ([cyberious](https://github.com/cyberious))
 - Fix apt_has_updates fact not parsing apt-check output correctly [#403](https://github.com/puppetlabs/puppetlabs-apt/pull/403) ([WolverineFan](https://github.com/WolverineFan))
 - Separate apt::pin for apt::backports to allow pin by release instead of ... [#398](https://github.com/puppetlabs/puppetlabs-apt/pull/398) ([riconnon](https://github.com/riconnon))
+- (MODULES-1231) Fix apt::force locale issues [#394](https://github.com/puppetlabs/puppetlabs-apt/pull/394) ([juniorsysadmin](https://github.com/juniorsysadmin))
 - (MODULES-1200) Fix inconsistent header across files [#389](https://github.com/puppetlabs/puppetlabs-apt/pull/389) ([stdietrich](https://github.com/stdietrich))
 - MODULES-1119 Fixed to now have username and passwords passed in again [#384](https://github.com/puppetlabs/puppetlabs-apt/pull/384) ([cyberious](https://github.com/cyberious))
 - Unattended upgrades oldstable for wheezy [#376](https://github.com/puppetlabs/puppetlabs-apt/pull/376) ([raoulbhatia](https://github.com/raoulbhatia))
@@ -669,6 +712,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 - Refactor facts to improve performance: [#375](https://github.com/puppetlabs/puppetlabs-apt/pull/375) ([raphink](https://github.com/raphink))
 - add --force-yes so deb7 doesn't hang [#371](https://github.com/puppetlabs/puppetlabs-apt/pull/371) ([underscorgan](https://github.com/underscorgan))
+- Missed one case for _kick_apt needed for strict variables [#369](https://github.com/puppetlabs/puppetlabs-apt/pull/369) ([underscorgan](https://github.com/underscorgan))
 - Fix for future parser support [#368](https://github.com/puppetlabs/puppetlabs-apt/pull/368) ([underscorgan](https://github.com/underscorgan))
 - We aren't truncating in the type [#366](https://github.com/puppetlabs/puppetlabs-apt/pull/366) ([underscorgan](https://github.com/underscorgan))
 - Don't truncate to short keys in the type [#365](https://github.com/puppetlabs/puppetlabs-apt/pull/365) ([underscorgan](https://github.com/underscorgan))
@@ -745,6 +789,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - apt: Allow managing of preferences file. [#240](https://github.com/puppetlabs/puppetlabs-apt/pull/240) ([daenney](https://github.com/daenney))
 - apt_key: Support fetching keys over FTP. [#229](https://github.com/puppetlabs/puppetlabs-apt/pull/229) ([daenney](https://github.com/daenney))
 - apt::pin: Allow for packages to be an array. [#223](https://github.com/puppetlabs/puppetlabs-apt/pull/223) ([daenney](https://github.com/daenney))
+- apt_key type/provider [#212](https://github.com/puppetlabs/puppetlabs-apt/pull/212) ([daenney](https://github.com/daenney))
 
 ### Fixed
 
@@ -759,12 +804,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/1.4.0...1.4.1)
 
+### Changed
+- Handling of release parameter and apt provider in force manifest [#140](https://github.com/puppetlabs/puppetlabs-apt/pull/140) ([hunner](https://github.com/hunner))
+
 ### Added
 
 - Update ppa.pp [#191](https://github.com/puppetlabs/puppetlabs-apt/pull/191) ([mnencia](https://github.com/mnencia))
-
-### Changed
-- Handling of release parameter and apt provider in force manifest [#140](https://github.com/puppetlabs/puppetlabs-apt/pull/140) ([hunner](https://github.com/hunner))
 
 ### Fixed
 
@@ -817,6 +862,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/1.1.0...1.1.1)
 
+### Changed
+- Restrict the versions and add 3.1 [#112](https://github.com/puppetlabs/puppetlabs-apt/pull/112) ([richardc](https://github.com/richardc))
+
 ### Added
 
 - Support APT pinning by codename [#135](https://github.com/puppetlabs/puppetlabs-apt/pull/135) ([vholer](https://github.com/vholer))
@@ -842,6 +890,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ## [1.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/1.0.0) - 2012-10-29
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/0.0.4...1.0.0)
+
+### Changed
+- Without puppetlabs/stdlib, you will get "err: Could not retrieve catalog... [#75](https://github.com/puppetlabs/puppetlabs-apt/pull/75) ([ytjohn](https://github.com/ytjohn))
 
 ### Added
 

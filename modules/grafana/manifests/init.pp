@@ -1,9 +1,7 @@
 # class: grafana
 class grafana (
-    String $grafana_password = lookup('passwords::db::grafana'),
     String $mail_password = lookup('passwords::mail::noreply'),
     String $ldap_password = lookup('passwords::ldap_password'),
-    String $grafana_db_host = lookup('grafana_db_host', {'default_value' => 'db112.miraheze.org'}),
 ) {
 
     include ::apt
@@ -60,16 +58,25 @@ class grafana (
 
     ssl::wildcard { 'grafana wildcard': }
 
-    nginx::site { 'grafana.miraheze.org':
+    nginx::site { 'grafana.wikitide.net':
         ensure => present,
         source => 'puppet:///modules/grafana/nginx/grafana.conf',
     }
 
-    monitoring::services { 'grafana.miraheze.org HTTPS':
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
+
+    monitoring::services { 'grafana.wikitide.net HTTPS':
         check_command => 'check_http',
         vars          => {
+            address6   => $address,
             http_ssl   => true,
-            http_vhost => 'grafana.miraheze.org',
+            http_vhost => 'grafana.wikitide.net',
         },
     }
 }

@@ -29,7 +29,7 @@ twitter_api_params = {
 }
 
 # Channels to join
-targets = ("#miraheze-sre", "#miraheze-sre-security")
+targets = ("#miraheze-sre",)
 
 # Name of nickserv user
 nickserv = "nickserv"
@@ -55,7 +55,13 @@ ssl = True
 author_map = {
     "MirahezeLSBot_": "MirahezeLSBot",
     "CosmicAlpha": "Universal Omega",
-    "Voidwalker": "Void"
+    "Voidwalker": "Void",
+
+    # Discord usernames
+    "@cosmicalpha": "Universal Omega",
+    "@agentisai": "Agent",
+    "@reception123": "Reception123",
+    "@originalauthority": "Original Authority"
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)
@@ -124,3 +130,6 @@ wiki_query_path = ""
 
 # Whether we "warn" or "error" if the user isn't in the trust list
 required_users_mode = "warn"
+
+# Host for to identify Relay bot for relayed log commands
+relay_host = "~MirahezeR@miraheze/bot/MirahezeRelay" 

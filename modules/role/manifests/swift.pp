@@ -1,15 +1,24 @@
 # role: swift
 class role::swift (
     String $stats_reporter_host = lookup('role::swift::stats_reporter_host'),
+    String $swift_expirer_host = lookup('role::swift::expirer_host'),
 ) {
 
     include ::swift
     include ::swift::ring
 
     $firewall_rules_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and (Class[Role::Swift] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion])", ['networking'])
+        query_facts('Class[Role::Swift] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion] or Class[Role::Varnish]', ['networking'])
         .map |$key, $value| {
-            "${value['networking']['ip']} ${value['networking']['ip6']}"
+            if ( $value['networking']['interfaces']['he-ipv6'] ) {
+                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
         }
         .flatten()
         .unique()
@@ -98,6 +107,15 @@ class role::swift (
     if $object {
         include ::swift::storage
 
+        $expirer_ensure = $swift_expirer_host? {
+            $facts['networking']['fqdn'] => 'present',
+            default => 'absent',
+        }
+        class { 'swift::expirer':
+            ensure               => $expirer_ensure,
+            statsd_metric_prefix => "swift.${facts['networking']['hostname']}",
+        }
+
         ferm::service { 'swift_object_6000':
             proto   => 'tcp',
             port    => '6000',
@@ -116,6 +134,6 @@ class role::swift (
     include ::prometheus::exporter::statsd_exporter
 
     motd::role { 'role::swift':
-        description => 'Openstack Swift Service (Accounting, Container, Proxy, Object)',
+        description => 'OpenStack Swift Service (Accounting, Container, Proxy, Object)',
     }
 }

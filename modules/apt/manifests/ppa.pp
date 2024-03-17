@@ -44,14 +44,9 @@ define apt::ppa (
     fail("Invalid PPA name: ${name}")
   }
 
-  if versioncmp($facts['os']['release']['full'], '14.10') >= 0 {
-    $distid = downcase($dist)
-    $dash_filename = regsubst($name, '^ppa:([^/]+)/(.+)$', "\\1-${distid}-\\2")
-    $underscore_filename = regsubst($name, '^ppa:([^/]+)/(.+)$', "\\1_${distid}_\\2")
-  } else {
-    $dash_filename = regsubst($name, '^ppa:([^/]+)/(.+)$', "\\1-\\2")
-    $underscore_filename = regsubst($name, '^ppa:([^/]+)/(.+)$', "\\1_\\2")
-  }
+  $distid = downcase($dist)
+  $dash_filename = regsubst($name, '^ppa:([^/]+)/(.+)$', "\\1-${distid}-\\2")
+  $underscore_filename = regsubst($name, '^ppa:([^/]+)/(.+)$', "\\1_${distid}_\\2")
 
   $dash_filename_no_slashes      = regsubst($dash_filename, '/', '-', 'G')
   $dash_filename_no_specialchars = regsubst($dash_filename_no_slashes, '[\.\+]', '_', 'G')
@@ -60,8 +55,7 @@ define apt::ppa (
 
   $sources_list_d_filename  = "${dash_filename_no_specialchars}-${release}.list"
 
-  if versioncmp($facts['os']['release']['full'], '15.10') >= 0 and
-  versioncmp($facts['os']['release']['full'], '21.04') < 0 {
+  if versioncmp($facts['os']['release']['full'], '21.04') < 0 {
     $trusted_gpg_d_filename = "${underscore_filename_no_specialchars}.gpg"
   } else {
     $trusted_gpg_d_filename = "${dash_filename_no_specialchars}.gpg"

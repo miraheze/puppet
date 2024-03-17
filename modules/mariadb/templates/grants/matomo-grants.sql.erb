@@ -1,0 +1,8 @@
+-- Grants for 'matomo'@''
+
+GRANT CREATE, PROCESS
+    ON *.* TO 'matomo'@'%'
+    IDENTIFIED BY '<%= @matomo_password %>';
+
+GRANT SELECT, INSERT, UPDATE, INDEX, DELETE, CREATE, DROP, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES
+    ON `matomo`.* TO 'matomo'@'%';

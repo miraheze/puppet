@@ -2,7 +2,8 @@
 
 define( 'MW_NO_SESSION', 1 );
 
-require_once '/srv/mediawiki/w/includes/WebStart.php';
+require_once '/srv/mediawiki/config/initialise/MirahezeFunctions.php';
+require MirahezeFunctions::getMediaWiki( 'includes/WebStart.php' );
 
 use MediaWiki\MediaWikiServices;
 
@@ -28,7 +29,7 @@ if ( $page->exists() ) {
 	$extratext = ( $content instanceof TextContent ) ? $content->getText() : '';
 	// Take last modified timestamp of page into account
 	$mtime = max( $mtime, wfTimestamp( TS_UNIX, $page->getTouched() ) );
-} elseif ( php_uname( 'n' ) === 'test131.miraheze.org' ) {
+} elseif ( php_uname( 'n' ) === 'test151' ) {
 	echo $dontIndex;
 }
 

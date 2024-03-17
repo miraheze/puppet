@@ -32,7 +32,7 @@ class mediawiki::firejail {
         mode   => '0555',
     }
 
-    file { '/usr/local/bin/mediawiki-firejail-rsvg-convert':
+    file { '/usr/local/bin/rsvg-convert':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-rsvg-convert.py',
         owner  => 'www-data',
         group  => 'www-data',

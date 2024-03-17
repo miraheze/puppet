@@ -28,10 +28,30 @@ define ssl::wildcard (
         }
     }
 
+    if !defined(File["${ssl_cert_path}/wikitide.net.crt"]) {
+        file { "${ssl_cert_path}/wikitide.net.crt":
+            ensure => 'present',
+            source => 'puppet:///ssl/certificates/wikitide.net.crt',
+            notify => $restart_nginx,
+        }
+    }
+
     if !defined(File["${ssl_cert_key_private_path}/wildcard.miraheze.org-2020-2.key"]) {
         file { "${ssl_cert_key_private_path}/wildcard.miraheze.org-2020-2.key":
             ensure    => 'present',
             source    => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
+            owner     => 'root',
+            group     => 'ssl-cert',
+            mode      => '0660',
+            show_diff => false,
+            notify    => $restart_nginx,
+        }
+    }
+
+    if !defined(File["${ssl_cert_key_private_path}/wikitide.net.key"]) {
+        file { "${ssl_cert_key_private_path}/wikitide.net.key":
+            ensure    => 'present',
+            source    => 'puppet:///ssl-keys/wikitide.net.key',
             owner     => 'root',
             group     => 'ssl-cert',
             mode      => '0660',

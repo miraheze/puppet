@@ -1,0 +1,12 @@
+http_proxy: 'http://bastion.wikitide.net:8080'
+
+role::opensearch::master: true
+role::opensearch::data: true
+role::opensearch::discovery_host:
+  - os162-private.wikitide.net
+role::opensearch::master_hosts:
+  - os162-private
+role::opensearch::master_host: 'http://os162-private.wikitide.net:9200'
+opensearch::api_host: os162-private.wikitide.net
+
+base::syslog::rsyslog_udp_localhost: true

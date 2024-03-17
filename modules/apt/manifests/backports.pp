@@ -34,12 +34,7 @@
 #
 # @param key
 #   Specifies a key to authenticate the backports. Valid options: a string to be passed to the id parameter of the apt::key defined type, or a
-#   hash of parameter => value pairs to be passed to apt::key's id, server, content, source, and/or options parameters. Default value
-#   for Debian and Ubuntu varies:
-#
-#   - Debian: 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553'
-#
-#   - Ubuntu: '630239CC130E1A7FD81A27B140976EAF437D05B5'
+#   hash of parameter => value pairs to be passed to apt::key's id, server, content, source, and/or options parameters.
 #
 # @param pin
 #   Specifies a pin priority for the backports. Valid options: a number or string to be passed to the `id` parameter of the `apt::pin` defined
@@ -67,9 +62,7 @@ class apt::backports (
   if $repos {
     $_repos = $repos
   }
-  if $key {
-    $_key = $key
-  }
+
   if (!($facts['os']['name'] == 'Debian' or $facts['os']['name'] == 'Ubuntu')) {
     unless $location and $release and $repos and $key {
       fail('If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key')
@@ -87,9 +80,6 @@ class apt::backports (
   }
   unless $repos {
     $_repos = $apt::backports['repos']
-  }
-  unless $key {
-    $_key =  $apt::backports['key']
   }
 
   if $pin =~ Hash {
@@ -110,7 +100,7 @@ class apt::backports (
     release  => $_release,
     repos    => $_repos,
     include  => $include,
-    key      => $_key,
+    key      => $key,
     pin      => $_pin,
   }
 }

@@ -13,9 +13,17 @@ class role::bastion (
     }
 
     $squid_access_hosts_str = join(
-        query_facts("networking.domain='${facts['networking']['domain']}'", ['networking'])
+        query_facts('', ['networking'])
         .map |$key, $value| {
-            "${value['networking']['ip']} ${value['networking']['ip6']}"
+            if ( $value['networking']['interfaces']['he-ipv6'] ) {
+                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
         }
         .flatten()
         .unique()
@@ -32,9 +40,17 @@ class role::bastion (
     if $enable_proxy_ipv4_ipv6 {
         $backends = lookup('varnish::backends')
         $firewall_rules_str = join(
-            query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Varnish]", ['networking'])
+            query_facts('Class[Role::Varnish]', ['networking'])
             .map |$key, $value| {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
+                if ( $value['networking']['interfaces']['he-ipv6'] ) {
+                    "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
+                } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                    "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+                } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                    "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+                } else {
+                    "${value['networking']['ip']} ${value['networking']['ip6']}"
+                }
             }
             .flatten()
             .unique()
