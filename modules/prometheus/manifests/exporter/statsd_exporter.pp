@@ -31,11 +31,13 @@ class prometheus::exporter::statsd_exporter (
       ],
     }
 
-    file { $basedir:
-        ensure => directory,
-        mode   => '0555',
-        owner  => 'root',
-        group  => 'root',
+    if (!defined(File[$basedir])) {
+        file { $basedir:
+            ensure => directory,
+            mode   => '0555',
+            owner  => 'root',
+            group  => 'root',
+        }
     }
 
     file { $config:
