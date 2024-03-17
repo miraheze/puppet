@@ -13,10 +13,10 @@ class role::prometheus::statsd_exporter (
     }
 
     class { 'prometheus::exporter::statsd_exporter':
-        mappings            => $mappings,
-        relay_address       => $relay_addr,
-        timer_type          => $timer_type,
-        histogram_buckets   => $histogram_buckets,
+        mappings          => $mappings,
+        relay_address     => $relay_addr,
+        timer_type        => $timer_type,
+        histogram_buckets => $histogram_buckets,
     }
 
     # Don't spam conntrack with localhost statsd clients
