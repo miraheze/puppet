@@ -1,9 +1,0 @@
--- Grants for 'piwik'@''
-
-GRANT CREATE, PROCESS
-    ON *.* TO 'piwik'@'%'
-    IDENTIFIED BY '<%= @piwik_password %>'
-    REQUIRE SSL;
-
-GRANT SELECT, INSERT, UPDATE, INDEX, DELETE, CREATE, DROP, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES
-    ON `piwik`.* TO 'piwik'@'%';

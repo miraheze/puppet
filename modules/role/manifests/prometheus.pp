@@ -3,9 +3,9 @@ class role::prometheus {
     include prometheus::exporter::blackbox
 
     $blackbox_web_urls = [
-        'https://phabricator.miraheze.org',
-        'https://matomo.miraheze.org',
-        'https://graylog.miraheze.org'
+        'https://issue-tracker.miraheze.org',
+        'https://analytics.wikitide.net',
+        'https://logging.wikitide.net'
     ]
 
     file { '/etc/prometheus/targets/blackbox_web_urls.yaml':
@@ -198,23 +198,6 @@ class role::prometheus {
         port   => 9150
     }
 
-    $postfix_job = [
-        {
-            'job_name' => 'postfix',
-            'file_sd_configs' => [
-                {
-                    'files' => [ 'targets/postfix.yaml' ]
-                }
-            ]
-        }
-    ]
-
-    prometheus::class { 'postfix':
-        dest   => '/etc/prometheus/targets/postfix.yaml',
-        module => 'Prometheus::Exporter::Postfix',
-        port   => 9154,
-    }
-
     $openldap_job = [
         {
             'job_name' => 'openldap',
@@ -272,15 +255,23 @@ class role::prometheus {
         scrape_extra => [
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
             $puppetserver_job, $puppetdb_job, $memcached_job,
-            $postfix_job, $openldap_job, $elasticsearch_job, $statsd_exporter_job,
+            $openldap_job, $elasticsearch_job, $statsd_exporter_job,
             $varnish_job, $cadvisor_job
         ].flatten,
     }
 
     $firewall_grafana = join(
-        query_facts("networking.domain='${facts['networking']['domain']}' and Class[Role::Grafana]", ['networking'])
+        query_facts('Class[Role::Grafana]', ['networking'])
         .map |$key, $value| {
-            "${value['networking']['ip']} ${value['networking']['ip6']}"
+            if ( $value['networking']['interfaces']['he-ipv6'] ) {
+                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
         }
         .flatten()
         .unique()

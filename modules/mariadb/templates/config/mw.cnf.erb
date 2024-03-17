@@ -9,7 +9,11 @@ default-storage-engine         = InnoDB
 socket                         = /var/run/mysqld/mysqld.sock
 pid-file                       = /var/run/mysqld/mysqld.pid
 skip-name-resolve
+<%- if @version == '10.5' -%>
 bind-address                   = ::
+<%- else -%>
+bind-address                   = 0.0.0.0,::
+<%- end -%>
 key-buffer-size                = 16M
 myisam-recover-options         = FORCE,BACKUP
 
@@ -85,19 +89,29 @@ join_cache_level               = 8
 
 performance_schema = off
 
-log-error                      = /var/log/mysql/mysql-error.log
-slow-query-log                 = 0
-slow-query-log-file            = /var/log/mysql/mysql-slow.log
+log_output                     = FILE
+log_error                      = /var/log/mysql/mysql-error.log
+<%- if @enable_slow_log -%>
+slow_query_log                 = ON
+slow_query_log_file            = /var/log/mysql/mysql-slow.log
+long_query_time                = 1
+log_slow_admin_statements      = ON
+log_queries_not_using_indexes  = OFF
+<%- else -%>
+slow_query_log                 = OFF
+<%- end -%>
 
 userstat                       = 1
 plugin_load_add                = query_response_time
 query_response_time_stats      = ON
 
+<%- if @enable_ssl -%>
 ssl
 ssl-ca                         = /etc/ssl/certs/Sectigo.crt
 ssl-cert                       = /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt
 ssl-key                        = /etc/ssl/private/wildcard.miraheze.org-2020-2.key
 tls_version                    = TLSv1.2,TLSv1.3
+<%- end -%>
 
 optimizer_switch               = 'mrr=on,mrr_cost_based=on,mrr_sort_keys=on,optimize_join_buffer_size=on,rowid_filter=off'
 

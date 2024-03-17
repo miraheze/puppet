@@ -48,7 +48,7 @@ server {
 		return 301 https://discord.gg/TVAJTE4CUn;
 	}
 
-	location ~ ^/((?!(css|discord|images)).)*$ {
+	location ~ ^/((?!(css|discord|img|js|lib|scss)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -124,9 +124,20 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
+	error_page 400 /ErrorPages/400.html;
+	error_page 401 /ErrorPages/401.html;
+	error_page 403 /ErrorPages/403.html;
 	error_page 404 /ErrorPages/404.php;
+	error_page 405 /ErrorPages/405.html;
+	error_page 406 /ErrorPages/406.html;
+	error_page 410 /ErrorPages/410.html;
+	error_page 413 /ErrorPages/413.html;
+	error_page 414 /ErrorPages/414.html;
+
+	error_page 500 /ErrorPages/500.html;
 	error_page 502 /ErrorPages/502.html;
-	error_page 504 /ErrorPages/504.php;
+	error_page 504 /ErrorPages/504.html;
+
 
 	include /etc/nginx/mediawiki-includes;
 
@@ -218,7 +229,7 @@ server {
 		send_timeout 140;
 	}
 
-	location ~ ^/((?!(css|images)).)*$ {
+	location ~ ^/((?!(css|discord|img|js|lib|scss)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -279,9 +290,19 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
+	error_page 400 /ErrorPages/400.html;
+	error_page 401 /ErrorPages/401.html;
+	error_page 403 /ErrorPages/403.html;
 	error_page 404 /ErrorPages/404.php;
+	error_page 405 /ErrorPages/405.html;
+	error_page 406 /ErrorPages/406.html;
+	error_page 410 /ErrorPages/410.html;
+	error_page 413 /ErrorPages/413.html;
+	error_page 414 /ErrorPages/414.html;
+
+	error_page 500 /ErrorPages/500.html;
 	error_page 502 /ErrorPages/502.html;
-	error_page 504 /ErrorPages/504.php;
+	error_page 504 /ErrorPages/504.html;
 
 	include /etc/nginx/mediawiki-includes;
 

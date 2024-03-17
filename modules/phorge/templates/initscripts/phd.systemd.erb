@@ -1,0 +1,16 @@
+[Unit]
+Description=phorge-phd
+After=syslog.target network.target mysql.service
+Before=apache2.service
+
+[Service]
+Type=forking
+User=www-data
+Group=www-data
+ExecStart=/srv/phorge/phorge/bin/phd start
+ExecStop=/srv/phorge/phorge/bin/phd stop --force
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

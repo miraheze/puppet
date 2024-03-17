@@ -8,7 +8,7 @@ rescue LoadError
 end
 require 'tempfile'
 
-Puppet::Type.type(:apt_key).provide(:apt_key) do # rubocop:disable Metrics/BlockLength
+Puppet::Type.type(:apt_key).provide(:apt_key) do
   desc 'apt-key provider for apt_key resource'
 
   confine    osfamily: :debian
@@ -16,7 +16,7 @@ Puppet::Type.type(:apt_key).provide(:apt_key) do # rubocop:disable Metrics/Block
   commands   apt_key: 'apt-key'
   commands   gpg: '/usr/bin/gpg'
 
-  def self.instances # rubocop:disable Metrics/AbcSize
+  def self.instances
     key_array = []
 
     cli_args = ['adv', '--no-tty', '--list-keys', '--with-colons', '--fingerprint', '--fixed-list-mode']

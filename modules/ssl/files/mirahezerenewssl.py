@@ -4,11 +4,17 @@ from filelock import FileLock
 from flask import Flask
 from flask import request
 import logging
-import os
+import logging.handlers
+import subprocess
 
 app = Flask(__name__)
 
-logging.basicConfig(filename='/var/log/ssl/miraheze-renewal.log', format='%(asctime)s - %(message)s', level=logging.INFO, force=True)
+formatter = logging.Formatter('%(asctime)s - %(message)s', '%m-%d-%Y %I:%M:%S %p')
+handler = logging.handlers.TimedRotatingFileHandler('/var/log/ssl/miraheze-renewal.log', 'midnight', 1)
+handler.setFormatter(formatter)
+logger = logging.getLogger()
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 
 
 @app.route('/renew', methods=['POST'])
@@ -24,8 +30,16 @@ def post():
         with lock:
             lock.acquire()
             try:
-                logging.info(f'Renewed SSL certificate: {content["SERVICEDESC"]}')
-                os.system(f'/var/lib/nagios/ssl-acme -s {content["SERVICESTATE"]} -t {content["SERVICESTATETYPE"]} -u {content["SERVICEDESC"]} >> /var/log/ssl/ssl-renew.log 2>&1')
+                logger.info(f'Renewed SSL certificate: {content["SERVICEDESC"]}')
+                command = subprocess.run(
+                    f'/var/lib/nagios/ssl-acme -s {content["SERVICESTATE"]} -t {content["SERVICESTATETYPE"]} -u {content["SERVICEDESC"]}',
+                    capture_output=True,
+                    text=True,
+                    shell=True)
+                if command.stdout:
+                    logger.info(command.stdout)
+                if command.stderr:
+                    logger.info(command.stderr)
                 lock_acquired = True
             finally:
                 lock.release()

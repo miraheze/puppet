@@ -32,7 +32,7 @@ probe mwhealth {
 
 <%- @backends.each_pair do | name, property | -%>
 backend <%= name %> {
-	.host = "localhost";
+	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
 <%- if property['probe'] -%>
 	.probe = <%= property['probe'] %>;
@@ -45,7 +45,7 @@ backend <%= name %> {
 
 <%- if property['xdebug'] -%>
 backend <%= name %>_test {
-	.host = "localhost";
+	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
         .connect_timeout = 3s;
         .first_byte_timeout = 63s;
@@ -55,7 +55,7 @@ backend <%= name %>_test {
 <%- end -%>
 <%- end -%>
 
-# Initialise vcl
+# Initialize vcl
 sub vcl_init {
 	new mediawiki = directors.random();
 <%- @backends.each_pair do | name, property | -%>
@@ -63,22 +63,33 @@ sub vcl_init {
 	mediawiki.add_backend(<%= name %>, 100);
 <%- end -%>
 <%- end -%>
+
+	new swift = directors.random();
+<%- @backends.each_pair do | name, property | -%>
+<%- if property['swiftpool'] -%>
+	swift.add_backend(<%= name %>, 100);
+<%- end -%>
+<%- end -%>
 }
 
 # Purge ACL
 acl purge {
-	"localhost";
+	# localhost
+	"127.0.0.1";
+
 	# IPv6
-	"2a10:6740::/64";
-	# IPv4
-	"31.24.105.128/28";
+	"2602:294:0:c8::/64";
+	"2602:294:0:b13::/64";
+	"2602:294:0:b23::/64";
+	"2602:294:0:b12::/64";
 }
 
 acl miraheze_nets {
 	# IPv6
-	"2a10:6740::/64";
-	# IPv4
-	"31.24.105.128/28";
+	"2602:294:0:c8::/64";
+	"2602:294:0:b13::/64";
+	"2602:294:0:b23::/64";
+	"2602:294:0:b12::/64";
 }
 
 # Cookie handling logic
@@ -131,7 +142,7 @@ sub rate_limit {
 			std.ip(req.http.X-Real-IP, "192.0.2.1") !~ miraheze_nets &&
 			(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
-			if (req.url ~ "^/(w/api.php|w/rest.php|wiki/Special:EntityData)") {
+			if (req.url ~ "^/((w|(1\.\d{2,}))/api.php|(w|(1\.\d{2,}))/rest.php|(wiki/)?Special:EntityData)") {
 				if (vsthrottle.is_denied("rest:" + req.http.X-Real-IP, 1000, 10s)) {
 					return (synth(429, "Too Many Requests"));
 				}
@@ -154,7 +165,7 @@ sub vcl_synth {
 			set resp.status = 302;
 			return (deliver);
 		}
-	
+
 		// Homepage redirect to commons
 		if (resp.reason == "Commons Redirect") {
 			set resp.reason = "Moved Permanently";
@@ -162,7 +173,14 @@ sub vcl_synth {
 			set resp.http.Connection = "keep-alive";
 			set resp.http.Content-Length = "0";
 		}
-	
+
+		if (resp.reason == "Main Page Redirect") {
+			set resp.reason = "Moved Permanently";
+			set resp.http.Location = "https://miraheze.org/";
+			set resp.http.Connection = "keep-alive";
+			set resp.http.Content-Length = "0";
+		}
+
 		// Handle CORS preflight requests
 		if (
 			req.http.Host == "static.miraheze.org" &&
@@ -171,7 +189,7 @@ sub vcl_synth {
 			set resp.reason = "OK";
 			set resp.http.Connection = "keep-alive";
 			set resp.http.Content-Length = "0";
-	
+
 			// allow Range requests, and avoid other CORS errors when debugging with X-Miraheze-Debug
 			set resp.http.Access-Control-Allow-Origin = "*";
 			set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
@@ -209,14 +227,22 @@ sub mw_request {
 	call normalize_request_nonmisc;
 
 	# Assigning a backend
+	if (req.http.X-Miraheze-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ miraheze_nets) {
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['xdebug'] -%>
-	if (req.http.X-Miraheze-Debug == "<%= name %>.miraheze.org") {
-		set req.backend_hint = <%= name %>_test;
-		return (pass);
+		if (req.http.X-Miraheze-Debug == "<%= name %>.wikitide.net") {
+			if (req.http.Host == "static.miraheze.org") {
+				set req.backend_hint = swift.backend();
+			} else {
+				set req.backend_hint = <%= name %>_test;
+			}
+			return (pass);
+		}
+<%- end -%>
+<%- end -%>
+	} else {
+		unset req.http.X-Miraheze-Debug;
 	}
-<%- end -%>
-<%- end -%>
 
 	set req.backend_hint = mediawiki.backend();
 
@@ -227,6 +253,8 @@ sub mw_request {
 
 	# Numerous static.miraheze.org specific code
 	if (req.http.Host == "static.miraheze.org") {
+		set req.backend_hint = swift.backend();
+
 		unset req.http.X-Range;
 
 		if (req.http.Range) {
@@ -272,8 +300,8 @@ sub mw_request {
 			// .jpg.jpg => .jpg, .JPG.jpg => .JPG
 			// eg. /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg.jpg => /metawiki/thumb/0/06/Foo.jpg/120px-Foo.jpg
 			// if (req.url ~ "(?i)(.*)(\.\w+)\2$") {
-				// set req.url = regsub(req.url, "(?i)(.*)(\.\w+)\2$", "\1\2");
-			//}
+			//	set req.url = regsub(req.url, "(?i)(.*)(\.\w+)\2$", "\1\2");
+			// }
 		}
 
 		// Fixup borked client Range: headers
@@ -309,7 +337,7 @@ sub mw_request {
 	}
 
 	# We can rewrite those to one domain name to increase cache hits
-	if (req.url ~ "^/w/(skins|resources|extensions)/" ) {
+	if (req.url ~ "^/(1\.\d{2,})/(skins|resources|extensions)/" ) {
 		set req.http.Host = "meta.miraheze.org";
 	}
 
@@ -319,7 +347,7 @@ sub mw_request {
 		return (pass);
 	}
 
-	# A requet via OAuth should not be cached or use a cached response elsewhere
+	# A request via OAuth should not be cached or use a cached response elsewhere
 	if (req.http.Authorization ~ "OAuth") {
 		return (pass);
 	}
@@ -345,7 +373,11 @@ sub vcl_recv {
 	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
 		return (synth(200));
 	}
-	
+
+	if (req.http.host == "meta.miraheze.org" && req.url == "/wiki/Miraheze" && req.http.User-Agent ~ "(G|g)ooglebot") {
+		return (synth(301, "Main Page Redirect"));
+	}
+
 	if (req.http.host == "static.miraheze.org" && req.url == "/") {
 		return (synth(301, "Commons Redirect"));
 	}
@@ -355,21 +387,21 @@ sub vcl_recv {
 		req.http.Host == "ssl.miraheze.org" ||
 		req.http.Host == "acme.miraheze.org"
 	) {
-		set req.backend_hint = puppet141;
+		set req.backend_hint = puppet181;
 		return (pass);
 	}
 
 	if (req.http.Host ~ "^(.*\.)?mirabeta\.org") {
-		set req.backend_hint = test131;
+		set req.backend_hint = test151;
 		return (pass);
 	}
 
 	# Only cache js files from Matomo
-	if (req.http.Host == "matomo.miraheze.org") {
-		set req.backend_hint = matomo121;
+	if (req.http.Host == "analytics.wikitide.net") {
+		set req.backend_hint = matomo151;
 
 		# Yes, we only care about this file
-		if (req.url ~ "^/piwik.js" || req.url ~ "^/matomo.js") {
+		if (req.url ~ "^/matomo.js") {
 			return (hash);
 		} else {
 			return (pass);
@@ -377,8 +409,8 @@ sub vcl_recv {
 	}
 
 	# Do not cache requests from this domain
-	if (req.http.Host == "icinga.miraheze.org" || req.http.Host == "grafana.miraheze.org") {
-		set req.backend_hint = mon141;
+	if (req.http.Host == "monitoring.wikitide.net" || req.http.Host == "grafana.wikitide.net") {
+		set req.backend_hint = mon181;
 
 		if (req.http.upgrade ~ "(?i)websocket") {
 			return (pipe);
@@ -388,21 +420,15 @@ sub vcl_recv {
 	}
 
 	# Do not cache requests from this domain
-	if (req.http.Host == "phabricator.miraheze.org" || req.http.Host == "phab.miraheze.wiki" ||
+	if (req.http.Host == "issue-tracker.miraheze.org" || req.http.Host == "phorge-static.wikitide.net" ||
 		req.http.Host == "blog.miraheze.org") {
-		set req.backend_hint = phab121;
-		return (pass);
-	}
-
-	# Do not cache requests from this domain
-	if (req.http.Host == "webmail.miraheze.org") {
-		set req.backend_hint = mail121;
+		set req.backend_hint = phorge171;
 		return (pass);
 	}
 
 	# Do not cache requests from this domain
 	if (req.http.Host == "reports.miraheze.org") {
-		set req.backend_hint = reports121;
+		set req.backend_hint = reports171;
 		return (pass);
 	}
 
@@ -415,7 +441,7 @@ sub vcl_recv {
 # Defines the uniqueness of a request
 sub vcl_hash {
 	# FIXME: try if we can make this ^/wiki/ only?
-	if (req.url ~ "^/wiki/" || req.url ~ "^/w/load.php" || req.url ~ "^/w/index.php") {
+	if ((req.http.Host != "miraheze.org" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
 		hash_data(req.http.X-Subdomain);
 	}
 }
@@ -443,21 +469,21 @@ sub vcl_backend_fetch {
 }
 
 sub mf_admission_policies {
-    // hit-for-pass objects >= 8388608 size. Do cache if Content-Length is missing.
-    if (bereq.http.Host == "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 262144) {
-        // HFP
-        set beresp.http.X-CDIS = "pass";
-        return(pass(beresp.ttl));
-    }
+	// hit-for-pass objects >= 8388608 size. Do cache if Content-Length is missing.
+	if (bereq.http.Host == "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 262144) {
+		// HFP
+		set beresp.http.X-CDIS = "pass";
+		return(pass(beresp.ttl));
+	}
 
-    // hit-for-pass objects >= 67108864 size. Do cache if Content-Length is missing.
-    if (bereq.http.Host != "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
-        // HFP
-        set beresp.http.X-CDIS = "pass";
-        return(pass(beresp.ttl));
-    }
+	// hit-for-pass objects >= 67108864 size. Do cache if Content-Length is missing.
+	if (bereq.http.Host != "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
+		// HFP
+		set beresp.http.X-CDIS = "pass";
+		return(pass(beresp.ttl));
+	}
 
-    return (deliver);
+	return (deliver);
 }
 
 # Backend response, defines cacheability
@@ -518,9 +544,9 @@ sub vcl_backend_response {
 		set beresp.ttl = 10m;
 	}
 
-    // Set keep, which influences the amount of time objects are kept available
-    // in cache for IMS requests (TTL+grace+keep). Scale keep to the app-provided
-    // TTL.
+	// Set keep, which influences the amount of time objects are kept available
+	// in cache for IMS requests (TTL+grace+keep). Scale keep to the app-provided
+	// TTL.
 	if (beresp.ttl > 0s) {
 		if (beresp.http.ETag || beresp.http.Last-Modified) {
 			if (beresp.ttl < 1d) {
@@ -548,84 +574,84 @@ sub vcl_backend_response {
 	}
 
 	# Cache 301 redirects for 12h (/, /wiki, /wiki/ redirects only)
-    if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
-        set beresp.ttl = 43200s;
-    }
+	if (beresp.status == 301 && bereq.url ~ "^/?(wiki/?)?$" && !beresp.http.Cache-Control ~ "no-cache") {
+		set beresp.ttl = 43200s;
+	}
 
-    # Cache non-modified robots.txt for 12 hours, otherwise 5 minutes
-    if (bereq.url == "/robots.txt") {
-        if (beresp.http.X-Miraheze-Robots == "Custom") {
-            set beresp.ttl = 300s;
-        } else {
-            set beresp.ttl = 43200s;
-        }
-    }
+	# Cache non-modified robots.txt for 12 hours, otherwise 5 minutes
+	if (bereq.url == "/robots.txt") {
+		if (beresp.http.X-Miraheze-Robots == "Custom") {
+			set beresp.ttl = 300s;
+		} else {
+			set beresp.ttl = 43200s;
+		}
+	}
 
-    // Compress compressible things if the backend didn't already, but
-    // avoid explicitly-defined CL < 860 bytes.  We've seen varnish do
-    // gzipping on CL:0 302 responses, resulting in output that has CE:gzip
-    // and CL:20 and sends a pointless gzip header.
-    // Very small content may actually inflate from gzipping, and
-    // sub-one-packet content isn't saving a lot of latency for the gzip
-    // costs (to the server and the client, who must also decompress it).
-    // The magic 860 number comes from Akamai, Google recommends anywhere
-    // from 150-1000.  See also:
-    // https://webmasters.stackexchange.com/questions/31750/what-is-recommended-minimum-object-size-for-gzip-performance-benefits
-    if (beresp.http.content-type ~ "json|text|html|script|xml|icon|ms-fontobject|ms-opentype|x-font|sla"
-        && (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 860)) {
-            set beresp.do_gzip = true;
-    }
+	// Compress compressible things if the backend didn't already, but
+	// avoid explicitly-defined CL < 860 bytes.  We've seen varnish do
+	// gzipping on CL:0 302 responses, resulting in output that has CE:gzip
+	// and CL:20 and sends a pointless gzip header.
+	// Very small content may actually inflate from gzipping, and
+	// sub-one-packet content isn't saving a lot of latency for the gzip
+	// costs (to the server and the client, who must also decompress it).
+	// The magic 860 number comes from Akamai, Google recommends anywhere
+	// from 150-1000.  See also:
+	// https://webmasters.stackexchange.com/questions/31750/what-is-recommended-minimum-object-size-for-gzip-performance-benefits
+	if (beresp.http.content-type ~ "json|text|html|script|xml|icon|ms-fontobject|ms-opentype|x-font|sla"
+		&& (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 860)) {
+			set beresp.do_gzip = true;
+	}
 
-    // SVGs served by MediaWiki are part of the interface. That makes them
-    // very hot objects, as a result the compression time overhead is a
-    // non-issue. Several of them tend to be requested at the same time,
-    // as the browser finds out about them when parsing stylesheets that
-    // contain multiple. This means that the "less than 1 packet" rationale
-    // for not compressing very small objects doesn't apply either. Lastly,
-    // since they're XML, they contain a fair amount of repetitive content
-    // even when small, which means that gzipped SVGs tend to be
-    // consistantly smaller than their uncompressed version, even when tiny.
-    // For all these reasons, it makes sense to have a lower threshold for
-    // SVG. Applying it to XML in general is a more unknown tradeoff, as it
-    // would affect small API responses that are more likely to be cold
-    // objects due to low traffic to specific API URLs.
-    if (beresp.http.content-type ~ "svg" && (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 150)) {
-        set beresp.do_gzip = true;
-    }
+	// SVGs served by MediaWiki are part of the interface. That makes them
+	// very hot objects, as a result the compression time overhead is a
+	// non-issue. Several of them tend to be requested at the same time,
+	// as the browser finds out about them when parsing stylesheets that
+	// contain multiple. This means that the "less than 1 packet" rationale
+	// for not compressing very small objects doesn't apply either. Lastly,
+	// since they're XML, they contain a fair amount of repetitive content
+	// even when small, which means that gzipped SVGs tend to be
+	// consistantly smaller than their uncompressed version, even when tiny.
+	// For all these reasons, it makes sense to have a lower threshold for
+	// SVG. Applying it to XML in general is a more unknown tradeoff, as it
+	// would affect small API responses that are more likely to be cold
+	// objects due to low traffic to specific API URLs.
+	if (beresp.http.content-type ~ "svg" && (!beresp.http.Content-Length || std.integer(beresp.http.Content-Length, 0) >= 150)) {
+		set beresp.do_gzip = true;
+	}
 
-    // set a 601s hit-for-pass object based on response conditions in vcl_backend_response:
-    //    Calculated TTL <= 0 + Status < 500:
-    //    These are generally uncacheable responses.  The 5xx exception
-    //    avoids us accidentally replacing a good stale/grace object with
-    //    an hfp (and then repeatedly passing on potentially-cacheable
-    //    content) due to an isolated 5xx response.
-    if (beresp.ttl <= 0s && beresp.status < 500 && (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ " hit")) {
-        set beresp.grace = 31s;
-        set beresp.keep = 0s;
-        set beresp.http.X-CDIS = "pass";
-        return(pass(601s));
-    }
+	// set a 601s hit-for-pass object based on response conditions in vcl_backend_response:
+	//    Calculated TTL <= 0 + Status < 500:
+	//    These are generally uncacheable responses.  The 5xx exception
+	//    avoids us accidentally replacing a good stale/grace object with
+	//    an hfp (and then repeatedly passing on potentially-cacheable
+	//    content) due to an isolated 5xx response.
+	if (beresp.ttl <= 0s && beresp.status < 500 && (!beresp.http.X-Cache-Int || beresp.http.X-Cache-Int !~ " hit")) {
+		set beresp.grace = 31s;
+		set beresp.keep = 0s;
+		set beresp.http.X-CDIS = "pass";
+		return(pass(601s));
+	}
 
-    if (beresp.ttl > 60s && (bereq.url ~ "mobileaction=" || bereq.url ~ "useformat=")) {
-        set beresp.ttl = 60 s;
-    }
+	if (beresp.ttl > 60s && (bereq.url ~ "mobileaction=" || bereq.url ~ "useformat=")) {
+		set beresp.ttl = 60 s;
+	}
 
-    // set a 607s hit-for-pass object based on response conditions in vcl_backend_response:
-    //    Token=1 + Vary:Cookie:
-    //    All requests with real login session|token cookies share the
-    //    Cookie:Token=1 value for Vary purposes.  This allows them to
-    //    share a single hit-for-pass object here if the response
-    //    shouldn't be shared between users (Vary:Cookie).
-    if (
-        bereq.http.Cookie == "Token=1"
-        && beresp.http.Vary ~ "(?i)(^|,)\s*Cookie\s*(,|$)"
-    ) {
-        set beresp.grace = 31s;
-        set beresp.keep = 0s;
-        set beresp.http.X-CDIS = "pass";
-        // HFP
-        return(pass(607s));
-    }
+	// set a 607s hit-for-pass object based on response conditions in vcl_backend_response:
+	//    Token=1 + Vary:Cookie:
+	//    All requests with real login session|token cookies share the
+	//    Cookie:Token=1 value for Vary purposes.  This allows them to
+	//    share a single hit-for-pass object here if the response
+	//    shouldn't be shared between users (Vary:Cookie).
+	if (
+		bereq.http.Cookie == "Token=1"
+		&& beresp.http.Vary ~ "(?i)(^|,)\s*Cookie\s*(,|$)"
+	) {
+		set beresp.grace = 31s;
+		set beresp.keep = 0s;
+		set beresp.http.X-CDIS = "pass";
+		// HFP
+		return(pass(607s));
+	}
 
 	// It is important that this happens after the code responsible for translating TTL<=0
 	// (uncacheable) responses into hit-for-pass.
@@ -714,9 +740,9 @@ sub vcl_deliver {
 		call add_upload_cors_headers;
 	}
 
-	if (req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php" || req.url ~ "^/\?title=") {
+	if (req.url ~ "^/(wiki/)?" || req.url ~ "^/w/index\.php") {
 		// ...but exempt CentralNotice banner special pages
-		if (req.url !~ "^/(wiki/|(w/index\.php)?\?title=)Special:Banner") {
+		if (req.url !~ "^/(wiki/|w/index\.php\?title=)?Special:Banner") {
 			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
 		}
 	}
@@ -727,7 +753,7 @@ sub vcl_deliver {
 	}
 
 	# Do not index certain URLs
-	if (req.url ~ "^(/w/(api|index|rest)\.php*|/wiki/Special(\:|%3A)(?!WikiForum)).+$") {
+	if (req.url ~ "^(/(w/)?(api|index|rest)\.php*|/(wiki/)?Special(\:|%3A)(?!WikiForum)).+$") {
 		set resp.http.X-Robots-Tag = "noindex";
 	}
 
@@ -795,8 +821,8 @@ sub vcl_pass {
 
 # Synthetic code, default logic is appended
 sub vcl_synth {
-    if (req.method != "PURGE") {
-        set resp.http.X-CDIS = "int";
+	if (req.method != "PURGE") {
+		set resp.http.X-CDIS = "int";
 
 		// we copy through from beresp->resp->req here for the initial hit-for-pass case
 		if (resp.http.X-CDIS) {
@@ -829,10 +855,11 @@ sub vcl_backend_error {
 		<head>
 			<meta charset="utf-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-			<meta name="description" content="Backend Fetch Failed" />
-			<title>"} + beresp.status + " " + beresp.reason + {"</title>
+			<meta name="description" content="Something went wrong, try again in a few seconds." />
+			<title>Something went wrong</title>
 			<!-- Bootstrap core CSS -->
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous"/>
+			<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+			<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit">
 			<style>
 				/* Error Page Inline Styles */
 				body {
@@ -858,11 +885,6 @@ sub vcl_backend_error {
 					font-size: 21px;
 					padding: 14px 24px;
 				}
-				/* Fade-in */
-				@keyframes fadein {
-					from { opacity: 0; }
-					to   { opacity: 1; }
-				}
 				/* Dark mode */
 				@media (prefers-color-scheme: dark) {
 					body {
@@ -873,38 +895,26 @@ sub vcl_backend_error {
 						color: white;
 					}
 				}
+				body {
+					font-family: 'Outfit', sans-serif;
+				}
 			</style>
 		</head>
-		<div class="container">
+		<div class="container" style="padding: 70px 0; text-align: center;">
 			<!-- Jumbotron -->
 			<div class="jumbotron">
-				<p style="font-align: center; animation: fadein 1s;"><?xml version="1.0" encoding="UTF-8" standalone="no"?><svg id="svg4206" version="1.1" inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)" width="130.851" height="134.98416" viewBox="0 0 130.851 134.98416" sodipodi:docname="mhwarn.svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><defs id="defs4210" /> <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1920" inkscape:window-height="1009" id="namedview4208" showgrid="true" fit-margin-top="0" fit-margin-left="0" fit-margin-right="0" fit-margin-bottom="0" inkscape:zoom="4.0163665" inkscape:cx="99.343524" inkscape:cy="87.890385" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" inkscape:current-layer="svg4206" showborder="false" inkscape:showpageshadow="2" inkscape:pagecheckerboard="0" inkscape:deskcolor="#d1d1d1"> <inkscape:grid type="xygrid" id="grid4863" originx="-29.149001" originy="-23.271838" /> </sodipodi:namedview> <path style="fill:#8e7650;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 52.721681,48.525706 21.189606,0.06232 10.968739,18.946003 -10.84409,18.696711 H 52.659356 L 41.752943,67.471705 Z" id="path4756" inkscape:connector-curvature="0" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 52.7219,0 73.911507,0.06233 84.880246,19.008333 74.036156,37.705042 H 52.659576 L 41.753162,18.946004 Z" id="path4756-4" inkscape:connector-curvature="0" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 52.7219,97.279112 21.189607,0.06233 10.968739,18.946008 -10.84409,18.69671 H 52.659576 L 41.753162,116.22513 Z" id="path4756-4-7" inkscape:connector-curvature="0" inkscape:transform-center-x="23.96383" inkscape:transform-center-y="-86.164066" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 94.666356,24.313311 21.189604,0.06232 10.96874,18.946001 -10.84409,18.696715 H 94.604032 L 83.697618,43.259317 Z" id="path4756-4-7-0-4" inkscape:connector-curvature="0" inkscape:transform-center-x="23.963831" inkscape:transform-center-y="-86.164068" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 10.946578,24.313315 21.1464,0.06232 10.94636,18.945997 -10.821965,18.696715 H 10.884381 L 2.04e-4,43.259317 Z" id="path4756-4-7-0-4-0" inkscape:connector-curvature="0" inkscape:transform-center-x="23.914978" inkscape:transform-center-y="-86.164069" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 10.968739,72.678425 32.158346,72.740745 43.12708,91.686749 32.282994,110.38347 H 10.906415 L 0,91.624434 Z" id="path4756-4-7-0-4-5" inkscape:connector-curvature="0" inkscape:transform-center-x="23.96383" inkscape:transform-center-y="-86.16407" /> <path d="M 92.925494,56.217561 A 37.925497,37.925497 0 1 0 130.851,94.143056 37.925497,37.925497 0 0 0 92.925494,56.217561 Z m 3.792549,60.680789 h -7.5851 v -7.58509 h 7.5851 z m 0,-15.17019 h -7.5851 V 71.387759 h 7.5851 z" id="path4" style="fill:#ff5d00;fill-opacity:1;stroke-width:3.79255" /></svg></p>
-				<h1>"} + beresp.status + " " + beresp.reason + {"</h1>
-				<p class="lead">Try again later or click the button below to refresh.</p>
-				<p style="font-size: 70%; margin: -1em;">If you were trying to import something and encountered this error, use <a href="https://meta.miraheze.org/wiki/Special:RequestImportDump">ImportDump</a> instead.</p><br />
-				<a href="javascript:document.location.reload(true);" class="btn btn-lg btn-outline-success" role="button">Refresh page</a>
+				<p style="font-align: center;"><?xml version="1.0" encoding="UTF-8" standalone="no"?><svg id="svg4206" version="1.1" inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)" width="130.851" height="134.98416" viewBox="0 0 130.851 134.98416" sodipodi:docname="mhwarn.svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><defs id="defs4210" /> <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1920" inkscape:window-height="1009" id="namedview4208" showgrid="true" fit-margin-top="0" fit-margin-left="0" fit-margin-right="0" fit-margin-bottom="0" inkscape:zoom="4.0163665" inkscape:cx="99.343524" inkscape:cy="87.890385" inkscape:window-x="-8" inkscape:window-y="-8" inkscape:window-maximized="1" inkscape:current-layer="svg4206" showborder="false" inkscape:showpageshadow="2" inkscape:pagecheckerboard="0" inkscape:deskcolor="#d1d1d1"> <inkscape:grid type="xygrid" id="grid4863" originx="-29.149001" originy="-23.271838" /> </sodipodi:namedview> <path style="fill:#8e7650;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 52.721681,48.525706 21.189606,0.06232 10.968739,18.946003 -10.84409,18.696711 H 52.659356 L 41.752943,67.471705 Z" id="path4756" inkscape:connector-curvature="0" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 52.7219,0 73.911507,0.06233 84.880246,19.008333 74.036156,37.705042 H 52.659576 L 41.753162,18.946004 Z" id="path4756-4" inkscape:connector-curvature="0" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 52.7219,97.279112 21.189607,0.06233 10.968739,18.946008 -10.84409,18.69671 H 52.659576 L 41.753162,116.22513 Z" id="path4756-4-7" inkscape:connector-curvature="0" inkscape:transform-center-x="23.96383" inkscape:transform-center-y="-86.164066" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 94.666356,24.313311 21.189604,0.06232 10.96874,18.946001 -10.84409,18.696715 H 94.604032 L 83.697618,43.259317 Z" id="path4756-4-7-0-4" inkscape:connector-curvature="0" inkscape:transform-center-x="23.963831" inkscape:transform-center-y="-86.164068" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 10.946578,24.313315 21.1464,0.06232 10.94636,18.945997 -10.821965,18.696715 H 10.884381 L 2.04e-4,43.259317 Z" id="path4756-4-7-0-4-0" inkscape:connector-curvature="0" inkscape:transform-center-x="23.914978" inkscape:transform-center-y="-86.164069" /> <path style="fill:#ffc200;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 10.968739,72.678425 32.158346,72.740745 43.12708,91.686749 32.282994,110.38347 H 10.906415 L 0,91.624434 Z" id="path4756-4-7-0-4-5" inkscape:connector-curvature="0" inkscape:transform-center-x="23.96383" inkscape:transform-center-y="-86.16407" /> <path d="M 92.925494,56.217561 A 37.925497,37.925497 0 1 0 130.851,94.143056 37.925497,37.925497 0 0 0 92.925494,56.217561 Z m 3.792549,60.680789 h -7.5851 v -7.58509 h 7.5851 z m 0,-15.17019 h -7.5851 V 71.387759 h 7.5851 z" id="path4" style="fill:#ff5d00;fill-opacity:1;stroke-width:3.79255" /></svg></p>
+				<h1>Something went wrong</h1>
+				<p class="lead">Give it a bit and try again.</p>
+				<a href="javascript:document.location.reload(true);" class="btn btn-outline-primary" role="button">Try this action again</a>
 			</div>
 		</div>
-		<div class="container">
-			<div class="body-content">
-				<div class="row">
-					<div class="col-md-6">
-						<h2>What can I do?</h2>
-						<p>Please try again in a few minutes. If the problem persists, please report this on <a href="https://phabricator.miraheze.org">Phabricator</a> or join our <a href="https://discord.gg/TVAJTE4CUn">Discord server</a> or IRC channel (<a href="https://web.libera.chat/?channel=#miraheze-sre">#miraheze-sre</a>) for additional updates. We apologise for the inconvenience. Our Site Reliability Engineers are working to correct the issue.</p>
-					</div>
-					<div class="col-md-6">
-						<a class="twitter-timeline" data-width="500" data-height="350" href="https://twitter.com/MirahezeStatus?ref_src=twsrc%5Etfw">Tweets by MirahezeStatus</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="footer">
+		<div class="footer" style="position: fixed; left:0px; bottom: 125px; height:30px; width:100%;">
 			<div class="text-center">
 				<p class="lead">When reporting this, please include the information below:</p>
 
-				Error "} + beresp.status + " " + beresp.reason + {", forwarded for "} + bereq.http.X-Forwarded-For + {" <br />
-				(Varnish XID "} + bereq.xid + {") via "} + server.identity + {" at "} + now + {".
+				Error "} + beresp.status + " " + beresp.reason + {" via "} + server.identity + {" at "} + now + {" <br />
+				Varnish XID "} + bereq.xid + {", serving "} + bereq.http.X-Forwarded-For + {" (your IP!).
 				<br /><br />
 			</div>
 		</div>

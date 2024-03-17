@@ -1,5 +1,4 @@
-# A class to handle GENERIC server mail internally. This will NOT work outside
-# a Miraheze Mail Server.
+# A class to handle GENERIC server mail.
 class base::mail {
     package { 'postfix':
         ensure => present,
@@ -24,11 +23,11 @@ class base::mail {
     }
 
     mailalias { 'root':
-        recipient => 'root@miraheze.org',
+        recipient => 'root@wikitide.net',
     }
 
     file { '/etc/mailname':
         ensure  => present,
-        content => 'miraheze.org',
+        content => 'wikitide.net',
     }
 }

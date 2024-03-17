@@ -6,15 +6,28 @@ class mongodb::repo::apt inherits mongodb::repo {
   include apt
 
   if($mongodb::repo::ensure == 'present' or $mongodb::repo::ensure == true) {
-    apt::source { 'mongodb':
-      location => $mongodb::repo::location,
-      release  => $mongodb::repo::release,
-      repos    => $mongodb::repo::repos,
-      key      => {
-        'id'      => $mongodb::repo::key,
-        'server'  => $mongodb::repo::key_server,
-        'options' => $mongodb::repo::aptkey_options,
-      },
+    $mongover = split($mongodb::repo::version, '[.]')
+    if ("${mongover[0]}.${mongover[1]}" == '7.0') {
+      apt::source { 'mongodb':
+        location => $mongodb::repo::location,
+        release  => $mongodb::repo::release,
+        repos    => $mongodb::repo::repos,
+        key      => {
+          'name'   => "mongodb-server-${mongover[0]}.${mongover[1]}.gpg",
+          'source' => "puppet:///modules/mongodb/apt/mongodb-server-${mongover[0]}.${mongover[1]}.gpg",
+        },
+      }
+    } else {
+      apt::source { 'mongodb':
+        location => $mongodb::repo::location,
+        release  => $mongodb::repo::release,
+        repos    => $mongodb::repo::repos,
+        key      => {
+          'id'      => $mongodb::repo::key,
+          'server'  => $mongodb::repo::key_server,
+          'options' => $mongodb::repo::aptkey_options,
+        },
+      }
     }
 
     Apt::Source['mongodb'] -> Class['apt::update'] -> Package<| tag == 'mongodb_package' |>

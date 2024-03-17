@@ -23,6 +23,11 @@ class swift::ac {
         lock_file       => '/var/lock/container.lock',
     }
 
+    $old_swift = $facts['os']['distro']['codename'] ? {
+        'bookworm' => false,
+        'bullseye' => true,
+    }
+
     # set up swift specific configs
     file {
         default:
@@ -87,10 +92,18 @@ class swift::ac {
         source => 'puppet:///modules/swift/swift-drive-audit.conf',
     }
 
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
+
     monitoring::services { 'Swift Account Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $facts['networking']['ip6'],
+            tcp_address => $address,
             tcp_port    => '6002',
         },
     }
@@ -98,7 +111,7 @@ class swift::ac {
     monitoring::services { 'Swift Container Service':
         check_command => 'tcp',
         vars          => {
-            tcp_address => $facts['networking']['ip6'],
+            tcp_address => $address,
             tcp_port    => '6001',
         },
     }

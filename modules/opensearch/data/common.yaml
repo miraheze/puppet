@@ -4,9 +4,9 @@ opensearch::api_basic_auth_password: ~
 opensearch::api_basic_auth_username: ~
 opensearch::api_ca_file: ~
 opensearch::api_ca_path: ~
-opensearch::api_host: os131.miraheze.org
+opensearch::api_host: os151-private.wikitide.net
 opensearch::api_port: 9200
-opensearch::api_protocol: https
+opensearch::api_protocol: http
 opensearch::api_timeout: 10
 opensearch::autoupgrade: false
 opensearch::config: {}

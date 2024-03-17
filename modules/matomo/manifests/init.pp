@@ -1,17 +1,24 @@
 # class: matomo
 class matomo (
     String $ldap_password  = lookup('passwords::matomo::ldap_password'),
-    String $matomo_db_host = 'db112.miraheze.org',
+    String $matomo_db_host = 'db182-private.wikitide.net',
 ) {
     stdlib::ensure_packages('composer')
 
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '5.0.0', # Current stable
+        branch             => '5.0.2', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
+    }
+
+    file { '/srv/matomo/misc/GeoLite2-Country.mmdb':
+        ensure  => present,
+        source  => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
+        mode    => '0444',
+        require => Git::Clone['matomo'],
     }
 
     exec { 'matomo_composer':
@@ -147,15 +154,14 @@ class matomo (
 
     ssl::wildcard { 'matomo wildcard': }
 
-    nginx::site { 'matomo.miraheze.org':
+    nginx::site { 'analytics.wikitide.net':
         ensure  => present,
         source  => 'puppet:///modules/matomo/nginx.conf',
         monitor => true,
     }
 
-    $salt = lookup('passwords::piwik::salt')
-    $password = lookup('passwords::db::piwik')
-    $noreply_password = lookup('passwords::mail::noreply')
+    $salt = lookup('passwords::matomo::salt')
+    $password = lookup('passwords::db::matomo')
 
     file { '/srv/matomo/config/config.ini.php':
         ensure  => present,
@@ -176,16 +182,16 @@ class matomo (
     # Install a systemd timer to run the Archive task periodically.
     # Running it once a day to avoid performance penalties on high trafficated websites
     # (https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/#important-tips-for-medium-to-high-traffic-websites)
-    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --url=\"https://matomo.miraheze.org/\""
+    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --url=\"https://analytics.wikitide.net/\""
 
     # Create concurrent archivers
     # https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/
-    $concurrentHash = {
+    $concurrent_hash = {
         '1' => '*-*-* 00/8:00:00',
         '2' => '*-*-* 00/8:01:00',
         '3' => '*-*-* 00/8:02:00',
     }
-    $concurrentHash.each | String $concurrent, String $interval | {
+    $concurrent_hash.each | String $concurrent, String $interval | {
         systemd::timer::job { "matomo-archiver-${concurrent}":
             description       => "Runs the Matomo's archive process.",
             command           => "/bin/bash -c '${archiver_command}'",

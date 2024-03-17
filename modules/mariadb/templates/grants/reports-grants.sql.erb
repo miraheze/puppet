@@ -2,8 +2,7 @@
 
 GRANT USAGE
     ON *.* TO 'reports'@'%'
-    IDENTIFIED BY '<%= @reports_password %>'
-    REQUIRE SSL;
+    IDENTIFIED BY '<%= @reports_password %>';
 
 GRANT ALL PRIVILEGES
     ON `reports`.* TO 'reports'@'%';

@@ -91,6 +91,8 @@ def check_records(hostname):
 
         if sorted(list(nameservers)) == sorted(['ns1.miraheze.org.', 'ns2.miraheze.org.']):
             return 'NS'
+        if sorted(list(nameservers)) == sorted(['ns1.wikitide.net.', 'ns2.wikitide.net.']):
+            return 'NS'
     except resolver.NoAnswer:
         nameservers = None
 
@@ -99,7 +101,11 @@ def check_records(hostname):
     except resolver.NoAnswer:
         cname = None
 
-    if cname == 'mw-lb.miraheze.org.':
+    if (
+        cname is not None and
+        re.match(".+\.miraheze\.org", cname) and
+        not re.match("(issue-tracker|static|donate|reports)\.miraheze\.org", cname)
+       ):
         return 'CNAME'
     elif cname is None and cname_check_impossible:
         return 'CNAMEFLAT'

@@ -5,6 +5,7 @@ from twisted.internet import reactor, ssl
 from twisted.words.protocols import irc
 from twisted.internet import protocol
 
+import base64
 import socket
 
 recver = None
@@ -15,9 +16,32 @@ irc_network = str(socket.getaddrinfo("<%= @network %>", None, family=socket.AF_I
 
 class RCBot(irc.IRCClient):
     nickname = "<%= @nickname %>"
-    password = "mirahezebots:<%= @mirahezebots_password %>"
+    password = "<%= @mirahezebots_password %>"
     channel = "<%= @channel %>"
     lineRate = 1
+
+    def connectionMade(self):
+        self.lineRate = None
+        self.sendLine('CAP REQ :sasl')
+        self.lineRate = 1
+        irc.IRCClient.connectionMade(self)
+
+    def irc_CAP(self, prefix, params):
+        if params[1] != 'ACK' or params[2].split() != ['sasl']:
+            print('sasl not available')
+            self.quit('')
+        sasl_string = '{0}\0{0}\0{1}'.format(self.nickname, self.password)
+        sasl_b64_bytes = base64.b64encode(sasl_string.encode(encoding='UTF-8',errors='strict'))
+        self.sendLine('AUTHENTICATE PLAIN')
+        self.sendLine('AUTHENTICATE ' + sasl_b64_bytes.decode('UTF-8'))
+
+    def irc_903(self, prefix, params):
+        self.sendLine('CAP END')
+
+    def irc_904(self, prefix, params):
+        print('sasl auth failed', params)
+        self.quit('')
+    irc_905 = irc_904
 
     def signedOn(self):
         global recver

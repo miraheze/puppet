@@ -4,12 +4,12 @@ location ~ ^/(\.git|config|landing|cache|stopforumspam|geoip) {
         deny all;
 }
 
-location ~ ^/w/(cache|maintenance|mw-config|vendor) {
+location ~ ^/1\.\d\d/(cache|maintenance|mw-config|vendor) {
 	deny all;
 }
 
 # Cache certain non-static.miraheze.org static resources
-location ~ ^/w/((skins|resources)|extensions/[A-Za-z0-9]+.*)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=)?$ {
+location ~ ^/1\.\d\d/((skins|resources)|extensions/[A-Za-z0-9]+.*)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=)?$ {
 	expires 1d;
 }
 
@@ -27,10 +27,6 @@ location ~ \.php {
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 }
 
-location = / {
-	return 301 /wiki/;
-}
-
 location = /favicon.ico {
 	rewrite ^(.*)$ /favicon.php;
 }
@@ -39,11 +35,37 @@ location = /apple-touch-icon.png {
 	rewrite ^(.*)$ /touch.php;
 }
 
+location ^~ /w/index.php {
+	include fastcgi_params;
+	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
+	fastcgi_buffers 32 32k;
+	fastcgi_buffer_size 64k;
+	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+
+	if ($request_uri ~ OAuth) {
+		# Skip OAuth requests to prevent
+		# things from breaking
+		break;
+	}
+
+	if ($request_method = POST) {
+		# Skip if it is a POST request,
+		# as it can cause issues otherwise
+		break;
+	}
+
+	rewrite ^ /w/decode.php$is_args$args last;
+}
+
 location = /wiki {
 	return 301 /wiki/;
 }
 
-location ^~ /wiki/ {
+location / {
+	try_files $uri $uri/ @wiki;
+}
+
+location @wiki {
 	include fastcgi_params;
 	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
 	fastcgi_buffers 32 32k;
@@ -54,7 +76,7 @@ location ^~ /wiki/ {
 location ~ ^/m/(.*) {
 	return 301 /wiki/Special:UrlRedirector/$1;
 }
-	
+
 location /sitemaps/ {
 	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.miraheze.org/$1/sitemaps/$2 permanent;
 }

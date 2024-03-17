@@ -9,6 +9,9 @@ case $facts['os']['family'] {
     $ssl_key_source = '/etc/pki/tls/private/localhost.key'
     $ssl_cert_source = '/etc/pki/tls/certs/localhost.crt'
   }
+  default: {
+    fail("unsupported os family ${facts['os']['name']}")
+  }
 }
 if $facts['os']['family'] == 'RedHat' and versioncmp($facts['os']['release']['major'], '8') >= 0 {
   exec { 'gencerts':
