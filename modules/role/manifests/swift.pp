@@ -130,8 +130,10 @@ class role::swift (
             srange  => "(${firewall_rules_str})",
         }
     }
-
-    include ::prometheus::exporter::statsd_exporter
+    
+    class { 'role::prometheus::statsd_exporter':
+        relay_address => '',
+    }
 
     motd::role { 'role::swift':
         description => 'OpenStack Swift Service (Accounting, Container, Proxy, Object)',
