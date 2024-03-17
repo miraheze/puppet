@@ -20,6 +20,12 @@ class mediawiki {
         include mediawiki::shellbox
     }
 
+    class { 'role::prometheus::statsd_exporter':
+        relay_address     => '',
+        timer_type        => 'histogram',
+        histogram_buckets => lookup('role::prometheus::statsd_exporter::histogram_buckets', { 'default_value' => [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60] }),
+    }
+
     if !lookup('jobrunner::intensive', {'default_value' => false}) {
         cron { 'clean-tmp-files':
             ensure  => absent,
