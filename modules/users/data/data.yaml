@@ -152,7 +152,7 @@ users:
     uid: 1014
     name: void
     realname: Voidwalker 
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWIwmB8ZkwnyvWoMwVfWxmPH6QkP2X2l0TfipMXeWHf void@miraheze.org]
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWIwmB8ZkwnyvWoMwVfWxmPH6QkP2X2l0TfipMXeWHf void@wikitide.org]
   agent:
     ensure: present
     uid: 1015

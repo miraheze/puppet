@@ -23,11 +23,11 @@ class base::mail {
     }
 
     mailalias { 'root':
-        recipient => 'root@miraheze.org',
+        recipient => 'root@wikitide.net',
     }
 
     file { '/etc/mailname':
         ensure  => present,
-        content => 'miraheze.org',
+        content => 'wikitide.net',
     }
 }
