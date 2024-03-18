@@ -34,4 +34,13 @@ define systemd::tmpfile(
         owner   => $owner,
         group   => $group,
     }
+
+    if $ensure == 'present' {
+        exec { "Refresh tmpfile ${name}":
+            command     => "/bin/systemd-tmpfiles --create --remove '${conf_path}'",
+            user        => 'root',
+            refreshonly => true,
+            subscribe   => File[$conf_path],
+        }
+    }
 }

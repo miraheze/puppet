@@ -1,33 +1,32 @@
-# == systemd::service ===
-#
-# Manages a systemd-based unit as a puppet service, properly handling:
+# @summary Manages a systemd-based unit as a puppet service, properly handling:
 # - the unit file
 # - the puppet service definition and state
+# @param unit_type The unit type we are defining as a service
+# @param content The content of the file.
+# @param ensure The usual meta-parameter, defaults to present.
+# @param restart Whether to handle restarting the service when the file changes.
+# @param override If the are creating an override to system-provided units or not.
+# @param override_filename When creating an override, filename to use instead of
+#                          the one forged by systemd::unit.
+# @param monitoring_enabled Periodically check the last execution of the unit and
+#                           alarm if it ended up in a failed state.
+# @param monitoring_contact_group The monitoring's contact group to send the alarm to.
+# @param monitoring_notes_url The notes url used to resolve issues, if
+#                             monitoring_enabled is true this is required
+# @param monitoring_critical If monitoring is enabled allows paging if the execution
+#                            of the unit ended up in a failed state.
+# @param team The team which owns this service
+# @param service_params Additional service parameters we want to specify
 #
-# === Parameters ===
-# [*unit_type*]
-#   The unit type we are defining as a service
-# [*content*]
-#   The content of the file. Required.
-# [*ensure*]
-#   The usual meta-parameter, defaults to present. Valid values are
-#   'absent' and 'present'
-# [*restart*]
-#   Whether to handle restarting the service when the file changes.
-# [*override*]
-#   If the are creating an override to system-provided units or not.
-#   Defaults to false
-# [*service_params*]
-#   Additional service parameters we want to specify
-#
-define systemd::service(
+define systemd::service (
     String $content,
-    Systemd::Unit_type $unit_type = 'service',
-    VMlib::Ensure $ensure  = 'present',
-    Boolean $restart = false,
-    Boolean $override = false,
-    $service_params = {},
-){
+    VMlib::Ensure       $ensure            = 'present',
+    Systemd::Unit::Type $unit_type         = 'service',
+    Boolean             $restart           = false,
+    Boolean             $override          = false,
+    Optional[String[1]] $override_filename = undef,
+    Hash                $service_params    = {},
+) {
     if $unit_type == 'service' {
         $label = $title
         $provider = undef
@@ -35,7 +34,7 @@ define systemd::service(
         # Use a fully specified label for the unit.
         $label = "${title}.${unit_type}"
         # Force the provider of the service to be systemd if the unit type is
-        # not service. Otherwise, they'd fail on at least debian jessie
+        # not service.
         $provider = 'systemd'
     }
 
@@ -45,17 +44,18 @@ define systemd::service(
     }
 
     $base_params = {
-        ensure   => ensure_service($ensure),
+        ensure   => stdlib::ensure($ensure, 'service'),
         enable   => $enable,
-        provider => $provider
+        provider => $provider,
     }
     $params = $base_params + $service_params
     ensure_resource('service', $label, $params)
 
     systemd::unit { $label:
-        ensure   => $ensure,
-        content  => $content,
-        override => $override,
-        restart  => $restart
+        ensure            => $ensure,
+        content           => $content,
+        override          => $override,
+        override_filename => $override_filename,
+        restart           => $restart,
     }
 }
