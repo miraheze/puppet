@@ -8,13 +8,6 @@
 # @param override If the are creating an override to system-provided units or not.
 # @param override_filename When creating an override, filename to use instead of
 #                          the one forged by systemd::unit.
-# @param monitoring_enabled Periodically check the last execution of the unit and
-#                           alarm if it ended up in a failed state.
-# @param monitoring_contact_group The monitoring's contact group to send the alarm to.
-# @param monitoring_notes_url The notes url used to resolve issues, if
-#                             monitoring_enabled is true this is required
-# @param monitoring_critical If monitoring is enabled allows paging if the execution
-#                            of the unit ended up in a failed state.
 # @param team The team which owns this service
 # @param service_params Additional service parameters we want to specify
 #
