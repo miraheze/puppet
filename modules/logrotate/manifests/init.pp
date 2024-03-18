@@ -6,16 +6,3 @@ class logrotate (
 ) {
     stdlib::ensure_packages('logrotate')
     $hourly_content = @(CONTENT)
-    [Unit]
-    Description=Rotation of log files
-    [Timer]
-    OnCalendar=
-    OnCalendar=hourly
-    |CONTENT
-    systemd::unit { 'logrotate.timer:hourly-override':
-        ensure   => $hourly.bool2str('present', 'absent'),
-        unit     => 'logrotate.timer',
-        override => true,
-        content  => $hourly_content,
-    }
-}
