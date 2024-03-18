@@ -4,7 +4,7 @@ class grafana (
     String $ldap_password = lookup('passwords::ldap_password'),
 ) {
 
-    include ::apt
+    include apt
 
     file { '/usr/share/keyrings/grafana.key':
         ensure => present,
@@ -62,6 +62,8 @@ class grafana (
         ensure => present,
         source => 'puppet:///modules/grafana/nginx/grafana.conf',
     }
+
+    include grafana::datasource_exporter
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
         $address = $facts['networking']['interfaces']['ens19']['ip']
