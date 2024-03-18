@@ -1,9 +1,14 @@
-# class: motd
-class motd {
+# SPDX-License-Identifier: Apache-2.0
+# == Class: motd
+#
+# Module for customizing MOTD (Message of the Day) banners.
+#
+class motd (
+    Hash[String[1], Hash] $messages = {}
+) {
+    # Kill Debian's default copyright/warranty banner
     file { '/etc/motd':
-        ensure => link,
-        target => '/var/run/motd',
-        force  => true,
+        ensure => absent,
     }
 
     file { '/etc/update-motd.d':
@@ -15,15 +20,10 @@ class motd {
         purge   => true,
     }
 
-    motd::script { 'header':
-        ensure   => present,
-        priority => 0,
-        content  => "#!/bin/sh\nuname -snrvm\nlsb_release -s -d\n\n",
-    }
-
-    motd::script { 'footer':
-        ensure   => present,
-        priority => 99,
-        content  => "#!/bin/sh\n[ -f /etc/motd.tail ] && cat /etc/motd.tail || true\n",
+    include motd::defaults
+    $messages.each |$title, $params| {
+        motd::message { $title:
+            * => $params,
+        }
     }
 }
