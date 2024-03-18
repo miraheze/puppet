@@ -44,7 +44,7 @@ class role::ssl {
         host_aliases => [ 'github.com' ],
     }
 
-    motd::role { 'role::ssl':
+    system::role { 'ssl':
         description => 'SSL management server',
     }
 }

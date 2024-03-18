@@ -118,7 +118,7 @@ class role::graylog {
         use_udp           => true,
     }
 
-    motd::role { 'role::graylog':
+    system::role { 'graylog':
         description => 'central logging server',
     }
 }

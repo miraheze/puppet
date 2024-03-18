@@ -82,7 +82,7 @@ class role::mediawiki (
         values => { 'net.ipv4.tcp_tw_reuse' => 1 },
     }
 
-    motd::role { 'role::mediawiki':
+    system::role { 'mediawiki':
         description => 'MediaWiki server',
     }
 }

@@ -35,7 +35,7 @@ class role::phorge {
         notrack => true,
     }
 
-    motd::role { 'role::phorge':
+    system::role { 'phorge':
         description => 'Phorge instance',
     }
 }

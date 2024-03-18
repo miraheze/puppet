@@ -41,7 +41,7 @@ class role::dns {
         rule  => 'proto udp dport 53 NOTRACK;',
     }
 
-    motd::role { 'role::dns':
+    system::role { 'dns':
         description => 'authoritative DNS server',
     }
 }

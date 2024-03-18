@@ -65,7 +65,7 @@ class role::memcached (
         srange => "(${firewall_rules_str})",
     }
 
-    motd::role { 'role::memcached':
+    system::role { 'memcached':
         description => 'Memcached server',
     }
 }

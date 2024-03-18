@@ -39,7 +39,7 @@ class role::matomo {
         notrack => true,
     }
 
-    motd::role { 'role::matomo':
+    system::role { 'matomo':
         description => 'analytics server',
     }
 }

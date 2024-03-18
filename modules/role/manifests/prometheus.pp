@@ -285,7 +285,7 @@ class role::prometheus {
         srange => "(${firewall_grafana})",
     }
 
-    motd::role { 'role::prometheus':
+    system::role { 'prometheus':
         description => 'central Prometheus server',
     }
 }

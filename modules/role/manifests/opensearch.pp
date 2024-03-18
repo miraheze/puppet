@@ -236,7 +236,7 @@ class role::opensearch (
         srange => "(${firewall_os_nodes})",
     }
 
-    motd::role { 'role::opensearch':
+    system::role { 'opensearch':
         description => 'OpenSearch server',
     }
 }

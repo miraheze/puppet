@@ -30,7 +30,7 @@ class role::poolcounter {
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Poolcounter'
     }
 
-    motd::role { 'role::poolcounter':
+    system::role { 'poolcounter':
         description => 'Poolcounter server',
     }
 }

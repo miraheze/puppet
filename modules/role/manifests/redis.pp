@@ -32,7 +32,7 @@ class role::redis {
         notrack => true,
     }
 
-    motd::role { 'role::redis':
+    system::role { 'redis':
         description => 'Redis caching server',
     }
 }
