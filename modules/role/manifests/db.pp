@@ -102,7 +102,7 @@ class role::db (
         ensure => directory,
     }
 
-    motd::role { 'role::db':
+    system::role { 'db':
         description => 'MySQL database server',
     }
 

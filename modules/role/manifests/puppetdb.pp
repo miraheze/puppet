@@ -36,7 +36,7 @@ class role::puppetdb {
         srange => "(${firewall_rules_str})",
     }
 
-    motd::role { 'role::puppetdb':
+    system::role { 'puppetdb':
         description => 'PuppetDB server',
     }
 }

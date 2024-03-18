@@ -135,7 +135,7 @@ class role::swift (
         relay_address => '',
     }
 
-    motd::role { 'role::swift':
+    system::role { 'swift':
         description => 'OpenStack Swift Service (Accounting, Container, Proxy, Object)',
     }
 }

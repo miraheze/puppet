@@ -33,7 +33,7 @@ class role::reports {
         notrack => true,
     }
 
-    motd::role { 'role::reports':
+    system::role { 'reports':
         description => 'TSPortal-hosting server',
     }
 }

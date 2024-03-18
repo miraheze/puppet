@@ -194,7 +194,7 @@ class role::varnish {
         },
     }
 
-    motd::role { 'role::varnish':
+    system::role { 'varnish':
         description => 'Varnish caching server',
     }
 }

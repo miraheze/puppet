@@ -103,7 +103,7 @@ class role::elasticsearch {
         srange => "(${firewall_es_nodes})",
     }
 
-    motd::role { 'role::elasticsearch':
+    system::role { 'elasticsearch':
         description => 'ElasticSearch server',
     }
 }

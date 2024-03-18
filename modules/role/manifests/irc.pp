@@ -72,7 +72,7 @@ class role::irc {
         srange => "(${firewall_all_rules_str})",
     }
 
-    motd::role { 'role::irc':
+    system::role { 'irc':
         description => 'IRC bots server',
     }
 }

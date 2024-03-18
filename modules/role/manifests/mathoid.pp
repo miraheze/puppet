@@ -25,7 +25,7 @@ class role::mathoid {
         notrack => true,
     }
 
-    motd::role { 'role::mathoid':
+    system::role { 'mathoid':
         description => 'Mathoid server',
     }
 }

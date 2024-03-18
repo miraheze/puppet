@@ -1,6 +1,6 @@
 # role: grafana
 class role::grafana {
-    motd::role { 'role::grafana':
+    system::role { 'grafana':
         description => 'Grafana server',
     }
 

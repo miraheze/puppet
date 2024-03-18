@@ -234,7 +234,7 @@ class role::openldap (
         },
     }
 
-    motd::role { 'role::openldap':
+    system::role { 'openldap':
         description => 'LDAP server',
     }
 }

@@ -29,7 +29,7 @@ class role::postgresql {
         notrack => true,
     }
 
-    motd::role { 'role::postgresql':
+    system::role { 'postgresql':
         description => 'PostgreSQL server',
     }
 }

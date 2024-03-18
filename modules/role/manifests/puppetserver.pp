@@ -44,7 +44,7 @@ class role::puppetserver (
         notify      => Service['puppetserver']
     }
 
-    motd::role { 'role::puppetserver':
+    system::role { 'puppetserver':
         description => 'Puppet master!',
     }
 }

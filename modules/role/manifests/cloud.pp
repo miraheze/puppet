@@ -49,7 +49,7 @@ class role::cloud {
         srange => "(${firewall_rules_str})",
     }
 
-    motd::role { 'role::cloud':
+    system::role { 'cloud':
         description => 'Proxmox host',
     }
 }
