@@ -4,9 +4,9 @@
 # @param formating any formating to add e.g. bold, underlined
 # @param reset if true terminate text with the reset string
 function vmlib::ansi::attr (
-    String[1]               $text,
+    String[1]              $text,
     VMlib::Ansi::Formating $format,
-    Boolean                 $reset = true
+    Boolean                $reset = true
 ) >> String {
     $csi = "\u001B[" # lint:ignore:double_quoted_strings
     $format_codes = {
