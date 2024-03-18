@@ -3,9 +3,19 @@ Description=<%= @description %>
 <%- if @after -%>
 After=<%= @after %>
 <%- end -%>
+<% unless @path_exists.nil? -%>
+ConditionPathExists=<%= @path_exists %>
+<%- end -%>
 
 [Service]
+Type=oneshot
 User=<%= @user %>
+<%- if @group %>
+Group=<%= @group %>
+<%- end -%>
+<%- if @private_tmp %>
+PrivateTmp=true
+<%- end -%>
 <%- if @environment -%>
 <%- @environment.keys.sort.each do |key| -%>
 Environment="<%= key -%>=<%= @environment[key] %>"
@@ -20,9 +30,12 @@ SyslogIdentifier=<%= @syslog_identifier %>
 <%- if @slice -%>
 Slice=<%= @slice %>
 <%- end -%>
+<%- if @timeout_start_sec -%>
+TimeoutStartSec=<%= @timeout_start_sec %>
+<%- end -%>
 <%- if @send_mail -%>
 SyslogIdentifier=<%= @command.split(' ')[0].split('/')[-1] %>
-ExecStart=<% if @ignore_errors %>-<% end %>/usr/local/bin/systemd-timer-mail-wrapper -T <%= @send_mail_to %><% if @send_mail_only_on_error -%> --only-on-error<% end %> <%= @command %> 
+ExecStart=<% if @ignore_errors %>-<% end %>/usr/local/bin/systemd-timer-mail-wrapper --subject <%= @title %> --mail-to <%= @send_mail_to %><% if @send_mail_only_on_error -%> --only-on-error<% end %> <%= @command %>
 <%- else -%>
 ExecStart=<% if @ignore_errors %>-<% end %><%= @command %>
 <%- end -%>
@@ -43,4 +56,7 @@ StandardError=<%= @stderr %>
 <%- end -%>
 <%- if @working_directory -%>
 WorkingDirectory=<%= @working_directory %>
+<%- end -%>
+<%- unless @success_exit_status.empty? -%>
+SuccessExitStatus=<%= @success_exit_status.join(' ') %>
 <%- end -%>

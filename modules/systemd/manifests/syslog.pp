@@ -39,7 +39,7 @@
 #   Possible values: startswith, isequal
 #   Default: startswith
 #
-define systemd::syslog(
+define systemd::syslog (
     VMlib::Ensure                 $ensure                 = 'present',
     Stdlib::Unixpath              $base_dir               = '/var/log',
     String[1]                     $owner                  = $title,
@@ -68,22 +68,24 @@ define systemd::syslog(
             group  => $group,
             mode   => $dirmode,
             force  => true,
+            backup => false,
         }
-    }
-
-    file { $local_syslogfile:
-        ensure  => $ensure,
-        replace => false,
-        content => '',
-        owner   => $owner,
-        group   => $group,
-        mode    => $filemode,
-        before  => Rsyslog::Conf[$title],
     }
 
     rsyslog::conf { $title:
         ensure   => $ensure,
-        content  => template('systemd/rsyslog.conf.erb'),
+        content  => epp(
+            'systemd/rsyslog.conf.epp',
+            {
+                'programname_comparison' => $programname_comparison,
+                'programname'            => $title,
+                'local_syslogfile'       => $local_syslogfile,
+                'owner'                  => $owner,
+                'group'                  => $group,
+                'filemode'               => $filemode,
+                'force_stop'             => $force_stop,
+            },
+        ),
         priority => 40,
         require  => File[$local_logdir],
     }

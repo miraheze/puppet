@@ -23,13 +23,24 @@
 #   Systemd::Timer::Interval. Defaults to 15 seconds, which should be good in
 #   most cases.
 
-define systemd::timer(
+define systemd::timer (
     Array[Systemd::Timer::Schedule, 1] $timer_intervals,
     String $unit_name="${title}.service",
     VMlib::Ensure $ensure = 'present',
     Integer $splay = 0,
     Systemd::Timer::Interval $accuracy = '15sec',
 ) {
+    if $ensure == 'present' {
+        $timer_intervals.each |$schedule| {
+            # Each Schedule has either an Interval (which is already validated by
+            # regex) or a Datetime.
+            $interval = $schedule['interval']
+            if $interval !~ Systemd::Timer::Interval {
+                generate('/usr/bin/systemd-analyze', 'calendar', $interval)
+            }
+        }
+    }
+
     # Timer service
     systemd::service { $title:
         ensure    => $ensure,

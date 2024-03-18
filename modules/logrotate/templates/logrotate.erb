@@ -1,7 +1,57 @@
-<%= @logs %> {
-    <%= @time %>
-    missingok
+<%#- SPDX-License-Identifier: Apache-2.0 -%>
+# This file is managed by Puppet.
+# puppet:///logrotate/logrotate.erb
+
+<%= @file_glob %> {
+<% if @not_if_empty -%>
+    notifempty
+<% end -%>
+<% if @frequency -%>
+    <%= @frequency %>
+<% end -%>
+<% if @date_yesterday -%>
+    dateyesterday
+<% end -%>
+<% if @copy_truncate -%>
+    copytruncate
+<% end -%>
+<% if @max_age -%>
+    maxage <%= @max_age %>
+<% end -%>
+<% if @rotate -%>
     rotate <%= @rotate %>
+<% end -%>
+<% if @date_ext -%>
+    dateext
+<% end -%>
+<% if @compress -%>
     compress
-    <% if @delay %>delaycompress<% end %>
+    delaycompress
+<% end -%>
+<% if @missing_ok -%>
+    missingok
+<% end -%>
+<% if @actual_size -%>
+    <%= @actual_size %>
+<% end -%>
+<% if @no_create -%>
+    nocreate
+<% end -%>
+<% if @create -%>
+    create <%= @create %>
+<% end -%>
+<% if @su -%>
+    su <%= @su %>
+<% end -%>
+<% unless @post_rotate.empty? -%>
+    sharedscripts
+    postrotate
+    <%- @post_rotate.each do |line| -%>
+        <%= line %>
+    <%- end -%>
+    endscript
+<% end -%>
+<% if @old_dir -%>
+    olddir <%= @old_dir %>
+<% end -%>
 }
