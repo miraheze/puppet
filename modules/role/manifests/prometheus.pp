@@ -52,7 +52,7 @@ class role::prometheus {
                     'files' => [ 'targets/pushgateway.yaml' ]
                 },
             ],
-         },
+        },
     ]
 
     prometheus::class { 'pushgateway':
