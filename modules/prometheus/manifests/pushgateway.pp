@@ -5,6 +5,17 @@ class prometheus::pushgateway (
 ) {
     stdlib::ensure_packages('prometheus-pushgateway')
 
+    # Apache config
+    class { '::httpd':
+        modules => [
+            'proxy',
+            'proxy_http',
+            'rewrite',
+            'headers',
+            'allowmethods',
+        ],
+    }
+
     httpd::site { 'pushgateway':
         priority => 30, # Earlier than main prometheus* vhost wildcard matching
         content  => template('prometheus/pushgateway-apache.erb'),
