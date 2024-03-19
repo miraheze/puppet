@@ -168,8 +168,8 @@ class role::graphite::base(
     }
 
     if $provide_vhost {
-        nginx::site { $hostname:
-            content => template('role/graphite/graphite.nginx.erb'),
+        httpd::site { $hostname:
+            content => template('role/graphite/graphite.apache.erb'),
         }
     }
 

@@ -8,6 +8,10 @@
 class role::graphite {
     $storage_dir = '/srv/carbon'
 
+    class { 'httpd':
+        modules => ['headers', 'rewrite', 'proxy', 'proxy_http', 'uwsgi', 'authnz_ldap'],
+    }
+
     class { 'role::graphite::base':
         storage_dir                        => $storage_dir,
         uwsgi_max_request_duration_seconds => 60,
