@@ -23,7 +23,7 @@ class role::graphite {
                 ]
             },
             cluster_routes   => [
-                ['^cassandra\.', 'big_users'],
+                ['big_users'],
             ],
             'queue_depth'    => 500000,
             'batch_size'     => 8000,
