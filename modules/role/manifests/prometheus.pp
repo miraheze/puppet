@@ -43,6 +43,24 @@ class role::prometheus {
         }
     ]
 
+    $pushgateway_job = [
+        {
+            'job_name'        => 'pushgateway',
+            'honor_labels'    => true,
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/pushgateway.yaml' ]
+                },
+            ],
+        },
+    ]
+
+    prometheus::class { 'pushgateway':
+        dest   => '/etc/prometheus/targets/pushgateway.yaml',
+        module => 'Prometheus::Pushgateway',
+        port   => 9091,
+    }
+
     $cadvisor_job = [
         {
             'job_name'        => 'cadvisor',
@@ -256,7 +274,7 @@ class role::prometheus {
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
             $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
-            $varnish_job, $cadvisor_job
+            $varnish_job, $cadvisor_job, $pushgateway_job
         ].flatten,
     }
 

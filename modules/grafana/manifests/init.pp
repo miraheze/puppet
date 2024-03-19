@@ -4,7 +4,8 @@ class grafana (
     String $ldap_password = lookup('passwords::ldap_password'),
 ) {
 
-    include ::apt
+    include apt
+    include grafana::datasource_exporter
 
     file { '/usr/share/keyrings/grafana.key':
         ensure => present,

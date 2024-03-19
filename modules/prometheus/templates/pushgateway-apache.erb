@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+    ServerName <%= @vhost %>
+
+    # Disable golang debugging from outside localhost
+    <Location /debug >
+        Require all denied
+    </Location>
+
+    # Disable quit/reload from outside localhost
+    <LocationMatch ^/-/(quit|reload) >
+        Require all denied
+    </LocationMatch>
+
+    ProxyPass / http://localhost:<%= @listen_port %>/
+</VirtualHost>

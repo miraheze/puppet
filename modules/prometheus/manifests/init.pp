@@ -80,6 +80,11 @@ class prometheus (
         require => Package['prometheus'],
     }
 
+    class { 'prometheus::pushgateway':
+        ensure      => present,
+        listen_port => 9091,
+    }
+
     monitoring::services { 'Prometheus':
         check_command => 'tcp',
         vars          => {
