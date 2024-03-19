@@ -27,7 +27,6 @@ class profile::graphite::base(
     $uwsgi_max_request_duration_seconds = undef,
     $uwsgi_max_request_rss_megabytes = undef,
     $provide_vhost    = true,
-    Hash $ldap_config = lookup('ldap'),
 ) {
     $carbon_storage_dir = $storage_dir
 
