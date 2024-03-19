@@ -6,7 +6,7 @@ class prometheus::pushgateway (
     stdlib::ensure_packages('prometheus-pushgateway')
 
     # Apache config
-    class { '::httpd':
+    class { 'httpd':
         modules => [
             'proxy',
             'proxy_http',
