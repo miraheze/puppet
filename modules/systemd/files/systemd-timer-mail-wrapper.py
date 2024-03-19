@@ -8,7 +8,6 @@ import subprocess
 from argparse import ArgumentParser, REMAINDER
 from email.message import EmailMessage
 from textwrap import dedent
-from socket import getfqdn
 
 
 def get_args():
