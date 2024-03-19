@@ -18,7 +18,7 @@ def get_args():
         `argparse.Namespace`: The parsed argparser Namespace
     """
     parser = ArgumentParser(description=__doc__)
-    parser.add_argument('-T', '--mail-to', default='root@{}'.format(getfqdn()))
+    parser.add_argument('-T', '--mail-to', default='root@wikitide.net')
     parser.add_argument(
         '-s', '--subject', required=True, help="Add this string to the subject line"
     )
@@ -84,7 +84,7 @@ def main():
         msg['Subject'] = "{}: {}".format(status, args.subject)
         msg['Auto-Submitted'] = "auto-generated"
         msg.set_content(body)
-        smtp = smtplib.SMTP('localhost')
+        smtp = smtplib.SMTP('::1')
         smtp.send_message(msg)
         smtp.quit()
 
