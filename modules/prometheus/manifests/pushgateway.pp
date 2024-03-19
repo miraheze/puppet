@@ -5,8 +5,9 @@ class prometheus::pushgateway (
 ) {
     stdlib::ensure_packages('prometheus-pushgateway')
 
-    nginx::site { 'pushgateway':
-        content  => template('prometheus/pushgateway-nginx.erb'),
+    httpd::site { 'pushgateway':
+        priority => 30, # Earlier than main prometheus* vhost wildcard matching
+        content  => template('prometheus/pushgateway-apache.erb'),
     }
 
     systemd::service { 'prometheus-pushgateway':
