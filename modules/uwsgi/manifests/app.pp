@@ -59,7 +59,7 @@ define uwsgi::app(
 
         systemd::service { "uwsgi-${title}":
             content   => systemd_template('uwsgi'),
-	    restart   => true,
+            restart   => true,
             subscribe => File["/etc/uwsgi/apps-available/${basename}.ini"],
         }
     } else {
@@ -69,7 +69,7 @@ define uwsgi::app(
 
         systemd::service { "uwsgi-${title}":
             ensure  => absent,
-	    content => '',
+            content => '',
         }
     }
 }
