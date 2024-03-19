@@ -30,21 +30,21 @@ class graphite::monitoring::graphite (
         # is carbon-cache able to write to disk (e.g. permissions)
         'carbon-cache_write_error':
             description => 'carbon-cache write error',
-            metric      => 'secondYAxis(sumSeries(carbon.agents.mon181-*.errors))',
+            metric      => 'secondYAxis(sumSeries(carbon.agents.graphite151-*.errors))',
             from        => '10minutes',
             warning     => 1,
             critical    => 8;
         # are carbon-cache queues overflowing their capacity?
         'carbon-cache_overflow':
             description => 'carbon-cache queues overflow',
-            metric      => 'secondYAxis(sumSeries(carbon.agents.mon181-*.cache.overflow))',
+            metric      => 'secondYAxis(sumSeries(carbon.agents.graphite151-*.cache.overflow))',
             from        => '10minutes',
             warning     => 1,
             critical    => 8;
         # are we creating too many metrics?
         'carbon-cache_many_creates':
             description => 'carbon-cache too many creates',
-            metric      => 'sumSeries(carbon.agents.mon181-*.creates)',
+            metric      => 'sumSeries(carbon.agents.graphite151-*.creates)',
             from        => '30min',
             warning     => 500,
             critical    => 1000;

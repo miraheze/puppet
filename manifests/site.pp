@@ -30,6 +30,11 @@ node /^os1[56][12]\.wikitide\.net$/ {
     include role::opensearch
 }
 
+node 'graphite151.wikitide.net' {
+    include base
+    include role::graphite
+}
+
 node 'graylog161.wikitide.net' {
     include base
     include role::graylog
@@ -60,7 +65,6 @@ node /^mem1[56]1\.wikitide\.net$/ {
 node 'mon181.wikitide.net' {
     include base
     include role::grafana
-    include role::graphite
     include role::icinga2
 }
 

@@ -16,10 +16,10 @@ class role::graphite {
         c_relay_settings                   => {
             forward_clusters => {
                 'default'   => [
-                  'mon181.wikitide.net:1903',
+                  'graphite151.wikitide.net:1903',
                 ],
                 'big_users' => [
-                  'mon181.wikitide.net:1903',
+                  'graphite151.wikitide.net:1903',
                 ]
             },
             cluster_routes   => [
