@@ -1,0 +1,19 @@
+server {
+    listen 80;
+    server_name <%= @hostname %>;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/run/uwsgi/graphite-web.sock;
+        uwsgi_param UWSGI_SCHEME https;
+        uwsgi_param UWSGI_MAX_VARS 256;
+    }
+
+    location /static/ {
+        alias /usr/share/graphite-web/static/;
+    }
+
+    location ~ /(render|metrics|events/get_data) {
+        allow all;
+    }
+}

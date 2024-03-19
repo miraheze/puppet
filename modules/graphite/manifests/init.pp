@@ -168,11 +168,4 @@ class graphite(
     }
 
     graphite::carbon_cache_instance { 'a': }
-    graphite::carbon_cache_instance { 'b': }
-    graphite::carbon_cache_instance { 'c': }
-    graphite::carbon_cache_instance { 'd': }
-    graphite::carbon_cache_instance { 'e': }
-    graphite::carbon_cache_instance { 'f': }
-    graphite::carbon_cache_instance { 'g': }
-    graphite::carbon_cache_instance { 'h': }
 }

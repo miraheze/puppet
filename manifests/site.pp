@@ -60,6 +60,7 @@ node /^mem1[56]1\.wikitide\.net$/ {
 node 'mon181.wikitide.net' {
     include base
     include role::grafana
+    include role::graphite
     include role::icinga2
 }
 
