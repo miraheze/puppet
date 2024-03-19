@@ -30,6 +30,7 @@ class role::mediawiki::mcrouter(
         probe_delay_initial_ms => 60000,
         port                   => 11213,
     }
+
     file { '/etc/systemd/system/mcrouter.service.d/cpuaccounting-override.conf':
         content => "[Service]\nCPUAccounting=yes\n",
         owner   => 'root',
