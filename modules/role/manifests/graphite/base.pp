@@ -30,7 +30,7 @@ class role::graphite::base(
 ) {
     $carbon_storage_dir = $storage_dir
 
-    class { '::graphite':
+    class { 'graphite':
         # First match wins with storage schemas
         # lint:ignore:arrow_alignment
         storage_schemas     => {
@@ -138,19 +138,12 @@ class role::graphite::base(
 
             'relay'   => {
                 pickle_receiver_interface => '0.0.0.0',
-                # disabled, see ::graphite::carbon_c_relay
+                # disabled, see graphite::carbon_c_relay
                 line_receiver_port        => '0',
                 relay_method              => 'consistent-hashing',
                 max_queue_size            => '500000',
                 destinations              => [
                     '127.0.0.1:2104:a',
-                    '127.0.0.1:2204:b',
-                    '127.0.0.1:2304:c',
-                    '127.0.0.1:2404:d',
-                    '127.0.0.1:2504:e',
-                    '127.0.0.1:2604:f',
-                    '127.0.0.1:2704:g',
-                    '127.0.0.1:2804:h',
                 ],
             },
         },
@@ -161,12 +154,12 @@ class role::graphite::base(
     }
 
     class { 'graphite::web':
-        admin_user                         => lookup('passwords::graphite::user'),
+        admin_user                         => lookup('role::graphite::base::user', {'default_value' => 'admin'}),
         admin_pass                         => lookup('passwords::graphite::pass'),
         remote_user_auth                   => true,
         secret_key                         => lookup('passwords::graphite::secret_key'),
         storage_dir                        => $carbon_storage_dir,
-        documentation_url                  => '//meta.miraheze.org/wiki/Tech::Graphite',
+        documentation_url                  => 'https://meta.miraheze.org/wiki/Tech::Graphite',
         cluster_servers                    => $cluster_servers,
         cors_origins                       => $cors_origins,
         uwsgi_max_request_duration_seconds => $uwsgi_max_request_duration_seconds,
