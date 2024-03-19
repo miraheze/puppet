@@ -12,7 +12,7 @@ class role::graphite {
         storage_dir                        => $storage_dir,
         uwsgi_max_request_duration_seconds => 60,
         uwsgi_max_request_rss_megabytes    => 1024,
-        provide_vhost                      => false,
+        provide_vhost                      => true,
         c_relay_settings                   => {
             forward_clusters => {
                 'default'   => [
