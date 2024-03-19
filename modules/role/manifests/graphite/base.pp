@@ -17,7 +17,7 @@
 #   If enabled, configure an Apache vhost config (which is provided by a different
 #   profile if running with CAS auth)
 #
-class profile::graphite::base(
+class role::graphite::base(
     $storage_dir      = '/var/lib/carbon',
     $hostname         = 'graphite.wikitide.net',
     $cors_origins     = [ 'https://grafana.wikitide.net' ],
