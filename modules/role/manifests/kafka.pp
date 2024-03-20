@@ -6,7 +6,7 @@ class role::kafka {
     class { 'kafka':
         version       => '1.1.0',
         scala_version => '2.12',
-	config => {
+        config => {
             'broker.id'         => '0',
             'zookeeper.connect' => 'localhost:2181',
         }
