@@ -43,12 +43,16 @@ jobs:
           if git status --porcelain | grep .; then
             git stash push -m "Stashing uncommitted changes"
           fi
-          git pull origin ${GITHUB_HEAD_REF} --rebase
+          # Fetch latest changes before rebase
+          git fetch origin
+          git rebase origin/${GITHUB_HEAD_REF}
           # Check if there are conflicts
           if git diff --name-only --diff-filter=U | grep -q .; then
+            echo "Conflicts encountered, unable to proceed."
             exit 1
           fi
           git push --set-upstream origin ${GITHUB_HEAD_REF}
+          # Pop stashed changes if any
           git stash pop --quiet
         else
           echo "No changes to commit"
