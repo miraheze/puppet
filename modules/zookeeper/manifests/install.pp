@@ -1,4 +1,4 @@
-# Class: zookeeper::install
+# == Class: zookeeper::install
 #
 # This module manages installation tasks.
 #
