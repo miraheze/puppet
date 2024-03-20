@@ -37,9 +37,9 @@ class statsd_proxy (
     Integer             $socket_receive_bufsize = 6291456,
 ) {
 
-    package { 'statsd-proxy':
-        ensure => $ensure,
-    }
+    # package { 'statsd-proxy':
+    #     ensure => $ensure,
+    # }
 
     file { '/etc/statsd-proxy.cfg':
         ensure  => $ensure,
@@ -52,9 +52,9 @@ class statsd_proxy (
     service { 'statsd-proxy':
         ensure    => stdlib::ensure($ensure, 'service'),
         enable    => $ensure == 'present',
-        subscribe => [
-            Package['statsd-proxy'],
-        ],
+        # subscribe => [
+        #    Package['statsd-proxy'],
+        # ],
     }
 
     # statsd-proxy lacks native ipv6 support, front it with with a socat v6 to v4 relay
