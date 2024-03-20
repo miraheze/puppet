@@ -156,7 +156,7 @@ class graphite::web(
         ensure      => present,
         description => 'Regular jobs to generate the index file',
         user        => 'www-data',
-        command     => '/usr/local/sbin/graphite-index',
+        command     => '/usr/bin/python3 /usr/local/sbin/graphite-index',
         interval    => {'start' => 'OnCalendar', 'interval' => '*-*-* *:0/5:00'},
         require     => File['/usr/local/sbin/graphite-index'],
     }
