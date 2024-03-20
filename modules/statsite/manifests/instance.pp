@@ -37,7 +37,7 @@ define statsite::instance(
     file { "/etc/statsite/${port}.ini":
         ensure  => $ensure,
         content => template('statsite/statsite.ini.erb'),
-        require => Package['statsite'],
+        # require => Package['statsite'],
         notify  => Service["statsite@${port}"],
     }
 
