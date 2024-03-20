@@ -40,7 +40,7 @@ class role::statsd (
         proto   => 'udp',
         port    => '8125',
         notrack => true,
-        srange => "(${firewall_srange})",
+        srange  => "(${firewall_srange})",
     }
 
     class { 'statsite': }
@@ -49,6 +49,6 @@ class role::statsd (
     statsite::instance { '8126':
         port          => 8126,
         graphite_host => $graphite_host,
-        input_counter => "statsd.${::hostname}-8126.received",
+        input_counter => "statsd.${facts['networking']['hostname']}-8126.received",
     }
 }

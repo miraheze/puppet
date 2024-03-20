@@ -25,10 +25,10 @@ define statsite::instance(
     Stdlib::Port   $port              = 8125,
     Stdlib::Host   $graphite_host     = 'localhost',
     Stdlib::Port   $graphite_port     = 2003,
-    String         $input_counter     = "statsd.${::hostname}.received",
+    String         $input_counter     = "statsd.${facts['networking']['hostname']}.received",
     Integer        $extended_counters = 1,
 ) {
-    $python = $::lsbdistcodename ? {
+    $python = $facts['os']['distro']['codename'] ? {
         default => 'python3',
     }
 
