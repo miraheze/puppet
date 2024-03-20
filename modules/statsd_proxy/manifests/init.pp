@@ -49,12 +49,18 @@ class statsd_proxy (
         mode    => '0444',
     }
 
-    service { 'statsd-proxy':
-        ensure => stdlib::ensure($ensure, 'service'),
-        enable => $ensure == 'present',
+    # service { 'statsd-proxy':
+        # ensure => stdlib::ensure($ensure, 'service'),
+        # enable => $ensure == 'present',
         # subscribe => [
         #    Package['statsd-proxy'],
         # ],
+    # }
+
+    systemd::service { 'statsd-proxy':
+        ensure  => $ensure,
+        content => systemd_template('statsd-proxy'),
+        restart => true,
     }
 
     # statsd-proxy lacks native ipv6 support, front it with with a socat v6 to v4 relay
