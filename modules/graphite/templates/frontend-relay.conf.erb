@@ -19,7 +19,7 @@ match <%= tap[0] %>
 # route this metric to <%= route[1] %>, don't send to backends
 match <%= route[0] %>
   send to <%= route[1] %>
-  blackhole
+  stop
   ;
 
 <% end -%>
