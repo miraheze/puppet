@@ -4,7 +4,7 @@ Description=statsite (instance %i)
 PartOf=statsite-instances.service
 
 [Service]
-User=statsite
+User=www-data
 ExecStart=/usr/bin/statsite -f /etc/statsite/%i.ini
 SyslogIdentifier=statsite@%i
 
