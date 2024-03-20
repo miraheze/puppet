@@ -24,9 +24,9 @@
 class statsite (
   VMlib::Ensure $ensure = present,
 ) {
-    package { 'statsite':
-        ensure => $ensure,
-    }
+    # package { 'statsite':
+    #    ensure => $ensure,
+    # }
 
     file { '/etc/statsite':
         ensure => stdlib::ensure($ensure, 'directory'),
@@ -41,7 +41,7 @@ class statsite (
     exec { 'mask_statsite':
         command => '/bin/systemctl mask statsite.service',
         creates => '/etc/systemd/system/statsite.service',
-        before  => Package['statsite'],
+        # before  => Package['statsite'],
     }
 
     systemd::unit { 'statsite@':
