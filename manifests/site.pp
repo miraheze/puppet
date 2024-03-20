@@ -48,7 +48,7 @@ node 'jobchron171.wikitide.net' {
     include mediawiki::jobqueue::chron
 }
 
-node 'kafka151.wikitide.net' {
+node 'kafka181.wikitide.net' {
     include base
     include role::kafka
 }
