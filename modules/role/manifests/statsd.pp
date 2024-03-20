@@ -6,8 +6,7 @@
 #
 class role::statsd (
     Stdlib::Host $graphite_host = lookup('graphite_host', {'default_value' => 'localhost'}),
-){
-
+) {
     class { 'statsd_proxy':
         server_port   => 8125,
         backend_ports => range(8126, 8131),
@@ -50,5 +49,9 @@ class role::statsd (
         port          => 8126,
         graphite_host => $graphite_host,
         input_counter => "statsd.${facts['networking']['hostname']}-8126.received",
+    }
+
+    system::role { 'statsd':
+        description => 'statsd server',
     }
 }
