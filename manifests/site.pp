@@ -48,6 +48,11 @@ node 'jobchron171.wikitide.net' {
     include mediawiki::jobqueue::chron
 }
 
+node 'kafka181.wikitide.net' {
+    include base
+    include role::kafka
+}
+
 node 'ldap171.wikitide.net' {
     include base
     include role::openldap

@@ -1,0 +1,245 @@
+# http://hadoop.apache.org/zookeeper/docs/current/zookeeperAdmin.html
+
+# The number of milliseconds of each tick
+tickTime=<%= scope.lookupvar("zookeeper::tick_time") %>
+# The number of ticks that the initial
+# synchronization phase can take
+initLimit=<%= scope.lookupvar("zookeeper::init_limit") %>
+# The number of ticks that can pass between
+# sending a request and getting an acknowledgement
+syncLimit=<%= scope.lookupvar("zookeeper::sync_limit") %>
+#  ZooKeeper will throttle clients so that there is no more than globalOutstandingLimit outstanding requests in the system.
+globalOutstandingLimit=<%= scope.lookupvar('zookeeper::global_outstanding_limit') %>
+# the directory where the snapshot is stored.
+dataDir=<%= scope.lookupvar("zookeeper::datastore") %>
+# Place the dataLogDir to a separate physical disc for better performance
+<% if ! [nil, :undefined, :undef].include?(scope.lookupvar("zookeeper::datalogstore")) -%>
+dataLogDir=<%= scope.lookupvar("zookeeper::datalogstore") %>
+<% else -%>
+# dataLogDir=/disk2/zookeeper
+<% end -%>
+
+# the port at which the clients will connect
+<% if scope.lookupvar("zookeeper::secure_port_only") -%>
+#clientPort=
+<% else -%>
+clientPort=<%= scope.lookupvar("zookeeper::client_port") %>
+<% end -%>
+# interface to bind
+<% if ! [nil, :undefined, :undef].include?(scope.lookupvar("zookeeper::client_ip")) and ! scope.lookupvar("zookeeper::secure_port_only") -%>
+clientPortAddress=<%= scope.lookupvar("zookeeper::client_ip") %>
+<% else -%>
+#clientPortAddress=
+<% end -%>
+
+# specify all zookeeper servers
+# The first port is used by followers to connect to the leader
+# The second one is used for leader election
+#server.1=zookeeper1:2888:3888
+#server.2=zookeeper2:2888:3888
+#server.3=zookeeper3:2888:3888
+<%- if scope.lookupvar("zookeeper::servers").is_a?(Hash) -%>
+  <%- _servers = scope.lookupvar("zookeeper::servers") -%>
+<% else -%>
+<%# make sure @servers is a hash -%>
+  <%- _servers = Hash.new -%>
+  <%- scope.lookupvar("zookeeper::servers").map.each_with_index {|e, i|  _servers[i + 1] = e } -%>
+<%- end -%>
+<%- _servers.each_pair do |id, host| -%>
+<%# make sure port is not included in hostname -%>
+  <%- if host.index(':') -%>
+      <%- host = host[0...(host.index(':'))] -%>
+  <%- end -%>
+  <%- if scope.lookupvar("zookeeper::observers").include? host -%>
+      <%- observer_text=':observer' -%>
+  <%- end -%>
+<%= "server.#{id}=#{host}:%s:%s%s" % [scope.lookupvar("zookeeper::election_port"), scope.lookupvar("zookeeper::leader_port"), observer_text ] %>
+<%- end -%>
+
+# Bind election_port and leader_port to all interfaces (0.0.0.0)
+quorumListenOnAllIPs=<%= scope.lookupvar("zookeeper::quorum_listen_on_all_ips") %>
+
+# To avoid seeks ZooKeeper allocates space in the transaction log file in
+# blocks of preAllocSize kilobytes. The default block size is 64M. One reason
+# for changing the size of the blocks is to reduce the block size if snapshots
+# are taken more often. (Also, see snapCount).
+preAllocSize=<%= scope.lookupvar("zookeeper::pre_alloc_size") %>
+
+# Clients can submit requests faster than ZooKeeper can process them,
+# especially if there are a lot of clients. To prevent ZooKeeper from running
+# out of memory due to queued requests, ZooKeeper will throttle clients so that
+# there is no more than globalOutstandingLimit outstanding requests in the
+# system. The default limit is 1,000.ZooKeeper logs transactions to a
+# transaction log. After snapCount transactions are written to a log file a
+# snapshot is started and a new transaction log file is started. The default
+# snapCount is 10,000.
+snapCount=<%= scope.lookupvar("zookeeper::snap_count") %>
+
+# If this option is defined, requests will be will logged to a trace file named
+# traceFile.year.month.day.
+#traceFile=
+
+<% if ! [nil, :undefined, :undef].include?(scope.lookupvar("zookeeper::port_unification")) -%>
+# Supported since 3.5.5
+portUnification=<%= scope.lookupvar("zookeeper::port_unification") %>
+<% end -%>
+# Leader accepts client connections. Default value is "yes". The leader machine
+# coordinates updates. For higher update throughput at thes slight expense of
+# read throughput the leader can be configured to not accept clients and focus
+# on coordination.
+<% if scope.lookupvar("zookeeper::leader") -%>
+leaderServes=yes
+<% else -%>
+leaderServes=no
+<% end -%>
+
+# Since 3.4.0: When enabled, ZooKeeper auto purge feature retains the autopurge.
+# snapRetainCount most recent snapshots and the corresponding transaction logs
+# in the dataDir and dataLogDir respectively and deletes the rest.
+# Defaults to 3. Minimum value is 3.
+autopurge.snapRetainCount=<%= scope.lookupvar("zookeeper::snap_retain_count") %>
+
+# Since 3.4.0: The time interval in hours for which the purge task has to be
+# triggered. Set to a positive integer (1 and above) to enable the auto purging.
+# Defaults to 0.
+autopurge.purgeInterval=<%= scope.lookupvar("zookeeper::purge_interval") %>
+
+# Maximum allowed connections
+<% if ! [nil, :undefined, :undef].include?(scope.lookupvar("zookeeper::max_allowed_connections")) -%>
+maxClientCnxns=<%= scope.lookupvar("zookeeper::max_allowed_connections") %>
+<% else -%>
+#maxClientCnxns=60
+<% end -%>
+
+<% if scope.lookupvar("zookeeper::peer_type") != 'UNSET' -%>
+# Zookeeper peer type
+peerType=<%= scope.lookupvar("zookeeper::peer_type") %>
+<% end -%>
+
+# The minimum session timeout in milliseconds that the server will allow the # client to negotiate. Defaults to 2 times the tickTime.
+<% if ! [nil, :undefined, :undef].include?(scope.lookupvar("zookeeper::min_session_timeout")) -%>
+minSessionTimeout=<%= scope.lookupvar("zookeeper::min_session_timeout") %>
+<% else -%>
+#minSessionTimeout=2
+<% end -%>
+
+# The maximum session timeout in milliseconds that the server will allow the # client to negotiate. Defaults to 20 times the tickTime.
+<% if ! [nil, :undefined, :undef].include?(scope.lookupvar("zookeeper::max_session_timeout")) -%>
+maxSessionTimeout=<%= scope.lookupvar("zookeeper::max_session_timeout") %>
+<% else -%>
+#maxSessionTimeout=20
+<% end -%>
+
+<% if scope.lookupvar("zookeeper::use_sasl_auth") -%>
+# Enable SASL authentication and use the default provider/renew provided by cloudera
+authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider
+jaasLoginRenew=3600000
+<% if scope.lookupvar("zookeeper::remove_host_principal") -%>
+kerberos.removeHostFromPrincipal=true
+<% end -%>
+<% if scope.lookupvar("zookeeper::remove_realm_principal") -%>
+kerberos.removeRealmFromPrincipal=true
+<% end -%>
+<% end -%>
+
+<% if scope.lookupvar("zookeeper::ssl") -%>
+# Supported since 3.5.1
+<% if ! [nil, :undefined, :undef].include?(scope.lookupvar("zookeeper::secure_client_port")) -%>
+secureClientPort=<%= scope.lookupvar("zookeeper::secure_client_port") %>
+<% else -%>
+#secureClientPort=2281
+<% end -%>
+
+# Client TLS configuration
+serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
+# Force TLS version
+ssl.protocol=<%= scope.lookupvar("zookeeper::ssl_protocol") %>
+# Hostname verification (default yes)
+ssl.hostnameVerification=<%= scope.lookupvar("zookeeper::ssl_hostname_verification") %>
+# Client authentication
+ssl.clientAuth=<%= scope.lookupvar("zookeeper::ssl_clientauth") %>
+
+## Hint: if PEM is used, private key must be in PKCS#8 format
+# Line must begin with "-----BEGIN PRIVATE KEY-----"
+# and not "-----BEGIN RSA PRIVATE KEY-----"
+# Client TLS configuration
+ssl.keyStore.location=<%= scope.lookupvar("zookeeper::keystore_location") %>
+ssl.keyStore.type=<%= scope.lookupvar("zookeeper::keystore_type") %>
+<% if scope.lookupvar("zookeeper::keystore_password") %>
+ssl.keyStore.password=<%= scope.lookupvar("zookeeper::keystore_password") %>
+<% end -%>
+
+
+## Hint: if PEM is used, private key must be in PKCS#8 format
+# Line must begin with "-----BEGIN PRIVATE KEY-----"
+# and not "-----BEGIN RSA PRIVATE KEY-----"
+ssl.trustStore.location=<%= scope.lookupvar("zookeeper::truststore_location") %>
+ssl.trustStore.type=<%= scope.lookupvar("zookeeper::truststore_type") %>
+<% if scope.lookupvar("zookeeper::truststore_password") %>
+ssl.trustStore.password=<%= scope.lookupvar("zookeeper::truststore_password") %>
+<% end -%>
+# Set allowed Ciphers
+<% if ! [nil, :undefined, :undef].include?scope.lookupvar("zookeeper::ssl_ciphersuites") %>
+ssl.ciphersuites=<%= scope.lookupvar("zookeeper::ssl_ciphersuites") %>
+<% else -%>
+#ssl.ciphersuites=
+<% end -%>
+
+# Server TLS configuration
+sslQuorum=<%= scope.lookupvar("zookeeper::ssl_quorum") %>
+# Force TLS version
+ssl.quorum.protocol=<%= scope.lookupvar("zookeeper::ssl_quorum_protocol") %>
+# Hostname verification from node to node (default yes)
+ssl.quorum.hostnameVerification=<%= scope.lookupvar("zookeeper::ssl_quorum_hostname_verification") %>
+
+## Hint: if PEM is used, private key must be in PKCS#8 format
+# Line must begin with "-----BEGIN PRIVATE KEY-----"
+# and not "-----BEGIN RSA PRIVATE KEY-----"
+ssl.quorum.keyStore.location=<%= scope.lookupvar("zookeeper::keystore_quorum_location") %>
+ssl.quorum.keyStore.type=<%= scope.lookupvar("zookeeper::keystore_quorum_type") %>
+<% if scope.lookupvar("zookeeper::keystore_quorum_password") %>
+ssl.quorum.keyStore.password=<%= scope.lookupvar("zookeeper::keystore_quorum_password") %>
+<% end -%>
+
+ssl.quorum.trustStore.type=<%= scope.lookupvar("zookeeper::truststore_quorum_type") %>
+## Hint: if PEM is used, private key must be in PKCS#8 format
+# Line must begin with "-----BEGIN PRIVATE KEY-----"
+# and not "-----BEGIN RSA PRIVATE KEY-----"
+ssl.quorum.trustStore.location=<%= scope.lookupvar("zookeeper::truststore_quorum_location") %>
+<% if scope.lookupvar("zookeeper::truststore_quorum_password") %>
+ssl.quorum.trustStore.password=<%= scope.lookupvar("zookeeper::truststore_quorum_password") %>
+<% end -%>
+
+# Set allowed Ciphers
+<% if ! [nil, :undefined, :undef].include?scope.lookupvar("zookeeper::ssl_quorum_ciphersuites") %>
+ssl.quorum.ciphersuites=<%=scope.lookupvar("zookeeper::ssl_quorum_ciphersuites") %>
+<% else -%>
+#ssl.quorum.ciphersuites=
+<% end -%>
+<% end -%>
+
+<% unless scope.lookupvar("zookeeper::whitelist_4lw").empty? -%>
+# Supported since 3.4.10
+4lw.commands.whitelist=<%= scope.lookupvar("zookeeper::whitelist_4lw").join(',') %>
+<% end -%>
+
+# Supported since 3.6
+## Metrics Providers
+#
+# https://prometheus.io Metrics Exporter
+<% unless [nil, :undefined, :undef].include?(scope.lookupvar("zookeeper::metrics_provider_classname")) -%>
+metricsProvider.className=<%= scope.lookupvar("zookeeper::metrics_provider_classname") %>
+metricsProvider.httpPort=<%= scope.lookupvar("zookeeper::metrics_provider_http_port") %>
+metricsProvider.exportJvmInfo=<%= scope.lookupvar("zookeeper::metrics_provider_export_jvm_info") %>
+<% else -%>
+#metricsProvider.className=org.apache.zookeeper.metrics.prometheus.PrometheusMetricsProvider
+#metricsProvider.httpPort=7000
+#metricsProvider.exportJvmInfo=true
+<% end -%>
+
+# ZooKeeper Audit Logs (supported since 3.6)
+<% if scope.lookupvar("zookeeper::audit_enable") %>
+audit.enable=true
+<% else -%>
+#audit.enable=
+<% end -%>

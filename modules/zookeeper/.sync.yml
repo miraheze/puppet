@@ -1,0 +1,47 @@
+---
+appveyor.yml:
+  delete: true
+.editorconfig:
+  unmanaged: true
+.github/CONTRIBUTING.md:
+  delete: true
+.github/ISSUE_TEMPLATE.md:
+  delete: true
+.github/PULL_REQUEST_TEMPLATE.md:
+  delete: true
+.gitlab-ci.yml:
+  delete: true
+.gitignore:
+  paths:
+    - '/.vscode/'
+    - '/.devcontainer/'
+.travis.yml:
+  delete: true
+
+Rakefile:
+  config.user: 'deric'
+
+spec/spec_helper.rb:
+  spec_overrides: "require 'spec_helper_local' if File.file?(File.join(File.dirname(__FILE__), 'spec_helper_local.rb'))"
+  coverage_report: true
+
+Gemfile:
+  required:
+    ":development":
+      - gem: 'github_changelog_generator'
+        version: '~> 1.15'
+        condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.3.0')"
+      - gem: overcommit
+  optional:
+    ':acceptance':
+      - gem: beaker
+      - gem: beaker-rspec
+      - gem: beaker-docker
+      - gem: beaker-puppet_install_helper
+      - gem: beaker-module_install_helper
+      - gem: 'voxpupuli-acceptance'
+    ':release':
+      - gem: 'puppet-blacksmith'
+.gitignore:
+  paths:
+    - .tmp/*

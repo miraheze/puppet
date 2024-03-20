@@ -1,0 +1,9 @@
+---
+fixtures:
+  forge_modules:
+     archive: puppet/archive
+     cron: puppet/cron
+     stdlib: puppetlabs/stdlib
+     yumrepo_core: puppetlabs/yumrepo_core
+  symlinks:
+    zookeeper: "#{source_dir}"

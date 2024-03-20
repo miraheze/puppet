@@ -1,0 +1,32 @@
+NAME=zookeeper
+ZOOCFGDIR=<%= scope.lookupvar("zookeeper::cfg_dir") %>
+
+<% if scope.lookupvar('zookeeper::install_method') != 'archive' and
+  (scope.lookupvar('zookeeper::service_provider') != 'systemd' or
+     (scope.lookupvar('zookeeper::service_provider') == 'systemd' and !scope.lookupvar('zookeeper::manage_service_file'))
+  )-%>
+# TODO this is really ugly
+# How to find out, which jars are needed?
+# seems, that log4j requires the log4j.properties file to be in the classpath
+CLASSPATH="<%= scope.lookupvar("zookeeper::cfg_dir") %>:/usr/share/java/jline.jar:/usr/share/java/log4j-1.2.jar:/usr/share/java/xercesImpl.jar:/usr/share/java/xmlParserAPIs.jar:/usr/share/java/netty.jar:/usr/share/java/slf4j-api.jar:/usr/share/java/slf4j-log4j12.jar:/usr/share/java/zookeeper.jar"
+<% end -%>
+
+ZOOCFG="<%= scope.lookupvar("zookeeper::cfg_dir") %>/zoo.cfg"
+ZOO_LOG_DIR=<%= scope.lookupvar("zookeeper::log_dir") %>
+USER=<%= scope.lookupvar("zookeeper::user") %>
+GROUP=<%= scope.lookupvar("zookeeper::group") %>
+PIDDIR=<%= scope.lookupvar("zookeeper::pid_dir") %>
+PIDFILE=<%= scope.lookupvar("zookeeper::pid_path") %>
+SCRIPTNAME=/etc/init.d/$NAME
+JAVA=<%= scope.lookupvar("zookeeper::java_bin") %>
+ZOOMAIN="<%= scope.lookupvar("zookeeper::zoo_main") %>"
+ZOO_LOG4J_PROP="<%= scope.lookupvar("zookeeper::log4j_prop") %>"
+JMXLOCALONLY=false
+<% if scope.lookupvar('zookeeper::use_sasl_auth') -%>
+JAVA_OPTS="<%= scope.lookupvar("zookeeper::java_opts") %> -Djava.security.auth.login.config=<%= File.join(scope.lookupvar("zookeeper::cfg_dir"), "jaas.conf") -%>"
+<% else -%>
+JAVA_OPTS="<%= scope.lookupvar("zookeeper::java_opts") %>"
+<% end -%>
+# will be concatenated with JVMFLAGS var
+# see https://github.com/apache/zookeeper/blob/master/bin/zkServer.sh#L78
+SERVER_JVMFLAGS=$JAVA_OPTS
