@@ -5,7 +5,7 @@
 # as well as the set of statsite backends that listen on these ports.
 #
 class role::statsd (
-    Stdlib::Host $graphite_host = lookup('graphite_host', {'default_value' => 'graphite.wikitide.net'}),
+    Stdlib::Host $graphite_host = lookup('graphite_host', {'default_value' => 'localhost'}),
 ){
 
     class { 'statsd_proxy':
