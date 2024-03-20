@@ -1,0 +1,15 @@
+Server {
+<% if scope.lookupvar("zookeeper::sasl_krb5") == true -%>
+    com.sun.security.auth.module.Krb5LoginModule required
+    useKeyTab=<%= scope.lookupvar("zookeeper::use_keytab").to_s %>
+    keyTab="<%= scope.lookupvar("zookeeper::keytab_path") %>"
+    storeKey=<%= scope.lookupvar("zookeeper::store_key").to_s %>
+    useTicketCache=<%= scope.lookupvar("zookeeper::use_ticket_cache") %>
+    principal="<%= scope.lookupvar("zookeeper::principal") %>@<%= scope.lookupvar("zookeeper::realm").upcase %>";
+<% else -%>
+    org.apache.zookeeper.server.auth.DigestLoginModule required
+    <% scope.lookupvar("zookeeper::sasl_users").each do |user,pwd| -%>
+    user_<%=user%>="<%=pwd%>"
+    <% end %>;
+<% end -%>
+};

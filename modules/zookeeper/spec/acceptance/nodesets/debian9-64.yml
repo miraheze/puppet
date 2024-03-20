@@ -1,0 +1,15 @@
+HOSTS:
+  debian-9-x64:
+    platform: debian-9-amd64
+    hypervisor : docker
+    image: debian:9
+    roles:
+      - agent
+    debug: false
+    docker_image_commands:
+      - 'apt-get install -y wget'
+      - 'echo "LANG=C\nLC_ALL=C" >> /etc/default/locale'
+CONFIG:
+  masterless: true
+  log_level: info
+  type: foss
