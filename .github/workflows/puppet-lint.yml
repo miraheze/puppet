@@ -39,10 +39,6 @@ jobs:
           git checkout -b ${GITHUB_HEAD_REF}
           git add .
           git commit -am "CI: lint puppet code to standards" -m "Check commit and GitHub actions for more details"
-          # Check for uncommitted changes
-          if git status --porcelain | grep .; then
-            git stash push -m "Stashing uncommitted changes"
-          fi
           # Fetch latest changes before rebase
           git fetch origin
           git rebase origin/${GITHUB_HEAD_REF}
@@ -51,9 +47,7 @@ jobs:
             echo "Conflicts encountered, unable to proceed."
             exit 1
           fi
-          git push --set-upstream origin ${GITHUB_HEAD_REF}
-          # Pop stashed changes if any
-          git stash pop --quiet
+          git push --force-with-lease --set-upstream origin ${GITHUB_HEAD_REF}
         else
           echo "No changes to commit"
         fi
