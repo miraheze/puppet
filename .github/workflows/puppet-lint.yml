@@ -36,10 +36,20 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git checkout -fb ${GITHUB_HEAD_REF}
+          git checkout -b ${GITHUB_HEAD_REF}
           git add .
           git commit -am "CI: lint puppet code to standards" -m "Check commit and GitHub actions for more details"
           git pull origin ${GITHUB_HEAD_REF} --rebase
+          # Check if there are conflicts
+          if git diff --name-only --diff-filter=U | grep -q .; then
+            echo "Conflicts encountered, attempting to resolve them."
+            git checkout --theirs .
+            git add .
+            git rebase --continue
+            if git diff --name-only --diff-filter=U | grep -q .; then
+              exit 1
+            fi
+          fi
           git push --set-upstream origin ${GITHUB_HEAD_REF}
         else
           echo "No changes to commit"
