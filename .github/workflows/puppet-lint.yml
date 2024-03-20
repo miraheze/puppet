@@ -40,6 +40,7 @@ jobs:
           git add .
           git commit -am "CI: lint puppet code to standards" -m "Check commit and GitHub actions for more details"
           git pull origin ${GITHUB_HEAD_REF} --rebase
+          git rebase --continue
           git push --set-upstream origin ${GITHUB_HEAD_REF}
         else
           echo "No changes to commit"
