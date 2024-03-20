@@ -1,4 +1,4 @@
-# Miraheze's Puppet Configuration
+# Mi raheze's Puppet Configuration
 
 [Miraheze](https://meta.miraheze.org/wiki/Special:MyLanguage/Miraheze) is a 501(c)(3) non-profit wiki farm operated by the [WikiTide Foundation](https://meta.miraheze.org/wiki/Special:MyLanguage/WikiTide_Foundation), that provides free MediaWiki hosting. Miraheze is powered by volunteers only, and we believe our code should be open source.
 
