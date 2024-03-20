@@ -1,0 +1,12 @@
+<%#- SPDX-License-Identifier: Apache-2.0 -%>
+[Unit]
+Description=statsite (instance %i)
+PartOf=statsite-instances.service
+
+[Service]
+User=statsite
+ExecStart=/usr/bin/statsite -f /etc/statsite/%i.ini
+SyslogIdentifier=statsite@%i
+
+[Install]
+WantedBy=multi-user.target

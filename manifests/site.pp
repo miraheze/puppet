@@ -33,6 +33,7 @@ node /^os1[56][12]\.wikitide\.net$/ {
 node 'graphite151.wikitide.net' {
     include base
     include role::graphite
+    include role::statsd
 }
 
 node 'graylog161.wikitide.net' {
