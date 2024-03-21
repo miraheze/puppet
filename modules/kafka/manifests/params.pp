@@ -2,10 +2,6 @@
 #   This class provides default parameters.
 #
 class kafka::params {
-  unless $facts['os']['family'] =~ /(RedHat|Debian|Suse)/ {
-    warning("${facts['os']['family']} is not supported")
-  }
-
   $kafka_version  = '2.4.1'
   $scala_version  = '2.12'
   $install_dir    = "/opt/kafka-${scala_version}-${kafka_version}"
