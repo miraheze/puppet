@@ -12,11 +12,11 @@ After=<%= scope.lookupvar("zookeeper::systemd_unit_after") %>
 
 [Service]
 ExecStart=/bin/bash -c 'set -x; \
-  . <%= scope.lookupvar("zookeeper::cfg_dir") %>/<%= scope.lookupvar("zookeeper::environment_file") %>; \
-  CLASSPATH="<%= @_zoo_dir %>/zookeeper<% if scope.lookupvar('zookeeper::install_method') == 'archive' -%>-<%= scope.lookupvar("zookeeper::archive_version") %><% end -%>.jar:<%= @_zoo_dir %>/lib/*:$CLASSPATH"; \
-  CLASSPATH="$([ -r <%= scope.lookupvar("zookeeper::service::_zoo_dir") %>/bin/zkEnv.sh ] && . <%= scope.lookupvar("zookeeper::service::_zoo_dir") %>/bin/zkEnv.sh ; echo $CLASSPATH)"; \
-  mkdir -p <%= scope.lookupvar("zookeeper::log_dir") %>; \
-  $JAVA "-Dzookeeper.log.dir=<%= scope.lookupvar("zookeeper::log_dir") %>" "-Dzookeeper.root.logger=$ZOO_LOG4J_PROP" -cp "$CLASSPATH" $JAVA_OPTS "$ZOOMAIN" "$ZOOCFG"'
+  . /etc/zookeeper/conf/environment; \
+  CLASSPATH="/usr/share/zookeeper/zookeeper.jar:/usr/share/zookeeper/lib/*:$CLASSPATH"; \
+  CLASSPATH="$([ -r /usr/share/zookeeper/bin/zkEnv.sh ] && . /usr/share/zookeeper/bin/zkEnv.sh ; echo $CLASSPATH)"; \
+  mkdir -p /var/log/zookeeper; \
+  /usr/bin/java "-Dzookeeper.log.dir=/var/log/zookeeper" "-Dzookeeper.root.logger=$ZOO_LOG4J_PROP" -cp "/usr/share/zookeeper/zookeeper.jar:/usr/share/zookeeper/lib/*:" '' "org.apache.zookeeper.server.quorum.QuorumPeerMain" "/etc/zookeeper/conf/zoo.cfg"'
 Restart=always
 RemainAfterExit=no
 SyslogIdentifier=zookeeper
