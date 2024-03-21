@@ -1,6 +1,5 @@
 NAME=zookeeper
 ZOOCFGDIR=<%= scope.lookupvar("zookeeper::cfg_dir") %>
-
 <% if scope.lookupvar('zookeeper::install_method') != 'archive' and
   (scope.lookupvar('zookeeper::service_provider') != 'systemd' or
      (scope.lookupvar('zookeeper::service_provider') == 'systemd' and !scope.lookupvar('zookeeper::manage_service_file'))
@@ -10,7 +9,6 @@ ZOOCFGDIR=<%= scope.lookupvar("zookeeper::cfg_dir") %>
 # seems, that log4j requires the log4j.properties file to be in the classpath
 CLASSPATH="<%= scope.lookupvar("zookeeper::cfg_dir") %>:/usr/share/java/jline.jar:/usr/share/java/log4j-1.2.jar:/usr/share/java/xercesImpl.jar:/usr/share/java/xmlParserAPIs.jar:/usr/share/java/netty.jar:/usr/share/java/slf4j-api.jar:/usr/share/java/slf4j-log4j12.jar:/usr/share/java/zookeeper.jar"
 <% end -%>
-
 ZOOCFG="<%= scope.lookupvar("zookeeper::cfg_dir") %>/zoo.cfg"
 ZOO_LOG_DIR=<%= scope.lookupvar("zookeeper::log_dir") %>
 USER=<%= scope.lookupvar("zookeeper::user") %>
