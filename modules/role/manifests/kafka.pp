@@ -6,7 +6,7 @@ class role::kafka {
             '1' => '10.0.18.146',
         },
         install_java    => true,
-        java_package    => 'openjdk-11-jre-headless',
+        java_package    => 'openjdk-17-jre-headless',
         log4j_prop      => 'INFO,SYSLOG',
         extra_appenders => {
             'Syslog' => {
