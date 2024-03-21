@@ -39,15 +39,20 @@ jobs:
           git checkout -b ${GITHUB_HEAD_REF}
           git add .
           git commit -am "CI: lint puppet code to standards" -m "Check commit and GitHub actions for more details"
+          # Stash changes
+          git stash push -m "Stashing changes before rebase"
           # Fetch latest changes before rebase
           git fetch origin
           git rebase origin/${GITHUB_HEAD_REF}
           # Check if there are conflicts
           if git diff --name-only --diff-filter=U | grep -q .; then
             echo "Conflicts encountered, unable to proceed."
+            git stash pop --quiet
             exit 1
           fi
           git push --force-with-lease --set-upstream origin ${GITHUB_HEAD_REF}
+          # Pop stashed changes
+          git stash pop --quiet
         else
           echo "No changes to commit"
         fi
