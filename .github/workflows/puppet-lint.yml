@@ -20,9 +20,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        ref: cleanup
 
     - name: puppet-lint
       uses: scottbrenner/puppet-lint-action@master
@@ -39,6 +36,7 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git checkout -b ${GITHUB_HEAD_REF}
           git add .
           git commit -am "CI: lint puppet code to standards" -m "Check commit and GitHub actions for more details"
           git pull origin ${GITHUB_HEAD_REF} --rebase
