@@ -101,7 +101,8 @@ do_start()
                  $JVM_FLAGS \
                  -Dzookeeper.log.dir=${ZOO_LOG_DIR} \
                  -Dzookeeper.root.logger=${ZOO_LOG4J_PROP} \
-                 $ZOOMAIN $ZOOCFG \		|| return 2
+                 $ZOOMAIN $ZOOCFG \
+		|| return 2
 }
 
 #
