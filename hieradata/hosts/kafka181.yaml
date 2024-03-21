@@ -1,3 +1,3 @@
-zookeeper::id: 1
+zookeeper::id: '1'
 zookeeper::client_port: 2181
 zookeeper::datastore: '/var/lib/zookeeper'
