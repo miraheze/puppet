@@ -17,7 +17,7 @@ class eventgate {
     }
 
     git::clone { 'eventgate':
-        ensure             => latest,
+        ensure             => present,
         directory          => '/srv/eventgate',
         origin             => 'https://github.com/miraheze/eventgate-deploy',
         branch             => 'master',
