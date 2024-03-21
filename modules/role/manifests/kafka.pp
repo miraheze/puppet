@@ -4,7 +4,7 @@ class role::kafka {
     class { 'zookeeper': }
 
     class { 'kafka':
-        version       => '1.1.0',
+        kafka_version => '1.1.0',
         scala_version => '2.12',
         config => {
             'broker.id'         => '0',
