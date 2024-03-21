@@ -2,6 +2,9 @@
 class role::kafka {
     # We need zookeeper also
     class { 'zookeeper':
+        servers         => {
+            1 => '10.0.18.146',
+        },
         log4j_prop      => 'INFO,SYSLOG',
         extra_appenders => {
             'Syslog' => {
