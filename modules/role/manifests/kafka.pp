@@ -8,6 +8,13 @@ class role::kafka {
         scala_version => '2.12',
     }
 
+    class { 'kafka::broker':
+        config => {
+            'broker.id'         => '0',
+            'zookeeper.connect' => 'localhost:2181'
+        }
+    }
+
     system::role { 'kafka':
         description => 'Kafka server',
     }
