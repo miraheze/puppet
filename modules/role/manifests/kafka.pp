@@ -2,13 +2,14 @@
 class role::kafka {
     # We need zookeeper also
     class { 'zookeeper':
-        servers         => {
+        servers             => {
             '1' => '10.0.18.146',
         },
-        install_java    => true,
-        java_package    => 'openjdk-17-jre-headless',
-        log4j_prop      => 'INFO,SYSLOG',
-        extra_appenders => {
+        install_java        => true,
+        java_package        => 'openjdk-17-jre-headless',
+        manage_service_file => true,
+        log4j_prop          => 'INFO,SYSLOG',
+        extra_appenders     => {
             'Syslog' => {
                 'class'                    => 'org.apache.log4j.net.SyslogAppender',
                 'layout'                   => 'org.apache.log4j.PatternLayout',
