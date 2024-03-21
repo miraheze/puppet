@@ -8,6 +8,7 @@ class role::kafka {
         install_java        => true,
         java_package        => 'openjdk-17-jre-headless',
         manage_service_file => true,
+        zoo_dir             => '/usr/share/zookeeper',
         log4j_prop          => 'INFO,SYSLOG',
         extra_appenders     => {
             'Syslog' => {
