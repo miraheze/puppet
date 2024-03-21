@@ -1,0 +1,137 @@
+# Example config file for running an eventgate instance.
+# This (optionally) uses a stream config file to restrict schemas
+# in streams.
+# Number of worker processes to spawn.
+# Set to 0 to run everything in a single process without clustering.
+# Use 'ncpu' to run as many workers as there are CPU units
+num_workers: 0
+# Log error messages and gracefully restart a worker if v8 reports that it
+# uses more heap (note: not RSS) than this many mb.
+worker_heap_limit_mb: 250
+# Logger info
+logging:
+  level: debug
+#  streams:
+#  # Use gelf-stream -> logstash
+#  - type: gelf
+#    host: logstash1003.eqiad.wmnet
+#    port: 12201
+# Statsd metrics reporter
+metrics:
+  - type: prometheus
+    port: 9102
+#   - type: statsd
+#     host: 0.0.0.0
+#     port: 8125
+services:
+  - name: EventGate
+    # a relative path or the name of an npm package, if different from name
+    module: ./src/app.js
+    # optionally, a version constraint of the npm package
+    # version: ^0.4.0
+    # per-service config
+    conf:
+      port: 8192
+      # uncomment to only listen on localhost
+      #interface: localhost
+      # Events can be large; increase max body size
+      max_body_size: 4mb
+
+      # Set cors to false by default.
+      cors: false
+
+      # more per-service config settings
+      user_agent: eventgate
+
+      # EventGate will be instantiated from the factory method returned by this module.
+      eventgate_factory_module: '../lib/factories/default-eventgate'
+
+      # This field in each event will be used to extract a
+      # (possibly relative) schema uri.  The default is $schema.
+      # An array of field names will cause EventGate to search for
+      # You can alteratively use a remote HTTP base URI.
+      # fields by these names in each event, using the first match.
+      schema_uri_field: $schema
+
+      # If set, these URIs will be prepended to any relative schema URI
+      # extracted from each event's schema_field.  The resulting URLs will
+      # be searched until a schema is found.  Change this
+      # to match paths to your schema repositories.
+      schema_base_uris: []
+
+      # This field in each event will be used to extract a destination 'stream' name.
+      # This will equal the destination Kafka topic, unless a topic prefix
+      # is also configured.
+      stream_field: meta.stream
+  
+      # This field will be used in log messages to uniquely ID each event.
+      id_field: meta.id
+
+      # This field will be used to extract and set a Kafka message timestamp.
+      dt_field: meta.dt
+
+      # A map of header names to field names.  On an incoming event, if the header
+      # name is present, and if the field name is present in that event's schema
+      # (or if the immediate parent of that field is present and has map type),
+      # that field in the event will be set to the value of the corresponding header.
+      http_request_headers_to_fields:
+        x-request-id: meta.request_id
+        user-agent: http.request_headers.user-agent
+
+      # If a validation error is encountered, a validation error event
+      # will be produced to this stream.
+      error_stream: eventgate.error.validation
+
+      ## If test_events is set, a GET /v1/_test/events route will be added.
+      # When this route is requested, these test_events will be processed through EventGate
+      # as if it they were directly POSTed to /v1/events.
+      # This is useful for readiness probes that want to make sure the service
+      # is alive and ready to produce events end to end.
+      test_events: [{$schema: /test/0.0.1, meta: {stream: test_events, id: "12345678-1234-5678-1234-567812345678"}, test: "example string"}]
+
+      # If this is set and an event does not have schema_uri_field, the value of
+      # event[schema_uri_field] will be set to the value of this HTTP query paramater
+      schema_uri_query_param: schema_uri
+
+      # If this is set and an event does not have stream_field, the value of
+      # event[stream_field] will be set to the value of this HTTP query paramater.
+      stream_query_param: stream
+
+      # kafka configs go here.
+      kafka:
+        conf:
+          metadata.broker.list: '127.0.0.1:9092'
+          compression.codec: snappy
+          message.max.bytes: 4194304
+          # Silence noisy connection reaper logging
+          # https://github.com/Blizzard/node-rdkafka/issues/326
+          # https://github.com/edenhill/librdkafka/issues/768#issuecomment-246302856
+          log.connection.close: false
+          # report Kafka producer stats every 5 seconds
+          statistics.interval.ms: 5000
+          ## Uncomment the below to enable rdkafka trace logging
+          # event_cb: true
+          # log_level: 7
+          # debug: broker,topic,msg
+        # kafka topic conf goes here
+        topic_conf: {}
+        # Producer type specific overrides.
+        # If you need to configure some producer specific settings,
+        # e.g. different batch settings, you can provide them here.
+        hasty:
+          conf:
+            # HastyProducer doesn't block HTTP clients, so we can
+            # afford to wait for a largish batch size.
+            queue.buffering.max.ms: 1000
+            # Custom kafka config, will call producer.setPollInterval
+            # with this value if set.
+            producer.poll.interval.ms: 100
+        guaranteed:
+          conf:
+            # GuaranteedProducer does block HTTP clients, so we attempt to send
+            # the produce request as soon as possible, rather than waiting
+            # for larger batches.
+            queue.buffering.max.ms: 0
+            # Custom kafka config, will call producer.setPollInterval
+            # with this value if set.
+            producer.poll.interval.ms: 10
