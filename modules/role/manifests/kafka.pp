@@ -7,7 +7,7 @@ class role::kafka {
             'Syslog' => {
                 'class'                    => 'org.apache.log4j.net.SyslogAppender',
                 'layout'                   => 'org.apache.log4j.PatternLayout',
-                'layout.conversionPattern' => "${hostname} zookeeper[id:%X{myid}] - %-5p [%t:%C{1}@%L][%x] - %m%n",
+                'layout.conversionPattern' => "${facts['networking']['hostname']} zookeeper[id:%X{myid}] - %-5p [%t:%C{1}@%L][%x] - %m%n",
                 'syslogHost'               => 'localhost',
                 'facility'                 => 'user',
             },
