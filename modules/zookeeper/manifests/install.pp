@@ -4,8 +4,6 @@
 #
 # @private - do not use directly (use main `zookeeper` class).
 class zookeeper::install inherits zookeeper {
-  $os_family = $facts['os']['family']
-
   # Java installation
   if ($zookeeper::install_java) {
     if !$zookeeper::java_package {
@@ -31,16 +29,6 @@ class zookeeper::install inherits zookeeper {
     }
     'package': {
       # Repo management
-      case $os_family {
-        'RedHat', 'Suse': {
-          contain zookeeper::install::repo
-
-          Class['zookeeper::install::repo']
-          -> Class['zookeeper::post_install']
-        }
-        default: {} # nothing to do
-      }
-
       contain zookeeper::install::package
       Class['zookeeper::install::package']
       -> Class['zookeeper::post_install']
