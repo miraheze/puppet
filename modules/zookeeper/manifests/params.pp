@@ -2,80 +2,15 @@
 #
 # PRIVATE CLASS - do not use directly (use main `zookeeper` class).
 class zookeeper::params {
-  $_defaults = {
-    'packages' => ['zookeeper'],
+  $_params = {
+    'packages'                 => ['zookeeper', 'zookeeperd'],
+    'service_name'             => 'zookeeper',
+    'service_provider'         => 'systemd',
+    'shell'                    => '/bin/false',
+    'initialize_datastore_bin' => '/usr/bin/zookeeper-server-initialize',
   }
 
-  $os_family = $facts['os']['family']
-  $os_name = $facts['os']['name']
-  $os_release = $facts['os']['release']['major']
-
-  case $os_family {
-    'Debian': {
-      case $os_name {
-        'Debian', 'Ubuntu': {
-          $initstyle = 'systemd'
-        }
-        default: { $initstyle = undef }
-      }
-
-      $_os_overrides = {
-        'packages'                 => ['zookeeper', 'zookeeperd'],
-        'service_name'             => 'zookeeper',
-        'service_provider'         => $initstyle,
-        'shell'                    => '/bin/false',
-        'initialize_datastore_bin' => '/usr/bin/zookeeper-server-initialize',
-      }
-      # 'environment' file probably read just by Debian
-      # see #16, #81
-      $environment_file = 'environment'
-    }
-    'RedHat': {
-      case $os_name {
-        'RedHat', 'CentOS', 'Rocky': {
-          if versioncmp($os_release, '7') < 0 {
-            $initstyle = 'redhat'
-          } else {
-            $initstyle = 'systemd'
-          }
-        }
-        default: {
-          $initstyle = undef
-        }
-      }
-
-      $_os_overrides = {
-        'packages'                 => ['zookeeper', 'zookeeper-server'],
-        'service_name'             => 'zookeeper-server',
-        'service_provider'         => $initstyle,
-        'shell'                    => '/sbin/nologin',
-        'initialize_datastore_bin' => '/usr/bin/zookeeper-server-initialize',
-      }
-      $environment_file = 'java.env'
-    }
-    'Suse': {
-      case $os_name {
-        'SLES': {
-          $initstyle = 'systemd'
-        }
-        default: { $initstyle = undef }
-      }
-
-      $_os_overrides = {
-        'packages'                 => ['zookeeper', 'zookeeper-server'],
-        'service_name'             => 'zookeeper-server',
-        'service_provider'         => $initstyle,
-        'shell'                    => '/bin/false',
-        'initialize_datastore_bin' => '/usr/bin/zookeeper-server-initialize',
-      }
-      $environment_file = 'java.env'
-    }
-
-    default: {
-      fail("Module '${module_name}' is not supported on OS: '${os_name}', family: '${os_family}'")
-    }
-  }
-  $_params = merge($_defaults, $_os_overrides)
+  $environment_file = 'environment'
 
   # meta options
   $ensure = present
@@ -128,7 +63,7 @@ class zookeeper::params {
   # zookeeper config
   $cfg_dir = '/etc/zookeeper/conf'
   $cleanup_sh = '/usr/share/zookeeper/bin/zkCleanup.sh'
-  $client_ip = undef # use e.g. $::ipaddress if you want to bind to single interface
+  $client_ip = undef # use e.g. $facts['networking']['ip'] if you want to bind to single interface
   $client_port = 2181
   $secure_client_port = undef
   $secure_port_only = false
