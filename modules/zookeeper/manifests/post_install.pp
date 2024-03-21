@@ -5,44 +5,11 @@
 #
 # PRIVATE CLASS - do not use directly (use main `zookeeper` class).
 class zookeeper::post_install inherits zookeeper {
-  $os_family = $facts['os']['family']
-  $os_name = $facts['os']['name']
-  $os_release = $facts['os']['release']['major']
-
   if ($zookeeper::manual_clean) {
     # User defined value
     $_clean = $zookeeper::manual_clean
   } else {
-    # Autodetect:
-    # Since ZooKeeper 3.4 there's no need for purging snapshots with cron
-    case $os_family {
-      'Debian': {
-        case $os_name {
-          'Debian', 'Ubuntu': {
-            $_clean = false
-          }
-          default: {
-            fail ("Family: '${os_family}' OS: '${os_name}' is not supported yet")
-          }
-        }
-      }
-      'Redhat': {
-        $_clean = false
-      }
-      default: {
-        fail ("Family: '${os_family}' OS: '${os_name}' is not supported yet")
-      }
-      'Suse': {
-        case $os_name {
-          'SLES': {
-            $_clean = false
-          }
-          default: {
-            fail ("Family: '${os_family}' OS: '${os_name}' is not supported yet")
-          }
-        }
-      }
-    }
+    $_clean = false
   }
 
   # If !$cleanup_count, then ensure this cron is absent.
