@@ -4,12 +4,8 @@ class role::kafka {
     class { 'zookeeper': }
 
     class { 'kafka':
-        kafka_version => '1.1.0',
+        kafka_version => '2.4.1',
         scala_version => '2.12',
-        config => {
-            'broker.id'         => '0',
-            'zookeeper.connect' => 'localhost:2181',
-        }
     }
 
     system::role { 'kafka':
