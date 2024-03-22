@@ -57,7 +57,10 @@ services:
       # extracted from each event's schema_field.  The resulting URLs will
       # be searched until a schema is found.  Change this
       # to match paths to your schema repositories.
-      schema_base_uris: []
+      schema_base_uris: [
+          https://schema.wikimedia.org/repositories/primary/jsonschema,
+          https://schema.wikimedia.org/repositories/secondary/jsonschema
+      ]
 
       # These schema URIs will be 'precached' on service startup.
       # They should be resolveable by the URI prefixes in schema_base_uris.
