@@ -59,6 +59,23 @@ services:
       # to match paths to your schema repositories.
       schema_base_uris: []
 
+      # These schema URIs will be 'precached' on service startup.
+      # They should be resolveable by the URI prefixes in schema_base_uris.
+      schema_precache_uris:
+        - /error/1.0.0
+        - /test/event/1.0.0
+
+      # If set, this will be appended to every extracted schema_uri if that schema_uri
+      # does not already end with a file extension.
+      #schema_file_extension: .yaml
+
+      # If this is true, then schema_uris in events will be allowed to
+      # point at any URL domain.  If false, they must only contain URI paths,
+      # which will be prefixed with one of the schema_base_uris.
+      # Setting this to false restricts schema URLs to those specified
+      # in schema_base_uris.  This defaults to false.
+      allow_absolute_schema_uris: false
+
       # This field in each event will be used to extract a destination 'stream' name.
       # This will equal the destination Kafka topic, unless a topic prefix
       # is also configured.
@@ -82,7 +99,37 @@ services:
       # will be produced to this stream.
       error_stream: eventgate.error.validation
 
-      ## If test_events is set, a GET /v1/_test/events route will be added.
+      # A URI from which 'stream configuration' will be fetched.  The result
+      # should be a static stream name to stream config map.
+      # The object returned by this URI should map a stream name to its config,
+      # which must include schema_title.  schema_title must match exactly
+      # incoming event schema's title field, or it will be rejected.
+      #
+      # If stream_config_uri is undefined, then any event will be allowed in
+      # any stream, as long as it validates with its schema.
+      #
+      #stream_config_uri: stream-config.yaml
+
+      # If provided, these options will be passed when opening stream_config_uri
+      # for reading.  If this is a local file path, fs.readFile options should be
+      # given.  If this is a remote http URI, preq.get options should be used.
+      #stream_config_uri_options: {'headers': {'Host': 'streamconfig.service.org'}}
+
+      # If set, the stream configs are expected to live in a subobject
+      # of the result object returned from stream_config_uri. The stream
+      # configs object will be extracted at this path.
+      # This should be a path string that Lodash#get understands.
+      #stream_config_object_path: 'streams'
+
+      # How long in seconds stream configs live in cache before being expired.
+      # 0 means no expiration. This has no affect if stream_config_is_dynamic: false
+      #stream_config_ttl: 0
+
+      # Retry up to this many times when fetching stream config from stream_config_uri.
+      # Default: 1
+      #stream_config_retries: 1
+
+      # If test_events is set, a GET /v1/_test/events route will be added.
       # When this route is requested, these test_events will be processed through EventGate
       # as if it they were directly POSTed to /v1/events.
       # This is useful for readiness probes that want to make sure the service
