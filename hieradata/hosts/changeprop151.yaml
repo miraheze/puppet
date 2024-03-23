@@ -18,7 +18,7 @@ changeprop::high_traffic_jobs_config:
   # so disable the retries by change-prop. We need special rules for cirrus
   # jobs because they need special configuration.
   cirrusSearchCheckerJob:
-    disable_delayed_execution: true #T198462
+    disable_delayed_execution: true
     retry_limit: 0
     concurrency: 20
   cirrusSearchDeleteArchive:
