@@ -2,7 +2,7 @@
 
 class changeprop (
     $broker_list              = lookup('changeprop::broker_list', {'default_value' => '10.0.18.146:9092'}),
-    $jobrunner_host           = lookup('changeprop::jobrunner_host', {'default_value' => 'jobrunner.wikitide.net'}),
+    $jobrunner_host           = lookup('changeprop::jobrunner_host', {'default_value' => 'http://jobrunner.wikitide.net'}),
     $realm                    = lookup('changeprop::realm', {'default_value' => 'production'}),
     $proxy                    = lookup('changeprop::proxy', {'default_value' => ''}),
     $high_traffic_jobs_config = lookup('changeprop::high_traffic_jobs_config', {'default_value' => {}}),
