@@ -81,17 +81,6 @@ spec: &spec
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
-<%- else %>
-              job:
-                topic: '/^mediawiki\.job\..*/'
-                exec:
-                  method: post
-                  uri: '<%= jobrunner_host %>/rpc/RunSingleJob.php'
-                  headers:
-                    content-type: 'application/json'
-                  body: '{{globals.message}}'
-                  agentOptions:
-                    keepAlive: true
 <%- endif %>
 
 
