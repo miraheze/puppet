@@ -1,0 +1,41 @@
+changeprop::jobqueue: true
+changeprop::high_traffic_jobs_config:
+  categoryMembershipChange:
+    concurrency: 200
+  # CNDPurge is quite low-volume, but it uses delayed execution,
+  # so avoid putting it together with other low-volume jobs so that it doesn't
+  # block execution for others.
+  cdnPurge:
+    concurrency: 5
+  # RecordLinks is normally low-volume, but could have big spikes
+  # when maintenance scripts are run. Elevated concurrency
+  RecordLintJob:
+    concurrency: 50
+    consumer_batch_size: 10
+  wikibase-addUsagesForPage:
+    concurrency: 5
+  # For cirrus search jobs the retries are built into the job itself,
+  # so disable the retries by change-prop. We need special rules for cirrus
+  # jobs because they need special configuration.
+  cirrusSearchCheckerJob:
+    disable_delayed_execution: true #T198462
+    retry_limit: 0
+    concurrency: 20
+  cirrusSearchDeleteArchive:
+    retry_limit: 0
+    concurrency: 5
+  cirrusSearchDeletePages:
+    retry_limit: 0
+    concurrency: 5
+  cirrusSearchIncomingLinkCount:
+    retry_limit: 0
+    concurrency: 15
+  cirrusSearchLinksUpdate:
+    retry_limit: 0
+    concurrency: 300
+  cirrusSearchLinksUpdatePrioritized:
+    retry_limit: 0
+    concurrency: 150
+  cirrusSearchOtherIndex:
+    retry_limit: 0
+    concurrency: 5

@@ -7,10 +7,12 @@ contactgroups: ['sre', 'mediawiki']
 
 jobrunner: true
 jobrunner::intensive: true
+
 mediawiki::jobqueue::runner::beta: true
 mediawiki::jobqueue::runner::cron: true
 mediawiki::jobqueue::runner::redis_ip: '10.0.15.118:6379'
 mediawiki::jobqueue::wiki: 'loginwikibeta'
+mediawiki::use_cpjobqueue: true
 
 role::mediawiki::use_strict_firewall: true
 
@@ -47,6 +49,7 @@ nginx::keepalive_timeout: 75
 nginx::keepalive_requests: 1000
 nginx::logrotate_number: 2
 nginx::use_graylog: true
+nginx::remove_apache: false
 
 # memcached
 role::memcached::threads: ~

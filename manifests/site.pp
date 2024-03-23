@@ -10,6 +10,12 @@ node 'bots171.wikitide.net' {
     include role::irc
 }
 
+node 'changeprop151.wikitide.net' {
+    include base
+    include role::changeprop
+    include role::redis
+}
+
 node /^cloud1[5678]\.wikitide\.net$/ {
     include base
     include role::cloud

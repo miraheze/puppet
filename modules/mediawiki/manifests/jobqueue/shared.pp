@@ -2,10 +2,16 @@
 #
 # JobQueue resources for both runner & chron
 class mediawiki::jobqueue::shared (
-    String $version,
+    VMlib::Ensure $ensure = present,
+    String        $version,
 ) {
     if !defined(Package['composer']) {
-        stdlib::ensure_packages('composer')
+        stdlib::ensure_packages(
+            'composer',
+            {
+                ensure => $ensure,
+            },
+        )
     }
 
     if versioncmp($version, '1.40') >= 0 {
@@ -15,7 +21,7 @@ class mediawiki::jobqueue::shared (
     }
 
     git::clone { 'JobRunner':
-        ensure    => latest,
+        ensure    => $ensure,
         directory => '/srv/jobrunner',
         origin    => 'https://github.com/miraheze/jobrunner-service',
         branch    => 'miraheze',
@@ -24,6 +30,7 @@ class mediawiki::jobqueue::shared (
     }
 
     exec { 'jobrunner_composer':
+        ensure      => $ensure,
         command     => 'composer install --no-dev',
         creates     => '/srv/jobrunner/vendor',
         cwd         => '/srv/jobrunner',
@@ -46,13 +53,13 @@ class mediawiki::jobqueue::shared (
     }
 
     file { '/srv/jobrunner/jobrunner.json':
-        ensure  => present,
+        ensure  => $ensure,
         content => template("mediawiki/${config}"),
         require => Git::Clone['JobRunner'],
     }
 
     file { '/srv/jobrunner/jobchron.json':
-        ensure  => present,
+        ensure  => $ensure,
         content => template('mediawiki/jobchron.json.erb'),
         require => Git::Clone['JobRunner'],
     }

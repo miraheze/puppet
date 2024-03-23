@@ -2,14 +2,17 @@
 class nginx (
     Variant[String, Integer] $nginx_worker_processes                  = lookup('nginx::worker_processes', {'default_value' => 'auto'}),
     Boolean                  $use_graylog                             = lookup('nginx::use_graylog', {'default_value' => false}),
+    Boolean                  $remove_apache                           = lookup('nginx::remove_apache', {'default_value' => true}),
     Integer                  $logrotate_number                        = lookup('nginx::logrotate_number', {'default_value' => 12}),
     Integer                  $keepalive_timeout                       = lookup('nginx::keepalive_timeout', {'default_value' => 75}),
     Integer                  $keepalive_requests                      = lookup('nginx::keepalive_requests', {'default_value' => 1000}),
     String                   $nginx_client_max_body_size              = lookup('nginx::client_max_body_size', {'default_value' => '250M'}),
 ) {
-    # Ensure Apache is absent: https://issue-tracker.miraheze.org/T253
-    package { 'apache2':
-        ensure  => absent,
+    if $remove_apache2 {
+        # Ensure Apache is absent: https://issue-tracker.miraheze.org/T253
+        package { 'apache2':
+            ensure  => absent,
+        }
     }
 
     # We need to check the syntax before we reload

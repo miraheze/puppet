@@ -1,0 +1,21 @@
+[Unit]
+Description=ChangeProp Service
+Documentation=https://wikitech.wikimedia.org/wiki/Changeprop
+Wants=local-fs.target network.target
+After=local-fs.target network.target
+
+[Service]
+Type=simple
+User=changeprop
+Group=changeprop
+SyslogIdentifier=changeprop
+WorkingDirectory=/srv/changeprop
+ExecStart=/usr/bin/node /srv/changeprop/src/server.js -c /etc/changeprop/config.yaml
+KillMode=process
+Restart=on-success
+Restart=always
+PrivateTmp=true
+StandardOutput=syslog
+
+[Install]
+WantedBy=multi-user.target

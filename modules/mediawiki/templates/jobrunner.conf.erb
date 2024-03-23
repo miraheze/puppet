@@ -1,0 +1,36 @@
+<%-
+-%>
+# This file is managed by Puppet
+<VirtualHost *:<%= @port %>>
+    DocumentRoot "/srv/mediawiki"
+    # Only accept health check requests.
+    RewriteEngine On
+    <Directory /srv/mediawiki>
+       Require all granted
+    </Directory>
+    RewriteCond  %{REQUEST_URI} !^/w/healthcheck.php
+    RewriteRule ^ - [R=404,L]
+    # Just use the default php version.
+    <FilesMatch "\.php$">
+        SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>"
+    </FilesMatch>
+    ErrorLog ${APACHE_LOG_DIR}/jq-public-error.log
+    CustomLog ${APACHE_LOG_DIR}/jq-public-access.log wt
+</VirtualHost>
+
+<VirtualHost *:<%= @local_only_port %>>
+    ServerName jobrunner.wikitide.net
+    ServerAlias mwtask.wikitide.net
+    Timeout 1202
+    DocumentRoot "/srv/mediawiki"
+    RewriteEngine On
+    <Directory /srv/mediawiki>
+       Require all granted
+    </Directory>
+    # Only selected paths are allowed here
+    RewriteCond %{REQUEST_URI} !^/(w/healthcheck|rpc/RunSingleJob)\.php
+    RewriteRule ^ - [R=404,L]
+
+    ErrorLog ${APACHE_LOG_DIR}/jobqueue-error.log
+    CustomLog ${APACHE_LOG_DIR}/jobqueue-access.log wt
+</VirtualHost>
