@@ -15,14 +15,14 @@ spec: &spec
           options:
             redis_prefix: 'CPJQ'
             redis:
-              host: <%= redis_host %>
+              host: <%= @redis_host %>
               port: 6379
-              password: '<%= redis_password %>'
+              password: '<%= @redis_password %>'
     /{api:sys}/queue:
       x-modules:
         - path: src/sys/kafka.js
           options:
-            metadata_broker_list: <%= broker_list %>
+            metadata_broker_list: <%= @broker_list %>
             dc_name: default
             consumer:
               fetch.message.max.bytes: 4194304
@@ -43,7 +43,7 @@ spec: &spec
 <%- end %>
                 exec:
                   method: post
-                  uri: '<%= jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                   body: '{{globals.message}}'
@@ -61,7 +61,7 @@ spec: &spec
                   - 'mediawiki.job.ThumbnailRender'
                 exec:
                   method: post
-                  uri: '<%= jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                   body: '{{globals.message}}'
@@ -120,6 +120,6 @@ services:
     conf:
       cors: "*"
       port: 7200
-      proxy: '<%= proxy %>'
+      proxy: '<%= @proxy %>'
       user_agent: ChangePropagation-JobQueue/WT
       spec: *spec
