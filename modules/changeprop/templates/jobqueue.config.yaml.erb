@@ -9,7 +9,6 @@ spec: &spec
               user-agent: true
   title: The Change Propagation for JobQueue root
   paths:
-<%- if realm == 'production' %>
     /{api:sys}/dedupe:
       x-modules:
         - path: src/sys/deduplicator.js
@@ -19,7 +18,6 @@ spec: &spec
               host: <%= redis_host %>
               port: 6379
               password: '<%= redis_password %>'
-<%- endif %>
     /{api:sys}/queue:
       x-modules:
         - path: src/sys/kafka.js
@@ -46,7 +44,6 @@ spec: &spec
             disable_blacklist: true
             disable_ratelimit: true
             templates:
-<%- if realm == 'production' %>
 <%- for topic, topic_config in high_traffic_jobs_config.iteritems() %>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
@@ -81,7 +78,6 @@ spec: &spec
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
-<%- endif %>
 
 
 # Number of worker processes to spawn.
