@@ -151,7 +151,7 @@ services:
       port: 7200
       # interface: localhost # uncomment to only listen on localhost
       # URL of the outbound proxy to use (complete with protocol)
-      proxy: <%= proxy if proxy else '' %>
+      proxy: '<%= proxy %>'
       # the list of domains for which not to use the proxy defined above
       # no_proxy_list:
       #   - domain1.com
