@@ -25,31 +25,22 @@ spec: &spec
             metadata_broker_list: <%= broker_list %>
             dc_name: default
             consumer:
-              # JobQueue jobs might sent messages larget then 1 Meg,
-              # so we increase the max message size in kafka and have to
-              # ajust the consumers accordingly.
               fetch.message.max.bytes: 4194304
-              # Silence noisy connection reaper logging
-              # https://github.com/Blizzard/node-rdkafka/issues/326
-              # https://github.com/edenhill/librdkafka/issues/768#issuecomment-246302856
               log.connection.close: false
             producer:
               compression.codec: snappy
-              # Silence noisy connection reaper logging
-              # https://github.com/Blizzard/node-rdkafka/issues/326
-              # https://github.com/edenhill/librdkafka/issues/768#issuecomment-246302856
               log.connection.close: false
             concurrency: 10
             startup_delay: 60000
             disable_blacklist: true
             disable_ratelimit: true
             templates:
-<%- for topic, topic_config in high_traffic_jobs_config.iteritems() %>
+<%- high_traffic_jobs_config.each do |topic, topic_config| %>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
-<%- for key, value in topic_config.iteritems() %>
+<%- topic_config.each do |key, value| %>
                 <%= key %>: <%= value %>
-<%- endfor %>
+<%- end %>
                 exec:
                   method: post
                   uri: '<%= jobrunner_host %>/rpc/RunSingleJob.php'
@@ -58,17 +49,15 @@ spec: &spec
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
-<%- endfor %>
-# Now special rule to cover all the low-traffic jobs
+<%- end %>
               low_traffic_jobs:
                 concurrency: <%= low_traffic_concurrency %>
                 topics:
                   - '/^mediawiki\.job\..*/'
-                # Don't execute anything that's covered by different rules
                 exclude_topics:
-<%- for job in high_traffic_jobs_config.iterkeys() %>
+<%- high_traffic_jobs_config.keys.each do |job| %>
                   - 'mediawiki.job.<%= job %>'
-<%- endfor %>
+<%- end %>
                   - 'mediawiki.job.ThumbnailRender'
                 exec:
                   method: post
@@ -78,7 +67,7 @@ spec: &spec
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
-
+# Now special rule to cover all the low-traffic jobs
 
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
@@ -116,7 +105,6 @@ logging:
       name: node
   sampled_levels:
     trace/dedupe: 0.001
-    # With the average job insertion rate of 1000/s this will give about 1 sample log per minute
     trace/sample: 0.00002
 
 # Statsd metrics reporter
@@ -128,28 +116,10 @@ metrics:
 
 services:
   - name: cpjobqueue
-    # a relative path or the name of an npm package, if different from name
     module: hyperswitch
-    # per-service config
     conf:
       cors: "*"
       port: 7200
-      # interface: localhost # uncomment to only listen on localhost
-      # URL of the outbound proxy to use (complete with protocol)
       proxy: '<%= proxy %>'
-      # the list of domains for which not to use the proxy defined above
-      # no_proxy_list:
-      #   - domain1.com
-      #   - domain2.org
-      # the list of incoming request headers that can be logged; if left empty,
-      # the following headers are allowed: cache-control, content-length,
-      # content-type, if-match, user-agent, x-request-id
-      # log_header_whitelist:
-      #   - cache-control
-      #   - content-length
-      #   - content-type
-      #   - if-match
-      #   - user-agent
-      #   - x-request-id
       user_agent: ChangePropagation-JobQueue/WT
       spec: *spec
