@@ -10,12 +10,6 @@ class mediawiki::jobqueue::runner (
         $runner = ''
     }
 
-    if !defined(Class['mediawiki::jobqueue::shared']) {
-        class { 'mediawiki::jobqueue::shared':
-            version => $version,
-        }
-    }
-
     $wiki = lookup('mediawiki::jobqueue::wiki')
     $beta = lookup('mediawiki::jobqueue::runner::beta')
     $database = $beta ? {
@@ -25,11 +19,30 @@ class mediawiki::jobqueue::runner (
 
     stdlib::ensure_packages('python3-xmltodict')
 
-    systemd::service { 'jobrunner':
-        ensure    => present,
-        content   => systemd_template('jobrunner'),
-        subscribe => File['/srv/jobrunner/jobrunner.json'],
-        restart   => true,
+    if lookup('mediawiki::use_cpjobqueue', {'default_value' => false}) {
+        include mediawiki::jobrunner
+        if !defined(Class['mediawiki::jobqueue::shared']) {
+            class { 'mediawiki::jobqueue::shared':
+                ensure  => absent,
+                version => $version,
+            }
+        }
+        systemd::service { 'jobrunner':
+            ensure  => stopped,
+            content => systemd_template('jobrunner'),
+        }
+    } else {
+        if !defined(Class['mediawiki::jobqueue::shared']) {
+            class { 'mediawiki::jobqueue::shared':
+                version => $version,
+            }
+        }
+        systemd::service { 'jobrunner':
+            ensure    => present,
+            content   => systemd_template('jobrunner'),
+            subscribe => File['/srv/jobrunner/jobrunner.json'],
+            restart   => true,
+        }
     }
 
     if lookup('mediawiki::jobqueue::runner::cron', {'default_value' => false}) {

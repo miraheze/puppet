@@ -29,7 +29,7 @@ define php::extension(
     }
 
     if $package_name != '' {
-        package{ $package_name:
+        package { $package_name:
             ensure  => $ensure,
             require => File[$mod_file],
             tag     => prefix($_sapis, 'php::package::')

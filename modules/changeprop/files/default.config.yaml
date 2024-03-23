@@ -1,0 +1,53 @@
+# Number of worker processes to spawn.
+# Set to 0 to run everything in a single process without clustering.
+# Use 'ncpu' to run as many workers as there are CPU units
+num_workers: 1
+
+# Log error messages and gracefully restart a worker if v8 reports that it
+# uses more heap (note: not RSS) than this many mb.
+worker_heap_limit_mb: 150
+
+# Logger info
+logging:
+  name: changeprop
+  level: info
+
+metrics:
+  type: log
+
+services:
+  - name: changeprop
+    # a relative path or the name of an npm package, if different from name
+    module: hyperswitch
+    # optionally, a version constraint of the npm package
+    # version: ^0.4.0
+    # per-service config
+    conf:
+      # the port to bind to
+      port: 7200
+      # IP address to bind to, all IPs by default
+      # interface: localhost # uncomment to only listen on localhost
+      # allow cross-domain requests to the API (default '*')
+      cors: '*'
+      # to disable use:
+      # cors: false
+      # to restrict to a particular domain, use:
+      # cors: restricted.domain.org
+      # URL of the outbound proxy to use (complete with protocol)
+      # proxy:
+      spec:
+        title: The Change Propagation root
+        paths:
+          /{domain:a}/sys/queue:
+            x-modules:
+              - path: sys/kafka.js
+                options:
+                  metadata_broker_list: 10.0.18.146:9092
+                  dc_name: default
+                  concurrency: 10
+                  templates: {}
+                  # Useful for mirroring the propagation of events in a test
+                  # environment; test_mode does the following: a) disables
+                  # production entirely to prevent enqueuing retries, b) alters
+                  # the consumer group ID, and c) disables offset commits.
+                  test_mode: false
