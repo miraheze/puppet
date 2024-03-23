@@ -35,7 +35,7 @@ spec: &spec
             disable_blacklist: true
             disable_ratelimit: true
             templates:
-<%- high_traffic_jobs_config.each do |topic, topic_config| %>
+<%- @high_traffic_jobs_config.each do |topic, topic_config| %>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <%- topic_config.each do |key, value| %>
@@ -51,11 +51,11 @@ spec: &spec
                     keepAlive: true
 <%- end %>
               low_traffic_jobs:
-                concurrency: <%= low_traffic_concurrency %>
+                concurrency: <%= @low_traffic_concurrency %>
                 topics:
                   - '/^mediawiki\.job\..*/'
                 exclude_topics:
-<%- high_traffic_jobs_config.keys.each do |job| %>
+<%- @high_traffic_jobs_config.keys.each do |job| %>
                   - 'mediawiki.job.<%= job %>'
 <%- end %>
                   - 'mediawiki.job.ThumbnailRender'
