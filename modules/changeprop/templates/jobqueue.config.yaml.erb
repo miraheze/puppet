@@ -18,7 +18,7 @@ spec: &spec
             redis:
               host: <%= redis_host %>
               port: 6379
-              password: <%= redis_pass if redis_pass else '' %>
+              password: '<%= redis_password %>'
 <%- endif %>
     /{api:sys}/queue:
       x-modules:
