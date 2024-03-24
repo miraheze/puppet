@@ -28,7 +28,7 @@ class mediawiki::jobqueue::runner (
             }
         }
         systemd::service { 'jobrunner':
-            ensure  => stopped,
+            ensure  => absent,
             content => systemd_template('jobrunner'),
         }
     } else {
