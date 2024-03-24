@@ -28,7 +28,11 @@ class role::kafka {
 
     class { 'kafka::broker':
         config => {
+            'auto.create.topics.enable'        => 'true',
             'broker.id'                        => '0',
+            'broker.id.generation.enable'      => 'false',
+            'default.replication.factor'       => '1',
+            'delete.topic.enable'              => 'true',
             'offsets.topic.replication.factor' => '1',
             'zookeeper.connect'                => 'localhost:2181',
         }
