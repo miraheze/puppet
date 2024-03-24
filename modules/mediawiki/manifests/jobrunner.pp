@@ -37,6 +37,14 @@ class mediawiki::jobrunner {
         ensure => absent,
     }
 
+    file { '/srv/mediawiki/rpc':
+        ensure  => 'link',
+        target  => '/srv/mediawiki/config/rpc',
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => File['/srv/mediawiki/config'],
+    }
+
     httpd::conf { 'jobrunner_port':
         ensure   => present,
         priority => 1,
