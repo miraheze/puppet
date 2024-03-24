@@ -50,10 +50,12 @@ spec: &spec
                   agentOptions:
                     keepAlive: true
 <%- end %>
+# Now special rule to cover all the low-traffic jobs
               low_traffic_jobs:
                 concurrency: <%= @low_traffic_concurrency %>
                 topics:
                   - '/^mediawiki\.job\..*/'
+                # Don't execute anything that's covered by different rules
                 exclude_topics:
 <%- @high_traffic_jobs_config.keys.each do |job| %>
                   - 'mediawiki.job.<%= job %>'
@@ -67,7 +69,6 @@ spec: &spec
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
-# Now special rule to cover all the low-traffic jobs
 
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
