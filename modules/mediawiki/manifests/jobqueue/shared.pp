@@ -5,8 +5,13 @@ class mediawiki::jobqueue::shared (
     VMlib::Ensure $ensure = present,
     String        $version,
 ) {
-    if !defined(Package['composer']) and $ensure == present {
-        stdlib::ensure_packages('composer')
+    if !defined(Package['composer']) {
+        stdlib::ensure_packages(
+            'composer',
+            {
+                ensure => $ensure,
+            },
+        )
     }
 
     if versioncmp($version, '1.40') >= 0 {
