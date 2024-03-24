@@ -29,18 +29,19 @@ class mediawiki::jobqueue::shared (
         group     => 'www-data',
     }
 
-    exec { 'jobrunner_composer':
-        ensure      => $ensure,
-        command     => 'composer install --no-dev',
-        creates     => '/srv/jobrunner/vendor',
-        cwd         => '/srv/jobrunner',
-        path        => '/usr/bin',
-        environment => [
-            'HOME=/srv/jobrunner',
-            'HTTP_PROXY=http://bastion.wikitide.net:8080'
-        ],
-        user        => 'www-data',
-        require     => Git::Clone['JobRunner'],
+    if $ensure == present {
+        exec { 'jobrunner_composer':
+            command     => 'composer install --no-dev',
+            creates     => '/srv/jobrunner/vendor',
+            cwd         => '/srv/jobrunner',
+            path        => '/usr/bin',
+            environment => [
+                'HOME=/srv/jobrunner',
+                'HTTP_PROXY=http://bastion.wikitide.net:8080'
+            ],
+            user        => 'www-data',
+            require     => Git::Clone['JobRunner'],
+        }
     }
 
     $redis_password = lookup('passwords::redis::master')
