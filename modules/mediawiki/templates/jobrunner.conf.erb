@@ -10,9 +10,8 @@
     </Directory>
     RewriteCond  %{REQUEST_URI} !^/w/healthcheck.php
     RewriteRule ^ - [R=404,L]
-    # Just use the default php version.
     <FilesMatch "\.php$">
-        SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>"
+        SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>|fcgi://127.0.0.1:<%= @port %>"
     </FilesMatch>
     ErrorLog ${APACHE_LOG_DIR}/jq-public-error.log
     CustomLog ${APACHE_LOG_DIR}/jq-public-access.log wt
@@ -31,7 +30,7 @@
     RewriteCond %{REQUEST_URI} !^/(w/healthcheck|rpc/RunSingleJob)\.php
     RewriteRule ^ - [R=404,L]
     <FilesMatch "\.php$">
-        SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>"
+        SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>|fcgi://127.0.0.1:<%= @port %>"
     </FilesMatch>
     ErrorLog ${APACHE_LOG_DIR}/jobqueue-error.log
     CustomLog ${APACHE_LOG_DIR}/jobqueue-access.log wt
