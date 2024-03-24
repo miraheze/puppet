@@ -9,7 +9,7 @@ class changeprop (
     $redis_host               = lookup('changeprop::redis_host', {'default_value' => 'localhost'}),
     $redis_password           = lookup('passwords::redis::master')
 ) {
-    stdlib::ensure_packages(['nodejs', 'libsasl2-dev'])
+    stdlib::ensure_packages(['nodejs', 'libssl1.1', 'libsasl2-dev'])
 
     group { 'changeprop':
         ensure => present,
