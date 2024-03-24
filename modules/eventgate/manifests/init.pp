@@ -1,7 +1,7 @@
 # == Class: eventgate
 
 class eventgate {
-    stdlib::ensure_packages('nodejs')
+    stdlib::ensure_packages(['nodejs', 'libssl1.1'])
 
     group { 'eventgate':
         ensure => present,
