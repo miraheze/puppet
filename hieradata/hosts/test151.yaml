@@ -51,6 +51,8 @@ nginx::logrotate_number: 2
 nginx::use_graylog: true
 nginx::remove_apache: false
 
+httpd::remove_default_ports: true
+
 # memcached
 role::memcached::threads: ~
 role::memcached::version: 'present'

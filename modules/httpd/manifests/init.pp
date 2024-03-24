@@ -12,7 +12,7 @@
 # @param wait_network_online Set to true to have the service to run after
 #   network-online.target. Can be used when Apache is configured to Listen to
 #   an explicit IP address.
-class httpd(
+class httpd (
     Array[String]           $modules              = [],
     VMlib::Ensure           $legacy_compat        = present,
     Enum['daily', 'weekly'] $period               = 'daily',
@@ -20,9 +20,9 @@ class httpd(
     Boolean                 $enable_forensic_log  = false,
     Array[String]           $extra_pkgs           = [],
     Boolean                 $purge_manual_config  = true,
-    Boolean                 $remove_default_ports = false,
     Boolean                 $http_only            = false,
     Boolean                 $wait_network_online  = false,
+    Boolean                 $remove_default_ports = lookup('httpd::remove_default_ports', {'default_value' => false}),
 ) {
     # Package and service. Links is needed for the status page below
     $base_pkgs = ['apache2', 'links']
