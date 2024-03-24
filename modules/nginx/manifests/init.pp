@@ -23,10 +23,17 @@ class nginx (
         restart  => false,
     }
 
-    package { 'nginx':
-        ensure  => present,
-        require => Package['apache2'],
-        notify  => Exec['nginx unmask'],
+    if $remove_apache {
+        package { 'nginx':
+            ensure  => present,
+            require => Package['apache2'],
+            notify  => Exec['nginx unmask'],
+        }
+    } else {
+        package { 'nginx':
+            ensure  => present,
+            notify  => Exec['nginx unmask'],
+        }
     }
 
     file { [ '/etc/nginx', '/etc/nginx/sites-available', '/etc/nginx/sites-enabled' ]:
