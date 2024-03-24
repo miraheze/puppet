@@ -28,8 +28,9 @@ class role::kafka {
 
     class { 'kafka::broker':
         config => {
-            'broker.id'         => '0',
-            'zookeeper.connect' => 'localhost:2181'
+            'broker.id'                        => '0',
+            'offsets.topic.replication.factor' => '1',
+            'zookeeper.connect'                => 'localhost:2181',
         }
     }
 
