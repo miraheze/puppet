@@ -31,8 +31,8 @@ class nginx (
         }
     } else {
         package { 'nginx':
-            ensure  => present,
-            notify  => Exec['nginx unmask'],
+            ensure => present,
+            notify => Exec['nginx unmask'],
         }
     }
 
