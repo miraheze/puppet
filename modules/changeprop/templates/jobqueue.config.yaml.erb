@@ -9,6 +9,7 @@ spec: &spec
               user-agent: true
   title: The Change Propagation for JobQueue root
   paths:
+<% if @realm == 'production' -%>
     /{api:sys}/dedupe:
       x-modules:
         - path: src/sys/deduplicator.js
@@ -18,6 +19,7 @@ spec: &spec
               host: <%= @redis_host %>
               port: 6379
               password: '<%= @redis_password %>'
+<% end -%>
     /{api:sys}/queue:
       x-modules:
         - path: src/sys/kafka.js
@@ -44,12 +46,13 @@ spec: &spec
             disable_blacklist: true
             disable_ratelimit: true
             templates:
-<%- @high_traffic_jobs_config.each do |topic, topic_config| %>
+<% if @realm == 'production' -%>
+<% @high_traffic_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
-<%- topic_config.each do |key, value| %>
+<% topic_config.each do |key, value| -%>
                 <%= key %>: <%= value %>
-<%- end %>
+<% end -%>
                 exec:
                   method: post
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
@@ -58,7 +61,7 @@ spec: &spec
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
-<%- end %>
+<% end -%>
                # Now special rule to cover all the low-traffic jobs
 #              low_traffic_jobs:
 #                concurrency: <%= @low_traffic_concurrency %>
@@ -66,9 +69,9 @@ spec: &spec
 #                  - '/^mediawiki\.job\..*/'
 #                # Don't execute anything that's covered by different rules
 #                exclude_topics:
-<%- @high_traffic_jobs_config.keys.each do |job| %>
+<% @high_traffic_jobs_config.keys.each do |job| -%>
  #                 - 'mediawiki.job.<%= job %>'
-<%- end %>
+<% end -%>
  #                 - 'mediawiki.job.ThumbnailRender'
  #               exec:
  #                 method: post
@@ -78,6 +81,18 @@ spec: &spec
  #                 body: '{{globals.message}}'
  #                 agentOptions:
  #                   keepAlive: true
+<% else -%>
+              job:
+                topic: '/^mediawiki\.job\..*/'
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+<% end -%>
 
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
