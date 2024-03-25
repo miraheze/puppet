@@ -15,7 +15,7 @@ const {
     EventValidator,
     util,
     error,
-} = require('eventgate');
+} = require('./src/lib/eventgate.js');
 
 const {
     objectGet,
