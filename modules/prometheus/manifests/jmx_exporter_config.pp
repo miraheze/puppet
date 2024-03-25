@@ -33,6 +33,13 @@ define prometheus::jmx_exporter_config(
         order by parameters
     }
     | PQL
-    ${resources} = puppetdb_query(${pql})
+    $resources = puppetdb_query($pql)
 
-    file { $dest
+    file { $dest:
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        content => template('prometheus/jmx_exporter_config.erb'),
+    }
+}
