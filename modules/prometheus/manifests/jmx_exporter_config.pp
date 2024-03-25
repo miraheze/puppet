@@ -18,7 +18,7 @@
 # [*labels*]
 #   Hash of labels to attach to every host. 'cluster' will be added automatically as well.
 #
-define prometheus::jmx_exporter_config(
+define prometheus::jmx_exporter_config (
     String $dest,
     String $class_name,
     String $instance_selector = '.*',
@@ -33,6 +33,13 @@ define prometheus::jmx_exporter_config(
         order by parameters
     }
     | PQL
-    ${resources} = puppetdb_query(${pql})
+    $resources = puppetdb_query($pql)
 
-    file { $dest
+    file { $dest:
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        content => template('prometheus/jmx_exporter_config.erb'),
+    }
+}
