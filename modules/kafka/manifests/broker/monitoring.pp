@@ -24,6 +24,6 @@ class kafka::broker::monitoring {
     ### Icinga alerts
     # Generate icinga alert if Kafka Broker Server is not running.
     monitoring::nrpe { 'Kafka Broker Server':
-        command => '/usr/lib/nagios/plugins/check_procs -c 1:1 -C java -a "Kafka /opt/kafka-2.12-2.4.1/config/server.properties"',
+        command => '/usr/lib/nagios/plugins/check_procs -c 1:1 -C java -a "Kafka /opt/kafka/config/server.properties"',
     }
 }
