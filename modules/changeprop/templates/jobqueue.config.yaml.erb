@@ -25,10 +25,19 @@ spec: &spec
             metadata_broker_list: <%= @broker_list %>
             dc_name: default
             consumer:
+              # JobQueue jobs might sent messages larget then 1 Meg,
+              # so we increase the max message size in kafka and have to
+              # ajust the consumers accordingly.
               fetch.message.max.bytes: 4194304
+              # Silence noisy connection reaper logging
+              # https://github.com/Blizzard/node-rdkafka/issues/326
+              # https://github.com/edenhill/librdkafka/issues/768#issuecomment-246302856
               log.connection.close: false
             producer:
               compression.codec: snappy
+              # Silence noisy connection reaper logging
+              # https://github.com/Blizzard/node-rdkafka/issues/326
+              # https://github.com/edenhill/librdkafka/issues/768#issuecomment-246302856
               log.connection.close: false
             concurrency: 10
             startup_delay: 60000
@@ -50,7 +59,7 @@ spec: &spec
                   agentOptions:
                     keepAlive: true
 <%- end %>
-# Now special rule to cover all the low-traffic jobs
+               # Now special rule to cover all the low-traffic jobs
 #              low_traffic_jobs:
 #                concurrency: <%= @low_traffic_concurrency %>
 #                topics:
@@ -106,6 +115,7 @@ logging:
       name: node
   sampled_levels:
     trace/dedupe: 0.001
+    # With the average job insertion rate of 1000/s this will give about 1 sample log per minute
     trace/sample: 0.00002
 
 # Statsd metrics reporter
@@ -117,10 +127,28 @@ metrics:
 
 services:
   - name: cpjobqueue
+    # a relative path or the name of an npm package, if different from name
     module: hyperswitch
+    # per-service config
     conf:
       cors: "*"
       port: 7200
+      # interface: localhost # uncomment to only listen on localhost
+      # URL of the outbound proxy to use (complete with protocol)
       proxy: '<%= @proxy %>'
+      # the list of domains for which not to use the proxy defined above
+      # no_proxy_list:
+      #   - domain1.com
+      #   - domain2.org
+      # the list of incoming request headers that can be logged; if left empty,
+      # the following headers are allowed: cache-control, content-length,
+      # content-type, if-match, user-agent, x-request-id
+      # log_header_whitelist:
+      #   - cache-control
+      #   - content-length
+      #   - content-type
+      #   - if-match
+      #   - user-agent
+      #   - x-request-id
       user_agent: ChangePropagation-JobQueue/WT
       spec: *spec
