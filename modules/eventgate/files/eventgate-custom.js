@@ -10,12 +10,10 @@ const {
     uriGetFirstObject,
 } = require('@wikimedia/url-get');
 
-const {
-    EventGate,
-    EventValidator,
-    util,
-    error,
-} = require('./src/lib/eventgate.js');
+const EventValidator = require('./src/lib/EventValidator.js');
+const EventGate = require('./src/lib/eventgate.js').EventGate;
+const util = require('./src/lib/event-util.js');
+const error = require('./src/lib/error.js');
 
 const {
     objectGet,
