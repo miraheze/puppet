@@ -1,0 +1,26 @@
+<%-
+require 'yaml'
+
+# All labels / targets list
+static_configs = []
+
+# Iterate over each resource and build a hash of labels => jmx_exporter_instance parameters.
+# Each instance parameters contain the jmx exporter hostname, port, and hash
+# of jmx exporter instance custom labels. We will build prometheus static_config
+# entries for each grouping of labels.
+#
+# Labels are applied at several levels here:
+# - @labels from the declared prometheus::jmx_exporter_config (on the prometheus server).
+# - Finally, any jmx exporter instance specific labels declared on the
+#   prometheus::jmx_exporter_instance class.
+parameter_by_labels = @resources.each do |resource|
+  labels = resource['parameters']['labels']
+  targets = "#{resource['parameters']['hostname']}:#{resource['parameters']['port']}"
+  static_configs.push({
+    'targets' => [targets],
+    'labels'  => labels
+  })
+end
+-%>
+# This file is managed by puppet
+<%= static_configs.to_yaml %>

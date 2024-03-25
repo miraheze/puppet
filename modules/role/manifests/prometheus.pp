@@ -174,6 +174,28 @@ class role::prometheus {
         }
     ]
 
+
+    $kafka_job = [
+        {
+            'job_name'        => 'kafka',
+            'scheme'          => 'http',
+            'scrape_timeout'  => '45s',
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/kafka.yaml' ]
+                }
+            ],
+        },
+    ]
+
+    # Collect all declared kafka.* jmx_exporter_instances
+    # from any uses of kafka::broker::monitoring.
+    prometheus::jmx_exporter_config { 'kafka':
+        dest              => '/etc/prometheus/targets/kafka.yaml',
+        class_name        => 'kafka::broker::monitoring',
+        instance_selector => 'kafka.*',
+    }
+
     # jmx based
     prometheus::class { 'puppetserver':
         dest   => '/etc/prometheus/targets/puppetserver.yaml',
@@ -274,7 +296,7 @@ class role::prometheus {
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
             $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
-            $varnish_job, $cadvisor_job, $pushgateway_job
+            $varnish_job, $cadvisor_job, $pushgateway_job, $kafka_job
         ].flatten,
     }
 
