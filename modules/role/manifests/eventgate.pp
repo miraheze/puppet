@@ -43,7 +43,7 @@ class role::eventgate {
     )
     ferm::service { 'eventgate-prometheus':
         proto   => 'tcp',
-        port    => '9103',
+        port    => '9102',
         srange  => "(${firewall_rules_prometheus_str})",
         notrack => true,
     }
