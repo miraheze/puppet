@@ -42,7 +42,6 @@ class role::kafka {
         port        => 7800,
         config_file => '/etc/prometheus/kafka_broker_prometheus_jmx_exporter.yaml',
         source      => 'puppet:///modules/kafka/broker_prometheus_jmx_exporter.yaml',
-        notify      => Service['puppetdb']
     }
 
     $firewall_rules_str = join(
