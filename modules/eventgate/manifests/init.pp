@@ -49,6 +49,13 @@ class eventgate {
         notify  => Service['eventgate'],
     }
 
+    file { '/etc/eventgate/stream-configs.js':
+        ensure  => present,
+        source  => 'puppet:///modules/eventgate/stream-configs.js',
+        require => File['/etc/eventgate'],
+        notify  => Service['eventgate'],
+    }
+
     systemd::service { 'eventgate':
         ensure  => present,
         content => systemd_template('eventgate'),
