@@ -28,7 +28,7 @@ class role::kafka {
         scala_version => '2.12',
     }
 
-    $jmx_opts = $kafka::params::broker_jmx_opts + $kafka::broker::monitoring::jmx_opts
+    $jmx_opts = "${kafka::params::broker_jmx_opts} ${kafka::broker::monitoring::jmx_opts}"
 
     class { 'kafka::broker':
         jmx_opts => $jmx_opts,
