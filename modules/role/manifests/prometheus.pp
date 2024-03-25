@@ -288,23 +288,6 @@ class role::prometheus {
         port   => 9112,
     }
 
-    $cpjobqueue_job = [
-        {
-            'job_name' => 'cpjobqueue',
-            'file_sd_configs' => [
-                {
-                    'files' => [ 'targets/cpjobqueue.yaml' ]
-                }
-            ]
-        }
-    ]
-
-    prometheus::class { 'cpjobqueue':
-        dest   => '/etc/prometheus/targets/cpjobqueue.yaml',
-        module => 'Role::Changeprop',
-        port   => 9112
-    }
-
     $eventgate_job = [
         {
             'job_name' => 'eventgate',
@@ -331,7 +314,7 @@ class role::prometheus {
             $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
             $varnish_job, $cadvisor_job, $pushgateway_job, $kafka_job,
-            $cpjobqueue_job, $eventgate_job
+            $eventgate_job
         ].flatten,
     }
 
