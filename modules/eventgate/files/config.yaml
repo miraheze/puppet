@@ -19,7 +19,7 @@ logging:
 # Statsd metrics reporter
 metrics:
   - type: prometheus
-    port: 9103
+    port: 9102
 #  - type: statsd
 #    host: 10.0.15.145
 #    port: 8125
