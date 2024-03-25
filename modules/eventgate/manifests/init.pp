@@ -31,6 +31,20 @@ class eventgate {
         ],
     }
 
+    file { '/srv/eventgate/eventgate-custom.js':
+        ensure  => present,
+        source  => 'puppet:///modules/eventgate/eventgate-custom.js',
+        require => Git::Clone['eventgate'],
+        notify  => Service['eventgate'],
+    }
+
+    file { '/srv/eventgate/stream-configs.js':
+        ensure  => present,
+        source  => 'puppet:///modules/eventgate/stream-configs.js',
+        require => Git::Clone['eventgate'],
+        notify  => Service['eventgate'],
+    }
+
     file { '/etc/eventgate':
         ensure  => directory,
     }
@@ -38,20 +52,6 @@ class eventgate {
     file { '/etc/eventgate/config.yaml':
         ensure  => present,
         source  => 'puppet:///modules/eventgate/config.yaml',
-        require => File['/etc/eventgate'],
-        notify  => Service['eventgate'],
-    }
-
-    file { '/etc/eventgate/eventgate-custom.js':
-        ensure  => present,
-        source  => 'puppet:///modules/eventgate/eventgate-custom.js',
-        require => File['/etc/eventgate'],
-        notify  => Service['eventgate'],
-    }
-
-    file { '/etc/eventgate/stream-configs.js':
-        ensure  => present,
-        source  => 'puppet:///modules/eventgate/stream-configs.js',
         require => File['/etc/eventgate'],
         notify  => Service['eventgate'],
     }

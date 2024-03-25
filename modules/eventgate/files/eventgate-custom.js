@@ -30,7 +30,7 @@ const {
 // Used for getting static or dynamic remote stream configs.
 const {
     makeStreamConfigs,
-} = require('/etc/eventgate/stream-configs.js');
+} = require('./stream-configs.js');
 
 /**
  * This module can be used as the value of app.options.eventgate_factory_module.  It exports
