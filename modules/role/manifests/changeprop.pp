@@ -44,7 +44,7 @@ class role::changeprop {
     ferm::service { 'changeprop-prometheus':
         proto   => 'tcp',
         port    => '9102',
-        srange  => "(${firewall_rules_str})",
+        srange  => "(${firewall_rules_prometheus_str})",
         notrack => true,
     }
 
