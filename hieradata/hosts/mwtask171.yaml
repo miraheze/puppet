@@ -8,6 +8,7 @@ jobrunner: true
 jobrunner::intensive: true
 mediawiki::jobqueue::runner::redis_ip: '10.0.17.120:6379'
 mediawiki::jobqueue::runner::cron: true
+mediawiki::use_cpjobqueue: true
 
 role::mediawiki::use_strict_firewall: true
 
