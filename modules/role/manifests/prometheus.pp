@@ -302,7 +302,7 @@ class role::prometheus {
     prometheus::class { 'cpjobqueue':
         dest   => '/etc/prometheus/targets/cpjobqueue.yaml',
         module => 'Role::Changeprop',
-        port   => 9102
+        port   => 9112
     }
 
     $eventgate_job = [
@@ -319,7 +319,7 @@ class role::prometheus {
     prometheus::class { 'eventgate':
         dest   => '/etc/prometheus/targets/eventgate.yaml',
         module => 'Role::Eventgate',
-        port   => 9103
+        port   => 9102
     }
 
     $global_extra = {}
