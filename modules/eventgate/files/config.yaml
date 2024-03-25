@@ -83,6 +83,7 @@ services:
       # This will equal the destination Kafka topic, unless a topic prefix
       # is also configured.
       stream_field: meta.stream
+      topic_prefix: 'default.'
   
       # This field will be used in log messages to uniquely ID each event.
       id_field: meta.id
