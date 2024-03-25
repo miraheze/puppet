@@ -42,6 +42,13 @@ class eventgate {
         notify  => Service['eventgate'],
     }
 
+    file { '/etc/eventgate/eventgate-custom.js':
+        ensure  => present,
+        source  => 'puppet:///modules/eventgate/eventgate-custom.js',
+        require => File['/etc/eventgate'],
+        notify  => Service['eventgate'],
+    }
+
     systemd::service { 'eventgate':
         ensure  => present,
         content => systemd_template('eventgate'),
