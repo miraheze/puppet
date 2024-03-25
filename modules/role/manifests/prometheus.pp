@@ -174,7 +174,7 @@ class role::prometheus {
         }
     ]
 
-    
+
     $kafka_job = [
         {
             'job_name'        => 'kafka',
