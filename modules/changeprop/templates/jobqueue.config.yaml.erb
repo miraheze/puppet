@@ -136,9 +136,11 @@ logging:
 # Statsd metrics reporter
 metrics:
   name: cpjobqueue
-  host: 10.0.15.145
-  port: 8125
-  type: statsd
+  type: prometheus
+  port: 9102
+#  host: 10.0.15.145
+#  port: 8125
+#  type: statsd
 
 services:
   - name: cpjobqueue
