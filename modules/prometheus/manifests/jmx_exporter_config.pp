@@ -33,6 +33,6 @@ define prometheus::jmx_exporter_config(
         order by parameters
     }
     | PQL
-    ${resources} = puppetdb_query($pql)
+    ${resources} = puppetdb_query(${pql})
 
     file { $dest
