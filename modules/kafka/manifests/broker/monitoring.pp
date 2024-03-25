@@ -7,7 +7,7 @@ class kafka::broker::monitoring {
     $jmx_exporter_config_file     = "${config_dir}/kafka_broker_prometheus_jmx_exporter.yaml"
 
     # Use this in your JAVA_OPTS you pass to the Kafka  broker process
-    $jmx_opts = "-javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${facts['networking']['interfaces']['ens19']}:${prometheus_jmx_exporter_port}:${jmx_exporter_config_file}"
+    $jmx_opts = "-javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${facts['networking']['fqdn']}:${prometheus_jmx_exporter_port}:${jmx_exporter_config_file}"
 
     # Declare a prometheus jmx_exporter instance.
     # This will render the config file, declare the jmx_exporter_instance,
