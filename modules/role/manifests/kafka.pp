@@ -38,6 +38,13 @@ class role::kafka {
         }
     }
 
+    prometheus::exporter::jmx { "kafka_broker_${facts['networking']['hostname']}":
+        port        => 7800,
+        config_file => '/etc/prometheus/kafka_broker_prometheus_jmx_exporter.yaml',
+        source      => 'puppet:///modules/kafka/broker_prometheus_jmx_exporter.yaml',
+        notify      => Service['puppetdb']
+    }
+
     $firewall_rules_str = join(
         query_facts('Class[Role::Changeprop] or Class[Role::Eventgate]', ['networking'])
         .map |$key, $value| {
