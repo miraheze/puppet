@@ -1,5 +1,7 @@
-# role: irc
+# role: kafka
 class role::kafka {
+    include kafka::broker::monitoring
+
     # We need zookeeper also
     class { 'zookeeper':
         servers             => {
@@ -26,8 +28,11 @@ class role::kafka {
         scala_version => '2.12',
     }
 
+    $jmx_opts = $kafka::params::broker_jmx_opts + $kafka::broker::monitoring::jmx_opts
+
     class { 'kafka::broker':
-        config => {
+        jmx_opts => $jmx_opts,
+        config   => {
             'auto.create.topics.enable'        => 'true',
             'broker.id'                        => '0',
             'broker.id.generation.enable'      => 'false',
@@ -36,12 +41,6 @@ class role::kafka {
             'offsets.topic.replication.factor' => '1',
             'zookeeper.connect'                => 'localhost:2181',
         }
-    }
-
-    prometheus::exporter::jmx { "kafka_broker_${facts['networking']['hostname']}":
-        port        => 7800,
-        config_file => '/etc/prometheus/kafka_broker_prometheus_jmx_exporter.yaml',
-        source      => 'puppet:///modules/kafka/broker_prometheus_jmx_exporter.yaml',
     }
 
     $firewall_rules_str = join(
