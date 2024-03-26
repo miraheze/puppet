@@ -9,7 +9,7 @@ class mediawiki::jobqueue::shared (
         stdlib::ensure_packages(
             'composer',
             {
-                ensure => $ensure,
+                ensure => absent,
             },
         )
     }
@@ -27,21 +27,6 @@ class mediawiki::jobqueue::shared (
         branch    => 'miraheze',
         owner     => 'www-data',
         group     => 'www-data',
-    }
-
-    if $ensure == present {
-        exec { 'jobrunner_composer':
-            command     => 'composer install --no-dev',
-            creates     => '/srv/jobrunner/vendor',
-            cwd         => '/srv/jobrunner',
-            path        => '/usr/bin',
-            environment => [
-                'HOME=/srv/jobrunner',
-                'HTTP_PROXY=http://bastion.wikitide.net:8080'
-            ],
-            user        => 'www-data',
-            require     => Git::Clone['JobRunner'],
-        }
     }
 
     $redis_password = lookup('passwords::redis::master')
