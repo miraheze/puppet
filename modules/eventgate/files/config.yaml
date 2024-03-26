@@ -158,7 +158,7 @@ services:
           # https://github.com/edenhill/librdkafka/issues/768#issuecomment-246302856
           log.connection.close: false
           # Force rdkafka to prefer IPv4 addresses for repeatablity.
-          broker.address.family: v4
+          # broker.address.family: v4
           # Emit rdkafka stats every 30 seconds
           # (Prometheus will only scrape every 60 seconds).
           statistics.interval.ms: 30000
