@@ -3,9 +3,7 @@ define mediawiki::extensionsetup (
     String $branch,
     String $version,
 ) {
-    if !defined(Package['composer']) {
-        stdlib::ensure_packages('composer')
-    }
+    stdlib::ensure_packages('composer')
 
     $mwpath = "/srv/mediawiki-staging/${version}"
 
