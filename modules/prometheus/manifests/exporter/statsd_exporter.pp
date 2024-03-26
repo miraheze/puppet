@@ -21,19 +21,25 @@ class prometheus::exporter::statsd_exporter (
 
     $basedir = '/etc/prometheus'
     $config = "${basedir}/statsd_exporter.conf"
-    $defaults = {
-      'timer_type' => $timer_type,
-      'buckets'    => $histogram_buckets,
-      'quantiles'  => [
-        { 'quantile' => 0.99,
-          'error'    => 0.001  },
-        { 'quantile' => 0.95,
-          'error'    => 0.001  },
-        { 'quantile' => 0.75,
-          'error'    => 0.001  },
-        { 'quantile' => 0.50,
-          'error'    => 0.005  },
-      ],
+    if lookup('prometheus::exporter::statsd_exporter::use_defaults', { 'default_value' => true }) {
+        $defaults = {
+            'timer_type' => $timer_type,
+            'buckets'    => $histogram_buckets,
+            'quantiles'  => [
+                { 'quantile' => 0.99,
+                  'error'    => 0.001  },
+                { 'quantile' => 0.95,
+                  'error'    => 0.001  },
+                { 'quantile' => 0.75,
+                  'error'    => 0.001  },
+                { 'quantile' => 0.50,
+                  'error'    => 0.005  },
+            ],
+        }
+
+        $content = stdlib::to_yaml({ 'defaults' => $defaults, 'mappings' => $mappings })
+    } else {
+        $content = stdlib::to_yaml({ 'mappings' => $mappings })
     }
 
     if (!defined(File[$basedir])) {
@@ -46,7 +52,7 @@ class prometheus::exporter::statsd_exporter (
     }
 
     file { $config:
-        content => stdlib::to_yaml({'defaults' => $defaults, 'mappings' => $mappings}),
+        content => $content,
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
