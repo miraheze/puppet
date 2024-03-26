@@ -24,7 +24,7 @@ define prometheus::jmx_exporter_config (
     String $instance_selector = '.*',
     Hash   $labels            = {},
 ) {
-    # lint:ignore:variables_not_enclosed
+
     $_class_name = vmlib::resource::capitalize($class_name)
     $pql = @("PQL")
     resources[certname, parameters] {
@@ -33,6 +33,14 @@ define prometheus::jmx_exporter_config (
         order by parameters
     }
     | PQL
-    ${resources} = puppetdb_query(${pql})
 
-    file { $dest
+    $resources = puppetdb_query($pql)
+
+    file { $dest:
+        ensure  => present,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        content => template('prometheus/jmx_exporter_config.erb'),
+    }
+}
