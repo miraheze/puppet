@@ -1,4 +1,5 @@
 changeprop::jobqueue: true
+changeprop::low_traffic_concurrency: 5
 changeprop::high_traffic_jobs_config:
   categoryMembershipChange:
     concurrency: 200
