@@ -26,7 +26,7 @@ define mediawiki::extensionsetup (
             default => $version in split($params['versions'], /,\s?/),
         }
 
-        if !defined(File["${mwpath}/${params['path']}"]) {
+        if !defined(File["${mwpath}/${params['path']}"]) or $params['latest'] or $params['removed'] {
             # lint:ignore:selector_inside_resource
             git::clone { "MediaWiki-${branch} ${name}":
                 ensure             => $params['removed'] ? {
