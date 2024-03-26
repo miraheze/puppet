@@ -5,15 +5,6 @@ class mediawiki::jobqueue::shared (
     VMlib::Ensure $ensure = present,
     String        $version,
 ) {
-    if !defined(Package['composer']) {
-        stdlib::ensure_packages(
-            'composer',
-            {
-                ensure => absent,
-            },
-        )
-    }
-
     if versioncmp($version, '1.40') >= 0 {
         $runner = "/srv/mediawiki/${version}/maintenance/run.php "
     } else {
