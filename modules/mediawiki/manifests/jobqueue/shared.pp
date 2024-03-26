@@ -2,8 +2,8 @@
 #
 # JobQueue resources for both runner & chron
 class mediawiki::jobqueue::shared (
-    VMlib::Ensure $ensure = present,
     String        $version,
+    VMlib::Ensure $ensure = present,
 ) {
     if versioncmp($version, '1.40') >= 0 {
         $runner = "/srv/mediawiki/${version}/maintenance/run.php "
