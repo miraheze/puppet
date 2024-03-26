@@ -72,7 +72,6 @@ spec: &spec
 <% @high_traffic_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
-                  - 'mediawiki.job.ThumbnailRender'
                 exec:
                   method: post
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
