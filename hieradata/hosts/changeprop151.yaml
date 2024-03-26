@@ -42,6 +42,10 @@ changeprop::high_traffic_jobs_config:
     concurrency: 5
   parsoidCachePrewarm:
     concurrency: 150
+  htmlCacheUpdate:
+    concurrency: 50
+    # Abandon jobs which root job is more than 1 week long
+    root_claim_ttl: 604800
 
 prometheus::exporter::statsd_exporter::use_defaults: false
 role::prometheus::statsd_exporter::mappings:
