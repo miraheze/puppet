@@ -7,24 +7,22 @@
 num_workers: 0
 # Log error messages and gracefully restart a worker if v8 reports that it
 # uses more heap (note: not RSS) than this many mb.
-worker_heap_limit_mb: 250
+worker_heap_limit_mb: 200
 # Logger info
 logging:
-  level: debug
-#  streams:
-#  # Use gelf-stream -> logstash
-#  - type: gelf
-#    host: logstash1003.eqiad.wmnet
-#    port: 12201
+  level: info
+  streams:
+    - type: stdout
+      named_levels: true
+
 # Statsd metrics reporter
 metrics:
-  - type: prometheus
-    port: 9102
-#  - type: statsd
-#    host: 10.0.15.145
-#    port: 8125
+  name: eventgate
+  type: prometheus
+  port: 9102
+
 services:
-  - name: EventGate
+  - name: eventgate
     # a relative path or the name of an npm package, if different from name
     module: ./src/app.js
     # optionally, a version constraint of the npm package
@@ -32,10 +30,13 @@ services:
     # per-service config
     conf:
       port: 8192
-      # uncomment to only listen on localhost
-      #interface: localhost
       # Events can be large; increase max body size
-      max_body_size: 4mb
+      # Note that this is larger than Kafka's message.max.bytes (set below).
+      # The request body is accepted as an array of events, each of which
+      # will be an individual message in Kafka.  Each individual
+      # message must be smaller than message.max.bytes, but EventGate
+      # can accept multiple events at once in the request body.
+      max_body_size: 10mb
 
       # Set cors to false by default.
       cors: false
@@ -57,10 +58,8 @@ services:
       # extracted from each event's schema_field.  The resulting URLs will
       # be searched until a schema is found.  Change this
       # to match paths to your schema repositories.
-      schema_base_uris: [
-          https://schema.wikimedia.org/repositories/primary/jsonschema,
-          https://schema.wikimedia.org/repositories/secondary/jsonschema
-      ]
+      schema_base_uris:
+        - 'https://schema.wikimedia.org/repositories/primary/jsonschema'
 
       # These schema URIs will be 'precached' on service startup.
       # They should be resolveable by the URI prefixes in schema_base_uris.
@@ -151,15 +150,18 @@ services:
       # kafka configs go here.
       kafka:
         conf:
-          metadata.broker.list: '10.0.18.146:9092'
+          metadata.broker.list: ['10.0.18.146:9092']
           compression.codec: snappy
           message.max.bytes: 4194304
           # Silence noisy connection reaper logging
           # https://github.com/Blizzard/node-rdkafka/issues/326
           # https://github.com/edenhill/librdkafka/issues/768#issuecomment-246302856
           log.connection.close: false
-          # report Kafka producer stats every 5 seconds
-          statistics.interval.ms: 5000
+          # Force rdkafka to prefer IPv4 addresses for repeatablity.
+          broker.address.family: v4
+          # Emit rdkafka stats every 30 seconds
+          # (Prometheus will only scrape every 60 seconds).
+          statistics.interval.ms: 30000
           ## Uncomment the below to enable rdkafka trace logging
           # event_cb: true
           # log_level: 7
@@ -182,7 +184,7 @@ services:
             # GuaranteedProducer does block HTTP clients, so we attempt to send
             # the produce request as soon as possible, rather than waiting
             # for larger batches.
-            queue.buffering.max.ms: 0
+            queue.buffering.max.ms: 10
             # Custom kafka config, will call producer.setPollInterval
             # with this value if set.
             producer.poll.interval.ms: 10
