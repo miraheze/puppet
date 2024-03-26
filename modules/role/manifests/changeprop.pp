@@ -1,12 +1,7 @@
 # === Role changeprop
 class role::changeprop {
     include changeprop
-
-    class { 'role::prometheus::statsd_exporter':
-        relay_address     => '',
-        timer_type        => 'histogram',
-        histogram_buckets => lookup('role::prometheus::statsd_exporter::histogram_buckets', { 'default_value' => [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60] }),
-    }
+    include role::prometheus::statsd_exporter
 
     $firewall_rules_str = join(
         query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2]', ['networking'])
