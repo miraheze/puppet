@@ -43,6 +43,11 @@ class mediawiki::jobqueue::runner (
             subscribe => File['/srv/jobrunner/jobrunner.json'],
             restart   => true,
         }
+        
+        monitoring::nrpe { 'JobRunner Service':
+            command => '/usr/lib/nagios/plugins/check_procs -a redisJobRunnerService -c 1:1',
+            docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#JobRunner_Service'
+        }
     }
 
     if lookup('mediawiki::jobqueue::runner::cron', {'default_value' => false}) {
@@ -185,10 +190,5 @@ class mediawiki::jobqueue::runner (
             hour     => '5',
             monthday => [ '6', '21' ],
         }
-    }
-
-    monitoring::nrpe { 'JobRunner Service':
-        command => '/usr/lib/nagios/plugins/check_procs -a redisJobRunnerService -c 1:1',
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#JobRunner_Service'
     }
 }
