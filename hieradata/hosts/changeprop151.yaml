@@ -52,6 +52,10 @@ changeprop::high_traffic_jobs_config:
     concurrency: 50
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
+  refreshLinks:
+    concurrency: 5
+    # Abandon jobs which root job is more than 1 week long
+    root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
     concurrency: 50
   smw.changePropagationDispatch:
