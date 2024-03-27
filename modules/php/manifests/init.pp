@@ -3,7 +3,7 @@
 # Basic installation of php - only cli modules.
 #
 class php(
-    VMlib::Php_version $version               = lookup('php::php_version', {'default_value' => '7.4'}),
+    VMlib::Php_version $version               = lookup('php::php_version', {'default_value' => '8.2'}),
     VMlib::Ensure $ensure                     = present,
     Array[Php::Sapi] $sapis                   = ['cli'],
     Hash $config_by_sapi                      = {},
@@ -30,7 +30,7 @@ class php(
         'display_errors'         => 'On',
         'log_errors'             => 'On',
         'include_path'           => '".:/usr/share/php"',
-        'max_execution_time'     => 60,
+        'max_execution_time'     => 180,
         'memory_limit'           => '100M',
         'mysql'                  => {
             'connect_timeout' => 1,
@@ -54,7 +54,7 @@ class php(
         # This means that rogue configurations added by
         # packages will be actively removed.
         file { "${config_dir}/${sapi}/conf.d":
-            ensure  => ensure_directory($ensure),
+            ensure  => stdlib::ensure($ensure, 'directory'),
             owner   => 'root',
             group   => 'root',
             mode    => '0755',
