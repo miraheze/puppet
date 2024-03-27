@@ -10,6 +10,7 @@ class mediawiki::php (
     String $memory_limit                 = lookup('mediawiki::php::memory_limit', {'default_value' => '256M'}),
     Optional[Hash] $fpm_config           = lookup('mediawiki::php::fpm_config', {default_value => undef}),
     Integer $emergency_restart_threshold = lookup('mediawiki::php::emergency_restart_threshold', {default_value => $facts['processors']['count']}),
+    Boolean $increase_open_files         = lookup('mediawiki::php::increase_open_files', {'default_value' => false}),
 ) {
 
     $config_cli = {
