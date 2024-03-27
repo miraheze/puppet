@@ -41,7 +41,10 @@ spec: &spec
               # https://github.com/Blizzard/node-rdkafka/issues/326
               # https://github.com/edenhill/librdkafka/issues/768#issuecomment-246302856
               log.connection.close: false
-            concurrency: 10
+              # The default value is 5ms, and we want Changeprop to batch
+              # more messages rather than keep sending small ones.
+              linger.ms: 20
+            concurrency: 25
             startup_delay: 60000
             disable_blacklist: true
             disable_ratelimit: true
