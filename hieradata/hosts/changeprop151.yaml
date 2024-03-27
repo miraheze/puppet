@@ -1,5 +1,5 @@
 changeprop::jobqueue: true
-changeprop::low_traffic_concurrency: 5
+changeprop::low_traffic_concurrency: 25
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
@@ -9,7 +9,7 @@ changeprop::high_traffic_jobs_config:
   # so avoid putting it together with other low-volume jobs so that it doesn't
   # block execution for others.
   cdnPurge:
-    concurrency: 5
+    concurrency: 20
   # RecordLinks is normally low-volume, but could have big spikes
   # when maintenance scripts are run. Elevated concurrency
   RecordLintJob:
@@ -51,9 +51,9 @@ changeprop::high_traffic_jobs_config:
     concurrency: 25
     reenqueue_delay: 3600
   parsoidCachePrewarm:
-    concurrency: 25
+    concurrency: 100
   htmlCacheUpdate:
-    concurrency: 25
+    concurrency: 50
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   refreshLinks:
