@@ -33,12 +33,25 @@ class role::kafka {
     class { 'kafka::broker':
         jmx_opts => $jmx_opts,
         config   => {
+          # 'allow.everyone.if.no.acl.found'   => 'true',
+          # 'authorizer.class.name'            => 'kafka.security.auth.SimpleAclAuthorizer',
             'auto.create.topics.enable'        => 'true',
+            'auto_leader_rebalance_enable'     => 'true',
             'broker.id'                        => '0',
             'broker.id.generation.enable'      => 'false',
             'default.replication.factor'       => '1',
             'delete.topic.enable'              => 'true',
+            'group.initial.rebalance.delay.ms' => '10000',
+            'listeners'                        => 'PLAINTEXT://:9092',
+            'log.message.timestamp.type'       => 'CreateTime',
+            'log.retention.hours'              => '168', # 1 week
+            'message.max.bytes'                => '4194304',
+            'num.io.threads'                   => '4',
+            'offsets.retention.minutes'        => '10080', # 1 week
             'offsets.topic.replication.factor' => '1',
+            'replica.fetch.max.bytes'          => '4194304',
+            'socket.receive.buffer.bytes'      => '1048576',
+            'socket.send.buffer.bytes'         => '1048576',
             'zookeeper.connect'                => 'localhost:2181',
         }
     }
