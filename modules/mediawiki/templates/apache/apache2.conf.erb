@@ -1,0 +1,81 @@
+ServerRoot "/etc/apache2"
+PidFile ${APACHE_PID_FILE}
+
+Timeout 202
+
+KeepAlive on
+MaxKeepAliveRequests 150
+KeepAliveTimeout 2
+
+Include mods-enabled/*.load
+Include mods-enabled/*.conf
+
+# Ensure that mod_php is never use even if present
+<IfModule mod_php5.c>
+    php_admin_flag engine off
+</IfModule>
+
+Include conf-enabled/*.conf
+
+Include ports.conf
+
+User www-data
+Group www-data
+
+ServerName wikitide.net
+
+DocumentRoot "/srv/mediawiki/docroot/default"
+
+<Directory />
+    Options FollowSymLinks
+    AllowOverride None
+</Directory>
+
+<Directory "/srv/mediawiki/docroot/default">
+    Options -Indexes +FollowSymLinks +MultiViews
+    AllowOverride None
+
+    Order allow,deny
+    Allow from all
+</Directory>
+
+<Files ~ "^\.ht">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</Files>
+
+# T80039: prevent downloading of .*~ and similar files
+<FilesMatch "(\.bak|\.old|~|#)$">
+	Order allow,deny
+	Deny from all
+	Satisfy All
+</FilesMatch>
+
+UseCanonicalName On
+
+TypesConfig /etc/mime.types
+
+ErrorLog syslog
+
+LogLevel notice
+
+LogFormat "%v:%p %h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D" vhost_combined
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %D" combined
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+LogFormat "%{Referer}i -> %U" referer
+LogFormat "%{User-agent}i" agent
+
+ExtendedStatus On
+<Location /server-status>
+    SetHandler server-status
+    Order deny,allow
+    Deny from all
+    Allow from 127.0.0.1
+</Location>
+
+Include sites-enabled/*.conf
+
+# Set ETags for files to not be based on inode,
+# since that will be different on each backend server
+FileETag MTime Size
