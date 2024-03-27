@@ -35,13 +35,17 @@ changeprop::high_traffic_jobs_config:
     concurrency: 15
   cirrusSearchLinksUpdate:
     retry_limit: 0
-    concurrency: 300
+    concurrency: 100
   cirrusSearchLinksUpdatePrioritized:
     retry_limit: 0
-    concurrency: 150
+    concurrency: 50
   cirrusSearchOtherIndex:
     retry_limit: 0
     concurrency: 5
+  cirrusSearchElasticaWrite:
+    retry_limit: 0
+    concurrency: 25
+    reenqueue_delay: 3600
   parsoidCachePrewarm:
     concurrency: 150
   htmlCacheUpdate:
