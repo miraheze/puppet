@@ -50,6 +50,8 @@ changeprop::high_traffic_jobs_config:
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
     concurrency: 50
+  smw.changePropagationDispatch:
+    concurrency: 10
 
 prometheus::exporter::statsd_exporter::use_defaults: false
 role::prometheus::statsd_exporter::mappings:
