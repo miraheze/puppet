@@ -54,7 +54,6 @@ node 'graylog161.wikitide.net' {
 
 node 'jobchron171.wikitide.net' {
     include base
-    include role::poolcounter
     include role::redis
     include mediawiki::jobqueue::chron
 }
@@ -123,6 +122,7 @@ node 'puppet181.wikitide.net' {
 
 node 'rdb151.wikitide.net' {
     include base
+    include role::poolcounter
     include role::redis
 }
 
