@@ -64,6 +64,13 @@ changeprop::high_traffic_jobs_config:
     concurrency: 50
   smw.changePropagationDispatch:
     concurrency: 10
+  # Translation jobs tend to be low traffic but are being delayed when other
+  # low traffic jobs have a large spike. It is being moved to its own queue to
+  # improve editing experience for users
+  UpdateTranslatablePageJob:
+    concurrency: 3
+  RenderTranslationPageJob:
+    concurrency: 3
 
   # These jobs need to be ran with priority so are using their own queues
   CreateWikiJob:
