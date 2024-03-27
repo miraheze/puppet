@@ -4,7 +4,7 @@ changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
   categoryMembershipChange:
-    concurrency: 200
+    concurrency: 50
   # CNDPurge is quite low-volume, but it uses delayed execution,
   # so avoid putting it together with other low-volume jobs so that it doesn't
   # block execution for others.
@@ -13,7 +13,7 @@ changeprop::high_traffic_jobs_config:
   # RecordLinks is normally low-volume, but could have big spikes
   # when maintenance scripts are run. Elevated concurrency
   RecordLintJob:
-    concurrency: 50
+    concurrency: 25
     consumer_batch_size: 10
   wikibase-addUsagesForPage:
     concurrency: 5
@@ -51,9 +51,9 @@ changeprop::high_traffic_jobs_config:
     concurrency: 25
     reenqueue_delay: 3600
   parsoidCachePrewarm:
-    concurrency: 150
-  htmlCacheUpdate:
     concurrency: 50
+  htmlCacheUpdate:
+    concurrency: 25
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   refreshLinks:
