@@ -26,73 +26,71 @@ define mediawiki::extensionsetup (
             default => $version in split($params['versions'], /,\s?/),
         }
 
-        if !defined(File["${mwpath}/${params['path']}"]) or $params['latest'] or $params['removed'] {
-            # lint:ignore:selector_inside_resource
-            git::clone { "MediaWiki-${branch} ${name}":
-                ensure             => $params['removed'] ? {
-                    true    => absent,
-                    default => $should_install ? {
-                        true    => $params['latest'] ? {
-                            true    => latest,
-                            default => present,
-                        },
-                        default => absent,
+        # lint:ignore:selector_inside_resource
+        git::clone { "MediaWiki-${branch} ${name}":
+            ensure             => $params['removed'] ? {
+                true    => absent,
+                default => $should_install ? {
+                    true    => $params['latest'] ? {
+                        true    => latest,
+                        default => present,
                     },
+                    default => absent,
                 },
-                directory          => "${mwpath}/${params['path']}",
-                origin             => $params['repo_url'],
-                branch             => $params['branch'] ? {
-                    '_branch_' => $branch == 'master' ? {
-                        true    => $params['alpha_branch'] ? {
-                            undef   => $branch,
-                            default => $params['alpha_branch'],
-                        },
-                        default => $branch,
+            },
+            directory          => "${mwpath}/${params['path']}",
+            origin             => $params['repo_url'],
+            branch             => $params['branch'] ? {
+                '_branch_' => $branch == 'master' ? {
+                    true    => $params['alpha_branch'] ? {
+                        undef   => $branch,
+                        default => $params['alpha_branch'],
                     },
-                    default    => $params['branch'],
+                    default => $branch,
                 },
-                revision           => $params['commit'] ? {
-                    undef   => '',
-                    default => $params['commit'],
-                },
-                owner              => 'www-data',
-                group              => 'www-data',
-                mode               => '0755',
-                depth              => '5',
-                recurse_submodules => true,
-                shallow_submodules => $params['shallow_submodules'] ? {
-                    true    => true,
-                    default => false,
-                },
-                require            => Git::Clone["MediaWiki-${branch} core"],
-            }
-            # lint:endignore
+                default    => $params['branch'],
+            },
+            revision           => $params['commit'] ? {
+                undef   => '',
+                default => $params['commit'],
+            },
+            owner              => 'www-data',
+            group              => 'www-data',
+            mode               => '0755',
+            depth              => '5',
+            recurse_submodules => true,
+            shallow_submodules => $params['shallow_submodules'] ? {
+                true    => true,
+                default => false,
+            },
+            require            => Git::Clone["MediaWiki-${branch} core"],
+        }
+        # lint:endignore
 
-            if $should_install {
-                if $params['composer'] {
-                    exec { "${name}-${branch} composer":
-                        command     => 'composer install --no-dev',
-                        creates     => "${mwpath}/${params['path']}/vendor",
-                        cwd         => "${mwpath}/${params['path']}",
-                        path        => '/usr/bin',
-                        environment => [
-                            "HOME=${mwpath}/${params['path']}",
-                            'HTTP_PROXY=http://bastion.wikitide.net:8080'
-                        ],
-                        user        => 'www-data',
-                        require     => Git::Clone["MediaWiki-${branch} ${name}"],
-                    }
+        if $should_install {
+            if $params['composer'] {
+                exec { "${name}-${branch} composer":
+                    command     => 'composer install --no-dev',
+                    creates     => "${mwpath}/${params['path']}/vendor",
+                    cwd         => "${mwpath}/${params['path']}",
+                    path        => '/usr/bin',
+                    environment => [
+                        "HOME=${mwpath}/${params['path']}",
+                        'HTTP_PROXY=http://bastion.wikitide.net:8080'
+                    ],
+                    user        => 'www-data',
+                    require     => Git::Clone["MediaWiki-${branch} ${name}"],
                 }
+            }
 
-                if $params['latest'] {
-                    exec { "MediaWiki-${branch} ${name} Sync":
-                        command     => "/usr/local/bin/mwdeploy --folders=${version}/${params['path']} --servers=${lookup(mediawiki::default_sync)}",
-                        cwd         => '/srv/mediawiki-staging',
-                        refreshonly => true,
-                        user        => 'www-data',
-                        subscribe   => Git::Clone["MediaWiki-${branch} ${name}"],
-                        require     => File['/usr/local/bin/mwdeploy'],
-                    }
+            if $params['latest'] {
+                exec { "MediaWiki-${branch} ${name} Sync":
+                    command     => "/usr/local/bin/mwdeploy --folders=${version}/${params['path']} --servers=${lookup(mediawiki::default_sync)}",
+                    cwd         => '/srv/mediawiki-staging',
+                    refreshonly => true,
+                    user        => 'www-data',
+                    subscribe   => Git::Clone["MediaWiki-${branch} ${name}"],
+                    require     => File['/usr/local/bin/mwdeploy'],
                 }
             }
         }
