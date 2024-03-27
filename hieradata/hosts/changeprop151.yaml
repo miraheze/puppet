@@ -61,6 +61,14 @@ changeprop::high_traffic_jobs_config:
   smw.changePropagationDispatch:
     concurrency: 10
 
+  # These jobs need to be ran with priority so are using their own queues
+  CreateWikiJob:
+    concurrency: 1
+  DataDumpGenerateJob:
+    concurrency: 1
+  ImportDumpJob:
+    concurrency: 1
+
 prometheus::exporter::statsd_exporter::use_defaults: false
 role::prometheus::statsd_exporter::mappings:
   - match: '*.gc.*'
