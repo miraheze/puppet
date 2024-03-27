@@ -76,10 +76,10 @@ spec: &spec
 <% @partitioned_jobs_config.each do |topic, options| -%>
               <%= topic %>_partitioner:
                 topic: 'mediawiki.job.<%= topic %>'
-                concurrency: <%= options.partitioner_concurrency %>
+                concurrency: <%= options['partitioner_concurrency'] %>
                 exec:
                   method: 'post'
-                  uri: '/sys/partition/<%= options.partitioner_kind %>/'
+                  uri: '/sys/partition/<%= options['partitioner_kind'] %>/'
                   headers:
                     content-type: application/json
                   body: '{{globals.message}}'
