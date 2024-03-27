@@ -112,25 +112,16 @@ worker_heap_limit_mb: 750
 
 # The maximum interval in ms that can pass between two beat messages
 # sent by each worker to the master before it is killed
-worker_heartbeat_timeout: 15000
+worker_heartbeat_timeout: false
 
 # Logger info
 logging:
-  level: warn
-  name: cpjobqueue
+  level: error
   streams:
-    - level: info
-      path: /tmp/cpjq.log
-      type: file
-    - type: syslog
-      host: localhost
-      port: 10514
-      prefix: '@cee: '
-      name: node
+    - type: stdout
+      named_levels: true
   sampled_levels:
-    trace/dedupe: 0.001
-    # With the average job insertion rate of 1000/s this will give about 1 sample log per minute
-    trace/sample: 0.00002
+    debug/request: 0.00005
 
 # Statsd metrics reporter
 metrics:

@@ -74,10 +74,13 @@ changeprop::high_traffic_jobs_config:
 
   # These jobs need to be ran with priority so are using their own queues
   CreateWikiJob:
+    disable_delayed_execution: true
     concurrency: 1
   DataDumpGenerateJob:
+    disable_delayed_execution: true
     concurrency: 1
   ImportDumpJob:
+    disable_delayed_execution: true
     concurrency: 1
 
 prometheus::exporter::statsd_exporter::use_defaults: false
