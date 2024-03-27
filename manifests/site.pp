@@ -152,7 +152,6 @@ node 'test151.wikitide.net' {
     include role::mediawiki
     include role::poolcounter
     include role::redis
-    include mediawiki::jobqueue::chron
 }
 
 # ensures all servers have basic class if puppet runs
