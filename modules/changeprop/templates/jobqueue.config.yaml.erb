@@ -78,7 +78,7 @@ spec: &spec
                 topic: 'mediawiki.job.<%= topic %>'
                 concurrency: <%= options['partitioner_concurrency'] %>
                 exec:
-                  method: 'post'
+                  method: post
                   uri: '/sys/partition/<%= options['partitioner_kind'] %>/'
                   headers:
                     content-type: application/json
