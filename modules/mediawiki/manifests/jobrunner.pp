@@ -23,16 +23,60 @@ class mediawiki::jobrunner {
             'proxy_fcgi',
         ]
     }
+    systemd::unit { 'apache2':
+        content  => "[Service]\nCPUAccounting=yes\n",
+        override => true,
+    }
+
+    # MPM configuration
+    $threads_per_child = 25
+    $apache_server_limit = $facts['processors']['count']
+    $max_workers = $threads_per_child * $apache_server_limit
+    if $workers_limit and is_integer($workers_limit) {
+        $max_req_workers = min($workers_limit, $max_workers)
+    }
+    else {
+        # Default if no override has been defined
+        $max_req_workers = $max_workers
+    }
+
+    httpd::conf { 'worker':
+        content => template('mediawiki/apache/worker.conf.erb')
+    }
 
     class { 'httpd::mpm':
         mpm => 'worker',
     }
 
+    file { '/etc/apache2/apache2.conf':
+        content => template('mediawiki/apache/apache2.conf.erb'),
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0444',
+        before  => Service['apache2'],
+        require => Package['apache2'],
+    }
+
+    file { '/var/lock/apache2':
+        ensure => directory,
+        owner  => $::mediawiki::users::web,
+        group  => 'root',
+        mode   => '0755',
+        before => File['/etc/apache2/apache2.conf'],
+    }
+
     # Modules we don't enable.
     httpd::mod_conf { [
+        'auth_basic',
+        'authn_file',
         'authz_default',
         'authz_groupfile',
+        'authz_user',
         'cgi',
+        'deflate',
+        'env',
+        'negotiation',
+        'reqtimeout',
     ]:
         ensure => absent,
     }
