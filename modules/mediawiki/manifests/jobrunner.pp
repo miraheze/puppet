@@ -59,7 +59,7 @@ class mediawiki::jobrunner {
 
     file { '/var/lock/apache2':
         ensure => directory,
-        owner  => $::mediawiki::users::web,
+        owner  => 'www-data',
         group  => 'root',
         mode   => '0755',
         before => File['/etc/apache2/apache2.conf'],
