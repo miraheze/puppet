@@ -3,6 +3,7 @@ class mediawiki::php (
     Float $fpm_workers_multiplier        = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $fpm_min_child               = lookup('mediawiki::php::fpm::fpm_min_child', {'default_value' => 4}),
     Integer $request_timeout             = lookup('mediawiki::php::request_timeout', {'default_value' => 60}),
+    String $apc_shm_size                 = lookup('mediawiki::php::apc_shm_size', {'default_value' => '3072M'}),
     VMlib::Php_version $php_version      = lookup('php::php_version', {'default_value' => '7.4'}),
     Boolean $enable_fpm                  = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
     Boolean $enable_request_profiling    = lookup('mediawiki::php::enable_request_profiling', {'default_value' => false}),
@@ -35,7 +36,7 @@ class mediawiki::php (
         'display_errors'                  => 0,
         'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
-        'apc.shm_size'                    => '3072M',
+        'apc.shm_size'                    => $apc_shm_size,
         'rlimit_core'                     => 0,
     }
     if $enable_fpm {
