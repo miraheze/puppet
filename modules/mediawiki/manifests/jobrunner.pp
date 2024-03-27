@@ -72,7 +72,13 @@ class mediawiki::jobrunner {
         .sort(),
         ' '
     )
-    ferm::service { 'jobrunner':
+    ferm::service { 'jobrunner-9005':
+        proto   => 'tcp',
+        port    => '9005',
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
+    }
+    ferm::service { 'jobrunner-9006':
         proto   => 'tcp',
         port    => '9006',
         srange  => "(${firewall_rules_str})",
