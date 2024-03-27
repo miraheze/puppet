@@ -72,7 +72,6 @@ spec: &spec
 <% @high_traffic_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
-                  - 'mediawiki.job.ThumbnailRender'
                 exec:
                   method: post
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
@@ -136,8 +135,8 @@ logging:
 # Statsd metrics reporter
 metrics:
   name: cpjobqueue
-  host: 10.0.15.145
-  port: 8125
+  host: localhost
+  port: 9125
   type: statsd
 
 services:

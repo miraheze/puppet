@@ -1,4 +1,5 @@
 changeprop::jobqueue: true
+changeprop::low_traffic_concurrency: 5
 changeprop::high_traffic_jobs_config:
   categoryMembershipChange:
     concurrency: 200
@@ -39,3 +40,86 @@ changeprop::high_traffic_jobs_config:
   cirrusSearchOtherIndex:
     retry_limit: 0
     concurrency: 5
+  parsoidCachePrewarm:
+    concurrency: 150
+  htmlCacheUpdate:
+    concurrency: 50
+    # Abandon jobs which root job is more than 1 week long
+    root_claim_ttl: 604800
+
+prometheus::exporter::statsd_exporter::use_defaults: false
+role::prometheus::statsd_exporter::mappings:
+  - match: '*.gc.*'
+    name: service_runner_gc_microseconds
+    timer_type: histogram
+    buckets: [ 5e+2, 1e+3, 5e+3, 10e+3, 15e+3, 30e+3, 100e+3 ]
+    labels:
+      service: $1
+      event: $2
+
+  - match: '*.heap.*'
+    # service-runner abuses timer for heap data
+    name: service_runner_${2}_heap_kilobytes
+    timer_type: histogram
+    buckets: [1e+3, 1e+4, 1e+5, 1e+6, 1e+7]
+    labels:
+      service: $1
+
+  - match: '(.+)\.internal-startup\.(.+)-retry_exec'
+    match_type: regex
+    name: "${1}_retry_rule_processing"
+    labels:
+      service: $1
+      rule: $2
+
+  - match: '(.+)\.internal-startup\.(.+)_exec'
+    match_type: regex
+    name: "${1}_normal_rule_processing"
+    labels:
+      service: $1
+      rule: $2
+
+  - match: '(.+)\.internal-startup\.(.+)-retry_delay'
+    match_type: regex
+    name: "${1}_retry_rule_processing_delay"
+    labels:
+      service: $1
+      rule: $2
+
+  - match: '(.+)\.internal-startup\.(.+)_delay'
+    match_type: regex
+    name: "${1}_normal_rule_processing_delay"
+    timer_type: histogram
+    buckets: [1, 30, 60, 300, 600, 1800, 3600]  # 1s, 30s, 1m, 5m, 10m, 30m, 1h
+    labels:
+      service: $1
+      rule: $2
+
+  - match: '(.+)\.internal-startup\.(.+)_totaldelay'
+    match_type: regex
+    name: "${1}_normal_rule_processing_total_delay"
+    labels:
+      service: $1
+      rule: $2
+
+  - match: '(.+)\.internal-startup\.(.+)_dequeue'
+    match_type: regex
+    name: "${1}_dequeue"
+    labels:
+      service: $1
+      rule: $2
+
+  - match: '(.+)\.internal-startup\.(.+)_dedupe'
+    match_type: regex
+    name: "${1}_dedupe"
+    labels:
+      service: $1
+      rule: $2
+
+  - match: '(.+)\.internal-startup\.produce_(.+)\.(.+)'
+    match_type: regex
+    name: "${1}_produce"
+    labels:
+      service: $1
+      stream: $2
+      partition: $3

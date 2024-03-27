@@ -1,6 +1,7 @@
 # === Role changeprop
 class role::changeprop {
     include changeprop
+    include role::prometheus::statsd_exporter
 
     $firewall_rules_str = join(
         query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2]', ['networking'])
