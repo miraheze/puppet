@@ -10,7 +10,7 @@ num_workers: 0
 worker_heap_limit_mb: 500
 # Logger info
 logging:
-  level: info
+  level: error
   streams:
     - type: stdout
       named_levels: true
