@@ -7,7 +7,7 @@
 num_workers: 0
 # Log error messages and gracefully restart a worker if v8 reports that it
 # uses more heap (note: not RSS) than this many mb.
-worker_heap_limit_mb: 200
+worker_heap_limit_mb: 500
 # Logger info
 logging:
   level: info
@@ -59,13 +59,38 @@ services:
       # be searched until a schema is found.  Change this
       # to match paths to your schema repositories.
       schema_base_uris:
-        - 'https://schema.wikimedia.org/repositories/primary/jsonschema'
+        - 'https://schema.wikimedia.org/repositories/primary/jsonschema/'
+        - 'https://schema.wikimedia.org/repositories/secondary/jsonschema/'
 
       # These schema URIs will be 'precached' on service startup.
       # They should be resolveable by the URI prefixes in schema_base_uris.
       schema_precache_uris:
         - /error/1.0.0
         - /test/event/1.0.0
+        - /change-prop/retry/1.0.0
+        - /change-prop/continue/1.0.0
+        - /resource_change/1.0.0
+        - /mediawiki/page/change/1.0.0
+        - /mediawiki/page/move/1.0.0
+        - /mediawiki/page/restrictions-change/1.0.0
+        - /mediawiki/page/delete/1.0.0
+        - /mediawiki/page/links-change/1.0.0
+        - /mediawiki/page/properties-change/1.0.0
+        - /mediawiki/page/undelete/1.0.0
+        - /mediawiki/recentchange/1.0.0
+        - /mediawiki/user/blocks-change/1.0.0
+        - /mediawiki/centralnotice/campaign/change/1.0.0
+        - /mediawiki/centralnotice/campaign/delete/1.0.0
+        - /mediawiki/centralnotice/campaign/create/1.0.0
+        - /mediawiki/job/1.0.0
+        - /mediawiki/revision/visibility-change/1.0.0
+        - /mediawiki/revision/score/2.0.0
+        - /mediawiki/revision/tags-change/1.0.0
+        - /mediawiki/revision/create/1.0.0
+        - /mediawiki/revision/create/1.1.0
+        - /mediawiki/revision/recommendation-create/1.0.0
+        - /mediawiki/page/image-suggestions-feedback/1.0.0
+        - /mediawiki/page/change/1.1.0
 
       # If set, this will be appended to every extracted schema_uri if that schema_uri
       # does not already end with a file extension.
