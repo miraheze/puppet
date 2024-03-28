@@ -81,6 +81,7 @@ changeprop::high_traffic_jobs_config:
     concurrency: 1
   ImportDumpJob:
     disable_delayed_execution: true
+    retry_limit: 0
     concurrency: 1
   ImportDumpNotifyJob:
     disable_delayed_execution: true
