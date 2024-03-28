@@ -162,3 +162,5 @@ role::prometheus::statsd_exporter::mappings:
       service: $1
       stream: $2
       partition: $3
+
+http_proxy: 'http://bastion.wikitide.net:8080'
