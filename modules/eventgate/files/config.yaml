@@ -130,7 +130,7 @@ services:
       # Request static stream config during startup from the EventStreamConfig extension
       # stream_config_ttl is not set, so stream configs will be cached permanently.
       # MW API endpoint for all streams with destination_event_service == eventgate
-      stream_config_uri: 'https://meta.miraheze.org/w/api.php?format=json&action=streamconfigs&constraints=destination_event_service=eventgate'
+      stream_config_uri: 'https://jobrunner.wikitide.net/w/api.php?format=json&action=streamconfigs&constraints=destination_event_service=eventgate'
       stream_config_uri_options: {'headers': {'Host': 'meta.miraheze.org'}}
       # Expect the stream -> settings map in the response at this subobject key
       stream_config_object_path: streams
