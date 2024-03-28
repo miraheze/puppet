@@ -8,7 +8,7 @@
 #
 # [*puppet_major_version*] Specify the puppetserver version you want to support / install.
 #
-# [*puppetserver_hostname*] Hostname of the puppetserver, eg puppet1.miraheze.org.
+# [*puppetserver_hostname*] Hostname of the puppetserver.
 #
 # [*puppetserver_java_opts*] Options to pass to the puppetserver, eg configuring the heap.
 #
