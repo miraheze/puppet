@@ -44,7 +44,7 @@ spec: &spec
               # The default value is 5ms, and we want Changeprop to batch
               # more messages rather than keep sending small ones.
               linger.ms: 20
-            concurrency: 25
+            concurrency: 50
             startup_delay: 60000
             disable_blacklist: true
             disable_ratelimit: true
@@ -99,7 +99,7 @@ spec: &spec
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
 # Use 'ncpu' to run as many workers as there are CPU units
-num_workers: 28
+num_workers: 32
 
 # Number of workers to start in parallel after the first worker.
 # The first worker is always started independently. After it has completed
