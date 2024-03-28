@@ -129,10 +129,7 @@ services:
 
       # Request static stream config during startup from the EventStreamConfig extension
       # stream_config_ttl is not set, so stream configs will be cached permanently.
-      # MW API endpoint for all streams with destination_event_service == eventgate-main
-      # We use meta.miraheze.org here as the default stream configuration wiki.
-      # Streams can be configured per wiki in mediawiki-config, but they should always be at
-      # least configured with a stream name and schema_title available from meta.wikimedia.org.
+      # MW API endpoint for all streams with destination_event_service == eventgate
       stream_config_uri: 'https://jobrunner.wikitide.net/w/api.php?format=json&action=streamconfigs&constraints=destination_event_service=eventgate'
       stream_config_uri_options: {'headers': {'Host': 'meta.miraheze.org'}}
       # Expect the stream -> settings map in the response at this subobject key
