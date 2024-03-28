@@ -12,11 +12,11 @@ server {
 
 	access_log  off;
 
-	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
-	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
+	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
+	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
 
 	location / {
-		proxy_pass https://<%= name %>.miraheze.org;
+		proxy_pass https://<%= name %>.wikitide.net;
 		proxy_http_version 1.1;
 		proxy_set_header Connection $connection_upgrade;
 		proxy_set_header Upgrade $http_upgrade;
