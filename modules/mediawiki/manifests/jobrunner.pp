@@ -71,9 +71,9 @@ class mediawiki::jobrunner {
         .unique()
         .sort(),
         ' '
-     )
+    )
 
-     ferm::service { 'eventgate-https':
+    ferm::service { 'eventgate-https':
         proto   => 'tcp',
         port    => '443',
         srange  => "(${firewall_rules_eventgate_str})",
