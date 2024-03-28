@@ -155,14 +155,11 @@ class SslCertificate:
         domain_key = self.domain.translate(str.maketrans('', '', string.punctuation))
 
         if domain_key not in certs_data:
-            certs_data[domain_key] = {
-                'url': self.domain,
-                'ca': 'LetsEncrypt',
-                'disable_event': False,
-            }
-
-            with open(file_path, 'a') as certs_file:
-                yaml.dump(certs_data, certs_file, default_flow_style=False)
+            with open(file_path, 'a') as certs:
+                certs.write(domain_key + ':\n')
+                certs.write(f"  url: '{self.domain}'\n")
+                certs.write("  ca: 'LetsEncrypt'\n")
+                certs.write('  disable_event: false\n')
 
             os.system('git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
             os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
