@@ -82,6 +82,9 @@ changeprop::high_traffic_jobs_config:
   ImportDumpJob:
     disable_delayed_execution: true
     concurrency: 1
+  ImportDumpNotifyJob:
+    disable_delayed_execution: true
+    concurrency: 1
 
 prometheus::exporter::statsd_exporter::use_defaults: false
 role::prometheus::statsd_exporter::mappings:
