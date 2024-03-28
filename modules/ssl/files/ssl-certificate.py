@@ -140,8 +140,8 @@ class SslCertificate:
                 print('Pushing LetsEncrypt SSL certificate to GitHub')
 
             os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bastion.wikitide.net:8080 %h %p\'"')
-            os.system('git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"')
-            os.system('git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"')
+            os.system('git -C /srv/ssl/ssl/ config user.name "WikiTideSSLBot"')
+            os.system('git -C /srv/ssl/ssl/ config user.email "noreply@wikitide.org"')
             os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
             os.system('git -C /srv/ssl/ssl/ pull')
             os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
@@ -222,8 +222,8 @@ class SslCertificate:
             print('Pushing LetsEncrypt SSL certificate to GitHub')
 
         os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bastion.wikitide.net:8080 %h %p\'"')
-        os.system('git -C /srv/ssl/ssl/ config user.name "MirahezeSSLBot"')
-        os.system('git -C /srv/ssl/ssl/ config user.email "noreply@miraheze.org"')
+        os.system('git -C /srv/ssl/ssl/ config user.name "WikiTideSSLBot"')
+        os.system('git -C /srv/ssl/ssl/ config user.email "noreply@wikitide.org"')
         os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
         os.system('git -C /srv/ssl/ssl/ pull')
         os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
