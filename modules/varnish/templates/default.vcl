@@ -374,7 +374,7 @@ sub vcl_recv {
 		return (synth(200));
 	}
 
-	if (req.http.host == "meta.miraheze.org" && req.url == "/wiki/Miraheze" && req.http.User-Agent ~ "(G|g)ooglebot") {
+	if (req.http.host == "meta.miraheze.org" && req.url == "/wiki/Miraheze_Meta" && req.http.User-Agent ~ "(G|g)ooglebot") {
 		return (synth(301, "Main Page Redirect"));
 	}
 
