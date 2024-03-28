@@ -1,3 +1,9 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+
+contactgroups: ['sre', 'mediawiki']
+
 changeprop::jobqueue: true
 changeprop::low_traffic_concurrency: 25
 changeprop::high_traffic_jobs_config:

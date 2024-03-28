@@ -1,9 +1,3 @@
-users::groups:
-  - mediawiki-admins
-  - mediawiki-roots
-
-contactgroups: ['sre', 'mediawiki']
-
 redis::heap: '1GB'
 
 http_proxy: 'http://bastion.wikitide.net:8080'
