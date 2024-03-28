@@ -384,8 +384,8 @@ sub vcl_recv {
 
 	if (
 		req.url ~ "^/\.well-known" ||
-		req.http.Host == "ssl.miraheze.org" ||
-		req.http.Host == "acme.miraheze.org"
+		req.http.Host == "ssl.wikitide.net" ||
+		req.http.Host == "acme.wikitide.net"
 	) {
 		set req.backend_hint = puppet181;
 		return (pass);
