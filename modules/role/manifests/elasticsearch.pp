@@ -19,17 +19,17 @@ class role::elasticsearch {
         config      => {
             'cluster.initial_master_nodes'                   => $es_master_hosts,
             'discovery.seed_hosts'                           => $es_discovery,
-            'cluster.name'                                   => 'miraheze-general',
+            'cluster.name'                                   => 'wikitide-general',
             'node.master'                                    => $es_master,
             'node.data'                                      => $es_data,
             'network.host'                                   => $facts['networking']['fqdn'],
             'xpack.security.enabled'                         => true,
             'xpack.security.http.ssl.enabled'                => true,
-            'xpack.security.http.ssl.key'                    => '/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.key',
-            'xpack.security.http.ssl.certificate'            => '/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.crt',
+            'xpack.security.http.ssl.key'                    => '/etc/elasticsearch/ssl/wikitide.net.key',
+            'xpack.security.http.ssl.certificate'            => '/etc/elasticsearch/ssl/wikitide.net.crt',
             'xpack.security.transport.ssl.enabled'           => true,
-            'xpack.security.transport.ssl.key'               => '/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.key',
-            'xpack.security.transport.ssl.certificate'       => '/etc/elasticsearch/ssl/wildcard.miraheze.org-2020-2.crt',
+            'xpack.security.transport.ssl.key'               => '/etc/elasticsearch/ssl/wikitide.net.key',
+            'xpack.security.transport.ssl.certificate'       => '/etc/elasticsearch/ssl/wikitide.net.crt',
             'xpack.security.transport.ssl.verification_mode' => 'certificate',
             # We use a firewall so this is safe
             'xpack.security.authc.anonymous.username'        => 'elastic',
@@ -56,7 +56,7 @@ class role::elasticsearch {
     }
 
     if $es_master {
-        nginx::site { 'elasticsearch.miraheze.org':
+        nginx::site { 'elasticsearch.wikitide.net':
             ensure  => present,
             source  => 'puppet:///modules/role/elasticsearch/nginx.conf',
             monitor => false,
