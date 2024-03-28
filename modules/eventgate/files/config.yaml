@@ -143,12 +143,16 @@ services:
       # Default: 1
       #stream_config_retries: 1
 
-      # If test_events is set, a GET /v1/_test/events route will be added.
-      # When this route is requested, these test_events will be processed through EventGate
-      # as if it they were directly POSTed to /v1/events.
-      # This is useful for readiness probes that want to make sure the service
-      # is alive and ready to produce events end to end.
-      test_events: [{$schema: /test/0.0.1, meta: {stream: test_events, id: "12345678-1234-5678-1234-567812345678"}, test: "example string"}]
+      # If test_events is set, EventGate will set up a /v1/_test/events
+      # route that will process these test_events as if they were POSTed
+      # to /v1/events.
+      # IMPORTANT:
+      # If you are using stream config, make sure this stream is configured!
+      test_events:
+      - $schema: /test/event/1.0.0
+        meta:
+          # make sure this is configured in stream config if you are using it.
+          stream: eventgate.test.event
 
       # If this is set and an event does not have schema_uri_field, the value of
       # event[schema_uri_field] will be set to the value of this HTTP query paramater
