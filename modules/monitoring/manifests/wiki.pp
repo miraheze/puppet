@@ -2,7 +2,7 @@ define monitoring::wiki (
     $ensure       = present,
     $contacts     = lookup('contactgroups', {'default_value' => [ 'sre' ]}),
     $protocol     = 'https',
-    $domain       = 'miraheze.org',
+    $domain       = 'wikitide.net',
     $testpage     = 'Main_Page',
     $http_version = '1.1',
     $enable_ssl   = true,
