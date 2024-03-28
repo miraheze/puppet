@@ -2,7 +2,7 @@
 'use strict';
 
 const _ = require('lodash');
-const uuid = require('uuid');
+const { v1: uuidv1 } = require('uuid');
 
 const {
     urlGetObject,
@@ -231,7 +231,7 @@ function makeMapToErrorEvent(options, metrics) {
 
         const errorEvent = {
             meta: {
-                id: uuid(),
+                id: uuidv1(),
                 dt: now.toISOString(),
                 uri: getToString(event, 'meta.uri', 'unknown'),
                 domain: getToString(event, 'meta.domain', 'unknown'),
@@ -547,9 +547,9 @@ function makeSetCustomDefaults(options, logger) {
             );
         }
 
-        // meta.id ||= new uuid
+        // meta.id ||= new uuidv1
         if (_.has(schema, 'properties.meta.properties.id') && !_.has(event, 'meta.id')) {
-            _.set(event, 'meta.id', uuid());
+            _.set(event, 'meta.id', uuidv1());
             logger.trace(`Set meta.dt in ${eventRepr(event, context)}`);
         }
 
