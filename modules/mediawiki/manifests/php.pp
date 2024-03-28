@@ -25,26 +25,31 @@ class mediawiki::php (
         'default_socket_timeout' => 60,
     }
 
-    # Custom config for php-fpm
-    $base_config_fpm = {
+    $config_opcache = {
         'opcache.enable'                  => 1,
+        'opcache.enable_cli'              => 1,
         'opcache.interned_strings_buffer' => 96,
         'opcache.memory_consumption'      => 1024,
         'opcache.max_accelerated_files'   => 50000,
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,
         'opcache.revalidate_freq'         => 10,
+        'opcache.jit_buffer_size'         => $apc_shm_size,
+    }
+
+    # Custom config for php-fpm
+    $base_config_fpm = {
         'display_errors'                  => 0,
         'session.upload_progress.enabled' => 0,
         'enable_dl'                       => 0,
-        'apc.shm_size'                    => $apc_shm_size,
         'rlimit_core'                     => 0,
+        'apc.shm_size'                    => $apc_shm_size,
     }
     if $enable_fpm {
         $_sapis = ['cli', 'fpm']
         $_config = {
-            'cli' => $config_cli,
-            'fpm' => $config_cli + $base_config_fpm + $fpm_config
+            'cli' => $config_cli + $config_opcache,
+            'fpm' => $config_cli + $config_opcache + $base_config_fpm + $fpm_config
         }
         # Add systemd override for php-fpm, that should prevent a reload
         # if the fpm config files are broken.

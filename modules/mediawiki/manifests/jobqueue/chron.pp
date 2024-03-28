@@ -18,8 +18,8 @@ class mediawiki::jobqueue::chron (
             }
         }
         systemd::service { 'jobchron':
-            ensure    => absent,
-            content   => systemd_template('jobchron'),
+            ensure  => absent,
+            content => systemd_template('jobchron'),
         }
     } else {
         if !defined(Class['mediawiki::jobqueue::shared']) {
