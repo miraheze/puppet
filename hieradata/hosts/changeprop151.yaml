@@ -1,5 +1,5 @@
 changeprop::jobqueue: true
-changeprop::low_traffic_concurrency: 25
+changeprop::low_traffic_concurrency: 50
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
