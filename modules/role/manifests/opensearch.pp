@@ -24,8 +24,8 @@ class role::opensearch (
             'plugins.security.ssl.transport.pemtrustedcas_filepath' => '/etc/opensearch/ssl/opensearch-ca.pem',
             'plugins.security.ssl_cert_reload_enabled'              => true,
             # TODO: Admin must use its own certificate.
-            'plugins.security.authcz.admin_dn'                      => ['CN=ADMIN_MIRAHEZE,O=Miraheze LTD,L=Worksop,ST=Nottinghamshire,C=GB'],
-            'plugins.security.nodes_dn'                             => ['CN=*.miraheze.org'],
+            'plugins.security.authcz.admin_dn'                      => ['CN=ADMIN_WIKITIDE,O=WikiTide Foundation,L=Washington,ST=DC,C=US'],
+            'plugins.security.nodes_dn'                             => ['CN=*.wikitide.net'],
             'plugins.security.restapi.roles_enabled'                => ['all_access', 'security_rest_api_access'],
         }
     } else {
@@ -38,7 +38,7 @@ class role::opensearch (
         config      => {
             'cluster.initial_master_nodes' => $os_master_hosts,
             'discovery.seed_hosts'         => $os_discovery,
-            'cluster.name'                 => 'miraheze-general',
+            'cluster.name'                 => 'wikitide-general',
             'node.master'                  => $os_master,
             'node.data'                    => $os_data,
             'network.host'                 => '0.0.0.0',
@@ -175,7 +175,7 @@ class role::opensearch (
         # For nginx
         ssl::wildcard { 'opensearch wildcard': }
 
-        nginx::site { 'opensearch.miraheze.org':
+        nginx::site { 'opensearch.wikitide.net':
             ensure  => present,
             content => template('role/opensearch/nginx.conf.erb'),
             monitor => false,
