@@ -26,10 +26,13 @@ spec: &spec
             templates:
               partition_stream: 'cpjobqueue.partitioned.{{message.meta.stream}}'
             partition_key: database
-            partition_default: 0
+            partition_default: 2
             partition_map:
-              loginwiki: 1
-              metawiki: 2
+              # partition 0
+              loginwiki: 0
+              # partition 1
+              metawiki: 1
+              # partition 2: default
 <% end -%>
     /{api:sys}/queue:
       x-modules:
