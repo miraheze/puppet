@@ -2,6 +2,8 @@
 #
 # Defines a jobrunner process for jobrunner selected machine only.
 class mediawiki::jobrunner {
+    include prometheus::exporter::apache
+
     $port = 9005
     $local_only_port = 9006
     $php_fpm_sock = 'php/fpm-www.sock'

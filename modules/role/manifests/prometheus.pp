@@ -163,6 +163,23 @@ class role::prometheus {
         port   => 9113
     }
 
+    $apache_job = [
+        {
+            'job_name' => 'apache',
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/apache.yaml' ]
+                }
+            ]
+        }
+    ]
+
+    prometheus::class { 'apache':
+        dest   => '/etc/prometheus/targets/apache.yaml',
+        module => 'Prometheus::Exporter::Apache',
+        port   => 9117
+    }
+
     $puppetserver_job = [
         {
             'job_name' => 'puppetserver',
@@ -311,7 +328,7 @@ class role::prometheus {
         global_extra => $global_extra,
         scrape_extra => [
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
-            $puppetserver_job, $puppetdb_job, $memcached_job,
+            $apache_job, $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
             $varnish_job, $cadvisor_job, $pushgateway_job, $kafka_job,
             $eventgate_job
