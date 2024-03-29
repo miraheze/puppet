@@ -6,6 +6,7 @@ class changeprop (
     $realm                    = lookup('changeprop::realm', {'default_value' => 'production'}),
     $proxy                    = lookup('changeprop::proxy', {'default_value' => ''}),
     $high_traffic_jobs_config = lookup('changeprop::high_traffic_jobs_config', {'default_value' => {}}),
+    $partitioned_jobs_config  = lookup('changeprop::partitioned_jobs_config', {'default_value' => {}}),
     $low_traffic_concurrency  = lookup('changeprop::low_traffic_concurrency', {'default_value' => 50}),
     $redis_host               = lookup('changeprop::redis_host', {'default_value' => 'localhost'}),
     $redis_password           = lookup('passwords::redis::master')

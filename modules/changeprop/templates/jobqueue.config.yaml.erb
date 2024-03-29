@@ -19,6 +19,17 @@ spec: &spec
               host: <%= @redis_host %>
               port: 6379
               password: '<%= @redis_password %>'
+    /{api:sys}/partition/mediawiki_database:
+      x-modules:
+        - path: src/sys/partitioner.js
+          options:
+            templates:
+              partition_stream: 'cpjobqueue.partitioned.{{message.meta.stream}}'
+            partition_key: database
+            partition_default: 0
+            partition_map:
+              loginwiki: 1
+              metawiki: 2
 <% end -%>
     /{api:sys}/queue:
       x-modules:
@@ -65,6 +76,30 @@ spec: &spec
                   agentOptions:
                     keepAlive: true
 <% end -%>
+<% @partitioned_jobs_config.each do |topic, options| -%>
+              <%= topic %>_partitioner:
+                topic: 'mediawiki.job.<%= topic %>'
+                concurrency: <%= options['partitioner_concurrency'] %>
+                exec:
+                  method: post
+                  uri: '/sys/partition/<%= options['partitioner_kind'] %>/'
+                  headers:
+                    content-type: application/json
+                  body: '{{globals.message}}'
+              <%= topic %>:
+                topic: 'cpjobqueue.partitioned.mediawiki.job.<%= topic %>'
+<% options['partition'].each do |key, value| -%>
+                <%= key %>: <%= value %>
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: application/json
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+<% end -%>
               # Now special rule to cover all the low-traffic jobs
               low_traffic_jobs:
                 concurrency: <%= @low_traffic_concurrency %>
@@ -73,6 +108,9 @@ spec: &spec
                 # Don't execute anything that's covered by different rules
                 exclude_topics:
 <% @high_traffic_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @partitioned_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
                 exec:
