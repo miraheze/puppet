@@ -6,7 +6,7 @@ class prometheus::exporter::apache {
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
-        content => 'ARGS="--scrape_uri http://127.0.0.1/server-status/?auto"',
+        content => 'ARGS="--scrape_uri http://127.0.0.1:9006/server-status/?auto"',
         notify  => Service['prometheus-apache-exporter'],
     }
 
