@@ -9,12 +9,10 @@ groups:
     description: sudo on MediaWiki servers
     members: [alex, macfan, oa]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service apache2 *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service mcrouter *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service nutcracker *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php7.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service jobchron *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
@@ -56,7 +54,6 @@ groups:
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service jobrunner *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
 
