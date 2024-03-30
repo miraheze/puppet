@@ -68,6 +68,11 @@ class changeprop (
         require => Git::Clone['changeprop'],
     }
 
+    nginx::site { 'jobrunner':
+        ensure => present,
+        source => 'puppet:///modules/changeprop/nginx/jobrunner.conf',
+    }
+
     monitoring::services { 'changeprop':
         check_command => 'tcp',
         vars          => {
