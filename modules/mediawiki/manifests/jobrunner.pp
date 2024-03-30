@@ -58,7 +58,7 @@ class mediawiki::jobrunner {
         content  => template('mediawiki/jobrunner.conf.erb'),
     }
 
-    $firewall_rules_jobrunned_str = join(
+    $firewall_rules_jobrunner_str = join(
         query_facts('Class[Role::Changeprop] or Class[Role::Eventgate]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
