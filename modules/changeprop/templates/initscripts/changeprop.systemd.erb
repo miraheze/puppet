@@ -11,6 +11,7 @@ Group=changeprop
 SyslogIdentifier=changeprop
 WorkingDirectory=/srv/changeprop
 ExecStart=/usr/bin/node /srv/changeprop/src/server.js -c /etc/changeprop/config.yaml
+Environment="PREQ_CONNECT_TIMEOUT=60"
 KillMode=process
 Restart=on-success
 Restart=always
