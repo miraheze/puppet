@@ -29,7 +29,7 @@
     RewriteCond %{REQUEST_URI} !^/(w/healthcheck|rpc/RunSingleJob)\.php
     RewriteRule ^ - [R=404,L]
     <FilesMatch "\.php$">
-        SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>|fcgi://127.0.0.1:<%= @port %>"
+        SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>|fcgi://localhost"
     </FilesMatch>
     ErrorLog ${APACHE_LOG_DIR}/jobqueue-error.log
     CustomLog ${APACHE_LOG_DIR}/jobqueue-access.log wt
