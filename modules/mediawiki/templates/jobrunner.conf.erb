@@ -19,8 +19,7 @@
 
 <VirtualHost *:<%= @local_only_port %>>
     ServerName jobrunner.wikitide.net
-    ServerAlias mwtask171.wikitide.net
-    ServerAlias mwtask181.wikitide.net
+    ServerAlias <%= @facts['networking']['fqdn'] %>
     Timeout 86402
     DocumentRoot "/srv/mediawiki"
     RewriteEngine On
