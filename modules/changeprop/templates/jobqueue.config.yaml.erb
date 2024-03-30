@@ -72,9 +72,10 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/w/rest.php/eventbus/v0/internal/job/execute'
                   headers:
                     content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -96,9 +97,10 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/w/rest.php/eventbus/v0/internal/job/execute'
                   headers:
                     content-type: application/json
+                    host: '{{message.meta.domain}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -118,9 +120,10 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/w/rest.php/eventbus/v0/internal/job/execute'
                   headers:
                     content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -129,9 +132,10 @@ spec: &spec
                 topic: '/^mediawiki\.job\..*/'
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/w/rest.php/eventbus/v0/internal/job/execute'
                   headers:
                     content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
