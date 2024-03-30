@@ -58,8 +58,8 @@ class mediawiki::jobrunner {
         content  => template('mediawiki/jobrunner.conf.erb'),
     }
 
-    $firewall_rules_eventgate_str = join(
-        query_facts('Class[Role::Eventgate]', ['networking'])
+    $firewall_rules_jobrunned_str = join(
+        query_facts('Class[Role::Changeprop] or Class[Role::Eventgate]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
@@ -75,10 +75,17 @@ class mediawiki::jobrunner {
         ' '
     )
 
-    ferm::service { 'eventgate-https':
+    ferm::service { 'jobrunner-http':
+        proto   => 'tcp',
+        port    => '80',
+        srange  => "(${firewall_rules_jobrunner_str})",
+        notrack => true,
+    }
+
+    ferm::service { 'jobrunner-https':
         proto   => 'tcp',
         port    => '443',
-        srange  => "(${firewall_rules_eventgate_str})",
+        srange  => "(${firewall_rules_jobrunner_str})",
         notrack => true,
     }
 
