@@ -24,7 +24,6 @@ types {
     image/x-jng                           jng;
     image/x-ms-bmp                        bmp;
 
-    application/font-woff                 woff;
     font/woff                             woff;
     font/woff2                            woff2;
     application/java-archive              jar war ear;
