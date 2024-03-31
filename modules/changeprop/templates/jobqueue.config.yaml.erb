@@ -144,7 +144,7 @@ spec: &spec
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
 # Use 'ncpu' to run as many workers as there are CPU units
-num_workers: 28
+num_workers: 16
 
 # Number of workers to start in parallel after the first worker.
 # The first worker is always started independently. After it has completed
@@ -164,7 +164,7 @@ worker_heartbeat_timeout: false
 
 # Logger info
 logging:
-  level: error
+  level: debug
   streams:
     - type: stdout
       named_levels: true
