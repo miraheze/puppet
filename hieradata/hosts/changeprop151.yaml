@@ -1,5 +1,6 @@
 changeprop::jobqueue: true
 changeprop::jobrunner_host: 'http://10.0.17.144:9006'
+changeprop::num_workers: 12
 changeprop::low_traffic_concurrency: 50
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
