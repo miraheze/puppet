@@ -88,7 +88,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @import_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
