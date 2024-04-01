@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import os
 import argparse
 import re
 import json
@@ -11,7 +12,6 @@ class DbClusterMap(TypedDict):
     c2: str
     c3: str
     c4: str
-    c5: str
 
 
 # Define the mapping of db clusters to db names
@@ -58,18 +58,18 @@ def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
 
     try:
         oldwiki_cluster = get_db_cluster(oldwiki_db)
-    except KeyError:
+    except KeyError, IndexError:
         print(f'Error: Unable to determine the db cluster for {oldwiki_db}')
         sys.exit(1)
 
     # Step 2: Execute SQL commands for rename
-    execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f'sudo -i mysqldump {oldwiki_db} > /home/reception/{oldwiki_db}.sql'))
+    execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f'sudo -i mysqldump {oldwiki_db} > /home/{os.getlogin()}/{oldwiki_db}.sql'))
     execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f"sudo -i mysql -e 'CREATE DATABASE {newwiki_db}'"))
-    execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f"sudo -i mysql -e 'USE {newwiki_db}; SOURCE /home/reception/{oldwiki_db}.sql;'"))
+    execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f"sudo -i mysql -e 'USE {newwiki_db}; SOURCE /home/{os.getlogin()}/{oldwiki_db}.sql;'"))
 
     # Step 3: Execute MediaWiki rename script
     execute_salt_command(salt_command=generate_salt_command('mwtask181', f'sudo -u www-data php /srv/mediawiki/1.41/extensions/CreateWiki/maintenance/renameWiki.php --wiki=loginwiki --rename {oldwiki_db} {newwiki_db} Reception123'))
-    execute_salt_command(salt_command=generate_salt_command('mwtask181', f"/usr/local/bin/logsalmsg 'Renamed {oldwiki_db} to {newwiki_db} using renamewiki.py'"))
+    execute_salt_command(salt_command=generate_salt_command('mwtask181', f"/usr/local/bin/logsalmsg '{os.getlogin()} renamed {oldwiki_db} to {newwiki_db} using renamewiki.py'"))
 
 
 
