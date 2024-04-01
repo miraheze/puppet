@@ -5,7 +5,7 @@ class changeprop (
     $jobrunner_host           = lookup('changeprop::jobrunner_host', {'default_value' => 'http://localhost:4063'}),
     $realm                    = lookup('changeprop::realm', {'default_value' => 'production'}),
     $proxy                    = lookup('changeprop::proxy', {'default_value' => ''}),
-    $num_workers              = lookup('changeprop::num_workers', {'default_value' => 'ncpu'}),
+    $num_workers              = lookup('changeprop::num_workers', {'default_value' => 1}),
     $high_traffic_jobs_config = lookup('changeprop::high_traffic_jobs_config', {'default_value' => {}}),
     $partitioned_jobs_config  = lookup('changeprop::partitioned_jobs_config', {'default_value' => {}}),
     $low_traffic_concurrency  = lookup('changeprop::low_traffic_concurrency', {'default_value' => 50}),
