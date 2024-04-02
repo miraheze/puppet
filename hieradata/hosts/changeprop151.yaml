@@ -55,13 +55,13 @@ changeprop::high_traffic_jobs_config:
     concurrency: 25
     reenqueue_delay: 3600
   parsoidCachePrewarm:
-    concurrency: 100
+    concurrency: 150
   htmlCacheUpdate:
     concurrency: 50
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   refreshLinks:
-    concurrency: 5
+    concurrency: 25
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
@@ -80,11 +80,14 @@ changeprop::high_traffic_jobs_config:
   CreateWikiJob:
     disable_delayed_execution: true
     concurrency: 1
-  DataDumpGenerateJob:
+  RemovePIIJob:
     disable_delayed_execution: true
     concurrency: 1
 
 changeprop::import_jobs_config:
+  DataDumpGenerateJob:
+    disable_delayed_execution: true
+    concurrency: 1
   ImportDumpJob:
     disable_delayed_execution: true
     retry_limit: 0
