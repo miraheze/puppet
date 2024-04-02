@@ -13,6 +13,7 @@ node 'bots171.wikitide.net' {
 node 'changeprop151.wikitide.net' {
     include base
     include role::changeprop
+    include role::mediawiki
     include role::redis
 }
 
