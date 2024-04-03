@@ -236,7 +236,6 @@ class mediawiki::php (
             'extension' => 'xhprof.so',
         }
     }
-    }
 
     # Set the default interpreter to php8
     $cli_path = "/usr/bin/php${php_version}"
