@@ -33,16 +33,9 @@ class php::default_extensions (
         'tokenizer'
     ]
 
-    # TODO: Remove when we no longer support php 7.4
-    if ($version == '7.4' or $version == undef) {
-        $_base_extensions = [ 'json' ] + $base_extensions
-    } else {
-        $_base_extensions = $base_extensions
-    }
-
     # None of these extensions need to install a package - they're part of the core
     # package on debian. So, pass an empty string as a package name.
-    php::extension { $_base_extensions:
+    php::extension { $base_extensions:
         package_name => '',
         priority     => 20,
     }

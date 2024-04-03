@@ -99,13 +99,8 @@ class icinga::web(
     $_db_port = $db_port
   }
 
-  if $facts[os][distro][codename] in ['focal', 'bullseye'] {
-    $php_globals = {
-      php_version => '7.4',
-    }
-  } else {
-    $php_globals = {}
-  }
+  $php_globals = {}
+
   $php_extensions = {
     mbstring => {},
     json     => {},
