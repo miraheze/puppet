@@ -86,9 +86,9 @@ class postgresql::server(
             group  => 'postgres',
         }
 
-        file { "/etc/postgresql/${_pgversion}/main/ssl/wildcard.miraheze.org.key":
+        file { "/etc/postgresql/${_pgversion}/main/ssl/wikitide.net.key":
             ensure  => 'present',
-            source  => 'puppet:///ssl-keys/wildcard.miraheze.org-2020-2.key',
+            source  => 'puppet:///ssl-keys/wikitide.net.key',
             owner   => 'postgres',
             group   => 'postgres',
             mode    => '0600',
@@ -102,7 +102,7 @@ class postgresql::server(
             group   => 'root',
             mode    => '0444',
             before  => Service['postgresql'],
-            require => File["/etc/postgresql/${_pgversion}/main/ssl/wildcard.miraheze.org.key"],
+            require => File["/etc/postgresql/${_pgversion}/main/ssl/wikitide.net.key"],
         }
     }
 
