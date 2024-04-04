@@ -107,9 +107,9 @@ query_response_time_stats      = ON
 
 <%- if @enable_ssl -%>
 ssl
-ssl-ca                         = /etc/ssl/certs/Sectigo.crt
-ssl-cert                       = /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt
-ssl-key                        = /etc/ssl/private/wildcard.miraheze.org-2020-2.key
+ssl-ca                         = /etc/ssl/certs/LetsEncrypt.crt
+ssl-cert                       = /etc/ssl/localcerts/wikitide.net.crt
+ssl-key                        = /etc/ssl/private/wikitide.net.key
 tls_version                    = TLSv1.2,TLSv1.3
 <%- end -%>
 
