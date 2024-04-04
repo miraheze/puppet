@@ -27,6 +27,11 @@ class ssl::web {
             File['/usr/local/bin/renew-ssl'],
         ],
     }
+    
+    systemd::service { 'mirahezerenewssl':
+        ensure  => absent,
+        content => systemd_template('wikitiderenewssl'),
+    }
 
     systemd::service { 'wikitiderenewssl':
         ensure  => present,
