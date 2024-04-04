@@ -24,7 +24,7 @@ class role::grafana {
 
     cron { 'grafana-backup':
         ensure   => present,
-        command  => '/usr/local/bin/miraheze-backup backup grafana > /var/log/grafana-backup.log 2>&1',
+        command  => '/usr/local/bin/wikitide-backup backup grafana > /var/log/grafana-backup.log 2>&1',
         user     => 'root',
         minute   => '0',
         hour     => '3',

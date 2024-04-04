@@ -119,7 +119,7 @@ class swift::ac {
     # Backups
     cron { 'backups-swift-account-container':
         ensure  => present,
-        command => '/usr/local/bin/miraheze-backup backup swift-account-container > /var/log/swift-account-container-backup.log 2>&1',
+        command => '/usr/local/bin/wikitide-backup backup swift-account-container > /var/log/swift-account-container-backup.log 2>&1',
         user    => 'root',
         minute  => '0',
         hour    => '6',

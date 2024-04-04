@@ -6,8 +6,8 @@ class base::backup (
         ensure => present,
     }
 
-    file { '/usr/local/bin/miraheze-backup':
+    file { '/usr/local/bin/wikitide-backup':
         mode    => '0555',
-        content => template('base/backups/miraheze-backup.py.erb'),
+        content => template('base/backups/wikitide-backup.py.erb'),
     }
 }
