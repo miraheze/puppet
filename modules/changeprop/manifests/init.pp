@@ -24,7 +24,7 @@ class changeprop (
         location => 'http://deb.debian.org/debian/',
         repos    => 'main',
         release  => 'bullseye',
-        pin      => -10, 
+        pin      => -10,
         include  => {
             'src' => true,
             'deb' => true,
@@ -32,9 +32,9 @@ class changeprop (
     }
 
     # Need to update before trying to install libssl1.1 
-    Class['apt::update'] ->
+    Class['apt::update']
 
-    stdlib::ensure_packages(['nodejs', 'libssl1.1', 'libsasl2-dev'])
+    -> stdlib::ensure_packages(['nodejs', 'libssl1.1', 'libsasl2-dev'])
 
     group { 'changeprop':
         ensure => present,
