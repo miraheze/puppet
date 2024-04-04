@@ -20,6 +20,20 @@ class changeprop (
     $redis_host                     = lookup('changeprop::redis_host', {'default_value' => 'localhost'}),
     $redis_password                 = lookup('passwords::redis::master')
 ) {
+    apt::source { 'bullseye':
+        location => 'http://deb.debian.org/debian/',
+        repos    => 'main',
+        release  => 'bullseye',
+        pin      => -10, 
+        include  => {
+            'src' => true,
+            'deb' => true,
+        }
+    }
+
+    # Need to update before trying to install libssl1.1 
+    Class['apt::update'] ->
+
     stdlib::ensure_packages(['nodejs', 'libssl1.1', 'libsasl2-dev'])
 
     group { 'changeprop':
