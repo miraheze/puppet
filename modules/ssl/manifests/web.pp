@@ -28,11 +28,6 @@ class ssl::web {
         ],
     }
 
-    systemd::service { 'mirahezerenewssl':
-        ensure  => absent,
-        content => systemd_template('wikitiderenewssl'),
-    }
-
     systemd::service { 'wikitiderenewssl':
         ensure  => present,
         content => systemd_template('wikitiderenewssl'),
