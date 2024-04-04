@@ -137,6 +137,36 @@ spec: &spec
                   agentOptions:
                     keepAlive: true
 <% end -%>
+              global_new_files_jobs:
+                concurrency: <%= @global_new_files_concurrency %>
+                topics:
+<% @global_new_files_jobs.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+              semantic_mediawiki_jobs:
+                concurrency: <%= @semantic_mediawiki_concurrency %>
+                topics:
+<% @semantic_mediawiki_jobs.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
               # Now special rule to cover all the low-traffic jobs
               low_traffic_jobs:
                 concurrency: <%= @low_traffic_concurrency %>
@@ -154,6 +184,12 @@ spec: &spec
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @partitioned_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @global_new_files_jobs.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @semantic_mediawiki_jobs.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
                 exec:
