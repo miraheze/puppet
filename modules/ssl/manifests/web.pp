@@ -4,11 +4,11 @@ class ssl::web {
 
     stdlib::ensure_packages(['python3-flask', 'python3-filelock'])
 
-    file { '/usr/local/bin/mirahezerenewssl.py':
+    file { '/usr/local/bin/wikitiderenewssl.py':
         ensure => present,
-        source => 'puppet:///modules/ssl/mirahezerenewssl.py',
+        source => 'puppet:///modules/ssl/wikitiderenewssl.py',
         mode   => '0755',
-        notify => Service['mirahezerenewssl'],
+        notify => Service['wikitiderenewssl'],
     }
 
     file { '/usr/local/bin/renew-ssl':
@@ -23,14 +23,19 @@ class ssl::web {
         group  => 'root',
         mode   => '0750',
         before => [
-            File['/usr/local/bin/mirahezerenewssl.py'],
+            File['/usr/local/bin/wikitiderenewssl.py'],
             File['/usr/local/bin/renew-ssl'],
         ],
     }
 
     systemd::service { 'mirahezerenewssl':
+        ensure  => absent,
+        content => systemd_template('wikitiderenewssl'),
+    }
+
+    systemd::service { 'wikitiderenewssl':
         ensure  => present,
-        content => systemd_template('mirahezerenewssl'),
+        content => systemd_template('wikitiderenewssl'),
         restart => true,
     }
 
@@ -64,9 +69,9 @@ class ssl::web {
         $address = $facts['networking']['ip6']
     }
 
-    monitoring::services { 'MirahezeRenewSsl':
+    monitoring::services { 'WikiTideRenewSSL':
         check_command => 'tcp',
-        docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#MirahezeRenewSSL',
+        docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#WikiTideRenewSSL',
         vars          => {
             tcp_address => $address,
             tcp_port    => '5000',
