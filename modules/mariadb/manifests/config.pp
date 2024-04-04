@@ -136,14 +136,14 @@ class mariadb::config(
             mysql_username => 'icinga',
             mysql_password => $icinga_password,
             mysql_ssl      => true,
-            mysql_cacert   => '/etc/ssl/certs/Sectigo.crt',
+            mysql_cacert   => '/etc/ssl/certs/LetsEncrypt.crt',
         },
     }
 
     if $enable_ssl {
         $ssl = {
             mysql_ssl       => $enable_ssl,
-            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
+            mysql_cacert    => '/etc/ssl/certs/LetsEncrypt.crt',
         }
     } else {
         $ssl = {
