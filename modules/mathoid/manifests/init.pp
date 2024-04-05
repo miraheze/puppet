@@ -19,7 +19,7 @@ class mathoid {
     git::clone { 'mathoid':
         ensure             => 'latest',
         directory          => '/srv/mathoid',
-        origin             => 'https://github.com/miraheze/mathoid-deploy.git',
+        origin             => 'https://github.com/miraheze/mathoid-deploy',
         branch             => 'master',
         owner              => 'mathoid',
         group              => 'mathoid',

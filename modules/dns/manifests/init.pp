@@ -9,7 +9,7 @@ class dns {
     git::clone { 'dns':
         ensure    => latest,
         directory => '/etc/gdnsd',
-        origin    => 'https://github.com/miraheze/dns.git',
+        origin    => 'https://github.com/miraheze/dns',
         owner     => 'root',
         group     => 'root',
         before    => Package['gdnsd'],
