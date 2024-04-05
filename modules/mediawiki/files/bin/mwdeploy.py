@@ -90,10 +90,10 @@ def get_valid_skins(versions: list[str]) -> list[str]:
 def get_extensions_in_pack(pack_name: str) -> list[str]:
     packs = {
         'bundled': ['AbuseFilter', 'CategoryTree', 'Cite', 'CiteThisPage', 'CodeEditor', 'ConfirmEdit', 'DiscussionTools', 'Echo', 'Gadgets', 'ImageMap', 'InputBox', 'Interwiki', 'Linter', 'LoginNotify', 'Math', 'MultimediaViewer', 'Nuke', 'OATHAuth', 'PageImages', 'ParserFunctions', 'PdfHandler', 'Poem', 'ReplaceText', 'Scribunto', 'SpamBlacklist', 'SyntaxHighlight_GeSHi', 'TemplateData', 'TextExtracts', 'Thanks', 'TitleBlacklist', 'VisualEditor', 'WikiEditor'],
-        'miraheze': ['CreateWiki', 'DataDump', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'MatomoAnalytics', 'MirahezeMagic', 'PDFEmbed', 'RemovePII', 'RottenLinks', 'SpriteSheet', 'WikiDiscover', 'YouTube'],
         'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
         'socialtools': ['AJAXPoll', 'BlogPage', 'Comments', 'ContributionScores', 'HAWelcome', 'ImageRating', 'MediaWikiChat', 'NewSignupPage', 'PollNY', 'QuizGame', 'RandomGameUnit', 'SocialProfile', 'Video', 'VoteNY', 'WikiForum', 'WikiTextLoggedInOut'],
         'universalomega': ['AutoCreatePage', 'DiscordNotifications', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleBlogPage', 'SimpleTooltip'],
+        'wikitide': ['CreateWiki', 'DataDump', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'MatomoAnalytics', 'MirahezeMagic', 'PDFEmbed', 'RemovePII', 'RequestSSL', 'RottenLinks', 'SpriteSheet', 'WikiDiscover', 'YouTube'],
     }
     return packs.get(pack_name, [])
 
