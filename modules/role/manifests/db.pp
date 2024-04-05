@@ -40,27 +40,27 @@ class role::db (
         enable_slow_log => $enable_slow_log,
     }
 
-    file { '/etc/mysql/miraheze/mediawiki-grants.sql':
+    file { '/etc/mysql/wikitide/mediawiki-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/mediawiki-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/matomo-grants.sql':
+    file { '/etc/mysql/wikitide/matomo-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/matomo-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/phorge-grants.sql':
+    file { '/etc/mysql/wikitide/phorge-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/phorge-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/icinga2-grants.sql':
+    file { '/etc/mysql/wikitide/icinga2-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/icinga2-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/reports-grants.sql':
+    file { '/etc/mysql/wikitide/reports-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/reports-grants.sql.erb'),
     }
