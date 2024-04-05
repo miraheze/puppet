@@ -12,7 +12,7 @@ from pywikibot import family
 
 class Family(family.Family):  # noqa: D101
 
-    name = 'miraheze'
+    name = 'wikitide'
     langs = {
         'meta': 'meta.miraheze.org',
         'test': 'test.miraheze.org',

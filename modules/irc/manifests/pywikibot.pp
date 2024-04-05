@@ -48,20 +48,20 @@ class irc::pywikibot {
         require => Git::Clone['PyWikiBot'],
     }
 
-    file { "${install_path}/families/miraheze_family.py":
+    file { "${install_path}/families/wikitide_family.py":
         ensure  => present,
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
-        content => template('irc/pywikibot/miraheze_family.py'),
+        content => template('irc/pywikibot/wikitide_family.py'),
         require => Git::Clone['PyWikiBot'],
     }
 
     cron { 'run pywikibot archivebot on meta':
-            ensure  => present,
-            command => '/usr/bin/python3 /srv/pywikibot/pwb.py archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /srv/pywikibot/cron.log 2>&1',
-            user    => 'irc',
-            minute  => '0',
-            hour    => '0',
-        }
+        ensure  => present,
+        command => '/usr/bin/python3 /srv/pywikibot/pwb.py archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /srv/pywikibot/cron.log 2>&1',
+        user    => 'irc',
+        minute  => '0',
+        hour    => '0',
+    }
 }
