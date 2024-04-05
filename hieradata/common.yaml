@@ -132,7 +132,7 @@ swift::storage::devices:
   - swiftobject181
 
 role::mediawiki::mcrouter::shards:
-  miraheze:
+  wikitide:
     shard01:
       host: 10.0.15.113
     shard02:
