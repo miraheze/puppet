@@ -21,7 +21,7 @@ class TestArchiveUploader(unittest.TestCase):
         self.assertEqual(args.collection, 'opensource')
         self.assertEqual(args.description, '')
         self.assertEqual(args.mediatype, 'web')
-        self.assertEqual(args.subject, 'miraheze;wikiteam')
+        self.assertEqual(args.subject, 'wikitide;wikiteam')
         self.assertEqual(args.proxy, '')
 
     @patch('argparse.ArgumentParser.parse_args')
@@ -42,7 +42,7 @@ class TestArchiveUploader(unittest.TestCase):
             'collection': 'opensource',
             'description': '',
             'mediatype': 'web',
-            'subject': 'miraheze;wikiteam',
+            'subject': 'wikitide;wikiteam',
             'proxy': '',
         }
         mock_parse_args.return_value = MagicMock(**mock_args)
@@ -54,7 +54,7 @@ class TestArchiveUploader(unittest.TestCase):
             'date': now.strftime('%Y-%m-%d'),
             'description': '',
             'mediatype': 'web',
-            'subject': 'miraheze;wikiteam',
+            'subject': 'wikitide;wikiteam',
             'title': 'test_title',
         }, verbose=True, queue_derive=False)
 
