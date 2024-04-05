@@ -190,9 +190,9 @@ sub vcl_synth {
 			set resp.http.Connection = "keep-alive";
 			set resp.http.Content-Length = "0";
 
-			// allow Range requests, and avoid other CORS errors when debugging with X-Miraheze-Debug
+			// allow Range requests, and avoid other CORS errors when debugging with X-WikiTide-Debug
 			set resp.http.Access-Control-Allow-Origin = "*";
-			set resp.http.Access-Control-Allow-Headers = "Range,X-Miraheze-Debug";
+			set resp.http.Access-Control-Allow-Headers = "Range,X-WikiTide-Debug";
 			set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
 			set resp.http.Access-Control-Max-Age = "86400";
 		} else {
@@ -227,10 +227,10 @@ sub mw_request {
 	call normalize_request_nonmisc;
 
 	# Assigning a backend
-	if (req.http.X-Miraheze-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ miraheze_nets) {
+	if (req.http.X-WikiTide-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ miraheze_nets) {
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['xdebug'] -%>
-		if (req.http.X-Miraheze-Debug == "<%= name %>.wikitide.net") {
+		if (req.http.X-WikiTide-Debug == "<%= name %>.wikitide.net") {
 			if (req.http.Host == "static.miraheze.org") {
 				set req.backend_hint = swift.backend();
 			} else {
@@ -241,7 +241,7 @@ sub mw_request {
 <%- end -%>
 <%- end -%>
 	} else {
-		unset req.http.X-Miraheze-Debug;
+		unset req.http.X-WikiTide-Debug;
 	}
 
 	set req.backend_hint = mediawiki.backend();

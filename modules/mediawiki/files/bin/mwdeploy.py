@@ -184,14 +184,14 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
     headers = {}
     if Debug:
         server = f'{Debug}.wikitide.net'
-        headers['X-Miraheze-Debug'] = server
+        headers['X-WikiTide-Debug'] = server
         location = f'{domain}@{server}'
 
         debug_access_key = os.getenv('DEBUG_ACCESS_KEY')
 
         # Check if DEBUG_ACCESS_KEY is set and add it to headers
         if debug_access_key:
-            headers['X-Miraheze-Debug-Access-Key'] = debug_access_key
+            headers['X-WikiTide-Debug-Access-Key'] = debug_access_key
     else:
         os.environ['NO_PROXY'] = 'localhost'
         domain = 'localhost'
