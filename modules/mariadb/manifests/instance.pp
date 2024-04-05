@@ -14,7 +14,7 @@
 #   sets read_only mode to 1 for replicas by default!)
 # * pid_file: used PID file, by default /var/run/mysqld/mysqld.title.pid
 # From https://github.com/wikimedia/puppet/blob/production/modules/mariadb/manifests/instance.pp
-# with changes for Miraheze
+# with changes for WikiTide
 
 define mariadb::instance(
     Integer                             $port,
