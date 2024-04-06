@@ -113,7 +113,6 @@ class phorge (
     }
 
     ssl::wildcard { 'phorge wildcard': }
-    ssl::cert { 'miraheze.wiki': }
 
     file { '/srv/phorge':
         ensure => directory,
