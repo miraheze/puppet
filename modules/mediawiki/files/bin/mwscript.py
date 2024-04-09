@@ -48,6 +48,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         'nukens',
         'rebuildall',
         'rebuildimages',
+        'rebuildtextindex',
         'refreshlinks',
         'runjobs',
         'purgelist',
