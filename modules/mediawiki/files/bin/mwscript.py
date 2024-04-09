@@ -24,7 +24,7 @@ def syscheck(result: CommandInfo | int) -> CommandInfo:
 
 
 def get_commands(args: argparse.Namespace) -> CommandInfo | int:
-    mw_versions = os.popen('getMWVersions all').read().strip()
+    mw_versions = os.popen('/usr/local/bin/getMWVersions all').read().strip()
     versions = {}
     if mw_versions:
         versions = json.loads(mw_versions)
@@ -48,6 +48,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         'nukens',
         'rebuildall',
         'rebuildimages',
+        'rebuildtextindex',
         'refreshlinks',
         'runjobs',
         'purgelist',
@@ -76,7 +77,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         dbname = wiki
         if not dbname:
             dbname = 'default'
-        args.version = os.popen(f'getMWVersion {dbname}').read().strip()
+        args.version = os.popen(f'/usr/local/bin/getMWVersion {dbname}').read().strip()
         if wiki and wiki in versionLists:
             args.version = versions.get(wiki[:-6])
 

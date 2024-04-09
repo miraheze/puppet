@@ -58,7 +58,10 @@ define mediawiki::extensionsetup (
             group              => 'www-data',
             mode               => '0755',
             depth              => '5',
-            recurse_submodules => true,
+            recurse_submodules => $params['recurse_submodules'] ? {
+                false   => false,
+                default => true,
+            },
             shallow_submodules => $params['shallow_submodules'] ? {
                 true    => true,
                 default => false,
