@@ -68,7 +68,7 @@ def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
     execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f"sudo -i mysql -e 'USE {newwiki_db}; SOURCE /home/{os.getlogin()}/{oldwiki_db}.sql;'"))
 
     # Step 3: Execute MediaWiki rename script
-    execute_salt_command(salt_command=generate_salt_command('mwtask181', f'mwscript extensions/CreateWiki/renameWiki.php --no-log --wiki=loginwiki --rename {oldwiki_db} {newwiki_db} {os.getlogin()}'))
+    execute_salt_command(salt_command=generate_salt_command('mwtask181', f'mwscript extensions/CreateWiki/renameWiki.php loginwiki --no-log --rename {oldwiki_db} {newwiki_db} {os.getlogin()}'))
     execute_salt_command(salt_command=generate_salt_command('mwtask181', f"/usr/local/bin/logsalmsg '{os.getlogin()} renamed {oldwiki_db} to {newwiki_db} using renamewiki.py'"))
 
 
