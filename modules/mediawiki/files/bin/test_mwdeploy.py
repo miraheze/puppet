@@ -72,17 +72,16 @@ def test_get_valid_extensions():
     extensions1 = ['Extension1', 'Extension2']
     extensions2 = ['Extension3', 'Extension4']
 
-    with patch('os.path.isdir', return_value=True) as mock_isdir:
-        with patch('os.scandir') as mock_scandir:
-            mock_cm1 = MagicMock()
-            mock_cm1.__enter__.return_value = [MagicMock(name=name) for name in extensions1]
-            mock_cm2 = MagicMock()
-            mock_cm2.__enter__.return_value = [MagicMock(name=name) for name in extensions2]
-            mock_scandir.side_effect = [mock_cm1, mock_cm2]
+    with patch('os.path.isdir', return_value=True) as mock_isdir, patch('os.scandir') as mock_scandir:
+        mock_cm1 = MagicMock()
+        mock_cm1.__enter__.return_value = [MagicMock(name=name) for name in extensions1]
+        mock_cm2 = MagicMock()
+        mock_cm2.__enter__.return_value = [MagicMock(name=name) for name in extensions2]
+        mock_scandir.side_effect = [mock_cm1, mock_cm2]
 
-            extensions = mwdeploy.get_valid_extensions(versions)
-            assert extensions == extensions1 + extensions2
-            assert mock_isdir.call_count == len(versions) * 2
+        extensions = mwdeploy.get_valid_extensions(versions)
+        assert extensions == extensions1 + extensions2
+        assert mock_isdir.call_count == len(versions) * 2
 
     with patch('os.path.isdir', return_value=False) as mock_isdir:
         extensions = mwdeploy.get_valid_extensions(versions)
@@ -94,17 +93,16 @@ def test_get_valid_skins():
     skins1 = ['Skins1', 'Skins2']
     skins2 = ['Skins3', 'Skins4']
 
-    with patch('os.path.isdir', return_value=True) as mock_isdir:
-        with patch('os.scandir') as mock_scandir:
-            mock_cm1 = MagicMock()
-            mock_cm1.__enter__.return_value = [MagicMock(name=name) for name in skins1]
-            mock_cm2 = MagicMock()
-            mock_cm2.__enter__.return_value = [MagicMock(name=name) for name in skins2]
-            mock_scandir.side_effect = [mock_cm1, mock_cm2]
+    with patch('os.path.isdir', return_value=True) as mock_isdir, patch('os.scandir') as mock_scandir:
+        mock_cm1 = MagicMock()
+        mock_cm1.__enter__.return_value = [MagicMock(name=name) for name in skins1]
+        mock_cm2 = MagicMock()
+        mock_cm2.__enter__.return_value = [MagicMock(name=name) for name in skins2]
+        mock_scandir.side_effect = [mock_cm1, mock_cm2]
 
-            skins = mwdeploy.get_valid_skins(versions)
-            assert skins == skins1 + skins2
-            assert mock_isdir.call_count == len(versions) * 2
+        skins = mwdeploy.get_valid_skins(versions)
+        assert skins == skins1 + skins2
+        assert mock_isdir.call_count == len(versions) * 2
 
     with patch('os.path.isdir', return_value=False) as mock_isdir:
         skins = mwdeploy.get_valid_skins(versions)
