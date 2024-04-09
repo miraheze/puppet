@@ -74,7 +74,7 @@ def get_valid_extensions(versions: list[str]) -> list[str]:
     for version in versions:
         extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
         with os.scandir(extensions_path) as extensions:
-            valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
+            valid_extensions += [extension.name for extension in extensions if os.path.isdir(os.path.join(extension.path, '.git'))]
     return sorted(valid_extensions)
 
 
@@ -83,7 +83,7 @@ def get_valid_skins(versions: list[str]) -> list[str]:
     for version in versions:
         skins_path = f'/srv/mediawiki-staging/{version}/skins/'
         with os.scandir(skins_path) as skins:
-            valid_skins += [skin.name for skin in skins if skin.is_dir()]
+            valid_skins += [skin.name for skin in skins if os.path.isdir(os.path.join(skin.path, '.git'))]
     return sorted(valid_skins)
 
 
