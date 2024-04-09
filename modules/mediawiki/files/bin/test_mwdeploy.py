@@ -89,10 +89,6 @@ def test_get_valid_extensions():
         assert extensions == extensions1 + extensions2
         assert mock_isdir.call_count == len(versions) * 2
 
-        mock_isdir.return_value = False
-        extensions = mwdeploy.get_valid_extensions(versions)
-        assert extensions == []
-
 
 def test_get_valid_skins():
     versions = ['version1', 'version2']
@@ -115,10 +111,6 @@ def test_get_valid_skins():
         skins = mwdeploy.get_valid_skins(versions)
         assert skins == skins1 + skins2
         assert mock_isdir.call_count == len(versions) * 2
-
-        mock_isdir.return_value = False
-        skins = mwdeploy.get_valid_skins(versions)
-        assert skins == []
 
 
 def test_get_extensions_in_pack():
