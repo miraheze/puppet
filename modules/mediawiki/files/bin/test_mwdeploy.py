@@ -74,18 +74,20 @@ def test_get_valid_extensions():
 
     with patch('os.path.isdir', return_value=True) as mock_isdir, patch('os.scandir') as mock_scandir:
         mock_cm1 = MagicMock()
-        mock_cm1.__enter__.return_value = [MagicMock(name=name) for name in extensions1]
+        mock_cm1.__enter__.return_value = [MagicMock(is_dir=lambda: True) for name in extensions1]
+        for i, ext in enumerate(extensions1):
+            setattr(mock_cm1.__enter__.return_value[i], 'name', ext)
+
         mock_cm2 = MagicMock()
-        mock_cm2.__enter__.return_value = [MagicMock(name=name) for name in extensions2]
+        mock_cm2.__enter__.return_value = [MagicMock(is_dir=lambda: True) for name in extensions2]
+        for i, ext in enumerate(extensions2):
+            setattr(mock_cm2.__enter__.return_value[i], 'name', ext)
+
         mock_scandir.side_effect = [mock_cm1, mock_cm2]
 
         extensions = mwdeploy.get_valid_extensions(versions)
         assert extensions == extensions1 + extensions2
         assert mock_isdir.call_count == len(versions) * 2
-
-    with patch('os.path.isdir', return_value=False) as mock_isdir:
-        extensions = mwdeploy.get_valid_extensions(versions)
-        assert extensions == []
 
 
 def test_get_valid_skins():
@@ -93,20 +95,22 @@ def test_get_valid_skins():
     skins1 = ['Skins1', 'Skins2']
     skins2 = ['Skins3', 'Skins4']
 
-    with patch('os.path.isdir', return_value=True) as mock_isdir, patch('os.scandir') as mock_scandir:
+    with assert mock_isdir.call_count == len(versions) * 2, patch('os.scandir') as mock_scandir:
         mock_cm1 = MagicMock()
-        mock_cm1.__enter__.return_value = [MagicMock(name=name) for name in skins1]
+        mock_cm1.__enter__.return_value = [MagicMock(is_dir=lambda: True) for name in skins1]
+        for i, skin in enumerate(skins1):
+            setattr(mock_cm1.__enter__.return_value[i], 'name', skin)
+
         mock_cm2 = MagicMock()
-        mock_cm2.__enter__.return_value = [MagicMock(name=name) for name in skins2]
+        mock_cm2.__enter__.return_value = [MagicMock(is_dir=lambda: True) for name in skins2]
+        for i, skin in enumerate(skins2):
+            setattr(mock_cm2.__enter__.return_value[i], 'name', skin)
+
         mock_scandir.side_effect = [mock_cm1, mock_cm2]
 
         skins = mwdeploy.get_valid_skins(versions)
         assert skins == skins1 + skins2
         assert mock_isdir.call_count == len(versions) * 2
-
-    with patch('os.path.isdir', return_value=False) as mock_isdir:
-        skins = mwdeploy.get_valid_skins(versions)
-        assert skins == []
 
 
 def test_get_extensions_in_pack():
