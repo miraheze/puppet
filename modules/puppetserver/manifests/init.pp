@@ -258,7 +258,7 @@ class puppetserver(
     # Backups
     cron { 'backups-sslkeys':
         ensure  => present,
-        command => '/usr/local/bin/miraheze-backup backup sslkeys > /var/log/sslkeys-backup.log 2>&1',
+        command => '/usr/local/bin/wikitide-backup backup sslkeys > /var/log/sslkeys-backup.log 2>&1',
         user    => 'root',
         minute  => '0',
         hour    => '6',
@@ -273,7 +273,7 @@ class puppetserver(
 
     cron { 'backups-private':
         ensure  => present,
-        command => '/usr/local/bin/miraheze-backup backup private > /var/log/private-backup.log 2>&1',
+        command => '/usr/local/bin/wikitide-backup backup private > /var/log/private-backup.log 2>&1',
         user    => 'root',
         minute  => '0',
         hour    => '3',

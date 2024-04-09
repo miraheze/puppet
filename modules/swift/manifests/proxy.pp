@@ -27,14 +27,13 @@ class swift::proxy (
 
     $python_version = $facts['os']['distro']['codename'] ? {
         'bookworm' => 'python3.11',
-        'bullseye' => 'python3.9',
     }
 
-    file { "/usr/local/lib/${python_version}/dist-packages/miraheze/":
+    file { "/usr/local/lib/${python_version}/dist-packages/wikitide/":
         owner   => 'root',
         group   => 'root',
         mode    => '0444',
-        source  => 'puppet:///modules/swift/SwiftMedia/miraheze/',
+        source  => 'puppet:///modules/swift/SwiftMedia/wikitide/',
         recurse => 'remote',
         notify  => Service['swift-proxy'],
     }

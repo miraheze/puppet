@@ -16,14 +16,14 @@ class role::mediawiki::mcrouter(
     $routes = $servers_by_dc.map |$dc, $_| {
       {
         'aliases' => [ "/${dc}/mw/" ],
-        'route' => 'PoolRoute|miraheze'
+        'route' => 'PoolRoute|wikitide'
       }
     }
 
     class { 'mcrouter':
         pools                  => $pools,
         routes                 => $routes,
-        region                 => 'miraheze',
+        region                 => 'wikitide',
         cluster                => 'mw',
         num_proxies            => $num_proxies,
         disable_tko_tracking   => true,

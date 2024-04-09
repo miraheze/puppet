@@ -25,8 +25,8 @@ class ArchiveUploader:
             '--mediatype', dest='mediatype', default='web',
             help='The media type of the file to be used on archive.org. Optional. Default: web')
         self.parser.add_argument(
-            '--subject', dest='subject', default='miraheze;wikiteam',
-            help='Subject (topics) of the file for archive.org. Multiple topics can be separated by a semicolon. Optional. Default: miraheze;wikiteam')
+            '--subject', dest='subject', default='wikitide;wikiteam',
+            help='Subject (topics) of the file for archive.org. Multiple topics can be separated by a semicolon. Optional. Default: wikitide;wikiteam')
         self.parser.add_argument(
             '--collection', dest='collection', default='opensource',
             help='The name of the collection to use on archive.org. Optional. Default: opensource')

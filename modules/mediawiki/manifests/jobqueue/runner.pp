@@ -68,7 +68,7 @@ class mediawiki::jobqueue::runner (
         }
 
         cron { 'managewikis':
-            ensure  => absent,
+            ensure  => present,
             command => "/usr/bin/php ${runner}/srv/mediawiki/${version}/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki ${wiki} --write >> /var/log/mediawiki/cron/managewikis.log",
             user    => 'www-data',
             minute  => '5',
@@ -139,7 +139,7 @@ class mediawiki::jobqueue::runner (
 
             cron { 'backups-mediawiki-xml':
                 ensure   => absent,
-                command  => '/usr/local/bin/miraheze-backup backup mediawiki-xml > /var/log/mediawiki-xml-backup.log 2>&1',
+                command  => '/usr/local/bin/wikitide-backup backup mediawiki-xml > /var/log/mediawiki-xml-backup.log 2>&1',
                 user     => 'root',
                 minute   => '0',
                 hour     => '1',

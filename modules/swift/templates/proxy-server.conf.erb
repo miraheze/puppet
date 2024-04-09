@@ -67,7 +67,7 @@ use = egg:swift#bulk
 use = egg:swift#container_sync
 
 [filter:cors]
-paste.filter_factory = miraheze.cors:filter_factory
+paste.filter_factory = wikitide.cors:filter_factory
 
 [filter:proxy-logging]
 use = egg:swift#proxy_logging
@@ -77,7 +77,7 @@ set access_log_facility = LOG_LOCAL1
 use = egg:swift#listing_formats
 
 [filter:ensure_max_age]
-paste.filter_factory = miraheze.ensure_max_age:filter_factory
+paste.filter_factory = wikitide.ensure_max_age:filter_factory
 methods_list = HEAD GET
 status_list = 200
 max_age = 86400
@@ -93,4 +93,4 @@ user_agent = Mozilla/5.0
 # sending thumbnail requests to thumbor
 thumbhost = static.miraheze.org
 
-paste.filter_factory = miraheze.rewrite:filter_factory
+paste.filter_factory = wikitide.rewrite:filter_factory

@@ -40,27 +40,27 @@ class role::db (
         enable_slow_log => $enable_slow_log,
     }
 
-    file { '/etc/mysql/miraheze/mediawiki-grants.sql':
+    file { '/etc/mysql/wikitide/mediawiki-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/mediawiki-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/matomo-grants.sql':
+    file { '/etc/mysql/wikitide/matomo-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/matomo-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/phorge-grants.sql':
+    file { '/etc/mysql/wikitide/phorge-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/phorge-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/icinga2-grants.sql':
+    file { '/etc/mysql/wikitide/icinga2-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/icinga2-grants.sql.erb'),
     }
 
-    file { '/etc/mysql/miraheze/reports-grants.sql':
+    file { '/etc/mysql/wikitide/reports-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/reports-grants.sql.erb'),
     }
@@ -109,7 +109,7 @@ class role::db (
     if $backup_sql {
         cron { 'backups-sql':
             ensure   => present,
-            command  => '/usr/local/bin/miraheze-backup backup sql > /var/log/sql-backup.log 2>&1',
+            command  => '/usr/local/bin/wikitide-backup backup sql > /var/log/sql-backup.log 2>&1',
             user     => 'root',
             minute   => '0',
             hour     => '3',
@@ -126,7 +126,7 @@ class role::db (
     $daily_misc.each |String $db| {
         cron { "backups-${db}":
             ensure  => present,
-            command => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup-daily.log 2>&1",
+            command => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-daily.log 2>&1",
             user    => 'root',
             special => 'daily',
         }
@@ -141,7 +141,7 @@ class role::db (
     $weekly_misc.each |String $db| {
         cron { "backups-${db}":
             ensure  => present,
-            command => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup-weekly.log 2>&1",
+            command => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-weekly.log 2>&1",
             user    => 'root',
             minute  => '0',
             hour    => '5',
@@ -158,7 +158,7 @@ class role::db (
     $fortnightly_misc.each |String $db| {
         cron { "backups-${db}":
             ensure   => present,
-            command  => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup-fortnightly.log 2>&1",
+            command  => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-fortnightly.log 2>&1",
             user     => 'root',
             minute   => '0',
             hour     => '5',
@@ -175,7 +175,7 @@ class role::db (
     $monthly_misc.each |String $db| {
         cron { "backups-${db}":
             ensure   => present,
-            command  => "/usr/local/bin/miraheze-backup backup sql --database=${db} > /var/log/sql-${db}-backup-monthly.log 2>&1",
+            command  => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-monthly.log 2>&1",
             user     => 'root',
             minute   => '0',
             hour     => '5',

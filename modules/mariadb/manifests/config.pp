@@ -72,7 +72,7 @@ class mariadb::config(
         }
     }
 
-    file { '/etc/mysql/miraheze':
+    file { '/etc/mysql/wikitide':
         ensure  => directory,
         owner   => 'mysql',
         group   => 'mysql',
@@ -80,10 +80,10 @@ class mariadb::config(
         require => Package[$package_name],
     }
 
-    file { '/etc/mysql/miraheze/default-grants.sql':
+    file { '/etc/mysql/wikitide/default-grants.sql':
         ensure  => present,
         content => template('mariadb/grants/default-grants.sql.erb'),
-        require => File['/etc/mysql/miraheze'],
+        require => File['/etc/mysql/wikitide'],
     }
 
     file { '/root/.my.cnf':
@@ -136,14 +136,14 @@ class mariadb::config(
             mysql_username => 'icinga',
             mysql_password => $icinga_password,
             mysql_ssl      => true,
-            mysql_cacert   => '/etc/ssl/certs/Sectigo.crt',
+            mysql_cacert   => '/etc/ssl/certs/LetsEncrypt.crt',
         },
     }
 
     if $enable_ssl {
         $ssl = {
             mysql_ssl       => $enable_ssl,
-            mysql_cacert    => '/etc/ssl/certs/Sectigo.crt',
+            mysql_cacert    => '/etc/ssl/certs/LetsEncrypt.crt',
         }
     } else {
         $ssl = {

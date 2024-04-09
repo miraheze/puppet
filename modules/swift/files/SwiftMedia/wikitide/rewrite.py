@@ -22,7 +22,7 @@ class DumbRedirectHandler(urllib.request.HTTPRedirectHandler):
         return None
 
 
-class _MirahezeRewriteContext(WSGIContext):
+class _WikiTideRewriteContext(WSGIContext):
     """
     Rewrite Media Store URLs so that swift knows how to deal with them.
     """
@@ -377,7 +377,7 @@ class _MirahezeRewriteContext(WSGIContext):
             return resp(env, start_response)
 
 
-class MirahezeRewrite(object):
+class WikiTideRewrite(object):
 
     def __init__(self, app, conf):
         self.app = app
@@ -394,7 +394,7 @@ class MirahezeRewrite(object):
         if path.startswith('/auth') or path.startswith('/v1/AUTH_'):
             return self.app(env, start_response)
 
-        context = _MirahezeRewriteContext(self, self.conf)
+        context = _WikiTideRewriteContext(self, self.conf)
         return context.handle_request(env, start_response)
 
 
@@ -402,9 +402,9 @@ def filter_factory(global_conf, **local_conf):
     conf = global_conf.copy()
     conf.update(local_conf)
 
-    def mirahezerewrite_filter(app):
-        return MirahezeRewrite(app, conf)
+    def wikitiderewrite_filter(app):
+        return WikiTideRewrite(app, conf)
 
-    return mirahezerewrite_filter
+    return wikitiderewrite_filter
 
 # vim: set expandtab tabstop=4 shiftwidth=4 autoindent:

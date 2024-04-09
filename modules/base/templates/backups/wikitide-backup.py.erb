@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# Backup script for Miraheze
+# Backup script for WikiTide
 # Created by John Lewis 2022
 
 import argparse
@@ -14,7 +14,7 @@ import time
 from fabric import Connection
 from datetime import datetime
 
-parser = argparse.ArgumentParser(description='Provides backup and download functionality for Miraheze backups from PCA.')
+parser = argparse.ArgumentParser(description='Provides backup and download functionality for WikiTide backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
 parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
@@ -51,7 +51,7 @@ def pca_web(method: str, url: str, expiry: int):
     elif method == 'HEAD':
         return requests.head(url, headers=headers, proxies=proxies)
     else:
-        raise Exception('Method is not currently implemented in Miraheze-Backup')
+        raise Exception('Method is not currently implemented in WikiTide-Backup')
 
 
 def backup_private(dt: str):

@@ -1,4 +1,10 @@
 changeprop::jobqueue: true
+changeprop::jobrunner_host: 'http://10.0.17.144:9006'
+changeprop::import_host: 'http://10.0.17.144:9006'
+changeprop::videoscaler_host: 'http://10.0.17.144:9006'
+changeprop::num_workers: 12
+changeprop::global_new_files_concurrency: 25
+changeprop::semantic_mediawiki_concurrency: 50
 changeprop::low_traffic_concurrency: 50
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
@@ -51,13 +57,13 @@ changeprop::high_traffic_jobs_config:
     concurrency: 25
     reenqueue_delay: 3600
   parsoidCachePrewarm:
-    concurrency: 100
+    concurrency: 150
   htmlCacheUpdate:
     concurrency: 50
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   refreshLinks:
-    concurrency: 5
+    concurrency: 25
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
@@ -76,6 +82,11 @@ changeprop::high_traffic_jobs_config:
   CreateWikiJob:
     disable_delayed_execution: true
     concurrency: 1
+  RemovePIIJob:
+    disable_delayed_execution: true
+    concurrency: 1
+
+changeprop::import_jobs_config:
   DataDumpGenerateJob:
     disable_delayed_execution: true
     concurrency: 1
@@ -86,6 +97,41 @@ changeprop::high_traffic_jobs_config:
   ImportDumpNotifyJob:
     disable_delayed_execution: true
     concurrency: 1
+  RequestWikiAIJob:
+    concurrency: 1
+  RottenLinksJob:
+    concurrency: 1
+
+changeprop::videoscaler_jobs_config:
+  webVideoTranscode:
+    timeout: 86400
+    concurrency: 3
+  webVideoTranscodePrioritized:
+    concurrency: 3
+    timeout: 86400
+
+changeprop::global_new_files_jobs:
+  - GlobalNewFilesDeleteJob
+  - GlobalNewFilesInsertJob
+  - GlobalNewFilesMoveJob
+
+changeprop::semantic_mediawiki_jobs:
+  - SMWRefreshJob
+  - SMWUpdateJob
+#  - smw.changePropagationClassUpdate
+#  - smw.changePropagationDispatch
+  - smw.changePropagationUpdate
+  - smw.deferredConstraintCheckUpdateJob
+  - smw.elasticFileIngest
+  - smw.elasticIndexerRecovery
+  - smw.entityIdDisposer
+  - smw.fulltextSearchTableRebuild
+  - smw.fulltextSearchTableUpdate
+  - smw.parserCachePurgeJob
+  - smw.propertyStatisticsRebuild
+  - smw.refresh
+  - smw.update
+  - smw.updateDispatcher
 
 prometheus::exporter::statsd_exporter::use_defaults: false
 role::prometheus::statsd_exporter::mappings:

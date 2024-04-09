@@ -65,7 +65,7 @@ role::memcached::extended_options:
 role::memcached::port: 11211
 
 role::mediawiki::mcrouter::shards:
-  miraheze:
+  wikitide:
     shard01:
       host: 10.0.15.118
 

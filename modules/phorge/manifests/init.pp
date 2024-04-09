@@ -113,7 +113,6 @@ class phorge (
     }
 
     ssl::wildcard { 'phorge wildcard': }
-    ssl::cert { 'miraheze.wiki': }
 
     file { '/srv/phorge':
         ensure => directory,
@@ -230,7 +229,7 @@ class phorge (
 
     cron { 'backups-phorge':
         ensure   => present,
-        command  => '/usr/local/bin/miraheze-backup backup phorge > /var/log/phorge-backup.log 2>&1',
+        command  => '/usr/local/bin/wikitide-backup backup phorge > /var/log/phorge-backup.log 2>&1',
         user     => 'root',
         minute   => '0',
         hour     => '1',

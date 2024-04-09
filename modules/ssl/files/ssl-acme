@@ -4,8 +4,6 @@
 #
 # This script is only compatible with LetsEncrypt
 # do not try to use it with any other certs.
-#
-# Miraheze SRE 2018
 set -e
 set -u
 

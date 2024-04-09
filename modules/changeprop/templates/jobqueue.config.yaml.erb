@@ -80,6 +80,38 @@ spec: &spec
                   agentOptions:
                     keepAlive: true
 <% end -%>
+<% @import_jobs_config.each do |topic, topic_config| -%>
+              <%= topic %>:
+                topic: 'mediawiki.job.<%= topic %>'
+<% topic_config.each do |key, value| -%>
+                <%= key %>: <%= value %>
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @import_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+<% end -%>
+<% @videoscaler_jobs_config.each do |topic, topic_config| -%>
+              <%= topic %>:
+                topic: 'mediawiki.job.<%= topic %>'
+<% topic_config.each do |key, value| -%>
+                <%= key %>: <%= value %>
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @videoscaler_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+<% end -%>
 <% @partitioned_jobs_config.each do |topic, options| -%>
               <%= topic %>_partitioner:
                 topic: 'mediawiki.job.<%= topic %>'
@@ -105,6 +137,36 @@ spec: &spec
                   agentOptions:
                     keepAlive: true
 <% end -%>
+              global_new_files_jobs:
+                concurrency: <%= @global_new_files_concurrency %>
+                topics:
+<% @global_new_files_jobs.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+              semantic_mediawiki_jobs:
+                concurrency: <%= @semantic_mediawiki_concurrency %>
+                topics:
+<% @semantic_mediawiki_jobs.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
               # Now special rule to cover all the low-traffic jobs
               low_traffic_jobs:
                 concurrency: <%= @low_traffic_concurrency %>
@@ -115,7 +177,19 @@ spec: &spec
 <% @high_traffic_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
+<% @import_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @videoscaler_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
 <% @partitioned_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @global_new_files_jobs.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @semantic_mediawiki_jobs.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
                 exec:
@@ -144,7 +218,7 @@ spec: &spec
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
 # Use 'ncpu' to run as many workers as there are CPU units
-num_workers: 28
+num_workers: <%= @num_workers %>
 
 # Number of workers to start in parallel after the first worker.
 # The first worker is always started independently. After it has completed
@@ -164,7 +238,7 @@ worker_heartbeat_timeout: false
 
 # Logger info
 logging:
-  level: error
+  level: debug
   streams:
     - type: stdout
       named_levels: true

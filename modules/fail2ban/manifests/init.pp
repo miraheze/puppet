@@ -2,9 +2,9 @@
 class fail2ban {
   stdlib::ensure_packages(['fail2ban']);
 
-  file { '/etc/fail2ban/filter.d/miraheze-custom-01.conf':
+  file { '/etc/fail2ban/filter.d/wikitide-custom-01.conf':
     ensure  => 'file',
-    source  => 'puppet:///private/fail2ban/miraheze-custom-01.conf',
+    source  => 'puppet:///private/fail2ban/wikitide-custom-01.conf',
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
@@ -36,7 +36,7 @@ class fail2ban {
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    require => File['/etc/fail2ban/filter.d/miraheze-custom-01.conf'],
+    require => File['/etc/fail2ban/filter.d/wikitide-custom-01.conf'],
     notify  => Service['fail2ban'],
   }
 
