@@ -92,7 +92,7 @@ class SslCertificate:
         subprocess.call([
             'bash',
             '-c',
-            f'openssl req -new -sha256 -key /root/ssl/{self.domain}.key -subj \"/C=NL/ST=Netherlands/L=Netherlands/O=Miraheze/CN={self.domain}\" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf \"[SAN]\nsubjectAltName=DNS:{self.domain}{secondary_domain}\")) > /root/ssl/{self.domain}.csr',
+            f'openssl req -new -sha256 -key /root/ssl/{self.domain}.key -subj \"/C=US/ST=DC/L=Washington/O=WikiTide Foundation/CN={self.domain}\" -reqexts SAN -config <(cat /etc/ssl/openssl.cnf <(printf \"[SAN]\nsubjectAltName=DNS:{self.domain}{secondary_domain}\")) > /root/ssl/{self.domain}.csr',
         ])
 
         if not self.quiet:
