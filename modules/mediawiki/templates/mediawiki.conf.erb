@@ -138,7 +138,6 @@ server {
 	error_page 502 /ErrorPages/502.html;
 	error_page 504 /ErrorPages/504.html;
 
-
 	include /etc/nginx/mediawiki-includes;
 
 	location = /robots.txt {
@@ -160,6 +159,7 @@ server {
 
 	server_name health.wikitide.net;
 	root /srv/mediawiki;
+	index index.php index.html;
 
 	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
 	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
@@ -170,6 +170,16 @@ server {
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_buffers 32 32k;
+		fastcgi_buffer_size 64k;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+	}
 
 	location = /check {
 		rewrite ^(.*)$ /healthcheck.php;
