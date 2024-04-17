@@ -15,7 +15,7 @@ import vsthrottle;
 # MediaWiki configuration
 probe mwhealth {
 	.request = "GET /check HTTP/1.1"
-		"Host: health.miraheze.org"
+		"Host: health.wikitide.net"
 		"User-Agent: Varnish healthcheck"
 		"Connection: close";
 	# Check each <%= @interval_check %>
@@ -370,7 +370,7 @@ sub vcl_recv {
 	}
 
 	# Health checks, do not send request any further, if we're up, we can handle it
-	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
+	if (req.http.Host == "health.wikitide.net" && req.url == "/check") {
 		return (synth(200));
 	}
 
@@ -440,8 +440,8 @@ sub vcl_recv {
 
 # Defines the uniqueness of a request
 sub vcl_hash {
-	# FIXME: try if we can make this ^/wiki/ only?
-	if ((req.http.Host != "miraheze.org" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
+	# FIXME: try if we can make this ^/(wiki/)? only?
+	if ((req.http.Host != "miraheze.org" && req.http.Host != "wikitide.org" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
 		hash_data(req.http.X-Subdomain);
 	}
 }
