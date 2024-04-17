@@ -56,6 +56,17 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+database-admins:
+    gid: 2008
+    description: limited sudo access on database servers
+    members: []
+    privileges: ['ALL = (mysql) NOPASSWD: /usr/bin/mariadb *',
+                 'ALL = (mysql) NOPASSWD: /usr/bin/mysql *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb start',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb restart',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
 
 users:
   johnflewis:
