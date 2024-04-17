@@ -56,7 +56,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
-database-admins:
+  database-admins:
     gid: 2008
     description: limited sudo access on database servers
     members: [alex]
