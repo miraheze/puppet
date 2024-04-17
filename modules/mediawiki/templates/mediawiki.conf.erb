@@ -158,6 +158,28 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
+	server_name health.wikitide.net;
+	root /srv/mediawiki;
+
+	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
+	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	location = /check {
+		rewrite ^(.*)$ /healthcheck.php;
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
 	server_name static.miraheze.org;
 
 	send_timeout 120;
