@@ -32,9 +32,9 @@ mediawiki::monitoring::host: 'test.mirabeta.org'
 mediawiki::multiversion::versions:
   '1.41':
     branch: 'REL1_41'
-    default: true
   '1.42':
     branch: 'REL1_42'
+    default: true
   '1.43':
     branch: 'master'
 

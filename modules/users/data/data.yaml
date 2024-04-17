@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [alex, macfan, oa]
+    members: [macfan, oa]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service apache2 *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mcrouter *',
@@ -18,7 +18,7 @@ groups:
   mediawiki-roots:
     gid: 2002
     description: full root on MediaWiki servers
-    members: []
+    members: [alex]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   cache-admins:
     gid: 2003
@@ -54,6 +54,17 @@ groups:
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+  database-admins:
+    gid: 2008
+    description: limited sudo access on database servers
+    members: [alex]
+    privileges: ['ALL = (mysql) NOPASSWD: /usr/bin/mariadb *',
+                 'ALL = (mysql) NOPASSWD: /usr/bin/mysql *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb start',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb restart',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
 

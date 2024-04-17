@@ -89,7 +89,7 @@ class ssl {
     }
 
     git::clone { 'srv-ssl':
-        ensure    => latest,
+        ensure    => present,
         directory => '/srv/ssl/ssl',
         origin    => 'git@github.com:miraheze/ssl.git',
         ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bastion.wikitide.net:8080 %h %p\'',
