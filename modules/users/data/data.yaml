@@ -60,8 +60,8 @@ groups:
     gid: 2008
     description: limited sudo access on database servers
     members: [alex]
-    privileges: ['ALL = (mysql) NOPASSWD: /usr/bin/mariadb *',
-                 'ALL = (mysql) NOPASSWD: /usr/bin/mysql *',
+    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/sudo -i mariadb',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/sudo -i mysql',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb start',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb restart',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
