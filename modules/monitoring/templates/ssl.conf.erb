@@ -1,8 +1,8 @@
-apply Service "wc.miraheze.org" {
+apply Service "wc.wikitide.net" {
   import "generic-service"
   check_command = "check_ssl_expire"
   notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
-  vars.host = "miraheze.org"
+  vars.host = "wikitide.net"
   vars.time = "30"
 
   assign where "sslchecks" in host.groups
@@ -37,7 +37,7 @@ apply Service "<%= property['url'] %> - reverse DNS" {
   check_interval = 30m
   notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Reverse_DNS_Checks"
   vars.hostname = "<%= property['url'] %>"
-  vars.regex = "^(test|cp)[0-9]+\\.(miraheze\\.org|wikitide\\.net)$$"
+  vars.regex = "^(test|cp)[0-9]+\\.wikitide\\.net$$"
   assign where "sslchecks" in host.groups
 }
 <% end -%>
