@@ -1,8 +1,48 @@
+apply Service "wc.miraheze.org" {
+  import "generic-service"
+  check_command = "check_ssl_expire"
+  notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
+  vars.host = "miraheze.org"
+  vars.time = "30"
+
+  assign where "sslchecks" in host.groups
+}
+
+apply Service "wc.orain.org" {
+  import "generic-service"
+  check_command = "check_ssl_expire"
+  notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
+  vars.host = "orain.org"
+  vars.time = "30"
+
+  assign where "sslchecks" in host.groups
+}
+
+apply Service "wc.wiki.surf" {
+  import "generic-service"
+  check_command = "check_ssl_expire"
+  notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
+  vars.host = "wiki.surf"
+  vars.time = "30"
+
+  assign where "sslchecks" in host.groups
+}
+
 apply Service "wc.wikitide.net" {
   import "generic-service"
   check_command = "check_ssl_expire"
   notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
   vars.host = "wikitide.net"
+  vars.time = "30"
+
+  assign where "sslchecks" in host.groups
+}
+
+apply Service "wc.wikitide.org" {
+  import "generic-service"
+  check_command = "check_ssl_expire"
+  notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
+  vars.host = "wikitide.org"
   vars.time = "30"
 
   assign where "sslchecks" in host.groups
