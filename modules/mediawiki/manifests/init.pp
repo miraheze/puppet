@@ -128,7 +128,6 @@ class mediawiki {
     $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
     $multipurge_apitoken        = lookup('mediawiki::multipurge_apitoken')
     $multipurge_zoneid          = lookup('mediawiki::multipurge_zoneid')
-    $swift_password             = lookup('mediawiki::swift_password')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
