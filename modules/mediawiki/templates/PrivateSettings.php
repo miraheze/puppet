@@ -20,6 +20,10 @@ $wgShellboxSecretKey = "<%= @shellbox_secretkey %>";
 // Matomo token
 $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 
+// MultiPurge configuration tokens for CloudFlare
+$wgMultiPurgeCloudFlareApiToken = "<%= @multipurge_apitoken %>";
+$wgMultiPurgeCloudFlareZoneId = "<%= @multipurge_zoneid %>";
+  
 // Extension:DiscordNotifications global webhook
 $wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
 $wmgDiscordExperimentalWebhook = "<%= @discord_experimental_webhook %>";
