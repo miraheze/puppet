@@ -224,10 +224,6 @@ server {
 		proxy_buffer_size       32k;
 		proxy_buffers         4 32k;
         }
-
-        location = / {
-		return 301 https://commons.miraheze.org;
-	}
 }
 
 server {
