@@ -311,11 +311,6 @@ server {
 	<%- end -%>
 
 	root /var/www/html;
-	
-	# no way you are legit - rhinosf1 T8832
-	if ($http_user_agent ~ "MJ12bot") {
-		return 403;
-	}
 
 	ssl_certificate /etc/ssl/localcerts/<%= property['sslname'] %>.crt;
 	ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
