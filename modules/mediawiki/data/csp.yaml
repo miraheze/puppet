@@ -217,3 +217,4 @@ connect-src:
   - '*.youtube-nocookie.com'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
+  - '1.1.1.1'
