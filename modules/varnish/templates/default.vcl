@@ -756,9 +756,6 @@ sub vcl_deliver {
 	# Disable Google ad targeting (FLoC)
 	set resp.http.Permissions-Policy = "interest-cohort=(), browsing-topics=()";
 
-	# Content Security Policy
-	set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
-
 	# For a 500 error, do not set cookies
 	if (resp.status >= 500 && resp.http.Set-Cookie) {
 		unset resp.http.Set-Cookie;
