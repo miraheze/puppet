@@ -64,6 +64,8 @@ http {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
+	add_header Content-Security-Policy "default-src 'self' *.wikitide.net static.miraheze.org;";
+
 	# Custom log format for graylog
 	log_format graylog2_json escape=json '{ "timestamp": "$time_iso8601", '
 		'"remote_addr": "$remote_addr", '
