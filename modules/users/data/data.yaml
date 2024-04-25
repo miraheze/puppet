@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [agent, reception, universalomega, void]
+    members: [reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -162,11 +162,11 @@ users:
     realname: Voidwalker 
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWIwmB8ZkwnyvWoMwVfWxmPH6QkP2X2l0TfipMXeWHf void@wikitide.org]
   agent:
-    ensure: present
+    ensure: absent
     uid: 1015
     name: Agent
     realname: Agent
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYndIxzLtu9icCCMJIKTZXKk9rdJRP/Nsfyb2kfcZEy]
+    ssh_keys: []
   alex:
     ensure: present
     uid: 1016

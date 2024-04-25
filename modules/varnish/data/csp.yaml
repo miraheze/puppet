@@ -1,5 +1,4 @@
-# Only add a domain pursuant to the policy below. Please also be restrictive in which list.
-# See https://meta.miraheze.org/wiki/Tech:CSP_Policy.
+# DEPRECATED: use https://github.com/miraheze/puppet/blob/master/modules/mediawiki/data/csp.yaml instead.
 default-src: 
   - "'self'"
   - '*.miraheze.org'

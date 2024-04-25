@@ -33,6 +33,12 @@ class base (
         mode   => '0555',
     }
 
+    file { '/usr/local/bin/secupgrade.sh':
+        ensure => present,
+        source => 'puppet:///modules/base/secupgrade.sh',
+        mode   => '0555',
+    }
+
     if $http_proxy {
         file { '/etc/gitconfig':
             ensure  => present,

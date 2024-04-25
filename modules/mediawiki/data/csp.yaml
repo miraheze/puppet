@@ -33,6 +33,7 @@ script-src:
   - 'apis.google.com'
   - 'platform.twitter.com'
   - 'wiki-assets.sumin.wiki'
+  - 'ajax.cloudflare.com'
   - 'cdnjs.cloudflare.com'
   - 'cdn.jsdelivr.net'
   - 'fastly.jsdelivr.net'
@@ -217,3 +218,4 @@ connect-src:
   - '*.youtube-nocookie.com'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
+  - '1.1.1.1'

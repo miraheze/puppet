@@ -25,8 +25,6 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
-
 	location ~ ^/(\.git|config) {
 		deny all;
 	}
@@ -251,8 +249,6 @@ server {
 	add_header x-xss-protection "1; mode=block" always;
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
-
-	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 
 	location ~ \.php {
 		include fastcgi_params;
