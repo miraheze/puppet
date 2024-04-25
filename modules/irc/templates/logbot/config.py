@@ -60,7 +60,6 @@ author_map = {
 
     # Discord usernames
     "@cosmicalpha": "Universal Omega",
-    "@agentisai": "Agent",
     "@reception123": "Reception123",
     "@originalauthority": "Original Authority",
     "@bluemoon0332": "OrangeStar"
