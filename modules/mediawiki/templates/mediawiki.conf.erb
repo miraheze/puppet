@@ -44,11 +44,7 @@ server {
 		send_timeout 140;
 	}
 
-	location /discord {
-		return 301 https://discord.gg/TVAJTE4CUn;
-	}
-
-	location ~ ^/((?!(css|discord|img|js|lib|scss)).)*$ {
+	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -261,7 +257,7 @@ server {
 		send_timeout 140;
 	}
 
-	location ~ ^/((?!(css|discord|img|js|lib|scss)).)*$ {
+	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
