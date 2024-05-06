@@ -24,7 +24,7 @@ class role::irc {
         nickname     => 'MirahezeLSBot',
         network      => 'irc.libera.chat',
         network_port => '6697',
-        channel      => '#miraheze-sre',
+        channel      => '#miraheze-tech-ops',
         udp_port     => '5071',
     }
 
