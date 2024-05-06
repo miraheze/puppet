@@ -49,8 +49,6 @@ class nginx (
         source => 'puppet:///modules/nginx/mime.types',
     }
 
-    $module_path = get_module_path('varnish')
-
     $cache_proxies = query_facts("Class['Role::Varnish']", ['networking'])
     file { '/etc/nginx/nginx.conf':
         content => template('nginx/nginx.conf.erb'),

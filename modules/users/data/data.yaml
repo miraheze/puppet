@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [agent, reception, universalomega, void]
+    members: [evalprime, reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -60,8 +60,9 @@ groups:
     gid: 2008
     description: limited sudo access on database servers
     members: [alex]
-    privileges: ['ALL = (mysql) NOPASSWD: /usr/bin/mariadb *',
-                 'ALL = (mysql) NOPASSWD: /usr/bin/mysql *',
+    privileges: ['ALL = (ALL) NOPASSWD: /bin/bash -c mariadb',
+                 'ALL = (ALL) NOPASSWD: /bin/bash -c mysql',
+                 'ALL = (ALL) NOPASSWD: /bin/bash -c mysqldump *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb start',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb restart',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
@@ -162,17 +163,19 @@ users:
     realname: Voidwalker 
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWIwmB8ZkwnyvWoMwVfWxmPH6QkP2X2l0TfipMXeWHf void@wikitide.org]
   agent:
-    ensure: present
+    ensure: absent
     uid: 1015
     name: Agent
     realname: Agent
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYndIxzLtu9icCCMJIKTZXKk9rdJRP/Nsfyb2kfcZEy]
+    ssh_keys: []
   alex:
     ensure: present
     uid: 1016
     name: alex
     realname: Alex
-    ssh_keys: [sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIK1eR7I1K/AL6R9RxDOaldPLSDRpN5jl0+lMJq1Fa4tzAAAABHNzaDo= alex@localhost.localdomain]
+    ssh_keys:
+      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIK1eR7I1K/AL6R9RxDOaldPLSDRpN5jl0+lMJq1Fa4tzAAAABHNzaDo= alex@localhost.localdomain
+      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIIFhlw40YKZdLPFIfhzApQpdwPC8rdxWD2kppomPt8OUAAAABHNzaDo= alex-wikitide-backup@yubikey-nfc2
   owen:
     ensure: absent
     uid: 1017
@@ -185,3 +188,9 @@ users:
     name: OA
     realname: Original Authority
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILD0e5CCa8BhhAmKvIHPjhN6+dMU0uQ1Z/ZHcfmqoUVP original.authority0@gmail.com]
+  evalprime:
+    ensure: present
+    uid: 1019
+    name: evalprime
+    realname: EvalPrime
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII58/9ujLHNt1p1YOlHJr7Y2D7laEkYzQSOKcAhF8r1Q]

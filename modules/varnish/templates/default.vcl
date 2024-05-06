@@ -1,4 +1,4 @@
-# This is the VCL file for Varnish, adjusted for Miraheze's needs.
+# This is the VCL file for Varnish, adjusted for WikiTide's needs.
 # It was originally written by Southparkfan in 2015, but rewritten in 2022 by John.
 # Some material used is inspired by the Wikimedia Foundation's configuration files.
 # Their material and license is available at https://github.com/wikimedia/puppet
@@ -15,7 +15,7 @@ import vsthrottle;
 # MediaWiki configuration
 probe mwhealth {
 	.request = "GET /check HTTP/1.1"
-		"Host: health.miraheze.org"
+		"Host: health.wikitide.net"
 		"User-Agent: Varnish healthcheck"
 		"Connection: close";
 	# Check each <%= @interval_check %>
@@ -84,7 +84,7 @@ acl purge {
 	"2602:294:0:b12::/64";
 }
 
-acl miraheze_nets {
+acl wikitide_nets {
 	# IPv6
 	"2602:294:0:c8::/64";
 	"2602:294:0:b13::/64";
@@ -139,7 +139,7 @@ sub rate_limit {
 		//   * All others (excludes static): 1000/50s (20/s long term, with 1000 burst)
 		if (
 			req.http.Cookie !~ "([sS]ession|Token)=" &&
-			std.ip(req.http.X-Real-IP, "192.0.2.1") !~ miraheze_nets &&
+			std.ip(req.http.X-Real-IP, "192.0.2.1") !~ wikitide_nets &&
 			(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 		) {
 			if (req.url ~ "^/((w|(1\.\d{2,}))/api.php|(w|(1\.\d{2,}))/rest.php|(wiki/)?Special:EntityData)") {
@@ -227,7 +227,7 @@ sub mw_request {
 	call normalize_request_nonmisc;
 
 	# Assigning a backend
-	if (req.http.X-WikiTide-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ miraheze_nets) {
+	if (req.http.X-WikiTide-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ wikitide_nets) {
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['xdebug'] -%>
 		if (req.http.X-WikiTide-Debug == "<%= name %>.wikitide.net") {
@@ -370,7 +370,7 @@ sub vcl_recv {
 	}
 
 	# Health checks, do not send request any further, if we're up, we can handle it
-	if (req.http.Host == "health.miraheze.org" && req.url == "/check") {
+	if (req.http.Host == "health.wikitide.net" && req.url == "/check") {
 		return (synth(200));
 	}
 
@@ -440,8 +440,8 @@ sub vcl_recv {
 
 # Defines the uniqueness of a request
 sub vcl_hash {
-	# FIXME: try if we can make this ^/wiki/ only?
-	if ((req.http.Host != "miraheze.org" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
+	# FIXME: try if we can make this ^/(wiki/)? only?
+	if ((req.http.Host != "miraheze.org" && req.http.Host != "wikitide.org" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
 		hash_data(req.http.X-Subdomain);
 	}
 }
@@ -578,13 +578,9 @@ sub vcl_backend_response {
 		set beresp.ttl = 43200s;
 	}
 
-	# Cache non-modified robots.txt for 12 hours, otherwise 5 minutes
+	# Cache robots.txt for 12 hours
 	if (bereq.url == "/robots.txt") {
-		if (beresp.http.X-Miraheze-Robots == "Custom") {
-			set beresp.ttl = 300s;
-		} else {
-			set beresp.ttl = 43200s;
-		}
+		set beresp.ttl = 43200s;
 	}
 
 	// Compress compressible things if the backend didn't already, but

@@ -44,11 +44,7 @@ server {
 		send_timeout 140;
 	}
 
-	location /discord {
-		return 301 https://discord.gg/TVAJTE4CUn;
-	}
-
-	location ~ ^/((?!(css|discord|img|js|lib|scss)).)*$ {
+	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -124,6 +120,8 @@ server {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
+	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+
 	error_page 400 /ErrorPages/400.html;
 	error_page 401 /ErrorPages/401.html;
 	error_page 403 /ErrorPages/403.html;
@@ -138,19 +136,47 @@ server {
 	error_page 502 /ErrorPages/502.html;
 	error_page 504 /ErrorPages/504.html;
 
-
 	include /etc/nginx/mediawiki-includes;
 
 	location = /robots.txt {
 		rewrite ^(.*)$ /robots.php;
 	}
 
-	location = /check {
-		rewrite ^(.*)$ /healthcheck.php;
-	}
-
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name health.wikitide.net;
+	root /srv/mediawiki;
+	index index.php index.html;
+
+	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
+	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_buffers 32 32k;
+		fastcgi_buffer_size 64k;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+	}
+
+	location = /check {
+		rewrite ^(.*)$ /healthcheck.php;
 	}
 }
 
@@ -173,6 +199,8 @@ server {
 	add_header x-xss-protection "1; mode=block" always;
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+
+	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 
 	location /private/ {
 		deny all;
@@ -229,7 +257,7 @@ server {
 		send_timeout 140;
 	}
 
-	location ~ ^/((?!(css|discord|img|js|lib|scss)).)*$ {
+	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -258,6 +286,120 @@ server {
 		}
 	}
 }
+
+server {
+	listen 80;
+	listen [::]:80;
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name foundation.wikitide.org;
+	root /srv/mediawiki/landing;
+	index foundation.php;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	ssl_certificate /etc/ssl/localcerts/wikitide.org.crt;
+	ssl_certificate_key /etc/ssl/private/wikitide.org.key;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		try_files $fastcgi_script_name =404;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+		fastcgi_read_timeout 140;
+		send_timeout 140;
+	}
+
+	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
+		# redirect query parameter to path
+		if ($arg_lang !~ '^$|en') {
+			return 301 /$arg_lang;
+		}
+
+		# redirect en (default) to /
+		if ($arg_lang = 'en') {
+			return 301 /;
+		}
+
+		rewrite ^/en(/.*)?$ / permanent;
+
+		# rewrite path to lang, so that, for example, /en will act the
+		# same as ?lang=en, but without the ?lang being needed 
+		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
+
+		# if we aren't using a user selected language,
+		# use $http_accept_language
+		if ( $http_accept_language ~ ^(..) ) {
+			set $lang $1;
+		}
+
+		# rewrite to language if not default
+		if ($lang != 'en') {
+			rewrite ^(.*) $1?lang=$lang break;
+		}
+	}
+}
+
+<%- @sslredirects.each_pair do | name, property | -%>
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	<%- if property['additional_domain'] -%>
+	server_name <%= property['url'] %> <%= property['additional_domain'] %>;
+	<%- else -%>
+	server_name <%= property['url'] %>;
+	<%- end -%>
+
+	root /var/www/html;
+
+	ssl_certificate /etc/ssl/localcerts/<%= property['sslname'] %>.crt;
+	ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
+
+	<%- if property['hsts'] == "strict" -%>
+	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
+	<%- else -%>
+	add_header Strict-Transport-Security "max-age=604800";
+	<%- end -%>
+
+	<%- if property['path_redirects'] -%>
+	<%- property['path_redirects'].each_pair do | path, redirect | -%>
+	location ~* <%= path %>$ {
+		return 301 https://<%= redirect %>;
+	}
+	<%- end -%>
+	# If we are using path_redirects, make the main
+	# redirect property optional.
+	<%- if property['redirect'] -%>
+	# Only redirect if there are no other matches found.
+	# This prevents this from conflicting with
+	# redirects specified in path_redirects.
+	location / {
+		return 301 https://<%= property['redirect'] %>$request_uri;
+	}
+	<%- end -%>
+	<%- else -%>
+	# If we aren't using path_redirects, always
+	# redirect using the main redirect property.
+	return 301 https://<%= property['redirect'] %>$request_uri;
+	<%- end -%>
+}
+
+<%- end -%>
 
 <%- @sslcerts.each_pair do | name, property | -%>
 server {
@@ -289,6 +431,8 @@ server {
 	add_header x-xss-protection "1; mode=block" always;
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+
+	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 
 	error_page 400 /ErrorPages/400.html;
 	error_page 401 /ErrorPages/401.html;

@@ -2,8 +2,11 @@
 class role::phorge {
     include phorge
 
+    $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
+    $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
+
     $firewall_rules_str = join(
-        query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['networking'])
+        $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['he-ipv6'] ) {
                 "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"

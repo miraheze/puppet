@@ -29,7 +29,7 @@ twitter_api_params = {
 }
 
 # Channels to join
-targets = ("#miraheze-sre",)
+targets = ("#miraheze-tech-ops",)
 
 # Name of nickserv user
 nickserv = "nickserv"
@@ -60,10 +60,11 @@ author_map = {
 
     # Discord usernames
     "@cosmicalpha": "Universal Omega",
-    "@agentisai": "Agent",
     "@reception123": "Reception123",
     "@originalauthority": "Original Authority",
-    "@bluemoon0332": "OrangeStar"
+    "@bluemoon0332": "OrangeStar",
+    "@orduin": "Void",
+    "@evalprime": "Evalprime"
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)
