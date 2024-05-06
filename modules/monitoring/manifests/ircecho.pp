@@ -17,7 +17,6 @@ class monitoring::ircecho (
 
     $pyversion = $facts['os']['distro']['codename'] ? {
         'bookworm' => 'python3.11',
-        'bullseye' => 'python3.9',
     }
 
     file { "/usr/local/lib/${pyversion}/dist-packages/ib3_auth.py":
@@ -30,7 +29,7 @@ class monitoring::ircecho (
     }
 
     $ircecho_logs = {
-        '/var/log/icinga2/irc.log' => '#miraheze-sre',
+        '/var/log/icinga2/irc.log' => '#miraheze-tech-ops',
     }
 
     file { '/etc/default/ircecho':
