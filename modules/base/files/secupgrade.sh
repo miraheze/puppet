@@ -1,6 +1,11 @@
 #!/bin/bash
 #script to upgrade packages with pending security upgrades, and automatically log these upgrades to Tech:SAL
-packages=$(apt-get -s dist-upgrade | grep "^Inst" | grep -i securi | grep -v "linux-image" | awk -F " " {"print $2"} | awk '{printf "%s ", $2}')
+#this is much easier than trying to use getopt or getopts
+if [ "$1" = "--include-kernel" ]; then
+  packages=$(apt-get -s dist-upgrade | grep "^Inst" | grep -i securi | awk -F " " {"print $2"} | awk '{printf "%s ", $2}')
+else
+  packages=$(apt-get -s dist-upgrade | grep "^Inst" | grep -i securi | grep -v "linux-image" | awk -F " " {"print $2"} | awk '{printf "%s ", $2}')
+fi
 if [ -z "${packages//[[:space:]]}" ]; then
   echo "No packages to upgrade"
 else
