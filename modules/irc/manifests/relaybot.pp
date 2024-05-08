@@ -3,7 +3,7 @@ define irc::relaybot (
     String $instance
 ) {
     $install_path = "/srv/${instance}"
-    $dotnet_version = '8.0'
+    $dotnet_version = '6.0'
 
     $bot_token = lookup("passwords::irc::${instance}::bot_token")
     $irc_password = lookup("passwords::irc::${instance}::irc_password")
