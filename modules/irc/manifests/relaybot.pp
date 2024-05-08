@@ -31,9 +31,11 @@ define irc::relaybot (
         }
     }
 
-    package { "dotnet-sdk-${dotnet_version}":
-        ensure  => installed,
-        require => Package['packages-microsoft-prod'],
+    if !defined(Package["dotnet-sdk-${dotnet_version}"]) {
+        package { "dotnet-sdk-${dotnet_version}":
+            ensure  => installed,
+            require => Package['packages-microsoft-prod'],
+        }
     }
 
     file { $install_path:
