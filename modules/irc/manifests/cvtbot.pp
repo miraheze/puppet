@@ -14,7 +14,7 @@ class irc::cvtbot {
         }
     }
 
-    if !defined(File['/opt/packages-microsoft-prod.deb']) {
+    if !defined(Package['packages-microsoft-prod']) {
         file { '/opt/packages-microsoft-prod.deb':
             ensure => present,
             source => 'puppet:///modules/irc/packages-microsoft-prod.deb',
@@ -26,11 +26,11 @@ class irc::cvtbot {
             source   => '/opt/packages-microsoft-prod.deb',
             require  => File['/opt/packages-microsoft-prod.deb'],
         }
+    }
 
-        package { "dotnet-sdk-${dotnet_version}":
-            ensure  => installed,
-            require => Package['packages-microsoft-prod'],
-        }
+    package { "dotnet-sdk-${dotnet_version}":
+        ensure  => installed,
+        require => Package['packages-microsoft-prod'],
     }
 
     file { $install_path:
