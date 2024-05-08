@@ -29,7 +29,7 @@ define irc::relaybot (
             require  => File['/opt/packages-microsoft-prod.deb'],
         }
 
-        package { 'dotnet-sdk-6.0':
+        package { 'dotnet-sdk-8.0':
             ensure  => installed,
             require => Package['packages-microsoft-prod'],
         }
