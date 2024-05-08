@@ -141,6 +141,7 @@ class irc::cvtbot {
         require => [
             Exec['CVTBot-build'],
             File["${install_path}/src/CVTBot.ini"],
+            Package["dotnet-sdk-${dotnet_version}"],
         ],
     }
 
