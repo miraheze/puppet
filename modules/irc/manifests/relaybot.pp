@@ -3,6 +3,7 @@ define irc::relaybot (
     String $instance
 ) {
     $install_path = "/srv/${instance}"
+    $dotnet_version = '8.0'
 
     $bot_token = lookup("passwords::irc::${instance}::bot_token")
     $irc_password = lookup("passwords::irc::${instance}::irc_password")
@@ -11,7 +12,7 @@ define irc::relaybot (
     if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01irc']) {
         file { '/etc/apt/apt.conf.d/01irc':
             ensure  => present,
-            content => template('irc/relaybot/aptproxy.erb'),
+            content => template('irc/aptproxy.erb'),
             before  => Package['packages-microsoft-prod'],
         }
     }
@@ -19,7 +20,7 @@ define irc::relaybot (
     if !defined(File['/opt/packages-microsoft-prod.deb']) {
         file { '/opt/packages-microsoft-prod.deb':
             ensure => present,
-            source => 'puppet:///modules/irc/relaybot/packages-microsoft-prod.deb',
+            source => 'puppet:///modules/irc/packages-microsoft-prod.deb',
         }
 
         package { 'packages-microsoft-prod':
@@ -29,7 +30,7 @@ define irc::relaybot (
             require  => File['/opt/packages-microsoft-prod.deb'],
         }
 
-        package { 'dotnet-sdk-8.0':
+        package { "dotnet-sdk-${dotnet_version}":
             ensure  => installed,
             require => Package['packages-microsoft-prod'],
         }
@@ -68,7 +69,7 @@ define irc::relaybot (
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
-        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        source  => 'puppet:///modules/irc/NuGet.Config',
         before  => Exec["${instance}-build"],
         require => [
             File["${install_path}/.nuget"],
@@ -79,7 +80,7 @@ define irc::relaybot (
     exec { "${instance}-build":
         command     => 'dotnet build --configuration Release',
         creates     => "${install_path}/bin",
-        unless      => "test -d ${install_path}/bin/Release/net6.0",
+        unless      => "test -d ${install_path}/bin/Release/net${dotnet_version}",
         cwd         => $install_path,
         path        => '/usr/bin',
         environment => [
@@ -91,8 +92,8 @@ define irc::relaybot (
     }
 
     file { [
-        "${install_path}/bin/Release/net6.0/.nuget",
-        "${install_path}/bin/Release/net6.0/.nuget/NuGet"
+        "${install_path}/bin/Release/net${dotnet_version}/.nuget",
+        "${install_path}/bin/Release/net${dotnet_version}/.nuget/NuGet"
     ]:
         ensure  => directory,
         owner   => 'irc',
@@ -101,15 +102,15 @@ define irc::relaybot (
         require => Exec["${instance}-build"],
     }
 
-    file { "${install_path}/bin/Release/net6.0/.nuget/NuGet/NuGet.Config":
+    file { "${install_path}/bin/Release/net${dotnet_version}/.nuget/NuGet/NuGet.Config":
         ensure  => present,
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
-        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        source  => 'puppet:///modules/irc/NuGet.Config',
         require => [
-            File["${install_path}/bin/Release/net6.0/.nuget"],
-            File["${install_path}/bin/Release/net6.0/.nuget/NuGet"],
+            File["${install_path}/bin/Release/net${dotnet_version}/.nuget"],
+            File["${install_path}/bin/Release/net${dotnet_version}/.nuget/NuGet"],
         ],
     }
 
@@ -129,7 +130,7 @@ define irc::relaybot (
         restart => true,
         require => [
             Git::Clone["IRC-Discord-Relay-${instance}"],
-            Package['dotnet-sdk-6.0'],
+            Package["dotnet-sdk-${dotnet_version}"],
             File["${install_path}/config.ini"],
         ],
     }
