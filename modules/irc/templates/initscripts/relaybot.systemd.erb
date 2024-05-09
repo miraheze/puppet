@@ -1,10 +1,10 @@
 [Unit]
-Description=IRC<->Discord relay bot (instance: <%= @instance %>)
+Description=IRC<->Discord relay bot (instance: <%= @title %>)
 
 [Service]
 Type=simple
 User=irc
-SyslogIdentifier=<%= @instance %>
+SyslogIdentifier=<%= @title %>
 ExecStart=/usr/bin/dotnet run --project <%= @install_path %>/IrcDiscordRelay.csproj --configuration Release
 Restart=on-failure
 WorkingDirectory=<%= @install_path %>
