@@ -1,12 +1,11 @@
 # define: irc::relaybot
 define irc::relaybot (
-    String $instance,
     String $dotnet_version
 ) {
-    $install_path = "/srv/${instance}"
+    $install_path = "/srv/${title}"
 
-    $bot_token = lookup("passwords::irc::${instance}::bot_token")
-    $irc_password = lookup("passwords::irc::${instance}::irc_password")
+    $bot_token = lookup("passwords::irc::${title}::bot_token")
+    $irc_password = lookup("passwords::irc::${title}::irc_password")
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01irc']) {
@@ -45,7 +44,7 @@ define irc::relaybot (
         mode   => '0755',
     }
 
-    git::clone { "IRC-Discord-Relay-${instance}":
+    git::clone { "IRC-Discord-Relay-${title}":
         ensure    => latest,
         origin    => 'https://github.com/Universal-Omega/IRC-Discord-Relay',
         directory => $install_path,
@@ -63,7 +62,7 @@ define irc::relaybot (
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
-        require => Git::Clone["IRC-Discord-Relay-${instance}"],
+        require => Git::Clone["IRC-Discord-Relay-${title}"],
     }
 
     file { "${install_path}/.nuget/NuGet/NuGet.Config":
@@ -72,14 +71,14 @@ define irc::relaybot (
         group   => 'irc',
         mode    => '0644',
         source  => 'puppet:///modules/irc/NuGet.Config',
-        before  => Exec["${instance}-build"],
+        before  => Exec["${title}-build"],
         require => [
             File["${install_path}/.nuget"],
             File["${install_path}/.nuget/NuGet"],
         ],
     }
 
-    exec { "${instance}-build":
+    exec { "${title}-build":
         command     => 'dotnet build --configuration Release',
         creates     => "${install_path}/bin",
         unless      => "test -d ${install_path}/bin/Release/net${dotnet_version}",
@@ -90,7 +89,7 @@ define irc::relaybot (
             'HTTP_PROXY=http://bastion.wikitide.net:8080',
         ],
         user        => 'irc',
-        require     => Git::Clone["IRC-Discord-Relay-${instance}"],
+        require     => Git::Clone["IRC-Discord-Relay-${title}"],
     }
 
     file { [
@@ -101,7 +100,7 @@ define irc::relaybot (
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
-        require => Exec["${instance}-build"],
+        require => Exec["${title}-build"],
     }
 
     file { "${install_path}/bin/Release/net${dotnet_version}/.nuget/NuGet/NuGet.Config":
@@ -121,25 +120,23 @@ define irc::relaybot (
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => template("irc/relaybot/config-${instance}.ini.erb"),
-        require => Git::Clone["IRC-Discord-Relay-${instance}"],
-        notify  => Service[$instance],
+        content => template("irc/relaybot/config-${title}.ini.erb"),
+        require => Git::Clone["IRC-Discord-Relay-${title}"],
+        notify  => Service[$title],
     }
 
-    systemd::service { $instance:
+    systemd::service { $title:
         ensure  => present,
         content => systemd_template('relaybot'),
         restart => true,
         require => [
-            Git::Clone["IRC-Discord-Relay-${instance}"],
+            Git::Clone["IRC-Discord-Relay-${title}"],
             Package["dotnet-sdk-${dotnet_version}"],
             File["${install_path}/config.ini"],
         ],
     }
 
-    if !defined(Monitoring::Nrpe['IRC-Discord Relay Bot']) {
-        monitoring::nrpe { 'IRC-Discord Relay Bot':
-            command => '/usr/lib/nagios/plugins/check_procs -a relaybot -c 4:4'
-        }
+    monitoring::nrpe { "IRC-Discord Relay Bot (instance: ${title})":
+        command => "/usr/lib/nagios/plugins/check_procs -a ${title}/ -c 2:2"
     }
 }
