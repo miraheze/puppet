@@ -5,12 +5,10 @@ class role::irc {
     # include irc::pywikibot
 
     irc::relaybot { 'relaybot':
-        instance       => 'relaybot',
         dotnet_version => '6.0',
     }
 
     irc::relaybot { 'relaybot2':
-        instance       => 'relaybot2',
         dotnet_version => '6.0',
     }
 
