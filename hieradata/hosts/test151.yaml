@@ -3,7 +3,7 @@ users::groups:
   - mediawiki-roots
   - mediawiki-test-admins
 
-contactgroups: ['sre', 'mediawiki']
+contactgroups: ['infrastructure', 'mediawiki']
 
 jobrunner: true
 jobrunner::intensive: true

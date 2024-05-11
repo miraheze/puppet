@@ -1,6 +1,6 @@
 define monitoring::hosts (
     $ensure      = present,
-    $contacts    = lookup('contactgroups', {'default_value' => [ 'sre' ]}),
+    $contacts    = lookup('contactgroups', {'default_value' => [ 'infrastructure' ]}),
 ) {
     if ( $facts['networking']['interfaces']['he-ipv6'] ) {
         $address = undef
