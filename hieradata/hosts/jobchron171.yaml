@@ -2,7 +2,7 @@ users::groups:
   - mediawiki-admins
   - mediawiki-roots
 
-contactgroups: ['infrastructure', 'mediawiki']
+contactgroups: ['infra', 'mediawiki']
 
 redis::heap: '1GB'
 
