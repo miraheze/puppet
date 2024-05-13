@@ -1,6 +1,6 @@
 define monitoring::wiki (
     $ensure       = present,
-    $contacts     = lookup('contactgroups', {'default_value' => [ 'sre' ]}),
+    $contacts     = lookup('contactgroups', {'default_value' => [ 'infra' ]}),
     $protocol     = 'https',
     $domain       = 'wikitide.net',
     $testpage     = 'Main_Page',
