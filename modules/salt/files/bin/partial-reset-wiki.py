@@ -38,7 +38,7 @@ def execute_salt_command(salt_command: str, shell: bool = True, stdout: Optional
 
 
 def get_db_cluster(wiki: str) -> str:
-    db_query = f'SELECT wiki_dbcluster FROM mhglobal.cw_wikis WHERE wiki_dbname = \\"{wiki_db}\\"'
+    db_query = f'SELECT wiki_dbcluster FROM mhglobal.cw_wikis WHERE wiki_dbname = \\"{wiki}\\"'
     command = generate_salt_command("db171", f"sudo -i mysql --skip-column-names -e '{db_query}'")
     result = execute_salt_command(salt_command=command, stdout=subprocess.PIPE, text=True)
     if result:
