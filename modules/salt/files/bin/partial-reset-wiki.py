@@ -59,7 +59,7 @@ def reset_wiki(wiki: str) -> None:
 
     try:
         wiki_cluster = get_db_cluster(wiki_db)
-    except KeyError, IndexError:
+    except (KeyError, IndexError):
         print(f'Error: Unable to determine the db cluster for {wiki}')
         sys.exit(1)
 
