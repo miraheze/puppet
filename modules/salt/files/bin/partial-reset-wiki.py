@@ -62,7 +62,7 @@ def reset_wiki(wiki: str) -> None:
     # Step 2: Execute deleteWiki.php
     execute_salt_command(salt_command=generate_salt_command('mwtask181', f'mwscript extensions/CreateWiki/deleteWiki.php loginwiki --deletewiki {wiki} --delete {os.getlogin()}'))
 
-    # Step 3: Backup and drop database 
+    # Step 3: Backup and drop database
     execute_salt_command(salt_command=generate_salt_command(wiki_cluster, f"sudo -i mysqldump {wiki} > {wiki}.sql'"))
     execute_salt_command(salt_command=generate_salt_command(wiki_cluster, f"sudo -i mysql -e 'DROP DATABASE {wiki}'"))
 
