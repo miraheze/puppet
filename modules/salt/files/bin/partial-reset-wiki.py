@@ -10,7 +10,6 @@ class DbClusterMap(TypedDict):
     c2: str
     c3: str
     c4: str
-    c5: str
 
 
 # Define the mapping of db clusters to db names
