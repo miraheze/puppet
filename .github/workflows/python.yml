@@ -34,7 +34,7 @@ jobs:
         run: |
           flake8 modules/mediawiki modules/ssl modules/salt/files/bin --ignore=E501,W503,SFS301,T003,PT009
           coverage run --branch -m pytest modules
-          mypy modules/mediawiki modules/ssl --ignore-missing-imports
+          mypy modules/mediawiki modules/ssl modules/salt/files/bin --ignore-missing-imports
 
   notify-irc:
     needs: build
