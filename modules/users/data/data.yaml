@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [evalprime, reception, universalomega, void]
+    members: [alex, evalprime, reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -18,7 +18,7 @@ groups:
   mediawiki-roots:
     gid: 2002
     description: full root on MediaWiki servers
-    members: [alex]
+    members: []
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   cache-admins:
     gid: 2003
@@ -39,7 +39,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [alex, macfan, oa]
+    members: [macfan, oa]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -59,7 +59,7 @@ groups:
   database-admins:
     gid: 2008
     description: limited sudo access on database servers
-    members: [alex]
+    members: []
     privileges: ['ALL = (ALL) NOPASSWD: /bin/bash -c mariadb',
                  'ALL = (ALL) NOPASSWD: /bin/bash -c mysql',
                  'ALL = (ALL) NOPASSWD: /bin/bash -c mysqldump *',
