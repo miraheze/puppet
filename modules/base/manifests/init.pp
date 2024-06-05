@@ -57,7 +57,7 @@ class base (
     class { 'apt::security': }
 
     class { 'ntp':
-        servers => [ 'time.cloudflare.com' ]
+        servers  => [ 'time.cloudflare.com' ]
         restrict => [ '127.0.0.1', '::1' ]
     }
 
