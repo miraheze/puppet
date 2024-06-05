@@ -14,7 +14,6 @@ class base (
     include base::mail
     include base::monitoring
     include base::backup
-    include ntp
     include ssh
     include users
 
