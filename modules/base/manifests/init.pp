@@ -55,11 +55,6 @@ class base (
 
     class { 'apt::security': }
 
-    class { 'ntp':
-        servers  => [ 'time.cloudflare.com' ],
-        restrict => [ 'default kod nomodify notrap nopeer noquery', '-6 default kod nomodify notrap nopeer noquery', '127.0.0.1', '-6 ::1' ],
-    }
-
     # Used by salt-user
     users::user { 'salt-user':
         ensure     => present,
