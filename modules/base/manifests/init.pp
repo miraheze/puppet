@@ -56,10 +56,10 @@ class base (
     class { 'apt::security': }
 
     class { 'ntp':
-        servers  => [ 'time.cloudflare.com' ],
-        config => '/etc/ntpsec/ntp.conf',
+        servers   => [ 'time.cloudflare.com' ],
+        config    => '/etc/ntpsec/ntp.conf',
         driftfile => '/var/lib/ntpsec/ntp.drift',
-        restrict => [ 'default kod limited nomodify noquery', '-6 default kod limited nomodify noquery', '127.0.0.1', '-6 ::1' ],
+        restrict  => [ 'default kod limited nomodify noquery', '-6 default kod limited nomodify noquery', '127.0.0.1', '-6 ::1' ],
     }
 
     # Used by salt-user
