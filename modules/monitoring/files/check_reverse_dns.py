@@ -125,18 +125,17 @@ def get_reverse_dnshostname(hostname):
 
         return rev_host
     except (resolver.NXDOMAIN, resolver.NoAnswer):
-        if ".miraheze.org" in hostname or hostname=="miraheze.org":
-                print('SSL OK - domain exempt from check')
-                sys.exit(0)
-        else:
-                print(f'rDNS WARNING - reverse DNS entry for {hostname} could not be found')
-                sys.exit(1)
+        print(f'rDNS WARNING - reverse DNS entry for {hostname} could not be found')
+        sys.exit(1)
 
 
 def main():
     """Execute functions."""
 
     args = get_args()
+    if ".miraheze.org" in args.hostname or args.hostname=="miraheze.org":
+                print('SSL OK - domain exempt from check')
+                sys.exit(0)
     try:
         rdns_hostname = get_reverse_dnshostname(args.hostname)
     except resolver.NoNameservers:
