@@ -59,7 +59,7 @@ def get_args():
 
 def check_records(hostname):
     """Check NS and CNAME records for given hostname."""
-    domains_as_tlds = ('eu.org','for.uz')
+    domains_as_tlds = ('eu.org','for.uz','liao.media')
     cname_check_impossible = False
 
     nameservers = []
@@ -125,8 +125,12 @@ def get_reverse_dnshostname(hostname):
 
         return rev_host
     except (resolver.NXDOMAIN, resolver.NoAnswer):
-        print(f'rDNS WARNING - reverse DNS entry for {hostname} could not be found')
-        sys.exit(1)
+        if ".miraheze.org" in hostname or hostname=="miraheze.org":
+                print(f'SSL OK - domain exempt from check')
+                sys.exit(0)
+        else:
+                print(f'rDNS WARNING - reverse DNS entry for {hostname} could not be found')
+                sys.exit(1)
 
 
 def main():
