@@ -126,7 +126,7 @@ def get_reverse_dnshostname(hostname):
         return rev_host
     except (resolver.NXDOMAIN, resolver.NoAnswer):
         if ".miraheze.org" in hostname or hostname=="miraheze.org":
-                print(f'SSL OK - domain exempt from check')
+                print('SSL OK - domain exempt from check')
                 sys.exit(0)
         else:
                 print(f'rDNS WARNING - reverse DNS entry for {hostname} could not be found')
