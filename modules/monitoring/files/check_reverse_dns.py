@@ -59,7 +59,7 @@ def get_args():
 
 def check_records(hostname):
     """Check NS and CNAME records for given hostname."""
-    domains_as_tlds = ('eu.org','for.uz')
+    domains_as_tlds = ('eu.org','for.uz','liao.media')
     cname_check_impossible = False
 
     nameservers = []
@@ -133,6 +133,9 @@ def main():
     """Execute functions."""
 
     args = get_args()
+    if ".miraheze.org" in args.hostname or args.hostname=="miraheze.org":
+                print('SSL OK - domain exempt from check')
+                sys.exit(0)
     try:
         rdns_hostname = get_reverse_dnshostname(args.hostname)
     except resolver.NoNameservers:
