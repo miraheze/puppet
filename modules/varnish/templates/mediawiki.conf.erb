@@ -216,7 +216,8 @@ server {
 	<%- end -%>
 
 	location ^~ /.well-known/acme-challenge/ {
-		# Take no action and prevent redirects - T12203
+		# Redirect to wikitide.net to serve acme challenges - T12203
+		return 301 https://wikitide.net$request_uri;
 	}
 
 	<%- if property['path_redirects'] -%>
