@@ -215,7 +215,7 @@ server {
 	add_header Strict-Transport-Security "max-age=604800";
 	<%- end -%>
 
-	location ^~ /.well-known/acme-challenges/ {
+	location ^~ /.well-known/acme-challenge/ {
 		# Take no action and prevent redirects - T12203
 	}
 
