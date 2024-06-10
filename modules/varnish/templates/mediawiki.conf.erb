@@ -215,27 +215,23 @@ server {
 	add_header Strict-Transport-Security "max-age=604800";
 	<%- end -%>
 
+	location ^~ /.well-known/acme-challenges/ {
+		# Take no action and prevent redirects - T12203
+	}
+
 	<%- if property['path_redirects'] -%>
 	<%- property['path_redirects'].each_pair do | path, redirect | -%>
 	location ~* <%= path %>$ {
 		return 301 https://<%= redirect %>;
 	}
 	<%- end -%>
-	# If we are using path_redirects, make the main
-	# redirect property optional.
-	<%- if property['redirect'] -%>
+
 	# Only redirect if there are no other matches found.
 	# This prevents this from conflicting with
 	# redirects specified in path_redirects.
 	location / {
 		return 301 https://<%= property['redirect'] %>$request_uri;
 	}
-	<%- end -%>
-	<%- else -%>
-	# If we aren't using path_redirects, always
-	# redirect using the main redirect property.
-	return 301 https://<%= property['redirect'] %>$request_uri;
-	<%- end -%>
 }
 
 <%- end -%>
