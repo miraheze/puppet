@@ -226,12 +226,14 @@ server {
 	}
 	<%- end -%>
 
+	<%- if property['redirect'] -%>
 	# Only redirect if there are no other matches found.
 	# This prevents this from conflicting with
 	# redirects specified in path_redirects.
 	location / {
 		return 301 https://<%= property['redirect'] %>$request_uri;
 	}
+	<%- end -%>
 }
 
 <%- end -%>
