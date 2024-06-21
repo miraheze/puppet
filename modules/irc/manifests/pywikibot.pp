@@ -66,13 +66,13 @@ class irc::pywikibot {
     }
 
     logrotate::rule { 'archivebot-cron':
-        file_glob => '/var/log/pwb-archivebot-cron.log'
-        frequency => 'weekly',
-        date_ext => true,
+        file_glob      => '/var/log/pwb-archivebot-cron.log'
+        frequency      => 'weekly',
+        date_ext       => true,
         date_yesterday => true,
-        rotate => 7,
-        missing_ok => true,
-        no_create => true,
-        compress => true,
+        rotate         => 7,
+        missing_ok     => true,
+        no_create      => true,
+        compress       => true,
     }
 }
