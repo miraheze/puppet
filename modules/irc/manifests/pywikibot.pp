@@ -59,9 +59,20 @@ class irc::pywikibot {
 
     cron { 'run pywikibot archivebot on meta':
         ensure  => present,
-        command => '/usr/bin/python3 /srv/pywikibot/pwb.py archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /srv/pywikibot/cron.log 2>&1',
+        command => '/usr/bin/python3 /srv/pywikibot/pwb.py archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /var/log/pwb-archivebot-cron.log 2>&1',
         user    => 'irc',
         minute  => '0',
         hour    => '0',
+    }
+
+    logrotate::rule { 'archivebot-cron':
+        file_glob => '/var/log/pwb-archivebot-cron.log'
+        frequency => 'weekly',
+        date_ext => true,
+        date_yesterday => true,
+        rotate => 7,
+        missing_ok => true,
+        no_create => true,
+        compress => true,
     }
 }
