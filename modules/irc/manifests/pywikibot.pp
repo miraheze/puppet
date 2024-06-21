@@ -70,6 +70,7 @@ class irc::pywikibot {
         frequency      => 'weekly',
         date_ext       => true,
         date_yesterday => true,
+        copy_truncate  => true,
         rotate         => 7,
         missing_ok     => true,
         no_create      => true,
