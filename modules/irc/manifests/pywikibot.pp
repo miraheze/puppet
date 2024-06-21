@@ -65,7 +65,7 @@ class irc::pywikibot {
         hour    => '0',
     }
 
-    logrotate::rule { 'archivebot-cron':
+    logrotate::rule { 'pwb-archivebot-cron':
         file_glob      => '/var/log/pwb-archivebot-cron.log'
         frequency      => 'weekly',
         date_ext       => true,
