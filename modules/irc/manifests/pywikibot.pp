@@ -23,7 +23,7 @@ class irc::pywikibot {
         'python3-mwoauth',
         'python3-pydot',
         'python3-stdnum',
-        'python3-pillow',
+        'python3-pil',
         'python3-mysqldb',
         'python3-bs4',
     ])
