@@ -19,7 +19,7 @@ class irc::pywikibot {
     file { '/var/log/pwb':
         ensure  => 'directory',
         owner   => 'irc',
-        group   => 'irc'
+        group   => 'irc',
         mode    => '0644',
         recurse => true,
     }
