@@ -16,6 +16,14 @@ class irc::pywikibot {
         max_files => 5000,
     }
 
+    file { '/var/log/pwb':
+        ensure  => 'directory',
+        owner   => 'irc',
+        group   => 'irc'
+        mode    => '0644',
+        recurse => true,
+    }
+
     stdlib::ensure_packages([
         'python3-mwparserfromhell',
         'python3-packaging',
@@ -59,14 +67,14 @@ class irc::pywikibot {
 
     cron { 'run pywikibot archivebot on meta':
         ensure  => present,
-        command => '/usr/bin/python3 /srv/pywikibot/pwb.py archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /var/log/pwb-archivebot-cron.log 2>&1',
+        command => '/usr/bin/python3 /srv/pywikibot/pwb.py archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /var/log/pwb/archivebot-cron.log 2>&1',
         user    => 'irc',
         minute  => '0',
         hour    => '0',
     }
 
     logrotate::rule { 'pwb-archivebot-cron':
-        file_glob      => '/var/log/pwb-archivebot-cron.log',
+        file_glob      => '/var/log/pwb/archivebot-cron.log',
         frequency      => 'weekly',
         date_ext       => true,
         date_yesterday => true,
