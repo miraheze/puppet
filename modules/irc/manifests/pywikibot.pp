@@ -43,7 +43,7 @@ class irc::pywikibot {
         ensure  => present,
         owner   => 'irc',
         group   => 'irc',
-        mode    => '0644',
+        mode    => '0400',
         content => template('irc/pywikibot/user-config.py'),
         require => Git::Clone['PyWikiBot'],
     }
