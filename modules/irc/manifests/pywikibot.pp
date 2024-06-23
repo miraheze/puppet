@@ -25,6 +25,13 @@ class irc::pywikibot {
         mode   => '0644',
     }
 
+    file { $base_path/families:
+        ensure => 'directory',
+        owner  => 'irc',
+        group  => 'irc',
+        mode   => '0644',
+    }
+
     file { 'usr/local/bin/pywikibot':
         ensure  => 'present',
         owner   => 'irc',
@@ -64,7 +71,7 @@ class irc::pywikibot {
         require            => File[$install_path],
     }
 
-    file { "${base_dir}/user-config.py":
+    file { "${base_path}/user-config.py":
         ensure  => present,
         owner   => 'irc',
         group   => 'irc',
@@ -73,7 +80,7 @@ class irc::pywikibot {
         require => Git::Clone['PyWikiBot'],
     }
 
-    file { "${base_dir}/families/wikitide_family.py":
+    file { "${base_path}/families/wikitide_family.py":
         ensure  => present,
         owner   => 'irc',
         group   => 'irc',
