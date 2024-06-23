@@ -26,10 +26,10 @@ class irc::pywikibot {
     }
 
     file { 'usr/local/bin/pywikibot':
-        ensure => 'present',
-        owner => 'irc',
-        group => 'irc',
-        mode => '0555',
+        ensure  => 'present',
+        owner   => 'irc',
+        group   => 'irc',
+        mode    => '0555',
         content => template('irc/pywikibot/pywikibot.sh'),
     }
 
