@@ -25,7 +25,7 @@ class irc::pywikibot {
         mode   => '0644',
     }
 
-    file { 'usr/local/bin/pywikibot'
+    file { 'usr/local/bin/pywikibot':
         ensure => 'present',
         owner => 'irc',
         group => 'irc',
