@@ -20,9 +20,9 @@ class irc::pywikibot {
 
     file { $base_path:
         ensure => 'directory',
-        owner => 'irc',
-        group => 'irc',
-        mode => '0644',
+        owner  => 'irc',
+        group  => 'irc',
+        mode   => '0644',
     }
 
     file { 'usr/local/bin/pywikibot'
