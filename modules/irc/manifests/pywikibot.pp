@@ -1,6 +1,8 @@
 # class: irc::pywikibot
 class irc::pywikibot {
     $install_path = '/srv/pywikibot'
+    # The directory pointed to by the PYWIKIBOT_DIR environment variable
+    $base_path = '/var/local/pwb'
 
     $consumer_token = lookup('passwords::pywikibot::consumer_token')
     $consumer_secret = lookup('passwords::pywikibot::consumer_secret')
@@ -14,6 +16,21 @@ class irc::pywikibot {
         mode      => '0644',
         recurse   => true,
         max_files => 5000,
+    }
+
+    file { $base_path:
+        ensure => 'directory',
+        owner => 'irc',
+        group => 'irc',
+        mode => '0644',
+    }
+
+    file { 'usr/local/bin/pywikibot'
+        ensure => 'present',
+        owner => 'irc',
+        group => 'irc',
+        mode => '0555',
+        content => template('irc/pywikibot/pywikibot.sh'),
     }
 
     file { '/var/log/pwb':
@@ -47,7 +64,7 @@ class irc::pywikibot {
         require            => File[$install_path],
     }
 
-    file { "${install_path}/user-config.py":
+    file { "${base_dir}/user-config.py":
         ensure  => present,
         owner   => 'irc',
         group   => 'irc',
@@ -56,7 +73,7 @@ class irc::pywikibot {
         require => Git::Clone['PyWikiBot'],
     }
 
-    file { "${install_path}/families/wikitide_family.py":
+    file { "${base_dir}/families/wikitide_family.py":
         ensure  => present,
         owner   => 'irc',
         group   => 'irc',
@@ -67,7 +84,7 @@ class irc::pywikibot {
 
     cron { 'run pywikibot archivebot on meta':
         ensure  => present,
-        command => '/usr/bin/python3 /srv/pywikibot/pwb.py archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /var/log/pwb/archivebot-cron.log 2>&1',
+        command => '/usr/local/bin/pywikibot archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /var/log/pwb/archivebot-cron.log 2>&1',
         user    => 'irc',
         minute  => '0',
         hour    => '0',
