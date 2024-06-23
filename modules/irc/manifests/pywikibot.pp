@@ -84,7 +84,7 @@ class irc::pywikibot {
 
     cron { 'run pywikibot archivebot on meta':
         ensure  => present,
-        command => '/usr/local/bin/pywikibot archivebot Template:Autoarchive/config -pt:0 -dir:/srv/pywikibot >> /var/log/pwb/archivebot-cron.log 2>&1',
+        command => '/usr/local/bin/pywikibot archivebot Template:Autoarchive/config -pt:0 >> /var/log/pwb/archivebot-cron.log 2>&1',
         user    => 'irc',
         minute  => '0',
         hour    => '0',
