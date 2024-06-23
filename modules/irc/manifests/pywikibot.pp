@@ -25,7 +25,7 @@ class irc::pywikibot {
         mode   => '0644',
     }
 
-    file { "$base_path/families":
+    file { "${base_path}/families":
         ensure => 'directory',
         owner  => 'irc',
         group  => 'irc',
