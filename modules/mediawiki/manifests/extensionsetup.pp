@@ -18,6 +18,13 @@ define mediawiki::extensionsetup (
             require => Exec["OAuth-${branch} composer"],
     }
 
+    file { '/var/local/mwdeploy':
+        ensure => directory,
+        owner => 'www-data',
+        group => 'www-data',
+        mode => '0644',
+    }
+
     $repos = loadyaml('/etc/puppetlabs/puppet/mediawiki-repos/mediawiki-repos.yaml')
 
     $repos.each |$name, $params| {
@@ -69,6 +76,19 @@ define mediawiki::extensionsetup (
             require            => Git::Clone["MediaWiki-${branch} core"],
         }
         # lint:endignore
+
+        if $params['commit'] {
+           file { "/var/local/mwdeploy/${name}":
+               ensure => 'present',
+               owner => 'www-data',
+               group => 'www-data',
+               mode => '0644',
+           }
+        } else {
+          file { "/var/local/mwdeploy/${name}":
+              ensure => 'absent',
+          }
+        }
 
         if $should_install {
             if $params['composer'] {
