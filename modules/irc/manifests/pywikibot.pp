@@ -61,12 +61,12 @@ class irc::pywikibot {
     ])
 
     git::clone { 'PyWikiBot':
-        ensure             => present,
+        ensure             => latest,
         origin             => 'https://github.com/wikimedia/pywikibot',
+        branch             => 'stable'.
         directory          => $install_path,
         owner              => 'irc',
         group              => 'irc',
-        mode               => '0644',
         recurse_submodules => true,
         require            => File[$install_path],
     }
