@@ -63,7 +63,7 @@ class irc::pywikibot {
     git::clone { 'PyWikiBot':
         ensure             => latest,
         origin             => 'https://github.com/wikimedia/pywikibot',
-        branch             => 'stable'.
+        branch             => 'stable',
         directory          => $install_path,
         owner              => 'irc',
         group              => 'irc',
