@@ -20,9 +20,9 @@ define mediawiki::extensionsetup (
 
     file { '/var/local/mwdeploy':
         ensure => directory,
-        owner => 'www-data',
-        group => 'www-data',
-        mode => '0644',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0644',
     }
 
     $repos = loadyaml('/etc/puppetlabs/puppet/mediawiki-repos/mediawiki-repos.yaml')
@@ -79,10 +79,10 @@ define mediawiki::extensionsetup (
 
         if $params['commit'] {
             file { "/var/local/mwdeploy/${name}":
-                ensure => 'present',
-                owner => 'www-data',
-                group => 'www-data',
-                mode => '0644',
+                ensure  => 'present',
+                owner   => 'www-data',
+                group   => 'www-data',
+                mode    => '0644',
                 content => 'This extension is configured to checkout a specific commit in mediawiki-repos',
             }
         } else {
