@@ -83,11 +83,11 @@ define mediawiki::extensionsetup (
                 owner => 'www-data',
                 group => 'www-data',
                 mode => '0644',
-           }
+            }
         } else {
-           file { "/var/local/mwdeploy/${name}":
-               ensure => 'absent',
-          }
+            file { "/var/local/mwdeploy/${name}":
+                ensure => 'absent',
+            }
         }
 
         if $should_install {
