@@ -79,14 +79,14 @@ define mediawiki::extensionsetup (
 
         if $params['commit'] {
             file { "/var/local/mwdeploy/${name}":
-               ensure => 'present',
-               owner => 'www-data',
-               group => 'www-data',
-               mode => '0644',
+                ensure => 'present',
+                owner => 'www-data',
+                group => 'www-data',
+                mode => '0644',
            }
         } else {
            file { "/var/local/mwdeploy/${name}":
-              ensure => 'absent',
+               ensure => 'absent',
           }
         }
 
