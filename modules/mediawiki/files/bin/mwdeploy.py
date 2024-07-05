@@ -247,6 +247,8 @@ def _get_staging_path(repo: str, version: str = '') -> str:
 
     return f'/srv/mediawiki-staging/{repos[repo]}/'
 
+def _get_local_path(extension: str) -> str:
+    return f'/var/local/mwdeploy/{extension}'
 
 def _get_deployed_path(repo: str) -> str:
     return f'/srv/mediawiki/{repos[repo]}/'
@@ -439,6 +441,9 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     if not os.path.exists(_get_staging_path(f'extensions/{extension}', version)):
                         print(f'{extension} does not exist for {version}. Skipping...')
                         continue
+                    if os.path.exists(_get_local_path(extension))
+                        print(f'Skipping upgrade of {extension} because it is configured in mediawiki-repos to checkout a specific commit')
+                        continue
                     process = os.popen(_construct_git_pull(f'extensions/{extension}', submodules=True, quiet=False, version=version))
                     output = process.read().strip()
                     status = process.close()
@@ -487,6 +492,9 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 for skin in args.upgrade_skins:
                     if not os.path.exists(_get_staging_path(f'skins/{skin}', version)):
                         print(f'{skin} does not exist for {version}. Skipping...')
+                        continue
+                    if os.path.exists(_get_local_path(skin)):
+                        print(f'Skipping upgrade of {skin} because it is configured in mediawiki-repos to checkout a specific commit')
                         continue
                     process = os.popen(_construct_git_pull(f'skins/{skin}', quiet=False, version=version))
                     output = process.read().strip()
