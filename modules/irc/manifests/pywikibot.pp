@@ -14,7 +14,6 @@ class irc::pywikibot {
         owner     => 'irc',
         group     => 'irc',
         mode      => '0644',
-        recurse   => true,
         max_files => 5000,
     }
 
