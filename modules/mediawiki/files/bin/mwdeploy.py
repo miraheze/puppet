@@ -441,7 +441,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     if not os.path.exists(_get_staging_path(f'extensions/{extension}', version)):
                         print(f'{extension} does not exist for {version}. Skipping...')
                         continue
-                    if os.path.exists(_get_local_path(extension))
+                    if os.path.exists(_get_local_path(extension)):
                         print(f'Skipping upgrade of {extension} because it is configured in mediawiki-repos to checkout a specific commit')
                         continue
                     process = os.popen(_construct_git_pull(f'extensions/{extension}', submodules=True, quiet=False, version=version))
