@@ -78,14 +78,14 @@ define mediawiki::extensionsetup (
         # lint:endignore
 
         if $params['commit'] {
-           file { "/var/local/mwdeploy/${name}":
+            file { "/var/local/mwdeploy/${name}":
                ensure => 'present',
                owner => 'www-data',
                group => 'www-data',
                mode => '0644',
            }
         } else {
-          file { "/var/local/mwdeploy/${name}":
+           file { "/var/local/mwdeploy/${name}":
               ensure => 'absent',
           }
         }
