@@ -247,8 +247,10 @@ def _get_staging_path(repo: str, version: str = '') -> str:
 
     return f'/srv/mediawiki-staging/{repos[repo]}/'
 
+
 def _get_local_path(extension: str) -> str:
     return f'/var/local/mwdeploy/{extension}'
+
 
 def _get_deployed_path(repo: str) -> str:
     return f'/srv/mediawiki/{repos[repo]}/'
