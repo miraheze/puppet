@@ -83,6 +83,7 @@ define mediawiki::extensionsetup (
                 owner => 'www-data',
                 group => 'www-data',
                 mode => '0644',
+                content => 'This extension is configured to checkout a specific commit in mediawiki-repos',
             }
         } else {
             file { "/var/local/mwdeploy/${name}":
