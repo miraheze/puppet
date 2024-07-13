@@ -11,6 +11,7 @@ vcl 4.1;
 import directors;
 import std;
 import vsthrottle;
+import xkey;
 
 # MediaWiki configuration
 probe mwhealth {
@@ -207,6 +208,8 @@ sub recv_purge {
 		if (!client.ip ~ purge) {
 			return (synth(405, "Denied."));
 		} else {
+			// Purges all resources with this host + url
+			set req.http.purged = xkey.purge(req.http.Host + req.url);
 			return (purge);
 		}
 	}
@@ -492,6 +495,9 @@ sub vcl_backend_response {
 	// We'll be setting this same variable internally in VCL in hit-for-pass
 	// cases later.
 	unset beresp.http.X-CDIS;
+
+	// Used for purging
+	set beresp.http.xkey = bereq.http.Host + bereq.url;
 
 	if (bereq.http.Cookie ~ "([sS]ession|Token)=") {
 		set bereq.http.Cookie = "Token=1";
