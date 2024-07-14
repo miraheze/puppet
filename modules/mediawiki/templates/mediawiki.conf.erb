@@ -18,7 +18,7 @@ server {
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
@@ -113,14 +113,14 @@ server {
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
 	error_page 400 /ErrorPages/400.html;
 	error_page 401 /ErrorPages/401.html;
@@ -160,7 +160,7 @@ server {
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
@@ -193,14 +193,14 @@ server {
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
 	location /private/ {
 		deny all;
@@ -239,7 +239,7 @@ server {
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
@@ -306,7 +306,7 @@ server {
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
@@ -425,14 +425,14 @@ server {
 	add_header Strict-Transport-Security "max-age=604800";
 <%- end -%>
 
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
-	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
 	error_page 400 /ErrorPages/400.html;
 	error_page 401 /ErrorPages/401.html;
