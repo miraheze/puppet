@@ -32,7 +32,6 @@ script-src:
   - 'www.google.com'
   - 'apis.google.com'
   - 'platform.twitter.com'
-  - 'wiki-assets.sumin.wiki'
   - 'ajax.cloudflare.com'
   - 'cdnjs.cloudflare.com'
   - 'cdn.jsdelivr.net'
