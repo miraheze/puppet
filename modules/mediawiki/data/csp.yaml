@@ -219,3 +219,4 @@ connect-src:
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
   - '1.1.1.1'
+  - 'translate.googleapis.com'
