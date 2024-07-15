@@ -122,6 +122,8 @@ server {
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
+        add_header Cache-Tag "mediawiki" always;
+
 	error_page 400 /ErrorPages/400.html;
 	error_page 401 /ErrorPages/401.html;
 	error_page 403 /ErrorPages/403.html;
