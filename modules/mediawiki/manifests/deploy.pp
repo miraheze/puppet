@@ -70,6 +70,51 @@ class mediawiki::deploy {
         mode   => '0755',
     }
 
+    file { '/srv/mediawiki-staging/patches':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0755',
+        require => File['/srv/mediawiki-staging'],
+    }
+
+    file { '/srv/mediawiki-staging/patches/public.json':
+        ensure  => 'file',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0644',
+        source  => 'puppet:///modules/mediawiki/patches/public.json',
+        require => File['/srv/mediawiki-staging/patches'],
+    }
+
+    file { '/srv/mediawiki-staging/patches/private.json':
+        ensure  => 'file',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0644',
+        source  => 'puppet:///private/mediawiki/patches/private.json',
+        require => File['/srv/mediawiki-staging/patches'],
+    }
+
+    file { '/srv/mediawiki-staging/patches/public':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0755',
+        source  => 'puppet:///modules/mediawiki/patches/public',
+        resurse => true,
+        require => File['/srv/mediawiki-staging/patches'],
+    }
+
+    file { '/srv/mediawiki-staging/patches/private':
+        ensure  => 'directory',
+        owner   => 'www-data',
+        group   => 'www-data',
+        mode    => '0700',
+        source  => 'puppet:///private/mediawiki/patches/private',
+        require => File['/srv/mediawiki-staging/patches'],
+    }
+
     file { '/usr/local/bin/mwdeploy':
         ensure  => 'present',
         mode    => '0755',

@@ -24,6 +24,12 @@ del mw_versions
 
 DEPLOYUSER = 'www-data'
 
+patches = []
+with open('/srv/mediawiki-staging/patches/public.json') as public:
+    patches += json.load(public)
+with open('/srv/mediawiki-staging/patches/private.json') as private:
+    patches += json.load(private)
+
 
 class Environment(TypedDict):
     wikidbname: str
@@ -303,6 +309,35 @@ def _construct_reset_mediawiki_run_puppet() -> str:
     return 'sudo puppet agent -tv'
 
 
+def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bool = False) -> str:
+    extopt = ' --check' if check else ' --index'
+    return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} apply{extopt} {patchfile}'
+
+
+def _apply_patches(repo: str, version: str = '') -> list[int]:
+    exitcodes = []
+    staging_path = _get_staging_path(repo, version)
+    to_apply = [patch for patch in patches if staging_path.endswith(patch.path)]
+    for patch in to_apply:
+        pubpriv = 'public' if patch.public else 'private'
+        patchfile = f'/srv/mediawiki-staging/patches/{pubpriv}/{patch.file}'
+        if not os.path.isfile(patchfile):
+            print(f'WARNING: Patch file {patch.file} could not be found!')
+            continue
+        check = run_command(_construct_git_apply(repo, patchfile, version, True))
+        if check == 0:  # TODO: Probably no need to return exit codes. Handle bad codes here according to failureStrategy?
+            exitcodes.append(run_command(_construct_git_apply(repo, patchfile, version)))
+        else:
+            print(f'ERROR: Could not apply patch {patch.file}')
+            if patch.failureStrategy == "abort":
+                print('Aborting!')
+                sys.exit(1)
+            else:
+                print('Skipping patch...')
+                continue
+    return exitcodes
+
+
 def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
     loginfo = {}
     for arg in vars(args).items():
@@ -409,6 +444,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
         if version and args.reset_world:
             stage.append(_construct_reset_mediawiki_rm_staging(version))
             stage.append(_construct_reset_mediawiki_run_puppet())
+            # TODO: Apply all patches here?
 
         pull = []
         if args.pull:
@@ -421,14 +457,16 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                             repo = version
                         else:
                             continue
-                    stage.append(_construct_git_pull(repo, branch=args.branch))
+                    exitcodes.append(run_command(_construct_git_pull(repo, branch=args.branch)))
+                    exitcodes.extend(_apply_patches(repo))
                 except KeyError:
                     print(f'Failed to pull {repo} due to invalid name')
 
         if version:
             if args.upgrade_vendor:
-                stage.append(_construct_git_reset_hard('vendor', version=version))
-                stage.append(_construct_git_pull('vendor', submodules=True, version=version))
+                exitcodes.append(run_command(_construct_git_reset_hard('vendor', version=version)))
+                exitcodes.append(run_command(_construct_git_pull('vendor', submodules=True, version=version)))
+                exitcodes.extend(_apply_patches('vendor', version=version))
                 if not args.world:
                     stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet')
                     rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/vendor/*', dest=f'/srv/mediawiki/{version}/vendor/'))
@@ -448,6 +486,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     exitcodes.append(exitcode)
                     if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
                         print(f'Upgrading {extension}')
+                        exitcodes.extend(_apply_patches(f'extensions/{extension}', version=version))
                         for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
                             if not args.skip_schema_confirm and extension not in warnings:
                                 warnings[extension] = True
@@ -497,6 +536,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     exitcodes.append(exitcode)
                     if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
                         print(f'Upgrading {skin}')
+                        _apply_patches(f'skins/{skin}', version=version)
                         for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
                             if not args.skip_schema_confirm and skin not in warnings:
                                 warnings[skin] = True
