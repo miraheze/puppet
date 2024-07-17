@@ -329,7 +329,7 @@ def _apply_patches(repo: str, version: str = '') -> list[int]:
             exitcodes.append(run_command(_construct_git_apply(repo, patchfile, version)))
         else:
             print(f'ERROR: Could not apply patch {patch.file}')
-            if patch.failureStrategy == "abort":
+            if patch.failureStrategy == 'abort':
                 print('Aborting!')
                 sys.exit(1)
             else:
