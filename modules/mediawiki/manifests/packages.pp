@@ -8,8 +8,8 @@ class mediawiki::packages {
     stdlib::ensure_packages([
         'djvulibre-bin',
         'dvipng',
-	'espeak-ng-espeak',
-	'lame',
+        'espeak-ng-espeak',
+        'lame',
         'ghostscript',
         'htmldoc',
         'inkscape',
