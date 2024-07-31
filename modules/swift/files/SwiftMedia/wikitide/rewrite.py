@@ -294,6 +294,15 @@ class _WikiTideRewriteContext(WSGIContext):
                 zone = 'backup'
                 obj = match.group('path')
 
+       # Phonos renderings
+       if match is None:
+           match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>phonos)/(?P<path>.+)$', req.path)
+           if match:
+                proj = match.group('proj')
+                repo = match.group('repo')
+                zone = ''
+                obj = match.group('path')
+
         if match is None:
             match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
             if match:
