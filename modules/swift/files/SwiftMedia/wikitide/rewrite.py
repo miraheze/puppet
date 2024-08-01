@@ -300,7 +300,7 @@ class _WikiTideRewriteContext(WSGIContext):
            if match:
                 proj = match.group('proj')
                 repo = match.group('repo')
-                zone = ''
+                zone = 'render'
                 obj = match.group('path')
 
         if match is None:
