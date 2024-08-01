@@ -295,7 +295,7 @@ class _WikiTideRewriteContext(WSGIContext):
                 obj = match.group('path')
 
        # Phonos renderings
-       if match is None:
+        if match is None:
             match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>phonos)/(?P<path>.+)$', req.path)
             if match:
                 proj = match.group('proj')
