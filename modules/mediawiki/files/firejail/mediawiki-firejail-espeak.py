@@ -6,7 +6,7 @@ subprocess.call(
     [
         '/usr/bin/firejail',
         '--profile=/etc/firejail/mediawiki-converters.profile',
-        '/usr/bin/lame',
+        '/usr/bin/espeak',
     ]
     + sys.argv[1:],
 )
