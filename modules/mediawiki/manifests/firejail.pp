@@ -41,15 +41,15 @@ class mediawiki::firejail {
 
     file { '/usr/local/bin/mediawiki-firejail-espeak':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-espeak.py',
-        owner => 'www-data',
-        group => 'www-data',
-        mode => '0555',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0555',
     }
 
     file { '/usr/local/bin/mediawiki-firejail-lame':
         source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-lame.py',
-        owner => 'www-data',
-        group => 'www-data',
-        mode => '0555',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0555',
     }
 }
