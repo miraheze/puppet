@@ -6,7 +6,7 @@ subprocess.call(
     [
         '/usr/bin/firejail',
         '--profile=/etc/firejail/mediawiki-converters.profile',
-        '/usr/bin/convert',
+        '/usr/bin/lame',
     ]
     + sys.argv[1:],
 )
