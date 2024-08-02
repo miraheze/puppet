@@ -283,7 +283,7 @@ GEM
     rb-readline (0.5.5)
     regexp_parser (2.8.1)
     retryable (3.0.5)
-    rexml (3.3.2)
+    rexml (3.3.3)
       strscan
     rgen (0.9.1)
     rspec (3.12.0)
