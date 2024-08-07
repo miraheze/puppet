@@ -325,7 +325,7 @@ def _apply_patches(repo: str, version: str = '') -> list[int]:
             print(f'WARNING: Patch file {patch.file} could not be found!')
             continue
         check = run_command(_construct_git_apply(repo, patchfile, version, True))
-        if check == 0:  # TODO: Probably no need to return exit codes. Handle bad codes here according to failureStrategy?
+        if check == 0:  # Handle bad codes here according to failureStrategy?
             exitcodes.append(run_command(_construct_git_apply(repo, patchfile, version)))
         else:
             print(f'ERROR: Could not apply patch {patch.file}')
@@ -444,7 +444,11 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
         if version and args.reset_world:
             stage.append(_construct_reset_mediawiki_rm_staging(version))
             stage.append(_construct_reset_mediawiki_run_puppet())
-            # TODO: Apply all patches here?
+            applied = []
+            for patch in patches:
+                if patch.path not in applied:
+                    exitcodes.append(_apply_patches(patch.path, version))
+                    applied.append(patch.path)
 
         pull = []
         if args.pull:
