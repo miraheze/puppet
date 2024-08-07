@@ -25,10 +25,13 @@ del mw_versions
 DEPLOYUSER = 'www-data'
 
 patches = []
-with open('/srv/mediawiki-staging/patches/public.json') as public:
-    patches += json.load(public)
-with open('/srv/mediawiki-staging/patches/private.json') as private:
-    patches += json.load(private)
+try:
+    with open('/srv/mediawiki-staging/patches/public.json') as public:
+        patches += json.load(public)
+    with open('/srv/mediawiki-staging/patches/private.json') as private:
+        patches += json.load(private)
+except FileNotFoundError:
+    pass
 
 
 class Environment(TypedDict):
