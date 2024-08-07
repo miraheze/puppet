@@ -20,7 +20,7 @@ class mediawiki::php (
         'date.timezone'          => 'UTC',
         'display_errors'         => 'stderr',
         'memory_limit'           => $memory_limit,
-        'error_reporting'        => 'E_ALL & ~(E_STRICT | E_DEPRECATED)',
+        'error_reporting'        => 'E_ALL & ~E_STRICT',
         'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
     }
