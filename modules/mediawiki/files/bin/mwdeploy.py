@@ -452,7 +452,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
             applied = []
             for patch in patches:
                 if patch.path not in applied:
-                    exitcodes.append(_apply_patches(patch.path, version))
+                    exitcodes.extend(_apply_patches(patch.path, version))
                     applied.append(patch.path)
 
         pull = []
