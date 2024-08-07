@@ -194,7 +194,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         raise Exception('Host or Debug must be specified')
 
     headers = {
-        'User-Agent': 'wikitide/mwdeploy.py'
+        'User-Agent': 'wikitide/mwdeploy.py',
     }
     if Debug:
         server = f'{Debug}.wikitide.net'
