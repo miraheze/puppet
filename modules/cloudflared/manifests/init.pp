@@ -19,7 +19,5 @@ class cloudflared (
   String $package_name,
   String $package_ensure,
 ) {
-  contain cloudflared::install
-
-  Class['cloudflared::install']
+  include cloudflared::install
 }
