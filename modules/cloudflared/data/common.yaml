@@ -1,4 +1,0 @@
----
-cloudflared::package_manage: true
-cloudflared::package_name: 'cloudflared'
-cloudflared::package_ensure: 'present'

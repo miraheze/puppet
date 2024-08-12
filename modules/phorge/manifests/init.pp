@@ -236,12 +236,6 @@ class phorge (
         monthday => ['1', '15'],
     }
 
-    class cloudflared {
-        package_manage => true,
-        package_ensure => 'present',
-        package_name => 'cloudflared',
-    }
-
     monitoring::nrpe { 'Backups Phorge Static':
         command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/phorge-backup.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
