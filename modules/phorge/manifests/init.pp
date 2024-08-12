@@ -238,7 +238,7 @@ class phorge (
 
     class cloudflared {
         package_manage => true,
-        package_ensure => present,
+        package_ensure => 'present',
         package_name => 'cloudflared',
     }
 
