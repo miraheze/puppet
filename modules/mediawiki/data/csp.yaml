@@ -135,6 +135,7 @@ img-src:
   - '*.postimg.cc'
   - '*.rbxcdn.com'
   - 'cms-imgp.jw-cdn.org'
+  - 'hosted.weblate.org'
 
 font-src:
   - "'self'"
