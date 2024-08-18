@@ -74,7 +74,7 @@ groups:
     members: []
     privileges: ['ALL = (ALL) NOPASSWD: /usr/sbin/service mwdeploy *',
                 'ALL = (ALL) NOPASSWD: /usr/bin/rsync *',
-                'ALL = (ALL) NOPASSWD: /bin/nano /srv/mediawiki-staging/*',
+                'ALL = (ALL) NOPASSWD: /bin/sudoedit /srv/mediawiki-staging/*',
                 'ALL = (ALL) NOPASSWD: /bin/rm /srv/mediawiki-staging/*',]
 users:
   johnflewis:
