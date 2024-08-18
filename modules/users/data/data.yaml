@@ -72,8 +72,10 @@ groups:
     gid: 2009
     description: ability to deploy changes on the MediaWiki test server
     members: []
-    privileges: ['ALL = (ALL) NOPASSWD: /usr/local/bin/mwdeploy *',]
-
+    privileges: ['ALL = (ALL) NOPASSWD: /bin/nano /srv/mediawiki/*',
+                'ALL = (ALL) NOPASSWD: /bin/nano /srv/mediawiki-staging/*',
+                'ALL = (ALL) NOPASSWD: /bin/rm /srv/mediawiki/*',
+                'ALL = (ALL) NOPASSWD: /bin/rm /srv/mediawiki-staging/*',]
 users:
   johnflewis:
     ensure: absent
@@ -201,7 +203,7 @@ users:
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII58/9ujLHNt1p1YOlHJr7Y2D7laEkYzQSOKcAhF8r1Q]
   testuser:
     ensure: present
-    uid: 1020
+    uid: 3000
     name: Test User
     realname: Test User (user for testing access)
     ssh_keys:
