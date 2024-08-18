@@ -68,6 +68,11 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+  mediawiki-deploy-users:
+    gid: 2009
+    description: ability to deploy changes on the MediaWiki test server
+    members: []
+    privileges: ['ALL = (ALL) NOPASSWD: /usr/sbin/service mwdeploy *',]
 
 users:
   johnflewis:
@@ -194,3 +199,11 @@ users:
     name: evalprime
     realname: EvalPrime
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII58/9ujLHNt1p1YOlHJr7Y2D7laEkYzQSOKcAhF8r1Q]
+  testuser:
+    ensure: present
+    uid: 1020
+    name: Test User
+    realname: Test User (user for testing access)
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIApGU+6cUDu6gLhJY547Ge/2r4FU382qFx6wVGHN/+FP
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILMGnrVrhB1ZfXRouXhLzjsWjx3dTVYxxvsIzTD2JJg/ reception
