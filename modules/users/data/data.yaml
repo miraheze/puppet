@@ -72,9 +72,9 @@ groups:
     gid: 2009
     description: ability to deploy changes on the MediaWiki test server
     members: []
-    privileges: ['ALL = (ALL) NOPASSWD: /bin/nano /srv/mediawiki/*',
+    privileges: ['ALL = (ALL) NOPASSWD: /usr/sbin/service mwdeploy *',
+                'ALL = (ALL) NOPASSWD: /usr/bin/rsync *',
                 'ALL = (ALL) NOPASSWD: /bin/nano /srv/mediawiki-staging/*',
-                'ALL = (ALL) NOPASSWD: /bin/rm /srv/mediawiki/*',
                 'ALL = (ALL) NOPASSWD: /bin/rm /srv/mediawiki-staging/*',]
 users:
   johnflewis:
