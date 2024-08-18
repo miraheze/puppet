@@ -68,7 +68,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
-  mediawiki-deploy-users:
+  mediawiki-test-deploy-users:
     gid: 2009
     description: ability to deploy changes on the MediaWiki test server
     members: []
