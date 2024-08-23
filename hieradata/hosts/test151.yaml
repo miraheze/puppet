@@ -2,6 +2,7 @@ users::groups:
   - mediawiki-admins
   - mediawiki-roots
   - mediawiki-test-admins
+  - mediawiki-test-deploy-users
 
 contactgroups: ['infra', 'mediawiki']
 
