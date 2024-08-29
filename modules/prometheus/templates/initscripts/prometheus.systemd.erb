@@ -1,0 +1,21 @@
+[Unit]
+Description=Prometheus server
+
+[Service]
+User=prometheus
+ExecStart=/usr/bin/prometheus \
+              --storage.tsdb.retention.time 1000d \
+              --storage.tsdb.retention.size 80GB \
+              --config.file /etc/prometheus/prometheus.yml \
+              --storage.tsdb.max-block-duration=24h \
+              --storage.tsdb.min-block-duration=2h \
+              --query.max-samples=10000000
+Restart=on-failure
+RestartSec=2s
+TimeoutStopSec=10m
+LimitNOFILE=32768
+SyslogIdentifier=prometheus
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target
