@@ -75,6 +75,14 @@ server {
 		return 403;
 	}
 
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
 	location / {
 		if ($request_uri !~ "^/check$") {
 			return 301 https://$host$request_uri;
@@ -102,6 +110,14 @@ server {
 
 	# Web scraper - Void
 	if ($http_user_agent ~ "\+Zimit$") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 
@@ -143,6 +159,14 @@ server {
 		return 403;
 	}
 
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
 	if ($host ~ ^(\w+)\.m\.miraheze\.org$) {
 		return 301 https://$1.miraheze.org$request_uri;
 	}
@@ -164,6 +188,14 @@ server {
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 
@@ -203,6 +235,14 @@ server {
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 
@@ -274,6 +314,14 @@ server {
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 
