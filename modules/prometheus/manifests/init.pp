@@ -7,14 +7,6 @@ class prometheus (
 
     stdlib::ensure_packages('prometheus')
 
-    file { '/etc/default/prometheus':
-        source  => 'puppet:///modules/prometheus/prometheus.default.conf',
-        owner   => 'root',
-        group   => 'root',
-        notify  => Service['prometheus'],
-        require => Package['prometheus'],
-    }
-
     file { '/etc/prometheus/targets':
         ensure => directory
     }
