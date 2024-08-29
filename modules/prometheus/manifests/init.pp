@@ -75,9 +75,13 @@ class prometheus (
         content => template('prometheus/nodes.erb')
     }
 
-    service { 'prometheus':
-        ensure  => running,
-        require => Package['prometheus'],
+    systemd::service { 'prometheus':
+        ensure         => $ensure,
+        restart        => true,
+        content        => systemd_template('prometheus'),
+        service_params => {
+            hasrestart => true,
+        },
     }
 
     class { 'prometheus::pushgateway':
