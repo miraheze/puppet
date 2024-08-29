@@ -11,8 +11,7 @@ ExecStart=/usr/bin/prometheus \
               --storage.tsdb.min-block-duration=2h \
               --query.max-samples=5000000 \
               --query.max-concurrency=10 \
-              --storage.tsdb.wal-compression \
-              --storage.tsdb.max-head-chunks=100000
+              --storage.tsdb.wal-compression
 Restart=on-failure
 RestartSec=2s
 TimeoutStopSec=10m
