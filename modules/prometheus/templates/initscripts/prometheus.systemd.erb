@@ -5,12 +5,13 @@ Description=Prometheus server
 User=prometheus
 ExecStart=/usr/bin/prometheus \
               --config.file=/etc/prometheus/prometheus.yml \
-              --storage.tsdb.retention.time=1000d \
+              --storage.tsdb.retention.time=90d \
               --storage.tsdb.retention.size=50GB \
               --storage.tsdb.max-block-duration=24h \
               --storage.tsdb.min-block-duration=2h \
               --query.max-samples=5000000 \
-              --query.max-concurrency=10 \
+              --query.max-concurrency=5 \
+              --query.timeout=1m \
               --storage.tsdb.wal-compression
 Restart=on-failure
 RestartSec=2s
