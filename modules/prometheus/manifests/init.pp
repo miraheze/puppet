@@ -76,7 +76,7 @@ class prometheus (
     }
 
     systemd::service { 'prometheus':
-        ensure         => $ensure,
+        ensure         => present,
         restart        => true,
         content        => systemd_template('prometheus'),
         service_params => {
