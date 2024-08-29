@@ -64,6 +64,9 @@ http {
 
 	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
+	# Content Security Policy
+	add_header Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'self';" always;
+
 	# Custom log format for graylog
 	log_format graylog2_json escape=json '{ "timestamp": "$time_iso8601", '
 		'"remote_addr": "$remote_addr", '
