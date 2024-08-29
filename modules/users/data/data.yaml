@@ -39,7 +39,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [macfan, oa]
+    members: [macfan, oa, theresnotime]
     privileges: []
   ssl-admins:
     gid: 2006
