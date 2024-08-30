@@ -68,10 +68,10 @@ define ssl::wildcard (
         }
     }
 
-    if !defined(File["${ssl_cert_path}/miraheze-origin-cert.key"]) {
-        file { "${ssl_cert_path}/miraheze-origin-cert.key":
+    if !defined(File["${ssl_cert_key_private_path}/miraheze-origin-cert.key"]) {
+        file { "${ssl_cert_key_private_path}/miraheze-origin-cert.key":
             ensure => 'present',
-            source => 'puppet:///ssl/certificates/miraheze-origin-cert.key',
+            source => 'puppet:///ssl-keys/miraheze-origin-cert.key',
             notify => $restart_nginx,
         }
     }
