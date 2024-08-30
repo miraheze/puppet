@@ -83,7 +83,7 @@ class SslCertificate:
             secondary_domain = self.secondary_domain
 
         # Generate the private key
-        os.system(f'openssl genrsa 2048 > /root/ssl/{self.domain}.key')
+        os.system(f'openssl ecparam -genkey -name prime256v1 > /root/ssl/{self.domain}.key')
 
         if not self.quiet:
             print(f'Private key generated at: /root/ssl/{self.domain}.key')
