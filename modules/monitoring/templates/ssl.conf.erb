@@ -23,7 +23,7 @@ apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   check_command = "check_ssl_expire"
   check_interval = 30m
   notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
-  vars.host = "<% if property['monitoring_url'] %><%= property['monitoring_url'] %><% else %><%= property['url'] %><% end %>"
+  vars.host = "<% if property['sslname'] %><%= property['sslname'] %><% else %><%= property['url'] %><% end %>"
   vars.time = "<% if property['ca'] == "LetsEncrypt" %>15<% else %>30<% end %>"
   <%- if property['ca'] == "LetsEncrypt" and property['disable_event'] == false -%>
   event_command = "eh_ssl_acme"
