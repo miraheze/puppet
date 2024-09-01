@@ -7,7 +7,7 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [macfan, oa]
+    members: [macfan, oa, theresnotime]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service apache2 *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mcrouter *',
@@ -39,7 +39,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [macfan, oa]
+    members: [macfan, oa, theresnotime]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -194,3 +194,9 @@ users:
     name: evalprime
     realname: EvalPrime
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII58/9ujLHNt1p1YOlHJr7Y2D7laEkYzQSOKcAhF8r1Q]
+  theresnotime:
+    ensure: present
+    uid: 1020
+    name: theresnotime
+    realname: TheresNoTime
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILKpKbySYM5Us1a2jYZPSmjdDepKLlyRoxKOFjPRAk4t miraheze-2024]
