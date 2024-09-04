@@ -1,0 +1,294 @@
+2020-03-14 Richard Grainger <harbottle@room3d3.com> - 3.10.0
+* Default to Mattermost 5.21.0
+* Support Arch
+
+2020-02-23 Richard Grainger <harbottle@room3d3.com> - 3.9.0
+* Mattercon 2020 Edition!
+* Default to Mattermost 5.20.1
+* Vagrant fixes
+
+2020-01-25 Richard Grainger <harbottle@room3d3.com> - 3.8.0
+* Default to Mattermost 5.19.1
+* Update supported OS
+
+2019-10-18 Carlos Panato <ctadeu@gmail.com> - 3.7.0
+* Default to Mattermost 5.16.0
+
+2019-10-14 Carlos Panato <ctadeu@gmail.com> - 3.6.1
+* Default to Mattermost 5.15.1
+
+2019-09-17 Carlos Panato <ctadeu@gmail.com> - 3.6.0
+* Default to Mattermost 5.15.0
+
+2019-08-20 Jeoffrey Bauvin <jeoffrey54@gmail.com> - 3.5.0
+* Default to Mattermost 5.14.0
+
+2019-07-07 Richard Grainger <harbottle@room3d3.com> - 3.4.0
+* Add support for Debian 10 (buster)
+* Add support for RHEL 8
+
+2019-07-06 Richard Grainger <harbottle@room3d3.com> - 3.3.0
+* Default to Mattermost 5.12.2
+* Remove support for Ubuntu 12.04
+* Add support for Ubuntu 19.04
+* Loosen stdlib requirement
+
+2019-05-20 Carlos Panato <ctadeu@gmail.com> - 3.2.0
+* Default to Mattermost 5.11.0
+
+2019-04-16 Richard Grainger <harbottle@room3d3.com> - 3.1.0
+* Default to Mattermost 5.10.0
+
+2019-03-15 Richard Grainger <harbottle@room3d3.com> - 3.0.0
+* Default to Mattermost 5.9.0 [@harbottle]
+* Support configuration by environment variables [#40] [@harbottle]
+* Manage log directory [#45] [@harbottle]
+* Update support matrix [#39] [@harbottle]
+* Allow install from package [#43] [@harbottle]
+* Change config file permissions [!97] [@fr3nd]
+
+2019-02-16 Carlos Panato <ctadeu@gmail.com> - 2.11.0
+* Default to Mattermost 5.8.0
+
+2019-02-01 Carlos Panato <ctadeu@gmail.com> - 2.10.1
+* Default to Mattermost 5.7.1
+
+2019-01-16 Carlos Panato <ctadeu@gmail.com> - 2.10.0
+* Default to Mattermost 5.7.0
+
+2019-01-12 Richard Grainger <harbottle@room3d3.com> - 2.9.0
+* Default to Mattermost 5.6.3 [!92] [@cpanato]
+* Support Ubuntu 18.04 [!91] [@francesco.canovai]
+* Support Puppet 6 [!93] [@harbottle]
+* Support stdlib 5 [!93] [@harbottle]
+
+2018-12-22 Carlos Panato <ctadeu@gmail.com> - 2.8.2
+* Default to Mattermost 5.6.2
+
+2018-12-19 Carlos Panato <ctadeu@gmail.com> - 2.8.1
+* Default to Mattermost 5.6.1
+
+2018-12-14 Carlos Panato <ctadeu@gmail.com> - 2.8.0
+* Default to Mattermost 5.6.0
+
+2018-12-06 Carlos Panato <ctadeu@gmail.com> - 2.7.1
+* Default to Mattermost 5.5.1
+
+2018-11-16 Carlos Panato <ctadeu@gmail.com> - 2.7.0
+* Default to Mattermost 5.5.0
+
+2018-10-17 Carlos Panato <ctadeu@gmail.com> - 2.6.0
+* Default to Mattermost 5.4.0
+
+2018-09-21 Carlos Panato <ctadeu@gmail.com> - 2.5.1
+* Default to Mattermost 5.3.1
+
+2018-09-14 Carlos Panato <ctadeu@gmail.com> - 2.5.0
+* Default to Mattermost 5.3.0
+
+2018-08-24 Carlos Panato <ctadeu@gmail.com> - 2.4.2
+* Default to Mattermost 5.2.1
+
+2018-08-21 Richard Grainger <grainger@gmail.com> - 2.4.1
+* Avoid merging a config value if not an hash [#38] [@mnencia]
+* Merge configuration during writes [@mnencia]
+
+2018-08-20 Carlos Panato <ctadeu@gmail.com> - 2.4.0
+* Default to Mattermost 5.2.0
+
+2018-08-10 Richard Grainger <grainger@gmail.com> - 2.3.1
+* Default to Mattermost 5.1.1
+
+2018-07-16 Richard Grainger <grainger@gmail.com> - 2.3.0
+* Default to Mattermost 5.1.0
+
+2018-07-09 Richard Grainger <grainger@gmail.com> - 2.2.1
+* Default to Mattermost 5.0.1
+
+2018-06-22 Carlos Panato <ctadeu@gmail.com> - 2.2.0
+* Default to Mattermost 5.0.0 (Carlos Panato)
+* New execuable name for Mattermost >= 5.0.0 (Richard Grainger)
+
+2018-06-04 Carlos Panato <ctadeu@gmail.com> - 2.1.1
+* Default to Mattermost 4.10.1
+
+2018-05-16 Carlos Panato <ctadeu@gmail.com> - 2.1.0
+* Default to Mattermost 4.10.0
+
+2018-04-28 Carlos Panato <ctadeu@gmail.com> - 2.0.4
+* Default to Mattermost 4.9.1
+
+2018-04-16 Richard Grainger <grainger@gmail.com> - 2.0.3
+* Default to Mattermost 4.9.0
+
+2018-03-16 Carlos Panato <ctadeu@gmail.com> - 2.0.2
+* Default to Mattermost 4.8.1
+
+2018-03-20 Richard Grainger <grainger@gmail.com> - 2.0.1
+* Ensure generated JSON is always pretty
+* Update README
+
+2018-03-18 Richard Grainger <grainger@gmail.com> - 2.0.0
+* Replace use of augeas with new mattermost_settings defined type
+* Add vagrant boxes to dev/test environment
+* Fixes #34 (Augeas fails to update configuration file)
+
+2018-03-16 Carlos Panato <ctadeu@gmail.com> - 1.17.0
+* Default to Mattermost 4.8.0
+
+2018-02-27 Carlos Panato <ctadeu@gmail.com> - 1.16.3
+* Default to Mattermost 4.7.3
+
+2018-02-27 Richard Grainger <grainger@gmail.com> - 1.16.2
+* Update README and examples
+
+2018-02-23 Richard Grainger <grainger@gmail.com> - 1.16.1
+* Remove RHEL 5; Ubuntu 12.10, 13.04, 13.10, 14.10, 16.10
+* Add Debian 9; Ubuntu 17.10
+* Systemd unit files for all operating systems now under /etc/systemd/systm
+* Specify compatibility with Puppet 5
+
+2018-02-23 Martin Krebs <mtkr@gmail.com> - 1.16.0
+* Default to Mattermost 4.7.2
+* RHEL systemd unit file now under /etc/systemd/system/...
+* replace staging module with archive module
+
+2018-02-20 Carlos Panato <ctadeu@gmail.com> - 1.15.1
+* Default to Mattermost 4.7.1
+
+2018-02-16 Carlos Panato <ctadeu@gmail.com> - 1.15.0
+* Default to Mattermost 4.7.0
+
+2018-01-31 Carlos Panato <ctadeu@gmail.com> - 1.14.1
+* Default to Mattermost 4.6.1
+
+2018-01-18 Carlos Panato <ctadeu@gmail.com> - 1.14.0
+* Default to Mattermost 4.6.0
+
+2017-12-18 Carlos Panato <ctadeu@gmail.com> - 1.13.0
+* Default to Mattermost 4.5.0
+
+2017-12-12 Carlos Panato <ctadeu@gmail.com> - 1.12.3
+* Default to Mattermost 4.4.5
+
+2017-12-10 Richard Grainger <grainger@gmail.com> - 1.12.2
+* Default to Mattermost 4.4.3
+
+2017-11-23 Carlos Panato <ctadeu@gmail.com> - 1.12.1
+* Default to Mattermost 4.4.2
+
+2017-11-17 Carlos Panato <ctadeu@gmail.com> - 1.12.0
+* Default to Mattermost 4.4.1
+
+2017-11-13 Carlos Panato <ctadeu@gmail.com> - 1.11.2
+* Default to Mattermost 4.3.2
+
+2017-10-19 Carlos Panato <ctadeu@gmail.com> - 1.11.1
+* Default to Mattermost 4.3.1
+
+2017-10-15 Richard Grainger <grainger@gmail.com> - 1.11.0
+* Default to Mattermost 4.3.0
+
+2017-10-02 Richard Grainger <grainger@gmail.com> - 1.10.1
+* Publish module with puppet-blacksmith and GitLab-CI
+
+2017-09-27 Carlos Panato <ctadeu@gmail.com> - 1.10.0
+* Default to Mattermost 4.2.0
+
+2017-08-30 Carlos Panato <ctadeu@gmail.com> - 1.9.0
+* Default to Mattermost 4.1.0
+
+2017-05-29 Richard Grainger <grainger@gmail.com> - 1.8.0
+* Default to Mattermost 3.9.0
+
+2017-04-24 Richard Grainger <grainger@gmail.com> - 1.7.2
+* Support new binary argument format
+* Improve Debian sysv init script.
+* Default to Mattermost 3.8.2
+
+2017-03-30 Richard Grainger <grainger@gmail.com> - 1.7.1
+* Fixed README
+
+2017-03-30 Richard Grainger <grainger@gmail.com> - 1.7.0
+* Change default conf file location to aide Mattermost upgrades
+* Default to Mattermost 3.7.3
+
+2017-03-06 Richard Grainger <grainger@gmail.com> - 1.6.1
+* Add .pmtignore [#25]
+* Update Maintainer Guide link in README
+
+2017-03-06 Richard Grainger <grainger@gmail.com> - 1.6.0
+* Fix README with regards to complete PostgreSQL/NGINX example [#21]
+* Add Vagrant dev environment [#22]
+* Fix `mattermost::service_mode` unknown variable warnings [#23]
+* Default to Mattermost 3.6.2 [#24]
+* Add `limit nofile 50000 50000` to upstart service template
+* Add `LimitNOFILE=49152` to systemd service template
+* Add suggested text to README from Mattermost Deployment Solution Programs
+* Add Maintainer Guide
+
+2016-11-28 Richard Grainger <grainger@gmail.com> - 1.5.1
+* Make service_provider a class parameter
+* Improve documentation
+
+2016-11-25 Richard Grainger <grainger@gmail.com> - 1.5.0
+* Support Mattermost Enterprise edition
+* Default to Mattermost 3.5.1
+
+2016-09-19 Richard Grainger <grainger@gmail.com> - 1.4.1
+* Support Mattermost 3.4.0
+* Move source code to gitlab.com
+
+2016-07-18 Richard Grainger <grainger@gmail.com> - 1.4.0
+* Support Mattermost 3.2.0
+
+2016-07-11 Richard Grainger <grainger@gmail.com> - 1.3.1
+* Fix issue with SMTPPort setting in config.json
+
+2016-06-16 Richard Grainger <grainger@gmail.com> - 1.3.0
+* Support Mattermost 3.1.0
+* Support Ubuntu 16.04 (Xenial)
+
+2016-05-22 Richard Grainger <grainger@gmail.com> - 1.2.3
+* Support Mattermost 3.0.2
+
+2016-04-21 Richard Grainger <grainger@gmail.com> - 1.2.2
+* Support Mattermost 2.2.0
+
+2016-03-26 Richard Grainger <grainger@gmail.com> - 1.2.1
+* Remove redundant $conf pointing to missing param (gguillotte - Puppet Labs)
+* Clean up line endings in templates (gguillotte - Puppet Labs)
+* Several README edits (gguillotte - Puppet Labs)
+
+2016-03-21 Richard Grainger <grainger@gmail.com> - 1.2.0
+* Support Mattermost 2.1.0
+* New default download location
+* Drop support for Debian 6 (Squeeze)
+
+2016-01-25 Richard Grainger <grainger@gmail.com> - 1.1.0
+* Support Mattermost 1.4.0
+* Allow external config.json file with conf parameter
+* Add purge_conf parameter
+* Make systemd service more robust
+* Better support for Puppet 3
+
+2016-01-14 Richard Grainger <grainger@gmail.com> - 1.0.5
+* Refresh service when config changes
+
+2016-01-13 Richard Grainger <grainger@gmail.com> - 1.0.4
+* Manage Mattermost data directory in non-default location
+* Allow smooth upgrades
+
+2016-01-11 Richard Grainger <grainger@gmail.com> - 1.0.3
+* Remove conf variable from params.pp
+* Improve README
+
+2016-01-09 Richard Grainger <grainger@gmail.com> - 1.0.2
+* Correct README
+* Correct metadata
+
+2016-01-09 Richard Grainger <grainger@gmail.com> - 1.0.1
+* Fix metadata
+
+2016-01-09 Richard Grainger <grainger@gmail.com> - 1.0.0
+* Initial 1.0.0 release

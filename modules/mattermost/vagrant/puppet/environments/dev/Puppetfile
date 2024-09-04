@@ -1,0 +1,24 @@
+mod 'apt',
+  :git    => 'https://github.com/puppetlabs/puppetlabs-apt.git',
+  :commit => '744f34351d8de86193f406b18614d3bca0ee1b96'
+mod 'concat',
+  :git    => 'https://github.com/puppetlabs/puppetlabs-concat.git',
+  :commit => '22c5b2fb26e5b60ede1355ecc47d18ae49419614'
+mod 'firewall',
+  :git    => 'https://github.com/puppetlabs/puppetlabs-firewall.git',
+  :commit => '2283aed36aae48366c2af69aad0ce2b5cbb0b048'
+mod 'nginx',
+  :git    => 'https://github.com/voxpupuli/puppet-nginx.git',
+  :commit => 'f081b84f0c2c87cfb2966ff43769aeab73107fdb'
+mod 'postgresql',
+  :git    => 'https://github.com/puppetlabs/puppetlabs-postgresql.git',
+  :commit => '9c4ae79b8f5f202cdc92075deead716c07bf7b64'
+mod 'archive',
+  :git    => 'https://github.com/voxpupuli/puppet-archive.git',
+  :commit => '30594f39c56603fc9d1d9a5232c2cff66af1d8af'
+mod 'stdlib',
+  :git    => 'https://github.com/puppetlabs/puppetlabs-stdlib.git',
+  :commit => 'c4243084b449a5c801d99c0d5ea4c27abb09b1c6'
+mod 'yumrepo_core',
+  :git    => 'https://github.com/puppetlabs/puppetlabs-yumrepo_core.git',
+  :commit => '89383579962eb70390788ec21c67a6ac6ec6d3c1'
