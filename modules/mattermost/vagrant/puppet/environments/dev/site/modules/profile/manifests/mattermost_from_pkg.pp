@@ -27,15 +27,15 @@ class profile::mattermost_from_pkg {
 
   # Mattermost
   class { 'mattermost':
-    install_from_pkg => true,
-    version          => latest,
-    conf             => '/etc/mattermost/config.json',
+    install_from_pkg     => true,
+    version              => latest,
+    conf                 => '/etc/mattermost/config.json',
     override_env_options => {
       'MM_SQLSETTINGS_DRIVERNAME' => 'postgres',
       'MM_SQLSETTINGS_DATASOURCE' => 'postgres://mattermost:mattermost@127.0.0.1:5432/mattermost?sslmode=disable&connect_timeout=10',
       'MM_TEAMSETTINGS_SITENAME'  => 'Dev Team',
     },
-    require          =>[
+    require              =>[
       Postgresql::Server::Db['mattermost'],
       Postgresql::Server::Database_grant['mattermost'],
       Yumrepo['harbottle-main'],
@@ -45,7 +45,7 @@ class profile::mattermost_from_pkg {
   # Nginx
   include nginx
 
-  nginx::resource::server { $::fqdn:
+  nginx::resource::server { $facts['networking']['fqdn']:
     listen_port         => 80,
     proxy               => 'http://localhost:8065',
     location_cfg_append => {

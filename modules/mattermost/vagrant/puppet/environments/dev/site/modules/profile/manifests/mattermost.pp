@@ -22,9 +22,9 @@ class profile::mattermost {
   # Mattermost
   -> class { 'mattermost':
     override_options => {
-      'SqlSettings' => {
+      'SqlSettings'  => {
         'DriverName' => 'postgres',
-        'DataSource' => "postgres://mattermost:mattermost@127.0.0.1:5432/mattermost?sslmode=disable&connect_timeout=10",
+        'DataSource' => 'postgres://mattermost:mattermost@127.0.0.1:5432/mattermost?sslmode=disable&connect_timeout=10',
       },
       'TeamSettings' => {
         'SiteName' => 'Dev Team',
@@ -35,7 +35,7 @@ class profile::mattermost {
   # Nginx
   include nginx
 
-  nginx::resource::server { $::fqdn:
+  nginx::resource::server { $facts['networking']['fqdn']:
     listen_port         => 80,
     proxy               => 'http://localhost:8065',
     location_cfg_append => {

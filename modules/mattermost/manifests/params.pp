@@ -1,7 +1,7 @@
 # See README.md.
 class mattermost::params {
   $fail_msg =
-    "OS ${::operatingsystem} ${::operatingsystemrelease} is not supported"
+    "OS ${facts['os']['name']} ${facts['os']['release']['full']} is not supported"
   $install_from_pkg = false
   $pkg = 'mattermost-server'
   $base_url = 'https://releases.mattermost.com'
@@ -28,7 +28,7 @@ class mattermost::params {
   $service_name = 'mattermost'
   $purge_conf = false
   $purge_env_conf = false
-  case $::osfamily {
+  case $facts['os']['family'] {
     'Archlinux': {
       $env_conf = '/etc/default/mattermost'
       $service_template = 'mattermost/systemd.erb'
@@ -38,9 +38,9 @@ class mattermost::params {
     }
     'Debian': {
       $env_conf = '/etc/default/mattermost'
-      case $::operatingsystem {
+      case $facts['os']['name'] {
         'Debian': {
-          case $::operatingsystemmajrelease {
+          case $facts['os']['release']['major'] {
             '8','9','10': {
               $service_template = 'mattermost/systemd.erb'
               $service_path     = '/etc/systemd/system/__SERVICENAME__.service'
@@ -51,7 +51,7 @@ class mattermost::params {
           }
         }
         'Ubuntu': {
-          case $::operatingsystemmajrelease {
+          case $facts['os']['release']['major'] {
             '14.04': {
               $service_template = 'mattermost/upstart.erb'
               $service_path     = '/etc/init/__SERVICENAME__.conf'
@@ -72,7 +72,7 @@ class mattermost::params {
     }
     'RedHat': {
       $env_conf = '/etc/sysconfig/mattermost'
-      case $::operatingsystemmajrelease {
+      case $facts['os']['release']['major'] {
         '6': {
           $service_template = 'mattermost/sysvinit_el.erb'
           $service_path     = '/etc/init.d/__SERVICENAME__'
@@ -90,9 +90,9 @@ class mattermost::params {
     }
     'Suse': {
       $env_conf = '/etc/sysconfig/mattermost'
-      case $::operatingsystem {
+      case $facts['os']['name'] {
         'SLES': {
-          case $::operatingsystemmajrelease {
+          case $facts['os']['release']['major'] {
             '12', '15': {
               $service_template = 'mattermost/systemd.erb'
               $service_path     = '/etc/systemd/system/__SERVICENAME__.service'

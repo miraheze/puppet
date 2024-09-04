@@ -22,10 +22,10 @@ class profile::mattermost_with_env {
   # Mattermost
   -> class { 'mattermost':
     override_env_options => {
-      'MM_SQLSETTINGS_DRIVERNAME' => 'postgres',
-      'MM_SQLSETTINGS_DATASOURCE' => 'postgres://mattermost:mattermost@127.0.0.1:5432/mattermost?sslmode=disable&connect_timeout=10',
-      'MM_TEAMSETTINGS_SITENAME'  => 'Dev Team',
-      'MM_FILESETTINGS_DIRECTORY' => '/var/mattermost',
+      'MM_SQLSETTINGS_DRIVERNAME'   => 'postgres',
+      'MM_SQLSETTINGS_DATASOURCE'   => 'postgres://mattermost:mattermost@127.0.0.1:5432/mattermost?sslmode=disable&connect_timeout=10',
+      'MM_TEAMSETTINGS_SITENAME'    => 'Dev Team',
+      'MM_FILESETTINGS_DIRECTORY'   => '/var/mattermost',
       'MM_LOGSETTINGS_FILELOCATION' => '/var/log/mattermost',
     },
   }
@@ -33,7 +33,7 @@ class profile::mattermost_with_env {
   # Nginx
   include nginx
 
-  nginx::resource::server { $::fqdn:
+  nginx::resource::server { $facts['networking']['fqdn']:
     listen_port         => 80,
     proxy               => 'http://localhost:8065',
     location_cfg_append => {
