@@ -33,7 +33,7 @@ class role::mattermost {
                 'DataSource' => "postgres://mattermost:${mattermost_pass}@localhost:5432/mattermost?sslmode=disable&connect_timeout=10",
             },
             'FileSettings' => {
-                'Directory' => '/var/mattermost',
+                'Directory' => '/var/mattermost/',
             },
             'LogSettings'  => {
                 'FileLocation' => '/var/log/mattermost',
