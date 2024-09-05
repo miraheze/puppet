@@ -28,6 +28,11 @@ class role::mattermost {
                 'EnableUserCreation' => false,
                 'SiteName'           => 'WikiTide Foundation',
             },
+            'EmailSettings'   => {
+                'SMTPServer'         => 'smtp-relay.gmail.com',
+                'SMTPPort'           => 465,
+                'ConnectionSecurity' => 'TLS',
+            },
             'ServiceSettings' => {
                 'SiteURL' => 'https://mattermost.wikitide.net',
             },
