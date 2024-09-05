@@ -40,9 +40,9 @@ class role::mattermost {
                 'SupportEmail' => 'noreply@wikitide.org',
             },
             'ServiceSettings' => {
-                'SiteURL'                 => 'https://mattermost.wikitide.net',
-                'SessionLengthSSOInHours' => 2160,
-                'SessionLengthWebInHours' => 2160,
+                'SiteURL'                    => 'https://mattermost.wikitide.net',
+                'SessionLengthSSOInHours'    => 2160,
+                'SessionLengthWebInHours'    => 2160,
                 'SessionLengthMobileInHours' => 2160,
             },
             'SqlSettings'     => {
