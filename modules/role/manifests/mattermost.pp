@@ -22,19 +22,19 @@ class role::mattermost {
         require => Class['postgresql::master'],
     }
     -> class { 'mattermost':
-        version => '9.11.1',
+        version          => '9.11.1',
         override_options => {
             'TeamSettings' => {
                 'SiteName' => 'WikiTide Foundation',
             },
-            'SqlSettings' => {
+            'SqlSettings'  => {
                 'DriverName' => 'postgres',
                 'DataSource' => "postgres://mattermost:${mattermost_pass}@localhost:5432/mattermost?sslmode=disable&connect_timeout=10",
             },
             'FileSettings' => {
                 'Directory' => '/var/mattermost',
             },
-            'LogSettings' => {
+            'LogSettings'  => {
                 'FileLocation' => '/var/log/mattermost',
             },
         },
