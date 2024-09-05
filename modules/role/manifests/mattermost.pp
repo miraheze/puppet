@@ -24,21 +24,21 @@ class role::mattermost {
     -> class { 'mattermost':
         version          => '9.11.1',
         override_options => {
-            'TeamSettings' => {
+            'TeamSettings'    => {
                 'EnableUserCreation' => false,
                 'SiteName'           => 'WikiTide Foundation',
             },
             'ServiceSettings' => {
                 'SiteURL' => 'https://mattermost.wikitide.net',
             },
-            'SqlSettings'  => {
+            'SqlSettings'     => {
                 'DriverName' => 'postgres',
                 'DataSource' => "postgres://mattermost:${mattermost_pass}@localhost:5432/mattermost?sslmode=disable&connect_timeout=10",
             },
-            'FileSettings' => {
+            'FileSettings'    => {
                 'Directory' => '/var/mattermost/',
             },
-            'LogSettings'  => {
+            'LogSettings'     => {
                 'FileLocation' => '/var/log/mattermost',
             },
         },
