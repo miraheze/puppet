@@ -28,6 +28,9 @@ class role::mattermost {
                 'EnableUserCreation' => false,
                 'SiteName'           => 'WikiTide Foundation',
             },
+            'ServiceSettings' => {
+                'SiteURL' => 'https://mattermost.wikitide.net',
+            },
             'SqlSettings'  => {
                 'DriverName' => 'postgres',
                 'DataSource' => "postgres://mattermost:${mattermost_pass}@localhost:5432/mattermost?sslmode=disable&connect_timeout=10",
