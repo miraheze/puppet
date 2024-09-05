@@ -29,9 +29,15 @@ class role::mattermost {
                 'SiteName'           => 'WikiTide Foundation',
             },
             'EmailSettings'   => {
-                'SMTPServer'         => 'smtp-relay.gmail.com',
-                'SMTPPort'           => '465',
-                'ConnectionSecurity' => 'TLS',
+                'SendEmailNotifications' => true,
+                'SMTPServer'             => 'smtp-relay.gmail.com',
+                'SMTPPort'               => '465',
+                'ConnectionSecurity'     => 'TLS',
+                'FeedbackName'           => 'No Reply',
+                'FeedbackEmail'          => 'noreply@wikitide.org',
+            },
+            'SupportSettings' => {
+                'SupportEmail' => 'noreply@wikitide.org',
             },
             'ServiceSettings' => {
                 'SiteURL' => 'https://mattermost.wikitide.net',
