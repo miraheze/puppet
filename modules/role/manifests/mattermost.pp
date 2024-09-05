@@ -30,7 +30,7 @@ class role::mattermost {
             },
             'EmailSettings'   => {
                 'SMTPServer'         => 'smtp-relay.gmail.com',
-                'SMTPPort'           => 465,
+                'SMTPPort'           => '465',
                 'ConnectionSecurity' => 'TLS',
             },
             'ServiceSettings' => {
