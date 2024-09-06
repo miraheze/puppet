@@ -25,11 +25,11 @@ class role::mattermost {
         version          => '9.11.1',
         override_options => {
             'EnablePostUsernameOverride' => true,
-            'TeamSettings'    => {
+            'TeamSettings'               => {
                 'EnableUserCreation' => false,
                 'SiteName'           => 'WikiTide Foundation',
             },
-            'EmailSettings'   => {
+            'EmailSettings'              => {
                 'SendEmailNotifications' => true,
                 'SMTPServer'             => 'smtp-relay.gmail.com',
                 'SMTPPort'               => '465',
@@ -37,23 +37,23 @@ class role::mattermost {
                 'FeedbackName'           => 'No Reply',
                 'FeedbackEmail'          => 'noreply@wikitide.org',
             },
-            'SupportSettings' => {
+            'SupportSettings'            => {
                 'SupportEmail' => 'noreply@wikitide.org',
             },
-            'ServiceSettings' => {
+            'ServiceSettings'            => {
                 'SiteURL'                    => 'https://mattermost.wikitide.net',
                 'SessionLengthSSOInHours'    => 2160,
                 'SessionLengthWebInHours'    => 2160,
                 'SessionLengthMobileInHours' => 2160,
             },
-            'SqlSettings'     => {
+            'SqlSettings'                => {
                 'DriverName' => 'postgres',
                 'DataSource' => "postgres://mattermost:${mattermost_pass}@localhost:5432/mattermost?sslmode=disable&connect_timeout=10",
             },
-            'FileSettings'    => {
+            'FileSettings'               => {
                 'Directory' => '/var/mattermost/',
             },
-            'LogSettings'     => {
+            'LogSettings'                => {
                 'FileLocation' => '/var/log/mattermost',
             },
         },
