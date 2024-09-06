@@ -45,6 +45,7 @@ class role::mattermost {
                 'SessionLengthWebInHours'    => 2160,
                 'SessionLengthMobileInHours' => 2160,
                 'EnablePostUsernameOverride' => true,
+                'EnablePostIconOverride'     => true,
             },
             'SqlSettings'     => {
                 'DriverName' => 'postgres',
