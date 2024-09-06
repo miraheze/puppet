@@ -24,6 +24,7 @@ class role::mattermost {
     -> class { 'mattermost':
         version          => '9.11.1',
         override_options => {
+            'EnablePostUsernameOverride' => true,
             'TeamSettings'    => {
                 'EnableUserCreation' => false,
                 'SiteName'           => 'WikiTide Foundation',
