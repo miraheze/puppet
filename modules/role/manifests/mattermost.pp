@@ -24,7 +24,6 @@ class role::mattermost {
     -> class { 'mattermost':
         version          => '9.11.1',
         override_options => {
-            'EnablePostUsernameOverride' => true,
             'TeamSettings'               => {
                 'EnableUserCreation' => false,
                 'SiteName'           => 'WikiTide Foundation',
@@ -45,6 +44,7 @@ class role::mattermost {
                 'SessionLengthSSOInHours'    => 2160,
                 'SessionLengthWebInHours'    => 2160,
                 'SessionLengthMobileInHours' => 2160,
+                'EnablePostUsernameOverride' => true,
             },
             'SqlSettings'                => {
                 'DriverName' => 'postgres',
