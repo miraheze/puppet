@@ -390,7 +390,7 @@ server {
 	# Domain doesn't go through Cloudflare,
 	# do not require a client certificate as
 	# cp* will not present one that'd be signed by Cloudflare
-	ssl_verify_client optional;
+	ssl_verify_client off;
 	<%- end -%>
 	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
 
@@ -449,7 +449,7 @@ server {
 	# Domain doesn't go through Cloudflare,
 	# do not require a client certificate as
 	# cp* will not present one that'd be signed by Cloudflare
-	ssl_verify_client optional;
+	ssl_verify_client off;
 <%- end -%>
 	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
 
