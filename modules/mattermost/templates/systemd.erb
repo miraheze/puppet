@@ -1,0 +1,24 @@
+[Unit]
+Description=<%= @service_name %>
+<% if @depend_service != '' -%>
+After=syslog.target network.target <%= @depend_service %>.service
+Requires=<%= @depend_service %>.service
+<% else -%>
+After=syslog.target network.target
+<% end -%>
+
+[Service]
+EnvironmentFile=<%= @env_conf %>
+Type=simple
+WorkingDirectory=<%= @symlink %>
+User=<%= @user %>
+<% if (scope.function_versioncmp(['3.8.0', @version]) > 0) -%>
+ExecStart=<%= @symlink %>/bin/<%= @executable %> -config=<%= @conf %>
+<% else -%>
+ExecStart=<%= @symlink %>/bin/<%= @executable %> --config <%= @conf %>
+<% end -%>
+PIDFile=/var/spool/mattermost/pid/master.pid
+LimitNOFILE=49152
+
+[Install]
+WantedBy=multi-user.target

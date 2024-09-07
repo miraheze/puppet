@@ -1,0 +1,12 @@
+fixtures:
+  repositories:
+    "archive": "git://github.com/voxpupuli/puppet-archive.git"
+    "stdlib":
+      repo: "git://github.com/puppetlabs/puppetlabs-stdlib.git"
+      ref: "4.11.0"
+      #"postgresql": "git://github.com/puppetlabs/puppetlabs-postgresql.git"
+      #"nginx": "git://github.com/voxpupuli/puppet-nginx.git"
+
+  symlinks:
+    "mattermost": "#{source_dir}"
+
