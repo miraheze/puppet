@@ -16,6 +16,9 @@ server {
 	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
 
+	ssl_verify_client on;
+	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
+
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
@@ -111,6 +114,9 @@ server {
 	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
 
+	ssl_verify_client on;
+	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
+
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
@@ -193,6 +199,9 @@ server {
 	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
 
+	ssl_verify_client on;
+	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
+
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
@@ -238,6 +247,9 @@ server {
 
 	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
+
+	ssl_verify_client on;
+	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
@@ -372,6 +384,16 @@ server {
 	ssl_certificate /etc/ssl/localcerts/<%= property['sslname'] %>.crt;
 	ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
 
+	<%- if property['ca'] == "Cloudflare" -%>
+	ssl_verify_client on;
+	<%- else -%>
+	# Domain doesn't go through Cloudflare,
+	# do not require a client certificate as
+	# cp* will not present one that'd be signed by Cloudflare
+	ssl_verify_client off;
+	<%- end -%>
+	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
+
 	<%- if property['hsts'] == "strict" -%>
 	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
 	<%- else -%>
@@ -420,6 +442,16 @@ server {
 	ssl_certificate /etc/ssl/localcerts/<%= property['url'] %>.crt;
 	ssl_certificate_key /etc/ssl/private/<%= property['url'] %>.key;
 <%- end -%>
+
+<%- if property['ca'] == "Cloudflare" -%>
+	ssl_verify_client on;
+<%- else -%>
+	# Domain doesn't go through Cloudflare,
+	# do not require a client certificate as
+	# cp* will not present one that'd be signed by Cloudflare
+	ssl_verify_client off;
+<%- end -%>
+	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
 
 <%- if property['hsts'] == "strict" -%>  
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
