@@ -455,6 +455,9 @@ server {
 	ssl_verify_client off;
 <%- end -%>
 	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
+	# Same as ssl_client_certificate, but we don't send the certificate
+	# to the client
+	ssl_trusted_certificate /etc/ssl/localcerts/internal-client-certificate.crt;
 
 <%- if property['hsts'] == "strict" -%>  
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
