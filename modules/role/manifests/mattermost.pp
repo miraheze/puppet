@@ -27,6 +27,7 @@ class role::mattermost {
         override_options => {
             'TeamSettings'    => {
                 'SiteName'                  => 'WikiTide Foundation',
+                'TeammateNameDisplay'       => 'nickname_full_name',
                 'RestrictCreationToDomains' => 'wikitide.org',
                 'EnableUserCreation'        => true,
                 'EnableOpenServer'          => false,
