@@ -8,11 +8,6 @@ class role::irc {
         dotnet_version => '6.0',
     }
 
-    irc::relaybot { 'relaybot2':
-        dotnet_version => '6.0',
-        ensure => absent,
-    }
-
     class { 'irc::ircrcbot':
         nickname     => 'MirahezeRC',
         network      => 'irc.libera.chat',
