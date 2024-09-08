@@ -45,17 +45,16 @@ define irc::relaybot (
         mode   => '0755',
     }
 
-    git::clone { "IRC-Discord-Relay-${title}":
-        ensure    => $ensure ? {
-            present => latest,
-            default => $ensure,
-        },
-        origin    => 'https://github.com/Universal-Omega/IRC-Discord-Relay',
-        directory => $install_path,
-        owner     => 'irc',
-        group     => 'irc',
-        mode      => '0755',
-        require   => File[$install_path],
+    if $ensure == present {
+        git::clone { "IRC-Discord-Relay-${title}":
+            ensure    => latest,
+            origin    => 'https://github.com/Universal-Omega/IRC-Discord-Relay',
+            directory => $install_path,
+            owner     => 'irc',
+            group     => 'irc',
+            mode      => '0755',
+            require   => File[$install_path],
+        }
     }
 
     file { [
