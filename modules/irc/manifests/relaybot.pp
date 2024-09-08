@@ -143,7 +143,7 @@ define irc::relaybot (
     }
 
     monitoring::nrpe { "IRC-Discord Relay Bot ${title}":
-        command => "/usr/lib/nagios/plugins/check_procs -a ${title}/ -c 2:2",
         ensure  => $ensure,
+        command => "/usr/lib/nagios/plugins/check_procs -a ${title}/ -c 2:2",
     }
 }
