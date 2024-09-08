@@ -392,12 +392,10 @@ server {
 	# cp* will not present one that'd be signed by Cloudflare
 	ssl_verify_client off;
 	<%- end -%>
-	<%- if property['url'] == "mirabeta.org" -%>
+	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
 	# Same as ssl_client_certificate, but we don't send the certificate
 	# to the client
-	ssl_trusted_certificate /etc/ssl/localcerts/internal-client-cert.crt
-	<%- end -%>
-	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
+	ssl_trusted_certificate /etc/ssl/localcerts/internal-client-cert.crt;
 
 	<%- if property['hsts'] == "strict" -%>
 	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
