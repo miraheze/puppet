@@ -98,6 +98,11 @@ define irc::relaybot (
             user        => 'irc',
             require     => Git::Clone["IRC-Discord-Relay-${title}"],
         }
+    } else {
+        exec { "${title}-build":
+            noop    => true,
+            command => 'true',  # Do nothing but maintain the resource for below require
+        }
     }
 
     file { [
