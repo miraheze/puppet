@@ -21,11 +21,6 @@ node /^cloud1[5678]\.wikitide\.net$/ {
     include role::cloud
 }
 
-node 'cp26.wikitide.net' {
-    include base
-    include role::mattermost
-}
-
 node /^cp(3[678]|[45]1)\.wikitide\.net$/ {
     include base
     include role::varnish
@@ -76,6 +71,11 @@ node 'ldap171.wikitide.net' {
 node 'matomo151.wikitide.net' {
     include base
     include role::matomo
+}
+
+node 'mattermost1.wikitide.net' {
+    include base
+    include role::mattermost
 }
 
 node /^mem1[56]1\.wikitide\.net$/ {
