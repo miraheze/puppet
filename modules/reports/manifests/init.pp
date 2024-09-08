@@ -154,7 +154,6 @@ class reports {
     $app_key = lookup('reports::app_key')
     $reports_mediawiki_identifier = lookup('reports::reports_mediawiki_identifier')
     $reports_mediawiki_secret = lookup('reports::reports_mediawiki_secret')
-    $reports_discord_webhook = lookup('reports::reports_discord_webhook')
     $reports_mattermost_webhook = lookup('reports::reports_mattermost_webhook')
     $reports_write_key = lookup('reports::reports_write_key')
 
