@@ -10,6 +10,7 @@ class role::irc {
 
     irc::relaybot { 'relaybot2':
         dotnet_version => '6.0',
+        ensure => absent,
     }
 
     class { 'irc::ircrcbot':
