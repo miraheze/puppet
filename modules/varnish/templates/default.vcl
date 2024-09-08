@@ -340,8 +340,11 @@ sub mw_request {
 	}
 
 	# We can rewrite those to one domain name to increase cache hits
+	# T12559: Rewrite to a non-Cloudflare domain so that resources for those
+	# will still work without the client certificate from Cloudflare (not an
+	# elegant solution, but "it's 'temporary' anyway" so who cares)
 	if (req.url ~ "^/(1\.\d{2,})/(skins|resources|extensions)/" ) {
-		set req.http.Host = "meta.miraheze.org";
+		set req.http.Host = "rainverse.wiki";
 	}
 
 	call evaluate_cookie;
