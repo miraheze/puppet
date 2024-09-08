@@ -44,6 +44,7 @@ define irc::relaybot (
             owner  => 'irc',
             group  => 'irc',
             mode   => '0755',
+            before => Git::Clone["IRC-Discord-Relay-${title}"],
         }
     }
 
@@ -57,7 +58,6 @@ define irc::relaybot (
         owner     => 'irc',
         group     => 'irc',
         mode      => '0755',
-        require   => File[$install_path],
     }
 
     file { [
@@ -101,7 +101,7 @@ define irc::relaybot (
     } else {
         exec { "${title}-build":
             noop    => true,
-            command => 'true',  # Do nothing but maintain the resource for below require
+            command => '/usr/bin/true',  # Do nothing but maintain the resource for below require
         }
     }
 
