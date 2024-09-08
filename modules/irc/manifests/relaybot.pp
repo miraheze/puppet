@@ -38,23 +38,26 @@ define irc::relaybot (
         }
     }
 
-    file { $install_path:
-        ensure => ensure_directory($ensure),
-        owner  => 'irc',
-        group  => 'irc',
-        mode   => '0755',
+    if $ensure == present {
+        file { $install_path:
+            ensure => ensure_directory($ensure),
+            owner  => 'irc',
+            group  => 'irc',
+            mode   => '0755',
+        }
     }
 
-    if $ensure == present {
-        git::clone { "IRC-Discord-Relay-${title}":
-            ensure    => latest,
-            origin    => 'https://github.com/Universal-Omega/IRC-Discord-Relay',
-            directory => $install_path,
-            owner     => 'irc',
-            group     => 'irc',
-            mode      => '0755',
-            require   => File[$install_path],
-        }
+    git::clone { "IRC-Discord-Relay-${title}":
+        ensure    => $ensure ? {
+            present => latest,
+            default => $ensure,
+        },
+        origin    => 'https://github.com/Universal-Omega/IRC-Discord-Relay',
+        directory => $install_path,
+        owner     => 'irc',
+        group     => 'irc',
+        mode      => '0755',
+        require   => File[$install_path],
     }
 
     file { [
