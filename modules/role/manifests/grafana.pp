@@ -32,8 +32,8 @@ class role::grafana {
     }
 
     monitoring::nrpe { 'Backups Grafana':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/grafana-backup.log',
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 1382400 -c 1468800 -f /var/log/grafana-backup.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+        critical => true,
     }
 }
