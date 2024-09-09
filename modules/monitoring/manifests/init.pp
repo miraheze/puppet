@@ -240,11 +240,7 @@ class monitoring (
     }
 
     file { '/usr/lib/nagios/plugins/check_reverse_dns.py':
-        source  => 'puppet:///modules/monitoring/check_reverse_dns.py',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        require => Package['nagios-nrpe-plugin'],
+        ensure  => absent,
     }
 
     file { '/usr/lib/nagios/plugins/check_mysql_connections.php':

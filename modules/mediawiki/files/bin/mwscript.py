@@ -1,5 +1,8 @@
 #! /usr/bin/python3
 
+# will eventually be moved to python-functions repository;
+# prefer making changes there if possible
+
 from __future__ import annotations
 
 import argparse

@@ -28,6 +28,22 @@ define ssl::wildcard (
         }
     }
 
+    if !defined(File["${ssl_cert_path}/mirabeta-origin-cert.crt"]) {
+        file { "${ssl_cert_path}/mirabeta-origin-cert.crt":
+            ensure => 'present',
+            source => 'puppet:///ssl/certificates/mirabeta-origin-cert.crt',
+            notify => $restart_nginx,
+        }
+    }
+
+    if !defined(File["${ssl_cert_path}/miraheze-origin-cert.crt"]) {
+        file { "${ssl_cert_path}/miraheze-origin-cert.crt":
+            ensure => 'present',
+            source => 'puppet:///ssl/certificates/miraheze-origin-cert.crt',
+            notify => $restart_nginx,
+        }
+    }
+
     if !defined(File["${ssl_cert_path}/wikitide.net.crt"]) {
         file { "${ssl_cert_path}/wikitide.net.crt":
             ensure => 'present',
@@ -57,6 +73,22 @@ define ssl::wildcard (
             mode      => '0660',
             show_diff => false,
             notify    => $restart_nginx,
+        }
+    }
+
+    if !defined(File["${ssl_cert_key_private_path}/miraheze-origin-cert.key"]) {
+        file { "${ssl_cert_key_private_path}/miraheze-origin-cert.key":
+            ensure => 'present',
+            source => 'puppet:///ssl-keys/miraheze-origin-cert.key',
+            notify => $restart_nginx,
+        }
+    }
+
+    if !defined(File["${ssl_cert_key_private_path}/mirabeta-origin-cert.key"]) {
+        file { "${ssl_cert_key_private_path}/mirabeta-origin-cert.key":
+            ensure => 'present',
+            source => 'puppet:///ssl-keys/mirabeta-origin-cert.key',
+            notify => $restart_nginx,
         }
     }
 }

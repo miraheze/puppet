@@ -64,7 +64,8 @@ author_map = {
     "@originalauthority": "Original Authority",
     "@bluemoon0332": "OrangeStar",
     "@orduin": "Void",
-    "@evalprime": "Evalprime"
+    "@evalprime": "Evalprime",
+    "@theresnotime": "TheresNoTime"
 }
 
 # Map irc nick to title of the user (how the bot addresses the user)

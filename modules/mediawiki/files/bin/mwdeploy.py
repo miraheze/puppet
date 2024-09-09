@@ -1,5 +1,8 @@
 #! /usr/bin/python3
 
+# will eventually be moved to python-functions repository;
+# prefer making changes there if possible
+
 import argparse
 from typing import TypedDict
 import os
@@ -181,7 +184,9 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
 
-    headers = {}
+    headers = {
+        'User-Agent': 'wikitide/mwdeploy.py',
+    }
     if Debug:
         server = f'{Debug}.wikitide.net'
         headers['X-WikiTide-Debug'] = server

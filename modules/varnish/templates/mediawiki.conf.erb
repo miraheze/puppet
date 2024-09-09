@@ -75,6 +75,14 @@ server {
 		return 403;
 	}
 
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
 	location / {
 		if ($request_uri !~ "^/check$") {
 			return 301 https://$host$request_uri;
@@ -102,6 +110,14 @@ server {
 
 	# Web scraper - Void
 	if ($http_user_agent ~ "\+Zimit$") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 
@@ -143,6 +159,14 @@ server {
 		return 403;
 	}
 
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
 	if ($host ~ ^(\w+)\.m\.miraheze\.org$) {
 		return 301 https://$1.miraheze.org$request_uri;
 	}
@@ -164,6 +188,14 @@ server {
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 
@@ -206,6 +238,14 @@ server {
 		return 403;
 	}
 
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
 	ssl_certificate /etc/ssl/localcerts/<%= property['sslname'] %>.crt;
 	ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
 
@@ -215,14 +255,19 @@ server {
 	add_header Strict-Transport-Security "max-age=604800";
 	<%- end -%>
 
+	location ^~ /.well-known/acme-challenge/ {
+		# Redirect to wikitide.net to serve acme challenges - T12203
+		return 301 https://wikitide.net$request_uri;
+	}
+
 	<%- if property['path_redirects'] -%>
 	<%- property['path_redirects'].each_pair do | path, redirect | -%>
 	location ~* <%= path %>$ {
 		return 301 https://<%= redirect %>;
 	}
 	<%- end -%>
-	# If we are using path_redirects, make the main
-	# redirect property optional.
+	<%- end -%>
+
 	<%- if property['redirect'] -%>
 	# Only redirect if there are no other matches found.
 	# This prevents this from conflicting with
@@ -230,11 +275,6 @@ server {
 	location / {
 		return 301 https://<%= property['redirect'] %>$request_uri;
 	}
-	<%- end -%>
-	<%- else -%>
-	# If we aren't using path_redirects, always
-	# redirect using the main redirect property.
-	return 301 https://<%= property['redirect'] %>$request_uri;
 	<%- end -%>
 }
 
@@ -274,6 +314,14 @@ server {
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 

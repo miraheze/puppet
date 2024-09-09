@@ -1,0 +1,15 @@
+start on runlevel [2345]
+stop on runlevel [016]
+respawn
+limit nofile 50000 50000
+chdir <%= @symlink %>
+setuid <%= @user %>
+script
+   set -a
+   . <%= @env_conf %>
+<% if (scope.function_versioncmp(['3.8.0', @version]) > 0) -%>
+    exec bin/<%= @executable %> -config="<%= @conf %>"
+<% else -%>
+    exec bin/<%= @executable %> --config "<%= @conf %>"
+<% end -%>
+end script

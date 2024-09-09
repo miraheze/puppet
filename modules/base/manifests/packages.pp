@@ -44,4 +44,7 @@ class base::packages {
     package { 'apt-listchanges':
         ensure => absent,
     }
+    package { 'systemd-timesyncd':
+        ensure => absent,
+    }
 }

@@ -27,4 +27,4 @@ Attributions should exist in module directories if code is fully unmodified or s
 If attribution is missing, please open a code request adding the attribution, and it will be merged.
 
 This works out of the box as long as Puppet is installed on the local machine.
-All code is tested and developed on Debian Bullseye and is run in production on Debian Bullseye.
+All code is tested and developed on Debian Bookworm and is run in production on Debian Bookworm.
