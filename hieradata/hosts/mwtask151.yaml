@@ -26,9 +26,6 @@ mediawiki::php::fpm_config:
 mediawiki::php::increase_open_files: true
 mediawiki::php::memory_limit: '1G'
 
-mediawiki::is_canary: true
-mediawiki::use_staging: true
-
 php::php_version: '8.2'
 
 http_proxy: 'http://bastion.wikitide.net:8080'
