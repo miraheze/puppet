@@ -17,7 +17,7 @@ server {
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
 
 	ssl_verify_client optional;
-	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
@@ -115,7 +115,7 @@ server {
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
 
 	ssl_verify_client optional;
-	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
@@ -200,7 +200,7 @@ server {
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
 
 	ssl_verify_client optional;
-	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
@@ -249,7 +249,7 @@ server {
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
 
 	ssl_verify_client optional;
-	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
@@ -392,10 +392,7 @@ server {
 	# cp* will not present one that'd be signed by Cloudflare
 	ssl_verify_client off;
 	<%- end -%>
-	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
-	# Same as ssl_client_certificate, but we don't send the certificate
-	# to the client
-	# ssl_trusted_certificate /etc/ssl/localcerts/internal-client-certificate.crt;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
 	<%- if property['hsts'] == "strict" -%>
 	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
@@ -454,10 +451,7 @@ server {
 	# cp* will not present one that'd be signed by Cloudflare
 	ssl_verify_client off;
 <%- end -%>
-	ssl_client_certificate /etc/ssl/localcerts/authenticated_origin_pull_ca.crt;
-	# Same as ssl_client_certificate, but we don't send the certificate
-	# to the client
-	# ssl_trusted_certificate /etc/ssl/localcerts/internal-client-certificate.crt;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
 <%- if property['hsts'] == "strict" -%>  
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
