@@ -73,7 +73,6 @@ class role::mattermost {
     nginx::site { 'mattermost':
         ensure  => present,
         source  => 'puppet:///modules/role/mattermost/nginx.conf',
-        monitor => false,
     }
 
     $firewall_rules_str = join(
@@ -141,6 +140,10 @@ class role::mattermost {
         port    => '443',
         # srange  => "(${$firewall_rules_cloudflare_str})",
         notrack => true,
+    }
+
+    monitoring::nrpe { 'Mattermost':
+        command => '/usr/lib/nagios/plugins/check_procs -a /opt/mattermost/bin/mattermost -c 1:1'
     }
 
     system::role { 'role::mattermost':
