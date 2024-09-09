@@ -21,7 +21,7 @@ node /^cloud1[5678]\.wikitide\.net$/ {
     include role::cloud
 }
 
-node /^cp(3[678]|[45]1)\.wikitide\.net$/ {
+node /^cp(3[67])\.wikitide\.net$/ {
     include base
     include role::varnish
 }
