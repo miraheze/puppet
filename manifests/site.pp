@@ -89,12 +89,12 @@ node 'mon181.wikitide.net' {
     include role::icinga2
 }
 
-node /^mw1[5678][12]\.wikitide\.net$/ {
+node /^mw1[5678][1234]\.wikitide\.net$/ {
     include base
     include role::mediawiki
 }
 
-node /^mwtask1[78]1\.wikitide\.net$/ {
+node /^mwtask1[5678]1\.wikitide\.net$/ {
     include base
     include role::mediawiki
     include role::mathoid
