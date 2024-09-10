@@ -21,15 +21,6 @@ class mediawiki::deploy {
             before => File['/usr/local/bin/mwdeploy'],
         }
 
-        file { '/srv/mediawiki-staging/mwdeploy-client-cert.key':
-            ensure => present,
-            source => 'puppet:///ssl-keys/mwdeploy.key',
-            owner  => 'www-data',
-            group  => 'www-data',
-            mode   => '0444',
-            before => File['/usr/local/bin/mwdeploy'],
-        }
-
         file { '/var/www/.ssh':
             ensure => directory,
             owner  => 'www-data',
@@ -151,5 +142,17 @@ class mediawiki::deploy {
         user        => www-data,
         subscribe   => Git::Clone['ErrorPages'],
         require     => File['/usr/local/bin/mwdeploy'],
+    }
+
+    # This is outside of the is_canary if so that test* also pulls
+    # the certificate, as that server has use_staging to true but not
+    # is_canary
+    file { '/srv/mediawiki-staging/mwdeploy-client-cert.key':
+        ensure => present,
+        source => 'puppet:///ssl-keys/mwdeploy.key',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0444',
+        before => File['/usr/local/bin/mwdeploy'],
     }
 }
