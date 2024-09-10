@@ -71,8 +71,8 @@ class role::mattermost {
     }
 
     nginx::site { 'mattermost':
-        ensure  => present,
-        source  => 'puppet:///modules/role/mattermost/nginx.conf',
+        ensure => present,
+        source => 'puppet:///modules/role/mattermost/nginx.conf',
     }
 
     $firewall_rules_str = join(
