@@ -113,6 +113,7 @@ class phorge (
     }
 
     ssl::wildcard { 'phorge wildcard': }
+    ssl::client_cert_cas { 'phorge client_cert_cas': }
 
     file { '/srv/phorge':
         ensure => directory,
