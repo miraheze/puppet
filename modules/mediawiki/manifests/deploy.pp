@@ -21,6 +21,15 @@ class mediawiki::deploy {
             before => File['/usr/local/bin/mwdeploy'],
         }
 
+        file { '/srv/mediawiki-staging/mwdeploy-client-cert.key':
+            ensure => present,
+            source => 'puppet:///ssl-keys/mwdeploy.key',
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0444',
+            before => File['/usr/local/bin/mwdeploy'],
+        }
+
         file { '/var/www/.ssh':
             ensure => directory,
             owner  => 'www-data',

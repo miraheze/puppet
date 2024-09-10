@@ -217,7 +217,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         proto = 'https://'
     else:
         proto = 'http://'
-    req = requests.get(f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
+    req = requests.get(f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify, cert=('/etc/ssl/localcerts/mwdeploy.crt', '/srv/mediawiki-staging/mwdeploy-client-cert.key'))
     if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
