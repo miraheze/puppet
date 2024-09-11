@@ -154,15 +154,14 @@ def test_check_up_no_debug_host() -> None:
     assert failed
 
 
-def mock_requests_get(*args, **kwargs):
+def requests_get_without_cert(url, headers=None, verify=True, **kwargs):
     kwargs.pop('cert', None)
-    with patch('requests.get', wraps=requests.get) as real_get:
-        return real_get(*args, **kwargs)
+    return requests.get(url, headers=headers, verify=verify, **kwargs)
 
 
 @patch('requests.get')
 def test_check_up_debug(mock_get) -> None:
-    mock_get.side_effect = mock_requests_get
+    mock_get.wraps = requests_get_without_cert
     if os.getenv('DEBUG_ACCESS_KEY'):
         assert mwdeploy.check_up(nolog=True, Debug='mwtask181')
 
