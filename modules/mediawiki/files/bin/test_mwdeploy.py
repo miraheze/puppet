@@ -160,8 +160,9 @@ def mock_requests_get(*args, **kwargs):
         return real_get(*args, **kwargs)
 
 
-@patch('requests.get', side_effect=mock_requests_get)
+@patch('requests.get')
 def test_check_up_debug(mock_get) -> None:
+    mock_get.side_effect = mock_requests_get
     if os.getenv('DEBUG_ACCESS_KEY'):
         assert mwdeploy.check_up(nolog=True, Debug='mwtask181')
 
