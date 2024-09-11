@@ -6,6 +6,7 @@ class role::opensearch (
     $os_master_hosts = lookup('role::opensearch::master_hosts', {'default_value' => undef}),
     $os_master_host = lookup('role::opensearch::master_host', {'default_value' => undef}),
     $use_tls = lookup('role::opensearch::use_tls', {'default_value' => false}),
+    $enable_exporter = lookup('role::opensearch::enable_exporter', {'default_value' => true}),
 ) {
     include ::java
 
@@ -204,7 +205,7 @@ class role::opensearch (
         }
     }
 
-    if $os_master {
+    if ($os_master and $enable_exporter) {
         include prometheus::exporter::elasticsearch
     }
 
