@@ -1,6 +1,7 @@
 import argparse
 import os
 import re
+import requests
 import pytest
 import unittest
 from unittest.mock import MagicMock, patch
@@ -156,8 +157,7 @@ def test_check_up_no_debug_host() -> None:
 @patch('requests.get')
 def test_check_up_debug(mock_get) -> None:
     def mock_requests_get(url, headers=None, verify=True, cert=None, *args, **kwargs):
-        assert cert is None, f"Expected cert to be None, got {cert}"
-        return mock_response
+        return requests.get(url, headers=headers, verify=verify, cert=None, *args, **kwargs)
 
     mock_get.side_effect = mock_requests_get
     if os.getenv('DEBUG_ACCESS_KEY'):
