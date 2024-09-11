@@ -165,7 +165,7 @@ def test_check_up_debug(mock_get) -> None:
         url,
         headers=headers,
         verify=verify,
-        **{k: v for k, v in kwargs.items() if k != 'cert'}
+        **{k: v for k, v in kwargs.items() if k != 'cert'},
     )
 
     if os.getenv('DEBUG_ACCESS_KEY'):
