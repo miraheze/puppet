@@ -9,4 +9,6 @@ role::opensearch::master_hosts:
 role::opensearch::master_host: 'http://os162-private.wikitide.net:9200'
 opensearch::api_host: os162-private.wikitide.net
 
+prometheus::exporter::opensearch::opensearch_cluster: 'https://opensearch-mw.wikitide.net'
+
 base::syslog::rsyslog_udp_localhost: true
