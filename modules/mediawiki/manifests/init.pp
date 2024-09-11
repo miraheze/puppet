@@ -111,29 +111,60 @@ class mediawiki {
         require => File['/srv/mediawiki'],
     }
 
-    $wikiadmin_password         = lookup('passwords::db::wikiadmin')
-    $mediawiki_password         = lookup('passwords::db::mediawiki')
-    $redis_password             = lookup('passwords::redis::master')
-    $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
-    $mediawiki_secretkey        = lookup('passwords::mediawiki::secretkey')
-    $hcaptcha_secretkey         = lookup('passwords::hcaptcha::secretkey')
-    $shellbox_secretkey         = lookup('passwords::shellbox::secretkey')
-    $matomotoken                = lookup('passwords::mediawiki::matomotoken')
-    $ldap_password              = lookup('passwords::mediawiki::ldap_password')
-    $discord_experimental_webhook = lookup('mediawiki::discord_experimental_webhook')
-    $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
-    $swift_password             = lookup('mediawiki::swift_password')
-    $swift_temp_url_key         = lookup('mediawiki::swift_temp_url_key')
-    $reports_write_key          = lookup('reports::reports_write_key')
-    $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
-    $multipurge_apitoken        = lookup('mediawiki::multipurge_apitoken')
-    $multipurge_zoneid          = lookup('mediawiki::multipurge_zoneid')
+    if lookup('mediawiki::jobqueue::runner::beta') {
+        $wikiadmin_password         = lookup('passwords::beta::db::wikiadmin')
+        $mediawiki_password         = lookup('passwords::beta::db::mediawiki')
+        $redis_password             = lookup('passwords::beta::redis::master')
+        $mediawiki_upgradekey       = lookup('passwords::beta::mediawiki::upgradekey')
+        $mediawiki_secretkey        = lookup('passwords::beta::mediawiki::secretkey')
+        $hcaptcha_secretkey         = lookup('passwords::beta::hcaptcha::secretkey')
+        $shellbox_secretkey         = lookup('passwords::beta::shellbox::secretkey')
+        $swift_password             = lookup('mediawiki::beta::swift_password')
+        $swift_temp_url_key         = lookup('mediawiki::beta::swift_temp_url_key')
 
-    file { '/srv/mediawiki/config/PrivateSettings.php':
-        ensure  => 'present',
-        content => template('mediawiki/PrivateSettings.php'),
-        require => File['/srv/mediawiki/config'],
+        file { '/srv/mediawiki/config/PrivateSettings.php':
+            ensure  => 'present',
+            content => template('mediawiki/PrivateSettings-beta.php'),
+            require => File['/srv/mediawiki/config'],
+        }
+
+        file { '/etc/swift-env.sh':
+            ensure  => 'present',
+            content => template('mediawiki/swift-env-beta.sh.erb'),
+            mode    => '0755',
+        }
+    } else {
+        $wikiadmin_password         = lookup('passwords::db::wikiadmin')
+        $mediawiki_password         = lookup('passwords::db::mediawiki')
+        $redis_password             = lookup('passwords::redis::master')
+        $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
+        $mediawiki_secretkey        = lookup('passwords::mediawiki::secretkey')
+        $hcaptcha_secretkey         = lookup('passwords::hcaptcha::secretkey')
+        $shellbox_secretkey         = lookup('passwords::shellbox::secretkey')
+        $matomotoken                = lookup('passwords::mediawiki::matomotoken')
+        $ldap_password              = lookup('passwords::mediawiki::ldap_password')
+        $discord_experimental_webhook = lookup('mediawiki::discord_experimental_webhook')
+        $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
+        $swift_password             = lookup('mediawiki::swift_password')
+        $swift_temp_url_key         = lookup('mediawiki::swift_temp_url_key')
+        $reports_write_key          = lookup('reports::reports_write_key')
+        $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
+        $multipurge_apitoken        = lookup('mediawiki::multipurge_apitoken')
+        $multipurge_zoneid          = lookup('mediawiki::multipurge_zoneid')
+
+        file { '/srv/mediawiki/config/PrivateSettings.php':
+            ensure  => 'present',
+            content => template('mediawiki/PrivateSettings.php'),
+            require => File['/srv/mediawiki/config'],
+        }
+
+        file { '/etc/swift-env.sh':
+            ensure  => 'present',
+            content => template('mediawiki/swift-env.sh.erb'),
+            mode    => '0755',
+        }
     }
+
 
     file { '/usr/local/bin/fileLockScript.sh':
         ensure => 'present',
@@ -194,12 +225,6 @@ class mediawiki {
         privileges => [
             'ALL = (www-data) NOPASSWD: ALL',
         ],
-    }
-
-    file { '/etc/swift-env.sh':
-        ensure  => 'present',
-        content => template('mediawiki/swift-env.sh.erb'),
-        mode    => '0755',
     }
 
     file { '/tmp/magick-tmp':

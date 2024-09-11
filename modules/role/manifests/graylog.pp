@@ -39,7 +39,7 @@ class role::graylog {
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
     $firewall_http_rules_str = join(
-        query_facts('Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus]', ['networking'])
+        query_facts('Class[Role::Bastion] or (Class[Role::Mediawiki] and !facts['mediawiki::jobqueue::runner::beta']) or Class[Role::Icinga2] or Class[Role::Prometheus]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['he-ipv6'] ) {
                 "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"

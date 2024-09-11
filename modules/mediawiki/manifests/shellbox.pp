@@ -43,7 +43,11 @@ class mediawiki::shellbox {
         require => File['/srv/shellbox/config'],
     }
 
-    $shellbox_secretkey = lookup('passwords::shellbox::secretkey')
+    if lookup('mediawiki::jobqueue::runner::beta') {
+        $shellbox_secretkey = lookup('passwords::beta::shellbox::secretkey')
+    } else {
+        $shellbox_secretkey = lookup('passwords::shellbox::secretkey')
+    }
 
     nginx::site { 'shellbox':
         ensure  => present,
