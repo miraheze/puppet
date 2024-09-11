@@ -1,7 +1,6 @@
 import argparse
 import os
 import re
-import requests
 import pytest
 import unittest
 from unittest.mock import MagicMock, patch
@@ -164,7 +163,7 @@ def test_check_up_debug_fail(mock_get) -> None:
     mock_response = MagicMock()
     mock_response.status_code = 500
     mock_get.return_value = mock_response
-    
+
     assert not mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstat.us/500', force=True)
 
 
