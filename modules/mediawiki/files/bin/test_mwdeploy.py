@@ -153,7 +153,11 @@ def test_check_up_no_debug_host() -> None:
     assert failed
 
 
-def test_check_up_debug() -> None:
+@patch('requests.get')
+def test_check_up_debug(mock_get) -> None:
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_get.return_value = mock_response
     if os.getenv('DEBUG_ACCESS_KEY'):
         assert mwdeploy.check_up(nolog=True, Debug='mwtask181')
 
@@ -163,7 +167,6 @@ def test_check_up_debug_fail(mock_get) -> None:
     mock_response = MagicMock()
     mock_response.status_code = 500
     mock_get.return_value = mock_response
-
     assert not mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstat.us/500', force=True)
 
 
