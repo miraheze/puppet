@@ -12,7 +12,6 @@ class DbClusterMap(TypedDict):
     c2: str
     c3: str
     c4: str
-    c5: str
 
 
 # Define the mapping of db clusters to db names
@@ -23,9 +22,11 @@ db_clusters: DbClusterMap = {
     'c4': 'db181',
 }
 
+TASK_SERVER = 'mwtask181'
+
 
 def generate_salt_command(cluster: str, command: str) -> str:
-    return f'salt-ssh -E "{cluster}" cmd.run "{command}"'
+    return f'salt-ssh -E "{cluster}*" cmd.run "{command}"'
 
 
 def execute_salt_command(salt_command: str, shell: bool = True, stdout: Optional[int] = None, text: Optional[bool] = None) -> Optional[subprocess.CompletedProcess]:
@@ -39,7 +40,7 @@ def execute_salt_command(salt_command: str, shell: bool = True, stdout: Optional
 
 def get_db_cluster(oldwiki_db: str) -> str:
     db_query = f'SELECT wiki_dbcluster FROM mhglobal.cw_wikis WHERE wiki_dbname = \\"{oldwiki_db}\\"'
-    command = generate_salt_command("db171", f"sudo -i mysql --skip-column-names -e '{db_query}'")
+    command = generate_salt_command('db171', f"sudo -i mysql --skip-column-names -e '{db_query}'")
     result = execute_salt_command(salt_command=command, stdout=subprocess.PIPE, text=True)
     if result:
          cluster_name = result.stdout.strip()
@@ -69,8 +70,8 @@ def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
     execute_salt_command(salt_command=generate_salt_command(oldwiki_cluster, f"sudo -i mysql -e 'USE {newwiki_db}; SOURCE /home/{os.getlogin()}/{oldwiki_db}.sql;'"))
 
     # Step 3: Execute MediaWiki rename script
-    execute_salt_command(salt_command=generate_salt_command('mwtask181', f'mwscript extensions/CreateWiki/renameWiki.php loginwiki --no-log --rename {oldwiki_db} {newwiki_db} {os.getlogin()}'))
-    execute_salt_command(salt_command=generate_salt_command('mwtask181', f"/usr/local/bin/logsalmsg '{os.getlogin()} renamed {oldwiki_db} to {newwiki_db} using renamewiki.py'"))
+    execute_salt_command(salt_command=generate_salt_command(TASK_SERVER, f'mwscript extensions/CreateWiki/renameWiki.php loginwiki --no-log --rename {oldwiki_db} {newwiki_db} {os.getlogin()}'))
+    execute_salt_command(salt_command=generate_salt_command(TASK_SERVER, f"/usr/local/bin/logsalmsg '{os.getlogin()} renamed {oldwiki_db} to {newwiki_db} using renamewiki.py'"))
 
 
 
