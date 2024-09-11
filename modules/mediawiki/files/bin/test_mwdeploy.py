@@ -154,20 +154,16 @@ def test_check_up_no_debug_host() -> None:
     assert failed
 
 
-def requests_get_without_cert(*args, **kwargs):
-    kwargs.pop('cert', None)
-    return requests.get(*args, **kwargs)
-
-
 @patch('requests.get')
 def test_check_up_debug(mock_get) -> None:
-    req = requests_get_without_cert(mock_get.call_args.args, mock_get.call_args.kwargs)
-    mock_response = MagicMock()
-    mock_response.status_code = req.status_code
-    mock_response.text = req.text
-    mock_response.headers = req.headers
-    mock_get.return_value = mock_response
     if os.getenv('DEBUG_ACCESS_KEY'):
+        headers = {
+            'User-Agent': 'wikitide/mwdeploy.py',
+            'X-WikiTide-Debug': 'mwtask181.wikitide.net',
+            'X-WikiTide-Debug-Access-Key': os.getenv('DEBUG_ACCESS_KEY'),
+        }
+        req = requests.get('https://meta.miraheze.org:443/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=True)
+        mock_get.return_value = req
         assert mwdeploy.check_up(nolog=True, Debug='mwtask181')
 
 
