@@ -156,9 +156,10 @@ def test_check_up_no_debug_host() -> None:
 
 @patch('requests.get')
 def test_check_up_debug(mock_get) -> None:
+    requests_get = requests.get
     def mock_requests_get(url, headers=None, verify=True, **kwargs):
         kwargs.pop('cert', None)
-        return requests.get(url, headers=headers, verify=verify, cert=None, **kwargs)
+        return requests_get(url, headers=headers, verify=verify, cert=None, **kwargs)
 
     mock_get.side_effect = mock_requests_get
     if os.getenv('DEBUG_ACCESS_KEY'):
