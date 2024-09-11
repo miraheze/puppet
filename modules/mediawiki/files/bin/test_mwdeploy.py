@@ -154,20 +154,14 @@ def test_check_up_no_debug_host() -> None:
     assert failed
 
 
-@patch('requests.get')
+def mock_requests_get(*args, **kwargs):
+    kwargs.pop('cert', None)
+    with patch('requests.get', wraps=requests.get) as real_get:
+        return real_get(*args, **kwargs)
+
+
+@patch('requests.get', side_effect=mock_requests_get)
 def test_check_up_debug(mock_get) -> None:
-
-    def real_requests_get(url, headers=None, verify=True, **kwargs):
-        kwargs.pop('cert', None)
-        return requests.get(url, headers=headers, verify=verify, **kwargs)
-
-    mock_get.side_effect = lambda url, headers=None, verify=True, **kwargs: real_requests_get(
-        url,
-        headers=headers,
-        verify=verify,
-        **{k: v for k, v in kwargs.items() if k != 'cert'},
-    )
-
     if os.getenv('DEBUG_ACCESS_KEY'):
         assert mwdeploy.check_up(nolog=True, Debug='mwtask181')
 
