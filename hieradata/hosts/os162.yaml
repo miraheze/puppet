@@ -2,6 +2,7 @@ http_proxy: 'http://bastion.wikitide.net:8080'
 
 role::opensearch::master: true
 role::opensearch::data: true
+role::opensearch::enable_exporter: false
 role::opensearch::discovery_host:
   - os162-private.wikitide.net
 role::opensearch::master_hosts:
