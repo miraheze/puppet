@@ -201,8 +201,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         if use_cert:
             kwargs['cert'] = ('/etc/ssl/localcerts/mwdeploy.crt', '/srv/mediawiki-staging/mwdeploy-client-cert.key')
 
-        req = requests.get(url, **kwargs)
-        return req
+        return requests.get(url, **kwargs)
 
     if verify is False:
         os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
