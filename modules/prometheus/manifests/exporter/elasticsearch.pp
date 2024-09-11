@@ -1,5 +1,7 @@
 # Prometheus Elasticsearch query metrics exporter.
-class prometheus::exporter::elasticsearch {
+class prometheus::exporter::elasticsearch (
+    String $opensearch_cluster = lookup('prometheus::exporter::opensearch::opensearch_cluster', {'default_value' => 'https://opensearch.wikitide.net'}),
+) {
     stdlib::ensure_packages([
         'python3-click',
         'python3-colorama',
