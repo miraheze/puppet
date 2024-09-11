@@ -4,6 +4,7 @@ import re
 import requests
 import pytest
 import unittest
+from functools import partial
 from unittest.mock import MagicMock, patch
 import mwdeploy
 from mwdeploy import (
@@ -156,9 +157,11 @@ def test_check_up_no_debug_host() -> None:
 
 @patch('requests.get')
 def test_check_up_debug(mock_get) -> None:
+    original_requests_get = partial(requests.get)
+
     def mock_requests_get(url, headers=None, verify=True, **kwargs):
         kwargs.pop('cert', None)
-        return requests.get(url, headers=headers, verify=verify, **kwargs)
+        return original_requests_get(url, headers=headers, verify=verify, **kwargs)
 
     mock_get.side_effect = mock_requests_get
     if os.getenv('DEBUG_ACCESS_KEY'):
