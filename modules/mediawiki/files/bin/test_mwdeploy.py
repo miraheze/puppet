@@ -155,9 +155,11 @@ def test_check_up_no_debug_host() -> None:
 
 @patch('requests.get')
 def test_check_up_debug(mock_get) -> None:
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_get.return_value = mock_response
+    def mock_requests_get(url, headers=None, verify=True, cert=None, *args, **kwargs):
+        assert cert is None, f"Expected cert to be None, got {cert}"
+        return mock_response
+
+    mock_get.side_effect = mock_requests_get
     if os.getenv('DEBUG_ACCESS_KEY'):
         assert mwdeploy.check_up(nolog=True, Debug='mwtask181')
 
