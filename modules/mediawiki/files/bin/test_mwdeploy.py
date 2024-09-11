@@ -153,8 +153,7 @@ def test_check_up_no_debug_host() -> None:
     assert failed
 
 
-@patch('requests.get')
-def test_check_up_debug(mock_get) -> None:
+def test_check_up_debug() -> None:
     if os.getenv('DEBUG_ACCESS_KEY'):
         assert mwdeploy.check_up(nolog=True, Debug='mwtask181', use_cert=False)
 
