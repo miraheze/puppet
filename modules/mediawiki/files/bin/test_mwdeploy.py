@@ -1,7 +1,6 @@
 import argparse
 import os
 import re
-import requests
 import pytest
 import unittest
 from unittest.mock import MagicMock, patch
@@ -157,14 +156,7 @@ def test_check_up_no_debug_host() -> None:
 @patch('requests.get')
 def test_check_up_debug(mock_get) -> None:
     if os.getenv('DEBUG_ACCESS_KEY'):
-        headers = {
-            'User-Agent': 'wikitide/mwdeploy.py',
-            'X-WikiTide-Debug': 'mwtask181.wikitide.net',
-            'X-WikiTide-Debug-Access-Key': os.getenv('DEBUG_ACCESS_KEY'),
-        }
-        req = requests.get('https://meta.miraheze.org:443/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=True)
-        mock_get.return_value = req
-        assert mwdeploy.check_up(nolog=True, Debug='mwtask181')
+        assert mwdeploy.check_up(nolog=True, Debug='mwtask181', use_cert=False)
 
 
 @patch('requests.get')
