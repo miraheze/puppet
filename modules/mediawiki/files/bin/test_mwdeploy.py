@@ -156,7 +156,7 @@ def test_check_up_no_debug_host() -> None:
 
 @patch('requests.get')
 def test_check_up_debug(mock_get) -> None:
-    def mock_requests_get(url, headers=None, verify=True, cert=None, *args, **kwargs):
+    def mock_requests_get(url, headers=None, verify=True, *_args, **_kwargs):
         return requests.get(url, headers=headers, verify=verify, cert=None, *args, **kwargs)
 
     mock_get.side_effect = mock_requests_get
