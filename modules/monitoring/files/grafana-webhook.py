@@ -32,7 +32,7 @@ def post():
 
                     page = ''
                     if 'page' in alert['labels']:
-                        page = '!sre '
+                        page = '!tech '
 
                     message = f'[Grafana] {page}{status.upper()}: {body}'
 

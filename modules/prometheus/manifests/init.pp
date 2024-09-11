@@ -7,20 +7,12 @@ class prometheus (
 
     stdlib::ensure_packages('prometheus')
 
-    file { '/etc/default/prometheus':
-        source  => 'puppet:///modules/prometheus/prometheus.default.conf',
-        owner   => 'root',
-        group   => 'root',
-        notify  => Service['prometheus'],
-        require => Package['prometheus'],
-    }
-
     file { '/etc/prometheus/targets':
         ensure => directory
     }
 
     $global_default = {
-        'scrape_interval' => '1m',
+        'scrape_interval' => '60s',
     }
     $global_config = $global_default + $global_extra
 
@@ -75,9 +67,13 @@ class prometheus (
         content => template('prometheus/nodes.erb')
     }
 
-    service { 'prometheus':
-        ensure  => running,
-        require => Package['prometheus'],
+    systemd::service { 'prometheus':
+        ensure         => present,
+        restart        => true,
+        content        => systemd_template('prometheus'),
+        service_params => {
+            hasrestart => true,
+        },
     }
 
     class { 'prometheus::pushgateway':

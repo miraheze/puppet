@@ -1,8 +1,39 @@
 # class: irc::cvtbot
 class irc::cvtbot {
     $install_path = '/srv/cvtbot'
+    $dotnet_version = '6.0'
 
     $password = lookup('passwords::irc::cvtbot')
+
+    $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01irc']) {
+        file { '/etc/apt/apt.conf.d/01irc':
+            ensure  => present,
+            content => template('irc/aptproxy.erb'),
+            before  => Package['packages-microsoft-prod'],
+        }
+    }
+
+    if !defined(Package['packages-microsoft-prod']) {
+        file { '/opt/packages-microsoft-prod.deb':
+            ensure => present,
+            source => 'puppet:///modules/irc/packages-microsoft-prod.deb',
+        }
+
+        package { 'packages-microsoft-prod':
+            ensure   => installed,
+            provider => dpkg,
+            source   => '/opt/packages-microsoft-prod.deb',
+            require  => File['/opt/packages-microsoft-prod.deb'],
+        }
+    }
+
+    if !defined(Package["dotnet-sdk-${dotnet_version}"]) {
+        package { "dotnet-sdk-${dotnet_version}":
+            ensure  => installed,
+            require => Package['packages-microsoft-prod'],
+        }
+    }
 
     file { $install_path:
         ensure    => 'directory',
@@ -39,7 +70,7 @@ class irc::cvtbot {
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
-        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        source  => 'puppet:///modules/irc/NuGet.Config',
         before  => Exec['CVTBot-build'],
         require => [
             File["${install_path}/src/CVTBot/.nuget"],
@@ -50,7 +81,7 @@ class irc::cvtbot {
     exec { 'CVTBot-build':
         command     => 'dotnet build --configuration Release',
         creates     => "${install_path}/src/CVTBot/bin",
-        unless      => "test -d ${install_path}/src/CVTBot/bin/Release/net6.0",
+        unless      => "test -d ${install_path}/src/CVTBot/bin/Release/net${dotnet_version}",
         cwd         => "${install_path}/src/CVTBot",
         path        => '/usr/bin',
         environment => [
@@ -62,8 +93,8 @@ class irc::cvtbot {
     }
 
     file { [
-        "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget",
-        "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet"
+        "${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget",
+        "${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget/NuGet"
     ]:
         ensure  => directory,
         owner   => 'irc',
@@ -72,24 +103,24 @@ class irc::cvtbot {
         require => Exec['CVTBot-build'],
     }
 
-    file { "${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config":
+    file { "${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget/NuGet/NuGet.Config":
         ensure  => present,
         owner   => 'irc',
         group   => 'irc',
         mode    => '0644',
-        source  => 'puppet:///modules/irc/cvtbot/NuGet.Config',
+        source  => 'puppet:///modules/irc/NuGet.Config',
         require => [
-            File["${install_path}/src/CVTBot/bin/Release/net6.0/.nuget"],
-            File["${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet"],
+            File["${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget"],
+            File["${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget/NuGet"],
         ],
     }
 
-    file { "${install_path}/src/CVTBot/bin/Release/net6.0/CVTBot":
+    file { "${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/CVTBot":
         ensure  => present,
         owner   => 'irc',
         group   => 'irc',
         mode    => '0744',
-        require => File["${install_path}/src/CVTBot/bin/Release/net6.0/.nuget/NuGet/NuGet.Config"],
+        require => File["${install_path}/src/CVTBot/bin/Release/net${dotnet_version}/.nuget/NuGet/NuGet.Config"],
     }
 
     file { [
@@ -112,6 +143,7 @@ class irc::cvtbot {
         require => [
             Exec['CVTBot-build'],
             File["${install_path}/src/CVTBot.ini"],
+            Package["dotnet-sdk-${dotnet_version}"],
         ],
     }
 

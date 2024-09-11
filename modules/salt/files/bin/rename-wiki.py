@@ -74,7 +74,6 @@ def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
     execute_salt_command(salt_command=generate_salt_command(TASK_SERVER, f"/usr/local/bin/logsalmsg '{os.getlogin()} renamed {oldwiki_db} to {newwiki_db} using renamewiki.py'"))
 
 
-
 def main() -> None:
     parser = argparse.ArgumentParser(description='Executes the commands needed to rename wikis')
     parser.add_argument('--oldwiki', required=True, help='Old wiki database name')

@@ -21,7 +21,7 @@ def log(config, message, project, author):
 
     site = mwclient.Site(config.wiki_connection,
                          path=config.wiki_path,
-                         clients_useragent='WikiTide-LogBot/0.2 run by WikiTide SRE',
+                         clients_useragent='WikiTide-LogBot/0.2 run by the WikiTide Technology team',
                          consumer_token=config.wiki_consumer_token,
                          consumer_secret=config.wiki_consumer_secret,
                          access_token=config.wiki_access_token,

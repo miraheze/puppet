@@ -11,6 +11,7 @@ vcl 4.1;
 import directors;
 import std;
 import vsthrottle;
+import xkey;
 
 # MediaWiki configuration
 probe mwhealth {
@@ -207,6 +208,8 @@ sub recv_purge {
 		if (!client.ip ~ purge) {
 			return (synth(405, "Denied."));
 		} else {
+			// Purges all resources with this host + url
+			set req.http.purged = xkey.purge(req.http.Host + req.url);
 			return (purge);
 		}
 	}
@@ -391,11 +394,6 @@ sub vcl_recv {
 		return (pass);
 	}
 
-	if (req.http.Host ~ "^(.*\.)?mirabeta\.org") {
-		set req.backend_hint = test151;
-		return (pass);
-	}
-
 	# Only cache js files from Matomo
 	if (req.http.Host == "analytics.wikitide.net") {
 		set req.backend_hint = matomo151;
@@ -492,6 +490,9 @@ sub vcl_backend_response {
 	// We'll be setting this same variable internally in VCL in hit-for-pass
 	// cases later.
 	unset beresp.http.X-CDIS;
+
+	// Used for purging
+	set beresp.http.xkey = bereq.http.Host + bereq.url;
 
 	if (bereq.http.Cookie ~ "([sS]ession|Token)=") {
 		set bereq.http.Cookie = "Token=1";
@@ -755,9 +756,6 @@ sub vcl_deliver {
 
 	# Disable Google ad targeting (FLoC)
 	set resp.http.Permissions-Policy = "interest-cohort=(), browsing-topics=()";
-
-	# Content Security Policy
-	set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 
 	# For a 500 error, do not set cookies
 	if (resp.status >= 500 && resp.http.Set-Cookie) {

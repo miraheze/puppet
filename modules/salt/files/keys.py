@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 '''
 runner: do basic operations on keys for a specified minion
 '''

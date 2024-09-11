@@ -1,0 +1,84 @@
+#!/bin/bash
+#
+# <%= @service_name %>        Startup script for mattermost.
+#
+# chkconfig: 2345 85 15
+# Mattermost brings your team communication into one place
+### BEGIN INIT INFO
+# Provides:          <%= @service_name %>
+# Required-Start:    $local_fs $network $named $time $syslog <%= @depend_service %>
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       Mattermost brings your team communication into one place
+### END INIT INFO
+
+name=<%= @service_name %>
+dir=<%= @symlink %>
+exe=bin/<%= @executable %>
+<% if (scope.function_versioncmp(['3.8.0', @version]) > 0) -%>
+exe_args="-config='<%= @conf %>'"
+<% else -%>
+exe_args="--config '<%= @conf %>'"
+<% end -%>
+uid=<%= @user %>
+pidfile='/var/run/<%= @service_name %>.pid'
+
+. /etc/init.d/functions
+
+set -a
+[ -r <%= @env_conf %> ] && . <%= @env_conf %>
+
+start() {
+  echo "Starting daemon: " ${name}
+  # start the program
+  cd ${dir}
+  daemon --user ${uid} ${exe} ${exe_args} >/dev/null 2>&1 &
+  [ $? = 0 ] && { exit 0 ; } || { exit 1 ; }
+}
+stop() {
+  echo "Stopping daemon: " $name
+  if rh_status_q; then
+    killproc ${exe}
+  else
+    true
+  fi
+  retval=$?
+  echo
+  [ ${retval} = 0 ] && rm -f ${pidfile}
+  return ${retval}
+}
+restart() {
+  echo "Restarting daemon: " $name
+  stop
+  start
+}
+rh_status() {
+  status ${exe}
+  retval=$?
+  return ${retval}
+}
+rh_status_q() {
+  rh_status >/dev/null 2>&1
+}
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  reload)
+    restart
+    ;;
+  status)
+    rh_status
+    ;;
+  *)
+    echo "Usage: ${name} {start|stop|restart|reload|status}"
+    exit 2
+      ;;
+esac

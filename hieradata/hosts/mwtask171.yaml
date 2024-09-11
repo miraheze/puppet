@@ -2,13 +2,13 @@ users::groups:
   - mediawiki-admins
   - mediawiki-roots
 
-contactgroups: ['sre', 'mediawiki']
+contactgroups: ['infra', 'mediawiki']
 
 jobrunner: true
 jobrunner::intensive: true
 mediawiki::jobqueue::runner::redis_ip: '10.0.17.120:6379'
-mediawiki::jobqueue::runner::cron: true
-mediawiki::use_cpjobqueue: true
+mediawiki::jobqueue::runner::cron: false
+mediawiki::use_cpjobqueue: false
 
 role::mediawiki::use_strict_firewall: true
 

@@ -66,6 +66,10 @@ http {
 
 	# Custom log format for graylog
 	log_format graylog2_json escape=json '{ "timestamp": "$time_iso8601", '
+		'"client_cert_dn": "$ssl_client_s_dn", '
+		'"client_cert_serial": "$ssl_client_serial", '
+		'"client_cert_issuer": "$ssl_client_i_dn", '
+		'"client_cert_verify": "$ssl_client_verify", '
 		'"remote_addr": "$remote_addr", '
 		'"remote_user": "$remote_user", '
 		'"time_local": "$time_local", '

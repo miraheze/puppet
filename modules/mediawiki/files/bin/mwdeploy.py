@@ -1,5 +1,8 @@
 #! /usr/bin/python3
 
+# will eventually be moved to python-functions repository;
+# prefer making changes there if possible
+
 import argparse
 from typing import TypedDict
 import os
@@ -44,12 +47,22 @@ prod: Environment = {
     'servers': [
         'mw151',
         'mw152',
+        'mw153',
+        'mw154',
         'mw161',
         'mw162',
+        'mw163',
+        'mw164',
         'mw171',
         'mw172',
+        'mw173',
+        'mw174',
         'mw181',
         'mw182',
+        'mw183',
+        'mw184',
+        'mwtask151',
+        'mwtask161',
         'mwtask171',
         'mwtask181',
     ],
@@ -181,7 +194,9 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
     if not Debug and not Host:
         raise Exception('Host or Debug must be specified')
 
-    headers = {}
+    headers = {
+        'User-Agent': 'wikitide/mwdeploy.py',
+    }
     if Debug:
         server = f'{Debug}.wikitide.net'
         headers['X-WikiTide-Debug'] = server
@@ -202,7 +217,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         proto = 'https://'
     else:
         proto = 'http://'
-    req = requests.get(f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
+    req = requests.get(f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify, cert=('/etc/ssl/localcerts/mwdeploy.crt', '/srv/mediawiki-staging/mwdeploy-client-cert.key'))
     if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:

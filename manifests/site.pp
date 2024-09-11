@@ -21,7 +21,7 @@ node /^cloud1[5678]\.wikitide\.net$/ {
     include role::cloud
 }
 
-node /^cp([23][678]|[45]1)\.wikitide\.net$/ {
+node /^cp(3[67])\.wikitide\.net$/ {
     include base
     include role::varnish
 }
@@ -73,6 +73,11 @@ node 'matomo151.wikitide.net' {
     include role::matomo
 }
 
+node 'mattermost1.wikitide.net' {
+    include base
+    include role::mattermost
+}
+
 node /^mem1[56]1\.wikitide\.net$/ {
     include base
     include role::memcached
@@ -84,12 +89,12 @@ node 'mon181.wikitide.net' {
     include role::icinga2
 }
 
-node /^mw1[5678][12]\.wikitide\.net$/ {
+node /^mw1[5678][1234]\.wikitide\.net$/ {
     include base
     include role::mediawiki
 }
 
-node /^mwtask1[78]1\.wikitide\.net$/ {
+node /^mwtask1[5678]1\.wikitide\.net$/ {
     include base
     include role::mediawiki
     include role::mathoid
