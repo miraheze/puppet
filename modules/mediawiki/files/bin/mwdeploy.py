@@ -199,7 +199,10 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         }
 
         if use_cert:
-            kwargs['cert'] = ('/etc/ssl/localcerts/mwdeploy.crt', '/srv/mediawiki-staging/mwdeploy-client-cert.key')
+            kwargs['cert'] = (
+                '/etc/ssl/localcerts/mwdeploy.crt',
+                '/srv/mediawiki-staging/mwdeploy-client-cert.key',
+            )
 
         return requests.get(url, **kwargs)
 
