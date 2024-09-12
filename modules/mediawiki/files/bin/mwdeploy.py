@@ -188,7 +188,24 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443) -> bool:
+def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443, use_cert: bool = True) -> bool:
+
+    def make_request(proto, domain, headers) -> requests.Response:
+        url = f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json'
+
+        kwargs = {
+            'headers': headers,
+            'verify': verify,
+        }
+
+        if use_cert:
+            kwargs['cert'] = (
+                '/etc/ssl/localcerts/mwdeploy.crt',
+                '/srv/mediawiki-staging/mwdeploy-client-cert.key',
+            )
+
+        return requests.get(url, **kwargs)
+
     if verify is False:
         os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
     if not Debug and not Host:
@@ -217,7 +234,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         proto = 'https://'
     else:
         proto = 'http://'
-    req = requests.get(f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify, cert=('/etc/ssl/localcerts/mwdeploy.crt', '/srv/mediawiki-staging/mwdeploy-client-cert.key'))
+    req = make_request(proto, domain, headers)
     if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
