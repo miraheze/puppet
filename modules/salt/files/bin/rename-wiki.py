@@ -60,7 +60,7 @@ def rename_wiki(oldwiki_db: str, newwiki_db: str) -> None:
 
     try:
         oldwiki_cluster = get_db_cluster(oldwiki_db)
-    except KeyError, IndexError:
+    except (KeyError, IndexError):
         print(f'Error: Unable to determine the db cluster for {oldwiki_db}')
         sys.exit(1)
 
