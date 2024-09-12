@@ -158,7 +158,7 @@ def test_check_up_debug() -> None:
         assert mwdeploy.check_up(nolog=True, Debug='mwtask181', use_cert=False)
 
 
-def test_check_up_debug_fail(mock_get) -> None:
+def test_check_up_debug_fail() -> None:
     assert not mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstat.us/500', force=True, use_cert=False)
 
 
