@@ -158,12 +158,8 @@ def test_check_up_debug() -> None:
         assert mwdeploy.check_up(nolog=True, Debug='mwtask181', use_cert=False)
 
 
-@patch('requests.get')
 def test_check_up_debug_fail(mock_get) -> None:
-    mock_response = MagicMock()
-    mock_response.status_code = 500
-    mock_get.return_value = mock_response
-    assert not mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstat.us/500', force=True)
+    assert not mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstat.us/500', force=True, use_cert=False)
 
 
 def test_get_staging_path() -> None:
