@@ -190,7 +190,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
 
 def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443, use_cert: bool = True) -> bool:
 
-    def make_request(proto, domain, headers):
+    def make_request(proto: str, domain: str, headers: dict[str, str]) -> requests.Response:
         url = f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json'
 
         kwargs = {
