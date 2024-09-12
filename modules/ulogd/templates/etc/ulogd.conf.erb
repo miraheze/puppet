@@ -66,13 +66,14 @@ hash_enable=0
 [mark]
 
 [log1]
-group=0
-
-[log2]
+# Group O is used by the kernel
 group=1
 
-[log3]
+[log2]
 group=2
+
+[log3]
+group=0
 
 [logemu1]
 sync=<%= bool2int(@sync) %>
