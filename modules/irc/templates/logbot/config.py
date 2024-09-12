@@ -56,13 +56,11 @@ author_map = {
     "MirahezeLSBot_": "MirahezeLSBot",
     "CosmicAlpha": "Universal Omega",
     "Voidwalker": "Void",
-    "Orange_Star": "OrangeStar",
 
     # Discord usernames
     "@cosmicalpha": "Universal Omega",
     "@reception123": "Reception123",
     "@originalauthority": "Original Authority",
-    "@bluemoon0332": "OrangeStar",
     "@orduin": "Void",
     "@evalprime": "Evalprime",
     "@theresnotime": "TheresNoTime"
