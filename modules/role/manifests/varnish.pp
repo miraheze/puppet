@@ -25,7 +25,7 @@ class role::varnish {
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Mediawiki]', ['networking'])
+        query_facts('(Class[Role::Mediawiki] and !facts['mediawiki::jobqueue::runner::beta']), ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['he-ipv6'] ) {
                 "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
