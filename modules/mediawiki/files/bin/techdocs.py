@@ -105,7 +105,7 @@ def process_node(node, current_line, markdown_lines, is_first_category):
         return process_external_link_node(node, current_line)
 
     if isinstance(node, mwparserfromhell.nodes.Wikilink):
-        return process_wikilink_node(node, current_line, markdown_lines)
+        return process_wikilink_node(node, current_line, markdown_lines, is_first_category)
 
     if isinstance(node, mwparserfromhell.nodes.Template):
         return process_template_node(node, current_line, markdown_lines)
