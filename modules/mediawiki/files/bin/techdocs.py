@@ -41,7 +41,7 @@ def fetch_tech_pages():
     response.raise_for_status()
     data = response.json()
     pages_gen = data.get('query', {}).get('pages', {})
-    for page_id, page_data in pages_gen.items():
+    for _, page_data in pages_gen.items():
         categories = [cat['title'] for cat in page_data.get('categories', [])]
         if not EXCLUDED_CATEGORIES.intersection(categories):
             pages.append({'title': page_data['title']})
