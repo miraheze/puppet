@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [agent, evalprime, reception, universalomega, void]
+    members: [agent, evalprime, paladox, reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -125,11 +125,11 @@ users:
     realname: ImBoPhil
     ssh_keys: []
   paladox:
-    ensure: absent
+    ensure: present
     uid: 1009
     name: paladox
     realname: Paladox
-    ssh_keys: []
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJF/bY6KnOxux3v5KIDDsBWbaut2LY/mGSd6rSyN2dcl paladox@wikitide.org]
   macfan:
     ensure: present
     uid: 1010
