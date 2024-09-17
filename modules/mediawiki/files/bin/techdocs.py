@@ -78,42 +78,60 @@ def convert_wikitext_to_markdown(wikitext):
         """Convert specific HTML tags to Markdown."""
         tag_name = node.tag
         content = convert_wikitext_to_markdown(node.contents.strip())
+
         if tag_name == 'hr':
             return '---'
-        elif tag_name == 'br':
+
+        if tag_name == 'br':
             return '<br />'
-        elif tag_name == 'li':
+
+        if tag_name == 'li':
             return '* '
-        elif tag_name == 'dd':
+
+        if tag_name == 'dd':
             # We use a placeholder so whitespaces don't get stripped
             return '<dd>   '
-        elif tag_name == 'dt':
+
+        if tag_name == 'dt':
             # We use a placeholder so whitespaces don't get stripped
             return '<dt>'
-        elif tag_name == 'h1':
+
+        if tag_name == 'h1':
             return f'# {content}'
-        elif tag_name == 'h2':
+
+        if tag_name == 'h2':
             return f'## {content}'
-        elif tag_name == 'h3':
+
+        if tag_name == 'h3':
             return f'### {content}'
-        elif tag_name == 'h4':
+
+        if tag_name == 'h4':
             return f'#### {content}'
-        elif tag_name == 'h5':
+
+        if tag_name == 'h5':
             return f'##### {content}'
-        elif tag_name == 's':
+
+        if tag_name == 's':
             return f'~~{content}~~'
-        elif tag_name == 'code':
+
+        if tag_name == 'code':
             return f'`{node.contents.strip_code()}`'
-        elif tag_name == 'ref' and content:
-           return f'<sub>(*reference:* {content})</sub>'
-        elif tag_name in ['pre', 'syntaxhighlight']:
+
+        if tag_name == 'ref' and content:
+            return f'<sub>(*reference:* {content})</sub>'
+
+        if tag_name in ['pre', 'syntaxhighlight']:
             return f'\n```{handle_lang(node)}\n{node.contents.strip_code()}\n```\n'
-        elif tag_name in ['b', 'strong']:
+
+        if tag_name in ['b', 'strong']:
             return f'**{content}**'
-        elif tag_name in ['i', 'em']:
+
+        if tag_name in ['i', 'em']:
             return f'*{content}*'
-        elif tag_name == 'table':
+
+        if tag_name == 'table':
             return handle_table(node)
+
         return content
 
     def handle_lang(node):
@@ -216,7 +234,7 @@ def convert_wikitext_to_markdown(wikitext):
             # Process specific HTML tags to Markdown
             processed_content = process_html_tags(node)
             if processed_content:
-                no_space_after = ('\'', '/', ',', ';', ':', '(', '[', '{', '-', '_')
+                no_space_after = ("'", '/', ',', ';', ':', '(', '[', '{', '-', '_')
                 if node.tag != 'br' and not current_line.endswith(no_space_after) and not current_line.endswith(' '):
                     current_line += ' '
                 current_line += processed_content
@@ -257,7 +275,7 @@ def convert_wikitext_to_markdown(wikitext):
                 '.': '',
                 ',': '',
                 '"': '',
-                '\'': '',
+                "'": '',
                 '_': '-',
                 ' ': '-',
             }
@@ -384,7 +402,7 @@ def clean_markdown(markdown_lines):
                 in_code_block = not in_code_block
             if not in_code_block:
                 # Replace extra spaces only after the first non-space character in the line
-                return re.sub(r'(^\s*\S.*?)([  ]{2,})', lambda m: m.group(1) + ' ', line)
+                return re.sub(r'(^\s*\S.*?)([ \u00A0]{2,})', lambda m: m.group(1) + ' ', line)
             return line
 
         return re.sub(r'^.*$', replace_spaces, text, flags=re.M)
@@ -405,11 +423,9 @@ def file_exists_case_insensitive(file_path):
     directory, file_name = os.path.split(file_path)
     if not os.path.exists(directory):
         return False
-    # List all files in the directory and compare case-insensitive
-    for existing_file in os.listdir(directory):
-        if existing_file.lower() == file_name.lower():
-            return True
-    return False
+
+    # Compare case-insensitive file names
+    return any(existing_file.lower() == file_name.lower() for existing_file in os.listdir(directory))
 
 
 def update_local_repo():
