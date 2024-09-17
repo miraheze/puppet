@@ -65,6 +65,9 @@ def fetch_page_content(title):
     return response.json()['parse']['wikitext']['*']
 
 
+is_first_category = True
+
+
 def convert_wikitext_to_markdown(wikitext):
     """
     Convert wikitext to markdown using mwparserfromhell with custom handling.
@@ -73,13 +76,13 @@ def convert_wikitext_to_markdown(wikitext):
     wikicode = mwparserfromhell.parse(wikitext)
     markdown_lines = []
     current_line = ''
-    
+
     for node in wikicode.nodes:
         current_line = process_node(node, current_line, markdown_lines)
-    
+
     if current_line:
         markdown_lines.append(current_line.strip())
-    
+
     return clean_markdown(markdown_lines)
 
 
@@ -130,7 +133,7 @@ def process_text_node(node, current_line, markdown_lines):
     """Process text nodes, keeping original newlines."""
     text = str(node)
     lines = text.splitlines(keepends=True)
-    
+
     for line in lines:
         stripped_line = line.strip()
         if stripped_line:
@@ -138,7 +141,7 @@ def process_text_node(node, current_line, markdown_lines):
         if line.endswith('\n'):
             markdown_lines.append(current_line.strip())
             current_line = ''
-    
+
     return current_line
 
 
@@ -245,12 +248,12 @@ def process_template_node(node, current_line, markdown_lines):
     """Process template nodes."""
     if current_line:
         markdown_lines.append(current_line.strip())
-    
+
     if '\n' in str(node):
         markdown_lines.append(f'```\n{{{{ {node} }}}}\n```')
     else:
         current_line += f'`{{{{ {node} }}}}`'
-    
+
     return current_line
 
 
@@ -265,7 +268,7 @@ def process_html_tags(node):
     """Convert specific HTML tags to Markdown."""
     tag_name = node.tag
     content = convert_wikitext_to_markdown(node.contents.strip())
-    
+
     tag_conversions = {
         'hr': '---',
         'br': '<br />',
@@ -287,7 +290,7 @@ def process_html_tags(node):
         'em': f'*{content}*',
         'table': handle_table(node),
     }
-    
+
     return tag_conversions.get(tag_name, content)
 
 
