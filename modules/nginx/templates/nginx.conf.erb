@@ -45,6 +45,9 @@ http {
 	ssl_session_cache shared:SSL:300m;
 	ssl_session_timeout 6h;
 
+	# Disable RFC5077 tickets (may revisit later when client support is better)
+	ssl_session_tickets off;
+
 	# GZIP Settings
 	gzip off;
 	gzip_disable "msie6";
