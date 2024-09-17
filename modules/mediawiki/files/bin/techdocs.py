@@ -10,7 +10,7 @@ GITHUB_REPO_URL = 'git@github.com:miraheze/statichelp.git'
 LOCAL_REPO_PATH = '/home/universalomega/statichelp'
 SUB_DIRECTORY = 'content/tech-docs'
 NAMESPACE = 1600  # Tech namespace ID
-USER_AGENT = 'TechNamespaceBot/1.0 (https://github.com/miraheze/statichelp/content/tech-docs)'
+USER_AGENT = 'TechNamespaceBot/1.0 (https://github.com/miraheze/statichelp/tree/main/content/tech-docs)'
 
 EXCLUDED_CATEGORIES = {
     'Category:Decommissioned servers',
