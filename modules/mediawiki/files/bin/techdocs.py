@@ -393,8 +393,9 @@ def clean_markdown(markdown_lines):
     markdown_text = markdown_text.replace('<dd>', '').replace('<dt>', '')
 
     def replace_outside_code_blocks(text):
-        # Replace spaces but skip inside code blocks
+        """Replace spaces but skip inside code blocks"""
         in_code_block = False
+
         def replace_spaces(match):
             nonlocal in_code_block
             line = match.group(0)
