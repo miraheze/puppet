@@ -65,20 +65,19 @@ def fetch_page_content(title):
     return response.json()['parse']['wikitext']['*']
 
 
-is_first_category = True
-
-
 def convert_wikitext_to_markdown(wikitext):
     """
     Convert wikitext to markdown using mwparserfromhell with custom handling.
     """
     wikitext = preprocess_wikitext(wikitext)
     wikicode = mwparserfromhell.parse(wikitext)
+
+    is_first_category = True
     markdown_lines = []
     current_line = ''
 
     for node in wikicode.nodes:
-        current_line = process_node(node, current_line, markdown_lines)
+        current_line = process_node(node, current_line, markdown_lines, is_first_category)
 
     if current_line:
         markdown_lines.append(current_line.strip())
@@ -91,7 +90,7 @@ def preprocess_wikitext(wikitext):
     return re.sub(r'</?(tvar|noinclude|includeonly).*?>', '', wikitext)
 
 
-def process_node(node, current_line, markdown_lines):
+def process_node(node, current_line, markdown_lines, is_first_category):
     """Process each type of wikitext node."""
     if isinstance(node, mwparserfromhell.nodes.Heading):
         return process_heading_node(node, current_line, markdown_lines)
@@ -106,7 +105,7 @@ def process_node(node, current_line, markdown_lines):
         return process_external_link_node(node, current_line)
 
     if isinstance(node, mwparserfromhell.nodes.Wikilink):
-        return process_wikilink_node(node, current_line)
+        return process_wikilink_node(node, current_line, markdown_lines)
 
     if isinstance(node, mwparserfromhell.nodes.Template):
         return process_template_node(node, current_line, markdown_lines)
@@ -164,7 +163,7 @@ def process_external_link_node(node, current_line):
     return current_line + f'[{label}]({url})'
 
 
-def process_wikilink_node(node, current_line):
+def process_wikilink_node(node, current_line, markdown_lines, is_first_category):
     """Process wiki link nodes."""
     target = str(node.title).replace('Special:MyLanguage/Tech:', 'Tech:')
     label = node.text if node.text else target
