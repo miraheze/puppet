@@ -6,6 +6,14 @@ class role::mediawiki_beta (
     # doesn't install on bookworm
     # include prometheus::exporter::cadvisor
 
+    file { '/etc/miraheze-beta':
+        content => 'The presence of this file alters how we do things in mw-config',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        before  => Class['mediawiki']
+    }
+
     if $use_mcrouter {
         include role::mediawiki::mcrouter
     } else {
