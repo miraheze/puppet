@@ -154,7 +154,7 @@ node /^swiftobject1[5678]1\.wikitide\.net$/ {
 node 'test151.wikitide.net' {
     include base
     include role::memcached
-    include role::mediawiki
+    include role::mediawiki_beta
     include role::poolcounter
     include role::redis
 }
