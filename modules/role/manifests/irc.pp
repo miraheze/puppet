@@ -25,7 +25,7 @@ class role::irc {
     }
 
     $firewall_irc_rules_str = join(
-        query_facts('Class[Role::Mediawiki]', ['networking'])
+        query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_beta]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
