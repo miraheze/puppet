@@ -394,6 +394,11 @@ sub vcl_recv {
 		return (pass);
 	}
 
+	if (req.http.Host ~ "^(.*\.)?mirabeta\.org") {
+		set req.backend_hint = test151;
+		return (pass);
+	}
+
 	# Only cache js files from Matomo
 	if (req.http.Host == "analytics.wikitide.net") {
 		set req.backend_hint = matomo151;
