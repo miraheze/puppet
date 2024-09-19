@@ -86,6 +86,6 @@ class role::mediawiki (
     }
 
     system::role { 'mediawiki':
-        description => 'MediaWiki server',
+        description => 'MediaWiki Production server',
     }
 }
