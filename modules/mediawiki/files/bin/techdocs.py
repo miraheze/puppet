@@ -82,7 +82,7 @@ def generate_footnotes():
 
     for index, (key, value) in enumerate(footnotes.items()):
         footnotes_md += f'[^{key}]: {value}'
-    
+
         # Only add a newline if it's not the last item
         if index < footnote_count - 1:
             footnotes_md += '\n'
