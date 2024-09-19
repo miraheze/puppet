@@ -9,8 +9,13 @@ class role::redis {
         maxmemory => $redis_heap,
     }
 
+    $firewall = $facts['networking']['hostname'] =~ /^test1.+$/ ? {
+        true    => 'Class[Role::Mediawiki_beta] or Class[Role::Icinga2]',
+        default => 'Class[Role::Mediawiki] or Class[Role::Icinga2]',
+    }
+
     $firewall_rules_str = join(
-        query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2]', ['networking'])
+        query_facts($firewall, ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"

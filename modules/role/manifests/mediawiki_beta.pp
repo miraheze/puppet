@@ -1,5 +1,5 @@
-# === Class role::mediawiki
-class role::mediawiki (
+# === Class role::mediawiki_beta
+class role::mediawiki_beta (
     Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false}),
     Boolean $use_mcrouter = lookup('role::mediawiki::use_mcrouter', {'default_value' => false})
 ) {
@@ -18,7 +18,7 @@ class role::mediawiki (
         $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
 
         $firewall_rules_str = join(
-            $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion]', ['networking'])
+            $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Mediawiki_beta] or Class[Role::Varnish] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion]', ['networking'])
             .map |$key, $value| {
                 if ( $value['networking']['interfaces']['he-ipv6'] ) {
                     "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
@@ -86,6 +86,6 @@ class role::mediawiki (
     }
 
     system::role { 'mediawiki':
-        description => 'MediaWiki Production server',
+        description => 'MediaWiki Beta server',
     }
 }
