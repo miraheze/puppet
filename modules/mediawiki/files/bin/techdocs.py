@@ -66,9 +66,10 @@ def fetch_page_content(title):
 
 
 footnote_counter = 0
-footnotes = {}
 content_to_footnote_map = {}
 name_to_footnote_map = {}
+
+footnotes: dict[str, str] = {}
 
 
 def generate_footnotes():
