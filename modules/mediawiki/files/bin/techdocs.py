@@ -65,6 +65,31 @@ def fetch_page_content(title):
     return response.json()['parse']['wikitext']['*']
 
 
+footnote_counter = 0
+footnotes = {}
+name_to_footnote_map = {}
+
+
+def generate_footnotes():
+    """Generate the Markdown footnotes section at the end of the page."""
+    if not footnotes:
+        # If we have no footnotes, we can return early
+        return ''
+
+    footnotes_md = '\n\n'
+    for key, value in footnotes.items():
+        footnotes_md += f'[^{key}]: {value}\n'
+    return footnotes_md
+
+
+def reset_footnotes():
+    """Reset footnote counter and footnote-related data."""
+    global footnote_counter, footnotes, name_to_footnote_map
+    footnote_counter = 0
+    footnotes = {}
+    name_to_footnote_map = {}
+
+
 def convert_wikitext_to_markdown(wikitext):
     """
     Convert wikitext to markdown using mwparserfromhell with custom handling.
@@ -76,6 +101,10 @@ def convert_wikitext_to_markdown(wikitext):
 
     def process_html_tags(node):
         """Convert specific HTML tags to Markdown."""
+        global footnote_counter
+        global footnotes
+        global name_to_footnote_map
+
         tag_name = node.tag
         content = convert_wikitext_to_markdown(node.contents.strip())
 
@@ -117,8 +146,28 @@ def convert_wikitext_to_markdown(wikitext):
         if tag_name == 'code':
             return f'`{node.contents.strip_code()}`'
 
-        if tag_name == 'ref' and content:
-            return f'<sub>(*reference:* {content})</sub>'
+        if tag_name == 'ref':
+            # If there's content in the ref tag, treat it as a footnote
+            if content:
+                footnote_counter += 1
+                footnote_key = str(footnote_counter)
+
+                # Store the content in footnotes dictionary
+                footnotes[footnote_key] = content
+
+                if handle_name(node) and handle_name(node) not in name_to_footnote_map:
+                    name_to_footnote_map[handle_name(node)] = str(footnote_counter)
+
+                return f'[^{footnote_key}]'  # Return the footnote reference
+
+            # If only name attribute exists, use it to retrieve or assign a footnote number
+            elif handle_name(node):
+                if handle_name(node) not in name_to_footnote_map:
+                    footnote_counter += 1
+                    name_to_footnote_map[handle_name(node)] = str(footnote_counter)
+
+                # Return the footnote reference based on the name
+                return f'[^{name_to_footnote_map[handle_name(node)]}]'
 
         if tag_name in ['pre', 'syntaxhighlight']:
             return f'\n```{handle_lang(node)}\n{node.contents.strip_code()}\n```\n'
@@ -133,6 +182,13 @@ def convert_wikitext_to_markdown(wikitext):
             return handle_table(node)
 
         return content
+
+    def handle_name(node):
+        if node.attributes:
+            for attribute in node.attributes:
+                if attribute.name == 'name':
+                    return str(attribute.value)
+        return ''
 
     def handle_lang(node):
         if node.attributes:
@@ -488,7 +544,8 @@ def mirror_tech_pages_to_github():
         print(f'Processing page: {title}')
         content = fetch_page_content(title)
         markdown_content = convert_wikitext_to_markdown(content)
-        write_content_to_file(title, markdown_content)
+        write_content_to_file(title, markdown_content + generate_footnotes())
+        reset_footnotes()  # Reset footnote data for next page
     commit_and_push_changes()
     print('Successfully updated GitHub repository.')
 
