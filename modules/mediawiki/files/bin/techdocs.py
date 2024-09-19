@@ -67,6 +67,7 @@ def fetch_page_content(title):
 
 footnote_counter = 0
 footnotes = {}
+content_to_footnote_map = {}
 name_to_footnote_map = {}
 
 
@@ -77,16 +78,24 @@ def generate_footnotes():
         return ''
 
     footnotes_md = '\n\n'
-    for key, value in footnotes.items():
-        footnotes_md += f'[^{key}]: {value}\n'
+    footnote_count = len(footnotes)
+
+    for index, (key, value) in enumerate(footnotes.items()):
+        footnotes_md += f'[^{key}]: {value}'
+    
+        # Only add a newline if it's not the last item
+        if index < footnote_count - 1:
+            footnotes_md += '\n'
+
     return footnotes_md
 
 
 def reset_footnotes():
     """Reset footnote counter and footnote-related data."""
-    global footnote_counter, footnotes, name_to_footnote_map
+    global footnote_counter, footnotes, content_to_footnote_map, name_to_footnote_map
     footnote_counter = 0
     footnotes = {}
+    content_to_footnote_map = {}
     name_to_footnote_map = {}
 
 
@@ -103,6 +112,7 @@ def convert_wikitext_to_markdown(wikitext):
         """Convert specific HTML tags to Markdown."""
         global footnote_counter
         global footnotes
+        global content_to_footnote_map
         global name_to_footnote_map
 
         tag_name = node.tag
@@ -149,11 +159,16 @@ def convert_wikitext_to_markdown(wikitext):
         if tag_name == 'ref':
             # If there's content in the ref tag, treat it as a footnote
             if content:
-                footnote_counter += 1
-                footnote_key = str(footnote_counter)
+                # Check if the content has already been added as a footnote
+                if content in content_to_footnote_map:
+                    footnote_key = content_to_footnote_map[content]
+                else:
+                    footnote_counter += 1
+                    footnote_key = str(footnote_counter)
 
-                # Store the content in footnotes dictionary
-                footnotes[footnote_key] = content
+                    footnotes[footnote_key] = content
+
+                    content_to_footnote_map[content] = footnote_key
 
                 if handle_name(node) and handle_name(node) not in name_to_footnote_map:
                     name_to_footnote_map[handle_name(node)] = str(footnote_counter)
@@ -161,7 +176,7 @@ def convert_wikitext_to_markdown(wikitext):
                 return f'[^{footnote_key}]'  # Return the footnote reference
 
             # If only name attribute exists, use it to retrieve or assign a footnote number
-            elif handle_name(node):
+            if handle_name(node):
                 if handle_name(node) not in name_to_footnote_map:
                     footnote_counter += 1
                     name_to_footnote_map[handle_name(node)] = str(footnote_counter)
