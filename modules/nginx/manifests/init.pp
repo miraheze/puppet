@@ -50,6 +50,14 @@ class nginx (
         source => 'puppet:///modules/nginx/mime.types',
     }
 
+    # (1024.0 * 1024.0) converts to megabytes.
+    $mem_gb = $facts['memory']['system']['total_bytes'] / (1024.0 * 1024.0) / 1024.0
+    if ($mem_gb < 90.0) {
+        $ssl_session_cache = 120
+    } else {
+        $ssl_session_cache = 1024
+    }
+
     $cache_proxies = query_facts("Class['Role::Varnish']", ['networking'])
     $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
