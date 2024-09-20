@@ -7,3 +7,4 @@ php::php_version: '8.2'
 nginx::use_graylog: false
 
 nginx::client_max_body_size: "10M"
+nginx::use_varnish_directly: false
