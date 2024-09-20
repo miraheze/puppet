@@ -7,6 +7,7 @@ class nginx (
     Integer                  $keepalive_timeout                       = lookup('nginx::keepalive_timeout', {'default_value' => 75}),
     Integer                  $keepalive_requests                      = lookup('nginx::keepalive_requests', {'default_value' => 1000}),
     String                   $nginx_client_max_body_size              = lookup('nginx::client_max_body_size', {'default_value' => '250M'}),
+    Boolean                  $use_varnish_directly                    = lookup('nginx::use_varnish_directly', {'default_value' => true}),
 ) {
     if $remove_apache {
         # Ensure Apache is absent: https://issue-tracker.miraheze.org/T253
@@ -50,6 +51,8 @@ class nginx (
     }
 
     $cache_proxies = query_facts("Class['Role::Varnish']", ['networking'])
+    $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
+    $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
     file { '/etc/nginx/nginx.conf':
         content => template('nginx/nginx.conf.erb'),
         require => Package['nginx'],
