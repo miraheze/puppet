@@ -42,7 +42,7 @@ http {
 	ssl_protocols TLSv1.2 TLSv1.3;
 	ssl_prefer_server_ciphers on;
 	ssl_stapling on;
-	ssl_session_cache shared:SSL:1024m;
+	ssl_session_cache shared:SSL:<%= @ssl_session_cache %>m;
 	ssl_session_timeout 25h;
 
 	# Disable RFC5077 tickets (may revisit later when client support is better)
