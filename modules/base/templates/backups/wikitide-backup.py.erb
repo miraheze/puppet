@@ -149,9 +149,9 @@ def backup_mediawiki_xml(dt: str, database: str):
     def get_php_keys(file_path):
         try:
             command = (
-                f'/usr/bin/php -r \'$wikis = include "{file_path}"; '
-                f'if ( is_array( $wikis ) ) {{ '
-                f'echo implode( PHP_EOL, array_keys( $wikis ) ); '
+                f'/usr/bin/php -r \'$list = include "{file_path}"; '
+                f'if ( is_array( $list["databases"] ?? false ) ) {{ '
+                f'echo implode( PHP_EOL, array_keys( $list["databases"] ) ); '
                 f'}} else {{ echo "Invalid format"; }}\''
             )
             output = subprocess.check_output(command, shell=True, text=True)
