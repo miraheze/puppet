@@ -31,10 +31,7 @@ def get_dblist_file(name: str) -> str:
     if os.path.exists(f'/srv/mediawiki/cache/{name}.php'):
         return f'{name}.php'
 
-    if os.path.exists(f'/srv/mediawiki/cache/{name}.json'):
-        return f'{name}.json'
-
-    raise FileNotFoundError(f'No valid dblist file found for {name}')
+    return f'{name}.json'
 
 
 def get_commands(args: argparse.Namespace) -> CommandInfo | int:
