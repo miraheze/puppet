@@ -167,7 +167,9 @@ users:
     uid: 1015
     name: Agent
     realname: Agent
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYndIxzLtu9icCCMJIKTZXKk9rdJRP/Nsfyb2kfcZEy]
+    ssh_keys: 
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYndIxzLtu9icCCMJIKTZXKk9rdJRP/Nsfyb2kfcZEy
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJZcRCYjd0F3DWjQbvY16pEFBWttdVaCWzOzIrvWmmB3
   alex:
     ensure: absent
     uid: 1016
