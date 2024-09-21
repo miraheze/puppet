@@ -625,7 +625,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
         for folder in str(args.folders).split(','):
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
     if args.extension_list and version:
-        rsyncfiles.append(f'/srv/mediawiki/cache/{version}/extension-list.json')
+        rsyncfiles.append(f'/srv/mediawiki/cache/{version}/extension-list.php')
     if args.l10n and version:
         rsyncpaths.append(f'/srv/mediawiki/cache/{version}/l10n/')
 
