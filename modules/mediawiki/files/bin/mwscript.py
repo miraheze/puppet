@@ -26,6 +26,17 @@ def syscheck(result: CommandInfo | int) -> CommandInfo:
     return result
 
 
+def get_dblist_file(name: str) -> str:
+    # Check if .php file exists, if not, fallback to .json
+    if os.path.exists(f'/srv/mediawiki/cache/{name}.php'):
+        return f'{name}.php'
+
+    if os.path.exists(f'/srv/mediawiki/cache/{name}.json'):
+        return f'{name}.json'
+
+    raise FileNotFoundError(f'No valid dblist file found for {name}')
+
+
 def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     mw_versions = os.popen('/usr/local/bin/getMWVersions all').read().strip()
     versions = {}
@@ -110,14 +121,17 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
 
     if wiki == 'all':
         long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json {script}'
+        dblist_file = get_dblist_file('databases')
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{dblist_file} {script}'
     elif wiki and wiki in validDBLists:
         long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.json {script}'
+        dblist_file = get_dblist_file(wiki)
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{dblist_file} {script}'
     elif args.extension:
         long = True
         generate = f'php {runner}/srv/mediawiki/{args.version}/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension} --directory=/home/{os.getlogin()}'
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
+        dblist_file = get_dblist_file(args.extension)
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{dblist_file} {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
     if args.arguments:
