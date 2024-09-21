@@ -20,11 +20,9 @@ if [[ "$dblist" == *.json ]]; then
 elif [[ "$dblist" == *.php ]]; then
         # Load the PHP array and output the keys (wiki database names)
         wikis=$(/usr/bin/php -r "
-            \$wikis = include '$dblist';
-            if ( is_array( \$wikis ) ) {
-                echo implode( PHP_EOL, array_keys( \$wikis ) );
-            } else {
-                echo 'Invalid PHP array in $dblist';
+            \$list = include '$dblist';
+            if ( is_array( \$list['databases'] ?? false ) ) {
+                echo implode( PHP_EOL, array_keys( \$list['databases'] ) );
             }
         ")
 else
