@@ -8,7 +8,6 @@ contactgroups: ['infra', 'mediawiki']
 jobrunner: true
 jobrunner::intensive: true
 
-mediawiki::jobqueue::runner::beta: true
 mediawiki::jobqueue::runner::cron: true
 mediawiki::jobqueue::runner::redis_ip: '10.0.15.118:6379'
 mediawiki::jobqueue::wiki: 'loginwikibeta'
