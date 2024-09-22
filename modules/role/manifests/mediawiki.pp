@@ -20,7 +20,7 @@ class role::mediawiki (
         $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
 
         $firewall_rules_str = join(
-            $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Mediawiki] or Class[Role::Varnish] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion]', ['networking'])
+            $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Varnish] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion]', ['networking'])
             .map |$key, $value| {
                 if ( $value['networking']['interfaces']['he-ipv6'] ) {
                     "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
