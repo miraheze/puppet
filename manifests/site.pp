@@ -5,8 +5,7 @@ node /^bast1[68]1\.wikitide\.net$/ {
 }
 
 node 'bots171.wikitide.net' {
-    include base
-    include role::irc
+    role(irc)
 }
 
 node 'changeprop151.wikitide.net' {
