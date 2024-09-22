@@ -198,19 +198,6 @@ spec: &spec
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
-<% else -%>
-              job:
-                topic: '/^mediawiki\.job\..*/'
-                exec:
-                  method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
-                  headers:
-                    content-type: 'application/json'
-                    host: '{{message.meta.domain}}'
-                  body: '{{globals.message}}'
-                  agentOptions:
-                    keepAlive: true
-<% end -%>
 
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
@@ -276,3 +263,4 @@ services:
       #   - x-request-id
       user_agent: ChangePropagation-JobQueue/WT
       spec: *spec
+
