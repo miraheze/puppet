@@ -1,5 +1,6 @@
 # role: irc
 class role::irc {
+    include base
     include irc::irclogbot
     include irc::cvtbot
     include irc::pywikibot
