@@ -89,6 +89,6 @@ class role::mediawiki_task (
     }
 
     system::role { 'mediawiki':
-        description => 'MediaWiki Production server',
+        description => 'MediaWiki Task/Deployment Production server',
     }
 }
