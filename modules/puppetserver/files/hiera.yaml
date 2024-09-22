@@ -10,12 +10,10 @@ hierarchy:
   - name: "node hierarchy"
     path: "hosts/%{networking.hostname}.yaml"
   - name: "role"
-    paths:
-      - "role/common/%{::_role}.yaml"
+    path: "role/common/%{::_role}.yaml"
   - name: "private role"
     datadir: "/etc/puppetlabs/puppet/private/hieradata"
-    paths:
-      - "role/common/%{::_role}.yaml"
+    path: "role/common/%{::_role}.yaml"
   - name: "common"
     lookup_key: 'vmlib::expand_path'
     path: "common"
