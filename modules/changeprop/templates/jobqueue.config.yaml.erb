@@ -9,7 +9,6 @@ spec: &spec
               user-agent: true
   title: The Change Propagation for JobQueue root
   paths:
-<% if @realm == 'production' -%>
     /{api:sys}/dedupe:
       x-modules:
         - path: src/sys/deduplicator.js
@@ -33,7 +32,6 @@ spec: &spec
               # partition 1
               metawiki: 1
               # partition 2: default
-<% end -%>
     /{api:sys}/queue:
       x-modules:
         - path: src/sys/kafka.js
@@ -63,7 +61,6 @@ spec: &spec
             disable_blacklist: true
             disable_ratelimit: true
             templates:
-<% if @realm == 'production' -%>
 <% @high_traffic_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
