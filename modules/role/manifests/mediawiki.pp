@@ -2,13 +2,8 @@
 class role::mediawiki (
     Boolean $strict_firewall = lookup('role::mediawiki::use_strict_firewall', {'default_value' => false}),
     Boolean $use_mcrouter = lookup('role::mediawiki::use_mcrouter', {'default_value' => false})
-    Boolean $enable_mathoid = lookup('role::mediawiki::enable_mathoid', {'default_value' => false})
 ) {
     include base
-
-    if $enable_mathoid {
-        include mathoid
-    }
 
     # doesn't install on bookworm
     # include prometheus::exporter::cadvisor
