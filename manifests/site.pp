@@ -1,8 +1,7 @@
 # servers
 
 node /^bast1[68]1\.wikitide\.net$/ {
-    include base
-    include role::bastion
+    role(bastion)
 }
 
 node 'bots171.wikitide.net' {
