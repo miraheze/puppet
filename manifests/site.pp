@@ -90,14 +90,11 @@ node 'mon181.wikitide.net' {
 }
 
 node /^mw1[5678][1234]\.wikitide\.net$/ {
-    include base
-    include role::mediawiki
+    role(mediawiki)
 }
 
 node /^mwtask1[5678]1\.wikitide\.net$/ {
-    include base
-    include role::mediawiki
-    include role::mathoid
+    role(mediawiki_task)
 }
 
 node /^ns[12]\.wikitide\.net$/ {

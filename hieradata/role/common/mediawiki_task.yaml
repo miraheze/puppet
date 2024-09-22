@@ -7,7 +7,7 @@ contactgroups: ['infra', 'mediawiki']
 jobrunner: true
 jobrunner::intensive: true
 mediawiki::jobqueue::runner::redis_ip: '10.0.17.120:6379'
-mediawiki::jobqueue::runner::cron: true
+mediawiki::jobqueue::runner::cron: false
 mediawiki::use_cpjobqueue: false
 
 role::mediawiki::use_strict_firewall: true
@@ -25,9 +25,6 @@ mediawiki::php::fpm_config:
 
 mediawiki::php::increase_open_files: true
 mediawiki::php::memory_limit: '1G'
-
-mediawiki::is_canary: true
-mediawiki::use_staging: true
 
 php::php_version: '8.2'
 

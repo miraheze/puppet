@@ -45,7 +45,7 @@ class role::memcached (
 
     $firewall = $facts['networking']['hostname'] =~ /^test1.+$/ ? {
         true    => 'Class[Role::Mediawiki_beta] or Class[Role::Icinga2]',
-        default => 'Class[Role::Mediawiki] or Class[Role::Icinga2]',
+        default => 'Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Icinga2]',
     }
 
     $firewall_rules_str = join(
