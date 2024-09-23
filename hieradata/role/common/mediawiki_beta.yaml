@@ -34,6 +34,8 @@ mediawiki::multiversion::versions:
   '1.43':
     branch: 'master'
     default: true
+  'master':
+    branch: 'master'
 
 php::php_version: '8.2'
 
