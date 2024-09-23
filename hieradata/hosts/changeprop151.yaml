@@ -104,11 +104,13 @@ changeprop::import_jobs_config:
 
 changeprop::videoscaler_jobs_config:
   webVideoTranscode:
-    timeout: 86400
-    concurrency: 3
+    timeout: 86400000
+    concurrency: 1
+    retry_limit: 1
   webVideoTranscodePrioritized:
-    concurrency: 3
-    timeout: 86400
+    concurrency: 1
+    timeout: 86400000
+    retry_limit: 1
 
 changeprop::global_new_files_jobs:
   - GlobalNewFilesDeleteJob
