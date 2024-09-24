@@ -1,83 +1,83 @@
 changeprop::jobqueue: true
-changeprop::jobrunner_host: 'http://10.0.15.118:9006'
-changeprop::import_host: 'http://10.0.15.118:9006'
-changeprop::videoscaler_host: 'http://10.0.15.118:9006'
-changeprop::num_workers: 12
-changeprop::global_new_files_concurrency: 25
-changeprop::semantic_mediawiki_concurrency: 50
-changeprop::low_traffic_concurrency: 50
+changeprop::jobrunner_host: 'http://10.0.17.144:9006'
+changeprop::import_host: 'http://10.0.17.144:9006'
+changeprop::videoscaler_host: 'http://10.0.17.144:9006'
+changeprop::num_workers: 8
+changeprop::global_new_files_concurrency: 5
+changeprop::semantic_mediawiki_concurrency: 5
+changeprop::low_traffic_concurrency: 10
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
   categoryMembershipChange:
-    concurrency: 50
+    concurrency: 2
   # CNDPurge is quite low-volume, but it uses delayed execution,
   # so avoid putting it together with other low-volume jobs so that it doesn't
   # block execution for others.
   cdnPurge:
-    concurrency: 20
+    concurrency: 2
   # RecordLinks is normally low-volume, but could have big spikes
   # when maintenance scripts are run. Elevated concurrency
   RecordLintJob:
-    concurrency: 25
+    concurrency: 2
     consumer_batch_size: 10
   wikibase-addUsagesForPage:
-    concurrency: 5
+    concurrency: 2
   LocalGlobalUserPageCacheUpdateJob:
     # This job is prone to large spikes, so having it on the low_traffic_jobs queue
     # blocks other jobs.
-    concurrency: 10
+    concurrency: 2
   # For cirrus search jobs the retries are built into the job itself,
   # so disable the retries by change-prop. We need special rules for cirrus
   # jobs because they need special configuration.
   cirrusSearchCheckerJob:
     disable_delayed_execution: true
     retry_limit: 0
-    concurrency: 20
+    concurrency: 2
   cirrusSearchDeleteArchive:
     retry_limit: 0
-    concurrency: 5
+    concurrency: 2
   cirrusSearchDeletePages:
     retry_limit: 0
-    concurrency: 5
+    concurrency: 2
   cirrusSearchIncomingLinkCount:
     retry_limit: 0
-    concurrency: 15
+    concurrency: 2
   cirrusSearchLinksUpdate:
     retry_limit: 0
-    concurrency: 100
+    concurrency: 2
   cirrusSearchLinksUpdatePrioritized:
     retry_limit: 0
-    concurrency: 50
+    concurrency: 2
   cirrusSearchOtherIndex:
     retry_limit: 0
-    concurrency: 5
+    concurrency: 2
   cirrusSearchElasticaWrite:
     retry_limit: 0
-    concurrency: 25
+    concurrency: 2
     reenqueue_delay: 3600
     timeout: 600000
   parsoidCachePrewarm:
-    concurrency: 150
+    concurrency: 15
   htmlCacheUpdate:
-    concurrency: 50
+    concurrency: 5
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   refreshLinks:
-    concurrency: 25
+    concurrency: 5
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
-    concurrency: 50
+    concurrency: 2
   smw.changePropagationDispatch:
-    concurrency: 10
+    concurrency: 2
   # Translation jobs tend to be low traffic but are being delayed when other
   # low traffic jobs have a large spike. It is being moved to its own queue to
   # improve editing experience for users
   UpdateTranslatablePageJob:
-    concurrency: 3
+    concurrency: 2
   RenderTranslationPageJob:
-    concurrency: 3
+    concurrency: 2
 
   # These jobs need to be ran with priority so are using their own queues
   CreateWikiJob:
@@ -112,10 +112,10 @@ changeprop::import_jobs_config:
 changeprop::videoscaler_jobs_config:
   webVideoTranscode:
     timeout: 86400000
-    concurrency: 3
+    concurrency: 1
     retry_limit: 1
   webVideoTranscodePrioritized:
-    concurrency: 3
+    concurrency: 1
     timeout: 86400000
     retry_limit: 1
 
