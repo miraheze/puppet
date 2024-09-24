@@ -81,7 +81,7 @@ changeprop::high_traffic_jobs_config:
     concurrency: 3
   RenderTranslationPageJob:
     concurrency: 3
-  
+
   # These jobs need to be ran with priority so are using their own queues
   CreateWikiJob:
     disable_delayed_execution: true
