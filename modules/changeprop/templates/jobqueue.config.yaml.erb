@@ -34,10 +34,11 @@ spec: &spec
               # partition 2: default
     /{api:sys}/queue:
       x-modules:
+<%- ['default', 'beta'].each do |group| -%>
         - path: src/sys/kafka.js
           options:
             metadata_broker_list: <%= @broker_list %>
-            dc_name: default
+            dc_name: <%= group %>
             consumer:
               # JobQueue jobs might sent messages larget then 1 Meg,
               # so we increase the max message size in kafka and have to
@@ -69,7 +70,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_<%= group %>_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
@@ -85,7 +86,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @import_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @import_<%= group %>_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
@@ -101,7 +102,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @videoscaler_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @videoscaler_<%= group %>_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
@@ -126,7 +127,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_<%= group %>_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: application/json
                     host: '{{message.meta.domain}}'
@@ -142,7 +143,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_<%= group %>_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
@@ -157,7 +158,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_<%= group %>_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
@@ -191,13 +192,14 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_<%= group %>_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
+<%- end %->
 
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
