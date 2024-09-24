@@ -154,7 +154,7 @@ role::prometheus::statsd_exporter::mappings:
     labels:
       service: $1
       event: $2
-  
+
   - match: '*.heap.*'
     # service-runner abuses timer for heap data
     name: service_runner_${2}_heap_kilobytes
