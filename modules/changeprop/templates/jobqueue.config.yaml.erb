@@ -34,11 +34,11 @@ spec: &spec
               # partition 2: default
     /{api:sys}/queue:
       x-modules:
-<%- ['default', 'beta'].each do |group| -%>
+        # Prod config
         - path: src/sys/kafka.js
           options:
             metadata_broker_list: <%= @broker_list %>
-            dc_name: <%= group %>
+            dc_name: default
             consumer:
               # JobQueue jobs might sent messages larget then 1 Meg,
               # so we increase the max message size in kafka and have to
@@ -70,7 +70,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_<%= group %>_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
@@ -86,7 +86,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @import_<%= group %>_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @import_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
@@ -102,7 +102,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @videoscaler_<%= group %>_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @videoscaler_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
@@ -127,7 +127,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_<%= group %>_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: application/json
                     host: '{{message.meta.domain}}'
@@ -143,7 +143,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_<%= group %>_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
@@ -158,7 +158,7 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_<%= group %>_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
@@ -192,14 +192,177 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @jobrunner_<%= group %>_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     host: '{{message.meta.domain}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
-<%- end -%>
+        - path: src/sys/kafka.js
+          options:
+            metadata_broker_list: <%= @broker_list %>
+            dc_name: beta
+            consumer:
+              # JobQueue jobs might sent messages larget then 1 Meg,
+              # so we increase the max message size in kafka and have to
+              # ajust the consumers accordingly.
+              fetch.message.max.bytes: 4194304
+              # Silence noisy connection reaper logging
+              # https://github.com/Blizzard/node-rdkafka/issues/326
+              # https://github.com/edenhill/librdkafka/issues/768#issuecomment-246302856
+              log.connection.close: false
+            producer:
+              compression.codec: snappy
+              # Silence noisy connection reaper logging
+              # https://github.com/Blizzard/node-rdkafka/issues/326
+              # https://github.com/edenhill/librdkafka/issues/768#issuecomment-246302856
+              log.connection.close: false
+              # The default value is 5ms, and we want Changeprop to batch
+              # more messages rather than keep sending small ones.
+              linger.ms: 20
+            concurrency: 50
+            startup_delay: 60000
+            disable_blacklist: true
+            disable_ratelimit: true
+            templates:
+<% @high_traffic_jobs_config.each do |topic, topic_config| -%>
+              <%= topic %>:
+                topic: 'mediawiki.job.<%= topic %>'
+<% topic_config.each do |key, value| -%>
+                <%= key %>: <%= value %>
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_beta_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+<% end -%>
+<% @import_jobs_config.each do |topic, topic_config| -%>
+              <%= topic %>:
+                topic: 'mediawiki.job.<%= topic %>'
+<% topic_config.each do |key, value| -%>
+                <%= key %>: <%= value %>
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @import_beta_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+<% end -%>
+<% @videoscaler_jobs_config.each do |topic, topic_config| -%>
+              <%= topic %>:
+                topic: 'mediawiki.job.<%= topic %>'
+<% topic_config.each do |key, value| -%>
+                <%= key %>: <%= value %>
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @videoscaler_beta_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+<% end -%>
+<% @partitioned_jobs_config.each do |topic, options| -%>
+              <%= topic %>_partitioner:
+                topic: 'mediawiki.job.<%= topic %>'
+                concurrency: <%= options['partitioner_concurrency'] %>
+                exec:
+                  method: post
+                  uri: '/sys/partition/<%= options['partitioner_kind'] %>/'
+                  headers:
+                    content-type: application/json
+                  body: '{{globals.message}}'
+              <%= topic %>:
+                topic: 'cpjobqueue.partitioned.mediawiki.job.<%= topic %>'
+<% options['partition'].each do |key, value| -%>
+                <%= key %>: <%= value %>
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_beta_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: application/json
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+<% end -%>
+              global_new_files_jobs:
+                concurrency: <%= @global_new_files_concurrency %>
+                topics:
+<% @global_new_files_jobs.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_beta_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+              semantic_mediawiki_jobs:
+                concurrency: <%= @semantic_mediawiki_concurrency %>
+                topics:
+<% @semantic_mediawiki_jobs.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_beta_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+              # Now special rule to cover all the low-traffic jobs
+              low_traffic_jobs:
+                concurrency: <%= @low_traffic_concurrency %>
+                topics:
+                  - '/^mediawiki\.job\..*/'
+                # Don't execute anything that's covered by different rules
+                exclude_topics:
+<% @high_traffic_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @import_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @videoscaler_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @partitioned_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @global_new_files_jobs.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @semantic_mediawiki_jobs.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_beta_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
 
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
@@ -265,4 +428,3 @@ services:
       #   - x-request-id
       user_agent: ChangePropagation-JobQueue/WT
       spec: *spec
-
