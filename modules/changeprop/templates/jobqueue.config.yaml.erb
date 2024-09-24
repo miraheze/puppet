@@ -199,6 +199,7 @@ spec: &spec
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
+        # Beta config
         - path: src/sys/kafka.js
           options:
             metadata_broker_list: <%= @broker_list %>
