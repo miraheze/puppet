@@ -10,216 +10,216 @@ changeprop::global_new_files_concurrency: 25
 changeprop::semantic_mediawiki_concurrency: 50
 changeprop::low_traffic_concurrency: 50
 changeprop::high_traffic_jobs_config:
-ThumbnailRender:
-  concurrency: 5
-categoryMembershipChange:
-  concurrency: 50
-# CNDPurge is quite low-volume, but it uses delayed execution,
-# so avoid putting it together with other low-volume jobs so that it doesn't
-# block execution for others.
-cdnPurge:
-  concurrency: 20
-# RecordLinks is normally low-volume, but could have big spikes
-# when maintenance scripts are run. Elevated concurrency
-RecordLintJob:
-  concurrency: 25
-  consumer_batch_size: 10
-wikibase-addUsagesForPage:
-  concurrency: 5
-LocalGlobalUserPageCacheUpdateJob:
-  # This job is prone to large spikes, so having it on the low_traffic_jobs queue
-  # blocks other jobs.
-  concurrency: 10
-# For cirrus search jobs the retries are built into the job itself,
-# so disable the retries by change-prop. We need special rules for cirrus
-# jobs because they need special configuration.
-cirrusSearchCheckerJob:
-  disable_delayed_execution: true
-  retry_limit: 0
-  concurrency: 20
-cirrusSearchDeleteArchive:
-  retry_limit: 0
-  concurrency: 5
-cirrusSearchDeletePages:
-  retry_limit: 0
-  concurrency: 5
-cirrusSearchIncomingLinkCount:
-  retry_limit: 0
-  concurrency: 15
-cirrusSearchLinksUpdate:
-  retry_limit: 0
-  concurrency: 100
-cirrusSearchLinksUpdatePrioritized:
-  retry_limit: 0
-  concurrency: 50
-cirrusSearchOtherIndex:
-  retry_limit: 0
-  concurrency: 5
-cirrusSearchElasticaWrite:
-  retry_limit: 0
-  concurrency: 25
-  reenqueue_delay: 3600
-  timeout: 600000
-parsoidCachePrewarm:
-  concurrency: 150
-htmlCacheUpdate:
-  concurrency: 50
-  # Abandon jobs which root job is more than 1 week long
-  root_claim_ttl: 604800
-refreshLinks:
-  concurrency: 25
-  # Abandon jobs which root job is more than 1 week long
-  root_claim_ttl: 604800
-smw.changePropagationClassUpdate:
-  concurrency: 50
-smw.changePropagationDispatch:
-  concurrency: 10
-# Translation jobs tend to be low traffic but are being delayed when other
-# low traffic jobs have a large spike. It is being moved to its own queue to
-# improve editing experience for users
-UpdateTranslatablePageJob:
-  concurrency: 3
-RenderTranslationPageJob:
-  concurrency: 3
-
-# These jobs need to be ran with priority so are using their own queues
-CreateWikiJob:
-  disable_delayed_execution: true
-  concurrency: 1
-NamespaceMigrationJob:
-  disable_delayed_execution: true
-  concurrency: 1
-  timeout: 9000000
-RemovePIIJob:
-  disable_delayed_execution: true
-  concurrency: 1
+  ThumbnailRender:
+    concurrency: 5
+  categoryMembershipChange:
+    concurrency: 50
+  # CNDPurge is quite low-volume, but it uses delayed execution,
+  # so avoid putting it together with other low-volume jobs so that it doesn't
+  # block execution for others.
+  cdnPurge:
+    concurrency: 20
+  # RecordLinks is normally low-volume, but could have big spikes
+  # when maintenance scripts are run. Elevated concurrency
+  RecordLintJob:
+    concurrency: 25
+    consumer_batch_size: 10
+  wikibase-addUsagesForPage:
+    concurrency: 5
+  LocalGlobalUserPageCacheUpdateJob:
+    # This job is prone to large spikes, so having it on the low_traffic_jobs queue
+    # blocks other jobs.
+    concurrency: 10
+  # For cirrus search jobs the retries are built into the job itself,
+  # so disable the retries by change-prop. We need special rules for cirrus
+  # jobs because they need special configuration.
+  cirrusSearchCheckerJob:
+    disable_delayed_execution: true
+    retry_limit: 0
+    concurrency: 20
+  cirrusSearchDeleteArchive:
+    retry_limit: 0
+    concurrency: 5
+  cirrusSearchDeletePages:
+    retry_limit: 0
+    concurrency: 5
+  cirrusSearchIncomingLinkCount:
+    retry_limit: 0
+    concurrency: 15
+  cirrusSearchLinksUpdate:
+    retry_limit: 0
+    concurrency: 100
+  cirrusSearchLinksUpdatePrioritized:
+    retry_limit: 0
+    concurrency: 50
+  cirrusSearchOtherIndex:
+    retry_limit: 0
+    concurrency: 5
+  cirrusSearchElasticaWrite:
+    retry_limit: 0
+    concurrency: 25
+    reenqueue_delay: 3600
+    timeout: 600000
+  parsoidCachePrewarm:
+    concurrency: 150
+  htmlCacheUpdate:
+    concurrency: 50
+    # Abandon jobs which root job is more than 1 week long
+    root_claim_ttl: 604800
+  refreshLinks:
+    concurrency: 25
+    # Abandon jobs which root job is more than 1 week long
+    root_claim_ttl: 604800
+  smw.changePropagationClassUpdate:
+    concurrency: 50
+  smw.changePropagationDispatch:
+    concurrency: 10
+  # Translation jobs tend to be low traffic but are being delayed when other
+  # low traffic jobs have a large spike. It is being moved to its own queue to
+  # improve editing experience for users
+  UpdateTranslatablePageJob:
+    concurrency: 3
+  RenderTranslationPageJob:
+    concurrency: 3
+  
+  # These jobs need to be ran with priority so are using their own queues
+  CreateWikiJob:
+    disable_delayed_execution: true
+    concurrency: 1
+  NamespaceMigrationJob:
+    disable_delayed_execution: true
+    concurrency: 1
+    timeout: 9000000
+  RemovePIIJob:
+    disable_delayed_execution: true
+    concurrency: 1
 
 changeprop::import_jobs_config:
-DataDumpGenerateJob:
-  disable_delayed_execution: true
-  concurrency: 1
-  timeout: 86400000
-ImportDumpJob:
-  disable_delayed_execution: true
-  retry_limit: 0
-  concurrency: 1
-  timeout: 259200000
-ImportDumpNotifyJob:
-  disable_delayed_execution: true
-  concurrency: 1
-RequestWikiAIJob:
-  concurrency: 1
-RottenLinksJob:
-  concurrency: 1
+  DataDumpGenerateJob:
+    disable_delayed_execution: true
+    concurrency: 1
+    timeout: 86400000
+  ImportDumpJob:
+    disable_delayed_execution: true
+    retry_limit: 0
+    concurrency: 1
+    timeout: 259200000
+  ImportDumpNotifyJob:
+    disable_delayed_execution: true
+    concurrency: 1
+  RequestWikiAIJob:
+    concurrency: 1
+  RottenLinksJob:
+    concurrency: 1
 
 changeprop::videoscaler_jobs_config:
-webVideoTranscode:
-  timeout: 86400000
-  concurrency: 3
-  retry_limit: 1
-webVideoTranscodePrioritized:
-  concurrency: 3
-  timeout: 86400000
-  retry_limit: 1
+  webVideoTranscode:
+    timeout: 86400000
+    concurrency: 3
+    retry_limit: 1
+  webVideoTranscodePrioritized:
+    concurrency: 3
+    timeout: 86400000
+    retry_limit: 1
 
 changeprop::global_new_files_jobs:
-- GlobalNewFilesDeleteJob
-- GlobalNewFilesInsertJob
-- GlobalNewFilesMoveJob
+  - GlobalNewFilesDeleteJob
+  - GlobalNewFilesInsertJob
+  - GlobalNewFilesMoveJob
 
 changeprop::semantic_mediawiki_jobs:
-- SMWRefreshJob
-- SMWUpdateJob
-#  - smw.changePropagationClassUpdate
-#  - smw.changePropagationDispatch
-- smw.changePropagationUpdate
-- smw.deferredConstraintCheckUpdateJob
-- smw.elasticFileIngest
-- smw.elasticIndexerRecovery
-- smw.entityIdDisposer
-- smw.fulltextSearchTableRebuild
-- smw.fulltextSearchTableUpdate
-- smw.parserCachePurgeJob
-- smw.propertyStatisticsRebuild
-- smw.refresh
-- smw.update
-- smw.updateDispatcher
+  - SMWRefreshJob
+  - SMWUpdateJob
+  #  - smw.changePropagationClassUpdate
+  #  - smw.changePropagationDispatch
+  - smw.changePropagationUpdate
+  - smw.deferredConstraintCheckUpdateJob
+  - smw.elasticFileIngest
+  - smw.elasticIndexerRecovery
+  - smw.entityIdDisposer
+  - smw.fulltextSearchTableRebuild
+  - smw.fulltextSearchTableUpdate
+  - smw.parserCachePurgeJob
+  - smw.propertyStatisticsRebuild
+  - smw.refresh
+  - smw.update
+  - smw.updateDispatcher
 
 prometheus::exporter::statsd_exporter::use_defaults: false
 role::prometheus::statsd_exporter::mappings:
-- match: '*.gc.*'
-  name: service_runner_gc_microseconds
-  timer_type: histogram
-  buckets: [ 5e+2, 1e+3, 5e+3, 10e+3, 15e+3, 30e+3, 100e+3 ]
-  labels:
-    service: $1
-    event: $2
+  - match: '*.gc.*'
+    name: service_runner_gc_microseconds
+    timer_type: histogram
+    buckets: [ 5e+2, 1e+3, 5e+3, 10e+3, 15e+3, 30e+3, 100e+3 ]
+    labels:
+      service: $1
+      event: $2
+  
+  - match: '*.heap.*'
+    # service-runner abuses timer for heap data
+    name: service_runner_${2}_heap_kilobytes
+    timer_type: histogram
+    buckets: [1e+3, 1e+4, 1e+5, 1e+6, 1e+7]
+    labels:
+      service: $1
+  
+  - match: '(.+)\.internal-startup\.(.+)-retry_exec'
+    match_type: regex
+    name: "${1}_retry_rule_processing"
+    labels:
+      service: $1
+      rule: $2
 
-- match: '*.heap.*'
-  # service-runner abuses timer for heap data
-  name: service_runner_${2}_heap_kilobytes
-  timer_type: histogram
-  buckets: [1e+3, 1e+4, 1e+5, 1e+6, 1e+7]
-  labels:
-    service: $1
+  - match: '(.+)\.internal-startup\.(.+)_exec'
+    match_type: regex
+    name: "${1}_normal_rule_processing"
+    labels:
+      service: $1
+      rule: $2
+  
+  - match: '(.+)\.internal-startup\.(.+)-retry_delay'
+    match_type: regex
+    name: "${1}_retry_rule_processing_delay"
+    labels:
+      service: $1
+      rule: $2
 
-- match: '(.+)\.internal-startup\.(.+)-retry_exec'
-  match_type: regex
-  name: "${1}_retry_rule_processing"
-  labels:
-    service: $1
-    rule: $2
+  - match: '(.+)\.internal-startup\.(.+)_delay'
+    match_type: regex
+    name: "${1}_normal_rule_processing_delay"
+    timer_type: histogram
+    buckets: [1, 30, 60, 300, 600, 1800, 3600]  # 1s, 30s, 1m, 5m, 10m, 30m, 1h
+    labels:
+      service: $1
+      rule: $2
+  
+  - match: '(.+)\.internal-startup\.(.+)_totaldelay'
+    match_type: regex
+    name: "${1}_normal_rule_processing_total_delay"
+    labels:
+      service: $1
+      rule: $2
 
-- match: '(.+)\.internal-startup\.(.+)_exec'
-  match_type: regex
-  name: "${1}_normal_rule_processing"
-  labels:
-    service: $1
-    rule: $2
+  - match: '(.+)\.internal-startup\.(.+)_dequeue'
+    match_type: regex
+    name: "${1}_dequeue"
+    labels:
+      service: $1
+      rule: $2
+  
+  - match: '(.+)\.internal-startup\.(.+)_dedupe'
+    match_type: regex
+    name: "${1}_dedupe"
+    labels:
+      service: $1
+      rule: $2
 
-- match: '(.+)\.internal-startup\.(.+)-retry_delay'
-  match_type: regex
-  name: "${1}_retry_rule_processing_delay"
-  labels:
-    service: $1
-    rule: $2
-
-- match: '(.+)\.internal-startup\.(.+)_delay'
-  match_type: regex
-  name: "${1}_normal_rule_processing_delay"
-  timer_type: histogram
-  buckets: [1, 30, 60, 300, 600, 1800, 3600]  # 1s, 30s, 1m, 5m, 10m, 30m, 1h
-  labels:
-    service: $1
-    rule: $2
-
-- match: '(.+)\.internal-startup\.(.+)_totaldelay'
-  match_type: regex
-  name: "${1}_normal_rule_processing_total_delay"
-  labels:
-    service: $1
-    rule: $2
-
-- match: '(.+)\.internal-startup\.(.+)_dequeue'
-  match_type: regex
-  name: "${1}_dequeue"
-  labels:
-    service: $1
-    rule: $2
-
-- match: '(.+)\.internal-startup\.(.+)_dedupe'
-  match_type: regex
-  name: "${1}_dedupe"
-  labels:
-    service: $1
-    rule: $2
-
-- match: '(.+)\.internal-startup\.produce_(.+)\.(.+)'
-  match_type: regex
-  name: "${1}_produce"
-  labels:
-    service: $1
-    stream: $2
-    partition: $3
+  - match: '(.+)\.internal-startup\.produce_(.+)\.(.+)'
+    match_type: regex
+    name: "${1}_produce"
+    labels:
+      service: $1
+      stream: $2
+      partition: $3
 
 http_proxy: 'http://bastion.wikitide.net:8080'
