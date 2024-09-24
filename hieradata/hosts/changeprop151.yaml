@@ -162,7 +162,7 @@ role::prometheus::statsd_exporter::mappings:
     buckets: [1e+3, 1e+4, 1e+5, 1e+6, 1e+7]
     labels:
       service: $1
-  
+
   - match: '(.+)\.internal-startup\.(.+)-retry_exec'
     match_type: regex
     name: "${1}_retry_rule_processing"
@@ -176,7 +176,7 @@ role::prometheus::statsd_exporter::mappings:
     labels:
       service: $1
       rule: $2
-  
+
   - match: '(.+)\.internal-startup\.(.+)-retry_delay'
     match_type: regex
     name: "${1}_retry_rule_processing_delay"
@@ -192,7 +192,7 @@ role::prometheus::statsd_exporter::mappings:
     labels:
       service: $1
       rule: $2
-  
+
   - match: '(.+)\.internal-startup\.(.+)_totaldelay'
     match_type: regex
     name: "${1}_normal_rule_processing_total_delay"
@@ -206,7 +206,7 @@ role::prometheus::statsd_exporter::mappings:
     labels:
       service: $1
       rule: $2
-  
+
   - match: '(.+)\.internal-startup\.(.+)_dedupe'
     match_type: regex
     name: "${1}_dedupe"
