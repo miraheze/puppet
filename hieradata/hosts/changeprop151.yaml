@@ -2,6 +2,9 @@ changeprop::jobqueue: true
 changeprop::jobrunner_host: 'http://10.0.15.118:9006'
 changeprop::import_host: 'http://10.0.15.118:9006'
 changeprop::videoscaler_host: 'http://10.0.15.118:9006'
+changeprop::jobrunner_beta_host: 'http://10.0.17.144:9006'
+changeprop::import_beta_host: 'http://10.0.17.144:9006'
+changeprop::videoscaler_beta_host: 'http://10.0.17.144:9006'
 changeprop::num_workers: 12
 changeprop::global_new_files_concurrency: 25
 changeprop::semantic_mediawiki_concurrency: 50
