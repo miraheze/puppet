@@ -56,6 +56,7 @@ changeprop::high_traffic_jobs_config:
     retry_limit: 0
     concurrency: 25
     reenqueue_delay: 3600
+    timeout: 600000
   parsoidCachePrewarm:
     concurrency: 150
   htmlCacheUpdate:
@@ -82,6 +83,10 @@ changeprop::high_traffic_jobs_config:
   CreateWikiJob:
     disable_delayed_execution: true
     concurrency: 1
+  NamespaceMigrationJob:
+    disable_delayed_execution: true
+    concurrency: 1
+    timeout: 9000000
   RemovePIIJob:
     disable_delayed_execution: true
     concurrency: 1
@@ -90,10 +95,12 @@ changeprop::import_jobs_config:
   DataDumpGenerateJob:
     disable_delayed_execution: true
     concurrency: 1
+    timeout: 86400000
   ImportDumpJob:
     disable_delayed_execution: true
     retry_limit: 0
     concurrency: 1
+    timeout: 259200000
   ImportDumpNotifyJob:
     disable_delayed_execution: true
     concurrency: 1
