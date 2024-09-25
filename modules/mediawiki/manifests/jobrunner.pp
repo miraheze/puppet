@@ -56,7 +56,7 @@ class mediawiki::jobrunner {
     httpd::conf { 'jobrunner_timeout':
         ensure   => present,
         priority => 1,
-        content  => inline_template("# This file is managed by Puppet\Timeout 259200\n"),
+        content  => inline_template("# This file is managed by Puppet\nTimeout 259200\n"),
     }
 
     httpd::site { 'jobrunner':
