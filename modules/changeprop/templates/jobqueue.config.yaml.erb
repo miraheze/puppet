@@ -222,12 +222,14 @@ worker_heartbeat_timeout: 15000
 
 # Logger info
 logging:
-  level: debug
+  level: warn
   streams:
     - type: stdout
       named_levels: true
   sampled_levels:
-    debug/request: 0.00005
+    trace/dedupe: 0.001
+    # With the average job insertion rate of 1000/s this will give about 1 sample log per minute
+    trace/sample: 0.00002
 
 # Statsd metrics reporter
 metrics:
