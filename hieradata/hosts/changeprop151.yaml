@@ -5,10 +5,10 @@ changeprop::videoscaler_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::num_workers: 4
 changeprop::global_new_files_concurrency: 5
 changeprop::semantic_mediawiki_concurrency: 5
-changeprop::low_traffic_concurrency: 5
+changeprop::low_traffic_concurrency: 10
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
-    concurrency: 2
+    concurrency: 5
   categoryMembershipChange:
     concurrency: 2
   # CNDPurge is quite low-volume, but it uses delayed execution,
@@ -58,9 +58,9 @@ changeprop::high_traffic_jobs_config:
     reenqueue_delay: 3600
     timeout: 600000
   parsoidCachePrewarm:
-    concurrency: 15
+    concurrency: 20
   htmlCacheUpdate:
-    concurrency: 2
+    concurrency: 10
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   refreshLinks:
