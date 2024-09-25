@@ -53,6 +53,12 @@ class mediawiki::jobrunner {
         content  => inline_template("# This file is managed by Puppet\nListen <%= @port %>\nListen <%= @local_only_port %>\n"),
     }
 
+    httpd::conf { 'jobrunner_timeout':
+        ensure   => present,
+        priority => 1,
+        content  => inline_template("# This file is managed by Puppet\Timeout 259200\n"),
+    }
+
     httpd::site { 'jobrunner':
         priority => 1,
         content  => template('mediawiki/jobrunner.conf.erb'),
