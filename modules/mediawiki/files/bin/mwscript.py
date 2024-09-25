@@ -28,7 +28,7 @@ def syscheck(result: CommandInfo | int) -> CommandInfo:
 
 def get_dblist_file(name: str) -> str:
     # Check if .json file exists, if not, use .php by default
-    # TODO: remove support for .json and always use PHP
+    # In the future, we will remove support for .json and always use PHP
     if os.path.exists(f'/srv/mediawiki/cache/{name}.json'):
         return f'{name}.json'
 
