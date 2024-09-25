@@ -56,7 +56,7 @@ spec: &spec
               # The default value is 5ms, and we want Changeprop to batch
               # more messages rather than keep sending small ones.
               linger.ms: 20
-            concurrency: 50
+            concurrency: 10
             startup_delay: 60000
             disable_blacklist: true
             disable_ratelimit: true
