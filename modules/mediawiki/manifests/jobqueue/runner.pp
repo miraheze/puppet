@@ -98,6 +98,16 @@ class mediawiki::jobqueue::runner (
             minute  => 0,
         }
 
+        cron { 'purge expired blocks':
+            ensure  => present,
+            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php ${runner}/srv/mediawiki/${version}/maintenance/purgeExpiredBlocks.php",
+            user    => 'www-data',
+            minute  => '0',
+            hour    => '0',
+            month   => '*',
+            weekday => [ '1' ],
+        }
+
         if $wiki == 'loginwiki' {
             $swift_password = lookup('mediawiki::swift_password')
 
