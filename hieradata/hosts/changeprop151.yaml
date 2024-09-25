@@ -112,10 +112,10 @@ changeprop::import_jobs_config:
 changeprop::videoscaler_jobs_config:
   webVideoTranscode:
     timeout: 86400000
-    concurrency: 1
+    concurrency: 2
     retry_limit: 1
   webVideoTranscodePrioritized:
-    concurrency: 1
+    concurrency: 2
     timeout: 86400000
     retry_limit: 1
 
