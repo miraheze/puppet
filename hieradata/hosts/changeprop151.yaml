@@ -2,13 +2,13 @@ changeprop::jobqueue: true
 changeprop::jobrunner_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::import_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::videoscaler_host: 'http://jobrunner.wikitide.net:9006'
-changeprop::num_workers: 8
+changeprop::num_workers: 4
 changeprop::global_new_files_concurrency: 5
 changeprop::semantic_mediawiki_concurrency: 5
-changeprop::low_traffic_concurrency: 10
+changeprop::low_traffic_concurrency: 5
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
-    concurrency: 5
+    concurrency: 2
   categoryMembershipChange:
     concurrency: 2
   # CNDPurge is quite low-volume, but it uses delayed execution,
@@ -60,17 +60,17 @@ changeprop::high_traffic_jobs_config:
   parsoidCachePrewarm:
     concurrency: 15
   htmlCacheUpdate:
-    concurrency: 5
+    concurrency: 2
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   refreshLinks:
-    concurrency: 5
+    concurrency: 2
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
-    concurrency: 2
+    concurrency: 1
   smw.changePropagationDispatch:
-    concurrency: 2
+    concurrency: 1
   # Translation jobs tend to be low traffic but are being delayed when other
   # low traffic jobs have a large spike. It is being moved to its own queue to
   # improve editing experience for users
