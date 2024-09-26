@@ -9,13 +9,8 @@ class changeprop (
     $proxy                          = lookup('changeprop::proxy', {'default_value' => ''}),
     $num_workers                    = lookup('changeprop::num_workers', {'default_value' => 1}),
     $high_traffic_jobs_config       = lookup('changeprop::high_traffic_jobs_config', {'default_value' => {}}),
-    $import_jobs_config             = lookup('changeprop::import_jobs_config', {'default_value' => {}}),
     $videoscaler_jobs_config        = lookup('changeprop::videoscaler_jobs_config', {'default_value' => {}}),
     $partitioned_jobs_config        = lookup('changeprop::partitioned_jobs_config', {'default_value' => {}}),
-    $global_new_files_jobs          = lookup('changeprop::global_new_files_jobs', {'default_value' => {}}),
-    $semantic_mediawiki_jobs        = lookup('changeprop::semantic_mediawiki_jobs', {'default_value' => {}}),
-    $global_new_files_concurrency   = lookup('changeprop::global_new_files_concurrency', {'default_value' => 50}),
-    $semantic_mediawiki_concurrency = lookup('changeprop::semantic_mediawiki_concurrency', {'default_value' => 50}),
     $low_traffic_concurrency        = lookup('changeprop::low_traffic_concurrency', {'default_value' => 50}),
     $redis_host                     = lookup('changeprop::redis_host', {'default_value' => 'localhost'}),
     $redis_password                 = lookup('passwords::redis::master')
