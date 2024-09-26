@@ -47,6 +47,10 @@ class mathoid {
         ensure  => present,
         content => systemd_template('mathoid'),
         restart => true,
+        service_params => {
+            hasstatus  => true,
+            hasrestart => true
+        },
         require => Git::Clone['mathoid'],
     }
 
