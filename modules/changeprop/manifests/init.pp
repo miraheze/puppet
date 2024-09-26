@@ -71,10 +71,14 @@ class changeprop (
     }
 
     systemd::service { 'changeprop':
-        ensure  => present,
-        content => systemd_template('changeprop'),
-        restart => true,
-        require => Git::Clone['changeprop'],
+        ensure         => present,
+        content        => systemd_template('changeprop'),
+        restart        => true,
+        service_params => {
+            hasstatus  => true,
+            hasrestart => true
+        },
+        require        => Git::Clone['changeprop'],
     }
 
     nginx::site { 'jobrunner':
