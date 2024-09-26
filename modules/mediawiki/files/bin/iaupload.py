@@ -53,10 +53,10 @@ class ArchiveUploader:
             os.environ['HTTPS_PROXY'] = args.proxy
 
             # set session proxy for uploading
-            item.session.proxies = {
+            item.session.proxies.update({
                 'http': args.proxy,
                 'https': args.proxy,
-            }
+            })
 
         # get last modification time from file to use as the publication date in archive.org
         mtime = os.path.getmtime(args.file)
