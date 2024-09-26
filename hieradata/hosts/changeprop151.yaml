@@ -56,6 +56,7 @@ changeprop::high_traffic_jobs_config:
     retry_limit: 0
     concurrency: 50
     reenqueue_delay: 3600
+    timeout: 600000
   parsoidCachePrewarm:
     concurrency: 80
   htmlCacheUpdate:
