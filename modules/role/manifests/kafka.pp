@@ -31,7 +31,7 @@ class role::kafka {
     $jmx_opts = "${kafka::broker::monitoring::jmx_opts} ${kafka::params::broker_jmx_opts}"
 
     class { 'kafka::broker':
-        heap_opts => '-Xmx1G -Xms1G',
+        heap_opts => '-Xmx2G -Xms2G',
         jmx_opts  => $jmx_opts,
         config    => {
           # 'allow.everyone.if.no.acl.found'   => 'true',
