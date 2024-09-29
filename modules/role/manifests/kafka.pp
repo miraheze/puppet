@@ -26,13 +26,16 @@ class role::kafka {
     class { 'kafka':
         kafka_version => '2.4.1',
         scala_version => '2.12',
+        heap_opts     => {
+        }
     }
 
     $jmx_opts = "${kafka::broker::monitoring::jmx_opts} ${kafka::params::broker_jmx_opts}"
 
     class { 'kafka::broker':
-        jmx_opts => $jmx_opts,
-        config   => {
+        heap_opts => '-Xmx1G -Xms1G',
+        jmx_opts  => $jmx_opts,
+        config    => {
           # 'allow.everyone.if.no.acl.found'   => 'true',
           # 'authorizer.class.name'            => 'kafka.security.auth.SimpleAclAuthorizer',
             'auto.create.topics.enable'        => 'true',
