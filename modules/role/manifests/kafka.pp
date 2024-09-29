@@ -26,8 +26,6 @@ class role::kafka {
     class { 'kafka':
         kafka_version => '2.4.1',
         scala_version => '2.12',
-        heap_opts     => {
-        }
     }
 
     $jmx_opts = "${kafka::broker::monitoring::jmx_opts} ${kafka::params::broker_jmx_opts}"
