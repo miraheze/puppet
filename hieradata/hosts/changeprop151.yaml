@@ -82,6 +82,9 @@ changeprop::high_traffic_jobs_config:
     concurrency: 3
 
   # These jobs need to be ran with priority so are using their own queues
+  LocalRenameUserJob:
+    disable_delayed_execution: true
+    concurrency: 5
   CreateWikiJob:
     disable_delayed_execution: true
     concurrency: 2
