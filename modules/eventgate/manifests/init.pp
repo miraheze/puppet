@@ -67,11 +67,11 @@ class eventgate {
     file { '/etc/eventgate/config.yaml':
         ensure  => present,
         source  => 'puppet:///modules/eventgate/config.yaml',
-        require => File['/etc/eventgate'],
         require => [
-            Git::Clone['eventgate'],
+            File['/etc/eventgate'],
             Git::Clone['jsonschema']
         ],
+        notify => Service['eventgate'],
     }
 
     systemd::service { 'eventgate':
