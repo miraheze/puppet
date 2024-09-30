@@ -49,7 +49,7 @@ services:
       # /srv/service/schemas/primary is in the eventgate image cloned at build
       # time from https://gerrit.wikimedia.org/r/schemas/event/primary.
       schema_base_uris:
-        - 'file:///srv/service/schemas/event/primary/jsonschema/'
+        - 'file:///srv/jsonschema/jsonschema/'
 
       # These schema URIs will be 'precached' on service startup.
       # They should be resolveable by the URI prefixes in schema_base_uris.
