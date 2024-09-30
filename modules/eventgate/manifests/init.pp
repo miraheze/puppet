@@ -71,7 +71,7 @@ class eventgate {
             File['/etc/eventgate'],
             Git::Clone['jsonschema']
         ],
-        notify => Service['eventgate'],
+        notify  => Service['eventgate'],
     }
 
     systemd::service { 'eventgate':
