@@ -5,7 +5,7 @@ changeprop::videoscaler_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::num_workers: 4
 changeprop::global_new_files_concurrency: 20
 changeprop::semantic_mediawiki_concurrency: 10
-changeprop::low_traffic_concurrency: 50
+changeprop::low_traffic_concurrency: 100
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
@@ -58,7 +58,7 @@ changeprop::high_traffic_jobs_config:
     reenqueue_delay: 3600
     timeout: 600000
   parsoidCachePrewarm:
-    concurrency: 80
+    concurrency: 150
   htmlCacheUpdate:
     concurrency: 10
     # Abandon jobs which root job is more than 1 week long
