@@ -1,7 +1,7 @@
 changeprop::jobqueue: true
-changeprop::jobrunner_host: 'http://10.0.15.118:9006'
-changeprop::import_host: 'http://10.0.15.118:9006'
-changeprop::videoscaler_host: 'http://10.0.15.118:9006'
+changeprop::jobrunner_host: 'http://jobrunner.wikitide.net:9006'
+changeprop::import_host: 'http://jobrunner.wikitide.net:9006'
+changeprop::videoscaler_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::num_workers: 4
 changeprop::global_new_files_concurrency: 20
 changeprop::semantic_mediawiki_concurrency: 10
