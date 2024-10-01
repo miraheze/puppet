@@ -28,6 +28,9 @@ class role::kafka {
         description => 'Regular jobs for running the cleanup script',
         user        => 'zookeeper',
         command     => '/usr/share/zookeeper/bin/zkCleanup.sh -n 10',
+        environment => {
+            'CLASSPATH' => '/etc/zookeeper/conf:/usr/share/java/zookeeper.jar:/usr/share/java/slf4j-log4j12.jar:/usr/share/java/log4j-1.2.jar'
+        },
         interval    => {'start' => 'OnCalendar', 'interval' => '*-*-* 0:10:00'},
         require     => [Class['zookeeper'], Service['zookeeper']],
     }
