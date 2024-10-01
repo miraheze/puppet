@@ -42,6 +42,13 @@ class role::kafka {
 
     $jmx_opts = "${kafka::broker::monitoring::jmx_opts} ${kafka::params::broker_jmx_opts}"
 
+    file { '/var/spool/kafka':
+        ensure => 'directory',
+        owner  => 'kafka',
+        group  => 'kafka',
+        mode   => '0755',
+    }
+
     class { 'kafka::broker':
         heap_opts => '-Xmx2G -Xms2G',
         jmx_opts  => $jmx_opts,
@@ -56,6 +63,7 @@ class role::kafka {
             'delete.topic.enable'              => 'true',
             'group.initial.rebalance.delay.ms' => '10000',
             'listeners'                        => 'PLAINTEXT://:9092',
+            'log.dirs'                         => '/var/spool/kafka',
             'log.message.timestamp.type'       => 'CreateTime',
             'log.retention.hours'              => '168', # 1 week
             'message.max.bytes'                => '4194304',
