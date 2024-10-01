@@ -23,6 +23,15 @@ class role::kafka {
         },
     }
 
+    systemd::timer::job { 'zookeeper-cleanup':
+        ensure      => present,
+        description => 'Regular jobs for running the cleanup script',
+        user        => 'zookeeper',
+        command     => '/usr/share/zookeeper/bin/zkCleanup.sh -n 10',
+        interval    => {'start' => 'OnCalendar', 'interval' => '*-*-* 0:10:00'},
+        require     => [Class['zookeeper'], Service['zookeeper']],
+    }
+
     class { 'kafka':
         kafka_version => '2.4.1',
         scala_version => '2.12',
