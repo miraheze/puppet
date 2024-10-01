@@ -53,8 +53,8 @@ class role::kafka {
         heap_opts => '-Xmx2G -Xms2G',
         jmx_opts  => $jmx_opts,
         config    => {
-          # 'allow.everyone.if.no.acl.found'   => 'true',
           # 'authorizer.class.name'            => 'kafka.security.auth.SimpleAclAuthorizer',
+            'allow.everyone.if.no.acl.found'   => true,
             'auto.create.topics.enable'        => 'true',
             'auto_leader_rebalance_enable'     => 'true',
             'broker.id'                        => '0',
