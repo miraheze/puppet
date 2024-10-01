@@ -3,9 +3,9 @@ changeprop::jobrunner_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::import_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::videoscaler_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::num_workers: 8
-changeprop::global_new_files_concurrency: 20
+changeprop::global_new_files_concurrency: 40
 changeprop::semantic_mediawiki_concurrency: 10
-changeprop::low_traffic_concurrency: 100
+changeprop::low_traffic_concurrency: 150
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
@@ -54,17 +54,15 @@ changeprop::high_traffic_jobs_config:
     concurrency: 5
   cirrusSearchElasticaWrite:
     retry_limit: 0
-    concurrency: 50
+    concurrency: 100
     reenqueue_delay: 3600
     timeout: 600000
   parsoidCachePrewarm:
     concurrency: 150
   htmlCacheUpdate:
-    concurrency: 10
-    # Abandon jobs which root job is more than 1 week long
-    root_claim_ttl: 604800
-  refreshLinks:
     concurrency: 30
+  refreshLinks:
+    concurrency: 50
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
