@@ -3,8 +3,7 @@ changeprop::jobrunner_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::import_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::videoscaler_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::num_workers: 8
-changeprop::global_new_files_concurrency: 40
-changeprop::semantic_mediawiki_concurrency: 10
+changeprop::semantic_mediawiki_concurrency: 30
 changeprop::low_traffic_concurrency: 150
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
@@ -91,8 +90,6 @@ changeprop::high_traffic_jobs_config:
   RemovePIIJob:
     disable_delayed_execution: true
     concurrency: 2
-
-changeprop::import_jobs_config:
   DataDumpGenerateJob:
     disable_delayed_execution: true
     concurrency: 1
@@ -109,6 +106,12 @@ changeprop::import_jobs_config:
     concurrency: 1
   RottenLinksJob:
     concurrency: 5
+  GlobalNewFilesDeleteJob:
+    concurrency: 30
+  GlobalNewFilesInsertJob:
+    concurrency: 30
+  GlobalNewFilesMoveJob:
+    concurrency: 30
 
 changeprop::videoscaler_jobs_config:
   webVideoTranscode:
@@ -119,11 +122,6 @@ changeprop::videoscaler_jobs_config:
     concurrency: 3
     timeout: 86400000
     retry_limit: 1
-
-changeprop::global_new_files_jobs:
-  - GlobalNewFilesDeleteJob
-  - GlobalNewFilesInsertJob
-  - GlobalNewFilesMoveJob
 
 changeprop::semantic_mediawiki_jobs:
   - SMWRefreshJob

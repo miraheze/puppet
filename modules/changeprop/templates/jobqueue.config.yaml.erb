@@ -77,22 +77,6 @@ spec: &spec
                   agentOptions:
                     keepAlive: true
 <% end -%>
-<% @import_jobs_config.each do |topic, topic_config| -%>
-              <%= topic %>:
-                topic: 'mediawiki.job.<%= topic %>'
-<% topic_config.each do |key, value| -%>
-                <%= key %>: <%= value %>
-<% end -%>
-                exec:
-                  method: post
-                  uri: '<%= @import_host %>/rpc/RunSingleJob.php'
-                  headers:
-                    content-type: 'application/json'
-                    host: '{{message.meta.domain}}'
-                  body: '{{globals.message}}'
-                  agentOptions:
-                    keepAlive: true
-<% end -%>
 <% @videoscaler_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
@@ -134,21 +118,6 @@ spec: &spec
                   agentOptions:
                     keepAlive: true
 <% end -%>
-              global_new_files_jobs:
-                concurrency: <%= @global_new_files_concurrency %>
-                topics:
-<% @global_new_files_jobs.each do |job| -%>
-                  - 'mediawiki.job.<%= job %>'
-<% end -%>
-                exec:
-                  method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
-                  headers:
-                    content-type: 'application/json'
-                    host: '{{message.meta.domain}}'
-                  body: '{{globals.message}}'
-                  agentOptions:
-                    keepAlive: true
               semantic_mediawiki_jobs:
                 concurrency: <%= @semantic_mediawiki_concurrency %>
                 topics:
@@ -174,16 +143,10 @@ spec: &spec
 <% @high_traffic_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
-<% @import_jobs_config.keys.each do |job| -%>
-                  - 'mediawiki.job.<%= job %>'
-<% end -%>
 <% @videoscaler_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @partitioned_jobs_config.keys.each do |job| -%>
-                  - 'mediawiki.job.<%= job %>'
-<% end -%>
-<% @global_new_files_jobs.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @semantic_mediawiki_jobs.each do |job| -%>
