@@ -183,9 +183,6 @@ spec: &spec
 <% @partitioned_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
-<% @global_new_files_jobs.each do |job| -%>
-                  - 'mediawiki.job.<%= job %>'
-<% end -%>
 <% @semantic_mediawiki_jobs.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
