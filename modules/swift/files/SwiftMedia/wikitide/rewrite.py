@@ -303,6 +303,16 @@ class _WikiTideRewriteContext(WSGIContext):
                 zone = 'render'
                 obj = match.group('path')
 
+        # UserProfileV2 avatars
+        if match is None:
+            # /scratchpadwiki/upv2avatars/avatar_104.png
+            match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>upv2avatars)/(?P<path>.+)$', req.path)
+            if match:
+                proj = match.group('proj')
+                repo = 'upv2avatars'
+                zone = ''
+                obj = match.group('path')
+
         if match is None:
             match = re.match(r'^/monitoring/(?P<what>.+)$', req.path)
             if match:
