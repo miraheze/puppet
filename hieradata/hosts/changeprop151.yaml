@@ -2,7 +2,7 @@ changeprop::jobqueue: true
 changeprop::jobrunner_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::import_host: 'http://jobrunner.wikitide.net:9006'
 changeprop::videoscaler_host: 'http://jobrunner.wikitide.net:9006'
-changeprop::num_workers: 8
+changeprop::num_workers: 16
 changeprop::semantic_mediawiki_concurrency: 30
 changeprop::low_traffic_concurrency: 150
 changeprop::high_traffic_jobs_config:
