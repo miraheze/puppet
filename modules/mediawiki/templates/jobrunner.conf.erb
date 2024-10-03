@@ -60,6 +60,9 @@
     ServerAlias <%= @facts['networking']['fqdn'] %>
     Timeout 86402
     DocumentRoot "/srv/mediawiki"
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/localcerts/jobrunner.wikitide.net.crt
+    SSLCertificateKeyFile /etc/ssl/private/jobrunner.wikitide.net.key;
     RewriteEngine On
     <Directory /srv/mediawiki>
        Require all granted
