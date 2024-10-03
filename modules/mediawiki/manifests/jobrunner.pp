@@ -36,6 +36,7 @@ class mediawiki::jobrunner {
             'mime',
             'rewrite',
             'setenvif',
+            'ssl',
             'proxy_fcgi',
         ]
     }
