@@ -8,6 +8,20 @@ class mediawiki::jobrunner {
     $local_only_port = 9006
     $php_fpm_sock = 'php/fpm-www.sock'
 
+    # Add headers lost by mod_proxy_fastcgi
+    # The apache module doesn't pass along to the fastcgi appserver
+    # a few headers, like Content-Type and Content-Length.
+    # We need to add them back here.
+    ::httpd::conf { 'fcgi_headers':
+        source   => 'puppet:///modules/mediawiki/fcgi_headers.conf',
+        priority => 0,
+    }
+    # Declare the proxies explicitly with retry=0
+    httpd::conf { 'fcgi_proxies':
+        ensure  => present,
+        content => template('mediawiki/fcgi_proxies.conf.erb')
+    }
+
     class { 'httpd':
         period  => 'daily',
         rotate  => 7,
