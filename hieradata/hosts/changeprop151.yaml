@@ -95,7 +95,7 @@ changeprop::high_traffic_jobs_config:
   GlobalNewFilesMoveJob:
     concurrency: 30
 
-changeprop::high_traffic_jobs_config:
+changeprop::high_traffic_high_timeout_jobs_config:
   cirrusSearchElasticaWrite:
     retry_limit: 0
     concurrency: 100
