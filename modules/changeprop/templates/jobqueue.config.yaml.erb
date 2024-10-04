@@ -92,6 +92,7 @@ spec: &spec
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
+<% end -%>
 <% @videoscaler_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
