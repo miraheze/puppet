@@ -12,7 +12,7 @@ define role::burrow(
         zookeeper_hosts    => [ 'localhost' ],
         zookeeper_path     => '/kafka/main',
         kafka_cluster_name => 'main',
-        kafka_brokers      => [ 'localhost' ]
+        kafka_brokers      => [ 'localhost' ],
         lagcheck_intervals => 100,
         httpserver_port    => 8100,
     }
