@@ -13,6 +13,12 @@ class role::burrow {
         kafka_brokers      => [ 'localhost' ],
         lagcheck_intervals => 100,
         httpserver_port    => 8100,
+
+        # Uneeded right now
+        alert_whitelist    => undef,
+        smtp_server        => undef,
+        from_email         => undef,
+        to_email           => undef,
     }
 
     prometheus::exporter::burrow_exporter { 'main':
