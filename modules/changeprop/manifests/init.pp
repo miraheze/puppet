@@ -3,11 +3,13 @@
 class changeprop (
     $broker_list                    = lookup('changeprop::broker_list', {'default_value' => '10.0.18.146:9092'}),
     $jobrunner_host                 = lookup('changeprop::jobrunner_host', {'default_value' => 'http://localhost:4063'}),
+    $jobrunner_host                 = lookup('changeprop::jobrunner_high_timeout_host', {'default_value' => 'http://localhost:4063'}),
     $videoscaler_host               = lookup('changeprop::videoscaler_host', {'default_value' => 'http://localhost:4063'}),
     $realm                          = lookup('changeprop::realm', {'default_value' => 'production'}),
     $proxy                          = lookup('changeprop::proxy', {'default_value' => ''}),
     $num_workers                    = lookup('changeprop::num_workers', {'default_value' => 1}),
     $high_traffic_jobs_config       = lookup('changeprop::high_traffic_jobs_config', {'default_value' => {}}),
+    $high_traffic_jobs_config       = lookup('changeprop::high_traffic_high_timeout_jobs_config', {'default_value' => {}}),
     $videoscaler_jobs_config        = lookup('changeprop::videoscaler_jobs_config', {'default_value' => {}}),
     $partitioned_jobs_config        = lookup('changeprop::partitioned_jobs_config', {'default_value' => {}}),
     $semantic_mediawiki_jobs        = lookup('changeprop::semantic_mediawiki_jobs', {'default_value' => {}}),

@@ -1,7 +1,7 @@
 changeprop::jobqueue: true
 changeprop::jobrunner_host: 'http://jobrunner.wikitide.net:9006'
-changeprop::import_host: 'http://jobrunner.wikitide.net:9006'
-changeprop::videoscaler_host: 'http://jobrunner.wikitide.net:9006'
+changeprop::jobrunner_high_timeout_host: 'http://jobrunner.wikitide.net:9006'
+changeprop::videoscaler_host: 'http://videoscaler.wikitide.net:9006'
 changeprop::num_workers: 8
 changeprop::semantic_mediawiki_concurrency: 30
 changeprop::low_traffic_concurrency: 150
@@ -51,11 +51,6 @@ changeprop::high_traffic_jobs_config:
   cirrusSearchOtherIndex:
     retry_limit: 0
     concurrency: 5
-  cirrusSearchElasticaWrite:
-    retry_limit: 0
-    concurrency: 100
-    reenqueue_delay: 3600
-    timeout: 600000
   parsoidCachePrewarm:
     concurrency: 200
   htmlCacheUpdate:
@@ -83,22 +78,9 @@ changeprop::high_traffic_jobs_config:
   CreateWikiJob:
     disable_delayed_execution: true
     concurrency: 2
-  NamespaceMigrationJob:
-    disable_delayed_execution: true
-    concurrency: 2
-    timeout: 9000000
   RemovePIIJob:
     disable_delayed_execution: true
     concurrency: 2
-  DataDumpGenerateJob:
-    disable_delayed_execution: true
-    concurrency: 1
-    timeout: 86400000
-  ImportDumpJob:
-    disable_delayed_execution: true
-    retry_limit: 0
-    concurrency: 1
-    timeout: 259200000
   ImportDumpNotifyJob:
     disable_delayed_execution: true
     concurrency: 1
@@ -112,6 +94,26 @@ changeprop::high_traffic_jobs_config:
     concurrency: 30
   GlobalNewFilesMoveJob:
     concurrency: 30
+
+changeprop::high_traffic_high_timeout_jobs_config:
+  cirrusSearchElasticaWrite:
+    retry_limit: 0
+    concurrency: 100
+    reenqueue_delay: 3600
+    timeout: 600000
+  NamespaceMigrationJob:
+    disable_delayed_execution: true
+    concurrency: 2
+    timeout: 9000000
+  DataDumpGenerateJob:
+    disable_delayed_execution: true
+    concurrency: 1
+    timeout: 86400000
+  ImportDumpJob:
+    disable_delayed_execution: true
+    retry_limit: 0
+    concurrency: 1
+    timeout: 259200000
 
 changeprop::videoscaler_jobs_config:
   webVideoTranscode:
