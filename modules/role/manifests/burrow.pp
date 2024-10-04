@@ -15,7 +15,7 @@ class role::burrow {
         httpserver_port    => 8100,
     }
 
-    prometheus::burrow_exporter { 'main':
+    prometheus::exporter::burrow_exporter { 'main':
         burrow_addr  => 'localhost:8100',
         metrics_addr => '0.0.0.0:9500'
     }
