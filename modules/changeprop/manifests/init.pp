@@ -3,7 +3,7 @@
 class changeprop (
     $broker_list                    = lookup('changeprop::broker_list', {'default_value' => '10.0.18.146:9092'}),
     $jobrunner_host                 = lookup('changeprop::jobrunner_host', {'default_value' => 'http://localhost:4063'}),
-    $jobrunner_host                 = lookup('changeprop::jobrunner_high_timeout_host', {'default_value' => 'http://localhost:4063'}),
+    $jobrunner_high_timeout_host    = lookup('changeprop::jobrunner_high_timeout_host', {'default_value' => 'http://localhost:4063'}),
     $videoscaler_host               = lookup('changeprop::videoscaler_host', {'default_value' => 'http://localhost:4063'}),
     $realm                          = lookup('changeprop::realm', {'default_value' => 'production'}),
     $proxy                          = lookup('changeprop::proxy', {'default_value' => ''}),
