@@ -1,4 +1,4 @@
-# == Define: prometheus::burrow_exporter
+# == Define: prometheus::exporter::burrow_exporter
 #
 # Prometheus exporter for the Kafka Burrow Consumer lag monitoring daemon.
 #
@@ -20,7 +20,7 @@
 #  Burrow API version to use.
 #  Default: 3
 #
-define prometheus::burrow_exporter(
+define prometheus::exporter::burrow_exporter(
     $burrow_addr = 'localhost:8000',
     $metrics_addr = '0.0.0.0:9000',
     $interval = 30,
