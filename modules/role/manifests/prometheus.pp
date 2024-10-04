@@ -305,6 +305,23 @@ class role::prometheus {
         port   => 9112,
     }
 
+    $kafka_burrow_jobs = [
+      {
+        'job_name'        => 'burrow',
+        'scheme'          => 'http',
+        'file_sd_configs' => [
+          { 'files' => [ "${targets_path}/burrow_*.yaml" ]}
+        ],
+      },
+    ]
+
+    prometheus::class_config{ 'burrow_main':
+        dest       => '/etc/prometheus/targets/burrow_main.yaml',
+        class_name => 'role::kafka::monitoring_bullseye',
+        module => 'Role::Burrow',
+        port       => 9500,
+    }
+
     $eventgate_job = [
         {
             'job_name' => 'eventgate',
