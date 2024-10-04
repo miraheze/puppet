@@ -12,8 +12,8 @@ mediawiki::use_cpjobqueue: true
 
 role::mediawiki::use_strict_firewall: true
 
-mediawiki::php::fpm::fpm_min_child: 20
-mediawiki::php::emergency_restart_threshold: 12
+mediawiki::php::fpm::fpm_min_child: 30
+mediawiki::php::emergency_restart_threshold: 15
 mediawiki::php::fpm::fpm_workers_multiplier: 1.0
 mediawiki::php::request_timeout: 86400
 mediawiki::php::apc_shm_size: 4096M
