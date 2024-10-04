@@ -315,7 +315,7 @@ class role::prometheus {
       },
     ]
 
-    prometheus::class_config{ 'burrow_main':
+    prometheus::class{ 'burrow_main':
         dest       => '/etc/prometheus/targets/burrow_main.yaml',
         module     => 'Role::Burrow',
         port       => 9500,
