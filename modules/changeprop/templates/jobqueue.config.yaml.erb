@@ -77,6 +77,21 @@ spec: &spec
                   agentOptions:
                     keepAlive: true
 <% end -%>
+<% @high_traffic_high_timeout_jobs_config.each do |topic, topic_config| -%>
+              <%= topic %>:
+                topic: 'mediawiki.job.<%= topic %>'
+<% topic_config.each do |key, value| -%>
+                <%= key %>: <%= value %>
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_high_timeout_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    host: '{{message.meta.domain}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
 <% @videoscaler_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
@@ -141,6 +156,9 @@ spec: &spec
                 # Don't execute anything that's covered by different rules
                 exclude_topics:
 <% @high_traffic_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @high_traffic_high_timeout_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @videoscaler_jobs_config.keys.each do |job| -%>
