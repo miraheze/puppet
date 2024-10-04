@@ -318,7 +318,7 @@ class role::prometheus {
     prometheus::class_config{ 'burrow_main':
         dest       => '/etc/prometheus/targets/burrow_main.yaml',
         class_name => 'role::kafka::monitoring_bullseye',
-        module => 'Role::Burrow',
+        module     => 'Role::Burrow',
         port       => 9500,
     }
 
