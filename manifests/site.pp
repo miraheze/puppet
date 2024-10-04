@@ -59,6 +59,7 @@ node 'jobchron171.wikitide.net' {
 node 'kafka181.wikitide.net' {
     include base
     include role::kafka
+    include role::burrow
 }
 
 node 'ldap171.wikitide.net' {

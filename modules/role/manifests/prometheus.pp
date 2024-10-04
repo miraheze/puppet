@@ -305,6 +305,22 @@ class role::prometheus {
         port   => 9112,
     }
 
+    $kafka_burrow_jobs = [
+      {
+        'job_name'        => 'burrow',
+        'scheme'          => 'http',
+        'file_sd_configs' => [
+          { 'files' => [ 'targets/burrow_*.yaml' ]}
+        ],
+      },
+    ]
+
+    prometheus::class{ 'burrow_main':
+        dest   => '/etc/prometheus/targets/burrow_main.yaml',
+        module => 'Role::Burrow',
+        port   => 9500,
+    }
+
     $eventgate_job = [
         {
             'job_name' => 'eventgate',
@@ -331,7 +347,7 @@ class role::prometheus {
             $apache_job, $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
             $varnish_job, $cadvisor_job, $pushgateway_job, $kafka_job,
-            $eventgate_job
+            $eventgate_job, $kafka_burrow_jobs
         ].flatten,
     }
 
