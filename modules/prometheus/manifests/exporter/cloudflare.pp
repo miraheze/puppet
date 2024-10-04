@@ -1,4 +1,4 @@
-class prometheus::exporter::cloudflare { 
+class prometheus::exporter::cloudflare {
     $cf_api_token = lookup('passwords::cloudflare::api_token')
 
     file { '/etc/default/prometheus-cloudflare-exporter':
