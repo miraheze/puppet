@@ -347,7 +347,7 @@ class role::prometheus {
             $apache_job, $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
             $varnish_job, $cadvisor_job, $pushgateway_job, $kafka_job,
-            $eventgate_job
+            $eventgate_job, $kafka_burrow_jobs
         ].flatten,
     }
 
