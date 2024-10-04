@@ -26,6 +26,7 @@ define prometheus::exporter::burrow_exporter(
     $interval = 30,
     $api_version = 3,
 ) {
+    stdlib::ensure_packages('daemon')
 
     file { '/opt/prometheus-burrow-exporter_0.0.5-1_amd64.deb':
         ensure => present,
@@ -36,7 +37,10 @@ define prometheus::exporter::burrow_exporter(
         ensure   => installed,
         provider => dpkg,
         source   => '/opt/prometheus-burrow-exporter_0.0.5-1_amd64.deb',
-        require  => File['/opt/prometheus-burrow-exporter_0.0.5-1_amd64.deb'],
+        require  => [
+            File['/opt/prometheus-burrow-exporter_0.0.5-1_amd64.deb'],
+            Package['daemon'],
+        ],
     }
 
     $service_name = "prometheus-burrow-exporter@${title}"
