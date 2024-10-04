@@ -19,7 +19,7 @@ define role::burrow(
 
     prometheus::burrow_exporter { 'main':
         burrow_addr  => 'localhost:8100',
-        metrics_addr => 'localhost:9500'
+        metrics_addr => '0.0.0.0:9500'
     }
 
     $firewall_rules_str = join(
