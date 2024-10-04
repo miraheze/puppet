@@ -6,7 +6,7 @@ class prometheus::exporter::cloudflare {
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
-        content => 'ARGS="-metrics_path='' -cf_api_token='${$cf_api_token}' -listen=':9119'',
+        content => 'ARGS="-metrics_path='' -cf_api_token='${$cf_api_token}' -listen=':9119'",
     }
 
     systemd::service { 'prometheus-cloudflare-exporter':
