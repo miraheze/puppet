@@ -1,6 +1,6 @@
 changeprop::jobqueue: true
 changeprop::jobrunner_host: 'http://jobrunner.wikitide.net:9006'
-changeprop::jobrunner_high_timeout_host: 'http://jobrunner.wikitide.net:9006'
+changeprop::jobrunner_high_timeout_host: 'http://jobrunner-high.wikitide.net:9006'
 changeprop::videoscaler_host: 'http://videoscaler.wikitide.net:9006'
 changeprop::num_workers: 8
 changeprop::semantic_mediawiki_concurrency: 30
