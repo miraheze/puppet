@@ -316,9 +316,9 @@ class role::prometheus {
     ]
 
     prometheus::class{ 'burrow_main':
-        dest       => '/etc/prometheus/targets/burrow_main.yaml',
-        module     => 'Role::Burrow',
-        port       => 9500,
+        dest   => '/etc/prometheus/targets/burrow_main.yaml',
+        module => 'Role::Burrow',
+        port   => 9500,
     }
 
     $eventgate_job = [
