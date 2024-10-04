@@ -58,7 +58,7 @@
 <VirtualHost *:<%= @local_only_port %>>
     ServerName videoscaler.wikitide.net
     ServerAlias <%= @facts['networking']['fqdn'] %>
-    Timeout 259202
+    Timeout 86402
     DocumentRoot "/srv/mediawiki"
     RewriteEngine On
     <Directory /srv/mediawiki>
