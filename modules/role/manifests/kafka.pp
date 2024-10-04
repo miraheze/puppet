@@ -40,7 +40,7 @@ class role::kafka {
         scala_version => '2.12',
     }
 
-    $jmx_opts = "${kafka::broker::monitoring::jmx_opts} ${kafka::params::broker_jmx_opts}"
+    $jmx_opts = "-server -XX:MetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M -XX:MinMetaspaceFreeRatio=50 -XX:MaxMetaspaceFreeRatio=80 ${kafka::broker::monitoring::jmx_opts} ${kafka::params::broker_jmx_opts}"
 
     file { '/var/spool/kafka':
         ensure => 'directory',
