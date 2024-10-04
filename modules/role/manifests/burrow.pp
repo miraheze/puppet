@@ -51,4 +51,10 @@ class role::burrow {
         port   => 8100,
         srange => "(${firewall_rules_str})",
     }
+
+    ferm::service { 'burrow-main-exporter':
+        proto  => 'tcp',
+        port   => 9500,
+        srange => "(${firewall_rules_str})",
+    }
 }
