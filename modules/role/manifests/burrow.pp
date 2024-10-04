@@ -7,31 +7,6 @@
 define role::burrow(
     $monitoring_config,
 ) {
-    $config = {
-      'name'      => 'main',
-      'brokers'   => {
-        'hash'       => brokers,
-        # array of broker hostnames without port.  TODO: change this to use host:port?
-        'array'      => brokers.keys.sort,
-        # string list of comma-separated host:port broker
-        'string'     => brokers.map { |host, conf| "#{host}:#{conf['port']}" }.sort.join(','),
-
-        # array host:ssl_port brokers
-        'ssl_array'  => brokers.map { |host, conf| "#{host}:#{conf['ssl_port']}" }.sort,
-        # string list of comma-separated host:ssl_port brokers
-        'ssl_string' => brokers.map { |host, conf| "#{host}:#{conf['ssl_port']}" }.sort.join(','),
-
-        'size'       => brokers.keys.size
-      },
-      'jmx_port'  => jmx_port,
-      'zookeeper' => {
-        'name'   => zk_cluster_name,
-        'hosts'  => zk_hosts,
-        'chroot' => "/kafka/#{cluster_name}",
-        'url'    => "#{zk_hosts.join(',')}/kafka/#{cluster_name}"
-      }
-    }
-
 
     burrow { 'main':
         zookeeper_hosts    => [ 'localhost' ],
