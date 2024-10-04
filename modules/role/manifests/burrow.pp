@@ -4,9 +4,7 @@
 # Consumer offset lag monitoring tool template for a generic Kafka cluster.
 # Compatible only with burrow >= 1.0.
 #
-define role::burrow(
-    $monitoring_config,
-) {
+class role::burrow {
 
     burrow { 'main':
         zookeeper_hosts    => [ 'localhost' ],
@@ -42,7 +40,7 @@ define role::burrow(
     )
 
     # Burrow offers a HTTP REST API
-    ferm::service { "burrow-${title}":
+    ferm::service { 'burrow-main':
         proto  => 'tcp',
         port   => 8100,
         srange  => "(${firewall_rules_str})",
