@@ -310,7 +310,7 @@ class role::prometheus {
         'job_name'        => 'burrow',
         'scheme'          => 'http',
         'file_sd_configs' => [
-          { 'files' => [ "${targets_path}/burrow_*.yaml" ]}
+          { 'files' => [ 'targets/burrow_*.yaml' ]}
         ],
       },
     ]
