@@ -63,6 +63,8 @@ class role::icinga2 (
     String $ldap_password                   = lookup('passwords::ldap_password'),
     Optional[String] $icinga2_api_bind_host = lookup('icinga2_api_bind_host', {'default_value' => undef}),
 ) {
+    include prometheus::exporter::cloudflare
+
     class { '::monitoring':
         db_host               => $icinga2_db_host,
         db_name               => $icinga2_db_name,

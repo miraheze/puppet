@@ -180,6 +180,23 @@ class role::prometheus {
         port   => 9117
     }
 
+    $cloudflare_job = [
+        {
+            'job_name' => 'cloudflare',
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/cloudflare.yaml' ]
+                }
+            ]
+        }
+    ]
+
+    prometheus::class { 'cloudflare':
+        dest   => '/etc/prometheus/targets/cloudflare.yaml',
+        module => 'Prometheus::Exporter::Cloudflare',
+        port   => 9119
+    }
+
     $puppetserver_job = [
         {
             'job_name' => 'puppetserver',
@@ -347,7 +364,7 @@ class role::prometheus {
             $apache_job, $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
             $varnish_job, $cadvisor_job, $pushgateway_job, $kafka_job,
-            $eventgate_job, $kafka_burrow_jobs
+            $eventgate_job, $kafka_burrow_jobs, $cloudflare_job
         ].flatten,
     }
 
