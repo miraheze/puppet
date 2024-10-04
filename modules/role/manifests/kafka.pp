@@ -68,6 +68,7 @@ class role::kafka {
             'log.retention.hours'              => '168', # 1 week
             'message.max.bytes'                => '4194304',
             'num.io.threads'                   => '4',
+            'num.partitions'                   => '6',
             'offsets.retention.minutes'        => '10080', # 1 week
             'offsets.topic.replication.factor' => '1',
             'replica.fetch.max.bytes'          => '4194304',
