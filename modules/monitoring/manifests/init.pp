@@ -208,6 +208,11 @@ class monitoring (
     $redirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
     $sslcerts = $ssl + $redirects
 
+    $servers = query_nodes('Class[Role::Mediawiki]')
+        .flatten()
+        .unique()
+        .sort()
+
     file { '/etc/icinga2/conf.d/ssl.conf':
         ensure  => 'present',
         content => template('monitoring/ssl.conf.erb'),
