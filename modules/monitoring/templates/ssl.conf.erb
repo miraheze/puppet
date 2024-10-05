@@ -27,6 +27,7 @@ apply Service "m.miraheze.org - LetsEncrypt" {
     vars.time = "30"
     assign where "sslchecks" in host.groups
   }
+<% end -%>
 
 <% @sslcerts.each_pair do | name, property | -%>
 apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
