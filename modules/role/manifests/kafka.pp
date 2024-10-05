@@ -73,6 +73,7 @@ class role::kafka {
             'num.recovery.threads.per.data.dir' => '4',
             'offsets.retention.minutes'         => '10080', # 1 week
             'offsets.topic.replication.factor'  => '1',
+            'queued.max.requests'               => '1000',
             'replica.fetch.max.bytes'           => '4194304',
             'socket.receive.buffer.bytes'       => '1048576',
             'socket.send.buffer.bytes'          => '1048576',
