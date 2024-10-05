@@ -78,9 +78,6 @@ changeprop::high_traffic_jobs_config:
   CreateWikiJob:
     disable_delayed_execution: true
     concurrency: 2
-  RemovePIIJob:
-    disable_delayed_execution: true
-    concurrency: 2
   ImportDumpNotifyJob:
     disable_delayed_execution: true
     concurrency: 1
@@ -114,6 +111,10 @@ changeprop::high_traffic_high_timeout_jobs_config:
     retry_limit: 0
     concurrency: 1
     timeout: 259200000
+  RemovePIIJob:
+    disable_delayed_execution: true
+    concurrency: 2
+    timeout: 86400000
 
 changeprop::videoscaler_jobs_config:
   webVideoTranscode:
