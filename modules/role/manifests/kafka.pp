@@ -52,6 +52,7 @@ class role::kafka {
     class { 'kafka::broker':
         heap_opts => '-Xmx2G -Xms2G',
         jmx_opts  => $jmx_opts,
+        limit_nofile => '128000',
         config    => {
           # 'authorizer.class.name'             => 'kafka.security.auth.SimpleAclAuthorizer',
             'allow.everyone.if.no.acl.found'    => true,
