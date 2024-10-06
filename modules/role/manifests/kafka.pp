@@ -70,7 +70,7 @@ class role::kafka {
             'message.max.bytes'                 => '4194304',
             'num.io.threads'                    => '12',
             'num.network.threads'               => '6',
-            'num.partitions'                    => '10',
+            'num.partitions'                    => '1',
             'num.recovery.threads.per.data.dir' => '4',
             'offsets.retention.minutes'         => '10080', # 1 week
             'offsets.topic.replication.factor'  => '1',
