@@ -6,13 +6,13 @@ class prometheus::exporter::cloudflare {
         mode    => '0444',
         owner   => 'root',
         group   => 'root',
-        content => "ARGS=\"--metrics_path '' --cf_api_token='${cf_api_token}' --listen :9119\"",
+        content => "ARGS=\"--cf_api_token='${cf_api_token}' --listen :9119\"",
         notify  => Service['prometheus-cloudflare-exporter'],
     }
 
 
     systemd::service { 'prometheus-cloudflare-exporter':
-        ensure  => absent,
+        ensure  => present,
         content => systemd_template('cloudflare'),
     }
 
