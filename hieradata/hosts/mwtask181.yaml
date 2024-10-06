@@ -1,0 +1,2 @@
+mediawiki::is_canary: true
+mediawiki::use_staging: true
