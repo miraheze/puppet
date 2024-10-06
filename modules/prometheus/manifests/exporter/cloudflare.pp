@@ -12,7 +12,7 @@ class prometheus::exporter::cloudflare {
 
 
     systemd::service { 'prometheus-cloudflare-exporter':
-        ensure  => present,
+        ensure  => absent,
         content => systemd_template('cloudflare'),
     }
 
