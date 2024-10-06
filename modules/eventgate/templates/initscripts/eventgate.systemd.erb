@@ -5,15 +5,14 @@ Wants=local-fs.target network.target
 After=local-fs.target network.target
 
 [Service]
-Type=simple
 User=eventgate
 Group=eventgate
 SyslogIdentifier=eventgate
 WorkingDirectory=/srv/eventgate
 ExecStart=/usr/bin/node /srv/eventgate/src/server.js -c /etc/eventgate/config.yaml
-KillMode=process
-Restart=on-success
 Restart=always
+RestartSec=2s
+TimeoutStopSec=60
 PrivateTmp=true
 StandardOutput=syslog
 
