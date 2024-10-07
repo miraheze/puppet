@@ -178,7 +178,7 @@ spec: &spec
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
-                    x-request-id: x-request-id: '{{globals.message.meta.request_id}}'
+                    x-request-id: '{{globals.message.meta.request_id}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
