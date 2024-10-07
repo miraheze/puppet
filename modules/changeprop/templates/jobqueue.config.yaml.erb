@@ -73,6 +73,7 @@ spec: &spec
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
+                    x-request-id: '{{ `{{globals.message.meta.request_id}}` }}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -88,6 +89,7 @@ spec: &spec
                   uri: '<%= @jobrunner_high_timeout_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
+                    x-request-id: '{{ `{{globals.message.meta.request_id}}` }}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -103,6 +105,7 @@ spec: &spec
                   uri: '<%= @videoscaler_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
+                    x-request-id: '{{ `{{globals.message.meta.request_id}}` }}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -116,6 +119,7 @@ spec: &spec
                   uri: '/sys/partition/<%= options['partitioner_kind'] %>/'
                   headers:
                     content-type: application/json
+                    x-request-id: '{{ `{{globals.message.meta.request_id}}` }}'
                   body: '{{globals.message}}'
               <%= topic %>:
                 topic: 'cpjobqueue.partitioned.mediawiki.job.<%= topic %>'
@@ -127,6 +131,7 @@ spec: &spec
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: application/json
+                    x-request-id: '{{ `{{globals.message.meta.request_id}}` }}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -142,6 +147,7 @@ spec: &spec
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
+                    x-request-id: '{{ `{{globals.message.meta.request_id}}` }}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -172,6 +178,7 @@ spec: &spec
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
+                    x-request-id: '{{ `{{globals.message.meta.request_id}}` }}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
