@@ -64,6 +64,7 @@ class role::kafka {
             'delete.topic.enable'               => 'true',
             'group.initial.rebalance.delay.ms'  => '10000',
             'listeners'                         => 'PLAINTEXT://:9092',
+            'advertised.listeners'              => '10.0.18.146:9092',
             'log.dirs'                          => '/var/spool/kafka',
             'log.message.timestamp.type'        => 'CreateTime',
             'log.retention.hours'               => '168', # 1 week
