@@ -10,6 +10,7 @@ Group=changeprop
 SyslogIdentifier=changeprop
 WorkingDirectory=/srv/changeprop
 ExecStart=/usr/bin/node /srv/changeprop/src/server.js -c /etc/changeprop/config.yaml
+Environment="UV_THREADPOOL_SIZE=128"
 Restart=always
 RestartSec=2s
 TimeoutStopSec=60
