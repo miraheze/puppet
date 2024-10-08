@@ -3,13 +3,13 @@ changeprop::jobrunner_host: 'https://jobrunner.wikitide.net:9006'
 changeprop::jobrunner_high_timeout_host: 'https://jobrunner-high.wikitide.net:9006'
 changeprop::videoscaler_host: 'https://videoscaler.wikitide.net:9006'
 changeprop::num_workers: 8
-changeprop::semantic_mediawiki_concurrency: 30
-changeprop::low_traffic_concurrency: 150
+changeprop::semantic_mediawiki_concurrency: 10
+changeprop::low_traffic_concurrency: 20
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
   categoryMembershipChange:
-    concurrency: 50
+    concurrency: 20
   # CNDPurge is quite low-volume, but it uses delayed execution,
   # so avoid putting it together with other low-volume jobs so that it doesn't
   # block execution for others.
@@ -18,7 +18,7 @@ changeprop::high_traffic_jobs_config:
   # RecordLinks is normally low-volume, but could have big spikes
   # when maintenance scripts are run. Elevated concurrency
   RecordLintJob:
-    concurrency: 50
+    concurrency: 20
     consumer_batch_size: 10
   wikibase-addUsagesForPage:
     concurrency: 5
@@ -52,11 +52,11 @@ changeprop::high_traffic_jobs_config:
     retry_limit: 0
     concurrency: 5
   parsoidCachePrewarm:
-    concurrency: 200
+    concurrency: 20
   htmlCacheUpdate:
-    concurrency: 30
+    concurrency: 10
   refreshLinks:
-    concurrency: 50
+    concurrency: 20
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
