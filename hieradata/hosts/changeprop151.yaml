@@ -4,10 +4,10 @@ changeprop::jobrunner_high_timeout_host: 'https://jobrunner-high.wikitide.net:90
 changeprop::videoscaler_host: 'https://videoscaler.wikitide.net:9006'
 changeprop::num_workers: 8
 changeprop::semantic_mediawiki_concurrency: 30
-changeprop::low_traffic_concurrency: 50
+changeprop::low_traffic_concurrency: 100
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
-    concurrency: 5
+    concurrency: 10
   categoryMembershipChange:
     concurrency: 50
   # CNDPurge is quite low-volume, but it uses delayed execution,
