@@ -10,6 +10,11 @@ Group=changeprop
 SyslogIdentifier=changeprop
 WorkingDirectory=/srv/changeprop
 ExecStart=/usr/bin/node /srv/changeprop/src/server.js -c /etc/changeprop/config.yaml
+# Some how we need this otherwise we get connect timeouts
+Environment="PREQ_CONNECT_TIMEOUT=60"
+# We need this otherwise job concurrency is very low
+# including processing.
+Environment="UV_THREADPOOL_SIZE=128"
 Restart=always
 RestartSec=2s
 TimeoutStopSec=60
