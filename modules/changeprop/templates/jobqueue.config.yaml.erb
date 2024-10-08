@@ -60,7 +60,6 @@ spec: &spec
             startup_delay: 60000
             disable_blacklist: true
             disable_ratelimit: true
-            disable_delayed_execution: true
             templates:
 <% @high_traffic_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
