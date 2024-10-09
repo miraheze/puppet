@@ -65,9 +65,9 @@ changeprop::high_traffic_jobs_config:
     retry_limit: 0
     concurrency: 1
   parsoidCachePrewarm:
-    concurrency: 1
+    concurrency: 2
   htmlCacheUpdate:
-    concurrency: 1
+    concurrency: 2
   refreshLinks:
     concurrency: 1
     # Abandon jobs which root job is more than 1 week long
