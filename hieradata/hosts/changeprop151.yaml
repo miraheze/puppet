@@ -2,6 +2,19 @@ changeprop::jobqueue: true
 changeprop::jobrunner_host: 'https://jobrunner.wikitide.net:9006'
 changeprop::jobrunner_high_timeout_host: 'https://jobrunner-high.wikitide.net:9006'
 changeprop::videoscaler_host: 'https://videoscaler.wikitide.net:9006'
+jobrunner_haproxy::backends:
+  mwtask151:
+    ip: 10.0.15.150
+    port: 9006
+  mwtask161:
+    ip: 10.0.16.157
+    port: 9006
+  mwtask171:
+    ip: 10.0.17.144
+    port: 9006
+  mwtask181:
+    ip: 10.0.18.106
+    port: 9006
 changeprop::num_workers: 8
 changeprop::semantic_mediawiki_concurrency: 10
 changeprop::low_traffic_concurrency: 20
