@@ -39,6 +39,7 @@ repository.default-local-path: "/srv/phorge/repos/"
 policy.allow-public: true
 user.require-real-name: false
 storage.local-disk.path: "/srv/phorge/images/"
+phabricator.serious-business: true
 
 # Maniphest priorities
 maniphest.priorities:
