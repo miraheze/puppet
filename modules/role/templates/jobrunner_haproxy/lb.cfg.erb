@@ -8,6 +8,7 @@ listen jobrunner
         http-reuse always
         mode http
         bind :9007
+        bind :::9007
         balance roundrobin
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true-%>
@@ -23,6 +24,7 @@ listen jobrunner_high
         http-reuse always
         mode http
         bind :9008
+        bind :::9008
         balance roundrobin
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
@@ -38,6 +40,7 @@ listen videoscaler
         http-reuse always
         mode http
         bind :9009
+        bind :::9009
         balance roundrobin
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
