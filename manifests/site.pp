@@ -10,6 +10,7 @@ node 'bots171.wikitide.net' {
 
 node 'changeprop151.wikitide.net' {
     include base
+    include role::jobrunner_haproxy
     include role::changeprop
     include role::redis
 }
