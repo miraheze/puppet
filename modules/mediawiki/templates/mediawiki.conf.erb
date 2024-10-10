@@ -1,7 +1,5 @@
 server {
 	# We can only set backlog once per port (so this will be applied to the others below)
-	listen 80 deferred backlog=4096 reuseport;
-	listen [::]:80 deferred backlog=4096 reuseport;
 	listen 443 ssl deferred http2 backlog=4096 reuseport;
 	listen [::]:443 deferred ssl http2 backlog=4096 reuseport;
 
@@ -64,8 +62,8 @@ server {
 }
 
 server {
-	listen 80;
-	listen [::]:80;
+	listen 80 deferred backlog=4096 reuseport;
+	listen [::]:80 deferred backlog=4096 reuseport;
 
 	server_name ~.;
 
