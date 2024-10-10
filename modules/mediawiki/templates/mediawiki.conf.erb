@@ -7,7 +7,7 @@ server {
 
 	server_name ~.;
 	root /srv/mediawiki/ErrorPages;
-	index MisconfiguredWiki.html;
+	index UnknownWiki.php;
 
 	if ($http_user_agent ~* "WordPress") {
 		return 403;
