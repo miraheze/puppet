@@ -7,7 +7,6 @@ icinga::repos:
     key:
        name: icinga.key
        source: https://packages.icinga.com/icinga.key
-       options: http-proxy='http://bastion.wikitide.net:8080'
   'icinga-testing-builds':
     location: https://packages.icinga.com/debian
     release: 'icinga-%{facts.os.distro.codename}-testing'
