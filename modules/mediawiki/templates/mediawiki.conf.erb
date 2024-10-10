@@ -5,6 +5,91 @@ server {
 	listen 443 ssl deferred http2 backlog=4096 reuseport;
 	listen [::]:443 deferred ssl http2 backlog=4096 reuseport;
 
+	server_name ~.;
+	root /srv/mediawiki/ErrorPages;
+	index MisconfiguredWiki.html;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
+	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
+
+	ssl_verify_client optional;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header x-xss-protection "1; mode=block" always;
+
+	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
+
+	location ~ ^/(\.git|config) {
+		deny all;
+	}
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		try_files $fastcgi_script_name =404;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+		fastcgi_read_timeout 140;
+		send_timeout 140;
+	}
+
+	error_page 400 /400.html;
+	error_page 401 /401.html;
+	error_page 403 /403.html;
+	error_page 404 /404.php;
+	error_page 405 /405.html;
+	error_page 406 /406.html;
+	error_page 410 /410.html;
+	error_page 413 /413.html;
+	error_page 414 /414.html;
+
+	error_page 500 /500.html;
+	error_page 502 /502.html;
+	error_page 504 /504.html;
+
+}
+
+server {
+	listen 80;
+	listen [::]:80;
+
+	server_name ~.;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	location /php_status {
+		access_log off;
+		allow 127.0.0.1;
+		include fastcgi_params;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_buffers 32 32k;
+		fastcgi_buffer_size 64k;
+		fastcgi_read_timeout 20;
+		send_timeout 20s;
+	}
+
+	location / {
+		return 301 https://$host$request_uri;
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
 	server_name miraheze.org;
 	root /srv/mediawiki/landing;
 	index index.php index.html;
@@ -74,33 +159,6 @@ server {
 		if ($lang != 'en') {
 			rewrite ^(.*) $1?lang=$lang break;
 		}
-	}
-}
-
-server {
-	listen 80;
-	listen [::]:80;
-
-	server_name ~.;
-
-	if ($http_user_agent ~* "WordPress") {
-		return 403;
-	}
-
-	location /php_status {
-		access_log off;
-		allow 127.0.0.1;
-		include fastcgi_params;
-		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_buffers 32 32k;
-		fastcgi_buffer_size 64k;
-		fastcgi_read_timeout 20;
-		send_timeout 20s;
-	}
-
-	location / {
-		return 301 https://$host$request_uri;
 	}
 }
 
