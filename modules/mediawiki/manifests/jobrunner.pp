@@ -79,6 +79,9 @@ class mediawiki::jobrunner {
         content  => template('mediawiki/jobrunner.conf.erb'),
     }
 
+    File['/etc/ssl/localcerts'] ~> Service['apache2']
+    File['/etc/ssl/private'] ~> Service['apache2']
+
     $firewall_rules_jobrunner_str = join(
         query_facts('Class[Role::Changeprop] or Class[Role::Eventgate]', ['networking'])
         .map |$key, $value| {
