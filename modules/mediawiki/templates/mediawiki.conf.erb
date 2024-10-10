@@ -43,6 +43,10 @@ server {
 		send_timeout 140;
 	}
 
+	location = /ErrorPages/assets/main.css {
+		rewrite ^/ErrorPages/assets/main.css$ /assets/main.css permanent;
+	}
+
 	error_page 400 /400.html;
 	error_page 401 /401.html;
 	error_page 403 /403.html;
