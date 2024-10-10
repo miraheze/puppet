@@ -4,9 +4,9 @@ icinga::repos:
     location: https://packages.icinga.com/debian
     release: 'icinga-%{facts.os.distro.codename}'
     repos: main
-    key: 
-      id: F51A91A5EE001AA5D77D53C4C6E319C334410682
-      source: https://packages.icinga.com/icinga.key
+    key:
+       name: icinga.key
+       source: https://packages.icinga.com/icinga.key
   'icinga-testing-builds':
     location: https://packages.icinga.com/debian
     release: 'icinga-%{facts.os.distro.codename}-testing'

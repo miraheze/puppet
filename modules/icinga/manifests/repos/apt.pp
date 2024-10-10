@@ -4,15 +4,14 @@
 # @api private
 #
 class icinga::repos::apt {
-
   assert_private()
 
-  $repos   = $::icinga::repos::list
-  $managed = $::icinga::repos::managed
+  $repos   = $icinga::repos::list
+  $managed = $icinga::repos::managed
 
-  $configure_backports = $::icinga::repos::configure_backports
+  $configure_backports = $icinga::repos::configure_backports
 
-  include ::apt
+  include apt
 
   $http_proxy = lookup('http_proxy', {'default_value' => undef})
   if $http_proxy {
@@ -24,7 +23,7 @@ class icinga::repos::apt {
   }
 
   if $configure_backports {
-    include ::apt::backports
+    include apt::backports
     Apt::Source['backports'] -> Package <| title != 'apt-transport-https' |>
   }
 
@@ -35,12 +34,18 @@ class icinga::repos::apt {
 
   $repos.each |String $repo_name, Hash $repo_config| {
     if $managed[$repo_name] {
+      if $repo_config['key'] and !$repo_config['key']['id'] {
+        ensure_resource('apt::keyring', $repo_config['key']['name'], $repo_config['key'])
+        $_repo_config = $repo_config - 'key' + { 'keyring' => "/etc/apt/keyrings/${repo_config['key']['name']}" }
+      } else {
+        $_repo_config = $repo_config
+      }
+
       Apt::Source[$repo_name] -> Package <| title != 'apt-transport-https' |>
       apt::source { $repo_name:
-        *       =>  { ensure => present } + $repo_config,
+        *       => { ensure => present } + $_repo_config,
         require => File['/etc/apt/sources.list.d/netways-plugins.list', '/etc/apt/sources.list.d/netways-extras.list'],
       }
     }
   }
-
 }
