@@ -21,7 +21,6 @@ icinga::repos:
     key:
       name: icinga.key
       source: https://packages.icinga.com/icinga.key
-      options: http-proxy='http://bastion.wikitide.net:8080'
 
 icinga2::globals::package_name: 'icinga2'
 icinga2::globals::service_name: 'icinga2'
