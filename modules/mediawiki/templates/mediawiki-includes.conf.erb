@@ -53,6 +53,7 @@ location ^~ /w/index.php {
 	fastcgi_buffers 32 32k;
 	fastcgi_buffer_size 64k;
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+	fastcgi_intercept_errors on;
 
 	if ($request_uri ~ OAuth) {
 		# Skip OAuth requests to prevent
