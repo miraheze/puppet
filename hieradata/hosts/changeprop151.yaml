@@ -108,7 +108,7 @@ changeprop::high_traffic_jobs_config:
 changeprop::high_traffic_high_timeout_jobs_config:
   cirrusSearchElasticaWrite:
     retry_limit: 0
-    concurrency: 1
+    concurrency: 2
     reenqueue_delay: 3600
     timeout: 600000
   NamespaceMigrationJob:
