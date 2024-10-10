@@ -28,7 +28,7 @@ location ~ \.php {
 	fastcgi_intercept_errors on;
 }
 
-location ^~ /ErrorPages/ {
+location ^~ /ErrorPages/+\.php {
 	include fastcgi_params;
 	fastcgi_index index.php;
 	fastcgi_split_path_info ^(.+\.php)(.*)$;
