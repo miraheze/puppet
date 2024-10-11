@@ -16,7 +16,7 @@ jobrunner_haproxy::backends:
     ip: 10.0.18.106
     port: 9006
 changeprop::num_workers: 8
-changeprop::semantic_mediawiki_concurrency: 1
+changeprop::semantic_mediawiki_concurrency: 2
 changeprop::low_traffic_concurrency: 4
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
