@@ -96,6 +96,7 @@ changeprop::high_traffic_jobs_config:
     concurrency: 1
   RequestWikiAIJob:
     concurrency: 1
+    timeout: 86400000
   RottenLinksJob:
     concurrency: 1
   GlobalNewFilesDeleteJob:
