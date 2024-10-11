@@ -23,7 +23,7 @@ args = parser.parse_args()
 
 
 def pca_connection():
-    return Connection('gateways.storage.us-west-or.cloud.ovh.us', user='pca', connect_kwargs={'password': '<%= @pca_password %>'})
+    return Connection('gateways.storage.us-west-or.cloud.ovh.us', user='pca', connect_kwargs={'password': '<%= @pca_legacy_password %>'})
 
 
 def pca_web(method: str, url: str, expiry: int):
