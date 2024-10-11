@@ -1,0 +1,232 @@
+#!/usr/bin/python3
+# Backup script for WikiTide
+# Created by John Lewis for Miraheze 2022
+# Adapted for WikiTide by Universal Omega 2023
+
+import argparse
+import time
+import tarfile
+import os
+import json
+import glob
+import requests
+
+from fabric import Connection
+from datetime import datetime
+
+parser = argparse.ArgumentParser(description='Provides backup and download functionality for WikiTide backups from PCA.')
+parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
+parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-xml', 'grafana'], help='Type of backup to handle using the action')
+parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
+parser.add_argument('--database', dest='database', help='Specific database to download or backup')
+args = parser.parse_args()
+
+
+def pca_connection():
+    return Connection('gateways.storage.us-west-or.cloud.ovh.us', user='pca', connect_kwargs={'password': '<%= @pca_password %>'})
+
+
+def pca_web(method: str, url: str, expiry: int):
+    pca_password = "<%= @pca_legacy_password %>"
+    json_data = { "auth": { "identity": { "methods": ["password"], "password": { "user": { "name": pca_password.split('.')[1], "domain": { "id": "default" }, "password": pca_password.split('.')[2] } } }, "scope": { "project": { "id": "162389f5fb5c40329ef10e20ff94616b", "domain": { "id": "default" } } } } }
+
+    token = requests.post(f'https://auth.cloud.ovh.us/v3/auth/tokens', json=json_data, headers={ 'Content-Type': 'application/json' }).headers.get('X-Subject-Token')
+    headers = { 'X-AUTH-TOKEN': token }
+    
+    if method == 'GET':
+        return requests.get(url, headers=headers)
+    elif method == 'POST':
+        if expiry > 0:
+            headers['X-Delete-After'] = f'{expiry*604800}'
+        
+        return requests.post(url, headers=headers)
+    elif method == 'HEAD':
+        return requests.head(url, headers=headers)
+    else:
+        raise Exception('Method is not currently implemented in WikiTide-Backup')
+
+
+def backup_private(dt: str):
+    tar = tarfile.open('private.tar.gz', 'w:gz')
+    tar.add('/etc/puppetlabs/puppet/private', arcname='private')
+    tar.close()
+
+    pca_connection().put('private.tar.gz', f'private/{dt}.tar.gz', False)
+    pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/private/{dt}.tar.gz', 4)
+
+    os.remove('private.tar.gz')
+
+
+def backup_sslkeys(dt: str):
+    tar = tarfile.open('sslkeys.tar.gz', 'w:gz')
+    tar.add('/etc/puppetlabs/puppet/ssl-keys', arcname='sslkeys')
+    tar.close()
+
+    pca_connection().put('sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
+    pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/sslkeys/{dt}.tar.gz', 4)
+
+    os.remove('sslkeys.tar.gz')
+
+
+def backup_phorge(dt: str):
+    os.system('/srv/phorge/phorge/bin/storage dump --compress --output backup.tar.gz')
+    tar = tarfile.open('phorge.tar.gz', 'w:gz')
+    tar.add('backup.tar.gz', arcname='db')
+    os.remove('backup.tar.gz')
+    tar.add('/srv/phorge/images', arcname='phorge')
+    tar.close()
+
+    pca_connection().put('phorge.tar.gz', f'phorge/{dt}.tar.gz', False)
+    pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/phorge/{dt}.tar.gz', 4)
+
+    os.remove('phorge.tar.gz')
+
+
+def backup_sql(dt: str, database: str):
+    if database is None:
+        os.system('/usr/bin/mydumper -N -W -k --less-locking -t 4 -c -x \'^(.*wiki(?!.*(objectcache|querycache|querycachetwo|recentchanges|searchindex)))\' --trx-consistency-only -o \'/srv/backups/dbs\'')
+        dbs = [file for file in os.listdir('/srv/mariadb') if os.path.isdir(f'/srv/mariadb/{file}') and file[-4:] == 'wiki']
+    else:
+        os.system(f'/usr/bin/mysqldump -C --ignore-table={database}.objectcache --ignore-table={database}.querycache --ignore-table={database}.querycachetwo --ignore-table={database}.searchindex --ignore-table={database}.recentchanges {database} > /srv/backups/dbs/{database}.backup')
+        dbs = [database]
+
+    for db in dbs:
+        tar = tarfile.open(f'{db}.tar.gz', 'w:gz')
+        for dbfile in glob.glob(f'/srv/backups/dbs/{db}.*'):
+            tar.add(dbfile, arcname=db)
+            os.remove(dbfile)
+        tar.close()
+
+        pca_connection().put(f'{db}.tar.gz', f'sql/{db}/{dt}.tar.gz', False)
+        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/sql/{db}/{dt}.tar.gz', 5)
+
+        os.remove(f'{db}.tar.gz')
+
+    def backup_grafana_db(dt: str):
+        os.system(f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"')
+        tar = tarfile.open('grafana.tar.gz', 'w:gz')
+        tar.add('/var/lib/grafana/grafana_backup.db', arcname='grafana_backup.db')
+        tar.close()
+        
+        pca_connection().put('grafana.tar.gz', f'sql/grafana/{dt}.tar.gz', False)
+        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/sql/grafana/{dt}.tar.gz', 4)
+        
+        os.remove('grafana.tar.gz')
+
+
+def backup_mediawiki_xml(dt: str, database: str):
+    if database is None:
+        dbs = json.load(open('/srv/mediawiki/cache/databases.json'))['combi'].keys()
+    else:
+        dbs = [database]
+
+    for db in dbs:
+        version = os.popen(f'getMWVersion {db}').read().strip()
+
+        runner = ''
+        if float(version) >= 1.40:
+            runner = f'/srv/mediawiki/{version}/maintenance/run.php '
+
+        os.system(f'/usr/bin/php {runner}/srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="7zip:/srv/backups/{db}.xml.7z" --7ziplevel=7 --wiki={db}')
+
+        pca_connection().put(f'/srv/backups/{db}.xml.7z', f'mediawiki-xml/{db}/{dt}.xml.7z', False)
+        pca_web('POST', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/mediawiki-xml/{db}/{dt}.xml.7z', 13)
+
+        os.remove(f'/srv/backups/{db}.xml.7z')
+
+
+def backup(source: str, database: str):
+    dt = datetime.now().strftime('%Y-%m-%d')
+    ts = time.time()
+    print(f'Starting backup of \'{source}\' for date {dt}...')
+
+    if source == 'private':
+        backup_private(dt)
+    elif source == 'sslkeys':
+        backup_sslkeys(dt)
+    elif source == 'phorge':
+        backup_phorge(dt)
+    elif source == 'sql':
+        backup_sql(dt, database)
+    elif source == 'grafana':
+        backup_grafana_db(dt)
+    elif source == 'mediawiki-xml':
+        backup_mediawiki_xml(dt, database)
+
+    print(f'Completed! This took {time.time() - ts}s')
+
+
+def download_pca(file: str):
+    check_header = pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0).headers.get('X-Ovh-Retrieval-State')
+    
+    if check_header == 'sealed':
+        print(f'{file} is unable to be downloaded as the file is sealed. Please unfreeze the file using the unfreeze command.')
+    elif check_header == 'unsealing':
+        unseal_time = pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
+        print(f'{file} is unable to be downloaded as the file is being unsealed. Please try again in {unseal_time}s.')
+    else:
+        try:
+            pca_connection().get(file)
+        except:
+            print('Unable to download file! Please raise this on Phorge if this is a repeat issue.')
+
+
+def download(source: str, dt: str, database: str):
+    ts = time.time()
+    print(f'Downloading backup of \'{source}\' for date {dt}...')
+
+    if source in ['private', 'sslkeys', 'phorge']:
+        download_pca(f'{source}/{dt}.tar.gz')
+    elif source in ['mediawiki-xml']:
+        download_pca(f'{source}/{database}/{dt}.xml.7z')
+    elif source in ['grafana']:
+        download_pca(f'sql/{source}/{dt}.tar.gz')
+    elif source in ['sql']:
+        download_pca(f'{source}/{database}/{dt}.tar.gz')
+
+    print(f'Completed! This took {time.time() - ts}s')
+
+
+def find_backups(source: str, database: str):
+    all_backups = pca_web('GET', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{source}', 0)
+    backups_list = list(all_backups.text.split("\n"))
+    
+    if source in ['database', 'mediawiki-xml']:
+        for backup_item in backups_list:
+            if backup_item.split('/')[0] == database:
+                print(backup_item.split('/')[1].split('.')[0])
+    else:
+        for backup_item in backups_list:
+            print(backup_item)
+
+
+def unfreeze_backup(source: str, dt: str, database: str):
+    if source in ['private', 'sslkeys', 'phorge']:
+        file = f'{source}/{dt}.tar.gz'
+    elif source in ['grafana']:
+        file = f'sql/{source}/{dt}.tar.gz'
+    elif source in ['sql']:
+        file = f'{source}/{database}/{dt}.tar.gz'
+    elif source in ['mediawiki-xml']:
+        file = f'{source}/{database}/{dt}.7z'
+
+    pca_web('GET', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0)
+    available_in = pca_web('HEAD', f'https://storage.us-west-or.cloud.ovh.us/v1/AUTH_162389f5fb5c40329ef10e20ff94616b/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
+    print(f'{file} has been unfrozen. It will be available to download in {int(available_in)/60} minutes.')
+
+if __name__ == '__main__':
+
+    if args.action == 'backup':
+        backup(args.type, args.database)
+    elif args.action == 'download':
+        if not args.date:
+            parser.exit(1, '--date is required when downloading a file!')
+
+        download(args.type, args.date, args.database)
+    elif args.action == 'find':
+        find_backups(args.type, args.database)
+    elif args.action == 'unfreeze':
+        if not args.date:
+            parser.exit(1, '--date is required when unfreezing a file!')
+
+        unfreeze_backup(args.type, args.date, args.database)
