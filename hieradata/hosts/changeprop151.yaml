@@ -45,7 +45,7 @@ changeprop::high_traffic_jobs_config:
   cirrusSearchCheckerJob:
     disable_delayed_execution: true
     retry_limit: 0
-    concurrency: 1
+    concurrency: 2
   cirrusSearchDeleteArchive:
     retry_limit: 0
     concurrency: 1
@@ -57,10 +57,10 @@ changeprop::high_traffic_jobs_config:
     concurrency: 1
   cirrusSearchLinksUpdate:
     retry_limit: 0
-    concurrency: 1
+    concurrency: 2
   cirrusSearchLinksUpdatePrioritized:
     retry_limit: 0
-    concurrency: 1
+    concurrency: 2
   cirrusSearchOtherIndex:
     retry_limit: 0
     concurrency: 1
