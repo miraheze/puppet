@@ -8,6 +8,7 @@ class role::mediawiki_beta (
     include role::memcached
     include role::poolcounter
     include role::redis
+    include mediawiki::jobqueue::chron
 
     # doesn't install on bookworm
     # include prometheus::exporter::cadvisor
