@@ -22,7 +22,7 @@ changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 2
   categoryMembershipChange:
-    concurrency: 1
+    concurrency: 4
   # CNDPurge is quite low-volume, but it uses delayed execution,
   # so avoid putting it together with other low-volume jobs so that it doesn't
   # block execution for others.
