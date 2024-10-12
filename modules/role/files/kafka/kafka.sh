@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# File from: https://github.com/wikimedia/operations-puppet/blob/8c2d6f688fd75980213cfa7cc01c3458b6baf902/modules/confluent/files/kafka/kafka.sh
 # NOTE: This file is managed by Puppet.
 
 SCRIPT_NAME=$(basename "$0")
