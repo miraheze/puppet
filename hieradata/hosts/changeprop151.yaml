@@ -39,6 +39,23 @@ changeprop::high_traffic_jobs_config:
     # This job is prone to large spikes, so having it on the low_traffic_jobs queue
     # blocks other jobs.
     concurrency: 4
+  notificationGetStartedJob:
+    concurrency: 2
+    # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
+    # by setting the reenqueue delay to 72 hours
+    reenqueue_delay: 259200
+  notificationKeepGoingJob:
+    concurrency: 2
+    # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
+    # by setting the reenqueue delay to 72 hours
+    reenqueue_delay: 259200
+  newcomerTasksCacheRefreshJob:
+    concurrency: 2
+    # All the jobs of this kind are delayed exactly 144 hours (6 days), avoid reenqueueing them
+    # by setting the reenqueue delay to 7 days
+    reenqueue_delay: 604800
+  refreshUserImpactJob:
+    concurrency: 3
   # For cirrus search jobs the retries are built into the job itself,
   # so disable the retries by change-prop. We need special rules for cirrus
   # jobs because they need special configuration.
