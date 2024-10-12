@@ -31,7 +31,7 @@ changeprop::high_traffic_jobs_config:
   # RecordLinks is normally low-volume, but could have big spikes
   # when maintenance scripts are run. Elevated concurrency
   RecordLintJob:
-    concurrency: 1
+    concurrency: 4
     consumer_batch_size: 10
   wikibase-addUsagesForPage:
     concurrency: 1
