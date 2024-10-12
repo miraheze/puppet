@@ -27,7 +27,7 @@ changeprop::high_traffic_jobs_config:
   # so avoid putting it together with other low-volume jobs so that it doesn't
   # block execution for others.
   cdnPurge:
-    concurrency: 1
+    concurrency: 4
   # RecordLinks is normally low-volume, but could have big spikes
   # when maintenance scripts are run. Elevated concurrency
   RecordLintJob:
