@@ -17,7 +17,7 @@ jobrunner_haproxy::backends:
     port: 9006
 changeprop::num_workers: 8
 changeprop::semantic_mediawiki_concurrency: 2
-changeprop::low_traffic_concurrency: 10
+changeprop::low_traffic_concurrency: 15
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 2
