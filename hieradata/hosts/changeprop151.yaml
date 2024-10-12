@@ -69,7 +69,7 @@ changeprop::high_traffic_jobs_config:
   htmlCacheUpdate:
     concurrency: 3
   refreshLinks:
-    concurrency: 3
+    concurrency: 4
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
