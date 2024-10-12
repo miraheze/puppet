@@ -83,6 +83,8 @@ changeprop::high_traffic_jobs_config:
     concurrency: 1
   RenderTranslationPageJob:
     concurrency: 1
+  MWScriptJob:
+    concurrency: 2
 
   # These jobs need to be ran with priority so are using their own queues
   LocalRenameUserJob:
