@@ -81,6 +81,14 @@ class role::kafka {
         }
     }
 
+    file { '/usr/local/bin/kafka':
+        source  => 'puppet:///modules/role/kafka/kafka.sh',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => Class['kafka::broker'],
+    }
+
     $firewall_rules_str = join(
         query_facts('Class[Role::Changeprop] or Class[Role::Eventgate]', ['networking'])
         .map |$key, $value| {
