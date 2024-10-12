@@ -48,13 +48,13 @@ changeprop::high_traffic_jobs_config:
     concurrency: 2
   cirrusSearchDeleteArchive:
     retry_limit: 0
-    concurrency: 1
+    concurrency: 2
   cirrusSearchDeletePages:
     retry_limit: 0
-    concurrency: 1
+    concurrency: 2
   cirrusSearchIncomingLinkCount:
     retry_limit: 0
-    concurrency: 1
+    concurrency: 2
   cirrusSearchLinksUpdate:
     retry_limit: 0
     concurrency: 2
@@ -63,7 +63,7 @@ changeprop::high_traffic_jobs_config:
     concurrency: 2
   cirrusSearchOtherIndex:
     retry_limit: 0
-    concurrency: 1
+    concurrency: 2
   parsoidCachePrewarm:
     concurrency: 6
   htmlCacheUpdate:
