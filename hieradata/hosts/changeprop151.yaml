@@ -82,7 +82,7 @@ changeprop::high_traffic_jobs_config:
     retry_limit: 0
     concurrency: 2
   parsoidCachePrewarm:
-    concurrency: 6
+    concurrency: 8
   htmlCacheUpdate:
     concurrency: 3
   refreshLinks:
