@@ -74,7 +74,7 @@ changeprop::high_traffic_jobs_config:
     concurrency: 2
   cirrusSearchLinksUpdate:
     retry_limit: 0
-    concurrency: 2
+    concurrency: 4
   cirrusSearchLinksUpdatePrioritized:
     retry_limit: 0
     concurrency: 2
