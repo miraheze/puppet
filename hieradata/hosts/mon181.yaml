@@ -20,7 +20,7 @@ icinga::repos:
     repos: main
     key:
       name: icinga.key
-      source: https://packages.icinga.com/icinga.key
+      source: 'puppet:///modules/monitoring/icinga.key';
 
 icinga2::globals::package_name: 'icinga2'
 icinga2::globals::service_name: 'icinga2'
