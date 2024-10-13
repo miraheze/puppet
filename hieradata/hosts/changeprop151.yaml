@@ -107,6 +107,9 @@ changeprop::high_traffic_jobs_config:
   LocalRenameUserJob:
     disable_delayed_execution: true
     concurrency: 1
+  SetContainersAccessJob:
+    disable_delayed_execution: true
+    concurrency: 2
   CreateWikiJob:
     disable_delayed_execution: true
     concurrency: 1
