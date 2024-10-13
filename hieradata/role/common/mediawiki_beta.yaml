@@ -15,8 +15,8 @@ mediawiki::use_cpjobqueue: false
 
 role::mediawiki::use_strict_firewall: true
 
-mediawiki::php::fpm::fpm_min_child: 10
-mediawiki::php::emergency_restart_threshold: 5
+mediawiki::php::fpm::fpm_min_child: 15
+mediawiki::php::emergency_restart_threshold: 6
 mediawiki::php::fpm::fpm_workers_multiplier: 1.0
 mediawiki::php::fpm_config:
   post_max_size: '250M'
