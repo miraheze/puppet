@@ -90,7 +90,7 @@ location ~ ^/m/(.*) {
 }
 
 location /sitemaps/ {
-	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.miraheze.org/$1/sitemaps/$2 permanent;
+	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.miraheze.org/$1/sitemaps/$2 break;
 }
 
 location /static/ {
