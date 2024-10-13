@@ -20,7 +20,7 @@ changeprop::semantic_mediawiki_concurrency: 2
 changeprop::low_traffic_concurrency: 50
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
-    concurrency: 2
+    concurrency: 3
   categoryMembershipChange:
     concurrency: 4
   # CNDPurge is quite low-volume, but it uses delayed execution,
