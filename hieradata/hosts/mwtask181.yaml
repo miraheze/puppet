@@ -1,2 +1,3 @@
 mediawiki::is_canary: true
 mediawiki::use_staging: true
+mediawiki::jobqueue::runner::cron: true
