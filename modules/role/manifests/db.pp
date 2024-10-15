@@ -108,12 +108,27 @@ class role::db (
 
     if $backup_sql {
         cron { 'backups-sql':
-            ensure   => present,
+            ensure   => absent,
             command  => '/usr/local/bin/wikitide-backup backup sql > /var/log/sql-backup.log 2>&1',
             user     => 'root',
             minute   => '0',
             hour     => '3',
             monthday => [fqdn_rand(13, 'db-backups') + 1, fqdn_rand(13, 'db-backups') + 15],
+        }
+
+        $monthday_1 = fqdn_rand(13, 'db-backups') + 1
+        $monthday_15 = fqdn_rand(13, 'db-backups') + 1
+        systemd::timer::job { 'db-backups':
+            description       => "Runs backup of all the wikis dbs",
+            command           => "/usr/local/bin/wikitide-backup backup sql",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => "*-*-${monthday_1},${monthday_15} 03:00:00",
+            },
+            logfile_basedir   => '/var/log/db-backup',
+            logfile_name      => 'db-backups.log',
+            syslog_identifier => 'db-backups',
+            user              => 'root',
         }
 
         monitoring::nrpe { 'Backups SQL':
