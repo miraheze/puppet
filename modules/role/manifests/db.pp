@@ -117,7 +117,7 @@ class role::db (
         }
 
         $monthday_1 = fqdn_rand(13, 'db-backups') + 1
-        $monthday_15 = fqdn_rand(13, 'db-backups') + 1
+        $monthday_15 = fqdn_rand(13, 'db-backups') + 15
         systemd::timer::job { 'db-backups':
             description       => 'Runs backup of all the wikis dbs',
             command           => '/usr/local/bin/wikitide-backup backup sql',
