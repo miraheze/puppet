@@ -139,7 +139,7 @@ class role::db (
         }
 
         monitoring::nrpe { 'Backups SQL':
-            command  => '/usr/lib/nagios/plugins/check_file_age -w 1382400 -c 1468800 -f /var/log/sql-backup.log',
+            command  => '/usr/lib/nagios/plugins/check_file_age -w 1382400 -c 1468800 -f /var/log/db-backups/db-backups.log',
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
@@ -167,7 +167,7 @@ class role::db (
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 129600 -c 172800 -f /var/log/sql-${db}-backup-daily.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 129600 -c 172800 -f /var/log/db-backups/${db}-db-backups-daily/${db}-db-backups-daily.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
@@ -197,7 +197,7 @@ class role::db (
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sql-${db}-backup-weekly.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/db-backups/${db}-db-backups-weekly/${db}-db-backups-weekly.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
@@ -227,7 +227,7 @@ class role::db (
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/sql-${db}-backup-fortnightly.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/db-backups/${db}-db-backups-fortnightly/${db}-db-backups-fortnightly.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
@@ -257,7 +257,7 @@ class role::db (
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 3024000 -c 3456000 -f /var/log/sql-${db}-backup-monthly.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 3024000 -c 3456000 -f /var/log/db-backups/${db}-db-backups-monthly/${db}-db-backups-monthly.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
