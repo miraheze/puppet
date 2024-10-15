@@ -125,7 +125,7 @@ class role::db (
                 'start'    => 'OnCalendar',
                 'interval' => "*-*-${monthday_1},${monthday_15} 03:00:00",
             },
-            logfile_basedir   => '/var/log/db-backup',
+            logfile_basedir   => '/var/log/db-backups',
             logfile_name      => 'db-backups.log',
             syslog_identifier => 'db-backups',
             user              => 'root',
@@ -140,10 +140,23 @@ class role::db (
 
     $daily_misc.each |String $db| {
         cron { "backups-${db}":
-            ensure  => present,
+            ensure  => absent,
             command => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-daily.log 2>&1",
             user    => 'root',
             special => 'daily',
+        }
+
+        systemd::timer::job { "${db}-db-backups-daily":
+            description       => "Runs backup of ${db} db daily",
+            command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-*-* 00:00:00',
+            },
+            logfile_basedir   => "/var/log/${db}-db-backups-daily",
+            logfile_name      => "${db}-db-backups-daily.log",
+            syslog_identifier => "${db}-db-backups-daily",
+            user              => 'root',
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
@@ -155,12 +168,25 @@ class role::db (
 
     $weekly_misc.each |String $db| {
         cron { "backups-${db}":
-            ensure  => present,
+            ensure  => absent,
             command => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-weekly.log 2>&1",
             user    => 'root',
             minute  => '0',
             hour    => '5',
             weekday => '0',
+        }
+
+        systemd::timer::job { "${db}-db-backups-weekly":
+            description       => "Runs backup of ${db} db weekly",
+            command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => 'Sun *-*-* 05:00:00',
+            },
+            logfile_basedir   => "/var/log/${db}-db-backups-weekly",
+            logfile_name      => "${db}-db-backups-weekly.log",
+            syslog_identifier => "${db}-db-backups-weekly",
+            user              => 'root',
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
@@ -172,12 +198,25 @@ class role::db (
 
     $fortnightly_misc.each |String $db| {
         cron { "backups-${db}":
-            ensure   => present,
+            ensure   => absent,
             command  => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-fortnightly.log 2>&1",
             user     => 'root',
             minute   => '0',
             hour     => '5',
             monthday => ['1', '15'],
+        }
+
+        systemd::timer::job { "${db}-db-backups-fortnightly":
+            description       => "Runs backup of ${db} db fortnightly",
+            command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-*-1,15 05:00:00',
+            },
+            logfile_basedir   => "/var/log/${db}-db-backups-fortnightly",
+            logfile_name      => "${db}-db-backups-fortnightly.log",
+            syslog_identifier => "${db}-db-backups-fortnightly",
+            user              => 'root',
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
@@ -189,12 +228,25 @@ class role::db (
 
     $monthly_misc.each |String $db| {
         cron { "backups-${db}":
-            ensure   => present,
+            ensure   => absent,
             command  => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-monthly.log 2>&1",
             user     => 'root',
             minute   => '0',
             hour     => '5',
             monthday => ['24'],
+        }
+
+        systemd::timer::job { "${db}-db-backups-monthly":
+            description       => "Runs backup of ${db} db monthly",
+            command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-*-24 05:00:00',
+            },
+            logfile_basedir   => "/var/log/${db}-db-backups-monthly",
+            logfile_name      => "${db}-db-backups-monthly.log",
+            syslog_identifier => "${db}-db-backups-monthly",
+            user              => 'root',
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
