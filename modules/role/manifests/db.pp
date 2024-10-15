@@ -106,6 +106,13 @@ class role::db (
         description => 'MySQL database server',
     }
 
+    file { '/var/log/db-backups':
+        ensure => 'directory',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    }
+
     if $backup_sql {
         cron { 'backups-sql':
             ensure   => absent,
@@ -153,7 +160,7 @@ class role::db (
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-* 00:00:00',
             },
-            logfile_basedir   => "/var/log/${db}-db-backups-daily",
+            logfile_basedir   => '/var/log/db-backups',
             logfile_name      => "${db}-db-backups-daily.log",
             syslog_identifier => "${db}-db-backups-daily",
             user              => 'root',
@@ -183,7 +190,7 @@ class role::db (
                 'start'    => 'OnCalendar',
                 'interval' => 'Sun *-*-* 05:00:00',
             },
-            logfile_basedir   => "/var/log/${db}-db-backups-weekly",
+            logfile_basedir   => '/var/log/db-backups',
             logfile_name      => "${db}-db-backups-weekly.log",
             syslog_identifier => "${db}-db-backups-weekly",
             user              => 'root',
@@ -213,7 +220,7 @@ class role::db (
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-1,15 05:00:00',
             },
-            logfile_basedir   => "/var/log/${db}-db-backups-fortnightly",
+            logfile_basedir   => '/var/log/db-backups',
             logfile_name      => "${db}-db-backups-fortnightly.log",
             syslog_identifier => "${db}-db-backups-fortnightly",
             user              => 'root',
@@ -243,7 +250,7 @@ class role::db (
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-24 05:00:00',
             },
-            logfile_basedir   => "/var/log/${db}-db-backups-monthly",
+            logfile_basedir   => '/var/log/db-backups',
             logfile_name      => "${db}-db-backups-monthly.log",
             syslog_identifier => "${db}-db-backups-monthly",
             user              => 'root',
