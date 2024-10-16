@@ -114,15 +114,6 @@ class role::db (
     }
 
     if $backup_sql {
-        cron { 'backups-sql':
-            ensure   => absent,
-            command  => '/usr/local/bin/wikitide-backup backup sql > /var/log/sql-backup.log 2>&1',
-            user     => 'root',
-            minute   => '0',
-            hour     => '3',
-            monthday => [fqdn_rand(13, 'db-backups') + 1, fqdn_rand(13, 'db-backups') + 15],
-        }
-
         $monthday_1 = fqdn_rand(13, 'db-backups') + 1
         $monthday_15 = fqdn_rand(13, 'db-backups') + 15
         systemd::timer::job { 'db-backups':
@@ -146,13 +137,6 @@ class role::db (
     }
 
     $daily_misc.each |String $db| {
-        cron { "backups-${db}":
-            ensure  => absent,
-            command => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-daily.log 2>&1",
-            user    => 'root',
-            special => 'daily',
-        }
-
         systemd::timer::job { "${db}-db-backups-daily":
             description       => "Runs backup of ${db} db daily",
             command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
@@ -174,15 +158,6 @@ class role::db (
     }
 
     $weekly_misc.each |String $db| {
-        cron { "backups-${db}":
-            ensure  => absent,
-            command => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-weekly.log 2>&1",
-            user    => 'root',
-            minute  => '0',
-            hour    => '5',
-            weekday => '0',
-        }
-
         systemd::timer::job { "${db}-db-backups-weekly":
             description       => "Runs backup of ${db} db weekly",
             command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
@@ -204,15 +179,6 @@ class role::db (
     }
 
     $fortnightly_misc.each |String $db| {
-        cron { "backups-${db}":
-            ensure   => absent,
-            command  => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-fortnightly.log 2>&1",
-            user     => 'root',
-            minute   => '0',
-            hour     => '5',
-            monthday => ['1', '15'],
-        }
-
         systemd::timer::job { "${db}-db-backups-fortnightly":
             description       => "Runs backup of ${db} db fortnightly",
             command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
@@ -234,15 +200,6 @@ class role::db (
     }
 
     $monthly_misc.each |String $db| {
-        cron { "backups-${db}":
-            ensure   => absent,
-            command  => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-monthly.log 2>&1",
-            user     => 'root',
-            minute   => '0',
-            hour     => '5',
-            monthday => ['24'],
-        }
-
         systemd::timer::job { "${db}-db-backups-monthly":
             description       => "Runs backup of ${db} db monthly",
             command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
