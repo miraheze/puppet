@@ -31,14 +31,14 @@ changeprop::high_traffic_jobs_config:
   # RecordLinks is normally low-volume, but could have big spikes
   # when maintenance scripts are run. Elevated concurrency
   RecordLintJob:
-    concurrency: 6
+    concurrency: 10
     consumer_batch_size: 10
   wikibase-addUsagesForPage:
     concurrency: 1
   LocalGlobalUserPageCacheUpdateJob:
     # This job is prone to large spikes, so having it on the low_traffic_jobs queue
     # blocks other jobs.
-    concurrency: 10
+    concurrency: 25
   notificationGetStartedJob:
     concurrency: 2
     # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
@@ -82,11 +82,11 @@ changeprop::high_traffic_jobs_config:
     retry_limit: 0
     concurrency: 2
   parsoidCachePrewarm:
-    concurrency: 10
+    concurrency: 15
   htmlCacheUpdate:
-    concurrency: 5
+    concurrency: 10
   refreshLinks:
-    concurrency: 8
+    concurrency: 15
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
@@ -97,9 +97,9 @@ changeprop::high_traffic_jobs_config:
   # low traffic jobs have a large spike. It is being moved to its own queue to
   # improve editing experience for users
   UpdateTranslatablePageJob:
-    concurrency: 1
+    concurrency: 2
   RenderTranslationPageJob:
-    concurrency: 1
+    concurrency: 2
   MWScriptJob:
     concurrency: 2
 
