@@ -1,45 +1,50 @@
 # dns
 class dns {
-    include prometheus::exporter::gdnsd
+    # include prometheus::exporter::gdnsd
 
-    package { 'gdnsd':
+    package { 'bind9':
         ensure  => installed,
+    }
+    package { 'bind9-utils':
+        ensure  => installed,
+    }
+
+    file { '/var/log/named':
+        ensure => 'directory',
+        owner  => 'bind',
+        group  => 'bind',
+        mode   => '0644',
     }
 
     git::clone { 'dns':
         ensure    => latest,
-        directory => '/etc/gdnsd',
+        directory => '/etc/bind',
         origin    => 'https://github.com/miraheze/dns',
         owner     => 'root',
         group     => 'root',
-        before    => Package['gdnsd'],
-        notify    => Exec['gdnsd-syntax'],
+        before    => Package['bind9'],
+        notify    => Exec['bind-syntax'],
     }
 
-    file { '/usr/share/GeoIP/GeoLite2-Country.mmdb':
+    file { '/usr/local/bin/check-dns-zones':
         ensure => present,
-        source => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
-        mode   => '0444',
-        notify => Exec['gdnsd-syntax'],
+        owner  => 'root',
+        group  => 'root',
+        source => 'puppet:///modules/dns/check-dns-zones.py',
+        mode   => '0555',
     }
 
-    exec { 'gdnsd-syntax':
-        command     => '/usr/sbin/gdnsd checkconf',
-        notify      => Service['gdnsd'],
+    exec { 'bind-syntax':
+        command     => '/usr/local/bin/check-dns-zones',
+        notify      => Service['named'],
         refreshonly => true,
     }
 
-    service { 'gdnsd':
+    service { 'named':
         ensure     => running,
         hasrestart => true,
         hasstatus  => true,
-        require    => [ Package['gdnsd'], Exec['gdnsd-syntax'] ],
-    }
-
-    file { '/usr/lib/nagios/plugins/check_gdnsd_datacenters':
-        ensure => present,
-        source => 'puppet:///modules/dns/check_gdnsd_datacenters.py',
-        mode   => '0755',
+        require    => [ Package['bind9'], Exec['bind-syntax'], File['/var/log/named'] ],
     }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
@@ -56,9 +61,5 @@ class dns {
             address6 => $address,
             host     => 'wikitide.net',
         },
-    }
-
-    monitoring::nrpe { 'GDNSD Datacenters':
-        command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_gdnsd_datacenters'
     }
 }
