@@ -106,7 +106,7 @@ class role::db (
 
     file { '/home/dbcopy/.ssh/id_ed25519':
         ensure  => 'present',
-        content => 'puppet:///private/mariadb/dbcopy-ssh-key'
+        source  => 'puppet:///private/mariadb/dbcopy-ssh-key',
         owner   => 'dbcopy',
         group   => 'dbcopy',
         mode    => '0400',
