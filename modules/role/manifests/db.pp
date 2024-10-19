@@ -93,8 +93,24 @@ class role::db (
         ensure   => present,
         uid      => 3000,
         ssh_keys => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOL4FH2aRAwbSGP1HLmo1YzaXRci2YnkTGJvT2E6Ay0d dbcopy@db101'
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDHPGyXQ6O2Cy+LxP3BwtbzaUufVTihefglsUoWkBiIl dbcopy@wikitide.net'
         ],
+    }
+
+    file { '/home/dbcopy/.ssh':
+        ensure => 'directory',
+        owner  => 'dbcopy',
+        group  => 'dbcopy',
+        mode   => '0700',
+    }
+
+    file { '/home/dbcopy/.ssh/id_ed25519': 
+        ensure  => 'present',
+        content => 'puppet:///private/mariadb/dbcopy-ssh-key'
+        owner   => 'dbcopy',
+        group   => 'dbcopy',
+        mode    => '0400',
+        require => File['/home/dbcopy/.ssh'],
     }
 
     # Backup provisioning
