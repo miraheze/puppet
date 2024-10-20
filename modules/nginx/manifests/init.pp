@@ -50,9 +50,8 @@ class nginx (
         source => 'puppet:///modules/nginx/mime.types',
     }
 
-    # (1024.0 * 1024.0) converts to megabytes.
-    $mem_gb = $facts['memory']['system']['total_bytes'] / (1024.0 * 1024.0) / 1024.0
-    if ($mem_gb < 90.0) {
+    $mem_gb = $facts['memory']['system']['total_bytes'] / 1073741824.0
+    if ($mem_gb < 2.0) {
         $ssl_session_cache = 120
     } else {
         $ssl_session_cache = 1024
