@@ -8,6 +8,7 @@ class role::db (
     Boolean $enable_slow_log = lookup('role::db::enable_slow_log', {'default_value' => false}),
     Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
     Boolean $enable_ssl = lookup('role::db::enable_ssl', {'default_value' => true}),
+    Boolean $is_beta_db = lookup('role::db::is_beta_db', {'default_value' => false}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
@@ -65,8 +66,14 @@ class role::db (
         content => template('mariadb/grants/reports-grants.sql.erb'),
     }
 
+    if ( $is_beta_db ) {
+        $query_classes = 'Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]'
+    } else {
+        $query_classes = 'Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]'
+    }
+
     $firewall_rules_str = join(
-        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]', ['networking'])
+        query_facts($query_classes, ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
