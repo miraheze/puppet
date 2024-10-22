@@ -14,6 +14,7 @@ mediawiki::jobqueue::wiki: 'loginwikibeta'
 mediawiki::use_cpjobqueue: false
 
 role::mediawiki::use_strict_firewall: true
+role::mediawiki::is_beta: true
 
 mediawiki::php::fpm::fpm_min_child: 15
 mediawiki::php::emergency_restart_threshold: 6
