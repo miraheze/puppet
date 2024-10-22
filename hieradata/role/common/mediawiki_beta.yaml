@@ -32,7 +32,7 @@ mediawiki::multiversion::versions:
   '1.42':
     branch: 'REL1_42'
   '1.43':
-    branch: 'master'
+    branch: 'REL1_43'
     default: true
 
 php::php_version: '8.2'
