@@ -82,11 +82,11 @@ changeprop::high_traffic_jobs_config:
     retry_limit: 0
     concurrency: 5
   parsoidCachePrewarm:
-    concurrency: 15
+    concurrency: 20
   htmlCacheUpdate:
     concurrency: 10
   refreshLinks:
-    concurrency: 15
+    concurrency: 20
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
