@@ -120,7 +120,7 @@ changeprop::high_traffic_jobs_config:
     concurrency: 1
     timeout: 86400000
   RottenLinksJob:
-    concurrency: 2
+    concurrency: 4
   GlobalNewFilesDeleteJob:
     concurrency: 1
   GlobalNewFilesInsertJob:
