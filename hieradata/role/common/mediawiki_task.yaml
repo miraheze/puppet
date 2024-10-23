@@ -11,6 +11,7 @@ mediawiki::jobqueue::runner::cron: false
 mediawiki::use_cpjobqueue: true
 
 role::mediawiki::use_strict_firewall: true
+role::mediawiki::is_beta: false
 
 mediawiki::php::fpm::fpm_min_child: 20
 mediawiki::php::emergency_restart_threshold: 8

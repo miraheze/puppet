@@ -111,8 +111,13 @@ class mediawiki {
         require => File['/srv/mediawiki'],
     }
 
-    $wikiadmin_password         = lookup('passwords::db::wikiadmin')
-    $mediawiki_password         = lookup('passwords::db::mediawiki')
+    if ( lookup('role::mediawiki::is_beta', {'default_value' => false}) ) {
+        $wikiadmin_password         = lookup('passwords::mediawiki::wikiadmin_beta')
+        $mediawiki_password         = lookup('passwords::mediawiki::mediawiki_beta')
+    } else {
+        $wikiadmin_password         = lookup('passwords::mediawiki::wikiadmin')
+        $mediawiki_password         = lookup('passwords::mediawiki::mediawiki')
+    }
     $redis_password             = lookup('passwords::redis::master')
     $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
     $mediawiki_secretkey        = lookup('passwords::mediawiki::secretkey')

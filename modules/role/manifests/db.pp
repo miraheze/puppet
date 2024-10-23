@@ -13,8 +13,13 @@ class role::db (
     include mariadb::packages
     include prometheus::exporter::mariadb
 
-    $mediawiki_password = lookup('passwords::db::mediawiki')
-    $wikiadmin_password = lookup('passwords::db::wikiadmin')
+    if ( $is_beta_db ) {
+        $mediawiki_password = lookup('passwords:db::mediawiki_beta')
+        $wikiadmin_password = lookup('passwords:db::wikiadmin_beta')
+    } else {
+        $mediawiki_password = lookup('passwords::db::mediawiki')
+        $wikiadmin_password = lookup('passwords::db::wikiadmin')
+    }
     $matomo_password = lookup('passwords::db::matomo')
     $phorge_password = lookup('passwords::db::phorge')
     $exporter_password = lookup('passwords::db::exporter')
