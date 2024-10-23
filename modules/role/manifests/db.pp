@@ -14,8 +14,8 @@ class role::db (
     include prometheus::exporter::mariadb
 
     if ( $is_beta_db ) {
-        $mediawiki_password = lookup('passwords:db::mediawiki_beta')
-        $wikiadmin_password = lookup('passwords:db::wikiadmin_beta')
+        $mediawiki_password = lookup('passwords::db::mediawiki_beta')
+        $wikiadmin_password = lookup('passwords::db::wikiadmin_beta')
     } else {
         $mediawiki_password = lookup('passwords::db::mediawiki')
         $wikiadmin_password = lookup('passwords::db::wikiadmin')
