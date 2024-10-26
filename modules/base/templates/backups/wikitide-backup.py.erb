@@ -30,7 +30,9 @@ def pca_connection(status, *args):
             try:
                 c.put(*args)
             except IOError:
-                print(f'WARNING: encountered IOError uploading {args[0]} to {args[1]}') 
+                print(f'WARNING: encountered IOError uploading {args[0]} to {args[1]}')
+            except:
+                print(f'WARNING: encountered error uploading {args[0]} to {args[1]}')
 
 
 def pca_web(method: str, url: str, expiry: int):
