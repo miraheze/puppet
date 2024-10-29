@@ -68,6 +68,11 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+  dns-admins:
+    gid: 2009
+    description: limited sudo access on DNS nameservers
+    members: [macfan]
+    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/puppet *']
 
 users:
   johnflewis:
