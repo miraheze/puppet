@@ -23,7 +23,11 @@ $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 // MultiPurge configuration tokens for CloudFlare
 $wgMultiPurgeCloudFlareApiToken = "<%= @multipurge_apitoken %>";
 $wgMultiPurgeCloudFlareZoneId = "<%= @multipurge_zoneid %>";
-  
+
+// OpenAI settings
+$wgCreateWikiOpenAIAPIKey = "<%= @openai_apikey %>";
+$wgCreateWikiOpenAIAssistantID = "<%= @openai_assistantid %>";
+
 // Extension:DiscordNotifications global webhook
 $wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
 $wmgDiscordExperimentalWebhook = "<%= @discord_experimental_webhook %>";
