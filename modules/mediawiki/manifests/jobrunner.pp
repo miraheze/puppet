@@ -81,6 +81,8 @@ class mediawiki::jobrunner {
 
     File['/etc/ssl/localcerts'] ~> Service['apache2']
     File['/etc/ssl/private'] ~> Service['apache2']
+    File['/etc/ssl/localcerts/wikitide.net.crt'] ~> Service['apache2']
+    File['/etc/ssl/private/wikitide.net.key'] ~> Service['apache2']
 
     $firewall_rules_jobrunner_str = join(
         query_facts('Class[Role::Changeprop] or Class[Role::Eventgate]', ['networking'])
