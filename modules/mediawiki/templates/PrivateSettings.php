@@ -25,8 +25,11 @@ $wgMultiPurgeCloudFlareApiToken = "<%= @multipurge_apitoken %>";
 $wgMultiPurgeCloudFlareZoneId = "<%= @multipurge_zoneid %>";
 
 // OpenAI settings
-$wgCreateWikiOpenAIAPIKey = "<%= @openai_apikey %>";
-$wgCreateWikiOpenAIAssistantID = "<%= @openai_assistantid %>";
+$wgCreateWikiOpenAIConfig = [
+  "dryrun" => true,
+  "apikey" => "<%= @openai_apikey %>",
+  "assistant" => "<%= @openai_assistantid %>"
+];
 
 // Extension:DiscordNotifications global webhook
 $wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
