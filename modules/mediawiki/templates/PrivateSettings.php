@@ -28,7 +28,7 @@ $wgMultiPurgeCloudFlareZoneId = "<%= @multipurge_zoneid %>";
 $wgCreateWikiOpenAIConfig = [
   "dryrun" => true,
   "apikey" => "<%= @openai_apikey %>",
-  "assistant" => "<%= @openai_assistantid %>"
+  "assistantid" => "<%= @openai_assistantid %>"
 ];
 
 // Extension:DiscordNotifications global webhook
