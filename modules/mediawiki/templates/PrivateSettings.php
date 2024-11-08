@@ -26,7 +26,6 @@ $wgMultiPurgeCloudFlareZoneId = "<%= @multipurge_zoneid %>";
 
 // OpenAI settings
 $wgCreateWikiOpenAIConfig = [
-  "dryrun" => false,
   "apikey" => "<%= @openai_apikey %>",
   "assistantid" => "<%= @openai_assistantid %>"
 ];
