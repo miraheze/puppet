@@ -297,7 +297,7 @@ def delete_backups(source: str, database: str, delete_all: bool, file_name: str)
              print(f'Deleted file {backup_item}')
      else:
          if not file_name:
-             parser.exit(1, 'Must specify --file-name with the file you want deleting.')
+             parser.exit(1, 'Must specify --file-name with the file you want to delete.')
 
          pca_web('DELETE', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}/{file_name}', 0)
          print(f'Deleted file {file_name}')
