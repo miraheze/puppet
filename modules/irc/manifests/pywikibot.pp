@@ -106,7 +106,7 @@ class irc::pywikibot {
             }
             $log_path = "/var/log/pwb/${dbname}-${script_config['name']}-cron.log"
             $command = $script_config['scriptparams'] ? {
-                '' => "/usr/local/bin/pywikibot ${script_config['script']} -lang:${dbname} -pt:0 >> ${log_path}"
+                '' => "/usr/local/bin/pywikibot ${script_config['script']} -lang:${dbname} -pt:0 >> ${log_path}",
                 default => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0 >> ${log_path}"
             }
             # lint:ignore:selector_inside_resource
@@ -116,27 +116,27 @@ class irc::pywikibot {
                 user     => 'irc',
                 minute   => $script_config['minute'] ? { 
                                 '*' => absent,
-                                undef => '0'
+                                undef => '0',
                                 default  => $script_config['minute'],
                             }
                 hour     => $script_config['hour'] ? { 
                                 '*' => absent,
-                                undef => '0'
+                                undef => '0',
                                 default  => $script_config['hour']
                             }
                 month    => $script_config['month'] ? { 
                                 '*' => absent,
-                                undef => '1'
+                                undef => '1',
                                 default  => $script_config['month']
                             }
                 monthday => $script_config['monthday'] ? { 
                                 '*' => absent,
-                                undef => '1'
+                                undef => '1',
                                 default  => $script_config['monthday']
                             }
                 weekday  => $script_config['weekday'] ? {
                                 '*' => absent,
-                                undef => '0'
+                                undef => '0',
                                 default  => $script_config['weekday']
                             }
             }
