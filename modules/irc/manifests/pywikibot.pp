@@ -111,7 +111,7 @@ class irc::pywikibot {
             }
             # lint:ignore:selector_inside_resource
             cron { "pywikibot ${dbname}-${script_config['name']}":
-                ensure   => $ensure,
+                ensure   => $script_config['ensure'],
                 command  => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0 >> ${log_path}",
                 user     => 'irc',
                 minute   => $script_config['minute'] ? { 
@@ -142,7 +142,7 @@ class irc::pywikibot {
             }
             # lint:ignore:selector_inside_resource
             logrotate::rule { "pwb-${dbname}-${script_config['name']}-cron":
-                ensure         => $ensure,
+                ensure         => $script_config['ensure'],
                 file_glob      => $log_path,
                 frequency      => 'daily',
                 date_ext       => true,
