@@ -8,19 +8,19 @@ class Family(family.Family):  # noqa: D101
     langs = {
         <%- @family_langs.each do |dbname, params| {-%>
         '<%= dbname %>': '<%= params["domain"] %>',
-        <% end -%>
+        <%- end -%>
     }
 
     def scriptpath(self, code):
         return {
             <%- @family_langs.each do |dbname, params| {-%>
             '<%= dbname %>': '/w',
-            <% end -%>
+            <%- end -%>
         }[code]
 
     def protocol(self, code):
         return {
             <%- @family_langs.each do |dbname, params| {-%>
             '<%= dbname %>': 'https',
-            <% end -%>
+            <%- end -%>
         }[code]
