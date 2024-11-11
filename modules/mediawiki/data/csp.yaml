@@ -157,6 +157,7 @@ font-src:
   - 'fastly.jsdelivr.net'
   - 'db.onlinewebfonts.com'
   - 'upload.wikimedia.org'
+  - 'use.typekit.net'
 
 media-src:
   - "'self'"
