@@ -117,28 +117,28 @@ class irc::pywikibot {
                 minute   => $script_config['minute'] ? { 
                                 '*' => absent,
                                 undef => '0',
-                                default  => $script_config['minute'],
-                            }
+                                default  => $script_config['minute']
+                            },
                 hour     => $script_config['hour'] ? { 
                                 '*' => absent,
                                 undef => '0',
                                 default  => $script_config['hour']
-                            }
+                            },
                 month    => $script_config['month'] ? { 
                                 '*' => absent,
                                 undef => '1',
                                 default  => $script_config['month']
-                            }
+                            },
                 monthday => $script_config['monthday'] ? { 
                                 '*' => absent,
                                 undef => '1',
                                 default  => $script_config['monthday']
-                            }
+                            },
                 weekday  => $script_config['weekday'] ? {
                                 '*' => absent,
                                 undef => '0',
                                 default  => $script_config['weekday']
-                            }
+                            },
             }
             # lint:ignore:selector_inside_resource
             logrotate::rule { "pwb-${dbname}-${script_config['name']}-cron":
