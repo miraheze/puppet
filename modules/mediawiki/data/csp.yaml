@@ -45,6 +45,7 @@ script-src:
   - '*.hcaptcha.com'
   - 'bandcamp.com'
   - 'flo.uri.sh'
+  - 'challenges.cloudflare.com'
 
 style-src:
   - "'self'"
@@ -210,6 +211,7 @@ frame-src:
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
   - 'bandcamp.com'
+  - 'challenges.cloudflare.com'
 
 connect-src:
   - "'self'"

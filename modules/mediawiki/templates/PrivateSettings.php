@@ -14,6 +14,10 @@ $wgSecretKey = "<%= @mediawiki_secretkey %>";
 // hCaptcha secret key
 $wgHCaptchaSecretKey = "<%= @hcaptcha_secretkey %>";
 
+// Turnstile keys
+$wgTurnstileSiteKey = "<%= @turnstile_sitekey %>";
+$wgTurnstileSecretKey = "<%= @turnstile_secretkey %>";
+
 // Shellbox secret key
 $wgShellboxSecretKey = "<%= @shellbox_secretkey %>";
 
