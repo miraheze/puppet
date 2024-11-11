@@ -88,6 +88,15 @@ class puppetserver(
         require   => Package['puppet-agent'],
     }
 
+    git::clone { 'pywikibot-config':
+        ensure    => latest,
+        directory => '/etc/puppetlabs/puppet/pywikibot-config',
+        origin    => 'https://github.com/miraheze/pywikibot-config',
+        owner     => 'puppet',
+        group     => 'puppet',
+        require   => Package['puppet-agent'],
+    }
+
     file { '/etc/puppetlabs/puppet/private':
         ensure => directory,
     }
