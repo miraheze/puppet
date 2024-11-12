@@ -125,6 +125,20 @@ class mediawiki::jobqueue::runner (
             require           => File['/var/log/mediawiki/cron'],
         }
 
+        systemd::timer::job { 'refreshlinks':
+            description       => 'refreshlinks',
+            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/refreshLinks.php --dfn-only",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-1 00:00',
+            },
+            logfile_basedir   => '/var/log/mediawiki/cron',
+            logfile_name      => 'refreshlinks.log',
+            syslog_identifier => 'refreshlinks',
+            user              => 'www-data',
+            require           => File['/var/log/mediawiki/cron'],
+        }
+
         if $wiki == 'loginwiki' {
             $swift_password = lookup('mediawiki::swift_password')
 
