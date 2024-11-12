@@ -240,7 +240,7 @@ class mediawiki::jobqueue::runner (
             }
 
             cron { 'update_special_pages':
-                ensure   => present,
+                ensure   => absent,
                 command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/updateSpecialPages.php > /var/log/mediawiki/cron/updateSpecialPages.log 2>&1",
                 user     => 'www-data',
                 monthday => '*/3',
