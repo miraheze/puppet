@@ -213,7 +213,7 @@ class mediawiki::jobqueue::runner (
                 command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/updateSpecialPages.php",
                 interval          => {
                     'start'    => 'OnCalendar',
-                    'interval' => '*-*-*/3 05:00:00',
+                    'interval' => '*-1/3 05:00',
                 },
                 logfile_basedir   => '/var/log/mediawiki/cron',
                 logfile_name      => 'update-special-pages.log',
