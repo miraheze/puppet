@@ -33,6 +33,7 @@ else
         exit 1
 fi
 
+    logsalmsg "Began automatic backing up"
 # Loop through each wiki and perform the backup and upload
 for wiki in $wikis; do
 
@@ -53,8 +54,8 @@ for wiki in $wikis; do
 
     # Backup process for each wiki
    if /usr/bin/php /srv/mediawiki/$mwversion/maintenance/dumpBackup.php --wiki $wiki --output gzip:/opt/backups/$wiki-$date.xml.gz --full --logs --uploads &&
-       /usr/bin/php /srv/mediawiki/$mwversion/extensions/MirahezeMagic/maintenance/swiftDump.php --wiki $wiki --filename /tmp/$wiki-images-$date.tar.gz &&
-       /usr/bin/python3 /usr/lib/python3/dist-packages/internetarchive/cli/ia.py upload "miraheze-wiki-$wiki-$(date +'%Y%m%d')" \
+       /usr/bin/php /srv/mediawiki/$mwversion/extensions/MirahezeMagic/maintenance/swiftDump.php --wiki $wiki --filename $wiki-images-$date.tar.gz &&
+       /usr/bin/python3 /usr/lib/python3/dist-packages/internetarchive/cli/ia.py upload "miraheze-wiki-$wiki-$date" \
             /opt/backups/$wiki-$date.xml.gz /tmp/$wiki-images-$date.tar.gz \
             --metadata="mediatypes:texts" \
             --metadata="subject:wiki;MediaWiki;Miraheze;$SITENAME;$wiki" \
