@@ -79,6 +79,7 @@ style-src:
   - 'ton.twimg.com'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
+  - 'use.typekit.net'
 
 img-src:
   - 'blob:'
