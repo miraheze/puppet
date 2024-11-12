@@ -173,7 +173,7 @@ class mediawiki::jobqueue::runner (
         }
 
         cron { 'clean_gu_cache':
-            ensure   => present,
+            ensure   => absent,
             command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/GlobalUsage/maintenance/refreshGlobalimagelinks.php --pages=existing,nonexisting > /dev/null",
             user     => 'www-data',
             minute   => '0',
