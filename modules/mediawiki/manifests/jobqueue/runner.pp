@@ -125,58 +125,6 @@ class mediawiki::jobqueue::runner (
             require           => File['/var/log/mediawiki/cron'],
         }
 
-        cron { 'purge_checkuser':
-            ensure  => absent,
-            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/CheckUser/maintenance/purgeOldData.php >> /var/log/mediawiki/cron/purge_checkuser.log",
-            user    => 'www-data',
-            minute  => '5',
-            hour    => '6',
-        }
-
-        cron { 'purge_abusefilter':
-            ensure  => absent,
-            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/AbuseFilter/maintenance/PurgeOldLogIPData.php >> /var/log/mediawiki/cron/purge_abusefilter.log",
-            user    => 'www-data',
-            minute  => '5',
-            hour    => '18',
-        }
-
-        cron { 'managewikis':
-            ensure  => absent,
-            command => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki ${wiki} --write >> /var/log/mediawiki/cron/managewikis.log",
-            user    => 'www-data',
-            minute  => '5',
-            hour    => '12',
-        }
-
-        cron { 'generate sitemaps for all wikis':
-            ensure  => absent,
-            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php",
-            user    => 'www-data',
-            minute  => '0',
-            hour    => '0',
-            month   => '*',
-            weekday => [ '6' ],
-        }
-
-        cron { 'cleanup_upload_stash':
-            ensure  => absent,
-            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/cleanupUploadStash.php",
-            user    => 'www-data',
-            hour    => 1,
-            minute  => 0,
-        }
-
-        cron { 'purge expired blocks':
-            ensure  => absent,
-            command => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/purgeExpiredBlocks.php",
-            user    => 'www-data',
-            minute  => '0',
-            hour    => '0',
-            month   => '*',
-            weekday => [ '1' ],
-        }
-
         if $wiki == 'loginwiki' {
             $swift_password = lookup('mediawiki::swift_password')
 
@@ -222,32 +170,6 @@ class mediawiki::jobqueue::runner (
                 require           => File['/var/log/mediawiki/cron'],
             }
 
-            cron { 'generate sitemap index':
-                ensure  => absent,
-                command => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/MirahezeMagic/py/generateSitemapIndex.py -A https://swift-lb.miraheze.org/auth/v1.0 -U mw:media -K ${swift_password} >> /var/log/mediawiki/cron/generate-sitemap-index.log",
-                user    => 'www-data',
-                minute  => '0',
-                hour    => '0',
-                month   => '*',
-                weekday => [ '5' ],
-            }
-
-            cron { 'purge_parsercache':
-                ensure  => absent,
-                command => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/purgeParserCache.php --wiki loginwiki --tag pc1 --age 864000 --msleep 200",
-                user    => 'www-data',
-                special => 'daily',
-            }
-
-            cron { 'update_special_pages':
-                ensure   => absent,
-                command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/updateSpecialPages.php > /var/log/mediawiki/cron/updateSpecialPages.log 2>&1",
-                user     => 'www-data',
-                monthday => '*/3',
-                hour     => 5,
-                minute   => 0,
-            }
-
             # Backups
             file { '/srv/backups':
                 ensure => directory,
@@ -285,13 +207,6 @@ class mediawiki::jobqueue::runner (
                 user              => 'www-data',
                 require           => File['/var/log/mediawiki/cron'],
             }
-
-            cron { 'purge_parsercache':
-                ensure  => absent,
-                command => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/purgeParserCache.php --wiki loginwikibeta --tag pc1 --age 864000 --msleep 200",
-                user    => 'www-data',
-                special => 'daily',
-            }
         }
 
         systemd::timer::job { 'update-statistics':
@@ -320,24 +235,6 @@ class mediawiki::jobqueue::runner (
             syslog_identifier => 'update-wikibase-sites-table',
             user              => 'www-data',
             require           => File['/var/log/mediawiki/cron'],
-        }
-
-        cron { 'update_statistics':
-            ensure   => absent,
-            command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/initSiteStats.php --update --active > /dev/null",
-            user     => 'www-data',
-            minute   => '0',
-            hour     => '5',
-            monthday => [ '1', '15' ],
-        }
-
-        cron { 'update_sites':
-            ensure   => absent,
-            command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/MirahezeMagic/maintenance/populateWikibaseSitesTable.php > /dev/null",
-            user     => 'www-data',
-            minute   => '0',
-            hour     => '5',
-            monthday => [ '5', '20' ],
         }
     }
 }
