@@ -37,7 +37,7 @@ fi
 for wiki in $wikis; do
 
     # Retrieve the MediaWiki version for each wiki
-    mwversion=(/usr/local/bin/getMWVersion $wiki)
+    mwversion="$(/usr/local/bin/getMWVersion $wiki)"
     echo "$wiki is running MediaWiki $mwversion"
 
     echo "Retrieving site information for $wiki..."
