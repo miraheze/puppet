@@ -65,7 +65,7 @@ class mediawiki {
         file { '/opt/backups':
             ensure => directory,
             owner  => 'www-data',
-            group  => 'root',
+            group  => 'www-data',
             mode   => '0755',
         }
 
