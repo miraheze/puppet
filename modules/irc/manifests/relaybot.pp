@@ -53,7 +53,7 @@ define irc::relaybot (
             present => latest,
             default => $ensure,
         },
-        origin    => 'https://github.com/Universal-Omega/IRC-Discord-Relay',
+        origin    => 'https://github.com/miraheze/IRC-Discord-Relay',
         directory => $install_path,
         owner     => 'irc',
         group     => 'irc',
