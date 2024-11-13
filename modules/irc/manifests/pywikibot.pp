@@ -12,7 +12,7 @@ class irc::pywikibot {
     file { $install_path:
         ensure    => 'directory',
         owner     => 'pywikibot',
-        group     => 'irc',
+        group     => 'pywikibot',
         mode      => '0644',
         max_files => 5000,
     }
