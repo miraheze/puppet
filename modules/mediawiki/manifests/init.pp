@@ -55,6 +55,26 @@ class mediawiki {
             mode   => '0755',
             source => 'puppet:///modules/mediawiki/bin/iaupload.py',
         }
+
+        file { '/usr/local/bin/backupwikis':
+                ensure => 'present',
+                mode   => '0755',
+                source => 'puppet:///modules/mediawiki/bin/backupwikis',
+        }
+
+        file { '/opt/backups':
+            ensure => directory,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0755',
+        }
+
+        cron { 'backup-all-wikis-ia':
+            ensure  => present,
+            command => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php  > /var/log/iabackup-backup.log 2>&1',
+            user    => 'www-data',
+            monthday => ['1'],
+        }
     }
 
     git::clone { '3d2png':
