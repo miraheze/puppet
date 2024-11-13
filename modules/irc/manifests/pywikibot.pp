@@ -11,7 +11,7 @@ class irc::pywikibot {
 
     file { $install_path:
         ensure    => 'directory',
-        owner     => 'irc',
+        owner     => 'pywikibot',
         group     => 'irc',
         mode      => '0644',
         max_files => 5000,
@@ -19,15 +19,15 @@ class irc::pywikibot {
 
     file { $base_path:
         ensure => 'directory',
-        owner  => 'irc',
-        group  => 'irc',
+        owner  => 'pywikibot',
+        group  => 'pywikibot',
         mode   => '0644',
     }
 
     file { "${base_path}/families":
         ensure => 'directory',
-        owner  => 'irc',
-        group  => 'irc',
+        owner  => 'pywikibot',
+        group  => 'pywikibot',
         mode   => '0644',
     }
 
@@ -41,8 +41,8 @@ class irc::pywikibot {
 
     file { '/var/log/pwb':
         ensure  => 'directory',
-        owner   => 'irc',
-        group   => 'irc',
+        owner   => 'pywikibot',
+        group   => 'pywikibot',
         mode    => '0644',
         recurse => true,
     }
@@ -59,21 +59,21 @@ class irc::pywikibot {
         'python3-bs4',
     ])
 
-    git::clone { 'PyWikiBot':
+    git::clone { 'Pywikibot-stable':
         ensure             => latest,
         origin             => 'https://github.com/wikimedia/pywikibot',
         branch             => 'stable',
         directory          => $install_path,
-        owner              => 'irc',
-        group              => 'irc',
+        owner              => 'pywikibot',
+        group              => 'pywikibot',
         recurse_submodules => true,
         require            => File[$install_path],
     }
 
     file { "${base_path}/user-config.py":
         ensure  => present,
-        owner   => 'irc',
-        group   => 'irc',
+        owner   => 'pywikibot',
+        group   => 'pywikibot',
         mode    => '0400',
         content => template('irc/pywikibot/user-config.py'),
         require => Git::Clone['PyWikiBot'],
@@ -83,8 +83,8 @@ class irc::pywikibot {
 
     file { "${base_path}/families/wikitide_family.py":
         ensure  => present,
-        owner   => 'irc',
-        group   => 'irc',
+        owner   => 'pywikibot',
+        group   => 'pywikibot',
         mode    => '0644',
         content => template('irc/pywikibot/wikitide_family.py'),
         require => Git::Clone['PyWikiBot'],
@@ -113,7 +113,7 @@ class irc::pywikibot {
             cron { "pywikibot ${dbname}-${script_config['name']}":
                 ensure   => $script_config['ensure'],
                 command  => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0 >> ${log_path}",
-                user     => 'irc',
+                user     => 'pywikibot',
                 minute   => $script_config['minute'] ? {
                                 '*'     => absent,
                                 undef   => '0',

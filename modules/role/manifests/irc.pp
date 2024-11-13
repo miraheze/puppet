@@ -3,6 +3,13 @@ class role::irc {
     include base
     include irc::irclogbot
     include irc::cvtbot
+
+    users::user { 'pywikibot':
+        ensure => present,
+        uid    => 3200,
+        shell  => '/bin/bash',
+    }
+
     include irc::pywikibot
 
     irc::relaybot { 'relaybot':
