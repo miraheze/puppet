@@ -70,9 +70,9 @@ class mediawiki {
         }
 
         cron { 'backup-all-wikis-ia':
-            ensure  => present,
-            command => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php  > /var/log/iabackup-backup.log 2>&1',
-            user    => 'www-data',
+            ensure   => present,
+            command  => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php  > /var/log/iabackup-backup.log 2>&1',
+            user     => 'www-data',
             monthday => ['1'],
         }
     }
