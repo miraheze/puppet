@@ -76,7 +76,7 @@ class irc::pywikibot {
         group   => 'pywikibot',
         mode    => '0400',
         content => template('irc/pywikibot/user-config.py'),
-        require => Git::Clone['PyWikiBot'],
+        require => Git::Clone['Pywikibot-stable'],
     }
 
     $family_langs = loadyaml('/etc/puppetlabs/puppet/pywikibot-config/langs.yaml')
@@ -87,7 +87,7 @@ class irc::pywikibot {
         group   => 'pywikibot',
         mode    => '0644',
         content => template('irc/pywikibot/wikitide_family.py'),
-        require => Git::Clone['PyWikiBot'],
+        require => Git::Clone['Pywikibot-stable'],
     }
 
     $pwb_crons = loadyaml('/etc/puppetlabs/puppet/pywikibot-config/cron.yaml')
