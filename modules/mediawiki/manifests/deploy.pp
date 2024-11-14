@@ -83,7 +83,7 @@ class mediawiki::deploy {
         owner   => 'www-data',
         group   => 'www-data',
         mode    => '0644',
-        source  => 'puppet:///modules/mediawiki/patches/public.json',
+        source  => 'puppet:///mediawiki-repos/patches/public.json',
         require => File['/srv/mediawiki-staging/patches'],
     }
 
@@ -101,7 +101,7 @@ class mediawiki::deploy {
         owner   => 'www-data',
         group   => 'www-data',
         mode    => '0755',
-        source  => 'puppet:///modules/mediawiki/patches/public',
+        source  => 'puppet:///mediawiki-repos/patches/public',
         resurse => true,
         require => File['/srv/mediawiki-staging/patches'],
     }
