@@ -1,13 +1,19 @@
 #! /bin/bash
 
 usage(){
-        echo "Usage: /usr/local/bin/runwikibackups /srv/mediawiki/cache/<dblist>.php"
+        echo "Usage: /usr/local/bin/runwikibackups /srv/mediawiki/cache/<dblist>.php <start> <stop>"
         exit 1
 }
 
 [[ $# -eq 0 ]] && usage
 
 dblist=$1
+shift
+script=$1
+shift
+
+start_string=${1:-}
+end_string=${2:-}
 
 export HTTPS_PROXY=http://bastion.wikitide.net:8080
 
@@ -34,9 +40,12 @@ else
 fi
 
     logsalmsg "Began automatic backing up"
-# Loop through each wiki and perform the backup and upload
-for wiki in $wikis; do
+# Filter wikis based on start and end strings if provided
+filtered_wikis=$(echo "$wikis" | awk -v start="$start_string" -v end="$end_string" '
+    (start == "" || index($0, start) == 1) && (end == "" || index($0, end) > 0)
+')
 
+for wiki in $filtered_wikis
     # Retrieve the MediaWiki version for each wiki
     mwversion="$(/usr/local/bin/getMWVersion $wiki)"
     echo "$wiki is running MediaWiki $mwversion"
@@ -53,8 +62,8 @@ for wiki in $wikis; do
         }')
 
     # Backup process for each wiki
-   if /usr/bin/php /srv/mediawiki/$mwversion/maintenance/dumpBackup.php --wiki $wiki --output gzip:/opt/backups/$wiki-$date.xml.gz --full --logs --uploads &&
-       /usr/bin/php /srv/mediawiki/$mwversion/extensions/MirahezeMagic/maintenance/swiftDump.php --wiki $wiki --filename $wiki-images-$date.tar.gz &&
+   if /usr/bin/php /srv/mediawiki/$mwversion/maintenance/run.php dumpBackup --wiki $wiki --output gzip:/opt/backups/$wiki-$date.xml.gz --full --logs --uploads &&
+       /usr/bin/php /srv/mediawiki/$mwversion/maintenance/run.php /srv/mediawiki/$mwversion/extensions/MirahezeMagic/maintenance/swiftDump.php --wiki $wiki --filename $wiki-images-$date.tar.gz &&
        /usr/bin/python3 /usr/lib/python3/dist-packages/internetarchive/cli/ia.py upload "miraheze-wiki-$wiki-$date" \
             /opt/backups/$wiki-$date.xml.gz /tmp/$wiki-images-$date.tar.gz \
             --metadata="mediatypes:texts" \
