@@ -49,6 +49,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     ) + versionLists
 
     longscripts = (
+        'checkswiftcontainers',
         'compressold',
         'deletebatch',
         'importdump',
