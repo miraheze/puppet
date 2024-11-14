@@ -106,13 +106,13 @@ class irc::pywikibot {
             }
             $log_path = "/var/log/pwb/${dbname}-${script_config['name']}-cron.log"
             $command = $script_config['scriptparams'] ? {
-                '' => "/usr/local/bin/pywikibot ${script_config['script']} -lang:${dbname} -pt:0 >> ${log_path}",
-                default => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0 >> ${log_path}"
+                '' => "/usr/local/bin/pywikibot ${script_config['script']} -lang:${dbname} -pt:0 >> ${log_path} 2>&1",
+                default => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0 >> ${log_path} 2>&1"
             }
             # lint:ignore:selector_inside_resource
             cron { "pywikibot ${dbname}-${script_config['name']}":
                 ensure   => $script_config['ensure'],
-                command  => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0 >> ${log_path}",
+                command  => $command,
                 user     => 'pywikibot',
                 minute   => $script_config['minute'] ? {
                                 '*'     => absent,
