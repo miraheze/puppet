@@ -1,7 +1,7 @@
 #! /bin/bash
 
 usage(){
-        echo "Usage: /usr/local/bin/runwikibackups /srv/mediawiki/cache/<dblist>.php <start> <stop>"
+        echo "Usage: /usr/local/bin/runwikibackups /srv/mediawiki/cache/<dblist>.php <start> <stop> [--automatic]"
         exit 1
 }
 
@@ -14,6 +14,7 @@ shift
 
 start_string=${1:-}
 end_string=${2:-}
+automatic_run=false
 
 export HTTPS_PROXY=http://bastion.wikitide.net:8080
 
@@ -44,6 +45,11 @@ fi
 filtered_wikis=$(echo "$wikis" | awk -v start="$start_string" -v end="$end_string" '
     (start == "" || index($0, start) == 1) && (end == "" || index($0, end) > 0)
 ')
+
+if [ "$automatic_run" = true ]; then
+    echo "Running logsalmsg for $wiki"
+    /usr/local/bin/logsalmsg "AUTOMATIC: Archival of all public wikis to Internet Archive has begun..."
+fi
 
 for wiki in $filtered_wikis
     # Retrieve the MediaWiki version for each wiki
@@ -89,3 +95,8 @@ for wiki in $filtered_wikis
         echo "An error occurred during backup or upload for $wiki! Skipping cleanup..."
     fi
 done
+
+if [ "$automatic_run" = true ]; then
+    echo "Logging beginning of automatic archival..."
+    /usr/local/bin/logsalmsg "AUTOMATIC: Finished archival of all public wikis to Internet Archive"
+fi
