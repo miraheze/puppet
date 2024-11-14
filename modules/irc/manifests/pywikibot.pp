@@ -11,38 +11,38 @@ class irc::pywikibot {
 
     file { $install_path:
         ensure    => 'directory',
-        owner     => 'irc',
-        group     => 'irc',
+        owner     => 'pywikibot',
+        group     => 'pywikibot',
         mode      => '0644',
         max_files => 5000,
     }
 
     file { $base_path:
         ensure => 'directory',
-        owner  => 'irc',
-        group  => 'irc',
+        owner  => 'pywikibot',
+        group  => 'pywikibot',
         mode   => '0644',
     }
 
     file { "${base_path}/families":
         ensure => 'directory',
-        owner  => 'irc',
-        group  => 'irc',
+        owner  => 'pywikibot',
+        group  => 'pywikibot',
         mode   => '0644',
     }
 
     file { '/usr/local/bin/pywikibot':
         ensure  => 'present',
-        owner   => 'irc',
-        group   => 'irc',
+        owner   => 'root',
+        group   => 'root',
         mode    => '0555',
         content => template('irc/pywikibot/pywikibot.sh'),
     }
 
     file { '/var/log/pwb':
         ensure  => 'directory',
-        owner   => 'irc',
-        group   => 'irc',
+        owner   => 'pywikibot',
+        group   => 'pywikibot',
         mode    => '0644',
         recurse => true,
     }
@@ -59,52 +59,100 @@ class irc::pywikibot {
         'python3-bs4',
     ])
 
-    git::clone { 'PyWikiBot':
+    git::clone { 'Pywikibot-stable':
         ensure             => latest,
         origin             => 'https://github.com/wikimedia/pywikibot',
         branch             => 'stable',
         directory          => $install_path,
-        owner              => 'irc',
-        group              => 'irc',
+        owner              => 'pywikibot',
+        group              => 'pywikibot',
         recurse_submodules => true,
         require            => File[$install_path],
     }
 
     file { "${base_path}/user-config.py":
         ensure  => present,
-        owner   => 'irc',
-        group   => 'irc',
+        owner   => 'pywikibot',
+        group   => 'pywikibot',
         mode    => '0400',
         content => template('irc/pywikibot/user-config.py'),
-        require => Git::Clone['PyWikiBot'],
+        require => Git::Clone['Pywikibot-stable'],
     }
+
+    $family_langs = loadyaml('/etc/puppetlabs/puppet/pywikibot-config/langs.yaml')
 
     file { "${base_path}/families/wikitide_family.py":
         ensure  => present,
-        owner   => 'irc',
-        group   => 'irc',
+        owner   => 'pywikibot',
+        group   => 'pywikibot',
         mode    => '0644',
         content => template('irc/pywikibot/wikitide_family.py'),
-        require => Git::Clone['PyWikiBot'],
+        require => Git::Clone['Pywikibot-stable'],
     }
 
-    cron { 'run pywikibot archivebot on meta':
-        ensure  => present,
-        command => '/usr/local/bin/pywikibot archivebot Template:Autoarchive/config -pt:0 >> /var/log/pwb/archivebot-cron.log 2>&1',
-        user    => 'irc',
-        minute  => '0',
-        hour    => '0',
-    }
+    $pwb_crons = loadyaml('/etc/puppetlabs/puppet/pywikibot-config/cron.yaml')
 
-    logrotate::rule { 'pwb-archivebot-cron':
-        file_glob      => '/var/log/pwb/archivebot-cron.log',
-        frequency      => 'weekly',
-        date_ext       => true,
-        date_yesterday => true,
-        copy_truncate  => true,
-        rotate         => 7,
-        missing_ok     => true,
-        no_create      => true,
-        compress       => true,
+    $pwb_crons.each |$dbname, $params| {
+        $params.each |$script_config| {
+            if $script_config['name'] == undef {
+                warning("One crontab entry for ${dbname} has no name attribute!")
+                next()
+            } elsif $script_config['script'] == undef {
+                warning("One crontab entry for ${dbname} has no script attribute!")
+                next()
+            } elsif $script_config['scriptparams'] == undef {
+                warning("One crontab entry for ${dbname} has no scriptparams attribute!")
+                next()
+            }
+            $log_path = "/var/log/pwb/${dbname}-${script_config['name']}-cron.log"
+            $command = $script_config['scriptparams'] ? {
+                '' => "/usr/local/bin/pywikibot ${script_config['script']} -lang:${dbname} -pt:0 >> ${log_path}",
+                default => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0 >> ${log_path}"
+            }
+            # lint:ignore:selector_inside_resource
+            cron { "pywikibot ${dbname}-${script_config['name']}":
+                ensure   => $script_config['ensure'],
+                command  => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0 >> ${log_path}",
+                user     => 'pywikibot',
+                minute   => $script_config['minute'] ? {
+                                '*'     => absent,
+                                undef   => '0',
+                                default => $script_config['minute']
+                            },
+                hour     => $script_config['hour'] ? {
+                                '*'     => absent,
+                                undef   => '0',
+                                default => $script_config['hour']
+                            },
+                month    => $script_config['month'] ? {
+                                '*'     => absent,
+                                undef   => '1',
+                                default => $script_config['month']
+                            },
+                monthday => $script_config['monthday'] ? {
+                                '*'     => absent,
+                                undef   => '1',
+                                default => $script_config['monthday']
+                            },
+                weekday  => $script_config['weekday'] ? {
+                                '*'     => absent,
+                                undef   => '0',
+                                default => $script_config['weekday']
+                            },
+            }
+            # lint:ignore:selector_inside_resource
+            logrotate::rule { "pwb-${dbname}-${script_config['name']}-cron":
+                ensure         => $script_config['ensure'],
+                file_glob      => $log_path,
+                frequency      => 'daily',
+                date_ext       => true,
+                date_yesterday => true,
+                copy_truncate  => true,
+                rotate         => 7,
+                missing_ok     => true,
+                no_create      => true,
+                compress       => true,
+            }
+        }
     }
 }

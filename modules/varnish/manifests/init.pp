@@ -38,7 +38,7 @@ class varnish (
         notify  => Service['varnish'],
     }
 
-    $module_path = get_module_path($module_name)
+    $module_path = get_module_path('mediawiki')
     $csp = loadyaml("${module_path}/data/csp.yaml")
     $backends = lookup('varnish::backends')
     $interval_check = lookup('varnish::interval-check')

@@ -4,6 +4,7 @@ default-src:
   - "'self'"
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.nexttide.org'
   - '*.wikitide.org'
   - '*.wikitide.net'
 
@@ -14,6 +15,7 @@ script-src:
   - "'unsafe-eval'"
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.nexttide.org'
   - '*.wikitide.org'
   - '*.wikitide.net'
   - '*.wikimedia.org'
@@ -42,6 +44,8 @@ script-src:
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
   - 'bandcamp.com'
+  - 'flo.uri.sh'
+  - 'challenges.cloudflare.com'
 
 style-src:
   - "'self'"
@@ -51,6 +55,7 @@ style-src:
   - 'wikitide.org'
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.nexttide.org'
   - '*.wikitide.org'
   - '*.wikitide.net'
   - '*.wikimedia.org'
@@ -74,6 +79,7 @@ style-src:
   - 'ton.twimg.com'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
+  - 'use.typekit.net'
 
 img-src:
   - 'blob:'
@@ -83,6 +89,7 @@ img-src:
   - 'wikitide.org'
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.nexttide.org'
   - '*.wikitide.org'
   - '*.wikitide.net'
   - 'upload.wikimedia.org'
@@ -142,6 +149,7 @@ font-src:
   - 'data:'
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.nexttide.org'
   - '*.wikitide.org'
   - '*.wikitide.net'
   - 'fonts.gstatic.com'
@@ -151,12 +159,14 @@ font-src:
   - 'fastly.jsdelivr.net'
   - 'db.onlinewebfonts.com'
   - 'upload.wikimedia.org'
+  - 'use.typekit.net'
 
 media-src:
   - "'self'"
   - 'blob:'
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.nexttide.org'
   - '*.wikitide.org'
   - '*.wikitide.net'
   - 'upload.wikimedia.org'
@@ -173,6 +183,7 @@ frame-src:
   - "'self'"
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.nexttide.org'
   - '*.wikitide.org'
   - '*.wikitide.net'
   - 'www.google.com'
@@ -201,11 +212,13 @@ frame-src:
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
   - 'bandcamp.com'
+  - 'challenges.cloudflare.com'
 
 connect-src:
   - "'self'"
   - '*.miraheze.org'
   - '*.mirabeta.org'
+  - '*.nexttide.org'
   - '*.wikitide.org'
   - '*.wikitide.net'
   - 'www.wikidata.org'

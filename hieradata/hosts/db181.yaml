@@ -1,7 +1,9 @@
 users::groups: 'database-admins'
 http_proxy: 'http://bastion.wikitide.net:8080'
-role::db::weekly_misc: ['mhglobal']
-mariadb::config::innodb_buffer_pool_size: '30G'
+role::db::weekly_misc: []
+# This is in GiB
+mariadb::config::innodb_buffer_pool_size: '34G'
 mariadb::version: '10.11'
 role::db::enable_ssl: false
 mariadb::config::server_id: 8
+role::db::is_beta_db: false

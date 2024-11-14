@@ -1,0 +1,75 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          <%= @service_name %>
+# Required-Start:    $local_fs $network $named $time $syslog <%= @depend_service %>
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       Mattermost brings your team communication into one place
+### END INIT INFO
+
+name=<%= @service_name %>
+dir=<%= @symlink %>
+exe=bin/<%= @executable %>
+<% if (scope.function_versioncmp(['3.8.0', @version]) > 0) -%>
+daemon_opts="-config=<%= @conf %>"
+<% else -%>
+daemon_opts="--config <%= @conf %>"
+<% end -%>
+uid=<%= @user %>
+pidfile='/var/run/<%= @service_name %>.pid'
+
+. /lib/lsb/init-functions
+
+set -a
+[ -r <%= @env_conf %> ] && . <%= @env_conf %>
+
+start() {
+  echo "Starting daemon: " ${name}
+  # start the program
+  start-stop-daemon --start --pidfile ${pidfile} \
+                    --oknodo --quiet --chdir ${dir} \
+                    --chuid ${uid} --startas ${exe} --background \
+                    --make-pidfile -- ${daemon_opts}
+  [ $? = 0 ] && { exit 0 ; } || { exit 1 ; }
+  log_success_msg "${name} started"
+}
+stop() {
+  echo "Stopping daemon: " $name
+  start-stop-daemon --stop --retry 5 --signal "TERM" --oknodo --quiet \
+                    --pidfile ${pidfile}
+  [ $? = 0 ] && { exit 0 ; } || { exit 1 ; }
+  log_success_msg "${name} stopped"
+}
+restart() {
+  echo "Restarting daemon: " $name
+  $0 stop
+  sleep 2
+  $0 start
+  [ $? = 0 ] && { echo "${name} restarted" ; exit 0 ; }
+}
+status() {
+  status_of_proc -p ${pidfile} ${exe} ${name} && exit 0 || exit $?
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  reload)
+    restart
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo "Usage: ${name} {start|stop|restart|reload|status}"
+    exit 2
+      ;;
+esac

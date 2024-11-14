@@ -56,12 +56,22 @@ prod: Environment = {
     'servers': [
         'mw151',
         'mw152',
+        'mw153',
+        'mw154',
         'mw161',
         'mw162',
+        'mw163',
+        'mw164',
         'mw171',
         'mw172',
+        'mw173',
+        'mw174',
         'mw181',
         'mw182',
+        'mw183',
+        'mw184',
+        'mwtask151',
+        'mwtask161',
         'mwtask171',
         'mwtask181',
     ],
@@ -187,7 +197,24 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443) -> bool:
+def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443, use_cert: bool = True) -> bool:
+
+    def make_request(proto, domain, headers) -> requests.Response:
+        url = f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json'
+
+        kwargs = {
+            'headers': headers,
+            'verify': verify,
+        }
+
+        if use_cert:
+            kwargs['cert'] = (
+                '/etc/ssl/localcerts/mwdeploy.crt',
+                '/srv/mediawiki-staging/mwdeploy-client-cert.key',
+            )
+
+        return requests.get(url, **kwargs)
+
     if verify is False:
         os.environ['PYTHONWARNINGS'] = 'ignore:Unverified HTTPS request'
     if not Debug and not Host:
@@ -216,7 +243,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         proto = 'https://'
     else:
         proto = 'http://'
-    req = requests.get(f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json', headers=headers, verify=verify)
+    req = make_request(proto, domain, headers)
     if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
@@ -645,7 +672,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
         for folder in str(args.folders).split(','):
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
     if args.extension_list and version:
-        rsyncfiles.append(f'/srv/mediawiki/cache/{version}/extension-list.json')
+        rsyncfiles.append(f'/srv/mediawiki/cache/{version}/extension-list.php')
     if args.l10n and version:
         rsyncpaths.append(f'/srv/mediawiki/cache/{version}/l10n/')
 

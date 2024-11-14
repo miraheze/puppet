@@ -9,7 +9,6 @@ spec: &spec
               user-agent: true
   title: The Change Propagation for JobQueue root
   paths:
-<% if @realm == 'production' -%>
     /{api:sys}/dedupe:
       x-modules:
         - path: src/sys/deduplicator.js
@@ -33,7 +32,6 @@ spec: &spec
               # partition 1
               metawiki: 1
               # partition 2: default
-<% end -%>
     /{api:sys}/queue:
       x-modules:
         - path: src/sys/kafka.js
@@ -58,12 +56,11 @@ spec: &spec
               # The default value is 5ms, and we want Changeprop to batch
               # more messages rather than keep sending small ones.
               linger.ms: 20
-            concurrency: 50
+            concurrency: 10
             startup_delay: 60000
             disable_blacklist: true
             disable_ratelimit: true
             templates:
-<% if @realm == 'production' -%>
 <% @high_traffic_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
@@ -75,12 +72,12 @@ spec: &spec
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
-                    host: '{{message.meta.domain}}'
+                    x-request-id: '{{globals.message.meta.request_id}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
 <% end -%>
-<% @import_jobs_config.each do |topic, topic_config| -%>
+<% @high_traffic_high_timeout_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
@@ -88,10 +85,10 @@ spec: &spec
 <% end -%>
                 exec:
                   method: post
-                  uri: '<%= @import_host %>/rpc/RunSingleJob.php'
+                  uri: '<%= @jobrunner_high_timeout_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
-                    host: '{{message.meta.domain}}'
+                    x-request-id: '{{globals.message.meta.request_id}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -107,7 +104,7 @@ spec: &spec
                   uri: '<%= @videoscaler_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
-                    host: '{{message.meta.domain}}'
+                    x-request-id: '{{globals.message.meta.request_id}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -120,7 +117,8 @@ spec: &spec
                   method: post
                   uri: '/sys/partition/<%= options['partitioner_kind'] %>/'
                   headers:
-                    content-type: application/json
+                    content-type: 'application/json'
+                    x-request-id: '{{globals.message.meta.request_id}}'
                   body: '{{globals.message}}'
               <%= topic %>:
                 topic: 'cpjobqueue.partitioned.mediawiki.job.<%= topic %>'
@@ -131,27 +129,12 @@ spec: &spec
                   method: post
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
-                    content-type: application/json
-                    host: '{{message.meta.domain}}'
-                  body: '{{globals.message}}'
-                  agentOptions:
-                    keepAlive: true
-<% end -%>
-              global_new_files_jobs:
-                concurrency: <%= @global_new_files_concurrency %>
-                topics:
-<% @global_new_files_jobs.each do |job| -%>
-                  - 'mediawiki.job.<%= job %>'
-<% end -%>
-                exec:
-                  method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
-                  headers:
                     content-type: 'application/json'
-                    host: '{{message.meta.domain}}'
+                    x-request-id: '{{globals.message.meta.request_id}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
+<% end -%>
               semantic_mediawiki_jobs:
                 concurrency: <%= @semantic_mediawiki_concurrency %>
                 topics:
@@ -163,7 +146,7 @@ spec: &spec
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
-                    host: '{{message.meta.domain}}'
+                    x-request-id: '{{globals.message.meta.request_id}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
@@ -177,16 +160,13 @@ spec: &spec
 <% @high_traffic_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
-<% @import_jobs_config.keys.each do |job| -%>
+<% @high_traffic_high_timeout_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @videoscaler_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @partitioned_jobs_config.keys.each do |job| -%>
-                  - 'mediawiki.job.<%= job %>'
-<% end -%>
-<% @global_new_files_jobs.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @semantic_mediawiki_jobs.each do |job| -%>
@@ -197,23 +177,10 @@ spec: &spec
                   uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
-                    host: '{{message.meta.domain}}'
+                    x-request-id: '{{globals.message.meta.request_id}}'
                   body: '{{globals.message}}'
                   agentOptions:
                     keepAlive: true
-<% else -%>
-              job:
-                topic: '/^mediawiki\.job\..*/'
-                exec:
-                  method: post
-                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
-                  headers:
-                    content-type: 'application/json'
-                    host: '{{message.meta.domain}}'
-                  body: '{{globals.message}}'
-                  agentOptions:
-                    keepAlive: true
-<% end -%>
 
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
@@ -234,16 +201,18 @@ worker_heap_limit_mb: 750
 
 # The maximum interval in ms that can pass between two beat messages
 # sent by each worker to the master before it is killed
-worker_heartbeat_timeout: false
+worker_heartbeat_timeout: 15000
 
 # Logger info
 logging:
-  level: debug
+  level: warn
   streams:
     - type: stdout
       named_levels: true
   sampled_levels:
-    debug/request: 0.00005
+    trace/dedupe: 0.001
+    # With the average job insertion rate of 1000/s this will give about 1 sample log per minute
+    trace/sample: 0.00002
 
 # Statsd metrics reporter
 metrics:
@@ -279,3 +248,4 @@ services:
       #   - x-request-id
       user_agent: ChangePropagation-JobQueue/WT
       spec: *spec
+

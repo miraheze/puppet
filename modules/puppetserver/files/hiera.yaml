@@ -4,11 +4,16 @@ defaults:
   datadir: /etc/puppetlabs/puppet/hieradata
   data_hash: yaml_data
 hierarchy:
-  - name: "node hierarchy"
-    path: "hosts/%{networking.hostname}.yaml"
   - name: "private node"
     datadir: "/etc/puppetlabs/puppet/private/hieradata"
     path: "hosts/%{networking.hostname}.yaml"
+  - name: "node hierarchy"
+    path: "hosts/%{networking.hostname}.yaml"
+  - name: "role"
+    path: "role/common/%{::_role}.yaml"
+  - name: "private role"
+    datadir: "/etc/puppetlabs/puppet/private/hieradata"
+    path: "role/common/%{::_role}.yaml"
   - name: "common"
     lookup_key: 'vmlib::expand_path'
     path: "common"

@@ -14,6 +14,10 @@ $wgSecretKey = "<%= @mediawiki_secretkey %>";
 // hCaptcha secret key
 $wgHCaptchaSecretKey = "<%= @hcaptcha_secretkey %>";
 
+// Turnstile keys
+$wgTurnstileSiteKey = "<%= @turnstile_sitekey %>";
+$wgTurnstileSecretKey = "<%= @turnstile_secretkey %>";
+
 // Shellbox secret key
 $wgShellboxSecretKey = "<%= @shellbox_secretkey %>";
 
@@ -23,7 +27,14 @@ $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 // MultiPurge configuration tokens for CloudFlare
 $wgMultiPurgeCloudFlareApiToken = "<%= @multipurge_apitoken %>";
 $wgMultiPurgeCloudFlareZoneId = "<%= @multipurge_zoneid %>";
-  
+
+// OpenAI settings
+$wgCreateWikiOpenAIConfig = [
+  "dryrun" => true,
+  "apikey" => "<%= @openai_apikey %>",
+  "assistantid" => "<%= @openai_assistantid %>"
+];
+
 // Extension:DiscordNotifications global webhook
 $wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
 $wmgDiscordExperimentalWebhook = "<%= @discord_experimental_webhook %>";

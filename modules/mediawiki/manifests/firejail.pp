@@ -5,7 +5,7 @@ class mediawiki::firejail {
     stdlib::ensure_packages('firejail')
 
     file { '/usr/local/bin/mediawiki-firejail-convert':
-        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-convert.py',
+        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-convert.sh',
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0555',
@@ -26,28 +26,28 @@ class mediawiki::firejail {
     }
 
     file { '/usr/local/bin/mediawiki-firejail-ghostscript':
-        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-ghostscript.py',
+        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-ghostscript.sh',
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0555',
     }
 
     file { '/usr/local/bin/rsvg-convert':
-        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-rsvg-convert.py',
+        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-rsvg-convert.sh',
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0555',
     }
 
     file { '/usr/local/bin/mediawiki-firejail-espeak':
-        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-espeak.py',
+        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-espeak.sh',
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0555',
     }
 
     file { '/usr/local/bin/mediawiki-firejail-lame':
-        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-lame.py',
+        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-lame.sh',
         owner  => 'www-data',
         group  => 'www-data',
         mode   => '0555',

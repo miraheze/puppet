@@ -44,14 +44,6 @@ def test_get_command_all():
     assert mwscript.syscheck(mwscript.get_commands(args)) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/1.39/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
 
 
-def test_get_command_beta():
-    args = mwscript.get_args()
-    args.script = 'test.php'
-    args.arguments = ['beta']
-    args.version = '1.39'
-    assert mwscript.syscheck(mwscript.get_commands(args)) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/beta.json /srv/mediawiki/1.39/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
-
-
 def test_get_command_args():
     args = mwscript.get_args()
     args.script = 'test.php'
@@ -107,14 +99,6 @@ def test_get_command_all_runner():
     args.arguments = ['all']
     args.version = '1.40'
     assert mwscript.syscheck(mwscript.get_commands(args)) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/1.40/maintenance/run.php /srv/mediawiki/1.40/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
-
-
-def test_get_command_beta_runner():
-    args = mwscript.get_args()
-    args.script = 'test.php'
-    args.arguments = ['beta']
-    args.version = '1.40'
-    assert mwscript.syscheck(mwscript.get_commands(args)) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/beta.json /srv/mediawiki/1.40/maintenance/run.php /srv/mediawiki/1.40/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
 
 
 def test_get_command_args_runner():

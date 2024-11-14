@@ -1,6 +1,7 @@
 class role::bastion (
     $enable_proxy_ipv4_ipv6 = lookup('role::bastion::enable_proxy_ipv4_ipv6', {'default_value' => undef})
 ) {
+    include base
     include squid
 
     system::role { 'bastion':

@@ -22,10 +22,10 @@ class role::graylog {
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
         proxy   => $http_proxy,
-        version => '5.2',
+        version => '6.1',
     }
     -> class { 'graylog::server':
-        package_version        => '5.2.3-1',
+        package_version        => '6.1.2-1',
         config                 => {
             'password_secret'           => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'        => lookup('passwords::graylog::root_password_sha2'),
@@ -39,7 +39,7 @@ class role::graylog {
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
     $firewall_http_rules_str = join(
-        query_facts('Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus]', ['networking'])
+        query_facts('Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Mediawiki_beta] or Class[Role::Mediawiki_task] or Class[Role::Icinga2] or Class[Role::Prometheus]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['he-ipv6'] ) {
                 "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"

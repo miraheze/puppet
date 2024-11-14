@@ -19,8 +19,8 @@ mysql.host: 'db182-private.wikitide.net'
 storage.mysql-engine.max-size: 10000000
 storage.default-namespace: 'phabricator'
 
-metamta.default-address: 'noreply@miraheze.org'
-metamta.single-reply-handler-prefix: 'phorge'
+metamta.default-address: 'issue-tracker@wikitide.org'
+metamta.single-reply-handler-prefix: 'issuetracker'
 
 # Auth
 auth.lock-config: true
@@ -39,6 +39,7 @@ repository.default-local-path: "/srv/phorge/repos/"
 policy.allow-public: true
 user.require-real-name: false
 storage.local-disk.path: "/srv/phorge/images/"
+phabricator.serious-business: true
 
 # Maniphest priorities
 maniphest.priorities:

@@ -8,6 +8,20 @@ class mediawiki::jobrunner {
     $local_only_port = 9006
     $php_fpm_sock = 'php/fpm-www.sock'
 
+    # Add headers lost by mod_proxy_fastcgi
+    # The apache module doesn't pass along to the fastcgi appserver
+    # a few headers, like Content-Type and Content-Length.
+    # We need to add them back here.
+    ::httpd::conf { 'fcgi_headers':
+        source   => 'puppet:///modules/mediawiki/fcgi_headers.conf',
+        priority => 0,
+    }
+    # Declare the proxies explicitly with retry=0
+    httpd::conf { 'fcgi_proxies':
+        ensure  => present,
+        content => template('mediawiki/fcgi_proxies.conf.erb')
+    }
+
     class { 'httpd':
         period  => 'daily',
         rotate  => 7,
@@ -22,6 +36,7 @@ class mediawiki::jobrunner {
             'mime',
             'rewrite',
             'setenvif',
+            'ssl',
             'proxy_fcgi',
         ]
     }
@@ -53,10 +68,21 @@ class mediawiki::jobrunner {
         content  => inline_template("# This file is managed by Puppet\nListen <%= @port %>\nListen <%= @local_only_port %>\n"),
     }
 
+    httpd::conf { 'jobrunner_timeout':
+        ensure   => present,
+        priority => 1,
+        content  => inline_template("# This file is managed by Puppet\nTimeout 259200\n"),
+    }
+
     httpd::site { 'jobrunner':
         priority => 1,
         content  => template('mediawiki/jobrunner.conf.erb'),
     }
+
+    File['/etc/ssl/localcerts'] ~> Service['apache2']
+    File['/etc/ssl/private'] ~> Service['apache2']
+    File['/etc/ssl/localcerts/wikitide.net.crt'] ~> Service['apache2']
+    File['/etc/ssl/private/wikitide.net.key'] ~> Service['apache2']
 
     $firewall_rules_jobrunner_str = join(
         query_facts('Class[Role::Changeprop] or Class[Role::Eventgate]', ['networking'])

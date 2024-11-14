@@ -17,7 +17,6 @@ mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
 mediawiki::use_shellbox: false
 mediawiki::jobqueue::wiki: 'loginwiki'
-mediawiki::jobqueue::runner::beta: false
 mediawiki::monitoring::host: 'login.miraheze.org'
 memcached_servers:
   - '10.0.15.113:11211:1 "shard01"'
@@ -67,6 +66,46 @@ varnish::backends:
     probe: mwhealth
     pool: true
     xdebug: true
+  mw153:
+    port: 8121
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw154:
+    port: 8122
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw163:
+    port: 8123
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw164:
+    port: 8124
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw173:
+    port: 8125
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw174:
+    port: 8126
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw183:
+    port: 8127
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw184:
+    port: 8128
+    probe: mwhealth
+    pool: true
+    xdebug: true
   mwtask171:
     port: 8161
     probe: false
@@ -74,6 +113,16 @@ varnish::backends:
     xdebug: true
   mwtask181:
     port: 8160
+    probe: false
+    pool: false
+    xdebug: true
+  mwtask151:
+    port: 8162
+    probe: false
+    pool: false
+    xdebug: true
+  mwtask161:
+    port: 8163
     probe: false
     pool: false
     xdebug: true

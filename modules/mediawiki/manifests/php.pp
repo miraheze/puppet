@@ -20,7 +20,7 @@ class mediawiki::php (
         'date.timezone'          => 'UTC',
         'display_errors'         => 'stderr',
         'memory_limit'           => $memory_limit,
-        'error_reporting'        => 'E_ALL & ~(E_STRICT | E_DEPRECATED)',
+        'error_reporting'        => 'E_ALL & ~E_STRICT',
         'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
     }
@@ -28,8 +28,8 @@ class mediawiki::php (
     $config_opcache = {
         'opcache.enable'                  => 1,
         'opcache.enable_cli'              => 1,
-        'opcache.interned_strings_buffer' => 96,
-        'opcache.memory_consumption'      => 1024,
+        'opcache.interned_strings_buffer' => 256,
+        'opcache.memory_consumption'      => 2048,
         'opcache.max_accelerated_files'   => 50000,
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,

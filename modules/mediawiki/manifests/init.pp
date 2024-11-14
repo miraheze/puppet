@@ -55,6 +55,26 @@ class mediawiki {
             mode   => '0755',
             source => 'puppet:///modules/mediawiki/bin/iaupload.py',
         }
+
+        file { '/usr/local/bin/backupwikis':
+                ensure => 'present',
+                mode   => '0755',
+                source => 'puppet:///modules/mediawiki/bin/backupwikis',
+        }
+
+        file { '/opt/backups':
+            ensure => directory,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0755',
+        }
+
+        cron { 'backup-all-wikis-ia':
+            ensure   => present,
+            command  => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php  > /var/log/iabackup-backup.log 2>&1',
+            user     => 'www-data',
+            monthday => ['1'],
+        }
     }
 
     git::clone { '3d2png':
@@ -111,8 +131,13 @@ class mediawiki {
         require => File['/srv/mediawiki'],
     }
 
-    $wikiadmin_password         = lookup('passwords::db::wikiadmin')
-    $mediawiki_password         = lookup('passwords::db::mediawiki')
+    if ( lookup('role::mediawiki::is_beta', {'default_value' => false}) ) {
+        $wikiadmin_password         = lookup('passwords::mediawiki::wikiadmin_beta')
+        $mediawiki_password         = lookup('passwords::mediawiki::mediawiki_beta')
+    } else {
+        $wikiadmin_password         = lookup('passwords::mediawiki::wikiadmin')
+        $mediawiki_password         = lookup('passwords::mediawiki::mediawiki')
+    }
     $redis_password             = lookup('passwords::redis::master')
     $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
     $mediawiki_secretkey        = lookup('passwords::mediawiki::secretkey')
@@ -128,6 +153,10 @@ class mediawiki {
     $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
     $multipurge_apitoken        = lookup('mediawiki::multipurge_apitoken')
     $multipurge_zoneid          = lookup('mediawiki::multipurge_zoneid')
+    $openai_apikey              = lookup('mediawiki::openai_apikey')
+    $openai_assistantid         = lookup('mediawiki::openai_assistantid')
+    $turnstile_sitekey          = lookup('mediawiki::turnstile_sitekey')
+    $turnstile_secreteky        = lookup('mediawiki::turnstile_secretkey')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',

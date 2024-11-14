@@ -42,8 +42,11 @@ http {
 	ssl_protocols TLSv1.2 TLSv1.3;
 	ssl_prefer_server_ciphers on;
 	ssl_stapling on;
-	ssl_session_cache shared:SSL:120m;
-	ssl_session_timeout 2h;
+	ssl_session_cache shared:SSL:<%= @ssl_session_cache %>m;
+	ssl_session_timeout 12h;
+
+	# Disable RFC5077 tickets (may revisit later when client support is better)
+	ssl_session_tickets off;
 
 	# GZIP Settings
 	gzip off;
@@ -66,6 +69,10 @@ http {
 
 	# Custom log format for graylog
 	log_format graylog2_json escape=json '{ "timestamp": "$time_iso8601", '
+		'"client_cert_dn": "$ssl_client_s_dn", '
+		'"client_cert_serial": "$ssl_client_serial", '
+		'"client_cert_issuer": "$ssl_client_i_dn", '
+		'"client_cert_verify": "$ssl_client_verify", '
 		'"remote_addr": "$remote_addr", '
 		'"remote_user": "$remote_user", '
 		'"time_local": "$time_local", '
@@ -98,7 +105,8 @@ http {
 	access_log /var/log/nginx/access.log wikitide;
 	error_log /var/log/nginx/error.log error;
 
-	# Set real IP for cache proxy web requests
+	<%- if @use_varnish_directly -%>
+	# Set real IP for cache proxy web requests (varnish)
 	<%- @cache_proxies.sort.each do |key, value| -%>
 	<%- if value['networking']['ip'] -%>
 	set_real_ip_from <%= value['networking']['ip'] %>; # <%= key %>
@@ -111,6 +119,17 @@ http {
 
 	<%- end -%>
 	real_ip_header X-Real-IP;
+	<%- else -%>
+	# Set real IP for cache proxy web requests (cloudflare)
+	<%- @cloudflare_ipv4.sort.each do |key| -%>
+	set_real_ip_from <%= key %>;
+	<%- end -%>
+	<%- @cloudflare_ipv6.sort.each do |key| -%>
+	set_real_ip_from <%= key %>;
+	<%- end -%>
+
+	real_ip_header CF-Connecting-IP;
+	<%- end -%>
 
 	# VHosts
 	include /etc/nginx/conf.d/*.conf;

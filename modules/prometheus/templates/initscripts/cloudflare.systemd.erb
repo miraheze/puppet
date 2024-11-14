@@ -1,0 +1,12 @@
+[Unit]
+Description=Prometheus exporter for Cloudflare
+Documentation=https://prometheus.io/docs/introduction/overview/
+
+[Service]
+Restart=always
+User=prometheus
+EnvironmentFile=/etc/default/prometheus-cloudflare-exporter
+ExecStart=/usr/bin/prometheus-cloudflare-exporter $ARGS
+
+[Install]
+WantedBy=multi-user.target

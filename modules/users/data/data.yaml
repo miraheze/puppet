@@ -2,7 +2,7 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [alex, evalprime, reception, universalomega, void]
+    members: [agent, alex, evalprime, paladox, reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
@@ -68,6 +68,11 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+  dns-admins:
+    gid: 2009
+    description: limited sudo access on DNS nameservers
+    members: [macfan]
+    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/puppet *']
 
 users:
   johnflewis:
@@ -125,11 +130,11 @@ users:
     realname: ImBoPhil
     ssh_keys: []
   paladox:
-    ensure: absent
+    ensure: present
     uid: 1009
     name: paladox
     realname: Paladox
-    ssh_keys: []
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJF/bY6KnOxux3v5KIDDsBWbaut2LY/mGSd6rSyN2dcl paladox@wikitide.org]
   macfan:
     ensure: present
     uid: 1010
@@ -163,17 +168,19 @@ users:
     realname: Voidwalker 
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWIwmB8ZkwnyvWoMwVfWxmPH6QkP2X2l0TfipMXeWHf void@wikitide.org]
   agent:
-    ensure: absent
+    ensure: present
     uid: 1015
     name: Agent
     realname: Agent
-    ssh_keys: []
+    ssh_keys: 
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYndIxzLtu9icCCMJIKTZXKk9rdJRP/Nsfyb2kfcZEy
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJZcRCYjd0F3DWjQbvY16pEFBWttdVaCWzOzIrvWmmB3
   alex:
     ensure: present
     uid: 1016
     name: alex
     realname: Alex
-    ssh_keys:
+    ssh_keys: 
       - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIK1eR7I1K/AL6R9RxDOaldPLSDRpN5jl0+lMJq1Fa4tzAAAABHNzaDo= alex@localhost.localdomain
       - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIIFhlw40YKZdLPFIfhzApQpdwPC8rdxWD2kppomPt8OUAAAABHNzaDo= alex-wikitide-backup@yubikey-nfc2
   owen:

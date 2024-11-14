@@ -1,9 +1,33 @@
 server {
-	# We can only set backlog once per port (so this will be applied to the others below)
 	listen 80 deferred backlog=4096 reuseport;
 	listen [::]:80 deferred backlog=4096 reuseport;
-	listen 443 ssl deferred http2 backlog=4096 reuseport;
-	listen [::]:443 deferred ssl http2 backlog=4096 reuseport;
+
+	server_name ~.;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	location /php_status {
+		access_log off;
+		allow 127.0.0.1;
+		include fastcgi_params;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_buffers 32 32k;
+		fastcgi_buffer_size 64k;
+		fastcgi_read_timeout 20;
+		send_timeout 20s;
+	}
+
+	location / {
+		return 301 https://$host$request_uri;
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
 
 	server_name miraheze.org;
 	root /srv/mediawiki/landing;
@@ -15,6 +39,9 @@ server {
 
 	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
+
+	ssl_verify_client optional;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
@@ -75,33 +102,6 @@ server {
 }
 
 server {
-	listen 80;
-	listen [::]:80;
-
-	server_name ~.;
-
-	if ($http_user_agent ~* "WordPress") {
-		return 403;
-	}
-
-	location /php_status {
-		access_log off;
-		allow 127.0.0.1;
-		include fastcgi_params;
-		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_buffers 32 32k;
-		fastcgi_buffer_size 64k;
-		fastcgi_read_timeout 20;
-		send_timeout 20s;
-	}
-
-	location / {
-		return 301 https://$host$request_uri;
-	}
-}
-
-server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
@@ -110,6 +110,9 @@ server {
 
 	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
+
+	ssl_verify_client optional;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
@@ -193,6 +196,9 @@ server {
 	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
 
+	ssl_verify_client optional;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
+
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
@@ -238,6 +244,9 @@ server {
 
 	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
 	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
+
+	ssl_verify_client optional;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
@@ -372,6 +381,16 @@ server {
 	ssl_certificate /etc/ssl/localcerts/<%= property['sslname'] %>.crt;
 	ssl_certificate_key /etc/ssl/private/<%= property['sslname'] %>.key;
 
+	<%- if property['ca'] == "Cloudflare" -%>
+	ssl_verify_client optional;
+	<%- else -%>
+	# Domain doesn't go through Cloudflare,
+	# do not require a client certificate as
+	# cp* will not present one that'd be signed by Cloudflare
+	ssl_verify_client off;
+	<%- end -%>
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
+
 	<%- if property['hsts'] == "strict" -%>
 	add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload";
 	<%- else -%>
@@ -420,6 +439,16 @@ server {
 	ssl_certificate /etc/ssl/localcerts/<%= property['url'] %>.crt;
 	ssl_certificate_key /etc/ssl/private/<%= property['url'] %>.key;
 <%- end -%>
+
+<%- if property['ca'] == "Cloudflare" -%>
+	ssl_verify_client optional;
+<%- else -%>
+	# Domain doesn't go through Cloudflare,
+	# do not require a client certificate as
+	# cp* will not present one that'd be signed by Cloudflare
+	ssl_verify_client off;
+<%- end -%>
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
 <%- if property['hsts'] == "strict" -%>  
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
