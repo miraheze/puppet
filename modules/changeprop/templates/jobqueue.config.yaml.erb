@@ -64,13 +64,16 @@ spec: &spec
 <% @high_traffic_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
-<% topic_config.each do |key, value| -%>
 <% if topic_config['consumer'] -%>
+                consumer:
 <% topic_config['consumer'].each do |optionKey, optionValue| -%>
-                <%= optionKey %>: <%= optionValue %>
+                  <%= optionKey %>: <%= optionValue %>
 <% end -%>
-<% else -%>
+<% end -%>
+<% topic_config.each do |key, value| -%>
+<% if !key['consumer'] -%>
                 <%= key %>: <%= value %>
+<% end -%>
 <% end -%>
 <% end -%>
                 exec:
@@ -86,13 +89,16 @@ spec: &spec
 <% @high_traffic_high_timeout_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
-<% topic_config.each do |key, value| -%>
 <% if topic_config['consumer'] -%>
+                consumer:
 <% topic_config['consumer'].each do |optionKey, optionValue| -%>
-                <%= optionKey %>: <%= optionValue %>
+                  <%= optionKey %>: <%= optionValue %>
 <% end -%>
-<% else -%>
+<% end -%>
+<% topic_config.each do |key, value| -%>
+<% if !key['consumer'] -%>
                 <%= key %>: <%= value %>
+<% end -%>
 <% end -%>
 <% end -%>
                 exec:
@@ -108,13 +114,16 @@ spec: &spec
 <% @videoscaler_jobs_config.each do |topic, topic_config| -%>
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
-<% topic_config.each do |key, value| -%>
 <% if topic_config['consumer'] -%>
+                consumer:
 <% topic_config['consumer'].each do |optionKey, optionValue| -%>
-                <%= optionKey %>: <%= optionValue %>
+                  <%= optionKey %>: <%= optionValue %>
 <% end -%>
-<% else -%>
+<% end -%>
+<% topic_config.each do |key, value| -%>
+<% if !key['consumer'] -%>
                 <%= key %>: <%= value %>
+<% end -%>
 <% end -%>
 <% end -%>
                 exec:
