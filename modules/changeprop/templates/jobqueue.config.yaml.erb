@@ -67,7 +67,7 @@ spec: &spec
 <% topic_config.each do |key, value| -%>
 <% if key['consumer'] -%>
                 consumer:
-<% value.each do |optionKey, optionValue| -%>
+<% value['consumer'].each do |optionKey, optionValue| -%>
                   <%= optionKey %>: <%= optionValue %>
 <% end -%>
 <% else -%>
@@ -90,7 +90,7 @@ spec: &spec
 <% topic_config.each do |key, value| -%>
 <% if key['consumer'] -%>
                 consumer:
-<% value.each do |optionKey, optionValue| -%>
+<% value['consumer'].each do |optionKey, optionValue| -%>
                   <%= optionKey %>: <%= optionValue %>
 <% end -%>
 <% else -%>
@@ -113,7 +113,7 @@ spec: &spec
 <% topic_config.each do |key, value| -%>
 <% if key['consumer'] -%>
                 consumer:
-<% value.each do |optionKey, optionValue| -%>
+<% value['consumer'].each do |optionKey, optionValue| -%>
                   <%= optionKey %>: <%= optionValue %>
 <% end -%>
 <% else -%>
