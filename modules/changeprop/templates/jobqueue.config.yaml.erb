@@ -65,7 +65,13 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
+<% if topic_config['consumer'] -%>
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                <%= optionKey %>: <%= optionValue %>
+<% end -%>
+<% else -%>
                 <%= key %>: <%= value %>
+<% end -%>
 <% end -%>
                 exec:
                   method: post
@@ -81,7 +87,13 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
+<% if topic_config['consumer'] -%>
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                <%= optionKey %>: <%= optionValue %>
+<% end -%>
+<% else -%>
                 <%= key %>: <%= value %>
+<% end -%>
 <% end -%>
                 exec:
                   method: post
@@ -97,7 +109,13 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
+<% if topic_config['consumer'] -%>
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                <%= optionKey %>: <%= optionValue %>
+<% end -%>
+<% else -%>
                 <%= key %>: <%= value %>
+<% end -%>
 <% end -%>
                 exec:
                   method: post
