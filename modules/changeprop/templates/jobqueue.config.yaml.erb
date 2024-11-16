@@ -65,7 +65,15 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
+<% if !key['consumer'] -%>
                 <%= key %>: <%= value %>
+<% end -%>
+<% end -%>
+<% if topic_config['consumer'] -%>
+                consumer:
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                  <%= optionKey %>: <%= optionValue %>
+<% end -%>
 <% end -%>
                 exec:
                   method: post
@@ -81,7 +89,15 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
+<% if !key['consumer'] -%>
                 <%= key %>: <%= value %>
+<% end -%>
+<% end -%>
+<% if topic_config['consumer'] -%>
+                consumer:
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                  <%= optionKey %>: <%= optionValue %>
+<% end -%>
 <% end -%>
                 exec:
                   method: post
@@ -97,7 +113,15 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
+<% if !key['consumer'] -%>
                 <%= key %>: <%= value %>
+<% end -%>
+<% end -%>
+<% if topic_config['consumer'] -%>
+                consumer:
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                  <%= optionKey %>: <%= optionValue %>
+<% end -%>
 <% end -%>
                 exec:
                   method: post
@@ -248,4 +272,3 @@ services:
       #   - x-request-id
       user_agent: ChangePropagation-JobQueue/WT
       spec: *spec
-
