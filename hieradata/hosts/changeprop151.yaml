@@ -159,10 +159,14 @@ changeprop::videoscaler_jobs_config:
     timeout: 86400000
     concurrency: 1
     retry_limit: 1
+    consumer:
+      max.poll.interval.ms: 3600000  # 1h
   webVideoTranscodePrioritized:
     concurrency: 1
     timeout: 86400000
     retry_limit: 1
+    consumer:
+      max.poll.interval.ms: 3600000  # 1h
 
 changeprop::semantic_mediawiki_jobs:
   - SMWRefreshJob
