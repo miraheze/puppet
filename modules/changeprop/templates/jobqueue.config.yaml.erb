@@ -119,7 +119,7 @@ spec: &spec
 <% topic_config['consumer'].each do |optionKey, optionValue| -%>
                   <%= optionKey %>: <%= optionValue %>
 <% end -%>
-<% end -%>
+<% else -%>
 <% topic_config.each do |key, value| -%>
 <% if !key['consumer'] -%>
                 <%= key %>: <%= value %>
