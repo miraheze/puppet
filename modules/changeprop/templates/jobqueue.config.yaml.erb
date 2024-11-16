@@ -65,7 +65,7 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
-<% if !key['consumer'] -%>
+<% if key != 'consumer' -%>
                 <%= key %>: <%= value %>
 <% end -%>
 <% end -%>
@@ -89,7 +89,7 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
-<% if !key['consumer'] -%>
+<% if key != 'consumer' -%>
                 <%= key %>: <%= value %>
 <% end -%>
 <% end -%>
@@ -113,7 +113,7 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
-<% if !key['consumer'] -%>
+<% if key != 'consumer' -%>
                 <%= key %>: <%= value %>
 <% end -%>
 <% end -%>
