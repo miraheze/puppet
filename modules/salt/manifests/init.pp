@@ -10,11 +10,11 @@ class salt {
         }
 
         apt::source { 'salt_apt':
-            location => "https://packages.broadcom.com/artifactory/saltproject-deb",
+            location => 'https://packages.broadcom.com/artifactory/saltproject-deb',
             release  => 'stable',
             repos    => 'main',
             key      => {
-              name => icinga.key
+              name   => icinga.key
               source => 'puppet:///modules/salt/key/salt.pgp'
             },
             notify   => Exec['apt_update_salt'],
