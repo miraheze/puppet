@@ -309,8 +309,6 @@ server {
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
-
-	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {

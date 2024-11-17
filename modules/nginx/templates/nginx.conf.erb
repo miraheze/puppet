@@ -65,8 +65,6 @@ http {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
-
 	# Custom log format for graylog
 	log_format graylog2_json escape=json '{ "timestamp": "$time_iso8601", '
 		'"client_cert_dn": "$ssl_client_s_dn", '

@@ -144,7 +144,7 @@ class mediawiki::jobqueue::runner (
 
             systemd::timer::job { 'generate-sitemap-index':
                 description       => 'Create sitemap index',
-                command           => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/MirahezeMagic/py/generateSitemapIndex.py -A https://swift-lb.miraheze.org/auth/v1.0 -U mw:media -K ${swift_password}",
+                command           => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/MirahezeMagic/py/generateSitemapIndex.py -A https://swift-lb.wikitide.net/auth/v1.0 -U mw:media -K ${swift_password}",
                 interval          => {
                     'start'    => 'OnCalendar',
                     'interval' => 'Fri *-*-* 00:00:00',

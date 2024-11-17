@@ -125,8 +125,8 @@ sub mobile_detection {
 
 # Rate limiting logic
 sub rate_limit {
-	# Allow higher limits for static.miraheze.org, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org") {
+	# Allow higher limits for static.wikitide.net, we can handle more of those requests
+	if (req.http.Host == "static.wikitide.net") {
 		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
 			return (synth(429, "Varnish Rate Limit Exceeded"));
 		}
@@ -184,7 +184,7 @@ sub vcl_synth {
 
 		// Handle CORS preflight requests
 		if (
-			req.http.Host == "static.miraheze.org" &&
+			req.http.Host == "static.wikitide.net" &&
 			resp.reason == "CORS Preflight"
 		) {
 			set resp.reason = "OK";
@@ -234,7 +234,7 @@ sub mw_request {
 <%- @backends.each_pair do | name, property | -%>
 <%- if property['xdebug'] -%>
 		if (req.http.X-WikiTide-Debug == "<%= name %>.wikitide.net") {
-			if (req.http.Host == "static.miraheze.org") {
+			if (req.http.Host == "static.wikitide.net") {
 				set req.backend_hint = swift.backend();
 			} else {
 				set req.backend_hint = <%= name %>_test;
@@ -249,13 +249,13 @@ sub mw_request {
 
 	set req.backend_hint = mediawiki.backend();
 
-	# Rewrite hostname to static.miraheze.org for caching
+	# Rewrite hostname to static.wikitide.net for caching
 	if (req.url ~ "^/static/") {
-		set req.http.Host = "static.miraheze.org";
+		set req.http.Host = "static.wikitide.net";
 	}
 
-	# Numerous static.miraheze.org specific code
-	if (req.http.Host == "static.miraheze.org") {
+	# Numerous static.wikitide.net specific code
+	if (req.http.Host == "static.wikitide.net") {
 		set req.backend_hint = swift.backend();
 
 		unset req.http.X-Range;
@@ -264,7 +264,7 @@ sub mw_request {
 			set req.hash_ignore_busy = true;
 		}
 
-		# We can do this because static.miraheze.org should not be capable of serving such requests anyway
+		# We can do this because static.wikitide.net should not be capable of serving such requests anyway
 		# This could also increase cache hit rates as Cookies will be stripped entirely
 		unset req.http.Cookie;
 		unset req.http.Authorization;
@@ -324,13 +324,13 @@ sub mw_request {
 	}
 
 	# Do not cache dumps and also pipe requests.
-	if ( req.http.Host == "static.miraheze.org" && req.url ~ "^/.*wiki/dumps" ) {
+	if ( req.http.Host == "static.wikitide.net" && req.url ~ "^/.*wiki/dumps" ) {
 		return (pipe);
 	}
 
 	# Don't cache certain things on static
 	if (
-		req.http.Host == "static.miraheze.org" &&
+		req.http.Host == "static.wikitide.net" &&
 		(
 			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
 			req.url ~ "^/(.+)wiki/sitemaps" # Do not cache sitemaps
@@ -381,7 +381,7 @@ sub vcl_recv {
 		return (synth(301, "Main Page Redirect"));
 	}
 
-	if (req.http.host == "static.miraheze.org" && req.url == "/") {
+	if (req.http.host == "static.wikitide.net" && req.url == "/") {
 		return (synth(301, "Commons Redirect"));
 	}
 
@@ -473,14 +473,14 @@ sub vcl_backend_fetch {
 
 sub mf_admission_policies {
 	// hit-for-pass objects >= 8388608 size. Do cache if Content-Length is missing.
-	if (bereq.http.Host == "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 262144) {
+	if (bereq.http.Host == "static.wikitide.net" && std.integer(beresp.http.Content-Length, 0) >= 262144) {
 		// HFP
 		set beresp.http.X-CDIS = "pass";
 		return(pass(beresp.ttl));
 	}
 
 	// hit-for-pass objects >= 67108864 size. Do cache if Content-Length is missing.
-	if (bereq.http.Host != "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
+	if (bereq.http.Host != "static.wikitide.net" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
 		// HFP
 		set beresp.http.X-CDIS = "pass";
 		return(pass(beresp.ttl));
@@ -724,7 +724,7 @@ sub vcl_deliver {
 		unset resp.http.X-Content-Range;
 	}
 
-	if ( req.http.Host == "static.miraheze.org" ) {
+	if ( req.http.Host == "static.wikitide.net" ) {
 		unset resp.http.Set-Cookie;
 		unset resp.http.Cache-Control;
 

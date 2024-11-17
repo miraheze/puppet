@@ -70,7 +70,7 @@ class swift::proxy (
         check_command => 'check_http',
         vars          => {
             address6         => $address,
-            http_vhost       => 'swift-lb.miraheze.org',
+            http_vhost       => 'swift-lb.wikitide.net',
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
             # We don't serve index page.
@@ -82,7 +82,7 @@ class swift::proxy (
         check_command => 'check_http',
         vars          => {
             address6         => $address,
-            http_vhost       => 'swift-lb.miraheze.org',
+            http_vhost       => 'swift-lb.wikitide.net',
             http_ssl         => true,
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.

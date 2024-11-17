@@ -8,7 +8,7 @@ location ~ ^/1\.\d\d/(cache|maintenance|mw-config|vendor) {
 	deny all;
 }
 
-# Cache certain non-static.miraheze.org static resources
+# Cache certain non-static.wikitide.net static resources
 location ~ ^/1\.\d\d/((skins|resources)|extensions/[A-Za-z0-9]+.*)/.*\.(gif|jpe?g|png|css|js|json|woff|woff2|svg|eot|ttf|ico)(\?[0-9a-z]+\=)?$ {
 	expires 1d;
 }
@@ -90,11 +90,11 @@ location ~ ^/m/(.*) {
 }
 
 location /sitemaps/ {
-	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.miraheze.org/$1/sitemaps/$2 permanent;
+	rewrite ^/sitemaps/(.+)/sitemaps/(.+)$ https://static.wikitide.net/$1/sitemaps/$2 permanent;
 }
 
 location /static/ {
-	rewrite ^/static/(.+)$ https://static.miraheze.org/$1 permanent;
+	rewrite ^/static/(.+)$ https://static.wikitide.net/$1 permanent;
 }
 
 # Redirect /entity/* to /wiki/Special:EntityData/*
