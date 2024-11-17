@@ -1,6 +1,5 @@
 class salt {
     if $facts['os']['distro']['codename'] == 'bookworm' {
-
         $http_proxy = lookup('http_proxy', {'default_value' => undef})
         if $http_proxy {
             file { '/etc/apt/apt.conf.d/01salt':
