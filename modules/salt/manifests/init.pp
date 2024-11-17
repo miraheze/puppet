@@ -17,7 +17,6 @@ class salt {
               name => icinga.key
               source => 'puppet:///modules/salt/key/salt.pgp'
             },
-            require  => File['/etc/apt/trusted.gpg.d/salt.gpg'],
             notify   => Exec['apt_update_salt'],
         }
 
