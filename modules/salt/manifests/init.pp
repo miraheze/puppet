@@ -1,21 +1,32 @@
 class salt {
     if $facts['os']['distro']['codename'] == 'bookworm' {
-        file { '/etc/apt/trusted.gpg.d/salt.gpg':
-            ensure => present,
-            source => 'puppet:///modules/salt/key/salt.gpg',
+
+        $http_proxy = lookup('http_proxy', {'default_value' => undef})
+        if $http_proxy {
+            file { '/etc/apt/apt.conf.d/01salt':
+                ensure  => present,
+                content => template('salt/apt/01salt.erb'),
+                before  => Apt::Source['salt_apt'],
+            }
         }
 
         apt::source { 'salt_apt':
-            location => "https://repo.saltproject.io/salt/py3/debian/${$facts['os']['distro']['release']['major']}/amd64/latest",
-            release  => $facts['os']['distro']['codename'],
+            location => "https://packages.broadcom.com/artifactory/saltproject-deb",
+            release  => 'stable',
             repos    => 'main',
+            key      => {
+              name => icinga.key
+              source => 'puppet:///modules/salt/key/salt.pgp'
+            },
             require  => File['/etc/apt/trusted.gpg.d/salt.gpg'],
             notify   => Exec['apt_update_salt'],
         }
 
         apt::pin { 'salt_pin':
-            priority => 600,
-            origin   => 'repo.saltproject.io'
+            priority => 1001,
+            packages => 'salt-*',
+            # TODO: Migrate to LTS once a version greater than 3007 becomes lts.
+            version  => '3007.*',
         }
 
         # First installs can trip without this
