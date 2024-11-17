@@ -14,7 +14,7 @@ class salt {
             release  => 'stable',
             repos    => 'main',
             key      => {
-              name   => icinga.key
+              name   => 'salt.pgp',
               source => 'puppet:///modules/salt/key/salt.pgp'
             },
             notify   => Exec['apt_update_salt'],
