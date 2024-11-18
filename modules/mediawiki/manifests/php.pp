@@ -27,7 +27,6 @@ class mediawiki::php (
 
     $config_opcache = {
         'opcache.enable'                  => 1,
-        'opcache.enable_cli'              => 1,
         'opcache.interned_strings_buffer' => 256,
         'opcache.memory_consumption'      => 2048,
         'opcache.max_accelerated_files'   => 50000,
