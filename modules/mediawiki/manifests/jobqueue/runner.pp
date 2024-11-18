@@ -210,7 +210,7 @@ class mediawiki::jobqueue::runner (
         if $wiki == 'loginwikibeta' {
             systemd::timer::job { 'purge-parsercache':
                 description       => 'Purge parsercache',
-                command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/purgeParserCache.php --wiki loginwikibeta --tag pc1 --age 864000 --msleep 200",
+                command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/purgeParserCache.php --wiki loginwikibeta --tag pc1 --age 1296000 --msleep 200",
                 interval          => {
                     'start'    => 'OnCalendar',
                     'interval' => '*-*-* 00:00:00',
