@@ -235,7 +235,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
     else:
         proto = 'http://'
     req = make_request(proto, domain, headers)
-    if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
+    if req.status_code == 200 and 'mainpageisdomainroot' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
         print(f'Status: {req.status_code}')
