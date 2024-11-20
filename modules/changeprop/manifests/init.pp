@@ -11,6 +11,7 @@ class changeprop (
     $high_traffic_jobs_config              = lookup('changeprop::high_traffic_jobs_config', {'default_value' => {}}),
     $high_traffic_high_timeout_jobs_config = lookup('changeprop::high_traffic_high_timeout_jobs_config', {'default_value' => {}}),
     $videoscaler_jobs_config               = lookup('changeprop::videoscaler_jobs_config', {'default_value' => {}}),
+    $latency_sensitive_jobs_config         = lookup('changeprop::latency_sensitive_jobs_config', {'default_value' => {}}),
     $partitioned_jobs_config               = lookup('changeprop::partitioned_jobs_config', {'default_value' => {}}),
     $semantic_mediawiki_jobs               = lookup('changeprop::semantic_mediawiki_jobs', {'default_value' => {}}),
     $semantic_mediawiki_concurrency        = lookup('changeprop::semantic_mediawiki_concurrency', {'default_value' => 50}),
