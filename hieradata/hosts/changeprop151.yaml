@@ -168,6 +168,17 @@ changeprop::videoscaler_jobs_config:
     consumer:
       max.poll.interval.ms: 3600000  # 1h
 
+changeprop::latency_sensitive_jobs_config:
+  # AssembleUploadChunks, PublishStashedFile, and UploadFromUrl,
+  # are considered latency sensitive, as high backlog time presents a poor
+  # user experience for async uploads.
+  AssembleUploadChunks:
+    concurrency: 5
+  PublishStashedFile:
+    concurrency: 5
+  UploadFromUrl:
+    concurrency: 5
+
 changeprop::semantic_mediawiki_jobs:
   - SMWRefreshJob
   - SMWUpdateJob
