@@ -133,6 +133,30 @@ spec: &spec
                   agentOptions:
                     keepAlive: true
 <% end -%>
+<% @latency_sensitive_jobs_config.each do |topic, topic_config| -%>
+              <%= topic %>:
+                topic: 'mediawiki.job.<%= topic %>'
+<% topic_config.each do |key, value| -%>
+<% if key != 'consumer' -%>
+                <%= key %>: <%= value %>
+<% end -%>
+<% end -%>
+<% if topic_config['consumer'] -%>
+                consumer:
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                  <%= optionKey %>: <%= optionValue %>
+<% end -%>
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    x-request-id: '{{globals.message.meta.request_id}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+<% end -%>
 <% @partitioned_jobs_config.each do |topic, options| -%>
               <%= topic %>_partitioner:
                 topic: 'mediawiki.job.<%= topic %>'
@@ -188,6 +212,9 @@ spec: &spec
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @videoscaler_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @latency_sensitive_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @partitioned_jobs_config.keys.each do |job| -%>
