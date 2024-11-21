@@ -170,6 +170,20 @@ class mediawiki::jobqueue::runner (
                 require           => File['/var/log/mediawiki/cron'],
             }
 
+            systemd::timer::job { 'purge-loginnotify':
+                description       => 'Purge loginnotify',
+                command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/LoginNotify/maintenance/purgeSeen.php --wiki loginwiki",
+                interval          => {
+                    'start'    => 'OnCalendar',
+                    'interval' => '*-*-* 23:00:00',
+                },
+                logfile_basedir   => '/var/log/mediawiki/cron',
+                logfile_name      => 'purge-loginnotify.log',
+                syslog_identifier => 'purge-loginnotify',
+                user              => 'www-data',
+                require           => File['/var/log/mediawiki/cron'],
+            }
+
             systemd::timer::job { 'update-special-pages':
                 description       => 'Purge parsercache',
                 command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/updateSpecialPages.php",
@@ -218,6 +232,20 @@ class mediawiki::jobqueue::runner (
                 logfile_basedir   => '/var/log/mediawiki/cron',
                 logfile_name      => 'purge-parsercache.log',
                 syslog_identifier => 'purge-parsercache',
+                user              => 'www-data',
+                require           => File['/var/log/mediawiki/cron'],
+            }
+
+            systemd::timer::job { 'purge-loginnotify':
+                description       => 'Purge loginnotify',
+                command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/LoginNotify/maintenance/purgeSeen.php --wiki loginwikibeta",
+                interval          => {
+                    'start'    => 'OnCalendar',
+                    'interval' => '*-*-* 23:00:00',
+                },
+                logfile_basedir   => '/var/log/mediawiki/cron',
+                logfile_name      => 'purge-loginnotify.log',
+                syslog_identifier => 'purge-loginnotify',
                 user              => 'www-data',
                 require           => File['/var/log/mediawiki/cron'],
             }
