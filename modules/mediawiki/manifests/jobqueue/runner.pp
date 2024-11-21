@@ -172,7 +172,7 @@ class mediawiki::jobqueue::runner (
 
             systemd::timer::job { 'purge-loginnotify':
                 description       => 'Purge loginnotify',
-                command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/LoginNotify/maintenance/purgeSeen.php",
+                command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/LoginNotify/maintenance/purgeSeen.php --wiki loginwiki",
                 interval          => {
                     'start'    => 'OnCalendar',
                     'interval' => '*-*-* 23:00:00',
