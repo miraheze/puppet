@@ -1,10 +1,10 @@
-role::memcached::threads: 6
+role::memcached::threads: 8
 role::memcached::version: 'present'
 role::memcached::growth_factor: 1.15
 role::memcached::min_slab_size: 48
 role::memcached::max_seq_reqs: 200
-# This is in MiB (67gb)
-role::memcached::size: 64512
+# This is in MiB (62gb)
+role::memcached::size: 59392
 role::memcached::extended_options:
   - "modern"
 role::memcached::port: 11211
