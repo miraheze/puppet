@@ -84,7 +84,7 @@ class mediawiki::deploy {
     }
 
     git::clone { 'MediaWiki config':
-        ensure    => 'latest',
+        ensure    => present,
         directory => '/srv/mediawiki-staging/config',
         origin    => 'https://github.com/miraheze/mw-config',
         branch    => 'master',
@@ -95,7 +95,7 @@ class mediawiki::deploy {
     }
 
     git::clone { 'landing':
-        ensure    => 'latest',
+        ensure    => present,
         directory => '/srv/mediawiki-staging/landing',
         origin    => 'https://github.com/miraheze/landing',
         branch    => 'master',
@@ -106,7 +106,7 @@ class mediawiki::deploy {
     }
 
     git::clone { 'ErrorPages':
-        ensure    => 'latest',
+        ensure    => present,
         directory => '/srv/mediawiki-staging/ErrorPages',
         origin    => 'https://github.com/miraheze/ErrorPages',
         branch    => 'master',
@@ -114,33 +114,6 @@ class mediawiki::deploy {
         group     => 'www-data',
         mode      => '0755',
         require   => File['/srv/mediawiki-staging'],
-    }
-
-    exec { 'MediaWiki Config Sync':
-        command     => "/usr/local/bin/mwdeploy --config --servers=${lookup(mediawiki::default_sync)}",
-        cwd         => '/srv/mediawiki-staging',
-        refreshonly => true,
-        user        => www-data,
-        subscribe   => Git::Clone['MediaWiki config'],
-        require     => File['/usr/local/bin/mwdeploy'],
-    }
-
-    exec { 'Landing Sync':
-        command     => "/usr/local/bin/mwdeploy --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
-        cwd         => '/srv/mediawiki-staging',
-        refreshonly => true,
-        user        => www-data,
-        subscribe   => Git::Clone['landing'],
-        require     => File['/usr/local/bin/mwdeploy'],
-    }
-
-    exec { 'ErrorPages Sync':
-        command     => "/usr/local/bin/mwdeploy --errorpages --servers=${lookup(mediawiki::default_sync)} --no-log",
-        cwd         => '/srv/mediawiki-staging',
-        refreshonly => true,
-        user        => www-data,
-        subscribe   => Git::Clone['ErrorPages'],
-        require     => File['/usr/local/bin/mwdeploy'],
     }
 
     # This is outside of the is_canary if so that test* also pulls
