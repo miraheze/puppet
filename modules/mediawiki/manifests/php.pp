@@ -29,7 +29,7 @@ class mediawiki::php (
         'opcache.enable'                  => 1,
         'opcache.interned_strings_buffer' => 256,
         'opcache.memory_consumption'      => 2048,
-        'opcache.max_accelerated_files'   => 50000,
+        'opcache.max_accelerated_files'   => 65407,
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,
         'opcache.revalidate_freq'         => 10,
