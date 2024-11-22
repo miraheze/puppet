@@ -4,7 +4,7 @@ role::memcached::growth_factor: 1.15
 role::memcached::min_slab_size: 48
 role::memcached::max_seq_reqs: 200
 # This is in MiB (57gb) (80-85% of total ram)
-role::memcached::size: 51498
+role::memcached::size: 55296
 role::memcached::extended_options:
   - "modern"
 role::memcached::port: 11211
