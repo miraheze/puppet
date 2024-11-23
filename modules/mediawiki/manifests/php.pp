@@ -33,7 +33,6 @@ class mediawiki::php (
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,
         'opcache.revalidate_freq'         => 10,
-        'opcache.jit_buffer_size'         => $apc_shm_size,
     }
 
     # Custom config for php-fpm
