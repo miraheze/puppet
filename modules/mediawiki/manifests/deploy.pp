@@ -84,7 +84,7 @@ class mediawiki::deploy {
     }
 
     git::clone { 'MediaWiki config':
-        ensure    => 'latest',
+        ensure    => present,
         directory => '/srv/mediawiki-staging/config',
         origin    => 'https://github.com/miraheze/mw-config',
         branch    => 'master',
@@ -95,7 +95,7 @@ class mediawiki::deploy {
     }
 
     git::clone { 'landing':
-        ensure    => 'latest',
+        ensure    => present,
         directory => '/srv/mediawiki-staging/landing',
         origin    => 'https://github.com/miraheze/landing',
         branch    => 'master',
@@ -106,7 +106,7 @@ class mediawiki::deploy {
     }
 
     git::clone { 'ErrorPages':
-        ensure    => 'latest',
+        ensure    => present,
         directory => '/srv/mediawiki-staging/ErrorPages',
         origin    => 'https://github.com/miraheze/ErrorPages',
         branch    => 'master',
@@ -117,6 +117,7 @@ class mediawiki::deploy {
     }
 
     exec { 'MediaWiki Config Sync':
+        ensure      => absent,
         command     => "/usr/local/bin/mwdeploy --config --servers=${lookup(mediawiki::default_sync)}",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
@@ -126,6 +127,7 @@ class mediawiki::deploy {
     }
 
     exec { 'Landing Sync':
+        ensure      => absent,
         command     => "/usr/local/bin/mwdeploy --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
@@ -135,6 +137,7 @@ class mediawiki::deploy {
     }
 
     exec { 'ErrorPages Sync':
+        ensure      => absent,
         command     => "/usr/local/bin/mwdeploy --errorpages --servers=${lookup(mediawiki::default_sync)} --no-log",
         cwd         => '/srv/mediawiki-staging',
         refreshonly => true,
