@@ -116,8 +116,7 @@ class mediawiki::deploy {
         require   => File['/srv/mediawiki-staging'],
     }
 
-
-     exec { 'MediaWiki Config Sync':
+    exec { 'MediaWiki Config Sync':
         ensure      => absent,
         command     => "/usr/local/bin/mwdeploy --config --servers=${lookup(mediawiki::default_sync)}",
         cwd         => '/srv/mediawiki-staging',
@@ -125,9 +124,9 @@ class mediawiki::deploy {
         user        => www-data,
         subscribe   => Git::Clone['MediaWiki config'],
         require     => File['/usr/local/bin/mwdeploy'],
-     }
+    }
 
-     exec { 'Landing Sync':
+    exec { 'Landing Sync':
         ensure      => absent,
         command     => "/usr/local/bin/mwdeploy --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
         cwd         => '/srv/mediawiki-staging',
@@ -135,9 +134,9 @@ class mediawiki::deploy {
         user        => www-data,
         subscribe   => Git::Clone['landing'],
         require     => File['/usr/local/bin/mwdeploy'],
-     }
+    }
 
-     exec { 'ErrorPages Sync':
+    exec { 'ErrorPages Sync':
         ensure      => absent,
         command     => "/usr/local/bin/mwdeploy --errorpages --servers=${lookup(mediawiki::default_sync)} --no-log",
         cwd         => '/srv/mediawiki-staging',
@@ -145,7 +144,7 @@ class mediawiki::deploy {
         user        => www-data,
         subscribe   => Git::Clone['ErrorPages'],
         require     => File['/usr/local/bin/mwdeploy'],
-     }
+    }
 
     # This is outside of the is_canary if so that test* also pulls
     # the certificate, as that server has use_staging to true but not
