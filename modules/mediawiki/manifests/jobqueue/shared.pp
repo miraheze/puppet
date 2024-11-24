@@ -5,10 +5,79 @@ class mediawiki::jobqueue::shared (
     String        $version,
     VMlib::Ensure $ensure = present,
 ) {
-    if versioncmp($version, '1.40') >= 0 {
-        $runner = "/srv/mediawiki/${version}/maintenance/run.php "
-    } else {
-        $runner = ''
+
+    $local_only_port = 9007
+    $php_fpm_sock = 'php/fpm-www.sock'
+
+    # Add headers lost by mod_proxy_fastcgi
+    # The apache module doesn't pass along to the fastcgi appserver
+    # a few headers, like Content-Type and Content-Length.
+    # We need to add them back here.
+    ::httpd::conf { 'fcgi_headers':
+        source   => 'puppet:///modules/mediawiki/fcgi_headers.conf',
+        priority => 0,
+    }
+    # Declare the proxies explicitly with retry=0
+    httpd::conf { 'fcgi_proxies':
+        ensure  => present,
+        content => template('mediawiki/fcgi_proxies.conf.erb')
+    }
+
+    class { 'httpd':
+        period  => 'daily',
+        rotate  => 7,
+        modules => [
+            'alias',
+            'authz_host',
+            'autoindex',
+            'deflate',
+            'dir',
+            'expires',
+            'headers',
+            'mime',
+            'rewrite',
+            'setenvif',
+            'ssl',
+            'proxy_fcgi',
+        ]
+    }
+
+    class { 'httpd::mpm':
+        mpm => 'worker',
+    }
+
+    # Modules we don't enable.
+    httpd::mod_conf { [
+        'authz_default',
+        'authz_groupfile',
+        'cgi',
+    ]:
+        ensure => absent,
+    }
+
+    file { '/srv/mediawiki/rpc':
+        ensure  => 'link',
+        target  => '/srv/mediawiki/config/rpc',
+        owner   => 'www-data',
+        group   => 'www-data',
+        require => File['/srv/mediawiki/config'],
+    }
+
+    httpd::conf { 'jobrunner_port':
+        ensure   => present,
+        priority => 1,
+        content  => inline_template("# This file is managed by Puppet\nListen <%= @local_only_port %>\n"),
+    }
+
+    httpd::conf { 'jobrunner_timeout':
+        ensure   => present,
+        priority => 1,
+        content  => inline_template("# This file is managed by Puppet\nTimeout 259200\n"),
+    }
+
+    httpd::site { 'jobrunner':
+        priority => 1,
+        content  => template('mediawiki/jobrunner_legacy.conf.erb'),
     }
 
     git::clone { 'JobRunner':
