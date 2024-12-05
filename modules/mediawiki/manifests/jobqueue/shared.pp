@@ -24,7 +24,6 @@ class mediawiki::jobqueue::shared (
     }
 
     class { 'httpd':
-        ensure  => $ensure,
         period  => 'daily',
         rotate  => 7,
         modules => [
