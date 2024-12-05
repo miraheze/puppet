@@ -4,7 +4,7 @@
     "groups": {
         "basic": {
             // Number of runner processes in this group
-            "runners": 5,
+            "runners": 1,
             // Job types to include ("*" means "all")
             "include": [
                 "*"
@@ -15,21 +15,107 @@
                 "DataDumpGenerateJob",
                 "ImportDumpJob",
                 "ImportDumpNotifyJob",
+                "parsoidCachePrewarm",
                 "PublishStashedFile",
+                "RecordLintJob",
+                "RequestWikiAIJob",
                 "refreshLinks",
                 "refreshLinksDynamic",
                 "refreshLinksPrioritized",
-                "RequestWikiAIJob",
-                "smw.changePropagationClassUpdate",
                 "uploadFromUrl",
                 "webVideoTranscode",
                 "webVideoTranscodePrioritized",
                 "NamespaceMigrationJob",
-                "RecordLintJob"
+                "smw.update",
+                "smw.changePropagationClassUpdate",
+                "CreateWikiJob"
             ],
             "low-priority": [
+                "htmlCacheUpdate"
+            ]
+        },
+        "html": {
+            // Number of runner processes in this group
+            "runners": 1,
+            "include": [
                 "htmlCacheUpdate",
+                "refreshLinks",
+                "refreshLinksDynamic",
+                "refreshLinksPrioritized"
+            ]
+        },
+        "hi": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "DataDumpGenerateJob",
+                "RecordLintJob"
+            ]
+        },
+        "createwiki": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "CreateWikiJob"
+            ]
+        },
+        "importdump": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "ImportDumpJob"
+            ]
+        },
+        "importdumpnotify": {
+            // Number of runner processes in this group
+            "runners": 2,
+            // Job types to include ("*" means "all")
+            "include": [
+                "ImportDumpNotifyJob"
+            ]
+        },
+        "managewiki": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "NamespaceMigrationJob",
+                "RequestWikiAIJob"
+            ]
+        },
+        "parsoidcache": {
+            // Number of runner processes in this group
+            "runners": 8,
+            // Job types to include ("*" means "all")
+            "include": [
                 "parsoidCachePrewarm"
+            ]
+        },
+        "smw": {
+            // Number of runner processes in this group
+            "runners": 1,
+            // Job types to include ("*" means "all")
+            "include": [
+                "smw.update",
+                "smw.changePropagationClassUpdate"
+            ]
+        },
+        "transcode": {
+            "runners": 1,
+            "include": [
+                "webVideoTranscode",
+                "webVideoTranscodePrioritized"
+            ]
+        },
+        "upload": {
+            "runners": 1,
+            "include": [
+                "AssembleUploadChunks",
+                "PublishStashedFile",
+                "uploadFromUrl"
             ]
         }
     },
@@ -43,16 +129,36 @@
         },
         // How long jobs can be claimed before being recycled
         "claimTTL": {
-            "*": 3600
+            "*": 3600,
+            "DataDumpGenerateJob": 86400,
+            "ImportDumpJob": 259200,
+            "NamespaceMigrationJob": 9000,
+            "webVideoTranscode": 86400,
+            "webVideoTranscodePrioritized": 86400
         },
         // runJobs.php process time limits
         "real": {
-            "*": 300
+            "*": 300,
+            "cirrusSearchElasticaWrite": 600,
+            "DataDumpGenerateJob": 86400,
+            "ImportDumpJob": 259200,
+            "NamespaceMigrationJob": 9000,
+            "webVideoTranscode": 86400,
+            "webVideoTranscodePrioritized": 86400
         },
         // runJobs.php memory limits
         "memory": {
             "*": "500M",
-            "parsoidCachePrewarm": "1400M"
+            "cirrusSearchElasticaWrite": "1400M",
+            "DataDumpGenerateJob": "512M",
+            "ImportDumpJob": "2000M",
+            "parsoidCachePrewarm": "1400M",
+            "refreshLinks": "1400M",
+            "refreshLinksDynamic": "1400M",
+            "refreshLinksPrioritized": "1400M",
+            "RequestWikiAIJob": "2000M",
+            "smw.update": "1400M",
+            "smw.changePropagationClassUpdate": "1400M"
         }
     },
 
