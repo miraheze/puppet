@@ -116,7 +116,7 @@ class mediawiki::jobrunner {
     }
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Changeprop]', ['networking'])
+        query_facts('Class[Role::Changeprop] or Class[Role::Icinga2]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
@@ -142,5 +142,27 @@ class mediawiki::jobrunner {
         port    => '9006',
         srange  => "(${firewall_rules_str})",
         notrack => true,
+    }
+
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
+    ['jobrunner.wikitide.net', 'jobrunner-high.wikitide.net', 'videoscaler.wikitide.net'].each |String $domain| {
+        monitoring::services { "${domain} HTTPS":
+            ensure        => present,
+            check_command => 'check_curl',
+            vars          => {
+                address6         => $address,
+                http_port        => 9006,
+                http_vhost       => $domain,
+                http_uri         => '/healthcheck.php',
+                http_ssl         => true,
+                http_ignore_body => true,
+            },
+        }
     }
 }
