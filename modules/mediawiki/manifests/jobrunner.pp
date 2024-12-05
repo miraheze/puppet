@@ -143,4 +143,24 @@ class mediawiki::jobrunner {
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
+
+    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens19']['ip']
+    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+        $address = $facts['networking']['interfaces']['ens18']['ip6']
+    } else {
+        $address = $facts['networking']['ip6']
+    }
+    ['jobrunner.wikitide.net', 'jobrunner-high.wikitide.net', 'videoscaler.wikitide.net'].each |String $domain| {
+        monitoring::services { "${domain} HTTPS":
+            ensure        => $monitor_service,
+            check_command => 'check_curl',
+            vars          => {
+                address6         => $address,
+                http_port        => 9006,
+                http_vhost       => $domain,
+                http_ssl         => true,
+                http_ignore_body => true,
+            },
+        }
 }
