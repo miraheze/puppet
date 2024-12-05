@@ -8,7 +8,7 @@ class mediawiki::jobqueue::shared (
     if defined(File['/srv/mediawiki/config']) {
         $local_only_port = 9007
         $php_fpm_sock = 'php/fpm-www.sock'
-    
+
         # Add headers lost by mod_proxy_fastcgi
         # The apache module doesn't pass along to the fastcgi appserver
         # a few headers, like Content-Type and Content-Length.
@@ -23,7 +23,7 @@ class mediawiki::jobqueue::shared (
             ensure  => $ensure,
             content => template('mediawiki/fcgi_proxies.conf.erb')
         }
-    
+
         class { 'httpd':
             period  => 'daily',
             rotate  => 7,
@@ -42,11 +42,11 @@ class mediawiki::jobqueue::shared (
                 'proxy_fcgi',
             ]
         }
-    
+
         class { 'httpd::mpm':
             mpm => 'worker',
         }
-    
+
         # Modules we don't enable.
         httpd::mod_conf { [
             'authz_default',
@@ -55,7 +55,7 @@ class mediawiki::jobqueue::shared (
         ]:
             ensure => absent,
         }
-    
+
         file { '/srv/mediawiki/rpc':
             ensure  => 'link',
             target  => '/srv/mediawiki/config/rpc',
@@ -63,19 +63,19 @@ class mediawiki::jobqueue::shared (
             group   => 'www-data',
             require => File['/srv/mediawiki/config'],
         }
-    
+
         httpd::conf { 'jobrunner_port':
             ensure   => $ensure,
             priority => 1,
             content  => inline_template("# This file is managed by Puppet\nListen <%= @local_only_port %>\n"),
         }
-    
+
         httpd::conf { 'jobrunner_timeout':
             ensure   => $ensure,
             priority => 1,
             content  => inline_template("# This file is managed by Puppet\nTimeout 259200\n"),
         }
-    
+
         httpd::site { 'jobrunner':
             priority => 1,
             content  => template('mediawiki/jobrunner_legacy.conf.erb'),
