@@ -5,7 +5,6 @@ class mediawiki::jobqueue::shared (
     String        $version,
     VMlib::Ensure $ensure = present,
 ) {
-
     $local_only_port = 9007
     $php_fpm_sock = 'php/fpm-www.sock'
 
@@ -14,16 +13,18 @@ class mediawiki::jobqueue::shared (
     # a few headers, like Content-Type and Content-Length.
     # We need to add them back here.
     ::httpd::conf { 'fcgi_headers':
+        ensure   => $ensure,
         source   => 'puppet:///modules/mediawiki/fcgi_headers.conf',
         priority => 0,
     }
     # Declare the proxies explicitly with retry=0
     httpd::conf { 'fcgi_proxies':
-        ensure  => present,
+        ensure  => $ensure,
         content => template('mediawiki/fcgi_proxies.conf.erb')
     }
 
     class { 'httpd':
+        ensure   => $ensure,
         period  => 'daily',
         rotate  => 7,
         modules => [
@@ -43,7 +44,8 @@ class mediawiki::jobqueue::shared (
     }
 
     class { 'httpd::mpm':
-        mpm => 'worker',
+        ensure => $ensure,
+        mpm    => 'worker',
     }
 
     # Modules we don't enable.
@@ -64,13 +66,13 @@ class mediawiki::jobqueue::shared (
     }
 
     httpd::conf { 'jobrunner_port':
-        ensure   => present,
+        ensure   => $ensure,
         priority => 1,
         content  => inline_template("# This file is managed by Puppet\nListen <%= @local_only_port %>\n"),
     }
 
     httpd::conf { 'jobrunner_timeout':
-        ensure   => present,
+        ensure   => $ensure,
         priority => 1,
         content  => inline_template("# This file is managed by Puppet\nTimeout 259200\n"),
     }
@@ -92,15 +94,9 @@ class mediawiki::jobqueue::shared (
     $redis_password = lookup('passwords::redis::master')
     $redis_server_ip = lookup('mediawiki::jobqueue::runner::redis_ip', {'default_value' => false})
 
-    if lookup('jobrunner::intensive', {'default_value' => false}) {
-        $config = 'jobrunner-hi.json.erb'
-    } else {
-        $config = 'jobrunner.json.erb'
-    }
-
     file { '/srv/jobrunner/jobrunner.json':
         ensure  => $ensure,
-        content => template("mediawiki/${config}"),
+        content => template('mediawiki/jobrunner.json.erb'),
         require => Git::Clone['JobRunner'],
     }
 
