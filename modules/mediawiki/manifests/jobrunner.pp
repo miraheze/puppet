@@ -163,4 +163,5 @@ class mediawiki::jobrunner {
                 http_ignore_body => true,
             },
         }
+    }
 }
