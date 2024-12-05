@@ -43,8 +43,7 @@ class mediawiki::jobqueue::shared (
     }
 
     class { 'httpd::mpm':
-        ensure => $ensure,
-        mpm    => 'worker',
+        mpm => 'worker',
     }
 
     # Modules we don't enable.
