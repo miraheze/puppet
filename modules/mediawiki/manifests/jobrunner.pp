@@ -153,7 +153,7 @@ class mediawiki::jobrunner {
     }
     ['jobrunner.wikitide.net', 'jobrunner-high.wikitide.net', 'videoscaler.wikitide.net'].each |String $domain| {
         monitoring::services { "${domain} HTTPS":
-            ensure        => $monitor_service,
+            ensure        => present,
             check_command => 'check_curl',
             vars          => {
                 address6         => $address,
