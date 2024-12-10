@@ -52,7 +52,7 @@ class nginx (
 
     $mem_gb = $facts['memory']['system']['total_bytes'] / 1073741824.0
     if ($mem_gb < 3.0) {
-        $ssl_session_cache = 120
+        $ssl_session_cache = 256
     } else {
         $ssl_session_cache = 2048
     }
