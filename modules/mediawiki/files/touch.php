@@ -37,7 +37,7 @@ function streamAppleTouch() {
 		$url = wfExpandUrl( $touch, PROTO_CANONICAL );
 		$client = MediaWikiServices::getInstance()
 			->getHttpRequestFactory()
-			->create( $url );
+			->create( $url, [ 'followRedirects' => true ] );
 
 		$status = $client->execute();
 		if ( !$status->isOK() ) {
