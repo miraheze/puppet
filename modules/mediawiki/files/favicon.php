@@ -26,9 +26,15 @@ function streamFavicon() {
 	}
 
 	$url = wfExpandUrl( $favicon, PROTO_CANONICAL );
+
+	$options = [];
+	if ( preg_match( '/static\.(miraheze\.org|wikitide\.net)\/(.+)/', $url ) ) {
+		$options['followRedirects'] = true;
+	}
+
 	$client = MediaWikiServices::getInstance()
 		->getHttpRequestFactory()
-		->create( $url );
+		->create( $url, $options );
 	$client->setHeader( 'X-Favicon-Loop', '1' );
 
 	$status = $client->execute();
