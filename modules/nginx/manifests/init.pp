@@ -54,7 +54,7 @@ class nginx (
     if ($mem_gb < 2.0) {
         $ssl_session_cache = 120
     } else {
-        $ssl_session_cache = 1024
+        $ssl_session_cache = 2048
     }
 
     $cache_proxies = query_facts("Class['Role::Varnish']", ['networking'])
