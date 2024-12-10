@@ -28,7 +28,7 @@ function streamAppleTouch() {
 	$url = wfExpandUrl( $touch, PROTO_CANONICAL );
 
 	$options = [];
-	if ( preg_match( '/static\.(miraheze\.org|wikitide\.net)$/', $url ) ) {
+	if ( preg_match( '/static\.(miraheze\.org|wikitide\.net)\/(.+)/', $url ) ) {
 		$options['followRedirects'] = true;
 	}
 	
