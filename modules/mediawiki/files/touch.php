@@ -34,7 +34,7 @@ function streamAppleTouch() {
 	if ( $parsedBaseUrl['host'] === 'static.miraheze.org'  ) {
 		$url = str_replace( 'static.miraheze.org', 'static.wikitide.net', $url );
 	}
-	
+
 	$client = $mediaWikiServices
 		->getHttpRequestFactory()
 		->create( $url );
