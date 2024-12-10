@@ -27,12 +27,16 @@ function streamAppleTouch() {
 
 	$url = wfExpandUrl( $touch, PROTO_CANONICAL );
 
+	$mediaWikiServices = MediaWikiServices::getInstance();
+	$urlUtils = $mediaWikiServices->getUrlUtils();
+	$parsedBaseUrl = $urlUtils->parse( $url );
+
 	$options = [];
-	if ( preg_match( '/static\.(miraheze\.org|wikitide\.net)\/(.+)/', $url ) ) {
+	if ( $parsedBaseUrl['host'] === 'static.wikitide.net' || $parsedBaseUrl['host'] === 'static.miraheze.org'  ) {
 		$options['followRedirects'] = true;
 	}
 	
-	$client = MediaWikiServices::getInstance()
+	$client = $mediaWikiServices
 		->getHttpRequestFactory()
 		->create( $url, $options );
 	$client->setHeader( 'X-Favicon-Loop', '1' );
