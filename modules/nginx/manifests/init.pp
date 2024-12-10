@@ -51,10 +51,10 @@ class nginx (
     }
 
     $mem_gb = $facts['memory']['system']['total_bytes'] / 1073741824.0
-    if ($mem_gb < 2.0) {
-        $ssl_session_cache = 120
+    if ($mem_gb < 3.0) {
+        $ssl_session_cache = 256
     } else {
-        $ssl_session_cache = 1024
+        $ssl_session_cache = 2048
     }
 
     $cache_proxies = query_facts("Class['Role::Varnish']", ['networking'])
