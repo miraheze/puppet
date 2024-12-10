@@ -26,9 +26,15 @@ function streamAppleTouch() {
 	}
 
 	$url = wfExpandUrl( $touch, PROTO_CANONICAL );
+
+	$options = [];
+	if ( preg_match( '/static\.(miraheze\.org|wikitide\.net)$/', $url ) ) {
+		$options['followRedirects'] = true;
+	}
+	
 	$client = MediaWikiServices::getInstance()
 		->getHttpRequestFactory()
-		->create( $url );
+		->create( $url, $options );
 	$client->setHeader( 'X-Favicon-Loop', '1' );
 
 	$status = $client->execute();
@@ -37,7 +43,7 @@ function streamAppleTouch() {
 		$url = wfExpandUrl( $touch, PROTO_CANONICAL );
 		$client = MediaWikiServices::getInstance()
 			->getHttpRequestFactory()
-			->create( $url, [ 'followRedirects' => true ] );
+			->create( $url );
 
 		$status = $client->execute();
 		if ( !$status->isOK() ) {
