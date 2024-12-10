@@ -31,8 +31,9 @@ function streamFavicon() {
 	$urlUtils = $mediaWikiServices->getUrlUtils();
 	$parsedBaseUrl = $urlUtils->parse( $url );
 
-	if ( $parsedBaseUrl['host'] === 'static.miraheze.org'  ) {
-		$url = str_replace( 'static.miraheze.org', 'static.wikitide.net', $url );
+	if ( $parsedBaseUrl && $parsedBaseUrl['host'] === 'static.miraheze.org'  ) {
+		$parsedBaseUrl['host'] = 'static.wikitide.net';
+		$url = $urlUtils->assemble( $parsedBaseUrl );
 	}
 
 	$client = $mediaWikiServices
