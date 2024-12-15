@@ -228,6 +228,11 @@ class phorge (
         command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'
     }
 
+    # Backup provisioning
+    file { '/srv/backups':
+        ensure => directory,
+    }
+
     file { '/var/log/phorge-backup':
         ensure => 'directory',
         owner  => 'root',
