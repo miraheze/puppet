@@ -109,10 +109,10 @@ def backup_swift_account_container(dt: str):
 
 
 def backup_phorge(dt: str):
-    subprocess.check_call(f'/srv/phorge/phorge/bin/storage dump --compress --output backup.tar.gz', shell=True)
+    subprocess.check_call(f'/srv/phorge/phorge/bin/storage dump --compress --output backup.sql.gz', shell=True)
     tar = tarfile.open('phorge.tar.gz', 'w:gz')
-    tar.add('backup.tar.gz', arcname='db')
-    subprocess.call(f'rm -f backup.tar.gz', shell=True)
+    tar.add('backup.sql.gz', arcname='db')
+    subprocess.call(f'rm -f backup.sql.gz', shell=True)
     tar.add('/srv/phorge/images', arcname='phorge')
     tar.close()
 
