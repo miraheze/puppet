@@ -41,6 +41,10 @@ user.require-real-name: false
 storage.local-disk.path: "/srv/phorge/images/"
 phabricator.serious-business: true
 
+# 15 days
+phd.garbage-collection:
+  'user.logs': 1296000
+  
 # Maniphest priorities
 maniphest.priorities:
   '100':
