@@ -233,7 +233,7 @@ class phorge (
         command           => '/usr/local/bin/wikitide-backup backup phorge',
         interval          => {
             'start'    => 'OnCalendar',
-            'interval' => "*-*-1,15 01:00:00",
+            'interval' => '*-*-1,15 01:00:00',
         },
         logfile_basedir   => '/var/log/phorge-backup',
         logfile_name      => 'phorge-backup.log',
