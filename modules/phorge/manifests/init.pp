@@ -228,6 +228,13 @@ class phorge (
         command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'
     }
 
+    file { '/var/log/phorge-backup':
+        ensure => 'directory',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    }
+
     systemd::timer::job { 'phorge-backup':
         description       => 'Runs backup of phorge',
         command           => '/usr/local/bin/wikitide-backup backup phorge',
