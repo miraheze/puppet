@@ -56,6 +56,7 @@ class role::mattermost {
                 'EnableEmailInvitations'           => true,
                 'EnableMultifactorAuthentication'  => true,
                 'EnforceMultifactorAuthentication' => true,
+                'ScheduledPosts'                   => true,
             },
             'SqlSettings'     => {
                 'DriverName' => 'postgres',
