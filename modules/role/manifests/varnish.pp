@@ -41,7 +41,7 @@ class role::varnish (
             srange  => "(${cloudflare_firewall_rule})",
             notrack => true,
         }
-    
+
         ferm::service { 'https':
             proto   => 'tcp',
             port    => '443',
@@ -54,7 +54,7 @@ class role::varnish (
             port    => '80',
             notrack => true,
         }
-    
+
         ferm::service { 'https':
             proto   => 'tcp',
             port    => '443',
