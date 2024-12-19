@@ -751,7 +751,6 @@ sub vcl_deliver {
 
 	if ( req.http.Host == "static.wikitide.net" ) {
 		unset resp.http.Set-Cookie;
-		unset resp.http.Cache-Control;
 
 		if (req.http.X-Content-Disposition == "attachment") {
 			set resp.http.Content-Disposition = "attachment";
