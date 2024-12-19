@@ -766,7 +766,7 @@ sub vcl_deliver {
 		call add_upload_cors_headers;
 	}
 
-	if (req.url ~ "^/(wiki/)?" || req.url ~ "^/w/index\.php") {
+	if ( req.http.Host != "static.wikitide.net" && ( req.url ~ "^/(wiki/)?" || req.url ~ "^/w/index\.php" ) ) {
 		// ...but exempt CentralNotice banner special pages
 		if (req.url !~ "^/(wiki/|w/index\.php\?title=)?Special:Banner") {
 			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
