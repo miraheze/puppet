@@ -41,6 +41,8 @@ class varnish (
     $module_path = get_module_path('mediawiki')
     $csp = loadyaml("${module_path}/data/csp.yaml")
     $backends = lookup('varnish::backends')
+    $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
+    $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
     $interval_check = lookup('varnish::interval-check')
     $interval_timeout = lookup('varnish::interval-timeout')
 

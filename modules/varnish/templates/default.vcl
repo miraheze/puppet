@@ -93,6 +93,18 @@ acl wikitide_nets {
 	"2602:294:0:b12::/64";
 }
 
+acl cloudflare_ips {
+	# Add Cloudflare IPv4 addresses
+	<%- @cloudflare_ipv4.each do |ip| -%>
+	"<%= ip.split('/')[0] %>"/<%= ip.split('/')[1] %>;
+	<%- end -%>
+
+	# Add Cloudflare IPv6 addresses
+	<%- @cloudflare_ipv6.each do |ip| -%>
+	"<%= ip.split('/')[0] %>"/<%= ip.split('/')[1] %>;
+	<%- end -%>
+}
+
 # Cookie handling logic
 sub evaluate_cookie {
 	# Replace all session/token values with a non-unique global value for caching purposes.
@@ -433,6 +445,19 @@ sub vcl_recv {
 	if (req.http.Host == "reports.miraheze.org") {
 		set req.backend_hint = reports171;
 		return (pass);
+	}
+
+	# Respect CloudFlare IPs for X-Forwarded-For configuration
+	if (client.ip ~ cloudflare_ips || client.ip ~ purge) {
+		if (req.http.CF-Connecting-IP) {
+			# Honor the X-Forwarded-For header only if the client IP is in the Cloudflare ACL
+			set req.http.X-Client-IP = client.ip;
+			set req.http.X-Forwarded-For = req.http.CF-Connecting-IP + ", " + client.ip;
+		}
+	} else {
+		# Reset X-Forwarded-For if the request is not from a Cloudflare IP
+		unset req.http.CF-Connecting-IP;
+		set req.http.X-Client-IP = client.ip;
 	}
 
 	# MediaWiki specific
