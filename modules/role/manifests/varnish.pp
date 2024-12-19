@@ -18,7 +18,7 @@ class role::varnish (
         $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
         $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
         $cloudflare_firewall_rule = join(
-            $cloudflare_ipv4 + $cloudflare_ipv6, ['networking'])
+            $cloudflare_ipv4 + $cloudflare_ipv6
             .map |$key, $value| {
                 if ( $value['networking']['interfaces']['he-ipv6'] ) {
                     "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
