@@ -3,7 +3,7 @@ class varnish (
     String $cache_file_name = '/srv/varnish/cache_storage.bin',
     String $cache_file_size = '22G',
     Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
-    Integer $transient_storage = lookup('varnish::transient_storage'),
+    Integer $transient_gb = lookup('varnish::transient_storage'),
 ) {
     include varnish::nginx
     include prometheus::exporter::varnish
