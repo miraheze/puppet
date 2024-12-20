@@ -49,13 +49,6 @@ class varnish (
 
     $debug_access_key = lookup('passwords::varnish::debug_access_key')
 
-    $mem_gb = $facts['memory']['system']['total_bytes'] / 1073741824.0
-    if ($mem_gb < 6.0) {
-        $v_mem_gb = 1
-    } else {
-        $v_mem_gb = ceiling(0.7 * ($mem_gb - 100.0))
-    }
-
     if $transient_gb > 0 {
         $transient_storage = "-s Transient=malloc,${transient_gb}G"
     } else {
