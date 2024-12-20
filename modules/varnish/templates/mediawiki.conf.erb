@@ -303,12 +303,6 @@ server {
 	<% else %>
 	add_header Strict-Transport-Security "max-age=604800";
 	<% end %>
-
-	# Default headers
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
-
-	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {
