@@ -2,27 +2,22 @@
 class role::mathoid {
     include mathoid
 
-    $firewall = $facts['networking']['hostname'] =~ /^test1.+$/ ? {
-        true    => 'Class[Role::Bastion] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2]',
-        default => 'Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Icinga2]',
+    if ( $facts['networking']['hostname'] =~ /^test1.+$/ ) {
+        $subquery = @("PQL")
+        (resources { type = 'Class' and title = 'Role::Bastion' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
+        resources { type = 'Class' and title = 'Role::Icinga2' })
+        | PQL
+    } else {
+        $subquery = @("PQL")
+        (resources { type = 'Class' and title = 'Role::Bastion' } or
+        resources { type = 'Class' and title = 'Role::Mediawik' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+        resources { type = 'Class' and title = 'Role::Icinga2' })
+        | PQL
     }
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
-    $firewall_rules_str = join(
-        query_facts($firewall, ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
     ferm::service { 'mathoid':
         proto   => 'tcp',
         port    => '10044',
