@@ -32,44 +32,21 @@ class role::irc {
         udp_port     => '5071',
     }
 
-    $firewall_irc_rules_str = join(
-        query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Mediawik' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki_beta' })
+    | PQL
+    $firewall_irc_rules_str = vmlib::generate_firewall_ip($subquery)
+
     ferm::service { 'ircrcbot':
         proto  => 'udp',
         port   => '5070',
         srange => "(${firewall_irc_rules_str})",
     }
 
-    $firewall_all_rules_str = join(
-        query_facts('Class[Base]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $firewall_all_rules_str = vmlib::generate_firewall_ip()
+
     ferm::service { 'irclogserverbot':
         proto  => 'udp',
         port   => '5071',

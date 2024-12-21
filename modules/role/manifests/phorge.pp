@@ -4,25 +4,13 @@ class role::phorge {
 
     $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
+    $cf = join($cloudflare_ipv4 + $cloudflare_ipv6, ' ')
 
-    $firewall_rules_str = join(
-        $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['he-ipv6'] ) {
-                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Varnish' } or
+    resources { type = 'Class' and title = 'Role::Icinga2' })
+    | PQL
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery) + " ${$cf}"
 
     ferm::service { 'http':
         proto   => 'tcp',
