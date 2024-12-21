@@ -1,5 +1,5 @@
 users::groups: 'cache-admins'
-varnish::cache_file_size: '400G'
+varnish::cache_file_size: '480G'
 varnish::thread_pool_max: 12000
 varnish::transient_storage: 5
 nginx::worker_processes: 8
