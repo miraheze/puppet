@@ -24,7 +24,7 @@
     # Metrics from https://puppet.com/docs/puppetserver/latest/puppet_server_metrics.html#enabling-puppet-servers-graphite-support
 
     ## Compiler metrics
-    - pattern: 'puppetserver<name=puppetlabs.localhost.compiler><>(Max|Min|Mean|StdDev|50thPercentile|75thPercentile|95thPercentile|99thPercentile):'
+    - pattern: 'puppetserver<name=puppetlabs.localhost.compiler><>(Max|Min|Mean|StdDev|50thPercentile|75thPercentile|95thPercentile|99thPercentile)'
       name: puppetserver_compiler_seconds
       type: GAUGE
       help: "Time spent parsing/retrieving/compiling catalogs."
