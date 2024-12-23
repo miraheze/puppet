@@ -40,7 +40,7 @@ class role::puppetserver (
     prometheus::exporter::jmx { "puppetserver_${facts['networking']['hostname']}":
         port        => 9400,
         config_file => '/etc/puppetlabs/puppetserver/jvm_prometheus_jmx_exporter.yaml',
-        content     => template('role/puppetserver/jvm_prometheus_jmx_exporter.yaml.erb'),
+        content     => epp('role/puppetserver/jvm_prometheus_jmx_exporter.yaml.epp'),
         notify      => Service['puppetserver']
     }
 

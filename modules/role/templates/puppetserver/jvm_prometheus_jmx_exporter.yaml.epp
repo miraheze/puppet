@@ -1,13 +1,26 @@
+# SPDX-License-Identifier: Apache-2.0
+# from https://github.com/matejzero/puppet_server_jmx_exporter/blob/master/jmx_exporter.yaml
+# and https://github.com/wikimedia/operations-puppet/blob/bb6051bfa550020ef030f4d91cc90a023554c3c7/modules/puppetserver/templates/jmx_exporter.yaml.epp
 ---
-lowercaseOutputLabelNames: true
-lowercaseOutputName: false
-blacklistObjectNames:
-    # PuppetServer metrics
+  lowercaseOutputName: true
+  lowercaseOutputLabelNames: true
+  blacklistObjectNames:
     - puppetserver:name=puppetlabs.localhost.compiler.evaluate_resource.*
     - puppetserver:name=puppetlabs.localhost.compiler.compile.*
     - puppetserver:name=puppetlabs.localhost.puppetdb.catalog.*
     - puppetserver:name=puppetlabs.localhost.puppetdb.facts.*
-rules:
+  whitelistObjectNames:
+    - puppetserver:name=puppetlabs.localhost.compiler
+    - puppetserver:name=puppetlabs.localhost.compiler.*
+    - puppetserver:name=puppetlabs.localhost.functions
+    # - puppetserver:name=puppetlabs.localhost.puppetdb.*
+    - puppetserver:name=puppetlabs.localhost.memory.*
+    - puppetserver:name=puppetlabs.localhost.jruby.*
+    - puppetserver:name=puppetlabs.localhost.http.*
+    - puppetserver:name=puppetlabs.localhost.http-client.experimental.with-metric-id.puppetdb.*
+    - puppetserver:name=puppetlabs.localhost.uptime
+
+  rules:
     # Metrics from https://puppet.com/docs/puppetserver/latest/puppet_server_metrics.html#enabling-puppet-servers-graphite-support
 
     ## Compiler metrics
