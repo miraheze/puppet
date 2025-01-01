@@ -46,8 +46,6 @@ script-src:
   - 'bandcamp.com'
   - 'flo.uri.sh'
   - 'challenges.cloudflare.com'
-  - 'games.roblox.com'
-  - 'economy.roblox.com'
 
 style-src:
   - "'self'"
@@ -236,3 +234,5 @@ connect-src:
   - '*.hcaptcha.com'
   - '1.1.1.1'
   - 'translate.googleapis.com'
+  - 'games.roblox.com'
+  - 'economy.roblox.com'
