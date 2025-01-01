@@ -476,6 +476,12 @@ server {
 	location = /sitemap.xml {
 		rewrite ^(.*)$ /sitemap.php;
 	}
+
+	<%- if property['rewrites'] -%>
+	<%- property['rewrites'].each_pair do | regex, replacement | -%>
+	rewrite <%= regex %> <%= replacement %>;
+	<%- end -%>
+	<%- end -%>
 }
 
 <%- end -%>
