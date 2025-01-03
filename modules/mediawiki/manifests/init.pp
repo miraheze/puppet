@@ -239,7 +239,7 @@ class mediawiki {
     }
 
     tidy { [ '/tmp', '/tmp/magick-tmp' ]:
-        matches => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v', 'php*', 'shellbox-*' ],
+        matches => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v', 'php*', 'shellbox-*', 'arch*' ],
         age     => '2h',
         type    => 'atime',
         backup  => false,
