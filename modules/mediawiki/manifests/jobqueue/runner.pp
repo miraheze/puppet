@@ -175,7 +175,7 @@ class mediawiki::jobqueue::runner (
             }
 
             systemd::timer::job { 'update-special-pages':
-                description       => 'Purge parsercache',
+                description       => 'Update Special Pages',
                 command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/updateSpecialPages.php",
                 interval          => {
                     'start'    => 'OnCalendar',
