@@ -129,6 +129,20 @@ class mediawiki::jobqueue::runner (
             require           => File['/var/log/mediawiki/cron'],
         }
 
+        systemd::timer::job { 'semanticmediawiki':
+            description       => 'Deploy Semantic MediaWiki files',
+            command           => "/usr/local/bin/mwdeploy --files=../mediawiki/<version>/extensions/SemanticMediaWiki/.smw.json --servers=all --no-log",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*/15 * * * *',
+            },
+            logfile_basedir   => '/var/log/mediawiki/cron',
+            logfile_name      => 'semanticmediawikideploy.log',
+            syslog_identifier => 'semanticmediawikideploy',
+            user              => 'www-data',
+            require           => File['/var/log/mediawiki/cron'],
+        }
+
         if $wiki == 'loginwiki' {
             $swift_password = lookup('mediawiki::swift_password')
 
