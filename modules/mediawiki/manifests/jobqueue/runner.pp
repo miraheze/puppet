@@ -131,7 +131,7 @@ class mediawiki::jobqueue::runner (
 
         systemd::timer::job { 'semanticmediawiki':
             description       => 'Deploy Semantic MediaWiki files',
-            command           => "/usr/local/bin/mwdeploy --files=../mediawiki/<version>/extensions/SemanticMediaWiki/.smw.json --servers=all --no-log",
+            command           => '/usr/local/bin/mwdeploy --files=../mediawiki/<version>/extensions/SemanticMediaWiki/.smw.json --servers=all --no-log',
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => '*/15 * * * *',
