@@ -62,7 +62,6 @@ author_map = {
     "@reception123": "Reception123",
     "@originalauthority": "Original Authority",
     "@orduin": "Void",
-    "@evalprime": "Evalprime",
     "@theresnotime": "TheresNoTime",
     "@agentisai": "Agent"
 }
