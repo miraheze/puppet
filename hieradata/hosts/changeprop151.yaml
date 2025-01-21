@@ -277,3 +277,6 @@ role::prometheus::statsd_exporter::mappings:
       partition: $3
 
 http_proxy: 'http://bastion.wikitide.net:8080'
+
+redis::heap: '3GB'
+redis::maxmemory_policy: volatile-lru
