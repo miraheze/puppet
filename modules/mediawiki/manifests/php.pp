@@ -229,6 +229,11 @@ class mediawiki::php (
         }
     }
 
+    php::extension { 'excimer':
+        ensure            => present,
+        package_overrides => {'7.4' => 'php7.4-excimer'};
+    }
+
     # Set the default interpreter to php8
     $cli_path = "/usr/bin/php${php_version}"
     $pkg = "php${php_version}-cli"
