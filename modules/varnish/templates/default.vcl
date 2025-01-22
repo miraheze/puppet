@@ -41,7 +41,7 @@ backend <%= name %> {
         .connect_timeout = 3s;
         .first_byte_timeout = 63s;
         .between_bytes_timeout = 31s;
-        .max_connections = 1000;
+        .max_connections = 5000;
 }
 
 <%- if property['xdebug'] -%>
@@ -51,7 +51,7 @@ backend <%= name %>_test {
         .connect_timeout = 3s;
         .first_byte_timeout = 63s;
         .between_bytes_timeout = 31s;
-        .max_connections = 1000;
+        .max_connections = 5000;
 }
 <%- end -%>
 <%- end -%>
