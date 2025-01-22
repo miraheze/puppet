@@ -16,6 +16,7 @@ mediawiki::use_cpjobqueue: false
 role::mediawiki::use_strict_firewall: true
 role::mediawiki::is_beta: true
 
+mediawiki::php::request_timeout: 201
 mediawiki::php::fpm::fpm_workers_multiplier: 2.0
 mediawiki::php::fpm_config:
   post_max_size: '250M'
