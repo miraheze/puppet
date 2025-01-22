@@ -230,8 +230,7 @@ class mediawiki::php (
     }
 
     php::extension { 'excimer':
-        ensure            => present,
-        package_overrides => {'7.4' => 'php7.4-excimer'};
+        ensure => present,
     }
 
     # Set the default interpreter to php8
