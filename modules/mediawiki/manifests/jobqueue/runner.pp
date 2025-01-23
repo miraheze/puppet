@@ -269,25 +269,25 @@ class mediawiki::jobqueue::runner (
             require           => File['/var/log/mediawiki/cron'],
         }
 
-         stdlib::ensure_packages(['python3-internetarchive'])
+        stdlib::ensure_packages(['python3-internetarchive'])
 
-         file { '/usr/local/bin/iaupload':
-             ensure => present,
-             mode   => '0755',
-             source => 'puppet:///modules/mediawiki/bin/iaupload.py',
-         }
+        file { '/usr/local/bin/iaupload':
+            ensure => present,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/bin/iaupload.py',
+        }
 
-         file { '/usr/local/bin/backupwikis':
-                 ensure => 'present',
-                 mode   => '0755',
-                 source => 'puppet:///modules/mediawiki/bin/backupwikis',
-         }
+        file { '/usr/local/bin/backupwikis':
+            ensure => 'present',
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/bin/backupwikis',
+        }
 
-         file { '/opt/backups':
-             ensure => directory,
-             owner  => 'www-data',
-             group  => 'www-data',
-             mode   => '0755',
+        file { '/opt/backups':
+            ensure => directory,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0755',
         }
 
         systemd::timer::job { 'backup-all-wikis-ia':
