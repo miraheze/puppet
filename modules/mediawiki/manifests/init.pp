@@ -35,48 +35,6 @@ class mediawiki {
         }
     }
 
-    if lookup('jobrunner::intensive', {'default_value' => false}) {
-        if ($facts['os']['distro']['codename'] == 'bookworm') {
-            stdlib::ensure_packages(['python3-internetarchive'])
-        } else {
-            stdlib::ensure_packages(
-                'internetarchive',
-                {
-                    ensure   => '3.3.0',
-                    provider => 'pip3',
-                    before   => File['/usr/local/bin/iaupload'],
-                    require  => Package['python3-pip'],
-                },
-            )
-        }
-
-        file { '/usr/local/bin/iaupload':
-            ensure => present,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/bin/iaupload.py',
-        }
-
-        file { '/usr/local/bin/backupwikis':
-                ensure => 'present',
-                mode   => '0755',
-                source => 'puppet:///modules/mediawiki/bin/backupwikis',
-        }
-
-        file { '/opt/backups':
-            ensure => directory,
-            owner  => 'www-data',
-            group  => 'www-data',
-            mode   => '0755',
-        }
-
-        cron { 'backup-all-wikis-ia':
-            ensure   => present,
-            command  => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php  > /var/log/iabackup-backup.log 2>&1',
-            user     => 'www-data',
-            monthday => ['1'],
-        }
-    }
-
     git::clone { '3d2png':
         ensure             => 'latest',
         directory          => '/srv/3d2png',

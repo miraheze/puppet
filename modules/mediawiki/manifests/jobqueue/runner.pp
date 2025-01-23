@@ -268,5 +268,40 @@ class mediawiki::jobqueue::runner (
             user              => 'www-data',
             require           => File['/var/log/mediawiki/cron'],
         }
+
+         stdlib::ensure_packages(['python3-internetarchive'])
+
+         file { '/usr/local/bin/iaupload':
+             ensure => present,
+             mode   => '0755',
+             source => 'puppet:///modules/mediawiki/bin/iaupload.py',
+         }
+
+         file { '/usr/local/bin/backupwikis':
+                 ensure => 'present',
+                 mode   => '0755',
+                 source => 'puppet:///modules/mediawiki/bin/backupwikis',
+         }
+
+         file { '/opt/backups':
+             ensure => directory,
+             owner  => 'www-data',
+             group  => 'www-data',
+             mode   => '0755',
+        }
+
+        systemd::timer::job { 'backup-all-wikis-ia':
+            description       => 'Backups all wikis for IA',
+            command           => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php',
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => 'monthly',
+            },
+            logfile_basedir   => '/var/log/mediawiki/cron',
+            logfile_name      => 'iabackup-backup.log',
+            syslog_identifier => 'iabackup-backup',
+            user              => 'www-data',
+            require           => File['/var/log/mediawiki/cron'],
+        }
     }
 }
