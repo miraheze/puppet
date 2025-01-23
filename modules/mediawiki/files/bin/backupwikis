@@ -61,7 +61,7 @@ for wiki in $filtered_wikis
 
     echo "Retrieving site information for $wiki..."
     
-    eval $(/usr/bin/php /srv/mediawiki/$mwversion/extensions/MirahezeMagic/maintenance/getSiteInfo.php --wiki $wiki | \
+    eval $(/usr/bin/php /srv/mediawiki/$mwversion/maintenance/run.php /srv/mediawiki/$mwversion/extensions/MirahezeMagic/maintenance/getSiteInfo.php --wiki $wiki | \
         awk -F': ' '/Sitename|URL|Language|License/ {
             gsub(" ", "_", $1);
             printf("%s=\"%s\"\n", toupper($1), $2);
