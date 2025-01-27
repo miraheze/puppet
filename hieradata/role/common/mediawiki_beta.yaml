@@ -29,8 +29,6 @@ mediawiki::use_staging: true
 mediawiki::monitoring::host: 'test.mirabeta.org'
 
 mediawiki::multiversion::versions:
-  '1.42':
-    branch: 'REL1_42'
   '1.43':
     branch: 'REL1_43'
     default: true
