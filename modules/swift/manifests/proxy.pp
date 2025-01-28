@@ -45,13 +45,13 @@ class swift::proxy (
         content => systemd_template('swift-proxy'),
     }
 
-    ssl::wildcard { 'swift wildcard': }
-
     nginx::site { 'swift':
         ensure  => present,
         source  => 'puppet:///modules/swift/nginx/swift.conf',
         monitor => false,
     }
+
+    ssl::wildcard { 'swift wildcard': }
 
     nginx::site { 'default':
         ensure  => absent,
