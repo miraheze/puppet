@@ -9,7 +9,6 @@ class role::openldap (
     String $ldapvi_password = lookup('profile::openldap::ldapvi_password'),
     String $ldap_host = lookup('profile::openldap::ldap_host', {'default_value' => $facts['networking']['fqdn']}),
 ) {
-    ssl::wildcard { 'openldap wildcard': }
 
     class { 'openldap::server':
         ldaps_ifs => ['/'],
@@ -147,6 +146,10 @@ class role::openldap (
         base       => 'dc=miraheze,dc=org',
         uri        => ["ldaps://${facts['networking']['fqdn']}"],
         tls_cacert => '/etc/ssl/certs/LetsEncrypt.crt',
+    }
+
+    ssl::wildcard { 'openldap wildcard':
+        notify => Service[$openldap::server::service]
     }
 
     include prometheus::exporter::openldap
