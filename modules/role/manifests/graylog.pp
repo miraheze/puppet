@@ -119,7 +119,7 @@ class role::graylog {
     }
 
     monitoring::nrpe { 'graylog tls port 12210 ssl cert check':
-        command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 12210 -D 7,3',
+        command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 12210 -D 15,7',
     }
 
     system::role { 'graylog':
