@@ -99,7 +99,7 @@ class swift::proxy (
         },
     }
 
-    monitoring::nrpe { "Swift NGINX SSL check ":
+    monitoring::nrpe { 'Swift NGINX SSL check ':
         command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 443 -D 7,3',
     }
 }
