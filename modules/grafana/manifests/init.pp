@@ -57,12 +57,12 @@ class grafana (
         require => Package['grafana'],
     }
 
-    ssl::wildcard { 'grafana wildcard': }
-
     nginx::site { 'grafana.wikitide.net':
         ensure => present,
         source => 'puppet:///modules/grafana/nginx/grafana.conf',
     }
+
+    ssl::wildcard { 'grafana wildcard': }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
         $address = $facts['networking']['interfaces']['ens19']['ip']
