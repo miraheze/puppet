@@ -22,15 +22,6 @@ class role::grafana {
         }
     }
 
-    cron { 'grafana-backup':
-        ensure   => absent,
-        command  => '/usr/local/bin/wikitide-backup backup grafana > /var/log/grafana-backup.log 2>&1',
-        user     => 'root',
-        minute   => '0',
-        hour     => '3',
-        monthday => [fqdn_rand(13, 'grafana-backup') + 1, fqdn_rand(13, 'grafana-backup') + 15],
-    }
-
     $monthday_1 = fqdn_rand(13, 'grafana-backup') + 1
     $monthday_15 = fqdn_rand(13, 'grafana-backup') + 15
     systemd::timer::job { 'grafana-backup':
