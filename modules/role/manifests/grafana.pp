@@ -22,6 +22,13 @@ class role::grafana {
         }
     }
 
+    file { '/var/log/grafana-backup':
+        ensure => 'directory',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    }
+
     $monthday_1 = fqdn_rand(13, 'grafana-backup') + 1
     $monthday_15 = fqdn_rand(13, 'grafana-backup') + 15
     systemd::timer::job { 'grafana-backup':
