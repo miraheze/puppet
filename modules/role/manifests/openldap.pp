@@ -238,7 +238,7 @@ class role::openldap (
     }
 
     monitoring::nrpe { 'LDAP SSL check ':
-        command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 636 -D 7,3',
+        command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 636 -D 15,7',
     }
 
     system::role { 'openldap':
