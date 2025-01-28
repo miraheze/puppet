@@ -173,14 +173,13 @@ class role::opensearch (
     }
 
     if $os_master {
-        # For nginx
-        ssl::wildcard { 'opensearch wildcard': }
-
         nginx::site { 'opensearch.wikitide.net':
             ensure  => present,
             content => template('role/opensearch/nginx.conf.erb'),
             monitor => false,
         }
+
+        ssl::wildcard { 'opensearch wildcard': }
 
         $firewall_rules_str = join(
             query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]', ['networking'])
