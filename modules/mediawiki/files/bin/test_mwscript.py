@@ -29,7 +29,7 @@ def test_get_command_extension_list(mock_getlogin):
     args.version = '1.39'
     assert mwscript.syscheck(mwscript.get_commands(args)) == {
         'confirm': False,
-        'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/CheckUser.json /srv/mediawiki/1.39/maintenance/test.php',
+        'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/CheckUser.php /srv/mediawiki/1.39/maintenance/test.php',
         'generate': 'sudo -u www-data php /srv/mediawiki/1.39/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension=CheckUser --directory=/tmp',
         'long': True,
         'nolog': False,
@@ -41,7 +41,7 @@ def test_get_command_all():
     args.script = 'test.php'
     args.arguments = ['all']
     args.version = '1.39'
-    assert mwscript.syscheck(mwscript.get_commands(args)) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/1.39/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
+    assert mwscript.syscheck(mwscript.get_commands(args)) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/1.39/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
 
 
 def test_get_command_args():
@@ -86,7 +86,7 @@ def test_get_command_extension_list_runner(mock_getlogin):
     args.version = '1.40'
     assert mwscript.syscheck(mwscript.get_commands(args)) == {
         'confirm': False,
-        'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/CheckUser.json /srv/mediawiki/1.40/maintenance/run.php /srv/mediawiki/1.40/maintenance/test.php',
+        'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/CheckUser.php /srv/mediawiki/1.40/maintenance/run.php /srv/mediawiki/1.40/maintenance/test.php',
         'generate': 'sudo -u www-data php /srv/mediawiki/1.40/maintenance/run.php /srv/mediawiki/1.40/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension=CheckUser --directory=/tmp',
         'long': True,
         'nolog': False,
@@ -98,7 +98,7 @@ def test_get_command_all_runner():
     args.script = 'test.php'
     args.arguments = ['all']
     args.version = '1.40'
-    assert mwscript.syscheck(mwscript.get_commands(args)) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json /srv/mediawiki/1.40/maintenance/run.php /srv/mediawiki/1.40/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
+    assert mwscript.syscheck(mwscript.get_commands(args)) == {'confirm': False, 'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/1.40/maintenance/run.php /srv/mediawiki/1.40/maintenance/test.php', 'generate': None, 'long': True, 'nolog': False}
 
 
 def test_get_command_args_runner():
