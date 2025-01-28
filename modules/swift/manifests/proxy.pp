@@ -98,4 +98,8 @@ class swift::proxy (
             tcp_port    => '80',
         },
     }
+
+    monitoring::nrpe { "Swift NGINX SSL check ":
+        command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 443 -D 7,3',
+    }
 }
