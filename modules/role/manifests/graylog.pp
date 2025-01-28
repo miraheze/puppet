@@ -118,6 +118,10 @@ class role::graylog {
         use_udp           => true,
     }
 
+    monitoring::nrpe { "graylog tls port 12210 ssl cert check":
+        command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 12210 -D 7,3',
+    }
+
     system::role { 'graylog':
         description => 'central logging server',
     }
