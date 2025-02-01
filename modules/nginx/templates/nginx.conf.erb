@@ -22,7 +22,6 @@ http {
 	tcp_nodelay on;
 	client_max_body_size <%= @nginx_client_max_body_size %>;
 	client_body_buffer_size 64k;
-	large_client_header_buffers 4 16k;
 	types_hash_max_size 2048;
 	# 512 x 4
 	server_names_hash_max_size 2048;
