@@ -70,7 +70,7 @@ location ^~ /w/index.php {
 }
 
 location = /wiki {
-	return 301 /wiki/;
+	return 301 /wiki/$is_args$args;
 }
 
 location / {
