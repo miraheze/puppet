@@ -17,7 +17,11 @@ class base (
     include ssh
     include users
 
-    if !lookup('dns') {
+    if lookup('dns') {
+        package { 'pdns-recursor':
+            ensure => absent,
+        }
+    } else {
         include base::dns
     }
 
