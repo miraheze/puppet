@@ -17,8 +17,6 @@ mediawiki::php::fpm_config:
   post_max_size: '250M'
   upload_max_filesize: '250M'
 
-mediawiki::php::memory_limit: '500M'
-
 php::php_version: '8.2'
 
 http_proxy: 'http://bastion.wikitide.net:8080'
