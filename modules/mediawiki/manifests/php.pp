@@ -6,7 +6,6 @@ class mediawiki::php (
     VMlib::Php_version $php_version      = lookup('php::php_version', {'default_value' => '8.2'}),
     Boolean $enable_fpm                  = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
     Boolean $enable_request_profiling    = lookup('mediawiki::php::enable_request_profiling', {'default_value' => false}),
-    String $memory_limit                 = lookup('mediawiki::php::memory_limit', {'default_value' => '256M'}),
     Optional[Hash] $fpm_config           = lookup('mediawiki::php::fpm_config', {default_value => undef}),
     Boolean $increase_open_files         = lookup('mediawiki::php::increase_open_files', {'default_value' => false}),
 ) {
@@ -17,7 +16,7 @@ class mediawiki::php (
         'pcre.backtrack_limit'   => 5000000,
         'date.timezone'          => 'UTC',
         'display_errors'         => 'stderr',
-        'memory_limit'           => $memory_limit,
+        'memory_limit'           => '500M',
         'error_reporting'        => 'E_ALL & ~E_STRICT',
         'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
