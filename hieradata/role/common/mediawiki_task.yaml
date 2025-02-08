@@ -24,7 +24,6 @@ mediawiki::php::fpm_config:
   max_execution_time: 1200
 
 mediawiki::php::increase_open_files: true
-mediawiki::php::memory_limit: '1G'
 mediawiki::php::enable_request_profiling: true
 
 php::php_version: '8.2'
