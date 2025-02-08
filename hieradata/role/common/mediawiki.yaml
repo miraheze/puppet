@@ -26,7 +26,7 @@ http_proxy: 'http://bastion.wikitide.net:8080'
 base::syslog::rsyslog_udp_localhost: true
 
 # NGINX
-nginx::keepalive_timeout: 75
+nginx::keepalive_timeout: 60
 nginx::keepalive_requests: 1000
 nginx::logrotate_number: 2
 nginx::use_graylog: true
