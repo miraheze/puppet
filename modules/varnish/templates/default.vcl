@@ -39,7 +39,7 @@ backend <%= name %> {
 	.probe = <%= property['probe'] %>;
 <%- end -%>
         .connect_timeout = 3s;
-        .first_byte_timeout = 63s;
+        .first_byte_timeout = 65s;
         .between_bytes_timeout = 31s;
         .max_connections = 5000;
 }
@@ -49,7 +49,7 @@ backend <%= name %>_test {
 	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
         .connect_timeout = 3s;
-        .first_byte_timeout = 63s;
+        .first_byte_timeout = 65s;
         .between_bytes_timeout = 31s;
         .max_connections = 5000;
 }
