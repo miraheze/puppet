@@ -51,12 +51,6 @@ node 'graylog161.wikitide.net' {
     include role::graylog
 }
 
-node 'jobchron171.wikitide.net' {
-    include base
-    include role::redis
-    include mediawiki::jobqueue::chron
-}
-
 node 'kafka181.wikitide.net' {
     include base
     include role::kafka
