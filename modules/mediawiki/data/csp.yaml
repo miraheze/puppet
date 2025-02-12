@@ -216,6 +216,7 @@ frame-src:
 
 connect-src:
   - "'self'"
+  - 'blob:'
   - '*.miraheze.org'
   - '*.mirabeta.org'
   - '*.nexttide.org'
