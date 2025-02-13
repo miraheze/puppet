@@ -10,9 +10,10 @@ listen jobrunner
         bind :9007
         bind :::9007
         balance roundrobin
+        cookie SERVER insert indirect nocache
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true-%>
-        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
+        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check cookie <%= name %>
         <%- end -%>
         <%- end -%>
         http-request set-header Host jobrunner.wikitide.net
@@ -26,9 +27,10 @@ listen jobrunner_high
         bind :9008
         bind :::9008
         balance roundrobin
+        cookie SERVER insert indirect nocache
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
-        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
+        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check cookie <%= name %>
         <%- end -%>
         <%- end -%>
         http-request set-header Host jobrunner-high.wikitide.net
@@ -42,9 +44,10 @@ listen videoscaler
         bind :9009
         bind :::9009
         balance roundrobin
+        cookie SERVER insert indirect nocache
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
-        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
+        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check cookie <%= name %>
         <%- end -%>
         <%- end -%>
         http-request set-header Host videoscaler.wikitide.net
