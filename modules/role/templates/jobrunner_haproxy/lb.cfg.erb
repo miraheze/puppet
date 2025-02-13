@@ -7,15 +7,26 @@ listen jobrunner
         http-check expect status 405
         http-reuse always
         mode http
+
         bind :9007
         bind :::9007
-        balance roundrobin
+
+        balance consistent
+        hash-type consistent sdbm
+
+        # Use X-Request-ID for hash key
+        hash-header X-Request-ID
+
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true-%>
         server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
         <%- end -%>
         <%- end -%>
+
         http-request set-header Host jobrunner.wikitide.net
+
+        # Preserve the X-Request-ID header
+        http-response set-header X-Request-ID %[req.hdr(X-Request-ID)]
 
 listen jobrunner_high
         option httpchk
@@ -23,15 +34,26 @@ listen jobrunner_high
         http-check expect status 405
         http-reuse always
         mode http
+
         bind :9008
         bind :::9008
-        balance roundrobin
+
+        balance consistent
+        hash-type consistent sdbm
+
+        # Use X-Request-ID for hash key
+        hash-header X-Request-ID
+
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
         server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
         <%- end -%>
         <%- end -%>
+
         http-request set-header Host jobrunner-high.wikitide.net
+
+        # Preserve the X-Request-ID header
+        http-response set-header X-Request-ID %[req.hdr(X-Request-ID)]
 
 listen videoscaler
         option httpchk
@@ -39,12 +61,22 @@ listen videoscaler
         http-check expect status 405
         http-reuse always
         mode http
+
         bind :9009
         bind :::9009
-        balance roundrobin
+
+        balance consistent
+        hash-type consistent sdbm
+
+        # Use X-Request-ID for hash key
+        hash-header X-Request-ID
+
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
         server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
         <%- end -%>
         <%- end -%>
         http-request set-header Host videoscaler.wikitide.net
+
+        # Preserve the X-Request-ID header
+        http-response set-header X-Request-ID %[req.hdr(X-Request-ID)]
