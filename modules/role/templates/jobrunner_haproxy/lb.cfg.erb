@@ -11,11 +11,8 @@ listen jobrunner
         bind :9007
         bind :::9007
 
-        balance consistent
-        hash-type consistent sdbm
-
-        # Use X-Request-ID for hash key
-        hash-header X-Request-ID
+        balance hdr(X-Request-ID)
+        hash-type consistent
 
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true-%>
@@ -38,11 +35,8 @@ listen jobrunner_high
         bind :9008
         bind :::9008
 
-        balance consistent
-        hash-type consistent sdbm
-
-        # Use X-Request-ID for hash key
-        hash-header X-Request-ID
+        balance hdr(X-Request-ID)
+        hash-type consistent
 
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
@@ -65,11 +59,8 @@ listen videoscaler
         bind :9009
         bind :::9009
 
-        balance consistent
-        hash-type consistent sdbm
-
-        # Use X-Request-ID for hash key
-        hash-header X-Request-ID
+        balance hdr(X-Request-ID)
+        hash-type consistent
 
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
