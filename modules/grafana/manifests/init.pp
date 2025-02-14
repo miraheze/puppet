@@ -5,7 +5,6 @@ class grafana (
 ) {
 
     include apt
-    include grafana::datasource_exporter
 
     file { '/usr/share/keyrings/grafana.key':
         ensure => present,
