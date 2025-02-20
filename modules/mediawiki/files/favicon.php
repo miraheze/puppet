@@ -25,10 +25,10 @@ function streamFavicon() {
 		return;
 	}
 
-	$url = wfExpandUrl( $favicon, PROTO_CANONICAL );
+	$services = MediaWikiServices::getInstance();
+	$urlUtils = $services->getUrlUtils();
 
-	$mediaWikiServices = MediaWikiServices::getInstance();
-	$urlUtils = $mediaWikiServices->getUrlUtils();
+	$url = $urlUtils->expand( $favicon, PROTO_CANONICAL );
 	$parsedBaseUrl = $urlUtils->parse( $url );
 
 	if ( $parsedBaseUrl && $parsedBaseUrl['host'] === 'static.miraheze.org' ) {
@@ -36,19 +36,14 @@ function streamFavicon() {
 		$url = $urlUtils->assemble( $parsedBaseUrl );
 	}
 
-	$client = $mediaWikiServices
-		->getHttpRequestFactory()
-		->create( $url );
+	$client = $services->getHttpRequestFactory()->create( $url );
 	$client->setHeader( 'X-Favicon-Loop', '1' );
 
 	$status = $client->execute();
 	if ( !$status->isOK() ) {
 		$favicon = '/favicons/default.ico';
-
-		$url = wfExpandUrl( $favicon, PROTO_CANONICAL );
-		$client = MediaWikiServices::getInstance()
-			->getHttpRequestFactory()
-			->create( $url );
+		$url = $urlUtils->expand( $favicon, PROTO_CANONICAL );
+		$client = $services->getHttpRequestFactory()->create( $url );
 
 		$status = $client->execute();
 		if ( !$status->isOK() ) {
