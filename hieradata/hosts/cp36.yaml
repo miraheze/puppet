@@ -6,3 +6,4 @@ nginx::worker_processes: 6
 
 base::syslog::rsyslog_udp_localhost: true
 nginx::logrotate_number: 2
+nginx::logrotate_maxsize: '10G'

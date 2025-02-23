@@ -4,6 +4,7 @@ class nginx (
     Boolean                  $use_graylog                             = lookup('nginx::use_graylog', {'default_value' => false}),
     Boolean                  $remove_apache                           = lookup('nginx::remove_apache', {'default_value' => true}),
     Integer                  $logrotate_number                        = lookup('nginx::logrotate_number', {'default_value' => 12}),
+    String                   $logrotate_maxsize                       = lookup('nginx::logrotate_maxsize', {'default_value' => '5G'}),
     Integer                  $keepalive_timeout                       = lookup('nginx::keepalive_timeout', {'default_value' => 60}),
     Integer                  $keepalive_requests                      = lookup('nginx::keepalive_requests', {'default_value' => 1000}),
     String                   $nginx_client_max_body_size              = lookup('nginx::client_max_body_size', {'default_value' => '250M'}),
@@ -87,6 +88,10 @@ class nginx (
             File['/etc/nginx/nginx.conf'],
             File['/etc/nginx/fastcgi_params']
         ],
+    }
+
+    class { 'logrotate':
+        hourly => true,
     }
 
     logrotate::conf { 'nginx':
