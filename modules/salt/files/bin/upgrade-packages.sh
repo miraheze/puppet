@@ -4,8 +4,8 @@
 skip_confirm=false
 dry_run=false
 server_pattern='.*'  # Default: Match all servers
-include_kernel=false # Default: Exclude kernel updates
-include_all=false    # Default: Only security updates
+include_kernel=false # Default: Exclude kernel upgrades
+include_all=false    # Default: Only security upgrades
 
 # Trap SIGINT (CTRL+C) to exit the entire script
 trap "echo -e '\nScript terminated by user'; exit 1" SIGINT
@@ -17,8 +17,8 @@ function show_help() {
   echo "  --yes, -y           Skip confirmation prompts"
   echo "  --dry-run, -d       Show what would be done without making changes"
   echo "  --servers, -s       Specify target servers using a pattern"
-  echo "  --include-kernel, -k Include kernel updates (requires system reboot to take effect)"
-  echo "  --include-all, -a   Include all package updates (requires maintenance window)"
+  echo "  --include-kernel, -k Include kernel upgrades (requires system reboot to take effect)"
+  echo "  --include-all, -a   Include all package upgrades rather than only security upgrades (requires maintenance window)"
   echo "  --help, -h          Show this help message"
   exit 0
 }
@@ -53,16 +53,16 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-# Confirm before proceeding if including kernel or all updates
+# Confirm before proceeding if including kernel or all upgrades
 if $include_all; then
-  echo "WARNING: You have chosen to include all package updates. This type of update can never be done without a maintenance window. Proceeding may cause unexpected system behavior."
+  echo "WARNING: You have chosen to include all package upgrades. This type of upgrade can never be done without a maintenance window. Proceeding may cause unexpected system behavior or outage."
   read -p "Are you sure you want to proceed? (yes/no): " user_confirm
   if [[ "$user_confirm" != "yes" ]]; then
     echo "Operation cancelled."
     exit 1
   fi
 elif $include_kernel; then
-  echo "WARNING: You have chosen to include kernel updates. This will require a system reboot to take effect."
+  echo "WARNING: You have chosen to include kernel upgrades. This will require a system reboot to take effect."
   read -p "Are you sure you want to proceed? (yes/no): " user_confirm
   if [[ "$user_confirm" != "yes" ]]; then
     echo "Operation cancelled."
@@ -128,6 +128,6 @@ for server in $servers; do
     sudo salt-ssh "$server" cmd.run "apt-get -o Dpkg::Options::='--force-confold' install --only-upgrade $packages"
 
     # Log the packages that were upgraded
-    logsalmsg "Upgraded packages $packages_list on $hostname"
+    logsalmsg "Upgraded packages on $hostname: $packages_list"
   fi
 done
