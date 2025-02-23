@@ -108,8 +108,9 @@ for server in $servers; do
     # Check if a reboot will be required before upgrading (if there are kernal upgrades)
     reboot_required=$(echo "$packages" | grep -q "linux-image" && echo "yes" || echo "no")
 
+    echo "Packages that will be upgraded on $hostname: $packages_list"
+
     # Warn about required reboot if necessary
-    echo "Will Upgrade packages $packages_list on $hostname"
     if [[ "$reboot_required" == "yes" ]]; then
       echo "WARNING: Upgrading kernel package on $hostname will require a system reboot. However, this script will not automatically perform a reboot. Please plan accordingly."
     fi
