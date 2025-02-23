@@ -1,6 +1,7 @@
 /var/log/nginx/*.log {
         daily
         missingok
+        maxsize <%= @logrotate_maxsize %>
         rotate <%= @logrotate_number %>
         compress
         notifempty
