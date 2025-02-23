@@ -108,22 +108,16 @@ for server in $servers; do
     # Check if a reboot will be required before upgrading (if there are kernal upgrades)
     reboot_required=$(echo "$packages" | grep -q "linux-image" && echo "yes" || echo "no")
 
-    # Warn about reboot if necessary
+    # Warn about required reboot if necessary
+    echo "Will Upgrade packages $packages_list on $hostname"
     if [[ "$reboot_required" == "yes" ]]; then
-      echo "WARNING: Upgrading kernel on $hostname will require a system reboot. However, this script will not automatically perform a reboot. Please plan accordingly."
-      if ! $skip_confirm; then
-        read -p "Are you sure you want to proceed with these upgrades? (yes/no): " reboot_confirm
-        if [[ "$reboot_confirm" != "yes" ]]; then
-          echo "Skipping upgrade on $hostname..."
-          continue
-        fi
-      fi
+      echo "WARNING: Upgrading kernel package on $hostname will require a system reboot. However, this script will not automatically perform a reboot. Please plan accordingly."
     fi
 
     # Prompt for confirmation unless --yes or -y is provided
     if ! $skip_confirm; then
-      read -p "Upgrading packages $packages_list on $hostname; press enter to confirm or type 'skip' to skip this server... " user_input
-      if [[ "$user_input" == "skip" ]]; then
+      read -p "Are you sure you want to proceed with these upgrades? (yes/no): " upgrade_confirm
+      if [[ "$upgrade_confirm" != "yes" ]]; then
         echo "Skipping upgrade on $hostname..."
         continue
       fi
