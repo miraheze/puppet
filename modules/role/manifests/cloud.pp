@@ -4,20 +4,10 @@ class role::cloud {
 
     class { '::cpufrequtils': }
 
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Cloud]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['vmbr1'] ) {
-                "${value['networking']['interfaces']['vmbr1']['ip']} ${value['networking']['ip']} ${value['networking']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Role::Cloud' }
+    | PQL
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
     ferm::service { 'proxmox port 5900:5999':
         proto  => 'tcp',

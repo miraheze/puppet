@@ -56,10 +56,13 @@ class prometheus (
         refreshonly => true,
     }
 
-    $servers = query_nodes('Class[Base]')
-              .flatten()
-              .unique()
-              .sort()
+    $pql = @("PQL")
+    nodes[certname] {
+        resources {type =  "Class" and title = "Base" }
+        order by certname
+    }
+    | PQL
+    $servers = puppetdb_query($pql).map |$resource| { $resource['certname'] }.flatten().unique().sort
 
     file { '/etc/prometheus/targets/nodes.yaml':
         ensure  => present,
