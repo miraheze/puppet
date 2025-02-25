@@ -23,7 +23,7 @@ recheck_time = time.time()
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for WikiTide backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
-parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana'], help='Type of backup to handle using the action')
+parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana', 'mattermost-db', 'puppetdb'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
@@ -145,6 +145,28 @@ def backup_sql(dt: str, database: str):
         segments_expire(f'sql', f'{db}/{dt}.sql.gz', 5)
 
 
+def backup_mattermost_db(dt: str, database: str):
+    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump mattermost | gzip -9 > /srv/backups/mattermost-db.sql.gz', shell=True)
+
+    pca_connection('PUT', '/srv/backups/mattermost-db.sql.gz', f'mattermost-db/{dt}.sql.gz', False)
+
+    subprocess.call(f'/srv/backups/mattermost-db.sql.gz', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-db/{dt}.sql.gz', 4)
+    segments_expire(f'mattermost-db', f'{dt}.sql.gz', 4)
+
+
+def backup_puppetdb(dt: str, database: str):
+    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump puppetdb | gzip -9 > /srv/backups/puppetdb.sql.gz', shell=True)
+
+    pca_connection('PUT', '/srv/backups/puppetdb.sql.gz', f'puppetdb/{dt}.sql.gz', False)
+
+    subprocess.call(f'/srv/backups/puppetdb.sql.gz', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/puppetdb/{dt}.sql.gz', 4)
+    segments_expire(f'puppetdb', f'{dt}.sql.gz', 4)
+
+
 def backup_grafana_db(dt: str):
     subprocess.check_call(f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"', shell=True)
     tar = tarfile.open('grafana.tar.gz', 'w:gz')
@@ -235,6 +257,10 @@ def backup(source: str, database: str):
         backup_grafana_db(dt)
     elif source == 'mediawiki-xml':
         backup_mediawiki_xml(dt, database)
+    elif source == 'mattermost-db':
+        backup_mattermost_db(dt, database)
+    elif source == 'puppetdb':
+        backup_puppetdb(dt, database)
 
     print(f'Completed! This took {time.time() - ts}s')
 
@@ -258,7 +284,7 @@ def download(source: str, dt: str, database: str):
     ts = time.time()
     print(f'Downloading backup of \'{source}\' for date {dt}...')
 
-    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container']:
+    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container', 'mattermost-db', 'puppetdb']:
         download_pca(f'{source}/{dt}.tar.gz')
     elif source in ['mediawiki-xml']:
         download_pca(f'{source}/{database}/{dt}.xml.gz')
@@ -288,7 +314,7 @@ def find_backups(source: str, database: str):
 
 
 def unfreeze_backup(source: str, dt: str, database: str):
-    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container']:
+    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container', 'mattermost-db', 'puppetdb']:
         file = f'{source}/{dt}.tar.gz'
     elif source in ['grafana']:
         file = f'sql/{source}/{dt}.tar.gz'
