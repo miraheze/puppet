@@ -238,7 +238,7 @@ class matomo (
     }
 
     ['1', '2'].each | $key | {
-        systemd::timer::job { "matomo-queuedtracking ${key}":
+        systemd::timer::job { "matomo-queuedtracking-${key}":
             description       => "Runs the Matomo's Plugin QueuedTracking process.",
             command           => "/bin/bash -c '${queuedtracking_command}'",
             interval          => {
