@@ -247,7 +247,7 @@ class matomo (
             },
             logfile_basedir   => '/var/log/matomo',
             logfile_name      => "matomo-queuedtracking-${key}.log",
-            syslog_identifier => "matomo-queuedtrackin-${key}",
+            syslog_identifier => "matomo-queuedtracking-${key}",
             user              => 'www-data',
         }
     }
