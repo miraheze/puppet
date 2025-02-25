@@ -145,17 +145,6 @@ def backup_sql(dt: str, database: str):
         segments_expire(f'sql', f'{db}/{dt}.sql.gz', 5)
 
 
-def backup_mattermost_db(dt: str, database: str):
-    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump mattermost | gzip -9 > /srv/backups/mattermost-db.sql.gz', shell=True)
-
-    pca_connection('PUT', '/srv/backups/mattermost-db.sql.gz', f'mattermost-db/{dt}.sql.gz', False)
-
-    subprocess.call(f'rm -f /srv/backups/mattermost-db.sql.gz', shell=True)
-
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-db/{dt}.sql.gz', 4)
-    segments_expire(f'mattermost-db', f'{dt}.sql.gz', 4)
-
-
 def backup_mattermost_data(dt: str, database: str):
     subprocess.check_call(f'/usr/bin/tar -zcvf /srv/backups/mattermost-data.tar.gz /var/mattermost', shell=True)
 
@@ -165,6 +154,17 @@ def backup_mattermost_data(dt: str, database: str):
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-data/{dt}.tar.gz', 4)
     segments_expire(f'mattermost-data', f'{dt}.tar.gz', 4)
+
+
+def backup_mattermost_db(dt: str, database: str):
+    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump mattermost | gzip -9 > /srv/backups/mattermost-db.sql.gz', shell=True)
+
+    pca_connection('PUT', '/srv/backups/mattermost-db.sql.gz', f'mattermost-db/{dt}.sql.gz', False)
+
+    subprocess.call(f'rm -f /srv/backups/mattermost-db.sql.gz', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-db/{dt}.sql.gz', 4)
+    segments_expire(f'mattermost-db', f'{dt}.sql.gz', 4)
 
 
 def backup_puppetdb(dt: str, database: str):
