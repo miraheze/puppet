@@ -224,7 +224,7 @@ class matomo (
 
     $queuedtracking_command = '/usr/bin/php /srv/matomo/console queuedtracking:process'
     systemd::timer::job { 'matomo-queuedtracking':
-        ensure => absent,
+        ensure            => absent,
         description       => "Runs the Matomo's Plugin QueuedTracking process.",
         command           => "/bin/bash -c '${queuedtracking_command}'",
         interval          => {
@@ -247,7 +247,7 @@ class matomo (
             },
             logfile_basedir   => '/var/log/matomo',
             logfile_name      => "matomo-queuedtracking-${key}.log",
-            syslog_identifier => "matomo-queuedtrackin-{$key}",
+            syslog_identifier => "matomo-queuedtrackin-{${key}}",
             user              => 'www-data',
         }
     }
