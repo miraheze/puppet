@@ -30,6 +30,7 @@ apply Service "m.miraheze.org - LetsEncrypt" {
 <% end -%>
 
 <% @sslcerts.each_pair do | name, property | -%>
+<% if property['url'].end_with?(".miraheze.org") == false%>
 apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   import "generic-service"
   check_command = "check_ssl_expire"
@@ -42,5 +43,6 @@ apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   <%- end -%>
   assign where "sslchecks" in host.groups
 }
+<% end %>
 
 <% end -%>
