@@ -190,6 +190,7 @@ frame-src:
   - 'docs.google.com'
   - 'apis.google.com'
   - 'calendar.google.com'
+  - 'drive.google.com'
   - 'web.libera.chat'
   - 'snap.berkeley.edu'
   - '*.youtube-nocookie.com'
