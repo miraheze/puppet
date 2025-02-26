@@ -209,7 +209,7 @@ class puppetdb(
         },
         logfile_basedir   => '/var/log/puppetdb-backup',
         logfile_name      => 'puppetdb.log',
-        syslog_identifier => 'puppetdb',
+        syslog_identifier => 'puppetdb-backup',
         user              => 'root',
     }
 
