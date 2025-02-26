@@ -2,7 +2,7 @@
 class base::backup (
     String $pca_password = lookup('private::passwords::pca'),
     String $pca_legacy_password = lookup('private::passwords::legacy_pca'),
-    String $use_gateway = lookup('use_gateway', {'default_value' => true),
+    String $use_gateway = lookup('use_gateway', {'default_value' => true}),
 ) {
     package { ['python3-fabric', 'python3-decorator']:
         ensure => present,
