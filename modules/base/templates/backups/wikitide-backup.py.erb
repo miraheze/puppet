@@ -148,7 +148,7 @@ def backup_sql(dt: str, database: str):
 def backup_mattermost_data(dt: str, database: str):
     subprocess.check_call(f'/usr/bin/tar -zcvf /srv/backups/mattermost-data.tar.gz /var/mattermost', shell=True)
 
-    pca_connection('PUT', '/srv/backups/mattermost-data.tar.gz', f'mattermost-db/{dt}.tar.gz', False)
+    pca_connection('PUT', '/srv/backups/mattermost-data.tar.gz', f'mattermost-data/{dt}.tar.gz', False)
 
     subprocess.call(f'rm -f /srv/backups/mattermost-data.tar.gz', shell=True)
 
