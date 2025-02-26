@@ -46,7 +46,7 @@ def pca_web(method: str, url: str, expiry: int):
     global token
     global recheck_time
 
-    proxies = { 'https': 'http://<%= @gateway_host %>' }
+    proxies = { 'https': 'http://bastion.wikitide.net:8080' }
 
     if token is None or time.time() - recheck_time > 1800:
         pca_password = "<%= @pca_password %>"
