@@ -214,7 +214,7 @@ class puppetdb(
     }
 
     monitoring::nrpe { 'Backups PuppetDB':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/mattermost-backup/mattermost-data/mattermost-data.log',
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/puppetdb-backup/puppetdb-backup/puppetdb.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
         critical => true
     }
