@@ -15,7 +15,7 @@ node 'changeprop151.wikitide.net' {
     include role::redis
 }
 
-node /^cloud1[5678]\.wikitide\.net$/ {
+node /^cloud[12][056789]\.wikitide\.net$/ {
     include base
     include role::cloud
 }
