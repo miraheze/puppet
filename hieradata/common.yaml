@@ -74,7 +74,7 @@ varnish::backends:
   mw154:
     port: 8122
     probe: mwhealth
-    pool: true
+    pool: false
     xdebug: true
   mw163:
     port: 8123
@@ -84,7 +84,7 @@ varnish::backends:
   mw164:
     port: 8124
     probe: mwhealth
-    pool: true
+    pool: false
     xdebug: true
   mw173:
     port: 8125
