@@ -1,0 +1,11 @@
+users::groups: 'cache-admins'
+varnish::cache_file_size: '380G'
+varnish::thread_pool_max: 12000
+varnish::transient_storage: 5
+nginx::worker_processes: 8
+role::varnish::restrict_firewall: true
+nginx::use_varnish_directly: false
+
+base::syslog::rsyslog_udp_localhost: true
+nginx::logrotate_number: 2
+nginx::logrotate_maxsize: '40G'
