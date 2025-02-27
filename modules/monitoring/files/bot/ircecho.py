@@ -189,7 +189,7 @@ class EventHandler(pyinotify.ProcessEvent):
             except (irc.client.ServerNotConnectedError, irc.client.MessageTooLong,
                     UnicodeDecodeError) as e:
                 print('Error writing: %s'
-                      'Dropping this message: "%s"') % (e, s)
+                      'Dropping this message: "%s"' % (e, s))
 
     def process_IN_CREATE(self, event):
         try:
