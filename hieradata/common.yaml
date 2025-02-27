@@ -111,6 +111,21 @@ varnish::backends:
     probe: mwhealth
     pool: true
     xdebug: true
+  mw201:
+    port: 8132
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw202:
+    port: 8133
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw203:
+    port: 8134
+    probe: mwhealth
+    pool: true
+    xdebug: true
   mwtask171:
     port: 8161
     probe: false
