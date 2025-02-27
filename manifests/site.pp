@@ -131,7 +131,12 @@ node 'swiftac171.wikitide.net' {
     include role::swift
 }
 
-node /^swiftobject1[56789]1\.wikitide\.net$/ {
+node /^swiftobject[12][056789]1\.wikitide\.net$/ {
+    include base
+    include role::swift
+}
+
+node /^swiftobject2[0]1\.wikitide\.net$/ {
     include base
     include role::swift
 }
