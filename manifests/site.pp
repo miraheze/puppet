@@ -77,7 +77,7 @@ node 'mon181.wikitide.net' {
     include role::icinga2
 }
 
-node /^mw1[5678][1234]\.wikitide\.net$/ {
+node /^mw1[56789][1234]\.wikitide\.net$/ {
     role(mediawiki)
 }
 
