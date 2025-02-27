@@ -20,7 +20,7 @@ node /^cloud[12][056789]\.wikitide\.net$/ {
     include role::cloud
 }
 
-node /^cp(3[67])\.wikitide\.net$/ {
+node /^cp(3[678])\.wikitide\.net$/ {
     include base
     include role::varnish
 }
@@ -77,7 +77,7 @@ node 'mon181.wikitide.net' {
     include role::icinga2
 }
 
-node /^mw1[5678][1234]\.wikitide\.net$/ {
+node /^mw[12][056789][1234]\.wikitide\.net$/ {
     role(mediawiki)
 }
 
@@ -131,7 +131,7 @@ node 'swiftac171.wikitide.net' {
     include role::swift
 }
 
-node /^swiftobject1[5678]1\.wikitide\.net$/ {
+node /^swiftobject[12][056789]1\.wikitide\.net$/ {
     include base
     include role::swift
 }
