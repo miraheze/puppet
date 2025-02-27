@@ -136,11 +136,6 @@ node /^swiftobject[12][056789]1\.wikitide\.net$/ {
     include role::swift
 }
 
-node /^swiftobject2[0]1\.wikitide\.net$/ {
-    include base
-    include role::swift
-}
-
 node 'test151.wikitide.net' {
     role(mediawiki_beta)
 }
