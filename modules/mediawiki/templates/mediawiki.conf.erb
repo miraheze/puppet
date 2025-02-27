@@ -297,7 +297,7 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
-	server_name foundation.wikitide.org;
+	server_name wikitidefoundation.org;
 	root /srv/mediawiki/landing;
 	index foundation.php;
 
@@ -305,8 +305,8 @@ server {
 		return 403;
 	}
 
-	ssl_certificate /etc/ssl/localcerts/wikitide.org.crt;
-	ssl_certificate_key /etc/ssl/private/wikitide.org.key;
+	ssl_certificate /etc/ssl/localcerts/wikitidefoundation.org.crt;
+	ssl_certificate_key /etc/ssl/private/wikitidefoundation.org.key;
 
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 
