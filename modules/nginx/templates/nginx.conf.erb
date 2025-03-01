@@ -103,15 +103,6 @@ http {
 	error_log /var/log/nginx/error.log error;
 
 	<%- if @use_varnish_directly -%>
-                if ( $value['networking']['interfaces']['he-ipv6'] ) {
-                    "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
-                } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                    "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-                } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                    "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-                } else {
-                    "${value['networking']['ip']} ${value['networking']['ip6']}"
-                }
 	# Set real IP for cache proxy web requests (varnish)
 	<%- @cache_proxies.sort.each do |key, value| -%>
 	<%- if value['networking']['interfaces']['ens19'] and value['networking']['interfaces']['ens18'] -%>
