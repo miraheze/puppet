@@ -2,7 +2,7 @@ users::groups: 'database-admins'
 http_proxy: 'http://bastion.wikitide.net:8080'
 role::db::weekly_misc: ['mhglobal']
 # This is in GiB
-mariadb::config::innodb_buffer_pool_size: '34G'
+mariadb::config::innodb_buffer_pool_size: '78G'
 mariadb::version: '10.11'
 role::db::enable_ssl: false
 mariadb::config::server_id: 7
