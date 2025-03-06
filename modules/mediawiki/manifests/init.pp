@@ -26,15 +26,6 @@ class mediawiki {
         histogram_buckets => lookup('role::prometheus::statsd_exporter::histogram_buckets', { 'default_value' => [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60] }),
     }
 
-    if !lookup('jobrunner::intensive', {'default_value' => false}) {
-        cron { 'clean-tmp-files':
-            ensure  => absent,
-            command => 'find /tmp/ -user www-data -amin +30 \( -iname "magick-*" -or -iname "transform_*" -or -iname "lci_*" -or -iname "svg_* -or -iname "localcopy_*" \) -delete',
-            user    => 'www-data',
-            special => 'hourly',
-        }
-    }
-
     git::clone { '3d2png':
         ensure             => 'latest',
         directory          => '/srv/3d2png',
