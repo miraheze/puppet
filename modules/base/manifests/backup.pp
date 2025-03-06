@@ -1,7 +1,7 @@
 # class base::backup
 class base::backup (
-    String  $pca_password = lookup('private::passwords::pca'),
-    Boolean $use_gateway  = lookup('backups::use_gateway', {'default_value' => true}),
+    String $pca_password = lookup('private::passwords::pca'),
+    Boolean $use_gateway = lookup('backups::use_gateway', {'default_value' => true}),
 ) {
     package { ['python3-fabric', 'python3-decorator']:
         ensure => present,
