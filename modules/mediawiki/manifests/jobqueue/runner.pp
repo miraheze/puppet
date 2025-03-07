@@ -60,6 +60,7 @@ class mediawiki::jobqueue::runner (
         }
 
         systemd::timer::job { 'managewikis':
+            ensure            => absent,
             description       => 'Check for inactive wikis',
             command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php CreateWiki:ManageInactiveWikis --wiki ${wiki} --write",
             interval          => {
