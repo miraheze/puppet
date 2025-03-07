@@ -473,7 +473,7 @@ sub vcl_recv {
 # Defines the uniqueness of a request
 sub vcl_hash {
 	# FIXME: try if we can make this ^/(wiki/)? only?
-	if ((req.http.Host != "miraheze.org" && req.http.Host != "wikitide.org" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
+	if (req.url ~ "^/(wiki/)?" || req.url ~ "^/w/load.php" || req.url ~ "^/w/index.php") {
 		hash_data(req.http.X-Subdomain);
 	}
 }
