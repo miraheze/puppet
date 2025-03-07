@@ -61,7 +61,7 @@ class mediawiki::jobqueue::runner (
 
         systemd::timer::job { 'managewikis':
             description       => 'Check for inactive wikis',
-            command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki ${wiki} --write",
+            command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php CreateWiki:ManageInactiveWikis --wiki ${wiki} --write",
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-* 12:05:00',
