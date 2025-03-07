@@ -25,10 +25,10 @@ function streamAppleTouch() {
 		return;
 	}
 
-	$url = wfExpandUrl( $touch, PROTO_CANONICAL );
+	$services = MediaWikiServices::getInstance();
+	$urlUtils = $services->getUrlUtils();
 
-	$mediaWikiServices = MediaWikiServices::getInstance();
-	$urlUtils = $mediaWikiServices->getUrlUtils();
+	$url = $urlUtils->expand( $touch, PROTO_CANONICAL );
 	$parsedBaseUrl = $urlUtils->parse( $url );
 
 	if ( $parsedBaseUrl && $parsedBaseUrl['host'] === 'static.miraheze.org' ) {
@@ -36,18 +36,14 @@ function streamAppleTouch() {
 		$url = $urlUtils->assemble( $parsedBaseUrl );
 	}
 
-	$client = $mediaWikiServices
-		->getHttpRequestFactory()
-		->create( $url );
+	$client = $services->getHttpRequestFactory()->create( $url );
 	$client->setHeader( 'X-Favicon-Loop', '1' );
 
 	$status = $client->execute();
 	if ( !$status->isOK() ) {
 		$touch = '/favicons/apple-touch-icon-default.png';
-		$url = wfExpandUrl( $touch, PROTO_CANONICAL );
-		$client = MediaWikiServices::getInstance()
-			->getHttpRequestFactory()
-			->create( $url );
+		$url = $urlUtils->expand( $touch, PROTO_CANONICAL );
+		$client = $services->getHttpRequestFactory()->create( $url );
 
 		$status = $client->execute();
 		if ( !$status->isOK() ) {

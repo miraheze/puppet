@@ -25,7 +25,7 @@ class role::graylog {
         version => '6.1',
     }
     -> class { 'graylog::server':
-        package_version        => '6.1.4-1',
+        package_version        => '6.1.7-1',
         config                 => {
             'password_secret'           => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'        => lookup('passwords::graylog::root_password_sha2'),
@@ -116,6 +116,10 @@ class role::graylog {
         path              => '/var/log/graylog-server/server.log',
         syslog_tag_prefix => '',
         use_udp           => true,
+    }
+
+    monitoring::nrpe { 'graylog tls port 12210 ssl cert check':
+        command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 12210 -D 15,7',
     }
 
     system::role { 'graylog':

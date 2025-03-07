@@ -9,7 +9,6 @@ class role::openldap (
     String $ldapvi_password = lookup('profile::openldap::ldapvi_password'),
     String $ldap_host = lookup('profile::openldap::ldap_host', {'default_value' => $facts['networking']['fqdn']}),
 ) {
-    ssl::wildcard { 'openldap wildcard': }
 
     class { 'openldap::server':
         ldaps_ifs => ['/'],
@@ -149,6 +148,10 @@ class role::openldap (
         tls_cacert => '/etc/ssl/certs/LetsEncrypt.crt',
     }
 
+    ssl::wildcard { 'openldap wildcard':
+        notify => Service[$openldap::server::service]
+    }
+
     include prometheus::exporter::openldap
 
     stdlib::ensure_packages('ldapvi')
@@ -232,6 +235,10 @@ class role::openldap (
             ldap_base    => 'dc=miraheze,dc=org',
             ldap_v3      => true,
         },
+    }
+
+    monitoring::nrpe { 'LDAP SSL check':
+        command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 636 -D 7,3',
     }
 
     system::role { 'openldap':

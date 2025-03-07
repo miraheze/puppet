@@ -45,13 +45,13 @@ class swift::proxy (
         content => systemd_template('swift-proxy'),
     }
 
-    ssl::wildcard { 'swift wildcard': }
-
     nginx::site { 'swift':
         ensure  => present,
         source  => 'puppet:///modules/swift/nginx/swift.conf',
         monitor => false,
     }
+
+    ssl::wildcard { 'swift wildcard': }
 
     nginx::site { 'default':
         ensure  => absent,
@@ -97,5 +97,9 @@ class swift::proxy (
             tcp_address => $address,
             tcp_port    => '80',
         },
+    }
+
+    monitoring::nrpe { 'Swift NGINX SSL check':
+        command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 443 -D 7,3',
     }
 }

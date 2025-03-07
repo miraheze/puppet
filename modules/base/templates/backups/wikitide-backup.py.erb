@@ -23,14 +23,14 @@ recheck_time = time.time()
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for WikiTide backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
-parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana'], help='Type of backup to handle using the action')
+parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana', 'mattermost-data', 'mattermost-db', 'puppetdb'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
 
 
 def pca_connection(status, *args):
-    with Connection('gateways.storage.bhs.cloud.ovh.net', gateway='nc -X connect -x bastion.wikitide.net:8080 %h %p', user='pca', connect_kwargs={'password': '<%= @pca_password %>'}) as c:
+    with Connection('gateways.storage.bhs.cloud.ovh.net', <%- if @use_gateway -%>gateway='nc -X connect -x bastion.wikitide.net:8080 %h %p', <%- end -%>user='pca', connect_kwargs={'password': '<%= @pca_password %>'}) as c:
         if status == 'GET':
             c.get(*args)
         else:
@@ -51,20 +51,20 @@ def pca_web(method: str, url: str, expiry: int):
     if token is None or time.time() - recheck_time > 1800:
         pca_password = "<%= @pca_password %>"
         json_data = { "auth": { "identity": { "methods": ["password"], "password": { "user": { "name": pca_password.split('.')[1], "domain": { "id": "default" }, "password": pca_password.split('.')[2] } } }, "scope": { "project": { "id": "76f9bc606a8044e08db7ebd118f6b19a", "domain": { "id": "default" } } } } }
-        token = requests.post(f'https://auth.cloud.ovh.net/v3/auth/tokens', json=json_data, proxies=proxies, headers={ 'Content-Type': 'application/json' }).headers.get('X-Subject-Token')
+        token = requests.post(f'https://auth.cloud.ovh.net/v3/auth/tokens', json=json_data<%- if @use_gateway -%>, proxies=proxies<%- end -%>, headers={ 'Content-Type': 'application/json' }).headers.get('X-Subject-Token')
         recheck_time = time.time()
 
     headers = { 'X-AUTH-TOKEN': token }
     
     if method == 'GET':
-        return requests.get(url, headers=headers, proxies=proxies)
+        return requests.get(url, headers=headers<%- if @use_gateway -%>, proxies=proxies<%- end -%>)
     elif method == 'POST':
         if expiry > 0:
             headers['X-Delete-After'] = f'{expiry*604800}'
         
-        return requests.post(url, headers=headers, proxies=proxies)
+        return requests.post(url, headers=headers<%- if @use_gateway -%>, proxies=proxies<%- end -%>)
     elif method == 'HEAD':
-        return requests.head(url, headers=headers, proxies=proxies)
+        return requests.head(url, headers=headers<%- if @use_gateway -%>, proxies=proxies<%- end -%>)
     else:
         raise Exception('Method is not currently implemented in WikiTide-Backup')
 
@@ -136,13 +136,46 @@ def backup_sql(dt: str, database: str):
     for db in dbs:
         print(f'Backing up database \'{db}\'...')
 
-        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -C --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= (@facts['processors']['count']/3).to_i > 1 ? (@facts['processors']['count']/3).to_i : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True)
+        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -c --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= (@facts['processors']['count']/3).to_i > 1 ? (@facts['processors']['count']/3).to_i : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True)
         pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
 
         subprocess.check_call(f'rm -f /srv/backups/dbs/{db}.sql.gz', shell=True)
 
         pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.sql.gz', 5)
         segments_expire(f'sql', f'{db}/{dt}.sql.gz', 5)
+
+
+def backup_mattermost_data(dt: str, database: str):
+    subprocess.check_call(f'/usr/bin/tar -zcf /srv/backups/mattermost-data.tar.gz /var/mattermost', shell=True)
+
+    pca_connection('PUT', '/srv/backups/mattermost-data.tar.gz', f'mattermost-data/{dt}.tar.gz', False)
+
+    subprocess.call(f'rm -f /srv/backups/mattermost-data.tar.gz', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-data/{dt}.tar.gz', 4)
+    segments_expire(f'mattermost-data', f'{dt}.tar.gz', 4)
+
+
+def backup_mattermost_db(dt: str, database: str):
+    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump mattermost | gzip -9 > /srv/backups/mattermost-db.sql.gz', shell=True)
+
+    pca_connection('PUT', '/srv/backups/mattermost-db.sql.gz', f'mattermost-db/{dt}.sql.gz', False)
+
+    subprocess.call(f'rm -f /srv/backups/mattermost-db.sql.gz', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-db/{dt}.sql.gz', 4)
+    segments_expire(f'mattermost-db', f'{dt}.sql.gz', 4)
+
+
+def backup_puppetdb(dt: str, database: str):
+    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump puppetdb | gzip -9 > /srv/backups/puppetdb.sql.gz', shell=True)
+
+    pca_connection('PUT', '/srv/backups/puppetdb.sql.gz', f'puppetdb/{dt}.sql.gz', False)
+
+    subprocess.call(f'rm -f /srv/backups/puppetdb.sql.gz', shell=True)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/puppetdb/{dt}.sql.gz', 4)
+    segments_expire(f'puppetdb', f'{dt}.sql.gz', 4)
 
 
 def backup_grafana_db(dt: str):
@@ -235,6 +268,12 @@ def backup(source: str, database: str):
         backup_grafana_db(dt)
     elif source == 'mediawiki-xml':
         backup_mediawiki_xml(dt, database)
+    elif source == 'mattermost-data':
+        backup_mattermost_data(dt, database)
+    elif source == 'mattermost-db':
+        backup_mattermost_db(dt, database)
+    elif source == 'puppetdb':
+        backup_puppetdb(dt, database)
 
     print(f'Completed! This took {time.time() - ts}s')
 
@@ -258,7 +297,7 @@ def download(source: str, dt: str, database: str):
     ts = time.time()
     print(f'Downloading backup of \'{source}\' for date {dt}...')
 
-    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container']:
+    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container', 'mattermost-data']:
         download_pca(f'{source}/{dt}.tar.gz')
     elif source in ['mediawiki-xml']:
         download_pca(f'{source}/{database}/{dt}.xml.gz')
@@ -266,6 +305,8 @@ def download(source: str, dt: str, database: str):
         download_pca(f'sql/{source}/{dt}.tar.gz')
     elif source in ['sql']:
         download_pca(f'{source}/{database}/{dt}.sql.gz')
+    elif source in ['mattermost-db', 'puppetdb']:
+        download_pca(f'{source}/{dt}.sql.gz')
 
     print(f'Completed! This took {time.time() - ts}s')
 
@@ -288,7 +329,7 @@ def find_backups(source: str, database: str):
 
 
 def unfreeze_backup(source: str, dt: str, database: str):
-    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container']:
+    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container', 'mattermost-data']:
         file = f'{source}/{dt}.tar.gz'
     elif source in ['grafana']:
         file = f'sql/{source}/{dt}.tar.gz'
@@ -296,6 +337,8 @@ def unfreeze_backup(source: str, dt: str, database: str):
         file = f'{source}/{database}/{dt}.xml.gz'
     elif source in ['sql']:
         file = f'{source}/{database}/{dt}.sql.gz'
+    elif source in ['mattermost-db', 'puppetdb']:
+        file = f'{source}/{dt}.sql.gz'
 
     pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0)
     available_in = pca_web('HEAD', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')

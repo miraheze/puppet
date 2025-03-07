@@ -8,7 +8,7 @@ class matomo (
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '5.1.2', # Current stable
+        branch             => '5.2.2', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
@@ -223,16 +223,19 @@ class matomo (
     }
 
     $queuedtracking_command = '/usr/bin/php /srv/matomo/console queuedtracking:process'
-    systemd::timer::job { 'matomo-queuedtracking':
-        description       => "Runs the Matomo's Plugin QueuedTracking process.",
-        command           => "/bin/bash -c '${queuedtracking_command}'",
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-* *:*:00',
-        },
-        logfile_basedir   => '/var/log/matomo',
-        logfile_name      => 'matomo-queuedtracking.log',
-        syslog_identifier => 'matomo-queuedtracking',
-        user              => 'www-data',
+
+    ['1', '2'].each | $key | {
+        systemd::timer::job { "matomo-queuedtracking-${key}":
+            description       => "Runs the Matomo's Plugin QueuedTracking process.",
+            command           => "/bin/bash -c '${queuedtracking_command}'",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-*-* *:*:00',
+            },
+            logfile_basedir   => '/var/log/matomo',
+            logfile_name      => "matomo-queuedtracking-${key}.log",
+            syslog_identifier => "matomo-queuedtracking-${key}",
+            user              => 'www-data',
+        }
     }
 }

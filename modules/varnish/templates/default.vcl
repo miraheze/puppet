@@ -39,9 +39,9 @@ backend <%= name %> {
 	.probe = <%= property['probe'] %>;
 <%- end -%>
         .connect_timeout = 3s;
-        .first_byte_timeout = 63s;
+        .first_byte_timeout = 65s;
         .between_bytes_timeout = 31s;
-        .max_connections = 1000;
+        .max_connections = 5000;
 }
 
 <%- if property['xdebug'] -%>
@@ -49,9 +49,9 @@ backend <%= name %>_test {
 	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
         .connect_timeout = 3s;
-        .first_byte_timeout = 63s;
+        .first_byte_timeout = 65s;
         .between_bytes_timeout = 31s;
-        .max_connections = 1000;
+        .max_connections = 5000;
 }
 <%- end -%>
 <%- end -%>
@@ -83,6 +83,8 @@ acl purge {
 	"2602:294:0:b13::/64";
 	"2602:294:0:b23::/64";
 	"2602:294:0:b12::/64";
+	"2602:294:0:b33::/64";
+	"2602:294:0:b39::/64";
 }
 
 acl wikitide_nets {
@@ -91,6 +93,8 @@ acl wikitide_nets {
 	"2602:294:0:b13::/64";
 	"2602:294:0:b23::/64";
 	"2602:294:0:b12::/64";
+	"2602:294:0:b33::/64";
+	"2602:294:0:b39::/64";
 }
 
 acl cloudflare_ips {
@@ -538,7 +542,7 @@ sub vcl_backend_response {
 
 	# T9808: Assign restrictive Cache-Control if one is missing
 	if (!beresp.http.Cache-Control) {
-		set beresp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
+		set beresp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate, no-transform";
 		set beresp.ttl = 0s;
 		// translated to hit-for-pass below
 	}
@@ -767,10 +771,10 @@ sub vcl_deliver {
 		call add_upload_cors_headers;
 	}
 
-	if ( req.http.Host != "static.wikitide.net" && ( req.url ~ "^/(wiki/)?" || req.url ~ "^/w/index\.php" ) ) {
+	if ( req.http.Host != "static.wikitide.net" && ( req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php"  || req.url ~ "^/\?title=" ) ) {
 		// ...but exempt CentralNotice banner special pages
 		if (req.url !~ "^/(wiki/|w/index\.php\?title=)?Special:Banner") {
-			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
+			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate, no-transform";
 		}
 	}
 

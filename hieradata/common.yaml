@@ -5,11 +5,9 @@ puppetserver: false
 puppet_major_version: 8
 
 mediawiki::multiversion::versions:
-  '1.42':
-    branch: 'REL1_42'
-    default: true
   '1.43':
     branch: 'REL1_43'
+    default: true
 
 puppetserver_hostname: puppet181.wikitide.net
 role::salt::minions::salt_master: 'puppet181.wikitide.net'
@@ -73,18 +71,8 @@ varnish::backends:
     probe: mwhealth
     pool: true
     xdebug: true
-  mw154:
-    port: 8122
-    probe: mwhealth
-    pool: true
-    xdebug: true
   mw163:
     port: 8123
-    probe: mwhealth
-    pool: true
-    xdebug: true
-  mw164:
-    port: 8124
     probe: mwhealth
     pool: true
     xdebug: true
@@ -93,18 +81,38 @@ varnish::backends:
     probe: mwhealth
     pool: true
     xdebug: true
-  mw174:
-    port: 8126
-    probe: mwhealth
-    pool: true
-    xdebug: true
   mw183:
     port: 8127
     probe: mwhealth
     pool: true
     xdebug: true
-  mw184:
-    port: 8128
+  mw191:
+    port: 8129
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw192:
+    port: 8130
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw193:
+    port: 8131
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw201:
+    port: 8132
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw202:
+    port: 8133
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw203:
+    port: 8134
     probe: mwhealth
     pool: true
     xdebug: true
@@ -181,12 +189,16 @@ swift::storage::devices:
   - swiftobject161
   - swiftobject171
   - swiftobject181
+  - swiftobject191
+  - swiftobject201
 
 role::mediawiki::mcrouter::shards:
   wikitide:
     shard01:
-      host: 10.0.15.113
+      host: 10.0.15.113 # mem151
     shard02:
-      host: 10.0.16.131
+      host: 10.0.16.131 # mem161
+    shard03:
+      host: 10.0.20.148 # mem201
 
 role::mediawiki::use_mcrouter: true

@@ -5,6 +5,7 @@ define( 'MW_NO_SESSION', 1 );
 require_once '/srv/mediawiki/config/initialise/MirahezeFunctions.php';
 require MirahezeFunctions::getMediaWiki( 'includes/WebStart.php' );
 
+use MediaWiki\Content\TextContent;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Title\Title;
 

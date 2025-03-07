@@ -15,12 +15,19 @@ node 'changeprop151.wikitide.net' {
     include role::redis
 }
 
-node /^cloud1[5678]\.wikitide\.net$/ {
+node 'changeprop201.wikitide.net' {
+    include base
+    include role::jobrunner_haproxy
+    include role::changeprop
+    include role::redis
+}
+
+node /^cloud[12][056789]\.wikitide\.net$/ {
     include base
     include role::cloud
 }
 
-node /^cp(3[67])\.wikitide\.net$/ {
+node /^cp(3[678])\.wikitide\.net$/ {
     include base
     include role::varnish
 }
@@ -40,21 +47,9 @@ node /^os1[56][12]\.wikitide\.net$/ {
     include role::opensearch
 }
 
-node 'graphite151.wikitide.net' {
-    include base
-    include role::graphite
-    include role::statsd
-}
-
 node 'graylog161.wikitide.net' {
     include base
     include role::graylog
-}
-
-node 'jobchron171.wikitide.net' {
-    include base
-    include role::redis
-    include mediawiki::jobqueue::chron
 }
 
 node 'kafka181.wikitide.net' {
@@ -78,7 +73,7 @@ node 'mattermost1.wikitide.net' {
     include role::mattermost
 }
 
-node /^mem1[56]1\.wikitide\.net$/ {
+node /^mem[12][056]1\.wikitide\.net$/ {
     include base
     include role::memcached
 }
@@ -89,7 +84,7 @@ node 'mon181.wikitide.net' {
     include role::icinga2
 }
 
-node /^mw1[5678][1234]\.wikitide\.net$/ {
+node /^mw[12][056789][1234]\.wikitide\.net$/ {
     role(mediawiki)
 }
 
@@ -143,7 +138,7 @@ node 'swiftac171.wikitide.net' {
     include role::swift
 }
 
-node /^swiftobject1[5678]1\.wikitide\.net$/ {
+node /^swiftobject[12][056789]1\.wikitide\.net$/ {
     include base
     include role::swift
 }

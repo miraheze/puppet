@@ -26,57 +26,6 @@ class mediawiki {
         histogram_buckets => lookup('role::prometheus::statsd_exporter::histogram_buckets', { 'default_value' => [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60] }),
     }
 
-    if !lookup('jobrunner::intensive', {'default_value' => false}) {
-        cron { 'clean-tmp-files':
-            ensure  => absent,
-            command => 'find /tmp/ -user www-data -amin +30 \( -iname "magick-*" -or -iname "transform_*" -or -iname "lci_*" -or -iname "svg_* -or -iname "localcopy_*" \) -delete',
-            user    => 'www-data',
-            special => 'hourly',
-        }
-    }
-
-    if lookup('jobrunner::intensive', {'default_value' => false}) {
-        if ($facts['os']['distro']['codename'] == 'bookworm') {
-            stdlib::ensure_packages(['python3-internetarchive'])
-        } else {
-            stdlib::ensure_packages(
-                'internetarchive',
-                {
-                    ensure   => '3.3.0',
-                    provider => 'pip3',
-                    before   => File['/usr/local/bin/iaupload'],
-                    require  => Package['python3-pip'],
-                },
-            )
-        }
-
-        file { '/usr/local/bin/iaupload':
-            ensure => present,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/bin/iaupload.py',
-        }
-
-        file { '/usr/local/bin/backupwikis':
-                ensure => 'present',
-                mode   => '0755',
-                source => 'puppet:///modules/mediawiki/bin/backupwikis',
-        }
-
-        file { '/opt/backups':
-            ensure => directory,
-            owner  => 'www-data',
-            group  => 'www-data',
-            mode   => '0755',
-        }
-
-        cron { 'backup-all-wikis-ia':
-            ensure   => present,
-            command  => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php  > /var/log/iabackup-backup.log 2>&1',
-            user     => 'www-data',
-            monthday => ['1'],
-        }
-    }
-
     git::clone { '3d2png':
         ensure             => 'latest',
         directory          => '/srv/3d2png',
@@ -239,7 +188,7 @@ class mediawiki {
     }
 
     tidy { [ '/tmp', '/tmp/magick-tmp' ]:
-        matches => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v', 'php*', 'shellbox-*' ],
+        matches => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v', 'php*', 'shellbox-*', 'arch*' ],
         age     => '2h',
         type    => 'atime',
         backup  => false,

@@ -175,7 +175,7 @@ class mediawiki::jobqueue::runner (
             }
 
             systemd::timer::job { 'update-special-pages':
-                description       => 'Purge parsercache',
+                description       => 'Update Special Pages',
                 command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/updateSpecialPages.php",
                 interval          => {
                     'start'    => 'OnCalendar',
@@ -186,28 +186,6 @@ class mediawiki::jobqueue::runner (
                 syslog_identifier => 'update-special-pages',
                 user              => 'www-data',
                 require           => File['/var/log/mediawiki/cron'],
-            }
-
-            # Backups
-            file { '/srv/backups':
-                ensure => directory,
-            }
-
-            cron { 'backups-mediawiki-xml':
-                ensure   => absent,
-                command  => '/usr/local/bin/wikitide-backup backup mediawiki-xml > /var/log/mediawiki-xml-backup.log 2>&1',
-                user     => 'root',
-                minute   => '0',
-                hour     => '1',
-                monthday => ['27'],
-                month    => ['3', '6', '9', '12'],
-            }
-
-            monitoring::nrpe { 'Backups MediaWiki XML':
-                ensure   => absent,
-                command  => '/usr/lib/nagios/plugins/check_file_age -w 8640000 -c 11232000 -f /var/log/mediawiki-xml-backup.log',
-                docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-                critical => true
             }
         }
 
@@ -265,6 +243,41 @@ class mediawiki::jobqueue::runner (
             logfile_basedir   => '/var/log/mediawiki/cron',
             logfile_name      => 'update-wikibase-sites-table.log',
             syslog_identifier => 'update-wikibase-sites-table',
+            user              => 'www-data',
+            require           => File['/var/log/mediawiki/cron'],
+        }
+
+        stdlib::ensure_packages(['python3-internetarchive'])
+
+        file { '/usr/local/bin/iaupload':
+            ensure => present,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/bin/iaupload.py',
+        }
+
+        file { '/usr/local/bin/backupwikis':
+            ensure => 'present',
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/bin/backupwikis',
+        }
+
+        file { '/opt/backups':
+            ensure => directory,
+            owner  => 'www-data',
+            group  => 'www-data',
+            mode   => '0755',
+        }
+
+        systemd::timer::job { 'backup-all-wikis-ia':
+            description       => 'Backups all wikis for IA',
+            command           => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php',
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => 'monthly',
+            },
+            logfile_basedir   => '/var/log/mediawiki/cron',
+            logfile_name      => 'iabackup-backup.log',
+            syslog_identifier => 'iabackup-backup',
             user              => 'www-data',
             require           => File['/var/log/mediawiki/cron'],
         }

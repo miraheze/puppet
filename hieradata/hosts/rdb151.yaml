@@ -1,1 +1,2 @@
 redis::heap: '3GB'
+redis::maxmemory_policy: volatile-lru
