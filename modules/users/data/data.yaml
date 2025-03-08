@@ -66,7 +66,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb start',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb restart',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
-                 'ALL = (ALL) NOPASSWD: ',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet-agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   dns-admins:
     gid: 2009
