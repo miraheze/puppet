@@ -91,13 +91,8 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
             args.version = versions.get(wiki[:-6])
 
     script = args.script
-    if not script.endswith('.php') and float(args.version) < 1.40:
-        print('Error: Use MediaWiki version 1.40 or greater (e.g. --version=1.40) to use a class for MaintenanceRunner')
-        return 2
-    if float(args.version) >= 1.40:
-        runner = f'/srv/mediawiki/{args.version}/maintenance/run.php '
-    else:
-        runner = ''
+    runner = f'/srv/mediawiki/{args.version}/maintenance/run.php '
+
     if script.endswith('.php'):  # assume class if not
         scriptsplit = script.split('/')
         if script.split('.')[0].lower() in longscripts:
