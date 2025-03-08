@@ -22,7 +22,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: puppet-lint
-      uses: scottbrenner/puppet-lint-action@v1.0.6
+      uses: scottbrenner/puppet-lint-action@v1.0.5
       with:
         args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check --fix ./ --ignore-paths=.//modules/prometheus/manifests/jmx_exporter_config.pp
 
