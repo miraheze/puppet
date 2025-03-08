@@ -13,7 +13,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mcrouter *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet-agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
     gid: 2002
@@ -29,7 +29,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/bin/varnishstat',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service varnish *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet-agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   puppet-users:
     gid: 2004
@@ -54,7 +54,7 @@ groups:
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet-agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   database-admins:
     gid: 2008
@@ -66,13 +66,13 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb start',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb restart',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: ',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   dns-admins:
     gid: 2009
     description: limited sudo access on DNS nameservers
     members: [macfan]
-    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/puppet *']
+    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/puppet-agent *']
 
 users:
   johnflewis:
