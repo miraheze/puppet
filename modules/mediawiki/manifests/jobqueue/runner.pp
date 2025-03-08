@@ -75,7 +75,7 @@ class mediawiki::jobqueue::runner (
 
         systemd::timer::job { 'generate-sitemaps':
             description       => 'Create sitemaps for all wikis',
-            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php",
+            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php MirahezeMagic:GenerateMirahezeSitemap",
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => 'Sat *-*-* 00:00:00',
@@ -235,7 +235,7 @@ class mediawiki::jobqueue::runner (
 
         systemd::timer::job { 'update-wikibase-sites-table':
             description       => 'Update site statistics',
-            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/MirahezeMagic/maintenance/populateWikibaseSitesTable.php",
+            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php MirahezeMagic:PopulateWikibaseSitesTable",
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-5,20 05:00:00',
