@@ -61,7 +61,7 @@ for wiki in $filtered_wikis
 
     echo "Retrieving site information for $wiki..."
     
-    eval $(/usr/bin/php /srv/mediawiki/$mwversion/maintenance/run.php /srv/mediawiki/$mwversion/extensions/MirahezeMagic/maintenance/getSiteInfo.php --wiki $wiki | \
+    eval $(/usr/bin/php /srv/mediawiki/$mwversion/maintenance/run.php MirahezeMagic:GetSiteInfo --wiki $wiki | \
         awk -F': ' '/Sitename|URL|Language|License/ {
             gsub(" ", "_", $1);
             printf("%s=\"%s\"\n", toupper($1), $2);
@@ -69,7 +69,7 @@ for wiki in $filtered_wikis
 
     # Backup process for each wiki
    if /usr/bin/php /srv/mediawiki/$mwversion/maintenance/run.php dumpBackup --wiki $wiki --output gzip:/opt/backups/$wiki-$date.xml.gz --full --logs --uploads &&
-       /usr/bin/php /srv/mediawiki/$mwversion/maintenance/run.php /srv/mediawiki/$mwversion/extensions/MirahezeMagic/maintenance/swiftDump.php --wiki $wiki --filename $wiki-images-$date.tar.gz &&
+       /usr/bin/php /srv/mediawiki/$mwversion/maintenance/run.php MirahezeMagic:SwiftDump --wiki $wiki --filename $wiki-images-$date.tar.gz &&
        /usr/bin/python3 /usr/lib/python3/dist-packages/internetarchive/cli/ia.py upload "miraheze-wiki-$wiki-$date" \
             /opt/backups/$wiki-$date.xml.gz /tmp/$wiki-images-$date.tar.gz \
             --metadata="mediatypes:texts" \
