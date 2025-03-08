@@ -431,11 +431,8 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
 
     if HOSTNAME in args.servers:
         if version:
-            runner = ''
-            runner_staging = ''
-            if '.' in version and float(version) >= 1.40:
-                runner = f'/srv/mediawiki/{version}/maintenance/run.php '
-                runner_staging = f'/srv/mediawiki-staging/{version}/maintenance/run.php '
+            runner = f'/srv/mediawiki/{version}/maintenance/run.php '
+            runner_staging = f'/srv/mediawiki-staging/{version}/maintenance/run.php '
 
         if version and args.reset_world:
             stage.append(_construct_reset_mediawiki_rm_staging(version))
