@@ -25,6 +25,7 @@ class mediawiki::packages {
         'ploticus',
         'poppler-utils',
         'python3',
+        'python3-venv',
         'python3-pip',
         'netpbm',
         'librsvg2-dev',
