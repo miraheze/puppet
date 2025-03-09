@@ -194,4 +194,11 @@ class mediawiki {
         backup  => false,
         recurse => 1,
     }
+    exec { 'create python venv':
+        command => '/usr/bin/python3 -m venv /srv/pythonenv && /srv/pythonenv/bin/pip3 install Miraheze-PyUtils',
+        require => Package['python3'],
+        cwd => '/srv',
+        user => 'www-data',
+        onlyif => "test ! -d /srv/pythonenv"
+    }
 }
