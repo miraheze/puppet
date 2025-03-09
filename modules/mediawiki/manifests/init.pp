@@ -199,6 +199,7 @@ class mediawiki {
         require => Package['python3'],
         cwd => '/srv',
         user => 'www-data',
-        onlyif => "test ! -d /srv/pythonenv"
+        onlyif => "test ! -d /srv/pythonenv",
+        path   => '/bin:/usr/bin',
     }
 }
