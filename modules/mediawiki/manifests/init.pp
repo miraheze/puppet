@@ -194,12 +194,18 @@ class mediawiki {
         backup  => false,
         recurse => 1,
     }
+    file { '/srv/python':
+        ensure => directory,
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0775',
+    }
     exec { 'create python venv':
-        command => '/usr/bin/python3 -m venv /srv/pythonenv && /srv/pythonenv/bin/pip3 install Miraheze-PyUtils',
-        require => Package['python3'],
+        command => '/usr/bin/python3 -m venv /srv/python/env && /srv/python/env/bin/pip3 install Miraheze-PyUtils',
+        require => [Package['python3'],File['/srv/python']],
         cwd => '/srv',
         user => 'www-data',
-        onlyif => "test ! -d /srv/pythonenv",
+        onlyif => "test ! -d /srv/python/env",
         path   => '/bin:/usr/bin',
     }
 }
