@@ -46,7 +46,7 @@ class irc::cvtbot {
 
     git::clone { 'CVTBot':
         ensure    => present,
-        origin    => 'https://github.com/Universal-Omega/CVTBot',
+        origin    => 'https://github.com/miraheze/CVTBot',
         directory => $install_path,
         owner     => 'irc',
         group     => 'irc',

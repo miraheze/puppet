@@ -44,10 +44,14 @@ class mathoid {
     }
 
     systemd::service { 'mathoid':
-        ensure  => present,
-        content => systemd_template('mathoid'),
-        restart => true,
-        require => Git::Clone['mathoid'],
+        ensure         => present,
+        content        => systemd_template('mathoid'),
+        restart        => true,
+        service_params => {
+            hasstatus  => true,
+            hasrestart => true
+        },
+        require        => Git::Clone['mathoid'],
     }
 
     monitoring::services { 'mathoid':

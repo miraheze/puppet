@@ -10,7 +10,7 @@ pid /run/nginx.pid;
 worker_rlimit_nofile 262144; # Twice the number of worker_connections
 
 events {
-	worker_connections 30720;
+	worker_connections 131072;
 	use epoll;
 	multi_accept on;
 }
@@ -22,7 +22,6 @@ http {
 	tcp_nodelay on;
 	client_max_body_size <%= @nginx_client_max_body_size %>;
 	client_body_buffer_size 64k;
-	large_client_header_buffers 4 16k;
 	types_hash_max_size 2048;
 	# 512 x 4
 	server_names_hash_max_size 2048;
@@ -38,12 +37,15 @@ http {
 	server_tokens off;
 
 	# SSL Settings
-	ssl_ciphers EECDH+CHACHA20:EECDH+AES128:EECDH+AES256:EECDH+3DES:!MD5;
-	ssl_protocols TLSv1.2 TLSv1.3;
-	ssl_prefer_server_ciphers on;
+	ssl_protocols TLSv1.3;
+	ssl_ecdh_curve X25519:prime256v1:secp384r1;
+	ssl_prefer_server_ciphers off;
 	ssl_stapling on;
-	ssl_session_cache shared:SSL:120m;
-	ssl_session_timeout 2h;
+	ssl_session_cache shared:SSL:<%= @ssl_session_cache %>m;
+	ssl_session_timeout 25h;
+
+	# Disable RFC5077 tickets (may revisit later when client support is better)
+	ssl_session_tickets off;
 
 	# GZIP Settings
 	gzip off;
@@ -62,10 +64,12 @@ http {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
-
 	# Custom log format for graylog
 	log_format graylog2_json escape=json '{ "timestamp": "$time_iso8601", '
+		'"client_cert_dn": "$ssl_client_s_dn", '
+		'"client_cert_serial": "$ssl_client_serial", '
+		'"client_cert_issuer": "$ssl_client_i_dn", '
+		'"client_cert_verify": "$ssl_client_verify", '
 		'"remote_addr": "$remote_addr", '
 		'"remote_user": "$remote_user", '
 		'"time_local": "$time_local", '
@@ -98,19 +102,40 @@ http {
 	access_log /var/log/nginx/access.log wikitide;
 	error_log /var/log/nginx/error.log error;
 
-	# Set real IP for cache proxy web requests
+	<%- if @use_varnish_directly -%>
+	# Set real IP for cache proxy web requests (varnish)
 	<%- @cache_proxies.sort.each do |key, value| -%>
+	<%- if value['networking']['interfaces']['ens19'] and value['networking']['interfaces']['ens18'] -%>
+	set_real_ip_from <%= value['networking']['interfaces']['ens19']['ip'] %>; # <%= key %> private
+	<%- if value['networking']['interfaces']['ens18']['ip'] -%>
+	set_real_ip_from <%= value['networking']['interfaces']['ens18']['ip'] %>; # <%= key %> public
+	<%- end -%>
+	set_real_ip_from <%= value['networking']['interfaces']['ens18']['ip6'] %>; # <%= key %> public
+	<%- elsif value['networking']['interfaces']['ens18'] -%>
+	<%- if value['networking']['interfaces']['ens18']['ip'] -%>
+	set_real_ip_from <%= value['networking']['interfaces']['ens18']['ip'] %>; # <%= key %>
+	<%- end -%>
+	set_real_ip_from <%= value['networking']['interfaces']['ens18']['ip6'] %>; # <%= key %>
+	<%- else -%>
 	<%- if value['networking']['ip'] -%>
 	set_real_ip_from <%= value['networking']['ip'] %>; # <%= key %>
 	<%- end -%>
-	<%- if value['networking']['interfaces']['he-ipv6'] -%>
-	set_real_ip_from <%= value['networking']['interfaces']['he-ipv6']['ip6'] %>; # <%= key %>
-	<%- elsif value['networking']['ip6'] -%>
 	set_real_ip_from <%= value['networking']['ip6'] %>; # <%= key %>
 	<%- end -%>
 
 	<%- end -%>
 	real_ip_header X-Real-IP;
+	<%- else -%>
+	# Set real IP for cache proxy web requests (cloudflare)
+	<%- @cloudflare_ipv4.sort.each do |key| -%>
+	set_real_ip_from <%= key %>;
+	<%- end -%>
+	<%- @cloudflare_ipv6.sort.each do |key| -%>
+	set_real_ip_from <%= key %>;
+	<%- end -%>
+
+	real_ip_header CF-Connecting-IP;
+	<%- end -%>
 
 	# VHosts
 	include /etc/nginx/conf.d/*.conf;
@@ -124,7 +149,7 @@ http {
 		root /var/www/html;
 
 		location /server-status {
-		stub_status;
+			stub_status;
 			access_log off;
 			allow 127.0.0.1;
 		}

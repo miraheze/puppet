@@ -7,16 +7,16 @@ class prometheus::exporter::statsd_exporter (
     String $arguments = '',
 ) {
 
-    file { '/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb':
+    file { '/opt/prometheus-statsd-exporter_0.26.1-1_amd64.deb':
         ensure => present,
-        source => 'puppet:///modules/prometheus/statsd_exporter/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb',
+        source => 'puppet:///modules/prometheus/statsd_exporter/prometheus-statsd-exporter_0.26.1-1_amd64.deb',
     }
 
     package { 'prometheus-statsd-exporter':
         ensure   => installed,
         provider => dpkg,
-        source   => '/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb',
-        require  => File['/opt/prometheus-statsd-exporter_0.9.0+ds1-1_amd64.deb'],
+        source   => '/opt/prometheus-statsd-exporter_0.26.1-1_amd64.deb',
+        require  => File['/opt/prometheus-statsd-exporter_0.26.1-1_amd64.deb'],
     }
 
     $basedir = '/etc/prometheus'

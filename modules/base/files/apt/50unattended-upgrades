@@ -18,7 +18,7 @@ Unattended-Upgrade::Package-Blacklist {
 	"varnish";
 };
 
-Unattended-Upgrade::Mail "sre-infrastructure@wikitide.org";
+Unattended-Upgrade::Mail "tech-infrastructure@wikitide.org";
 Unattended-Upgrade::MailReport "only-on-error";
 
 Unattended-Upgrade::Remove-Unused-Dependencies "true";

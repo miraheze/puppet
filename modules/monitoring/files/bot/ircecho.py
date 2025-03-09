@@ -79,8 +79,9 @@ class EchoReader():
                     pass
                 wm = pyinotify.WatchManager()
                 mask = pyinotify.IN_MODIFY | pyinotify.IN_CREATE
-                wm.watch_transient_file(filename, mask, EventHandler)
-                notifier = EchoNotifier(pyinotify.Notifier(wm))
+                wm.add_watch(filename, mask)
+                notifier = EchoNotifier(pyinotify.Notifier(wm, default_proc_fun=EventHandler()))
+
                 self.notifiers.append(notifier)
                 # Does this file have channel associations?
                 if len(temparr) > 1:
@@ -187,8 +188,8 @@ class EventHandler(pyinotify.ProcessEvent):
                     bot.connection.privmsg(chans, out)
             except (irc.client.ServerNotConnectedError, irc.client.MessageTooLong,
                     UnicodeDecodeError) as e:
-                print(('Error writing: %s'
-                      'Dropping this message: "%s"') % (e, s))
+                print('Error writing: %s'
+                      'Dropping this message: "%s"') % (e, s)
 
     def process_IN_CREATE(self, event):
         try:
@@ -213,26 +214,26 @@ ap.add_argument('--nickname-pass', required=True,
                 help='Password for nickname.')
 ap.add_argument('--server', required=True,
                 help='irc server to connect to, eg freenode and also including the port.')
-args = vars(ap.parse_args())
+args = ap.parse_args()
 
-chans = args['channel']
-nickname = args['nickname']
-nickname_pass = args['nickname_pass']
-server = args['server'].split(':')[0]
+chans = args.channel
+nickname = args.nickname
+nickname_pass = args.nickname_pass
+server = args.server.split(':')[0]
 try:
-    ssl = args['server'].split(':')[1].startswith('+')
-    port = int(args['server'].split(':')[1].strip('+'))
+    ssl = args.server.split(':')[1].startswith('+')
+    port = int(args.server.split(':')[1].strip('+'))
 except IndexError:
     ssl = False
     port = 6667
 global bot
-if args['ident_passwd_file']:
-    with open(args['ident_passwd_file']) as f:
+if args.ident_passwd_file:
+    with open(args.ident_passwd_file) as f:
         bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl, f.read().strip())
 else:
     bot = EchoBot(chans, nickname, nickname_pass, server, port, ssl)
 global reader
-reader = EchoReader(args['infile'])
+reader = EchoReader(args.infile)
 try:
     bot.start()
 except Exception:

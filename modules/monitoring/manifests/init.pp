@@ -208,6 +208,11 @@ class monitoring (
     $redirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
     $sslcerts = $ssl + $redirects
 
+    $servers = query_nodes('Class[Role::Mediawiki]')
+        .flatten()
+        .unique()
+        .sort()
+
     file { '/etc/icinga2/conf.d/ssl.conf':
         ensure  => 'present',
         content => template('monitoring/ssl.conf.erb'),
@@ -240,11 +245,7 @@ class monitoring (
     }
 
     file { '/usr/lib/nagios/plugins/check_reverse_dns.py':
-        source  => 'puppet:///modules/monitoring/check_reverse_dns.py',
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        require => Package['nagios-nrpe-plugin'],
+        ensure  => absent,
     }
 
     file { '/usr/lib/nagios/plugins/check_mysql_connections.php':

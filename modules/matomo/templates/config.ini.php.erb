@@ -20,6 +20,11 @@ trusted_hosts[] = "analytics.wikitide.net"
 maintenance_mode = 0
 enable_internet_features = 0
 enable_tracking_failures_notification = 0
+enable_browser_archiving_triggering = 0
+
+[CustomReports]
+custom_reports_max_execution_time = 2700
+custom_reports_disabled_dimensions = "CoreHome.VisitLastActionDate"
 
 [Tracker]
 bulk_requests_use_transaction = 0
@@ -92,6 +97,7 @@ Plugins[] = "ProfessionalServices"
 Plugins[] = "UserId"
 Plugins[] = "QueuedTracking"
 Plugins[] = "DeviceDetectorCache"
+Plugins[] = "Login"
 Plugins[] = "LoginLdap"
 Plugins[] = "PagePerformance"
 
@@ -159,6 +165,7 @@ PluginsInstalled[] = "GeoIp2"
 PluginsInstalled[] = "QueuedTracking"
 PluginsInstalled[] = "TwoFactorAuth"
 PluginsInstalled[] = "DeviceDetectorCache"
+PluginsInstalled[] = "Login"
 PluginsInstalled[] = "LoginLdap"
 PluginsInstalled[] = "CoreVue"
 PluginsInstalled[] = "PagePerformance"

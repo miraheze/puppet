@@ -1,27 +1,33 @@
 # servers
 
 node /^bast1[68]1\.wikitide\.net$/ {
-    include base
-    include role::bastion
+    role(bastion)
 }
 
 node 'bots171.wikitide.net' {
-    include base
-    include role::irc
+    role(irc)
 }
 
 node 'changeprop151.wikitide.net' {
     include base
+    include role::jobrunner_haproxy
     include role::changeprop
     include role::redis
 }
 
-node /^cloud1[5678]\.wikitide\.net$/ {
+node 'changeprop201.wikitide.net' {
+    include base
+    include role::jobrunner_haproxy
+    include role::changeprop
+    include role::redis
+}
+
+node /^cloud[12][056789]\.wikitide\.net$/ {
     include base
     include role::cloud
 }
 
-node /^cp([23][678]|[45]1)\.wikitide\.net$/ {
+node /^cp(3[678])\.wikitide\.net$/ {
     include base
     include role::varnish
 }
@@ -41,26 +47,15 @@ node /^os1[56][12]\.wikitide\.net$/ {
     include role::opensearch
 }
 
-node 'graphite151.wikitide.net' {
-    include base
-    include role::graphite
-    include role::statsd
-}
-
 node 'graylog161.wikitide.net' {
     include base
     include role::graylog
 }
 
-node 'jobchron171.wikitide.net' {
-    include base
-    include role::redis
-    include mediawiki::jobqueue::chron
-}
-
 node 'kafka181.wikitide.net' {
     include base
     include role::kafka
+    include role::burrow
 }
 
 node 'ldap171.wikitide.net' {
@@ -73,7 +68,12 @@ node 'matomo151.wikitide.net' {
     include role::matomo
 }
 
-node /^mem1[56]1\.wikitide\.net$/ {
+node 'mattermost1.wikitide.net' {
+    include base
+    include role::mattermost
+}
+
+node /^mem[12][056]1\.wikitide\.net$/ {
     include base
     include role::memcached
 }
@@ -84,15 +84,12 @@ node 'mon181.wikitide.net' {
     include role::icinga2
 }
 
-node /^mw1[5678][12]\.wikitide\.net$/ {
-    include base
-    include role::mediawiki
+node /^mw[12][056789][1234]\.wikitide\.net$/ {
+    role(mediawiki)
 }
 
-node /^mwtask1[78]1\.wikitide\.net$/ {
-    include base
-    include role::mediawiki
-    include role::mathoid
+node /^mwtask1[5678]1\.wikitide\.net$/ {
+    role(mediawiki_task)
 }
 
 node /^ns[12]\.wikitide\.net$/ {
@@ -141,17 +138,13 @@ node 'swiftac171.wikitide.net' {
     include role::swift
 }
 
-node /^swiftobject1[5678]1\.wikitide\.net$/ {
+node /^swiftobject[12][056789]1\.wikitide\.net$/ {
     include base
     include role::swift
 }
 
 node 'test151.wikitide.net' {
-    include base
-    include role::memcached
-    include role::mediawiki
-    include role::poolcounter
-    include role::redis
+    role(mediawiki_beta)
 }
 
 # ensures all servers have basic class if puppet runs

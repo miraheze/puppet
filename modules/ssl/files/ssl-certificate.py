@@ -83,7 +83,7 @@ class SslCertificate:
             secondary_domain = self.secondary_domain
 
         # Generate the private key
-        os.system(f'openssl genrsa 2048 > /root/ssl/{self.domain}.key')
+        os.system(f'openssl ecparam -genkey -name prime256v1 > /root/ssl/{self.domain}.key')
 
         if not self.quiet:
             print(f'Private key generated at: /root/ssl/{self.domain}.key')
@@ -139,7 +139,7 @@ class SslCertificate:
             if not self.quiet:
                 print('Pushing LetsEncrypt SSL certificate to GitHub')
 
-            os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bastion.wikitide.net:8080 %h %p\'"')
+            os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.wikitide.net:8080 %h %p\'"')
             os.system('git -C /srv/ssl/ssl/ config user.name "WikiTideSSLBot"')
             os.system('git -C /srv/ssl/ssl/ config user.email "noreply@wikitide.org"')
             os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
@@ -218,7 +218,7 @@ class SslCertificate:
         if not self.quiet:
             print('Pushing LetsEncrypt SSL certificate to GitHub')
 
-        os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -6 -X connect -x bastion.wikitide.net:8080 %h %p\'"')
+        os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.wikitide.net:8080 %h %p\'"')
         os.system('git -C /srv/ssl/ssl/ config user.name "WikiTideSSLBot"')
         os.system('git -C /srv/ssl/ssl/ config user.email "noreply@wikitide.org"')
         os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')

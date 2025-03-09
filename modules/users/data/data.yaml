@@ -2,18 +2,18 @@ groups:
   ops:
     gid: 2000
     description: roots, sudo everywhere
-    members: [alex, evalprime, reception, universalomega, void]
+    members: [agent, paladox, reception, universalomega, void]
     privileges: ['ALL = (ALL) NOPASSWD: ALL']
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [macfan, oa]
+    members: [blankeclair, macfan, oa]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service apache2 *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mcrouter *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
     gid: 2002
@@ -29,7 +29,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/bin/varnishstat',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service varnish *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   puppet-users:
     gid: 2004
@@ -39,7 +39,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [macfan, oa]
+    members: [blankeclair, macfan, oa]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -54,7 +54,7 @@ groups:
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   database-admins:
     gid: 2008
@@ -66,8 +66,13 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb start',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb restart',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
-                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet *',
+                 'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
+  dns-admins:
+    gid: 2009
+    description: limited sudo access on DNS nameservers
+    members: [macfan]
+    privileges: ['ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *']
 
 users:
   johnflewis:
@@ -125,11 +130,11 @@ users:
     realname: ImBoPhil
     ssh_keys: []
   paladox:
-    ensure: absent
+    ensure: present
     uid: 1009
     name: paladox
     realname: Paladox
-    ssh_keys: []
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJF/bY6KnOxux3v5KIDDsBWbaut2LY/mGSd6rSyN2dcl paladox@wikitide.org]
   macfan:
     ensure: present
     uid: 1010
@@ -155,7 +160,7 @@ users:
     uid: 1013
     name: universalomega
     realname: Universal Omega
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIApGU+6cUDu6gLhJY547Ge/2r4FU382qFx6wVGHN/+FP]
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO+m4fGlqEWiQzYFQomR3VFrozUufqyyGR3M4Eju3Pa+]
   void:
     ensure: present
     uid: 1014
@@ -163,19 +168,19 @@ users:
     realname: Voidwalker 
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAWIwmB8ZkwnyvWoMwVfWxmPH6QkP2X2l0TfipMXeWHf void@wikitide.org]
   agent:
-    ensure: absent
+    ensure: present
     uid: 1015
     name: Agent
     realname: Agent
-    ssh_keys: []
+    ssh_keys: 
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYndIxzLtu9icCCMJIKTZXKk9rdJRP/Nsfyb2kfcZEy
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJZcRCYjd0F3DWjQbvY16pEFBWttdVaCWzOzIrvWmmB3
   alex:
-    ensure: present
+    ensure: absent
     uid: 1016
     name: alex
     realname: Alex
-    ssh_keys:
-      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIK1eR7I1K/AL6R9RxDOaldPLSDRpN5jl0+lMJq1Fa4tzAAAABHNzaDo= alex@localhost.localdomain
-      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIIFhlw40YKZdLPFIfhzApQpdwPC8rdxWD2kppomPt8OUAAAABHNzaDo= alex-wikitide-backup@yubikey-nfc2
+    ssh_keys: []
   owen:
     ensure: absent
     uid: 1017
@@ -189,8 +194,22 @@ users:
     realname: Original Authority
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILD0e5CCa8BhhAmKvIHPjhN6+dMU0uQ1Z/ZHcfmqoUVP original.authority0@gmail.com]
   evalprime:
-    ensure: present
+    ensure: absent
     uid: 1019
     name: evalprime
     realname: EvalPrime
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII58/9ujLHNt1p1YOlHJr7Y2D7laEkYzQSOKcAhF8r1Q]
+    ssh_keys: []
+  theresnotime:
+    ensure: absent
+    uid: 1020
+    name: theresnotime
+    realname: TheresNoTime
+    ssh_keys: []
+  blankeclair:
+    ensure: present
+    uid: 1021
+    name: BlankEclair
+    realname: BlankEclair
+    ssh_keys: 
+      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIJfFeBEEUvSN/T+MQyVGxxJ2X6RKpfs7YduE3felF1pDAAAAIHNzaDptaXJhaGV6ZS5jbGFpcmVAZGlhbW9uZHByaXNt
+      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINarEjRpotDTzYa7NgSSMenXlsJ6d5Qf3l7FDWnySO0UAAAAIXNzaDptaXJhaGV6ZS5jbGFpcmVAZG91YmxlcmFpbmJvdw==

@@ -5,7 +5,7 @@ class reports {
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',
         origin    => 'https://github.com/miraheze/TSPortal',
-        branch    => 'v18',
+        branch    => 'v20',
         owner     => 'www-data',
         group     => 'www-data',
     }
@@ -142,6 +142,7 @@ class reports {
     }
 
     ssl::wildcard { 'reports wildcard': }
+    ssl::client_cert_cas { 'reports client_cert_cas': }
 
     nginx::site { 'reports.miraheze.org':
         ensure  => present,
@@ -154,7 +155,7 @@ class reports {
     $app_key = lookup('reports::app_key')
     $reports_mediawiki_identifier = lookup('reports::reports_mediawiki_identifier')
     $reports_mediawiki_secret = lookup('reports::reports_mediawiki_secret')
-    $reports_discord_webhook = lookup('reports::reports_discord_webhook')
+    $reports_mattermost_webhook = lookup('reports::reports_mattermost_webhook')
     $reports_write_key = lookup('reports::reports_write_key')
 
     file { '/srv/TSPortal/.env':

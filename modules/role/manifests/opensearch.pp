@@ -6,6 +6,7 @@ class role::opensearch (
     $os_master_hosts = lookup('role::opensearch::master_hosts', {'default_value' => undef}),
     $os_master_host = lookup('role::opensearch::master_host', {'default_value' => undef}),
     $use_tls = lookup('role::opensearch::use_tls', {'default_value' => false}),
+    $enable_exporter = lookup('role::opensearch::enable_exporter', {'default_value' => true}),
 ) {
     include ::java
 
@@ -43,7 +44,7 @@ class role::opensearch (
             'node.data'                    => $os_data,
             'network.host'                 => '0.0.0.0',
         } + $tls_config,
-        version     => '2.11.0',
+        version     => '2.19.0',
         manage_repo => true,
         jvm_options => [ '-Xms3g', '-Xmx3g' ],
         templates   => {
@@ -172,17 +173,16 @@ class role::opensearch (
     }
 
     if $os_master {
-        # For nginx
-        ssl::wildcard { 'opensearch wildcard': }
-
         nginx::site { 'opensearch.wikitide.net':
             ensure  => present,
             content => template('role/opensearch/nginx.conf.erb'),
             monitor => false,
         }
 
+        ssl::wildcard { 'opensearch wildcard': }
+
         $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]', ['networking'])
+            query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]', ['networking'])
             .map |$key, $value| {
                 if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                     "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
@@ -204,7 +204,7 @@ class role::opensearch (
         }
     }
 
-    if $os_master {
+    if ($os_master and $enable_exporter) {
         include prometheus::exporter::elasticsearch
     }
 

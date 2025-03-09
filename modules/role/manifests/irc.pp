@@ -1,14 +1,18 @@
 # role: irc
 class role::irc {
+    include base
     include irc::irclogbot
     include irc::cvtbot
-    # include irc::pywikibot
 
-    irc::relaybot { 'relaybot':
-        dotnet_version => '6.0',
+    users::user { 'pywikibot':
+        ensure => present,
+        uid    => 3200,
+        shell  => '/bin/bash',
     }
 
-    irc::relaybot { 'relaybot2':
+    include irc::pywikibot
+
+    irc::relaybot { 'relaybot':
         dotnet_version => '6.0',
     }
 
@@ -29,7 +33,7 @@ class role::irc {
     }
 
     $firewall_irc_rules_str = join(
-        query_facts('Class[Role::Mediawiki]', ['networking'])
+        query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"

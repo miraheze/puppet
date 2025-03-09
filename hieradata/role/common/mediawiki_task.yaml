@@ -1,0 +1,41 @@
+users::groups:
+  - mediawiki-admins
+  - mediawiki-roots
+
+contactgroups: ['infra', 'mediawiki']
+
+jobrunner: true
+jobrunner::intensive: true
+mediawiki::jobqueue::runner::cron: false
+mediawiki::use_cpjobqueue: true
+
+role::mediawiki::use_strict_firewall: true
+role::mediawiki::is_beta: false
+
+mediawiki::php::fpm::fpm_workers_multiplier: 2.0
+mediawiki::php::request_timeout: 259201
+mediawiki::php::apc_shm_size: 4096M
+mediawiki::php::fpm_config:
+  post_max_size: '250M'
+  upload_max_filesize: '250M'
+  opcache.interned_strings_buffer: 256
+  opcache.memory_consumption: 3072
+  max_execution_time: 1200
+
+mediawiki::php::increase_open_files: true
+mediawiki::php::enable_request_profiling: true
+
+php::php_version: '8.2'
+
+http_proxy: 'http://bastion.wikitide.net:8080'
+
+base::syslog::rsyslog_udp_localhost: true
+
+# NGINX
+nginx::keepalive_timeout: 2
+nginx::keepalive_requests: 150
+nginx::logrotate_number: 2
+nginx::use_graylog: true
+nginx::remove_apache: false
+
+httpd::remove_default_ports: true

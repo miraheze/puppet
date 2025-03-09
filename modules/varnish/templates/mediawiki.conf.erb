@@ -30,6 +30,7 @@ server {
 		proxy_pass https://<%= name %>.wikitide.net;
 		<%- end -%>
 		<%- end -%>
+		proxy_ssl_protocols TLSv1.3;
 		proxy_http_version 1.1;
 		proxy_set_header Connection $connection_upgrade;
 		proxy_set_header Upgrade $http_upgrade;
@@ -75,6 +76,14 @@ server {
 		return 403;
 	}
 
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
 	location / {
 		if ($request_uri !~ "^/check$") {
 			return 301 https://$host$request_uri;
@@ -90,8 +99,8 @@ server {
 	server_name miraheze.org *.miraheze.org;
 	root /var/www/html;
 
-	ssl_certificate /etc/ssl/localcerts/wildcard.miraheze.org-2020-2.crt;
-	ssl_certificate_key /etc/ssl/private/wildcard.miraheze.org-2020-2.key;
+	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
+	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
 
 	ssl_stapling_verify on;
 	
@@ -102,6 +111,14 @@ server {
 
 	# Web scraper - Void
 	if ($http_user_agent ~ "\+Zimit$") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 
@@ -143,6 +160,14 @@ server {
 		return 403;
 	}
 
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
+		return 403;
+	}
+
 	if ($host ~ ^(\w+)\.m\.miraheze\.org$) {
 		return 301 https://$1.miraheze.org$request_uri;
 	}
@@ -157,13 +182,21 @@ server {
 	server_name phorge-static.wikitide.net;
 	root /var/www/html;
 
-	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
-	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
+	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
+	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
 
 	ssl_stapling_verify on;
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 
@@ -203,6 +236,14 @@ server {
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 
@@ -263,17 +304,17 @@ server {
 	<% else %>
 	add_header Strict-Transport-Security "max-age=604800";
 	<% end %>
-
-	# Default headers
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>';
-
-	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
-
-	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 	
 	# no way you are legit - rhinosf1 T8832
 	if ($http_user_agent ~ "MJ12bot") {
+		return 403;
+	}
+
+	# Cloudflare bans
+	if ($http_user_agent ~ "sqlmap|Go-http-client|claudebot@anthropic\.com|Amazonbot|wp_is_mobile|FriendlyCrawler|https:\/\/openai\.com\/(gpt)?bot") {
+		return 403;
+	}
+	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
 	}
 

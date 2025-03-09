@@ -38,18 +38,17 @@ class mediawiki::deploy {
         }
 
         users::user { 'www-data':
-        ensure   => present,
-        uid      => 33,
-        gid      => 33,
-        system   => true,
-        homedir  => '/var/www',
-        shell    => '/bin/bash',
-        before   => Service['nginx'],
-        ssh_keys => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy'
-        ],
-    }
-
+            ensure   => present,
+            uid      => 33,
+            gid      => 33,
+            system   => true,
+            homedir  => '/var/www',
+            shell    => '/bin/bash',
+            before   => Service['nginx'],
+            ssh_keys => [
+                'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFEak8evb6DAVAeYTl8Gyg0uCrcMAfPt9CUm++4NO8fb MediaWikiDeploy',
+            ],
+        }
     }
 
     stdlib::ensure_packages(
@@ -85,7 +84,7 @@ class mediawiki::deploy {
     }
 
     git::clone { 'MediaWiki config':
-        ensure    => 'latest',
+        ensure    => present,
         directory => '/srv/mediawiki-staging/config',
         origin    => 'https://github.com/miraheze/mw-config',
         branch    => 'master',
@@ -96,7 +95,7 @@ class mediawiki::deploy {
     }
 
     git::clone { 'landing':
-        ensure    => 'latest',
+        ensure    => present,
         directory => '/srv/mediawiki-staging/landing',
         origin    => 'https://github.com/miraheze/landing',
         branch    => 'master',
@@ -107,7 +106,7 @@ class mediawiki::deploy {
     }
 
     git::clone { 'ErrorPages':
-        ensure    => 'latest',
+        ensure    => present,
         directory => '/srv/mediawiki-staging/ErrorPages',
         origin    => 'https://github.com/miraheze/ErrorPages',
         branch    => 'master',
@@ -117,30 +116,15 @@ class mediawiki::deploy {
         require   => File['/srv/mediawiki-staging'],
     }
 
-    exec { 'MediaWiki Config Sync':
-        command     => "/usr/local/bin/mwdeploy --config --servers=${lookup(mediawiki::default_sync)}",
-        cwd         => '/srv/mediawiki-staging',
-        refreshonly => true,
-        user        => www-data,
-        subscribe   => Git::Clone['MediaWiki config'],
-        require     => File['/usr/local/bin/mwdeploy'],
-    }
-
-    exec { 'Landing Sync':
-        command     => "/usr/local/bin/mwdeploy --landing --servers=${lookup(mediawiki::default_sync)} --no-log",
-        cwd         => '/srv/mediawiki-staging',
-        refreshonly => true,
-        user        => www-data,
-        subscribe   => Git::Clone['landing'],
-        require     => File['/usr/local/bin/mwdeploy'],
-    }
-
-    exec { 'ErrorPages Sync':
-        command     => "/usr/local/bin/mwdeploy --errorpages --servers=${lookup(mediawiki::default_sync)} --no-log",
-        cwd         => '/srv/mediawiki-staging',
-        refreshonly => true,
-        user        => www-data,
-        subscribe   => Git::Clone['ErrorPages'],
-        require     => File['/usr/local/bin/mwdeploy'],
+    # This is outside of the is_canary if so that test* also pulls
+    # the certificate, as that server has use_staging to true but not
+    # is_canary
+    file { '/srv/mediawiki-staging/mwdeploy-client-cert.key':
+        ensure => present,
+        source => 'puppet:///ssl-keys/mwdeploy.key',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0444',
+        before => File['/usr/local/bin/mwdeploy'],
     }
 }

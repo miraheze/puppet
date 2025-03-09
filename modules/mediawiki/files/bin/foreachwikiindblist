@@ -1,19 +1,35 @@
 #! /bin/bash
 
 usage(){
-        echo "Usage: /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/<dblist>.json /srv/mediawiki/<version>/<maintenance script> <any other options if needed>"
+        echo "Usage: /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/<dblist>.json or <dblist>.php /srv/mediawiki/<version>/<maintenance script> <any other options if needed>"
         exit 1
 }
 
 [[ $# -eq 0 ]] && usage
 
-if [ ! -f $1 ]; then
+dblist=$1
+
+if [ ! -f "$dblist" ]; then
         echo "dblist does not exist!"
         usage
         exit 1
 fi
 
-wikis=`/usr/bin/jq ".combi | keys | .[]" $1 | sed 's/.//;s/.$//'`
+if [[ "$dblist" == *.json ]]; then
+        wikis=$(/usr/bin/jq ".combi | keys | .[]" "$dblist" | sed 's/.//;s/.$//')
+elif [[ "$dblist" == *.php ]]; then
+        # Load the PHP array and output the keys (wiki database names)
+        wikis=$(/usr/bin/php -r "
+            \$list = include '$dblist';
+            if ( is_array( \$list['databases'] ?? false ) ) {
+                echo implode( PHP_EOL, array_keys( \$list['databases'] ) );
+            }
+        ")
+else
+        echo "Unsupported file format. Please provide a .json or .php file."
+        usage
+        exit 1
+fi
 
 for wiki in $wikis
 do

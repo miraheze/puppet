@@ -5,15 +5,14 @@ Wants=local-fs.target network.target
 After=local-fs.target network.target
 
 [Service]
-Type=simple
 User=mathoid
 Group=mathoid
 SyslogIdentifier=mathoid
 WorkingDirectory=/srv/mathoid
 ExecStart=/usr/bin/node /srv/mathoid/src/server.js -c /etc/mathoid/config.yaml
-KillMode=process
-Restart=on-success
 Restart=always
+RestartSec=2s
+TimeoutStopSec=60
 PrivateTmp=true
 StandardOutput=syslog
 

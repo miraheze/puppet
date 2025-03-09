@@ -17,27 +17,30 @@ apply Service "m.miraheze.org - LetsEncrypt" {
   assign where "sslchecks" in host.groups
 }
 
+<% @servers.each do |server| -%>
+  apply Service "<%= server %> SSL Check" {
+    import "generic-service"
+    check_command = "check_ssl_expire"
+    check_interval = 30m
+    notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
+    vars.host = "<%= server %>"
+    vars.time = "30"
+    assign where "sslchecks" in host.groups
+  }
+<% end -%>
+
 <% @sslcerts.each_pair do | name, property | -%>
 apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   import "generic-service"
   check_command = "check_ssl_expire"
   check_interval = 30m
   notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
-  vars.host = "<%= property['url'] %>"
-  vars.time = "<% if property['ca'] == "LetsEncrypt" %>15<% else %>30<% end %>"
+  vars.host = "<% if property['url'].start_with?('*') and property['sslname'] %><%= property['sslname'] %><% else %><%= property['url'] %><% end %>"
+  vars.time = "<% if property['ca'] == "LetsEncrypt" %>14<% else %>29<% end %>"
   <%- if property['ca'] == "LetsEncrypt" and property['disable_event'] == false -%>
   event_command = "eh_ssl_acme"
   <%- end -%>
   assign where "sslchecks" in host.groups
 }
 
-apply Service "<%= property['url'] %> - reverse DNS" {
-  import "generic-service"
-  check_command = "reverse_dns"
-  check_interval = 30m
-  notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Reverse_DNS_Checks"
-  vars.hostname = "<%= property['url'] %>"
-  vars.regex = "^(test|cp)[0-9]+\\.(miraheze\\.org|wikitide\\.net)$$"
-  assign where "sslchecks" in host.groups
-}
 <% end -%>

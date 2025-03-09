@@ -6,22 +6,7 @@ class mediawiki::jobqueue::chron (
 ) {
     include mediawiki::php
 
-    if lookup('mediawiki::use_cpjobqueue', {'default_value' => false}) {
-        if !defined(Class['mediawiki::jobqueue::shared']) {
-            $versions.each |$version, $params| {
-                if $params['default'] {
-                    class { 'mediawiki::jobqueue::shared':
-                        ensure  => absent,
-                        version => $version,
-                    }
-                }
-            }
-        }
-        systemd::service { 'jobchron':
-            ensure  => absent,
-            content => systemd_template('jobchron'),
-        }
-    } else {
+    if !lookup('mediawiki::use_cpjobqueue', {'default_value' => false}) {
         if !defined(Class['mediawiki::jobqueue::shared']) {
             $versions.each |$version, $params| {
                 if $params['default'] {
