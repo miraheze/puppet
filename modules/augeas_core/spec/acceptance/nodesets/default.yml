@@ -10,4 +10,4 @@ HOSTS:
     - default
 CONFIG:
   type: agent
-  pooling_api: http://vmpooler.delivery.puppetlabs.net/
+  pooling_api: http:vmpooler.delivery.puppetlabs.net/

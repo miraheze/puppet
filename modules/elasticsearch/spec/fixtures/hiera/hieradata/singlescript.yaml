@@ -2,4 +2,4 @@
 elasticsearch::scripts:
   myscript:
     ensure: present
-    source: puppet:///file/here
+    source: puppet:/file/here

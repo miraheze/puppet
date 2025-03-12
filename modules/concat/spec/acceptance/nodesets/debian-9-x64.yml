@@ -17,4 +17,4 @@ HOSTS:
 CONFIG:
   nfs_server: none
   consoleport: 443
-  pooling_api: http://vmpooler.delivery.puppetlabs.net/
+  pooling_api: http:vmpooler.delivery.puppetlabs.net/

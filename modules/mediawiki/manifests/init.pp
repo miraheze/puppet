@@ -203,9 +203,9 @@ class mediawiki {
     exec { 'create python venv':
         command => '/usr/bin/python3 -m venv /srv/python/env && /srv/python/env/bin/pip3 install Miraheze-PyUtils',
         require => [Package['python3'],File['/srv/python']],
-        cwd => '/srv',
-        user => 'www-data',
-        onlyif => "test ! -d /srv/python/env",
-        path   => '/bin:/usr/bin',
+        cwd     => '/srv',
+        user    => 'www-data',
+        onlyif  => 'test ! -d /srv/python/env',
+        path    => '/bin:/usr/bin',
     }
 }

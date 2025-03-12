@@ -15,7 +15,7 @@ php::php_version: '8.2'
 
 icinga::repos:
   'icinga-stable-release':
-    location: http://packages.icinga.com/debian
+    location: http:packages.icinga.com/debian
     release: 'icinga-%{facts.os.distro.codename}'
     repos: main
     key:
