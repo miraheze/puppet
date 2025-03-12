@@ -123,7 +123,7 @@ server {
 	}
 
 	location = /.well-known/change-password {
-		return 301 /wiki/Special:ChangePassword;
+		return 301 /wiki/Special:ResetPassword;
 	}
 
 	location / {
@@ -266,7 +266,7 @@ server {
 	}
 
 	location = /.well-known/change-password {
-		return 301 /wiki/Special:ChangePassword;
+		return 301 /wiki/Special:ResetPassword;
 	}
 
 	<%- if property['path_redirects'] -%>
@@ -327,7 +327,7 @@ server {
 	}
 
 	location = /.well-known/change-password {
-		return 301 /wiki/Special:ChangePassword;
+		return 301 /wiki/Special:ResetPassword;
 	}
 
 	location / {
