@@ -106,6 +106,7 @@ class mediawiki {
     $openai_assistantid         = lookup('mediawiki::openai_assistantid')
     $turnstile_sitekey          = lookup('mediawiki::turnstile_sitekey')
     $turnstile_secreteky        = lookup('mediawiki::turnstile_secretkey')
+    $campaigneventsdashboard_apisecret = lookup('mediawiki::campaigneventsdashboard_apisecret')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
