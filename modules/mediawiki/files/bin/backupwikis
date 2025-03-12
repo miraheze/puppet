@@ -51,7 +51,7 @@ if [ "$automatic_run" = true ]; then
     /usr/local/bin/logsalmsg "AUTOMATIC: Archival of all public wikis to Internet Archive has begun..."
 fi
 
-for wiki in $filtered_wikis
+for wiki in $filtered_wikis; do
     # Retrieve the MediaWiki version for each wiki
     mwversion="$(/usr/local/bin/getMWVersion $wiki)"
     echo "$wiki is running MediaWiki $mwversion"
