@@ -144,30 +144,30 @@ role::prometheus::statsd_exporter::mappings:
       status: "$3"
 
   # Swift per-account stats reporter
-  - match: swift\.stats\.([^.]+)\.bytes
+  - match: 'swift\.stats\.([^.]+)\.bytes'
     match_type: regex
     name: swift_account_stats_bytes_total
     labels:
       account: "$1"
-  - match: swift\.stats\.([^.]+)\.containers
+  - match: 'swift\.stats\.([^.]+)\.containers'
     match_type: regex
     name: swift_account_stats_containers_total
     labels:
       account: "$1"
-  - match: swift\.stats\.([^.]+)\.objects
+  - match: 'swift\.stats\.([^.]+)\.objects'
     match_type: regex
     name: swift_account_stats_objects_total
     labels:
       account: "$1"
 
   # Swift containers stats reporter
-  - match: swift\.containers\.([^.]+)\.([^.]+)\.bytes
+  - match: 'swift\.containers\.([^.]+)\.([^.]+)\.bytes'
     match_type: regex
     name: swift_container_stats_bytes_total
     labels:
       account: "$1"
       class: "$2"
-  - match: swift\.containers\.([^.]+)\.([^.]+)\.objects
+  - match: 'swift\.containers\.([^.]+)\.([^.]+)\.objects'
     match_type: regex
     name: swift_container_stats_objects_total
     labels:
@@ -175,19 +175,19 @@ role::prometheus::statsd_exporter::mappings:
       class: "$2"
 
   ## $2 can be copies_expected/copies_found/missing_<integer>/overlapping/pct_found/retries
-  - match: swift\.([^.]+)\.dispersion\.object\.([^.]+)
+  - match: 'swift\.([^.]+)\.dispersion\.object\.([^.]+)'
     match_type: regex
     name: "swift_dispersion_object_$1"
-  - match: swift\.dispersion\.container\.([^.]+)
+  - match: 'swift\.dispersion\.container\.([^.]+)'
     match_type: regex
     name: "swift_dispersion_container_$1"
   ## storage policy-specific metrics
-  - match: swift\.dispersion\.([^.]+)\.object\.([^.]+)
+  - match: 'swift\.dispersion\.([^.]+)\.object\.([^.]+)'
     match_type: regex
     name: "swift_dispersion_policy_object_$2"
     labels:
       storage_policy: "$1"
-  - match: swift\.dispersion\.([^.]+)\.container\.([^.]+)
+  - match: 'swift\.dispersion\.([^.]+)\.container\.([^.]+)'
     match_type: regex
     name: "swift_dispersion_policy_container_$2"
     labels:
