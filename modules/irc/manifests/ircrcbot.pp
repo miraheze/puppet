@@ -23,7 +23,7 @@ define irc::ircrcbot(
         restart => true,
     }
 
-    monitoring::nrpe { 'IRC RC Bot':
+    monitoring::nrpe { "IRC RC Bot $nickname":
         command => "/usr/lib/nagios/plugins/check_procs -a ircrcbot-$nickname.py -c 1:1"
     }
 }
