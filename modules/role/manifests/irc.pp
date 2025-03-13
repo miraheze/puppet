@@ -16,7 +16,7 @@ class role::irc {
         dotnet_version => '6.0',
     }
 
-    class { 'irc::ircrcbot':
+    irc::ircrcbot { 'RCBot1' :
         nickname     => 'MirahezeRC',
         network      => 'irc.libera.chat',
         network_port => '6697',
@@ -32,7 +32,7 @@ class role::irc {
         udp_port     => '5071',
     }
 
-    class { 'irc::ircrcbot':
+    irc::ircrcbot { 'RCBot2' :
         nickname     => 'MirahezeRC2',
         network      => 'irc.libera.chat',
         network_port => '6697',
