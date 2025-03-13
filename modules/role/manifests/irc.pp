@@ -32,6 +32,14 @@ class role::irc {
         udp_port     => '5071',
     }
 
+    class { 'irc::ircrcbot':
+        nickname     => 'MirahezeRC2',
+        network      => 'irc.libera.chat',
+        network_port => '6697',
+        channel      => '#miraheze-feed',
+        udp_port     => '5072',
+    }
+
     $firewall_irc_rules_str = join(
         query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta]', ['networking'])
         .map |$key, $value| {
@@ -51,6 +59,12 @@ class role::irc {
     ferm::service { 'ircrcbot':
         proto  => 'udp',
         port   => '5070',
+        srange => "(${firewall_irc_rules_str})",
+    }
+
+    ferm::service { 'ircrcbot2':
+        proto  => 'udp',
+        port   => '5072',
         srange => "(${firewall_irc_rules_str})",
     }
 
