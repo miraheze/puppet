@@ -14,7 +14,7 @@ define irc::ircrcbot(
             ensure  => present,
             content => template('irc/ircrcbot.py'),
             mode    => '0755',
-            notify  => Service['ircrcbot'],
+            notify  => Service['ircrcbot-${nickname}'],
         }
 
     systemd::service { "ircrcbot-${nickname}":
