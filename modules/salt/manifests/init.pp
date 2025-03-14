@@ -79,6 +79,12 @@ class salt {
         require => File['/home/salt-user/.ssh'],
     }
 
+    file { '/usr/local/bin/upgrade-packages':
+        ensure => present,
+        source => 'puppet:///modules/salt/bin/upgrade-packages.sh',
+        mode   => '0555',
+    }
+
     file { '/root/.ssh':
         ensure => directory,
         mode   => '0700',
