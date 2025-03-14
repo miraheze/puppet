@@ -14,12 +14,12 @@ trap "echo -e '\nScript terminated by user'; exit 1" SIGINT
 function show_help() {
   echo "Usage: $0 [OPTIONS]"
   echo "Options:"
-  echo "  --yes, -y           Skip confirmation prompts"
-  echo "  --dry-run, -d       Show what would be done without making changes"
-  echo "  --servers, -s       Specify target servers using a pattern"
+  echo "  --yes, -y            Skip confirmation prompts"
+  echo "  --dry-run, -d        Show what would be done without making changes"
+  echo "  --servers, -s        Specify target servers using a pattern"
   echo "  --include-kernel, -k Include kernel upgrades (requires system reboot to take effect)"
-  echo "  --include-all, -a   Include all package upgrades rather than only security upgrades (requires maintenance window)"
-  echo "  --help, -h          Show this help message"
+  echo "  --include-all, -a    Include all package upgrades rather than only security upgrades (requires maintenance window)"
+  echo "  --help, -h           Show this help message"
   exit 0
 }
 
