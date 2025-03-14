@@ -56,14 +56,14 @@ done
 # Confirm before proceeding if including kernel or all upgrades
 if $include_all; then
   echo "WARNING: You have chosen to include all package upgrades. This type of upgrade can never be done without a maintenance window. Proceeding may cause unexpected system behavior or outage."
-  read -p "Are you sure you want to proceed? (yes/no): " user_confirm
+  read -r -p "Are you sure you want to proceed? (yes/no): " user_confirm
   if [[ "$user_confirm" != "yes" ]]; then
     echo "Operation cancelled."
     exit 1
   fi
 elif $include_kernel; then
   echo "WARNING: You have chosen to include kernel upgrades. This will require a system reboot to take effect."
-  read -p "Are you sure you want to proceed? (yes/no): " user_confirm
+  read -r -p "Are you sure you want to proceed? (yes/no): " user_confirm
   if [[ "$user_confirm" != "yes" ]]; then
     echo "Operation cancelled."
     exit 1
@@ -75,7 +75,7 @@ servers=$(sudo salt-ssh -E "$server_pattern" test.ping --out=json | jq -r 'keys[
 
 # Loop through the servers and check/execute the upgrade command
 for server in $servers; do
-  hostname=$(echo $server | awk -F '.' '{print $1}')
+  hostname=$(echo "$server" | awk -F '.' '{print $1}')
   echo "Checking packages for upgrade on $hostname..."
 
   # Get the list of upgrades
@@ -90,14 +90,19 @@ for server in $servers; do
   if [ -z "${packages//[[:space:]]}" ]; then
     echo "No packages to upgrade on $hostname"
   else
-    # Create formatted package list
-    packages_list=$(echo $packages | sed 's/ /, /g')
-    packages_count=$(echo $packages | wc -w)
+    # Convert package list into an array
+    IFS=' ' read -r -a package_array <<< "$packages"
+    packages_count=${#package_array[@]}
 
-    if [ $packages_count -gt 1 ]; then
-      last_package=$(echo $packages_list | awk '{print $NF}')
-      packages_list=$(echo $packages_list | sed "s/ $last_package$/ and $last_package/")
-    fi
+    # Format the package list
+    case "$packages_count" in
+      1) packages_list="${package_array[0]}" ;;
+      2) packages_list="${package_array[0]} and ${package_array[1]}" ;;
+      *)
+        # Join all except last with ", " and append "and last_item"
+        packages_list="$(printf "%s, " "${package_array[@]:0:$((packages_count - 1))}")and ${package_array[-1]}"
+        ;;
+    esac
 
     # If dry-run mode is enabled, only display the list
     if $dry_run; then
@@ -105,7 +110,7 @@ for server in $servers; do
       continue
     fi
 
-    # Check if a reboot will be required before upgrading (if there are kernal upgrades)
+    # Check if a reboot will be required before upgrading (if there are kernel upgrades)
     reboot_required=$(echo "$packages" | grep -q "linux-image" && echo "yes" || echo "no")
 
     echo "Packages that will be upgraded on $hostname: $packages_list"
@@ -117,7 +122,7 @@ for server in $servers; do
 
     # Prompt for confirmation unless --yes or -y is provided
     if ! $skip_confirm; then
-      read -p "Are you sure you want to proceed with these upgrades? (yes/no): " upgrade_confirm
+      read -r -p "Are you sure you want to proceed with these upgrades? (yes/no): " upgrade_confirm
       if [[ "$upgrade_confirm" != "yes" ]]; then
         echo "Skipping upgrade on $hostname..."
         continue
