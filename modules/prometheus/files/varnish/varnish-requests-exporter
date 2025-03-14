@@ -1,7 +1,7 @@
 #!/bin/bash
 
-amount_of_accesslogs=`tail -500 /var/log/nginx/access.log | wc -l`
-amount_of_errors=`tail -500 /var/log/nginx/access.log | awk '{print $8}' | grep '^[45]' | grep -v '429' | wc -l`
+amount_of_accesslogs=$(tail -500 /var/log/nginx/access.log | wc -l)
+amount_of_errors=$(tail -500 /var/log/nginx/access.log | awk '{print $8}' | grep '^[45]' | grep -cv '429')
 error_rate=$(awk "BEGIN { pc=${amount_of_errors}/${amount_of_accesslogs}; print pc }")
 
 cat >/var/lib/prometheus/node.d/varnish_requests.prom <<EOL
