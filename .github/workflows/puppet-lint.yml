@@ -25,7 +25,7 @@ jobs:
       uses: scottbrenner/puppet-lint-action@master
       continue-on-error: true
       with:
-        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check --fix ./ --ignore-paths=.//modules/prometheus/manifests/jmx_exporter_config.pp
+        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check --fix ./ --ignore-paths=.//modules/prometheus/manifests/jmx_exporter_config.pp,**/*.y{a,}ml
 
     - name: Push the changes
       continue-on-error: true
