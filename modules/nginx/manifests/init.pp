@@ -13,7 +13,7 @@ class nginx (
     if $remove_apache {
         # Ensure Apache is absent: https://issue-tracker.miraheze.org/T253
         package { 'apache2':
-            ensure  => absent,
+            ensure => absent,
         }
     }
 

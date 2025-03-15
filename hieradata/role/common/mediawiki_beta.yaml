@@ -52,7 +52,7 @@ nginx::remove_apache: false
 httpd::remove_default_ports: true
 
 # memcached
-role::memcached::threads: ~
+role::memcached::threads: '~'
 role::memcached::version: 'present'
 role::memcached::growth_factor: 1.15
 role::memcached::min_slab_size: 48

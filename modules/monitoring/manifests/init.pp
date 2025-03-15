@@ -245,7 +245,7 @@ class monitoring (
     }
 
     file { '/usr/lib/nagios/plugins/check_reverse_dns.py':
-        ensure  => absent,
+        ensure => absent,
     }
 
     file { '/usr/lib/nagios/plugins/check_mysql_connections.php':

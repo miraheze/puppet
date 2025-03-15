@@ -20,7 +20,7 @@ class swift::storage (
     }
 
     file { '/etc/rsync.disable.d':
-        ensure  => directory,
+        ensure => directory,
     }
 
     file { '/etc/rsync_footer':

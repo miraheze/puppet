@@ -33,7 +33,7 @@ class mathoid {
     }
 
     file { '/etc/mathoid':
-        ensure  => directory,
+        ensure => directory,
     }
 
     file { '/etc/mathoid/config.yaml':

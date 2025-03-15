@@ -109,7 +109,7 @@ class matomo (
     # Extensions that require configuration.
     php::extension {
         default:
-            sapis        => ['cli', 'fpm'];
+            sapis => ['cli', 'fpm'];
         'xml':
             package_name => "php${php_version}-xml",
             priority     => 15;

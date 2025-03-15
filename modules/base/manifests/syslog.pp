@@ -14,7 +14,7 @@ class base::syslog (
 
         # Have to define this in order to restart it
         service { 'systemd-journald':
-                ensure  => 'running',
+                ensure => 'running',
         }
 
         include ::rsyslog

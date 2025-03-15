@@ -3,7 +3,7 @@ class dns {
     include prometheus::exporter::gdnsd
 
     package { 'gdnsd':
-        ensure  => installed,
+        ensure => installed,
     }
 
     git::clone { 'dns':

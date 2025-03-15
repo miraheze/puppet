@@ -211,7 +211,7 @@ role::prometheus::statsd_exporter::mappings:
 
   - match: '*.heap.*'
     # service-runner abuses timer for heap data
-    name: service_runner_${2}_heap_kilobytes
+    name: "service_runner_${2}_heap_kilobytes"
     timer_type: histogram
     buckets: [1e+3, 1e+4, 1e+5, 1e+6, 1e+7]
     labels:

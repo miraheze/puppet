@@ -41,7 +41,7 @@ class salt {
         }
     } else {
         package { ['salt-ssh', 'salt-common']:
-            ensure  => present,
+            ensure => present,
         }
     }
 

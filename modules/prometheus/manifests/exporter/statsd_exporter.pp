@@ -73,7 +73,7 @@ class prometheus::exporter::statsd_exporter (
     }
 
     service { 'prometheus-statsd-exporter':
-        ensure  => running,
+        ensure => running,
     }
 
     $firewall_rules_str = join(

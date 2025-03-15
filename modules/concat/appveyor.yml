@@ -4,7 +4,7 @@ branches:
   only:
     - master
 skip_commits:
-  message: /^\(?doc\)?.*/
+  message: '/^\(?doc\)?.*/'
 clone_depth: 10
 init:
   - SET

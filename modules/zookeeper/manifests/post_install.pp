@@ -40,11 +40,11 @@ class zookeeper::post_install inherits zookeeper {
       }
 
       cron::job { 'zookeeper-cleanup':
-        ensure  => $zookeeper::ensure,
+        ensure => $zookeeper::ensure,
       }
     } else {
       file { '/etc/cron.daily/zkcleanup':
-        ensure  => $zookeeper::ensure,
+        ensure => $zookeeper::ensure,
       }
     }
   }

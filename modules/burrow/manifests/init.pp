@@ -93,7 +93,7 @@ define burrow (
     # it is necessary to create the appropriate etc hierarchy.
     $config_dir = "/etc/burrow/${title}"
     file { $config_dir:
-        ensure  => 'directory',
+        ensure => 'directory',
     }
 
     $email_template_path = "${config_dir}/email.tmpl"

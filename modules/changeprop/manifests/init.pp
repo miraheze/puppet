@@ -50,7 +50,7 @@ class changeprop (
     }
 
     file { '/etc/changeprop':
-        ensure  => directory,
+        ensure => directory,
     }
 
     if lookup('changeprop::jobqueue', {'default_value' => false}) {

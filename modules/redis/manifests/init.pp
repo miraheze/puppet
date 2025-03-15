@@ -8,7 +8,7 @@ class redis (
     Variant[Boolean, String] $password = false,
 ) {
     package { 'redis-server':
-        ensure  => present,
+        ensure => present,
     }
 
     file { '/etc/redis/redis.conf':

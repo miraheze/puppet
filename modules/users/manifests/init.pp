@@ -26,7 +26,7 @@ class users(
     }
 
     users::groupmembers { $all_groups:
-        phash  => $data,
+        phash => $data,
     }
 
     # Ensure ordering of resources

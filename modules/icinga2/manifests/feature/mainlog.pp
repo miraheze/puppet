@@ -45,7 +45,7 @@ class icinga2::feature::mainlog(
 
   # manage feature
   icinga2::feature { 'mainlog':
-    ensure      => $ensure,
+    ensure => $ensure,
   }
 
 }

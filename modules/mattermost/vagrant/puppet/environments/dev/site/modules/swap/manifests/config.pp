@@ -4,7 +4,7 @@ class swap::config {
     creates => '/swap',
   }
   -> exec { '/sbin/mkswap /swap':
-    unless  => "/usr/bin/file /swap | grep -q 'swap file'",
+    unless => "/usr/bin/file /swap | grep -q 'swap file'",
   }
   -> file { '/swap':
     owner => 'root',
