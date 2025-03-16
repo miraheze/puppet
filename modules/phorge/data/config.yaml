@@ -57,7 +57,7 @@ maniphest.priorities:
     short: 'Triage'
     color: 'violet'
     keywords: ['triage']
-  '80':
+  '75':
     name: 'High'
     short: 'High'
     color: 'red'
