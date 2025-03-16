@@ -103,7 +103,7 @@ define git::clone(
             if !empty($branch) {
                 $checkout_command = $revision ? {
                     ''      => "${git} checkout ${branch}",
-                    default => "${git} checkout ${revision}",
+                    default => "${git} fetch --all --tags && ${git} checkout ${revision}",
                 }
                 $is_current_revision = $revision ? {
                     ''      => "${git} rev-parse --abbrev-ref HEAD | grep ${branch}",
@@ -181,6 +181,16 @@ define git::clone(
                 }
             }
 
+            file { "${directory}/.git/hooks/post-merge":
+                ensure  => $revision ? {
+                    ''      => absent,
+                    default => present,
+                },
+                content => "#!/bin/bash\n${git} reset --hard ${revision}\n",
+                owner   => $owner,
+                group   => $group,
+                mode    => '0755',
+            }
         }
     }
 }
