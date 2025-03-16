@@ -63,15 +63,20 @@ maniphest.priorities:
     color: 'red'
     keywords: ['high']
   '50':
-    name: 'Normal'
-    short: 'Normal'
+    name: 'Medium'
+    short: 'Medium'
     color: 'orange'
-    keywords: ['normal']
+    keywords: ['medium', 'normal']
   '25':
     name: 'Low'
     short: 'Low'
-    color: 'sky'
+    color: 'yellow'
     keywords: ['low']
+  '10':
+    name: 'Lowest'
+    short: 'Lowest'
+    color: 'sky'
+    keywords: ['lowest']
 
 maniphest.statuses:
   'open':
