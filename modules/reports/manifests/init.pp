@@ -96,7 +96,7 @@ class reports {
     # Extensions that require configuration.
     php::extension {
         default:
-            sapis        => ['cli', 'fpm'];
+            sapis => ['cli', 'fpm'];
         'xml':
             package_name => "php${php_version}-xml",
             priority     => 15;
@@ -142,6 +142,7 @@ class reports {
     }
 
     ssl::wildcard { 'reports wildcard': }
+    ssl::client_cert_cas { 'reports client_cert_cas': }
 
     nginx::site { 'reports.miraheze.org':
         ensure  => present,

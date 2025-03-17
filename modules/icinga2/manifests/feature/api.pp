@@ -165,7 +165,7 @@ class icinga2::feature::api(
   Optional[Stdlib::Base64]                                 $ssl_key                          = undef,
   Optional[Stdlib::Base64]                                 $ssl_cert                         = undef,
   Optional[Stdlib::Base64]                                 $ssl_cacert                       = undef,
-  Optional[Enum['TLSv1', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3']] $ssl_protocolmin                  = undef,
+  Optional[Enum['TLSv1.3']] $ssl_protocolmin                  = undef,
   Optional[Icinga2::Interval]                              $ssl_handshake_timeout            = undef,
   Optional[Icinga2::Interval]                              $connect_timeout                  = undef,
   Optional[String]                                         $ssl_cipher_list                  = undef,
@@ -367,6 +367,6 @@ class icinga2::feature::api(
 
   # manage feature
   icinga2::feature { 'api':
-    ensure      => $ensure,
+    ensure => $ensure,
   }
 }

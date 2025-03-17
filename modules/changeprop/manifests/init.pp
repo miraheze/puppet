@@ -1,26 +1,25 @@
 # == Class: changeprop
 
 class changeprop (
-    $broker_list                    = lookup('changeprop::broker_list', {'default_value' => '10.0.18.146:9092'}),
-    $jobrunner_host                 = lookup('changeprop::jobrunner_host', {'default_value' => 'http://localhost:4063'}),
-    $import_host                    = lookup('changeprop::import_host', {'default_value' => 'http://localhost:4063'}),
-    $videoscaler_host               = lookup('changeprop::videoscaler_host', {'default_value' => 'http://localhost:4063'}),
-    $realm                          = lookup('changeprop::realm', {'default_value' => 'production'}),
-    $proxy                          = lookup('changeprop::proxy', {'default_value' => ''}),
-    $num_workers                    = lookup('changeprop::num_workers', {'default_value' => 1}),
-    $high_traffic_jobs_config       = lookup('changeprop::high_traffic_jobs_config', {'default_value' => {}}),
-    $import_jobs_config             = lookup('changeprop::import_jobs_config', {'default_value' => {}}),
-    $videoscaler_jobs_config        = lookup('changeprop::videoscaler_jobs_config', {'default_value' => {}}),
-    $partitioned_jobs_config        = lookup('changeprop::partitioned_jobs_config', {'default_value' => {}}),
-    $global_new_files_jobs          = lookup('changeprop::global_new_files_jobs', {'default_value' => {}}),
-    $semantic_mediawiki_jobs        = lookup('changeprop::semantic_mediawiki_jobs', {'default_value' => {}}),
-    $global_new_files_concurrency   = lookup('changeprop::global_new_files_concurrency', {'default_value' => 50}),
-    $semantic_mediawiki_concurrency = lookup('changeprop::semantic_mediawiki_concurrency', {'default_value' => 50}),
-    $low_traffic_concurrency        = lookup('changeprop::low_traffic_concurrency', {'default_value' => 50}),
-    $redis_host                     = lookup('changeprop::redis_host', {'default_value' => 'localhost'}),
-    $redis_password                 = lookup('passwords::redis::master')
+    $broker_list                           = lookup('changeprop::broker_list', {'default_value' => '10.0.18.146:9092'}),
+    $jobrunner_host                        = lookup('changeprop::jobrunner_host', {'default_value' => 'http://localhost:4063'}),
+    $jobrunner_high_timeout_host           = lookup('changeprop::jobrunner_high_timeout_host', {'default_value' => 'http://localhost:4063'}),
+    $videoscaler_host                      = lookup('changeprop::videoscaler_host', {'default_value' => 'http://localhost:4063'}),
+    $realm                                 = lookup('changeprop::realm', {'default_value' => 'production'}),
+    $proxy                                 = lookup('changeprop::proxy', {'default_value' => ''}),
+    $num_workers                           = lookup('changeprop::num_workers', {'default_value' => 1}),
+    $high_traffic_jobs_config              = lookup('changeprop::high_traffic_jobs_config', {'default_value' => {}}),
+    $high_traffic_high_timeout_jobs_config = lookup('changeprop::high_traffic_high_timeout_jobs_config', {'default_value' => {}}),
+    $videoscaler_jobs_config               = lookup('changeprop::videoscaler_jobs_config', {'default_value' => {}}),
+    $latency_sensitive_jobs_config         = lookup('changeprop::latency_sensitive_jobs_config', {'default_value' => {}}),
+    $partitioned_jobs_config               = lookup('changeprop::partitioned_jobs_config', {'default_value' => {}}),
+    $semantic_mediawiki_jobs               = lookup('changeprop::semantic_mediawiki_jobs', {'default_value' => {}}),
+    $semantic_mediawiki_concurrency        = lookup('changeprop::semantic_mediawiki_concurrency', {'default_value' => 50}),
+    $low_traffic_concurrency               = lookup('changeprop::low_traffic_concurrency', {'default_value' => 50}),
+    $redis_host                            = lookup('changeprop::redis_host', {'default_value' => 'localhost'}),
+    $redis_password                        = lookup('passwords::redis::master')
 ) {
-    stdlib::ensure_packages(['nodejs', 'libssl1.1', 'libsasl2-dev'])
+    stdlib::ensure_packages(['nodejs', 'libssl-dev', 'libsasl2-dev'])
 
     group { 'changeprop':
         ensure => present,
@@ -51,7 +50,7 @@ class changeprop (
     }
 
     file { '/etc/changeprop':
-        ensure  => directory,
+        ensure => directory,
     }
 
     if lookup('changeprop::jobqueue', {'default_value' => false}) {
@@ -71,15 +70,14 @@ class changeprop (
     }
 
     systemd::service { 'changeprop':
-        ensure  => present,
-        content => systemd_template('changeprop'),
-        restart => true,
-        require => Git::Clone['changeprop'],
-    }
-
-    nginx::site { 'jobrunner':
-        ensure => present,
-        source => 'puppet:///modules/changeprop/nginx/jobrunner.conf',
+        ensure         => present,
+        content        => systemd_template('changeprop'),
+        restart        => true,
+        service_params => {
+            hasstatus  => true,
+            hasrestart => true
+        },
+        require        => Git::Clone['changeprop'],
     }
 
     monitoring::services { 'changeprop':

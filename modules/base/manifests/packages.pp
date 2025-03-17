@@ -25,6 +25,7 @@ class base::packages {
         'pigz',
         'python-is-python3',
         'python3-distro',
+        'qemu-guest-agent',
         'ruby',
         'screen',
         'strace',

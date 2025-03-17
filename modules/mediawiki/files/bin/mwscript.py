@@ -50,6 +50,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     ) + versionLists
 
     longscripts = (
+        'checkswiftcontainers',
         'compressold',
         'deletebatch',
         'importdump',
@@ -91,13 +92,8 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
             args.version = versions.get(wiki[:-6])
 
     script = args.script
-    if not script.endswith('.php') and float(args.version) < 1.40:
-        print('Error: Use MediaWiki version 1.40 or greater (e.g. --version=1.40) to use a class for MaintenanceRunner')
-        return 2
-    if float(args.version) >= 1.40:
-        runner = f'/srv/mediawiki/{args.version}/maintenance/run.php '
-    else:
-        runner = ''
+    runner = f'/srv/mediawiki/{args.version}/maintenance/run.php '
+
     if script.endswith('.php'):  # assume class if not
         scriptsplit = script.split('/')
         if script.split('.')[0].lower() in longscripts:
@@ -127,9 +123,9 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{dblist_file} {script}'
     elif args.extension:
         long = True
-        generate = f'php {runner}/srv/mediawiki/{args.version}/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension} --directory=/home/{os.getlogin()}'
+        generate = f'sudo -u www-data php {runner}MirahezeMagic:GenerateExtensionDatabaseList --wiki=loginwiki --extension={args.extension} --directory=/tmp'
         dblist_file = get_dblist_file(args.extension)
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{dblist_file} {script}'
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/{dblist_file} {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
     if args.arguments:

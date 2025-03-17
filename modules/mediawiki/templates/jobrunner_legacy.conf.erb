@@ -1,0 +1,20 @@
+<%-
+-%>
+# This file is managed by Puppet
+
+<VirtualHost *:<%= @local_only_port %>>
+    Timeout 259202
+    DocumentRoot "/srv/mediawiki"
+    RewriteEngine On
+    <Directory /srv/mediawiki>
+       Require all granted
+    </Directory>
+    # Only selected paths are allowed here
+    RewriteCond %{REQUEST_URI} !^/(w/healthcheck|rpc/RunJobs)\.php
+    RewriteRule ^ - [R=404,L]
+    <FilesMatch "\.php$">
+        SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>|fcgi://www"
+    </FilesMatch>
+    ErrorLog ${APACHE_LOG_DIR}/jobqueue-error.log
+    CustomLog ${APACHE_LOG_DIR}/jobqueue-access.log wt
+</VirtualHost>

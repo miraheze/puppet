@@ -3,6 +3,7 @@ class varnish (
     String $cache_file_name = '/srv/varnish/cache_storage.bin',
     String $cache_file_size = '22G',
     Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
+    Integer $transient_gb = lookup('varnish::transient_storage'),
 ) {
     include varnish::nginx
     include prometheus::exporter::varnish
@@ -38,18 +39,20 @@ class varnish (
         notify  => Service['varnish'],
     }
 
+    $module_path = get_module_path('mediawiki')
+    $csp = loadyaml("${module_path}/data/csp.yaml")
     $backends = lookup('varnish::backends')
+    $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
+    $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
     $interval_check = lookup('varnish::interval-check')
     $interval_timeout = lookup('varnish::interval-timeout')
 
     $debug_access_key = lookup('passwords::varnish::debug_access_key')
 
-    # (1024.0 * 1024.0) converts to megabytes.
-    $mem_gb = $facts['memory']['system']['total_bytes'] / (1024.0 * 1024.0) / 1024.0
-    if ($mem_gb < 90.0) {
-        $v_mem_gb = 1
+    if $transient_gb > 0 {
+        $transient_storage = "-s Transient=malloc,${transient_gb}G"
     } else {
-        $v_mem_gb = ceiling(0.7 * ($mem_gb - 100.0))
+        $transient_storage = ''
     }
 
     file { '/etc/varnish/default.vcl':
@@ -66,7 +69,7 @@ class varnish (
     }
 
     # TODO: On bigger memory hosts increase Transient size
-    $storage = "-s file,${cache_file_name},${cache_file_size} -s Transient=malloc,${v_mem_gb}G"
+    $storage = "-s file,${cache_file_name},${cache_file_size} ${transient_storage}"
 
     systemd::service { 'varnish':
         ensure         => present,

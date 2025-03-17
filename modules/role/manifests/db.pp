@@ -8,12 +8,18 @@ class role::db (
     Boolean $enable_slow_log = lookup('role::db::enable_slow_log', {'default_value' => false}),
     Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
     Boolean $enable_ssl = lookup('role::db::enable_ssl', {'default_value' => true}),
+    Boolean $is_beta_db = lookup('role::db::is_beta_db', {'default_value' => false}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
 
-    $mediawiki_password = lookup('passwords::db::mediawiki')
-    $wikiadmin_password = lookup('passwords::db::wikiadmin')
+    if ( $is_beta_db ) {
+        $mediawiki_password = lookup('passwords::db::mediawiki_beta')
+        $wikiadmin_password = lookup('passwords::db::wikiadmin_beta')
+    } else {
+        $mediawiki_password = lookup('passwords::db::mediawiki')
+        $wikiadmin_password = lookup('passwords::db::wikiadmin')
+    }
     $matomo_password = lookup('passwords::db::matomo')
     $phorge_password = lookup('passwords::db::phorge')
     $exporter_password = lookup('passwords::db::exporter')
@@ -65,8 +71,14 @@ class role::db (
         content => template('mariadb/grants/reports-grants.sql.erb'),
     }
 
+    if ( $is_beta_db ) {
+        $query_classes = 'Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]'
+    } else {
+        $query_classes = 'Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]'
+    }
+
     $firewall_rules_str = join(
-        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]', ['networking'])
+        query_facts($query_classes, ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
@@ -93,8 +105,24 @@ class role::db (
         ensure   => present,
         uid      => 3000,
         ssh_keys => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOL4FH2aRAwbSGP1HLmo1YzaXRci2YnkTGJvT2E6Ay0d dbcopy@db101'
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDHPGyXQ6O2Cy+LxP3BwtbzaUufVTihefglsUoWkBiIl dbcopy@wikitide.net'
         ],
+    }
+
+    file { '/home/dbcopy/.ssh':
+        ensure => 'directory',
+        owner  => 'dbcopy',
+        group  => 'dbcopy',
+        mode   => '0700',
+    }
+
+    file { '/home/dbcopy/.ssh/id_ed25519':
+        ensure  => 'present',
+        source  => 'puppet:///private/mariadb/dbcopy-ssh-key',
+        owner   => 'dbcopy',
+        group   => 'dbcopy',
+        mode    => '0400',
+        require => File['/home/dbcopy/.ssh'],
     }
 
     # Backup provisioning
@@ -106,84 +134,115 @@ class role::db (
         description => 'MySQL database server',
     }
 
+    file { '/var/log/db-backups':
+        ensure => 'directory',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    }
+
     if $backup_sql {
-        cron { 'backups-sql':
-            ensure   => present,
-            command  => '/usr/local/bin/wikitide-backup backup sql > /var/log/sql-backup.log 2>&1',
-            user     => 'root',
-            minute   => '0',
-            hour     => '3',
-            monthday => [fqdn_rand(13, 'db-backups') + 1, fqdn_rand(13, 'db-backups') + 15],
+        $monthday_1 = fqdn_rand(13, 'db-backups') + 1
+        $monthday_15 = fqdn_rand(13, 'db-backups') + 15
+        systemd::timer::job { 'db-backups':
+            description       => 'Runs backup of all the wikis dbs',
+            command           => '/usr/local/bin/wikitide-backup backup sql',
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => "*-*-${monthday_1},${monthday_15} 03:00:00",
+            },
+            logfile_basedir   => '/var/log/db-backups',
+            logfile_name      => 'db-backups.log',
+            syslog_identifier => 'db-backups',
+            user              => 'root',
         }
 
         monitoring::nrpe { 'Backups SQL':
-            command  => '/usr/lib/nagios/plugins/check_file_age -w 1382400 -c 1468800 -f /var/log/sql-backup.log',
+            command  => '/usr/lib/nagios/plugins/check_file_age -w 1382400 -c 1468800 -f /var/log/db-backups/db-backups/db-backups.log',
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
     }
 
     $daily_misc.each |String $db| {
-        cron { "backups-${db}":
-            ensure  => present,
-            command => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-daily.log 2>&1",
-            user    => 'root',
-            special => 'daily',
+        systemd::timer::job { "${db}-db-backups-daily":
+            description       => "Runs backup of ${db} db daily",
+            command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-*-* 00:00:00',
+            },
+            logfile_basedir   => '/var/log/db-backups',
+            logfile_name      => "${db}-db-backups-daily.log",
+            syslog_identifier => "${db}-db-backups-daily",
+            user              => 'root',
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 129600 -c 172800 -f /var/log/sql-${db}-backup-daily.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 129600 -c 172800 -f /var/log/db-backups/${db}-db-backups-daily/${db}-db-backups-daily.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
     }
 
     $weekly_misc.each |String $db| {
-        cron { "backups-${db}":
-            ensure  => present,
-            command => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-weekly.log 2>&1",
-            user    => 'root',
-            minute  => '0',
-            hour    => '5',
-            weekday => '0',
+        systemd::timer::job { "${db}-db-backups-weekly":
+            description       => "Runs backup of ${db} db weekly",
+            command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => 'Sun *-*-* 05:00:00',
+            },
+            logfile_basedir   => '/var/log/db-backups',
+            logfile_name      => "${db}-db-backups-weekly.log",
+            syslog_identifier => "${db}-db-backups-weekly",
+            user              => 'root',
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sql-${db}-backup-weekly.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/db-backups/${db}-db-backups-weekly/${db}-db-backups-weekly.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
     }
 
     $fortnightly_misc.each |String $db| {
-        cron { "backups-${db}":
-            ensure   => present,
-            command  => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-fortnightly.log 2>&1",
-            user     => 'root',
-            minute   => '0',
-            hour     => '5',
-            monthday => ['1', '15'],
+        systemd::timer::job { "${db}-db-backups-fortnightly":
+            description       => "Runs backup of ${db} db fortnightly",
+            command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-*-1,15 05:00:00',
+            },
+            logfile_basedir   => '/var/log/db-backups',
+            logfile_name      => "${db}-db-backups-fortnightly.log",
+            syslog_identifier => "${db}-db-backups-fortnightly",
+            user              => 'root',
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/sql-${db}-backup-fortnightly.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/db-backups/${db}-db-backups-fortnightly/${db}-db-backups-fortnightly.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }
     }
 
     $monthly_misc.each |String $db| {
-        cron { "backups-${db}":
-            ensure   => present,
-            command  => "/usr/local/bin/wikitide-backup backup sql --database=${db} > /var/log/sql-${db}-backup-monthly.log 2>&1",
-            user     => 'root',
-            minute   => '0',
-            hour     => '5',
-            monthday => ['24'],
+        systemd::timer::job { "${db}-db-backups-monthly":
+            description       => "Runs backup of ${db} db monthly",
+            command           => "/usr/local/bin/wikitide-backup backup sql --database=${db}",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-*-24 05:00:00',
+            },
+            logfile_basedir   => '/var/log/db-backups',
+            logfile_name      => "${db}-db-backups-monthly.log",
+            syslog_identifier => "${db}-db-backups-monthly",
+            user              => 'root',
         }
 
         monitoring::nrpe { "Backups SQL ${db}":
-            command  => "/usr/lib/nagios/plugins/check_file_age -w 3024000 -c 3456000 -f /var/log/sql-${db}-backup-monthly.log",
+            command  => "/usr/lib/nagios/plugins/check_file_age -w 3024000 -c 3456000 -f /var/log/db-backups/${db}-db-backups-monthly/${db}-db-backups-monthly.log",
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }

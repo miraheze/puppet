@@ -13,17 +13,17 @@ swift::accounts:
     super_admin:
         access:       '.admin .reseller_admin'
         account_name: 'AUTH_admin'
-        auth:         'http://swift-lb.miraheze.org'
+        auth:         'http://swift-lb.wikitide.net'
         user:         'admin:admin'
     mw_media:
         access:       '.admin'
         account_name: 'AUTH_mw'
-        auth:         'http://swift-lb.miraheze.org'
+        auth:         'http://swift-lb.wikitide.net'
         user:         'mw:media'
     dispersion:
         access:       '.admin'
         account_name: 'AUTH_dispersion'
-        auth:         'http://swift-lb.miraheze.org'
+        auth:         'http://swift-lb.wikitide.net'
         user:         'swift:dispersion'
 
 role::prometheus::statsd_exporter::mappings:

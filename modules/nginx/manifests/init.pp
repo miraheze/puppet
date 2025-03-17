@@ -4,7 +4,8 @@ class nginx (
     Boolean                  $use_graylog                             = lookup('nginx::use_graylog', {'default_value' => false}),
     Boolean                  $remove_apache                           = lookup('nginx::remove_apache', {'default_value' => true}),
     Integer                  $logrotate_number                        = lookup('nginx::logrotate_number', {'default_value' => 12}),
-    Integer                  $keepalive_timeout                       = lookup('nginx::keepalive_timeout', {'default_value' => 75}),
+    String                   $logrotate_maxsize                       = lookup('nginx::logrotate_maxsize', {'default_value' => '5G'}),
+    Integer                  $keepalive_timeout                       = lookup('nginx::keepalive_timeout', {'default_value' => 60}),
     Integer                  $keepalive_requests                      = lookup('nginx::keepalive_requests', {'default_value' => 1000}),
     String                   $nginx_client_max_body_size              = lookup('nginx::client_max_body_size', {'default_value' => '250M'}),
     Boolean                  $use_varnish_directly                    = lookup('nginx::use_varnish_directly', {'default_value' => true}),
@@ -12,7 +13,7 @@ class nginx (
     if $remove_apache {
         # Ensure Apache is absent: https://issue-tracker.miraheze.org/T253
         package { 'apache2':
-            ensure  => absent,
+            ensure => absent,
         }
     }
 
@@ -50,12 +51,13 @@ class nginx (
         source => 'puppet:///modules/nginx/mime.types',
     }
 
-    # (1024.0 * 1024.0) converts to megabytes.
-    $mem_gb = $facts['memory']['system']['total_bytes'] / (1024.0 * 1024.0) / 1024.0
-    if ($mem_gb < 90.0) {
-        $ssl_session_cache = 120
-    } else {
+    $mem_gb = $facts['memory']['system']['total_bytes'] / 1073741824.0
+    if ($mem_gb < 3.0) {
+        $ssl_session_cache = 256
+    } elsif ($mem_gb < 4.0) {
         $ssl_session_cache = 1024
+    } else {
+        $ssl_session_cache = 2048
     }
 
     $cache_proxies = query_facts("Class['Role::Varnish']", ['networking'])
@@ -88,6 +90,10 @@ class nginx (
             File['/etc/nginx/nginx.conf'],
             File['/etc/nginx/fastcgi_params']
         ],
+    }
+
+    class { 'logrotate':
+        hourly => true,
     }
 
     logrotate::conf { 'nginx':

@@ -11,27 +11,26 @@ jobrunner::intensive: true
 mediawiki::jobqueue::runner::cron: true
 mediawiki::jobqueue::runner::redis_ip: '10.0.15.118:6379'
 mediawiki::jobqueue::wiki: 'loginwikibeta'
-mediawiki::use_cpjobqueue: true
+mediawiki::use_cpjobqueue: false
 
 role::mediawiki::use_strict_firewall: true
+role::mediawiki::is_beta: true
 
-mediawiki::php::fpm::fpm_min_child: 10
-mediawiki::php::emergency_restart_threshold: 5
-mediawiki::php::fpm::fpm_workers_multiplier: 1.0
+mediawiki::php::request_timeout: 201
+mediawiki::php::fpm::fpm_workers_multiplier: 2.0
 mediawiki::php::fpm_config:
   post_max_size: '250M'
   upload_max_filesize: '250M'
 
-mediawiki::php::memory_limit: '500M'
 mediawiki::php::enable_request_profiling: true
 
 mediawiki::use_staging: true
 mediawiki::monitoring::host: 'test.mirabeta.org'
 
 mediawiki::multiversion::versions:
-  '1.42':
-    branch: 'REL1_42'
   '1.43':
+    branch: 'REL1_43'
+  '1.44':
     branch: 'master'
     default: true
 
@@ -44,7 +43,7 @@ base::syslog::rsyslog_udp_localhost: true
 prometheus::exporter::redis::collect_jobqueue_stats: present
 
 # NGINX
-nginx::keepalive_timeout: 75
+nginx::keepalive_timeout: 60
 nginx::keepalive_requests: 1000
 nginx::logrotate_number: 2
 nginx::use_graylog: true
@@ -55,12 +54,12 @@ httpd::remove_default_ports: true
 # memcached
 role::memcached::threads: ~
 role::memcached::version: 'present'
-role::memcached::growth_factor: 1.05
-role::memcached::min_slab_size: 5
+role::memcached::growth_factor: 1.15
+role::memcached::min_slab_size: 48
 role::memcached::max_seq_reqs: 200
-role::memcached::size: 512
+role::memcached::size: 1024
 role::memcached::extended_options:
-  - 'slab_reassign'
+  - "modern"
 role::memcached::port: 11211
 
 role::mediawiki::mcrouter::shards:

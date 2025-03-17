@@ -1,7 +1,7 @@
 # == Class: eventgate
 
 class eventgate {
-    stdlib::ensure_packages(['nodejs', 'libssl1.1'])
+    stdlib::ensure_packages(['nodejs', 'libssl-dev'])
 
     group { 'eventgate':
         ensure => present,
@@ -31,6 +31,21 @@ class eventgate {
         ],
     }
 
+    git::clone { 'jsonschema':
+        ensure             => present,
+        directory          => '/srv/jsonschema',
+        origin             => 'https://gitlab.wikimedia.org/repos/data-engineering/schemas-event-primary.git',
+        branch             => 'master',
+        owner              => 'eventgate',
+        group              => 'eventgate',
+        mode               => '0755',
+        recurse_submodules => true,
+        require            => [
+          User['eventgate'],
+          Group['eventgate'],
+        ],
+    }
+
     file { '/srv/eventgate/eventgate-custom.js':
         ensure  => present,
         source  => 'puppet:///modules/eventgate/eventgate-custom.js',
@@ -46,13 +61,16 @@ class eventgate {
     }
 
     file { '/etc/eventgate':
-        ensure  => directory,
+        ensure => directory,
     }
 
     file { '/etc/eventgate/config.yaml':
         ensure  => present,
         source  => 'puppet:///modules/eventgate/config.yaml',
-        require => File['/etc/eventgate'],
+        require => [
+            File['/etc/eventgate'],
+            Git::Clone['jsonschema']
+        ],
         notify  => Service['eventgate'],
     }
 

@@ -1,88 +1,88 @@
 -- Grants for 'mediawiki'@''
 
 GRANT USAGE
-    ON *.* TO 'mediawiki'@'%'
+    ON *.* TO 'mediawiki2024'@'%'
     IDENTIFIED BY '<%= @mediawiki_password %>'
     WITH MAX_STATEMENT_TIME 600;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES, CREATE TEMPORARY TABLES
-    ON `%wiki%`.* TO 'mediawiki'@'%';
+    ON `%wiki%`.* TO 'mediawiki2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, LOCK TABLES
-    ON `centralauth`.* TO 'mediawiki'@'%';
+    ON `centralauth`.* TO 'mediawiki2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `cargodb`.* TO 'mediawiki'@'%';
+    ON `cargodb`.* TO 'mediawiki2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `mhglobal`.* TO 'mediawiki'@'%';
+    ON `mhglobal`.* TO 'mediawiki2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `testglobal`.* TO 'mediawiki'@'%';
+    ON `testglobal`.* TO 'mediawiki2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `parsercache`.* TO 'mediawiki'@'%';
+    ON `parsercache`.* TO 'mediawiki2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `testparsercache`.* TO 'mediawiki'@'%';
+    ON `testparsercache`.* TO 'mediawiki2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `mainstash`.* TO 'mediawiki'@'%';
+    ON `mainstash`.* TO 'mediawiki2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `testmainstash`.* TO 'mediawiki'@'%';
+    ON `testmainstash`.* TO 'mediawiki2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
-    ON `incidents`.* TO 'mediawiki'@'%';
+    ON `incidents`.* TO 'mediawiki2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
-    ON `survey`.* TO 'mediawiki'@'%';
+    ON `survey`.* TO 'mediawiki2024'@'%';
 
 -- Grants for 'cargouser'@''
 
 GRANT USAGE
-    ON *.* TO 'cargouser'@'%'
+    ON *.* TO 'cargouser2024'@'%'
     IDENTIFIED BY '<%= @mediawiki_password %>'
     WITH MAX_STATEMENT_TIME 600;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    on `%cargo`.* TO 'cargouser'@'%';
+    on `%cargo`.* TO 'cargouser2024'@'%';
 
 -- Grants for 'wikiadmin'@''
 
 GRANT USAGE
-    ON *.* TO 'wikiadmin'@'%'
+    ON *.* TO 'wikiadmin2024'@'%'
     IDENTIFIED BY '<%= @wikiadmin_password %>';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `%wiki%`.* TO 'wikiadmin'@'%';
+    ON `%wiki%`.* TO 'wikiadmin2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `centralauth`.* TO 'wikiadmin'@'%';
+    ON `centralauth`.* TO 'wikiadmin2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `cargodb`.* TO 'wikiadmin'@'%';
+    ON `cargodb`.* TO 'wikiadmin2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `mhglobal`.* TO 'wikiadmin'@'%';
+    ON `mhglobal`.* TO 'wikiadmin2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `testglobal`.* TO 'wikiadmin'@'%';
+    ON `testglobal`.* TO 'wikiadmin2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `parsercache`.* TO 'wikiadmin'@'%';
+    ON `parsercache`.* TO 'wikiadmin2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `testparsercache`.* TO 'wikiadmin'@'%';
+    ON `testparsercache`.* TO 'wikiadmin2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `mainstash`.* TO 'wikiadmin'@'%';
+    ON `mainstash`.* TO 'wikiadmin2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `testmainstash`.* TO 'wikiadmin'@'%';
+    ON `testmainstash`.* TO 'wikiadmin2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
-    ON `incidents`.* TO 'wikiadmin'@'%';
+    ON `incidents`.* TO 'wikiadmin2024'@'%';
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER
-    ON `survey`.* TO 'wikiadmin'@'%';
+    ON `survey`.* TO 'wikiadmin2024'@'%';
