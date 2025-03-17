@@ -48,11 +48,13 @@ define irc::relaybot (
         }
     }
 
+    $repo_ensure = $ensure ? {
+        present => latest,
+        default => $ensure,
+    }
+
     git::clone { "IRC-Discord-Relay-${title}":
-        ensure    => $ensure ? {
-            present => latest,
-            default => $ensure,
-        },
+        ensure    => $repo_ensure,
         origin    => 'https://github.com/miraheze/IRC-Discord-Relay',
         directory => $install_path,
         owner     => 'irc',
