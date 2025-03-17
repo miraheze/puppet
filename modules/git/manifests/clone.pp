@@ -181,11 +181,13 @@ define git::clone(
                 }
             }
 
+            $revision_ensure = $revision ? {
+                ''      => absent,
+                default => present,
+            }
+
             file { "${directory}/.git/hooks/post-merge":
-                ensure  => $revision ? {
-                    ''      => absent,
-                    default => present,
-                },
+                ensure  => $revision_ensure,
                 content => "#!/bin/bash\n${git} reset --hard ${revision}\n",
                 owner   => $owner,
                 group   => $group,
