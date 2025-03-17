@@ -32,7 +32,7 @@ jobs:
           --no-documentation-check
           --no-variable_scope-check
           --fix ./
-          --ignore-paths './/**/*.yaml,.//**/*.yml'
+          --ignore-paths './/**/*.yaml,.//**/*.yml,.//modules/prometheus/manifests/jmx_exporter_config.pp'
 
     - name: Push the changes
       continue-on-error: true
