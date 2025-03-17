@@ -47,7 +47,7 @@ class icinga2::feature::notification(
 
   # manage feature
   icinga2::feature { 'notification':
-    ensure      => $ensure,
+    ensure => $ensure,
   }
 
 }

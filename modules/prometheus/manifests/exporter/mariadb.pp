@@ -61,7 +61,7 @@ class prometheus::exporter::mariadb {
     }
 
     service { 'prometheus-mysqld-exporter':
-        ensure  => running,
+        ensure => running,
     }
 
     $firewall_rules_str = join(
