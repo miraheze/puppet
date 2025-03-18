@@ -1,11 +1,11 @@
 [Unit]
-Description=WikiTide IRC RecentChanges feed
+Description=WikiTide IRC RecentChanges feed - <%= @nickname %>
 
 [Service]
 Type=simple
 User=irc
 SyslogIdentifier=ircrcbot
-ExecStart=/usr/bin/python3 /usr/local/bin/ircrcbot.py
+ExecStart=/usr/bin/python3 /usr/local/bin/ircrcbot-<%= @nickname %>.py
 Restart=on-failure
 
 [Install]

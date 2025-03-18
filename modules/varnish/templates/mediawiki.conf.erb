@@ -122,6 +122,10 @@ server {
 		return 403;
 	}
 
+	location = /.well-known/change-password {
+		return 301 /wiki/Special:ResetPassword;
+	}
+
 	location / {
 		proxy_pass http://127.0.0.1:81;
 		proxy_http_version 1.1;
@@ -261,6 +265,10 @@ server {
 		return 301 https://wikitide.net$request_uri;
 	}
 
+	location = /.well-known/change-password {
+		return 301 /wiki/Special:ResetPassword;
+	}
+
 	<%- if property['path_redirects'] -%>
 	<%- property['path_redirects'].each_pair do | path, redirect | -%>
 	location ~* <%= path %>$ {
@@ -316,6 +324,10 @@ server {
 	}
 	location ~* /wp-login\.php|xm(lr|rl)pc\.php|/wp-admin|/wp-content/|install\.php|/wp-includes/|wso112233\.php|/\.git/|ALFA_DATA|/wordpress/ {
 		return 403;
+	}
+
+	location = /.well-known/change-password {
+		return 301 /wiki/Special:ResetPassword;
 	}
 
 	location / {

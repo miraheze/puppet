@@ -100,8 +100,6 @@ class mediawiki {
     $swift_temp_url_key         = lookup('mediawiki::swift_temp_url_key')
     $reports_write_key          = lookup('reports::reports_write_key')
     $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
-    $multipurge_apitoken        = lookup('mediawiki::multipurge_apitoken')
-    $multipurge_zoneid          = lookup('mediawiki::multipurge_zoneid')
     $openai_apikey              = lookup('mediawiki::openai_apikey')
     $openai_assistantid         = lookup('mediawiki::openai_assistantid')
     $turnstile_sitekey          = lookup('mediawiki::turnstile_sitekey')
@@ -204,9 +202,9 @@ class mediawiki {
     exec { 'create python venv':
         command => '/usr/bin/python3 -m venv /srv/python/env && /srv/python/env/bin/pip3 install Miraheze-PyUtils',
         require => [Package['python3'],File['/srv/python']],
-        cwd => '/srv',
-        user => 'www-data',
-        onlyif => "test ! -d /srv/python/env",
-        path   => '/bin:/usr/bin',
+        cwd     => '/srv',
+        user    => 'www-data',
+        onlyif  => 'test ! -d /srv/python/env',
+        path    => '/bin:/usr/bin',
     }
 }

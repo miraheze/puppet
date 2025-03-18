@@ -24,7 +24,14 @@ jobs:
     - name: puppet-lint
       uses: scottbrenner/puppet-lint-action@master
       with:
-        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check --fix ./ --ignore-paths=.//modules/prometheus/manifests/jmx_exporter_config.pp
+        args: >-
+          --no-80chars-check
+          --no-140chars-check
+          --no-puppet_url_without_modules-check
+          --no-documentation-check
+          --no-variable_scope-check
+          --fix ./
+          --ignore-paths './/**/*.yaml,.//**/*.yml,.//modules/prometheus/manifests/jmx_exporter_config.pp'
 
     - name: Push the changes
       continue-on-error: true

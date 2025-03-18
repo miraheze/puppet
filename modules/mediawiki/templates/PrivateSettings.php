@@ -27,10 +27,6 @@ $wgShellboxSecretKey = "<%= @shellbox_secretkey %>";
 // Matomo token
 $wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
 
-// MultiPurge configuration tokens for CloudFlare
-$wgMultiPurgeCloudFlareApiToken = "<%= @multipurge_apitoken %>";
-$wgMultiPurgeCloudFlareZoneId = "<%= @multipurge_zoneid %>";
-
 // OpenAI settings
 $wgCreateWikiOpenAIConfig = [
   "dryrun" => false,
