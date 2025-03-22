@@ -388,6 +388,10 @@ sub vcl_recv {
 		unset req.http.X-Subdomain;
 	}
 
+	if (req.url == "/.well-known/traffic-advice") {
+		return (synth(200, "Disable Chrome Private Prefetch Proxy"));
+	}
+
 	# Health checks, do not send request any further, if we're up, we can handle it
 	if (req.http.Host == "health.wikitide.net" && req.url == "/check") {
 		return (synth(200));
@@ -875,6 +879,17 @@ sub vcl_synth {
 		} else {
 			set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
 		}
+	}
+
+	if (resp.reason == "Disable Chrome Private Prefetch Proxy") {
+		set resp.reason = "OK";
+		set resp.http.Cache-Control = "public, max-age=86400";
+		set resp.http.Content-Type = "application/trafficadvice+json";
+		synthetic({"[{
+	"user_agent": "prefetch-proxy",
+	"disallow": true
+}]
+"});
 	}
 
 	return (deliver);
