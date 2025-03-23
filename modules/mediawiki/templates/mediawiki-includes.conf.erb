@@ -54,8 +54,13 @@ location ^~ /w/index.php {
 		break;
 	}
 
-	if ($arg_action = raw || $arg_action = render) {
-		# T12214 and T13404: Avoid an unnecessary redirect
+	if ($arg_action = raw) {
+		# T12214: Avoid an unnecessary redirect
+		break;
+	}
+
+	if ($arg_action = render) {
+		# T13404: Avoid an unnecessary redirect
 		break;
 	}
 
