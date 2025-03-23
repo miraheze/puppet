@@ -16,8 +16,8 @@ class role::mediawiki (
     include mediawiki
 
     if $strict_firewall {
-        $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Varnish] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion]', ['networking'])
+        $firewall_rules_str_80 = join(
+            query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Varnish] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion] or Class[Role::Dns]', ['networking'])
             .map |$key, $value| {
                 if ( $value['networking']['interfaces']['he-ipv6'] ) {
                     "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
@@ -38,14 +38,32 @@ class role::mediawiki (
         ferm::service { 'http':
             proto   => 'tcp',
             port    => '80',
-            srange  => "(${firewall_rules_str})",
+            srange  => "(${firewall_rules_str_80})",
             notrack => true,
         }
 
+        $firewall_rules_str_443 = join(
+            query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Varnish] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion]', ['networking'])
+            .map |$key, $value| {
+                if ( $value['networking']['interfaces']['he-ipv6'] ) {
+                    "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
+                } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                    "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+                } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                    "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+                } else {
+                    "${value['networking']['ip']} ${value['networking']['ip6']}"
+                }
+            }
+            .flatten()
+            .unique()
+            .sort(),
+            ' '
+        )
         ferm::service { 'https':
             proto   => 'tcp',
             port    => '443',
-            srange  => "(${firewall_rules_str})",
+            srange  => "(${firewall_rules_str_443})",
             notrack => true,
         }
     } else {
