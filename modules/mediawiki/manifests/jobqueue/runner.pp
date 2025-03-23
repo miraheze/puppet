@@ -131,7 +131,7 @@ class mediawiki::jobqueue::runner (
 
         systemd::timer::job { 'campaigneventstimestamps':
             description       => 'Update UTC Timestamps',
-            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /src/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/CampaignEvents/maintenance/UpdateUTCTimestamps.php",
+            command           => "mwscript --extension CampaignEvents CampaignEvents:UpdateUTCTimestamps --no-log --confim",
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-* 01:00:00',
@@ -145,7 +145,7 @@ class mediawiki::jobqueue::runner (
 
         systemd::timer::job { 'campaigneventsaggregateanswers':
             description       => 'Aggregate Participant Answers',
-            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /src/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/CampaignEvents/maintenance/AggregateParticipantAnswers.php",
+            command           => "mwscript --extension CampaignEvents CampaignEvents:AggregateParticipantAnswers --no-log --confim",
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-* 01:00:00',
