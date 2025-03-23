@@ -54,7 +54,7 @@ location ^~ /w/index.php {
 		break;
 	}
 
-	if ($arg_action != "" && $arg_action != "view") {
+	if ($arg_action = raw || $arg_action = render) {
 		# T12214 and T13404: Avoid an unnecessary redirect
 		break;
 	}
