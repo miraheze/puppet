@@ -83,9 +83,11 @@ class mediawiki {
     if ( lookup('role::mediawiki::is_beta', {'default_value' => false}) ) {
         $wikiadmin_password         = lookup('passwords::mediawiki::wikiadmin_beta')
         $mediawiki_password         = lookup('passwords::mediawiki::mediawiki_beta')
+        $campaigneventsdashboard_apisecret = lookup('mediawiki::campaigneventsdashboard_apisecret_beta')
     } else {
         $wikiadmin_password         = lookup('passwords::mediawiki::wikiadmin')
         $mediawiki_password         = lookup('passwords::mediawiki::mediawiki')
+        $campaigneventsdashboard_apisecret = lookup('mediawiki::campaigneventsdashboard_apisecret')
     }
     $redis_password             = lookup('passwords::redis::master')
     $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
@@ -104,11 +106,6 @@ class mediawiki {
     $openai_assistantid         = lookup('mediawiki::openai_assistantid')
     $turnstile_sitekey          = lookup('mediawiki::turnstile_sitekey')
     $turnstile_secreteky        = lookup('mediawiki::turnstile_secretkey')
-    if ( lookup('role::mediawiki::is_beta', {'default_value' => false)) ) {
-        $campaigneventsdashboard_apisecret = lookup('mediawiki::campaigneventsdashboard_apisecret_beta')
-    } else {
-        $campaigneventsdashboard_apisecret = lookup('mediawiki::campaigneventsdashboard_apisecret')
-    }
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
