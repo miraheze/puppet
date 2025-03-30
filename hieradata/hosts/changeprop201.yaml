@@ -17,7 +17,7 @@ jobrunner_haproxy::backends:
     port: 9006
 changeprop::num_workers: 8
 changeprop::semantic_mediawiki_concurrency: 10
-changeprop::low_traffic_concurrency: 50
+changeprop::low_traffic_concurrency: 30
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
@@ -162,13 +162,13 @@ changeprop::videoscaler_jobs_config:
     concurrency: 2
     retry_limit: 1
     consumer:
-      max.poll.interval.ms: 3600000  # 1h
+      max.poll.interval.ms: 7200000  # 2h
   webVideoTranscodePrioritized:
     concurrency: 2
     timeout: 86400000
     retry_limit: 1
     consumer:
-      max.poll.interval.ms: 3600000  # 1h
+      max.poll.interval.ms: 7200000  # 2h
 
 changeprop::latency_sensitive_jobs_config:
   # AssembleUploadChunks, PublishStashedFile, and UploadFromUrl,
