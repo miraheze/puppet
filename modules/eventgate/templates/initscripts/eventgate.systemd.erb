@@ -10,6 +10,7 @@ Group=eventgate
 SyslogIdentifier=eventgate
 WorkingDirectory=/srv/eventgate
 ExecStart=/usr/bin/node /srv/eventgate/src/server.js -c /etc/eventgate/config.yaml
+Environment="UV_THREADPOOL_SIZE=128"
 Restart=always
 RestartSec=2s
 TimeoutStopSec=60
