@@ -68,6 +68,8 @@ class changeprop (
         }
     }
 
+    File['/etc/changeprop/config.yaml'] -> Service['changeprop']
+
     exec { 'systemd reload for changeprop':
       refreshonly => true,
       command     => '/bin/systemctl daemon-reload',
@@ -79,8 +81,8 @@ class changeprop (
     systemd::service { 'changeprop':
         ensure         => present,
         content        => systemd_template('changeprop'),
-        restart        => false,
         service_params => {
+            enable     => true,
             hasstatus  => true,
             hasrestart => true
         },
