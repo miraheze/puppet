@@ -159,12 +159,12 @@ changeprop::high_traffic_high_timeout_jobs_config:
 changeprop::videoscaler_jobs_config:
   webVideoTranscode:
     timeout: 86400000
-    concurrency: 2
+    concurrency: 1
     retry_limit: 1
     consumer:
       max.poll.interval.ms: 7200000  # 2h
   webVideoTranscodePrioritized:
-    concurrency: 2
+    concurrency: 1
     timeout: 86400000
     retry_limit: 1
     consumer:
