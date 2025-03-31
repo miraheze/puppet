@@ -65,14 +65,21 @@ class changeprop (
             ensure  => present,
             source  => 'puppet:///modules/changeprop/default.config.yaml',
             require => File['/etc/changeprop'],
-            notify  => Service['changeprop'],
         }
     }
+
+    exec { 'systemd reload for changeprop':
+      refreshonly => true,
+      command     => '/bin/systemctl daemon-reload',
+      subscribe   => File['/etc/changeprop/config.yaml'],
+    }
+
+    Exec['systemd reload for changeprop'] -> Service['changeprop']
 
     systemd::service { 'changeprop':
         ensure         => present,
         content        => systemd_template('changeprop'),
-        restart        => true,
+        restart        => false,
         service_params => {
             hasstatus  => true,
             hasrestart => true
