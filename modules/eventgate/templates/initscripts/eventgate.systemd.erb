@@ -5,6 +5,7 @@ Wants=local-fs.target network.target
 After=local-fs.target network.target
 
 [Service]
+LimitNOFILE=10000
 User=eventgate
 Group=eventgate
 SyslogIdentifier=eventgate
