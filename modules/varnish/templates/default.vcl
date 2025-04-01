@@ -78,6 +78,9 @@ acl purge {
 	# localhost
 	"127.0.0.1";
 
+	# Internal ips
+	"10.0.0.0/8";
+
 	# IPv6
 	"2602:294:0:c8::/64";
 	"2602:294:0:b13::/64";
@@ -88,6 +91,9 @@ acl purge {
 }
 
 acl wikitide_nets {
+	# Internal ips
+	"10.0.0.0/8";
+
 	# IPv6
 	"2602:294:0:c8::/64";
 	"2602:294:0:b13::/64";
