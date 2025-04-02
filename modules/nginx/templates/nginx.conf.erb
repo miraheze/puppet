@@ -36,7 +36,7 @@ http {
 
 	server_tokens off;
 
-	<%- if @disable_etag_tag -%>
+	<%- if @disable_etag -%>
 	# Set ETags for files to not be based on inode,
 	# since that will be different on each backend server
 	etag off;
