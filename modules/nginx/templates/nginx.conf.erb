@@ -36,6 +36,12 @@ http {
 
 	server_tokens off;
 
+	<%- if @disable_etag_tag -%>
+	# Set ETags for files to not be based on inode,
+	# since that will be different on each backend server
+	etag off;
+	<%- end -%>
+
 	# SSL Settings
 	ssl_protocols TLSv1.3;
 	ssl_ecdh_curve X25519:prime256v1:secp384r1;
