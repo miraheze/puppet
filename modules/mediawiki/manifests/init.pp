@@ -150,6 +150,15 @@ class mediawiki {
         }
     }
 
+    $shells = ['sql', 'eval', 'shell']
+    $shells.each |$shell| {
+        file {"/usr/local/bin/${shell}":
+            ensure => 'present',
+            mode   => '0755',
+            source => "puppet:///modules/mediawiki/bin/${shell}.sh",
+        }
+    }
+
     file { '/srv/mediawiki/config/OAuth2.key':
         ensure  => present,
         mode    => '0755',
