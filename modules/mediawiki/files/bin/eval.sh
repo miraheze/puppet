@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mwscript eval "$1" --no-log --confirm
+exec mwscript eval "$1" --no-log --confirm
