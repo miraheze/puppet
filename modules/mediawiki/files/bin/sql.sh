@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mwscript sql "$1" --no-log --confirm
+exec mwscript sql "$1" --no-log --confirm
