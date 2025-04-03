@@ -150,7 +150,7 @@ class mediawiki {
         }
     }
 
-    $shells = ['sql', 'eval', 'shell']
+    $shells = ['sql', 'mweval', 'shell']
     $shells.each |$shell| {
         file {"/usr/local/bin/${shell}":
             ensure => 'present',
