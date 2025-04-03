@@ -70,11 +70,11 @@ class phorge (
     # Extensions that require configuration.
     php::extension {
         default:
-            sapis        => ['cli', 'fpm'];
+            sapis => ['cli', 'fpm'];
         'apcu':
             ;
         'mailparse':
-            priority     => 21;
+            priority => 21;
         'mysqlnd':
             package_name => '',
             priority     => 10;

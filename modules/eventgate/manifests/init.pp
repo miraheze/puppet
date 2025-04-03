@@ -61,7 +61,7 @@ class eventgate {
     }
 
     file { '/etc/eventgate':
-        ensure  => directory,
+        ensure => directory,
     }
 
     file { '/etc/eventgate/config.yaml':

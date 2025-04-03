@@ -26,14 +26,6 @@ def syscheck(result: CommandInfo | int) -> CommandInfo:
     return result
 
 
-def get_dblist_file(name: str) -> str:
-    # Check if .php file exists, if not, fallback to .json
-    if os.path.exists(f'/srv/mediawiki/cache/{name}.php'):
-        return f'{name}.php'
-
-    return f'{name}.php'
-
-
 def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     mw_versions = os.popen('/usr/local/bin/getMWVersions all').read().strip()
     versions = {}
@@ -114,17 +106,14 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
 
     if wiki == 'all':
         long = True
-        dblist_file = get_dblist_file('databases')
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{dblist_file} {script}'
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php {script}'
     elif wiki and wiki in validDBLists:
         long = True
-        dblist_file = get_dblist_file(wiki)
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{dblist_file} {script}'
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.php {script}'
     elif args.extension:
         long = True
         generate = f'sudo -u www-data php {runner}MirahezeMagic:GenerateExtensionDatabaseList --wiki=loginwiki --extension={args.extension} --directory=/tmp'
-        dblist_file = get_dblist_file(args.extension)
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/{dblist_file} {script}'
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/{args.extension}.php {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
     if args.arguments:

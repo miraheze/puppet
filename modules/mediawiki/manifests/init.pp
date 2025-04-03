@@ -150,6 +150,15 @@ class mediawiki {
         }
     }
 
+    $shells = ['sql', 'mweval', 'shell']
+    $shells.each |$shell| {
+        file {"/usr/local/bin/${shell}":
+            ensure => 'present',
+            mode   => '0755',
+            source => "puppet:///modules/mediawiki/bin/${shell}.sh",
+        }
+    }
+
     file { '/srv/mediawiki/config/OAuth2.key':
         ensure  => present,
         mode    => '0755',
@@ -201,9 +210,9 @@ class mediawiki {
     exec { 'create python venv':
         command => '/usr/bin/python3 -m venv /srv/python/env && /srv/python/env/bin/pip3 install Miraheze-PyUtils',
         require => [Package['python3'],File['/srv/python']],
-        cwd => '/srv',
-        user => 'www-data',
-        onlyif => "test ! -d /srv/python/env",
-        path   => '/bin:/usr/bin',
+        cwd     => '/srv',
+        user    => 'www-data',
+        onlyif  => 'test ! -d /srv/python/env',
+        path    => '/bin:/usr/bin',
     }
 }

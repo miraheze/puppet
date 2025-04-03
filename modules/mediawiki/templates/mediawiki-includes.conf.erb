@@ -59,6 +59,11 @@ location ^~ /w/index.php {
 		break;
 	}
 
+	if ($arg_action = render) {
+		# T13404: Avoid an unnecessary redirect
+		break;
+	}
+
 	if ($args ~ "(^|&)search(=|&|$)") {
 		# T12682: Avoid breaking some search links
 		# (We don't use $arg_search here as there might be

@@ -44,7 +44,7 @@ class role::opensearch (
             'node.data'                    => $os_data,
             'network.host'                 => '0.0.0.0',
         } + $tls_config,
-        version     => '2.19.0',
+        version     => '2.19.1',
         manage_repo => true,
         jvm_options => [ '-Xms3g', '-Xmx3g' ],
         templates   => {
