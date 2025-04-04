@@ -15,4 +15,10 @@ class role::jobrunner_haproxy (
         priority => 20,
         content  => template('role/jobrunner_haproxy/haproxy.rsyslog.conf.erb'),
     }
+
+    ['9007', '9008', '9009'].each |String $port| {
+        monitoring::nrpe { "Haproxy backend for localhost:${port}":
+            command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${port}",
+        }
+    }
 }
