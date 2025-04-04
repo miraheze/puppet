@@ -17,7 +17,7 @@ class role::jobrunner_haproxy (
     }
 
     ['9007', '9008', '9009'].each |String $port| {
-        monitoring::nrpe { "Haproxy backend for ${name}":
+        monitoring::nrpe { "Haproxy backend for localhost:${port}":
             command => "/usr/lib/nagios/plugins/check_tcp -H localhost -p ${port}",
         }
     }
