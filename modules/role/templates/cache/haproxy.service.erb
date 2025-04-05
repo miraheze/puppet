@@ -1,0 +1,53 @@
+<%#- SPDX-License-Identifier: Apache-2.0 -%>
+[Unit]
+Description=HAProxy Load Balancer
+Documentation=man:haproxy(1)
+Documentation=file:/usr/share/doc/haproxy/configuration.txt.gz
+After=network-online.target syslog.service
+Wants=network-online.target syslog.service
+
+[Service]
+Environment="CONFIG=/etc/haproxy/haproxy.cfg" "PIDFILE=<%=@pid%>"
+EnvironmentFile=-/etc/default/haproxy
+ExecStartPre=/usr/sbin/haproxy -f ${CONFIG} -c -q $EXTRAOPTS
+ExecStart=/usr/sbin/haproxy -Ws -f ${CONFIG} -p $PIDFILE $EXTRAOPTS
+ExecReload=/usr/sbin/haproxy -f ${CONFIG} -c -q $EXTRAOPTS
+ExecReload=/bin/kill -USR2 $MAINPID
+KillMode=mixed
+Restart=always
+SuccessExitStatus=143
+Type=notify
+LimitNOFILE=500000
+<%- if @enable_coredumps -%>
+LimitCORE=infinity
+<%- end -%>
+<% if @do_systemd_hardening -%>
+
+# haproxy systemd hardening.
+NoNewPrivileges=true
+PrivateDevices=true
+<%- unless @enable_coredumps -%>
+PrivateTmp=true
+<%- end -%>
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictNamespaces=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SystemCallFilter=~@clock @cpu-emulation @keyring @module @obsolete @raw-io @reboot @swap
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE CAP_SETGID CAP_SETUID CAP_DAC_OVERRIDE CAP_KILL
+
+# Since we set ProtectSystem=strict, allow access to the below paths.
+ReadWritePaths=/run/haproxy
+ReadWritePaths=/var/lib/haproxy
+<%- if @enable_coredumps -%>
+ReadWritePaths=/var/tmp/core
+<%- end -%>
+<% end -%>
+
+[Install]
+WantedBy=multi-user.target
