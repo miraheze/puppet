@@ -8,7 +8,7 @@ class matomo (
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '5.2.2', # Current stable
+        branch             => '5.3.1', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
@@ -109,7 +109,7 @@ class matomo (
     # Extensions that require configuration.
     php::extension {
         default:
-            sapis        => ['cli', 'fpm'];
+            sapis => ['cli', 'fpm'];
         'xml':
             package_name => "php${php_version}-xml",
             priority     => 15;

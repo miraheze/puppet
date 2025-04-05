@@ -7,19 +7,14 @@ listen jobrunner
         http-check expect status 405
         http-reuse always
         mode http
-
         bind :9007
         bind :::9007
-
-        balance hdr(X-Request-ID)
-        hash-type consistent
-
+        balance roundrobin
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true-%>
         server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
         <%- end -%>
         <%- end -%>
-
         http-request set-header Host jobrunner.wikitide.net
 
         # Preserve the X-Request-ID header
@@ -31,19 +26,14 @@ listen jobrunner_high
         http-check expect status 405
         http-reuse always
         mode http
-
         bind :9008
         bind :::9008
-
-        balance hdr(X-Request-ID)
-        hash-type consistent
-
+        balance roundrobin
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
         server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
         <%- end -%>
         <%- end -%>
-
         http-request set-header Host jobrunner-high.wikitide.net
 
         # Preserve the X-Request-ID header
@@ -55,13 +45,9 @@ listen videoscaler
         http-check expect status 405
         http-reuse always
         mode http
-
         bind :9009
         bind :::9009
-
-        balance hdr(X-Request-ID)
-        hash-type consistent
-
+        balance roundrobin
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
         server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check

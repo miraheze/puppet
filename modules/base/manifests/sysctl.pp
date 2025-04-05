@@ -74,7 +74,7 @@ class base::sysctl {
         # mail servers sometimes timeout.
         # https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=v5.10.96&id=164294d09c47b9a6c6160b08c43d74ae93c82758
         sysctl::parameters { 'fastopen':
-            values   => { 'net.ipv4.tcp_fastopen_blackhole_timeout_sec' => 3600 },
+            values => { 'net.ipv4.tcp_fastopen_blackhole_timeout_sec' => 3600 },
         }
     }
 
@@ -98,7 +98,7 @@ class base::sysctl {
 
     if $facts['virtual'] == 'kvm' {
         sysctl::parameters { 'increase open files limit':
-            values  => { 'fs.file-max' => 9223372036854775807, },
+            values => { 'fs.file-max' => 9223372036854775807, },
         }
     }
 }

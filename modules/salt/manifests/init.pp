@@ -41,7 +41,7 @@ class salt {
         }
     } else {
         package { ['salt-ssh', 'salt-common']:
-            ensure  => present,
+            ensure => present,
         }
     }
 
@@ -77,6 +77,12 @@ class salt {
         group   => 'salt-user',
         mode    => '0644',
         require => File['/home/salt-user/.ssh'],
+    }
+
+    file { '/usr/local/bin/upgrade-packages':
+        ensure => present,
+        source => 'puppet:///modules/salt/bin/upgrade-packages.sh',
+        mode   => '0555',
     }
 
     file { '/root/.ssh':
