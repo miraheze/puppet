@@ -48,7 +48,13 @@ define mediawiki::extensionsetup (
                     },
                     default => $branch,
                 },
-                default    => $params['branch'],
+                default    => $branch == 'master' ? {
+                    true    => $params['alpha_branch'] ? {
+                        undef   => $params['branch'],
+                        default => $params['alpha_branch'],
+                    },
+                    default => $params['branch'],
+                },
             },
             revision           => $params['commit'] ? {
                 undef   => '',

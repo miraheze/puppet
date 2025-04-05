@@ -21,8 +21,8 @@
 #
 # === Examples
 #
-#  haproxy::site { 'graphite':
-#    content => template('graphite/graphite.nginx.erb'),
+#  haproxy::site { 'example':
+#    content => template('example/example.nginx.erb'),
 #  }
 #
 define haproxy::site(

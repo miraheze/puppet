@@ -17,6 +17,9 @@ listen jobrunner
         <%- end -%>
         http-request set-header Host jobrunner.wikitide.net
 
+        # Preserve the X-Request-ID header
+        http-request set-header X-Request-ID %[req.hdr(X-Request-ID)]
+
 listen jobrunner_high
         option httpchk
         http-check send meth GET  uri /rpc/RunSingleJob.php
@@ -33,6 +36,9 @@ listen jobrunner_high
         <%- end -%>
         http-request set-header Host jobrunner-high.wikitide.net
 
+        # Preserve the X-Request-ID header
+        http-request set-header X-Request-ID %[req.hdr(X-Request-ID)]
+
 listen videoscaler
         option httpchk
         http-check send meth GET  uri /rpc/RunSingleJob.php
@@ -48,3 +54,6 @@ listen videoscaler
         <%- end -%>
         <%- end -%>
         http-request set-header Host videoscaler.wikitide.net
+
+        # Preserve the X-Request-ID header
+        http-request set-header X-Request-ID %[req.hdr(X-Request-ID)]

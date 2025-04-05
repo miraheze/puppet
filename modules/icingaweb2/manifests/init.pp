@@ -82,7 +82,7 @@ class icingaweb2 (
     # Extensions that require configuration.
     php::extension {
         default:
-            sapis        => ['cli', 'fpm'];
+            sapis => ['cli', 'fpm'];
         'xml':
             package_name => "php${php_version}-xml",
             priority     => 15;
@@ -245,12 +245,12 @@ class icingaweb2 (
         require => File['/etc/icingaweb2/modules/monitoring'],
     }
 
-    ssl::wildcard { 'icingaweb2 wildcard': }
-
     nginx::site { 'icinga2':
         ensure => present,
         source => 'puppet:///modules/icingaweb2/icinga2.conf',
     }
+
+    ssl::wildcard { 'icingaweb2 wildcard': }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
         $address = $facts['networking']['interfaces']['ens19']['ip']

@@ -8,12 +8,18 @@ class role::db (
     Boolean $enable_slow_log = lookup('role::db::enable_slow_log', {'default_value' => false}),
     Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
     Boolean $enable_ssl = lookup('role::db::enable_ssl', {'default_value' => true}),
+    Boolean $is_beta_db = lookup('role::db::is_beta_db', {'default_value' => false}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
 
-    $mediawiki_password = lookup('passwords::db::mediawiki')
-    $wikiadmin_password = lookup('passwords::db::wikiadmin')
+    if ( $is_beta_db ) {
+        $mediawiki_password = lookup('passwords::db::mediawiki_beta')
+        $wikiadmin_password = lookup('passwords::db::wikiadmin_beta')
+    } else {
+        $mediawiki_password = lookup('passwords::db::mediawiki')
+        $wikiadmin_password = lookup('passwords::db::wikiadmin')
+    }
     $matomo_password = lookup('passwords::db::matomo')
     $phorge_password = lookup('passwords::db::phorge')
     $exporter_password = lookup('passwords::db::exporter')
@@ -65,8 +71,14 @@ class role::db (
         content => template('mariadb/grants/reports-grants.sql.erb'),
     }
 
+    if ( $is_beta_db ) {
+        $query_classes = 'Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]'
+    } else {
+        $query_classes = 'Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]'
+    }
+
     $firewall_rules_str = join(
-        query_facts('Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]', ['networking'])
+        query_facts($query_classes, ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
@@ -93,8 +105,24 @@ class role::db (
         ensure   => present,
         uid      => 3000,
         ssh_keys => [
-            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOL4FH2aRAwbSGP1HLmo1YzaXRci2YnkTGJvT2E6Ay0d dbcopy@db101'
+            'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDHPGyXQ6O2Cy+LxP3BwtbzaUufVTihefglsUoWkBiIl dbcopy@wikitide.net'
         ],
+    }
+
+    file { '/home/dbcopy/.ssh':
+        ensure => 'directory',
+        owner  => 'dbcopy',
+        group  => 'dbcopy',
+        mode   => '0700',
+    }
+
+    file { '/home/dbcopy/.ssh/id_ed25519':
+        ensure  => 'present',
+        source  => 'puppet:///private/mariadb/dbcopy-ssh-key',
+        owner   => 'dbcopy',
+        group   => 'dbcopy',
+        mode    => '0400',
+        require => File['/home/dbcopy/.ssh'],
     }
 
     # Backup provisioning
@@ -130,7 +158,7 @@ class role::db (
         }
 
         monitoring::nrpe { 'Backups SQL':
-            command  => '/usr/lib/nagios/plugins/check_file_age -w 1382400 -c 1468800 -f /var/log/db-backups/db-backups.log',
+            command  => '/usr/lib/nagios/plugins/check_file_age -w 1382400 -c 1468800 -f /var/log/db-backups/db-backups/db-backups.log',
             docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
             critical => true
         }

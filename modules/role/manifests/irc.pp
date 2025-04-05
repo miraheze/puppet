@@ -3,13 +3,20 @@ class role::irc {
     include base
     include irc::irclogbot
     include irc::cvtbot
+
+    users::user { 'pywikibot':
+        ensure => present,
+        uid    => 3200,
+        shell  => '/bin/bash',
+    }
+
     include irc::pywikibot
 
     irc::relaybot { 'relaybot':
         dotnet_version => '6.0',
     }
 
-    class { 'irc::ircrcbot':
+    irc::ircrcbot { 'RCBot1' :
         nickname     => 'MirahezeRC',
         network      => 'irc.libera.chat',
         network_port => '6697',
@@ -23,6 +30,14 @@ class role::irc {
         network_port => '6697',
         channel      => '#miraheze-tech-ops',
         udp_port     => '5071',
+    }
+
+    irc::ircrcbot { 'RCBot2' :
+        nickname     => 'MirahezeRC2',
+        network      => 'irc.libera.chat',
+        network_port => '6697',
+        channel      => '#miraheze-feed',
+        udp_port     => '5072',
     }
 
     $firewall_irc_rules_str = join(
@@ -44,6 +59,12 @@ class role::irc {
     ferm::service { 'ircrcbot':
         proto  => 'udp',
         port   => '5070',
+        srange => "(${firewall_irc_rules_str})",
+    }
+
+    ferm::service { 'ircrcbot2':
+        proto  => 'udp',
+        port   => '5072',
         srange => "(${firewall_irc_rules_str})",
     }
 

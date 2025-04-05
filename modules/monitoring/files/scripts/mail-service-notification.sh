@@ -29,6 +29,8 @@ Required parameters:
 Optional parameters:
   -4 HOSTADDRESS (\$address\$)
   -6 HOSTADDRESS6 (\$address6\$)
+  -X HOSTNOTES (\$host.notes\$)
+  -x SERVICENOTES (\$service.notes\$)
   -b NOTIFICATIONAUTHORNAME (\$notification.author\$)
   -c NOTIFICATIONCOMMENT (\$notification.comment\$)
   -i ICINGAWEB2URL (\$notification_icingaweb2url\$, Default: unset)
@@ -65,7 +67,7 @@ urlencode() {
 }
 
 ## Main
-while getopts 4:6:b:c:d:e:f:hi:l:n:o:r:s:t:u:v: opt
+while getopts 4:6:b:c:d:e:f:hi:l:n:o:r:s:t:u:v:X:x: opt
 do
   case "$opt" in
     4) HOSTADDRESS=$OPTARG ;;
@@ -79,6 +81,8 @@ do
     i) ICINGAWEB2URL=$OPTARG ;;
     l) HOSTNAME=$OPTARG ;; # required
     n) HOSTDISPLAYNAME=$OPTARG ;; # required
+    X) HOSTNOTES=$OPTARG ;;
+    x) SERVICENOTES=$OPTARG ;;
     o) SERVICEOUTPUT=$OPTARG ;; # required
     r) USEREMAIL=$OPTARG ;; # required
     s) SERVICESTATE=$OPTARG ;; # required
@@ -134,6 +138,18 @@ if [ -n "$HOSTADDRESS6" ] ; then
 IPv6:    $HOSTADDRESS6"
 fi
 
+## Check whether host notes was specified.
+if [ -n "$HOSTNOTES" ] ; then
+  NOTIFICATION_MESSAGE="$NOTIFICATION_MESSAGE
+Host notes: $HOSTNOTES"
+fi
+
+## Check whether service notes was specified.
+if [ -n "$SERVICENOTES" ] ; then
+  NOTIFICATION_MESSAGE="$NOTIFICATION_MESSAGE
+Service notes: $SERVICENOTES"
+fi
+
 ## Check whether author and comment was specified.
 if [ -n "$NOTIFICATIONCOMMENT" ] ; then
   NOTIFICATION_MESSAGE="$NOTIFICATION_MESSAGE
@@ -162,13 +178,15 @@ if [ -n "$MAILFROM" ] ; then
 
   ## Debian/Ubuntu use mailutils which requires `-a` to append the header
   if [ -f /etc/debian_version ]; then
-    /usr/bin/printf "%b" "$NOTIFICATION_MESSAGE" | $MAILBIN -a "From: $MAILFROM" -s "$SUBJECT" $USEREMAIL
+    /usr/bin/printf "%b" "$NOTIFICATION_MESSAGE" | tr -d '\015' \
+    | $MAILBIN -a "From: $MAILFROM" -s "$SUBJECT" $USEREMAIL
   ## Other distributions (RHEL/SUSE/etc.) prefer mailx which sets a sender address with `-r`
   else
-    /usr/bin/printf "%b" "$NOTIFICATION_MESSAGE" | $MAILBIN -r "$MAILFROM" -s "$SUBJECT" $USEREMAIL
+    /usr/bin/printf "%b" "$NOTIFICATION_MESSAGE" | tr -d '\015' \
+    | $MAILBIN -r "$MAILFROM" -s "$SUBJECT" $USEREMAIL
   fi
 
 else
-  /usr/bin/printf "%b" "$NOTIFICATION_MESSAGE" \
+  /usr/bin/printf "%b" "$NOTIFICATION_MESSAGE" | tr -d '\015' \
   | $MAILBIN -s "$SUBJECT" $USEREMAIL
 fi
