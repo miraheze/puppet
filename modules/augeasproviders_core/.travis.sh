@@ -10,10 +10,10 @@ PKG_VERSION=""
 
 sudo add-apt-repository -y ppa:raphink/augeas
 sudo apt-get update
-sudo apt-get install augeas-tools${PKG_VERSION} \
-                     augeas-lenses${PKG_VERSION} \
-                     libaugeas0${PKG_VERSION} \
-                     libaugeas-dev${PKG_VERSION} \
+sudo apt-get install "augeas-tools${PKG_VERSION}" \
+                     "augeas-lenses${PKG_VERSION}" \
+                     "libaugeas0${PKG_VERSION}" \
+                     "libaugeas-dev${PKG_VERSION}" \
                      libxml2-dev
 
 # Install gems
