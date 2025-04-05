@@ -1,0 +1,5 @@
+if ($programname == 'haproxy') then {
+    action(type="omfile" file="/var/log/haproxy.log")
+    stop
+}
+
