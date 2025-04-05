@@ -351,8 +351,8 @@ def _apply_patches(repo: str, version: str = '') -> list[int]:
     staging_path = _get_staging_path(repo, version)
     to_apply = [patch for patch in patches if staging_path.endswith(patch.path)]
     for patch in to_apply:
-        pubpriv = 'public' if patch.public else 'private'
-        patchfile = f'/srv/mediawiki-staging/patches/{pubpriv}/{patch.file}'
+        visibility = 'public' if patch.public else 'private'
+        patchfile = f'/srv/mediawiki-staging/patches/{visibility}/{patch.file}'
         if not os.path.isfile(patchfile):
             print(f'WARNING: Patch file {patch.file} could not be found!')
             continue
