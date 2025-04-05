@@ -21,6 +21,7 @@ class mediawiki::packages {
         'libglu1-mesa-dev',
         'libglew-dev',
         'libvips-tools',
+        'mariadb-client',
         'nodejs',
         'ploticus',
         'poppler-utils',
