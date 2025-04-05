@@ -1,7 +1,7 @@
 # == Class: eventgate
 
 class eventgate {
-    stdlib::ensure_packages(['nodejs', 'libssl1.1'])
+    stdlib::ensure_packages(['nodejs', 'libssl-dev'])
 
     group { 'eventgate':
         ensure => present,
@@ -61,7 +61,7 @@ class eventgate {
     }
 
     file { '/etc/eventgate':
-        ensure  => directory,
+        ensure => directory,
     }
 
     file { '/etc/eventgate/config.yaml':

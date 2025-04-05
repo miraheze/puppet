@@ -15,6 +15,13 @@ node 'changeprop151.wikitide.net' {
     include role::redis
 }
 
+node 'changeprop201.wikitide.net' {
+    include base
+    include role::jobrunner_haproxy
+    include role::changeprop
+    include role::redis
+}
+
 node /^cloud[12][056789]\.wikitide\.net$/ {
     include base
     include role::cloud
@@ -66,7 +73,7 @@ node 'mattermost1.wikitide.net' {
     include role::mattermost
 }
 
-node /^mem1[56]1\.wikitide\.net$/ {
+node /^mem[12][056]1\.wikitide\.net$/ {
     include base
     include role::memcached
 }

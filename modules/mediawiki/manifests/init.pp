@@ -26,15 +26,6 @@ class mediawiki {
         histogram_buckets => lookup('role::prometheus::statsd_exporter::histogram_buckets', { 'default_value' => [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30, 60] }),
     }
 
-    if !lookup('jobrunner::intensive', {'default_value' => false}) {
-        cron { 'clean-tmp-files':
-            ensure  => absent,
-            command => 'find /tmp/ -user www-data -amin +30 \( -iname "magick-*" -or -iname "transform_*" -or -iname "lci_*" -or -iname "svg_* -or -iname "localcopy_*" \) -delete',
-            user    => 'www-data',
-            special => 'hourly',
-        }
-    }
-
     git::clone { '3d2png':
         ensure             => 'latest',
         directory          => '/srv/3d2png',
@@ -109,8 +100,6 @@ class mediawiki {
     $swift_temp_url_key         = lookup('mediawiki::swift_temp_url_key')
     $reports_write_key          = lookup('reports::reports_write_key')
     $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
-    $multipurge_apitoken        = lookup('mediawiki::multipurge_apitoken')
-    $multipurge_zoneid          = lookup('mediawiki::multipurge_zoneid')
     $openai_apikey              = lookup('mediawiki::openai_apikey')
     $openai_assistantid         = lookup('mediawiki::openai_assistantid')
     $turnstile_sitekey          = lookup('mediawiki::turnstile_sitekey')
@@ -161,6 +150,15 @@ class mediawiki {
         }
     }
 
+    $shells = ['sql', 'mweval', 'shell']
+    $shells.each |$shell| {
+        file {"/usr/local/bin/${shell}":
+            ensure => 'present',
+            mode   => '0755',
+            source => "puppet:///modules/mediawiki/bin/${shell}.sh",
+        }
+    }
+
     file { '/srv/mediawiki/config/OAuth2.key':
         ensure  => present,
         mode    => '0755',
@@ -202,5 +200,19 @@ class mediawiki {
         type    => 'atime',
         backup  => false,
         recurse => 1,
+    }
+    file { '/srv/python':
+        ensure => directory,
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0775',
+    }
+    exec { 'create python venv':
+        command => '/usr/bin/python3 -m venv /srv/python/env && /srv/python/env/bin/pip3 install Miraheze-PyUtils',
+        require => [Package['python3'],File['/srv/python']],
+        cwd     => '/srv',
+        user    => 'www-data',
+        onlyif  => 'test ! -d /srv/python/env',
+        path    => '/bin:/usr/bin',
     }
 }

@@ -140,7 +140,8 @@ class irc::pywikibot {
                                 default => $script_config['weekday']
                             },
             }
-            # lint:ignore:selector_inside_resource
+            # lint:endignore
+
             logrotate::rule { "pwb-${dbname}-${script_config['name']}-cron":
                 ensure         => $script_config['ensure'],
                 file_glob      => $log_path,

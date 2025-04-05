@@ -61,7 +61,7 @@ class mediawiki::jobqueue::runner (
 
         systemd::timer::job { 'managewikis':
             description       => 'Check for inactive wikis',
-            command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/CreateWiki/maintenance/manageInactiveWikis.php --wiki ${wiki} --write",
+            command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php CreateWiki:ManageInactiveWikis --wiki ${wiki} --write",
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-* 12:05:00',
@@ -75,7 +75,7 @@ class mediawiki::jobqueue::runner (
 
         systemd::timer::job { 'generate-sitemaps':
             description       => 'Create sitemaps for all wikis',
-            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/MirahezeMagic/maintenance/generateMirahezeSitemap.php",
+            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php MirahezeMagic:GenerateMirahezeSitemap",
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => 'Sat *-*-* 00:00:00',
@@ -134,7 +134,7 @@ class mediawiki::jobqueue::runner (
 
             systemd::timer::job { 'generate-sitemap-index':
                 description       => 'Create sitemap index',
-                command           => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/MirahezeMagic/py/generateSitemapIndex.py -A https://swift-lb.wikitide.net/auth/v1.0 -U mw:media -K ${swift_password}",
+                command           => "/usr/bin/python3 /srv/mediawiki/${version}/extensions/MirahezeMagic/py/generate_sitemap_index.py -A https://swift-lb.wikitide.net/auth/v1.0 -U mw:media -K ${swift_password}",
                 interval          => {
                     'start'    => 'OnCalendar',
                     'interval' => 'Fri *-*-* 00:00:00',
@@ -187,28 +187,6 @@ class mediawiki::jobqueue::runner (
                 user              => 'www-data',
                 require           => File['/var/log/mediawiki/cron'],
             }
-
-            # Backups
-            file { '/srv/backups':
-                ensure => directory,
-            }
-
-            cron { 'backups-mediawiki-xml':
-                ensure   => absent,
-                command  => '/usr/local/bin/wikitide-backup backup mediawiki-xml > /var/log/mediawiki-xml-backup.log 2>&1',
-                user     => 'root',
-                minute   => '0',
-                hour     => '1',
-                monthday => ['27'],
-                month    => ['3', '6', '9', '12'],
-            }
-
-            monitoring::nrpe { 'Backups MediaWiki XML':
-                ensure   => absent,
-                command  => '/usr/lib/nagios/plugins/check_file_age -w 8640000 -c 11232000 -f /var/log/mediawiki-xml-backup.log',
-                docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-                critical => true
-            }
         }
 
         if $wiki == 'loginwikibeta' {
@@ -257,7 +235,7 @@ class mediawiki::jobqueue::runner (
 
         systemd::timer::job { 'update-wikibase-sites-table':
             description       => 'Update site statistics',
-            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/MirahezeMagic/maintenance/populateWikibaseSitesTable.php",
+            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php MirahezeMagic:PopulateWikibaseSitesTable",
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-5,20 05:00:00',

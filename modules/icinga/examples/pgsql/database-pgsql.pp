@@ -1,5 +1,5 @@
 class { 'postgresql::server':
-  listen_addresses           => '*',
+  listen_addresses => '*',
 }
 
 class { '::icinga::ido::database':

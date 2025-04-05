@@ -5,6 +5,7 @@ Wants=local-fs.target network.target
 After=local-fs.target network.target
 
 [Service]
+LimitNOFILE=10000
 User=changeprop
 Group=changeprop
 SyslogIdentifier=changeprop
