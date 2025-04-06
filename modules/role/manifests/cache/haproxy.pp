@@ -46,20 +46,29 @@ class role::cache::haproxy(
     # used on haproxy.cfg.erb
     $socket = '/run/haproxy/haproxy.sock'
 
+    # We don't need to use all our certificates, only these three.
+    $certificates = {
+        'miraheze-origin-cert' => ''
+        'mirabeta-origin-cert' => 'mirabeta.org *.mirabeta.org',
+        'wikitide.net' => 'wikitide.net *.wikitide.net'
+    }
+
     # TODO: Under haproxy 3, support is better for seperated cert and key.
     # under 2.4+, you are limited to .key being prefixed to the cert name.
-    if !defined(File['/etc/ssl/localcerts/miraheze-origin-cert.crt']) {
-        file { '/etc/ssl/localcerts/miraheze-origin-cert.crt':
-            ensure => 'present',
-            source => 'puppet:///ssl/certificates/miraheze-origin-cert.crt',
-            notify => Service['haproxy'],
+    $certificates.each | $key, $value | {
+        if !defined(File["/etc/ssl/private/${key}.crt"]) {
+            file { "/etc/ssl/private/${key}.crt":
+                ensure => 'present',
+                source => "puppet:///ssl/certificates/${key}.crt",
+                notify => Service['haproxy'],
+            }
         }
-    }
-    if !defined(File['/etc/ssl/localcerts/miraheze-origin-cert.crt.key']) {
-        file { '/etc/ssl/localcerts/miraheze-origin-cert.crt.key':
-            ensure => 'present',
-            source => 'puppet:///ssl-keys/miraheze-origin-cert.key',
-            notify => Service['haproxy'],
+        if !defined(File["/etc/ssl/private/${key}.crt.key"]) {
+            file { "/etc/ssl/private/${key}.crt.key":
+                ensure => 'present',
+                source => "puppet:///ssl-keys/${key}.key",
+                notify => Service['haproxy'],
+            }
         }
     }
 
@@ -98,6 +107,14 @@ class role::cache::haproxy(
         ],
         user        => 'root',
         require     => File['/usr/local/sbin/haproxy-stek-manager'],
+    }
+
+    $ecdhe_curves = ['X25519', 'P-256']
+    $alpn = ['h2', 'http/1.1']
+    file { '/etc/haproxy/crt-list.cfg':
+        mode    => '0444',
+        content => template('role/cache/haproxy/crt-list.cfg.erb'),
+        notify  => Service['haproxy'],
     }
 
     mediawiki::errorpage { '/etc/haproxy/tls-terminator-tls-plaintext-error.html':

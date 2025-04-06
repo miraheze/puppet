@@ -34,9 +34,9 @@ backend <%= table['name'] %>
 listen tls
     log global
     maxconn 199000
-    bind :<%= @tls_port -%> tfo ssl crt /etc/ssl/localcerts/miraheze-origin-cert.crt<%- if @tls_ticket_keys_path -%> tls-ticket-keys <%= @tls_ticket_keys_path %><%- end %>
+    bind :<%= @tls_port -%> tfo ssl crt-list /etc/haproxy/crt-list.cfg<%- if @tls_ticket_keys_path -%> tls-ticket-keys <%= @tls_ticket_keys_path %><%- end %>
 
-    bind :::<%= @tls_port -%> tfo v6only ssl crt /etc/ssl/localcerts/miraheze-origin-cert.crt<%- if @tls_ticket_keys_path -%> tls-ticket-keys <%= @tls_ticket_keys_path %><%- end %>
+    bind :::<%= @tls_port -%> tfo v6only ssl crt-list /etc/haproxy/crt-list.cfg<%- if @tls_ticket_keys_path -%> tls-ticket-keys <%= @tls_ticket_keys_path %><%- end %>
 
     http-reuse always
 
@@ -134,9 +134,6 @@ listen tls
 <%- end -%>
 <%- end -%>
 <%- end -%>
-<%- if @extended_logging -%>
-    http-request capture hdr(X-Analytics-TLS) len 96
-<%- end -%>
 <%- if @del_headers and @del_headers['tls'] -%>
 <%- @del_headers['tls'].each do |del_header| -%>
     http-<%= del_header['direction'] %> del-header <%= del_header['name'] %> <%- if del_header['acl'] %> if <%= del_header['acl'] %> <%- end %>
@@ -205,7 +202,6 @@ listen <%= name %>_backend_tls
     # timeout used after upgrading a connection (websockets) or after the first response when no keepalive/close option is specified
     timeout tunnel <%= @timeout['tunnel'] %>s
 
-    # required ca-file /etc/ssl/localcerts/origin-pull-and-internal-ca.crt
     # We don't use a healthchecker because we use varnish for this.
     server <%= name %>_backend <%= name %>.<%= property['domain'] || 'wikitide.net' %>:443 ssl verify none
 
