@@ -60,7 +60,7 @@ class nginx (
         $ssl_session_cache = 2048
     }
 
-    $cache_proxies = query_facts("Class['Role::Varnish']", ['networking'])
+    $cache_proxies = query_facts("Class['Role::Varnish'] or Class['Role::Cache::Varnish']", ['networking'])
     $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
     file { '/etc/nginx/nginx.conf':
