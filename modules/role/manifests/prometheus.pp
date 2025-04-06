@@ -177,7 +177,7 @@ class role::prometheus {
     prometheus::class { 'cache_haproxy':
         dest   => '/etc/prometheus/targets/cache_haproxy.yaml',
         module => 'Role::Cache::Haproxy',
-        port   => 9113
+        port   => 9422
     }
 
     $apache_job = [
