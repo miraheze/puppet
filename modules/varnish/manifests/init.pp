@@ -5,7 +5,7 @@ class varnish (
     Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
     Integer $transient_gb = lookup('varnish::transient_storage'),
     Hash $backends = lookup('varnish::backends'),
-    Boolean $use_nginx = false,
+    Boolean $use_nginx = true,
 ) {
     if $use_nginx {
         include varnish::nginx
