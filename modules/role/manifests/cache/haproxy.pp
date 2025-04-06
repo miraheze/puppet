@@ -50,6 +50,7 @@ class role::cache::haproxy(
     $certificates = {
         'miraheze-origin-cert' => '',
         'mirabeta-origin-cert' => 'mirabeta.org *.mirabeta.org',
+        'nexttide-origin-cert' => 'nexttide.org *.nexttide.org',
         'wikitide.net' => 'wikitide.net *.wikitide.net'
     }
 
