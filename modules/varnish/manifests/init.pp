@@ -4,8 +4,12 @@ class varnish (
     String $cache_file_size = '22G',
     Integer[1] $thread_pool_max = lookup('varnish::thread_pool_max'),
     Integer $transient_gb = lookup('varnish::transient_storage'),
+    Hash $backends = lookup('varnish::backends'),
+    Boolean $use_nginx = false,
 ) {
-    include varnish::nginx
+    if $use_nginx {
+        include varnish::nginx
+    }
     include prometheus::exporter::varnish
 
     stdlib::ensure_packages(['varnish', 'varnish-modules'])
@@ -32,7 +36,7 @@ class varnish (
         ensure  => mounted,
         device  => 'tmpfs',
         fstype  => 'tmpfs',
-        options => 'noatime,defaults,size=256M',
+        options => 'noatime,defaults,size=512M',
         pass    => 0,
         dump    => 0,
         require => File['/var/lib/varnish'],
@@ -41,7 +45,6 @@ class varnish (
 
     $module_path = get_module_path('mediawiki')
     $csp = loadyaml("${module_path}/data/csp.yaml")
-    $backends = lookup('varnish::backends')
     $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
     $interval_check = lookup('varnish::interval-check')
@@ -151,8 +154,10 @@ class varnish (
         command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_varnishbackends'
     }
 
-    monitoring::nrpe { 'HTTP 4xx/5xx ERROR Rate':
-        command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_nginx_errorrate'
+    if $use_nginx {
+        monitoring::nrpe { 'HTTP 4xx/5xx ERROR Rate':
+            command => '/usr/bin/sudo /usr/lib/nagios/plugins/check_nginx_errorrate'
+        }
     }
 
     $backends.each | $name, $property | {
