@@ -48,7 +48,7 @@ class role::cache::haproxy(
 
     # We don't need to use all our certificates, only these three.
     $certificates = {
-        'miraheze-origin-cert' => ''
+        'miraheze-origin-cert' => '',
         'mirabeta-origin-cert' => 'mirabeta.org *.mirabeta.org',
         'wikitide.net' => 'wikitide.net *.wikitide.net'
     }
