@@ -39,7 +39,7 @@ class role::bastion (
     }
 
     if $enable_proxy_ipv4_ipv6 {
-        $backends = lookup('role::cache::haproxy::varnish_backends')
+        $backends = lookup('varnish::backends')
         $firewall_rules_str = join(
             query_facts('Class[Role::Varnish] or Class[Role::Cache::Cache]', ['networking'])
             .map |$key, $value| {
