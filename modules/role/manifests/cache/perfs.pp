@@ -29,7 +29,7 @@ class role::cache::perfs {
     # at least some rotational disks, as there have been past regressions and
     # this can only be turned on for all of the scsi layer, not by-device.
     # It will eventually be the default, probably in 4.19 or later.
-    grub::bootparam { 'scsi_mod.use_blk_mq': value  => 'y' }
+    grub::bootparam { 'scsi_mod.use_blk_mq': value => 'y' }
 
     sysctl::parameters { 'cache proxy network tuning':
         values => {
