@@ -142,7 +142,7 @@ class SslCertificate:
             os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.wikitide.net:8080 %h %p\'"')
             os.system('git -C /srv/ssl/ssl/ config user.name "WikiTideSSLBot"')
             os.system('git -C /srv/ssl/ssl/ config user.email "noreply@wikitide.org"')
-            os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
+            os.system('git -C /srv/ssl/ssl/ reset --hard origin/main')
             os.system('git -C /srv/ssl/ssl/ pull')
             os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
             os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
@@ -163,12 +163,12 @@ class SslCertificate:
 
             os.system('git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
             os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
-            os.system('git -C /srv/ssl/ssl/ push origin master')
+            os.system('git -C /srv/ssl/ssl/ push origin main')
 
         if self.private:
             print('Private key is being copied and pushed to /home/ssl-admins/ssl-keys')
             os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /home/ssl-admins/ssl-keys/{self.domain}.key')
-            os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'add {self.domain} key' && git push origin master")
+            os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'add {self.domain} key' && git push origin main")
 
     def renew_letsencrypt_certificate(self):
         self.newprivate = False
@@ -221,17 +221,17 @@ class SslCertificate:
         os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.wikitide.net:8080 %h %p\'"')
         os.system('git -C /srv/ssl/ssl/ config user.name "WikiTideSSLBot"')
         os.system('git -C /srv/ssl/ssl/ config user.email "noreply@wikitide.org"')
-        os.system('git -C /srv/ssl/ssl/ reset --hard origin/master')
+        os.system('git -C /srv/ssl/ssl/ reset --hard origin/main')
         os.system('git -C /srv/ssl/ssl/ pull')
         os.system(f'cp /etc/letsencrypt/live/{self.domain}/fullchain.pem /srv/ssl/ssl/certificates/{self.domain}.crt')
         os.system(f'git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certificates/{self.domain}.crt')
         os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Update SSL cert for {self.domain}"')
-        os.system('git -C /srv/ssl/ssl/ push origin master')
+        os.system('git -C /srv/ssl/ssl/ push origin main')
 
         if self.private and self.newprivate is True:
             print('New private key is being copied and pushed to /home/ssl-admins/ssl-keys')
             os.system(f'cp /etc/letsencrypt/live/{self.domain}/privkey.pem /home/ssl-admins/ssl-keys/{self.domain}.key')
-            os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'add {self.domain} key' && git push origin master")
+            os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'add {self.domain} key' && git push origin main")
 
     def revoke_letsencrypt_certificate(self):
         if not self.quiet:
@@ -248,7 +248,7 @@ class SslCertificate:
             print('Removing key from private git')
 
         os.system(f'rm -rf /home/ssl-admins/ssl-keys/{self.domain}.key')
-        os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'remove {self.domain} key' && git push origin master")
+        os.system(f"cd /home/ssl-admins/ssl-keys/ && git add . && git commit -m 'remove {self.domain} key' && git push origin main")
 
 
 cert = SslCertificate()
