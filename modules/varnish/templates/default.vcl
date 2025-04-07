@@ -148,7 +148,7 @@ sub mobile_detection {
 # Rate limiting logic
 sub rate_limit {
 	// dont apply any rate limiting to internal networks
-	if (req.http.X-Real-IP, "192.0.2.1") !~ wikitide_nets) {
+	if (std.ip(req.http.X-Real-IP, "192.0.2.1") !~ wikitide_nets) {
 		# Allow higher limits for static.wikitide.net, we can handle more of those requests
 		if (req.http.Host == "static.wikitide.net") {
 			if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
