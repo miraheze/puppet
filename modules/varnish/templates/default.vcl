@@ -221,7 +221,7 @@ sub vcl_synth {
 			set resp.http.Access-Control-Allow-Headers = "Range,X-WikiTide-Debug";
 			set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
 			set resp.http.Access-Control-Max-Age = "86400";
-		} else {
+		} elseif (req.http.Host == "static.wikitide.net") {
 			call add_upload_cors_headers;
 		}
 	}
