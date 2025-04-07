@@ -30,7 +30,7 @@ class mediawiki {
         ensure             => 'latest',
         directory          => '/srv/3d2png',
         origin             => 'https://github.com/miraheze/3d2png-deploy',
-        branch             => 'master',
+        branch             => 'main',
         owner              => 'www-data',
         group              => 'www-data',
         mode               => '0755',
