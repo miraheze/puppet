@@ -157,14 +157,12 @@ sub rate_limit {
 		} else {
 			// Ratelimit miss/pass requests per IP:
 			//   * Excluded for now:
-			//       * all MF IPs
 			//       * T6283: remove rate limit for IABot (temporarily?)
 			//       * seemingly-authenticated requests (simple cookie check)
 			//   * MW rest.php and MW API, Wikidata: 1000/10s (100/s long term, with 1000 burst)
 			//   * All others (excludes static): 1000/50s (20/s long term, with 1000 burst)
 			if (
 				req.http.Cookie !~ "([sS]ession|Token)=" &&
-				std.ip(req.http.X-Real-IP, "192.0.2.1") !~ wikitide_nets &&
 				(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
 			) {
 				if (req.url ~ "^/((w|(1\.\d{2,}))/api.php|(w|(1\.\d{2,}))/rest.php|(wiki/)?Special:EntityData)") {
