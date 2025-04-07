@@ -66,9 +66,10 @@ class role::cache::haproxy(
         }
         if !defined(File["/etc/ssl/private/${key}.crt.key"]) {
             file { "/etc/ssl/private/${key}.crt.key":
-                ensure => 'present',
-                source => "puppet:///ssl-keys/${key}.key",
-                notify => Service['haproxy'],
+                ensure    => 'present',
+                source    => "puppet:///ssl-keys/${key}.key",
+                show_diff => false,
+                notify    => Service['haproxy'],
             }
         }
     }
