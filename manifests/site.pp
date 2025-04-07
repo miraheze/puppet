@@ -27,13 +27,13 @@ node /^cloud[12][056789]\.wikitide\.net$/ {
     include role::cloud
 }
 
-node 'cp38.wikitide.net' {
-    role(cache::cache)
-}
-
-node /^cp(3[67])\.wikitide\.net$/ {
+node 'cp36.wikitide.net' {
     include base
     include role::varnish
+}
+
+node /^cp(3[78])\.wikitide\.net$/ {
+    role(cache::cache)
 }
 
 node /^db1([5678][12])\.wikitide\.net$/ {
