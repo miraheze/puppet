@@ -38,7 +38,7 @@ class changeprop (
         ensure             => present,
         directory          => '/srv/changeprop',
         origin             => 'https://github.com/miraheze/changeprop-deploy',
-        branch             => 'master',
+        branch             => 'main',
         owner              => 'changeprop',
         group              => 'changeprop',
         mode               => '0755',
