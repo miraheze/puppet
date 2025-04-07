@@ -87,7 +87,7 @@ class mediawiki::deploy {
         ensure    => present,
         directory => '/srv/mediawiki-staging/config',
         origin    => 'https://github.com/miraheze/mw-config',
-        branch    => 'master',
+        branch    => 'main',
         owner     => 'www-data',
         group     => 'www-data',
         mode      => '0755',
