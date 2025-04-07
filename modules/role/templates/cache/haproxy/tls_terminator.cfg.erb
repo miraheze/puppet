@@ -75,6 +75,9 @@ listen tls
     acl is_cloudflare_ip src <%= @cloudflare_ips.join(' ') %>
     acl cf_ip_hdr req.hdr(CF-Connecting-IP) -m found
     http-request set-header X-Real-IP %[req.hdr(CF-Connecting-IP)] if is_cloudflare_ip cf_ip_hdr
+    http-request set-header X-Real-IP %[src] if !is_cloudflare_ip
+
+    http-request set-var(txn.real_ip) req.hdr(X-Real-IP)
 
     # Redirect unwanted User-Agent requests to 403
     acl is_mj12bot hdr_sub(User-Agent) -i MJ12bot
@@ -229,6 +232,13 @@ frontend http
     capture response header X-Cache len 96
     capture response header Server len 64
 <%- end -%>
+
+    acl is_cloudflare_ip src <%= @cloudflare_ips.join(' ') %>
+    acl cf_ip_hdr req.hdr(CF-Connecting-IP) -m found
+    http-request set-header X-Real-IP %[req.hdr(CF-Connecting-IP)] if is_cloudflare_ip cf_ip_hdr
+    http-request set-header X-Real-IP %[src] if !is_cloudflare_ip
+
+    http-request set-var(txn.real_ip) req.hdr(X-Real-IP)
 
     # we can be rather aggresive regarding timeouts here as only impact http to https redirections
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
