@@ -79,6 +79,13 @@ listen tls
 
     http-request set-var(txn.real_ip) req.hdr(X-Real-IP)
 
+    <%- @sslredirects.each_pair do | name, property | -%>
+    http-request redirect prefix https://<%= property['redirect'] %>%[capture.req.uri] code 301 if { hdr_dom(host) -i <%= property['url'] %> }
+    <%- if property['additional_domain'] -%>
+    http-request redirect prefix https://<%= property['redirect'] %>%[capture.req.uri] code 301 if { hdr_dom(host) -i <%= property['additional_domain'] %> }
+    <%- end -%>
+    <%- end -%>
+
     # Redirect unwanted User-Agent requests to 403
     acl is_mj12bot hdr_sub(User-Agent) -i MJ12bot
     acl is_zimit hdr_sub(User-Agent) -i +Zimit
