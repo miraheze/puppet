@@ -78,6 +78,7 @@ acl local_host {
 }
 
 acl local_tls_terminator {
+	"10.0.16.137"; # cp36
 	"10.0.17.138"; # cp37
 	"10.0.19.146"; # cp38
 	"0.0.0.0"; // this matches incoming traffic via UDS
