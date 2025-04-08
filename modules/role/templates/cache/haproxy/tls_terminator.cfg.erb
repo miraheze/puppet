@@ -79,6 +79,8 @@ listen tls
 
     http-request set-var(txn.real_ip) req.hdr(X-Real-IP)
 
+    http-request set-src hdr(CF-Connecting-IP) if is_cloudflare_ip cf_ip_hdr
+
     # Redirect unwanted User-Agent requests to 403
     acl is_mj12bot hdr_sub(User-Agent) -i MJ12bot
     acl is_zimit hdr_sub(User-Agent) -i +Zimit
@@ -239,6 +241,7 @@ frontend http
     http-request set-header X-Real-IP %[src] if !is_cloudflare_ip
 
     http-request set-var(txn.real_ip) req.hdr(X-Real-IP)
+    http-request set-src hdr(CF-Connecting-IP) if is_cloudflare_ip cf_ip_hdr
 
     # we can be rather aggresive regarding timeouts here as only impact http to https redirections
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
