@@ -38,7 +38,7 @@ listen tls
 
     bind :::<%= @tls_port -%> tfo v6only ssl crt-list /etc/haproxy/crt-list.cfg<%- if @tls_ticket_keys_path -%> tls-ticket-keys <%= @tls_ticket_keys_path %><%- end %>
 
-    # http-reuse always
+    http-reuse never
 
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
     timeout http-request <%= @timeout['http_request'] %>s
@@ -72,12 +72,14 @@ listen tls
     capture response header Server len 64
     <%- end -%>
 
+    http-request del-header X-Real-IP
+
     acl is_cloudflare_ip src <%= @cloudflare_ips.join(' ') %>
     acl cf_ip_hdr req.hdr(CF-Connecting-IP) -m found
     http-request set-header X-Real-IP %[req.hdr(CF-Connecting-IP)] if is_cloudflare_ip cf_ip_hdr
     http-request set-header X-Real-IP %[src] if !is_cloudflare_ip
 
-    http-request set-var(txn.real_ip) req.hdr(X-Real-IP)
+    http-request set-src hdr(CF-Connecting-IP) if is_cloudflare_ip cf_ip_hdr
 
     # Redirect unwanted User-Agent requests to 403
     acl is_mj12bot hdr_sub(User-Agent) -i MJ12bot
@@ -114,7 +116,7 @@ listen tls
 <%- end -%>
 <%- end -%>
 
-    acl wikitide_trust var(txn.real_ip) -m ip 2602:294:0:c8::/64 2602:294:0:b13::/64 2602:294:0:b23::/64 2602:294:0:b12::/64 2602:294:0:b33::/64 2602:294:0:b39::/64 2604:2dc0:202:300::7c6 10.0.0.0/8 38.46.223.206 38.46.223.205
+    acl wikitide_trust src 2602:294:0:c8::/64 2602:294:0:b13::/64 2602:294:0:b23::/64 2602:294:0:b12::/64 2602:294:0:b33::/64 2602:294:0:b39::/64 2604:2dc0:202:300::7c6 10.0.0.0/8 38.46.223.206 38.46.223.205
 
 <%- if @acls and @acls['tls'] -%>
 <%- @acls['tls'].each do |acl| -%>
@@ -160,11 +162,14 @@ listen tls
     acl hc-path        path_beg     /check
     use_backend healthcheck if hc-host hc-path
 
+    option forwardfor
+
     <%- @cache_backends.each_pair do | name, address | -%>
     server <%= name %> <%= address %>:81 check
     <%- end -%>
 
 backend healthcheck
+    option forwardfor
     server hc_server 127.0.0.1:81 maxconn 100
 
 <%- if @prometheus_port -%>
@@ -203,6 +208,8 @@ listen <%= name %>_backend_tls
     # timeout used after upgrading a connection (websockets) or after the first response when no keepalive/close option is specified
     timeout tunnel <%= @timeout['tunnel'] %>s
 
+    option http-server-close
+
     # We don't use a healthchecker because we use varnish for this.
     server <%= name %>_backend <%= name %>.<%= property['domain'] || 'wikitide.net' %>:443 ssl check-ssl verify none
 
@@ -233,12 +240,14 @@ frontend http
     capture response header Server len 64
 <%- end -%>
 
+    http-request del-header X-Real-IP
+
     acl is_cloudflare_ip src <%= @cloudflare_ips.join(' ') %>
     acl cf_ip_hdr req.hdr(CF-Connecting-IP) -m found
     http-request set-header X-Real-IP %[req.hdr(CF-Connecting-IP)] if is_cloudflare_ip cf_ip_hdr
     http-request set-header X-Real-IP %[src] if !is_cloudflare_ip
 
-    http-request set-var(txn.real_ip) req.hdr(X-Real-IP)
+    http-request set-src hdr(CF-Connecting-IP) if is_cloudflare_ip cf_ip_hdr
 
     # we can be rather aggresive regarding timeouts here as only impact http to https redirections
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
