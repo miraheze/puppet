@@ -77,7 +77,7 @@ listen tls
     http-request set-header X-Real-IP %[req.hdr(CF-Connecting-IP)] if is_cloudflare_ip cf_ip_hdr
     http-request set-header X-Real-IP %[src] if !is_cloudflare_ip
 
-    http-request set-var(req.real_ip) req.hdr(X-Real-IP)
+    http-request set-var(txn.real_ip) req.hdr(X-Real-IP)
 
     # Redirect unwanted User-Agent requests to 403
     acl is_mj12bot hdr_sub(User-Agent) -i MJ12bot
