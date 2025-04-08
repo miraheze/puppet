@@ -77,6 +77,8 @@ listen tls
     http-request set-header X-Real-IP %[req.hdr(CF-Connecting-IP)] if is_cloudflare_ip cf_ip_hdr
     http-request set-header X-Real-IP %[src] if !is_cloudflare_ip
 
+    http-request set-src hdr(CF-Connecting-IP) if is_cloudflare_ip cf_ip_hdr
+
     # Redirect unwanted User-Agent requests to 403
     acl is_mj12bot hdr_sub(User-Agent) -i MJ12bot
     acl is_zimit hdr_sub(User-Agent) -i +Zimit
@@ -204,6 +206,8 @@ listen <%= name %>_backend_tls
     # timeout used after upgrading a connection (websockets) or after the first response when no keepalive/close option is specified
     timeout tunnel <%= @timeout['tunnel'] %>s
 
+    http-request set-src hdr(X-Real-IP)
+
     # We don't use a healthchecker because we use varnish for this.
     server <%= name %>_backend <%= name %>.<%= property['domain'] || 'wikitide.net' %>:443 ssl check-ssl verify none
 
@@ -233,6 +237,13 @@ frontend http
     capture response header X-Cache len 96
     capture response header Server len 64
 <%- end -%>
+
+    acl is_cloudflare_ip src <%= @cloudflare_ips.join(' ') %>
+    acl cf_ip_hdr req.hdr(CF-Connecting-IP) -m found
+    http-request set-header X-Real-IP %[req.hdr(CF-Connecting-IP)] if is_cloudflare_ip cf_ip_hdr
+    http-request set-header X-Real-IP %[src] if !is_cloudflare_ip
+
+    http-request set-src hdr(CF-Connecting-IP) if is_cloudflare_ip cf_ip_hdr
 
     # we can be rather aggresive regarding timeouts here as only impact http to https redirections
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
