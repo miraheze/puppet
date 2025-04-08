@@ -208,6 +208,8 @@ listen <%= name %>_backend_tls
     # timeout used after upgrading a connection (websockets) or after the first response when no keepalive/close option is specified
     timeout tunnel <%= @timeout['tunnel'] %>s
 
+    option http-server-close
+
     # We don't use a healthchecker because we use varnish for this.
     server <%= name %>_backend <%= name %>.<%= property['domain'] || 'wikitide.net' %>:443 ssl check-ssl verify none
 
