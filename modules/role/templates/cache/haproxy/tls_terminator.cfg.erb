@@ -88,7 +88,7 @@ listen tls
     http-request redirect location https://<%= redirect %> if { hdr(host) -i <%= property['url'] -%><%- if property['additional_domain'] -%> <%= property['additional_domain'] -%><%- end -%> && path_reg -i <%= path -%>$ }
     <%- end -%>
     <%- end -%>
-    http-request redirect location https://<%= property['redirect'] %>%[url] code 301 if { hdr(host) -i <%= property['url'] -%> <%- if property['additional_domain'] -%><%= property['additional_domain'] -%> <%- end -%>}
+    http-request redirect location https://<%= property['redirect'] %>%[url] code 301 if { hdr(host) -i <%= property['url'] -%> <%- if property['additional_domain'] -%> <%= property['additional_domain'] -%> <%- end -%>}
     <%- end -%>
     <%- end -%>
 
