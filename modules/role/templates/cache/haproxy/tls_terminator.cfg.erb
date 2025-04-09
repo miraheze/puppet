@@ -90,14 +90,6 @@ listen tls
     http-request redirect location https://<%= property['redirect'] %>%[url] code 301 if { hdr_dom(host) -i <%= property['url'] %> <%- if property['additional_domain'] -%><%= property['additional_domain'] %> <%- end -%>}
     <%- end -%>
 
-	<%- if property['path_redirects'] -%>
-	<%- property['path_redirects'].each_pair do | path, redirect | -%>
-	location ~* <%= path %>$ {
-		return 301 https://<%= redirect %>;
-	}
-	<%- end -%>
-	<%- end -%>
-
     # Redirect unwanted User-Agent requests to 403
     acl is_mj12bot hdr_sub(User-Agent) -i MJ12bot
     acl is_zimit hdr_sub(User-Agent) -i +Zimit
