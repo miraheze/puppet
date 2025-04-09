@@ -82,12 +82,14 @@ listen tls
     http-request set-src hdr(CF-Connecting-IP) if is_cloudflare_ip cf_ip_hdr
 
     <%- @sslredirects.each_pair do | name, property | -%>
-	<%- if property['path_redirects'] -%>
-	<%- property['path_redirects'].each_pair do | path, redirect | -%>
+    <%- if property['sslname'] == 'miraheze-origin-cert' or property['sslname'] == 'mirabeta-origin-cert' or property['sslname'] == 'nexttide-origin-cert' or property['sslname'] == 'wikitide.net' -%>
+    <%- if property['path_redirects'] -%>
+    <%- property['path_redirects'].each_pair do | path, redirect | -%>
     http-request redirect location https://<%= redirect %> if { hdr(host) -i<%= property['url'] %> <%- if property['additional_domain'] -%><%= property['additional_domain'] %> <%- end -%> } { path_reg -i <%= path %>$ }
-	<%- end -%>
-	<%- end -%>
+    <%- end -%>
+    <%- end -%>
     http-request redirect location https://<%= property['redirect'] %>%[url] code 301 if { hdr_dom(host) -i <%= property['url'] %> <%- if property['additional_domain'] -%><%= property['additional_domain'] %> <%- end -%>}
+    <%- end -%>
     <%- end -%>
 
     # Redirect unwanted User-Agent requests to 403
