@@ -73,6 +73,17 @@ sub vcl_init {
 <%- end -%>
 }
 
+acl local_host {
+	"127.0.0.1";
+}
+
+acl local_tls_terminator {
+	"10.0.16.137"; # cp36
+	"10.0.17.138"; # cp37
+	"10.0.19.146"; # cp38
+	"0.0.0.0"; // this matches incoming traffic via UDS
+}
+
 # Purge ACL
 acl purge {
 	# localhost
@@ -392,6 +403,22 @@ sub vcl_recv {
 	unset req.http.X-CDIS;
 
 	if (req.restarts == 0) {
+		if (client.ip !~ local_host && remote.ip !~ local_tls_terminator) {
+			// only the local haproxy TLS terminator should set these at all -
+			// there are no other internal exceptions to that rule
+			unset req.http.X-Real-IP;
+		}
+
+		if (!req.http.X-Real-IP) {
+			set req.http.X-Real-IP = client.ip;
+			if (!req.http.X-Real-IP) {
+				// apparently sometimes the above doesn't set it???  use
+				// illegal RFC 5735 documentation network to avoid
+				// sending NULL
+				set req.http.X-Real-IP = "192.0.2.1";
+			}
+		}
+
 		unset req.http.X-Subdomain;
 	}
 
