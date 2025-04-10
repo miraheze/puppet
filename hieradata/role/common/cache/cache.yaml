@@ -256,6 +256,9 @@ role::cache::haproxy::del_headers:
       name: 'Backend-Timing'
       acl: missing_xwd
     - direction: response
+      name: 'X-OpenStack-Request-ID'
+      acl: missing_xwd
+    - direction: response
       name: 'X-Powered-By'
       acl: missing_xwd
     - direction: response
