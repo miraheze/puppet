@@ -38,7 +38,8 @@ listen tls
 
     bind :::<%= @tls_port -%> tfo v6only ssl crt-list /etc/haproxy/crt-list.cfg<%- if @tls_ticket_keys_path -%> tls-ticket-keys <%= @tls_ticket_keys_path %><%- end %>
 
-    http-reuse never
+    http-reuse always
+    option http-server-close
 
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
     timeout http-request <%= @timeout['http_request'] %>s
@@ -193,7 +194,7 @@ listen <%= name %>_backend_tls
     bind :<%= property['port'] %>
     bind :::<%= property['port'] %> v6only
 
-    http-reuse never
+    http-reuse always
 
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
     timeout http-request <%= @timeout['http_request'] %>s
