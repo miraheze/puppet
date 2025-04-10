@@ -197,7 +197,7 @@ role::cache::haproxy::vars:
   tls:
     - direction: request
       name: 'txn.xwd_count'
-      value: 'req.hdr_cnt(X-Miraheze-Debug)'
+      value: 'req.hdr_cnt(X-Wikitide-Debug)'
   http:
     - direction: request
       name: 'req.dummy_silent_drop_port80'  # exists only for logging purposes
