@@ -480,6 +480,11 @@ sub vcl_recv {
 	if (req.http.Host == "issue-tracker.miraheze.org" || req.http.Host == "phorge-static.wikitide.net" ||
 		req.http.Host == "blog.miraheze.org") {
 		set req.backend_hint = phorge171;
+
+		if (req.http.upgrade ~ "(?i)websocket") {
+			return (pipe);
+		}
+
 		return (pass);
 	}
 
