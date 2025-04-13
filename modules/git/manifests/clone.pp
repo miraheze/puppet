@@ -103,7 +103,7 @@ define git::clone(
             if !empty($branch) {
                 $checkout_command = $revision ? {
                     ''      => "${git} checkout ${branch}",
-                    default => "${git} fetch --all --tags && ${git} checkout ${revision}",
+                    default => "${git} fetch --all --tags --unshallow && ${git} checkout ${revision}",
                 }
                 $is_current_revision = $revision ? {
                     ''      => "${git} rev-parse --abbrev-ref HEAD | grep ${branch}",
