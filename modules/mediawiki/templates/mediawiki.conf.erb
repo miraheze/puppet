@@ -66,6 +66,7 @@ server {
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 		fastcgi_read_timeout 140;
+		fastcgi_request_buffering off
 		send_timeout 140;
 	}
 
@@ -173,6 +174,7 @@ server {
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		fastcgi_buffers 32 32k;
 		fastcgi_buffer_size 64k;
+		fastcgi_request_buffering off
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 	}
 
@@ -259,6 +261,7 @@ server {
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 		fastcgi_read_timeout 140;
 		send_timeout 140;
+		fastcgi_request_buffering off
 	}
 
 	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
@@ -324,6 +327,7 @@ server {
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 		fastcgi_read_timeout 140;
 		send_timeout 140;
+		fastcgi_request_buffering off
 	}
 
 	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
