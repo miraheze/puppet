@@ -282,7 +282,10 @@ role::cache::haproxy::del_headers:
 
 role::cache::haproxy::h2settings:
   header_table_size: 4096
-  initial_window_size: 65535
+  # Issues with file uploads that take ages to upload or hit the timeout.
+  # To fix this, it seemed increasing this to 1mb improved the sitation so you weren't
+  # waiting too long. Experiment was done with a 40m file.
+  initial_window_size: 1048576
   max_concurrent_streams: 100
 role::cache::haproxy::timeout:
   client: 120
