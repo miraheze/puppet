@@ -7,10 +7,16 @@ import re
 
 MEDIAWIKI_API_URL = 'https://meta.miraheze.org/w/api.php'
 GITHUB_REPO_URL = 'git@github.com:miraheze/statichelp.git'
-LOCAL_REPO_PATH = '/home/universalomega/statichelp'
+LOCAL_REPO_PATH = '/srv/statichelp'
 SUB_DIRECTORY = 'content/tech-docs'
 NAMESPACE = 1600  # Tech namespace ID
 USER_AGENT = 'TechNamespaceBot/1.0 (https://github.com/miraheze/statichelp/tree/main/content/tech-docs)'
+
+SSH_PRIVATE_KEY_PATH = '/var/lib/nagios/id_ed25519'
+HTTP_PROXY = 'bastion.wikitide.net:8080'
+
+GIT_USER_EMAIL = 'noreply@wikitide.org'
+GIT_USER_NAME = 'WikiTideBot'
 
 EXCLUDED_CATEGORIES = {
     'Category:Decommissioned servers',
@@ -543,11 +549,14 @@ def delete_files_not_in_pages(pages):
 
 def commit_and_push_changes():
     repo = Repo(LOCAL_REPO_PATH)
+    with repo.config_writer() as git_config:
+        git_config.set_value('user', 'email', GIT_USER_EMAIL)
+        git_config.set_value('user', 'name', GIT_USER_NAME)
     repo.git.add(A=True)  # Add all changes
     commit_message = f'Auto-update Tech namespace pages {datetime.now()}'
     repo.index.commit(commit_message)
     origin = repo.remote(name='origin')
-    origin.push()
+    origin.push(env={'GIT_SSH_COMMAND': f'ssh -i {SSH_PRIVATE_KEY_PATH} -F /dev/null -o ProxyCommand="nc -X connect -x {HTTP_PROXY} %h %p"'})
 
 
 def mirror_tech_pages_to_github():
