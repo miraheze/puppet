@@ -6,15 +6,15 @@ class base::puppet (
 ) {
     $crontime = fqdn_rand(60, 'puppet-params-crontime')
 
-    file { '/etc/apt/trusted.gpg.d/puppetlabs.gpg':
+    file { '/etc/apt/trusted.gpg.d/puppetlabs.asc':
         ensure => present,
-        source => 'puppet:///modules/base/puppet/puppetlabs.gpg',
+        source => 'puppet:///modules/base/puppet/puppetlabs.asc',
     }
 
     apt::source { 'puppetlabs':
         location => 'http://apt.puppetlabs.com',
         repos    => "puppet${puppet_major_version}",
-        require  => File['/etc/apt/trusted.gpg.d/puppetlabs.gpg'],
+        require  => File['/etc/apt/trusted.gpg.d/puppetlabs.asc'],
         notify   => Exec['apt_update_puppetlabs'],
     }
 

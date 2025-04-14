@@ -74,7 +74,7 @@ class puppetdb(
         group  => 'puppetdb',
     }
 
-    $jvm_opts = "${puppetdb_jvm_opts} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${facts['networking']['fqdn']}:9401:/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml"
+    $jvm_opts = "${puppetdb_jvm_opts} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=0.0.0.0:9401:/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml"
     file { '/etc/default/puppetdb':
         ensure  => present,
         owner   => 'root',
@@ -185,6 +185,38 @@ class puppetdb(
         path              => '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
         syslog_tag_prefix => '',
         use_udp           => true,
+    }
+
+
+    # Backup provisioning
+    file { '/srv/backups':
+        ensure => directory,
+    }
+
+    file { '/var/log/puppetdb-backup':
+        ensure => 'directory',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+    }
+
+    systemd::timer::job { 'puppetdb-backup':
+        description       => 'Runs backup of puppetdb',
+        command           => '/usr/local/bin/wikitide-backup backup puppetdb',
+        interval          => {
+            'start'    => 'OnCalendar',
+            'interval' => '*-*-1,15 01:00:00',
+        },
+        logfile_basedir   => '/var/log/puppetdb-backup',
+        logfile_name      => 'puppetdb.log',
+        syslog_identifier => 'puppetdb-backup',
+        user              => 'root',
+    }
+
+    monitoring::nrpe { 'Backups PuppetDB':
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/puppetdb-backup/puppetdb-backup/puppetdb.log',
+        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
+        critical => true
     }
 
     monitoring::services { 'puppetdb':

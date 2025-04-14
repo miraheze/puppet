@@ -1,11 +1,11 @@
 -- Grants for 'icinga2'@''
 
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER, CREATE VIEW, INDEX, EXECUTE, USAGE
     ON `icinga`.* TO 'icinga2'@'%'
     IDENTIFIED BY '<%= @ido_db_user_password %>';
 
 -- Grants for 'icingaweb2'@''
 
-GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER, CREATE VIEW, INDEX, EXECUTE, USAGE
     ON `icingaweb2`.* TO 'icingaweb2'@'%'
     IDENTIFIED BY '<%= @icingaweb2_db_user_password %>';

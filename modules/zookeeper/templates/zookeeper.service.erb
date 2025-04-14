@@ -11,7 +11,7 @@ After=<%= scope.lookupvar("zookeeper::systemd_unit_after") %>
 <% end -%>
 
 [Service]
-ExecStart=/bin/bash -c "source /etc/zookeeper/conf/environment; CLASSPATH=/usr/share/zookeeper/zookeeper.jar:/usr/share/zookeeper/lib/*:$CLASSPATH; CLASSPATH=$([ -r /usr/share/zookeeper/bin/zkEnv.sh ] && . /usr/share/zookeeper/bin/zkEnv.sh ; echo $CLASSPATH); mkdir -p /var/log/zookeeper; /usr/bin/java -Dzookeeper.log.dir=/var/log/zookeeper -Dzookeeper.root.logger=$ZOO_LOG4J_PROP -cp /usr/share/zookeeper/zookeeper.jar:/usr/share/zookeeper/lib/*: org.apache.zookeeper.server.quorum.QuorumPeerMain /etc/zookeeper/conf/zoo.cfg"
+ExecStart=/bin/bash -c "source /etc/zookeeper/conf/environment; CLASSPATH=/etc/zookeeper/conf:/usr/share/java/zookeeper.jar:/usr/share/java/slf4j-log4j12.jar:/usr/share/java/log4j-1.2.jar; CLASSPATH=$([ -r /usr/share/zookeeper/bin/zkEnv.sh ] && . /usr/share/zookeeper/bin/zkEnv.sh ; echo $CLASSPATH); mkdir -p /var/log/zookeeper; /usr/bin/java -Dzookeeper.log.dir=/var/log/zookeeper -Dzookeeper.root.logger=$ZOO_LOG4J_PROP -cp /etc/zookeeper/conf:/usr/share/java/zookeeper.jar:/usr/share/java/slf4j-log4j12.jar:/usr/share/java/log4j-1.2.jar: org.apache.zookeeper.server.quorum.QuorumPeerMain /etc/zookeeper/conf/zoo.cfg"
 Restart=always
 RemainAfterExit=no
 SyslogIdentifier=zookeeper

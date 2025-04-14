@@ -192,19 +192,19 @@ class _WikiTideRewriteContext(WSGIContext):
         # (d) global-data-repo-zone.shard (if sharded)
         #
         # Rewrite wiki-global URLs of these forms:
-        # (a) http://static.miraheze.org/<proj>/math/<relpath>
+        # (a) http://static.wikitide.net/<proj>/math/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/math/<relpath>
-        # (b) http://static.miraheze.org/<proj>/<relpath>
+        # (b) http://static.wikitide.net/<proj>/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/<relpath>
-        # (c) http://static.miraheze.org/<proj>/archive/<relpath>
+        # (c) http://static.wikitide.net/<proj>/archive/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/archive/<relpath>
-        # (d) http://static.miraheze.org/<proj>/thumb/<relpath>
+        # (d) http://static.wikitide.net/<proj>/thumb/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/thumb/<relpath>
-        # (e) https://static.miraheze.org/<proj>/temp/<relpath>
+        # (e) https://static.wikitide.net/<proj>/temp/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/temp/<relpath>
-        # (f) https://static.miraheze.org/<proj>/transcoded/<relpath>
+        # (f) https://static.wikitide.net/<proj>/transcoded/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/transcoded/<relpath>
-        # (g) https://static.miraheze.org/<proj>/timeline/<relpath>
+        # (g) https://static.wikitide.net/<proj>/timeline/<relpath>
         #         => http://127.0.0.1:8080/v1/AUTH_<hash>/<container>/<proj>/timeline/<relpath>
 
         zone = ''
@@ -301,6 +301,16 @@ class _WikiTideRewriteContext(WSGIContext):
                 proj = match.group('proj')
                 repo = 'phonos'
                 zone = 'render'
+                obj = match.group('path')
+
+        # UserProfileV2 avatars
+        if match is None:
+            # /scratchpadwiki/upv2avatars/avatar_104.png
+            match = re.match(r'^/(?P<proj>[^/]+)/(?P<repo>upv2avatars)/(?P<path>.+)$', req.path)
+            if match:
+                proj = match.group('proj')
+                repo = 'upv2avatars'
+                zone = ''
                 obj = match.group('path')
 
         if match is None:

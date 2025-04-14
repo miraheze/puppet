@@ -4,7 +4,8 @@
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
 # Use 'ncpu' to run as many workers as there are CPU units
-num_workers: 0
+num_workers: 8
+
 # Log error messages and gracefully restart a worker if v8 reports that it
 # uses more heap (note: not RSS) than this many mb.
 worker_heap_limit_mb: 500
@@ -38,8 +39,7 @@ services:
       # can accept multiple events at once in the request body.
       max_body_size: 10mb
 
-      # Set cors to false by default.
-      cors: false
+      cors: '*'
 
       # more per-service config settings
       user_agent: eventgate
@@ -47,20 +47,10 @@ services:
       # EventGate will be instantiated from the factory method returned by this module.
       eventgate_factory_module: '/srv/eventgate/eventgate-custom.js'
 
-      # This field in each event will be used to extract a
-      # (possibly relative) schema uri.  The default is $schema.
-      # An array of field names will cause EventGate to search for
-      # You can alteratively use a remote HTTP base URI.
-      # fields by these names in each event, using the first match.
-      schema_uri_field: $schema
-
-      # If set, these URIs will be prepended to any relative schema URI
-      # extracted from each event's schema_field.  The resulting URLs will
-      # be searched until a schema is found.  Change this
-      # to match paths to your schema repositories.
+      # /srv/service/schemas/primary is in the eventgate image cloned at build
+      # time from https://gerrit.wikimedia.org/r/schemas/event/primary.
       schema_base_uris:
-        - 'https://schema.wikimedia.org/repositories/primary/jsonschema/'
-        - 'https://schema.wikimedia.org/repositories/secondary/jsonschema/'
+        - 'file:///srv/jsonschema/jsonschema/'
 
       # These schema URIs will be 'precached' on service startup.
       # They should be resolveable by the URI prefixes in schema_base_uris.
@@ -130,8 +120,8 @@ services:
       # Request static stream config during startup from the EventStreamConfig extension
       # stream_config_ttl is not set, so stream configs will be cached permanently.
       # MW API endpoint for all streams with destination_event_service == eventgate
-      stream_config_uri: 'https://jobrunner.wikitide.net/w/api.php?format=json&action=streamconfigs&constraints=destination_event_service=eventgate'
-      stream_config_uri_options: {'headers': {'Host': 'mwcosmos.com'}}
+      stream_config_uri: 'https://meta.miraheze.org/w/api.php?format=json&action=streamconfigs&constraints=destination_event_service=eventgate'
+      # stream_config_uri_options: {'headers': {'Host': 'mwcosmos.com'}}
       # Expect the stream -> settings map in the response at this subobject key
       stream_config_object_path: streams
 
@@ -141,7 +131,13 @@ services:
 
       # Retry up to this many times when fetching stream config from stream_config_uri.
       # Default: 1
-      #stream_config_retries: 1
+      stream_config_retries: 3
+
+      # This field in each event will be used to extract a
+      # (possibly relative) schema uri.  The default is $schema.
+      # An array of field names will cause EventGate to search for
+      # fields by these names in each event, using the first match.
+      schema_uri_field: $schema
 
       # If test_events is set, EventGate will set up a /v1/_test/events
       # route that will process these test_events as if they were POSTed
@@ -154,18 +150,10 @@ services:
           # make sure this is configured in stream config if you are using it.
           stream: eventgate.test.event
 
-      # If this is set and an event does not have schema_uri_field, the value of
-      # event[schema_uri_field] will be set to the value of this HTTP query paramater
-      schema_uri_query_param: schema_uri
-
-      # If this is set and an event does not have stream_field, the value of
-      # event[stream_field] will be set to the value of this HTTP query paramater.
-      stream_query_param: stream
-
       # kafka configs go here.
       kafka:
         conf:
-          metadata.broker.list: ['10.0.18.146:9092']
+          metadata.broker.list: '10.0.18.146:9092'
           compression.codec: snappy
           message.max.bytes: 4194304
           # Silence noisy connection reaper logging

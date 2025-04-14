@@ -20,6 +20,11 @@ trusted_hosts[] = "analytics.wikitide.net"
 maintenance_mode = 0
 enable_internet_features = 0
 enable_tracking_failures_notification = 0
+enable_browser_archiving_triggering = 0
+
+[CustomReports]
+custom_reports_max_execution_time = 2700
+custom_reports_disabled_dimensions = "CoreHome.VisitLastActionDate"
 
 [Tracker]
 bulk_requests_use_transaction = 0
@@ -92,6 +97,7 @@ Plugins[] = "ProfessionalServices"
 Plugins[] = "UserId"
 Plugins[] = "QueuedTracking"
 Plugins[] = "DeviceDetectorCache"
+Plugins[] = "Login"
 Plugins[] = "LoginLdap"
 Plugins[] = "PagePerformance"
 
@@ -159,6 +165,7 @@ PluginsInstalled[] = "GeoIp2"
 PluginsInstalled[] = "QueuedTracking"
 PluginsInstalled[] = "TwoFactorAuth"
 PluginsInstalled[] = "DeviceDetectorCache"
+PluginsInstalled[] = "Login"
 PluginsInstalled[] = "LoginLdap"
 PluginsInstalled[] = "CoreVue"
 PluginsInstalled[] = "PagePerformance"
@@ -179,7 +186,7 @@ ldap_user_id_field = "uid"
 ldap_last_name_field = "sn"
 ldap_first_name_field = "givenName"
 ldap_alias_field = "cn"
-ldap_mail_field = "mailacceptinggeneralid"
+ldap_mail_field = "mail"
 ldap_password_field = "userPassword"
 ldap_view_access_field = "view"
 ldap_admin_access_field = "admin"

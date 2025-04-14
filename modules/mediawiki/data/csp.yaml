@@ -44,6 +44,8 @@ script-src:
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
   - 'bandcamp.com'
+  - 'flo.uri.sh'
+  - 'challenges.cloudflare.com'
 
 style-src:
   - "'self'"
@@ -77,6 +79,7 @@ style-src:
   - 'ton.twimg.com'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
+  - 'use.typekit.net'
 
 img-src:
   - 'blob:'
@@ -156,6 +159,7 @@ font-src:
   - 'fastly.jsdelivr.net'
   - 'db.onlinewebfonts.com'
   - 'upload.wikimedia.org'
+  - 'use.typekit.net'
 
 media-src:
   - "'self'"
@@ -186,6 +190,7 @@ frame-src:
   - 'docs.google.com'
   - 'apis.google.com'
   - 'calendar.google.com'
+  - 'drive.google.com'
   - 'web.libera.chat'
   - 'snap.berkeley.edu'
   - '*.youtube-nocookie.com'
@@ -208,9 +213,11 @@ frame-src:
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
   - 'bandcamp.com'
+  - 'challenges.cloudflare.com'
 
 connect-src:
   - "'self'"
+  - 'blob:'
   - '*.miraheze.org'
   - '*.mirabeta.org'
   - '*.nexttide.org'
@@ -229,3 +236,5 @@ connect-src:
   - '*.hcaptcha.com'
   - '1.1.1.1'
   - 'translate.googleapis.com'
+  - 'games.roblox.com'
+  - 'economy.roblox.com'
