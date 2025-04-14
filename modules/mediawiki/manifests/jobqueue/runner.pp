@@ -130,6 +130,7 @@ class mediawiki::jobqueue::runner (
         }
 
         if $wiki == 'loginwiki' {
+            include mediawiki::techdocs
             $swift_password = lookup('mediawiki::swift_password')
 
             systemd::timer::job { 'generate-sitemap-index':
