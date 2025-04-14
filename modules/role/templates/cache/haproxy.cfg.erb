@@ -11,8 +11,8 @@ global
     log /var/lib/haproxy/dev/log local0 info
     <%- if @use_graylog -%>
     log 127.0.0.1:10514 len <%= @log_length %> local0 info
-    tune.http.logurilen 2048
     <%- end -%>
+    tune.http.logurilen 2048
     # do not keep old processes longer than 5m after a reload
     hard-stop-after 5m
     set-dumpable
