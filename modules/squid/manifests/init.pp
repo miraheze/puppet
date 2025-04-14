@@ -19,9 +19,17 @@ class squid {
         restart  => true,
         require  => File['/etc/squid/squid.conf'],
     }
+
     service { 'squid':
         ensure    => 'running',
         require   => Systemd::Unit['squid'],
         subscribe => File['/etc/squid/squid.conf'],
+    }
+
+    monitoring::services { 'squid':
+        check_command => 'tcp',
+        vars          => {
+            tcp_port  => '8080',
+        },
     }
 }

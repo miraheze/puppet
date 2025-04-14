@@ -8,7 +8,7 @@ class EnsureMaxAge(object):
         self.methods_list = conf.get("methods_list", "HEAD GET").split()
         self.status_list = conf.get("status_list", "200").split()
         self.max_age = conf.get("max_age", "86400")
-        self.host_list = conf.get("host_list", "static.miraheze.org").split()
+        self.host_list = conf.get("host_list", "static.wikitide.net").split()
 
     def __call__(self, env, start_response):
         if env["REQUEST_METHOD"] not in self.methods_list:

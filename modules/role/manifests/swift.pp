@@ -8,7 +8,7 @@ class role::swift (
     include ::swift::ring
 
     $firewall_rules_str = join(
-        query_facts('Class[Role::Swift] or Class[Role::Mediawiki] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion] or Class[Role::Varnish]', ['networking'])
+        query_facts('Class[Role::Swift] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion] or Class[Role::Varnish] or Class[Role::Cache::Cache]', ['networking'])
         .map |$key, $value| {
             if ( $value['networking']['interfaces']['he-ipv6'] ) {
                 "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"

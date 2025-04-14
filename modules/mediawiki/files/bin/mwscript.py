@@ -37,13 +37,11 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
     validDBLists = (
         'active',
-        'active-beta',
-        'beta',
         'deleted',
-        'deleted-beta',
     ) + versionLists
 
     longscripts = (
+        'checkswiftcontainers',
         'compressold',
         'deletebatch',
         'importdump',
@@ -85,13 +83,8 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
             args.version = versions.get(wiki[:-6])
 
     script = args.script
-    if not script.endswith('.php') and float(args.version) < 1.40:
-        print('Error: Use MediaWiki version 1.40 or greater (e.g. --version=1.40) to use a class for MaintenanceRunner')
-        return 2
-    if float(args.version) >= 1.40:
-        runner = f'/srv/mediawiki/{args.version}/maintenance/run.php '
-    else:
-        runner = ''
+    runner = f'/srv/mediawiki/{args.version}/maintenance/run.php '
+
     if script.endswith('.php'):  # assume class if not
         scriptsplit = script.split('/')
         if script.split('.')[0].lower() in longscripts:
@@ -113,14 +106,14 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
 
     if wiki == 'all':
         long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.json {script}'
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php {script}'
     elif wiki and wiki in validDBLists:
         long = True
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.json {script}'
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.php {script}'
     elif args.extension:
         long = True
-        generate = f'php {runner}/srv/mediawiki/{args.version}/extensions/MirahezeMagic/maintenance/generateExtensionDatabaseList.php --wiki=loginwiki --extension={args.extension} --directory=/home/{os.getlogin()}'
-        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /home/{os.getlogin()}/{args.extension}.json {script}'
+        generate = f'sudo -u www-data php {runner}MirahezeMagic:GenerateExtensionDatabaseList --wiki=loginwiki --extension={args.extension} --directory=/tmp'
+        command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/{args.extension}.php {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
     if args.arguments:

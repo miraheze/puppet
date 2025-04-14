@@ -1,0 +1,315 @@
+users::groups: 'cache-admins'
+varnish::cache_file_size: '380G'
+varnish::thread_pool_max: 12000
+varnish::transient_storage: 5
+role::cache::cache::restrict_firewall: true
+
+role::cache::haproxy::cache_backends:
+  cp37: 10.0.17.138
+  cp38: 10.0.19.146
+
+role::cache::haproxy::varnish_backends:
+  mw151:
+    port: 8113
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw152:
+    port: 8114
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw161:
+    port: 8115
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw162:
+    port: 8116
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw171:
+    port: 8117
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw172:
+    port: 8118
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw181:
+    port: 8119
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw182:
+    port: 8120
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw153:
+    port: 8121
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw163:
+    port: 8123
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw173:
+    port: 8125
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw183:
+    port: 8127
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw191:
+    port: 8129
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw192:
+    port: 8130
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw193:
+    port: 8131
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw201:
+    port: 8132
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw202:
+    port: 8133
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mw203:
+    port: 8134
+    probe: mwhealth
+    pool: true
+    xdebug: true
+  mwtask171:
+    port: 8161
+    probe: false
+    pool: false
+    xdebug: true
+  mwtask181:
+    port: 8160
+    probe: false
+    pool: false
+    xdebug: true
+  mwtask151:
+    port: 8162
+    probe: false
+    pool: false
+    xdebug: true
+  mwtask161:
+    port: 8163
+    probe: false
+    pool: false
+    xdebug: true
+  test151:
+    port: 8181
+    probe: false
+    pool: false
+    xdebug: true
+  mon181:
+    port: 8201
+    probe: false
+    pool: false
+  phorge171:
+    port: 8202
+    probe: false
+    pool: false
+  matomo151:
+    port: 8203
+    probe: false
+    pool: false
+  puppet181:
+    port: 8204
+    probe: false
+    pool: false
+  reports171:
+    port: 8205
+    probe: false
+    pool: false
+  swiftproxy161:
+    port: 8206
+    probe: false
+    pool: false
+    swiftpool: true
+  swiftproxy171:
+    port: 8207
+    probe: false
+    pool: false
+    swiftpool: true
+
+role::cache::haproxy::post_acl_actions:
+  tls:
+    - context: http-request
+      verb: track-sc0 src table httpreqrate if !wikitide_trust
+    - context: http-request
+      verb: 'set-var(req.dummy_silent_drop) src,debug(silent-drop_for_300s,stderr)'
+      condition: if !wikitide_trust too_many_concurrent_queries !too_much_recent_concurrency
+      comment: "exists only for logging side-effect"
+    # To disable concurrency enforcement, comment out this entire block below.
+    - context: http-request
+      verb: silent-drop
+      condition: if too_much_recent_concurrency || !wikitide_trust too_many_concurrent_queries mark_as_too_much_concurrency
+      comment: "To disable concurrency enforcement, see post_acl_actions in puppet/hieradata/common/role/cache/cache.yaml"
+  http:
+    - context: http-request
+      verb: track-sc0 src table httpreqrate_http
+    # To disable concurrency enforcement, comment out this entire block below.
+    - context: http-request
+      verb: silent-drop
+      condition: if too_much_recent_concurrency || too_many_concurrent_queries mark_as_too_much_concurrency
+      comment: "To disable concurrency enforcement, see post_acl_actions in puppet/hieradata/common/role/cache/cache.yaml"
+
+role::cache::haproxy::sticktables:
+  - name: httpreqrate
+    type: ipv6
+    size: 1m
+    expire: 300s
+    store:
+      - 'http_req_rate(10s)'
+      - 'gpc_rate(10,300s)'
+  - name: httpreqrate_http
+    type: ipv6
+    size: 1m
+    expire: 300s
+    store:
+      - 'http_req_rate(10s)'
+      - 'gpc_rate(10,300s)'
+
+role::cache::haproxy::vars:
+  tls:
+    - direction: request
+      name: 'txn.xwd_count'
+      value: 'req.hdr_cnt(X-Wikitide-Debug)'
+  http:
+    - direction: request
+      name: 'req.dummy_silent_drop_port80'  # exists only for logging purposes
+      value: 'src,debug(silent-drop_port80_for_300s,stderr)'
+      # only log the first time an IP violates too_many_concurrent_queries and starts being silent-dropped
+      acl: 'too_many_concurrent_queries !too_much_recent_concurrency'
+
+role::cache::haproxy::acls:
+  tls:
+    - name: 'too_many_concurrent_queries'
+      criterion: 'sc0_trackers(httpreqrate)'
+      operator: 'ge'
+      value: '500'
+    - name: 'too_much_recent_concurrency'
+      # Add hysteresis.
+      criterion: 'sc0_gpc0_rate(httpreqrate)'
+      operator: 'gt'
+      value: '0'
+    - name: 'mark_as_too_much_concurrency'
+      criterion: 'sc0_inc_gpc0(httpreqrate)'  # increments the gpc0 counter
+      # (so yes, evaluating this ACL is mutating, and yes, this is haproxy-idiomatic)
+      operator: 'gt'
+      value: '0'
+    - name: missing_xwd
+      criterion: 'var(txn.xwd_count)'
+      operator: '-m int eq'
+      value: '0'
+  http:
+    - name: 'too_many_concurrent_queries'
+      criterion: 'sc0_trackers(httpreqrate_http)'
+      operator: 'ge'
+      value: '400'
+    - name: 'too_much_recent_concurrency'
+      # Add hysteresis.
+      criterion: 'sc0_gpc0_rate(httpreqrate_http)'
+      operator: 'gt'
+      value: '0'
+    - name: 'mark_as_too_much_concurrency'
+      criterion: 'sc0_inc_gpc0(httpreqrate_http)'  # increments the gpc1 counter
+      # (so yes, evaluating this ACL is mutating, and yes, this is haproxy-idiomatic)
+      operator: 'gt'
+      value: '0'
+
+role::cache::haproxy::del_headers:
+  tls:
+    - direction: request
+      name: 'X-Request-Id'
+      acl: '!wikitide_trust'
+    - direction: request
+      name: 'tracestate'
+      acl: '!wikitide_trust'
+    - direction: request
+      name: 'traceparent'
+      acl: '!wikitide_trust'
+    - direction: response
+      name: 'Backend-Timing'
+      acl: missing_xwd
+    - direction: response
+      name: 'X-OpenStack-Request-ID'
+      acl: missing_xwd
+    - direction: response
+      name: 'X-Powered-By'
+      acl: missing_xwd
+    - direction: response
+      name: 'X-Request-Id'
+      acl: missing_xwd
+    - direction: response
+      name: 'X-Timestamp'
+      acl: missing_xwd
+    - direction: response
+      name: 'X-Trans-Id'
+      acl: missing_xwd
+    - direction: response
+      name: 'X-Varnish'
+      acl: missing_xwd
+    - direction: response
+      name: 'traceparent'
+      acl: missing_xwd
+    - direction: response
+      name: 'tracestate'
+      acl: missing_xwd
+
+role::cache::haproxy::h2settings:
+  header_table_size: 4096
+  initial_window_size: 65535
+  max_concurrent_streams: 100
+role::cache::haproxy::timeout:
+  client: 120
+  client_fin: 120
+  connect: 3
+  http_request: 3600
+  keep_alive: 120
+  server: 180
+  tunnel: 3600
+# port 80 timeout.
+role::cache::haproxy::redirection_timeout:
+  client: 3
+  client_fin: 1
+  connect: 0 # N/A
+  http_request: 3
+  keep_alive: 3
+  server: 0 # N/A
+  tunnel: 0 # N/A
+role::cache::haproxy::tls_port: 443
+role::cache::haproxy::tls_cachesize: 512000
+role::cache::haproxy::tls_session_lifetime: 86400
+
+role::cache::haproxy::do_systemd_hardening: true
+role::cache::haproxy::http_disable_keepalive: true
+
+role::cache::haproxy::extended_logging: true
+
+# base
+
+base::syslog::rsyslog_udp_localhost: true

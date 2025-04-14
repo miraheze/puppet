@@ -1,5 +1,30 @@
 # === Class mediawiki::monitoring
 class mediawiki::monitoring {
+
+    # Admin interface (and prometheus metrics) for APCu and opcache
+    file { '/var/www/php-monitoring':
+        ensure  => directory,
+        recurse => true,
+        owner   => 'root',
+        group   => 'www-data',
+        mode    => '0555',
+        source  => 'puppet:///modules/mediawiki/php/admin'
+    }
+
+    nginx::site { 'php-admin':
+        ensure  => present,
+        content => template('mediawiki/php-admin.conf.erb'),
+    }
+
+    ## Admin script
+    file { '/usr/local/bin/php8adm':
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/php/php8adm.sh',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0555',
+    }
+
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
         $address = $facts['networking']['interfaces']['ens19']['ip']
     } elsif ( $facts['networking']['interfaces']['ens18'] ) {

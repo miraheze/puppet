@@ -23,37 +23,70 @@ class role::kafka {
         },
     }
 
+    systemd::timer::job { 'zookeeper-cleanup':
+        ensure      => present,
+        description => 'Regular jobs for running the cleanup script',
+        user        => 'zookeeper',
+        command     => '/usr/share/zookeeper/bin/zkCleanup.sh -n 10',
+        environment => {
+            'CLASSPATH' => '/etc/zookeeper/conf:/usr/share/java/zookeeper.jar:/usr/share/java/slf4j-log4j12.jar:/usr/share/java/log4j-1.2.jar'
+        },
+        interval    => {'start' => 'OnCalendar', 'interval' => '*-*-* 0:10:00'},
+        require     => [Class['zookeeper'], Service['zookeeper']],
+    }
+
     class { 'kafka':
         kafka_version => '2.4.1',
         scala_version => '2.12',
     }
 
-    $jmx_opts = "${kafka::broker::monitoring::jmx_opts} ${kafka::params::broker_jmx_opts}"
+    $jmx_opts = "-server -XX:MetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M -XX:MinMetaspaceFreeRatio=50 -XX:MaxMetaspaceFreeRatio=80 ${kafka::broker::monitoring::jmx_opts} ${kafka::params::broker_jmx_opts}"
+
+    file { '/var/spool/kafka':
+        ensure => 'directory',
+        owner  => 'kafka',
+        group  => 'kafka',
+        mode   => '0755',
+    }
 
     class { 'kafka::broker':
-        jmx_opts => $jmx_opts,
-        config   => {
-          # 'allow.everyone.if.no.acl.found'   => 'true',
-          # 'authorizer.class.name'            => 'kafka.security.auth.SimpleAclAuthorizer',
-            'auto.create.topics.enable'        => 'true',
-            'auto_leader_rebalance_enable'     => 'true',
-            'broker.id'                        => '0',
-            'broker.id.generation.enable'      => 'false',
-            'default.replication.factor'       => '1',
-            'delete.topic.enable'              => 'true',
-            'group.initial.rebalance.delay.ms' => '10000',
-            'listeners'                        => 'PLAINTEXT://:9092',
-            'log.message.timestamp.type'       => 'CreateTime',
-            'log.retention.hours'              => '168', # 1 week
-            'message.max.bytes'                => '4194304',
-            'num.io.threads'                   => '4',
-            'offsets.retention.minutes'        => '10080', # 1 week
-            'offsets.topic.replication.factor' => '1',
-            'replica.fetch.max.bytes'          => '4194304',
-            'socket.receive.buffer.bytes'      => '1048576',
-            'socket.send.buffer.bytes'         => '1048576',
-            'zookeeper.connect'                => 'localhost:2181',
+        heap_opts    => '-Xmx2G -Xms2G',
+        jmx_opts     => $jmx_opts,
+        limit_nofile => '128000',
+        config       => {
+          # 'authorizer.class.name'             => 'kafka.security.auth.SimpleAclAuthorizer',
+            'allow.everyone.if.no.acl.found'    => true,
+            'auto.create.topics.enable'         => 'true',
+            'auto_leader_rebalance_enable'      => 'true',
+            'broker.id'                         => '0',
+            'broker.id.generation.enable'       => 'false',
+            'default.replication.factor'        => '1',
+            'delete.topic.enable'               => 'true',
+            'group.initial.rebalance.delay.ms'  => '10000',
+            'listeners'                         => 'PLAINTEXT://:9092',
+            'log.dirs'                          => '/var/spool/kafka',
+            'log.message.timestamp.type'        => 'CreateTime',
+            'log.retention.hours'               => '168', # 1 week
+            'message.max.bytes'                 => '4194304',
+            'num.io.threads'                    => '12',
+            'num.network.threads'               => '6',
+            'num.partitions'                    => '1',
+            'num.recovery.threads.per.data.dir' => '4',
+            'offsets.retention.minutes'         => '10080', # 1 week
+            'offsets.topic.replication.factor'  => '1',
+            'replica.fetch.max.bytes'           => '4194304',
+            'socket.receive.buffer.bytes'       => '1048576',
+            'socket.send.buffer.bytes'          => '1048576',
+            'zookeeper.connect'                 => 'localhost:2181',
         }
+    }
+
+    file { '/usr/local/bin/kafka':
+        source  => 'puppet:///modules/role/kafka/kafka.sh',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        require => Class['kafka::broker'],
     }
 
     $firewall_rules_str = join(

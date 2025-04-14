@@ -24,15 +24,16 @@ except ImportError:
 CONTAINER_SETS = {
     # MediaWiki containers used for media storage
     'mw-media': {
-        re.compile(r'-thumb(\.[a-z0-9][a-z0-9])?$'):      'thumb',
-        re.compile(r'-public(\.[a-z0-9][a-z0-9])?$'):     'originals',
-        re.compile(r'-temp(\.[a-z0-9][a-z0-9])?$'):       'temp',
-        re.compile(r'-deleted(\.[a-z0-9][a-z0-9])?$'):    'deleted',
-        re.compile(r'-transcoded(\.[a-z0-9][a-z0-9])?$'): 'transcoded',
-        re.compile(r'-render(\.[a-z0-9][a-z0-9])?$'):     'render',
+        re.compile(r'-thumb(\.[a-z0-9][a-z0-9])?$'):       'thumb',
+        re.compile(r'-public(\.[a-z0-9][a-z0-9])?$'):      'originals',
+        re.compile(r'-temp(\.[a-z0-9][a-z0-9])?$'):        'temp',
+        re.compile(r'-deleted(\.[a-z0-9][a-z0-9])?$'):     'deleted',
+        re.compile(r'-transcoded(\.[a-z0-9][a-z0-9])?$'):  'transcoded',
+        re.compile(r'-render(\.[a-z0-9][a-z0-9])?$'):      'render',
         re.compile(r'-avatars(\.[a-z0-9][a-z0-9])?$'):     'avatars',
-        re.compile(r'-awards(\.[a-z0-9][a-z0-9])?$'):     'awards',
-        re.compile(r'-dumps-backup(_segments)?$'):     'dumps',
+        re.compile(r'-awards(\.[a-z0-9][a-z0-9])?$'):      'awards',
+        re.compile(r'-dumps-backup(_segments)?$'):         'dumps',
+        re.compile(r'-upv2avatars(\.[a-z0-9][a-z0-9])?$'): 'upv2avatars',
     },
 }
 

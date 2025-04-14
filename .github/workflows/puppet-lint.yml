@@ -1,13 +1,13 @@
 name: Puppet Lint
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - '**.pp'
       - '.github/**'
 
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     paths:
       - '**.pp'
       - '.github/**'
@@ -24,7 +24,14 @@ jobs:
     - name: puppet-lint
       uses: scottbrenner/puppet-lint-action@master
       with:
-        args: --no-80chars-check --no-140chars-check --no-puppet_url_without_modules-check --no-documentation-check --no-variable_scope-check --fix ./ --ignore-paths=.//modules/prometheus/manifests/jmx_exporter_config.pp
+        args: >-
+          --no-80chars-check
+          --no-140chars-check
+          --no-puppet_url_without_modules-check
+          --no-documentation-check
+          --no-variable_scope-check
+          --fix ./
+          --ignore-paths './/**/*.yaml,.//**/*.yml,.//modules/prometheus/manifests/jmx_exporter_config.pp'
 
     - name: Push the changes
       continue-on-error: true
@@ -48,7 +55,7 @@ jobs:
   notify-irc:
     needs: puppet-lint
     runs-on: ubuntu-latest
-    if: ${{ always() && github.repository_owner == 'miraheze' && ( github.ref == 'refs/heads/master' || github.event_name == 'pull_request' ) }}
+    if: ${{ always() && github.repository_owner == 'miraheze' && ( github.ref == 'refs/heads/main' || github.event_name == 'pull_request' ) }}
     steps:
       - name: failed
         uses: technote-space/workflow-conclusion-action@v3

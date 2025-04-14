@@ -1,0 +1,4 @@
+# Configure the proxies
+<Proxy "unix:/run/<%= @php_fpm_sock %>|fcgi://www">
+       ProxySet retry=0
+</Proxy>

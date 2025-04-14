@@ -48,19 +48,21 @@ prod: Environment = {
         'mw151',
         'mw152',
         'mw153',
-        'mw154',
         'mw161',
         'mw162',
         'mw163',
-        'mw164',
         'mw171',
         'mw172',
         'mw173',
-        'mw174',
         'mw181',
         'mw182',
         'mw183',
-        'mw184',
+        'mw191',
+        'mw192',
+        'mw193',
+        'mw201',
+        'mw202',
+        'mw203',
         'mwtask151',
         'mwtask161',
         'mwtask171',
@@ -105,8 +107,8 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
         'bundled': ['AbuseFilter', 'CategoryTree', 'Cite', 'CiteThisPage', 'CodeEditor', 'ConfirmEdit', 'DiscussionTools', 'Echo', 'Gadgets', 'ImageMap', 'InputBox', 'Interwiki', 'Linter', 'LoginNotify', 'Math', 'MultimediaViewer', 'Nuke', 'OATHAuth', 'PageImages', 'ParserFunctions', 'PdfHandler', 'Poem', 'ReplaceText', 'Scribunto', 'SpamBlacklist', 'SyntaxHighlight_GeSHi', 'TemplateData', 'TextExtracts', 'Thanks', 'TitleBlacklist', 'VisualEditor', 'WikiEditor'],
         'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
         'socialtools': ['AJAXPoll', 'BlogPage', 'Comments', 'ContributionScores', 'HAWelcome', 'ImageRating', 'MediaWikiChat', 'NewSignupPage', 'PollNY', 'QuizGame', 'RandomGameUnit', 'SocialProfile', 'Video', 'VoteNY', 'WikiForum', 'WikiTextLoggedInOut'],
-        'universalomega': ['AutoCreatePage', 'DiscordNotifications', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleBlogPage', 'SimpleTooltip'],
-        'wikitide': ['CreateWiki', 'DataDump', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'MatomoAnalytics', 'MirahezeMagic', 'PDFEmbed', 'RemovePII', 'RequestSSL', 'RottenLinks', 'SpriteSheet', 'WikiDiscover', 'YouTube'],
+        'universalomega': ['AutoCreatePage', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleTooltip'],
+        'wikitide': ['CreateWiki', 'DataDump', 'DiscordNotifications', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'MatomoAnalytics', 'MirahezeMagic', 'PDFEmbed', 'RemovePII', 'RequestSSL', 'RottenLinks', 'WikiDiscover', 'YouTube'],
     }
     return packs.get(pack_name, [])
 
@@ -235,7 +237,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
     else:
         proto = 'http://'
     req = make_request(proto, domain, headers)
-    if req.status_code == 200 and 'miraheze' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
+    if req.status_code == 200 and 'mainpageisdomainroot' in req.text and (Debug is None or Debug in req.headers['X-Served-By']):
         up = True
     if not up:
         print(f'Status: {req.status_code}')
@@ -429,11 +431,8 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
 
     if HOSTNAME in args.servers:
         if version:
-            runner = ''
-            runner_staging = ''
-            if '.' in version and float(version) >= 1.40:
-                runner = f'/srv/mediawiki/{version}/maintenance/run.php '
-                runner_staging = f'/srv/mediawiki-staging/{version}/maintenance/run.php '
+            runner = f'/srv/mediawiki/{version}/maintenance/run.php '
+            runner_staging = f'/srv/mediawiki-staging/{version}/maintenance/run.php '
 
         if version and args.reset_world:
             stage.append(_construct_reset_mediawiki_rm_staging(version))
@@ -572,7 +571,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     option = version
                     os.chdir(_get_staging_path(version))
                     exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet'))
-                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}/srv/mediawiki-staging/{version}/extensions/MirahezeMagic/maintenance/rebuildVersionCache.php --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
+                    rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
         non_zero_code(exitcodes, nolog=args.nolog)
@@ -586,7 +585,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extension_list and version:  # when adding skins/exts
-            rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/extensions/CreateWiki/maintenance/rebuildExtensionListCache.php --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}CreateWiki:RebuildExtensionListCache --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
 
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))
@@ -596,7 +595,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
             if args.lang:
                 lang = f'--lang={args.lang}'
 
-            postinstall.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/extensions/MirahezeMagic/maintenance/mergeMessageFileList.php --quiet --wiki={envinfo["wikidbname"]} --extensions-dir=/srv/mediawiki/{version}/extensions:/srv/mediawiki/{version}/skins --output /srv/mediawiki/config/ExtensionMessageFiles-{version}.php')
+            postinstall.append(f'sudo -u {DEPLOYUSER} php {runner}MirahezeMagic:MergeMessageFileList --quiet --wiki={envinfo["wikidbname"]} --extensions-dir=/srv/mediawiki/{version}/extensions:/srv/mediawiki/{version}/skins --output /srv/mediawiki/config/ExtensionMessageFiles-{version}.php')
             rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}/srv/mediawiki/{version}/maintenance/rebuildLocalisationCache.php {lang} --quiet --wiki={envinfo["wikidbname"]}')
 
         for cmd in postinstall:  # cmds to run after rsync & install (like mergemessage)
@@ -625,7 +624,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
         for folder in str(args.folders).split(','):
             rsyncpaths.append(f'/srv/mediawiki/{folder}/')
     if args.extension_list and version:
-        rsyncfiles.append(f'/srv/mediawiki/cache/{version}/extension-list.json')
+        rsyncfiles.append(f'/srv/mediawiki/cache/{version}/extension-list.php')
     if args.l10n and version:
         rsyncpaths.append(f'/srv/mediawiki/cache/{version}/l10n/')
 

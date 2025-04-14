@@ -19,9 +19,7 @@ class opensearch::config {
     cwd  => '/',
   }
 
-  $init_defaults = {
-    'MAX_OPEN_FILES' => '65535',
-  }.merge($opensearch::init_defaults)
+  $init_defaults = stdlib::merge($opensearch::init_defaults, {'MAX_OPEN_FILES' => '65535'})
 
   if ($opensearch::ensure == 'present') {
     file {
