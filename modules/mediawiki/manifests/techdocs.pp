@@ -1,6 +1,6 @@
 # === Class mediawiki::techdocs
 class mediawiki::techdocs {
-    stdlib::ensure_packages('python3-GitPython')
+    stdlib::ensure_packages(['python3-GitPython', 'python3-mwparserfromhell'])
 
     file { '/usr/local/bin/techdocs':
         ensure => present,
