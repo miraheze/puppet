@@ -217,7 +217,7 @@ listen <%= name %>_backend_tls
     timeout tunnel <%= @timeout['tunnel'] %>s
 
     # We don't use a healthchecker because we use varnish for this.
-    server <%= name %>_backend <%= name %>.<%= property['domain'] || 'wikitide.net' %>:443 ssl check-ssl verify none
+    server <%= name %>_backend <%= name %>.<%= property['domain'] || 'wikitide.net' %>:443 ssl check-ssl verify none tfo alpn h2,http/1.1
 
 <%- end -%>
 
