@@ -44,4 +44,18 @@ class mediawiki::techdocs {
             File['/srv/statichelp'],
         ],
     }
+
+    systemd::timer::job { 'update-techdocs':
+        description       => 'Update techdocs',
+        command           => '/usr/bin/python3 /usr/local/bin/techdocs',
+        interval          => {
+            'start'    => 'OnCalendar',
+            'interval' => 'Sun *-*-* 00:00:00',
+        },
+        logfile_basedir   => '/var/log/mediawiki/cron',
+        logfile_name      => 'update-techdocs.log',
+        syslog_identifier => 'update-techdocs',
+        user              => 'root',
+        require           => File['/var/log/mediawiki/cron'],
+    }
 }
