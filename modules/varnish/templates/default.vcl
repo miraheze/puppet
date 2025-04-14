@@ -485,6 +485,10 @@ sub vcl_recv {
 			return (pipe);
 		}
 
+                if (req.http.Host == "phorge-static.wikitide.net") {
+			return (hash);
+                }
+
 		return (pass);
 	}
 
