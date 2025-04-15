@@ -27,6 +27,8 @@ location ~ ^/(w/)?\w+\.php {
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 	fastcgi_buffering off;
 	fastcgi_request_buffering off;
+	fastcgi_send_timeout 202;
+	fastcgi_read_timeout 202;
 }
 
 location = /favicon.ico {
@@ -45,6 +47,8 @@ location ^~ /w/index.php {
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 	fastcgi_buffering off;
 	fastcgi_request_buffering off;
+	fastcgi_send_timeout 202;
+	fastcgi_read_timeout 202;
 
 	if ($request_uri ~ OAuth) {
 		# Skip OAuth requests to prevent
@@ -94,6 +98,8 @@ location @wiki {
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 	fastcgi_buffering off;
 	fastcgi_request_buffering off;
+	fastcgi_send_timeout 202;
+	fastcgi_read_timeout 202;
 }
 
 location ~ ^/m/(.*) {
