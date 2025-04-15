@@ -168,14 +168,14 @@ listen tls
     acl hc-path        path_beg     /check
     use_backend healthcheck if hc-host hc-path
 
-    option forwardfor
+    #option forwardfor
 
     <%- @cache_backends.each_pair do | name, address | -%>
     server <%= name %> <%= address %>:81 check
     <%- end -%>
 
 backend healthcheck
-    option forwardfor
+    #option forwardfor
     server hc_server 127.0.0.1:81 maxconn 100
 
 <%- if @prometheus_port -%>
