@@ -17,6 +17,15 @@ apply Service "m.miraheze.org - LetsEncrypt" {
   assign where "sslchecks" in host.groups
 }
 
+apply Service "wikitide.org - LetsEncrypt" {
+  import "generic-service"
+  check_command = "check_ssl_expire"
+  notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
+  vars.host = "ssltest.wikitide.org"
+  vars.time = "15"
+  assign where "sslchecks" in host.groups
+}
+
 <% @servers.each do |server| -%>
   apply Service "<%= server %> SSL Check" {
     import "generic-service"
@@ -31,6 +40,7 @@ apply Service "m.miraheze.org - LetsEncrypt" {
 
 <% @sslcerts.each_pair do | name, property | -%>
 <% if property['url'].end_with?(".miraheze.org") == false%>
+<% if property['url'].end_with?(".wikitide.org") == false%>
 apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   import "generic-service"
   check_command = "check_ssl_expire"
@@ -41,5 +51,5 @@ apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   assign where "sslchecks" in host.groups
 }
 <% end %>
-
+<% end %>
 <% end -%>
