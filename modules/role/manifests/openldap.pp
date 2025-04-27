@@ -12,7 +12,7 @@ class role::openldap (
 
     class { 'openldap::server':
         ldaps_ifs => ['/'],
-        ssl_ca    => '/etc/ssl/certs/LetsEncrypt.crt',
+        ssl_ca    => '/etc/ssl/certs/ISRG_Root_X1.pem',
         ssl_cert  => '/etc/ssl/localcerts/wikitide.net.crt',
         ssl_key   => '/etc/ssl/private/wikitide.net.key',
         require   => Ssl::Wildcard['openldap wildcard']
@@ -145,7 +145,7 @@ class role::openldap (
     class { 'openldap::client':
         base       => 'dc=miraheze,dc=org',
         uri        => ["ldaps://${facts['networking']['fqdn']}"],
-        tls_cacert => '/etc/ssl/certs/LetsEncrypt.crt',
+        tls_cacert => '/etc/ssl/certs/ISRG_Root_X1.pem',
     }
 
     ssl::wildcard { 'openldap wildcard':
