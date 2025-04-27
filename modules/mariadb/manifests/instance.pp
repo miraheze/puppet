@@ -60,7 +60,7 @@ define mariadb::instance(
             mysql_username => 'icinga',
             mysql_password => $icinga_password,
             mysql_ssl      => true,
-            mysql_cacert   => '/etc/ssl/certs/LetsEncrypt.crt',
+            mysql_cacert   => '/etc/ssl/certs/ISRG_Root_X1.pem',
         }
     }
 
