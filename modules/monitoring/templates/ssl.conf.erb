@@ -37,10 +37,7 @@ apply Service "<%= property['url'] %> - <%= property['ca'] %>" {
   check_interval = 30m
   notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
   vars.host = "<% if property['url'].start_with?('*') and property['sslname'] %><%= property['sslname'] %><% else %><%= property['url'] %><% end %>"
-  vars.time = "<% if property['ca'] == "LetsEncrypt" %>14<% else %>29<% end %>"
-  <%- if property['ca'] == "LetsEncrypt" and property['disable_event'] == false -%>
-  event_command = "eh_ssl_acme"
-  <%- end -%>
+  vars.time = "<% if property['ca'] == "LetsEncrypt" %>1<% else %>29<% end %>"
   assign where "sslchecks" in host.groups
 }
 <% end %>
