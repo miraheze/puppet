@@ -23,7 +23,7 @@ class role::mattermost {
     }
     -> class { 'mattermost':
         edition          => 'enterprise',
-        version          => '10.7.0',
+        version          => '10.7.1',
         override_options => {
             'TeamSettings'    => {
                 'SiteName'                  => 'WikiTide Foundation',
