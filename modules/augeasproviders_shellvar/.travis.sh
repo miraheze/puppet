@@ -4,16 +4,16 @@ set -xe
 # Clone submodules in tree
 git submodule update --init
 
-if [ -z $AUGEAS ]; then
+if [ -z "$AUGEAS" ]; then
   # Use latest version of lenses
   cd augeas && git pull origin master
   PKG_VERSION=""
 else
-  if [ -z $LENSES ]; then
+  if [ -z "$LENSES" ]; then
     # Use matching version of lenses
-    cd augeas && git fetch && git checkout release-${AUGEAS}
+    cd augeas && git fetch && git checkout "release-${AUGEAS}"
   else
-    cd augeas && git fetch && git checkout $LENSES
+    cd augeas && git fetch && git checkout "$LENSES"
   fi
 
   PKG_VERSION="=${AUGEAS}*"
@@ -25,10 +25,10 @@ else
 fi
 sudo add-apt-repository -y ppa:raphink/augeas
 sudo apt-get update
-sudo apt-get install augeas-tools${PKG_VERSION} \
-                     augeas-lenses${PKG_VERSION} \
-                     libaugeas0${PKG_VERSION} \
-                     libaugeas-dev${PKG_VERSION} \
+sudo apt-get install "augeas-tools${PKG_VERSION}" \
+                     "augeas-lenses${PKG_VERSION}" \
+                     "libaugeas0${PKG_VERSION}" \
+                     "libaugeas-dev${PKG_VERSION}" \
                      libxml2-dev
 
 # Install gems
