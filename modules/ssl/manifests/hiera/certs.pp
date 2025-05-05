@@ -8,7 +8,6 @@ define ssl::hiera::certs (
     Optional[Hash] $path_redirects = undef,
     Optional[String] $sslname  = undef,
     Optional[String] $additional_domain  = undef,
-    Optional[Boolean] $disable_event = true,
 ) {
 
     if !defined(File['/etc/ssl/localcerts']) {
