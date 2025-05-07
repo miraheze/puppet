@@ -128,6 +128,7 @@ class role::cache::haproxy(
     $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
     $cloudflare_ips = $cloudflare_ipv4 + $cloudflare_ipv6
+    $sslredirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
 
     haproxy::site { 'tls':
         ensure  => present,
