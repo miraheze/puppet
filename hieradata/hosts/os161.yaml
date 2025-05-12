@@ -4,6 +4,7 @@ role::opensearch::data: true
 role::opensearch::discovery_host:
   - os151-private.wikitide.net
   - os161-private.wikitide.net
+  - os191-private.wikitide.net
 role::opensearch::master_hosts:
   - os151-private
 role::opensearch::master_host: 'http://os151-private.wikitide.net:9200'
