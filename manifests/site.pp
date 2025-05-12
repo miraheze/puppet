@@ -77,7 +77,7 @@ node 'mattermost1.wikitide.net' {
     include role::mattermost
 }
 
-node /^mem[12][056]1\.wikitide\.net$/ {
+node /^mem[12][0569]1\.wikitide\.net$/ {
     include base
     include role::memcached
 }
