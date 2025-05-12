@@ -37,4 +37,13 @@ Puppet::Type.type(:opensearch_index_template).provide(
       }
     end
   end
+
+  def self.prefetch(resources)
+    instances.each do |prov|
+      resource = resources[prov.name]
+      if resource
+        resource.provider = prov
+      end
+    end
+  end
 end
