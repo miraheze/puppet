@@ -46,7 +46,7 @@ node 'eventgate181.wikitide.net' {
     include role::eventgate
 }
 
-node /^os1[56][12]\.wikitide\.net$/ {
+node /^os1[569][12]\.wikitide\.net$/ {
     include base
     include role::opensearch
 }

@@ -36,7 +36,7 @@ class role::opensearch (
     }
 
     class { 'opensearch':
-        config          => {
+        config      => {
             'cluster.initial_master_nodes' => $os_master_hosts,
             'discovery.seed_hosts'         => $os_discovery,
             'cluster.name'                 => 'wikitide-general',
@@ -44,10 +44,10 @@ class role::opensearch (
             'node.data'                    => $os_data,
             'network.host'                 => '0.0.0.0',
         } + $tls_config,
-        version         => '2.19.1',
-        manage_repo     => true,
-        jvm_options     => [ '-Xms3g', '-Xmx3g' ],
-        templates => {
+        version     => '2.19.1',
+        manage_repo => true,
+        jvm_options => [ '-Xms3g', '-Xmx3g' ],
+        templates   => {
             'graylog-internal' => {
                 'source' => 'puppet:///modules/role/opensearch/index_template.json'
             }
