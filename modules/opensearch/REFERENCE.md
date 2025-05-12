@@ -13,7 +13,9 @@
 
 ### Defined types
 
+* [`opensearch::component_template`](#opensearch--component_template): This define allows you to insert, update or delete Opensearch component  templates.   Template content should be defined through either th
 * [`opensearch::index`](#opensearchindex): A defined type to control Opensearch index-level settings.
+* [`opensearch::index_template`](#opensearch--index_template): This define allows you to insert, update or delete Opensearch index  templates (using new composable api).   Template content should be de
 * [`opensearch::pipeline`](#opensearchpipeline): This define allows you to insert, update or delete Opensearch index  ingestion pipelines.   Pipeline content should be defined through the
 * [`opensearch::plugin`](#opensearchhplugin): This define allows you to install arbitrary Opensearch plugins either by using the default repositories or by specifying an URL
 * [`opensearch::role`](#opensearchrole): Manage x-pack roles.
@@ -24,7 +26,9 @@
 
 ### Resource types
 
+* [`opensearch_component_template`](#opensearch_component_template): Manages Opensearch component templates.
 * [`opensearch_index`](#opensearch_index): Manages Opensearch index settings.
+* [`opensearch_index_template`](#opensearch_index_template): Manages Opensearch index templates.
 * [`opensearch_keystore`](#opensearch_keystore): Manages an Opensearch keystore settings file.
 * [`opensearch_pipeline`](#opensearch_pipeline): Manages Opensearch ingest pipelines.
 * [`opensearch_plugin`](#opensearch_plugin): Plugin installation type
@@ -162,6 +166,8 @@ The following parameters are available in the `opensearch` class:
 * [`system_key`](#system_key)
 * [`systemd_service_path`](#systemd_service_path)
 * [`templates`](#templates)
+* [`index_templates`](#index_templates)
+* [`component_templates`](#component_templates)
 * [`users`](#users)
 * [`validate_tls`](#validate_tls)
 * [`version`](#version)
@@ -702,6 +708,22 @@ Data type: `Hash`
 
 Define templates via a hash. This is mainly used with Hiera's auto binding.
 
+##### <a name="index_templates"></a>`index_templates`
+
+Data type: `Hash`
+
+Define index_templates via a hash. This is mainly used with Hiera's auto binding.
+
+Default value: `{}`
+
+##### <a name="component_templates"></a>`component_templates`
+
+Data type: `Hash`
+
+Define component_templates via a hash. This is mainly used with Hiera's auto binding.
+
+Default value: `{}`
+
 ##### <a name="users"></a>`users`
 
 Data type: `Hash`
@@ -764,6 +786,136 @@ in general and is used in a platform-independent way. E.g. "service" means
 "daemon" in relation to Unix-like systems.
 
 ## Defined types
+
+### <a name="component_template"></a>`opensearch::component_template`
+
+This define allows you to insert, update or delete Opensearch component
+ templates.
+
+ Template content should be defined through either the `content` parameter
+ (when passing a hash or json string) or the `source` parameter (when passing
+ the puppet file URI to a template json file).
+
+#### Parameters
+
+The following parameters are available in the `opensearch::component_template` defined type:
+
+* [`ensure`](#component_template--ensure)
+* [`api_basic_auth_password`](#component_template--api_basic_auth_password)
+* [`api_basic_auth_username`](#component_template--api_basic_auth_username)
+* [`api_ca_file`](#component_template--api_ca_file)
+* [`api_ca_path`](#component_template--api_ca_path)
+* [`api_host`](#component_template--api_host)
+* [`api_port`](#component_template--api_port)
+* [`api_protocol`](#component_template--api_protocol)
+* [`api_timeout`](#component_template--api_timeout)
+* [`content`](#component_template--content)
+* [`source`](#component_template--source)
+* [`validate_tls`](#component_template--validate_tls)
+
+##### <a name="component_template--ensure"></a>`ensure`
+
+Data type: `Enum['absent', 'present']`
+
+Controls whether the named component template should be present or absent in
+the cluster.
+
+Default value: `'present'`
+
+##### <a name="component_template--api_basic_auth_password"></a>`api_basic_auth_password`
+
+Data type: `Optional[String]`
+
+HTTP basic auth password to use when communicating over the Opensearch
+API.
+
+Default value: `$opensearch::api_basic_auth_password`
+
+##### <a name="component_template--api_basic_auth_username"></a>`api_basic_auth_username`
+
+Data type: `Optional[String]`
+
+HTTP basic auth username to use when communicating over the Opensearch
+API.
+
+Default value: `$opensearch::api_basic_auth_username`
+
+##### <a name="component_template--api_ca_file"></a>`api_ca_file`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+Path to a CA file which will be used to validate server certs when
+communicating with the Opensearch API over HTTPS.
+
+Default value: `$opensearch::api_ca_file`
+
+##### <a name="component_template--api_ca_path"></a>`api_ca_path`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+Path to a directory with CA files which will be used to validate server
+certs when communicating with the Opensearch API over HTTPS.
+
+Default value: `$opensearch::api_ca_path`
+
+##### <a name="component_template--api_host"></a>`api_host`
+
+Data type: `String`
+
+Host name or IP address of the OS instance to connect to.
+
+Default value: `$opensearch::api_host`
+
+##### <a name="component_template--api_port"></a>`api_port`
+
+Data type: `Integer[0, 65535]`
+
+Port number of the OS instance to connect to
+
+Default value: `$opensearch::api_port`
+
+##### <a name="component_template--api_protocol"></a>`api_protocol`
+
+Data type: `Enum['http', 'https']`
+
+Protocol that should be used to connect to the Opensearch API.
+
+Default value: `$opensearch::api_protocol`
+
+##### <a name="component_template--api_timeout"></a>`api_timeout`
+
+Data type: `Integer`
+
+Timeout period (in seconds) for the Opensearch API.
+
+Default value: `$opensearch::api_timeout`
+
+##### <a name="component_template--content"></a>`content`
+
+Data type: `Optional[Variant[String, Hash]]`
+
+Contents of the template. Can be either a puppet hash or a string
+containing JSON.
+
+Default value: `undef`
+
+##### <a name="component_template--source"></a>`source`
+
+Data type: `Optional[String]`
+
+Source path for the template file. Can be any value similar to `source`
+values for `file` resources.
+
+Default value: `undef`
+
+##### <a name="component_template--validate_tls"></a>`validate_tls`
+
+Data type: `Boolean`
+
+Determines whether the validity of SSL/TLS certificates received from the
+Opensearch API should be verified or ignored.
+
+Default value: `$opensearch::validate_tls`
 
 ### <a name="opensearchindex"></a>`opensearch::index`
 
@@ -871,6 +1023,136 @@ Index settings in hash form (typically nested).
 Default value: `{}`
 
 ##### <a name="validate_tls"></a>`validate_tls`
+
+Data type: `Boolean`
+
+Determines whether the validity of SSL/TLS certificates received from the
+Opensearch API should be verified or ignored.
+
+Default value: `$opensearch::validate_tls`
+
+### <a name="index_template"></a>`opensearch::index_template`
+
+This define allows you to insert, update or delete Opensearch index
+ templates (using new composable api).
+
+ Template content should be defined through either the `content` parameter
+ (when passing a hash or json string) or the `source` parameter (when passing
+ the puppet file URI to a template json file).
+
+#### Parameters
+
+The following parameters are available in the `opensearch::index_template` defined type:
+
+* [`ensure`](#index_template--ensure)
+* [`api_basic_auth_password`](#index_template--api_basic_auth_password)
+* [`api_basic_auth_username`](#index_template--api_basic_auth_username)
+* [`api_ca_file`](#index_template--api_ca_file)
+* [`api_ca_path`](#index_template--api_ca_path)
+* [`api_host`](#index_template--api_host)
+* [`api_port`](#index_template--api_port)
+* [`api_protocol`](#index_template--api_protocol)
+* [`api_timeout`](#index_template--api_timeout)
+* [`content`](#index_template--content)
+* [`source`](#index_template--source)
+* [`validate_tls`](#index_template--validate_tls)
+
+##### <a name="index_template--ensure"></a>`ensure`
+
+Data type: `Enum['absent', 'present']`
+
+Controls whether the named index template should be present or absent in
+the cluster.
+
+Default value: `'present'`
+
+##### <a name="index_template--api_basic_auth_password"></a>`api_basic_auth_password`
+
+Data type: `Optional[String]`
+
+HTTP basic auth password to use when communicating over the Opensearch
+API.
+
+Default value: `$opensearch::api_basic_auth_password`
+
+##### <a name="index_template--api_basic_auth_username"></a>`api_basic_auth_username`
+
+Data type: `Optional[String]`
+
+HTTP basic auth username to use when communicating over the Opensearch
+API.
+
+Default value: `$opensearch::api_basic_auth_username`
+
+##### <a name="index_template--api_ca_file"></a>`api_ca_file`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+Path to a CA file which will be used to validate server certs when
+communicating with the Opensearch API over HTTPS.
+
+Default value: `$opensearch::api_ca_file`
+
+##### <a name="index_template--api_ca_path"></a>`api_ca_path`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+Path to a directory with CA files which will be used to validate server
+certs when communicating with the Opensearch API over HTTPS.
+
+Default value: `$opensearch::api_ca_path`
+
+##### <a name="index_template--api_host"></a>`api_host`
+
+Data type: `String`
+
+Host name or IP address of the OS instance to connect to.
+
+Default value: `$opensearch::api_host`
+
+##### <a name="index_template--api_port"></a>`api_port`
+
+Data type: `Integer[0, 65535]`
+
+Port number of the OS instance to connect to
+
+Default value: `$opensearch::api_port`
+
+##### <a name="index_template--api_protocol"></a>`api_protocol`
+
+Data type: `Enum['http', 'https']`
+
+Protocol that should be used to connect to the Opensearch API.
+
+Default value: `$opensearch::api_protocol`
+
+##### <a name="index_template--api_timeout"></a>`api_timeout`
+
+Data type: `Integer`
+
+Timeout period (in seconds) for the Opensearch API.
+
+Default value: `$opensearch::api_timeout`
+
+##### <a name="index_template--content"></a>`content`
+
+Data type: `Optional[Variant[String, Hash]]`
+
+Contents of the template. Can be either a puppet hash or a string
+containing JSON.
+
+Default value: `undef`
+
+##### <a name="index_template--source"></a>`source`
+
+Data type: `Optional[String]`
+
+Source path for the template file. Can be any value similar to `source`
+values for `file` resources.
+
+Default value: `undef`
+
+##### <a name="index_template--validate_tls"></a>`validate_tls`
 
 Data type: `Boolean`
 
@@ -1559,6 +1841,49 @@ Default value: `[]`
 
 ## Resource types
 
+### <a name="opensearch_component_template"></a>`opensearch_component_template`
+
+Manages Opensearch component templates.
+
+#### Properties
+
+The following properties are available in the `opensearch_component_template` type.
+
+##### `content`
+
+Structured content of template.
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
+
+#### Parameters
+
+The following parameters are available in the `opensearch_component_template` type.
+
+* [`name`](#component_template--name)
+* [`provider`](#component_template--provider)
+* [`source`](#component_template--source)
+
+##### <a name="component_template--name"></a>`name`
+
+namevar
+
+Template name.
+
+##### <a name="component_template--provider"></a>`provider`
+
+The specific backend to use for this `opensearch_component_template` resource. You will seldom need to specify this
+--- Puppet will usually discover the appropriate provider for your platform.
+
+##### <a name="component_template--source"></a>`source`
+
+Puppet source to file containing template contents.
+
 ### <a name="opensearch_index"></a>`opensearch_index`
 
 Manages Opensearch index settings.
@@ -1596,6 +1921,49 @@ Index name.
 
 The specific backend to use for this `opensearch_index` resource. You will seldom need to specify this --- Puppet
 will usually discover the appropriate provider for your platform.
+
+### <a name="opensearch_index_template"></a>`opensearch_index_template`
+
+Manages Opensearch index templates.
+
+#### Properties
+
+The following properties are available in the `opensearch_index_template` type.
+
+##### `content`
+
+Structured content of template.
+
+##### `ensure`
+
+Valid values: `present`, `absent`
+
+The basic property that the resource should be in.
+
+Default value: `present`
+
+#### Parameters
+
+The following parameters are available in the `opensearch_index_template` type.
+
+* [`name`](#index_template--name)
+* [`provider`](#index_template--provider)
+* [`source`](#index_template--source)
+
+##### <a name="index_template--name"></a>`name`
+
+namevar
+
+Template name.
+
+##### <a name="index_template--provider"></a>`provider`
+
+The specific backend to use for this `opensearch_index_template` resource. You will seldom need to specify this ---
+Puppet will usually discover the appropriate provider for your platform.
+
+##### <a name="index_template--source"></a>`source`
+
+Puppet source to file containing template contents.
 
 ### <a name="opensearch_keystore"></a>`opensearch_keystore`
 
