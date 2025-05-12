@@ -47,7 +47,7 @@ class role::opensearch (
         version         => '2.19.1',
         manage_repo     => true,
         jvm_options     => [ '-Xms3g', '-Xmx3g' ],
-        index_templates => {
+        templates => {
             'graylog-internal' => {
                 'source' => 'puppet:///modules/role/opensearch/index_template.json'
             }
