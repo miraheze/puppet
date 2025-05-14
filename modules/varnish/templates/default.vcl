@@ -266,6 +266,11 @@ sub mw_request {
 	# Assigning a backend
 	if (req.http.X-WikiTide-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ wikitide_nets) {
 <%- @backends.each_pair do | name, property | -%>
+<%- if not (property['pool'] or property['swiftpool']) -%>
+		if (req.http.X-WikiTide-Debug == "unused") {
+			set req.backend_hint = <%= name %>;
+		}
+<%- end -%>
 <%- if property['xdebug'] -%>
 		if (req.http.X-WikiTide-Debug == "<%= name %>.wikitide.net") {
 			if (req.http.Host == "static.wikitide.net") {
@@ -274,10 +279,6 @@ sub mw_request {
 				set req.backend_hint = <%= name %>_test;
 			}
 			return (pass);
-		}
-<%- elsif not (property['pool'] or property['swiftpool']) -%>
-		if (req.http.X-WikiTide-Debug == "unused") {
-			set req.backend_hint = <%= name %>;
 		}
 <%- end -%>
 <%- end -%>
