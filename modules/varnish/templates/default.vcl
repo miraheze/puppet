@@ -32,7 +32,6 @@ probe mwhealth {
 }
 
 <%- @backends.each_pair do | name, property | -%>
-<%- if property['pool'] or property['swiftpool'] -%>
 backend <%= name %> {
 	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
@@ -44,7 +43,6 @@ backend <%= name %> {
         .between_bytes_timeout = 31s;
         .max_connections = 5000;
 }
-<%- end -%>
 
 <%- if property['xdebug'] -%>
 backend <%= name %>_test {
@@ -276,6 +274,10 @@ sub mw_request {
 				set req.backend_hint = <%= name %>_test;
 			}
 			return (pass);
+		}
+<%- elsif not (property['pool'] or propert['swiftpool']) -%>
+		if (req.http.X-WikiTide-Debug == "unused") {
+			set req.backend_hint = <%= name %>;
 		}
 <%- end -%>
 <%- end -%>
