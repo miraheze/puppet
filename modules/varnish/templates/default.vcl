@@ -275,7 +275,7 @@ sub mw_request {
 			}
 			return (pass);
 		}
-<%- elsif not (property['pool'] or propert['swiftpool']) -%>
+<%- elsif not (property['pool'] or property['swiftpool']) -%>
 		if (req.http.X-WikiTide-Debug == "unused") {
 			set req.backend_hint = <%= name %>;
 		}
