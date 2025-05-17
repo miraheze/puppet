@@ -129,6 +129,34 @@ class mediawiki::jobqueue::runner (
             require           => File['/var/log/mediawiki/cron'],
         }
 
+        systemd::timer::job { 'campaigneventstimestamps':
+            description       => 'Update UTC Timestamps',
+            command           => "mwscript --extension CampaignEvents CampaignEvents:UpdateUTCTimestamps --no-log --confirm",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-*-* 01:00:00',
+            },
+            logfile_basedir   => '/var/log/mediawiki/cron',
+            logfile_name      => 'campaignevents.log',
+            syslog_identifier => 'campaignevents',
+            user              => 'www-data',
+            require           => File:['/var/log/mediawiki/cron'],
+        }
+
+        systemd::timer::job { 'campaigneventsaggregateanswers':
+            description       => 'Aggregate Participant Answers',
+            command           => "mwscript --extension CampaignEvents CampaignEvents:AggregateParticipantAnswers --no-log --confirm",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-*-* 01:00:00',
+            },
+            logfile_basedir   => '/var/log/mediawiki/cron',
+            logfile_name      => 'campaignevents.log',
+            syslog_identifier => 'campaignevents',
+            user              => 'www-data',
+            require           => File:['/var/log/mediawiki/cron'],
+        }
+
         if $wiki == 'loginwiki' {
             $swift_password = lookup('mediawiki::swift_password')
 
