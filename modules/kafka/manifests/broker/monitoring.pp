@@ -27,3 +27,4 @@ class kafka::broker::monitoring {
         command => '/usr/lib/nagios/plugins/check_procs -c 1:1 -C java -a "Kafka /opt/kafka/config/server.properties"',
     }
 }
+
