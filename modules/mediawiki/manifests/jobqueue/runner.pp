@@ -234,8 +234,8 @@ class mediawiki::jobqueue::runner (
         }
 
         systemd::timer::job { 'update-wikibase-sites-table':
-            description       => 'Update site statistics',
-            command           => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php MirahezeMagic:PopulateWikibaseSitesTable",
+            description       => 'Update Wikibase Sites Table',
+            command           => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php MirahezeMagic:PopulateWikibaseSitesTable --wiki=${wiki} --all-wikis",
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-5,20 05:00:00',
