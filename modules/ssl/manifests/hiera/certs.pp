@@ -21,7 +21,7 @@ define ssl::hiera::certs (
     }
 
     if $sslname == undef {
-        $sslurl = $url
+        $sslurl = 'miraheze-origin-cert'
     } else {
         $sslurl = $sslname
     }
