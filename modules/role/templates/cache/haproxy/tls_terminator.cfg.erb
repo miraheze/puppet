@@ -42,9 +42,8 @@ listen tls
     # so we have to use http-server-close with http-reuse.
     # E.g. with just `http-reuse always` it was causing requests to be routed to the wrong backend in varnish.
     # We set `option http-keep-alive` to restore keep-alive between cf and haproxy since we're using `http-server-close`.
-    http-reuse always
-    option http-server-close
     option http-keep-alive
+    http-reuse safe
 
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
     timeout http-request <%= @timeout['http_request'] %>s
