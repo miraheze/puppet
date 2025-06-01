@@ -10,7 +10,7 @@ role::mediawiki::use_strict_firewall: true
 role::mediawiki::is_beta: false
 
 mediawiki::php::request_timeout: 201
-mediawiki::php::fpm::fpm_workers_multiplier: 1.5
+mediawiki::php::fpm::fpm_workers_multiplier: 2.0
 mediawiki::php::apc_shm_size: 4096M
 mediawiki::php::fpm_config:
   post_max_size: '250M'
