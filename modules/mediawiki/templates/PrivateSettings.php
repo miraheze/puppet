@@ -11,6 +11,9 @@ $wmgRedisPassword = "<%= @redis_password %>";
 $wgUpgradeKey = "<%= @mediawiki_upgradekey %>";
 $wgSecretKey = "<%= @mediawiki_secretkey %>";
 
+// CampaignEvents
+$wgCampaignEventsProgramsAndEventsDashboardAPISecret = "<%= @campaigneventsdashboard_apisecret %>";
+
 // hCaptcha secret key
 $wgHCaptchaSecretKey = "<%= @hcaptcha_secretkey %>";
 
