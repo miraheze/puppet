@@ -194,7 +194,9 @@ users:
     uid: 1018
     name: OA
     realname: Original Authority
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILD0e5CCa8BhhAmKvIHPjhN6+dMU0uQ1Z/ZHcfmqoUVP original.authority0@gmail.com]
+    ssh_keys: 
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILD0e5CCa8BhhAmKvIHPjhN6+dMU0uQ1Z/ZHcfmqoUVP original.authority0@gmail.com
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIvaFW3tV5L/WXEYHfnqDCNAvM/UrS0Wp0qY03bOxUWB
   evalprime:
     ensure: absent
     uid: 1019
