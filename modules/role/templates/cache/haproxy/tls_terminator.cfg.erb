@@ -38,10 +38,6 @@ listen tls
 
     bind :::<%= @tls_port -%> tfo v6only ssl crt-list /etc/haproxy/crt-list.cfg<%- if @tls_ticket_keys_path -%> tls-ticket-keys <%= @tls_ticket_keys_path %><%- end %>
 
-    # We load balance varnish by hashing. It seems that varnish doesn't like http-reuse
-    # so we have to use http-server-close with http-reuse.
-    # E.g. with just `http-reuse always` it was causing requests to be routed to the wrong backend in varnish.
-    # We set `option http-keep-alive` to restore keep-alive between cf and haproxy since we're using `http-server-close`.
     option http-keep-alive
     http-reuse safe
 
