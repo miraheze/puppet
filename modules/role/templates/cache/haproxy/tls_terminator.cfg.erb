@@ -39,7 +39,7 @@ listen tls
     bind :::<%= @tls_port -%> tfo v6only ssl crt-list /etc/haproxy/crt-list.cfg<%- if @tls_ticket_keys_path -%> tls-ticket-keys <%= @tls_ticket_keys_path %><%- end %>
 
     option http-keep-alive
-    http-reuse safe
+    http-reuse always
 
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
     timeout http-request <%= @timeout['http_request'] %>s
@@ -152,12 +152,26 @@ listen tls
 <%- end -%>
 <%- end -%>
 
-    balance uri
+    # hash by both URI and Path (not query string)
+    http-request set-header X-LB %[req.hdr(Host),lower]%[path]
+    balance hdr(X-LB)
     hash-type consistent
+
+    # try the same server 9 times
+    retries 9
+
+    # If we can't connect, redispatch to a new server
+    # This means that HAProxy will attempt up to 9 retries,
+    # but only redispatch to a different server up to 3 times total
+    option redispatch 3
+
+    # Prevent any one server from reaching 150% (1.5x) the average load
+    hash-balance-factor 150
 
     option httpchk
     http-check send meth HEAD uri /check ver HTTP/1.1 hdr Host health.wikitide.net
     http-check expect status 200
+    http-check disable-on-404
 
     acl hc-host        hdr(host) -i health.wikitide.net
     acl hc-path        path_beg     /check
