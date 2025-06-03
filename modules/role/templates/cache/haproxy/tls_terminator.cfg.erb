@@ -194,7 +194,8 @@ listen <%= name %>_backend_tls
     bind :<%= property['port'] %>
     bind :::<%= property['port'] %> v6only
 
-    http-reuse always
+    option http-keep-alive
+    http-reuse safe
 
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
     timeout http-request <%= @timeout['http_request'] %>s
