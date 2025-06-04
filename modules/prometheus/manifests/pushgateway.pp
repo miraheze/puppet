@@ -1,7 +1,7 @@
 class prometheus::pushgateway (
     VMlib::Ensure $ensure = present,
     Stdlib::Port  $listen_port = 9091,
-    String        $vhost = 'prometheus-pushgateway.wikitide.net',
+    String        $vhost = 'prometheus-pushgateway.fsslc.wtnet',
 ) {
     stdlib::ensure_packages('prometheus-pushgateway')
 
