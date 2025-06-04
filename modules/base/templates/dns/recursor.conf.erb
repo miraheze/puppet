@@ -15,6 +15,10 @@ reuseport=yes
 # Set a maximum TTL for all records to prevent overcaching
 max-cache-ttl = 600
 
+max-negative-ttl = 30
+cache-size = 10000
+prefetch = on
+
 stats-ringbuffer-entries=1000
 
 query-local-address=::
@@ -26,4 +30,4 @@ security-poll-suffix=
 hint-file=/usr/share/dns/root.hints
 
 # Forward requests to our authorative servers
-forward-zones = wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089
+forward-zones = <%= @forward_zones -%>
