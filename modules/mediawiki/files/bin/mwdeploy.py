@@ -258,13 +258,16 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
     return up
 
 
-def remote_sync_file(time: str, serverlist: list[str], path: str, envinfo: Environment, nolog: bool, recursive: bool = True, force: bool = False) -> int:
+def remote_sync_file(args: argparse.Namespace, path: str, envinfo: Environment, recursive: bool = True) -> int:
     print(f'Start {path} deploys.')
-    for server in serverlist:
+    for server in args.servers:
         if HOSTNAME != server.split('.')[0]:
             print(f'Deploying {path} to {server}.')
-            ec = run_command(_construct_rsync_command(time=time, local=False, dest=path, server=server, recursive=recursive))
-            check_up(Debug=server, force=force, domain=envinfo['wikiurl'], nolog=nolog)
+            ec = run_command(_construct_rsync_command(time=args.ignoretime, local=False, dest=path, server=server, recursive=recursive))
+            if args.port:
+                check_up(Debug=server, force=args.force, domain=envinfo['wikiurl'], nolog=args.nolog, port=args.port)
+            else:
+                check_up(Debug=server, force=args.force, domain=envinfo['wikiurl'], nolog=args.nolog)
             print(f'Deployed {path} to {server}.')
         else:
             return 0
@@ -629,9 +632,9 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
         rsyncpaths.append(f'/srv/mediawiki/cache/{version}/l10n/')
 
     for path in rsyncpaths:
-        exitcodes.append(remote_sync_file(time=args.ignore_time, serverlist=args.servers, path=path, force=args.force, envinfo=envinfo, nolog=args.nolog))
+        exitcodes.append(remote_sync_file(args=args, path=path, envinfo=envinfo))
     for file in rsyncfiles:
-        exitcodes.append(remote_sync_file(time=args.ignore_time, serverlist=args.servers, path=file, recursive=False, force=args.force, envinfo=envinfo, nolog=args.nolog))
+        exitcodes.append(remote_sync_file(args=args, path=file, recursive=False, envinfo=envinfo))
 
     if tagsinfo:
         print('TAGS:')
