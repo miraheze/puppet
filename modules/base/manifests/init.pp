@@ -33,9 +33,9 @@ class base (
     }
 
     file { '/usr/local/bin/logsalmsg':
-        ensure => present,
-        source => template('base/logsalmsg.erb'),
-        mode   => '0555',
+        ensure  => present,
+        content => template('base/logsalmsg.erb'),
+        mode    => '0555',
     }
 
     file { '/usr/local/bin/secupgrade.sh':
