@@ -276,7 +276,7 @@ role::prometheus::statsd_exporter::mappings:
       stream: $2
       partition: $3
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 redis::heap: '5GB'
 redis::maxmemory_policy: volatile-lru

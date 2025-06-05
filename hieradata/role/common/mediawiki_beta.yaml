@@ -36,7 +36,7 @@ mediawiki::multiversion::versions:
 
 php::php_version: '8.2'
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 
