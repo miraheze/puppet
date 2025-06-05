@@ -1,5 +1,5 @@
 users::groups: 'database-admins'
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 mariadb::config::innodb_buffer_pool_size: '30G'
 mariadb::version: '10.11'
 role::db::enable_ssl: false

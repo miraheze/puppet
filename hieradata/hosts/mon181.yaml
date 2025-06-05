@@ -1,7 +1,7 @@
-icinga_ido_db_host: 'db182-private.wikitide.net'
-icingaweb_db_host: 'db182-private.wikitide.net'
+icinga_ido_db_host: 'db182.fsslc.wtnet'
+icingaweb_db_host: 'db182.fsslc.wtnet'
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 icinga2_api_bind_host: '::'
 

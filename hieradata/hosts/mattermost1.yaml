@@ -1,1 +1,2 @@
+base::syslog::syslog_host: [ 'graylog161.wikitide.net:12210' ]
 backups::use_gateway: false
