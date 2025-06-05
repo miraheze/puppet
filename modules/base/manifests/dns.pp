@@ -30,7 +30,7 @@ class base::dns {
     }
 
     monitoring::nrpe { 'PowerDNS Recursor':
-        command  => '/usr/lib/nagios/plugins/check_dns -s ::1 -H wikitide.net',
+        command  => '/usr/lib/nagios/plugins/check_dns -s 0.0.0.0 -H wtnet',
         docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#PowerDNS_Recursor',
         critical => true
     }
