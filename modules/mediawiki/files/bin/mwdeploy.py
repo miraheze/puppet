@@ -263,7 +263,7 @@ def remote_sync_file(args: argparse.Namespace, path: str, envinfo: Environment, 
     for server in args.servers:
         if HOSTNAME != server.split('.')[0]:
             print(f'Deploying {path} to {server}.')
-            ec = run_command(_construct_rsync_command(time=args.ignoretime, local=False, dest=path, server=server, recursive=recursive))
+            ec = run_command(_construct_rsync_command(time=args.ignore_time, local=False, dest=path, server=server, recursive=recursive))
             if args.port:
                 check_up(Debug=server, force=args.force, domain=envinfo['wikiurl'], nolog=args.nolog, port=args.port)
             else:
