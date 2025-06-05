@@ -176,6 +176,8 @@ varnish::backends:
 base::syslog::syslog_daemon: rsyslog
 base::syslog::syslog_host: [ 'graylog161.fsslc.wtnet:12210' ]
 
+base::bots_hostname: 'bots171.fsslc.wtnet'
+
 ## Swift
 # TODO: Add support for class based hiera
 rsync::server::address: '::'

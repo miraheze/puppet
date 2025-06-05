@@ -7,4 +7,4 @@ else
   ACTOR=$USER
 fi
 
-echo '!log' "[$ACTOR@$HOSTNAME] $*" | nc -q0 -u bots171.fsslc.wtnet 5071
+echo '!log' "[$ACTOR@$HOSTNAME] $*" | nc -q0 -u <%= @bots_hostname %> 5071
