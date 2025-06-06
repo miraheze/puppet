@@ -4,7 +4,7 @@ class swift::proxy (
     Integer              $num_workers   = lookup('swift::proxy::num_workers', {'default_value' => $facts['processors']['count']}),
     Hash                 $accounts      = lookup('swift::accounts'),
     Hash                 $accounts_keys = lookup('swift::accounts_keys'),
-    String               $swift_main_memcached = lookup('swift::proxy::swift_main_memcached', {'default_value' => '[2602:294:0:b23::109]'}),
+    String               $swift_main_memcached = lookup('swift::proxy::swift_main_memcached', {'default_value' => '10.0.17.108'}),
 ) {
 
     stdlib::ensure_packages(['swift-proxy'])
