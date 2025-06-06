@@ -12,7 +12,9 @@ threads=<%= @threads %>
 pdns-distributes-queries=no
 reuseport=yes
 
-max-negative-ttl = 30
+max-cache-ttl=3600
+max-negative-ttl=60
+max-cache-entries=500000
 
 stats-ringbuffer-entries=1000
 
