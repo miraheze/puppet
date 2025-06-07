@@ -72,7 +72,7 @@ node 'matomo151.wikitide.net' {
     include role::matomo
 }
 
-node 'mattermost1.wikitide.net' {
+node 'mattermost1.vps.wtnet' {
     include base
     include role::mattermost
 }
