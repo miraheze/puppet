@@ -7,7 +7,7 @@ swift::proxy::swift_main_memcached: '10.0.17.108'
 swift_proxy_enable: true
 swift::proxy::num_workers: 12
 
-role::swift::stats_reporter_host: swiftproxy171.wikitide.net
+role::swift::stats_reporter_host: swiftproxy171.fsslc.wtnet
 
 swift::accounts:
     super_admin:
