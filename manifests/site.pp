@@ -137,6 +137,11 @@ node /^swiftproxy1[67]1\.wikitide\.net$/ {
     include role::swift
 }
 
+node /^swiftproxy1[67]1\.fsslc\.wtnet$/ {
+    include base
+    include role::swift
+}
+
 node 'swiftac171.wikitide.net' {
     include base
     include role::swift
