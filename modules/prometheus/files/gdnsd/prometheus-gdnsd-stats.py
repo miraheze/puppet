@@ -16,6 +16,7 @@
 
 import argparse
 import logging
+import socket
 import sys
 import os.path
 import subprocess
@@ -85,7 +86,7 @@ def collect_gdnsd_stats(stats, registry):
         lat_req = resolver.Resolver(configure=False)
         lat_req.nameservers = ['127.0.0.1']
         lat_s = time.time()
-        lat_req.resolve('wikitide.net')
+        lat_req.resolve('.'.join(socket.getfqdn().split('.')[1:]))
         lat_e = time.time()
         latency.set(round((lat_e - lat_s) * 1000, 2))
     except ValueError:
