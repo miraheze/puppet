@@ -190,7 +190,7 @@ def non_zero_code(ec: list[int], nolog: bool = True, leave: bool = True) -> bool
     return False
 
 
-def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443, use_cert: bool = True) -> bool:
+def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, fqdn: str | None = None, domain: str = 'meta.miraheze.org', verify: bool = True, force: bool = False, port: int = 443, use_cert: bool = True) -> bool:
 
     def make_request(proto, domain, headers) -> requests.Response:
         url = f'{proto}{domain}:{port}/w/api.php?action=query&meta=siteinfo&formatversion=2&format=json'
@@ -218,7 +218,10 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
     }
     if Debug:
         headers['X-WikiTide-Debug'] = Debug
-        location = f'{domain}@{socket.getfqdn()}'
+        if fqdn is None:
+            location = f'{domain}@{socket.getfqdn()}'
+        else:
+            location = f'{domain}@{fqdn}'
 
         debug_access_key = os.getenv('DEBUG_ACCESS_KEY')
 
