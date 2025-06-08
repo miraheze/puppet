@@ -145,7 +145,7 @@ class role::cache::haproxy(
     monitoring::services { 'HTTPS':
         check_command => 'check_curl',
         vars          => {
-            address6         => $address,
+            address          => $address,
             http_vhost       => $facts['networking']['fqdn'],
             http_ssl         => true,
             http_ignore_body => true,
@@ -157,7 +157,7 @@ class role::cache::haproxy(
         ensure        => present,
         check_command => 'check_curl',
         vars          => {
-            address6         => $address,
+            address          => $address,
             http_port        => 443,
             http_vhost       => 'health.wikitide.net',
             http_uri         => '/check',

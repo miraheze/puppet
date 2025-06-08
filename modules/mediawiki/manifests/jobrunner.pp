@@ -156,7 +156,7 @@ class mediawiki::jobrunner {
             ensure        => present,
             check_command => 'check_curl',
             vars          => {
-                address6         => $address,
+                address          => $address,
                 http_port        => 9006,
                 http_vhost       => $domain,
                 http_uri         => '/healthcheck.php',
