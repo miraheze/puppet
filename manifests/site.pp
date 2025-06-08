@@ -94,16 +94,8 @@ node 'mon181.fsslc.wtnet' {
     include role::icinga2
 }
 
-node /^mw[12][056789][1234]\.wikitide\.net$/ {
-    role(mediawiki)
-}
-
 node /^mw[12][056789][1234]\.fsslc\.wtnet$/ {
     role(mediawiki)
-}
-
-node /^mwtask1[5678]1\.wikitide\.net$/ {
-    role(mediawiki_task)
 }
 
 node /^mwtask1[5678]1\.fsslc\.wtnet$/ {
