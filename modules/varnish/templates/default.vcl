@@ -272,14 +272,14 @@ sub mw_request {
 		}
 <%- end -%>
 <%- if property['xdebug'] && (name.start_with?('mw') || name.start_with?('test')) -%>
-	if (req.http.X-WikiTide-Debug == "<%= name %>") {
-		if (req.http.Host == "static.wikitide.net") {
-			set req.backend_hint = swift.backend();
-		} else {
-			set req.backend_hint = <%= name %>_test;
+		if (req.http.X-WikiTide-Debug == "<%= name %>") {
+			if (req.http.Host == "static.wikitide.net") {
+				set req.backend_hint = swift.backend();
+			} else {
+				set req.backend_hint = <%= name %>_test;
+			}
+			return (pass);
 		}
-		return (pass);
-	}
 <%- end -%>
 <%- end -%>
 	} else {
