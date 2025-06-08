@@ -271,15 +271,15 @@ sub mw_request {
 			set req.backend_hint = <%= name %>;
 		}
 <%- end -%>
-<%- if property['xdebug'] -%>
-		if (req.http.X-WikiTide-Debug == "<%= name %>.wikitide.net") {
-			if (req.http.Host == "static.wikitide.net") {
-				set req.backend_hint = swift.backend();
-			} else {
-				set req.backend_hint = <%= name %>_test;
-			}
-			return (pass);
+<%- if property['xdebug'] && (name.start_with?('mw') || name.start_with?('test')) -%>
+	if (req.http.X-WikiTide-Debug == "<%= name %>") {
+		if (req.http.Host == "static.wikitide.net") {
+			set req.backend_hint = swift.backend();
+		} else {
+			set req.backend_hint = <%= name %>_test;
 		}
+		return (pass);
+	}
 <%- end -%>
 <%- end -%>
 	} else {
