@@ -295,7 +295,9 @@ def _construct_rsync_command(time: bool | str, dest: str, recursive: bool = True
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.wikitide.net:{dest}'
+        fqdn = socket.getfqdn()
+        domain = '.'.join(fqdn.split('.')[1:])
+        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.{domain}:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
