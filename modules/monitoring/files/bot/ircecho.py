@@ -162,6 +162,10 @@ class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
         for chan in [self.chans]:
             c.join(chan)
 
+    def on_disconnect(self, c, e):
+        print('Disconnected')
+        sys.exit(0)
+
 
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_MODIFY(self, event):
