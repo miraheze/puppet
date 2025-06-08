@@ -54,7 +54,7 @@ class dns {
         check_command => 'check_dns_auth',
         vars          => {
             address6 => $address,
-            host     => 'wikitide.net',
+            host     => $facts['networking']['fqdn'],
         },
     }
 
