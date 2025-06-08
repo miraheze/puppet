@@ -149,11 +149,13 @@ role::cache::haproxy::varnish_backends:
     probe: false
     pool: false
     swiftpool: true
+    domain: 'fsslc.wtnet'
   swiftproxy171:
     port: 8207
     probe: false
     pool: false
     swiftpool: true
+    domain: 'fsslc.wtnet'
 
 role::cache::haproxy::post_acl_actions:
   tls:
