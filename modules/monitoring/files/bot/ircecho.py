@@ -80,7 +80,8 @@ class EchoReader():
                 wm = pyinotify.WatchManager()
                 mask = pyinotify.IN_MODIFY | pyinotify.IN_CREATE
                 wm.add_watch(filename, mask)
-                notifier = EchoNotifier(pyinotify.Notifier(wm, default_proc_fun=EventHandler()))
+                notifier = EchoNotifier(pyinotify.Notifier(
+                    wm, default_proc_fun=EventHandler()))
 
                 self.notifiers.append(notifier)
                 # Does this file have channel associations?
@@ -96,7 +97,8 @@ class EchoReader():
                     s = input()
                     # this throws an exception if not connected.
                     s = beautify_message(s)
-                    self.bot.connection.privmsg(self.chans, s.replace('\n', ''))
+                    self.bot.connection.privmsg(
+                        self.chans, s.replace('\n', ''))
                 except EOFError:
                     # Once the input is finished, the bot should exit
                     break
@@ -146,7 +148,8 @@ class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
             ssl_factory = irc.connection.Factory(ipv6=True, wrapper=ssl.wrap_socket)
             kwargs['connect_factory'] = ssl_factory
 
-        SingleServerIRCBot.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', **kwargs)
+        SingleServerIRCBot.__init__(
+            self, [(server, port)], nickname_pass, 'IRC echo bot', **kwargs)
         if ident_passwd is not None:
             ib3_auth.SASL.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', ident_passwd,
                                    **kwargs)
@@ -193,7 +196,7 @@ class EventHandler(pyinotify.ProcessEvent):
             except (irc.client.ServerNotConnectedError, irc.client.MessageTooLong,
                     UnicodeDecodeError) as e:
                 print('Error writing: %s'
-                      'Dropping this message: "%s"') % (e, s)
+                      'Dropping this message: "%s"' % (e, s))
 
     def process_IN_CREATE(self, event):
         try:
