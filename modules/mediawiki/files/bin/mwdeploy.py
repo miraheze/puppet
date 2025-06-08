@@ -217,9 +217,8 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         'User-Agent': 'wikitide/mwdeploy.py',
     }
     if Debug:
-        server = f'{Debug}.wikitide.net'
-        headers['X-WikiTide-Debug'] = server
-        location = f'{domain}@{server}'
+        headers['X-WikiTide-Debug'] = Debug
+        location = f'{domain}@{socket.getfqdn()}'
 
         debug_access_key = os.getenv('DEBUG_ACCESS_KEY')
 
