@@ -4,10 +4,6 @@ node /^bast1[68]1\.wikitide\.net$/ {
     role(bastion)
 }
 
-node 'bots171.wikitide.net' {
-    role(irc)
-}
-
 node 'bots171.fsslc.wtnet' {
     role(irc)
 }
@@ -59,11 +55,6 @@ node 'kafka181.wikitide.net' {
     include role::burrow
 }
 
-node 'ldap171.wikitide.net' {
-    include base
-    include role::openldap
-}
-
 node 'ldap171.fsslc.wtnet' {
     include base
     include role::openldap
@@ -106,11 +97,6 @@ node /^ns[12]\.wikitide\.net$/ {
 node 'phorge171.fsslc.wtnet' {
     include base
     include role::phorge
-}
-
-node 'prometheus151.wikitide.net' {
-    include base
-    include role::prometheus
 }
 
 node 'prometheus151.fsslc.wtnet' {
