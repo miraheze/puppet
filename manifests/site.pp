@@ -56,6 +56,11 @@ node 'graylog161.wikitide.net' {
     include role::graylog
 }
 
+node 'graylog161.fsslc.wtnet' {
+    include base
+    include role::graylog
+}
+
 node 'kafka181.wikitide.net' {
     include base
     include role::kafka
@@ -112,6 +117,11 @@ node 'phorge171.wikitide.net' {
     include role::phorge
 }
 
+node 'phorge171.fsslc.wtnet' {
+    include base
+    include role::phorge
+}
+
 node 'prometheus151.wikitide.net' {
     include base
     include role::prometheus
@@ -134,6 +144,11 @@ node 'rdb151.wikitide.net' {
 }
 
 node 'reports171.wikitide.net' {
+    include base
+    include role::reports
+}
+
+node 'reports171.fsslc.wtnet' {
     include base
     include role::reports
 }
