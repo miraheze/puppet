@@ -218,7 +218,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
     }
     if Debug:
         headers['X-WikiTide-Debug'] = Debug
-        location = f'{domain}@{socket.getfqdn()}'
+        location = f'{domain}@{Debug}'
 
         debug_access_key = os.getenv('DEBUG_ACCESS_KEY')
         # Check if DEBUG_ACCESS_KEY is set and add it to headers
