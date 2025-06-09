@@ -12,13 +12,6 @@ node 'bots171.fsslc.wtnet' {
     role(irc)
 }
 
-node 'changeprop151.wikitide.net' {
-    include base
-    include role::jobrunner_haproxy
-    include role::changeprop
-    include role::redis
-}
-
 node 'changeprop201.wikitide.net' {
     include base
     include role::jobrunner_haproxy
