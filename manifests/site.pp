@@ -138,11 +138,6 @@ node 'rdb151.wikitide.net' {
     include role::redis
 }
 
-node 'reports171.wikitide.net' {
-    include base
-    include role::reports
-}
-
 node 'reports171.fsslc.wtnet' {
     include base
     include role::reports
