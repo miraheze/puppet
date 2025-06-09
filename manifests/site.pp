@@ -82,12 +82,6 @@ node /^mem[12][0569]1\.wikitide\.net$/ {
     include role::memcached
 }
 
-node 'mon181.wikitide.net' {
-    include base
-    include role::grafana
-    include role::icinga2
-}
-
 node 'mon181.fsslc.wtnet' {
     include base
     include role::grafana
