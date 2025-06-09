@@ -8,6 +8,10 @@ node 'bots171.wikitide.net' {
     role(irc)
 }
 
+node 'bots171.fsslc.wtnet' {
+    role(irc)
+}
+
 node 'changeprop151.wikitide.net' {
     include base
     include role::jobrunner_haproxy
@@ -67,6 +71,11 @@ node 'ldap171.wikitide.net' {
     include role::openldap
 }
 
+node 'ldap171.fsslc.wtnet' {
+    include base
+    include role::openldap
+}
+
 node 'matomo151.fsslc.wtnet' {
     include base
     include role::matomo
@@ -107,6 +116,11 @@ node 'phorge171.fsslc.wtnet' {
 }
 
 node 'prometheus151.wikitide.net' {
+    include base
+    include role::prometheus
+}
+
+node 'prometheus151.fsslc.wtnet' {
     include base
     include role::prometheus
 }
