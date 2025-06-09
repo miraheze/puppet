@@ -67,11 +67,6 @@ node 'ldap171.wikitide.net' {
     include role::openldap
 }
 
-node 'matomo151.wikitide.net' {
-    include base
-    include role::matomo
-}
-
 node 'matomo151.fsslc.wtnet' {
     include base
     include role::matomo
