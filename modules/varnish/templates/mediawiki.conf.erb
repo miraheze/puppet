@@ -17,7 +17,7 @@ server {
 		<%- if property['domain'] -%>
 		proxy_pass https://<%= name %>.<%= property['domain'] %>;
 		<%- else -%>
-		proxy_pass https://<%= name %>.wikitide.net;
+		proxy_pass https://<%= name %>.fsslc.wtnet;
 		<%- end -%>
 		proxy_ssl_protocols TLSv1.3;
 		proxy_http_version 1.1;
