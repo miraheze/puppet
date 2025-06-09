@@ -51,11 +51,6 @@ node /^os[12][0569][12]\.wikitide\.net$/ {
     include role::opensearch
 }
 
-node 'graylog161.wikitide.net' {
-    include base
-    include role::graylog
-}
-
 node 'graylog161.fsslc.wtnet' {
     include base
     include role::graylog
