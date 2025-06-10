@@ -75,6 +75,11 @@ node /^mem[12][0569]1\.wikitide\.net$/ {
     include role::memcached
 }
 
+node /^mem[12][0569]1\.fsslc\.wtnet$/ {
+    include base
+    include role::memcached
+}
+
 node 'mon181.fsslc.wtnet' {
     include base
     include role::grafana
@@ -115,6 +120,12 @@ node 'puppet181.wikitide.net' {
 }
 
 node 'rdb151.wikitide.net' {
+    include base
+    include role::poolcounter
+    include role::redis
+}
+
+node 'rdb151.fsslc.wtnet' {
     include base
     include role::poolcounter
     include role::redis
