@@ -49,12 +49,6 @@ node 'graylog161.fsslc.wtnet' {
     include role::graylog
 }
 
-node 'kafka181.wikitide.net' {
-    include base
-    include role::kafka
-    include role::burrow
-}
-
 node 'kafka181.fsslc.wtnet' {
     include base
     include role::kafka
