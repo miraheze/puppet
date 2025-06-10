@@ -5,8 +5,8 @@ varnish::transient_storage: 5
 role::cache::cache::restrict_firewall: true
 
 role::cache::haproxy::cache_backends:
-  cp37: 10.0.17.138
-  cp38: 10.0.19.146
+  cp171: 10.0.17.138
+  cp191: 10.0.19.146
 
 role::cache::haproxy::varnish_backends:
   mw151:
