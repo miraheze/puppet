@@ -8,13 +8,6 @@ node 'bots171.fsslc.wtnet' {
     role(irc)
 }
 
-node 'changeprop201.wikitide.net' {
-    include base
-    include role::jobrunner_haproxy
-    include role::changeprop
-    include role::redis
-}
-
 node 'changeprop201.fsslc.wtnet' {
     include base
     include role::jobrunner_haproxy
@@ -39,11 +32,6 @@ node /^cp(3[78])\.wikitide\.net$/ {
 node /^db1([5678][12])\.fsslc\.wtnet$/ {
     include base
     include role::db
-}
-
-node 'eventgate181.wikitide.net' {
-    include base
-    include role::eventgate
 }
 
 node 'eventgate181.fsslc.wtnet' {
