@@ -140,6 +140,11 @@ node /^swiftobject[12][056789]1\.wikitide\.net$/ {
     include role::swift
 }
 
+node /^swiftobject[12][056789]1\.fsslc\.wtnet$/ {
+    include base
+    include role::swift
+}
+
 node 'test151.fsslc.wtnet' {
     role(mediawiki_beta)
 }
