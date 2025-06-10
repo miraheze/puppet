@@ -153,7 +153,7 @@ services:
       # kafka configs go here.
       kafka:
         conf:
-          metadata.broker.list: '10.0.18.146:9092'
+          metadata.broker.list: '10.0.18.159:9092'
           compression.codec: snappy
           message.max.bytes: 4194304
           # Silence noisy connection reaper logging
