@@ -55,6 +55,12 @@ node 'kafka181.wikitide.net' {
     include role::burrow
 }
 
+node 'kafka181.fsslc.wtnet' {
+    include base
+    include role::kafka
+    include role::burrow
+}
+
 node 'ldap171.fsslc.wtnet' {
     include base
     include role::openldap
