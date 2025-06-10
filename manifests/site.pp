@@ -70,11 +70,6 @@ node 'mattermost1.vps.wtnet' {
     include role::mattermost
 }
 
-node /^mem[12][0569]1\.wikitide\.net$/ {
-    include base
-    include role::memcached
-}
-
 node /^mem[12][0569]1\.fsslc\.wtnet$/ {
     include base
     include role::memcached
@@ -117,12 +112,6 @@ node 'puppet181.wikitide.net' {
     include role::puppetserver
     include role::salt
     include role::ssl
-}
-
-node 'rdb151.wikitide.net' {
-    include base
-    include role::poolcounter
-    include role::redis
 }
 
 node 'rdb151.fsslc.wtnet' {
