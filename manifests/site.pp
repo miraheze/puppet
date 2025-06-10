@@ -34,12 +34,22 @@ node /^db1([5678][12])\.wikitide\.net$/ {
     include role::db
 }
 
+node /^db1([5678][12])\.fsslc\.wtnet$/ {
+    include base
+    include role::db
+}
+
 node 'eventgate181.wikitide.net' {
     include base
     include role::eventgate
 }
 
 node /^os[12][0569][12]\.wikitide\.net$/ {
+    include base
+    include role::opensearch
+}
+
+node /^os[12][0569][12]\.fsslc\.wtnet$/ {
     include base
     include role::opensearch
 }
