@@ -97,7 +97,13 @@ class mediawiki::jobrunner {
     )
     ferm::service { 'jobrunner-9005':
         proto   => 'tcp',
-        port    => '9005',
+        port    => $port,
+        srange  => "(${firewall_rules_str})",
+        notrack => true,
+    }
+    ferm::service { 'jobrunner-9006':
+        proto   => 'tcp',
+        port    => $local_only_port,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
@@ -108,7 +114,7 @@ class mediawiki::jobrunner {
             check_command => 'check_curl',
             vars          => {
                 address          => $facts['networking']['ip'],
-                http_port        => 9005,
+                http_port        => $port,
                 http_vhost       => $domain,
                 http_uri         => '/healthcheck.php',
                 http_ssl         => false,
