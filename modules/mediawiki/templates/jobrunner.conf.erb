@@ -18,13 +18,10 @@
 </VirtualHost>
 
 <VirtualHost *:<%= @local_only_port %>>
-    ServerName jobrunner.wikitide.net
+    ServerName jobrunner.svc.fsslc.wtnet
     ServerAlias <%= @facts['networking']['fqdn'] %>
     Timeout 1202
     DocumentRoot "/srv/mediawiki"
-    SSLEngine on
-    SSLCertificateFile /etc/ssl/localcerts/wikitide.net.crt
-    SSLCertificateKeyFile /etc/ssl/private/wikitide.net.key
     RewriteEngine On
     <Directory /srv/mediawiki>
        Require all granted
@@ -40,13 +37,10 @@
 </VirtualHost>
 
 <VirtualHost *:<%= @local_only_port %>>
-    ServerName jobrunner-high.wikitide.net
+    ServerName jobrunner-high.svc.fsslc.wtnet
     ServerAlias <%= @facts['networking']['fqdn'] %>
     Timeout 259202
     DocumentRoot "/srv/mediawiki"
-    SSLEngine on
-    SSLCertificateFile /etc/ssl/localcerts/wikitide.net.crt
-    SSLCertificateKeyFile /etc/ssl/private/wikitide.net.key
     RewriteEngine On
     <Directory /srv/mediawiki>
        Require all granted
@@ -62,13 +56,10 @@
 </VirtualHost>
 
 <VirtualHost *:<%= @local_only_port %>>
-    ServerName videoscaler.wikitide.net
+    ServerName videoscaler.svc.fsslc.wtnet
     ServerAlias <%= @facts['networking']['fqdn'] %>
     Timeout 86402
     DocumentRoot "/srv/mediawiki"
-    SSLEngine on
-    SSLCertificateFile /etc/ssl/localcerts/wikitide.net.crt
-    SSLCertificateKeyFile /etc/ssl/private/wikitide.net.key
     RewriteEngine On
     <Directory /srv/mediawiki>
        Require all granted
