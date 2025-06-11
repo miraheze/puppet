@@ -117,7 +117,6 @@ class mediawiki::jobrunner {
                 http_port        => $port,
                 http_vhost       => $domain,
                 http_uri         => '/healthcheck.php',
-                http_ssl         => false,
                 http_ignore_body => true,
             },
         }
