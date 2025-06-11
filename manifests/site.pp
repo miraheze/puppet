@@ -20,6 +20,11 @@ node /^cloud[12][056789]\.wikitide\.net$/ {
     include role::cloud
 }
 
+node /^cloud[12][056789]\.fsslc\.wtnet$/ {
+    include base
+    include role::cloud
+}
+
 node 'cp161.wikitide.net' {
     include base
     include role::varnish
