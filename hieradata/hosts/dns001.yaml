@@ -1,0 +1,5 @@
+base::bots_hostname: 'bots171.public.fsslc.wtnet'
+base::syslog::syslog_host: [ 'graylog161.public.fsslc.wtnet:12210' ]
+users::groups:
+  - dns-admins
+dns: true
