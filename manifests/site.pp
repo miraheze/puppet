@@ -75,6 +75,11 @@ node 'mattermost1.vps.wtnet' {
     include role::mattermost
 }
 
+node 'mattermost001.vps.wtnet' {
+    include base
+    include role::mattermost
+}
+
 node /^mem[12][0569]1\.fsslc\.wtnet$/ {
     include base
     include role::memcached
@@ -95,6 +100,11 @@ node /^mwtask1[5678]1\.fsslc\.wtnet$/ {
 }
 
 node /^ns[12]\.wikitide\.net$/ {
+    include base
+    include role::dns
+}
+
+node /^dns(001|171)\.wikitide\.net$/ {
     include base
     include role::dns
 }
