@@ -30,7 +30,7 @@ class mediawiki::jobqueue::runner (
         }
     }
 
-    if lookup('mediawiki::jobqueue::runner::cron', {'default_value' => false}) {
+    if lookup('mediawiki::jobqueue::runner::periodic_jobs', {'default_value' => false}) {
         mediawiki::periodic_job { 'purge-checkuser':
             command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/CheckUser/maintenance/purgeOldData.php",
             interval => '*-*-* 06:05:00',

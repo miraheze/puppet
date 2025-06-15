@@ -6,7 +6,7 @@ contactgroups: ['infra', 'mediawiki']
 
 jobrunner: true
 jobrunner::intensive: true
-mediawiki::jobqueue::runner::cron: false
+mediawiki::jobqueue::runner::periodic_jobs: false
 mediawiki::use_cpjobqueue: true
 
 role::mediawiki::use_strict_firewall: true
