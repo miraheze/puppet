@@ -4,11 +4,11 @@ define monitoring::hosts (
 ) {
 
     @@icinga2::object::host { $title:
-        ensure   => $ensure,
-        import   => ['generic-host'],
-        address  => $facts['networking']['ip'],
-        target   => '/etc/icinga2/conf.d/puppet_hosts.conf',
-        vars     => {
+        ensure  => $ensure,
+        import  => ['generic-host'],
+        address => $facts['networking']['ip'],
+        target  => '/etc/icinga2/conf.d/puppet_hosts.conf',
+        vars    => {
             notification => {
                 mail => {
                     groups => $contacts,
