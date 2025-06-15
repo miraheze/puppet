@@ -1,9 +1,7 @@
 # class base::puppet
 class base::puppet (
-    Integer[1,59]       $interval              = lookup('base::puppet::interval', {'default_value' => 30}),
-    Optional[String[1]] $timer_seed            = lookup('base::puppet::timer_seed', {'default_value' => undef}),
-    Integer             $puppet_major_version  = lookup('puppet_major_version', {'default_value' => 8}),
-    String              $puppetserver_hostname = lookup('puppetserver_hostname'),
+    Integer $puppet_major_version  = lookup('puppet_major_version', {'default_value' => 8}),
+    String  $puppetserver_hostname = lookup('puppetserver_hostname'),
 ) {
     file { '/etc/apt/trusted.gpg.d/puppetlabs.asc':
         ensure => present,
@@ -64,8 +62,8 @@ class base::puppet (
         require => File['/var/log/puppet'],
     }
 
-    $min = $interval.fqdn_rand($timer_seed)
-    $timer_interval = "*:${min}/${interval}:00"
+    $minute = fqdn_rand(30, 'puppet_agent_timer')
+    $timer_interval = "*:${minute}/${interval}:00"
 
     systemd::timer::job { 'puppet-agent-timer':
         ensure        => present,
