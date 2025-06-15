@@ -1,7 +1,8 @@
 # class base::puppet
 class base::puppet (
-    Integer $puppet_major_version  = lookup('puppet_major_version', {'default_value' => 8}),
-    String  $puppetserver_hostname = lookup('puppetserver_hostname'),
+    Integer[1,59] $interval              = lookup('base::puppet::interval', {'default_value' => 30}),
+    Integer       $puppet_major_version  = lookup('puppet_major_version', {'default_value' => 8}),
+    String        $puppetserver_hostname = lookup('puppetserver_hostname'),
 ) {
     file { '/etc/apt/trusted.gpg.d/puppetlabs.asc':
         ensure => present,
@@ -62,7 +63,6 @@ class base::puppet (
         require => File['/var/log/puppet'],
     }
 
-    $interval = 30
     $minute = fqdn_rand($interval, 'puppet_agent_timer')
     $timer_interval = "*:${minute}/${interval}:00"
 
