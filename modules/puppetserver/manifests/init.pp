@@ -207,7 +207,7 @@ class puppetserver(
         interval        => {
             'start'    => 'OnCalendar',
             'interval' => '*-*-* *:09,19,29,39,49,59',
-        },                  
+        },
         logging_enabled => false,
         user            => 'root',
     }
@@ -219,7 +219,7 @@ class puppetserver(
         interval        => {
             'start'    => 'OnCalendar',
             'interval' => '*-*-* *:09,19,29,39,49,59',
-        },                  
+        },
         logging_enabled => false,
         user            => 'root',
     }
