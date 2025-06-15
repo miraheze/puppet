@@ -3,6 +3,7 @@
 
 import os
 import smtplib
+import socket
 import subprocess
 
 from argparse import ArgumentParser, REMAINDER
@@ -45,7 +46,7 @@ def main():
         result = subprocess.check_output(args.cmd, stderr=subprocess.STDOUT)
     except FileNotFoundError as error:
         # This will cause the systemd unit to fail
-        print("Failed to run command: {}", error)
+        print(f'Failed to run command: {error}')
         return 1
     except subprocess.CalledProcessError as error:
         output = error.output.decode()
@@ -71,17 +72,17 @@ def main():
             msg['To'] = args.mail_to
         cmd_str = ' '.join(str(i) for i in args.cmd)
         body = dedent(
-            """\
-            Systemd timer ran the following command:
+            f"""\
+            Systemd timer ran the following command on {socket.gethostname()}:
 
-                {}
+                {cmd_str}
 
-            Its return value was {} and emitted the following output:
+            Its return value was {ret} and emitted the following output:
 
-            {}
-            """).format(cmd_str, ret, output)
-        msg['Subject'] = "{}: {}".format(status, args.subject)
-        msg['Auto-Submitted'] = "auto-generated"
+            {output}
+            """)
+        msg['Subject'] = f'{status}: {args.subject}'
+        msg['Auto-Submitted'] = 'auto-generated'
         msg.set_content(body)
         smtp = smtplib.SMTP('::1')
         smtp.send_message(msg)
