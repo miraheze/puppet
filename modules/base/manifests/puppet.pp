@@ -62,7 +62,8 @@ class base::puppet (
         require => File['/var/log/puppet'],
     }
 
-    $minute = fqdn_rand(30, 'puppet_agent_timer')
+    $interval = 30
+    $minute = fqdn_rand($interval, 'puppet_agent_timer')
     $timer_interval = "*:${minute}/${interval}:00"
 
     systemd::timer::job { 'puppet-agent-timer':
