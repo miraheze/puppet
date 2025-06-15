@@ -1,11 +1,10 @@
 # class base::puppet
 class base::puppet (
-    Optional[String] $puppet_cron_time = lookup('puppet_cron_time', {'default_value' => undef}),
-    Integer $puppet_major_version = lookup('puppet_major_version', {'default_value' => 8}),
-    String $puppetserver_hostname = lookup('puppetserver_hostname'),
+    Integer[1,59]       $interval              = lookup('base::puppet::interval'),
+    Optional[String[1]] $timer_seed            = lookup('base::puppet::timer_seed'),
+    Integer             $puppet_major_version  = lookup('puppet_major_version', {'default_value' => 8}),
+    String              $puppetserver_hostname = lookup('puppetserver_hostname'),
 ) {
-    $crontime = fqdn_rand(60, 'puppet-params-crontime')
-
     file { '/etc/apt/trusted.gpg.d/puppetlabs.asc':
         ensure => present,
         source => 'puppet:///modules/base/puppet/puppetlabs.asc',
@@ -65,12 +64,19 @@ class base::puppet (
         require => File['/var/log/puppet'],
     }
 
-    file { '/etc/cron.d/puppet':
-        mode    => '0444',
-        owner   => 'root',
-        group   => 'root',
-        content => template('base/puppet/puppet.cron.erb'),
-        require => File['/usr/local/sbin/puppet-run'],
+    $min = $interval.fqdn_rand($timer_seed)
+    $timer_interval = "*:${min}/${interval}:00"
+
+    systemd::timer::job { 'puppet-agent-timer':
+        ensure        => present,
+        description   => "Run Puppet agent every ${interval} minutes",
+        user          => 'root',
+        ignore_errors => true,
+        command       => '/usr/local/sbin/puppet-run',
+        interval      => [
+            { 'start' => 'OnCalendar', 'interval' => $timer_interval },
+            { 'start' => 'OnStartupSec', 'interval' => '1min' },
+        ],
     }
 
     logrotate::conf { 'puppet':
