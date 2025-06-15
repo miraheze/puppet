@@ -203,7 +203,7 @@ class puppetserver(
     systemd::timer::job { 'git_pull_puppet':
         ensure          => present,
         description     => 'Pull changes on the puppet repo',
-        command         => '/usr/bin/git -C /etc/puppetlabs/puppet/git pull > /dev/null 2>&1',
+        command         => '/bin/bash -c "cd /etc/puppetlabs/puppet/git && /usr/bin/git pull>/dev/null 2>&1"',
         interval        => {
             'start'    => 'OnCalendar',
             'interval' => '*-*-* *:09,19,29,39,49,59',
@@ -215,7 +215,7 @@ class puppetserver(
     systemd::timer::job { 'git_pull_ssl':
         ensure          => present,
         description     => 'Pull changes on the ssl repo',
-        command         => '/usr/bin/git -C /etc/puppetlabs/puppet/ssl-cert pull > /dev/null 2>&1',
+        command         => '/bin/bash -c "cd /etc/puppetlabs/puppet/ssl-cert && /usr/bin/git pull>/dev/null 2>&1"',
         interval        => {
             'start'    => 'OnCalendar',
             'interval' => '*-*-* *:09,19,29,39,49,59',
