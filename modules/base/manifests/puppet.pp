@@ -1,7 +1,7 @@
 # class base::puppet
 class base::puppet (
     Integer[1,59]       $interval              = lookup('base::puppet::interval'),
-    Optional[String[1]] $timer_seed            = lookup('base::puppet::timer_seed'),
+    Optional[String[1]] $timer_seed            = lookup('base::puppet::timer_seed', {'default_value' => undef}),
     Integer             $puppet_major_version  = lookup('puppet_major_version', {'default_value' => 8}),
     String              $puppetserver_hostname = lookup('puppetserver_hostname'),
 ) {
