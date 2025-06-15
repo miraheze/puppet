@@ -225,12 +225,12 @@ class puppetserver(
     }
 
     systemd::timer::job { 'remove_old_puppet_reports':
-        ensure      => 'present',
+        ensure      => present,
         user        => 'root',
         description => 'Removes puppet reports older than 100 minutes.',
-        command     => '/usr/bin/find /var/lib/puppet/reports -type f -mmin +100 -delete',
+        command     => '/usr/bin/find /opt/puppetlabs/server/data/puppetserver/reports -type f -mmin +100 -delete',
         interval    => { 'start' => 'OnUnitInactiveSec', 'interval' => '1h' },
-        path_exists => '/var/lib/puppet/reports',
+        path_exists => '/opt/puppetlabs/server/data/puppetserver/reports',
     }
 
     $geoip_key = lookup('passwords::geoipupdatekey')
