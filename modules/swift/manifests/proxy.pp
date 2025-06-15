@@ -69,7 +69,7 @@ class swift::proxy (
     monitoring::services { 'HTTP':
         check_command => 'check_http',
         vars          => {
-            address6         => $address,
+            address          => $address,
             http_vhost       => 'swift-lb.wikitide.net',
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
@@ -81,7 +81,7 @@ class swift::proxy (
     monitoring::services { 'HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6         => $address,
+            address          => $address,
             http_vhost       => 'swift-lb.wikitide.net',
             http_ssl         => true,
             http_ignore_body => true,

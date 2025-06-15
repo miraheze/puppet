@@ -207,7 +207,7 @@ class phorge (
     monitoring::services { 'phorge-static.wikitide.net HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6    => $address,
+            address     => $address,
             http_expect => 'HTTP/1.1 200',
             http_ssl    => true,
             http_vhost  => 'phorge-static.wikitide.net',
@@ -218,7 +218,7 @@ class phorge (
     monitoring::services { 'issue-tracker.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6   => $address,
+            address    => $address,
             http_ssl   => true,
             http_vhost => 'issue-tracker.miraheze.org',
         },

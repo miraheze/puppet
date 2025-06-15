@@ -263,7 +263,7 @@ class icingaweb2 (
     monitoring::services { 'monitoring.wikitide.net HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6   => $address,
+            address    => $address,
             http_ssl   => true,
             http_vhost => 'monitoring.wikitide.net',
         },
