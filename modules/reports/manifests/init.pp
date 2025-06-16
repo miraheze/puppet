@@ -167,13 +167,13 @@ class reports {
     }
 
     systemd::timer::job { 'task-scheduler':
-        ensure          => present,
-        description     => 'Runs Laravel Task Scheduler',
-        command         => '/usr/bin/php /srv/TSPortal/artisan schedule:run',
-        interval        => {
+        ensure      => present,
+        description => 'Runs Laravel Task Scheduler',
+        command     => '/usr/bin/php /srv/TSPortal/artisan schedule:run',
+        interval    => {
             start    => 'OnCalendar',
             interval => '*-*-* *:00:00',
         },
-        user            => 'www-data',
+        user        => 'www-data',
     }
 }
