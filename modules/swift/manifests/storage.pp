@@ -114,7 +114,7 @@ class swift::storage (
     systemd::timer::job { 'disable-rsync':
         ensure      => present,
         description => 'Disables rsync via devicecheck',
-        command     => '/usr/local/bin/disable_rsync.py',
+        command     => '/usr/bin/python3 /usr/local/bin/disable_rsync.py',
         interval    => {
             start    => 'OnUnitInactiveSec',
             interval => '60s',
