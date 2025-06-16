@@ -10,7 +10,7 @@ class prometheus::exporter::graylog (
     systemd::timer::job { 'prometheus_graylog_stats':
         ensure          => $ensure,
         description     => 'Exports graylog metrics',
-        command         => '/usr/bin/wget http://127.0.0.1:9833/ -O ${outfile}',
+        command         => "/usr/bin/wget http://127.0.0.1:9833/ -O ${outfile}",
         interval        => {
             start    => 'OnCalendar',
             interval => '*-*-* *:*:00',
