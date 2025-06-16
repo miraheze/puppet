@@ -172,7 +172,7 @@ class reports {
         command     => '/usr/bin/php /srv/TSPortal/artisan schedule:run',
         interval    => {
             start    => 'OnCalendar',
-            interval => '*-*-* *:00:00',
+            interval => '*-*-* *:*:00',
         },
         user        => 'www-data',
     }
