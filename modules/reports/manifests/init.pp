@@ -166,10 +166,14 @@ class reports {
         require => Git::Clone['TSPortal'],
     }
 
-    cron { 'Task Scheduler':
-        ensure  => present,
-        command => '/usr/bin/php /srv/TSPortal/artisan schedule:run >> /dev/null 2>&1',
-        user    => 'www-data',
-        minute  => '*'
+    systemd::timer::job { 'task-scheduler':
+        ensure          => present,
+        description     => 'Runs Laravel Task Scheduler',
+        command         => '/usr/bin/php /srv/TSPortal/artisan schedule:run',
+        interval        => {
+            start    => 'OnCalendar',
+            interval => '*-*-* *:00:00',
+        },
+        user            => 'www-data',
     }
 }
