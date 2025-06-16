@@ -21,6 +21,9 @@
 #   The ensurable parameter
 # @param environment
 #   Hash containing 'Environment=' related values to insert in the
+# @param monitoring_enabled
+#   Periodically check the last execution of the unit and alarm if it ended
+#   up in a failed state.
 # @param logging_enabled
 #   If true, log directories are created, rsyslog/logrotate rules are created.
 # @param send_mail
@@ -104,8 +107,9 @@ define systemd::timer::job (
     String                                  $description,
     Systemd::Command                        $command,
     String                                  $user,
-    VMlib::Ensure                           $ensure                    = 'present',
+    VMlib::Ensure                           $ensure                    = present,
     Hash[String, String]                    $environment               = {},
+    Boolean                                 $monitoring_enabled        = true,
     Boolean                                 $logging_enabled           = true,
     String                                  $logfile_basedir           = '/var/log',
     String                                  $logfile_name              = 'syslog.log',
@@ -208,6 +212,12 @@ define systemd::timer::job (
             readable_by            => $logfile_perms,
             force_stop             => $syslog_force_stop,
             programname_comparison => $syslog_programname_comparison,
+        }
+    }
+
+    if $monitoring_enabled {
+        systemd::monitor { $title:
+            ensure => $ensure,
         }
     }
 }
