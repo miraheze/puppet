@@ -112,15 +112,15 @@ class swift::storage (
     }
 
     systemd::timer::job { 'disable-rsync':
-        ensure          => present,
-        description     => 'Disables rsync via devicecheck',
-        command         => '/usr/local/bin/disable_rsync.py',
-        interval        => {
+        ensure      => present,
+        description => 'Disables rsync via devicecheck',
+        command     => '/usr/local/bin/disable_rsync.py',
+        interval    => {
             start    => 'OnUnitInactiveSec',
             interval => '60s',
         },
-        user            => 'root',
-        require         => File['/usr/local/bin/disable_rsync.py'],
+        user        => 'root',
+        require     => File['/usr/local/bin/disable_rsync.py'],
     }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
