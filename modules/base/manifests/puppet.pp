@@ -67,12 +67,13 @@ class base::puppet (
     $timer_interval = "*:${minute}/${interval}:00"
 
     systemd::timer::job { 'puppet-agent-timer':
-        ensure        => present,
-        description   => "Run Puppet agent every ${interval} minutes",
-        user          => 'root',
-        ignore_errors => true,
-        command       => '/usr/local/sbin/puppet-run',
-        interval      => [
+        ensure             => present,
+        description        => "Run Puppet agent every ${interval} minutes",
+        user               => 'root',
+        ignore_errors      => true,
+        monitoring_enabled => false,
+        command            => '/usr/local/sbin/puppet-run',
+        interval           => [
             { 'start' => 'OnCalendar', 'interval' => $timer_interval },
             { 'start' => 'OnStartupSec', 'interval' => '1min' },
         ],
