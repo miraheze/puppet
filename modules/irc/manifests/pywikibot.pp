@@ -133,15 +133,15 @@ class irc::pywikibot {
 
             $on_calendar = "${weekday} ${month}-${monthday} ${hour}:${minute}:00"
             systemd::timer::job { "pywikibot-${dbname}-${script_config['name']}":
-                ensure            => $script_config['ensure'],
-                description       => "Runs pywikibot script ${script_config['name']} for ${dbname}",
-                command           => $command,
-                interval          => {
+                ensure          => $script_config['ensure'],
+                description     => "Runs pywikibot script ${script_config['name']} for ${dbname}",
+                command         => $command,
+                interval        => {
                     start    => 'OnCalendar',
                     interval => $on_calendar,
                 },
-                logfile_basedir   => '/var/log/pwb',
-                user              => 'pywikibot',
+                logfile_basedir => '/var/log/pwb',
+                user            => 'pywikibot',
             }
         }
     }
