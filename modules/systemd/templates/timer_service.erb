@@ -21,11 +21,12 @@ PrivateTmp=true
 Environment="<%= key -%>=<%= @environment[key] %>"
 <%- end -%>
 <%- end -%>
+<%- if @syslog_identifier -%>
+Environment="SYSLOG_IDENTIFIER=<%= @syslog_identifier %>"
+SyslogIdentifier=<%= @syslog_identifier %>
+<%- end -%>
 <%- if @environment_file -%>
 EnvironmentFile=<%= @environment_file %>
-<%- end -%>
-<%- if @syslog_identifier -%>
-SyslogIdentifier=<%= @syslog_identifier %>
 <%- end -%>
 <%- if @slice -%>
 Slice=<%= @slice %>
