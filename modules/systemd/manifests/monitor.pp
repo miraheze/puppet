@@ -3,7 +3,6 @@ define systemd::monitor(
 ) {
     if !defined(File['/usr/lib/nagios/plugins/check_systemd_unit_status']) {
         file { '/usr/lib/nagios/plugins/check_systemd_unit_status':
-            ensure => $ensure,
             source => 'puppet:///modules/systemd/check_systemd_unit_status.sh',
             mode   => '0755',
         }
