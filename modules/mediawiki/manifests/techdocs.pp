@@ -37,7 +37,7 @@ class mediawiki::techdocs {
         ensure    => present,
         directory => '/srv/statichelp',
         origin    => 'git@github.com:miraheze/statichelp.git',
-        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.wikitide.net:8080 %h %p\'',
+        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.fsslc.wtnet:8080 %h %p\'',
         require   => [
             File['/var/lib/nagios/id_ed25519'],
             File['/var/lib/nagios/id_ed25519.pub'],
