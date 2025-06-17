@@ -1,12 +1,14 @@
 define systemd::monitor(
     VMlib::Ensure $ensure = present,
 ) {
-    file { '/usr/lib/nagios/plugins/check_systemd_unit_status':
-        ensure => $ensure,
-        source => 'puppet:///modules/systemd/check_systemd_unit_status.sh',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
+    if !defined(File['/usr/lib/nagios/plugins/check_systemd_unit_status']) {
+        file { '/usr/lib/nagios/plugins/check_systemd_unit_status':
+            ensure => $ensure,
+            source => 'puppet:///modules/systemd/check_systemd_unit_status.sh',
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0755',
+        }
     }
 
     monitoring::nrpe { "Check unit status of ${title}":
