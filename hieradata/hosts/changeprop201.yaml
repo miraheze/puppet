@@ -38,7 +38,7 @@ changeprop::high_traffic_jobs_config:
   LocalGlobalUserPageCacheUpdateJob:
     # This job is prone to large spikes, so having it on the low_traffic_jobs queue
     # blocks other jobs.
-    concurrency: 15
+    concurrency: 45
   notificationGetStartedJob:
     concurrency: 2
     # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
@@ -276,7 +276,7 @@ role::prometheus::statsd_exporter::mappings:
       stream: $2
       partition: $3
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 redis::heap: '5GB'
 redis::maxmemory_policy: volatile-lru

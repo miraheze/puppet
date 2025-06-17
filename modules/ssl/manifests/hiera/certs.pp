@@ -2,13 +2,11 @@
 define ssl::hiera::certs (
     String $url,
     # This is not used in this file, but is used in icinga2.
-    String $ca,
     String $hsts     = 'weak',
     Optional[String] $redirect = undef,
     Optional[Hash] $path_redirects = undef,
     Optional[String] $sslname  = undef,
     Optional[String] $additional_domain  = undef,
-    Optional[Boolean] $disable_event = true,
 ) {
 
     if !defined(File['/etc/ssl/localcerts']) {
@@ -22,7 +20,7 @@ define ssl::hiera::certs (
     }
 
     if $sslname == undef {
-        $sslurl = $url
+        $sslurl = 'miraheze-origin-cert'
     } else {
         $sslurl = $sslname
     }

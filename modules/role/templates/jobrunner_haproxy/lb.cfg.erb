@@ -12,10 +12,10 @@ listen jobrunner
         balance roundrobin
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true-%>
-        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
+        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> check
         <%- end -%>
         <%- end -%>
-        http-request set-header Host jobrunner.wikitide.net
+        http-request set-header Host jobrunner.svc.fsslc.wtnet
 
         # Preserve the X-Request-ID header
         http-request set-header X-Request-ID %[req.hdr(X-Request-ID)]
@@ -31,10 +31,10 @@ listen jobrunner_high
         balance roundrobin
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
-        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
+        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> check
         <%- end -%>
         <%- end -%>
-        http-request set-header Host jobrunner-high.wikitide.net
+        http-request set-header Host jobrunner-high.svc.fsslc.wtnet
 
         # Preserve the X-Request-ID header
         http-request set-header X-Request-ID %[req.hdr(X-Request-ID)]
@@ -50,10 +50,10 @@ listen videoscaler
         balance roundrobin
         <%- @backends.each_pair do | name, property | -%>
         <%- if property['depool'] != true -%>
-        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> ssl verify none check
+        server <%= name %>  <%= property['ip'] %>:<%= property['port'] %> check
         <%- end -%>
         <%- end -%>
-        http-request set-header Host videoscaler.wikitide.net
+        http-request set-header Host videoscaler.svc.fsslc.wtnet
 
         # Preserve the X-Request-ID header
         http-request set-header X-Request-ID %[req.hdr(X-Request-ID)]

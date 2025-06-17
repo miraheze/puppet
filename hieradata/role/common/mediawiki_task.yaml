@@ -6,7 +6,7 @@ contactgroups: ['infra', 'mediawiki']
 
 jobrunner: true
 jobrunner::intensive: true
-mediawiki::jobqueue::runner::cron: false
+mediawiki::jobqueue::runner::periodic_jobs: false
 mediawiki::use_cpjobqueue: true
 
 role::mediawiki::use_strict_firewall: true
@@ -27,7 +27,7 @@ mediawiki::php::enable_request_profiling: true
 
 php::php_version: '8.2'
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 

@@ -139,7 +139,7 @@ class SslCertificate:
             if not self.quiet:
                 print('Pushing LetsEncrypt SSL certificate to GitHub')
 
-            os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.wikitide.net:8080 %h %p\'"')
+            os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.fsslc.wtnet:8080 %h %p\'"')
             os.system('git -C /srv/ssl/ssl/ config user.name "WikiTideBot"')
             os.system('git -C /srv/ssl/ssl/ config user.email "noreply@wikitide.org"')
             os.system('git -C /srv/ssl/ssl/ reset --hard origin/main')
@@ -159,7 +159,6 @@ class SslCertificate:
                 certs.write(domain_key + ':\n')
                 certs.write(f"  url: '{self.domain}'\n")
                 certs.write("  ca: 'LetsEncrypt'\n")
-                certs.write('  disable_event: false\n')
 
             os.system('git -C /srv/ssl/ssl/ add /srv/ssl/ssl/certs.yaml')
             os.system(f'git -C /srv/ssl/ssl/ commit -m "Bot: Add SSL cert for {self.domain}" -m "Certificate committed by {os.getlogin()}"')
@@ -218,7 +217,7 @@ class SslCertificate:
         if not self.quiet:
             print('Pushing LetsEncrypt SSL certificate to GitHub')
 
-        os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.wikitide.net:8080 %h %p\'"')
+        os.system('git config --global core.sshCommand "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.fsslc.wtnet:8080 %h %p\'"')
         os.system('git -C /srv/ssl/ssl/ config user.name "WikiTideBot"')
         os.system('git -C /srv/ssl/ssl/ config user.email "noreply@wikitide.org"')
         os.system('git -C /srv/ssl/ssl/ reset --hard origin/main')

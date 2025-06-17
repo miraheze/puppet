@@ -1,6 +1,7 @@
 # class: base
 class base (
-    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    String $bots_hostname = lookup('base::bots_hostname'),
+    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
 ) {
     include apt
     include base::packages
@@ -32,9 +33,9 @@ class base (
     }
 
     file { '/usr/local/bin/logsalmsg':
-        ensure => present,
-        source => 'puppet:///modules/base/logsalmsg',
-        mode   => '0555',
+        ensure  => present,
+        content => template('base/logsalmsg.erb'),
+        mode    => '0555',
     }
 
     file { '/usr/local/bin/secupgrade.sh':

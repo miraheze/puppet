@@ -103,3 +103,4 @@ rules:
 - pattern : kafka.server<type=KafkaRequestHandlerPool, name=RequestHandlerAvgIdlePercent><>(MeanRate|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
   name: kafka_server_KafkaRequestHandlerPool_RequestHandlerAvgIdlePercent_$1
   type: GAUGE
+

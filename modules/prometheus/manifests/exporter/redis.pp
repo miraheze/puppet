@@ -51,10 +51,16 @@ class prometheus::exporter::redis (
     }
 
     # Collect every minute
-    cron { 'prometheus_jobqueue_stats':
-        ensure  => $collect_jobqueue_stats,
-        user    => 'root',
-        command => '/usr/local/bin/prometheus-jobqueue-stats --outfile /var/lib/prometheus/node.d/jobqueue.prom',
+    systemd::timer::job { 'prometheus_jobqueue_stats':
+        ensure          => $collect_jobqueue_stats,
+        description     => 'Exports JobQueue metrics',
+        command         => '/usr/local/bin/prometheus-jobqueue-stats --outfile /var/lib/prometheus/node.d/jobqueue.prom',
+        interval        => {
+            start    => 'OnCalendar',
+            interval => '*-*-* *:*:00',
+        },
+        logging_enabled => false,
+        user            => 'root',
     }
 
     $firewall_rules_str = join(

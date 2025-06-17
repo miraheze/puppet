@@ -17,7 +17,7 @@ start_string=${1:-}
 end_string=${2:-}
 automatic_run=false
 
-export HTTPS_PROXY=http://bastion.wikitide.net:8080
+export HTTPS_PROXY=http://bastion.fsslc.wtnet:8080
 
 if [ ! -f "$dblist" ]; then
         echo "dblist does not exist!"

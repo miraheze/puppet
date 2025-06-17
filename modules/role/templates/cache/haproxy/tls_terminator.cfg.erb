@@ -38,13 +38,8 @@ listen tls
 
     bind :::<%= @tls_port -%> tfo v6only ssl crt-list /etc/haproxy/crt-list.cfg<%- if @tls_ticket_keys_path -%> tls-ticket-keys <%= @tls_ticket_keys_path %><%- end %>
 
-    # We load balance varnish by hashing. It seems that varnish doesn't like http-reuse
-    # so we have to use http-server-close with http-reuse.
-    # E.g. with just `http-reuse always` it was causing requests to be routed to the wrong backend in varnish.
-    # We set `option http-keep-alive` to restore keep-alive between cf and haproxy since we're using `http-server-close`.
-    http-reuse always
-    option http-server-close
     option http-keep-alive
+    http-reuse always
 
     # time to wait for a complete HTTP request, It only applies to the header part of the HTTP request (unless option http-buffer-request is used)
     timeout http-request <%= @timeout['http_request'] %>s
@@ -157,25 +152,39 @@ listen tls
 <%- end -%>
 <%- end -%>
 
-    balance uri
+    # hash by both URI and Path (not query string)
+    http-request set-header X-LB %[req.hdr(Host),lower]%[path]
+    balance hdr(X-LB)
     hash-type consistent
+
+    # try the same server 9 times
+    retries 9
+
+    # If we can't connect, redispatch to a new server
+    # This means that HAProxy will attempt up to 9 retries,
+    # but only redispatch to a different server up to 3 times total
+    option redispatch 3
+
+    # Prevent any one server from reaching 150% (1.5x) the average load
+    hash-balance-factor 150
 
     option httpchk
     http-check send meth HEAD uri /check ver HTTP/1.1 hdr Host health.wikitide.net
     http-check expect status 200
+    http-check disable-on-404
 
     acl hc-host        hdr(host) -i health.wikitide.net
     acl hc-path        path_beg     /check
     use_backend healthcheck if hc-host hc-path
 
-    option forwardfor
+    #option forwardfor
 
     <%- @cache_backends.each_pair do | name, address | -%>
     server <%= name %> <%= address %>:81 check
     <%- end -%>
 
 backend healthcheck
-    option forwardfor
+    #option forwardfor
     server hc_server 127.0.0.1:81 maxconn 100
 
 <%- if @prometheus_port -%>
@@ -217,7 +226,7 @@ listen <%= name %>_backend_tls
     timeout tunnel <%= @timeout['tunnel'] %>s
 
     # We don't use a healthchecker because we use varnish for this.
-    server <%= name %>_backend <%= name %>.<%= property['domain'] || 'wikitide.net' %>:443 ssl check-ssl verify none
+    server <%= name %>_backend <%= name %>.<%= property['domain'] || 'fsslc.wtnet' %>:443 ssl check-ssl verify none tfo alpn h2,http/1.1
 
 <%- end -%>
 
