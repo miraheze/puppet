@@ -39,14 +39,6 @@ class irc::pywikibot {
         content => template('irc/pywikibot/pywikibot.sh'),
     }
 
-    file { '/var/log/pwb':
-        ensure  => 'directory',
-        owner   => 'pywikibot',
-        group   => 'pywikibot',
-        mode    => '0644',
-        recurse => true,
-    }
-
     stdlib::ensure_packages([
         'python3-mwparserfromhell',
         'python3-packaging',
@@ -90,24 +82,23 @@ class irc::pywikibot {
         require => Git::Clone['Pywikibot-stable'],
     }
 
-    $pwb_crons = loadyaml('/etc/puppetlabs/puppet/pywikibot-config/cron.yaml')
+    $pwb_timers = loadyaml('/etc/puppetlabs/puppet/pywikibot-config/timers.yaml')
 
-    $pwb_crons.each |$dbname, $params| {
+    $pwb_timers.each |$dbname, $params| {
         $params.each |$script_config| {
             if $script_config['name'] == undef {
-                warning("One crontab entry for ${dbname} has no name attribute!")
+                warning("One timer entry for ${dbname} has no name attribute!")
                 next()
             } elsif $script_config['script'] == undef {
-                warning("One crontab entry for ${dbname} has no script attribute!")
+                warning("One timer entry for ${dbname} has no script attribute!")
                 next()
             } elsif $script_config['scriptparams'] == undef {
-                warning("One crontab entry for ${dbname} has no scriptparams attribute!")
+                warning("One timer entry for ${dbname} has no scriptparams attribute!")
                 next()
             }
-            $log_path = "/var/log/pwb/${dbname}-${script_config['name']}-cron.log"
             $command = $script_config['scriptparams'] ? {
-                '' => "/usr/local/bin/pywikibot ${script_config['script']} -lang:${dbname} -pt:0 >> ${log_path} 2>&1",
-                default => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0 >> ${log_path} 2>&1"
+                '' => "/usr/local/bin/pywikibot ${script_config['script']} -lang:${dbname} -pt:0",
+                default => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0"
             }
 
             $minute = $script_config['minute'] ? {
@@ -142,27 +133,15 @@ class irc::pywikibot {
 
             $on_calendar = "${weekday} ${month}-${monthday} ${hour}:${minute}:00"
             systemd::timer::job { "pywikibot-${dbname}-${script_config['name']}":
-                ensure      => $script_config['ensure'],
-                description => "Runs pywikibot script ${script_config['name']} for ${dbname}",
-                command     => $command,
-                interval    => {
+                ensure            => $script_config['ensure'],
+                description       => "Runs pywikibot script ${script_config['name']} for ${dbname}",
+                command           => $command,
+                interval          => {
                     start    => 'OnCalendar',
                     interval => $on_calendar,
                 },
-                user        => 'pywikibot',
-            }
-
-            logrotate::rule { "pwb-${dbname}-${script_config['name']}-cron":
-                ensure         => $script_config['ensure'],
-                file_glob      => $log_path,
-                frequency      => 'daily',
-                date_ext       => true,
-                date_yesterday => true,
-                copy_truncate  => true,
-                rotate         => 7,
-                missing_ok     => true,
-                no_create      => true,
-                compress       => true,
+                logfile_basedir   => '/var/log/pwb',
+                user              => 'pywikibot',
             }
         }
     }
