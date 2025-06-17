@@ -109,38 +109,48 @@ class irc::pywikibot {
                 '' => "/usr/local/bin/pywikibot ${script_config['script']} -lang:${dbname} -pt:0 >> ${log_path} 2>&1",
                 default => "/usr/local/bin/pywikibot ${script_config['script']} ${script_config['scriptparams']} -lang:${dbname} -pt:0 >> ${log_path} 2>&1"
             }
-            # lint:ignore:selector_inside_resource
-            cron { "pywikibot ${dbname}-${script_config['name']}":
-                ensure   => $script_config['ensure'],
-                command  => $command,
-                user     => 'pywikibot',
-                minute   => $script_config['minute'] ? {
-                                '*'     => absent,
-                                undef   => '0',
-                                default => $script_config['minute']
-                            },
-                hour     => $script_config['hour'] ? {
-                                '*'     => absent,
-                                undef   => '0',
-                                default => $script_config['hour']
-                            },
-                month    => $script_config['month'] ? {
-                                '*'     => absent,
-                                undef   => '1',
-                                default => $script_config['month']
-                            },
-                monthday => $script_config['monthday'] ? {
-                                '*'     => absent,
-                                undef   => '1',
-                                default => $script_config['monthday']
-                            },
-                weekday  => $script_config['weekday'] ? {
-                                '*'     => absent,
-                                undef   => '0',
-                                default => $script_config['weekday']
-                            },
+
+            $minute = $script_config['minute'] ? {
+                '*'     => '*',
+                undef   => '0',
+                default => $script_config['minute'],
             }
-            # lint:endignore
+
+            $hour = $script_config['hour'] ? {
+                '*'     => '*',
+                undef   => '0',
+                default => $script_config['hour'],
+            }
+
+            $monthday = $script_config['monthday'] ? {
+                '*'     => '*',
+                undef   => '*',
+                default => $script_config['monthday'],
+            }
+
+            $month = $script_config['month'] ? {
+                '*'     => '*',
+                undef   => '*',
+                default => $script_config['month'],
+            }
+
+            $weekday = $script_config['weekday'] ? {
+                '*'     => '*',
+                undef   => '*',
+                default => $script_config['weekday'],
+            }
+
+            $on_calendar = "${weekday} ${month}-${monthday} ${hour}:${minute}:00"
+            systemd::timer::job { "pywikibot-${dbname}-${script_config['name']}":
+                ensure      => $script_config['ensure'],
+                description => "Runs pywikibot script ${script_config['name']} for ${dbname}",
+                command     => $command,
+                interval    => {
+                    start    => 'OnCalendar',
+                    interval => $on_calendar,
+                },
+                user        => 'pywikibot',
+            }
 
             logrotate::rule { "pwb-${dbname}-${script_config['name']}-cron":
                 ensure         => $script_config['ensure'],
