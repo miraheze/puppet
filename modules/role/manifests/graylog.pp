@@ -1,7 +1,6 @@
 # role: graylog
 class role::graylog {
     include ::java
-    include prometheus::exporter::graylog
 
     ssl::wildcard { 'graylog wildcard': }
 
