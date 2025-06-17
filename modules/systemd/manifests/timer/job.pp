@@ -24,6 +24,8 @@
 # @param monitoring_enabled
 #   Periodically check the last execution of the unit and alarm if it ended
 #   up in a failed state.
+# @param monitoring_docs_url
+#   URL of the docs for this alert.
 # @param logging_enabled
 #   If true, log directories are created, rsyslog/logrotate rules are created.
 # @param send_mail
@@ -110,6 +112,7 @@ define systemd::timer::job (
     VMlib::Ensure                           $ensure                    = present,
     Hash[String, String]                    $environment               = {},
     Boolean                                 $monitoring_enabled        = true,
+    Optional[Stdlib::HTTPSUrl]              $monitoring_docs_url       = undef,
     Boolean                                 $logging_enabled           = true,
     String                                  $logfile_basedir           = '/var/log',
     String                                  $logfile_name              = 'syslog.log',
@@ -218,6 +221,7 @@ define systemd::timer::job (
     if $monitoring_enabled {
         systemd::monitor { $title:
             ensure => $ensure,
+            docs   => $monitoring_docs_url,
         }
     }
 }
