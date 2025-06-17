@@ -1,5 +1,6 @@
 define systemd::monitor(
-    VMlib::Ensure $ensure = present,
+    VMlib::Ensure              $ensure = present,
+    Optional[Stdlib::HTTPSUrl] $docs   = undef,
 ) {
     if !defined(File['/usr/lib/nagios/plugins/check_systemd_unit_status']) {
         file { '/usr/lib/nagios/plugins/check_systemd_unit_status':
@@ -10,6 +11,7 @@ define systemd::monitor(
 
     monitoring::nrpe { "Check unit status of ${title}":
         ensure  => $ensure,
+        docs    => $docs,
         command => "/usr/lib/nagios/plugins/check_systemd_unit_status ${title}",
     }
 }
