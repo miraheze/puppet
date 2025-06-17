@@ -46,6 +46,7 @@ class mediawiki::techdocs {
     }
 
     systemd::timer::job { 'update-static-tech-docs':
+        ensure            => present,
         description       => 'Update static tech documentation',
         command           => '/usr/bin/python3 /usr/local/bin/techdocs',
         interval          => {
