@@ -13,7 +13,7 @@ NAMESPACE = 1600  # Tech namespace ID
 USER_AGENT = 'TechNamespaceBot/1.0 (https://github.com/miraheze/statichelp/tree/main/content/tech-docs)'
 
 SSH_PRIVATE_KEY_PATH = '/var/lib/nagios/id_ed25519'
-HTTP_PROXY = 'bastion.wikitide.net:8080'
+HTTP_PROXY = 'bastion.fsslc.wtnet:8080'
 
 GIT_USER_EMAIL = 'noreply@wikitide.org'
 GIT_USER_NAME = 'WikiTideBot'
