@@ -122,11 +122,12 @@ class irc::pywikibot {
             }
 
             $weekday = $script_config['weekday'] ? {
-                undef   => '*',
-                default => $script_config['weekday'],
+                '*'     => '*-',
+                undef   => '*-',
+                default => "${script_config['weekday']} ",
             }
 
-            $on_calendar = "${weekday} ${month}-${monthday} ${hour}:${minute}:00"
+            $on_calendar = "${weekday}${month}-${monthday} ${hour}:${minute}:00"
             systemd::timer::job { "pywikibot-${dbname}-${script_config['name']}":
                 ensure          => $script_config['ensure'],
                 description     => "Runs pywikibot script ${script_config['name']} for ${dbname}",
