@@ -275,12 +275,15 @@ class monitoring (
         command => '/usr/lib/nagios/plugins/check_icinga_config'
     }
 
-    cron { 'remove_icinga2_perfdata_2_days':
-        ensure  => present,
-        command => '/usr/bin/find /var/spool/icinga2/perfdata -type f -mtime +2 -exec rm {} +',
-        user    => 'root',
-        hour    => 5,
-        minute  => 0,
+    systemd::timer::job { 'remove_icinga2_perfdata':
+        ensure      => present,
+        description => 'Removes Icinga2 perfdata files older than 2 days',
+        command     => '/usr/bin/find /var/spool/icinga2/perfdata -type f -mtime +2 -exec rm {} +',
+        interval    => {
+            start    => 'OnCalendar',
+            interval => '*-*-* 05:00:00',
+        },
+        user        => 'root',
     }
 
     Icinga2::Object::Host <<||>> ~> Service['icinga2']
