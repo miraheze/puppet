@@ -34,7 +34,7 @@ class swift::stats::dispersion(
 
     if $storage_policies {
         systemd::timer::job { 'swift_dispersion_stats_lowlatency':
-            ensure          => $ensure,
+            ensure          => absent,
             user            => 'root',
             description     => 'swift dispersion statistics - low latency',
             command         => "/usr/local/bin/swift-dispersion-stats --prefix ${statsd_prefix}.lowlatency --statsd-host ${statsd_host} --statsd-port ${statsd_port} --policy-name lowlatency",
