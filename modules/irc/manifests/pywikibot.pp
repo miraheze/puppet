@@ -102,31 +102,26 @@ class irc::pywikibot {
             }
 
             $minute = $script_config['minute'] ? {
-                '*'     => '*',
                 undef   => '0',
                 default => $script_config['minute'],
             }
 
             $hour = $script_config['hour'] ? {
-                '*'     => '*',
                 undef   => '0',
                 default => $script_config['hour'],
             }
 
             $monthday = $script_config['monthday'] ? {
-                '*'     => '*',
                 undef   => '*',
                 default => $script_config['monthday'],
             }
 
             $month = $script_config['month'] ? {
-                '*'     => '*',
                 undef   => '*',
                 default => $script_config['month'],
             }
 
             $weekday = $script_config['weekday'] ? {
-                '*'     => '*',
                 undef   => '*',
                 default => $script_config['weekday'],
             }
