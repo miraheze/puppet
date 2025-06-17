@@ -145,7 +145,7 @@ class role::cache::haproxy(
     monitoring::services { 'HTTPS':
         check_command => 'check_curl',
         vars          => {
-            address6         => $address,
+            address          => $address,
             http_vhost       => $facts['networking']['fqdn'],
             http_ssl         => true,
             http_ignore_body => true,
@@ -157,7 +157,7 @@ class role::cache::haproxy(
         ensure        => present,
         check_command => 'check_curl',
         vars          => {
-            address6         => $address,
+            address          => $address,
             http_port        => 443,
             http_vhost       => 'health.wikitide.net',
             http_uri         => '/check',
@@ -185,9 +185,7 @@ class role::cache::haproxy(
     $firewall_str = join(
         query_facts('Class[Prometheus]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['he-ipv6'] ) {
-                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"

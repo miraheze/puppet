@@ -8,7 +8,7 @@ contactgroups: ['infra', 'mediawiki']
 jobrunner: true
 jobrunner::intensive: true
 
-mediawiki::jobqueue::runner::cron: true
+mediawiki::jobqueue::runner::periodic_jobs: true
 mediawiki::jobqueue::runner::redis_ip: '10.0.15.118:6379'
 mediawiki::jobqueue::wiki: 'loginwikibeta'
 mediawiki::use_cpjobqueue: false
@@ -31,19 +31,19 @@ mediawiki::multiversion::versions:
   '1.43':
     branch: 'REL1_43'
   '1.44':
-    branch: 'master'
+    branch: 'REL1_44'
     default: true
 
 php::php_version: '8.2'
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 
 prometheus::exporter::redis::collect_jobqueue_stats: present
 
 # NGINX
-nginx::keepalive_timeout: 2
+nginx::keepalive_timeout: 120
 nginx::keepalive_requests: 150
 nginx::logrotate_number: 2
 nginx::use_graylog: true

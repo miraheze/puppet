@@ -12,8 +12,9 @@ threads=<%= @threads %>
 pdns-distributes-queries=no
 reuseport=yes
 
-# Set a maximum TTL for all records to prevent overcaching
-max-cache-ttl = 600
+max-cache-ttl=3600
+max-negative-ttl=60
+max-cache-entries=500000
 
 stats-ringbuffer-entries=1000
 
@@ -26,4 +27,4 @@ security-poll-suffix=
 hint-file=/usr/share/dns/root.hints
 
 # Forward requests to our authorative servers
-forward-zones = wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089
+forward-zones = wtnet=2602:294:0:b23::111;2001:41d0:801:2000::4089, 10.in-addr.arpa=2602:294:0:b23::111;2001:41d0:801:2000::4089, wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089

@@ -9,9 +9,7 @@ server {
 
 	location / {
 		proxy_pass <%= @os_master_host %>;
-		proxy_set_header Connection "Keep-Alive";
 		proxy_set_header Host $http_host;
-		proxy_set_header Proxy-Connection "Keep-Alive";
 		proxy_set_header X-Real-IP $remote_addr;
 	}
 }

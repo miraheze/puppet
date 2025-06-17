@@ -193,13 +193,6 @@ class puppetdb(
         ensure => directory,
     }
 
-    file { '/var/log/puppetdb-backup':
-        ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
     systemd::timer::job { 'puppetdb-backup':
         description       => 'Runs backup of puppetdb',
         command           => '/usr/local/bin/wikitide-backup backup puppetdb',
@@ -207,14 +200,13 @@ class puppetdb(
             'start'    => 'OnCalendar',
             'interval' => '*-*-1,15 01:00:00',
         },
-        logfile_basedir   => '/var/log/puppetdb-backup',
         logfile_name      => 'puppetdb.log',
         syslog_identifier => 'puppetdb-backup',
         user              => 'root',
     }
 
     monitoring::nrpe { 'Backups PuppetDB':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/puppetdb-backup/puppetdb-backup/puppetdb.log',
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/puppetdb-backup/puppetdb.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
         critical => true
     }

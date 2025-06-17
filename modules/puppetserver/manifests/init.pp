@@ -200,26 +200,37 @@ class puppetserver(
         port  => '8140',
     }
 
-    cron { 'puppet-git':
-        command => '/usr/bin/git -C /etc/puppetlabs/puppet/git pull > /dev/null 2>&1',
-        user    => 'root',
-        hour    => '*',
-        minute  => [ '9', '19', '29', '39', '49', '59' ],
+    systemd::timer::job { 'git_pull_puppet':
+        ensure          => present,
+        description     => 'Pull changes on the puppet repo',
+        command         => '/bin/bash -c "cd /etc/puppetlabs/puppet/git && /usr/bin/git pull>/dev/null 2>&1"',
+        interval        => {
+            'start'    => 'OnCalendar',
+            'interval' => '*-*-* *:09,19,29,39,49,59',
+        },
+        logging_enabled => false,
+        user            => 'root',
     }
 
-    cron { 'ssl-git':
-        command => '/usr/bin/git -C /etc/puppetlabs/puppet/ssl-cert pull > /dev/null 2>&1',
-        user    => 'root',
-        hour    => '*',
-        minute  => [ '9', '19', '29', '39', '49', '59' ],
+    systemd::timer::job { 'git_pull_ssl':
+        ensure          => present,
+        description     => 'Pull changes on the ssl repo',
+        command         => '/bin/bash -c "cd /etc/puppetlabs/puppet/ssl-cert && /usr/bin/git pull>/dev/null 2>&1"',
+        interval        => {
+            'start'    => 'OnCalendar',
+            'interval' => '*-*-* *:09,19,29,39,49,59',
+        },
+        logging_enabled => false,
+        user            => 'root',
     }
 
-    cron { 'puppet-old-reports-remove':
-        ensure  => present,
-        command => 'find /opt/puppetlabs/server/data/puppetserver/reports -type f -mmin +100 -delete >/dev/null 2>&1',
-        user    => 'root',
-        hour    => '*/1',
-        minute  => '*',
+    systemd::timer::job { 'remove_old_puppet_reports':
+        ensure      => present,
+        user        => 'root',
+        description => 'Removes puppet reports older than 100 minutes.',
+        command     => '/usr/bin/find /opt/puppetlabs/server/data/puppetserver/reports -type f -mmin +100 -delete',
+        interval    => { 'start' => 'OnUnitInactiveSec', 'interval' => '1h' },
+        path_exists => '/opt/puppetlabs/server/data/puppetserver/reports',
     }
 
     $geoip_key = lookup('passwords::geoipupdatekey')
@@ -234,13 +245,18 @@ class puppetserver(
         mode    => '0555',
     }
 
-    cron { 'geoipupdate':
-        ensure   => present,
-        command  => '/root/geoipupdate',
-        user     => 'root',
-        monthday => 1,
-        hour     => 12,
-        minute   => 0,
+    systemd::timer::job { 'geoipupdate':
+        ensure                  => present,
+        description             => 'Run geoipupdate monthly',
+        command                 => '/root/geoipupdate',
+        interval                => {
+            start    => 'OnCalendar',
+            interval => '*-01 12:00:00',
+        },
+        user                    => 'root',
+        send_mail               => true,
+        send_mail_only_on_error => false,
+        send_mail_to            => 'root@wikitide.net',
     }
 
     file { '/root/updatesfs':
@@ -249,48 +265,62 @@ class puppetserver(
         mode    => '0555',
     }
 
-    cron { 'updatesfs':
-        ensure  => present,
-        command => '/root/updatesfs',
-        user    => 'root',
-        hour    => 23,
-        minute  => 0,
+    systemd::timer::job { 'updatesfs':
+        ensure                  => present,
+        description             => 'Run updatesfs nightly',
+        command                 => '/root/updatesfs',
+        interval                => {
+            start    => 'OnCalendar',
+            interval => '*-*-* 23:00:00',
+        },
+        user                    => 'root',
+        send_mail               => true,
+        send_mail_only_on_error => false,
+        send_mail_to            => 'root@wikitide.net',
     }
 
     monitoring::services { 'puppetserver':
         check_command => 'tcp',
         vars          => {
-            tcp_port    => '8140',
+            tcp_port => '8140',
         },
     }
 
     # Backups
-    cron { 'backups-sslkeys':
-        ensure  => present,
-        command => '/usr/local/bin/wikitide-backup backup sslkeys > /var/log/sslkeys-backup.log 2>&1',
-        user    => 'root',
-        minute  => '0',
-        hour    => '6',
-        weekday => '0',
+    systemd::timer::job { 'backups-sslkeys':
+        ensure            => present,
+        description       => 'Runs backup of sslkeys',
+        command           => '/usr/local/bin/wikitide-backup backup sslkeys',
+        interval          => {
+            start    => 'OnCalendar',
+            interval => 'Sun *-*-* 06:00:00',
+        },
+        logfile_name      => 'sslkeys-backup.log',
+        syslog_identifier => 'sslkeys-backup',
+        user              => 'root',
     }
 
     monitoring::nrpe { 'Backups SSLKeys':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sslkeys-backup.log',
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sslkeys-backup/sslkeys-backup.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
         critical => true
     }
 
-    cron { 'backups-private':
-        ensure  => present,
-        command => '/usr/local/bin/wikitide-backup backup private > /var/log/private-backup.log 2>&1',
-        user    => 'root',
-        minute  => '0',
-        hour    => '3',
-        weekday => '0',
+    systemd::timer::job { 'backups-private':
+        ensure            => present,
+        description       => 'Runs backup of private data',
+        command           => '/usr/local/bin/wikitide-backup backup private',
+        interval          => {
+            start    => 'OnCalendar',
+            interval => 'Sun *-*-* 03:00:00',
+        },
+        logfile_name      => 'private-backup.log',
+        syslog_identifier => 'private-backup',
+        user              => 'root',
     }
 
     monitoring::nrpe { 'Backups Private':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/private-backup.log',
+        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/private-backup/private-backup.log',
         docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
         critical => true
     }

@@ -5,7 +5,7 @@ class swift::expirer (
     $statsd_port               = 8125,
     $statsd_metric_prefix      = undef,
     $statsd_sample_rate_factor = '1',
-    $swift_main_memcached      = lookup('swift::proxy::swift_main_memcached', {'default_value' => '[2602:294:0:b23::109]'}),
+    $swift_main_memcached      = lookup('swift::proxy::swift_main_memcached', {'default_value' => '10.0.17.108'}),
 ) {
 
     package { 'swift-object-expirer':

@@ -1,8 +1,14 @@
 #!/bin/bash
 
-amount_of_accesslogs=`tail -500 /var/log/nginx/access.log | wc -l`
-amount_of_errors=`tail -500 /var/log/nginx/access.log | awk '{print $8}' | grep '^[45]' | grep -v '429' | wc -l`
-error_rate=$(awk "BEGIN { pc=${amount_of_errors}/${amount_of_accesslogs}; print pc }")
+if [ -f /var/log/haproxy.log ]; then
+  amount_of_accesslogs=`tail -500 /var/log/haproxy.log | wc -l`
+  amount_of_errors=`tail -500 /var/log/haproxy.log | awk '{print $9}' | sed 's/http_status=//' | grep '^[45]' | grep -v '429' | wc -l`
+  error_rate=$(awk "BEGIN { pc=${amount_of_errors}/${amount_of_accesslogs}; print pc }")
+else
+  amount_of_accesslogs=`tail -500 /var/log/nginx/access.log | wc -l`
+  amount_of_errors=`tail -500 /var/log/nginx/access.log | awk '{print $8}' | grep '^[45]' | grep -v '429' | wc -l`
+  error_rate=$(awk "BEGIN { pc=${amount_of_errors}/${amount_of_accesslogs}; print pc }")
+fi
 
 cat >/var/lib/prometheus/node.d/varnish_requests.prom <<EOL
 # HELP varnish_requests_errors All error requests

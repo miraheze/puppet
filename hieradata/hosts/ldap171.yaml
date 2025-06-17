@@ -1,1 +1,1 @@
-profile::openldap::ldap_host: 'ldap171-private.wikitide.net'
+profile::openldap::ldap_host: 'ldap171.fsslc.wtnet'
