@@ -8,7 +8,7 @@ class prometheus::exporter::graylog (
 ) {
     # Collect every minute
     systemd::timer::job { 'prometheus_graylog_stats':
-        ensure          => $ensure,
+        ensure          => absent,
         description     => 'Exports graylog metrics',
         command         => "/usr/bin/wget http://127.0.0.1:9833/ -O ${outfile}",
         interval        => {
