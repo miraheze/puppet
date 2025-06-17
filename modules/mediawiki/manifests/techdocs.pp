@@ -37,6 +37,10 @@ class mediawiki::techdocs {
         ensure    => present,
         directory => '/srv/statichelp',
         origin    => 'git@github.com:miraheze/statichelp.git',
+        branch    => 'main',
+        owner     => 'www-data',
+        group     => 'www-data',
+        mode      => '0755',
         ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.fsslc.wtnet:8080 %h %p\'',
         require   => [
             File['/var/lib/nagios/id_ed25519'],
@@ -45,17 +49,8 @@ class mediawiki::techdocs {
         ],
     }
 
-    systemd::timer::job { 'update-techdocs':
-        description       => 'Update techdocs',
-        command           => '/usr/bin/python3 /usr/local/bin/techdocs',
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => 'Sun *-*-* 00:00:00',
-        },
-        logfile_basedir   => '/var/log/mediawiki/cron',
-        logfile_name      => 'update-techdocs.log',
-        syslog_identifier => 'update-techdocs',
-        user              => 'root',
-        require           => File['/var/log/mediawiki/cron'],
+    mediawiki::periodic_job { 'update-static-tech-docs':
+        command  => '/usr/bin/python3 /usr/local/bin/techdocs',
+        interval => 'Sun *-*-* 00:00:00',
     }
 }
