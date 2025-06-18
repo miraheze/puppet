@@ -1,6 +1,15 @@
 # === Class mediawiki::techdocs
 class mediawiki::techdocs {
-    stdlib::ensure_packages(['python3-GitPython', 'python3-mwparserfromhell'])
+    stdlib::ensure_packages('python3-mwparserfromhell')
+    stdlib::ensure_packages(
+        'GitPython',
+        {
+            provider        => 'pip3',
+            install_options => [ '--break-system-packages' ],
+            before          => File['/usr/local/bin/techdocs'],
+            require         => Package['python3-pip'],
+        },
+    )
 
     file { '/usr/local/bin/techdocs':
         ensure => present,
@@ -31,13 +40,6 @@ class mediawiki::techdocs {
         owner  => 'root',
         group  => 'root',
         mode   => '0644',
-    }
-
-    @@sshkey { 'github.com':
-        ensure       => present,
-        type         => 'ecdsa-sha2-nistp256',
-        key          => 'AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg=',
-        host_aliases => [ 'github.com' ],
     }
 
     git::clone { 'statichelp':
