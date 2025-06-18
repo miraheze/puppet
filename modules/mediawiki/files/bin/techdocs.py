@@ -512,7 +512,7 @@ def update_local_repo():
         Repo.clone_from(GITHUB_REPO_URL, LOCAL_REPO_PATH, env={'GIT_SSH_COMMAND': f'ssh -i {SSH_PRIVATE_KEY_PATH} -F /dev/null -o ProxyCommand="nc -X connect -x {HTTP_PROXY} %h %p"'})
     else:
         repo = Repo(LOCAL_REPO_PATH)
-        repo.git.pull()
+        repo.git.pull(env={'GIT_SSH_COMMAND': f'ssh -i {SSH_PRIVATE_KEY_PATH} -F /dev/null -o ProxyCommand="nc -X connect -x {HTTP_PROXY} %h %p"'})
 
 
 def ensure_sub_directory():
