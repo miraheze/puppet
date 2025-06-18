@@ -19,13 +19,6 @@ class mediawiki::techdocs {
         source => 'puppet:///modules/mediawiki/bin/techdocs.py',
     }
 
-    file { '/srv/statichelp':
-        ensure => directory,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0770',
-    }
-
     file { '/var/lib/nagios/id_ed25519':
         ensure => present,
         source => 'puppet:///private/acme/id_ed25519',
