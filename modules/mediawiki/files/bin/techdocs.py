@@ -509,9 +509,7 @@ def file_exists_case_insensitive(file_path):
 
 def update_local_repo():
     if not os.path.exists(LOCAL_REPO_PATH):
-        os.environ['HTTP_PROXY'] = HTTP_PROXY
-        os.environ['HTTPS_PROXY'] = HTTP_PROXY
-        Repo.clone_from(GITHUB_REPO_URL, LOCAL_REPO_PATH)
+        Repo.clone_from(GITHUB_REPO_URL, LOCAL_REPO_PATH, env={'GIT_SSH_COMMAND': f'ssh -i {SSH_PRIVATE_KEY_PATH} -F /dev/null -o ProxyCommand="nc -X connect -x {HTTP_PROXY} %h %p"'})
     else:
         repo = Repo(LOCAL_REPO_PATH)
         repo.git.pull()
