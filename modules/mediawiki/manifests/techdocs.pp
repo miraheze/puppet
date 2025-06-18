@@ -42,18 +42,6 @@ class mediawiki::techdocs {
         mode   => '0644',
     }
 
-    git::clone { 'statichelp':
-        ensure    => present,
-        directory => '/srv/statichelp',
-        origin    => 'git@github.com:miraheze/statichelp.git',
-        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.fsslc.wtnet:8080 %h %p\'',
-        require   => [
-            File['/var/lib/nagios/id_ed25519'],
-            File['/var/lib/nagios/id_ed25519.pub'],
-            File['/srv/statichelp'],
-        ],
-    }
-
     systemd::timer::job { 'update-static-tech-docs':
         ensure            => present,
         description       => 'Update static tech documentation',
