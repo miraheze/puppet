@@ -509,6 +509,8 @@ def file_exists_case_insensitive(file_path):
 
 def update_local_repo():
     if not os.path.exists(LOCAL_REPO_PATH):
+        os.environ['HTTP_PROXY'] = HTTP_PROXY
+        os.environ['HTTPS_PROXY'] = HTTP_PROXY
         Repo.clone_from(GITHUB_REPO_URL, LOCAL_REPO_PATH)
     else:
         repo = Repo(LOCAL_REPO_PATH)
