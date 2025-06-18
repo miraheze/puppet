@@ -299,7 +299,7 @@ if args.confarg is not None:
     if 'targets' not in conf.__dict__:
         logging.error("%s does not appear to be a valid bot config." %
                       args.confarg)
-        exit(1)
+        sys.exit(1)
 
     if ('enable_projects' in conf.__dict__) and conf.enable_projects:
         enable_projects = True
@@ -346,7 +346,7 @@ if args.listprojects:
         logging.debug("For bot %s" % bot.name)
         for proj in bot.get_projects(None, True):
             logging.debug("   %s" % proj)
-    exit(0)
+    sys.exit(0)
 
 for bot in bots:
     logging.debug("'%s' starting" % bot.name)
