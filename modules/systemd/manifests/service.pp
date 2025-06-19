@@ -16,15 +16,15 @@
 #
 define systemd::service (
     String $content,
-    VMlib::Ensure             $ensure              = present,
-    Systemd::Unit::Type       $unit_type           = 'service',
-    Boolean                   $restart             = false,
-    Boolean                   $override            = false,
-    Optional[String[1]]       $override_filename   = undef,
-    Boolean                   $monitoring_enabled  = false,
+    VMlib::Ensure              $ensure              = present,
+    Systemd::Unit::Type        $unit_type           = 'service',
+    Boolean                    $restart             = false,
+    Boolean                    $override            = false,
+    Optional[String[1]]        $override_filename   = undef,
+    Boolean                    $monitoring_enabled  = false,
     Optional[Stdlib::HTTPSUrl] $monitoring_docs_url = undef,
-    Boolean                   $monitoring_critical = false,
-    Hash                      $service_params      = {},
+    Boolean                    $monitoring_critical = false,
+    Hash                       $service_params      = {},
 ) {
     if $unit_type == 'service' {
         $label = $title
