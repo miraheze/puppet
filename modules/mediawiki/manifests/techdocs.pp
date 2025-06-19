@@ -41,7 +41,7 @@ class mediawiki::techdocs {
         command           => '/usr/bin/python3 /usr/local/bin/techdocs',
         interval          => {
             'start'    => 'OnCalendar',
-            'interval' => 'Sun *-*-* 00:00:00',
+            'interval' => 'daily',
         },
         user              => 'root',
         logfile_basedir   => '/var/log/mediawiki',
