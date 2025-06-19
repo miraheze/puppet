@@ -8,17 +8,23 @@
 # @param override If the are creating an override to system-provided units or not.
 # @param override_filename When creating an override, filename to use instead of
 #                          the one forged by systemd::unit.
-# @param team The team which owns this service
+# @param monitoring_enabled Periodically check the last execution of the unit and
+#                           alarm if it ended up in a failed state.
+# @param monitoring_docs_url URL of the docs for this alert.
+# @param monitoring_critical If monitoring alert should be critical.
 # @param service_params Additional service parameters we want to specify
 #
 define systemd::service (
     String $content,
-    VMlib::Ensure       $ensure            = 'present',
-    Systemd::Unit::Type $unit_type         = 'service',
-    Boolean             $restart           = false,
-    Boolean             $override          = false,
-    Optional[String[1]] $override_filename = undef,
-    Hash                $service_params    = {},
+    Vmlib::Ensure             $ensure              = present,
+    Systemd::Unit::Type       $unit_type           = 'service',
+    Boolean                   $restart             = false,
+    Boolean                   $override            = false,
+    Optional[String[1]]       $override_filename   = undef,
+    Boolean                   $monitoring_enabled  = false,
+    Optional[Stdlib::HTTPUrl] $monitoring_docs_url = undef,
+    Boolean                   $monitoring_critical = false,
+    Hash                      $service_params      = {},
 ) {
     if $unit_type == 'service' {
         $label = $title
@@ -32,7 +38,7 @@ define systemd::service (
     }
 
     $enable = $ensure ? {
-        'present' => true,
+        present => true,
         default   => false,
     }
 
@@ -50,5 +56,13 @@ define systemd::service (
         override          => $override,
         override_filename => $override_filename,
         restart           => $restart,
+    }
+
+    if $monitoring_enabled {
+        systemd::monitor { $title:
+            ensure   => $ensure,
+            docs     => $monitoring_docs_url,
+            critical => $monitoring_critical,
+        }
     }
 }
