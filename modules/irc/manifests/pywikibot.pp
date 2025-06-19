@@ -82,18 +82,17 @@ class irc::pywikibot {
         require => Git::Clone['Pywikibot-stable'],
     }
 
-    $pwb_timers = loadyaml('/etc/puppetlabs/puppet/pywikibot-config/timers.yaml')
-
-    $pwb_timers.each |$dbname, $params| {
+    $pwb_periodic_jobs = loadyaml('/etc/puppetlabs/puppet/pywikibot-config/periodic_jobs.yaml')
+    $pwb_periodic_jobs.each |$dbname, $params| {
         $params.each |$script_config| {
             if $script_config['name'] == undef {
-                warning("One timer entry for ${dbname} has no name attribute!")
+                warning("One periodic job entry for ${dbname} has no name attribute!")
                 next()
             } elsif $script_config['script'] == undef {
-                warning("One timer entry for ${dbname} has no script attribute!")
+                warning("One periodic job entry for ${dbname} has no script attribute!")
                 next()
             } elsif $script_config['scriptparams'] == undef {
-                warning("One timer entry for ${dbname} has no scriptparams attribute!")
+                warning("One periodic job entry for ${dbname} has no scriptparams attribute!")
                 next()
             }
             $command = $script_config['scriptparams'] ? {
