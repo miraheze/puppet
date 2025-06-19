@@ -137,7 +137,7 @@ class role::db (
     }
 
     $daily_misc.each |String $db| {
-        backup::job { 'sql-daily':
+        backup::job { "sql-daily-{$db}":
             ensure          => present,
             interval        => '*-*-* 00:00:00',
             backup_params   => "sql --database=${db}",
@@ -146,7 +146,7 @@ class role::db (
     }
 
     $weekly_misc.each |String $db| {
-        backup::job { 'sql-weekly':
+        backup::job { "sql-weekly-{$db}":
             ensure          => present,
             interval        => 'Sun *-*-* 05:00:00',
             backup_params   => "sql --database=${db}",
@@ -155,7 +155,7 @@ class role::db (
     }
 
     $fortnightly_misc.each |String $db| {
-        backup::job { 'sql-fortnightly':
+        backup::job { "sql-fortnightly-{$db}":
             ensure          => present,
             interval        => '*-*-1,15 05:00:00',
             backup_params   => "sql --database=${db}",
@@ -164,7 +164,7 @@ class role::db (
     }
 
     $monthly_misc.each |String $db| {
-        backup::job { 'sql-monthly':
+        backup::job { "sql-monthly-{$db}":
             ensure          => present,
             interval        => '*-*-24 05:00:00',
             backup_params   => "sql --database=${db}",
