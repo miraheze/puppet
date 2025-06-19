@@ -141,54 +141,17 @@ class role::mattermost {
         notrack => true,
     }
 
-    # Backup provisioning
-    file { '/srv/backups':
-        ensure => directory,
+    # Backups
+    backup::job { 'mattermost-data':
+        ensure          => present,
+        interval        => '*-*-1,15 01:00:00',
+        logfile_basedir => '/var/log/mattermost-backup',
     }
 
-    file { '/var/log/mattermost-backup':
-        ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
-    systemd::timer::job { 'mattermost-data-backup':
-        description       => 'Runs backup of mattermost data',
-        command           => '/usr/local/bin/wikitide-backup backup mattermost-data',
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-1,15 01:00:00',
-        },
-        logfile_basedir   => '/var/log/mattermost-backup',
-        logfile_name      => 'mattermost-data.log',
-        syslog_identifier => 'mattermost-data',
-        user              => 'root',
-    }
-
-    systemd::timer::job { 'mattermost-db-backup':
-        description       => 'Runs backup of mattermost db',
-        command           => '/usr/local/bin/wikitide-backup backup mattermost-db',
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-1,15 01:00:00',
-        },
-        logfile_basedir   => '/var/log/mattermost-backup',
-        logfile_name      => 'mattermost-db.log',
-        syslog_identifier => 'mattermost-db',
-        user              => 'root',
-    }
-
-    monitoring::nrpe { 'Backups Mattermost Data':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/mattermost-backup/mattermost-data/mattermost-data.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
-    }
-
-    monitoring::nrpe { 'Backups Mattermost DB':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/mattermost-backup/mattermost-db/mattermost-db.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    backup::job { 'mattermost-db':
+        ensure          => present,
+        interval        => '*-*-1,15 01:00:00',
+        logfile_basedir => '/var/log/mattermost-backup',
     }
 
     monitoring::nrpe { 'Mattermost':
