@@ -16,7 +16,7 @@
 #
 define systemd::service (
     String $content,
-    Vmlib::Ensure             $ensure              = present,
+    VMlib::Ensure             $ensure              = present,
     Systemd::Unit::Type       $unit_type           = 'service',
     Boolean                   $restart             = false,
     Boolean                   $override            = false,
