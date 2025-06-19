@@ -30,7 +30,7 @@ node 'cp161.wikitide.net' {
     include role::varnish
 }
 
-node /^cp(1[79]1)\.wikitide\.net$/ {
+node /^cp([12][079]1)\.wikitide\.net$/ {
     role(cache::cache)
 }
 
