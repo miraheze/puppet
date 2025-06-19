@@ -553,7 +553,8 @@ def commit_and_push_changes():
         git_config.set_value('user', 'email', GIT_USER_EMAIL)
         git_config.set_value('user', 'name', GIT_USER_NAME)
     repo.git.add(A=True)  # Add all changes
-    commit_message = f'Auto-update Tech namespace pages {datetime.now()}'
+    utctime = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+    commit_message = f'Bot: Auto-update Tech namespace pages {utctime}'
     repo.index.commit(commit_message)
     origin = repo.remote(name='origin')
     origin.push(env={'GIT_SSH_COMMAND': f'ssh -i {SSH_PRIVATE_KEY_PATH} -F /dev/null -o ProxyCommand="nc -X connect -x {HTTP_PROXY} %h %p"'})
