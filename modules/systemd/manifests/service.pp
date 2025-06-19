@@ -22,7 +22,7 @@ define systemd::service (
     Boolean                   $override            = false,
     Optional[String[1]]       $override_filename   = undef,
     Boolean                   $monitoring_enabled  = false,
-    Optional[Stdlib::HTTPUrl] $monitoring_docs_url = undef,
+    Optional[Stdlib::HTTPSUrl] $monitoring_docs_url = undef,
     Boolean                   $monitoring_critical = false,
     Hash                      $service_params      = {},
 ) {
