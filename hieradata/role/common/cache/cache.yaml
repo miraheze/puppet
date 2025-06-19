@@ -7,6 +7,7 @@ role::cache::cache::restrict_firewall: true
 role::cache::haproxy::cache_backends:
   cp171: 10.0.17.138
   cp191: 10.0.19.146
+  cp201: 10.0.20.166
 
 role::cache::haproxy::varnish_backends:
   mw151:
