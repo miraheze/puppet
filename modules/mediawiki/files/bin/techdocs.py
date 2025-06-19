@@ -446,6 +446,7 @@ def clean_markdown(markdown_lines):
         '* * * * ': '         * ',
         '* * * ': '      * ',
         '* * ': '   * ',
+        '* - `': '  * `',  # TODO: Improve, this is currently very much an edge case for Tech:Removing an extension
         # Remove magic words
         '__NOTOC__\n': '',
         '__NOINDEX__\n': '',
