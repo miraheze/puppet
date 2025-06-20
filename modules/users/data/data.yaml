@@ -61,7 +61,6 @@ groups:
     description: limited sudo access on database servers
     members: []
     privileges: ['ALL = (ALL) NOPASSWD: /bin/bash -c mariadb',
-                 'ALL = (ALL) NOPASSWD: /bin/bash -c mysql',
                  'ALL = (ALL) NOPASSWD: /bin/bash -c mariadb-dump *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb start',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb restart',
