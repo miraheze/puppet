@@ -125,24 +125,56 @@ def backup_phorge(dt: str):
 
 
 def backup_sql(dt: str, database: str):
+    # Ensure backup directory exists
+    os.makedirs('/srv/backups/dbs', exist_ok=True)
+
+    cpu_count = os.cpu_count() or 4
+    # Determine pigz thread count: 1/3 of CPU count, min 1
+    pigz_threads = max(cpu_count // 3, 1)
+    # Determine mydumper thread count: 1/2 of CPU count, min 3, max 16
+    mydumper_threads = max(min(cpu_count // 2, 16), 2)
+
     if database is None:
-        dbs = [file for file in sorted(os.listdir('/srv/mariadb')) if os.path.isdir(f'/srv/mariadb/{file}') and file[-4:] == 'wiki']
+        cmd = (
+            f'/usr/bin/ionice -c2 -n7 /usr/bin/nice -n19 '
+            f'/usr/bin/mydumper '
+            f'-N -W -k --less-locking '
+            f'-t {mydumper_threads} '
+            f'-c --compress '
+            f'-x "^(.*wiki(?!.*(objectcache|querycache|querycachetwo|recentchanges|searchindex)))" '
+            f'--trx-consistency-only '
+            f'-o /srv/backups/dbs'
+        )
+        subprocess.check_call(cmd, shell=True)
+        # Get list of databases
+        dbs = [
+            file for file in sorted(os.listdir('/srv/mariadb'))
+            if os.path.isdir(f'/srv/mariadb/{file}') and file.endswith('wiki')
+        ]
     else:
         dbs = [database]
+        dump_cmd = (
+            f'/usr/bin/ionice -c2 -n7 /usr/bin/mariadb-dump '
+            f'--quick --skip-lock-tables --single-transaction -c '
+            f'--ignore-table={database}.objectcache '
+            f'--ignore-table={database}.querycache '
+            f'--ignore-table={database}.querycachetwo '
+            f'--ignore-table={database}.recentchanges '
+            f'--ignore-table={database}.searchindex '
+            f'{database} | '
+            f'/usr/bin/nice -n19 /usr/bin/pigz -p {pigz_threads} > /srv/backups/dbs/{database}.sql.gz'
+        )
+        subprocess.check_call(dump_cmd, shell=True)
 
-    if not os.path.isdir(f'/srv/backups/dbs'):
-        os.makedirs(f'/srv/backups/dbs')
-
+    # Upload, clean up, and expire each database backup
     for db in dbs:
-        print(f'Backing up database \'{db}\'...')
+        print(f"Backing up database '{db}'...")
 
-        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -c --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= (@facts['processors']['count']/3).to_i > 1 ? (@facts['processors']['count']/3).to_i : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True)
         pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
-
         subprocess.check_call(f'rm -f /srv/backups/dbs/{db}.sql.gz', shell=True)
 
         pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.sql.gz', 5)
-        segments_expire(f'sql', f'{db}/{dt}.sql.gz', 5)
+        segments_expire('sql', f'{db}/{dt}.sql.gz', 5)
 
 
 def backup_mattermost_data(dt: str, database: str):
