@@ -44,6 +44,6 @@ class mariadb::packages(
             require => Exec['apt_update_mariadb'],
         }
     )
-    
+
     stdlib::ensure_packages(['mariadb-backup', 'libjemalloc2'])
 }
