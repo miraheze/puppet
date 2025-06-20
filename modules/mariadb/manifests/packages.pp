@@ -2,7 +2,7 @@
 class mariadb::packages(
     Enum['10.11'] $version = lookup('mariadb::version', {'default_value' => '10.11'}),
 ) {
-    stdlib::ensure_packages(['mydumper', 'percona-toolkit'])
+    stdlib::ensure_packages([ 'mydumper', 'percona-toolkit' ])
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01mariadb']) {
