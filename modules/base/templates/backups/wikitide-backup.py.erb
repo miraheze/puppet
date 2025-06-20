@@ -131,7 +131,7 @@ def backup_sql(dt: str, database: str):
     cpu_count = os.cpu_count() or 4
     # Determine pigz thread count: 1/3 of CPU count, min 1
     pigz_threads = max(cpu_count // 3, 1)
-    # Determine mydumper thread count: 1/2 of CPU count, min 3, max 16
+    # Determine mydumper thread count: 1/2 of CPU count, min 2, max 16
     mydumper_threads = max(min(cpu_count // 2, 16), 2)
 
     if database is None:
