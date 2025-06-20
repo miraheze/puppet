@@ -1,6 +1,6 @@
 # class: mariadb::packages
 class mariadb::packages(
-    Enum['10.11'] $version = lookup('mariadb::version', {'default_value' => '10.11'}),
+    Enum['10.11', '11.8'] $version = lookup('mariadb::version', {'default_value' => '10.11'}),
 ) {
     stdlib::ensure_packages([ 'mydumper', 'percona-toolkit' ])
 
