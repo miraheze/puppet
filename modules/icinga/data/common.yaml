@@ -1,0 +1,26 @@
+---
+icinga::repos::manage_stable: false
+icinga::repos::manage_testing: false
+icinga::repos::manage_nightly: false
+icinga::repos::configure_backports: false
+icinga::repos::manage_epel: false
+icinga::repos::manage_powertools: false
+icinga::repos::manage_crb: false
+icinga::repos::manage_server_monitoring: false
+icinga::repos::manage_plugins: false
+icinga::repos::manage_extras: false
+
+icinga::server::logging_type: file
+icinga::server::logging_level: warning
+
+icinga::worker::logging_type: file
+icinga::worker::logging_level: warning
+
+icinga::agent::logging_type: file
+icinga::agent::logging_level: warning
+
+icinga::agentless::user: icinga
+icinga::agentless::manage_user: true
+icinga::agentless::ssh_key_type: rsa
+
+icinga::cert_name: "%{facts.networking.fqdn}"

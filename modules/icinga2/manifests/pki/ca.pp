@@ -20,19 +20,18 @@
 # @param ca_key
 #   Content of the CA key. If this is unset, a key will be generated with the Icinga 2 CLI.
 #
-class icinga2::pki::ca(
-  Optional[String]               $ca_cert         = undef,
-  Optional[String]               $ca_key          = undef,
+class icinga2::pki::ca (
+  Optional[String]         $ca_cert = undef,
+  Optional[Icinga::Secret] $ca_key  = undef,
 ) {
+  require icinga2::config
 
-  require ::icinga2::config
-
-  $icinga2_bin = $::icinga2::globals::icinga2_bin
-  $ca_dir      = $::icinga2::globals::ca_dir
-  $cert_dir    = $::icinga2::globals::cert_dir
-  $user        = $::icinga2::globals::user
-  $group       = $::icinga2::globals::group
-  $node_name   = $::icinga2::_constants['NodeName']
+  $icinga2_bin = $icinga2::globals::icinga2_bin
+  $ca_dir      = $icinga2::globals::ca_dir
+  $cert_dir    = $icinga2::globals::cert_dir
+  $user        = $icinga2::globals::user
+  $group       = $icinga2::globals::group
+  $node_name   = $icinga2::_constants['NodeName']
 
   $_ssl_key_path    = "${cert_dir}/${node_name}.key"
   $_ssl_csr_path    = "${cert_dir}/${node_name}.csr"
@@ -40,11 +39,16 @@ class icinga2::pki::ca(
   $_ssl_cacert_path = "${cert_dir}/ca.crt"
 
   File {
-    owner => $user,
-    group => $group,
+    owner   => $user,
+    group   => $group,
+    seltype => 'icinga2_var_lib_t',
   }
 
-  $_ca_key_mode = '0600'
+  if $::facts['os']['family'] != 'windows' {
+    $_ca_key_mode = '0600'
+  } else {
+    $_ca_key_mode = undef
+  }
 
   if !$ca_cert or !$ca_key {
     exec { 'create-icinga2-ca':
@@ -52,19 +56,16 @@ class icinga2::pki::ca(
       environment => ["ICINGA2_USER=${user}", "ICINGA2_GROUP=${group}"],
       creates     => "${ca_dir}/ca.crt",
       before      => File[$_ssl_cacert_path],
-      notify      => Class['::icinga2::service'],
+      notify      => Class['icinga2::service'],
     }
   } else {
-    $_ca_cert     = $ca_cert
-    $_ca_key      = $ca_key
-
     file { $ca_dir:
       ensure => directory,
     }
 
     file { "${ca_dir}/ca.crt":
       ensure  => file,
-      content => $_ca_cert,
+      content => icinga::newline($ca_cert),
       tag     => 'icinga2::config::file',
       before  => File[$_ssl_cacert_path],
     }
@@ -72,7 +73,7 @@ class icinga2::pki::ca(
     file { "${ca_dir}/ca.key":
       ensure    => file,
       mode      => $_ca_key_mode,
-      content   => $_ca_key,
+      content   => icinga::newline($ca_key),
       tag       => 'icinga2::config::file',
       show_diff => false,
       backup    => false,
@@ -81,7 +82,11 @@ class icinga2::pki::ca(
 
   file { $_ssl_cacert_path:
     ensure => file,
-    source => "${ca_dir}/ca.crt"
+    source => if $facts['kernel'] == 'windows' {
+      "file:///${ca_dir}/ca.crt"
+    } else {
+      "${ca_dir}/ca.crt"
+    },
   }
 
   exec { 'icinga2 pki create certificate signing request':
@@ -103,7 +108,7 @@ class icinga2::pki::ca(
     environment => ["ICINGA2_USER=${user}", "ICINGA2_GROUP=${group}"],
     subscribe   => Exec['icinga2 pki create certificate signing request'],
     refreshonly => true,
-    notify      => Class['::icinga2::service'],
+    notify      => Class['icinga2::service'],
   }
 
   -> file {

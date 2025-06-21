@@ -5,10 +5,12 @@ Alexander Schaber <alexander@schaber.info>
 Andrea Cervesato <andrea.cervesato@kqi.it>
 Andreas Ntaflos <andreas.ntaflos@rise-world.com>
 Andreas Paul <xorpaul@gmail.com>
+Beat Gaetzi <beat@chruetertee.ch>
 Ben Ford <ben.ford@puppetlabs.com>
 Benedikt Trefzer <benedikt.trefzer@cirrax.com>
 Benjamin Akhras <b@akhras.at>
 Blerim Sheqa <blerim.sheqa@icinga.com>
+Blerim Sheqa <blerim.sheqa@netways.de>
 Cocker Koch <github@cocker.cc>
 David Raison <david@tentwentyfour.lu>
 Dirk Goetz <dirk.goetz@netways.de>
@@ -26,7 +28,9 @@ Lennart Betz <lbetz@prefork.de>
 Lennart Betz <lennart.betz@netways.de>
 Lennart Betz <lennart.betz@prefork.de>
 Markus Frosch <markus.frosch@icinga.com>
+Markus Frosch <markus@lazyfrosch.de>
 Matthias Baur <m.baur@syseleven.de>
+Matthias Hensler <matthias@wspse.de>
 Matthias Ritter <matthias.ritter@dm.de>
 Michael Friedrich <michael.friedrich@icinga.com>
 Ott, Jörn WI (Fa. Allgeier Experts / Goetzfried) <Joern.Ott@schufa.de>
@@ -37,6 +41,7 @@ Rudy Gevaert <rudy.gevaert@ugent.be>
 Simon Hoenscheid <code@simonhoenscheid.de>
 Simon Hoenscheid <sh@example42.com>
 Simon Hoenscheid <simon.hoenscheid@netways.de>
+Simon Hoenscheid <simon@hoenscheid-itconsulting.com>
 Stefan Kleindl <stefan.kleindl@rise-world.com>
 Thomas Dalichow <thomas.dalichow@publicispixelpark.de>
 Thomas Gelf <thomas@gelf.net>
@@ -47,8 +52,11 @@ Tom De Vylder <tom@penumbra.be>
 Tomas Barton <barton.tomas@gmail.com>
 Wyatt Alt <wyatt.alt@gmail.com>
 Zach Leslie <xaque208@gmail.com>
+cruelsmith <92088441+cruelsmith@users.noreply.github.com>
+dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 jas01 <Through github>
 markuszilch <markus.zilch@tik.uni-stuttgart.de>
 murmur <hristo.mohamed@gmail.com>
 paladox <paladox@users.noreply.github.com>
+root <root@kronecker.prefork.local>
 zilchms <zilchmarkus@web.de>

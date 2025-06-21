@@ -13,28 +13,27 @@
 # @param enable_ha
 #   Enable the high availability functionality. Only valid in a cluster setup.
 #
-class icinga2::feature::opentsdb(
-  Enum['absent', 'present']               $ensure    = present,
-  Optional[Stdlib::Host]                  $host      = undef,
-  Optional[Stdlib::Port::Unprivileged]    $port      = undef,
-  Optional[Boolean]                       $enable_ha = undef,
+class icinga2::feature::opentsdb (
+  Enum['absent', 'present'] $ensure    = present,
+  Optional[Stdlib::Host]    $host      = undef,
+  Optional[Stdlib::Port]    $port      = undef,
+  Optional[Boolean]         $enable_ha = undef,
 ) {
-
-  if ! defined(Class['::icinga2']) {
+  if ! defined(Class['icinga2']) {
     fail('You must include the icinga2 base class before using any icinga2 feature class!')
   }
 
-  $conf_dir = $::icinga2::globals::conf_dir
+  $conf_dir = $icinga2::globals::conf_dir
   $_notify  = $ensure ? {
-    'present' => Class['::icinga2::service'],
+    'present' => Class['icinga2::service'],
     default   => undef,
   }
 
   # compose attributes
   $attrs = {
-    host      => $host,
-    port      => $port,
-    enable_ha => $enable_ha,
+    'host'      => $host,
+    'port'      => $port,
+    'enable_ha' => $enable_ha,
   }
 
   # create object
@@ -46,13 +45,6 @@ class icinga2::feature::opentsdb(
     target      => "${conf_dir}/features-available/opentsdb.conf",
     order       => 10,
     notify      => $_notify,
-  }
-
-  # import library 'perfdata'
-  concat::fragment { 'icinga2::feature::opentsdb':
-    target  => "${conf_dir}/features-available/opentsdb.conf",
-    content => "library \"perfdata\"\n\n",
-    order   => '05',
   }
 
   # manage feature

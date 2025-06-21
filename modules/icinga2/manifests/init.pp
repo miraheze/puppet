@@ -3,7 +3,7 @@
 #
 # @example Declare icinga2 with all defaults. Keep in mind that your operating system may not have Icinga 2 in its package repository.
 #
-#   include ::icinga2
+#   include icinga2
 #
 # @example If you want to use the module icinga/puppet-icinga, e.g. to use the official Icinga Project repositories, enable the manage_repos parameter.
 #   class { 'icinga2':
@@ -21,7 +21,7 @@
 #     notifiy => Class['icinga2'],
 #   }
 #
-#   class { '::icinga2':
+#   class { 'icinga2':
 #     manage_packages => false,
 #   }
 #
@@ -38,7 +38,7 @@
 #   }
 #
 # @example Enabling features with there defaults or loading parameters via Hiera:
-#   class { '::icinga2':
+#   class { 'icinga2':
 #     manage_repos => true,
 #     features     => ['checker', 'mainlog', 'command'],
 #   }
@@ -77,23 +77,17 @@
 # @param enable
 #   If set to true the Icinga 2 service will start on boot.
 #
-# @param manage_repo
-#   Deprecated, use manage_repos.
-#
 # @param manage_repos
 #   When set to true this module will use the module icinga/puppet-icinga to manage repositories,
 #   e.g. the release repo on packages.icinga.com repository by default, the EPEL repository or Backports.
 #   For more information, see http://github.com/icinga/puppet-icinga.
 #
-# @param manage_package
-#   Deprecated, use manage_packages.
-#
 # @param manage_packages
 #   If set to false packages aren't managed.
 #
 # @param manage_selinux
-#   If set to true the icinga selinux package is installed. Requires a `selinux_package_name` (icinga2::globals)
-#   and `manage_packages` has to be set to true.
+#   If set to true the icinga selinux package is installed if selinux is enabled. Also requires a
+#   `selinux_package_name` (icinga2::globals) and `manage_packages` has to be set to true.
 #
 # @param manage_service
 #   If set to true the service is managed otherwise the service also
@@ -118,28 +112,34 @@
 #   with tag icinga2::config::file.
 #
 class icinga2 (
-  Array                      $features,
-  Array                      $plugins,
-  Stdlib::Ensure::Service    $ensure          = running,
-  Boolean                    $enable          = true,
-  Boolean                    $manage_repo     = false,
-  Boolean                    $manage_repos    = false,
-  Boolean                    $manage_package  = false,
-  Boolean                    $manage_packages = true,
-  Boolean                    $manage_selinux  = false,
-  Boolean                    $manage_service  = true,
-  Boolean                    $purge_features  = true,
-  Hash                       $constants       = {},
-  Variant[Boolean, String]   $confd           = true,
+  Array[String[1]]            $features,
+  Array[String[1]]            $plugins,
+  Stdlib::Ensure::Service     $ensure          = running,
+  Boolean                     $enable          = true,
+  Boolean                     $manage_repos    = false,
+  Boolean                     $manage_packages = true,
+  Boolean                     $manage_selinux  = false,
+  Boolean                     $manage_service  = true,
+  Boolean                     $purge_features  = true,
+  Hash[String[1], Any]        $constants       = {},
+  Variant[Boolean, String[1]] $confd           = true,
 ) {
+  require icinga2::globals
 
-  require ::icinga2::globals
+  $selinux_package_name = $icinga2::globals::selinux_package_name
+
+  # check selinux
+  $_selinux = if fact('os.selinux.enabled') and $facts['os']['selinux']['enabled'] and $selinux_package_name {
+    $manage_selinux
+  } else {
+    false
+  }
 
   # load reserved words
-  $_reserved = $::icinga2::globals::reserved
+  $_reserved = $icinga2::globals::reserved
 
   # merge constants with defaults
-  $_constants = $::icinga2::globals::constants + $constants
+  $_constants = delete_undef_values($icinga2::globals::constants + $constants)
 
   # validate confd, boolean or string
   if $confd =~ Boolean {
@@ -148,32 +148,22 @@ class icinga2 (
     $_confd = $confd
   }
 
-  Class['::icinga2::config']
+  Class['icinga2::config']
   -> Concat <| tag == 'icinga2::config::file' |>
-  ~> Class['::icinga2::service']
+  ~> Class['icinga2::service']
 
-  if $manage_package {
-    deprecation('manage_package', 'manage_package is deprecated and will be replaced by manage_packages in the future.')
+  if $manage_repos {
+    require icinga::repos
   }
 
-  if $manage_repos or $manage_repo {
-    require ::icinga::repos
-    if $manage_repo {
-      deprecation('manage_repo', 'manage_repo is deprecated and will be replaced by manage_repos in the future.')
-    }
-  }
-
-  anchor { '::icinga2::begin':
-    notify => Class['::icinga2::service'],
-  }
-  -> class { '::icinga2::install': }
+  class { 'icinga2::install': }
   -> File <| ensure == 'directory' and tag == 'icinga2::config::file' |>
-  -> class { '::icinga2::config': notify => Class['::icinga2::service'] }
+  -> class { 'icinga2::config': notify => Class['icinga2::service'] }
   -> File <| ensure != 'directory' and tag == 'icinga2::config::file' |>
-  ~> class { '::icinga2::service': }
-  -> anchor { '::icinga2::end':
-    subscribe => Class['::icinga2::config'],
-  }
+  ~> class { 'icinga2::service': }
+  contain icinga2::install
+  contain icinga2::config
+  contain icinga2::service
 
-  include prefix($features, '::icinga2::feature::')
+  include prefix($features, 'icinga2::feature::')
 }
