@@ -1,45 +1,43 @@
 # @summary
-#   Setup a Icinga agent.
+#   Setup an Icinga agent.
 #
-# @param [Stdlib::Host] ca_server
+# @param ca_server
 #   The CA to send the certificate request to.
 #
-# @param [String] parent_zone
+# @param parent_zone
 #   Name of the parent Icinga zone.
 #
-# @param [Hash[String, Hash]] parent_endpoints
+# @param parent_endpoints
 #   Configures these endpoints of the parent zone.
 #
-# @param [Array[String]] global_zones
+# @param global_zones
 #   List of global zones to configure.
 #
-# @param [Enum['file', 'syslog']] logging_type
-#   Switch the log target. Only `file` is supported on Windows.
+# @param logging_type
+#   Switch the log target. On Windows `syslog` is ignored, `eventlog` on all other platforms.
 #
-# @param [Optional[Icinga::LogLevel]] logging_level
+# @param logging_level
 #   Set the log level.
 #
-# @param [String] zone
+# @param zone
 #   Set a dedicated zone name.
 #
-# @param [Boolean] run_web
+# @param run_web
 #   Prepare to run Icinga Web 2 on the same machine. Manage a group `icingaweb2`
 #   and add the Icinga user to this group.
 #
-class icinga::agent(
-  Stdlib::Host                    $ca_server,
-  Hash[String, Hash]              $parent_endpoints,
-  String                          $parent_zone   = 'main',
-  Array[String]                   $global_zones  = [],
-  Enum['file', 'syslog']          $logging_type  = 'file',
-  Optional[Icinga::LogLevel]      $logging_level = undef,
-  String                          $zone          = 'NodeName',
-  Boolean                         $run_web       = false,
+class icinga::agent (
+  Stdlib::Host                       $ca_server,
+  Hash[String[1], Hash]              $parent_endpoints,
+  Icinga::LogLevel                   $logging_level,
+  Enum['file', 'syslog', 'eventlog'] $logging_type,
+  String[1]                          $parent_zone   = 'main',
+  Array[String[1]]                   $global_zones  = [],
+  String[1]                          $zone          = 'NodeName',
+  Boolean                            $run_web       = false,
 ) {
-
-  class { '::icinga':
+  class { 'icinga':
     ca              => false,
-    ssh_private_key => undef,
     ca_server       => $ca_server,
     this_zone       => $zone,
     zones           => {
@@ -51,8 +49,8 @@ class icinga::agent(
     prepare_web     => $run_web,
   }
 
-  ::icinga2::object::zone { $global_zones:
+  icinga2::object::zone { $global_zones:
     global => true,
+    order  => 'zz',
   }
-
 }

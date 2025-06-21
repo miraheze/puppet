@@ -4,7 +4,7 @@
 # @return
 #   Nothing, statement function.
 #     
-function icinga::prepare_web(String $icingamod) {
+function icinga::prepare_web(String[1] $icingamod) {
   # @param module
   #   The module that should be printed in the warning
   #

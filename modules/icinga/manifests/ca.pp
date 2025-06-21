@@ -3,14 +3,14 @@
 #
 # @api private
 #
-class icinga::ca(
+class icinga::ca (
 ) {
+  assert_private()
 
-  include ::icinga2::pki::ca
+  include icinga2::pki::ca
 
-  class { '::icinga2::feature::api':
+  class { 'icinga2::feature::api':
     pki             => 'none',
     accept_commands => true,
   }
-
 }

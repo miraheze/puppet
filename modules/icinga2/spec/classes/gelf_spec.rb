@@ -23,13 +23,13 @@ describe('icinga2::feature::gelf', type: :class) do
       when 'FreeBSD'
         let(:icinga2_conf_dir) { '/usr/local/etc/icinga2' }
         let(:icinga2_pki_dir) { '/var/lib/icinga2/certs' }
-        let(:icinga2_sslkey_mode) { '0600' }
+        let(:icinga2_sslkey_mode) { '0440' }
         let(:icinga2_user) { 'icinga' }
         let(:icinga2_group) { 'icinga' }
       else
         let(:icinga2_conf_dir) { '/etc/icinga2' }
         let(:icinga2_pki_dir) { '/var/lib/icinga2/certs' }
-        let(:icinga2_sslkey_mode) { '0600' }
+        let(:icinga2_sslkey_mode) { '0440' }
         case facts[:os]['family']
         when 'Debian'
           let(:icinga2_user) { 'nagios' }
@@ -47,15 +47,6 @@ describe('icinga2::feature::gelf', type: :class) do
           is_expected.to contain_icinga2__object('icinga2::object::GelfWriter::gelf').with(
             { 'target' => "#{icinga2_conf_dir}/features-available/gelf.conf" },
           ).that_notifies('Class[icinga2::service]')
-        }
-
-        it {
-          is_expected.to contain_concat__fragment('icinga2::feature::gelf').with(
-            {
-              'target' => "#{icinga2_conf_dir}/features-available/gelf.conf",
-              'order'  => '05',
-            },
-          ).with_content(%r{library \"perfdata\"$})
         }
       end
 

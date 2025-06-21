@@ -7,24 +7,23 @@
 # @param enable_ha
 #   Notifications are load-balanced amongst all nodes in a zone.
 #
-class icinga2::feature::notification(
+class icinga2::feature::notification (
   Enum['absent', 'present'] $ensure    = present,
   Optional[Boolean]         $enable_ha = undef,
 ) {
-
-  if ! defined(Class['::icinga2']) {
+  if ! defined(Class['icinga2']) {
     fail('You must include the icinga2 base class before using any icinga2 feature class!')
   }
 
-  $conf_dir = $::icinga2::globals::conf_dir
+  $conf_dir = $icinga2::globals::conf_dir
   $_notify  = $ensure ? {
-    'present' => Class['::icinga2::service'],
+    'present' => Class['icinga2::service'],
     default   => undef,
   }
 
   # compose attributes
   $attrs = {
-    enable_ha => $enable_ha,
+    'enable_ha' => $enable_ha,
   }
 
   # create object
@@ -38,16 +37,8 @@ class icinga2::feature::notification(
     notify      => $_notify,
   }
 
-  # import library 'notification'
-  concat::fragment { 'icinga2::feature::notification':
-    target  => "${conf_dir}/features-available/notification.conf",
-    content => "library \"notification\"\n\n",
-    order   => '05',
-  }
-
   # manage feature
   icinga2::feature { 'notification':
     ensure => $ensure,
   }
-
 }

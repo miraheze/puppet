@@ -1,0 +1,8 @@
+---
+icinga::repos:
+  crb:
+    descr: 'AlmaLinux $releasever - CRB'
+    mirrorlist: 'https://mirrors.almalinux.org/mirrorlist/$releasever/crb'
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-AlmaLinux-9'

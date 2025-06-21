@@ -130,10 +130,10 @@
 #   Set service_name as prefix in front of 'apply for'. Only effects if apply is a string.
 #
 # @param assign
-#   Assign user group members using the group assign rules.
+#   Assign service using the assign rules.
 #
 # @param ignore
-#   Exclude users using the group ignore rules.
+#   Exclude service using the ignore rules.
 #
 # @param import
 #   Sorted List of templates to include.
@@ -145,17 +145,20 @@
 # @param order
 #   String or integer to set the position in the target file, sorted alpha numeric.
 #
+# @param export
+#   Export object to destination, collected by class `icinga2::query_objects`.
+#
 define icinga2::object::service (
   Stdlib::Absolutepath                       $target,
   Enum['absent', 'present']                  $ensure                  = present,
-  String                                     $service_name            = $title,
-  Optional[String]                           $display_name            = undef,
-  Optional[String]                           $host_name               = undef,
-  Optional[Array]                            $groups                  = undef,
+  String[1]                                  $service_name            = $title,
+  Optional[String[1]]                        $display_name            = undef,
+  Optional[String[1]]                        $host_name               = undef,
+  Optional[Array[String[1]]]                 $groups                  = undef,
   Optional[Icinga2::CustomAttributes]        $vars                    = undef,
-  Optional[String]                           $check_command           = undef,
+  Optional[String[1]]                        $check_command           = undef,
   Optional[Integer[1]]                       $max_check_attempts      = undef,
-  Optional[String]                           $check_period            = undef,
+  Optional[String[1]]                        $check_period            = undef,
   Optional[Icinga2::Interval]                $check_timeout           = undef,
   Optional[Icinga2::Interval]                $check_interval          = undef,
   Optional[Icinga2::Interval]                $retry_interval          = undef,
@@ -165,25 +168,27 @@ define icinga2::object::service (
   Optional[Boolean]                          $enable_event_handler    = undef,
   Optional[Boolean]                          $enable_flapping         = undef,
   Optional[Boolean]                          $enable_perfdata         = undef,
-  Optional[String]                           $event_command           = undef,
+  Optional[String[1]]                        $event_command           = undef,
   Optional[Integer[1]]                       $flapping_threshold_low  = undef,
   Optional[Integer[1]]                       $flapping_threshold_high = undef,
   Optional[Boolean]                          $volatile                = undef,
-  Optional[String]                           $zone                    = undef,
-  Optional[String]                           $command_endpoint        = undef,
-  Optional[String]                           $notes                   = undef,
-  Optional[String]                           $notes_url               = undef,
-  Optional[String]                           $action_url              = undef,
-  Optional[String]                           $icon_image              = undef,
-  Optional[String]                           $icon_image_alt          = undef,
-  Variant[Boolean, String]                   $apply                   = false,
-  Variant[Boolean, String]                   $prefix                  = false,
-  Array                                      $assign                  = [],
-  Array                                      $ignore                  = [],
-  Array                                      $import                  = [],
+  Optional[String[1]]                        $zone                    = undef,
+  Optional[String[1]]                        $command_endpoint        = undef,
+  Optional[String[1]]                        $notes                   = undef,
+  Optional[String[1]]                        $notes_url               = undef,
+  Optional[String[1]]                        $action_url              = undef,
+  Optional[String[1]]                        $icon_image              = undef,
+  Optional[String[1]]                        $icon_image_alt          = undef,
+  Variant[Boolean, String[1]]                $apply                   = false,
+  Variant[Boolean, String[1]]                $prefix                  = false,
+  Array[String[1]]                           $assign                  = [],
+  Array[String[1]]                           $ignore                  = [],
+  Array[String[1]]                           $import                  = [],
   Boolean                                    $template                = false,
-  Variant[String, Integer]                   $order                   = 60,
+  Variant[String[1], Integer[0]]             $order                   = 60,
+  Variant[Array[String[1]], String[1]]       $export                  = [],
 ) {
+  require icinga2::globals
 
   # compose the attributes
   $attrs = {
@@ -217,19 +222,32 @@ define icinga2::object::service (
   }
 
   # create object
-  icinga2::object { "icinga2::object::Service::${title}":
-    ensure      => $ensure,
-    object_name => $service_name,
-    object_type => 'Service',
-    import      => $import,
-    apply       => $apply,
-    prefix      => $prefix,
-    assign      => $assign,
-    ignore      => $ignore,
-    template    => $template,
-    attrs       => delete_undef_values($attrs),
-    attrs_list  => keys($attrs),
-    target      => $target,
-    order       => $order,
+  $config = {
+    'object_name' => $service_name,
+    'object_type' => 'Service',
+    'import'      => $import,
+    'apply'       => $apply,
+    'prefix'      => $prefix,
+    'assign'      => $assign,
+    'ignore'      => $ignore,
+    'template'    => $template,
+    'attrs'       => delete_undef_values($attrs),
+    'attrs_list'  => keys($attrs),
+  }
+
+  unless empty($export) {
+    @@icinga2::config::fragment { "icinga2::object::Service::${title}":
+      tag     => prefix(any2array($export), 'icinga2::instance::'),
+      content => epp('icinga2/object.conf.epp', $config),
+      target  => $target,
+      order   => $order,
+    }
+  } else {
+    icinga2::object { "icinga2::object::Service::${title}":
+      ensure => $ensure,
+      target => $target,
+      order  => $order,
+      *      => $config,
+    }
   }
 }
