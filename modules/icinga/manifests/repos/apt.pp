@@ -13,6 +13,15 @@ class icinga::repos::apt {
 
   include apt
 
+  $http_proxy = lookup('http_proxy', {'default_value' => undef})
+  if $http_proxy {
+    file { '/etc/apt/apt.conf.d/01icinga':
+      ensure  => present,
+      content => template('icinga/apt/01icinga.erb'),
+      before  => Apt::Source['icinga-stable-release'],
+    }
+  }
+
   if $configure_backports {
     include apt::backports
     Apt::Source['backports'] -> Package <| tag == 'icinga' or tag == 'icinga2' or tag == 'icingadb' or tag == 'icingaweb2' |>
