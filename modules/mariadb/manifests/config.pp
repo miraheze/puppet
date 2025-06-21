@@ -128,18 +128,6 @@ class mariadb::config(
         }
     }
 
-    monitoring::services { 'MariaDB':
-        check_command => 'mysql',
-        docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
-        vars          => {
-            mysql_hostname => $facts['networking']['fqdn'],
-            mysql_username => 'icinga',
-            mysql_password => $icinga_password,
-            mysql_ssl      => true,
-            mysql_cacert   => '/etc/ssl/certs/ISRG_Root_X1.pem',
-        },
-    }
-
     if $enable_ssl {
         $ssl = {
             mysql_ssl       => $enable_ssl,
@@ -151,6 +139,17 @@ class mariadb::config(
             mysql_cacert    => '',
         }
     }
+
+    monitoring::services { 'MariaDB':
+        check_command => 'mysql',
+        docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
+        vars          => {
+            mysql_hostname => $facts['networking']['fqdn'],
+            mysql_username => 'icinga',
+            mysql_password => $icinga_password,
+        } + $ssl,
+    }
+
     monitoring::services { 'MariaDB Connections':
         check_command => 'mysql_connections',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
