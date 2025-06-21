@@ -1,91 +1,81 @@
 {
-  "name": "icinga-icinga2",
-  "version": "3.4.1",
-  "author": "Icinga Development Team",
+  "name": "puppet-icinga2",
+  "version": "6.1.0",
+  "author": "Vox Pupuli",
   "summary": "Icinga 2 Puppet Module",
   "license": "Apache-2.0",
-  "source": "git://github.com/icinga/puppet-icinga2",
-  "project_page": "https://github.com/icinga/puppet-icinga2",
-  "issues_url": "https://github.com/icinga/puppet-icinga2/issues",
+  "source": "git://github.com/voxpupuli/puppet-icinga2",
+  "project_page": "https://github.com/voxpupuli/puppet-icinga2",
+  "issues_url": "https://github.com/voxpupuli/puppet-icinga2/issues",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 5.0.0 < 9.0.0"
+      "version_requirement": ">= 6.6.0 < 10.0.0"
     },
     {
       "name": "puppetlabs/concat",
-      "version_requirement": ">= 2.1.0 < 8.0.0"
+      "version_requirement": ">= 6.4.0 < 10.0.0"
+    },
+    {
+      "name": "puppet/icinga",
+      "version_requirement": ">= 3.0.0 < 7.0.0"
     }
   ],
   "operatingsystem_support": [
     {
-      "operatingsystem": "Windows",
-      "operatingsystemrelease": [
-        "Server 2012 R2",
-        "Server 2016",
-        "Server 2019"
-      ]
-    },
-    {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "6",
-        "7",
-        "8"
-      ]
-    },
-    {
-      "operatingsystem": "RedHat",
-      "operatingsystemrelease": [
-        "6",
-        "7",
-        "8"
+        "9"
       ]
     },
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
-        "6",
-        "7",
-        "8"
+        "8",
+        "9"
       ]
     },
     {
-      "operatingsystem": "Rocky",
+      "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "8"
+        "8",
+        "9"
       ]
     },
     {
       "operatingsystem": "AlmaLinux",
       "operatingsystemrelease": [
-        "8"
+        "8",
+        "9"
       ]
     },
     {
-      "operatingsystem": "Fedora",
+      "operatingsystem": "Rocky",
       "operatingsystemrelease": [
-        "32",
-        "33",
-        "34",
-        "35"
+        "8",
+        "9"
       ]
     },
     {
       "operatingsystem": "Debian",
       "operatingsystemrelease": [
-        "8",
-        "9",
-        "10",
-        "11"
+        "11",
+        "12"
       ]
     },
     {
       "operatingsystem": "Ubuntu",
       "operatingsystemrelease": [
-        "16.04",
-        "18.04",
-        "20.04"
+        "20.04",
+        "22.04",
+        "24.04"
+      ]
+    },
+    {
+      "operatingsystem": "Fedora",
+      "operatingsystemrelease": [
+        "39",
+        "40"
       ]
     },
     {
@@ -98,22 +88,31 @@
     {
       "operatingsystem": "FreeBSD",
       "operatingsystemrelease": [
-        "11",
         "12",
         "13"
+      ]
+    },
+    {
+      "operatingsystem": "windows",
+      "operatingsystemrelease": [
+        "2019",
+        "10"
       ]
     }
   ],
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 4.12.0 < 8.0.0"
+      "version_requirement": ">= 7.9.0 < 9.0.0"
+    },
+    {
+      "name": "openvox",
+      "version_requirement": ">= 7.9.0 < 9.0.0"
     }
   ],
   "tags": [
+    "icinga",
+    "icinga2",
     "monitoring"
-  ],
-  "pdk-version": "2.4.0",
-  "template-url": "pdk-default#2.4.0",
-  "template-ref": "tags/2.4.0-0-gfa6b6d2"
+  ]
 }

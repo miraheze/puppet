@@ -6,7 +6,7 @@ class mariadb::config(
     String                $tmpdir                       = '/tmp',
     String                $innodb_buffer_pool_size      = '5G',
     Integer               $max_connections              = 1000,
-    Enum['10.5', '10.11'] $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
+    Enum['10.11', '11.8'] $version                      = lookup('mariadb::version', {'default_value' => '10.11'}),
     String                $icinga_password              = undef,
     Optional[Integer]     $server_id                    = undef,
     Boolean               $enable_bin_logs              = true,
@@ -128,18 +128,6 @@ class mariadb::config(
         }
     }
 
-    monitoring::services { 'MariaDB':
-        check_command => 'mysql',
-        docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
-        vars          => {
-            mysql_hostname => $facts['networking']['fqdn'],
-            mysql_username => 'icinga',
-            mysql_password => $icinga_password,
-            mysql_ssl      => true,
-            mysql_cacert   => '/etc/ssl/certs/ISRG_Root_X1.pem',
-        },
-    }
-
     if $enable_ssl {
         $ssl = {
             mysql_ssl       => $enable_ssl,
@@ -151,6 +139,17 @@ class mariadb::config(
             mysql_cacert    => '',
         }
     }
+
+    monitoring::services { 'MariaDB':
+        check_command => 'mysql',
+        docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
+        vars          => {
+            mysql_hostname => $facts['networking']['fqdn'],
+            mysql_username => 'icinga',
+            mysql_password => $icinga_password,
+        } + $ssl,
+    }
+
     monitoring::services { 'MariaDB Connections':
         check_command => 'mysql_connections',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',

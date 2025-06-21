@@ -5,15 +5,14 @@
 # @api private
 #
 class icinga2::service {
-
   assert_private()
 
-  $ensure         = $::icinga2::ensure
-  $enable         = $::icinga2::enable
-  $manage_service = $::icinga2::manage_service
-  $service_name   = $::icinga2::globals::service_name
-  $reload         = $::icinga2::globals::service_reload
-  $logon_account  = $::icinga2::globals::logon_account
+  $ensure         = $icinga2::ensure
+  $enable         = $icinga2::enable
+  $manage_service = $icinga2::manage_service
+  $service_name   = $icinga2::globals::service_name
+  $reload         = $icinga2::globals::service_reload
+  $logon_account  = $icinga2::globals::logon_account
 
   $hasrestart     = $reload ? {
     undef   => false,
@@ -22,11 +21,11 @@ class icinga2::service {
 
   if $manage_service {
     service { $service_name:
-      ensure     => $ensure,
-      enable     => $enable,
-      hasrestart => $hasrestart,
-      restart    => $reload,
+      ensure       => $ensure,
+      enable       => $enable,
+      hasrestart   => $hasrestart,
+      restart      => $reload,
+      logonaccount => $logon_account,
     }
   }
-
 }

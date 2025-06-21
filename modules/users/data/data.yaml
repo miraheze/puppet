@@ -13,6 +13,7 @@ groups:
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mcrouter *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
@@ -54,6 +55,7 @@ groups:
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   database-admins:
@@ -61,8 +63,7 @@ groups:
     description: limited sudo access on database servers
     members: []
     privileges: ['ALL = (ALL) NOPASSWD: /bin/bash -c mariadb',
-                 'ALL = (ALL) NOPASSWD: /bin/bash -c mysql',
-                 'ALL = (ALL) NOPASSWD: /bin/bash -c mysqldump *',
+                 'ALL = (ALL) NOPASSWD: /bin/bash -c mariadb-dump *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb start',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb restart',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',

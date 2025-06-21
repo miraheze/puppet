@@ -1,0 +1,4 @@
+---
+icinga::server::logging_type: eventlog
+icinga::worker::logging_type: eventlog
+icinga::agent::logging_type: eventlog
