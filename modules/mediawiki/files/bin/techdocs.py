@@ -160,6 +160,9 @@ def convert_wikitext_to_markdown(wikitext):
         if tag_name == 's':
             return f'~~{content}~~'
 
+        if tag_name == 'u':
+            return f'<ins>{content}</ins>'
+
         if tag_name == 'code':
             return f'`{node.contents.strip_code()}`'
 
