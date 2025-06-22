@@ -13,9 +13,12 @@ class role::dns {
         }
     }
 
-    package { 'python3-dnspython':
-        ensure => latest
-    }
+    stdlib::ensure_packages(
+        'python3-dnspython',
+        {
+            ensure => latest,
+        }
+    )
 
     ferm::service { 'dns_udp':
         proto => 'udp',

@@ -1,10 +1,7 @@
 # dns
 class dns {
     include prometheus::exporter::gdnsd
-
-    package { 'gdnsd':
-        ensure => installed,
-    }
+    stdlib::ensure_packages('gdnsd')
 
     git::clone { 'dns':
         ensure    => latest,
