@@ -1,6 +1,7 @@
 # role: dns
 class role::dns {
-    include ::dns
+    include dns
+    stdlib::ensure_packages('python3-dnspython')
 
     $mem = $facts['memory']['system']['total_bytes'] / (1024.0 * 1024.0) / 1024.0
     # If less than 500mib change vm.swappiness to 1
@@ -12,13 +13,6 @@ class role::dns {
             },
         }
     }
-
-    stdlib::ensure_packages(
-        'python3-dnspython',
-        {
-            ensure => latest,
-        }
-    )
 
     ferm::service { 'dns_udp':
         proto => 'udp',

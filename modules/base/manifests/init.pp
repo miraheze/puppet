@@ -21,9 +21,7 @@ class base (
     if lookup('dns') {
         stdlib::ensure_packages(
             'pdns-recursor',
-            {
-                ensure => absent,
-            }
+            { ensure => absent },
         )
     } else {
         include base::dns
