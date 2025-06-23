@@ -16,7 +16,6 @@ class postgresql::postgis(
     VMlib::Ensure $ensure = 'present',
     String $postgresql_postgis_package = $facts['os']['distro']['codename'] ? {
         'bookworm' => 'postgresql-15-postgis-3',
-        'bullseye' => 'postgresql-13-postgis-3',
     },
 ) {
     stdlib::ensure_packages(
@@ -25,8 +24,6 @@ class postgresql::postgis(
             "${postgresql_postgis_package}-scripts",
             'postgis',
         ],
-        {
-            ensure => $ensure,
-        },
+        { ensure => $ensure }
     )
 }
