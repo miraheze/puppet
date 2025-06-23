@@ -44,7 +44,7 @@ class mediawiki::packages {
     if !lookup(mediawiki::use_shellbox) {
         stdlib::ensure_packages(
             'lilypond',
-            { ensure => absent },
+            { ensure => absent }
         )
     }
 }
