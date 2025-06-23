@@ -1,51 +1,50 @@
 # === Class base::packages
 class base::packages {
     stdlib::ensure_packages([
-        'acct',
-        'apt-transport-https',
-        'coreutils',
-        'debian-goodies',
-        'dirmngr',
-        'fatrace',
-        'git',
-        'gzip',
-        'htop',
-        'jq',
-        'iftop',
-        'iotop',
-        'logrotate',
-        'lsof',
-        'lvm2',
-        'molly-guard',
-        'mtr',
-        'nano',
-        'netcat-openbsd',
-        'net-tools',
-        'parted',
-        'pigz',
-        'python-is-python3',
-        'python3-distro',
-        'qemu-guest-agent',
-        'ruby',
-        'screen',
-        'strace',
-        'tcpdump',
-        'tcptrack',
-        'telnet',
-        'vim',
-        'vnstat',
-        'wipe',
+          'acct',
+          'apt-transport-https',
+          'coreutils',
+          'debian-goodies',
+          'dirmngr',
+          'fatrace',
+          'git',
+          'gzip',
+          'htop',
+          'iftop',
+          'iotop',
+          'jq',
+          'logrotate',
+          'lsof',
+          'lvm2',
+          'molly-guard',
+          'mtr',
+          'nano',
+          'net-tools',
+          'netcat-openbsd',
+          'parted',
+          'pigz',
+          'python-is-python3',
+          'python3-distro',
+          'qemu-guest-agent',
+          'ruby',
+          'screen',
+          'strace',
+          'tcpdump',
+          'tcptrack',
+          'telnet',
+          'vim',
+          'vnstat',
+          'wipe',
     ])
 
-    package { 'needrestart':
-        ensure => 'purged',
-    }
+    # Get rid of these
+    stdlib::ensure_packages(
+        'needrestart',
+        { ensure => purged }
+    )
 
-    # Get rid of this
-    package { 'apt-listchanges':
-        ensure => absent,
-    }
-    package { 'systemd-timesyncd':
-        ensure => absent,
-    }
+    stdlib::ensure_packages(
+        [ 'apt-listchanges', 'systemd-timesyncd' ],
+        { ensure => absent }
+    )
 }
