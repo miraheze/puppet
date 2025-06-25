@@ -4,14 +4,17 @@ class role::mediawiki::nutcracker (
 ) {
     $nutcracker_pools = {
         'redis' => {
-            auto_eject_hosts   => false,
-            distribution       => 'ketama',
-            hash               => 'md5',
-            listen             => '/var/run/nutcracker/nutcracker.sock 0666',
-            preconnect         => true,
-            server_connections => 1,
-            timeout            => 500,    # milliseconds
-            servers            => $redis_servers,
+            auto_eject_hosts     => false,
+            distribution         => 'ketama',
+            redis                => true,
+            redis_auth           => "\"${lookup('passwords::redis::master')}\"",
+            hash                 => 'md5',
+            listen               => '/var/run/nutcracker/nutcracker.sock 0666',
+            server_connections   => 1,
+            server_failure_limit => 3,
+            server_retry_timeout => 15000,  # milliseconds
+            timeout              => 500,    # milliseconds
+            servers              => $redis_servers,
         },
     }
 
