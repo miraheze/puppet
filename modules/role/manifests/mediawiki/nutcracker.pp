@@ -1,29 +1,17 @@
 # === Class role::mediawiki::nutcracker
 class role::mediawiki::nutcracker (
-    Array[Variant[Stdlib::Host,String]] $memcached_servers = lookup('memcached_servers', {'default_value' => []}),
-    Array[Variant[Stdlib::Host,String]] $memcached_servers_beta = lookup('memcached_servers_beta', {'default_value' => []}),
+    Array[Variant[Stdlib::Host,String]] $redis_servers = lookup('redis_servers', {'default_value' => []}),
 ) {
-
     $nutcracker_pools = {
-        'memcached'     => {
-            auto_eject_hosts     => false,
-            distribution         => 'ketama',
-            hash                 => 'md5',
-            listen               => '/var/run/nutcracker/nutcracker.sock 0666',
-            preconnect           => true,
-            server_connections   => 1,
-            timeout              => 500,    # milliseconds
-            servers              => $memcached_servers
-        },
-        'memcached_beta'     => {
-            auto_eject_hosts     => false,
-            distribution         => 'ketama',
-            hash                 => 'md5',
-            listen               => '/var/run/nutcracker/nutcracker_beta.sock 0666',
-            preconnect           => true,
-            server_connections   => 1,
-            timeout              => 500,    # milliseconds
-            servers              => $memcached_servers_beta,
+        'redis' => {
+            auto_eject_hosts   => false,
+            distribution       => 'ketama',
+            hash               => 'md5',
+            listen             => '/var/run/nutcracker/nutcracker.sock 0666',
+            preconnect         => true,
+            server_connections => 1,
+            timeout            => 500,    # milliseconds
+            servers            => $redis_servers,
         },
     }
 
