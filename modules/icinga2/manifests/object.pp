@@ -49,41 +49,55 @@
 # @param attrs_list
 #   Array of all possible attributes for this object type.
 #
-define icinga2::object(
-  String                                                      $object_type,
+define icinga2::object (
+  String[1]                                                   $object_type,
   Stdlib::Absolutepath                                        $target,
-  Variant[String, Integer]                                    $order,
+  Variant[String[1], Integer[0]]                              $order,
   Enum['present', 'absent']                                   $ensure       = present,
-  String                                                      $object_name  = $title,
+  String[1]                                                   $object_name  = $title,
   Boolean                                                     $template     = false,
   Variant[Boolean, Pattern[/^.+\s+(=>\s+.+\s+)?in\s+.+$/]]    $apply        = false,
-  Array                                                       $attrs_list   = [],
+  Array[String[1]]                                            $attrs_list   = [],
   Optional[Enum['Host', 'Service']]                           $apply_target = undef,
-  Variant[Boolean, String]                                    $prefix       = false,
-  Array                                                       $import       = [],
-  Array                                                       $assign       = [],
-  Array                                                       $ignore       = [],
-  Hash                                                        $attrs        = {},
+  Variant[Boolean, String[1]]                                 $prefix       = false,
+  Array[String[1]]                                            $import       = [],
+  Array[String[1]]                                            $assign       = [],
+  Array[String[1]]                                            $ignore       = [],
+  Hash[String[1], Any]                                        $attrs        = {},
 ) {
-
   assert_private()
 
-  Concat {
-    owner => $::icinga2::globals::user,
-    group => $::icinga2::globals::group,
-    mode  => '0640',
+  case $facts['os']['family'] {
+    'windows': {
+    } # windows
+    default: {
+      Concat {
+        owner   => $icinga2::globals::user,
+        group   => $icinga2::globals::group,
+        seltype => 'icinga2_etc_t',
+        mode    => '0640',
+      }
+    } # default
   }
 
   if $object_type == $apply_target {
     fail('The object type must be different from the apply target')
   }
 
-  $_attrs = $attrs + {
-    'assign where' => $assign,
-    'ignore where' => $ignore,
-  }
-
-  $_content = template('icinga2/object.conf.erb')
+  $_object = epp('icinga2/object.conf.epp',
+    { 'attrs'        => $attrs,
+      'attrs_list'   => $attrs_list,
+      'apply'        => $apply,
+      'apply_target' => $apply_target,
+      'prefix'       => $prefix,
+      'object_type'  => $object_type,
+      'object_name'  => $object_name,
+      'template'     => $template,
+      'import'       => $import,
+      'assign'       => $assign,
+      'ignore'       => $ignore,
+    }
+  )
 
   if !defined(Concat[$target]) {
     concat { $target:
@@ -96,9 +110,8 @@ define icinga2::object(
   if $ensure != 'absent' {
     concat::fragment { $title:
       target  => $target,
-      content => $_content,
+      content => icinga::newline($_object),
       order   => $order,
     }
   }
-
 }

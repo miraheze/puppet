@@ -72,31 +72,42 @@
 # @param order
 #   String or integer to set the position in the target file, sorted alpha numeric.
 #
+# @param assign
+#   Assign notification using the assign rules.
+#
+# @param ignore
+#   Exclude notification using the ignore rules.
+#
+# @param export
+#   Export object to destination, collected by class `icinga2::query_objects`.
+#
 define icinga2::object::notification (
   Stdlib::Absolutepath                                                $target,
   Enum['absent', 'present']                                           $ensure            = present,
-  String                                                              $notification_name = $title,
-  Optional[String]                                                    $host_name         = undef,
-  Optional[String]                                                    $service_name      = undef,
+  String[1]                                                           $notification_name = $title,
+  Optional[String[1]]                                                 $host_name         = undef,
+  Optional[String[1]]                                                 $service_name      = undef,
   Optional[Icinga2::CustomAttributes]                                 $vars              = undef,
-  Optional[Variant[String, Array]]                                    $users             = undef,
-  Optional[Variant[String, Array]]                                    $user_groups       = undef,
-  Optional[Hash]                                                      $times             = undef,
-  Optional[String]                                                    $command           = undef,
+  Optional[Variant[String[1], Array[String[1]]]]                      $users             = undef,
+  Optional[Variant[String[1], Array[String[1]]]]                      $user_groups       = undef,
+  Optional[Hash[String[1], Any]]                                       $times             = undef,
+  Optional[String[1]]                                                 $command           = undef,
   Optional[Variant[Icinga2::Interval,Pattern[/(host|service)\./]]]    $interval          = undef,
-  Optional[String]                                                    $period            = undef,
-  Optional[String]                                                    $zone              = undef,
-  Optional[Variant[Array, String]]                                    $types             = undef,
-  Optional[Variant[Array, String]]                                    $states            = undef,
-  Variant[Boolean, String]                                            $apply             = false,
-  Variant[Boolean, String]                                            $prefix            = false,
+  Optional[String[1]]                                                 $period            = undef,
+  Optional[String[1]]                                                 $zone              = undef,
+  Optional[Variant[Array, String[1]]]                                 $types             = undef,
+  Optional[Variant[Array, String[1]]]                                 $states            = undef,
+  Variant[Boolean, String[1]]                                         $apply             = false,
+  Variant[Boolean, String[1]]                                         $prefix            = false,
   Enum['Host', 'Service']                                             $apply_target      = 'Host',
-  Array                                                               $assign            = [],
-  Array                                                               $ignore            = [],
-  Array                                                               $import            = [],
+  Array[String[1]]                                                    $assign            = [],
+  Array[String[1]]                                                    $ignore            = [],
+  Array[String[1]]                                                    $import            = [],
   Boolean                                                             $template          = false,
-  Variant[String, Integer]                                            $order             = 85,
-){
+  Variant[String[1], Integer[0]]                                      $order             = 85,
+  Variant[Array[String[1]], String[1]]                                $export            = [],
+) {
+  require icinga2::globals
 
   if $ignore != [] and $assign == [] {
     fail('When attribute ignore is used, assign must be set.')
@@ -119,21 +130,33 @@ define icinga2::object::notification (
   }
 
   # create object
-  icinga2::object { "icinga2::object::Notification::${title}":
-    ensure       => $ensure,
-    object_name  => $notification_name,
-    object_type  => 'Notification',
-    import       => $import,
-    template     => $template,
-    attrs        => delete_undef_values($attrs),
-    attrs_list   => keys($attrs),
-    target       => $target,
-    order        => $order,
-    apply        => $apply,
-    prefix       => $prefix,
-    apply_target => $apply_target,
-    assign       => $assign,
-    ignore       => $ignore,
+  $config = {
+    'object_name'  => $notification_name,
+    'object_type'  => 'Notification',
+    'import'       => $import,
+    'template'     => $template,
+    'attrs'        => delete_undef_values($attrs),
+    'attrs_list'   => keys($attrs),
+    'apply'        => $apply,
+    'prefix'       => $prefix,
+    'apply_target' => $apply_target,
+    'assign'       => $assign,
+    'ignore'       => $ignore,
   }
 
+  unless empty($export) {
+    @@icinga2::config::fragment { "icinga2::object::Notification::${title}":
+      tag     => prefix(any2array($export), 'icinga2::instance::'),
+      content => epp('icinga2/object.conf.epp', $config),
+      target  => $target,
+      order   => $order,
+    }
+  } else {
+    icinga2::object { "icinga2::object::Notification::${title}":
+      ensure => $ensure,
+      target => $target,
+      order  => $order,
+      *      => $config,
+    }
+  }
 }

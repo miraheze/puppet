@@ -26,19 +26,16 @@
 #   Location of the CA certificate. Only valid if ssl is enabled.
 #
 # @param ssl_key
-#   The private key in a base64 encoded string to store in spicified ssl_key_path file.
-#   Only valid if ssl is enabled.
+#   The client private key in PEM format. Only valid if ssl is enabled.
 #
 # @param ssl_cert
-#   The certificate in a base64 encoded string to store in spicified ssl_cert_path file.
-#   Only valid if ssl is enabled.
+#   The client certificate in PEM format. Only valid if ssl is enabled.
 #
 # @param ssl_cacert
-#   The CA root certificate in a base64 encoded string to store in spicified ssl_cacert_path file.
-#   Only valid if ssl is enabled.
+#   The CA certificate in PEM format. Only valid if ssl is enabled.
 #
 # @param ssl_noverify
-#     Disable TLS peer verification.
+#     Disable TLS peer verification. Only valid if ssl is enabled.
 #
 # @param enable_send_perfdata
 #   Enable performance data for 'CHECK RESULT' events.
@@ -46,123 +43,90 @@
 # @param enable_ha
 #   Enable the high availability functionality. Only valid in a cluster setup.
 #
-class icinga2::feature::gelf(
-  Enum['absent', 'present']                $ensure               = present,
-  Optional[Stdlib::Host]                   $host                 = undef,
-  Optional[Stdlib::Port::Unprivileged]     $port                 = undef,
-  Optional[String]                         $source               = undef,
-  Boolean                                  $enable_ssl           = false,
-  Optional[Stdlib::Absolutepath]           $ssl_key_path         = undef,
-  Optional[Stdlib::Absolutepath]           $ssl_cert_path        = undef,
-  Optional[Stdlib::Absolutepath]           $ssl_cacert_path      = undef,
-  Optional[Stdlib::Base64]                 $ssl_key              = undef,
-  Optional[Stdlib::Base64]                 $ssl_cert             = undef,
-  Optional[Stdlib::Base64]                 $ssl_cacert           = undef,
-  Optional[Boolean]                        $ssl_noverify         = undef,
-  Optional[Boolean]                        $enable_send_perfdata = undef,
-  Optional[Boolean]                        $enable_ha            = undef,
+class icinga2::feature::gelf (
+  Enum['absent', 'present']      $ensure               = present,
+  Optional[Stdlib::Host]         $host                 = undef,
+  Optional[Stdlib::Port]         $port                 = undef,
+  Optional[String[1]]            $source               = undef,
+  Boolean                        $enable_ssl           = false,
+  Optional[Stdlib::Absolutepath] $ssl_key_path         = undef,
+  Optional[Stdlib::Absolutepath] $ssl_cert_path        = undef,
+  Optional[Stdlib::Absolutepath] $ssl_cacert_path      = undef,
+  Optional[Icinga::Secret]       $ssl_key              = undef,
+  Optional[String[1]]            $ssl_cert             = undef,
+  Optional[String[1]]            $ssl_cacert           = undef,
+  Optional[Boolean]              $ssl_noverify         = undef,
+  Optional[Boolean]              $enable_send_perfdata = undef,
+  Optional[Boolean]              $enable_ha            = undef,
 ) {
-
-  if ! defined(Class['::icinga2']) {
+  if ! defined(Class['icinga2']) {
     fail('You must include the icinga2 base class before using any icinga2 feature class!')
   }
 
-  $owner    = $::icinga2::globals::user
-  $group    = $::icinga2::globals::group
-  $conf_dir = $::icinga2::globals::conf_dir
-  $ssl_dir  = $::icinga2::globals::cert_dir
-
-  $_ssl_key_mode = '0600'
+  $owner    = $icinga2::globals::user
+  $group    = $icinga2::globals::group
+  $conf_dir = $icinga2::globals::conf_dir
+  $ssl_dir  = $icinga2::globals::cert_dir
 
   $_notify = $ensure ? {
-    'present' => Class['::icinga2::service'],
+    'present' => Class['icinga2::service'],
     default   => undef,
   }
 
-  File {
-    owner   => $owner,
-    group   => $group,
-  }
-
-
   if $enable_ssl {
-    # Set defaults for certificate stuff
-    if $ssl_key {
-      if $ssl_key_path {
-        $_ssl_key_path = $ssl_key_path }
-      else {
-        $_ssl_key_path = "${ssl_dir}/GelfWriter_gelf.key"
-      }
-
-      $_ssl_key = $ssl_key
-
-      file { $_ssl_key_path:
-        ensure    => file,
-        mode      => $_ssl_key_mode,
-        content   => $ssl_key,
-        show_diff => false,
-        tag       => 'icinga2::config::file',
-      }
-    } else {
-      $_ssl_key_path = $ssl_key_path
-    }
-
-    if $ssl_cert {
-      if $ssl_cert_path {
-        $_ssl_cert_path = $ssl_cert_path }
-      else {
-        $_ssl_cert_path = "${ssl_dir}/GelfWriter_gelf.crt"
-      }
-
-      $_ssl_cert = $ssl_cert
-
-      file { $_ssl_cert_path:
-        ensure  => file,
-        content => $ssl_cert,
-        tag     => 'icinga2::config::file',
-      }
-    } else {
-      $_ssl_cert_path = $ssl_cert_path
-    }
-
-    if $ssl_cacert {
-      if $ssl_cacert_path {
-        $_ssl_cacert_path = $ssl_cacert_path }
-      else {
-        $_ssl_cacert_path = "${ssl_dir}/GelfWriter_gelf_ca.crt"
-      }
-
-      $_ssl_cacert = $ssl_cacert
-
-      file { $_ssl_cacert_path:
-        ensure  => file,
-        content => $ssl_cacert,
-        tag     => 'icinga2::config::file',
-      }
-    } else {
-      $_ssl_cacert_path = $ssl_cacert_path
-    }
+    $cert = icinga::cert::files(
+      'GelfWriter_gelf',
+      $ssl_dir,
+      $ssl_key_path,
+      $ssl_cert_path,
+      $ssl_cacert_path,
+      $ssl_key,
+      $ssl_cert,
+      $ssl_cacert,
+    )
 
     $attrs_ssl = {
-      enable_tls        => $enable_ssl,
-      insecure_noverify => $ssl_noverify,
-      ca_path           => $_ssl_cacert_path,
-      cert_path         => $_ssl_cert_path,
-      key_path          => $_ssl_key_path,
+      'enable_tls'        => true,
+      'insecure_noverify' => $ssl_noverify,
+      'ca_path'           => $cert['cacert_file'],
+      'cert_path'         => $cert['cert_file'],
+      'key_path'          => $cert['key_file'],
     }
-  } # enable_ssl
-  else {
-    $attrs_ssl = { enable_tls  => $enable_ssl }
-  }
 
+    # Workaround, icinga::cert doesn't accept undef values for owner and group!
+    if $facts['os']['family'] != 'windows' {
+      icinga::cert { 'GelfWriter_gelf':
+        args   => $cert,
+        owner  => $owner,
+        group  => $group,
+        notify => $_notify,
+      }
+    } else {
+      icinga::cert { 'GelfWriter_gelf':
+        args   => $cert,
+        owner  => 'foo',
+        group  => 'bar',
+        notify => $_notify,
+      }
+    }
+  } else {
+    $attrs_ssl = {
+      'enable_tls'        => undef,
+      'insecure_noverify' => undef,
+      'ca_path'           => undef,
+      'cert_path'         => undef,
+      'key_path'          => undef,
+    }
+    $cert = {}
+  }
 
   # compose attributes
   $attrs = {
-    host                 => $host,
-    port                 => $port,
-    source               => $source,
-    enable_send_perfdata => $enable_send_perfdata,
-    enable_ha            => $enable_ha,
+    'host'                 => $host,
+    'port'                 => $port,
+    'source'               => $source,
+    'enable_send_perfdata' => $enable_send_perfdata,
+    'enable_ha'            => $enable_ha,
   }
 
   # create object
@@ -174,13 +138,6 @@ class icinga2::feature::gelf(
     target      => "${conf_dir}/features-available/gelf.conf",
     order       => 10,
     notify      => $_notify,
-  }
-
-  # import library 'perfdata'
-  concat::fragment { 'icinga2::feature::gelf':
-    target  => "${conf_dir}/features-available/gelf.conf",
-    content => "library \"perfdata\"\n\n",
-    order   => '05',
   }
 
   # manage feature

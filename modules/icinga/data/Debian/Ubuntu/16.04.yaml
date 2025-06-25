@@ -1,3 +1,0 @@
----
-icinga::repos::configure_backports: true
-icinga::web::apache_cgi_pass_auth: false
