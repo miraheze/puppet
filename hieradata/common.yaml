@@ -196,12 +196,12 @@ swift::storage::devices:
 
 role::mediawiki::mcrouter::shards:
   wikitide:
-    shard01:
-      host: 10.0.15.113 # mem151
+#    shard01:
+#      host: 10.0.15.113 # mem151
     shard02:
       host: 10.0.16.131 # mem161
-    shard03:
-      host: 10.0.20.148 # mem201
+#    shard03:
+#      host: 10.0.20.148 # mem201
     shard04:
       host: 10.0.19.154 # mem191
 
