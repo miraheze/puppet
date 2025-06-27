@@ -46,6 +46,7 @@ script-src:
   - 'bandcamp.com'
   - 'flo.uri.sh'
   - 'challenges.cloudflare.com'
+  - 'static.cloudflareinsights.com'
 
 style-src:
   - "'self'"
