@@ -40,7 +40,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [aeywoo, blankeclair, macfan, oa, somerandomdeveloper, skye]
+    members: [aeywoo, blankeclair, macfan, oa, somerandomdeveloper]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -51,7 +51,7 @@ groups:
   mediawiki-test-admins:
     gid: 2007
     description: sudo on the MediaWiki test server
-    members: [aeywoo, skye]
+    members: [aeywoo]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
@@ -230,9 +230,3 @@ users:
     name: SomeRandomDeveloper
     realname: SomeRandomDeveloper
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAMnceDgta9BYLmFqvaroH98PGJKAD0gfGu0EFQeWosc somerandomdeveloper]
-  skye:
-    ensure: present
-    uid: 1024
-    name: Skye
-    realname: Skye
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAF1SOjrWs84LQOYKphBHie0zREN1l4Hr30B/QMd2PT7 skye@skyebuntu]
