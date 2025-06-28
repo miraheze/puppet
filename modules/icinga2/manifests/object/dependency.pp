@@ -21,6 +21,9 @@
 #   The child service. If omitted, this dependency object is treated as host
 #   dependency.
 #
+# @param redundancy_group
+#   The redundancy group - puts the dependency into a group of mutually redundant ones.
+#
 # @param disable_checks
 #   Whether to disable checks when this dependency fails.
 #
@@ -68,28 +71,34 @@
 # @param order
 #   String or integer to set the position in the target file, sorted alpha numeric.
 #
+# @param export
+#   Export object to destination, collected by class `icinga2::query_objects`.
+#
 define icinga2::object::dependency (
-  Stdlib::Absolutepath          $target,
-  Enum['absent', 'present']     $ensure                = present,
-  String                        $dependency_name       = $title,
-  Optional[String]              $parent_host_name      = undef,
-  Optional[String]              $parent_service_name   = undef,
-  Optional[String]              $child_host_name       = undef,
-  Optional[String]              $child_service_name    = undef,
-  Optional[Boolean]             $disable_checks        = undef,
-  Optional[Boolean]             $disable_notifications = undef,
-  Optional[Boolean]             $ignore_soft_states    = undef,
-  Optional[String]              $period                = undef,
-  Optional[Array]               $states                = undef,
-  Variant[Boolean, String]      $apply                 = false,
-  Variant[Boolean, String]      $prefix                = false,
-  Enum['Host', 'Service']       $apply_target          = 'Host',
-  Array                         $assign                = [],
-  Array                         $ignore                = [],
-  Array                         $import                = [],
-  Boolean                       $template              = false,
-  Variant[String, Integer]      $order                 = 70,
-){
+  Stdlib::Absolutepath                 $target,
+  Enum['absent', 'present']            $ensure                = present,
+  String[1]                            $dependency_name       = $title,
+  Optional[String[1]]                  $parent_host_name      = undef,
+  Optional[String[1]]                  $parent_service_name   = undef,
+  Optional[String[1]]                  $child_host_name       = undef,
+  Optional[String[1]]                  $child_service_name    = undef,
+  Optional[String[1]]                  $redundancy_group      = undef,
+  Optional[Boolean]                    $disable_checks        = undef,
+  Optional[Boolean]                    $disable_notifications = undef,
+  Optional[Boolean]                    $ignore_soft_states    = undef,
+  Optional[String[1]]                  $period                = undef,
+  Optional[Array]                      $states                = undef,
+  Variant[Boolean, String[1]]          $apply                 = false,
+  Variant[Boolean, String[1]]          $prefix                = false,
+  Enum['Host', 'Service']              $apply_target          = 'Host',
+  Array[String[1]]                     $assign                = [],
+  Array[String[1]]                     $ignore                = [],
+  Array[String[1]]                     $import                = [],
+  Boolean                              $template              = false,
+  Variant[String[1], Integer[0]]       $order                 = 70,
+  Variant[Array[String[1]], String[1]] $export                = [],
+) {
+  require icinga2::globals
 
   # compose attributes
   $attrs = {
@@ -97,6 +106,7 @@ define icinga2::object::dependency (
     'parent_service_name'   => $parent_service_name,
     'child_host_name'       => $child_host_name,
     'child_service_name'    => $child_service_name,
+    'redundancy_group'      => $redundancy_group,
     'disable_checks'        => $disable_checks,
     'disable_notifications' => $disable_notifications,
     'ignore_soft_states'    => $ignore_soft_states,
@@ -105,21 +115,33 @@ define icinga2::object::dependency (
   }
 
   # create object
-  icinga2::object { "icinga2::object::Dependency::${title}":
-    ensure       => $ensure,
-    object_name  => $dependency_name,
-    object_type  => 'Dependency',
-    import       => $import,
-    template     => $template,
-    attrs        => delete_undef_values($attrs),
-    attrs_list   => keys($attrs),
-    apply        => $apply,
-    prefix       => $prefix,
-    apply_target => $apply_target,
-    assign       => $assign,
-    ignore       => $ignore,
-    target       => $target,
-    order        => $order,
+  $config = {
+    'object_name'  => $dependency_name,
+    'object_type'  => 'Dependency',
+    'import'       => $import,
+    'template'     => $template,
+    'attrs'        => delete_undef_values($attrs),
+    'attrs_list'   => keys($attrs),
+    'apply'        => $apply,
+    'prefix'       => $prefix,
+    'apply_target' => $apply_target,
+    'assign'       => $assign,
+    'ignore'       => $ignore,
   }
 
+  unless empty($export) {
+    @@icinga2::config::fragment { "icinga2::object::Dependency::${title}":
+      tag     => prefix(any2array($export), 'icinga2::instance::'),
+      content => epp('icinga2/object.conf.epp', $config),
+      target  => $target,
+      order   => $order,
+    }
+  } else {
+    icinga2::object { "icinga2::object::Dependency::${title}":
+      ensure => $ensure,
+      target => $target,
+      order  => $order,
+      *      => $config,
+    }
+  }
 }

@@ -1,14 +1,14 @@
 # class: matomo
 class matomo (
     String $ldap_password  = lookup('passwords::matomo::ldap_password'),
-    String $matomo_db_host = 'db182-private.wikitide.net',
+    String $matomo_db_host = 'db182.fsslc.wtnet',
 ) {
     stdlib::ensure_packages('composer')
 
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '5.3.1', # Current stable
+        branch             => '5.3.2', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',

@@ -207,7 +207,7 @@ class phorge (
     monitoring::services { 'phorge-static.wikitide.net HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6    => $address,
+            address     => $address,
             http_expect => 'HTTP/1.1 200',
             http_ssl    => true,
             http_vhost  => 'phorge-static.wikitide.net',
@@ -218,7 +218,7 @@ class phorge (
     monitoring::services { 'issue-tracker.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6   => $address,
+            address    => $address,
             http_ssl   => true,
             http_vhost => 'issue-tracker.miraheze.org',
         },
@@ -233,13 +233,6 @@ class phorge (
         ensure => directory,
     }
 
-    file { '/var/log/phorge-backup':
-        ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
     systemd::timer::job { 'phorge-backup':
         description       => 'Runs backup of phorge',
         command           => '/usr/local/bin/wikitide-backup backup phorge',
@@ -247,7 +240,6 @@ class phorge (
             'start'    => 'OnCalendar',
             'interval' => '*-*-1,15 01:00:00',
         },
-        logfile_basedir   => '/var/log/phorge-backup',
         logfile_name      => 'phorge-backup.log',
         syslog_identifier => 'phorge-backup',
         user              => 'root',

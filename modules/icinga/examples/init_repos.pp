@@ -1,1 +1,1 @@
-include ::icinga::repos
+include icinga::repos

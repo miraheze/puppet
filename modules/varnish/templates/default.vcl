@@ -78,9 +78,10 @@ acl local_host {
 }
 
 acl local_tls_terminator {
-	"10.0.16.137"; # cp36
-	"10.0.17.138"; # cp37
-	"10.0.19.146"; # cp38
+	"10.0.16.137"; # cp161
+	"10.0.17.138"; # cp171
+	"10.0.19.146"; # cp191
+	"10.0.20.166"; # cp201
 	"0.0.0.0"; // this matches incoming traffic via UDS
 }
 
@@ -266,8 +267,13 @@ sub mw_request {
 	# Assigning a backend
 	if (req.http.X-WikiTide-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ wikitide_nets) {
 <%- @backends.each_pair do | name, property | -%>
-<%- if property['xdebug'] -%>
-		if (req.http.X-WikiTide-Debug == "<%= name %>.wikitide.net") {
+<%- if not (property['pool'] or property['swiftpool']) -%>
+		if (req.http.X-WikiTide-Debug == "unused") {
+			set req.backend_hint = <%= name %>;
+		}
+<%- end -%>
+<%- if property['xdebug'] && (name.start_with?('mw') || name.start_with?('test')) -%>
+		if (req.http.X-WikiTide-Debug == "<%= name %>") {
 			if (req.http.Host == "static.wikitide.net") {
 				set req.backend_hint = swift.backend();
 			} else {

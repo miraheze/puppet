@@ -1,7 +1,7 @@
-icinga_ido_db_host: 'db182-private.wikitide.net'
-icingaweb_db_host: 'db182-private.wikitide.net'
+icinga_ido_db_host: 'db182.fsslc.wtnet'
+icingaweb_db_host: 'db182.fsslc.wtnet'
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 icinga2_api_bind_host: '::'
 
@@ -41,8 +41,8 @@ icinga2::globals::constants:
   PluginDir: '/usr/lib/nagios/plugins'
   PluginContribDir: '/usr/lib/nagios/plugins'
   ManubulonPluginDir: '/usr/lib/nagios/plugins'
-  NodeName: 'mon181.wikitide.net'
-  ZoneName: 'mon181.wikitide.net'
+  NodeName: 'mon181.fsslc.wtnet'
+  ZoneName: 'mon181.fsslc.wtnet'
   TicketSalt: ''
   MaxConcurrentChecks: 40
 icinga2::globals::user: 'nagios'

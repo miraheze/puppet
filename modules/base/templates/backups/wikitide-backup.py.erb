@@ -30,7 +30,7 @@ args = parser.parse_args()
 
 
 def pca_connection(status, *args):
-    with Connection('gateways.storage.bhs.cloud.ovh.net', <%- if @use_gateway -%>gateway='nc -X connect -x bastion.wikitide.net:8080 %h %p', <%- end -%>user='pca', connect_kwargs={'password': '<%= @pca_password %>'}) as c:
+    with Connection('gateways.storage.bhs.cloud.ovh.net', <%- if @use_gateway -%>gateway='nc -X connect -x bastion.fsslc.wtnet:8080 %h %p', <%- end -%>user='pca', connect_kwargs={'password': '<%= @pca_password %>'}) as c:
         if status == 'GET':
             c.get(*args)
         else:
@@ -46,7 +46,7 @@ def pca_web(method: str, url: str, expiry: int):
     global token
     global recheck_time
 
-    proxies = { 'https': 'http://bastion.wikitide.net:8080' }
+    proxies = { 'https': 'http://bastion.fsslc.wtnet:8080' }
 
     if token is None or time.time() - recheck_time > 1800:
         pca_password = "<%= @pca_password %>"
@@ -136,7 +136,7 @@ def backup_sql(dt: str, database: str):
     for db in dbs:
         print(f'Backing up database \'{db}\'...')
 
-        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mysqldump --quick --skip-lock-tables --single-transaction -c --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= (@facts['processors']['count']/3).to_i > 1 ? (@facts['processors']['count']/3).to_i : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True)
+        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mariadb-dump --quick --skip-lock-tables --single-transaction -c --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= (@facts['processors']['count']/3).to_i > 1 ? (@facts['processors']['count']/3).to_i : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True)
         pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
 
         subprocess.check_call(f'rm -f /srv/backups/dbs/{db}.sql.gz', shell=True)

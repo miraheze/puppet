@@ -1,10 +1,10 @@
 class monitoring (
     String $db_host,
-    String $db_name               = 'icinga',
-    String $db_user               = 'icinga2',
-    String $db_password           = undef,
-    String $mirahezebots_password = undef,
-    String $ticket_salt           = '',
+    String $db_name                         = 'icinga',
+    String $db_user                         = 'icinga2',
+    String $db_password                     = undef,
+    String $mirahezebots_password           = undef,
+    String $ticket_salt                     = '',
     Optional[String] $icinga2_api_bind_host = undef,
 ) {
     stdlib::ensure_packages([
@@ -22,10 +22,18 @@ class monitoring (
         allowdupe => false,
     }
 
-    $version = lookup('mariadb::version', {'default_value' => '10.4'})
+    $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/02mariadb']) {
+        file { '/etc/apt/apt.conf.d/02mariadb':
+            ensure  => present,
+            content => template('mariadb/aptproxy.erb'),
+        }
+    }
+
+    $version = lookup('mariadb::version', {'default_value' => '10.11'})
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
-        location => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
+        location => "https://mirror.mariadb.org/repo/${version}/debian",
         release  => $facts['os']['distro']['codename'],
         repos    => 'main',
         key      => {
@@ -36,7 +44,7 @@ class monitoring (
 
     apt::pin { 'mariadb_pin':
         priority => 600,
-        origin   => 'ams2.mirrors.digitalocean.com',
+        origin   => 'mirror.mariadb.org',
         require  => Apt::Source['mariadb_apt'],
         notify   => Exec['apt_update_mariadb'],
     }
@@ -48,43 +56,34 @@ class monitoring (
         logoutput   => true,
     }
 
-    if $facts['os']['distro']['codename'] == 'bookworm' {
-        # It looks like on mariadb 10.11 and above
-        # it dosen't contain the version number
-        # in the package name.
-        $package_name = 'mariadb-client'
-    } else {
-        $package_name = "mariadb-client-${version}"
-    }
-
     stdlib::ensure_packages(
-        $package_name,
+        'mariadb-client',
         {
             ensure  => present,
             require => Apt::Source['mariadb_apt'],
         },
     )
 
-    class { '::icinga2':
+    class { 'icinga2':
         manage_repos => true,
         constants    => {
-            'TicketSalt' => $ticket_salt
+            'TicketSalt' => Sensitive($ticket_salt),
         }
     }
 
-    class { '::icinga2::feature::api':
+    class { 'icinga2::feature::api':
         bind_host   => $icinga2_api_bind_host,
         ca_host     => $facts['networking']['fqdn'],
-        ticket_salt => $ticket_salt,
+        ticket_salt => Sensitive($ticket_salt),
     }
 
-    include ::icinga2::feature::command
+    include icinga2::feature::command
 
-    include ::icinga2::feature::notification
+    include icinga2::feature::notification
 
-    include ::icinga2::feature::perfdata
+    include icinga2::feature::perfdata
 
-    class{ '::icinga2::feature::idomysql':
+    class { 'icinga2::feature::idomysql':
         host          => $db_host,
         user          => $db_user,
         password      => $db_password,
@@ -92,7 +91,7 @@ class monitoring (
         import_schema => false,
     }
 
-    class { '::icinga2::feature::gelf':
+    class { 'icinga2::feature::gelf':
         host => 'logging.wikitide.net',
     }
 
@@ -232,7 +231,7 @@ class monitoring (
     }
 
     # includes a irc bot to relay messages from icinga to irc
-    class { '::monitoring::ircecho':
+    class { 'monitoring::ircecho':
         mirahezebots_password => $mirahezebots_password,
     }
 
@@ -275,12 +274,15 @@ class monitoring (
         command => '/usr/lib/nagios/plugins/check_icinga_config'
     }
 
-    cron { 'remove_icinga2_perfdata_2_days':
-        ensure  => present,
-        command => '/usr/bin/find /var/spool/icinga2/perfdata -type f -mtime +2 -exec rm {} +',
-        user    => 'root',
-        hour    => 5,
-        minute  => 0,
+    systemd::timer::job { 'remove_icinga2_perfdata':
+        ensure      => present,
+        description => 'Removes Icinga2 perfdata files older than 2 days',
+        command     => '/usr/bin/find /var/spool/icinga2/perfdata -type f -mtime +2 -exec rm {} +',
+        interval    => {
+            start    => 'OnCalendar',
+            interval => '*-*-* 05:00:00',
+        },
+        user        => 'root',
     }
 
     Icinga2::Object::Host <<||>> ~> Service['icinga2']

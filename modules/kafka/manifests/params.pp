@@ -2,6 +2,7 @@
 #   This class provides default parameters.
 #
 class kafka::params {
+
   $kafka_version  = '2.4.1'
   $scala_version  = '2.12'
   $install_dir    = "/opt/kafka-${scala_version}-${kafka_version}"

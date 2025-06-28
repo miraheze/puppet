@@ -217,12 +217,10 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         'User-Agent': 'wikitide/mwdeploy.py',
     }
     if Debug:
-        server = f'{Debug}.wikitide.net'
-        headers['X-WikiTide-Debug'] = server
-        location = f'{domain}@{server}'
+        headers['X-WikiTide-Debug'] = Debug
+        location = f'{domain}@{Debug}'
 
         debug_access_key = os.getenv('DEBUG_ACCESS_KEY')
-
         # Check if DEBUG_ACCESS_KEY is set and add it to headers
         if debug_access_key:
             headers['X-WikiTide-Debug-Access-Key'] = debug_access_key
@@ -297,7 +295,9 @@ def _construct_rsync_command(time: bool | str, dest: str, recursive: bool = True
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.wikitide.net:{dest}'
+        fqdn = socket.getfqdn()
+        domain = '.'.join(fqdn.split('.')[1:])
+        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.{domain}:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
@@ -458,7 +458,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 stage.append(_construct_git_reset_hard('vendor', version=version))
                 stage.append(_construct_git_pull('vendor', submodules=True, version=version))
                 if not args.world:
-                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet')
+                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet')
                     rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/vendor/*', dest=f'/srv/mediawiki/{version}/vendor/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/vendor/')
 
@@ -570,7 +570,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 if option == 'world':  # install steps for world
                     option = version
                     os.chdir(_get_staging_path(version))
-                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet'))
+                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet'))
                     rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))

@@ -193,13 +193,6 @@ class puppetdb(
         ensure => directory,
     }
 
-    file { '/var/log/puppetdb-backup':
-        ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
     systemd::timer::job { 'puppetdb-backup':
         description       => 'Runs backup of puppetdb',
         command           => '/usr/local/bin/wikitide-backup backup puppetdb',
@@ -207,7 +200,6 @@ class puppetdb(
             'start'    => 'OnCalendar',
             'interval' => '*-*-1,15 01:00:00',
         },
-        logfile_basedir   => '/var/log/puppetdb-backup',
         logfile_name      => 'puppetdb.log',
         syslog_identifier => 'puppetdb-backup',
         user              => 'root',

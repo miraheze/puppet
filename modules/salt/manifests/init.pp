@@ -1,48 +1,42 @@
 class salt {
-    if $facts['os']['distro']['codename'] == 'bookworm' {
-        $http_proxy = lookup('http_proxy', {'default_value' => undef})
-        if $http_proxy {
-            file { '/etc/apt/apt.conf.d/01salt':
-                ensure  => present,
-                content => template('salt/apt/01salt.erb'),
-                before  => Apt::Source['salt_apt'],
-            }
-        }
-
-        apt::source { 'salt_apt':
-            location => 'https://packages.broadcom.com/artifactory/saltproject-deb',
-            release  => 'stable',
-            repos    => 'main',
-            key      => {
-              name   => 'salt.pgp',
-              source => 'puppet:///modules/salt/key/salt.pgp'
-            },
-            notify   => Exec['apt_update_salt'],
-        }
-
-        apt::pin { 'salt_pin':
-            priority => 1001,
-            packages => 'salt-*',
-            # TODO: Migrate to LTS once a version greater than 3007 becomes lts.
-            version  => '3007.*',
-        }
-
-        # First installs can trip without this
-        exec {'apt_update_salt':
-            command     => '/usr/bin/apt-get update',
-            refreshonly => true,
-            logoutput   => true,
-            require     => Apt::Pin['salt_pin'],
-        }
-
-        package { ['salt-ssh', 'salt-common']:
+    $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    if $http_proxy {
+        file { '/etc/apt/apt.conf.d/01salt':
             ensure  => present,
-            require => Apt::Source['salt_apt']
+            content => template('salt/apt/01salt.erb'),
+            before  => Apt::Source['salt_apt'],
         }
-    } else {
-        package { ['salt-ssh', 'salt-common']:
-            ensure => present,
-        }
+    }
+
+    apt::source { 'salt_apt':
+        location => 'https://packages.broadcom.com/artifactory/saltproject-deb',
+        release  => 'stable',
+        repos    => 'main',
+        key      => {
+            name   => 'salt.pgp',
+            source => 'puppet:///modules/salt/key/salt.pgp'
+        },
+        notify   => Exec['apt_update_salt'],
+    }
+
+    apt::pin { 'salt_pin':
+        priority => 1001,
+        packages => 'salt-*',
+        # TODO: Migrate to LTS once a version greater than 3007 becomes lts.
+        version  => '3007.*',
+    }
+
+    # First installs can trip without this
+    exec {'apt_update_salt':
+        command     => '/usr/bin/apt-get update',
+        refreshonly => true,
+        logoutput   => true,
+        require     => Apt::Pin['salt_pin'],
+    }
+
+    package { ['salt-ssh', 'salt-common']:
+        ensure  => present,
+        require => Apt::Source['salt_apt']
     }
 
     $host = query_nodes('', 'networking.fqdn')

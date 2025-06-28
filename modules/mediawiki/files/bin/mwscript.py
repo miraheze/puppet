@@ -47,6 +47,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         'importdump',
         'importimages',
         'nukens',
+        'populatewikibasesitestable',
         'rebuildall',
         'rebuildimages',
         'rebuildtextindex',

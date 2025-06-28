@@ -74,7 +74,7 @@ class grafana (
     monitoring::services { 'grafana.wikitide.net HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6   => $address,
+            address    => $address,
             http_ssl   => true,
             http_vhost => 'grafana.wikitide.net',
         },

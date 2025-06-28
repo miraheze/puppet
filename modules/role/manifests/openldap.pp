@@ -12,7 +12,7 @@ class role::openldap (
 
     class { 'openldap::server':
         ldaps_ifs => ['/'],
-        ssl_ca    => '/etc/ssl/certs/LetsEncrypt.crt',
+        ssl_ca    => '/etc/ssl/certs/ISRG_Root_X1.pem',
         ssl_cert  => '/etc/ssl/localcerts/wikitide.net.crt',
         ssl_key   => '/etc/ssl/private/wikitide.net.key',
         require   => Ssl::Wildcard['openldap wildcard']
@@ -145,7 +145,7 @@ class role::openldap (
     class { 'openldap::client':
         base       => 'dc=miraheze,dc=org',
         uri        => ["ldaps://${facts['networking']['fqdn']}"],
-        tls_cacert => '/etc/ssl/certs/LetsEncrypt.crt',
+        tls_cacert => '/etc/ssl/certs/ISRG_Root_X1.pem',
     }
 
     ssl::wildcard { 'openldap wildcard':
@@ -220,12 +220,23 @@ class role::openldap (
         srange => "(${firewall_rules_icinga})",
     }
 
-    # restart slapd if it uses more than 50% of memory
-    cron { 'restart_slapd':
-        ensure  => present,
-        minute  => fqdn_rand(60, $title),
-        command => "/bin/ps -C slapd -o pmem= | awk '{sum+=\$1} END { if (sum <= 50.0) exit 1 }' \
-        && /bin/systemctl restart slapd >/dev/null 2>/dev/null",
+    file { '/usr/local/sbin/restart_openldap':
+        source => 'puppet:///modules/openldap/restart_openldap.sh',
+        mode   => '0554',
+        owner  => 'root',
+        group  => 'root',
+    }
+
+    $minutes = fqdn_rand(60, $title)
+    systemd::timer::job { 'restart_slapd':
+        ensure      => present,
+        user        => 'root',
+        description => 'Restart slapd when using more than 50% of memory',
+        command     => '/usr/local/sbin/restart_openldap',
+        interval    => {
+            start    => 'OnCalendar',
+            interval => "*-*-* *:0/${minutes}:00",
+        },
     }
 
     monitoring::services { 'LDAP':

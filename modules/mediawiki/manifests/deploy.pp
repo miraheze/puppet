@@ -76,13 +76,6 @@ class mediawiki::deploy {
         require => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
     }
 
-    file { '/usr/local/bin/deploy-mediawiki':
-        ensure  => 'link',
-        target  => '/usr/local/bin/mwdeploy',
-        mode    => '0755',
-        require => File['/usr/local/bin/mwdeploy'],
-    }
-
     git::clone { 'MediaWiki config':
         ensure    => present,
         directory => '/srv/mediawiki-staging/config',

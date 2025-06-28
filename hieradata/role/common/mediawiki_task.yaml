@@ -6,13 +6,13 @@ contactgroups: ['infra', 'mediawiki']
 
 jobrunner: true
 jobrunner::intensive: true
-mediawiki::jobqueue::runner::cron: false
+mediawiki::jobqueue::runner::periodic_jobs: false
 mediawiki::use_cpjobqueue: true
 
 role::mediawiki::use_strict_firewall: true
 role::mediawiki::is_beta: false
 
-mediawiki::php::fpm::fpm_workers_multiplier: 2.0
+mediawiki::php::fpm::fpm_workers_multiplier: 1.5
 mediawiki::php::request_timeout: 259201
 mediawiki::php::apc_shm_size: 4096M
 mediawiki::php::fpm_config:
@@ -27,7 +27,7 @@ mediawiki::php::enable_request_profiling: true
 
 php::php_version: '8.2'
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 

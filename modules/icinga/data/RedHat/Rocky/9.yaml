@@ -1,0 +1,8 @@
+---
+icinga::repos:
+  crb:
+    descr: 'Rocky Linux $releasever - CRB'
+    mirrorlist: 'https://mirrors.rockylinux.org/mirrorlist?arch=$basearch&repo=CRB-$releasever$rltype'
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Rocky-9'

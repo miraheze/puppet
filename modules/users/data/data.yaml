@@ -7,12 +7,13 @@ groups:
   mediawiki-admins:
     gid: 2001
     description: sudo on MediaWiki servers
-    members: [blankeclair, macfan, oa]
+    members: [blankeclair, macfan, oa, somerandomdeveloper]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service apache2 *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mcrouter *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   mediawiki-roots:
@@ -39,7 +40,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [blankeclair, macfan, oa]
+    members: [aeywoo, blankeclair, macfan, oa, somerandomdeveloper]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -50,10 +51,11 @@ groups:
   mediawiki-test-admins:
     gid: 2007
     description: sudo on the MediaWiki test server
-    members: []
+    members: [aeywoo]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
+                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
   database-admins:
@@ -61,8 +63,7 @@ groups:
     description: limited sudo access on database servers
     members: []
     privileges: ['ALL = (ALL) NOPASSWD: /bin/bash -c mariadb',
-                 'ALL = (ALL) NOPASSWD: /bin/bash -c mysql',
-                 'ALL = (ALL) NOPASSWD: /bin/bash -c mysqldump *',
+                 'ALL = (ALL) NOPASSWD: /bin/bash -c mariadb-dump *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb start',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb restart',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service mariadb status',
@@ -194,7 +195,9 @@ users:
     uid: 1018
     name: OA
     realname: Original Authority
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILD0e5CCa8BhhAmKvIHPjhN6+dMU0uQ1Z/ZHcfmqoUVP original.authority0@gmail.com]
+    ssh_keys: 
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILD0e5CCa8BhhAmKvIHPjhN6+dMU0uQ1Z/ZHcfmqoUVP original.authority0@gmail.com
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIvaFW3tV5L/WXEYHfnqDCNAvM/UrS0Wp0qY03bOxUWB
   evalprime:
     ensure: absent
     uid: 1019
@@ -215,3 +218,15 @@ users:
     ssh_keys: 
       - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIJfFeBEEUvSN/T+MQyVGxxJ2X6RKpfs7YduE3felF1pDAAAAIHNzaDptaXJhaGV6ZS5jbGFpcmVAZGlhbW9uZHByaXNt
       - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAINarEjRpotDTzYa7NgSSMenXlsJ6d5Qf3l7FDWnySO0UAAAAIXNzaDptaXJhaGV6ZS5jbGFpcmVAZG91YmxlcmFpbmJvdw==
+  aeywoo:
+    ensure: present
+    uid: 1022
+    name: Aeywoo
+    realname: Aeywoo
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXBIiVCdmpvCT52zULjYDIReM8MyAWUHh4n17AuN15M]
+  somerandomdeveloper:
+    ensure: present
+    uid: 1023
+    name: SomeRandomDeveloper
+    realname: SomeRandomDeveloper
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAMnceDgta9BYLmFqvaroH98PGJKAD0gfGu0EFQeWosc somerandomdeveloper]
