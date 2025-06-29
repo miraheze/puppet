@@ -16,8 +16,8 @@ jobrunner_haproxy::backends:
     ip: 10.0.18.106
     port: 9006
 changeprop::num_workers: 8
-changeprop::semantic_mediawiki_concurrency: 10
-changeprop::low_traffic_concurrency: 30
+changeprop::semantic_mediawiki_concurrency: 6
+changeprop::low_traffic_concurrency: 25
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
@@ -31,7 +31,7 @@ changeprop::high_traffic_jobs_config:
   # RecordLinks is normally low-volume, but could have big spikes
   # when maintenance scripts are run. Elevated concurrency
   RecordLintJob:
-    concurrency: 15
+    concurrency: 10
     consumer_batch_size: 10
   wikibase-addUsagesForPage:
     concurrency: 4
@@ -63,7 +63,7 @@ changeprop::high_traffic_jobs_config:
   cirrusSearchCheckerJob:
     disable_delayed_execution: true
     retry_limit: 0
-    concurrency: 15
+    concurrency: 10
   cirrusSearchDeleteArchive:
     retry_limit: 0
     concurrency: 5
@@ -72,24 +72,24 @@ changeprop::high_traffic_jobs_config:
     concurrency: 5
   cirrusSearchIncomingLinkCount:
     retry_limit: 0
-    concurrency: 15
+    concurrency: 10
   cirrusSearchLinksUpdate:
     retry_limit: 0
-    concurrency: 15
+    concurrency: 10
   cirrusSearchLinksUpdatePrioritized:
     retry_limit: 0
-    concurrency: 10
+    concurrency: 6
   cirrusSearchOtherIndex:
     retry_limit: 0
     concurrency: 5
   wikibase-InjectRCRecords:
     concurrency: 2
   parsoidCachePrewarm:
-    concurrency: 15
+    concurrency: 10
   htmlCacheUpdate:
     concurrency: 10
   refreshLinks:
-    concurrency: 15
+    concurrency: 10
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
@@ -133,7 +133,7 @@ changeprop::high_traffic_jobs_config:
 changeprop::high_traffic_high_timeout_jobs_config:
   cirrusSearchElasticaWrite:
     retry_limit: 0
-    concurrency: 15
+    concurrency: 10
     reenqueue_delay: 3600
     timeout: 600000
   NamespaceMigrationJob:
