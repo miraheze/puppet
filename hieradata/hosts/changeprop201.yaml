@@ -142,7 +142,7 @@ changeprop::high_traffic_high_timeout_jobs_config:
     timeout: 9000000
   DataDumpGenerateJob:
     concurrency: 1
-    retry_limit: 1
+    retry_limit: 0
     timeout: 86400000
   ImportDumpJob:
     disable_delayed_execution: true
