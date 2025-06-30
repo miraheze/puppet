@@ -190,10 +190,11 @@ class phorge (
     }
 
     systemd::service { 'phd':
-        ensure  => present,
-        content => systemd_template('phd'),
-        restart => true,
-        require => File['/srv/phorge/phorge/conf/local/local.json'],
+        ensure             => present,
+        content            => systemd_template('phd'),
+        restart            => true,
+        require            => File['/srv/phorge/phorge/conf/local/local.json'],
+        monitoring_enabled => true,
     }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
@@ -222,10 +223,6 @@ class phorge (
             http_ssl   => true,
             http_vhost => 'issue-tracker.miraheze.org',
         },
-    }
-
-    monitoring::nrpe { 'phd':
-        command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'
     }
 
     # Backup provisioning
