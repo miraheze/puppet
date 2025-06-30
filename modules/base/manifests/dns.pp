@@ -1,8 +1,6 @@
 # class base::dns
 class base::dns {
-    package { 'pdns-recursor':
-        ensure => present,
-    }
+    stdlib::ensure_packages('pdns-recursor')
 
     if $facts['processors']['count'] < 4 {
         $threads = 4
