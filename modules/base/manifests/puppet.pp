@@ -33,19 +33,19 @@ class base::puppet (
     file { '/usr/bin/facter':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/facter',
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
     }
 
     file { '/usr/bin/hiera':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/hiera',
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
     }
 
     file { '/usr/bin/puppet':
         ensure  => 'link',
         target  => '/opt/puppetlabs/bin/puppet',
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
     }
 
     file { '/var/log/puppet':
@@ -89,7 +89,7 @@ class base::puppet (
             ensure  => present,
             content => template('base/puppet/puppet.conf.erb'),
             mode    => '0444',
-            require => Package['puppet-agent'],
+            require => Package['openvox-agent'],
         }
     }
 
