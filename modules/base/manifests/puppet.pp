@@ -22,7 +22,7 @@ class base::puppet (
         logoutput   => true,
     }
 
-    package { 'puppet-agent':
+    package { 'openvox-agent':
         ensure  => present,
         require => Apt::Source['openvox'],
     }
