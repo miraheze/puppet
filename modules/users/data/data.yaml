@@ -229,7 +229,10 @@ users:
     uid: 1023
     name: SomeRandomDeveloper
     realname: SomeRandomDeveloper
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAMnceDgta9BYLmFqvaroH98PGJKAD0gfGu0EFQeWosc somerandomdeveloper]
+    ssh_keys:
+      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIEMUaajN0cGxJVFiyZiB4HuzXrWOf9cfzO1XjKZJ/23aAAAABHNzaDo= Main
+      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIH3eLi1gI0KdIBsh/hMb9ChlVdMqDA0Oc+Ax3J6LT9spAAAABHNzaDo= Alt A
+      - sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIIPiOslZCXG4kQqaP3dc/2K7e1qfQsqRU/b9oaiAN2UMAAAABHNzaDo= Alt C
   skye:
     ensure: present
     uid: 1024
