@@ -238,3 +238,5 @@ connect-src:
   - 'translate.googleapis.com'
   - 'games.roblox.com'
   - 'economy.roblox.com'
+  - 'discord.com'
+  - 'discordapp.com'
