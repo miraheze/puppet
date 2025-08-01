@@ -143,6 +143,10 @@ img-src:
   - '*.rbxcdn.com'
   - 'cms-imgp.jw-cdn.org'
   - 'hosted.weblate.org'
+  - 'minecraft.wiki'
+  - 'www.divine-pride.net'
+  - 'static.divine-pride.net'
+  - 'legacyofnightwind.com'
 
 font-src:
   - "'self'"
@@ -214,6 +218,7 @@ frame-src:
   - '*.hcaptcha.com'
   - 'bandcamp.com'
   - 'challenges.cloudflare.com'
+  - 'map.showdown.wiki'
 
 connect-src:
   - "'self'"
