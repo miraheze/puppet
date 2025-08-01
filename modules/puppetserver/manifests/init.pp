@@ -19,49 +19,49 @@ class puppetserver(
     String  $puppetserver_hostname,
     String  $puppetserver_java_opts,
 ) {
-    package { 'puppetserver':
+    package { 'openvox-server':
         ensure  => present,
-        require => Apt::Source['puppetlabs'],
+        require => Apt::Source['openvox'],
     }
 
     file { '/usr/bin/puppetserver':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/puppetserver',
-        require => Package['puppetserver'],
+        require => Package['openvox-server'],
     }
 
     file { '/etc/default/puppetserver':
         ensure  => present,
         content => template('puppetserver/puppetserver.erb'),
-        require => Package['puppetserver'],
+        require => Package['openvox-server'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/auth.conf':
         ensure  => present,
         source  => 'puppet:///modules/puppetserver/auth.conf',
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/fileserver.conf':
         ensure  => present,
         source  => 'puppet:///modules/puppetserver/fileserver.conf',
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/hiera.yaml':
         ensure  => present,
         source  => 'puppet:///modules/puppetserver/hiera.yaml',
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/puppet.conf':
         ensure  => present,
         content => template('puppetserver/puppet.conf.erb'),
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
         notify  => Service['puppetserver'],
     }
 
@@ -69,14 +69,14 @@ class puppetserver(
         ensure    => latest,
         directory => '/etc/puppetlabs/puppet/git',
         origin    => 'https://github.com/miraheze/puppet',
-        require   => Package['puppet-agent'],
+        require   => Package['openvox-agent'],
     }
 
     git::clone { 'ssl':
         ensure    => latest,
         directory => '/etc/puppetlabs/puppet/ssl-cert',
         origin    => 'https://github.com/miraheze/ssl',
-        require   => Package['puppet-agent'],
+        require   => Package['openvox-agent'],
     }
 
     git::clone { 'mediawiki-repos':
@@ -85,7 +85,7 @@ class puppetserver(
         origin    => 'https://github.com/miraheze/mediawiki-repos',
         owner     => 'puppet',
         group     => 'puppet',
-        require   => Package['puppet-agent'],
+        require   => Package['openvox-agent'],
     }
 
     git::clone { 'pywikibot-config':
@@ -94,7 +94,7 @@ class puppetserver(
         origin    => 'https://github.com/miraheze/pywikibot-config',
         owner     => 'puppet',
         group     => 'puppet',
-        require   => Package['puppet-agent'],
+        require   => Package['openvox-agent'],
     }
 
     file { '/etc/puppetlabs/puppet/private':
@@ -122,7 +122,7 @@ class puppetserver(
     file { '/etc/puppetlabs/puppet/environments':
         ensure  => directory,
         mode    => '0775',
-        require => Package['puppetserver'],
+        require => Package['openvox-server'],
     }
 
     file { '/etc/puppetlabs/puppet/environments/production':
@@ -192,7 +192,7 @@ class puppetserver(
         ensure   => running,
         enable   => true,
         provider => 'systemd',
-        require  => Package['puppetserver'],
+        require  => Package['openvox-server'],
     }
 
     ferm::service { 'puppetserver':
