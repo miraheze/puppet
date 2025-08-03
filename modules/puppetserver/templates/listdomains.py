@@ -87,9 +87,9 @@ def get_wikidiscover_data():
         count = result.get('count', 0)
 
         for dbname, info in wikis_data.items():
-            url = info.get('url')
-            if dbname.endswith("wiki") and url:
-                yaml_output[dbname] = url
+            wiki_url = info.get('url')
+            if dbname.endswith("wiki") and wiki_url:
+                yaml_output[dbname] = wiki_url
                 domain = url.split("//")[1]
                 domain_list.append(domain)
 
