@@ -13,6 +13,12 @@ bind-address                   = 0.0.0.0,::
 key-buffer-size                = 16M
 myisam_recover_options         = FORCE,BACKUP
 
+# MariaDB 11.8 defaults to utf8mb4/utf8mb4_uca1400_ai_ci
+# eventually we will update but for now we want to maintain
+# the same version as 10.11 has to not mess something up.
+character-set-server           = latin1
+collation-server               = latin1_swedish_ci
+
 max-allowed-packet             = 64M
 max-connect-errors             = 1000000
 sql-mode                       = STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_AUTO_VALUE_ON_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE
