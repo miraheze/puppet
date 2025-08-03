@@ -264,14 +264,14 @@ class puppetserver(
         content => template('puppetserver/updatesfs'),
         mode    => '0555',
     }
-    
+
     systemd::timer::job { 'updatesfs':
         ensure                  => present,
         description             => 'Run updatesfs nightly',
         command                 => '/root/updatesfs',
         interval                => {
-            'start'    => 'OnCalendar',
-            interval   => '*-*-* 23:00:00',
+            'start'  => 'OnCalendar',
+            interval => '*-*-* 23:00:00',
         },
         user                    => 'root',
         send_mail               => true,
@@ -287,13 +287,13 @@ class puppetserver(
         content => template('puppetserver/listdomains.py'),
         mode    => '0555',
     }
-    
+
     systemd::timer::job { 'listdomains_github_push':
         ensure                  => present,
         description             => 'Refresh custom domains list from Cloudflare and WikiDiscover hourly',
         command                 => '/usr/local/bin/listdomains',
         interval                => {
-            start    => 'OnCalendar',
+            start      => 'OnCalendar',
             'interval' => '*-*-* *:05,15,25,35,45,55'
         },
         user                    => 'root',
