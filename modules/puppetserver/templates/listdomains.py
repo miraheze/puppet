@@ -14,8 +14,6 @@ CLOUDFLARE_API_TOKEN = "<%= @cloudflare_api_token %>"
 CLOUDFLARE_ZONE_ID = "<%= @cloudflare_zone_id %>"
 CLOUDFLARE_API_URL = f"https://api.cloudflare.com/client/v4/zones/{CLOUDFLARE_ZONE_ID}/custom_hostnames"
 
-WIKIDISCOVER_API_URL = "https://meta.miraheze.org/w/api.php?action=query&list=wikidiscover&formatversion=2&wdcustomurl=true&wdprop=url&wdlimit=1000&format=json"
-
 CLOUDFLARE_OUTPUT = "cloudflare_domains"
 WIKIDISCOVER_OUTPUT = "wikidiscover_output.yaml"
 LOG_FILE = "domain_comparisons"
@@ -29,13 +27,9 @@ proxies = {
 
 # Headers for Cloudflare API requests
 cf_headers = {
+    "Authorization": f"Bearer {CLOUDFLARE_API_TOKEN}",
     "X-Auth-Key": f"{CLOUDFLARE_API_TOKEN}",
     "Content-Type": "application/json",
-    "User-Agent": "wikitide/listdomains.py (operated by WikiTide Foundation Technology Team - https://wikitide.org)"
-}
-
-# Headers for WikiDiscover API requests
-wd_headers = {
     "User-Agent": "wikitide/listdomains.py (operated by WikiTide Foundation Technology Team - https://wikitide.org)"
 }
 
@@ -43,7 +37,7 @@ wd_headers = {
 def get_cloudflare_domains():
     all_domains = []
     page = 1
-    per_page = 50
+    per_page = 100
     while True:
         resp = requests.get(f"{CLOUDFLARE_API_URL}?page={page}&per_page={per_page}", headers=cf_headers, proxies=proxies)
         resp.raise_for_status()
@@ -60,19 +54,37 @@ def get_cloudflare_domains():
 
 # Step 2: Get WikiDiscover data
 def get_wikidiscover_data():
-    response = requests.get(WIKIDISCOVER_API_URL, headers=wd_headers)
-    response.raise_for_status()
-    data = response.json()
-    wikis = data.get("query", {}).get("wikidiscover", {}).get("wikis", {})
-    yaml_output = {}
+    all_wikis = {}
     domain_list = []
-    for dbname, info in wikis.items():
-        url = info.get("url")
-        if dbname.endswith("wiki") and url:
-            yaml_output[dbname] = url
-            domain = url.split("//")[1]
-            domain_list.append(domain)
-    return yaml_output, sorted(set(domain_list))
+    offset = 0
+
+    while True:
+        url = f"https://meta.miraheze.org/w/api.php?action=query&list=wikidiscover&formatversion=2&wdcustomurl=true&wdprop=url&format=json&wdoffset={offset}"
+
+        # Headers for WikiDiscover API requests
+        wd_headers = {
+            "User-Agent": "wikitide/listdomains.py (operated by WikiTide Foundation Technology Team - https://wikitide.org)"
+        }
+
+        response = requests.get(url, headers=wd_headers, proxies=proxies)
+        response.raise_for_status()
+        data = response.json()
+
+        wikis = data.get("query", {}).get("wikidiscover", {}).get("wikis", {})
+        count = data.get("query", {}).get("wikidiscover", {}).get("count", 0)
+
+        for dbname, info in wikis.items():
+            url = info.get("url")
+            if dbname.endswith("wiki") and url:
+                all_wikis[dbname] = url
+                domain = url.split("//")[1]  # remove https://
+                domain_list.append(domain)
+
+        if count < 500:
+            break  # No more pages
+        offset += 500  # Next page
+
+    return all_wikis, sorted(set(domain_list))
 
 # Step 3: Write files and compare domains
 def write_files(cloudflare_list, wikidiscover_yaml, wikidiscover_domains):
