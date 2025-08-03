@@ -270,8 +270,31 @@ class puppetserver(
         description             => 'Run updatesfs nightly',
         command                 => '/root/updatesfs',
         interval                => {
-            start    => 'OnCalendar',
+            'start'  => 'OnCalendar',
             interval => '*-*-* 23:00:00',
+        },
+        user                    => 'root',
+        send_mail               => true,
+        send_mail_only_on_error => false,
+        send_mail_to            => 'root@wikitide.net',
+    }
+
+    $cloudflare_api_token = lookup('passwords::cloudflare::listdomains_roapikey')
+    $cloudflare_zone_id   = lookup('cloudflare::zone_id')
+
+    file { '/usr/local/bin/listdomains':
+        ensure  => present,
+        content => template('puppetserver/listdomains.py'),
+        mode    => '0555',
+    }
+
+    systemd::timer::job { 'listdomains_github_push':
+        ensure                  => present,
+        description             => 'Refresh custom domains list from Cloudflare and WikiDiscover hourly',
+        command                 => '/usr/local/bin/listdomains',
+        interval                => {
+            start      => 'OnCalendar',
+            'interval' => '*-*-* *:05,15,25,35,45,55'
         },
         user                    => 'root',
         send_mail               => true,
