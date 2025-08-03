@@ -30,7 +30,7 @@ proxies = {
 # Headers for Cloudflare API requests
 cf_headers = {
     "X-Auth-Key": f"{CLOUDFLARE_API_TOKEN}",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
     "User-Agent": "wikitide/listdomains.py (operated by WikiTide Foundation Technology Team - https://wikitide.org)"
 }
 
