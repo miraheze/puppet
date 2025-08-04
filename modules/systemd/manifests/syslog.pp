@@ -58,18 +58,28 @@ define systemd::syslog (
         'all'   => '0644'
     }
 
+    if ! defined(File[$base_dir]) {
+        file { $base_dir:
+            ensure => stdlib::ensure($ensure, 'directory'),
+            owner  => $owner,
+            group  => $group,
+            mode   => $dirmode,
+            force  => true,
+            backup => false,
+        }
+    }
+
     $local_logdir = "${base_dir}/${title}"
     $local_syslogfile = "${local_logdir}/${log_filename}"
 
     if ! defined(File[$local_logdir]) {
         file { $local_logdir:
             ensure => stdlib::ensure($ensure, 'directory'),
-            owner   => $owner,
-            group   => $group,
-            mode    => $dirmode,
-            force   => true,
-            recurse => true,
-            backup  => false,
+            owner  => $owner,
+            group  => $group,
+            mode   => $dirmode,
+            force  => true,
+            backup => false,
         }
     }
 
