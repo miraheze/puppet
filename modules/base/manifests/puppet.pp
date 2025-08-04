@@ -12,7 +12,7 @@ class base::puppet (
     apt::source { 'openvox':
         location => 'https://apt.voxpupuli.org',
         repos    => "openvox${puppet_major_version}",
-        release  => 'debian12',
+        release  => "debian${facts['os']['release']['major']}",
         require  => File['/etc/apt/trusted.gpg.d/openvox-keyring.gpg'],
         notify   => Exec['apt_update_openvox'],
     }
