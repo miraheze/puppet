@@ -40,14 +40,14 @@ class puppetdb(
 
     ## PuppetDB installation
 
-    package { 'puppetdb':
+    package { 'openvoxdb':
         ensure  => present,
-        require => Apt::Source['puppetlabs'],
+        require => Apt::Source['openvox'],
     }
 
-    package { 'puppetdb-termini':
+    package { 'openvoxdb-termini':
         ensure  => present,
-        require => Apt::Source['puppetlabs'],
+        require => Apt::Source['openvox'],
     }
 
     file { '/etc/puppetlabs/puppetdb/logback.xml':
@@ -59,7 +59,7 @@ class puppetdb(
     file { '/usr/bin/puppetdb':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/puppetdb',
-        require => Package['puppetdb'],
+        require => Package['openvoxdb'],
     }
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
