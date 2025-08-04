@@ -1,16 +1,16 @@
 # == Class: puppetserver
 #
-# Configures a puppetserver using puppetlabs debian repo.
+# Configures an openvox server using the openvox debian repo.
 #
 # === Parameters
 #
-# [*use_puppetdb*] Enables or disable puppetdb support.
+# [*use_puppetdb*] Enables or disable openvoxdb support.
 #
-# [*puppet_major_version*] Specify the puppetserver version you want to support / install.
+# [*puppet_major_version*] Specify the openvox-server version you want to support / install.
 #
-# [*puppetserver_hostname*] Hostname of the puppetserver.
+# [*puppetserver_hostname*] Hostname of the openvox server.
 #
-# [*puppetserver_java_opts*] Options to pass to the puppetserver, eg configuring the heap.
+# [*puppetserver_java_opts*] Options to pass to the openvox server, eg configuring the heap.
 #
 class puppetserver(
     String  $puppetdb_hostname,
@@ -205,8 +205,8 @@ class puppetserver(
         description     => 'Pull changes on the puppet repo',
         command         => '/bin/bash -c "cd /etc/puppetlabs/puppet/git && /usr/bin/git pull>/dev/null 2>&1"',
         interval        => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-* *:09,19,29,39,49,59',
+            start    => 'OnCalendar',
+            interval => '*-*-* *:09,19,29,39,49,59',
         },
         logging_enabled => false,
         user            => 'root',
@@ -270,7 +270,7 @@ class puppetserver(
         description             => 'Run updatesfs nightly',
         command                 => '/root/updatesfs',
         interval                => {
-            'start'  => 'OnCalendar',
+            start    => 'OnCalendar',
             interval => '*-*-* 23:00:00',
         },
         user                    => 'root',
@@ -293,8 +293,8 @@ class puppetserver(
         description             => 'Refresh custom domains list from Cloudflare and WikiDiscover hourly',
         command                 => '/usr/local/bin/listdomains',
         interval                => {
-            start      => 'OnCalendar',
-            'interval' => '*-*-* *:05,15,25,35,45,55'
+            start    => 'OnCalendar',
+            interval => '*-*-* *:05,15,25,35,45,55',
         },
         user                    => 'root',
         send_mail               => true,
