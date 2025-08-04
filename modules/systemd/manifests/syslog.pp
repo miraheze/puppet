@@ -64,11 +64,12 @@ define systemd::syslog (
     if ! defined(File[$local_logdir]) {
         file { $local_logdir:
             ensure => stdlib::ensure($ensure, 'directory'),
-            owner  => $owner,
-            group  => $group,
-            mode   => $dirmode,
-            force  => true,
-            backup => false,
+            owner   => $owner,
+            group   => $group,
+            mode    => $dirmode,
+            force   => true,
+            recurse => true,
+            backup  => false,
         }
     }
 
