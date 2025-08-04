@@ -310,41 +310,13 @@ class puppetserver(
     }
 
     # Backups
-    systemd::timer::job { 'backups-sslkeys':
-        ensure            => present,
-        description       => 'Runs backup of sslkeys',
-        command           => '/usr/local/bin/wikitide-backup backup sslkeys',
-        interval          => {
-            start    => 'OnCalendar',
-            interval => 'Sun *-*-* 06:00:00',
-        },
-        logfile_name      => 'sslkeys-backup.log',
-        syslog_identifier => 'sslkeys-backup',
-        user              => 'root',
+    backup::job { 'sslkeys':
+        ensure   => present,
+        interval => 'Sun *-*-* 06:00:00',
     }
 
-    monitoring::nrpe { 'Backups SSLKeys':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sslkeys-backup/sslkeys-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
-    }
-
-    systemd::timer::job { 'backups-private':
-        ensure            => present,
-        description       => 'Runs backup of private data',
-        command           => '/usr/local/bin/wikitide-backup backup private',
-        interval          => {
-            start    => 'OnCalendar',
-            interval => 'Sun *-*-* 03:00:00',
-        },
-        logfile_name      => 'private-backup.log',
-        syslog_identifier => 'private-backup',
-        user              => 'root',
-    }
-
-    monitoring::nrpe { 'Backups Private':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/private-backup/private-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    backup::job { 'private':
+        ensure   => present,
+        interval => 'Sun *-*-* 03:00:00',
     }
 }
