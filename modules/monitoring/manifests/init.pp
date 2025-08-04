@@ -204,6 +204,7 @@ class monitoring (
     }
 
     $ssl = loadyaml('/etc/puppetlabs/puppet/ssl-cert/certs.yaml')
+    $domains = readlines('/etc/puppetlabs/puppet/ssl-cert/cloudflare_domains')
     $redirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
     $sslcerts = $ssl + $redirects
 
