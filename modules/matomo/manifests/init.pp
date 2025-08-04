@@ -171,14 +171,6 @@ class matomo (
         require => Git::Clone['matomo'],
     }
 
-    file { '/var/log/matomo':
-        ensure  => 'directory',
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '0755',
-        require => Git::Clone['matomo'],
-    }
-
     # Install a systemd timer to run the Archive task periodically.
     # Running it once a day to avoid performance penalties on high trafficated websites
     # (https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/#important-tips-for-medium-to-high-traffic-websites)
@@ -200,9 +192,11 @@ class matomo (
                 'interval' => $interval,
             },
             logfile_basedir   => '/var/log/matomo',
+            logfile_group     => 'www-data',
             logfile_name      => "matomo-archive-${concurrent}.log",
             syslog_identifier => "matomo-archiver-${concurrent}",
             user              => 'www-data',
+            require           => Git::Clone['matomo'],
         }
     }
 
@@ -216,9 +210,11 @@ class matomo (
                 'interval' => 'monthly',
             },
             logfile_basedir   => '/var/log/matomo',
+            logfile_group     => 'www-data',
             logfile_name      => "matomo-optimize-${key}.log",
             syslog_identifier => "matomo-optimize-${key}",
             user              => 'www-data',
+            require           => Git::Clone['matomo'],
         }
     }
 
@@ -233,9 +229,11 @@ class matomo (
                 'interval' => '*-*-* *:*:00',
             },
             logfile_basedir   => '/var/log/matomo',
+            logfile_group     => 'www-data',
             logfile_name      => "matomo-queuedtracking-${key}.log",
             syslog_identifier => "matomo-queuedtracking-${key}",
             user              => 'www-data',
+            require           => Git::Clone['matomo'],
         }
     }
 }

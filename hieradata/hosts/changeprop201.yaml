@@ -38,7 +38,7 @@ changeprop::high_traffic_jobs_config:
   LocalGlobalUserPageCacheUpdateJob:
     # This job is prone to large spikes, so having it on the low_traffic_jobs queue
     # blocks other jobs.
-    concurrency: 45
+    concurrency: 100
   notificationGetStartedJob:
     concurrency: 2
     # The jobs have a variable delay (several hours, up to 48 hours),

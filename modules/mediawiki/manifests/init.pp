@@ -93,6 +93,8 @@ class mediawiki {
     $hcaptcha_secretkey         = lookup('passwords::hcaptcha::secretkey')
     $shellbox_secretkey         = lookup('passwords::shellbox::secretkey')
     $matomotoken                = lookup('passwords::mediawiki::matomotoken')
+    $cloudflare_apikey          = lookup('passwords::mediawiki::cloudflare_requestssl_apikey')
+    $cloudflare_zoneid          = lookup('cloudflare::zone_id')
     $ldap_password              = lookup('passwords::mediawiki::ldap_password')
     $discord_experimental_webhook = lookup('mediawiki::discord_experimental_webhook')
     $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')

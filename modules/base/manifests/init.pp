@@ -14,7 +14,6 @@ class base (
     include base::firewall
     include base::mail
     include base::monitoring
-    include base::backup
     include ssh
     include users
 

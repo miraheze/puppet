@@ -187,27 +187,10 @@ class puppetdb(
         use_udp           => true,
     }
 
-    # Backup provisioning
-    file { '/srv/backups':
-        ensure => directory,
-    }
-
-    systemd::timer::job { 'puppetdb-backup':
-        description       => 'Runs backup of puppetdb',
-        command           => '/usr/local/bin/wikitide-backup backup puppetdb',
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-1,15 01:00:00',
-        },
-        logfile_name      => 'puppetdb.log',
-        syslog_identifier => 'puppetdb-backup',
-        user              => 'root',
-    }
-
-    monitoring::nrpe { 'Backups PuppetDB':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/puppetdb-backup/puppetdb-backup/puppetdb.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    # Backups
+    backup::job { 'puppetdb':
+        ensure   => present,
+        interval => '*-*-1,15 01:00:00',
     }
 
     monitoring::services { 'puppetdb':

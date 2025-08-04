@@ -270,8 +270,31 @@ class puppetserver(
         description             => 'Run updatesfs nightly',
         command                 => '/root/updatesfs',
         interval                => {
-            start    => 'OnCalendar',
+            'start'  => 'OnCalendar',
             interval => '*-*-* 23:00:00',
+        },
+        user                    => 'root',
+        send_mail               => true,
+        send_mail_only_on_error => false,
+        send_mail_to            => 'root@wikitide.net',
+    }
+
+    $cloudflare_api_token = lookup('passwords::cloudflare::listdomains_roapikey')
+    $cloudflare_zone_id   = lookup('cloudflare::zone_id')
+
+    file { '/usr/local/bin/listdomains':
+        ensure  => present,
+        content => template('puppetserver/listdomains.py'),
+        mode    => '0555',
+    }
+
+    systemd::timer::job { 'listdomains_github_push':
+        ensure                  => present,
+        description             => 'Refresh custom domains list from Cloudflare and WikiDiscover hourly',
+        command                 => '/usr/local/bin/listdomains',
+        interval                => {
+            start      => 'OnCalendar',
+            'interval' => '*-*-* *:05,15,25,35,45,55'
         },
         user                    => 'root',
         send_mail               => true,
@@ -287,41 +310,13 @@ class puppetserver(
     }
 
     # Backups
-    systemd::timer::job { 'backups-sslkeys':
-        ensure            => present,
-        description       => 'Runs backup of sslkeys',
-        command           => '/usr/local/bin/wikitide-backup backup sslkeys',
-        interval          => {
-            start    => 'OnCalendar',
-            interval => 'Sun *-*-* 06:00:00',
-        },
-        logfile_name      => 'sslkeys-backup.log',
-        syslog_identifier => 'sslkeys-backup',
-        user              => 'root',
+    backup::job { 'sslkeys':
+        ensure   => present,
+        interval => 'Sun *-*-* 06:00:00',
     }
 
-    monitoring::nrpe { 'Backups SSLKeys':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sslkeys-backup/sslkeys-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
-    }
-
-    systemd::timer::job { 'backups-private':
-        ensure            => present,
-        description       => 'Runs backup of private data',
-        command           => '/usr/local/bin/wikitide-backup backup private',
-        interval          => {
-            start    => 'OnCalendar',
-            interval => 'Sun *-*-* 03:00:00',
-        },
-        logfile_name      => 'private-backup.log',
-        syslog_identifier => 'private-backup',
-        user              => 'root',
-    }
-
-    monitoring::nrpe { 'Backups Private':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/private-backup/private-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    backup::job { 'private':
+        ensure   => present,
+        interval => 'Sun *-*-* 03:00:00',
     }
 }

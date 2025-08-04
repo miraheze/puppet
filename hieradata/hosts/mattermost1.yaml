@@ -1,3 +1,3 @@
 base::bots_hostname: 'bots171.public.fsslc.wtnet'
 base::syslog::syslog_host: [ 'graylog161.public.fsslc.wtnet:12210' ]
-backups::use_gateway: false
+backup::job::use_gateway: false
