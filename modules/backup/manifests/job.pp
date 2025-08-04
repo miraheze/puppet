@@ -9,8 +9,8 @@ define backup::job (
 ) {
     stdlib::ensure_packages(['python3-fabric', 'python3-decorator'])
 
-    $pca_password = lookup('private::passwords::pca'),
-    $use_gateway = lookup('backup::job::use_gateway', {'default_value' => true}),
+    $pca_password = lookup('private::passwords::pca')
+    $use_gateway = lookup('backup::job::use_gateway', {'default_value' => true})
 
     if !defined(File['/usr/local/bin/wikitide-backup']) {
         file { '/usr/local/bin/wikitide-backup':
