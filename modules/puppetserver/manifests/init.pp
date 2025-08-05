@@ -1,16 +1,16 @@
 # == Class: puppetserver
 #
-# Configures a puppetserver using puppetlabs debian repo.
+# Configures an openvox server using the openvox debian repo.
 #
 # === Parameters
 #
-# [*use_puppetdb*] Enables or disable puppetdb support.
+# [*use_puppetdb*] Enables or disable openvoxdb support.
 #
-# [*puppet_major_version*] Specify the puppetserver version you want to support / install.
+# [*puppet_major_version*] Specify the openvox-server version you want to support / install.
 #
-# [*puppetserver_hostname*] Hostname of the puppetserver.
+# [*puppetserver_hostname*] Hostname of the openvox server.
 #
-# [*puppetserver_java_opts*] Options to pass to the puppetserver, eg configuring the heap.
+# [*puppetserver_java_opts*] Options to pass to the openvox server, eg configuring the heap.
 #
 class puppetserver(
     String  $puppetdb_hostname,
@@ -19,49 +19,49 @@ class puppetserver(
     String  $puppetserver_hostname,
     String  $puppetserver_java_opts,
 ) {
-    package { 'puppetserver':
+    package { 'openvox-server':
         ensure  => present,
-        require => Apt::Source['puppetlabs'],
+        require => Apt::Source['openvox'],
     }
 
     file { '/usr/bin/puppetserver':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/puppetserver',
-        require => Package['puppetserver'],
+        require => Package['openvox-server'],
     }
 
     file { '/etc/default/puppetserver':
         ensure  => present,
         content => template('puppetserver/puppetserver.erb'),
-        require => Package['puppetserver'],
+        require => Package['openvox-server'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/auth.conf':
         ensure  => present,
         source  => 'puppet:///modules/puppetserver/auth.conf',
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/fileserver.conf':
         ensure  => present,
         source  => 'puppet:///modules/puppetserver/fileserver.conf',
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/hiera.yaml':
         ensure  => present,
         source  => 'puppet:///modules/puppetserver/hiera.yaml',
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
         notify  => Service['puppetserver'],
     }
 
     file { '/etc/puppetlabs/puppet/puppet.conf':
         ensure  => present,
         content => template('puppetserver/puppet.conf.erb'),
-        require => Package['puppet-agent'],
+        require => Package['openvox-agent'],
         notify  => Service['puppetserver'],
     }
 
@@ -69,14 +69,14 @@ class puppetserver(
         ensure    => latest,
         directory => '/etc/puppetlabs/puppet/git',
         origin    => 'https://github.com/miraheze/puppet',
-        require   => Package['puppet-agent'],
+        require   => Package['openvox-agent'],
     }
 
     git::clone { 'ssl':
         ensure    => latest,
         directory => '/etc/puppetlabs/puppet/ssl-cert',
         origin    => 'https://github.com/miraheze/ssl',
-        require   => Package['puppet-agent'],
+        require   => Package['openvox-agent'],
     }
 
     git::clone { 'mediawiki-repos':
@@ -85,7 +85,7 @@ class puppetserver(
         origin    => 'https://github.com/miraheze/mediawiki-repos',
         owner     => 'puppet',
         group     => 'puppet',
-        require   => Package['puppet-agent'],
+        require   => Package['openvox-agent'],
     }
 
     git::clone { 'pywikibot-config':
@@ -94,7 +94,7 @@ class puppetserver(
         origin    => 'https://github.com/miraheze/pywikibot-config',
         owner     => 'puppet',
         group     => 'puppet',
-        require   => Package['puppet-agent'],
+        require   => Package['openvox-agent'],
     }
 
     file { '/etc/puppetlabs/puppet/private':
@@ -122,7 +122,7 @@ class puppetserver(
     file { '/etc/puppetlabs/puppet/environments':
         ensure  => directory,
         mode    => '0775',
-        require => Package['puppetserver'],
+        require => Package['openvox-server'],
     }
 
     file { '/etc/puppetlabs/puppet/environments/production':
@@ -192,7 +192,7 @@ class puppetserver(
         ensure   => running,
         enable   => true,
         provider => 'systemd',
-        require  => Package['puppetserver'],
+        require  => Package['openvox-server'],
     }
 
     ferm::service { 'puppetserver':
@@ -205,8 +205,8 @@ class puppetserver(
         description     => 'Pull changes on the puppet repo',
         command         => '/bin/bash -c "cd /etc/puppetlabs/puppet/git && /usr/bin/git pull>/dev/null 2>&1"',
         interval        => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-* *:09,19,29,39,49,59',
+            start    => 'OnCalendar',
+            interval => '*-*-* *:09,19,29,39,49,59',
         },
         logging_enabled => false,
         user            => 'root',
@@ -279,6 +279,29 @@ class puppetserver(
         send_mail_to            => 'root@wikitide.net',
     }
 
+    $cloudflare_api_token = lookup('passwords::cloudflare::listdomains_roapikey')
+    $cloudflare_zone_id   = lookup('cloudflare::zone_id')
+
+    file { '/usr/local/bin/listdomains':
+        ensure  => present,
+        content => template('puppetserver/listdomains.py'),
+        mode    => '0555',
+    }
+
+    systemd::timer::job { 'listdomains_github_push':
+        ensure                  => present,
+        description             => 'Refresh custom domains list from Cloudflare and WikiDiscover hourly',
+        command                 => '/usr/local/bin/listdomains',
+        interval                => {
+            start    => 'OnCalendar',
+            interval => '*-*-* *:05,15,25,35,45,55',
+        },
+        user                    => 'root',
+        send_mail               => true,
+        send_mail_only_on_error => false,
+        send_mail_to            => 'root@wikitide.net',
+    }
+
     monitoring::services { 'puppetserver':
         check_command => 'tcp',
         vars          => {
@@ -287,41 +310,13 @@ class puppetserver(
     }
 
     # Backups
-    systemd::timer::job { 'backups-sslkeys':
-        ensure            => present,
-        description       => 'Runs backup of sslkeys',
-        command           => '/usr/local/bin/wikitide-backup backup sslkeys',
-        interval          => {
-            start    => 'OnCalendar',
-            interval => 'Sun *-*-* 06:00:00',
-        },
-        logfile_name      => 'sslkeys-backup.log',
-        syslog_identifier => 'sslkeys-backup',
-        user              => 'root',
+    backup::job { 'sslkeys':
+        ensure   => present,
+        interval => 'Sun *-*-* 06:00:00',
     }
 
-    monitoring::nrpe { 'Backups SSLKeys':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/sslkeys-backup/sslkeys-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
-    }
-
-    systemd::timer::job { 'backups-private':
-        ensure            => present,
-        description       => 'Runs backup of private data',
-        command           => '/usr/local/bin/wikitide-backup backup private',
-        interval          => {
-            start    => 'OnCalendar',
-            interval => 'Sun *-*-* 03:00:00',
-        },
-        logfile_name      => 'private-backup.log',
-        syslog_identifier => 'private-backup',
-        user              => 'root',
-    }
-
-    monitoring::nrpe { 'Backups Private':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/private-backup/private-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    backup::job { 'private':
+        ensure   => present,
+        interval => 'Sun *-*-* 03:00:00',
     }
 }

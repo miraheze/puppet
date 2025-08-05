@@ -3,7 +3,7 @@ class role::matomo {
 
     include prometheus::exporter::redis
     class { '::redis':
-        maxmemory_policy => 'volatile-lru',
+        maxmemory_policy => 'allkeys-lru',
         password         => lookup('passwords::redis::master')
     }
     include ::matomo
