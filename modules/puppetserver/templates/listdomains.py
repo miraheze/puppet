@@ -145,7 +145,7 @@ def git_push(workdir):
         print("No changes to commit.")
         return
 
-    subprocess.run(["git", "commit", "-m", "Automatic: Updating domain lists in Cloudflare and WikiDiscover (listdomains.py)"], check=True)
+    subprocess.run(["git", "commit", "-m", "Bot: Auto-update domain lists"], check=True)
     subprocess.run(["git", "push", "origin"], check=True)
 
 
