@@ -28,7 +28,7 @@ class role::bastion {
         ' '
     )
 
-    # Add entire 10.0.0.0/8 (private IP) range and
+    # Add entire 10.0.0.0/8 (internal network) range and
     # remove individual private IPs.
     $squid_access_hosts_combined = join(
         (
