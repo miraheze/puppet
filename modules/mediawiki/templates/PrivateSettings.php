@@ -26,21 +26,21 @@ $wgMatomoAnalyticsTokenAuth = '<%= @matomotoken %>';
 
 // OpenAI settings
 $wgCreateWikiOpenAIConfig = [
-  'dryrun' => false,
-  'apikey' => '<%= @openai_apikey %>',
-  'assistantid' => '<%= @openai_assistantid %>',
+	'dryrun' => false,
+	'apikey' => '<%= @openai_apikey %>',
+	'assistantid' => '<%= @openai_assistantid %>',
 ];
 
 // RequestCustomDomain settings
 $wgRequestCustomDomainCloudflareConfig = [
-  'apikey' => '<%= @cloudflare_apikey %>',
-  'zoneid' => '<%= @cloudflare_zoneid %>',
+	'apikey' => '<%= @cloudflare_apikey %>',
+	'zoneid' => '<%= @cloudflare_zoneid %>',
 ];
 
 // RequestSSL settings
 $wgRequestSSLCloudflareConfig = [
-  'apikey' => '<%= @cloudflare_apikey %>',
-  'zoneid' => '<%= @cloudflare_zoneid %>',
+	'apikey' => '<%= @cloudflare_apikey %>',
+	'zoneid' => '<%= @cloudflare_zoneid %>',
 ];
 
 // Extension:DiscordNotifications global webhook
