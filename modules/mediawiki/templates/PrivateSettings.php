@@ -33,6 +33,7 @@ $wgCreateWikiOpenAIConfig = [
 
 // RequestCustomDomain settings
 $wgRequestCustomDomainCloudflareConfig = [
+	'tlsversion' => '1.3',
 	'apikey' => '<%= @cloudflare_apikey %>',
 	'zoneid' => '<%= @cloudflare_zoneid %>',
 ];
