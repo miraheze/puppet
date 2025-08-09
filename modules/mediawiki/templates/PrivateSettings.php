@@ -38,12 +38,6 @@ $wgRequestCustomDomainCloudflareConfig = [
 	'zoneid' => '<%= @cloudflare_zoneid %>',
 ];
 
-// RequestSSL settings
-$wgRequestSSLCloudflareConfig = [
-	'apikey' => '<%= @cloudflare_apikey %>',
-	'zoneid' => '<%= @cloudflare_zoneid %>',
-];
-
 // Extension:DiscordNotifications global webhook
 $wmgGlobalDiscordWebhookUrl = '<%= @global_discord_webhook_url %>';
 $wmgDiscordExperimentalWebhook = '<%= @discord_experimental_webhook %>';
