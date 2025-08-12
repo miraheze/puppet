@@ -19,7 +19,7 @@ jobs:
     env:
       DEBUG_ACCESS_KEY: ${{ secrets.DEBUG_ACCESS_KEY }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Python ${{ matrix.python }}
         uses: actions/setup-python@v5
         with:
