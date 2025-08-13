@@ -8,7 +8,7 @@ puppetdb_hostname: puppet181.wikitide.net
 puppetdb::db_ssl: true
 puppetdb::db_rw_host: puppet181.wikitide.net
 postgresql::ssl: true
-puppetdb::command_processing_threads: 8
+puppetdb::command_processing_threads: 10
 puppetserver_hostname: 'puppet181.wikitide.net'
 role::salt::minions::salt_master: 'puppet181.wikitide.net'
 role::salt::minions::salt_master_key: true
