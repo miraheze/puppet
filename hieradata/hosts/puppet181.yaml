@@ -1,7 +1,8 @@
 users::groups:
   - ssl-admins
 puppetserver: true
-puppetserver_java_opts: '-Xms2000M -Xmx2000M'
+puppetserver_java_opts: '-Xms2G -Xmx2G'
+profile::puppetdb::jvm_opts: '-Xmx2G'
 puppetdb_enable: true
 puppetdb_hostname: puppet181.wikitide.net
 puppetdb::db_ssl: true
