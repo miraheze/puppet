@@ -3,6 +3,8 @@ class irc::pywikibot {
     $install_path = '/srv/pywikibot'
     # The directory pointed to by the PYWIKIBOT_DIR environment variable
     $base_path = '/var/local/pwb'
+    # Directory where custom userscripts will be installed to
+    $userscripts_path '/var/local/pwb/userscripts'
 
     $consumer_token = lookup('passwords::pywikibot::consumer_token')
     $consumer_secret = lookup('passwords::pywikibot::consumer_secret')
@@ -28,6 +30,13 @@ class irc::pywikibot {
         ensure => 'directory',
         owner  => 'pywikibot',
         group  => 'pywikibot',
+        mode   => '0644',
+    }
+
+    file { $userscripts_path:
+        ensure => 'directory'
+        owner  => 'pywikibot'
+        group  => 'pywikibot'
         mode   => '0644',
     }
 
@@ -60,6 +69,15 @@ class irc::pywikibot {
         group              => 'pywikibot',
         recurse_submodules => true,
         require            => File[$install_path],
+    }
+
+    git::clone { 'Wikitide-userscripts': 
+        ensure    => latest,
+        origin    => 'https://github.com/miraheze/pywikibot-userscripts',
+        directory => $userscripts_path,
+        owner     => 'pywikibot',
+        group     => 'pywikibot',
+        require   => File[$userscripts_path],
     }
 
     file { "${base_path}/user-config.py":
