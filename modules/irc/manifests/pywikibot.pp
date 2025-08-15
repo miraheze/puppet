@@ -4,7 +4,7 @@ class irc::pywikibot {
     # The directory pointed to by the PYWIKIBOT_DIR environment variable
     $base_path = '/var/local/pwb'
     # Directory where custom userscripts will be installed to
-    $userscripts_path '/var/local/pwb/wikitide-userscripts'
+    $userscripts_path = '/var/local/pwb/wikitide-userscripts'
 
     $consumer_token = lookup('passwords::pywikibot::consumer_token')
     $consumer_secret = lookup('passwords::pywikibot::consumer_secret')
