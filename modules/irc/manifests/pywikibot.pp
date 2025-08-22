@@ -74,6 +74,7 @@ class irc::pywikibot {
     git::clone { 'Wikitide-userscripts': 
         ensure    => latest,
         origin    => 'https://github.com/miraheze/pywikibot-userscripts',
+        branch    => 'main',
         directory => $userscripts_path,
         owner     => 'pywikibot',
         group     => 'pywikibot',
