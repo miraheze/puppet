@@ -89,6 +89,32 @@ class mediawiki::jobqueue::runner (
                 command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/maintenance/updateSpecialPages.php",
                 interval => '*-1/3 05:00',
             }
+
+            stdlib::ensure_packages('python3-internetarchive')
+
+            file { '/usr/local/bin/iaupload':
+                ensure => present,
+                mode   => '0755',
+                source => 'puppet:///modules/mediawiki/bin/iaupload.py',
+            }
+
+            file { '/usr/local/bin/backupwikis':
+                ensure => present,
+                mode   => '0755',
+                source => 'puppet:///modules/mediawiki/bin/backupwikis',
+            }
+
+            file { '/opt/backups':
+                ensure => directory,
+                owner  => 'www-data',
+                group  => 'www-data',
+                mode   => '0755',
+            }
+
+            mediawiki::periodic_job { 'backup-all-wikis-ia':
+                command  => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php',
+                interval => 'monthly',
+            }
         }
 
         if $wiki == 'loginwikibeta' {
@@ -101,6 +127,24 @@ class mediawiki::jobqueue::runner (
                 command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/LoginNotify/maintenance/purgeSeen.php --wiki loginwikibeta",
                 interval => '*-*-* 23:00:00',
             }
+
+            file { '/usr/local/bin/iaupload':
+                ensure => absent,
+                mode   => '0755',
+                source => 'puppet:///modules/mediawiki/bin/iaupload.py',
+            }
+
+            file { '/usr/local/bin/backupwikis':
+                ensure => absent,
+                mode   => '0755',
+                source => 'puppet:///modules/mediawiki/bin/backupwikis',
+            }
+
+            mediawiki::periodic_job { 'backup-all-wikis-ia':
+                ensure   => absent,
+                command  => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php',
+                interval => 'monthly',
+            }
         }
 
         mediawiki::periodic_job { 'update-statistics':
@@ -111,32 +155,6 @@ class mediawiki::jobqueue::runner (
         mediawiki::periodic_job { 'update-wikibase-sites-table':
             command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php MirahezeMagic:PopulateWikibaseSitesTable --wiki=${wiki} --all-wikis",
             interval => '*-*-5,20 05:00:00',
-        }
-
-        stdlib::ensure_packages(['python3-internetarchive'])
-
-        file { '/usr/local/bin/iaupload':
-            ensure => present,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/bin/iaupload.py',
-        }
-
-        file { '/usr/local/bin/backupwikis':
-            ensure => present,
-            mode   => '0755',
-            source => 'puppet:///modules/mediawiki/bin/backupwikis',
-        }
-
-        file { '/opt/backups':
-            ensure => directory,
-            owner  => 'www-data',
-            group  => 'www-data',
-            mode   => '0755',
-        }
-
-        mediawiki::periodic_job { 'backup-all-wikis-ia':
-            command  => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php',
-            interval => 'monthly',
         }
     }
 }
