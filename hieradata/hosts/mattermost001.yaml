@@ -1,3 +1,4 @@
 base::bots_hostname: 'bots171.public.fsslc.wtnet'
+base::ntp_server: 'time.cloudflare.com'
 base::syslog::syslog_host: [ 'graylog161.public.fsslc.wtnet:12210' ]
 backup::job::use_gateway: false

@@ -59,11 +59,19 @@ class base (
 
     class { 'apt::security': }
 
+    $ntp_server = lookup('base::ntp_server')
+
     class { 'ntp':
-        servers   => [ 'time.cloudflare.com' ],
+        servers   => [ $ntp_server ],
         config    => '/etc/ntpsec/ntp.conf',
         driftfile => '/var/lib/ntpsec/ntp.drift',
-        restrict  => [ 'default kod limited nomodify noquery', '-6 default kod limited nomodify noquery', '127.0.0.1', '-6 ::1' ],
+        restrict  => [
+            'default kod limited nomodify noquery',
+            '-6 default kod limited nomodify noquery',
+            '127.0.0.1',
+            '-6 ::1',
+            '10.0.0.0 mask 255.0.0.0 nomodify notrap',
+        ],
     }
 
     # Used by salt-user
