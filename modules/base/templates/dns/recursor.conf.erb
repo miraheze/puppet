@@ -2,7 +2,11 @@
 allow-from = 127.0.0.0/8, ::1/128
 config-dir = /etc/powerdns
 dnssec = off
+<%- if @forward_use_internal -%>
+local-address = 127.0.0.1
+<%- else -%>
 local-address = ::1
+<%- end -%>
 quiet = yes
 setgid = pdns
 setuid = pdns
