@@ -13,9 +13,10 @@ class base::dns (
         $threads = $facts['processors']['count']
     }
 
-    $forward_zones = 'wtnet=2602:294:0:b23::111;2001:41d0:801:2000::4089, 10.in-addr.arpa=2602:294:0:b23::111;2001:41d0:801:2000::4089, wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089'
     if $forward_use_internal {
         $forward_zones = 'wtnet=10.0.17.136, 10.in-addr.arpa=10.0.17.136, wikitide.net=10.0.17.136'
+    } else {
+        $forward_zones = 'wtnet=2602:294:0:b23::111;2001:41d0:801:2000::4089, 10.in-addr.arpa=2602:294:0:b23::111;2001:41d0:801:2000::4089, wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089'
     }
 
     file { '/etc/powerdns/recursor.conf':
