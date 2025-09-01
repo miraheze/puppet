@@ -127,24 +127,6 @@ class mediawiki::jobqueue::runner (
                 command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/LoginNotify/maintenance/purgeSeen.php --wiki loginwikibeta",
                 interval => '*-*-* 23:00:00',
             }
-
-            file { '/usr/local/bin/iaupload':
-                ensure => absent,
-                mode   => '0755',
-                source => 'puppet:///modules/mediawiki/bin/iaupload.py',
-            }
-
-            file { '/usr/local/bin/backupwikis':
-                ensure => absent,
-                mode   => '0755',
-                source => 'puppet:///modules/mediawiki/bin/backupwikis',
-            }
-
-            mediawiki::periodic_job { 'backup-all-wikis-ia':
-                ensure   => absent,
-                command  => '/usr/local/bin/backupwikis /srv/mediawiki/cache/public.php',
-                interval => 'monthly',
-            }
         }
 
         mediawiki::periodic_job { 'update-statistics':
