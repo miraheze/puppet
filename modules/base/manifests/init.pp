@@ -59,8 +59,10 @@ class base (
 
     class { 'apt::security': }
 
+    $ntp_server = lookup('base::ntp_server')
+
     class { 'ntp':
-        servers   => [ 'time.cloudflare.com' ],
+        servers   => [ $ntp_server ],
         config    => '/etc/ntpsec/ntp.conf',
         driftfile => '/var/lib/ntpsec/ntp.drift',
         restrict  => [
