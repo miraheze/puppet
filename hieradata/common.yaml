@@ -4,6 +4,8 @@ puppetserver: false
 
 puppet_major_version: 8
 
+base::ntp_server: 'bastion.fsslc.wtnet'
+
 mediawiki::multiversion::versions:
   '1.43':
     branch: 'REL1_43'
