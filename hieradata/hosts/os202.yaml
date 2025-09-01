@@ -12,3 +12,6 @@ role::opensearch::master_host: 'http://os162.fsslc.wtnet:9200'
 opensearch::api_host: os162.fsslc.wtnet
 
 base::syslog::rsyslog_udp_localhost: true
+
+base::dns::query_local_address: ['0.0.0.0']
+base::dns::forward_use_internal: true

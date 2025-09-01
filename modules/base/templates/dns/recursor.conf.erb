@@ -18,7 +18,7 @@ max-cache-entries=500000
 
 stats-ringbuffer-entries=1000
 
-query-local-address=::,0.0.0.0
+query-local-address= <%= @query_local_address.join(', ') %>
 
 # This prevents pdns from polling a public server to check for sec fixes
 security-poll-suffix=
@@ -27,4 +27,4 @@ security-poll-suffix=
 hint-file=/usr/share/dns/root.hints
 
 # Forward requests to our authorative servers
-forward-zones = wtnet=2602:294:0:b23::111;2001:41d0:801:2000::4089, 10.in-addr.arpa=2602:294:0:b23::111;2001:41d0:801:2000::4089, wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089
+forward-zones = <%= @forward_zones %>

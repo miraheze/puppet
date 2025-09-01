@@ -1,2 +1,4 @@
 users::groups:
   - bastion
+
+base::dns::query_local_address: ['0.0.0.0', '::']
