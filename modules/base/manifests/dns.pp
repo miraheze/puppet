@@ -1,5 +1,8 @@
 # class base::dns
-class base::dns {
+class base::dns (
+    Array[String] $query_local_address,
+    Boolean       $forward_use_internal,
+) {
     package { 'pdns-recursor':
         ensure => present,
     }
@@ -8,6 +11,11 @@ class base::dns {
         $threads = 4
     } else {
         $threads = $facts['processors']['count']
+    }
+
+    $forward_zones = 'wtnet=2602:294:0:b23::111;2001:41d0:801:2000::4089, 10.in-addr.arpa=2602:294:0:b23::111;2001:41d0:801:2000::4089, wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089'
+    if $forward_use_internal {
+        $forward_zones = 'wtnet=10.0.17.136, 10.in-addr.arpa=10.0.17.136, wikitide.net=10.0.17.136'
     }
 
     file { '/etc/powerdns/recursor.conf':
