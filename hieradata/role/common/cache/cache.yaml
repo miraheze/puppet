@@ -317,5 +317,3 @@ role::cache::haproxy::extended_logging: true
 # base
 
 base::syslog::rsyslog_udp_localhost: true
-
-base::dns::query_local_address: ['0.0.0.0', '::']
