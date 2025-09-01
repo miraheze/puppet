@@ -1,8 +1,6 @@
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
-role::opensearch::master: true
 role::opensearch::data: true
-role::opensearch::enable_exporter: false
 role::opensearch::discovery_host:
   - os162.fsslc.wtnet
   - os202.fsslc.wtnet
