@@ -5,6 +5,7 @@ role::opensearch::data: true
 role::opensearch::enable_exporter: false
 role::opensearch::discovery_host:
   - os162.fsslc.wtnet
+  - os202.fsslc.wtnet
 role::opensearch::master_hosts:
   - os162
 role::opensearch::master_host: 'http://os162.fsslc.wtnet:9200'
