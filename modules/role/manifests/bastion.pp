@@ -45,4 +45,10 @@ class role::bastion {
         port   => '8080',
         srange => "(${squid_access_hosts_internal})",
     }
+
+    ferm::service { 'bastion-ntp':
+        proto  => 'udp',
+        port   => '123',
+        srange => '10.0.0.0/8',
+    }
 }
