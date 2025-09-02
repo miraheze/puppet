@@ -85,9 +85,9 @@ changeprop::high_traffic_jobs_config:
   wikibase-InjectRCRecords:
     concurrency: 2
   parsoidCachePrewarm:
-    concurrency: 20
+    concurrency: 15
   htmlCacheUpdate:
-    concurrency: 20
+    concurrency: 15
   refreshLinks:
     concurrency: 10
     # Abandon jobs which root job is more than 1 week long
