@@ -28,7 +28,7 @@ script-src:
   - '*.wikinews.org'
   - '*.wikivoyage.org'
   - 'mediawiki.org'
-  - 'www.mediawiki.org'
+  - '*.mediawiki.org'
   - 'wikidata.org'
   - 'www.gstatic.com'
   - 'www.google.com'
@@ -68,7 +68,7 @@ style-src:
   - '*.wikinews.org'
   - '*.wikivoyage.org'
   - 'mediawiki.org'
-  - 'www.mediawiki.org'
+  - '*.mediawiki.org'
   - 'wikidata.org'
   - 'www.gstatic.com'
   - 'fonts.googleapis.com'
@@ -143,6 +143,10 @@ img-src:
   - '*.rbxcdn.com'
   - 'cms-imgp.jw-cdn.org'
   - 'hosted.weblate.org'
+  - 'minecraft.wiki'
+  - 'www.divine-pride.net'
+  - 'static.divine-pride.net'
+  - 'legacyofnightwind.com'
 
 font-src:
   - "'self'"
@@ -214,6 +218,7 @@ frame-src:
   - '*.hcaptcha.com'
   - 'bandcamp.com'
   - 'challenges.cloudflare.com'
+  - 'map.showdown.wiki'
 
 connect-src:
   - "'self'"
@@ -238,3 +243,5 @@ connect-src:
   - 'translate.googleapis.com'
   - 'games.roblox.com'
   - 'economy.roblox.com'
+  - 'discord.com'
+  - 'discordapp.com'

@@ -30,7 +30,7 @@ class monitoring (
         }
     }
 
-    $version = lookup('mariadb::version', {'default_value' => '10.11'})
+    $version = lookup('mariadb::version', {'default_value' => '11.8'})
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
         location => "https://mirror.mariadb.org/repo/${version}/debian",

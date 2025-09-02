@@ -1,10 +1,10 @@
-mariadb::config::innodb_buffer_pool_size: '8G'
+mariadb::config::innodb_buffer_pool_size: '14G'
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 role::db::weekly_misc: ['reports']
 role::db::fortnightly_misc: ['icinga', 'icingaweb2']
 role::db::monthly_misc: []
 role::db::backup_sql: false
 role::db::enable_bin_logs: false
-mariadb::version: '10.11'
+mariadb::version: '11.8'
 role::db::enable_ssl: false
 role::db::is_beta_db: false

@@ -49,10 +49,9 @@ class postgresql::master(
 
     $_pgversion = $pgversion ? {
         undef   => $facts['os']['distro']['codename'] ? {
-            'buster'   => 11,
-            'bullseye' => 13,
             'bookworm' => 15,
-            default    => fail("${title} not supported by: ${$facts['os']['distro']['codename']})")
+            'trixie'   => 17,
+            default    => fail("${title} not supported by: ${$facts['os']['distro']['codename']})"),
         },
         default => $pgversion,
     }

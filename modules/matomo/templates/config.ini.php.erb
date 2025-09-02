@@ -8,6 +8,8 @@ dbname = "matomo"
 tables_prefix = "matomo_"
 adapter = "MYSQLI"
 charset = "utf8mb4"
+collation = "utf8mb4_general_ci"
+schema = Mariadb
 
 [General]
 browser_archiving_disabled_enforce = 1
@@ -21,10 +23,6 @@ maintenance_mode = 0
 enable_internet_features = 0
 enable_tracking_failures_notification = 0
 enable_browser_archiving_triggering = 0
-
-[CustomReports]
-custom_reports_max_execution_time = 2700
-custom_reports_disabled_dimensions = "CoreHome.VisitLastActionDate"
 
 [Tracker]
 bulk_requests_use_transaction = 0
@@ -76,7 +74,6 @@ Plugins[] = "CoreConsole"
 Plugins[] = "ScheduledReports"
 Plugins[] = "UserCountryMap"
 Plugins[] = "Live"
-Plugins[] = "CustomVariables"
 Plugins[] = "PrivacyManager"
 Plugins[] = "ImageGraph"
 Plugins[] = "Annotations"
@@ -86,7 +83,6 @@ Plugins[] = "SegmentEditor"
 Plugins[] = "Insights"
 Plugins[] = "Morpheus"
 Plugins[] = "Contents"
-Plugins[] = "TestRunner"
 Plugins[] = "BulkTracking"
 Plugins[] = "Resolution"
 Plugins[] = "DevicePlugins"
@@ -100,6 +96,7 @@ Plugins[] = "DeviceDetectorCache"
 Plugins[] = "Login"
 Plugins[] = "LoginLdap"
 Plugins[] = "PagePerformance"
+Plugins[] = "CustomDimensions"
 
 [PluginsInstalled]
 PluginsInstalled[] = "Diagnostics"
@@ -138,7 +135,6 @@ PluginsInstalled[] = "CoreConsole"
 PluginsInstalled[] = "ScheduledReports"
 PluginsInstalled[] = "UserCountryMap"
 PluginsInstalled[] = "Live"
-PluginsInstalled[] = "CustomVariables"
 PluginsInstalled[] = "PrivacyManager"
 PluginsInstalled[] = "ImageGraph"
 PluginsInstalled[] = "Annotations"
@@ -150,7 +146,6 @@ PluginsInstalled[] = "ZenMode"
 PluginsInstalled[] = "LeftMenu"
 PluginsInstalled[] = "Morpheus"
 PluginsInstalled[] = "Contents"
-PluginsInstalled[] = "TestRunner"
 PluginsInstalled[] = "BulkTracking"
 PluginsInstalled[] = "Resolution"
 PluginsInstalled[] = "DevicePlugins"
@@ -169,6 +164,7 @@ PluginsInstalled[] = "Login"
 PluginsInstalled[] = "LoginLdap"
 PluginsInstalled[] = "CoreVue"
 PluginsInstalled[] = "PagePerformance"
+PluginsInstalled[] = "CustomDimensions"
 
 [QueuedTracking]
 notify_queue_threshold_single_queue = 250000
