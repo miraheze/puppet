@@ -49,6 +49,11 @@ changeprop::high_traffic_jobs_config:
     # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
     # by setting the reenqueue delay to 72 hours
     reenqueue_delay: 259200
+  notificationReEngageJob:
+    concurrency: 2
+    # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
+    # by setting the reenqueue delay to 72 hours
+    reenqueue_delay: 259200
   newcomerTasksCacheRefreshJob:
     concurrency: 2
     # All the jobs of this kind are delayed exactly 144 hours (6 days), avoid reenqueueing them
