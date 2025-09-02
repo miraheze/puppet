@@ -35,19 +35,24 @@
 # @param order
 #   String or integer to control the position in the target file, sorted alpha numeric.
 #
+# @param export
+#   Export object to destination, collected by class `icinga2::query_objects`.
+#
 define icinga2::object::timeperiod (
-  Stdlib::Absolutepath         $target,
-  Enum['absent', 'present']    $ensure          = present,
-  String                       $timeperiod_name = $title,
-  Optional[String]             $display_name    = undef,
-  Optional[Hash]               $ranges          = undef,
-  Optional[Boolean]            $prefer_includes = undef,
-  Optional[Array]              $excludes        = undef,
-  Optional[Array]              $includes        = undef,
-  Boolean                      $template        = false,
-  Array                        $import          = ['legacy-timeperiod'],
-  Variant[String, Integer]     $order           = 35,
-){
+  Stdlib::Absolutepath                 $target,
+  Enum['absent', 'present']            $ensure          = present,
+  String[1]                            $timeperiod_name = $title,
+  Optional[String[1]]                  $display_name    = undef,
+  Optional[Hash]                       $ranges          = undef,
+  Optional[Boolean]                    $prefer_includes = undef,
+  Optional[Array[String[1]]]           $excludes        = undef,
+  Optional[Array[String[1]]]           $includes        = undef,
+  Boolean                              $template        = false,
+  Array[String[1]]                     $import          = ['legacy-timeperiod'],
+  Variant[String[1], Integer[0]]       $order           = 35,
+  Variant[Array[String[1]], String[1]] $export          = [],
+) {
+  require icinga2::globals
 
   # compose attributes
   $attrs = {
@@ -59,16 +64,28 @@ define icinga2::object::timeperiod (
   }
 
   # create object
-  icinga2::object { "icinga2::object::TimePeriod::${title}":
-    ensure      => $ensure,
-    object_name => $timeperiod_name,
-    object_type => 'TimePeriod',
-    template    => $template,
-    import      => $import,
-    attrs       => delete_undef_values($attrs),
-    attrs_list  => keys($attrs),
-    target      => $target,
-    order       => $order,
+  $config = {
+    'object_name' => $timeperiod_name,
+    'object_type' => 'TimePeriod',
+    'template'    => $template,
+    'import'      => $import,
+    'attrs'       => delete_undef_values($attrs),
+    'attrs_list'  => keys($attrs),
   }
 
+  unless empty($export) {
+    @@icinga2::config::fragment { "icinga2::object::TimePeriod::${title}":
+      tag     => prefix(any2array($export), 'icinga2::instance::'),
+      content => epp('icinga2/object.conf.epp', $config),
+      target  => $target,
+      order   => $order,
+    }
+  } else {
+    icinga2::object { "icinga2::object::TimePeriod::${title}":
+      ensure => $ensure,
+      target => $target,
+      order  => $order,
+      *      => $config,
+    }
+  }
 }

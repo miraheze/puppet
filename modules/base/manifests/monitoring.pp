@@ -79,8 +79,9 @@ class base::monitoring {
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#APT'
     }
 
+    $ntp_server = lookup('base::ntp_server')
     monitoring::nrpe { 'NTP time':
-        command => '/usr/lib/nagios/plugins/check_ntp_time -H time.cloudflare.com -w 0.1 -c 0.5',
+        command => "/usr/lib/nagios/plugins/check_ntp_time -H ${ntp_server} -w 0.1 -c 0.5",
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#NTP'
     }
 

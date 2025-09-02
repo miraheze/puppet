@@ -27,6 +27,7 @@ class swift::proxy (
 
     $python_version = $facts['os']['distro']['codename'] ? {
         'bookworm' => 'python3.11',
+        'trixie'   => 'python3.13',
     }
 
     file { "/usr/local/lib/${python_version}/dist-packages/wikitide/":

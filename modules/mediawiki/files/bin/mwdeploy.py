@@ -108,7 +108,7 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
         'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
         'socialtools': ['AJAXPoll', 'BlogPage', 'Comments', 'ContributionScores', 'HAWelcome', 'ImageRating', 'MediaWikiChat', 'NewSignupPage', 'PollNY', 'QuizGame', 'RandomGameUnit', 'SocialProfile', 'Video', 'VoteNY', 'WikiForum', 'WikiTextLoggedInOut'],
         'universalomega': ['AutoCreatePage', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleTooltip'],
-        'wikitide': ['CreateWiki', 'DataDump', 'DiscordNotifications', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'MatomoAnalytics', 'MirahezeMagic', 'PDFEmbed', 'RemovePII', 'RequestSSL', 'RottenLinks', 'WikiDiscover', 'YouTube'],
+        'wikitide': ['CreateWiki', 'DataDump', 'DiscordNotifications', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'MatomoAnalytics', 'MirahezeMagic', 'PDFEmbed', 'RemovePII', 'RequestCustomDomain', 'RottenLinks', 'WikiDiscover'],
     }
     return packs.get(pack_name, [])
 
@@ -585,7 +585,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extension_list and version:  # when adding skins/exts
-            rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}CreateWiki:RebuildExtensionListCache --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}ManageWiki:RebuildExtensionListCache --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
 
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))

@@ -19,32 +19,31 @@
 # @param compat_log_path
 #   Required for historical table queries. Requires CompatLogger feature to be enabled.
 #
-class icinga2::feature::livestatus(
-  Enum['absent', 'present']                $ensure          = present,
-  Optional[Enum['tcp', 'unix']]            $socket_type     = undef,
-  Optional[Stdlib::Host]                   $bind_host       = undef,
-  Optional[Stdlib::Port::Unprivileged]     $bind_port       = undef,
-  Optional[Stdlib::Absolutepath]           $socket_path     = undef,
-  Optional[Stdlib::Absolutepath]           $compat_log_path = undef,
+class icinga2::feature::livestatus (
+  Enum['absent', 'present']      $ensure          = present,
+  Optional[Enum['tcp', 'unix']]  $socket_type     = undef,
+  Optional[Stdlib::Host]         $bind_host       = undef,
+  Optional[Stdlib::Port]         $bind_port       = undef,
+  Optional[Stdlib::Absolutepath] $socket_path     = undef,
+  Optional[Stdlib::Absolutepath] $compat_log_path = undef,
 ) {
-
-  if ! defined(Class['::icinga2']) {
+  if ! defined(Class['icinga2']) {
     fail('You must include the icinga2 base class before using any icinga2 feature class!')
   }
 
-  $conf_dir = $::icinga2::globals::conf_dir
+  $conf_dir = $icinga2::globals::conf_dir
   $_notify  = $ensure ? {
-    'present' => Class['::icinga2::service'],
+    'present' => Class['icinga2::service'],
     default   => undef,
   }
 
   # compose attributes
   $attrs = {
-    socket_type     => $socket_type,
-    bind_host       => $bind_host,
-    bind_port       => $bind_port,
-    socket_path     => $socket_path,
-    compat_log_path => $compat_log_path,
+    'socket_type'     => $socket_type,
+    'bind_host'       => $bind_host,
+    'bind_port'       => $bind_port,
+    'socket_path'     => $socket_path,
+    'compat_log_path' => $compat_log_path,
   }
 
   # create object
@@ -56,13 +55,6 @@ class icinga2::feature::livestatus(
     target      => "${conf_dir}/features-available/livestatus.conf",
     order       => 10,
     notify      => $_notify,
-  }
-
-  # import library 'livestatus'
-  concat::fragment { 'icinga2::feature::livestatus':
-    target  => "${conf_dir}/features-available/livestatus.conf",
-    content => "library \"livestatus\"\n\n",
-    order   => '05',
   }
 
   # manage feature

@@ -160,6 +160,9 @@ def convert_wikitext_to_markdown(wikitext):
         if tag_name == 's':
             return f'~~{content}~~'
 
+        if tag_name == 'u':
+            return f'<ins>{content}</ins>'
+
         if tag_name == 'code':
             return f'`{node.contents.strip_code()}`'
 
@@ -554,11 +557,16 @@ def commit_and_push_changes():
         git_config.set_value('user', 'email', GIT_USER_EMAIL)
         git_config.set_value('user', 'name', GIT_USER_NAME)
     repo.git.add(A=True)  # Add all changes
+    has_index_changes = repo.index.diff(repo.head.commit)
+    if not has_index_changes:
+        print('No changes detected – skipping commit and push.')
+        return
     utctime = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
     commit_message = f'Bot: Auto-update Tech namespace pages {utctime}'
     repo.index.commit(commit_message)
     origin = repo.remote(name='origin')
     origin.push(env={'GIT_SSH_COMMAND': f'ssh -i {SSH_PRIVATE_KEY_PATH} -F /dev/null -o ProxyCommand="nc -X connect -x {HTTP_PROXY} %h %p"'})
+    print('Changes committed and pushed.')
 
 
 def mirror_tech_pages_to_github():

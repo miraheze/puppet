@@ -136,6 +136,7 @@ class irc::pywikibot {
                     interval => $on_calendar,
                 },
                 logfile_basedir => '/var/log/pwb',
+                logfile_group   => 'pywikibot',
                 user            => 'pywikibot',
             }
         }

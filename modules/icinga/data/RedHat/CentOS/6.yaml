@@ -1,4 +1,0 @@
----
-icinga::repos::manage_epel: true
-icinga::web::apache_cgi_pass: false
-icinga::web::apache_cgi_pass_auth: false

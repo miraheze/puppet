@@ -225,26 +225,9 @@ class phorge (
         },
     }
 
-    # Backup provisioning
-    file { '/srv/backups':
-        ensure => directory,
-    }
-
-    systemd::timer::job { 'phorge-backup':
-        description       => 'Runs backup of phorge',
-        command           => '/usr/local/bin/wikitide-backup backup phorge',
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-1,15 01:00:00',
-        },
-        logfile_name      => 'phorge-backup.log',
-        syslog_identifier => 'phorge-backup',
-        user              => 'root',
-    }
-
-    monitoring::nrpe { 'Backups Phorge Static':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/phorge-backup/phorge-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    # Backups
+    backup::job { 'phorge':
+        ensure   => present,
+        interval => '*-*-1,15 01:00:00',
     }
 }
