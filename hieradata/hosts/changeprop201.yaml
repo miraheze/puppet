@@ -41,10 +41,9 @@ changeprop::high_traffic_jobs_config:
     concurrency: 25
   notificationGetStartedJob:
     concurrency: 2
-    # The jobs have a variable delay (several hours, up to 48 hours),
-    # set the reenqueue delay to 30 minutes to ensure variable delays
-    # are supported.
-    reenqueue_delay: 1800
+    # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
+    # by setting the reenqueue delay to 72 hours
+    reenqueue_delay: 259200
   notificationKeepGoingJob:
     concurrency: 2
     # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
