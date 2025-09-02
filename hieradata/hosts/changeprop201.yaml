@@ -242,7 +242,7 @@ role::prometheus::statsd_exporter::mappings:
     match_type: regex
     name: "${1}_normal_rule_processing_delay"
     timer_type: histogram
-    buckets: [1, 30, 60, 300, 600, 1800, 3600]  # 1s, 30s, 1m, 5m, 10m, 30m, 1h
+    buckets: [1, 30, 60, 300, 600, 1800, 3600, 21600, 86400]  # 1s, 30s, 1m, 5m, 10m, 30m, 1h, 6h, 1d
     labels:
       service: $1
       rule: $2
@@ -268,6 +268,20 @@ role::prometheus::statsd_exporter::mappings:
       service: $1
       rule: $2
 
+  - match: '(.+)\.internal-startup\.(.+)_blacklist'
+    match_type: regex
+    name: "${1}_blacklist"
+    labels:
+      service: $1
+      rule: $2
+
+  - match: '(.+)\.internal-startup\.(.+)_abandon'
+    match_type: regex
+    name: "${1}_abandon"
+    labels:
+      service: $1
+      rule: $2
+
   - match: '(.+)\.internal-startup\.produce_(.+)\.(.+)'
     match_type: regex
     name: "${1}_produce"
@@ -275,6 +289,14 @@ role::prometheus::statsd_exporter::mappings:
       service: $1
       stream: $2
       partition: $3
+
+  - match: '(.+)\.internal-startup\.ratelimit_(.+)_(.+)'
+    match_type: regex
+    name: "${1}_ratelimit_timing"
+    labels:
+      service: $1
+      function: $2
+      timing: $3
 
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
