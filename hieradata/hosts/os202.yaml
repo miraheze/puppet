@@ -6,7 +6,6 @@ role::opensearch::discovery_host:
   - os202.fsslc.wtnet
 role::opensearch::manager_hosts:
   - os162
-role::opensearch::manager_host: 'http://os162.fsslc.wtnet:9200'
 opensearch::api_host: os162.fsslc.wtnet
 
 base::syslog::rsyslog_udp_localhost: true

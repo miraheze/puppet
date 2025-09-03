@@ -1,10 +1,8 @@
 # role: opensearch
 class role::opensearch (
-    $os_manager = lookup('role::opensearch::manager', {'default_value' => false}),
     $os_roles = lookup('role::opensearch::roles', {'default_value' => []}),
     $os_discovery = lookup('role::opensearch::discovery_host', {'default_value' => false}),
     $os_manager_hosts = lookup('role::opensearch::manager_hosts', {'default_value' => undef}),
-    $os_manager_host = lookup('role::opensearch::manager_host', {'default_value' => undef}),
     $use_tls = lookup('role::opensearch::use_tls', {'default_value' => false}),
     $enable_exporter = lookup('role::opensearch::enable_exporter', {'default_value' => true}),
 ) {
@@ -160,8 +158,8 @@ class role::opensearch (
         }
     }
 
-    # We only need to do this on the main node.
-    if ($os_manager and $use_tls) {
+    # We only need to do this on the manager node.
+    if (('cluster_manager' in $os_roles) and $use_tls) {
         File['/etc/opensearch/opensearch-security/config.yml'] ~> Exec['run opensearch-security']
         File['/etc/opensearch/opensearch-security/roles_mapping.yml'] ~> Exec['run opensearch-security']
         File['/etc/opensearch/opensearch-security/roles.yml'] ~> Exec['run opensearch-security']
@@ -173,7 +171,7 @@ class role::opensearch (
         }
     }
 
-    if $os_manager {
+    if ('cluster_manager' in $os_roles) {
         nginx::site { 'opensearch.wikitide.net':
             ensure  => present,
             content => template('role/opensearch/nginx.conf.erb'),
@@ -205,7 +203,7 @@ class role::opensearch (
         }
     }
 
-    if ($os_manager and $enable_exporter) {
+    if (('cluster_manager' in $os_roles) and $enable_exporter) {
         include prometheus::exporter::elasticsearch
     }
 
