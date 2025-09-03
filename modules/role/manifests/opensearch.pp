@@ -46,10 +46,10 @@ class role::opensearch (
             'node.data'                    => $os_data,
             'network.host'                 => '0.0.0.0',
         } + $tls_config,
-        version                      => '2.19.3',
-        manage_repo                  => true,
-        jvm_options                  => [ '-Xms4g', '-Xmx4g' ],
-        templates                    => {
+        version                       => '2.19.3',
+        manage_repo                   => true,
+        jvm_options                   => [ '-Xms4g', '-Xmx4g' ],
+        templates                     => {
             'graylog-internal' => {
                 'source' => 'puppet:///modules/role/opensearch/index_template.json'
             }
