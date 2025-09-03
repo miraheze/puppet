@@ -1,14 +1,14 @@
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
-role::opensearch::master: true
-role::opensearch::data: true
+role::opensearch::manager: true
+role::opensearch::roles: ['cluster_manager', 'data', 'ingest']
 role::opensearch::discovery_host:
   - os151.fsslc.wtnet
   - os161.fsslc.wtnet
   - os191.fsslc.wtnet
   - os201.fsslc.wtnet
-role::opensearch::master_hosts:
+role::opensearch::manager_hosts:
   - os151
-role::opensearch::master_host: 'http://os151.fsslc.wtnet:9200'
+role::opensearch::manager_host: 'http://os151.fsslc.wtnet:9200'
 
 base::syslog::rsyslog_udp_localhost: true
