@@ -8,7 +8,7 @@ class role::opensearch (
     $use_tls = lookup('role::opensearch::use_tls', {'default_value' => false}),
     $enable_exporter = lookup('role::opensearch::enable_exporter', {'default_value' => true}),
 ) {
-    include ::java
+    include java
 
     class { 'opensearch::repo':
         version => '2.x',
@@ -46,7 +46,7 @@ class role::opensearch (
             'node.data'                    => $os_data,
             'network.host'                 => '0.0.0.0',
         } + $tls_config,
-        version                      => '2.19.1',
+        version                      => '2.19.3',
         manage_repo                  => true,
         jvm_options                  => [ '-Xms4g', '-Xmx4g' ],
         templates                    => {
