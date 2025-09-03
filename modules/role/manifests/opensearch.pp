@@ -36,8 +36,7 @@ class role::opensearch (
     }
 
     class { 'opensearch':
-        file_rolling_type             => 'rollingFile',
-        rolling_file_max_file_size    => 0,
+        file_rolling_type             => 'dailyRollingFile',
         rolling_file_max_backup_index => 7,
         config                        => {
             'cluster.initial_master_nodes' => $os_master_hosts,
