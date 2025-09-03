@@ -1,14 +1,14 @@
 # role: opensearch
 class role::opensearch (
-    $os_master = lookup('role::opensearch::master', {'default_value' => false}),
-    $os_data = lookup('role::opensearch::data', {'default_value' => false}),
+    $os_manager = lookup('role::opensearch::manager', {'default_value' => false}),
+    $os_roles = lookup('role::opensearch::roles', {'default_value' => []}),
     $os_discovery = lookup('role::opensearch::discovery_host', {'default_value' => false}),
-    $os_master_hosts = lookup('role::opensearch::master_hosts', {'default_value' => undef}),
-    $os_master_host = lookup('role::opensearch::master_host', {'default_value' => undef}),
+    $os_manager_hosts = lookup('role::opensearch::manager_hosts', {'default_value' => undef}),
+    $os_manager_host = lookup('role::opensearch::manager_host', {'default_value' => undef}),
     $use_tls = lookup('role::opensearch::use_tls', {'default_value' => false}),
     $enable_exporter = lookup('role::opensearch::enable_exporter', {'default_value' => true}),
 ) {
-    include ::java
+    include java
 
     class { 'opensearch::repo':
         version => '2.x',
@@ -39,12 +39,11 @@ class role::opensearch (
         file_rolling_type             => 'dailyRollingFile',
         rolling_file_max_backup_index => 7,
         config                        => {
-            'cluster.initial_master_nodes' => $os_master_hosts,
-            'discovery.seed_hosts'         => $os_discovery,
-            'cluster.name'                 => 'wikitide-general',
-            'node.master'                  => $os_master,
-            'node.data'                    => $os_data,
-            'network.host'                 => '0.0.0.0',
+            'cluster.initial_cluster_manager_nodes' => $os_manager_hosts,
+            'discovery.seed_hosts'                  => $os_discovery,
+            'cluster.name'                          => 'wikitide-general',
+            'node.roles'                            => $os_roles,
+            'network.host'                          => '0.0.0.0',
         } + $tls_config,
         version                      => '2.19.1',
         manage_repo                  => true,
@@ -162,7 +161,7 @@ class role::opensearch (
     }
 
     # We only need to do this on the main node.
-    if ($os_master and $use_tls) {
+    if ($os_manager and $use_tls) {
         File['/etc/opensearch/opensearch-security/config.yml'] ~> Exec['run opensearch-security']
         File['/etc/opensearch/opensearch-security/roles_mapping.yml'] ~> Exec['run opensearch-security']
         File['/etc/opensearch/opensearch-security/roles.yml'] ~> Exec['run opensearch-security']
@@ -174,7 +173,7 @@ class role::opensearch (
         }
     }
 
-    if $os_master {
+    if $os_manager {
         nginx::site { 'opensearch.wikitide.net':
             ensure  => present,
             content => template('role/opensearch/nginx.conf.erb'),
@@ -206,7 +205,7 @@ class role::opensearch (
         }
     }
 
-    if ($os_master and $enable_exporter) {
+    if ($os_manager and $enable_exporter) {
         include prometheus::exporter::elasticsearch
     }
 
@@ -226,13 +225,13 @@ class role::opensearch (
         .sort(),
         ' '
     )
-    ferm::service { 'opensearch data nodes to master':
+    ferm::service { 'opensearch data nodes to manager':
         proto  => 'tcp',
         port   => '9200',
         srange => "(${firewall_os_nodes})",
     }
 
-    ferm::service { 'opensearch master access data nodes 9200 port':
+    ferm::service { 'opensearch manager access data nodes 9300 port':
         proto  => 'tcp',
         port   => '9300',
         srange => "(${firewall_os_nodes})",
