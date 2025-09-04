@@ -24,6 +24,9 @@ $wgShellboxSecretKey = '<%= @shellbox_secretkey %>';
 // Matomo token
 $wgMatomoAnalyticsTokenAuth = '<%= @matomotoken %>';
 
+// MediaModeration API key
+$wgMediaModerationPhotoDNASubscriptionKey = '<%= @mediamoderation_apikey %>';
+
 // OpenAI settings
 $wgCreateWikiOpenAIConfig = [
 	'dryrun' => false,
