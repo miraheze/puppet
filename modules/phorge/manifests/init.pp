@@ -42,7 +42,7 @@ class phorge (
     $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
-    class { '::php':
+    class { 'php':
         ensure         => present,
         version        => $php_version,
         sapis          => ['cli', 'fpm'],
@@ -58,7 +58,7 @@ class phorge (
         }
     }
 
-    class { '::php::fpm':
+    class { 'php::fpm':
         ensure => present,
         config => {
             'emergency_restart_interval'  => '60s',
@@ -190,11 +190,12 @@ class phorge (
     }
 
     systemd::service { 'phd':
-        ensure             => present,
-        content            => systemd_template('phd'),
-        restart            => true,
-        require            => File['/srv/phorge/phorge/conf/local/local.json'],
-        monitoring_enabled => true,
+        ensure              => present,
+        content             => systemd_template('phd'),
+        restart             => true,
+        require             => File['/srv/phorge/phorge/conf/local/local.json'],
+        monitoring_enabled  => true,
+        monitoring_critical => true,
     }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
