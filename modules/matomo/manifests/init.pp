@@ -8,7 +8,7 @@ class matomo (
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '5.3.2', # Current stable
+        branch             => '5.4.0', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
@@ -66,7 +66,7 @@ class matomo (
     $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
-    class { '::php':
+    class { 'php':
         ensure         => present,
         version        => $php_version,
         sapis          => ['cli', 'fpm'],
@@ -97,7 +97,7 @@ class matomo (
         ensure => present
     }
 
-    class { '::php::fpm':
+    class { 'php::fpm':
         ensure => present,
         config => {
             'emergency_restart_interval'  => '60s',
