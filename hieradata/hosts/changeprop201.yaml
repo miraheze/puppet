@@ -17,7 +17,7 @@ jobrunner_haproxy::backends:
     port: 9006
 changeprop::num_workers: 8
 changeprop::semantic_mediawiki_concurrency: 6
-changeprop::low_traffic_concurrency: 25
+changeprop::low_traffic_concurrency: 20
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
@@ -89,9 +89,9 @@ changeprop::high_traffic_jobs_config:
   wikibase-InjectRCRecords:
     concurrency: 2
   parsoidCachePrewarm:
-    concurrency: 10
+    concurrency: 20
   htmlCacheUpdate:
-    concurrency: 10
+    concurrency: 20
   refreshLinks:
     concurrency: 10
     # Abandon jobs which root job is more than 1 week long

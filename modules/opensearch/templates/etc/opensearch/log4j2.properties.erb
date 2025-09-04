@@ -7,7 +7,7 @@ logger.action.level = debug
 appender.console.type = Console
 appender.console.name = console
 appender.console.layout.type = PatternLayout
-appender.console.layout.pattern = [%d{ISO8601}][%-5p][%-25c{1.}] %marker%m%n
+appender.console.layout.pattern = [%d{ISO8601}][%-5p][%-25c{1.}] [%node_name]%marker %m%n
 
 <%- if scope['opensearch::file_rolling_type'] == 'file' -%>
 appender.fixed.type = File
@@ -27,6 +27,10 @@ appender.rolling.policies.type = Policies
 appender.rolling.policies.time.type = TimeBasedTriggeringPolicy
 appender.rolling.policies.time.interval = 1
 appender.rolling.policies.time.modulate = true
+<%- if scope['opensearch::rolling_file_max_backup_index'] -%>
+appender.rolling.strategy.type = DefaultRolloverStrategy
+appender.rolling.strategy.max = <%= scope['opensearch::rolling_file_max_backup_index'] %>
+<%- end -%>
 <%- elsif scope['opensearch::file_rolling_type'] == 'rollingFile' -%>
 appender.rolling.filePattern = ${sys:opensearch.logs.base_path}${sys:file.separator}${sys:opensearch.logs.cluster_name}-%i.log.gz
 appender.rolling.policies.type = Policies
