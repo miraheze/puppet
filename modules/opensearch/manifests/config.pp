@@ -121,6 +121,16 @@ class opensearch::config {
       $_tls_config = {}
     }
 
+    file { "${opensearch::configdir}/log4j2.properties":
+      ensure  => file,
+      content => template('opensearch/etc/opensearch/log4j2.properties.erb'),
+      notify  => $opensearch::_notify_service,
+      require => Class['opensearch::package'],
+      owner   => 'root',
+      group   => $opensearch::opensearch_group,
+      mode    => '0640',
+    }
+
     # Generate Opensearch config
     $data = $opensearch::config + { 'path.data' => $opensearch::datadir } + { 'path.logs' => $opensearch::logdir } + $_tls_config
 

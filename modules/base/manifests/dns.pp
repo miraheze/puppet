@@ -3,9 +3,7 @@ class base::dns (
     Array[String] $query_local_address,
     Boolean       $forward_use_internal,
 ) {
-    package { 'pdns-recursor':
-        ensure => present,
-    }
+    stdlib::ensure_packages('pdns-recursor')
 
     if $facts['processors']['count'] < 4 {
         $threads = 4

@@ -17,7 +17,7 @@ jobrunner_haproxy::backends:
     port: 9006
 changeprop::num_workers: 8
 changeprop::semantic_mediawiki_concurrency: 6
-changeprop::low_traffic_concurrency: 25
+changeprop::low_traffic_concurrency: 20
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
@@ -38,14 +38,18 @@ changeprop::high_traffic_jobs_config:
   LocalGlobalUserPageCacheUpdateJob:
     # This job is prone to large spikes, so having it on the low_traffic_jobs queue
     # blocks other jobs.
-    concurrency: 25
+    concurrency: 15
   notificationGetStartedJob:
     concurrency: 2
-    # The jobs have a variable delay (several hours, up to 48 hours),
-    # set the reenqueue delay to 30 minutes to ensure variable delays
-    # are supported.
-    reenqueue_delay: 1800
+    # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
+    # by setting the reenqueue delay to 72 hours
+    reenqueue_delay: 259200
   notificationKeepGoingJob:
+    concurrency: 2
+    # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
+    # by setting the reenqueue delay to 72 hours
+    reenqueue_delay: 259200
+  notificationReEngageJob:
     concurrency: 2
     # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
     # by setting the reenqueue delay to 72 hours
@@ -85,9 +89,9 @@ changeprop::high_traffic_jobs_config:
   wikibase-InjectRCRecords:
     concurrency: 2
   parsoidCachePrewarm:
-    concurrency: 10
+    concurrency: 15
   htmlCacheUpdate:
-    concurrency: 10
+    concurrency: 15
   refreshLinks:
     concurrency: 10
     # Abandon jobs which root job is more than 1 week long
@@ -243,7 +247,7 @@ role::prometheus::statsd_exporter::mappings:
     match_type: regex
     name: "${1}_normal_rule_processing_delay"
     timer_type: histogram
-    buckets: [1, 30, 60, 300, 600, 1800, 3600]  # 1s, 30s, 1m, 5m, 10m, 30m, 1h
+    buckets: [1, 30, 60, 300, 600, 1800, 3600, 21600, 86400]  # 1s, 30s, 1m, 5m, 10m, 30m, 1h, 6h, 1d
     labels:
       service: $1
       rule: $2
@@ -269,6 +273,20 @@ role::prometheus::statsd_exporter::mappings:
       service: $1
       rule: $2
 
+  - match: '(.+)\.internal-startup\.(.+)_blacklist'
+    match_type: regex
+    name: "${1}_blacklist"
+    labels:
+      service: $1
+      rule: $2
+
+  - match: '(.+)\.internal-startup\.(.+)_abandon'
+    match_type: regex
+    name: "${1}_abandon"
+    labels:
+      service: $1
+      rule: $2
+
   - match: '(.+)\.internal-startup\.produce_(.+)\.(.+)'
     match_type: regex
     name: "${1}_produce"
@@ -276,6 +294,14 @@ role::prometheus::statsd_exporter::mappings:
       service: $1
       stream: $2
       partition: $3
+
+  - match: '(.+)\.internal-startup\.ratelimit_(.+)_(.+)'
+    match_type: regex
+    name: "${1}_ratelimit_timing"
+    labels:
+      service: $1
+      function: $2
+      timing: $3
 
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 

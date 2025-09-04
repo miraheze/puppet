@@ -25,8 +25,6 @@ class postgresql::postgis(
             "${postgresql_postgis_package}-scripts",
             'postgis',
         ],
-        {
-            ensure => $ensure,
-        },
+        { ensure => $ensure }
     )
 }

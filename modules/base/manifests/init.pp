@@ -18,9 +18,10 @@ class base (
     include users
 
     if lookup('dns') {
-        package { 'pdns-recursor':
-            ensure => absent,
-        }
+        stdlib::ensure_packages(
+            'pdns-recursor',
+            { ensure => absent }
+        )
     } else {
         include base::dns
     }
