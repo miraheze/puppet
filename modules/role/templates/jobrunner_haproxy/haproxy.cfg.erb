@@ -27,10 +27,11 @@ defaults
         option  accept-invalid-http-request
         option  accept-invalid-http-response
         option  http-ignore-probes
+		option  http-server-close
         timeout connect 50000
-	timeout client 259202000
- 	timeout server 259202000
- 	timeout http-keep-alive 120s
+        timeout client 259202000
+        timeout server 259202000
+        timeout http-keep-alive 120s
         errorfile 400 /etc/haproxy/errors/400.http
         errorfile 403 /etc/haproxy/errors/403.http
         errorfile 408 /etc/haproxy/errors/408.http
