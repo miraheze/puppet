@@ -133,6 +133,8 @@ changeprop::high_traffic_jobs_config:
     concurrency: 2
   GlobalNewFilesMoveJob:
     concurrency: 2
+  mediaModerationScanFileJob:
+    concurrency: 20
 
 changeprop::high_traffic_high_timeout_jobs_config:
   cirrusSearchElasticaWrite:
