@@ -29,7 +29,7 @@ $wgMediaModerationPhotoDNASubscriptionKey = '<%= @mediamoderation_apikey %>';
 
 // OpenAI settings
 $wgCreateWikiOpenAIConfig = [
-	'dryrun' => true,
+	'dryrun' => false,
 	'apikey' => '<%= @openai_apikey %>',
 	'assistantid' => '<%= @openai_assistantid %>',
 ];
