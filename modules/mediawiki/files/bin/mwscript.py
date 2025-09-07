@@ -37,7 +37,9 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
     validDBLists = (
         'active',
+        'closed',
         'deleted',
+        'inactive',
     ) + versionLists
 
     longscripts = (
