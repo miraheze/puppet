@@ -19,6 +19,7 @@ server {
 		fastcgi_read_timeout 20;
 		fastcgi_buffering off;
 		fastcgi_request_buffering off;
+		fastcgi_keep_conn on;
 		send_timeout 20s;
 	}
 
@@ -119,6 +120,7 @@ server {
 		fastcgi_read_timeout 140;
 		fastcgi_buffering off;
 		fastcgi_request_buffering off;
+		fastcgi_keep_conn on;
 		send_timeout 140;
 	}
 
@@ -179,6 +181,7 @@ server {
 		fastcgi_buffer_size 64k;
 		fastcgi_buffering off;
 		fastcgi_request_buffering off;
+		fastcgi_keep_conn on;
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 	}
 
@@ -266,6 +269,7 @@ server {
 		send_timeout 140;
 		fastcgi_buffering off;
 		fastcgi_request_buffering off;
+		fastcgi_keep_conn on;
 	}
 
 	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
@@ -333,6 +337,7 @@ server {
 		send_timeout 140;
 		fastcgi_buffering off;
 		fastcgi_request_buffering off;
+		fastcgi_keep_conn on;
 	}
 
 	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
