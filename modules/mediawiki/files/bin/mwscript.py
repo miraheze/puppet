@@ -28,11 +28,11 @@ def syscheck(result: CommandInfo | int) -> CommandInfo:
 
 
 HOSTNAME = socket.gethostname().split('.')[0]
-wikisuffix = ""
+wikisuffix = ''
 if HOSTNAME.startswith('test'):
-    wikisuffix = "wikibeta"
+    wikisuffix = 'wikibeta'
 else:
-    wikisuffix = "wiki"
+    wikisuffix = 'wiki'
 
 
 def get_commands(args: argparse.Namespace) -> CommandInfo | int:
