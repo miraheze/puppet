@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import os
 import json
+import socket
 import sys
 from typing import TypedDict
 
@@ -25,12 +26,14 @@ def syscheck(result: CommandInfo | int) -> CommandInfo:
         sys.exit(result)
     return result
 
+
 HOSTNAME = socket.gethostname().split('.')[0]
 wikisuffix = ""
 if HOSTNAME.startswith('test'):
     wikisuffix = "wikibeta"
 else:
     wikisuffix = "wiki"
+
 
 def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     mw_versions = os.popen('/usr/local/bin/getMWVersions all').read().strip()
