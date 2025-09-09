@@ -25,6 +25,12 @@ def syscheck(result: CommandInfo | int) -> CommandInfo:
         sys.exit(result)
     return result
 
+HOSTNAME = socket.gethostname().split('.')[0]
+wikisuffix = ""
+if HOSTNAME.startswith('test'):
+    wikisuffix = "wikibeta"
+else:
+    wikisuffix = "wiki"
 
 def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     mw_versions = os.popen('/usr/local/bin/getMWVersions all').read().strip()
@@ -115,7 +121,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.php {script}'
     elif args.extension:
         long = True
-        generate = f'sudo -u www-data php {runner}MirahezeMagic:GenerateExtensionDatabaseList --wiki=loginwiki --extension={args.extension} --directory=/tmp'
+        generate = f'sudo -u www-data php {runner}MirahezeMagic:GenerateExtensionDatabaseList --wiki=login{wikisuffix} --extension={args.extension} --directory=/tmp'
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/{args.extension}.php {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'
