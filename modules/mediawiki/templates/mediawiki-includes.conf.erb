@@ -27,6 +27,7 @@ location ~ ^/(w/)?\w+\.php {
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 	fastcgi_buffering off;
 	fastcgi_request_buffering off;
+	fastcgi_keep_conn on;
 }
 
 location = /favicon.ico {
@@ -45,6 +46,7 @@ location ^~ /w/index.php {
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 	fastcgi_buffering off;
 	fastcgi_request_buffering off;
+	fastcgi_keep_conn on;
 
 	if ($request_uri ~ OAuth) {
 		# Skip OAuth requests to prevent
@@ -94,6 +96,7 @@ location @wiki {
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 	fastcgi_buffering off;
 	fastcgi_request_buffering off;
+	fastcgi_keep_conn on;
 }
 
 location ~ ^/m/(.*) {
@@ -113,3 +116,4 @@ location /static/ {
 location ~ ^/entity/(.*) {
 	return 301 /wiki/Special:EntityData/$1;
 }
+
