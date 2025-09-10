@@ -160,7 +160,7 @@ def test_check_up_debug() -> None:
 
 
 def test_check_up_debug_fail() -> None:
-    assert not mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstat.us/500', force=True, use_cert=False)
+    assert not mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstatuses.maor.io/500', force=True, use_cert=False)
 
 
 def test_get_staging_path() -> None:
