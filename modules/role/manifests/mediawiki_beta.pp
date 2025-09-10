@@ -5,6 +5,7 @@ class role::mediawiki_beta (
 ) {
 
     include base
+    include role::mathoid
     include role::memcached
     include role::poolcounter
     include role::redis
