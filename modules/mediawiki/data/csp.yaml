@@ -46,6 +46,7 @@ script-src:
   - 'bandcamp.com'
   - 'flo.uri.sh'
   - 'challenges.cloudflare.com'
+  - 'www.youtube.com'
 
 style-src:
   - "'self'"
@@ -219,6 +220,8 @@ frame-src:
   - 'bandcamp.com'
   - 'challenges.cloudflare.com'
   - 'map.showdown.wiki'
+  - 'video.fastly.steamstatic.com'
+  - 'shared.fastly.steamstatic.com'
 
 connect-src:
   - "'self'"
