@@ -68,7 +68,7 @@ class mediawiki::multiversion (
 
         $branch = $params['branch'] ? {
             'master' => 'main',
-	        default  => $params['branch'],
+            default  => $params['branch'],
         }
 
         git::clone { "femiwiki-deploy-${version}":
