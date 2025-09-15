@@ -122,7 +122,7 @@ server {
 		send_timeout 140;
 	}
 
-	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
+	location ~ ^/((?!(css|img|js|lib|scss|webfonts)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -268,7 +268,7 @@ server {
 		fastcgi_request_buffering off;
 	}
 
-	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
+	location ~ ^/((?!(css|img|js|lib|scss|webfonts)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -335,7 +335,7 @@ server {
 		fastcgi_request_buffering off;
 	}
 
-	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
+	location ~ ^/((?!(css|img|js|lib|scss|webfonts)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
