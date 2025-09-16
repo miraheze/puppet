@@ -66,11 +66,16 @@ class mediawiki::multiversion (
             group  => 'www-data',
         }
 
+        $branch = $params['branch'] ? {
+            'master' => 'main',
+            default  => $params['branch'],
+        }
+
         git::clone { "femiwiki-deploy-${version}":
             ensure    => 'latest',
             directory => "/srv/mediawiki/femiwiki-deploy/${version}",
             origin    => 'https://github.com/miraheze/femiwiki-deploy',
-            branch    => $params['branch'],
+            branch    => $branch,
             owner     => 'www-data',
             group     => 'www-data',
             mode      => '0755',
