@@ -219,6 +219,7 @@ frame-src:
   - 'bandcamp.com'
   - 'challenges.cloudflare.com'
   - 'map.showdown.wiki'
+  - 'clips.twitch.tv'
 
 connect-src:
   - "'self'"
