@@ -106,7 +106,7 @@ server {
 	}
 
 	location ~ /donate {
-		return 301 https://donate.miraheze.org;
+		return 301 https://meta.miraheze.org/wiki/Donate;
 	}
 
 	location ~ ^/(css|img|js|webfonts).*$ {
@@ -230,80 +230,6 @@ server {
 		proxy_buffer_size       32k;
 		proxy_buffers         4 32k;
         }
-}
-
-server {
-	listen 80;
-	listen [::]:80;
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-
-	server_name donate.miraheze.org;
-	root /srv/mediawiki/landing;
-	index donate.php;
-
-	if ($http_user_agent ~* "WordPress") {
-		return 403;
-	}
-
-	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
-	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
-
-	ssl_verify_client optional;
-	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
-
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
-
-	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
-
-	location ~ ^/(css|img|js|webfonts).*$ {
-		expires 1d;
-	}
-
-	location ~ \.php {
-		include fastcgi_params;
-		fastcgi_index index.php;
-		fastcgi_split_path_info ^(.+\.php)(.*)$;
-		try_files $fastcgi_script_name =404;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-		fastcgi_read_timeout 140;
-		send_timeout 140;
-		fastcgi_buffering off;
-		fastcgi_request_buffering off;
-	}
-
-	location ~ ^/((?!(css|img|js|webfonts)).)*$ {
-		# redirect query parameter to path
-		if ($arg_lang !~ '^$|en') {
-			return 301 /$arg_lang;
-		}
-
-		# redirect en (default) to /
-		if ($arg_lang = 'en') {
-			return 301 /;
-		}
-
-		rewrite ^/en(/.*)?$ / permanent;
-
-		# rewrite path to lang, so that, for example, /en will act the
-		# same as ?lang=en, but without the ?lang being needed 
-		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
-
-		# if we aren't using a user selected language,
-		# use $http_accept_language
-		if ( $http_accept_language ~ ^(..) ) {
-			set $lang $1;
-		}
-
-		# rewrite to language if not default
-		if ($lang != 'en') {
-			rewrite ^(.*) $1?lang=$lang break;
-		}
-	}
 }
 
 server {
