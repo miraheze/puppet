@@ -109,6 +109,10 @@ server {
 		return 301 https://donate.miraheze.org;
 	}
 
+	location ~ ^/(css|img|js|webfonts).*$ {
+		expires 1d;
+	}
+
 	location ~ \.php {
 		include fastcgi_params;
 		fastcgi_index index.php;
@@ -122,7 +126,7 @@ server {
 		send_timeout 140;
 	}
 
-	location ~ ^/((?!(css|img|js|lib|scss|webfonts)).)*$ {
+	location ~ ^/((?!(css|img|js|webfonts)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -255,6 +259,10 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
+	location ~ ^/(css|img|js|webfonts).*$ {
+		expires 1d;
+	}
+
 	location ~ \.php {
 		include fastcgi_params;
 		fastcgi_index index.php;
@@ -268,7 +276,7 @@ server {
 		fastcgi_request_buffering off;
 	}
 
-	location ~ ^/((?!(css|img|js|lib|scss|webfonts)).)*$ {
+	location ~ ^/((?!(css|img|js|webfonts)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -322,6 +330,10 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
+	location ~ ^/(css|img|js|webfonts).*$ {
+		expires 1d;
+	}
+
 	location ~ \.php {
 		include fastcgi_params;
 		fastcgi_index index.php;
@@ -335,7 +347,7 @@ server {
 		fastcgi_request_buffering off;
 	}
 
-	location ~ ^/((?!(css|img|js|lib|scss|webfonts)).)*$ {
+	location ~ ^/((?!(css|img|js|webfonts)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
