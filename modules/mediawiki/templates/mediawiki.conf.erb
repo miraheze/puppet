@@ -82,7 +82,7 @@ server {
 
 	server_name miraheze.org;
 	root /srv/mediawiki/landing;
-	index index.php index.html;
+	index index.php;
 
 	if ($http_user_agent ~* "WordPress") {
 		return 403;
@@ -109,8 +109,16 @@ server {
 		return 301 https://meta.miraheze.org/wiki/Donate;
 	}
 
-	location ~ ^/(css|img|js|webfonts).*$ {
+	location ~* ^/(css|img)/ {
 		expires 1d;
+		add_header Cache-Control "public";
+	}
+
+	# These should typically never change so we
+	# can set a very long cache expiry.
+	location ~* ^/webfonts/ {
+		expires 1y;
+		add_header Cache-Control "public, immutable";
 	}
 
 	location ~ \.php {
@@ -126,7 +134,7 @@ server {
 		send_timeout 140;
 	}
 
-	location ~ ^/((?!(css|img|js|webfonts)).)*$ {
+	location ~ ^/((?!(css|img|webfonts)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -218,18 +226,18 @@ server {
 		deny all;
 	}
 
-        location / {
-                proxy_pass https://swift-lb.wikitide.net;
-                proxy_ssl_protocols TLSv1.3;
-                proxy_http_version 1.1;
-                proxy_set_header Connection close; # should be default
-                proxy_set_header Host $host;
+    location / {
+		proxy_pass https://swift-lb.wikitide.net;
+		proxy_ssl_protocols TLSv1.3;
+		proxy_http_version 1.1;
+		proxy_set_header Connection close; # should be default
+		proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_buffering    off;
-		proxy_buffer_size       32k;
-		proxy_buffers         4 32k;
-        }
+		proxy_buffering off;
+		proxy_buffer_size 32k;
+		proxy_buffers 4 32k;
+	}
 }
 
 server {
@@ -256,8 +264,16 @@ server {
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
 
-	location ~ ^/(css|img|js|webfonts).*$ {
+	location ~* ^/(css|img)/ {
 		expires 1d;
+		add_header Cache-Control "public";
+	}
+
+	# These should typically never change so we
+	# can set a very long cache expiry.
+	location ~* ^/webfonts/ {
+		expires 1y;
+		add_header Cache-Control "public, immutable";
 	}
 
 	location ~ \.php {
@@ -273,7 +289,7 @@ server {
 		fastcgi_request_buffering off;
 	}
 
-	location ~ ^/((?!(css|img|js|webfonts)).)*$ {
+	location ~ ^/((?!(css|img|webfonts)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
