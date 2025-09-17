@@ -69,6 +69,7 @@ class mediawiki::jobqueue::runner (
         mediawiki::periodic_job { 'mediamoderation-scan':
             command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/MediaModeration/maintenance/scanFilesInScanTable.php --use-jobqueue --sleep=1 --poll-sleep=10 --last-checked=never --verbose",
             interval => '*-*-* *:34:00',
+            ensure   => absent,
         }
 
         if $wiki == 'loginwiki' {
