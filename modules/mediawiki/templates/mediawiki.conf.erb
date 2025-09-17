@@ -404,7 +404,7 @@ server {
 <%- end -%>
 	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
-<%- if property['hsts'] == "strict" -%>  
+<%- if property['hsts'] == "strict" -%>
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 <%- else -%>
 	add_header Strict-Transport-Security "max-age=604800";
