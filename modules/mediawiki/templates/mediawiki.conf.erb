@@ -45,7 +45,7 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
@@ -99,7 +99,7 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	location ~ ^/(\.git|config) {
 		deny all;
@@ -180,7 +180,7 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	location ~ \.php {
 		include fastcgi_params;
@@ -218,7 +218,7 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
@@ -262,7 +262,7 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	location ~* ^/(css|img)/ {
 		expires 1d;
@@ -413,7 +413,7 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
