@@ -226,7 +226,7 @@ server {
 		deny all;
 	}
 
-    location / {
+	location / {
 		proxy_pass https://swift-lb.wikitide.net;
 		proxy_ssl_protocols TLSv1.3;
 		proxy_http_version 1.1;
