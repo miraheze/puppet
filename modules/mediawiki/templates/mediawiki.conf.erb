@@ -168,84 +168,6 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
-	server_name health.wikitide.net;
-	root /srv/mediawiki;
-	index index.php index.html;
-
-	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
-	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
-
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
-
-	# XSS Protection
-	add_header X-XSS-Protection "1; mode=block" always;
-
-	location ~ \.php {
-		include fastcgi_params;
-		fastcgi_index index.php;
-		fastcgi_split_path_info ^(.+\.php)(.*)$;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_buffers 32 32k;
-		fastcgi_buffer_size 64k;
-		fastcgi_buffering off;
-		fastcgi_request_buffering off;
-		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-	}
-
-	location = /check {
-		rewrite ^(.*)$ /healthcheck.php;
-	}
-}
-
-server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-
-	server_name static.wikitide.net;
-
-	send_timeout 120;
-
-	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
-	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
-
-	ssl_verify_client optional;
-	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
-
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
-
-	# XSS Protection
-	add_header X-XSS-Protection "1; mode=block" always;
-
-	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
-
-	location /private/ {
-		deny all;
-	}
-
-	location / {
-		proxy_pass https://swift-lb.wikitide.net;
-		proxy_ssl_protocols TLSv1.3;
-		proxy_http_version 1.1;
-		proxy_set_header Connection close; # should be default
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_buffering off;
-		proxy_buffer_size 32k;
-		proxy_buffers 4 32k;
-	}
-}
-
-server {
-	listen 80;
-	listen [::]:80;
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-
 	server_name foundation.wikitide.org;
 	root /srv/mediawiki/landing;
 	index foundation.php;
@@ -316,6 +238,82 @@ server {
 		if ($lang != 'en') {
 			rewrite ^(.*) $1?lang=$lang break;
 		}
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name health.wikitide.net;
+	root /srv/mediawiki;
+	index index.php index.html;
+
+	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
+	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header X-XSS-Protection "1; mode=block" always;
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_buffers 32 32k;
+		fastcgi_buffer_size 64k;
+		fastcgi_buffering off;
+		fastcgi_request_buffering off;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+	}
+
+	location = /check {
+		rewrite ^(.*)$ /healthcheck.php;
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name static.wikitide.net;
+
+	send_timeout 120;
+
+	ssl_certificate /etc/ssl/localcerts/wikitide.net.crt;
+	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
+
+	ssl_verify_client optional;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header X-XSS-Protection "1; mode=block" always;
+
+	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
+
+	location /private/ {
+		deny all;
+	}
+
+	location / {
+		proxy_pass https://swift-lb.wikitide.net;
+		proxy_ssl_protocols TLSv1.3;
+		proxy_http_version 1.1;
+		proxy_set_header Connection close; # should be default
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_buffering off;
+		proxy_buffer_size 32k;
+		proxy_buffers 4 32k;
 	}
 }
 
