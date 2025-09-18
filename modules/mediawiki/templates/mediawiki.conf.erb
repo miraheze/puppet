@@ -186,6 +186,10 @@ server {
 	# XSS Protection
 	add_header X-XSS-Protection "1; mode=block" always;
 
+	location ~ ^/(\.git|config) {
+		deny all;
+	}
+
 	location ~* ^/(css|img)/ {
 		expires 1d;
 		add_header Cache-Control "public";
