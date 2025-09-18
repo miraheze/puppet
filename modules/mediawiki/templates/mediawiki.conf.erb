@@ -105,14 +105,17 @@ server {
 		deny all;
 	}
 
-	location ~* ^/(css|img)/ {
+	# images are more likely to change so we
+	# use a shorter cache expiry for them.
+	location ~* ^/img/ {
 		expires 1d;
 		add_header Cache-Control "public";
 	}
 
-	# These should typically never change so we
-	# can set a very long cache expiry.
-	location ~* ^/webfonts/ {
+	# webfonts should typically never change, and for css
+	# we use versioned file names so we can set a very
+	# long cache expiry.
+	location ~* ^/(css|webfonts)/ {
 		expires 1y;
 		add_header Cache-Control "public, immutable";
 	}
@@ -186,14 +189,17 @@ server {
 		deny all;
 	}
 
-	location ~* ^/(css|img)/ {
+	# images are more likely to change so we
+	# use a shorter cache expiry for them.
+	location ~* ^/img/ {
 		expires 1d;
 		add_header Cache-Control "public";
 	}
 
-	# These should typically never change so we
-	# can set a very long cache expiry.
-	location ~* ^/webfonts/ {
+	# webfonts should typically never change, and for css
+	# we use versioned file names so we can set a very
+	# long cache expiry.
+	location ~* ^/(css|webfonts)/ {
 		expires 1y;
 		add_header Cache-Control "public, immutable";
 	}
