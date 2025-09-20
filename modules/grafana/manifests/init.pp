@@ -6,9 +6,9 @@ class grafana (
 
     include apt
 
-    file { '/usr/share/keyrings/grafana.key':
+    file { '/etc/apt/keyrings/grafana.gpg':
         ensure => present,
-        source => 'puppet:///modules/grafana/grafana.key',
+        source => 'puppet:///modules/grafana/grafana.gpg',
     }
 
     apt::source { 'grafana_apt':
@@ -16,8 +16,8 @@ class grafana (
         location => 'https://apt.grafana.com',
         release  => 'stable',
         repos    => 'main',
-        keyring  => '/usr/share/keyrings/grafana.key',
-        require  => File['/usr/share/keyrings/grafana.key'],
+        keyring  => '/etc/apt/keyrings/grafana.gpg',
+        require  => File['/etc/apt/keyrings/grafana.gpg'],
         notify   => Exec['apt_update_grafana'],
     }
 
