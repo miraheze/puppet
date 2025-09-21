@@ -372,6 +372,23 @@ class role::prometheus {
         port   => 9102
     }
 
+    # PHP - MediaWiki
+    $php_mediawiki_job = [
+      {
+        'job_name'        => 'php_mediawiki',
+        'scheme'          => 'http',
+        'file_sd_configs' => [
+          { 'files' => [ 'targets/php_mediawiki.yaml' ] },
+        ],
+      },
+    ]
+
+    prometheus::class{ 'php_mediawiki':
+        dest   => '/etc/prometheus/targets/php_mediawiki.yaml',
+        module => 'MediaWiki::Monitoring',
+        port   => 9181,
+    }
+    
     $global_extra = {}
 
     class { 'prometheus':
