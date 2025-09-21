@@ -25,6 +25,29 @@ class mediawiki::monitoring {
         mode   => '0555',
     }
 
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Prometheus]', ['networking'])
+        .map |$key, $value| {
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+
+    ferm::service { 'php http port 9181':
+        proto  => 'tcp',
+        port   => '9181',
+        srange => "(${firewall_rules_str})",
+    }
+
     monitoring::services { 'MediaWiki Rendering':
         check_command => 'check_mediawiki',
         docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#MediaWiki_Rendering',
