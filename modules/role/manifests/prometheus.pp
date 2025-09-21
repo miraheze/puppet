@@ -388,7 +388,7 @@ class role::prometheus {
         module => 'MediaWiki::Monitoring',
         port   => 9181,
     }
-    
+
     $global_extra = {}
 
     class { 'prometheus':
