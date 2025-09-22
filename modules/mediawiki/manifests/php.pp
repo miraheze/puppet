@@ -3,7 +3,6 @@ class mediawiki::php (
     Float $fpm_workers_multiplier        = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $request_timeout             = lookup('mediawiki::php::request_timeout', {'default_value' => 240}),
     String $apc_shm_size                 = lookup('mediawiki::php::apc_shm_size', {'default_value' => '3072M'}),
-    Integer $opcache_memory_consumption  = lookup('mediawiki::php::opcache_memory_consumption', {'default_value' => 3072}),
     VMlib::Php_version $php_version      = lookup('php::php_version', {'default_value' => '8.2'}),
     Boolean $enable_fpm                  = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
     Boolean $enable_request_profiling    = lookup('mediawiki::php::enable_request_profiling', {'default_value' => false}),
@@ -26,7 +25,7 @@ class mediawiki::php (
     $base_config_fpm = {
         'opcache.enable'                  => 1,
         'opcache.interned_strings_buffer' => 256,
-        'opcache.memory_consumption'      => $opcache_memory_consumption,
+        'opcache.memory_consumption'      => 3072,
         'opcache.max_accelerated_files'   => 65407,
         'opcache.max_wasted_percentage'   => 10,
         'opcache.validate_timestamps'     => 1,
