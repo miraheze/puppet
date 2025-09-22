@@ -15,6 +15,7 @@ role::mediawiki::is_beta: false
 mediawiki::php::fpm::fpm_workers_multiplier: 2.0
 mediawiki::php::request_timeout: 259201
 mediawiki::php::apc_shm_size: 4096M
+mediawiki::php::opcache_memory_consumption: 6096
 mediawiki::php::fpm_config:
   post_max_size: '250M'
   upload_max_filesize: '250M'
