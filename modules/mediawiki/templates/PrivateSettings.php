@@ -60,4 +60,4 @@ $wgMirahezeReportsWriteKey = '<%= @reports_write_key %>';
 // Google Translate API key for Meta
 $wmgTranslateGoogleTranslateMetaKey = '<%= @google_translate_apikey_meta %>';
 
-<%= @mw_security_settings %>
+<%= @mw_security_overrides %>
