@@ -19,7 +19,6 @@ class ollama::nvidia (
     "linux-headers-${facts['kernelrelease']}",
     'dkms',
     'pciutils',
-    'curl',
   ]:
     ensure => present,
   }
