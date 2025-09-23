@@ -15,7 +15,7 @@ class ollama (
         }
     }
 
-    package { ['curl','gnupg','python3','python3-venv','git']:
+    package { ['curl','python3','python3-venv']:
         ensure => present,
     }
 

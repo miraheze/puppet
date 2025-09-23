@@ -20,7 +20,6 @@ class ollama::nvidia (
     'dkms',
     'pciutils',
     'curl',
-    'gnupg',
   ]:
     ensure => present,
   }
