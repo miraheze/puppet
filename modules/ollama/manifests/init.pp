@@ -49,16 +49,16 @@ class ollama (
     }
 
     file { '/etc/systemd/system/ollama.service':
-        ensure    => file,
-        owner     => 'root',
-        group     => 'root',
-        mode      => '0644',
-        content   => epp('ollama/ollama.service.epp', {
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        content => epp('ollama/ollama.service.epp', {
         'user'    => $user,
         'group'   => $group,
         'envfile' => $service_envfile,
         }),
-        notify => Exec['systemd-daemon-reload'],
+        notify  => Exec['systemd-daemon-reload'],
     }
 
     exec { 'systemd-daemon-reload':

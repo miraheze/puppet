@@ -22,70 +22,70 @@ class openwebui (
     user { $user:
         ensure => present,
         system => true,
-        shell => '/usr/sbin/nologin',
-        home => $base_dir,
-        gid => $group,
+        shell  => '/usr/sbin/nologin',
+        home   => $base_dir,
+        gid    => $group,
     }
 
 
     file { $base_dir:
         ensure => directory,
-        owner => $user,
-        group => $group,
-        mode => '0755',
+        owner  => $user,
+        group  => $group,
+        mode   => '0755',
     }
 
 
     exec { 'openwebui_venv_create':
         command => "${venv_python} -m venv ${base_dir}/venv",
         creates => "${base_dir}/venv/bin/activate",
-        path => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+        path    => ['/usr/bin','/usr/sbin','/bin','/sbin'],
         require => File[$base_dir],
     }
 
 
     exec { 'openwebui_pip_install':
         command => "${base_dir}/venv/bin/pip install --upgrade pip && ${base_dir}/venv/bin/pip install open-webui",
-        unless => "${base_dir}/venv/bin/pip show open-webui",
-        path => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+        unless  => "${base_dir}/venv/bin/pip show open-webui",
+        path    => ['/usr/bin','/usr/sbin','/bin','/sbin'],
         require => Exec['openwebui_venv_create'],
     }
 
 
     file { '/etc/openwebui.env':
-        ensure => file,
-        owner => 'root',
-        group => 'root',
-        mode => '0644',
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
         content => epp('open_webui/openwebui.env.epp', {
         'backend_api_base' => $backend_api_base,
-        'backend_api_key' => $backend_api_key,
-        'bind_host' => $bind_host,
-        'port' => $port,
+        'backend_api_key'  => $backend_api_key,
+        'bind_host'        => $bind_host,
+        'port'             => $port,
         }),
-        notify => Exec['systemd-daemon-reload'],
+        notify  => Exec['systemd-daemon-reload'],
     }
 
 
     file { '/etc/systemd/system/openwebui.service':
-        ensure => file,
-        owner => 'root',
-        group => 'root',
-        mode => '0644',
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
         content => epp('open_webui/openwebui.service.epp', {}),
-        notify => Exec['systemd-daemon-reload'],
+        notify  => Exec['systemd-daemon-reload'],
     }
 
 
     exec { 'systemd-daemon-reload':
-        command => '/bin/systemctl daemon-reload',
+        command     => '/bin/systemctl daemon-reload',
         refreshonly => true,
     }
 
 
     service { 'openwebui':
-        ensure => running,
-        enable => true,
+        ensure    => running,
+        enable    => true,
         subscribe => [File['/etc/openwebui.env'], File['/etc/systemd/system/openwebui.service']],
     }
 }

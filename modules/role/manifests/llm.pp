@@ -8,13 +8,13 @@ class role::llm (
     ssl::wildcard { 'llm wildcard': }
 
     nginx::site { 'llm_proxy':
-        ensure => present,
-        source => 'puppet:///modules/role/llm/ai.wikitide.net.conf',
+        ensure  => present,
+        source  => 'puppet:///modules/role/llm/ai.wikitide.net.conf',
         monitor => true,
     }
 
     class { '::ollama':
-        bind_host => $bind_host,
+        bind_host       => $bind_host,
         allowed_origins => '*',
     }
 
@@ -26,9 +26,9 @@ class role::llm (
 
     class { '::openwebui':
         backend_api_base => $backend_api_base,
-        backend_api_key => $backend_api_key,
-        bind_host => $bind_host,
-        port => $port,
+        backend_api_key  => $backend_api_key,
+        bind_host        => $bind_host,
+        port             => $port,
     }
 
     $firewall_rules_str = join(

@@ -33,9 +33,9 @@ class ollama::nvidia (
   # --- Optional: Nouveau blacklist (prevents conflicts) ---
   if $blacklist_nouveau {
     file { '/etc/modprobe.d/blacklist-nouveau.conf':
-      ensure  => file,
-      mode    => '0644',
-      source  => 'puppet:///modules/ollama/blacklist-nouveau.conf'
+      ensure => file,
+      mode   => '0644',
+      source => 'puppet:///modules/ollama/blacklist-nouveau.conf'
     }
 
     # Ubuntu/Debian use initramfs-tools; dracut on some Debian variants
