@@ -7,6 +7,14 @@ class ollama (
     String $bind_host = '0.0.0.0', # API bind; 127.0.0.1 for local-only
     String $allowed_origins = '*', # tighten for prod
 ) {
+    $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    if $http_proxy {
+        file { '/etc/apt/apt.conf.d/01ollama':
+            ensure  => present,
+            content => template('ollama/aptproxy.erb'),
+        }
+    }
+
     package { ['curl','gnupg','python3','python3-venv','git']:
         ensure => present,
     }
@@ -33,7 +41,7 @@ class ollama (
 
     # Install Ollama from official script (idempotent w/creates)
     exec { 'ollama_install':
-        command => "curl -fsSL ${install_script_url} | sh",
+        command => "HTTPS_PROXY=http://bastion.wikitide.net:8080 curl -fsSL ${install_script_url} | sh",
         creates => '/usr/bin/ollama',
         path    => ['/usr/bin','/usr/sbin','/bin','/sbin'],
         timeout => 0,

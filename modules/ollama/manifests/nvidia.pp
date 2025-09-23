@@ -68,7 +68,7 @@ class ollama::nvidia (
     # See official CUDA Linux install docs + blog about key rotation.
     # (We tolerate re-run with 'creates' so it stays idempotent)
     exec { 'add-cuda-keyring':
-      command => '/usr/bin/curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/$(. /etc/os-release; echo $ID)/$(. /etc/os-release; echo $VERSION_CODENAME)/cuda-keyring_1.1-1_all.deb -o /tmp/cuda-keyring.deb && /usr/bin/dpkg -i /tmp/cuda-keyring.deb',
+      command => 'HTTPS_PROXY=http://bastion.wikitide.net /usr/bin/curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/$(. /etc/os-release; echo $ID)/$(. /etc/os-release; echo $VERSION_CODENAME)/cuda-keyring_1.1-1_all.deb -o /tmp/cuda-keyring.deb && /usr/bin/dpkg -i /tmp/cuda-keyring.deb',
       creates => '/etc/apt/keyrings/cuda-archive-keyring.gpg',
       path    => ['/usr/bin','/usr/sbin','/bin','/sbin'],
     }
