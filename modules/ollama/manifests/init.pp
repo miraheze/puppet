@@ -16,10 +16,6 @@ class ollama (
         }
     }
 
-    package { ['python3-venv']:
-        ensure => present,
-    }
-
     group { $group:
         ensure => present,
         system => true,

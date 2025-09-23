@@ -8,11 +8,6 @@ class openwebui (
     String $backend_api_base = 'http://127.0.0.1:11434/v1',
     String $backend_api_key = 'local-anything',
 ) {
-    package { ['python3-venv','python3-pip']:
-        ensure => present,
-    }
-
-
     group { $group:
         ensure => present,
         system => true,
