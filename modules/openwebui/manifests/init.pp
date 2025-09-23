@@ -6,6 +6,7 @@ class openwebui (
     String $bind_host = '0.0.0.0',
     Integer $port = 3000,
     String $backend_api_base = 'http://127.0.0.1:11434/v1',
+    String $backend_api_key = lookup('mediawiki::openai_apikey'),
 ) {
     group { $group:
         ensure => present,
@@ -48,7 +49,7 @@ class openwebui (
         mode    => '0644',
         content => epp('openwebui/openwebui.env.epp', {
         'backend_api_base' => $backend_api_base,
-        'backend_api_key'  => lookup('mediawiki::openai_apikey'),
+        'backend_api_key'  => $backend_api_key,
         'bind_host'        => $bind_host,
         'port'             => $port,
         }),
