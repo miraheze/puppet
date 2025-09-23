@@ -35,16 +35,12 @@ class ollama::nvidia (
     file { '/etc/modprobe.d/blacklist-nouveau.conf':
       ensure  => file,
       mode    => '0644',
-      content => @("EOF")
-        blacklist nouveau
-        options nouveau modeset=0
-        | EOF,
-      notify  => Exec['dracut-or-initramfs'],
+      source  => 'puppet:///modules/ollama/blacklist-nouveau.conf'
     }
 
     # Ubuntu/Debian use initramfs-tools; dracut on some Debian variants
     exec { 'dracut-or-initramfs':
-      command => '/bin/sh -c \'if command -v dracut >/dev/null 2>&1; then dracut -f; else update-initramfs -u; fi\'',
+      command     => '/bin/sh -c \'if command -v dracut >/dev/null 2>&1; then dracut -f; else update-initramfs -u; fi\'',
       refreshonly => true,
     }
   }
