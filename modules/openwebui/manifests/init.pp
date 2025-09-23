@@ -6,7 +6,6 @@ class openwebui (
     String $bind_host = '0.0.0.0',
     Integer $port = 3000,
     String $backend_api_base = 'http://127.0.0.1:11434/v1',
-    String $backend_api_key = 'local-anything',
 ) {
     group { $group:
         ensure => present,
@@ -49,7 +48,7 @@ class openwebui (
         mode    => '0644',
         content => epp('openwebui/openwebui.env.epp', {
         'backend_api_base' => $backend_api_base,
-        'backend_api_key'  => $backend_api_key,
+        'backend_api_key'  => lookup('mediawiki::openai_apikey'),
         'bind_host'        => $bind_host,
         'port'             => $port,
         }),
@@ -69,5 +68,13 @@ class openwebui (
         ensure    => running,
         enable    => true,
         subscribe => [File['/etc/openwebui.env'], File['/etc/systemd/system/openwebui.service']],
+    }
+
+    monitoring::nrpe { 'open webui':
+        command => '/usr/lib/nagios/plugins/check_procs -a /opt/open-webui/venv/bin/open-webui -c 2:2'
+    }
+
+    monitoring::nrpe { 'open webui $port check':
+        command => '/usr/lib/nagios/plugins/check_tcp -H 127.0.0.1 -p $port',
     }
 }

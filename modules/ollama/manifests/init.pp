@@ -80,4 +80,12 @@ class ollama (
         subscribe => [File[$service_envfile], File['/etc/systemd/system/ollama.service']],
         require   => Exec['ollama_install'],
     }
+
+    monitoring::nrpe { 'ollama process':
+        command => '/usr/lib/nagios/plugins/check_procs -a /usr/bin/ollama -c 2:2'
+    }
+
+    monitoring::nrpe { 'ollama port 11434':
+        command => '/usr/lib/nagios/plugins/check_tcp -H 127.0.0.1 -p 11434',
+    }
 }
