@@ -5,7 +5,7 @@ class openwebui (
     String $venv_python = 'python3', # system python
     String $bind_host = '0.0.0.0',
     Integer $port = 3000,
-    String $backend_api_base = 'http://127.0.0.1:11434/v1',
+    String $backend_api_base = 'http://127.0.0.1:11434',
     String $backend_api_key = lookup('mediawiki::openai_apikey'),
 ) {
     group { $group:
