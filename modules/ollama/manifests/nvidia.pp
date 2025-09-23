@@ -105,8 +105,8 @@ class ollama::nvidia (
       default => inline_epp('<%- |$enabled| -%><%= $enabled %>', {'enabled' => 'unknown'}),
     }
     # This is just a log message; real detection of SB varies; we give guidance either way.
-    notify { 'secure_boot_note':
-      message => 'If Secure Boot is enabled, you may need to enroll a Machine Owner Key (MOK) so the NVIDIA DKMS module loads. Run `sudo mokutil --sb-state` and if enabled, reconfigure the driver package to sign the module, then enroll at reboot.',
+    # notify { 'secure_boot_note':
+    #  message => 'If Secure Boot is enabled, you may need to enroll a Machine Owner Key (MOK) so the NVIDIA DKMS module loads. Run `sudo mokutil --sb-state` and if enabled, reconfigure the driver package to sign the module, then enroll at reboot.',
     }
   }
 
