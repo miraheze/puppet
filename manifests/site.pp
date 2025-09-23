@@ -65,6 +65,11 @@ node 'ldap171.fsslc.wtnet' {
     include role::openldap
 }
 
+node 'llm191.fsslc.wtnet' {
+    include base
+    include role::llm
+}
+
 node 'matomo151.fsslc.wtnet' {
     include base
     include role::matomo
