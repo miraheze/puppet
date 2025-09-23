@@ -13,7 +13,6 @@ class openwebui (
         system => true,
     }
 
-
     user { $user:
         ensure => present,
         system => true,
@@ -22,14 +21,12 @@ class openwebui (
         gid    => $group,
     }
 
-
     file { $base_dir:
         ensure => directory,
         owner  => $user,
         group  => $group,
         mode   => '0755',
     }
-
 
     exec { 'openwebui_venv_create':
         command => "${venv_python} -m venv ${base_dir}/venv",
@@ -38,14 +35,12 @@ class openwebui (
         require => File[$base_dir],
     }
 
-
     exec { 'openwebui_pip_install':
         command => "${base_dir}/venv/bin/pip install --upgrade pip && ${base_dir}/venv/bin/pip install open-webui",
         unless  => "${base_dir}/venv/bin/pip show open-webui",
         path    => ['/usr/bin','/usr/sbin','/bin','/sbin'],
         require => Exec['openwebui_venv_create'],
     }
-
 
     file { '/etc/openwebui.env':
         ensure  => file,
@@ -61,7 +56,6 @@ class openwebui (
         notify  => Exec['systemd-daemon-reload'],
     }
 
-
     file { '/etc/systemd/system/openwebui.service':
         ensure  => file,
         owner   => 'root',
@@ -70,13 +64,6 @@ class openwebui (
         content => epp('openwebui/openwebui.service.epp', {}),
         notify  => Exec['systemd-daemon-reload'],
     }
-
-
-    exec { 'systemd-daemon-reload':
-        command     => '/bin/systemctl daemon-reload',
-        refreshonly => true,
-    }
-
 
     service { 'openwebui':
         ensure    => running,
