@@ -15,6 +15,7 @@ mediawiki::php::apc_shm_size: '8192M'
 mediawiki::php::fpm_config:
   post_max_size: '250M'
   upload_max_filesize: '250M'
+  opcache.interned_strings_buffer: 384
   opcache.memory_consumption: 6096
 
 php::php_version: '8.2'
