@@ -52,7 +52,7 @@ class openwebui (
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => epp('open_webui/openwebui.env.epp', {
+        content => epp('openwebui/openwebui.env.epp', {
         'backend_api_base' => $backend_api_base,
         'backend_api_key'  => $backend_api_key,
         'bind_host'        => $bind_host,
@@ -67,7 +67,7 @@ class openwebui (
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
-        content => epp('open_webui/openwebui.service.epp', {}),
+        content => epp('openwebui/openwebui.service.epp', {}),
         notify  => Exec['systemd-daemon-reload'],
     }
 
