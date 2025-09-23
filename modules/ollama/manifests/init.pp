@@ -1,5 +1,6 @@
 # ollama
 class ollama (
+    String $user = 'ollama',
     String $group = 'ollama',
     String $home = '/usr/share/ollama',
     String $install_script_url = 'https://ollama.com/install.sh',
