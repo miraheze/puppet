@@ -1,0 +1,16 @@
+[Unit]
+Description=Ollama Service
+After=network-online.target
+
+
+[Service]
+User=<%= $user %>
+Group=<%= $group %>
+ExecStart=/usr/bin/ollama serve
+Restart=always
+RestartSec=3
+EnvironmentFile=<%= $envfile %>
+
+
+[Install]
+WantedBy=multi-user.target
