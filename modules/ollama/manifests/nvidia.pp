@@ -107,7 +107,7 @@ class ollama::nvidia (
     # This is just a log message; real detection of SB varies; we give guidance either way.
     # notify { 'secure_boot_note':
     #  message => 'If Secure Boot is enabled, you may need to enroll a Machine Owner Key (MOK) so the NVIDIA DKMS module loads. Run `sudo mokutil --sb-state` and if enabled, reconfigure the driver package to sign the module, then enroll at reboot.',
-    }
+    # }
   }
 
   # --- Sanity check command as a noop probe (will fail gracefully pre-reboot) ---
