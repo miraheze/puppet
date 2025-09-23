@@ -24,7 +24,8 @@ class ollama::nvidia (
   ]:
     ensure => present,
   }
-  -> exec { 'update-initramfs-pre':
+
+  exec { 'update-initramfs-pre':
     command     => '/usr/sbin/update-initramfs -u',
     refreshonly => true,
   }
