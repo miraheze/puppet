@@ -75,7 +75,7 @@ class openwebui (
         command => '/usr/lib/nagios/plugins/check_procs -a /opt/open-webui/venv/bin/open-webui -c 2:2'
     }
 
-    monitoring::nrpe { 'open webui $port check':
-        command => '/usr/lib/nagios/plugins/check_tcp -H 127.0.0.1 -p $port',
+    monitoring::nrpe { "open webui ${port} check":
+        command => "/usr/lib/nagios/plugins/check_tcp -H 127.0.0.1 -p ${port}",
     }
 }

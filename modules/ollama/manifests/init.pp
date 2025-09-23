@@ -38,13 +38,13 @@ class ollama (
 
     # Install Ollama from official script (idempotent w/creates)
     exec { 'ollama_install':
-        command => "curl -fsSL ${install_script_url} | sh",
+        command     => "curl -fsSL ${install_script_url} | sh",
         environment => [
             'HTTPS_PROXY=http://bastion.fsslc.wtnet:8080',
         ],
-        creates => '/usr/bin/ollama',
-        path    => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-        timeout => 0,
+        creates     => '/usr/bin/ollama',
+        path        => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+        timeout     => 0,
     }
 
     file { $service_envfile:
