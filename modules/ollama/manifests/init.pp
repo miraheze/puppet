@@ -16,7 +16,7 @@ class ollama (
         }
     }
 
-    package { ['python3','python3-venv']:
+    package { ['python3-venv']:
         ensure => present,
     }
 
