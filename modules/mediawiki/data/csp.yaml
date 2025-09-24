@@ -248,3 +248,4 @@ connect-src:
   - 'economy.roblox.com'
   - 'discord.com'
   - 'discordapp.com'
+  - 'api.steampowered.com'
