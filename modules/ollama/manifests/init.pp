@@ -81,8 +81,17 @@ class ollama (
         require   => Exec['ollama_install'],
     }
 
+    file { '/etc/ollama-modelfile':
+        ensure  => 'file',
+        source  => 'puppet:///private/ollama/Modelfile',
+        owner   => 'ollama',
+        group   => 'ollama',
+        mode    => '0600',
+        require => Exec['ollama_install'],
+    }
+
     monitoring::nrpe { 'ollama process':
-        command => '/usr/lib/nagios/plugins/check_procs -a /usr/bin/ollama -c 2:2'
+        command => '/usr/lib/nagios/plugins/check_procs -a /usr/bin/ollama -c 1:10'
     }
 
     monitoring::nrpe { 'ollama port 11434':

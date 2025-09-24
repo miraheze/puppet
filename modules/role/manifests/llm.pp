@@ -1,7 +1,7 @@
 # role: LLM
 class role::llm (
     String $backend_api_base = 'http://127.0.0.1:11434/v1',
-    String $backend_api_key = lookup('passwords::openwebui::api_key'),
+    String $backend_api_key = undef,
     String $bind_host = '127.0.0.1',
     Integer $port = 3000,
 ) {
