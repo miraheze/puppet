@@ -372,6 +372,23 @@ class role::prometheus {
         port   => 9102
     }
 
+    # PHP - MediaWiki
+    $php_mediawiki_job = [
+      {
+        'job_name'        => 'php_mediawiki',
+        'scheme'          => 'http',
+        'file_sd_configs' => [
+          { 'files' => [ 'targets/php_mediawiki.yaml' ] },
+        ],
+      },
+    ]
+
+    prometheus::class{ 'php_mediawiki':
+        dest   => '/etc/prometheus/targets/php_mediawiki.yaml',
+        module => 'MediaWiki::Monitoring',
+        port   => 9181,
+    }
+
     $global_extra = {}
 
     class { 'prometheus':
@@ -381,7 +398,8 @@ class role::prometheus {
             $apache_job, $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
             $varnish_job, $cadvisor_job, $pushgateway_job, $kafka_job,
-            $eventgate_job, $kafka_burrow_jobs, $cloudflare_job, $cache_haproxy_job
+            $eventgate_job, $kafka_burrow_jobs, $cloudflare_job, $cache_haproxy_job,
+            $php_mediawiki_job
         ].flatten,
     }
 

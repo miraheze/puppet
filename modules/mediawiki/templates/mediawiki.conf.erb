@@ -17,8 +17,6 @@ server {
 		fastcgi_buffers 32 32k;
 		fastcgi_buffer_size 64k;
 		fastcgi_read_timeout 20;
-		fastcgi_buffering off;
-		fastcgi_request_buffering off;
 		send_timeout 20s;
 	}
 
@@ -45,7 +43,7 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
@@ -82,7 +80,7 @@ server {
 
 	server_name miraheze.org;
 	root /srv/mediawiki/landing;
-	index index.php index.html;
+	index index.php;
 
 	if ($http_user_agent ~* "WordPress") {
 		return 403;
@@ -99,14 +97,25 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	location ~ ^/(\.git|config) {
 		deny all;
 	}
 
-	location ~ /donate {
-		return 301 https://donate.miraheze.org;
+	# images are more likely to change so we
+	# use a shorter cache expiry for them.
+	location ~* ^/img/ {
+		expires 1d;
+		add_header Cache-Control "public";
+	}
+
+	# webfonts should typically never change, and for css
+	# we use versioned file names so we can set a very
+	# long cache expiry.
+	location ~* ^/(css|webfonts)/ {
+		expires 1y;
+		add_header Cache-Control "public, immutable";
 	}
 
 	location ~ \.php {
@@ -117,12 +126,92 @@ server {
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 		fastcgi_read_timeout 140;
-		fastcgi_buffering off;
-		fastcgi_request_buffering off;
 		send_timeout 140;
 	}
 
-	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
+	location ~ ^/((?!(css|img|webfonts)).)*$ {
+		# redirect query parameter to path
+		if ($arg_lang !~ '^$|en') {
+			return 301 /$arg_lang;
+		}
+
+		# redirect en (default) to /
+		if ($arg_lang = 'en') {
+			return 301 /;
+		}
+
+		rewrite ^/en(/.*)?$ / permanent;
+
+		# rewrite path to lang, so that, for example, /en will act the
+		# same as ?lang=en, but without the ?lang being needed 
+		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
+
+		# if we aren't using a user selected language,
+		# use $http_accept_language
+		if ( $http_accept_language ~ ^(..) ) {
+			set $lang $1;
+		}
+
+		# rewrite to language if not default
+		if ($lang != 'en') {
+			rewrite ^(.*) $1?lang=$lang break;
+		}
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
+	server_name foundation.wikitide.org;
+	root /srv/mediawiki/landing;
+	index foundation.php;
+
+	if ($http_user_agent ~* "WordPress") {
+		return 403;
+	}
+
+	ssl_certificate /etc/ssl/localcerts/wikitide.org.crt;
+	ssl_certificate_key /etc/ssl/private/wikitide.org.key;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header X-XSS-Protection "1; mode=block" always;
+
+	location ~ ^/(\.git|config) {
+		deny all;
+	}
+
+	# images are more likely to change so we
+	# use a shorter cache expiry for them.
+	location ~* ^/img/ {
+		expires 1d;
+		add_header Cache-Control "public";
+	}
+
+	# webfonts should typically never change, and for css
+	# we use versioned file names so we can set a very
+	# long cache expiry.
+	location ~* ^/(css|webfonts)/ {
+		expires 1y;
+		add_header Cache-Control "public, immutable";
+	}
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		try_files $fastcgi_script_name =404;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+		fastcgi_read_timeout 140;
+		send_timeout 140;
+	}
+
+	location ~ ^/((?!(css|img|webfonts)).)*$ {
 		# redirect query parameter to path
 		if ($arg_lang !~ '^$|en') {
 			return 301 /$arg_lang;
@@ -168,7 +257,7 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	location ~ \.php {
 		include fastcgi_params;
@@ -177,8 +266,6 @@ server {
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		fastcgi_buffers 32 32k;
 		fastcgi_buffer_size 64k;
-		fastcgi_buffering off;
-		fastcgi_request_buffering off;
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
 	}
 
@@ -206,7 +293,7 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 
@@ -214,154 +301,17 @@ server {
 		deny all;
 	}
 
-        location / {
-                proxy_pass https://swift-lb.wikitide.net;
-                proxy_ssl_protocols TLSv1.3;
-                proxy_http_version 1.1;
-                proxy_set_header Connection close; # should be default
-                proxy_set_header Host $host;
+	location / {
+		proxy_pass https://swift-lb.wikitide.net;
+		proxy_ssl_protocols TLSv1.3;
+		proxy_http_version 1.1;
+		proxy_set_header Connection close; # should be default
+		proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_buffering    off;
-		proxy_buffer_size       32k;
-		proxy_buffers         4 32k;
-        }
-}
-
-server {
-	listen 80;
-	listen [::]:80;
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-
-	server_name donate.miraheze.org;
-	root /srv/mediawiki/landing;
-	index donate.php;
-
-	if ($http_user_agent ~* "WordPress") {
-		return 403;
-	}
-
-	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
-	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
-
-	ssl_verify_client optional;
-	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
-
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
-
-	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
-
-	location ~ \.php {
-		include fastcgi_params;
-		fastcgi_index index.php;
-		fastcgi_split_path_info ^(.+\.php)(.*)$;
-		try_files $fastcgi_script_name =404;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-		fastcgi_read_timeout 140;
-		send_timeout 140;
-		fastcgi_buffering off;
-		fastcgi_request_buffering off;
-	}
-
-	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
-		# redirect query parameter to path
-		if ($arg_lang !~ '^$|en') {
-			return 301 /$arg_lang;
-		}
-
-		# redirect en (default) to /
-		if ($arg_lang = 'en') {
-			return 301 /;
-		}
-
-		rewrite ^/en(/.*)?$ / permanent;
-
-		# rewrite path to lang, so that, for example, /en will act the
-		# same as ?lang=en, but without the ?lang being needed 
-		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
-
-		# if we aren't using a user selected language,
-		# use $http_accept_language
-		if ( $http_accept_language ~ ^(..) ) {
-			set $lang $1;
-		}
-
-		# rewrite to language if not default
-		if ($lang != 'en') {
-			rewrite ^(.*) $1?lang=$lang break;
-		}
-	}
-}
-
-server {
-	listen 80;
-	listen [::]:80;
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-
-	server_name foundation.wikitide.org;
-	root /srv/mediawiki/landing;
-	index foundation.php;
-
-	if ($http_user_agent ~* "WordPress") {
-		return 403;
-	}
-
-	ssl_certificate /etc/ssl/localcerts/wikitide.org.crt;
-	ssl_certificate_key /etc/ssl/private/wikitide.org.key;
-
-	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
-
-	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
-
-	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
-
-	location ~ \.php {
-		include fastcgi_params;
-		fastcgi_index index.php;
-		fastcgi_split_path_info ^(.+\.php)(.*)$;
-		try_files $fastcgi_script_name =404;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-		fastcgi_read_timeout 140;
-		send_timeout 140;
-		fastcgi_buffering off;
-		fastcgi_request_buffering off;
-	}
-
-	location ~ ^/((?!(css|img|js|lib|scss)).)*$ {
-		# redirect query parameter to path
-		if ($arg_lang !~ '^$|en') {
-			return 301 /$arg_lang;
-		}
-
-		# redirect en (default) to /
-		if ($arg_lang = 'en') {
-			return 301 /;
-		}
-
-		rewrite ^/en(/.*)?$ / permanent;
-
-		# rewrite path to lang, so that, for example, /en will act the
-		# same as ?lang=en, but without the ?lang being needed 
-		rewrite ^/([a-z\-]+)(/.*)?$ /$2?lang=$1 break;
-
-		# if we aren't using a user selected language,
-		# use $http_accept_language
-		if ( $http_accept_language ~ ^(..) ) {
-			set $lang $1;
-		}
-
-		# rewrite to language if not default
-		if ($lang != 'en') {
-			rewrite ^(.*) $1?lang=$lang break;
-		}
+		proxy_buffering off;
+		proxy_buffer_size 32k;
+		proxy_buffers 4 32k;
 	}
 }
 
@@ -450,7 +400,7 @@ server {
 <%- end -%>
 	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
 
-<%- if property['hsts'] == "strict" -%>  
+<%- if property['hsts'] == "strict" -%>
 	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
 <%- else -%>
 	add_header Strict-Transport-Security "max-age=604800";
@@ -459,7 +409,7 @@ server {
 	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
 
 	# XSS Protection
-	add_header x-xss-protection "1; mode=block" always;
+	add_header X-XSS-Protection "1; mode=block" always;
 
 	add_header Content-Security-Policy "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>" always;
 

@@ -17,7 +17,7 @@ class phorge (
         'opcache' => {
                 'enable' => 1,
                 'interned_strings_buffer' => 40,
-                'memory_consumption' => 256,
+                'memory_consumption' => 512,
                 'max_accelerated_files' => 20000,
                 'max_wasted_percentage' => 10,
                 'validate_timestamps' => 1,

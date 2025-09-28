@@ -1,5 +1,5 @@
 #! /usr/bin/python3
-# This script fetches domains from Cloudflare for SaaS, and also domains from the WikiDiscover API.
+# This script fetches domains from Cloudflare for SaaS, and also domains from the WikiDiscover API, and the redirect domains from the repo redirects file.
 # It compares the two lists, writes the results to files, and pushes changes to a Git repository.
 
 import requests
@@ -12,6 +12,8 @@ import argparse
 CLOUDFLARE_OUTPUT = "cloudflare_domains"
 WIKIDISCOVER_OUTPUT = "wikidiscover_output.yaml"
 LOG_FILE = "domain_comparisons"
+EXEMPT_DOMAINS = ["analytics.wikitide.net", "grafana.wikitide.net", "monitoring.wikitide.net", "orain.org", "phorge-static.wikitide.net",
+    "static.wikitide.net", "wikitide.com", "www.orain.org"]
 PROXY = "http://bastion.fsslc.wtnet:8080"
 proxies = {"http": PROXY, "https": PROXY}
 
@@ -98,7 +100,21 @@ def get_wikidiscover_data():
     return yaml_output, sorted(set(domain_list))
 
 
-def write_files(workdir, cf_list=None, wd_yaml=None, wd_domains=None):
+def get_redirects(workdir):
+    os.chdir(workdir)
+
+    with open("redirects.yaml") as redirs:
+        redirects = yaml.safe_load(redirs)
+
+    redirect_list = []
+
+    for key in list(redirects):
+        redirect_list.append(redirects[key]["url"])
+
+    return sorted(set(redirect_list))
+
+
+def write_files(workdir, cf_list=None, wd_yaml=None, wd_domains=None, redirect_list=None):
     os.chdir(workdir)
 
     if cf_list is not None:
@@ -112,8 +128,12 @@ def write_files(workdir, cf_list=None, wd_yaml=None, wd_domains=None):
     if cf_list is not None and wd_domains is not None:
         cf_set = set(cf_list)
         wd_set = set(wd_domains)
+        exempt_set = set(EXEMPT_DOMAINS)
 
-        only_in_cf = cf_set - wd_set
+        only_in_cf = cf_set - wd_set - exempt_set
+        if redirect_list is not None:
+            redirect_set = set(redirect_list)
+            only_in_cf = only_in_cf - redirect_set
         only_in_wd = wd_set - cf_set
 
         with open(LOG_FILE, "w") as f:
@@ -153,7 +173,7 @@ def main():
     parser = argparse.ArgumentParser(description="Fetch and compare domains from Cloudflare and WikiDiscover.")
     parser.add_argument("--workdir", type=str, default="/srv/ssl/ssl", help="Working directory containing the Git repo.")
     parser.add_argument("--dry-run", action="store_true", help="Do not push changes to Git.")
-    parser.add_argument("--source", choices=["cloudflare", "wikidiscover", "both"], default="both", help="Which data sources to use.")
+    parser.add_argument("--source", choices=["cloudflare", "wikidiscover", "all"], default="all", help="Which data sources to use.")
     parser.add_argument("--quiet", action="store_true", help="Suppress all console output.")
 
     args = parser.parse_args()
@@ -170,20 +190,26 @@ def main():
     cf_domains = None
     wd_yaml = None
     wd_domains = None
+    redirect_list = None
 
-    if args.source in ("cloudflare", "both"):
+    if args.source in ("cloudflare", "all"):
         if not args.quiet:
             print("Fetching Cloudflare domains...")
         cf_domains = get_cloudflare_domains(quiet=args.quiet)
 
-    if args.source in ("wikidiscover", "both"):
+    if args.source in ("wikidiscover", "all"):
         if not args.quiet:
             print("Fetching WikiDiscover data...")
         wd_yaml, wd_domains = get_wikidiscover_data()
 
+    if args.source in ("redirects", "all"):
+        if not args.quiet:
+            print("Fetching redirect domains...")
+        redirect_list = get_redirects(args.workdir)
+
     if not args.quiet:
         print("Writing output files...")
-    write_files(args.workdir, cf_domains, wd_yaml, wd_domains)
+    write_files(args.workdir, cf_domains, wd_yaml, wd_domains, redirect_list)
 
     if args.dry_run:
         if not args.quiet:

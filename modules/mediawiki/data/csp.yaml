@@ -46,6 +46,7 @@ script-src:
   - 'bandcamp.com'
   - 'flo.uri.sh'
   - 'challenges.cloudflare.com'
+  - 'www.youtube.com'
 
 style-src:
   - "'self'"
@@ -220,6 +221,8 @@ frame-src:
   - 'challenges.cloudflare.com'
   - 'map.showdown.wiki'
   - 'clips.twitch.tv'
+  - 'video.fastly.steamstatic.com'
+  - 'shared.fastly.steamstatic.com'
 
 connect-src:
   - "'self'"
@@ -246,3 +249,4 @@ connect-src:
   - 'economy.roblox.com'
   - 'discord.com'
   - 'discordapp.com'
+  - 'api.steampowered.com'
