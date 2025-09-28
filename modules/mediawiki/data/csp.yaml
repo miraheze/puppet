@@ -220,6 +220,7 @@ frame-src:
   - 'bandcamp.com'
   - 'challenges.cloudflare.com'
   - 'map.showdown.wiki'
+  - 'clips.twitch.tv'
   - 'video.fastly.steamstatic.com'
   - 'shared.fastly.steamstatic.com'
 
