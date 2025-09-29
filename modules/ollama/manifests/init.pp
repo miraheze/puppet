@@ -96,6 +96,7 @@ class ollama (
         refreshonly => true,
         user        => $user,
         logoutput   => true,
+        environment => ["HOME=/usr/share/ollama"],
         require     => File['/etc/ollama-modelfile'],
         subscribe   => Service['ollama'],
     }
