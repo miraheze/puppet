@@ -314,7 +314,6 @@ if args.confarg is not None:
 else:
     # Enumerate bot configs in /etc/adminbot;
     # Create a logbot object for each.
-    /etc/irclogbot
     sys.path.append('/etc/adminbot')
     confdir = '/etc/adminbot'
     configfiles = os.listdir(confdir)
