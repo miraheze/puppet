@@ -90,6 +90,10 @@ class logbot(ircbot.SingleServerIRCBot):
         for target in self.config.targets:
             con.join(target)
 
+    def on_disconnect(self, con, event):
+        print('Disconnected')
+        sys.exit(0)
+
     def get_projects(self, event, force_reload=False):
         projects = []
         try:
