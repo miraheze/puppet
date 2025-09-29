@@ -87,7 +87,17 @@ class ollama (
         owner   => 'ollama',
         group   => 'ollama',
         mode    => '0600',
+        notify  => Exec['ollama_rebuild_createwiki_ai'],
         require => Exec['ollama_install'],
+    }
+
+    exec { 'ollama_rebuild_createwiki_ai':
+        command     => "/usr/bin/ollama create createwiki-ai -f /etc/ollama-modelfile",
+        refreshonly => true,
+        user        => $user,
+        logoutput   => true,
+        require     => File['/etc/ollama-modelfile'],
+        subscribe   => Service['ollama'],
     }
 
     monitoring::nrpe { 'ollama process':
