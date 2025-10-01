@@ -157,7 +157,6 @@ def git_push(workdir):
 
     subprocess.run(["git", "-C", workdir, "config", "user.name", "WikiTideBot"], check=True)
     subprocess.run(["git", "-C", workdir, "config", "user.email", "noreply@wikitide.org"], check=True)
-    subprocess.run(["git", "-C", workdir, "pull"], check=True)
     subprocess.run(["git", "add", CLOUDFLARE_OUTPUT, WIKIDISCOVER_OUTPUT, LOG_FILE], check=True)
 
     result = subprocess.run(["git", "diff", "--cached", "--quiet"])
@@ -186,6 +185,8 @@ def main():
     if not os.access(args.workdir, os.W_OK):
         print(f"Error: You do not have write permissions for '{args.workdir}'!", file=sys.stderr)
         sys.exit(1)
+
+    subprocess.run(["git", "-C", workdir, "pull"], check=True)
 
     cf_domains = None
     wd_yaml = None
