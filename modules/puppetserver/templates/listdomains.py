@@ -186,7 +186,7 @@ def main():
         print(f"Error: You do not have write permissions for '{args.workdir}'!", file=sys.stderr)
         sys.exit(1)
 
-    subprocess.run(["git", "-C", workdir, "pull"], check=True)
+    subprocess.run(["git", "-C", args.workdir, "pull"], check=True)
 
     cf_domains = None
     wd_yaml = None
