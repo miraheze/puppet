@@ -15,10 +15,10 @@ class varnish (
     stdlib::ensure_packages(['varnish', 'varnish-modules', 'python3-flask'])
 
     file { '/usr/local/bin/varnish-depool.py':
-        ensure => present,
+        ensure  => present,
         content => template('varnish/varnish-depool.py'),
-        mode   => '0755',
-        notify => Service['varnish-depool'],
+        mode    => '0755',
+        notify  => Service['varnish-depool'],
     }
 
     $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
