@@ -1,11 +1,15 @@
 #!flask/bin/python3
 
-from flask import Flask, Response
+from flask import Flask, Response, request
 import subprocess
 import json
 import re
+import os
+import pyotp
 
 app = Flask(__name__)
+
+TOTP_SECRET = os.environ.get("VARNISH_TOTP_SECRET")
 
 def run_varnishadm(cmd):
     """Run varnishadm and return (returncode, stdout/stderr)"""
@@ -21,6 +25,19 @@ def run_varnishadm(cmd):
 def json_response(data, status=200):
     """Return a Flask Response with JSON content"""
     return Response(json.dumps(data), status=status, mimetype="application/json")
+
+def check_totp():
+    """Check X-TOTP header"""
+    totp_code = request.headers.get("X-TOTP", "")
+    if not totp_code or not TOTP_SECRET:
+        return False
+    totp = pyotp.TOTP(TOTP_SECRET)
+    return totp.verify(totp_code, valid_window=1)  # allow ±1 interval
+
+@app.before_request
+def enforce_security():
+    if not check_totp():
+        return json_response({"status": "error", "error": "unauthorized"}, status=401)
 
 @app.route("/backend/<name>/<state>", methods=["POST"])
 def set_backend(name, state):
