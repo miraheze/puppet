@@ -4,12 +4,10 @@ from flask import Flask, Response, request
 import subprocess
 import json
 import re
-import os
 import pyotp
+import argparse
 
 app = Flask(__name__)
-
-TOTP_SECRET = os.environ.get("VARNISH_TOTP_SECRET")
 
 def run_varnishadm(cmd):
     """Run varnishadm and return (returncode, stdout/stderr)"""
@@ -29,9 +27,10 @@ def json_response(data, status=200):
 def check_totp():
     """Check X-TOTP header"""
     totp_code = request.headers.get("X-TOTP", "")
-    if not totp_code or not TOTP_SECRET:
+    secret = app.config.get("TOTP_SECRET")
+    if not totp_code or not secret:
         return False
-    totp = pyotp.TOTP(TOTP_SECRET)
+    totp = pyotp.TOTP(secret)
     return totp.verify(totp_code, valid_window=1)  # allow ±1 interval
 
 @app.before_request
@@ -54,7 +53,6 @@ def set_backend(name, state):
     if rc != 0:
         return json_response({"status": "error", "error": "failed to set backend state"}, status=500)
 
-    # Success
     return json_response({"status": "ok"})
 
 @app.route("/backend/list", methods=["GET"])
@@ -66,7 +64,7 @@ def list_backends():
 
     filtered_lines = []
     for line in out.splitlines():
-        # Skip header
+        # Keep header
         if line.startswith("Backend name"):
             filtered_lines.append(line)
             continue
@@ -77,4 +75,12 @@ def list_backends():
     return Response("\n".join(filtered_lines), mimetype="text/plain")
 
 if __name__ == "__main__":
-    app.run(host='::', port=5001, threaded=True)
+    parser = argparse.ArgumentParser(description="Varnish API Flask wrapper with TOTP auth")
+    parser.add_argument("--totp-secret", required=True, help="TOTP shared secret (base32)")
+    parser.add_argument("--port", type=int, default=5001, help="Port to listen on (default: 5001)")
+    args = parser.parse_args()
+
+    # store secret in app config
+    app.config["TOTP_SECRET"] = args.totp_secret
+
+    app.run(host="::", port=args.port, threaded=True)
