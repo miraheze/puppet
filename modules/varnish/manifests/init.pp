@@ -12,7 +12,15 @@ class varnish (
     }
     include prometheus::exporter::varnish
 
-    stdlib::ensure_packages(['varnish', 'varnish-modules'])
+    stdlib::ensure_packages(['varnish', 'varnish-modules', 'python3-flask'])
+
+    file { '/usr/local/bin/varnish-depool.py':
+        ensure => present,
+        source => 'puppet:///modules/varnish/varnish-depool.py',
+        content => template('varnish/varnish-depool.py'),
+        mode   => '0755',
+        notify => Service['varnish-depool'],
+    }
 
     $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
     $reload_vcl_opts = "-f /etc/varnish/default.vcl -d ${vcl_reload_delay_s} -a"
@@ -92,6 +100,12 @@ class varnish (
         content => systemd_template('varnishlog'),
         restart => true,
         require => Service['varnish'],
+    }
+
+    systemd::service { 'varnish-depool':
+        ensure  => present,
+        content => systemd_template('varnish-depool'),
+        restart => true,
     }
 
     service { 'varnishncsa':
