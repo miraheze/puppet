@@ -42,9 +42,22 @@ def set_backend(name, state):
 
 @app.route("/backend/list", methods=["GET"])
 def list_backends():
-    """Return all backends"""
+    """Return only 'mw' backends (e.g., mw151), ignoring mwtask"""
     rc, out = run_varnishadm(["backend.list"])
-    return Response(out, mimetype="text/plain")
+    if rc != 0:
+        return json_response({"status": "error", "error": "failed to list backends"}, status=500)
+
+    filtered_lines = []
+    for line in out.splitlines():
+        # Skip header
+        if line.startswith("Backend name"):
+            filtered_lines.append(line)
+            continue
+        # Match backend containing '.mw' followed by numbers
+        if re.search(r"\.mw\d+\b", line):
+            filtered_lines.append(line)
+
+    return Response("\n".join(filtered_lines), mimetype="text/plain")
 
 if __name__ == "__main__":
     app.run(host='::', port=5001, threaded=True)
