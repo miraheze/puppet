@@ -1,0 +1,50 @@
+#!flask/bin/python3
+
+from flask import Flask, Response
+import subprocess
+import json
+import re
+
+app = Flask(__name__)
+
+def run_varnishadm(cmd):
+    """Run varnishadm and return (returncode, stdout/stderr)"""
+    result = subprocess.run(
+        ["/usr/bin/varnishadm"] + cmd,
+        capture_output=True, text=True
+    )
+    if result.returncode == 0:
+        return 0, result.stdout.strip()
+    else:
+        return result.returncode, result.stderr.strip()
+
+def json_response(data, status=200):
+    """Return a Flask Response with JSON content"""
+    return Response(json.dumps(data), status=status, mimetype="application/json")
+
+@app.route("/backend/<name>/<state>", methods=["POST"])
+def set_backend(name, state):
+    # Only allow backend names starting with 'mw' followed by numbers
+    if not re.match(r"^mw\d+$", name):
+        return json_response({"status": "error", "error": "invalid backend name"}, status=400)
+
+    state = state.lower()
+    if state not in ["sick", "healthy", "auto"]:
+        return json_response({"status": "error", "error": "invalid state"}, status=400)
+
+    # Set backend health
+    rc, _ = run_varnishadm(["backend.set_health", name, state])
+    if rc != 0:
+        return json_response({"status": "error", "error": "failed to set backend state"}, status=500)
+
+    # Success
+    return json_response({"status": "ok"})
+
+@app.route("/backend/list", methods=["GET"])
+def list_backends():
+    """Return all backends"""
+    rc, out = run_varnishadm(["backend.list"])
+    return Response(out, mimetype="text/plain")
+
+if __name__ == "__main__":
+    app.run(host='::', port=5001, threaded=True)
