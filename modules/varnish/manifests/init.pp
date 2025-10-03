@@ -16,7 +16,6 @@ class varnish (
 
     file { '/usr/local/bin/varnish-depool.py':
         ensure => present,
-        source => 'puppet:///modules/varnish/varnish-depool.py',
         content => template('varnish/varnish-depool.py'),
         mode   => '0755',
         notify => Service['varnish-depool'],
