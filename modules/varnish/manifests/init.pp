@@ -101,6 +101,7 @@ class varnish (
         require => Service['varnish'],
     }
 
+    $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
     systemd::service { 'varnish-depool':
         ensure  => present,
         content => systemd_template('varnish-depool'),
