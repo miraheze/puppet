@@ -1,6 +1,6 @@
 #!/bin/bash
 
-<%- if @mediawiki_nodes.include?(@fqdn) -%>
+<%- if @mediawiki_nodes.include?(@facts['networking']['fqdn']) -%>
 echo "Safe-restart is not needed here."
 systemctl restart <%= @title %>
 <%- else -%>
