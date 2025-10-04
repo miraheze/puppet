@@ -3,9 +3,9 @@ class profile::mediawiki::php::restarts(
     Integer $opcache_limit = lookup('role::mediawiki::php::restarts::opcache_limit'),
 ) {
 
-    # Check, then restart php-fpm if needed.
-    # This implicitly depends on the other MediaWiki/PHP profiles
-    # Setting $opcache_limit to 0 will replace the script with a noop and thus disable restarts
+	# Check, then restart php-fpm if needed.
+	# This implicitly depends on the other MediaWiki/PHP profiles
+	# Setting $opcache_limit to 0 will replace the script with a noop and thus disable restarts
 	if $opcache_limit == 0 {
         file { '/usr/local/sbin/check-and-restart-php':
 			ensure  => present,
