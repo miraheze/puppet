@@ -1,5 +1,5 @@
 class profile::mediawiki::php::restarts(
-    Wmflib::Ensure $ensure = lookup('role::mediawiki::php::restarts::ensure'),
+    VMlib::Ensure $ensure = lookup('role::mediawiki::php::restarts::ensure'),
     Integer $opcache_limit = lookup('role::mediawiki::php::restarts::opcache_limit'),
 ) {
 
