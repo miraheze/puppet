@@ -226,7 +226,7 @@ class varnish (
         $address = $facts['networking']['ip6']
     }
 
-    monitoring::services { 'WikiTideRenewSSL':
+    monitoring::services { 'varnish-depool service':
         check_command => 'tcp',
         docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#WikiTideRenewSSL',
         vars          => {
