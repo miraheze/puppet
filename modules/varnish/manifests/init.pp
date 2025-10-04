@@ -14,10 +14,19 @@ class varnish (
 
     stdlib::ensure_packages(['varnish', 'varnish-modules', 'python3-flask', 'python3-pyotp'])
 
+    file { '/opt/varnish-depool':
+        ensure => directory,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0700',
+    }
+
     file { '/usr/local/bin/varnish-depool.py':
         ensure => present,
         source => 'puppet:///modules/varnish/varnish-depool.py',
-        mode   => '0755',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0700',
         notify => Service['varnish-depool'],
     }
 
