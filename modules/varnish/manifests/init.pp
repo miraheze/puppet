@@ -21,13 +21,14 @@ class varnish (
         mode   => '0700',
     }
 
-    file { '/usr/local/bin/varnish-depool.py':
-        ensure => present,
-        source => 'puppet:///modules/varnish/varnish-depool.py',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0700',
-        notify => Service['varnish-depool'],
+    file { '/opt/varnish-depool/varnish-depool.py':
+        ensure  => present,
+        source  => 'puppet:///modules/varnish/varnish-depool.py',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0700',
+        notify  => Service['varnish-depool'],
+        require => File['/opt/varnish-depool']
     }
 
     $vcl_reload_delay_s = max(2, ceiling(((100 * 5) + (100 * 4)) / 1000.0))
