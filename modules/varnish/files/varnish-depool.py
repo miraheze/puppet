@@ -1,13 +1,26 @@
-#!flask/bin/python3
+#!/usr/bin/env python3
 
-from flask import Flask, Response, request
-import subprocess
-import json
+import os
 import re
+import json
+import subprocess
 import pyotp
-import argparse
+from flask import Flask, Response, request
 
 app = Flask(__name__)
+
+# ========================================
+# Load configuration from environment variables
+# ========================================
+app.config["TOTP_SECRET"] = os.environ.get("TOTP_SECRET")
+PORT = int(os.environ.get("PORT", 5001))  # optional, default 5001
+
+if not app.config["TOTP_SECRET"]:
+    raise RuntimeError("TOTP_SECRET environment variable must be set")
+
+# ========================================
+# Helper Functions
+# ========================================
 
 def run_varnishadm(cmd):
     """Run varnishadm and return (returncode, stdout/stderr)"""
@@ -33,14 +46,21 @@ def check_totp():
     totp = pyotp.TOTP(secret)
     return totp.verify(totp_code, valid_window=1)  # allow ±1 interval
 
+# ========================================
+# Flask Hooks
+# ========================================
+
 @app.before_request
 def enforce_security():
     if not check_totp():
         return json_response({"status": "error", "error": "unauthorized"}, status=401)
 
+# ========================================
+# Routes
+# ========================================
+
 @app.route("/backend/<name>/<state>", methods=["POST"])
 def set_backend(name, state):
-    # Only allow backend names starting with 'mw' followed by numbers
     if not re.match(r"^mw\d+$", name):
         return json_response({"status": "error", "error": "invalid backend name"}, status=400)
 
@@ -48,7 +68,6 @@ def set_backend(name, state):
     if state not in ["sick", "healthy", "auto"]:
         return json_response({"status": "error", "error": "invalid state"}, status=400)
 
-    # Set backend health
     rc, _ = run_varnishadm(["backend.set_health", name, state])
     if rc != 0:
         return json_response({"status": "error", "error": "failed to set backend state"}, status=500)
@@ -64,23 +83,19 @@ def list_backends():
 
     filtered_lines = []
     for line in out.splitlines():
-        # Keep header
         if line.startswith("Backend name"):
             filtered_lines.append(line)
             continue
-        # Match backend containing '.mw' followed by numbers
         if re.search(r"\.mw\d+\b", line):
             filtered_lines.append(line)
 
     return Response("\n".join(filtered_lines), mimetype="text/plain")
 
+# ========================================
+# Note for developers
+# ========================================
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Varnish API Flask wrapper with TOTP auth")
-    parser.add_argument("--totp-secret", required=True, help="TOTP shared secret (base32)")
-    parser.add_argument("--port", type=int, default=5001, help="Port to listen on (default: 5001)")
-    args = parser.parse_args()
+    print("Running varnish-depool.py directly is only for development/testing.")
+    print("Use Gunicorn to serve this app in production.")
 
-    # store secret in app config
-    app.config["TOTP_SECRET"] = args.totp_secret
-
-    app.run(host="::", port=args.port, threaded=True)
