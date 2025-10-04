@@ -6,15 +6,15 @@ class profile::mediawiki::php::restarts(
     # Check, then restart php-fpm if needed.
     # This implicitly depends on the other MediaWiki/PHP profiles
     # Setting $opcache_limit to 0 will replace the script with a noop and thus disable restarts
-    if $opcache_limit == 0 {
+	if $opcache_limit == 0 {
         file { '/usr/local/sbin/check-and-restart-php':
-            ensure  => present,
-            owner   => 'root',
-            group   => 'root',
-            mode    => '0555',
-            content => "#!/bin/sh\nexit 0"
+			ensure  => present,
+			owner   => 'root',
+			group   => 'root',
+			mode    => '0555',
+			content => "#!/bin/sh\nexit 0"
         }
-    } else {
+	} else {
 		file { '/usr/local/sbin/check-and-restart-php':
 			ensure => $ensure,
 			owner  => 'root',
@@ -22,30 +22,30 @@ class profile::mediawiki::php::restarts(
 			mode   => '0555',
 			source => 'puppet:///modules/role/mediawiki/php/php-check-and-restart.sh',
 		}
-    }
+	}
 
 	$cache_proxies = query_facts("Class['Role::Varnish'] or Class['Role::Cache::Varnish']", ['networking'])
 	$cache_nodes = $cache_proxies.values().map |$node_facts| { $node_facts['networking']['hostname'] }.flatten().unique()
-
+	
 	$mediawiki_hosts = query_facts("Class['Role::Mediawiki']", ['networking'])
 	$mediawiki_nodes = $mediawiki_hosts.keys().flatten().unique()
 
 	$varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
-    file { '/usr/local/bin/safe-service-restart':
-        ensure => present,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0555',
-        source => 'puppet:///modules/role/mediawiki/safe-service-restart.py'
-    }
+	file { '/usr/local/bin/safe-service-restart':
+		ensure => present,
+		owner  => 'root',
+		group  => 'root',
+		mode   => '0555',
+		source => 'puppet:///modules/role/mediawiki/safe-service-restart.py'
+	}
 
-    file { '/usr/local/sbin/restart-php8.2-fpm':
-        ensure  => present,
-        content => template('role/mediawiki/safe-restart.erb'),
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0555',
-    }
+	file { '/usr/local/sbin/restart-php8.2-fpm':
+		ensure  => present,
+		content => template('role/mediawiki/safe-restart.erb'),
+		owner   => 'root',
+		group   => 'root',
+		mode    => '0555',
+	}
 
 	if member($mediawiki_nodes, $::fqdn) {
 		$times = cron_splay($mediawiki_nodes, 'daily', 'php8.2-fpm-opcache-restarts')
