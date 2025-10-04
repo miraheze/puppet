@@ -1,4 +1,4 @@
-class profile::mediawiki::php::restarts(
+class role::mediawiki::php::restarts (
   VMlib::Ensure $ensure = lookup('role::mediawiki::php::restarts::ensure'),
   Integer $opcache_limit = lookup('role::mediawiki::php::restarts::opcache_limit'),
 ) {
@@ -26,10 +26,10 @@ class profile::mediawiki::php::restarts(
 
   $cache_proxies = query_facts("Class['Role::Varnish'] or Class['Role::Cache::Varnish']", ['networking'])
   $cache_nodes = $cache_proxies.values().map |$node_facts| { $node_facts['networking']['hostname'] }.flatten().unique()
-  
+
   $mediawiki_hosts = query_facts("Class['Role::Mediawiki']", ['networking'])
   $mediawiki_nodes = $mediawiki_hosts.keys().flatten().unique()
-  
+
   $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
   file { '/usr/local/bin/safe-service-restart':
     ensure => present,
@@ -47,7 +47,7 @@ class profile::mediawiki::php::restarts(
     mode    => '0555',
   }
 
-  if member($mediawiki_nodes, $::fqdn) {
+  if member($mediawiki_nodes, $facts['networking']['fqdn']) {
     $times = cron_splay($mediawiki_nodes, 'daily', 'php8.2-fpm-opcache-restarts')
   } else {
     $times =  { 'OnCalendar' => sprintf('*-*-* %02d:00:00', fqdn_rand(24)) }
