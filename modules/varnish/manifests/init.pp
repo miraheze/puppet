@@ -12,7 +12,7 @@ class varnish (
     }
     include prometheus::exporter::varnish
 
-    stdlib::ensure_packages(['varnish', 'varnish-modules', 'python3-flask'])
+    stdlib::ensure_packages(['varnish', 'varnish-modules', 'python3-flask', 'python3-pyotp'])
 
     file { '/usr/local/bin/varnish-depool.py':
         ensure => present,
