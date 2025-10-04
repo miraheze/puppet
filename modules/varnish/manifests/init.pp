@@ -12,7 +12,13 @@ class varnish (
     }
     include prometheus::exporter::varnish
 
-    stdlib::ensure_packages(['varnish', 'varnish-modules', 'python3-flask', 'python3-pyotp'])
+    stdlib::ensure_packages([
+        'varnish',
+        'varnish-modules',
+        'python3-flask',
+        'python3-pyotp',
+        'gunicorn'
+    ])
 
     file { '/opt/varnish-depool':
         ensure => directory,
