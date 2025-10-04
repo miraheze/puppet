@@ -1,0 +1,8 @@
+#!/bin/bash
+
+<%- if @mediawiki_nodes.include?(@fqdn) -%>
+echo "Safe-restart is not needed here."
+systemctl restart <%= @title %>
+<%- else -%>
+/usr/local/bin/safe-service-restart --api <%= @cache_nodes.map { |host| "http://#{host}:5001" }.join(' ') %> --services <%= @title %> --retries 10 --wait 5 $@
+<%- end -%>
