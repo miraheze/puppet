@@ -228,7 +228,6 @@ class varnish (
 
     monitoring::services { 'varnish-depool service':
         check_command => 'tcp',
-        docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#WikiTideRenewSSL',
         vars          => {
             tcp_address => $address,
             tcp_port    => '5001',
