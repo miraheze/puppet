@@ -1,0 +1,11 @@
+[Unit]
+Description=Varnish depool/repool service to safely restart services non-interactively
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/bin/varnish-depool.py --totp-secret <%- @varnish_totp_secret -%>
+User=root
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
