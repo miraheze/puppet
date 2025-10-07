@@ -92,11 +92,11 @@ class ollama (
     }
 
     exec { 'ollama_rebuild_createwiki_ai':
-        command     => "/usr/bin/ollama create createwiki-ai -f /etc/ollama-modelfile",
+        command     => '/usr/bin/ollama create createwiki-ai -f /etc/ollama-modelfile',
         refreshonly => true,
         user        => $user,
         logoutput   => true,
-        environment => ["HOME=/usr/share/ollama"],
+        environment => ['HOME=/usr/share/ollama'],
         require     => File['/etc/ollama-modelfile'],
         subscribe   => Service['ollama'],
     }
