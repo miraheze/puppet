@@ -5,7 +5,7 @@ class role::prometheus::statsd_exporter (
     String      $relay_address = lookup('statsd', { 'default_value' => '' }),
     Enum['summary', 'histogram'] $timer_type = lookup('role::prometheus::statsd_exporter::timer_type', { 'default_value' => 'summary' }),
     Array[Variant[Integer, Float]] $histogram_buckets = lookup('role::prometheus::statsd_exporter::histogram_buckets', { 'default_value' => [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],}),
-    String $ttl = lookup('role::prometheus::statsd_exporter::ttl', { 'default_value' => '720h' }),
+    String $ttl = lookup('role::prometheus::statsd_exporter::ttl', { 'default_value' => '360' }),
 ) {
     if $enable_relay {
         $relay_addr = $relay_address
