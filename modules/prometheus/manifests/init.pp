@@ -76,6 +76,16 @@ class prometheus (
         },
     }
 
+    logrotate::conf { 'prometheus':
+        ensure => present,
+        source => 'puppet:///modules/prometheus/prometheus.logrotate.conf',
+    }
+
+    rsyslog::conf { 'prometheus':
+        source   => 'puppet:///modules/prometheus/prometheus.rsyslog.conf',
+        priority => 40,
+    }
+
     class { 'prometheus::pushgateway':
         ensure      => present,
         listen_port => 9091,
