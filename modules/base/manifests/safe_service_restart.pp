@@ -15,9 +15,11 @@ define base::safe_service_restart(
     Array[String] $nodes
 ) {
 
-  $cache_proxies = query_facts("Class['Role::Varnish'] or Class['Role::Cache::Varnish']", ['networking'])
-  $cache_nodes = $cache_proxies.values().map |$node_facts| { $node_facts['networking']['fqdn'] }.flatten().unique().sort()
-  
+    $cache_proxies = query_facts("Class['Role::Varnish'] or Class['Role::Cache::Varnish']", ['networking'])
+    $cache_nodes = $cache_proxies.values().map |$node_facts| { $node_facts['networking']['fqdn'] }.flatten().unique().sort()
+
+    $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
+
     # This file will be created independently of the presence of pools to remove or not.
     file { "/usr/local/sbin/restart-${title}":
         ensure  => present,
