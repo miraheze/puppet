@@ -164,8 +164,6 @@ def parse_args():
     )
     parser.add_argument("--api", nargs="+", required=True,
                         help="One or more Varnish control API base URLs (e.g. http://cp171:5001 http://cp191:5001)")
-    parser.add_argument("--services", nargs="+", metavar="SVC",
-                        help="Systemd service(s) to restart")
     parser.add_argument("--retries", default=5, type=int, help="Number of times to retry API")
     parser.add_argument("--wait", default=3, type=int, help="Seconds to wait between retries")
     parser.add_argument("--timeout", default=5, type=int, help="Seconds to wait for API response")
