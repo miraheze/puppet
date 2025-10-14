@@ -39,7 +39,7 @@ class role::mediawiki::php::restarts (
   }
 
   base::safe_service_restart{ 'php8.2-fpm':
-    nodes       => $mediawiki_nodes,
+    nodes => $mediawiki_nodes,
   }
 
   if member($mediawiki_nodes, $facts['networking']['fqdn']) {
