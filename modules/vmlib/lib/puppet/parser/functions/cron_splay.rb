@@ -130,7 +130,6 @@ From: https://github.com/wikimedia/operations-puppet/blob/production/modules/wmf
     ordered = longest.zip(*sublists).flatten.compact
 
     # find the index of this host in ordered
-    this_idx = ordered.index(lookupvar('::fqdn'))
     this_idx = ordered.index(Facter.value(:networking)['fqdn'])
     if this_idx.nil?
       raise(Puppet::ParseError, 'cron_splay(): this host not in set')
