@@ -3,6 +3,8 @@ class role::mediawiki::php::restarts (
   Integer $opcache_limit = lookup('role::mediawiki::php::restarts::opcache_limit'),
 ) {
 
+  stdlib::ensure_packages(['python3-pyotp'])
+
   # Check, then restart php-fpm if needed.
   # This implicitly depends on the other MediaWiki/PHP profiles
   # Setting $opcache_limit to 0 will replace the script with a noop and thus disable restarts
