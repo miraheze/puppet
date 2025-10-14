@@ -5,7 +5,7 @@ Description=Varnish depool/repool service to safely restart services non-interac
 Type=simple
 WorkingDirectory=/opt/varnish-depool
 Environment="TOTP_SECRET=<%= @varnish_totp_secret -%>"
-ExecStart=/usr/local/bin/gunicorn -b [::]:5001 varnish-depool:app -w 2
+ExecStart=/usr/bin/gunicorn -b [::]:5001 varnish-depool:app -w 2
 User=root
 Restart=on-failure
 
