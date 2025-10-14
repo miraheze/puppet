@@ -11,7 +11,7 @@ authentication for security.
 
 Usage examples:
   Safe restart:  ./safe_service_restart.py --api http://cp171.fsslc.wtnet:5001 http://cp191.fsslc.wtnet:5001 \
-                                           --services php-fpm --restart --totp-secret ABCDEF123
+                                           --services php-fpm --totp-secret ABCDEF123
   Depool only:   ./safe_service_restart.py --api http://cp171.fsslc.wtnet:5001 --depool --totp-code 123456
   Repool only:   ./safe_service_restart.py --api http://cp171.fsslc.wtnet:5001 --pool --totp-secret ABCDEF123
 """
@@ -34,7 +34,6 @@ class SafeServiceRestarter:
     DEFAULT_RC = 127
 
     def __init__(self, args):
-        # Detect backend name from FQDN (e.g. mw151.wikitide.org → mw151)
         fqdn = socket.getfqdn()
         self.backend = fqdn.split(".")[0]
         self.fqdn = fqdn
@@ -175,8 +174,10 @@ def parse_args():
     parser.add_argument("--totp-secret", help="Shared TOTP secret (base32)")
     parser.add_argument("--totp-code", help="Pre-generated TOTP code")
 
+    # Mutually exclusive actions (like Wikimedia's version)
     actions = parser.add_mutually_exclusive_group(required=True)
-    actions.add_argument("--restart", action="store_true", help="Depool, restart, repool (safe service restart)")
+    actions.add_argument("--services", nargs="+", metavar="SVC",
+                         help="Systemd service(s) to restart safely")
     actions.add_argument("--depool", action="store_true", help="Just depool backend")
     actions.add_argument("--pool", action="store_true", help="Just repool backend")
     return parser.parse_args()
@@ -191,8 +192,7 @@ def main():
         return sr.run_depool()
     if args.pool:
         return sr.run_pool()
-    if args.restart:
-        return sr.run()
+    return sr.run()
 
 
 if __name__ == "__main__":
