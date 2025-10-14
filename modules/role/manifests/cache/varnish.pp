@@ -8,6 +8,5 @@ class role::cache::varnish (
         use_nginx => false,
     }
 
-    include fail2ban
     include prometheus::exporter::varnishreqs
 }
