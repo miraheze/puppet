@@ -27,10 +27,10 @@ class role::mediawiki::php::restarts (
   }
 
   $cache_proxies = query_facts("Class['Role::Varnish'] or Class['Role::Cache::Varnish']", ['networking'])
-  $cache_nodes = $cache_proxies.values().map |$node_facts| { $node_facts['networking']['hostname'] }.flatten().unique()
+  $cache_nodes = $cache_proxies.values().map |$node_facts| { $node_facts['networking']['fqdn'] }.flatten().unique().sort()
 
   $mediawiki_hosts = query_facts("Class['Role::Mediawiki']", ['networking'])
-  $mediawiki_nodes = $mediawiki_hosts.keys().flatten().unique()
+  $mediawiki_nodes = $mediawiki_hosts.keys().flatten().unique().sort()
 
   $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
   file { '/usr/local/bin/safe-service-restart':
