@@ -176,7 +176,7 @@ def parse_args():
 
     # Mutually exclusive actions (like Wikimedia's version)
     actions = parser.add_mutually_exclusive_group(required=True)
-    simple_actions.add_argument(
+    actions.add_argument(
         "--services", nargs="+", metavar="SVC", help="Systemd service to restart"
     )
     actions.add_argument(
