@@ -176,10 +176,21 @@ def parse_args():
 
     # Mutually exclusive actions (like Wikimedia's version)
     actions = parser.add_mutually_exclusive_group(required=True)
-    actions.add_argument("--services", nargs="+", metavar="SVC",
-                         help="Systemd service(s) to restart safely")
-    actions.add_argument("--depool", action="store_true", help="Just depool backend")
-    actions.add_argument("--pool", action="store_true", help="Just repool backend")
+    simple_actions.add_argument(
+        "--services", nargs="+", metavar="SVC", help="Systemd service to restart"
+    )
+    actions.add_argument(
+        "--pool",
+        action="store_true",
+        default=False,
+        help="Just repool backend",
+    )
+    actions.add_argument(
+        "--depool",
+        action="store_true",
+        default=False,
+        help="Just depool backend",
+    )
     return parser.parse_args()
 
 
