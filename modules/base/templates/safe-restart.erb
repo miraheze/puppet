@@ -1,6 +1,6 @@
 #!/bin/bash
 
-<%- unless @nodes.include?(@facts['networking']['fqdn']) -%>
+<%- unless @nodes.include?(@facts['networking']['fqdn']) || @nodess.nil? || @nodes.empty? -%>
 echo "Safe-restart is not needed here."
 systemctl restart <%= @title %>
 <%- else -%>
