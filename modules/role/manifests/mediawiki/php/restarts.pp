@@ -26,9 +26,6 @@ class role::mediawiki::php::restarts (
     }
   }
 
-  $cache_proxies = query_facts("Class['Role::Varnish'] or Class['Role::Cache::Varnish']", ['networking'])
-  $cache_nodes = $cache_proxies.values().map |$node_facts| { $node_facts['networking']['fqdn'] }.flatten().unique().sort()
-
   $mediawiki_hosts = query_facts("Class['Role::Mediawiki']", ['networking'])
   $mediawiki_nodes = $mediawiki_hosts.keys().flatten().unique().sort()
 
@@ -41,12 +38,8 @@ class role::mediawiki::php::restarts (
     source => 'puppet:///modules/role/mediawiki/safe-service-restart.py'
   }
 
-  file { '/usr/local/sbin/restart-php8.2-fpm':
-    ensure  => present,
-    content => template('role/mediawiki/safe-restart.erb'),
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0555',
+  base::safe_service_restart{ 'php8.2-fpm':
+    nodes       => $mediawiki_nodes,
   }
 
   if member($mediawiki_nodes, $facts['networking']['fqdn']) {
