@@ -17,7 +17,6 @@ mediawiki::php::fpm_config:
   upload_max_filesize: '250M'
   opcache.interned_strings_buffer: 384
   opcache.memory_consumption: 8192
-  opcache.max_wasted_percentage: 3
 
 role::mediawiki::php::restarts::ensure: present
 role::mediawiki::php::restarts::opcache_limit: 200

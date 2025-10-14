@@ -22,7 +22,6 @@ mediawiki::php::fpm_config:
   opcache.memory_consumption: 8192
   opcache.max_accelerated_files: 130987
   max_execution_time: 1200
-  opcache.max_wasted_percentage: 3
 
 mediawiki::php::increase_open_files: true
 mediawiki::php::enable_request_profiling: true
