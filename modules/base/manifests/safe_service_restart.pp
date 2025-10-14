@@ -12,9 +12,12 @@
 # If no pool is provided, or the realm is not production, the restart scripts will not use conftool
 # and will just be a stub.
 define base::safe_service_restart(
-    Array[String] $varnish_pools
+    Array[String] $nodes
 ) {
 
+  $cache_proxies = query_facts("Class['Role::Varnish'] or Class['Role::Cache::Varnish']", ['networking'])
+  $cache_nodes = $cache_proxies.values().map |$node_facts| { $node_facts['networking']['fqdn'] }.flatten().unique().sort()
+  
     # This file will be created independently of the presence of pools to remove or not.
     file { "/usr/local/sbin/restart-${title}":
         ensure  => present,
