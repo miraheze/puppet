@@ -20,6 +20,7 @@ class role::mediawiki_beta (
         include role::mediawiki::nutcracker
     }
     include mediawiki
+    include role::mediawiki::php::restarts
 
     if $strict_firewall {
         $firewall_rules_str = join(
