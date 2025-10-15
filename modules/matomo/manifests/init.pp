@@ -61,6 +61,7 @@ class matomo (
         'post_max_size' => '60M',
         'track_errors' => 'Off',
         'upload_max_filesize' => '100M',
+        'apc.shm_size' => '512M',
     }
 
     $php_version = lookup('php::php_version', {'default_value' => '8.2'})
