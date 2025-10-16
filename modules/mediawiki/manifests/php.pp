@@ -17,7 +17,6 @@ class mediawiki::php (
         group  => 'root',
         mode   => '0644',
         source => 'puppet:///modules/mediawiki/php/opcache-blacklist.txt',
-        notify => Service["php${php_version}-fpm.service"],
     }
 
     $config_cli = {
