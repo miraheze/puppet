@@ -45,7 +45,7 @@ class mediawiki::php (
         'enable_dl'                       => 0,
         'rlimit_core'                     => 0,
         'apc.shm_size'                    => $apc_shm_size,
-        'opcache.blacklist_filename'      => '/srv/mediawiki/opcache-blacklist.txt'
+        'opcache.blacklist_filename'      => '/etc/php/opcache-blacklist.txt',
     }
     if $enable_fpm {
         $_sapis = ['cli', 'fpm']
