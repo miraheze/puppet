@@ -12,12 +12,12 @@ class mediawiki::php (
 
     # Blacklist cache php files from opcache.
     file { '/etc/php/opcache-blacklist.txt':
-        ensure  => file,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0644',
-        source  => 'puppet:///modules/mediawiki/php/opcache-blacklist.txt',
-        notify  => Service["php${php_version}-fpm.service"],
+        ensure => file,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0644',
+        source => 'puppet:///modules/mediawiki/php/opcache-blacklist.txt',
+        notify => Service["php${php_version}-fpm.service"],
     }
 
     $config_cli = {
