@@ -10,6 +10,16 @@ class mediawiki::php (
     Boolean $increase_open_files         = lookup('mediawiki::php::increase_open_files', {'default_value' => false}),
 ) {
 
+    # Blacklist cache php files from opcache.
+    file { '/etc/php/opcache-blacklist.txt':
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0644',
+        source  => 'puppet:///modules/mediawiki/php/opcache-blacklist.txt',
+        notify  => Service["php${php_version}-fpm.service"],
+    }
+
     $config_cli = {
         'include_path'           => '".:/usr/share/php"',
         'error_log'              => 'syslog',
@@ -35,6 +45,7 @@ class mediawiki::php (
         'enable_dl'                       => 0,
         'rlimit_core'                     => 0,
         'apc.shm_size'                    => $apc_shm_size,
+        'opcache.blacklist_filename'      => '/srv/mediawiki/opcache-blacklist.txt'
     }
     if $enable_fpm {
         $_sapis = ['cli', 'fpm']
