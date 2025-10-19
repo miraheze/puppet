@@ -50,7 +50,7 @@ class matomo (
         'enable_dl' => 0,
         'opcache' => {
             'enable' => 1,
-            'interned_strings_buffer' => 30,
+            'interned_strings_buffer' => 80,
             'memory_consumption' => 1024,
             'max_accelerated_files' => 20000,
             'max_wasted_percentage' => 10,
