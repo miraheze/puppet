@@ -52,7 +52,7 @@ class matomo (
             'enable' => 1,
             'interned_strings_buffer' => 80,
             'memory_consumption' => 1024,
-            'max_accelerated_files' => 20000,
+            'max_accelerated_files' => 50000,
             'max_wasted_percentage' => 10,
             'validate_timestamps' => 1,
             'revalidate_freq' => 10,
