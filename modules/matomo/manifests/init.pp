@@ -221,20 +221,18 @@ class matomo (
 
     $queuedtracking_command = '/usr/bin/php /srv/matomo/console queuedtracking:process'
 
-    ['1', '2'].each | $key | {
-        systemd::timer::job { "matomo-queuedtracking-${key}":
-            description       => "Runs the Matomo's Plugin QueuedTracking process.",
-            command           => "/bin/bash -c '${queuedtracking_command}'",
-            interval          => {
-                'start'    => 'OnCalendar',
-                'interval' => '*-*-* *:*:00',
-            },
-            logfile_basedir   => '/var/log/matomo',
-            logfile_group     => 'www-data',
-            logfile_name      => "matomo-queuedtracking-${key}.log",
-            syslog_identifier => "matomo-queuedtracking-${key}",
-            user              => 'www-data',
-            require           => Git::Clone['matomo'],
-        }
+    systemd::timer::job { 'matomo-queuedtracking':
+        description       => "Runs the Matomo's Plugin QueuedTracking process.",
+        command           => "/bin/bash -c '${queuedtracking_command}'",
+        interval          => {
+            'start'    => 'OnCalendar',
+            'interval' => '*-*-* *:*:00',
+        },
+        logfile_basedir   => '/var/log/matomo',
+        logfile_group     => 'www-data',
+        logfile_name      => "matomo-queuedtracking.log",
+        syslog_identifier => "matomo-queuedtracking",
+        user              => 'www-data',
+        require           => Git::Clone['matomo'],
     }
 }
