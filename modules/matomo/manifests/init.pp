@@ -230,8 +230,8 @@ class matomo (
         },
         logfile_basedir   => '/var/log/matomo',
         logfile_group     => 'www-data',
-        logfile_name      => "matomo-queuedtracking.log",
-        syslog_identifier => "matomo-queuedtracking",
+        logfile_name      => 'matomo-queuedtracking.log',
+        syslog_identifier => 'matomo-queuedtracking',
         user              => 'www-data',
         require           => Git::Clone['matomo'],
     }
