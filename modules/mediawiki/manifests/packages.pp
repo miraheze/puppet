@@ -10,6 +10,7 @@ class mediawiki::packages {
         'dvipng',
         'espeak-ng-espeak',
         'ffmpeg',
+        'fluidsynth',
         'fonts-freefont-ttf',
         'ghostscript',
         'htmldoc',
