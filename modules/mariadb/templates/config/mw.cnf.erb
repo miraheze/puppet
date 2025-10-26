@@ -22,7 +22,7 @@ innodb                         = FORCE
 datadir                        = <%= @datadir %>
 tmpdir                         = <%= @tmpdir %>
 
-transaction-isolation          = READ-COMMITTED
+transaction_isolation          = REPEATABLE-READ
 binlog_format                  = ROW
 
 <%- if @server_id -%>
