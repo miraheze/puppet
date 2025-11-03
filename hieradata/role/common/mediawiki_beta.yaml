@@ -31,7 +31,7 @@ mediawiki::multiversion::versions:
   '1.44':
     branch: 'REL1_44'
   '1.45':
-    branch: 'master'
+    branch: 'REL1_45'
     default: true
 
 role::mediawiki::php::restarts::ensure: present
