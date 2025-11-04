@@ -4,7 +4,15 @@ location ~ ^/(\.git|config|landing|cache|stopforumspam|geoip) {
         deny all;
 }
 
-location ~ ^/1\.\d\d/(cache|maintenance|mw-config|vendor) {
+location ~ ^/1\.\d\d/(cache|includes|maintenance|mw-config|sql|tests|vendor) {
+	deny all;
+}
+
+location ~ ^/1\.\d\d/(extensions|skins)/.*\.php {
+	deny all;
+}
+
+location ~ ^(?!\/wiki\/)[^?]+\.patch {
 	deny all;
 }
 
