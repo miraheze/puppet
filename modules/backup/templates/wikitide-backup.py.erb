@@ -10,9 +10,40 @@ import requests
 import subprocess
 import tarfile
 import time
-
+import signal
+import sys
 from fabric import Connection
 from datetime import datetime
+
+# --------------------------------------------------------------------
+# Graceful shutdown handling: ensures child processes are killed
+# --------------------------------------------------------------------
+current_proc = None
+
+def handle_exit(signum, frame):
+    global current_proc
+    if current_proc and current_proc.poll() is None:
+        try:
+            print(f"Received signal {signum}, terminating child processes...")
+            os.killpg(current_proc.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+    sys.exit(0)
+
+# Catch systemd stop/restart signals
+signal.signal(signal.SIGTERM, handle_exit)
+signal.signal(signal.SIGINT, handle_exit)
+
+def run_cmd(cmd, check=True):
+    """Run a command in its own process group and handle termination."""
+    global current_proc
+    current_proc = subprocess.Popen(cmd, shell=True, start_new_session=True)
+    ret = current_proc.wait()
+    current_proc = None
+    if check and ret != 0:
+        raise subprocess.CalledProcessError(ret, cmd)
+    return ret
+# --------------------------------------------------------------------
 
 # Cache swift token
 # We don't want to hit rate limits (429)
@@ -75,8 +106,7 @@ def backup_private(dt: str):
     tar.close()
 
     pca_connection('PUT', 'private.tar.gz', f'private/{dt}.tar.gz', False)
-
-    subprocess.call(f'rm -f private.tar.gz', shell=True)
+    run_cmd('rm -f private.tar.gz', check=False)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/private/{dt}.tar.gz', 4)
     segments_expire(f'private', f'{dt}.tar.gz', 4)
@@ -88,8 +118,7 @@ def backup_sslkeys(dt: str):
     tar.close()
 
     pca_connection('PUT', 'sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
-
-    subprocess.call(f'rm -f sslkeys.tar.gz', shell=True)
+    run_cmd('rm -f sslkeys.tar.gz', check=False)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sslkeys/{dt}.tar.gz', 4)
     segments_expire(f'sslkeys', f'{dt}.tar.gz', 4)
@@ -101,24 +130,22 @@ def backup_swift_account_container(dt: str):
     tar.close()
 
     pca_connection('PUT', 'swift_account_container.tar.gz', f'swift-account-container/{dt}.tar.gz', False)
-
-    subprocess.call(f'rm -f swift_account_container.tar.gz', shell=True)
+    run_cmd('rm -f swift_account_container.tar.gz', check=False)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/swift-account-container/{dt}.tar.gz', 4)
     segments_expire(f'swift-account-container', f'{dt}.tar.gz', 4)
 
 
 def backup_phorge(dt: str):
-    subprocess.check_call(f'/srv/phorge/phorge/bin/storage dump --compress --output /srv/backups/backup.sql.gz', shell=True)
+    run_cmd('/srv/phorge/phorge/bin/storage dump --compress --output /srv/backups/backup.sql.gz')
     tar = tarfile.open('/srv/backups/phorge.tar.gz', 'w:gz')
     tar.add('/srv/backups/backup.sql.gz', arcname='db')
-    subprocess.check_call(f'rm -f /srv/backups/backup.sql.gz', shell=True)
+    run_cmd('rm -f /srv/backups/backup.sql.gz', check=False)
     tar.add('/srv/phorge/images', arcname='phorge')
     tar.close()
 
     pca_connection('PUT', '/srv/backups/phorge.tar.gz', f'phorge/{dt}.tar.gz', False)
-
-    subprocess.call(f'rm -f /srv/backups/phorge.tar.gz', shell=True)
+    run_cmd('rm -f /srv/backups/phorge.tar.gz', check=False)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phorge/{dt}.tar.gz', 4)
     segments_expire(f'phorge', f'{dt}.tar.gz', 4)
@@ -136,64 +163,56 @@ def backup_sql(dt: str, database: str):
     for db in dbs:
         print(f'Backing up database \'{db}\'...')
 
-        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mariadb-dump --quick --skip-lock-tables --single-transaction -c --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= (@facts['processors']['count']/3).to_i > 1 ? (@facts['processors']['count']/3).to_i : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True)
-        pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
+        run_cmd(f'/usr/bin/ionice -c2 -n7 /usr/bin/mariadb-dump --quick --skip-lock-tables --single-transaction -c '
+                f'--ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo '
+                f'--ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | '
+                f'/usr/bin/nice /usr/bin/pigz -p <%= (@facts["processors"]["count"]/3).to_i > 1 ? (@facts["processors"]["count"]/3).to_i : 1 %> '
+                f'> /srv/backups/dbs/{db}.sql.gz')
 
-        subprocess.check_call(f'rm -f /srv/backups/dbs/{db}.sql.gz', shell=True)
+        pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
+        run_cmd(f'rm -f /srv/backups/dbs/{db}.sql.gz', check=False)
 
         pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.sql.gz', 5)
         segments_expire(f'sql', f'{db}/{dt}.sql.gz', 5)
 
 
 def backup_mattermost_data(dt: str, database: str):
-    subprocess.check_call(f'/usr/bin/tar -zcf /srv/backups/mattermost-data.tar.gz /var/mattermost', shell=True)
-
+    run_cmd('/usr/bin/tar -zcf /srv/backups/mattermost-data.tar.gz /var/mattermost')
     pca_connection('PUT', '/srv/backups/mattermost-data.tar.gz', f'mattermost-data/{dt}.tar.gz', False)
-
-    subprocess.call(f'rm -f /srv/backups/mattermost-data.tar.gz', shell=True)
-
+    run_cmd('rm -f /srv/backups/mattermost-data.tar.gz', check=False)
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-data/{dt}.tar.gz', 4)
     segments_expire(f'mattermost-data', f'{dt}.tar.gz', 4)
 
 
 def backup_mattermost_db(dt: str, database: str):
-    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump mattermost | gzip -9 > /srv/backups/mattermost-db.sql.gz', shell=True)
-
+    run_cmd('sudo -u postgres /usr/bin/pg_dump mattermost | gzip -9 > /srv/backups/mattermost-db.sql.gz')
     pca_connection('PUT', '/srv/backups/mattermost-db.sql.gz', f'mattermost-db/{dt}.sql.gz', False)
-
-    subprocess.call(f'rm -f /srv/backups/mattermost-db.sql.gz', shell=True)
-
+    run_cmd('rm -f /srv/backups/mattermost-db.sql.gz', check=False)
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-db/{dt}.sql.gz', 4)
     segments_expire(f'mattermost-db', f'{dt}.sql.gz', 4)
 
 
 def backup_puppetdb(dt: str, database: str):
-    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump puppetdb | gzip -9 > /srv/backups/puppetdb.sql.gz', shell=True)
-
+    run_cmd('sudo -u postgres /usr/bin/pg_dump puppetdb | gzip -9 > /srv/backups/puppetdb.sql.gz')
     pca_connection('PUT', '/srv/backups/puppetdb.sql.gz', f'puppetdb/{dt}.sql.gz', False)
-
-    subprocess.call(f'rm -f /srv/backups/puppetdb.sql.gz', shell=True)
-
+    run_cmd('rm -f /srv/backups/puppetdb.sql.gz', check=False)
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/puppetdb/{dt}.sql.gz', 4)
     segments_expire(f'puppetdb', f'{dt}.sql.gz', 4)
 
 
 def backup_grafana_db(dt: str):
-    subprocess.check_call(f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"', shell=True)
+    run_cmd('/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"')
     tar = tarfile.open('grafana.tar.gz', 'w:gz')
     tar.add('/var/lib/grafana/grafana_backup.db', arcname='grafana_backup.db')
     tar.close()
     
     pca_connection('PUT', 'grafana.tar.gz', f'sql/grafana/{dt}.tar.gz', False)
-
-    subprocess.call(f'rm -f grafana.tar.gz /var/lib/grafana/grafana_backup.db', shell=True)
-
+    run_cmd('rm -f grafana.tar.gz /var/lib/grafana/grafana_backup.db', check=False)
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/grafana/{dt}.tar.gz', 4)
     segments_expire(f'sql', f'grafana/{dt}.tar.gz', 4)
 
 
 def backup_mediawiki_xml(dt: str, database: str):
-
     def get_php_keys(file_path):
         try:
             command = (
@@ -222,31 +241,27 @@ def backup_mediawiki_xml(dt: str, database: str):
         runner = f'/srv/mediawiki/{version}/maintenance/run.php '
 
         try:
-            subprocess.check_call(f'/usr/bin/php {runner}/srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}', shell=True)
+            run_cmd(f'/usr/bin/php {runner}/srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full '
+                    f'--output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}')
         except subprocess.CalledProcessError as e:
-            print(f'WARNING: encountered CalledProcessError backing up {db} with returned code {e.returncode} and output:\n')
-            print(f'{e.output}\n')
-            subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
+            print(f'WARNING: encountered CalledProcessError backing up {db} with returned code {e.returncode}')
+            run_cmd(f'rm -f /srv/backups/{db}.xml.gz', check=False)
             continue
 
         pca_connection('PUT', f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
-
-        subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
+        run_cmd(f'rm -f /srv/backups/{db}.xml.gz', check=False)
 
         pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{db}/{dt}.xml.gz', 13)
         segments_expire(f'mediawiki-xml', f'{db}/{dt}.xml.gz', 13)
 
 
 def segments_expire(source: str, object: str, expire: int):
-    """We have to apply the X-Delete-After header to segments as well if they exist for a object.
-    Doing it just for a main object doesn't apply it to all the segments of the object.
-    """
     segments = pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}_segments', 0)
     segments_list = list(segments.text.split("\n"))
 
     for segment in segments_list:
-            if segment.startswith(f'{object}/'):
-                pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}_segments/{segment}', expire)
+        if segment.startswith(f'{object}/'):
+            pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}_segments/{segment}', expire)
 
 
 def backup(source: str, database: str):
@@ -294,69 +309,68 @@ def download_pca(file: str):
 
 
 def download(source: str, dt: str, database: str):
-    ts = time.time()
-    print(f'Downloading backup of \'{source}\' for date {dt}...')
-
-    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container', 'mattermost-data']:
-        download_pca(f'{source}/{dt}.tar.gz')
-    elif source in ['mediawiki-xml']:
-        download_pca(f'{source}/{database}/{dt}.xml.gz')
-    elif source in ['grafana']:
-        download_pca(f'sql/{source}/{dt}.tar.gz')
-    elif source in ['sql']:
-        download_pca(f'{source}/{database}/{dt}.sql.gz')
-    elif source in ['mattermost-db', 'puppetdb']:
-        download_pca(f'{source}/{dt}.sql.gz')
-
-    print(f'Completed! This took {time.time() - ts}s')
-
-
-def find_backups(source: str, database: str):
-    all_backups = pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}', 0)
-    backups_list = list(all_backups.text.strip().split('\n'))
-    # These web requests return a maximum of 10000 items at a time. The status code is 200 if objects are returned and 204 if there are no others
-    while all_backups.status_code == 200:
-        all_backups = pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{source}?marker={backups_list[-1]}', 0)
-        backups_list += list(all_backups.text.strip().split('\n'))
-    
-    if source in ['sql', 'mediawiki-xml']:
-        for backup_item in backups_list:
-            if backup_item.split('/')[0] == database:
-                print(backup_item.split('/')[1].split('.')[0])
+    if source == 'private':
+        download_pca(f'private/{dt}.tar.gz')
+    elif source == 'sslkeys':
+        download_pca(f'sslkeys/{dt}.tar.gz')
+    elif source == 'swift-account-container':
+        download_pca(f'swift-account-container/{dt}.tar.gz')
+    elif source == 'phorge':
+        download_pca(f'phorge/{dt}.tar.gz')
+    elif source == 'sql':
+        if database is None:
+            raise Exception('Database argument is required for SQL backups.')
+        download_pca(f'sql/{database}/{dt}.sql.gz')
+    elif source == 'grafana':
+        download_pca(f'sql/grafana/{dt}.tar.gz')
+    elif source == 'mediawiki-xml':
+        if database is None:
+            raise Exception('Database argument is required for MediaWiki XML backups.')
+        download_pca(f'mediawiki-xml/{database}/{dt}.xml.gz')
+    elif source == 'mattermost-data':
+        download_pca(f'mattermost-data/{dt}.tar.gz')
+    elif source == 'mattermost-db':
+        download_pca(f'mattermost-db/{dt}.sql.gz')
+    elif source == 'puppetdb':
+        download_pca(f'puppetdb/{dt}.sql.gz')
     else:
-        for backup_item in backups_list:
-            print(backup_item)
+        raise Exception(f'Unsupported source: {source}')
 
 
-def unfreeze_backup(source: str, dt: str, database: str):
-    if source in ['private', 'sslkeys', 'phorge', 'swift-account-container', 'mattermost-data']:
-        file = f'{source}/{dt}.tar.gz'
-    elif source in ['grafana']:
-        file = f'sql/{source}/{dt}.tar.gz'
-    elif source in ['mediawiki-xml']:
-        file = f'{source}/{database}/{dt}.xml.gz'
-    elif source in ['sql']:
-        file = f'{source}/{database}/{dt}.sql.gz'
-    elif source in ['mattermost-db', 'puppetdb']:
-        file = f'{source}/{dt}.sql.gz'
+def unfreeze(source: str, dt: str, database: str):
+    if source == 'private':
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/private/{dt}.tar.gz', 0)
+    elif source == 'sslkeys':
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sslkeys/{dt}.tar.gz', 0)
+    elif source == 'swift-account-container':
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/swift-account-container/{dt}.tar.gz', 0)
+    elif source == 'phorge':
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phorge/{dt}.tar.gz', 0)
+    elif source == 'sql':
+        if database is None:
+            raise Exception('Database argument is required for SQL unfreezing.')
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{database}/{dt}.sql.gz', 0)
+    elif source == 'grafana':
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/grafana/{dt}.tar.gz', 0)
+    elif source == 'mediawiki-xml':
+        if database is None:
+            raise Exception('Database argument is required for MediaWiki XML unfreezing.')
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{database}/{dt}.xml.gz', 0)
+    elif source == 'mattermost-data':
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-data/{dt}.tar.gz', 0)
+    elif source == 'mattermost-db':
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-db/{dt}.sql.gz', 0)
+    elif source == 'puppetdb':
+        pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/puppetdb/{dt}.sql.gz', 0)
+    else:
+        raise Exception(f'Unsupported source: {source}')
 
-    pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0)
-    available_in = pca_web('HEAD', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
-    print(f'{file} has been unfrozen. It will be available to download in {int(available_in)/60} minutes.')
 
-if __name__ == '__main__':
-
-    if args.action == 'backup':
-        backup(args.type, args.database)
-    elif args.action == 'download':
-        if not args.date:
-            parser.exit(1, '--date is required when downloading a file!')
-
-        download(args.type, args.date, args.database)
-    elif args.action == 'find':
-        find_backups(args.type, args.database)
-    elif args.action == 'unfreeze':
-        if not args.date:
-            parser.exit(1, '--date is required when unfreezing a file!')
-
-        unfreeze_backup(args.type, args.date, args.database)
+if args.action == 'backup':
+    backup(args.type, args.database)
+elif args.action == 'download':
+    download(args.type, args.date, args.database)
+elif args.action == 'unfreeze':
+    unfreeze(args.type, args.date, args.database)
+else:
+    raise Exception(f'Unsupported action: {args.action}')
