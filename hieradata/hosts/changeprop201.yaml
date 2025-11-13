@@ -135,7 +135,7 @@ changeprop::high_traffic_jobs_config:
     concurrency: 2
   mediaModerationScanFileJob:
     concurrency: 15
-  DataDumpStatusJob:
+  DataDumpStatusUpdateJob:
     concurrency: 1
     retry_limit: 0
 
