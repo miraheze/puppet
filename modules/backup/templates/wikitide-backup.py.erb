@@ -76,7 +76,7 @@ def backup_private(dt: str):
 
     pca_connection('PUT', 'private.tar.gz', f'private/{dt}.tar.gz', False)
 
-    subprocess.call(f'rm -f private.tar.gz', shell=True)
+    subprocess.call(f'rm -f private.tar.gz', shell=True, preexec_fn=os.setsid)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/private/{dt}.tar.gz', 4)
     segments_expire(f'private', f'{dt}.tar.gz', 4)
@@ -89,7 +89,7 @@ def backup_sslkeys(dt: str):
 
     pca_connection('PUT', 'sslkeys.tar.gz', f'sslkeys/{dt}.tar.gz', False)
 
-    subprocess.call(f'rm -f sslkeys.tar.gz', shell=True)
+    subprocess.call(f'rm -f sslkeys.tar.gz', shell=True, preexec_fn=os.setsid)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sslkeys/{dt}.tar.gz', 4)
     segments_expire(f'sslkeys', f'{dt}.tar.gz', 4)
@@ -102,23 +102,23 @@ def backup_swift_account_container(dt: str):
 
     pca_connection('PUT', 'swift_account_container.tar.gz', f'swift-account-container/{dt}.tar.gz', False)
 
-    subprocess.call(f'rm -f swift_account_container.tar.gz', shell=True)
+    subprocess.call(f'rm -f swift_account_container.tar.gz', shell=True, preexec_fn=os.setsid)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/swift-account-container/{dt}.tar.gz', 4)
     segments_expire(f'swift-account-container', f'{dt}.tar.gz', 4)
 
 
 def backup_phorge(dt: str):
-    subprocess.check_call(f'/srv/phorge/phorge/bin/storage dump --compress --output /srv/backups/backup.sql.gz', shell=True)
+    subprocess.check_call(f'/srv/phorge/phorge/bin/storage dump --compress --output /srv/backups/backup.sql.gz', shell=True, preexec_fn=os.setsid)
     tar = tarfile.open('/srv/backups/phorge.tar.gz', 'w:gz')
     tar.add('/srv/backups/backup.sql.gz', arcname='db')
-    subprocess.check_call(f'rm -f /srv/backups/backup.sql.gz', shell=True)
+    subprocess.check_call(f'rm -f /srv/backups/backup.sql.gz', shell=True, preexec_fn=os.setsid)
     tar.add('/srv/phorge/images', arcname='phorge')
     tar.close()
 
     pca_connection('PUT', '/srv/backups/phorge.tar.gz', f'phorge/{dt}.tar.gz', False)
 
-    subprocess.call(f'rm -f /srv/backups/phorge.tar.gz', shell=True)
+    subprocess.call(f'rm -f /srv/backups/phorge.tar.gz', shell=True, preexec_fn=os.setsid)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phorge/{dt}.tar.gz', 4)
     segments_expire(f'phorge', f'{dt}.tar.gz', 4)
@@ -136,57 +136,57 @@ def backup_sql(dt: str, database: str):
     for db in dbs:
         print(f'Backing up database \'{db}\'...')
 
-        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mariadb-dump --quick --skip-lock-tables --single-transaction -c --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= (@facts['processors']['count']/3).to_i > 1 ? (@facts['processors']['count']/3).to_i : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True)
+        subprocess.check_call(f'/usr/bin/ionice -c2 -n7 /usr/bin/mariadb-dump --quick --skip-lock-tables --single-transaction -c --ignore-table={db}.objectcache --ignore-table={db}.querycache --ignore-table={db}.querycachetwo --ignore-table={db}.recentchanges --ignore-table={db}.searchindex {db} | /usr/bin/nice /usr/bin/pigz -p <%= (@facts['processors']['count']/3).to_i > 1 ? (@facts['processors']['count']/3).to_i : 1 %> > /srv/backups/dbs/{db}.sql.gz', shell=True, preexec_fn=os.setsid)
         pca_connection('PUT', f'/srv/backups/dbs/{db}.sql.gz', f'sql/{db}/{dt}.sql.gz', False)
 
-        subprocess.check_call(f'rm -f /srv/backups/dbs/{db}.sql.gz', shell=True)
+        subprocess.check_call(f'rm -f /srv/backups/dbs/{db}.sql.gz', shell=True, preexec_fn=os.setsid)
 
         pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/{db}/{dt}.sql.gz', 5)
         segments_expire(f'sql', f'{db}/{dt}.sql.gz', 5)
 
 
 def backup_mattermost_data(dt: str, database: str):
-    subprocess.check_call(f'/usr/bin/tar -zcf /srv/backups/mattermost-data.tar.gz /var/mattermost', shell=True)
+    subprocess.check_call(f'/usr/bin/tar -zcf /srv/backups/mattermost-data.tar.gz /var/mattermost', shell=True, preexec_fn=os.setsid)
 
     pca_connection('PUT', '/srv/backups/mattermost-data.tar.gz', f'mattermost-data/{dt}.tar.gz', False)
 
-    subprocess.call(f'rm -f /srv/backups/mattermost-data.tar.gz', shell=True)
+    subprocess.call(f'rm -f /srv/backups/mattermost-data.tar.gz', shell=True, preexec_fn=os.setsid)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-data/{dt}.tar.gz', 4)
     segments_expire(f'mattermost-data', f'{dt}.tar.gz', 4)
 
 
 def backup_mattermost_db(dt: str, database: str):
-    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump mattermost | gzip -9 > /srv/backups/mattermost-db.sql.gz', shell=True)
+    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump mattermost | gzip -9 > /srv/backups/mattermost-db.sql.gz', shell=True, preexec_fn=os.setsid)
 
     pca_connection('PUT', '/srv/backups/mattermost-db.sql.gz', f'mattermost-db/{dt}.sql.gz', False)
 
-    subprocess.call(f'rm -f /srv/backups/mattermost-db.sql.gz', shell=True)
+    subprocess.call(f'rm -f /srv/backups/mattermost-db.sql.gz', shell=True, preexec_fn=os.setsid)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mattermost-db/{dt}.sql.gz', 4)
     segments_expire(f'mattermost-db', f'{dt}.sql.gz', 4)
 
 
 def backup_puppetdb(dt: str, database: str):
-    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump puppetdb | gzip -9 > /srv/backups/puppetdb.sql.gz', shell=True)
+    subprocess.check_call(f'sudo -u postgres /usr/bin/pg_dump puppetdb | gzip -9 > /srv/backups/puppetdb.sql.gz', shell=True, preexec_fn=os.setsid)
 
     pca_connection('PUT', '/srv/backups/puppetdb.sql.gz', f'puppetdb/{dt}.sql.gz', False)
 
-    subprocess.call(f'rm -f /srv/backups/puppetdb.sql.gz', shell=True)
+    subprocess.call(f'rm -f /srv/backups/puppetdb.sql.gz', shell=True, preexec_fn=os.setsid)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/puppetdb/{dt}.sql.gz', 4)
     segments_expire(f'puppetdb', f'{dt}.sql.gz', 4)
 
 
 def backup_grafana_db(dt: str):
-    subprocess.check_call(f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"', shell=True)
+    subprocess.check_call(f'/usr/bin/sqlite3 /var/lib/grafana/grafana.db ".backup \'/var/lib/grafana/grafana_backup.db\'"', shell=True, preexec_fn=os.setsid)
     tar = tarfile.open('grafana.tar.gz', 'w:gz')
     tar.add('/var/lib/grafana/grafana_backup.db', arcname='grafana_backup.db')
     tar.close()
     
     pca_connection('PUT', 'grafana.tar.gz', f'sql/grafana/{dt}.tar.gz', False)
 
-    subprocess.call(f'rm -f grafana.tar.gz /var/lib/grafana/grafana_backup.db', shell=True)
+    subprocess.call(f'rm -f grafana.tar.gz /var/lib/grafana/grafana_backup.db', shell=True, preexec_fn=os.setsid)
 
     pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/sql/grafana/{dt}.tar.gz', 4)
     segments_expire(f'sql', f'grafana/{dt}.tar.gz', 4)
@@ -202,7 +202,7 @@ def backup_mediawiki_xml(dt: str, database: str):
                 f'echo implode( PHP_EOL, array_keys( $list["databases"] ) ); '
                 f'}} else {{ echo "Invalid format"; }}\''
             )
-            output = subprocess.check_output(command, shell=True, text=True)
+            output = subprocess.check_output(command, shell=True, text=True, preexec_fn=os.setsid)
             keys = output.strip().splitlines()
             return keys
         except subprocess.CalledProcessError as e:
@@ -222,16 +222,16 @@ def backup_mediawiki_xml(dt: str, database: str):
         runner = f'/srv/mediawiki/{version}/maintenance/run.php '
 
         try:
-            subprocess.check_call(f'/usr/bin/php {runner}/srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}', shell=True)
+            subprocess.check_call(f'/usr/bin/php {runner}/srv/mediawiki/{version}/maintenance/dumpBackup.php --logs --uploads --full --output="gzip:/srv/backups/{db}.xml.gz" --wiki {db}', shell=True, preexec_fn=os.setsid)
         except subprocess.CalledProcessError as e:
             print(f'WARNING: encountered CalledProcessError backing up {db} with returned code {e.returncode} and output:\n')
             print(f'{e.output}\n')
-            subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
+            subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True, preexec_fn=os.setsid)
             continue
 
         pca_connection('PUT', f'/srv/backups/{db}.xml.gz', f'mediawiki-xml/{db}/{dt}.xml.gz', False)
 
-        subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True)
+        subprocess.call(f'rm -f /srv/backups/{db}.xml.gz', shell=True, preexec_fn=os.setsid)
 
         pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/mediawiki-xml/{db}/{dt}.xml.gz', 13)
         segments_expire(f'mediawiki-xml', f'{db}/{dt}.xml.gz', 13)
