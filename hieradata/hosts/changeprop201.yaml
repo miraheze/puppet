@@ -135,6 +135,9 @@ changeprop::high_traffic_jobs_config:
     concurrency: 2
   mediaModerationScanFileJob:
     concurrency: 15
+  DataDumpStatusJob:
+    concurrency: 1
+    retry_limit: 0
 
 changeprop::high_traffic_high_timeout_jobs_config:
   cirrusSearchElasticaWrite:
