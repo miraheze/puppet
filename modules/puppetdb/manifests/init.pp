@@ -188,7 +188,7 @@ class puppetdb(
     }
 
     # Backups
-    backup::job { 'puppetdb-backup':
+    backup::job { 'puppetdb':
         ensure   => present,
         interval => '*-*-1,15 01:00:00',
     }

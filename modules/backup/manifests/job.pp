@@ -38,7 +38,7 @@ define backup::job (
         interval            => { 'start' => 'OnCalendar', 'interval' => $interval },
         logfile_basedir     => $logfile_basedir,
         logfile_name        => "${title}-backup.log",
-        syslog_identifier   => $title,
+        syslog_identifier   => "${title}-backup",
         user                => 'root',
         monitoring_docs_url => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
     }
