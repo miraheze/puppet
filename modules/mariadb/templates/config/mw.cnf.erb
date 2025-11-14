@@ -10,7 +10,7 @@ socket                         = /var/run/mysqld/mysqld.sock
 pid-file                       = /var/run/mysqld/mysqld.pid
 skip-name-resolve
 bind-address                   = 0.0.0.0,::
-key-buffer-size                = 16M
+key_buffer_size                = 128M
 myisam_recover_options         = FORCE,BACKUP
 
 max-allowed-packet             = 64M
