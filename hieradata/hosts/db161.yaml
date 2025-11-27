@@ -7,3 +7,4 @@ mariadb::version: '10.11'
 role::db::enable_ssl: false
 mariadb::config::server_id: 6
 role::db::is_beta_db: false
+mariadb::config::enable_slow_log: true
