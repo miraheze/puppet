@@ -23,7 +23,7 @@ recursor:
   config_dir: /etc/powerdns
   daemon: true
   forward_zones:
-<% @forward_zones.each do |zone, ips| -%>
+<% @forward_zones_new.each do |zone, ips| -%>
   - zone: <%= zone %>
     recurse: false
     forwarders:
