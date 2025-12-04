@@ -12,10 +12,24 @@ class base::dns (
     }
 
     if $forward_use_internal {
+        # Get rid when we no longer use debian bookworm
         $forward_zones = 'wtnet=10.0.17.136, 10.in-addr.arpa=10.0.17.136, wikitide.net=10.0.17.136'
+        # For debian trixie+
+        $forward_zones_new = {
+            'wtnet'          => ['10.0.17.136'],
+            '10.in-addr.arpa'=> ['10.0.17.136'],
+            'wikitide.net'   => ['10.0.17.136'],
+        }
         $local_address = '127.0.0.1'
     } else {
+        # Get rid when we no longer use debian bookworm
         $forward_zones = 'wtnet=2602:294:0:b23::111;2001:41d0:801:2000::4089, 10.in-addr.arpa=2602:294:0:b23::111;2001:41d0:801:2000::4089, wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089'
+        # For debian trixie+
+        $forward_zones_new = {
+            'wtnet'          => ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
+            '10.in-addr.arpa'=> ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
+            'wikitide.net'   => ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
+        }
         $local_address = '::1'
     }
 
