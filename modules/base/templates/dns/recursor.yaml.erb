@@ -1,34 +1,40 @@
-# Basic config for setup
-allow-from:
-  - "127.0.0.0/8"
-  - "::1/128"
-
-config-dir: "/etc/powerdns"
-dnssec: off
-local-address: "<%= @local_address %>"
-quiet: true
-setgid: "pdns"
-setuid: "pdns"
-
-daemon: true
-threads: <%= @threads %>
-pdns-distributes-queries: false
-reuseport: true
-
-max-cache-ttl: 3600
-max-negative-ttl: 60
-max-cache-entries: 1000000
-
-stats-ringbuffer-entries: 1000
-
-# Note: if there are multiple addresses, this should become a YAML list.
-query-local-address: "<%= @query_local_address.join(', ') %>"
-
-# This prevents pdns from polling a public server to check for sec fixes
-security-poll-suffix: ""
-
-# Root hints distributed by Debian 4.x
-hint-file: "/usr/share/dns/root.hints"
-
-# Forward requests to our authoritative servers
-forward-zones: "<%= @forward_zones %>"
+dnssec:
+  validation: off
+incoming:
+  allow_from:
+  - 127.0.0.0/8
+  - ::1/128
+  listen:
+  - <%= @local_address %>
+  pdns_distributes_queries: false
+  reuseport: true
+logging:
+  quiet: true
+outgoing:
+  source_address:
+<% @query_local_address.each do |addr| -%>
+  - <%= addr %>
+<% end -%>
+recordcache:
+  max_entries: 1000000
+  max_negative_ttl: 60
+  max_ttl: 3600
+recursor:
+  config_dir: /etc/powerdns
+  daemon: true
+  forward_zones:
+<% @forward_zones.each do |zone, ips| -%>
+  - zone: <%= zone %>
+    recurse: false
+    forwarders:
+<% ips.each do |ip| -%>
+      - <%= ip %>
+<% end -%>
+<% end -%>
+  hint_file: /usr/share/dns/root.hints
+  security_poll_suffix: ''
+  setgid: pdns
+  setuid: pdns
+  stats_ringbuffer_entries: 1000
+  threads: <%= @threads %>
+# Validation result: OK
