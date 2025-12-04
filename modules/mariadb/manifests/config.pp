@@ -12,6 +12,8 @@ class mariadb::config(
     Boolean               $enable_bin_logs              = true,
     Boolean               $enable_ssl                   = true,
     Boolean               $enable_slow_log              = false,
+    String                $expire_logs_days             = '3',
+    String                $sync_binlog                  = '1',
     String                $flush_log_at_trx_commit      = '1',
 ) {
     $exporter_password = lookup('passwords::db::exporter')

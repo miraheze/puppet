@@ -3,6 +3,8 @@ http_proxy: 'http://bastion.fsslc.wtnet:8080'
 role::db::weekly_misc: []
 # This is in GiB
 mariadb::config::innodb_buffer_pool_size: '14G'
+mariadb::config::expire_logs_days: '1'
+mariadb::config::sync_binlog: '0'
 mariadb::config::flush_log_at_trx_commit: '0'
 mariadb::version: '11.8'
 role::db::enable_ssl: false
