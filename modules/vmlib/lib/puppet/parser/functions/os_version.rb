@@ -50,6 +50,8 @@ module Puppet::Parser::Functions
       'stretch'  => '9',
       'buster'   => '10',
       'bullseye' => '11',
+      'bookworm' => '12',
+      'trixie'   => '13',
     }
   }
 
