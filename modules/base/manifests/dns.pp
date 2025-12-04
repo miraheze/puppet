@@ -19,12 +19,18 @@ class base::dns (
         $local_address = '::1'
     }
 
+    if (versioncmp($facts['os']['release']['major'], '13') >= 0) {
+        $file_ext = 'yaml'
+    } else {
+        $file_ext = 'conf'
+    }
+
     file { '/etc/powerdns/recursor.conf':
         mode    => '0444',
         owner   => 'pdns',
         group   => 'pdns',
         notify  => Service['pdns-recursor'],
-        content => template('base/dns/recursor.conf.erb'),
+        content => template("base/dns/recursor.${file_ext}.erb"),
     }
 
     systemd::service { 'pdns-recursor':
@@ -34,7 +40,7 @@ class base::dns (
         content  => template('base/dns/override.conf.erb'),
         require  => [
           Package['pdns-recursor'],
-          File['/etc/powerdns/recursor.conf']
+          File["/etc/powerdns/recursor.${file_ext}"]
         ],
     }
 
