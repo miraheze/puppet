@@ -25,7 +25,7 @@ class base::dns (
         $file_ext = 'conf'
     }
 
-    file { '/etc/powerdns/recursor.conf':
+    file { "/etc/powerdns/recursor.${file_ext}":
         mode    => '0444',
         owner   => 'pdns',
         group   => 'pdns',
