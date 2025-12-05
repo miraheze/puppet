@@ -34,7 +34,7 @@ class base::dns (
     }
 
     if (versioncmp($facts['os']['release']['major'], '13') >= 0) {
-        $file_ext = 'yaml'
+        $file_ext = 'yml'
     } else {
         $file_ext = 'conf'
     }
