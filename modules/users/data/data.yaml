@@ -135,7 +135,7 @@ users:
     uid: 1009
     name: paladox
     realname: Paladox
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJF/bY6KnOxux3v5KIDDsBWbaut2LY/mGSd6rSyN2dcl paladox@wikitide.org]
+    ssh_keys: []
   macfan:
     ensure: present
     uid: 1010
