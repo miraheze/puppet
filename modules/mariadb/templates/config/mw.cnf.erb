@@ -34,6 +34,8 @@ expire_logs_days               = <%= @expire_logs_days %>
 sync_binlog                    = <%= @sync_binlog %>
 binlog_cache_size              = 10M
 slave_compressed_protocol      = 1
+<%- else -%>
+disable_log_bin
 <%- end -%>
 
 local_infile                   = 0
