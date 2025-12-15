@@ -255,7 +255,7 @@ class puppetserver(
         },
         user                    => 'root',
         send_mail               => true,
-        send_mail_only_on_error => false,
+        send_mail_only_on_error => true,
         send_mail_to            => 'root@wikitide.net',
     }
 
@@ -298,7 +298,7 @@ class puppetserver(
         },
         user                    => 'root',
         send_mail               => true,
-        send_mail_only_on_error => false,
+        send_mail_only_on_error => true,
         send_mail_to            => 'root@wikitide.net',
     }
 
