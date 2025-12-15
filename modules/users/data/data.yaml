@@ -163,7 +163,7 @@ users:
     uid: 1013
     name: universalomega
     realname: Universal Omega
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIO+m4fGlqEWiQzYFQomR3VFrozUufqyyGR3M4Eju3Pa+]
+    ssh_keys: []
   void:
     ensure: present
     uid: 1014
