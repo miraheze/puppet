@@ -2,7 +2,7 @@
 define ssl::wildcard (
     String $ssl_cert_path = '/etc/ssl/localcerts',
     String $ssl_cert_key_private_path = '/etc/ssl/private',
-    Optional[Service] $notify_service = undef,
+    Optional[String] $notify_service = undef,
 ) {
 
     if !defined(File['/etc/ssl/localcerts']) {
@@ -17,10 +17,11 @@ define ssl::wildcard (
 
     if defined(Service['nginx']) {
         $_notify_service = Service['nginx']
-    } elsif $notify_service != undef and defined($notify_service) {
-        $_notify_service = $notify_service
     } else {
-        $_notify_service = undef
+        $_notify_service = $notify_service ? {
+          undef   => undef,
+          default => Service[$notify_service],
+        }
     }
 
     if !defined(File["${ssl_cert_path}/mirabeta-origin-cert.crt"]) {
