@@ -17,7 +17,7 @@ define ssl::wildcard (
 
     if defined(Service['nginx']) {
         $_notify_service = Service['nginx']
-    } elsif defined($notify_service) {
+    } elsif $notify_service != undef and defined($notify_service) {
         $_notify_service = $notify_service
     } else {
         $_notify_service = undef
