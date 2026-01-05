@@ -223,6 +223,7 @@ frame-src:
   - 'clips.twitch.tv'
   - 'video.fastly.steamstatic.com'
   - 'shared.fastly.steamstatic.com'
+  - '*.instatus.com'
 
 connect-src:
   - "'self'"
