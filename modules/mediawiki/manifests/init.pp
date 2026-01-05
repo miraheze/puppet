@@ -198,7 +198,7 @@ class mediawiki {
     }
 
     tidy { [ '/tmp', '/tmp/magick-tmp' ]:
-        matches   => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v', 'php*', 'shellbox-*', 'arch*', '*.webm', '*.xml', '*.xml.gz'  ],
+        matches   => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v', 'php*', 'shellbox-*', 'arch*', '*.webm', '*.xml', '*.xml.gz', 'lci_*'  ],
         age       => '4h',
         type      => 'atime',
         backup    => false,
