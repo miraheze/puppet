@@ -37,6 +37,7 @@ class mediawiki::multiversion (
         if lookup(mediawiki::use_staging) {
             mediawiki::extensionsetup { "MediaWiki-${version}":
                 branch  => $params['branch'],
+                tag     => $params['tags'],
                 version => $version,
             }
 
@@ -71,11 +72,17 @@ class mediawiki::multiversion (
             default  => $params['branch'],
         }
 
+        $tag = $params['tag'] ? {
+            undef => '',
+            default  => $params['tag'],
+        }
+
         git::clone { "femiwiki-deploy-${version}":
             ensure    => 'latest',
             directory => "/srv/mediawiki/femiwiki-deploy/${version}",
             origin    => 'https://github.com/miraheze/femiwiki-deploy',
             branch    => $branch,
+            tag       => $tag,
             owner     => 'www-data',
             group     => 'www-data',
             mode      => '0755',
