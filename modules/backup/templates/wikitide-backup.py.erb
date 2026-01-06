@@ -23,7 +23,7 @@ recheck_time = time.time()
 
 parser = argparse.ArgumentParser(description='Provides backup and download functionality for WikiTide backups from PCA.')
 parser.add_argument('action', choices=['backup', 'download', 'find', 'unfreeze'], help='Action to be ran')
-parser.add_argument('type', choices=['private', 'sslkeys', 'phorge', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana', 'mattermost-data', 'mattermost-db', 'puppetdb'], help='Type of backup to handle using the action')
+parser.add_argument('type', choices=['private', 'sslkeys', 'phorge_db', 'phorge_images', 'sql', 'mediawiki-xml', 'swift-account-container', 'grafana', 'mattermost-data', 'mattermost-db', 'puppetdb'], help='Type of backup to handle using the action')
 parser.add_argument('--date', dest='date', help='Date for backup to download', metavar='YYYY-MM-DD')
 parser.add_argument('--database', dest='database', help='Specific database to download or backup')
 args = parser.parse_args()
@@ -108,20 +108,28 @@ def backup_swift_account_container(dt: str):
     segments_expire(f'swift-account-container', f'{dt}.tar.gz', 4)
 
 
-def backup_phorge(dt: str):
+def backup_phorge_db(dt: str):
     subprocess.check_call(f'/srv/phorge/phorge/bin/storage dump --compress --output /srv/backups/backup.sql.gz', shell=True, preexec_fn=os.setsid)
-    tar = tarfile.open('/srv/backups/phorge.tar.gz', 'w:gz')
-    tar.add('/srv/backups/backup.sql.gz', arcname='db')
+
+    pca_connection('PUT', '/srv/backups/backup.sql.gz', f'phorge/{dt}_db.sql.gz', False)
+
     subprocess.check_call(f'rm -f /srv/backups/backup.sql.gz', shell=True, preexec_fn=os.setsid)
+
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phorge/{dt}_db.sql.gz', 4)
+    segments_expire(f'phorge', f'{dt}_db.sql.gz', 4)
+
+
+def backup_phorge_images(dt: str):
+    tar = tarfile.open('/srv/backups/phorge_images.tar.gz', 'w:gz')
     tar.add('/srv/phorge/images', arcname='phorge')
     tar.close()
 
-    pca_connection('PUT', '/srv/backups/phorge.tar.gz', f'phorge/{dt}.tar.gz', False)
+    pca_connection('PUT', '/srv/backups/phorge_images.tar.gz', f'phorge/{dt}_images.tar.gz', False)
 
-    subprocess.call(f'rm -f /srv/backups/phorge.tar.gz', shell=True, preexec_fn=os.setsid)
+    subprocess.call(f'rm -f /srv/backups/phorge_images.tar.gz', shell=True, preexec_fn=os.setsid)
 
-    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phorge/{dt}.tar.gz', 4)
-    segments_expire(f'phorge', f'{dt}.tar.gz', 4)
+    pca_web('POST', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/phorge/{dt}_images.tar.gz', 4)
+    segments_expire(f'phorge', f'{dt}_images.tar.gz', 4)
 
 
 def backup_sql(dt: str, database: str):
@@ -260,8 +268,10 @@ def backup(source: str, database: str):
         backup_sslkeys(dt)
     elif source == 'swift-account-container':
         backup_swift_account_container(dt)
-    elif source == 'phorge':
-        backup_phorge(dt)
+    elif source == 'phorge_db':
+        backup_phorge_db(dt)
+    elif source == 'phorge_images':
+        backup_phorge_images(dt)
     elif source == 'sql':
         backup_sql(dt, database)
     elif source == 'grafana':
@@ -307,6 +317,10 @@ def download(source: str, dt: str, database: str):
         download_pca(f'{source}/{database}/{dt}.sql.gz')
     elif source in ['mattermost-db', 'puppetdb']:
         download_pca(f'{source}/{dt}.sql.gz')
+    elif source in ['phorge_db']:
+        download_pca(f'phorge/{dt}_db.sql.gz')
+    elif source in ['phorge_images']:
+        download_pca(f'phorge/{dt}_images.tar.gz')
 
     print(f'Completed! This took {time.time() - ts}s')
 
@@ -339,6 +353,10 @@ def unfreeze_backup(source: str, dt: str, database: str):
         file = f'{source}/{database}/{dt}.sql.gz'
     elif source in ['mattermost-db', 'puppetdb']:
         file = f'{source}/{dt}.sql.gz'
+    elif source in ['phorge_db']:
+        file = f'phorge/{dt}_db.sql.gz'
+    elif source in ['phorge_images']:
+        file = f'phorge/{dt}_images.tar.gz'
 
     pca_web('GET', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0)
     available_in = pca_web('HEAD', f'https://storage.bhs.cloud.ovh.net/v1/AUTH_76f9bc606a8044e08db7ebd118f6b19a/{file}', 0).headers.get('X-Ovh-Retrieval-Delay')
