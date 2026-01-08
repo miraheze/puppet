@@ -251,3 +251,4 @@ connect-src:
   - 'discord.com'
   - 'discordapp.com'
   - 'api.steampowered.com'
+  - '*.instatus.com'
