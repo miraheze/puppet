@@ -149,7 +149,7 @@ class role::openldap (
     }
 
     ssl::wildcard { 'openldap wildcard':
-        notify => Service['slapd']
+        notify_service => 'slapd'
     }
 
     include prometheus::exporter::openldap

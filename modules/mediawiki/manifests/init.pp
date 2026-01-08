@@ -197,13 +197,23 @@ class mediawiki {
         mode   => '0755',
     }
 
-    tidy { [ '/tmp', '/tmp/magick-tmp' ]:
-        matches => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v', 'php*', 'shellbox-*', 'arch*' ],
-        age     => '2h',
-        type    => 'atime',
+    # Recursively delete from /tmp any files that haven't been accessed
+    # or modified in the last week.
+    tidy { '/tmp':
+        age     => '1w',
+        backup  => false,
+        recurse => true,
+        rmdirs  => true,
+    }
+
+    tidy { '/tmp/magick-tmp':
+        matches => [ '*.png', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v' ],
+        age     => '15m',
+        type    => 'ctime',
         backup  => false,
         recurse => 1,
     }
+
     file { '/srv/python':
         ensure => directory,
         owner  => 'www-data',
