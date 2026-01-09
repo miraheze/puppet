@@ -90,8 +90,9 @@ location / {
 	try_files $uri $uri/ @wiki;
 }
 
-location ~ ^/.+/api\.php$ {
-	rewrite ^/.+/api\.php$ /w/api.php last;
+# Support SUL3-style API access via /<wiki>/w/api.php
+location ~ ^/.+wiki(?:beta)?/w/api\.php$ {
+	rewrite ^/.+wiki(?:beta)?/w/api\.php$ /w/api.php last;
 }
 
 location @wiki {
