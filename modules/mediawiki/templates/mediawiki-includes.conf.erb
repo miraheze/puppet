@@ -90,6 +90,17 @@ location / {
 	try_files $uri $uri/ @wiki;
 }
 
+# Support SUL3-style API access via /<wiki>/w/api.php
+location ~ ^/[^/]+wiki(?:beta)?/w/api\.php$ {
+	rewrite ^/[^/]+wiki(?:beta)?/w/api\.php$ /w/api.php last;
+}
+
+# Support SUL3-style resources access via /<wiki>/<version>/resources
+location ~ ^/[^/]+wiki(?:beta)?/1\.\d\d/resources {
+	rewrite ^/[^/]+wiki(?:beta)?/(1\.\d\d/resources.*)$ /$1 last;
+	expires 1d;
+}
+
 location @wiki {
 	include fastcgi_params;
 	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
