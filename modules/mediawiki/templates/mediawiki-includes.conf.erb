@@ -98,6 +98,7 @@ location ~ ^/[^/]+wiki(?:beta)?/w/api\.php$ {
 # Support SUL3-style resources access via /<wiki>/<version>/resources
 location ~ ^/[^/]+wiki(?:beta)?/1\.\d\d/resources {
 	rewrite ^/[^/]+wiki(?:beta)?/(1\.\d\d/resources.*)$ /$1 last;
+	expires 1d;
 }
 
 location @wiki {
@@ -125,3 +126,4 @@ location /static/ {
 location ~ ^/entity/(.*) {
 	return 301 /wiki/Special:EntityData/$1;
 }
+
