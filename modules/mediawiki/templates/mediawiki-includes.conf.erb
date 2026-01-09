@@ -90,6 +90,10 @@ location / {
 	try_files $uri $uri/ @wiki;
 }
 
+location ~ ^/.+/api\.php$ {
+	rewrite ^/.+/api\.php$ /w/api.php last;
+}
+
 location @wiki {
 	include fastcgi_params;
 	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
