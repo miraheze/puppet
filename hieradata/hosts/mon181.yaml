@@ -9,7 +9,7 @@ mariadb::version: '11.8'
 
 php::fpm::fpm_workers_multiplier: 5.0
 php::fpm::fpm_min_child: 4
-php::php_version: '8.2'
+php::php_version: '8.4'
 
 # icinga2
 
