@@ -142,7 +142,10 @@ class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
         kwargs = {}
         if ssl:
             import ssl
-            ssl_factory = irc.connection.Factory(ipv6=True, wrapper=ssl.wrap_socket)
+            context = ssl.create_default_context()
+            def ssl_wrapper(sock):
+                return context.wrap_socket(sock, server_hostname=server)
+            ssl_factory = irc.connection.Factory(ipv6=True, wrapper=ssl_wrapper)
             kwargs['connect_factory'] = ssl_factory
 
         SingleServerIRCBot.__init__(
