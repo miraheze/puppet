@@ -172,7 +172,7 @@ class puppetdb(
         },
     }
 
-    package { 'polkit':
+    package { ['polkitd', 'pkexec']:
         ensure => present,
     }
 
