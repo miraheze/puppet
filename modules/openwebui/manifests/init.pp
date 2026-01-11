@@ -35,12 +35,12 @@ class openwebui (
         require => File[$base_dir],
     }
 
-    exec { 'openwebui_pip_install':
-        command => "${base_dir}/venv/bin/pip install --upgrade pip && ${base_dir}/venv/bin/pip install open-webui",
-        unless  => "${base_dir}/venv/bin/pip show open-webui",
-        path    => ['/usr/bin','/usr/sbin','/bin','/sbin'],
-        require => Exec['openwebui_venv_create'],
-    }
+#    exec { 'openwebui_pip_install':
+#        command => "${base_dir}/venv/bin/pip install --upgrade pip && ${base_dir}/venv/bin/pip install open-webui",
+#        unless  => "${base_dir}/venv/bin/pip show open-webui",
+#        path    => ['/usr/bin','/usr/sbin','/bin','/sbin'],
+#        require => Exec['openwebui_venv_create'],
+#    }
 
     file { '/etc/openwebui.env':
         ensure  => file,
