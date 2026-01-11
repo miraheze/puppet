@@ -1,0 +1,14 @@
+users::groups: 'database-admins'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
+role::db::weekly_misc: ['mhglobal']
+# This is in GiB
+mariadb::config::innodb_buffer_pool_size: '14G'
+mariadb::version: '11.8'
+role::db::enable_ssl: false
+mariadb::config::server_id: 8
+role::db::is_beta_db: false
+base::dns::query_local_address: ['0.0.0.0']
+base::dns::forward_use_internal: true
+
+
+

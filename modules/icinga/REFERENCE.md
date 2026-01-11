@@ -8,18 +8,29 @@
 
 #### Public Classes
 
-* [`icinga::agent`](#icingaagent): Setup a Icinga agent.
-* [`icinga::ido`](#icingaido): Configure IDO Backend.
-* [`icinga::ido::database`](#icingaidodatabase): Configure IDO backend database.
-* [`icinga::repos`](#icingarepos): This class manages the stages stable, testing and snapshot of packages.icinga.com repository and depending on the operating system platform s
-* [`icinga::server`](#icingaserver): Setup a Icinga server.
-* [`icinga::web`](#icingaweb): Setup Icinga Web 2 including a database backend for user settings.
-* [`icinga::web::database`](#icingawebdatabase): Setup Icinga Web 2 database for user settings.
-* [`icinga::web::director`](#icingawebdirector): Setup Director module for Icinga Web 2
-* [`icinga::web::director::database`](#icingawebdirectordatabase): Setup Director database.
-* [`icinga::web::vspheredb`](#icingawebvspheredb): Setup VSphereDB module for Icinga Web 2
-* [`icinga::web::vspheredb::database`](#icingawebvspheredbdatabase): Setup VSphereDB database.
-* [`icinga::worker`](#icingaworker): Setup a Icinga worker (aka satellite).
+* [`icinga::agent`](#icinga--agent): Setup an Icinga agent.
+* [`icinga::agentless`](#icinga--agentless): Setup an agentless monitoring via SSH.
+* [`icinga::db`](#icinga--db)
+* [`icinga::db::database`](#icinga--db--database): Setup database for IcingaDB.
+* [`icinga::ido`](#icinga--ido): Configure IDO Backend.
+* [`icinga::ido::database`](#icinga--ido--database): Configure IDO backend database.
+* [`icinga::redis`](#icinga--redis): Base class for all redis owned by Icinga.
+* [`icinga::repos`](#icinga--repos): This class manages the stages stable, testing and snapshot of packages.icinga.com repository and depending on the operating system platform s
+* [`icinga::server`](#icinga--server): Setup a Icinga server.
+* [`icinga::web`](#icinga--web): Setup Icinga Web 2 including a database backend for user settings,
+PHP and a Webserver.
+* [`icinga::web::database`](#icinga--web--database): Setup Icinga Web 2 database for user settings.
+* [`icinga::web::director`](#icinga--web--director): Setup Director module for Icinga Web 2
+* [`icinga::web::director::database`](#icinga--web--director--database): Setup Director database.
+* [`icinga::web::icingadb`](#icinga--web--icingadb): Setup IcingaDB module for the new backend.
+* [`icinga::web::monitoring`](#icinga--web--monitoring): Setup Monitoring module for the IDO backend.
+* [`icinga::web::reporting`](#icinga--web--reporting): Setup the reporting module for Icinga Web 2
+* [`icinga::web::reporting::database`](#icinga--web--reporting--database): Setup the reporting database.
+* [`icinga::web::vspheredb`](#icinga--web--vspheredb): Setup VSphereDB module for Icinga Web 2
+* [`icinga::web::vspheredb::database`](#icinga--web--vspheredb--database): Setup VSphereDB database.
+* [`icinga::web::x509`](#icinga--web--x509): Setup the x509 module for Icinga Web 2
+* [`icinga::web::x509::database`](#icinga--web--x509--database): Setup the x509 database.
+* [`icinga::worker`](#icinga--worker): Setup a Icinga worker (aka satellite).
 
 #### Private Classes
 
@@ -33,6 +44,7 @@
 
 #### Public Defined types
 
+* [`icinga::cert`](#icinga--cert): A class to generate tls key, cert and cacert files.
 
 #### Private Defined types
 
@@ -40,93 +52,338 @@
 
 ### Functions
 
-* [`icinga::prepare_web`](#icingaprepare_web): This funktion checks for web preparation and display a warning if fails
+* [`icinga::cert::files`](#icinga--cert--files): Choose the path of tls key, cert and ca file.
+* [`icinga::db::connect`](#icinga--db--connect): This function returns a string to connect databases
+with or without TLS information.
+* [`icinga::newline`](#icinga--newline): Replace newlines for Windows systems.
+* [`icinga::prepare_web`](#icinga--prepare_web): This funktion checks for web preparation and display a warning if fails
 
 ### Data types
 
-* [`Icinga::LogLevel`](#icingaloglevel): A strict type for log levels
+* [`Icinga::Certificate`](#Icinga--Certificate): A strict type for a certificate
+* [`Icinga::LogLevel`](#Icinga--LogLevel): A strict type for log levels
+* [`Icinga::Secret`](#Icinga--Secret): A strict type for the secrets like passwords or keys
 
 ## Classes
 
-### <a name="icingaagent"></a>`icinga::agent`
+### <a name="icinga--agent"></a>`icinga::agent`
 
-Setup a Icinga agent.
+Setup an Icinga agent.
 
 #### Parameters
 
 The following parameters are available in the `icinga::agent` class:
 
-* [`ca_server`](#ca_server)
-* [`parent_zone`](#parent_zone)
-* [`parent_endpoints`](#parent_endpoints)
-* [`global_zones`](#global_zones)
-* [`logging_type`](#logging_type)
-* [`logging_level`](#logging_level)
-* [`zone`](#zone)
-* [`run_web`](#run_web)
+* [`ca_server`](#-icinga--agent--ca_server)
+* [`parent_zone`](#-icinga--agent--parent_zone)
+* [`parent_endpoints`](#-icinga--agent--parent_endpoints)
+* [`global_zones`](#-icinga--agent--global_zones)
+* [`logging_type`](#-icinga--agent--logging_type)
+* [`logging_level`](#-icinga--agent--logging_level)
+* [`zone`](#-icinga--agent--zone)
+* [`run_web`](#-icinga--agent--run_web)
 
-##### <a name="ca_server"></a>`ca_server`
+##### <a name="-icinga--agent--ca_server"></a>`ca_server`
 
 Data type: `Stdlib::Host`
 
 The CA to send the certificate request to.
 
-##### <a name="parent_zone"></a>`parent_zone`
+##### <a name="-icinga--agent--parent_zone"></a>`parent_zone`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the parent Icinga zone.
 
 Default value: `'main'`
 
-##### <a name="parent_endpoints"></a>`parent_endpoints`
+##### <a name="-icinga--agent--parent_endpoints"></a>`parent_endpoints`
 
-Data type: `Hash[String, Hash]`
+Data type: `Hash[String[1], Hash]`
 
 Configures these endpoints of the parent zone.
 
-##### <a name="global_zones"></a>`global_zones`
+##### <a name="-icinga--agent--global_zones"></a>`global_zones`
 
-Data type: `Array[String]`
+Data type: `Array[String[1]]`
 
 List of global zones to configure.
 
 Default value: `[]`
 
-##### <a name="logging_type"></a>`logging_type`
+##### <a name="-icinga--agent--logging_type"></a>`logging_type`
 
-Data type: `Enum['file', 'syslog']`
+Data type: `Enum['file', 'syslog', 'eventlog']`
 
-Switch the log target. Only `file` is supported on Windows.
+Switch the log target. On Windows `syslog` is ignored, `eventlog` on all other platforms.
 
-Default value: `'file'`
+##### <a name="-icinga--agent--logging_level"></a>`logging_level`
 
-##### <a name="logging_level"></a>`logging_level`
-
-Data type: `Optional[Icinga::LogLevel]`
+Data type: `Icinga::LogLevel`
 
 Set the log level.
 
-Default value: ``undef``
+##### <a name="-icinga--agent--zone"></a>`zone`
 
-##### <a name="zone"></a>`zone`
-
-Data type: `String`
+Data type: `String[1]`
 
 Set a dedicated zone name.
 
 Default value: `'NodeName'`
 
-##### <a name="run_web"></a>`run_web`
+##### <a name="-icinga--agent--run_web"></a>`run_web`
 
 Data type: `Boolean`
 
 Prepare to run Icinga Web 2 on the same machine. Manage a group `icingaweb2`
 and add the Icinga user to this group.
 
-Default value: ``false``
+Default value: `false`
 
-### <a name="icingaido"></a>`icinga::ido`
+### <a name="icinga--agentless"></a>`icinga::agentless`
+
+Setup an agentless monitoring via SSH.
+
+#### Parameters
+
+The following parameters are available in the `icinga::agentless` class:
+
+* [`user`](#-icinga--agentless--user)
+* [`manage_user`](#-icinga--agentless--manage_user)
+* [`ssh_key_type`](#-icinga--agentless--ssh_key_type)
+* [`ssh_public_key`](#-icinga--agentless--ssh_public_key)
+* [`extra_packages`](#-icinga--agentless--extra_packages)
+
+##### <a name="-icinga--agentless--user"></a>`user`
+
+Data type: `String[1]`
+
+User name to login.
+
+##### <a name="-icinga--agentless--manage_user"></a>`manage_user`
+
+Data type: `Boolean`
+
+Wether or not to manage user.
+
+##### <a name="-icinga--agentless--ssh_key_type"></a>`ssh_key_type`
+
+Data type: `Enum['ecdsa','ed25519','rsa']`
+
+SSH key type.
+
+##### <a name="-icinga--agentless--ssh_public_key"></a>`ssh_public_key`
+
+Data type: `String[1]`
+
+Public SSH key of ´ssh_key_type´ for ´user´.
+
+##### <a name="-icinga--agentless--extra_packages"></a>`extra_packages`
+
+Data type: `Array[String[1]]`
+
+Install extra packages such as plugins.
+
+Default value: `[]`
+
+### <a name="icinga--db"></a>`icinga::db`
+
+The icinga::db class.
+
+#### Parameters
+
+The following parameters are available in the `icinga::db` class:
+
+* [`db_type`](#-icinga--db--db_type)
+* [`db_host`](#-icinga--db--db_host)
+* [`db_port`](#-icinga--db--db_port)
+* [`db_name`](#-icinga--db--db_name)
+* [`db_user`](#-icinga--db--db_user)
+* [`db_pass`](#-icinga--db--db_pass)
+* [`manage_database`](#-icinga--db--manage_database)
+* [`db_accesses`](#-icinga--db--db_accesses)
+* [`redis_host`](#-icinga--db--redis_host)
+* [`redis_bind`](#-icinga--db--redis_bind)
+* [`redis_port`](#-icinga--db--redis_port)
+* [`redis_pass`](#-icinga--db--redis_pass)
+* [`manage_redis`](#-icinga--db--manage_redis)
+* [`manage_feature`](#-icinga--db--manage_feature)
+
+##### <a name="-icinga--db--db_type"></a>`db_type`
+
+Data type: `Enum['mysql', 'pgsql']`
+
+Choose wether MySQL or PostgreSQL as backend for historical data.
+
+##### <a name="-icinga--db--db_host"></a>`db_host`
+
+Data type: `Stdlib::Host`
+
+Database server.
+
+Default value: `'localhost'`
+
+##### <a name="-icinga--db--db_port"></a>`db_port`
+
+Data type: `Optional[Stdlib::Port]`
+
+Port to connect the database.
+
+Default value: `undef`
+
+##### <a name="-icinga--db--db_name"></a>`db_name`
+
+Data type: `String[1]`
+
+The IcingaDB database.
+
+Default value: `'icingadb'`
+
+##### <a name="-icinga--db--db_user"></a>`db_user`
+
+Data type: `String[1]`
+
+User to connect the database.
+
+Default value: `'icingadb'`
+
+##### <a name="-icinga--db--db_pass"></a>`db_pass`
+
+Data type: `Icinga::Secret`
+
+Passwort to login into database.
+
+##### <a name="-icinga--db--manage_database"></a>`manage_database`
+
+Data type: `Boolean`
+
+Install and create database on localhost.
+
+Default value: `false`
+
+##### <a name="-icinga--db--db_accesses"></a>`db_accesses`
+
+Data type: `Array[Stdlib::Host]`
+
+List of hosts with access to the database, e.g. host running Icinga Web 2.
+Omly valid if `manage_database` is `true`.
+
+Default value: `[]`
+
+##### <a name="-icinga--db--redis_host"></a>`redis_host`
+
+Data type: `Stdlib::Host`
+
+Redis host to connect.
+
+Default value: `'localhost'`
+
+##### <a name="-icinga--db--redis_bind"></a>`redis_bind`
+
+Data type: `Optional[Array[Stdlib::Host]]`
+
+When Redis runs on a differnt host than Icinga, here the listining interfaces
+have to be set.
+
+Default value: `undef`
+
+##### <a name="-icinga--db--redis_port"></a>`redis_port`
+
+Data type: `Optional[Stdlib::Port]`
+
+Port for Redis listening.
+
+Default value: `undef`
+
+##### <a name="-icinga--db--redis_pass"></a>`redis_pass`
+
+Data type: `Optional[Icinga::Secret]`
+
+Password to authenticate against Redis.
+
+Default value: `undef`
+
+##### <a name="-icinga--db--manage_redis"></a>`manage_redis`
+
+Data type: `Boolean`
+
+Install and create the IcingaDB Redis service on localhost.
+
+Default value: `true`
+
+##### <a name="-icinga--db--manage_feature"></a>`manage_feature`
+
+Data type: `Boolean`
+
+If you wanna manage the Icinga 2 feature for the IcingaDB, set this to `true`.
+This only make sense when an Icinga 2 Server is running on the same host.
+
+Default value: `true`
+
+### <a name="icinga--db--database"></a>`icinga::db::database`
+
+Setup database for IcingaDB.
+
+#### Parameters
+
+The following parameters are available in the `icinga::db::database` class:
+
+* [`db_type`](#-icinga--db--database--db_type)
+* [`access_instances`](#-icinga--db--database--access_instances)
+* [`db_pass`](#-icinga--db--database--db_pass)
+* [`db_name`](#-icinga--db--database--db_name)
+* [`db_user`](#-icinga--db--database--db_user)
+* [`tls`](#-icinga--db--database--tls)
+
+##### <a name="-icinga--db--database--db_type"></a>`db_type`
+
+Data type: `Enum['mysql','pgsql']`
+
+What kind of database type to use.
+
+##### <a name="-icinga--db--database--access_instances"></a>`access_instances`
+
+Data type: `Array[Stdlib::Host]`
+
+List of Hosts to allow write access to the database. Usually an IcingaDB instance.
+
+##### <a name="-icinga--db--database--db_pass"></a>`db_pass`
+
+Data type: `Icinga::Secret`
+
+Password to connect the database.
+
+##### <a name="-icinga--db--database--db_name"></a>`db_name`
+
+Data type: `String[1]`
+
+Name of the database.
+
+Default value: `'icingadb'`
+
+##### <a name="-icinga--db--database--db_user"></a>`db_user`
+
+Data type: `String[1]`
+
+Database user name.
+
+Default value: `'icingadb'`
+
+##### <a name="-icinga--db--database--tls"></a>`tls`
+
+Data type:
+
+```puppet
+Variant[Boolean,
+  Enum['password','cert']]
+```
+
+Access only for TLS encrypted connections. Authentication via `password` or `cert`,
+value `true` means password auth.
+
+Default value: `false`
+
+### <a name="icinga--ido"></a>`icinga::ido`
 
 Configure IDO Backend.
 
@@ -134,22 +391,22 @@ Configure IDO Backend.
 
 The following parameters are available in the `icinga::ido` class:
 
-* [`db_pass`](#db_pass)
-* [`db_type`](#db_type)
-* [`db_host`](#db_host)
-* [`db_port`](#db_port)
-* [`db_name`](#db_name)
-* [`db_user`](#db_user)
-* [`manage_database`](#manage_database)
-* [`enable_ha`](#enable_ha)
+* [`db_pass`](#-icinga--ido--db_pass)
+* [`db_type`](#-icinga--ido--db_type)
+* [`db_host`](#-icinga--ido--db_host)
+* [`db_port`](#-icinga--ido--db_port)
+* [`db_name`](#-icinga--ido--db_name)
+* [`db_user`](#-icinga--ido--db_user)
+* [`manage_database`](#-icinga--ido--manage_database)
+* [`enable_ha`](#-icinga--ido--enable_ha)
 
-##### <a name="db_pass"></a>`db_pass`
+##### <a name="-icinga--ido--db_pass"></a>`db_pass`
 
-Data type: `String`
+Data type: `Icinga::Secret`
 
 Password to connect the database.
 
-##### <a name="db_type"></a>`db_type`
+##### <a name="-icinga--ido--db_type"></a>`db_type`
 
 Data type: `Enum['mysql','pgsql']`
 
@@ -157,7 +414,7 @@ What kind of database type to use.
 
 Default value: `'mysql'`
 
-##### <a name="db_host"></a>`db_host`
+##### <a name="-icinga--ido--db_host"></a>`db_host`
 
 Data type: `Stdlib::Host`
 
@@ -165,47 +422,47 @@ Database host to connect.
 
 Default value: `'localhost'`
 
-##### <a name="db_port"></a>`db_port`
+##### <a name="-icinga--ido--db_port"></a>`db_port`
 
 Data type: `Optional[Stdlib::Port]`
 
 Port to connect. Only affects for connection to remote database hosts.
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="db_name"></a>`db_name`
+##### <a name="-icinga--ido--db_name"></a>`db_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the database.
 
 Default value: `'icinga2'`
 
-##### <a name="db_user"></a>`db_user`
+##### <a name="-icinga--ido--db_user"></a>`db_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Database user name.
 
 Default value: `'icinga2'`
 
-##### <a name="manage_database"></a>`manage_database`
+##### <a name="-icinga--ido--manage_database"></a>`manage_database`
 
 Data type: `Boolean`
 
 Create database and import schema.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="enable_ha"></a>`enable_ha`
+##### <a name="-icinga--ido--enable_ha"></a>`enable_ha`
 
 Data type: `Boolean`
 
 Enable HA feature for database.
 
-Default value: ``false``
+Default value: `false`
 
-### <a name="icingaidodatabase"></a>`icinga::ido::database`
+### <a name="icinga--ido--database"></a>`icinga::ido::database`
 
 Configure IDO backend database.
 
@@ -213,47 +470,67 @@ Configure IDO backend database.
 
 The following parameters are available in the `icinga::ido::database` class:
 
-* [`db_type`](#db_type)
-* [`ido_instances`](#ido_instances)
-* [`db_pass`](#db_pass)
-* [`db_name`](#db_name)
-* [`db_user`](#db_user)
+* [`db_type`](#-icinga--ido--database--db_type)
+* [`ido_instances`](#-icinga--ido--database--ido_instances)
+* [`db_pass`](#-icinga--ido--database--db_pass)
+* [`db_name`](#-icinga--ido--database--db_name)
+* [`db_user`](#-icinga--ido--database--db_user)
+* [`tls`](#-icinga--ido--database--tls)
 
-##### <a name="db_type"></a>`db_type`
+##### <a name="-icinga--ido--database--db_type"></a>`db_type`
 
 Data type: `Enum['mysql','pgsql']`
 
 What kind of database type to use.
 
-##### <a name="ido_instances"></a>`ido_instances`
+##### <a name="-icinga--ido--database--ido_instances"></a>`ido_instances`
 
 Data type: `Array[Stdlib::Host]`
 
-List of Hosts to allow write access to the database. Usually an Icinga Server with IDO feature.
+List of Hosts to allow write access to the database.
+Usually an Icinga Server with enabled IDO feature.
 
-##### <a name="db_pass"></a>`db_pass`
+##### <a name="-icinga--ido--database--db_pass"></a>`db_pass`
 
-Data type: `String`
+Data type: `Icinga::Secret`
 
 Password to connect the database.
 
-##### <a name="db_name"></a>`db_name`
+##### <a name="-icinga--ido--database--db_name"></a>`db_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the database.
 
 Default value: `'icinga2'`
 
-##### <a name="db_user"></a>`db_user`
+##### <a name="-icinga--ido--database--db_user"></a>`db_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Database user name.
 
 Default value: `'icinga2'`
 
-### <a name="icingarepos"></a>`icinga::repos`
+##### <a name="-icinga--ido--database--tls"></a>`tls`
+
+Data type:
+
+```puppet
+Variant[Boolean,
+  Enum['password','cert']]
+```
+
+Access only for TLS encrypted connections. Authentication via `password` or `cert`,
+value `true` means password auth.
+
+Default value: `false`
+
+### <a name="icinga--redis"></a>`icinga::redis`
+
+Base class for all redis owned by Icinga.
+
+### <a name="icinga--repos"></a>`icinga::repos`
 
 This class manages the stages stable, testing and snapshot of packages.icinga.com repository
 and depending on the operating system platform some other repositories.
@@ -270,58 +547,66 @@ require icinga::repos
 
 The following parameters are available in the `icinga::repos` class:
 
-* [`manage_stable`](#manage_stable)
-* [`manage_testing`](#manage_testing)
-* [`manage_nightly`](#manage_nightly)
-* [`configure_backports`](#configure_backports)
-* [`manage_epel`](#manage_epel)
-* [`manage_powertools`](#manage_powertools)
-* [`manage_server_monitoring`](#manage_server_monitoring)
-* [`manage_plugins`](#manage_plugins)
-* [`manage_extras`](#manage_extras)
+* [`manage_stable`](#-icinga--repos--manage_stable)
+* [`manage_testing`](#-icinga--repos--manage_testing)
+* [`manage_nightly`](#-icinga--repos--manage_nightly)
+* [`configure_backports`](#-icinga--repos--configure_backports)
+* [`manage_epel`](#-icinga--repos--manage_epel)
+* [`manage_powertools`](#-icinga--repos--manage_powertools)
+* [`manage_crb`](#-icinga--repos--manage_crb)
+* [`manage_server_monitoring`](#-icinga--repos--manage_server_monitoring)
+* [`manage_plugins`](#-icinga--repos--manage_plugins)
+* [`manage_extras`](#-icinga--repos--manage_extras)
 
-##### <a name="manage_stable"></a>`manage_stable`
+##### <a name="-icinga--repos--manage_stable"></a>`manage_stable`
 
 Data type: `Boolean`
 
 Manage the Icinga stable repository. Disabled by setting to 'false'. Defaults to 'true'.
 
-##### <a name="manage_testing"></a>`manage_testing`
+##### <a name="-icinga--repos--manage_testing"></a>`manage_testing`
 
 Data type: `Boolean`
 
 Manage the Icinga testing repository to get access to release candidates.
 Enabled by setting to 'true'. Defaults to 'false'.
 
-##### <a name="manage_nightly"></a>`manage_nightly`
+##### <a name="-icinga--repos--manage_nightly"></a>`manage_nightly`
 
 Data type: `Boolean`
 
 Manage the Icinga snapshot repository to get access to nightly snapshots.
 Enabled by setting to 'true'. Defaults to 'false'.
 
-##### <a name="configure_backports"></a>`configure_backports`
+##### <a name="-icinga--repos--configure_backports"></a>`configure_backports`
 
 Data type: `Boolean`
 
 Enables or Disables the backports repository. Has only an effect on plattforms
 simular to Debian. To configure the backports repo uses apt::backports in hiera.
 
-##### <a name="manage_epel"></a>`manage_epel`
+##### <a name="-icinga--repos--manage_epel"></a>`manage_epel`
 
 Data type: `Boolean`
 
 Manage the EPEL (Extra Packages Enterprise Linux) repository that is needed for some package
 like newer Boost libraries. Has only an effect on plattforms simular to RedHat Enterprise.
 
-##### <a name="manage_powertools"></a>`manage_powertools`
+##### <a name="-icinga--repos--manage_powertools"></a>`manage_powertools`
 
 Data type: `Boolean`
 
 Manage the PowerTools repository that is needed for some package like nagios-plugins on
-Linux Enterprise systems like Alma, Rocky and CentOS Stream.
+Linux Enterprise systems like Alma 8, Rocky 8 and CentOS Stream 8.
 
-##### <a name="manage_server_monitoring"></a>`manage_server_monitoring`
+##### <a name="-icinga--repos--manage_crb"></a>`manage_crb`
+
+Data type: `Boolean`
+
+Manage the CRB repository that is needed for some package like nagios-plugins on
+Linux Enterprise systems like Alma 9, Rocky 9 and CentOS Stream 9.
+
+##### <a name="-icinga--repos--manage_server_monitoring"></a>`manage_server_monitoring`
 
 Data type: `Boolean`
 
@@ -329,19 +614,19 @@ Manage the 'server:monitoring' repository on SLES platforms that is needed for s
 like monitoring-plugins-common. Additional also the 'monitoring-plugins' are provided by this
 repository. Bye default the repository is added with a lower priority of 120.
 
-##### <a name="manage_plugins"></a>`manage_plugins`
+##### <a name="-icinga--repos--manage_plugins"></a>`manage_plugins`
 
 Data type: `Boolean`
 
 Manage the NETWAYS plugins repository that provides some packages for additional plugins.
 
-##### <a name="manage_extras"></a>`manage_extras`
+##### <a name="-icinga--repos--manage_extras"></a>`manage_extras`
 
 Data type: `Boolean`
 
 Manage the NETWAYS extras repository that provides some packages for extras.
 
-### <a name="icingaserver"></a>`icinga::server`
+### <a name="icinga--server"></a>`icinga::server`
 
 Setup a Icinga server.
 
@@ -349,215 +634,230 @@ Setup a Icinga server.
 
 The following parameters are available in the `icinga::server` class:
 
-* [`ca`](#ca)
-* [`config_server`](#config_server)
-* [`zone`](#zone)
-* [`colocation_endpoints`](#colocation_endpoints)
-* [`workers`](#workers)
-* [`global_zones`](#global_zones)
-* [`ca_server`](#ca_server)
-* [`ticket_salt`](#ticket_salt)
-* [`web_api_user`](#web_api_user)
-* [`web_api_pass`](#web_api_pass)
-* [`director_api_user`](#director_api_user)
-* [`director_api_pass`](#director_api_pass)
-* [`logging_type`](#logging_type)
-* [`logging_level`](#logging_level)
-* [`run_web`](#run_web)
+* [`ca`](#-icinga--server--ca)
+* [`config_server`](#-icinga--server--config_server)
+* [`zone`](#-icinga--server--zone)
+* [`colocation_endpoints`](#-icinga--server--colocation_endpoints)
+* [`workers`](#-icinga--server--workers)
+* [`global_zones`](#-icinga--server--global_zones)
+* [`ca_server`](#-icinga--server--ca_server)
+* [`ticket_salt`](#-icinga--server--ticket_salt)
+* [`web_api_user`](#-icinga--server--web_api_user)
+* [`web_api_pass`](#-icinga--server--web_api_pass)
+* [`director_api_user`](#-icinga--server--director_api_user)
+* [`director_api_pass`](#-icinga--server--director_api_pass)
+* [`logging_type`](#-icinga--server--logging_type)
+* [`logging_level`](#-icinga--server--logging_level)
+* [`run_web`](#-icinga--server--run_web)
+* [`ssh_private_key`](#-icinga--server--ssh_private_key)
+* [`ssh_key_type`](#-icinga--server--ssh_key_type)
 
-##### <a name="ca"></a>`ca`
+##### <a name="-icinga--server--ca"></a>`ca`
 
 Data type: `Boolean`
 
 Enables a CA on this node.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="config_server"></a>`config_server`
+##### <a name="-icinga--server--config_server"></a>`config_server`
 
 Data type: `Boolean`
 
 Enables that this node is the central configuration server.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="zone"></a>`zone`
+##### <a name="-icinga--server--zone"></a>`zone`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the Icinga zone.
 
 Default value: `'main'`
 
-##### <a name="colocation_endpoints"></a>`colocation_endpoints`
+##### <a name="-icinga--server--colocation_endpoints"></a>`colocation_endpoints`
 
-Data type: `Hash[String,Hash]`
+Data type: `Hash[String[1], Hash]`
 
 When the zone includes more than one endpoint, set here the additional endpoint(s).
 Icinga supports two endpoints per zone only.
 
 Default value: `{}`
 
-##### <a name="workers"></a>`workers`
+##### <a name="-icinga--server--workers"></a>`workers`
 
-Data type: `Hash[String,Hash]`
+Data type: `Hash[String[1], Hash]`
 
-All worker zones with key 'endpoints' for
-endpoint objects.
+All worker zones with key 'endpoints' for endpoint objects.
 
 Default value: `{}`
 
-##### <a name="global_zones"></a>`global_zones`
+##### <a name="-icinga--server--global_zones"></a>`global_zones`
 
-Data type: `Array[String]`
+Data type: `Array[String[1]]`
 
 List of global zones to configure.
 
 Default value: `[]`
 
-##### <a name="ca_server"></a>`ca_server`
+##### <a name="-icinga--server--ca_server"></a>`ca_server`
 
 Data type: `Optional[Stdlib::Host]`
 
 The CA to send the certificate request to.
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="ticket_salt"></a>`ticket_salt`
+##### <a name="-icinga--server--ticket_salt"></a>`ticket_salt`
 
-Data type: `Optional[String]`
+Data type: `Optional[Icinga::Secret]`
 
 Set an alternate ticket salt to icinga::ticket_salt from Hiera.
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="web_api_user"></a>`web_api_user`
+##### <a name="-icinga--server--web_api_user"></a>`web_api_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Icinga API user to connect Icinga 2. Notice: user is only created if a password is set.
 
 Default value: `'icingaweb2'`
 
-##### <a name="web_api_pass"></a>`web_api_pass`
+##### <a name="-icinga--server--web_api_pass"></a>`web_api_pass`
 
-Data type: `Optional[String]`
+Data type: `Optional[Icinga::Secret]`
 
 Icinga API user password.
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="director_api_user"></a>`director_api_user`
+##### <a name="-icinga--server--director_api_user"></a>`director_api_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Icinga API director user to connect Icinga 2. Notice: user is only created if a password is set.
 
 Default value: `'director'`
 
-##### <a name="director_api_pass"></a>`director_api_pass`
+##### <a name="-icinga--server--director_api_pass"></a>`director_api_pass`
 
-Data type: `Optional[String]`
+Data type: `Optional[Icinga::Secret]`
 
 Icinga API director user password.
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="logging_type"></a>`logging_type`
+##### <a name="-icinga--server--logging_type"></a>`logging_type`
 
-Data type: `Enum['file', 'syslog']`
+Data type: `Enum['file', 'syslog', 'eventlog']`
 
-Switch the log target. Only `file` is supported on Windows.
+Switch the log target. On Windows `syslog` is ignored, `eventlog` on all other platforms.
 
-Default value: `'file'`
+##### <a name="-icinga--server--logging_level"></a>`logging_level`
 
-##### <a name="logging_level"></a>`logging_level`
-
-Data type: `Optional[Icinga::LogLevel]`
+Data type: `Icinga::LogLevel`
 
 Set the log level.
 
-Default value: ``undef``
-
-##### <a name="run_web"></a>`run_web`
+##### <a name="-icinga--server--run_web"></a>`run_web`
 
 Data type: `Boolean`
 
 Prepare to run Icinga Web 2 on the same machine. Manage a group `icingaweb2`
 and add the Icinga user to this group.
 
-Default value: ``false``
+Default value: `false`
 
-### <a name="icingaweb"></a>`icinga::web`
+##### <a name="-icinga--server--ssh_private_key"></a>`ssh_private_key`
 
-Setup Icinga Web 2 including a database backend for user settings.
+Data type: `Optional[Icinga::Secret]`
+
+The private key to install.
+
+Default value: `undef`
+
+##### <a name="-icinga--server--ssh_key_type"></a>`ssh_key_type`
+
+Data type: `Enum['ecdsa','ed25519','rsa']`
+
+SSH key type.
+
+Default value: `rsa`
+
+### <a name="icinga--web"></a>`icinga::web`
+
+Setup Icinga Web 2 including a database backend for user settings,
+PHP and a Webserver.
 
 #### Parameters
 
 The following parameters are available in the `icinga::web` class:
 
-* [`default_admin_user`](#default_admin_user)
-* [`default_admin_pass`](#default_admin_pass)
-* [`db_pass`](#db_pass)
-* [`api_pass`](#api_pass)
-* [`apache_cgi_pass_auth`](#apache_cgi_pass_auth)
-* [`backend_db_pass`](#backend_db_pass)
-* [`db_type`](#db_type)
-* [`db_host`](#db_host)
-* [`db_port`](#db_port)
-* [`db_name`](#db_name)
-* [`db_user`](#db_user)
-* [`manage_database`](#manage_database)
-* [`api_host`](#api_host)
-* [`api_user`](#api_user)
-* [`backend_db_type`](#backend_db_type)
-* [`backend_db_host`](#backend_db_host)
-* [`backend_db_port`](#backend_db_port)
-* [`backend_db_name`](#backend_db_name)
-* [`backend_db_user`](#backend_db_user)
+* [`default_admin_user`](#-icinga--web--default_admin_user)
+* [`default_admin_pass`](#-icinga--web--default_admin_pass)
+* [`db_pass`](#-icinga--web--db_pass)
+* [`apache_cgi_pass_auth`](#-icinga--web--apache_cgi_pass_auth)
+* [`apache_extra_mods`](#-icinga--web--apache_extra_mods)
+* [`apache_config`](#-icinga--web--apache_config)
+* [`db_type`](#-icinga--web--db_type)
+* [`db_host`](#-icinga--web--db_host)
+* [`db_port`](#-icinga--web--db_port)
+* [`db_name`](#-icinga--web--db_name)
+* [`db_user`](#-icinga--web--db_user)
+* [`manage_database`](#-icinga--web--manage_database)
+* [`api_host`](#-icinga--web--api_host)
+* [`api_user`](#-icinga--web--api_user)
+* [`api_pass`](#-icinga--web--api_pass)
 
-##### <a name="default_admin_user"></a>`default_admin_user`
+##### <a name="-icinga--web--default_admin_user"></a>`default_admin_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Set the initial name of the admin user.
 
 Default value: `'icingaadmin'`
 
-##### <a name="default_admin_pass"></a>`default_admin_pass`
+##### <a name="-icinga--web--default_admin_pass"></a>`default_admin_pass`
 
-Data type: `String`
+Data type: `Icinga::Secret`
 
 Set the initial password for the admin user.
 
 Default value: `'icingaadmin'`
 
-##### <a name="db_pass"></a>`db_pass`
+##### <a name="-icinga--web--db_pass"></a>`db_pass`
 
-Data type: `String`
+Data type: `Icinga::Secret`
 
 Password to connect the database.
 
-##### <a name="api_pass"></a>`api_pass`
-
-Data type: `String`
-
-Password to connect the Icinga 2 API.
-
-##### <a name="apache_cgi_pass_auth"></a>`apache_cgi_pass_auth`
+##### <a name="-icinga--web--apache_cgi_pass_auth"></a>`apache_cgi_pass_auth`
 
 Data type: `Boolean`
 
 Either turn on or off the apache cgi pass thru auth.
 An option available since Apache v2.4.15 and required for authenticated access to the Icinga Web Api.
 
-##### <a name="backend_db_pass"></a>`backend_db_pass`
+##### <a name="-icinga--web--apache_extra_mods"></a>`apache_extra_mods`
 
-Data type: `String`
+Data type: `Array[String[1]]`
 
-Pasword to connect the IDO backend.
+List of addational Apache modules to load.
 
-##### <a name="db_type"></a>`db_type`
+Default value: `[]`
+
+##### <a name="-icinga--web--apache_config"></a>`apache_config`
+
+Data type: `Boolean`
+
+Wether or not install an default Apache config for Icinga Web 2. If set to `true` Icinga is
+reachable via `/icingaweb2`.
+
+Default value: `true`
+
+##### <a name="-icinga--web--db_type"></a>`db_type`
 
 Data type: `Enum['mysql', 'pgsql']`
 
@@ -565,7 +865,7 @@ What kind of database type to use.
 
 Default value: `'mysql'`
 
-##### <a name="db_host"></a>`db_host`
+##### <a name="-icinga--web--db_host"></a>`db_host`
 
 Data type: `Stdlib::Host`
 
@@ -573,39 +873,39 @@ Database host to connect.
 
 Default value: `'localhost'`
 
-##### <a name="db_port"></a>`db_port`
+##### <a name="-icinga--web--db_port"></a>`db_port`
 
 Data type: `Optional[Stdlib::Port::Unprivileged]`
 
 Port to connect. Only affects for connection to remote database hosts.
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="db_name"></a>`db_name`
+##### <a name="-icinga--web--db_name"></a>`db_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the database.
 
 Default value: `'icingaweb2'`
 
-##### <a name="db_user"></a>`db_user`
+##### <a name="-icinga--web--db_user"></a>`db_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Database user name.
 
 Default value: `'icingaweb2'`
 
-##### <a name="manage_database"></a>`manage_database`
+##### <a name="-icinga--web--manage_database"></a>`manage_database`
 
 Data type: `Boolean`
 
 Create database.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="api_host"></a>`api_host`
+##### <a name="-icinga--web--api_host"></a>`api_host`
 
 Data type: `Variant[Stdlib::Host, Array[Stdlib::Host]]`
 
@@ -613,55 +913,21 @@ Single or list of Icinga 2 API endpoints to connect.
 
 Default value: `'localhost'`
 
-##### <a name="api_user"></a>`api_user`
+##### <a name="-icinga--web--api_user"></a>`api_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Icinga 2 API user.
 
 Default value: `'icingaweb2'`
 
-##### <a name="backend_db_type"></a>`backend_db_type`
+##### <a name="-icinga--web--api_pass"></a>`api_pass`
 
-Data type: `Enum['mysql', 'pgsql']`
+Data type: `Icinga::Secret`
 
-What kind of database type to use as IDO backend.
+Password to connect the Icinga 2 API.
 
-Default value: `'mysql'`
-
-##### <a name="backend_db_host"></a>`backend_db_host`
-
-Data type: `Stdlib::Host`
-
-Database host to connect for the IDO backenend.
-
-Default value: `'localhost'`
-
-##### <a name="backend_db_port"></a>`backend_db_port`
-
-Data type: `Optional[Stdlib::Port::Unprivileged]`
-
-Port to connect the IDO backend. Only affects for connection to remote database hosts.
-
-Default value: ``undef``
-
-##### <a name="backend_db_name"></a>`backend_db_name`
-
-Data type: `String`
-
-Name of the IDO database backend.
-
-Default value: `'icinga2'`
-
-##### <a name="backend_db_user"></a>`backend_db_user`
-
-Data type: `String`
-
-IDO database backend user name.
-
-Default value: `'icinga2'`
-
-### <a name="icingawebdatabase"></a>`icinga::web::database`
+### <a name="icinga--web--database"></a>`icinga::web::database`
 
 Setup Icinga Web 2 database for user settings.
 
@@ -669,47 +935,62 @@ Setup Icinga Web 2 database for user settings.
 
 The following parameters are available in the `icinga::web::database` class:
 
-* [`db_type`](#db_type)
-* [`web_instances`](#web_instances)
-* [`db_pass`](#db_pass)
-* [`db_name`](#db_name)
-* [`db_user`](#db_user)
+* [`db_type`](#-icinga--web--database--db_type)
+* [`web_instances`](#-icinga--web--database--web_instances)
+* [`db_pass`](#-icinga--web--database--db_pass)
+* [`db_name`](#-icinga--web--database--db_name)
+* [`db_user`](#-icinga--web--database--db_user)
+* [`tls`](#-icinga--web--database--tls)
 
-##### <a name="db_type"></a>`db_type`
+##### <a name="-icinga--web--database--db_type"></a>`db_type`
 
 Data type: `Enum['mysql','pgsql']`
 
 What kind of database type to use.
 
-##### <a name="web_instances"></a>`web_instances`
+##### <a name="-icinga--web--database--web_instances"></a>`web_instances`
 
 Data type: `Array[Stdlib::Host]`
 
 List of Hosts to allow write access to the database. Usually an Icinga Web 2 instance.
 
-##### <a name="db_pass"></a>`db_pass`
+##### <a name="-icinga--web--database--db_pass"></a>`db_pass`
 
-Data type: `String`
+Data type: `Icinga::Secret`
 
 Password to connect the database.
 
-##### <a name="db_name"></a>`db_name`
+##### <a name="-icinga--web--database--db_name"></a>`db_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the database.
 
 Default value: `'icingaweb2'`
 
-##### <a name="db_user"></a>`db_user`
+##### <a name="-icinga--web--database--db_user"></a>`db_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Database user name.
 
 Default value: `'icingaweb2'`
 
-### <a name="icingawebdirector"></a>`icinga::web::director`
+##### <a name="-icinga--web--database--tls"></a>`tls`
+
+Data type:
+
+```puppet
+Variant[Boolean,
+  Enum['password','cert']]
+```
+
+Access only for TLS encrypted connections. Authentication via `password` or `cert`,
+value `true` means password auth.
+
+Default value: `false`
+
+### <a name="icinga--web--director"></a>`icinga::web::director`
 
 Setup Director module for Icinga Web 2
 
@@ -717,21 +998,21 @@ Setup Director module for Icinga Web 2
 
 The following parameters are available in the `icinga::web::director` class:
 
-* [`service_ensure`](#service_ensure)
-* [`service_enable`](#service_enable)
-* [`db_type`](#db_type)
-* [`db_host`](#db_host)
-* [`db_port`](#db_port)
-* [`db_name`](#db_name)
-* [`db_user`](#db_user)
-* [`db_pass`](#db_pass)
-* [`endpoint`](#endpoint)
-* [`manage_database`](#manage_database)
-* [`api_host`](#api_host)
-* [`api_user`](#api_user)
-* [`api_pass`](#api_pass)
+* [`service_ensure`](#-icinga--web--director--service_ensure)
+* [`service_enable`](#-icinga--web--director--service_enable)
+* [`db_type`](#-icinga--web--director--db_type)
+* [`db_host`](#-icinga--web--director--db_host)
+* [`db_port`](#-icinga--web--director--db_port)
+* [`db_name`](#-icinga--web--director--db_name)
+* [`db_user`](#-icinga--web--director--db_user)
+* [`db_pass`](#-icinga--web--director--db_pass)
+* [`endpoint`](#-icinga--web--director--endpoint)
+* [`manage_database`](#-icinga--web--director--manage_database)
+* [`api_host`](#-icinga--web--director--api_host)
+* [`api_user`](#-icinga--web--director--api_user)
+* [`api_pass`](#-icinga--web--director--api_pass)
 
-##### <a name="service_ensure"></a>`service_ensure`
+##### <a name="-icinga--web--director--service_ensure"></a>`service_ensure`
 
 Data type: `Stdlib::Ensure::Service`
 
@@ -739,15 +1020,15 @@ Manages if the Director service should be stopped or running.
 
 Default value: `'running'`
 
-##### <a name="service_enable"></a>`service_enable`
+##### <a name="-icinga--web--director--service_enable"></a>`service_enable`
 
 Data type: `Boolean`
 
 If set to true the Director service will start on boot.
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="db_type"></a>`db_type`
+##### <a name="-icinga--web--director--db_type"></a>`db_type`
 
 Data type: `Enum['mysql', 'pgsql']`
 
@@ -755,7 +1036,7 @@ Type of your database. Either `mysql` or `pgsql`.
 
 Default value: `'mysql'`
 
-##### <a name="db_host"></a>`db_host`
+##### <a name="-icinga--web--director--db_host"></a>`db_host`
 
 Data type: `Stdlib::Host`
 
@@ -763,51 +1044,51 @@ Hostname of the database.
 
 Default value: `'localhost'`
 
-##### <a name="db_port"></a>`db_port`
+##### <a name="-icinga--web--director--db_port"></a>`db_port`
 
 Data type: `Optional[Stdlib::Port]`
 
 Port of the database.
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="db_name"></a>`db_name`
+##### <a name="-icinga--web--director--db_name"></a>`db_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the database.
 
 Default value: `'director'`
 
-##### <a name="db_user"></a>`db_user`
+##### <a name="-icinga--web--director--db_user"></a>`db_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Username for DB connection.
 
 Default value: `'director'`
 
-##### <a name="db_pass"></a>`db_pass`
+##### <a name="-icinga--web--director--db_pass"></a>`db_pass`
 
-Data type: `String`
+Data type: `Icinga::Secret`
 
 Password for DB connection.
 
-##### <a name="endpoint"></a>`endpoint`
+##### <a name="-icinga--web--director--endpoint"></a>`endpoint`
 
-Data type: `String`
+Data type: `String[1]`
 
 Endpoint object name of Icinga 2 API.
 
-##### <a name="manage_database"></a>`manage_database`
+##### <a name="-icinga--web--director--manage_database"></a>`manage_database`
 
 Data type: `Boolean`
 
 Create database and import schema.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="api_host"></a>`api_host`
+##### <a name="-icinga--web--director--api_host"></a>`api_host`
 
 Data type: `Stdlib::Host`
 
@@ -815,21 +1096,21 @@ Icinga 2 API hostname.
 
 Default value: `'localhost'`
 
-##### <a name="api_user"></a>`api_user`
+##### <a name="-icinga--web--director--api_user"></a>`api_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Icinga 2 API username.
 
 Default value: `'director'`
 
-##### <a name="api_pass"></a>`api_pass`
+##### <a name="-icinga--web--director--api_pass"></a>`api_pass`
 
-Data type: `String`
+Data type: `Icinga::Secret`
 
 Icinga 2 API password.
 
-### <a name="icingawebdirectordatabase"></a>`icinga::web::director::database`
+### <a name="icinga--web--director--database"></a>`icinga::web::director::database`
 
 Setup Director database.
 
@@ -837,89 +1118,305 @@ Setup Director database.
 
 The following parameters are available in the `icinga::web::director::database` class:
 
-* [`db_type`](#db_type)
-* [`web_instances`](#web_instances)
-* [`db_pass`](#db_pass)
-* [`db_name`](#db_name)
-* [`db_user`](#db_user)
+* [`db_type`](#-icinga--web--director--database--db_type)
+* [`web_instances`](#-icinga--web--director--database--web_instances)
+* [`db_pass`](#-icinga--web--director--database--db_pass)
+* [`db_name`](#-icinga--web--director--database--db_name)
+* [`db_user`](#-icinga--web--director--database--db_user)
+* [`tls`](#-icinga--web--director--database--tls)
 
-##### <a name="db_type"></a>`db_type`
+##### <a name="-icinga--web--director--database--db_type"></a>`db_type`
 
 Data type: `Enum['mysql','pgsql']`
 
 What kind of database type to use.
 
-##### <a name="web_instances"></a>`web_instances`
+##### <a name="-icinga--web--director--database--web_instances"></a>`web_instances`
 
 Data type: `Array[Stdlib::Host]`
 
-List of Hosts to allow write access to the database. Usually an Icinga Web 2 instance.
+List of Hosts to allow write access to the database.
+Usually an Icinga Web 2 instance.
 
-##### <a name="db_pass"></a>`db_pass`
+##### <a name="-icinga--web--director--database--db_pass"></a>`db_pass`
 
-Data type: `String`
+Data type: `Icinga::Secret`
 
 Password to connect the database.
 
-##### <a name="db_name"></a>`db_name`
+##### <a name="-icinga--web--director--database--db_name"></a>`db_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the database.
 
 Default value: `'director'`
 
-##### <a name="db_user"></a>`db_user`
+##### <a name="-icinga--web--director--database--db_user"></a>`db_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Database user name.
 
 Default value: `'director'`
 
-### <a name="icingawebvspheredb"></a>`icinga::web::vspheredb`
+##### <a name="-icinga--web--director--database--tls"></a>`tls`
 
-Setup VSphereDB module for Icinga Web 2
+Data type:
+
+```puppet
+Variant[Boolean,
+  Enum['password','cert']]
+```
+
+Access only for TLS encrypted connections. Authentication via `password` or `cert`,
+value `true` means password auth.
+
+Default value: `false`
+
+### <a name="icinga--web--icingadb"></a>`icinga::web::icingadb`
+
+Setup IcingaDB module for the new backend.
 
 #### Parameters
 
-The following parameters are available in the `icinga::web::vspheredb` class:
+The following parameters are available in the `icinga::web::icingadb` class:
 
-* [`service_ensure`](#service_ensure)
-* [`service_enable`](#service_enable)
-* [`db_type`](#db_type)
-* [`db_host`](#db_host)
-* [`db_port`](#db_port)
-* [`db_name`](#db_name)
-* [`db_user`](#db_user)
-* [`db_pass`](#db_pass)
-* [`manage_database`](#manage_database)
+* [`db_type`](#-icinga--web--icingadb--db_type)
+* [`db_host`](#-icinga--web--icingadb--db_host)
+* [`db_port`](#-icinga--web--icingadb--db_port)
+* [`db_name`](#-icinga--web--icingadb--db_name)
+* [`db_user`](#-icinga--web--icingadb--db_user)
+* [`db_pass`](#-icinga--web--icingadb--db_pass)
+* [`redis_host`](#-icinga--web--icingadb--redis_host)
+* [`redis_port`](#-icinga--web--icingadb--redis_port)
+* [`redis_pass`](#-icinga--web--icingadb--redis_pass)
+* [`redis_primary_host`](#-icinga--web--icingadb--redis_primary_host)
+* [`redis_primary_port`](#-icinga--web--icingadb--redis_primary_port)
+* [`redis_primary_pass`](#-icinga--web--icingadb--redis_primary_pass)
+* [`redis_secondary_host`](#-icinga--web--icingadb--redis_secondary_host)
+* [`redis_secondary_port`](#-icinga--web--icingadb--redis_secondary_port)
+* [`redis_secondary_pass`](#-icinga--web--icingadb--redis_secondary_pass)
 
-##### <a name="service_ensure"></a>`service_ensure`
+##### <a name="-icinga--web--icingadb--db_type"></a>`db_type`
 
-Data type: `Stdlib::Ensure::Service`
+Data type: `Enum['mysql', 'pgsql']`
 
-Manages if the VSphereDB service should be stopped or running.
+What kind of database type to use as backend.
 
-Default value: `'running'`
+##### <a name="-icinga--web--icingadb--db_host"></a>`db_host`
 
-##### <a name="service_enable"></a>`service_enable`
+Data type: `Stdlib::Host`
 
-Data type: `Boolean`
+Database host to connect for the backenend.
 
-If set to true the VSphereDB service will start on boot.
+Default value: `'localhost'`
 
-Default value: ``true``
+##### <a name="-icinga--web--icingadb--db_port"></a>`db_port`
 
-##### <a name="db_type"></a>`db_type`
+Data type: `Optional[Stdlib::Port]`
 
-Data type: `Enum['mysql']`
+Port to connect the backend.
 
-Type of your database. At the moment only `mysql` is supported by the Icinga team.
+Default value: `undef`
+
+##### <a name="-icinga--web--icingadb--db_name"></a>`db_name`
+
+Data type: `String[1]`
+
+Name of the database backend.
+
+Default value: `'icingadb'`
+
+##### <a name="-icinga--web--icingadb--db_user"></a>`db_user`
+
+Data type: `String[1]`
+
+Database backend user name.
+
+Default value: `'icingadb'`
+
+##### <a name="-icinga--web--icingadb--db_pass"></a>`db_pass`
+
+Data type: `Icinga::Secret`
+
+Password to connect the backend.
+
+##### <a name="-icinga--web--icingadb--redis_host"></a>`redis_host`
+
+Data type: `Stdlib::Host`
+
+Redis host to connect.
+
+Default value: `'localhost'`
+
+##### <a name="-icinga--web--icingadb--redis_port"></a>`redis_port`
+
+Data type: `Optional[Stdlib::Port]`
+
+Connect `redis_host` om this port.
+
+Default value: `undef`
+
+##### <a name="-icinga--web--icingadb--redis_pass"></a>`redis_pass`
+
+Data type: `Optional[Icinga::Secret]`
+
+Password for Redis connection.
+
+Default value: `undef`
+
+##### <a name="-icinga--web--icingadb--redis_primary_host"></a>`redis_primary_host`
+
+Data type: `Stdlib::Host`
+
+Alternative parameter to use for `redis_host`. Useful for high availability environments.
+
+Default value: `$redis_host`
+
+##### <a name="-icinga--web--icingadb--redis_primary_port"></a>`redis_primary_port`
+
+Data type: `Optional[Stdlib::Port]`
+
+Alternative parameter to use for `redis_port`. Useful for high availability environments.
+
+Default value: `$redis_port`
+
+##### <a name="-icinga--web--icingadb--redis_primary_pass"></a>`redis_primary_pass`
+
+Data type: `Optional[Icinga::Secret]`
+
+Alternative parameter to use for `redis_passwod`. Useful for high availability environments.
+
+Default value: `$redis_pass`
+
+##### <a name="-icinga--web--icingadb--redis_secondary_host"></a>`redis_secondary_host`
+
+Data type: `Optional[Stdlib::Host]`
+
+Fallback Redis host to connect if the first one fails.
+
+Default value: `undef`
+
+##### <a name="-icinga--web--icingadb--redis_secondary_port"></a>`redis_secondary_port`
+
+Data type: `Optional[Stdlib::Port]`
+
+Port to connect on the fallback Redis server.
+
+Default value: `undef`
+
+##### <a name="-icinga--web--icingadb--redis_secondary_pass"></a>`redis_secondary_pass`
+
+Data type: `Optional[Icinga::Secret]`
+
+Password for the second Redis server.
+
+Default value: `undef`
+
+### <a name="icinga--web--monitoring"></a>`icinga::web::monitoring`
+
+Setup Monitoring module for the IDO backend.
+
+#### Parameters
+
+The following parameters are available in the `icinga::web::monitoring` class:
+
+* [`db_type`](#-icinga--web--monitoring--db_type)
+* [`db_host`](#-icinga--web--monitoring--db_host)
+* [`db_port`](#-icinga--web--monitoring--db_port)
+* [`db_name`](#-icinga--web--monitoring--db_name)
+* [`db_user`](#-icinga--web--monitoring--db_user)
+* [`db_pass`](#-icinga--web--monitoring--db_pass)
+
+##### <a name="-icinga--web--monitoring--db_type"></a>`db_type`
+
+Data type: `Enum['mysql', 'pgsql']`
+
+What kind of database type to use as IDO backend.
 
 Default value: `'mysql'`
 
-##### <a name="db_host"></a>`db_host`
+##### <a name="-icinga--web--monitoring--db_host"></a>`db_host`
+
+Data type: `Stdlib::Host`
+
+Database host to connect for the IDO backenend.
+
+Default value: `'localhost'`
+
+##### <a name="-icinga--web--monitoring--db_port"></a>`db_port`
+
+Data type: `Optional[Stdlib::Port::Unprivileged]`
+
+Port to connect the IDO backend.
+
+Default value: `undef`
+
+##### <a name="-icinga--web--monitoring--db_name"></a>`db_name`
+
+Data type: `String[1]`
+
+Name of the IDO database backend.
+
+Default value: `'icinga2'`
+
+##### <a name="-icinga--web--monitoring--db_user"></a>`db_user`
+
+Data type: `String[1]`
+
+IDO database backend user name.
+
+Default value: `'icinga2'`
+
+##### <a name="-icinga--web--monitoring--db_pass"></a>`db_pass`
+
+Data type: `Icinga::Secret`
+
+Pasword to connect the IDO backend.
+
+### <a name="icinga--web--reporting"></a>`icinga::web::reporting`
+
+Setup the reporting module for Icinga Web 2
+
+#### Parameters
+
+The following parameters are available in the `icinga::web::reporting` class:
+
+* [`service_ensure`](#-icinga--web--reporting--service_ensure)
+* [`service_enable`](#-icinga--web--reporting--service_enable)
+* [`db_type`](#-icinga--web--reporting--db_type)
+* [`db_host`](#-icinga--web--reporting--db_host)
+* [`db_port`](#-icinga--web--reporting--db_port)
+* [`db_name`](#-icinga--web--reporting--db_name)
+* [`db_user`](#-icinga--web--reporting--db_user)
+* [`db_pass`](#-icinga--web--reporting--db_pass)
+* [`manage_database`](#-icinga--web--reporting--manage_database)
+* [`mail`](#-icinga--web--reporting--mail)
+
+##### <a name="-icinga--web--reporting--service_ensure"></a>`service_ensure`
+
+Data type: `Stdlib::Ensure::Service`
+
+Manages if the reporting service should be stopped or running.
+
+Default value: `'running'`
+
+##### <a name="-icinga--web--reporting--service_enable"></a>`service_enable`
+
+Data type: `Boolean`
+
+If set to true the reporting service will start on boot.
+
+Default value: `true`
+
+##### <a name="-icinga--web--reporting--db_type"></a>`db_type`
+
+Data type: `Enum['mysql', 'pgsql']`
+
+Type of your database.
+
+##### <a name="-icinga--web--reporting--db_host"></a>`db_host`
 
 Data type: `Stdlib::Host`
 
@@ -927,45 +1424,205 @@ Hostname of the database.
 
 Default value: `'localhost'`
 
-##### <a name="db_port"></a>`db_port`
+##### <a name="-icinga--web--reporting--db_port"></a>`db_port`
 
 Data type: `Optional[Stdlib::Port]`
 
 Port of the database.
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="db_name"></a>`db_name`
+##### <a name="-icinga--web--reporting--db_name"></a>`db_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the database.
 
-Default value: `'vspheredb'`
+Default value: `'reporting'`
 
-##### <a name="db_user"></a>`db_user`
+##### <a name="-icinga--web--reporting--db_user"></a>`db_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Username for DB connection.
 
-Default value: `'vspheredb'`
+Default value: `'reporting'`
 
-##### <a name="db_pass"></a>`db_pass`
+##### <a name="-icinga--web--reporting--db_pass"></a>`db_pass`
 
-Data type: `String`
+Data type: `Icinga::Secret`
 
 Password for DB connection.
 
-##### <a name="manage_database"></a>`manage_database`
+##### <a name="-icinga--web--reporting--manage_database"></a>`manage_database`
 
 Data type: `Boolean`
 
 Create database and import schema.
 
-Default value: ``false``
+Default value: `false`
 
-### <a name="icingawebvspheredbdatabase"></a>`icinga::web::vspheredb::database`
+##### <a name="-icinga--web--reporting--mail"></a>`mail`
+
+Data type: `Optional[String[1]]`
+
+Mails are sent with this sender address.
+
+Default value: `undef`
+
+### <a name="icinga--web--reporting--database"></a>`icinga::web::reporting::database`
+
+Setup the reporting database.
+
+#### Parameters
+
+The following parameters are available in the `icinga::web::reporting::database` class:
+
+* [`db_type`](#-icinga--web--reporting--database--db_type)
+* [`web_instances`](#-icinga--web--reporting--database--web_instances)
+* [`db_pass`](#-icinga--web--reporting--database--db_pass)
+* [`db_name`](#-icinga--web--reporting--database--db_name)
+* [`db_user`](#-icinga--web--reporting--database--db_user)
+* [`tls`](#-icinga--web--reporting--database--tls)
+
+##### <a name="-icinga--web--reporting--database--db_type"></a>`db_type`
+
+Data type: `Enum['mysql','pgsql']`
+
+What kind of database type to use.
+
+##### <a name="-icinga--web--reporting--database--web_instances"></a>`web_instances`
+
+Data type: `Array[Stdlib::Host]`
+
+List of Hosts to allow write access to the database.
+Usually an Icinga Web 2 instance.
+
+##### <a name="-icinga--web--reporting--database--db_pass"></a>`db_pass`
+
+Data type: `Icinga::Secret`
+
+Password to connect the database.
+
+##### <a name="-icinga--web--reporting--database--db_name"></a>`db_name`
+
+Data type: `String[1]`
+
+Name of the database.
+
+Default value: `'reporting'`
+
+##### <a name="-icinga--web--reporting--database--db_user"></a>`db_user`
+
+Data type: `String[1]`
+
+Database user name.
+
+Default value: `'reporting'`
+
+##### <a name="-icinga--web--reporting--database--tls"></a>`tls`
+
+Data type:
+
+```puppet
+Variant[Boolean,
+  Enum['password','cert']]
+```
+
+Access only for TLS encrypted connections. Authentication via `password` or `cert`,
+value `true` means password auth.
+
+Default value: `false`
+
+### <a name="icinga--web--vspheredb"></a>`icinga::web::vspheredb`
+
+Setup VSphereDB module for Icinga Web 2
+
+#### Parameters
+
+The following parameters are available in the `icinga::web::vspheredb` class:
+
+* [`service_ensure`](#-icinga--web--vspheredb--service_ensure)
+* [`service_enable`](#-icinga--web--vspheredb--service_enable)
+* [`db_type`](#-icinga--web--vspheredb--db_type)
+* [`db_host`](#-icinga--web--vspheredb--db_host)
+* [`db_port`](#-icinga--web--vspheredb--db_port)
+* [`db_name`](#-icinga--web--vspheredb--db_name)
+* [`db_user`](#-icinga--web--vspheredb--db_user)
+* [`db_pass`](#-icinga--web--vspheredb--db_pass)
+* [`manage_database`](#-icinga--web--vspheredb--manage_database)
+
+##### <a name="-icinga--web--vspheredb--service_ensure"></a>`service_ensure`
+
+Data type: `Stdlib::Ensure::Service`
+
+Manages if the VSphereDB service should be stopped or running.
+
+Default value: `'running'`
+
+##### <a name="-icinga--web--vspheredb--service_enable"></a>`service_enable`
+
+Data type: `Boolean`
+
+If set to true the VSphereDB service will start on boot.
+
+Default value: `true`
+
+##### <a name="-icinga--web--vspheredb--db_type"></a>`db_type`
+
+Data type: `Enum['mysql']`
+
+Type of your database. At the moment only `mysql` is supported by the Icinga team.
+
+Default value: `'mysql'`
+
+##### <a name="-icinga--web--vspheredb--db_host"></a>`db_host`
+
+Data type: `Stdlib::Host`
+
+Hostname of the database.
+
+Default value: `'localhost'`
+
+##### <a name="-icinga--web--vspheredb--db_port"></a>`db_port`
+
+Data type: `Optional[Stdlib::Port]`
+
+Port of the database.
+
+Default value: `undef`
+
+##### <a name="-icinga--web--vspheredb--db_name"></a>`db_name`
+
+Data type: `String[1]`
+
+Name of the database.
+
+Default value: `'vspheredb'`
+
+##### <a name="-icinga--web--vspheredb--db_user"></a>`db_user`
+
+Data type: `String[1]`
+
+Username for DB connection.
+
+Default value: `'vspheredb'`
+
+##### <a name="-icinga--web--vspheredb--db_pass"></a>`db_pass`
+
+Data type: `Icinga::Secret`
+
+Password for DB connection.
+
+##### <a name="-icinga--web--vspheredb--manage_database"></a>`manage_database`
+
+Data type: `Boolean`
+
+Create database and import schema.
+
+Default value: `false`
+
+### <a name="icinga--web--vspheredb--database"></a>`icinga::web::vspheredb::database`
 
 Setup VSphereDB database.
 
@@ -973,47 +1630,212 @@ Setup VSphereDB database.
 
 The following parameters are available in the `icinga::web::vspheredb::database` class:
 
-* [`db_type`](#db_type)
-* [`web_instances`](#web_instances)
-* [`db_pass`](#db_pass)
-* [`db_name`](#db_name)
-* [`db_user`](#db_user)
+* [`db_type`](#-icinga--web--vspheredb--database--db_type)
+* [`web_instances`](#-icinga--web--vspheredb--database--web_instances)
+* [`db_pass`](#-icinga--web--vspheredb--database--db_pass)
+* [`db_name`](#-icinga--web--vspheredb--database--db_name)
+* [`db_user`](#-icinga--web--vspheredb--database--db_user)
+* [`tls`](#-icinga--web--vspheredb--database--tls)
 
-##### <a name="db_type"></a>`db_type`
+##### <a name="-icinga--web--vspheredb--database--db_type"></a>`db_type`
 
 Data type: `Enum['mysql']`
 
 What kind of database type to use.
 
-##### <a name="web_instances"></a>`web_instances`
+##### <a name="-icinga--web--vspheredb--database--web_instances"></a>`web_instances`
 
 Data type: `Array[Stdlib::Host]`
 
 List of Hosts to allow write access to the database. Usually an Icinga Web 2 instance.
 
-##### <a name="db_pass"></a>`db_pass`
+##### <a name="-icinga--web--vspheredb--database--db_pass"></a>`db_pass`
 
-Data type: `String`
+Data type: `Icinga::Secret`
 
 Password to connect the database.
 
-##### <a name="db_name"></a>`db_name`
+##### <a name="-icinga--web--vspheredb--database--db_name"></a>`db_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the database.
 
 Default value: `'vspheredb'`
 
-##### <a name="db_user"></a>`db_user`
+##### <a name="-icinga--web--vspheredb--database--db_user"></a>`db_user`
 
-Data type: `String`
+Data type: `String[1]`
 
 Database user name.
 
 Default value: `'vspheredb'`
 
-### <a name="icingaworker"></a>`icinga::worker`
+##### <a name="-icinga--web--vspheredb--database--tls"></a>`tls`
+
+Data type:
+
+```puppet
+Variant[Boolean,
+  Enum['password','cert']]
+```
+
+Access only for TLS encrypted connections. Authentication via `password` or `cert`,
+value `true` means password auth.
+
+Default value: `false`
+
+### <a name="icinga--web--x509"></a>`icinga::web::x509`
+
+Setup the x509 module for Icinga Web 2
+
+#### Parameters
+
+The following parameters are available in the `icinga::web::x509` class:
+
+* [`service_ensure`](#-icinga--web--x509--service_ensure)
+* [`service_enable`](#-icinga--web--x509--service_enable)
+* [`db_type`](#-icinga--web--x509--db_type)
+* [`db_host`](#-icinga--web--x509--db_host)
+* [`db_port`](#-icinga--web--x509--db_port)
+* [`db_name`](#-icinga--web--x509--db_name)
+* [`db_user`](#-icinga--web--x509--db_user)
+* [`db_pass`](#-icinga--web--x509--db_pass)
+* [`manage_database`](#-icinga--web--x509--manage_database)
+
+##### <a name="-icinga--web--x509--service_ensure"></a>`service_ensure`
+
+Data type: `Stdlib::Ensure::Service`
+
+Manages if the x509 service should be stopped or running.
+
+Default value: `'running'`
+
+##### <a name="-icinga--web--x509--service_enable"></a>`service_enable`
+
+Data type: `Boolean`
+
+If set to true the x509 service will start on boot.
+
+Default value: `true`
+
+##### <a name="-icinga--web--x509--db_type"></a>`db_type`
+
+Data type: `Enum['mysql', 'pgsql']`
+
+Type of your database.
+
+##### <a name="-icinga--web--x509--db_host"></a>`db_host`
+
+Data type: `Stdlib::Host`
+
+Hostname of the database.
+
+Default value: `'localhost'`
+
+##### <a name="-icinga--web--x509--db_port"></a>`db_port`
+
+Data type: `Optional[Stdlib::Port]`
+
+Port of the database.
+
+Default value: `undef`
+
+##### <a name="-icinga--web--x509--db_name"></a>`db_name`
+
+Data type: `String[1]`
+
+Name of the database.
+
+Default value: `'x509'`
+
+##### <a name="-icinga--web--x509--db_user"></a>`db_user`
+
+Data type: `String[1]`
+
+Username for DB connection.
+
+Default value: `'x509'`
+
+##### <a name="-icinga--web--x509--db_pass"></a>`db_pass`
+
+Data type: `Icinga::Secret`
+
+Password for DB connection.
+
+##### <a name="-icinga--web--x509--manage_database"></a>`manage_database`
+
+Data type: `Boolean`
+
+Create database and import schema.
+
+Default value: `false`
+
+### <a name="icinga--web--x509--database"></a>`icinga::web::x509::database`
+
+Setup the x509 database.
+
+#### Parameters
+
+The following parameters are available in the `icinga::web::x509::database` class:
+
+* [`db_type`](#-icinga--web--x509--database--db_type)
+* [`web_instances`](#-icinga--web--x509--database--web_instances)
+* [`db_pass`](#-icinga--web--x509--database--db_pass)
+* [`db_name`](#-icinga--web--x509--database--db_name)
+* [`db_user`](#-icinga--web--x509--database--db_user)
+* [`tls`](#-icinga--web--x509--database--tls)
+
+##### <a name="-icinga--web--x509--database--db_type"></a>`db_type`
+
+Data type: `Enum['mysql','pgsql']`
+
+What kind of database type to use.
+
+##### <a name="-icinga--web--x509--database--web_instances"></a>`web_instances`
+
+Data type: `Array[Stdlib::Host]`
+
+List of Hosts to allow write access to the database.
+Usually an Icinga Web 2 instance.
+
+##### <a name="-icinga--web--x509--database--db_pass"></a>`db_pass`
+
+Data type: `Icinga::Secret`
+
+Password to connect the database.
+
+##### <a name="-icinga--web--x509--database--db_name"></a>`db_name`
+
+Data type: `String[1]`
+
+Name of the database.
+
+Default value: `'x509'`
+
+##### <a name="-icinga--web--x509--database--db_user"></a>`db_user`
+
+Data type: `String[1]`
+
+Database user name.
+
+Default value: `'x509'`
+
+##### <a name="-icinga--web--x509--database--tls"></a>`tls`
+
+Data type:
+
+```puppet
+Variant[Boolean,
+  Enum['password','cert']]
+```
+
+Access only for TLS encrypted connections. Authentication via `password` or `cert`,
+value `true` means password auth.
+
+Default value: `false`
+
+### <a name="icinga--worker"></a>`icinga::worker`
 
 Setup a Icinga worker (aka satellite).
 
@@ -1021,95 +1843,282 @@ Setup a Icinga worker (aka satellite).
 
 The following parameters are available in the `icinga::worker` class:
 
-* [`ca_server`](#ca_server)
-* [`zone`](#zone)
-* [`parent_zone`](#parent_zone)
-* [`parent_endpoints`](#parent_endpoints)
-* [`colocation_endpoints`](#colocation_endpoints)
-* [`global_zones`](#global_zones)
-* [`logging_type`](#logging_type)
-* [`logging_level`](#logging_level)
-* [`run_web`](#run_web)
+* [`ca_server`](#-icinga--worker--ca_server)
+* [`zone`](#-icinga--worker--zone)
+* [`parent_zone`](#-icinga--worker--parent_zone)
+* [`parent_endpoints`](#-icinga--worker--parent_endpoints)
+* [`colocation_endpoints`](#-icinga--worker--colocation_endpoints)
+* [`workers`](#-icinga--worker--workers)
+* [`global_zones`](#-icinga--worker--global_zones)
+* [`logging_type`](#-icinga--worker--logging_type)
+* [`logging_level`](#-icinga--worker--logging_level)
+* [`run_web`](#-icinga--worker--run_web)
+* [`ssh_private_key`](#-icinga--worker--ssh_private_key)
+* [`ssh_key_type`](#-icinga--worker--ssh_key_type)
 
-##### <a name="ca_server"></a>`ca_server`
+##### <a name="-icinga--worker--ca_server"></a>`ca_server`
 
 Data type: `Stdlib::Host`
 
 The CA to send the certificate request to.
 
-##### <a name="zone"></a>`zone`
+##### <a name="-icinga--worker--zone"></a>`zone`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the Icinga zone.
 
-##### <a name="parent_zone"></a>`parent_zone`
+##### <a name="-icinga--worker--parent_zone"></a>`parent_zone`
 
-Data type: `String`
+Data type: `String[1]`
 
 Name of the parent Icinga zone.
 
 Default value: `'main'`
 
-##### <a name="parent_endpoints"></a>`parent_endpoints`
+##### <a name="-icinga--worker--parent_endpoints"></a>`parent_endpoints`
 
-Data type: `Hash[String, Hash]`
+Data type: `Hash[String[1], Hash]`
 
 Configures these endpoints of the parent zone.
 
-##### <a name="colocation_endpoints"></a>`colocation_endpoints`
+##### <a name="-icinga--worker--colocation_endpoints"></a>`colocation_endpoints`
 
-Data type: `Hash[String, Hash]`
+Data type: `Hash[String[1], Hash]`
 
 When the zone includes more than one endpoint, set here the additional endpoint(s).
 Icinga supports two endpoints per zone only.
 
 Default value: `{}`
 
-##### <a name="global_zones"></a>`global_zones`
+##### <a name="-icinga--worker--workers"></a>`workers`
 
-Data type: `Array[String]`
+Data type: `Hash[String[1], Hash]`
+
+All cascading worker zones with key 'endpoints' for endpoint objects.
+
+Default value: `{}`
+
+##### <a name="-icinga--worker--global_zones"></a>`global_zones`
+
+Data type: `Array[String[1]]`
 
 List of global zones to configure.
 
 Default value: `[]`
 
-##### <a name="logging_type"></a>`logging_type`
+##### <a name="-icinga--worker--logging_type"></a>`logging_type`
 
-Data type: `Enum['file', 'syslog']`
+Data type: `Enum['file', 'syslog', 'eventlog']`
 
-Switch the log target. Only `file` is supported on Windows.
+Switch the log target. On Windows `syslog` is ignored, `eventlog` on all other platforms.
 
-Default value: `'file'`
+##### <a name="-icinga--worker--logging_level"></a>`logging_level`
 
-##### <a name="logging_level"></a>`logging_level`
-
-Data type: `Optional[Icinga::LogLevel]`
+Data type: `Icinga::LogLevel`
 
 Set the log level.
 
-Default value: ``undef``
-
-##### <a name="run_web"></a>`run_web`
+##### <a name="-icinga--worker--run_web"></a>`run_web`
 
 Data type: `Boolean`
 
 Prepare to run Icinga Web 2 on the same machine. Manage a group `icingaweb2`
 and add the Icinga user to this group.
 
-Default value: ``false``
+Default value: `false`
+
+##### <a name="-icinga--worker--ssh_private_key"></a>`ssh_private_key`
+
+Data type: `Optional[Icinga::Secret]`
+
+The private key to install.
+
+Default value: `undef`
+
+##### <a name="-icinga--worker--ssh_key_type"></a>`ssh_key_type`
+
+Data type: `Enum['ecdsa','ed25519','rsa']`
+
+SSH key type.
+
+Default value: `rsa`
 
 ## Defined types
 
+### <a name="icinga--cert"></a>`icinga::cert`
+
+A class to generate tls key, cert and cacert files.
+
+#### Parameters
+
+The following parameters are available in the `icinga::cert` defined type:
+
+* [`args`](#-icinga--cert--args)
+* [`owner`](#-icinga--cert--owner)
+* [`group`](#-icinga--cert--group)
+
+##### <a name="-icinga--cert--args"></a>`args`
+
+Data type: `Icinga::Certificate`
+
+A config hash with the keys:
+key_file, cert_file, cacert_file, key, cert and cacert
+
+##### <a name="-icinga--cert--owner"></a>`owner`
+
+Data type: `String[1]`
+
+Owner of the files.
+
+##### <a name="-icinga--cert--group"></a>`group`
+
+Data type: `String[1]`
+
+Group membership of all files.
+
 ## Functions
 
-### <a name="icingaprepare_web"></a>`icinga::prepare_web`
+### <a name="icinga--cert--files"></a>`icinga::cert::files`
+
+Type: Puppet Language
+
+Choose the path of tls key, cert and ca file.
+
+#### `icinga::cert::files(String[1] $name, Optional[Stdlib::Absolutepath] $default_dir, Optional[Stdlib::Absolutepath] $key_file = undef, Optional[Stdlib::Absolutepath] $cert_file = undef, Optional[Stdlib::Absolutepath] $cacert_file = undef, Optional[Icinga::Secret] $key = undef, Optional[String[1]] $cert = undef, Optional[String[1]] $cacert = undef)`
+
+The icinga::cert::files function.
+
+Returns: `Hash` Returned hash includes all paths and the key, cert and cacert.
+
+##### `name`
+
+Data type: `String[1]`
+
+
+
+##### `default_dir`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+
+
+##### `key_file`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+
+
+##### `cert_file`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+
+
+##### `cacert_file`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+
+
+##### `key`
+
+Data type: `Optional[Icinga::Secret]`
+
+
+
+##### `cert`
+
+Data type: `Optional[String[1]]`
+
+
+
+##### `cacert`
+
+Data type: `Optional[String[1]]`
+
+
+
+### <a name="icinga--db--connect"></a>`icinga::db::connect`
+
+Type: Puppet Language
+
+This function returns a string to connect databases
+with or without TLS information.
+
+#### `icinga::db::connect(Struct[{
+      type     => Enum['pgsql','mysql','mariadb'],
+      host     => Stdlib::Host,
+      port     => Optional[Stdlib::Port],
+      database => String[1],
+      username => String[1],
+      password => Optional[Icinga::Secret],
+  }] $db, Hash[String[1], Any] $tls, Optional[Boolean] $use_tls = undef, Optional[Enum['verify-full', 'verify-ca']] $ssl_mode = undef)`
+
+The icinga::db::connect function.
+
+Returns: `String` Connection string to connect database.
+
+##### `db`
+
+Data type:
+
+```puppet
+Struct[{
+      type     => Enum['pgsql','mysql','mariadb'],
+      host     => Stdlib::Host,
+      port     => Optional[Stdlib::Port],
+      database => String[1],
+      username => String[1],
+      password => Optional[Icinga::Secret],
+  }]
+```
+
+Data hash with database information.
+
+##### `tls`
+
+Data type: `Hash[String[1], Any]`
+
+Data hash with TLS connection information.
+
+##### `use_tls`
+
+Data type: `Optional[Boolean]`
+
+Wether or not to use TLS encryption.
+
+##### `ssl_mode`
+
+Data type: `Optional[Enum['verify-full', 'verify-ca']]`
+
+Enable SSL connection mode.
+
+### <a name="icinga--newline"></a>`icinga::newline`
+
+Type: Puppet Language
+
+Replace newlines for Windows systems.
+
+#### `icinga::newline(Optional[String] $text)`
+
+The icinga::newline function.
+
+Returns: `String` Text with correct newlines.
+
+##### `text`
+
+Data type: `Optional[String]`
+
+
+
+### <a name="icinga--prepare_web"></a>`icinga::prepare_web`
 
 Type: Puppet Language
 
 This funktion checks for web preparation and display a warning if fails
 
-#### `icinga::prepare_web(String $icingamod)`
+#### `icinga::prepare_web(String[1] $icingamod)`
 
 The icinga::prepare_web function.
 
@@ -1117,19 +2126,39 @@ Returns: `Any` Nothing, statement function.
 
 ##### `icingamod`
 
-Data type: `String`
+Data type: `String[1]`
 
 
 
 ## Data types
 
-### <a name="icingaloglevel"></a>`Icinga::LogLevel`
+### <a name="Icinga--Certificate"></a>`Icinga::Certificate`
 
-A strict type for log levels
+A strict type for a certificate
 
 Alias of
 
 ```puppet
-Enum['debug', 'information', 'notice', 'warning', 'critical']
+Struct[{
+    cert        => Optional[String[1]],
+    key         => Optional[Icinga::Secret],
+    cacert      => Optional[String[1]],
+    insecure    => Optional[Boolean],
+    cert_file   => Optional[Stdlib::Absolutepath],
+    key_file    => Optional[Stdlib::Absolutepath],
+    cacert_file => Optional[Stdlib::Absolutepath],
+}]
 ```
+
+### <a name="Icinga--LogLevel"></a>`Icinga::LogLevel`
+
+A strict type for log levels
+
+Alias of `Enum['debug', 'information', 'notice', 'warning', 'critical']`
+
+### <a name="Icinga--Secret"></a>`Icinga::Secret`
+
+A strict type for the secrets like passwords or keys
+
+Alias of `Variant[String[1], Sensitive[String[1]]]`
 

@@ -20,7 +20,7 @@ class mathoid {
         ensure             => 'latest',
         directory          => '/srv/mathoid',
         origin             => 'https://github.com/miraheze/mathoid-deploy',
-        branch             => 'master',
+        branch             => 'main',
         owner              => 'mathoid',
         group              => 'mathoid',
         mode               => '0755',

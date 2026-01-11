@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import os
 import json
+import socket
 import sys
 from typing import TypedDict
 
@@ -26,6 +27,14 @@ def syscheck(result: CommandInfo | int) -> CommandInfo:
     return result
 
 
+HOSTNAME = socket.gethostname().split('.')[0]
+wikisuffix = ''
+if HOSTNAME.startswith('test'):
+    wikisuffix = 'wikibeta'
+else:
+    wikisuffix = 'wiki'
+
+
 def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     mw_versions = os.popen('/usr/local/bin/getMWVersions all').read().strip()
     versions = {}
@@ -37,7 +46,9 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
     versionLists = tuple([f'{key}-wikis' for key in versions.keys()])
     validDBLists = (
         'active',
+        'closed',
         'deleted',
+        'inactive',
     ) + versionLists
 
     longscripts = (
@@ -47,6 +58,8 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         'importdump',
         'importimages',
         'nukens',
+        'populatewikibasesitestable',
+        'populatewikisettings',
         'rebuildall',
         'rebuildimages',
         'rebuildtextindex',
@@ -112,7 +125,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/{wiki}.php {script}'
     elif args.extension:
         long = True
-        generate = f'sudo -u www-data php {runner}MirahezeMagic:GenerateExtensionDatabaseList --wiki=loginwiki --extension={args.extension} --directory=/tmp'
+        generate = f'sudo -u www-data php {runner}MirahezeMagic:GenerateExtensionDatabaseList --wiki=meta{wikisuffix} --extension={args.extension} --directory=/tmp'
         command = f'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/{args.extension}.php {script}'
     else:
         command = f'sudo -u www-data php {script} --wiki={wiki}'

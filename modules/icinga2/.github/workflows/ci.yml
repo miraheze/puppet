@@ -1,27 +1,21 @@
-name: Test
+---
+# Managed by modulesync - DO NOT EDIT
+# https://voxpupuli.org/docs/updating-files-managed-with-modulesync/
+
+name: CI
 
 on:
-  - pull_request
-  - push
+  pull_request: {}
+  push:
+    branches:
+      - main
+      - master
+
+concurrency:
+  group: ${{ github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    env:
-      BUNDLE_WITHOUT: system_tests
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.7
-        bundler-cache: true
-    - name: Run static validation for Puppet/Ruby files
-      run: bundle exec rake validate
-    - name: Run Ruby Linter
-      run: bundle exec rake rubocop
-    - name: Run Puppet Linter
-      run: bundle exec rake lint
-    - name: Check if REFERENCE.md is up2date
-      run: bundle exec rake strings:validate:reference
+  puppet:
+    name: Puppet
+    uses: voxpupuli/gha-puppet/.github/workflows/basic.yml@v3

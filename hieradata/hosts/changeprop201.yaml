@@ -16,8 +16,8 @@ jobrunner_haproxy::backends:
     ip: 10.0.18.106
     port: 9006
 changeprop::num_workers: 8
-changeprop::semantic_mediawiki_concurrency: 10
-changeprop::low_traffic_concurrency: 30
+changeprop::semantic_mediawiki_concurrency: 6
+changeprop::low_traffic_concurrency: 20
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
@@ -31,20 +31,25 @@ changeprop::high_traffic_jobs_config:
   # RecordLinks is normally low-volume, but could have big spikes
   # when maintenance scripts are run. Elevated concurrency
   RecordLintJob:
-    concurrency: 15
+    concurrency: 10
     consumer_batch_size: 10
   wikibase-addUsagesForPage:
     concurrency: 4
   LocalGlobalUserPageCacheUpdateJob:
     # This job is prone to large spikes, so having it on the low_traffic_jobs queue
     # blocks other jobs.
-    concurrency: 15
+    concurrency: 35
   notificationGetStartedJob:
     concurrency: 2
     # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
     # by setting the reenqueue delay to 72 hours
     reenqueue_delay: 259200
   notificationKeepGoingJob:
+    concurrency: 2
+    # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
+    # by setting the reenqueue delay to 72 hours
+    reenqueue_delay: 259200
+  notificationReEngageJob:
     concurrency: 2
     # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
     # by setting the reenqueue delay to 72 hours
@@ -62,7 +67,7 @@ changeprop::high_traffic_jobs_config:
   cirrusSearchCheckerJob:
     disable_delayed_execution: true
     retry_limit: 0
-    concurrency: 15
+    concurrency: 10
   cirrusSearchDeleteArchive:
     retry_limit: 0
     concurrency: 5
@@ -71,13 +76,13 @@ changeprop::high_traffic_jobs_config:
     concurrency: 5
   cirrusSearchIncomingLinkCount:
     retry_limit: 0
-    concurrency: 15
+    concurrency: 10
   cirrusSearchLinksUpdate:
     retry_limit: 0
-    concurrency: 15
+    concurrency: 10
   cirrusSearchLinksUpdatePrioritized:
     retry_limit: 0
-    concurrency: 10
+    concurrency: 6
   cirrusSearchOtherIndex:
     retry_limit: 0
     concurrency: 5
@@ -86,9 +91,9 @@ changeprop::high_traffic_jobs_config:
   parsoidCachePrewarm:
     concurrency: 15
   htmlCacheUpdate:
-    concurrency: 10
-  refreshLinks:
     concurrency: 15
+  refreshLinks:
+    concurrency: 10
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
@@ -128,11 +133,16 @@ changeprop::high_traffic_jobs_config:
     concurrency: 2
   GlobalNewFilesMoveJob:
     concurrency: 2
+  mediaModerationScanFileJob:
+    concurrency: 15
+  DataDumpStatusUpdateJob:
+    concurrency: 1
+    retry_limit: 0
 
 changeprop::high_traffic_high_timeout_jobs_config:
   cirrusSearchElasticaWrite:
     retry_limit: 0
-    concurrency: 15
+    concurrency: 10
     reenqueue_delay: 3600
     timeout: 600000
   NamespaceMigrationJob:
@@ -140,8 +150,8 @@ changeprop::high_traffic_high_timeout_jobs_config:
     concurrency: 1
     timeout: 9000000
   DataDumpGenerateJob:
-    disable_delayed_execution: true
     concurrency: 1
+    retry_limit: 0
     timeout: 86400000
   ImportDumpJob:
     disable_delayed_execution: true
@@ -242,7 +252,7 @@ role::prometheus::statsd_exporter::mappings:
     match_type: regex
     name: "${1}_normal_rule_processing_delay"
     timer_type: histogram
-    buckets: [1, 30, 60, 300, 600, 1800, 3600]  # 1s, 30s, 1m, 5m, 10m, 30m, 1h
+    buckets: [1, 30, 60, 300, 600, 1800, 3600, 21600, 86400]  # 1s, 30s, 1m, 5m, 10m, 30m, 1h, 6h, 1d
     labels:
       service: $1
       rule: $2
@@ -268,6 +278,20 @@ role::prometheus::statsd_exporter::mappings:
       service: $1
       rule: $2
 
+  - match: '(.+)\.internal-startup\.(.+)_blacklist'
+    match_type: regex
+    name: "${1}_blacklist"
+    labels:
+      service: $1
+      rule: $2
+
+  - match: '(.+)\.internal-startup\.(.+)_abandon'
+    match_type: regex
+    name: "${1}_abandon"
+    labels:
+      service: $1
+      rule: $2
+
   - match: '(.+)\.internal-startup\.produce_(.+)\.(.+)'
     match_type: regex
     name: "${1}_produce"
@@ -276,7 +300,15 @@ role::prometheus::statsd_exporter::mappings:
       stream: $2
       partition: $3
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+  - match: '(.+)\.internal-startup\.ratelimit_(.+)_(.+)'
+    match_type: regex
+    name: "${1}_ratelimit_timing"
+    labels:
+      service: $1
+      function: $2
+      timing: $3
+
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 redis::heap: '5GB'
 redis::maxmemory_policy: volatile-lru

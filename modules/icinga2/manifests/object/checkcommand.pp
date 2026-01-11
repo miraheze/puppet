@@ -39,40 +39,57 @@
 # @param order
 #   String or integer to set the position in the target file, sorted alpha numeric.
 #
+# @param export
+#   Export object to destination, collected by class `icinga2::query_objects`.
 #
-define icinga2::object::checkcommand(
-  Stdlib::Absolutepath                $target,
-  Enum['absent', 'present']           $ensure            = present,
-  String                              $checkcommand_name = $title,
-  Array                               $import            = [],
-  Optional[Variant[Array, String]]    $command           = undef,
-  Optional[Hash]                      $env               = undef,
-  Optional[Icinga2::CustomAttributes] $vars              = undef,
-  Optional[Icinga2::Interval]         $timeout           = undef,
-  Optional[Variant[Hash, String]]     $arguments         = undef,
-  Boolean                             $template          = false,
-  Variant[String, Integer]            $order             = 15,
+define icinga2::object::checkcommand (
+  Stdlib::Absolutepath                  $target,
+  Enum['absent', 'present']             $ensure            = present,
+  String[1]                             $checkcommand_name = $title,
+  Array[String[1]]                      $import            = [],
+  Optional[Variant[Array, String[1]]]   $command           = undef,
+  Optional[Hash[String[1], Any]]        $env               = undef,
+  Optional[Icinga2::CustomAttributes]   $vars              = undef,
+  Optional[Icinga2::Interval]           $timeout           = undef,
+  Optional[Variant[Hash, String]]       $arguments         = undef,
+  Boolean                               $template          = false,
+  Variant[String[1], Integer[0]]        $order             = 15,
+  Variant[Array[String[1]], String[1]]  $export            = [],
 ) {
+  require icinga2::globals
 
   # compose the attributes
   $attrs = {
-    command   => $command,
-    env       => $env,
-    timeout   => $timeout,
-    arguments => $arguments,
-    vars      => $vars,
+    'command'   => $command,
+    'env'       => $env,
+    'timeout'   => $timeout,
+    'arguments' => $arguments,
+    'vars'      => $vars,
   }
 
   # create object
-  icinga2::object { "icinga2::object::CheckCommand::${title}":
-    ensure      => $ensure,
-    object_name => $checkcommand_name,
-    object_type => 'CheckCommand',
-    template    => $template,
-    import      => $import,
-    attrs       => delete_undef_values($attrs),
-    attrs_list  => keys($attrs),
-    target      => $target,
-    order       => $order,
+  $config = {
+    'object_name' => $checkcommand_name,
+    'object_type' => 'CheckCommand',
+    'template'    => $template,
+    'import'      => $import,
+    'attrs'       => delete_undef_values($attrs),
+    'attrs_list'  => keys($attrs),
+  }
+
+  unless empty($export) {
+    @@icinga2::config::fragment { "icinga2::object::CheckCommand::${title}":
+      tag     => prefix(any2array($export), 'icinga2::instance::'),
+      content => epp('icinga2/object.conf.epp', $config),
+      target  => $target,
+      order   => $order,
+    }
+  } else {
+    icinga2::object { "icinga2::object::CheckCommand::${title}":
+      ensure => $ensure,
+      target => $target,
+      order  => $order,
+      *      => $config,
+    }
   }
 }

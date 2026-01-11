@@ -1,18 +1,20 @@
 # class: mariadb::packages
 class mariadb::packages(
-    Enum['10.5', '10.11'] $version = lookup('mariadb::version', {'default_value' => '10.5'}),
+    Enum['10.11', '11.8'] $version = lookup('mariadb::version', {'default_value' => '10.11'}),
 ) {
+    stdlib::ensure_packages([ 'percona-toolkit' ])
 
-    package { [
-        'mydumper',
-        'percona-toolkit',
-    ]:
-        ensure => present,
+    $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01mariadb']) {
+        file { '/etc/apt/apt.conf.d/01mariadb':
+            ensure  => present,
+            content => template('mariadb/aptproxy.erb'),
+        }
     }
 
     apt::source { 'mariadb_apt':
         comment  => 'MariaDB stable',
-        location => "http://ams2.mirrors.digitalocean.com/mariadb/repo/${version}/debian",
+        location => "https://mirror.mariadb.org/repo/${version}/debian",
         release  => $facts['os']['distro']['codename'],
         repos    => 'main',
         key      => {
@@ -23,7 +25,7 @@ class mariadb::packages(
 
     apt::pin { 'mariadb_pin':
         priority => 600,
-        origin   => 'ams2.mirrors.digitalocean.com',
+        origin   => 'mirror.mariadb.org',
         require  => Apt::Source['mariadb_apt'],
         notify   => Exec['apt_update_mariadb'],
     }
@@ -35,21 +37,12 @@ class mariadb::packages(
         logoutput   => true,
     }
 
-    if $facts['os']['distro']['codename'] == 'bookworm' {
-        # It looks like on mariadb 10.11 and above
-        # it dosen't contain the version number
-        # in the package name.
-        $package_name = 'mariadb-server'
-    } else {
-        $package_name = "mariadb-server-${version}"
-    }
+    stdlib::ensure_packages(
+        [ 'mariadb-server', 'mariadb-backup', 'libjemalloc2' ],
+        {
+            ensure  => present,
+            require => Exec['apt_update_mariadb'],
+        }
+    )
 
-    package { [
-        $package_name,
-        'mariadb-backup',
-        'libjemalloc2',
-    ]:
-        ensure  => present,
-        require => Exec['apt_update_mariadb'],
-    }
 }

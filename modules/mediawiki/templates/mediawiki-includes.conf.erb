@@ -4,7 +4,15 @@ location ~ ^/(\.git|config|landing|cache|stopforumspam|geoip) {
         deny all;
 }
 
-location ~ ^/1\.\d\d/(cache|maintenance|mw-config|vendor) {
+location ~ ^/1\.\d\d/(cache|includes|maintenance|mw-config|sql|tests|vendor) {
+	deny all;
+}
+
+location ~ ^/1\.\d\d/(extensions|skins)/.*\.php {
+	deny all;
+}
+
+location ~ ^(?!\/wiki\/)[^?]+\.patch {
 	deny all;
 }
 
@@ -80,6 +88,17 @@ location = /wiki {
 
 location / {
 	try_files $uri $uri/ @wiki;
+}
+
+# Support SUL3-style API access via /<wiki>/w/api.php
+location ~ ^/[^/]+wiki(?:beta)?/w/api\.php$ {
+	rewrite ^/[^/]+wiki(?:beta)?/w/api\.php$ /w/api.php last;
+}
+
+# Support SUL3-style resources access via /<wiki>/<version>/resources
+location ~ ^/[^/]+wiki(?:beta)?/1\.\d\d/resources {
+	rewrite ^/[^/]+wiki(?:beta)?/(1\.\d\d/resources.*)$ /$1 last;
+	expires 1d;
 }
 
 location @wiki {

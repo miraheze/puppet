@@ -61,6 +61,9 @@
 # @param cache_dir
 #   Path to cache files of Icinga.
 #
+# @param data_dir
+#   Path to data files of Icinga.
+#
 # @param cert_dir
 #   Path to the directory where Icinga stores keys and certificates.
 #
@@ -70,11 +73,13 @@
 # @param service_reload
 #   How to do a reload of the Icinga process.
 #
-class icinga2::globals(
-  String                 $package_name,
-  String                 $service_name,
-  String                 $ido_mysql_schema,
-  String                 $ido_pgsql_schema,
+# @param $constants
+#   Define Icinga constants
+class icinga2::globals (
+  String[1]              $package_name,
+  String[1]              $service_name,
+  String[1]              $ido_mysql_schema,
+  String[1]              $ido_pgsql_schema,
   Stdlib::Absolutepath   $icinga2_bin,
   Stdlib::Absolutepath   $conf_dir,
   Stdlib::Absolutepath   $lib_dir,
@@ -82,24 +87,18 @@ class icinga2::globals(
   Stdlib::Absolutepath   $run_dir,
   Stdlib::Absolutepath   $spool_dir,
   Stdlib::Absolutepath   $cache_dir,
+  Stdlib::Absolutepath   $data_dir,
   Stdlib::Absolutepath   $cert_dir,
   Stdlib::Absolutepath   $ca_dir,
-  Array[String]          $reserved,
-  Optional[String]       $user                   = undef,
-  Optional[String]       $group                  = undef,
-  Optional[String]       $logon_account          = undef,
-  Optional[String]       $selinux_package_name   = undef,
-  Optional[String]       $ido_mysql_package_name = undef,
-  Optional[String]       $ido_pgsql_package_name = undef,
-  Optional[String]       $service_reload         = undef,
+  Array[String[1]]       $reserved,
+  Optional[String[1]]    $user                   = undef,
+  Optional[String[1]]    $group                  = undef,
+  Optional[String[1]]    $logon_account          = undef,
+  Optional[String[1]]    $selinux_package_name   = undef,
+  Optional[String[1]]    $ido_mysql_package_name = undef,
+  Optional[String[1]]    $ido_pgsql_package_name = undef,
+  Optional[String[1]]    $service_reload         = undef,
+  Hash[String, Any]      $constants              = {},
 ) {
-
   assert_private()
-
-  if ( versioncmp($::facts['puppetversion'], '6' ) >= 0 and versioncmp(load_module_metadata('stdlib')['version'], '5.1.0') < 0 ) {
-    fail('You be affected by this bug: https://github.com/Icinga/puppet-icinga2/issues/505 so you should update your stdlib to version 5.1 or higher')
-  }
-
-  $constants =  lookup('icinga2::globals::constants', Hash, 'deep', {})
-
 }

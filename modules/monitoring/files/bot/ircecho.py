@@ -48,16 +48,13 @@ class EchoNotifier(threading.Thread):
 
 
 class EchoReader():
-    '''
-    Essentially an initalization class
-    '''
-
+    '''Essentially an initalization class.'''
     def __init__(self, infile='', associatedchannel=''):
         self.infile = infile
         self.associatedchannel = associatedchannel
-        self.uniques = {';': 'UNIQ_' + self.get_unique_string() + '_QINU',
-                        ':': 'UNIQ_' + self.get_unique_string() + '_QINU',
-                        ',': 'UNIQ_' + self.get_unique_string() + '_QINU'}
+        self.uniques = {';': f'UNIQ_{self.get_unique_string()}_QINU',
+                        ':': f'UNIQ_{self.get_unique_string()}_QINU',
+                        ',': f'UNIQ_{self.get_unique_string()}_QINU'}
 
         if self.infile:
             print('Using infile')
@@ -69,18 +66,19 @@ class EchoReader():
                 temparr = filechan.split(':')
                 filename = self.unescape(temparr[0])
                 try:
-                    print('Opening: ' + filename)
+                    print(f'Opening: {filename}')
                     f = open(filename)
                     f.seek(0, 2)
                     self.files[filename] = f
                 except IOError:
-                    print('Failed to open file: ' + filename)
+                    print(f'Failed to open file: {filename}')
                     self.files[filename] = None
                     pass
                 wm = pyinotify.WatchManager()
                 mask = pyinotify.IN_MODIFY | pyinotify.IN_CREATE
                 wm.add_watch(filename, mask)
-                notifier = EchoNotifier(pyinotify.Notifier(wm, default_proc_fun=EventHandler()))
+                notifier = EchoNotifier(pyinotify.Notifier(
+                    wm, default_proc_fun=EventHandler()))
 
                 self.notifiers.append(notifier)
                 # Does this file have channel associations?
@@ -96,7 +94,8 @@ class EchoReader():
                     s = input()
                     # this throws an exception if not connected.
                     s = beautify_message(s)
-                    self.bot.connection.privmsg(self.chans, s.replace('\n', ''))
+                    self.bot.connection.privmsg(
+                        self.chans, s.replace('\n', ''))
                 except EOFError:
                     # Once the input is finished, the bot should exit
                     break
@@ -136,31 +135,38 @@ class EchoReader():
 
 class EchoBot(ib3_auth.SASL, SingleServerIRCBot):
     def __init__(self, chans, nickname, nickname_pass, server, port=6667, ssl=False, ident_passwd=None):
-        print('Connecting to IRC server %s...' % server)
+        print(f'Connecting to IRC server {server}...')
 
         self.chans = chans
         self.nickname = nickname
         kwargs = {}
         if ssl:
             import ssl
-            ssl_factory = irc.connection.Factory(ipv6=True, wrapper=ssl.wrap_socket)
+            context = ssl.create_default_context()
+            def ssl_wrapper(sock):
+                return context.wrap_socket(sock, server_hostname=server)
+            ssl_factory = irc.connection.Factory(ipv6=True, wrapper=ssl_wrapper)
             kwargs['connect_factory'] = ssl_factory
 
-        SingleServerIRCBot.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', **kwargs)
+        SingleServerIRCBot.__init__(
+            self, [(server, port)], nickname_pass, 'IRC echo bot', **kwargs)
         if ident_passwd is not None:
             ib3_auth.SASL.__init__(self, [(server, port)], nickname_pass, 'IRC echo bot', ident_passwd,
                                    **kwargs)
 
     def on_nicknameinuse(self, c, e):
-        c.nick(c.get_nickname() + '_')
+        c.nick(f'{c.get_nickname()}_')
 
     def on_welcome(self, c, e):
         print('Connected')
 
         c.nick(self.nickname)
-
         for chan in [self.chans]:
             c.join(chan)
+
+    def on_disconnect(self, c, e):
+        print('Disconnected')
+        sys.exit(0)
 
 
 class EventHandler(pyinotify.ProcessEvent):
@@ -179,7 +185,7 @@ class EventHandler(pyinotify.ProcessEvent):
                 # the format of which is:
                 #     :source PRIVMSG <target> :Message
                 # which is not easy to calculate as the channel is of variable
-                # size. Using #wikimedia-operations means this is 40 bytes, so
+                # size. Using #miraheze-tech-ops means this is 38 bytes, so
                 # set a 450 max message size and hope is enough.
                 # We anyway catch and silently drop the message later on if that
                 # turns out to not be true
@@ -188,15 +194,14 @@ class EventHandler(pyinotify.ProcessEvent):
                     bot.connection.privmsg(chans, out)
             except (irc.client.ServerNotConnectedError, irc.client.MessageTooLong,
                     UnicodeDecodeError) as e:
-                print('Error writing: %s'
-                      'Dropping this message: "%s"') % (e, s)
+                print(f'Error writing: {e} Dropping this message: "{s}"')
 
     def process_IN_CREATE(self, event):
         try:
-            print('Reopening file: ' + event.pathname)
+            print(f'Reopening file: {event.pathname}')
             reader.files[event.pathname] = open(event.pathname)
         except IOError:
-            print('Failed to reopen file: ' + event.pathname)
+            print(f'Failed to reopen file: {event.pathname}')
             pass
 
 
@@ -213,7 +218,7 @@ ap.add_argument('--nickname', required=True,
 ap.add_argument('--nickname-pass', required=True,
                 help='Password for nickname.')
 ap.add_argument('--server', required=True,
-                help='irc server to connect to, eg freenode and also including the port.')
+                help='irc server to connect to, eg libera.chat and also including the port.')
 args = ap.parse_args()
 
 chans = args.channel

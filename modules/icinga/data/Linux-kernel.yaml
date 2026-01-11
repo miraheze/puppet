@@ -1,13 +1,5 @@
 ---
 icinga::repos::manage_stable: true
-icinga::repos::manage_testing: false
-icinga::repos::manage_nightly: false
-icinga::repos::configure_backports: false
-icinga::repos::manage_epel: false
-icinga::repos::manage_powertools: false
-icinga::repos::manage_server_monitoring: false
-icinga::repos::manage_plugins: false
-icinga::repos::manage_extras: false
 
 icinga::redis::globals::package_name: icinga-redis
 icinga::redis::globals::redis_bin: /usr/bin/icinga-redis-server
@@ -19,3 +11,7 @@ icinga::redis::globals::user: icinga-redis
 icinga::redis::globals::group: icinga-redis
 
 icinga::web::apache_cgi_pass_auth: true
+
+icinga::server::logging_type: syslog
+icinga::worker::logging_type: syslog
+icinga::agent::logging_type: syslog

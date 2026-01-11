@@ -8,10 +8,8 @@ server {
 	ssl_certificate_key /etc/ssl/private/wikitide.net.key;
 
 	location / {
-		proxy_pass <%= @os_master_host %>;
-		proxy_set_header Connection "Keep-Alive";
+		proxy_pass http://<%= @os_manager_hosts[0] %>.fsslc.wtnet:9200;
 		proxy_set_header Host $http_host;
-		proxy_set_header Proxy-Connection "Keep-Alive";
 		proxy_set_header X-Real-IP $remote_addr;
 	}
 }

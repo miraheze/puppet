@@ -42,7 +42,7 @@ services:
             x-modules:
               - path: sys/kafka.js
                 options:
-                  metadata_broker_list: 10.0.18.146:9092
+                  metadata_broker_list: 10.0.18.159:9092
                   dc_name: default
                   concurrency: 10
                   templates: {}

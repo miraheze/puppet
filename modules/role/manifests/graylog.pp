@@ -1,7 +1,6 @@
 # role: graylog
 class role::graylog {
     include ::java
-    include prometheus::exporter::graylog
 
     ssl::wildcard { 'graylog wildcard': }
 
@@ -22,10 +21,10 @@ class role::graylog {
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
         proxy   => $http_proxy,
-        version => '6.1',
+        version => '6.3',
     }
     -> class { 'graylog::server':
-        package_version        => '6.1.10-1',
+        package_version        => '6.3.7-1',
         config                 => {
             'password_secret'           => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'        => lookup('passwords::graylog::root_password_sha2'),
@@ -41,9 +40,7 @@ class role::graylog {
     $firewall_http_rules_str = join(
         query_facts('Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Mediawiki_beta] or Class[Role::Mediawiki_task] or Class[Role::Icinga2] or Class[Role::Prometheus]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['he-ipv6'] ) {
-                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
@@ -66,9 +63,7 @@ class role::graylog {
     $firewall_syslog_rules_str = join(
         query_facts('Class[Base]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['he-ipv6'] ) {
-                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
@@ -91,9 +86,7 @@ class role::graylog {
     $firewall_icinga_rules_str = join(
         query_facts('Class[Role::Icinga2]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['he-ipv6'] ) {
-                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"

@@ -1,6 +1,5 @@
 users::groups: 'database-admins'
-http_proxy: 'http://bastion.wikitide.net:8080'
-role::db::weekly_misc: ['mhglobal']
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 # This is in GiB
 mariadb::config::innodb_buffer_pool_size: '78G'
 mariadb::version: '10.11'

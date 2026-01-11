@@ -23,17 +23,14 @@ define mediawiki::periodic_job (
     Optional[Integer] $splay = undef,
 ) {
     systemd::timer::job { "mediawiki_job_${title}":
-        ensure                  => $ensure,
-        description             => "MediaWiki periodic job ${title}",
-        command                 => $command,
-        interval                => {'start' => 'OnCalendar', 'interval' => $interval},
-        user                    => 'www-data',
-        logfile_basedir         => '/var/log/mediawiki',
-        logfile_group           => 'www-data',
-        syslog_identifier       => "mediawiki_job_${title}",
-        splay                   => $splay,
-        send_mail               => true,
-        send_mail_only_on_error => false,
-        send_mail_to            => 'root@wikitide.net',
+        ensure            => $ensure,
+        description       => "MediaWiki periodic job ${title}",
+        command           => $command,
+        interval          => {'start' => 'OnCalendar', 'interval' => $interval},
+        user              => 'www-data',
+        logfile_basedir   => '/var/log/mediawiki',
+        logfile_group     => 'www-data',
+        syslog_identifier => "mediawiki_job_${title}",
+        splay             => $splay,
     }
 }

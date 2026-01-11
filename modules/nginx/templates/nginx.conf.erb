@@ -10,15 +10,15 @@ pid /run/nginx.pid;
 worker_rlimit_nofile 262144; # Twice the number of worker_connections
 
 events {
-	worker_connections 131072;
+	worker_connections 90000;
 	use epoll;
-	multi_accept on;
+	# multi_accept on;
 }
 
 http {
 	# Basic settings
 	sendfile on;
-	tcp_nopush on;
+	#tcp_nopush on;
 	tcp_nodelay on;
 	client_max_body_size <%= @nginx_client_max_body_size %>;
 	client_body_buffer_size 64k;

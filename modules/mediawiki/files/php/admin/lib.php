@@ -385,7 +385,7 @@ function show_apcu_frag() {
 
 function dump_apcu_full() {
 	header("Content-Type: text/plain");
-	$stats = apcu_stats(true);
+	$stats = apcu_stats(false);
 	dump_file('/tmp/apcu_dump_meta', $stats['cache_list']);
 }
 

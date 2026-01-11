@@ -11,19 +11,24 @@ role::mediawiki::is_beta: false
 
 mediawiki::php::request_timeout: 201
 mediawiki::php::fpm::fpm_workers_multiplier: 2.0
-mediawiki::php::apc_shm_size: 4096M
+mediawiki::php::apc_shm_size: '10240M'
 mediawiki::php::fpm_config:
   post_max_size: '250M'
   upload_max_filesize: '250M'
+  opcache.interned_strings_buffer: 384
+  opcache.memory_consumption: 8192
 
+role::mediawiki::php::restarts::ensure: present
+role::mediawiki::php::restarts::opcache_limit: 200
+  
 php::php_version: '8.2'
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 
 # NGINX
-nginx::keepalive_timeout: 60
-nginx::keepalive_requests: 1000
+nginx::keepalive_timeout: 120
+nginx::keepalive_requests: 150
 nginx::logrotate_number: 2
 nginx::use_graylog: true

@@ -5,6 +5,7 @@ class role::mediawiki_beta (
 ) {
 
     include base
+    include role::mathoid
     include role::memcached
     include role::poolcounter
     include role::redis
@@ -19,14 +20,13 @@ class role::mediawiki_beta (
         include role::mediawiki::nutcracker
     }
     include mediawiki
+    include role::mediawiki::php::restarts
 
     if $strict_firewall {
         $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki_beta] or Class[Role::Varnish] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion]', ['networking'])
+            query_facts('Class[Role::Mediawiki_beta] or Class[Role::Varnish] or Class[Role::Cache::Cache] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion]', ['networking'])
             .map |$key, $value| {
-                if ( $value['networking']['interfaces']['he-ipv6'] ) {
-                    "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
-                } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                     "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
                 } elsif ( $value['networking']['interfaces']['ens18'] ) {
                     "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"

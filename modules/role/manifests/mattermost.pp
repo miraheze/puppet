@@ -23,7 +23,7 @@ class role::mattermost {
     }
     -> class { 'mattermost':
         edition          => 'enterprise',
-        version          => '10.6.1',
+        version          => '11.1.1',
         override_options => {
             'TeamSettings'    => {
                 'SiteName'                  => 'WikiTide Foundation',
@@ -111,11 +111,9 @@ class role::mattermost {
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
 
     $firewall_rules_cloudflare_str = join(
-        $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['networking'])
+        $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Varnish] or Class[Role::Cache::Cache] or Class[Role::Icinga2]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['he-ipv6'] ) {
-                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
@@ -143,54 +141,17 @@ class role::mattermost {
         notrack => true,
     }
 
-    # Backup provisioning
-    file { '/srv/backups':
-        ensure => directory,
+    # Backups
+    backup::job { 'mattermost-data':
+        ensure          => present,
+        interval        => '*-*-1,15 01:00:00',
+        logfile_basedir => '/var/log/mattermost-backup',
     }
 
-    file { '/var/log/mattermost-backup':
-        ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
-    systemd::timer::job { 'mattermost-data-backup':
-        description       => 'Runs backup of mattermost data',
-        command           => '/usr/local/bin/wikitide-backup backup mattermost-data',
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-1,15 01:00:00',
-        },
-        logfile_basedir   => '/var/log/mattermost-backup',
-        logfile_name      => 'mattermost-data.log',
-        syslog_identifier => 'mattermost-data',
-        user              => 'root',
-    }
-
-    systemd::timer::job { 'mattermost-db-backup':
-        description       => 'Runs backup of mattermost db',
-        command           => '/usr/local/bin/wikitide-backup backup mattermost-db',
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-1,15 01:00:00',
-        },
-        logfile_basedir   => '/var/log/mattermost-backup',
-        logfile_name      => 'mattermost-db.log',
-        syslog_identifier => 'mattermost-db',
-        user              => 'root',
-    }
-
-    monitoring::nrpe { 'Backups Mattermost Data':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/mattermost-backup/mattermost-data/mattermost-data.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
-    }
-
-    monitoring::nrpe { 'Backups Mattermost DB':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/mattermost-backup/mattermost-db/mattermost-db.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    backup::job { 'mattermost-db':
+        ensure          => present,
+        interval        => '*-*-1,15 01:00:00',
+        logfile_basedir => '/var/log/mattermost-backup',
     }
 
     monitoring::nrpe { 'Mattermost':

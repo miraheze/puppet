@@ -17,7 +17,7 @@ class phorge (
         'opcache' => {
                 'enable' => 1,
                 'interned_strings_buffer' => 40,
-                'memory_consumption' => 256,
+                'memory_consumption' => 512,
                 'max_accelerated_files' => 20000,
                 'max_wasted_percentage' => 10,
                 'validate_timestamps' => 1,
@@ -42,7 +42,7 @@ class phorge (
     $php_version = lookup('php::php_version', {'default_value' => '8.2'})
 
     # Install the runtime
-    class { '::php':
+    class { 'php':
         ensure         => present,
         version        => $php_version,
         sapis          => ['cli', 'fpm'],
@@ -58,7 +58,7 @@ class phorge (
         }
     }
 
-    class { '::php::fpm':
+    class { 'php::fpm':
         ensure => present,
         config => {
             'emergency_restart_interval'  => '60s',
@@ -190,10 +190,12 @@ class phorge (
     }
 
     systemd::service { 'phd':
-        ensure  => present,
-        content => systemd_template('phd'),
-        restart => true,
-        require => File['/srv/phorge/phorge/conf/local/local.json'],
+        ensure              => present,
+        content             => systemd_template('phd'),
+        restart             => true,
+        require             => File['/srv/phorge/phorge/conf/local/local.json'],
+        monitoring_enabled  => true,
+        monitoring_critical => true,
     }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
@@ -207,7 +209,7 @@ class phorge (
     monitoring::services { 'phorge-static.wikitide.net HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6    => $address,
+            address     => $address,
             http_expect => 'HTTP/1.1 200',
             http_ssl    => true,
             http_vhost  => 'phorge-static.wikitide.net',
@@ -218,44 +220,24 @@ class phorge (
     monitoring::services { 'issue-tracker.miraheze.org HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6   => $address,
+            address    => $address,
             http_ssl   => true,
             http_vhost => 'issue-tracker.miraheze.org',
         },
     }
 
-    monitoring::nrpe { 'phd':
-        command => '/usr/lib/nagios/plugins/check_procs -a phd -c 1:'
+    # Backups
+
+    # Replaced with the below.
+    backup::job { 'phorge':
+        ensure   => absent,
+        interval => '*-*-1,15 01:00:00',
     }
 
-    # Backup provisioning
-    file { '/srv/backups':
-        ensure => directory,
-    }
-
-    file { '/var/log/phorge-backup':
-        ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
-    systemd::timer::job { 'phorge-backup':
-        description       => 'Runs backup of phorge',
-        command           => '/usr/local/bin/wikitide-backup backup phorge',
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-1,15 01:00:00',
-        },
-        logfile_basedir   => '/var/log/phorge-backup',
-        logfile_name      => 'phorge-backup.log',
-        syslog_identifier => 'phorge-backup',
-        user              => 'root',
-    }
-
-    monitoring::nrpe { 'Backups Phorge Static':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/phorge-backup/phorge-backup/phorge-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    ['phorge_db', 'phorge_images'].each | $key | {
+        backup::job { $key:
+            ensure   => present,
+            interval => '*-*-1,15 01:00:00',
+        }
     }
 }

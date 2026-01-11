@@ -5,7 +5,7 @@ class role::kafka {
     # We need zookeeper also
     class { 'zookeeper':
         servers             => {
-            '1' => '10.0.18.146',
+            '1' => '10.0.18.159',
         },
         install_java        => true,
         java_package        => 'openjdk-17-jre-headless',
@@ -68,8 +68,7 @@ class role::kafka {
             'log.message.timestamp.type'        => 'CreateTime',
             'log.retention.hours'               => '168', # 1 week
             'message.max.bytes'                 => '4194304',
-            'num.io.threads'                    => '12',
-            'num.network.threads'               => '6',
+            'num.io.threads'                    => '8',
             'num.partitions'                    => '1',
             'num.recovery.threads.per.data.dir' => '4',
             'offsets.retention.minutes'         => '10080', # 1 week

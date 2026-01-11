@@ -20,7 +20,7 @@ class eventgate {
         ensure             => present,
         directory          => '/srv/eventgate',
         origin             => 'https://github.com/miraheze/eventgate-deploy',
-        branch             => 'master',
+        branch             => 'main',
         owner              => 'eventgate',
         group              => 'eventgate',
         mode               => '0755',

@@ -27,9 +27,15 @@ class prometheus::exporter::gdnsd (
     }
 
     # Collect every minute
-    cron { 'prometheus_gdnsd_stats':
-        ensure  => $ensure,
-        user    => 'root',
-        command => "/usr/local/bin/prometheus-gdnsd-stats --outfile ${outfile}",
+    systemd::timer::job { 'prometheus_gdnsd_stats':
+        ensure          => $ensure,
+        description     => 'Exports GDNSD metrics',
+        command         => "/usr/local/bin/prometheus-gdnsd-stats --outfile ${outfile}",
+        interval        => {
+            start    => 'OnCalendar',
+            interval => '*-*-* *:*:00',
+        },
+        logging_enabled => false,
+        user            => 'root',
     }
 }
