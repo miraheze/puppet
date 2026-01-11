@@ -66,7 +66,7 @@ class openwebui (
     }
 
     service { 'openwebui':
-        ensure    => absent,
+        ensure    => running,
         enable    => true,
         subscribe => [File['/etc/openwebui.env'], File['/etc/systemd/system/openwebui.service']],
     }
