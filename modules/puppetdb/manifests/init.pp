@@ -172,7 +172,7 @@ class puppetdb(
         },
     }
 
-    package { 'policykit-1':
+    package { 'polkit':
         ensure => present,
     }
 
