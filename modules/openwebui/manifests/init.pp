@@ -66,16 +66,18 @@ class openwebui (
     }
 
     service { 'openwebui':
-        ensure    => running,
+        ensure    => absent,
         enable    => true,
         subscribe => [File['/etc/openwebui.env'], File['/etc/systemd/system/openwebui.service']],
     }
 
     monitoring::nrpe { 'open webui':
-        command => '/usr/lib/nagios/plugins/check_procs -a /opt/open-webui/venv/bin/open-webui -c 1:1'
+        command => '/usr/lib/nagios/plugins/check_procs -a /opt/open-webui/venv/bin/open-webui -c 1:1',
+        ensure  => absent,
     }
 
     monitoring::nrpe { "open webui ${port} check":
         command => "/usr/lib/nagios/plugins/check_tcp -H 127.0.0.1 -p ${port}",
+        ensure  => absent,
     }
 }
