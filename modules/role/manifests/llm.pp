@@ -10,7 +10,7 @@ class role::llm (
     nginx::site { 'llm_proxy':
         ensure  => present,
         source  => 'puppet:///modules/role/llm/ai.wikitide.net.conf',
-        monitor => true,
+        monitor => false,
     }
 
     class { '::ollama':
