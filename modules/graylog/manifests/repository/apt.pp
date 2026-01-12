@@ -14,7 +14,10 @@ class graylog::repository::apt (
   ]
 
   anchor { 'graylog::repository::apt::begin': }
-  stdlib::ensure_packages($apt_transport_package)
+
+  if !defined(Package[$apt_transport_package]) {
+    ensure_packages([$apt_transport_package])
+  }
 
   file { $gpg_file:
     ensure => file,

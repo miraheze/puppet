@@ -1,0 +1,6 @@
+require 'puppet_blacksmith/rake_tasks'
+Blacksmith::RakeTask.new do |t|
+  t.tag_pattern = "v%s"
+  t.tag_sign = true
+  t.tag_message_pattern = "Tag v%s"
+end

@@ -4,7 +4,7 @@ class graylog::allinone (
 ) inherits graylog::params {
   class { 'mongodb::globals':
     manage_package_repo => true,
-    version             => '5.0.19',
+    version             => '5.0.30',
   }
   -> class { 'mongodb::server':
     bind_ip => ['127.0.0.1'],
@@ -13,7 +13,7 @@ class graylog::allinone (
   if 'version' in $opensearch {
     $opensearch_version = $opensearch['version']
   } else {
-    $opensearch_version = '2.9.0'
+    $opensearch_version = '2.15.0'
   }
 
   class { 'opensearch':
