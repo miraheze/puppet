@@ -207,14 +207,12 @@ sub vcl_synth {
 			set resp.reason = "Moved Permanently";
 			set resp.http.Location = "https://commons.miraheze.org/";
 			set resp.http.Connection = "keep-alive";
-			set resp.http.Content-Length = "0";
 		}
 
 		if (resp.reason == "Main Page Redirect") {
 			set resp.reason = "Moved Permanently";
 			set resp.http.Location = "https://miraheze.org/";
 			set resp.http.Connection = "keep-alive";
-			set resp.http.Content-Length = "0";
 		}
 
 		// Handle CORS preflight requests
@@ -224,7 +222,6 @@ sub vcl_synth {
 		) {
 			set resp.reason = "OK";
 			set resp.http.Connection = "keep-alive";
-			set resp.http.Content-Length = "0";
 
 			// allow Range requests, and avoid other CORS errors when debugging with X-WikiTide-Debug
 			set resp.http.Access-Control-Allow-Origin = "*";
@@ -1018,3 +1015,4 @@ sub vcl_backend_error {
 
 	return (deliver);
 }
+
