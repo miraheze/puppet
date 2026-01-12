@@ -39,7 +39,7 @@ class phorge (
         'zip',
     ]
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
 
     # Install the runtime
     class { 'php':
