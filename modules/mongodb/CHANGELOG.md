@@ -4,6 +4,145 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v7.0.0](https://github.com/voxpupuli/puppet-mongodb/tree/v7.0.0) (2025-06-11)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-mongodb/compare/v6.0.1...v7.0.0)
+
+**Breaking changes:**
+
+- Update default repo version to latest supported by OS [\#779](https://github.com/voxpupuli/puppet-mongodb/pull/779) ([h-haaks](https://github.com/h-haaks))
+- remove EOL OSes [\#775](https://github.com/voxpupuli/puppet-mongodb/pull/775) ([h-haaks](https://github.com/h-haaks))
+
+**Implemented enhancements:**
+
+- Add Ubuntu 24.04 support [\#778](https://github.com/voxpupuli/puppet-mongodb/pull/778) ([h-haaks](https://github.com/h-haaks))
+- Allow puppetlabs/apt 10.x [\#773](https://github.com/voxpupuli/puppet-mongodb/pull/773) ([smortex](https://github.com/smortex))
+- metadata.json: Add OpenVox [\#770](https://github.com/voxpupuli/puppet-mongodb/pull/770) ([jstraw](https://github.com/jstraw))
+- allow puppet/systemd 8.x [\#769](https://github.com/voxpupuli/puppet-mongodb/pull/769) ([jay7x](https://github.com/jay7x))
+
+**Fixed bugs:**
+
+- granting roles using role@db syntax does not allow db names containing "-" [\#771](https://github.com/voxpupuli/puppet-mongodb/issues/771)
+
+**Closed issues:**
+
+- Update default mongodb version to 7.x [\#754](https://github.com/voxpupuli/puppet-mongodb/issues/754)
+
+**Merged pull requests:**
+
+- README: fix spacing style [\#780](https://github.com/voxpupuli/puppet-mongodb/pull/780) ([kenyon](https://github.com/kenyon))
+- Add MongoDB 8.x to integration tests [\#777](https://github.com/voxpupuli/puppet-mongodb/pull/777) ([h-haaks](https://github.com/h-haaks))
+- remove tests on EOL MongoDB 5.x [\#776](https://github.com/voxpupuli/puppet-mongodb/pull/776) ([h-haaks](https://github.com/h-haaks))
+- replace legacy facts in unit tests [\#774](https://github.com/voxpupuli/puppet-mongodb/pull/774) ([h-haaks](https://github.com/h-haaks))
+- fix regex to allow database names to contain "-" in role@db syntax [\#772](https://github.com/voxpupuli/puppet-mongodb/pull/772) ([dermsd](https://github.com/dermsd))
+- Fix secondary users on a replicaset being marked as changed [\#766](https://github.com/voxpupuli/puppet-mongodb/pull/766) ([stevenpost](https://github.com/stevenpost))
+
+## [v6.0.1](https://github.com/voxpupuli/puppet-mongodb/tree/v6.0.1) (2024-05-07)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-mongodb/compare/v6.0.0...v6.0.1)
+
+**Fixed bugs:**
+
+- Wrong "pidFilePath:" setting in `/etc/mongodb.conf` on Debian [\#647](https://github.com/voxpupuli/puppet-mongodb/issues/647)
+- Backslashes in a password need to be escaped [\#760](https://github.com/voxpupuli/puppet-mongodb/pull/760) ([stevenpost](https://github.com/stevenpost))
+
+**Closed issues:**
+
+- Roadmap to get this module in better shape [\#696](https://github.com/voxpupuli/puppet-mongodb/issues/696)
+
+## [v6.0.0](https://github.com/voxpupuli/puppet-mongodb/tree/v6.0.0) (2024-04-29)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-mongodb/compare/v5.0.0...v6.0.0)
+
+**Breaking changes:**
+
+- Remove nojournal parameter; Cleanup journal management [\#730](https://github.com/voxpupuli/puppet-mongodb/pull/730) ([h-haaks](https://github.com/h-haaks))
+- Provider cleanup [\#723](https://github.com/voxpupuli/puppet-mongodb/pull/723) ([stevenpost](https://github.com/stevenpost))
+- Set default redhat dbpath to /var/lib/mongo [\#718](https://github.com/voxpupuli/puppet-mongodb/pull/718) ([h-haaks](https://github.com/h-haaks))
+- Use keyring for apt repository; update dependency versions [\#713](https://github.com/voxpupuli/puppet-mongodb/pull/713) ([h-haaks](https://github.com/h-haaks))
+- Move params to classes and hiera; Align defaults with supported versions [\#712](https://github.com/voxpupuli/puppet-mongodb/pull/712) ([h-haaks](https://github.com/h-haaks))
+
+**Implemented enhancements:**
+
+- update puppet-systemd upper bound to 8.0.0 [\#756](https://github.com/voxpupuli/puppet-mongodb/pull/756) ([TheMeier](https://github.com/TheMeier))
+- Add OracleLinux support [\#748](https://github.com/voxpupuli/puppet-mongodb/pull/748) ([bastelfreak](https://github.com/bastelfreak))
+- Add Rocky and AlmaLinux support [\#745](https://github.com/voxpupuli/puppet-mongodb/pull/745) ([h-haaks](https://github.com/h-haaks))
+- feat: Add tls\_invalid\_certificates argument [\#742](https://github.com/voxpupuli/puppet-mongodb/pull/742) ([jouir](https://github.com/jouir))
+- Use proper yaml for the mongod config [\#740](https://github.com/voxpupuli/puppet-mongodb/pull/740) ([h-haaks](https://github.com/h-haaks))
+- Add RedHat/CentOS 9 support [\#738](https://github.com/voxpupuli/puppet-mongodb/pull/738) ([h-haaks](https://github.com/h-haaks))
+- Add Debian 12 support [\#736](https://github.com/voxpupuli/puppet-mongodb/pull/736) ([h-haaks](https://github.com/h-haaks))
+- Add mongodb 6.0 and 7.0 to acceptance testing [\#728](https://github.com/voxpupuli/puppet-mongodb/pull/728) ([h-haaks](https://github.com/h-haaks))
+- Use  the mongosh command instead of the old mongo command [\#703](https://github.com/voxpupuli/puppet-mongodb/pull/703) ([stevenpost](https://github.com/stevenpost))
+- Add Ubuntu 22.04 support [\#694](https://github.com/voxpupuli/puppet-mongodb/pull/694) ([zilchms](https://github.com/zilchms))
+
+**Fixed bugs:**
+
+- Full support for mongo 5.x on RedHat/CentOS [\#629](https://github.com/voxpupuli/puppet-mongodb/issues/629)
+- Fix typo in is\_master fact [\#751](https://github.com/voxpupuli/puppet-mongodb/pull/751) ([h-haaks](https://github.com/h-haaks))
+- Fix replset and sharding integration tests [\#743](https://github.com/voxpupuli/puppet-mongodb/pull/743) ([h-haaks](https://github.com/h-haaks))
+
+**Closed issues:**
+
+- Typo in is\_master fact [\#750](https://github.com/voxpupuli/puppet-mongodb/issues/750)
+- Subsequent puppet runs fail on unauthenticated replicasets [\#731](https://github.com/voxpupuli/puppet-mongodb/issues/731)
+- Default location for database files on RHEL variants is /var/lib/mongo [\#714](https://github.com/voxpupuli/puppet-mongodb/issues/714)
+- Puppet 8x compatibility [\#684](https://github.com/voxpupuli/puppet-mongodb/issues/684)
+- Stdlib IP Address Variable [\#674](https://github.com/voxpupuli/puppet-mongodb/issues/674)
+- removed mongo cli in 6.0 is not compatible with outputs from new mongosh [\#648](https://github.com/voxpupuli/puppet-mongodb/issues/648)
+- rs.initiate\(\) fails due to duplicated replicaset alive members  [\#565](https://github.com/voxpupuli/puppet-mongodb/issues/565)
+
+**Merged pull requests:**
+
+- Remove unsupported mongodb 4.4 from test matrix [\#758](https://github.com/voxpupuli/puppet-mongodb/pull/758) ([h-haaks](https://github.com/h-haaks))
+- Link metadata for tested Oses [\#755](https://github.com/voxpupuli/puppet-mongodb/pull/755) ([h-haaks](https://github.com/h-haaks))
+- Support for pure yaml in is\_master.rb [\#741](https://github.com/voxpupuli/puppet-mongodb/pull/741) ([h-haaks](https://github.com/h-haaks))
+- Remove the retry mechanism from the provider [\#739](https://github.com/voxpupuli/puppet-mongodb/pull/739) ([stevenpost](https://github.com/stevenpost))
+- Various documentation fixes [\#733](https://github.com/voxpupuli/puppet-mongodb/pull/733) ([stevenpost](https://github.com/stevenpost))
+- Use ensure pruned to remove packages in acceptance tests [\#727](https://github.com/voxpupuli/puppet-mongodb/pull/727) ([h-haaks](https://github.com/h-haaks))
+- Provider cleanup \(safe part\) [\#726](https://github.com/voxpupuli/puppet-mongodb/pull/726) ([stevenpost](https://github.com/stevenpost))
+- Prefer connecting over localhost when possible [\#725](https://github.com/voxpupuli/puppet-mongodb/pull/725) ([stevenpost](https://github.com/stevenpost))
+- Remove unused parameter [\#724](https://github.com/voxpupuli/puppet-mongodb/pull/724) ([stevenpost](https://github.com/stevenpost))
+- Documentation update [\#722](https://github.com/voxpupuli/puppet-mongodb/pull/722) ([stevenpost](https://github.com/stevenpost))
+- Support Suse enterprise repository [\#719](https://github.com/voxpupuli/puppet-mongodb/pull/719) ([h-haaks](https://github.com/h-haaks))
+- Test supported repo versions with gha [\#716](https://github.com/voxpupuli/puppet-mongodb/pull/716) ([h-haaks](https://github.com/h-haaks))
+- Debian 10 support should not be dropped yet [\#711](https://github.com/voxpupuli/puppet-mongodb/pull/711) ([h-haaks](https://github.com/h-haaks))
+- Remove old version from template name [\#710](https://github.com/voxpupuli/puppet-mongodb/pull/710) ([stevenpost](https://github.com/stevenpost))
+- Move documentation from README into the manifests [\#709](https://github.com/voxpupuli/puppet-mongodb/pull/709) ([stevenpost](https://github.com/stevenpost))
+- Provider cleanup part2 [\#706](https://github.com/voxpupuli/puppet-mongodb/pull/706) ([stevenpost](https://github.com/stevenpost))
+
+## [v5.0.0](https://github.com/voxpupuli/puppet-mongodb/tree/v5.0.0) (2024-03-19)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-mongodb/compare/v4.2.0...v5.0.0)
+
+**Breaking changes:**
+
+- Drop Debian 10 support [\#704](https://github.com/voxpupuli/puppet-mongodb/pull/704) ([h-haaks](https://github.com/h-haaks))
+- Use mongodb repo by default; require repo version \>= 4.4 [\#699](https://github.com/voxpupuli/puppet-mongodb/pull/699) ([h-haaks](https://github.com/h-haaks))
+- Drop Ubuntu 18.04 support [\#693](https://github.com/voxpupuli/puppet-mongodb/pull/693) ([zilchms](https://github.com/zilchms))
+- Drop EoL Puppet 6 [\#672](https://github.com/voxpupuli/puppet-mongodb/pull/672) ([traylenator](https://github.com/traylenator))
+- Drop EoL Debian 9 [\#671](https://github.com/voxpupuli/puppet-mongodb/pull/671) ([traylenator](https://github.com/traylenator))
+- Drop Puppet 6 support [\#669](https://github.com/voxpupuli/puppet-mongodb/pull/669) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- add redhat8, centos8  and debian11 support [\#702](https://github.com/voxpupuli/puppet-mongodb/pull/702) ([h-haaks](https://github.com/h-haaks))
+- Provider cleanup [\#701](https://github.com/voxpupuli/puppet-mongodb/pull/701) ([stevenpost](https://github.com/stevenpost))
+- Mongos as systemd service [\#698](https://github.com/voxpupuli/puppet-mongodb/pull/698) ([h-haaks](https://github.com/h-haaks))
+- puppetlabs/apt: Allow 9.x [\#692](https://github.com/voxpupuli/puppet-mongodb/pull/692) ([zilchms](https://github.com/zilchms))
+- bump systemd: \< 7.0.0 [\#687](https://github.com/voxpupuli/puppet-mongodb/pull/687) ([sandwitch](https://github.com/sandwitch))
+- Set version defaults with hiera data [\#685](https://github.com/voxpupuli/puppet-mongodb/pull/685) ([traylenator](https://github.com/traylenator))
+- Add Puppet 8 support [\#676](https://github.com/voxpupuli/puppet-mongodb/pull/676) ([bastelfreak](https://github.com/bastelfreak))
+- puppetlabs/stdlib: Allow 9.x [\#675](https://github.com/voxpupuli/puppet-mongodb/pull/675) ([bastelfreak](https://github.com/bastelfreak))
+- bump puppet/systemd to \< 5.0.0 [\#665](https://github.com/voxpupuli/puppet-mongodb/pull/665) ([jhoblitt](https://github.com/jhoblitt))
+- New server::admin\_password\_hash parameter [\#659](https://github.com/voxpupuli/puppet-mongodb/pull/659) ([traylenator](https://github.com/traylenator))
+
+**Fixed bugs:**
+
+- Extra json on mongo output causing provider 'mongodb': 783: unexpected token at '{ [\#680](https://github.com/voxpupuli/puppet-mongodb/issues/680)
+- add docs, doc stubs and descriptions to fix validate warnings [\#690](https://github.com/voxpupuli/puppet-mongodb/pull/690) ([zilchms](https://github.com/zilchms))
+- Remove extra line causing errors: "Started a new thread for the timer service" [\#681](https://github.com/voxpupuli/puppet-mongodb/pull/681) ([xepa](https://github.com/xepa))
+- Catch errors on database creation or destroy [\#663](https://github.com/voxpupuli/puppet-mongodb/pull/663) ([JvGinkel](https://github.com/JvGinkel))
+
 ## [v4.2.0](https://github.com/voxpupuli/puppet-mongodb/tree/v4.2.0) (2022-12-07)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-mongodb/compare/v4.1.1...v4.2.0)
