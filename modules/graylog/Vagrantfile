@@ -31,8 +31,8 @@ Vagrant.configure('2') do |config|
 
   # Required to run graylog::allinone
   test -d /etc/puppetlabs/code/environments/production/modules/apt || puppet module install puppetlabs-apt
-  test -d /etc/puppetlabs/code/environments/production/modules/mongodb || puppet module install puppet-mongodb
   test -d /etc/puppetlabs/code/environments/production/modules/opensearch || puppet module install puppet-opensearch
+  test -d /etc/puppetlabs/code/environments/production/modules/mongodb || puppet module install puppet-mongodb
 
   cp /home/vagrant/site.pp /etc/puppetlabs/code/environments/production/manifests/
 
@@ -43,7 +43,7 @@ Vagrant.configure('2') do |config|
                               destination: '/home/vagrant/site.pp'
 
   config.vm.define 'ubuntu2004' do |machine|
-    machine.vm.box = 'geerlingguy/ubuntu2004'
+    machine.vm.box = 'ubuntu/focal64'
     machine.vm.network 'private_network', type: 'dhcp'
     machine.vm.network "forwarded_port", guest: 9000, host: 9000
     machine.vm.network "forwarded_port", guest: 12900, host: 12900
@@ -54,7 +54,7 @@ Vagrant.configure('2') do |config|
   end
 
   config.vm.define 'rockylinux8' do |machine|
-    machine.vm.box = "geerlingguy/rockylinux8"
+    machine.vm.box = "almalinux/8"
 
     machine.vm.network 'private_network', type: 'dhcp'
     machine.vm.network "forwarded_port", guest: 9000, host: 9000

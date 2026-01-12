@@ -99,10 +99,10 @@ class { 'opensearch':
 }
 
 class { 'graylog::repository':
-  version => '5.1'
+  version => '6.1'
 }->
 class { 'graylog::server':
-  package_version => '5.1.0-6',
+  package_version => '6.1.5-2',
   config          => {
     'password_secret' => '...',    # Fill in your password secret
     'root_password_sha2' => '...', # Fill in your root password hash
@@ -114,7 +114,7 @@ class { 'graylog::server':
 
 ```puppet
 class { '::graylog::repository':
-  version => '5.1'
+  version => '6.1'
 }->
 class { '::graylog::server':
   config  => {
@@ -171,7 +171,7 @@ version.
 
 It defaults to `$graylog::params::major_version`.
 
-Example: `version => '5.1'`
+Example: `version => '6.1'`
 
 ##### `url`
 
@@ -210,7 +210,7 @@ This setting is used to choose the Graylog package version. It defaults to
 install time. You can also use `latest` so it will always update to the latest
 stable version if a new one is available.
 
-Example: `package_version => '5.1.0-6'`
+Example: `package_version => '6.1.5-2'`
 
 ##### `config`
 
@@ -324,7 +324,7 @@ Example:
 
 ```
 graylog => {
-  major_version => '5.1',
+  major_version => '6.1',
   config        => {
     # ... see graylog::server description for details
   },
@@ -361,10 +361,9 @@ files for further details.
 ### Release New Version
 
 1. Update and commit CHANGELOG
-1. Bump version via `bundle exec rake module:bump:minor` (or major/patch)
+1. Bump version via `bundle exec rake -f Rakefile.release module:bump:minor` (or major/patch)
 1. Commit `metadata.json`
-1. Test build with `bundle exec rake build`
-1. Tag release with `bundle exec rake module:tag`
-1. Push release to PuppetForge with `bundle exec rake module:push`
-1. Push commits to GitHub with `git push`
-1. Push tags to GitHub with `git push --tags`
+1. Test build with `bundle exec rake -f Rakefile.release module:build`
+1. Tag release with `bundle exec rake -f Rakefile.release module:tag`
+1. Push release to PuppetForge with `bundle exec -f Rakefile.release rake module:push`
+1. Push commits and tags to GitHub with `git push --follow-tags`
