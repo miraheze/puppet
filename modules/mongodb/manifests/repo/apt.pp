@@ -27,6 +27,7 @@ class mongodb::repo::apt (
   Optional[String[1]] $release = undef,
   Optional[String[1]] $repos = undef,
   Optional[String[1]] $comment = undef,
+  Optional[String] $version = undef,
 ) {
   # we try to follow/reproduce the instruction
   # from http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/
@@ -42,10 +43,8 @@ class mongodb::repo::apt (
     release  => $mongodb::repo::release,
     repos    => $mongodb::repo::repos,
     key      => {
-      dir     => '/usr/share/keyrings/',
-      name    => "mongodb-${keyring_file}",
-      source  => $keyring_location,
-      options => $mongodb::repo::aptkey_options,
+      name   => "mongodb-server-${version}.gpg",
+      source => "puppet:///modules/mongodb/apt/mongodb-server-${version}.gpg",
     },
     comment  => $comment,
   }
