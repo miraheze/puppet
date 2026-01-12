@@ -1,4 +1,7 @@
-# PRIVATE CLASS: do not call directly
+# @summary Manages mongod config
+#
+# @api private
+#
 class mongodb::server::config {
   $ensure           = $mongodb::server::ensure
   $user             = $mongodb::server::user
@@ -18,11 +21,9 @@ class mongodb::server::config {
   $fork             = $mongodb::server::fork
   $port             = $mongodb::server::port
   $journal          = $mongodb::server::journal
-  $nojournal        = $mongodb::server::nojournal
   $smallfiles       = $mongodb::server::smallfiles
   $cpu              = $mongodb::server::cpu
   $auth             = $mongodb::server::auth
-  $noath            = $mongodb::server::noauth
   $create_admin     = $mongodb::server::create_admin
   $admin_username   = $mongodb::server::admin_username
   $admin_password   = $mongodb::server::admin_password
@@ -60,17 +61,12 @@ class mongodb::server::config {
   $maxconns         = $mongodb::server::maxconns
   $set_parameter    = $mongodb::server::set_parameter
   $syslog           = $mongodb::server::syslog
-  $ssl              = $mongodb::server::ssl
-  $ssl_key          = $mongodb::server::ssl_key
-  $ssl_ca           = $mongodb::server::ssl_ca
-  $ssl_weak_cert    = $mongodb::server::ssl_weak_cert
-  $ssl_invalid_hostnames = $mongodb::server::ssl_invalid_hostnames
-  $ssl_mode         = $mongodb::server::ssl_mode
   $tls              = $mongodb::server::tls
   $tls_key          = $mongodb::server::tls_key
   $tls_ca           = $mongodb::server::tls_ca
   $tls_conn_without_cert = $mongodb::server::tls_conn_without_cert
   $tls_invalid_hostnames = $mongodb::server::tls_invalid_hostnames
+  $tls_invalid_certificates = $mongodb::server::tls_invalid_certificates
   $tls_mode         = $mongodb::server::tls_mode
   $storage_engine   = $mongodb::server::storage_engine
 
@@ -79,18 +75,7 @@ class mongodb::server::config {
     group => $group,
   }
 
-  if ($logpath and $syslog) { fail('You cannot use syslog with logpath') }
-
-  if ($ssl and $tls) { fail('You cannot use ssl and tls options together') }
-
   if ($ensure == 'present' or $ensure == true) {
-    # Exists for future compatibility and clarity.
-    if $auth {
-      $noauth = false
-    }
-    else {
-      $noauth = true
-    }
     if $keyfile and $key {
       file { $keyfile:
         content => $key,
@@ -116,7 +101,7 @@ class mongodb::server::config {
     } else {
       # Template has available user-supplied data
       # - $config_data
-      $cfg_content = template('mongodb/mongodb.conf.2.6.erb')
+      $cfg_content = template('mongodb/mongodb.conf.erb')
     }
 
     file { $config:
@@ -176,7 +161,7 @@ class mongodb::server::config {
   if $handle_creds {
     file { $rcfile:
       ensure  => file,
-      content => template('mongodb/mongorc.js.erb'),
+      content => template('mongodb/mongoshrc.js.erb'),
       owner   => 'root',
       group   => 'root',
       mode    => '0600',

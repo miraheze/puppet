@@ -11,6 +11,7 @@ class role::graylog {
 
     class { 'mongodb::globals':
         manage_package_repo => true,
+        repo_version        => lookup('mongodb_repo_version', {'default_value' => '7.0'}),
         version             => lookup('mongodb_version', {'default_value' => '7.0.28'}),
     }
     -> class { 'mongodb::server':
