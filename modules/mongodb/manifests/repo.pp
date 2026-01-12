@@ -36,6 +36,7 @@ class mongodb::repo (
   Optional[String[1]] $proxy            = undef,
   Optional[String[1]] $proxy_username   = undef,
   Optional[String[1]] $proxy_password   = undef,
+  Optional[String[1]] $aptkey_options   = undef,
 ) {
   if $version == undef and $repo_location == undef {
     fail('`version` or `repo_location` is required')
