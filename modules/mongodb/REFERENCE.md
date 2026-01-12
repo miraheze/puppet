@@ -8,33 +8,30 @@
 
 #### Public Classes
 
-* [`mongodb::client`](#mongodb--client): Class for installing a MongoDB client shell (CLI).  == Parameters  $ensure:: Desired ensure state of the package.  $package_name:: Name of th
-* [`mongodb::globals`](#mongodb--globals): Class for setting cross-class global overrides. See README.md for more details.
-* [`mongodb::mongos`](#mongodb--mongos): This installs a Mongo Shard daemon. See README.md for more details.
-* [`mongodb::mongos::config`](#mongodb--mongos--config): PRIVATE CLASS: do not call directly
-* [`mongodb::mongos::install`](#mongodb--mongos--install): PRIVATE CLASS: do not call directly
-* [`mongodb::mongos::params`](#mongodb--mongos--params): PRIVATE CLASS: do not use directly
-* [`mongodb::mongos::service`](#mongodb--mongos--service): PRIVATE CLASS: do not call directly
-* [`mongodb::opsmanager`](#mongodb--opsmanager): This installs Ops Manager
-* [`mongodb::params`](#mongodb--params): PRIVATE CLASS: do not use directly
+* [`mongodb::client`](#mongodb--client)
+* [`mongodb::globals`](#mongodb--globals): Class for setting cross-class global overrides.
+* [`mongodb::mongos`](#mongodb--mongos): This installs a Mongo Shard daemon.
+* [`mongodb::opsmanager`](#mongodb--opsmanager)
 * [`mongodb::replset`](#mongodb--replset): Wrapper class useful for hiera based deployments
-* [`mongodb::repo`](#mongodb--repo): PRIVATE CLASS: do not use directly
-* [`mongodb::repo::apt`](#mongodb--repo--apt): PRIVATE CLASS: do not use directly
-* [`mongodb::repo::yum`](#mongodb--repo--yum): PRIVATE CLASS: do not use directly
-* [`mongodb::server`](#mongodb--server): This installs a MongoDB server. See README.md for more details.
-* [`mongodb::server::config`](#mongodb--server--config): PRIVATE CLASS: do not call directly
-* [`mongodb::server::install`](#mongodb--server--install): PRIVATE CLASS: do not call directly
-* [`mongodb::server::service`](#mongodb--server--service): PRIVATE CLASS: do not call directly
+* [`mongodb::server`](#mongodb--server): This installs a MongoDB server.
 * [`mongodb::shardsvr`](#mongodb--shardsvr): Wrapper class useful for hiera based deployments
 
 #### Private Classes
 
-* `mongodb::client::params`
+* `mongodb::mongos::config`: Manages mongos config
+* `mongodb::mongos::install`: Installs mongos
+* `mongodb::mongos::service`: Manages the mongos service
+* `mongodb::repo`: Manages the mongodb repository
+* `mongodb::repo::apt`: This is a repo class for apt
+* `mongodb::repo::yum`: This is a repo class for yum
 * `mongodb::repo::zypper`: This is a repo class for zypper
+* `mongodb::server::config`: Manages mongod config
+* `mongodb::server::install`: Manages the mongod package
+* `mongodb::server::service`: Manages the mongos service
 
 ### Defined types
 
-* [`mongodb::db`](#mongodb--db): == Class: mongodb::db  Class for creating mongodb databases and users.  == Parameters   user - Database username.  auth_mechanism - Authentic
+* [`mongodb::db`](#mongodb--db): Class for creating mongodb databases and users.
 
 ### Resource types
 
@@ -52,14 +49,7 @@
 
 ### <a name="mongodb--client"></a>`mongodb::client`
 
-Class for installing a MongoDB client shell (CLI).
-
-== Parameters
-
-$ensure:: Desired ensure state of the package.
-
-$package_name:: Name of the package to install the client from. Default is
-                repository dependent.
+The mongodb::client class.
 
 #### Parameters
 
@@ -72,250 +62,190 @@ The following parameters are available in the `mongodb::client` class:
 
 Data type: `String[1]`
 
+Used to ensure that the package is installed, or that the package is absent/purged
 
-
-Default value: `$mongodb::client::params::package_ensure`
+Default value: `pick($mongodb::globals::client_version, 'present')`
 
 ##### <a name="-mongodb--client--package_name"></a>`package_name`
 
 Data type: `String[1]`
 
+This setting can be used to specify the name of the package that should be installed.
+If not specified, the module will use whatever service name is the default for your OS distro.
 
-
-Default value: `$mongodb::client::params::package_name`
+Default value: `'mongodb-mongosh'`
 
 ### <a name="mongodb--globals"></a>`mongodb::globals`
 
-Class for setting cross-class global overrides. See README.md for more
-details.
+Class for setting cross-class global overrides.
+
+#### Examples
+
+##### Use a specific MongoDB version to install from the community repository.
+
+```puppet
+
+class {'mongodb::globals':
+  manage_package_repo => true,
+  repo_version        => '6.0',
+}
+-> class {'mongodb::client': }
+-> class {'mongodb::server': }
+```
+
+##### Use a specific MongoDB version to install from the enterprise repository.
+
+```puppet
+
+class {'mongodb::globals':
+  manage_package_repo => true,
+  repo_version        => '6.0',
+  use_enterprise_repo => true,
+}
+-> class {'mongodb::client': }
+-> class {'mongodb::server': }
+```
+
+##### Use a custom MongoDB apt repository.
+
+```puppet
+
+class {'mongodb::globals':
+  manage_package_repo => true,
+  repo_location       => 'https://example.com/repo',
+  keyring_location    => 'https://example.com/keyring.asc'
+}
+-> class {'mongodb::client': }
+-> class {'mongodb::server': }
+```
+
+##### To disable managing of repository, but still enable managing packages.
+
+```puppet
+
+class {'mongodb::globals':
+  manage_package_repo => false,
+}
+-> class {'mongodb::server': }
+-> class {'mongodb::client': }
+```
 
 #### Parameters
 
 The following parameters are available in the `mongodb::globals` class:
 
-* [`server_package_name`](#-mongodb--globals--server_package_name)
-* [`client_package_name`](#-mongodb--globals--client_package_name)
-* [`mongod_service_manage`](#-mongodb--globals--mongod_service_manage)
-* [`service_enable`](#-mongodb--globals--service_enable)
-* [`service_ensure`](#-mongodb--globals--service_ensure)
-* [`service_name`](#-mongodb--globals--service_name)
-* [`service_provider`](#-mongodb--globals--service_provider)
-* [`service_status`](#-mongodb--globals--service_status)
-* [`user`](#-mongodb--globals--user)
-* [`group`](#-mongodb--globals--group)
-* [`ipv6`](#-mongodb--globals--ipv6)
-* [`bind_ip`](#-mongodb--globals--bind_ip)
 * [`version`](#-mongodb--globals--version)
+* [`client_version`](#-mongodb--globals--client_version)
 * [`manage_package_repo`](#-mongodb--globals--manage_package_repo)
-* [`manage_package`](#-mongodb--globals--manage_package)
+* [`repo_version`](#-mongodb--globals--repo_version)
+* [`use_enterprise_repo`](#-mongodb--globals--use_enterprise_repo)
+* [`repo_location`](#-mongodb--globals--repo_location)
 * [`repo_proxy`](#-mongodb--globals--repo_proxy)
+* [`keyring_location`](#-mongodb--globals--keyring_location)
 * [`proxy_username`](#-mongodb--globals--proxy_username)
 * [`proxy_password`](#-mongodb--globals--proxy_password)
-* [`repo_location`](#-mongodb--globals--repo_location)
-* [`use_enterprise_repo`](#-mongodb--globals--use_enterprise_repo)
-* [`pidfilepath`](#-mongodb--globals--pidfilepath)
-* [`pidfilemode`](#-mongodb--globals--pidfilemode)
-* [`manage_pidfile`](#-mongodb--globals--manage_pidfile)
-
-##### <a name="-mongodb--globals--server_package_name"></a>`server_package_name`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--client_package_name"></a>`client_package_name`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--mongod_service_manage"></a>`mongod_service_manage`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--service_enable"></a>`service_enable`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--service_ensure"></a>`service_ensure`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--service_name"></a>`service_name`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--service_provider"></a>`service_provider`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--service_status"></a>`service_status`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--user"></a>`user`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--group"></a>`group`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--ipv6"></a>`ipv6`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--bind_ip"></a>`bind_ip`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
 
 ##### <a name="-mongodb--globals--version"></a>`version`
 
-Data type: `Any`
+Data type: `Optional[String[1]]`
 
+The version of MonogDB to install/manage.
+If not specified, the module will ensure packages with `present`.
 
+Default value: `undef`
 
-Default value:
+##### <a name="-mongodb--globals--client_version"></a>`client_version`
 
-```puppet
-fact('os.distro.codename') ? { # Debian 10 doesn't provide mongodb 3.6.
-    'buster' => '4.4.8',
-    default  => undef
-```
+Data type: `Optional[String[1]]`
+
+The version of MongoDB Shell to install/manage.
+If not specified, the module will ensure packages with `present`.
+
+Default value: `undef`
 
 ##### <a name="-mongodb--globals--manage_package_repo"></a>`manage_package_repo`
 
-Data type: `Any`
+Data type: `Boolean`
 
+Whether to manage MongoDB software repository.
 
+Default value: `true`
 
-Default value:
+##### <a name="-mongodb--globals--repo_version"></a>`repo_version`
 
-```puppet
-fact('os.distro.codename') ? { # Debian 10 doesn't provide mongodb packages. So manage it!
-    'buster' => true,
-    default  => undef
-```
+Data type: `String[1]`
 
-##### <a name="-mongodb--globals--manage_package"></a>`manage_package`
+The version of the package repo.
+If not specified, the module will default to the latest supported version for your OS distro.
+When `repo_location` is specified `repo_version` is ignored.
 
-Data type: `Any`
+##### <a name="-mongodb--globals--use_enterprise_repo"></a>`use_enterprise_repo`
 
+Data type: `Boolean`
 
+When manage_package_repo is set to true, this setting indicates if it will use the Community Edition
+(false, the default) or the Enterprise one (true).
+
+Default value: `false`
+
+##### <a name="-mongodb--globals--repo_location"></a>`repo_location`
+
+Data type: `Optional[String]`
+
+This setting can be used to override the default MongoDB repository location.
+If not specified, the module will use the default repository for your OS distro.
 
 Default value: `undef`
 
 ##### <a name="-mongodb--globals--repo_proxy"></a>`repo_proxy`
 
-Data type: `Any`
+Data type: `Optional[String]`
 
+This will allow you to set a proxy for your repository in case you are behind a corporate firewall.
+Currently this is only supported with yum repositories
 
+Default value: `undef`
+
+##### <a name="-mongodb--globals--keyring_location"></a>`keyring_location`
+
+Data type: `Optional[String]`
+
+When `repo_location` is used for an apt repository this setting can be used for the keyring
+file to download.
 
 Default value: `undef`
 
 ##### <a name="-mongodb--globals--proxy_username"></a>`proxy_username`
 
-Data type: `Any`
+Data type: `Optional[String]`
 
-
+This sets the username for the proxyserver, should authentication be required.
 
 Default value: `undef`
 
 ##### <a name="-mongodb--globals--proxy_password"></a>`proxy_password`
 
-Data type: `Any`
+Data type: `Optional[String]`
 
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--repo_location"></a>`repo_location`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--use_enterprise_repo"></a>`use_enterprise_repo`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--pidfilepath"></a>`pidfilepath`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--pidfilemode"></a>`pidfilemode`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--globals--manage_pidfile"></a>`manage_pidfile`
-
-Data type: `Any`
-
-
+This sets the password for the proxyserver, should authentication be required
 
 Default value: `undef`
 
 ### <a name="mongodb--mongos"></a>`mongodb::mongos`
 
-This installs a Mongo Shard daemon. See README.md for more details.
+This class should only be used if you want to implement sharding within your mongodb deployment.
+ This class allows you to configure the mongos daemon (responsible for routing) on your platform.
+
+ }
+
+#### Examples
+
+##### mongos can be installed the following way.
+
+```puppet
+class {'mongodb::mongos' :
+ configdb => ['configsvr1.example.com:27018'],
+```
 
 #### Parameters
 
@@ -329,6 +259,8 @@ The following parameters are available in the `mongodb::mongos` class:
 * [`service_manage`](#-mongodb--mongos--service_manage)
 * [`service_provider`](#-mongodb--mongos--service_provider)
 * [`service_name`](#-mongodb--mongos--service_name)
+* [`service_user`](#-mongodb--mongos--service_user)
+* [`service_group`](#-mongodb--mongos--service_group)
 * [`service_template`](#-mongodb--mongos--service_template)
 * [`service_enable`](#-mongodb--mongos--service_enable)
 * [`service_ensure`](#-mongodb--mongos--service_ensure)
@@ -347,441 +279,209 @@ The following parameters are available in the `mongodb::mongos` class:
 
 Data type: `Stdlib::Absolutepath`
 
+Path of the config file. If not specified, the module will use the default for your OS distro.
 
-
-Default value: `$mongodb::mongos::params::config`
+Default value: `'/etc/mongos.conf'`
 
 ##### <a name="-mongodb--mongos--config_content"></a>`config_content`
 
 Data type: `Optional[String[1]]`
 
+Config content if the default doesn't match one needs.
 
-
-Default value: `$mongodb::mongos::params::config_content`
+Default value: `undef`
 
 ##### <a name="-mongodb--mongos--config_template"></a>`config_template`
 
 Data type: `Optional[String[1]]`
 
+Path to the config template if the default doesn't match one needs.
 
-
-Default value: `$mongodb::mongos::params::config_template`
+Default value: `undef`
 
 ##### <a name="-mongodb--mongos--configdb"></a>`configdb`
 
 Data type: `Variant[String[1], Array[String[1]]]`
 
+Array of the config servers IP addresses the mongos should connect to.
 
-
-Default value: `$mongodb::mongos::params::configdb`
+Default value: `'127.0.0.1:27019'`
 
 ##### <a name="-mongodb--mongos--config_data"></a>`config_data`
 
 Data type: `Optional[Hash]`
 
+Hash containing key-value pairs to allow for additional configuration options to be set in user-provided template.
 
-
-Default value: `$mongodb::mongos::params::config_data`
+Default value: `undef`
 
 ##### <a name="-mongodb--mongos--service_manage"></a>`service_manage`
 
 Data type: `Boolean`
 
+Whether or not the MongoDB sharding service resource should be part of the catalog.
 
-
-Default value: `$mongodb::mongos::params::service_manage`
+Default value: `true`
 
 ##### <a name="-mongodb--mongos--service_provider"></a>`service_provider`
 
 Data type: `Optional[String]`
 
+This setting can be used to override the default Mongos service provider.
+If not specified, the module will use whatever service provider is the default for your OS distro.
 
-
-Default value: `$mongodb::mongos::params::service_provider`
+Default value: `undef`
 
 ##### <a name="-mongodb--mongos--service_name"></a>`service_name`
 
-Data type: `Optional[String]`
+Data type: `String[1]`
 
+This setting can be used to override the default Mongos service name.
+If not specified, the module will use whatever service name is the default for your OS distro.
 
+Default value: `'mongos'`
 
-Default value: `$mongodb::mongos::params::service_name`
+##### <a name="-mongodb--mongos--service_user"></a>`service_user`
+
+Data type: `String[1]`
+
+The user used by Systemd for running the service.
+If not specified, the module will use the default for your OS distro.
+
+##### <a name="-mongodb--mongos--service_group"></a>`service_group`
+
+Data type: `String[1]`
+
+The group used by Systemd for running the service
+If not specified, the module will use the default for your OS distro.
 
 ##### <a name="-mongodb--mongos--service_template"></a>`service_template`
 
-Data type: `Optional[String[1]]`
+Data type: `String[1]`
 
+Path to the service template if the default doesn't match one needs.
 
-
-Default value: `$mongodb::mongos::params::service_template`
+Default value: `'mongodb/mongos/mongos.service-dropin.epp'`
 
 ##### <a name="-mongodb--mongos--service_enable"></a>`service_enable`
 
 Data type: `Boolean`
 
+This setting can be used to specify if the service should be enable at boot
 
-
-Default value: `$mongodb::mongos::params::service_enable`
+Default value: `true`
 
 ##### <a name="-mongodb--mongos--service_ensure"></a>`service_ensure`
 
 Data type: `Stdlib::Ensure::Service`
 
+This setting can be used to specify if the service should be running
 
-
-Default value: `$mongodb::mongos::params::service_ensure`
+Default value: `'running'`
 
 ##### <a name="-mongodb--mongos--service_status"></a>`service_status`
 
 Data type: `Optional[String]`
 
+This setting can be used to override the default status check command for your Mongos service.
+If not specified, the module will use whatever service name is the default for your OS distro.
 
-
-Default value: `$mongodb::mongos::params::service_status`
+Default value: `undef`
 
 ##### <a name="-mongodb--mongos--package_ensure"></a>`package_ensure`
 
-Data type: `Variant[Boolean, String]`
+Data type: `String[1]`
 
+This setting can be used to specify if puppet should install the package or not
 
-
-Default value: `$mongodb::mongos::params::package_ensure`
+Default value: `pick($mongodb::globals::version, 'present')`
 
 ##### <a name="-mongodb--mongos--package_name"></a>`package_name`
 
 Data type: `String`
 
+This setting can be used to specify the name of the package that should be installed.
+If not specified, the module will use whatever service name is the default for your OS distro.
 
-
-Default value: `$mongodb::mongos::params::package_name`
+Default value: `"mongodb-${mongodb::globals::edition}-mongos"`
 
 ##### <a name="-mongodb--mongos--unixsocketprefix"></a>`unixsocketprefix`
 
-Data type: `Optional[Stdlib::Absolutepath]`
+Data type: `Stdlib::Absolutepath`
 
+The path for the UNIX socket. If this option has no value, the mongos process creates a socket with /tmp as a prefix.
 
-
-Default value: `$mongodb::mongos::params::unixsocketprefix`
+Default value: `'/var/run/mongodb'`
 
 ##### <a name="-mongodb--mongos--pidfilepath"></a>`pidfilepath`
 
-Data type: `Optional[Stdlib::Absolutepath]`
+Data type: `Stdlib::Absolutepath`
 
+Specify a file location to hold the PID or process ID of the mongod process.
+If not specified, the module will use the default for your OS distro.
 
-
-Default value: `$mongodb::mongos::params::pidfilepath`
+Default value: `'/var/run/mongodb/mongos.pid'`
 
 ##### <a name="-mongodb--mongos--logpath"></a>`logpath`
 
-Data type: `Optional[Variant[Boolean, Stdlib::Absolutepath]]`
+Data type: `Variant[Boolean, Stdlib::Absolutepath]`
 
+Specify the path to a file name for the log file that will hold all diagnostic logging information.
+Unless specified, mongod will output all log information to the standard output.
 
-
-Default value: `$mongodb::mongos::params::logpath`
+Default value: `'/var/log/mongodb/mongos.log'`
 
 ##### <a name="-mongodb--mongos--fork"></a>`fork`
 
-Data type: `Optional[Boolean]`
+Data type: `Boolean`
 
+Set to true to fork server process at launch time. The default setting depends on the operating system.
 
-
-Default value: `$mongodb::mongos::params::fork`
+Default value: `true`
 
 ##### <a name="-mongodb--mongos--bind_ip"></a>`bind_ip`
 
 Data type: `Optional[Array[Stdlib::IP::Address]]`
 
+Set this option to configure the mongod or mongos process to bind to and listen for connections from applications on this address.
+If not specified, the module will use the default for your OS distro.
 
-
-Default value: `$mongodb::mongos::params::bind_ip`
+Default value: `undef`
 
 ##### <a name="-mongodb--mongos--port"></a>`port`
 
 Data type: `Optional[Stdlib::Port]`
 
+Specifies a TCP port for the server instance to listen for client connections.
 
-
-Default value: `$mongodb::mongos::params::port`
+Default value: `undef`
 
 ##### <a name="-mongodb--mongos--restart"></a>`restart`
 
 Data type: `Boolean`
 
+Specifies whether the service should be restarted on config changes.
 
-
-Default value: `$mongodb::mongos::params::restart`
-
-### <a name="mongodb--mongos--config"></a>`mongodb::mongos::config`
-
-PRIVATE CLASS: do not call directly
-
-#### Parameters
-
-The following parameters are available in the `mongodb::mongos::config` class:
-
-* [`package_ensure`](#-mongodb--mongos--config--package_ensure)
-* [`config`](#-mongodb--mongos--config--config)
-* [`config_content`](#-mongodb--mongos--config--config_content)
-* [`config_template`](#-mongodb--mongos--config--config_template)
-* [`service_manage`](#-mongodb--mongos--config--service_manage)
-* [`configdb`](#-mongodb--mongos--config--configdb)
-* [`bind_ip`](#-mongodb--mongos--config--bind_ip)
-* [`port`](#-mongodb--mongos--config--port)
-* [`fork`](#-mongodb--mongos--config--fork)
-* [`pidfilepath`](#-mongodb--mongos--config--pidfilepath)
-* [`logpath`](#-mongodb--mongos--config--logpath)
-* [`unixsocketprefix`](#-mongodb--mongos--config--unixsocketprefix)
-* [`config_data`](#-mongodb--mongos--config--config_data)
-
-##### <a name="-mongodb--mongos--config--package_ensure"></a>`package_ensure`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::package_ensure`
-
-##### <a name="-mongodb--mongos--config--config"></a>`config`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::config`
-
-##### <a name="-mongodb--mongos--config--config_content"></a>`config_content`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::config_content`
-
-##### <a name="-mongodb--mongos--config--config_template"></a>`config_template`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::config_template`
-
-##### <a name="-mongodb--mongos--config--service_manage"></a>`service_manage`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::service_manage`
-
-##### <a name="-mongodb--mongos--config--configdb"></a>`configdb`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::configdb`
-
-##### <a name="-mongodb--mongos--config--bind_ip"></a>`bind_ip`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::bind_ip`
-
-##### <a name="-mongodb--mongos--config--port"></a>`port`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::port`
-
-##### <a name="-mongodb--mongos--config--fork"></a>`fork`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::fork`
-
-##### <a name="-mongodb--mongos--config--pidfilepath"></a>`pidfilepath`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::pidfilepath`
-
-##### <a name="-mongodb--mongos--config--logpath"></a>`logpath`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::logpath`
-
-##### <a name="-mongodb--mongos--config--unixsocketprefix"></a>`unixsocketprefix`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::unixsocketprefix`
-
-##### <a name="-mongodb--mongos--config--config_data"></a>`config_data`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::config_data`
-
-### <a name="mongodb--mongos--install"></a>`mongodb::mongos::install`
-
-PRIVATE CLASS: do not call directly
-
-#### Parameters
-
-The following parameters are available in the `mongodb::mongos::install` class:
-
-* [`package_ensure`](#-mongodb--mongos--install--package_ensure)
-* [`package_name`](#-mongodb--mongos--install--package_name)
-
-##### <a name="-mongodb--mongos--install--package_ensure"></a>`package_ensure`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::package_ensure`
-
-##### <a name="-mongodb--mongos--install--package_name"></a>`package_name`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::package_name`
-
-### <a name="mongodb--mongos--params"></a>`mongodb::mongos::params`
-
-PRIVATE CLASS: do not use directly
-
-### <a name="mongodb--mongos--service"></a>`mongodb::mongos::service`
-
-PRIVATE CLASS: do not call directly
-
-#### Parameters
-
-The following parameters are available in the `mongodb::mongos::service` class:
-
-* [`package_ensure`](#-mongodb--mongos--service--package_ensure)
-* [`service_manage`](#-mongodb--mongos--service--service_manage)
-* [`service_name`](#-mongodb--mongos--service--service_name)
-* [`service_enable`](#-mongodb--mongos--service--service_enable)
-* [`service_ensure`](#-mongodb--mongos--service--service_ensure)
-* [`service_status`](#-mongodb--mongos--service--service_status)
-* [`service_provider`](#-mongodb--mongos--service--service_provider)
-* [`bind_ip`](#-mongodb--mongos--service--bind_ip)
-* [`port`](#-mongodb--mongos--service--port)
-* [`service_template`](#-mongodb--mongos--service--service_template)
-
-##### <a name="-mongodb--mongos--service--package_ensure"></a>`package_ensure`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::package_ensure`
-
-##### <a name="-mongodb--mongos--service--service_manage"></a>`service_manage`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::service_manage`
-
-##### <a name="-mongodb--mongos--service--service_name"></a>`service_name`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::service_name`
-
-##### <a name="-mongodb--mongos--service--service_enable"></a>`service_enable`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::service_enable`
-
-##### <a name="-mongodb--mongos--service--service_ensure"></a>`service_ensure`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::service_ensure`
-
-##### <a name="-mongodb--mongos--service--service_status"></a>`service_status`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::service_status`
-
-##### <a name="-mongodb--mongos--service--service_provider"></a>`service_provider`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::service_provider`
-
-##### <a name="-mongodb--mongos--service--bind_ip"></a>`bind_ip`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::bind_ip`
-
-##### <a name="-mongodb--mongos--service--port"></a>`port`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::port`
-
-##### <a name="-mongodb--mongos--service--service_template"></a>`service_template`
-
-Data type: `Any`
-
-
-
-Default value: `$mongodb::mongos::service_template`
+Default value: `true`
 
 ### <a name="mongodb--opsmanager"></a>`mongodb::opsmanager`
 
-This installs Ops Manager
+The mongodb::opsmanager class.
 
 #### Parameters
 
 The following parameters are available in the `mongodb::opsmanager` class:
 
+* [`pem_key_password`](#-mongodb--opsmanager--pem_key_password)
+* [`user_svc_class`](#-mongodb--opsmanager--user_svc_class)
+* [`snapshot_interval`](#-mongodb--opsmanager--snapshot_interval)
+* [`snapshot_interval_retention`](#-mongodb--opsmanager--snapshot_interval_retention)
+* [`snapshot_daily_retention`](#-mongodb--opsmanager--snapshot_daily_retention)
+* [`snapshot_weekly_retention`](#-mongodb--opsmanager--snapshot_weekly_retention)
+* [`snapshot_monthly_retention`](#-mongodb--opsmanager--snapshot_monthly_retention)
+* [`versions_directory`](#-mongodb--opsmanager--versions_directory)
 * [`user`](#-mongodb--opsmanager--user)
 * [`group`](#-mongodb--opsmanager--group)
-* [`opsmanager_url`](#-mongodb--opsmanager--opsmanager_url)
-* [`opsmanager_mongo_uri`](#-mongodb--opsmanager--opsmanager_mongo_uri)
-* [`ca_file`](#-mongodb--opsmanager--ca_file)
-* [`pem_key_file`](#-mongodb--opsmanager--pem_key_file)
-* [`pem_key_password`](#-mongodb--opsmanager--pem_key_password)
 * [`ensure`](#-mongodb--opsmanager--ensure)
 * [`package_name`](#-mongodb--opsmanager--package_name)
 * [`package_ensure`](#-mongodb--opsmanager--package_ensure)
@@ -790,6 +490,7 @@ The following parameters are available in the `mongodb::opsmanager` class:
 * [`service_name`](#-mongodb--opsmanager--service_name)
 * [`download_url`](#-mongodb--opsmanager--download_url)
 * [`mongo_uri`](#-mongodb--opsmanager--mongo_uri)
+* [`opsmanager_url`](#-mongodb--opsmanager--opsmanager_url)
 * [`client_certificate_mode`](#-mongodb--opsmanager--client_certificate_mode)
 * [`from_email_addr`](#-mongodb--opsmanager--from_email_addr)
 * [`reply_to_email_addr`](#-mongodb--opsmanager--reply_to_email_addr)
@@ -800,57 +501,8 @@ The following parameters are available in the `mongodb::opsmanager` class:
 * [`smtp_server_port`](#-mongodb--opsmanager--smtp_server_port)
 * [`ssl`](#-mongodb--opsmanager--ssl)
 * [`ignore_ui_setup`](#-mongodb--opsmanager--ignore_ui_setup)
-* [`user_svc_class`](#-mongodb--opsmanager--user_svc_class)
-* [`snapshot_interval`](#-mongodb--opsmanager--snapshot_interval)
-* [`snapshot_interval_retention`](#-mongodb--opsmanager--snapshot_interval_retention)
-* [`snapshot_daily_retention`](#-mongodb--opsmanager--snapshot_daily_retention)
-* [`snapshot_weekly_retention`](#-mongodb--opsmanager--snapshot_weekly_retention)
-* [`snapshot_monthly_retention`](#-mongodb--opsmanager--snapshot_monthly_retention)
-* [`versions_directory`](#-mongodb--opsmanager--versions_directory)
-
-##### <a name="-mongodb--opsmanager--user"></a>`user`
-
-Data type: `String[1]`
-
-The user that owns the config file
-
-Default value: `'mongodb-mms'`
-
-##### <a name="-mongodb--opsmanager--group"></a>`group`
-
-Data type: `String[1]`
-
-The group that owns the config file
-
-Default value: `'mongodb-mms'`
-
-##### <a name="-mongodb--opsmanager--opsmanager_url"></a>`opsmanager_url`
-
-Data type: `Stdlib::Httpurl`
-
-The fully qualified url where opsmanager runs. Must include the port.
-
-Default value: `"http://${facts['networking']['fqdn']}:8080"`
-
-##### <a name="-mongodb--opsmanager--opsmanager_mongo_uri"></a>`opsmanager_mongo_uri`
-
-Full URI where the Ops Manager application mongodb server(s) can be found.
-
-##### <a name="-mongodb--opsmanager--ca_file"></a>`ca_file`
-
-Data type: `Optional[String[1]]`
-
-Ca file for secure connection to backup agents.
-
-Default value: `undef`
-
-##### <a name="-mongodb--opsmanager--pem_key_file"></a>`pem_key_file`
-
-Data type: `Optional[String[1]]`
-
-Pem key file containing the cert and private key used for secure connections to backup agents.
-
-Default value: `undef`
+* [`ca_file`](#-mongodb--opsmanager--ca_file)
+* [`pem_key_file`](#-mongodb--opsmanager--pem_key_file)
 
 ##### <a name="-mongodb--opsmanager--pem_key_password"></a>`pem_key_password`
 
@@ -859,6 +511,81 @@ Data type: `Optional[String[1]]`
 The password to the pem key file.
 
 Default value: `undef`
+
+##### <a name="-mongodb--opsmanager--user_svc_class"></a>`user_svc_class`
+
+Data type: `Optional[String[1]]`
+
+The user svc class
+Default: com.xgen.svc.mms.svc.user.UserSvcDb
+External Source: com.xgen.svc.mms.svc.user.UserSvcCrowd
+Internal Database: com.xgen.svc.mms.svc.user.UserSvcDb
+
+Default value: `undef`
+
+##### <a name="-mongodb--opsmanager--snapshot_interval"></a>`snapshot_interval`
+
+Data type: `Optional[Integer]`
+
+The snapshot interval to use
+
+Default value: `undef`
+
+##### <a name="-mongodb--opsmanager--snapshot_interval_retention"></a>`snapshot_interval_retention`
+
+Data type: `Optional[Integer]`
+
+The snapshot interval retention period
+
+Default value: `undef`
+
+##### <a name="-mongodb--opsmanager--snapshot_daily_retention"></a>`snapshot_daily_retention`
+
+Data type: `Optional[Integer]`
+
+The dayly snapshot interval retention period
+
+Default value: `undef`
+
+##### <a name="-mongodb--opsmanager--snapshot_weekly_retention"></a>`snapshot_weekly_retention`
+
+Data type: `Optional[Integer]`
+
+The weekly snapshot interval retention period
+
+Default value: `undef`
+
+##### <a name="-mongodb--opsmanager--snapshot_monthly_retention"></a>`snapshot_monthly_retention`
+
+Data type: `Optional[Integer]`
+
+The monthly snapshot interval retention period
+
+Default value: `undef`
+
+##### <a name="-mongodb--opsmanager--versions_directory"></a>`versions_directory`
+
+Data type: `Optional[Integer]`
+
+The directory where to store the snapshot versions
+
+Default value: `undef`
+
+##### <a name="-mongodb--opsmanager--user"></a>`user`
+
+Data type: `String[1]`
+
+
+
+Default value: `'mongodb-mms'`
+
+##### <a name="-mongodb--opsmanager--group"></a>`group`
+
+Data type: `String[1]`
+
+
+
+Default value: `'mongodb-mms'`
 
 ##### <a name="-mongodb--opsmanager--ensure"></a>`ensure`
 
@@ -923,6 +650,14 @@ Data type: `String[1]`
 
 
 Default value: `'mongodb://127.0.0.1:27017'`
+
+##### <a name="-mongodb--opsmanager--opsmanager_url"></a>`opsmanager_url`
+
+Data type: `Stdlib::Httpurl`
+
+
+
+Default value: `"http://${facts['networking']['fqdn']}:8080"`
 
 ##### <a name="-mongodb--opsmanager--client_certificate_mode"></a>`client_certificate_mode`
 
@@ -1004,7 +739,7 @@ Data type: `Boolean`
 
 Default value: `true`
 
-##### <a name="-mongodb--opsmanager--user_svc_class"></a>`user_svc_class`
+##### <a name="-mongodb--opsmanager--ca_file"></a>`ca_file`
 
 Data type: `Optional[String[1]]`
 
@@ -1012,61 +747,32 @@ Data type: `Optional[String[1]]`
 
 Default value: `undef`
 
-##### <a name="-mongodb--opsmanager--snapshot_interval"></a>`snapshot_interval`
+##### <a name="-mongodb--opsmanager--pem_key_file"></a>`pem_key_file`
 
-Data type: `Optional[Integer]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--opsmanager--snapshot_interval_retention"></a>`snapshot_interval_retention`
-
-Data type: `Optional[Integer]`
+Data type: `Optional[String[1]]`
 
 
 
 Default value: `undef`
-
-##### <a name="-mongodb--opsmanager--snapshot_daily_retention"></a>`snapshot_daily_retention`
-
-Data type: `Optional[Integer]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--opsmanager--snapshot_weekly_retention"></a>`snapshot_weekly_retention`
-
-Data type: `Optional[Integer]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--opsmanager--snapshot_monthly_retention"></a>`snapshot_monthly_retention`
-
-Data type: `Optional[Integer]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--opsmanager--versions_directory"></a>`versions_directory`
-
-Data type: `Optional[Integer]`
-
-
-
-Default value: `undef`
-
-### <a name="mongodb--params"></a>`mongodb::params`
-
-PRIVATE CLASS: do not use directly
 
 ### <a name="mongodb--replset"></a>`mongodb::replset`
 
 Wrapper class useful for hiera based deployments
+
+#### Examples
+
+##### hieradata
+
+```puppet
+
+mongodb::replset::sets:
+  replicaset01:
+    ensure: present
+    members:
+      - member01.example.com:27017
+      - member02.example.com:27017
+      - member03.example.com:27017
+```
 
 #### Parameters
 
@@ -1078,129 +784,39 @@ The following parameters are available in the `mongodb::replset` class:
 
 Data type: `Any`
 
-
-
-Default value: `undef`
-
-### <a name="mongodb--repo"></a>`mongodb::repo`
-
-PRIVATE CLASS: do not use directly
-
-#### Parameters
-
-The following parameters are available in the `mongodb::repo` class:
-
-* [`ensure`](#-mongodb--repo--ensure)
-* [`version`](#-mongodb--repo--version)
-* [`use_enterprise_repo`](#-mongodb--repo--use_enterprise_repo)
-* [`repo_location`](#-mongodb--repo--repo_location)
-* [`proxy`](#-mongodb--repo--proxy)
-* [`proxy_username`](#-mongodb--repo--proxy_username)
-* [`proxy_password`](#-mongodb--repo--proxy_password)
-* [`aptkey_options`](#-mongodb--repo--aptkey_options)
-
-##### <a name="-mongodb--repo--ensure"></a>`ensure`
-
-Data type: `Variant[Enum['present', 'absent'], Boolean]`
-
-
-
-Default value: `'present'`
-
-##### <a name="-mongodb--repo--version"></a>`version`
-
-Data type: `Optional[String]`
-
-
+Hash of attributes as described in the mongodb_replset custom type
 
 Default value: `undef`
-
-##### <a name="-mongodb--repo--use_enterprise_repo"></a>`use_enterprise_repo`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
-
-##### <a name="-mongodb--repo--repo_location"></a>`repo_location`
-
-Data type: `Optional[String]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--repo--proxy"></a>`proxy`
-
-Data type: `Optional[String]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--repo--proxy_username"></a>`proxy_username`
-
-Data type: `Optional[String]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--repo--proxy_password"></a>`proxy_password`
-
-Data type: `Optional[String]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--repo--aptkey_options"></a>`aptkey_options`
-
-Data type: `Optional[String[1]]`
-
-
-
-Default value: `undef`
-
-### <a name="mongodb--repo--apt"></a>`mongodb::repo::apt`
-
-PRIVATE CLASS: do not use directly
-
-### <a name="mongodb--repo--yum"></a>`mongodb::repo::yum`
-
-PRIVATE CLASS: do not use directly
 
 ### <a name="mongodb--server"></a>`mongodb::server`
 
-This installs a MongoDB server. See README.md for more details.
+Most of the parameters manipulate the mongod.conf file.
+
+ For more details about configuration parameters consult the MongoDB Configuration File Options.
+
+This setting can be used to specify if the service should be running.
 
 #### Parameters
 
 The following parameters are available in the `mongodb::server` class:
 
-* [`tls`](#-mongodb--server--tls)
-* [`tls_key`](#-mongodb--server--tls_key)
-* [`tls_ca`](#-mongodb--server--tls_ca)
-* [`tls_conn_without_cert`](#-mongodb--server--tls_conn_without_cert)
-* [`tls_invalid_hostnames`](#-mongodb--server--tls_invalid_hostnames)
-* [`tls_mode`](#-mongodb--server--tls_mode)
 * [`ensure`](#-mongodb--server--ensure)
 * [`user`](#-mongodb--server--user)
 * [`group`](#-mongodb--server--group)
 * [`config`](#-mongodb--server--config)
 * [`dbpath`](#-mongodb--server--dbpath)
 * [`dbpath_fix`](#-mongodb--server--dbpath_fix)
-* [`pidfilepath`](#-mongodb--server--pidfilepath)
 * [`pidfilemode`](#-mongodb--server--pidfilemode)
+* [`pidfilepath`](#-mongodb--server--pidfilepath)
 * [`manage_pidfile`](#-mongodb--server--manage_pidfile)
 * [`rcfile`](#-mongodb--server--rcfile)
 * [`service_manage`](#-mongodb--server--service_manage)
-* [`service_provider`](#-mongodb--server--service_provider)
+* [`service_manage`](#-mongodb--server--service_manage)
 * [`service_name`](#-mongodb--server--service_name)
+* [`service_provider`](#-mongodb--server--service_provider)
+* [`service_status`](#-mongodb--server--service_status)
 * [`service_enable`](#-mongodb--server--service_enable)
 * [`service_ensure`](#-mongodb--server--service_ensure)
-* [`service_status`](#-mongodb--server--service_status)
 * [`package_ensure`](#-mongodb--server--package_ensure)
 * [`package_name`](#-mongodb--server--package_name)
 * [`logpath`](#-mongodb--server--logpath)
@@ -1211,11 +827,9 @@ The following parameters are available in the `mongodb::server` class:
 * [`fork`](#-mongodb--server--fork)
 * [`port`](#-mongodb--server--port)
 * [`journal`](#-mongodb--server--journal)
-* [`nojournal`](#-mongodb--server--nojournal)
 * [`smallfiles`](#-mongodb--server--smallfiles)
 * [`cpu`](#-mongodb--server--cpu)
 * [`auth`](#-mongodb--server--auth)
-* [`noauth`](#-mongodb--server--noauth)
 * [`verbose`](#-mongodb--server--verbose)
 * [`verbositylevel`](#-mongodb--server--verbositylevel)
 * [`objcheck`](#-mongodb--server--objcheck)
@@ -1250,12 +864,14 @@ The following parameters are available in the `mongodb::server` class:
 * [`config_content`](#-mongodb--server--config_content)
 * [`config_template`](#-mongodb--server--config_template)
 * [`config_data`](#-mongodb--server--config_data)
-* [`ssl`](#-mongodb--server--ssl)
-* [`ssl_key`](#-mongodb--server--ssl_key)
-* [`ssl_ca`](#-mongodb--server--ssl_ca)
-* [`ssl_weak_cert`](#-mongodb--server--ssl_weak_cert)
-* [`ssl_invalid_hostnames`](#-mongodb--server--ssl_invalid_hostnames)
-* [`ssl_mode`](#-mongodb--server--ssl_mode)
+* [`tls`](#-mongodb--server--tls)
+* [`tls_key`](#-mongodb--server--tls_key)
+* [`tls_ca`](#-mongodb--server--tls_ca)
+* [`tls_conn_without_cert`](#-mongodb--server--tls_conn_without_cert)
+* [`tls_invalid_hostnames`](#-mongodb--server--tls_invalid_hostnames)
+* [`tls_invalid_certificates`](#-mongodb--server--tls_invalid_certificates)
+* [`tls_mode`](#-mongodb--server--tls_mode)
+* [`admin_password_hash`](#-mongodb--server--admin_password_hash)
 * [`restart`](#-mongodb--server--restart)
 * [`storage_engine`](#-mongodb--server--storage_engine)
 * [`create_admin`](#-mongodb--server--create_admin)
@@ -1263,9 +879,563 @@ The following parameters are available in the `mongodb::server` class:
 * [`admin_password`](#-mongodb--server--admin_password)
 * [`admin_auth_mechanism`](#-mongodb--server--admin_auth_mechanism)
 * [`admin_update_password`](#-mongodb--server--admin_update_password)
+* [`admin_roles`](#-mongodb--server--admin_roles)
 * [`handle_creds`](#-mongodb--server--handle_creds)
 * [`store_creds`](#-mongodb--server--store_creds)
-* [`admin_roles`](#-mongodb--server--admin_roles)
+
+##### <a name="-mongodb--server--ensure"></a>`ensure`
+
+Data type: `String[1]`
+
+Used to ensure that the package is installed and the service is running, or that the package is
+absent/purged and the service is stopped.
+
+Default value: `'present'`
+
+##### <a name="-mongodb--server--user"></a>`user`
+
+Data type: `String[1]`
+
+This setting can be used to override the default MongoDB user and owner of the service and related files in the file system.
+If not specified, the module will use the default for your OS distro.
+
+##### <a name="-mongodb--server--group"></a>`group`
+
+Data type: `String[1]`
+
+This setting can be used to override the default MongoDB user group to be used for related files in the file system.
+If not specified, the module will use the default for your OS distro.
+
+##### <a name="-mongodb--server--config"></a>`config`
+
+Data type: `Stdlib::Absolutepath`
+
+Path of the config file. If not specified, the module will use the default for your OS distro.
+
+Default value: `'/etc/mongod.conf'`
+
+##### <a name="-mongodb--server--dbpath"></a>`dbpath`
+
+Data type: `Stdlib::Absolutepath`
+
+Set this value to designate a directory for the mongod instance to store it's data.
+If not specified, the module will use the default for your OS distro.
+
+##### <a name="-mongodb--server--dbpath_fix"></a>`dbpath_fix`
+
+Data type: `Boolean`
+
+Set this value to true if you want puppet to recursively manage the permissions of the files in the dbpath
+directory. If you are using the default dbpath, this should probably be false. Set this to true if you are
+using a custom dbpath.
+
+Default value: `false`
+
+##### <a name="-mongodb--server--pidfilemode"></a>`pidfilemode`
+
+Data type: `String[4,4]`
+
+The file mode of the pidfilepath
+
+Default value: `'0644'`
+
+##### <a name="-mongodb--server--pidfilepath"></a>`pidfilepath`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+Specify a file location to hold the PID or process ID of the mongod process.
+If not specified, the module will use the default for your OS distro.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--manage_pidfile"></a>`manage_pidfile`
+
+Data type: `Boolean`
+
+Should puppet create the pidfile. Mongod 6.2.10 will not start if pidfile exists
+
+Default value: `false`
+
+##### <a name="-mongodb--server--rcfile"></a>`rcfile`
+
+Data type: `String`
+
+The path to the custom mongosh rc file.
+
+Default value: `"${facts['root_home']}/.mongoshrc.js"`
+
+##### <a name="-mongodb--server--service_manage"></a>`service_manage`
+
+Data type: `Boolean`
+
+Whether or not the MongoDB service resource should be part of the catalog.
+
+Default value: `true`
+
+##### <a name="-mongodb--server--service_manage"></a>`service_manage`
+
+Whether or not the MongoDB sharding service resource should be part of the catalog.
+
+Default value: `true`
+
+##### <a name="-mongodb--server--service_name"></a>`service_name`
+
+Data type: `String[1]`
+
+This setting can be used to override the default Mongos service name.
+If not specified, the module will use whatever service name is the default for your OS distro.
+
+Default value: `'mongod'`
+
+##### <a name="-mongodb--server--service_provider"></a>`service_provider`
+
+Data type: `Optional[String[1]]`
+
+This setting can be used to override the default Mongos service provider.
+If not specified, the module will use whatever service provider is the default for your OS distro.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--service_status"></a>`service_status`
+
+Data type: `Optional[Enum['stopped', 'running']]`
+
+This setting can be used to override the default status check command for your Mongos service.
+If not specified, the module will use whatever service name is the default for your OS distro.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--service_enable"></a>`service_enable`
+
+Data type: `Boolean`
+
+This setting can be used to specify if the service should be enable at boot.
+
+Default value: `true`
+
+##### <a name="-mongodb--server--service_ensure"></a>`service_ensure`
+
+Data type: `Enum['stopped', 'running']`
+
+
+
+Default value: `'running'`
+
+##### <a name="-mongodb--server--package_ensure"></a>`package_ensure`
+
+Data type: `String[1]`
+
+This setting can be used to specify if puppet should install the package or not.
+
+Default value: `pick($mongodb::globals::version, 'present')`
+
+##### <a name="-mongodb--server--package_name"></a>`package_name`
+
+Data type: `String[1]`
+
+This setting can be used to specify the name of the package that should be installed.
+If not specified, the module will use whatever service name is the default for your OS distro.
+
+Default value: `"mongodb-${mongodb::globals::edition}-server"`
+
+##### <a name="-mongodb--server--logpath"></a>`logpath`
+
+Data type: `Stdlib::Absolutepath`
+
+Specify the path to a file name for the log file that will hold all diagnostic logging information.
+Unless specified, mongod will output all log information to the standard output.
+
+Default value: `'/var/log/mongodb/mongod.log'`
+
+##### <a name="-mongodb--server--bind_ip"></a>`bind_ip`
+
+Data type: `Array[Stdlib::IP::Address]`
+
+Set this option to configure the mongod or mongos process to bind to and listen for connections from
+applications on this address. If not specified, the module will use the default for your OS distro.
+
+Default value: `['127.0.0.1']`
+
+##### <a name="-mongodb--server--ipv6"></a>`ipv6`
+
+Data type: `Optional[Boolean]`
+
+This setting has to be true to configure MongoDB to turn on ipv6 support. If not specified and ipv6
+address is passed to MongoDB bind_ip it will just fail.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--logappend"></a>`logappend`
+
+Data type: `Boolean`
+
+Set to true to add new entries to the end of the logfile rather than overwriting the content of the log
+when the process restarts.
+
+Default value: `true`
+
+##### <a name="-mongodb--server--system_logrotate"></a>`system_logrotate`
+
+Data type: `Optional[String]`
+
+Set to reopen for mongo to close a log file then reopen it so that logrotations handled outside of mongo
+perform as expected.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--fork"></a>`fork`
+
+Data type: `Optional[Boolean]`
+
+Set to true to fork server process at launch time. The default setting depends on the operating system.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--port"></a>`port`
+
+Data type: `Optional[Integer[1, 65535]]`
+
+Specifies a TCP port for the server instance to listen for client connections.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--journal"></a>`journal`
+
+Data type: `Optional[Boolean]`
+
+Enable or disable the durability journal to ensure data files remain valid and recoverable.
+Available in MongoDB < 7.0
+Default: true on 64-bit systems, false on 32-bit systems
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--smallfiles"></a>`smallfiles`
+
+Data type: `Optional[Boolean]`
+
+Set to true to modify MongoDB to use a smaller default data file size. Specifically, smallfiles reduces
+the initial size for data files and limits them to 512 megabytes.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--cpu"></a>`cpu`
+
+Data type: `Optional[Boolean]`
+
+Set to true to force mongod to report every four seconds CPU utilization and the amount of time that the
+processor waits for I/O operations to complete (i.e. I/O wait.)
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--auth"></a>`auth`
+
+Data type: `Boolean`
+
+Set to true to enable database authentication for users connecting from remote hosts. If no users exist,
+the localhost interface will continue to have access to the database until you create the first user.
+
+Default value: `false`
+
+##### <a name="-mongodb--server--verbose"></a>`verbose`
+
+Data type: `Optional[Boolean]`
+
+Increases the amount of internal reporting returned on standard output or in the log file generated by logpath.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--verbositylevel"></a>`verbositylevel`
+
+Data type: `Optional[String]`
+
+MongoDB has the following levels of verbosity: v, vv, vvv, vvvv and vvvvv.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--objcheck"></a>`objcheck`
+
+Data type: `Optional[Boolean]`
+
+Forces the mongod to validate all requests from clients upon receipt to ensure that clients never insert
+invalid documents into the database.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--quota"></a>`quota`
+
+Data type: `Optional[Boolean]`
+
+Set to true to enable a maximum limit for the number of data files each database can have. The default
+quota is 8 data files, when quota is true.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--quotafiles"></a>`quotafiles`
+
+Data type: `Optional[Integer]`
+
+Modify limit on the number of data files per database. This option requires the quota setting.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--diaglog"></a>`diaglog`
+
+Data type: `Optional[Integer[0, 7]]`
+
+Creates a very verbose diagnostic log for troubleshooting and recording various errors. For more
+information please refer to MongoDB Configuration File Options.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--directoryperdb"></a>`directoryperdb`
+
+Data type: `Optional[Boolean]`
+
+Set to true to modify the storage pattern of the data directory to store each database’s files in a distinct folder.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--profile"></a>`profile`
+
+Data type: `Any`
+
+Modify this value to changes the level of database profiling, which inserts information about operation
+performance into output of mongod or the log file if specified by logpath.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--maxconns"></a>`maxconns`
+
+Data type: `Optional[Integer]`
+
+Specifies a value to set the maximum number of simultaneous connections that MongoDB will accept.
+Unless set, MongoDB will not limit its own connections.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--oplog_size"></a>`oplog_size`
+
+Data type: `Optional[Integer]`
+
+Specifies a maximum size in megabytes for the replication operation log (e.g. oplog.) mongod creates an
+oplog based on the maximum amount of space available. For 64-bit systems, the oplog is typically 5% of
+available disk space.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--nohints"></a>`nohints`
+
+Data type: `Any`
+
+Ignore query hints.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--nohttpinterface"></a>`nohttpinterface`
+
+Data type: `Optional[Boolean]`
+
+Set to true to disable the HTTP interface. This command will override the rest and disable the HTTP
+interface if you specify both.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--noscripting"></a>`noscripting`
+
+Data type: `Optional[Boolean]`
+
+Set noscripting = true to disable the scripting engine.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--notablescan"></a>`notablescan`
+
+Data type: `Optional[Boolean]`
+
+Set notablescan = true to forbid operations that require a table scan.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--noprealloc"></a>`noprealloc`
+
+Data type: `Optional[Boolean]`
+
+Set noprealloc = true to disable the preallocation of data files. This will shorten the start up time in
+some cases, but can cause significant performance penalties during normal operations.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--nssize"></a>`nssize`
+
+Data type: `Optional[Integer]`
+
+Use this setting to control the default size for all newly created namespace files (i.e .ns).
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--mms_token"></a>`mms_token`
+
+Data type: `Any`
+
+MMS token for mms monitoring.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--mms_name"></a>`mms_name`
+
+Data type: `Any`
+
+MMS identifier for mms monitoring.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--mms_interval"></a>`mms_interval`
+
+Data type: `Any`
+
+MMS interval for mms monitoring.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--replset"></a>`replset`
+
+Data type: `Optional[String]`
+
+Use this setting to configure replication with replica sets. Specify a replica set name as an argument to
+this set. All hosts must have the same set name.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--replset_config"></a>`replset_config`
+
+Data type: `Optional[Hash]`
+
+A hash that is used to configure the replica set. Mutually exclusive with replset_members param.
+class mongodb::server {
+  replset        => 'rsmain',
+  replset_config => { 'rsmain' => {
+                       ensure => present,
+                       settings => { heartbeatTimeoutSecs => 15, getLastErrorModes => { ttmode => { dc => 1 } } },
+                       members => [{'host' => 'host1:27017', 'tags':{ 'dc' : 'east'}}, { 'host' => 'host2:27017'}, 'host3:27017'] }},
+}
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--replset_members"></a>`replset_members`
+
+Data type: `Optional[Array]`
+
+An array of member hosts for the replica set. Mutually exclusive with replset_config param.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--configsvr"></a>`configsvr`
+
+Data type: `Optional[Boolean]`
+
+Use this setting to enable config server mode for mongod.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--shardsvr"></a>`shardsvr`
+
+Data type: `Optional[Boolean]`
+
+Use this setting to enable shard server mode for mongod.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--rest"></a>`rest`
+
+Data type: `Optional[Boolean]`
+
+Set to true to enable a simple REST interface.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--quiet"></a>`quiet`
+
+Data type: `Optional[Boolean]`
+
+Runs the mongod or mongos instance in a quiet mode that attempts to limit the amount of output.
+This option suppresses : "output from database commands, including drop, dropIndexes, diagLogging,
+validate, and clean", "replication activity", "connection accepted events" and "connection closed events".
+
+For production systems this option is not recommended as it may make tracking problems during particular
+connections much more difficult.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--slowms"></a>`slowms`
+
+Data type: `Optional[Integer]`
+
+Sets the threshold for mongod to consider a query “slow” for the database profiler.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--keyfile"></a>`keyfile`
+
+Data type: `Optional[Stdlib::Absolutepath]`
+
+Specify the path to a key file to store authentication information. This option is only useful for the
+connection between replica set members.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--key"></a>`key`
+
+Data type: `Optional[Variant[String[6], Sensitive[String[6]]]]`
+
+Specify the key contained within the keyfile. This option is only useful for the connection between
+replica set members.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--set_parameter"></a>`set_parameter`
+
+Data type: `Optional[Variant[String[1], Array[String[1]], Hash]]`
+
+Set MongoDB parameters
+Supported types:
+  String (i.e. 'textSearchEnabled=true' or 'textSearchEnabled: true' )
+  Array  (i.e. ['textSearchEnabled=true'] or ['textSearchEnabled: true'] )
+  Hash   (i.e. {'textSearchEnabled' => true}
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--syslog"></a>`syslog`
+
+Data type: `Boolean`
+
+Sends all logging output to the host’s syslog system rather than to standard output or a log file.
+
+Default value: `false`
+
+##### <a name="-mongodb--server--config_content"></a>`config_content`
+
+Data type: `Any`
+
+Config content if the default doesn't match one needs.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--config_template"></a>`config_template`
+
+Data type: `Optional[String]`
+
+Path to the config template if the default doesn't match one needs.
+
+Default value: `undef`
+
+##### <a name="-mongodb--server--config_data"></a>`config_data`
+
+Data type: `Optional[Hash]`
+
+A hash to allow for additional configuration options to be set.
+(i.e {'security' => { 'javascriptEnabled' => false}})
+
+Default value: `undef`
 
 ##### <a name="-mongodb--server--tls"></a>`tls`
 
@@ -1293,19 +1463,28 @@ Default value: `undef`
 
 ##### <a name="-mongodb--server--tls_conn_without_cert"></a>`tls_conn_without_cert`
 
-Data type: `Boolean`
+Data type: `Optional[Boolean]`
 
 Set to true to bypass client certificate validation for clients that do not present a certificate.
 
-Default value: `false`
+Default value: `undef`
 
 ##### <a name="-mongodb--server--tls_invalid_hostnames"></a>`tls_invalid_hostnames`
 
-Data type: `Boolean`
+Data type: `Optional[Boolean]`
 
 Set to true to disable the validation of the hostnames in TLS certificates.
 
-Default value: `false`
+Default value: `undef`
+
+##### <a name="-mongodb--server--tls_invalid_certificates"></a>`tls_invalid_certificates`
+
+Data type: `Optional[Boolean]`
+
+Enable or disable the validation checks for TLS certificates on other servers in the cluster and allows the use of
+invalid certificates to connect.
+
+Default value: `undef`
 
 ##### <a name="-mongodb--server--tls_mode"></a>`tls_mode`
 
@@ -1315,587 +1494,28 @@ Defines if TLS is used for all network connections. Allowed values are 'requireT
 
 Default value: `'requireTLS'`
 
-##### <a name="-mongodb--server--ensure"></a>`ensure`
+##### <a name="-mongodb--server--admin_password_hash"></a>`admin_password_hash`
 
-Data type: `Variant[Boolean, String]`
+Data type: `Optional[Variant[String[1], Sensitive[String[1]]]]`
 
-
-
-Default value: `$mongodb::params::ensure`
-
-##### <a name="-mongodb--server--user"></a>`user`
-
-Data type: `String`
-
-
-
-Default value: `$mongodb::params::user`
-
-##### <a name="-mongodb--server--group"></a>`group`
-
-Data type: `String`
-
-
-
-Default value: `$mongodb::params::group`
-
-##### <a name="-mongodb--server--config"></a>`config`
-
-Data type: `Stdlib::Absolutepath`
-
-
-
-Default value: `$mongodb::params::config`
-
-##### <a name="-mongodb--server--dbpath"></a>`dbpath`
-
-Data type: `Stdlib::Absolutepath`
-
-
-
-Default value: `$mongodb::params::dbpath`
-
-##### <a name="-mongodb--server--dbpath_fix"></a>`dbpath_fix`
-
-Data type: `Boolean`
-
-
-
-Default value: `$mongodb::params::dbpath_fix`
-
-##### <a name="-mongodb--server--pidfilepath"></a>`pidfilepath`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-
-
-Default value: `$mongodb::params::pidfilepath`
-
-##### <a name="-mongodb--server--pidfilemode"></a>`pidfilemode`
-
-Data type: `String`
-
-
-
-Default value: `$mongodb::params::pidfilemode`
-
-##### <a name="-mongodb--server--manage_pidfile"></a>`manage_pidfile`
-
-Data type: `Boolean`
-
-
-
-Default value: `$mongodb::params::manage_pidfile`
-
-##### <a name="-mongodb--server--rcfile"></a>`rcfile`
-
-Data type: `String`
-
-
-
-Default value: `$mongodb::params::rcfile`
-
-##### <a name="-mongodb--server--service_manage"></a>`service_manage`
-
-Data type: `Boolean`
-
-
-
-Default value: `$mongodb::params::service_manage`
-
-##### <a name="-mongodb--server--service_provider"></a>`service_provider`
-
-Data type: `Optional[String]`
-
-
-
-Default value: `$mongodb::params::service_provider`
-
-##### <a name="-mongodb--server--service_name"></a>`service_name`
-
-Data type: `Optional[String]`
-
-
-
-Default value: `$mongodb::params::service_name`
-
-##### <a name="-mongodb--server--service_enable"></a>`service_enable`
-
-Data type: `Boolean`
-
-
-
-Default value: `$mongodb::params::service_enable`
-
-##### <a name="-mongodb--server--service_ensure"></a>`service_ensure`
-
-Data type: `Enum['stopped', 'running']`
-
-
-
-Default value: `$mongodb::params::service_ensure`
-
-##### <a name="-mongodb--server--service_status"></a>`service_status`
-
-Data type: `Optional[Enum['stopped', 'running']]`
-
-
-
-Default value: `$mongodb::params::service_status`
-
-##### <a name="-mongodb--server--package_ensure"></a>`package_ensure`
-
-Data type: `Variant[Boolean, String]`
-
-
-
-Default value: `$mongodb::params::package_ensure`
-
-##### <a name="-mongodb--server--package_name"></a>`package_name`
-
-Data type: `String`
-
-
-
-Default value: `$mongodb::params::server_package_name`
-
-##### <a name="-mongodb--server--logpath"></a>`logpath`
-
-Data type: `Variant[Boolean, Stdlib::Absolutepath]`
-
-
-
-Default value: `$mongodb::params::logpath`
-
-##### <a name="-mongodb--server--bind_ip"></a>`bind_ip`
-
-Data type: `Array[Stdlib::IP::Address]`
-
-
-
-Default value: `$mongodb::params::bind_ip`
-
-##### <a name="-mongodb--server--ipv6"></a>`ipv6`
-
-Data type: `Optional[Boolean]`
-
-
+Hashed password. Hex encoded md5 hash of mongodb password.
 
 Default value: `undef`
-
-##### <a name="-mongodb--server--logappend"></a>`logappend`
-
-Data type: `Boolean`
-
-
-
-Default value: `true`
-
-##### <a name="-mongodb--server--system_logrotate"></a>`system_logrotate`
-
-Data type: `Optional[String]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--fork"></a>`fork`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `$mongodb::params::fork`
-
-##### <a name="-mongodb--server--port"></a>`port`
-
-Data type: `Optional[Integer[1, 65535]]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--journal"></a>`journal`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `$mongodb::params::journal`
-
-##### <a name="-mongodb--server--nojournal"></a>`nojournal`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--smallfiles"></a>`smallfiles`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--cpu"></a>`cpu`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--auth"></a>`auth`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
-
-##### <a name="-mongodb--server--noauth"></a>`noauth`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--verbose"></a>`verbose`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--verbositylevel"></a>`verbositylevel`
-
-Data type: `Optional[String]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--objcheck"></a>`objcheck`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--quota"></a>`quota`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--quotafiles"></a>`quotafiles`
-
-Data type: `Optional[Integer]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--diaglog"></a>`diaglog`
-
-Data type: `Optional[Integer[0, 7]]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--directoryperdb"></a>`directoryperdb`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--profile"></a>`profile`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--maxconns"></a>`maxconns`
-
-Data type: `Optional[Integer]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--oplog_size"></a>`oplog_size`
-
-Data type: `Optional[Integer]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--nohints"></a>`nohints`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--nohttpinterface"></a>`nohttpinterface`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--noscripting"></a>`noscripting`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--notablescan"></a>`notablescan`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--noprealloc"></a>`noprealloc`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--nssize"></a>`nssize`
-
-Data type: `Optional[Integer]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--mms_token"></a>`mms_token`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--mms_name"></a>`mms_name`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--mms_interval"></a>`mms_interval`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--replset"></a>`replset`
-
-Data type: `Optional[String]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--replset_config"></a>`replset_config`
-
-Data type: `Optional[Hash]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--replset_members"></a>`replset_members`
-
-Data type: `Optional[Array]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--configsvr"></a>`configsvr`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--shardsvr"></a>`shardsvr`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--rest"></a>`rest`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--quiet"></a>`quiet`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--slowms"></a>`slowms`
-
-Data type: `Optional[Integer]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--keyfile"></a>`keyfile`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--key"></a>`key`
-
-Data type: `Optional[Variant[String[6], Sensitive[String[6]]]]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--set_parameter"></a>`set_parameter`
-
-Data type: `Optional[Variant[String[1], Array[String[1]]]]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--syslog"></a>`syslog`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--config_content"></a>`config_content`
-
-Data type: `Any`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--config_template"></a>`config_template`
-
-Data type: `Optional[String]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--config_data"></a>`config_data`
-
-Data type: `Optional[Hash]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--ssl"></a>`ssl`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--ssl_key"></a>`ssl_key`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--ssl_ca"></a>`ssl_ca`
-
-Data type: `Optional[Stdlib::Absolutepath]`
-
-
-
-Default value: `undef`
-
-##### <a name="-mongodb--server--ssl_weak_cert"></a>`ssl_weak_cert`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
-
-##### <a name="-mongodb--server--ssl_invalid_hostnames"></a>`ssl_invalid_hostnames`
-
-Data type: `Boolean`
-
-
-
-Default value: `false`
-
-##### <a name="-mongodb--server--ssl_mode"></a>`ssl_mode`
-
-Data type: `Enum['requireSSL', 'preferSSL', 'allowSSL']`
-
-
-
-Default value: `'requireSSL'`
 
 ##### <a name="-mongodb--server--restart"></a>`restart`
 
 Data type: `Boolean`
 
+Specifies whether the service should be restarted on config changes.
 
-
-Default value: `$mongodb::params::restart`
+Default value: `true`
 
 ##### <a name="-mongodb--server--storage_engine"></a>`storage_engine`
 
 Data type: `Optional[String]`
 
-
+Only needed for MongoDB 3.x versions, where it's possible to select the 'wiredTiger' engine in addition to
+the default 'mmapv1' engine. If not set, the config is left out and mongo will default to 'mmapv1'.
 
 Default value: `undef`
 
@@ -1903,23 +1523,23 @@ Default value: `undef`
 
 Data type: `Boolean`
 
+Allows to create admin user for admin database.
 
-
-Default value: `$mongodb::params::create_admin`
+Default value: `false`
 
 ##### <a name="-mongodb--server--admin_username"></a>`admin_username`
 
 Data type: `String`
 
+Administrator user name
 
-
-Default value: `$mongodb::params::admin_username`
+Default value: `'admin'`
 
 ##### <a name="-mongodb--server--admin_password"></a>`admin_password`
 
 Data type: `Optional[Variant[String, Sensitive[String]]]`
 
-
+Administrator user password
 
 Default value: `undef`
 
@@ -1927,57 +1547,69 @@ Default value: `undef`
 
 Data type: `Enum['scram_sha_1', 'scram_sha_256']`
 
+Administrator authentication mechanism. scram_sha_256 password synchronization verification is not supported.
 
-
-Default value: `$mongodb::params::admin_auth_mechanism`
+Default value: `'scram_sha_1'`
 
 ##### <a name="-mongodb--server--admin_update_password"></a>`admin_update_password`
 
 Data type: `Boolean`
 
-
+Update password. Used with SCRAM-SHA-256 because password verification is not supported.
 
 Default value: `false`
+
+##### <a name="-mongodb--server--admin_roles"></a>`admin_roles`
+
+Data type: `Array[String[1]]`
+
+Administrator user roles
+
+Default value:
+
+```puppet
+[
+    'userAdmin', 'readWrite', 'dbAdmin', 'dbAdminAnyDatabase', 'readAnyDatabase',
+    'readWriteAnyDatabase', 'userAdminAnyDatabase', 'clusterAdmin',
+    'clusterManager', 'clusterMonitor', 'hostManager', 'root', 'restore',
+  ]
+```
 
 ##### <a name="-mongodb--server--handle_creds"></a>`handle_creds`
 
 Data type: `Boolean`
 
+Set this to false to avoid having puppet handle .mongoshrc.js in case you wish to deliver it by other
+means. This is needed for facts and providers to work if you have auth set to true.
 
-
-Default value: `$mongodb::params::handle_creds`
+Default value: `true`
 
 ##### <a name="-mongodb--server--store_creds"></a>`store_creds`
 
 Data type: `Boolean`
 
+Store admin credentials in mongoshrc.js file. Uses with create_admin parameter
 
-
-Default value: `$mongodb::params::store_creds`
-
-##### <a name="-mongodb--server--admin_roles"></a>`admin_roles`
-
-Data type: `Array`
-
-
-
-Default value: `$mongodb::params::admin_roles`
-
-### <a name="mongodb--server--config"></a>`mongodb::server::config`
-
-PRIVATE CLASS: do not call directly
-
-### <a name="mongodb--server--install"></a>`mongodb::server::install`
-
-PRIVATE CLASS: do not call directly
-
-### <a name="mongodb--server--service"></a>`mongodb::server::service`
-
-PRIVATE CLASS: do not call directly
+Default value: `false`
 
 ### <a name="mongodb--shardsvr"></a>`mongodb::shardsvr`
 
 Wrapper class useful for hiera based deployments
+
+#### Examples
+
+##### hieradata
+
+```puppet
+mongodb::shardsvr::shards:
+  shard01:
+    keys:
+      - {x: 1}
+    members:
+      - shardhost01.exmaple.com:30000
+      - shardhost02.exmaple.com:30000
+      - shardhost03.exmaple.com:30000
+```
 
 #### Parameters
 
@@ -1989,7 +1621,7 @@ The following parameters are available in the `mongodb::shardsvr` class:
 
 Data type: `Any`
 
-
+Hash of attributes as described in the mongodb_shardsvr custom type
 
 Default value: `undef`
 
@@ -1997,20 +1629,7 @@ Default value: `undef`
 
 ### <a name="mongodb--db"></a>`mongodb::db`
 
-== Class: mongodb::db
-
 Class for creating mongodb databases and users.
-
-== Parameters
-
- user - Database username.
- auth_mechanism - Authentication mechanism. scram_sha_256 password verification is not supported. Defaults to 'scram_sha_1'.
- db_name - Database name. Defaults to $name.
- password_hash - Hashed password. Hex encoded md5 hash of "$username:mongo:$password".
- password - Plain text user password. This is UNSAFE, use 'password_hash' instead.
- roles (default: ['dbAdmin']) - array with user roles.
- tries (default: 10) - The maximum amount of two second tries to wait MongoDB startup.
- update_password (default: false) - Force an update of the password when scram_sha_256 is used.
 
 #### Parameters
 
@@ -2029,13 +1648,13 @@ The following parameters are available in the `mongodb::db` defined type:
 
 Data type: `String`
 
-
+Database username.
 
 ##### <a name="-mongodb--db--auth_mechanism"></a>`auth_mechanism`
 
 Data type: `Enum['scram_sha_1', 'scram_sha_256']`
 
-
+Authentication mechanism. scram_sha_256 password verification is not supported. Defaults to 'scram_sha_1'.
 
 Default value: `'scram_sha_1'`
 
@@ -2043,7 +1662,7 @@ Default value: `'scram_sha_1'`
 
 Data type: `String`
 
-
+Database name. Defaults to $name.
 
 Default value: `$name`
 
@@ -2051,7 +1670,7 @@ Default value: `$name`
 
 Data type: `Optional[Variant[String[1], Sensitive[String[1]]]]`
 
-
+Hashed password. Hex encoded md5 hash of "$username:mongo:$password".
 
 Default value: `undef`
 
@@ -2059,7 +1678,7 @@ Default value: `undef`
 
 Data type: `Optional[Variant[String[1], Sensitive[String[1]]]]`
 
-
+Plain text user password. This is UNSAFE, use 'password_hash' instead.
 
 Default value: `undef`
 
@@ -2067,7 +1686,7 @@ Default value: `undef`
 
 Data type: `Array[String]`
 
-
+Array with user roles. Deaults to ['dbAdmin']
 
 Default value: `['dbAdmin']`
 
@@ -2075,7 +1694,7 @@ Default value: `['dbAdmin']`
 
 Data type: `Integer[0]`
 
-
+The maximum amount of two second tries to wait MongoDB startup. Defaults to 10.
 
 Default value: `10`
 
@@ -2083,7 +1702,7 @@ Default value: `10`
 
 Data type: `Boolean`
 
-
+Force an update of the password when scram_sha_256 is used. Defaults to false.
 
 Default value: `false`
 
@@ -2105,7 +1724,7 @@ The following properties are available in the `mongodb_conn_validator` type.
 
 Valid values: `present`, `absent`
 
-The basic property that the resource should be in.
+Ensure to verify the connection to mongodb
 
 Default value: `present`
 
@@ -2207,7 +1826,7 @@ The following properties are available in the `mongodb_replset` type.
 
 Valid values: `present`
 
-The basic property that the resource should be in.
+Ensure the replicaset is either present or absent
 
 Default value: `present`
 
@@ -2261,7 +1880,7 @@ The following properties are available in the `mongodb_shard` type.
 
 Valid values: `present`
 
-The basic property that the resource should be in.
+Ensure the shard is either present or absent
 
 Default value: `present`
 
@@ -2325,7 +1944,7 @@ The password hash of the user. Use mongodb_password() for creating hash. Only av
 
 ##### `roles`
 
-Valid values: `%r{^\w+(@\w+)?$}`
+Valid values: `%r{^\w+(@[\w-]+)?$}`
 
 The user's roles.
 
