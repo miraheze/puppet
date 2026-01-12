@@ -227,17 +227,13 @@ class phorge (
     }
 
     # Backups
-
-    # Replaced with the below.
-    backup::job { 'phorge':
-        ensure   => absent,
+    backup::job { 'phorge_db':
+        ensure   => present,
         interval => '*-*-1,15 01:00:00',
     }
 
-    ['phorge_db', 'phorge_images'].each | $key | {
-        backup::job { $key:
-            ensure   => present,
-            interval => '*-*-1,15 01:00:00',
-        }
+    backup::job { 'phorge_images':
+        ensure   => present,
+        interval => '*-*-1,15 01:00:00',
     }
 }
