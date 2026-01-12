@@ -11,7 +11,7 @@ class role::graylog {
 
     class { 'mongodb::globals':
         manage_package_repo => true,
-        version             => lookup('mongodb_version', {'default_value' => '5.0.21'}),
+        repo_version        => lookup('mongodb_version', {'default_value' => '5.0.21'}),
     }
     -> class { 'mongodb::server':
         bind_ip => ['127.0.0.1'],
