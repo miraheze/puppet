@@ -42,9 +42,10 @@ class mongodb::repo::apt (
     release  => $mongodb::repo::release,
     repos    => $mongodb::repo::repos,
     key      => {
-      dir    => '/usr/share/keyrings/',
-      name   => "mongodb-${keyring_file}",
-      source => $keyring_location,
+      dir     => '/usr/share/keyrings/',
+      name    => "mongodb-${keyring_file}",
+      source  => $keyring_location,
+      options => $mongodb::repo::aptkey_options,
     },
     comment  => $comment,
   }
