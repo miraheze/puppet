@@ -11,7 +11,7 @@ class role::graylog {
 
     class { 'mongodb::globals':
         manage_package_repo => true,
-        version             => lookup('mongodb_version', {'default_value' => '5.0.21'}),
+        version             => lookup('mongodb_version', {'default_value' => '7.0.28'}),
     }
     -> class { 'mongodb::server':
         bind_ip => ['127.0.0.1'],
@@ -21,10 +21,10 @@ class role::graylog {
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
         proxy   => $http_proxy,
-        version => '6.3',
+        version => '7.0',
     }
     -> class { 'graylog::server':
-        package_version        => '6.3.7-1',
+        package_version        => '7.0.3-1',
         config                 => {
             'password_secret'           => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'        => lookup('passwords::graylog::root_password_sha2'),
