@@ -2,7 +2,8 @@
 'use strict';
 
 const _ = require('lodash');
-const { v1: uuidv1 } = require('uuid');
+const uuid = require('uuid');
+const packageVersion = require('./package.json').version;
 
 const {
     urlGetObject,
@@ -10,25 +11,41 @@ const {
     uriGetFirstObject,
 } = require('@wikimedia/url-get');
 
-const EventValidator = require('./src/lib/EventValidator.js');
-const EventGate = require('./src/lib/eventgate.js').EventGate;
-const util = require('./src/lib/event-util.js');
-const error = require('./src/lib/error.js');
+const {
+    EventGate,
+    EventValidator,
+    util,
+    error,
+    app: startEventGate
+} = require('@wikimedia/eventgate');
 
 const {
     objectGet,
     makeExtractField,
 } = util;
 
+// @wikimedia/eventgate library defined errors.
 const {
     MissingFieldError,
-    ValidationError
 } = error;
+
+// @wikimedia/eventgate-wikimedia (this repo) defined error classes and functions.
+const {
+    UnauthorizedSchemaForStreamError,
+    HoistingError,
+    makeMapToErrorEvent,
+} = require('./lib/error.js');
 
 // Used for getting static or dynamic remote stream configs.
 const {
     makeStreamConfigs,
-} = require('./stream-configs.js');
+} = require('./lib/stream-configs.js');
+
+const {
+    X_EXPERIMENT_ENROLLMENTS_HEADER,
+    isValidEventSubjectId,
+    getEnrolledExperiment,
+} = require('./lib/experiments.js');
 
 /**
  * This module can be used as the value of app.options.eventgate_factory_module.  It exports
@@ -36,13 +53,13 @@ const {
  * that will produce to Kafka, and a mapToEventError function for transforming
  * errors into events that can be produced to an error topic.
  *
- * This file contains various functions for configuring and creating the main 'custom'
+ * This file contains various functions for configuring and creating the main 'wikimedia'
  * EventGate instance using Express app.options.  These functions all use a options object
  * to make new functions that extract information from events (e.g. schema_uri_field)
  * and to create validate and produce functions for constructing the EventGate instance.
  *
  * makeExtractSchemaUri exported by default-eventgate module is used, but
- * this file mostly creates and uses new specific functions.
+ * this file mostly creates and uses new Wikimedia specific functions.
  *
  * The following keys are used in the options argument in functions here.
  *
@@ -94,6 +111,10 @@ const {
  *      Retry up to this many tines when fetching stream config from stream_config_uri.
  *      Default: 1
  *
+ *   error_stream:
+ *      If given, certain kinds of Errors (defined in lib/error.js) will be converted
+ *      to error events and produced via EventGate.
+ *
  * - topic_prefix
  *      If given, this will be prefixed to the value extracted from stream_field
  *      and used for the Kafka topic the event will be produced to.
@@ -117,6 +138,43 @@ const {
  * - kafka.{guaranteed,hasty}.conf
  *      Producer type specific overides. Use this to set e.g. batching settings
  *      different for each producer type.
+ *
+ * # Settings used from stream config
+ *
+ * If stream_config_uri is set, then each event's stream_field value
+ * will be used to fetch settings for that stream.
+ *
+ * These settings used by this code as follows:
+ *
+ *  - schema_title
+ *      Ensure that an event's schema's title matches this.
+ *
+ * - message_key_fields
+ *      A map of key field name to event field name.
+ *      If set, a key object will be constructed as specified.
+ *      This will be serialized to JSON and used for the Kafka key.
+ *
+ *      Example:
+ *          message_key_fields: { page_id: 'page.page_id' }
+ *          will result in a key like
+ *          { page_id: <value of page.page_id from event> }
+ *
+ * - producers.eventgate.enrich_fields_from_http_headers
+ *      A map of event field names to HTTP request header names.
+ *      Sets the specified event field to the value of the HTTP request header if:
+ *          - The value of the HTTP header name is not false,
+ *            e.g. the setting of the field has been disabled
+ *          - The HTTP request header is set and has a value
+ *          - The event's schema has the specified field names
+ *          - The event's field is not already set
+ *
+ *      Examples:
+ *          enrich_fields_from_http_headers: { 'my_field.my_header': 'x-my-header' }
+ *          will result in myfield.my_header being set to the value of x-my-header
+ *          in the event.
+ *
+ *          enrich_fields_from_http_headers: { 'my_field.my_header': false }
+ *          will explicitly disable collection of any header into my_field.my_header
  */
 
 const defaultOptions = {
@@ -133,18 +191,7 @@ const defaultOptions = {
         },
         topic_conf: {}
     },
-    http_request_headers_to_fields: {
-        'x-request-id': 'meta.request_id',
-        'user-agent': 'http.request_headers.user-agent',
-    },
 };
-
-/**
- * The schema URI of the error event that will be created and produced
- * for event validation errors.  Change this when you change
- * error schema versions.
- */
-const errorSchemaUri = '/error/1.0.0';
 
 /**
  * Utility function to DRY up requiring optionalDependencies with a
@@ -172,122 +219,6 @@ const errorSchemaUri = '/error/1.0.0';
 }
 
 /**
- * Returns a new mapToErrorEvent function that uses options.error_schema_uri
- * and options.error_stream to return an error event that conforms to the
- * error event schema used by us.  This function only returns
- * error events for ValidationErrors.
- *
- * @param {Object} options
- * @param {Object} metrics service-runner metrics interface.  This is provided from
- *      service-runner app.
- * @return {function(Object, Object, Object): Object}
- */
-function makeMapToErrorEvent(options, metrics) {
-
-    let validationErrorMetric;
-    if (metrics) {
-        validationErrorMetric = metrics.makeMetric({
-            type: 'Counter',
-            name: 'events.errors.validation',
-            prometheus: {
-                name: 'eventgate_validation_errors_total',
-                help: 'EventGate events with schema validation errors',
-                staticLabels: metrics.getServiceLabel(),
-            },
-            labels: {
-                names: ['stream', 'schema_uri'],
-            },
-        });
-    }
-
-    return (error, event, context = {}) => {
-        // Only produce error events for ValidationErrors.
-        if (!(error instanceof ValidationError)) {
-            // Returning null will cause this particular error event
-            // to not be produced at all.
-            return null;
-        }
-
-        const now = new Date();
-
-        /**
-         * Like lodash _.get().toString(), except if the value is defined and it is null,
-         * returns 'null'. Most values have a toString method, but null does
-         * not.
-         *
-         * @param {Object} object
-         * @param {string} path
-         * @param {*} defaultValue
-         * @return {string}
-         */
-        function getToString(object, path, defaultValue) {
-            const v = _.get(object, path, defaultValue);
-            if (_.isNull(v)) {
-                return 'null';
-            } else {
-                return v.toString();
-            }
-        }
-
-        const errorEvent = {
-            meta: {
-                id: uuidv1(),
-                dt: now.toISOString(),
-                uri: getToString(event, 'meta.uri', 'unknown'),
-                domain: getToString(event, 'meta.domain', 'unknown'),
-                request_id: getToString(event, 'meta.request_id', 'unknown')
-            },
-            emitter_id: options.user_agent || 'eventgate-service',
-            raw_event: _.isString(event) ? event : JSON.stringify(event),
-            // We know error is an ValidationError,
-            // so we can use errorsText as error message.
-            message: error.errorsText
-        };
-
-        // Get the preferred schema_uri_field and stream_field
-        // and set them on the event.
-        /* eslint-disable */
-        const schemaUriField =_.isArray(options.schema_uri_field) ?
-            options.schema_uri_field[0] :
-            options.schema_uri_field;
-       const streamField = _.isArray(options.stream_field) ?
-            options.stream_field[0] :
-            options.stream_field;
-        /* eslint-enable */
-
-        _.set(errorEvent, schemaUriField, errorSchemaUri);
-        _.set(errorEvent, streamField, options.error_stream);
-
-        // if event an object, we should be able to include
-        // top level infomration in our error event about
-        // which stream and which schema this validation
-        // error is about.
-        if (_.isObject(event)) {
-            _.set(
-                errorEvent,
-                'errored_schema_uri',
-                _.get(event, schemaUriField, 'unknown')
-            );
-            _.set(
-                errorEvent,
-                'errored_stream_name',
-                _.get(event, streamField, 'unknown')
-            );
-        }
-
-        if (validationErrorMetric) {
-            // Increment the validation errors seen for this stream.
-            validationErrorMetric.increment(
-                1,
-                [errorEvent.errored_stream_name, errorEvent.errored_schema_uri]
-            );
-        }
-
-        return errorEvent;
-    };
-}
-
-/**
  * Returns a function that extracts the event's schema URI.
  *
  * @param {Object} options
@@ -306,7 +237,7 @@ function makeExtractSchemaUri(options) {
 }
 
 /**
- * All our events should have stream_field set.  The function
+ * All wikimedia events should have stream_field set.  The function
  * created by this function returns the value extracted from event at stream_field.
  *
  * @param {Object} options
@@ -415,7 +346,19 @@ function parentOfField(field) {
 }
 
 /**
- * Makes a function that will set some custom required fields with
+ * Returns true if the event is a canary event.
+ * This is true if meta.domain === 'canary'.
+ * https://wikitech.wikimedia.org/wiki/Data_Platform/Systems/Hadoop_Event_Ingestion_Lifecycle#Canary_Events
+ *
+ * @param  {Object}  event
+ * @return {boolean}
+ */
+function isCanaryEvent(event) {
+    return _.get(event, 'meta.domain') === 'canary';
+}
+
+/**
+ * Makes a function that will set some Wikimedia required fields with
  * values if they are not set by the client.  These event fields
  * will only be set if they are present in the event's schema.
  *
@@ -435,7 +378,9 @@ function parentOfField(field) {
  *      To value of options.stream_field if provided in HTTP request.
  *
  *  - meta.dt
- *      To current ISO-8601 UTC timestamp
+ *      To current date time timestamp.
+ *      This will always be set, even if the incoming event provides it,
+ *      unless meta.domain == canary. Canary events need control over timestamps.
  *
  * - dt
  *      If schema.title starts with 'analytics/legacy', dt defaults to a server
@@ -443,6 +388,7 @@ function parentOfField(field) {
  *      side AKA event timestamp and don't touch it here. However, EventLogging legacy
  *      schemas (all of which start with 'analytics/legacy') used dt as a server side
  *      timestamp, and we want to maintain compatible semantics for this field for them.
+ *      See: https://phabricator.wikimedia.org/T240460#6614767
  *
  *  - meta.id
  *      To new uuid
@@ -464,19 +410,24 @@ function parentOfField(field) {
  *     This option is required.
  * @param {function(Object, Object): Object} options.eventRepr
  * @param {Object} logger
- * @return {function(Object, Object): Object}
+ * @return {function(Object, {req?: Object, res?: Object, conf?: Object}): Object}
  *      (event, context) => event
  *      context.req must be set to the http ClientRequest
  */
-function makeSetCustomDefaults(options, logger) {
+async function makeSetWikitideDefaults(options, logger) {
     if (!_.isFunction(options.getSchemaForEvent)) {
         throw new Error(
-            'Must set options.getSchemaForEvent to a function for makeSetCustomDefaults.'
+            'Must set options.getSchemaForEvent to a function for makeSetWikitideDefaults.'
         );
     }
     const getSchemaForEvent = options.getSchemaForEvent;
     const eventRepr         = options.eventRepr || makeEventRepr(options);
+    const extractStream     = options.extractStream || makeExtractStream(options);
 
+    let streamConfigs;
+    if (options.stream_config_uri) {
+        streamConfigs = options.streamConfigs || await makeStreamConfigs(options, logger);
+    }
     // All header values will be truncated to this length to prevent malicious data.
     const maxHeaderLength = 400;
 
@@ -500,8 +451,11 @@ function makeSetCustomDefaults(options, logger) {
             (
                 req.headers['x-forwarded-for'] &&
                 req.headers['x-forwarded-for'].split(xffClientIpRegex)[0]
-            ) ||
-            req.socket.remoteAddress;
+            ) || (
+                req &&
+                req.socket &&
+                req.socket.remoteAddress
+            );
     }
 
     return async (event, context = {}) => {
@@ -519,7 +473,7 @@ function makeSetCustomDefaults(options, logger) {
                 options.schema_uri_field,
                 context.req.query[options.schema_uri_query_param]
             );
-            logger.trace(
+            logger.debug(
                 `Set ${options.schema_uri_field} to ` +
                 `${context.req.query[options.schema_uri_query_param]} in ` +
                 eventRepr(event, context)
@@ -540,25 +494,44 @@ function makeSetCustomDefaults(options, logger) {
                 options.stream_field,
                 context.req.query[options.stream_query_param]
             );
-            logger.trace(
+            logger.debug(
                 `Set ${options.stream_field} to ` +
                 `${context.req.query[options.stream_query_param]} in ` +
                 eventRepr(event, context)
             );
         }
 
-        // meta.id ||= new uuidv1
+        // Now that schema and stream fields should be set,
+        // save eventString for subsequent log messages.
+        const eventString = eventRepr(event, context);
+
+        // meta.id ||= new uuid
         if (_.has(schema, 'properties.meta.properties.id') && !_.has(event, 'meta.id')) {
-            _.set(event, 'meta.id', uuidv1());
-            logger.trace(`Set meta.dt in ${eventRepr(event, context)}`);
+            _.set(event, 'meta.id', uuid());
+            logger.debug(`Set meta.id in ${eventString}`);
         }
 
         const nowDt = new Date().toISOString();
-        // meta.dt ||= now
-        if (_.has(schema, 'properties.meta.properties.dt') && !_.has(event, 'meta.dt')) {
-            _.set(event, 'meta.dt', nowDt);
-            logger.trace(`Set meta.dt in ${eventRepr(event, context)}`);
+
+        // meta.dt = now, unless this is a canary event and meta.dt is already set.
+        // See:
+        // - https://phabricator.wikimedia.org/T376026
+        // - https://phabricator.wikimedia.org/T267648
+        if (_.has(schema, 'properties.meta.properties.dt')) {
+            if (!isCanaryEvent(event) || !_.has(event, 'meta.dt')) {
+                if (_.has(event, 'meta.dt')) {
+                    // Log at info level (instead of debug) because this should be rare,
+                    // and it would be good to know when it is happening so we can possibly
+                    // fix offending clients.
+                    logger.info(
+                        `Overriding meta.dt in ${eventString} ` +
+                        `from ${_.get(event, 'meta.dt')} to ${nowDt}.`
+                    );
+                }
+                _.set(event, 'meta.dt', nowDt);
+            }
         }
+
         // dt ||= now (For legacy EventLogging events.)
         // In non-legacy schemas, we expect dt to be a client side timestamp.
         // we only want to set this if this is a legacy EventLogging schema,
@@ -568,7 +541,7 @@ function makeSetCustomDefaults(options, logger) {
             _.has(schema, 'properties.dt') && !_.has(event, 'dt')
         ) {
             _.set(event, 'dt', nowDt);
-            logger.trace(`Set dt in ${eventRepr(event, context)}`);
+            logger.debug(`Set dt in ${eventString}`);
         }
 
         // Use HTTP request info to set some more field defaults.
@@ -576,37 +549,137 @@ function makeSetCustomDefaults(options, logger) {
         // just warn.
         if (!context.req) {
             logger.warn(
-                `Cannot augment ${eventRepr(event, context)} with HTTP request info: ` +
+                `Cannot augment ${eventString} with HTTP request info: ` +
                 'req was not given in context parameter.'
             );
-        } else {
-            // meta.request_id ||= X-Request-ID header
-            // http.request_headers['user-agent'] ||= User-Agent header
-            _.forEach(options.http_request_headers_to_fields, (field, header) => {
+        } else if (streamConfigs) {
+            // Note: ^ if streamConfigs is not set
+            // We can't use it to figure out what to enrich :)
+            const stream = extractStream(event);
+            const streamSettings = streamConfigs.get(stream);
+
+            const enrichFieldsFromHttpHeaders = _.get(
+                streamSettings,
+                'producers.eventgate.enrich_fields_from_http_headers',
+                {}
+            );
+
+            // For each stream configured http_request_headers_to_fields,
+            // enrich the HTTP header into the event at the specified field,
+            // if that field exists in the event schema.
+            _.forEach(enrichFieldsFromHttpHeaders, (header, field) => {
                 if (
-                    (_.has(schema, fieldNameToSchemaName(field)) ||
-                     _.get(schema, fieldNameToSchemaName(parentOfField(field)) + '.type') === 'object') &&
-                    !_.has(event, field) &&
-                    context.req.headers[header]
+                    // If not header, then skip. This allows
+                    // explicit disablement of collection of the header by setting
+                    // the value to false, e.g.
+                    //  'http.request_headers.user-agent': false
+                    // would skip enriching user-agent into the event.
+                    // This is useful because EventStreamConfig (which is the source of
+                    // StreamConfigs in WMF production) recursively merges in default settings.
+                    // Overriding the setting with false makes it possible to opt out.
+                    header &&
+                    // Skip if the header is not set
+                    context.req.headers[header] &&
+                    (
+                        _.has(schema, fieldNameToSchemaName(field)) ||
+                        _.get(schema, fieldNameToSchemaName(parentOfField(field)) + '.type') === 'object'
+                    ) &&
+                    !_.has(event, field)
                 ) {
                     _.set(
                         event, field,
                         context.req.headers[header].slice(0, Math.max(0, maxHeaderLength))
                     );
-                    logger.trace(`Set ${field} in ${eventRepr(event, context)}`);
+                    logger.debug(`Set ${field} in ${eventString}`);
                 }
             });
 
+            // It would be nice to be able to use http_request_headers_to_fields
+            // for client_ip as above, but we need to examine multiple
+            // headers to find a client IP, and we fallback to socket address.
             // http.client_ip ||= getClientIp(context.req)
             if (
                 _.has(schema, 'properties.http.properties.client_ip') &&
                 !_.has(event, 'http.client_ip')
             ) {
-                _.set(
-                    event, 'http.client_ip',
-                    getClientIp(context.req).slice(0, Math.max(0, maxHeaderLength))
-                );
-                logger.trace(`Set http.client_ip in ${eventRepr(event, context)}`);
+                const clientIp = getClientIp(context.req);
+
+                if (clientIp) {
+                    _.set(
+                        event, 'http.client_ip',
+                        clientIp.slice(0, Math.max(0, maxHeaderLength))
+                    );
+                    logger.debug(`Set http.client_ip in ${eventString}`);
+                }
+            }
+
+            // Hoists (and drops!!) events related to experiment enrollemnts.
+            // Since we don't have a single function that does both augment + drop, we do it here.
+            const streamUsesEdgeUniques = _.get(
+                streamSettings,
+                'producers.eventgate.use_edge_uniques',
+                false
+            );
+            const xExperimentEnrollmentsHeader =
+                context.req.headers[X_EXPERIMENT_ENROLLMENTS_HEADER];
+
+            /**
+             * Only hoist the enrollment subject_id into the event if:
+             * 1. The stream is configured to use edge uniques
+             * 2. The incoming HTTP request has the 'x-experiment-enrollments' header
+             * 3. The stream's event schema has an experiment field
+             *    (assuming it's using the experiment fragment)
+             * 4. The experiment subject_id in the event is valid
+             * 5. x-experiment-enrollments header has data that makes sense
+             *    for event's experiment values.
+             *
+             * // TODO: move this logic into a function in lib/experiments.js (?)
+             */
+            if (xExperimentEnrollmentsHeader) {
+                if (streamUsesEdgeUniques) {
+                    const hoistingErrorMessagePrefix =
+                        `Could not hoist data into experiment.subject_id for event ${eventString}: `;
+
+                    if (!_.has(schema, 'properties.experiment')) {
+                        throw new HoistingError(
+                            hoistingErrorMessagePrefix +
+                            'Schema does not have an experiment field.'
+                        );
+                    }
+
+                    if (!isValidEventSubjectId(event)) {
+                        throw new HoistingError(
+                            hoistingErrorMessagePrefix +
+                            'Event is enrolled in experiments but \'experiment.subject_id\' ' +
+                            'is not a valid subject_id.'
+                        );
+                    }
+
+                    const enrollment = getEnrolledExperiment(event, xExperimentEnrollmentsHeader);
+                    if (!enrollment) {
+                        throw new HoistingError(
+                            hoistingErrorMessagePrefix +
+                            `${X_EXPERIMENT_ENROLLMENTS_HEADER} header does not have a matching enrollment in event data: ` +
+                            'One of \'experiment.enrolled\' or \'experiment.assigned\' fields does not have matching experiment ' +
+                            'or group name in header.'
+                        );
+                    }
+
+                    _.set(event, 'experiment.subject_id', enrollment.subjectId);
+                } else {
+                    // error_stream is a 'side output' that may have events produced
+                    // to it as a result of encountering Errors when producing other events.
+                    // In the case of an Error on an experiment event, an error event may
+                    // be produced even though the X_EXPERIMENT_ENROLLMENTS_HEADER is set.
+                    // Log at info level for error events, as this is likely a normal case,
+                    // but warn otherwise.
+                    const logLevel = stream === options.error_stream ? 'info' : 'warn';
+                    logger[logLevel](
+                        'Stream config setting \'producers.eventgate.use_edge_uniques\' ' +
+                        `is disabled for ${eventString}, but ${X_EXPERIMENT_ENROLLMENTS_HEADER} ` +
+                        `request header is set. Ignoring ${X_EXPERIMENT_ENROLLMENTS_HEADER}.`
+                    );
+                }
             }
         }
         return event;
@@ -651,7 +724,9 @@ async function makeEventValidator(options, logger) {
                 );
             }
             // Return the first schema found for URI by looking for it in each schema_base_uris.
-            return uriGetFirstObject(uri, options.schema_base_uris, options.schema_file_extension);
+            return uriGetFirstObject(uri, options.schema_base_uris, options.schema_file_extension,
+                { headers: { 'user-agent': `@wikimedia/eventgate-wikimedia/${packageVersion}` } }
+            );
         };
     }
 
@@ -668,8 +743,6 @@ async function makeEventValidator(options, logger) {
 
     return eventValidator;
 }
-
-class UnauthorizedSchemaForStreamError extends Error {}
 
 /**
  * Returns a function that given an event, will either return true, or throw
@@ -756,6 +829,7 @@ async function makeEnsureEventAllowedInStream(options, logger) {
 
         // Sometimes we seem to get a stream config response with no schema_title setting.
         // To help debug this, throw a specific error if the stream config is actually empty.
+        // See: https://phabricator.wikimedia.org/T266573
         if (_.isEmpty(specificStreamConfig)) {
             throw new UnauthorizedSchemaForStreamError(
                 `${eventRepr(event)} is not allowed in stream; ` +
@@ -803,13 +877,13 @@ async function makeEnsureEventAllowedInStream(options, logger) {
  * @param {Object} logger
  * @return {Function} EventGate validate function
  */
-async function makeCustomValidate(options, logger) {
+async function makeWikimediaValidate(options, logger) {
     // Use the already constructed functions if they are set in options, else
     // make them from options now.
     const eventValidator =  await makeEventValidator(options, logger);
 
     // eventValidator already knows how to get a schema for an event.
-    // Reuse it in ensureEventAllowedInStream and setCustomDefaults functions.
+    // Reuse it in ensureEventAllowedInStream and setWikimediaDefaults functions.
     options.getSchemaForEvent = options.getSchemaForEvent ||
         eventValidator.schemaFor.bind(eventValidator);
 
@@ -823,16 +897,17 @@ async function makeCustomValidate(options, logger) {
     }
 
     // Before schema validation, the event will be transformed by this function
-    // to ensure any custom (required) defaults that weren't set client side
+    // to ensure any Wikimedia (required) defaults that weren't set client side
     // are set now.
-    const setCustomDefaults = makeSetCustomDefaults(options, logger);
+    // https://phabricator.wikimedia.org/T240477
+    const setWikimediaDefaults = await makeSetWikitideDefaults(options, logger);
 
     // Finally create a single validate function that
     // checks that an event's schema is allowed in a stream,
     // and that it validates against its schema.
     return async (event, context = {}) => {
-        // Set any custom specific defaults that all events should have.
-        event = await setCustomDefaults(event, context);
+        // Set any Wikimedia specific defaults that all events should have.
+        event = await setWikimediaDefaults(event, context);
 
         if (ensureEventAllowedInStream) {
             // First ensure that this event schema is allowed in the destination stream.
@@ -931,9 +1006,9 @@ function getKafkaProducerConf(options, producerType) {
  * @param {string} producerType
  *      Either 'hasty' or 'guaranteed'.
  * @param {Object} logger
+ *      Winston logger
  * @param {Object} metrics
- *      service-runner metrics interface.  This is provided from
- *      service-runner app.
+ *      service-utils Metrics
  * @return {Promise<Object>} connected Kafka Producer
  */
 async function makeKafkaProducer(options, producerType, logger, metrics) {
@@ -967,61 +1042,38 @@ async function makeKafkaProducer(options, producerType, logger, metrics) {
     );
 
     // Register rdkafka events.stats callback to expose metrics
-    // via service-runner Metrics.
     if (metrics && conf['statistics.interval.ms']) {
         // List of callbacks to call when rdkafka events.stats is fired.
         const metricsCallbacks = [];
 
-        // If service-runner metrics StatsDClient is being used, then
-        // handle rdkafka metrics with node-rdkafka-statsd.
-        if (metrics.fetchClient('StatsDClient')) {
-            logger.info(
-                'Enabling Kafka metrics reporting for ' +
-                `${producerType} Kafka producer via statsd.`
-            );
-            const rdkafkaStatsd = requireOptional('node-rdkafka-statsd');
-            const rdkafkaStatsdCb = rdkafkaStatsd(
-                // NOTE: makeChild is deprecated, but
-                // we'd need to rewrite node-rdkafka-statsd
-                // to support the new service-runner
-                // metrics.makeMetric interface.
-                metrics.makeChild(`rdkafka.producer.${producerType}`)
-            );
-            metricsCallbacks.push(rdkafkaStatsdCb);
-        }
+        logger.info(
+            'Enabling Kafka metrics reporting for ' +
+            `${producerType} Kafka producer via prometheus.`
+        );
 
-        // If service-runner metrics Prometheus is being used, then
-        // handle rdkafka metrics with node-rdkafka-prometheus.
-        if (metrics.fetchClient('PrometheusClient')) {
-            logger.info(
-                'Enabling Kafka metrics reporting for ' +
-                `${producerType} Kafka producer via prometheus.`
-            );
+        const RdkafkaPrometheus = requireOptional('@wikimedia/node-rdkafka-prometheus');
+        const rdkafkaPrometheus = options.rdkafkaPrometheus || new RdkafkaPrometheus({
+            // Pass prom-client to RdkafkaPrometheus constructor so it does
+            // not have to require it itself. See:
+            // https://github.com/siimon/prom-client/issues/199#issuecomment-556908200
+            // https://github.com/siimon/prom-client/issues/448
+            prometheus: metrics.prometheus,
+            // prefix metrics with eventgate_
+            namePrefix: 'eventgate_',
+            // producer_type label value will be set in the callback below.
+            extraLabels: _.merge({ producer_type: '' }, metrics.getServiceLabel()),
+        });
 
-            const RdkafkaPrometheus = requireOptional('@wikimedia/node-rdkafka-prometheus');
-            const rdkafkaPrometheus = options.rdkafkaPrometheus || new RdkafkaPrometheus({
-                // Pass prom-client to RdkafkaPrometheus constructor so it does
-                // not have to require it itself. See:
-                // https://github.com/siimon/prom-client/issues/199#issuecomment-556908200
-                // https://github.com/siimon/prom-client/issues/448
-                prometheus: metrics.fetchClient('PrometheusClient').client,
-                // prefix metrics with eventgate_
-                namePrefix: 'eventgate_',
-                // producer_type label value will be set in the callback below.
-                extraLabels: _.merge({ producer_type: '' }, metrics.getServiceLabel()),
-            });
+        // Save RdkafkaPrometheus instance we create in options for reuse if this
+        // function is called again. This is necessary here because RdkafkaPrometheus
+        // adds promethues metrics by name to the prom-client register, and
+        // if the same metrics are added to the register again, an error will be thrown.
+        // We only want to construct one RdkafkaPrometheus per prom-client register.
+        options.rdkafkaPrometheus = rdkafkaPrometheus;
 
-            // Save RdkafkaPrometheus instance we create in options for reuse if this
-            // function is called again. This is necessary here because RdkafkaPrometheus
-            // adds promethues metrics by name to the prom-client register, and
-            // if the same metrics are added to the register again, an error will be thrown.
-            // We only want to construct one RdkafkaPrometheus per prom-client register.
-            options.rdkafkaPrometheus = rdkafkaPrometheus;
-
-            metricsCallbacks.push((stats) => {
-                rdkafkaPrometheus.observe(stats, { producer_type: producerType });
-            });
-        }
+        metricsCallbacks.push((stats) => {
+            rdkafkaPrometheus.observe(stats, { producer_type: producerType });
+        });
 
         // Call each defined metricsCallback on events.stats
         producer.on('event.stats', (msg) => {
@@ -1073,8 +1125,7 @@ function createMessageKey(event, keyFieldToEventFieldMap) {
  * @param {string} options.topic_prefix
  *      If given, this will be prefixed to the value extracted from stream_field
  *      and used as the topic in Kafka.
- * @param {Object} metrics service-runner metrics interface.  This is provided from
- *      service-runner app.
+ * @param {Object} metrics service-utils metrics interface.
  *      This is optional, and will only be used if context.req.query.hasty is set to true.
  * @param {Object} logger
  * @return {Promise<Function>} Promise of EventGate produce function
@@ -1105,16 +1156,12 @@ async function makeProduce(options, metrics, logger) {
 
     let produceMetric;
     if (metrics) {
-        produceMetric = metrics.makeMetric({
+        produceMetric = metrics.createMetric({
             type: 'Counter',
-            name: 'events.produced',
-            prometheus: {
-                name: 'eventgate_events_produced_total',
-                help: 'EventGate events produced',
-                staticLabels: metrics.getServiceLabel(),
-            },
+            name: 'eventgate_events_produced_total',
+            help: 'EventGate events produced',
             labels: {
-                names: ['stream', 'schema_uri'],
+                names: ['service', 'stream', 'schema_uri'],
             },
         });
     }
@@ -1130,7 +1177,7 @@ async function makeProduce(options, metrics, logger) {
 
         if (produceMetric) {
             const schemaUri = extractSchemaUri(event);
-            produceMetric.increment(1, [stream, schemaUri]);
+            produceMetric.inc({ ...metrics.getServiceLabel(), stream, schema_uri: schemaUri }, 1);
         }
 
         const topic = getKafkaTopicForStream(options, stream);
@@ -1185,13 +1232,12 @@ async function makeProduce(options, metrics, logger) {
  * @param {Object} options.kafka.topic_conf
  *      node-rdkafka KafkaProducer topic configuration
  * @param {Object} logger
- * @param {Object} metrics service-runner metrics interface.  This is provided from
- *      service-runner app.
+ * @param {Object} metrics service-utils metrics interface.
  * @param {Object} router Express router object.  Useful if you want to add extra http routes
  *      to the EventGate service route.
  * @return {Promise<EventGate>}
  */
-async function customEventGateFactory(options, logger, metrics, router) {
+async function wikimediaEventGateFactory(options, logger, metrics, router) {
     _.defaultsDeep(options, defaultOptions);
 
     // Premake some of the event handling functions so that that they
@@ -1234,7 +1280,7 @@ async function customEventGateFactory(options, logger, metrics, router) {
         });
     }
 
-    const validate = await makeCustomValidate(options, logger);
+    const validate = await makeWikimediaValidate(options, logger);
     const produce = await makeProduce(options, metrics, logger);
 
     return new EventGate({
@@ -1247,12 +1293,12 @@ async function customEventGateFactory(options, logger, metrics, router) {
 }
 
 module.exports = {
-    factory: customEventGateFactory,
-    makeMapToErrorEvent,
+    factory: wikimediaEventGateFactory,
+    makeMapToErrorEvent: makeMapToErrorEvent,
     makeEventRepr,
     makeExtractStream,
-    makeCustomValidate,
-    makeSetCustomDefaults,
+    makeWikimediaValidate,
+    makeSetWikitideDefaults,
     makeProduce,
     defaultOptions,
     UnauthorizedSchemaForStreamError,
@@ -1260,20 +1306,28 @@ module.exports = {
 
 if (require.main === module) {
     const start = async () => {
-        let conf;
         // If not specifying a config file on the CLI, then we want to use
         // the included config file, but make sure that the evengate_factory_module
         // is set to use this exact file.  Read in the config file manually and
-        // set it, then pass the read in config directly to service-runner.
+        // set it, then pass the read in config directly to service-utils.
         if (!process.argv.includes('-c') && !process.argv.includes('--config')) {
             const configFile = `${__dirname}/config.yaml`;
 
-            conf = await urlGetObject(configFile);
-            conf.services[0].conf.eventgate_factory_module = require.main.filename;
+            let conf = await urlGetObject(configFile);
+            // Default to old service-runner config shape or override with top level
+            // TODO: Make config top level in helmchart
+            conf = {
+                ...conf.services?.[0]?.conf,
+                ...conf
+            };
+            conf.eventgate_factory_module = require.main.filename;
+            return startEventGate({
+                defaultConfig: conf
+            });
         }
 
-        const ServiceRunner = require('service-runner');
-        return new ServiceRunner().start(conf);
+        // eventgate will automatically load the config file from the -c args vis service-utils
+        return startEventGate();
     };
 
     start();
