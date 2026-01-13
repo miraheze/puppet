@@ -32,7 +32,7 @@ const {
     UnauthorizedSchemaForStreamError,
     HoistingError,
     makeMapToErrorEvent,
-} = require('./lib/error.js');
+} = require('./error.js');
 
 // Used for getting static or dynamic remote stream configs.
 const {
@@ -1255,6 +1255,7 @@ if (require.main === module) {
 
     start();
 }
+
 
 
 
