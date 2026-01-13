@@ -46,6 +46,13 @@ class eventgate {
         ],
     }
 
+    file { '/srv/eventgate/error.js':
+        ensure  => present,
+        source  => 'puppet:///modules/eventgate/error.js',
+        require => Git::Clone['eventgate'],
+        notify  => Service['eventgate'],
+    }
+
     file { '/srv/eventgate/eventgate-custom.js':
         ensure  => present,
         source  => 'puppet:///modules/eventgate/eventgate-custom.js',
