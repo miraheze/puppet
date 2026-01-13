@@ -725,7 +725,7 @@ async function makeEventValidator(options, logger) {
             }
             // Return the first schema found for URI by looking for it in each schema_base_uris.
             return uriGetFirstObject(uri, options.schema_base_uris, options.schema_file_extension,
-                { headers: { 'user-agent': `@wikimedia/eventgate-wikimedia/${packageVersion}` } }
+                { headers: { 'user-agent': `@miraheze/eventgate-deploy/${packageVersion}` } }
             );
         };
     }
@@ -1332,4 +1332,5 @@ if (require.main === module) {
 
     start();
 }
+
 
