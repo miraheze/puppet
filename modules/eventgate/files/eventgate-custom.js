@@ -39,12 +39,6 @@ const {
     makeStreamConfigs,
 } = require('./stream-configs.js');
 
-const {
-    X_EXPERIMENT_ENROLLMENTS_HEADER,
-    isValidEventSubjectId,
-    getEnrolledExperiment,
-} = require('./lib/experiments.js');
-
 /**
  * This module can be used as the value of app.options.eventgate_factory_module.  It exports
  * a factory function that given options and a logger, returns an instantiated EventGate instance
@@ -608,75 +602,6 @@ async function makeSetWikitideDefaults(options, logger) {
                         clientIp.slice(0, Math.max(0, maxHeaderLength))
                     );
                     logger.debug(`Set http.client_ip in ${eventString}`);
-                }
-            }
-
-            // Hoists (and drops!!) events related to experiment enrollemnts.
-            // Since we don't have a single function that does both augment + drop, we do it here.
-            const streamUsesEdgeUniques = _.get(
-                streamSettings,
-                'producers.eventgate.use_edge_uniques',
-                false
-            );
-            const xExperimentEnrollmentsHeader =
-                context.req.headers[X_EXPERIMENT_ENROLLMENTS_HEADER];
-
-            /**
-             * Only hoist the enrollment subject_id into the event if:
-             * 1. The stream is configured to use edge uniques
-             * 2. The incoming HTTP request has the 'x-experiment-enrollments' header
-             * 3. The stream's event schema has an experiment field
-             *    (assuming it's using the experiment fragment)
-             * 4. The experiment subject_id in the event is valid
-             * 5. x-experiment-enrollments header has data that makes sense
-             *    for event's experiment values.
-             *
-             * // TODO: move this logic into a function in lib/experiments.js (?)
-             */
-            if (xExperimentEnrollmentsHeader) {
-                if (streamUsesEdgeUniques) {
-                    const hoistingErrorMessagePrefix =
-                        `Could not hoist data into experiment.subject_id for event ${eventString}: `;
-
-                    if (!_.has(schema, 'properties.experiment')) {
-                        throw new HoistingError(
-                            hoistingErrorMessagePrefix +
-                            'Schema does not have an experiment field.'
-                        );
-                    }
-
-                    if (!isValidEventSubjectId(event)) {
-                        throw new HoistingError(
-                            hoistingErrorMessagePrefix +
-                            'Event is enrolled in experiments but \'experiment.subject_id\' ' +
-                            'is not a valid subject_id.'
-                        );
-                    }
-
-                    const enrollment = getEnrolledExperiment(event, xExperimentEnrollmentsHeader);
-                    if (!enrollment) {
-                        throw new HoistingError(
-                            hoistingErrorMessagePrefix +
-                            `${X_EXPERIMENT_ENROLLMENTS_HEADER} header does not have a matching enrollment in event data: ` +
-                            'One of \'experiment.enrolled\' or \'experiment.assigned\' fields does not have matching experiment ' +
-                            'or group name in header.'
-                        );
-                    }
-
-                    _.set(event, 'experiment.subject_id', enrollment.subjectId);
-                } else {
-                    // error_stream is a 'side output' that may have events produced
-                    // to it as a result of encountering Errors when producing other events.
-                    // In the case of an Error on an experiment event, an error event may
-                    // be produced even though the X_EXPERIMENT_ENROLLMENTS_HEADER is set.
-                    // Log at info level for error events, as this is likely a normal case,
-                    // but warn otherwise.
-                    const logLevel = stream === options.error_stream ? 'info' : 'warn';
-                    logger[logLevel](
-                        'Stream config setting \'producers.eventgate.use_edge_uniques\' ' +
-                        `is disabled for ${eventString}, but ${X_EXPERIMENT_ENROLLMENTS_HEADER} ` +
-                        `request header is set. Ignoring ${X_EXPERIMENT_ENROLLMENTS_HEADER}.`
-                    );
                 }
             }
         }
@@ -1330,6 +1255,7 @@ if (require.main === module) {
 
     start();
 }
+
 
 
 
