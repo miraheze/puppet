@@ -8,8 +8,8 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 
-const ContextualError = require('./src/lib/error.js');
-const ValidationError = require('./src/lib/error.js');
+const ContextualError = require('./src/lib/error.js').ContextualError;
+const ValidationError = require('./src/lib/error.js').ValidationError;
 
 /**
  * The schema URI of the error event that will be created and produced
