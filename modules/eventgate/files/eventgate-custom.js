@@ -800,13 +800,13 @@ async function makeEnsureEventAllowedInStream(options, logger) {
  * @param {Object} logger
  * @return {Function} EventGate validate function
  */
-async function makeWikimediaValidate(options, logger) {
+async function makeWikitideValidate(options, logger) {
     // Use the already constructed functions if they are set in options, else
     // make them from options now.
     const eventValidator =  await makeEventValidator(options, logger);
 
     // eventValidator already knows how to get a schema for an event.
-    // Reuse it in ensureEventAllowedInStream and setWikimediaDefaults functions.
+    // Reuse it in ensureEventAllowedInStream and setWikitideDefaults functions.
     options.getSchemaForEvent = options.getSchemaForEvent ||
         eventValidator.schemaFor.bind(eventValidator);
 
@@ -820,17 +820,17 @@ async function makeWikimediaValidate(options, logger) {
     }
 
     // Before schema validation, the event will be transformed by this function
-    // to ensure any Wikimedia (required) defaults that weren't set client side
+    // to ensure any Wikitide (required) defaults that weren't set client side
     // are set now.
     // https://phabricator.wikimedia.org/T240477
-    const setWikimediaDefaults = await makeSetWikitideDefaults(options, logger);
+    const setWikitideDefaults = await makeSetWikitideDefaults(options, logger);
 
     // Finally create a single validate function that
     // checks that an event's schema is allowed in a stream,
     // and that it validates against its schema.
     return async (event, context = {}) => {
-        // Set any Wikimedia specific defaults that all events should have.
-        event = await setWikimediaDefaults(event, context);
+        // Set any Wikitide specific defaults that all events should have.
+        event = await setWikitideDefaults(event, context);
 
         if (ensureEventAllowedInStream) {
             // First ensure that this event schema is allowed in the destination stream.
@@ -1203,7 +1203,7 @@ async function wikitideEventGateFactory(options, logger, metrics, router) {
         });
     }
 
-    const validate = await makeWikimediaValidate(options, logger);
+    const validate = await makeWikitideValidate(options, logger);
     const produce = await makeProduce(options, metrics, logger);
 
     return new EventGate({
@@ -1220,7 +1220,7 @@ module.exports = {
     makeMapToErrorEvent: makeMapToErrorEvent,
     makeEventRepr,
     makeExtractStream,
-    makeWikimediaValidate,
+    makeWikitideValidate,
     makeSetWikitideDefaults,
     makeProduce,
     defaultOptions,
@@ -1255,9 +1255,3 @@ if (require.main === module) {
 
     start();
 }
-
-
-
-
-
-
