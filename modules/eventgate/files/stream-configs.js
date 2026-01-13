@@ -30,8 +30,8 @@ async function retryFn(fn, retryLimit, customRetryWarnMessage, logger) {
                 const warnMessage =  customRetryWarnMessage ||
                     'Caught error when calling function';
                 logger.warn(
-                    { error },
-                    warnMessage + ` on try number ${tryNum} out of ${retryLimit}`
+                    warnMessage + ` on try number ${tryNum} out of ${retryLimit}`,
+                    { error }
                 );
             }
             if (tryNum === retryLimit) {
@@ -81,7 +81,6 @@ function compileStreamConfigRegexes(streamConfigsData) {
  */
 class StreamConfigs {
     /**
-     *
      * @param {Object} options
      * @param {string} options.stream_config_uri
      * @param {string} options.stream_config_uri_options
@@ -89,7 +88,7 @@ class StreamConfigs {
      * @param {string} options.stream_config_ttl
      * @param {string} options.stream_config_retries
      * @param {Object} logger
-     *      an instantiated bunyan logger instance.
+     *      an instantiated winston logger instance.
      */
     constructor(options, logger) {
         this.log = logger;
@@ -145,6 +144,7 @@ class StreamConfigs {
 
     /**
      * Returns a list of all currently known stream config keys.
+     *
      * @return {Array}
      */
     keys() {
@@ -157,6 +157,7 @@ class StreamConfigs {
 
     /**
      * Gets the settings for the given stream.
+     *
      * @param {string} stream
      * @return {Object}
      */
@@ -171,6 +172,7 @@ class StreamConfigs {
     /**
      * Gets settings for multiple streams.
      * The returned Object will be keyed by stream name.
+     *
      * @param {Array} streams
      * @return {Object}
      */
@@ -180,7 +182,6 @@ class StreamConfigs {
         }
 
         return this._getConfigsForStreams(streams);
-
     }
 
     /**
@@ -235,24 +236,25 @@ class StreamConfigs {
         }, {});
 
         // Log if the requested streams configs are missing, undefined, or empty.
+        // See also: https://phabricator.wikimedia.org/T263672
         streams.forEach((stream) => {
             if (!_.has(matchedStreamConfigs, stream)) {
                 this.log.warn(
-                    { stream_configs: this._streamConfigs },
                     `Stream ${stream} is not present in stream configs ` +
-                    `loaded from ${this.stream_config_uri}`
+                    `loaded from ${this.stream_config_uri}`,
+                    { stream_configs: this._streamConfigs }
                 );
             } else if (_.isUndefined(matchedStreamConfigs[stream])) {
                 this.log.warn(
-                    { stream_configs: this._streamConfigs },
                     `Stream ${stream} is undefined in stream configs ` +
-                    `loaded from ${this.stream_config_uri}`
+                    `loaded from ${this.stream_config_uri}`,
+                    { stream_configs: this._streamConfigs }
                 );
             } else if (_.isEmpty(matchedStreamConfigs[stream])) {
                 this.log.warn(
-                    { stream_configs: this._streamConfigs },
                     `Stream ${stream} is present in stream configs but has no settings ` +
-                    `loaded from ${this.stream_config_uri}`
+                    `loaded from ${this.stream_config_uri}`,
+                    { stream_configs: this._streamConfigs }
                 );
             }
         });
@@ -263,6 +265,7 @@ class StreamConfigs {
     /**
      * Fetches stream configs from the configured stream_config_uri,
      * with configured stream_config_retries.
+     *
      * @return {Object}
      */
     async _fetchStreamConfigs() {
@@ -280,16 +283,16 @@ class StreamConfigs {
             if (this.stream_config_uri.includes('action=streamconfigs')) {
                 if (_.has(streamConfigsResult, 'warnings')) {
                     this.log.warn(
-                        { response_body: streamConfigsResult },
                         'Got warnings in response body when requesting ' +
-                        `stream config from ${this.stream_config_uri}`
+                        `stream config from ${this.stream_config_uri}`,
+                        { response_body: streamConfigsResult }
                     );
                 }
                 if (_.has(streamConfigsResult, 'error')) {
                     const errorMessage =
                         'Got error in response body when requesting ' +
                         `stream config from ${this.stream_config_uri}`;
-                    this.log.error({ body: streamConfigsResult }, errorMessage);
+                    this.log.error(errorMessage, { body: streamConfigsResult });
                     throw new Error(errorMessage);
                 }
             }
