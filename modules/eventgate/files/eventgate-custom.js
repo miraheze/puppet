@@ -37,7 +37,7 @@ const {
 // Used for getting static or dynamic remote stream configs.
 const {
     makeStreamConfigs,
-} = require('./lib/stream-configs.js');
+} = require('./stream-configs.js');
 
 const {
     X_EXPERIMENT_ENROLLMENTS_HEADER,
@@ -1330,6 +1330,7 @@ if (require.main === module) {
 
     start();
 }
+
 
 
 
