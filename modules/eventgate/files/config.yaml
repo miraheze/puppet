@@ -4,7 +4,7 @@
 # Number of worker processes to spawn.
 # Set to 0 to run everything in a single process without clustering.
 # Use 'ncpu' to run as many workers as there are CPU units
-num_workers: 8
+num_workers: 4
 
 # Log error messages and gracefully restart a worker if v8 reports that it
 # uses more heap (note: not RSS) than this many mb.
@@ -191,3 +191,4 @@ services:
             # Custom kafka config, will call producer.setPollInterval
             # with this value if set.
             producer.poll.interval.ms: 10
+
