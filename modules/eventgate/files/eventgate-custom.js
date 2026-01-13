@@ -53,13 +53,13 @@ const {
  * that will produce to Kafka, and a mapToEventError function for transforming
  * errors into events that can be produced to an error topic.
  *
- * This file contains various functions for configuring and creating the main 'wikimedia'
+ * This file contains various functions for configuring and creating the main 'wikitide'
  * EventGate instance using Express app.options.  These functions all use a options object
  * to make new functions that extract information from events (e.g. schema_uri_field)
  * and to create validate and produce functions for constructing the EventGate instance.
  *
  * makeExtractSchemaUri exported by default-eventgate module is used, but
- * this file mostly creates and uses new Wikimedia specific functions.
+ * this file mostly creates and uses new Wikitide specific functions.
  *
  * The following keys are used in the options argument in functions here.
  *
@@ -237,7 +237,7 @@ function makeExtractSchemaUri(options) {
 }
 
 /**
- * All wikimedia events should have stream_field set.  The function
+ * All wikitide events should have stream_field set.  The function
  * created by this function returns the value extracted from event at stream_field.
  *
  * @param {Object} options
@@ -358,7 +358,7 @@ function isCanaryEvent(event) {
 }
 
 /**
- * Makes a function that will set some Wikimedia required fields with
+ * Makes a function that will set some Wikitide required fields with
  * values if they are not set by the client.  These event fields
  * will only be set if they are present in the event's schema.
  *
@@ -1237,7 +1237,7 @@ async function makeProduce(options, metrics, logger) {
  *      to the EventGate service route.
  * @return {Promise<EventGate>}
  */
-async function wikimediaEventGateFactory(options, logger, metrics, router) {
+async function wikitideEventGateFactory(options, logger, metrics, router) {
     _.defaultsDeep(options, defaultOptions);
 
     // Premake some of the event handling functions so that that they
@@ -1293,7 +1293,7 @@ async function wikimediaEventGateFactory(options, logger, metrics, router) {
 }
 
 module.exports = {
-    factory: wikimediaEventGateFactory,
+    factory: wikitideEventGateFactory,
     makeMapToErrorEvent: makeMapToErrorEvent,
     makeEventRepr,
     makeExtractStream,
@@ -1332,3 +1332,4 @@ if (require.main === module) {
 
     start();
 }
+
