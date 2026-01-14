@@ -36,6 +36,7 @@ class role::kafka {
     }
 
     class { 'kafka':
+        proxy_server  => lookup('http_proxy', {'default_value' => undef}),
         kafka_version => '2.4.1',
         scala_version => '2.12',
     }
