@@ -1,6 +1,6 @@
 # role: kafka
 class role::kafka (
-    Optional[String] $zooper_server = lookup('zooper_server', {'default_value' => undef}),
+    Optional[String] $zooper_server = lookup('zookeeper_server', {'default_value' => undef}),
 ) {
     include kafka::broker::monitoring
 
