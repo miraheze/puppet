@@ -1,2 +1,0 @@
-redis::heap: '18GB'
-redis::maxmemory_policy: volatile-lru
