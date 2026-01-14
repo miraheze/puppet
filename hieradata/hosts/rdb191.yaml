@@ -1,0 +1,4 @@
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
+
+redis::heap: '18GB'
+redis::maxmemory_policy: volatile-lru
