@@ -1,11 +1,13 @@
 # role: kafka
-class role::kafka {
+class role::kafka (
+    Optional[String] $zooper_server = lookup('zookeeper_server', {'default_value' => undef}),
+) {
     include kafka::broker::monitoring
 
     # We need zookeeper also
     class { 'zookeeper':
         servers             => {
-            '1' => '10.0.18.159',
+            '1' => $zooper_server,
         },
         install_java        => true,
         java_package        => 'openjdk-21-jre-headless',
