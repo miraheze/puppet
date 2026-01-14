@@ -96,13 +96,6 @@ define burrow (
         ensure => 'directory',
     }
 
-    file { '/run/burrow':
-        ensure  => 'directory',
-        user    => 'burrow',
-        group   => 'burrow',
-        require => Package['burrow',
-    }
-
     $email_template_path = "${config_dir}/email.tmpl"
     if $to_email {
         file { $email_template_path:
@@ -121,7 +114,6 @@ define burrow (
         subscribe => File["${config_dir}/burrow.toml"],
         require   => [
             Package['burrow'],
-            File['/run/burrow'],
         ],
     }
 
