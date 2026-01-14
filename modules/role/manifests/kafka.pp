@@ -8,7 +8,7 @@ class role::kafka {
             '1' => '10.0.18.159',
         },
         install_java        => true,
-        java_package        => 'openjdk-17-jre-headless',
+        java_package        => 'openjdk-21-jre-headless',
         manage_service_file => true,
         zoo_dir             => '/usr/share/zookeeper',
         log4j_prop          => 'INFO,SYSLOG',
