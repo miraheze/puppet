@@ -1,0 +1,7 @@
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
+base::dns::query_local_address: ['0.0.0.0']
+base::dns::forward_use_internal: true
+
+zookeeper::id: '1'
+zookeeper::client_port: 2181
+zookeeper::datastore: '/var/lib/zookeeper'

@@ -65,6 +65,12 @@ node 'kafka181.fsslc.wtnet' {
     include role::burrow
 }
 
+node 'kafka182.fsslc.wtnet' {
+    include base
+    include role::kafka
+    include role::burrow
+}
+
 node 'ldap171.fsslc.wtnet' {
     include base
     include role::openldap
