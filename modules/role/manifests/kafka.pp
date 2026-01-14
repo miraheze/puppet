@@ -7,7 +7,7 @@ class role::kafka (
     # We need zookeeper also
     class { 'zookeeper':
         servers             => {
-            '1' => '10.0.18.159',
+            '1' => $zooper_server,
         },
         install_java        => true,
         java_package        => 'openjdk-21-jre-headless',
