@@ -157,6 +157,12 @@ node 'rdb151.fsslc.wtnet' {
     include role::redis
 }
 
+node 'rdb191.fsslc.wtnet' {
+    include base
+    include role::poolcounter
+    include role::redis
+}
+
 node 'reports171.fsslc.wtnet' {
     include base
     include role::reports
