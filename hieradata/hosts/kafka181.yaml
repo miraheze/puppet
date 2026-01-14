@@ -1,3 +1,4 @@
 zookeeper::id: '1'
 zookeeper::client_port: 2181
 zookeeper::datastore: '/var/lib/zookeeper'
+zooper_server: '10.0.18.159'
