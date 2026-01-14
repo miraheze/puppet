@@ -44,11 +44,6 @@ node /^db2([0][1])\.fsslc\.wtnet$/ {
     include role::db
 }
 
-node 'eventgate181.fsslc.wtnet' {
-    include base
-    include role::eventgate
-}
-
 node 'eventgate182.fsslc.wtnet' {
     include base
     include role::eventgate
