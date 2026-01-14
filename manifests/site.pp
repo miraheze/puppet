@@ -8,13 +8,6 @@ node 'bots171.fsslc.wtnet' {
     role(irc)
 }
 
-node 'changeprop201.fsslc.wtnet' {
-    include base
-    include role::jobrunner_haproxy
-    include role::changeprop
-    include role::redis
-}
-
 node 'changeprop202.fsslc.wtnet' {
     include base
     include role::jobrunner_haproxy
