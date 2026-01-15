@@ -3,24 +3,26 @@ dnssec:
 incoming:
   allow_from:
   - 127.0.0.0/8
+  - 10.0.0.0/8
   - ::1/128
   listen:
   - <%= @local_address %>
   pdns_distributes_queries: false
   reuseport: true
+  max_tcp_clients: 128
+  max_tcp_per_client: 100
 logging:
   quiet: true
 outgoing:
   source_address:
 <% @query_local_address.each do |addr| -%>
-  - '<%= addr %>'
+  - <%= addr %>
 <% end -%>
 recordcache:
-  max_entries: 1000000
-  max_negative_ttl: 60
-  max_ttl: 3600
+  max_entries: 3000000
+  max_negative_ttl: 3600
 recursor:
-  config_dir: /etc/powerdns
+  config_dir: /etc/powerdns/
   daemon: true
   extended_resolution_errors: true
   forward_zones:
@@ -38,3 +40,4 @@ recursor:
   setuid: pdns
   stats_ringbuffer_entries: 1000
   threads: <%= @threads %>
+  max_mthreads: 2048

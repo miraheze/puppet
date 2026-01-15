@@ -2,4 +2,4 @@ users::groups:
   - bastion
 
 base::ntp_server: 'time.cloudflare.com'
-base::dns::query_local_address: ['0.0.0.0', '::']
+base::dns::query_local_address: ['0.0.0.0', '"::"']
