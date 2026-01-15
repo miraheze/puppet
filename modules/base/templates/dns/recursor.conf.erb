@@ -11,10 +11,14 @@ daemon=yes
 threads=<%= @threads %>
 pdns-distributes-queries=no
 reuseport=yes
+max-mthreads=512
 
-max-cache-ttl=3600
-max-negative-ttl=60
-max-cache-entries=1000000
+max-negative-ttl=3600
+max-cache-entries=3000000
+
+max-tcp-clients=128
+
+max-tcp-per-client=100
 
 stats-ringbuffer-entries=1000
 
