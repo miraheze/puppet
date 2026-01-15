@@ -22,6 +22,7 @@ recordcache:
 recursor:
   config_dir: /etc/powerdns
   daemon: true
+  extended_resolution_errors: true
   forward_zones:
 <% @forward_zones_new.each do |zone, ips| -%>
   - zone: <%= zone %>
