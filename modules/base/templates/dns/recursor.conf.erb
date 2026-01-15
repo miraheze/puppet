@@ -28,3 +28,6 @@ hint-file=/usr/share/dns/root.hints
 
 # Forward requests to our authorative servers
 forward-zones = <%= @forward_zones %>
+
+# Default in 5.0 (trixie) and off in 4.x (bookworm)
+extended-resolution-errors=yes
