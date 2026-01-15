@@ -22,8 +22,6 @@ max-tcp-per-client=100
 
 stats-ringbuffer-entries=1000
 
-query-local-address= <%= @query_local_address.join(', ') %>
-
 <% unless @query_local_address.empty? -%>
 # use this address for outgoing queries
 query-local-address=<%= @query_local_address.join(' ') %>
