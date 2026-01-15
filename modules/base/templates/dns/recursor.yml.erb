@@ -15,6 +15,16 @@ logging:
   quiet: true
 outgoing:
   source_address:
+  <%- if @do_ipv6 -%>
+    - 0.0.0.0
+    - "::"
+  <%- end -%>
+  <%- if @do_ipv4_only -%>
+    - 0.0.0.0
+  <%- end -%>
+  <%- if @do_ipv6_only -%>
+    - "::"
+  <%- end -%>
 <% @query_local_address.each do |addr| -%>
   - <%= addr %>
 <% end -%>
