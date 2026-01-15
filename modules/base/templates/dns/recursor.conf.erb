@@ -22,7 +22,20 @@ max-tcp-per-client=100
 
 stats-ringbuffer-entries=1000
 
-query-local-address= <%= @query_local_address.join(', ') %>
+<% unless @query_local_address.empty? -%>
+# use this address for outgoing queries
+query-local-address=<%= @query_local_address.join(' ') %>
+<%- end -%>
+
+<% if @do_ipv6 -%>
+query-local-address=0.0.0.0,[::]
+<% end -%>
+<% if @do_ipv4_only -%>
+query-local-address=0.0.0.0
+<% end -%>
+<% if @do_ipv6_only -%>
+query-local-address=[::]
+<% end -%>
 
 # This prevents pdns from polling a public server to check for sec fixes
 security-poll-suffix=

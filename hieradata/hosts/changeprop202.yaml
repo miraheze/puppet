@@ -313,5 +313,5 @@ http_proxy: 'http://bastion.fsslc.wtnet:8080'
 redis::heap: '5GB'
 redis::maxmemory_policy: volatile-lru
 
-base::dns::query_local_address: ['0.0.0.0']
+base::dns::do_ipv4_only: true
 base::dns::forward_use_internal: true
