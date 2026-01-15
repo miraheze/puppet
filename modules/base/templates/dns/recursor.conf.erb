@@ -33,6 +33,14 @@ query-local-address=<%= @query_local_address.join(' ') %>
 query-local-address=0.0.0.0,[::]
 <% end -%>
 
+<% if @do_ipv4_only -%>
+query-local-address=0.0.0.0
+<% end -%>
+
+<% if @do_ipv6_only -%>
+query-local-address=[::]
+<% end -%>
+
 # This prevents pdns from polling a public server to check for sec fixes
 security-poll-suffix=
 
