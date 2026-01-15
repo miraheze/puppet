@@ -1,6 +1,6 @@
 # class base::dns
 class base::dns (
-    Array[String] $query_local_address,
+    Array[String] $query_local_address = [],
     Boolean       $forward_use_internal,
 ) {
     stdlib::ensure_packages('pdns-recursor')
