@@ -15,7 +15,7 @@ logging:
 outgoing:
   source_address:
 <% @query_local_address.each do |addr| -%>
-  - '<%= addr %>'
+  - <%= addr %>
 <% end -%>
 recordcache:
   max_entries: 3000000
