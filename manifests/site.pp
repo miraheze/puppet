@@ -91,7 +91,7 @@ node 'mattermost1.vps.wtnet' {
     include role::mattermost
 }
 
-node 'mattermost001.vps.wtnet' {
+node 'mattermost2.vps.wtnet' {
     include base
     include role::mattermost
 }
