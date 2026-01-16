@@ -51,7 +51,7 @@ groups:
   mediawiki-test-admins:
     gid: 2007
     description: sudo on the MediaWiki test server
-    members: []
+    members: [petramagna]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
@@ -238,3 +238,9 @@ users:
     name: Skye
     realname: Skye
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAF1SOjrWs84LQOYKphBHie0zREN1l4Hr30B/QMd2PT7 skye@skyebuntu]
+  petramagna:
+    ensure: present
+    uid: 1025
+    name: PetraMagna
+    realname: PetraMagna
+    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJ2P83EMNaymM0IARjHKHSmYSVH2XnB9Zn9VQrwcHdb petramagna]
