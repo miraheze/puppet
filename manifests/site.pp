@@ -86,11 +86,6 @@ node 'matomo151.fsslc.wtnet' {
     include role::matomo
 }
 
-node 'mattermost1.vps.wtnet' {
-    include base
-    include role::mattermost
-}
-
 node 'mattermost2.vps.wtnet' {
     include base
     include role::mattermost
