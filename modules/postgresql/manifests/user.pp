@@ -66,11 +66,7 @@ define postgresql::user(
     # Starting with Bookworm passwords are hashed with salted Scram-SHA256. The user is still tested for existance,
     # but no password changes are supported T326325
     $password_md5    = md5("${password}${user}")
-    if (versioncmp($facts['os']['release']['major'], '12') >= 0) {
-        $password_clause = "LIKE 'SCRAM-SHA-256\\\$4096:%'"
-    } else {
-        $password_clause = "= 'md5${password_md5}'"
-    }
+    $password_clause = "LIKE 'SCRAM-SHA-256\\\$4096:%'"
     $password_check = "/usr/bin/psql -Atc \"SELECT 1 FROM pg_authid WHERE rolname = '${user}' AND rolpassword ${password_clause};\" | grep 1"
 
     if $ensure == 'present' {
