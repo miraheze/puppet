@@ -1,4 +1,4 @@
-mariadb::config::innodb_buffer_pool_size: '14G'
+mariadb::config::innodb_buffer_pool_size: '18G'
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 role::db::weekly_misc: ['reports']
 role::db::fortnightly_misc: ['icinga', 'icingaweb2']
