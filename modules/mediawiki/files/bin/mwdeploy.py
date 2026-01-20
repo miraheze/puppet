@@ -231,7 +231,7 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         location = f'{Host}@{domain}'
 
     if force:
-        print(f'Skiping canary check on {location} due to --force')
+        print(f'Skipping canary check on {location} due to --force')
         return True
 
     up = False
