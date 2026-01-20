@@ -1,8 +1,8 @@
 # class: mariadb::packages
 class mariadb::packages(
-    Enum['10.11', '11.8'] $version = lookup('mariadb::version', {'default_value' => '10.11'}),
+    Enum['11.8'] $version = lookup('mariadb::version', {'default_value' => '11.8'}),
 ) {
-    stdlib::ensure_packages([ 'percona-toolkit' ])
+    stdlib::ensure_packages('percona-toolkit')
 
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     if $http_proxy and !defined(File['/etc/apt/apt.conf.d/01mariadb']) {
@@ -38,7 +38,7 @@ class mariadb::packages(
     }
 
     stdlib::ensure_packages(
-        [ 'mariadb-server', 'mariadb-backup', 'libjemalloc2' ],
+        ['mariadb-server', 'mariadb-backup', 'libjemalloc2'],
         {
             ensure  => present,
             require => Exec['apt_update_mariadb'],

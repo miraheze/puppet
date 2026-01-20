@@ -6,7 +6,7 @@ class mariadb::config(
     String                $tmpdir                       = '/tmp',
     String                $innodb_buffer_pool_size      = '5G',
     Integer               $max_connections              = 1000,
-    Enum['10.11', '11.8'] $version                      = lookup('mariadb::version', {'default_value' => '10.11'}),
+    Enum['11.8']          $version                      = lookup('mariadb::version', {'default_value' => '11.8'}),
     String                $icinga_password              = undef,
     Optional[Integer]     $server_id                    = undef,
     Boolean               $enable_bin_logs              = true,
