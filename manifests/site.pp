@@ -34,12 +34,7 @@ node /^cp([12][079]1)\.wikitide\.net$/ {
     role(cache::cache)
 }
 
-node /^db1([56789][12])\.fsslc\.wtnet$/ {
-    include base
-    include role::db
-}
-
-node /^db2([0][1])\.fsslc\.wtnet$/ {
+node /^db[12]([056789][12])\.fsslc\.wtnet$/ {
     include base
     include role::db
 }
