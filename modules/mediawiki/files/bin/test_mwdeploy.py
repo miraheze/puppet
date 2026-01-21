@@ -160,7 +160,13 @@ def test_check_up_debug() -> None:
 
 
 def test_check_up_debug_fail() -> None:
-    assert not mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstatuses.maor.io/500', force=True, use_cert=False)
+    with pytest.raises(SystemExit) as excinfo:
+        mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstatuses.maor.io/500', use_cert=False)
+    assert excinfo.value.code == 3
+
+
+def test_check_up_debug_fail_force() -> None:
+    assert mwdeploy.check_up(nolog=True, Debug='mwtask181', domain='httpstatuses.maor.io/500', force=True, use_cert=False)
 
 
 def test_get_staging_path() -> None:

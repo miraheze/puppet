@@ -229,6 +229,11 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         domain = 'localhost'
         headers['host'] = f'{Host}'
         location = f'{Host}@{domain}'
+
+    if force:
+        print(f'Skipping canary check on {location} due to --force')
+        return True
+
     up = False
     if port == 443:
         proto = 'https://'
@@ -243,16 +248,13 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         if 'X-Served-By' not in req.headers:
             req.headers['X-Served-By'] = 'None'
         print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
-        if force:
-            print(f'Ignoring canary check error on {location} due to --force')
+        print(f'Canary check failed for {location}. Aborting... - use --force to proceed')
+        message = f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {location}'
+        if nolog:
+            print(message)
         else:
-            print(f'Canary check failed for {location}. Aborting... - use --force to proceed')
-            message = f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {location}'
-            if nolog:
-                print(message)
-            else:
-                os.system(message)
-            sys.exit(3)
+            os.system(message)
+        sys.exit(3)
     return up
 
 
