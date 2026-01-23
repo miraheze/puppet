@@ -22,6 +22,14 @@ class role::grafana {
         }
     }
 
+    if !defined(Ferm::Service['https-quic']) {
+        ferm::service { 'https-quic':
+            proto   => 'udp',
+            port    => '443',
+            notrack => true,
+        }
+    }
+
     # Backups
     $monthday_1 = fqdn_rand(13, 'grafana-backup') + 1
     $monthday_15 = fqdn_rand(13, 'grafana-backup') + 15
