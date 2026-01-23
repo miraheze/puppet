@@ -83,8 +83,9 @@ server {
 
 server {
 	# We can only set backlog once per port (so this will be applied to the others below)
-	listen 443 ssl http2 deferred backlog=16384 reuseport;
-	listen [::]:443 ssl http2 deferred  backlog=16384 reuseport;
+	listen 443 ssl deferred backlog=16384 reuseport;
+	listen [::]:443 ssl deferred backlog=16384 reuseport;
+	http2 on;
 
 	server_name miraheze.org *.miraheze.org;
 	root /var/www/html;
@@ -139,10 +140,11 @@ server {
 }
 
 server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
-	server_name m.miraheze.org *.m.miraheze.org;
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
 
+	server_name m.miraheze.org *.m.miraheze.org;
 	root /var/www/html;
 
 	ssl_certificate /etc/ssl/localcerts/m.miraheze.org.crt;
@@ -171,8 +173,9 @@ server {
 }
 
 server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
 
 	server_name phorge-static.wikitide.net;
 	root /var/www/html;
@@ -219,8 +222,9 @@ server {
 
 <%- @sslredirects.each_pair do | name, property | -%>
 server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
 
 	<%- if property['additional_domain'] -%>
 	server_name <%= property['url'] %> <%= property['additional_domain'] %>;
@@ -283,8 +287,9 @@ server {
 
 <%- @sslcerts.each_pair do | name, property | -%>
 server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	http2 on;
 <%- if property['additional_domain'] -%>
 	server_name <%= property['url'] %> <%= property['additional_domain'] %>;
 <%- else -%>
