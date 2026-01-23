@@ -508,7 +508,6 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                         if not args.world:
                             rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
                             rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
-                            exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet'))
                             rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                             rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                     elif exitcode == 0:
@@ -560,7 +559,6 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                         if not args.world:
                             rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
                             rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
-                            exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet'))
                             rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                             rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                     elif exitcode == 0:
