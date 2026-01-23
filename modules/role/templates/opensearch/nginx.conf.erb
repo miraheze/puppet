@@ -1,6 +1,7 @@
 server {
-	listen 443 ssl http2 deferred;
-	listen [::]:443 ssl http2 deferred;
+	listen 443 ssl deferred;
+	listen [::]:443 ssl deferred;
+	http2 on;
 
 	server_name opensearch.wikitide.net opensearch-mw.wikitide.net;
 
