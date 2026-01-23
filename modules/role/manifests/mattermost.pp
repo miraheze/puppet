@@ -141,6 +141,12 @@ class role::mattermost {
         notrack => true,
     }
 
+    ferm::service { 'https-quic':
+        proto   => 'udp',
+        port    => '443',
+        notrack => true,
+    }
+
     # Backups
     backup::job { 'mattermost-data':
         ensure          => present,
