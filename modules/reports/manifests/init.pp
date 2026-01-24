@@ -5,7 +5,7 @@ class reports {
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',
         origin    => 'https://github.com/miraheze/TSPortal',
-        branch    => 'v23',
+        branch    => 'v24',
         owner     => 'www-data',
         group     => 'www-data',
     }
