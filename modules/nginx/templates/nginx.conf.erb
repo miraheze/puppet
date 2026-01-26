@@ -12,7 +12,8 @@ worker_rlimit_nofile 262144; # Twice the number of worker_connections
 events {
 	worker_connections 90000;
 	use epoll;
-	# multi_accept on;
+	multi_accept off;
+	accept_mutex off;
 }
 
 http {
