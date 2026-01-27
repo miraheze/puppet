@@ -1,5 +1,5 @@
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
-base::dns::do_ipv4_only: true
+base::dns::do_ipv4: true
 base::dns::forward_use_internal: true
 
 redis::heap: '18GB'
