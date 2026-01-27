@@ -6,3 +6,5 @@ varnish::transient_storage: 1
 base::syslog::rsyslog_udp_localhost: true
 nginx::logrotate_number: 2
 nginx::logrotate_maxsize: '10G'
+
+base::dns::do_ipv4: true
