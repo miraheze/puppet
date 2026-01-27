@@ -2,7 +2,7 @@
 allow-from = 127.0.0.0/8, 10.0.0.0/8, ::1/128
 config-dir = /etc/powerdns
 dnssec = off
-local-address = <%= @local_address %>
+local-address = 127.0.0.1, ::1
 quiet = yes
 setgid = pdns
 setuid = pdns
@@ -27,13 +27,11 @@ stats-ringbuffer-entries=1000
 query-local-address=<%= @query_local_address.join(' ') %>
 <%- end -%>
 
-<% if @do_ipv6 -%>
+<% if @do_ipv4 and @do_ipv6 -%>
 query-local-address=0.0.0.0,[::]
-<% end -%>
-<% if @do_ipv4_only -%>
+<% elsif @do_ipv4 -%>
 query-local-address=0.0.0.0
-<% end -%>
-<% if @do_ipv6_only -%>
+<% elsif @do_ipv6 -%>
 query-local-address=[::]
 <% end -%>
 

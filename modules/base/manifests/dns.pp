@@ -1,9 +1,8 @@
 # class base::dns
 class base::dns (
     Array[String] $query_local_address = [],
-    Boolean       $do_ipv6                  = false,
-    Boolean       $do_ipv4_only             = false,
-    Boolean       $do_ipv6_only             = false,
+    Boolean       $do_ipv4             = false,
+    Boolean       $do_ipv6             = false,
     Boolean       $forward_use_internal,
 ) {
     stdlib::ensure_packages('pdns-recursor')
@@ -23,7 +22,6 @@ class base::dns (
             '10.in-addr.arpa'=> ['10.0.17.171'],
             'wikitide.net'   => ['10.0.17.171'],
         }
-        $local_address = '127.0.0.1'
     } else {
         # Get rid when we no longer use debian bookworm
         $forward_zones = 'wtnet=2602:294:0:b23::111;2001:41d0:801:2000::4089, 10.in-addr.arpa=2602:294:0:b23::111;2001:41d0:801:2000::4089, wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089'
@@ -33,7 +31,6 @@ class base::dns (
             '10.in-addr.arpa'=> ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
             'wikitide.net'   => ['2602:294:0:b23::111', '2001:41d0:801:2000::4089'],
         }
-        $local_address = '::1'
     }
 
     if (versioncmp($facts['os']['release']['major'], '13') >= 0) {
@@ -62,7 +59,7 @@ class base::dns (
     }
 
     monitoring::nrpe { 'PowerDNS Recursor':
-        command  => "/usr/lib/nagios/plugins/check_dns -s ${local_address} -H ${facts['networking']['fqdn']}",
+        command  => "/usr/lib/nagios/plugins/check_dns -s 127.0.0.1 -H ${facts['networking']['fqdn']}",
         docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#PowerDNS_Recursor',
         critical => true
     }
