@@ -6,7 +6,8 @@ incoming:
   - 10.0.0.0/8
   - ::1/128
   listen:
-  - <%= @local_address %>
+  - 127.0.0.1
+  - "::1"
   pdns_distributes_queries: false
   reuseport: true
   max_tcp_clients: 128
