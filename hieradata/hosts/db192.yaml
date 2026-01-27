@@ -9,4 +9,3 @@ mariadb::config::server_id: 8
 role::db::is_beta_db: false
 base::dns::do_ipv4: true
 base::dns::forward_use_internal: true
-
