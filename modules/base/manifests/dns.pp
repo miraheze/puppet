@@ -59,7 +59,7 @@ class base::dns (
     }
 
     monitoring::nrpe { 'PowerDNS Recursor':
-        command  => "/usr/lib/nagios/plugins/check_dns -s ${local_address} -H ${facts['networking']['fqdn']}",
+        command  => "/usr/lib/nagios/plugins/check_dns -s 127.0.0.1 -H ${facts['networking']['fqdn']}",
         docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#PowerDNS_Recursor',
         critical => true
     }
