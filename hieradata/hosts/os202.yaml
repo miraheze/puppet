@@ -10,5 +10,5 @@ opensearch::api_host: os162.fsslc.wtnet
 
 base::syslog::rsyslog_udp_localhost: true
 
-base::dns::do_ipv4_only: true
+base::dns::do_ipv4: true
 base::dns::forward_use_internal: true
