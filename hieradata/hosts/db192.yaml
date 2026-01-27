@@ -7,5 +7,6 @@ mariadb::version: '11.8'
 role::db::enable_ssl: false
 mariadb::config::server_id: 8
 role::db::is_beta_db: false
-base::dns::do_ipv4_only: true
+base::dns::do_ipv4: true
 base::dns::forward_use_internal: true
+
