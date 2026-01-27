@@ -3,3 +3,4 @@ users::groups:
 
 base::ntp_server: 'time.cloudflare.com'
 base::dns::do_ipv6: true
+base::dns::do_ipv6_only: false
