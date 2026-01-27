@@ -1,9 +1,8 @@
 # class base::dns
 class base::dns (
     Array[String] $query_local_address = [],
-    Boolean       $do_ipv6                  = false,
-    Boolean       $do_ipv4_only             = false,
-    Boolean       $do_ipv6_only             = false,
+    Boolean       $do_ipv4             = false,
+    Boolean       $do_ipv6             = false,
     Boolean       $forward_use_internal,
 ) {
     stdlib::ensure_packages('pdns-recursor')
