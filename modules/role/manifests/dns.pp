@@ -15,17 +15,17 @@ class role::dns {
     }
 
     ferm::service { 'dns_udp':
-        proto => 'udp',
+        proto   => 'udp',
         notrack => true,
         prio    => 5,
-        port  => '53',
+        port    => '53',
     }
 
     ferm::service { 'dns_tcp':
-        proto => 'tcp',
+        proto   => 'tcp',
         notrack => true,
         prio    => 5,
-        port  => '53',
+        port    => '53',
     }
 
     system::role { 'dns':
