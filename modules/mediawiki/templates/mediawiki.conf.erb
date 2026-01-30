@@ -78,6 +78,53 @@ server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
 
+	server_name auth.miraheze.org;
+	root /srv/mediawiki;
+
+	ssl_certificate /etc/ssl/localcerts/miraheze-origin-cert.crt;
+	ssl_certificate_key /etc/ssl/private/miraheze-origin-cert.key;
+
+	ssl_verify_client optional;
+	ssl_client_certificate /etc/ssl/localcerts/origin-pull-and-internal-ca.crt;
+
+	add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+	add_header X-Served-By '<%= @facts['networking']['fqdn'] %>' always;
+
+	# XSS Protection
+	add_header X-XSS-Protection "1; mode=block" always;
+
+	add_header Cache-Tag "mediawiki" always;
+
+	error_page 400 /ErrorPages/400.html;
+	error_page 401 /ErrorPages/401.html;
+	error_page 403 /ErrorPages/403.html;
+	error_page 404 /ErrorPages/404.php;
+	error_page 405 /ErrorPages/405.html;
+	error_page 406 /ErrorPages/406.html;
+	error_page 410 /ErrorPages/410.html;
+	error_page 413 /ErrorPages/413.html;
+	error_page 414 /ErrorPages/414.html;
+
+	error_page 500 /ErrorPages/500.html;
+	error_page 502 /ErrorPages/502.html;
+	error_page 504 /ErrorPages/504.html;
+
+	include /etc/nginx/mediawiki-includes;
+
+	location = /robots.txt {
+		rewrite ^(.*)$ /robots.php;
+	}
+
+	location = /sitemap.xml {
+		rewrite ^(.*)$ /sitemap.php;
+	}
+}
+
+server {
+	listen 443 ssl http2;
+	listen [::]:443 ssl http2;
+
 	server_name miraheze.org;
 	root /srv/mediawiki/landing;
 	index index.php;
