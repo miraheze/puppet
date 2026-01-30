@@ -10,3 +10,5 @@ role::opensearch::manager_hosts:
   - os151
 
 base::syslog::rsyslog_udp_localhost: true
+
+nginx::client_max_body_size: "0"
