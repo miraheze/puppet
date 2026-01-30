@@ -3,3 +3,4 @@ http_proxy: 'http://bastion.fsslc.wtnet:8080'
 elasticsearch_host: 'https://opensearch.wikitide.net'
 mongodb_repo_version: '7.0'
 mongodb_version: '7.0.28'
+nginx::client_max_body_size: "0"
