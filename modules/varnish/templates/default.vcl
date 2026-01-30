@@ -837,8 +837,10 @@ sub vcl_deliver {
 	# Disable Google ad targeting (FLoC)
 	set resp.http.Permissions-Policy = "interest-cohort=(), browsing-topics=()";
 
-	# Content Security Policy
-	set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+	if (req.http.Host != "auth.miraheze.org") {
+		# Content Security Policy
+		set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
+	}
 
 	# For a 500 error, do not set cookies
 	if (resp.status >= 500 && resp.http.Set-Cookie) {
@@ -1015,4 +1017,5 @@ sub vcl_backend_error {
 
 	return (deliver);
 }
+
 
