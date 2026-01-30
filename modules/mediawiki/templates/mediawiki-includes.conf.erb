@@ -95,6 +95,11 @@ location ~ ^/[^/]+wiki(?:beta)?/w/api\.php$ {
 	rewrite ^/[^/]+wiki(?:beta)?/w/api\.php$ /w/api.php last;
 }
 
+# Support SUL3-style API access via /<wiki>/w/load.php
+location ~ ^/[^/]+wiki(?:beta)?/w/load\.php$ {
+	rewrite ^/[^/]+wiki(?:beta)?/w/load\.php$ /w/load.php last;
+}
+
 # Support SUL3-style resources access via /<wiki>/<version>/resources
 location ~ ^/[^/]+wiki(?:beta)?/1\.\d\d/resources {
 	rewrite ^/[^/]+wiki(?:beta)?/(1\.\d\d/resources.*)$ /$1 last;
