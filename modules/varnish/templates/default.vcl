@@ -1017,5 +1017,3 @@ sub vcl_backend_error {
 
 	return (deliver);
 }
-
-
