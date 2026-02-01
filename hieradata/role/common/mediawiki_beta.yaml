@@ -25,6 +25,7 @@ mediawiki::php::fpm::fpm_workers_multiplier: 2.0
 mediawiki::php::fpm_config:
   post_max_size: '250M'
   upload_max_filesize: '250M'
+  max_execution_time: 210
 
 mediawiki::php::enable_request_profiling: true
 
