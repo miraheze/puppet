@@ -21,7 +21,7 @@ mediawiki::php::fpm_config:
   opcache.interned_strings_buffer: 384
   opcache.memory_consumption: 8192
   opcache.max_accelerated_files: 130987
-  max_execution_time: 1200
+  max_execution_time: 259210
 
 mediawiki::php::increase_open_files: true
 mediawiki::php::enable_request_profiling: true
