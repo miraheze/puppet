@@ -29,6 +29,10 @@ http {
 	# 128 x 4
 	server_names_hash_bucket_size 512;
 
+	<%- @config.sort.each do |key, value| -%>
+		<%= key %> <%= value %>;
+	<%- end -%>
+
 	keepalive_timeout <%= @keepalive_timeout %>;
 	keepalive_requests <%= @keepalive_requests %>;
 
