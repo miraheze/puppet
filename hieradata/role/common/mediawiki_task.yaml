@@ -13,6 +13,17 @@ role::mediawiki::use_strict_firewall: true
 role::mediawiki::is_beta: false
 
 mediawiki::php::fpm::fpm_workers_multiplier: 2.0
+
+nginx::config:
+  # This is the equivelent of Timeout in apache
+  client_header_timeout: 202s
+  client_body_timeout: 202s
+  send_timeout: 202s
+  # Matches apache ProxyTimeout default
+  proxy_connect_timeout: 300s
+  proxy_send_timeout:    300s
+  proxy_read_timeout:    300s
+
 mediawiki::php::request_timeout: 259201
 mediawiki::php::apc_shm_size: '10240'
 mediawiki::php::fpm_config:
