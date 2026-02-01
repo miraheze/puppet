@@ -18,9 +18,6 @@ nginx::config:
   proxy_connect_timeout: 300s
   proxy_send_timeout:    300s
   proxy_read_timeout:    300s
-  fastcgi_connect_timeout: 300s
-  fastcgi_send_timeout:    300s
-  fastcgi_read_timeout:    300s
 
 mediawiki::php::request_timeout: 201
 mediawiki::php::fpm::fpm_workers_multiplier: 2.0
