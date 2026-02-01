@@ -9,7 +9,7 @@ class nginx (
     Integer                  $keepalive_requests                      = lookup('nginx::keepalive_requests', {'default_value' => 1000}),
     String                   $nginx_client_max_body_size              = lookup('nginx::client_max_body_size', {'default_value' => '250M'}),
     Boolean                  $use_varnish_directly                    = lookup('nginx::use_varnish_directly', {'default_value' => true}),
-    Optional[Hash]           $config                                  = lookup('nginx::config', {default_value => {}),
+    Optional[Hash]           $config                                  = lookup('nginx::config', {default_value => {}}),
 ) {
     if $remove_apache {
         # Ensure Apache is absent: https://issue-tracker.miraheze.org/T253
