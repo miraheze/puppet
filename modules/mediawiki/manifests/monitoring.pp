@@ -53,14 +53,14 @@ class mediawiki::monitoring {
         docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#MediaWiki_Rendering',
         vars          => {
             host    => lookup('mediawiki::monitoring::host'),
-            address => $facts['networking']['ip'],
+            address => $facts['networking']['interfaces']['ens19']['ip'],
         },
     }
 
     monitoring::services { 'HTTPS':
         check_command => 'check_curl',
         vars          => {
-            address          => $facts['networking']['ip'],
+            address          => $facts['networking']['interfaces']['ens19']['ip'],
             http_vhost       => $facts['networking']['fqdn'],
             http_ssl         => true,
             http_ignore_body => true,
