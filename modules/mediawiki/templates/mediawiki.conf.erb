@@ -125,8 +125,9 @@ server {
 		try_files $fastcgi_script_name =404;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-		fastcgi_read_timeout 140;
-		send_timeout 140;
+		fastcgi_connect_timeout 300;
+		fastcgi_send_timeout 300;
+		fastcgi_read_timeout 300;
 	}
 
 	location ~ ^/((?!(css|img|webfonts)).)*$ {
@@ -207,8 +208,9 @@ server {
 		try_files $fastcgi_script_name =404;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
-		fastcgi_read_timeout 140;
-		send_timeout 140;
+		fastcgi_connect_timeout 300;
+		fastcgi_send_timeout 300;
+		fastcgi_read_timeout 300;
 	}
 
 	location ~ ^/((?!(css|img|webfonts)).)*$ {
