@@ -113,7 +113,7 @@ class mediawiki::jobrunner {
             ensure        => present,
             check_command => 'check_curl',
             vars          => {
-                address          => $facts['networking']['ip'],
+                address          => $facts['networking']['interfaces']['ens19']['ip'],
                 http_port        => $port,
                 http_vhost       => $domain,
                 http_uri         => '/healthcheck.php',
