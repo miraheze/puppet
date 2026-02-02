@@ -15,7 +15,7 @@ class base::dns (
 
     if $forward_use_internal {
         # Get rid when we no longer use debian bookworm
-        $forward_zones = 'wtnet=10.0.17.171, 10.in-addr.arpa=10.0.17.171, wikitide.net=10.0.17.171'
+        $forward_zones = 'wtnet=10.0.17.171, 10.in-addr.arpa=10.0.17.171, wikitide.net=10.0.17.171, .=10.0.17.171'
         # For debian trixie+
         $forward_zones_new = {
             'wtnet'          => ['10.0.17.171'],
