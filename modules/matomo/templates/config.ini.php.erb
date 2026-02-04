@@ -14,6 +14,7 @@ collation = "utf8mb4_general_ci"
 [General]
 browser_archiving_disabled_enforce = 1
 enable_browser_archiving_triggering = 0
+enable_sql_optimize_queries = 0
 force_ssl = 1
 noreply_email_address = "noreply@wikitide.org"
 assume_secure_protocol = 1
@@ -22,7 +23,9 @@ enable_internet_features = 0
 enable_tracking_failures_notification = 0
 salt = "<%= @salt %>"
 trusted_hosts[] = "analytics.wikitide.net"
-enable_sql_optimize_queries = 0
+proxy_scheme_headers[] = "HTTP_X_FORWARDED_PROTO"
+proxy_scheme_headers[] = "HTTP_X_FORWARDED_SCHEME"
+proxy_scheme_headers[] = "HTTP_X_URL_SCHEME"
 
 [mail]
 defaultHostnameIfEmpty = "wikitide.org"
