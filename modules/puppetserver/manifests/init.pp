@@ -294,7 +294,7 @@ class puppetserver(
         command                 => '/usr/local/bin/listdomains',
         interval                => {
             start    => 'OnCalendar',
-            interval => '*-*-* *:05,15,25,35,45,55',
+            interval => '*-*-* *:00,30',
         },
         user                    => 'root',
         send_mail               => true,
