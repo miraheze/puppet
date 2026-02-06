@@ -1,19 +1,24 @@
 # == Class: chart
 
-class chart {
+class chart inherits chart::params {
     stdlib::ensure_packages(['nodejs'])
 
-    group { 'chart':
+    group { $chart::group:
         ensure => present,
+        gid    => $chart::gid,
     }
 
-    user { 'chart':
+    user { $chart::user:
         ensure     => present,
-        gid        => 'chart',
+        uid        => $chart::uid,
+        gid        => $chart::gid,
         shell      => '/bin/false',
         home       => '/srv/chart',
         managehome => false,
         system     => true,
+        require    => [
+            Group[$chart::group]
+        ],
     }
 
     git::clone { 'chart':
@@ -21,13 +26,13 @@ class chart {
         directory          => '/srv/chart',
         origin             => 'https://github.com/miraheze/chart-deploy.git',
         branch             => 'main',
-        owner              => 'chart',
-        group              => 'chart',
+        owner              => $chart::user,
+        group              => $chart::group,
         mode               => '0755',
         recurse_submodules => true,
         require            => [
-            User['chart'],
-            Group['chart'],
+            User[$chart::user],
+            Group[$chart::group],
         ],
     }
 
