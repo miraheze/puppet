@@ -15,12 +15,13 @@ logging:
     - type: stdout
 
 # Statsd metrics reporter
-metrics:
-  - type: prometheus
-    port: 9100
-  - type: statsd
-    host: localhost
-    port: 8125
+# Don't send metrics until we figure out our prometheus to Grafana setup
+# metrics:
+#   - type: prometheus
+#     port: 9100
+#   - type: statsd
+#     host: localhost
+#     port: 9125
 
 # todo choose available port on beta cluster
 services:
