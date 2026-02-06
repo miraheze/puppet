@@ -1,0 +1,20 @@
+[Unit]
+Description=Chart Renderer Service
+Documentation=https://www.mediawiki.org/wiki/Extension:Chart
+Wants=local-fs.target network.target
+After=local-fs.target network.target
+
+[Service]
+User=chart
+Group=chart
+SyslogIdentifier=chart
+WorkingDirectory=/srv/chart
+ExecStart=/usr/bin/node /srv/chart/node_modules/.bin/service-runner -c /etc/chart/config.yaml
+Restart=always
+RestartSec=2s
+TimeoutStopSec=60
+PrivateTmp=true
+StandardOutput=syslog
+
+[Install]
+WantedBy=multi-user.target
