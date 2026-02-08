@@ -64,6 +64,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         'rebuildimages',
         'rebuildtextindex',
         'refreshlinks',
+        'resetwikicaches',
         'runjobs',
         'purgelist',
         'cargorecreatedata',
