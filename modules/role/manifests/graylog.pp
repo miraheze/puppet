@@ -25,7 +25,7 @@ class role::graylog {
         version => '7.0',
     }
     -> class { 'graylog::server':
-        package_version        => '7.0.3-1',
+        package_version        => '7.0.4-1',
         config                 => {
             'password_secret'           => lookup('passwords::graylog::password_secret'),
             'root_password_sha2'        => lookup('passwords::graylog::root_password_sha2'),
