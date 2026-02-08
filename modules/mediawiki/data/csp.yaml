@@ -148,6 +148,7 @@ img-src:
   - 'www.divine-pride.net'
   - 'static.divine-pride.net'
   - 'legacyofnightwind.com'
+  - 'cdn.jsdelivr.net'
 
 font-src:
   - "'self'"
@@ -183,6 +184,7 @@ media-src:
   - 'player.vimeo.com'
   - 'apis.google.com'
   - 'bandcamp.com'
+  - 'cdn.jsdelivr.net'
 
 frame-src:
   - "'self'"
