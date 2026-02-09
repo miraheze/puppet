@@ -62,5 +62,6 @@ class redis (
         require             => Package['redis-server'],
         monitoring_enabled  => true,
         monitoring_critical => true,
+        monitoring_docs_url => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Redis_Service',
     }
 }
