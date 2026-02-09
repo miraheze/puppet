@@ -56,14 +56,11 @@ class redis (
     }
 
     systemd::service { 'redis-server':
-        ensure  => present,
-        content => systemd_template('redis-server'),
-        restart => true,
-        require => Package['redis-server'],
-    }
-
-    monitoring::nrpe { 'Redis Process':
-        command => '/usr/lib/nagios/plugins/check_procs -a redis-server -c 1:2',
-        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Redis_Service'
+        ensure              => present,
+        content             => systemd_template('redis-server'),
+        restart             => true,
+        require             => Package['redis-server'],
+        monitoring_enabled  => true,
+        monitoring_critical => true,
     }
 }
