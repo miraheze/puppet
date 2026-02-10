@@ -5,11 +5,10 @@ class grafana (
 ) {
 
     include apt
-    include grafana::datasource_exporter
 
-    file { '/usr/share/keyrings/grafana.key':
+    file { '/etc/apt/keyrings/grafana.gpg':
         ensure => present,
-        source => 'puppet:///modules/grafana/grafana.key',
+        source => 'puppet:///modules/grafana/grafana.gpg',
     }
 
     apt::source { 'grafana_apt':
@@ -17,8 +16,8 @@ class grafana (
         location => 'https://apt.grafana.com',
         release  => 'stable',
         repos    => 'main',
-        keyring  => '/usr/share/keyrings/grafana.key',
-        require  => File['/usr/share/keyrings/grafana.key'],
+        keyring  => '/etc/apt/keyrings/grafana.gpg',
+        require  => File['/etc/apt/keyrings/grafana.gpg'],
         notify   => Exec['apt_update_grafana'],
     }
 
@@ -57,12 +56,12 @@ class grafana (
         require => Package['grafana'],
     }
 
-    ssl::wildcard { 'grafana wildcard': }
-
     nginx::site { 'grafana.wikitide.net':
         ensure => present,
         source => 'puppet:///modules/grafana/nginx/grafana.conf',
     }
+
+    ssl::wildcard { 'grafana wildcard': }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
         $address = $facts['networking']['interfaces']['ens19']['ip']
@@ -75,7 +74,7 @@ class grafana (
     monitoring::services { 'grafana.wikitide.net HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6   => $address,
+            address    => $address,
             http_ssl   => true,
             http_vhost => 'grafana.wikitide.net',
         },

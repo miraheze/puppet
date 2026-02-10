@@ -39,9 +39,9 @@ backend <%= name %> {
 	.probe = <%= property['probe'] %>;
 <%- end -%>
         .connect_timeout = 3s;
-        .first_byte_timeout = 63s;
+        .first_byte_timeout = 65s;
         .between_bytes_timeout = 31s;
-        .max_connections = 1000;
+        .max_connections = 5000;
 }
 
 <%- if property['xdebug'] -%>
@@ -49,9 +49,9 @@ backend <%= name %>_test {
 	.host = "127.0.0.1";
 	.port = "<%= property['port'] %>";
         .connect_timeout = 3s;
-        .first_byte_timeout = 63s;
+        .first_byte_timeout = 65s;
         .between_bytes_timeout = 31s;
-        .max_connections = 1000;
+        .max_connections = 5000;
 }
 <%- end -%>
 <%- end -%>
@@ -73,24 +73,58 @@ sub vcl_init {
 <%- end -%>
 }
 
+acl local_host {
+	"127.0.0.1";
+}
+
+acl local_tls_terminator {
+	"10.0.16.137"; # cp161
+	"10.0.17.138"; # cp171
+	"10.0.19.146"; # cp191
+	"10.0.20.166"; # cp201
+	"0.0.0.0"; // this matches incoming traffic via UDS
+}
+
 # Purge ACL
 acl purge {
 	# localhost
 	"127.0.0.1";
 
+	# Internal ips
+	"10.0.0.0/8";
+
 	# IPv6
 	"2602:294:0:c8::/64";
 	"2602:294:0:b13::/64";
 	"2602:294:0:b23::/64";
 	"2602:294:0:b12::/64";
+	"2602:294:0:b33::/64";
+	"2602:294:0:b39::/64";
 }
 
 acl wikitide_nets {
+	# Internal ips
+	"10.0.0.0/8";
+
 	# IPv6
 	"2602:294:0:c8::/64";
 	"2602:294:0:b13::/64";
 	"2602:294:0:b23::/64";
 	"2602:294:0:b12::/64";
+	"2602:294:0:b33::/64";
+	"2602:294:0:b39::/64";
+}
+
+acl cloudflare_ips {
+	# Add Cloudflare IPv4 addresses
+	<%- @cloudflare_ipv4.each do |ip| -%>
+	"<%= ip.split('/')[0] %>"/<%= ip.split('/')[1] %>;
+	<%- end -%>
+
+	# Add Cloudflare IPv6 addresses
+	<%- @cloudflare_ipv6.each do |ip| -%>
+	"<%= ip.split('/')[0] %>"/<%= ip.split('/')[1] %>;
+	<%- end -%>
 }
 
 # Cookie handling logic
@@ -125,31 +159,32 @@ sub mobile_detection {
 
 # Rate limiting logic
 sub rate_limit {
-	# Allow higher limits for static.miraheze.org, we can handle more of those requests
-	if (req.http.Host == "static.miraheze.org") {
-		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
-			return (synth(429, "Varnish Rate Limit Exceeded"));
-		}
-	} else {
-		// Ratelimit miss/pass requests per IP:
-		//   * Excluded for now:
-		//       * all MF IPs
-		//       * T6283: remove rate limit for IABot (temporarily?)
-		//       * seemingly-authenticated requests (simple cookie check)
-		//   * MW rest.php and MW API, Wikidata: 1000/10s (100/s long term, with 1000 burst)
-		//   * All others (excludes static): 1000/50s (20/s long term, with 1000 burst)
-		if (
-			req.http.Cookie !~ "([sS]ession|Token)=" &&
-			std.ip(req.http.X-Real-IP, "192.0.2.1") !~ wikitide_nets &&
-			(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
-		) {
-			if (req.url ~ "^/((w|(1\.\d{2,}))/api.php|(w|(1\.\d{2,}))/rest.php|(wiki/)?Special:EntityData)") {
-				if (vsthrottle.is_denied("rest:" + req.http.X-Real-IP, 1000, 10s)) {
-					return (synth(429, "Too Many Requests"));
-				}
-			} else {
-				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 1000, 50s)) {
-					return (synth(429, "Too Many Requests"));
+	// dont apply any rate limiting to internal networks
+	if (std.ip(req.http.X-Real-IP, "192.0.2.1") !~ wikitide_nets) {
+		# Allow higher limits for static.wikitide.net, we can handle more of those requests
+		if (req.http.Host == "static.wikitide.net") {
+			if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
+				return (synth(429, "Varnish Rate Limit Exceeded"));
+			}
+		} else {
+			// Ratelimit miss/pass requests per IP:
+			//   * Excluded for now:
+			//       * T6283: remove rate limit for IABot (temporarily?)
+			//       * seemingly-authenticated requests (simple cookie check)
+			//   * MW rest.php and MW API, Wikidata: 1000/10s (100/s long term, with 1000 burst)
+			//   * All others (excludes static): 1000/50s (20/s long term, with 1000 burst)
+			if (
+				req.http.Cookie !~ "([sS]ession|Token)=" &&
+				(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
+			) {
+				if (req.url ~ "^/((w|(1\.\d{2,}))/api.php|(w|(1\.\d{2,}))/rest.php|(wiki/)?Special:EntityData)") {
+					if (vsthrottle.is_denied("rest:" + req.http.X-Real-IP, 1000, 10s)) {
+						return (synth(429, "Too Many Requests"));
+					}
+				} else {
+					if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 1000, 50s)) {
+						return (synth(429, "Too Many Requests"));
+					}
 				}
 			}
 		}
@@ -172,31 +207,28 @@ sub vcl_synth {
 			set resp.reason = "Moved Permanently";
 			set resp.http.Location = "https://commons.miraheze.org/";
 			set resp.http.Connection = "keep-alive";
-			set resp.http.Content-Length = "0";
 		}
 
 		if (resp.reason == "Main Page Redirect") {
 			set resp.reason = "Moved Permanently";
 			set resp.http.Location = "https://miraheze.org/";
 			set resp.http.Connection = "keep-alive";
-			set resp.http.Content-Length = "0";
 		}
 
 		// Handle CORS preflight requests
 		if (
-			req.http.Host == "static.miraheze.org" &&
+			req.http.Host == "static.wikitide.net" &&
 			resp.reason == "CORS Preflight"
 		) {
 			set resp.reason = "OK";
 			set resp.http.Connection = "keep-alive";
-			set resp.http.Content-Length = "0";
 
 			// allow Range requests, and avoid other CORS errors when debugging with X-WikiTide-Debug
 			set resp.http.Access-Control-Allow-Origin = "*";
 			set resp.http.Access-Control-Allow-Headers = "Range,X-WikiTide-Debug";
 			set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
 			set resp.http.Access-Control-Max-Age = "86400";
-		} else {
+		} elseif (req.http.Host == "static.wikitide.net") {
 			call add_upload_cors_headers;
 		}
 	}
@@ -232,9 +264,14 @@ sub mw_request {
 	# Assigning a backend
 	if (req.http.X-WikiTide-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ wikitide_nets) {
 <%- @backends.each_pair do | name, property | -%>
-<%- if property['xdebug'] -%>
-		if (req.http.X-WikiTide-Debug == "<%= name %>.wikitide.net") {
-			if (req.http.Host == "static.miraheze.org") {
+<%- if not (property['pool'] or property['swiftpool']) -%>
+		if (req.http.X-WikiTide-Debug == "unused") {
+			set req.backend_hint = <%= name %>;
+		}
+<%- end -%>
+<%- if property['xdebug'] && (name.start_with?('mw') || name.start_with?('test')) -%>
+		if (req.http.X-WikiTide-Debug == "<%= name %>") {
+			if (req.http.Host == "static.wikitide.net") {
 				set req.backend_hint = swift.backend();
 			} else {
 				set req.backend_hint = <%= name %>_test;
@@ -249,13 +286,13 @@ sub mw_request {
 
 	set req.backend_hint = mediawiki.backend();
 
-	# Rewrite hostname to static.miraheze.org for caching
+	# Rewrite hostname to static.wikitide.net for caching
 	if (req.url ~ "^/static/") {
-		set req.http.Host = "static.miraheze.org";
+		set req.http.Host = "static.wikitide.net";
 	}
 
-	# Numerous static.miraheze.org specific code
-	if (req.http.Host == "static.miraheze.org") {
+	# Numerous static.wikitide.net specific code
+	if (req.http.Host == "static.wikitide.net") {
 		set req.backend_hint = swift.backend();
 
 		unset req.http.X-Range;
@@ -264,7 +301,7 @@ sub mw_request {
 			set req.hash_ignore_busy = true;
 		}
 
-		# We can do this because static.miraheze.org should not be capable of serving such requests anyway
+		# We can do this because static.wikitide.net should not be capable of serving such requests anyway
 		# This could also increase cache hit rates as Cookies will be stripped entirely
 		unset req.http.Cookie;
 		unset req.http.Authorization;
@@ -324,13 +361,13 @@ sub mw_request {
 	}
 
 	# Do not cache dumps and also pipe requests.
-	if ( req.http.Host == "static.miraheze.org" && req.url ~ "^/.*wiki/dumps" ) {
+	if ( req.http.Host == "static.wikitide.net" && req.url ~ "^/.*wiki/dumps" ) {
 		return (pipe);
 	}
 
 	# Don't cache certain things on static
 	if (
-		req.http.Host == "static.miraheze.org" &&
+		req.http.Host == "static.wikitide.net" &&
 		(
 			req.url !~ "^/.*wiki" || # If it isn't a wiki folder, don't cache it
 			req.url ~ "^/(.+)wiki/sitemaps" # Do not cache sitemaps
@@ -369,7 +406,27 @@ sub vcl_recv {
 	unset req.http.X-CDIS;
 
 	if (req.restarts == 0) {
+		if (client.ip !~ local_host && remote.ip !~ local_tls_terminator) {
+			// only the local haproxy TLS terminator should set these at all -
+			// there are no other internal exceptions to that rule
+			unset req.http.X-Real-IP;
+		}
+
+		if (!req.http.X-Real-IP) {
+			set req.http.X-Real-IP = client.ip;
+			if (!req.http.X-Real-IP) {
+				// apparently sometimes the above doesn't set it???  use
+				// illegal RFC 5735 documentation network to avoid
+				// sending NULL
+				set req.http.X-Real-IP = "192.0.2.1";
+			}
+		}
+
 		unset req.http.X-Subdomain;
+	}
+
+	if (req.url == "/.well-known/traffic-advice") {
+		return (synth(200, "Disable Chrome Private Prefetch Proxy"));
 	}
 
 	# Health checks, do not send request any further, if we're up, we can handle it
@@ -381,7 +438,7 @@ sub vcl_recv {
 		return (synth(301, "Main Page Redirect"));
 	}
 
-	if (req.http.host == "static.miraheze.org" && req.url == "/") {
+	if (req.http.host == "static.wikitide.net" && req.url == "/") {
 		return (synth(301, "Commons Redirect"));
 	}
 
@@ -426,6 +483,11 @@ sub vcl_recv {
 	if (req.http.Host == "issue-tracker.miraheze.org" || req.http.Host == "phorge-static.wikitide.net" ||
 		req.http.Host == "blog.miraheze.org") {
 		set req.backend_hint = phorge171;
+
+		if (req.http.upgrade ~ "(?i)websocket") {
+			return (pipe);
+		}
+
 		return (pass);
 	}
 
@@ -433,6 +495,19 @@ sub vcl_recv {
 	if (req.http.Host == "reports.miraheze.org") {
 		set req.backend_hint = reports171;
 		return (pass);
+	}
+
+	# Respect CloudFlare IPs for X-Forwarded-For configuration
+	if (client.ip ~ cloudflare_ips || client.ip ~ purge) {
+		if (req.http.CF-Connecting-IP) {
+			# Honor the X-Forwarded-For header only if the client IP is in the Cloudflare ACL
+			set req.http.X-Client-IP = client.ip;
+			set req.http.X-Forwarded-For = req.http.CF-Connecting-IP + ", " + client.ip;
+		}
+	} else {
+		# Reset X-Forwarded-For if the request is not from a Cloudflare IP
+		unset req.http.CF-Connecting-IP;
+		set req.http.X-Client-IP = client.ip;
 	}
 
 	# MediaWiki specific
@@ -444,7 +519,7 @@ sub vcl_recv {
 # Defines the uniqueness of a request
 sub vcl_hash {
 	# FIXME: try if we can make this ^/(wiki/)? only?
-	if ((req.http.Host != "miraheze.org" && req.http.Host != "wikitide.org" && req.url ~ "^/(wiki/)?") || req.url ~ "^/w/load.php") {
+	if (req.url ~ "^/(wiki/)?" || req.url ~ "^/w/load.php" || req.url ~ "^/w/index.php") {
 		hash_data(req.http.X-Subdomain);
 	}
 }
@@ -473,14 +548,14 @@ sub vcl_backend_fetch {
 
 sub mf_admission_policies {
 	// hit-for-pass objects >= 8388608 size. Do cache if Content-Length is missing.
-	if (bereq.http.Host == "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 262144) {
+	if (bereq.http.Host == "static.wikitide.net" && std.integer(beresp.http.Content-Length, 0) >= 262144) {
 		// HFP
 		set beresp.http.X-CDIS = "pass";
 		return(pass(beresp.ttl));
 	}
 
 	// hit-for-pass objects >= 67108864 size. Do cache if Content-Length is missing.
-	if (bereq.http.Host != "static.miraheze.org" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
+	if (bereq.http.Host != "static.wikitide.net" && std.integer(beresp.http.Content-Length, 0) >= 67108864) {
 		// HFP
 		set beresp.http.X-CDIS = "pass";
 		return(pass(beresp.ttl));
@@ -513,7 +588,7 @@ sub vcl_backend_response {
 
 	# T9808: Assign restrictive Cache-Control if one is missing
 	if (!beresp.http.Cache-Control) {
-		set beresp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
+		set beresp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate, no-transform";
 		set beresp.ttl = 0s;
 		// translated to hit-for-pass below
 	}
@@ -664,12 +739,12 @@ sub vcl_backend_response {
 
 # Last sub route activated, clean up of HTTP headers etc.
 sub vcl_deliver {
-	if (req.method != "PURGE") {
-		if(req.http.X-CDIS == "hit") {
-			// obj.hits isn't known in vcl_hit, and not useful for other states
-			set req.http.X-CDIS = "hit/" + obj.hits;
-		}
+	// Provides custom error html if error response has no body
+	if (resp.http.Content-Length == "0" && resp.status >= 400) {
+		return(synth(resp.status));
+	}
 
+	if (req.method != "PURGE") {
 		// we copy through from beresp->resp->req here for the initial hit-for-pass case
 		if (resp.http.X-CDIS) {
 			set req.http.X-CDIS = resp.http.X-CDIS;
@@ -724,7 +799,7 @@ sub vcl_deliver {
 		unset resp.http.X-Content-Range;
 	}
 
-	if ( req.http.Host == "static.miraheze.org" ) {
+	if ( req.http.Host == "static.wikitide.net" ) {
 		unset resp.http.Set-Cookie;
 		unset resp.http.Cache-Control;
 
@@ -742,10 +817,10 @@ sub vcl_deliver {
 		call add_upload_cors_headers;
 	}
 
-	if (req.url ~ "^/(wiki/)?" || req.url ~ "^/w/index\.php") {
+	if ( req.http.Host != "static.wikitide.net" && ( req.url ~ "^/wiki/" || req.url ~ "^/w/index\.php"  || req.url ~ "^/\?title=" ) ) {
 		// ...but exempt CentralNotice banner special pages
 		if (req.url !~ "^/(wiki/|w/index\.php\?title=)?Special:Banner") {
-			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate";
+			set resp.http.Cache-Control = "private, s-maxage=0, max-age=0, must-revalidate, no-transform";
 		}
 	}
 
@@ -796,7 +871,11 @@ sub add_upload_cors_headers {
 
 # Hit code, default logic is appended
 sub vcl_hit {
-	set req.http.X-CDIS = "hit";
+	if (req.method == "PURGE") {
+		set req.http.X-CDIS = "hit/purge";
+	} else {
+		set req.http.X-CDIS = "hit/" + obj.hits;
+	}
 }
 
 # Miss code, default logic is appended
@@ -842,6 +921,17 @@ sub vcl_synth {
 		} else {
 			set resp.http.X-Cache-Int = "<%= @facts['networking']['hostname'] %> " + req.http.X-CDIS;
 		}
+	}
+
+	if (resp.reason == "Disable Chrome Private Prefetch Proxy") {
+		set resp.reason = "OK";
+		set resp.http.Cache-Control = "public, max-age=86400";
+		set resp.http.Content-Type = "application/trafficadvice+json";
+		synthetic({"[{
+	"user_agent": "prefetch-proxy",
+	"disallow": true
+}]
+"});
 	}
 
 	return (deliver);
@@ -925,3 +1015,4 @@ sub vcl_backend_error {
 
 	return (deliver);
 }
+

@@ -1,10 +1,7 @@
 # dns
 class dns {
     include prometheus::exporter::gdnsd
-
-    package { 'gdnsd':
-        ensure  => installed,
-    }
+    stdlib::ensure_packages('gdnsd')
 
     git::clone { 'dns':
         ensure    => latest,
@@ -16,11 +13,16 @@ class dns {
         notify    => Exec['gdnsd-syntax'],
     }
 
+    file { '/usr/share/GeoIP':
+        ensure => directory,
+    }
+
     file { '/usr/share/GeoIP/GeoLite2-Country.mmdb':
-        ensure => present,
-        source => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
-        mode   => '0444',
-        notify => Exec['gdnsd-syntax'],
+        ensure  => present,
+        source  => 'puppet:///private/geoip/GeoLite2-Country.mmdb',
+        mode    => '0444',
+        notify  => Exec['gdnsd-syntax'],
+        require => File['/usr/share/GeoIP']
     }
 
     exec { 'gdnsd-syntax':
@@ -54,7 +56,7 @@ class dns {
         check_command => 'check_dns_auth',
         vars          => {
             address6 => $address,
-            host     => 'wikitide.net',
+            host     => $facts['networking']['fqdn'],
         },
     }
 

@@ -2,7 +2,7 @@
 
 swift_ac_enable: true
 
-role::swift::stats_reporter_host: swiftproxy171.wikitide.net
+role::swift::stats_reporter_host: swiftproxy171.fsslc.wtnet
 
 role::prometheus::statsd_exporter::mappings:
   # Account-related services

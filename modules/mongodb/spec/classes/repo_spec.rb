@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'mongodb::repo' do
@@ -8,43 +10,46 @@ describe 'mongodb::repo' do
       end
 
       describe 'without parameters' do
-        it { is_expected.to raise_error(Puppet::Error, %r{unsupported}) }
+        it { is_expected.to raise_error(Puppet::Error, %r{required}) }
       end
 
       describe 'with version set' do
         let :params do
           {
-            version: '3.6.1'
+            version: '5.0'
           }
         end
 
-        case facts[:osfamily]
+        case facts[:os]['family']
         when 'RedHat'
           it { is_expected.to contain_class('mongodb::repo::yum') }
+
           it do
             is_expected.to contain_yumrepo('mongodb').
-              with_baseurl('https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.6/$basearch/')
+              with_baseurl('https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/5.0/$basearch/')
           end
         when 'Suse'
           it { is_expected.to contain_class('mongodb::repo::zypper') }
+
           it do
             is_expected.to contain_zypprepo('mongodb').
-              with_baseurl('https://repo.mongodb.org/zypper/suse/$releasever_major/mongodb-org/3.6/$basearch/')
+              with_baseurl('https://repo.mongodb.org/zypper/suse/$releasever_major/mongodb-org/5.0/$basearch/')
           end
         when 'Debian'
           it { is_expected.to contain_class('mongodb::repo::apt') }
-          case facts[:operatingsystem]
+
+          case facts[:os]['name']
           when 'Debian'
             it do
               is_expected.to contain_apt__source('mongodb').
                 with_location('https://repo.mongodb.org/apt/debian').
-                with_release("#{facts[:lsbdistcodename]}/mongodb-org/3.6")
+                with_release("#{facts[:os]['distro']['codename']}/mongodb-org/5.0")
             end
           when 'Ubuntu'
             it do
               is_expected.to contain_apt__source('mongodb').
                 with_location('https://repo.mongodb.org/apt/ubuntu').
-                with_release("#{facts[:lsbdistcodename]}/mongodb-org/3.6")
+                with_release("#{facts[:os]['distro']['codename']}/mongodb-org/5.0")
             end
           end
         else
@@ -55,16 +60,17 @@ describe 'mongodb::repo' do
       describe 'with proxy' do
         let :params do
           {
-            version: '3.6.1',
+            version: '5.0',
             proxy: 'http://proxy-server:8080',
             proxy_username: 'proxyuser1',
             proxy_password: 'proxypassword1'
           }
         end
 
-        case facts[:osfamily]
+        case facts[:os]['family']
         when 'RedHat'
           it { is_expected.to contain_class('mongodb::repo::yum') }
+
           it do
             is_expected.to contain_yumrepo('mongodb').
               with_enabled('1').

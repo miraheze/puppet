@@ -8,7 +8,7 @@
     <Directory /srv/mediawiki>
        Require all granted
     </Directory>
-    RewriteCond  %{REQUEST_URI} !^/w/healthcheck.php
+    RewriteCond  %{REQUEST_URI} !^/healthcheck.php
     RewriteRule ^ - [R=404,L]
     <FilesMatch "\.php$">
         SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>|fcgi://www"
@@ -18,19 +18,16 @@
 </VirtualHost>
 
 <VirtualHost *:<%= @local_only_port %>>
-    ServerName jobrunner.wikitide.net
+    ServerName jobrunner.svc.fsslc.wtnet
     ServerAlias <%= @facts['networking']['fqdn'] %>
     Timeout 1202
     DocumentRoot "/srv/mediawiki"
-    SSLEngine on
-    SSLCertificateFile /etc/ssl/localcerts/wikitide.net.crt
-    SSLCertificateKeyFile /etc/ssl/private/wikitide.net.key
     RewriteEngine On
     <Directory /srv/mediawiki>
        Require all granted
     </Directory>
     # Only selected paths are allowed here
-    RewriteCond %{REQUEST_URI} !^/(w/healthcheck|rpc/RunSingleJob)\.php
+    RewriteCond %{REQUEST_URI} !^/(healthcheck|rpc/RunSingleJob)\.php
     RewriteRule ^ - [R=404,L]
     <FilesMatch "\.php$">
         SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>|fcgi://www"
@@ -40,19 +37,16 @@
 </VirtualHost>
 
 <VirtualHost *:<%= @local_only_port %>>
-    ServerName jobrunner-high.wikitide.net
+    ServerName jobrunner-high.svc.fsslc.wtnet
     ServerAlias <%= @facts['networking']['fqdn'] %>
     Timeout 259202
     DocumentRoot "/srv/mediawiki"
-    SSLEngine on
-    SSLCertificateFile /etc/ssl/localcerts/wikitide.net.crt
-    SSLCertificateKeyFile /etc/ssl/private/wikitide.net.key
     RewriteEngine On
     <Directory /srv/mediawiki>
        Require all granted
     </Directory>
     # Only selected paths are allowed here
-    RewriteCond %{REQUEST_URI} !^/(w/healthcheck|rpc/RunSingleJob)\.php
+    RewriteCond %{REQUEST_URI} !^/(healthcheck|rpc/RunSingleJob)\.php
     RewriteRule ^ - [R=404,L]
     <FilesMatch "\.php$">
         SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>|fcgi://www"
@@ -62,19 +56,16 @@
 </VirtualHost>
 
 <VirtualHost *:<%= @local_only_port %>>
-    ServerName videoscaler.wikitide.net
+    ServerName videoscaler.svc.fsslc.wtnet
     ServerAlias <%= @facts['networking']['fqdn'] %>
     Timeout 86402
     DocumentRoot "/srv/mediawiki"
-    SSLEngine on
-    SSLCertificateFile /etc/ssl/localcerts/wikitide.net.crt
-    SSLCertificateKeyFile /etc/ssl/private/wikitide.net.key
     RewriteEngine On
     <Directory /srv/mediawiki>
        Require all granted
     </Directory>
     # Only selected paths are allowed here
-    RewriteCond %{REQUEST_URI} !^/(w/healthcheck|rpc/RunSingleJob)\.php
+    RewriteCond %{REQUEST_URI} !^/(healthcheck|rpc/RunSingleJob)\.php
     RewriteRule ^ - [R=404,L]
     <FilesMatch "\.php$">
         SetHandler "proxy:unix:/run/<%= @php_fpm_sock %>|fcgi://www"

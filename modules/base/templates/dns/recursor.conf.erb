@@ -1,8 +1,8 @@
 # Basic config for setup
-allow-from = 127.0.0.0/8, ::1/128
+allow-from = 127.0.0.0/8, 10.0.0.0/8, ::1/128
 config-dir = /etc/powerdns
 dnssec = off
-local-address = ::1
+local-address = 127.0.0.1, ::1
 quiet = yes
 setgid = pdns
 setuid = pdns
@@ -11,13 +11,29 @@ daemon=yes
 threads=<%= @threads %>
 pdns-distributes-queries=no
 reuseport=yes
+max-mthreads=512
 
-# Set a maximum TTL for all records to prevent overcaching
-max-cache-ttl = 600
+max-negative-ttl=3600
+max-cache-entries=3000000
+
+max-tcp-clients=128
+
+max-tcp-per-client=100
 
 stats-ringbuffer-entries=1000
 
-query-local-address=::
+<% unless @query_local_address.empty? -%>
+# use this address for outgoing queries
+query-local-address=<%= @query_local_address.join(' ') %>
+<%- end -%>
+
+<% if @do_ipv4 and @do_ipv6 -%>
+query-local-address=0.0.0.0,[::]
+<% elsif @do_ipv4 -%>
+query-local-address=0.0.0.0
+<% elsif @do_ipv6 -%>
+query-local-address=[::]
+<% end -%>
 
 # This prevents pdns from polling a public server to check for sec fixes
 security-poll-suffix=
@@ -26,4 +42,7 @@ security-poll-suffix=
 hint-file=/usr/share/dns/root.hints
 
 # Forward requests to our authorative servers
-forward-zones = wikitide.net=2602:294:0:b23::111;2001:41d0:801:2000::4089
+forward-zones = <%= @forward_zones %>
+
+# Default in 5.0 (trixie) and off in 4.x (bookworm)
+extended-resolution-errors=yes

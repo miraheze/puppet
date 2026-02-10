@@ -121,6 +121,22 @@ class java::params {
             },
           }
         }
+        '13': {
+          $java = {
+            'jdk' => {
+              'package'          => 'openjdk-21-jdk',
+              'alternative'      => "java-1.21.0-openjdk-${openjdk_architecture}",
+              'alternative_path' => "/usr/lib/jvm/java-1.21.0-openjdk-${openjdk_architecture}/bin/java",
+              'java_home'        => "/usr/lib/jvm/java-1.21.0-openjdk-${openjdk_architecture}/",
+            },
+            'jre' => {
+              'package'          => 'openjdk-21-jre-headless',
+              'alternative'      => "java-1.21.0-openjdk-${openjdk_architecture}",
+              'alternative_path' => "/usr/lib/jvm/java-1.21.0-openjdk-${openjdk_architecture}/bin/java",
+              'java_home'        => "/usr/lib/jvm/java-1.21.0-openjdk-${openjdk_architecture}/",
+            },
+          }
+        }
         default: { fail("unsupported release ${facts['os']['release']['major']}") }
       }
     }

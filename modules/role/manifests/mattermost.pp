@@ -23,7 +23,7 @@ class role::mattermost {
     }
     -> class { 'mattermost':
         edition          => 'enterprise',
-        version          => '10.1.1',
+        version          => '11.3.0',
         override_options => {
             'TeamSettings'    => {
                 'SiteName'                  => 'WikiTide Foundation',
@@ -56,6 +56,7 @@ class role::mattermost {
                 'EnableEmailInvitations'           => true,
                 'EnableMultifactorAuthentication'  => true,
                 'EnforceMultifactorAuthentication' => true,
+                'ScheduledPosts'                   => true,
             },
             'SqlSettings'     => {
                 'DriverName' => 'postgres',
@@ -110,11 +111,9 @@ class role::mattermost {
     $cloudflare_ipv6 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv6'), /[\r\n]/)
 
     $firewall_rules_cloudflare_str = join(
-        $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Varnish] or Class[Role::Icinga2]', ['networking'])
+        $cloudflare_ipv4 + $cloudflare_ipv6 + query_facts('Class[Role::Varnish] or Class[Role::Cache::Cache] or Class[Role::Icinga2]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['he-ipv6'] ) {
-                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
@@ -140,6 +139,25 @@ class role::mattermost {
         port    => '443',
         # srange  => "(${$firewall_rules_cloudflare_str})",
         notrack => true,
+    }
+
+    ferm::service { 'https-quic':
+        proto   => 'udp',
+        port    => '443',
+        notrack => true,
+    }
+
+    # Backups
+    backup::job { 'mattermost-data':
+        ensure          => present,
+        interval        => '*-*-1,15 01:00:00',
+        logfile_basedir => '/var/log/mattermost-backup',
+    }
+
+    backup::job { 'mattermost-db':
+        ensure          => present,
+        interval        => '*-*-1,15 01:00:00',
+        logfile_basedir => '/var/log/mattermost-backup',
     }
 
     monitoring::nrpe { 'Mattermost':

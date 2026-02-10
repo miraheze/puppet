@@ -1,5 +1,6 @@
-require 'voxpupuli/acceptance/spec_helper_acceptance'
+# frozen_string_literal: true
 
-configure_beaker do |host|
-  install_package(host, 'epel-release') if fact_on(host, 'os.name') == 'CentOS'
-end
+require 'voxpupuli/acceptance/spec_helper_acceptance'
+require 'support/acceptance/supported_version'
+
+configure_beaker(modules: :metadata)

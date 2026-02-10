@@ -1,0 +1,14 @@
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
+
+role::opensearch::roles: ['data', 'ingest']
+role::opensearch::discovery_host:
+  - os162.fsslc.wtnet
+  - os202.fsslc.wtnet
+role::opensearch::manager_hosts:
+  - os162
+opensearch::api_host: os162.fsslc.wtnet
+
+base::syslog::rsyslog_udp_localhost: true
+
+base::dns::do_ipv4: true
+base::dns::forward_use_internal: true

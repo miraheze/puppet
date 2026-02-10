@@ -86,7 +86,7 @@ class zookeeper::params {
   $truststore_quorum_type = 'PEM'
   $ssl_quorum_ciphersuites = undef
   $ssl_quorum_hostname_verification = true
-  $ssl_quorum_protocol = 'TLSv1.2'
+  $ssl_quorum_protocol = 'TLSv1.3'
   $ssl_quorum = false
   $quorum_listen_on_all_ips = false
   $audit_enable = false

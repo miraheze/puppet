@@ -1,0 +1,8 @@
+---
+icinga::repos:
+  crb:
+    descr: 'CentOS Stream $releasever - CRB'
+    metalink: 'https://mirrors.centos.org/metalink?repo=centos-crb-$stream&arch=$basearch&protocol=https,http'
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial'

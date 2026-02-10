@@ -1,0 +1,23 @@
+server {
+	listen 9181;
+	listen [::]:9181;
+
+	server_name ~.;
+	root /var/www/php-monitoring;
+
+	index index.php index.html;
+
+	location / {
+		try_files $uri $uri/ /index.php$uri?$args;
+	}
+
+	location ~ \.php {
+		include fastcgi_params;
+		fastcgi_index index.php;
+		fastcgi_split_path_info ^(.+\.php)(.*)$;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_buffers 32 32k;
+		fastcgi_buffer_size 64k;
+		fastcgi_pass unix:/run/php/fpm-www.sock;
+	}
+}

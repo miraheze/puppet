@@ -1,7 +1,7 @@
 users::groups: 'database-admins'
-http_proxy: 'http://bastion.wikitide.net:8080'
-mariadb::config::innodb_buffer_pool_size: '30G'
-mariadb::version: '10.11'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
+mariadb::config::innodb_buffer_pool_size: '2G'
+mariadb::version: '11.8'
 role::db::enable_ssl: false
 mariadb::config::server_id: 5
 role::db::is_beta_db: true

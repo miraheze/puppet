@@ -10,7 +10,7 @@ class zookeeper::install::package inherits zookeeper::install {
   # Make sure, that service package was not installed earlier
   if ($zookeeper::service_provider == 'init.d' and (!member($zookeeper::packages, $zookeeper::service_package))) {
     package { [$zookeeper::service_package]: #init.d scripts for zookeeper
-      ensure  => $zookeeper::ensure,
+      ensure => $zookeeper::ensure,
     }
   }
 }

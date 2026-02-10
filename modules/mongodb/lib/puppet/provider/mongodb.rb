@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', '..'))
 require 'puppet/util/mongodb_output'
 
@@ -6,42 +8,33 @@ require 'json'
 class Puppet::Provider::Mongodb < Puppet::Provider
   # Without initvars commands won't work.
   initvars
-  commands mongo: 'mongo'
+  commands mongosh: 'mongosh'
 
   # Optional defaults file
-  def self.mongorc_file
-    "load('#{Facter.value(:root_home)}/.mongorc.js'); " if File.file?("#{Facter.value(:root_home)}/.mongorc.js")
+  def self.mongoshrc_file
+    "load('#{Facter.value(:root_home)}/.mongoshrc.js'); " if File.file?("#{Facter.value(:root_home)}/.mongoshrc.js")
   end
 
-  def mongorc_file
-    self.class.mongorc_file
+  def mongoshrc_file
+    self.class.mongoshrc_file
   end
 
   def self.mongod_conf_file
-    if File.exist? '/etc/mongod.conf'
-      '/etc/mongod.conf'
-    else
-      '/etc/mongodb.conf'
-    end
+    '/etc/mongod.conf'
   end
 
   def self.mongo_conf
     config = YAML.load_file(mongod_conf_file) || {}
     {
-      'bindip' => config['net.bindIp'],
-      'port' => config['net.port'],
-      'ipv6' => config['net.ipv6'],
-      'sslallowInvalidHostnames' => config['net.ssl.allowInvalidHostnames'],
-      'ssl' => config['net.ssl.mode'],
-      'sslcert' => config['net.ssl.PEMKeyFile'],
-      'sslca' => config['net.ssl.CAFile'],
-      'tlsallowInvalidHostnames' => config['net.tls.allowInvalidHostnames'],
-      'tls' => config['net.tls.mode'],
-      'tlscert' => config['net.tls.certificateKeyFile'],
-      'tlsca' => config['net.tls.CAFile'],
-      'auth' => config['security.authorization'],
-      'shardsvr' => config['sharding.clusterRole'],
-      'confsvr' => config['sharding.clusterRole']
+      'bindip' => config['net.bindIp'] || config.fetch('net', {}).fetch('bindIp', nil),
+      'port' => config['net.port'] || config.fetch('net', {}).fetch('port', nil),
+      'ipv6' => config['net.ipv6'] || config.fetch('net', {}).fetch('ipv6', nil),
+      'tlsallowInvalidHostnames' => config['net.tls.allowInvalidHostnames'] || config.fetch('net', {}).fetch('tls', {}).fetch('allowInvalidHostnames', nil),
+      'tls' => config['net.tls.mode'] || config.fetch('net', {}).fetch('tls', {}).fetch('mode', nil),
+      'tlscert' => config['net.tls.certificateKeyFile'] || config.fetch('net', {}).fetch('tls', {}).fetch('certificateKeyFile', nil),
+      'tlsca' => config['net.tls.CAFile'] || config.fetch('net', {}).fetch('tls', {}).fetch('CAFile', nil),
+      'auth' => config['security.authorization'] || config.fetch('security', {}).fetch('authorization', nil),
+      'clusterRole' => config['sharding.clusterRole'] || config.fetch('sharding', {}).fetch('clusterRole', nil),
     }
   end
 
@@ -50,21 +43,10 @@ class Puppet::Provider::Mongodb < Puppet::Provider
     config['ipv6']
   end
 
-  def self.ssl_is_enabled(config = nil)
-    config ||= mongo_conf
-    ssl_mode = config.fetch('ssl')
-    !ssl_mode.nil? && ssl_mode != 'disabled'
-  end
-
   def self.tls_is_enabled(config = nil)
     config ||= mongo_conf
     tls_mode = config.fetch('tls')
     !tls_mode.nil? && tls_mode != 'disabled'
-  end
-
-  def self.ssl_invalid_hostnames(config = nil)
-    config ||= mongo_conf
-    config['sslallowInvalidHostnames']
   end
 
   def self.tls_invalid_hostnames(config = nil)
@@ -72,21 +54,18 @@ class Puppet::Provider::Mongodb < Puppet::Provider
     config['tlsallowInvalidHostnames']
   end
 
-  def self.mongo_cmd(db, host, cmd)
+  def self.tls_invalid_certificates(config = nil)
+    config ||= mongo_conf
+    config['tlsallowInvalidCertificates']
+  end
+
+  def self.mongosh_cmd(db, host, cmd)
     config = mongo_conf
+
+    host = conn_string if host.nil? || host.split(':')[0] == Facter.value(:fqdn) || host == '127.0.0.1'
 
     args = [db, '--quiet', '--host', host]
     args.push('--ipv6') if ipv6_is_enabled(config)
-
-    if ssl_is_enabled(config)
-      args.push('--ssl')
-      args += ['--sslPEMKeyFile', config['sslcert']]
-
-      ssl_ca = config['sslca']
-      args += ['--sslCAFile', ssl_ca] unless ssl_ca.nil?
-
-      args.push('--sslAllowInvalidHostnames') if ssl_invalid_hostnames(config)
-    end
 
     if tls_is_enabled(config)
       args.push('--tls')
@@ -96,10 +75,11 @@ class Puppet::Provider::Mongodb < Puppet::Provider
       args += ['--tlsCAFile', tls_ca] unless tls_ca.nil?
 
       args.push('--tlsAllowInvalidHostnames') if tls_invalid_hostnames(config)
+      args.push('--tlsAllowInvalidCertificates') if tls_invalid_certificates(config)
     end
 
     args += ['--eval', cmd]
-    mongo(args)
+    mongosh(args)
   end
 
   def self.conn_string
@@ -109,22 +89,21 @@ class Puppet::Provider::Mongodb < Puppet::Provider
       first_ip_in_list = bindip.split(',').first
       ip_real = case first_ip_in_list
                 when '0.0.0.0'
-                  Facter.value(:fqdn)
+                  '127.0.0.1'
                 when %r{\[?::0\]?}
-                  Facter.value(:fqdn)
+                  '::1'
                 else
                   first_ip_in_list
                 end
     end
 
     port = config.fetch('port')
-    shardsvr = config.fetch('shardsvr')
-    confsvr = config.fetch('confsvr')
+    cluster_role = config.fetch('clusterRole')
     port_real = if port
                   port
-                elsif !port && (confsvr.eql?('configsvr') || confsvr.eql?('true'))
+                elsif cluster_role.eql?('configsvr')
                   27_019
-                elsif !port && (shardsvr.eql?('shardsvr') || shardsvr.eql?('true'))
+                elsif cluster_role.eql?('shardsvr')
                   27_018
                 else
                   27_017
@@ -133,11 +112,14 @@ class Puppet::Provider::Mongodb < Puppet::Provider
     "#{ip_real}:#{port_real}"
   end
 
+  def conn_string
+    self.class.conn_string
+  end
+
   def self.db_ismaster
     cmd_ismaster = 'db.isMaster().ismaster'
-    cmd_ismaster = mongorc_file + cmd_ismaster if mongorc_file
     db = 'admin'
-    res = mongo_cmd(db, conn_string, cmd_ismaster).to_s.split(%r{\n}).last.chomp
+    res = mongosh_cmd(db, conn_string, cmd_ismaster).to_s.split(%r{\n}).last.chomp
     res.eql?('true')
   end
 
@@ -151,36 +133,21 @@ class Puppet::Provider::Mongodb < Puppet::Provider
   end
 
   # Mongo Command Wrapper
-  def self.mongo_eval(cmd, db = 'admin', retries = 10, host = nil)
-    retry_count = retries
-    retry_sleep = 3
-    cmd = mongorc_file + cmd if mongorc_file
+  def self.mongo_eval(cmd, db = 'admin', host = nil)
+    cmd = mongoshrc_file + cmd if mongoshrc_file
 
     out = nil
     begin
-      out = if host
-              mongo_cmd(db, host, cmd)
-            else
-              mongo_cmd(db, conn_string, cmd)
-            end
-    rescue => e
-      retry_count -= 1
-      if retry_count > 0
-        Puppet.debug "Request failed: '#{e.message}' Retry: '#{retries - retry_count}'"
-        sleep retry_sleep
-        retry
-      end
-    end
-
-    unless out
-      raise Puppet::ExecutionFailure, "Could not evaluate MongoDB shell command: #{cmd}"
+      out = mongosh_cmd(db, host, cmd)
+    rescue StandardError => e
+      raise Puppet::ExecutionFailure, "Could not evaluate MongoDB shell command: #{cmd}, with: #{e.message}"
     end
 
     Puppet::Util::MongodbOutput.sanitize(out)
   end
 
-  def mongo_eval(cmd, db = 'admin', retries = 10, host = nil)
-    self.class.mongo_eval(cmd, db, retries, host)
+  def mongo_eval(cmd, db = 'admin', host = nil)
+    self.class.mongo_eval(cmd, db, host)
   end
 
   # Mongo Version checker
@@ -190,32 +157,5 @@ class Puppet::Provider::Mongodb < Puppet::Provider
 
   def mongo_version
     self.class.mongo_version
-  end
-
-  def self.mongo_26?
-    v = mongo_version
-    !v[%r{^2\.6\.}].nil?
-  end
-
-  def mongo_26?
-    self.class.mongo_26?
-  end
-
-  def self.mongo_4?
-    v = mongo_version
-    !v[%r{^4\.}].nil?
-  end
-
-  def mongo_4?
-    self.class.mongo_4?
-  end
-
-  def self.mongo_5?
-    v = mongo_version
-    !v[%r{^5\.}].nil?
-  end
-
-  def mongo_5?
-    self.class.mongo_5?
   end
 end

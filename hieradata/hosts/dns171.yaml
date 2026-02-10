@@ -1,0 +1,3 @@
+users::groups:
+  - dns-admins
+dns: true

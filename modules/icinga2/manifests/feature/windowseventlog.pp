@@ -7,12 +7,11 @@
 # @param severity
 #   You can choose the log severity between information, notice, warning or debug.
 #
-class icinga2::feature::windowseventlog(
+class icinga2::feature::windowseventlog (
   Enum['absent', 'present']        $ensure   = present,
-  Icinga2::LogSeverity             $severity = 'warning',
+  Icinga::LogLevel                 $severity = 'warning',
 ) {
-
-  if ! defined(Class['::icinga2']) {
+  if ! defined(Class['icinga2']) {
     fail('You must include the icinga2 base class before using any icinga2 feature class!')
   }
 
@@ -20,15 +19,15 @@ class icinga2::feature::windowseventlog(
     fail('The feature windowseventlogs is only supported on Windows platforms!')
   }
 
-  $conf_dir  = $::icinga2::globals::conf_dir
+  $conf_dir  = $icinga2::globals::conf_dir
   $_notify   = $ensure ? {
-    'present' => Class['::icinga2::service'],
+    'present' => Class['icinga2::service'],
     default   => undef,
   }
 
   # compose attributes
   $attrs = {
-    severity => $severity,
+    'severity' => $severity,
   }
 
   # create object
@@ -47,4 +46,3 @@ class icinga2::feature::windowseventlog(
     ensure => $ensure,
   }
 }
-

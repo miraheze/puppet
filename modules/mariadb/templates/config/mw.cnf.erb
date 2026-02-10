@@ -9,13 +9,8 @@ default-storage-engine         = InnoDB
 socket                         = /var/run/mysqld/mysqld.sock
 pid-file                       = /var/run/mysqld/mysqld.pid
 skip-name-resolve
-<%- if @version == '10.5' -%>
-bind-address                   = ::
-<%- else -%>
-bind-address                   = 0.0.0.0,::
-<%- end -%>
-key-buffer-size                = 16M
-myisam-recover-options         = FORCE,BACKUP
+key_buffer_size                = 128M
+myisam_recover_options         = FORCE,BACKUP
 
 max-allowed-packet             = 64M
 max-connect-errors             = 1000000
@@ -26,7 +21,7 @@ innodb                         = FORCE
 datadir                        = <%= @datadir %>
 tmpdir                         = <%= @tmpdir %>
 
-transaction-isolation          = READ-COMMITTED
+transaction_isolation          = REPEATABLE-READ
 binlog_format                  = ROW
 
 <%- if @server_id -%>
@@ -34,19 +29,21 @@ server_id = <%= @server_id %>
 <%- end -%>
 <%- if @enable_bin_logs -%>
 log-bin                        = <%= @datadir %>/mysql-bin
-expire-logs-days               = 3
-sync-binlog                    = 1
+expire_logs_days               = <%= @expire_logs_days %>
+sync_binlog                    = <%= @sync_binlog %>
 binlog_cache_size              = 10M
 slave_compressed_protocol      = 1
+<%- else -%>
+disable_log_bin
 <%- end -%>
 
 local_infile                   = 0
 
-tmp-table-size                 = 64M
-max-heap-table-size            = 64M
+tmp_table_size                 = 64M
+max_heap_table_size            = 64M
 max-connections                = <%= @max_connections %>
 open-files-limit               = 200000
-table_open_cache               = 210000
+table_open_cache               = 200000
 table_definition_cache         = 200000
 
 # thread and connection handling
@@ -58,22 +55,21 @@ back_log                       = 500
 # For port 3307
 # https://github.com/wikimedia/puppet/commit/7927ece6f1c77b2279d3c84c23e90c207261c639
 extra_max_connections          = 10
+max_connect_errors             = 1000000000
 query-cache-type               = 0
 query-cache-size               = 0
-thread-cache-size              = 100
+thread_cache_size              = 300
 interactive_timeout            = 28800
 wait_timeout                   = 3600
 
 innodb-flush-method            = O_DIRECT
-innodb_thread_concurrency      = 0
 innodb_flush_neighbors         = 0
-innodb_io_capacity             = 500
+innodb_io_capacity             = 1000
 innodb_stats_method            = nulls_unequal
 innodb_log_file_size           = 2G
-innodb-flush-log-at-trx-commit = 1
+innodb_flush_log_at_trx_commit = <%= @flush_log_at_trx_commit %>
 innodb-file-per-table          = 1
 innodb_buffer_pool_size        = <%= @innodb_buffer_pool_size %>
-innodb_lock_wait_timeout       = 120
 innodb-stats-on-metadata       = OFF
 # Defaults to 8000000 (8MB)
 # We set this to 150000000 (200MB)
@@ -84,7 +80,9 @@ innodb_adaptive_hash_index     = OFF
 # Change this back to 75%.
 innodb_max_dirty_pages_pct     = 75
 innodb_purge_threads           = 1
+innodb_snapshot_isolation      = OFF
 
+aria_pagecache_buffer_size     = 1G
 join_cache_level               = 8
 
 performance_schema = off
@@ -107,10 +105,10 @@ query_response_time_stats      = ON
 
 <%- if @enable_ssl -%>
 ssl
-ssl-ca                         = /etc/ssl/certs/LetsEncrypt.crt
+ssl-ca                         = /etc/ssl/certs/ISRG_Root_X1.pem
 ssl-cert                       = /etc/ssl/localcerts/wikitide.net.crt
 ssl-key                        = /etc/ssl/private/wikitide.net.key
-tls_version                    = TLSv1.2,TLSv1.3
+tls_version                    = TLSv1.3
 <%- end -%>
 
 optimizer_switch               = 'mrr=on,mrr_cost_based=on,mrr_sort_keys=on,optimize_join_buffer_size=on,rowid_filter=off'

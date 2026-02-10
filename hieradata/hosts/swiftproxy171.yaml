@@ -12,28 +12,28 @@ nginx::logrotate_number: 2
 
 # Swift config
 
-swift::proxy::swift_main_memcached: '[2602:294:0:b23::109]'
+swift::proxy::swift_main_memcached: '10.0.17.108'
 swift_proxy_enable: true
 swift::proxy::num_workers: 12
 swift_enable_memcache: true
 
-role::swift::stats_reporter_host: swiftproxy171.wikitide.net
+role::swift::stats_reporter_host: swiftproxy171.fsslc.wtnet
 
 swift::accounts:
     super_admin:
         access:       '.admin .reseller_admin'
         account_name: 'AUTH_admin'
-        auth:         'http://swift-lb.miraheze.org'
+        auth:         'http://swift-lb.wikitide.net'
         user:         'admin:admin'
     mw_media:
         access:       '.admin'
         account_name: 'AUTH_mw'
-        auth:         'http://swift-lb.miraheze.org'
+        auth:         'http://swift-lb.wikitide.net'
         user:         'mw:media'
     dispersion:
         access:       '.admin'
         account_name: 'AUTH_dispersion'
-        auth:         'http://swift-lb.miraheze.org'
+        auth:         'http://swift-lb.wikitide.net'
         user:         'swift:dispersion'
 
 role::prometheus::statsd_exporter::mappings:

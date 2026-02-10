@@ -2,11 +2,21 @@
 icinga::repos:
   'icinga-stable-release':
     location: https://packages.icinga.com/ubuntu
+#    key:
+#      id: F51A91A5EE001AA5D77D53C4C6E319C334410682
   'icinga-testing-builds':
     location: https://packages.icinga.com/ubuntu
+#    key:
+#      id: F51A91A5EE001AA5D77D53C4C6E319C334410682
   'icinga-snapshot-builds':
     location: https://packages.icinga.com/ubuntu
+#    key:
+#      id: F51A91A5EE001AA5D77D53C4C6E319C334410682
   'netways-plugins-release':
     location: https://packages.netways.de/plugins/ubuntu
+#    key:
+#      id: 0DEE49417F457646CC0C29AD03E3F1C5E8B2FC5E
   'netways-extras-release':
     location: https://packages.netways.de/extras/ubuntu
+#    key:
+#      id: 0DEE49417F457646CC0C29AD03E3F1C5E8B2FC5E

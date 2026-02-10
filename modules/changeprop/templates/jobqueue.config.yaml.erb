@@ -56,7 +56,7 @@ spec: &spec
               # The default value is 5ms, and we want Changeprop to batch
               # more messages rather than keep sending small ones.
               linger.ms: 20
-            concurrency: 10
+            concurrency: 20
             startup_delay: 60000
             disable_blacklist: true
             disable_ratelimit: true
@@ -65,7 +65,15 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
+<% if key != 'consumer' -%>
                 <%= key %>: <%= value %>
+<% end -%>
+<% end -%>
+<% if topic_config['consumer'] -%>
+                consumer:
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                  <%= optionKey %>: <%= optionValue %>
+<% end -%>
 <% end -%>
                 exec:
                   method: post
@@ -81,7 +89,15 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
+<% if key != 'consumer' -%>
                 <%= key %>: <%= value %>
+<% end -%>
+<% end -%>
+<% if topic_config['consumer'] -%>
+                consumer:
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                  <%= optionKey %>: <%= optionValue %>
+<% end -%>
 <% end -%>
                 exec:
                   method: post
@@ -97,11 +113,43 @@ spec: &spec
               <%= topic %>:
                 topic: 'mediawiki.job.<%= topic %>'
 <% topic_config.each do |key, value| -%>
+<% if key != 'consumer' -%>
                 <%= key %>: <%= value %>
+<% end -%>
+<% end -%>
+<% if topic_config['consumer'] -%>
+                consumer:
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                  <%= optionKey %>: <%= optionValue %>
+<% end -%>
 <% end -%>
                 exec:
                   method: post
                   uri: '<%= @videoscaler_host %>/rpc/RunSingleJob.php'
+                  headers:
+                    content-type: 'application/json'
+                    x-request-id: '{{globals.message.meta.request_id}}'
+                  body: '{{globals.message}}'
+                  agentOptions:
+                    keepAlive: true
+<% end -%>
+<% @latency_sensitive_jobs_config.each do |topic, topic_config| -%>
+              <%= topic %>:
+                topic: 'mediawiki.job.<%= topic %>'
+<% topic_config.each do |key, value| -%>
+<% if key != 'consumer' -%>
+                <%= key %>: <%= value %>
+<% end -%>
+<% end -%>
+<% if topic_config['consumer'] -%>
+                consumer:
+<% topic_config['consumer'].each do |optionKey, optionValue| -%>
+                  <%= optionKey %>: <%= optionValue %>
+<% end -%>
+<% end -%>
+                exec:
+                  method: post
+                  uri: '<%= @jobrunner_host %>/rpc/RunSingleJob.php'
                   headers:
                     content-type: 'application/json'
                     x-request-id: '{{globals.message.meta.request_id}}'
@@ -164,6 +212,9 @@ spec: &spec
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @videoscaler_jobs_config.keys.each do |job| -%>
+                  - 'mediawiki.job.<%= job %>'
+<% end -%>
+<% @latency_sensitive_jobs_config.keys.each do |job| -%>
                   - 'mediawiki.job.<%= job %>'
 <% end -%>
 <% @partitioned_jobs_config.keys.each do |job| -%>

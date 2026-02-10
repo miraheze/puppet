@@ -40,14 +40,14 @@ class puppetdb(
 
     ## PuppetDB installation
 
-    package { 'puppetdb':
+    package { 'openvoxdb':
         ensure  => present,
-        require => Apt::Source['puppetlabs'],
+        require => Apt::Source['openvox'],
     }
 
-    package { 'puppetdb-termini':
+    package { 'openvoxdb-termini':
         ensure  => present,
-        require => Apt::Source['puppetlabs'],
+        require => Apt::Source['openvox'],
     }
 
     file { '/etc/puppetlabs/puppetdb/logback.xml':
@@ -59,7 +59,7 @@ class puppetdb(
     file { '/usr/bin/puppetdb':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/puppetdb',
-        require => Package['puppetdb'],
+        require => Package['openvoxdb'],
     }
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
@@ -74,7 +74,7 @@ class puppetdb(
         group  => 'puppetdb',
     }
 
-    $jvm_opts = "${puppetdb_jvm_opts} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=${facts['networking']['fqdn']}:9401:/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml"
+    $jvm_opts = "${puppetdb_jvm_opts} -javaagent:/usr/share/java/prometheus/jmx_prometheus_javaagent.jar=0.0.0.0:9401:/etc/puppetlabs/puppetdb/jvm_prometheus_jmx_exporter.yaml"
     file { '/etc/default/puppetdb':
         ensure  => present,
         owner   => 'root',
@@ -172,7 +172,7 @@ class puppetdb(
         },
     }
 
-    package { 'policykit-1':
+    package { ['polkitd', 'pkexec']:
         ensure => present,
     }
 
@@ -185,6 +185,12 @@ class puppetdb(
         path              => '/var/log/puppetlabs/puppetdb/puppetdb.log.json',
         syslog_tag_prefix => '',
         use_udp           => true,
+    }
+
+    # Backups
+    backup::job { 'puppetdb':
+        ensure   => present,
+        interval => '*-*-1,15 01:00:00',
     }
 
     monitoring::services { 'puppetdb':

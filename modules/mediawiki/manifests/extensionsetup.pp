@@ -48,7 +48,13 @@ define mediawiki::extensionsetup (
                     },
                     default => $branch,
                 },
-                default    => $params['branch'],
+                default    => $branch == 'master' ? {
+                    true    => $params['alpha_branch'] ? {
+                        undef   => $params['branch'],
+                        default => $params['alpha_branch'],
+                    },
+                    default => $params['branch'],
+                },
             },
             revision           => $params['commit'] ? {
                 undef   => '',
@@ -79,7 +85,7 @@ define mediawiki::extensionsetup (
                     path        => '/usr/bin',
                     environment => [
                         "HOME=${mwpath}/${params['path']}",
-                        'HTTP_PROXY=http://bastion.wikitide.net:8080'
+                        'HTTP_PROXY=http://bastion.fsslc.wtnet:8080'
                     ],
                     user        => 'www-data',
                     require     => Git::Clone["MediaWiki-${branch} ${name}"],

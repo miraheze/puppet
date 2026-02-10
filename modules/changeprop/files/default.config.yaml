@@ -42,7 +42,7 @@ services:
             x-modules:
               - path: sys/kafka.js
                 options:
-                  metadata_broker_list: 10.0.18.146:9092
+                  metadata_broker_list: 10.0.18.142:9092
                   dc_name: default
                   concurrency: 10
                   templates: {}
@@ -50,4 +50,5 @@ services:
                   # environment; test_mode does the following: a) disables
                   # production entirely to prevent enqueuing retries, b) alters
                   # the consumer group ID, and c) disables offset commits.
+
                   test_mode: false

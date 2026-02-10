@@ -1,14 +1,16 @@
 # role: kafka
-class role::kafka {
+class role::kafka (
+    Optional[String] $zooper_server = lookup('zookeeper_server', {'default_value' => undef}),
+) {
     include kafka::broker::monitoring
 
     # We need zookeeper also
     class { 'zookeeper':
         servers             => {
-            '1' => '10.0.18.146',
+            '1' => $zooper_server,
         },
         install_java        => true,
-        java_package        => 'openjdk-17-jre-headless',
+        java_package        => 'openjdk-21-jre-headless',
         manage_service_file => true,
         zoo_dir             => '/usr/share/zookeeper',
         log4j_prop          => 'INFO,SYSLOG',
@@ -36,6 +38,7 @@ class role::kafka {
     }
 
     class { 'kafka':
+        proxy_server  => lookup('http_proxy', {'default_value' => undef}),
         kafka_version => '2.4.1',
         scala_version => '2.12',
     }
@@ -68,8 +71,7 @@ class role::kafka {
             'log.message.timestamp.type'        => 'CreateTime',
             'log.retention.hours'               => '168', # 1 week
             'message.max.bytes'                 => '4194304',
-            'num.io.threads'                    => '12',
-            'num.network.threads'               => '6',
+            'num.io.threads'                    => '8',
             'num.partitions'                    => '1',
             'num.recovery.threads.per.data.dir' => '4',
             'offsets.retention.minutes'         => '10080', # 1 week

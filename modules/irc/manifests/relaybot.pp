@@ -48,11 +48,13 @@ define irc::relaybot (
         }
     }
 
+    $repo_ensure = $ensure ? {
+        present => latest,
+        default => $ensure,
+    }
+
     git::clone { "IRC-Discord-Relay-${title}":
-        ensure    => $ensure ? {
-            present => latest,
-            default => $ensure,
-        },
+        ensure    => $repo_ensure,
         origin    => 'https://github.com/miraheze/IRC-Discord-Relay',
         directory => $install_path,
         owner     => 'irc',
@@ -93,7 +95,7 @@ define irc::relaybot (
             path        => '/usr/bin',
             environment => [
                 "HOME=${install_path}",
-                'HTTP_PROXY=http://bastion.wikitide.net:8080',
+                'HTTP_PROXY=http://bastion.fsslc.wtnet:8080',
             ],
             user        => 'irc',
             require     => Git::Clone["IRC-Discord-Relay-${title}"],

@@ -1,3 +1,0 @@
-role::graphite::base::uwsgi_processes: 4
-role::graphite::base::cluster_servers:
-  - graphite151.wikitide.net

@@ -19,9 +19,7 @@ class opensearch::config {
     cwd  => '/',
   }
 
-  $init_defaults = {
-    'MAX_OPEN_FILES' => '65535',
-  }.merge($opensearch::init_defaults)
+  $init_defaults = stdlib::merge($opensearch::init_defaults, {'MAX_OPEN_FILES' => '65535'})
 
   if ($opensearch::ensure == 'present') {
     file {
@@ -121,6 +119,16 @@ class opensearch::config {
       }
     } else {
       $_tls_config = {}
+    }
+
+    file { "${opensearch::configdir}/log4j2.properties":
+      ensure  => file,
+      content => template('opensearch/etc/opensearch/log4j2.properties.erb'),
+      notify  => $opensearch::_notify_service,
+      require => Class['opensearch::package'],
+      owner   => 'root',
+      group   => $opensearch::opensearch_group,
+      mode    => '0640',
     }
 
     # Generate Opensearch config

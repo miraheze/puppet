@@ -1,0 +1,58 @@
+# Copied from https://gitlab.wikimedia.org/repos/mediawiki/services/chart-renderer/-/blob/4e739fa02efe01f073c2744a6eb4b6e0b4b89765/config.yaml
+
+# Number of worker processes to spawn.
+# Set to 0 to run everything in a single process without clustering.
+num_workers: 0
+
+# Number of milliseconds to wait for a heartbeat from worker before killing
+# and restarting a worker. 'false' means disabling the heartbeat feature.
+worker_heartbeat_timeout: 7500
+
+# Logger info
+logging:
+  level: info
+  streams:
+    - type: stdout
+
+# Statsd metrics reporter
+# Don't send metrics until we figure out our prometheus to Grafana setup
+# metrics:
+#   - type: prometheus
+#     port: 9100
+#   - type: statsd
+#     host: localhost
+#     port: 9125
+
+# todo choose available port on beta cluster
+services:
+  - name: chart-service
+    module: ./dist/index.js
+    conf:
+      port: 6284
+      cors: "*"
+      # to disable use:
+      # cors: false
+      # to restrict to a particular domain, use:
+      # cors: restricted.domain.org
+      # content for the CSP headers
+      # csp: false  # uncomment this line to disable sending them
+      # URL of the outbound proxy to use (complete with protocol)
+      # proxy: http://my.proxy.org:8080
+      # the list of domains for which not to use the proxy defined above
+      # no_proxy_list:
+      #   - domain1.com
+      #   - domain2.org
+      # the list of incoming request headers that can be logged; if left empty,
+      # the following headers are allowed: cache-control, content-length,
+      # content-type, if-match, user-agent, x-request-id
+      # log_header_whitelist:
+      #   - cache-control
+      #   - content-length
+      #   - content-type
+      #   - if-match
+      #   - user-agent
+      #   - x-request-id
+      # the user agent to use when issuing requests
+      # user_agent: service-template-node
+      # max JSON POST body size limit
+      # max_body_size: 100kb

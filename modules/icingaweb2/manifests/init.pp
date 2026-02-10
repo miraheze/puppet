@@ -1,9 +1,9 @@
 class icingaweb2 (
-    String $db_host              = 'db182-private.wikitide.net',
+    String $db_host              = 'db182.fsslc.wtnet',
     String $db_name              = 'icingaweb2',
     String $db_user_name         = 'icingaweb2',
     String $db_user_password     = undef,
-    String $ido_db_host          = 'db182-private.wikitide.net',
+    String $ido_db_host          = 'db182.fsslc.wtnet',
     String $ido_db_name          = 'icinga',
     String $ido_db_user_name     = 'icinga2',
     String $ido_db_user_password = undef,
@@ -51,7 +51,7 @@ class icingaweb2 (
         'ldap',
     ]
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
 
     # Install the runtime
     class { '::php':
@@ -82,7 +82,7 @@ class icingaweb2 (
     # Extensions that require configuration.
     php::extension {
         default:
-            sapis        => ['cli', 'fpm'];
+            sapis => ['cli', 'fpm'];
         'xml':
             package_name => "php${php_version}-xml",
             priority     => 15;
@@ -245,12 +245,12 @@ class icingaweb2 (
         require => File['/etc/icingaweb2/modules/monitoring'],
     }
 
-    ssl::wildcard { 'icingaweb2 wildcard': }
-
     nginx::site { 'icinga2':
         ensure => present,
         source => 'puppet:///modules/icingaweb2/icinga2.conf',
     }
+
+    ssl::wildcard { 'icingaweb2 wildcard': }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
         $address = $facts['networking']['interfaces']['ens19']['ip']
@@ -263,7 +263,7 @@ class icingaweb2 (
     monitoring::services { 'monitoring.wikitide.net HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6   => $address,
+            address    => $address,
             http_ssl   => true,
             http_vhost => 'monitoring.wikitide.net',
         },

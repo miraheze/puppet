@@ -1,0 +1,50 @@
+dnssec:
+  validation: off
+incoming:
+  allow_from:
+  - 127.0.0.0/8
+  - 10.0.0.0/8
+  - ::1/128
+  listen:
+  - 127.0.0.1
+  - "::1"
+  pdns_distributes_queries: false
+  reuseport: true
+  max_tcp_clients: 128
+  max_tcp_per_client: 100
+logging:
+  quiet: true
+outgoing:
+  source_address:
+  <%- if @do_ipv4 -%>
+    - 0.0.0.0
+  <%- end -%>
+  <%- if @do_ipv6 -%>
+    - "::"
+  <%- end -%>
+<% @query_local_address.each do |addr| -%>
+  - <%= addr %>
+<% end -%>
+recordcache:
+  max_entries: 3000000
+  max_negative_ttl: 3600
+recursor:
+  config_dir: /etc/powerdns/
+  daemon: true
+  extended_resolution_errors: true
+  forward_zones:
+<% @forward_zones_new.each do |zone, ips| -%>
+  - zone: <%= zone %>
+    recurse: false
+    forwarders:
+<% ips.each do |ip| -%>
+      - <%= ip %>
+<% end -%>
+<% end -%>
+  hint_file: /usr/share/dns/root.hints
+  security_poll_suffix: ''
+  setgid: pdns
+  setuid: pdns
+  stats_ringbuffer_entries: 1000
+  threads: <%= @threads %>
+  max_mthreads: 2048

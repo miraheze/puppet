@@ -5,28 +5,41 @@ users::groups:
 contactgroups: ['infra', 'mediawiki']
 
 jobrunner: false
-mediawiki::jobqueue::runner::redis_ip: '10.0.17.120:6379'
 
 role::mediawiki::use_strict_firewall: true
 role::mediawiki::is_beta: false
 
-mediawiki::php::fpm::fpm_min_child: 20
-mediawiki::php::emergency_restart_threshold: 12
-mediawiki::php::fpm::fpm_workers_multiplier: 1.0
+nginx::config:
+  # This is the equivelent of Timeout in apache
+  client_header_timeout: 202s
+  client_body_timeout: 202s
+  send_timeout: 202s
+  # Matches apache ProxyTimeout default
+  proxy_connect_timeout: 300s
+  proxy_send_timeout:    300s
+  proxy_read_timeout:    300s
+
+mediawiki::php::request_timeout: 201
+mediawiki::php::fpm::fpm_workers_multiplier: 2.0
+mediawiki::php::apc_shm_size: '10240M'
 mediawiki::php::fpm_config:
   post_max_size: '250M'
   upload_max_filesize: '250M'
+  opcache.interned_strings_buffer: 384
+  opcache.memory_consumption: 8192
+  max_execution_time: 210
 
-mediawiki::php::memory_limit: '500M'
-
+role::mediawiki::php::restarts::ensure: present
+role::mediawiki::php::restarts::opcache_limit: 200
+  
 php::php_version: '8.2'
 
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 base::syslog::rsyslog_udp_localhost: true
 
 # NGINX
-nginx::keepalive_timeout: 75
+nginx::keepalive_timeout: 65
 nginx::keepalive_requests: 1000
 nginx::logrotate_number: 2
 nginx::use_graylog: true

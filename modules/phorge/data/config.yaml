@@ -11,7 +11,7 @@ ui.header-color: 'blue'
 # MySQL
 mysql.port: '3306'
 mysql.user: 'phorge'
-mysql.host: 'db182-private.wikitide.net'
+mysql.host: 'db182.fsslc.wtnet'
 
 # https://we.phorge.it/book/phorge/article/configuring_file_storage/
 # Needs to match php.ini upload_max_filesize
@@ -30,7 +30,6 @@ auth.require-email-verification: true
 # Phorge
 phabricator.show-prototypes: true
 phabricator.base-uri: "https://issue-tracker.miraheze.org/"
-phabricator.allowed-uris: ["https://phorge171.wikitide.net/"]
 phabricator.timezone: 'UTC'
 security.alternate-file-domain: "https://phorge-static.wikitide.net/"
 security.require-https: true
@@ -41,6 +40,10 @@ user.require-real-name: false
 storage.local-disk.path: "/srv/phorge/images/"
 phabricator.serious-business: true
 
+# 15 days
+phd.garbage-collection:
+  'user.logs': 1296000
+  
 # Maniphest priorities
 maniphest.priorities:
   '100':
@@ -59,15 +62,20 @@ maniphest.priorities:
     color: 'red'
     keywords: ['high']
   '50':
-    name: 'Normal'
-    short: 'Normal'
+    name: 'Medium'
+    short: 'Medium'
     color: 'orange'
-    keywords: ['normal']
+    keywords: ['medium', 'normal']
   '25':
     name: 'Low'
     short: 'Low'
-    color: 'sky'
+    color: 'yellow'
     keywords: ['low']
+  '10':
+    name: 'Lowest'
+    short: 'Lowest'
+    color: 'sky'
+    keywords: ['lowest']
 
 maniphest.statuses:
   'open':

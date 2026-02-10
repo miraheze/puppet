@@ -51,23 +51,28 @@
 # @param order
 #   String or integer to set the position in the target file, sorted alpha numeric.
 #
+# @param export
+#   Export object to destination, collected by class `icinga2::query_objects`.
+#
 define icinga2::object::user (
-  Stdlib::Absolutepath                $target,
-  Enum['absent', 'present']           $ensure               = present,
-  String                              $user_name            = $title,
-  Optional[String]                    $display_name         = undef,
-  Optional[String]                    $email                = undef,
-  Optional[String]                    $pager                = undef,
-  Optional[Icinga2::CustomAttributes] $vars                 = undef,
-  Optional[Array]                     $groups               = undef,
-  Optional[Boolean]                   $enable_notifications = undef,
-  Optional[String]                    $period               = undef,
-  Optional[Array]                     $types                = undef,
-  Optional[Array]                     $states               = undef,
-  Array                               $import               = [],
-  Boolean                             $template             = false,
-  Variant[String, Integer]            $order                = 75,
-){
+  Stdlib::Absolutepath                 $target,
+  Enum['absent', 'present']            $ensure               = present,
+  String[1]                            $user_name            = $title,
+  Optional[String[1]]                  $display_name         = undef,
+  Optional[String[1]]                  $email                = undef,
+  Optional[String[1]]                  $pager                = undef,
+  Optional[Icinga2::CustomAttributes]  $vars                 = undef,
+  Optional[Array[String[1]]]           $groups               = undef,
+  Optional[Boolean]                    $enable_notifications = undef,
+  Optional[String[1]]                  $period               = undef,
+  Optional[Array[String[1]]]           $types                = undef,
+  Optional[Array[String[1]]]           $states               = undef,
+  Array[String[1]]                     $import               = [],
+  Boolean                              $template             = false,
+  Variant[String[1], Integer[1]]       $order                = 75,
+  Variant[Array[String[1]], String[1]] $export               = [],
+) {
+  require icinga2::globals
 
   # compose attributes
   $attrs = {
@@ -83,16 +88,28 @@ define icinga2::object::user (
   }
 
   # create object
-  icinga2::object { "icinga2::object::User::${title}":
-    ensure      => $ensure,
-    object_name => $user_name,
-    object_type => 'User',
-    template    => $template,
-    import      => $import,
-    attrs       => delete_undef_values($attrs),
-    attrs_list  => keys($attrs),
-    target      => $target,
-    order       => $order,
+  $config = {
+    'object_name' => $user_name,
+    'object_type' => 'User',
+    'template'    => $template,
+    'import'      => $import,
+    'attrs'       => delete_undef_values($attrs),
+    'attrs_list'  => keys($attrs),
   }
 
+  unless empty($export) {
+    @@icinga2::config::fragment { "icinga2::object::User::${title}":
+      tag     => prefix(any2array($export), 'icinga2::instance::'),
+      content => epp('icinga2/object.conf.epp', $config),
+      target  => $target,
+      order   => $order,
+    }
+  } else {
+    icinga2::object { "icinga2::object::User::${title}":
+      ensure => $ensure,
+      target => $target,
+      order  => $order,
+      *      => $config,
+    }
+  }
 }

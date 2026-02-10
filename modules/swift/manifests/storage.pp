@@ -20,7 +20,7 @@ class swift::storage (
     }
 
     file { '/etc/rsync.disable.d':
-        ensure  => directory,
+        ensure => directory,
     }
 
     file { '/etc/rsync_footer':
@@ -111,12 +111,16 @@ class swift::storage (
         source => 'puppet:///modules/swift/disable_rsync.py',
     }
 
-    file { '/etc/cron.d/devicecheck':
-        mode    => '0444',
-        owner   => 'root',
-        group   => 'root',
-        source  => 'puppet:///modules/swift/devicecheck.cron',
-        require => File['/usr/local/bin/disable_rsync.py'],
+    systemd::timer::job { 'disable-rsync':
+        ensure      => present,
+        description => 'Disables rsync via devicecheck',
+        command     => '/usr/bin/python3 /usr/local/bin/disable_rsync.py',
+        interval    => {
+            start    => 'OnUnitInactiveSec',
+            interval => '60s',
+        },
+        user        => 'root',
+        require     => File['/usr/local/bin/disable_rsync.py'],
     }
 
     if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {

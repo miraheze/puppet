@@ -304,6 +304,12 @@
 # @param templates
 #   Define templates via a hash. This is mainly used with Hiera's auto binding.
 #
+# @param index_templates
+#   Define index_templates via a hash. This is mainly used with Hiera's auto binding.
+#
+# @param component_templates
+#   Define component_templates via a hash. This is mainly used with Hiera's auto binding.
+#
 # @param users
 #   Define templates via a hash. This is mainly used with Hiera's auto binding.
 #
@@ -387,6 +393,8 @@ class opensearch (
   Hash                                            $users,
   Boolean                                         $validate_tls,
   Variant[String, Boolean]                        $version,
+  Hash                                            $index_templates           = {},
+  Hash                                            $component_templates       = {},
   Optional[Stdlib::Absolutepath]                  $ca_certificate            = undef,
   Optional[Stdlib::Absolutepath]                  $certificate               = undef,
   String                                          $default_logging_level     = $logging_level,
@@ -452,6 +460,16 @@ class opensearch (
   create_resources('opensearch::script', $opensearch::scripts)
   create_resources('opensearch::snapshot_repository', $opensearch::snapshot_repositories)
   create_resources('opensearch::template', $opensearch::templates)
+  $opensearch::component_templates.each |String $key, Hash $values| {
+    opensearch::component_template { $key:
+      * => $values,
+    }
+  }
+  $opensearch::index_templates.each |String $key, Hash $values| {
+    opensearch::index_template { $key:
+      * => $values,
+    }
+  }
   create_resources('opensearch::user', $opensearch::users)
 
   if ($manage_repo == true) {
@@ -578,4 +596,8 @@ class opensearch (
   # file is modified
   Opensearch_user <| |>
   -> Opensearch_user_file <| |>
+
+  # Ensure component templates are loaded before index templates
+  Opensearch_component_template <| |>
+  -> Opensearch_index_template <| |>
 }

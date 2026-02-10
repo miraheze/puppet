@@ -1,10 +1,9 @@
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
 php::fpm::fpm_workers_multiplier: 1.5
 php::fpm::fpm_min_child: 8
-php::php_version: '8.2'
+php::php_version: '8.4'
 
 nginx::use_graylog: false
 
 nginx::client_max_body_size: "10M"
-nginx::use_varnish_directly: false

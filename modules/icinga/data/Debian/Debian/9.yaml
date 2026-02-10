@@ -1,2 +1,0 @@
----
-icinga::repos::configure_backports: true

@@ -1,24 +1,17 @@
 #! /bin/bash
 
 usage(){
-        echo "Usage: /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/<dblist>.json or <dblist>.php /srv/mediawiki/<version>/<maintenance script> <any other options if needed> <start> <end>"
+        echo "Usage: /usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/<dblist>.json or <dblist>.php /srv/mediawiki/<version>/<maintenance script> <any other options if needed>"
         exit 1
 }
 
-[[ $# -lt 2 ]] && usage
+[[ $# -eq 0 ]] && usage
 
 dblist=$1
-shift
-script=$1
-shift
-
-start_string=${1:-}
-end_string=${2:-}
 
 if [ ! -f "$dblist" ]; then
         echo "dblist does not exist!"
         usage
-        exit 1
 fi
 
 if [[ "$dblist" == *.json ]]; then
@@ -34,16 +27,10 @@ elif [[ "$dblist" == *.php ]]; then
 else
         echo "Unsupported file format. Please provide a .json or .php file."
         usage
-        exit 1
 fi
 
-# Filter wikis based on start and end strings if provided
-filtered_wikis=$(echo "$wikis" | awk -v start="$start_string" -v end="$end_string" '
-    (start == "" || index($0, start) == 1) && (end == "" || index($0, end) > 0)
-')
-
-for wiki in $filtered_wikis
+for wiki in $wikis
 do
-        echo "Running ${script} $* for $wiki"
-        /usr/bin/php "$script" "$@" --wiki "$wiki"
+        echo "Running ${*:2} for $wiki"
+        /usr/bin/php "${@:2}" --wiki "$wiki"
 done

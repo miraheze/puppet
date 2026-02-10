@@ -28,7 +28,7 @@ script-src:
   - '*.wikinews.org'
   - '*.wikivoyage.org'
   - 'mediawiki.org'
-  - 'www.mediawiki.org'
+  - '*.mediawiki.org'
   - 'wikidata.org'
   - 'www.gstatic.com'
   - 'www.google.com'
@@ -46,6 +46,7 @@ script-src:
   - 'bandcamp.com'
   - 'flo.uri.sh'
   - 'challenges.cloudflare.com'
+  - 'www.youtube.com'
 
 style-src:
   - "'self'"
@@ -68,7 +69,7 @@ style-src:
   - '*.wikinews.org'
   - '*.wikivoyage.org'
   - 'mediawiki.org'
-  - 'www.mediawiki.org'
+  - '*.mediawiki.org'
   - 'wikidata.org'
   - 'www.gstatic.com'
   - 'fonts.googleapis.com'
@@ -143,6 +144,11 @@ img-src:
   - '*.rbxcdn.com'
   - 'cms-imgp.jw-cdn.org'
   - 'hosted.weblate.org'
+  - 'minecraft.wiki'
+  - 'www.divine-pride.net'
+  - 'static.divine-pride.net'
+  - 'legacyofnightwind.com'
+  - 'cdn.jsdelivr.net'
 
 font-src:
   - "'self'"
@@ -178,6 +184,7 @@ media-src:
   - 'player.vimeo.com'
   - 'apis.google.com'
   - 'bandcamp.com'
+  - 'cdn.jsdelivr.net'
 
 frame-src:
   - "'self'"
@@ -190,6 +197,7 @@ frame-src:
   - 'docs.google.com'
   - 'apis.google.com'
   - 'calendar.google.com'
+  - 'drive.google.com'
   - 'web.libera.chat'
   - 'snap.berkeley.edu'
   - '*.youtube-nocookie.com'
@@ -213,9 +221,15 @@ frame-src:
   - '*.hcaptcha.com'
   - 'bandcamp.com'
   - 'challenges.cloudflare.com'
+  - 'map.showdown.wiki'
+  - 'clips.twitch.tv'
+  - 'video.fastly.steamstatic.com'
+  - 'shared.fastly.steamstatic.com'
+  - '*.instatus.com'
 
 connect-src:
   - "'self'"
+  - 'blob:'
   - '*.miraheze.org'
   - '*.mirabeta.org'
   - '*.nexttide.org'
@@ -234,3 +248,9 @@ connect-src:
   - '*.hcaptcha.com'
   - '1.1.1.1'
   - 'translate.googleapis.com'
+  - 'games.roblox.com'
+  - 'economy.roblox.com'
+  - 'discord.com'
+  - 'discordapp.com'
+  - 'api.steampowered.com'
+  - '*.instatus.com'

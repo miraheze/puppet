@@ -5,7 +5,7 @@ class reports {
     git::clone { 'TSPortal':
         directory => '/srv/TSPortal',
         origin    => 'https://github.com/miraheze/TSPortal',
-        branch    => 'v20',
+        branch    => 'v27',
         owner     => 'www-data',
         group     => 'www-data',
     }
@@ -17,7 +17,7 @@ class reports {
         path        => '/usr/bin',
         environment => [
             'HOME=/srv/TSPortal',
-            'HTTP_PROXY=http://bastion.wikitide.net:8080'
+            'HTTP_PROXY=http://bastion.fsslc.wtnet:8080'
         ],
         user        => 'www-data',
         require     => Git::Clone['TSPortal'],
@@ -55,7 +55,7 @@ class reports {
         'upload_max_filesize' => '100M',
     }
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
 
     # Install the runtime
     class { '::php':
@@ -96,7 +96,7 @@ class reports {
     # Extensions that require configuration.
     php::extension {
         default:
-            sapis        => ['cli', 'fpm'];
+            sapis => ['cli', 'fpm'];
         'xml':
             package_name => "php${php_version}-xml",
             priority     => 15;
@@ -142,6 +142,7 @@ class reports {
     }
 
     ssl::wildcard { 'reports wildcard': }
+    ssl::client_cert_cas { 'reports client_cert_cas': }
 
     nginx::site { 'reports.miraheze.org':
         ensure  => present,
@@ -165,10 +166,15 @@ class reports {
         require => Git::Clone['TSPortal'],
     }
 
-    cron { 'Task Scheduler':
-        ensure  => present,
-        command => '/usr/bin/php /srv/TSPortal/artisan schedule:run >> /dev/null 2>&1',
-        user    => 'www-data',
-        minute  => '*'
+    systemd::timer::job { 'task-scheduler':
+        ensure          => present,
+        description     => 'Runs Laravel Task Scheduler',
+        command         => '/usr/bin/php /srv/TSPortal/artisan schedule:run',
+        interval        => {
+            start    => 'OnCalendar',
+            interval => '*-*-* *:*:00',
+        },
+        logging_enabled => false,
+        user            => 'www-data',
     }
 }

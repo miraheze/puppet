@@ -1,3 +1,9 @@
+## 2.1.0 (2025-01-10)
+
+- Remove usage of legacy tags. ([#70](https://github.com/Graylog2/puppet-graylog/pull/70), @avitacco)
+- Update default Graylog version to 6.1.
+- Adjust `puppetlabs/apt` version constraint to support version 9.0.
+
 ## 2.0.0 (2023-08-14)
 
 **ATTENTION:** This major release removes support for Graylog versions < 5.0

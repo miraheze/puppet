@@ -73,7 +73,7 @@ define nginx::site(
             ensure        => $monitor_service,
             check_command => 'check_curl',
             vars          => {
-                address6         => $address,
+                address          => $address,
                 http_vhost       => $facts['networking']['fqdn'],
                 http_ssl         => true,
                 http_ignore_body => true,

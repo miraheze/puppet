@@ -1,9 +1,0 @@
-[Unit]
-Description=statsd-proxy
-
-[Service]
-User=www-data
-ExecStart=/usr/bin/statsd-proxy -f /etc/statsd-proxy.cfg
-
-[Install]
-WantedBy=multi-user.target

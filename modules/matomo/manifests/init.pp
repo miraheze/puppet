@@ -1,14 +1,14 @@
 # class: matomo
 class matomo (
     String $ldap_password  = lookup('passwords::matomo::ldap_password'),
-    String $matomo_db_host = 'db182-private.wikitide.net',
+    String $matomo_db_host = 'db182.fsslc.wtnet',
 ) {
     stdlib::ensure_packages('composer')
 
     git::clone { 'matomo':
         directory          => '/srv/matomo',
         origin             => 'https://github.com/matomo-org/matomo',
-        branch             => '5.1.2', # Current stable
+        branch             => '5.7.1', # Current stable
         recurse_submodules => true,
         owner              => 'www-data',
         group              => 'www-data',
@@ -50,9 +50,9 @@ class matomo (
         'enable_dl' => 0,
         'opcache' => {
             'enable' => 1,
-            'interned_strings_buffer' => 30,
-            'memory_consumption' => 112,
-            'max_accelerated_files' => 20000,
+            'interned_strings_buffer' => 80,
+            'memory_consumption' => 1024,
+            'max_accelerated_files' => 50000,
             'max_wasted_percentage' => 10,
             'validate_timestamps' => 1,
             'revalidate_freq' => 10,
@@ -61,12 +61,13 @@ class matomo (
         'post_max_size' => '60M',
         'track_errors' => 'Off',
         'upload_max_filesize' => '100M',
+        'apc.shm_size' => '512M',
     }
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
 
     # Install the runtime
-    class { '::php':
+    class { 'php':
         ensure         => present,
         version        => $php_version,
         sapis          => ['cli', 'fpm'],
@@ -97,7 +98,7 @@ class matomo (
         ensure => present
     }
 
-    class { '::php::fpm':
+    class { 'php::fpm':
         ensure => present,
         config => {
             'emergency_restart_interval'  => '60s',
@@ -109,7 +110,7 @@ class matomo (
     # Extensions that require configuration.
     php::extension {
         default:
-            sapis        => ['cli', 'fpm'];
+            sapis => ['cli', 'fpm'];
         'xml':
             package_name => "php${php_version}-xml",
             priority     => 15;
@@ -171,18 +172,10 @@ class matomo (
         require => Git::Clone['matomo'],
     }
 
-    file { '/var/log/matomo':
-        ensure  => 'directory',
-        owner   => 'www-data',
-        group   => 'www-data',
-        mode    => '0755',
-        require => Git::Clone['matomo'],
-    }
-
     # Install a systemd timer to run the Archive task periodically.
     # Running it once a day to avoid performance penalties on high trafficated websites
     # (https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/#important-tips-for-medium-to-high-traffic-websites)
-    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --url=\"https://analytics.wikitide.net/\""
+    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --concurrent-archivers=3 --url=\"https://analytics.wikitide.net/\""
 
     # Create concurrent archivers
     # https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/
@@ -200,9 +193,11 @@ class matomo (
                 'interval' => $interval,
             },
             logfile_basedir   => '/var/log/matomo',
+            logfile_group     => 'www-data',
             logfile_name      => "matomo-archive-${concurrent}.log",
             syslog_identifier => "matomo-archiver-${concurrent}",
             user              => 'www-data',
+            require           => Git::Clone['matomo'],
         }
     }
 
@@ -216,23 +211,30 @@ class matomo (
                 'interval' => 'monthly',
             },
             logfile_basedir   => '/var/log/matomo',
+            logfile_group     => 'www-data',
             logfile_name      => "matomo-optimize-${key}.log",
             syslog_identifier => "matomo-optimize-${key}",
             user              => 'www-data',
+            require           => Git::Clone['matomo'],
         }
     }
 
     $queuedtracking_command = '/usr/bin/php /srv/matomo/console queuedtracking:process'
-    systemd::timer::job { 'matomo-queuedtracking':
-        description       => "Runs the Matomo's Plugin QueuedTracking process.",
-        command           => "/bin/bash -c '${queuedtracking_command}'",
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-* *:*:00',
-        },
-        logfile_basedir   => '/var/log/matomo',
-        logfile_name      => 'matomo-queuedtracking.log',
-        syslog_identifier => 'matomo-queuedtracking',
-        user              => 'www-data',
+
+    ['0', '1', '2'].each | $key | {
+        systemd::timer::job { "matomo-queuedtracking-${key}":
+            description       => "Runs the Matomo's Plugin QueuedTracking process.",
+            command           => "/bin/bash -c '${queuedtracking_command} --queue-id=${key} -c 10 -s 2 -d 5'",
+            interval          => {
+                'start'    => 'OnCalendar',
+                'interval' => '*-*-* *:*:00',
+            },
+            logfile_basedir   => '/var/log/matomo',
+            logfile_group     => 'www-data',
+            logfile_name      => "matomo-queuedtracking-${key}.log",
+            syslog_identifier => "matomo-queuedtracking-${key}",
+            user              => 'www-data',
+            require           => Git::Clone['matomo'],
+        }
     }
 }

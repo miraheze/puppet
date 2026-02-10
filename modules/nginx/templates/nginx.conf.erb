@@ -10,24 +10,28 @@ pid /run/nginx.pid;
 worker_rlimit_nofile 262144; # Twice the number of worker_connections
 
 events {
-	worker_connections 30720;
+	worker_connections 90000;
 	use epoll;
-	multi_accept on;
+	multi_accept off;
+	accept_mutex off;
 }
 
 http {
 	# Basic settings
 	sendfile on;
-	tcp_nopush on;
+	#tcp_nopush on;
 	tcp_nodelay on;
 	client_max_body_size <%= @nginx_client_max_body_size %>;
 	client_body_buffer_size 64k;
-	large_client_header_buffers 4 16k;
 	types_hash_max_size 2048;
 	# 512 x 4
 	server_names_hash_max_size 2048;
 	# 128 x 4
 	server_names_hash_bucket_size 512;
+
+	<%- @config.sort.each do |key, value| -%>
+	<%= key %> <%= value %>;
+	<%- end -%>
 
 	keepalive_timeout <%= @keepalive_timeout %>;
 	keepalive_requests <%= @keepalive_requests %>;
@@ -38,12 +42,12 @@ http {
 	server_tokens off;
 
 	# SSL Settings
-	ssl_ciphers EECDH+CHACHA20:EECDH+AES128:EECDH+AES256:EECDH+3DES:!MD5;
-	ssl_protocols TLSv1.2 TLSv1.3;
-	ssl_prefer_server_ciphers on;
-	ssl_stapling on;
+	ssl_protocols TLSv1.3;
+	ssl_ecdh_curve X25519:prime256v1:secp384r1;
+	ssl_prefer_server_ciphers off;
+	ssl_stapling off;
 	ssl_session_cache shared:SSL:<%= @ssl_session_cache %>m;
-	ssl_session_timeout 12h;
+	ssl_session_timeout 25h;
 
 	# Disable RFC5077 tickets (may revisit later when client support is better)
 	ssl_session_tickets off;
@@ -64,8 +68,6 @@ http {
 
 	# XSS Protection
 	add_header x-xss-protection "1; mode=block" always;
-
-	add_header X-Frame-Options "ALLOW-FROM static.miraheze.org";
 
 	# Custom log format for graylog
 	log_format graylog2_json escape=json '{ "timestamp": "$time_iso8601", '
@@ -108,12 +110,21 @@ http {
 	<%- if @use_varnish_directly -%>
 	# Set real IP for cache proxy web requests (varnish)
 	<%- @cache_proxies.sort.each do |key, value| -%>
+	<%- if value['networking']['interfaces']['ens19'] and value['networking']['interfaces']['ens18'] -%>
+	set_real_ip_from <%= value['networking']['interfaces']['ens19']['ip'] %>; # <%= key %> private
+	<%- if value['networking']['interfaces']['ens18']['ip'] -%>
+	set_real_ip_from <%= value['networking']['interfaces']['ens18']['ip'] %>; # <%= key %> public
+	<%- end -%>
+	set_real_ip_from <%= value['networking']['interfaces']['ens18']['ip6'] %>; # <%= key %> public
+	<%- elsif value['networking']['interfaces']['ens18'] -%>
+	<%- if value['networking']['interfaces']['ens18']['ip'] -%>
+	set_real_ip_from <%= value['networking']['interfaces']['ens18']['ip'] %>; # <%= key %>
+	<%- end -%>
+	set_real_ip_from <%= value['networking']['interfaces']['ens18']['ip6'] %>; # <%= key %>
+	<%- else -%>
 	<%- if value['networking']['ip'] -%>
 	set_real_ip_from <%= value['networking']['ip'] %>; # <%= key %>
 	<%- end -%>
-	<%- if value['networking']['interfaces']['he-ipv6'] -%>
-	set_real_ip_from <%= value['networking']['interfaces']['he-ipv6']['ip6'] %>; # <%= key %>
-	<%- elsif value['networking']['ip6'] -%>
 	set_real_ip_from <%= value['networking']['ip6'] %>; # <%= key %>
 	<%- end -%>
 
@@ -143,7 +154,7 @@ http {
 		root /var/www/html;
 
 		location /server-status {
-		stub_status;
+			stub_status;
 			access_log off;
 			allow 127.0.0.1;
 		}

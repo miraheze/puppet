@@ -16,7 +16,7 @@ class role::irc {
         dotnet_version => '6.0',
     }
 
-    class { 'irc::ircrcbot':
+    irc::ircrcbot { 'RCBot1' :
         nickname     => 'MirahezeRC',
         network      => 'irc.libera.chat',
         network_port => '6697',
@@ -30,6 +30,14 @@ class role::irc {
         network_port => '6697',
         channel      => '#miraheze-tech-ops',
         udp_port     => '5071',
+    }
+
+    irc::ircrcbot { 'RCBot2' :
+        nickname     => 'MirahezeRC2',
+        network      => 'irc.libera.chat',
+        network_port => '6697',
+        channel      => '#miraheze-feed',
+        udp_port     => '5072',
     }
 
     $firewall_irc_rules_str = join(
@@ -54,10 +62,18 @@ class role::irc {
         srange => "(${firewall_irc_rules_str})",
     }
 
+    ferm::service { 'ircrcbot2':
+        proto  => 'udp',
+        port   => '5072',
+        srange => "(${firewall_irc_rules_str})",
+    }
+
     $firewall_all_rules_str = join(
         query_facts('Class[Base]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['interfaces']['vmbr1'] ) {
+                "${value['networking']['interfaces']['vmbr1']['ip']} ${value['networking']['ip']} ${value['networking']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"

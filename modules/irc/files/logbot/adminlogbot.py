@@ -2,7 +2,7 @@
 
 import adminlog
 import argparse
-import imp
+import importlib.util
 import irc.client  # for exceptions.
 import irc.bot as ircbot
 import json
@@ -30,7 +30,10 @@ class logbot(ircbot.SingleServerIRCBot):
     def connect(self, *args, **kwargs):
         if self.config.ssl:
             import ssl
-            ssl_factory = irc.connection.Factory(ipv6=True, wrapper=ssl.wrap_socket)
+            context = ssl.create_default_context()
+            def ssl_wrapper(sock):
+                return context.wrap_socket(sock, server_hostname=self.config.network)
+            ssl_factory = irc.connection.Factory(ipv6=True, wrapper=ssl_wrapper)
             self.connection.connect(*args, connect_factory=ssl_factory, **kwargs)
         else:
             self.connection.connect(*args, **kwargs)
@@ -89,6 +92,10 @@ class logbot(ircbot.SingleServerIRCBot):
     def on_welcome(self, con, event):
         for target in self.config.targets:
             con.join(target)
+
+    def on_disconnect(self, con, event):
+        print('Disconnected')
+        sys.exit(0)
 
     def get_projects(self, event, force_reload=False):
         projects = []
@@ -293,13 +300,17 @@ if args.confarg is not None:
     fname = os.path.basename(args.confarg)
     split = os.path.splitext(fname)
     module = split[0]
-    conf = imp.load_source(module, confdir + "/" + fname)
+    path = os.path.join(confdir, fname)
+    spec = importlib.util.spec_from_file_location(module, path)
+    conf = importlib.util.module_from_spec(spec)
+    sys.modules[module] = conf
+    spec.loader.exec_module(conf)
 
     # discard if this isn't actually a bot config file
     if 'targets' not in conf.__dict__:
         logging.error("%s does not appear to be a valid bot config." %
                       args.confarg)
-        exit(1)
+        sys.exit(1)
 
     if ('enable_projects' in conf.__dict__) and conf.enable_projects:
         enable_projects = True
@@ -317,7 +328,11 @@ else:
         split = os.path.splitext(fname)
         if split[1] == ".py":
             module = split[0]
-            conf = imp.load_source(module, confdir + "/" + fname)
+            path = os.path.join(confdir, fname)
+            spec = importlib.util.spec_from_file_location(module, path)
+            conf = importlib.util.module_from_spec(spec)
+            sys.modules[module] = conf
+            spec.loader.exec_module(conf)
 
             # discard if this isn't actually a bot config file
             if 'targets' not in conf.__dict__:
@@ -346,7 +361,7 @@ if args.listprojects:
         logging.debug("For bot %s" % bot.name)
         for proj in bot.get_projects(None, True):
             logging.debug("   %s" % proj)
-    exit(0)
+    sys.exit(0)
 
 for bot in bots:
     logging.debug("'%s' starting" % bot.name)

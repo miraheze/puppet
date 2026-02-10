@@ -33,14 +33,11 @@ class postgresql::server(
 ) {
 
     case $facts['os']['distro']['codename'] {
-        'buster': {
-            $_pgversion_default = 11
-        }
-        'bullseye': {
-            $_pgversion_default = 13
-        }
         'bookworm': {
             $_pgversion_default = 15
+        }
+        'trixie': {
+            $_pgversion_default = 17
         }
         default: {
             fail("${title} not supported by: ${$facts['os']['distro']['codename']})")
@@ -107,7 +104,7 @@ class postgresql::server(
     }
 
     service { 'postgresql':
-        ensure  => ensure_service($ensure),
+        ensure => ensure_service($ensure),
     }
 
     file { "/etc/postgresql/${_pgversion}/main/postgresql.conf":

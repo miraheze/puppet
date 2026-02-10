@@ -4,7 +4,7 @@ class swift::proxy (
     Integer              $num_workers   = lookup('swift::proxy::num_workers', {'default_value' => $facts['processors']['count']}),
     Hash                 $accounts      = lookup('swift::accounts'),
     Hash                 $accounts_keys = lookup('swift::accounts_keys'),
-    String               $swift_main_memcached = lookup('swift::proxy::swift_main_memcached', {'default_value' => '[2602:294:0:b23::109]'}),
+    String               $swift_main_memcached = lookup('swift::proxy::swift_main_memcached', {'default_value' => '10.0.17.108'}),
 ) {
 
     stdlib::ensure_packages(['swift-proxy'])
@@ -27,6 +27,7 @@ class swift::proxy (
 
     $python_version = $facts['os']['distro']['codename'] ? {
         'bookworm' => 'python3.11',
+        'trixie'   => 'python3.13',
     }
 
     file { "/usr/local/lib/${python_version}/dist-packages/wikitide/":
@@ -45,13 +46,13 @@ class swift::proxy (
         content => systemd_template('swift-proxy'),
     }
 
-    ssl::wildcard { 'swift wildcard': }
-
     nginx::site { 'swift':
         ensure  => present,
         source  => 'puppet:///modules/swift/nginx/swift.conf',
         monitor => false,
     }
+
+    ssl::wildcard { 'swift wildcard': }
 
     nginx::site { 'default':
         ensure  => absent,
@@ -69,8 +70,8 @@ class swift::proxy (
     monitoring::services { 'HTTP':
         check_command => 'check_http',
         vars          => {
-            address6         => $address,
-            http_vhost       => 'swift-lb.miraheze.org',
+            address          => $address,
+            http_vhost       => 'swift-lb.wikitide.net',
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
             # We don't serve index page.
@@ -81,8 +82,8 @@ class swift::proxy (
     monitoring::services { 'HTTPS':
         check_command => 'check_http',
         vars          => {
-            address6         => $address,
-            http_vhost       => 'swift-lb.miraheze.org',
+            address          => $address,
+            http_vhost       => 'swift-lb.wikitide.net',
             http_ssl         => true,
             http_ignore_body => true,
             # We redirect / in varnish so the 404 is expected in the backend.
@@ -97,5 +98,9 @@ class swift::proxy (
             tcp_address => $address,
             tcp_port    => '80',
         },
+    }
+
+    monitoring::nrpe { 'Swift NGINX SSL check':
+        command => '/usr/lib/nagios/plugins/check_tcp -H localhost -p 443 -D 7,3',
     }
 }

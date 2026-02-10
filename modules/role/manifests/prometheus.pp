@@ -163,6 +163,23 @@ class role::prometheus {
         port   => 9113
     }
 
+    $cache_haproxy_job = [
+        {
+            'job_name' => 'cache_haproxy',
+            'file_sd_configs' => [
+                {
+                    'files' => [ 'targets/cache_haproxy.yaml' ]
+                }
+            ]
+        }
+    ]
+
+    prometheus::class { 'cache_haproxy':
+        dest   => '/etc/prometheus/targets/cache_haproxy.yaml',
+        module => 'Role::Cache::Haproxy',
+        port   => 9422
+    }
+
     $apache_job = [
         {
             'job_name' => 'apache',
@@ -355,6 +372,23 @@ class role::prometheus {
         port   => 9102
     }
 
+    # PHP - MediaWiki
+    $php_mediawiki_job = [
+      {
+        'job_name'        => 'php_mediawiki',
+        'scheme'          => 'http',
+        'file_sd_configs' => [
+          { 'files' => [ 'targets/php_mediawiki.yaml' ] },
+        ],
+      },
+    ]
+
+    prometheus::class{ 'php_mediawiki':
+        dest   => '/etc/prometheus/targets/php_mediawiki.yaml',
+        module => 'MediaWiki::Monitoring',
+        port   => 9181,
+    }
+
     $global_extra = {}
 
     class { 'prometheus':
@@ -364,16 +398,15 @@ class role::prometheus {
             $apache_job, $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
             $varnish_job, $cadvisor_job, $pushgateway_job, $kafka_job,
-            $eventgate_job, $kafka_burrow_jobs, $cloudflare_job
+            $eventgate_job, $kafka_burrow_jobs, $cloudflare_job, $cache_haproxy_job,
+            $php_mediawiki_job
         ].flatten,
     }
 
     $firewall_grafana = join(
         query_facts('Class[Role::Grafana]', ['networking'])
         .map |$key, $value| {
-            if ( $value['networking']['interfaces']['he-ipv6'] ) {
-                "${value['networking']['ip']} ${value['networking']['interfaces']['he-ipv6']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
             } elsif ( $value['networking']['interfaces']['ens18'] ) {
                 "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"

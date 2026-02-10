@@ -5,6 +5,7 @@ class prometheus::exporter::statsd_exporter (
     String $relay_address = '',
     String $listen_address = ':9112',
     String $arguments = '',
+    String $ttl = '0'
 ) {
 
     file { '/opt/prometheus-statsd-exporter_0.26.1-1_amd64.deb':
@@ -35,6 +36,7 @@ class prometheus::exporter::statsd_exporter (
                 { 'quantile' => 0.50,
                   'error'    => 0.005  },
             ],
+            'ttl' => $ttl
         }
 
         $content = stdlib::to_yaml({ 'defaults' => $defaults, 'mappings' => $mappings })
@@ -73,7 +75,7 @@ class prometheus::exporter::statsd_exporter (
     }
 
     service { 'prometheus-statsd-exporter':
-        ensure  => running,
+        ensure => running,
     }
 
     $firewall_rules_str = join(
