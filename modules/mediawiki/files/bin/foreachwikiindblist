@@ -34,5 +34,5 @@ fi
 for wiki in $wikis
 do
         echo "Running ${*:2} for $wiki"
-        /usr/bin/php ${*:2} --wiki $wiki
+        /usr/bin/php "${@:2}" --wiki "$wiki"
 done
