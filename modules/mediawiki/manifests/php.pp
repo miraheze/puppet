@@ -96,6 +96,7 @@ class mediawiki::php (
         'apcu',
         'msgpack',
         'redis',
+        'uuid',
         'wikidiff2',
         'yaml',
     ]:
