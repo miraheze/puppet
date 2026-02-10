@@ -97,6 +97,7 @@ class mediawiki::php (
         'luasandbox',
         'msgpack',
         'redis',
+        'uuid',
         'wikidiff2',
         'yaml',
     ]:

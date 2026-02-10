@@ -7,9 +7,7 @@ class redis (
     Integer $maxmemory_samples = 5,
     Variant[Boolean, String] $password = false,
 ) {
-    package { 'redis-server':
-        ensure => present,
-    }
+    stdlib::ensure_packages('redis-server')
 
     file { '/etc/redis/redis.conf':
         content => template('redis/redis.conf.erb'),
@@ -50,9 +48,7 @@ class redis (
     }
 
     sysctl::parameters { 'redis increase connections':
-        values => {
-            'net.core.somaxconn' => 16384,
-        }
+        values => { 'net.core.somaxconn' => 16384 },
     }
 
     systemd::service { 'redis-server':
