@@ -12,6 +12,8 @@ import requests
 import socket
 import json
 import sys
+import urllib3
+import warnings
 from langcodes import tag_is_valid
 
 mw_versions = os.popen('/usr/local/bin/getMWVersions').read().strip()
@@ -217,6 +219,8 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         'User-Agent': 'wikitide/mwdeploy.py',
     }
     if Debug:
+        warnings.filterwarnings('default', category=urllib3.exceptions.InsecureRequestWarning)
+
         headers['X-WikiTide-Debug'] = Debug
         location = f'{domain}@{Debug}'
 
@@ -225,6 +229,8 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         if debug_access_key:
             headers['X-WikiTide-Debug-Access-Key'] = debug_access_key
     else:
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
         os.environ['NO_PROXY'] = 'localhost'
         domain = 'localhost'
         headers['host'] = f'{Host}'
