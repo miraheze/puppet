@@ -14,28 +14,27 @@
 #   Interval in seconds to update both status files. You can also specify
 #   it in minutes with the letter m or in seconds with s.
 #
-class icinga2::feature::statusdata(
+class icinga2::feature::statusdata (
   Enum['absent', 'present']          $ensure          = present,
   Optional[Stdlib::Absolutepath]     $status_path     = undef,
   Optional[Stdlib::Absolutepath]     $objects_path    = undef,
   Optional[Icinga2::Interval]        $update_interval = undef,
 ) {
-
-  if ! defined(Class['::icinga2']) {
+  if ! defined(Class['icinga2']) {
     fail('You must include the icinga2 base class before using any icinga2 feature class!')
   }
 
-  $conf_dir = $::icinga2::globals::conf_dir
+  $conf_dir = $icinga2::globals::conf_dir
   $_notify  = $ensure ? {
-    'present' => Class['::icinga2::service'],
+    'present' => Class['icinga2::service'],
     default   => undef,
   }
 
   # compose attributes
   $attrs = {
-    status_path     => $status_path,
-    objects_path    => $objects_path,
-    update_interval => $update_interval,
+    'status_path'     => $status_path,
+    'objects_path'    => $objects_path,
+    'update_interval' => $update_interval,
   }
 
   # create object
@@ -47,13 +46,6 @@ class icinga2::feature::statusdata(
     target      => "${conf_dir}/features-available/statusdata.conf",
     order       => 10,
     notify      => $_notify,
-  }
-
-  # import library 'compat'
-  concat::fragment { 'icinga2::feature::statusdata':
-    target  => "${conf_dir}/features-available/statusdata.conf",
-    content => "library \"compat\"\n\n",
-    order   => '05',
   }
 
   # manage feature

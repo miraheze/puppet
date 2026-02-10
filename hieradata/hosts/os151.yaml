@@ -1,12 +1,14 @@
-http_proxy: 'http://bastion.wikitide.net:8080'
+http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
-role::opensearch::master: true
-role::opensearch::data: true
+role::opensearch::roles: ['cluster_manager', 'data', 'ingest']
 role::opensearch::discovery_host:
-  - os151-private.wikitide.net
-  - os161-private.wikitide.net
-role::opensearch::master_hosts:
-  - os151-private
-role::opensearch::master_host: 'http://os151-private.wikitide.net:9200'
+  - os151.fsslc.wtnet
+  - os161.fsslc.wtnet
+  - os191.fsslc.wtnet
+  - os201.fsslc.wtnet
+role::opensearch::manager_hosts:
+  - os151
 
 base::syslog::rsyslog_udp_localhost: true
+
+nginx::client_max_body_size: "0"

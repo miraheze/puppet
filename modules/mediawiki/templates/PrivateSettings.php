@@ -1,51 +1,61 @@
 <?php
 
 // Database passwords
-$wgDBadminpassword = "<%= @wikiadmin_password %>";
-$wgDBpassword = "<%= @mediawiki_password %>";
+$wgDBadminpassword = '<%= @wikiadmin_password %>';
+$wgDBpassword = '<%= @mediawiki_password %>';
 
 // Redis AUTH password
-$wmgRedisPassword = "<%= @redis_password %>";
+$wmgRedisPassword = '<%= @redis_password %>';
 
 // MediaWiki secret keys
-$wgUpgradeKey = "<%= @mediawiki_upgradekey %>";
-$wgSecretKey = "<%= @mediawiki_secretkey %>";
+$wgUpgradeKey = '<%= @mediawiki_upgradekey %>';
+$wgSecretKey = '<%= @mediawiki_secretkey %>';
 
 // hCaptcha secret key
-$wgHCaptchaSecretKey = "<%= @hcaptcha_secretkey %>";
+$wgHCaptchaSecretKey = '<%= @hcaptcha_secretkey %>';
 
 // Turnstile keys
-$wgTurnstileSiteKey = "<%= @turnstile_sitekey %>";
-$wgTurnstileSecretKey = "<%= @turnstile_secretkey %>";
+$wgTurnstileSiteKey = '<%= @turnstile_sitekey %>';
+$wgTurnstileSecretKey = '<%= @turnstile_secretkey %>';
 
 // Shellbox secret key
-$wgShellboxSecretKey = "<%= @shellbox_secretkey %>";
+$wgShellboxSecretKey = '<%= @shellbox_secretkey %>';
 
 // Matomo token
-$wgMatomoAnalyticsTokenAuth = "<%= @matomotoken %>";
+$wgMatomoAnalyticsTokenAuth = '<%= @matomotoken %>';
+
+// MediaModeration API key
+$wgMediaModerationPhotoDNASubscriptionKey = '<%= @mediamoderation_apikey %>';
 
 // OpenAI settings
 $wgCreateWikiOpenAIConfig = [
-  "dryrun" => false,
-  "apikey" => "<%= @openai_apikey %>",
-  "assistantid" => "<%= @openai_assistantid %>"
+	'dryrun' => false,
+	'apikey' => '<%= @openai_apikey %>',
+	'assistantid' => '<%= @openai_assistantid %>',
+];
+
+// RequestCustomDomain settings
+$wgRequestCustomDomainCloudflareConfig = [
+	'tlsversion' => '1.3',
+	'apikey' => '<%= @cloudflare_apikey %>',
+	'zoneid' => '<%= @cloudflare_zoneid %>',
 ];
 
 // Extension:DiscordNotifications global webhook
-$wmgGlobalDiscordWebhookUrl = "<%= @global_discord_webhook_url %>";
-$wmgDiscordExperimentalWebhook = "<%= @discord_experimental_webhook %>";
+$wmgGlobalDiscordWebhookUrl = '<%= @global_discord_webhook_url %>';
+$wmgDiscordExperimentalWebhook = '<%= @discord_experimental_webhook %>';
 
 // writer-user password (ldap)
-$wmgLdapPassword = "<%= @ldap_password %>";
+$wmgLdapPassword = '<%= @ldap_password %>';
 
 // Swift password for mw
-$wmgSwiftPassword = "<%= @swift_password %>";
+$wmgSwiftPassword = '<%= @swift_password %>';
 
 // Swift temp URL key for mw
-$wmgSwiftTempUrlKey = "<%= @swift_temp_url_key %>";
+$wmgSwiftTempUrlKey = '<%= @swift_temp_url_key %>';
 
 // Reports write key
-$wgMirahezeReportsWriteKey = "<%= @reports_write_key %>";
+$wgMirahezeReportsWriteKey = '<%= @reports_write_key %>';
 
 // Google Translate API key for Meta
-$wmgTranslateGoogleTranslateMetaKey = "<%= @google_translate_apikey_meta %>";
+$wmgTranslateGoogleTranslateMetaKey = '<%= @google_translate_apikey_meta %>';

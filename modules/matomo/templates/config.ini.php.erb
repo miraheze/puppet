@@ -7,28 +7,25 @@ password = "<%= @password %>"
 dbname = "matomo"
 tables_prefix = "matomo_"
 adapter = "MYSQLI"
+schema = "Mariadb"
 charset = "utf8mb4"
+collation = "utf8mb4_general_ci"
 
 [General]
 browser_archiving_disabled_enforce = 1
-assume_secure_protocol = 1
+enable_browser_archiving_triggering = 0
+enable_sql_optimize_queries = 0
 force_ssl = 1
 noreply_email_address = "noreply@wikitide.org"
+assume_secure_protocol = 1
 enable_load_data_infile = 0
-salt = "<%= @salt %>"
-trusted_hosts[] = "analytics.wikitide.net"
-maintenance_mode = 0
 enable_internet_features = 0
 enable_tracking_failures_notification = 0
-enable_browser_archiving_triggering = 0
-
-[CustomReports]
-custom_reports_max_execution_time = 2700
-custom_reports_disabled_dimensions = "CoreHome.VisitLastActionDate"
-
-[Tracker]
-bulk_requests_use_transaction = 0
-record_statistics = 1
+salt = "<%= @salt %>"
+trusted_hosts[] = "analytics.wikitide.net"
+proxy_scheme_headers[] = "HTTP_X_FORWARDED_PROTO"
+proxy_scheme_headers[] = "HTTP_X_FORWARDED_SCHEME"
+proxy_scheme_headers[] = "HTTP_X_URL_SCHEME"
 
 [mail]
 defaultHostnameIfEmpty = "wikitide.org"
@@ -38,6 +35,7 @@ host = "ssl://smtp-relay.gmail.com"
 encryption = "tls"
 
 [Plugins]
+Plugins[] = "CoreVue"
 Plugins[] = "CorePluginsAdmin"
 Plugins[] = "CoreAdminHome"
 Plugins[] = "CoreHome"
@@ -67,6 +65,7 @@ Plugins[] = "VisitTime"
 Plugins[] = "VisitorInterest"
 Plugins[] = "RssWidget"
 Plugins[] = "Monolog"
+Plugins[] = "Login"
 Plugins[] = "TwoFactorAuth"
 Plugins[] = "UsersManager"
 Plugins[] = "SitesManager"
@@ -76,30 +75,29 @@ Plugins[] = "CoreConsole"
 Plugins[] = "ScheduledReports"
 Plugins[] = "UserCountryMap"
 Plugins[] = "Live"
-Plugins[] = "CustomVariables"
 Plugins[] = "PrivacyManager"
 Plugins[] = "ImageGraph"
 Plugins[] = "Annotations"
-Plugins[] = "MobileMessaging"
 Plugins[] = "Overlay"
 Plugins[] = "SegmentEditor"
 Plugins[] = "Insights"
 Plugins[] = "Morpheus"
 Plugins[] = "Contents"
-Plugins[] = "TestRunner"
 Plugins[] = "BulkTracking"
 Plugins[] = "Resolution"
 Plugins[] = "DevicePlugins"
 Plugins[] = "Heartbeat"
 Plugins[] = "Intl"
-Plugins[] = "Marketplace"
 Plugins[] = "ProfessionalServices"
 Plugins[] = "UserId"
-Plugins[] = "QueuedTracking"
-Plugins[] = "DeviceDetectorCache"
-Plugins[] = "Login"
-Plugins[] = "LoginLdap"
 Plugins[] = "PagePerformance"
+Plugins[] = "CustomDimensions"
+Plugins[] = "JsTrackerInstallCheck"
+Plugins[] = "FeatureFlags"
+Plugins[] = "AIAgents"
+Plugins[] = "DeviceDetectorCache"
+Plugins[] = "LoginLdap"
+Plugins[] = "QueuedTracking"
 
 [PluginsInstalled]
 PluginsInstalled[] = "Diagnostics"
@@ -138,7 +136,6 @@ PluginsInstalled[] = "CoreConsole"
 PluginsInstalled[] = "ScheduledReports"
 PluginsInstalled[] = "UserCountryMap"
 PluginsInstalled[] = "Live"
-PluginsInstalled[] = "CustomVariables"
 PluginsInstalled[] = "PrivacyManager"
 PluginsInstalled[] = "ImageGraph"
 PluginsInstalled[] = "Annotations"
@@ -150,7 +147,6 @@ PluginsInstalled[] = "ZenMode"
 PluginsInstalled[] = "LeftMenu"
 PluginsInstalled[] = "Morpheus"
 PluginsInstalled[] = "Contents"
-PluginsInstalled[] = "TestRunner"
 PluginsInstalled[] = "BulkTracking"
 PluginsInstalled[] = "Resolution"
 PluginsInstalled[] = "DevicePlugins"
@@ -169,6 +165,10 @@ PluginsInstalled[] = "Login"
 PluginsInstalled[] = "LoginLdap"
 PluginsInstalled[] = "CoreVue"
 PluginsInstalled[] = "PagePerformance"
+PluginsInstalled[] = "CustomDimensions"
+PluginsInstalled[] = "JsTrackerInstallCheck"
+PluginsInstalled[] = "FeatureFlags"
+PluginsInstalled[] = "AIAgents"
 
 [QueuedTracking]
 notify_queue_threshold_single_queue = 250000
@@ -181,7 +181,7 @@ new_user_default_sites_view_access = "all"
 user_email_suffix = ""
 required_member_of = ""
 required_member_of_field = "memberOf"
-ldap_user_filter = "(|(&(memberOf=cn=matomo-super,ou=groups,dc=miraheze,dc=org)(objectclass=person))(&(memberOf=cn=sre,ou=groups,dc=miraheze,dc=org)(objectclass=person))(&(memberOf=cn=matomo-users,ou=groups,dc=miraheze,dc=org)(objectclass=person)))"
+ldap_user_filter = "(|(&amp;(memberOf=cn=matomo-super,ou=groups,dc=miraheze,dc=org)(objectclass=person))(&amp;(memberOf=cn=sre,ou=groups,dc=miraheze,dc=org)(objectclass=person))(&amp;(memberOf=cn=matomo-users,ou=groups,dc=miraheze,dc=org)(objectclass=person)))"
 ldap_user_id_field = "uid"
 ldap_last_name_field = "sn"
 ldap_first_name_field = "givenName"
@@ -207,3 +207,4 @@ port = 636
 base_dn = "dc=miraheze,dc=org"
 admin_user = "cn=write-user,dc=miraheze,dc=org"
 admin_pass = "<%= @ldap_password %>"
+

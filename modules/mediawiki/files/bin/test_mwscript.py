@@ -30,7 +30,7 @@ def test_get_command_extension_list(mock_getlogin):
     assert mwscript.syscheck(mwscript.get_commands(args)) == {
         'confirm': False,
         'command': 'sudo -u www-data /usr/local/bin/foreachwikiindblist /tmp/CheckUser.php /srv/mediawiki/1.43/maintenance/run.php /srv/mediawiki/1.43/maintenance/test.php',
-        'generate': 'sudo -u www-data php /srv/mediawiki/1.43/maintenance/run.php MirahezeMagic:GenerateExtensionDatabaseList --wiki=loginwiki --extension=CheckUser --directory=/tmp',
+        'generate': 'sudo -u www-data php /srv/mediawiki/1.43/maintenance/run.php MirahezeMagic:GenerateExtensionDatabaseList --wiki=metawiki --extension=CheckUser --directory=/tmp',
         'long': True,
         'nolog': False,
     }

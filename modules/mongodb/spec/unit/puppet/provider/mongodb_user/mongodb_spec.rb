@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'json'
 require 'tempfile'
@@ -5,7 +7,34 @@ require 'tempfile'
 describe Puppet::Type.type(:mongodb_user).provider(:mongodb) do
   let(:raw_users) do
     [
-      { '_id' => 'admin.root', 'user' => 'root', 'db' => 'admin', 'credentials' => { 'MONGODB-CR' => 'pass', 'SCRAM-SHA-1' => { 'iterationCount' => 10_000, 'salt' => 'salt', 'storedKey' => 'storedKey', 'serverKey' => 'serverKey' } }, 'roles' => [{ 'role' => 'role2', 'db' => 'admin' }, { 'role' => 'role3', 'db' => 'user_database' }, { 'role' => 'role1', 'db' => 'admin' }] }
+      {
+        '_id' => 'admin.root',
+        'user' => 'root',
+        'db' => 'admin',
+        'credentials' => {
+          'MONGODB-CR' => 'pass',
+          'SCRAM-SHA-1' => {
+            'iterationCount' => 10_000,
+            'salt' => 'salt',
+            'storedKey' => 'storedKey',
+            'serverKey' => 'serverKey'
+          }
+        },
+        'roles' => [
+          {
+            'role' => 'role2',
+            'db' => 'admin'
+          },
+          {
+            'role' => 'role3',
+            'db' => 'user_database'
+          },
+          {
+            'role' => 'role1',
+            'db' => 'admin'
+          }
+        ]
+      }
     ].to_json
   end
 
@@ -30,8 +59,8 @@ describe Puppet::Type.type(:mongodb_user).provider(:mongodb) do
     tmp = Tempfile.new('test')
     mongodconffile = tmp.path
     allow(provider.class).to receive(:mongod_conf_file).and_return(mongodconffile)
-    allow(provider.class).to receive(:mongo_eval).with('printjson(db.system.users.find().toArray())').and_return(raw_users)
-    allow(provider.class).to receive(:mongo_version).and_return('2.6.x')
+    allow(provider.class).to receive(:mongo_eval).with('EJSON.stringify(db.system.users.find().toArray())').and_return(raw_users)
+    allow(provider.class).to receive(:mongo_version).and_return('7.0.0')
     allow(provider.class).to receive(:db_ismaster).and_return(true)
   end
 
@@ -42,13 +71,6 @@ describe Puppet::Type.type(:mongodb_user).provider(:mongodb) do
     end
   end
 
-  describe 'empty self.instances from slave' do
-    it 'doesn`t retrun array of users' do
-      allow(provider.class).to receive(:db_ismaster).and_return(false)
-      expect(provider.class.instances).to match_array([])
-    end
-  end
-
   describe 'create' do
     it 'creates a user' do
       cmd_json = <<-EOS.gsub(%r{^\s*}, '').gsub(%r{$\n}, '')
@@ -56,6 +78,7 @@ describe Puppet::Type.type(:mongodb_user).provider(:mongodb) do
         "createUser":"new_user",
         "customData":{"createdBy":"Puppet Mongodb_user['new_user']"},
         "roles":[{"role":"role1","db":"new_database"},{"role":"role2","db":"other_database"}],
+        "mechanisms":["SCRAM-SHA-1"],
         "pwd":"pass",
         "digestPassword":false
       }

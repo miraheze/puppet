@@ -76,18 +76,11 @@ class mediawiki::deploy {
         require => [ File['/srv/mediawiki'], File['/srv/mediawiki-staging'] ],
     }
 
-    file { '/usr/local/bin/deploy-mediawiki':
-        ensure  => 'link',
-        target  => '/usr/local/bin/mwdeploy',
-        mode    => '0755',
-        require => File['/usr/local/bin/mwdeploy'],
-    }
-
     git::clone { 'MediaWiki config':
         ensure    => present,
         directory => '/srv/mediawiki-staging/config',
         origin    => 'https://github.com/miraheze/mw-config',
-        branch    => 'master',
+        branch    => 'main',
         owner     => 'www-data',
         group     => 'www-data',
         mode      => '0755',
@@ -98,7 +91,7 @@ class mediawiki::deploy {
         ensure    => present,
         directory => '/srv/mediawiki-staging/landing',
         origin    => 'https://github.com/miraheze/landing',
-        branch    => 'master',
+        branch    => 'main',
         owner     => 'www-data',
         group     => 'www-data',
         mode      => '0755',
@@ -109,7 +102,7 @@ class mediawiki::deploy {
         ensure    => present,
         directory => '/srv/mediawiki-staging/ErrorPages',
         origin    => 'https://github.com/miraheze/ErrorPages',
-        branch    => 'master',
+        branch    => 'main',
         owner     => 'www-data',
         group     => 'www-data',
         mode      => '0755',

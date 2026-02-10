@@ -6,12 +6,15 @@ class mariadb::config(
     String                $tmpdir                       = '/tmp',
     String                $innodb_buffer_pool_size      = '5G',
     Integer               $max_connections              = 1000,
-    Enum['10.5', '10.11'] $version                      = lookup('mariadb::version', {'default_value' => '10.5'}),
+    Enum['11.8']          $version                      = lookup('mariadb::version', {'default_value' => '11.8'}),
     String                $icinga_password              = undef,
     Optional[Integer]     $server_id                    = undef,
     Boolean               $enable_bin_logs              = true,
     Boolean               $enable_ssl                   = true,
     Boolean               $enable_slow_log              = false,
+    String                $expire_logs_days             = '3',
+    String                $sync_binlog                  = '1',
+    String                $flush_log_at_trx_commit      = '1',
 ) {
     $exporter_password = lookup('passwords::db::exporter')
     $ido_db_user_password = lookup('passwords::icinga_ido')
@@ -45,21 +48,12 @@ class mariadb::config(
         require => File['/etc/mysql'],
     }
 
-    if $facts['os']['distro']['codename'] == 'bookworm' {
-        # It looks like on mariadb 10.11 and above
-        # it dosen't contain the version number
-        # in the package name.
-        $package_name = 'mariadb-server'
-    } else {
-        $package_name = "mariadb-server-${version}"
-    }
-
     file { $datadir:
         ensure  => directory,
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0755',
-        require => Package[$package_name],
+        require => Package['mariadb-server'],
     }
 
     if $tmpdir != '/tmp' {
@@ -68,7 +62,7 @@ class mariadb::config(
             owner   => 'mysql',
             group   => 'mysql',
             mode    => '0775',
-            require => Package[$package_name],
+            require => Package['mariadb-server'],
         }
     }
 
@@ -77,7 +71,7 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0750',
-        require => Package[$package_name],
+        require => Package['mariadb-server'],
     }
 
     file { '/etc/mysql/wikitide/default-grants.sql':
@@ -98,13 +92,13 @@ class mariadb::config(
         owner   => 'mysql',
         group   => 'mysql',
         mode    => '0644',
-        require => Package[$package_name],
+        require => Package['mariadb-server'],
     }
 
     logrotate::conf { 'mysql-server':
         ensure  => present,
         source  => 'puppet:///modules/mariadb/mysql-server.logrotate.conf',
-        require => Package[$package_name],
+        require => Package['mariadb-server'],
     }
 
     systemd::unit { 'mariadb.service':
@@ -128,22 +122,10 @@ class mariadb::config(
         }
     }
 
-    monitoring::services { 'MariaDB':
-        check_command => 'mysql',
-        docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
-        vars          => {
-            mysql_hostname => $facts['networking']['fqdn'],
-            mysql_username => 'icinga',
-            mysql_password => $icinga_password,
-            mysql_ssl      => true,
-            mysql_cacert   => '/etc/ssl/certs/LetsEncrypt.crt',
-        },
-    }
-
     if $enable_ssl {
         $ssl = {
             mysql_ssl       => $enable_ssl,
-            mysql_cacert    => '/etc/ssl/certs/LetsEncrypt.crt',
+            mysql_cacert    => '/etc/ssl/certs/ISRG_Root_X1.pem',
         }
     } else {
         $ssl = {
@@ -151,6 +133,17 @@ class mariadb::config(
             mysql_cacert    => '',
         }
     }
+
+    monitoring::services { 'MariaDB':
+        check_command => 'mysql',
+        docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',
+        vars          => {
+            mysql_hostname => $facts['networking']['fqdn'],
+            mysql_username => 'icinga',
+            mysql_password => $icinga_password,
+        } + $ssl,
+    }
+
     monitoring::services { 'MariaDB Connections':
         check_command => 'mysql_connections',
         docs          => 'https://meta.miraheze.org/wiki/Tech:MariaDB',

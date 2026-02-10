@@ -40,14 +40,14 @@ class puppetdb(
 
     ## PuppetDB installation
 
-    package { 'puppetdb':
+    package { 'openvoxdb':
         ensure  => present,
-        require => Apt::Source['puppetlabs'],
+        require => Apt::Source['openvox'],
     }
 
-    package { 'puppetdb-termini':
+    package { 'openvoxdb-termini':
         ensure  => present,
-        require => Apt::Source['puppetlabs'],
+        require => Apt::Source['openvox'],
     }
 
     file { '/etc/puppetlabs/puppetdb/logback.xml':
@@ -59,7 +59,7 @@ class puppetdb(
     file { '/usr/bin/puppetdb':
         ensure  => link,
         target  => '/opt/puppetlabs/bin/puppetdb',
-        require => Package['puppetdb'],
+        require => Package['openvoxdb'],
     }
 
     # Symlink /etc/puppetdb to /etc/puppetlabs/puppetdb
@@ -172,7 +172,7 @@ class puppetdb(
         },
     }
 
-    package { 'policykit-1':
+    package { ['polkitd', 'pkexec']:
         ensure => present,
     }
 
@@ -187,36 +187,10 @@ class puppetdb(
         use_udp           => true,
     }
 
-
-    # Backup provisioning
-    file { '/srv/backups':
-        ensure => directory,
-    }
-
-    file { '/var/log/puppetdb-backup':
-        ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-    }
-
-    systemd::timer::job { 'puppetdb-backup':
-        description       => 'Runs backup of puppetdb',
-        command           => '/usr/local/bin/wikitide-backup backup puppetdb',
-        interval          => {
-            'start'    => 'OnCalendar',
-            'interval' => '*-*-1,15 01:00:00',
-        },
-        logfile_basedir   => '/var/log/puppetdb-backup',
-        logfile_name      => 'puppetdb.log',
-        syslog_identifier => 'puppetdb-backup',
-        user              => 'root',
-    }
-
-    monitoring::nrpe { 'Backups PuppetDB':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 1555200 -c 1814400 -f /var/log/puppetdb-backup/puppetdb-backup/puppetdb.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    # Backups
+    backup::job { 'puppetdb':
+        ensure   => present,
+        interval => '*-*-1,15 01:00:00',
     }
 
     monitoring::services { 'puppetdb':

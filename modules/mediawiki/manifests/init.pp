@@ -30,7 +30,7 @@ class mediawiki {
         ensure             => 'latest',
         directory          => '/srv/3d2png',
         origin             => 'https://github.com/miraheze/3d2png-deploy',
-        branch             => 'master',
+        branch             => 'main',
         owner              => 'www-data',
         group              => 'www-data',
         mode               => '0755',
@@ -81,29 +81,32 @@ class mediawiki {
     }
 
     if ( lookup('role::mediawiki::is_beta', {'default_value' => false}) ) {
-        $wikiadmin_password         = lookup('passwords::mediawiki::wikiadmin_beta')
-        $mediawiki_password         = lookup('passwords::mediawiki::mediawiki_beta')
+        $wikiadmin_password       = lookup('passwords::mediawiki::wikiadmin_beta')
+        $mediawiki_password       = lookup('passwords::mediawiki::mediawiki_beta')
     } else {
-        $wikiadmin_password         = lookup('passwords::mediawiki::wikiadmin')
-        $mediawiki_password         = lookup('passwords::mediawiki::mediawiki')
+        $wikiadmin_password       = lookup('passwords::mediawiki::wikiadmin')
+        $mediawiki_password       = lookup('passwords::mediawiki::mediawiki')
     }
-    $redis_password             = lookup('passwords::redis::master')
-    $mediawiki_upgradekey       = lookup('passwords::mediawiki::upgradekey')
-    $mediawiki_secretkey        = lookup('passwords::mediawiki::secretkey')
-    $hcaptcha_secretkey         = lookup('passwords::hcaptcha::secretkey')
-    $shellbox_secretkey         = lookup('passwords::shellbox::secretkey')
-    $matomotoken                = lookup('passwords::mediawiki::matomotoken')
-    $ldap_password              = lookup('passwords::mediawiki::ldap_password')
+    $redis_password               = lookup('passwords::redis::master')
+    $mediawiki_upgradekey         = lookup('passwords::mediawiki::upgradekey')
+    $mediawiki_secretkey          = lookup('passwords::mediawiki::secretkey')
+    $hcaptcha_secretkey           = lookup('passwords::hcaptcha::secretkey')
+    $shellbox_secretkey           = lookup('passwords::shellbox::secretkey')
+    $matomotoken                  = lookup('passwords::mediawiki::matomotoken')
+    $cloudflare_apikey            = lookup('passwords::mediawiki::cloudflare_requestcustomdomain_apikey')
+    $cloudflare_zoneid            = lookup('cloudflare::zone_id')
+    $ldap_password                = lookup('passwords::mediawiki::ldap_password')
     $discord_experimental_webhook = lookup('mediawiki::discord_experimental_webhook')
-    $global_discord_webhook_url = lookup('mediawiki::global_discord_webhook_url')
-    $swift_password             = lookup('mediawiki::swift_password')
-    $swift_temp_url_key         = lookup('mediawiki::swift_temp_url_key')
-    $reports_write_key          = lookup('reports::reports_write_key')
+    $global_discord_webhook_url   = lookup('mediawiki::global_discord_webhook_url')
+    $swift_password               = lookup('mediawiki::swift_password')
+    $swift_temp_url_key           = lookup('mediawiki::swift_temp_url_key')
+    $reports_write_key            = lookup('reports::reports_write_key')
     $google_translate_apikey_meta = lookup('passwords::mediawiki::google_translate_apikey_meta')
-    $openai_apikey              = lookup('mediawiki::openai_apikey')
-    $openai_assistantid         = lookup('mediawiki::openai_assistantid')
-    $turnstile_sitekey          = lookup('mediawiki::turnstile_sitekey')
-    $turnstile_secreteky        = lookup('mediawiki::turnstile_secretkey')
+    $mediamoderation_apikey       = lookup('passwords::mediawiki::mediamoderation_apikey')
+    $openai_apikey                = lookup('mediawiki::openai_apikey')
+    $openai_assistantid           = lookup('mediawiki::openai_assistantid')
+    $turnstile_sitekey            = lookup('mediawiki::turnstile_sitekey')
+    $turnstile_secretkey          = lookup('mediawiki::turnstile_secretkey')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
@@ -150,7 +153,7 @@ class mediawiki {
         }
     }
 
-    $shells = ['sql', 'mweval', 'shell']
+    $shells = ['sql', 'mweval', 'shell', 'sugit']
     $shells.each |$shell| {
         file {"/usr/local/bin/${shell}":
             ensure => 'present',
@@ -194,13 +197,24 @@ class mediawiki {
         mode   => '0755',
     }
 
-    tidy { [ '/tmp', '/tmp/magick-tmp' ]:
-        matches => [ '*.png', '*.jpg', '*.gif', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v', 'php*', 'shellbox-*', 'arch*' ],
-        age     => '2h',
-        type    => 'atime',
+    # Recursively delete from /tmp any files that haven't been accessed
+    # or modified in the last week.
+    tidy { '/tmp':
+        age       => '1w',
+        backup    => false,
+        recurse   => true,
+        rmdirs    => true,
+        max_files => 3000,
+    }
+
+    tidy { '/tmp/magick-tmp':
+        matches => [ '*.png', 'EasyTimeline.*', 'gs_*', 'localcopy_*', 'magick-*', 'transform_*', 'vips-*.v' ],
+        age     => '15m',
+        type    => 'ctime',
         backup  => false,
         recurse => 1,
     }
+
     file { '/srv/python':
         ensure => directory,
         owner  => 'www-data',

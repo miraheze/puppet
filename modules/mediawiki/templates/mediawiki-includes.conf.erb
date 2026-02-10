@@ -4,7 +4,15 @@ location ~ ^/(\.git|config|landing|cache|stopforumspam|geoip) {
         deny all;
 }
 
-location ~ ^/1\.\d\d/(cache|maintenance|mw-config|vendor) {
+location ~ ^/1\.\d\d/(cache|includes|maintenance|mw-config|sql|tests|vendor) {
+	deny all;
+}
+
+location ~ ^/1\.\d\d/(extensions|skins)/.*\.php {
+	deny all;
+}
+
+location ~ ^(?!\/wiki\/)[^?]+\.patch {
 	deny all;
 }
 
@@ -25,6 +33,9 @@ location ~ ^/(w/)?\w+\.php {
 	fastcgi_buffers 32 32k;
 	fastcgi_buffer_size 64k;
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+	fastcgi_connect_timeout 300;
+	fastcgi_send_timeout 300;
+	fastcgi_read_timeout 300;
 }
 
 location = /favicon.ico {
@@ -41,6 +52,9 @@ location ^~ /w/index.php {
 	fastcgi_buffers 32 32k;
 	fastcgi_buffer_size 64k;
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+	fastcgi_connect_timeout 300;
+	fastcgi_send_timeout 300;
+	fastcgi_read_timeout 300;
 
 	if ($request_uri ~ OAuth) {
 		# Skip OAuth requests to prevent
@@ -82,12 +96,31 @@ location / {
 	try_files $uri $uri/ @wiki;
 }
 
+# Support SUL3-style API access via /<wiki>/w/api.php
+location ~ ^/[^/]+wiki(?:beta)?/w/api\.php$ {
+	rewrite ^/[^/]+wiki(?:beta)?/w/api\.php$ /w/api.php last;
+}
+
+# Support SUL3-style API access via /<wiki>/w/load.php
+location ~ ^/[^/]+wiki(?:beta)?/w/load\.php$ {
+	rewrite ^/[^/]+wiki(?:beta)?/w/load\.php$ /w/load.php last;
+}
+
+# Support SUL3-style resources access via /<wiki>/<version>/resources
+location ~ ^/[^/]+wiki(?:beta)?/1\.\d\d/resources {
+	rewrite ^/[^/]+wiki(?:beta)?/(1\.\d\d/resources.*)$ /$1 last;
+	expires 1d;
+}
+
 location @wiki {
 	include fastcgi_params;
 	fastcgi_param SCRIPT_FILENAME $document_root/w/index.php;
 	fastcgi_buffers 32 32k;
 	fastcgi_buffer_size 64k;
 	fastcgi_pass unix:/run/<%= @php_fpm_sock %>;
+	fastcgi_connect_timeout 300;
+	fastcgi_send_timeout 300;
+	fastcgi_read_timeout 300;
 }
 
 location ~ ^/m/(.*) {

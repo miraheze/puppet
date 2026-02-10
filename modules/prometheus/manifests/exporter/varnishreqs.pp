@@ -19,9 +19,15 @@ class prometheus::exporter::varnishreqs (
     }
 
     # Collect every minute
-    cron { 'varnish-requests-exporter':
-        ensure  => $ensure,
-        user    => 'root',
-        command => '/usr/local/bin/varnish-requests-exporter',
+    systemd::timer::job { 'varnish-requests-exporter':
+        ensure          => $ensure,
+        description     => 'Exports Varnish request metrics',
+        command         => '/usr/local/bin/varnish-requests-exporter',
+        interval        => {
+            start    => 'OnCalendar',
+            interval => '*-*-* *:*:00',
+        },
+        logging_enabled => false,
+        user            => 'root',
     }
 }

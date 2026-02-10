@@ -4,14 +4,20 @@ puppetserver: false
 
 puppet_major_version: 8
 
+base::ntp_server: 'ntp.fsslc.wtnet'
+
 mediawiki::multiversion::versions:
-  '1.43':
-    branch: 'REL1_43'
+  '1.44':
+    branch: 'REL1_44'
+  '1.45':
+    branch: 'REL1_45'
     default: true
 
 puppetserver_hostname: puppet181.wikitide.net
 role::salt::minions::salt_master: 'puppet181.wikitide.net'
 dns: false
+base::dns::do_ipv6: true
+base::dns::forward_use_internal: false
 mediawiki::use_staging: false
 mediawiki::is_canary: false
 mediawiki::default_sync: 'all'
@@ -174,16 +180,18 @@ varnish::backends:
 
 # Logging
 base::syslog::syslog_daemon: rsyslog
-base::syslog::syslog_host: [ 'graylog161.wikitide.net:12210' ]
+base::syslog::syslog_host: [ 'graylog161.fsslc.wtnet:12210' ]
+
+base::bots_hostname: 'bots171.fsslc.wtnet'
 
 ## Swift
 # TODO: Add support for class based hiera
 rsync::server::address: '::'
 swift::storage::object_server_default_workers: 100
 
-role::swift::stats_reporter_host: swiftproxy171.wikitide.net
+role::swift::stats_reporter_host: swiftproxy171.fsslc.wtnet
 
-role::swift::expirer_host: 'swiftobject151.wikitide.net'
+role::swift::expirer_host: 'swiftobject151.fsslc.wtnet'
 swift::storage::devices:
   - swiftobject151
   - swiftobject161
@@ -200,5 +208,11 @@ role::mediawiki::mcrouter::shards:
       host: 10.0.16.131 # mem161
     shard03:
       host: 10.0.20.148 # mem201
+    shard04:
+      host: 10.0.19.154 # mem191
 
 role::mediawiki::use_mcrouter: true
+
+ntp::package_name:
+  - ntpsec
+ntp::config: '/etc/ntpsec/ntp.conf'

@@ -107,8 +107,8 @@ def get_extensions_in_pack(pack_name: str) -> list[str]:
         'bundled': ['AbuseFilter', 'CategoryTree', 'Cite', 'CiteThisPage', 'CodeEditor', 'ConfirmEdit', 'DiscussionTools', 'Echo', 'Gadgets', 'ImageMap', 'InputBox', 'Interwiki', 'Linter', 'LoginNotify', 'Math', 'MultimediaViewer', 'Nuke', 'OATHAuth', 'PageImages', 'ParserFunctions', 'PdfHandler', 'Poem', 'ReplaceText', 'Scribunto', 'SpamBlacklist', 'SyntaxHighlight_GeSHi', 'TemplateData', 'TextExtracts', 'Thanks', 'TitleBlacklist', 'VisualEditor', 'WikiEditor'],
         'mleb': ['Babel', 'cldr', 'CleanChanges', 'Translate', 'UniversalLanguageSelector'],
         'socialtools': ['AJAXPoll', 'BlogPage', 'Comments', 'ContributionScores', 'HAWelcome', 'ImageRating', 'MediaWikiChat', 'NewSignupPage', 'PollNY', 'QuizGame', 'RandomGameUnit', 'SocialProfile', 'Video', 'VoteNY', 'WikiForum', 'WikiTextLoggedInOut'],
-        'universalomega': ['AutoCreatePage', 'DiscordNotifications', 'DynamicPageList3', 'PortableInfobox', 'Preloader', 'SimpleBlogPage', 'SimpleTooltip'],
-        'wikitide': ['CreateWiki', 'DataDump', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'MatomoAnalytics', 'MirahezeMagic', 'PDFEmbed', 'RemovePII', 'RequestSSL', 'RottenLinks', 'WikiDiscover', 'YouTube'],
+        'universalomega': ['AutoCreatePage', 'DynamicPageList4', 'PortableInfobox', 'Preloader', 'SimpleTooltip'],
+        'wikitide': ['CreateWiki', 'DataDump', 'DiscordNotifications', 'GlobalNewFiles', 'ImportDump', 'IncidentReporting', 'ManageWiki', 'MatomoAnalytics', 'MirahezeMagic', 'PDFEmbed', 'RemovePII', 'RequestCustomDomain', 'RottenLinks', 'WikiDiscover'],
     }
     return packs.get(pack_name, [])
 
@@ -217,12 +217,10 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         'User-Agent': 'wikitide/mwdeploy.py',
     }
     if Debug:
-        server = f'{Debug}.wikitide.net'
-        headers['X-WikiTide-Debug'] = server
-        location = f'{domain}@{server}'
+        headers['X-WikiTide-Debug'] = Debug
+        location = f'{domain}@{Debug}'
 
         debug_access_key = os.getenv('DEBUG_ACCESS_KEY')
-
         # Check if DEBUG_ACCESS_KEY is set and add it to headers
         if debug_access_key:
             headers['X-WikiTide-Debug-Access-Key'] = debug_access_key
@@ -231,6 +229,11 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         domain = 'localhost'
         headers['host'] = f'{Host}'
         location = f'{Host}@{domain}'
+
+    if force:
+        print(f'Skipping canary check on {location} due to --force')
+        return True
+
     up = False
     if port == 443:
         proto = 'https://'
@@ -245,16 +248,13 @@ def check_up(nolog: bool, Debug: str | None = None, Host: str | None = None, dom
         if 'X-Served-By' not in req.headers:
             req.headers['X-Served-By'] = 'None'
         print(f'Debug: {(Debug is None or Debug in req.headers["X-Served-By"])}')
-        if force:
-            print(f'Ignoring canary check error on {location} due to --force')
+        print(f'Canary check failed for {location}. Aborting... - use --force to proceed')
+        message = f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {location}'
+        if nolog:
+            print(message)
         else:
-            print(f'Canary check failed for {location}. Aborting... - use --force to proceed')
-            message = f'/usr/local/bin/logsalmsg DEPLOY ABORTED: Canary check failed for {location}'
-            if nolog:
-                print(message)
-            else:
-                os.system(message)
-            sys.exit(3)
+            os.system(message)
+        sys.exit(3)
     return up
 
 
@@ -297,7 +297,9 @@ def _construct_rsync_command(time: bool | str, dest: str, recursive: bool = True
     if location is None:
         location = dest
     if location == dest and server:  # ignore location if not specified, if given must equal dest.
-        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.wikitide.net:{dest}'
+        fqdn = socket.getfqdn()
+        domain = '.'.join(fqdn.split('.')[1:])
+        return f'sudo -u {DEPLOYUSER} rsync {params} -e "ssh -i /srv/mediawiki-staging/deploykey" {dest} {DEPLOYUSER}@{server}.{domain}:{dest}'
     # a return None here would be dangerous - except and ignore R503 as return after Exception is not reachable
     raise Exception(f'Error constructing command. Either server was missing or {location} != {dest}')
 
@@ -458,7 +460,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 stage.append(_construct_git_reset_hard('vendor', version=version))
                 stage.append(_construct_git_pull('vendor', submodules=True, version=version))
                 if not args.world:
-                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet')
+                    stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet')
                     rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/vendor/*', dest=f'/srv/mediawiki/{version}/vendor/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/vendor/')
 
@@ -570,7 +572,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 if option == 'world':  # install steps for world
                     option = version
                     os.chdir(_get_staging_path(version))
-                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.wikitide.net:8080 composer update --no-dev --quiet'))
+                    exitcodes.append(run_command(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet'))
                     rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
@@ -585,7 +587,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{folder}/*', dest=f'/srv/mediawiki/{folder}/'))
 
         if args.extension_list and version:  # when adding skins/exts
-            rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}CreateWiki:RebuildExtensionListCache --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
+            rebuild.append(f'sudo -u {DEPLOYUSER} php {runner}ManageWiki:RebuildExtensionListCache --wiki={envinfo["wikidbname"]} --cachedir=/srv/mediawiki/cache/{version}')
 
         for cmd in rsync:  # move staged content to live
             exitcodes.append(run_command(cmd))

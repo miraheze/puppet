@@ -23,11 +23,6 @@ class swift::ac {
         lock_file       => '/var/lock/container.lock',
     }
 
-    $old_swift = $facts['os']['distro']['codename'] ? {
-        'bookworm' => false,
-        'bullseye' => true,
-    }
-
     # set up swift specific configs
     file {
         default:
@@ -117,18 +112,8 @@ class swift::ac {
     }
 
     # Backups
-    cron { 'backups-swift-account-container':
-        ensure  => present,
-        command => '/usr/local/bin/wikitide-backup backup swift-account-container > /var/log/swift-account-container-backup.log 2>&1',
-        user    => 'root',
-        minute  => '0',
-        hour    => '6',
-        weekday => '0',
-    }
-
-    monitoring::nrpe { 'Backups Swift Account Container':
-        command  => '/usr/lib/nagios/plugins/check_file_age -w 864000 -c 1209600 -f /var/log/swift-account-container-backup.log',
-        docs     => 'https://meta.miraheze.org/wiki/Backups#General_backup_Schedules',
-        critical => true
+    backup::job { 'swift-account-container':
+        ensure   => present,
+        interval => 'Sun *-*-* 06:00:00',
     }
 }

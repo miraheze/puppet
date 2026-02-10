@@ -10,17 +10,17 @@ class base::packages {
         'git',
         'gzip',
         'htop',
-        'jq',
         'iftop',
         'iotop',
+        'jq',
         'logrotate',
         'lsof',
         'lvm2',
         'molly-guard',
         'mtr',
         'nano',
-        'netcat-openbsd',
         'net-tools',
+        'netcat-openbsd',
         'parted',
         'pigz',
         'python-is-python3',
@@ -37,15 +37,14 @@ class base::packages {
         'wipe',
     ])
 
-    package { 'needrestart':
-        ensure => 'purged',
-    }
+    # Get rid of these
+    stdlib::ensure_packages(
+        'needrestart',
+        { ensure => purged }
+    )
 
-    # Get rid of this
-    package { 'apt-listchanges':
-        ensure => absent,
-    }
-    package { 'systemd-timesyncd':
-        ensure => absent,
-    }
+    stdlib::ensure_packages(
+        [ 'apt-listchanges', 'systemd-timesyncd' ],
+        { ensure => absent }
+    )
 }

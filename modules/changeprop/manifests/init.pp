@@ -1,7 +1,7 @@
 # == Class: changeprop
 
 class changeprop (
-    $broker_list                           = lookup('changeprop::broker_list', {'default_value' => '10.0.18.146:9092'}),
+    $broker_list                           = lookup('changeprop::broker_list', {'default_value' => '10.0.18.142:9092'}),
     $jobrunner_host                        = lookup('changeprop::jobrunner_host', {'default_value' => 'http://localhost:4063'}),
     $jobrunner_high_timeout_host           = lookup('changeprop::jobrunner_high_timeout_host', {'default_value' => 'http://localhost:4063'}),
     $videoscaler_host                      = lookup('changeprop::videoscaler_host', {'default_value' => 'http://localhost:4063'}),
@@ -38,7 +38,7 @@ class changeprop (
         ensure             => present,
         directory          => '/srv/changeprop',
         origin             => 'https://github.com/miraheze/changeprop-deploy',
-        branch             => 'master',
+        branch             => 'main',
         owner              => 'changeprop',
         group              => 'changeprop',
         mode               => '0755',

@@ -1,23 +1,21 @@
+# frozen_string_literal: true
+
 require 'spec_helper_acceptance'
 
-describe 'mongodb::mongos class' do
-  case fact('osfamily')
-  when 'Debian'
-    package_name = if fact('os.distro.codename') =~ %r{^(buster|bullseye)$}
-                     'mongodb-org-server'
-                   else
-                     'mongodb-server'
-                   end
-    config_file  = '/etc/mongodb-shard.conf'
-  else
-    package_name = 'mongodb-org-server'
-    config_file  = '/etc/mongos.conf'
-  end
+repo_version = ENV.fetch('BEAKER_FACTER_mongodb_repo_version', nil)
+repo_ver_param = "repo_version => '#{repo_version}'" if repo_version
+
+describe 'mongodb::mongos class', if: supported_version?(default[:platform], repo_version) do
+  package_name = 'mongodb-org-server'
+  config_file = '/etc/mongos.conf'
 
   describe 'installation' do
     it 'works with no errors' do
       pp = <<-EOS
-        class { 'mongodb::server':
+          class { 'mongodb::globals':
+            #{repo_ver_param}
+          }
+          -> class { 'mongodb::server':
           configsvr => true,
           replset   => 'test',
           replset_members => ['127.0.0.1:27019'],
@@ -54,7 +52,7 @@ describe 'mongodb::mongos class' do
       it { is_expected.to be_listening }
     end
 
-    describe command('mongo --version') do
+    describe command('mongod --version') do
       its(:exit_status) { is_expected.to eq 0 }
     end
   end
@@ -62,17 +60,20 @@ describe 'mongodb::mongos class' do
   describe 'uninstalling' do
     it 'uninstalls mongodb' do
       pp = <<-EOS
-        class { 'mongodb::mongos':
+        class { 'mongodb::globals':
+          #{repo_ver_param}
+        }
+        -> class { 'mongodb::mongos':
           package_ensure => 'purged',
         }
         -> class { 'mongodb::server':
           ensure         => absent,
-          package_ensure => absent,
+          package_ensure => purged,
           service_ensure => stopped,
           service_enable => false
         }
         -> class { 'mongodb::client':
-          ensure => absent,
+          ensure => purged,
         }
       EOS
       apply_manifest(pp, catch_failures: true)

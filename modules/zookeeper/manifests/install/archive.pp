@@ -42,6 +42,7 @@ class zookeeper::install::archive inherits zookeeper::install {
     creates       => "${zookeeper::archive_install_dir}/${filename}",
     extract       => true,
     cleanup       => true,
+    proxy_server  => lookup('http_proxy', {'default_value' => undef}),
     notify        => Exec['chown_zookeeper_directory'],
   }
 

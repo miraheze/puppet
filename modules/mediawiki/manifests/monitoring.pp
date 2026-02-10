@@ -25,30 +25,46 @@ class mediawiki::monitoring {
         mode   => '0555',
     }
 
-    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
-        $address = $facts['networking']['interfaces']['ens19']['ip']
-    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
-        $address = $facts['networking']['interfaces']['ens18']['ip6']
-    } else {
-        $address = $facts['networking']['ip6']
+    $firewall_rules_str = join(
+        query_facts('Class[Role::Prometheus]', ['networking'])
+        .map |$key, $value| {
+            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } elsif ( $value['networking']['interfaces']['ens18'] ) {
+                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
+            } else {
+                "${value['networking']['ip']} ${value['networking']['ip6']}"
+            }
+        }
+        .flatten()
+        .unique()
+        .sort(),
+        ' '
+    )
+
+    ferm::service { 'php http port 9181':
+        proto  => 'tcp',
+        port   => '9181',
+        srange => "(${firewall_rules_str})",
     }
+
     monitoring::services { 'MediaWiki Rendering':
         check_command => 'check_mediawiki',
         docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#MediaWiki_Rendering',
         vars          => {
             host    => lookup('mediawiki::monitoring::host'),
-            address => $address,
+            address => $facts['networking']['interfaces']['ens19']['ip'],
         },
     }
 
     monitoring::services { 'HTTPS':
         check_command => 'check_curl',
         vars          => {
-            address6         => $address,
+            address          => $facts['networking']['interfaces']['ens19']['ip'],
             http_vhost       => $facts['networking']['fqdn'],
             http_ssl         => true,
             http_ignore_body => true,
-            http_expect      => 'HTTP/2 404',
+            http_expect      => 'HTTP/2 410',
         },
     }
 }

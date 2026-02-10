@@ -1,5 +1,5 @@
 class graylog::params {
-  $major_version = '5.1'
+  $major_version = '6.1'
   $package_name = 'graylog-server'
   $package_version = 'installed'
 

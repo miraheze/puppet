@@ -41,7 +41,7 @@ class mattermost::params {
       case $facts['os']['name'] {
         'Debian': {
           case $facts['os']['release']['major'] {
-            '8','9','10','11','12': {
+            '8','9','10','11','12','13': {
               $service_template = 'mattermost/systemd.erb'
               $service_path     = '/etc/systemd/system/__SERVICENAME__.service'
               $service_provider = ''

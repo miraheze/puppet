@@ -1,5 +1,6 @@
 # @summary
-#   Setup Icinga Web 2 including a database backend for user settings.
+#   Setup Icinga Web 2 including a database backend for user settings,
+#   PHP and a Webserver.
 #
 # @param default_admin_user
 #   Set the initial name of the admin user.
@@ -10,15 +11,16 @@
 # @param db_pass
 #   Password to connect the database.
 #
-# @param api_pass
-#   Password to connect the Icinga 2 API.
-#
 # @param apache_cgi_pass_auth
 #   Either turn on or off the apache cgi pass thru auth.
 #   An option available since Apache v2.4.15 and required for authenticated access to the Icinga Web Api.
 #
-# @param backend_db_pass
-#   Pasword to connect the IDO backend.
+# @param apache_extra_mods
+#   List of addational Apache modules to load.
+#
+# @param apache_config
+#   Wether or not install an default Apache config for Icinga Web 2. If set to `true` Icinga is
+#   reachable via `/icingaweb2`.
 #
 # @param db_type
 #   What kind of database type to use.
@@ -44,92 +46,90 @@
 # @param api_user
 #   Icinga 2 API user.
 #
-# @param backend_db_type
-#   What kind of database type to use as IDO backend.
+# @param api_pass
+#   Password to connect the Icinga 2 API.
 #
-# @param backend_db_host
-#   Database host to connect for the IDO backenend.
-#
-# @param backend_db_port
-#   Port to connect the IDO backend. Only affects for connection to remote database hosts.
-#
-# @param backend_db_name
-#   Name of the IDO database backend.
-#
-# @param backend_db_user
-#   IDO database backend user name.
-#
-class icinga::web(
-  String                                      $db_pass,
-  String                                      $api_pass,
+class icinga::web (
+  Icinga::Secret                              $db_pass,
+  Icinga::Secret                              $api_pass,
   Boolean                                     $apache_cgi_pass_auth,
-  String                                      $backend_db_pass,
-  String                                      $default_admin_user = 'icingaadmin',
-  String                                      $default_admin_pass = 'icingaadmin',
+  String[1]                                   $default_admin_user = 'icingaadmin',
+  Icinga::Secret                              $default_admin_pass = 'icingaadmin',
   Enum['mysql', 'pgsql']                      $db_type            = 'mysql',
   Stdlib::Host                                $db_host            = 'localhost',
   Optional[Stdlib::Port::Unprivileged]        $db_port            = undef,
-  String                                      $db_name            = 'icingaweb2',
-  String                                      $db_user            = 'icingaweb2',
+  String[1]                                   $db_name            = 'icingaweb2',
+  String[1]                                   $db_user            = 'icingaweb2',
   Boolean                                     $manage_database    = false,
   Variant[Stdlib::Host, Array[Stdlib::Host]]  $api_host           = 'localhost',
-  String                                      $api_user           = 'icingaweb2',
-  Enum['mysql', 'pgsql']                      $backend_db_type    = 'mysql',
-  Stdlib::Host                                $backend_db_host    = 'localhost',
-  Optional[Stdlib::Port::Unprivileged]        $backend_db_port    = undef,
-  String                                      $backend_db_name    = 'icinga2',
-  String                                      $backend_db_user    = 'icinga2',
+  String[1]                                   $api_user           = 'icingaweb2',
+  Array[String[1]]                            $apache_extra_mods  = [],
+  Boolean                                     $apache_config      = true,
 ) {
+  # install all required php extentions
+  # by icingaweb (done by package dependencies) before PHP
+  Package['icingaweb2']
+  -> Class['php']
+  -> Class['apache']
+  -> Class['icingaweb2']
 
-  unless $backend_db_port {
-    $_backend_db_port = $backend_db_type ? {
-      'pgsql' => 5432,
-      default => 3306,
+  # version if the used icingaweb2 puppet module
+  $icingaweb2_version = load_module_metadata('icingaweb2')['version']
+
+  #
+  # Platform
+  #
+  case $facts['os']['family'] {
+    'redhat': {
+      case $facts[os][release][major] {
+        '6': {
+          $php_globals = {
+            php_version => 'rh-php70',
+            rhscl_mode => 'rhscl',
+          }
+        }
+        '7': {
+          $php_globals = {
+            php_version => 'rh-php73',
+            rhscl_mode => 'rhscl',
+          }
+        }
+        default: {
+          $php_globals = {}
+        }
+      }
+
+      $package_prefix = undef
+    } # RedHat
+
+    'debian': {
+      $php_globals    = {}
+      $package_prefix = 'php-'
+    } # Debian
+
+    default: {
+      fail("'Your operatingsystem ${facts['os']['name']} is not supported.'")
     }
-  } else {
-    $_backend_db_port = $backend_db_port
-  }
-
-  unless $db_port {
-    $_db_port = $db_type ? {
-      'pgsql' => 5432,
-      default => 3306,
-    }
-  } else {
-    $_db_port = $db_port
-  }
-
-  $php_globals = {}
-
-  $php_extensions = {
-    mbstring => {},
-    json     => {},
-    ldap     => {},
-    gd       => {},
-    xml      => {},
-    intl     => {},
-    mysql    => {},
-    pgsql    => {},
   }
 
   #
   # PHP
   #
-  class { '::php::globals':
+  class { 'php::globals':
     * => $php_globals,
   }
 
-  class { '::php':
-    ensure        => installed,
-    manage_repos  => false,
-    apache_config => false,
-    fpm           => true,
-    extensions    => $php_extensions,
-    dev           => false,
-    composer      => false,
-    pear          => false,
-    phpunit       => false,
-    require       => Class['::php::globals'],
+  class { 'php':
+    ensure         => installed,
+    manage_repos   => false,
+    package_prefix => $package_prefix,
+    apache_config  => false,
+    fpm            => true,
+    dev            => false,
+    composer       => false,
+    pear           => false,
+    phpunit        => false,
+    require        => Class['php::globals'],
   }
 
   #
@@ -137,56 +137,60 @@ class icinga::web(
   #
   $manage_package = false
 
-  Package['icingaweb2']
-    -> Class['apache']
-
-  package { 'icingaweb2':
+  package { ['icingaweb2', 'icingaweb2-module-pdfexport']:
     ensure => installed,
   }
 
-  class { '::apache':
+  class { 'apache':
     default_mods => false,
     mpm_module   => 'event',
   }
 
-  $web_conf_user = $::apache::user
+  $web_conf_user = $apache::user
 
-  include ::apache::mod::alias
-  include ::apache::mod::mime
-  include ::apache::mod::status
-  include ::apache::mod::dir
-  include ::apache::mod::env
-  include ::apache::mod::rewrite
-  include ::apache::mod::proxy
-  include ::apache::mod::proxy_fcgi
-  include ::apache::mod::status
-  include ::apache::mod::ssl
+  include apache::vhosts
 
-  apache::custom_config { 'icingaweb2':
-    ensure        => present,
-    content       => template('icinga/apache_custom_default.conf'),
-    verify_config => false,
-    priority      => false,
+  include apache::mod::alias
+  include apache::mod::mime
+  include apache::mod::status
+  include apache::mod::dir
+  include apache::mod::env
+  include apache::mod::rewrite
+  include apache::mod::proxy
+  include apache::mod::proxy_fcgi
+  include apache::mod::proxy_http
+  include apache::mod::ssl
+
+  # Load additional modules
+  include prefix($apache_extra_mods, 'apache::mod::')
+
+  if $apache_config {
+    apache::custom_config { 'icingaweb2':
+      ensure        => present,
+      content       => template('icinga/apache_custom_default.conf.erb'),
+      verify_config => false,
+      priority      => false,
+    }
   }
 
   #
   # Database
   #
   if $manage_database {
-    class { '::icinga::web::database':
+    class { 'icinga::web::database':
       db_type       => $db_type,
       db_name       => $db_name,
       db_user       => $db_user,
       db_pass       => $db_pass,
-      web_instances => [ 'localhost' ],
+      web_instances => ['localhost'],
       before        => Class['icingaweb2'],
     }
     $_db_host = 'localhost'
   } else {
     if $db_type != 'pgsql' {
-      include ::mysql::client
+      include mysql::client
     } else {
-      include ::postgresql::client
+      include postgresql::client
     }
     $_db_host = $db_host
   }
@@ -194,37 +198,34 @@ class icinga::web(
   #
   # Icinga Web 2
   #
-  class { 'icingaweb2':
-    db_type                => $db_type,
-    db_host                => $_db_host,
-    db_port                => $_db_port,
-    db_name                => $db_name,
-    db_username            => $db_user,
-    db_password            => $db_pass,
-    default_admin_username => $default_admin_user,
-    default_admin_password => $default_admin_pass,
-    import_schema          => lookup('icingaweb2::import_schema', undef, undef, true),
-    config_backend         => 'db',
-    conf_user              => $web_conf_user,
-    manage_package         => $manage_package,
-  }
-
-  class { '::icingaweb2::module::monitoring':
-    ido_type        => $backend_db_type,
-    ido_host        => $backend_db_host,
-    ido_port        => $_backend_db_port,
-    ido_db_name     => $backend_db_name,
-    ido_db_username => $backend_db_user,
-    ido_db_password => $backend_db_pass,
-  }
-
-  any2array($api_host).each |Stdlib::Host $host| {
-    ::icingaweb2::module::monitoring::commandtransport { $host:
-      transport => 'api',
-      host      => $host,
-      username  => $api_user,
-      password  => $api_pass,
+  if versioncmp($icingaweb2_version, '4.0.0') < 0 {
+    class { 'icingaweb2':
+      db_type                => $db_type,
+      db_host                => $_db_host,
+      db_port                => $db_port,
+      db_name                => $db_name,
+      db_username            => $db_user,
+      db_password            => $db_pass,
+      default_admin_username => $default_admin_user,
+      default_admin_password => $default_admin_pass,
+      import_schema          => lookup('icingaweb2::import_schema', undef, undef, true),
+      config_backend         => 'db',
+      conf_user              => $web_conf_user,
+      manage_package         => $manage_package,
+    }
+  } else {
+    class { 'icingaweb2':
+      db_type                => $db_type,
+      db_host                => $_db_host,
+      db_port                => $db_port,
+      db_name                => $db_name,
+      db_username            => $db_user,
+      db_password            => $db_pass,
+      default_admin_username => $default_admin_user,
+      default_admin_password => $default_admin_pass,
+      import_schema          => lookup('icingaweb2::import_schema', undef, undef, true),
+      conf_user              => $web_conf_user,
+      manage_package         => $manage_package,
     }
   }
-
 }

@@ -1,6 +1,7 @@
 # role: dns
 class role::dns {
-    include ::dns
+    include dns
+    stdlib::ensure_packages('python3-dnspython')
 
     $mem = $facts['memory']['system']['total_bytes'] / (1024.0 * 1024.0) / 1024.0
     # If less than 500mib change vm.swappiness to 1
@@ -13,32 +14,18 @@ class role::dns {
         }
     }
 
-    package { 'python3-dnspython':
-        ensure => latest
-    }
-
     ferm::service { 'dns_udp':
-        proto => 'udp',
-        port  => '53',
+        proto   => 'udp',
+        notrack => true,
+        prio    => 5,
+        port    => '53',
     }
 
     ferm::service { 'dns_tcp':
-        proto => 'tcp',
-        port  => '53',
-    }
-
-    ferm::rule { 'skip_dns_conntrack-out':
-        desc  => 'Skip DNS outgoing connection tracking',
-        table => 'raw',
-        chain => 'OUTPUT',
-        rule  => 'proto udp sport 53 NOTRACK;',
-    }
-
-    ferm::rule { 'skip_dns_conntrack-in':
-        desc  => 'Skip DNS incoming connection tracking',
-        table => 'raw',
-        chain => 'PREROUTING',
-        rule  => 'proto udp dport 53 NOTRACK;',
+        proto   => 'tcp',
+        notrack => true,
+        prio    => 5,
+        port    => '53',
     }
 
     system::role { 'dns':

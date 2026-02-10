@@ -73,6 +73,18 @@ sub vcl_init {
 <%- end -%>
 }
 
+acl local_host {
+	"127.0.0.1";
+}
+
+acl local_tls_terminator {
+	"10.0.16.137"; # cp161
+	"10.0.17.138"; # cp171
+	"10.0.19.146"; # cp191
+	"10.0.20.166"; # cp201
+	"0.0.0.0"; // this matches incoming traffic via UDS
+}
+
 # Purge ACL
 acl purge {
 	# localhost
@@ -147,31 +159,32 @@ sub mobile_detection {
 
 # Rate limiting logic
 sub rate_limit {
-	# Allow higher limits for static.wikitide.net, we can handle more of those requests
-	if (req.http.Host == "static.wikitide.net") {
-		if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
-			return (synth(429, "Varnish Rate Limit Exceeded"));
-		}
-	} else {
-		// Ratelimit miss/pass requests per IP:
-		//   * Excluded for now:
-		//       * all MF IPs
-		//       * T6283: remove rate limit for IABot (temporarily?)
-		//       * seemingly-authenticated requests (simple cookie check)
-		//   * MW rest.php and MW API, Wikidata: 1000/10s (100/s long term, with 1000 burst)
-		//   * All others (excludes static): 1000/50s (20/s long term, with 1000 burst)
-		if (
-			req.http.Cookie !~ "([sS]ession|Token)=" &&
-			std.ip(req.http.X-Real-IP, "192.0.2.1") !~ wikitide_nets &&
-			(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
-		) {
-			if (req.url ~ "^/((w|(1\.\d{2,}))/api.php|(w|(1\.\d{2,}))/rest.php|(wiki/)?Special:EntityData)") {
-				if (vsthrottle.is_denied("rest:" + req.http.X-Real-IP, 1000, 10s)) {
-					return (synth(429, "Too Many Requests"));
-				}
-			} else {
-				if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 1000, 50s)) {
-					return (synth(429, "Too Many Requests"));
+	// dont apply any rate limiting to internal networks
+	if (std.ip(req.http.X-Real-IP, "192.0.2.1") !~ wikitide_nets) {
+		# Allow higher limits for static.wikitide.net, we can handle more of those requests
+		if (req.http.Host == "static.wikitide.net") {
+			if (vsthrottle.is_denied("static:" + req.http.X-Real-IP, 1000, 1s)) {
+				return (synth(429, "Varnish Rate Limit Exceeded"));
+			}
+		} else {
+			// Ratelimit miss/pass requests per IP:
+			//   * Excluded for now:
+			//       * T6283: remove rate limit for IABot (temporarily?)
+			//       * seemingly-authenticated requests (simple cookie check)
+			//   * MW rest.php and MW API, Wikidata: 1000/10s (100/s long term, with 1000 burst)
+			//   * All others (excludes static): 1000/50s (20/s long term, with 1000 burst)
+			if (
+				req.http.Cookie !~ "([sS]ession|Token)=" &&
+				(req.http.X-Real-IP != "185.15.56.22" && req.http.User-Agent !~ "^IABot/2")
+			) {
+				if (req.url ~ "^/((w|(1\.\d{2,}))/api.php|(w|(1\.\d{2,}))/rest.php|(wiki/)?Special:EntityData)") {
+					if (vsthrottle.is_denied("rest:" + req.http.X-Real-IP, 1000, 10s)) {
+						return (synth(429, "Too Many Requests"));
+					}
+				} else {
+					if (vsthrottle.is_denied("mwrtl:" + req.http.X-Real-IP, 1000, 50s)) {
+						return (synth(429, "Too Many Requests"));
+					}
 				}
 			}
 		}
@@ -194,14 +207,12 @@ sub vcl_synth {
 			set resp.reason = "Moved Permanently";
 			set resp.http.Location = "https://commons.miraheze.org/";
 			set resp.http.Connection = "keep-alive";
-			set resp.http.Content-Length = "0";
 		}
 
 		if (resp.reason == "Main Page Redirect") {
 			set resp.reason = "Moved Permanently";
 			set resp.http.Location = "https://miraheze.org/";
 			set resp.http.Connection = "keep-alive";
-			set resp.http.Content-Length = "0";
 		}
 
 		// Handle CORS preflight requests
@@ -211,14 +222,13 @@ sub vcl_synth {
 		) {
 			set resp.reason = "OK";
 			set resp.http.Connection = "keep-alive";
-			set resp.http.Content-Length = "0";
 
 			// allow Range requests, and avoid other CORS errors when debugging with X-WikiTide-Debug
 			set resp.http.Access-Control-Allow-Origin = "*";
 			set resp.http.Access-Control-Allow-Headers = "Range,X-WikiTide-Debug";
 			set resp.http.Access-Control-Allow-Methods = "GET, HEAD, OPTIONS";
 			set resp.http.Access-Control-Max-Age = "86400";
-		} else {
+		} elseif (req.http.Host == "static.wikitide.net") {
 			call add_upload_cors_headers;
 		}
 	}
@@ -254,8 +264,13 @@ sub mw_request {
 	# Assigning a backend
 	if (req.http.X-WikiTide-Debug-Access-Key == "<%= @debug_access_key %>" || std.ip(req.http.X-Real-IP, "0.0.0.0") ~ wikitide_nets) {
 <%- @backends.each_pair do | name, property | -%>
-<%- if property['xdebug'] -%>
-		if (req.http.X-WikiTide-Debug == "<%= name %>.wikitide.net") {
+<%- if not (property['pool'] or property['swiftpool']) -%>
+		if (req.http.X-WikiTide-Debug == "unused") {
+			set req.backend_hint = <%= name %>;
+		}
+<%- end -%>
+<%- if property['xdebug'] && (name.start_with?('mw') || name.start_with?('test')) -%>
+		if (req.http.X-WikiTide-Debug == "<%= name %>") {
 			if (req.http.Host == "static.wikitide.net") {
 				set req.backend_hint = swift.backend();
 			} else {
@@ -391,6 +406,22 @@ sub vcl_recv {
 	unset req.http.X-CDIS;
 
 	if (req.restarts == 0) {
+		if (client.ip !~ local_host && remote.ip !~ local_tls_terminator) {
+			// only the local haproxy TLS terminator should set these at all -
+			// there are no other internal exceptions to that rule
+			unset req.http.X-Real-IP;
+		}
+
+		if (!req.http.X-Real-IP) {
+			set req.http.X-Real-IP = client.ip;
+			if (!req.http.X-Real-IP) {
+				// apparently sometimes the above doesn't set it???  use
+				// illegal RFC 5735 documentation network to avoid
+				// sending NULL
+				set req.http.X-Real-IP = "192.0.2.1";
+			}
+		}
+
 		unset req.http.X-Subdomain;
 	}
 
@@ -452,6 +483,11 @@ sub vcl_recv {
 	if (req.http.Host == "issue-tracker.miraheze.org" || req.http.Host == "phorge-static.wikitide.net" ||
 		req.http.Host == "blog.miraheze.org") {
 		set req.backend_hint = phorge171;
+
+		if (req.http.upgrade ~ "(?i)websocket") {
+			return (pipe);
+		}
+
 		return (pass);
 	}
 
@@ -979,3 +1015,4 @@ sub vcl_backend_error {
 
 	return (deliver);
 }
+

@@ -57,14 +57,14 @@ done
 if $include_all; then
   echo "WARNING: You have chosen to include all package upgrades. This type of upgrade can never be done without a maintenance window. Proceeding may cause unexpected system behavior or outage."
   read -r -p "Are you sure you want to proceed? (yes/no): " user_confirm
-  if [[ "$user_confirm" != "yes" ]]; then
+  if [[ "$user_confirm" != "yes" && "$user_confirm" != "y" ]]; then
     echo "Operation cancelled."
     exit 1
   fi
 elif $include_kernel; then
   echo "WARNING: You have chosen to include kernel upgrades. This will require a system reboot to take effect."
   read -r -p "Are you sure you want to proceed? (yes/no): " user_confirm
-  if [[ "$user_confirm" != "yes" ]]; then
+  if [[ "$user_confirm" != "yes" && "$user_confirm" != "y" ]]; then
     echo "Operation cancelled."
     exit 1
   fi
@@ -123,7 +123,7 @@ for server in $servers; do
     # Prompt for confirmation unless --yes or -y is provided
     if ! $skip_confirm; then
       read -r -p "Are you sure you want to proceed with these upgrades? (yes/no): " upgrade_confirm
-      if [[ "$upgrade_confirm" != "yes" ]]; then
+      if [[ "$upgrade_confirm" != "yes" && "$upgrade_confirm" != "y" ]]; then
         echo "Skipping upgrade on $hostname..."
         continue
       fi

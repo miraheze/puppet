@@ -161,10 +161,11 @@
 require 'puppet'
 
 module Puppet::Icinga2
-  # Module: Utils with methods to parse Icinga 2 DSL config
+  # Module with methods to parse Icinga 2 DSL config
   module Utils
     def self.value_types(value)
-      if value.match?(%r{^(-?\d+\.?\d*[dhms]?|true|false|null|\{{2}.*\}{2})$|^!?(host|service|user)\.}) || @constants.index { |x| @hash_attrs.include?(x) ? value =~ %r{^!?(#{x})(\..+$|$)} : value =~ %r{^!?#{x}$} }
+      if value.match?(%r{^(-?\d+\.?\d*[dhms]?|true|false|null|\{{2}.*\}{2})$|^!?(host|service|user)\.}) ||
+         @constants.index { |x| @hash_attrs.include?(x) ? value =~ %r{^!?(#{x})(\..+$|$)} : value =~ %r{^!?#{x}$} }
         value
       else
         value.dump
@@ -187,28 +188,29 @@ module Puppet::Icinga2
       if row =~ %r{^-:(.*)$}m
         return Regexp.last_match(1)
       end
- 
-      if row =~ %r{^\{{2}(.+)\}{2}$}m
+
+      case row
+      when %r{^\{{2}(.+)\}{2}$}m
         # scan function
         result += '{{%{expr}}}' % { expr: Regexp.last_match(1) }
-      elsif row =~ %r{^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s\{{2}(.+)\}{2}$}m
+      when %r{^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s\{{2}(.+)\}{2}$}m
         # scan expression + function (function should contain expressions, but we donno parse it)
         result += '%{expr} %{op} {{%{fct}}}' % { expr: parse(Regexp.last_match(1)), op: Regexp.last_match(2), fct: Regexp.last_match(3) }
-      elsif row =~ %r{^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s(.+)$}
+      when %r{^(.+)\s([\+-]|\*|\/|==|!=|&&|\|{2}|in)\s(.+)$}
         # scan expression
         result += '%{expr1} %{op} %{expr2}' % { expr1: parse(Regexp.last_match(1)), op: Regexp.last_match(2), expr2: parse(Regexp.last_match(3)) }
-      elsif row =~ %r{^(.+)\((.*)$}
+      when %r{^(.+)\((.*)$}
         result += '%{fct}(%{param}' % { fct: Regexp.last_match(1), param: Regexp.last_match(2).split(',').map { |x| parse(x.lstrip) }.join(', ') }
-      elsif row =~ %r{^(.*)\)(.+)?$}
+      when %r{^(.*)\)(.+)?$}
         # closing bracket ) with optional access of an attribute e.g. '.arguments'
         result += '%{param})%{expr}' % { param: Regexp.last_match(1).split(',').map { |x| parse(x.lstrip) }.join(', '), expr: Regexp.last_match(2) }
-      elsif row =~ %r{^\((.*)$}
+      when %r{^\((.*)$}
         result += '(%{expr}' % { expr: parse(Regexp.last_match(1)) }
-      elsif row =~ %r{^\s*\[\s*(.*)\s*\]\s?(.+)?$}
+      when %r{^\s*\[\s*(.*)\s*\]\s?(.+)?$}
         # parse array
         result += '[ %{lst}]' % { lst: process_array(Regexp.last_match(1).split(',')) }
         result += ' %{expr}' % { expr: parse(Regexp.last_match(2)) } if Regexp.last_match(2)
-      elsif row =~ %r{^\s*\{\s*(.*)\s*\}\s?(.+)?$}
+      when %r{^\s*\{\s*(.*)\s*\}\s?(.+)?$}
         # parse hash
         result += "{\n%{expr}}" % { expr: process_hash(Hash[Regexp.last_match(1).gsub(%r{\s*=>\s*|\s*,\s*}, ',').split(',').each_slice(2).to_a]) }
         result += ' %{expr}' % { expr: parse(Regexp.last_match(2)) } if Regexp.last_match(2)
@@ -230,8 +232,8 @@ module Puppet::Icinga2
           result += "\n%{ind1}{\n%{expr}%{ind2}}, " % { ind1: ' ' * indent, expr: process_hash(value, indent + 2), ind2: ' ' * indent }
         elsif value.is_a?(Array)
           result += '[ %{lst}], ' % { lst: process_array(value, indent + 2) }
-        else
-          result += '%{expr}, ' % { expr: parse(value) } if value
+        elsif value
+          result += '%{expr}, ' % { expr: parse(value) }
         end
       end
       result
@@ -282,12 +284,14 @@ module Puppet::Icinga2
                     else
                       operator = '='
                     end
-                    if level == 3
-                      "%{pre}%{att} #{operator} %{val}\n" % { pre: prefix, att: attribute_types(attr), val: parse(value) } if value != :nil
-                    elsif level > 1
-                      "%{pre}[\"%{att}\"] #{operator} %{val}\n" % { pre: prefix, att: attr, val: parse(value) } if value != :nil
-                    else
-                      "%{pre}%{att} #{operator} %{val}\n" % { pre: prefix, att: attr, val: parse(value) } if value != :nil
+                    if value != :nil
+                      if level == 3
+                        "%{pre}%{att} #{operator} %{val}\n" % { pre: prefix, att: attribute_types(attr), val: parse(value) }
+                      elsif level > 1
+                        "%{pre}[\"%{att}\"] #{operator} %{val}\n" % { pre: prefix, att: attr, val: parse(value) }
+                      else
+                        "%{pre}%{att} #{operator} %{val}\n" % { pre: prefix, att: attr, val: parse(value) }
+                      end
                     end
                   end
       end

@@ -20,7 +20,7 @@ class eventgate {
         ensure             => present,
         directory          => '/srv/eventgate',
         origin             => 'https://github.com/miraheze/eventgate-deploy',
-        branch             => 'master',
+        branch             => 'main',
         owner              => 'eventgate',
         group              => 'eventgate',
         mode               => '0755',
@@ -44,6 +44,13 @@ class eventgate {
           User['eventgate'],
           Group['eventgate'],
         ],
+    }
+
+    file { '/srv/eventgate/error.js':
+        ensure  => present,
+        source  => 'puppet:///modules/eventgate/error.js',
+        require => Git::Clone['eventgate'],
+        notify  => Service['eventgate'],
     }
 
     file { '/srv/eventgate/eventgate-custom.js':

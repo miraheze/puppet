@@ -86,7 +86,7 @@ class irc::cvtbot {
         path        => '/usr/bin',
         environment => [
             "HOME=${install_path}/src/CVTBot",
-            'HTTP_PROXY=http://bastion.wikitide.net:8080',
+            'HTTP_PROXY=http://bastion.fsslc.wtnet:8080',
         ],
         user        => 'irc',
         require     => Git::Clone['CVTBot'],

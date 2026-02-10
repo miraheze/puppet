@@ -26,17 +26,21 @@
 # @param order
 #   String or integer to set the position in the target file, sorted alpha numeric.
 #
-define icinga2::object::endpoint(
+# @param export
+#   Export object to destination, collected by class `icinga2::query_objects`.
+#
+define icinga2::object::endpoint (
   Enum['absent', 'present']             $ensure        = present,
-  String                                $endpoint_name = $title,
+  String[1]                             $endpoint_name = $title,
   Optional[Stdlib::Host]                $host          = undef,
-  Optional[Stdlib::Port::Unprivileged]  $port          = undef,
+  Optional[Stdlib::Port]                $port          = undef,
   Optional[Icinga2::Interval]           $log_duration  = undef,
   Optional[Stdlib::Absolutepath]        $target        = undef,
-  Variant[String, Integer]              $order         = 40,
+  Variant[String[1], Integer[0]]        $order         = 40,
+  Variant[Array[String[1]], String[1]]  $export        = [],
 ) {
-
-  $conf_dir = $::icinga2::globals::conf_dir
+  require icinga2::globals
+  $conf_dir = $icinga2::globals::conf_dir
 
   if $target {
     $_target = $target
@@ -46,19 +50,32 @@ define icinga2::object::endpoint(
 
   # compose the attributes
   $attrs = {
-    host         => $host,
-    port         => $port,
-    log_duration => $log_duration,
+    'host'         => $host,
+    'port'         => $port,
+    'log_duration' => $log_duration,
   }
 
   # create object
-  icinga2::object { "icinga2::object::Endpoint::${title}":
-    ensure      => $ensure,
-    object_name => $endpoint_name,
-    object_type => 'Endpoint',
-    attrs       => delete_undef_values($attrs),
-    attrs_list  => keys($attrs),
-    target      => $_target,
-    order       => $order,
+  $config = {
+    'object_name' => $endpoint_name,
+    'object_type' => 'Endpoint',
+    'attrs'       => delete_undef_values($attrs),
+    'attrs_list'  => keys($attrs),
+  }
+
+  unless empty($export) {
+    @@icinga2::config::fragment { "icinga2::object::Endpoint::${title}":
+      tag     => prefix(any2array($export), 'icinga2::instance::'),
+      content => epp('icinga2/object.conf.epp', $config),
+      target  => $_target,
+      order   => $order,
+    }
+  } else {
+    icinga2::object { "icinga2::object::Endpoint::${title}":
+      ensure => $ensure,
+      target => $_target,
+      order  => $order,
+      *      => $config,
+    }
   }
 }

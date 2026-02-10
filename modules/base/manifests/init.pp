@@ -1,6 +1,7 @@
 # class: base
 class base (
-    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef})
+    String $bots_hostname = lookup('base::bots_hostname'),
+    Optional[String] $http_proxy = lookup('http_proxy', {'default_value' => undef}),
 ) {
     include apt
     include base::packages
@@ -13,14 +14,14 @@ class base (
     include base::firewall
     include base::mail
     include base::monitoring
-    include base::backup
     include ssh
     include users
 
     if lookup('dns') {
-        package { 'pdns-recursor':
-            ensure => absent,
-        }
+        stdlib::ensure_packages(
+            'pdns-recursor',
+            { ensure => absent }
+        )
     } else {
         include base::dns
     }
@@ -32,9 +33,9 @@ class base (
     }
 
     file { '/usr/local/bin/logsalmsg':
-        ensure => present,
-        source => 'puppet:///modules/base/logsalmsg',
-        mode   => '0555',
+        ensure  => present,
+        content => template('base/logsalmsg.erb'),
+        mode    => '0555',
     }
 
     file { '/usr/local/bin/secupgrade.sh':
@@ -59,11 +60,19 @@ class base (
 
     class { 'apt::security': }
 
+    $ntp_server = lookup('base::ntp_server')
+
     class { 'ntp':
-        servers   => [ 'time.cloudflare.com' ],
+        servers   => [ $ntp_server ],
         config    => '/etc/ntpsec/ntp.conf',
         driftfile => '/var/lib/ntpsec/ntp.drift',
-        restrict  => [ 'default kod limited nomodify noquery', '-6 default kod limited nomodify noquery', '127.0.0.1', '-6 ::1' ],
+        restrict  => [
+            'default kod limited nomodify noquery',
+            '-6 default kod limited nomodify noquery',
+            '127.0.0.1',
+            '-6 ::1',
+            '10.0.0.0 mask 255.0.0.0 nomodify notrap',
+        ],
     }
 
     # Used by salt-user
