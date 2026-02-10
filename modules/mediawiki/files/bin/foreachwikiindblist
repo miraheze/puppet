@@ -12,7 +12,6 @@ dblist=$1
 if [ ! -f "$dblist" ]; then
         echo "dblist does not exist!"
         usage
-        exit 1
 fi
 
 if [[ "$dblist" == *.json ]]; then
@@ -28,7 +27,6 @@ elif [[ "$dblist" == *.php ]]; then
 else
         echo "Unsupported file format. Please provide a .json or .php file."
         usage
-        exit 1
 fi
 
 for wiki in $wikis

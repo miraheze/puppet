@@ -1,6 +1,6 @@
 #! /bin/bash
-amount_of_accesslogs=`tail -500 /var/log/nginx/access.log | wc -l`
-amount_of_errors=`tail -500 /var/log/nginx/access.log | awk '{print $8}' | grep '^[45]' | grep -v '429' | wc -l`
+amount_of_accesslogs=$(tail -500 /var/log/nginx/access.log | wc -l)
+amount_of_errors=$(tail -500 /var/log/nginx/access.log | awk '{print $8}' | grep '^[45]' | grep -cv '429')
 
 # http://stackoverflow.com/a/24299222
 error_rate=$(awk "BEGIN { pc=100*${amount_of_errors}/${amount_of_accesslogs}; i=int(pc); print (pc-i<0.5)?i:i+1 }")
@@ -18,7 +18,7 @@ case $error_rate in
         echo "WARNING - NGINX Error Rate is $error_rate%"
         exit 1
         ;;
-        [5][1-9]|[6789][0-9]|[100]*)
+        [5][1-9]|[6789][0-9]|100*)
         echo "CRITICAL - NGINX Error Rate is $error_rate%"
         exit 2
         ;;

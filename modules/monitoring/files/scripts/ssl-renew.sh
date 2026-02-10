@@ -21,4 +21,4 @@ curl -X POST -H 'Content-type: application/json' --data "{
   \"SERVICESTATE\": \"${SERVICESTATE}\",
   \"SERVICESTATETYPE\": \"${SERVICESTATETYPE}\",
   \"SERVICEDESC\": \"${SERVICEDESC}\"
-}" http://puppet181.fsslc.wtnet:5000/renew >> /var/log/icinga2/ssl-let.log 2>&1
+}" "http://puppet181.fsslc.wtnet:5000/renew" >> /var/log/icinga2/ssl-let.log 2>&1

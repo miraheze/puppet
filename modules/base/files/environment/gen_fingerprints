@@ -38,8 +38,8 @@ declare -A ALGOS
 declare -a ASCII
 
 # fingerprints
-for host_key in $(awk '/^HostKey/ {sub(/^HostKey\s+/,"");print $0".pub"};' $SSHD_CONFIG); do
-    cipher=$(echo "$host_key" | sed -r 's/^.*ssh_host_([^_]+)_key\.pub$/\1/'| tr 'a-z' 'A-Z')
+while read -r host_key; do
+    cipher=$(echo "$host_key" | sed -r 's/^.*ssh_host_([^_]+)_key\.pub$/\1/'| tr '[:lower:]' '[:upper:]')
     if [[ -f "$host_key" ]]; then
         if ssh-keygen -E md5 -l -f "$host_key" &>/dev/null; then
         IFS=$'\n'
@@ -51,7 +51,7 @@ for host_key in $(awk '/^HostKey/ {sub(/^HostKey\s+/,"");print $0".pub"};' $SSHD
                 if [[ $n -eq 1 ]]; then
                     ALGOS[$algo]=$(echo "$line" | awk '{print $2}')
                 else
-                    ASCII[$n]="${ASCII[$n]} ${line}"
+                    ASCII[n]="${ASCII[$n]} ${line}"
                 fi
             done
         done
@@ -64,7 +64,7 @@ for host_key in $(awk '/^HostKey/ {sub(/^HostKey\s+/,"");print $0".pub"};' $SSHD
         echo "$cipher" SHA-256 "${ALGOS[sha256]}" | tablize
         echo "$LINE"
     fi
-done
+done < <(awk '/^HostKey/ {sub(/^HostKey\s+/,"");print $0".pub"};' $SSHD_CONFIG)
 
 echo
 for line in "${ASCII[@]}"; do

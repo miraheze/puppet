@@ -7,10 +7,6 @@
 set -e
 set -u
 
-function log {
-    echo "$@"
-}
-
 function usage {
     echo "Usage: $0 [-h] [-s <state>] [-t <service_type>] [-u <URL>]"
     echo "  -h      display help"
@@ -40,11 +36,11 @@ while getopts ":hs:t:u:" option; do
     esac
 done
 
-test -z ${STATE} && usage
-test -z ${TYPE} && usage
-test -z ${URL} && usage
+test -z "${STATE}" && usage
+test -z "${TYPE}" && usage
+test -z "${URL}" && usage
 
-case $STATE in
+case "$STATE" in
 OK)
         # It's all good
         ;;
@@ -58,7 +54,7 @@ WARNING)
                 # Lets Renew here
                 if [ -f "/etc/letsencrypt/live/${URL}/fullchain.pem" ]
                 then
-                    sudo /root/ssl-certificate -d $URL -r -p -o
+                    sudo /root/ssl-certificate -d "$URL" -r -p -o
                 fi
                 ;;
         esac
