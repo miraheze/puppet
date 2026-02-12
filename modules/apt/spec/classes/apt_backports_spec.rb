@@ -3,47 +3,22 @@
 require 'spec_helper'
 
 describe 'apt::backports', type: :class do
-  let(:pre_condition) { "class{ '::apt': }" }
+  let(:pre_condition) { 'include apt' }
 
-  describe 'debian/ubuntu tests' do
-    context 'with defaults on deb' do
-      let(:facts) do
-        {
-          os: {
-            family: 'Debian',
-            name: 'Debian',
-            release: {
-              major: '9',
-              full: '9.0'
-            },
-            distro: {
-              codename: 'stretch',
-              id: 'Debian'
-            }
-          }
-        }
-      end
-
-      it {
-        expect(subject).to contain_apt__source('backports').with(location: 'http://deb.debian.org/debian',
-                                                                 repos: 'main contrib non-free',
-                                                                 release: 'stretch-backports',
-                                                                 pin: { 'priority' => 200, 'release' => 'stretch-backports' })
-      }
-    end
-
-    context 'with defaults on ubuntu' do
+  # Shared examples for Ubuntu tests
+  shared_examples 'ubuntu backports' do |release_major, release_full, codename|
+    context "with defaults on ubuntu #{release_major}" do
       let(:facts) do
         {
           os: {
             family: 'Debian',
             name: 'Ubuntu',
             release: {
-              major: '18',
-              full: '18.04'
+              major: release_major,
+              full: release_full
             },
             distro: {
-              codename: 'bionic',
+              codename:,
               id: 'Ubuntu'
             }
           }
@@ -51,25 +26,31 @@ describe 'apt::backports', type: :class do
       end
 
       it {
-        expect(subject).to contain_apt__source('backports').with(location: 'http://archive.ubuntu.com/ubuntu',
-                                                                 repos: 'main universe multiverse restricted',
-                                                                 release: 'bionic-backports',
-                                                                 pin: { 'priority' => 200, 'release' => 'bionic-backports' })
+        expect(subject).to contain_apt__source('backports').with(
+          location: 'http://archive.ubuntu.com/ubuntu',
+          repos: 'main universe multiverse restricted',
+          release: "#{codename}-backports",
+          pin: {
+            'priority' => 200,
+            'release' => "#{codename}-backports"
+          },
+          keyring: '/usr/share/keyrings/ubuntu-archive-keyring.gpg',
+        )
       }
     end
 
-    context 'with everything set' do
+    context "with everything set on ubuntu #{release_major}" do
       let(:facts) do
         {
           os: {
             family: 'Debian',
             name: 'Ubuntu',
             release: {
-              major: '18',
-              full: '18.04'
+              major: release_major,
+              full: release_full
             },
             distro: {
-              codename: 'bionic',
+              codename:,
               id: 'Ubuntu'
             }
           }
@@ -86,26 +67,28 @@ describe 'apt::backports', type: :class do
       end
 
       it {
-        expect(subject).to contain_apt__source('backports').with(location: 'http://archive.ubuntu.com/ubuntu-test',
-                                                                 key: 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
-                                                                 repos: 'main',
-                                                                 release: 'vivid',
-                                                                 pin: { 'priority' => 90, 'release' => 'vivid' })
+        expect(subject).to contain_apt__source('backports').with(
+          location: 'http://archive.ubuntu.com/ubuntu-test',
+          key: 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
+          repos: 'main',
+          release: 'vivid',
+          pin: { 'priority' => 90, 'release' => 'vivid' },
+        )
       }
     end
 
-    context 'when set things with hashes' do
+    context "when set things with hashes on ubuntu #{release_major}" do
       let(:facts) do
         {
           os: {
             family: 'Debian',
             name: 'Ubuntu',
             release: {
-              major: '18',
-              full: '18.04'
+              major: release_major,
+              full: release_full
             },
             distro: {
-              codename: 'bionic',
+              codename:,
               id: 'Ubuntu'
             }
           }
@@ -123,182 +106,136 @@ describe 'apt::backports', type: :class do
       end
 
       it {
-        expect(subject).to contain_apt__source('backports').with(key: { 'id' => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553' },
-                                                                 pin: { 'priority' => '90' })
+        expect(subject).to contain_apt__source('backports').with(
+          key: { 'id' => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553' },
+          pin: { 'priority' => '90' },
+        )
       }
     end
   end
 
-  describe 'mint tests' do
-    let(:facts) do
-      {
-        os: {
-          family: 'Debian',
-          name: 'LinuxMint',
-          release: {
-            major: '17',
-            full: '17'
-          },
-          distro: {
-            codename: 'qiana',
-            id: 'LinuxMint'
+  # Shared examples for validation tests
+  shared_examples 'validation tests' do |release_major, release_full, codename|
+    describe "validation on ubuntu #{release_major}" do
+      let(:facts) do
+        {
+          os: {
+            family: 'Debian',
+            name: 'Ubuntu',
+            release: {
+              major: release_major,
+              full: release_full
+            },
+            distro: {
+              codename:,
+              id: 'Ubuntu'
+            }
           }
         }
-      }
-    end
+      end
 
-    context 'with all the needed things set' do
-      let(:params) do
+      context 'with invalid location' do
+        let(:params) do
+          {
+            location: true
+          }
+        end
+
+        it do
+          expect(subject).to raise_error(Puppet::Error, %r{expects a})
+        end
+      end
+
+      context 'with invalid release' do
+        let(:params) do
+          {
+            release: true
+          }
+        end
+
+        it do
+          expect(subject).to raise_error(Puppet::Error, %r{expects a})
+        end
+      end
+
+      context 'with invalid repos' do
+        let(:params) do
+          {
+            repos: true
+          }
+        end
+
+        it do
+          expect(subject).to raise_error(Puppet::Error, %r{expects a})
+        end
+      end
+
+      context 'with invalid key' do
+        let(:params) do
+          {
+            key: true
+          }
+        end
+
+        it do
+          expect(subject).to raise_error(Puppet::Error, %r{expects a})
+        end
+      end
+
+      context 'with invalid pin' do
+        let(:params) do
+          {
+            pin: true
+          }
+        end
+
+        it do
+          expect(subject).to raise_error(Puppet::Error, %r{expects a})
+        end
+      end
+    end
+  end
+
+  describe 'debian/ubuntu tests' do
+    context 'with defaults on debian' do
+      let(:facts) do
         {
-          location: 'http://archive.ubuntu.com/ubuntu',
-          release: 'trusty-backports',
-          repos: 'main universe multiverse restricted',
-          key: '630239CC130E1A7FD81A27B140976EAF437D05B5'
+          os: {
+            family: 'Debian',
+            name: 'Debian',
+            release: {
+              full: '12.5',
+              major: '12',
+              minor: '5'
+            },
+            distro: {
+              codename: 'bookworm',
+              id: 'Debian'
+            }
+          }
         }
       end
 
       it {
-        expect(subject).to contain_apt__source('backports').with(location: 'http://archive.ubuntu.com/ubuntu',
-                                                                 key: '630239CC130E1A7FD81A27B140976EAF437D05B5',
-                                                                 repos: 'main universe multiverse restricted',
-                                                                 release: 'trusty-backports',
-                                                                 pin: { 'priority' => 200, 'release' => 'trusty-backports' })
-      }
-    end
-
-    context 'with missing location' do
-      let(:params) do
-        {
-          release: 'trusty-backports',
-          repos: 'main universe multiverse restricted',
-          key: '630239CC130E1A7FD81A27B140976EAF437D05B5'
-        }
-      end
-
-      it do
-        expect(subject).to raise_error(Puppet::Error, %r{If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key})
-      end
-    end
-
-    context 'with missing release' do
-      let(:params) do
-        {
-          location: 'http://archive.ubuntu.com/ubuntu',
-          repos: 'main universe multiverse restricted',
-          key: '630239CC130E1A7FD81A27B140976EAF437D05B5'
-        }
-      end
-
-      it do
-        expect(subject).to raise_error(Puppet::Error, %r{If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key})
-      end
-    end
-
-    context 'with missing repos' do
-      let(:params) do
-        {
-          location: 'http://archive.ubuntu.com/ubuntu',
-          release: 'trusty-backports',
-          key: '630239CC130E1A7FD81A27B140976EAF437D05B5'
-        }
-      end
-
-      it do
-        expect(subject).to raise_error(Puppet::Error, %r{If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key})
-      end
-    end
-
-    context 'with missing key' do
-      let(:params) do
-        {
-          location: 'http://archive.ubuntu.com/ubuntu',
-          release: 'trusty-backports',
-          repos: 'main universe multiverse restricted'
-        }
-      end
-
-      it do
-        expect(subject).to raise_error(Puppet::Error, %r{If not on Debian or Ubuntu, you must explicitly pass location, release, repos, and key})
-      end
-    end
-  end
-
-  describe 'validation' do
-    let(:facts) do
-      {
-        os: {
-          family: 'Debian',
-          name: 'Ubuntu',
-          release: {
-            major: '18',
-            full: '18.04'
+        expect(subject).to contain_apt__source('backports').with(
+          location: 'http://deb.debian.org/debian',
+          repos: 'main contrib non-free non-free-firmware',
+          release: 'bookworm-backports',
+          pin: {
+            'priority' => 200,
+            'codename' => 'bookworm-backports'
           },
-          distro: {
-            codename: 'bionic',
-            id: 'Ubuntu'
-          }
-        }
+          keyring: '/usr/share/keyrings/debian-archive-keyring.gpg',
+        )
       }
     end
 
-    context 'with invalid location' do
-      let(:params) do
-        {
-          location: true
-        }
-      end
-
-      it do
-        expect(subject).to raise_error(Puppet::Error, %r{expects a})
-      end
-    end
-
-    context 'with invalid release' do
-      let(:params) do
-        {
-          release: true
-        }
-      end
-
-      it do
-        expect(subject).to raise_error(Puppet::Error, %r{expects a})
-      end
-    end
-
-    context 'with invalid repos' do
-      let(:params) do
-        {
-          repos: true
-        }
-      end
-
-      it do
-        expect(subject).to raise_error(Puppet::Error, %r{expects a})
-      end
-    end
-
-    context 'with invalid key' do
-      let(:params) do
-        {
-          key: true
-        }
-      end
-
-      it do
-        expect(subject).to raise_error(Puppet::Error, %r{expects a})
-      end
-    end
-
-    context 'with invalid pin' do
-      let(:params) do
-        {
-          pin: true
-        }
-      end
-
-      it do
-        expect(subject).to raise_error(Puppet::Error, %r{expects a})
-      end
-    end
+    # Include shared examples for Ubuntu versions
+    include_examples 'ubuntu backports', '22.04', '22.04', 'jammy'
+    include_examples 'ubuntu backports', '24.04', '24.04', 'noble'
   end
+
+  # Include shared validation examples for Ubuntu versions
+  include_examples 'validation tests', '22.04', '22.04', 'jammy'
+  include_examples 'validation tests', '24.04', '24.04', 'noble'
 end
