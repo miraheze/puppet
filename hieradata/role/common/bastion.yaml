@@ -1,5 +1,6 @@
 users::groups:
   - bastion
 
+base::ntp_server: '127.0.0.1'
 base::dns::do_ipv4: true
 base::dns::do_ipv6: true
