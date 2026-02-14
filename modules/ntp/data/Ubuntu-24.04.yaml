@@ -2,3 +2,4 @@
 ntp::package_name:
   - ntpsec
 ntp::config: '/etc/ntpsec/ntp.conf'
+ntp::driftfile: '/var/lib/ntpsec/ntp.drift'
