@@ -37,8 +37,7 @@ mediawiki::php::fpm_config:
   upload_max_filesize: '250M'
   max_execution_time: 210
 
-# Temporarily false until we build xhprof on PHP 8.4
-mediawiki::php::enable_request_profiling: false
+mediawiki::php::enable_request_profiling: true
 
 mediawiki::use_staging: true
 mediawiki::monitoring::host: 'test.mirabeta.org'
