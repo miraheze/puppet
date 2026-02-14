@@ -37,7 +37,8 @@ mediawiki::php::fpm_config:
   upload_max_filesize: '250M'
   max_execution_time: 210
 
-mediawiki::php::enable_request_profiling: true
+# Temporarily false until we build xhprof on PHP 8.4
+mediawiki::php::enable_request_profiling: false
 
 mediawiki::use_staging: true
 mediawiki::monitoring::host: 'test.mirabeta.org'
@@ -50,7 +51,7 @@ mediawiki::multiversion::versions:
 role::mediawiki::php::restarts::ensure: present
 role::mediawiki::php::restarts::opcache_limit: 200
 
-php::php_version: '8.2'
+php::php_version: '8.4'
 
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
