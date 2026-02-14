@@ -38,6 +38,14 @@ apt_conf_d = {    ensure: 'directory',
                   recurse: false,
                   notify: 'Class[Apt::Update]' }
 
+auth_conf_d = {   ensure: 'directory',
+                  path: '/etc/apt/auth.conf.d',
+                  owner: 'root',
+                  group: 'root',
+                  purge: false,
+                  recurse: false,
+                  notify: 'Class[Apt::Update]' }
+
 describe 'apt' do
   let(:facts) do
     {
@@ -75,6 +83,10 @@ describe 'apt' do
 
     it {
       expect(subject).to contain_file('apt.conf.d').that_notifies('Class[Apt::Update]').only_with(apt_conf_d)
+    }
+
+    it {
+      is_expected.to contain_file('auth.conf.d').that_notifies('Class[Apt::Update]').only_with(auth_conf_d)
     }
 
     it { is_expected.to contain_file('/etc/apt/auth.conf').with_ensure('absent') }
@@ -354,6 +366,34 @@ describe 'apt' do
           },
           distro: {
             codename: 'bionic',
+            id: 'Ubuntu'
+          }
+        }
+      },
+      'Ubuntu 22.04' => {
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '22.04',
+            full: '22.04'
+          },
+          distro: {
+            codename: 'jammy',
+            id: 'Ubuntu'
+          }
+        }
+      },
+      'Ubuntu 24.04' => {
+        os: {
+          family: 'Debian',
+          name: 'Ubuntu',
+          release: {
+            major: '24.04',
+            full: '24.04'
+          },
+          distro: {
+            codename: 'noble',
             id: 'Ubuntu'
           }
         }

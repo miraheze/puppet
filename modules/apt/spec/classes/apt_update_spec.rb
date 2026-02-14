@@ -152,7 +152,7 @@ describe 'apt::update', type: :class do
     end
   end
 
-  ['daily', 'weekly'].each do |update_frequency|
+  ['hourly', 'daily', 'weekly', 60].each do |update_frequency|
     context "when apt::update['frequency'] has the value of #{update_frequency}" do
       pair = { 'we are due for a run' => 1_406_660_561, 'the update-success-stamp file does not exist' => -1 }
       pair.each_pair do |desc, factval|
@@ -174,7 +174,7 @@ describe 'apt::update', type: :class do
               apt_update_last_success: factval
             }
           end
-          let(:pre_condition) { "class{ '::apt': update => {'frequency' => '#{update_frequency}',} }" }
+          let(:pre_condition) { "class{ '::apt': update => {'frequency' => #{update_frequency.inspect},} }" }
 
           it 'triggers an apt-get update run' do
             # set the apt_update exec\'s refreshonly attribute to false
@@ -200,7 +200,7 @@ describe 'apt::update', type: :class do
             apt_update_last_success: Time.now.to_i
           }
         end
-        let(:pre_condition) { "class{ '::apt': update => {'frequency' => '#{update_frequency}',} }" }
+        let(:pre_condition) { "class{ '::apt': update => {'frequency' => #{update_frequency.inspect},} }" }
 
         it 'does not trigger an apt-get update run' do
           # don't change the apt_update exec\'s refreshonly attribute. (it should be true)
@@ -226,7 +226,7 @@ describe 'apt::update', type: :class do
             apt_update_last_success: nil
           }
         end
-        let(:pre_condition) { "class{ '::apt': update => {'frequency' => '#{update_frequency}',} }" }
+        let(:pre_condition) { "class{ '::apt': update => {'frequency' => #{update_frequency.inspect},} }" }
 
         it 'triggers an apt-get update run' do
           # set the apt_update exec\'s refreshonly attribute to false
