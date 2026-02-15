@@ -38,7 +38,9 @@ class mediawiki::cgroup {
         value => '0',
     }
 
-    grub::bootparam { 'SYSTEMD_CGROUP_ENABLE_LEGACY_FORCE':
-        value => '1',
+    if ($facts['os']['distro']['codename'] == 'trixie') {
+        grub::bootparam { 'SYSTEMD_CGROUP_ENABLE_LEGACY_FORCE':
+            value => '1',
+        }
     }
 }
