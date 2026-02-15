@@ -37,4 +37,8 @@ class mediawiki::cgroup {
     grub::bootparam { 'systemd.unified_cgroup_hierarchy':
         value => '0',
     }
+
+    grub::bootparam { 'SYSTEMD_CGROUP_ENABLE_LEGACY_FORCE':
+        value => '1',
+    }
 }
