@@ -10,7 +10,7 @@ class mediawiki::cgroup {
 
     systemd::unit { 'mediawiki.slice':
         ensure  => present,
-        content => systemd_template('cgroup'),
+        content => systemd_template('mediawiki.slice'),
         restart => false,
     }
 }
