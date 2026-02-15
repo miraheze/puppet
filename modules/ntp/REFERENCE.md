@@ -46,7 +46,6 @@ The following parameters are available in the `ntp` class:
 * [`config_dir`](#-ntp--config_dir)
 * [`config_epp`](#-ntp--config_epp)
 * [`config_file_mode`](#-ntp--config_file_mode)
-* [`config_template`](#-ntp--config_template)
 * [`daemon_extra_opts`](#-ntp--daemon_extra_opts)
 * [`disable_auth`](#-ntp--disable_auth)
 * [`disable_dhclient`](#-ntp--disable_dhclient)
@@ -145,20 +144,13 @@ Specifies a directory for the NTP configuration files. Default value: undef.
 Data type: `Optional[String]`
 
 Specifies an absolute or relative file path to an EPP template for the config file.
-Example value: 'ntp/ntp.conf.epp'. A validation error is thrown if both this **and** the `config_template` parameter are specified.
+Example value: 'ntp/ntp.conf.epp'. A validation error is thrown if `config_epp` parameter is not specified.
 
 ##### <a name="-ntp--config_file_mode"></a>`config_file_mode`
 
 Data type: `String`
 
 Specifies a file mode for the ntp configuration file. Default value: '0664'.
-
-##### <a name="-ntp--config_template"></a>`config_template`
-
-Data type: `Optional[String]`
-
-Specifies an absolute or relative file path to an ERB template for the config file.
-Example value: 'ntp/ntp.conf.erb'. A validation error is thrown if both this **and** the `config_epp` parameter are specified.
 
 ##### <a name="-ntp--daemon_extra_opts"></a>`daemon_extra_opts`
 
@@ -552,7 +544,8 @@ Default value: 10.am udlc
 Data type: `Optional[String]`
 
 Specifies user to run ntpd daemon. Default value: ntp.
-Usually set by default on Centos7 (/etc/systemd/system/multi-user.target.wants/ntpd.service) and ubuntu 18.04 (/usr/lib/ntp/ntp-systemd-wrapper)
+Usually set by default on Centos7 (/etc/systemd/system/multi-user.target.wants/ntpd.service) and
+ubuntu 18.04 (/usr/lib/ntp/ntp-systemd-wrapper)
 This is currently restricted to Redhat based systems of version 7 and above and Ubuntu 18.04.
 
 ## Data types
@@ -610,7 +603,7 @@ Data type: `Optional[String]`
 
 
 
-Default value: `'2019.8.5'`
+Default value: `'2021.7.9'`
 
 ##### <a name="-ntp--acceptance--pe_server--pe_settings"></a>`pe_settings`
 
