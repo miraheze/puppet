@@ -85,7 +85,8 @@ define mediawiki::extensionsetup (
                     path        => '/usr/bin',
                     environment => [
                         "HOME=${mwpath}/${params['path']}",
-                        'HTTP_PROXY=http://bastion.fsslc.wtnet:8080'
+                        'HTTP_PROXY=http://bastion.fsslc.wtnet:8080',
+                        'HTTPS_PROXY=http://bastion.fsslc.wtnet:8080'
                     ],
                     user        => 'www-data',
                     require     => Git::Clone["MediaWiki-${branch} ${name}"],
