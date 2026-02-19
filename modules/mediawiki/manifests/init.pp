@@ -50,9 +50,9 @@ class mediawiki {
         mode   => '0755',
     }
 
-    file { '/etc/polkit-1/rules.d/90-shellbox.rules':
+    file { '/etc/polkit-1/rules.d/90-mediawiki-shellbox.rules':
         ensure => 'present',
-        source => 'puppet:///modules/mediawiki/polkit/90-shellbox.rules',
+        source => 'puppet:///modules/mediawiki/polkit/90-mediawiki-shellbox.rules',
     }
 
     file { '/srv/mediawiki/robots.php':
