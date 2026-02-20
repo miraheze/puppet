@@ -58,4 +58,19 @@ class role::mediawiki::php::restarts (
     logfile_basedir   => '/var/log/mediawiki',
     syslog_identifier => "php${php_version}-fpm_check_restart",
   }
+
+  if ($facts['os']['distro']['codename'] == 'trixie') {
+    # Remove PHP 8.2 scripts if we are on PHP 8.4
+    file { '/usr/local/sbin/restart-php8.2-fpm_check_restart':
+      ensure => absent,
+    }
+
+    systemd::timer::job { 'php8.2-fpm_check_restart':
+      ensure      => absent,
+      description => 'Timer to check the status of the opcache space on PHP 8.2, and restart the service if needed.',
+      command     => "/usr/local/sbin/check-and-restart-php php8.2-fpm ${opcache_limit}",
+      interval    => {'start' => 'OnCalendar', 'interval' => $times['OnCalendar']},
+      user        => 'root',
+    }
+  }
 }
