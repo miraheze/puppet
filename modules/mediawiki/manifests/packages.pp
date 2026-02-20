@@ -6,6 +6,7 @@ class mediawiki::packages {
     include mediawiki::firejail
 
     stdlib::ensure_packages([
+        'cgroup-tools',
         'djvulibre-bin',
         'dvipng',
         'espeak-ng-espeak',
