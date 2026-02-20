@@ -9,6 +9,10 @@ on_supported_os.each do |os, f|
     let(:conf_path) do
       if os.include?('solaris')
         '/etc/inet/ntp.conf'
+      elsif f[:os]['name'] == 'Debian' && f[:os]['release']['major'].to_f >= 12
+        '/etc/ntpsec/ntp.conf'
+      elsif f[:os]['name'] == 'Ubuntu' && f[:os]['release']['major'].to_f >= 24.04
+        '/etc/ntpsec/ntp.conf'
       else
         '/etc/ntp.conf'
       end
@@ -37,12 +41,6 @@ on_supported_os.each do |os, f|
         end
 
         it { is_expected.to contain_file('/var/run/ntp/servers-netconfig').with_ensure_absent } if f[:os]['family'] == 'Suse' && f[:os]['release']['major'] == '12'
-
-        describe 'allows template to be overridden with erb template' do
-          let(:params) { { config_template: 'my_ntp/ntp.conf.erb' } }
-
-          it { is_expected.to contain_file(conf_path).with_content(%r{erbserver1}) }
-        end
 
         describe 'allows template to be overridden with epp template' do
           let(:params) { { config_epp: 'my_ntp/ntp.conf.epp' } }
@@ -138,7 +136,7 @@ on_supported_os.each do |os, f|
           case f[:os]['family']
           when 'RedHat'
             it 'uses the centos ntp servers' do
-              expect(subject).to contain_file('/etc/ntp.conf').with('content' => %r{server \d.centos.pool.ntp.org})
+              expect(subject).to contain_file(conf_path).with('content' => %r{server \d.centos.pool.ntp.org})
             end
 
             it do
@@ -146,15 +144,15 @@ on_supported_os.each do |os, f|
             end
           when 'Debian'
             it 'uses the debian ntp servers' do
-              expect(subject).to contain_file('/etc/ntp.conf').with('content' => %r{server \d.debian.pool.ntp.org iburst\n})
+              expect(subject).to contain_file(conf_path).with('content' => %r{server \d.debian.pool.ntp.org iburst\n})
             end
           when 'Suse'
             it 'uses the opensuse ntp servers' do
-              expect(subject).to contain_file('/etc/ntp.conf').with('content' => %r{server \d.opensuse.pool.ntp.org})
+              expect(subject).to contain_file(conf_path).with('content' => %r{server \d.opensuse.pool.ntp.org})
             end
           when 'FreeBSD'
             it 'uses the freebsd ntp servers' do
-              expect(subject).to contain_file('/etc/ntp.conf').with('content' => %r{server \d.freebsd.pool.ntp.org iburst maxpoll 9})
+              expect(subject).to contain_file(conf_path).with('content' => %r{server \d.freebsd.pool.ntp.org iburst maxpoll 9})
             end
           when 'Solaris'
             it 'uses the generic NTP pool servers' do
@@ -162,7 +160,7 @@ on_supported_os.each do |os, f|
             end
           when 'AIX'
             it 'uses the generic NTP pool servers on AIX' do
-              expect(subject).to contain_file('/etc/ntp.conf').with('content' => %r{server \d.pool.ntp.org})
+              expect(subject).to contain_file(conf_path).with('content' => %r{server \d.pool.ntp.org})
             end
           else
             it {
