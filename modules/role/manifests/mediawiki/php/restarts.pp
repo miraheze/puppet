@@ -61,7 +61,7 @@ class role::mediawiki::php::restarts (
 
   if ($facts['os']['distro']['codename'] == 'trixie') {
     # Remove PHP 8.2 scripts if we are on PHP 8.4
-    file { '/usr/local/sbin/restart-php8.2-fpm_check_restart':
+    file { '/usr/local/sbin/restart-php8.2-fpm':
       ensure => absent,
     }
 
