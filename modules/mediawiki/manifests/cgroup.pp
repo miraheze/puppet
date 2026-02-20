@@ -25,23 +25,25 @@ class mediawiki::cgroup {
         restart => false,
     }
 
-    if $ensure == 'present' {
-        grub::bootparam { 'cgroup_enable':
-            value => 'memory',
-        }
+    grub::bootparam { 'cgroup_enable':
+        ensure => $ensure,
+        value  => 'memory',
+    }
 
-        grub::bootparam { 'swapaccount':
-            value => '1',
-        }
+    grub::bootparam { 'swapaccount':
+        ensure => $ensure,
+        value  => '1',
+    }
 
-        # Disable cgroup memory accounting
-        grub::bootparam { 'cgroup.memory':
-            value => 'nokmem',
-        }
+    # Disable cgroup memory accounting
+    grub::bootparam { 'cgroup.memory':
+        ensure => $ensure,
+        value  => 'nokmem',
+    }
 
-        # Force use of cgroups v1
-        grub::bootparam { 'systemd.unified_cgroup_hierarchy':
-            value => '0',
-        }
+    # Force use of cgroups v1
+    grub::bootparam { 'systemd.unified_cgroup_hierarchy':
+        ensure => $ensure,
+        value  => '0',
     }
 }
