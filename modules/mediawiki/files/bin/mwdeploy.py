@@ -485,9 +485,9 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
             stage.append(_construct_reset_mediawiki_run_puppet())
             applied = []
             for patch in patches:
-                if patch.path not in applied:
-                    exitcodes.extend(_apply_patches(patch.path, version))
-                    applied.append(patch.path)
+                if patch['path'] not in applied:
+                    exitcodes.extend(_apply_patches(patch['path'], version))
+                    applied.append(patch['path'])
 
         pull = []
         if args.pull:
