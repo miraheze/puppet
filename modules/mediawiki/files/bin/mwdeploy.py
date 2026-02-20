@@ -359,19 +359,19 @@ def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bo
 def _apply_patches(repo: str, version: str = '') -> list[int]:
     exitcodes = []
     staging_path = _get_staging_path(repo, version)
-    to_apply = [patch for patch in patches if staging_path.endswith(patch.path)]
+    to_apply = [patch for patch in patches if staging_path.endswith(patch['path'])]
     for patch in to_apply:
-        visibility = 'public' if patch.public else 'private'
-        patchfile = f'/srv/mediawiki-staging/patches/{visibility}/{patch.file}'
+        visibility = 'public' if patch['public'] else 'private'
+        patchfile = f'/srv/mediawiki-staging/patches/{visibility}/{patch['file']}'
         if not os.path.isfile(patchfile):
-            print(f'WARNING: Patch file {patch.file} could not be found!')
+            print(f'WARNING: Patch file {patch['file']} could not be found!')
             continue
         check = run_command(_construct_git_apply(repo, patchfile, version, True))
         if check == 0:  # Handle bad codes here according to failureStrategy?
             exitcodes.append(run_command(_construct_git_apply(repo, patchfile, version)))
         else:
-            print(f'ERROR: Could not apply patch {patch.file}')
-            if patch.failureStrategy == 'abort':
+            print(f'ERROR: Could not apply patch {patch['file']}')
+            if patch['failureStrategy'] == 'abort':
                 print('Aborting!')
                 sys.exit(1)
             else:
