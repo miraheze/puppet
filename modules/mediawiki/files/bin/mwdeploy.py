@@ -356,10 +356,22 @@ def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bo
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} apply{extopt} {patchfile}'
 
 
+def _patch_matches(patch: dict, repo: str, version: str) -> bool:
+    path = patch['path']
+    staging_path = _get_staging_path(repo, version)
+    if not staging_path.endswith(path):
+        return False
+
+    versions = patch['versions']
+    if 'all' in versions:
+        return True
+
+    return version in versions and staging_path.endswith(f'{version}/{path}')
+
+
 def _apply_patches(repo: str, version: str = '') -> list[int]:
     exitcodes = []
-    staging_path = _get_staging_path(repo, version)
-    to_apply = [patch for patch in patches if staging_path.endswith(patch['path'])]
+    to_apply = [patch for patch in patches if _patch_matches(patch, repo, version)]
     for patch in to_apply:
         visibility = 'public' if patch['public'] else 'private'
         patchfile = f'/srv/mediawiki-staging/patches/{visibility}/{patch['file']}'
