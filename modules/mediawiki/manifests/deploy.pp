@@ -101,7 +101,7 @@ class mediawiki::deploy {
         group   => 'www-data',
         mode    => '0755',
         source  => 'puppet:///mediawiki-repos/patches/public',
-        resurse => true,
+        recurse => true,
         require => File['/srv/mediawiki-staging/patches'],
     }
 
