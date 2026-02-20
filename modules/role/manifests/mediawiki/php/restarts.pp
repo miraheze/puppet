@@ -67,7 +67,7 @@ class role::mediawiki::php::restarts (
 
     systemd::timer::job { 'php8.2-fpm_check_restart':
       ensure      => absent,
-      description => "Timer to check the status of the opcache space on PHP 8.2, and restart the service if needed.",
+      description => 'Timer to check the status of the opcache space on PHP 8.2, and restart the service if needed.',
       command     => "/usr/local/sbin/check-and-restart-php php8.2-fpm ${opcache_limit}",
       interval    => {'start' => 'OnCalendar', 'interval' => $times['OnCalendar']},
       user        => 'root',
