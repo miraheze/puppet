@@ -1,6 +1,6 @@
 users::groups:
   - bastion
 
-base::ntp_server: 'time.cloudflare.com'
+base::ntp_server: 'pool.ntp.org'
 base::dns::do_ipv4: true
 base::dns::do_ipv6: true

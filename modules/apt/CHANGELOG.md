@@ -5,6 +5,96 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v11.2.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v11.2.0) - 2025-12-17
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v11.1.0...v11.2.0)
+
+### Added
+
+- (MODULES-11641) Add support for ubuntu-24.04 [#1267](https://github.com/puppetlabs/puppetlabs-apt/pull/1267) ([shubhamshinde360](https://github.com/shubhamshinde360))
+
+## [v11.1.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v11.1.0) - 2025-09-22
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v11.0.0...v11.1.0)
+
+### Added
+
+- add auth.conf.d resources [#1087](https://github.com/puppetlabs/puppetlabs-apt/pull/1087) ([aba-rechsteiner](https://github.com/aba-rechsteiner))
+
+### Other
+
+- add auth.conf.d resources [#1258](https://github.com/puppetlabs/puppetlabs-apt/pull/1258) ([shubhamshinde360](https://github.com/shubhamshinde360))
+
+## [v11.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v11.0.0) - 2025-09-05
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v10.0.1...v11.0.0)
+
+### Changed
+
+- (CAT-2354) Puppetcore update [#1240](https://github.com/puppetlabs/puppetlabs-apt/pull/1240) ([LukasAud](https://github.com/LukasAud))
+
+### Fixed
+
+- join key dir and key filename/name with slash "/" [#1233](https://github.com/puppetlabs/puppetlabs-apt/pull/1233) ([wolfaba](https://github.com/wolfaba))
+- Suites with a path don't get components [#1229](https://github.com/puppetlabs/puppetlabs-apt/pull/1229) ([jstraw](https://github.com/jstraw))
+
+### Other
+
+- (MODULES-11617) Replace apt with apt-cache when using with grep [#1248](https://github.com/puppetlabs/puppetlabs-apt/pull/1248) ([shubhamshinde360](https://github.com/shubhamshinde360))
+
+## [v10.0.1](https://github.com/puppetlabs/puppetlabs-apt/tree/v10.0.1) - 2025-01-27
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v10.0.0...v10.0.1)
+
+### Fixed
+
+- Handle repos passed as an array for list format [#1215](https://github.com/puppetlabs/puppetlabs-apt/pull/1215) ([ekohl](https://github.com/ekohl))
+
+## [v10.0.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v10.0.0) - 2024-12-18
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v9.4.0...v10.0.0)
+
+### Changed
+
+- Debian: add non-free-firmware repo component [#1180](https://github.com/puppetlabs/puppetlabs-apt/pull/1180) ([kenyon](https://github.com/kenyon))
+- Drop support for EoL Debian 10 "buster" [#1177](https://github.com/puppetlabs/puppetlabs-apt/pull/1177) ([kenyon](https://github.com/kenyon))
+
+### Added
+
+- Add Debian 12 "bookworm" support [#1178](https://github.com/puppetlabs/puppetlabs-apt/pull/1178) ([kenyon](https://github.com/kenyon))
+- Support PPA in deb822 format [#1169](https://github.com/puppetlabs/puppetlabs-apt/pull/1169) ([fredericgiquel](https://github.com/fredericgiquel))
+- Add support for deb822 APT sources [#1167](https://github.com/puppetlabs/puppetlabs-apt/pull/1167) ([jps-help](https://github.com/jps-help))
+
+### Fixed
+
+- apt::setting: Dont expect source/content when removing settings [#1208](https://github.com/puppetlabs/puppetlabs-apt/pull/1208) ([bastelfreak](https://github.com/bastelfreak))
+- apt::keyring: Require "source" or "content" only if ensure=present [#1198](https://github.com/puppetlabs/puppetlabs-apt/pull/1198) ([webcompas](https://github.com/webcompas))
+
+### Other
+
+- Eliminate `params.pp` and `create_resources()` [#1172](https://github.com/puppetlabs/puppetlabs-apt/pull/1172) ([kenyon](https://github.com/kenyon))
+
+## [v9.4.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v9.4.0) - 2024-02-15
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v9.3.0...v9.4.0)
+
+## [v9.3.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v9.3.0) - 2024-02-15
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v9.2.0...v9.3.0)
+
+### Added
+
+- Backports: add keyring support [#1162](https://github.com/puppetlabs/puppetlabs-apt/pull/1162) ([kenyon](https://github.com/kenyon))
+- Support "hourly" and Integer as value for update frequency (fixes #1157) [#1159](https://github.com/puppetlabs/puppetlabs-apt/pull/1159) ([webcompas](https://github.com/webcompas))
+
+### Fixed
+
+- replace deprecated merge() with native puppet code [#1154](https://github.com/puppetlabs/puppetlabs-apt/pull/1154) ([bastelfreak](https://github.com/bastelfreak))
+
+### Other
+
+- release_prep: Use puppetlabs_spec_helper 7.x [#1164](https://github.com/puppetlabs/puppetlabs-apt/pull/1164) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [v9.2.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v9.2.0) - 2023-12-04
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v9.1.0...v9.2.0)
@@ -25,6 +115,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v9.0.2...v9.1.0)
 
 ### Changed
+
 - (CONT-773) Add Support for Puppet 8 / Remove Support for Puppet 6 [#1101](https://github.com/puppetlabs/puppetlabs-apt/pull/1101) ([david22swan](https://github.com/david22swan))
 
 ### Added
@@ -68,6 +159,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.5.0...v9.0.0)
 
 ### Changed
+
 - Harden PPA defined type [#1052](https://github.com/puppetlabs/puppetlabs-apt/pull/1052) ([chelnak](https://github.com/chelnak))
 
 ### Added
@@ -100,6 +192,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v8.3.0...v8.4.0)
 
 ### Changed
+
 - (GH-iac-334) Remove code specific to unsupported OSs [#1024](https://github.com/puppetlabs/puppetlabs-apt/pull/1024) ([david22swan](https://github.com/david22swan))
 
 ### Added
@@ -177,6 +270,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v7.7.1...v8.0.0)
 
 ### Changed
+
 - pdksync - Remove Puppet 5 from testing and bump minimal version to 6.0.0 [#969](https://github.com/puppetlabs/puppetlabs-apt/pull/969) ([carabasdaniel](https://github.com/carabasdaniel))
 
 ## [v7.7.1](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.7.1) - 2021-02-16
@@ -265,8 +359,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 ### Fixed
 
-- MODULES-10063, extend apt::key to support deeplinks, this time with f… [#894](https://github.com/puppetlabs/puppetlabs-apt/pull/894) ([atarax](https://github.com/atarax))
-- MODULES-10063, extend apt::key to support deeplinks [#892](https://github.com/puppetlabs/puppetlabs-apt/pull/892) ([atarax](https://github.com/atarax))
+- MODULES-10063, extend apt::key to support deeplinks, this time with f… [#894](https://github.com/puppetlabs/puppetlabs-apt/pull/894) ([kaessert](https://github.com/kaessert))
+- MODULES-10063, extend apt::key to support deeplinks [#892](https://github.com/puppetlabs/puppetlabs-apt/pull/892) ([kaessert](https://github.com/kaessert))
 
 ## [v7.2.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v7.2.0) - 2019-10-29
 
@@ -300,6 +394,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/6.3.0...7.0.0)
 
 ### Changed
+
 - pdksync - (MODULES-8444) - Raise lower Puppet bound [#853](https://github.com/puppetlabs/puppetlabs-apt/pull/853) ([david22swan](https://github.com/david22swan))
 
 ### Added
@@ -372,6 +467,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/5.0.1...6.0.0)
 
 ### Changed
+
 - (MODULES-7668) Remove support for Puppet 4.7 [#780](https://github.com/puppetlabs/puppetlabs-apt/pull/780) ([jarretlavallee](https://github.com/jarretlavallee))
 
 ### Added
@@ -392,6 +488,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/4.5.1...5.0.0)
 
 ### Changed
+
 - [FM-6956] Removal of unsupported Debian 7 from apt [#760](https://github.com/puppetlabs/puppetlabs-apt/pull/760) ([david22swan](https://github.com/david22swan))
 
 ### Added
@@ -504,6 +601,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/2.3.0...2.4.0)
 
 ### Changed
+
 - Use stdlib deprecation [#641](https://github.com/puppetlabs/puppetlabs-apt/pull/641) ([DavidS](https://github.com/DavidS))
 
 ### Added
@@ -601,6 +699,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/2.0.1...2.1.0)
 
 ### Changed
+
 - API compatibility between 1.8.x and 2.x for apt::source [#529](https://github.com/puppetlabs/puppetlabs-apt/pull/529) ([underscorgan](https://github.com/underscorgan))
 
 ### Added
@@ -649,6 +748,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/1.7.0...1.8.0)
 
 ### Changed
+
 - Various major behavioural changes [#447](https://github.com/puppetlabs/puppetlabs-apt/pull/447) ([daenney](https://github.com/daenney))
 - V2.0.0 Prep work: Removing old code / Adding placeholders [#424](https://github.com/puppetlabs/puppetlabs-apt/pull/424) ([underscorgan](https://github.com/underscorgan))
 
@@ -805,6 +905,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/1.4.0...1.4.1)
 
 ### Changed
+
 - Handling of release parameter and apt provider in force manifest [#140](https://github.com/puppetlabs/puppetlabs-apt/pull/140) ([hunner](https://github.com/hunner))
 
 ### Added
@@ -863,6 +964,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/1.1.0...1.1.1)
 
 ### Changed
+
 - Restrict the versions and add 3.1 [#112](https://github.com/puppetlabs/puppetlabs-apt/pull/112) ([richardc](https://github.com/richardc))
 
 ### Added
@@ -892,6 +994,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/0.0.4...1.0.0)
 
 ### Changed
+
 - Without puppetlabs/stdlib, you will get "err: Could not retrieve catalog... [#75](https://github.com/puppetlabs/puppetlabs-apt/pull/75) ([ytjohn](https://github.com/ytjohn))
 
 ### Added

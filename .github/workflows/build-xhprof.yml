@@ -1,0 +1,49 @@
+name: Build XHProf
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        version: [ '8.4' ]
+
+    container:
+      image: php:${{ matrix.version }}-cli
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install build dependencies
+        run: |
+          apt-get update
+          apt-get install -y git build-essential autoconf
+
+      - name: Clone xhprof
+        run: git clone https://github.com/longxinH/xhprof
+
+      - name: Build extension
+        run: |
+          cd xhprof/extension
+          phpize
+          ./configure --with-php-config=$(which php-config)
+          make
+          make install
+
+      - name: Get extension dir
+        id: php_config
+        run: echo "EXTENSION_DIR=$(php-config --extension-dir)" >> $GITHUB_OUTPUT
+
+      - name: Verify build
+        run: |
+          ls -lah ${{ steps.php_config.outputs.EXTENSION_DIR }}
+          test -f "${{ steps.php_config.outputs.EXTENSION_DIR }}/xhprof.so"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: xhprof-${{ matrix.version }}
+          path: ${{ steps.php_config.outputs.EXTENSION_DIR }}/xhprof.so

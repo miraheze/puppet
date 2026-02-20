@@ -37,7 +37,7 @@ class mediawiki::jobqueue::runner (
         }
 
         mediawiki::periodic_job { 'purge-abusefilter':
-            command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/AbuseFilter/maintenance/PurgeOldLogIPData.php",
+            command  => "/usr/local/bin/foreachwikiindblist /srv/mediawiki/cache/databases.php /srv/mediawiki/${version}/maintenance/run.php /srv/mediawiki/${version}/extensions/AbuseFilter/maintenance/PurgeOldLogData.php",
             interval => '*-*-* 18:05:00',
         }
 

@@ -7,8 +7,6 @@ puppet_major_version: 8
 base::ntp_server: 'ntp.fsslc.wtnet'
 
 mediawiki::multiversion::versions:
-  '1.44':
-    branch: 'REL1_44'
   '1.45':
     branch: 'REL1_45'
     default: true

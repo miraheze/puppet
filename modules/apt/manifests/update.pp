@@ -14,6 +14,36 @@ class apt::update {
     'always': {
       $_kick_apt = true
     }
+    Integer[60]:{
+      #compare current date with the apt_update_last_success fact to determine
+      #if we should kick apt_update.
+      $int_threshold = (Integer(Timestamp().strftime('%s')) - Integer($apt::_update['frequency']))
+      if $facts['apt_update_last_success'] {
+        if $facts['apt_update_last_success'] + 0 < $int_threshold {
+          $_kick_apt = true
+        } else {
+          $_kick_apt = false
+        }
+      } else {
+        #if apt-get update has not successfully run, we should kick apt_update
+        $_kick_apt = true
+      }
+    }
+    'hourly':{
+      #compare current date with the apt_update_last_success fact to determine
+      #if we should kick apt_update.
+      $hourly_threshold = (Integer(Timestamp().strftime('%s')) - 3600)
+      if $facts['apt_update_last_success'] {
+        if $facts['apt_update_last_success'] + 0 < $hourly_threshold {
+          $_kick_apt = true
+        } else {
+          $_kick_apt = false
+        }
+      } else {
+        #if apt-get update has not successfully run, we should kick apt_update
+        $_kick_apt = true
+      }
+    }
     'daily': {
       #compare current date with the apt_update_last_success fact to determine
       #if we should kick apt_update.

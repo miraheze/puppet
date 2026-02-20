@@ -58,7 +58,16 @@ class base (
         },
     }
 
-    class { 'apt::security': }
+    $release = "${facts['os']['distro']['codename']}-security/updates"
+    apt::source { 'debian_security':
+        location => 'http://security.debian.org/',
+        release  => $release,
+        repos    => 'main',
+        pin      => {
+            'priority' => 200,
+            'release'  => $release,
+        },
+    }
 
     $ntp_server = lookup('base::ntp_server')
 

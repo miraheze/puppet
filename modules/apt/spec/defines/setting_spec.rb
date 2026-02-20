@@ -143,8 +143,15 @@ describe 'apt::setting' do
     it { is_expected.to contain_file('/etc/apt/apt.conf.d/100teddybear').that_notifies('Class[Apt::Update]') }
   end
 
-  describe 'with ensure=absent' do
+  describe 'with ensure=absent and default params' do
     let(:params) { default_params.merge(ensure: 'absent') }
+
+    it {
+      expect(subject).to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]').with(ensure: 'absent')
+    }
+  end
+  describe 'with ensure=absent and without default params' do
+    let(:params) { { ensure: 'absent' } }
 
     it {
       expect(subject).to contain_file('/etc/apt/apt.conf.d/50teddybear').that_notifies('Class[Apt::Update]').with(ensure: 'absent')

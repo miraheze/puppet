@@ -20,7 +20,7 @@ node /^cloud[12][056789]\.wikitide\.net$/ {
     include role::cloud
 }
 
-node /^cloud[12][056789]\.fsslc\.wtnet$/ {
+node /^cloud[12][0156789]\.fsslc\.wtnet$/ {
     include base
     include role::cloud
 }

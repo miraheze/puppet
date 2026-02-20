@@ -199,11 +199,20 @@ class mediawiki::php (
     }
 
     # Follow https://support.tideways.com/documentation/reference/tideways-xhprof/tideways-xhprof-extension.html
-    file { '/usr/lib/php/20220829/xhprof.so':
-        ensure => $profiling_ensure,
-        mode   => '0755',
-        source => 'puppet:///modules/mediawiki/php/xhprof.php82.so',
-        before => Php::Extension['xhprof'],
+    if ($php_version == '8.4') {
+        file { '/usr/lib/php/20240924/xhprof.so':
+            ensure => $profiling_ensure,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/xhprof.php84.so',
+            before => Php::Extension['xhprof'],
+        }
+    } else {
+        file { '/usr/lib/php/20220829/xhprof.so':
+            ensure => $profiling_ensure,
+            mode   => '0755',
+            source => 'puppet:///modules/mediawiki/php/xhprof.php82.so',
+            before => Php::Extension['xhprof'],
+        }
     }
 
     php::extension { 'xhprof':
