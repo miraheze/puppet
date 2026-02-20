@@ -2,10 +2,6 @@
 class mediawiki::cgroup {
     if ($facts['os']['distro']['codename'] == 'trixie') {
         $ensure = 'absent'
-        grub::bootparam { 'SYSTEMD_CGROUP_ENABLE_LEGACY_FORCE':
-            ensure => $ensure,
-            value  => '1',
-        }
     } else {
         $ensure = 'present'
     }
