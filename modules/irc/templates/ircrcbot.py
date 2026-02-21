@@ -22,7 +22,7 @@ class RCBot(irc.IRCClient):
 
     def connectionMade(self):
         self.lineRate = None
-        self.sendLine('CAP REQ :sasl')
+        # self.sendLine('CAP REQ :sasl')
         self.lineRate = 1
         irc.IRCClient.connectionMade(self)
 
