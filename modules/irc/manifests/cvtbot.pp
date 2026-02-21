@@ -137,7 +137,7 @@ class irc::cvtbot {
     }
 
     systemd::service { 'cvtbot':
-        ensure  => running,
+        ensure  => present,
         content => systemd_template('cvtbot'),
         restart => true,
         require => [
