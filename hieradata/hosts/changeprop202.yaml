@@ -17,7 +17,7 @@ jobrunner_haproxy::backends:
     port: 9006
 changeprop::num_workers: 8
 changeprop::semantic_mediawiki_concurrency: 6
-changeprop::low_traffic_concurrency: 20
+changeprop::low_traffic_concurrency: 15
 changeprop::high_traffic_jobs_config:
   ThumbnailRender:
     concurrency: 5
@@ -38,7 +38,7 @@ changeprop::high_traffic_jobs_config:
   LocalGlobalUserPageCacheUpdateJob:
     # This job is prone to large spikes, so having it on the low_traffic_jobs queue
     # blocks other jobs.
-    concurrency: 35
+    concurrency: 20
   notificationGetStartedJob:
     concurrency: 2
     # All the jobs of this kind are delayed exactly 48 hours, avoid reenqueueing them
@@ -97,11 +97,11 @@ changeprop::high_traffic_jobs_config:
     # Abandon jobs which root job is more than 1 week long
     root_claim_ttl: 604800
   smw.changePropagationClassUpdate:
-    concurrency: 15
+    concurrency: 10
   smw.changePropagationDispatch:
-    concurrency: 15
+    concurrency: 10
   smw.changePropagationUpdate:
-    concurrency: 15
+    concurrency: 10
   # Translation jobs tend to be low traffic but are being delayed when other
   # low traffic jobs have a large spike. It is being moved to its own queue to
   # improve editing experience for users
