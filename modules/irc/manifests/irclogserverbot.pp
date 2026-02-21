@@ -18,7 +18,7 @@ class irc::irclogserverbot(
     }
 
     systemd::service { 'irclogserverbot':
-        ensure  => present,
+        ensure  => running,
         content => systemd_template('irclogserverbot'),
         restart => true,
     }

@@ -18,7 +18,7 @@ define irc::ircrcbot(
         }
 
     systemd::service { "ircrcbot-${nickname}":
-        ensure  => present,
+        ensure  => running,
         content => systemd_template('ircrcbot'),
         restart => true,
     }
