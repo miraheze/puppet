@@ -15,6 +15,7 @@ jobrunner_haproxy::backends:
   mwtask181:
     ip: 10.0.18.106
     port: 9006
+    depool: true
 changeprop::num_workers: 8
 changeprop::semantic_mediawiki_concurrency: 6
 changeprop::low_traffic_concurrency: 15
