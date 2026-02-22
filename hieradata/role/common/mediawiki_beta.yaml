@@ -30,7 +30,7 @@ nginx::config:
   proxy_send_timeout:    300s
   proxy_read_timeout:    300s
 
-mediawiki::php::request_timeout: 201
+mediawiki::php::request_timeout: 259201
 mediawiki::php::fpm::fpm_workers_multiplier: 2.0
 mediawiki::php::fpm_config:
   post_max_size: '250M'
