@@ -10,7 +10,7 @@ class phorge (
         'pcre.backtrack_limit'            => 5000000,
         'date.timezone'                   => 'UTC',
         'display_errors'                  => 0,
-        'error_reporting'                 => 'E_ALL & ~E_STRICT',
+        'error_reporting'                 => 'E_ALL',
         'mysql'                           => { 'connect_timeout' => 3 },
         'default_socket_timeout'          => 60,
         'enable_dl'                       => 0,
