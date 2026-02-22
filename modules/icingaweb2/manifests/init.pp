@@ -20,7 +20,7 @@ class icingaweb2 (
         'pcre.backtrack_limit'            => 5000000,
         'date.timezone'                   => 'UTC',
         'display_errors'                  => 0,
-        'error_reporting'                 => 'E_ALL & ~E_STRICT',
+        'error_reporting'                 => 'E_ALL',
         'log_errors'                      => 'On',
         'memory_limit'                    => lookup('php::fpm::memory_limit', {'default_value' => '512M'}),
         'mysql'                           => { 'connect_timeout' => 3 },
