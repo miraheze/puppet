@@ -38,7 +38,7 @@ class matomo (
         'date.timezone'          => 'UTC',
         'display_errors'         => 'stderr',
         'memory_limit'           => lookup('php::cli::memory_limit', {'default_value' => '1G'}),
-        'error_reporting'        => 'E_ALL & ~E_STRICT',
+        'error_reporting'        => 'E_ALL',
         'mysql'                  => { 'connect_timeout' => 3 },
         'default_socket_timeout' => 60,
     }
