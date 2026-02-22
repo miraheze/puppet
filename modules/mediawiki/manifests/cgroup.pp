@@ -18,7 +18,7 @@ class mediawiki::cgroup {
         mode   => '0755',
     }
 
-    $php_version = lookup('php::php_version', {'default_value' => '8.2'})
+    $php_version = lookup('php::php_version', {'default_value' => '8.4'})
     systemd::service { 'cgroup':
         ensure  => $ensure,
         content => systemd_template('cgroup'),
