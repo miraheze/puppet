@@ -54,7 +54,7 @@ class mediawiki::deploy {
     stdlib::ensure_packages(
         'langcodes',
         {
-            ensure   => '3.3.0',
+            ensure   => '3.5.1',
             provider => 'pip3',
             install_options => [ '--break-system-packages' ],
             before   => File['/usr/local/bin/mwdeploy'],
