@@ -54,7 +54,6 @@ groups:
     members: []
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
-                 'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.2-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.4-fpm *',
                  'ALL = (ALL) NOPASSWD: /usr/bin/puppet agent *',
                  'ALL = (ALL) NOPASSWD: /bin/journalctl *']
