@@ -9,10 +9,10 @@ jobrunner_haproxy::backends:
   mwtask161:
     ip: 10.0.16.157
     port: 9006
-    depool: true
   mwtask171:
     ip: 10.0.17.144
     port: 9006
+    depool: true
   mwtask181:
     ip: 10.0.18.106
     port: 9006
