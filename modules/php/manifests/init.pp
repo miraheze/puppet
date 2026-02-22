@@ -3,7 +3,7 @@
 # Basic installation of php - only cli modules.
 #
 class php(
-    VMlib::Php_version $version               = lookup('php::php_version', {'default_value' => '8.2'}),
+    VMlib::Php_version $version               = lookup('php::php_version', {'default_value' => '8.4'}),
     VMlib::Ensure $ensure                     = present,
     Array[Php::Sapi] $sapis                   = ['cli'],
     Hash $config_by_sapi                      = {},
