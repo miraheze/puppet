@@ -39,6 +39,7 @@ class mediawiki {
     }
 
     if ($facts['os']['distro']['codename'] == 'trixie') {
+        stdlib::ensure_packages(['polkitd', 'pkexec'])
         file { '/etc/polkit-1/rules.d/90-mediawiki-shellbox.rules':
             ensure => present,
             source => 'puppet:///modules/mediawiki/polkit/90-mediawiki-shellbox.rules',
