@@ -3,7 +3,7 @@ class mediawiki::php (
     Float $fpm_workers_multiplier        = lookup('mediawiki::php::fpm::fpm_workers_multiplier', {'default_value' => 1.5}),
     Integer $request_timeout             = lookup('mediawiki::php::request_timeout', {'default_value' => 240}),
     String $apc_shm_size                 = lookup('mediawiki::php::apc_shm_size', {'default_value' => '3072M'}),
-    VMlib::Php_version $php_version      = lookup('php::php_version', {'default_value' => '8.2'}),
+    VMlib::Php_version $php_version      = lookup('php::php_version', {'default_value' => '8.4'}),
     Boolean $enable_fpm                  = lookup('mediawiki::php::enable_fpm', {'default_value' => true}),
     Boolean $enable_request_profiling    = lookup('mediawiki::php::enable_request_profiling', {'default_value' => false}),
     Optional[Hash] $fpm_config           = lookup('mediawiki::php::fpm_config', {default_value => undef}),
