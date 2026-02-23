@@ -1,6 +1,5 @@
 # === Class mediawiki
 class mediawiki {
-    include mediawiki::cgroup
     include mediawiki::favicons
     include mediawiki::logging
     include mediawiki::monitoring
@@ -38,12 +37,9 @@ class mediawiki {
         require            => Package['libjpeg-dev'],
     }
 
-    if ($facts['os']['distro']['codename'] == 'trixie') {
-        stdlib::ensure_packages(['polkitd', 'pkexec'])
-        file { '/etc/polkit-1/rules.d/90-mediawiki-shellbox.rules':
-            ensure => present,
-            source => 'puppet:///modules/mediawiki/polkit/90-mediawiki-shellbox.rules',
-        }
+    file { '/etc/polkit-1/rules.d/90-mediawiki-shellbox.rules':
+        ensure => present,
+        source => 'puppet:///modules/mediawiki/polkit/90-mediawiki-shellbox.rules',
     }
 
     file { [
