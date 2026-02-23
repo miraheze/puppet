@@ -384,7 +384,7 @@ def _patch_matches(patch: dict, repo: str, version: str) -> bool:
 
 def _apply_patches(repo: str, version: str = '') -> list[int]:
     exitcodes = []
-    is_git = os.path.isdir(os.path.join(repo, '.git'))
+    is_git = os.path.isdir(os.path.join(_get_staging_path(repo, version), '.git'))
 
     to_apply = [
         patch for patch in patches
