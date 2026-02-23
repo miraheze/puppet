@@ -356,6 +356,19 @@ def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bo
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} apply{extopt} {patchfile}'
 
 
+def _apply_patch_git(repo: str, patchfile: str, version: str) -> int:
+    check = run_command(_construct_git_apply(repo, patchfile, version, True))
+    if check == 0:
+        return run_command(_construct_git_apply(repo, patchfile, version))
+
+    return check
+
+
+def _apply_patch_plain(repo: str, patchfile: str) -> int:
+    # For non-git repos (like those installed via composer)
+    return run_command(f"sudo -u {DEPLOYUSER} patch -p1 -d {repo} -i {patchfile}")
+
+
 def _patch_matches(patch: dict, repo: str, version: str) -> bool:
     path = patch['path']
     staging_path = _get_staging_path(repo, version)
@@ -371,16 +384,28 @@ def _patch_matches(patch: dict, repo: str, version: str) -> bool:
 
 def _apply_patches(repo: str, version: str = '') -> list[int]:
     exitcodes = []
-    to_apply = [patch for patch in patches if _patch_matches(patch, repo, version)]
+    is_git = os.path.isdir(os.path.join(repo, '.git'))
+
+    to_apply = [
+        patch for patch in patches
+        if _patch_matches(patch, repo, version)
+    ]
+
     for patch in to_apply:
         visibility = 'public' if patch['public'] else 'private'
         patchfile = f"/srv/mediawiki-staging/patches/{visibility}/{patch['file']}"
+
         if not os.path.isfile(patchfile):
             print(f"WARNING: Patch file {patch['file']} could not be found!")
             continue
-        check = run_command(_construct_git_apply(repo, patchfile, version, True))
-        if check == 0:  # Handle bad codes here according to failureStrategy?
-            exitcodes.append(run_command(_construct_git_apply(repo, patchfile, version)))
+
+        if is_git:
+            code = _apply_patch_git(repo, patchfile, version)
+        else:
+            code = _apply_patch_plain(repo, patchfile)
+
+        if code == 0:  # Handle bad codes here according to failureStrategy?
+            exitcodes.append(code)
         else:
             print(f"ERROR: Could not apply patch {patch['file']}")
             if patch['failureStrategy'] == 'abort':
@@ -388,7 +413,7 @@ def _apply_patches(repo: str, version: str = '') -> list[int]:
                 sys.exit(1)
             else:
                 print('Skipping patch...')
-                continue
+
     return exitcodes
 
 
