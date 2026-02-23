@@ -4,13 +4,7 @@
 class imagemagick::install {
     stdlib::ensure_packages(['imagemagick', 'webp'])
 
-    if ($facts['os']['distro']['codename'] == 'trixie') {
-        $version = '7'
-    } else {
-        $version = '6'
-    }
-
-    file { "/etc/ImageMagick-${version}/policy.xml":
+    file { '/etc/ImageMagick-7/policy.xml':
         ensure  => present,
         owner   => 'root',
         group   => 'root',
