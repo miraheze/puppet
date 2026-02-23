@@ -32,7 +32,7 @@ mediawiki::php::fpm_config:
 role::mediawiki::php::restarts::ensure: present
 role::mediawiki::php::restarts::opcache_limit: 200
   
-php::php_version: '8.2'
+php::php_version: '8.4'
 
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 
