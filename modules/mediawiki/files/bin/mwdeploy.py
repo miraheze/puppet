@@ -364,9 +364,9 @@ def _apply_patch_git(repo: str, patchfile: str, version: str) -> int:
     return check
 
 
-def _apply_patch_plain(repo: str, patchfile: str) -> int:
+def _apply_patch_plain(repo: str, patchfile: str, version: str) -> int:
     # For non-git repos (like those installed via composer)
-    return run_command(f'sudo -u {DEPLOYUSER} patch -p1 -d {repo} -i {patchfile}')
+    return run_command(f'sudo -u {DEPLOYUSER} patch -p1 -d {_get_staging_path(repo, version)} -i {patchfile}')
 
 
 def _patch_matches(patch: dict, repo: str, version: str) -> bool:
@@ -402,7 +402,7 @@ def _apply_patches(repo: str, version: str = '') -> list[int]:
         if is_git:
             code = _apply_patch_git(repo, patchfile, version)
         else:
-            code = _apply_patch_plain(repo, patchfile)
+            code = _apply_patch_plain(repo, patchfile, version)
 
         if code == 0:  # Handle bad codes here according to failureStrategy?
             exitcodes.append(code)
