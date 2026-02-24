@@ -44,12 +44,7 @@ class RCBot(irc.IRCClient):
     irc_905 = irc_904
 
     def lineReceived(self, line):
-        # Attempt to decode incoming strings; if they are neither UTF-8 or
-        # CP1252 they will get mangled as whatever CP1252 thinks they are.
-        try:
-            line = line.decode('utf-8')
-        except UnicodeDecodeError:
-            line = line.decode('cp1252')
+        line = line.decode("utf-8", errors="replace")
         irc.IRCClient.lineReceived(self, line)
 
     def signedOn(self):
