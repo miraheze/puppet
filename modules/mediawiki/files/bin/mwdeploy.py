@@ -100,7 +100,7 @@ def get_valid_extensions(versions: list[str]) -> list[str]:
     for version in versions:
         extensions_path = f'/srv/mediawiki-staging/{version}/extensions/'
         with os.scandir(extensions_path) as extensions:
-            valid_extensions += [extension.name for extension in extensions if os.path.isdir(os.path.join(extension.path, '.git'))]
+            valid_extensions += [extension.name for extension in extensions if extension.is_dir()]
     return sorted(valid_extensions)
 
 
@@ -109,7 +109,7 @@ def get_valid_skins(versions: list[str]) -> list[str]:
     for version in versions:
         skins_path = f'/srv/mediawiki-staging/{version}/skins/'
         with os.scandir(skins_path) as skins:
-            valid_skins += [skin.name for skin in skins if os.path.isdir(os.path.join(skin.path, '.git'))]
+            valid_skins += [skin.name for skin in skins if skin.is_dir()]
     return sorted(valid_skins)
 
 
@@ -351,6 +351,10 @@ def _construct_reset_mediawiki_run_puppet() -> str:
     return 'sudo puppet agent -tv'
 
 
+def _is_git_repo(repo: str, version: str) -> bool:
+    return os.path.isdir(os.path.join(_get_staging_path(repo, version), '.git'))
+
+
 def _construct_git_apply(repo: str, patchfile: str, version: str = '', check: bool = False) -> str:
     extopt = ' --check' if check else ' --index'
     return f'sudo -u {DEPLOYUSER} git -C {_get_staging_path(repo, version)} apply{extopt} {patchfile}'
@@ -384,7 +388,7 @@ def _patch_matches(patch: dict, repo: str, version: str) -> bool:
 
 def _apply_patches(repo: str, version: str = '') -> list[int]:
     exitcodes = []
-    is_git = os.path.isdir(os.path.join(_get_staging_path(repo, version), '.git'))
+    is_git = _is_git_repo(repo, version)
 
     to_apply = [
         patch for patch in patches
@@ -546,7 +550,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
             if args.upgrade_vendor:
                 exitcodes.append(run_command(_construct_git_reset_hard('vendor', version=version)))
                 exitcodes.append(run_command(_construct_git_pull('vendor', submodules=True, version=version)))
-                exitcodes.extend(_apply_patches('vendor', version=version))
+                exitcodes.extend(_apply_patches('vendor', version))
                 if not args.world:
                     stage.append(f'sudo -u {DEPLOYUSER} http_proxy=http://bastion.fsslc.wtnet:8080 https_proxy=http://bastion.fsslc.wtnet:8080 composer update --no-dev --quiet')
                     rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/vendor/*', dest=f'/srv/mediawiki/{version}/vendor/'))
@@ -554,10 +558,17 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
 
             if args.upgrade_extensions:
                 for extension in args.upgrade_extensions:
-                    if not os.path.exists(_get_staging_path(f'extensions/{extension}', version)):
+                    repo = f'extensions/{extension}'
+                    if not _is_git_repo(repo, version):
+                        print(f'Upgrading {extension} using composer')
+                        exitcodes.extend(_apply_patches(repo, version))
+                        continue
+
+                    if not os.path.exists(_get_staging_path(repo, version)):
                         print(f'{extension} does not exist for {version}. Skipping...')
                         continue
-                    process = os.popen(_construct_git_pull(f'extensions/{extension}', submodules=True, quiet=False, version=version))
+
+                    process = os.popen(_construct_git_pull(repo, submodules=True, quiet=False, version=version))
                     output = process.read().strip()
                     status = process.close()
                     exitcode = 0
@@ -566,19 +577,19 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     exitcodes.append(exitcode)
                     if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
                         print(f'Upgrading {extension}')
-                        exitcodes.extend(_apply_patches(f'extensions/{extension}', version=version))
-                        for file in get_changed_files_type(f'extensions/{extension}', version, 'schema change'):
+                        exitcodes.extend(_apply_patches(repo, version))
+                        for file in get_changed_files_type(repo, version, 'schema change'):
                             if not args.skip_schema_confirm and extension not in warnings:
                                 warnings[extension] = True
                                 print('WARNING: upgrade contains schema changes.')
                                 try:
                                     if input('Type Y to confirm: ').upper() != 'Y':
-                                        exitcodes.append(run_command(_construct_git_reset_revert(f'extensions/{extension}', version)))
+                                        exitcodes.append(run_command(_construct_git_reset_revert(repo, version)))
                                         print('reverted')
                                         continue
-                                    newschema.append(f'/srv/mediawiki-staging/{version}/extensions/{extension}/{file}')
+                                    newschema.append(f'/srv/mediawiki-staging/{version}/{repo}/{file}')
                                 except KeyboardInterrupt:
-                                    run_command(_construct_git_reset_revert(f'extensions/{extension}', version))
+                                    run_command(_construct_git_reset_revert(repo, version))
                                     print('reverted')
                                     if tagsinfo:
                                         print('TAGS:')
@@ -591,12 +602,12 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                                     print('Operation aborted by user')
                                     sys.exit(1)
                         if args.show_tags:
-                            tags = get_change_tags(f'extensions/{extension}', version)
+                            tags = get_change_tags(repo, version)
                             if tags:
                                 tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
                         if not args.world:
-                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/extensions/{extension}/*', dest=f'/srv/mediawiki/{version}/extensions/{extension}/'))
-                            rsyncpaths.append(f'/srv/mediawiki/{version}/extensions/{extension}/')
+                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
+                            rsyncpaths.append(f'/srv/mediawiki/{version}/{repo}/')
                     elif exitcode == 0:
                         print(f'{extension} already up to date. Skipping...')
                     else:
@@ -604,10 +615,17 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
 
             if args.upgrade_skins:
                 for skin in args.upgrade_skins:
-                    if not os.path.exists(_get_staging_path(f'skins/{skin}', version)):
+                    repo = f'skins/{skin}'
+                    if not _is_git_repo(repo, version):
+                        print(f'Upgrading {skin} using composer')
+                        exitcodes.extend(_apply_patches(repo, version))
+                        continue
+
+                    if not os.path.exists(_get_staging_path(repo, version)):
                         print(f'{skin} does not exist for {version}. Skipping...')
                         continue
-                    process = os.popen(_construct_git_pull(f'skins/{skin}', quiet=False, version=version))
+
+                    process = os.popen(_construct_git_pull(repo, submodules=True, quiet=False, version=version))
                     output = process.read().strip()
                     status = process.close()
                     exitcode = 0
@@ -616,19 +634,19 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     exitcodes.append(exitcode)
                     if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
                         print(f'Upgrading {skin}')
-                        _apply_patches(f'skins/{skin}', version=version)
-                        for file in get_changed_files_type(f'skins/{skin}', version, 'schema change'):
+                        exitcodes.extend(_apply_patches(repo, version))
+                        for file in get_changed_files_type(repo, version, 'schema change'):
                             if not args.skip_schema_confirm and skin not in warnings:
                                 warnings[skin] = True
                                 print('WARNING: upgrade contains schema changes.')
                                 try:
                                     if input('Type Y to confirm: ').upper() != 'Y':
-                                        exitcodes.append(run_command(_construct_git_reset_revert(f'skins/{skin}', version)))
+                                        exitcodes.append(run_command(_construct_git_reset_revert(repo, version)))
                                         print('reverted')
                                         continue
-                                    newschema.append(f'/srv/mediawiki-staging/{version}/skins/{skin}/{file}')
+                                    newschema.append(f'/srv/mediawiki-staging/{version}/{repo}/{file}')
                                 except KeyboardInterrupt:
-                                    run_command(_construct_git_reset_revert(f'skins/{skin}', version))
+                                    run_command(_construct_git_reset_revert(repo, version))
                                     print('reverted')
                                     if tagsinfo:
                                         print('TAGS:')
@@ -641,12 +659,12 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                                     print('Operation aborted by user')
                                     sys.exit(1)
                         if args.show_tags:
-                            tags = get_change_tags(f'skins/{skin}', version)
+                            tags = get_change_tags(repo, version)
                             if tags:
                                 tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
                         if not args.world:
-                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/skins/{skin}/*', dest=f'/srv/mediawiki/{version}/skins/{skin}/'))
-                            rsyncpaths.append(f'/srv/mediawiki/{version}/skins/{skin}/')
+                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
+                            rsyncpaths.append(f'/srv/mediawiki/{version}/{repo}/')
                     elif exitcode == 0:
                         print(f'{skin} already up to date. Skipping...')
                     else:
