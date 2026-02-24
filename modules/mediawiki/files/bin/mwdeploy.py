@@ -562,6 +562,9 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     if not _is_git_repo(repo, version):
                         print(f'Upgrading {extension} using composer')
                         exitcodes.extend(_apply_patches(repo, version))
+                        if not args.world:
+                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
+                            rsyncpaths.append(f'/srv/mediawiki/{version}/{repo}/')
                         continue
 
                     if not os.path.exists(_get_staging_path(repo, version)):
@@ -619,6 +622,9 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     if not _is_git_repo(repo, version):
                         print(f'Upgrading {skin} using composer')
                         exitcodes.extend(_apply_patches(repo, version))
+                        if not args.world:
+                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
+                            rsyncpaths.append(f'/srv/mediawiki/{version}/{repo}/')
                         continue
 
                     if not os.path.exists(_get_staging_path(repo, version)):
