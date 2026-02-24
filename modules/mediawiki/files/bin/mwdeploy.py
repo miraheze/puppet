@@ -560,7 +560,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 for extension in args.upgrade_extensions:
                     repo = f'extensions/{extension}'
                     if not _is_git_repo(repo, version):
-                        print(f'Upgrading {extension} using composer')
+                        print(f'Upgrading {extension}')
                         exitcodes.extend(_apply_patches(repo, version))
                         if not args.world:
                             rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
@@ -620,7 +620,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 for skin in args.upgrade_skins:
                     repo = f'skins/{skin}'
                     if not _is_git_repo(repo, version):
-                        print(f'Upgrading {skin} using composer')
+                        print(f'Upgrading {skin}')
                         exitcodes.extend(_apply_patches(repo, version))
                         if not args.world:
                             rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
