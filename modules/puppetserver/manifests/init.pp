@@ -80,13 +80,22 @@ class puppetserver(
     }
 
     git::clone { 'mediawiki-repos':
-        ensure             => latest,
-        directory          => '/etc/puppetlabs/puppet/mediawiki-repos',
-        origin             => 'git@github.com:miraheze/mediawiki-repos',
-        ssh                => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.fsslc.wtnet:8080 %h %p\'',
-        recurse_submodules => true,
-        require            => [
+        ensure    => latest,
+        directory => '/etc/puppetlabs/puppet/mediawiki-repos',
+        origin    => 'https://github.com/miraheze/mediawiki-repos',
+        owner     => 'puppet',
+        group     => 'puppet',
+        require   => Package['openvox-agent'],
+    }
+
+    git::clone { 'mediawiki-patches-private':
+        ensure    => latest,
+        directory => '/etc/puppetlabs/puppet/mediawiki-repos/patches/private',
+        origin    => 'git@github.com:miraheze/mediawiki-patches-private',
+        ssh       => 'ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand=\'nc -X connect -x bastion.fsslc.wtnet:8080 %h %p\'',
+        require  => [
             Package['openvox-agent'],
+            Git::Clone['mediawiki-repos'],
             File['/var/lib/nagios/id_ed25519'],
             File['/var/lib/nagios/id_ed25519.pub'],
         ],
