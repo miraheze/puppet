@@ -43,6 +43,10 @@ class RCBot(irc.IRCClient):
         self.quit('')
     irc_905 = irc_904
 
+    def lineReceived(self, line):
+        line = line.decode("utf-8", errors="replace")
+        irc.IRCClient.lineReceived(self, line)
+
     def signedOn(self):
         global recver
         self.join(self.channel)
