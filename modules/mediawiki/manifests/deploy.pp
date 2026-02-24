@@ -91,7 +91,7 @@ class mediawiki::deploy {
         owner   => 'www-data',
         group   => 'www-data',
         mode    => '0644',
-        source  => 'puppet:///private/mediawiki/patches/private.json',
+        source  => 'puppet:///mediawiki-repos/patches/private/private.json',
         require => File['/srv/mediawiki-staging/patches'],
     }
 
@@ -110,7 +110,8 @@ class mediawiki::deploy {
         owner   => 'www-data',
         group   => 'www-data',
         mode    => '0700',
-        source  => 'puppet:///private/mediawiki/patches/private',
+        source  => 'puppet:///mediawiki-repos/patches/private',
+        recurse => true,
         require => File['/srv/mediawiki-staging/patches'],
     }
 
