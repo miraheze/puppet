@@ -370,7 +370,7 @@ def _apply_patch_git(repo: str, patchfile: str, version: str) -> int:
 
 def _apply_patch_plain(repo: str, patchfile: str, version: str) -> int:
     # For non-git repos (like those installed via composer)
-    return run_command(f'sudo -u {DEPLOYUSER} patch -p1 -d {_get_staging_path(repo, version)} -i {patchfile}')
+    return run_command(f'sudo -u {DEPLOYUSER} patch -p1 -N -d {_get_staging_path(repo, version)} -i {patchfile}')
 
 
 def _patch_matches(patch: dict, repo: str, version: str) -> bool:
