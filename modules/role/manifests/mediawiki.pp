@@ -5,9 +5,6 @@ class role::mediawiki (
 ) {
     include base
 
-    # doesn't install on bookworm
-    # include prometheus::exporter::cadvisor
-
     if $use_mcrouter {
         include role::mediawiki::mcrouter
     } else {
