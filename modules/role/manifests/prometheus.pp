@@ -313,6 +313,14 @@ class role::prometheus {
         'file_sd_configs' => [
           { 'files' => [ 'targets/statsd_exporter.yaml' ] },
         ],
+        'metric_relabel_configs' => [
+          # Very high cardinality
+          {
+            'action'        => 'drop',
+            'source_labels' => [ '__name__' ],
+            'regex'         => 'mediawiki_action_api_modules_latency_.*',
+          },
+        ],
       },
     ]
 
