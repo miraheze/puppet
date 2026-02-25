@@ -109,7 +109,7 @@ class mediawiki::deploy {
         ensure  => 'directory',
         owner   => 'www-data',
         group   => 'www-data',
-        mode    => '0700',
+        mode    => '0755',
         source  => 'puppet:///mediawiki-repos/patches/private/patches',
         recurse => true,
         require => File['/srv/mediawiki-staging/patches'],
