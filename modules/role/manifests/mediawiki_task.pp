@@ -6,9 +6,6 @@ class role::mediawiki_task (
     include base
     include role::mathoid
 
-    # doesn't install on bookworm
-    # include prometheus::exporter::cadvisor
-
     if $use_mcrouter {
         include role::mediawiki::mcrouter
     } else {

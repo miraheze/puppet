@@ -61,23 +61,6 @@ class role::prometheus {
         port   => 9091,
     }
 
-    $cadvisor_job = [
-        {
-            'job_name'        => 'cadvisor',
-            'file_sd_configs' => [
-                {
-                    'files' => [ 'targets/cadvisor.yaml' ]
-                }
-            ]
-        }
-    ]
-
-    prometheus::class { 'cadvisor':
-        dest   => '/etc/prometheus/targets/cadvisor.yaml',
-        module => 'Prometheus::Exporter::Cadvisor',
-        port   => 4194,
-    }
-
     $fpm_job = [
         {
             'job_name' => 'fpm',
@@ -332,8 +315,8 @@ class role::prometheus {
         'metric_relabel_configs' => [
           # Very high cardinality
           {
+            'action'        => 'labeldrop',
             'source_labels' => [ 'path' ],
-            'action' => 'labeldrop',
           },
         ],
       },
@@ -403,8 +386,8 @@ class role::prometheus {
             $blackbox_jobs, $fpm_job, $redis_job, $mariadb_job, $nginx_job,
             $apache_job, $puppetserver_job, $puppetdb_job, $memcached_job,
             $openldap_job, $elasticsearch_job, $statsd_exporter_job,
-            $varnish_job, $cadvisor_job, $pushgateway_job, $kafka_job,
-            $eventgate_job, $kafka_burrow_jobs, $cloudflare_job, $cache_haproxy_job,
+            $varnish_job, $pushgateway_job, $kafka_job, $eventgate_job,
+            $kafka_burrow_jobs, $cloudflare_job, $cache_haproxy_job,
             $php_mediawiki_job
         ].flatten,
     }

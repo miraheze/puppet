@@ -11,9 +11,6 @@ class role::mediawiki_beta (
     include role::redis
     include mediawiki::jobqueue::chron
 
-    # doesn't install on bookworm
-    # include prometheus::exporter::cadvisor
-
     if $use_mcrouter {
         include role::mediawiki::mcrouter
     } else {
