@@ -400,7 +400,7 @@ def _apply_patches(repo: str, version: str = '') -> list[int]:
         patchfile = f"/srv/mediawiki-staging/patches/{visibility}/{patch['file']}"
 
         if not os.path.isfile(patchfile):
-            print(f"WARNING: Patch file {patch['file']} could not be found!")
+            print(f'WARNING: Patch file {patchfile} could not be found!')
             continue
 
         if is_git:
