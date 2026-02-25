@@ -225,7 +225,6 @@ class role::prometheus {
         }
     ]
 
-
     $kafka_job = [
         {
             'job_name'        => 'kafka',
@@ -329,6 +328,13 @@ class role::prometheus {
         'scheme'          => 'http',
         'file_sd_configs' => [
           { 'files' => [ 'targets/statsd_exporter.yaml' ] },
+        ],
+        'metric_relabel_configs' => [
+          # Very high cardinality
+          {
+            'source_labels' => [ 'path' ],
+            'action' => 'labeldrop',
+          },
         ],
       },
     ]
