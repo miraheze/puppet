@@ -5,8 +5,7 @@ class puppetdb::database(
     Optional[String] $master = undef
 ) {
     $pgversion = $facts['os']['distro']['codename'] ? {
-        'bookworm' => '15',
-        'trixie'   => '17',
+        'trixie' => '17',
     }
 
     $puppetdb_pass = lookup('puppetdb::password::rw')
