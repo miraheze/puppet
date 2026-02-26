@@ -16,8 +16,8 @@ class mattermost::params {
   $create_group = true
   $user = 'mattermost'
   $group = 'mattermost'
-  $uid = '1500'
-  $gid = '1500'
+  $uid = 1500
+  $gid = 1500
   $override_options = {}
   $override_env_options = {}
   $manage_data_dir = true
