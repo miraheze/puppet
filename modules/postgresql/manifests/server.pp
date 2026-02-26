@@ -33,9 +33,6 @@ class postgresql::server(
 ) {
 
     case $facts['os']['distro']['codename'] {
-        'bookworm': {
-            $_pgversion_default = 15
-        }
         'trixie': {
             $_pgversion_default = 17
         }
