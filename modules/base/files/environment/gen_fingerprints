@@ -64,7 +64,7 @@ while read -r host_key; do
         echo "$cipher" SHA-256 "${ALGOS[sha256]}" | tablize
         echo "$LINE"
     fi
-done < <(awk '/^HostKey/ {sub(/^HostKey\s+/,"");print $0".pub"};' $SSHD_CONFIG)
+done < <(awk '/^HostKey/ {sub(/^HostKey[[:space:]]+/,"");print $0".pub"};' $SSHD_CONFIG)
 
 echo
 for line in "${ASCII[@]}"; do
