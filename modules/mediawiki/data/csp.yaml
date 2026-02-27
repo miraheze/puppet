@@ -242,6 +242,7 @@ connect-src:
   - '*.wikinews.org'
   - '*.wiktionary.org'
   - 'cdn.jsdelivr.net'
+  - 'fastly.jsdelivr.net'
   - 'storage.googleapis.com'
   - '*.youtube-nocookie.com'
   - 'hcaptcha.com'
