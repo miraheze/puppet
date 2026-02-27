@@ -320,8 +320,8 @@ class role::prometheus {
             'regex'         => 'mediawiki_action_api_modules_latency_.*',
           },
           {
-            'action'        => 'labeldrop',
-            'source_labels' => [ 'path' ],
+            'action' => 'labeldrop',
+            'regex'  => 'path',
           },
         ],
       },
