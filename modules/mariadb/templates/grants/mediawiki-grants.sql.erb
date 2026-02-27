@@ -48,6 +48,16 @@ GRANT USAGE
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
     on `%cargo`.* TO 'cargouser2024'@'%';
 
+-- Grants for 'bucketuser'@''
+
+GRANT USAGE
+    ON *.* TO 'bucketuser2026'@'%'
+    IDENTIFIED BY '<%= @bucketuser_password %>'
+    WITH MAX_STATEMENT_TIME 600;
+
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
+    ON `%wiki%`.* TO 'bucketuser2026'@'%';
+
 -- Grants for 'wikiadmin'@''
 
 GRANT USAGE
