@@ -323,6 +323,11 @@ class role::prometheus {
             'action' => 'labeldrop',
             'regex'  => 'path',
           },
+          # Can remove once on MediaWiki 1.46
+          {
+            'action' => 'labeldrop',
+            'regex'  => 'wiki',
+          },
         ],
       },
     ]
