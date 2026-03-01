@@ -13,7 +13,7 @@ class role::db (
     include mariadb::packages
     include prometheus::exporter::mariadb
 
-    if ( $is_beta_db ) {
+    if ($is_beta_db) {
         $mediawiki_password = lookup('passwords::db::mediawiki_beta')
         $wikiadmin_password = lookup('passwords::db::wikiadmin_beta')
     } else {
@@ -71,28 +71,29 @@ class role::db (
         content => template('mariadb/grants/reports-grants.sql.erb'),
     }
 
-    if ( $is_beta_db ) {
-        $query_classes = 'Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]'
+    if ($is_beta_db) {
+        $subquery = @("PQL")
+        (resources { type = 'Class' and title = 'Role::Db' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
+        resources { type = 'Class' and title = 'Role::Icinga2' } or
+        resources { type = 'Class' and title = 'Role::Phorge' } or
+        resources { type = 'Class' and title = 'Role::Matomo' } or
+        resources { type = 'Class' and title = 'Role::Reports' })
+        | PQL
     } else {
-        $query_classes = 'Class[Role::Db] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Icinga2] or Class[Role::Phorge] or Class[Role::Matomo] or Class[Role::Reports]'
+        $subquery = @("PQL")
+        (resources { type = 'Class' and title = 'Role::Db' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+        resources { type = 'Class' and title = 'Role::Icinga2' } or
+        resources { type = 'Class' and title = 'Role::Phorge' } or
+        resources { type = 'Class' and title = 'Role::Matomo' } or
+        resources { type = 'Class' and title = 'Role::Reports' })
+        | PQL
     }
-
-    $firewall_rules_str = join(
-        query_facts($query_classes, ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $firewall_srange = vmlib::generate_firewall_ip($subquery)
     ferm::service { 'mariadb':
         proto   => 'tcp',
         port    => '3306',
@@ -126,7 +127,7 @@ class role::db (
     }
 
     # Backups
-    if $backup_sql {
+    if ($backup_sql) {
         $monthday_1 = fqdn_rand(13, 'sql-backups') + 1
         $monthday_15 = fqdn_rand(13, 'sql-backups') + 15
         backup::job { 'sql':
