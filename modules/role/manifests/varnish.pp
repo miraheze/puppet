@@ -24,7 +24,10 @@ class role::varnish (
         resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
         resources { type = 'Class' and title = 'Role::Icinga2' })
         | PQL
-        $cloudflare_firewall_rule = $cloudflare_ipv4 + $cloudflare_ipv6 + vmlib::generate_firewall_ip($subquery)
+        $cf_ip = join($cloudflare_ipv4 + $cloudflare_ipv6, ' ')
+        $ip = vmlib::generate_firewall_ip($subquery)
+        $cloudflare_firewall_rule = "${cf_ip} ${ip}"
+
         ferm::service { 'http':
             proto   => 'tcp',
             port    => '80',
