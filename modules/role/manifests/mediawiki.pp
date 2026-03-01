@@ -23,7 +23,7 @@ class role::mediawiki (
         resources { type = 'Class' and title = 'Role::Prometheus' } or
         resources { type = 'Class' and title = 'Role::Bastion' })
         | PQL
-        $firewall_srange = vmlib::generate_firewall_ip($subquery)
+        $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
         ferm::service { 'http':
             proto   => 'tcp',
