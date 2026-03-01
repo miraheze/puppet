@@ -19,7 +19,7 @@ class role::cache::cache (
         $cf_ip = join($cloudflare_ipv4 + $cloudflare_ipv6, ' ')
         $ip = vmlib::generate_firewall_ip($subquery)
         $cloudflare_firewall_rule = "${cf_ip} ${ip}"
-        
+
         ferm::service { 'http':
             proto   => 'tcp',
             port    => '80',
