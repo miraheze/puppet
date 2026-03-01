@@ -101,7 +101,9 @@ class role::mattermost {
     $subquery_2 = @("PQL")
     resources { type = 'Class' and title = 'Role::Icinga2' }
     | PQL
-    $firewall_rules_cloudflare_str = $cloudflare_ipv4 + $cloudflare_ipv6 + vmlib::generate_firewall_ip($subquery_2)
+    $cf_ip = join($cloudflare_ipv4 + $cloudflare_ipv6, ' ')
+    $ip = vmlib::generate_firewall_ip($subquery_2)
+    $firewall_rules_cloudflare_str = "${cf_ip} ${ip}"
 
     ferm::service { 'http':
         proto   => 'tcp',
