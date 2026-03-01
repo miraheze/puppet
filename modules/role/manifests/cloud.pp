@@ -7,16 +7,19 @@ class role::cloud {
     $subquery = @("PQL")
     resources { type = 'Class' and title = 'Role::Cloud' }
     | PQL
-    $firewall_rules_str = puppetdb::query_facts(
-        ['networking'],
-        $subquery
-    ).values.map |$_facts| {
-        if ( $_facts['networking']['interfaces']['vmbr1'] ) {
-            "${_facts['networking']['interfaces']['vmbr1']['ip']} ${_facts['networking']['ip']} ${_facts['networking']['ip6']}"
-        } else {
-            "${_facts['networking']['ip']} ${_facts['networking']['ip6']}"
-        }
-    }.flatten.sort.unique
+    $firewall_rules_str = join(
+        puppetdb::query_facts(
+            ['networking'],
+            $subquery
+        ).values.map |$_facts| {
+            if ( $_facts['networking']['interfaces']['vmbr1'] ) {
+                "${_facts['networking']['interfaces']['vmbr1']['ip']} ${_facts['networking']['ip']} ${_facts['networking']['ip6']}"
+            } else {
+                "${_facts['networking']['ip']} ${_facts['networking']['ip6']}"
+            }
+        }.flatten.sort.unique,
+        ' '
+    )
 
     ferm::service { 'proxmox port 5900:5999':
         proto  => 'tcp',
