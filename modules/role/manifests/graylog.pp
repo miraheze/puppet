@@ -38,22 +38,15 @@ class role::graylog {
     }
 
     # Access is restricted: https://meta.miraheze.org/wiki/Tech:Graylog#Access
-    $firewall_http_rules_str = join(
-        query_facts('Class[Role::Bastion] or Class[Role::Mediawiki] or Class[Role::Mediawiki_beta] or Class[Role::Mediawiki_task] or Class[Role::Icinga2] or Class[Role::Prometheus]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Bastion' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki_task' }
+    resources { type = 'Class' and title = 'Role::Icinga2' }
+    resources { type = 'Class' and title = 'Role::Prometheus' })
+    | PQL
+    $firewall_http_rules_str = vmlib::generate_firewall_ip($subquery)
     ferm::service { 'access graylog 443':
         proto  => 'tcp',
         port   => '443',
@@ -61,45 +54,20 @@ class role::graylog {
     }
 
     # syslog-ng > graylog 12210/tcp
-    $firewall_syslog_rules_str = join(
-        query_facts('Class[Base]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery_2 = @("PQL")
+    resources { type = 'Class' and title = 'Base' }
+    | PQL
+    $firewall_syslog_rules_str = vmlib::generate_firewall_ip($subquery_2)
     ferm::service { 'graylog 12210':
         proto  => 'tcp',
         port   => '12210',
         srange => "(${firewall_syslog_rules_str})",
     }
 
-
-    $firewall_icinga_rules_str = join(
-        query_facts('Class[Role::Icinga2]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery_3 = @("PQL")
+    resources { type = 'Class' and title = 'Role::Icinga2' }
+    | PQL
+    $firewall_icinga_rules_str = vmlib::generate_firewall_ip($subquery_3)
     ferm::service { 'graylog 12201':
         proto  => 'tcp',
         port   => '12201',

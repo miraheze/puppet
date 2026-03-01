@@ -11,22 +11,7 @@ class role::bastion {
         port  => '22',
     }
 
-    $squid_access_hosts_str = join(
-        query_facts('', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $squid_access_hosts_str = vmlib::generate_firewall_ip()
 
     # Add entire 10.0.0.0/8 (internal network) range and
     # remove individual private IPs.
