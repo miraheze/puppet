@@ -23,7 +23,7 @@ class role::mediawiki_beta (
         $subquery = @("PQL")
         (resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
         resources { type = 'Class' and title = 'Role::Varnish' } or
-        resources { type = 'Class' and title = 'Role::Cache::Cache]' } or
+        resources { type = 'Class' and title = 'Role::Cache::Cache' } or
         resources { type = 'Class' and title = 'Role::Icinga2' } or
         resources { type = 'Class' and title = 'Role::Prometheus' } or
         resources { type = 'Class' and title = 'Role::Bastion' })
