@@ -10,10 +10,9 @@ class role::phorge {
     resources { type = 'Class' and title = 'Role::Cache::Cache' } or
     resources { type = 'Class' and title = 'Role::Icinga2' })
     | PQL
-    $firewall_rules_str = join(
-        $cloudflare_ipv4 + $cloudflare_ipv6,
-        ' '
-    ) + ' ' + vmlib::generate_firewall_ip($subquery)
+    $cf_ip = join($cloudflare_ipv4 + $cloudflare_ipv6, ' ')
+    $ip = vmlib::generate_firewall_ip($subquery)
+    $firewall_rules_str = "${cf_ip} ${ip}"
 
     ferm::service { 'http':
         proto   => 'tcp',
