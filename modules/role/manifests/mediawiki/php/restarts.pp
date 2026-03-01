@@ -27,8 +27,13 @@ class role::mediawiki::php::restarts (
     }
   }
 
-  $mediawiki_hosts = query_facts("Class['Role::Mediawiki']", ['networking'])
-  $mediawiki_nodes = $mediawiki_hosts.keys().flatten().unique().sort()
+  $subquery = @("PQL")
+  resources { type = 'Class' and title = 'Role::Mediawiki' }
+  | PQL
+  $mediawiki_nodes = puppetdb::query_facts(
+    ['networking'],
+    $subquery
+  ).keys().flatten.sort.unique
 
   $varnish_totp_secret = lookup('passwords::varnish::varnish_totp_secret')
   file { '/usr/local/bin/safe-service-restart':
