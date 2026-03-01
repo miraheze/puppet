@@ -22,7 +22,7 @@ define base::safe_service_restart(
     $cache_nodes = puppetdb::query_facts(
         ['networking'],
         $subquery
-    ).values.map |$_facts| {
+    ).values().map |$_facts| {
         $_facts['networking']['fqdn']
     }.flatten.sort.unique
 
