@@ -93,7 +93,7 @@ class role::db (
         resources { type = 'Class' and title = 'Role::Reports' })
         | PQL
     }
-    $firewall_srange = vmlib::generate_firewall_ip($subquery)
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     ferm::service { 'mariadb':
         proto   => 'tcp',
         port    => '3306',
