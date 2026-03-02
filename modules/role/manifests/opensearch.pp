@@ -180,22 +180,15 @@ class role::opensearch (
 
         ssl::wildcard { 'opensearch wildcard': }
 
-        $firewall_rules_str = join(
-            query_facts('Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Graylog] or Class[Role::Opensearch]', ['networking'])
-            .map |$key, $value| {
-                if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                    "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-                } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                    "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-                } else {
-                    "${value['networking']['ip']} ${value['networking']['ip6']}"
-                }
-            }
-            .flatten()
-            .unique()
-            .sort(),
-            ' '
-        )
+        $subquery = @("PQL")
+        (resources { type = 'Class' and title = 'Role::Mediawiki' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+        resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
+        resources { type = 'Class' and title = 'Role::Icinga2' } or
+        resources { type = 'Class' and title = 'Role::Graylog' } or
+        resources { type = 'Class' and title = 'Role::Opensearch' })
+        | PQL
+        $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
         ferm::service { 'opensearch ssl':
             proto  => 'tcp',
             port   => '443',
@@ -207,22 +200,10 @@ class role::opensearch (
         include prometheus::exporter::elasticsearch
     }
 
-    $firewall_os_nodes = join(
-        query_facts('Class[Role::Opensearch]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery_2 = @("PQL")
+    resources { type = 'Class' and title = 'Role::Opensearch' }
+    | PQL
+    $firewall_os_nodes = vmlib::generate_firewall_ip($subquery_2)
     ferm::service { 'opensearch data nodes to manager':
         proto  => 'tcp',
         port   => '9200',
