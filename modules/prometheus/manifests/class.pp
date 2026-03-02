@@ -3,7 +3,14 @@ define prometheus::class (
     String $module,
     Integer $port,
 ) {
-    $servers = query_nodes("Class[${module}] or Define[${module}]")
+    $pdb_query = @("PQL")
+        nodes[certname] {
+            (resources {type = "Class" and title = "${module}"} or
+            resources {type = "Define" and title = "${module}"} or)
+            order by certname
+        }
+    | PQL
+    $servers = puppetdb_query($pdb_query).map |$x| { $x['certname'] }
         .flatten()
         .unique()
         .sort()
