@@ -207,7 +207,13 @@ class monitoring (
     $redirects = loadyaml('/etc/puppetlabs/puppet/ssl-cert/redirects.yaml')
     $sslcerts = $ssl + $redirects
 
-    $servers = query_nodes('Class[Role::Mediawiki]')
+    $pdb_query = @("PQL")
+        nodes[certname] {
+            resources {type = "Class" and title = "Role::Mediawiki"}
+            order by certname
+        }
+    | PQL
+    $servers = vmlib::puppetdb_query($pdb_query).map |$x| { $x['certname'] }
         .flatten()
         .unique()
         .sort()
