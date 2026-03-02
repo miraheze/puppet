@@ -17,10 +17,10 @@ class role::eventgate {
         notrack => true,
     }
 
-    $subquery = @("PQL")
+    $subquery_2 = @("PQL")
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
-    $firewall_rules_prometheus_str = vmlib::generate_firewall_ip($subquery)
+    $firewall_rules_prometheus_str = vmlib::generate_firewall_ip($subquery_2)
     ferm::service { 'eventgate-prometheus':
         proto   => 'tcp',
         port    => '9102',
