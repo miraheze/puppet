@@ -39,7 +39,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [blankeclair, macfan, oa, petramagna, skye]
+    members: [blankeclair, macfan, oa, petramagna, skye, wwr]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -50,7 +50,7 @@ groups:
   mediawiki-test-admins:
     gid: 2007
     description: sudo on the MediaWiki test server
-    members: []
+    members: [wwr]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.4-fpm *',
@@ -243,3 +243,11 @@ users:
     name: PetraMagna
     realname: PetraMagna
     ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMJ2P83EMNaymM0IARjHKHSmYSVH2XnB9Zn9VQrwcHdb petramagna]
+  wwr:
+    ensure: present
+    uid: 1026
+    name: WWR
+    realname: TheWWRNerdGuy
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHAdu5/IGuxAZP/RgteTGfkx3/sfS5q8asB9pv+dSFMS wwr@linuxmint
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEA03LUbyQibJSlJM0XQSl6agA/GHWkoXz/WWAv9Ft3a wwr@wsl
