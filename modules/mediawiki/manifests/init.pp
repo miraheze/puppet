@@ -2,10 +2,7 @@
 class mediawiki {
     include mediawiki::favicons
     include mediawiki::logging
-
-    # We have to use "class" over "include"
-    class { 'mediawiki::monitoring': }
-
+    include mediawiki::monitoring
     include mediawiki::nginx
     include mediawiki::packages
     include mediawiki::php
