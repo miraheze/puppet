@@ -213,7 +213,7 @@ class monitoring (
             order by certname
         }
     | PQL
-    $servers = vmlib::puppetdb_query($pdb_query).map |$x| { $x['certname'] }
+    $servers = puppetdb_query($pdb_query).map |$x| { $x['certname'] }
         .flatten()
         .unique()
         .sort()
