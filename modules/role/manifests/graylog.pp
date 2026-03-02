@@ -42,8 +42,8 @@ class role::graylog {
     (resources { type = 'Class' and title = 'Role::Bastion' } or
     resources { type = 'Class' and title = 'Role::Mediawiki' } or
     resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
-    resources { type = 'Class' and title = 'Role::Mediawiki_task' }
-    resources { type = 'Class' and title = 'Role::Icinga2' }
+    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+    resources { type = 'Class' and title = 'Role::Icinga2' } or
     resources { type = 'Class' and title = 'Role::Prometheus' })
     | PQL
     $firewall_http_rules_str = vmlib::generate_firewall_ip($subquery)
