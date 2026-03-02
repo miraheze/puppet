@@ -6,7 +6,7 @@ define prometheus::class (
     $pdb_query = @("PQL")
         nodes[certname] {
             (resources {type = "Class" and title = "${module}"} or
-            resources {type = "Define" and title = "${module}"} or)
+            resources {type = "Define" and title = "${module}"})
             order by certname
         }
     | PQL
