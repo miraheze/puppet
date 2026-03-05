@@ -55,7 +55,7 @@ class SASL(AbstractAuth):
 
     def __init__(self, *args, **kwargs):
         super(SASL, self).__init__(*args, **kwargs)
-        self.ircobj._on_connect = self._handle_connect
+        self.reactor._on_connect = self._handle_connect
 
         for event in ['cap', 'authenticate', '903', '908', 'welcome']:
             logger.debug('Registering for %s', event)
