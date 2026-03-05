@@ -39,6 +39,11 @@ class role::cloud {
         srange => "(${firewall_rules_str})",
     }
 
+    ferm::service { 'cloud-ssh':
+        proto => 'tcp',
+        port  => '22',
+    }
+
     system::role { 'cloud':
         description => 'Proxmox host',
     }
