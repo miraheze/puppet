@@ -55,7 +55,8 @@ class cpupower(
         }
 
         systemd::service { 'cpufrequtils':
-            ensure => absent,
+            ensure  => absent,
+            content => '',
         }
     }
 }
