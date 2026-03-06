@@ -197,6 +197,7 @@ swift::storage::devices:
   - swiftobject181
   - swiftobject191
   - swiftobject201
+  - swiftobject211
 
 role::mediawiki::mcrouter::shards:
   wikitide:
