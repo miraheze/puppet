@@ -29,7 +29,7 @@ class cpupower(
 
         file { '/usr/libexec/cpupower':
             ensure => $ensure,
-            source => 'puppet:///modules/cpufrequtils/cpupower.sh',
+            source => 'puppet:///modules/cpupower/cpupower.sh',
             mode   => '0555',
         }
 
