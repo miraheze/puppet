@@ -1,8 +1,8 @@
 # class: role::cloud
 class role::cloud {
-    include ::cloud
+    include cloud
 
-    class { '::cpufrequtils': }
+    class { 'cpupower': }
 
     $subquery = @("PQL")
     resources { type = 'Class' and title = 'Role::Cloud' }
