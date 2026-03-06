@@ -52,7 +52,6 @@ class cpupower(
         file { '/etc/default/cpufrequtils':
             ensure  => absent,
             content => "GOVERNOR=${governor}\n",
-            require => Package['cpufrequtils'],
         }
 
         service { 'cpufrequtils':
