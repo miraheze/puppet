@@ -13,7 +13,7 @@
 #
 class cpupower(
     VMlib::Ensure $ensure = 'present',
-    String $governor = 'performance'
+    String $governor = 'performance',
 ) {
     unless $facts['is_virtual'] {
         stdlib::ensure_packages('linux-cpupower')
@@ -46,7 +46,7 @@ class cpupower(
         exec { 'cpupower_reload':
             unless  => "/usr/bin/cpupower frequency-info -p | /bin/grep -wq ${governor}",
             command => '/usr/bin/systemctl restart cpupower',
-            require => File['/etc/default/cpupower']
+            require => File['/etc/default/cpupower'],
         }
     }
 }
