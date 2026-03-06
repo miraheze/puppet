@@ -48,15 +48,5 @@ class cpupower(
             command => '/usr/bin/systemctl restart cpupower',
             require => File['/etc/default/cpupower'],
         }
-
-        file { '/etc/default/cpufrequtils':
-            ensure  => absent,
-            content => "GOVERNOR=${governor}\n",
-        }
-
-        systemd::service { 'cpufrequtils':
-            ensure  => absent,
-            content => '',
-        }
     }
 }
