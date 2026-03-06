@@ -23,6 +23,12 @@ import ib3_auth
 import irc.client  # for exceptions.
 from irc.bot import SingleServerIRCBot
 
+# HACK: Add support for message-tags not present in current version of irc.client
+irc.client._rfc_1459_command_regexp = re.compile((
+    "^(@(?P<tags>[^ ]*) )?(:(?P<prefix>[^ ]+) +)?"
+    "(?P<command>[^ ]+)( *(?P<argument> .+))?"
+))
+
 logging.basicConfig()
 logger = logging.getLogger()
 
