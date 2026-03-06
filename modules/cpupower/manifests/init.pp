@@ -54,7 +54,7 @@ class cpupower(
             content => "GOVERNOR=${governor}\n",
         }
 
-        service { 'cpufrequtils':
+        systemd::service { 'cpufrequtils':
             ensure => absent,
         }
     }
