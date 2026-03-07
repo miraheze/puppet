@@ -3,6 +3,7 @@
 // Database passwords
 $wgDBadminpassword = '<%= @wikiadmin_password %>';
 $wgDBpassword = '<%= @mediawiki_password %>';
+$wgBucketDBpassword = '<%= @bucketuser_password %>';
 
 // Redis AUTH password
 $wmgRedisPassword = '<%= @redis_password %>';
