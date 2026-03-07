@@ -191,7 +191,6 @@ role::swift::stats_reporter_host: swiftproxy171.fsslc.wtnet
 
 role::swift::expirer_host: 'swiftobject151.fsslc.wtnet'
 swift::storage::devices:
-  - swiftobject151
   - swiftobject161
   - swiftobject171
   - swiftobject181
