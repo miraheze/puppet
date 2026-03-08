@@ -39,7 +39,7 @@ groups:
   bastion:
     gid: 2005
     description: users who require bastion access
-    members: [blankeclair, macfan, oa, petramagna, skye, wwr]
+    members: [blankeclair, macfan, oa, petramagna, pixldev, skye, wwr]
     privileges: []
   ssl-admins:
     gid: 2006
@@ -50,7 +50,7 @@ groups:
   mediawiki-test-admins:
     gid: 2007
     description: sudo on the MediaWiki test server
-    members: [wwr]
+    members: [pixldev, wwr]
     privileges: ['ALL = (www-data) NOPASSWD: ALL',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service nginx *',
                  'ALL = (ALL) NOPASSWD: /usr/sbin/service php8.4-fpm *',
@@ -249,3 +249,11 @@ users:
     ssh_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHAdu5/IGuxAZP/RgteTGfkx3/sfS5q8asB9pv+dSFMS wwr@linuxmint
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEA03LUbyQibJSlJM0XQSl6agA/GHWkoXz/WWAv9Ft3a wwr@wsl
+  pixldev:
+    ensure: present
+    uid: 1027
+    name: PixDeVl
+    realname: PixDeVl
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOHs/0a4J7OuWVgI8LNmo5GTZtQbaNdb7LkvidH11XZy pixldev@fedora
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPYfqH3k4MsvAd7C9gUzLmftIpgbrTF4Tf9KSgwr8cXY pixldev@iterm
