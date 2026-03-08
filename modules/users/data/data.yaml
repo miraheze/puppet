@@ -254,4 +254,6 @@ users:
     uid: 1027
     name: PixDeVl
     realname: PixDeVl
-    ssh_keys: [ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOHs/0a4J7OuWVgI8LNmo5GTZtQbaNdb7LkvidH11XZy pixldev@wikitide.org]
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOHs/0a4J7OuWVgI8LNmo5GTZtQbaNdb7LkvidH11XZy pixldev@fedora
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPYfqH3k4MsvAd7C9gUzLmftIpgbrTF4Tf9KSgwr8cXY pixldev@iterm
