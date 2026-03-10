@@ -152,7 +152,6 @@ node /^swiftobject[12][0156789]1\.fsslc\.wtnet$/ {
 
 node 'test151.fsslc.wtnet' {
     role(mediawiki_beta)
-    include role::chart
 }
 
 # ensures all servers have basic class if puppet runs
