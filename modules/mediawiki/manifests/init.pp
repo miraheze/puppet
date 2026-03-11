@@ -148,7 +148,7 @@ class mediawiki {
         source => 'puppet:///modules/mediawiki/bin/mwscript.py',
     }
 
-    $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet', 'check-read-only']
+    $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet', 'check-read-only', 'cleanup-old-mediawiki']
     $cookbooks.each |$cookbook| {
         file {"/usr/local/bin/${cookbook}":
             ensure => 'present',
