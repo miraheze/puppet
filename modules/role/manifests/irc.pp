@@ -13,7 +13,7 @@ class role::irc {
     include irc::pywikibot
 
     irc::relaybot { 'relaybot':
-        dotnet_version => '8.0',
+        dotnet_version => '10.0',
     }
 
     irc::ircrcbot { 'RCBot1' :
