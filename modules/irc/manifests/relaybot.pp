@@ -40,12 +40,13 @@ define irc::relaybot (
 
     if $ensure == present {
         file { $install_path:
-            ensure  => ensure_directory($ensure),
-            owner   => 'irc',
-            group   => 'irc',
-            mode    => '0755',
-            recurse => true,
-            before  => Git::Clone["IRC-Discord-Relay-${title}"],
+            ensure    => ensure_directory($ensure),
+            owner     => 'irc',
+            group     => 'irc',
+            mode      => '0755',
+            recurse   => true,
+            max_files => 5000,
+            before    => Git::Clone["IRC-Discord-Relay-${title}"],
         }
     }
 
