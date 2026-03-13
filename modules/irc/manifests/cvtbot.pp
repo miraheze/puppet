@@ -1,7 +1,7 @@
 # class: irc::cvtbot
 class irc::cvtbot {
     $install_path = '/srv/cvtbot'
-    $dotnet_version = '8.0'
+    $dotnet_version = '10.0'
 
     $password = lookup('passwords::irc::cvtbot')
 
