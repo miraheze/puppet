@@ -19,6 +19,7 @@ GIT_USER_EMAIL = 'noreply@wikitide.org'
 GIT_USER_NAME = 'WikiTideBot'
 
 EXCLUDED_CATEGORIES = {
+    'Category:Candidates for deletion',
     'Category:Decommissioned servers',
     'Category:Deprecated',
     'Category:Incidents',
