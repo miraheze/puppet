@@ -196,7 +196,11 @@ def convert_wikitext_to_markdown(wikitext):
                 return f'[^{name_to_footnote_map[handle_name(node)]}]'
 
         if tag_name in ['pre', 'syntaxhighlight']:
-            return f'\n```{handle_lang(node)}\n{node.contents.strip_code()}\n```\n'
+            code = node.contents.strip_code()
+            # Don't split to new line for inline syntaxhighlight tag
+            if tag_name == 'syntaxhighlight' and has_inline(node):
+                return f'`{code}`'
+            return f'\n```{handle_lang(node)}\n{code}\n```\n'
 
         if tag_name in ['b', 'strong']:
             return f'**{content}**'
@@ -222,6 +226,13 @@ def convert_wikitext_to_markdown(wikitext):
                 if attribute.name == 'lang':
                     return attribute.value
         return ''
+
+    def has_inline(node):
+        if node.attributes:
+            for attribute in node.attributes:
+                if attribute.name == 'inline':
+                    return True
+        return False
 
     def handle_table(table_node):
         """
