@@ -147,6 +147,7 @@ users:
     realname: RhinosF1
     ssh_keys: 
        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID82KBMUQBwtVGYaeb3UJK/87MBlnXLL2H8uZEthls/m rhinos-miraheze@macbook
+       - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNPbdnu+o3UVFr/DYY3JVe5yADoj2Ci4ZH3XIcvqgqJpVpU/rxN43UvdWJ/ZiJreHPB2PE4RWdU8cEKUW6mslMA=
   zppix:
     ensure: absent
     uid: 1012
