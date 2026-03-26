@@ -87,9 +87,11 @@ class mediawiki {
     if ( lookup('role::mediawiki::is_beta', {'default_value' => false}) ) {
         $wikiadmin_password       = lookup('passwords::mediawiki::wikiadmin_beta')
         $mediawiki_password       = lookup('passwords::mediawiki::mediawiki_beta')
+        $bucketuser_password      = lookup('passwords::mediawiki::bucketuser_beta')
     } else {
         $wikiadmin_password       = lookup('passwords::mediawiki::wikiadmin')
         $mediawiki_password       = lookup('passwords::mediawiki::mediawiki')
+        $bucketuser_password      = lookup('passwords::mediawiki::bucketuser')
     }
     $redis_password               = lookup('passwords::redis::master')
     $mediawiki_upgradekey         = lookup('passwords::mediawiki::upgradekey')
