@@ -15,22 +15,10 @@ class prometheus::exporter::apache {
         require => Package['prometheus-apache-exporter'],
     }
 
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Prometheus]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Prometheus' }
+    | PQL
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     ferm::service { 'prometheus apache exporter':
         proto  => 'tcp',
         port   => '9117',

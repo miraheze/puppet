@@ -18,15 +18,15 @@ apply Service "m.miraheze.org - LetsEncrypt" {
 }
 
 <% @servers.each do |server| -%>
-  apply Service "<%= server %> SSL Check" {
-    import "generic-service"
-    check_command = "check_ssl_expire"
-    check_interval = 30m
-    notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
-    vars.host = "<%= server %>"
-    vars.time = "30"
-    assign where "sslchecks" in host.groups
-  }
+apply Service "<%= server %> SSL Check" {
+  import "generic-service"
+  check_command = "check_ssl_expire"
+  check_interval = 30m
+  notes_url = "https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#SSL_Validity_Checks"
+  vars.host = "<%= server %>"
+  vars.time = "30"
+  assign where "sslchecks" in host.groups
+}
 <% end -%>
 <% @sslcerts.each_pair do | name, property | -%>
 <% if property['url'].end_with?(".miraheze.org") == false%>

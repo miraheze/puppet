@@ -1,11 +1,24 @@
 # Known hosts for remote sync
 # This file is managed by puppet
 <%-
-scope.function_query_resources([false, '@@Sshkey[~".*"]', false]).sort_by { |r| r['certname'] }.each do |resource|
+resources = scope.call_function('puppetdb_query', [[
+  'from',
+  'resources',
+  [
+    'and',
+    ['=', 'type', 'Sshkey'],
+    ['=', 'exported', true],
+    ['=', ['parameter', 'ensure'], 'present'],
+  ]
+]])
+
+resources.sort_by { |r| r['certname'] }.each do |resource|
   parameters = resource['parameters']
-  aliases = parameters['host_aliases'].select{ |el| el !~ /^---/}.join(',')
-  if parameters['ensure'] == 'present' -%>
+  aliases = Array(parameters['host_aliases'])
+    .reject { |el| el =~ /^---/ }
+    .join(',')
+-%>
 <%= resource['certname'] %>,<%= aliases %> <%= parameters['type'] %> <%= parameters['key'] %>
 <%-
-  end
-end -%>
+end
+-%>

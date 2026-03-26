@@ -43,7 +43,7 @@ jobs:
           test -f "${{ steps.php_config.outputs.EXTENSION_DIR }}/xhprof.so"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: xhprof-${{ matrix.version }}
           path: ${{ steps.php_config.outputs.EXTENSION_DIR }}/xhprof.so

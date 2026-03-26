@@ -320,8 +320,13 @@ class role::prometheus {
             'regex'         => 'mediawiki_action_api_modules_latency_.*',
           },
           {
-            'action'        => 'labeldrop',
-            'source_labels' => [ 'path' ],
+            'action' => 'labeldrop',
+            'regex'  => 'path',
+          },
+          # Can remove once on MediaWiki 1.46
+          {
+            'action' => 'labeldrop',
+            'regex'  => 'wiki',
           },
         ],
       },
@@ -397,22 +402,10 @@ class role::prometheus {
         ].flatten,
     }
 
-    $firewall_grafana = join(
-        query_facts('Class[Role::Grafana]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Role::Grafana' }
+    | PQL
+    $firewall_grafana = vmlib::generate_firewall_ip($subquery)
 
     ferm::service { 'prometheus':
         proto  => 'tcp',

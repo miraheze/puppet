@@ -7,22 +7,18 @@ class role::swift (
     include ::swift
     include ::swift::ring
 
-    $firewall_rules_str = join(
-        query_facts('Class[Role::Swift] or Class[Role::Mediawiki] or Class[Role::Mediawiki_task] or Class[Role::Mediawiki_beta] or Class[Role::Icinga2] or Class[Role::Prometheus] or Class[Role::Bastion] or Class[Role::Varnish] or Class[Role::Cache::Cache]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    (resources { type = 'Class' and title = 'Role::Swift' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki_task' } or
+    resources { type = 'Class' and title = 'Role::Mediawiki_beta' } or
+    resources { type = 'Class' and title = 'Role::Prometheus' } or
+    resources { type = 'Class' and title = 'Role::Bastion' } or
+    resources { type = 'Class' and title = 'Role::Varnish' } or
+    resources { type = 'Class' and title = 'Role::Cache::Cache' } or
+    resources { type = 'Class' and title = 'Role::Icinga2' })
+    | PQL
+    $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
     $proxy = lookup('swift_proxy_enable', {'default_value' => false})
     if $proxy {

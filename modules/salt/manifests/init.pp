@@ -39,7 +39,12 @@ class salt {
         require => Apt::Source['salt_apt']
     }
 
-    $host = query_nodes('', 'networking.fqdn')
+    $pdb_query = @("PQL")
+        nodes[certname] {
+            order by certname
+        }
+    | PQL
+    $host = puppetdb_query($pdb_query).map |$x| { $x['certname'] }
     file { '/etc/salt/roster':
         content => template('salt/roster.erb'),
         owner   => 'root',

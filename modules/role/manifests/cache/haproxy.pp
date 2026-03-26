@@ -134,9 +134,9 @@ class role::cache::haproxy(
         content => template('role/cache/haproxy/tls_terminator.cfg.erb'),
     }
 
-    if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+    if ($facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18']) {
         $address = $facts['networking']['interfaces']['ens19']['ip']
-    } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+    } elsif ($facts['networking']['interfaces']['ens18']) {
         $address = $facts['networking']['interfaces']['ens18']['ip6']
     } else {
         $address = $facts['networking']['ip6']
@@ -182,22 +182,10 @@ class role::cache::haproxy(
         source => 'puppet:///modules/role/cache/haproxy/logrotate',
     }
 
-    $firewall_str = join(
-        query_facts('Class[Prometheus]', ['networking'])
-        .map |$key, $value| {
-            if ( $value['networking']['interfaces']['ens19'] and $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens19']['ip']} ${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } elsif ( $value['networking']['interfaces']['ens18'] ) {
-                "${value['networking']['interfaces']['ens18']['ip']} ${value['networking']['interfaces']['ens18']['ip6']}"
-            } else {
-                "${value['networking']['ip']} ${value['networking']['ip6']}"
-            }
-        }
-        .flatten()
-        .unique()
-        .sort(),
-        ' '
-    )
+    $subquery = @("PQL")
+    resources { type = 'Class' and title = 'Prometheus' }
+    | PQL
+    $firewall_str = vmlib::generate_firewall_ip($subquery)
     ferm::service { "prometheus_${prometheus_port}":
         proto   => 'tcp',
         port    => $prometheus_port,
