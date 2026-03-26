@@ -51,12 +51,12 @@ GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, L
 -- Grants for 'bucketuser'@''
 
 GRANT USAGE
-    ON *.* TO 'bucketuser2026'@'%'
+    ON *.* TO 'bucketuser'@'%'
     IDENTIFIED BY '<%= @bucketuser_password %>'
     WITH MAX_STATEMENT_TIME 15;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE, ALTER, INDEX, CREATE VIEW, LOCK TABLES
-    ON `%wiki%`.* TO 'bucketuser2026'@'%';
+    ON `%wiki%`.* TO 'bucketuser'@'%';
 
 -- Grants for 'wikiadmin'@''
 
