@@ -839,12 +839,11 @@ sub vcl_deliver {
 	# Disable Google ad targeting (FLoC)
 	set resp.http.Permissions-Policy = "interest-cohort=(), browsing-topics=()";
 
-	# Content Security Policy
-	# For testing moving the CSP to the MediaWiki application layer
-	if (req.backend_hint == test151) {
-		set resp.http.Original-Content-Security-Policy = resp.http.Content-Security-Policy;
+	# The CSP setting was moved from Varnish to MediaWiki. If MediaWiki somehow fails to set
+	# the header, fall back to using the old Varnish CSP.
+	if (!resp.http.Content-Security-Policy) {
+		set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 	}
-	set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 
 	# For a 500 error, do not set cookies
 	if (resp.status >= 500 && resp.http.Set-Cookie) {
