@@ -4,6 +4,7 @@ default-src:
   - "'self'"
   - '*.miraheze.org'
   - '*.wikitide.org'
+  - '*.wikitide.net'
 
 script-src:
   - 'blob:'
@@ -12,6 +13,7 @@ script-src:
   - "'unsafe-eval'"
   - '*.miraheze.org'
   - '*.wikitide.org'
+  - '*.wikitide.net'
   - 'ajax.cloudflare.com'
   - 'cdnjs.cloudflare.com'
   - 'cdn.jsdelivr.net'
@@ -28,6 +30,7 @@ style-src:
   - 'wikitide.org'
   - '*.miraheze.org'
   - '*.wikitide.org'
+  - '*.wikitide.net'
   - 'www.gstatic.com'
   - 'fonts.googleapis.com'
   - 'cdn.jsdelivr.net'
@@ -43,12 +46,14 @@ img-src:
   - 'wikitide.org'
   - '*.miraheze.org'
   - '*.wikitide.org'
+  - '*.wikitide.net'
 
 font-src:
   - "'self'"
   - 'data:'
   - '*.miraheze.org'
   - '*.wikitide.org'
+  - '*.wikitide.net'
   - 'fonts.gstatic.com'
   - 'fonts.googleapis.com'
   - 'cdnjs.cloudflare.com'
@@ -59,6 +64,7 @@ media-src:
   - 'blob:'
   - '*.miraheze.org'
   - '*.wikitide.org'
+  - '*.wikitide.net'
   - 'upload.wikimedia.org'
 
 frame-src:
@@ -73,6 +79,7 @@ connect-src:
   - 'blob:'
   - '*.miraheze.org'
   - '*.wikitide.org'
+  - '*.wikitide.net'
   - 'cdn.jsdelivr.net'
   - 'hcaptcha.com'
   - '*.hcaptcha.com'
