@@ -841,7 +841,7 @@ sub vcl_deliver {
 
 	# The CSP setting was moved from Varnish to MediaWiki. If MediaWiki somehow fails to set
 	# the header, fall back to using the old Varnish CSP.
-	if (!resp.http.Content-Security-Policy) {
+	if (resp.status != 304 && !resp.http.Content-Security-Policy) {
 		set resp.http.Content-Security-Policy = "<%- @csp.each_pair do |type, value| -%> <%= type %> <%= value.join(' ') %>; <%- end -%>";
 	}
 
