@@ -45,6 +45,8 @@ mediawiki::monitoring::host: 'test.mirabeta.org'
 mediawiki::multiversion::versions:
   '1.45':
     branch: 'REL1_45'
+  '1.46':
+    branch: 'master'
     default: true
 
 role::mediawiki::php::restarts::ensure: present
