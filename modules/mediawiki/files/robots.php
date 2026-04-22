@@ -7,6 +7,7 @@ require MirahezeFunctions::getMediaWiki( 'includes/WebStart.php' );
 
 use MediaWiki\Content\TextContent;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 
 $page = MediaWikiServices::getInstance()
@@ -38,7 +39,19 @@ if ( $page->exists() ) {
 $lastmod = gmdate( 'D, j M Y H:i:s', $mtime ) . ' GMT';
 header( "Last-modified: $lastmod" );
 
-fpassthru( $robots );
+if ( php_uname( 'n' ) === 'test151' ) {
+	$specialPagePath = SpecialPage::getTitleFor( 'Badtitle' )->getLocalURL();
+	$specialPrefix = substr( $specialPagePath, 0, strpos( $specialPagePath, 'Badtitle' ) );
+	while ( ( $line = fgets( $robots ) ) !== false ) {
+		if ( strpos( $line, 'REPLACEME' ) !== false ) {
+			echo "Disallow: $specialPrefix\n";
+		} else {
+			echo $line;
+		}
+	}
+} else {
+	fpassthru( $robots );
+}
 
 echo "#\n#\n#----------------------------------------------------------#\n#\n#\n#\n";
 # Dynamic sitemap url
