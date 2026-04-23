@@ -45,6 +45,13 @@ if ( php_uname( 'n' ) === 'test151' ) {
 	while ( ( $line = fgets( $robots ) ) !== false ) {
 		if ( strpos( $line, 'REPLACEME' ) !== false ) {
 			echo "Disallow: $specialPrefix\n";
+			// Handle the other URL pattern in case article root changes
+			if ( str_starts_with( $line, '/wiki/' ) ) {
+				$newPrefix = str_replace( '/wiki/', '/', $line );
+			} else {
+				$newPrefix = '/wiki' . $line;
+			}
+			echo "Disallow: $newPrefix\n";
 		} else {
 			echo $line;
 		}
