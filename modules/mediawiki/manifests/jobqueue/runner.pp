@@ -143,5 +143,10 @@ class mediawiki::jobqueue::runner (
             command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php MirahezeMagic:PopulateWikibaseSitesTable --wiki=${wiki} --all-wikis",
             interval => '*-*-5,20 05:00:00',
         }
+
+        mediawiki::periodic_job { 'decline-stale-requests':
+            command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php CreateWiki:DeclineStaleRequests --wiki metawiki --days=5",
+            interval => '*-*-1/5 23:00:00',
+        }
     }
 }
