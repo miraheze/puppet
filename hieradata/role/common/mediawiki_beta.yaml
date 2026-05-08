@@ -46,6 +46,8 @@ mediawiki::multiversion::versions:
   '1.45':
     branch: 'REL1_45'
     default: true
+  '1.46':
+    branch: 'REL1_46'
 
 role::mediawiki::php::restarts::ensure: present
 role::mediawiki::php::restarts::opcache_limit: 200
