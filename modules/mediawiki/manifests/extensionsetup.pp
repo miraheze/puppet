@@ -93,12 +93,28 @@ define mediawiki::extensionsetup (
                 }
             }
 
-            if $params['npm_deploy_repo'] and $params['npm_deploy_branch'] {
+            if $params['npm_deploy_repo'] {
+                $deploy_branch = $params['npm_deploy_branch'] ? {
+                    '_branch_' => $branch == 'master' ? {
+                        true    => $params['npm_deploy_alpha_branch'] ? {
+                            undef   => $branch,
+                            default => $params['npm_deploy_alpha_branch'],
+                        },
+                        default => $branch,
+                    },
+                    default    => $branch == 'master' ? {
+                        true    => $params['npm_deploy_alpha_branch'] ? {
+                            undef   => $params['npm_deploy_branch'],
+                            default => $params['npm_deploy_alpha_branch'],
+                        },
+                        default => $params['npm_deploy_branch'],
+                    },
+                }
                 git::clone { "${name}-${branch}-deploy":
                     ensure    => present,
                     directory => "${mwpath}/${params['path']}/node_modules",
                     origin    => $params['npm_deploy_repo'],
-                    branch    => $params['npm_deploy_branch'],
+                    branch    => $deploy_branch,
                     owner     => 'www-data',
                     group     => 'www-data',
                     mode      => '0755',
