@@ -46,39 +46,6 @@ class mediawiki::multiversion (
                 depth     => '5',
                 require   => File['/srv/mediawiki-staging'],
             }
-
-            file { '/srv/mediawiki-staging/femiwiki-deploy':
-                ensure => 'directory',
-                owner  => 'www-data',
-                group  => 'www-data',
-            }
-
-            $branch = $params['branch'] ? {
-                'master' => 'main',
-                default  => $params['branch'],
-            }
-
-            git::clone { "femiwiki-deploy-${version}":
-                ensure    => 'latest',
-                directory => "/srv/mediawiki-staging/femiwiki-deploy/${version}",
-                origin    => 'https://github.com/miraheze/femiwiki-deploy',
-                branch    => $branch,
-                owner     => 'www-data',
-                group     => 'www-data',
-                mode      => '0755',
-                require   => File['/srv/mediawiki-staging/femiwiki-deploy'],
-            }
-
-            file { "/srv/mediawiki-staging/${version}/skins/Femiwiki/node_modules":
-                ensure  => 'link',
-                target  => "/srv/mediawiki-staging/femiwiki-deploy/${version}/node_modules",
-                owner   => 'www-data',
-                group   => 'www-data',
-                require => [
-                    Git::Clone["femiwiki-deploy-${version}"],
-                    File["/srv/mediawiki-staging/${version}"],
-                ],
-            }
         }
 
         file { "/srv/mediawiki/${version}":
