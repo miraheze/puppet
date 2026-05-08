@@ -93,7 +93,7 @@ define mediawiki::extensionsetup (
                 }
             }
 
-            if $params['npm_deploy_repo'] {
+            if $params['npm_deploy_repo_url'] {
                 $deploy_branch = $params['npm_deploy_branch'] ? {
                     '_branch_' => $branch == 'master' ? {
                         true    => $params['npm_deploy_alpha_branch'] ? {
@@ -113,7 +113,7 @@ define mediawiki::extensionsetup (
                 git::clone { "${name}-${branch}-npm-deploy":
                     ensure    => present,
                     directory => "${mwpath}/${params['path']}/node_modules",
-                    origin    => $params['npm_deploy_repo'],
+                    origin    => $params['npm_deploy_repo_url'],
                     branch    => $deploy_branch,
                     owner     => 'www-data',
                     group     => 'www-data',
