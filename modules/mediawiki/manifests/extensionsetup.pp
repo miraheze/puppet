@@ -110,7 +110,7 @@ define mediawiki::extensionsetup (
                         default => $params['npm_deploy_branch'],
                     },
                 }
-                git::clone { "${name}-${branch}-deploy":
+                git::clone { "${name}-${branch}-npm-deploy":
                     ensure    => present,
                     directory => "${mwpath}/${params['path']}/node_modules",
                     origin    => $params['npm_deploy_repo'],
