@@ -187,7 +187,10 @@ def main():
         print(f"Error: You do not have write permissions for '{args.workdir}'!", file=sys.stderr)
         sys.exit(1)
 
-    subprocess.run(["git", "-C", args.workdir, "pull"], check=True)
+    # T15362: Temporarily enable GIT_TRACE
+    env = os.environ.copy()
+    env["GIT_TRACE"] = "1"
+    subprocess.run(["git", "-C", args.workdir, "pull"], check=True, env=env)
 
     cf_domains = None
     wd_yaml = None
