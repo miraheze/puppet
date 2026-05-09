@@ -309,6 +309,7 @@ class puppetserver(
             start    => 'OnCalendar',
             interval => '*-*-* *:00,30',
         },
+        max_runtime_seconds     => 600, # Set timeout to prevent the unit from getting stuck; see T15362
         user                    => 'root',
         send_mail               => true,
         send_mail_only_on_error => true,
