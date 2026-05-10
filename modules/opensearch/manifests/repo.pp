@@ -15,7 +15,7 @@ class opensearch::repo (
 
   file_line { 'fix-apt-temp':
     path  => '/usr/share/apt/default-sequoia.config',
-    line  => "sha1.second_preimage_resistance = 2026-12-01",
+    line  => 'sha1.second_preimage_resistance = 2026-12-01',
     match => 'sha1.second_preimage_resistance =',
   }
 
