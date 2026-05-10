@@ -13,9 +13,9 @@ class opensearch::repo (
 ) {
   include apt
 
-  file { '/usr/share/keyrings/opensearch.key':
+  file { '/usr/share/keyrings/opensearch.gpg':
     ensure => present,
-    source => 'puppet:///modules/opensearch/apt/opensearch.key',
+    source => 'puppet:///modules/opensearch/apt/opensearch.gpg',
   }
 
   apt::source { 'opensearch':
@@ -24,12 +24,12 @@ class opensearch::repo (
     location => "https://artifacts.opensearch.org/releases/bundle/opensearch/${version}/apt",
     release  => 'stable',
     repos    => 'main',
-    keyring  => '/usr/share/keyrings/opensearch.key',
+    keyring  => '/usr/share/keyrings/opensearch.gpg',
     include  => {
       'deb' => true,
       'src' => false,
     },
     pin      => $priority,
-    require  => File['/usr/share/keyrings/opensearch.key'],
+    require  => File['/usr/share/keyrings/opensearch.gpg'],
   }
 }
