@@ -13,6 +13,12 @@ class opensearch::repo (
 ) {
   include apt
 
+  file_line { 'fix-apt-temp':
+    path  => '/usr/share/apt/default-sequoia.config',
+    line  => "sha1.second_preimage_resistance = 2026-12-01",
+    match => 'sha1.second_preimage_resistance =',
+  }
+
   file { '/usr/share/keyrings/opensearch.key':
     ensure => present,
     source => 'puppet:///modules/opensearch/apt/opensearch.key',
