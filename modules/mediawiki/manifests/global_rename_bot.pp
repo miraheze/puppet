@@ -1,4 +1,4 @@
-class mediawiki::rename_bot {
+class mediawiki::global_rename_bot {
     $bot_password = lookup('passwords::mediawiki::global_rename_bot')
 
     $bot_dir = '/usr/local/lib/global_rename_bot'
