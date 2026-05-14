@@ -1,0 +1,2 @@
+# Host-specific configuration for bots171.fsslc.wtnet
+# passwords::mediawiki::global_rename_bot is set in the private hiera repo

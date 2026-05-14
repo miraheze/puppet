@@ -13,15 +13,6 @@ class opensearch::repo (
 ) {
   include apt
 
-  # Revert back to
-  # sha1.second_preimage_resistance = 2026-02-01    # Extend the expiry for legacy repositories
-  # when it starts working without needing this workaround.
-  file_line { 'fix-apt-temp':
-    path  => '/usr/share/apt/default-sequoia.config',
-    line  => 'sha1.second_preimage_resistance = 2026-12-01',
-    match => 'sha1.second_preimage_resistance =',
-  }
-
   file { '/usr/share/keyrings/opensearch.key':
     ensure => present,
     source => 'puppet:///modules/opensearch/apt/opensearch.key',
