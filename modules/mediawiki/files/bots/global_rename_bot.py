@@ -20,7 +20,7 @@ from bs4 import BeautifulSoup
 
 from policy_checker import PolicyChecker
 
-BASE_URL = "https://meta.mirabeta.org"
+BASE_URL = "https://meta.miraheze.org"
 API_URL  = f"{BASE_URL}/w/api.php"
 
 HUMAN_REVIEW_PHRASES = (
@@ -44,7 +44,7 @@ class RenameBot:
         self.session.headers.update({
             "User-Agent": (
                 f"MirahezeRenameBot/2.2 "
-                f"(+{config.get('bot_contact', 'https://meta.mirabeta.org')}; "
+                f"(+{config.get('bot_contact', 'https://meta.miraheze.org')}; "
                 "bot; python-requests)"
             )
         })
