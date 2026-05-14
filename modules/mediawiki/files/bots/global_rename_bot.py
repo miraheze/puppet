@@ -307,8 +307,8 @@ class RenameBot:
 )
 
         APPROVAL_COMMENT = (
-            "Approved. Please read [[Changing username]] if you ever wish "
-            "to change your username again in the future. "
+            "Automatically approved. Please read [[Changing username]] if you ever "
+            "wish to change your username again in the future. "
             "Please note we generally do not accept renames before the "
             "12-24 month mark unless a compelling reason is provided. "
             "Thank you for choosing Miraheze!"
