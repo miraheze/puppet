@@ -95,6 +95,11 @@ class mediawiki::jobqueue::runner (
                 interval => '*-1/3 05:00',
             }
 
+            mediawiki::periodic_job { 'decline-stale-requests':
+            command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php CreateWiki:DeclineStaleRequests --wiki metawiki --days=5",
+            interval => '*-*-1/5 23:00:00',
+            }
+
             stdlib::ensure_packages('python3-internetarchive')
 
             file { '/usr/local/bin/iaupload':
@@ -144,9 +149,5 @@ class mediawiki::jobqueue::runner (
             interval => '*-*-5,20 05:00:00',
         }
 
-        mediawiki::periodic_job { 'decline-stale-requests':
-            command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php CreateWiki:DeclineStaleRequests --wiki metawiki --days=5",
-            interval => '*-*-1/5 23:00:00',
-        }
     }
 }
