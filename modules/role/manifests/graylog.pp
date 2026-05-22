@@ -22,7 +22,7 @@ class role::graylog {
     $http_proxy = lookup('http_proxy', {'default_value' => undef})
     class { 'graylog::repository':
         proxy   => $http_proxy,
-        version => '7.0',
+        version => '7.1',
     }
     -> class { 'graylog::server':
         package_version        => '7.1.2-1',
