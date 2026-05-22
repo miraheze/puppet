@@ -2,5 +2,5 @@ mongodb::repo::aptkey_options: 'http-proxy="http://bastion.fsslc.wtnet:8080"'
 http_proxy: 'http://bastion.fsslc.wtnet:8080'
 elasticsearch_host: 'https://opensearch.wikitide.net'
 mongodb_repo_version: '8.0'
-mongodb_version: '8.0.18'
+mongodb_version: '8.0.23'
 nginx::client_max_body_size: "0"
