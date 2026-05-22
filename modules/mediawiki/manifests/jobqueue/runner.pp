@@ -95,8 +95,8 @@ class mediawiki::jobqueue::runner (
                 interval => '*-1/3 05:00',
             }
 
-            mediawiki::periodic_job { 'decline-stale-requests':
-            command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php CreateWiki:DeclineStaleRequests --wiki metawiki --days=5",
+            mediawiki::periodic_job { 'decline-stale-wiki-requests':
+            command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php CreateWiki:DeclineStaleWikiRequests --wiki metawiki --days=5",
             interval => '*-*-1/5 23:00:00',
             }
 
