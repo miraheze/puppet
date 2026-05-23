@@ -158,20 +158,20 @@ class mariadb::config(
     }
 
     file { '/var/log/mysql/proclist':
-        'ensure': directory,
-        'owner': 'mysql',
-        'group': 'mysql',
-        'require': Package['mariadb-server'],
+        ensure  => directory,
+        owner   => 'mysql',
+        group   => 'mysql',
+        require => Package['mariadb-server'],
     }
 
     $load_critical = $facts['processors']['count'] * 2.0
 
     file { '/usr/local/sbin/dump-processlist':
         ensure => present,
-        owner => 'root',
-        group => 'root',
-        mode => '0550',
-        source => 'puppet:///modules/mariadb/dump-processlist'
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0550',
+        source => 'puppet:///modules/mariadb/dump-processlist',
     }
 
     systemd::timer::job { 'mariadb-generate-processlist':
