@@ -96,8 +96,8 @@ class mediawiki::jobqueue::runner (
             }
 
             mediawiki::periodic_job { 'decline-stale-wiki-requests':
-            command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php CreateWiki:DeclineStaleWikiRequests --wiki metawiki --days=5",
-            interval => '*-*-1/5 23:00:00',
+                command  => "/usr/bin/php /srv/mediawiki/${version}/maintenance/run.php CreateWiki:DeclineStaleWikiRequests --wiki metawiki --days=5",
+                interval => '*-*-1/5 23:00:00',
             }
 
             stdlib::ensure_packages('python3-internetarchive')
