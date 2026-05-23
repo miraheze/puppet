@@ -158,10 +158,10 @@ class mariadb::config(
     }
 
     file { '/var/log/mysql/proclist':
-        ensure: directory,
-        owner: 'mysql',
-        group: 'mysql',
-        require: Package['mariadb-server'],
+        'ensure': directory,
+        'owner': 'mysql',
+        'group': 'mysql',
+        'require': Package['mariadb-server'],
     }
 
     $load_critical = $facts['processors']['count'] * 2.0
