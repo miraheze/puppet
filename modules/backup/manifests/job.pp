@@ -36,6 +36,7 @@ define backup::job (
         description         => "Runs backup of ${title}",
         command             => "/usr/local/bin/wikitide-backup backup ${params}",
         interval            => { 'start' => 'OnCalendar', 'interval' => $interval },
+        timeout_start_sec   => '1d',
         logfile_basedir     => $logfile_basedir,
         logfile_name        => "${title}-backup.log",
         syslog_identifier   => "${title}-backup",
