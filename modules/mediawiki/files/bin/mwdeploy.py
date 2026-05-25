@@ -556,11 +556,17 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/vendor/*', dest=f'/srv/mediawiki/{version}/vendor/'))
                     rsyncpaths.append(f'/srv/mediawiki/{version}/vendor/')
 
-            if args.upgrade_extensions:
-                for extension in args.upgrade_extensions:
-                    repo = f'extensions/{extension}'
+            for kind, items in (
+                ('extensions', args.upgrade_extensions),
+                ('skins', args.upgrade_skins),
+            ):
+                if not items:
+                    continue
+
+                for name in items:
+                    repo = f'{kind}/{name}'
                     if not _is_git_repo(repo, version):
-                        print(f'Upgrading {extension}')
+                        print(f'Upgrading {name}')
                         exitcodes.extend(_apply_patches(repo, version))
                         if not args.world:
                             rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
@@ -568,7 +574,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                         continue
 
                     if not os.path.exists(_get_staging_path(repo, version)):
-                        print(f'{extension} does not exist for {version}. Skipping...')
+                        print(f'{name} does not exist for {version}. Skipping...')
                         continue
 
                     process = os.popen(_construct_git_pull(repo, submodules=True, quiet=False, version=version))
@@ -577,13 +583,14 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     exitcode = 0
                     if status and not args.force:
                         exitcode = os.waitstatus_to_exitcode(status)
-                    exitcodes.append(exitcode)
+                        exitcodes.append(exitcode)
+
                     if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
-                        print(f'Upgrading {extension}')
+                        print(f'Upgrading {name}')
                         exitcodes.extend(_apply_patches(repo, version))
                         for file in get_changed_files_type(repo, version, 'schema change'):
-                            if not args.skip_schema_confirm and extension not in warnings:
-                                warnings[extension] = True
+                            if not args.skip_schema_confirm and name not in warnings:
+                                warnings[name] = True
                                 print('WARNING: upgrade contains schema changes.')
                                 try:
                                     if input('Type Y to confirm: ').upper() != 'Y':
@@ -604,77 +611,21 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                                             print(schema)
                                     print('Operation aborted by user')
                                     sys.exit(1)
+
                         if args.show_tags:
                             tags = get_change_tags(repo, version)
                             if tags:
-                                tagsinfo.append(f'Tags for {extension}: {", ".join(sorted(tags))}')
+                                tagsinfo.append(f'Tags for {name}: {", ".join(sorted(tags))}')
+
                         if not args.world:
                             rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
                             rsyncpaths.append(f'/srv/mediawiki/{version}/{repo}/')
+                            rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
+                            rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                     elif exitcode == 0:
-                        print(f'{extension} already up to date. Skipping...')
+                        print(f'{name} already up to date. Skipping...')
                     else:
-                        print(f'Failed to upgrade {extension} (exit code: {exitcode}).')
-
-            if args.upgrade_skins:
-                for skin in args.upgrade_skins:
-                    repo = f'skins/{skin}'
-                    if not _is_git_repo(repo, version):
-                        print(f'Upgrading {skin}')
-                        exitcodes.extend(_apply_patches(repo, version))
-                        if not args.world:
-                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
-                            rsyncpaths.append(f'/srv/mediawiki/{version}/{repo}/')
-                        continue
-
-                    if not os.path.exists(_get_staging_path(repo, version)):
-                        print(f'{skin} does not exist for {version}. Skipping...')
-                        continue
-
-                    process = os.popen(_construct_git_pull(repo, submodules=True, quiet=False, version=version))
-                    output = process.read().strip()
-                    status = process.close()
-                    exitcode = 0
-                    if status and not args.force:
-                        exitcode = os.waitstatus_to_exitcode(status)
-                    exitcodes.append(exitcode)
-                    if exitcode == 0 and (args.force_upgrade or output != 'Already up to date.'):
-                        print(f'Upgrading {skin}')
-                        exitcodes.extend(_apply_patches(repo, version))
-                        for file in get_changed_files_type(repo, version, 'schema change'):
-                            if not args.skip_schema_confirm and skin not in warnings:
-                                warnings[skin] = True
-                                print('WARNING: upgrade contains schema changes.')
-                                try:
-                                    if input('Type Y to confirm: ').upper() != 'Y':
-                                        exitcodes.append(run_command(_construct_git_reset_revert(repo, version)))
-                                        print('reverted')
-                                        continue
-                                    newschema.append(f'/srv/mediawiki-staging/{version}/{repo}/{file}')
-                                except KeyboardInterrupt:
-                                    run_command(_construct_git_reset_revert(repo, version))
-                                    print('reverted')
-                                    if tagsinfo:
-                                        print('TAGS:')
-                                        for info in tagsinfo:
-                                            print(info)
-                                    if newschema:
-                                        print('WARNING: NEW SCHEMA CHANGES DETECTED:')
-                                        for schema in newschema:
-                                            print(schema)
-                                    print('Operation aborted by user')
-                                    sys.exit(1)
-                        if args.show_tags:
-                            tags = get_change_tags(repo, version)
-                            if tags:
-                                tagsinfo.append(f'Tags for {skin}: {", ".join(sorted(tags))}')
-                        if not args.world:
-                            rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'/srv/mediawiki-staging/{version}/{repo}/*', dest=f'/srv/mediawiki/{version}/{repo}/'))
-                            rsyncpaths.append(f'/srv/mediawiki/{version}/{repo}/')
-                    elif exitcode == 0:
-                        print(f'{skin} already up to date. Skipping...')
-                    else:
-                        print(f'Failed to upgrade {skin} (exit code: {exitcode}).')
+                        print(f'Failed to upgrade {name} (exit code: {exitcode}).')
 
         for cmd in stage:  # setup env, git pull etc
             if 'composer' in cmd:
