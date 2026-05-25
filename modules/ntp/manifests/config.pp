@@ -33,21 +33,29 @@ class ntp::config {
       }
     }
     'Debian': {
-      $daemon_config = '/etc/default/ntp'
+      if $facts['os']['name'] == 'Ubuntu' {
+        if (versioncmp($facts['os']['release']['major'], '18.04') >= 0 and
+          versioncmp($facts['os']['release']['major'], '24.04') < 0 and
+        $ntp::user) {
+          file_line { 'Set NTPD daemon user':
+            ensure => present,
+            path   => '/usr/lib/ntp/ntp-systemd-wrapper',
+            line   => "RUNASUSER=${ntp::user}",
+            match  => '^RUNASUSER\=',
+          }
+        }
+      }
+      if 'ntpsec' in $ntp::package_name {
+        $daemon_config = '/etc/default/ntpsec'
+      } else {
+        $daemon_config = '/etc/default/ntp'
+      }
       if $ntp::daemon_extra_opts {
         file_line { 'Set NTPD daemon options':
           ensure => present,
           path   => $daemon_config,
           line   => "NTPD_OPTS='${ntp::daemon_extra_opts}'",
           match  => '^NTPD_OPTS\=',
-        }
-      }
-      if $ntp::user and $facts['os']['release']['major'] == '18.04' {
-        file_line { 'Set NTPD daemon user':
-          ensure => present,
-          path   => '/usr/lib/ntp/ntp-systemd-wrapper',
-          line   => "RUNASUSER=${ntp::user}",
-          match  => '^RUNASUSER\=',
         }
       }
     }
@@ -90,13 +98,7 @@ class ntp::config {
     }
   }
 
-  #If both epp and erb are defined, throw validation error.
-  #Otherwise use the defined erb/epp template, or use default
-  if $ntp::config_epp and $ntp::config_template {
-    fail('Cannot supply both config_epp and config_template templates for ntp config file.')
-  } elsif $ntp::config_template {
-    $config_content = template($ntp::config_template)
-  } elsif $ntp::config_epp {
+  if $ntp::config_epp {
     $config_content = epp($ntp::config_epp)
   } else {
     $config_content = epp('ntp/ntp.conf.epp')
