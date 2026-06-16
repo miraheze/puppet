@@ -114,6 +114,9 @@ class role::icinga2 (
         icingadb_db_name          => $icingadb_db_name,
         icingadb_db_user          => $icingadb_db_user,
         icingadb_db_user_password => $ido_db_user_password,
+        icingadb_redis_host       => $icingadb_redis_host,
+        icingadb_redis_port       => $icingadb_redis_port,
+        icingadb_redis_password   => $icingadb_redis_password,
         ldap_password             => $ldap_password,
         icingaweb2_api_password   => $icingaweb2_api_password,
     }
