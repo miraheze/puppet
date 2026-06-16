@@ -6,6 +6,8 @@
 class icingadb::redis::install {
   assert_private()
 
+  contain icinga::redis
+
   $package_name    = $icingadb::redis::globals::package_name
   $manage_packages = $icingadb::redis::manage_packages
   $user            = $icingadb::redis::globals::user

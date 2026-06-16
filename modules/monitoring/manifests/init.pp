@@ -79,13 +79,6 @@ class monitoring (
         maxmemory => $redis_heap,
     }
 
-    class { 'icingadb::redis':
-        manage_repos => true,
-        port         => $icingadb_redis_port,
-        requirepass  => $icingadb_redis_password,
-        require      => Class['redis']
-    }
-
     class { 'icingadb':
         db_host        => $icingadb_db_host,
         db_name        => $icingadb_db_name,
@@ -95,7 +88,7 @@ class monitoring (
         redis_port     => $icingadb_redis_port,
         redis_password => $icingadb_redis_password,
         import_schema  => false,
-        require        => Class['icingadb::redis'],
+        require        => Class['redis'],
     }
 
     class { 'icinga2':
