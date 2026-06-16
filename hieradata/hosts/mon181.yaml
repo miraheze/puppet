@@ -142,5 +142,27 @@ icinga2::globals::reserved:
   - Warning
   - ZonesDir
 
+# IcingaDB
+
+icingadb::globals::package_name: icingadb
+icingadb::globals::user: icingadb
+icingadb::globals::group: icingadb
+icingadb::globals::service_name: icingadb
+icingadb::globals::conf_dir: /etc/icingadb
+icingadb::globals::mysql_db_schema: /usr/share/icingadb/schema/mysql/schema.sql
+icingadb::globals::pgsql_db_schema: /usr/share/icingadb/schema/pgsql/schema.sql
+
+icingadb::redis::globals::package_name: icingadb-redis
+icingadb::redis::globals::service_name: icingadb-redis
+icingadb::redis::globals::user: icingadb-redis
+icingadb::redis::globals::group: icingadb-redis
+icingadb::redis::globals::redis_bin: /usr/bin
+icingadb::redis::globals::conf_dir: /etc/icingadb-redis
+icingadb::redis::globals::work_dir: /var/lib/icingadb-redis
+icingadb::redis::globals::run_dir: /var/run/icingadb-redis
+icingadb::redis::globals::log_dir: /var/log/icingadb-redis
+
+# Rest
+
 nginx::use_graylog: true
 base::syslog::rsyslog_udp_localhost: true
