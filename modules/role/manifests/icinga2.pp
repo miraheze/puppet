@@ -74,7 +74,7 @@ class role::icinga2 (
     String $icingadb_db_name                 = lookup('icingadb_db_name', {'default_value' => 'icingadb'}),
     String $icingadb_db_user                 = lookup('icingadb_db_user', {'default_value' => 'icinga2'}),
     String $icingadb_redis_host              = lookup('icingadb_redis_host', {'default_value' => 'localhost'}),
-    String $icingadb_redis_port              = lookup('icingadb_redis_port', {'default_value' => '6379'}),
+    Stdlib::Port $icingadb_redis_port        = lookup('icingadb_redis_port', {'default_value' => 6379}),
     String $icingadb_redis_password          = lookup('passwords::icingadb_redis_password'),
     String $ticket_salt                      = lookup('passwords::ticket_salt', {'default_value' => ''}),
     String $ldap_password                    = lookup('passwords::ldap_password'),
