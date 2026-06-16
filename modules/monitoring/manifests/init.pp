@@ -80,8 +80,8 @@ class monitoring (
 
     class { 'icingadb::redis':
         manage_repos => false,
-        requirepass  => $icingadb_db_password,
-        requre       => Class['redis']
+        requirepass  => $icingadb_redis_password,
+        require      => Class['redis']
     }
 
     class { 'icingadb':

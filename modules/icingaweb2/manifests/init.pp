@@ -9,7 +9,7 @@ class icingaweb2 (
     String $ido_db_user_password      = undef,
     String $icingadb_db_host          = 'db182.fsslc.wtnet',
     String $icingadb_db_name          = 'icingadb',
-    String $icingadb_db_user_name     = 'icinga2',
+    String $icingadb_db_user          = 'icinga2',
     String $icingadb_db_user_password = undef,
     String $ldap_password             = undef,
 ) {
