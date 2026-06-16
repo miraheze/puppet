@@ -72,11 +72,18 @@ class monitoring (
         },
     )
 
+    $redis_heap = lookup('redis::heap', {'default_value' => '500mb'})
+    class { 'redis':
+        persist   => false,
+        password  => $icingadb_redis_password,
+        maxmemory => $redis_heap,
+    }
 
     class { 'icingadb::redis':
         manage_repos => true,
         port         => $icingadb_redis_port,
         requirepass  => $icingadb_redis_password,
+        require      => Class['redis']
     }
 
     class { 'icingadb':
