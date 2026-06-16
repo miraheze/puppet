@@ -72,7 +72,9 @@ class monitoring (
         },
     )
 
-    include prometheus::exporter::redis
+    class { 'prometheus::exporter::redis':
+        redis_password => $icingadb_redis_password,
+    }
 
     $redis_heap = lookup('redis::heap', {'default_value' => '500mb'})
     class { 'redis':
