@@ -6,7 +6,12 @@
 class icingadb::redis::install {
   assert_private()
 
-  contain icinga::redis
+  $redis_heap = lookup('redis::heap', {'default_value' => '500mb'})
+  class { 'redis':
+    persist   => false,
+    password  => $icingadb_redis_password,
+    maxmemory => $redis_heap,
+  }
 
   $package_name    = $icingadb::redis::globals::package_name
   $manage_packages = $icingadb::redis::manage_packages
