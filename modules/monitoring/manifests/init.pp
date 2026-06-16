@@ -72,6 +72,8 @@ class monitoring (
         },
     )
 
+    include prometheus::exporter::redis
+
     $redis_heap = lookup('redis::heap', {'default_value' => '500mb'})
     class { 'redis':
         persist   => false,
