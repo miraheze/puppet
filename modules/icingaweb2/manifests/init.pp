@@ -6,12 +6,13 @@ class icingaweb2 (
     String $ido_db_host               = 'db182.fsslc.wtnet',
     String $ido_db_name               = 'icinga',
     String $ido_db_user_name          = 'icinga2',
-    String $ido_db_user_password      = undef,
+    String $ido_db_user_password,
     String $icingadb_db_host          = 'db182.fsslc.wtnet',
     String $icingadb_db_name          = 'icingadb',
     String $icingadb_db_user          = 'icinga2',
-    String $icingadb_db_user_password = undef,
-    String $ldap_password             = undef,
+    String $icingadb_db_user_password,
+    String $ldap_password,
+    String $icingaweb2_api_password,
 ) {
 
     if ! defined(Class['::icinga2']) {
@@ -251,7 +252,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/modules/monitoring/commandtransports.ini':
         ensure  => present,
-        content => template('icingaweb2/commandtransports.ini.erb'),
+        content => template('icingaweb2/commandtransports.ido.ini.erb'),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2/modules/monitoring'],
@@ -275,7 +276,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/modules/icingadb/commandtransports.ini':
         ensure  => present,
-        content => template('icingaweb2/commandtransports.ini.erb'),
+        content => template('icingaweb2/commandtransports.icingadb.ini.erb'),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2/modules/icingadb'],

@@ -79,6 +79,7 @@ class role::icinga2 (
     String $ticket_salt                      = lookup('passwords::ticket_salt', {'default_value' => ''}),
     String $ldap_password                    = lookup('passwords::ldap_password'),
     Optional[String] $icinga2_api_bind_host  = lookup('icinga2_api_bind_host', {'default_value' => undef}),
+    String $icingaweb2_api_password          = lookup('passwords::icingaweb2_api_password'),
 ) {
     # include prometheus::exporter::cloudflare
 
@@ -97,6 +98,7 @@ class role::icinga2 (
         icinga2_api_bind_host   => $icinga2_api_bind_host,
         mirahezebots_password   => $mirahezebots_password,
         ticket_salt             => $ticket_salt,
+        icingaweb2_api_password => $icingaweb2_api_password,
     }
 
     class { '::icingaweb2':
@@ -113,6 +115,7 @@ class role::icinga2 (
         icingadb_db_user          => $icingadb_db_user,
         icingadb_db_user_password => $ido_db_user_password,
         ldap_password             => $ldap_password,
+        icingaweb2_api_password   => $icingaweb2_api_password,
     }
 
     if !defined(Ferm::Service['http']) {

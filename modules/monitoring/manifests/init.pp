@@ -2,17 +2,18 @@ class monitoring (
     String $ido_db_host,
     String $ido_db_name                     = 'icinga',
     String $ido_db_user                     = 'icinga2',
-    String $ido_db_password                 = undef,
+    String $ido_db_password,
     String $icingadb_db_host,
-    String $icingadb_db_name                = 'icinga',
+    String $icingadb_db_name                = 'icingadb',
     String $icingadb_db_user                = 'icinga2',
-    String $icingadb_db_password            = undef,
+    String $icingadb_db_password,
     String $icingadb_redis_host             = 'localhost',
     Stdlib::Port $icingadb_redis_port       = 6379,
-    String $icingadb_redis_password         = undef,
-    String $mirahezebots_password           = undef,
+    String $icingadb_redis_password,
+    String $mirahezebots_password,
     String $ticket_salt                     = '',
     Optional[String] $icinga2_api_bind_host = undef,
+    String $icingaweb2_api_password,
 ) {
     stdlib::ensure_packages([
         'nagios-nrpe-plugin',
@@ -131,6 +132,15 @@ class monitoring (
 
     class { 'icinga2::feature::gelf':
         host => 'logging.wikitide.net',
+    }
+
+    icinga2::object::apiuser { 'icingaweb2':
+        ensure      => present,
+        password    => $icingaweb2_api_password,
+        permissions => ['status/query', 'actions/*', 'objects/modify/*', 'objects/query/*'],
+        target      => '/etc/icinga2/conf.d/api-users.conf',
+        require     => Package['icinga2'],
+        notify      => Service['icinga2'],
     }
 
     file { '/etc/icinga2/conf.d/commands.conf':
