@@ -115,6 +115,7 @@ class monitoring (
     include icinga2::feature::perfdata
 
     class { 'icinga2::feature::idomysql':
+        ensure        => absent,
         host          => $ido_db_host,
         user          => $ido_db_user,
         password      => $ido_db_password,

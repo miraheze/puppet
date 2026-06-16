@@ -205,14 +205,6 @@ class icingaweb2 (
         require => File['/etc/icingaweb2/enabledModules'],
     }
 
-    file { '/etc/icingaweb2/enabledModules/monitoring':
-        ensure  => 'link',
-        target  => '/usr/share/icingaweb2/modules/monitoring',
-        owner   => 'www-data',
-        group   => 'icingaweb2',
-        require => File['/etc/icingaweb2/enabledModules'],
-    }
-
     file { '/etc/icingaweb2/enabledModules/setup':
         ensure  => 'link',
         target  => '/usr/share/icingaweb2/modules/setup',
@@ -235,30 +227,6 @@ class icingaweb2 (
         group   => 'icingaweb2',
         mode    => '2755',
         require => File['/etc/icingaweb2'],
-    }
-
-    file { '/etc/icingaweb2/modules/monitoring':
-        ensure  => 'directory',
-        owner   => 'www-data',
-        group   => 'icingaweb2',
-        mode    => '2755',
-        require => File['/etc/icingaweb2/modules'],
-    }
-
-    file { '/etc/icingaweb2/modules/monitoring/backends.ini':
-        ensure  => present,
-        content => template('icingaweb2/backends.ini.erb'),
-        owner   => 'www-data',
-        group   => 'icingaweb2',
-        require => File['/etc/icingaweb2/modules/monitoring'],
-    }
-
-    file { '/etc/icingaweb2/modules/monitoring/commandtransports.ini':
-        ensure  => present,
-        content => template('icingaweb2/commandtransports.ido.ini.erb'),
-        owner   => 'www-data',
-        group   => 'icingaweb2',
-        require => File['/etc/icingaweb2/modules/monitoring'],
     }
 
     file { '/etc/icingaweb2/modules/icingadb':
