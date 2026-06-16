@@ -81,6 +81,7 @@ class monitoring (
 
     class { 'icingadb::redis':
         manage_repos => true,
+        port         => $icingadb_redis_port,
         requirepass  => $icingadb_redis_password,
         require      => Class['redis']
     }
