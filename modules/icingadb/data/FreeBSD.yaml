@@ -1,0 +1,18 @@
+---
+icingadb::globals::package_name: icingadb
+icingadb::globals::user: icinga
+icingadb::globals::group: icinga
+icingadb::globals::service_name: icingadb
+icingadb::globals::conf_dir: /usr/local/etc/icingadb
+icingadb::globals::mysql_db_schema: /usr/local/share/examples/icingadb/schema/mysql/schema.sql
+icingadb::globals::pgsql_db_schema: /usr/local/share/examples/icingadb/schema/pgsql/schema.sql
+
+icingadb::redis::globals::package_name: redis
+icingadb::redis::globals::service_name: redis
+icingadb::redis::globals::user: icinga
+icingadb::redis::globals::group: icinga
+icingadb::redis::globals::redis_bin: /usr/local/bin
+icingadb::redis::globals::conf_dir: /usr/local/etc/icingadb
+icingadb::redis::globals::work_dir: /var/lib/icingadb
+icingadb::redis::globals::run_dir: /var/run/icingadb
+icingadb::redis::globals::log_dir: /var/log/icingadb
