@@ -247,7 +247,7 @@ class icingaweb2 (
 
     file { '/etc/icingaweb2/modules/icingadb/commandtransports.ini':
         ensure  => present,
-        content => template('icingaweb2/commandtransports.icingadb.ini.erb'),
+        content => template('icingaweb2/commandtransports.ini.erb'),
         owner   => 'www-data',
         group   => 'icingaweb2',
         require => File['/etc/icingaweb2/modules/icingadb'],

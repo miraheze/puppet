@@ -84,10 +84,6 @@ class role::icinga2 (
     # include prometheus::exporter::cloudflare
 
     class { '::monitoring':
-        ido_db_host             => $icinga2_db_host,
-        ido_db_name             => $icinga2_db_name,
-        ido_db_user             => $icinga2_db_user,
-        ido_db_password         => $ido_db_user_password,
         icingadb_db_host        => $icingadb_db_host,
         icingadb_db_name        => $icingadb_db_name,
         icingadb_db_user        => $icingadb_db_user,

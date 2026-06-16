@@ -1,8 +1,4 @@
 class monitoring (
-    String $ido_db_host,
-    String $ido_db_name                     = 'icinga',
-    String $ido_db_user                     = 'icinga2',
-    String $ido_db_password,
     String $icingadb_db_host,
     String $icingadb_db_name                = 'icingadb',
     String $icingadb_db_user                = 'icinga2',
@@ -113,15 +109,6 @@ class monitoring (
     include icinga2::feature::notification
 
     include icinga2::feature::perfdata
-
-    class { 'icinga2::feature::idomysql':
-        ensure        => absent,
-        host          => $ido_db_host,
-        user          => $ido_db_user,
-        password      => $ido_db_password,
-        database      => $ido_db_name,
-        import_schema => false,
-    }
 
     class { 'icinga2::feature::icingadb':
         host     => $icingadb_redis_host,
