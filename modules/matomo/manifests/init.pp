@@ -218,12 +218,10 @@ class matomo (
         }
     }
 
-    $queuedtracking_command = '/usr/bin/php /srv/matomo/console queuedtracking:process'
-
     ['0', '1', '2'].each | $key | {
         systemd::timer::job { "matomo-queuedtracking-${key}":
             description       => "Runs the Matomo's Plugin QueuedTracking process.",
-            command           => "/bin/bash -c '${queuedtracking_command} --queue-id=${key} -c 10 -s 2 -d 5'",
+            command           => "/usr/bin/php /srv/matomo/console queuedtracking:process --queue-id=${key} --delay=1 --no-ansi",
             interval          => {
                 'start'    => 'OnCalendar',
                 'interval' => '*-*-* *:*:00',
