@@ -182,7 +182,6 @@ class matomo (
     $concurrent_hash = {
         '1' => '*-*-* 00/8:00:00',
         '2' => '*-*-* 00/8:01:00',
-        '3' => '*-*-* 00/8:02:00',
     }
     $concurrent_hash.each | String $concurrent, String $interval | {
         systemd::timer::job { "matomo-archiver-${concurrent}":
