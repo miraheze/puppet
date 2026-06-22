@@ -93,6 +93,35 @@ define mediawiki::extensionsetup (
                 }
             }
 
+            if $params['npm_deploy_repo_url'] {
+                $deploy_branch = $params['npm_deploy_branch'] ? {
+                    '_branch_' => $branch == 'master' ? {
+                        true    => $params['npm_deploy_alpha_branch'] ? {
+                            undef   => $branch,
+                            default => $params['npm_deploy_alpha_branch'],
+                        },
+                        default => $branch,
+                    },
+                    default    => $branch == 'master' ? {
+                        true    => $params['npm_deploy_alpha_branch'] ? {
+                            undef   => $params['npm_deploy_branch'],
+                            default => $params['npm_deploy_alpha_branch'],
+                        },
+                        default => $params['npm_deploy_branch'],
+                    },
+                }
+                git::clone { "${name}-${branch}-npm-deploy":
+                    ensure    => present,
+                    directory => "${mwpath}/${params['path']}/node_modules",
+                    origin    => $params['npm_deploy_repo_url'],
+                    branch    => $deploy_branch,
+                    owner     => 'www-data',
+                    group     => 'www-data',
+                    mode      => '0755',
+                    require   => Git::Clone["MediaWiki-${branch} ${name}"],
+                }
+            }
+
             if $params['latest'] {
                 exec { "MediaWiki-${branch} ${name} Sync":
                     command     => "/usr/local/bin/mwdeploy --folders=${version}/${params['path']} --servers=${lookup(mediawiki::default_sync)}",
