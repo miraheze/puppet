@@ -52,4 +52,11 @@ class mediawiki::firejail {
         group  => 'www-data',
         mode   => '0555',
     }
+
+    file { '/usr/local/bin/xvfb-run':
+        source => 'puppet:///modules/mediawiki/firejail/mediawiki-firejail-xvfb-run.sh',
+        owner  => 'www-data',
+        group  => 'www-data',
+        mode   => '0555',
+    }
 }
