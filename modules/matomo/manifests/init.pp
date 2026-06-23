@@ -180,18 +180,31 @@ class matomo (
     # Create concurrent archivers
     # https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/
     $concurrent_hash = {
-        '1' => '*-*-* 00/8:00:00',
-        '2' => '*-*-* 00/8:01:00',
-        '3' => '*-*-* 00/8:02:00',
-        '4' => '*-*-* 00/8:03:00',
+        '1' => {
+            interval => '*-*-* 00/8:00:00',
+            ensure   => 'present',
+        },
+        '2' => {
+            interval => '*-*-* 00/8:01:00',
+            ensure   => 'present',
+        },
+        '3' => {
+            interval => '*-*-* 00/8:02:00',
+            ensure   => 'absent',
+        },
+        '4' => {
+            interval => '*-*-* 00/8:03:00',
+            ensure   => 'present',
+        },
     }
-    $concurrent_hash.each | String $concurrent, String $interval | {
+    $concurrent_hash.each | String $concurrent, Hash $config | {
         systemd::timer::job { "matomo-archiver-${concurrent}":
+            ensure            => $config['ensure'],
             description       => "Runs the Matomo's archive process.",
             command           => "/bin/bash -c '${archiver_command}'",
             interval          => {
                 'start'    => 'OnCalendar',
-                'interval' => $interval,
+                'interval' => $config['interval'],
             },
             logfile_basedir   => '/var/log/matomo',
             logfile_group     => 'www-data',
