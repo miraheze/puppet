@@ -190,7 +190,7 @@ class matomo (
         },
         '3' => {
             interval => '*-*-* 00/8:02:00',
-            ensure   => 'absent',
+            ensure   => 'present',
         },
         '4' => {
             interval => '*-*-* 00/8:03:00',
