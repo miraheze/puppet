@@ -175,7 +175,7 @@ class matomo (
     # Install a systemd timer to run the Archive task periodically.
     # Running it once a day to avoid performance penalties on high trafficated websites
     # (https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/#important-tips-for-medium-to-high-traffic-websites)
-    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --concurrent-archivers=3 --concurrent-requests-per-website=1 --url=\"https://analytics.wikitide.net/\""
+    $archiver_command = "/usr/bin/php /srv/matomo/console core:archive --concurrent-archivers=4 --concurrent-requests-per-website=1 --url=\"https://analytics.wikitide.net/\""
 
     # Create concurrent archivers
     # https://matomo.org/faq/on-premise/how-to-set-up-auto-archiving-of-your-reports/
@@ -183,6 +183,7 @@ class matomo (
         '1' => '*-*-* 00/8:00:00',
         '2' => '*-*-* 00/8:01:00',
         '3' => '*-*-* 00/8:02:00',
+        '4' => '*-*-* 00/8:03:00',
     }
     $concurrent_hash.each | String $concurrent, String $interval | {
         systemd::timer::job { "matomo-archiver-${concurrent}":
