@@ -241,7 +241,7 @@ class matomo (
             ensure   => 'present',
         },
         '2' => {
-            ensure   => 'present',
+            ensure   => 'absent',
         },
     }
     $concurrent_queuedtracking.each | String $key, Hash $config | {
