@@ -233,8 +233,20 @@ class matomo (
         }
     }
 
-    ['0', '1', '2'].each | $key | {
+    $concurrent_queuedtracking = {
+        '0' => {
+            ensure   => 'present',
+        },
+        '2' => {
+            ensure   => 'present',
+        },
+        '2' => {
+            ensure   => 'present',
+        },
+    }
+    $concurrent_queuedtracking.each | String $key, Hash $config | {
         systemd::timer::job { "matomo-queuedtracking-${key}":
+            ensure            => $config['ensure'],
             description       => "Runs the Matomo's Plugin QueuedTracking process.",
             command           => "/usr/bin/php /srv/matomo/console queuedtracking:process --queue-id=${key} --delay=1 --no-ansi",
             interval          => {
