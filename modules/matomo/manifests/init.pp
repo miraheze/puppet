@@ -237,7 +237,7 @@ class matomo (
         '0' => {
             ensure   => 'present',
         },
-        '2' => {
+        '1' => {
             ensure   => 'present',
         },
         '2' => {
