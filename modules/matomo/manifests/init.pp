@@ -194,7 +194,7 @@ class matomo (
         },
         '4' => {
             interval => '*-*-* 00/8:03:00',
-            ensure   => 'present',
+            ensure   => 'absent',
         },
     }
     $concurrent_hash.each | String $concurrent, Hash $config | {
