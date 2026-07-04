@@ -54,12 +54,6 @@ class mediawiki {
         mode   => '0755',
     }
 
-    file { '/srv/mediawiki/robots.php':
-        ensure  => 'present',
-        source  => 'puppet:///modules/mediawiki/robots.php',
-        require => File['/srv/mediawiki'],
-    }
-
     file { '/srv/mediawiki/favicon.php':
         ensure  => 'present',
         source  => 'puppet:///modules/mediawiki/favicon.php',
