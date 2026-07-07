@@ -79,12 +79,9 @@ class base::monitoring {
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#APT'
     }
 
-    $ntp_server = lookup('base::ntp_server')
-    $ntp_servers.each |String $server| {
-        monitoring::nrpe { "NTP time ${server}":
-            command => "/usr/lib/nagios/plugins/check_ntp_time -H ${server} -w 0.1 -c 0.5",
-            docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#NTP'
-        }
+    monitoring::nrpe { 'NTP time':
+        command => '/usr/lib/nagios/plugins/check_ntp_peer -H localhost -w 0.05 -c 0.1 -W 5 -C 10',
+        docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#NTP'
     }
 
     # Collect all NRPE command files
