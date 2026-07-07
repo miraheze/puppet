@@ -79,7 +79,7 @@ class base::monitoring {
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#APT'
     }
 
-    monitoring::nrpe { 'NTP time':
+    monitoring::nrpe { 'ntp peers':
         command => '/usr/lib/nagios/plugins/check_ntp_peer -H localhost -w 0.05 -c 0.1 -W 5 -C 10',
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#NTP'
     }
