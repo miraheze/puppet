@@ -69,7 +69,7 @@ class base (
         },
     }
 
-    $ntp_server = lookup('base::ntp_servers')
+    $ntp_servers = lookup('base::ntp_servers')
 
     class { 'ntp':
         servers   => $ntp_servers,
