@@ -1,6 +1,10 @@
 users::groups:
   - bastion
 
-base::ntp_server: 'pool.ntp.org'
+base::ntp_servers:
+  - '0.debian.pool.ntp.org'
+  - '1.debian.pool.ntp.org'
+  - '2.debian.pool.ntp.org'
+  - '3.debian.pool.ntp.org'
 base::dns::do_ipv4: true
 base::dns::do_ipv6: true

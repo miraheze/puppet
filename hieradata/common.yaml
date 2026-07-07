@@ -4,7 +4,8 @@ puppetserver: false
 
 puppet_major_version: 8
 
-base::ntp_server: 'ntp.fsslc.wtnet'
+base::ntp_servers:
+  - 'ntp.fsslc.wtnet'
 
 mediawiki::multiversion::versions:
   '1.45':
