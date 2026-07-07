@@ -69,10 +69,10 @@ class base (
         },
     }
 
-    $ntp_server = lookup('base::ntp_server')
+    $ntp_server = lookup('base::ntp_servers')
 
     class { 'ntp':
-        servers   => [ $ntp_server ],
+        servers   => $ntp_servers,
         config    => '/etc/ntpsec/ntp.conf',
         driftfile => '/var/lib/ntpsec/ntp.drift',
         restrict  => [
