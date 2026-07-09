@@ -1,0 +1,5 @@
+<%- | Hash[String[1],Any]   $content,
+| -%>
+# This file is managed by Puppet. DO NOT EDIT.
+
+<%= $content -%>

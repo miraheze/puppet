@@ -2,10 +2,6 @@
 groups = "sre-infrastructure,sre-management"
 permissions = "*"
 
-[guest]
-users = "guest"
-permissions = "no-user/password-change, module/doc, module/monitoring, module/translation"
-
 [sre-mediawiki]
 groups = "sre-mediawiki"
-permissions = "module/doc, module/monitoring, monitoring/command/acknowledge-problem, monitoring/command/comment/*, monitoring/command/downtime/*, monitoring/command/remove-acknowledgement"
+permissions = "module/doc, module/icingadb, icingadb/command/acknowledge-problem, icingadb/command/comment/*, icingadb/command/downtime/*, icingadb/command/remove-acknowledgement"

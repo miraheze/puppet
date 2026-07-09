@@ -15,6 +15,7 @@ class mariadb::config(
     String                $expire_logs_days             = '3',
     String                $sync_binlog                  = '1',
     String                $flush_log_at_trx_commit      = '1',
+    Integer               $wait_timeout                 = 3600,
 ) {
     $exporter_password = lookup('passwords::db::exporter')
     $ido_db_user_password = lookup('passwords::icinga_ido')

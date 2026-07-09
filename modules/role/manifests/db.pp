@@ -9,6 +9,7 @@ class role::db (
     Boolean $backup_sql = lookup('role::db::backup_sql', {'default_value' => true}),
     Boolean $enable_ssl = lookup('role::db::enable_ssl', {'default_value' => true}),
     Boolean $is_beta_db = lookup('role::db::is_beta_db', {'default_value' => false}),
+    Integer $wait_timeout = lookup('role::db::wait_timeout', {'default_value' => 3600}),
 ) {
     include mariadb::packages
     include prometheus::exporter::mariadb
@@ -46,6 +47,7 @@ class role::db (
         enable_bin_logs => $enable_bin_logs,
         enable_ssl      => $enable_ssl,
         enable_slow_log => $enable_slow_log,
+        wait_timeout    => $wait_timeout,
     }
 
     file { '/etc/mysql/wikitide/mediawiki-grants.sql':

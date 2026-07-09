@@ -1,0 +1,8 @@
+---
+lookup_options:
+  icingadb::redis::config:
+    merge: hash
+
+icingadb::redis::config:
+  unixsocket: ''
+  tcp_keepalive: 300
