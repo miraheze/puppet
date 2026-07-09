@@ -575,6 +575,7 @@ sub vcl_backend_response {
 
 	// Used for purging
 	set beresp.http.xkey = bereq.http.Host + bereq.url;
+	set beresp.http.time = std.strftime(now, "%Y-%m-%dT%H:%M:%SZ");
 
 	if (bereq.http.Cookie ~ "([sS]ession|Token)=") {
 		set bereq.http.Cookie = "Token=1";
@@ -745,6 +746,9 @@ sub vcl_deliver {
 	if (resp.http.Content-Length == "0" && resp.status >= 400) {
 		return(synth(resp.status));
 	}
+
+	// Used for purging, does not need to be delivered to user
+	unset resp.http.time;
 
 	if (req.method != "PURGE") {
 		// we copy through from beresp->resp->req here for the initial hit-for-pass case
