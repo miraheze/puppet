@@ -121,7 +121,7 @@ class ssl {
         require  => Package['certbot'],
     }
 
-    class { 'ssl::web': {
+    class { 'ssl::web':
         ensure => lookup('ssl::web::ensure', {'default_value' => 'present'}),
     }
 }
