@@ -4,7 +4,7 @@ Description=WikiTide Renewing SSL REST api service
 [Service]
 Type=simple
 Environment=PYTHONPATH=/usr/local/bin
-ExecStart=/usr/local/bin/gunicorn -w 2 -b [::]:5000 wikitiderenewssl:app
+ExecStart=/usr/local/bin/gunicorn -w 2 -t 180 -b [::]:5000 wikitiderenewssl:app
 User=root
 Restart=on-failure
 
