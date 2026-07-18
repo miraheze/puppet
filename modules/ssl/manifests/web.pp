@@ -34,6 +34,11 @@ class ssl::web {
         restart => true,
     }
 
+    logrotate::conf { 'wikitiderenewssl':
+        ensure => present,
+        source => 'puppet:///modules/ssl/web/wikitiderenewssl.logrotate.conf',
+    }
+
     $subquery = @("PQL")
     resources { type = 'Class' and title = 'Role::Icinga2' }
     | PQL
