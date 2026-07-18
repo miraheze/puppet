@@ -1,14 +1,13 @@
-#!flask/bin/python3
-
+#!/usr/bin/env python3
 from filelock import FileLock
-from flask import Flask
-from flask import request
+from flask import Flask, request
 import logging
 import logging.handlers
 import subprocess
 
 app = Flask(__name__)
 
+# Configure logging
 formatter = logging.Formatter('%(asctime)s - %(message)s', '%m-%d-%Y %I:%M:%S %p')
 handler = logging.handlers.TimedRotatingFileHandler(
     '/var/log/ssl/wikitide-renewal.log',
@@ -21,35 +20,33 @@ logger = logging.getLogger()
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
-
 @app.route('/renew', methods=['POST'])
 def post():
-    lock_acquired = False
-
-    content = request.get_json()
+    content = request.get_json() or {}
+    
+    # Extract data safely with defaults
+    service_desc = content.get("SERVICEDESC", "unknown")
+    service_state = content.get("SERVICESTATE", "unknown")
+    state_type = content.get("SERVICESTATETYPE", "unknown")
 
     filename = '/tmp/tmp_file.lock'
     lock = FileLock(filename)
 
-    while not lock_acquired:
-        with lock:
-            lock.acquire()
-            try:
-                logger.info(f'Renewed SSL certificate: {content["SERVICEDESC"]}')
-                command = subprocess.run(
-                    f'/var/lib/nagios/ssl-acme -s {content["SERVICESTATE"]} -t {content["SERVICESTATETYPE"]} -u {content["SERVICEDESC"]}',
-                    capture_output=True,
-                    text=True,
-                    shell=True)
-                if command.stdout:
-                    logger.info(command.stdout)
-                if command.stderr:
-                    logger.info(command.stderr)
-                lock_acquired = True
-            finally:
-                lock.release()
-                lock_acquired = True
+    # Use the context manager properly to handle acquiring/releasing automatically
+    with lock:
+        logger.info(f'Renewed SSL certificate: {service_desc}')
+        
+        # Array argument format protects against shell injection vulnerabilities
+        command = subprocess.run([
+            '/var/lib/nagios/ssl-acme',
+            '-s', service_state,
+            '-t', state_type,
+            '-u', service_desc
+        ], capture_output=True, text=True)
+        
+        if command.stdout:
+            logger.info(command.stdout.strip())
+        if command.stderr:
+            logger.info(command.stderr.strip())
+
     return '', 204
-
-
-app.run(host='::', port=5000, threaded=True)
