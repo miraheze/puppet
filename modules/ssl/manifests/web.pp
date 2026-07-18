@@ -2,7 +2,7 @@
 class ssl::web {
     include ssl::nginx
 
-    stdlib::ensure_packages(['python3-flask', 'python3-filelock'])
+    stdlib::ensure_packages(['gunicorn', 'python3-flask', 'python3-filelock'])
 
     file { '/usr/local/bin/wikitiderenewssl.py':
         ensure => present,
