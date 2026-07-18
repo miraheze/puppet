@@ -10,7 +10,12 @@ import subprocess
 app = Flask(__name__)
 
 formatter = logging.Formatter('%(asctime)s - %(message)s', '%m-%d-%Y %I:%M:%S %p')
-handler = logging.handlers.TimedRotatingFileHandler('/var/log/ssl/wikitide-renewal.log', 'midnight', 1)
+handler = logging.handlers.TimedRotatingFileHandler(
+    '/var/log/ssl/wikitide-renewal.log', 
+    when='midnight', 
+    interval=1, 
+    backupCount=7
+)
 handler.setFormatter(formatter)
 logger = logging.getLogger()
 logger.addHandler(handler)
