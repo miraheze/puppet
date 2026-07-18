@@ -1,5 +1,7 @@
 # === Class ssl::web
-class ssl::web {
+class ssl::web (
+    VMlib::Ensure $ensure = 'present',
+) {
     include ssl::nginx
 
     stdlib::ensure_packages(['gunicorn', 'python3-flask', 'python3-filelock'])
@@ -29,7 +31,7 @@ class ssl::web {
     }
 
     systemd::service { 'wikitiderenewssl':
-        ensure  => present,
+        ensure  => $ensure,
         content => systemd_template('wikitiderenewssl'),
         restart => true,
     }
@@ -39,6 +41,7 @@ class ssl::web {
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
     ferm::service { 'icinga 5000':
+        ensure => $ensure,
         proto  => 'tcp',
         port   => '5000',
         srange => "(${firewall_rules_str})",
@@ -53,6 +56,7 @@ class ssl::web {
     }
 
     monitoring::services { 'WikiTideRenewSSL':
+        ensure        => $ensure,
         check_command => 'tcp',
         docs          => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#WikiTideRenewSSL',
         vars          => {
