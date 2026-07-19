@@ -283,7 +283,7 @@ def git_push(workdir):
 
     subprocess.run([
         "git", "config", "--global", "core.sshCommand",
-        "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand='nc -X connect -x bastion.fsslc.wtnet:8080 %h %p'"
+        "ssh -i /var/lib/nagios/id_ed25519 -F /dev/null -o ProxyCommand='nc -w 10 -X connect -x bastion.fsslc.wtnet:8080 %h %p'"
     ], check=True)
 
     subprocess.run(["git", "-C", workdir, "config", "user.name", "WikiTideBot"], check=True)
