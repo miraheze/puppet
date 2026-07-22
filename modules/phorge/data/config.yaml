@@ -18,6 +18,7 @@ mysql.host: 'db182.fsslc.wtnet'
 # Needs to match php.ini post_max_size for conduit
 storage.mysql-engine.max-size: 10000000
 storage.default-namespace: 'phabricator'
+storage.upload-size-limit: '10M'
 
 metamta.default-address: 'issue-tracker@wikitide.org'
 metamta.single-reply-handler-prefix: 'issuetracker'
