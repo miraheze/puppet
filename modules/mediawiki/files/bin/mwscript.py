@@ -92,7 +92,7 @@ def get_commands(args: argparse.Namespace) -> CommandInfo | int:
         dbname = wiki
         if not dbname:
             dbname = 'default'
-        args.version = os.popen(f'/usr/local/bin/getMWVersion {dbname}').read().strip()
+        args.version = os.popen(f'sudo -u www-data /usr/local/bin/getMWVersion {dbname}').read().strip()
         if wiki and wiki in versionLists:
             args.version = versions.get(wiki[:-6])
 
