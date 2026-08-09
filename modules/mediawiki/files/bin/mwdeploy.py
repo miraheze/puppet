@@ -448,7 +448,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
     if len(args.servers) > 1 and args.servers == get_environment_info()['servers']:
         loginfo['servers'] = 'all'
 
-    use_version = args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor
+    use_version = args.world or args.l10n or args.extension_list or args.reset_world or args.upgrade_extensions or args.upgrade_skins or args.upgrade_vendor or args.apply_patches
 
     if args.versions:
         if args.upgrade_extensions == get_valid_extensions(args.versions):
@@ -859,13 +859,8 @@ class ServersAction(argparse.Action):
 class ApplyPatchesAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         input_repos = values.split(',')
-        has_versions = getattr(namespace, 'versions', None)
-        invalid_repos = []
-        for repo in input_repos:
-            if repo not in versions and not has_versions:
-                invalid_repos.append(repo)
-        if invalid_repos:
-            parser.error(f'invalid --apply-patches, --versions must be used with and included before repo(s): {", ".join(invalid_repos)}')
+        if not getattr(namespace, 'versions', None):
+            parser.error(f'--versions is required when using --apply-patches (--versions must come before --apply-patches)')
         setattr(namespace, self.dest, input_repos)
 
 
