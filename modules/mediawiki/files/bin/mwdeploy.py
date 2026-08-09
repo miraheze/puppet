@@ -375,15 +375,17 @@ def _apply_patch_plain(repo: str, patchfile: str, version: str) -> int:
 
 def _patch_matches(patch: dict, repo: str, version: str) -> bool:
     path = patch['path']
+    if path == repo and path in versions:
+        return True  # mw core patches
     staging_path = _get_staging_path(repo, version)
     if not staging_path.endswith(path):
         return False
 
-    versions = patch['versions']
-    if 'all' in versions:
+    patch_versions = patch['versions']
+    if 'all' in patch_versions:
         return True
 
-    return version in versions and staging_path.endswith(f'{version}/{path}')
+    return version in patch_versions and staging_path.endswith(f'{version}/{path}')
 
 
 def _apply_patches(repo: str, version: str = '') -> list[int]:
@@ -504,7 +506,7 @@ def run(args: argparse.Namespace, start: float) -> None:  # pragma: no cover
 
 def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pragma: no cover
     envinfo = get_environment_info()
-    options = {'config': args.config and not version, 'world': args.world and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
+    options = {'config': args.config and not version, 'world': (args.world or args.reset_world) and version, 'landing': args.landing and not version, 'errorpages': args.errorpages and not version}
     exitcodes = []
     rsyncpaths = []
     rsyncfiles = []
@@ -524,11 +526,6 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
         if version and args.reset_world:
             stage.append(_construct_reset_mediawiki_rm_staging(version))
             stage.append(_construct_reset_mediawiki_run_puppet())
-            applied = []
-            for patch in patches:
-                if patch['path'] not in applied:
-                    exitcodes.extend(_apply_patches(patch['path'], version))
-                    applied.append(patch['path'])
 
         pull = []
         if args.pull:
@@ -690,6 +687,13 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     rebuild.append(f'sudo -u {DEPLOYUSER} MW_INSTALL_PATH=/srv/mediawiki-staging/{version} php {runner_staging}MirahezeMagic:RebuildVersionCache --save-gitinfo --version={version} --wiki={envinfo["wikidbname"]} --conf=/srv/mediawiki-staging/config/LocalSettings.php')
                     rsyncpaths.append(f'/srv/mediawiki/cache/{version}/gitinfo/')
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{_get_staging_path(option)}*', dest=_get_deployed_path(option)))
+        non_zero_code(exitcodes, nolog=args.nolog)
+        if version and args.reset_world:  # complete reset_world by applying patches, after potential composer update
+            applied = []
+            for patch in patches:
+                if patch['path'] not in applied:
+                    exitcodes.extend(_apply_patches(patch['path'], version))
+                    applied.append(patch['path'])
         non_zero_code(exitcodes, nolog=args.nolog)
         if args.files and not version:  # specfic extra files
             files = str(args.files).split(',')
