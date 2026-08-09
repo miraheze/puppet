@@ -294,7 +294,10 @@ def _get_staging_path(repo: str, version: str = '') -> str:
     return f'/srv/mediawiki-staging/{repos[repo]}/'
 
 
-def _get_deployed_path(repo: str) -> str:
+def _get_deployed_path(repo: str, version: str = '') -> str:
+    if version and ('extensions/' in repo or 'skins/' in repo or repo == 'vendor'):
+        return f'/srv/mediawiki-staging/{version}/{repo}'
+
     return f'/srv/mediawiki/{repos[repo]}/'
 
 
@@ -695,6 +698,17 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     exitcodes.extend(_apply_patches(patch['path'], version))
                     applied.append(patch['path'])
         non_zero_code(exitcodes, nolog=args.nolog)
+
+        if args.apply_patches:
+            for repo in args.apply_patches:
+                exitcodes.extend(_apply_patches(repo, version))
+                staging_path = _get_staging_path(repo, version)  # non-consistent behavior, ensure terminating /
+                staging_path = staging_path if staging_path.endswith('/') else staging_path + '/'
+                dest_path = _get_deployed_path(repo, version)
+                dest_path = dest_path if dest_path.endswith('/') else dest_path + '/'
+                rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{staging_path}*', dest=dest_path))
+        non_zero_code(exitcodes, nolog=args.nolog)
+
         if args.files and not version:  # specfic extra files
             files = str(args.files).split(',')
             for file in files:
@@ -842,6 +856,18 @@ class ServersAction(argparse.Action):
         setattr(namespace, self.dest, input_servers)
 
 
+class ApplyPatchesAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
+        input_repos = values.split(',')
+        has_versions = getattr(namespace, 'versions', None)
+        invalid_repos = []
+        for repo in input_repos:
+            if repo not in versions and not has_versions:
+                invalid_repos.append(repo)
+        if invalid_repos:
+            parser.error(f'invalid --apply-patches, --versions must be used with and included before repo(s): {", ".join(invalid_repos)}')
+
+
 if __name__ == '__main__':
     start = time.time()
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -871,5 +897,6 @@ if __name__ == '__main__':
     parser.add_argument('--servers', dest='servers', action=ServersAction, required=True, help='server(s) to deploy to')
     parser.add_argument('--ignore-time', dest='ignore_time', action='store_true')
     parser.add_argument('--port', dest='port')
+    parser.add_argument('--apply-patches', dest='apply_patches', action=ApplyPatchesAction, help='repo(s) to apply patches to')
 
     run(parser.parse_args(), start)
