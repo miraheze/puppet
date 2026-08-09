@@ -117,7 +117,7 @@ GEM
     io-console (0.8.0)
     jgrep (1.5.4)
     jmespath (1.6.2)
-    json (2.20.0)
+    json (2.21.2)
     json-schema (4.3.1)
       addressable (>= 2.8)
     jwt (2.10.1)
