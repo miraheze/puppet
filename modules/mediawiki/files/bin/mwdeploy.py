@@ -866,6 +866,7 @@ class ApplyPatchesAction(argparse.Action):
                 invalid_repos.append(repo)
         if invalid_repos:
             parser.error(f'invalid --apply-patches, --versions must be used with and included before repo(s): {", ".join(invalid_repos)}')
+        setattr(namespace, self.dest, input_repos)
 
 
 if __name__ == '__main__':
