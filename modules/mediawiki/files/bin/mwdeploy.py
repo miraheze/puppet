@@ -860,7 +860,7 @@ class ApplyPatchesAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):  # noqa: U100
         input_repos = values.split(',')
         if not getattr(namespace, 'versions', None):
-            parser.error(f'--versions is required when using --apply-patches (--versions must come before --apply-patches)')
+            parser.error('--versions is required when using --apply-patches (--versions must come before --apply-patches)')
         setattr(namespace, self.dest, input_repos)
 
 
