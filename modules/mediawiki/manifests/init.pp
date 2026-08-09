@@ -153,7 +153,7 @@ class mediawiki {
         }
     }
 
-    $shells = ['sql', 'mweval', 'shell', 'sugit']
+    $shells = ['sql', 'mweval', 'shell', 'sugit', 'suwd']
     $shells.each |$shell| {
         file {"/usr/local/bin/${shell}":
             ensure => 'present',
