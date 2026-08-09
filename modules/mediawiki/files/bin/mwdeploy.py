@@ -699,7 +699,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                     applied.append(patch['path'])
         non_zero_code(exitcodes, nolog=args.nolog)
 
-        if args.apply_patches:
+        if version and args.apply_patches:
             for repo in args.apply_patches:
                 exitcodes.extend(_apply_patches(repo, version))
                 staging_path = _get_staging_path(repo, version)  # non-consistent behavior, ensure terminating /
