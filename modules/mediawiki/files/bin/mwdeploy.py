@@ -296,7 +296,7 @@ def _get_staging_path(repo: str, version: str = '') -> str:
 
 def _get_deployed_path(repo: str, version: str = '') -> str:
     if version and ('extensions/' in repo or 'skins/' in repo or repo == 'vendor'):
-        return f'/srv/mediawiki-staging/{version}/{repo}'
+        return f'/srv/mediawiki/{version}/{repo}'
 
     return f'/srv/mediawiki/{repos[repo]}/'
 
