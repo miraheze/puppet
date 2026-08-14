@@ -707,6 +707,7 @@ def run_process(args: argparse.Namespace, version: str = '') -> list[int]:  # pr
                 dest_path = _get_deployed_path(repo, version)
                 dest_path = dest_path if dest_path.endswith('/') else dest_path + '/'
                 rsync.append(_construct_rsync_command(time=args.ignore_time, location=f'{staging_path}*', dest=dest_path))
+                rysncpaths.append(dest_path)
         non_zero_code(exitcodes, nolog=args.nolog)
 
         if args.files and not version:  # specfic extra files
