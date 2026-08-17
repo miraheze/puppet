@@ -13,6 +13,9 @@ mysql.port: '3306'
 mysql.user: 'phorge'
 mysql.host: 'db182.fsslc.wtnet'
 
+# Sets phorge into read-only
+cluster.read-only: true
+
 # https://we.phorge.it/book/phorge/article/configuring_file_storage/
 # Needs to match php.ini upload_max_filesize
 # Needs to match php.ini post_max_size for conduit
