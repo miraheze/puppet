@@ -177,6 +177,16 @@ class role::opensearch (
             content => template('role/opensearch/nginx.conf.erb'),
             monitor => false,
         }
+        monitoring::services { 'HTTPS':
+            check_command => 'check_curl',
+            vars          => {
+                address          => $facts['networking']['interfaces']['ens19']['ip'],
+                http_vhost       => 'opensearch.wikitide.net',
+                http_ssl         => true,
+                http_ignore_body => true,
+                http_expect      => 'HTTP/1.1 200',
+            },
+        }
 
         ssl::wildcard { 'opensearch wildcard': }
 
