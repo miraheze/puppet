@@ -135,6 +135,10 @@ node 'reports171.fsslc.wtnet' {
     include role::reports
 }
 
+node 'speedscope211.fsslc.wtnet' {
+    include base
+}
+
 node /^swiftproxy1[67]1\.fsslc\.wtnet$/ {
     include base
     include role::swift
