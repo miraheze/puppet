@@ -6,7 +6,7 @@
 # their own family first.
 function nftables::split_addrs(Optional[Variant[String, Array[String]]] $range) >> Struct[{'v4' => Array[String], 'v6' => Array[String]}] {
     if $range == undef or $range == '' or $range == [] {
-        return { 'v4' => [], 'v6' => [] }
+        return({ 'v4' => [], 'v6' => [] })
     }
 
     if $range =~ Array {
