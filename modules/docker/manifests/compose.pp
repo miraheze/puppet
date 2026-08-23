@@ -1,6 +1,6 @@
 # type: docker::compose
 define docker::compose(
-  Enum[present,absent] $ensure = present,
+  VMlib::Ensure $ensure = present,
   String $compose_file,
 ) {
   if $ensure == present {
