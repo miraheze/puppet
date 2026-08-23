@@ -44,7 +44,7 @@ class base (
         mode   => '0555',
     }
 
-    $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet']
+    $cookbooks = ['cycle-puppet', 'disable-puppet', 'enable-puppet']
     $cookbooks.each |$cookbook| {
         file {"/usr/local/bin/${cookbook}":
             ensure => 'present',
