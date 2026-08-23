@@ -21,6 +21,14 @@ class speedscope (
     ensure => directory,
   }
 
+  file { '/srv/speedscope/speedscope.db':
+    ensure => present,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0666',
+    require => File['/srv/speedscope'],
+  }
+
   file { '/srv/speedscope/.env':
     ensure  => present,
     content => epp('speedscope/speedscope.env.epp', {
@@ -30,6 +38,7 @@ class speedscope (
     owner   => 'root',
     group   => 'root',
     mode    => '0600',
+    require => File['/srv/speedscope'],
   }
 
   file { '/srv/speedscope/docker-compose.yml':
