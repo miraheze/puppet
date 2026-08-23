@@ -50,7 +50,7 @@ class role::bastion {
         content => epp('role/bastion/smtp-relay-proxy.service.epp'),
     }
 
-    ferm::service { 'bastion-smtp-relay':
+    firewall::service { 'bastion-smtp-relay':
         proto  => 'tcp',
         port   => '465',
         srange => "(${squid_access_hosts_internal})",
