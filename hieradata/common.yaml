@@ -2,7 +2,7 @@ jobrunner: false
 jobrunner::intensive: false
 puppetserver: false
 
-base::firewall::provider: 'both'
+base::firewall::provider: 'ferm'
 
 puppet_major_version: 8
 
