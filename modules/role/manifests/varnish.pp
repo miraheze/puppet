@@ -14,6 +14,15 @@ class role::varnish (
     #    prio   => '01',
     #    source => 'puppet:///modules/role/firewall/varnish-connlimits.conf'
     # }
+    #
+    # nftables::rules { 'varnish-connlimits':
+    #    prio  => 1,
+    #    chain => 'input',
+    #    rules => [
+    #        'tcp dport { 80, 443 } ct count over 80 reject with tcp reset',
+    #        'tcp dport { 80, 443 } ct state new limit rate over 120/second counter drop',
+    #    ],
+    # }
 
     if $restrict_firewall {
         $cloudflare_ipv4 = split(file('/etc/puppetlabs/puppet/private/files/firewall/cloudflare_ipv4'), /[\r\n]/)
