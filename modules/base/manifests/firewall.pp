@@ -116,45 +116,47 @@ class base::firewall (
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Conntrack_Table'
     }
 
-    if $ferm_active {
-        sudo::user { 'nagios_check_ferm':
-            user       => 'nagios',
-            privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_ferm' ],
-            require    => File['/usr/lib/nagios/plugins/check_ferm'],
-        }
-
-        file { '/usr/lib/nagios/plugins/check_ferm':
-            source => 'puppet:///modules/base/firewall/check_ferm',
-            owner  => 'root',
-            group  => 'root',
-            mode   => '0555',
-        }
-
-        monitoring::nrpe { 'ferm_active':
-            command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm',
-            docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Ferm',
-            critical => true
-        }
+    sudo::user { 'nagios_check_ferm':
+        ensure     => $ferm_active ? { true => 'present', default => 'absent' },
+        user       => 'nagios',
+        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_ferm' ],
+        require    => File['/usr/lib/nagios/plugins/check_ferm'],
     }
 
-    if $nftables_active {
-        sudo::user { 'nagios_check_nftables':
-            user       => 'nagios',
-            privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nftables' ],
-            require    => File['/usr/lib/nagios/plugins/check_nftables'],
-        }
+    file { '/usr/lib/nagios/plugins/check_ferm':
+        ensure => stdlib::ensure($ferm_active, 'file'),
+        source => 'puppet:///modules/base/firewall/check_ferm',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0555',
+    }
 
-        file { '/usr/lib/nagios/plugins/check_nftables':
-            source => 'puppet:///modules/base/firewall/check_nftables',
-            owner  => 'root',
-            group  => 'root',
-            mode   => '0555',
-        }
+    monitoring::nrpe { 'ferm_active':
+        ensure   => $ferm_active ? { true => 'present', default => 'absent' },
+        command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm',
+        docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Ferm',
+        critical => true
+    }
 
-        monitoring::nrpe { 'nftables_active':
-            command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_nftables',
-            docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Nftables',
-            critical => true
-        }
+    sudo::user { 'nagios_check_nftables':
+        ensure     => $nftables_active ? { true => 'present', default => 'absent' },
+        user       => 'nagios',
+        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nftables' ],
+        require    => File['/usr/lib/nagios/plugins/check_nftables'],
+    }
+
+    file { '/usr/lib/nagios/plugins/check_nftables':
+        ensure => stdlib::ensure($nftables_active, 'file'),
+        source => 'puppet:///modules/base/firewall/check_nftables',
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0555',
+    }
+
+    monitoring::nrpe { 'nftables_active':
+        ensure   => $nftables_active ? { true => 'present', default => 'absent' },
+        command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_nftables',
+        docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Nftables',
+        critical => true
     }
 }
