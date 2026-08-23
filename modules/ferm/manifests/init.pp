@@ -3,7 +3,7 @@
 #
 # @param ensure present installs and enables ferm. absent purges it.
 class ferm (
-    Enum['present', 'absent'] $ensure = 'present',
+    VMlib::Ensure $ensure = 'present',
 ) {
     # @resolve requires libnet-dns-perl
 
