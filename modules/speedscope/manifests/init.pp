@@ -7,6 +7,7 @@ class speedscope {
 
   $speedscope_version = '1fc7213162ec41442451e4d7a322fc9033f41016e52640159381567393554c65'
   $speedscope_log_token = lookup('speedscope::log_token')
+  $speedscope_image = 'ghcr.io/weirdgloop/speedscope-service'
   $speedscope_port = 3000
 
   file { '/srv/speedscope/.env':
@@ -34,5 +35,25 @@ class speedscope {
     ],
   }
 
-  # TODO Add aggregation cronjobs
+  systemd::timer::job { 'speedscope_hourly_aggregation':
+    ensure => present,
+    description => 'Generates the hourly speedscope aggregation',
+    working_directory => '/srv/speedscope',
+    command => "/usr/bin/docker run --rm --env-file .env -v \"./speedscope.db:/data/speedscope.db:rw\" \"${speedscope_image}:${speedscope_version}\" node dist/src/aggregateHourly.js",
+    interval    => {
+      start    => 'OnCalendar',
+      interval => '*-*-* *:00:00',
+    },
+  }
+
+  systemd::timer::job { 'speedscope_daily_aggregation':
+    ensure => present,
+    description => 'Generates the daily speedscope aggregation',
+    working_directory => '/srv/speedscope',
+    command => "/usr/bin/docker run --rm --env-file .env -v \"./speedscope.db:/data/speedscope.db:rw\" \"${speedscope_image}:${speedscope_version}\" node dist/src/aggregateDaily.js",
+    interval    => {
+      start    => 'OnCalendar',
+      interval => '*-*-* 00:30:00',
+    },
+  }
 }

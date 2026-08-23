@@ -12,8 +12,7 @@ define docker::compose(
   $dir = dirname($compose_file)
 
   exec { "docker-compose-${action}-${dir}":
-    command => "docker compose -f ${compose_file} ${action}",
+    command => "/usr/bin/docker compose -f ${compose_file} ${action}",
     cwd     => $dir,
-    path    => ['/usr/bin', '/bin'],
   }
 }

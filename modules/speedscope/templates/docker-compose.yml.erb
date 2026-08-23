@@ -1,6 +1,6 @@
 services:
   speedscope-service:
-    image: "ghcr.io/weirdgloop/speedscope-service:<%= @speedscope_version %>"
+    image: "<%= @speedscope_image %>:<%= @speedscope_version %>"
     restart: unless-stopped
     ports:
       - "<%= @speedscope_port %>:3000"
