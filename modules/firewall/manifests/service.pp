@@ -20,9 +20,9 @@ define firewall::service (
     Boolean                                  $notrack = false,
 ) {
     ferm::service { $title:
-        proto   => $proto,
-        port    => $port,
         ensure  => $ensure,
+        port    => $port,
+        proto   => $proto,
         desc    => $desc,
         prio    => $prio,
         srange  => $srange,
@@ -31,9 +31,9 @@ define firewall::service (
     }
 
     nftables::service { $title:
-        proto   => $proto,
-        port    => $port,
         ensure  => $ensure,
+        port    => $port,
+        proto   => $proto,
         desc    => $desc,
         prio    => $prio,
         srange  => $srange,

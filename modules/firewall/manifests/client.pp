@@ -17,9 +17,9 @@ define firewall::client (
     Boolean                                  $notrack = false,
 ) {
     ferm::client { $title:
-        proto   => $proto,
-        port    => $port,
         ensure  => $ensure,
+        port    => $port,
+        proto   => $proto,
         desc    => $desc,
         prio    => $prio,
         drange  => $drange,
@@ -27,9 +27,9 @@ define firewall::client (
     }
 
     nftables::client { $title:
-        proto   => $proto,
-        port    => $port,
         ensure  => $ensure,
+        port    => $port,
+        proto   => $proto,
         desc    => $desc,
         prio    => $prio,
         drange  => $drange,
