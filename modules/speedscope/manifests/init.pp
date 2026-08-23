@@ -70,4 +70,23 @@ class speedscope (
     ensure  => present,
     command => "/usr/lib/nagios/plugins/check_tcp -H 127.0.0.1 -p ${port}",
   }
+
+  if ( $facts['networking']['interfaces']['ens19'] and $facts['networking']['interfaces']['ens18'] ) {
+    $address = $facts['networking']['interfaces']['ens19']['ip']
+  } elsif ( $facts['networking']['interfaces']['ens18'] ) {
+    $address = $facts['networking']['interfaces']['ens18']['ip6']
+  } else {
+    $address = $facts['networking']['ip6']
+  }
+
+  monitoring::services { 'speedscope.wikitide.net HTTPS':
+    check_command => 'check_http',
+    vars          => {
+      address    => $address,
+      http_ssl   => true,
+      http_vhost => 'speedscope.wikitide.net',
+      # Use /aggregations endpoint, as / serves a static site
+      http_uri    => 'https://speedscope.wikitide.net/aggregations'
+    },
+  }
 }
