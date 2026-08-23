@@ -15,10 +15,10 @@ class role::speedscope (
   include ::docker
   class { '::speedscope':
     bind_host => $bind_host,
-    port => $port,
+    port      => $port,
     log_token => lookup('speedscope::log_token'),
-    image => $image,
-    version => $version,
+    image     => $image,
+    version   => $version,
   }
 
   $subquery = @("PQL")
