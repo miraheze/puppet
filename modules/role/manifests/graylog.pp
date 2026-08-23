@@ -47,7 +47,7 @@ class role::graylog {
     resources { type = 'Class' and title = 'Role::Prometheus' })
     | PQL
     $firewall_http_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'access graylog 443':
+    firewall::service { 'access graylog 443':
         proto  => 'tcp',
         port   => '443',
         srange => "(${firewall_http_rules_str})",
@@ -58,7 +58,7 @@ class role::graylog {
     resources { type = 'Class' and title = 'Base' }
     | PQL
     $firewall_syslog_rules_str = vmlib::generate_firewall_ip($subquery_2)
-    ferm::service { 'graylog 12210':
+    firewall::service { 'graylog 12210':
         proto  => 'tcp',
         port   => '12210',
         srange => "(${firewall_syslog_rules_str})",
@@ -68,7 +68,7 @@ class role::graylog {
     resources { type = 'Class' and title = 'Role::Icinga2' }
     | PQL
     $firewall_icinga_rules_str = vmlib::generate_firewall_ip($subquery_3)
-    ferm::service { 'graylog 12201':
+    firewall::service { 'graylog 12201':
         proto  => 'tcp',
         port   => '12201',
         srange => "(${firewall_icinga_rules_str})",

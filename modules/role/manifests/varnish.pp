@@ -11,8 +11,8 @@ class role::varnish (
     # service keep being restarted on
     # puppet runs.
     # ferm::conf { 'varnish-connlimits':
-    #    prio    => '01',
-    #    source  => 'puppet:///modules/role/firewall/varnish-connlimits.conf'
+    #    prio   => '01',
+    #    source => 'puppet:///modules/role/firewall/varnish-connlimits.conf'
     # }
 
     if $restrict_firewall {
@@ -28,27 +28,27 @@ class role::varnish (
         $ip = vmlib::generate_firewall_ip($subquery)
         $cloudflare_firewall_rule = "${cf_ip} ${ip}"
 
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
             srange  => "(${cloudflare_firewall_rule})",
             notrack => true,
         }
 
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
             srange  => "(${cloudflare_firewall_rule})",
             notrack => true,
         }
     } else {
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
             notrack => true,
         }
 
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
             notrack => true,
@@ -61,7 +61,7 @@ class role::varnish (
     resources { type = 'Class' and title = 'Role::Mediawiki_beta' })
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'direct varnish access':
+    firewall::service { 'direct varnish access':
         proto   => 'tcp',
         port    => '81',
         srange  => "(${firewall_rules_str})",

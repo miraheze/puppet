@@ -14,14 +14,14 @@ class role::matomo {
     resources { type = 'Class' and title = 'Role::Icinga2' })
     | PQL
     $firewall_srange = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'http':
+    firewall::service { 'http':
         proto   => 'tcp',
         port    => '80',
         srange  => "(${firewall_srange})",
         notrack => true,
     }
 
-    ferm::service { 'https':
+    firewall::service { 'https':
         proto   => 'tcp',
         port    => '443',
         srange  => "(${firewall_srange})",

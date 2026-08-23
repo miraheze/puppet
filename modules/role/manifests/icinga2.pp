@@ -118,7 +118,7 @@ class role::icinga2 (
     }
 
     if !defined(Ferm::Service['http']) {
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
             notrack => true,
@@ -126,7 +126,7 @@ class role::icinga2 (
     }
 
     if !defined(Ferm::Service['https']) {
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
             notrack => true,

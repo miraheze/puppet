@@ -202,7 +202,7 @@ class varnish (
     resources { type = 'Class' and title = 'Role::Mediawiki_task' })
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { "${facts['networking']['fqdn']} varnish depool service port 5001":
+    firewall::service { "${facts['networking']['fqdn']} varnish depool service port 5001":
         proto  => 'tcp',
         port   => '5001',
         srange => "(${firewall_rules_str})",

@@ -79,7 +79,7 @@ define rsync::server::module (
   if $auto_ferm and $hosts_allow {
       $hosts_allow_ferm = join($hosts_allow, ' ')
 
-      ferm::service { "rsyncd_access_${name}":
+      firewall::service { "rsyncd_access_${name}":
           ensure => $ensure,
           proto  => 'tcp',
           port   => 873,
@@ -88,7 +88,7 @@ define rsync::server::module (
 
       # rsync::server is always used with include semantics, so we must do this.
       if lookup('rsync::server::wrap_with_stunnel', {'default_value' => false}) {  # lint:ignore:wmf_styleguide
-          ferm::service { "rsyncd_access_${name}_tls":
+          firewall::service { "rsyncd_access_${name}_tls":
               ensure => $ensure,
               proto  => 'tcp',
               port   => 1873,
@@ -97,7 +97,7 @@ define rsync::server::module (
       }
 
       if $auto_ferm_ipv6 {
-          ferm::service { "rsyncd_access_${name}_ipv6":
+          firewall::service { "rsyncd_access_${name}_ipv6":
               ensure => $ensure,
               proto  => 'tcp',
               port   => 873,
@@ -105,7 +105,7 @@ define rsync::server::module (
           }
           # rsync::server is always used with include semantics, so we must do this.
           if lookup('rsync::server::wrap_with_stunnel', {'default_value' => false}) {  # lint:ignore:wmf_styleguide
-              ferm::service { "rsyncd_access_${name}_ipv6_tls":
+              firewall::service { "rsyncd_access_${name}_ipv6_tls":
                   ensure => $ensure,
                   proto  => 'tcp',
                   port   => 1873,

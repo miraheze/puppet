@@ -38,7 +38,7 @@ class prometheus::exporter::memcached (
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus memcached_exporter':
+    firewall::service { 'prometheus memcached_exporter':
         proto  => 'tcp',
         port   => '9150',
         srange => "(${firewall_rules_str})",

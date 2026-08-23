@@ -84,13 +84,13 @@ class mediawiki::jobrunner {
     resources { type = 'Class' and title = 'Role::Icinga2' })
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'jobrunner-9005':
+    firewall::service { 'jobrunner-9005':
         proto   => 'tcp',
         port    => $port,
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
-    ferm::service { 'jobrunner-9006':
+    firewall::service { 'jobrunner-9006':
         proto   => 'tcp',
         port    => $local_only_port,
         srange  => "(${firewall_rules_str})",

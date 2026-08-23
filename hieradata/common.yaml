@@ -2,6 +2,8 @@ jobrunner: false
 jobrunner::intensive: false
 puppetserver: false
 
+base::firewall::provider: 'ferm'
+
 puppet_major_version: 8
 
 base::ntp_servers:

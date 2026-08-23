@@ -21,7 +21,7 @@ class prometheus::exporter::nginx {
     resources { type = 'Class' and title = 'Prometheus' }
     | PQL
     $firewall_rules = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus nginx':
+    firewall::service { 'prometheus nginx':
         proto  => 'tcp',
         port   => '9113',
         srange => "(${firewall_rules})",

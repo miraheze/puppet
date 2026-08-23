@@ -31,27 +31,27 @@ class role::mediawiki_beta (
         | PQL
         $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
 
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
             srange  => "(${firewall_rules_str})",
             notrack => true,
         }
     } else {
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
             notrack => true,
         }
 
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
             notrack => true,

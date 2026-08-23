@@ -20,27 +20,27 @@ class role::cache::cache (
         $ip = vmlib::generate_firewall_ip($subquery)
         $cloudflare_firewall_rule = "${cf_ip} ${ip}"
 
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
             srange  => "(${cloudflare_firewall_rule})",
             notrack => true,
         }
 
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
             srange  => "(${cloudflare_firewall_rule})",
             notrack => true,
         }
     } else {
-        ferm::service { 'http':
+        firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
             notrack => true,
         }
 
-        ferm::service { 'https':
+        firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
             notrack => true,
@@ -54,7 +54,7 @@ class role::cache::cache (
     resources { type = 'Class' and title = 'Role::Cache::Varnish' })
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery_2)
-    ferm::service { 'direct varnish access':
+    firewall::service { 'direct varnish access':
         proto   => 'tcp',
         port    => '81',
         srange  => "(${firewall_rules_str})",

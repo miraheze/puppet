@@ -1,0 +1,33 @@
+# a default policy drop, at least for the input chain for now
+# this is the nftables equivalent of main-input-default-drop.conf, adapted
+# from how Wikimedia's operations-puppet lays out its own base.nft
+table inet base {
+	chain prerouting {
+		type filter hook prerouting priority -300;
+
+		# Include any puppet-managed connection tracking exceptions
+		# and custom rules targeting prerouting
+		include "/etc/nftables/prerouting/*.nft"
+	}
+
+	chain input {
+		type filter hook input priority 0; policy drop;
+
+		ct state established,related accept
+		iifname "lo" accept
+		pkttype multicast accept
+		meta l4proto ipv6-icmp accept
+		ip protocol icmp accept
+
+		# Include all puppet-managed service definitions for incoming traffic
+		include "/etc/nftables/input/*.nft"
+	}
+
+	chain output {
+		type filter hook output priority 0; policy accept;
+
+		# Include any puppet-managed client definitions and outbound
+		# connection tracking exceptions
+		include "/etc/nftables/output/*.nft"
+	}
+}

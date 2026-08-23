@@ -10,7 +10,7 @@ class role::eventgate {
     resources { type = 'Class' and title = 'Role::Icinga2' })
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'eventgate':
+    firewall::service { 'eventgate':
         proto   => 'tcp',
         port    => '8192',
         srange  => "(${firewall_rules_str})",
@@ -21,7 +21,7 @@ class role::eventgate {
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
     $firewall_rules_prometheus_str = vmlib::generate_firewall_ip($subquery_2)
-    ferm::service { 'eventgate-prometheus':
+    firewall::service { 'eventgate-prometheus':
         proto   => 'tcp',
         port    => '9102',
         srange  => "(${firewall_rules_prometheus_str})",

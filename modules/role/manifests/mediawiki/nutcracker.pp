@@ -47,6 +47,11 @@ class role::mediawiki::nutcracker (
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/MediaWiki_Monitoring#Nutcracker'
     }
 
+    # Declared for both backends directly (no firewall:: wrapper), same as
+    # Wikimedia's operations-puppet does for rules this specific: only
+    # ferm::rule and nftables::rules exist at this level, since there's no
+    # shared param shape between a raw ferm rule string and an nftables
+    # statement to build a shim around.
     ferm::rule { 'skip_nutcracker_conntrack_out':
         desc  => 'Skip outgoing connection tracking for Nutcracker',
         table => 'raw',
@@ -59,5 +64,17 @@ class role::mediawiki::nutcracker (
         table => 'raw',
         chain => 'PREROUTING',
         rule  => 'proto tcp dport 11212 NOTRACK;',
+    }
+
+    nftables::rules { 'skip_nutcracker_conntrack_out':
+        desc  => 'Skip outgoing connection tracking for Nutcracker',
+        chain => 'output',
+        rules => ['tcp sport 11212 notrack'],
+    }
+
+    nftables::rules { 'skip_nutcracker_conntrack_in':
+        desc  => 'Skip incoming connection tracking for Nutcracker',
+        chain => 'prerouting',
+        rules => ['tcp dport 11212 notrack'],
     }
 }

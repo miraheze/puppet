@@ -1,6 +1,31 @@
 # firewall for all servers
-class base::firewall {
-    include ferm
+#
+# Miraheze is migrating host firewalling from ferm to nftables, the same
+# way Wikimedia's operations-puppet does it: a generic firewall module
+# picks the backend, or backends, a host runs (see modules/firewall), and
+# everywhere else in the codebase just calls firewall::service or
+# firewall::client, which declare both backends' resources unconditionally.
+# Those resources are virtual and only take effect once the matching
+# backend module has actually been told to install itself, so a call site
+# never needs to know or care which backend, or backends, are active on a
+# given host.
+#
+# base::firewall::provider is looked up from hiera and can be overridden
+# fleet wide, per role, or per host as hosts move over. 'both' runs ferm
+# and nftables at once, which is only meant to be a temporary state to
+# verify nftables is enforcing the same rules as ferm on a host before
+# dropping ferm there, since it does mean maintaining two copies of every
+# rule on that host in the meantime.
+class base::firewall (
+    Firewall::Provider $provider = lookup('base::firewall::provider', { 'default_value' => 'ferm' }),
+) {
+    class { 'firewall':
+        provider => $provider,
+    }
+
+    $ferm_active     = $provider in ['ferm', 'both']
+    $nftables_active = $provider in ['nftables', 'both']
+
     # Increase the size of conntrack table size (default is 65536)
     sysctl::parameters { 'ferm_conntrack':
         values => {
@@ -23,18 +48,39 @@ class base::firewall {
             prio => '01',
             rule => "saddr (${$block_abuse.join(' ')}) DROP;",
         }
+
+        $block_abuse_v4 = $block_abuse.filter |$ip| { $ip !~ /:/ }
+        $block_abuse_v6 = $block_abuse.filter |$ip| { $ip =~ /:/ }
+
+        $block_abuse_nft = ($block_abuse_v4.empty ? { true => [], default => ["ip saddr { ${block_abuse_v4.join(', ')} } drop"] }) +
+        ($block_abuse_v6.empty ? { true => [], default => ["ip6 saddr { ${block_abuse_v6.join(', ')} } drop"] })
+
+        nftables::rules { 'drop-abuse-net-miaheze':
+            prio  => 1,
+            chain => 'input',
+            rules => $block_abuse_nft,
+        }
     }
 
+    # the base ruleset itself: default-drop on input, established/related,
+    # loopback, multicast and icmp always allowed. deployed for both
+    # backends unconditionally, same as everything else here, since it's
+    # only realized on a host that actually has that backend installed
     ferm::conf { 'main':
         prio   => '02',
         source => 'puppet:///modules/base/firewall/main-input-default-drop.conf',
+    }
+
+    nftables::file { 'base':
+        order   => 100,
+        content => file('base/firewall/nftables-base.nft'),
     }
 
     $subquery = @("PQL")
     resources { type = 'Class' and title = 'Role::Icinga2' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'nrpe':
+    firewall::service { 'nrpe':
         proto  => 'tcp',
         port   => '5666',
         srange => "(${firewall_rules_str})",
@@ -44,7 +90,7 @@ class base::firewall {
     resources { type = 'Class' and title = 'Base' }
     | PQL
     $firewall_bastion_hosts = vmlib::generate_firewall_ip($subquery_2)
-    ferm::service { 'ssh':
+    firewall::service { 'ssh':
         proto  => 'tcp',
         port   => '22',
         srange => "(${firewall_bastion_hosts})",
@@ -60,9 +106,21 @@ class base::firewall {
         dport => 68,
     }
 
+    nftables::rules { 'filter-bootp':
+        prio  => 90,
+        chain => 'input',
+        rules => ['udp ip daddr 255.255.255.255 sport 67 dport 68 drop'],
+    }
+
     ferm::rule { 'log-everything':
         rule => "NFLOG mod limit limit 1/second limit-burst 5 nflog-prefix \"[fw-in-drop]\";",
         prio => '98',
+    }
+
+    nftables::rules { 'log-everything':
+        prio  => 98,
+        chain => 'input',
+        rules => ['limit rate 1/second burst 5 packets log prefix "[fw-in-drop] " group 0'],
     }
 
     file { '/usr/lib/nagios/plugins/check_conntrack':
@@ -75,22 +133,45 @@ class base::firewall {
         docs    => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Conntrack_Table'
     }
 
-    sudo::user { 'nagios_check_ferm':
-        user       => 'nagios',
-        privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_ferm' ],
-        require    => File['/usr/lib/nagios/plugins/check_ferm'],
+    if $ferm_active {
+        sudo::user { 'nagios_check_ferm':
+            user       => 'nagios',
+            privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_ferm' ],
+            require    => File['/usr/lib/nagios/plugins/check_ferm'],
+        }
+
+        file { '/usr/lib/nagios/plugins/check_ferm':
+            source => 'puppet:///modules/base/firewall/check_ferm',
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0555',
+        }
+
+        monitoring::nrpe { 'ferm_active':
+            command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm',
+            docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Ferm',
+            critical => true
+        }
     }
 
-    file { '/usr/lib/nagios/plugins/check_ferm':
-        source => 'puppet:///modules/base/firewall/check_ferm',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0555',
-    }
+    if $nftables_active {
+        sudo::user { 'nagios_check_nftables':
+            user       => 'nagios',
+            privileges => [ 'ALL = NOPASSWD: /usr/lib/nagios/plugins/check_nftables' ],
+            require    => File['/usr/lib/nagios/plugins/check_nftables'],
+        }
 
-    monitoring::nrpe { 'ferm_active':
-        command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_ferm',
-        docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Ferm',
-        critical => true
+        file { '/usr/lib/nagios/plugins/check_nftables':
+            source => 'puppet:///modules/base/firewall/check_nftables',
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0555',
+        }
+
+        monitoring::nrpe { 'nftables_active':
+            command  => '/usr/bin/sudo /usr/lib/nagios/plugins/check_nftables',
+            docs     => 'https://meta.miraheze.org/wiki/Tech:Icinga/Base_Monitoring#Nftables',
+            critical => true
+        }
     }
 }

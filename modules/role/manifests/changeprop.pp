@@ -11,7 +11,7 @@ class role::changeprop {
     resources { type = 'Class' and title = 'Role::Icinga2' })
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'changeprop':
+    firewall::service { 'changeprop':
         proto   => 'tcp',
         port    => '7200',
         srange  => "(${firewall_rules_str})",

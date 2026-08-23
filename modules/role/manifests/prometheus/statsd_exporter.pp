@@ -22,7 +22,7 @@ class role::prometheus::statsd_exporter (
     }
 
     # Don't spam conntrack with localhost statsd clients
-    ferm::client { 'statsd-exporter-client':
+    firewall::client { 'statsd-exporter-client':
         proto   => 'udp',
         notrack => true,
         port    => 9125,

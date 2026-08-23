@@ -6,7 +6,7 @@ class role::bastion {
         description => 'core access bastion host'
     }
 
-    ferm::service { 'bastion-ssh-public':
+    firewall::service { 'bastion-ssh-public':
         proto => 'tcp',
         port  => '22',
     }
@@ -25,13 +25,13 @@ class role::bastion {
         ' '
     )
 
-    ferm::service { 'bastion-squid':
+    firewall::service { 'bastion-squid':
         proto  => 'tcp',
         port   => '8080',
         srange => "(${squid_access_hosts_internal})",
     }
 
-    ferm::service { 'bastion-ntp':
+    firewall::service { 'bastion-ntp':
         proto  => 'udp',
         port   => '123',
         srange => '10.0.0.0/8',

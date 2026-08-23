@@ -208,7 +208,7 @@ class puppetserver(
         require  => Package['openvox-server'],
     }
 
-    ferm::service { 'puppetserver':
+    firewall::service { 'puppetserver':
         proto => 'tcp',
         port  => '8140',
     }
