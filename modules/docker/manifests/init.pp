@@ -41,6 +41,13 @@ class docker {
         'http_proxy' => $http_proxy,
       })
     }
+
+    file { '/etc/docker/daemon.json':
+      ensure => present,
+      content => epp('docker/daemon-config.json.epp', {
+        'http_proxy' => $http_proxy,
+      })
+    }
   }
 
   service { 'docker':
