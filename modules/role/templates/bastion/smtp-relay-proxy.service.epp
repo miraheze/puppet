@@ -3,7 +3,7 @@ Description=TCP passthrough proxy to smtp-relay.gmail.com:465
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/socat TCP-LISTEN:465,fork,reuseaddr,bind=<%= $facts['networking']['ip'] %> TCP:smtp-relay.gmail.com:465
+ExecStart=/usr/bin/socat TCP-LISTEN:465,fork,reuseaddr TCP:smtp-relay.gmail.com:465
 Restart=always
 RestartSec=2
 DynamicUser=yes
