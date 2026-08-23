@@ -8,9 +8,9 @@
 #   needs to exist before it can use a lower order, and anything that depends
 #   on it existing already can use a higher one.
 define nftables::file (
-    String                    $content,
-    Enum['present', 'absent'] $ensure = present,
-    Integer[0, 999]           $order  = 0,
+    String          $content,
+    VMlib::Ensure   $ensure = present,
+    Integer[0, 999] $order  = 0,
 ) {
     @file { sprintf('/etc/nftables/%03d_%s_puppet.nft', $order, $title):
         ensure  => $ensure,
