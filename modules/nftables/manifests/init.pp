@@ -1,17 +1,14 @@
 # nftables is the successor to iptables/ferm for packet filtering on Linux.
 #
-# The layout here mirrors Wikimedia's operations-puppet nftables module: a
-# static top level ruleset (files/main.nft) just flushes and includes every
+# a static top level ruleset (files/main.nft) just flushes and includes every
 # *puppet.nft file it finds, in filename order. Fragments that belong
 # inside a specific base chain get dropped into that chain's own
 # directory (input/output/prerouting) instead of a single flat conf.d, so
 # a rule never needs to say which table or chain it targets, only which
 # directory. The actual base table with its policies and hooks is
-# deployed separately, by base::firewall, the same way the ferm module
-# doesn't ship its own default-drop policy either.
+# deployed separately, by base::firewall.
 #
-# @param ensure present installs and enables nftables. absent purges it,
-#   for hosts moving back to ferm or off nftables entirely.
+# @param ensure present installs and enables nftables. absent purges it.
 class nftables (
     Enum['present', 'absent'] $ensure = 'absent',
 ) {
@@ -19,8 +16,7 @@ class nftables (
         ensure => stdlib::ensure($ensure, 'package'),
     }
 
-    # if the ensure is absent, we don't want the service running, e.g. on a
-    # host where ferm is the active backend
+    # if the ensure is absent, we don't want the service running.
     if $ensure == 'absent' {
         systemd::mask { 'nftables.service': }
     } else {
@@ -69,7 +65,7 @@ class nftables (
     if $ensure == 'present' {
         # rules declared elsewhere are virtual resources for cases where
         # they are defined in a class but the host doesn't have nftables
-        # enabled
+        # enabled.
         File <| tag == 'nft' |> ~> Service['nftables']
     }
 }
