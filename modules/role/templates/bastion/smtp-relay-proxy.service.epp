@@ -6,7 +6,7 @@ After=network.target
 ExecStart=/usr/bin/socat TCP-LISTEN:465,fork,reuseaddr,bind=<%= $facts['networking']['ip'] %> TCP:smtp-relay.gmail.com:465
 Restart=always
 RestartSec=2
-User=nobody
+DynamicUser=yes
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 NoNewPrivileges=true
