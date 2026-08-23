@@ -53,7 +53,7 @@ class speedscope (
       start    => 'OnCalendar',
       interval => '*-*-* *:00:00',
     },
-    user => 'root',
+    user              => 'root',
   }
 
   systemd::timer::job { 'speedscope_daily_aggregation':
@@ -65,7 +65,7 @@ class speedscope (
       start    => 'OnCalendar',
       interval => '*-*-* 00:30:00',
     },
-    user => 'root',
+    user              => 'root',
   }
 
   monitoring::nrpe { "speedscope ${port} check":
