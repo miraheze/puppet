@@ -28,7 +28,7 @@ REDIRECTS_AUTO_HEADER = (
     "# Tracks every domain currently detected as configured in both Cloudflare and WikiDiscover.\n"
 )
 EXEMPT_DOMAINS = ["analytics.wikitide.net", "grafana.wikitide.net", "monitoring.wikitide.net", "orain.org", "phorge-static.wikitide.net",
-    "static.wikitide.net", "wikitide.com", "www.orain.org"]
+    "speedscope.wikitide.net", "static.wikitide.net", "wikitide.com", "www.orain.org"]
 PROXY = "http://bastion.fsslc.wtnet:8080"
 proxies = {"http": PROXY, "https": PROXY}
 
