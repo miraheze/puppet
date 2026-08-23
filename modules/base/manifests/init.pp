@@ -44,6 +44,15 @@ class base (
         mode   => '0555',
     }
 
+    $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet']
+    $cookbooks.each |$cookbook| {
+        file {"/usr/local/bin/${cookbook}":
+            ensure => 'present',
+            mode   => '0755',
+            source => "puppet:///modules/base/cookbooks/${cookbook}.py",
+        }
+    }
+
     if $http_proxy {
         file { '/etc/gitconfig':
             ensure  => present,
