@@ -30,8 +30,7 @@ class nftables (
     }
 
     file { '/etc/nftables':
-        ensure  => stdlib::ensure($ensure, 'directory'),
-        purge   => true,
+        ensure  => directory,
         recurse => true,
     }
 
@@ -45,8 +44,7 @@ class nftables (
     # up half of that.
     ['input', 'output', 'prerouting'].each |$dir| {
         file { "/etc/nftables/${dir}":
-            ensure  => stdlib::ensure($ensure, 'directory'),
-            purge   => true,
+            ensure  => directory,
             recurse => true,
             require => File['/etc/nftables'],
         }
