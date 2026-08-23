@@ -12,5 +12,9 @@ define docker::compose(
   exec { "docker-compose-${title}-${action}":
     command => "/usr/bin/docker compose -f ${compose_file} ${action}",
     cwd     => dirname($compose_file),
+    require => [
+      Package['docker-ce-cli'],
+      Package['docker-compose-plugin'],
+    ],
   }
 }
