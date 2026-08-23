@@ -9,10 +9,8 @@ define docker::compose(
     $action = 'down'
   }
 
-  $dir = dirname($compose_file)
-
-  exec { "docker-compose-${action}-${dir}":
+  exec { "docker-compose-${title}-${action}":
     command => "/usr/bin/docker compose -f ${compose_file} ${action}",
-    cwd     => $dir,
+    cwd     => $dirname($compose_file),
   }
 }
