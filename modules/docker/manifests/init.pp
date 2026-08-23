@@ -36,7 +36,7 @@ class docker {
     }
 
     file { '/root/.docker/config.json':
-      ensure => present,
+      ensure  => present,
       content => epp('docker/config.json.epp', {
         'http_proxy' => $http_proxy,
       })
