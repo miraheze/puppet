@@ -1,21 +1,4 @@
 # firewall for all servers
-#
-# Miraheze is migrating host firewalling from ferm to nftables, the same
-# way Wikimedia's operations-puppet does it: a generic firewall module
-# picks the backend, or backends, a host runs (see modules/firewall), and
-# everywhere else in the codebase just calls firewall::service or
-# firewall::client, which declare both backends' resources unconditionally.
-# Those resources are virtual and only take effect once the matching
-# backend module has actually been told to install itself, so a call site
-# never needs to know or care which backend, or backends, are active on a
-# given host.
-#
-# base::firewall::provider is looked up from hiera and can be overridden
-# fleet wide, per role, or per host as hosts move over. 'both' runs ferm
-# and nftables at once, which is only meant to be a temporary state to
-# verify nftables is enforcing the same rules as ferm on a host before
-# dropping ferm there, since it does mean maintaining two copies of every
-# rule on that host in the meantime.
 class base::firewall (
     Firewall::Provider $provider = lookup('base::firewall::provider', { 'default_value' => 'ferm' }),
 ) {
