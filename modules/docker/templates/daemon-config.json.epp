@@ -1,7 +1,7 @@
 <%- | String $http_proxy | -%>
 {
  "proxies": {
-   "httpProxy": "<%= $http_proxy %>",
-   "httpsProxy": "<%= $http_proxy %>"
+   "http-proxy": "<%= $http_proxy %>",
+   "https-proxy": "<%= $http_proxy %>"
  }
 }
