@@ -1,0 +1,9 @@
+#!/usr/sbin/nft -f
+
+# this ruleset is meant to be loaded atomically, wiping the previous
+# generation and loading the new one in one go. flush ruleset here
+# prevents duplicating anything.
+flush ruleset
+
+# include everything puppet has staged, in filename order
+include "/etc/nftables/*puppet.nft"

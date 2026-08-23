@@ -22,7 +22,7 @@ class role::redis {
         | PQL
     }
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'redis':
+    firewall::service { 'redis':
         proto   => 'tcp',
         port    => '6379',
         srange  => "(${firewall_rules_str})",

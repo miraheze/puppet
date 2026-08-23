@@ -199,7 +199,7 @@ class role::opensearch (
         resources { type = 'Class' and title = 'Role::Opensearch' })
         | PQL
         $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-        ferm::service { 'opensearch ssl':
+        firewall::service { 'opensearch ssl':
             proto  => 'tcp',
             port   => '443',
             srange => "(${firewall_rules_str})",
@@ -214,13 +214,13 @@ class role::opensearch (
     resources { type = 'Class' and title = 'Role::Opensearch' }
     | PQL
     $firewall_os_nodes = vmlib::generate_firewall_ip($subquery_2)
-    ferm::service { 'opensearch data nodes to manager':
+    firewall::service { 'opensearch data nodes to manager':
         proto  => 'tcp',
         port   => '9200',
         srange => "(${firewall_os_nodes})",
     }
 
-    ferm::service { 'opensearch manager access data nodes 9300 port':
+    firewall::service { 'opensearch manager access data nodes 9300 port':
         proto  => 'tcp',
         port   => '9300',
         srange => "(${firewall_os_nodes})",

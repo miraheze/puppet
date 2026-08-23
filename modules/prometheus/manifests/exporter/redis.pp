@@ -67,7 +67,7 @@ class prometheus::exporter::redis (
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus redis_exporter':
+    firewall::service { 'prometheus redis_exporter':
         proto  => 'tcp',
         port   => '9121',
         srange => "(${firewall_rules_str})",

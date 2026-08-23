@@ -117,16 +117,16 @@ class role::icinga2 (
         icingaweb2_api_password   => $icingaweb2_api_password,
     }
 
-    if !defined(Ferm::Service['http']) {
-        ferm::service { 'http':
+    if !defined(Firewall::Service['http']) {
+        firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
             notrack => true,
         }
     }
 
-    if !defined(Ferm::Service['https']) {
-        ferm::service { 'https':
+    if !defined(Firewall::Service['https']) {
+        firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
             notrack => true,

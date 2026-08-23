@@ -14,14 +14,14 @@ class role::dns {
         }
     }
 
-    ferm::service { 'dns_udp':
+    firewall::service { 'dns_udp':
         proto   => 'udp',
         notrack => true,
         prio    => 5,
         port    => '53',
     }
 
-    ferm::service { 'dns_tcp':
+    firewall::service { 'dns_tcp':
         proto   => 'tcp',
         notrack => true,
         prio    => 5,

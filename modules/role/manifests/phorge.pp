@@ -14,14 +14,14 @@ class role::phorge {
     $ip = vmlib::generate_firewall_ip($subquery)
     $firewall_rules_str = "${cf_ip} ${ip}"
 
-    ferm::service { 'http':
+    firewall::service { 'http':
         proto   => 'tcp',
         port    => '80',
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
 
-    ferm::service { 'https':
+    firewall::service { 'https':
         proto   => 'tcp',
         port    => '443',
         srange  => "(${firewall_rules_str})",

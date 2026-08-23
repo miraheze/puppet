@@ -407,7 +407,7 @@ class role::prometheus {
     | PQL
     $firewall_grafana = vmlib::generate_firewall_ip($subquery)
 
-    ferm::service { 'prometheus':
+    firewall::service { 'prometheus':
         proto  => 'tcp',
         port   => '9090',
         srange => "(${firewall_grafana})",

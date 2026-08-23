@@ -40,7 +40,7 @@ class ssl::web (
     resources { type = 'Class' and title = 'Role::Icinga2' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'icinga 5000':
+    firewall::service { 'icinga 5000':
         ensure => $ensure,
         proto  => 'tcp',
         port   => '5000',

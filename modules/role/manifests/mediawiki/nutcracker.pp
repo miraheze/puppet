@@ -60,4 +60,16 @@ class role::mediawiki::nutcracker (
         chain => 'PREROUTING',
         rule  => 'proto tcp dport 11212 NOTRACK;',
     }
+
+    nftables::rules { 'skip_nutcracker_conntrack_out':
+        desc  => 'Skip outgoing connection tracking for Nutcracker',
+        chain => 'output',
+        rules => ['tcp sport 11212 notrack'],
+    }
+
+    nftables::rules { 'skip_nutcracker_conntrack_in':
+        desc  => 'Skip incoming connection tracking for Nutcracker',
+        chain => 'prerouting',
+        rules => ['tcp dport 11212 notrack'],
+    }
 }

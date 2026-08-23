@@ -186,7 +186,7 @@ class role::cache::haproxy(
     resources { type = 'Class' and title = 'Prometheus' }
     | PQL
     $firewall_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { "prometheus_${prometheus_port}":
+    firewall::service { "prometheus_${prometheus_port}":
         proto   => 'tcp',
         port    => $prometheus_port,
         srange  => "(${firewall_str})",

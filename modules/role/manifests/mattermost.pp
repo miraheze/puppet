@@ -81,14 +81,14 @@ class role::mattermost {
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
-    ferm::service { 'postgresql':
+    firewall::service { 'postgresql':
         proto   => 'tcp',
         port    => '5432',
         srange  => "(${firewall_rules_str})",
         notrack => true,
     }
 
-    ferm::service { 'mattermost':
+    firewall::service { 'mattermost':
         proto   => 'tcp',
         port    => '8065',
         srange  => "(${firewall_rules_str})",
@@ -105,21 +105,21 @@ class role::mattermost {
     $ip = vmlib::generate_firewall_ip($subquery_2)
     $firewall_rules_cloudflare_str = "${cf_ip} ${ip}"
 
-    ferm::service { 'http':
+    firewall::service { 'http':
         proto   => 'tcp',
         port    => '80',
         # srange  => "(${$firewall_rules_cloudflare_str})",
         notrack => true,
     }
 
-    ferm::service { 'https':
+    firewall::service { 'https':
         proto   => 'tcp',
         port    => '443',
         # srange  => "(${$firewall_rules_cloudflare_str})",
         notrack => true,
     }
 
-    ferm::service { 'https-quic':
+    firewall::service { 'https-quic':
         proto   => 'udp',
         port    => '443',
         notrack => true,

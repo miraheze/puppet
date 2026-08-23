@@ -82,7 +82,7 @@ class prometheus::exporter::statsd_exporter (
     resources { type = 'Class' and title = 'Role::Prometheus' }
     | PQL
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
-    ferm::service { 'prometheus statsd-exporter':
+    firewall::service { 'prometheus statsd-exporter':
         proto  => 'tcp',
         port   => '9112',
         srange => "(${firewall_rules_str})",
