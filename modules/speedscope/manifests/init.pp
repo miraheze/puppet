@@ -65,4 +65,9 @@ class speedscope (
       interval => '*-*-* 00:30:00',
     },
   }
+
+  monitoring::nrpe { "speedscope ${port} check":
+    ensure  => present,
+    command => "/usr/lib/nagios/plugins/check_tcp -H 127.0.0.1 -p ${port}",
+  }
 }
