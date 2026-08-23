@@ -55,7 +55,7 @@ class base::firewall (
         $block_abuse_nft = ($block_abuse_v4.empty ? { true => [], default => ["ip saddr { ${block_abuse_v4.join(', ')} } drop"] }) +
         ($block_abuse_v6.empty ? { true => [], default => ["ip6 saddr { ${block_abuse_v6.join(', ')} } drop"] })
 
-        nftables::rules { 'drop-abuse-net-miaheze':
+        nftables::rules { 'drop-abuse-net-wikitide':
             prio  => 1,
             chain => 'input',
             rules => $block_abuse_nft,
