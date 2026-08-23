@@ -12,7 +12,7 @@
 define firewall::service (
     Enum['tcp', 'udp']                       $proto,
     Variant[Stdlib::Port, String[1]]         $port,
-    Enum['present', 'absent']                $ensure  = present,
+    VMlib::Ensure                            $ensure  = present,
     String                                   $desc    = '',
     Integer[0, 99]                           $prio    = 10,
     Optional[Variant[String, Array[String]]] $srange  = undef,
