@@ -1,18 +1,21 @@
 # == Class: speedscope
 
-class speedscope {
+class speedscope (
+  Integer $port = 3000,
+  String $log_token = lookup('speedscope::log_token'),
+  String $image = 'ghcr.io/weirdgloop/speedscope-service',
+  String $version = '1fc7213162ec41442451e4d7a322fc9033f41016e52640159381567393554c65',
+) {
   file { '/srv/speedscope':
     ensure => directory,
   }
 
-  $speedscope_image = 'ghcr.io/weirdgloop/speedscope-service'
-  $speedscope_version = '1fc7213162ec41442451e4d7a322fc9033f41016e52640159381567393554c65'
-  $speedscope_port = 3000
-  $speedscope_log_token = lookup('speedscope::log_token')
-
   file { '/srv/speedscope/.env':
     ensure  => present,
-    content => template('speedscope/.env.erb'),
+    content => epp('speedscope/speedscope.env.epp', {
+      'port' => $port,
+      'log_token' => $log_token
+    }),
     owner   => 'root',
     group   => 'root',
     mode    => '0600',
@@ -20,7 +23,11 @@ class speedscope {
 
   file { '/srv/speedscope/docker-compose.yml':
     ensure  => present,
-    content => template('speedscope/docker-compose.yml.erb'),
+    content => epp('speedscope/docker-compose.yml.epp', {
+      'image' => $image,
+      'version' => $version,
+      'port' => $port,
+    }),
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
