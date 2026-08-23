@@ -1,8 +1,7 @@
 # ferm is a frontend for iptables
 # https://wiki.debian.org/ferm
 #
-# @param ensure present installs and enables ferm. absent purges it, which
-#   is what lets a host drop ferm cleanly once it has moved to nftables.
+# @param ensure present installs and enables ferm. absent purges it.
 class ferm (
     Enum['present', 'absent'] $ensure = 'present',
 ) {
