@@ -1,0 +1,34 @@
+# class: docker
+class docker {
+  file { '/etc/apt/keyrings/docker.gpg':
+    ensure => present,
+    source => 'puppet:///modules/docker/key/docker.gpg',
+  }
+
+  apt::source { 'docker_apt':
+    location => 'https://download.docker.com/linux/debian',
+    comment => 'Docker stable',
+    release  => $facts['os']['distro']['codename'],
+    repos => 'stable',
+    keyring => '/etc/apt/keyrings/docker.gpg',
+    require => File['/etc/apt/keyrings/docker.gpg'],
+    notify => Exec['apt_update_docker'],
+  }
+
+  exec { 'apt_update_docker':
+    command     => '/usr/bin/apt-get update',
+    refreshonly => true,
+    logoutput   => true,
+  }
+
+  package { ['docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose-plugin']:
+    ensure => present,
+    require => Apt::Source['docker_apt'],
+  }
+
+  service { 'docker':
+    ensure  => running,
+    enable => true,
+    require => Package['docker-ce'],
+  }
+}

@@ -1,0 +1,13 @@
+services:
+  speedscope-service:
+    image: "ghcr.io/weirdgloop/speedscope-service:<%= @speedscope_version %>"
+    restart: unless-stopped
+    ports:
+      - "<%= @speedscope_port %>:3000"
+    env_file: .env
+    volumes:
+      - "./speedscope.db:/data/speedscope.db:rw"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}/{{.ID}}"
