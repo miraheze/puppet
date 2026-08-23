@@ -29,6 +29,20 @@ class docker {
     ],
   }
 
+  $http_proxy = lookup('http_proxy', {'default_value' => undef})
+  if $http_proxy {
+    file { '/root/.docker':
+      ensure => directory,
+    }
+
+    file { '/root/.docker/config.json':
+      ensure => present,
+      content => epp('docker/config.json.epp', {
+        'http_proxy' => $http_proxy,
+      })
+    }
+  }
+
   service { 'docker':
     ensure  => running,
     enable  => true,
