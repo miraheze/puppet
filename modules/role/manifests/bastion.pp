@@ -36,4 +36,23 @@ class role::bastion {
         port   => '123',
         srange => '10.0.0.0/8',
     }
+
+    # TCP passthrough for SMTP so fully private hosts can still reach
+    # Google's SMTP relay. Google authorizes by source IP, so only the
+    # bastion's public IP needs to be allowlisted in the Workspace admin
+    # console. TLS stays wrapped end to end between the client and Google,
+    # this box never terminates it or sees credentials.
+    stdlib::ensure_packages('socat')
+
+    systemd::service { 'smtp-relay-proxy':
+        ensure  => present,
+        restart => true,
+        content => template('role/bastion/smtp-relay-proxy.service.erb'),
+    }
+
+    ferm::service { 'bastion-smtp-relay':
+        proto  => 'tcp',
+        port   => '465',
+        srange => "(${squid_access_hosts_internal})",
+    }
 }
