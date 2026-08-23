@@ -16,8 +16,8 @@ function nftables::split_addrs(Optional[Variant[String, Array[String]]] $range) 
         $addrs    = $stripped.split(/\s+/).filter |$addr| { $addr != '' }
     }
 
-    {
+    return({
         'v4' => $addrs.filter |$addr| { $addr !~ /:/ },
         'v6' => $addrs.filter |$addr| { $addr =~ /:/ },
-    }
+    })
 }
