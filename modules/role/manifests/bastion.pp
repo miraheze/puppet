@@ -47,7 +47,7 @@ class role::bastion {
     systemd::service { 'smtp-relay-proxy':
         ensure  => present,
         restart => true,
-        content => template('role/bastion/smtp-relay-proxy.service.erb'),
+        content => epp('role/bastion/smtp-relay-proxy.service.epp'),
     }
 
     ferm::service { 'bastion-smtp-relay':
