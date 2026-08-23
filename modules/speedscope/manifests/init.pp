@@ -86,7 +86,7 @@ class speedscope (
       http_ssl   => true,
       http_vhost => 'speedscope.wikitide.net',
       # Use /aggregations endpoint, as / serves a static site
-      http_uri    => 'https://speedscope.wikitide.net/aggregations'
+      http_uri   => 'https://speedscope.wikitide.net/aggregations'
     },
   }
 }
