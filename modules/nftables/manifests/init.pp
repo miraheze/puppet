@@ -10,7 +10,7 @@
 #
 # @param ensure present installs and enables nftables. absent purges it.
 class nftables (
-    Enum['present', 'absent'] $ensure = 'absent',
+    VMlib::Ensure $ensure = 'absent',
 ) {
     package { 'nftables':
         ensure => stdlib::ensure($ensure, 'package'),
