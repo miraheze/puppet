@@ -17,6 +17,10 @@ table inet base {
 		meta l4proto ipv6-icmp accept
 		ip protocol icmp accept
 
+		tcp flags & (fin|syn|rst|ack) != syn ct state new drop
+		tcp flags & (fin|syn|rst|psh|ack|urg) == rst accept
+		tcp flags & (fin|syn|rst|psh|ack|urg) == (rst|ack) accept
+
 		# Include all puppet-managed service definitions for incoming traffic
 		include "/etc/nftables/input/*.nft"
 	}
