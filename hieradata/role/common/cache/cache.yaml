@@ -155,6 +155,10 @@ role::cache::haproxy::varnish_backends:
     probe: false
     pool: false
     swiftpool: true
+  speedscope211:
+    port: 8208
+    probe: false
+    pool: false
 
 role::cache::haproxy::post_acl_actions:
   tls:
