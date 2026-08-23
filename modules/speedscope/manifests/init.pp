@@ -1,11 +1,11 @@
 # == Class: speedscope
 
 class speedscope (
-  String $bind_host = '127.0.0.1',
-  Integer $port = 3000,
-  String $log_token = lookup('speedscope::log_token'),
-  String $image = 'ghcr.io/weirdgloop/speedscope-service',
-  String $version = '1fc7213162ec41442451e4d7a322fc9033f41016e52640159381567393554c65',
+  String $bind_host,
+  Integer $port,
+  String $log_token,
+  String $image,
+  String $version,
 ) {
   file { '/srv/speedscope':
     ensure => directory,
