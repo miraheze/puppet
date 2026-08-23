@@ -1,6 +1,6 @@
 # @summary a shim define to support a common interface between ferm::service and nftables::service
 # @param proto tcp or udp
-# @param port a single port, or a colon-separated ferm-style range like '5900:5999'
+# @param port a single port, or a colon-separated range like '5900:5999'
 # @param ensure the ensurable parameter
 # @param desc an optional description, added as a comment
 # @param prio the priority, meaning differs slightly by backend, see ferm::service and nftables::service

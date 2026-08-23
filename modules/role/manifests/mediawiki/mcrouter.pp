@@ -39,8 +39,6 @@ class role::mediawiki::mcrouter(
         notify  => Exec['systemd daemon-reload for mcrouter.service (mcrouter)']
     }
 
-    # Declared for both backends directly (no firewall:: wrapper), see the
-    # comment on the equivalent rules in role::mediawiki::nutcracker.
     ferm::rule { 'skip_mcrouter_wancache_conntrack_out':
         desc  => 'Skip outgoing connection tracking for mcrouter',
         table => 'raw',

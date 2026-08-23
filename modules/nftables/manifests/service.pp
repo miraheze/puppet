@@ -1,12 +1,12 @@
 # @summary allow incoming connections on the specific protocol and port
 # @param proto tcp or udp
-# @param port a single port, or a colon-separated ferm-style range like '5900:5999'
+# @param port a single port, or a colon-separated range like '5900:5999'
 # @param ensure the ensurable parameter
 # @param desc an optional description, added as a comment to the .nft file
 # @param prio fragments in a chain's directory load in filename order, this is the prefix
 # @param srange if not given, all source addresses are allowed. otherwise only traffic
 #   coming from srange is allowed. a bare CIDR, a parenthesised space separated list, or
-#   an array, same shapes ferm::service already accepts.
+#   an array.
 # @param drange same as srange, but for destination addresses
 # @param notrack if true, also exempt this port from connection tracking. this needs a
 #   rule in both prerouting (for the inbound request) and output (for the reply), the

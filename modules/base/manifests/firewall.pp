@@ -48,7 +48,7 @@ class base::firewall (
     # the base ruleset itself: default-drop on input, established/related,
     # loopback, multicast and icmp always allowed. deployed for both
     # backends unconditionally, same as everything else here, since it's
-    # only realized on a host that actually has that backend installed
+    # only realized on a host that actually has that backend installed.
     ferm::conf { 'main':
         prio   => '02',
         source => 'puppet:///modules/base/firewall/main-input-default-drop.conf',

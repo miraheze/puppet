@@ -1,17 +1,17 @@
 # @summary allow outbound connections on the specific protocol and destination port
 # @param proto tcp or udp
-# @param port a single port, or a colon-separated ferm-style range like '5900:5999'
+# @param port a single port, or a colon-separated range like '5900:5999'
 # @param ensure the ensurable parameter
 # @param desc an optional description, added as a comment to the .nft file
 # @param prio fragments in a chain's directory load in filename order, this is the prefix
 # @param drange if not given, all destination addresses are allowed. otherwise only
 #   traffic towards drange is allowed. a bare CIDR, a parenthesised space separated
-#   list, or an array, same shapes ferm::client already accepts.
+#   list, or an array.
 # @param notrack if true, also exempt this port from connection tracking. this needs a
 #   rule in output (for the outbound request), prerouting (for the reply), and an
 #   explicit input accept, since without conntrack state the usual
 #   "ct state established,related accept" rule at the top of input never matches the
-#   reply traffic. the same three rules ferm's own NOTRACK_CLIENT macro adds.
+#   reply traffic.
 define nftables::client (
     Enum['tcp', 'udp']                       $proto,
     Variant[Stdlib::Port, String[1]]         $port,

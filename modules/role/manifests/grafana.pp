@@ -6,7 +6,7 @@ class role::grafana {
 
     include ::grafana
 
-    if !defined(Ferm::Service['http']) {
+    if !defined(Firewall::Service['http']) {
         firewall::service { 'http':
             proto   => 'tcp',
             port    => '80',
@@ -14,7 +14,7 @@ class role::grafana {
         }
     }
 
-    if !defined(Ferm::Service['https']) {
+    if !defined(Firewall::Service['https']) {
         firewall::service { 'https':
             proto   => 'tcp',
             port    => '443',
