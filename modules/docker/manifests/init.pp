@@ -23,7 +23,10 @@ class docker {
 
   package { ['docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose-plugin']:
     ensure  => present,
-    require => Apt::Source['docker_apt'],
+    require => [
+      Apt::Source['docker_apt'],
+      Exec['apt_update_docker'],
+    ],
   }
 
   service { 'docker':
