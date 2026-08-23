@@ -5,10 +5,10 @@ class speedscope {
     ensure => directory,
   }
 
-  $speedscope_version = '1fc7213162ec41442451e4d7a322fc9033f41016e52640159381567393554c65'
-  $speedscope_log_token = lookup('speedscope::log_token')
   $speedscope_image = 'ghcr.io/weirdgloop/speedscope-service'
+  $speedscope_version = '1fc7213162ec41442451e4d7a322fc9033f41016e52640159381567393554c65'
   $speedscope_port = 3000
+  $speedscope_log_token = lookup('speedscope::log_token')
 
   file { '/srv/speedscope/.env':
     ensure  => present,
