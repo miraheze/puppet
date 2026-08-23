@@ -176,6 +176,10 @@ varnish::backends:
     probe: false
     pool: false
     swiftpool: true
+  speedscope211:
+    port: 8208
+    probe: false
+    pool: false
 
 # Logging
 base::syslog::syslog_daemon: rsyslog

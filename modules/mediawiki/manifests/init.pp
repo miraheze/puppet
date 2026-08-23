@@ -107,6 +107,7 @@ class mediawiki {
     $openai_assistantid           = lookup('mediawiki::openai_assistantid')
     $turnstile_sitekey            = lookup('mediawiki::turnstile_sitekey')
     $turnstile_secretkey          = lookup('mediawiki::turnstile_secretkey')
+    $speedscope_log_token         = lookup('speedscope::log_token')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
@@ -144,7 +145,7 @@ class mediawiki {
         source => 'puppet:///modules/mediawiki/bin/mwscript.py',
     }
 
-    $cookbooks = ['disable-puppet', 'enable-puppet', 'cycle-puppet', 'check-read-only', 'cleanup-old-mediawiki']
+    $cookbooks = ['check-read-only', 'cleanup-old-mediawiki']
     $cookbooks.each |$cookbook| {
         file {"/usr/local/bin/${cookbook}":
             ensure => 'present',
