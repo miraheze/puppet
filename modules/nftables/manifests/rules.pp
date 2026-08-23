@@ -5,11 +5,11 @@
 # @param chain which base table chain to add these statements to
 # @param rules one nft statement per array entry, each becomes its own line
 define nftables::rules (
-    Array[String]              $rules,
-    Enum['present', 'absent']  $ensure = present,
-    Optional[String]           $desc   = undef,
-    Integer[0, 99]             $prio   = 10,
-    Nftables::Chain            $chain  = 'input',
+    Array[String]    $rules,
+    VMlib::Ensure    $ensure = present,
+    Optional[String] $desc   = undef,
+    Integer[0, 99]   $prio   = 10,
+    Nftables::Chain  $chain  = 'input',
 ) {
     $content = @("CONTENT")
         # Managed by puppet
