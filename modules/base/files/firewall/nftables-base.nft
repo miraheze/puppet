@@ -1,6 +1,4 @@
 # a default policy drop, at least for the input chain for now
-# this is the nftables equivalent of main-input-default-drop.conf, adapted
-# from how Wikimedia's operations-puppet lays out its own base.nft
 table inet base {
 	chain prerouting {
 		type filter hook prerouting priority -300;
