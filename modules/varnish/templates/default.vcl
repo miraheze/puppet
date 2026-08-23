@@ -499,6 +499,12 @@ sub vcl_recv {
 		return (pass);
 	}
 
+	# Do not cache requests from this domain
+	if (req.http.Host == "speedscope.wikitide.net") {
+		set req.backend_hint = speedscope211;
+		return (pass);
+	}
+
 	# Respect CloudFlare IPs for X-Forwarded-For configuration
 	if (client.ip ~ cloudflare_ips || client.ip ~ purge) {
 		if (req.http.CF-Connecting-IP) {

@@ -1,0 +1,19 @@
+<%- | String $image,
+      String $version,
+      String $bind_host,
+      Integer $port,
+| -%>
+services:
+  speedscope-service:
+    image: "<%= $image %>:<%= $version %>"
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      - "<%= $bind_host %>:<%= $port %>:3000"
+    env_file: .env
+    volumes:
+      - "./speedscope.db:/data/speedscope.db:rw"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}/{{.ID}}"
