@@ -48,7 +48,7 @@ class speedscope (
     ensure            => present,
     description       => 'Generates the hourly speedscope aggregation',
     working_directory => '/srv/speedscope',
-    command           => "/usr/bin/docker run --rm --env-file .env -v \"./speedscope.db:/data/speedscope.db:rw\" \"${speedscope_image}:${speedscope_version}\" node dist/src/aggregateHourly.js",
+    command           => "/usr/bin/docker run --rm --env-file .env -v \"./speedscope.db:/data/speedscope.db:rw\" \"${image}:${version}\" node dist/src/aggregateHourly.js",
     interval          => {
       start    => 'OnCalendar',
       interval => '*-*-* *:00:00',
@@ -59,7 +59,7 @@ class speedscope (
     ensure            => present,
     description       => 'Generates the daily speedscope aggregation',
     working_directory => '/srv/speedscope',
-    command           => "/usr/bin/docker run --rm --env-file .env -v \"./speedscope.db:/data/speedscope.db:rw\" \"${speedscope_image}:${speedscope_version}\" node dist/src/aggregateDaily.js",
+    command           => "/usr/bin/docker run --rm --env-file .env -v \"./speedscope.db:/data/speedscope.db:rw\" \"${image}:${version}\" node dist/src/aggregateDaily.js",
     interval          => {
       start    => 'OnCalendar',
       interval => '*-*-* 00:30:00',
