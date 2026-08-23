@@ -22,7 +22,7 @@ class speedscope (
   }
 
   file { '/srv/speedscope/speedscope.db':
-    ensure => present,
+    ensure  => present,
     owner   => 'root',
     group   => 'root',
     mode    => '0666',
