@@ -111,5 +111,15 @@ class ferm (
         # the rules are virtual resources for cases where they are defined in a
         # class but the host doesn't have ferm enabled
         File <| tag == 'ferm' |>
+    } else {
+        exec { 'revert iptables alternative to auto':
+            command => '/usr/bin/update-alternatives --auto iptables',
+            unless  => "/usr/bin/update-alternatives --query iptables | /bin/grep -q 'Status: auto'",
+        }
+
+        exec { 'revert ip6tables alternative to auto':
+            command => '/usr/bin/update-alternatives --auto ip6tables',
+            unless  => "/usr/bin/update-alternatives --query ip6tables | /bin/grep -q 'Status: auto'",
+        }
     }
 }
