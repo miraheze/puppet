@@ -43,7 +43,7 @@ class docker {
     }
 
     file { '/etc/docker/daemon.json':
-      ensure => present,
+      ensure  => present,
       content => epp('docker/daemon-config.json.epp', {
         'http_proxy' => $http_proxy,
       })
