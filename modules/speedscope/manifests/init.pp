@@ -10,25 +10,25 @@ class speedscope {
   $speedscope_port = 3000
 
   file { '/srv/speedscope/.env':
-    ensure => present,
+    ensure  => present,
     content => template('speedscope/.env.erb'),
-    owner => 'root',
-    group => 'root',
-    mode => '0600',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0600',
   }
 
   file { '/srv/speedscope/docker-compose.yml':
-    ensure => present,
+    ensure  => present,
     content => template('speedscope/docker-compose.yml.erb'),
-    owner => 'root',
-    group => 'root',
-    mode => '0644',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
   }
 
   docker::compose { 'speedscope':
-    ensure => present,
+    ensure       => present,
     compose_file => '/srv/speedscope/docker-compose.yml',
-    require => [
+    require      => [
       File['/srv/speedscope/docker-compose.yml'],
       File['/srv/speedscope/.env'],
     ],

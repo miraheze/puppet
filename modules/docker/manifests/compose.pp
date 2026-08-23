@@ -13,7 +13,7 @@ define docker::compose(
 
   exec { "docker-compose-${action}-${dir}":
     command => "docker compose -f ${compose_file} ${action}",
-    cwd => $dir,
-    path => ['/usr/bin', '/bin'],
+    cwd     => $dir,
+    path    => ['/usr/bin', '/bin'],
   }
 }
