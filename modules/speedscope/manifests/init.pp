@@ -1,6 +1,7 @@
 # == Class: speedscope
 
 class speedscope (
+  String $bind_host = '127.0.0.1',
   Integer $port = 3000,
   String $log_token = lookup('speedscope::log_token'),
   String $image = 'ghcr.io/weirdgloop/speedscope-service',
@@ -24,9 +25,10 @@ class speedscope (
   file { '/srv/speedscope/docker-compose.yml':
     ensure  => present,
     content => epp('speedscope/docker-compose.yml.epp', {
-      'image'   => $image,
-      'version' => $version,
-      'port'    => $port,
+      'image'     => $image,
+      'version'   => $version,
+      'bind_host' => $bind_host,
+      'port'      => $port,
     }),
     owner   => 'root',
     group   => 'root',
