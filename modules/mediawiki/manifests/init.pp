@@ -107,6 +107,7 @@ class mediawiki {
     $openai_assistantid           = lookup('mediawiki::openai_assistantid')
     $turnstile_sitekey            = lookup('mediawiki::turnstile_sitekey')
     $turnstile_secretkey          = lookup('mediawiki::turnstile_secretkey')
+    $speedscope_log_token         = lookup('speedscope::log_token')
 
     file { '/srv/mediawiki/config/PrivateSettings.php':
         ensure  => 'present',
