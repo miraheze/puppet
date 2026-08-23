@@ -101,7 +101,7 @@ class base::firewall (
     nftables::rules { 'filter-bootp':
         prio  => 90,
         chain => 'input',
-        rules => ['ip daddr 255.255.255.255 udp sport 67 dport 68 drop'],
+        rules => ['ip daddr 255.255.255.255 udp sport 67 udp dport 68 drop'],
     }
 
     ferm::rule { 'log-everything':
