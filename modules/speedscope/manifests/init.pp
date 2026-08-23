@@ -13,7 +13,7 @@ class speedscope (
   file { '/srv/speedscope/.env':
     ensure  => present,
     content => epp('speedscope/speedscope.env.epp', {
-      'port' => $port,
+      'port'      => $port,
       'log_token' => $log_token
     }),
     owner   => 'root',
@@ -24,9 +24,9 @@ class speedscope (
   file { '/srv/speedscope/docker-compose.yml':
     ensure  => present,
     content => epp('speedscope/docker-compose.yml.epp', {
-      'image' => $image,
+      'image'   => $image,
       'version' => $version,
-      'port' => $port,
+      'port'    => $port,
     }),
     owner   => 'root',
     group   => 'root',
