@@ -10,15 +10,15 @@ class role::cloud {
     $firewall_rules_str = vmlib::generate_firewall_ip($subquery)
 
     firewall::service { 'proxmox port 5900:5999':
-        proto  => 'tcp',
-        port   => '5900:5999',
-        srange => "(${firewall_rules_str})",
+        proto      => 'tcp',
+        port_range => '5900:5999',
+        srange     => "(${firewall_rules_str})",
     }
 
     firewall::service { 'proxmox port 5404:5405':
-        proto  => 'udp',
-        port   => '5404:5405',
-        srange => "(${firewall_rules_str})",
+        proto      => 'udp',
+        port_range => '5404:5405',
+        srange     => "(${firewall_rules_str})",
     }
 
     firewall::service { 'proxmox port 3128':

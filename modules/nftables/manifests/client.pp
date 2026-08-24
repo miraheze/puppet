@@ -1,6 +1,9 @@
 # @summary allow outbound connections on the specific protocol and destination port
 # @param proto tcp or udp
-# @param port a single port, or a colon-separated range like '5900:5999'
+# @param port a single port, or an array of ports, for a rule that covers more than one
+#   discrete port. Exactly one of port or port_range must be given.
+# @param port_range a colon-separated range like '5900:5999'. Exactly one of port or
+#   port_range must be given.
 # @param ensure the ensurable parameter
 # @param desc an optional description, added as a comment to the .nft file
 # @param prio fragments in a chain's directory load in filename order, this is the prefix
@@ -14,14 +17,26 @@
 #   reply traffic.
 define nftables::client (
     Enum['tcp', 'udp']                       $proto,
-    Variant[Stdlib::Port, String[1]]         $port,
-    VMlib::Ensure                            $ensure  = present,
-    String                                   $desc    = '',
-    Integer[0, 99]                           $prio    = 10,
-    Optional[Variant[String, Array[String]]] $drange  = undef,
-    Boolean                                  $notrack = false,
+    Optional[Nftables::Port]                 $port       = undef,
+    Optional[VMlib::Portrange]               $port_range = undef,
+    VMlib::Ensure                            $ensure     = present,
+    String                                   $desc       = '',
+    Integer[0, 99]                           $prio       = 10,
+    Optional[Variant[String, Array[String]]] $drange     = undef,
+    Boolean                                  $notrack    = false,
 ) {
-    $nft_port     = regsubst(String($port), ':', '-', 'G')
+    if ($port == undef) == ($port_range == undef) {
+        fail("nftables::client: ${title}: exactly one of port or port_range must be given")
+    }
+
+    if $port_range != undef {
+        $nft_port = regsubst($port_range, ':', '-', 'G')
+    } elsif $port =~ Array {
+        $nft_port = "{ ${port.join(', ')} }"
+    } else {
+        $nft_port = String($port)
+    }
+
     $drange_split = nftables::split_addrs($drange)
 
     if $drange == undef {

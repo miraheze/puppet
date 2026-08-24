@@ -44,13 +44,21 @@ class base::firewall (
         $block_abuse_v4 = $block_abuse.filter |$ip| { $ip !~ /:/ }
         $block_abuse_v6 = $block_abuse.filter |$ip| { $ip =~ /:/ }
 
-        $block_abuse_nft = ($block_abuse_v4.empty ? { true => [], default => ["ip saddr { ${block_abuse_v4.join(', ')} } drop"] }) +
-        ($block_abuse_v6.empty ? { true => [], default => ["ip6 saddr { ${block_abuse_v6.join(', ')} } drop"] })
+        nftables::set { 'ABUSE_NET':
+            ips => $block_abuse,
+        }
 
-        nftables::rules { 'drop-abuse-net-wikitide':
-            prio  => 1,
-            chain => 'input',
-            rules => $block_abuse_nft,
+        # nftables::set only creates a family's set file if that family
+        # actually has members, even when declared overall, so a line
+        # here referencing an empty family's set would fail to load -
+        # only including the lines that have somewhere to point avoids
+        # that.
+        $block_abuse_lines = ($block_abuse_v4.empty ? { true => [], default => ['ip saddr @ABUSE_NET_ipv4 drop'] }) +
+        ($block_abuse_v6.empty ? { true => [], default => ['ip6 saddr @ABUSE_NET_ipv6 drop'] })
+
+        nftables::file::input { 'drop-abuse-net-wikitide':
+            order   => 1,
+            content => $block_abuse_lines.join("\n"),
         }
     }
 
@@ -98,7 +106,7 @@ class base::firewall (
         dport => 68,
     }
 
-    nftables::rules { 'filter-bootp':
+    nftables::rules { 'filter_log_filter-bootp':
         prio  => 90,
         chain => 'input',
         rules => ['ip daddr 255.255.255.255 udp sport 67 udp dport 68 drop'],
